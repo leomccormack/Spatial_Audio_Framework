@@ -1,0 +1,35 @@
+# NetCDF C Configuration Summary
+==============================
+
+# General
+-------
+NetCDF Version:		4.4.1
+Configured On:		Fri Jan 19 22:13:57 EET 2018
+Host System:		x86_64-Darwin-16.7.0
+Build Directory: 	/Users/mccorml1/Downloads/netcdf-c-4.4.1/build
+Install Prefix:         /usr/local
+
+# Compiling Options
+-----------------
+C Compiler:		/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc
+CFLAGS:			 -O3 -DNDEBUG
+CPPFLAGS:		 
+LDFLAGS:		 
+AM_CFLAGS:		
+AM_CPPFLAGS:		
+AM_LDFLAGS:		
+Shared Library:		no
+Static Library:		yes
+Extra libraries:	-lhdf5_hl -lhdf5 -lz -ldl -lm -lz -lcurl
+
+# Features
+--------
+NetCDF-2 API:		yes
+HDF4 Support:		no
+NetCDF-4 API:		yes
+NC-4 Parallel Support:	no
+PNetCDF Support:	no
+DAP Support:		yes
+Diskless Support:	yes
+MMap Support:		no
+JNA Support:		no
