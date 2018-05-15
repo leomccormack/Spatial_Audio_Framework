@@ -18,7 +18,7 @@ Spatial_Audio_Framework/framework/include
 
 To the header search paths.
 
-Windows users must also install Intel's MKL, which can be freely aquired from
+Windows users must also install Intel's MKL, which can be freely acquired from
 * [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries)
 
 ## Examples
@@ -45,7 +45,7 @@ Spatial_Audio_Framework/examples/upmix
 * **powermap** - sound-field visualiser using beamformers (PWD, MVDR) or sub-space methods (MUSIC)
 * **rotator** - rotates spherical harmonic signals (HOA signals) given yaw-pitch-roll angles
 * **sldoa** - spatially-localised direction of arrival estimator
-* **upmix** - a (soon to be) collection of upmixing algorithms
+* **upmix** - a (soon to be) collection of upmixing algorithms (currently only stereo to 5.x upmixing)
 
 ### GUI implementations
 
@@ -54,9 +54,9 @@ http://research.spa.aalto.fi/projects/sparta_vsts/
 
 ## Authors
 
-* **Leo McCormack** - C programmer and DSP engineer (contact: leo.mccormack@aalto.fi)
-* **Symeon Delikaris-Manias** - DSP engineer
-* **Archontis Politis** - DSP engineer
+* **Leo McCormack** - C programmer and DSP researcher (contact: leo.mccormack@aalto.fi)
+* **Symeon Delikaris-Manias** - DSP researcher
+* **Archontis Politis** - DSP researcher
 
 ## License
 
