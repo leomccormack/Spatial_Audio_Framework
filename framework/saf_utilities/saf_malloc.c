@@ -43,6 +43,19 @@ void ***malloc3d(int dim1, int  dim2, int dim3, size_t _Size)
     return arr;
 }
 
+//void **malloc2d(int dim1, int  dim2, size_t _Size)
+//{
+//    int i;
+//    void ** arr2d;
+//
+//    arr2d = malloc(dim1*sizeof(void*));
+//    arr2d[0] = malloc(dim1*dim2*_Size);
+//    for (i=1; i<dim1; i++)
+//        arr2d[i] = arr2d[i-1] + dim2;
+//
+//    return arr2d;
+//}
+
 void **malloc2d(int dim1, int  dim2, size_t _Size)
 {
 #if __STDC_VERSION__ >= 199901L

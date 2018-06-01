@@ -18,6 +18,12 @@ Spatial_Audio_Framework/framework/include
 
 To the header search paths.
 
+For plug-ins that support SOFA loading capabilities, statically build netcdf libraries must be placed in
+
+```
+Spatial_Audio_Framework/dependencies
+```
+
 Windows users must also install Intel's MKL, which can be freely acquired from
 * [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries)
 

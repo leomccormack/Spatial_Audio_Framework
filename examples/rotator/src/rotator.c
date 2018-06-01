@@ -69,7 +69,13 @@ void rotator_init
 )
 {
     rotator_data *pData = (rotator_data*)(hRot);
-    /**/
+    int i;
+    
+    /* starting values */
+    for(i=1; i<=FRAME_SIZE; i++)
+        pData->interpolator[i-1] = (float)i*1.0f/(float)FRAME_SIZE;
+    memset(pData->prev_M_rot, 0, NUM_SH_SIGNALS*NUM_SH_SIGNALS*sizeof(float));
+    memset(pData->prev_inputFrameTD, 0, NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
 }
 
 
@@ -85,9 +91,9 @@ void rotator_process
 )
 {
     rotator_data *pData = (rotator_data*)(hRot);
-    int i, n, ch;
+    int i, j, n, ch;
     int o[SH_ORDER+2];
-    float Rxyz[3][3], M_rot[NUM_SH_SIGNALS][NUM_SH_SIGNALS];
+    float Rxyz[3][3];
     CH_ORDER chOrdering;
     NORM_TYPES norm;
  
@@ -115,13 +121,24 @@ void rotator_process
         
         /* calculate rotation matrix */
         yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, Rxyz);
-        getSHrotMtxReal(Rxyz, (float*)M_rot, SH_ORDER);
+        getSHrotMtxReal(Rxyz, (float*)(pData->M_rot), SH_ORDER);
         
         /* apply rotation (assumes ACN/N3D) */
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_SH_SIGNALS, FRAME_SIZE, NUM_SH_SIGNALS, 1.0f,
-                    (float*)M_rot, NUM_SH_SIGNALS,
-                    (float*)pData->inputFrameTD, FRAME_SIZE, 0.0f,
+                    (float*)(pData->prev_M_rot), NUM_SH_SIGNALS,
+                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
+                    (float*)pData->tempFrame, FRAME_SIZE);
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_SH_SIGNALS, FRAME_SIZE, NUM_SH_SIGNALS, 1.0f,
+                    (float*)(pData->M_rot), NUM_SH_SIGNALS,
+                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
                     (float*)pData->outputFrameTD, FRAME_SIZE);
+        for (i=0; i < NUM_SH_SIGNALS; i++)
+            for(j=0; j<FRAME_SIZE; j++)
+                pData->outputFrameTD[i][j] = pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
+        
+        /* for next frame */
+        memcpy(pData->prev_inputFrameTD, pData->inputFrameTD, NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
+        memcpy(pData->prev_M_rot, pData->M_rot, NUM_SH_SIGNALS*NUM_SH_SIGNALS*sizeof(float));
         
         /* account for norm scheme */
         switch(norm){
@@ -134,13 +151,13 @@ void rotator_process
                             pData->outputFrameTD[ch][i] /= sqrtf(2.0f*(float)n+1.0f);
                 break;
         }
-        for (i=0; i < MIN(NUM_SH_SIGNALS, nOutputs); i++)
+        for (i = 0; i < MIN(NUM_SH_SIGNALS, nOutputs); i++)
             memcpy(outputs[i], pData->outputFrameTD[i], FRAME_SIZE*sizeof(float));
         for (; i < nOutputs; i++)
             memset(outputs[i], 0, FRAME_SIZE*sizeof(float));
     }
     else{
-        for (i=0; i < nOutputs; i++)
+        for (i = 0; i < nOutputs; i++)
             memset(outputs[i], 0, FRAME_SIZE*sizeof(float));
     }
 }

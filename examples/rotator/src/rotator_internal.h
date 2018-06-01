@@ -58,7 +58,14 @@ typedef enum _NORM_TYPES{
 typedef struct _rotator
 {
     float inputFrameTD[NUM_SH_SIGNALS][FRAME_SIZE];
+    float prev_inputFrameTD[NUM_SH_SIGNALS][FRAME_SIZE];
+    float tempFrame[NUM_SH_SIGNALS][FRAME_SIZE];
     float outputFrameTD[NUM_SH_SIGNALS][FRAME_SIZE];
+    
+    /* internal */
+    float interpolator[FRAME_SIZE];
+    float M_rot[NUM_SH_SIGNALS][NUM_SH_SIGNALS];
+    float prev_M_rot[NUM_SH_SIGNALS][NUM_SH_SIGNALS];
 
     /* user parameters */
     float yaw, roll, pitch;

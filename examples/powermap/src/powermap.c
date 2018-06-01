@@ -307,12 +307,26 @@ void powermap_analysis
 
                 case PM_MODE_MUSIC:
                     if(C_grp_trace>1e-8f)
-                        generateMUSICmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 1, pData->pmap);
+                        generateMUSICmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 0, pData->pmap);
                     else
                         memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
                     break;
-
+                    
+                case PM_MODE_MUSIC_LOG:
+                    if(C_grp_trace>1e-8f)
+                        generateMUSICmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 1, pData->pmap);
+                    else
+                        memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
+                    break; 
+                    
                 case PM_MODE_MINNORM:
+                    if(C_grp_trace>1e-8f)
+                        generateMinNormMap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 0, pData->pmap);
+                    else
+                        memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
+                    break;
+                    
+                case PM_MODE_MINNORM_LOG:
                     if(C_grp_trace>1e-8f)
                         generateMinNormMap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 1, pData->pmap);
                     else

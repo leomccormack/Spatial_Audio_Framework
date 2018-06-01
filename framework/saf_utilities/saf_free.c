@@ -44,6 +44,15 @@ void free3d(void ***arr, int dim1, int dim2)
     }
 }
 
+//void free2d(void **arr)
+//{
+//    if(arr!=NULL){
+//        //free(arr[0]);
+//        free(arr);
+//        arr = NULL;
+//    }
+//}
+
 void free2d(void **arr, int dim1)
 {
 #if __STDC_VERSION__ >= 199901L
@@ -54,12 +63,12 @@ void free2d(void **arr, int dim1)
 #else
     int i;
     if (arr){
-        for (i = 0; i < dim1; i++)	{
+        for (i = 0; i < dim1; i++)    {
             free(arr[i]);
         }
         free(arr);
-        arr = NULL; 
-    } 
+        arr = NULL;
+    }
 #endif
 }
 

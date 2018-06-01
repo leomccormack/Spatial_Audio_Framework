@@ -38,8 +38,9 @@
 extern "C" {
 #endif
 
-void free3d(void ***arr, int dim1, int dim2);
+void free3d(void ***arr, int dim1, int dim2); 
 void free2d(void **arr, int dim1);
+//void free2d(void **arr);
 void free1d(void *arr);
 
 

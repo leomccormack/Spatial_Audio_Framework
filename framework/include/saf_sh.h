@@ -183,7 +183,7 @@ void generateCroPaCLCMVmap(/* Input arguments */
                            float lambda,          /* parameter controlling how harsh CroPaC is applied, 0..1; 0: fully cropac, 1: fully mvdr */
                            /* Output arguments */
                            float* pmap);          /* resulting CroPaC LCMV powermap; nGrid_dirs x 1 */
-
+    
 /* generates a powermap utilising the subspace-based MUSIC method*/
 void generateMUSICmap(/* Input arguments */
                       int order,                  /* analysis order */

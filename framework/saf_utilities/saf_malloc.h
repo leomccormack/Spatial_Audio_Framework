@@ -39,7 +39,7 @@ extern "C" {
 #endif
     
 void***   malloc3d(int dim1, int dim2, int dim3, size_t _Size);
-void**    malloc2d(int dim1, int dim2, size_t _Size);
+void**    malloc2d(int dim1, int dim2, size_t _Size); 
 void*     malloc1d(int dim1, size_t _Size);
 
 #ifdef __cplusplus
