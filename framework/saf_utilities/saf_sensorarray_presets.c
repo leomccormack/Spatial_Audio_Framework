@@ -62,7 +62,7 @@ const float __Sound_field_SPS200_coords_rad[4][2] =
 /* Third Order Arrays */
 /**********************/
 
-const float __Zylia_coords_rad[19][2] =
+const float __Zylia1D_coords_rad[19][2] =
 { { 0.0f,    1.57079632679490f},
   { 0.00305809444245928f,    0.840254037451382f},
   { -2.09600986753364f,    0.840126252832125f},

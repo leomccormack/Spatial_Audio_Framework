@@ -127,17 +127,18 @@ void FIRtoFilterbankCoeffs
     float_complex** hFB /* nBands x nCH x N_dirs */
 )
 {
-    int i, j, t, nd, nm, nTimeSlots, hopSize;
+    int i, j, t, nd, nm, nTimeSlots, ir_pad, hopSize;
     int* maxIdx;
     float maxVal, idxDel, irFB_energy, irFB_gain, phase;
     float* centerImpulse, *centerImpulseFB_energy, *ir;
     float_complex cross;
     float_complex* centerImpulseFB, *irFB;
     
+    ir_pad = 1024+512;
     hopSize = 128;
-    nTimeSlots = (ir_len+1024)/hopSize;
+    nTimeSlots = (ir_len+ir_pad)/hopSize;
     maxIdx = calloc(nCH,sizeof(int));
-    centerImpulse = calloc(ir_len+1024, sizeof(float));
+    centerImpulse = calloc(ir_len+ir_pad, sizeof(float));
     
     /* pick a direction to estimate the center of FIR delays */
     for(j=0; j<nCH; j++){
@@ -160,7 +161,7 @@ void FIRtoFilterbankCoeffs
     
     /* analyse impulse with the filterbank */
     centerImpulseFB = malloc(nBands*nTimeSlots*nCH*sizeof(float_complex));
-    afAnalyse(centerImpulse, ir_len+1024, 1, centerImpulseFB);
+    afAnalyse(centerImpulse, ir_len+ir_pad, 1, centerImpulseFB);
     centerImpulseFB_energy = calloc(nBands, sizeof(float));
     for(i=0; i<nBands; i++)
         for(t=0; t<nTimeSlots; t++)
@@ -168,13 +169,13 @@ void FIRtoFilterbankCoeffs
     
     /* initialise FB coefficients */
     (*hFB) = malloc(nBands*nCH*N_dirs*sizeof(float_complex));
-    ir = calloc( (ir_len+1024) * nCH, sizeof(float));
+    ir = calloc( (ir_len+ir_pad) * nCH, sizeof(float));
     irFB = malloc(nBands*nCH*nTimeSlots*sizeof(float_complex));
     for(nd=0; nd<N_dirs; nd++){
         for(j=0; j<ir_len; j++)
             for(i=0; i<nCH; i++)
                 ir[j*nCH+i] = hIR[nd*nCH*ir_len + i*ir_len + j];
-        afAnalyse(ir, ir_len+1024, nCH, irFB);
+        afAnalyse(ir, ir_len+ir_pad, nCH, irFB);
         for(nm=0; nm<nCH; nm++){
             for(i=0; i<nBands; i++){
                 irFB_energy = 0;

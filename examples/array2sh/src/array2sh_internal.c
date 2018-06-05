@@ -684,8 +684,8 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int firstInitFlag)
             }
             break;
 #endif
-#ifdef ENABLE_ZYLIA_PRESET
-        case PRESET_ZYLIA:
+#ifdef ENABLE_ZYLIA_1D_PRESET
+        case PRESET_ZYLIA_1D:
             Q = 19;
             pars->r = 0.049f;
             pars->R = 0.049f;
@@ -693,7 +693,7 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int firstInitFlag)
             pars->weightType = WEIGHT_RIGID;
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
-                    pars->sensorCoords_rad[ch][i] = __Zylia_coords_rad[ch][i];
+                    pars->sensorCoords_rad[ch][i] = __Zylia1D_coords_rad[ch][i];
                     pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);
                 }
             }

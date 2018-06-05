@@ -19,7 +19,7 @@
  *     Convolves input audio (up to 64 channels) with interpolated HRTFs in the time-frequency
  *     domain. The HRTFs are interpolated by applying amplitude-preserving VBAP gains to the
  *     HRTF magnitude responses and inter-aural time differences (ITDs) individually, before
- *     being re-combined. The plug-in allows the user to specify an external SOFA file for the
+ *     being re-combined. The example allows the user to specify an external SOFA file for the
  *     convolution.
  * Dependencies:
  *     saf_utilities, saf_hrir, saf_vbap, afSTFTlib
@@ -50,7 +50,7 @@ void binauraliser_interpHRTFs
     int i, band;
     int aziIndex, elevIndex, N_azi, idx3d;
     float_complex ipd;
-    float aziRes, elevRes, weights[1][3], itds3[3],  itdInterp[1];
+    float aziRes, elevRes, weights[3], itds3[3],  itdInterp;
     float magnitudes3[HYBRID_BANDS][3][NUM_EARS], magInterp[HYBRID_BANDS][NUM_EARS];
      
     /* find closest pre-computed VBAP direction */
@@ -61,7 +61,8 @@ void binauraliser_interpHRTFs
     elevIndex = (int)((elevation_deg + 90.0f) / elevRes + 0.5f);
     idx3d = elevIndex * N_azi + aziIndex;
     for (i = 0; i < 3; i++)
-        weights[0][i] = pData->hrtf_vbap_gtableComp[idx3d*3 + i];
+        weights[i] = pData->hrtf_vbap_gtableComp[idx3d*3 + i];
+    
     /* retrieve the 3 itds and hrtf magnitudes */
     for (i = 0; i < 3; i++) {
         itds3[i] = pData->itds_s[pData->hrtf_vbap_gtableIdx[idx3d*3+i]];
@@ -70,22 +71,24 @@ void binauraliser_interpHRTFs
             magnitudes3[band][i][1] = pData->hrtf_fb_mag[band*NUM_EARS*(pData->N_hrir_dirs) + 1*(pData->N_hrir_dirs) + pData->hrtf_vbap_gtableIdx[idx3d*3+i]];
         }
     }
+    
     /* interpolate hrtf magnitudes and itd */
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 1, 1, 3, 1,
                 (float*)weights, 3,
                 (float*)itds3, 1, 0,
-                (float*)itdInterp, 1);
+                &itdInterp, 1);
     for (band = 0; band < HYBRID_BANDS; band++) {
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 1, 2, 3, 1,
                     (float*)weights, 3,
                     (float*)magnitudes3[band], 2, 0,
                     (float*)magInterp[band], 2);
-    } 
+    }
+    
     /* introduce interaural phase difference */
     for (band = 0; band < HYBRID_BANDS; band++) {
-        ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*PI* (pData->freqVector[band]) * itdInterp[0] + PI, 2.0f*PI) - PI) / 2.0f);
-        h_intrp[band][0] = ccmulf(cmplxf(magInterp[band][0], 0.0f), cexpf(ipd));
-        h_intrp[band][1] = ccmulf(cmplxf(magInterp[band][1], 0.0f), conjf(cexpf(ipd)));
+        ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*PI* (pData->freqVector[band]) * itdInterp + PI, 2.0f*PI) - PI) / 2.0f);
+        h_intrp[band][0] = crmulf(cexpf(ipd), magInterp[band][0]);
+        h_intrp[band][1] = crmulf(conjf(cexpf(ipd)), magInterp[band][1]);
     }
 }
 
@@ -129,16 +132,18 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
             for(j=0; j<2; j++)
                 pData->hrir_dirs_deg[i*2+j] = (float)__default_hrir_dirs_deg[i][j];
     }
+    
     /* estimate the ITDs for each HRIR */
     if(pData->itds_s!= NULL){
         free(pData->itds_s);
         pData->itds_s = NULL;
     }
     hrirlib_estimateITDs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrir_fs, &(pData->itds_s));
+    
     /* generate VBAP gain table */
     hrtf_vbap_gtable = NULL;
     pData->hrtf_vbapTableRes[0] = 2;
-    pData->hrtf_vbapTableRes[1] = 5;
+    pData->hrtf_vbapTableRes[1] = 4;
     generateVBAPgainTable3D(pData->hrir_dirs_deg, pData->N_hrir_dirs, pData->hrtf_vbapTableRes[0], pData->hrtf_vbapTableRes[1], 1, 0,
                             &hrtf_vbap_gtable, &(pData->N_hrtf_vbap_gtable), &(pData->nTriangles));
     if(hrtf_vbap_gtable==NULL){
@@ -146,6 +151,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
         pData->useDefaultHRIRsFLAG = 1;
         binauraliser_initHRTFsAndGainTables(hBin);
     }
+    
     /* compress VBAP table */
     if(pData->hrtf_vbap_gtableComp!= NULL){
         free(pData->hrtf_vbap_gtableComp);
@@ -156,12 +162,14 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
         pData->hrtf_vbap_gtableIdx = NULL;
     }
     compressVBAPgainTable3D(hrtf_vbap_gtable, pData->N_hrtf_vbap_gtable, pData->N_hrir_dirs, &(pData->hrtf_vbap_gtableComp), &(pData->hrtf_vbap_gtableIdx));
+    
     /* convert hrirs to filterbank coefficients */
     if(pData->hrtf_fb!= NULL){
         free(pData->hrtf_fb);
         pData->hrtf_fb = NULL;
     }
     hrirlib_HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->itds_s, pData->freqVector, HYBRID_BANDS, &(pData->hrtf_fb));
+    
     /* calculate magnitude responses */
     if(pData->hrtf_fb_mag!= NULL)
         free(pData->hrtf_fb_mag);
@@ -195,7 +203,7 @@ void binauraliser_initTFT
         free2d((void**)pData->tempHopFrameTD, MAX(pData->nSources, NUM_EARS));
     }
     if (pData->hSTFT == NULL){
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSources, NUM_EARS, 1, 1);
+        afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSources, NUM_EARS, 0, 1);
         pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, pData->new_nSources, sizeof(complexVector));
         for(t=0; t<TIME_SLOTS; t++) {
             for(ch=0; ch< pData->new_nSources; ch++) {

@@ -19,7 +19,7 @@
  *     Convolves input audio (up to 64 channels) with interpolated HRTFs in the time-frequency
  *     domain. The HRTFs are interpolated by applying amplitude-preserving VBAP gains to the
  *     HRTF magnitude responses and inter-aural time differences (ITDs) individually, before
- *     being re-combined. The plug-in allows the user to specify an external SOFA file for the
+ *     being re-combined. The example allows the user to specify an external SOFA file for the
  *     convolution.
  * Dependencies:
  *     saf_utilities, saf_hrir, saf_vbap, afSTFTlib
@@ -50,6 +50,7 @@ void binauraliser_create
         }
     }
     pData->tempHopFrameTD = NULL;
+    
     /* hrir data */
     pData->useDefaultHRIRsFLAG=1;
     pData->hrirs = NULL;
@@ -59,19 +60,21 @@ void binauraliser_create
     /* vbap */
     pData->hrtf_vbap_gtableIdx = NULL;
     pData->hrtf_vbap_gtableComp = NULL;
+    
     /* HRTF filterbank coefficients */
     pData->itds_s = NULL;
     pData->hrtf_fb = NULL;
     pData->hrtf_fb_mag = NULL;
+    
     /* flags */
     pData->reInitHRTFsAndGainTables = 1;
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_hrtf_interpFLAG[ch] = 1;
     pData->reInitTFT = 1;
+    
     /* user parameters */
     binauraliser_loadPreset(PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
     pData->nSources = pData->new_nSources;
-    pData->DTT = 0.5f;
 }
 
 
@@ -179,7 +182,8 @@ void binauraliser_process
         binauraliser_initHRTFsAndGainTables(hBin);
         pData->reInitHRTFsAndGainTables = 0;
     }
-    /* apply panner */
+    
+    /* apply binaural panner */
     if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && (pData->hrtf_fb!=NULL)) {
         nSources = pData->nSources;  
         memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
@@ -194,6 +198,7 @@ void binauraliser_process
                 for(i=0; i<FRAME_SIZE; i++)
                     pData->inputFrameTD[ch][i] *= (float)i/(float)FRAME_SIZE;
 #endif
+        
         /* Apply time-frequency transform (TFT) */
         for ( t=0; t< TIME_SLOTS; t++) {
             for( ch=0; ch < nSources; ch++)
@@ -205,9 +210,9 @@ void binauraliser_process
             for( ch=0; ch < nSources; ch++)
                 for ( t=0; t<TIME_SLOTS; t++)
                     pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
-        /* Apply Binaural Rendering */
-        memset(pData->outputframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
+     
         /* interpolate hrtfs and apply to each source */
+        memset(pData->outputframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
         for (ch = 0; ch < nSources; ch++) {
             if(pData->recalc_hrtf_interpFLAG[ch]){
                 binauraliser_interpHRTFs(hBin, pData->src_dirs_deg[ch][0], pData->src_dirs_deg[ch][1], pData->hrtf_interp[ch]);
@@ -218,11 +223,13 @@ void binauraliser_process
                     for (t = 0; t < TIME_SLOTS; t++)
                         pData->outputframeTF[band][ear][t] = ccaddf(pData->outputframeTF[band][ear][t], ccmulf(pData->inputframeTF[band][ch][t], pData->hrtf_interp[ch][band][ear]));
         }
+        
         /* scale by number of sources */
         for (band = 0; band < HYBRID_BANDS; band++)
             for (ear = 0; ear < NUM_EARS; ear++)
                 for (t = 0; t < TIME_SLOTS; t++)
                     pData->outputframeTF[band][ear][t] = crmulf(pData->outputframeTF[band][ear][t], 1.0f/sqrtf((float)nSources));
+        
         /* inverse-TFT */
         for (band = 0; band < HYBRID_BANDS; band++) {
             for (ch = 0; ch < NUM_EARS; ch++) {
@@ -321,17 +328,6 @@ void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID)
     }
 }
 
-void binauraliser_setDTT(void* const hBin, float newValue)
-{
-    binauraliser_data *pData = (binauraliser_data*)(hBin);
-    int ch;
-    
-    pData->DTT = newValue; 
-    for(ch=0; ch<MAX_NUM_INPUTS; ch++){
-        pData->recalc_hrtf_interpFLAG[ch] = 1;
-    }
-}
-
 
 /* Get Functions */
 
@@ -406,22 +402,20 @@ int binauraliser_getUseDefaultHRIRsflag(void* const hBin)
     return pData->useDefaultHRIRsFLAG;
 }
 
+char* binauraliser_getSofaFilePath(void* const hCmp)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hCmp);
+    if(pData->sofa_filepath!=NULL)
+        return pData->sofa_filepath;
+    else
+        return "no_file";
+}
+
 int binauraliser_getDAWsamplerate(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     return pData->fs;
-}
-
-float binauraliser_getDTT(void* const hBin)
-{
-    binauraliser_data *pData = (binauraliser_data*)(hBin);
-    return pData->DTT;
-}
-
-
-
-
-
+} 
 
 
     

@@ -43,7 +43,7 @@ extern const float __Aalto_Hydrophone_coords_rad[4][2];
 extern const float __Sennheiser_Ambeo_coords_rad[4][2];
 extern const float __Core_Sound_TetraMic_coords_rad[4][2];
 extern const float __Sound_field_SPS200_coords_rad[4][2];
-extern const float __Zylia_coords_rad[19][2];
+extern const float __Zylia1D_coords_rad[19][2];
 extern const float __Eigenmike32_coords_rad[32][2];
 extern const float __DTU_mic_coords_rad[52][2];
 extern const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2];

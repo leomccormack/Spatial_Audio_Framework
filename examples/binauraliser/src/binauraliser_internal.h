@@ -19,7 +19,7 @@
  *     Convolves input audio (up to 64 channels) with interpolated HRTFs in the time-frequency
  *     domain. The HRTFs are interpolated by applying amplitude-preserving VBAP gains to the
  *     HRTF magnitude responses and inter-aural time differences (ITDs) individually, before
- *     being re-combined. The plug-in allows the user to specify an external SOFA file for the
+ *     being re-combined. The example allows the user to specify an external SOFA file for the
  *     convolution.
  * Dependencies:
  *     saf_utilities, saf_hrir, saf_vbap, afSTFTlib
@@ -114,7 +114,6 @@ typedef struct _binauraliser
     int nSources;
     int new_nSources;
     float src_dirs_deg[MAX_NUM_INPUTS][2];
-    float DTT;
     
 } binauraliser_data;
      
