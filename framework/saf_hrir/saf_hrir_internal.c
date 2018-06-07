@@ -134,7 +134,7 @@ void FIRtoFilterbankCoeffs
     float_complex cross;
     float_complex* centerImpulseFB, *irFB;
     
-    ir_pad = 1024+512;
+    ir_pad = 1024;//+512;
     hopSize = 128;
     nTimeSlots = (ir_len+ir_pad)/hopSize;
     maxIdx = calloc(nCH,sizeof(int));
@@ -186,7 +186,7 @@ void FIRtoFilterbankCoeffs
                 for(t=0; t<nTimeSlots; t++)
                     cross = ccaddf(cross, ccmulf(irFB[i*nTimeSlots*nCH + t*nCH + nm], conjf(centerImpulseFB[i*nTimeSlots + t])));
                 phase = atan2f(cimagf(cross), crealf(cross));
-                (*hFB)[i*nCH*N_dirs + nm*N_dirs  +nd] = crmulf( cexpf(cmplxf(0.0f, phase)), irFB_gain);
+                (*hFB)[i*nCH*N_dirs + nm*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f, phase)), irFB_gain);
             }
         }
     }

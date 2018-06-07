@@ -107,7 +107,7 @@ typedef struct _binauraliser
     
     /* misc. */
     int nTriangles;
-    int input_nDims; /* both 2D and 3D setups are supported, however, triangulation can fail if LS directions are shady */
+    int input_nDims;  
     int output_nDims;
     
     /* user parameters */

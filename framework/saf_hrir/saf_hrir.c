@@ -110,21 +110,20 @@ void hrirlib_HRIRs2FilterbankHRTFs
     for(band=0; band<N_bands; band++)
         for(i=0; i<NUM_EARS; i++)
             for(j=0; j<N_dirs; j++)
-                hrtf_diff[band*NUM_EARS+i] += powf(cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + i* N_dirs +j]), 2.0f);
+                hrtf_diff[band*NUM_EARS + i] += powf(cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + i*N_dirs + j]), 2.0f);
     for(band=0; band<N_bands; band++)
         for(i=0; i<NUM_EARS; i++)
-            hrtf_diff[band*NUM_EARS+i] = sqrtf(hrtf_diff[band*NUM_EARS+i]/(float)N_dirs);
+            hrtf_diff[band*NUM_EARS + i] = sqrtf(hrtf_diff[band*NUM_EARS + i]/(float)N_dirs);
     for(band=0; band<N_bands; band++)
         for(i=0; i<NUM_EARS; i++)
             for(nd=0; nd<N_dirs; nd++)
-                (*hrtf_fb)[band*NUM_EARS*N_dirs + i* N_dirs +nd] = ccdivf((*hrtf_fb)[band*NUM_EARS*N_dirs + i* N_dirs +nd], cmplxf(hrtf_diff[band*NUM_EARS+i], 0.0f));
+                (*hrtf_fb)[band*NUM_EARS*N_dirs + i*N_dirs + nd] = ccdivf((*hrtf_fb)[band*NUM_EARS*N_dirs + i*N_dirs + nd], cmplxf(hrtf_diff[band*NUM_EARS + i], 0.0f));
     
     /* create complex HRTFs by introducing the interaural phase differences (IPDs) to the HRTF magnitude responses */
     for(band=0; band<N_bands; band++){
         for(nd=0; nd<N_dirs; nd++){
-            (*hrtf_fb)[band*NUM_EARS*N_dirs + 0* N_dirs +nd] = crmulf( cexpf(cmplxf(0.0f, ipd[band* N_dirs + nd])),  cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 0* N_dirs +nd]) );
-            (*hrtf_fb)[band*NUM_EARS*N_dirs + 1* N_dirs +nd] = crmulf((cexpf(cmplxf(0.0f,-ipd[band* N_dirs + nd]))), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 1* N_dirs +nd]) );
-            //(*hrtf_fb)[band*NUM_EARS*N_dirs + 1* N_dirs +nd] = crmulf( conjf(cexpf(cmplxf(0.0f, ipd[band* N_dirs + nd]))), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 1* N_dirs +nd]) );
+            (*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f, ipd[band*N_dirs + nd])), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd]) );
+            (*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f,-ipd[band*N_dirs + nd])), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd]) );
         }
     }
     

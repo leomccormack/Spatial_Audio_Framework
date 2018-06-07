@@ -35,7 +35,7 @@
 
 static inline float matlab_fmodf(float x, float y) {
     float tmp = fmodf(x, y);
-    return tmp >= 0 ? tmp : tmp + y;
+    return tmp >= 0 ? tmp : tmp + y; 
 }
 
 void binauraliser_interpHRTFs
@@ -73,20 +73,20 @@ void binauraliser_interpHRTFs
     }
     
     /* interpolate hrtf magnitudes and itd */
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 1, 1, 3, 1,
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 1, 1, 3, 1.0f,
                 (float*)weights, 3,
-                (float*)itds3, 1, 0,
+                (float*)itds3, 1, 0.0f,
                 &itdInterp, 1);
     for (band = 0; band < HYBRID_BANDS; band++) {
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 1, 2, 3, 1,
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 1, 2, 3, 1.0f,
                     (float*)weights, 3,
-                    (float*)magnitudes3[band], 2, 0,
+                    (float*)magnitudes3[band], 2, 0.0f,
                     (float*)magInterp[band], 2);
     }
     
     /* introduce interaural phase difference */
     for (band = 0; band < HYBRID_BANDS; band++) {
-        ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*PI* (pData->freqVector[band]) * itdInterp + PI, 2.0f*PI) - PI) / 2.0f);
+        ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*PI*(pData->freqVector[band]) * itdInterp + PI, 2.0f*PI) - PI) / 2.0f);
         h_intrp[band][0] = crmulf(cexpf(ipd), magInterp[band][0]);
         h_intrp[band][1] = crmulf(conjf(cexpf(ipd)), magInterp[band][1]);
     }
