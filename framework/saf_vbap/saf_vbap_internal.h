@@ -39,7 +39,7 @@ extern "C" {
 #endif
  
 #define ADD_DUMMY_LIMIT ( 60.0f )             /* in degrees, if no ls_dirs have elevation +/- this value. Dummies are placed at +/- 90 elevation.  */
-#define MAX_NUM_FACES ( 5000 )                /* avoids infinite loops in the 3d convexhull main loop */
+#define MAX_NUM_FACES ( 30000 )               /* avoids infinite loops in the 3d convexhull main loop */
 #define APERTURE_LIMIT_DEG ( 180.0f )         /* if omitLargeTriangles==1, triangles with an aperture larger than this are discarded */
 #ifndef M_PI
   #define M_PI ( 3.14159265359f )

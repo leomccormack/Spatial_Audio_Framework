@@ -120,6 +120,7 @@ void panner_init
         else
             pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
     }
+    
     /* calculate pValue per frequency */
     panner_getPvalue(pData->DTT, pData->freqVector, pData->pValue);
 }
@@ -144,12 +145,6 @@ void panner_process
     if(pData->reInitTFT){
         panner_initTFT(hPan);
         pData->reInitTFT = 0;
-        nSources = pData->nSources;
-        nLoudspeakers = pData->nLoudpkrs;
-    }
-    else{
-        nSources = pData->nSources;
-        nLoudspeakers = pData->nLoudpkrs;
     }
     if(pData->reInitGainTables){
         panner_initGainTables(hPan);
@@ -159,11 +154,15 @@ void panner_process
     if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && (pData->vbap_gtable != NULL)) {
         memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
         memcpy(pValue, pData->pValue, HYBRID_BANDS*sizeof(float));
+        nSources = pData->nSources;
+        nLoudspeakers = pData->nLoudpkrs;
+        
         /* Load time-domain data */
         for(i=0; i < MIN(nSources,nInputs); i++)
             memcpy(pData->inputFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
         for(; i<MAX_NUM_INPUTS; i++)
-            memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float)); 
+            memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
+        
         /* Apply time-frequency transform (TFT) */
         for ( t=0; t< TIME_SLOTS; t++) {
             for( ch=0; ch < nSources; ch++)
@@ -176,6 +175,7 @@ void panner_process
                 for ( t=0; t<TIME_SLOTS; t++)
                     pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
         memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
+        
         /* Apply VBAP Panning */
         if(pData->output_nDims == 3){/* 3-D case */
             aziRes = (float)pData->vbapTableRes[0];
@@ -231,11 +231,13 @@ void panner_process
                 }
             }
         }
+        
         /* scale by number of sources */
         for (band = 0; band < HYBRID_BANDS; band++)
             for (ls = 0; ls < nLoudspeakers; ls++)
                 for (t = 0; t < TIME_SLOTS; t++)
                     pData->outputframeTF[band][ls][t] = crmulf(pData->outputframeTF[band][ls][t], 1.0f/sqrtf((float)nSources));
+        
         /* inverse-TFT */
         for (band = 0; band < HYBRID_BANDS; band++) {
             for (ch = 0; ch < nLoudspeakers; ch++) {
@@ -255,10 +257,9 @@ void panner_process
                     outputs[ch][sample + t* HOP_SIZE] = 0.0f;
         }
     }
-    else{
+    else
         for (ch=0; ch < nOutputs; ch++)
             memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
-    } 
 }
 
 

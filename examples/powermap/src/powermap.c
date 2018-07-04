@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2016-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -275,7 +275,7 @@ void powermap_analysis
             for (band=0; band<HYBRID_BANDS; band++){
                 order_band = MAX(MIN(pData->analysisOrderPerBand[band], SH_ORDER),1);
                 nSH_order = (order_band+1)*(order_band+1);
-				pmapEQ_band = MIN(MAX(pmapEQ[band], 0.0f), 2.0f);
+                pmapEQ_band = MIN(MAX(pmapEQ[band], 0.0f), 2.0f);
                 for(i=0; i<nSH_order; i++)
                     for(j=0; j<nSH_order; j++)
                         C_grp[i*nSH_maxOrder+j] = ccaddf(C_grp[i*nSH_maxOrder+j], crmulf(pData->Cx[band][i][j], 1e4f*pmapEQ_band));

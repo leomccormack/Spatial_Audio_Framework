@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2016-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -125,11 +125,11 @@ void utility_svvmul(float* a, const float* b, const int len, float* c)
     else
         vDSP_vmul(a, 1, b, 1, c, 1, len);
 #elif INTEL_MKL_VERSION
-	vsMul(len, a, b, c);
+    vsMul(len, a, b, c);
 #else
-	int i;
-	for (i = 0; i < len; i++)
-		c[i] = a[i] * b[i];
+    int i;
+    for (i = 0; i < len; i++)
+        c[i] = a[i] * b[i];
 #endif
 }
 
@@ -186,12 +186,12 @@ void utility_svsmul(float* a, const float* s, const int len, float* c)
     else
         vDSP_vsmul(a, 1, s, c, 1, len);
 #elif INTEL_MKL_VERSION
-	if (c == NULL)
-		cblas_sscal(len, s[0], a, 1);
-	else {
-		memcpy(c, a, len*sizeof(float));
-		cblas_sscal(len, s[0], c, 1);
-	}
+    if (c == NULL)
+        cblas_sscal(len, s[0], a, 1);
+    else {
+        memcpy(c, a, len*sizeof(float));
+        cblas_sscal(len, s[0], c, 1);
+    }
 #else
     int i;
     for(i=0; i<len; i++)
@@ -202,13 +202,13 @@ void utility_svsmul(float* a, const float* s, const int len, float* c)
 void utility_cvsmul(float_complex* a, const float_complex* s, const int len, float_complex* c)
 {
 #if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
-	if (c == NULL)
-		cblas_cscal(len, s, a, 1);
-	else {
-		int i;
-		for (i = 0; i<len; i++)
-			c[i] = ccmulf(a[i], s[0]);
-	}
+    if (c == NULL)
+        cblas_cscal(len, s, a, 1);
+    else {
+        int i;
+        for (i = 0; i<len; i++)
+            c[i] = ccmulf(a[i], s[0]);
+    }
 #else
     int i;
     for(i=0; i<len; i++)
@@ -607,7 +607,7 @@ void utility_spinv(const float* inM, const int dim1, const int dim2, float* outM
     
     m = lda = ldu = dim1;
     n = dim2;
-	k = ldvt = m < n ? m : n; 
+    k = ldvt = m < n ? m : n; 
     a = malloc(m*n*sizeof(float) );
     for(i=0; i<m; i++)
         for(j=0; j<n; j++)

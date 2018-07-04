@@ -37,7 +37,7 @@ void powermap_initAna(void* const hPm)
     float* Y_grid_N, *grid_x_axis, *grid_y_axis;
     
     /* Store Y_grid per order */
-	Y_grid_N = NULL;
+    Y_grid_N = NULL;
     int geosphere_ico_freq = 9;
     pars->grid_dirs_deg = (float*)__HANDLES_geosphere_ico_dirs_deg[geosphere_ico_freq];
     pars->grid_nDirs = __geosphere_ico_nPoints[geosphere_ico_freq];

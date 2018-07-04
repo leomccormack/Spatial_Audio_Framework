@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2016-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -500,8 +500,8 @@ void getRSH
     
     scale = sqrtf(4.0f*M_PI);
     nSH = (N+1)*(N+1);
-	if((*Y)!=NULL)
-		free(*Y);
+    if((*Y)!=NULL)
+        free(*Y);
     (*Y) = malloc(nSH*nDirs*sizeof(float));
     Y_dir = malloc(nSH*sizeof(float));
     for(i=0; i<nDirs; i++){
@@ -684,7 +684,7 @@ void getSHrotMtxReal
         
         for(i=0; i<2*l+1; i++)
             for(j=0; j<2*l+1; j++)
-				RotMtx[(bandIdx + i)*M + (bandIdx + j)] = R_l[i][j];
+                RotMtx[(bandIdx + i)*M + (bandIdx + j)] = R_l[i][j];
                 //RotMtx[(bandIdx+i)*(2*l+1) +(bandIdx+j)] = R_l[i][j];
         for(i=0; i<2*l+1; i++)
             memcpy(R_lm1[i], R_l[i], (2*l+1) * sizeof(float));
@@ -912,13 +912,13 @@ void generateCroPaCLCMVmap
     float Cx_trace, S, G;
     float* mvdr_map;
     float_complex* Cx_d, *A, *invCxd_A, *invCxd_A_tmp, *w_LCMV_s, *w_CroPaC, *wo, *Cx_Y, *Cx_Y_s;
-	float_complex b[2]; 
+    float_complex b[2]; 
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float_complex A_invCxd_A[2][2];
     float_complex Y_wo_xspec;
     
-	b[0] = cmplxf(1.0f, 0.0f);
-	b[1] = cmplxf(0.0f, 0.0f);
+    b[0] = cmplxf(1.0f, 0.0f);
+    b[1] = cmplxf(0.0f, 0.0f);
     nSH = (order+1)*(order+1);
     Cx_Y = malloc(nSH * nGrid_dirs * sizeof(float_complex));
     Cx_d = malloc(nSH*nSH*sizeof(float_complex));

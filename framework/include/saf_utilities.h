@@ -30,6 +30,10 @@
 #ifndef __SAF_UTILITIES_H_INCLUDED__
 #define __SAF_UTILITIES_H_INCLUDED__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef MIN
   #define MIN(a,b) (( (a) < (b) ) ? (a) : (b))
 #endif
@@ -48,7 +52,7 @@
 #include "../saf_utilities/saf_calloc.h"
 #include "../saf_utilities/saf_free.h"
 
-/* For BLAS/LAPACK, plus some other handy linear algebra functions */
+/* For BLAS/LAPACK functions, plus some other handy linear algebra functions */
 #include "../saf_utilities/saf_veclib.h"
 
 /* For cross-platform complex numbers wrapper */
@@ -57,5 +61,9 @@
 /* For various presets for loudspeaker, microphone, and hydrophone arrays.  */
 #include "../saf_utilities/saf_loudspeaker_presets.h"
 #include "../saf_utilities/saf_sensorarray_presets.h"
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __SAF_UTILITIES_H_INCLUDED__ */

@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -46,7 +46,7 @@ static double_complex bessel_Hl2(int l, double z){
 #ifdef __APPLE__
     Hl2 = cmplx(jn(l,z), - yn(l,z));
 #else
-	Hl2 = cmplx(_jn(l, z), -_yn(l, z));
+    Hl2 = cmplx(_jn(l, z), -_yn(l, z));
 #endif
     return Hl2;
 }
@@ -264,7 +264,7 @@ static void array2sh_calculate_bN
                 case WEIGHT_OPEN_OMNI:
                     for(band=0; band<HYBRID_BANDS; band++){
                         for(n=0; n < SH_ORDER+1; n++){
-							pData->bN[band][n] = crmul(cpow(cmplx(0.0, 1.0), cmplx((double)n, 0.0)), 4.0*M_PI* bessel_jl(n, kr[band]));
+                            pData->bN[band][n] = crmul(cpow(cmplx(0.0, 1.0), cmplx((double)n, 0.0)), 4.0*M_PI* bessel_jl(n, kr[band]));
                         }
                     }
                     break;
@@ -272,8 +272,8 @@ static void array2sh_calculate_bN
                 case WEIGHT_OPEN_CARD:
                     for(band=0; band<HYBRID_BANDS; band++){
                         for(n=0; n < SH_ORDER+1; n++){
-							pData->bN[band][n] = crmul(cpow(cmplx(0.0, 1.0), cmplx((double)n, 0.0)), 4.0*M_PI);
-							pData->bN[band][n] = ccmul(pData->bN[band][n], ccsub(cmplx(bessel_jl(n, kr[band]),0.0), crmul(cmplx(0.0f, 0.5), (bessel_jl(n - 1, kr[band]) - bessel_jl(n + 1, kr[band]) - 1.0 / kr[band] * bessel_jl(n, kr[band]))) ) );
+                            pData->bN[band][n] = crmul(cpow(cmplx(0.0, 1.0), cmplx((double)n, 0.0)), 4.0*M_PI);
+                            pData->bN[band][n] = ccmul(pData->bN[band][n], ccsub(cmplx(bessel_jl(n, kr[band]),0.0), crmul(cmplx(0.0f, 0.5), (bessel_jl(n - 1, kr[band]) - bessel_jl(n + 1, kr[band]) - 1.0 / kr[band] * bessel_jl(n, kr[band]))) ) );
                         }
                     }
                     break;
@@ -281,8 +281,8 @@ static void array2sh_calculate_bN
                 case WEIGHT_OPEN_DIPOLE:
                     for(band=0; band<HYBRID_BANDS; band++){
                         for(n=0; n < SH_ORDER+1; n++){
-							pData->bN[band][n] = crmul(cpow(cmplx(0.0, 1.0), cmplx((double)n, 0.0)), 4.0*M_PI);
-							pData->bN[band][n] = ccmul(pData->bN[band][n],  crmul( crmul(cmplx(0.0f, 0.5), -1.0), (bessel_jl(n - 1, kr[band]) - bessel_jl(n + 1, kr[band]) - 1.0 / kr[band] * bessel_jl(n, kr[band])) ) );
+                            pData->bN[band][n] = crmul(cpow(cmplx(0.0, 1.0), cmplx((double)n, 0.0)), 4.0*M_PI);
+                            pData->bN[band][n] = ccmul(pData->bN[band][n],  crmul( crmul(cmplx(0.0f, 0.5), -1.0), (bessel_jl(n - 1, kr[band]) - bessel_jl(n + 1, kr[band]) - 1.0 / kr[band] * bessel_jl(n, kr[band])) ) );
                         }
                     }
                     break;
@@ -290,13 +290,13 @@ static void array2sh_calculate_bN
                 case WEIGHT_RIGID:
                     for(band=0; band<HYBRID_BANDS; band++){
                         for(n=0; n < SH_ORDER+1; n++){
-							sph2cyl_kR = MAX(sqrt(M_PI / (2.0*kR[band])), 2.23e-13);
-							jl2 = ccadd(cmplx((bessel_jl(n - 1, kR[band]) - bessel_jl(n + 1, kR[band])) / sph2cyl_kR, 0.0), crmul((ccsub(cmplx(0.0, 2.0*admittance), cmplx(1.0 / kR[band],0.0))), bessel_jl(n, kR[band]) / sph2cyl_kR) );
-							hl2 = ccdiv(ccsub(bessel_hl2(n - 1, kR[band]), bessel_hl2(n + 1, kR[band])), cmplx(sph2cyl_kR,0.0));
-							hl2 = ccadd( hl2, ccmul((ccsub(cmplx(0.0, 2.0*admittance), cmplx( 1.0 / kR[band],0.0))), ccdiv(bessel_hl2(n, kR[band]), cmplx(sph2cyl_kR, 0.0))) );
+                            sph2cyl_kR = MAX(sqrt(M_PI / (2.0*kR[band])), 2.23e-13);
+                            jl2 = ccadd(cmplx((bessel_jl(n - 1, kR[band]) - bessel_jl(n + 1, kR[band])) / sph2cyl_kR, 0.0), crmul((ccsub(cmplx(0.0, 2.0*admittance), cmplx(1.0 / kR[band],0.0))), bessel_jl(n, kR[band]) / sph2cyl_kR) );
+                            hl2 = ccdiv(ccsub(bessel_hl2(n - 1, kR[band]), bessel_hl2(n + 1, kR[band])), cmplx(sph2cyl_kR,0.0));
+                            hl2 = ccadd( hl2, ccmul((ccsub(cmplx(0.0, 2.0*admittance), cmplx( 1.0 / kR[band],0.0))), ccdiv(bessel_hl2(n, kR[band]), cmplx(sph2cyl_kR, 0.0))) );
 
-							pData->bN[band][n] = crmul(cpow(cmplx(0.0, 1.0), cmplx((double)n, 0.0)), 4.0*M_PI);
-							pData->bN[band][n] = ccmul(pData->bN[band][n], (ccsub(cmplx(bessel_jl(n, kr[band]),0.0), ccmul(ccdiv(jl2, hl2), bessel_hl2(n, kr[band])))));
+                            pData->bN[band][n] = crmul(cpow(cmplx(0.0, 1.0), cmplx((double)n, 0.0)), 4.0*M_PI);
+                            pData->bN[band][n] = ccmul(pData->bN[band][n], (ccsub(cmplx(bessel_jl(n, kr[band]),0.0), ccmul(ccdiv(jl2, hl2), bessel_hl2(n, kr[band])))));
                         }
                     }
                     break;
@@ -334,7 +334,7 @@ static void array2sh_reg_inv_bN
                     f_n += (2.0*(double)n+1.0) * pow(cabs(pData->bN[band][n]), 2.0);
                 beta = (1.0/ pow((double)(SH_ORDER)+1.0,2.0)) * f_n;
                 for(n=0; n < SH_ORDER+1; n++)
-					pData->bN_inv[band][n] = crmul(pData->bN_modal[band][n], pow(cabs(pData->bN[band][n]), 2.0) / beta);
+                    pData->bN_inv[band][n] = crmul(pData->bN_modal[band][n], pow(cabs(pData->bN[band][n]), 2.0) / beta);
             }
             break;
             
@@ -397,7 +397,7 @@ void array2sh_initTFT
         free2d((void**)pData->tempHopFrameTD, arraySpecs->Q);
     }
     if (pData->hSTFT == NULL){
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, arraySpecs->newQ, NUM_SH_SIGNALS, 1, 1);
+        afSTFTinit(&(pData->hSTFT), HOP_SIZE, arraySpecs->newQ, NUM_SH_SIGNALS, 0, 1);
         pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, arraySpecs->newQ, sizeof(complexVector));
         for(t=0; t<TIME_SLOTS; t++) {
             for(ch=0; ch< arraySpecs->newQ; ch++) {
@@ -609,7 +609,7 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int firstInitFlag)
     int ch, i, Q;
     
     switch(preset){
-	    default:
+        default:
         case PRESET_DEFAULT:
             Q = (SH_ORDER+1)*(SH_ORDER+1); /* number of mics */
             pars->r = 0.042f; /* array radius */

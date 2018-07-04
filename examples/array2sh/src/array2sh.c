@@ -45,7 +45,7 @@ void array2sh_create
      
     /* defualt parameters */
     array2sh_createArray(&(pData->arraySpecs)); 
-    pData->regType = REG_SOFT_LIM;
+    pData->regType = REG_TIKHONOV;
     pData->regPar = 15.0f;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_N3D;

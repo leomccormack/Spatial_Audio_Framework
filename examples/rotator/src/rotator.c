@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -36,7 +36,7 @@ void rotator_create
     if (pData == NULL) { return;/*error*/ }
     *phRot = (void*)pData;
   
-	/* Default user parameters */
+    /* Default user parameters */
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
     pData->roll = 0.0f;
@@ -87,7 +87,7 @@ void rotator_process
     int            nInputs,
     int            nOutputs,
     int            nSamples,
-	int            isPlaying
+    int            isPlaying
 )
 {
     rotator_data *pData = (rotator_data*)(hRot);
@@ -102,10 +102,10 @@ void rotator_process
         for(n=0; n<SH_ORDER+2; n++){  o[n] = n*n;  }
         chOrdering = pData->chOrdering;
         norm = pData->norm;
-		for (i = 0; i < MIN(NUM_SH_SIGNALS, nInputs); i++)
-			memcpy(pData->inputFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
-		for (; i < NUM_SH_SIGNALS; i++)
-			memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
+        for (i = 0; i < MIN(NUM_SH_SIGNALS, nInputs); i++)
+            memcpy(pData->inputFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
+        for (; i < NUM_SH_SIGNALS; i++)
+            memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
         
         /* account for norm scheme */
         switch(norm){
@@ -115,7 +115,7 @@ void rotator_process
                 for (n = 0; n<SH_ORDER+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
-                            pData->outputFrameTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
+                            pData->inputFrameTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
                 break;
         }
         

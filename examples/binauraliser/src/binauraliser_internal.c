@@ -86,7 +86,7 @@ void binauraliser_interpHRTFs
     
     /* introduce interaural phase difference */
     for (band = 0; band < HYBRID_BANDS; band++) {
-        ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*PI*(pData->freqVector[band]) * itdInterp + PI, 2.0f*PI) - PI) / 2.0f);
+        ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*PI*(pData->freqVector[band]) * itdInterp + PI, 2.0f*PI) - PI)/2.0f);
         h_intrp[band][0] = crmulf(cexpf(ipd), magInterp[band][0]);
         h_intrp[band][1] = crmulf(conjf(cexpf(ipd)), magInterp[band][1]);
     }
@@ -222,7 +222,7 @@ void binauraliser_loadPreset(PRESETS preset, float dirs_deg[MAX_NUM_INPUTS][2], 
     int ch, i, nCH;
     
     switch(preset){
-	default:
+        default:
         case PRESET_DEFAULT:
             nCH = 1;
             for(ch=0; ch<nCH; ch++)

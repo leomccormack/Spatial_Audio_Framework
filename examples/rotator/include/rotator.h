@@ -47,7 +47,7 @@ void rotator_process(void* const hRot,                  /* rotator handle */
                      int nInputs,                       /* number of channels in 'inputs' matrix */
                      int nOutputs,                      /* number of channels in 'outputs' matrix */
                      int nSamples,                      /* number of samples in 'inputs' matrix */
-	                 int isPlaying);                    /* set to 1 if there is audio in the buffers */
+                     int isPlaying);                    /* set to 1 if there is audio in the buffers */
 
 /* SETS */
 

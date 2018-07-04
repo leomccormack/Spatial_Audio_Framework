@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -78,7 +78,7 @@ void sldoa_create
         pData->alphaScale[i] = malloc(HYBRID_BANDS*MAX_NUM_SECTORS * sizeof(float));
     }
     
-	/* Default user parameters */
+    /* Default user parameters */
     for(band=0; band<HYBRID_BANDS; band++){
         pData->analysisOrderPerBand[band] = SH_ORDER;
         pData->nSectorsPerBand[band] = ORDER2NUMSECTORS(pData->analysisOrderPerBand[band]);
@@ -165,7 +165,7 @@ void sldoa_analysis
     int            isPlaying 
 )
 {
-	sldoa_data *pData = (sldoa_data*)(hSld);
+    sldoa_data *pData = (sldoa_data*)(hSld);
     int i, j, t, n, ch, sample, band, nSectors, min_band, numAnalysisBands, current_disp_idx;
     float avgCoeff, max_en[HYBRID_BANDS], min_en[HYBRID_BANDS];
     float new_doa[MAX_NUM_SECTORS][TIME_SLOTS][2], new_doa_xyz[3], doa_xyz[3], avg_xyz[3];
@@ -242,7 +242,7 @@ void sldoa_analysis
 #if SH_ORDER > 1
                                   pData->secCoeffs[analysisOrderPerBand[band]-2],
 #else
-								  NULL,
+                                  NULL,
 #endif
                                   new_doa,
                                   new_energy);
@@ -305,7 +305,7 @@ void sldoa_analysis
                 memset(&(pData->alphaScale [current_disp_idx][band*MAX_NUM_SECTORS]), 0, MAX_NUM_SECTORS*sizeof(float));
             }
         }
-	}
+    }
 }
 
 /* SETS */

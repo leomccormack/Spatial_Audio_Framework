@@ -24,7 +24,9 @@
 #define __afSTFT_MEXfile__vecTools__
 
 #ifdef __APPLE__
-  #define VDSP 1
+  #if DEBUG == 0
+    #define VDSP 1
+  #endif
 #endif
 
 #ifdef VDSP

@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2016-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -243,7 +243,7 @@ void maxre3d
         k++;
         free(z);
         for (i = 0; i<nz; i++)
-			free(p[i]);
+            free(p[i]);
         free(p);
         nz = 14;
         zmin = zc - dz2;
@@ -266,7 +266,7 @@ void maxre3d
     gm[1] = rE;
     for (i = 1; i<M; i++)
         gm[i + 1] = ((2.0f*(float)i + 1.0f)*rE*gm[i] - (float)i*gm[i - 1]) / ((float)i + 1.0f);
-	
+    
     free(z);
     for (i = 0; i<nz; i++)
         free(p[i]);

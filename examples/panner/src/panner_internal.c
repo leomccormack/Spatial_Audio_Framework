@@ -80,7 +80,7 @@ void panner_initTFT
         free2d((void**)pData->tempHopFrameTD, MAX(pData->nSources, pData->nLoudpkrs));
     }
     if (pData->hSTFT == NULL){
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSources, pData->new_nLoudpkrs, 1, 1);
+        afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSources, pData->new_nLoudpkrs, 0, 1);
         pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, pData->new_nSources, sizeof(complexVector));
         pData->STFTOutputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, pData->new_nLoudpkrs, sizeof(complexVector));
         for(t=0; t<TIME_SLOTS; t++) {
@@ -302,9 +302,8 @@ void panner_loadPreset(PRESETS preset, float dirs_deg[MAX_NUM_INPUTS][2], int* n
     /* estimate number of dimensions. (Obviously fails if using 2D setups thare are on an angle.
        However, in these cases, triangulation should fail and revert to 2D anyway) */
     sum_elev = 0.0f;
-    for(i=0; i<nCH; i++){
-        sum_elev += dirs_deg[i][1];
-    }
+    for(i=0; i<nCH; i++)
+        sum_elev += fabsf(dirs_deg[i][1]);
     if(sum_elev < 0.01f)
         (*nDims) = 2;
     else

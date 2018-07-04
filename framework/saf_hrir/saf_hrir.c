@@ -40,11 +40,20 @@ void hrirlib_estimateITDs
     float** itds_s /* & */
 )
 {
-    int i, j, k, maxIdx, xcorr_len;
-    float maxVal, itd_bounds;
-    float* xcorr_LR, *ir_L, *ir_R;
+    int i, n, j, k, maxIdx, xcorr_len;
+    float maxVal, itd_bounds, fc, Q, K, KK, D, wn, Wz1[2], Wz2[2];
+    float* xcorr_LR, *ir_L, *ir_R, *hrir_lpf;
     
-    /* determine the ITD via the cross-correlation between the left and right HRIR signals */
+    /* calculate LPF coefficients, 2nd order IIR design equations from DAFX (2nd ed) p50 */
+    fc = 750.0f;
+    Q = 0.7071f;
+    K = tanf(M_PI * fc/(float)fs);
+    KK = K * K; 
+    D = KK * Q + K + Q;
+    float b[3] = {(KK * Q)/D, (2.0f * KK * Q)/D, (KK * Q)/D};
+    float a[3] = {1.0f, (2.0f * Q * (KK - 1.0f))/D, (KK * Q - K + Q)/D};
+    
+    /* determine the ITD via the cross-correlation between the LPF'd left and right HRIR signals */
     xcorr_len = 2*(hrir_len)-1;
     itd_bounds = sqrtf(2.0f)/2e3f;
     if((*itds_s)!=NULL)
@@ -53,10 +62,27 @@ void hrirlib_estimateITDs
     xcorr_LR = (float*)malloc(xcorr_len*sizeof(float));
     ir_L = (float*)malloc(hrir_len*sizeof(float));
     ir_R = (float*)malloc(hrir_len*sizeof(float));
+    hrir_lpf = (float*)malloc(hrir_len*2*sizeof(float));
     for(i=0; i<N_dirs; i++){
+        /* apply lpf */
+        memset(Wz1, 0, 2*sizeof(float));
+        memset(Wz2, 0, 2*sizeof(float));
+        for (n=0; n<hrir_len; n++){
+            for(j=0; j<2; j++){
+                /* biquad difference equation (Direct form 2) */
+                wn = hrirs[i*2*hrir_len + j*hrir_len + n] - a[1] * Wz1[j] - a[2] * Wz2[j];
+                hrir_lpf[n*2+j]  = b[0] * wn + b[1]*Wz1[j] + b[2]*Wz2[j];
+                
+                /* shuffle delays */
+                Wz2[j] = Wz1[j];
+                Wz1[j] = wn;
+            }
+        }
+        
+        /* xcorr between L and R */
         for(k=0; k<hrir_len; k++){
-            ir_L[k] = hrirs[i*2*hrir_len + 0*hrir_len + k];
-            ir_R[k] = hrirs[i*2*hrir_len + 1*hrir_len + k];
+            ir_L[k] = hrir_lpf[k*2+0];
+            ir_R[k] = hrir_lpf[k*2+1];
         }
         cxcorr(ir_L, ir_R, xcorr_LR, hrir_len, hrir_len);
         maxIdx = 0;
@@ -75,6 +101,7 @@ void hrirlib_estimateITDs
     free(xcorr_LR);
     free(ir_L);
     free(ir_R);
+    free(hrir_lpf);
 }
 
 /* A C implementation of a MatLab function by Archontis Politis; published with permission */
@@ -92,21 +119,23 @@ void hrirlib_HRIRs2FilterbankHRTFs
     int i, j, nd, band;
     float* ipd, *hrtf_diff;
     
-    hrtf_diff = calloc(N_bands*NUM_EARS, sizeof(float));
+    /* convert the HRIRs to filterbank coefficients */
+    FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, N_bands, hrtf_fb);
+#if 1
+    /* convert ITDs to phase differences -pi..pi */
     ipd = malloc(N_bands*N_dirs*sizeof(float));
-    
-    /* convert ITDs to phase differences -pi~pi */
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_bands, N_dirs, 1, 1.0,
                 centreFreq, 1,
                 itds_s, 1, 0.0,
                 ipd, N_dirs);
-    for(i=0; i<N_bands*N_dirs; i++)
-        ipd[i] = (matlab_fmodf(2.0f*M_PI*ipd[i] + M_PI, 2.0f*M_PI) - M_PI)/2.0f; /* /2 here, not later */
-    
-    /* convert the HRIRs to filterbank coefficients */
-    FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, N_bands, hrtf_fb);
+    for(i=0; i<N_bands; i++){
+        for(j=0; j<N_dirs; j++){
+            ipd[i*N_dirs+j] = (matlab_fmodf(2.0f*M_PI*ipd[i*N_dirs+j] + M_PI, 2.0f*M_PI) - M_PI)/2.0f; /* /2 here, not later */ 
+        }
+    }
     
     /* diffuse-field equalise */
+    hrtf_diff = calloc(N_bands*NUM_EARS, sizeof(float));
     for(band=0; band<N_bands; band++)
         for(i=0; i<NUM_EARS; i++)
             for(j=0; j<N_dirs; j++)
@@ -126,9 +155,10 @@ void hrirlib_HRIRs2FilterbankHRTFs
             (*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f,-ipd[band*N_dirs + nd])), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd]) );
         }
     }
-    
+
     free(ipd);
     free(hrtf_diff);
+#endif
 }
 
 /* A C implementation of a MatLab function by Archontis Politis; published with permission */

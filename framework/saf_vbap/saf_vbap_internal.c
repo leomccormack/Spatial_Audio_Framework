@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -398,7 +398,7 @@ static void convhull_3d
     int f0_sum, u_len, start, num_p, index, horizon_size1;
     int FUCKED;
     FUCKED = 0;
-	u = horizon = NULL;
+    u = horizon = NULL;
     nFaces = d+1;
     visible_ind = malloc(nFaces*sizeof(int));
     points_cf = malloc(nFaces*sizeof(REAL));
@@ -821,7 +821,7 @@ void findLsTriplets
     free(validFacesID);
     
     /* Omit Triangules that have an aperture larger than APERTURE_LIMIT_DEG */
-	valid_faces2 = NULL;
+    valid_faces2 = NULL;
     if(omitLargeTriangles) {
         aperture_lim = APERTURE_LIMIT_DEG * M_PI/180.0f;
         nFaces = numValidFaces;

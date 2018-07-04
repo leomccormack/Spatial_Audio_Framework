@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2016-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -44,10 +44,10 @@ extern "C" {
 /*************************/
 
 typedef enum _BEAMFORMING_WEIGHT_TYPES {
-	BFW_BASIC,                 /* beamforming weights = spherical harmonic weights for one direction on the sphere */
-	BFW_MAX_RE,                /* maximum-energy beamformer */
-	BFW_DOLPH_CHEBY_MAIN,      /* Dolph-Chebyshev beamfomer */
-	BFW_DOLPH_CHEBY_DESIRED    /* Dolph-Chebyshev beamfomer */
+    BFW_BASIC,                 /* beamforming weights = spherical harmonic weights for one direction on the sphere */
+    BFW_MAX_RE,                /* maximum-energy beamformer */
+    BFW_DOLPH_CHEBY_MAIN,      /* Dolph-Chebyshev beamfomer */
+    BFW_DOLPH_CHEBY_DESIRED    /* Dolph-Chebyshev beamfomer */
 
 } BEAMFORMING_WEIGHT_TYPES;
     

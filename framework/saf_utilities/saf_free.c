@@ -33,7 +33,7 @@ void free3d(void ***arr, int dim1, int dim2)
 {
     int i, j;
     if (arr){
-        for (i = 0; i < dim1; i++)	{
+        for (i = 0; i < dim1; i++) {
             for (j = 0; j < dim2; j++){
                 free(arr[i][j]);
             }

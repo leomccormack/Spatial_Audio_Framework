@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2016-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -298,7 +298,7 @@ void cdf4sap_formulate_M_and_Cr
     float wkopt;
     float* work;
     for (i = 0; i<qsize1; i++)
-    	for (j = 0; j<qsize2; j++)
+        for (j = 0; j<qsize2; j++)
             pData->Q[j*qsize1 + i] = Qm[i][j];
     if (qsize1 < qsize2){
         for (i = 0; i < MIN(qsize2, qsize1); i++)
@@ -456,7 +456,7 @@ void cdf4sap_formulate_M_and_Cr
                 pData->KyP, qsize1,
                 pData->Kx_reg_inverse, qsize2, 0,
                 pData->M_CM, qsize1);
-	 
+     
     /* Formulate residual covariance matrix */
     for (i = 0; i<xsize; i++)
         for (j = 0; j<xsize; j++)
@@ -729,7 +729,7 @@ void cdf4sap_formulate_M_and_Cr_cmplx
             M[i][j] = pData->M_CM[j*qsize1 + i]; /* transpose - back to row major */
     for (i = 0; i<qsize1; i++) {
         for (j = 0; j<qsize1; j++) {
-			//Cr[i][j] = ccsubf(Cy[i][j], pData->Cy_tilde[j*qsize1 + i]); /* transpose - back to row major */
+            //Cr[i][j] = ccsubf(Cy[i][j], pData->Cy_tilde[j*qsize1 + i]); /* transpose - back to row major */
             Cr[i][j] = cmplxf(crealf(Cy[i][j]) - crealf(pData->Cy_tilde[j*qsize1 + i]), 0.0f); /* transpose - back to row major */
         }
     }
