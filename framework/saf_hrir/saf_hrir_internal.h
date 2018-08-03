@@ -30,6 +30,7 @@
 #include <math.h>
 #include <complex.h>
 #include <string.h>
+#include <float.h>
 #include "saf_hrir.h"
 #include "afSTFTlib.h"
 #include "saf_utilities.h"
