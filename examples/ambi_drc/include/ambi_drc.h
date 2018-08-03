@@ -44,7 +44,7 @@ extern "C" {
 #define HOP_SIZE ( 128 )                   /* STFT hop size, can be flexible, but only 'hybrid' mode afSTFT is supported (i.e. non uniform) */ 
 #define TIME_SLOTS ( FRAME_SIZE/HOP_SIZE ) /* time-frequency domain frame size */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )      /* hybrid mode incurs an additional 5 bands  */ 
-#define SPECTRAL_FLOOR (0.001)             /* -60dB */
+#define SPECTRAL_FLOOR (0.1585)            /* -16dB, maximum gain reduction for a given frequency band */
 #define MAX_ORDER ( 7 )
 #define MAX_NUM_SH_SIGNALS ( (MAX_ORDER+1)*(MAX_ORDER+1) )
 #ifdef ENABLE_TF_DISPLAY

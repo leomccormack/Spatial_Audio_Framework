@@ -219,14 +219,13 @@ void ambi_drc_process
                 pData->yL_z1[band] = yL;
                 cdB = -yL;
                 cdB = MAX(SPECTRAL_FLOOR, sqrtf(powf(10.0f, cdB / 20.0f)));
-                //cdB = MAX(SPECTRAL_FLOOR, powf(10.0f, cdB / 20.0f));
 
 #ifdef ENABLE_TF_DISPLAY
                 /* store gain factors in circular buffer for plotting */
                 if(pData->storeIdx==0)
-                    pData->gainsTF_bank0[band][pData->wIdx] = (1.0f - cdB);
+                    pData->gainsTF_bank0[band][pData->wIdx] = cdB;
                 else
-                    pData->gainsTF_bank1[band][pData->wIdx] = (1.0f - cdB);
+                    pData->gainsTF_bank1[band][pData->wIdx] = cdB;
 #endif
                 /* apply same gain factor to all SH components, the spatial characteristics will be preserved */
                 for (ch = 0; ch < pData->nSH; ch++)
@@ -314,13 +313,13 @@ void ambi_drc_setKnee(void* const hAmbi, float newValue)
 void ambi_drc_setInGain(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->inGain = MAX(MIN(newValue, 40.0f), 0.0f);
+    pData->inGain = MAX(MIN(newValue, 40.0f), -40.0f);
 }
 
 void ambi_drc_setOutGain(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->outGain = MAX(MIN(newValue, 40.0f), 0.0f);
+    pData->outGain = MAX(MIN(newValue, 40.0f), -20.0f);
 }
 
 void ambi_drc_setAttack(void* const hAmbi, float newValue)
@@ -332,7 +331,7 @@ void ambi_drc_setAttack(void* const hAmbi, float newValue)
 void ambi_drc_setRelease(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->release_ms = MAX(MIN(newValue, 300.0f), 50.0f);
+    pData->release_ms = MAX(MIN(newValue, 1000.0f), 50.0f);
 }
 
 void ambi_drc_setChOrder(void* const hAmbi, int newOrder)
@@ -351,6 +350,7 @@ void ambi_drc_setInputPreset(void* const hAmbi, INPUT_ORDER newPreset)
 {
     ambi_drc_data *pData = (ambi_drc_data*)hAmbi;
     ambi_drc_setInputOrder(newPreset, &(pData->new_nSH));
+    pData->currentOrder = newPreset;
     if(pData->new_nSH!=pData->nSH)
         pData->reInitTFT = 1;
 }

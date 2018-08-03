@@ -144,7 +144,7 @@ void HRIRs2FilterbankHRTFs
 
     /* convert the HRIRs to filterbank coefficients */
     FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, N_bands, hrtf_fb);
-#if 0
+#if 1
     /* estimate phase manipulation curve */
     phi_bands = malloc(N_bands*sizeof(float));
     estimateIPDmanipCurve(itds_s, N_dirs, centreFreq, N_bands, 343.0f, 1.2f, phi_bands);

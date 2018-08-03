@@ -16,7 +16,7 @@ And add:
 Spatial_Audio_Framework/framework/include
 ```
 
-To the header search paths.
+to the header search paths.
 
 For plug-ins that support SOFA loading capabilities, statically built netcdf libraries must also be placed in:
 
@@ -45,13 +45,13 @@ Spatial_Audio_Framework/examples/upmix
 ```
 
 * **ambi_dec** - a frequency-dependent Ambisonic decoder (AllRAD, EPAD, MMD etc)
-* **ambi_drc** - a frequency-dependent dynamic range compressor for spherical harmonic signals (aka HOA signals)
+* **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for spherical harmonic signals (aka Ambisonic signals)
 * **ambi_enc** - a simple Ambisonic encoder/panner
-* **array2sh** - converts microphone array signals into spherical harmonic signals (aka HOA signals)
+* **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals)
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file
 * **panner** - a frequency-dependent VBAP panner
 * **powermap** - sound-field visualiser using beamformers (PWD, MVDR) or sub-space methods (MUSIC)
-* **rotator** - rotates spherical harmonic signals (HOA signals) given yaw-pitch-roll angles
+* **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles
 * **sldoa** - spatially-localised direction of arrival estimator
 * **upmix** - a (soon to be) collection of upmixing algorithms (currently only stereo to 5.x upmixing)
 
