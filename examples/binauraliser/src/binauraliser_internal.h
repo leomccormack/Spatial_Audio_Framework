@@ -77,6 +77,7 @@ typedef struct _binauraliser
     
     /* time-frequency transform */
     float freqVector[HYBRID_BANDS];
+    float phi_bands[HYBRID_BANDS];
     void* hSTFT;
     
     /* sofa file info */

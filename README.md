@@ -4,13 +4,13 @@ A Spatial Audio Framework (SAF) written in C. The framework includes functions f
 
 ## Getting Started
 
-To include this framework in a project, simply add the following code
+To include this framework in a project, simply add the following code:
 
 ```
 Spatial_Audio_Framework/framework
 ```
 
-And add
+And add:
 
 ```
 Spatial_Audio_Framework/framework/include
@@ -18,7 +18,7 @@ Spatial_Audio_Framework/framework/include
 
 To the header search paths.
 
-For plug-ins that support SOFA loading capabilities, statically build netcdf libraries must be placed in
+For plug-ins that support SOFA loading capabilities, statically built netcdf libraries must also be placed in:
 
 ```
 Spatial_Audio_Framework/dependencies
@@ -29,10 +29,11 @@ Windows users must also install Intel's MKL, which can be freely acquired from
 
 ## Examples
 
-Several examples have also been included
+Several examples have also been included:
 
 ```
 Spatial_Audio_Framework/examples/ambi_dec
+Spatial_Audio_Framework/examples/ambi_drc
 Spatial_Audio_Framework/examples/ambi_enc
 Spatial_Audio_Framework/examples/array2sh
 Spatial_Audio_Framework/examples/binauraliser
@@ -44,6 +45,7 @@ Spatial_Audio_Framework/examples/upmix
 ```
 
 * **ambi_dec** - a frequency-dependent Ambisonic decoder (AllRAD, EPAD, MMD etc)
+* **ambi_drc** - a frequency-dependent dynamic range compressor for spherical harmonic signals (aka HOA signals)
 * **ambi_enc** - a simple Ambisonic encoder/panner
 * **array2sh** - converts microphone array signals into spherical harmonic signals (aka HOA signals)
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file
@@ -66,5 +68,5 @@ http://research.spa.aalto.fi/projects/sparta_vsts/
 
 ## License
 
-This framework is licensed under the ISC License. However, it also includes a slightly modified version of the alias-free STFT implementation by Juha Vilkamo (MIT license).
+This framework is licensed under the [ISC license](https://choosealicense.com/licenses/isc/). However, it also includes the 'alias-free STFT' implementation by Juha Vilkamo (MIT license), which can be found [here](https://github.com/jvilkamo/afSTFT); and the 'convhull_3d' header only Convex Hull implementation by Leo McCormack (MIT license), which can be found [here](https://github.com/leomccormack/convhull_3d).
 

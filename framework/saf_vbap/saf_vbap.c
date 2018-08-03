@@ -329,13 +329,14 @@ void compressVBAPgainTable3D
     for(nt=0; nt<nTable; nt++){
         gains_sum = 0.0f;
         for(i=0, j=0; i<nDirs; i++){
-            if(vbap_gtable[nt*nDirs+i]>0.0f){
+            if(vbap_gtable[nt*nDirs+i]>0.0000001f){
                 gains_nt[j] = vbap_gtable[nt*nDirs+i];
                 gains_sum += gains_nt[j];
                 idx_nt[j] = i;
                 j++;
             }
         }
+        assert(j<4);
         for(i=0; i<j; i++){
             (*vbap_gtableComp)[nt*3+i] = MAX(gains_nt[i]/gains_sum, 0.0f);
             (*vbap_gtableIdx)[nt*3+i] = idx_nt[i];

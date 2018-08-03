@@ -86,7 +86,7 @@ void binauraliser_interpHRTFs
     
     /* introduce interaural phase difference */
     for (band = 0; band < HYBRID_BANDS; band++) {
-        ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*PI*(pData->freqVector[band]) * itdInterp + PI, 2.0f*PI) - PI)/2.0f);
+        ipd = cmplxf(0.0f, pData->phi_bands[band]*(matlab_fmodf(2.0f*PI*(pData->freqVector[band]) * itdInterp + PI, 2.0f*PI) - PI)/2.0f);
         h_intrp[band][0] = crmulf(cexpf(ipd), magInterp[band][0]);
         h_intrp[band][1] = crmulf(conjf(cexpf(ipd)), magInterp[band][1]);
     }
@@ -138,12 +138,15 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
         free(pData->itds_s);
         pData->itds_s = NULL;
     }
-    hrirlib_estimateITDs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrir_fs, &(pData->itds_s));
+    estimateITDs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrir_fs, &(pData->itds_s));
+    
+    /* estimate phase manipulation curve */
+    estimateIPDmanipCurve(pData->itds_s, pData->N_hrir_dirs, pData->freqVector, HYBRID_BANDS, 343.0f, 1.3f, pData->phi_bands);
     
     /* generate VBAP gain table */
     hrtf_vbap_gtable = NULL;
     pData->hrtf_vbapTableRes[0] = 2;
-    pData->hrtf_vbapTableRes[1] = 4;
+    pData->hrtf_vbapTableRes[1] = 5;
     generateVBAPgainTable3D(pData->hrir_dirs_deg, pData->N_hrir_dirs, pData->hrtf_vbapTableRes[0], pData->hrtf_vbapTableRes[1], 1, 0,
                             &hrtf_vbap_gtable, &(pData->N_hrtf_vbap_gtable), &(pData->nTriangles));
     if(hrtf_vbap_gtable==NULL){
@@ -168,7 +171,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
         free(pData->hrtf_fb);
         pData->hrtf_fb = NULL;
     }
-    hrirlib_HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->itds_s, pData->freqVector, HYBRID_BANDS, &(pData->hrtf_fb));
+    HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->itds_s, pData->freqVector, HYBRID_BANDS, &(pData->hrtf_fb));
     
     /* calculate magnitude responses */
     if(pData->hrtf_fb_mag!= NULL)
@@ -356,6 +359,14 @@ void binauraliser_loadPreset(PRESETS preset, float dirs_deg[MAX_NUM_INPUTS][2], 
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __DTU_AVIL_dirs_deg[ch][i];
             break;
+#endif
+#ifdef  ENABLE_ZYLIA_LAB_PRESET
+        case PRESET_ZYLIA_LAB:
+            nCH = 22;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __Zylia_Lab_dirs_deg[ch][i];
+            break; 
 #endif
 #ifdef ENABLE_T_DESIGN_4_PRESET
         case PRESET_T_DESIGN_4:

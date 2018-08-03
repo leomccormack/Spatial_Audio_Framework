@@ -162,7 +162,8 @@ void utility_ceig(const float_complex* A,  /* in nonsymmetric square matrix; fla
                   int sortDecFLAG,         /* 1: sort eigen values and vectors in decending order. 0: ascending */
                   float_complex* VL,       /* Left Eigen vectors (set to NULL if not needed); dim x dim */
                   float_complex* VR,       /* Right Eigen vectors (set to NULL if not needed); dim x dim */
-                  float_complex* D);       /* Eigen values along the diagonal (set to NULL if not needed); dim x dim */
+                  float_complex* D,        /* Eigen values along the diagonal (set to NULL if not needed); dim x dim */
+                  float* eig);             /* Eigen values not diagonalised; dim x 1 */
 
 /*------------------------------ general linear solver (?glslv) -----------------------------*/
 

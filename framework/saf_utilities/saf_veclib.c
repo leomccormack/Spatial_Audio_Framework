@@ -29,6 +29,7 @@
 
 #include "saf_veclib.h"
 #include "saf_complex.h"
+#include "saf_sort.h"
 
 #ifndef MIN
   #define MIN(a,b) (( (a) < (b) ) ? (a) : (b))
@@ -36,59 +37,6 @@
 #ifndef MAX
   #define MAX(a,b) (( (a) > (b) ) ? (a) : (b))
 #endif
-
-typedef struct sort_float {
-    float val;
-    int idx;
-}sort_float;
-
-int cmp_asc_float(const void *a,const void *b) {
-    struct sort_float *a1 = (struct sort_float*)a;
-    struct sort_float *a2 = (struct sort_float*)b;
-    if((*a1).val<(*a2).val)return -1;
-    else if((*a1).val>(*a2).val)return 1;
-    else return 0;
-}
-
-int cmp_desc_float(const void *a,const void *b) {
-    struct sort_float *a1 = (struct sort_float*)a;
-    struct sort_float *a2 = (struct sort_float*)b;
-    if((*a1).val>(*a2).val)return -1;
-    else if((*a1).val<(*a2).val)return 1;
-    else return 0;
-}
-
-static void sortf
-(
-    float* in_vec,    /* vector[len] to be sorted */
-    float* out_vec,   /* if NULL, then in_vec is sorted "in-place" */
-    int* new_idices,  /* set to NULL if you don't need them */
-    int len,          /* number of elements in vectors, must be consistent with the input data */
-    int descendFLAG   /* !1:ascending, 1:descending */
-)
-{
-    int i;
-    struct sort_float *data;
-    
-    data = malloc(len*sizeof(sort_float));
-    for(i=0;i<len;i++) {
-        data[i].val=in_vec[i];
-        data[i].idx=i;
-    }
-    if(descendFLAG)
-        qsort(data,len,sizeof(data[0]),cmp_desc_float);
-    else
-        qsort(data,len,sizeof(data[0]),cmp_asc_float);
-    for(i=0;i<len;i++){
-        if (out_vec!=NULL)
-            out_vec[i] = data[i].val;
-        else
-            in_vec[i] = data[i].val; /* overwrite input vector */
-        if(new_idices!=NULL)
-            new_idices[i] = data[i].idx;
-    }
-    free(data);
-}
 
 /*------------------------------ vector-vector copy (?vvcopy) -------------------------------*/
 
@@ -366,7 +314,7 @@ void utility_sseig(const float* A, const int dim, int sortDecFLAG, float* V, flo
 
 /*-----------------------------  eigenvalue decomposition (?eig) ----------------------------*/
 
-void utility_ceig(const float_complex* A, const int dim, int sortDecFLAG, float_complex* VL, float_complex* VR, float_complex* D)
+void utility_ceig(const float_complex* A, const int dim, int sortDecFLAG, float_complex* VL, float_complex* VR, float_complex* D, float* eig)
 {
     int i, j, n, lda, ldvl, ldvr, info, lwork;
     float_complex wkopt;
@@ -420,6 +368,8 @@ void utility_ceig(const float_complex* A, const int dim, int sortDecFLAG, float_
             memset(VL, 0, dim*dim*sizeof(float_complex));
         if(VR!=NULL)
             memset(VR, 0, dim*dim*sizeof(float_complex));
+        if(eig!=NULL)
+            memset(eig, 0, dim*sizeof(float));
     }
     else{
         for(i=0; i<dim; i++){
@@ -431,6 +381,8 @@ void utility_ceig(const float_complex* A, const int dim, int sortDecFLAG, float_
                     VR[i*dim+j] = vr[sort_idx[j]*dim+i]; /* transpose, back to row-major */
             if(D!=NULL)
                 D[i*dim+i] = cmplxf(wr[i], 0.0f); /* store along the diagonal */
+            if(eig!=NULL)
+                eig[i] = wr[i];
         }
     }
     

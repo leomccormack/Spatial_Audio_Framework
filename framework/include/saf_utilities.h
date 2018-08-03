@@ -52,6 +52,9 @@ extern "C" {
 #include "../saf_utilities/saf_calloc.h"
 #include "../saf_utilities/saf_free.h"
 
+/* For sorting vectors */
+#include "../saf_utilities/saf_sort.h"
+
 /* For BLAS/LAPACK functions, plus some other handy linear algebra functions */
 #include "../saf_utilities/saf_veclib.h"
 

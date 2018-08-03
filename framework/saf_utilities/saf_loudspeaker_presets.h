@@ -53,6 +53,7 @@ extern const float __Aalto_Apaja_dirs_deg[29][2];
 extern const float __Aalto_Apaja2_dirs_deg[39][2];
 extern const float __Aalto_LR_dirs_deg[13][2];
 extern const float __DTU_AVIL_dirs_deg[64][2];
+extern const float __Zylia_Lab_dirs_deg[22][2];
 extern const float default_LScoords64_rad[64][2];
     
 /* (nearly) uniform arrangements (minimum T-designs for given degrees) */

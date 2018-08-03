@@ -37,41 +37,52 @@ extern "C" {
 #endif
 
 /* estimates the interaural time-differences (ITDs) for each HRIR via the cross-correlation between the left and right IRs */
-void hrirlib_estimateITDs(/* Input arguments */
-                          float* hrirs,                           /* HRIRs; FLAT: N_dirs x 2 x hrir_len */
-                          int N_dirs,                             /* number of HRIRs */
-                          int hrir_len,                           /* length of the HRIRs in samples */
-                          int fs,                                 /* sampling rate of the HRIRs */
-                          /* Output arguments */
-                          float** itds_s);                        /* & ITDs in seconds; N_dirs x 1 */
+void estimateITDs(/* Input arguments */
+                  float* hrirs,                           /* HRIRs; FLAT: N_dirs x 2 x hrir_len */
+                  int N_dirs,                             /* number of HRIRs */
+                  int hrir_len,                           /* length of the HRIRs in samples */
+                  int fs,                                 /* sampling rate of the HRIRs */
+                  /* Output arguments */
+                  float** itds_s);                        /* & ITDs in seconds; N_dirs x 1 */
+    
+/* estimates interaural phase difference (IPD) manipulation curve */
+void estimateIPDmanipCurve(/* Input arguments */
+                           float* itds_s,                 /* ITDs in seconds; N_dirs x 1 */
+                           int N_dirs,                    /* number of HRIRs */
+                           float* centreFreq,             /* filterbank centre frequencies; N_bands x 1 */
+                           int N_bands,                   /* number of frequency bands */
+                           float c,                       /* speed of sound, in m/s */
+                           float maxVal,                  /* maximum allowed value */
+                           /* Output arguments */
+                           float* phi_bands);             /* phase manipulation curve; N_dirs x 1 */
 
 /* passes zero padded HRIRs through the afSTFT filterbank. The filterbank coefficients are then normalised with the energy
  * of an impulse, which is centered at approximately the beginning of the HRIR peak. The HRTF FB coefficients are then
  * diffuse-field equalised before reintroducing the interaural phase differences (IPDs) per frequency band.
  * Please note that this function is NOT suitable for binaural room impulse responses (BRIRs). */
-void hrirlib_HRIRs2FilterbankHRTFs(/* Input arguments */
-                                   float* hrirs,                  /* HRIRs; FLAT: N_dirs x 2 x hrir_len */
-                                   int N_dirs,                    /* number of HRIRs */
-                                   int hrir_len,                  /* length of the HRIRs in samples */
-                                   float* itds_s,                 /* HRIR ITDs; N_dirs x 1 */
-                                   float* centreFreq,             /* filterbank centre frequencies; N_bands x 1 */
-                                   int N_bands,                   /* number of frequency bands */
-                                   /* Output arguments */
-                                   float_complex** hrtf_fb);      /* & HRTFs as filterbank coeffs; FLAT: N_bands x 2 x N_dirs */
+void HRIRs2FilterbankHRTFs(/* Input arguments */
+                           float* hrirs,                  /* HRIRs; FLAT: N_dirs x 2 x hrir_len */
+                           int N_dirs,                    /* number of HRIRs */
+                           int hrir_len,                  /* length of the HRIRs in samples */
+                           float* itds_s,                 /* HRIR ITDs; N_dirs x 1 */
+                           float* centreFreq,             /* filterbank centre frequencies; N_bands x 1 */
+                           int N_bands,                   /* number of frequency bands */
+                           /* Output arguments */
+                           float_complex** hrtf_fb);      /* & HRTFs as filterbank coeffs; FLAT: N_bands x 2 x N_dirs */
 
 /* Interpolates a set of HRTFs for specified directions; defined by a amplitude normalised vbap interpolation table (see saf_vbap).
  * The interpolation is performed by applying interpolation gains to the HRTF magnitudes and HRIR inter-aural time differences separately.
  * The inter-aural phase differences are then reintroduced for each frequency band */
-void hrirlib_interpFilterbankHRTFs(/* Input arguments */
-                                   float_complex* hrtfs,          /* HRTFs as filterbank coeffs; FLAT: N_bands x 2 x N_hrtf_dirs */
-                                   float* itds,                   /* the inter-aural time difference for each HRIR; N_hrtf_dirs x 1 */
-                                   float* freqVector,             /* frequency vector; N_bands x 1 */
-                                   float* vbap_gtable,            /* vbap gain table; FLAT: N_interp_dirs x N_hrtf_dirs */
-                                   int N_hrtf_dirs,               /* number of HRTF directions */
-                                   int N_bands,                   /* number of frequency bands */
-                                   int N_interp_dirs,             /* number of interpolated hrtf positions  */
-                                   /* Output arguments */
-                                   float_complex* hrtf_interp);   /* pre-alloc, interpolated HRTFs; FLAT: N_bands x 2 x N_interp_dirs */
+void interpFilterbankHRTFs(/* Input arguments */
+                           float_complex* hrtfs,          /* HRTFs as filterbank coeffs; FLAT: N_bands x 2 x N_hrtf_dirs */
+                           float* itds,                   /* the inter-aural time difference for each HRIR; N_hrtf_dirs x 1 */
+                           float* freqVector,             /* frequency vector; N_bands x 1 */
+                           float* vbap_gtable,            /* vbap gain table; FLAT: N_interp_dirs x N_hrtf_dirs */
+                           int N_hrtf_dirs,               /* number of HRTF directions */
+                           int N_bands,                   /* number of frequency bands */
+                           int N_interp_dirs,             /* number of interpolated hrtf positions  */
+                           /* Output arguments */
+                           float_complex* hrtf_interp);   /* pre-alloc, interpolated HRTFs; FLAT: N_bands x 2 x N_interp_dirs */
     
 
 #ifdef __cplusplus
