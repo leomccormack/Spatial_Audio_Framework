@@ -1,0 +1,83 @@
+	    SUMMARY OF THE HDF5 CONFIGURATION
+	    =================================
+
+General Information:
+-------------------
+                   HDF5 Version: 1.10.1
+                  Configured on: 2018-06-07
+                  Configured by: Visual Studio 14 2015 Win64
+                    Host system: Windows-10.0.17134
+              Uname information: Windows
+                       Byte sex: little-endian
+             Installation point: C:/Program
+
+Compiling Options:
+------------------
+                     Build Mode: Release
+              Debugging Symbols: 
+                        Asserts: 
+                      Profiling: 
+             Optimization Level: 
+
+Linking Options:
+----------------
+                      Libraries: 
+  Statically Linked Executables: OFF
+                        LDFLAGS: /machine:x64
+                     H5_LDFLAGS: 
+                     AM_LDFLAGS: 
+                Extra libraries: zlib-static;szip-static
+                       Archiver: 
+                         Ranlib: 
+
+Languages:
+----------
+                              C: yes
+                     C Compiler: C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/x86_amd64/cl.exe 19.0.23918.0
+                       CPPFLAGS: 
+                    H5_CPPFLAGS: 
+                    AM_CPPFLAGS: 
+                         CFLAGS: /DWIN32 /D_WINDOWS  /W3
+                      H5_CFLAGS: 
+                      AM_CFLAGS: 
+               Shared C Library: NO
+               Static C Library: YES
+
+                        Fortran: OFF
+               Fortran Compiler:  
+                  Fortran Flags: 
+               H5 Fortran Flags: 
+               AM Fortran Flags: 
+         Shared Fortran Library: NO
+         Static Fortran Library: YES
+
+                            C++: ON
+                   C++ Compiler: C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/x86_amd64/cl.exe 19.0.23918.0
+                      C++ Flags: /DWIN32 /D_WINDOWS /GR /EHsc /W3
+                   H5 C++ Flags: 
+                   AM C++ Flags: 
+             Shared C++ Library: NO
+             Static C++ Library: YES
+
+                            JAVA: OFF
+                   JAVA Compiler:  
+
+Features:
+---------
+                  Parallel HDF5: OFF
+             High-level library: ON
+                   Threadsafety: OFF
+            Default API mapping: v110
+ With deprecated public symbols: ON
+         I/O filters (external):  DEFLATE DECODE ENCODE
+                            MPE: 
+                     Direct VFD: 
+                        dmalloc: 
+ Packages w/ extra debug output: 
+                    API Tracing: OFF
+           Using memory checker: OFF
+Memory allocation sanity checks: OFF
+            Metadata trace file: 
+         Function Stack Tracing: OFF
+      Strict File Format Checks: OFF
+   Optimization Instrumentation: 
