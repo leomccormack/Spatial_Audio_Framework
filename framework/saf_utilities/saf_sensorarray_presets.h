@@ -34,8 +34,8 @@
 extern "C" {
 #endif
     
-#ifndef SH_ORDER
-  #define SH_ORDER ( 7 )
+#ifndef DEFAULT_SH_ORDER
+  #define DEFAULT_SH_ORDER ( 7 )
 #endif
     
 /* sensor array coordinates */
@@ -46,7 +46,7 @@ extern const float __Sound_field_SPS200_coords_rad[4][2];
 extern const float __Zylia1D_coords_rad[19][2];
 extern const float __Eigenmike32_coords_rad[32][2];
 extern const float __DTU_mic_coords_rad[52][2];
-extern const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2];
+extern const float __default_coords_rad[(DEFAULT_SH_ORDER+1)*(DEFAULT_SH_ORDER+1)][2];
 extern const float __default_SENSORcoords64_rad[64][2];
 
 /* sensor array maximum order */

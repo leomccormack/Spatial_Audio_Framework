@@ -35,6 +35,7 @@ void ambi_enc_create
     if (pData == NULL) { return;/*error*/ }
     *phAmbi = (void*)pData;
     int i;
+    pData->order = 1;
     
     /* user parameters */
     ambi_enc_loadPreset(PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources)); /*check setStateInformation if you change default preset*/
@@ -43,6 +44,7 @@ void ambi_enc_create
         pData->recalc_SH_FLAG[i] = 1;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_N3D;
+    pData->outputOrderPreset = OUTPUT_ORDER_FIRST;
 }
 
 void ambi_enc_destroy
@@ -80,21 +82,24 @@ void ambi_enc_process
 )
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
-    int i, j, ch, n, nSources;
-    int o[SH_ORDER+2];
-    float src_dirs[MAX_NUM_INPUTS][2];
+    int i, j, ch, n, nSources, nSH;
+    int o[MAX_ORDER+2];
+    float src_dirs[MAX_NUM_INPUTS][2], scale;
     float* Y_src;
     CH_ORDER chOrdering;
     NORM_TYPES norm;
-
-    if ( (nSamples == FRAME_SIZE) && (isPlaying==1) ) {
+    int order;
+    
+    if ( (nSamples == FRAME_SIZE) && (isPlaying == 1) ) {
         /* prep */
-        for(n=0; n<SH_ORDER+2; n++){  o[n] = n*n;  }
+        for(n=0; n<MAX_ORDER+2; n++){  o[n] = n*n;  }
         chOrdering = pData->chOrdering;
         norm = pData->norm;
         nSources = pData->nSources;
         memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
-        Y_src = malloc(NUM_SH_SIGNALS*sizeof(float));
+        order = MIN(pData->order, MAX_ORDER);
+        nSH = (order+1)*(order+1);
+        Y_src = malloc(nSH*sizeof(float));
         
         /* Load time-domain data */
         for(i=0; i < MIN(nSources,nInputs); i++)
@@ -105,25 +110,31 @@ void ambi_enc_process
         /* recalulate SHs */
         for(i=0; i<nSources; i++){
             if(pData->recalc_SH_FLAG[i]){
-                getSHreal(SH_ORDER, pData->src_dirs_deg[i][0]*M_PI/180.0f, M_PI/2.0f - pData->src_dirs_deg[i][1]*M_PI/180.0f, Y_src);
-                for(j=0; j<NUM_SH_SIGNALS; j++)
-                    pData->Y[j][i] = Y_src[j];
+                getSHreal(order, pData->src_dirs_deg[i][0]*M_PI/180.0f, M_PI/2.0f - pData->src_dirs_deg[i][1]*M_PI/180.0f, Y_src);
+                for(j=0; j<nSH; j++)
+                    pData->Y[j][i] = sqrtf(4.0f*M_PI)*Y_src[j];
+                for(; j<MAX_NUM_SH_SIGNALS; j++)
+                    pData->Y[j][i] = 0.0f;
                 pData->recalc_SH_FLAG[i] = 0;
             }
         }
         
         /* spatially encode the input signals into spherical harmonic signals */
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_SH_SIGNALS, FRAME_SIZE, nSources, 1.0,
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0,
                     (float*)pData->Y, MAX_NUM_INPUTS,
                     (float*)pData->inputFrameTD, FRAME_SIZE, 0.0,
                     (float*)pData->outputFrameTD, FRAME_SIZE);
+        
+        /* scale by 1/sqrt(nSources) */
+        scale = 1.0f/sqrt(nSources);
+        utility_svsmul((float*)pData->outputFrameTD, &scale, nSH*FRAME_SIZE, NULL);
         
         /* norm scheme */
         switch(norm){
             case NORM_N3D: /* already N3D */
                 break;
             case NORM_SN3D:
-                for (n = 0; n<SH_ORDER+1; n++)
+                for (n = 0; n<order+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->outputFrameTD[ch][i] /= sqrtf(2.0f*(float)n+1.0f);
@@ -131,8 +142,10 @@ void ambi_enc_process
         }
         
         /* save SH signals to output buffer */
-        for(i=0; i < MIN(NUM_SH_SIGNALS,nOutputs); i++)
+        for(i = 0; i < MIN(nSH,nOutputs); i++)
             memcpy(outputs[i], pData->outputFrameTD[i], FRAME_SIZE * sizeof(float));
+        for(; i < nOutputs; i++)
+            memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
         free((void*)Y_src);
     }
     else{
@@ -149,6 +162,27 @@ void ambi_enc_refreshParams(void* const hAmbi)
     int i;
     for(i=0; i<MAX_NUM_INPUTS; i++)
         pData->recalc_SH_FLAG[i] = 1;
+}
+
+void ambi_enc_setOutputOrder(void* const hAmbi, int newOrder)
+{
+    ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
+    int i;
+    if(newOrder != pData->outputOrderPreset){
+        pData->outputOrderPreset = (OUTPUT_ORDERS)newOrder;
+        switch(pData->outputOrderPreset){
+            case OUTPUT_OMNI: pData->order = 0; break;
+            case OUTPUT_ORDER_FIRST:   pData->order = 1; break;
+            case OUTPUT_ORDER_SECOND:  pData->order = 2; break;
+            case OUTPUT_ORDER_THIRD:   pData->order = 3; break;
+            case OUTPUT_ORDER_FOURTH:  pData->order = 4; break;
+            case OUTPUT_ORDER_FIFTH:   pData->order = 5; break;
+            case OUTPUT_ORDER_SIXTH:   pData->order = 6; break;
+            case OUTPUT_ORDER_SEVENTH: pData->order = 7; break;
+        }
+        for(i=0; i<MAX_NUM_INPUTS; i++)
+            pData->recalc_SH_FLAG[i] = 1;
+    }
 }
 
 void ambi_enc_setSourceAzi_deg(void* const hAmbi, int index, float newAzi_deg)
@@ -185,9 +219,8 @@ void ambi_enc_setInputConfigPreset(void* const hAmbi, int newPresetID)
     int ch;
     ambi_enc_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources));
     pData->nSources = pData->new_nSources;
-    for(ch=0; ch<MAX_NUM_INPUTS; ch++){
+    for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_SH_FLAG[ch] = 1;
-    }
 }
 
 void ambi_enc_setChOrder(void* const hAmbi, int newOrder)
@@ -203,6 +236,12 @@ void ambi_enc_setNormType(void* const hAmbi, int newType)
 }
 
 /* Get Functions */
+
+int ambi_enc_getOutputOrder(void* const hAmbi)
+{
+    ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
+    return (int)pData->outputOrderPreset;
+}
 
 float ambi_enc_getSourceAzi_deg(void* const hAmbi, int index)
 {

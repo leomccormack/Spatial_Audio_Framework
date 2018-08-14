@@ -45,6 +45,7 @@ void rotator_create
     pData->bFlipRoll = 0;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_N3D;
+    rotator_setOrder(*phRot,  OUTPUT_ORDER_FIRST);
 }
 
 
@@ -74,8 +75,9 @@ void rotator_init
     /* starting values */
     for(i=1; i<=FRAME_SIZE; i++)
         pData->interpolator[i-1] = (float)i*1.0f/(float)FRAME_SIZE;
-    memset(pData->prev_M_rot, 0, NUM_SH_SIGNALS*NUM_SH_SIGNALS*sizeof(float));
-    memset(pData->prev_inputFrameTD, 0, NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
+    memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
+    memset(pData->prev_M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
+    memset(pData->prev_inputFrameTD, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
 }
 
 
@@ -91,20 +93,23 @@ void rotator_process
 )
 {
     rotator_data *pData = (rotator_data*)(hRot);
-    int i, j, n, ch;
-    int o[SH_ORDER+2];
+    int i, j, n, order, nSH;
+    int o[MAX_SH_ORDER+2];
     float Rxyz[3][3];
+    float* M_rot_tmp;
     CH_ORDER chOrdering;
     NORM_TYPES norm;
  
     if (nSamples == FRAME_SIZE && isPlaying) {
         /* prep */
-        for(n=0; n<SH_ORDER+2; n++){  o[n] = n*n;  }
+        for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
         chOrdering = pData->chOrdering;
         norm = pData->norm;
-        for (i = 0; i < MIN(NUM_SH_SIGNALS, nInputs); i++)
+        order = pData->order;
+        nSH = (order+1)*(order+1);
+        for (i = 0; i < MIN(nSH, nInputs); i++)
             memcpy(pData->inputFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
-        for (; i < NUM_SH_SIGNALS; i++)
+        for (; i < nSH; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
         
         /* account for norm scheme */
@@ -112,46 +117,60 @@ void rotator_process
             case NORM_N3D: /* already N3D */
                 break;
             case NORM_SN3D: /* convert to N3D before rotation */
-                for (n = 0; n<SH_ORDER+1; n++)
+#if 0 /* actually doesn't seem to matter */
+                for (n = 0; n<order+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->inputFrameTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
+#endif
                 break;
         }
         
-        /* calculate rotation matrix */
-        yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, Rxyz);
-        getSHrotMtxReal(Rxyz, (float*)(pData->M_rot), SH_ORDER);
-        
-        /* apply rotation (assumes ACN/N3D) */
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_SH_SIGNALS, FRAME_SIZE, NUM_SH_SIGNALS, 1.0f,
-                    (float*)(pData->prev_M_rot), NUM_SH_SIGNALS,
-                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
-                    (float*)pData->tempFrame, FRAME_SIZE);
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_SH_SIGNALS, FRAME_SIZE, NUM_SH_SIGNALS, 1.0f,
-                    (float*)(pData->M_rot), NUM_SH_SIGNALS,
-                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
-                    (float*)pData->outputFrameTD, FRAME_SIZE);
-        for (i=0; i < NUM_SH_SIGNALS; i++)
-            for(j=0; j<FRAME_SIZE; j++)
-                pData->outputFrameTD[i][j] = pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
-        
-        /* for next frame */
-        memcpy(pData->prev_inputFrameTD, pData->inputFrameTD, NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
-        memcpy(pData->prev_M_rot, pData->M_rot, NUM_SH_SIGNALS*NUM_SH_SIGNALS*sizeof(float));
+        if (order>0){
+            /* calculate rotation matrix */
+            M_rot_tmp = malloc(nSH*nSH*sizeof(float));
+            yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, Rxyz);
+            getSHrotMtxReal(Rxyz, M_rot_tmp, order);
+            for(i=0; i<nSH; i++)
+                for(j=0; j<nSH; j++)
+                    pData->M_rot[i][j] = M_rot_tmp[i*nSH+j];
+            free(M_rot_tmp);
+            
+            /* apply rotation (assumes ACN/N3D) */
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSH, 1.0f,
+                        (float*)(pData->prev_M_rot), MAX_NUM_SH_SIGNALS,
+                        (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
+                        (float*)pData->tempFrame, FRAME_SIZE);
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSH, 1.0f,
+                        (float*)(pData->M_rot), MAX_NUM_SH_SIGNALS,
+                        (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
+                        (float*)pData->outputFrameTD, FRAME_SIZE);
+            for (i=0; i < nSH; i++)
+                for(j=0; j<FRAME_SIZE; j++)
+                    pData->outputFrameTD[i][j] = pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
+            
+            /* for next frame */
+            memcpy(pData->prev_inputFrameTD, pData->inputFrameTD, nSH*FRAME_SIZE*sizeof(float));
+            for(i=0; i<nSH; i++)
+                memcpy(pData->prev_M_rot[i], pData->M_rot[i], nSH*sizeof(float));
+        }
+        else
+            memcpy(pData->outputFrameTD[0], pData->inputFrameTD[0], FRAME_SIZE*sizeof(float));
         
         /* account for norm scheme */
         switch(norm){
             case NORM_N3D: /* already N3D */
                 break;
             case NORM_SN3D: /* convert back to SN3D after rotation */
-                for (n = 0; n<SH_ORDER+1; n++)
+#if 0 /* actually doesn't seem to matter */
+                for (n = 0; n<order+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->outputFrameTD[ch][i] /= sqrtf(2.0f*(float)n+1.0f);
+#endif
                 break;
         }
-        for (i = 0; i < MIN(NUM_SH_SIGNALS, nOutputs); i++)
+        for (i = 0; i < MIN(nSH, nOutputs); i++)
             memcpy(outputs[i], pData->outputFrameTD[i], FRAME_SIZE*sizeof(float));
         for (; i < nOutputs; i++)
             memset(outputs[i], 0, FRAME_SIZE*sizeof(float));
@@ -219,6 +238,23 @@ void rotator_setNormType(void* const hRot, int newType)
     pData->norm = (NORM_TYPES)newType;
 }
 
+void rotator_setOrder(void* const hRot, int newOrder)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    pData->outputOrder = (OUTPUT_ORDERS)newOrder;
+    switch(pData->outputOrder){
+        case OUTPUT_OMNI:          pData->order = 0; break;
+        default:
+        case OUTPUT_ORDER_FIRST:   pData->order = 1; break;
+        case OUTPUT_ORDER_SECOND:  pData->order = 2; break;
+        case OUTPUT_ORDER_THIRD:   pData->order = 3; break;
+        case OUTPUT_ORDER_FOURTH:  pData->order = 4; break;
+        case OUTPUT_ORDER_FIFTH:   pData->order = 5; break;
+        case OUTPUT_ORDER_SIXTH:   pData->order = 6; break;
+        case OUTPUT_ORDER_SEVENTH: pData->order = 7; break;
+    }
+}
+
 /*gets*/
 
 float rotator_getYaw(void* const hRot)
@@ -267,6 +303,12 @@ int rotator_getNormType(void* const hRot)
 {
     rotator_data *pData = (rotator_data*)(hRot);
     return (int)pData->norm;
+}
+
+int rotator_getOrder(void* const hRot)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    return (int)pData->outputOrder;
 }
 
 

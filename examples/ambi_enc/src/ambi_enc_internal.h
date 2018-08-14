@@ -37,25 +37,18 @@
 extern "C" {
 #endif
   
+#define MAX_ORDER ( 7 )
 #define MAX_NUM_INPUTS ( 64 )
-#define NUM_SH_SIGNALS ( (SH_ORDER + 1)*(SH_ORDER + 1) )    /* (L+1)^2 */
-    
-typedef enum _CH_ORDER{
-    CH_ACN = 1
-}CH_ORDER;
-
-typedef enum _NORM_TYPES{
-    NORM_N3D = 1,
-    NORM_SN3D
-}NORM_TYPES;
+#define MAX_NUM_SH_SIGNALS ( (MAX_ORDER + 1)*(MAX_ORDER + 1) )    /* (L+1)^2 */
     
 typedef struct _ambi_enc
 {
     float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
-    float outputFrameTD[NUM_SH_SIGNALS][FRAME_SIZE];
+    float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float fs;
     int recalc_SH_FLAG[MAX_NUM_INPUTS];
-    float Y[NUM_SH_SIGNALS][MAX_NUM_INPUTS];
+    float Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
+    int order;
     
     /* user parameters */
     int nSources;
@@ -63,6 +56,7 @@ typedef struct _ambi_enc
     float src_dirs_deg[MAX_NUM_INPUTS][2];
     CH_ORDER chOrdering;
     NORM_TYPES norm;
+    OUTPUT_ORDERS outputOrderPreset;
     
 } ambi_enc_data;
     

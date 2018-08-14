@@ -37,7 +37,8 @@
 extern "C" {
 #endif
 
-#define NUM_SH_SIGNALS ( (SH_ORDER + 1)*(SH_ORDER + 1)  )    /* (L+1)^2 */
+#define MAX_SH_ORDER ( 7 )
+#define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1)  )    /* (L+1)^2 */
     
 #ifndef DEG2RAD
   #define DEG2RAD(x) (x * PI / 180.0f)
@@ -45,33 +46,26 @@ extern "C" {
 #ifndef RAD2DEG
   #define RAD2DEG(x) (x * 180.0f / PI)
 #endif
-    
-typedef enum _CH_ORDER{
-    CH_ACN = 1
-}CH_ORDER;
-
-typedef enum _NORM_TYPES{
-    NORM_N3D = 1,
-    NORM_SN3D
-}NORM_TYPES;
 
 typedef struct _rotator
 {
-    float inputFrameTD[NUM_SH_SIGNALS][FRAME_SIZE];
-    float prev_inputFrameTD[NUM_SH_SIGNALS][FRAME_SIZE];
-    float tempFrame[NUM_SH_SIGNALS][FRAME_SIZE];
-    float outputFrameTD[NUM_SH_SIGNALS][FRAME_SIZE];
+    float inputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float prev_inputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     
     /* internal */
     float interpolator[FRAME_SIZE];
-    float M_rot[NUM_SH_SIGNALS][NUM_SH_SIGNALS];
-    float prev_M_rot[NUM_SH_SIGNALS][NUM_SH_SIGNALS];
+    float M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
+    float prev_M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
 
     /* user parameters */
     float yaw, roll, pitch;
     int bFlipYaw, bFlipPitch, bFlipRoll;
+    int order;
     CH_ORDER chOrdering;
     NORM_TYPES norm;
+    OUTPUT_ORDERS outputOrder;
     
 } rotator_data;
     

@@ -30,6 +30,31 @@
 extern "C" {
 #endif
     
+/* ENUMS */
+    
+typedef enum _OUTPUT_ORDERS{
+    OUTPUT_OMNI = 1,
+    OUTPUT_ORDER_FIRST,
+    OUTPUT_ORDER_SECOND,
+    OUTPUT_ORDER_THIRD,
+    OUTPUT_ORDER_FOURTH,
+    OUTPUT_ORDER_FIFTH,
+    OUTPUT_ORDER_SIXTH,
+    OUTPUT_ORDER_SEVENTH
+    
+}OUTPUT_ORDERS;
+
+typedef enum _CH_ORDER{
+    CH_ACN = 1
+}CH_ORDER;
+
+typedef enum _NORM_TYPES{
+    NORM_N3D = 1,
+    NORM_SN3D
+}NORM_TYPES;
+    
+/* MAIN FUNCTIONS */
+    
 /* creates an instance of rotator */
 void rotator_create(void** const phRot);                /* address of rotator handle */
 
@@ -66,7 +91,8 @@ void rotator_setFlipRoll(void* const hRot, int newState);
 void rotator_setChOrder(void* const hRot, int newOrder);
 
 void rotator_setNormType(void* const hRot, int newType);
-    
+  
+void rotator_setOrder(void* const hRot, int newOrder);
     
 /* GETS */
     
@@ -86,6 +112,7 @@ int rotator_getChOrder(void* const hRot);
 
 int rotator_getNormType(void* const hRot);
 
+int rotator_getOrder(void* const hRot);
     
 #ifdef __cplusplus
 }

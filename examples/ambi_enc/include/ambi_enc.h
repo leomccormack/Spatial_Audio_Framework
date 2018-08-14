@@ -128,6 +128,27 @@ typedef enum _PRESETS{
     
 }PRESETS;
     
+typedef enum _OUTPUT_ORDERS{
+    OUTPUT_OMNI = 1,
+    OUTPUT_ORDER_FIRST,
+    OUTPUT_ORDER_SECOND,
+    OUTPUT_ORDER_THIRD,
+    OUTPUT_ORDER_FOURTH,
+    OUTPUT_ORDER_FIFTH,
+    OUTPUT_ORDER_SIXTH,
+    OUTPUT_ORDER_SEVENTH
+    
+}OUTPUT_ORDERS;
+    
+typedef enum _CH_ORDER{
+    CH_ACN = 1
+}CH_ORDER;
+
+typedef enum _NORM_TYPES{
+    NORM_N3D = 1,
+    NORM_SN3D
+}NORM_TYPES;
+    
 /******************/
 /* Main Functions */
 /******************/
@@ -160,6 +181,8 @@ void ambi_enc_process(void* const hAmbi,                /* ambi_enc handle */
 /*****************/
     
 void ambi_enc_refreshParams(void* const hAmbi);
+    
+void ambi_enc_setOutputOrder(void* const hAmbi, int newType);
 
 void ambi_enc_setSourceAzi_deg(void* const hAmbi, int index, float newAzi_deg);
 
@@ -177,6 +200,8 @@ void ambi_enc_setNormType(void* const hAmbi, int newType);
 /*****************/
 /* Get Functions */
 /*****************/
+    
+int ambi_enc_getOutputOrder(void* const hAmbi);
 
 float ambi_enc_getSourceAzi_deg(void* const hAmbi, int index);
 

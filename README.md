@@ -18,7 +18,7 @@ Spatial_Audio_Framework/framework/include
 
 to the header search paths.
 
-For plug-ins that support SOFA loading capabilities, statically built netcdf libraries must also be placed in:
+For the examples that support SOFA loading capabilities, statically built netcdf libraries must also be placed in:
 
 ```
 Spatial_Audio_Framework/dependencies

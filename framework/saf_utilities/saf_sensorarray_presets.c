@@ -186,17 +186,17 @@ const float __DTU_mic_coords_rad[52][2] =
 /* Default Arrays */
 /******************/
 
-#if SH_ORDER == 1
+#if DEFAULT_SH_ORDER == 1
 /* 4point T-design: */
-const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2] =
+const float __default_coords_rad[(DEFAULT_SH_ORDER+1)*(DEFAULT_SH_ORDER+1)][2] =
 { { 0.785398163397448f,   0.615479708670387f},
   { -0.785398163397448f,    -0.615479708670387f},
   { 2.35619449019235f,    -0.615479708670387f},
   { -2.35619449019235f,    0.615479708670387f} };
 
-#elif SH_ORDER == 2
+#elif DEFAULT_SH_ORDER == 2
 /* Approx uniform sampling of the sphere using a spiral method: */
-const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2] =
+const float __default_coords_rad[(DEFAULT_SH_ORDER+1)*(DEFAULT_SH_ORDER+1)][2] =
 { { 0.0f,    1.57079632679490f},
   { 2.39996322972865f,    0.848062078981481f},
   { -1.48325884772228f,    0.523598775598299f},
@@ -207,9 +207,9 @@ const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2] =
   { -2.04981331343819f,    -0.848062078981481f},
   { 0.350149916290469f,    -1.57079632679490f} };
 
-#elif SH_ORDER == 3
+#elif DEFAULT_SH_ORDER == 3
 /* Approx uniform sampling of the sphere using a spiral method: */
-const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2] =
+const float __default_coords_rad[(DEFAULT_SH_ORDER+1)*(DEFAULT_SH_ORDER+1)][2] =
 { { 0.0f,    1.57079632679490f},
   { 2.39996322972865f,    1.04848150498885f},
   { -1.48325884772228f,    0.823211977125876f},
@@ -227,9 +227,9 @@ const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2] =
   { 2.18355868030321f,    -1.04848150498885f},
   { -1.69966339714772f,    -1.57079632679490f}};
 
-#elif SH_ORDER == 4
+#elif DEFAULT_SH_ORDER == 4
 /* Approx uniform sampling of the sphere using a spiral method: */
-const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2] =
+const float __default_coords_rad[(DEFAULT_SH_ORDER+1)*(DEFAULT_SH_ORDER+1)][2] =
 { { 0.0f,    1.57079632679490f},
   { 2.39996322972865f,    1.15965846447255f},
   { -1.48325884772228f,    0.985110783337746f},
@@ -256,9 +256,9 @@ const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2] =
   { -1.34951348085725f,    -1.15965846447255f},
   { 1.05044974887141f,    -1.57079632679490f} };
 
-#elif SH_ORDER == 5
+#elif DEFAULT_SH_ORDER == 5
 /* Approx uniform sampling of the sphere using a spiral method: */
-const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2] =
+const float __default_coords_rad[(DEFAULT_SH_ORDER+1)*(DEFAULT_SH_ORDER+1)][2] =
 { { 0.0f,    1.57079632679490f},
   { 2.39996322972865f,    1.23110375062755f},
   { -1.48325884772228f,    1.08803040346916f},
@@ -296,9 +296,9 @@ const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2] =
   { -0.0826591825604016f,    -1.23110375062755f},
   { 2.31730404716825f,    -1.57079632679490f}};
 
-#elif SH_ORDER == 6
+#elif DEFAULT_SH_ORDER == 6
 /* Approx uniform sampling of the sphere using a spiral method: */
-const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2] =
+const float __default_coords_rad[(DEFAULT_SH_ORDER+1)*(DEFAULT_SH_ORDER+1)][2] =
 { { 0.916704382006374f,    1.06543581651074f},
   { -2.96651769544456f,    0.985110783337746f},
   { -0.566554465715905f,    0.913532173549380f},
@@ -346,9 +346,9 @@ const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2] =
   { -0.299063731985844f,    -1.28110933279778f},
   { 2.10089949774281f,    -1.57079632679490f}};
 
-#elif SH_ORDER == 7
+#elif DEFAULT_SH_ORDER == 7
 /* Approx uniform sampling of the sphere using a spiral method: */
-const float __default_coords_rad[(SH_ORDER+1)*(SH_ORDER+1)][2] =
+const float __default_coords_rad[(DEFAULT_SH_ORDER+1)*(DEFAULT_SH_ORDER+1)][2] =
 { { 0.0f,     1.57079632679490f},
   { 2.39996322972865f,     1.31814860051033f},
   { -1.48325884772228f,     1.21253510828228f},
