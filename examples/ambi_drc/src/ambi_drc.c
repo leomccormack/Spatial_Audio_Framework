@@ -147,7 +147,7 @@ void ambi_drc_process
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
     int i, n, t, ch, band, sample;
-    int o[SH_ORDER+2];
+    int o[MAX_ORDER+2];
     float xG, yG, xL, yL, cdB, alpha_a, alpha_r;
     NORM_TYPES norm;
     float makeup, boost, theshold, ratio, knee;
@@ -162,7 +162,7 @@ void ambi_drc_process
     /* Main processing loop */
     if (nSamples == FRAME_SIZE && pData->reInitTFT == 0 && isPlaying) {
         /* prep */
-        for(n=0; n<SH_ORDER+2; n++){  o[n] = n*n;  }
+        for(n=0; n<MAX_ORDER+2; n++){  o[n] = n*n;  }
         alpha_a = expf(-1.0f / ( (pData->attack_ms  / ((float)FRAME_SIZE / (float)TIME_SLOTS)) * pData->fs * 0.001f));
         alpha_r = expf(-1.0f / ( (pData->release_ms / ((float)FRAME_SIZE / (float)TIME_SLOTS)) * pData->fs * 0.001f));
         boost = powf(10.0f, pData->inGain / 20.0f);
@@ -181,7 +181,7 @@ void ambi_drc_process
         /* account for selected norm scheme */
         switch(norm){
             case NORM_N3D: /* convert to SN3D for processing */
-                for (n = 0; n<SH_ORDER+1; n++)
+                for (n = 0; n<(sqrt(pData->nSH)-1)+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->inputFrameTD[ch][i] /= sqrtf(2.0f*(float)n+1.0f);
@@ -262,8 +262,8 @@ void ambi_drc_process
         
         /* account for selected normalisation scheme */
         switch(norm){
-            case NORM_N3D: /* convert to SN3D for processing*/
-                for (n = 0; n<SH_ORDER+1; n++)
+            case NORM_N3D: /* convert back to N3D */
+                for (n = 0; n<(sqrt(pData->nSH)-1)+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->outputFrameTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);

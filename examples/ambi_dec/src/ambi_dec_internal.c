@@ -177,7 +177,7 @@ void ambi_dec_initHRTFs
         free(pars->itds_s);
         pars->itds_s = NULL;
     }
-    hrirlib_estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, &(pars->itds_s));
+    estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, &(pars->itds_s));
     
     /* generate VBAP gain table for the hrir_dirs */
     hrtf_vbap_gtable = NULL;
@@ -207,7 +207,7 @@ void ambi_dec_initHRTFs
         free(pars->hrtf_fb);
         pars->hrtf_fb = NULL;
     }
-    hrirlib_HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->itds_s, (float*)pData->freqVector, HYBRID_BANDS, &(pars->hrtf_fb));
+    HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->itds_s, (float*)pData->freqVector, HYBRID_BANDS, &(pars->hrtf_fb));
     
     /* calculate magnitude responses */
     if(pars->hrtf_fb_mag!= NULL)
@@ -457,6 +457,14 @@ void ambi_dec_loadPreset(PRESETS preset, float dirs_deg[MAX_NUM_LOUDSPEAKERS][2]
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __DTU_AVIL_dirs_deg[ch][i];
+            break;
+#endif
+#ifdef  ENABLE_ZYLIA_LAB_PRESET
+        case PRESET_ZYLIA_LAB:
+            nCH = 22;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __Zylia_Lab_dirs_deg[ch][i];
             break;
 #endif
 #ifdef ENABLE_T_DESIGN_4_PRESET
