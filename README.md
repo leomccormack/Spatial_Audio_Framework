@@ -1,6 +1,6 @@
 # Spatial_Audio_Framework
 
-A Spatial Audio Framework (SAF) written in C. The framework includes functions for Vector-Base Amplitude Panning (VBAP), Spherical Harmonic Transforms (SHT), Higher-order Ambisonics (HOA) etc.
+A Spatial Audio Framework (SAF) written in C. The framework includes functions for performing Vector-Base Amplitude Panning (VBAP), Spherical Harmonic Transforms (SHT), and Higher-order Ambisonics (HOA); among others.
 
 ## Getting Started
 
@@ -32,6 +32,7 @@ Windows users must also install Intel's MKL, which can be freely acquired from
 Several examples have also been included:
 
 ```
+Spatial_Audio_Framework/examples/ambi_bin
 Spatial_Audio_Framework/examples/ambi_dec
 Spatial_Audio_Framework/examples/ambi_drc
 Spatial_Audio_Framework/examples/ambi_enc
@@ -44,6 +45,7 @@ Spatial_Audio_Framework/examples/sldoa
 Spatial_Audio_Framework/examples/upmix
 ```
 
+* **ambi_bin** - a binaural Ambisonic decoder with built-in rotator
 * **ambi_dec** - a frequency-dependent Ambisonic decoder (AllRAD, EPAD, MMD etc)
 * **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for spherical harmonic signals (aka Ambisonic signals)
 * **ambi_enc** - a simple Ambisonic encoder/panner
@@ -57,8 +59,7 @@ Spatial_Audio_Framework/examples/upmix
 
 ### GUI implementations
 
-Many of these examples have been intergrated into VST audio plug-ins using the JUCE framework and can be found here:
-http://research.spa.aalto.fi/projects/sparta_vsts/
+Many of these examples have been intergrated into VST audio plug-ins using the JUCE framework and can be found [here](http://research.spa.aalto.fi/projects/sparta_vsts/).
 
 ## Authors
 

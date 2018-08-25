@@ -189,3 +189,73 @@ void sortd
     free(data);
 }
 
+void findClosestGridPoints
+(
+    float* grid_dirs,
+    int nGrid,
+    float* target_dirs,
+    int nTarget,
+    int degFLAG,
+    int* idx_closest,
+    float* dirs_closest,
+    float* angle_diff
+)
+{
+    int i, j;
+    float* grid_xyz, *target_xyz;
+    float rcoselev, max_val, current_val;
+    
+    /* convert sph coords into Cartesian coords */
+    grid_xyz = malloc(nGrid*3*sizeof(float));
+    target_xyz = malloc(nTarget*3*sizeof(float));
+    for(i=0; i<nGrid; i++){
+        grid_xyz[i*3+2] = sinf(degFLAG ? grid_dirs[i*2+1]*M_PI/180.0f : grid_dirs[i*2+1]);
+        rcoselev = cosf(degFLAG ? grid_dirs[i*2+1]*M_PI/180.0f : grid_dirs[i*2+1]);
+        grid_xyz[i*3] = rcoselev * cosf(degFLAG ? grid_dirs[i*2]*M_PI/180.0f : grid_dirs[i*2]);
+        grid_xyz[i*3+1] = rcoselev * sinf(degFLAG ? grid_dirs[i*2]*M_PI/180.0f : grid_dirs[i*2]);
+    }
+    for(i=0; i<nTarget; i++){
+        target_xyz[i*3+2] = sinf(degFLAG ? target_dirs[i*2+1]*M_PI/180.0f : target_dirs[i*2+1]);
+        rcoselev = cosf(degFLAG ? target_dirs[i*2+1]*M_PI/180.0f : target_dirs[i*2+1]);
+        target_xyz[i*3] = rcoselev * cosf(degFLAG ? target_dirs[i*2]*M_PI/180.0f : target_dirs[i*2]);
+        target_xyz[i*3+1] = rcoselev * sinf(degFLAG ? target_dirs[i*2]*M_PI/180.0f : target_dirs[i*2]);
+    }
+    
+    /* determine which 'grid_dirs' indices are the closest to 'target_dirs' */
+    for(i=0; i<nTarget; i++){
+        max_val = -2.23e10f;
+        for(j=0; j<nGrid; j++){
+            current_val = grid_xyz[j*3] * target_xyz[i*3] +
+            grid_xyz[j*3+1] * target_xyz[i*3+1] +
+            grid_xyz[j*3+2] * target_xyz[i*3+2];
+            idx_closest[i] = current_val>max_val ? j : idx_closest[i];
+            if(current_val>max_val){
+                idx_closest[i] = j;
+                max_val = current_val;
+                if(angle_diff!=NULL)
+                    angle_diff[i] = acosf(max_val);
+            }
+        }
+    }
+    
+    /* optional output of directions */
+    if(dirs_closest!=NULL){
+        for(i=0; i<nTarget; i++){
+            dirs_closest[i*2] = grid_dirs[idx_closest[i]*2];
+            dirs_closest[i*2+1] = grid_dirs[idx_closest[i]*2+1];
+        }
+    }
+    
+    free(grid_xyz);
+    free(target_xyz);
+}
+
+
+
+
+
+
+
+
+
+

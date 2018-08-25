@@ -37,6 +37,12 @@ extern "C" {
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <float.h>
+#include <math.h>
+    
+#ifndef M_PI
+  #define M_PI ( 3.14159265358979323846264338327950288f )
+#endif
 
 /* sort a vector of integer values into ascending/decending order. Optionally returning the new indices. */
 void sorti(int* in_vec,          /* vector[len] to be sorted */
@@ -58,9 +64,23 @@ void sortd(double* in_vec,       /* vector[len] to be sorted */
            int* new_idices,      /* set to NULL if you don't need them */
            int len,              /* number of elements in vectors, must be consistent with the input data */
            int descendFLAG);     /* !1:ascending, 1:descending */
-
+    
+/* finds the closest grid points to  */
+void findClosestGridPoints(float* grid_dirs, /* sph coordinates of grid directions (deg/rad); nGrid x 2 */
+                           int nGrid,       /* number of directions in grid */
+                           float* target_dirs,  /* sph coordinates of target directions (deg/rad); nTarget x 2 */
+                           int nTarget,  /* number of target directions to find */
+                           int degFLAG,      /* 0: coords are in radians, 1: coords are in degrees */
+                           int* idx_closest,   /* (set to NULL to ignore); nTarget x 1 */
+                           float* dirs_closest, /* (set to NULL to ignore); nTarget x 1 */
+                           float* angle_diff); /* angle diff btwn target + grid dir, in degrees (set to NULL to ignore); nTarget x 1 */
+     
 #ifdef __cplusplus
 }/* extern "C" */
 #endif
 
 #endif /* SAF_SORT_H_INCLUDED */
+
+
+
+
