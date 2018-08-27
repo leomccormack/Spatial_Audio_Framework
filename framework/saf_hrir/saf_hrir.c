@@ -116,15 +116,14 @@ void estimateIPDmanipCurve
 )
 {
     int i;
-    float ITD_max, f1, max_increase;
+    float ITD_max, f1;
     
     ITD_max = FLT_MIN;
     for(i=0; i<N_dirs; i++)
         ITD_max = fabsf(itds_s[i]) > ITD_max ? fabsf(itds_s[i]) : ITD_max;
     f1 = 1.0f/ITD_max;
-    max_increase = 1.2f;
     for(i=0; i<N_bands; i++)
-       phi_bands[i] = MIN(powf(f1,2.0f)/(powf(centreFreq[i]+2.23e-9f,2.0f)), max_increase);
+       phi_bands[i] = MIN(powf(f1,2.0f)/(powf(centreFreq[i]+2.23e-9f,2.0f)), maxVal);
 }
 
 /* A C implementation of a MatLab function by Archontis Politis; published with permission */

@@ -284,6 +284,7 @@ void panner_setSourceElev_deg(void* const hPan, int index, float newElev_deg)
 void panner_setNumSources(void* const hPan, int new_nSources)
 {
     panner_data *pData = (panner_data*)(hPan);
+    /* determine if TFT must be reinitialised */
     pData->new_nSources = new_nSources > MAX_NUM_INPUTS ? MAX_NUM_INPUTS : new_nSources;
     if(pData->nSources != pData->new_nSources)
         pData->reInitTFT = 1;
@@ -309,10 +310,10 @@ void panner_setLoudspeakerElev_deg(void* const hPan, int index, float newElev_de
 
 void panner_setNumLoudspeakers(void* const hPan, int new_nLoudspeakers)
 {
-    panner_data *pData = (panner_data*)(hPan);
+    panner_data *pData = (panner_data*)(hPan);    
     pData->new_nLoudpkrs = new_nLoudspeakers > MAX_NUM_OUTPUTS ? MAX_NUM_OUTPUTS : new_nLoudspeakers;
     if(pData->nLoudpkrs != pData->new_nLoudpkrs)
-        pData->reInitTFT = 1;
+        pData->reInitTFT = 1; 
     pData->reInitGainTables=1;
 }
 

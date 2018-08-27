@@ -32,6 +32,18 @@
 void panner_initGainTables(void* const hPan)
 {
     panner_data *pData = (panner_data*)(hPan);
+    int i;
+    float sum_elev;
+    
+    /* determine dimensionality */
+    sum_elev = 0.0f;
+    for(i=0; i<pData->nLoudpkrs; i++)
+        sum_elev += fabsf(pData->loudpkrs_dirs_deg[i][1]);
+    sum_elev = sum_elev/(float)pData->nLoudpkrs - fabsf(pData->loudpkrs_dirs_deg[i][0]);
+    if(sum_elev < 0.01f)
+        pData->output_nDims = 2;
+    else
+        pData->output_nDims = 3;
     
     /* generate VBAP gain table */
     if(pData->vbap_gtable!= NULL){
