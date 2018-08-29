@@ -41,17 +41,17 @@ void estimateITDs
 )
 {
     int i, n, j, k, maxIdx, xcorr_len;
-    float maxVal, itd_bounds, fc, Q, K, KK, D, wn, Wz1[2], Wz2[2];
+    float maxVal, itd_bounds, fc, Q, K, KK, D, wn, Wz1[2], Wz2[2], b[3], a[3];
     float* xcorr_LR, *ir_L, *ir_R, *hrir_lpf;
-    
+
     /* calculate LPF coefficients, 2nd order IIR design equations from DAFX (2nd ed) p50 */
     fc = 750.0f;
     Q = 0.7071f;
     K = tanf(M_PI * fc/(float)fs);
     KK = K * K; 
     D = KK * Q + K + Q;
-    float b[3] = {(KK * Q)/D, (2.0f * KK * Q)/D, (KK * Q)/D};
-    float a[3] = {1.0f, (2.0f * Q * (KK - 1.0f))/D, (KK * Q - K + Q)/D};
+	b[0] = (KK * Q) / D; b[1] = (2.0f * KK * Q) / D; b[2] = (KK * Q) / D;
+	a[0] = 1.0f; a[1] = (2.0f * Q * (KK - 1.0f)) / D; a[2] = (KK * Q - K + Q) / D;
     
     /* determine the ITD via the cross-correlation between the LPF'd left and right HRIR signals */
     xcorr_len = 2*(hrir_len)-1;

@@ -25,10 +25,11 @@
  */
 
 #include "ambi_bin_internal.h"
-#ifdef __APPLE__ /* lost my patience trying to statically build netcdf for Windows... */
+
+//#if defined(__APPLE__) || defined(NDEBUG)
   #define SAF_ENABLE_SOFA_READER
   #include "saf_sofa_reader.h"
-#endif
+//#endif
 
 void ambi_bin_initCodec
 (

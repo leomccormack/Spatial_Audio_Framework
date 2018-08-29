@@ -165,7 +165,7 @@ void ambi_bin_process
     int o[MAX_SH_ORDER+2];
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float Rxyz[3][3];
-    float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS], interp_M[NUM_EARS][MAX_NUM_SH_SIGNALS];
+    float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     float_complex temp_binframeTF[NUM_EARS][TIME_SLOTS];
     float* M_rot_tmp;
     
@@ -238,20 +238,27 @@ void ambi_bin_process
                     pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
     
         /* Specify rotation matrix */
-        M_rot_tmp = malloc(nSH*nSH*sizeof(float));
-        yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, Rxyz);
-        getSHrotMtxReal(Rxyz, M_rot_tmp, order);
-        for(i=0; i<nSH; i++)
-            for(j=0; j<nSH; j++)
-                M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH+j], 0.0f);
-        free(M_rot_tmp);
+		if (order > 0) {
+			M_rot_tmp = malloc(nSH*nSH * sizeof(float));
+			yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, Rxyz);
+			getSHrotMtxReal(Rxyz, M_rot_tmp, order);
+			for (i = 0; i < nSH; i++)
+				for (j = 0; j < nSH; j++)
+					M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH + j], 0.0f);
+			free(M_rot_tmp);
+		}
         
         /* Define mixing matrix per band */
         for (band = 0; band < HYBRID_BANDS; band++) {
-            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, nSH, nSH, &calpha,
-                        pars->M_dec[band], MAX_NUM_SH_SIGNALS,
-                        M_rot, MAX_NUM_SH_SIGNALS, &cbeta,
-                        pData->current_M[band], MAX_NUM_SH_SIGNALS);
+			if (order > 0) { 
+				cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, nSH, nSH, &calpha,
+					pars->M_dec[band], MAX_NUM_SH_SIGNALS,
+					M_rot, MAX_NUM_SH_SIGNALS, &cbeta,
+					pData->current_M[band], MAX_NUM_SH_SIGNALS);
+			}
+			else
+				for(i=0; i<NUM_EARS; i++)
+					memcpy(pData->current_M[band][i], pars->M_dec[band][i], nSH * sizeof(float_complex));
         }
         
         /* mix to headphones */
