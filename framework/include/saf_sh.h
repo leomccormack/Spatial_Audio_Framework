@@ -104,6 +104,7 @@ void yawPitchRoll2Rzyx (/* Input arguments */
                         float yaw,                /* yaw angle in radians */
                         float pitch,              /* pitch angle in radians */
                         float roll,               /* roll angle in radians */
+                        int rollPitchYawFLAG,     /* 1: use Rxyz, i.e. apply roll, pitch and then yaw, 0: Rzyx / y-p-r */
                         /* Output arguments */
                         float R[3][3]);           /* zyx rotation matrix */
     

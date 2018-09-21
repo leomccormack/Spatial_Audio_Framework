@@ -67,6 +67,7 @@ void HRIRs2FilterbankHRTFs(/* Input arguments */
                            float* itds_s,                 /* HRIR ITDs; N_dirs x 1 */
                            float* centreFreq,             /* filterbank centre frequencies; N_bands x 1 */
                            int N_bands,                   /* number of frequency bands */
+                           int enablePhaseManipFLAG,      /* 0: off, 1: on */
                            /* Output arguments */
                            float_complex** hrtf_fb);      /* & HRTFs as filterbank coeffs; FLAT: N_bands x 2 x N_dirs */
 
@@ -81,6 +82,7 @@ void interpFilterbankHRTFs(/* Input arguments */
                            int N_hrtf_dirs,               /* number of HRTF directions */
                            int N_bands,                   /* number of frequency bands */
                            int N_interp_dirs,             /* number of interpolated hrtf positions  */
+                           int enablePhaseManipFLAG,      /* 0: off, 1: on */
                            /* Output arguments */
                            float_complex* hrtf_interp);   /* pre-alloc, interpolated HRTFs; FLAT: N_bands x 2 x N_interp_dirs */
     

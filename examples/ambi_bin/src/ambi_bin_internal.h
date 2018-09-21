@@ -36,6 +36,7 @@
 #define SAF_ENABLE_HOA      /* for ambisonic decoding matrices and max_rE weigting */
 #define SAF_ENABLE_SH       /* for spherical harmonic weights */
 #define SAF_ENABLE_HRIR     /* for HRIR->HRTF filterbank coefficients conversion */
+#define SAF_ENABLE_VBAP     /* for interpolation table */
 #include "saf.h"
 
 #ifdef __cplusplus
@@ -47,6 +48,7 @@ extern "C" {
 /***************/
     
 #define ENABLE_FADE_IN_OUT                                  /* (slightly) smoother transitions between HRIR switches */
+#define USE_NEAREST_HRIRS (1)                               /* 1: find nearest HRIRs to t-design dirs, 0: use triangular interpolation */
     
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
@@ -69,7 +71,7 @@ extern "C" {
 typedef struct _codecPars
 {
     /* Decoder */
-    float_complex M_dec[HYBRID_BANDS][NUM_EARS][MAX_NUM_SH_SIGNALS];
+    float_complex M_dec[2][HYBRID_BANDS][NUM_EARS][MAX_NUM_SH_SIGNALS]; /* [0][][][] WITHOUT, [1][][][] WITH phase manip */
     
     /* sofa file info */
     char* sofa_filepath;                                      /* absolute/relevative file path for a sofa file */
@@ -81,7 +83,7 @@ typedef struct _codecPars
    
     /* hrir filterbank coefficients */
     float* itds_s;                                            /* interaural-time differences for each HRIR (in seconds); N_hrirs x 1 */
-    float_complex* hrtf_fb;                                   /* HRTF filterbank coefficients; nBands x nCH x N_hrirs */
+    float_complex* hrtf_fb[2];                                /* HRTF filterbank coeffs, [0] WITHOUT, [1] WITH phase manip.; 2 x [nBands x nCH x N_hrirs] */
     
 }codecPars;
 
@@ -90,41 +92,39 @@ typedef struct _ambi_bin
     /* audio buffers + afSTFT time-frequency transform handle */
     float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
     float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    float_complex prev_SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
+    float_complex SHframeTF_rot[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     float_complex binframeTF[HYBRID_BANDS][NUM_EARS][TIME_SLOTS];
     complexVector** STFTInputFrameTF;
     complexVector** STFTOutputFrameTF;
-    void* hSTFT;                                              /* afSTFT handle */
-    int afSTFTdelay;                                          /* for host delay compensation */
-    float** tempHopFrameTD;                                   /* temporary multi-channel time-domain buffer of size "HOP_SIZE". */
-    int fs;                                                   /* host sampling rate */
-    float freqVector[HYBRID_BANDS];                           /* frequency vector for time-frequency transform, in Hz */
+    void* hSTFT;                             /* afSTFT handle */
+    int afSTFTdelay;                         /* for host delay compensation */
+    float** tempHopFrameTD;                  /* temporary multi-channel time-domain buffer of size "HOP_SIZE". */
+    int fs;                                  /* host sampling rate */
+    float freqVector[HYBRID_BANDS];          /* frequency vector for time-frequency transform, in Hz */
     
     /* our codec configuration */
-    codecPars* pars;                                          /* codec parameters */
+    codecPars* pars;                         /* codec parameters */
     
-    /* internal variables */
-    float interpolator[TIME_SLOTS];
-    float_complex current_M[HYBRID_BANDS][NUM_EARS][MAX_NUM_SH_SIGNALS];
-    float_complex prev_M[HYBRID_BANDS][NUM_EARS][MAX_NUM_SH_SIGNALS];
-    int order;                                                /* current decoding order */
-    int new_nSH;                                              /* if new_nSH != nSH, afSTFT is reinitialised */
-    int nSH;                                                  /* number of spherical harmonic signals */
+    /* internal variables */ 
+    int order;                               /* current decoding order */
+    int new_nSH;                             /* if new_nSH != nSH, afSTFT is reinitialised */
+    int nSH;                                 /* number of spherical harmonic signals */
     
     /* flags */
-    int reInitCodec;                                          /* 0: no init required, 1: init required, 2: init in progress */
-    int reInitTFT;                                            /* 0: no init required, 1: init required, 2: init in progress */
+    int reInitCodec;                         /* 0: no init required, 1: init required, 2: init in progress */
+    int reInitTFT;                           /* 0: no init required, 1: init required, 2: init in progress */
     
     /* user parameters */
-    float EQ[HYBRID_BANDS];                                   /* EQ curve */
-    int rE_WEIGHT;                                            /* 0:disabled, 1: enable max_rE weight */
-    int enableEQ;                                             /* 0:disabled, 1: enable EQ */
-    int useDefaultHRIRsFLAG;                                  /* 1: use default HRIRs in database, 0: use those from SOFA file */
-    CH_ORDER chOrdering;                                      /* only ACN is supported */
-    NORM_TYPES norm;                                          /* N3D or SN3D */
-    INPUT_ORDERS orderSelected;                               /* current decoding order PRESET */
-    float yaw, roll, pitch;                                   /* rotation angles in degrees */
-    int bFlipYaw, bFlipPitch, bFlipRoll;
+    float EQ[HYBRID_BANDS];                  /* EQ curve */
+    int rE_WEIGHT;                           /* 0:disabled, 1: enable max_rE weight */
+    int enablePhaseManip;                    /* 0:disabled, 1: enable phase manipulation */
+    int useDefaultHRIRsFLAG;                 /* 1: use default HRIRs in database, 0: use those from SOFA file */
+    CH_ORDER chOrdering;                     /* only ACN is supported */
+    NORM_TYPES norm;                         /* N3D or SN3D */
+    INPUT_ORDERS orderSelected;              /* current decoding order PRESET */
+    float yaw, roll, pitch;                  /* rotation angles in degrees */
+    int bFlipYaw, bFlipPitch, bFlipRoll;     /* flag to flip the sign of the individual rotation angles */
+    int useRollPitchYawFlag;                 /* rotation order flag, 1: r-p-y, 0: y-p-r */
     
 } ambi_bin_data;
 

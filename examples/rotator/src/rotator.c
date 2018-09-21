@@ -45,6 +45,7 @@ void rotator_create
     pData->bFlipRoll = 0;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_N3D;
+    pData->useRollPitchYawFlag = 0;
     rotator_setOrder(*phRot,  OUTPUT_ORDER_FIRST);
 }
 
@@ -117,7 +118,7 @@ void rotator_process
             case NORM_N3D: /* already N3D */
                 break;
             case NORM_SN3D: /* convert to N3D before rotation */
-#if 0 /* actually doesn't seem to matter */
+#if 0 /* actually doesn't matter */
                 for (n = 0; n<order+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
@@ -129,14 +130,14 @@ void rotator_process
         if (order>0){
             /* calculate rotation matrix */
             M_rot_tmp = malloc(nSH*nSH*sizeof(float));
-            yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, Rxyz);
+            yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
             getSHrotMtxReal(Rxyz, M_rot_tmp, order);
             for(i=0; i<nSH; i++)
                 for(j=0; j<nSH; j++)
                     pData->M_rot[i][j] = M_rot_tmp[i*nSH+j];
             free(M_rot_tmp);
             
-            /* apply rotation (assumes ACN/N3D) */
+            /* apply rotation */
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSH, 1.0f,
                         (float*)(pData->prev_M_rot), MAX_NUM_SH_SIGNALS,
                         (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
@@ -162,7 +163,7 @@ void rotator_process
             case NORM_N3D: /* already N3D */
                 break;
             case NORM_SN3D: /* convert back to SN3D after rotation */
-#if 0 /* actually doesn't seem to matter */
+#if 0 /* actually doesn't matter */
                 for (n = 0; n<order+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
@@ -224,6 +225,12 @@ void rotator_setFlipRoll(void* const hRot, int newState)
         pData->bFlipRoll = newState;
         rotator_setRoll(hRot, -rotator_getRoll(hRot));
     }
+}
+
+void rotator_setRPYflag(void* const hRot, int newState)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    pData->useRollPitchYawFlag = newState;
 }
 
 void rotator_setChOrder(void* const hRot, int newOrder)
@@ -291,6 +298,12 @@ int rotator_getFlipRoll(void* const hRot)
 {
     rotator_data *pData = (rotator_data*)(hRot);
     return pData->bFlipRoll;
+}
+
+int rotator_getRPYflag(void* const hRot)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    return pData->useRollPitchYawFlag;
 }
 
 int rotator_getChOrder(void* const hRot)

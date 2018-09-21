@@ -55,7 +55,8 @@ void ambi_bin_create
     pars->hrirs = NULL;
     pars->hrir_dirs_deg = NULL;
     pars->itds_s = NULL;
-    pars->hrtf_fb = NULL;
+    pars->hrtf_fb[0] = NULL;
+    pars->hrtf_fb[1] = NULL;
     
     /* flags */
     pData->reInitCodec = 1;
@@ -74,9 +75,10 @@ void ambi_bin_create
     pData->bFlipYaw = 0;
     pData->bFlipPitch = 0;
     pData->bFlipRoll = 0;
+    pData->useRollPitchYawFlag = 0;
     ambi_bin_setInputOrderPreset(*phAmbi, INPUT_ORDER_FIRST);
     pData->nSH = pData->new_nSH;
-    
+    pData->enablePhaseManip = 1;
 }
 
 void ambi_bin_destroy
@@ -86,7 +88,7 @@ void ambi_bin_destroy
 {
     ambi_bin_data *pData = (ambi_bin_data*)(*phAmbi);
     codecPars *pars = pData->pars;
-    int t, ch;
+    int i, t, ch;
     
     if (pData != NULL) {
         if(pData->hSTFT!=NULL)
@@ -108,14 +110,16 @@ void ambi_bin_destroy
         if(pData->tempHopFrameTD!=NULL)
             free2d((void**)pData->tempHopFrameTD, MAX(NUM_EARS, pData->nSH));
         
-        if(pars->hrtf_fb!= NULL)
-            free(pars->hrtf_fb);
+        for(i=0; i<2; i++)
+            if(pars->hrtf_fb[i]!= NULL)
+                free(pars->hrtf_fb[i]);
         if(pars->itds_s!= NULL)
             free(pars->itds_s);
         if(pars->hrirs!= NULL)
             free(pars->hrirs);
         if(pars->hrir_dirs_deg!= NULL)
             free(pars->hrir_dirs_deg);
+        free(pars);
 
         free(pData);
         pData = NULL;
@@ -129,7 +133,7 @@ void ambi_bin_init
 )
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    int i, band;
+    int band;
     
     /* define frequency vector */
     pData->fs = sampleRate;
@@ -138,14 +142,7 @@ void ambi_bin_init
             pData->freqVector[band] =  (float)__afCenterFreq44100[band];
         else /* Assume 48kHz */
             pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
-    }
-    
-    /* starting values */
-    for(i=1; i<=TIME_SLOTS; i++)
-        pData->interpolator[i-1] = (float)i*1.0f/(float)TIME_SLOTS;
-    memset(pData->current_M, 0, HYBRID_BANDS*NUM_EARS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
-    memset(pData->prev_M, 0, HYBRID_BANDS*NUM_EARS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
-    memset(pData->prev_SHframeTF, 0, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
+    } 
 }
 
 void ambi_bin_process
@@ -166,7 +163,6 @@ void ambi_bin_process
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float Rxyz[3][3];
     float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
-    float_complex temp_binframeTF[NUM_EARS][TIME_SLOTS];
     float* M_rot_tmp;
     
 #ifdef ENABLE_FADE_IN_OUT
@@ -177,16 +173,16 @@ void ambi_bin_process
         applyFadeIn = 0;
 #endif
     /* local copies of user parameters */
-    int order, nSH, rE_WEIGHT;
+    int order, nSH, rE_WEIGHT, enablePhaseManip;
     NORM_TYPES norm;
     
     /* reinitialise if needed */
-    if(pData->reInitTFT==1){
+    if(pData->reInitTFT == 1){
         pData->reInitTFT = 2;
-        ambi_bin_initTFT(hAmbi); /* always init before codec or hrtfs (will do this better in future release) */
+        ambi_bin_initTFT(hAmbi); /* always init before codec (will do this better in future release) */
         pData->reInitTFT = 0;
     }
-    if(pData->reInitCodec==1){
+    if(pData->reInitCodec == 1){
         pData->reInitCodec = 2;
         ambi_bin_initCodec(hAmbi);
         pData->reInitCodec = 0;
@@ -200,6 +196,7 @@ void ambi_bin_process
         rE_WEIGHT = pData->rE_WEIGHT;
         order = pData->order;
         nSH = (order+1)*(order+1);
+        enablePhaseManip = pData->enablePhaseManip;
         
         /* Load time-domain data */
         for(i=0; i < MIN(MAX_NUM_SH_SIGNALS, nInputs); i++)
@@ -237,57 +234,33 @@ void ambi_bin_process
                 for ( t=0; t<TIME_SLOTS; t++)
                     pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
     
-        /* Specify rotation matrix */
+        /* Apply rotation */
 		if (order > 0) {
 			M_rot_tmp = malloc(nSH*nSH * sizeof(float));
-			yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, Rxyz);
+			yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
 			getSHrotMtxReal(Rxyz, M_rot_tmp, order);
 			for (i = 0; i < nSH; i++)
 				for (j = 0; j < nSH; j++)
 					M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH + j], 0.0f);
 			free(M_rot_tmp);
+            for (band = 0; band < HYBRID_BANDS; band++) {
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, nSH, &calpha,
+                            M_rot, MAX_NUM_SH_SIGNALS,
+                            pData->SHframeTF[band], TIME_SLOTS, &cbeta,
+                            pData->SHframeTF_rot[band], TIME_SLOTS);
+            }
 		}
-        
-        /* Define mixing matrix per band */
-        for (band = 0; band < HYBRID_BANDS; band++) {
-			if (order > 0) { 
-				cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, nSH, nSH, &calpha,
-					pars->M_dec[band], MAX_NUM_SH_SIGNALS,
-					M_rot, MAX_NUM_SH_SIGNALS, &cbeta,
-					pData->current_M[band], MAX_NUM_SH_SIGNALS);
-			}
-			else
-				for(i=0; i<NUM_EARS; i++)
-					memcpy(pData->current_M[band][i], pars->M_dec[band][i], nSH * sizeof(float_complex));
-        }
+        else
+            memcpy(pData->SHframeTF_rot, pData->SHframeTF, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
         
         /* mix to headphones */
         for (band = 0; band < HYBRID_BANDS; band++) {
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
-                        pData->prev_M[band], MAX_NUM_SH_SIGNALS,
-                        pData->prev_SHframeTF[band], TIME_SLOTS, &cbeta,
-                        temp_binframeTF, TIME_SLOTS);
-            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
-                        pData->current_M[band], MAX_NUM_SH_SIGNALS,
-                        pData->prev_SHframeTF[band], TIME_SLOTS, &cbeta,
+                        pars->M_dec[enablePhaseManip][band], MAX_NUM_SH_SIGNALS,
+                        pData->SHframeTF_rot[band], TIME_SLOTS, &cbeta,
                         pData->binframeTF[band], TIME_SLOTS);
-            for (i=0; i < NUM_EARS; i++)
-                for(j=0; j<TIME_SLOTS; j++)
-                    pData->binframeTF[band][i][j] = ccaddf(crmulf(pData->binframeTF[band][i][j], pData->interpolator[j]),
-                                                           crmulf(temp_binframeTF[i][j], (1.0f-pData->interpolator[j])));
         }
-        
-        /* TODO: Apply order-dependent EQ curve */
-        
-        
-        /* for next frame */
-        for (band = 0; band < HYBRID_BANDS; band++){
-            for (i = 0; i < nSH; i++)
-                memcpy(pData->prev_SHframeTF[band][i], pData->SHframeTF[band][i], TIME_SLOTS*sizeof(float_complex));
-            for (i = 0; i < NUM_EARS; i++)
-                memcpy(pData->prev_M[band][i], pData->current_M[band][i], nSH*sizeof(float_complex));
-        }
-        
+          
         /* inverse-TFT */
         for (band = 0; band < HYBRID_BANDS; band++) {
             for (ch = 0; ch < NUM_EARS; ch++) {
@@ -321,7 +294,7 @@ void ambi_bin_process
 
 /* Set Functions */
 
-void ambi_bin_refreshSettings(void* const hAmbi)
+void ambi_bin_refreshParams(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     pData->reInitCodec = 1;
@@ -387,13 +360,16 @@ void ambi_bin_setNormType(void* const hAmbi, int newType)
 void ambi_bin_setDecEnableMaxrE(void* const hAmbi, int newState)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    pData->rE_WEIGHT = newState;
+    if(pData->rE_WEIGHT != newState){
+        pData->rE_WEIGHT = newState;
+        pData->reInitCodec=1;
+    }
 }
 
-void ambi_bin_setEnableEQ(void* const hAmbi, int newState)
+void ambi_bin_setEnablePhaseManip(void* const hAmbi, int newState)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    pData->enableEQ = newState;
+    pData->enablePhaseManip = newState;
 }
 
 void ambi_bin_setYaw(void  * const hAmbi, float newYaw)
@@ -441,6 +417,12 @@ void ambi_bin_setFlipRoll(void* const hAmbi, int newState)
     }
 }
 
+void ambi_bin_setRPYflag(void* const hAmbi, int newState)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    pData->useRollPitchYawFlag = newState;
+}
+
 /* Get Functions */
 
 int ambi_bin_getUseDefaultHRIRsflag(void* const hAmbi)
@@ -483,10 +465,10 @@ int ambi_bin_getDecEnableMaxrE(void* const hAmbi)
     return pData->rE_WEIGHT;
 }
 
-int ambi_bin_getEnableEQ(void* const hAmbi)
+int ambi_bin_getEnablePhaseManip(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    return pData->enableEQ;
+    return pData->enablePhaseManip;
 }
 
 float ambi_bin_getYaw(void* const hAmbi)
@@ -523,6 +505,12 @@ int ambi_bin_getFlipRoll(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     return pData->bFlipRoll;
+}
+
+int ambi_bin_getRPYflag(void* const hAmbi)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    return pData->useRollPitchYawFlag;
 }
 
 int ambi_bin_getNDirs(void* const hAmbi)

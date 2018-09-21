@@ -60,12 +60,13 @@ typedef struct _rotator
     float prev_M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
 
     /* user parameters */
-    float yaw, roll, pitch;
-    int bFlipYaw, bFlipPitch, bFlipRoll;
-    int order;
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
-    OUTPUT_ORDERS outputOrder;
+    float yaw, roll, pitch;                  /* rotation angles in degrees */
+    int bFlipYaw, bFlipPitch, bFlipRoll;     /* flag to flip the sign of the individual rotation angles */
+    int order;                               /* current decoding order */
+    CH_ORDER chOrdering;                     /* only ACN is supported */
+    NORM_TYPES norm;                         /* N3D or SN3D */
+    OUTPUT_ORDERS outputOrder;               /* current decoding order PRESET */
+    int useRollPitchYawFlag;                 /* rotation order flag, 1: r-p-y, 0: y-p-r */
     
 } rotator_data;
     

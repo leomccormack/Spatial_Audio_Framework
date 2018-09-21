@@ -58,21 +58,21 @@ void ***malloc3d(int dim1, int  dim2, int dim3, size_t _Size)
 
 void **malloc2d(int dim1, int  dim2, size_t _Size)
 {
-#if __STDC_VERSION__ >= 199901L
-    void **arr;
-    long i;
-    if(dim1 < 1 || dim2 < 1) return(NULL);
-    i = dim1 * sizeof(void *);
-    i += dim1*dim2*_Size;
-    arr = (void **)malloc((size_t)i);
-    if(arr!= NULL) {
-        arr[0] = (void *)(arr+dim1);
-        for(i = 1; i < dim1; i++){
-            arr[i] = (void *)(arr[i-1])+dim2*_Size;
-        }
-    }
-    return(arr);
-#else
+//#if __STDC_VERSION__ >= 199901L
+//    void **arr;
+//    long i;
+//    if(dim1 < 1 || dim2 < 1) return(NULL);
+//    i = dim1 * sizeof(void *);
+//    i += dim1*dim2*_Size;
+//    arr = (void **)malloc((size_t)i);
+//    if(arr!= NULL) {
+//        arr[0] = (void *)(arr+dim1);
+//        for(i = 1; i < dim1; i++){
+//            arr[i] = (void *)(arr[i-1])+dim2*_Size;
+//        }
+//    }
+//    return(arr);
+//#else
     void** arr;
     int i;
     arr = (void**)malloc(dim1 * sizeof(void*));
@@ -80,7 +80,7 @@ void **malloc2d(int dim1, int  dim2, size_t _Size)
         arr[i] = (void*)malloc(dim2 * _Size);
     }
     return arr;
-#endif
+//#endif
 }
 
 void* malloc1d(int dim1, size_t _Size)

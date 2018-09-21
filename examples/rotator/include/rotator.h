@@ -30,8 +30,10 @@
 extern "C" {
 #endif
     
-/* ENUMS */
-    
+/***********/
+/* Presets */
+/***********/
+
 typedef enum _OUTPUT_ORDERS{
     OUTPUT_OMNI = 1,
     OUTPUT_ORDER_FIRST,
@@ -53,7 +55,10 @@ typedef enum _NORM_TYPES{
     NORM_SN3D
 }NORM_TYPES;
     
-/* MAIN FUNCTIONS */
+    
+/******************/
+/* Main Functions */
+/******************/
     
 /* creates an instance of rotator */
 void rotator_create(void** const phRot);                /* address of rotator handle */
@@ -74,7 +79,10 @@ void rotator_process(void* const hRot,                  /* rotator handle */
                      int nSamples,                      /* number of samples in 'inputs' matrix */
                      int isPlaying);                    /* set to 1 if there is audio in the buffers */
 
-/* SETS */
+    
+/*****************/
+/* Set Functions */
+/*****************/
 
 void rotator_setYaw(void* const hRot, float newYaw);
     
@@ -94,7 +102,12 @@ void rotator_setNormType(void* const hRot, int newType);
   
 void rotator_setOrder(void* const hRot, int newOrder);
     
-/* GETS */
+void rotator_setRPYflag(void* const hRot, int newState);
+
+    
+/*****************/
+/* Get Functions */
+/*****************/
     
 float rotator_getYaw(void* const hRot);
     
@@ -108,11 +121,14 @@ int rotator_getFlipPitch(void* const hRot);
     
 int rotator_getFlipRoll(void* const hRot);
     
+int rotator_getRPYflag(void* const hRot);
+    
 int rotator_getChOrder(void* const hRot);
 
 int rotator_getNormType(void* const hRot);
 
 int rotator_getOrder(void* const hRot);
+    
     
 #ifdef __cplusplus
 }

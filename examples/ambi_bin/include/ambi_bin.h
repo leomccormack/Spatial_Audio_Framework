@@ -19,7 +19,7 @@
  *     A binaural Ambisonic decoder for reproducing ambisonic signals over headphones.
  *     Optionally, a SOFA file may be loaded for personalised headphone listening.
  * Dependencies:
- *     saf_utilities, afSTFTlib, saf_hrir, saf_sh
+ *     saf_utilities, afSTFTlib, saf_hrir, saf_vbap, saf_sh
  * Author, date created:
  *     Leo McCormack, 14.04.2018
  */
@@ -99,7 +99,7 @@ void ambi_bin_setNormType(void* const hAmbi, int newType);
 
 void ambi_bin_setDecEnableMaxrE(void* const hAmbi, int newState);
     
-void ambi_bin_setEnableEQ(void* const hAmbi, int newState);
+void ambi_bin_setEnablePhaseManip(void* const hAmbi, int newState);
     
 void ambi_bin_setYaw(void* const hAmbi, float newYaw);
 
@@ -113,6 +113,8 @@ void ambi_bin_setFlipPitch(void* const hAmbi, int newState);
 
 void ambi_bin_setFlipRoll(void* const hAmbi, int newState);
 
+void ambi_bin_setRPYflag(void* const hAmbi, int newState);
+    
     
 /*****************/
 /* Get Functions */
@@ -130,7 +132,7 @@ int ambi_bin_getNormType(void* const hAmbi);
     
 int ambi_bin_getDecEnableMaxrE(void* const hAmbi);
     
-int ambi_bin_getEnableEQ(void* const hAmbi);
+int ambi_bin_getEnablePhaseManip(void* const hAmbi);
     
 float ambi_bin_getYaw(void* const hAmbi);
 
@@ -143,6 +145,8 @@ int ambi_bin_getFlipYaw(void* const hAmbi);
 int ambi_bin_getFlipPitch(void* const hAmbi);
 
 int ambi_bin_getFlipRoll(void* const hAmbi);
+    
+int ambi_bin_getRPYflag(void* const hAmbi);
     
 int ambi_bin_getNDirs(void* const hAmbi);
 

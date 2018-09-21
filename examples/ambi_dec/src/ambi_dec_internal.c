@@ -207,7 +207,7 @@ void ambi_dec_initHRTFs
         free(pars->hrtf_fb);
         pars->hrtf_fb = NULL;
     }
-    HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->itds_s, (float*)pData->freqVector, HYBRID_BANDS, &(pars->hrtf_fb));
+    HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->itds_s, (float*)pData->freqVector, HYBRID_BANDS, 0, &(pars->hrtf_fb));
     
     /* calculate magnitude responses */
     if(pars->hrtf_fb_mag!= NULL)

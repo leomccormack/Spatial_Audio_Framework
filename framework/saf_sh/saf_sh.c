@@ -584,6 +584,7 @@ void yawPitchRoll2Rzyx
     float yaw,
     float pitch,
     float roll,
+    int rollPitchYawFLAG, /* use Rxyz, i.e. apply roll, pitch and then yaw */
     float R[3][3]
 )
 {
@@ -606,16 +607,32 @@ void yawPitchRoll2Rzyx
         Rz[0][0] =  cosf(yaw); Rz[0][1] = sinf(yaw);
         Rz[1][0] = -sinf(yaw); Rz[1][1] = cosf(yaw);
     }
-    for (m=0;m<3; m++){
-        memset(R[m], 0, 3*sizeof(float));
-        for(n=0;n<3; n++)
-            for(k=0; k<3; k++)
-                Rtmp[m][n] += Ry[m][k] * Rz[k][n];
+    if(rollPitchYawFLAG){
+        /* rotation order: roll-pitch-yaw */
+        for (m=0;m<3; m++){
+            memset(R[m], 0, 3*sizeof(float));
+            for(n=0;n<3; n++)
+                for(k=0; k<3; k++)
+                    Rtmp[m][n] += Ry[m][k] * Rx[k][n];
+        }
+        for (m=0;m<3; m++)
+            for(n=0;n<3; n++)
+                for(k=0; k<3; k++)
+                    R[m][n] += Rz[m][k] * Rtmp[k][n];
     }
-    for (m=0;m<3; m++)
-        for(n=0;n<3; n++)
-            for(k=0; k<3; k++)
-                R[m][n] += Rx[m][k] * Rtmp[k][n];
+    else{
+        /* rotation order: yaw-pitch-roll */
+        for (m=0;m<3; m++){
+            memset(R[m], 0, 3*sizeof(float));
+            for(n=0;n<3; n++)
+                for(k=0; k<3; k++)
+                    Rtmp[m][n] += Ry[m][k] * Rz[k][n];
+        }
+        for (m=0;m<3; m++)
+            for(n=0;n<3; n++)
+                for(k=0; k<3; k++)
+                    R[m][n] += Rx[m][k] * Rtmp[k][n];
+    }
 }
 
 /* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination
