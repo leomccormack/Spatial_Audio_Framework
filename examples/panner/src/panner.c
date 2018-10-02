@@ -361,7 +361,7 @@ float panner_getSourceElev_deg(void* const hPan, int index)
 int panner_getNumSources(void* const hPan)
 {
     panner_data *pData = (panner_data*)(hPan);
-    return pData->nSources;
+    return pData->new_nSources;
 }
 
 int panner_getMaxNumSources()
@@ -384,7 +384,7 @@ float panner_getLoudspeakerElev_deg(void* const hPan, int index)
 int panner_getNumLoudspeakers(void* const hPan)
 {
     panner_data *pData = (panner_data*)(hPan);
-    return pData->nLoudpkrs;
+    return pData->new_nLoudpkrs;
 }
 
 int panner_getMaxNumLoudspeakers()

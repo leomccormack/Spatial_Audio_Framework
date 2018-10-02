@@ -258,7 +258,7 @@ float ambi_enc_getSourceElev_deg(void* const hAmbi, int index)
 int ambi_enc_getNumSources(void* const hAmbi)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
-    return pData->nSources;
+    return pData->new_nSources;
 }
 
 int ambi_enc_getMaxNumSources()

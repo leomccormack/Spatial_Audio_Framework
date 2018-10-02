@@ -171,7 +171,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
         free(pData->hrtf_fb);
         pData->hrtf_fb = NULL;
     }
-    HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->itds_s, pData->freqVector, 0, HYBRID_BANDS, &(pData->hrtf_fb));
+    HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->itds_s, pData->freqVector, HYBRID_BANDS, 0, &(pData->hrtf_fb));
     
     /* calculate magnitude responses */
     if(pData->hrtf_fb_mag!= NULL)

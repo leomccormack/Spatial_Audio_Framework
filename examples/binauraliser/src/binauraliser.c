@@ -346,7 +346,7 @@ float binauraliser_getSourceElev_deg(void* const hBin, int index)
 int binauraliser_getNumSources(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    return pData->nSources;
+    return pData->new_nSources;
 }
 
 int binauraliser_getMaxNumSources()

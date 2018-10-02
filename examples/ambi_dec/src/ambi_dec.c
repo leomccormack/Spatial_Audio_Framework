@@ -655,7 +655,7 @@ float ambi_dec_getLoudspeakerElev_deg(void* const hAmbi, int index)
 int ambi_dec_getNumLoudspeakers(void* const hAmbi)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    return pData->nLoudpkrs;
+    return pData->new_nLoudpkrs;
 }
 
 int ambi_dec_getMaxNumLoudspeakers()
@@ -666,7 +666,7 @@ int ambi_dec_getMaxNumLoudspeakers()
 int ambi_dec_getBinauraliseLSflag(void* const hAmbi)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    return pData->binauraliseLS;
+    return pData->new_binauraliseLS;
 }
 
 int ambi_dec_getUseDefaultHRIRsflag(void* const hAmbi)
