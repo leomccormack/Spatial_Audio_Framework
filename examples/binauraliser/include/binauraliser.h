@@ -182,6 +182,22 @@ void binauraliser_setSofaFilePath(void* const hBin, const char* path);
 
 void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID);
     
+void binauraliser_setEnableRotation(void* const hBin, int newState);
+    
+void binauraliser_setYaw(void* const hBin, float newYaw);
+
+void binauraliser_setPitch(void* const hBin, float newPitch);
+
+void binauraliser_setRoll(void* const hBin, float newRoll);
+
+void binauraliser_setFlipYaw(void* const hBin, int newState);
+
+void binauraliser_setFlipPitch(void* const hBin, int newState);
+
+void binauraliser_setFlipRoll(void* const hBin, int newState);
+
+void binauraliser_setRPYflag(void* const hBin, int newState);
+    
 
 /*****************/
 /* Get Functions */
@@ -209,9 +225,26 @@ int binauraliser_getHRIRsamplerate(void* const hBin);
     
 int binauraliser_getUseDefaultHRIRsflag(void* const hBin);
     
-char* binauraliser_getSofaFilePath(void* const hCmp);
+char* binauraliser_getSofaFilePath(void* const hBin);
  
-int binauraliser_getDAWsamplerate(void* const hBin); 
+int binauraliser_getDAWsamplerate(void* const hBin);
+    
+int binauraliser_getEnableRotation(void* const hBin);
+    
+float binauraliser_getYaw(void* const hBin);
+
+float binauraliser_getPitch(void* const hBin);
+
+float binauraliser_getRoll(void* const hBin);
+
+int binauraliser_getFlipYaw(void* const hBin);
+
+int binauraliser_getFlipPitch(void* const hBin);
+
+int binauraliser_getFlipRoll(void* const hBin);
+
+int binauraliser_getRPYflag(void* const hBin);
+
 
 #ifdef __cplusplus
 }

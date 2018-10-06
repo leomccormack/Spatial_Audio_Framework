@@ -58,6 +58,12 @@ extern "C" {
 #define MAX_NUM_OUTPUTS ( 64 )                              /* Maximum permited channels for the VST standard */
 #define NUM_EARS ( 2 )                                      /* true for most humans */
  
+#ifndef DEG2RAD
+  #define DEG2RAD(x) (x * PI / 180.0f)
+#endif
+#ifndef RAD2DEG
+  #define RAD2DEG(x) (x * 180.0f / PI)
+#endif
     
 /***********/
 /* Structs */
@@ -115,6 +121,10 @@ typedef struct _binauraliser
     int nSources;
     int new_nSources;
     float src_dirs_deg[MAX_NUM_INPUTS][2];
+    int enableRotation;
+    float yaw, roll, pitch;                  /* rotation angles in degrees */
+    int bFlipYaw, bFlipPitch, bFlipRoll;     /* flag to flip the sign of the individual rotation angles */
+    int useRollPitchYawFlag;                 /* rotation order flag, 1: r-p-y, 0: y-p-r */
     
 } binauraliser_data;
      

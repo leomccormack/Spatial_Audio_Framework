@@ -265,6 +265,13 @@ void panner_process
 
 /* Set Functions */
 
+void panner_refreshSettings(void* const hPan)
+{
+    panner_data *pData = (panner_data*)(hPan);
+    pData->reInitGainTables = 1;
+    pData->reInitTFT = 1;
+}
+
 void panner_setSourceAzi_deg(void* const hPan, int index, float newAzi_deg)
 {
     panner_data *pData = (panner_data*)(hPan);

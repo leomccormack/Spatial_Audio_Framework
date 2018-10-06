@@ -164,6 +164,8 @@ void panner_process(void* const hPan,                    /* panner handle */
 /* Set Functions */
 /*****************/
     
+void panner_refreshSettings(void* const hPan);
+    
 void panner_setSourceAzi_deg(void* const hPan, int index, float newAzi_deg);
 
 void panner_setSourceElev_deg(void* const hPan, int index, float newElev_deg);

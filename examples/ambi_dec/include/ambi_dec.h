@@ -184,7 +184,7 @@ void ambi_dec_process(void* const hAmbi,                /* ambi_dec handle */
 /* Set Functions */
 /*****************/
     
-void ambi_dec_refreshParams(void* const hAmbi);
+void ambi_dec_refreshSettings(void* const hAmbi);
     
 void ambi_dec_setDecOrder(void* const hAmbi,  int newValue, int bandIdx);
 

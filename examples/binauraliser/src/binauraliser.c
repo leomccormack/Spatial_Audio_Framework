@@ -75,6 +75,14 @@ void binauraliser_create
     /* user parameters */
     binauraliser_loadPreset(PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
     pData->nSources = pData->new_nSources;
+    pData->yaw = 0.0f;
+    pData->pitch = 0.0f;
+    pData->roll = 0.0f;
+    pData->bFlipYaw = 0;
+    pData->bFlipPitch = 0;
+    pData->bFlipRoll = 0;
+    pData->useRollPitchYawFlag = 0;
+    pData->enableRotation = 0;
 }
 
 
@@ -328,6 +336,62 @@ void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID)
     }
 }
 
+void binauraliser_setEnableRotation(void* const hBin, int newState)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    pData->enableRotation = newState;
+}
+
+void binauraliser_setYaw(void  * const hBin, float newYaw)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    pData->yaw = pData->bFlipYaw == 1 ? -DEG2RAD(newYaw) : DEG2RAD(newYaw);
+}
+
+void binauraliser_setPitch(void* const hBin, float newPitch)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    pData->pitch = pData->bFlipPitch == 1 ? -DEG2RAD(newPitch) : DEG2RAD(newPitch);
+}
+
+void binauraliser_setRoll(void* const hBin, float newRoll)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    pData->roll = pData->bFlipRoll == 1 ? -DEG2RAD(newRoll) : DEG2RAD(newRoll);
+}
+
+void binauraliser_setFlipYaw(void* const hBin, int newState)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    if(newState !=pData->bFlipYaw ){
+        pData->bFlipYaw = newState;
+        binauraliser_setYaw(hBin, -binauraliser_getYaw(hBin));
+    }
+}
+
+void binauraliser_setFlipPitch(void* const hBin, int newState)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    if(newState !=pData->bFlipPitch ){
+        pData->bFlipPitch = newState;
+        binauraliser_setPitch(hBin, -binauraliser_getPitch(hBin));
+    }
+}
+
+void binauraliser_setFlipRoll(void* const hBin, int newState)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    if(newState !=pData->bFlipRoll ){
+        pData->bFlipRoll = newState;
+        binauraliser_setRoll(hBin, -binauraliser_getRoll(hBin));
+    }
+}
+
+void binauraliser_setRPYflag(void* const hBin, int newState)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    pData->useRollPitchYawFlag = newState;
+}
 
 /* Get Functions */
 
@@ -415,7 +479,55 @@ int binauraliser_getDAWsamplerate(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     return pData->fs;
-} 
+}
+
+int binauraliser_getEnableRotation(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->enableRotation;
+}
+
+float binauraliser_getYaw(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->bFlipYaw == 1 ? -RAD2DEG(pData->yaw) : RAD2DEG(pData->yaw);
+}
+
+float binauraliser_getPitch(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->bFlipPitch == 1 ? -RAD2DEG(pData->pitch) : RAD2DEG(pData->pitch);
+}
+
+float binauraliser_getRoll(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->bFlipRoll == 1 ? -RAD2DEG(pData->roll) : RAD2DEG(pData->roll);
+}
+
+int binauraliser_getFlipYaw(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->bFlipYaw;
+}
+
+int binauraliser_getFlipPitch(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->bFlipPitch;
+}
+
+int binauraliser_getFlipRoll(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->bFlipRoll;
+}
+
+int binauraliser_getRPYflag(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->useRollPitchYawFlag;
+}
 
 
     
