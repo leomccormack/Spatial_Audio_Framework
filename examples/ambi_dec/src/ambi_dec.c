@@ -411,6 +411,8 @@ void ambi_dec_setDecOrderAllBands(void  * const hAmbi, int newValue)
 void ambi_dec_setLoudspeakerAzi_deg(void* const hAmbi, int index, float newAzi_deg)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    if(newAzi_deg>180.0f)
+        newAzi_deg = -360.0f + newAzi_deg;
     newAzi_deg = MAX(newAzi_deg, -180.0f);
     newAzi_deg = MIN(newAzi_deg, 180.0f);
     pData->loudpkrs_dirs_deg[index][0] = newAzi_deg;

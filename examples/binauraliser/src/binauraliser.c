@@ -75,6 +75,7 @@ void binauraliser_create
     /* user parameters */
     binauraliser_loadPreset(PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
     pData->nSources = pData->new_nSources;
+    pData->interpMode = INTERP_TRI;
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
     pData->roll = 0.0f;
@@ -168,7 +169,8 @@ void binauraliser_process
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     int t, sample, ch, ear, i, band, nSources; 
-    float src_dirs[MAX_NUM_INPUTS][2];
+    float src_dirs[MAX_NUM_INPUTS][2], Rxyz[3][3], hypotxy;
+    int enableRotation;
     
 #ifdef ENABLE_FADE_IN_OUT
     int applyFadeIn;
@@ -193,8 +195,10 @@ void binauraliser_process
     
     /* apply binaural panner */
     if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && (pData->hrtf_fb!=NULL)) {
-        nSources = pData->nSources;  
+        nSources = pData->nSources;
+        enableRotation = pData->enableRotation;
         memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
+        
         /* Load time-domain data */
         for(i=0; i < MIN(nSources,nInputs); i++)
             memcpy(pData->inputFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
@@ -218,12 +222,35 @@ void binauraliser_process
             for( ch=0; ch < nSources; ch++)
                 for ( t=0; t<TIME_SLOTS; t++)
                     pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
+        
+        /* Rotate source directions */
+        if(enableRotation){
+            yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
+            for(i=0; i<nSources; i++){
+                pData->src_dirs_xyz[i][0] = cosf(DEG2RAD(pData->src_dirs_deg[i][1])) * cosf(DEG2RAD(pData->src_dirs_deg[i][0]));
+                pData->src_dirs_xyz[i][1] = cosf(DEG2RAD(pData->src_dirs_deg[i][1])) * sinf(DEG2RAD(pData->src_dirs_deg[i][0]));
+                pData->src_dirs_xyz[i][2] = sinf(DEG2RAD(pData->src_dirs_deg[i][1]));
+                pData->recalc_hrtf_interpFLAG[i] = 1;
+            }
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSources, 3, 3, 1.0f,
+                        (float*)(pData->src_dirs_xyz), 3,
+                        (float*)Rxyz, 3, 0.0f,
+                        (float*)(pData->src_dirs_rot_xyz), 3); 
+            for(i=0; i<nSources; i++){
+                hypotxy = sqrtf(powf(pData->src_dirs_rot_xyz[i][0], 2.0f) + powf(pData->src_dirs_rot_xyz[i][1], 2.0f));
+                pData->src_dirs_rot_deg[i][0] = RAD2DEG(atan2f(pData->src_dirs_rot_xyz[i][1], pData->src_dirs_rot_xyz[i][0]));
+                pData->src_dirs_rot_deg[i][1] = RAD2DEG(atan2f(pData->src_dirs_rot_xyz[i][2], hypotxy));
+            }
+        }
      
         /* interpolate hrtfs and apply to each source */
         memset(pData->outputframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
         for (ch = 0; ch < nSources; ch++) {
             if(pData->recalc_hrtf_interpFLAG[ch]){
-                binauraliser_interpHRTFs(hBin, pData->src_dirs_deg[ch][0], pData->src_dirs_deg[ch][1], pData->hrtf_interp[ch]);
+                if(enableRotation)
+                    binauraliser_interpHRTFs(hBin, pData->src_dirs_rot_deg[ch][0], pData->src_dirs_rot_deg[ch][1], pData->hrtf_interp[ch]);
+                else
+                    binauraliser_interpHRTFs(hBin, pData->src_dirs_deg[ch][0], pData->src_dirs_deg[ch][1], pData->hrtf_interp[ch]);
                 pData->recalc_hrtf_interpFLAG[ch] = 0;
             }
             for (band = 0; band < HYBRID_BANDS; band++)
@@ -281,6 +308,8 @@ void binauraliser_refreshSettings(void* const hBin)
 void binauraliser_setSourceAzi_deg(void* const hBin, int index, float newAzi_deg)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
+    if(newAzi_deg>180.0f)
+        newAzi_deg = -360.0f + newAzi_deg;
     newAzi_deg = MAX(newAzi_deg, -180.0f);
     newAzi_deg = MIN(newAzi_deg, 180.0f);
     pData->recalc_hrtf_interpFLAG[index] = 1;
@@ -391,6 +420,12 @@ void binauraliser_setRPYflag(void* const hBin, int newState)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     pData->useRollPitchYawFlag = newState;
+}
+
+void binauraliser_setInterpMode(void* const hBin, int newMode)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    pData->interpMode = newMode;
 }
 
 /* Get Functions */
@@ -529,6 +564,10 @@ int binauraliser_getRPYflag(void* const hBin)
     return pData->useRollPitchYawFlag;
 }
 
-
+int binauraliser_getInterpMode(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return (int)pData->interpMode;
+}
     
     

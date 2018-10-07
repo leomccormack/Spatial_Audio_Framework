@@ -39,6 +39,7 @@
 #define SAF_ENABLE_AFSTFT  /* for time-frequency transform */
 #define SAF_ENABLE_HRIR    /* for HRIR->HRTF filterbank coefficients conversion etc. */
 #define SAF_ENABLE_VBAP    /* for amplitude-normalised VBAP gains used for interpolating HRTFs */
+#define SAF_ENABLE_SH
 #include "saf.h"
 
 #ifdef __cplusplus
@@ -113,6 +114,9 @@ typedef struct _binauraliser
     int reInitTFT;
     
     /* misc. */
+    float src_dirs_rot_deg[MAX_NUM_INPUTS][2];
+    float src_dirs_rot_xyz[MAX_NUM_INPUTS][3];
+    float src_dirs_xyz[MAX_NUM_INPUTS][3]; 
     int nTriangles;
     int input_nDims;  
     int output_nDims;
@@ -121,6 +125,7 @@ typedef struct _binauraliser
     int nSources;
     int new_nSources;
     float src_dirs_deg[MAX_NUM_INPUTS][2];
+    INTERP_MODES interpMode;
     int enableRotation;
     float yaw, roll, pitch;                  /* rotation angles in degrees */
     int bFlipYaw, bFlipPitch, bFlipRoll;     /* flag to flip the sign of the individual rotation angles */
@@ -133,7 +138,7 @@ typedef struct _binauraliser
 /* Internal functions */
 /**********************/
     
-/* interpolates between 3 HRTFs via VBAP gains. The HRTF magnitude responses and HRIR ITDs are interpolated seperately
+/* interpolates between 3 HRTFs via AN-VBAP gains. The HRTF magnitude responses and HRIR ITDs are interpolated seperately
  * before being re-combined */
 void binauraliser_interpHRTFs(void* const hPan,                    /* pannerlib handle (includes VBAP gains, HRTFs and ITDs) */
                               float azimuth_deg,                   /* source azimuth in degrees */

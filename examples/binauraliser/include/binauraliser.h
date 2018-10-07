@@ -136,6 +136,9 @@ typedef enum _PRESETS{
     
 }PRESETS;
 
+typedef enum _INTERP_MODES{
+    INTERP_TRI = 1  /* Triangular interpolation */
+}INTERP_MODES;
     
 /******************/
 /* Main Functions */
@@ -198,6 +201,8 @@ void binauraliser_setFlipRoll(void* const hBin, int newState);
 
 void binauraliser_setRPYflag(void* const hBin, int newState);
     
+void binauraliser_setInterpMode(void* const hBin, int newMode);
+    
 
 /*****************/
 /* Get Functions */
@@ -244,6 +249,8 @@ int binauraliser_getFlipPitch(void* const hBin);
 int binauraliser_getFlipRoll(void* const hBin);
 
 int binauraliser_getRPYflag(void* const hBin);
+    
+int binauraliser_getInterpMode(void* const hBin);
 
 
 #ifdef __cplusplus

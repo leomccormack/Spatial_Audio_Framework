@@ -188,6 +188,8 @@ void ambi_enc_setOutputOrder(void* const hAmbi, int newOrder)
 void ambi_enc_setSourceAzi_deg(void* const hAmbi, int index, float newAzi_deg)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
+    if(newAzi_deg>180.0f)
+        newAzi_deg = -360.0f + newAzi_deg;
     newAzi_deg = MAX(newAzi_deg, -180.0f);
     newAzi_deg = MIN(newAzi_deg, 180.0f);
     pData->recalc_SH_FLAG[index] = 1;
