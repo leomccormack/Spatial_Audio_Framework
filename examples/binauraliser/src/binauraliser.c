@@ -320,7 +320,7 @@ void binauraliser_setSourceElev_deg(void* const hBin, int index, float newElev_d
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);
+    newElev_deg = MIN(newElev_deg, 90.0f);  
     pData->recalc_hrtf_interpFLAG[index] = 1;
     pData->src_dirs_deg[index][1] = newElev_deg;
 }

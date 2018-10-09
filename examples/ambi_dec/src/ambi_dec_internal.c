@@ -30,7 +30,7 @@
  */
 
 #include "ambi_dec_internal.h"
-#ifdef __APPLE__ /* lost my patience trying to statically build netcdf for Windows... */
+#ifdef __APPLE__
   #define SAF_ENABLE_SOFA_READER
   #include "saf_sofa_reader.h"
 #endif
@@ -76,7 +76,7 @@ void ambi_dec_initCodec
                 }
             }
             
-            /* create dedicated maxrE weighted versions too (c'mon.. RAM is cheap nowadays) */
+            /* create dedicated maxrE weighted versions */
             a_n = malloc(nSH_order*nSH_order*sizeof(float));
             getMaxREweights(n, a_n); /* weights returned as diagonal matrix */
             free(pars->M_dec_maxrE[d][n-1]);
@@ -333,7 +333,10 @@ void ambi_dec_interpHRTFs
     
     /* reintroduce the interaural phase difference per band */
     for (band = 0; band < HYBRID_BANDS; band++) {
-        ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*PI* (pData->freqVector[band]) * itdInterp[0] + PI, 2.0f*PI) - PI) / 2.0f);
+        if(pData->freqVector[band]<1.5e3f)
+            ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*PI* (pData->freqVector[band]) * itdInterp[0] + PI, 2.0f*PI) - PI) / 2.0f);
+        else
+            ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*PI* (pData->freqVector[band]) * itdInterp[0] + PI, 2.0f*PI) - PI) / 6.0f);
         h_intrp[band][0] = ccmulf(cmplxf(magInterp[band][0], 0.0f), cexpf(ipd));
         h_intrp[band][1] = ccmulf(cmplxf(magInterp[band][1], 0.0f), conjf(cexpf(ipd)));
     }

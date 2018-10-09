@@ -97,7 +97,7 @@ void ambi_drc_initTFT
                 free(pData->STFTFrameTF[t][ch].im);
             }
         }
-        free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_SH_SIGNALS, pData->nSH));
+        free2d((void**)pData->tempHopFrameTD, pData->nSH);
         free2d((void**)pData->STFTFrameTF, TIME_SLOTS);
     }
     

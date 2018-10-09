@@ -86,7 +86,10 @@ void binauraliser_interpHRTFs
     
     /* introduce interaural phase difference */
     for (band = 0; band < HYBRID_BANDS; band++) {
-        ipd = cmplxf(0.0f, pData->phi_bands[band]*(matlab_fmodf(2.0f*PI*(pData->freqVector[band]) * itdInterp + PI, 2.0f*PI) - PI)/2.0f);
+        if(pData->freqVector[band]<1.5e3f)
+            ipd = cmplxf(0.0f, 1.3f*(matlab_fmodf(2.0f*PI*(pData->freqVector[band]) * itdInterp + PI, 2.0f*PI) - PI)/2.0f);
+        else
+            ipd = cmplxf(0.0f, 0.0f);
         h_intrp[band][0] = crmulf(cexpf(ipd), magInterp[band][0]);
         h_intrp[band][1] = crmulf(conjf(cexpf(ipd)), magInterp[band][1]);
     }
@@ -139,9 +142,6 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
         pData->itds_s = NULL;
     }
     estimateITDs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrir_fs, &(pData->itds_s));
-    
-    /* estimate phase manipulation curve */
-    estimateIPDmanipCurve(pData->itds_s, pData->N_hrir_dirs, pData->freqVector, HYBRID_BANDS, 343.0f, 1.3f, pData->phi_bands);
     
     /* generate VBAP gain table */
     hrtf_vbap_gtable = NULL;

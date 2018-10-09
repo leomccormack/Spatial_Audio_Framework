@@ -44,17 +44,6 @@ void estimateITDs(/* Input arguments */
                   int fs,                                 /* sampling rate of the HRIRs */
                   /* Output arguments */
                   float** itds_s);                        /* & ITDs in seconds; N_dirs x 1 */
-    
-/* estimates interaural phase difference (IPD) manipulation curve */
-void estimateIPDmanipCurve(/* Input arguments */
-                           float* itds_s,                 /* ITDs in seconds; N_dirs x 1 */
-                           int N_dirs,                    /* number of HRIRs */
-                           float* centreFreq,             /* filterbank centre frequencies; N_bands x 1 */
-                           int N_bands,                   /* number of frequency bands */
-                           float c,                       /* speed of sound, in m/s */
-                           float maxVal,                  /* maximum allowed value */
-                           /* Output arguments */
-                           float* phi_bands);             /* phase manipulation curve; N_dirs x 1 */
 
 /* passes zero padded HRIRs through the afSTFT filterbank. The filterbank coefficients are then normalised with the energy
  * of an impulse, which is centered at approximately the beginning of the HRIR peak. The HRTF FB coefficients are then

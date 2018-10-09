@@ -104,29 +104,6 @@ void estimateITDs
     free(hrir_lpf);
 }
 
-void estimateIPDmanipCurve
-(
-    float* itds_s,
-    int N_dirs,
-    float* centreFreq,
-    int N_bands,
-    float c,
-    float maxVal,
-    float* phi_bands
-)
-{
-    int i;
-    float ITD_max, f1, steepness;
-    
-    ITD_max = FLT_MIN;
-    for(i=0; i<N_dirs; i++)
-        ITD_max = fabsf(itds_s[i]) > ITD_max ? fabsf(itds_s[i]) : ITD_max;
-    f1 = 1.0f/ITD_max;
-    steepness = 1.7f;
-    for(i=0; i<N_bands; i++)
-       phi_bands[i] = MIN(powf(f1,steepness)/(powf(centreFreq[i]+2.23e-9f,steepness)), maxVal);
-}
-
 /* A C implementation of a MatLab function by Archontis Politis; published with permission */
 void HRIRs2FilterbankHRTFs
 (
@@ -141,31 +118,20 @@ void HRIRs2FilterbankHRTFs
 )
 {
     int i, j, nd, band;
-    float* ipd, *hrtf_diff, *phi_bands;
+    float* ipd, *hrtf_diff;
 
     /* convert the HRIRs to filterbank coefficients */
     FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, N_bands, hrtf_fb);
 #if 1
-    /* estimate phase manipulation curve */
-    if (enablePhaseManipFLAG) {
-        phi_bands = malloc(N_bands*sizeof(float));
-        estimateIPDmanipCurve(itds_s, N_dirs, centreFreq, N_bands, 343.0f, 1.15f, phi_bands);
-    }
-    
     /* convert ITDs to phase differences -pi..pi */
     ipd = malloc(N_bands*N_dirs*sizeof(float));
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_bands, N_dirs, 1, 1.0,
                 centreFreq, 1,
                 itds_s, 1, 0.0,
                 ipd, N_dirs);
-    for(i=0; i<N_bands; i++){
-        for(j=0; j<N_dirs; j++){
-            if (enablePhaseManipFLAG)
-                ipd[i*N_dirs+j] = phi_bands[i]*(matlab_fmodf(2.0f*M_PI*ipd[i*N_dirs+j] + M_PI, 2.0f*M_PI) - M_PI)/2.0f; /* /2 here, not later */
-            else
-                ipd[i*N_dirs+j] = (matlab_fmodf(2.0f*M_PI*ipd[i*N_dirs+j] + M_PI, 2.0f*M_PI) - M_PI)/2.0f; /* /2 here, not later */
-        }
-    }
+    for(i=0; i<N_bands; i++)
+        for(j=0; j<N_dirs; j++)
+            ipd[i*N_dirs+j] = (matlab_fmodf(2.0f*M_PI*ipd[i*N_dirs+j] + M_PI, 2.0f*M_PI) - M_PI)/2.0f; /* /2 here, not later */
     
     /* diffuse-field equalise */
     hrtf_diff = calloc(N_bands*NUM_EARS, sizeof(float));
@@ -184,15 +150,19 @@ void HRIRs2FilterbankHRTFs
     /* create complex HRTFs by introducing the interaural phase differences (IPDs) to the HRTF magnitude responses */
     for(band=0; band<N_bands; band++){
         for(nd=0; nd<N_dirs; nd++){
-            (*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f, ipd[band*N_dirs + nd])), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd]) );
-            (*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f,-ipd[band*N_dirs + nd])), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd]) );
+            if( (!enablePhaseManipFLAG) || (centreFreq[band]<1.5e3f) ){
+                (*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f, ipd[band*N_dirs + nd])), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd]) );
+                (*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f,-ipd[band*N_dirs + nd])), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd]) );
+            }
+            else{
+                (*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd] = cmplxf(cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd]), 0.0f);
+                (*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd] = cmplxf(cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd]), 0.0f);
+            }
         }
     }
 
     free(ipd);
     free(hrtf_diff);
-    if (enablePhaseManipFLAG)
-        free(phi_bands);
 #endif
 }
 
@@ -211,19 +181,13 @@ void interpFilterbankHRTFs
 )
 {
     int i, band;
-    float* itd_interp, *mags_interp, *ipd_interp, *phi_bands;
+    float* itd_interp, *mags_interp, *ipd_interp;
     float** mags;
     
     mags = (float**)malloc(N_bands*sizeof(float*));
     itd_interp = malloc(N_interp_dirs*sizeof(float));
     mags_interp = malloc(N_interp_dirs*NUM_EARS*sizeof(float));
     ipd_interp = malloc(N_interp_dirs*sizeof(float));
-    
-    /* estimate phase manipulation curve */
-    if (enablePhaseManipFLAG) {
-        phi_bands = malloc(N_bands*sizeof(float));
-        estimateIPDmanipCurve(itds, N_hrtf_dirs, freqVector, N_bands, 343.0f, 1.15f, phi_bands);
-    }
     
     /* calculate HRTF magnitudes */
     for(band=0; band<N_bands; band++){
@@ -246,8 +210,12 @@ void interpFilterbankHRTFs
         
         /* convert ITDs to phase differences -pi..pi */
         for(i=0; i<N_interp_dirs; i++){
-            if (enablePhaseManipFLAG)
-                ipd_interp[i] = phi_bands[i]*(matlab_fmodf(2.0f*M_PI*freqVector[band]*itd_interp[i] + M_PI, 2.0f*M_PI) - M_PI)/2.0f; /* /2 here, not later */
+            if (enablePhaseManipFLAG){
+                if(freqVector[band]<1.5e3f)
+                    ipd_interp[i] = (matlab_fmodf(2.0f*M_PI*freqVector[band]*itd_interp[i] + M_PI, 2.0f*M_PI) - M_PI)/2.0f; /* /2 here, not later */
+                else
+                    ipd_interp[i] = 0.0f;
+            }
             else
                 ipd_interp[i] = (matlab_fmodf(2.0f*M_PI*freqVector[band]*itd_interp[i] + M_PI, 2.0f*M_PI) - M_PI)/2.0f; /* /2 here, not later */
         }
@@ -265,8 +233,6 @@ void interpFilterbankHRTFs
     free(mags);
     free(mags_interp);
     free(ipd_interp);
-    if (enablePhaseManipFLAG)
-        free(phi_bands);
 }
 
 
