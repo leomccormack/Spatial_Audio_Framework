@@ -39,18 +39,24 @@ void binauraliser_create
     *phBin = (void*)pData;
     
     /* time-frequency transform + buffers */
-    pData->hSTFT = NULL;
-    pData->STFTInputFrameTF = NULL;
     int t, ch;
+    pData->hSTFT = NULL;
+    pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_INPUTS, sizeof(complexVector));
+    for(t=0; t<TIME_SLOTS; t++) {
+        for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
+            pData->STFTInputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+            pData->STFTInputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        }
+    }
+    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_INPUTS, NUM_EARS), HOP_SIZE, sizeof(float));
     pData->STFTOutputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, NUM_EARS, sizeof(complexVector));
     for(t=0; t<TIME_SLOTS; t++) {
         for(ch=0; ch< NUM_EARS; ch++) {
             pData->STFTOutputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
             pData->STFTOutputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
         }
-    }
-    pData->tempHopFrameTD = NULL;
-    
+    } 
+     
     /* hrir data */
     pData->useDefaultHRIRsFLAG=1;
     pData->hrirs = NULL;
@@ -172,14 +178,6 @@ void binauraliser_process
     float src_dirs[MAX_NUM_INPUTS][2], Rxyz[3][3], hypotxy;
     int enableRotation;
     
-#ifdef ENABLE_FADE_IN_OUT
-    int applyFadeIn;
-    if(pData->reInitTFT || pData->reInitHRTFsAndGainTables)
-        applyFadeIn = 1;
-    else
-        applyFadeIn = 0;
-#endif
-    
     /* reinitialise if needed */
     if(pData->reInitTFT){
         binauraliser_initTFT(hBin);
@@ -283,12 +281,6 @@ void binauraliser_process
                 for (sample = 0; sample < HOP_SIZE; sample++)
                     outputs[ch][sample + t* HOP_SIZE] = 0.0f;
         }
-#ifdef ENABLE_FADE_IN_OUT
-        if(pData->reInitTFT || pData->reInitHRTFsAndGainTables)
-            for(ch=0; ch < NUM_EARS;ch++)
-                for(i=0; i<FRAME_SIZE; i++)
-                    outputs[ch][i] *= (1.0f - (float)(i+1)/(float)FRAME_SIZE);
-#endif
     }
     else{
         for (ch=0; ch < nOutputs; ch++)
@@ -451,6 +443,11 @@ int binauraliser_getNumSources(void* const hBin)
 int binauraliser_getMaxNumSources()
 {
     return MAX_NUM_INPUTS;
+}
+
+int binauraliser_getNumEars(void)
+{
+    return NUM_EARS;
 }
 
 int binauraliser_getNDirs(void* const hBin)

@@ -129,6 +129,8 @@ int rotator_getNormType(void* const hRot);
 
 int rotator_getOrder(void* const hRot);
     
+int rotator_getNSHrequired(void* const hRot);
+    
     
 #ifdef __cplusplus
 }

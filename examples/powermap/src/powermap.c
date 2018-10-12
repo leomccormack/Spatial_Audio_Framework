@@ -617,6 +617,11 @@ int powermap_getNumberOfBands(void)
     return HYBRID_BANDS;
 }
 
+int powermap_getNSHrequired(void)
+{
+    return MAX_NUM_SH_SIGNALS;
+}
+
 int powermap_getChOrder(void* const hPm)
 {
     powermap_data *pData = (powermap_data*)(hPm);

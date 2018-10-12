@@ -134,6 +134,10 @@ int ambi_bin_getDecEnableMaxrE(void* const hAmbi);
     
 int ambi_bin_getEnablePhaseManip(void* const hAmbi);
     
+int ambi_bin_getNumEars(void);
+    
+int ambi_bin_getNSHrequired(void* const hAmbi);
+    
 float ambi_bin_getYaw(void* const hAmbi);
 
 float ambi_bin_getPitch(void* const hAmbi);

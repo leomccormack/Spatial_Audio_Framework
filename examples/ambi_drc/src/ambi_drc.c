@@ -448,3 +448,9 @@ INPUT_ORDER ambi_drc_getInputPreset(void* const hAmbi)
     return pData->currentOrder;
 }
 
+int ambi_drc_getNSHrequired(void* const hAmbi)
+{
+    ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
+    return pData->nSH;
+}
+

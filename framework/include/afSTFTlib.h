@@ -79,6 +79,8 @@ typedef struct
 
 void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int LDmode, int hybridMode);
 
+void afSTFTchannelChange(void* handle, int inChannels, int outChannels);
+
 void afSTFTforward(void* handle, float** inTD, complexVector* outFD);
 
 void afSTFTinverse(void* handle, complexVector* inFD, float** outTD);

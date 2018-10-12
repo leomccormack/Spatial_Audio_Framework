@@ -483,6 +483,11 @@ int array2sh_getMaxNumSensors(void)
     return MAX_NUM_SENSORS;
 }
 
+int array2sh_getNSHrequired(void)
+{
+    return NUM_SH_SIGNALS;
+}
+
 float array2sh_getr(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);

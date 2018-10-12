@@ -241,6 +241,8 @@ float ambi_dec_getLoudspeakerElev_deg(void* const hAmbi, int index);
 int ambi_dec_getNumLoudspeakers(void* const hAmbi);
 
 int ambi_dec_getMaxNumLoudspeakers(void);
+    
+int  ambi_dec_getNSHrequired(void);
 
 float ambi_dec_getSourceAzi_deg(void* const hAmbi, int index);
 

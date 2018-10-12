@@ -268,6 +268,12 @@ int ambi_enc_getMaxNumSources()
     return MAX_NUM_INPUTS;
 }
 
+int ambi_enc_getNSHrequired(void* const hAmbi)
+{
+    ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
+    return (pData->order+1)*(pData->order+1);
+}
+
 int ambi_enc_getChOrder(void* const hAmbi)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);

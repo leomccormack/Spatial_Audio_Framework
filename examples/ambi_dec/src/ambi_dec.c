@@ -97,7 +97,7 @@ void ambi_dec_create
     pData->nLoudpkrs = pData->new_nLoudpkrs;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_N3D; 
-    pData->dec_method[0] = DECODER_MMD;
+    pData->dec_method[0] = DECODER_ALLRAD;
     pData->dec_method[1] = DECODER_ALLRAD;
     pData->rE_WEIGHT[0] = 0;
     pData->rE_WEIGHT[1] = 1;
@@ -663,6 +663,11 @@ int ambi_dec_getNumLoudspeakers(void* const hAmbi)
 int ambi_dec_getMaxNumLoudspeakers()
 {
     return MAX_NUM_LOUDSPEAKERS;
+}
+
+int  ambi_dec_getNSHrequired()
+{
+    return MAX_NUM_SH_SIGNALS;
 }
 
 int ambi_dec_getBinauraliseLSflag(void* const hAmbi)

@@ -199,6 +199,8 @@ int array2sh_getNumSensors(void* const hA2sh);
     
 int array2sh_getMaxNumSensors(void);
     
+int array2sh_getNSHrequired(void);
+    
 float array2sh_getr(void* const hA2sh);
     
 float array2sh_getR(void* const hA2sh);

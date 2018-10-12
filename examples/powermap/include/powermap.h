@@ -152,6 +152,8 @@ float powermap_getSamplingRate(void* const hPm);
 float powermap_getCovAvgCoeff(void* const hPm);
 
 int powermap_getNumberOfBands(void);
+    
+int powermap_getNSHrequired(void);
 
 float powermap_getPowermapEQ(void* const hPm, int bandIdx);
 

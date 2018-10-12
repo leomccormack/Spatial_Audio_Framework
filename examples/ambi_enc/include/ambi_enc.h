@@ -211,6 +211,8 @@ int ambi_enc_getNumSources(void* const hAmbi);
 
 int ambi_enc_getMaxNumSources(void);
     
+int ambi_enc_getNSHrequired(void* const hAmbi);
+    
 int ambi_enc_getChOrder(void* const hAmbi);
     
 int ambi_enc_getNormType(void* const hAmbi);

@@ -135,6 +135,8 @@ float sldoa_getAvg(void* const hSld);
     
 int sldoa_getNumberOfBands(void);
     
+int sldoa_getNSHrequired(void);
+    
 void sldoa_getDisplayData(void *  const hSld,
                           float** pAzi_deg,
                           float** pElev_deg,

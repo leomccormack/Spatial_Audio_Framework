@@ -191,32 +191,12 @@ void binauraliser_initTFT
 )
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    int t, ch;
-    
-    if (pData->hSTFT != NULL){
-        afSTFTfree(pData->hSTFT);
-        pData->hSTFT = NULL;
-        for (t = 0; t<TIME_SLOTS; t++) {
-            for (ch = 0; ch< pData->nSources; ch++) {
-                free(pData->STFTInputFrameTF[t][ch].re);
-                free(pData->STFTInputFrameTF[t][ch].im);
-            }
-        }
-        free2d((void**)pData->STFTInputFrameTF, TIME_SLOTS);
-        free2d((void**)pData->tempHopFrameTD, MAX(pData->nSources, NUM_EARS));
-    }
-    if (pData->hSTFT == NULL){
+ 
+    if(pData->hSTFT==NULL)
         afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSources, NUM_EARS, 0, 1);
-        pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, pData->new_nSources, sizeof(complexVector));
-        for(t=0; t<TIME_SLOTS; t++) {
-            for(ch=0; ch< pData->new_nSources; ch++) {
-                pData->STFTInputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-                pData->STFTInputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-            }
-        }
-        pData->tempHopFrameTD = (float**)malloc2d( MAX(pData->new_nSources, NUM_EARS), HOP_SIZE, sizeof(float));
-        pData->nSources = pData->new_nSources;
-    }
+    else 
+        afSTFTchannelChange(pData->hSTFT, pData->new_nSources, NUM_EARS);
+    pData->nSources = pData->new_nSources;
 }
 
 void binauraliser_loadPreset(PRESETS preset, float dirs_deg[MAX_NUM_INPUTS][2], int* newNCH, int* nDims)

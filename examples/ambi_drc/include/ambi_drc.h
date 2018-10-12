@@ -158,6 +158,8 @@ int ambi_drc_getNormType(void* const hAmbi);
     
 INPUT_ORDER ambi_drc_getInputPreset(void* const hAmbi);
     
+int ambi_drc_getNSHrequired(void* const hAmbi);
+    
 #ifdef __cplusplus
 }
 #endif

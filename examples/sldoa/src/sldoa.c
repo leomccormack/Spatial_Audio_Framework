@@ -536,6 +536,11 @@ int sldoa_getNumberOfBands(void)
     return HYBRID_BANDS;
 }
 
+int sldoa_getNSHrequired(void)
+{
+    return NUM_SH_SIGNALS;
+}
+
 int sldoa_getChOrder(void* const hSld)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);

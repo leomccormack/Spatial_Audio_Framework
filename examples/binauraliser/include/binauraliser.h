@@ -216,6 +216,8 @@ int binauraliser_getNumSources(void* const hBin);
 
 int binauraliser_getMaxNumSources(void);
     
+int binauraliser_getNumEars(void);
+    
 int binauraliser_getNDirs(void* const hBin);
     
 int binauraliser_getNTriangles(void* const hBin);

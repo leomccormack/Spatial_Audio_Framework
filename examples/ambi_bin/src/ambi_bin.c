@@ -471,6 +471,17 @@ int ambi_bin_getEnablePhaseManip(void* const hAmbi)
     return pData->enablePhaseManip;
 }
 
+int ambi_bin_getNumEars()
+{ 
+    return NUM_EARS;
+}
+
+int ambi_bin_getNSHrequired(void* const hAmbi)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    return pData->nSH;
+}
+
 float ambi_bin_getYaw(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);

@@ -324,6 +324,11 @@ int rotator_getOrder(void* const hRot)
     return (int)pData->outputOrder;
 }
 
+int rotator_getNSHrequired(void* const hRot)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    return (pData->order+1)*(pData->order+1);
+}
 
 
 
