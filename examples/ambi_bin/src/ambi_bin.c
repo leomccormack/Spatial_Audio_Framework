@@ -45,8 +45,14 @@ void ambi_bin_create
             pData->STFTOutputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
         }
     }
-    pData->STFTInputFrameTF = NULL;
-    pData->tempHopFrameTD = NULL;
+    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, NUM_EARS), HOP_SIZE, sizeof(float));
+    pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_SH_SIGNALS, sizeof(complexVector));
+    for(t=0; t<TIME_SLOTS; t++) {
+        for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
+            pData->STFTInputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+            pData->STFTInputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        }
+    }
 
     /* codec data */
     pData->pars = (codecPars*)malloc(sizeof(codecPars));
@@ -95,7 +101,7 @@ void ambi_bin_destroy
             afSTFTfree(pData->hSTFT);
         for (t = 0; t<TIME_SLOTS; t++) {
             if(pData->STFTInputFrameTF!=NULL){
-                for (ch = 0; ch< pData->nSH; ch++) {
+                for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
                     free(pData->STFTInputFrameTF[t][ch].re);
                     free(pData->STFTInputFrameTF[t][ch].im);
                 }
@@ -108,7 +114,7 @@ void ambi_bin_destroy
         free2d((void**)pData->STFTInputFrameTF, TIME_SLOTS);
         free2d((void**)pData->STFTOutputFrameTF, TIME_SLOTS);
         if(pData->tempHopFrameTD!=NULL)
-            free2d((void**)pData->tempHopFrameTD, MAX(NUM_EARS, pData->nSH));
+            free2d((void**)pData->tempHopFrameTD, MAX(NUM_EARS, MAX_NUM_SH_SIGNALS));
         
         for(i=0; i<2; i++)
             if(pars->hrtf_fb[i]!= NULL)
@@ -165,13 +171,6 @@ void ambi_bin_process
     float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     float* M_rot_tmp;
     
-#ifdef ENABLE_FADE_IN_OUT
-    int applyFadeIn;
-    if(pData->reInitTFT || pData->reInitCodec)
-        applyFadeIn = 1;
-    else
-        applyFadeIn = 0;
-#endif
     /* local copies of user parameters */
     int order, nSH, rE_WEIGHT, enablePhaseManip;
     NORM_TYPES norm;
@@ -203,12 +202,6 @@ void ambi_bin_process
             memcpy(pData->SHFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
         for(; i<MAX_NUM_SH_SIGNALS; i++)
             memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros, to avoid funky behaviour */
-#ifdef ENABLE_FADE_IN_OUT
-        if(applyFadeIn)
-            for(ch=0; ch < MAX_NUM_SH_SIGNALS;ch++)
-                for(i=0; i<FRAME_SIZE; i++)
-                    pData->SHFrameTD[ch][i] *= (float)i/(float)FRAME_SIZE;
-#endif
         
         /* account for input normalisation scheme */
         switch(norm){
@@ -279,12 +272,6 @@ void ambi_bin_process
                 for (sample = 0; sample < HOP_SIZE; sample++)
                     outputs[ch][sample + t* HOP_SIZE] = 0.0f;
         }
-#ifdef ENABLE_FADE_IN_OUT
-        if(pData->reInitTFT || pData->reInitCodec)
-            for(ch=0; ch < nOutputs; ch++)
-                for(i=0; i<FRAME_SIZE; i++)
-                    outputs[ch][i] *= (1.0f - (float)(i+1)/(float)FRAME_SIZE);
-#endif
     }
     else
         for (ch=0; ch < nOutputs; ch++)

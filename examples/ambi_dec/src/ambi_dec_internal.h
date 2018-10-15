@@ -52,12 +52,11 @@ extern "C" {
 /* Definitions */
 /***************/
     
-#define ENABLE_FADE_IN_OUT                                  /* (slightly) smoother transitions between HRIR switches */
-    
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
-#define MAX_NUM_SH_SIGNALS ( (SH_ORDER+1)*(SH_ORDER+1) )    /* Maximum number of spherical harmonic components */
+#define MAX_SH_ORDER ( 7 )
+#define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER+1)*(MAX_SH_ORDER+1) ) /* Maximum number of spherical harmonic components */
 #define MAX_NUM_LOUDSPEAKERS ( 64 )                         /* Maximum permitted channels for the VST standard */
 #define MIN_NUM_LOUDSPEAKERS ( 4 )                          /* To help avoid traingulation errors when using AllRAD */
 #define NUM_EARS ( 2 )                                      /* true for most humans */
@@ -80,11 +79,11 @@ typedef enum _NORM_TYPES{
 typedef struct _codecPars
 {
     /* decoders */
-    float* M_dec[NUM_DECODERS][SH_ORDER];                     /* ambisonic decoding matrices ([0] for low-freq, [1] for high-freq); FLAT: nLoudspeakers x nSH */
-    float_complex* M_dec_cmplx[NUM_DECODERS][SH_ORDER];       /* complex ambisonic decoding matrices ([0] for low-freq, [1] for high-freq); FLAT: nLoudspeakers x nSH */
-    float* M_dec_maxrE[NUM_DECODERS][SH_ORDER];               /* ambisonic decoding matrices with maxrE weighting ([0] for low-freq, [1] for high-freq); FLAT: nLoudspeakers x nSH */
-    float_complex* M_dec_cmplx_maxrE[NUM_DECODERS][SH_ORDER]; /* complex ambisonic decoding matrices with maxrE weighting ([0] for low-freq, [1] for high-freq); FLAT: nLoudspeakers x nSH */
-    float M_norm[NUM_DECODERS][SH_ORDER][2];                  /* norm coefficients to preserve omni energy/amplitude between different orders and decoders */
+    float* M_dec[NUM_DECODERS][MAX_SH_ORDER];                     /* ambisonic decoding matrices ([0] for low-freq, [1] for high-freq); FLAT: nLoudspeakers x nSH */
+    float_complex* M_dec_cmplx[NUM_DECODERS][MAX_SH_ORDER];       /* complex ambisonic decoding matrices ([0] for low-freq, [1] for high-freq); FLAT: nLoudspeakers x nSH */
+    float* M_dec_maxrE[NUM_DECODERS][MAX_SH_ORDER];               /* ambisonic decoding matrices with maxrE weighting ([0] for low-freq, [1] for high-freq); FLAT: nLoudspeakers x nSH */
+    float_complex* M_dec_cmplx_maxrE[NUM_DECODERS][MAX_SH_ORDER]; /* complex ambisonic decoding matrices with maxrE weighting ([0] for low-freq, [1] for high-freq); FLAT: nLoudspeakers x nSH */
+    float M_norm[NUM_DECODERS][MAX_SH_ORDER][2];                  /* norm coefficients to preserve omni energy/amplitude between different orders and decoders */
     
     /* sofa file info */
     char* sofa_filepath;                                      /* absolute/relevative file path for a sofa file */
@@ -113,7 +112,8 @@ typedef struct _ambi_dec
 {
     /* audio buffers + afSTFT time-frequency transform handle */
     float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
-    float_complex* SHframeTF[SH_ORDER][HYBRID_BANDS];         /* Frame per order; SH_ORDER x nBands x [ FLAT: (order+1)^2 x TIME_SLOTS ] */
+    //float_complex* SHframeTF[MAX_SH_ORDER][HYBRID_BANDS];     /* Frame per order; SH_ORDER x nBands x [ FLAT: (order+1)^2 x TIME_SLOTS ] */
+    float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     float_complex outputframeTF[HYBRID_BANDS][MAX_NUM_LOUDSPEAKERS][TIME_SLOTS];
     float_complex binframeTF[HYBRID_BANDS][NUM_EARS][TIME_SLOTS];
     complexVector** STFTInputFrameTF;
@@ -128,9 +128,14 @@ typedef struct _ambi_dec
     codecPars* pars;                                          /* codec parameters */
     
     /* internal variables */
-    int new_nLoudpkrs;                                        /* if new_nLoudpkrs != nLoudpkrs, afSTFT is reinitialised */
     int loudpkrs_nDims;                                       /* dimensionality of the current loudspeaker set-up */
+    int nSH;
+    
+    /* to still keep track of current config and preparing for new config */
+    int new_nLoudpkrs;                                        /* if new_nLoudpkrs != nLoudpkrs, afSTFT is reinitialised */
     int new_binauraliseLS;                                    /* if new_binauraliseLS != binauraliseLS, ambi_dec is reinitialised */
+    int new_nSH;
+    int new_masterOrder;
     
     /* flags */
     int recalc_hrtf_interpFLAG[MAX_NUM_LOUDSPEAKERS];         /* 0: no init required, 1: init required */
@@ -139,6 +144,7 @@ typedef struct _ambi_dec
     int reInitHRTFs;                                          /* 0: no init required, 1: init required, 2: init in progress */
     
     /* user parameters */
+    int masterOrder;
     int orderPerBand[HYBRID_BANDS];                           /* Ambisonic decoding order per frequency band 1..SH_ORDER */
     AMBI_DECODER_METHODS dec_method[NUM_DECODERS];            /* decoding methods for each decoder, see "AMBI_DECODER_METHODS" enum */
     int rE_WEIGHT[NUM_DECODERS];                              /* 0:disabled, 1: enable max_rE weight */

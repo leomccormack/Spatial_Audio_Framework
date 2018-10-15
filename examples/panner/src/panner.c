@@ -42,12 +42,23 @@ void panner_create
     panner_data* pData = (panner_data*)malloc(sizeof(panner_data));
     if (pData == NULL) { return;/*error*/ }
     *phPan = (void*)pData;
+    int t, ch;
     
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->STFTInputFrameTF = NULL;
-    pData->STFTOutputFrameTF = NULL;
-    pData->tempHopFrameTD = NULL;
+    pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_INPUTS, sizeof(complexVector));
+    pData->STFTOutputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_OUTPUTS, sizeof(complexVector));
+    for(t=0; t<TIME_SLOTS; t++) {
+        for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
+            pData->STFTInputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+            pData->STFTInputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        }
+        for(ch=0; ch< MAX_NUM_OUTPUTS; ch++) {
+            pData->STFTOutputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+            pData->STFTOutputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        }
+    }
+    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_INPUTS, MAX_NUM_OUTPUTS), HOP_SIZE, sizeof(float));
     
     /* flags and gain table */
     pData->reInitGainTables = 1;
@@ -75,25 +86,19 @@ void panner_destroy
         if(pData->hSTFT !=NULL)
             afSTFTfree(pData->hSTFT);
         for (t = 0; t<TIME_SLOTS; t++) {
-            if(pData->STFTInputFrameTF!=NULL){
-                for(ch=0; ch< pData->nSources; ch++) {
-                    free(pData->STFTInputFrameTF[t][ch].re);
-                    free(pData->STFTInputFrameTF[t][ch].im);
-                }
+            for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
+                free(pData->STFTInputFrameTF[t][ch].re);
+                free(pData->STFTInputFrameTF[t][ch].im);
             }
-            if(pData->STFTOutputFrameTF!=NULL){
-                for (ch = 0; ch< pData->new_nLoudpkrs; ch++) {
-                    free(pData->STFTOutputFrameTF[t][ch].re);
-                    free(pData->STFTOutputFrameTF[t][ch].im);
-                }
+        
+            for (ch = 0; ch< MAX_NUM_OUTPUTS; ch++) {
+                free(pData->STFTOutputFrameTF[t][ch].re);
+                free(pData->STFTOutputFrameTF[t][ch].im);
             }
         }
-        if(pData->STFTInputFrameTF!=NULL)
-            free2d((void**)pData->STFTInputFrameTF, TIME_SLOTS);
-        if(pData->STFTOutputFrameTF!=NULL)
-            free2d((void**)pData->STFTOutputFrameTF, TIME_SLOTS);
-        if(pData->tempHopFrameTD!=NULL)
-            free2d((void**)pData->tempHopFrameTD, MAX(pData->nSources, pData->new_nLoudpkrs));
+        free2d((void**)pData->STFTInputFrameTF, TIME_SLOTS);
+        free2d((void**)pData->STFTOutputFrameTF, TIME_SLOTS);
+        free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_INPUTS, MAX_NUM_OUTPUTS));
     
         if(pData->vbap_gtable!= NULL)
             free(pData->vbap_gtable);
@@ -232,7 +237,7 @@ void panner_process
             }
         }
         
-        /* scale by number of sources */
+        /* scale by sqrt(number of sources) */
         for (band = 0; band < HYBRID_BANDS; band++)
             for (ls = 0; ls < nLoudspeakers; ls++)
                 for (t = 0; t < TIME_SLOTS; t++)

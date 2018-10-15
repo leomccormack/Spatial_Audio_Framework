@@ -52,7 +52,7 @@ void powermap_create
     pData->pars = (codecPars*)malloc(sizeof(codecPars));
     codecPars* pars = pData->pars;
     pars->interp_dirs_deg = NULL;
-    for(n=0; n<SH_ORDER; n++){
+    for(n=0; n<MAX_SH_ORDER; n++){
         pars->Y_grid[n] = NULL;
         pars->Y_grid_cmplx[n] = NULL;
     }
@@ -71,8 +71,10 @@ void powermap_create
     pData->recalcPmap = 1;
     
     /* Default user parameters */
+    pData->masterOrder = pData->new_masterOrder = 1;
+    pData->nSH = pData->new_nSH = (pData->masterOrder+1)*(pData->masterOrder+1);
     for(band=0; band<HYBRID_BANDS; band++){
-        pData->analysisOrderPerBand[band] = SH_ORDER;
+        pData->analysisOrderPerBand[band] = pData->masterOrder;
         pData->pmapEQ[band] = 1.0f;
     }
     pData->covAvgCoeff = 0.0f;
@@ -114,7 +116,7 @@ void powermap_destroy
                 free(pData->pmap_grid[i]);
         if(pars->interp_dirs_deg!=NULL)
             free(pars->interp_dirs_deg);
-        for(i=0; i<SH_ORDER; i++){
+        for(i=0; i<MAX_SH_ORDER; i++){
             if(pars->Y_grid[i] !=NULL)
                 free(pars->Y_grid[i]);
             if(pars->Y_grid_cmplx[i]!=NULL)
@@ -154,7 +156,7 @@ void powermap_init
     }
     
     /* intialise parameters */
-    memset(pData->Cx, 0 , MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*HYBRID_BANDS*sizeof(float_complex));
+    memset(pData->Cx, 0 , MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*HYBRID_BANDS*sizeof(float_complex)); add this after reinitTFT too
     if(pData->prev_pmap!=NULL)
         memset(pData->prev_pmap, 0, pars->grid_nDirs*sizeof(float));
     pData->recalcPmap = 1;
@@ -176,20 +178,25 @@ void powermap_analysis
     codecPars* pars = pData->pars;
     int i, j, t, n, ch, sample, band, nSH_order, order_band, nSH_maxOrder, maxOrder;
     float C_grp_trace, covScale, pmapEQ_band;
-    int o[SH_ORDER+2];
+    int o[MAX_SH_ORDER+2];
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float_complex new_Cx[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     float_complex* C_grp;
     
     /* local parameters */
     int analysisOrderPerBand[HYBRID_BANDS];
-    int nSources;
+    int nSources, masterOrder, nSH;
     float covAvgCoeff, pmapAvgCoeff;
     float pmapEQ[HYBRID_BANDS];
     NORM_TYPES norm;
     POWERMAP_MODES pmap_mode;
     
     /* reinitialise if needed */
+    if(pData->reInitTFT==1){
+        pData->reInitTFT = 2;
+        powermap_initTFT(hPm);
+        pData->reInitTFT = 0;
+    }
     if(pData->reInitAna == 1){
         pData->reInitAna = 2;  /* indicate init in progress */
         pData->pmapReady = 0;  /* avoid trying to draw pmap during reinit */
@@ -208,11 +215,13 @@ void powermap_analysis
         covAvgCoeff = MIN(pData->covAvgCoeff, MAX_COV_AVG_COEFF);
         pmapAvgCoeff = pData->pmapAvgCoeff;
         pmap_mode = pData->pmap_mode;
+        masterOrder = pData->masterOrder;
+        nSH = pData->nSH;
         
         /* load intput time-domain data */
-        for (i = 0; i < MIN(MAX_NUM_SH_SIGNALS, nInputs); i++)
+        for (i = 0; i < MIN(nSH, nInputs); i++)
             memcpy(pData->SHframeTD[i], inputs[i], FRAME_SIZE*sizeof(float));
-        for (; i < MAX_NUM_SH_SIGNALS; i++)
+        for (; i < nSH; i++)
             memset(pData->SHframeTD[i], 0, FRAME_SIZE*sizeof(float));
         
         /* account for input normalisation scheme */
@@ -220,8 +229,8 @@ void powermap_analysis
             case NORM_N3D:  /* already in N3D, do nothing */
                 break;
             case NORM_SN3D: /* convert to N3D */
-                for(n=0; n<SH_ORDER+2; n++){  o[n] = n*n;  };
-                for (n = 0; n<SH_ORDER+1; n++)
+                for(n=0; n<masterOrder+2; n++){  o[n] = n*n;  };
+                for (n = 0; n<masterOrder+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->SHframeTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
@@ -230,32 +239,32 @@ void powermap_analysis
         
         /* apply the time-frequency transform */
         for (t = 0; t < TIME_SLOTS; t++) {
-            for (ch = 0; ch < MAX_NUM_SH_SIGNALS; ch++)
+            for (ch = 0; ch < nSH; ch++)
                 for (sample = 0; sample < HOP_SIZE; sample++)
                     pData->tempHopFrameTD[ch][sample] = pData->SHframeTD[ch][sample + t*HOP_SIZE];
             afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF[t]);
         }
         for (band = 0; band < HYBRID_BANDS; band++)
-            for (ch = 0; ch < MAX_NUM_SH_SIGNALS; ch++)
+            for (ch = 0; ch < nSH; ch++)
                 for (t = 0; t < TIME_SLOTS; t++)
                     pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
 
         /* Update covarience matrix per band */
-        covScale = 1.0f/(float)(MAX_NUM_SH_SIGNALS);
+        covScale = 1.0f/(float)(nSH);
         for(band=0; band<HYBRID_BANDS; band++){
-            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, MAX_NUM_SH_SIGNALS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, &calpha,
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, TIME_SLOTS, &calpha,
                         pData->SHframeTF[band], TIME_SLOTS,
                         pData->SHframeTF[band], TIME_SLOTS, &cbeta,
                         new_Cx, MAX_NUM_SH_SIGNALS);
 
             /* scale with nSH */
-            for(i=0; i<MAX_NUM_SH_SIGNALS; i++)
-                for(j=0; j<MAX_NUM_SH_SIGNALS; j++)
+            for(i=0; i<nSH; i++)
+                for(j=0; j<nSH; j++)
                     new_Cx[i][j] = crmulf(new_Cx[i][j], covScale);
 
             /* average over time */
-            for(i=0; i<MAX_NUM_SH_SIGNALS; i++)
-                for(j=0; j<MAX_NUM_SH_SIGNALS; j++)
+            for(i=0; i<nSH; i++)
+                for(j=0; j<nSH; j++)
                     pData->Cx[band][i][j] = ccaddf( crmulf(new_Cx[i][j], 1.0f-covAvgCoeff), crmulf(pData->Cx[band][i][j], covAvgCoeff));
         }
         
@@ -267,13 +276,13 @@ void powermap_analysis
             /* determine maximum analysis order */
             maxOrder = 1;
             for(i=0; i<HYBRID_BANDS; i++)
-                maxOrder = MAX(maxOrder, MIN(analysisOrderPerBand[i], SH_ORDER));
+                maxOrder = MAX(maxOrder, MIN(analysisOrderPerBand[i], MAX_SH_ORDER));
             nSH_maxOrder = (maxOrder+1)*(maxOrder+1);
 
             /* group covarience matrices */
             C_grp = calloc(MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS, sizeof(float_complex));
             for (band=0; band<HYBRID_BANDS; band++){
-                order_band = MAX(MIN(pData->analysisOrderPerBand[band], SH_ORDER),1);
+                order_band = MAX(MIN(pData->analysisOrderPerBand[band], MAX_SH_ORDER),1);
                 nSH_order = (order_band+1)*(order_band+1);
                 pmapEQ_band = MIN(MAX(pmapEQ[band], 0.0f), 2.0f);
                 for(i=0; i<nSH_order; i++)

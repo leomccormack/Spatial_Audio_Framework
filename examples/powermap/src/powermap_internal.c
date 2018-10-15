@@ -101,6 +101,29 @@ void powermap_initAna(void* const hPm)
     free(grid_y_axis);
 }
 
+void powermap_initTFT
+(
+    void* const hPm
+)
+{
+    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    
+    if(pData->hSTFT==NULL){
+        if(pData->new_binauraliseLS)
+            afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, NUM_EARS, 0, 1);
+        else
+            afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, pData->new_nLoudpkrs, 0, 1);
+    }
+    else{
+        if(pData->new_binauraliseLS)
+            afSTFTchannelChange(pData->hSTFT, pData->new_nSH, NUM_EARS);
+        else
+            afSTFTchannelChange(pData->hSTFT, pData->new_nSH, pData->new_nLoudpkrs);
+    }
+    pData->binauraliseLS = pData->new_binauraliseLS;
+    pData->nLoudpkrs = pData->new_nLoudpkrs;
+    pData->nSH = pData->new_nSH;
+}
 
 
 

@@ -61,8 +61,8 @@ void binauraliser_create
     pData->useDefaultHRIRsFLAG=1;
     pData->hrirs = NULL;
     pData->hrir_dirs_deg = NULL;
-    pData->sofa_filepath = "/Users/mccorml1/Documents/SourceTree/AkisPlugins/database/AALTO/leo_aalto2016.sofa";
-    //pData->sofa_filename = "/Users/mccorml1/Documents/SourceTree/AkisPlugins/database/CIPIC/subject_003.sofa";
+    pData->sofa_filepath = NULL;
+    
     /* vbap */
     pData->hrtf_vbap_gtableIdx = NULL;
     pData->hrtf_vbap_gtableComp = NULL;
@@ -106,7 +106,7 @@ void binauraliser_destroy
             afSTFTfree(pData->hSTFT);
         for (t = 0; t<TIME_SLOTS; t++) {
             if(pData->STFTInputFrameTF!=NULL){
-                for(ch=0; ch< pData->nSources; ch++) {
+                for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
                     free(pData->STFTInputFrameTF[t][ch].re);
                     free(pData->STFTInputFrameTF[t][ch].im);
                 }
@@ -121,7 +121,7 @@ void binauraliser_destroy
         if(pData->STFTOutputFrameTF!=NULL)
             free2d((void**)pData->STFTOutputFrameTF, TIME_SLOTS);
         if(pData->tempHopFrameTD!=NULL)
-            free2d((void**)pData->tempHopFrameTD, MAX(pData->nSources, NUM_EARS));
+            free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_INPUTS, NUM_EARS));
         
         if(pData->hrtf_vbap_gtableComp!= NULL)
             free(pData->hrtf_vbap_gtableComp);

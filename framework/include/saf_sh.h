@@ -332,6 +332,15 @@ void sphModalCoeffs(/* Input arguments */
                     /* Output arguments */
                     double_complex* b_N);         /* modal coefficients per kr and 0:order; FLAT: nBands x (order+1) */
 
+/* calculates the modal coefficients for a rigid spherical scatterer */
+void sphScattererModalCoeffs(/* Input arguments */
+                             int order,           /* max order (highest is ~30 given numerical error) */
+                             double* kr,          /* wavenumber*sensor_radius; nBands x 1 */
+                             double* kR,          /* wavenumber*scatterer_radius; nBands x 1 */
+                             int nBands,          /* number of frequency bands/bins */
+                             /* Output arguments */
+                             double_complex* b_N);/* modal coefficients per kr and 0:order; FLAT: nBands x (order+1) */
+
 /* simulates a cylindrical microphone array, returning the transfer functions for each (plane wave) source direction
  * on the surface of the cylinder. */
 void simulateCylArray(/* Input arguments */

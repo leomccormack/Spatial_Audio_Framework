@@ -46,8 +46,7 @@ extern "C" {
 /***************/
 /* Definitions */
 /***************/
-    
-#define ENABLE_FADE_IN_OUT                                  /* (slightly) smoother transitions between HRIR switches */
+     
 #define USE_NEAREST_HRIRS (1)                               /* 1: find nearest HRIRs to t-design dirs, 0: use triangular interpolation */
     
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */

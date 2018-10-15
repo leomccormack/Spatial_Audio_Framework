@@ -53,7 +53,8 @@ extern "C" {
 /* Definitions */
 /***************/
     
-#define NUM_SH_SIGNALS ( (SH_ORDER + 1)*(SH_ORDER + 1)  )   /* (L+1)^2 */
+#define MAX_SH_ORDER ( 7 )
+#define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1) ) /* (L+1)^2 */
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
@@ -67,8 +68,7 @@ extern "C" {
 typedef struct _arrayPars {
     int Q, newQ;
     float r;
-    float R;
-    float admittance;
+    float R; 
     ARRAY_TYPES arrayType;
     WEIGHT_TYPES weightType;
     float sensorCoords_rad[MAX_NUM_SENSORS][2];
@@ -80,22 +80,19 @@ typedef struct _array2sh
 {
     /* audio buffers */
     float inputFrameTD[MAX_NUM_SENSORS][FRAME_SIZE];
-    float SHframeTD[NUM_SH_SIGNALS][FRAME_SIZE];
+    float SHframeTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float_complex inputframeTF[HYBRID_BANDS][MAX_NUM_SENSORS][TIME_SLOTS];
-    float_complex SHframeTF[HYBRID_BANDS][NUM_SH_SIGNALS][TIME_SLOTS];
+    float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     complexVector** STFTInputFrameTF;
     complexVector** STFTOutputFrameTF;
     float** tempHopFrameTD;
     
     /* intermediates */
-    double_complex bN_modal[HYBRID_BANDS][SH_ORDER + 1];
-    double_complex bN[HYBRID_BANDS][SH_ORDER + 1];
-    double_complex bN_inv[HYBRID_BANDS][SH_ORDER + 1];
-    double_complex bN_inv_R[HYBRID_BANDS][NUM_SH_SIGNALS];
-    double Y[NUM_SH_SIGNALS][MAX_NUM_SENSORS];
-    double YYT[NUM_SH_SIGNALS][NUM_SH_SIGNALS];
-    float_complex Y_cmplx[NUM_SH_SIGNALS][MAX_NUM_SENSORS];
-    float_complex W[HYBRID_BANDS][NUM_SH_SIGNALS][MAX_NUM_SENSORS];
+    double_complex bN_modal[HYBRID_BANDS][MAX_SH_ORDER + 1];
+    double_complex* bN;
+    double_complex bN_inv[HYBRID_BANDS][MAX_SH_ORDER + 1];
+    double_complex bN_inv_R[HYBRID_BANDS][MAX_NUM_SH_SIGNALS]; 
+    float_complex W[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
     
     /* for displaying the bNs */
     float** bN_modal_dB;
@@ -109,7 +106,17 @@ typedef struct _array2sh
     void* hSTFT;
     void* arraySpecs;
     
+    /* internal parameters */
+    int new_order;
+    int nSH, new_nSH;
+    
+    /* flags */
+    int reinitSHTmatrixFLAG;
+    int reinitTFTFLAG;
+    int recalcEvalFLAG;
+    
     /* additional user parameters that are not included in the array presets */
+    int order;
     PRESETS preset;
     REG_TYPES regType;
     float regPar;
@@ -119,10 +126,6 @@ typedef struct _array2sh
     float gain_dB;
     float maxFreq; 
     
-    int reinitSHTmatrixFLAG;
-    int reinitTFTFLAG;
-    int recalcEvalFLAG;
-
 } array2sh_data;
      
 
@@ -144,6 +147,7 @@ void array2sh_destroyArray(void ** const hPars);
     
 void array2sh_initArray(void * const hPars,
                         PRESETS preset,
+                        int* arrayOrder,
                         int firstInitFLAG);
 
 #ifdef __cplusplus

@@ -68,6 +68,17 @@ extern "C" {
 #define ENABLE_T_DESIGN_48_PRESET
 #define ENABLE_T_DESIGN_60_PRESET
     
+typedef enum _MASTER_ORDERS{
+    MASTER_ORDER_FIRST = 1,
+    MASTER_ORDER_SECOND,
+    MASTER_ORDER_THIRD,
+    MASTER_ORDER_FOURTH,
+    MASTER_ORDER_FIFTH,
+    MASTER_ORDER_SIXTH,
+    MASTER_ORDER_SEVENTH
+    
+}MASTER_ORDERS;
+    
 typedef enum _MIC_PRESETS{
     MIC_PRESET_IDEAL = 1
 #ifdef ENABLE_ZYLIA_MIC_PRESET
@@ -186,6 +197,8 @@ void ambi_dec_process(void* const hAmbi,                /* ambi_dec handle */
     
 void ambi_dec_refreshSettings(void* const hAmbi);
     
+void ambi_dec_setMasterDecOrder(void* const hAmbi,  int newValue);
+    
 void ambi_dec_setDecOrder(void* const hAmbi,  int newValue, int bandIdx);
 
 void ambi_dec_setDecOrderAllBands(void* const hAmbi,  int newValue);
@@ -223,6 +236,8 @@ void ambi_dec_setTransitionFreq(void* const hAmbi, float newValue);
 /* Get Functions */
 /*****************/
     
+int ambi_dec_getMasterDecOrder(void* const hAmbi);
+    
 int ambi_dec_getDecOrder(void* const hAmbi, int bandIdx);
     
 int ambi_dec_getDecOrderAllBands(void* const hAmbi);
@@ -242,7 +257,7 @@ int ambi_dec_getNumLoudspeakers(void* const hAmbi);
 
 int ambi_dec_getMaxNumLoudspeakers(void);
     
-int  ambi_dec_getNSHrequired(void);
+int  ambi_dec_getNSHrequired(void* const hAmbi);
 
 float ambi_dec_getSourceAzi_deg(void* const hAmbi, int index);
 

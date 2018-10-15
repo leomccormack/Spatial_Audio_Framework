@@ -47,10 +47,12 @@ void ambi_dec_initCodec
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     codecPars* pars = pData->pars;
-    int i, d, j, n, ng, nGrid_dirs, nSH_order;
+    int i, d, j, n, ng, nGrid_dirs, masterOrder, nSH_order, max_nSH;
     float* grid_dirs_deg, *Y, *M_dec_tmp, *g, *a, *e, *a_n;
-    float a_avg[SH_ORDER], e_avg[SH_ORDER];
+    float a_avg[MAX_SH_ORDER], e_avg[MAX_SH_ORDER];
     
+    masterOrder = pData->new_masterOrder;
+    max_nSH = (masterOrder+1)*(masterOrder+1);
     M_dec_tmp = NULL;
     nGrid_dirs = 480; /* Minimum t-design of degree 30, has 480 points */
     g = malloc(pData->nLoudpkrs*sizeof(float));
@@ -59,10 +61,10 @@ void ambi_dec_initCodec
     
     /* calculate loudspeaker decoding matrices */
     for( d=0; d<NUM_DECODERS; d++){
-        getAmbiDecoder((float*)pData->loudpkrs_dirs_deg, pData->nLoudpkrs, pData->dec_method[d], SH_ORDER, &(M_dec_tmp));
+        getAmbiDecoder((float*)pData->loudpkrs_dirs_deg, pData->nLoudpkrs, pData->dec_method[d], masterOrder, &(M_dec_tmp));
         
-        /* diffuse-field EQ for orders 1..SH_ORDER */
-        for( n=1; n<=SH_ORDER; n++){
+        /* diffuse-field EQ for orders 1..masterOrder */
+        for( n=1; n<=masterOrder; n++){
             /* truncate M_dec for each order */
             nSH_order = (n+1)*(n+1);
             free(pars->M_dec[d][n-1]); 
@@ -71,7 +73,7 @@ void ambi_dec_initCodec
             pars->M_dec_cmplx[d][n-1] = malloc(pData->nLoudpkrs * nSH_order * sizeof(float_complex));
             for(i=0; i<pData->nLoudpkrs; i++){
                 for(j=0; j<nSH_order; j++){
-                    pars->M_dec[d][n-1][i*nSH_order+j] = M_dec_tmp[i*MAX_NUM_SH_SIGNALS +j]; /* for applying in the time domain, and... */
+                    pars->M_dec[d][n-1][i*nSH_order+j] = M_dec_tmp[i*max_nSH +j]; /* for applying in the time domain, and... */
                     pars->M_dec_cmplx[d][n-1][i*nSH_order+j] = cmplxf(pars->M_dec[d][n-1][i*nSH_order+j], 0.0f); /* for the time-frequency domain */
                 }
             }
@@ -122,6 +124,10 @@ void ambi_dec_initCodec
         free(M_dec_tmp);
         M_dec_tmp = NULL;
     }
+    
+    /* update order */
+    pData->masterOrder = pData->new_masterOrder;
+    
     free(g);
     free(a);
     free(e);
@@ -227,61 +233,22 @@ void ambi_dec_initTFT
 )
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    int t, ch;
 
-    /* free afSTFT + buffers, if already allocated */
-    if (pData->hSTFT != NULL){
-        afSTFTfree(pData->hSTFT);
-        pData->hSTFT = NULL;
-        if(pData->binauraliseLS){
-            for (t = 0; t<TIME_SLOTS; t++) {
-                for (ch = 0; ch< NUM_EARS; ch++) {
-                    free(pData->STFTOutputFrameTF[t][ch].re);
-                    free(pData->STFTOutputFrameTF[t][ch].im);
-                }
-            }
-            free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_SH_SIGNALS, NUM_EARS));
-        }
-        else{
-            for (t = 0; t<TIME_SLOTS; t++) {
-                for (ch = 0; ch< pData->nLoudpkrs; ch++) {
-                    free(pData->STFTOutputFrameTF[t][ch].re);
-                    free(pData->STFTOutputFrameTF[t][ch].im);
-                }
-            }
-            free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_SH_SIGNALS, pData->nLoudpkrs));
-        }
-        free2d((void**)pData->STFTOutputFrameTF, TIME_SLOTS);
+    if(pData->hSTFT==NULL){
+        if(pData->new_binauraliseLS)
+            afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, NUM_EARS, 0, 1);
+        else
+            afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, pData->new_nLoudpkrs, 0, 1);
     }
-    
-    /* reallocate afSTFT + buffers */
-    if (pData->hSTFT == NULL){
-        if(pData->new_binauraliseLS){
-            afSTFTinit(&(pData->hSTFT), HOP_SIZE, MAX_NUM_SH_SIGNALS, NUM_EARS, 0, 1);
-            pData->STFTOutputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, NUM_EARS, sizeof(complexVector));
-            for(t=0; t<TIME_SLOTS; t++) {
-                for(ch=0; ch< NUM_EARS; ch++) {
-                    pData->STFTOutputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-                    pData->STFTOutputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-                }
-            }
-            pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, NUM_EARS), HOP_SIZE, sizeof(float));
-            pData->nLoudpkrs = pData->new_nLoudpkrs;
-        }
-        else{
-            afSTFTinit(&(pData->hSTFT), HOP_SIZE, MAX_NUM_SH_SIGNALS, pData->new_nLoudpkrs, 0, 1);
-            pData->STFTOutputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, pData->new_nLoudpkrs, sizeof(complexVector));
-            for(t=0; t<TIME_SLOTS; t++) {
-                for(ch=0; ch< pData->new_nLoudpkrs; ch++) {
-                    pData->STFTOutputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-                    pData->STFTOutputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-                }
-            }
-            pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, pData->new_nLoudpkrs), HOP_SIZE, sizeof(float));
-            pData->nLoudpkrs = pData->new_nLoudpkrs;
-        }
-        pData->binauraliseLS = pData->new_binauraliseLS;
-    }
+    else{
+        if(pData->new_binauraliseLS)
+            afSTFTchannelChange(pData->hSTFT, pData->new_nSH, NUM_EARS);
+        else
+            afSTFTchannelChange(pData->hSTFT, pData->new_nSH, pData->new_nLoudpkrs);
+    } 
+    pData->binauraliseLS = pData->new_binauraliseLS;
+    pData->nLoudpkrs = pData->new_nLoudpkrs;
+    pData->nSH = pData->new_nSH;
 }
 
 void ambi_dec_interpHRTFs

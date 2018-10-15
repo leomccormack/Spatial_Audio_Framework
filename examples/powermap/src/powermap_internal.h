@@ -46,10 +46,11 @@ extern "C" {
 #define M_PI ( 3.14159265359f )
 #endif
     
+#define MAX_SH_ORDER ( 7 )
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* Processing relies on fdHop = 16 */
-#define MAX_NUM_SH_SIGNALS ( (SH_ORDER+1)*(SH_ORDER+1) )
+#define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER+1)*(MAX_SH_ORDER+1) )
 #define NUM_DISP_SLOTS ( 2 )
 #define MAX_COV_AVG_COEFF ( 0.45f )                         /*  */
     
@@ -67,8 +68,8 @@ typedef struct _codecPars
     int interp_nDirs;
     int interp_nTri;
     
-    float* Y_grid[SH_ORDER];                 /* MAX_NUM_SH_SIGNALS x grid_nDirs */
-    float_complex* Y_grid_cmplx[SH_ORDER];   /* MAX_NUM_SH_SIGNALS x grid_nDirs */
+    float* Y_grid[MAX_SH_ORDER];                 /* MAX_NUM_SH_SIGNALS x grid_nDirs */
+    float_complex* Y_grid_cmplx[MAX_SH_ORDER];   /* MAX_NUM_SH_SIGNALS x grid_nDirs */
     
 }codecPars;
     
@@ -86,6 +87,9 @@ typedef struct _powermap
     /* internal */
     float_complex Cx[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];     /* cov matrices */ 
     int reInitAna; /* 0: no init required, 1: init required, 2: init in progress */
+    int reInitTFT; /* 0: no init required, 1: init required, 2: init in progress */
+    int new_masterOrder;
+    int nSH, new_nSH;
     int dispWidth;
     
     /* ana configuration */
@@ -102,6 +106,7 @@ typedef struct _powermap
     int pmapReady;    /* 0: powermap not started yet, 1: powermap is ready for plotting*/
     
     /* User parameters */
+    int masterOrder;
     int analysisOrderPerBand[HYBRID_BANDS];
     float pmapEQ[HYBRID_BANDS]; 
     HFOV_OPTIONS HFOVoption; 
@@ -123,6 +128,8 @@ typedef struct _powermap
 /* generates spherical harmonic steering vectors and interpolation tables etc. */
 void powermap_initAna(void* const hPm);           /* handle for powermap */
 
+/* Initialise the filterbank used by Powermap */
+void powermap_initTFT(void* const hPm);           /* powermap handle */
     
 #ifdef __cplusplus
 }

@@ -64,11 +64,11 @@ static unsigned long factorial(unsigned long f)
  * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
 static void SPHI(int N, double X, int *NM, double *SI, double *DI)
 {
-    int K, M;
+    int K, M, i;
     double CS, F, F0, F1, SI0;
     
     *NM=N;
-    if (fabs(X) < 1e-100) {
+    if (fabs(X) < 1e-20) {
         for (K=0; K<=N; K++) {
             SI[K]=0.0;
             DI[K]=0.0;
@@ -86,6 +86,14 @@ static void SPHI(int N, double X, int *NM, double *SI, double *DI)
             *NM=M;
         else
             M=MSTA2(X,N,15);
+        /* I had to add this while loop to avoid NaNs and sacrifice some precision, but only when needed */
+        i=0;
+        while (M < 0) {
+            M=MSTA2(X,N,14-i);
+            i++;
+            if(i==14)
+                M=0;
+        }
         F0=0.0;
         F1=1.0-100;
         for (K=M; K>-1; K--) {
@@ -111,7 +119,7 @@ static void SPHK(int N, double X, int *NM, double *SK, double *DK)
     double F, F0, F1;
     
     *NM=N;
-    if (X < 1e-60) {
+    if (X < 1e-20) {
         for (K=0; K<=N; K++) {
             SK[K]=1.0e+300;
             DK[K]=-1.0e+300;
@@ -140,11 +148,11 @@ e20:    *NM=K-1;
  * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
 static void SPHJ(int N, double X, int *NM, double *SJ, double *DJ)
 {
-    int K, M;
+    int K, M, i;
     double CS, F, F0, F1, SA, SB;
     
     *NM=N;
-    if (fabs(X) < 1e-100) {
+    if (fabs(X) < 1e-80) {
         for (K=0; K<=N; K++) {
             SJ[K]=0.0;
             DJ[K]=0.0;
@@ -163,6 +171,15 @@ static void SPHJ(int N, double X, int *NM, double *SJ, double *DJ)
             *NM=M;
         else
             M=MSTA2(X,N,15);
+        /* I had to add this while loop to avoid NaNs and sacrifice some precision, but only when needed */
+        i=0;
+        while (M < 0) {
+            M=MSTA2(X,N,14-i);
+            i++;
+            if(i==14)
+                M=0;
+        }
+        //assert(M>0);
         F0=0.0;
         F1=1.0-100;
         for (K=M; K>-1; K--) {
@@ -173,7 +190,7 @@ static void SPHJ(int N, double X, int *NM, double *SJ, double *DJ)
         }
         if (fabs(SA) > fabs(SB))  CS=SA/F;
         if (fabs(SA) <= fabs(SB)) CS=SB/F0;
-        for (K=0; K<=*NM; K++)  SJ[K] *= CS;
+        for (K=0; K<=*NM; K++) SJ[K] *= CS;
     }
     DJ[0]=(cos(X)-sin(X)/X)/X;
     for (K=1; K<=*NM; K++)
@@ -255,7 +272,7 @@ static void SPHY(int N, double X, int *NM, double *SY, double *DY)
     double F, F0, F1;
     
     *NM=N;
-    if (X < 1e-60) {
+    if (X < 1e-20) {
         for (K=0; K<=N; K++) {
             SY[K]=-1.0e+300;
             DY[K]=1e+300;
@@ -1142,7 +1159,7 @@ void bessel_Jn /* untested */
                 memset(&dJ_n[0], 0, (N+1)*sizeof(double));
         }
         else{
-            for(n=0; n<N; n++){
+            for(n=0; n<N+1; n++){
                 if(J_n!=NULL)
                     J_n[i*(N+1)+n] = Jn(n, z[i]);
                 if(n==0 && dJ_n!=NULL)
@@ -1173,7 +1190,7 @@ void bessel_Yn /* untested */
                 memset(&dY_n[0], 0, (N+1)*sizeof(double));
         }
         else{
-            for(n=0; n<N; n++){
+            for(n=0; n<N+1; n++){
                 if(Y_n!=NULL)
                     Y_n[i*(N+1)+n] = Yn(n, z[i]);
                 if(n==0 && dY_n!=NULL)
@@ -1204,7 +1221,7 @@ void hankel_Hn1 /* untested */
                 memset(&dH_n1[0], 0, (N+1)*sizeof(double_complex));
         }
         else{
-            for(n=0; n<N; n++){
+            for(n=0; n<N+1; n++){
                 if(H_n1!=NULL)
                     H_n1[i*(N+1)+n] = cmplx(Jn(n, z[i]), Yn(n, z[i]));
                 if(dH_n1!=NULL)
@@ -1233,7 +1250,7 @@ void hankel_Hn2 /* untested */
                 memset(&dH_n2[0], 0, (N+1)*sizeof(double_complex));
         }
         else{
-            for(n=0; n<N; n++){
+            for(n=0; n<N+1; n++){
                 if(H_n2!=NULL)
                     H_n2[i*(N+1)+n] = cmplx(Jn(n, z[i]), -Yn(n, z[i]));
                 if(n==0 && dH_n2!=NULL)
@@ -1276,7 +1293,7 @@ void bessel_jn
         else{
             SPHJ(N, z[i], &NM, j_n_tmp, dj_n_tmp);
             *maxN = MIN(NM, *maxN );
-            for(n=0; n<NM; n++){
+            for(n=0; n<NM+1; n++){
                 if(j_n!=NULL)
                     j_n [i*(N+1)+n] = j_n_tmp[n];
                 if(dj_n!=NULL)
@@ -1327,7 +1344,7 @@ void bessel_in /* untested */
         else{
             SPHI(N, z[i], &NM, i_n_tmp, di_n_tmp);
             *maxN = MIN(NM, *maxN );
-            for(n=0; n<NM; n++){
+            for(n=0; n<NM+1; n++){
                 if(i_n!=NULL)
                     i_n [i*(N+1)+n] = i_n_tmp[n];
                 if(di_n!=NULL)
@@ -1373,7 +1390,7 @@ void bessel_yn
         else{
             SPHY(N, z[i], &NM, y_n_tmp, dy_n_tmp);
             *maxN = MIN(NM, *maxN );
-            for(n=0; n<NM; n++){
+            for(n=0; n<NM+1; n++){
                 if(y_n!=NULL)
                     y_n [i*(N+1)+n] = y_n_tmp[n];
                 if(dy_n!=NULL)
@@ -1419,7 +1436,7 @@ void bessel_kn /* untested */
         else{
             SPHK(N, z[i], &NM, k_n_tmp, dk_n_tmp);
             *maxN = MIN(NM, *maxN );
-            for(n=0; n<NM; n++){
+            for(n=0; n<NM+1; n++){
                 if(k_n!=NULL)
                     k_n [i*(N+1)+n] = k_n_tmp[n];
                 if(dk_n!=NULL)
@@ -1471,7 +1488,7 @@ void hankel_hn1
             *maxN = MIN(NM1, *maxN );
             SPHY(N, z[i], &NM2, y_n_tmp, dy_n_tmp);
             *maxN = MIN(NM2, *maxN );
-            for(n=0; n<MIN(NM1,NM2); n++){
+            for(n=0; n<MIN(NM1,NM2)+1; n++){
                 if(h_n1!=NULL)
                     h_n1 [i*(N+1)+n] = cmplx(j_n_tmp[n], y_n_tmp[n]);
                 if(dh_n1!=NULL)
@@ -1525,7 +1542,7 @@ void hankel_hn2
             *maxN = MIN(NM1, *maxN );
             SPHY(N, z[i], &NM2, y_n_tmp, dy_n_tmp);
             *maxN = MIN(NM2, *maxN );
-            for(n=0; n<MIN(NM1,NM2); n++){
+            for(n=0; n<MIN(NM1,NM2)+1; n++){
                 if(h_n2!=NULL)
                     h_n2 [i*(N+1)+n] = cmplx(j_n_tmp[n], -y_n_tmp[n]);
                 if(dh_n2!=NULL)
@@ -1571,7 +1588,7 @@ void cylModalCoeffs
             bessel_Jn(order, kr, nBands, Jn, NULL);
             
             /* modal coefficients for open spherical array (omni sensors): 1i^n * jn; */
-            for(n=0; n<order; n++)
+            for(n=0; n<order+1; n++)
                 for(i=0; i<nBands; i++)
                     b_N[i*(order+1)+n] = crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), Jn[i*(order+1)+n]);
             
@@ -1589,7 +1606,7 @@ void cylModalCoeffs
             
             /* modal coefficients for rigid spherical array: 1i^n * (jn-(jnprime./hn2prime).*hn2); */
             for(i=0; i<nBands; i++){
-                for(n=0; n<order; n++){
+                for(n=0; n<order+1; n++){
                     if(n==0 && kr[i]<=1e-20)
                         b_N[i*(order+1)+n] = cmplx(1.0, 0.0);
                     else if(kr[i] <= 1e-20)
@@ -1636,7 +1653,7 @@ void sphModalCoeffs
             bessel_jn(order, kr, nBands, &maxN, jn, NULL);
             
             /* modal coefficients for open spherical array (omni sensors): 4*pi*1i^n * jn; */
-            for(n=0; n<maxN; n++)
+            for(n=0; n<maxN+1; n++)
                 for(i=0; i<nBands; i++)
                     b_N[i*(order+1)+n] = crmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 4.0*M_PI), jn[i*(order+1)+n]);
             
@@ -1657,7 +1674,7 @@ void sphModalCoeffs
             
             /* modal coefficients for rigid spherical array: 4*pi*1i^n * (jn-(jnprime./hn2prime).*hn2); */
             for(i=0; i<nBands; i++){
-                for(n=0; n<maxN; n++){
+                for(n=0; n<maxN+1; n++){
                     if(n==0 && kr[i]<=1e-20)
                         b_N[i*(order+1)+n] = cmplx(4.0*M_PI, 0.0);
                     else if(kr[i] <= 1e-20)
@@ -1682,7 +1699,7 @@ void sphModalCoeffs
             bessel_jn(order, kr, nBands, &maxN, jn, jnprime);
             
             /* modal coefficients for open spherical array (directional sensors): 4*pi*1i^n * (dirCoeff*jn - 1i*(1-dirCoeff)*jnprime); */
-            for(n=0; n<maxN; n++)
+            for(n=0; n<maxN+1; n++)
                 for(i=0; i<nBands; i++)
                     b_N[i*(order+1)+n] = ccmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 4.0*M_PI), ccsub(cmplx(dirCoeff*jn[i*(order+1)+n], 0.0),
                                          cmplx(0.0, (1.0-dirCoeff)*jnprime[i*(order+1)+n]))  );
@@ -1691,6 +1708,50 @@ void sphModalCoeffs
             free(jnprime);
             break;
     }
+}
+
+void sphScattererModalCoeffs
+(
+    int order,
+    double* kr,
+    double* kR,
+    int nBands,
+    double_complex* b_N
+)
+{
+    int i, n, maxN, maxN_tmp;
+    double* jn, *jnprime;
+    double_complex* hn2, *hn2prime;
+    
+    /* compute spherical Bessels/Hankels and their derivatives */
+    jn = malloc(nBands*(order+1)*sizeof(double));
+    jnprime = malloc(nBands*(order+1)*sizeof(double));
+    hn2 = malloc(nBands*(order+1)*sizeof(double_complex));
+    hn2prime = malloc(nBands*(order+1)*sizeof(double_complex));
+    maxN = 1e8;
+    bessel_jn(order, kr, nBands, &maxN_tmp, jn, NULL);
+    maxN = MIN(maxN_tmp, maxN);
+    bessel_jn(order, kR, nBands, &maxN_tmp, NULL, jnprime);
+    maxN = MIN(maxN_tmp, maxN);
+    hankel_hn2(order, kr, nBands, &maxN_tmp, hn2, NULL);
+    maxN = MIN(maxN_tmp, maxN);
+    hankel_hn2(order, kR, nBands, &maxN_tmp, NULL, hn2prime);
+    maxN = MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
+    
+    /* modal coefficients for rigid spherical scatterer: (2*n+1) * 1i^n * (jn-(jnprime./hnprime).*hn); */
+    for(i=0; i<nBands; i++){
+        for(n=0; n<maxN+1; n++){
+            b_N[i*(order+1)+n] = ccmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 2.0*(float)n+1.0),
+                                       ( ccsub(cmplx(jn[i*(order+1)+n], 0.0), ccmul(ccdiv(cmplx(jnprime[i*(order+1)+n],0.0),
+                                     hn2prime[i*(order+1)+n]), hn2[i*(order+1)+n]))));
+            b_N[i*(order+1)+n] = crmul(b_N[i*(order+1)+n], 4.0*M_PI);
+        }
+    }
+    
+    free(jn);
+    free(jnprime);
+    free(hn2);
+    free(hn2prime);
 }
 
 void simulateCylArray /*untested*/

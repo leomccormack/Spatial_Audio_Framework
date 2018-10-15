@@ -38,28 +38,24 @@
 extern "C" {
 #endif
     
-/* specify the maximum possible spherical harmonic order for each array preset: */
-#if SH_ORDER <= 1
-  #define ENABLE_AALTO_HYDROPHONE_PRESET
-  #define ENABLE_SENNHEISER_AMBEO_PRESET
-  #define ENABLE_CORE_SOUND_TETRAMIC_PRESET
-  #define ENABLE_SOUND_FIELD_SPS200_PRESET
-#endif
-#if SH_ORDER <= 2
-#endif
-#if SH_ORDER <= 3
-  #define ENABLE_ZYLIA_1D_PRESET
-#endif
-#if SH_ORDER <= 4
-  #define ENABLE_EIGENMIKE32_PRESET
-#endif
-#if SH_ORDER <= 5
-#endif
-#if SH_ORDER <= 6
-  #define ENABLE_DTU_MIC_PRESET
-#endif
-#if SH_ORDER <= 7
-#endif
+#define ENABLE_AALTO_HYDROPHONE_PRESET
+#define ENABLE_SENNHEISER_AMBEO_PRESET
+#define ENABLE_CORE_SOUND_TETRAMIC_PRESET
+#define ENABLE_SOUND_FIELD_SPS200_PRESET
+#define ENABLE_ZYLIA_1D_PRESET
+#define ENABLE_EIGENMIKE32_PRESET
+#define ENABLE_DTU_MIC_PRESET
+    
+typedef enum _ENCODING_ORDERS{
+    ENCODING_ORDER_FIRST = 1,
+    ENCODING_ORDER_SECOND,
+    ENCODING_ORDER_THIRD,
+    ENCODING_ORDER_FOURTH,
+    ENCODING_ORDER_FIFTH,
+    ENCODING_ORDER_SIXTH,
+    ENCODING_ORDER_SEVENTH
+    
+}ENCODING_ORDERS;
     
 typedef enum _PRESETS{
     PRESET_DEFAULT = 1
@@ -144,6 +140,8 @@ void array2sh_process(void* const hA2sh,                /* hA2sh handle */
     
 void array2sh_refreshSettings(void* const hA2sh);
     
+void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
+    
 void array2sh_evaluateFilters(void* const hA2sh);
     
 void array2sh_setPreset(void* const hA2sh, int preset);
@@ -161,8 +159,6 @@ void array2sh_setNumSensors(void* const hA2sh, int newQ);
 void array2sh_setr(void* const hA2sh, float newr);
     
 void array2sh_setR(void* const hA2sh, float newR);
-    
-void array2sh_setAdmittance(void* const hA2sh, float newAdmittance);
     
 void array2sh_setArrayType(void* const hA2sh, int newType);
 
@@ -187,6 +183,8 @@ void array2sh_setMaxFreq(void* const hA2sh, float newF);
 /* Get Functions */
 /*****************/
     
+int array2sh_getEncodingOrder(void* const hA2sh);
+    
 float array2sh_getSensorAzi_rad(void* const hA2sh, int index);
     
 float array2sh_getSensorElev_rad(void* const hA2sh, int index);
@@ -199,13 +197,13 @@ int array2sh_getNumSensors(void* const hA2sh);
     
 int array2sh_getMaxNumSensors(void);
     
-int array2sh_getNSHrequired(void);
+int array2sh_getMinNumSensors(void* const hA2sh);
+    
+int array2sh_getNSHrequired(void* const hA2sh);
     
 float array2sh_getr(void* const hA2sh);
     
 float array2sh_getR(void* const hA2sh);
-    
-float array2sh_getAdmittance(void* const hA2sh);
     
 int array2sh_getArrayType(void* const hA2sh);
     

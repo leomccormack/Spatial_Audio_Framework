@@ -46,9 +46,7 @@ extern "C" {
 
 /***************/
 /* Definitions */
-/***************/
-    
-#define ENABLE_FADE_IN_OUT                                  /* (slightly) smoother transitions between HRIR switches */
+/***************/ 
     
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
