@@ -53,7 +53,8 @@ void vtVma(float* vec1, float* vec2, float* vec3, int N)
 
 
 /* FFT INITIALIZATION */
-void vtInitFFT(void** planPr, float* timeData, float* frequencyData, float* timeData_mkl, float_complex* frequencyData_mkl, int log2n)
+//void vtInitFFT(void** planPr, float* timeData, float* frequencyData, float* timeData_mkl, float_complex* frequencyData_mkl, int log2n)
+void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n)
 {
     *planPr = (void*)malloc(sizeof(vtFFT));
     vtFFT *h = (vtFFT*)(*planPr);
@@ -67,7 +68,7 @@ void vtInitFFT(void** planPr, float* timeData, float* frequencyData, float* time
     h->FFT = (void*)vDSP_create_fftsetup( h->log2n, FFT_RADIX2);
     h->VDSP_split.realp = frequencyData;
     h->VDSP_split.imagp = &(frequencyData[(h->N)/2]);
-#elif MKL_FFT
+#elif defined(MKL_FFT)
 	h->status = DftiCreateDescriptor(&(h->my_desc1_handle), DFTI_SINGLE,
 		DFTI_COMPLEX, 1, h->N);
 	h->status = DftiSetValue(h->my_desc1_handle, DFTI_PLACEMENT, DFTI_NOT_INPLACE);

@@ -68,5 +68,7 @@ void vtClr(float* vec, int N);
 
 void vtVma(float* vec1, float* vec2, float* vec3, int N);
 
+void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n);
+
 
 #endif /* defined(__afSTFT_MEXfile__vecTools__) */
