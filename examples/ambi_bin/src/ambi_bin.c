@@ -75,6 +75,7 @@ void ambi_bin_create
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_N3D;
     pData->rE_WEIGHT = 0;
+    pData->enableRotation = 0;
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
     pData->roll = 0.0f;
@@ -172,7 +173,7 @@ void ambi_bin_process
     float* M_rot_tmp;
     
     /* local copies of user parameters */
-    int order, nSH, rE_WEIGHT, enablePhaseManip;
+    int order, nSH, rE_WEIGHT, enablePhaseManip, enableRot;
     NORM_TYPES norm;
     
     /* reinitialise if needed */
@@ -196,6 +197,7 @@ void ambi_bin_process
         order = pData->order;
         nSH = (order+1)*(order+1);
         enablePhaseManip = pData->enablePhaseManip;
+        enableRot = pData->enableRotation;
         
         /* Load time-domain data */
         for(i=0; i < MIN(MAX_NUM_SH_SIGNALS, nInputs); i++)
@@ -228,7 +230,7 @@ void ambi_bin_process
                     pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
     
         /* Apply rotation */
-		if (order > 0) {
+		if (order > 0 && enableRot) {
 			M_rot_tmp = malloc(nSH*nSH * sizeof(float));
 			yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
 			getSHrotMtxReal(Rxyz, M_rot_tmp, order);
@@ -359,6 +361,12 @@ void ambi_bin_setEnablePhaseManip(void* const hAmbi, int newState)
     pData->enablePhaseManip = newState;
 }
 
+void ambi_bin_setEnableRotation(void* const hAmbi, int newState)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    pData->enableRotation = newState;
+}
+
 void ambi_bin_setYaw(void  * const hAmbi, float newYaw)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
@@ -467,6 +475,12 @@ int ambi_bin_getNSHrequired(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     return pData->nSH;
+}
+
+int ambi_bin_getEnableRotation(void* const hAmbi)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    return pData->enableRotation;
 }
 
 float ambi_bin_getYaw(void* const hAmbi)

@@ -47,22 +47,20 @@ void sldoa_create
     *phSld = (void*)pData;
     int i, j, t, ch, band;
     
-    afSTFTinit(&(pData->hSTFT), HOP_SIZE, NUM_SH_SIGNALS, 0, 0, 1);
-    pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, NUM_SH_SIGNALS, sizeof(complexVector));
+    afSTFTinit(&(pData->hSTFT), HOP_SIZE, MAX_NUM_SH_SIGNALS, 0, 0, 1);
+    pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_SH_SIGNALS, sizeof(complexVector));
     for(t=0; t<TIME_SLOTS; t++) {
-        for(ch=0; ch< NUM_SH_SIGNALS; ch++) {
+        for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
             pData->STFTInputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
             pData->STFTInputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
         }
     }
-    pData->tempHopFrameTD = (float**)malloc2d(NUM_SH_SIGNALS, HOP_SIZE, sizeof(float));
+    pData->tempHopFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, HOP_SIZE, sizeof(float));
     
     /* internal */
     pData->reInitAna = 1;
-#if SH_ORDER > 1
-    for(i=0; i<SH_ORDER; i++)
+    for(i=0; i<MAX_SH_ORDER; i++)
         pData->secCoeffs[i] = NULL;
-#endif
     for(i=0; i<64; i++)
         for(j=0; j<NUM_GRID_DIRS; j++)
             pData->grid_Y[i][j] = (float)__grid_Y[i][j];
@@ -79,8 +77,9 @@ void sldoa_create
     }
     
     /* Default user parameters */
+    pData->new_masterOrder = pData->masterOrder = 1;
     for(band=0; band<HYBRID_BANDS; band++){
-        pData->analysisOrderPerBand[band] = SH_ORDER;
+        pData->analysisOrderPerBand[band] = pData->masterOrder;
         pData->nSectorsPerBand[band] = ORDER2NUMSECTORS(pData->analysisOrderPerBand[band]);
     }
     pData->minFreq = 500.0f;
@@ -101,13 +100,13 @@ void sldoa_destroy
     if (pData != NULL) {
         afSTFTfree(pData->hSTFT);
         for (t = 0; t<TIME_SLOTS; t++) {
-            for (ch = 0; ch< NUM_SH_SIGNALS; ch++) {
+            for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
                 free(pData->STFTInputFrameTF[t][ch].re);
                 free(pData->STFTInputFrameTF[t][ch].im);
             }
         }
         free2d((void**)pData->STFTInputFrameTF, TIME_SLOTS);
-        free2d((void**)pData->tempHopFrameTD, NUM_SH_SIGNALS);
+        free2d((void**)pData->tempHopFrameTD, MAX_NUM_SH_SIGNALS);
         for(i=0; i<NUM_DISP_SLOTS; i++){
             free(pData->azi_deg[i]);
             free(pData->elev_deg[i]);
@@ -170,9 +169,10 @@ void sldoa_analysis
     float avgCoeff, max_en[HYBRID_BANDS], min_en[HYBRID_BANDS];
     float new_doa[MAX_NUM_SECTORS][TIME_SLOTS][2], new_doa_xyz[3], doa_xyz[3], avg_xyz[3];
     float new_energy[MAX_NUM_SECTORS][TIME_SLOTS];
-    int o[SH_ORDER+2];
+    int o[MAX_SH_ORDER+2];
     
     /* local parameters */
+    int nSH, masterOrder;
     int analysisOrderPerBand[HYBRID_BANDS];
     int nSectorsPerBand[HYBRID_BANDS];
     float minFreq, maxFreq, avg_ms;
@@ -195,11 +195,13 @@ void sldoa_analysis
         avg_ms = pData->avg_ms;
         chOrdering = pData->chOrdering;
         norm = pData->norm;
+        masterOrder = pData->masterOrder;
+        nSH = (masterOrder+1)*(masterOrder+1);
         
         /* load intput time-domain data */
-        for (i = 0; i < MIN(NUM_SH_SIGNALS, nInputs); i++)
+        for (i = 0; i < MIN(nSH, nInputs); i++)
             memcpy(pData->SHframeTD[i], inputs[i], FRAME_SIZE*sizeof(float));
-        for (; i < NUM_SH_SIGNALS; i++)
+        for (; i < nSH; i++)
             memset(pData->SHframeTD[i], 0, FRAME_SIZE*sizeof(float));
         
         /* account for input normalisation scheme */
@@ -207,8 +209,8 @@ void sldoa_analysis
             case NORM_N3D:  /* already in N3D, do nothing */
                 break;
             case NORM_SN3D: /* convert to N3D */
-                for(n=0; n<SH_ORDER+2; n++){  o[n] = n*n;  };
-                for (n = 0; n<SH_ORDER+1; n++)
+                for(n=0; n<masterOrder+2; n++){  o[n] = n*n;  };
+                for (n = 0; n<masterOrder+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->SHframeTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
@@ -217,13 +219,13 @@ void sldoa_analysis
         
         /* apply the time-frequency transform */
         for (t = 0; t < TIME_SLOTS; t++) {
-            for (ch = 0; ch < NUM_SH_SIGNALS; ch++)
+            for (ch = 0; ch < nSH; ch++)
                 for (sample = 0; sample < HOP_SIZE; sample++)
                     pData->tempHopFrameTD[ch][sample] = pData->SHframeTD[ch][sample + t*HOP_SIZE];
             afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF[t]);
         }
         for (band = 0; band < HYBRID_BANDS; band++)
-            for (ch = 0; ch < NUM_SH_SIGNALS; ch++)
+            for (ch = 0; ch < nSH; ch++)
                 for (t = 0; t < TIME_SLOTS; t++)
                     pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
         
@@ -239,11 +241,7 @@ void sldoa_analysis
                 avgCoeff = MAX(MIN(avgCoeff, 0.99999f), 0.0f); /* ensures stability */
                 sldoa_estimateDoA(pData->SHframeTF[band],
                                   analysisOrderPerBand[band],
-#if SH_ORDER > 1
-                                  pData->secCoeffs[analysisOrderPerBand[band]-2],
-#else
-                                  NULL,
-#endif
+                                  pData->secCoeffs[analysisOrderPerBand[band]-2], /* -2, as first order is skipped */
                                   new_doa,
                                   new_energy);
                 
@@ -310,6 +308,14 @@ void sldoa_analysis
 
 /* SETS */
 
+void sldoa_setMasterOrder(void* const hSld,  int newValue)
+{
+    sldoa_data *pData = (sldoa_data*)(hSld);
+    pData->new_masterOrder = newValue; 
+    pData->reInitTFT = 1;
+    pData->reInitAna = 1;
+}
+
 void sldoa_refreshSettings(void* const hSld)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
@@ -351,7 +357,7 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID)
     switch(newPresetID){
         case MIC_PRESET_IDEAL:
             for(band=0; band<HYBRID_BANDS; band++)
-                pData->analysisOrderPerBand[band] = SH_ORDER;
+                pData->analysisOrderPerBand[band] = pData->new_masterOrder;
             break;
 #ifdef ENABLE_ZYLIA_MIC_PRESET
         case MIC_PRESET_ZYLIA:
@@ -366,7 +372,7 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->analysisOrderPerBand[band] = MIN(SH_ORDER,curOrder);
+                pData->analysisOrderPerBand[band] = MIN(pData->new_masterOrder,curOrder);
             }
             pData->maxFreq = __Zylia_freqRange[(__Zylia_maxOrder-1)*2-1];
             break;
@@ -384,7 +390,7 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->analysisOrderPerBand[band] = MIN(SH_ORDER,curOrder);
+                pData->analysisOrderPerBand[band] = MIN(pData->new_masterOrder,curOrder);
             }
             pData->maxFreq = __Eigenmike32_freqRange[(__Eigenmike32_maxOrder-1)*2-1];
             break;
@@ -402,7 +408,7 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->analysisOrderPerBand[band] = MIN(SH_ORDER,curOrder);
+                pData->analysisOrderPerBand[band] = MIN(pData->new_masterOrder,curOrder);
             }
             pData->maxFreq = __DTU_mic_freqRange[(__DTU_mic_maxOrder-1)*2-1];
             break;
@@ -415,7 +421,7 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID)
 void sldoa_setAnaOrder(void * const hSld, int newValue, int bandIdx)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    pData->analysisOrderPerBand[bandIdx] = MIN(MAX(newValue,1), SH_ORDER);
+    pData->analysisOrderPerBand[bandIdx] = MIN(MAX(newValue,1), pData->new_masterOrder);
     pData->nSectorsPerBand[bandIdx] = ORDER2NUMSECTORS(pData->analysisOrderPerBand[bandIdx]);
 }
 
@@ -425,7 +431,7 @@ void sldoa_setAnaOrderAllBands(void * const hSld, int newValue)
     int band;
     
     for(band=0; band<HYBRID_BANDS; band++){
-        pData->analysisOrderPerBand[band] = MIN(MAX(newValue,1), SH_ORDER);
+        pData->analysisOrderPerBand[band] = MIN(MAX(newValue,1), pData->new_masterOrder);
         pData->nSectorsPerBand[band] = ORDER2NUMSECTORS(pData->analysisOrderPerBand[band]);
     }
 }
@@ -443,6 +449,12 @@ void sldoa_setNormType(void* const hSld, int newType)
 }
 
 /* GETS */
+
+int sldoa_getMasterOrder(void* const hSld)
+{
+    sldoa_data *pData = (sldoa_data*)(hSld);
+    return pData->new_masterOrder;
+}
 
 float sldoa_getSamplingRate(void* const hSld)
 {
@@ -536,9 +548,10 @@ int sldoa_getNumberOfBands(void)
     return HYBRID_BANDS;
 }
 
-int sldoa_getNSHrequired(void)
+int sldoa_getNSHrequired(void* const hSld)
 {
-    return NUM_SH_SIGNALS;
+    sldoa_data *pData = (sldoa_data*)(hSld);
+    return (pData->new_masterOrder+1)*(pData->new_masterOrder+1);
 }
 
 int sldoa_getChOrder(void* const hSld)

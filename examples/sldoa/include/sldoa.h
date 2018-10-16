@@ -48,6 +48,21 @@ extern "C" {
 #define ENABLE_ZYLIA_MIC_PRESET
 #define ENABLE_EIGENMIKE32_MIC_PRESET
 #define ENABLE_DTU_MIC_MIC_PRESET
+ 
+/* "Master order" relates to the current maximum order to expect. However,
+ * the analysis order can be lower for a given frequency, due to the
+ * "analysisOrderPerBand" vector, which can contain lower values than the
+ * master order, but not higher. */
+typedef enum _MASTER_ORDERS{
+    MASTER_ORDER_FIRST = 1,
+    MASTER_ORDER_SECOND,
+    MASTER_ORDER_THIRD,
+    MASTER_ORDER_FOURTH,
+    MASTER_ORDER_FIFTH,
+    MASTER_ORDER_SIXTH,
+    MASTER_ORDER_SEVENTH
+    
+}MASTER_ORDERS;
     
 typedef enum _MIC_PRESETS{
     MIC_PRESET_IDEAL = 1
@@ -97,6 +112,8 @@ void sldoa_analysis(void* const hSld,                /* sldoa handle */
 /*****************/
 /* Set Functions */
 /*****************/
+    
+void sldoa_setMasterOrder(void* const hSld,  int newValue);
 
 void sldoa_setAnalysisOrder(void* const hSld, int newOrder);
     
@@ -123,6 +140,8 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID);
 /* Get Functions */
 /*****************/
     
+int sldoa_getMasterOrder(void* const hSld);
+    
 void sldoa_refreshSettings(void* const hSld);
     
 float sldoa_getSamplingRate(void* const hSld);
@@ -135,7 +154,7 @@ float sldoa_getAvg(void* const hSld);
     
 int sldoa_getNumberOfBands(void);
     
-int sldoa_getNSHrequired(void);
+int sldoa_getNSHrequired(void* const hSld);
     
 void sldoa_getDisplayData(void *  const hSld,
                           float** pAzi_deg,

@@ -286,14 +286,11 @@ void array2sh_refreshSettings(void* const hA2sh)
 
 void array2sh_setEncodingOrder(void* const hA2sh, int newOrder)
 {
-    array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
-    if((newOrder+1)*(newOrder+1) <= arraySpecs->Q){
-        pData->new_order = newOrder;
-        pData->new_nSH = (newOrder+1)*(newOrder+1);
-        pData->reinitSHTmatrixFLAG = 1;
-        pData->reinitTFTFLAG = 1;
-    }
+    array2sh_data *pData = (array2sh_data*)(hA2sh); 
+    pData->new_order = newOrder;
+    pData->new_nSH = (newOrder+1)*(newOrder+1);
+    pData->reinitTFTFLAG = 1;
+    pData->reinitSHTmatrixFLAG = 1;
 }
 
 void array2sh_evaluateFilters(void* const hA2sh)

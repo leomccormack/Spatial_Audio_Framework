@@ -101,6 +101,8 @@ void ambi_bin_setDecEnableMaxrE(void* const hAmbi, int newState);
     
 void ambi_bin_setEnablePhaseManip(void* const hAmbi, int newState);
     
+void ambi_bin_setEnableRotation(void* const hAmbi, int newState);
+    
 void ambi_bin_setYaw(void* const hAmbi, float newYaw);
 
 void ambi_bin_setPitch(void* const hAmbi, float newPitch);
@@ -137,6 +139,8 @@ int ambi_bin_getEnablePhaseManip(void* const hAmbi);
 int ambi_bin_getNumEars(void);
     
 int ambi_bin_getNSHrequired(void* const hAmbi);
+    
+int ambi_bin_getEnableRotation(void* const hAmbi);
     
 float ambi_bin_getYaw(void* const hAmbi);
 

@@ -32,17 +32,19 @@ void powermap_initAna(void* const hPm)
 {
     powermap_data *pData = (powermap_data*)(hPm);
     codecPars* pars = pData->pars;
-    int i, j, n, N_azi, N_ele, nSH_order;
+    int i, j, n, N_azi, N_ele, nSH_order, order;
     float scaleY, hfov, vfov, fi, aspectRatio;
     float* Y_grid_N, *grid_x_axis, *grid_y_axis;
+    
+    order = pData->new_masterOrder;
     
     /* Store Y_grid per order */
     Y_grid_N = NULL;
     int geosphere_ico_freq = 9;
     pars->grid_dirs_deg = (float*)__HANDLES_geosphere_ico_dirs_deg[geosphere_ico_freq];
     pars->grid_nDirs = __geosphere_ico_nPoints[geosphere_ico_freq];
-    getRSH(SH_ORDER, pars->grid_dirs_deg, pars->grid_nDirs, &Y_grid_N);
-    for(n=1; n<=SH_ORDER; n++){
+    getRSH(order, pars->grid_dirs_deg, pars->grid_nDirs, &Y_grid_N);
+    for(n=1; n<=order; n++){
         nSH_order = (n+1)*(n+1);
         scaleY = 1.0f/(float)nSH_order;
         free(pars->Y_grid[n-1]);
@@ -96,6 +98,8 @@ void powermap_initAna(void* const hPm)
         pData->pmap_grid[i] = calloc(pars->interp_nDirs,sizeof(float));
     }
     
+    pData->masterOrder = order;
+    
     free(Y_grid_N);
     free(grid_x_axis);
     free(grid_y_axis);
@@ -106,23 +110,16 @@ void powermap_initTFT
     void* const hPm
 )
 {
-    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    powermap_data *pData = (powermap_data*)(hPm);
     
     if(pData->hSTFT==NULL){
-        if(pData->new_binauraliseLS)
-            afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, NUM_EARS, 0, 1);
-        else
-            afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, pData->new_nLoudpkrs, 0, 1);
+        afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, 0, 0, 1);
     }
     else{
-        if(pData->new_binauraliseLS)
-            afSTFTchannelChange(pData->hSTFT, pData->new_nSH, NUM_EARS);
-        else
-            afSTFTchannelChange(pData->hSTFT, pData->new_nSH, pData->new_nLoudpkrs);
+        afSTFTchannelChange(pData->hSTFT, pData->new_nSH, 0);
     }
-    pData->binauraliseLS = pData->new_binauraliseLS;
-    pData->nLoudpkrs = pData->new_nLoudpkrs;
     pData->nSH = pData->new_nSH;
+    memset(pData->Cx, 0 , MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*HYBRID_BANDS*sizeof(float_complex));
 }
 
 

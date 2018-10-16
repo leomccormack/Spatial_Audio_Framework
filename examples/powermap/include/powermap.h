@@ -39,6 +39,21 @@ extern "C" {
 #define ENABLE_ZYLIA_MIC_PRESET
 #define ENABLE_EIGENMIKE32_MIC_PRESET
 #define ENABLE_DTU_MIC_MIC_PRESET
+    
+/* "Master order" relates to the current maximum order to expect. However,
+ * the analysis order can be lower for a given frequency, due to the
+ * "analysisOrderPerBand" vector, which can contain lower values than the
+ * master order, but not higher. */
+typedef enum _MASTER_ORDERS{
+    MASTER_ORDER_FIRST = 1,
+    MASTER_ORDER_SECOND,
+    MASTER_ORDER_THIRD,
+    MASTER_ORDER_FOURTH,
+    MASTER_ORDER_FIFTH,
+    MASTER_ORDER_SIXTH,
+    MASTER_ORDER_SEVENTH
+    
+}MASTER_ORDERS;
 
 typedef enum _MIC_PRESETS{
     MIC_PRESET_IDEAL = 1
@@ -111,6 +126,8 @@ void powermap_analysis(void* const hPm,                      /* powermap handle 
 /*****************/
     
 void powermap_setPowermapMode(void* const hPm, int newMode);
+    
+void powermap_setMasterOrder(void* const hPm,  int newValue);
 
 void powermap_setAnaOrder(void* const hPm,  int newValue, int bandIdx);
 
@@ -145,6 +162,8 @@ void powermap_refreshSettings(void* const hPm);
 /* Get Functions */
 /*****************/
     
+int powermap_getMasterOrder(void* const hPm);
+    
 int powermap_getPowermapMode(void* const hPm);
 
 float powermap_getSamplingRate(void* const hPm);
@@ -153,7 +172,7 @@ float powermap_getCovAvgCoeff(void* const hPm);
 
 int powermap_getNumberOfBands(void);
     
-int powermap_getNSHrequired(void);
+int powermap_getNSHrequired(void* const hPm);
 
 float powermap_getPowermapEQ(void* const hPm, int bandIdx);
 

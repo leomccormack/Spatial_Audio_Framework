@@ -121,6 +121,7 @@ typedef struct _ambi_bin
     CH_ORDER chOrdering;                     /* only ACN is supported */
     NORM_TYPES norm;                         /* N3D or SN3D */
     INPUT_ORDERS orderSelected;              /* current decoding order PRESET */
+    int enableRotation;
     float yaw, roll, pitch;                  /* rotation angles in degrees */
     int bFlipYaw, bFlipPitch, bFlipRoll;     /* flag to flip the sign of the individual rotation angles */
     int useRollPitchYawFlag;                 /* rotation order flag, 1: r-p-y, 0: y-p-r */
