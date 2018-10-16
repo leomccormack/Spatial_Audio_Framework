@@ -78,7 +78,9 @@ void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int
     h->outBuffer = (float**)malloc(sizeof(float*)* h->outChannels);
     h->fftProcessFrameTD = (float*)calloc(sizeof(float),h->hopSize*2);
     h->fftProcessFrameFD  = (float*)calloc(sizeof(float),(h->hopSize+1)*2);
-    vtInitFFT(&(h->vtFFT),h->fftProcessFrameTD, h->fftProcessFrameFD, h->log2n);
+	h->fftProcessFrameTD_mkl = (float*)calloc(sizeof(float), h->hopSize * 2);
+	h->fftProcessFrameFD_mkl = (float_complex*)calloc(sizeof(float_complex), (h->hopSize + 1));
+    vtInitFFT(&(h->vtFFT),h->fftProcessFrameTD, h->fftProcessFrameFD, h->fftProcessFrameTD_mkl, h->fftProcessFrameFD_mkl, h->log2n);
     
     /* Normalization to ensure 0dB gain */
     if (h->LDmode==0){
@@ -205,7 +207,11 @@ void afSTFTforward(void* handle, float** inTD, complexVector* outFD)
                 hopIndex_this = 0;
             }
         }
-        
+
+		/* MKL */
+		for (k = 0; k < h->hopSize; k++)
+			h->fftProcessFrameTD_mkl[k] = h->fftProcessFrameTD[k];
+
         /* Apply FFT and copy the data to the output vector */
         vtRunFFT(h->vtFFT,1);
         outFD[ch].re[0]=h->fftProcessFrameFD[0];

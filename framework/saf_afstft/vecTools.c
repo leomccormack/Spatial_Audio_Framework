@@ -53,18 +53,29 @@ void vtVma(float* vec1, float* vec2, float* vec3, int N)
 
 
 /* FFT INITIALIZATION */
-void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n)
+void vtInitFFT(void** planPr, float* timeData, float* frequencyData, float* timeData_mkl, float_complex* frequencyData_mkl, int log2n)
 {
     *planPr = (void*)malloc(sizeof(vtFFT));
     vtFFT *h = (vtFFT*)(*planPr);
     h->timeData = timeData;
     h->frequencyData = frequencyData;
+	//h->timeData_mkl = timeData_mkl;
+    //h->frequencyData_mkl = frequencyData_mkl;
     h->N = (int)pow(2,log2n);
     h->log2n = log2n;
 #ifdef VDSP
     h->FFT = (void*)vDSP_create_fftsetup( h->log2n, FFT_RADIX2);
     h->VDSP_split.realp = frequencyData;
     h->VDSP_split.imagp = &(frequencyData[(h->N)/2]);
+#elif MKL_FFT
+	h->status = DftiCreateDescriptor(&(h->my_desc1_handle), DFTI_SINGLE,
+		DFTI_COMPLEX, 1, h->N);
+	h->status = DftiSetValue(h->my_desc1_handle, DFTI_PLACEMENT, DFTI_NOT_INPLACE);
+	h->status = DftiCommitDescriptor(h->my_desc1_handle);
+	h->status = DftiCreateDescriptor(&(h->my_desc2_handle), DFTI_SINGLE,
+		DFTI_REAL, 1, h->N);
+	h->status = DftiSetValue(h->my_desc2_handle, DFTI_PLACEMENT, DFTI_NOT_INPLACE);
+	h->status = DftiCommitDescriptor(h->my_desc2_handle);
 #else
     /* Ooura */
     h->w = (float*)malloc(sizeof(float)*(h->N)/2);
@@ -81,6 +92,9 @@ void vtFreeFFT(void* planPr)
     vtFFT *h = (vtFFT*)(planPr);
 #ifdef VDSP
     vDSP_destroy_fftsetup(h->FFT);
+#elif MKL_FFT
+	h->status = DftiFreeDescriptor(&(h->my_desc1_handle));
+	h->status = DftiFreeDescriptor(&(h->my_desc2_handle));
 #else
     free(h->w);
     free(h->ip);
@@ -106,6 +120,15 @@ void vtRunFFT(void* planPr, int positiveForForwardTransform)
         vDSP_fft_zrip(h->FFT,&(h->VDSP_split),1, h->log2n, FFT_INVERSE);
         vDSP_ztoc(&(h->VDSP_split),1, (DSPComplex*)h->timeData, 2, (h->N)/2);
     }
+#elif MKL_FFT
+	if (positiveForForwardTransform > 0) /* FORWARD FFT */
+	{
+		h->status = DftiComputeForward(h->my_desc1_handle, h->timeData_mkl, h->frequencyData_mkl);
+	}
+	else /* INVERSE FFT */
+	{
+		h->status = DftiComputeForward(h->my_desc2_handle, h->frequencyData_mkl, h->timeData_mkl);
+	}
 #else
     /* Note (A): The phase is conjugated below for Ooura's FFT to produce the same output than that of the vDSP FFT. */
     int k;

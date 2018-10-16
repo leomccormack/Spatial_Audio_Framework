@@ -96,6 +96,7 @@ static void SPHI(int N, double X, int *NM, double *SI, double *DI)
         }
         F0=0.0;
         F1=1.0-100;
+		F=1;
         for (K=M; K>-1; K--) {
             F=(2.0*K+3.0)*F1/X+F0;
             if (K <= *NM) SI[K]=F;
@@ -178,10 +179,11 @@ static void SPHJ(int N, double X, int *NM, double *SJ, double *DJ)
             i++;
             if(i==14)
                 M=0;
-        }
-        //assert(M>0);
+        } 
         F0=0.0;
         F1=1.0-100;
+		F=1;
+		CS=1;
         for (K=M; K>-1; K--) {
             F=(2.0*K+3.0)*F1/X-F0;
             if (K <= *NM)  SJ[K]=F;

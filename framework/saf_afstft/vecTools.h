@@ -23,14 +23,19 @@
 #ifndef __afSTFT_MEXfile__vecTools__
 #define __afSTFT_MEXfile__vecTools__
 
+#include "saf_utilities.h"
 #ifdef __APPLE__
   #ifdef NDEBUG
     #define VDSP 1  
   #endif
+#elif defined(_MSC_VER) && defined(INTEL_MKL_VERSION)
+  //#define MKL_FFT 1
 #endif
 
 #ifdef VDSP
 #include <Accelerate/Accelerate.h>
+#elif MKL_FFT
+#include "mkl_dfti.h"
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,6 +52,12 @@ typedef struct {
 #ifdef VDSP
     FFTSetup FFT;
     DSPSplitComplex VDSP_split;
+#elif MKL_FFT
+	float *timeData_mkl;
+	float_complex *frequencyData_mkl;
+	DFTI_DESCRIPTOR_HANDLE my_desc1_handle;
+	DFTI_DESCRIPTOR_HANDLE my_desc2_handle;
+	MKL_LONG status;
 #else
     float *a,*w;
     int *ip;
