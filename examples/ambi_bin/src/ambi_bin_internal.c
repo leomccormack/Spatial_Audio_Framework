@@ -25,11 +25,9 @@
  */
 
 #include "ambi_bin_internal.h"
-
-//#if defined(__APPLE__) || defined(NDEBUG)
-  #define SAF_ENABLE_SOFA_READER
-  #include "saf_sofa_reader.h"
-//#endif
+ 
+#define SAF_ENABLE_SOFA_READER
+#include "saf_sofa_reader.h" 
 
 void ambi_bin_initCodec
 (
@@ -195,9 +193,11 @@ void ambi_bin_initTFT
 )
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+
+	/* Initialise afSTFT */
     if(pData->hSTFT==NULL)
         afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, NUM_EARS, 0, 1);
-    else
+    else /* Or change the number of channels */
         afSTFTchannelChange(pData->hSTFT, pData->new_nSH, NUM_EARS);
     pData->nSH = pData->new_nSH;
 }

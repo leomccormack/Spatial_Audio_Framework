@@ -29,6 +29,7 @@
     #define VDSP 1  
   #endif
 #elif defined(_MSC_VER) && defined(INTEL_MKL_VERSION)
+  /* Real to Complex FFT is not currently supported by intel! WTF. */
   //#define MKL_FFT 1
 #endif
 
@@ -53,7 +54,7 @@ typedef struct {
     FFTSetup FFT;
     DSPSplitComplex VDSP_split;
 #elif MKL_FFT
-	float *timeData_mkl;
+	float_complex *timeData_mkl;
 	float_complex *frequencyData_mkl;
 	DFTI_DESCRIPTOR_HANDLE my_desc1_handle;
 	DFTI_DESCRIPTOR_HANDLE my_desc2_handle;
@@ -67,8 +68,6 @@ typedef struct {
 void vtClr(float* vec, int N);
 
 void vtVma(float* vec1, float* vec2, float* vec3, int N);
-
-void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n);
 
 
 #endif /* defined(__afSTFT_MEXfile__vecTools__) */

@@ -78,8 +78,8 @@ void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int
     h->outBuffer = (float**)malloc(sizeof(float*)* h->outChannels);
     h->fftProcessFrameTD = (float*)calloc(sizeof(float),h->hopSize*2);
     h->fftProcessFrameFD  = (float*)calloc(sizeof(float),(h->hopSize+1)*2);
-	h->fftProcessFrameTD_mkl = (float*)calloc(sizeof(float), h->hopSize * 2);
-	h->fftProcessFrameFD_mkl = (float_complex*)calloc(sizeof(float_complex), (h->hopSize + 1));
+	//h->fftProcessFrameTD_mkl = (float_complex*)calloc(sizeof(float_complex), h->hopSize * 2);
+	//h->fftProcessFrameFD_mkl = (float_complex*)calloc(sizeof(float_complex), 2*(h->hopSize + 1));
     //vtInitFFT(&(h->vtFFT),h->fftProcessFrameTD, h->fftProcessFrameFD, h->fftProcessFrameTD_mkl, h->fftProcessFrameFD_mkl, h->log2n);
     vtInitFFT(&(h->vtFFT),h->fftProcessFrameTD, h->fftProcessFrameFD, h->log2n);
     
@@ -209,10 +209,6 @@ void afSTFTforward(void* handle, float** inTD, complexVector* outFD)
             }
         }
 
-//        /* MKL */
-//        for (k = 0; k < h->hopSize; k++)
-//            h->fftProcessFrameTD_mkl[k] = h->fftProcessFrameTD[k];
-
         /* Apply FFT and copy the data to the output vector */
         vtRunFFT(h->vtFFT,1);
         outFD[ch].re[0]=h->fftProcessFrameFD[0];
@@ -276,10 +272,10 @@ void afSTFTinverse(void* handle, complexVector* inFD, float** outTD)
                 p4+=2;
             }
         }
-        
+
         /* Inverse FFT */
         vtRunFFT(h->vtFFT, -1);
-        
+
         /* Clear buffer at the pointer location and increment the pointer */
         p1 = &(h->outBuffer[ch][hopIndex_this2*h->hopSize]);
         vtClr(p1,h->hopSize);

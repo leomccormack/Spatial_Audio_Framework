@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../saf_afstft/vecTools.h"
-#include "saf_utilities.h"
 
 typedef struct
 {
@@ -54,8 +53,8 @@ typedef struct
     float **inBuffer;
     float *fftProcessFrameTD;
     float *fftProcessFrameFD;
-	float *fftProcessFrameTD_mkl;
-	float_complex *fftProcessFrameFD_mkl;
+	//float_complex *fftProcessFrameTD_mkl;
+	//float_complex *fftProcessFrameFD_mkl;
     float **outBuffer;
     int log2n;
     void *vtFFT;
@@ -90,6 +89,7 @@ void afSTFTinverse(void* handle, complexVector* inFD, float** outTD);
 void afSTFTfree(void* handle);
 
 void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n);
+//void vtInitFFT(void** planPr, float* timeData, float* frequencyData, float_complex* timeData_mkl, float_complex* frequencyData_mkl, int log2n);
 
 void vtFreeFFT(void* planPr);
 

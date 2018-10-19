@@ -53,15 +53,13 @@ void vtVma(float* vec1, float* vec2, float* vec3, int N)
 
 
 /* FFT INITIALIZATION */
-//void vtInitFFT(void** planPr, float* timeData, float* frequencyData, float* timeData_mkl, float_complex* frequencyData_mkl, int log2n)
+//void vtInitFFT(void** planPr, float* timeData, float* frequencyData, float_complex* timeData_mkl, float_complex* frequencyData_mkl, int log2n)
 void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n)
 {
     *planPr = (void*)malloc(sizeof(vtFFT));
     vtFFT *h = (vtFFT*)(*planPr);
     h->timeData = timeData;
-    h->frequencyData = frequencyData;
-	//h->timeData_mkl = timeData_mkl;
-    //h->frequencyData_mkl = frequencyData_mkl;
+    h->frequencyData = frequencyData; 
     h->N = (int)pow(2,log2n);
     h->log2n = log2n;
 #ifdef VDSP
@@ -69,12 +67,14 @@ void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n)
     h->VDSP_split.realp = frequencyData;
     h->VDSP_split.imagp = &(frequencyData[(h->N)/2]);
 #elif defined(MKL_FFT)
+	h->timeData_mkl = timeData_mkl;
+	h->frequencyData_mkl = frequencyData_mkl;
 	h->status = DftiCreateDescriptor(&(h->my_desc1_handle), DFTI_SINGLE,
 		DFTI_COMPLEX, 1, h->N);
 	h->status = DftiSetValue(h->my_desc1_handle, DFTI_PLACEMENT, DFTI_NOT_INPLACE);
 	h->status = DftiCommitDescriptor(h->my_desc1_handle);
 	h->status = DftiCreateDescriptor(&(h->my_desc2_handle), DFTI_SINGLE,
-		DFTI_REAL, 1, h->N);
+		DFTI_COMPLEX, 1, h->N);
 	h->status = DftiSetValue(h->my_desc2_handle, DFTI_PLACEMENT, DFTI_NOT_INPLACE);
 	h->status = DftiCommitDescriptor(h->my_desc2_handle);
 #else
@@ -128,7 +128,7 @@ void vtRunFFT(void* planPr, int positiveForForwardTransform)
 	}
 	else /* INVERSE FFT */
 	{
-		h->status = DftiComputeForward(h->my_desc2_handle, h->frequencyData_mkl, h->timeData_mkl);
+		h->status = DftiComputeBackward(h->my_desc2_handle, h->frequencyData_mkl, h->timeData_mkl);
 	}
 #else
     /* Note (A): The phase is conjugated below for Ooura's FFT to produce the same output than that of the vDSP FFT. */

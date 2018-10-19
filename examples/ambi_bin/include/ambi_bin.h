@@ -85,7 +85,11 @@ void ambi_bin_process(void* const hAmbi,                /* ambi_bin handle */
 /* Set Functions */
 /*****************/
     
+/* Set reInit Flags to 1 */
 void ambi_bin_refreshParams(void* const hAmbi);
+
+/* Check if any reInit Flags are active, and reinitialise if they are. Only call when playback has stopped. */
+void ambi_bin_checkReInit(void* const hAmbi);
 
 void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState);
     
@@ -121,7 +125,7 @@ void ambi_bin_setRPYflag(void* const hAmbi, int newState);
 /*****************/
 /* Get Functions */
 /*****************/
- 
+
 int ambi_bin_getUseDefaultHRIRsflag(void* const hAmbi);
     
 int ambi_bin_getInputOrderPreset(void* const hAmbi);
