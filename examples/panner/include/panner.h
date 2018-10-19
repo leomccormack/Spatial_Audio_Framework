@@ -163,8 +163,12 @@ void panner_process(void* const hPan,                    /* panner handle */
 /*****************/
 /* Set Functions */
 /*****************/
-    
+
+/* Set reInit Flags to 1 */
 void panner_refreshSettings(void* const hPan);
+
+/* Check if any reInit Flags are active, and reinitialise if they are. Only call when playback has stopped. */
+void panner_checkReInit(void* const hPan);
     
 void panner_setSourceAzi_deg(void* const hPan, int index, float newAzi_deg);
 

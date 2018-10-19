@@ -85,36 +85,13 @@ void ambi_drc_initTFT
 )
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    int t, ch;
-    
-    /* free afSTFT + buffers, if already allocated */
-    if (pData->hSTFT != NULL){
-        afSTFTfree(pData->hSTFT);
-        pData->hSTFT = NULL;
-        for (t = 0; t<TIME_SLOTS; t++) {
-            for (ch = 0; ch< pData->nSH; ch++) {
-                free(pData->STFTFrameTF[t][ch].re);
-                free(pData->STFTFrameTF[t][ch].im);
-            }
-        }
-        free2d((void**)pData->tempHopFrameTD, pData->nSH);
-        free2d((void**)pData->STFTFrameTF, TIME_SLOTS);
-    }
-    
-    /* reallocate afSTFT + buffers */
-    if (pData->hSTFT == NULL){
-    
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, pData->new_nSH, 0, 1);
-        pData->STFTFrameTF = (complexVector**)malloc2d(TIME_SLOTS, pData->new_nSH, sizeof(complexVector));
-        for(t=0; t<TIME_SLOTS; t++) {
-            for(ch=0; ch< pData->new_nSH; ch++) {
-                pData->STFTFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-                pData->STFTFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-            }
-        }
-        pData->tempHopFrameTD = (float**)malloc2d(pData->new_nSH, HOP_SIZE, sizeof(float));
-        pData->nSH = pData->new_nSH;
-    }
+
+	/* Initialise afSTFT */
+	if (pData->hSTFT == NULL)
+		afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, pData->new_nSH, 0, 1);
+	else /* Or change the number of channels */
+		afSTFTchannelChange(pData->hSTFT, pData->new_nSH, pData->new_nSH);
+	pData->nSH = pData->new_nSH; 
 }
 
 

@@ -128,6 +128,9 @@ void panner_init
     
     /* calculate pValue per frequency */
     panner_getPvalue(pData->DTT, pData->freqVector, pData->pValue);
+
+	/* reinitialise if needed */
+	panner_checkReInit(hPan);
 }
 
 void panner_process
@@ -147,16 +150,15 @@ void panner_process
     float src_dirs[MAX_NUM_INPUTS][2], pValue[HYBRID_BANDS], gains3D[MAX_NUM_OUTPUTS], gains2D[MAX_NUM_OUTPUTS], gains_band[MAX_NUM_OUTPUTS];
     
     /* reinitialise if needed */
-    if(pData->reInitTFT){
+    if(pData->reInitTFT==1){
+		pData->reInitTFT = 2;
         panner_initTFT(hPan);
         pData->reInitTFT = 0;
-    }
-    if(pData->reInitGainTables){
-        panner_initGainTables(hPan);
-        pData->reInitGainTables = 0;
-    }
+    } 
+
     /* apply panner */
-    if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && (pData->vbap_gtable != NULL)) {
+    if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && (pData->vbap_gtable != NULL) 
+		&& (pData->reInitTFT == 0) && (pData->reInitGainTables == 0)) {
         memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
         memcpy(pValue, pData->pValue, HYBRID_BANDS*sizeof(float));
         nSources = pData->nSources;
@@ -275,6 +277,23 @@ void panner_refreshSettings(void* const hPan)
     panner_data *pData = (panner_data*)(hPan);
     pData->reInitGainTables = 1;
     pData->reInitTFT = 1;
+}
+
+void panner_checkReInit(void* const hPan)
+{
+	panner_data *pData = (panner_data*)(hPan);
+
+	/* reinitialise if needed */
+	if (pData->reInitTFT==1) {
+		pData->reInitTFT = 2;
+		panner_initTFT(hPan);
+		pData->reInitTFT = 0;
+	}
+	if (pData->reInitGainTables==1) {
+		pData->reInitGainTables = 2;
+		panner_initGainTables(hPan);
+		pData->reInitGainTables = 0;
+	}
 }
 
 void panner_setSourceAzi_deg(void* const hPan, int index, float newAzi_deg)

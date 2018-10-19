@@ -124,6 +124,12 @@ void powermap_analysis(void* const hPm,                      /* powermap handle 
 /*****************/
 /* Set Functions */
 /*****************/
+
+/* Set reInit Flags to 1 */
+void powermap_refreshSettings(void* const hPm);
+
+/* Check if any reInit Flags are active, and reinitialise if they are. Only call when playback has stopped. */
+void powermap_checkReInit(void* const hPm);
     
 void powermap_setPowermapMode(void* const hPm, int newMode);
     
@@ -154,8 +160,6 @@ void powermap_setAspectRatio(void* const hPm, int newOption);
 void powermap_setPowermapAvgCoeff(void* const hPm, float newValue);
     
 void powermap_requestPmapUpdate(void* const hPm);
-
-void powermap_refreshSettings(void* const hPm);
     
     
 /*****************/

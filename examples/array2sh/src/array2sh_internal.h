@@ -61,6 +61,7 @@ extern "C" {
 #define MAX_NUM_SENSORS ( 64 )                              /* Maximum permited channels for the VST standard */
 #define MAX_EVAL_FREQ_HZ ( 20e3f )                          /* Up to which frequency should the evaluation be accurate */
     
+
 /***********/
 /* Structs */
 /***********/
@@ -109,6 +110,7 @@ typedef struct _array2sh
     /* internal parameters */
     int new_order;
     int nSH, new_nSH;
+	int evalReady;
     
     /* flags */
     int reinitSHTmatrixFLAG;

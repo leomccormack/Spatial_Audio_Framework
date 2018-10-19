@@ -27,11 +27,10 @@
  *     Leo McCormack, 25.09.2017
  */
 
-#include "binauraliser_internal.h"
-#ifdef __APPLE__
-  #define SAF_ENABLE_SOFA_READER
-  #include "saf_sofa_reader.h"
-#endif
+#include "binauraliser_internal.h" 
+#define SAF_ENABLE_SOFA_READER
+#include "saf_sofa_reader.h"
+
 
 static inline float matlab_fmodf(float x, float y) {
     float tmp = fmodf(x, y);

@@ -137,8 +137,12 @@ void array2sh_process(void* const hA2sh,                /* hA2sh handle */
 /*****************/
 /* Set Functions */
 /*****************/
-    
+
+/* Set reInit Flags to 1 */
 void array2sh_refreshSettings(void* const hA2sh);
+
+/* Check if any reInit Flags are active, and reinitialise if they are. Only call when playback has stopped. */
+void array2sh_checkReInit(void* const hA2sh);
     
 void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
     
@@ -182,6 +186,9 @@ void array2sh_setMaxFreq(void* const hA2sh, float newF);
 /*****************/
 /* Get Functions */
 /*****************/
+
+/* returns 1 if there are new evaluation curves */
+int array2sh_getEvalReady(void* const hA2sh);
     
 int array2sh_getEncodingOrder(void* const hA2sh);
     

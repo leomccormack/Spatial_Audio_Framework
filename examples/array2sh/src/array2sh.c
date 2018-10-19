@@ -81,6 +81,7 @@ void array2sh_create
     pData->new_order = pData->order;
     pData->nSH = pData->new_nSH = (pData->order+1)*(pData->order+1);
     pData->bN = NULL;
+	pData->evalReady = 0;
     
     /* display related stuff */
     pData->bN_modal_dB = (float**)malloc2d(HYBRID_BANDS-1, MAX_SH_ORDER + 1, sizeof(float));
@@ -152,6 +153,9 @@ void array2sh_init
         else /* assume 48e3 */
             pData->disp_freqVector[band] =  (float)__afCenterFreq48e3[band+1];
     }
+
+	/* reinitialise if needed */
+	array2sh_checkReInit(hA2sh);
 }
 
 void array2sh_process
@@ -174,7 +178,7 @@ void array2sh_process
     NORM_TYPES norm;
     float gain_lin, maxFreq;
     
-    /* reinit TF transform, before reinitialising bNs */
+    /* reinitialise if needed */
     if (pData->reinitTFTFLAG==1) {
         pData->reinitTFTFLAG = 2;
         array2sh_initTFT(hA2sh);
@@ -188,11 +192,7 @@ void array2sh_process
         array2sh_calculate_mag_curves(hA2sh);
         pData->reinitSHTmatrixFLAG = 0;
     }
-    if(pData->recalcEvalFLAG == 1){
-        pData->recalcEvalFLAG = 2;
-        array2sh_evaluateSHTfilters(hA2sh);
-        pData->recalcEvalFLAG = 0;
-    }
+
     if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && !(pData->recalcEvalFLAG) &&
         !(pData->reinitSHTmatrixFLAG) && !(pData->reinitTFTFLAG)) {
         /* prep */
@@ -282,6 +282,31 @@ void array2sh_refreshSettings(void* const hA2sh)
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     pData->reinitSHTmatrixFLAG = 1;
     pData->reinitTFTFLAG = 1;
+}
+
+void array2sh_checkReInit(void* const hA2sh)
+{
+	array2sh_data *pData = (array2sh_data*)(hA2sh);
+	/* reinitialise if needed */
+	if (pData->reinitTFTFLAG == 1) {
+		pData->reinitTFTFLAG = 2;
+		array2sh_initTFT(hA2sh);
+		pData->reinitTFTFLAG = 0;
+	}
+	if (pData->reinitSHTmatrixFLAG == 1) {
+		pData->reinitSHTmatrixFLAG = 2;
+		/* compute encoding matrix */
+		array2sh_calculate_sht_matrix(hA2sh);
+		/* calculate magnitude response curves */
+		array2sh_calculate_mag_curves(hA2sh);
+		pData->reinitSHTmatrixFLAG = 0;
+	}
+	/* Too heavy to put in main loop: */
+	if (pData->recalcEvalFLAG == 1) {
+		pData->recalcEvalFLAG = 2;
+		array2sh_evaluateSHTfilters(hA2sh);
+		pData->recalcEvalFLAG = 0;
+	}
 }
 
 void array2sh_setEncodingOrder(void* const hA2sh, int newOrder)
@@ -442,6 +467,17 @@ void array2sh_setMaxFreq(void* const hA2sh, float newF)
 
 
 /* Get Functions */
+
+int array2sh_getEvalReady(void* const hA2sh)
+{
+	array2sh_data *pData = (array2sh_data*)(hA2sh);
+	if (pData->evalReady) {
+		pData->evalReady = 0;
+		return 1;
+	}
+	else
+		return 0;
+}
 
 int array2sh_getEncodingOrder(void* const hA2sh)
 {

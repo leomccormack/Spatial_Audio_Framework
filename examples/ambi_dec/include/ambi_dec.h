@@ -194,8 +194,12 @@ void ambi_dec_process(void* const hAmbi,                /* ambi_dec handle */
 /*****************/
 /* Set Functions */
 /*****************/
-    
+
+/* Set reInit Flags to 1 */
 void ambi_dec_refreshSettings(void* const hAmbi);
+
+/* Check if any reInit Flags are active, and reinitialise if they are. Only call when playback has stopped. */
+void ambi_dec_checkReInit(void* const hAmbi);
     
 void ambi_dec_setMasterDecOrder(void* const hAmbi,  int newValue);
     

@@ -30,10 +30,9 @@
  */
 
 #include "ambi_dec_internal.h"
-#ifdef __APPLE__
-  #define SAF_ENABLE_SOFA_READER
-  #include "saf_sofa_reader.h"
-#endif
+#define SAF_ENABLE_SOFA_READER   
+#include "saf_sofa_reader.h"
+ 
 
 static inline float matlab_fmodf(float x, float y) {
     float tmp = fmodf(x, y);
@@ -58,6 +57,11 @@ void ambi_dec_initCodec
     g = malloc(pData->nLoudpkrs*sizeof(float));
     a = malloc(nGrid_dirs*sizeof(float));
     e = malloc(nGrid_dirs*sizeof(float));
+
+	/* Current AllRAD implementation does not support 2D setups */
+	for (d = 0; d<NUM_DECODERS; d++)
+		if (pData->loudpkrs_nDims == 2 && pData->dec_method[d] == DECODER_ALLRAD)
+			pData->dec_method[d] = DECODER_SAD;
     
     /* calculate loudspeaker decoding matrices */
     for( d=0; d<NUM_DECODERS; d++){

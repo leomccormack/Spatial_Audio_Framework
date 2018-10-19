@@ -43,11 +43,18 @@ void ambi_drc_create
     ambi_drc_data* pData = (ambi_drc_data*)malloc(sizeof(ambi_drc_data));
     if (pData == NULL) { return;/*error*/ }
     *phAmbi = (void*)pData;
+	int t, ch;
  
     /* afSTFT init and audio buffers */
-    pData->hSTFT = NULL;
-    pData->STFTFrameTF = NULL;
-    pData->tempHopFrameTD = NULL;
+    pData->hSTFT = NULL; 
+	pData->STFTFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_SH_SIGNALS, sizeof(complexVector));
+	for (t = 0; t<TIME_SLOTS; t++) {
+		for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
+			pData->STFTFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+			pData->STFTFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+		}
+	}
+	pData->tempHopFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, HOP_SIZE, sizeof(float));
     
     /* internal */
     pData->fs = 48000;
@@ -133,6 +140,13 @@ void ambi_drc_init
         memset(pData->gainsTF_bank1[band], 0, NUM_DISPLAY_TIME_SLOTS * sizeof(float));
     }
 #endif
+
+	/* reinitialise if needed */
+	if (pData->reInitTFT == 1) {
+		pData->reInitTFT = 2;
+		ambi_drc_initTFT(hAmbi);
+		pData->reInitTFT = 0;
+	}
 }
 
 void ambi_drc_process

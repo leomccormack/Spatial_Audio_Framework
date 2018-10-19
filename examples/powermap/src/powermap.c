@@ -59,7 +59,8 @@ void powermap_create
     pars->interp_table = NULL;
     
     /* internal */
-    pData->reInitAna = 1;
+	pData->reInitTFT = 1;
+	pData->reInitAna = 1;
     pData->dispWidth = 140;
 
     /* display */
@@ -159,9 +160,11 @@ void powermap_init
     memset(pData->Cx, 0 , MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*HYBRID_BANDS*sizeof(float_complex));
     if(pData->prev_pmap!=NULL)
         memset(pData->prev_pmap, 0, pars->grid_nDirs*sizeof(float));
-    pData->recalcPmap = 1;
     pData->pmapReady = 0;
     pData->dispSlotIdx = 0;
+
+	/* reinitialise if needed */
+	powermap_checkReInit(hPm);
 }
 
 
@@ -196,17 +199,10 @@ void powermap_analysis
         pData->reInitTFT = 2;
         powermap_initTFT(hPm);
         pData->reInitTFT = 0;
-    }
-    if(pData->reInitAna == 1){
-        pData->reInitAna = 2;  /* indicate init in progress */
-        pData->pmapReady = 0;  /* avoid trying to draw pmap during reinit */
-        powermap_initAna(hPm);
-        pData->reInitAna = 0;  /* indicate init complete */
-        pData->recalcPmap = 1; /* recalculate powermap with new configuration */
-    }
+    } 
     
     /* The main processing: */
-    if (nSamples == FRAME_SIZE && (pData->reInitAna == 0) && isPlaying ) {
+    if (nSamples == FRAME_SIZE && (pData->reInitAna == 0) && (pData->reInitTFT == 0) && isPlaying ) {
         /* copy current parameters to be thread safe */
         memcpy(analysisOrderPerBand, pData->analysisOrderPerBand, HYBRID_BANDS*sizeof(int));
         memcpy(pmapEQ, pData->pmapEQ, HYBRID_BANDS*sizeof(float));
@@ -377,6 +373,31 @@ void powermap_analysis
 }
 
 /* SETS */
+ 
+void powermap_refreshSettings(void* const hPm)
+{
+	powermap_data *pData = (powermap_data*)(hPm);
+	pData->reInitTFT = 1;
+	pData->reInitAna = 1; 
+}
+ 
+void powermap_checkReInit(void* const hPm)
+{
+	powermap_data *pData = (powermap_data*)(hPm); 
+	/* reinitialise if needed */
+	if (pData->reInitTFT == 1) {
+		pData->reInitTFT = 2;
+		powermap_initTFT(hPm);
+		pData->reInitTFT = 0;
+	}
+	if (pData->reInitAna == 1) {
+		pData->reInitAna = 2;  /* indicate init in progress */
+		pData->pmapReady = 0;  /* avoid trying to draw pmap during reinit */
+		powermap_initAna(hPm);
+		pData->reInitAna = 0;  /* indicate init complete */
+		pData->recalcPmap = 1; /* recalculate powermap with new configuration */
+	}
+}
 
 void powermap_setPowermapMode(void* const hPm, int newMode)
 {
@@ -549,12 +570,6 @@ void powermap_requestPmapUpdate(void* const hPm)
 {
     powermap_data *pData = (powermap_data*)(hPm);
     pData->recalcPmap = 1;
-}
-
-void powermap_refreshSettings(void* const hPm)
-{
-    powermap_data *pData = (powermap_data*)(hPm);
-    pData->reInitAna = 1;
 }
 
 

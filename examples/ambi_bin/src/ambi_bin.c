@@ -152,16 +152,7 @@ void ambi_bin_init
     } 
 
 	/* reinitialise if needed */
-	if (pData->reInitTFT == 1) {
-		pData->reInitTFT = 2;
-		ambi_bin_initTFT(hAmbi); /* always init before codec */
-		pData->reInitTFT = 0;
-	}
-	if (pData->reInitCodec == 1) {
-		pData->reInitCodec = 2;
-		ambi_bin_initCodec(hAmbi);
-		pData->reInitCodec = 0;
-	}
+	ambi_bin_checkReInit(hAmbi);
 }
 
 void ambi_bin_process

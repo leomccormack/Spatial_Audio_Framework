@@ -170,8 +170,12 @@ void binauraliser_process(void* const hBin,              /* binauraliser handle 
 /*****************/
 /* Set Functions */
 /*****************/
-    
+
+/* Set reInit Flags to 1 */
 void binauraliser_refreshSettings(void* const hBin);
+
+/* Check if any reInit Flags are active, and reinitialise if they are. Only call when playback has stopped. */
+void binauraliser_checkReInit(void* const hBin);
     
 void binauraliser_setSourceAzi_deg(void* const hBin, int index, float newAzi_deg);
 

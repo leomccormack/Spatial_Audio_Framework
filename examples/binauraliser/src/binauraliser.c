@@ -160,6 +160,9 @@ void binauraliser_init
         else
             pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
     }
+
+	/* reinitialise if needed */
+	binauraliser_checkReInit(hBin);
 }
 
 void binauraliser_process
@@ -179,20 +182,15 @@ void binauraliser_process
     int enableRotation;
     
     /* reinitialise if needed */
-    if(pData->reInitTFT){
+    if(pData->reInitTFT==1){
+		pData->reInitTFT = 2;
         binauraliser_initTFT(hBin);
-        pData->reInitTFT = 0;
-        nSources = pData->nSources;
-    }
-    else
-        nSources = pData->nSources;
-    if(pData->reInitHRTFsAndGainTables){
-        binauraliser_initHRTFsAndGainTables(hBin);
-        pData->reInitHRTFsAndGainTables = 0;
-    }
+        pData->reInitTFT = 0; 
+    }  
     
     /* apply binaural panner */
-    if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && (pData->hrtf_fb!=NULL)) {
+    if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && (pData->hrtf_fb!=NULL) && (pData->reInitTFT == 0) && 
+		(pData->reInitHRTFsAndGainTables == 0)) {
         nSources = pData->nSources;
         enableRotation = pData->enableRotation;
         memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
@@ -297,6 +295,23 @@ void binauraliser_refreshSettings(void* const hBin)
     pData->reInitTFT = 1;
 }
 
+void binauraliser_checkReInit(void* const hBin)
+{
+	binauraliser_data *pData = (binauraliser_data*)(hBin);
+
+	/* reinitialise if needed */
+	if (pData->reInitTFT==1) {
+		pData->reInitTFT = 2;
+		binauraliser_initTFT(hBin);
+		pData->reInitTFT = 0;
+	}
+	if (pData->reInitHRTFsAndGainTables==1) {
+		pData->reInitHRTFsAndGainTables = 2;
+		binauraliser_initHRTFsAndGainTables(hBin);
+		pData->reInitHRTFsAndGainTables = 0;
+	}
+}
+
 void binauraliser_setSourceAzi_deg(void* const hBin, int index, float newAzi_deg)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
@@ -352,15 +367,19 @@ void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID)
     binauraliser_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims));
     if(pData->nSources != pData->new_nSources)
         pData->reInitTFT = 1;
-    for(ch=0; ch<MAX_NUM_INPUTS; ch++){
+    for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_hrtf_interpFLAG[ch] = 1;
-    }
 }
 
 void binauraliser_setEnableRotation(void* const hBin, int newState)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
+	int ch;
+
     pData->enableRotation = newState;
+	if(!pData->enableRotation)
+		for (ch = 0; ch<MAX_NUM_INPUTS; ch++) 
+			pData->recalc_hrtf_interpFLAG[ch] = 1;
 }
 
 void binauraliser_setYaw(void  * const hBin, float newYaw)

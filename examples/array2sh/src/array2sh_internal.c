@@ -129,7 +129,7 @@ void array2sh_calculate_sht_matrix
         for(n=0; n < order+1; n++)
             pData->bN_modal[band+1][n] = ccdiv(cmplx(1.0,0.0), (pData->bN[band*(order+1)+n]));
     for(n=0; n < order+1; n++)
-        pData->bN_modal[0][n] = 0.0f; /* zero DC */
+        pData->bN_modal[0][n] = cmplx(0.0f, 0.0f); /* zero DC */
     switch(pData->regType){
         case REG_DAS:
             for(band=0; band<HYBRID_BANDS-1; band++){
@@ -161,7 +161,7 @@ void array2sh_calculate_sht_matrix
             break;
     }
     for(n=0; n < order+1; n++)
-        pData->bN_inv[0][n] = 0.0f; /* remove NaN at DC */
+        pData->bN_inv[0][n] = cmplx(0.0f, 0.0f); /* remove NaN at DC */
     array2sh_replicate_order(hA2sh, order); /* replicate orders */
     
     /* Generate encoding matrix per band */
@@ -230,6 +230,7 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
     float* Y_grid_real;
     float_complex* Y_grid, *H_array, *Wshort;
     
+	pData->evalReady = 0;
     assert(pData->W != NULL);
     
     /* simulate the current array by firing 812 plane-waves around the surface of a theoretical sphere
@@ -288,6 +289,8 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
             for(j=0; j<(arraySpecs->Q); j++)
                 Wshort[band*nSH*(arraySpecs->Q) + i*(arraySpecs->Q) + j] = pData->W[band+1/* skip DC */][i][j];
     evaluateSHTfilters(order, Wshort, arraySpecs->Q, HYBRID_BANDS-1, H_array, 812, Y_grid, pData->cSH, pData->lSH);
+
+	pData->evalReady = 1;
 
     free(Y_grid_real);
     free(Y_grid);
