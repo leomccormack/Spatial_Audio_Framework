@@ -51,7 +51,7 @@ typedef struct {
     int N;
     int log2n;
 #ifdef VDSP
-    FFTSetup FFT;
+    FFTSetup FFT; 
     DSPSplitComplex VDSP_split;
 #elif MKL_FFT
 	float_complex *timeData_mkl;

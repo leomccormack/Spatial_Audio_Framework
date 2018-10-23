@@ -240,6 +240,8 @@ float* array2sh_getSpatialCorrelation_Handle(void* const hA2sh, int* nCurves, in
 
 float* array2sh_getLevelDifference_Handle(void* const hA2sh, int* nCurves, int* nFreqPoints);
     
+int array2sh_getProcessingDelay(void);
+    
 #ifdef __cplusplus
 }
 #endif

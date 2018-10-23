@@ -439,7 +439,10 @@ float panner_getDTT(void* const hPan)
     return pData->DTT;
 }
 
-
+int panner_getProcessingDelay()
+{
+    return 12*HOP_SIZE;
+}
 
 
 

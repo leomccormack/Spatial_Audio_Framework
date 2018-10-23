@@ -258,6 +258,8 @@ int binauraliser_getRPYflag(void* const hBin);
     
 int binauraliser_getInterpMode(void* const hBin);
 
+int binauraliser_getProcessingDelay(void);
+    
 
 #ifdef __cplusplus
 }

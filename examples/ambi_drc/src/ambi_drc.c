@@ -45,16 +45,23 @@ void ambi_drc_create
     *phAmbi = (void*)pData;
 	int t, ch;
  
-    /* afSTFT init and audio buffers */
-    pData->hSTFT = NULL; 
-	pData->STFTFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_SH_SIGNALS, sizeof(complexVector));
-	for (t = 0; t<TIME_SLOTS; t++) {
-		for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-			pData->STFTFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-			pData->STFTFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-		}
-	}
-	pData->tempHopFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, HOP_SIZE, sizeof(float));
+    /* afSTFT stuff */
+    pData->hSTFT = NULL;
+    pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_SH_SIGNALS, sizeof(complexVector));
+    for(t=0; t<TIME_SLOTS; t++) {
+        for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
+            pData->STFTInputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+            pData->STFTInputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        }
+    }
+    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SH_SIGNALS), HOP_SIZE, sizeof(float));
+    pData->STFTOutputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_SH_SIGNALS, sizeof(complexVector));
+    for(t=0; t<TIME_SLOTS; t++) {
+        for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
+            pData->STFTOutputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+            pData->STFTOutputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        }
+    }
     
     /* internal */
     pData->fs = 48000;
@@ -94,13 +101,16 @@ void ambi_drc_destroy
         if (pData->hSTFT != NULL) {
             afSTFTfree(pData->hSTFT);
             for (t = 0; t < TIME_SLOTS; t++) {
-                for (ch = 0; ch < pData->nSH; ch++) {
-                    free(pData->STFTFrameTF[t][ch].re);
-                    free(pData->STFTFrameTF[t][ch].im);
+                for (ch = 0; ch < MAX_NUM_SH_SIGNALS; ch++) {
+                    free(pData->STFTInputFrameTF[t][ch].re);
+                    free(pData->STFTInputFrameTF[t][ch].im);
+                    free(pData->STFTOutputFrameTF[t][ch].re);
+                    free(pData->STFTOutputFrameTF[t][ch].im);
                 }
             }
-            free(pData->STFTFrameTF);
-            free(pData->tempHopFrameTD);
+            free2d((void**)pData->STFTInputFrameTF, TIME_SLOTS);
+            free2d((void**)pData->STFTOutputFrameTF, TIME_SLOTS);
+            free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SH_SIGNALS));
         }
      
 #ifdef ENABLE_TF_DISPLAY
@@ -163,7 +173,6 @@ void ambi_drc_process
     int i, n, t, ch, band, sample;
     int o[MAX_ORDER+2];
     float xG, yG, xL, yL, cdB, alpha_a, alpha_r;
-    NORM_TYPES norm;
     float makeup, boost, theshold, ratio, knee;
     
     /* reinitialise if needed */
@@ -181,41 +190,28 @@ void ambi_drc_process
         alpha_r = expf(-1.0f / ( (pData->release_ms / ((float)FRAME_SIZE / (float)TIME_SLOTS)) * pData->fs * 0.001f));
         boost = powf(10.0f, pData->inGain / 20.0f);
         makeup = powf(10.0f, pData->outGain / 20.0f);
-        norm = pData->norm;
         theshold = pData->theshold;
         ratio = pData->ratio;
         knee = pData->knee;
         
-        /* load time-domain data */
-        for (i = 0; i < MIN(pData->nSH, nCh); i++)
+        /* Load time-domain data */
+        for(i=0; i < MIN(pData->nSH, nCh); i++)
             memcpy(pData->inputFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
-        for (; i < pData->nSH; i++)
+        for(; i<pData->nSH; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
-        
-        /* account for selected norm scheme */
-        switch(norm){
-            case NORM_N3D: /* convert to SN3D for processing */
-                for (n = 0; n<(sqrt(pData->nSH)-1)+1; n++)
-                    for (ch = o[n]; ch<o[n+1]; ch++)
-                        for(i = 0; i<FRAME_SIZE; i++)
-                            pData->inputFrameTD[ch][i] /= sqrtf(2.0f*(float)n+1.0f);
-                break;
-            case NORM_SN3D: /* already SN3D */
-                break;
-        }
 
         /* Apply time-frequency transform */
-        for (t = 0; t < TIME_SLOTS; t++) {
-            for (ch = 0; ch < pData->nSH; ch++)
-                for (sample = 0; sample < HOP_SIZE; sample++)
+        for ( t=0; t< TIME_SLOTS; t++) {
+            for( ch=0; ch < pData->nSH; ch++)
+                for ( sample=0; sample < HOP_SIZE; sample++)
                     pData->tempHopFrameTD[ch][sample] = pData->inputFrameTD[ch][sample + t*HOP_SIZE];
-            afSTFTforward(pData->hSTFT, pData->tempHopFrameTD, pData->STFTFrameTF[t]);
+            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF[t]);
         }
         for (band = 0; band < HYBRID_BANDS; band++)
             for (ch = 0; ch < pData->nSH; ch++)
                 for (t = 0; t < TIME_SLOTS; t++)
-                    pData->inputFrameTF[band][ch][t] = cmplxf(pData->STFTFrameTF[t][ch].re[band], pData->STFTFrameTF[t][ch].im[band]);
-                
+                    pData->inputFrameTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
+        
         /* Calculate the dynamic range compression gain factors per frequency band based on the omnidirectional component.
          * McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range Compression". in Proceedings of the 14th
          * Sound and Music Computing Conference, July 5-8, Espoo, Finland.*/
@@ -224,7 +220,7 @@ void ambi_drc_process
                 /* apply input boost */
                 for (ch = 0; ch < pData->nSH; ch++)
                     pData->inputFrameTF[band][ch][t] = crmulf(pData->inputFrameTF[band][ch][t], boost);
-                
+
                 /* calculate gain factor for this frequency based on the omni component */
                 xG = 10.0f*log10f(powf(cabsf(pData->inputFrameTF[band][0/* omni */][t]), 2.0f) + 2e-13f);
                 yG = ambi_drc_gainComputer(xG, theshold, ratio, knee);
@@ -257,44 +253,30 @@ void ambi_drc_process
                 pData->rIdx = 0;
 #endif
         }
-        
+
         /* Inverse time-frequency transform */
         for (t = 0; t < TIME_SLOTS; t++) {
             for (ch = 0; ch < pData->nSH; ch++) {
                 for (band = 0; band < HYBRID_BANDS; band++) {
-                    pData->STFTFrameTF[t][ch].re[band] = crealf(pData->outputFrameTF[band][ch][t]);
-                    pData->STFTFrameTF[t][ch].im[band] = cimagf(pData->outputFrameTF[band][ch][t]);
+                    pData->STFTOutputFrameTF[t][ch].re[band] = crealf(pData->outputFrameTF[band][ch][t]);
+                    pData->STFTOutputFrameTF[t][ch].im[band] = cimagf(pData->outputFrameTF[band][ch][t]);
                 }
             }
         }
         for (t = 0; t < TIME_SLOTS; t++) {
-            afSTFTinverse(pData->hSTFT, pData->STFTFrameTF[t], pData->tempHopFrameTD);
-            for (ch = 0; ch < pData->nSH; ch++)
+            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF[t], pData->tempHopFrameTD);
+            for (ch = 0; ch < MIN(pData->nSH, nCh); ch++)
                 for (sample = 0; sample < HOP_SIZE; sample++)
-                    pData->outputFrameTD[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD[ch][sample];
+                    outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD[ch][sample];
+            for (; ch <  nCh; ch++)
+                for (sample = 0; sample < HOP_SIZE; sample++)
+                    outputs[ch][sample + t* HOP_SIZE] = 0.0f;
         }
         
-        /* account for selected normalisation scheme */
-        switch(norm){
-            case NORM_N3D: /* convert back to N3D */
-                for (n = 0; n<(sqrt(pData->nSH)-1)+1; n++)
-                    for (ch = o[n]; ch<o[n+1]; ch++)
-                        for(i = 0; i<FRAME_SIZE; i++)
-                            pData->outputFrameTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
-                break;
-            case NORM_SN3D: /* already SN3D */
-                break;
-        }
-        
-        /* copy buffers to output */
-        for (ch = 0; ch < MIN(pData->nSH, nCh); ch++) 
-            memcpy(outputs[ch], pData->outputFrameTD[ch], FRAME_SIZE*sizeof(float));
-        for (; ch < nCh; ch++)
-            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
     }
     else {
         for (ch=0; ch < nCh; ch++)
-            memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
     }
 }
 
@@ -466,5 +448,10 @@ int ambi_drc_getNSHrequired(void* const hAmbi)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
     return pData->nSH;
+}
+
+int ambi_drc_getProcessingDelay()
+{
+    return 12*HOP_SIZE;
 }
 

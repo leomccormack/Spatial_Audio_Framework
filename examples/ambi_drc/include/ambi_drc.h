@@ -160,6 +160,9 @@ INPUT_ORDER ambi_drc_getInputPreset(void* const hAmbi);
     
 int ambi_drc_getNSHrequired(void* const hAmbi);
     
+int ambi_drc_getProcessingDelay(void);
+    
+    
 #ifdef __cplusplus
 }
 #endif

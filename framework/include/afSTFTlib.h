@@ -88,8 +88,7 @@ void afSTFTinverse(void* handle, complexVector* inFD, float** outTD);
 
 void afSTFTfree(void* handle);
 
-void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n);
-//void vtInitFFT(void** planPr, float* timeData, float* frequencyData, float_complex* timeData_mkl, float_complex* frequencyData_mkl, int log2n);
+void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n); 
 
 void vtFreeFFT(void* planPr);
 

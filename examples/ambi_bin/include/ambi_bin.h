@@ -168,6 +168,8 @@ int ambi_bin_getHRIRsamplerate(void* const hAmbi);
  
 int ambi_bin_getDAWsamplerate(void* const hAmbi);
     
+int ambi_bin_getProcessingDelay(void);
+    
     
 #ifdef __cplusplus
 }

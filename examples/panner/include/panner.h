@@ -213,6 +213,8 @@ int panner_getDAWsamplerate(void* const hPan);
     
 float panner_getDTT(void* const hPan);
     
+int panner_getProcessingDelay(void);
+    
 
 #ifdef __cplusplus
 }

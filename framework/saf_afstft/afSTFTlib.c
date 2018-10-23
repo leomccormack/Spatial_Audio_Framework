@@ -65,6 +65,7 @@ void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int
     h->log2n=log2n;
     h->inChannels = inChannels;
     h->outChannels = outChannels;
+    h->maxChannels = inChannels > outChannels ? inChannels : outChannels;
     h->hopSize = hopSize;
     dsFactor=1024/hopSize;
     h->hLen = 10240/dsFactor;
@@ -74,41 +75,49 @@ void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int
     h->LDmode = LDmode;
     h->protoFilter = (float*)malloc(sizeof(float)*h->hLen);
     h->protoFilterI = (float*)malloc(sizeof(float)*h->hLen);
-    h->inBuffer = (float**)malloc(sizeof(float*)* h->inChannels);
-    h->outBuffer = (float**)malloc(sizeof(float*)* h->outChannels);
+    h->inBuffer = (float**)malloc(sizeof(float*)*h->inChannels);
+    h->outBuffer = (float**)malloc(sizeof(float*)*h->outChannels);
     h->fftProcessFrameTD = (float*)calloc(sizeof(float),h->hopSize*2);
     h->fftProcessFrameFD  = (float*)calloc(sizeof(float),(h->hopSize+1)*2);
-	//h->fftProcessFrameTD_mkl = (float_complex*)calloc(sizeof(float_complex), h->hopSize * 2);
-	//h->fftProcessFrameFD_mkl = (float_complex*)calloc(sizeof(float_complex), 2*(h->hopSize + 1));
-    //vtInitFFT(&(h->vtFFT),h->fftProcessFrameTD, h->fftProcessFrameFD, h->fftProcessFrameTD_mkl, h->fftProcessFrameFD_mkl, h->log2n);
     vtInitFFT(&(h->vtFFT),h->fftProcessFrameTD, h->fftProcessFrameFD, h->log2n);
     
     /* Normalization to ensure 0dB gain */
-    if (h->LDmode==0){
+    if (h->LDmode==0)
+    {
         eq = 1.0f/sqrtf((float)h->hopSize*5.487604141f);
-        for (k=0; k<h->hLen; k++){
+        for (k=0; k<h->hLen; k++)
+        {
             h->protoFilter[h->hLen-k-1] = protoFilter1024[k*dsFactor]*eq;
             h->protoFilterI[h->hLen-k-1] = protoFilter1024[k*dsFactor]*eq;
         }
     }
-    else{
+    else
+    {
         eq = 1.0f/sqrtf((float)h->hopSize*4.544559956f);
-        for (k=0; k<h->hLen; k++){
+        for (k=0; k<h->hLen; k++)
+        {
             h->protoFilter[h->hLen-k-1] = protoFilter1024LD[k*dsFactor]*eq;
             h->protoFilterI[k]=protoFilter1024LD[k*dsFactor]*eq;
             
         }
     }
-    for(ch=0;ch< h->inChannels;ch++)
+    for(ch=0;ch<h->inChannels;ch++)
+    {
         h->inBuffer[ch] = (float*)calloc(h->hLen,sizeof(float));
+    }
     
-    for(ch=0;ch< h->outChannels;ch++)
+    for(ch=0;ch<h->outChannels;ch++)
+    {
         h->outBuffer[ch] = (float*)calloc(h->hLen,sizeof(float));
+    }
+    
     
     /* Initialize the hybrid filter memory etc. */
     h->hybridMode=hybridMode;
     if (h->hybridMode)
+    {
         afHybridInit(&(h->h_afHybrid), h->hopSize, h->inChannels,h->outChannels);
+    }
 }
 
 void afSTFTchannelChange(void* handle, int new_inChannels, int new_outChannels)
@@ -169,7 +178,8 @@ void afSTFTforward(void* handle, float** inTD, complexVector* outFD)
     float *p1,*p2,*p3,*p4;
     int lr;
     
-    for (ch=0;ch<h->inChannels;ch++) {
+    for (ch=0;ch<h->inChannels;ch++)
+    {
         /* Copy the input frame into the memory buffer */
         hopIndex_this2 = h->hopIndexIn;
         p1=&(h->inBuffer[ch][hopIndex_this2*h->hopSize]);
@@ -208,7 +218,7 @@ void afSTFTforward(void* handle, float** inTD, complexVector* outFD)
                 hopIndex_this = 0;
             }
         }
-
+        
         /* Apply FFT and copy the data to the output vector */
         vtRunFFT(h->vtFFT,1);
         outFD[ch].re[0]=h->fftProcessFrameFD[0];
@@ -272,10 +282,10 @@ void afSTFTinverse(void* handle, complexVector* inFD, float** outTD)
                 p4+=2;
             }
         }
-
+        
         /* Inverse FFT */
         vtRunFFT(h->vtFFT, -1);
-
+        
         /* Clear buffer at the pointer location and increment the pointer */
         p1 = &(h->outBuffer[ch][hopIndex_this2*h->hopSize]);
         vtClr(p1,h->hopSize);
@@ -366,9 +376,9 @@ void afHybridInit(void** handle, int hopSize, int inChannels, int outChannels)
     h->inChannels = inChannels;
     h->hopSize = hopSize;
     h->outChannels = outChannels;
-    h->analysisBuffer = (complexVector**)malloc(sizeof(complexVector*)* (h->inChannels));
+    h->analysisBuffer = (complexVector**)malloc(sizeof(complexVector*)*h->inChannels);
     h->loopPointer=0;
-    for (ch=0;ch< h->inChannels;ch++)
+    for (ch=0;ch<h->inChannels;ch++)
     {
         h->analysisBuffer[ch] = (complexVector*)malloc(sizeof(complexVector)*7);
         for (sample=0;sample<7;sample++)
@@ -414,13 +424,13 @@ void afHybridForward(void* handle, complexVector* FD)
         {
             /* The 0.5 multipliers are the center coefficients of the half-band FIR filters. Data is duplicated for the half-bands. */
             *pr1 = *pr2;
-            *(pr1+1) = *(pr2+1)*0.5f;
+            *(pr1+1) = *(pr2+1)*0.5;
             *(pr1+2) = *(pr1+1);
-            *(pr1+3) = *(pr2+2)*0.5f;
+            *(pr1+3) = *(pr2+2)*0.5;
             *(pr1+4) = *(pr1+3);
-            *(pr1+5) = *(pr2+3)*0.5f;
+            *(pr1+5) = *(pr2+3)*0.5;
             *(pr1+6) = *(pr1+5);
-            *(pr1+7) = *(pr2+4)*0.5f;
+            *(pr1+7) = *(pr2+4)*0.5;
             *(pr1+8) = *(pr1+7);
             
             /* The rest of the bands are shifted upwards in the frequency indices, and delayed by the group delay of the half-band filters */
@@ -430,7 +440,7 @@ void afHybridForward(void* handle, complexVector* FD)
             pr1 = FD[ch].im;
             pr2 = h->analysisBuffer[ch][loopPointerThis].im;
         }
-    
+        
         for (sample=0;sample<7;sample++)
         {
             sampleIndices[sample]=h->loopPointer+1+sample;
@@ -453,7 +463,7 @@ void afHybridForward(void* handle, complexVector* FD)
             im -= COEFF1*h->analysisBuffer[ch][sampleIndices[0]].re[band];
             
             /* The addition or subtraction process below provides the upper and lower half-band spectra (the coefficient 0.5 had the same sign for both bands).
-               The half-band orders are switched for bands=1,3 with respect to band=2,4, because of the organization of the spectral data at the downsampled frequency band signals. As the result of the order switching, the bands are organized by the ascending spectral position. */
+             The half-band orders are switched for bands=1,3 with respect to band=2,4, because of the organization of the spectral data at the downsampled frequency band signals. As the result of the order switching, the bands are organized by the ascending spectral position. */
             if (band == 1 || band== 3)
             {
                 FD[ch].re[band*2-1] -= re;
@@ -480,7 +490,7 @@ void afHybridInverse(void* handle, complexVector* FD)
     afHybrid *h = (afHybrid*)(handle);
     int ch,realImag;
     float *pr;
-
+    
     for (ch=0;ch<h->outChannels;ch++)
     {
         pr = FD[ch].re;

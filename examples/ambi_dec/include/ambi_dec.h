@@ -285,6 +285,7 @@ int ambi_dec_getDecNormType(void* const hAmbi, int index);
     
 float ambi_dec_getTransitionFreq(void* const hAmbi);
     
+int ambi_dec_getProcessingDelay(void);
     
 #ifdef __cplusplus
 }

@@ -146,7 +146,7 @@ void ambi_dec_destroy
         if(pData->binauraliseLS && (pData->tempHopFrameTD!=NULL) )
             free2d((void**)pData->tempHopFrameTD, MAX(NUM_EARS, MAX_NUM_SH_SIGNALS));
         else if(pData->tempHopFrameTD!=NULL)
-            free2d((void**)pData->tempHopFrameTD, MAX(pData->nLoudpkrs, MAX_NUM_SH_SIGNALS));
+            free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_LOUDSPEAKERS, MAX_NUM_SH_SIGNALS));
         
         if(pars->hrtf_vbap_gtableComp!= NULL)
             free(pars->hrtf_vbap_gtableComp);
@@ -442,21 +442,11 @@ void ambi_dec_setLoudspeakerElev_deg(void* const hAmbi, int index, float newElev
 void ambi_dec_setNumLoudspeakers(void* const hAmbi, int new_nLoudspeakers)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    int ch;
-    float sum_elev;
+    int ch; 
     pData->new_nLoudpkrs = new_nLoudspeakers > MAX_NUM_LOUDSPEAKERS ? MAX_NUM_LOUDSPEAKERS : new_nLoudspeakers;
     pData->new_nLoudpkrs = MAX(MIN_NUM_LOUDSPEAKERS, pData->new_nLoudpkrs);
     if(pData->nLoudpkrs != pData->new_nLoudpkrs){
         pData->reInitTFT = 1;
-        /* check the new dimensionality before reinitialising the codec parameters */
-        sum_elev = 0.0f;
-        for(ch=0; ch<pData->new_nLoudpkrs; ch++){
-            sum_elev += fabsf(pData->loudpkrs_dirs_deg[ch][1]);
-        }
-        if( (((sum_elev < 5.0f) && (sum_elev > -5.0f))) || (pData->new_nLoudpkrs < 4) )
-            pData->loudpkrs_nDims = 2;
-        else
-            pData->loudpkrs_nDims = 3;
         pData->reInitCodec=1;
         for(ch=0; ch<MAX_NUM_LOUDSPEAKERS; ch++)
             pData->recalc_hrtf_interpFLAG[ch] = 1;
@@ -742,6 +732,11 @@ float ambi_dec_getTransitionFreq(void* const hAmbi)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     return pData->transitionFreq;
+}
+
+int ambi_dec_getProcessingDelay()
+{
+    return 12*HOP_SIZE;
 }
 
 

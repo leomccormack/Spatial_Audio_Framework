@@ -647,7 +647,10 @@ float* array2sh_getLevelDifference_Handle(void* const hA2sh, int* nCurves, int* 
     return pData->lSH;
 }
 
-
+int array2sh_getProcessingDelay()
+{
+    return 12*HOP_SIZE;
+}
 
 
 

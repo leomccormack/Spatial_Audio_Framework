@@ -585,5 +585,11 @@ int binauraliser_getInterpMode(void* const hBin)
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     return (int)pData->interpMode;
 }
+
+int binauraliser_getProcessingDelay()
+{
+    return 12*HOP_SIZE;
+}
+ 
     
     

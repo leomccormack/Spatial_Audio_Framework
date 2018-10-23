@@ -567,4 +567,7 @@ int ambi_bin_getDAWsamplerate(void* const hAmbi)
     return pData->fs;
 }
 
-
+int ambi_bin_getProcessingDelay()
+{
+    return 12*HOP_SIZE;
+}

@@ -46,36 +46,52 @@ void ambi_dec_initCodec
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     codecPars* pars = pData->pars;
-    int i, d, j, n, ng, nGrid_dirs, masterOrder, nSH_order, max_nSH;
+    int i, ch, d, j, n, ng, nGrid_dirs, masterOrder, nSH_order, max_nSH, nLoudspeakers;
     float* grid_dirs_deg, *Y, *M_dec_tmp, *g, *a, *e, *a_n;
-    float a_avg[MAX_SH_ORDER], e_avg[MAX_SH_ORDER];
+    float a_avg[MAX_SH_ORDER], e_avg[MAX_SH_ORDER], sum_elev;
     
     masterOrder = pData->new_masterOrder;
     max_nSH = (masterOrder+1)*(masterOrder+1);
+    nLoudspeakers = pData->nLoudpkrs;
+    
+    /* Quick and dirty check to find loudspeaker dimensionality */
+    sum_elev = 0.0f;
+    for(ch=0; ch < nLoudspeakers; ch++)
+        sum_elev += fabsf(pData->loudpkrs_dirs_deg[ch][1]);
+    if( (((sum_elev < 5.0f) && (sum_elev > -5.0f))) || (nLoudspeakers < 4) )
+        pData->loudpkrs_nDims = 2;
+    else
+        pData->loudpkrs_nDims = 3;
+    
+    /* add virtual loudspeakers for 2D case */
+    if (pData->loudpkrs_nDims == 2){
+        pData->loudpkrs_dirs_deg[nLoudspeakers][0] = 0.0f;
+        pData->loudpkrs_dirs_deg[nLoudspeakers][1] = -90.0f;
+        pData->loudpkrs_dirs_deg[nLoudspeakers+1][0] = 0.0f;
+        pData->loudpkrs_dirs_deg[nLoudspeakers+1][1] = 90.0f;
+        nLoudspeakers += 2;
+    }
+    
+    /* prep */
     M_dec_tmp = NULL;
     nGrid_dirs = 480; /* Minimum t-design of degree 30, has 480 points */
-    g = malloc(pData->nLoudpkrs*sizeof(float));
+    g = malloc(nLoudspeakers*sizeof(float));
     a = malloc(nGrid_dirs*sizeof(float));
     e = malloc(nGrid_dirs*sizeof(float));
-
-	/* Current AllRAD implementation does not support 2D setups */
-	for (d = 0; d<NUM_DECODERS; d++)
-		if (pData->loudpkrs_nDims == 2 && pData->dec_method[d] == DECODER_ALLRAD)
-			pData->dec_method[d] = DECODER_SAD;
     
     /* calculate loudspeaker decoding matrices */
     for( d=0; d<NUM_DECODERS; d++){
-        getAmbiDecoder((float*)pData->loudpkrs_dirs_deg, pData->nLoudpkrs, pData->dec_method[d], masterOrder, &(M_dec_tmp));
+        getAmbiDecoder((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, pData->dec_method[d], masterOrder, &(M_dec_tmp));
         
         /* diffuse-field EQ for orders 1..masterOrder */
         for( n=1; n<=masterOrder; n++){
             /* truncate M_dec for each order */
             nSH_order = (n+1)*(n+1);
             free(pars->M_dec[d][n-1]); 
-            pars->M_dec[d][n-1] = malloc(pData->nLoudpkrs * nSH_order * sizeof(float));
+            pars->M_dec[d][n-1] = malloc(nLoudspeakers* nSH_order * sizeof(float));
             free(pars->M_dec_cmplx[d][n-1]);
-            pars->M_dec_cmplx[d][n-1] = malloc(pData->nLoudpkrs * nSH_order * sizeof(float_complex));
-            for(i=0; i<pData->nLoudpkrs; i++){
+            pars->M_dec_cmplx[d][n-1] = malloc(nLoudspeakers * nSH_order * sizeof(float_complex));
+            for(i=0; i<nLoudspeakers; i++){
                 for(j=0; j<nSH_order; j++){
                     pars->M_dec[d][n-1][i*nSH_order+j] = M_dec_tmp[i*max_nSH +j]; /* for applying in the time domain, and... */
                     pars->M_dec_cmplx[d][n-1][i*nSH_order+j] = cmplxf(pars->M_dec[d][n-1][i*nSH_order+j], 0.0f); /* for the time-frequency domain */
@@ -86,14 +102,14 @@ void ambi_dec_initCodec
             a_n = malloc(nSH_order*nSH_order*sizeof(float));
             getMaxREweights(n, a_n); /* weights returned as diagonal matrix */
             free(pars->M_dec_maxrE[d][n-1]);
-            pars->M_dec_maxrE[d][n-1] = malloc(pData->nLoudpkrs * nSH_order * sizeof(float));
+            pars->M_dec_maxrE[d][n-1] = malloc(nLoudspeakers * nSH_order * sizeof(float));
             free(pars->M_dec_cmplx_maxrE[d][n-1]);
-            pars->M_dec_cmplx_maxrE[d][n-1] = malloc(pData->nLoudpkrs * nSH_order * sizeof(float_complex));
-            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pData->nLoudpkrs, nSH_order, nSH_order, 1.0f,
+            pars->M_dec_cmplx_maxrE[d][n-1] = malloc(nLoudspeakers * nSH_order * sizeof(float_complex));
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLoudspeakers, nSH_order, nSH_order, 1.0f,
                         pars->M_dec[d][n-1], nSH_order,
                         a_n, nSH_order, 0.0f,
                         pars->M_dec_maxrE[d][n-1], nSH_order); /* for applying in the time domain */
-            for(i=0; i<pData->nLoudpkrs * nSH_order; i++)
+            for(i=0; i<nLoudspeakers * nSH_order; i++)
                 pars->M_dec_cmplx_maxrE[d][n-1][i] = cmplxf(pars->M_dec_maxrE[d][n-1][i], 0.0f); /* for the time-frequency domain */
             
             /* fire a plane-wave from each grid direction to find the total energy/amplitude (using non-maxrE weighted versions) */
@@ -101,12 +117,12 @@ void ambi_dec_initCodec
             grid_dirs_deg = (float*)(&__Tdesign_degree_30_dirs_deg[0][0]);
             for(ng=0; ng<nGrid_dirs; ng++){
                 getSHreal(n, grid_dirs_deg[ng*2]*M_PI/180.0f, M_PI/2.0f-grid_dirs_deg[ng*2+1]*M_PI/180.0f, Y);
-                cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, pData->nLoudpkrs, 1, nSH_order, 1.0f,
+                cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nLoudspeakers, 1, nSH_order, 1.0f,
                             pars->M_dec[d][n-1], nSH_order,
                             Y, nSH_order, 0.0f,
                             g, 1);
                 a[ng] = e[ng] = 0.0f;
-                for(i=0; i<pData->nLoudpkrs; i++){
+                for(i=0; i<nLoudspeakers; i++){
                     a[ng] += g[i];
                     e[ng] += powf(g[i], 2.0f);
                 }
@@ -124,6 +140,14 @@ void ambi_dec_initCodec
             pars->M_norm[d][n-1][1] = sqrtf(1.0f/(e_avg[n-1]+2.23e-6f));  /* use this to preserve omni energy */
             free(a_n);
             free(Y);
+            
+            /* remove virtual loudspeakers from the decoder */
+            if (pData->loudpkrs_nDims == 2){
+                pars->M_dec[d][n-1] = realloc(pars->M_dec[d][n-1], pData->nLoudpkrs * nSH_order * sizeof(float));
+                pars->M_dec_cmplx[d][n-1] = realloc(pars->M_dec_cmplx[d][n-1], pData->nLoudpkrs * nSH_order * sizeof(float_complex));
+                pars->M_dec_maxrE[d][n-1] = realloc(pars->M_dec_maxrE[d][n-1], pData->nLoudpkrs * nSH_order * sizeof(float));
+                pars->M_dec_cmplx_maxrE[d][n-1] = realloc(pars->M_dec_cmplx_maxrE[d][n-1], pData->nLoudpkrs * nSH_order * sizeof(float_complex));
+            }
         }
         free(M_dec_tmp);
         M_dec_tmp = NULL;
