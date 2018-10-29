@@ -105,8 +105,8 @@ void array2sh_calculate_sht_matrix
         case ARRAY_SPHERICAL:
             switch (arraySpecs->weightType){
                 case WEIGHT_OPEN_OMNI:   sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_OPEN, 0.0, pData->bN); break;
-                case WEIGHT_OPEN_CARD:   sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_OPEN, 0.5, pData->bN); break;
-                case WEIGHT_OPEN_DIPOLE: sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_OPEN, 1.0, pData->bN); break;
+                case WEIGHT_OPEN_CARD:   sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_DIRECTIONAL, 0.5, pData->bN); break;
+                case WEIGHT_OPEN_DIPOLE: sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_DIRECTIONAL, 1.0, pData->bN); break;
                 case WEIGHT_RIGID:
                     if(arraySpecs->R == arraySpecs->r )
                         sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_RIGID, 1.0, pData->bN);

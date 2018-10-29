@@ -26,7 +26,7 @@
 #include "saf_utilities.h"
 #ifdef __APPLE__
   #ifdef NDEBUG
-    #define VDSP 1  
+    #define VDSP 1
   #endif
 #elif defined(_MSC_VER) && defined(INTEL_MKL_VERSION)
   /* Real to Complex FFT is not currently supported by intel! WTF. */
