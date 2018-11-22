@@ -4,28 +4,47 @@ A Spatial Audio Framework (SAF) written in C. The framework includes functions f
 
 ## Getting Started
 
-To include this framework in a project, simply add the following code:
+To use this framework in your project, first add all of the files found in this folder:
 
 ```
 Spatial_Audio_Framework/framework
 ```
 
-And add:
+Then add the following directories to the header search paths:
 
 ```
 Spatial_Audio_Framework/framework/include
+Spatial_Audio_Framework/dependencies/MacOSX/include (for MacOSX users) 
+Spatial_Audio_Framework/dependencies/Win64/include (for Windows users) 
 ```
 
-to the header search paths.
-
-For the examples that support SOFA loading capabilities, statically built netcdf libraries must also be placed in:
+Then add the following directories to the library search paths:
 
 ```
-Spatial_Audio_Framework/dependencies
+Spatial_Audio_Framework/dependencies/MacOSX/lib (for MacOSX users) 
+Spatial_Audio_Framework/dependencies/Win64/lib (for Windows users) 
 ```
 
-Windows users must also install Intel's MKL, which can be freely acquired from
-* [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries)
+To enable the SOFA loading feature, your project must link against the following included libraries:
+
+```
+netcdf; hdf5; hdf5_hl; z; (for MacOSX users)
+libszip.lib; libzlib.lib; libhdf5.lib; libhdf5_hl.lib; netcdf.lib; (for Windows users)
+```
+
+### For Windows users only
+
+Windows users must also link against the included custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library:
+
+```
+saf_mkl_custom.lib; (for Windows users)
+```
+
+The "saf_mkl_custom.dll" may be downloaded and installed from [here](http://research.spa.aalto.fi/projects/sparta_vsts/download/), or it can be generated with Intel's custom dll builder and the included "saf_mkl_list", with the following command:
+
+```c
+nmake dllintel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_mkl_list
+```
 
 ## Examples
 
@@ -59,7 +78,7 @@ Spatial_Audio_Framework/examples/upmix
 
 ### GUI implementations
 
-Many of these examples have been intergrated into VST audio plug-ins using the JUCE framework and can be found [here](http://research.spa.aalto.fi/projects/sparta_vsts/).
+Many of these examples have been integrated into VST audio plug-ins using the JUCE framework and can be found [here](http://research.spa.aalto.fi/projects/sparta_vsts/).
 
 ## Authors
 

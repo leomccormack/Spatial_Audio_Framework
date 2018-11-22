@@ -372,7 +372,7 @@ void utility_cseig(const float_complex* A, const int dim, int sortDecFLAG, float
                     for(j=0; j<dim; j++)
                         V[i*dim+j] = a[(dim-j-1)*dim+i]; /* traspose, back to row-major and reverse order */
                 if(D!=NULL)
-                    D[i*dim+i] = w[dim-i-1]; /* store along the diagonal, reversing the order */
+                    D[i*dim+i] = cmplxf(w[dim-i-1], 0.0f); /* store along the diagonal, reversing the order */
                 if(eig!=NULL)
                     eig[i] = w[dim-i-1];
             }
