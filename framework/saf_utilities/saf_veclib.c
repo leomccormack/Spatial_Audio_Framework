@@ -261,7 +261,7 @@ void utility_ssvd(const float* A, const int dim1, const int dim2, float** U, flo
 
 /*------------------------ symmetric eigenvalue decomposition (?seig) -----------------------*/
 
-void utility_sseig(const float* A, const int dim, int sortDecFLAG, float* V, float* D)
+void utility_sseig(const float* A, const int dim, int sortDecFLAG, float* V, float* D, float* eig)
 {
     int i, j, n, lda, info, lwork;
     float wkopt;
@@ -285,24 +285,107 @@ void utility_sseig(const float* A, const int dim, int sortDecFLAG, float* V, flo
     ssyev_( "Vectors", "Upper", &n, a, &lda, w, work, &lwork, &info );
 
     /* output */
-    memset(D, 0, dim*dim*sizeof(float));
+    if(D!=NULL)
+        memset(D, 0, dim*dim*sizeof(float));
     if( info > 0 ) {
         /* failed to converge and find the eigenvalues */
-        memset(V, 0, dim*dim*sizeof(float));
+        if(V!=NULL)
+            memset(V, 0, dim*dim*sizeof(float));
     }
     else{
         if(sortDecFLAG){
             for(i=0; i<dim; i++){
-                for(j=0; j<dim; j++)
-                    V[i*dim+j] = a[(dim-j-1)*dim+i]; /* traspose, back to row-major and reverse order */
-                D[i*dim+i] = w[dim-i-1]; /* store along the diagonal, reversing the order */
+                if(V!=NULL)
+                    for(j=0; j<dim; j++)
+                        V[i*dim+j] = a[(dim-j-1)*dim+i]; /* traspose, back to row-major and reverse order */
+                if(D!=NULL)
+                    D[i*dim+i] = w[dim-i-1]; /* store along the diagonal, reversing the order */
+                if(eig!=NULL)
+                    eig[i] = w[dim-i-1];
             }
         }
         else{
             for(i=0; i<dim; i++){
-                for(j=0; j<dim; j++)
-                    V[i*dim+j] = a[j*dim+i]; /* traspose, back to row-major */
-                D[i*dim+i] = w[i]; /* store along the diagonal */
+                if(V!=NULL)
+                    for(j=0; j<dim; j++)
+                        V[i*dim+j] = a[j*dim+i]; /* traspose, back to row-major */
+                if(D!=NULL)
+                    D[i*dim+i] = w[i]; /* store along the diagonal */
+                if(eig!=NULL)
+                    eig[i] = w[i];
+            }
+        }
+    }
+    
+    free(w);
+    free(a);
+    free(work);
+}
+
+void utility_cseig(const float_complex* A, const int dim, int sortDecFLAG, float_complex* V, float_complex* D, float* eig)
+{
+    int i, j, n, lda, info, lwork;
+    float_complex wkopt;
+    float *w, *rwork;
+    float_complex* a, *work;
+    
+    n = dim;
+    lda = dim;
+    w = malloc(dim*sizeof(float));
+    a = malloc(dim*dim*sizeof(float_complex));
+    rwork = malloc((3*n-2)*sizeof(float));
+    
+    /* store in column major order (i.e. transpose) */
+    for(i=0; i<dim; i++)
+        for(j=0; j<dim; j++)
+            a[i*dim+j] = A[j*dim+i];
+    
+    /* solve the eigenproblem */
+    lwork = -1;
+#ifdef __APPLE__
+    cheev_( "Vectors", "Upper", (__CLPK_integer*)&n, (__CLPK_complex*)a, (__CLPK_integer*)&lda,
+           (__CLPK_real*)w, (__CLPK_complex*)&wkopt, (__CLPK_integer*)&lwork, (__CLPK_real*)rwork, (__CLPK_integer*)&info );
+#else
+    cheev_( "Vectors", "Upper", &n, a, &lda, w, &wkopt, &lwork, rwork, &info );
+#endif
+    lwork = (int)crealf(wkopt);
+    work = (float_complex*)malloc( lwork*sizeof(float_complex) );
+#ifdef __APPLE__
+    cheev_( "Vectors", "Upper", (__CLPK_integer*)&n, (__CLPK_complex*)a, (__CLPK_integer*)&lda,
+           (__CLPK_real*)w, (__CLPK_complex*)work, (__CLPK_integer*)&lwork, (__CLPK_real*)rwork, (__CLPK_integer*)&info );
+#else
+    cheev_( "Vectors", "Upper", &n, a, &lda, w, work, &lwork, rwork, &info );
+#endif
+    
+    /* output */
+    if(D!=NULL)
+        memset(D, 0, dim*dim*sizeof(float_complex));
+    if( info > 0 ) {
+        /* failed to converge and find the eigenvalues */
+        if(V!=NULL)
+            memset(V, 0, dim*dim*sizeof(float_complex));
+    }
+    else{
+        if(sortDecFLAG){
+            for(i=0; i<dim; i++){
+                if(V!=NULL)
+                    for(j=0; j<dim; j++)
+                        V[i*dim+j] = a[(dim-j-1)*dim+i]; /* traspose, back to row-major and reverse order */
+                if(D!=NULL)
+                    D[i*dim+i] = w[dim-i-1]; /* store along the diagonal, reversing the order */
+                if(eig!=NULL)
+                    eig[i] = w[dim-i-1];
+            }
+        }
+        else{
+            for(i=0; i<dim; i++){
+                if(V!=NULL)
+                    for(j=0; j<dim; j++)
+                        V[i*dim+j] = a[j*dim+i]; /* traspose, back to row-major */
+                if(D!=NULL)
+                    D[i*dim+i] = cmplxf(w[i], 0.0f); /* store along the diagonal */
+                if(eig!=NULL)
+                    eig[i] = w[i];
             }
         }
     }

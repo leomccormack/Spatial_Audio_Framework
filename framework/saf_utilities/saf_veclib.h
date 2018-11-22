@@ -147,23 +147,32 @@ void utility_ssvd(const float* A,          /* in matrix; flat: dim1 x dim2 */
 
 /*------------------------ symmetric eigenvalue decomposition (?seig) -----------------------*/
 
-/* s, row-major, eigenvalue decomposition of symmetric matrix: single precision */
+/* s, row-major, eigenvalue decomposition of a symmetric matrix: single precision */
 void utility_sseig(const float* A,         /* in symmetric square matrix; flat: dim x dim */
-                  const int dim,           /* dimensions for the square matrix, A */
-                  int sortDecFLAG,         /* 1: sort eigen values and vectors in decending order. 0: ascending */
-                  float* V,                /* Eigen vectors; dim x dim */
-                  float* D);               /* Eigen values along the diagonal; dim x dim */
+                   const int dim,          /* dimensions for the square matrix, A */
+                   int sortDecFLAG,        /* 1: sort eigen values and vectors in decending order. 0: ascending */
+                   float* V,               /* Eigen vectors (set to NULL if not needed); dim x dim */
+                   float* D,               /* Eigen values along the diagonal (set to NULL if not needed); dim x dim */
+                   float* eig);            /* Eigen values not diagonalised (set to NULL if not needed); dim x 1 */
+
+/* c, row-major, eigenvalue decomposition of a symmetric/Hermitian matrix: single precision complex */
+void utility_cseig(const float_complex* A, /* in symmetric square matrix; flat: dim x dim */
+                   const int dim,          /* dimensions for the square matrix, A */
+                   int sortDecFLAG,        /* 1: sort eigen values and vectors in decending order. 0: ascending */
+                   float_complex* V,       /* Eigen vectors (set to NULL if not needed); dim x dim */
+                   float_complex* D,       /* Eigen values along the diagonal (set to NULL if not needed); dim x dim */
+                   float* eig);            /* Eigen values not diagonalised (set to NULL if not needed); dim x 1 */
 
 /*-----------------------------  eigenvalue decomposition (?eig) ----------------------------*/
 
-/* s, row-major, eigenvalue decomposition of a nonsymmetric matrix: single precision complex */
+/* s, row-major, eigenvalue decomposition of a non-symmetric matrix: single precision complex */
 void utility_ceig(const float_complex* A,  /* in nonsymmetric square matrix; flat: dim x dim */
                   const int dim,           /* dimensions for the square matrix, A */
                   int sortDecFLAG,         /* 1: sort eigen values and vectors in decending order. 0: ascending */
                   float_complex* VL,       /* Left Eigen vectors (set to NULL if not needed); dim x dim */
                   float_complex* VR,       /* Right Eigen vectors (set to NULL if not needed); dim x dim */
                   float_complex* D,        /* Eigen values along the diagonal (set to NULL if not needed); dim x dim */
-                  float* eig);             /* Eigen values not diagonalised; dim x 1 */
+                  float* eig);             /* Eigen values not diagonalised (set to NULL if not needed); dim x 1 */
 
 /*------------------------------ general linear solver (?glslv) -----------------------------*/
 
