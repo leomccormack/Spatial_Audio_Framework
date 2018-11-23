@@ -4,25 +4,18 @@ A Spatial Audio Framework (SAF) written in C. The framework includes functions f
 
 ## Getting Started
 
-To use this framework in your project, first add all of the files found in this folder:
+To use this framework in your project, first add this folder and all of its contained files:
 
 ```
 Spatial_Audio_Framework/framework
 ```
 
-Then add the following directories to the header search paths:
+Then add the following directories to the relevant header and library search paths:
 
 ```
 Spatial_Audio_Framework/framework/include
-Spatial_Audio_Framework/dependencies/MacOSX/include (for MacOSX users) 
-Spatial_Audio_Framework/dependencies/Win64/include (for Windows users) 
-```
-
-Then add the following directories to the library search paths:
-
-```
-Spatial_Audio_Framework/dependencies/MacOSX/lib (for MacOSX users) 
-Spatial_Audio_Framework/dependencies/Win64/lib (for Windows users) 
+Spatial_Audio_Framework/dependencies/.../include
+Spatial_Audio_Framework/dependencies/.../lib
 ```
 
 To enable the SOFA loading feature, your project must link against the following included libraries:
