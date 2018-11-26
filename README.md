@@ -2,6 +2,8 @@
 
 A Spatial Audio Framework (SAF) written in C. The framework includes functions for performing Vector-Base Amplitude Panning (VBAP), Spherical Harmonic Transforms (SHT), and Higher-order Ambisonics (HOA); among others.
 
+![](saf.png)
+
 ## Getting Started
 
 To use this framework in your project, first add this folder and all of its contained files:
