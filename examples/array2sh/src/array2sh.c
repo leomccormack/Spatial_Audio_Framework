@@ -179,6 +179,9 @@ void array2sh_process
     float gain_lin, maxFreq;
     
     /* reinitialise if needed */
+#ifdef __APPLE__
+    array2sh_checkReInit(hA2sh);
+#else
     if (pData->reinitTFTFLAG==1) {
         pData->reinitTFTFLAG = 2;
         array2sh_initTFT(hA2sh);
@@ -192,6 +195,7 @@ void array2sh_process
         array2sh_calculate_mag_curves(hA2sh);
         pData->reinitSHTmatrixFLAG = 0;
     }
+#endif
 
     if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && !(pData->recalcEvalFLAG) &&
         !(pData->reinitSHTmatrixFLAG) && !(pData->reinitTFTFLAG)) {

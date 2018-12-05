@@ -150,11 +150,15 @@ void panner_process
     float src_dirs[MAX_NUM_INPUTS][2], pValue[HYBRID_BANDS], gains3D[MAX_NUM_OUTPUTS], gains2D[MAX_NUM_OUTPUTS], gains_band[MAX_NUM_OUTPUTS];
     
     /* reinitialise if needed */
+#ifdef __APPLE__
+    panner_checkReInit(hPan);
+#else
     if(pData->reInitTFT==1){
 		pData->reInitTFT = 2;
         panner_initTFT(hPan);
         pData->reInitTFT = 0;
-    } 
+    }
+#endif
 
     /* apply panner */
     if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && (pData->vbap_gtable != NULL) 

@@ -178,13 +178,17 @@ void ambi_bin_process
     /* local copies of user parameters */
     int order, nSH, rE_WEIGHT, enablePhaseManip, enableRot;
     NORM_TYPES norm;
-
+ 
     /* reinitialise if needed */
+#ifdef __APPLE__
+    ambi_bin_checkReInit(hAmbi);
+#else
 	if (pData->reInitTFT == 1) {
 		pData->reInitTFT = 2;
 		ambi_bin_initTFT(hAmbi); /* always init before codec */
 		pData->reInitTFT = 0;
 	}
+#endif
 
     /* decode audio to loudspeakers or headphones */
     if ( (nSamples == FRAME_SIZE) && (isPlaying) && (pData->reInitCodec==0) && (pData->reInitTFT==0) ) {

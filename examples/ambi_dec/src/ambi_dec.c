@@ -223,6 +223,9 @@ void ambi_dec_process
     NORM_TYPES norm;
     
     /* reinitialise if needed */
+#ifdef __APPLE__
+    ambi_dec_checkReInit(hAmbi);
+#else
     if(pData->reInitTFT==1){
         pData->reInitTFT = 2;
         ambi_dec_initTFT(hAmbi); /* always init before codec or hrtfs  */
@@ -232,7 +235,8 @@ void ambi_dec_process
         pData->reInitCodec = 2;
         ambi_dec_initCodec(hAmbi);
         pData->reInitCodec = 0;
-    } 
+    }
+#endif
 
     /* decode audio to loudspeakers or headphones */
     if ( (nSamples == FRAME_SIZE) && (isPlaying) && (pData->reInitCodec==0) && (pData->reInitTFT==0) && (pData->reInitHRTFs==0) ) {

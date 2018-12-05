@@ -129,10 +129,12 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
                     pData->hrirs[i*2*(pData->hrir_len) + j*(pData->hrir_len) + k] = (float)__default_hrirs[i][j][k];
         if(pData->hrir_dirs_deg != NULL)
             free(pData->hrir_dirs_deg);
-        pData->hrir_dirs_deg = malloc(pData->N_hrir_dirs * 2 * sizeof(float));
-        for(i=0; i<pData->N_hrir_dirs; i++)
-            for(j=0; j<2; j++)
-                pData->hrir_dirs_deg[i*2+j] = (float)__default_hrir_dirs_deg[i][j];
+        pData->hrir_dirs_deg = malloc(pData->N_hrir_dirs * 2 * sizeof(float)); 
+        for(i=0; i<pData->N_hrir_dirs; i++){
+            pData->hrir_dirs_deg[i*2+0] = __default_hrir_dirs_deg[i][0]>180.0 ?
+                                   (float)__default_hrir_dirs_deg[i][0]-360.0f : (float)__default_hrir_dirs_deg[i][0];
+            pData->hrir_dirs_deg[i*2+1] = (float)__default_hrir_dirs_deg[i][1];
+        }
     }
     
     /* estimate the ITDs for each HRIR */

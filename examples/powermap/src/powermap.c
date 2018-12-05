@@ -195,11 +195,15 @@ void powermap_analysis
     POWERMAP_MODES pmap_mode;
     
     /* reinitialise if needed */
+#ifdef __APPLE__
+    powermap_checkReInit(hPm);
+#else
     if(pData->reInitTFT==1){
         pData->reInitTFT = 2;
         powermap_initTFT(hPm);
         pData->reInitTFT = 0;
-    } 
+    }
+#endif
     
     /* The main processing: */
     if (nSamples == FRAME_SIZE && (pData->reInitAna == 0) && (pData->reInitTFT == 0) && isPlaying ) {

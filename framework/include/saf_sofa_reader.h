@@ -67,7 +67,7 @@ void loadSofaFile
     int* hrir_fs
 )
 {
-    int i, j, k, retval,dimid[6], *dimids, ndimsp,ncid, varid;
+    int i, j, k, retval,dimid[6], *dimids, ndimsp,ncid, varid, is0_360;
     size_t dimlength[6], IR_dims[3], SourcePosition_dims[2];
     size_t hrir_dims[3], hrir_pos_dims[2];
     char dimname[6];
@@ -162,11 +162,19 @@ void loadSofaFile
     }
     
     /* store in floating point precision */
+    is0_360 = 0;
     for(i=0; i<SourcePosition_dims[0]; i++){
         (*hrir_dirs_deg)[2*i+0] = (float)SourcePosition[i*SourcePosition_dims[1]+0];
         (*hrir_dirs_deg)[2*i+1] = (float)SourcePosition[i*SourcePosition_dims[1]+1];
+        if((*hrir_dirs_deg)[2*i+0]>=181.0f)
+            is0_360 = 1;
     }
     
+    /* convert to -180..180, if azi is 0..360 */
+    if(is0_360)
+        for(i=0; i<SourcePosition_dims[0]; i++)
+            (*hrir_dirs_deg)[2*i+0] = (*hrir_dirs_deg)[2*i+0]>180.0f ? (*hrir_dirs_deg)[2*i+0] -360.0f : (*hrir_dirs_deg)[2*i+0];
+            
     free(IR);
     free(SourcePosition);
 }

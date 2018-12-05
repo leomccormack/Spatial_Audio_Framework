@@ -182,11 +182,15 @@ void binauraliser_process
     int enableRotation;
     
     /* reinitialise if needed */
+#ifdef __APPLE__
+    binauraliser_checkReInit(hBin);
+#else
     if(pData->reInitTFT==1){
 		pData->reInitTFT = 2;
         binauraliser_initTFT(hBin);
         pData->reInitTFT = 0; 
-    }  
+    }
+#endif
     
     /* apply binaural panner */
     if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && (pData->hrtf_fb!=NULL) && (pData->reInitTFT == 0) && 
