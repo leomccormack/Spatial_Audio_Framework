@@ -315,7 +315,7 @@ void cdf4sap_formulate_M_and_Cr
         for (j = 0; j<ysize; j++)
             pData->A_Cy[j*ysize + i] = Cy[i][j]; /* store in column-major order */
     lwork = -1;
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     sgesvd_("A", "N", (__CLPK_integer*)&m, (__CLPK_integer*)&n, pData->A_Cy, (__CLPK_integer*)&lda, pData->S_Cy, pData->U_Cy,
             (__CLPK_integer*)&ldu, pData->VT_Cy, (__CLPK_integer*)&ldvt, &wkopt, (__CLPK_integer*)&lwork, (__CLPK_integer*)&info);
 #else
@@ -324,7 +324,7 @@ void cdf4sap_formulate_M_and_Cr
 #endif
     lwork = (int)wkopt;
     work = (float*)malloc(lwork * sizeof(float));
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     sgesvd_("A", "N", (__CLPK_integer*)&m, (__CLPK_integer*)&n, pData->A_Cy, (__CLPK_integer*)&lda, pData->S_Cy, pData->U_Cy,
             (__CLPK_integer*)&ldu, pData->VT_Cy, (__CLPK_integer*)&ldvt, work, (__CLPK_integer*)&lwork, (__CLPK_integer*)&info);
 #else
@@ -345,7 +345,7 @@ void cdf4sap_formulate_M_and_Cr
         for (j = 0; j<xsize; j++)
             pData->A_Cx[j*xsize + i] = Cx[i][j];
     lwork = -1;
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     sgesvd_("A", "N", (__CLPK_integer*)&m, (__CLPK_integer*)&n, pData->A_Cx, (__CLPK_integer*)&lda, pData->S_Cx, pData->U_Cx,
             (__CLPK_integer*)&ldu, pData->VT_Cx, (__CLPK_integer*)&ldvt, &wkopt, (__CLPK_integer*)&lwork, (__CLPK_integer*)&info);
 #else
@@ -354,7 +354,7 @@ void cdf4sap_formulate_M_and_Cr
 #endif
     lwork = (int)wkopt;
     work = (float*)malloc(lwork * sizeof(float));
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     sgesvd_("A", "N", (__CLPK_integer*)&m, (__CLPK_integer*)&n, pData->A_Cx, (__CLPK_integer*)&lda, pData->S_Cx, pData->U_Cx,
             (__CLPK_integer*)&ldu, pData->VT_Cx, (__CLPK_integer*)&ldvt, work, (__CLPK_integer*)&lwork, (__CLPK_integer*)&info);
 #else
@@ -421,7 +421,7 @@ void cdf4sap_formulate_M_and_Cr
                 pData->KxQGKy, qsize2);
     m = qsize2; n = qsize1; lda = qsize2; ldu = qsize2; ldvt = qsize1;
     lwork = -1;
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     sgesvd_("A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, pData->KxQGKy, (__CLPK_integer*)&lda, pData->S, pData->U,
             (__CLPK_integer*)&ldu, pData->VT, (__CLPK_integer*)&ldvt, &wkopt, (__CLPK_integer*)&lwork, (__CLPK_integer*)&info);
 #else
@@ -430,7 +430,7 @@ void cdf4sap_formulate_M_and_Cr
 #endif
     lwork = (int)wkopt;
     work = (float*)malloc(lwork * sizeof(float));
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     sgesvd_("A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, pData->KxQGKy, (__CLPK_integer*)&lda, pData->S, pData->U,
             (__CLPK_integer*)&ldu, pData->VT, (__CLPK_integer*)&ldvt, work, (__CLPK_integer*)&lwork, (__CLPK_integer*)&info);
 #else
@@ -550,7 +550,7 @@ void cdf4sap_formulate_M_and_Cr_cmplx
         for (j = 0; j<ysize; j++)
             pData->A_Cy[j*ysize + i] = Cy[i][j]; /* store in column-major order */
     lwork = -1;
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgesvd_("A", "N", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_complex*)pData->A_Cy, (__CLPK_integer*)&lda, pData->S_Cy_real, (__CLPK_complex*)pData->U_Cy,
             (__CLPK_integer*)&ldu, (__CLPK_complex*)pData->VH_Cy, (__CLPK_integer*)&ldvt, (__CLPK_complex*)&wkopt, (__CLPK_integer*)&lwork, rwork, (__CLPK_integer*)&info);
 #elif INTEL_MKL_VERSION
@@ -559,7 +559,7 @@ void cdf4sap_formulate_M_and_Cr_cmplx
 #endif
     lwork = (int)crealf(wkopt);
     work = (float_complex*)malloc(lwork * sizeof(float_complex));
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgesvd_("A", "N", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_complex*)pData->A_Cy, (__CLPK_integer*)&lda, pData->S_Cy_real, (__CLPK_complex*)pData->U_Cy,
             (__CLPK_integer*)&ldu, (__CLPK_complex*)pData->VH_Cy, (__CLPK_integer*)&ldvt, (__CLPK_complex*)work, (__CLPK_integer*)&lwork, rwork, (__CLPK_integer*)&info);
 #elif INTEL_MKL_VERSION
@@ -582,7 +582,7 @@ void cdf4sap_formulate_M_and_Cr_cmplx
         for (j = 0; j<xsize; j++)
             pData->A_Cx[j*xsize + i] = Cx[i][j];
     lwork = -1;
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgesvd_("A", "N", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_complex*)pData->A_Cx, (__CLPK_integer*)&lda, pData->S_Cx_real, (__CLPK_complex*)pData->U_Cx,
             (__CLPK_integer*)&ldu, (__CLPK_complex*)pData->VH_Cx, (__CLPK_integer*)&ldvt, (__CLPK_complex*)&wkopt, (__CLPK_integer*)&lwork, rwork, (__CLPK_integer*)&info);
 #elif INTEL_MKL_VERSION
@@ -591,7 +591,7 @@ void cdf4sap_formulate_M_and_Cr_cmplx
 #endif
     lwork = (int)crealf(wkopt);
     work = (float_complex*)malloc(lwork * sizeof(float_complex));
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgesvd_("A", "N", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_complex*)pData->A_Cx, (__CLPK_integer*)&lda, pData->S_Cx_real, (__CLPK_complex*)pData->U_Cx,
             (__CLPK_integer*)&ldu, (__CLPK_complex*)pData->VH_Cx, (__CLPK_integer*)&ldvt, (__CLPK_complex*)work, (__CLPK_integer*)&lwork, rwork, (__CLPK_integer*)&info);
 #elif INTEL_MKL_VERSION
@@ -660,7 +660,7 @@ void cdf4sap_formulate_M_and_Cr_cmplx
     m = qsize2; n = qsize1; lda = qsize2; ldu = qsize2; ldvt = qsize1;
     rwork = (float*)malloc(MAX( 1, 5*MIN(m,n) )*sizeof(float));
     lwork = -1;
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgesvd_("A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_complex*)pData->KxQGKy, (__CLPK_integer*)&lda, pData->S_real, (__CLPK_complex*)pData->U,
             (__CLPK_integer*)&ldu, (__CLPK_complex*)pData->VH, (__CLPK_integer*)&ldvt, (__CLPK_complex*)&wkopt, (__CLPK_integer*)&lwork, rwork, (__CLPK_integer*)&info);
 #elif INTEL_MKL_VERSION
@@ -669,7 +669,7 @@ void cdf4sap_formulate_M_and_Cr_cmplx
 #endif
     lwork = (int)crealf(wkopt);
     work = (float_complex*)malloc(lwork * sizeof(float_complex));
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgesvd_("A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_complex*)pData->KxQGKy, (__CLPK_integer*)&lda, pData->S_real, (__CLPK_complex*)pData->U,
             (__CLPK_integer*)&ldu, (__CLPK_complex*)pData->VH, (__CLPK_integer*)&ldvt, (__CLPK_complex*)work, (__CLPK_integer*)&lwork, rwork, (__CLPK_integer*)&info);
 #elif INTEL_MKL_VERSION

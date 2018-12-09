@@ -24,7 +24,7 @@
 #define __afSTFT_MEXfile__vecTools__
 
 #include "saf_utilities.h"
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
   #ifdef NDEBUG
     #define VDSP 1
   #endif

@@ -342,19 +342,19 @@ void utility_cseig(const float_complex* A, const int dim, int sortDecFLAG, float
     
     /* solve the eigenproblem */
     lwork = -1;
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cheev_( "Vectors", "Upper", (__CLPK_integer*)&n, (__CLPK_complex*)a, (__CLPK_integer*)&lda,
            (__CLPK_real*)w, (__CLPK_complex*)&wkopt, (__CLPK_integer*)&lwork, (__CLPK_real*)rwork, (__CLPK_integer*)&info );
-#else
-    cheev_( "Vectors", "Upper", &n, a, &lda, w, &wkopt, &lwork, rwork, &info );
+#elif INTEL_MKL_VERSION
+    cheev_( "Vectors", "Upper", &n, (MKL_Complex8*)a, &lda, w, (MKL_Complex8*)&wkopt, &lwork, rwork, &info );
 #endif
     lwork = (int)crealf(wkopt);
     work = (float_complex*)malloc( lwork*sizeof(float_complex) );
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cheev_( "Vectors", "Upper", (__CLPK_integer*)&n, (__CLPK_complex*)a, (__CLPK_integer*)&lda,
            (__CLPK_real*)w, (__CLPK_complex*)work, (__CLPK_integer*)&lwork, (__CLPK_real*)rwork, (__CLPK_integer*)&info );
-#else
-    cheev_( "Vectors", "Upper", &n, a, &lda, w, work, &lwork, rwork, &info );
+#elif INTEL_MKL_VERSION
+    cheev_( "Vectors", "Upper", &n, (MKL_Complex8*)a, &lda, w, (MKL_Complex8*)work, &lwork, rwork, &info );
 #endif
     
     /* output */
@@ -418,7 +418,7 @@ void utility_ceig(const float_complex* A, const int dim, int sortDecFLAG, float_
     
     /* solve the eigenproblem */
     lwork = -1;
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgeev_( "Vectors", "Vectors", &n, (__CLPK_complex*)a, &lda, (__CLPK_complex*)w, (__CLPK_complex*)vl,
            &ldvl, (__CLPK_complex*)vr, &ldvr, (__CLPK_complex*)&wkopt, &lwork, rwork, &info );
 #elif INTEL_MKL_VERSION
@@ -426,7 +426,7 @@ void utility_ceig(const float_complex* A, const int dim, int sortDecFLAG, float_
 #endif
     lwork = (int)crealf(wkopt);
     work = (float_complex*)malloc( lwork*sizeof(float_complex) );
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgeev_( "Vectors", "Vectors", &n, (__CLPK_complex*)a, &lda, (__CLPK_complex*)w, (__CLPK_complex*)vl,
            &ldvl, (__CLPK_complex*)vr, &ldvr, (__CLPK_complex*)work, &lwork, rwork, &info );
 #elif INTEL_MKL_VERSION
@@ -535,7 +535,7 @@ void utility_cglslv(const float_complex* A, const int dim, float_complex* B, int
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgesv_( &n, &nrhs, (__CLPK_complex*)a, &lda, IPIV, (__CLPK_complex*)b, &ldb, &info );
 #elif INTEL_MKL_VERSION
     cgesv_( &n, &nrhs, (MKL_Complex8*)a, &lda, IPIV, (MKL_Complex8*)b, &ldb, &info );
@@ -608,7 +608,7 @@ void utility_cslslv(const float_complex* A, const int dim, float_complex* B, int
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cposv_( "U", &n, &nrhs, (__CLPK_complex*)a, &lda, (__CLPK_complex*)b, &ldb, &info );
 #elif INTEL_MKL_VERSION
     cposv_( "U", &n, &nrhs, (MKL_Complex8*)a, &lda, (MKL_Complex8*)b, &ldb, &info );
@@ -651,19 +651,19 @@ void utility_spinv(const float* inM, const int dim1, const int dim2, float* outM
     u = (float*)malloc(ldu*k*sizeof(float));
     vt = (float*)malloc(ldvt*n*sizeof(float));
     lwork = -1;
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     sgesvd_("S", "S", (__CLPK_integer*)&m, (__CLPK_integer*)&n, a, (__CLPK_integer*)&lda,
             s, u, (__CLPK_integer*)&ldu, vt, (__CLPK_integer*)&ldvt, &wkopt, (__CLPK_integer*)&lwork, (__CLPK_integer*)&info);
-#else
+#elif INTEL_MKL_VERSION
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
 #endif
     lwork = (int)wkopt;
     work = (float*)malloc(lwork*sizeof(float));
     
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     sgesvd_("S", "S", (__CLPK_integer*)&m, (__CLPK_integer*)&n, a, (__CLPK_integer*)&lda,
             s, u, (__CLPK_integer*)&ldu, vt, (__CLPK_integer*)&ldvt, work, (__CLPK_integer*) &lwork, (__CLPK_integer*)&info); /* Compute SVD */
-#else
+#elif INTEL_MKL_VERSION
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info ); /* Compute SVD */
 #endif
     if( info > 0 ) {
@@ -720,19 +720,19 @@ void utility_dpinv(const double* inM, const int dim1, const int dim2, double* ou
     u = (double*)malloc(ldu*k*sizeof(double));
     vt = (double*)malloc(ldvt*n*sizeof(double));
     lwork = -1;
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     dgesvd_("S", "S", (__CLPK_integer*)&m, (__CLPK_integer*)&n, a, (__CLPK_integer*)&lda,
             s, u, (__CLPK_integer*)&ldu, vt, (__CLPK_integer*)&ldvt, &wkopt, (__CLPK_integer*)&lwork, (__CLPK_integer*)&info);
-#else
+#elif INTEL_MKL_VERSION
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
 #endif
     lwork = (int)wkopt;
     work = (double*)malloc(lwork*sizeof(double));
     
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     dgesvd_("S", "S", (__CLPK_integer*)&m, (__CLPK_integer*)&n, a, (__CLPK_integer*)&lda,
             s, u, (__CLPK_integer*)&ldu, vt, (__CLPK_integer*)&ldvt, work, (__CLPK_integer*) &lwork, (__CLPK_integer*)&info); /* Compute SVD */
-#else
+#elif INTEL_MKL_VERSION
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info ); /* Compute SVD */
 #endif
     if( info > 0 ) {
@@ -783,7 +783,7 @@ void utility_sinv(float * A, const int N)
     WORK = (float*)malloc(LWORK * sizeof(float));
     int INFO;
     
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     sgetrf_((__CLPK_integer*)&N, (__CLPK_integer*)&N, A, (__CLPK_integer*)&N, (__CLPK_integer*)IPIV, (__CLPK_integer*)&INFO);
     sgetri_((__CLPK_integer*)&N, A, (__CLPK_integer*)&N, (__CLPK_integer*)IPIV, WORK, (__CLPK_integer*)&LWORK, (__CLPK_integer*)&INFO);
 #elif INTEL_MKL_VERSION
@@ -804,7 +804,7 @@ void utility_dinv(double* A, const int N)
     WORK = malloc( LWORK*sizeof(double));
     int INFO;
     
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     dgetrf_((__CLPK_integer*)&N, (__CLPK_integer*)&N, A, (__CLPK_integer*)&N, (__CLPK_integer*)IPIV, (__CLPK_integer*)&INFO);
     dgetri_((__CLPK_integer*)&N, A, (__CLPK_integer*)&N, (__CLPK_integer*)IPIV, WORK, (__CLPK_integer*)&LWORK, (__CLPK_integer*)&INFO);
 #elif INTEL_MKL_VERSION
@@ -825,7 +825,7 @@ void utility_cinv(float_complex * A, const int N)
     WORK = (float_complex*)malloc(LWORK * sizeof(float_complex));
     int INFO;
     
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgetrf_((__CLPK_integer*)&N, (__CLPK_integer*)&N, (__CLPK_complex*)A, (__CLPK_integer*)&N, (__CLPK_integer*)IPIV, (__CLPK_integer*)&INFO);
     cgetri_((__CLPK_integer*)&N, (__CLPK_complex*)A, (__CLPK_integer*)&N, (__CLPK_integer*)IPIV, (__CLPK_complex*)WORK, (__CLPK_integer*)&LWORK, (__CLPK_integer*)&INFO);
 #elif INTEL_MKL_VERSION

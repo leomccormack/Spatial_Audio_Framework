@@ -35,14 +35,12 @@
 #include <stdio.h>
 #include <string.h>
 /* a performance library is required: */
-#ifdef __APPLE__
-  /* it is highly recommended to use the Accelerate performance library for Mac OSX */
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+  /* it is highly recommended to use (at least) the Accelerate performance library for Mac OSX */
   #include "Accelerate/Accelerate.h"
 #else
-  /* it is highly recommended to use Intel's MKL performance library for Windows.
-   Otherwise, one may replace the BLAS/LAPACK functions with custom functions; i.e
-   rewrite saf_veclib, and the changes will be made throughout the framework. */
-  #include "mkl.h" 
+  /* it is highly recommended to use Intel's MKL performance library for Windows & Mac OSX */
+  #include "mkl.h"
 #endif
 #include "saf_complex.h"
 #ifdef CBLAS_H
