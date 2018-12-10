@@ -53,7 +53,6 @@ extern "C" {
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
 #define MAX_NUM_INPUTS ( 64 )                               /* Maximum permited channels for the VST standard */
 #define MAX_NUM_OUTPUTS ( 64 )                              /* Maximum permited channels for the VST standard */
-#define NUM_EARS ( 2 )                                      /* true for most humans */
  
     
 /***********/
@@ -64,7 +63,6 @@ typedef struct _panner
 {
     /* audio buffers */
     float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
-    float outframeTD[NUM_EARS][FRAME_SIZE];
     float_complex inputframeTF[HYBRID_BANDS][MAX_NUM_INPUTS][TIME_SLOTS];
     float_complex outputframeTF[HYBRID_BANDS][MAX_NUM_OUTPUTS][TIME_SLOTS];
     complexVector** STFTInputFrameTF;
@@ -76,29 +74,28 @@ typedef struct _panner
     float freqVector[HYBRID_BANDS];
     void* hSTFT;
     
-    /* Loudspeaker version */
+    /* Internal */
     int vbapTableRes[2];
     float* vbap_gtable; /* N_hrtf_vbap_gtable x nLoudpkrs */
     int N_vbap_gtable;
+    float G_src[HYBRID_BANDS][MAX_NUM_INPUTS][MAX_NUM_OUTPUTS];
+    int recalc_gainsFLAG[MAX_NUM_INPUTS];
     int reInitGainTables;
     int reInitTFT;
     
     /* misc. */
     int nTriangles;
-    int input_nDims; /* both 2D and 3D setups are supported, however, triangulation can fail if LS directions are shady */
-    int output_nDims;
+    int output_nDims; /* 2: 2-D, 3: 3-D */
     
     /* pValue */
     float pValue[HYBRID_BANDS];
     
     /* user parameters */
-    int nSources;
-    int new_nSources;
+    int nSources, new_nSources;
     float src_dirs_deg[MAX_NUM_INPUTS][2];
     float DTT;
-    int nLoudpkrs;
-    int new_nLoudpkrs;
-    float loudpkrs_dirs_deg[MAX_NUM_INPUTS][2];
+    int nLoudpkrs, new_nLoudpkrs;
+    float loudpkrs_dirs_deg[MAX_NUM_OUTPUTS][2];
     
 } panner_data;
      

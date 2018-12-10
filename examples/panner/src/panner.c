@@ -42,7 +42,7 @@ void panner_create
     panner_data* pData = (panner_data*)malloc(sizeof(panner_data));
     if (pData == NULL) { return;/*error*/ }
     *phPan = (void*)pData;
-    int t, ch;
+    int t, ch, dummy;
     
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
@@ -61,18 +61,19 @@ void panner_create
     pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_INPUTS, MAX_NUM_OUTPUTS), HOP_SIZE, sizeof(float));
     
     /* flags and gain table */
+    for(ch=0; ch<MAX_NUM_INPUTS; ch++)
+        pData->recalc_gainsFLAG[ch] = 1;
     pData->reInitGainTables = 1;
     pData->vbap_gtable = NULL;
     pData->reInitTFT = 1;
     
     /* user parameters */
-    panner_loadPreset(PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
+    panner_loadPreset(PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
     pData->nSources = pData->new_nSources;
     pData->DTT = 0.5f;
     panner_loadPreset(PRESET_5PX, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->output_nDims)); /*check setStateInformation if you change default preset*/
     pData->nLoudpkrs = pData->new_nLoudpkrs;
 }
-
 
 void panner_destroy
 (
@@ -147,7 +148,7 @@ void panner_process
     panner_data *pData = (panner_data*)(hPan);
     int t, sample, ch, ls, i, band, nSources, nLoudspeakers, N_azi, aziIndex, elevIndex, idx3d, idx2D;
     float aziRes, elevRes, pv_f, gains3D_sum_pvf, gains2D_sum_pvf;
-    float src_dirs[MAX_NUM_INPUTS][2], pValue[HYBRID_BANDS], gains3D[MAX_NUM_OUTPUTS], gains2D[MAX_NUM_OUTPUTS], gains_band[MAX_NUM_OUTPUTS];
+    float src_dirs[MAX_NUM_INPUTS][2], pValue[HYBRID_BANDS], gains3D[MAX_NUM_OUTPUTS], gains2D[MAX_NUM_OUTPUTS];
     
     /* reinitialise if needed */
 #ifdef __APPLE__
@@ -193,52 +194,70 @@ void panner_process
             elevRes = (float)pData->vbapTableRes[1];
             N_azi = (int)(360.0f / aziRes + 0.5f) + 1;
             for (ch = 0; ch < nSources; ch++) {
-                aziIndex = (int)(matlab_fmodf(pData->src_dirs_deg[ch][0] + 180.0f, 360.0f) / aziRes + 0.5f);
-                elevIndex = (int)((pData->src_dirs_deg[ch][1] + 90.0f) / elevRes + 0.5f);
-                idx3d = elevIndex * N_azi + aziIndex;
-                for (ls = 0; ls < nLoudspeakers; ls++)
-                    gains3D[ls] =  pData->vbap_gtable[idx3d*nLoudspeakers+ls];
-                for (band = 0; band < HYBRID_BANDS; band++){
-                    /* apply pValue per frequency */
-                    pv_f = pData->pValue[band];
-                    if(pv_f != 2.0f){
-                        gains3D_sum_pvf = 0.0f;
-                        for (ls = 0; ls < nLoudspeakers; ls++)
-                            gains3D_sum_pvf += powf(MAX(gains3D[ls], 0.0f), pv_f);
-                        gains3D_sum_pvf = powf(gains3D_sum_pvf, 1.0f/(pv_f+2.23e-13f));
-                        for (ls = 0; ls < nLoudspeakers; ls++)
-                            gains_band[ls] = gains3D[ls] / (gains3D_sum_pvf+2.23e-13f);
+                /* recalculate frequency dependent panning gains */
+                if(pData->recalc_gainsFLAG[ch]){
+                    //memset(pData->G_src[band][ch], 0, MAX_NUM_OUTPUTS * sizeof(float));
+                    aziIndex = (int)(matlab_fmodf(pData->src_dirs_deg[ch][0] + 180.0f, 360.0f) / aziRes + 0.5f);
+                    elevIndex = (int)((pData->src_dirs_deg[ch][1] + 90.0f) / elevRes + 0.5f);
+                    idx3d = elevIndex * N_azi + aziIndex;
+                    for (ls = 0; ls < nLoudspeakers; ls++)
+                        gains3D[ls] =  pData->vbap_gtable[idx3d*nLoudspeakers+ls];
+                    for (band = 0; band < HYBRID_BANDS; band++){
+                        /* apply pValue per frequency */
+                        pv_f = pData->pValue[band];
+                        if(pv_f != 2.0f){
+                            gains3D_sum_pvf = 0.0f;
+                            for (ls = 0; ls < nLoudspeakers; ls++)
+                                gains3D_sum_pvf += powf(MAX(gains3D[ls], 0.0f), pv_f);
+                            gains3D_sum_pvf = powf(gains3D_sum_pvf, 1.0f/(pv_f+2.23e-9f));
+                            for (ls = 0; ls < nLoudspeakers; ls++)
+                                pData->G_src[band][ch][ls] = gains3D[ls] / (gains3D_sum_pvf+2.23e-9f);
+                        }
+                        else
+                            for (ls = 0; ls < nLoudspeakers; ls++)
+                                pData->G_src[band][ch][ls] = gains3D[ls];
                     }
-                    else
-                        memcpy(gains_band, gains3D, nLoudspeakers*sizeof(float));
+                    pData->recalc_gainsFLAG[ch] = 0;
+                }
+                /* apply panning gains */
+                for (band = 0; band < HYBRID_BANDS; band++){
                     for (ls = 0; ls < nLoudspeakers; ls++)
                         for (t = 0; t < TIME_SLOTS; t++)
-                            pData->outputframeTF[band][ls][t] = ccaddf(pData->outputframeTF[band][ls][t], crmulf(pData->inputframeTF[band][ch][t], gains_band[ls]));
+                            pData->outputframeTF[band][ls][t] = ccaddf(pData->outputframeTF[band][ls][t], crmulf(pData->inputframeTF[band][ch][t], pData->G_src[band][ch][ls]));
                 }
             }
         }
         else{/* 2-D case */
             aziRes = (float)pData->vbapTableRes[0];
             for (ch = 0; ch < nSources; ch++) {
-                idx2D = (int)((matlab_fmodf(pData->src_dirs_deg[ch][0]+180.0f,360.0f)/aziRes)+0.5f);
-                for (ls = 0; ls < nLoudspeakers; ls++)
-                    gains2D[ls] = pData->vbap_gtable[idx2D*nLoudspeakers+ls]; 
-                for (band = 0; band < HYBRID_BANDS; band++){
-                    /* apply pValue per frequency */
-                    pv_f = pData->pValue[band];
-                    if(pv_f != 2.0f){
-                        gains2D_sum_pvf = 0.0f;
-                        for (ls = 0; ls < nLoudspeakers; ls++)
-                            gains2D_sum_pvf += powf(MAX(gains2D[ls], 0.0f), pv_f);
-                        gains2D_sum_pvf = powf(gains2D_sum_pvf, 1.0f/(pv_f+2.23e-13f));
-                        for (ls = 0; ls < nLoudspeakers; ls++)
-                            gains_band[ls] = gains2D[ls] / (gains2D_sum_pvf+2.23e-13f);
+                /* recalculate frequency dependent panning gains */
+                if(pData->recalc_gainsFLAG[ch]){
+                    //memset(pData->G_src[band][ch], 0, MAX_NUM_OUTPUTS*sizeof(float));
+                    idx2D = (int)((matlab_fmodf(pData->src_dirs_deg[ch][0]+180.0f,360.0f)/aziRes)+0.5f);
+                    for (ls = 0; ls < nLoudspeakers; ls++)
+                        gains2D[ls] = pData->vbap_gtable[idx2D*nLoudspeakers+ls];
+                    for (band = 0; band < HYBRID_BANDS; band++){
+                        /* apply pValue per frequency */
+                        pv_f = pData->pValue[band];
+                        if(pv_f != 2.0f){
+                            gains2D_sum_pvf = 0.0f;
+                            for (ls = 0; ls < nLoudspeakers; ls++)
+                                gains2D_sum_pvf += powf(MAX(gains2D[ls], 0.0f), pv_f);
+                            gains2D_sum_pvf = powf(gains2D_sum_pvf, 1.0f/(pv_f+2.23e-9f));
+                            for (ls = 0; ls < nLoudspeakers; ls++)
+                                pData->G_src[band][ch][ls] = gains2D[ls] / (gains2D_sum_pvf+2.23e-9f);
+                        }
+                        else
+                            for (ls = 0; ls < nLoudspeakers; ls++)
+                                pData->G_src[band][ch][ls] = gains2D[ls];
                     }
-                    else
-                        memcpy(gains_band, gains2D, nLoudspeakers*sizeof(float));
+                    pData->recalc_gainsFLAG[ch] = 0;
+                }
+                /* apply panning gains */
+                for (band = 0; band < HYBRID_BANDS; band++){
                     for (ls = 0; ls < nLoudspeakers; ls++)
                         for (t = 0; t < TIME_SLOTS; t++)
-                            pData->outputframeTF[band][ls][t] = ccaddf(pData->outputframeTF[band][ls][t], crmulf(pData->inputframeTF[band][ch][t], gains_band[ls]));
+                            pData->outputframeTF[band][ls][t] = ccaddf(pData->outputframeTF[band][ls][t], crmulf(pData->inputframeTF[band][ch][t], pData->G_src[band][ch][ls]));
                 }
             }
         }
@@ -268,7 +287,7 @@ void panner_process
                     outputs[ch][sample + t* HOP_SIZE] = 0.0f;
         }
     }
-    else
+    else 
         for (ch=0; ch < nOutputs; ch++)
             memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
 }
@@ -279,8 +298,11 @@ void panner_process
 void panner_refreshSettings(void* const hPan)
 {
     panner_data *pData = (panner_data*)(hPan);
+    int ch;
     pData->reInitGainTables = 1;
     pData->reInitTFT = 1;
+    for(ch=0; ch<MAX_NUM_INPUTS; ch++)
+        pData->recalc_gainsFLAG[ch] = 1;
 }
 
 void panner_checkReInit(void* const hPan)
@@ -308,6 +330,7 @@ void panner_setSourceAzi_deg(void* const hPan, int index, float newAzi_deg)
     newAzi_deg = MAX(newAzi_deg, -180.0f);
     newAzi_deg = MIN(newAzi_deg, 180.0f);
     pData->src_dirs_deg[index][0] = newAzi_deg;
+    pData->recalc_gainsFLAG[index] = 1;
 }
 
 void panner_setSourceElev_deg(void* const hPan, int index, float newElev_deg)
@@ -316,70 +339,91 @@ void panner_setSourceElev_deg(void* const hPan, int index, float newElev_deg)
     newElev_deg = MAX(newElev_deg, -90.0f);
     newElev_deg = MIN(newElev_deg, 90.0f);
     pData->src_dirs_deg[index][1] = newElev_deg;
+    pData->recalc_gainsFLAG[index] = 1;
 }
 
 void panner_setNumSources(void* const hPan, int new_nSources)
 {
     panner_data *pData = (panner_data*)(hPan);
+    int ch;
     /* determine if TFT must be reinitialised */
     pData->new_nSources = new_nSources > MAX_NUM_INPUTS ? MAX_NUM_INPUTS : new_nSources;
-    if(pData->nSources != pData->new_nSources)
+    if(pData->nSources != pData->new_nSources){
         pData->reInitTFT = 1;
+        for(ch=pData->nSources; ch<pData->new_nSources; ch++)
+            pData->recalc_gainsFLAG[ch] = 1;
+    }
 }
 
 void panner_setLoudspeakerAzi_deg(void* const hPan, int index, float newAzi_deg)
 {
     panner_data *pData = (panner_data*)(hPan);
+    int ch;
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
     newAzi_deg = MAX(newAzi_deg, -180.0f);
     newAzi_deg = MIN(newAzi_deg, 180.0f);
     pData->loudpkrs_dirs_deg[index][0] = newAzi_deg;
     pData->reInitGainTables=1;
+    for(ch=0; ch<MAX_NUM_INPUTS; ch++)
+        pData->recalc_gainsFLAG[ch] = 1;
 }
 
 void panner_setLoudspeakerElev_deg(void* const hPan, int index, float newElev_deg)
 {
     panner_data *pData = (panner_data*)(hPan);
+    int ch;
     newElev_deg = MAX(newElev_deg, -90.0f);
     newElev_deg = MIN(newElev_deg, 90.0f);
     pData->loudpkrs_dirs_deg[index][1] = newElev_deg;
     pData->reInitGainTables=1;
+    for(ch=0; ch<MAX_NUM_INPUTS; ch++)
+        pData->recalc_gainsFLAG[ch] = 1;
 }
 
 void panner_setNumLoudspeakers(void* const hPan, int new_nLoudspeakers)
 {
-    panner_data *pData = (panner_data*)(hPan);    
+    panner_data *pData = (panner_data*)(hPan);
+    int ch;
     pData->new_nLoudpkrs = new_nLoudspeakers > MAX_NUM_OUTPUTS ? MAX_NUM_OUTPUTS : new_nLoudspeakers;
     if(pData->nLoudpkrs != pData->new_nLoudpkrs)
         pData->reInitTFT = 1; 
     pData->reInitGainTables=1;
+    for(ch=0; ch<MAX_NUM_INPUTS; ch++)
+        pData->recalc_gainsFLAG[ch] = 1;
 }
 
 void panner_setOutputConfigPreset(void* const hPan, int newPresetID)
 {
     panner_data *pData = (panner_data*)(hPan);
-    panner_loadPreset(newPresetID, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->output_nDims));
+    int ch, dummy;
+    panner_loadPreset(newPresetID, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &dummy);
     if(pData->nLoudpkrs != pData->new_nLoudpkrs)
         pData->reInitTFT = 1;
     pData->reInitGainTables=1;
+    for(ch=0; ch<MAX_NUM_INPUTS; ch++)
+        pData->recalc_gainsFLAG[ch] = 1;
 }
 
 void panner_setInputConfigPreset(void* const hPan, int newPresetID)
 {
     panner_data *pData = (panner_data*)(hPan);
-
-    panner_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims));
+    int ch, dummy;
+    panner_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &dummy);
     if(pData->nSources != pData->new_nSources)
         pData->reInitTFT = 1;
+    for(ch=0; ch<pData->new_nSources; ch++)
+        pData->recalc_gainsFLAG[ch] = 1;
 }
 
 void panner_setDTT(void* const hPan, float newValue)
 {
     panner_data *pData = (panner_data*)(hPan);
-
+    int ch;
     pData->DTT = newValue;
     panner_getPvalue(pData->DTT, pData->freqVector, pData->pValue);
+    for(ch=0; ch<pData->new_nSources; ch++)
+        pData->recalc_gainsFLAG[ch] = 1;
 }
 
 

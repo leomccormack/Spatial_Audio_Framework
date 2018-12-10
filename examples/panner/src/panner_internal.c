@@ -38,8 +38,7 @@ void panner_initGainTables(void* const hPan)
     /* determine dimensionality */
     sum_elev = 0.0f;
     for(i=0; i<pData->nLoudpkrs; i++)
-        sum_elev += fabsf(pData->loudpkrs_dirs_deg[i][1]);
-    sum_elev = sum_elev/(float)pData->nLoudpkrs - fabsf(pData->loudpkrs_dirs_deg[i][0]);
+        sum_elev += fabsf(pData->loudpkrs_dirs_deg[i][1]); 
     if(sum_elev < 0.01f)
         pData->output_nDims = 2;
     else
