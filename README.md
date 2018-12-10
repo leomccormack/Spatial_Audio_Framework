@@ -46,7 +46,7 @@ Alternatively, this .dll is also installed in a system PATH folder, alongside th
 
 By default, the framework uses Apple's Accelerate library for the linear algebra speed-ups. However, Mac users may also choose to use Intel's MKL instead, with the global pre-processor definition: "SAF_USE_INTEL_MKL" (often around 20-40% faster than Accelerate). 
 
-The required "saf_mkl_custom.dylib" may be obtained in similar manner as in the above, by either installing the software found [here](http://research.spa.aalto.fi/projects/sparta_vsts/download/) or by generating it with the following command:
+The required "saf_mkl_custom.dylib" may be obtained in a similar manner as in the above, by either installing the software found [here](http://research.spa.aalto.fi/projects/sparta_vsts/download/) or by generating it with the following command:
 
 ```c
 make intel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_mkl_list
