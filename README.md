@@ -6,7 +6,7 @@ A Spatial Audio Framework (SAF) written in C. The framework includes functions f
 
 ## Getting Started
 
-To use this framework in your project, first add the following folder and all of its contained files:
+To use this framework, first add the following folder and all of its contained files to your project:
 
 ```
 Spatial_Audio_Framework/framework
@@ -40,13 +40,13 @@ The "saf_mkl_custom.dll" may be generated with Intel's custom dll builder and th
 ```c
 nmake dllintel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_mkl_list
 ```
-Alternatively, this .dll is also installed alongside the software found [here](http://research.spa.aalto.fi/projects/sparta_vsts/download/).
+Alternatively, this .dll is also installed in a system PATH folder, alongside the software found [here](http://research.spa.aalto.fi/projects/sparta_vsts/download/); if you're feeling lazy ;-) 
 
 ### For Mac OSX users only (Optional)
 
-By default, the framework uses Apple's Accelerate library for the linear algebra speed-ups. However, Mac users may also choose to use Intel's MKL instead, with the global pre-processor definition: "SAF_USE_INTEL_MKL". 
+By default, the framework uses Apple's Accelerate library for the linear algebra speed-ups. However, Mac users may also choose to use Intel's MKL instead, with the global pre-processor definition: "SAF_USE_INTEL_MKL" (often around 20-40% faster than Accelerate). 
 
-The "saf_mkl_custom.dylib" may be obtained in similar manner as in the above, by either installing the software found [here](http://research.spa.aalto.fi/projects/sparta_vsts/download/), or by generating it with the following command:
+The required "saf_mkl_custom.dylib" may be obtained in similar manner as in the above, by either installing the software found [here](http://research.spa.aalto.fi/projects/sparta_vsts/download/) or by generating it with the following command:
 
 ```c
 make intel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_mkl_list
@@ -54,7 +54,7 @@ make intel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_
 
 ## Examples
 
-Several examples have also been included:
+Several examples are also included in the repository:
 * **ambi_bin** - a binaural Ambisonic decoder with built-in rotator
 * **ambi_dec** - a frequency-dependent Ambisonic decoder (AllRAD, EPAD, MMD etc)
 * **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for spherical harmonic signals (aka Ambisonic signals)
@@ -79,5 +79,5 @@ Many of these examples have been integrated into VST audio plug-ins using the JU
 
 ## License
 
-This framework is licensed under the [ISC license](https://choosealicense.com/licenses/isc/). However, it also includes the 'alias-free STFT' implementation by Juha Vilkamo (MIT license), which can be found [here](https://github.com/jvilkamo/afSTFT); and the 'convhull_3d' header only Convex Hull implementation by Leo McCormack (MIT license), which can be found [here](https://github.com/leomccormack/convhull_3d).
+This framework is provided under the [ISC license](https://choosealicense.com/licenses/isc/). However, it also includes a modified version of the ['alias-free STFT'](https://github.com/jvilkamo/afSTFT) implementation by Juha Vilkamo (MIT license); and the ['convhull_3d'](https://github.com/leomccormack/convhull_3d) header only 3-D Convex Hull implementation by Leo McCormack (MIT license).
 
