@@ -217,7 +217,7 @@ void ambi_dec_initHRTFs
     hrtf_vbap_gtable = NULL;
     pars->hrtf_vbapTableRes[0] = 2; /* azimuth resolution in degrees */
     pars->hrtf_vbapTableRes[1] = 5; /* elevation resolution in degrees */
-    generateVBAPgainTable3D(pars->hrir_dirs_deg, pars->N_hrir_dirs, pars->hrtf_vbapTableRes[0], pars->hrtf_vbapTableRes[1], 1, 0,
+    generateVBAPgainTable3D(pars->hrir_dirs_deg, pars->N_hrir_dirs, pars->hrtf_vbapTableRes[0], pars->hrtf_vbapTableRes[1], 1, 0, 0.0f,
                             &hrtf_vbap_gtable, &(pars->N_hrtf_vbap_gtable), &(pars->hrtf_nTriangles));
     if(hrtf_vbap_gtable==NULL){
         /* if generating vbap gain tabled failed, re-calculate with default HRIR set (which is known to triangulate correctly) */

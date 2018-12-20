@@ -148,7 +148,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     hrtf_vbap_gtable = NULL;
     pData->hrtf_vbapTableRes[0] = 2;
     pData->hrtf_vbapTableRes[1] = 5;
-    generateVBAPgainTable3D(pData->hrir_dirs_deg, pData->N_hrir_dirs, pData->hrtf_vbapTableRes[0], pData->hrtf_vbapTableRes[1], 1, 0,
+    generateVBAPgainTable3D(pData->hrir_dirs_deg, pData->N_hrir_dirs, pData->hrtf_vbapTableRes[0], pData->hrtf_vbapTableRes[1], 1, 0, 0.0f,
                             &hrtf_vbap_gtable, &(pData->N_hrtf_vbap_gtable), &(pData->nTriangles));
     if(hrtf_vbap_gtable==NULL){
         /* if generating vbap gain tabled failed, re-calculate with default HRIR set */

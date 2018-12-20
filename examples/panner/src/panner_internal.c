@@ -55,7 +55,7 @@ void panner_initGainTables(void* const hPan)
         generateVBAPgainTable2D((float*)pData->loudpkrs_dirs_deg, pData->nLoudpkrs, pData->vbapTableRes[0],
                                 &(pData->vbap_gtable), &(pData->N_vbap_gtable), &(pData->nTriangles));
     else{
-        generateVBAPgainTable3D((float*)pData->loudpkrs_dirs_deg, pData->nLoudpkrs, pData->vbapTableRes[0], pData->vbapTableRes[1], 1, 1,
+        generateVBAPgainTable3D((float*)pData->loudpkrs_dirs_deg, pData->nLoudpkrs, pData->vbapTableRes[0], pData->vbapTableRes[1], 1, 1, 0.0f,
                                 &(pData->vbap_gtable), &(pData->N_vbap_gtable), &(pData->nTriangles));
         if(pData->vbap_gtable==NULL){
             /* if generating vbap gain tabled failed, re-calculate with 2D VBAP */

@@ -40,6 +40,7 @@ void generateVBAPgainTable3D_srcs(/* Input arguments */
                                   int L,                     /* number of loudspeakers */
                                   int omitLargeTriangles,    /* 0: normal triangultion, 1: remove large triangles too */
                                   int enableDummies,         /* 0: disabled, 1: enabled. Dummies are placed at +/-90 elevation if required */
+                                  float spread,              /* spreading in degrees, 0: VBAP, >0: MDAP */
                                   /* Output arguments */
                                   float** gtable,            /* & The 3D VBAP gain table ENERGY NORMALISED; FLAT: N_gtable x L */
                                   int* N_gtable,             /* & number of points in the gain table */
@@ -64,6 +65,7 @@ void generateVBAPgainTable3D(/* Input arguments */
                              int el_res_deg,                /* elevation resolution in degrees */
                              int omitLargeTriangles,        /* 0: normal triangulation, 1: remove large triangles */
                              int enableDummies,             /* 0: disabled, 1: enabled. Dummies are placed at +/-90 elevation if required */
+                             float spread,                  /* spreading in degrees, 0: VBAP, >0: MDAP */
                              /* Output arguments */
                              float** gtable,                /* & The 3D VBAP gain table ENERGY NORMALISED; FLAT: N_gtable x L */
                              int* N_gtable,                 /* & number of points in the gain table */

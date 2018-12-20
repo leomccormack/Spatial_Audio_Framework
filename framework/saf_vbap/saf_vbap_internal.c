@@ -268,6 +268,87 @@ void invertLsMtx3D
     free(tempGroup);
 }
 
+
+
+void getSpreadSrcDirs3D
+(
+    float src_azi_rad,
+    float src_elev_rad,
+    float spread,
+    int num_src,
+    int num_rings_3d,
+    float* U_spread
+)
+{
+    int i, j, ns, nr;
+    float theta, sin_theta, cos_theta, scale, spread_rad, ring_rad, U_spread_norm;
+    float u[3], u_x_u[3][3], u_x[3][3], R_theta[3][3], uu2[3], spreadbase_ns[3];
+    float* spreadbase;
+    
+    /* rotation matrix using the axis of rotation-angle definition (around source direction) */
+    u[0] = cosf(src_elev_rad) * cosf(src_azi_rad);
+    u[1] = cosf(src_elev_rad) * sinf(src_azi_rad);
+    u[2] = sinf(src_elev_rad);
+    u_x_u[0][0] = powf(u[0],2.0f); u_x_u[0][1] = u[0]*u[1]; u_x_u[0][2] = u[0]*u[2];
+    u_x_u[1][0] = u[0]*u[1]; u_x_u[1][1] = powf(u[1],2.0f); u_x_u[1][2] = u[1]*u[2];
+    u_x_u[2][0] = u[0]*u[2]; u_x_u[2][1] = u[1]*u[2]; u_x_u[2][2] = powf(u[2],2.0f);
+    u_x[0][0] = 0.0f; u_x[0][1] = -u[2]; u_x[0][2] = u[1];
+    u_x[1][0] = u[2]; u_x[1][1] = 0.0f; u_x[1][2] = -u[0];
+    u_x[2][0] = -u[1]; u_x[2][1] = u[0]; u_x[2][2] = 0.0f;
+    theta = 2.0f*M_PI/(float)num_src;
+    sin_theta = sinf(theta);
+    cos_theta = cosf(theta);
+    for(i=0; i<3; i++)
+        for(j=0; j<3; j++)
+            R_theta[i][j] = sin_theta*u_x[i][j] + (1.0f-cos_theta)*u_x_u[i][j] + (i==j ? cos_theta : 0.0f);
+
+    /*  create a ring of sources on the plane that is purpendicular to the source directions */
+    spreadbase = calloc(num_src*3, sizeof(float));
+    if ((src_elev_rad > M_PI/2.0f-0.01f ) || (src_elev_rad<-(M_PI/2.0f-0.01f)))
+        spreadbase[0] = 1.0f;
+    else{
+        const float u2[3] = {0.0f, 0.0f, 1.0f};
+        ccross(u, (float*)u2, uu2);
+        scale = 0.0f;
+        for(i=0; i<3; i++)
+            scale += powf(uu2[i],2.0f);
+        scale = sqrtf(scale);
+        for(i=0; i<3; i++)
+            spreadbase[i] = uu2[i]/scale;
+    }
+
+    /* get ring of directions by rotating the first vector around the source */
+    for (ns = 1; ns<num_src; ns++){
+        for(i=0; i<3; i++)
+            spreadbase_ns[i] = spreadbase[(ns-1)*3+i];
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 1, 3, 1.0f,
+                    (const float*)R_theta, 3,
+                    spreadbase_ns, 1, 0.0f,
+                    &spreadbase[ns*3], 1);
+    }
+    
+    /* squeeze the perpendicular ring to the desired spread */
+    spread_rad = (spread/2.0f)*M_PI/180.0f;
+    ring_rad = spread_rad/(float)num_rings_3d;
+    memset(U_spread, 0, num_rings_3d*num_src*3*sizeof(float));
+    for(nr=0; nr<num_rings_3d; nr++)
+        for (ns = 0; ns<num_src; ns++)
+            for(i=0; i<3; i++)
+                U_spread[(nr*num_src + ns)*3 + i] = u[i] + spreadbase[ns*3+i]*tanf(ring_rad*(float)(nr+1));
+ 
+    /* normalise vectors to unity (based on first vector) */
+    U_spread_norm = sqrtf(powf(U_spread[0],2.0f) + powf(U_spread[1],2.0f) + powf(U_spread[2],2.0f));
+    for(i=0; i<num_rings_3d*num_src*3; i++)
+        U_spread[i] /= U_spread_norm;
+
+    /* append the original source direction at the end */
+    for(i=0; i<3; i++)
+        U_spread[(num_rings_3d*num_src)*3 + i] = u[i];
+
+    free(spreadbase);
+}
+
+
 void vbap3D
 (
     float* src_dirs,
@@ -275,62 +356,106 @@ void vbap3D
     int ls_num,
     int* ls_groups,
     int nFaces,
+    float spread,
     float* layoutInvMtx,
     float** GainMtx
 )
 {
-    int i, j, ns;
+    int i, j, ns, nspr;
     float azi_rad, elev_rad, min_val, g_tmp_rms, gains_rms;
     float u[3], g_tmp[3], ls_invMtx_s[3];
     float* gains;
-    
+     
     (*GainMtx) = malloc(src_num*ls_num*sizeof(float));
-    gains = malloc(ls_num*sizeof(float)); 
-    for(ns=0; ns<src_num; ns++){
-        azi_rad  = src_dirs[ns*2+0]*M_PI/180.0f;
-        elev_rad = src_dirs[ns*2+1]*M_PI/180.0f;
-        u[0] = cosf(azi_rad)*cosf(elev_rad);
-        u[1] = sinf(azi_rad)*cosf(elev_rad);
-        u[2] = sinf(elev_rad);
-        memset(gains, 0, ls_num*sizeof(float));
-        for(i=0; i<nFaces; i++){
-            for(j=0; j<3; j++)
-                ls_invMtx_s[j] = layoutInvMtx[i*9+j];
-            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, 1, 3, 1.0,
-                        ls_invMtx_s, 3,
-                        u, 3, 0.0,
-                        &g_tmp[0], 1);
-            for(j=0; j<3; j++)
-                ls_invMtx_s[j] = layoutInvMtx[i*9+j+3];
-            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, 1, 3, 1.0,
-                        ls_invMtx_s, 3,
-                        u, 3, 0.0,
-                        &g_tmp[1], 1);
-            for(j=0; j<3; j++)
-                ls_invMtx_s[j] = layoutInvMtx[i*9+j+6];
-            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, 1, 3, 1.0,
-                        ls_invMtx_s, 3,
-                        u, 3, 0.0,
-                        &g_tmp[2], 1);
-            min_val = 2.23e13f;
-            g_tmp_rms = 0.0;
-            for(j=0; j<3; j++){
-                min_val = MIN(min_val, g_tmp[j]);
-                g_tmp_rms +=  powf(g_tmp[j], 2.0f);
+    gains = malloc(ls_num*sizeof(float));
+    
+    /* MDAP (with spread) */
+    if (spread > 0.1f) {
+        const int nSpreadSrcs = 8;
+        const int nRings = 1;
+        float* U_spread;
+        U_spread = malloc((nRings*nSpreadSrcs+1)*3*sizeof(float));
+        for(ns=0; ns<src_num; ns++){
+            azi_rad  = src_dirs[ns*2+0]*M_PI/180.0f;
+            elev_rad = src_dirs[ns*2+1]*M_PI/180.0f;
+            getSpreadSrcDirs3D(azi_rad, elev_rad, spread, nSpreadSrcs, nRings, U_spread);
+            memset(gains, 0, ls_num*sizeof(float));
+            for(nspr=0; nspr<(nRings*nSpreadSrcs+1); nspr++){
+                u[0] = U_spread[nspr*3+0];
+                u[1] = U_spread[nspr*3+1];
+                u[2] = U_spread[nspr*3+2];
+                for(i=0; i<nFaces; i++){
+                    for(j=0; j<3; j++)
+                        ls_invMtx_s[j] = layoutInvMtx[i*9+j];
+                    utility_svvdot(ls_invMtx_s, u, 3, &g_tmp[0]);
+                    for(j=0; j<3; j++)
+                        ls_invMtx_s[j] = layoutInvMtx[i*9+j+3];
+                    utility_svvdot(ls_invMtx_s, u, 3, &g_tmp[1]);
+                    for(j=0; j<3; j++)
+                        ls_invMtx_s[j] = layoutInvMtx[i*9+j+6];
+                    utility_svvdot(ls_invMtx_s, u, 3, &g_tmp[2]);
+                    min_val = 2.23e13f;
+                    g_tmp_rms = 0.0;
+                    for(j=0; j<3; j++){
+                        min_val = MIN(min_val, g_tmp[j]);
+                        g_tmp_rms +=  powf(g_tmp[j], 2.0f);
+                    }
+                    g_tmp_rms = sqrtf(g_tmp_rms);
+                    if(min_val>-0.001){
+                        for(j=0; j<3; j++)
+                            gains[ls_groups[i*3+j]] += g_tmp[j]/g_tmp_rms;
+                    }
+                }
             }
-            g_tmp_rms = sqrtf(g_tmp_rms);
-            if(min_val>-0.001){
-                for(j=0; j<3; j++)
-                    gains[ls_groups[i*3+j]] = g_tmp[j]/g_tmp_rms;
-                break;
-            }
+            gains_rms = 0.0;
+            for(i=0; i<ls_num; i++)
+                gains_rms += powf(gains[i], 2.0f);
+            gains_rms = sqrtf(gains_rms);
+            for(i=0; i<ls_num; i++)
+                (*GainMtx)[ns*ls_num+i] = MAX(gains[i]/gains_rms, 0.0f);
         }
-        gains_rms = 0.0;
-        for(i=0; i<ls_num; i++)
-            gains_rms += powf(gains[i], 2.0f);
-        gains_rms = sqrtf(gains_rms);
-        for(i=0; i<ls_num; i++)
-            (*GainMtx)[ns*ls_num+i] = MAX(gains[i]/gains_rms, 0.0f); 
+        
+        free(U_spread);
+    }
+    /* VBAP (no spread) */
+    else{
+        for(ns=0; ns<src_num; ns++){
+            azi_rad  = src_dirs[ns*2+0]*M_PI/180.0f;
+            elev_rad = src_dirs[ns*2+1]*M_PI/180.0f;
+            u[0] = cosf(azi_rad)*cosf(elev_rad);
+            u[1] = sinf(azi_rad)*cosf(elev_rad);
+            u[2] = sinf(elev_rad);
+            memset(gains, 0, ls_num*sizeof(float));
+            for(i=0; i<nFaces; i++){
+                for(j=0; j<3; j++)
+                    ls_invMtx_s[j] = layoutInvMtx[i*9+j];
+                utility_svvdot(ls_invMtx_s, u, 3, &g_tmp[0]);
+                for(j=0; j<3; j++)
+                    ls_invMtx_s[j] = layoutInvMtx[i*9+j+3];
+                utility_svvdot(ls_invMtx_s, u, 3, &g_tmp[1]);
+                for(j=0; j<3; j++)
+                    ls_invMtx_s[j] = layoutInvMtx[i*9+j+6];
+                utility_svvdot(ls_invMtx_s, u, 3, &g_tmp[2]);
+                min_val = 2.23e13f;
+                g_tmp_rms = 0.0;
+                for(j=0; j<3; j++){
+                    min_val = MIN(min_val, g_tmp[j]);
+                    g_tmp_rms +=  powf(g_tmp[j], 2.0f);
+                }
+                g_tmp_rms = sqrtf(g_tmp_rms);
+                if(min_val>-0.001){
+                    for(j=0; j<3; j++)
+                        gains[ls_groups[i*3+j]] = g_tmp[j]/g_tmp_rms;
+                    break;
+                }
+            }
+            gains_rms = 0.0;
+            for(i=0; i<ls_num; i++)
+                gains_rms += powf(gains[i], 2.0f);
+            gains_rms = sqrtf(gains_rms);
+            for(i=0; i<ls_num; i++)
+                (*GainMtx)[ns*ls_num+i] = MAX(gains[i]/gains_rms, 0.0f);
+        }
     }
     
     free(gains);

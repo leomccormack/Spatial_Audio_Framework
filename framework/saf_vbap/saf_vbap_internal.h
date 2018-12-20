@@ -60,12 +60,21 @@ void invertLsMtx3D(float* U_spkr,             /* loudspeaker directions in carte
                    int N_group,               /* number of true loudspeaker triangles */
                    float** layoutInvMtx);     /* & inverted 3x3 loudspeaker matrices per group; FLAT: N_group x 9 */
     
+/* returns a set of points that surround the source direction with a specific degree of spread */
+void getSpreadSrcDirs3D(float src_azi_rad,    /* source azimuth, radians */
+                        float src_elev_rad,   /* source elevation, radians */
+                        float spread,         /* spread in DEGREES */
+                        int num_src,          /* number of auxiliary sources to use for spreading */
+                        int num_rings_3d,     /* number of concentric rings of num_src each to generate inside the spreading surface */
+                        float* U_spread);     /* spread directions Cartesian coordinates; FLAT: (num_src*num_rings_3d+1) x 3 */
+    
 /* Calculates 3D VBAP gains for pre-calculated loudspeaker triangles and predefined source positions */
 void vbap3D(float* src_dirs,                  /* source directions; FLAT: src_num x 2 */
             int src_num,                      /* number of sources */
             int ls_num,                       /* number of loudspeakers */
             int* ls_groups,                   /* true loudspeaker triangle indices; FLAT: nFaces x 3 */
             int nFaces,                       /* number of true loudspeaker triangles */
+            float spread,                     /* spreading in degrees, 0: VBAP, >0: MDAP */
             float* layoutInvMtx,              /* inverted 3x3 loudspeaker matrix flattened; FLAT: nFaces x 9 */
             float** GainMtx);                 /* & Loudspeaker VBAP gain table; FLAT: src_num x ls_num */
     

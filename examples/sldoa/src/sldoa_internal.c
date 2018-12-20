@@ -55,7 +55,7 @@ void sldoa_initAna(void* const hSld)
         memcpy(sec_dirs_deg, __HANDLES_SphCovering_dirs_deg[nSectors-1], nSectors*2*sizeof(float));
         
         /* generate VBAP gain table */
-        generateVBAPgainTable3D_srcs((float*)pData->grid_dirs_deg, NUM_GRID_DIRS, sec_dirs_deg, nSectors, 0, 0,
+        generateVBAPgainTable3D_srcs((float*)pData->grid_dirs_deg, NUM_GRID_DIRS, sec_dirs_deg, nSectors, 0, 0, 0.0f,
                                      &(grid_vbap_gtable), &(grid_N_vbap_gtable), &(grid_nGroups));
         
         /* convert to amplitude preserving gains */
@@ -123,10 +123,10 @@ void sldoa_estimateDoA
     
     /* calculate energy and DoA for each sector */
     for( n=0; n<nSectors; n++){
-        if(anaOrder==1 || secCoeffs == NULL) /* standard first order pressure-intensity based DoA estimation */
+        if(anaOrder==1 || secCoeffs == NULL) /* standard first order active-intensity based DoA estimation */
             for (i=0; i<4; i++)
                 memcpy(secSig[i], SHframeTF[i], TIME_SLOTS * sizeof(float_complex));
-        else{ /* spatially localised pressure-intensity based DoA estimation */
+        else{ /* spatially localised active-intensity based DoA estimation */
             for (i=0; i<4; i++)
                 for (j=0; j<nSH; j++)
                     sec_c[i*nSH+j] = secCoeffs[i*(nSectors*nSH)+n*nSH+j];

@@ -42,6 +42,7 @@ void generateVBAPgainTable3D_srcs
     int L,
     int omitLargeTriangles,
     int enableDummies,
+    float spread,
     float** gtable /* &: S x L */,
     int* N_gtable /* & S */,
     int* nTriangles
@@ -121,7 +122,7 @@ void generateVBAPgainTable3D_srcs
     
     /* Calculate VBAP gains for each source position */
     N_points = S;
-    vbap3D(src_dirs_deg, N_points, numOutVertices, out_faces, numOutFaces, layoutInvMtx,  gtable);
+    vbap3D(src_dirs_deg, N_points, numOutVertices, out_faces, numOutFaces, spread, layoutInvMtx, gtable);
     if(enableDummies){
         if(needDummy[0] || needDummy[1]){
             /* remove the gains for the dummy loudspeakers, they have served their purpose and can now be laid to rest */
@@ -167,6 +168,7 @@ void generateVBAPgainTable3D
     int el_res_deg,
     int omitLargeTriangles,
     int enableDummies,
+    float spread,
     float** gtable /* N_srcs x N_lspkrs  */,
     int* N_gtable,
     int* nTriangles
@@ -267,7 +269,7 @@ void generateVBAPgainTable3D
     
     /* Calculate VBAP gains for each source position */
     N_points = N_azi*N_ele;
-    vbap3D(src_dirs, N_points, numOutVertices, out_faces, numOutFaces, layoutInvMtx,  gtable);
+    vbap3D(src_dirs, N_points, numOutVertices, out_faces, numOutFaces, spread, layoutInvMtx,  gtable);
     
     /* remove the gains for the dummy loudspeakers, they have served their purpose and can now be laid to rest */
     if(enableDummies){

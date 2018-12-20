@@ -164,7 +164,7 @@ void ambi_bin_initCodec
     int N_gtable,nTriangles;
     float* gtable;
     gtable = NULL;
-    generateVBAPgainTable3D_srcs(t_dirs, nDirs_td, pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, 1, &gtable, &N_gtable, &nTriangles);
+    generateVBAPgainTable3D_srcs(t_dirs, nDirs_td, pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, 1, 0.0f, &gtable, &N_gtable, &nTriangles);
     VBAPgainTable2InterpTable(gtable, nDirs_td, pars->N_hrir_dirs);
     
     /* M_dec(f) = H(f) * M_dec_td */

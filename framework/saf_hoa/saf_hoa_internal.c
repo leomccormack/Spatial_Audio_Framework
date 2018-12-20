@@ -106,7 +106,7 @@ void getAllRAD(int order, float* ls_dirs_deg, int nLS, float **decMtx)
     }
     
     /* calculate vbap gains and SH matrix for this t-design */
-    generateVBAPgainTable3D_srcs(t_dirs, nDirs_td, ls_dirs_deg, nLS, 0, 0, &G_td, &N_gtable, &nGroups);
+    generateVBAPgainTable3D_srcs(t_dirs, nDirs_td, ls_dirs_deg, nLS, 0, 0, 0.0f, &G_td, &N_gtable, &nGroups);
     getRSH(order, t_dirs, nDirs_td, &Y_td);
     
     /* AllRAD decoder is simply (G_td * T_td * 1/nDirs_td) */
