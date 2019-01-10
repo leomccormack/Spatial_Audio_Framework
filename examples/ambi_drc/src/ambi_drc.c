@@ -80,7 +80,7 @@ void ambi_drc_create
     pData->attack_ms = 50.0f;
     pData->release_ms = 100.0f;
     pData->chOrdering = CH_ACN;
-    pData->norm = NORM_N3D;
+    pData->norm = NORM_SN3D;
     pData->currentOrder = INPUT_ORDER_1;
     
     /* for dynamically allocating the number of channels */
@@ -448,6 +448,12 @@ int ambi_drc_getNSHrequired(void* const hAmbi)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
     return pData->nSH;
+}
+
+int ambi_drc_getSamplerate(void* const hAmbi)
+{
+    ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
+    return (int)(pData->fs+0.5f);
 }
 
 int ambi_drc_getProcessingDelay()

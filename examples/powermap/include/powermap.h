@@ -170,7 +170,7 @@ int powermap_getMasterOrder(void* const hPm);
     
 int powermap_getPowermapMode(void* const hPm);
 
-float powermap_getSamplingRate(void* const hPm);
+int powermap_getSamplingRate(void* const hPm);
 
 float powermap_getCovAvgCoeff(void* const hPm);
 

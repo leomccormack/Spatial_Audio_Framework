@@ -48,7 +48,7 @@ void array2sh_create
     pData->regType = REG_TIKHONOV;
     pData->regPar = 15.0f;
     pData->chOrdering = CH_ACN;
-    pData->norm = NORM_N3D;
+    pData->norm = NORM_SN3D;
     pData->c = 343.0f;
     pData->gain_dB = 0.0f;
     pData->maxFreq = 20e3f;
@@ -141,6 +141,7 @@ void array2sh_init
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     int band;
     
+    pData->fs = sampleRate;
     for(band=0; band <HYBRID_BANDS; band++){
         if(sampleRate==44100)
             pData->freqVector[band] =  (float)__afCenterFreq44100[band];
@@ -649,6 +650,12 @@ float* array2sh_getLevelDifference_Handle(void* const hA2sh, int* nCurves, int* 
     (*nCurves) = pData->order+1;
     (*nFreqPoints) = HYBRID_BANDS-1;
     return pData->lSH;
+}
+
+int array2sh_getSamplingRate(void* const hA2sh)
+{
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    return pData->fs;
 }
 
 int array2sh_getProcessingDelay()

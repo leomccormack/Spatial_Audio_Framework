@@ -85,7 +85,7 @@ void powermap_initAna(void* const hPm)
         }
     }
     free(pars->interp_table);
-    generateVBAPgainTable3D_srcs(pars->interp_dirs_deg, N_azi*N_ele, pars->grid_dirs_deg, pars->grid_nDirs, 0, 0, &(pars->interp_table), &(pars->interp_nDirs), &(pars->interp_nTri));
+    generateVBAPgainTable3D_srcs(pars->interp_dirs_deg, N_azi*N_ele, pars->grid_dirs_deg, pars->grid_nDirs, 0, 0, 0.0f, &(pars->interp_table), &(pars->interp_nDirs), &(pars->interp_nTri));
     VBAPgainTable2InterpTable(pars->interp_table, pars->interp_nDirs, pars->grid_nDirs);
     
     /* reallocate memory for storing the powermaps */

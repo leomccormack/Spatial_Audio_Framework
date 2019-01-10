@@ -108,6 +108,7 @@ typedef struct _array2sh
     void* arraySpecs;
     
     /* internal parameters */
+    int fs;
     int new_order;
     int nSH, new_nSH;
 	int evalReady;

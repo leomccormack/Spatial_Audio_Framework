@@ -86,7 +86,7 @@ void sldoa_create
     pData->maxFreq = 5e3f;
     pData->avg_ms = 500.0f;
     pData->chOrdering = CH_ACN;
-    pData->norm = NORM_N3D;
+    pData->norm = NORM_SN3D;
 }
 
 void sldoa_destroy
@@ -456,10 +456,10 @@ int sldoa_getMasterOrder(void* const hSld)
     return pData->new_masterOrder;
 }
 
-float sldoa_getSamplingRate(void* const hSld)
+int sldoa_getSamplingRate(void* const hSld)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    return pData->fs;
+    return (int)(pData->fs+0.5f);
 }
 
 float sldoa_getMaxFreq(void* const hSld)

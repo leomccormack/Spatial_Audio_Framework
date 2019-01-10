@@ -41,7 +41,7 @@ void ambi_bin_create
 		pData->EQ[band] = 1.0f;
 	pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
 	pData->chOrdering = CH_ACN;
-	pData->norm = NORM_N3D;
+	pData->norm = NORM_SN3D;
 	pData->rE_WEIGHT = 0;
 	pData->enableRotation = 0;
 	pData->yaw = 0.0f;

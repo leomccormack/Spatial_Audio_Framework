@@ -44,7 +44,7 @@ void rotator_create
     pData->bFlipPitch = 0;
     pData->bFlipRoll = 0;
     pData->chOrdering = CH_ACN;
-    pData->norm = NORM_N3D;
+    pData->norm = NORM_SN3D;
     pData->useRollPitchYawFlag = 0;
     rotator_setOrder(*phRot,  OUTPUT_ORDER_FIRST);
 }

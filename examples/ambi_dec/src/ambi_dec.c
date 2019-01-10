@@ -50,7 +50,7 @@ void ambi_dec_create
 	ambi_dec_loadPreset(PRESET_T_DESIGN_24, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
 	pData->nLoudpkrs = pData->new_nLoudpkrs;
 	pData->chOrdering = CH_ACN;
-	pData->norm = NORM_N3D;
+	pData->norm = NORM_SN3D;
 	pData->dec_method[0] = DECODER_ALLRAD;
 	pData->dec_method[1] = DECODER_ALLRAD;
 	pData->rE_WEIGHT[0] = 0;
@@ -736,6 +736,19 @@ float ambi_dec_getTransitionFreq(void* const hAmbi)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     return pData->transitionFreq;
+}
+
+int ambi_dec_getHRIRsamplerate(void* const hAmbi)
+{
+    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    codecPars* pars = pData->pars;
+    return pars->hrir_fs;
+}
+
+int ambi_dec_getDAWsamplerate(void* const hAmbi)
+{
+    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    return pData->fs;
 }
 
 int ambi_dec_getProcessingDelay()

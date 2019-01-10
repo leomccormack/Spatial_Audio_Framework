@@ -144,7 +144,7 @@ int sldoa_getMasterOrder(void* const hSld);
     
 void sldoa_refreshSettings(void* const hSld);
     
-float sldoa_getSamplingRate(void* const hSld);
+int sldoa_getSamplingRate(void* const hSld);
 
 float sldoa_getMaxFreq(void* const hSld);
     

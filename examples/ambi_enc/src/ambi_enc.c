@@ -43,7 +43,7 @@ void ambi_enc_create
     for(i=0; i<MAX_NUM_INPUTS; i++)
         pData->recalc_SH_FLAG[i] = 1;
     pData->chOrdering = CH_ACN;
-    pData->norm = NORM_N3D;
+    pData->norm = NORM_SN3D;
     pData->outputOrderPreset = OUTPUT_ORDER_FIRST;
 }
 

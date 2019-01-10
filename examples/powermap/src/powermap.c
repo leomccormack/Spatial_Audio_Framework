@@ -85,7 +85,7 @@ void powermap_create
     pData->HFOVoption = HFOV_360;
     pData->aspectRatioOption = ASPECT_RATIO_2_1;
     pData->chOrdering = CH_ACN;
-    pData->norm = NORM_N3D;
+    pData->norm = NORM_SN3D;
 }
 
 void powermap_destroy
@@ -591,10 +591,10 @@ int powermap_getPowermapMode(void* const hPm)
     return (int)pData->pmap_mode;
 }
 
-float powermap_getSamplingRate(void* const hPm)
+int powermap_getSamplingRate(void* const hPm)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    return pData->fs;
+    return (int)(pData->fs+0.5f);
 }
 
 float powermap_getCovAvgCoeff(void* const hPm)
