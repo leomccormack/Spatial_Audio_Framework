@@ -32,6 +32,7 @@
 void panner_initGainTables(void* const hPan)
 {
     panner_data *pData = (panner_data*)(hPan);
+#ifndef FORCE_3D_LAYOUT
     int i;
     float sum_elev;
     
@@ -43,6 +44,7 @@ void panner_initGainTables(void* const hPan)
         pData->output_nDims = 2;
     else
         pData->output_nDims = 3;
+#endif
     
     /* generate VBAP gain table */
     if(pData->vbap_gtable!= NULL){
@@ -51,11 +53,16 @@ void panner_initGainTables(void* const hPan)
     } 
     pData->vbapTableRes[0] = 2;
     pData->vbapTableRes[1] = 5;
+#ifdef FORCE_3D_LAYOUT
+    pData->output_nDims = 3;
+    generateVBAPgainTable3D((float*)pData->loudpkrs_dirs_deg, pData->nLoudpkrs, pData->vbapTableRes[0], pData->vbapTableRes[1], 1, 1, pData->spread_deg,
+                            &(pData->vbap_gtable), &(pData->N_vbap_gtable), &(pData->nTriangles));
+#else
     if(pData->output_nDims==2)
         generateVBAPgainTable2D((float*)pData->loudpkrs_dirs_deg, pData->nLoudpkrs, pData->vbapTableRes[0],
                                 &(pData->vbap_gtable), &(pData->N_vbap_gtable), &(pData->nTriangles));
     else{
-        generateVBAPgainTable3D((float*)pData->loudpkrs_dirs_deg, pData->nLoudpkrs, pData->vbapTableRes[0], pData->vbapTableRes[1], 1, 1, 0.0f,
+        generateVBAPgainTable3D((float*)pData->loudpkrs_dirs_deg, pData->nLoudpkrs, pData->vbapTableRes[0], pData->vbapTableRes[1], 1, 1, pData->spread_deg,
                                 &(pData->vbap_gtable), &(pData->N_vbap_gtable), &(pData->nTriangles));
         if(pData->vbap_gtable==NULL){
             /* if generating vbap gain tabled failed, re-calculate with 2D VBAP */
@@ -63,6 +70,7 @@ void panner_initGainTables(void* const hPan)
             panner_initGainTables(hPan);
         }
     }
+#endif
 }
 
 void panner_initTFT

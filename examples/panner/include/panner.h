@@ -188,7 +188,9 @@ void panner_setInputConfigPreset(void* const hPan, int newPresetID);
     
 void panner_setDTT(void* const hPan, float newValue);
     
-
+void panner_setSpread(void* const hPan, float newValue);
+    
+    
 /*****************/
 /* Get Functions */
 /*****************/
@@ -212,6 +214,8 @@ int panner_getMaxNumLoudspeakers(void);
 int panner_getDAWsamplerate(void* const hPan);
     
 float panner_getDTT(void* const hPan);
+    
+float panner_getSpread(void* const hPan);
     
 int panner_getProcessingDelay(void);
     

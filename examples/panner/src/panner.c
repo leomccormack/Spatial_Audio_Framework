@@ -70,7 +70,8 @@ void panner_create
     /* user parameters */
     panner_loadPreset(PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
     pData->nSources = pData->new_nSources;
-    pData->DTT = 0.5f;
+    pData->DTT = 0.0f;
+    pData->spread_deg = 0.0f;
     panner_loadPreset(PRESET_5PX, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->output_nDims)); /*check setStateInformation if you change default preset*/
     pData->nLoudpkrs = pData->new_nLoudpkrs;
 }
@@ -426,6 +427,18 @@ void panner_setDTT(void* const hPan, float newValue)
         pData->recalc_gainsFLAG[ch] = 1;
 }
 
+void panner_setSpread(void* const hPan, float newValue)
+{
+    panner_data *pData = (panner_data*)(hPan);
+    int ch;
+    if(pData->spread_deg!=newValue){
+        pData->spread_deg = newValue;
+        pData->reInitGainTables=1;
+        for(ch=0; ch<MAX_NUM_INPUTS; ch++)
+            pData->recalc_gainsFLAG[ch] = 1;
+    }
+}
+
 
 /* Get Functions */
 
@@ -485,6 +498,12 @@ float panner_getDTT(void* const hPan)
 {
     panner_data *pData = (panner_data*)(hPan);
     return pData->DTT;
+}
+
+float panner_getSpread(void* const hPan)
+{
+    panner_data *pData = (panner_data*)(hPan);
+    return pData->spread_deg;
 }
 
 int panner_getProcessingDelay()

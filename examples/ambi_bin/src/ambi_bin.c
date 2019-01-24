@@ -42,7 +42,7 @@ void ambi_bin_create
 	pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
 	pData->chOrdering = CH_ACN;
 	pData->norm = NORM_SN3D;
-	pData->rE_WEIGHT = 0;
+	pData->rE_WEIGHT = 1;
 	pData->enableRotation = 0;
 	pData->yaw = 0.0f;
 	pData->pitch = 0.0f;

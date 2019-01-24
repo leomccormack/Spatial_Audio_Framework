@@ -46,7 +46,9 @@ extern "C" {
 
 /***************/
 /* Definitions */
-/***************/ 
+/***************/
+    
+#define FORCE_3D_LAYOUT /* Even 2D loudspeaker setups will use 3D VBAP, with 2 virtual loudspeakers on the top/bottom */
     
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
@@ -93,7 +95,7 @@ typedef struct _panner
     /* user parameters */
     int nSources, new_nSources;
     float src_dirs_deg[MAX_NUM_INPUTS][2];
-    float DTT;
+    float DTT, spread_deg;
     int nLoudpkrs, new_nLoudpkrs;
     float loudpkrs_dirs_deg[MAX_NUM_OUTPUTS][2];
     

@@ -63,7 +63,7 @@ void binauraliser_create
     pData->hrir_dirs_deg = NULL;
     pData->sofa_filepath = NULL;
     
-    /* vbap */
+    /* vbap (amplitude normalised) */
     pData->hrtf_vbap_gtableIdx = NULL;
     pData->hrtf_vbap_gtableComp = NULL;
     
