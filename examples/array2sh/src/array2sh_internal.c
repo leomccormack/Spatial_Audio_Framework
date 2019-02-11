@@ -1,4 +1,4 @@
-    /*
+/*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -21,10 +21,12 @@
  *     The algorithms within array2sh were pieced together and developed in collaboration
  *     with Symeon Delikaris-Manias.
  *     A more detailed explanation of the algorithms in array2sh can be found in:
- *     McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
- *     “Real-time conversion of sensor array signals into spherical harmonic signals with
- *     applications to spatially localised sub-band sound-field analysis,” in Audio
- *     Engineering Society Convention 144, Audio Engineering Society, 2018.
+ *         McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
+ *         “Real-time conversion of sensor array signals into spherical harmonic signals with
+ *         applications to spatially localised sub-band sound-field analysis,” in Audio
+ *         Engineering Society Convention 144, Audio Engineering Society, 2018.
+ *     Also included, is a diffuse-field equalisation option for frequencies past aliasing,
+ *     developed in collaboration with Archontis Politis, 8.02.2019
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_sh
  * Author, date created:
@@ -51,7 +53,6 @@ static void array2sh_replicate_order
                 pData->bN_inv_R[band][i] = pData->bN_inv[band][n];
 }
 
-
 void array2sh_initTFT
 (
     void* const hA2sh
@@ -77,134 +78,446 @@ void array2sh_calculate_sht_matrix
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
-    int i, band, n, order, nSH;
-    double f_n, alpha, beta, g_lim, regPar;
+    int i, j, band, n, order, nSH;
+    double alpha, beta, g_lim, regPar;
     double kr[HYBRID_BANDS-1], kR[HYBRID_BANDS-1];
     float* Y_mic, *pinv_Y_mic;
     float_complex* pinv_Y_mic_cmplx, *diag_bN_inv_R;
     const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta  = cmplxf(0.0f, 0.0f);
     
+    /* prep */
     order = pData->new_order;
     nSH = (order+1)*(order+1);
-    arraySpecs->R = MAX(arraySpecs->R, arraySpecs->r);
-    
-    /* Compute modal coefficients */
-    for(band=0; band<HYBRID_BANDS-1; band++)
+    arraySpecs->R = MIN(arraySpecs->R, arraySpecs->r);
+    for(band=0; band<HYBRID_BANDS-1; band++){
         kr[band] = 2.0*M_PI*(pData->freqVector[band+1/* ignore DC */])*(arraySpecs->r)/pData->c;
-    free(pData->bN);
-    pData->bN = malloc((HYBRID_BANDS-1)*(order+1)*sizeof(double_complex));
-    switch(arraySpecs->arrayType){
-        case ARRAY_CYLINDRICAL:
-            switch (arraySpecs->weightType){
-                case WEIGHT_RIGID:       cylModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_RIGID, pData->bN); break;
-                case WEIGHT_OPEN_OMNI:   cylModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_OPEN, pData->bN);  break;
-                case WEIGHT_OPEN_CARD:   /* not supported */ break;
-                case WEIGHT_OPEN_DIPOLE: /* not supported */ break;
-            }
-            break;
-        case ARRAY_SPHERICAL:
-            switch (arraySpecs->weightType){
-                case WEIGHT_OPEN_OMNI:   sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_OPEN, 0.0, pData->bN); break;
-                case WEIGHT_OPEN_CARD:   sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_DIRECTIONAL, 0.5, pData->bN); break;
-                case WEIGHT_OPEN_DIPOLE: sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_DIRECTIONAL, 1.0, pData->bN); break;
-                case WEIGHT_RIGID:
-                    if(arraySpecs->R == arraySpecs->r )
-                        sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_RIGID, 1.0, pData->bN);
-                    else{
-                        for(band=0; band<HYBRID_BANDS-1; band++)
-                            kR[band] = 2.0*M_PI*(double)pData->freqVector[band+1] * (double)arraySpecs->R / (double)pData->c;
-                        sphScattererModalCoeffs(order, kr, kR, HYBRID_BANDS-1, pData->bN);
-                    }
-                    break;
-            }
-            break;
+        kR[band] = 2.0*M_PI*(pData->freqVector[band+1/* ignore DC */])*(arraySpecs->R)/pData->c;
     }
-    for(band=0; band<HYBRID_BANDS-1; band++)
-        for(n=0; n < order+1; n++)
-            pData->bN[band*(order+1)+n] = ccdiv(pData->bN[band*(order+1)+n], cmplx(4.0*M_PI, 0.0f)); /* 4pi term */
     
-    /* regularised inversion */
-    regPar = pData->regPar;
-    for(band=0; band<HYBRID_BANDS-1; band++)
-        for(n=0; n < order+1; n++)
-            pData->bN_modal[band+1][n] = ccdiv(cmplx(1.0,0.0), (pData->bN[band*(order+1)+n]));
-    for(n=0; n < order+1; n++)
-        pData->bN_modal[0][n] = cmplx(0.0f, 0.0f); /* zero DC */
-    switch(pData->regType){
-        case REG_DAS:
-            for(band=0; band<HYBRID_BANDS-1; band++){
-                f_n = 0.0;
-                for(n=0; n < order+1; n++)
-                    f_n += (2.0*(double)n+1.0) * pow(cabs(pData->bN[band*(order+1)+n]), 2.0);
-                beta = (1.0/ pow((double)(MAX_SH_ORDER)+1.0,2.0)) * f_n;
-                for(n=0; n < MAX_SH_ORDER+1; n++)
-                    pData->bN_inv[band+1][n] = crmul(pData->bN_modal[band+1][n], pow(cabs(pData->bN[band*(order+1)+n]), 2.0) / beta);
-            }
-            break;
-            
-        case REG_SOFT_LIM:
-            g_lim = sqrt(arraySpecs->Q)*pow(10.0,(regPar/20.0));
-            for(band=0; band<HYBRID_BANDS-1; band++)
-                for(n=0; n < order+1; n++)
-                    pData->bN_inv[band+1][n] = crmul(pData->bN_modal[band+1][n], (2.0*g_lim*cabs(pData->bN[band*(order+1)+n]) / M_PI)
-                                                   * atan(M_PI / (2.0*g_lim*cabs(pData->bN[band*(order+1)+n]))) );
-            break;
-            
-        case REG_TIKHONOV:
-            alpha = sqrt(arraySpecs->Q)*pow(10.0,(regPar/20.0));
-            for(band=0; band<HYBRID_BANDS-1; band++){
-                for(n=0; n < order+1; n++){
-                    beta = sqrt((1.0-sqrt(1.0-1.0/ pow(alpha,2.0)))/(1.0+sqrt(1.0-1.0/pow(alpha,2.0)))); /* Moreau & Daniel */
-                    pData->bN_inv[band+1][n] = ccdiv(conj(pData->bN[band*(order+1)+n]), cmplx((pow(cabs(pData->bN[band*(order+1)+n]), 2.0) + pow(beta, 2.0)),0.0));
-                }
-            }
-            break;
-    }
-    for(n=0; n < order+1; n++)
-        pData->bN_inv[0][n] = cmplx(0.0f, 0.0f); /* remove NaN at DC */
-    array2sh_replicate_order(hA2sh, order); /* replicate orders */
-    
-    /* Generate encoding matrix per band */
+    /* Spherical harmponic weights for each sensor direction */
     Y_mic = NULL;
     getRSH(order, (float*)arraySpecs->sensorCoords_deg, arraySpecs->Q, &Y_mic); /* nSH x Q */
-#if 1
     pinv_Y_mic = malloc( arraySpecs->Q * nSH *sizeof(float));
     utility_spinv(Y_mic, nSH, arraySpecs->Q, pinv_Y_mic);
     pinv_Y_mic_cmplx =  malloc((arraySpecs->Q) * nSH *sizeof(float_complex));
     for(i=0; i<(arraySpecs->Q)*nSH; i++)
         pinv_Y_mic_cmplx[i] = cmplxf(pinv_Y_mic[i], 0.0f);
-#else
-    int j;
-    float* YYT;
-    YYT = malloc(nSH*nSH*sizeof(float));
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, (arraySpecs->Q), 1.0f,
-                Y_mic, (arraySpecs->Q),
-                Y_mic, (arraySpecs->Q), 0.0f,
-                YYT, nSH);
-    pinv_Y_mic =  malloc((arraySpecs->Q) * nSH *sizeof(float_complex));
-    utility_sslslv(YYT, nSH, Y_mic, (arraySpecs->Q), pinv_Y_mic);
-    pinv_Y_mic_cmplx =  malloc((arraySpecs->Q) * nSH *sizeof(float_complex));
-    for(i=0; i<nSH; i++)
-        for(j=0; j<(arraySpecs->Q); j++)
-            pinv_Y_mic_cmplx[j*nSH+i] = cmplxf(pinv_Y_mic[i*(arraySpecs->Q)+j], 0.0f);
-    free(YYT);
-#endif 
-    diag_bN_inv_R = calloc(nSH*nSH, sizeof(float_complex));
-    for(band=0; band<HYBRID_BANDS; band++){
-        for(i=0; i<nSH; i++)
-            diag_bN_inv_R[i*nSH+i] = cmplxf((float)creal(pData->bN_inv_R[band][i]), (float)cimag(pData->bN_inv_R[band][i]));
-        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, (arraySpecs->Q), nSH, &calpha,
-                    diag_bN_inv_R, nSH,
-                    pinv_Y_mic_cmplx, nSH, &cbeta,
-                    pData->W[band], MAX_NUM_SENSORS);
+    
+    /* ------------------------------------------------------------------------------ */
+    /* Encoding filters based on the regularised inversion of the modal coefficients: */
+    /* ------------------------------------------------------------------------------ */
+    if ( (pData->filterType==FILTER_SOFT_LIM) || (pData->filterType==FILTER_TIKHONOV) ){
+        /* Compute modal responses */
+        free(pData->bN);
+        pData->bN = malloc((HYBRID_BANDS-1)*(order+1)*sizeof(double_complex));
+        switch(arraySpecs->arrayType){
+            case ARRAY_CYLINDRICAL:
+                switch (arraySpecs->weightType){
+                    case WEIGHT_RIGID_OMNI:   cylModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_RIGID, pData->bN); break;
+                    case WEIGHT_RIGID_CARD:   /* not supported */ break;
+                    case WEIGHT_RIGID_DIPOLE: /* not supported */ break;
+                    case WEIGHT_OPEN_OMNI:    cylModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_OPEN, pData->bN);  break;
+                    case WEIGHT_OPEN_CARD:    /* not supported */ break;
+                    case WEIGHT_OPEN_DIPOLE:  /* not supported */ break;
+                }
+                break;
+            case ARRAY_SPHERICAL:
+                switch (arraySpecs->weightType){
+                    case WEIGHT_OPEN_OMNI:   sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_OPEN, 1.0, pData->bN); break;
+                    case WEIGHT_OPEN_CARD:   sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.5, pData->bN); break;
+                    case WEIGHT_OPEN_DIPOLE: sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.0, pData->bN); break;
+                    case WEIGHT_RIGID_OMNI:
+                    case WEIGHT_RIGID_CARD:
+                    case WEIGHT_RIGID_DIPOLE:
+                        /* if sensors are flushed with the rigid baffle: */
+                        if(arraySpecs->R == arraySpecs->r )
+                            sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_RIGID, 1.0, pData->bN);
+
+                        /* if sensors protrude from the rigid baffle: */
+                        else{
+                            if (arraySpecs->weightType == WEIGHT_RIGID_OMNI)
+                                sphScattererModalCoeffs(order, kr, kR, HYBRID_BANDS-1, pData->bN);
+                            else if (arraySpecs->weightType == WEIGHT_RIGID_CARD)
+                                sphScattererDirModalCoeffs(order, kr, kR, HYBRID_BANDS-1, 0.5, pData->bN);
+                            else if (arraySpecs->weightType == WEIGHT_RIGID_DIPOLE)
+                                sphScattererDirModalCoeffs(order, kr, kR, HYBRID_BANDS-1, 0.0, pData->bN);
+                        }
+                        break;
+                }
+                break;
+        }
+        
+        for(band=0; band<HYBRID_BANDS-1; band++)
+            for(n=0; n < order+1; n++)
+                pData->bN[band*(order+1)+n] = ccdiv(pData->bN[band*(order+1)+n], cmplx(4.0*M_PI, 0.0f)); /* 4pi term */
+
+        /* direct inverse */
+        regPar = pData->regPar;
+        for(band=0; band<HYBRID_BANDS-1; band++)
+            for(n=0; n < order+1; n++)
+                pData->bN_modal[band+1][n] = ccdiv(cmplx(1.0,0.0), (pData->bN[band*(order+1)+n]));
+        for(n=0; n < order+1; n++)
+            pData->bN_modal[0][n] = cmplx(0.0f, 0.0f); /* zero DC */
+        
+        /* regularised inverse */
+        if (pData->filterType == FILTER_SOFT_LIM){
+            /* Bernschutz, B., Porschmann, C., Spors, S., Weinzierl, S., Versterkung, B., 2011. Soft-limiting der
+             modalen amplitudenverst?rkung bei sph?rischen mikrofonarrays im plane wave decomposition verfahren.
+             Proceedings of the 37. Deutsche Jahrestagung fur Akustik (DAGA 2011) */
+            g_lim = sqrt(arraySpecs->Q)*pow(10.0,(regPar/20.0));
+            for(band=0; band<HYBRID_BANDS-1; band++)
+                for(n=0; n < order+1; n++)
+                    pData->bN_inv[band+1][n] = crmul(pData->bN_modal[band+1][n], (2.0*g_lim*cabs(pData->bN[band*(order+1)+n]) / M_PI)
+                                                     * atan(M_PI / (2.0*g_lim*cabs(pData->bN[band*(order+1)+n]))) );
+        }
+        else if(pData->filterType == FILTER_TIKHONOV){
+            /* Moreau, S., Daniel, J., Bertet, S., 2006, 3D sound field recording with higher order ambisonics-objective
+             measurements and validation of spherical microphone. In Audio Engineering Society Convention 120. */
+            alpha = sqrt(arraySpecs->Q)*pow(10.0,(regPar/20.0));
+            for(band=0; band<HYBRID_BANDS-1; band++){
+                for(n=0; n < order+1; n++){
+                    beta = sqrt((1.0-sqrt(1.0-1.0/ pow(alpha,2.0)))/(1.0+sqrt(1.0-1.0/pow(alpha,2.0))));
+                    pData->bN_inv[band+1][n] = ccdiv(conj(pData->bN[band*(order+1)+n]), cmplx((pow(cabs(pData->bN[band*(order+1)+n]), 2.0) + pow(beta, 2.0)),0.0));
+                }
+            }
+        }
+        
+        /* diag(filters) * Y */
+        for(n=0; n < order+1; n++)
+            pData->bN_inv[0][n] = cmplx(0.0f, 0.0f); /* remove NaN at DC */
+        array2sh_replicate_order(hA2sh, order); /* replicate orders */
+        
+        diag_bN_inv_R = calloc(nSH*nSH, sizeof(float_complex));
+        for(band=0; band<HYBRID_BANDS; band++){
+            for(i=0; i<nSH; i++)
+                diag_bN_inv_R[i*nSH+i] = cmplxf((float)creal(pData->bN_inv_R[band][i]), (float)cimag(pData->bN_inv_R[band][i]));
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, (arraySpecs->Q), nSH, &calpha,
+                        diag_bN_inv_R, nSH,
+                        pinv_Y_mic_cmplx, nSH, &cbeta,
+                        pData->W[band], MAX_NUM_SENSORS);
+        }
+        free(diag_bN_inv_R);
     }
     
-    pData->order = order; 
+    /* ------------------------------------------------------------- */
+    /* Encoding filters based on a linear-phase filter-bank approach */
+    /* ------------------------------------------------------------- */
+    else if ( (pData->filterType==FILTER_Z_STYLE) || (pData->filterType==FILTER_Z_STYLE_MAXRE) ) {
+        /* Zotter, F. A Linear-Phase Filter-Bank Approach to Process Rigid Spherical Microphone Array Recordings. */
+        double normH;
+        float f_lim[MAX_SH_ORDER+1];
+        double H[HYBRID_BANDS-1][MAX_SH_ORDER+1];
+        double_complex Hs[HYBRID_BANDS-1][MAX_SH_ORDER+1];
+        
+        /* find suitable cut-off frequencies */
+        switch (arraySpecs->weightType){
+            case WEIGHT_OPEN_OMNI:   sphArrayNoiseThreshold(order, arraySpecs->Q, arraySpecs->r, pData->c, ARRAY_CONSTRUCTION_OPEN, 1.0, pData->regPar, f_lim); break;
+            case WEIGHT_OPEN_CARD:   sphArrayNoiseThreshold(order, arraySpecs->Q, arraySpecs->r, pData->c, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.5, pData->regPar, f_lim); break;
+            case WEIGHT_OPEN_DIPOLE: sphArrayNoiseThreshold(order, arraySpecs->Q, arraySpecs->r, pData->c, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.0, pData->regPar, f_lim); break;
+            case WEIGHT_RIGID_OMNI:
+            case WEIGHT_RIGID_CARD:
+            case WEIGHT_RIGID_DIPOLE:
+                /* Currently no support for estimating the noise cut-off frequencies for rigid scatterers. However, since we only need a rough estimate,
+                   maybe this is OK. */
+                sphArrayNoiseThreshold(order, arraySpecs->Q, arraySpecs->r, pData->c, ARRAY_CONSTRUCTION_RIGID, 1.0, pData->regPar, f_lim); break;
+        }
+        
+        /* design prototype filterbank */
+        for(band=0; band<HYBRID_BANDS-1; band++){
+            normH = 0.0;
+            for (n=0; n<order+1; n++){
+                if (n==0)
+                    H[band][n] = 1.0/(1.0+ pow((double)(pData->freqVector[band+1]/f_lim[n]),2.0));
+                else if (n==order)
+                    H[band][n] = pow((double)(pData->freqVector[band+1]/f_lim[n-1]), (double)order+1.0 )  /
+                                 (1.0 + pow((double)(pData->freqVector[band+1]/f_lim[n-1]), (double)order+1.0));
+                else
+                    H[band][n] = pow((double)(pData->freqVector[band+1]/f_lim[n-1]), (double)n+1.0 )  /
+                                 (1.0 + pow((double)(pData->freqVector[band+1]/f_lim[n-1]), (double)n+1.0)) *
+                                 (1.0 / (1.0 + pow((double)(pData->freqVector[band+1]/f_lim[n]), (double)n+2.0)));
+                normH += H[band][n];
+            }
+            /* normalise */
+            for (n=0; n<order+1; n++)
+                H[band][n] = H[band][n]/normH;
+        }
+                
+        /* compute inverse radial response */
+#if 0
+        int maxN;
+        double_complex* hn2prime_kr;
+        hn2prime_kr = malloc((HYBRID_BANDS-1)*(order+1)*sizeof(double_complex));
+        maxN = 1e8;
+        hankel_hn2(order, kr, HYBRID_BANDS-1, &maxN, NULL, hn2prime_kr);
+        for(band=0; band<HYBRID_BANDS-1; band++)
+            for (n=0; n<order+1; n++)
+                Hs[band][n] = crmul(ccmul(hn2prime_kr[band*(order+1)+n], cpow(cmplx(0.0, 1.0), -(double)n+1.0)), pow(kr[band], 2.0));
+        free(hn2prime_kr);
+#else
+        free(pData->bN);
+        pData->bN = malloc((HYBRID_BANDS-1)*(order+1)*sizeof(double_complex));
+        switch(arraySpecs->arrayType){
+            case ARRAY_CYLINDRICAL:
+                switch (arraySpecs->weightType){
+                    case WEIGHT_RIGID_OMNI:   cylModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_RIGID, pData->bN); break;
+                    case WEIGHT_RIGID_CARD:   /* not supported */ break;
+                    case WEIGHT_RIGID_DIPOLE: /* not supported */ break;
+                    case WEIGHT_OPEN_OMNI:    cylModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_OPEN, pData->bN);  break;
+                    case WEIGHT_OPEN_CARD:    /* not supported */ break;
+                    case WEIGHT_OPEN_DIPOLE:  /* not supported */ break;
+                }
+                break;
+            case ARRAY_SPHERICAL:
+                switch (arraySpecs->weightType){
+                    case WEIGHT_OPEN_OMNI:   sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_OPEN, 1.0, pData->bN); break;
+                    case WEIGHT_OPEN_CARD:   sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.5, pData->bN); break;
+                    case WEIGHT_OPEN_DIPOLE: sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.0, pData->bN); break;
+                    case WEIGHT_RIGID_OMNI:
+                    case WEIGHT_RIGID_CARD:
+                    case WEIGHT_RIGID_DIPOLE:
+                        /* if sensors are flushed with the rigid baffle: */
+                        if(arraySpecs->R == arraySpecs->r )
+                            sphModalCoeffs(order, kr, HYBRID_BANDS-1, ARRAY_CONSTRUCTION_RIGID, 1.0, pData->bN);
+                        
+                        /* if sensors protrude from the rigid baffle: */
+                        else{
+                            if (arraySpecs->weightType == WEIGHT_RIGID_OMNI)
+                                sphScattererModalCoeffs(order, kr, kR, HYBRID_BANDS-1, pData->bN);
+                            else if (arraySpecs->weightType == WEIGHT_RIGID_CARD)
+                                sphScattererDirModalCoeffs(order, kr, kR, HYBRID_BANDS-1, 0.5, pData->bN);
+                            else if (arraySpecs->weightType == WEIGHT_RIGID_DIPOLE)
+                                sphScattererDirModalCoeffs(order, kr, kR, HYBRID_BANDS-1, 0.0, pData->bN);
+                        }
+                        break;
+                }
+                break;
+        }
+#endif
+        
+        /* direct inverse (only required for GUI) */
+        for(band=0; band<HYBRID_BANDS-1; band++)
+            for(n=0; n < order+1; n++)
+                pData->bN_modal[band+1][n] = ccdiv(cmplx(4.0*M_PI, 0.0f), pData->bN[band*(order+1)+n]);
+        for(n=0; n < order+1; n++)
+            pData->bN_modal[0][n] = cmplx(0.0f, 0.0f); /* zero DC */
+
+        /* phase shift */
+        for(band=0; band<HYBRID_BANDS-1; band++)
+            for (n=0; n<order+1; n++)
+                Hs[band][n] = ccmul(cexp(cmplx(0.0, kr[band])), ccdiv(cmplx(4.0*M_PI, 0.0), pData->bN[band*(order+1)+n]));
+        
+        /* apply max-re order weighting and diffuse equalisation (not the same as "array2sh_apply_diff_EQ") */
+        float* wn;
+        double W[MAX_SH_ORDER+1][MAX_SH_ORDER+1];
+        double EN, scale;
+        int nSH_n;
+        memset(W, 0, (MAX_SH_ORDER+1)*(MAX_SH_ORDER+1)*sizeof(double));
+        for (n=0; n<order+1; n++){
+            nSH_n = (n+1)*(n+1);
+            wn = calloc(nSH_n*nSH_n, sizeof(float));
+            if(pData->filterType==FILTER_Z_STYLE)
+                for (i=0; i<n+1; i++)
+                    wn[(2*i)*nSH_n+(2*i)] = 1.0f;
+            else if(pData->filterType==FILTER_Z_STYLE_MAXRE)
+                getMaxREweights(n, wn);
+     
+            scale = 0.0;
+            for (i=0; i<n+1; i++)
+                scale += (double)(2*i+1)*powf((double)wn[(2*i)*nSH_n + (2*i)], 2.0f);
+            for (i=0; i<n+1; i++)
+                W[i][n] = (double)wn[(2*i)*nSH_n + (2*i)]/ sqrt(scale);
+            free(wn);
+        }
+        EN=W[0][n-1];
+        for (n=0; n<order+1; n++)
+            for (i=0; i<order+1; i++)
+                W[i][n] /= EN;
+        
+        /* apply bandpass filterbank to the inverse array response to regularise it */
+        double HW[HYBRID_BANDS-1];
+        double H_np[HYBRID_BANDS-1][MAX_SH_ORDER+1];
+        double W_np[MAX_SH_ORDER+1];
+        for (n=0; n<order+1; n++){
+            for(band=0; band< HYBRID_BANDS-1; band++)
+                for (i=n, j=0; i<order+1; i++, j++)
+                    H_np[band][j] = H[band][i];
+            for (i=n, j=0; i<order+1; i++, j++)
+                W_np[j] = W[n][i];
+            cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, HYBRID_BANDS-1, 1, order+1-n, 1.0,
+                        (const double*)H_np, MAX_SH_ORDER+1,
+                        (const double*)W_np, MAX_SH_ORDER+1, 0.0,
+                        (double*)HW, 1);
+            for(band=0; band<HYBRID_BANDS-1; band++)
+                pData->bN_inv[band+1][n] = crmul(Hs[band][n], HW[band]);
+        }
+        
+        /* diag(filters) * Y */
+        for(n=0; n < order+1; n++)
+            pData->bN_inv[0][n] = cmplx(0.0f, 0.0f); /* remove NaN at DC */
+        array2sh_replicate_order(hA2sh, order); /* replicate orders */
+        diag_bN_inv_R = calloc(nSH*nSH, sizeof(float_complex));
+        for(band=0; band<HYBRID_BANDS; band++){
+            for(i=0; i<nSH; i++)
+                diag_bN_inv_R[i*nSH+i] = cmplxf((float)creal(pData->bN_inv_R[band][i]), (float)cimag(pData->bN_inv_R[band][i]));
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, (arraySpecs->Q), nSH, &calpha,
+                        diag_bN_inv_R, nSH,
+                        pinv_Y_mic_cmplx, nSH, &cbeta,
+                        pData->W[band], MAX_NUM_SENSORS);
+        }
+        free(diag_bN_inv_R);
+        
+    }
+     
+    pData->order = order;
+    pData->currentEvalIsValid = 0;
     
     free(Y_mic);
     free(pinv_Y_mic);
     free(pinv_Y_mic_cmplx);
-    free(diag_bN_inv_R);
+}
+
+/* Based on a MatLab script by Archontis Politis, 2019 */
+void array2sh_apply_diff_EQ(void* const hA2sh)
+{
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    int i, j, band, array_order, idxf_alias, nSH;
+    float f_max, kR_max, f_alias, f_f_alias;
+    float_complex* M_diffcoh;
+    const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta  = cmplxf(0.0f, 0.0f);
+    double kr[HYBRID_BANDS-1];
+    double kR[HYBRID_BANDS-1];
+    double* dM_diffcoh; 
+    
+    if(arraySpecs->arrayType==ARRAY_CYLINDRICAL)
+        return; /* unsupported */
+    
+    /* prep */
+    nSH = (pData->order+1)*(pData->order+1);
+    dM_diffcoh = malloc((arraySpecs->Q)*(arraySpecs->Q)* (HYBRID_BANDS-1/* ignore DC */) * sizeof(double_complex));
+    M_diffcoh = malloc((arraySpecs->Q)*(arraySpecs->Q) * sizeof(float_complex));
+    f_max = 20e3f;
+    kR_max = 2.0f*M_PI*f_max*(arraySpecs->r)/pData->c;
+    array_order = (int)(ceilf(2.0f*kR_max)+0.01f);
+    for(band=0; band<HYBRID_BANDS-1; band++){
+        kr[band] = 2.0*M_PI*(pData->freqVector[band+1/* ignore DC */])*(arraySpecs->r)/pData->c;
+        kR[band] = 2.0*M_PI*(pData->freqVector[band+1/* ignore DC */])*(arraySpecs->R)/pData->c;
+    }
+    
+    /* Get theoretical diffuse coherence matrix */
+    switch(arraySpecs->arrayType){
+        case ARRAY_CYLINDRICAL:
+            return; /* Unsupported */
+            break;
+        case ARRAY_SPHERICAL:
+            switch (arraySpecs->weightType){
+                case WEIGHT_RIGID_OMNI:
+                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_RIGID, 1.0, kr, kR, HYBRID_BANDS-1, dM_diffcoh);
+                    break;
+                case WEIGHT_RIGID_CARD:
+                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL, 0.5, kr, kR, HYBRID_BANDS-1, dM_diffcoh);
+                    break;
+                case WEIGHT_RIGID_DIPOLE:
+                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL, 0.0, kr, kR, HYBRID_BANDS-1, dM_diffcoh);
+                    break;
+                case WEIGHT_OPEN_OMNI:
+                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_OPEN, 1.0, kr, NULL, HYBRID_BANDS-1, dM_diffcoh);
+                    break;
+                case WEIGHT_OPEN_CARD:
+                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.5, kr, NULL, HYBRID_BANDS-1, dM_diffcoh);
+                    break;
+                case WEIGHT_OPEN_DIPOLE:
+                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.0, kr, NULL, HYBRID_BANDS-1, dM_diffcoh);
+                    break;
+            }
+            break;
+    }
+    
+    /* determine band index for the spatial aliasing limit */
+    f_alias = sphArrayAliasLim(arraySpecs->r, pData->c, pData->order);
+    idxf_alias = 1;
+    f_f_alias = 1e13f;
+    for(band=0; band<HYBRID_BANDS; band++){
+        if( fabsf(pData->freqVector[band]-f_alias) < f_f_alias){
+            f_f_alias = fabsf(pData->freqVector[band]-f_alias);
+            idxf_alias = band;
+        }
+    }
+    
+#if 1
+    /* apply diffuse equalisation above aliasing */
+    float_complex L_diff_fal[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
+    float_complex L_diff[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
+    float_complex E_diff[MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
+    float_complex W_diffEQ[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
+    
+    for(i=0; i<arraySpecs->Q; i++)
+        for(j=0; j<arraySpecs->Q; j++)
+            M_diffcoh[i*(arraySpecs->Q)+j] = cmplxf( (float)dM_diffcoh[i*(arraySpecs->Q)* (HYBRID_BANDS-1) + j*(HYBRID_BANDS-1) + (idxf_alias-1)], 0.0f);
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, (arraySpecs->Q), (arraySpecs->Q), &calpha,
+                pData->W[idxf_alias], MAX_NUM_SENSORS,
+                M_diffcoh, (arraySpecs->Q), &cbeta,
+                E_diff, MAX_NUM_SENSORS);
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, (arraySpecs->Q), &calpha,
+                E_diff, MAX_NUM_SENSORS,
+                pData->W[idxf_alias], MAX_NUM_SENSORS, &cbeta,
+                L_diff_fal, MAX_NUM_SH_SIGNALS);
+    for(i=0; i<nSH; i++)
+        L_diff_fal[i][i] = crmulf(L_diff_fal[i][i], 1.0f/(4.0f*M_PI)); /* only care about the diagonal entries */
+    for(band = MAX(idxf_alias,1); band<HYBRID_BANDS; band++){
+        for(i=0; i<arraySpecs->Q; i++)
+            for(j=0; j<arraySpecs->Q; j++)
+                M_diffcoh[i*(arraySpecs->Q)+j] = cmplxf( (float)dM_diffcoh[i*(arraySpecs->Q)* (HYBRID_BANDS-1) + j*(HYBRID_BANDS-1) + (band-1)], 0.0f);
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, (arraySpecs->Q), (arraySpecs->Q), &calpha,
+                    pData->W[band], MAX_NUM_SENSORS,
+                    M_diffcoh, (arraySpecs->Q), &cbeta,
+                    E_diff, MAX_NUM_SENSORS);
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, (arraySpecs->Q), &calpha,
+                    E_diff, MAX_NUM_SENSORS,
+                    pData->W[band], MAX_NUM_SENSORS, &cbeta,
+                    L_diff, MAX_NUM_SH_SIGNALS);
+        for(i=0; i<nSH; i++)
+            for(j=0; j<nSH; j++)
+                L_diff[i][j] = i==j? csqrtf(ccdiv(L_diff_fal[i][j], crmulf(L_diff[i][j], 1.0f/(4.0f*M_PI)))) : cmplxf(0.0f,0.0f);
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, (arraySpecs->Q), nSH, &calpha,
+                    L_diff, MAX_NUM_SH_SIGNALS,
+                    pData->W[band], MAX_NUM_SENSORS, &cbeta,
+                    W_diffEQ, MAX_NUM_SENSORS);
+        memcpy(pData->W[band], W_diffEQ, MAX_NUM_SH_SIGNALS*MAX_NUM_SENSORS*sizeof(float_complex));
+    }
+#else /* old approach, doesn't work for Zotter-style encoder, so we switched to the above ^ */
+    float_complex Ws[MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
+    float_complex W_diffEQ[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
+    float_complex Ws_M_diffcoh[MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
+    
+    /* apply diffuse equalisation above aliasing */
+    for(band = MAX(idxf_alias,1); band<HYBRID_BANDS; band++){
+        memcpy(Ws, pData->W[band], MAX_NUM_SH_SIGNALS*MAX_NUM_SENSORS*sizeof(float_complex));
+        for(i=0; i<arraySpecs->Q; i++)
+            for(j=0; j<arraySpecs->Q; j++)
+                M_diffcoh[i*(arraySpecs->Q)+j] = cmplxf( (float)dM_diffcoh[i*(arraySpecs->Q)* (HYBRID_BANDS-1) + j*(HYBRID_BANDS-1) + (band-1)], 0.0f);
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, (arraySpecs->Q), (arraySpecs->Q), &calpha,
+                    Ws, MAX_NUM_SENSORS,
+                    M_diffcoh, (arraySpecs->Q), &cbeta,
+                    Ws_M_diffcoh, MAX_NUM_SENSORS);
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, (arraySpecs->Q), &calpha,
+                    Ws_M_diffcoh, MAX_NUM_SENSORS,
+                    Ws, MAX_NUM_SENSORS, &cbeta,
+                    W_diffEQ, MAX_NUM_SH_SIGNALS);
+        for(i=0; i<nSH; i++)
+            for(j=0; j<nSH; j++)
+                W_diffEQ[i][j] =  i==j ? ccdivf(cmplxf(1.0f,0.0f), csqrtf(ccdivf(W_diffEQ[i][j], 4.0f*M_PI))) : cmplxf(0.0f,0.0f);
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, (arraySpecs->Q), nSH, &calpha,
+                    W_diffEQ, MAX_NUM_SH_SIGNALS,
+                    Ws, MAX_NUM_SENSORS, &cbeta,
+                    pData->W[band], MAX_NUM_SENSORS);
+    }
+#endif
+    
+    pData->recalcEvalFLAG = 1;
+    
+    free(dM_diffcoh);
+    free(M_diffcoh);
 }
 
 
@@ -219,6 +532,7 @@ void array2sh_calculate_mag_curves(void* const hA2sh)
             pData->bN_modal_dB[band][n] = 20.0f * (float)log10(cabs(pData->bN_modal[band+1][n]));
         }
     }
+    pData->evalReady = 1;
 }
 
 void array2sh_evaluateSHTfilters(void* hA2sh)
@@ -227,33 +541,48 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
     int band, i, j, simOrder, order, nSH;
     double kr[HYBRID_BANDS-1];
+    double kR[HYBRID_BANDS-1];
     float* Y_grid_real;
     float_complex* Y_grid, *H_array, *Wshort;
     
 	pData->evalReady = 0;
     assert(pData->W != NULL);
     
-    /* simulate the current array by firing 812 plane-waves around the surface of a theoretical sphere
+    /* simulate the current array by firing 812 plane-waves around the surface of a theoretical version of the array
      * and ascertaining the transfer function for each */
     simOrder = (int)(2.0f*M_PI*MAX_EVAL_FREQ_HZ*(arraySpecs->r)/pData->c)+1;
-    for(i=0; i<HYBRID_BANDS-1; i++)
-        kr[i] = 2.0*M_PI*(pData->freqVector[i+1/* ignore DC */])*(arraySpecs->R)/pData->c;
+    for(i=0; i<HYBRID_BANDS-1; i++){
+        kr[i] = 2.0*M_PI*(pData->freqVector[i+1/* ignore DC */])*(arraySpecs->r)/pData->c;
+        kR[i] = 2.0*M_PI*(pData->freqVector[i+1/* ignore DC */])*(arraySpecs->R)/pData->c;
+    }
     H_array = malloc((HYBRID_BANDS-1) * (arraySpecs->Q) * 812*sizeof(float_complex));
     switch(arraySpecs->arrayType){
         case ARRAY_SPHERICAL:
             switch(arraySpecs->weightType){
                 default:
-                case WEIGHT_RIGID:
-                    simulateSphArray(simOrder, kr, HYBRID_BANDS-1, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, (float*)__geosphere_ico_9_0_dirs_deg, 812, ARRAY_CONSTRUCTION_RIGID, 0.0, H_array);
+                case WEIGHT_RIGID_OMNI:
+                    simulateSphArray(simOrder, kr, kR, HYBRID_BANDS-1, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q,
+                                     (float*)__geosphere_ico_9_0_dirs_deg, 812, ARRAY_CONSTRUCTION_RIGID, 1.0, H_array);
+                    break;
+                case WEIGHT_RIGID_CARD:
+                    simulateSphArray(simOrder, kr, kR, HYBRID_BANDS-1, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q,
+                                     (float*)__geosphere_ico_9_0_dirs_deg, 812, ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL, 0.5, H_array);
+                    break;
+                case WEIGHT_RIGID_DIPOLE:
+                    simulateSphArray(simOrder, kr, kR, HYBRID_BANDS-1, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q,
+                                     (float*)__geosphere_ico_9_0_dirs_deg, 812, ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL, 0.0, H_array);
                     break;
                 case WEIGHT_OPEN_OMNI:
-                    simulateSphArray(simOrder, kr, HYBRID_BANDS-1, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, (float*)__geosphere_ico_9_0_dirs_deg, 812, ARRAY_CONSTRUCTION_OPEN, 0.0, H_array);
-                    break;
-                case WEIGHT_OPEN_DIPOLE:
-                    simulateSphArray(simOrder, kr, HYBRID_BANDS-1, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, (float*)__geosphere_ico_9_0_dirs_deg, 812, ARRAY_CONSTRUCTION_DIRECTIONAL, 1.0, H_array);
+                    simulateSphArray(simOrder, kr, NULL, HYBRID_BANDS-1, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q,
+                                     (float*)__geosphere_ico_9_0_dirs_deg, 812, ARRAY_CONSTRUCTION_OPEN, 1.0, H_array);
                     break;
                 case WEIGHT_OPEN_CARD:
-                    simulateSphArray(simOrder, kr, HYBRID_BANDS-1, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, (float*)__geosphere_ico_9_0_dirs_deg, 812, ARRAY_CONSTRUCTION_DIRECTIONAL, 0.5, H_array);
+                    simulateSphArray(simOrder, kr, NULL, HYBRID_BANDS-1, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q,
+                                     (float*)__geosphere_ico_9_0_dirs_deg, 812, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.5, H_array);
+                    break;
+                case WEIGHT_OPEN_DIPOLE:
+                    simulateSphArray(simOrder, kr, NULL, HYBRID_BANDS-1, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q,
+                                     (float*)__geosphere_ico_9_0_dirs_deg, 812, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.0, H_array);
                     break;
             }
             break;
@@ -261,7 +590,9 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
         case ARRAY_CYLINDRICAL:
             switch(arraySpecs->weightType){
                 default:
-                case WEIGHT_RIGID:
+                case WEIGHT_RIGID_OMNI:
+                case WEIGHT_RIGID_CARD:
+                case WEIGHT_RIGID_DIPOLE:
                     simulateCylArray(simOrder, kr, HYBRID_BANDS-1, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, (float*)__geosphere_ico_9_0_dirs_deg, 812, ARRAY_CONSTRUCTION_RIGID, H_array);
                     break;
                 case WEIGHT_OPEN_DIPOLE:
@@ -291,6 +622,7 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
     evaluateSHTfilters(order, Wshort, arraySpecs->Q, HYBRID_BANDS-1, H_array, 812, Y_grid, pData->cSH, pData->lSH);
 
 	pData->evalReady = 1;
+    pData->currentEvalIsValid = 1;
 
     free(Y_grid_real);
     free(Y_grid);
@@ -327,8 +659,8 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
             Q = 4; /* number of mics */
             pars->r = 0.042f; /* array radius */
             pars->R = 0.042f; /* radius of the sensors (incase they protrude from the surface of the array), (only for rigid arrays) */
-            pars->arrayType = ARRAY_SPHERICAL; /* spherical or cylindrical */
-            pars->weightType = WEIGHT_RIGID; /* open or rigid, and directivity of the sensors (only for open arrays) */
+            pars->arrayType = ARRAY_SPHERICAL;    /* spherical or cylindrical */
+            pars->weightType = WEIGHT_RIGID_OMNI; /* open or rigid, and directivity of the sensors (only for open arrays) */
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
                     pars->sensorCoords_rad[ch][i] = __default_coords_rad[ch][i]; /* spherical coordinates of the sensors, in radians */
@@ -407,7 +739,7 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
             pars->r = 0.049f;
             pars->R = 0.049f;
             pars->arrayType = ARRAY_SPHERICAL;
-            pars->weightType = WEIGHT_RIGID;
+            pars->weightType = WEIGHT_RIGID_OMNI;
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
                     pars->sensorCoords_rad[ch][i] = __Zylia1D_coords_rad[ch][i];
@@ -423,7 +755,7 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
             pars->r = 0.042f;
             pars->R = 0.042f;
             pars->arrayType = ARRAY_SPHERICAL;
-            pars->weightType = WEIGHT_RIGID;
+            pars->weightType = WEIGHT_RIGID_OMNI;
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
                     pars->sensorCoords_rad[ch][i] = __Eigenmike32_coords_rad[ch][i];
@@ -439,7 +771,7 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
             pars->r = 0.05f;
             pars->R = 0.05f; 
             pars->arrayType = ARRAY_SPHERICAL;
-            pars->weightType = WEIGHT_RIGID;
+            pars->weightType = WEIGHT_RIGID_OMNI;
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
                     pars->sensorCoords_rad[ch][i] = __DTU_mic_coords_rad[ch][i];

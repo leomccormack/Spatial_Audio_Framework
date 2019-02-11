@@ -20,11 +20,13 @@
  *     signals utilising theoretical encoding filters.
  *     The algorithms within array2sh were pieced together and developed in collaboration
  *     with Symeon Delikaris-Manias.
- *     A detailed explanation of the algorithms in array2sh can be found in:
- *     McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
- *     “Real-time conversion of sensor array signals into spherical harmonic signals with
- *     applications to spatially localised sub-band sound-field analysis,” in Audio
- *     Engineering Society Convention 144, Audio Engineering Society, 2018.
+ *     A more detailed explanation of the algorithms in array2sh can be found in:
+ *         McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
+ *         “Real-time conversion of sensor array signals into spherical harmonic signals with
+ *         applications to spatially localised sub-band sound-field analysis,” in Audio
+ *         Engineering Society Convention 144, Audio Engineering Society, 2018.
+ *     Also included, is a diffuse-field equalisation option for frequencies past aliasing,
+ *     developed in collaboration with Archontis Politis, 8.02.2019
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_sh
  * Author, date created:
@@ -38,6 +40,7 @@
 extern "C" {
 #endif
     
+/* Array presets: */
 #define ENABLE_AALTO_HYDROPHONE_PRESET
 #define ENABLE_SENNHEISER_AMBEO_PRESET
 #define ENABLE_CORE_SOUND_TETRAMIC_PRESET
@@ -82,11 +85,22 @@ typedef enum _PRESETS{
 #endif
 }PRESETS;
 
-typedef enum _REG_TYPES{
-    REG_DAS = 1,
-    REG_SOFT_LIM,
-    REG_TIKHONOV
-}REG_TYPES;
+typedef enum _FILTER_TYPES{
+    /* encoding filters based on a 'soft-limiting' regularised inversion of the modal responses, see:
+           Bernschutz, B., Porschmann, C., Spors, S., Weinzierl, S., Versterkung, B., 2011. Soft-limiting der
+           modalen amplitudenverst?rkung bei sph?rischen mikrofonarrays im plane wave decomposition verfahren.
+           Proceedings of the 37. Deutsche Jahrestagung fur Akustik (DAGA 2011) */
+    FILTER_SOFT_LIM = 1,
+    /* encoding filters based on a 'Tikhonov' regularised inversion of the modal responses, see:
+           Moreau, S., Daniel, J., Bertet, S., 2006, 3D sound field recording with higher order ambisonics-objective
+           measurements and validation of spherical microphone. In Audio Engineering Society Convention 120.*/
+    FILTER_TIKHONOV,
+    /* encoding filters based on a linear-phase filter-bank approach, see:
+           Zotter, F. A Linear-Phase Filter-Bank Approach to Process Rigid Spherical Microphone Array Recordings. */
+    FILTER_Z_STYLE,
+    /* same as 'FILTER_Z_STYLE', only it also has maxRE weights baked in  */
+    FILTER_Z_STYLE_MAXRE
+}FILTER_TYPES;
 
 typedef enum _CH_ORDER{
     CH_ACN = 1,
@@ -100,11 +114,13 @@ typedef enum _NORM_TYPES{
 
 typedef enum _ARRAY_TYPES{
     ARRAY_SPHERICAL = 1,
-    ARRAY_CYLINDRICAL
+    ARRAY_CYLINDRICAL    /* FYI: although supported, cylindrical arrays have not really been tested */
 }ARRAY_TYPES;
 
 typedef enum _WEIGHT_TYPES{
-    WEIGHT_RIGID = 1,
+    WEIGHT_RIGID_OMNI = 1, 
+    WEIGHT_RIGID_CARD,
+    WEIGHT_RIGID_DIPOLE,
     WEIGHT_OPEN_OMNI,
     WEIGHT_OPEN_CARD,
     WEIGHT_OPEN_DIPOLE
@@ -148,6 +164,8 @@ void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
     
 void array2sh_evaluateFilters(void* const hA2sh);
     
+void array2sh_applyDiffEQpastAliasing(void* const hA2sh);
+    
 void array2sh_setPreset(void* const hA2sh, int preset);
     
 void array2sh_setSensorAzi_rad(void* const hA2sh, int index, float newAzi_rad);
@@ -168,7 +186,7 @@ void array2sh_setArrayType(void* const hA2sh, int newType);
 
 void array2sh_setWeightType(void* const hA2sh, int newType);
     
-void array2sh_setRegType(void* const hA2sh, int newType);
+void array2sh_setFilterType(void* const hA2sh, int newType);
     
 void array2sh_setRegPar(void* const hA2sh, float newVal);
     
@@ -189,6 +207,8 @@ void array2sh_setMaxFreq(void* const hA2sh, float newF);
 
 /* returns 1 if there are new evaluation curves */
 int array2sh_getEvalReady(void* const hA2sh);
+    
+int array2sh_getIsEvalValid(void* const hA2sh);
     
 int array2sh_getEncodingOrder(void* const hA2sh);
     
@@ -216,7 +236,7 @@ int array2sh_getArrayType(void* const hA2sh);
     
 int array2sh_getWeightType(void* const hA2sh);
     
-int array2sh_getRegType(void* const hA2sh);
+int array2sh_getFilterType(void* const hA2sh);
     
 float array2sh_getRegPar(void* const hA2sh);
     

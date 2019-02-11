@@ -1579,8 +1579,6 @@ void cylModalCoeffs
     double* Jn, *Jnprime;
     double_complex* Hn2, *Hn2prime;
     
-    assert(arrayType!=ARRAY_CONSTRUCTION_DIRECTIONAL);
-    
     memset(b_N, 0, nBands*(order+1)*sizeof(double_complex));
     switch(arrayType){
         default:
@@ -1615,7 +1613,7 @@ void cylModalCoeffs
                         b_N[i*(order+1)+n] = cmplx(0.0, 0.0);
                     else{
                         b_N[i*(order+1)+n] = ccmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), ( ccsub(cmplx(Jn[i*(order+1)+n], 0.0),
-                                                                                                       ccmul(ccdiv(cmplx(Jnprime[i*(order+1)+n],0.0), Hn2prime[i*(order+1)+n]), Hn2[i*(order+1)+n]))));
+                                             ccmul(ccdiv(cmplx(Jnprime[i*(order+1)+n],0.0), Hn2prime[i*(order+1)+n]), Hn2[i*(order+1)+n]))));
                     }
                 }
             }
@@ -1626,9 +1624,48 @@ void cylModalCoeffs
             free(Hn2prime);
             break;
             
-        case ARRAY_CONSTRUCTION_DIRECTIONAL:
+        case ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL:
+        case ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL:
             /* not supported */
             break;
+    }
+}
+
+float sphArrayAliasLim
+(
+    float r,
+    float c,
+    int maxN
+)
+{
+   return c*(float)maxN/(2.0f*M_PI*r);
+}
+
+void sphArrayNoiseThreshold
+(
+    int maxN,
+    int Nsensors,
+    float r,
+    float c,
+    ARRAY_CONSTRUCTION_TYPES arrayType,
+    double dirCoeff,
+    float maxG_db,
+    float* f_lim
+)
+{
+    int n;
+    float kR_lim, maxG;
+    double kr;
+    double_complex* b_N;
+    
+    maxG = powf(10.0f, maxG_db/10.0f);
+    kr = 1.0f;
+    for (n=1; n<maxN+1; n++){
+        b_N = malloc((n+1) * sizeof(double_complex));
+        sphModalCoeffs(n, &kr, 1, arrayType, dirCoeff, b_N);
+        kR_lim = powf(maxG*(float)Nsensors* powf((float)cabs(b_N[n])/(4.0f*M_PI), 2.0f), (-10.0f*log10f(2.0f)/(6.0f*n)));
+        f_lim[n-1] = kR_lim*c/(2.0f*M_PI*r);
+        free(b_N);
     }
 }
 
@@ -1662,6 +1699,26 @@ void sphModalCoeffs
             free(jn);
             break;
             
+        case ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL:
+            /* compute spherical Bessels of the first kind + derivatives */
+            jn = malloc(nBands*(order+1)*sizeof(double));
+            jnprime = malloc(nBands*(order+1)*sizeof(double));
+            bessel_jn(order, kr, nBands, &maxN, jn, jnprime);
+            
+            /* modal coefficients for open spherical array (directional sensors): 4*pi*1i^n * (dirCoeff*jn - 1i*(1-dirCoeff)*jnprime); */
+            for(n=0; n<maxN+1; n++)
+                for(i=0; i<nBands; i++)
+                    b_N[i*(order+1)+n] = ccmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 4.0*M_PI), ccsub(cmplx(dirCoeff*jn[i*(order+1)+n], 0.0),
+                                         cmplx(0.0, (1.0-dirCoeff)*jnprime[i*(order+1)+n]))  );
+            
+            free(jn);
+            free(jnprime);
+            break;
+            
+        case ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL:
+            /* equivalent to "ARRAY_CONSTRUCTION_RIGID", as long as the sensor radius is the same as the scatterer radius. Call
+               "sphScattererModalCoeffs" or "sphScattererDirModalCoeffs", if sensors protrude from the rigid baffle. */
+            
         case ARRAY_CONSTRUCTION_RIGID:
             /* compute spherical Bessels/Hankels and their derivatives */
             jn = malloc(nBands*(order+1)*sizeof(double));
@@ -1692,22 +1749,6 @@ void sphModalCoeffs
             free(jnprime);
             free(hn2);
             free(hn2prime);
-            break;
-            
-        case ARRAY_CONSTRUCTION_DIRECTIONAL:
-            /* compute spherical Bessels of the first kind + derivatives */
-            jn = malloc(nBands*(order+1)*sizeof(double));
-            jnprime = malloc(nBands*(order+1)*sizeof(double));
-            bessel_jn(order, kr, nBands, &maxN, jn, jnprime);
-            
-            /* modal coefficients for open spherical array (directional sensors): 4*pi*1i^n * (dirCoeff*jn - 1i*(1-dirCoeff)*jnprime); */
-            for(n=0; n<maxN+1; n++)
-                for(i=0; i<nBands; i++)
-                    b_N[i*(order+1)+n] = ccmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 4.0*M_PI), ccsub(cmplx(dirCoeff*jn[i*(order+1)+n], 0.0),
-                                         cmplx(0.0, (1.0-dirCoeff)*jnprime[i*(order+1)+n]))  );
-            
-            free(jn);
-            free(jnprime);
             break;
     }
 }
@@ -1740,13 +1781,18 @@ void sphScattererModalCoeffs
     hankel_hn2(order, kR, nBands, &maxN_tmp, NULL, hn2prime);
     maxN = MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
     
-    /* modal coefficients for rigid spherical scatterer: (2*n+1) * 1i^n * (jn-(jnprime./hnprime).*hn); */
+    /* modal coefficients for rigid spherical array (OMNI): 4*pi*1i^n * (jn_kr-(jnprime_kr./hn2prime_kr).*hn2_kr); */
+    /* modal coefficients for rigid spherical scatterer (OMNI): 4*pi*1i^n * (jn_kr-(jnprime_kR./hn2prime_kR).*hn2_kr); */
     for(i=0; i<nBands; i++){
         for(n=0; n<maxN+1; n++){
-            b_N[i*(order+1)+n] = ccmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 2.0*(float)n+1.0),
-                                       ( ccsub(cmplx(jn[i*(order+1)+n], 0.0), ccmul(ccdiv(cmplx(jnprime[i*(order+1)+n],0.0),
-                                     hn2prime[i*(order+1)+n]), hn2[i*(order+1)+n]))));
-            b_N[i*(order+1)+n] = crmul(b_N[i*(order+1)+n], 4.0*M_PI);
+            if(n==0 && kr[i]<=1e-20)
+                b_N[i*(order+1)+n] = cmplx(4.0*M_PI, 0.0);
+            else if(kr[i] <= 1e-20)
+                b_N[i*(order+1)+n] = cmplx(0.0, 0.0);
+            else{
+                b_N[i*(order+1)+n] = ccmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 4.0*M_PI), ( ccsub(cmplx(jn[i*(order+1)+n], 0.0),
+                                     ccmul(ccdiv(cmplx(jnprime[i*(order+1)+n],0.0), hn2prime[i*(order+1)+n]), hn2[i*(order+1)+n]))));
+            }
         }
     }
     
@@ -1754,6 +1800,144 @@ void sphScattererModalCoeffs
     free(jnprime);
     free(hn2);
     free(hn2prime);
+}
+
+void sphScattererDirModalCoeffs
+(
+    int order,
+    double* kr,
+    double* kR,
+    int nBands,
+    double dirCoeff, /* 0.0 gives NaNs */
+    double_complex* b_N
+)
+{
+    int i, n, maxN, maxN_tmp;
+    double* jn_kr, *jnprime_kr, *jnprime_kR;
+    double_complex* hn2_kr, *hn2prime_kr, *hn2prime_kR;
+    
+    /* compute spherical Bessels/Hankels and their derivatives */
+    jn_kr = malloc(nBands*(order+1)*sizeof(double));
+    jnprime_kr = malloc(nBands*(order+1)*sizeof(double));
+    jnprime_kR = malloc(nBands*(order+1)*sizeof(double));
+    hn2_kr = malloc(nBands*(order+1)*sizeof(double_complex));
+    hn2prime_kr = malloc(nBands*(order+1)*sizeof(double_complex));
+    hn2prime_kR = malloc(nBands*(order+1)*sizeof(double_complex));
+    maxN = 1e8;
+    bessel_jn(order, kr, nBands, &maxN_tmp, jn_kr, jnprime_kr);
+    maxN = MIN(maxN_tmp, maxN);
+    bessel_jn(order, kR, nBands, &maxN_tmp, NULL, jnprime_kR);
+    maxN = MIN(maxN_tmp, maxN);
+    hankel_hn2(order, kr, nBands, &maxN_tmp, hn2_kr, hn2prime_kr);
+    maxN = MIN(maxN_tmp, maxN);
+    hankel_hn2(order, kR, nBands, &maxN_tmp, NULL, hn2prime_kR);
+    maxN = MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
+    
+    /* modal coefficients for rigid spherical array (OMNI): 4*pi*1i^n * (jn_kr-(jnprime_kr./hn2prime_kr).*hn2_kr); */
+    /* modal coefficients for rigid spherical scatterer (OMNI): 4*pi*1i^n * (jn_kr-(jnprime_kR./hn2prime_kR).*hn2_kr); */
+    /* modal coefficients for rigid spherical scatterer (DIRECTIONAL):
+           4*pi*1i^n * [ (beta*jn_kr - i(1-beta)*jnprime_kr) - (jnprime_kR/hn2prime_kR) * (beta*hn2_kr - i(1-beta)hn2prime_kr) ] */
+    for(i=0; i<nBands; i++){
+        for(n=0; n<maxN+1; n++){
+            if(n==0 && kr[i]<=1e-20)
+                b_N[i*(order+1)+n] = cmplx(4.0*M_PI, 0.0);
+            else if(kr[i] <= 1e-20)
+                b_N[i*(order+1)+n] = cmplx(0.0, 0.0);
+            else{
+                b_N[i*(order+1)+n] = cmplx(dirCoeff * jn_kr[i*(order+1)+n], -(1.0-dirCoeff)* jnprime_kr[i*(order+1)+n]);
+                b_N[i*(order+1)+n] = ccsub(b_N[i*(order+1)+n], ccmul(ccdiv(cmplx(jnprime_kR[i*(order+1)+n], 0.0), hn2prime_kR[i*(order+1)+n]),
+                                    (ccsub(crmul(hn2_kr[i*(order+1)+n], dirCoeff), ccmul(cmplx(0.0f,1.0-dirCoeff), hn2prime_kr[i*(order+1)+n])))));
+                b_N[i*(order+1)+n] = crmul(ccmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), b_N[i*(order+1)+n]), 4.0*M_PI/dirCoeff); /* had to scale by directivity to preserve amplitude? */ 
+//                b_N[i*(order+1)+n] = dirCoeff * jn_kr[i*(order+1)+n] - I*(1.0-dirCoeff)* jnprime_kr[i*(order+1)+n];
+//                b_N[i*(order+1)+n] = b_N[i*(order+1)+n] - (jnprime_kR[i*(order+1)+n]/hn2prime_kR[i*(order+1)+n])*(dirCoeff*hn2_kr[i*(order+1)+n] - I*(1.0-dirCoeff)*hn2prime_kr[i*(order+1)+n]);
+//                b_N[i*(order+1)+n] = cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)) * b_N[i*(order+1)+n] * 4.0*M_PI/dirCoeff; /* had to scale by directivity to preserve amplitude? */
+            }
+        }
+    }
+    
+    free(jn_kr);
+    free(jnprime_kr);
+    free(jnprime_kR);
+    free(hn2_kr);
+    free(hn2prime_kr);
+    free(hn2prime_kR);
+}
+
+void sphDiffCohMtxTheory
+(
+    int order,
+    float* sensor_dirs_rad,
+    int N_sensors,
+    ARRAY_CONSTRUCTION_TYPES arrayType,
+    double dirCoeff,
+    double* kr,
+    double* kR,
+    int nBands,
+    double* M_diffcoh
+)
+{
+    int i, j, k, n;
+    float cosangle;
+    float* sensor_dirs_xyz;
+    double dcosangle;
+    double *ppm, *b_N2, *Pn;
+    double_complex* b_N;
+    
+    /* sph->cart */
+    sensor_dirs_xyz = malloc(N_sensors*3*sizeof(float));
+    for(i=0; i<N_sensors; i++){
+        sensor_dirs_xyz[i*3] = cosf(sensor_dirs_rad[i*2+1]) * cosf(sensor_dirs_rad[i*2]);
+        sensor_dirs_xyz[i*3+1] = cosf(sensor_dirs_rad[i*2+1]) * sinf(sensor_dirs_rad[i*2]);
+        sensor_dirs_xyz[i*3+2] = sinf(sensor_dirs_rad[i*2+1]);
+    }
+    
+    /* calculate modal coefficients */
+    b_N = malloc(nBands * (order+1) * sizeof(double_complex));
+    b_N2 = malloc(nBands * (order+1) * sizeof(double));
+    switch (arrayType){
+        case ARRAY_CONSTRUCTION_OPEN:
+            sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_OPEN, 1.0, b_N); break;
+        case ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL:
+            sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, dirCoeff, b_N); break;
+        case ARRAY_CONSTRUCTION_RIGID:
+        case ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL:
+            if(kR==NULL)
+                sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_RIGID, 1.0, b_N); /* if kr==kR, dirCoeff is irrelevant */
+            else
+                sphScattererDirModalCoeffs(order, kr, kR, nBands, dirCoeff, b_N);
+            break;
+    }
+    for(i=0; i<nBands * (order+1); i++)
+        b_N2[i] = powf(cabs(ccdiv(b_N[i], cmplx(4.0*M_PI, 0.0))), 2.0f);
+    
+    /* determine theoretical diffuse-coherence matrix for sensor array */
+    ppm = malloc((order+1)*sizeof(double));
+    Pn = malloc((order+1)*sizeof(double));
+    for(i=0; i<N_sensors; i++){
+        for(j=i; j<N_sensors; j++){
+            cosangle = 0.0f;
+            for(k=0; k<3; k++)
+                cosangle += sensor_dirs_xyz[j*3+k] * sensor_dirs_xyz[i*3+k];
+            cosangle = cosangle>1.0f ? 1.0f : (cosangle<-1.0f ? -1.0f : cosangle);
+            for(n=0; n<order+1; n++){
+                dcosangle = (double)cosangle;
+                unnorm_legendreP(n, &dcosangle, 1, ppm);
+                Pn[n] =  (2.0*(double)n+1.0) * 4.0f*M_PI * ppm[0];
+            }
+            cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBands, 1, order+1, 1.0,
+                        b_N2, order+1,
+                        Pn, 1, 0.0,
+                        &M_diffcoh[j*N_sensors*nBands + i*nBands], 1);
+            
+            memcpy(&M_diffcoh[i*N_sensors*nBands + j*nBands], &M_diffcoh[j*N_sensors*nBands + i*nBands], nBands*sizeof(double));
+        }
+    }
+    
+    free(b_N);
+    free(b_N2);
+    free(sensor_dirs_xyz);
+    free(ppm);
+    free(Pn);
 }
 
 void simulateCylArray /*untested*/
@@ -1812,6 +1996,7 @@ void simulateSphArray
 (
     int order,
     double* kr,
+    double* kR,
     int nBands,
     float* sensor_dirs_rad,
     int N_sensors,
@@ -1832,7 +2017,19 @@ void simulateSphArray
     
     /* calculate modal coefficients */
     b_N = malloc(nBands * (order+1) * sizeof(double_complex));
-    sphModalCoeffs(order, kr, nBands, arrayType, dirCoeff, b_N); /* double precision recommended for high orders of sph Bessels  */
+    switch (arrayType){
+        case ARRAY_CONSTRUCTION_OPEN:
+            sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_OPEN, 1.0, b_N); break;
+        case ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL:
+            sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, dirCoeff, b_N); break;
+        case ARRAY_CONSTRUCTION_RIGID:
+        case ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL:
+            if(kR==NULL)
+                sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_RIGID, 1.0, b_N); /* if kr==kR, dirCoeff is irrelevant */
+            else
+                sphScattererDirModalCoeffs(order, kr, kR, nBands, dirCoeff, b_N);
+            break;
+    }
     
     /* calculate (unit) cartesian coords for sensors and plane waves */
     U_sensors = malloc(N_sensors*3*sizeof(float));

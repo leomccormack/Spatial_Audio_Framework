@@ -20,11 +20,13 @@
  *     signals utilising theoretical encoding filters.
  *     The algorithms within array2sh were pieced together and developed in collaboration
  *     with Symeon Delikaris-Manias.
- *     A detailed explanation of the algorithms in array2sh can be found in:
- *     McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
- *     “Real-time conversion of sensor array signals into spherical harmonic signals with
- *     applications to spatially localised sub-band sound-field analysis,” in Audio
- *     Engineering Society Convention 144, Audio Engineering Society, 2018.
+ *     A more detailed explanation of the algorithms in array2sh can be found in:
+ *         McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
+ *         “Real-time conversion of sensor array signals into spherical harmonic signals with
+ *         applications to spatially localised sub-band sound-field analysis,” in Audio
+ *         Engineering Society Convention 144, Audio Engineering Society, 2018.
+ *     Also included, is a diffuse-field equalisation option for frequencies past aliasing,
+ *     developed in collaboration with Archontis Politis, 8.02.2019
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_sh
  * Author, date created:
@@ -43,6 +45,7 @@
 #include "array2sh_database.h"
 #define SAF_ENABLE_AFSTFT /* for time-frequency transform */
 #define SAF_ENABLE_SH     /* for spherical harmonic weights */
+#define SAF_ENABLE_HOA    /* for max-rE weights */
 #include "saf.h"
 
 #ifdef __cplusplus
@@ -53,13 +56,13 @@ extern "C" {
 /* Definitions */
 /***************/
     
-#define MAX_SH_ORDER ( 7 )
+#define MAX_SH_ORDER ( 7 )                     /* maximum encoding order */
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1) ) /* (L+1)^2 */
-#define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
-#define MAX_NUM_SENSORS ( 64 )                              /* Maximum permited channels for the VST standard */
-#define MAX_EVAL_FREQ_HZ ( 20e3f )                          /* Up to which frequency should the evaluation be accurate */
+#define HOP_SIZE ( 128 )                       /* STFT hop size = nBands */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )          /* hybrid mode incurs an additional 5 bands  */
+#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )   /* 4/8/16 */
+#define MAX_NUM_SENSORS ( 64 )                 /* Maximum permited channels for the VST standard */
+#define MAX_EVAL_FREQ_HZ ( 20e3f )             /* Up to which frequency should the evaluation be accurate */
     
 
 /***********/
@@ -67,11 +70,11 @@ extern "C" {
 /***********/
     
 typedef struct _arrayPars {
-    int Q, newQ;
-    float r;
-    float R; 
-    ARRAY_TYPES arrayType;
-    WEIGHT_TYPES weightType;
+    int Q, newQ;                    /* number of sensors */
+    float r;                        /* radius of sensors */
+    float R;                        /* radius of scatterer (only for rigid arrays) */
+    ARRAY_TYPES arrayType;          /* array type, spherical/cylindrical */
+    WEIGHT_TYPES weightType;        /*  */
     float sensorCoords_rad[MAX_NUM_SENSORS][2];
     float sensorCoords_deg[MAX_NUM_SENSORS][2];
         
@@ -94,40 +97,43 @@ typedef struct _array2sh
     double_complex bN_inv[HYBRID_BANDS][MAX_SH_ORDER + 1];
     double_complex bN_inv_R[HYBRID_BANDS][MAX_NUM_SH_SIGNALS]; 
     float_complex W[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
+    float_complex W_diffEQ[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
     
     /* for displaying the bNs */
-    float** bN_modal_dB;
-    float** bN_inv_dB;
-    float* cSH;
-    float* lSH; 
-    float* disp_freqVector;
+    float** bN_modal_dB;            /* modal responses / no regulaisation; HYBRID_BANDS x (MAX_SH_ORDER +1)  */
+    float** bN_inv_dB;              /* modal responses / with regularisation; HYBRID_BANDS x (MAX_SH_ORDER +1)  */
+    float* cSH;                     /* spatial correlation; HYBRID_BANDS x 1 */
+    float* lSH;                     /* level difference; HYBRID_BANDS x 1 */
+    float* disp_freqVector;         /* frequency vector used for display; HYBRID_BANDS x 1 */
     
     /* time-frequency transform and array details */
-    float freqVector[HYBRID_BANDS];
-    void* hSTFT;
-    void* arraySpecs;
+    float freqVector[HYBRID_BANDS]; /* frequency vector */
+    void* hSTFT;                    /* filterbank handle */
+    void* arraySpecs;               /* array configuration */
     
     /* internal parameters */
-    int fs;
-    int new_order;
-    int nSH, new_nSH;
-	int evalReady;
+    int fs;                         /* sampling rate, hz */
+    int new_order;                  /* new encoding order */
+    int nSH, new_nSH;               /* number of SH components (N+1)^2 */
+    int evalReady;                  /* 0: eval is ongoing; 1: eval is ready for plotting */
+    int currentEvalIsValid;         /* 0: current evaluation results are invalid (call recalcEvalFLAG); 1: they are valid */
     
     /* flags */
-    int reinitSHTmatrixFLAG;
-    int reinitTFTFLAG;
-    int recalcEvalFLAG;
+    int reinitSHTmatrixFLAG;        /* 0: do not reinit; 1: reinit; 2: reinit in progress; */
+    int reinitTFTFLAG;              /* 0: do not reinit; 1: reinit; 2: reinit in progress; */
+    int recalcEvalFLAG;             /* 0: do not reinit; 1: reinit; 2: reinit in progress; */
+    int applyDiffEQFLAG;            /* 0: do not reinit; 1: reinit; 2: reinit in progress; */
     
     /* additional user parameters that are not included in the array presets */
-    int order;
-    PRESETS preset;
-    REG_TYPES regType;
-    float regPar;
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
-    float c;
-    float gain_dB;
-    float maxFreq; 
+    int order;                      /* current encoding order */
+    PRESETS preset;                 /* currently selected MIC preset */
+    FILTER_TYPES filterType;        /* encoding filter approach */
+    float regPar;                   /* regularisation upper gain limit, dB; */
+    CH_ORDER chOrdering;            /* ACN */
+    NORM_TYPES norm;                /* N3D/SN3D */
+    float c;                        /* speed of sound, m/s */
+    float gain_dB;                  /* post gain, dB */
+    float maxFreq;                  /* maximum encoding frequency, hz */
     
 } array2sh_data;
      
@@ -139,6 +145,8 @@ typedef struct _array2sh
 void array2sh_initTFT(void* const hA2sh);
     
 void array2sh_calculate_sht_matrix(void* const hA2sh);
+    
+void array2sh_apply_diff_EQ(void* const hA2sh);
     
 void array2sh_calculate_mag_curves(void* const hA2sh);
     

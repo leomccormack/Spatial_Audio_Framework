@@ -53,8 +53,9 @@ typedef enum _BEAMFORMING_WEIGHT_TYPES {
     
 typedef enum _ARRAY_CONSTRUCTION_TYPES {
     ARRAY_CONSTRUCTION_OPEN,
+    ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL,
     ARRAY_CONSTRUCTION_RIGID,
-    ARRAY_CONSTRUCTION_DIRECTIONAL
+    ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL
 }ARRAY_CONSTRUCTION_TYPES;
     
 /******************/
@@ -210,7 +211,7 @@ void generateMinNormMap(/* Input arguments */
 /* (cylindrical) Bessel function of the first kind: Jn
  * returns the Bessel values and their derivatives up to order N for all values in vector z  */
 void bessel_Jn(/* Input arguments */
-               int N,                             /* function order (highest is ~30 given numerical error) */
+               int N,                             /* function order (highest is ~30 given numerical precision) */
                double* z,                         /* input values; nZ x 1 */
                int nZ,                            /* number of input values */
                /* Output arguments */
@@ -220,7 +221,7 @@ void bessel_Jn(/* Input arguments */
 /* (cylindrical) Bessel function of the second kind: Yn
  * returns the Bessel values and their derivatives up to order N for all values in vector z  */
 void bessel_Yn(/* Input arguments */
-               int N,                             /* function order (highest is ~30 given numerical error) */
+               int N,                             /* function order (highest is ~30 given numerical precision) */
                double* z,                         /* input values; nZ x 1 */
                int nZ,                            /* number of input values */
                /* Output arguments */
@@ -230,7 +231,7 @@ void bessel_Yn(/* Input arguments */
 /* (cylindrical) Hankel function of the first kind: Hn1
  * returns the Hankel values and their derivatives up to order N for all values in vector z  */
 void hankel_Hn1(/* Input arguments */
-                int N,                            /* function order (highest is ~30 given numerical error) */
+                int N,                            /* function order (highest is ~30 given numerical precision) */
                 double* z,                        /* input values; nZ x 1 */
                 int nZ,                           /* number of input values */
                 /* Output arguments */
@@ -240,7 +241,7 @@ void hankel_Hn1(/* Input arguments */
 /* (cylindrical) Hankel function of the second kind: Hn2
  * returns the Hankel values and their derivatives up to order N for all values in vector z  */
 void hankel_Hn2(/* Input arguments */
-                int N,                            /* function order (highest is ~30 given numerical error) */
+                int N,                            /* function order (highest is ~30 given numerical precision) */
                 double* z,                        /* input values; nZ x 1 */
                 int nZ,                           /* number of input values */
                 /* Output arguments */
@@ -250,7 +251,7 @@ void hankel_Hn2(/* Input arguments */
 /* spherical Bessel function of the first kind: jn
  * returns the Bessel values and their derivatives up to order N for all values in vector z  */
 void bessel_jn(/* Input arguments */
-               int N,                             /* function order (highest is ~30 given numerical error) */
+               int N,                             /* function order (highest is ~30 given numerical precision) */
                double* z,                         /* input values; nZ x 1 */
                int nZ,                            /* number of input values */
                /* Output arguments */
@@ -261,7 +262,7 @@ void bessel_jn(/* Input arguments */
 /* modified spherical Bessel function of the first kind: in
  * returns the Bessel values and their derivatives up to order N for all values in vector z  */
 void bessel_in(/* Input arguments */
-               int N,                             /* function order (highest is ~30 given numerical error) */
+               int N,                             /* function order (highest is ~30 given numerical precision) */
                double* z,                         /* input values; nZ x 1 */
                int nZ,                            /* number of input values */
                /* Output arguments */
@@ -272,7 +273,7 @@ void bessel_in(/* Input arguments */
 /* spherical Bessel function of the second kind (Neumann): yn
  * returns the Bessel values and their derivatives up to order N for all values in vector z  */
 void bessel_yn(/* Input arguments */
-               int N,                             /* function order (highest is ~30 given numerical error) */
+               int N,                             /* function order (highest is ~30 given numerical precision) */
                double* z,                         /* input values; nZ x 1 */
                int nZ,                            /* number of input values */
                /* Output arguments */
@@ -283,7 +284,7 @@ void bessel_yn(/* Input arguments */
 /* modified spherical Bessel function of the second kind: kn
  * returns the Bessel values and their derivatives up to order N for all values in vector z  */
 void bessel_kn(/* Input arguments */
-               int N,                             /* function order (highest is ~30 given numerical error) */
+               int N,                             /* function order (highest is ~30 given numerical precision) */
                double* z,                         /* input values; nZ x 1 */
                int nZ,                            /* number of input values */
                /* Output arguments */
@@ -294,7 +295,7 @@ void bessel_kn(/* Input arguments */
 /* spherical Hankel function of the first kind: hn1
  * returns the Hankel values and their derivatives up to order N for all values in vector z */
 void hankel_hn1(/* Input arguments */
-                int N,                            /* function order (highest is ~30 given numerical error) */
+                int N,                            /* function order (highest is ~30 given numerical precision) */
                 double* z,                        /* input values; nZ x 1 */
                 int nZ,                           /* number of input values */
                 /* Output arguments */
@@ -305,7 +306,7 @@ void hankel_hn1(/* Input arguments */
 /* spherical Hankel function of the second kind: hn2
  * returns the Hankel values and their derivatives up to order N for all values in vector z */
 void hankel_hn2(/* Input arguments */
-                int N,                            /* function order (highest is ~30 given numerical error) */
+                int N,                            /* function order (highest is ~30 given numerical precision) */
                 double* z,                        /* input values; nZ x 1 */
                 int nZ,                           /* number of input values */
                 /* Output arguments */
@@ -315,36 +316,84 @@ void hankel_hn2(/* Input arguments */
     
 /* calculates the modal coefficients for open/rigid cylindrical arrays */
 void cylModalCoeffs(/* Input arguments */
-                    int order,                    /* max order (highest is ~30 given numerical error) */
+                    int order,                    /* max order (highest is ~30 given numerical precision) */
                     double* kr,                   /* wavenumber*radius; nBands x 1 */
                     int nBands,                   /* number of frequency bands/bins */
                     ARRAY_CONSTRUCTION_TYPES arrayType, /* see 'ARRAY_CONSTRUCTION_TYPES' enum */
                     /* Output arguments */
                     double_complex* b_N);         /* modal coefficients per kr and 0:order; FLAT: nBands x (order+1) */
     
+/* returns the simplest estimate of the spatial aliasing limit (the kR = maxN rule) */
+float sphArrayAliasLim(/* Input arguments */
+                       float r,                   /* mic radius, meters */
+                       float c,                   /* speed of sound, m/s */
+                       int maxN);                 /* order */
+    
+/* returns the frequencies that the noise in the output channels of a SMA, after performing the SHT and equalization of
+ the output signals, reaches a certain user-defined threshold maxG_db. The frequencies are computed only at the lower range of each order,
+ where its response decays rapidly, ignoring for example the nulls of an open array at the higher frequencies. The estimation of the limits are
+ based on a linear approximation of the log-log response found e.g. in
+     Sector-based Parametric Sound Field Reproduction in the Spherical Harmonic Domain A Politis, J Vilkamo, V Pulkki
+     IEEE Journal of Selected Topics in Signal Processing 9 (5), 852 - 866 */
+void sphArrayNoiseThreshold(/* Input arguments */
+                            int maxN,             /* maximum order of the array */
+                            int Nsensors,         /* number of sensors */
+                            float r,              /* mic radius, meters */
+                            float c,              /* speed of sound, m/s */
+                            ARRAY_CONSTRUCTION_TYPES arrayType, /* see 'ARRAY_CONSTRUCTION_TYPES' enum */
+                            double dirCoeff,      /* only for directional (open) arrays, 1: omni, 0.5: card, 0:dipole */
+                            float maxG_db,        /* max allowed amplification for the noise level, maxG_db = 20*log10(maxG) */
+                            /* Output arguments */
+                            float* f_lim);        /* frequency points that the threhsold is reached; (max_N+1) x 1 */
+
 /* calculates the modal coefficients for open/rigid spherical arrays */
 void sphModalCoeffs(/* Input arguments */
-                    int order,                    /* max order (highest is ~30 given numerical error) */
+                    int order,                    /* max order (highest is ~30 given numerical precision) */
                     double* kr,                   /* wavenumber*radius; nBands x 1 */
                     int nBands,                   /* number of frequency bands/bins */
                     ARRAY_CONSTRUCTION_TYPES arrayType, /* see 'ARRAY_CONSTRUCTION_TYPES' enum */
-                    double dirCoeff,              /* only for directional (open) arrays, 0: omni, 0.5: card, 1:dipole */
+                    double dirCoeff,              /* only for directional (open) arrays, 1: omni, 0.5: card, 0:dipole */
                     /* Output arguments */
                     double_complex* b_N);         /* modal coefficients per kr and 0:order; FLAT: nBands x (order+1) */
 
-/* calculates the modal coefficients for a rigid spherical scatterer */
+/* calculates the modal coefficients for a rigid spherical scatterer with omnidirectional sensors
+   (Assumes all sensors are placed the same distance from the scatterer, w.r.t. the origin) */
 void sphScattererModalCoeffs(/* Input arguments */
-                             int order,           /* max order (highest is ~30 given numerical error) */
+                             int order,           /* max order (highest is ~30 given numerical precision) */
                              double* kr,          /* wavenumber*sensor_radius; nBands x 1 */
                              double* kR,          /* wavenumber*scatterer_radius; nBands x 1 */
                              int nBands,          /* number of frequency bands/bins */
                              /* Output arguments */
                              double_complex* b_N);/* modal coefficients per kr and 0:order; FLAT: nBands x (order+1) */
+    
+/* calculates the modal coefficients for a rigid spherical scatterer with directional sensors
+   (Assumes all sensors are placed the same distance from the scatterer, w.r.t. the origin) */
+void sphScattererDirModalCoeffs(/* Input arguments */
+                                int order,        /* max order (highest is ~30 given numerical precision) */
+                                double* kr,       /* wavenumber*sensor_radius; nBands x 1 */
+                                double* kR,       /* wavenumber*scatterer_radius; nBands x 1 */
+                                int nBands,       /* number of frequency bands/bins */
+                                double dirCoeff,  /* directivity coefficient, 1: omni, 0.5: card, 0:dipole */
+                                /* Output arguments */
+                                double_complex* b_N);/* modal coefficients per kr and 0:order; FLAT: nBands x (order+1) */
+    
+/* calculates the theoretical diffuse coherence matrix for a spherical array */
+void sphDiffCohMtxTheory(/* Input arguments */
+                         int order,               /* max order (highest is ~30 given numerical precision) */
+                         float* sensor_dirs_rad,  /* spherical coords of the sensors in RADIANS, [azi elev]; FLAT: N_sensors x 2 */
+                         int N_sensors,           /* number of sensors */
+                         ARRAY_CONSTRUCTION_TYPES arrayType, /* see 'ARRAY_CONSTRUCTION_TYPES' enum */
+                         double dirCoeff,         /* only for directional (open) arrays, 1: omni, 0.5: card, 0:dipole */
+                         double* kr,              /* wavenumber*sensor_radius; nBands x 1 */
+                         double* kR,              /* wavenumber*scatterer_radius, set to NULL if not applicable; nBands x 1 */
+                         int nBands,              /* number of frequency bands/bins */
+                         /* Output arguments */
+                         double* M_diffcoh);      /* theoretical diffuse coherence matrix per frequency; FLAT: N_sensors x N_sensors x nBands */
 
 /* simulates a cylindrical microphone array, returning the transfer functions for each (plane wave) source direction
  * on the surface of the cylinder. */
 void simulateCylArray(/* Input arguments */
-                      int order,                  /* max order (highest is ~30 given numerical error) */
+                      int order,                  /* max order (highest is ~30 given numerical precision) */
                       double* kr,                 /* wavenumber*radius; nBands x 1 */
                       int nBands,                 /* number of frequency bands/bins */
                       float* sensor_dirs_rad,     /* spherical coords of the sensors in RADIANS, [azi elev]; FLAT: N_sensors x 2 */
@@ -358,15 +407,16 @@ void simulateCylArray(/* Input arguments */
 /* simulates a spherical microphone array, returning the transfer functions for each (plane wave) source direction
  * on the surface of the sphere. */
 void simulateSphArray(/* Input arguments */
-                      int order,                  /* max order (highest is ~30 given numerical error) */
+                      int order,                  /* max order (highest is ~30 given numerical precision) */
                       double* kr,                 /* wavenumber*radius; nBands x 1 */
+                      double* kR,                 /* wavenumber*scatterer_radius, set to NULL if not applicable */
                       int nBands,                 /* number of frequency bands/bins */
                       float* sensor_dirs_rad,     /* spherical coords of the sensors in RADIANS, [azi elev]; FLAT: N_sensors x 2 */
                       int N_sensors,              /* number of sensors */
                       float* src_dirs_deg,        /* spherical coords of the plane waves in DEGREES, [azi elev]; FLAT: N_srcs x 2 */
                       int N_srcs,                 /* number sources (DoAs of plane waves) */
                       ARRAY_CONSTRUCTION_TYPES arrayType, /* see 'ARRAY_CONSTRUCTION_TYPES' enum */
-                      double dirCoeff,            /* only for directional (open) arrays, 0: omni, 0.5: card, 1:dipole */
+                      double dirCoeff,            /* only for directional (open) arrays, 1: omni, 0.5: card, 0:dipole */
                       /* Output arguments */
                       float_complex* H_array);    /* simulated array response for each plane wave; FLAT: nBands x N_sensors x N_srcs */
 

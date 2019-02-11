@@ -20,11 +20,13 @@
  *     signals utilising theoretical encoding filters.
  *     The algorithms within array2sh were pieced together and developed in collaboration
  *     with Symeon Delikaris-Manias.
- *     A detailed explanation of the algorithms in array2sh can be found in:
- *     McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
- *     “Real-time conversion of sensor array signals into spherical harmonic signals with
- *     applications to spatially localised sub-band sound-field analysis,” in Audio
- *     Engineering Society Convention 144, Audio Engineering Society, 2018.
+ *     A more detailed explanation of the algorithms in array2sh can be found in:
+ *         McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
+ *         “Real-time conversion of sensor array signals into spherical harmonic signals with
+ *         applications to spatially localised sub-band sound-field analysis,” in Audio
+ *         Engineering Society Convention 144, Audio Engineering Society, 2018.
+ *     Also included, is a diffuse-field equalisation option for frequencies past aliasing,
+ *     developed in collaboration with Archontis Politis, 8.02.2019
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_sh
  * Author, date created:
@@ -45,7 +47,7 @@ void array2sh_create
      
     /* defualt parameters */
     array2sh_createArray(&(pData->arraySpecs)); 
-    pData->regType = REG_TIKHONOV;
+    pData->filterType = FILTER_TIKHONOV;
     pData->regPar = 15.0f;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
@@ -75,6 +77,7 @@ void array2sh_create
     for(band=0; band <HYBRID_BANDS; band++)
         pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
     pData->reinitTFTFLAG = 1;
+    pData->applyDiffEQFLAG = 1;
     
     /* internal */
     pData->reinitSHTmatrixFLAG = 1;
@@ -287,6 +290,7 @@ void array2sh_refreshSettings(void* const hA2sh)
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     pData->reinitSHTmatrixFLAG = 1;
     pData->reinitTFTFLAG = 1;
+    pData->applyDiffEQFLAG = 1;
 }
 
 void array2sh_checkReInit(void* const hA2sh)
@@ -312,6 +316,11 @@ void array2sh_checkReInit(void* const hA2sh)
 		array2sh_evaluateSHTfilters(hA2sh);
 		pData->recalcEvalFLAG = 0;
 	}
+    if (pData->applyDiffEQFLAG == 1) {
+        pData->applyDiffEQFLAG = 2;
+        array2sh_apply_diff_EQ(hA2sh);
+        pData->applyDiffEQFLAG = 0;
+    }
 }
 
 void array2sh_setEncodingOrder(void* const hA2sh, int newOrder)
@@ -327,6 +336,12 @@ void array2sh_evaluateFilters(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     pData->recalcEvalFLAG = 1;
+}
+
+void array2sh_applyDiffEQpastAliasing(void* const hA2sh)
+{
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    pData->applyDiffEQFLAG = 1;
 }
 
 void array2sh_setPreset(void* const hA2sh, int preset)
@@ -424,10 +439,10 @@ void array2sh_setWeightType(void* const hA2sh, int newType)
     pData->reinitSHTmatrixFLAG = 1;
 }
 
-void array2sh_setRegType(void* const hA2sh, int newType)
+void array2sh_setFilterType(void* const hA2sh, int newType)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->regType = (REG_TYPES)newType;
+    pData->filterType = (FILTER_TYPES)newType;
     pData->reinitSHTmatrixFLAG = 1;
 }
 
@@ -482,6 +497,12 @@ int array2sh_getEvalReady(void* const hA2sh)
 	}
 	else
 		return 0;
+}
+
+int array2sh_getIsEvalValid(void* const hA2sh)
+{
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    return pData->currentEvalIsValid;
 }
 
 int array2sh_getEncodingOrder(void* const hA2sh)
@@ -571,10 +592,10 @@ int array2sh_getWeightType(void* const hA2sh)
     return (int)arraySpecs->weightType;
 }
 
-int array2sh_getRegType(void* const hA2sh)
+int array2sh_getFilterType(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    return (int)pData->regType;
+    return (int)pData->filterType;
 }
 
 float array2sh_getRegPar(void* const hA2sh)
