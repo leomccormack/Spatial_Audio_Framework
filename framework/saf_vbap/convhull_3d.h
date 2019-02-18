@@ -925,7 +925,7 @@ void convhull_3d_export_m
         fprintf(m_file, "%f, %f, %f;\n", vertices[i].x, vertices[i].y, vertices[i].z);
     fprintf(m_file, "];\n\n\n");
     fprintf(m_file, "faces = [\n");
-    for (i = 0; i < nFaces; i++) {
+    for (int i = 0; i < nFaces; i++) {
         fprintf(m_file, " %u, %u, %u;\n",
                 faces[3*i+0]+1,
                 faces[3*i+1]+1,

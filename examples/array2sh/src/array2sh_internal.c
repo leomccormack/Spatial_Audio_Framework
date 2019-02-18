@@ -369,6 +369,7 @@ void array2sh_calculate_sht_matrix
     }
      
     pData->order = order;
+    pData->nSH = nSH;
     pData->currentEvalIsValid = 0;
     
     free(Y_mic);

@@ -288,8 +288,8 @@ void array2sh_process
 void array2sh_refreshSettings(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->reinitSHTmatrixFLAG = 1;
     pData->reinitTFTFLAG = 1;
+    pData->reinitSHTmatrixFLAG = 1; 
     pData->applyDiffEQFLAG = 1;
 }
 
