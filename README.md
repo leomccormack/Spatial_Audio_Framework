@@ -29,7 +29,7 @@ libszip.lib; libzlib.lib; libhdf5.lib; libhdf5_hl.lib; netcdf.lib; (for Windows 
 
 ### For Windows users only
 
-Windows users must also link against an included custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library:
+Windows users must also link against a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library:
 
 ```
 saf_mkl_custom.lib; (for Windows users)
