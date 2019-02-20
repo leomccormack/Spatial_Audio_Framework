@@ -1901,10 +1901,7 @@ void sphDiffCohMtxTheory
             sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, dirCoeff, b_N); break;
         case ARRAY_CONSTRUCTION_RIGID:
         case ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL:
-            if(kR==NULL)
-                sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_RIGID, 1.0, b_N); /* if kr==kR, dirCoeff is irrelevant */
-            else
-                sphScattererDirModalCoeffs(order, kr, kR, nBands, dirCoeff, b_N);
+            sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_RIGID, 1.0, b_N);
             break;
     }
     for(i=0; i<nBands * (order+1); i++)

@@ -52,7 +52,7 @@ void array2sh_create
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->c = 343.0f;
-    pData->gain_dB = 0.0f;
+    pData->gain_dB = 0.0f; /* post-gain */
     pData->maxFreq = 20e3f;
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
     array2sh_initArray(arraySpecs, PRESET_DEFAULT, &(pData->order), 1);
@@ -74,8 +74,6 @@ void array2sh_create
         }
     }
     pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));;
-    for(band=0; band <HYBRID_BANDS; band++)
-        pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
     pData->reinitTFTFLAG = 1;
     pData->applyDiffEQFLAG = 1;
     
@@ -87,11 +85,11 @@ void array2sh_create
 	pData->evalReady = 0;
     
     /* display related stuff */
-    pData->bN_modal_dB = (float**)malloc2d(HYBRID_BANDS-1, MAX_SH_ORDER + 1, sizeof(float));
-    pData->bN_inv_dB = (float**)malloc2d(HYBRID_BANDS-1, MAX_SH_ORDER + 1, sizeof(float));
-    pData->cSH = (float*)calloc((HYBRID_BANDS-1)*(MAX_SH_ORDER + 1),sizeof(float));
-    pData->lSH = (float*)calloc((HYBRID_BANDS-1)*(MAX_SH_ORDER + 1),sizeof(float));
-    pData->disp_freqVector = (float*)malloc((HYBRID_BANDS-1)*sizeof(float));
+    pData->bN_modal_dB = (float**)malloc2d(HYBRID_BANDS, MAX_SH_ORDER + 1, sizeof(float));
+    pData->bN_inv_dB = (float**)malloc2d(HYBRID_BANDS, MAX_SH_ORDER + 1, sizeof(float));
+    pData->cSH = (float*)calloc((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
+    pData->lSH = (float*)calloc((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
+    //pData->disp_freqVector = (float*)malloc((HYBRID_BANDS-1)*sizeof(float));
     
     pData->recalcEvalFLAG = 1;
 }
@@ -128,7 +126,7 @@ void array2sh_destroy
         /* Display stuff */
         free2d((void**)pData->bN_modal_dB, HYBRID_BANDS-1);
         free2d((void**)pData->bN_inv_dB, HYBRID_BANDS-1);
-        free(pData->disp_freqVector);
+        //free(pData->disp_freqVector);
         
         free(pData);
         pData = NULL;
@@ -150,13 +148,15 @@ void array2sh_init
             pData->freqVector[band] =  (float)__afCenterFreq44100[band];
         else /* assume 48e3 */
             pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
-    }
-    for(band=0; band <HYBRID_BANDS-1; band++){
-        if(sampleRate==44100)
-            pData->disp_freqVector[band] =  (float)__afCenterFreq44100[band+1];
-        else /* assume 48e3 */
-            pData->disp_freqVector[band] =  (float)__afCenterFreq48e3[band+1];
-    }
+    } 
+    pData->freqVector[0] = pData->freqVector[1]/4.0f; /* avoids NaNs at DC */
+    
+//    for(band=0; band <HYBRID_BANDS-1; band++){
+//        if(sampleRate==44100)
+//            pData->disp_freqVector[band] =  (float)__afCenterFreq44100[band+1];
+//        else /* assume 48e3 */
+//            pData->disp_freqVector[band] =  (float)__afCenterFreq48e3[band+1];
+//    }
 
 	/* reinitialise if needed */
 	array2sh_checkReInit(hA2sh);
@@ -401,7 +401,12 @@ void array2sh_setNumSensors(void* const hA2sh, int newQ)
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
     
-    arraySpecs->newQ = newQ <= pData->new_nSH ? pData->new_nSH : newQ;
+    if (newQ < pData->nSH){
+        pData->new_order = 1;
+        pData->new_nSH = (pData->new_order+1)*(pData->new_order+1);
+    }
+    arraySpecs->newQ = newQ;
+    //arraySpecs->newQ = newQ <= pData->new_nSH ? pData->new_nSH : newQ;
     pData->reinitTFTFLAG = arraySpecs->Q != arraySpecs->newQ ? 1 : 0;
     pData->reinitSHTmatrixFLAG = arraySpecs->Q != arraySpecs->newQ ? 1 : 0;
 }
@@ -637,15 +642,15 @@ float array2sh_getMaxFreq(void* const hA2sh)
 float* array2sh_getFreqVector(void* const hA2sh, int* nFreqPoints)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    (*nFreqPoints) = HYBRID_BANDS-1;
-    return pData->disp_freqVector;
+    (*nFreqPoints) = HYBRID_BANDS;
+    return &(pData->freqVector[0]);
 }
 
 float** array2sh_getbN_inv(void* const hA2sh, int* nCurves, int* nFreqPoints)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     (*nCurves) = pData->order+1;
-    (*nFreqPoints) = HYBRID_BANDS-1;
+    (*nFreqPoints) = HYBRID_BANDS;
     return pData->bN_inv_dB;
 }
 
@@ -653,7 +658,7 @@ float** array2sh_getbN_modal(void* const hA2sh, int* nCurves, int* nFreqPoints)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     (*nCurves) = pData->order+1;
-    (*nFreqPoints) = HYBRID_BANDS-1;
+    (*nFreqPoints) = HYBRID_BANDS;
     return pData->bN_modal_dB;
 }
 
@@ -661,7 +666,7 @@ float* array2sh_getSpatialCorrelation_Handle(void* const hA2sh, int* nCurves, in
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     (*nCurves) = pData->order+1;
-    (*nFreqPoints) = HYBRID_BANDS-1;
+    (*nFreqPoints) = HYBRID_BANDS;
     return pData->cSH;
 }
 
@@ -669,7 +674,7 @@ float* array2sh_getLevelDifference_Handle(void* const hA2sh, int* nCurves, int* 
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     (*nCurves) = pData->order+1;
-    (*nFreqPoints) = HYBRID_BANDS-1;
+    (*nFreqPoints) = HYBRID_BANDS;
     return pData->lSH;
 }
 
