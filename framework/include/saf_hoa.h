@@ -31,9 +31,9 @@
 extern "C" {
 #endif
     
-/*************************/
-/* Processing modes tags */
-/*************************/
+/****************/
+/* Enum options */
+/****************/
 
 typedef enum _AMBI_DECODER_METHODS {
     DECODER_DEFAULT,        /* default is "DECODER_SAD" */
@@ -47,7 +47,7 @@ typedef enum _AMBI_DECODER_METHODS {
 /******************/
 /* Main Functions */
 /******************/
-    
+
 /* returns the weights required to manipulate the beam-patterns, such that they have maximum energy towards a given look-direction */
 /* Zotter, F., Frank, M. (2012). All-Round Ambisonic Panning and Decoding. Journal of the Audio Engineering Society, 60(10), 807?820. */
 void getMaxREweights(/* Input arguments */

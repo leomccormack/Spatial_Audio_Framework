@@ -35,18 +35,19 @@ void getMaxREweights
 )
 {
     int n, i, idx, nSH;
-    float* ppm;
+    double x;
+    double* ppm;
     
+    x = cosf(137.9f*(M_PI/180.0f)/((float)order+1.51f));
     nSH = (order+1)*(order+1);
     memset(a_n, 0, nSH*nSH*sizeof(float));
     ppm = calloc((order+1),sizeof(float));
     idx = 0;
     for(n=0; n<=order; n++){
-        legendreP(n, cosf(137.9f*(M_PI/180.0f)/((float)order+1.51f)), ppm);
-        
+        unnorm_legendreP(n, &x, 1, ppm);
         /* store the first Legendre polynomial value for each order along the diagonal of a_n */
         for(i = 0; i<2*n+1; i++)
-            a_n[(idx+i)*nSH + (idx+i)] = ppm[0];
+            a_n[(idx+i)*nSH + (idx+i)] = (float)ppm[0];
         idx += 2*n+1;
     }
     free(ppm);

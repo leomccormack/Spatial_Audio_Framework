@@ -351,6 +351,7 @@ void array2sh_setPreset(void* const hA2sh, int preset)
     
     array2sh_initArray(arraySpecs,(PRESETS)preset, &(pData->new_order), 0);
     pData->c = (PRESETS)preset == PRESET_AALTO_HYDROPHONE ? 1484.0f : 343.0f;
+    pData->new_nSH = (pData->new_order+1)*(pData->new_order+1);
     pData->reinitTFTFLAG = 1;
     pData->reinitSHTmatrixFLAG = 1;
 }
