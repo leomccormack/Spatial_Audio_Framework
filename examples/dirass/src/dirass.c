@@ -48,14 +48,21 @@ void dirass_create
     pData->pars = (codecPars*)malloc(sizeof(codecPars));
     codecPars* pars = pData->pars;
     pars->interp_dirs_deg = NULL;
-    pars->Y_grid = NULL;
+    pars->interp_dirs_rad = NULL;
+    pars->Y_up = NULL;
     pars->interp_table = NULL;
+    pars->w = NULL;
     pars->Cw = NULL;
+    pars->Uw = NULL;
     pars->Cxyz = NULL;
+    pars->ss = NULL;
+    pars->ssxyz = NULL;
+    pars->est_dirs = NULL;
+    pars->est_dirs_idx = NULL;
+    pars->prev_intensity = NULL;
     
     /* internal */
-	pData->reInitAna = 1;
-    pData->dispWidth = 140;
+	pData->reInitAna = 1; 
 
     /* display */
     pData->pmap = NULL;
@@ -66,14 +73,15 @@ void dirass_create
     pData->recalcPmap = 1;
     
     /* Default user parameters */
-    pData->inputOrder = pData->new_inputOrder = INPUT_ORDER_THIRD;
-    pData->pmap_mode = PM_MODE_PWD;
-    pData->enableDirAss = 1;
-    pData->upscaleOrder = pData->new_upscaleOrder = UPSCALE_ORDER_SECOND;
-    pData->gridOption = GRID_GEOSPHERE_9;
+    pData->inputOrder = pData->new_inputOrder = INPUT_ORDER_FIRST;
+    pData->beamType = BEAM_TYPE_HYPERCARD;
+    pData->DirAssMode = REASS_UPSCALE;
+    pData->upscaleOrder = pData->new_upscaleOrder = UPSCALE_ORDER_TENTH;
+    pData->gridOption = GRID_GEOSPHERE_8;
     pData->pmapAvgCoeff = 0.666f;
     pData->minFreq_hz = 100.0f;
     pData->maxFreq_hz = 20e3f;
+    pData->dispWidth = 120;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->HFOVoption = HFOV_360;
@@ -97,12 +105,28 @@ void dirass_destroy
         for(i=0; i<NUM_DISP_SLOTS; i++)
             if(pData->pmap_grid[i] !=NULL)
                 free(pData->pmap_grid[i]);
+        
         if(pars->interp_dirs_deg!=NULL)
             free(pars->interp_dirs_deg);
-        if(pars->Y_grid !=NULL)
-            free(pars->Y_grid);
+        if(pars->Y_up !=NULL)
+            free(pars->Y_up);
         if(pars->interp_table!=NULL)
             free(pars->interp_table);
+        if(pars->ss !=NULL)
+            free(pars->ss);
+        if(pars->ssxyz!=NULL)
+            free(pars->ssxyz);
+        if(pars->Cxyz !=NULL)
+            free(pars->Cxyz);
+        if(pars->w!=NULL)
+            free(pars->w);
+        if(pars->Cw!=NULL)
+            free(pars->Cw);
+        if(pars->Uw!=NULL)
+            free(pars->Uw);
+        if(pars->est_dirs!=NULL)
+            free(pars->est_dirs);
+        
         free(pData->pars);
         free(pData);
         pData = NULL;
@@ -123,6 +147,8 @@ void dirass_init
     /* intialise parameters */
     if(pData->prev_pmap!=NULL)
         memset(pData->prev_pmap, 0, pars->grid_nDirs*sizeof(float));
+    if(pars->prev_intensity!=NULL)
+        memset(pars->prev_intensity, 0, pars->grid_nDirs*3*sizeof(float));
     pData->pmapReady = 0;
     pData->dispSlotIdx = 0;
 
@@ -142,16 +168,14 @@ void dirass_analysis
 {
     dirass_data *pData = (dirass_data*)(hDir);
     codecPars* pars = pData->pars;
-    int i, j, t, n, ch, sample, band, nSH_order, order_band;
+    int i, j, k, n, ch, sec_nSH, secOrder, nSH, up_nSH;
     int o[MAX_INPUT_SH_ORDER+2];
-    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
-    float_complex* C_grp;
+    float intensity[3];
     
     /* local parameters */
-    int nSources, inputOrder, nSH;
-    float covAvgCoeff, pmapAvgCoeff;
+    int inputOrder, DirAssMode, upscaleOrder;
+    float pmapAvgCoeff, minFreq_hz, maxFreq_hz;
     NORM_TYPES norm;
-    MAP_MODES pmap_mode;
     
     /* reinitialise if needed */
 #ifdef __APPLE__
@@ -160,12 +184,20 @@ void dirass_analysis
     
     /* The main processing: */
     if (nSamples == FRAME_SIZE && (pData->reInitAna == 0)  && isPlaying ) {
+        for(n=0; n<MAX_INPUT_SH_ORDER+2; n++){  o[n] = n*n;  }
+        
         /* copy current parameters to be thread safe */
         norm = pData->norm;
         pmapAvgCoeff = pData->pmapAvgCoeff;
-        pmap_mode = pData->pmap_mode;
+        DirAssMode = pData->DirAssMode;
+        upscaleOrder = pData->upscaleOrder;
+        minFreq_hz = pData->minFreq_hz;
+        maxFreq_hz = pData->maxFreq_hz;
         inputOrder = pData->inputOrder;
+        secOrder = inputOrder-1;
         nSH = (inputOrder+1)*(inputOrder+1);
+        sec_nSH = (secOrder+1)*(secOrder+1);
+        up_nSH = (upscaleOrder+1)*(upscaleOrder+1);
         
         /* load intput time-domain data */
         for (i = 0; i < MIN(nSH, nInputs); i++)
@@ -187,29 +219,113 @@ void dirass_analysis
         }
         
         
-        return;
         /* update the dirass powermap */
         if(pData->recalcPmap==1){
             pData->recalcPmap = 0;
             pData->pmapReady = 0;
  
-            
-            
-            pData->pmap; 
-            
-            
-            /* average dirass over time */
-            for(i=0; i<pars->grid_nDirs; i++)
-                pData->pmap[i] =  (1.0f-pmapAvgCoeff) * (pData->pmap[i] )+ pmapAvgCoeff * (pData->prev_pmap[i]);
-            memcpy(pData->prev_pmap,  pData->pmap , pars->grid_nDirs*sizeof(float));
+            /* DoA estimation for each spatially-localised sector */
+            if(DirAssMode==REASS_UPSCALE || DirAssMode==REASS_NEAREST){
+                /* Beamform using the sector patterns */
+                cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->grid_nDirs, FRAME_SIZE, sec_nSH, 1.0f,
+                            pars->Cw, sec_nSH,
+                            (const float*)pData->SHframeTD, FRAME_SIZE, 0.0f,
+                            pars->ss, FRAME_SIZE);
+                
+                for(i=0; i<pars->grid_nDirs; i++){
+                    /* beamforming to get velocity patterns */
+                    cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, 3, FRAME_SIZE, nSH, 1.0f,
+                                &(pars->Cxyz[i*nSH*3]), 3,
+                                (const float*)pData->SHframeTD, FRAME_SIZE, 0.0f,
+                                pars->ssxyz, FRAME_SIZE);
+                    
+                    /* take the sum or mean ss.*ssxyz, to get intensity vector */
+                    memset(intensity, 0, 3*sizeof(float));
+                    for(k=0; k<3; k++){ 
+                        for(j=0; j<FRAME_SIZE; j++)
+                            intensity[k] += pars->ssxyz[k*FRAME_SIZE + j] * pars->ss[i*FRAME_SIZE+j];
+                        intensity[k] /= (float)FRAME_SIZE;
+                        
+                        /* average over time */
+                        intensity[k] = pmapAvgCoeff * (pars->prev_intensity[i*3+k]) + (1.0f-pmapAvgCoeff) * intensity[k];
+                        pars->prev_intensity[i*3+k] = intensity[k];
+                    }
 
-            /* interpolate dirass */
-            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->interp_nDirs, 1, pars->grid_nDirs, 1.0f,
-                        pars->interp_table, pars->grid_nDirs,
-                        pData->pmap, 1, 0.0f,
-                        pData->pmap_grid[pData->dispSlotIdx], 1);
+                    /* extract DoA [azi elev] convention */
+                    pars->est_dirs[i*2] = atan2f(intensity[1], intensity[0]);
+                    pars->est_dirs[i*2+1] = atan2f(intensity[2], sqrtf(powf(intensity[0], 2.0f) + powf(intensity[1], 2.0f)));
+                    if(DirAssMode==REASS_UPSCALE)
+                        pars->est_dirs[i*2+1] = M_PI/2.0f - pars->est_dirs[i*2+1]; /* convert to inclination */
+                }
+            }
+            
+            /* Obtain pmap/upscaled pmap in the case of REASS_MODE_OFF and REASS_UPSCALE modes, respectively.
+             * OR find the nearest display grid indices, corresponding to the DoA estimates, for the REASS_NEAREST mode */
+            switch(DirAssMode) {
+                default:
+                case REASS_MODE_OFF:
+                    /* Standard beamformer-based pmap */
+                    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->grid_nDirs, FRAME_SIZE, nSH, 1.0f,
+                                pars->w, nSH,
+                                (const float*)pData->SHframeTD, FRAME_SIZE, 0.0f,
+                                pars->ss, FRAME_SIZE);
+                    
+                    /* sum energy over the length of the frame to obtain the pmap */
+                    memset(pData->pmap, 0, pars->grid_nDirs *sizeof(float));
+                    for(i=0; i<pars->grid_nDirs; i++)
+                        for(j=0; j<FRAME_SIZE; j++)
+                            pData->pmap[i] += (pars->ss[i*FRAME_SIZE+j])*(pars->ss[i*FRAME_SIZE+j]);
+                    
+                    /* average the actual pmap over time (averaging is achieved for the reassignment modes via averaging the intensity) */
+                    for(i=0; i<pars->grid_nDirs; i++)
+                        pData->pmap[i] =  (1.0f-pmapAvgCoeff) * (pData->pmap[i] )+ pmapAvgCoeff * (pData->prev_pmap[i]);
+                    memcpy(pData->prev_pmap,  pData->pmap , pars->grid_nDirs*sizeof(float));
+                    
+                    /* interpolate the pmap */
+                    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->interp_nDirs, 1, pars->grid_nDirs, 1.0f,
+                                pars->interp_table, pars->grid_nDirs,
+                                pData->pmap, 1, 0.0f,
+                                pData->pmap_grid[pData->dispSlotIdx], 1);
+                    break;
+                    
+                case REASS_UPSCALE:
+                    /* upscale */
+                    getSHreal_recur(upscaleOrder, pars->est_dirs, pars->grid_nDirs, pars->Y_up);
+                    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, up_nSH, FRAME_SIZE, pars->grid_nDirs, 1.0f,
+                                pars->Y_up, pars->grid_nDirs,
+                                pars->ss, FRAME_SIZE, 0.0f,
+                                (float*)pData->SHframe_upTD, FRAME_SIZE);
 
-            /* ascertain minimum and maximum values for dirass colour scaling */
+                    /* Beamform using the new spatially upscaled frame */
+                    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->grid_nDirs, FRAME_SIZE, up_nSH, 1.0f,
+                                pars->Uw, up_nSH,
+                                (float*)pData->SHframe_upTD, FRAME_SIZE, 0.0f,
+                                pars->ss, FRAME_SIZE);
+                    
+                    /* sum energy over the length of the frame to obtain the pmap */
+                    memset(pData->pmap, 0, pars->grid_nDirs *sizeof(float));
+                    for(i=0; i<pars->grid_nDirs; i++)
+                        for(j=0; j<FRAME_SIZE; j++)
+                            pData->pmap[i] += (pars->ss[i*FRAME_SIZE+j])*(pars->ss[i*FRAME_SIZE+j]);
+                    
+                    /* interpolate the pmap */
+                    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->interp_nDirs, 1, pars->grid_nDirs, 1.0f,
+                                pars->interp_table, pars->grid_nDirs,
+                                pData->pmap, 1, 0.0f,
+                                pData->pmap_grid[pData->dispSlotIdx], 1);
+                    break;
+                 
+                case REASS_NEAREST:
+                    /* Assign the sector energies to the nearest display grid point */
+                    findClosestGridPoints(pars->interp_dirs_rad, pars->interp_nDirs, pars->est_dirs, pars->grid_nDirs, 0, pars->est_dirs_idx, NULL, NULL);
+                    memset(pData->pmap_grid[pData->dispSlotIdx], 0, pars->interp_nDirs * sizeof(float));
+                    for(i=0; i< pars->grid_nDirs; i++)
+                        for(j=0; j<FRAME_SIZE; j++)
+                            pData->pmap_grid[pData->dispSlotIdx][pars->est_dirs_idx[i]] = (pars->ss[i*FRAME_SIZE+j])*(pars->ss[i*FRAME_SIZE+j]);
+                    break;
+            }
+             
+            /* ascertain the minimum and maximum values for pmap colour scaling */
             pData->pmap_grid_minVal = FLT_MAX;
             pData->pmap_grid_maxVal = FLT_MIN;
             for(i=0; i<pars->interp_nDirs; i++){
@@ -217,11 +333,11 @@ void dirass_analysis
                 pData->pmap_grid_maxVal = pData->pmap_grid[pData->dispSlotIdx][i] > pData->pmap_grid_maxVal ? pData->pmap_grid[pData->dispSlotIdx][i] : pData->pmap_grid_maxVal;
             }
 
-            /* normalise the dirass to 0..1 */
+            /* normalise the pmap to 0..1 */
             for(i=0; i<pars->interp_nDirs; i++)
                 pData->pmap_grid[pData->dispSlotIdx][i] = (pData->pmap_grid[pData->dispSlotIdx][i]-pData->pmap_grid_minVal)/(pData->pmap_grid_maxVal-pData->pmap_grid_minVal+1e-11f);
 
-            /* signify that the dirass in current slot is ready for plotting */
+            /* signify that the pmap in the current slot is ready for plotting */
             pData->dispSlotIdx++;
             if(pData->dispSlotIdx>=NUM_DISP_SLOTS)
                 pData->dispSlotIdx = 0;
@@ -251,13 +367,14 @@ void dirass_checkReInit(void* const hDir)
 	}
 }
 
-void dirass_setMapMode(void* const hDir, int newMode)
+void dirass_setBeamType(void* const hDir, int newType)
 {
     dirass_data *pData = (dirass_data*)(hDir);
     codecPars* pars = pData->pars;
-    pData->pmap_mode = (MAP_MODES)newMode;
+    pData->beamType = (BEAM_TYPES)newType;
     if(pData->prev_pmap!=NULL)
         memset(pData->prev_pmap, 0, pars->grid_nDirs*sizeof(float));
+    pData->reInitAna = 1;
 }
 
 void dirass_setInputOrder(void* const hDir,  int newValue)
@@ -274,17 +391,24 @@ void dirass_setDisplayGridOption(void* const hDir,  int newState)
     pData->reInitAna = 1;
 }
 
-void dirass_setUpscaleOrder(void* const hDir,  int newState)
+void dirass_setDispWidth(void* const hDir,  int newValue)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->new_upscaleOrder = newState;
+    pData->dispWidth = newValue;
     pData->reInitAna = 1;
 }
 
-void dirass_setEnableDiRAss(void* const hDir,  int newState)
+void dirass_setUpscaleOrder(void* const hDir,  int newValue)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->enableDirAss = newState;
+    pData->new_upscaleOrder = newValue;
+    pData->reInitAna = 1;
+}
+
+void dirass_setDiRAssMode(void* const hDir,  int newMode)
+{
+    dirass_data *pData = (dirass_data*)(hDir);
+    pData->DirAssMode = newMode;
 }
 
 void dirass_setMinFreq(void* const hDir,  float newValue)
@@ -326,7 +450,7 @@ void dirass_setAspectRatio(void* const hDir, int newOption)
 void dirass_setMapAvgCoeff(void* const hDir, float newValue)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->pmapAvgCoeff = MIN(MAX(0.0f, newValue), 0.99999999f);
+    pData->pmapAvgCoeff = MIN(MAX(0.0f, newValue), 0.999f);
 }
 
 void dirass_requestPmapUpdate(void* const hDir)
@@ -344,10 +468,10 @@ int dirass_getInputOrder(void* const hDir)
     return pData->new_inputOrder;
 }
 
-int dirass_getMapMode(void* const hDir)
+int dirass_getBeamType(void* const hDir)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    return (int)pData->pmap_mode;
+    return (int)pData->beamType;
 }
 
 int dirass_getDisplayGridOption(void* const hDir)
@@ -356,16 +480,22 @@ int dirass_getDisplayGridOption(void* const hDir)
     return (int)pData->gridOption;
 }
 
+int dirass_getDispWidth(void* const hDir)
+{
+    dirass_data *pData = (dirass_data*)(hDir);
+    return pData->dispWidth;
+}
+
 int dirass_getUpscaleOrder(void* const hDir)
 {
     dirass_data *pData = (dirass_data*)(hDir);
     return (int)pData->gridOption;
 }
 
-int dirass_getEnableDiRAss(void* const hDir)
+int dirass_getDiRAssMode(void* const hDir)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    return pData->enableDirAss;
+    return pData->DirAssMode;
 }
 
 float dirass_getMinFreq(void* const hDir)
@@ -403,7 +533,6 @@ int dirass_getNormType(void* const hDir)
     dirass_data *pData = (dirass_data*)(hDir);
     return (int)pData->norm;
 }
-
 
 int dirass_getDispFOV(void* const hDir)
 {

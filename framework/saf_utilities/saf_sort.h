@@ -66,14 +66,14 @@ void sortd(double* in_vec,       /* vector[len] to be sorted */
            int descendFLAG);     /* !1:ascending, 1:descending */
     
 /* finds the closest grid points to  */
-void findClosestGridPoints(float* grid_dirs, /* sph coordinates of grid directions (deg/rad); nGrid x 2 */
-                           int nGrid,       /* number of directions in grid */
-                           float* target_dirs,  /* sph coordinates of target directions (deg/rad); nTarget x 2 */
-                           int nTarget,  /* number of target directions to find */
-                           int degFLAG,      /* 0: coords are in radians, 1: coords are in degrees */
-                           int* idx_closest,   /* (set to NULL to ignore); nTarget x 1 */
-                           float* dirs_closest, /* (set to NULL to ignore); nTarget x 1 */
-                           float* angle_diff); /* angle diff btwn target + grid dir, in degrees (set to NULL to ignore); nTarget x 1 */
+void findClosestGridPoints(float* grid_dirs,     /* sph coordinates of grid directions (deg/rad); nGrid x 2 */
+                           int nGrid,            /* number of directions in grid */
+                           float* target_dirs,   /* sph coordinates of target directions (deg/rad); nTarget x 2 */
+                           int nTarget,          /* number of target directions to find */
+                           int degFLAG,          /* 0: coords are in radians, 1: coords are in degrees */
+                           int* idx_closest,     /* (set to NULL to ignore); nTarget x 1 */
+                           float* dirs_closest,  /* (set to NULL to ignore); nTarget x 1 */
+                           float* angle_diff);   /* angle diff btwn target + grid dir, in degrees (set to NULL to ignore); nTarget x 1 */
      
 #ifdef __cplusplus
 }/* extern "C" */

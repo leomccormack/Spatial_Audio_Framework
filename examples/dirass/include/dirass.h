@@ -78,7 +78,18 @@ typedef enum _UPSCALE_ORDERS{
 }UPSCALE_ORDERS;
     
 typedef enum _GRID_OPTIONS{
-    GRID_GEOSPHERE_9 = 1
+    T_DESIGN_3 = 1,       /* 6 points */
+    T_DESIGN_4,           /* 12 points */
+    T_DESIGN_6,           /* 24 points */
+    T_DESIGN_9,           /* 48 points */
+    T_DESIGN_13,          /* 94 points */
+    T_DESIGN_18,          /* 180 points */
+    GRID_GEOSPHERE_6,     /* 362 points */
+    T_DESIGN_30,          /* 480 points */
+    GRID_GEOSPHERE_8,     /* 642 points */
+    GRID_GEOSPHERE_9,     /* 812 points */
+    GRID_GEOSPHERE_10,    /* 1002 points */
+    GRID_GEOSPHERE_12     /* 1442 points */
     
 }GRID_OPTIONS;
 
@@ -91,10 +102,33 @@ typedef enum _NORM_TYPES{
     NORM_SN3D
 }NORM_TYPES;
 
-typedef enum _MAP_MODES {
-    PM_MODE_PWD = 1
+typedef enum _BEAM_TYPES {
+    BEAM_TYPE_CARD = 1,
+    BEAM_TYPE_HYPERCARD,
+    BEAM_TYPE_MAX_EV
     
-} MAP_MODES;
+} BEAM_TYPES;
+    
+typedef enum _REASS_MODE {
+    /* Re-assignment is disabled. i.e. just calculates (beamformer) energy-based maps */
+    REASS_MODE_OFF = 1,
+    /* Each sector beamformer energy is re-assigned to the nearest interpolation grid point,
+     * based on the analysed DoA. More information can be found in:
+     *     McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular
+     *     spectra based on a directional re-assignment approach for ambisonic sound-field
+     *     visualisation". IEEE International Conference on Acoustics, Speech and Signal
+     *     Processing (ICASSP).*/
+    REASS_NEAREST,
+    /* Each sector beamformer is re-encoded into spherical harmonics of a higher order.
+     * The map is then derived from the upscaled SHs as normal. More information can be found
+     * in:
+     *     McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular
+     *     spectra based on a directional re-assignment approach for ambisonic sound-field
+     *     visualisation". IEEE International Conference on Acoustics, Speech and Signal
+     *     Processing (ICASSP).*/
+    REASS_UPSCALE
+    
+} REASS_MODES;
     
 typedef enum _HFOV_OPTIONS{
     HFOV_360 = 1
@@ -139,15 +173,17 @@ void dirass_refreshSettings(void* const hDir);
 /* Check if any reInit Flags are active, and reinitialise if they are. Only call when playback has stopped. */
 void dirass_checkReInit(void* const hDir);
     
-void dirass_setMapMode(void* const hDir, int newMode);
+void dirass_setBeamType(void* const hDir, int newMode);
     
 void dirass_setInputOrder(void* const hDir,  int newValue);
     
-void dirass_setDisplayGridOption(void* const hDir,  int newState);
+void dirass_setDisplayGridOption(void* const hDir,  int newState);  // not thread safe!
+    
+void dirass_setDispWidth(void* const hDir,  int newValue); // not thread safe!
     
 void dirass_setUpscaleOrder(void* const hDir,  int newState);
     
-void dirass_setEnableDiRAss(void* const hDir,  int newState);
+void dirass_setDiRAssMode(void* const hDir,  int newMode);
     
 void dirass_setMinFreq(void* const hDir,  float newValue);
 
@@ -172,13 +208,15 @@ void dirass_requestPmapUpdate(void* const hDir);
     
 int dirass_getInputOrder(void* const hDir);
     
-int dirass_getMapMode(void* const hDir); 
+int dirass_getBeamType(void* const hDir);
     
 int dirass_getDisplayGridOption(void* const hDir);
+    
+int dirass_getDispWidth(void* const hDir);
 
 int dirass_getUpscaleOrder(void* const hDir);
 
-int dirass_getEnableDiRAss(void* const hDir); 
+int dirass_getDiRAssMode(void* const hDir); 
 
 float dirass_getMinFreq(void* const hDir);
 

@@ -39,7 +39,7 @@
 #include <string.h>
 #include <float.h>
 #include "dirass.h"
-#define SAF_ENABLE_SH     /* for spherical harmonic weights */
+#define SAF_ENABLE_SH     /* for spherical harmonics and beamforming weights */
 #define SAF_ENABLE_VBAP   /* for vbap-based interpolation tables */
 #include "saf.h"
 
@@ -65,24 +65,35 @@ extern "C" {
 typedef struct _codecPars
 {
     /* scanning grid and intepolation table */
-    float* grid_dirs_deg;                   /* scanning grid directions; grid_nDirs x 2 */
-    int grid_nDirs;                         /* number of grid directions */
-    float* interp_dirs_deg;                 /* interpolation directions; interp_nDirs x 2 */
-    float* interp_table;                    /* interpolation table (spherical->rectangular grid); interp_nDirs x grid_nDirs */
+    float* grid_dirs_deg;                   /* scanning grid directions; FLAT: grid_nDirs x 2 */
+    int grid_nDirs;                         /* number of grid directions */ 
+    float* interp_dirs_deg;                 /* interpolation directions, in degrees; FLAT: interp_nDirs x 2 */
+    float* interp_dirs_rad;                 /* interpolation directions, in radians; FLAT: interp_nDirs x 2 */
+    float* interp_table;                    /* interpolation table (spherical->rectangular grid); FLAT: interp_nDirs x grid_nDirs */
     int interp_nDirs;                       /* number of interpolation directions */
     int interp_nTri;                        /* number of triangles in the spherical scanning grid mesh */
+    float* ss;                              /* beamformer sector signals; FLAT: grid_nDirs x FRAME_SIZE */
+    float* ssxyz;                           /* beamformer velocity signals; FLAT: 3 x FRAME_SIZE */
+    int* est_dirs_idx;                      /* DoA indices, into the interpolation directions; grid_nDirs x 1 */
+    float* prev_intensity;                  /* previous intensity vectors (for averaging); FLAT: grid_nDirs x 3 */
     
-    /* sector beamforming */
-    float* Cxyz;                            /* beamforming weights for velocity patterns; nDirs x (order+1) x 3 */
-    float* Cw;                              /* beamforming weights; nDirs x (order)^2 */
-    float* Y_grid;                          /* real spherical harmonic weights; MAX_NUM_DISPLAY_SH_SIGNALS x grid_nDirs */
+    /* sector beamforming and upscaling */
+    float* Cxyz;                            /* beamforming weights for velocity patterns; FLAT: nDirs x (order+1)^2 x 3 */
+    float* Cw;                              /* beamforming weights; FLAT: nDirs x (order)^2 */
+    float* Uw;                              /* beamforming weights; FLAT: nDirs x (upscaleOrder+1)^2 */
+    float* Y_up;                            /* real SH weights for upscaling; FLAT: (upscaleOrder+1)^2 x grid_nDirs */
+    float* est_dirs;                        /* estimated DoA per grid direction; grid_nDirs x 2 */
     
+    /* regular beamforming */
+    float* w;                               /* beamforming weights; FLAT: nDirs x (order+1)^2 */
+     
 }codecPars;
     
 typedef struct _dirass
 {
     /* Buffers */
     float SHframeTD[MAX_NUM_INPUT_SH_SIGNALS][FRAME_SIZE];
+    float SHframe_upTD[MAX_NUM_DISPLAY_SH_SIGNALS][FRAME_SIZE];
     float fs;                               /* host sampling rate */
     
     /* internal */
@@ -104,9 +115,9 @@ typedef struct _dirass
     
     /* User parameters */
     int new_inputOrder, inputOrder;         /* input/analysis order */
-    MAP_MODES pmap_mode;                    /* powermap mode */
-    int enableDirAss;                       /* 0: disabled, just energy-based, 1: enabled, energy is re-assigned based on intensity */
-    UPSCALE_ORDERS new_upscaleOrder, upscaleOrder; /* target upscale order */
+    BEAM_TYPES beamType;                    /* beamformer type mode */
+    REASS_MODES DirAssMode;                 /* see REASS_MODES enum */
+    int new_upscaleOrder, upscaleOrder;     /* target upscale order */
     GRID_OPTIONS gridOption;                /* grid option */
     float pmapAvgCoeff;                     /* averaging coefficient for the intensity vector per grid direction */
     float minFreq_hz;                       /* minimum frequency to include in pmap generation, Hz */

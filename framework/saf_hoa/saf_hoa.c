@@ -41,7 +41,7 @@ void getMaxREweights
     x = cosf(137.9f*(M_PI/180.0f)/((float)order+1.51f));
     nSH = (order+1)*(order+1);
     memset(a_n, 0, nSH*nSH*sizeof(float));
-    ppm = calloc((order+1),sizeof(float));
+    ppm = calloc((order+1),sizeof(double));
     idx = 0;
     for(n=0; n<=order; n++){
         unnorm_legendreP(n, &x, 1, ppm);

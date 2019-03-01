@@ -30,15 +30,15 @@
 #include "saf_sh.h"
 #include "saf_sh_internal.h"
 
-unsigned long factorial
-(
-    unsigned long f
-)
+long double factorial(int n)
 {
-    if (f == 0)
-        return 1;
-    else
-        return(f * factorial(f - 1));
+    int i;
+    long double ff;
+    ff = 1.0;
+    /* more robust approach for higher values of 'f' */
+    for(i = 1; i<=n; i++)
+        ff *= (long double)i;
+    return ff;
 }
 
 float wigner_3j

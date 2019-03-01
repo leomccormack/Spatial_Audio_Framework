@@ -51,8 +51,8 @@ extern "C" {
 /* Misc. Internal Functions */
 /****************************/
     
-/* classic factorial algorithm */
-unsigned long factorial(unsigned long f);
+/* factorial algorithm, accurate up to n<=25. The magnitude will still be correct >25, but it will be truncated */
+long double factorial(int n);
     
 /* computes the Wigner 3j symbol through the Racah formula found in
  * http://mathworld.wolfram.com/Wigner3j-Symbol.html, Eq.7. */

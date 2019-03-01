@@ -289,12 +289,12 @@ void getRSH
         dirs_rad[i*2+0] = dirs_deg[i*2+0] * M_PI/180.0f;
         dirs_rad[i*2+1] = M_PI/2.0f - (dirs_deg[i*2+1] * M_PI/180.0f);
     }
-    
+
     /* get real-valued spherical harmonics */
-    getSHreal(N, dirs_rad, nDirs, *Y);
-    
+    getSHreal(N, dirs_rad, nDirs, (*Y));
+
     /* remove sqrt(4*pi) term */
-    utility_svsmul(*Y, &scale, nSH*nDirs, NULL);
+    utility_svsmul((*Y), &scale, nSH*nDirs, NULL);
  
     free(dirs_rad);
 }
@@ -376,17 +376,18 @@ void getSHreal
 )
 {
     int dir, j, n, m, idx_Y;
-    float* Lnm, *norm_real, *CosSin;
+    double* Lnm, *CosSin;
     double *p_nm, *cos_incl;
+    double *norm_real;
     
-    Lnm = malloc((2*order+1)*nDirs*sizeof(float));
-    norm_real = malloc((2*order+1)*sizeof(float));
-    CosSin = malloc((2*order+1)*sizeof(float));
+    Lnm = malloc((2*order+1)*nDirs*sizeof(double));
+    norm_real = malloc((2*order+1)*sizeof(double));
+    CosSin = malloc((2*order+1)*sizeof(double));
     cos_incl = malloc(nDirs*sizeof(double));
     p_nm = malloc((order+1)*nDirs * sizeof(double));
     for (dir = 0; dir<nDirs; dir++)
-        cos_incl[dir] = cosf(dirs_rad[dir*2+1]);
- 
+        cos_incl[dir] = cos((double)dirs_rad[dir*2+1]);
+    
     idx_Y = 0;
     for(n=0; n<=order; n++){
         /* vector of unnormalised associated Legendre functions of current order */
@@ -396,24 +397,24 @@ void getSHreal
             /* cancel the Condon-Shortley phase from the definition of the Legendre functions to result in signless real SH */
             if (n != 0)
                 for(m=-n, j=0; m<=n; m++, j++)
-                    Lnm[j*nDirs+dir] = powf(-1.0f, (float)abs(m)) * (float)p_nm[abs(m)*nDirs+dir];
+                    Lnm[j*nDirs+dir] = pow(-1.0, (double)abs(m)) * p_nm[abs(m)*nDirs+dir];
             else
-                Lnm[dir] = (float)p_nm[dir];
+                Lnm[dir] = p_nm[dir];
         }
         
         /* normalisation */
         for(m=-n, j=0; m<=n; m++, j++)
-            norm_real[j] = sqrtf( (2.0f*(float)n+1.0f)*(float)factorial(n-abs(m)) / (4.0f*M_PI*(float)factorial(n+abs(m))) );
+            norm_real[j] = sqrt( (2.0*(double)n+1.0) * (double)factorial(n-abs(m)) / (4.0*M_PI*(double)factorial(n+abs(m))) );
         
         /* norm_real * Lnm_real .* CosSin; */
         for(dir=0; dir<nDirs; dir++){
             for(m=-n, j=0; m<=n; m++, j++){
                 if(j<n)
-                    Y[(j+idx_Y)*nDirs+dir] = norm_real[j] * Lnm[j*nDirs+dir] * sqrtf(2.0f)*sinf((float)(n-j)*dirs_rad[dir*2]);
+                    Y[(j+idx_Y)*nDirs+dir] = (float)(norm_real[j] * Lnm[j*nDirs+dir] * sqrt(2.0)*sin((double)(n-j)*(double)dirs_rad[dir*2]));
                 else if(j==n)
-                    Y[(j+idx_Y)*nDirs+dir] = norm_real[j] * Lnm[j*nDirs+dir];
+                    Y[(j+idx_Y)*nDirs+dir] = (float)(norm_real[j] * Lnm[j*nDirs+dir]);
                 else /* (j>n) */
-                    Y[(j+idx_Y)*nDirs+dir] = norm_real[j] * Lnm[j*nDirs+dir] * sqrtf(2.0f)*cosf((float)(abs(m))*dirs_rad[dir*2]);
+                    Y[(j+idx_Y)*nDirs+dir] = (float)(norm_real[j] * Lnm[j*nDirs+dir] * sqrt(2.0)*cos((double)(abs(m))*(double)dirs_rad[dir*2]));
             }
         }
         
@@ -428,6 +429,68 @@ void getSHreal
     free(cos_incl);
 }
 
+void getSHreal_recur
+(
+    int N,
+    float* dirs_rad,
+    int nDirs,
+    float* Y
+)
+{
+    int n, m, i, dir, index_n;
+    float Nn0, Nnm;
+    float* leg_n, *leg_n_1, *leg_n_2, *cos_incl, *factorials_n;
+    
+    factorials_n = malloc((2*N+1)*sizeof(float));
+    leg_n = malloc((N+1)*nDirs * sizeof(float));
+    leg_n_1 = calloc((N+1)*nDirs, sizeof(float));
+    leg_n_2 = calloc((N+1)*nDirs, sizeof(float));
+    cos_incl = malloc(nDirs * sizeof(float));
+    index_n = 0;
+
+    /* precompute factorials */
+    for (i = 0; i < 2*N+1; i++)
+        factorials_n[i] = (float)factorial(i);
+    
+    /* sinf(elevation) */
+    for (dir = 0; dir<nDirs; dir++)
+        cos_incl[dir] = cosf(dirs_rad[dir*2+1]);
+    
+    /* compute SHs with the recursive Legendre function */
+    for (n = 0; n<N+1; n++) {
+        if (n==0) {
+            for (dir = 0; dir<nDirs; dir++)
+                Y[n*nDirs+dir] = 1.0f/sqrtf(4.0f*M_PI);
+            index_n = 1;
+        }
+        else {
+            unnorm_legendreP_recur(n, cos_incl, nDirs, leg_n_1, leg_n_2, leg_n); /* does NOT include Condon-Shortley phase */
+            
+            Nn0 = sqrtf(2.0f*(float)n+1.0f);
+            for (dir = 0; dir<nDirs; dir++){
+                for (m = 0; m<n+1; m++) {
+                    if (m==0)
+                        Y[(index_n+n)*nDirs+dir] = Nn0/sqrtf(4.0f*M_PI)  * leg_n[m*nDirs+dir];
+                    else {
+                        Nnm = Nn0* sqrtf( 2.0f * factorials_n[n-m]/factorials_n[n+m] );
+                        Y[(index_n+n-m)*nDirs+dir] = Nnm/sqrtf(4.0f*M_PI) * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_rad[dir*2]));
+                        Y[(index_n+n+m)*nDirs+dir] = Nnm/sqrtf(4.0f*M_PI) * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_rad[dir*2]));
+                    }
+                }
+            }
+            index_n += 2*n+1;
+        }
+        memcpy(leg_n_2, leg_n_1, (N+1)*nDirs * sizeof(float));
+        memcpy(leg_n_1, leg_n, (N+1)*nDirs * sizeof(float));
+    }
+    
+    free(factorials_n);
+    free(leg_n);
+    free(leg_n_1);
+    free(leg_n_2);
+    free(cos_incl);
+}
+
 void getSHcomplex
 (
     int order,
@@ -437,14 +500,15 @@ void getSHcomplex
 )
 {
     int dir, j, n, m, idx_Y;
-    float *norm_real;
+    double *norm_real;
     double *Lnm, *cos_incl;
+    double_complex Ynm;
     
     Lnm = malloc((order+1)*nDirs*sizeof(double));
-    norm_real = malloc((order+1)*sizeof(float));
+    norm_real = malloc((order+1)*sizeof(double));
     cos_incl = malloc(nDirs*sizeof(double));
     for (dir = 0; dir<nDirs; dir++)
-        cos_incl[dir] = cosf(dirs_rad[dir*2+1]);
+        cos_incl[dir] = cos((double)dirs_rad[dir*2+1]);
     
     idx_Y = 0;
     for(n=0; n<=order; n++){
@@ -453,16 +517,19 @@ void getSHcomplex
         
         /* normalisation */
         for(m=0; m<=n; m++)
-            norm_real[m] = sqrtf( (2.0f*(float)n+1.0f)*(float)factorial(n-m) / (4.0f*M_PI*(float)factorial(n+m)) );
+            norm_real[m] = sqrt( (2.0*(double)n+1.0)*(double)factorial(n-m) / (4.0*M_PI*(double)factorial(n+m)) );
         
         /* norm_real .* Lnm_real .* CosSin; */
         for(dir=0; dir<nDirs; dir++){
             for(m=-n, j=0; m<=n; m++, j++){
-                if(m<0)
-                    Y[(j+idx_Y)*nDirs+dir] = crmulf(conjf(crmulf(cexpf(cmplxf(0.0f, (float)abs(m)*dirs_rad[dir*2])), norm_real[abs(m)] * Lnm[abs(m)*nDirs+dir])),
-                                                    powf(-1.0f, (float)abs(m)));
-                else /* (m>=0) */
-                    Y[(j+idx_Y)*nDirs+dir] = crmulf(cexpf(cmplxf(0.0f, (float)abs(m)*dirs_rad[dir*2])), norm_real[m] * Lnm[m*nDirs+dir]);
+                if(m<0){
+                    Ynm = crmul(conj(crmul(cexp(cmplx(0.0, (double)abs(m)*(double)dirs_rad[dir*2])), norm_real[abs(m)] * Lnm[abs(m)*nDirs+dir])), pow(-1.0, (double)abs(m)));
+                    Y[(j+idx_Y)*nDirs+dir] = cmplxf((float)creal(Ynm), (float)cimag(Ynm));
+                }
+                else {/* (m>=0) */
+                    Ynm = crmul(cexp(cmplx(0.0, (double)abs(m)*(double)dirs_rad[dir*2])), norm_real[m] * Lnm[m*nDirs+dir]);
+                    Y[(j+idx_Y)*nDirs+dir] = cmplxf((float)creal(Ynm), (float)cimag(Ynm));
+                }
             }
         }
         
@@ -530,7 +597,7 @@ void complex2realCoeffs
                 T_c2r, nSH,
                 C_N, K, &cbeta,
                 R_N_c, K);
-    for(i=0; i<nSH*nSH; i++)
+    for(i=0; i<nSH*K; i++)
         R_N[i] = crealf(R_N_c[i]);
     
     free(T_c2r);
@@ -643,6 +710,23 @@ void computeVelCoeffsMtx(int sectorOrder, float_complex* A_xyz)
     free(G_mtx);
 }
 
+void beamWeightsCardioid2Spherical
+(
+    int N,
+    float* b_n
+)
+{
+    int n;
+    
+    /* The coefficients can be derived by the binomial expansion of the cardioid function */
+    for(n=0; n<N+1; n++) {
+        b_n[n] = sqrtf(4.0f*M_PI*(2.0f*(float)n+1.0f)) *
+                 (float)factorial(N)* (float)factorial(N+1)/
+                 ((float)factorial(N+n+1)*(float)factorial(N-n))/
+                 ((float)N+1.0f);
+    }
+}
+
 void beamWeightsHypercardioid2Spherical
 (
     int N,
@@ -661,6 +745,33 @@ void beamWeightsHypercardioid2Spherical
     free(c_n);
 }
 
+void beamWeightsMaxEV
+(
+    int N,
+    float* b_n
+)
+{
+    int n;
+    float norm;
+    double temp_i;
+    double* temp_o;
+    
+    temp_o = malloc( (N+1)*sizeof(double));
+    norm = 0.0f;
+    for (n=0; n<=N; n++) {
+        temp_i = cos(2.4068f/((double)N+1.51));
+        unnorm_legendreP(n, &temp_i, 1, temp_o);
+        b_n[n] = sqrtf((2.0f*(float)n+1.0f)/(4.0f*M_PI))*(float)temp_o[0];
+        norm +=  sqrtf((2.0f*(float)n+1.0f)/(4.0f*M_PI))*b_n[n];
+    }
+    
+    /* normalise to unity response on look-direction */
+    for (n=0; n<=N; n++)
+        b_n[n] /= norm;
+    
+    free(temp_o);
+}
+
 void beamWeightsVelocityPatternsReal
 (
     int order,
@@ -675,7 +786,7 @@ void beamWeightsVelocityPatternsReal
     float_complex* velCoeffs_c;
     
     nSH = (order+2)*(order+2);
-    velCoeffs_c = malloc(nSH*sizeof(float_complex));
+    velCoeffs_c = malloc(nSH*3*sizeof(float_complex));
     beamWeightsVelocityPatternsComplex(order, b_n, azi_rad, elev_rad, A_xyz, velCoeffs_c);
     complex2realCoeffs(order+1, velCoeffs_c, 3, velCoeffs);
       
@@ -693,13 +804,14 @@ void beamWeightsVelocityPatternsComplex
 )
 {
     int i, j, d3, nSH_l, nSH;
-    float_complex* c_nm, *A_1;
+    float_complex* c_nm, *A_1, *velCoeffs_T;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
     nSH_l = (order+1)*(order+1);
     nSH = (order+2)*(order+2);
     c_nm = malloc(nSH_l*sizeof(float_complex));
-    A_1 = malloc(nSH*sizeof(float_complex));
+    A_1 = malloc(nSH*nSH_l*sizeof(float_complex));
+    velCoeffs_T = malloc(3*nSH*sizeof(float_complex));
     rotateAxisCoeffsComplex(order, b_n, M_PI/2.0f-elev_rad, azi_rad, c_nm);
     
     /* x_nm, y_nm, z_nm */
@@ -710,11 +822,15 @@ void beamWeightsVelocityPatternsComplex
         cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, 1, nSH_l, &calpha,
                     A_1, nSH_l,
                     c_nm, 1, &cbeta,
-                    &velCoeffs[d3*nSH], 1);
+                    &velCoeffs_T[d3*nSH], 1);
     }
-    
+    for(d3 = 0; d3<3; d3++)
+        for(i=0; i<nSH; i++)
+            velCoeffs[i*3+d3] = velCoeffs_T[d3*nSH+i]; /* transpose */
+
     free(c_nm);
     free(A_1);
+    free(velCoeffs_T);
 }
 
 void rotateAxisCoeffsReal

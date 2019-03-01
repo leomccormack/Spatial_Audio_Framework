@@ -97,7 +97,7 @@ void unnorm_legendreP(/* Input arguments */
                       double* y);                 /* resulting unnormalised legendre values for each x value; FLAT: (n+1) x lenX */
 
 /* calculates unnormalised legendre polynomials values up to order N, for all values in vector x
- * does NOT INCLUDE the Condon-Shortley phase term.
+ * does NOT INCLUDE the Condon-Shortley phase term
  * It uses a recursive approach, which makes it more suitable for computing the legendre values in a real-time loop */
 void unnorm_legendreP_recur(/* Input arguments */
                             int n,                /* order of  legendre polynomial */
@@ -108,12 +108,12 @@ void unnorm_legendreP_recur(/* Input arguments */
                             /* Output arguments */
                             float* Pnm);          /* resulting unnormalised legendre values for each x value; FLAT: (n+1) x lenX */
     
-/* INTENDED FOR AMBISONICS: due to the omission of the 1/sqrt(4*pi) scaling, and directions are given in
+/* INTENDED FOR AMBISONICS, due to the omission of the 1/sqrt(4*pi) scaling, and the directions are given in
  * [azimuth elevation] (degrees). In Ambisonics literature, the format convention of 'Y' is referred to as ACN/N3D
- * Compared to 'getRSH_recur', this approach uses 'unnorm_legendreP', which is more suitable for determining 'Y' in an
- * initialisation stage. This version is indeed slower, but more precise, especially for high orders.
  *
  * returns REAL spherical harmonics for multiple directions on the sphere. WITHOUT the 1/sqrt(4*pi) term. i.e. max(omni)=1
+ * Compared to 'getRSH_recur', this function uses 'unnorm_legendreP' and double precision, so is more suitable for determining 'Y' in an
+ * initialisation stage. This version is indeed slower, but more precise, especially for high orders.
  * For more information, the reader is  directed to:
  * Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8). Berlin: Springer. */
 void getRSH(/* Input arguments */
@@ -123,12 +123,12 @@ void getRSH(/* Input arguments */
             /* Output arguments */
             float** Y);                           /* & the SH weights: FLAT: (order+1)^2 x nDirs */
     
-/* INTENDED FOR AMBISONICS: due to the omission of the 1/sqrt(4*pi) term, and directions are given in
+/* INTENDED FOR AMBISONICS, due to the omission of the 1/sqrt(4*pi) term, and the directions are given in
  * [azimuth elevation] (degrees). In Ambisonics literature, the format convention of 'Y' is referred to as ACN/N3D
- * Compared to 'getRSH', this approach uses 'unnorm_legendreP_recur', which is more suitable for determining 'Y' in a real-time
- * loop. It sacrifices some precision, as numerical error propogates through the recursion, but it is faster.
  *
  * returns REAL spherical harmonics for multiple directions on the sphere. WITHOUT the 1/sqrt(4*pi) scaling. i.e. max(omni)=1
+ * Compared to 'getRSH', this function uses 'unnorm_legendreP_recur' and single precision, so is more suitable for determining 'Y' in a real-time
+ * loop. It sacrifices some precision, as numerical error propogates through the recursion, but it is faster.
  * For more information, the reader is  directed to:
  * Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8). Berlin: Springer. */
 void getRSH_recur(/* Input arguments */
@@ -139,6 +139,7 @@ void getRSH_recur(/* Input arguments */
                   float** Y);                     /* & the SH weights: FLAT: (order+1)^2 x nDirs */
     
 /* returns real spherical harmonics for each direction on the sphere. WITH the 1/sqrt(4*pi) term.  i.e. max(omni)= 1/sqrt(4*pi)
+ * compared to 'getSHreal_recur', this function employs 'unnorm_legendreP' and double precision, which is slower but more precise.
  * For more information, the reader is  directed to:
  * Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8). Berlin: Springer. */
 void getSHreal(/* Input arguments */
@@ -148,7 +149,19 @@ void getSHreal(/* Input arguments */
                /* Output arguments */
                float* Y);                         /* the SH weights: (order+1)^2 x nDirs */
     
+/* returns real spherical harmonics for each direction on the sphere. WITH the 1/sqrt(4*pi) term.  i.e. max(omni)= 1/sqrt(4*pi)
+ * compared to 'getSHreal', this function employs 'unnorm_legendreP_recur' and single precision, which is faster but less precise.
+ * For more information, the reader is  directed to:
+ * Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8). Berlin: Springer. */
+void getSHreal_recur(/* Input arguments */
+                     int order,                   /* order of spherical harmonic expansion */
+                     float* dirs_rad,             /* directions on the sphere [azi, INCLINATION] convention, radians; FLAT: nDirs x 2 */
+                     int nDirs,                   /* number of directions */
+                     /* Output arguments */
+                     float* Y);                   /* the SH weights: (order+1)^2 x nDirs */
+    
 /* returns complex spherical harmonics for each direction on the sphere. WITH the 1/sqrt(4*pi) term.  i.e. max(cabs(omni))= 1/sqrt(4*pi)
+ * this function employs 'unnorm_legendreP' and double precision.
  * For more information, the reader is  directed to:
  * Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8). Berlin: Springer. */
 void getSHcomplex(/* Input arguments */
@@ -187,14 +200,48 @@ void computeVelCoeffsMtx(/* Input arguments */
                          /* Output arguments */
                          float_complex* A_xyz);   /* Velocity coefficients; flat: (sectorOrder+2)^2  x (sectorOrder+1)^2 x 3 */
     
-/* The hypercardioid is the pattern that maximizes the directivity-factor for a certain SH order N. The
+/* Generate spherical coefficients for cardioids. For a specific order N of a higher order cardioid of the form
+ * D(theta)=(1/2)^N * (1+cos(theta))^N, generate the beamweights for the same pattern in the SHD. Because the
+ * pattern is axisymmetric only the N+1 coefficients of m=0 are returned. */
+void beamWeightsCardioid2Spherical(/* Input arguments */
+                                   int N,         /* order */
+                                   /* Output arguments */
+                                   float* b_n);   /* beamformer weights; (N+1) x 1 */
+    
+    // NOT IMPLEMENTED YET
+/* Generate beamweights in the SHD for Dolph-Chebyshev beampatterns, with mainlobe and sidelobe control.
+ * Because the pattern is axisymmetric only the N+1 coefficients of m=0 are returned.
+ *     Koretz, A. and Rafaely, B., 2009. Dolph-Chebyshev beampattern design for spherical arrays.
+ *     IEEE Transactions on Signal Processing, 57(6), pp.2417-2420. */
+void beamWeightsDolphChebyshev2Spherical(/* Input arguments */
+                                         int N,         /* order */
+                                         int paramType, /* 0: side-lobe level control, 1: mainlobe width control */
+                                         float arrayParam, /* sidelobe level 1/R or mainlobe with 2*a0 */
+                                         /* Output arguments */
+                                         float* b_n);   /* beamformer weights; (N+1) x 1 */
+    
+/* The hypercardioid is the pattern that maximises the directivity-factor for a certain SH order N. The
  * hypercardioid is also the plane-wave decomposition beamformer in the SHD, also called 'regular' because
  * the beamweights are just the SH values on the beam-direction. Since the pattern is axisymmetric only
- * the N+1 coefficients of m=0 are  returned.*/
+ * the N+1 coefficients of m=0 are  returned. */
 void beamWeightsHypercardioid2Spherical(/* Input arguments */
                                         int N,    /* order */
                                         /* Output arguments */
                                         float* b_n); /* beamformer weights; (N+1) x 1 */
+
+/* Generate the beamweights for the a maximum energy-vector beampattern in the SHD. This pattern originates
+ * from ambisonic-related research and it maximises the ambisonic energy-vector, which is essentially the
+ * directional centroid of the squared pattern. IT can also be seen as the pattern that maximizes the acoustic
+ * intensity vector of a diffuse field weighted with this pattern. In practice it is almost the same as
+ * a supercardioid that maximizes front-back power ratio for a certain order, and it can be used as such.
+ * Because the pattern is axisymmetric only the N+1 coefficients of m=0 are returned. Details for their theory
+ * can be found e.g. in
+ *     Zotter, F., Pomberger, H. and Noisternig, M., 2012.
+ *     Energy-preserving ambisonic decoding. Acta Acustica united with Acustica, 98(1), pp.37-47. */
+void beamWeightsMaxEV(/* Input arguments */
+                      int N,                      /* order */
+                      /* Output arguments */
+                      float* b_n);                /* beamformer weights; (N+1) x 1 */
     
 /* If the sound-field is weighted with an axisymmetric spatial distribution described by the N+1 SH coefficients
  * b_n, then the beamweights capturing the velocity signals for the weighted sound-field are of an order one higher
@@ -325,8 +372,8 @@ void bessel_Jn(/* Input arguments */
                double* z,                         /* input values; nZ x 1 */
                int nZ,                            /* number of input values */
                /* Output arguments */
-               double* J_n,                       /* Bessel values (set NULL if not required); FLAT: nZ x (N+1) */
-               double* dJ_n);                     /* Bessel derivative values (set NULL if not required); FLAT: nZ x (N+1) */
+               double* J_n,                       /* Bessel values (set as NULL if not required); FLAT: nZ x (N+1) */
+               double* dJ_n);                     /* Bessel derivative values (set as NULL if not required); FLAT: nZ x (N+1) */
     
 /* (cylindrical) Bessel function of the second kind: Yn
  * returns the Bessel values and their derivatives up to order N for all values in vector z  */
@@ -335,8 +382,8 @@ void bessel_Yn(/* Input arguments */
                double* z,                         /* input values; nZ x 1 */
                int nZ,                            /* number of input values */
                /* Output arguments */
-               double* Y_n,                       /* Bessel values (set NULL if not required); FLAT: nZ x (N+1) */
-               double* dY_n);                     /* Bessel derivative values (set NULL if not required); FLAT: nZ x (N+1) */
+               double* Y_n,                       /* Bessel values (set as NULL if not required); FLAT: nZ x (N+1) */
+               double* dY_n);                     /* Bessel derivative values (set as NULL if not required); FLAT: nZ x (N+1) */
     
 /* (cylindrical) Hankel function of the first kind: Hn1
  * returns the Hankel values and their derivatives up to order N for all values in vector z  */
@@ -345,8 +392,8 @@ void hankel_Hn1(/* Input arguments */
                 double* z,                        /* input values; nZ x 1 */
                 int nZ,                           /* number of input values */
                 /* Output arguments */
-                double_complex* Hn1_n,            /* Hankel values (set NULL if not required); FLAT: nZ x (N+1) */
-                double_complex* dHn1_n);          /* Hankel derivative values (set NULL if not required); FLAT: nZ x (N+1) */
+                double_complex* Hn1_n,            /* Hankel values (set as NULL if not required); FLAT: nZ x (N+1) */
+                double_complex* dHn1_n);          /* Hankel derivative values (set as NULL if not required); FLAT: nZ x (N+1) */
     
 /* (cylindrical) Hankel function of the second kind: Hn2
  * returns the Hankel values and their derivatives up to order N for all values in vector z  */
@@ -355,8 +402,8 @@ void hankel_Hn2(/* Input arguments */
                 double* z,                        /* input values; nZ x 1 */
                 int nZ,                           /* number of input values */
                 /* Output arguments */
-                double_complex* Hn2_n,            /* Hankel values (set NULL if not required); FLAT: nZ x (N+1) */
-                double_complex* dHn2_n);          /* Hankel derivative values (set NULL if not required); FLAT: nZ x (N+1) */
+                double_complex* Hn2_n,            /* Hankel values (set as NULL if not required); FLAT: nZ x (N+1) */
+                double_complex* dHn2_n);          /* Hankel derivative values (set as NULL if not required); FLAT: nZ x (N+1) */
     
 /* spherical Bessel function of the first kind: jn
  * returns the Bessel values and their derivatives up to order N for all values in vector z  */
@@ -366,8 +413,8 @@ void bessel_jn(/* Input arguments */
                int nZ,                            /* number of input values */
                /* Output arguments */
                int* maxN,                         /* & maximum function order that could be computed <=N */
-               double* j_n,                       /* Bessel values (set NULL if not required); FLAT: nZ x (N+1) */
-               double* dj_n);                     /* Bessel derivative values (set NULL if not required); FLAT: nZ x (N+1) */
+               double* j_n,                       /* Bessel values (set as NULL if not required); FLAT: nZ x (N+1) */
+               double* dj_n);                     /* Bessel derivative values (set as NULL if not required); FLAT: nZ x (N+1) */
     
 /* modified spherical Bessel function of the first kind: in
  * returns the Bessel values and their derivatives up to order N for all values in vector z  */
@@ -377,8 +424,8 @@ void bessel_in(/* Input arguments */
                int nZ,                            /* number of input values */
                /* Output arguments */
                int* maxN,                         /* & maximum function order that could be computed <=N */
-               double* i_n,                       /* Bessel values (set NULL if not required); FLAT: nZ x (N+1) */
-               double* di_n);                     /* Bessel derivative values (set NULL if not required); FLAT: nZ x (N+1) */
+               double* i_n,                       /* Bessel values (set as NULL if not required); FLAT: nZ x (N+1) */
+               double* di_n);                     /* Bessel derivative values (set as NULL if not required); FLAT: nZ x (N+1) */
 
 /* spherical Bessel function of the second kind (Neumann): yn
  * returns the Bessel values and their derivatives up to order N for all values in vector z  */
@@ -388,8 +435,8 @@ void bessel_yn(/* Input arguments */
                int nZ,                            /* number of input values */
                /* Output arguments */
                int* maxN,                         /* & maximum function order that could be computed <=N */
-               double* y_n,                       /* Bessel values (set NULL if not required); FLAT: nZ x (N+1) */
-               double* dy_n);                     /* Bessel derivative values (set NULL if not required); FLAT: nZ x (N+1) */
+               double* y_n,                       /* Bessel values (set as NULL if not required); FLAT: nZ x (N+1) */
+               double* dy_n);                     /* Bessel derivative values (set as NULL if not required); FLAT: nZ x (N+1) */
     
 /* modified spherical Bessel function of the second kind: kn
  * returns the Bessel values and their derivatives up to order N for all values in vector z  */
@@ -399,8 +446,8 @@ void bessel_kn(/* Input arguments */
                int nZ,                            /* number of input values */
                /* Output arguments */
                int* maxN,                         /* & maximum function order that could be computed <=N */
-               double* k_n,                       /* Bessel values (set NULL if not required); FLAT: nZ x (N+1) */
-               double* dk_n);                     /* Bessel derivative values (set NULL if not required); FLAT: nZ x (N+1) */
+               double* k_n,                       /* Bessel values (set as NULL if not required); FLAT: nZ x (N+1) */
+               double* dk_n);                     /* Bessel derivative values (set as NULL if not required); FLAT: nZ x (N+1) */
 
 /* spherical Hankel function of the first kind: hn1
  * returns the Hankel values and their derivatives up to order N for all values in vector z */
@@ -410,8 +457,8 @@ void hankel_hn1(/* Input arguments */
                 int nZ,                           /* number of input values */
                 /* Output arguments */
                 int* maxN,                        /* & maximum function order that could be computed <=N */
-                double_complex* h_n1,             /* Hankel values (set NULL if not required); FLAT: nZ x (N+1) */
-                double_complex* dh_n1);           /* Hankel derivative values (set NULL if not required); FLAT: nZ x (N+1) */
+                double_complex* h_n1,             /* Hankel values (set as NULL if not required); FLAT: nZ x (N+1) */
+                double_complex* dh_n1);           /* Hankel derivative values (set as NULL if not required); FLAT: nZ x (N+1) */
 
 /* spherical Hankel function of the second kind: hn2
  * returns the Hankel values and their derivatives up to order N for all values in vector z */
@@ -421,8 +468,8 @@ void hankel_hn2(/* Input arguments */
                 int nZ,                           /* number of input values */
                 /* Output arguments */
                 int* maxN,                        /* & maximum function order that could be computed <=N */
-                double_complex* h_n2,             /* Hankel values (set NULL if not required); FLAT: nZ x (N+1) */
-                double_complex* dh_n2);           /* Hankel derivative values (set NULL if not required); FLAT: nZ x (N+1) */
+                double_complex* h_n2,             /* Hankel values (set as NULL if not required); FLAT: nZ x (N+1) */
+                double_complex* dh_n2);           /* Hankel derivative values (set as NULL if not required); FLAT: nZ x (N+1) */
     
     
 /*****************************************/

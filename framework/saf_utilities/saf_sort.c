@@ -29,6 +29,7 @@
 
 #include "saf_sort.h"
 #include "saf_complex.h" /* TODO: add sort complex numbers, abs/real */
+#include "saf_veclib.h"
 
 typedef struct saf_sort_int {
     int val;
@@ -208,17 +209,33 @@ void findClosestGridPoints
     /* convert sph coords into Cartesian coords */
     grid_xyz = malloc(nGrid*3*sizeof(float));
     target_xyz = malloc(nTarget*3*sizeof(float));
-    for(i=0; i<nGrid; i++){
-        grid_xyz[i*3+2] = sinf(degFLAG ? grid_dirs[i*2+1]*M_PI/180.0f : grid_dirs[i*2+1]);
-        rcoselev = cosf(degFLAG ? grid_dirs[i*2+1]*M_PI/180.0f : grid_dirs[i*2+1]);
-        grid_xyz[i*3] = rcoselev * cosf(degFLAG ? grid_dirs[i*2]*M_PI/180.0f : grid_dirs[i*2]);
-        grid_xyz[i*3+1] = rcoselev * sinf(degFLAG ? grid_dirs[i*2]*M_PI/180.0f : grid_dirs[i*2]);
+    if(degFLAG){
+        for(i=0; i<nGrid; i++){
+            grid_xyz[i*3+2] = sinf(grid_dirs[i*2+1]*M_PI/180.0f);
+            rcoselev = cosf( grid_dirs[i*2+1]*M_PI/180.0f);
+            grid_xyz[i*3] = rcoselev * cosf(grid_dirs[i*2]*M_PI/180.0f);
+            grid_xyz[i*3+1] = rcoselev * sinf(grid_dirs[i*2]*M_PI/180.0f);
+        }
+        for(i=0; i<nTarget; i++){
+            target_xyz[i*3+2] = sinf(target_dirs[i*2+1]*M_PI/180.0f);
+            rcoselev = cosf(target_dirs[i*2+1]*M_PI/180.0f);
+            target_xyz[i*3] = rcoselev * cosf(target_dirs[i*2]*M_PI/180.0f);
+            target_xyz[i*3+1] = rcoselev * sinf(target_dirs[i*2]*M_PI/180.0f);
+        }
     }
-    for(i=0; i<nTarget; i++){
-        target_xyz[i*3+2] = sinf(degFLAG ? target_dirs[i*2+1]*M_PI/180.0f : target_dirs[i*2+1]);
-        rcoselev = cosf(degFLAG ? target_dirs[i*2+1]*M_PI/180.0f : target_dirs[i*2+1]);
-        target_xyz[i*3] = rcoselev * cosf(degFLAG ? target_dirs[i*2]*M_PI/180.0f : target_dirs[i*2]);
-        target_xyz[i*3+1] = rcoselev * sinf(degFLAG ? target_dirs[i*2]*M_PI/180.0f : target_dirs[i*2]);
+    else{
+        for(i=0; i<nGrid; i++){
+            grid_xyz[i*3+2] = sinf(grid_dirs[i*2+1]);
+            rcoselev = cosf(grid_dirs[i*2+1]);
+            grid_xyz[i*3] = rcoselev * cosf(grid_dirs[i*2]);
+            grid_xyz[i*3+1] = rcoselev * sinf(grid_dirs[i*2]);
+        }
+        for(i=0; i<nTarget; i++){
+            target_xyz[i*3+2] = sinf(target_dirs[i*2+1]);
+            rcoselev = cosf(target_dirs[i*2+1]);
+            target_xyz[i*3] = rcoselev * cosf(target_dirs[i*2]);
+            target_xyz[i*3+1] = rcoselev * sinf(target_dirs[i*2]);
+        }
     }
     
     /* determine which 'grid_dirs' indices are the closest to 'target_dirs' */
@@ -226,9 +243,10 @@ void findClosestGridPoints
         max_val = -2.23e10f;
         for(j=0; j<nGrid; j++){
             current_val = grid_xyz[j*3] * target_xyz[i*3] +
-            grid_xyz[j*3+1] * target_xyz[i*3+1] +
-            grid_xyz[j*3+2] * target_xyz[i*3+2];
-            idx_closest[i] = current_val>max_val ? j : idx_closest[i];
+                          grid_xyz[j*3+1] * target_xyz[i*3+1] +
+                          grid_xyz[j*3+2] * target_xyz[i*3+2];
+            if(current_val > max_val)
+                idx_closest[i] = j;
             if(current_val>max_val){
                 idx_closest[i] = j;
                 max_val = current_val;
