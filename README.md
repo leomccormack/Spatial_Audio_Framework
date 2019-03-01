@@ -58,13 +58,14 @@ Several examples are also included in the repository:
 * **ambi_bin** - a binaural Ambisonic decoder with built-in rotator
 * **ambi_dec** - a frequency-dependent Ambisonic decoder (AllRAD, EPAD, MMD etc)
 * **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for spherical harmonic signals (aka Ambisonic signals)
-* **ambi_enc** - a simple Ambisonic encoder/panner
+* **ambi_enc** - a simple Ambisonic encoder
 * **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals)
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file
+* **dirass** - a sound-field visualiser based on re-assigning the energy of multiple beamformers, based on the DoA estimates extracted from the corresponding spatially-localised active-intensity vectors
 * **panner** - a frequency-dependent VBAP panner
 * **powermap** - sound-field visualiser using beamformers (PWD, MVDR) or sub-space methods (MUSIC)
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles
-* **sldoa** - spatially-localised direction of arrival estimator
+* **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors
 * **upmix** - a (soon to be) collection of upmixing algorithms (currently only stereo to 5.x upmixing)
 
 ### GUI implementations

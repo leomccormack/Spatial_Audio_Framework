@@ -23,10 +23,10 @@
  *     each frequency band.
  *     The algorithms within sldoa were developed in collaboration with Symeon Delikaris-
  *     Manias, and are explained in more detail in:
- *     McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
- *     “Real-time conversion of sensor array signals into spherical harmonic signals with
- *     applications to spatially localised sub-band sound-field analysis,” in Audio
- *     Engineering Society Convention 144, Audio Engineering Society, 2018.
+ *         McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
+ *         “Real-time conversion of sensor array signals into spherical harmonic signals with
+ *         applications to spatially localised sub-band sound-field analysis,” in Audio
+ *         Engineering Society Convention 144, Audio Engineering Society, 2018.
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
  * Author, date created:
