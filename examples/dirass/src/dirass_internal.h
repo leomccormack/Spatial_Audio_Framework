@@ -99,6 +99,8 @@ typedef struct _dirass
     /* internal */
     int reInitAna;                          /* 0: no init required, 1: init required, 2: init in progress */
     int dispWidth;                          /* number of interpolation points on the horizontal */
+    float Wz12_hpf[MAX_NUM_INPUT_SH_SIGNALS][2]; /* delayed elements used in the HPF */
+    float Wz12_lpf[MAX_NUM_INPUT_SH_SIGNALS][2]; /* delayed elements used in the LPF */
     
     /* ana configuration */
     codecPars* pars;                        /* codec parameters */

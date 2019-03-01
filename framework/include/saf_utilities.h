@@ -51,6 +51,7 @@ extern "C" {
 #include "../saf_utilities/saf_calloc.h"              /* For multi-dimensional memory handling */
 #include "../saf_utilities/saf_free.h"                /* For multi-dimensional memory handling */
 #include "../saf_utilities/saf_sort.h"                /* For sorting vectors */
+#include "../saf_utilities/saf_filters.h"             /* For filter coefficients (IIR/FIR) */
 #include "../saf_utilities/saf_veclib.h"              /* For BLAS/LAPACK functions, plus some other handy linear algebra functions */
 #include "../saf_utilities/saf_complex.h"             /* For cross-platform complex numbers wrapper */
 #include "../saf_utilities/saf_loudspeaker_presets.h" /* For various presets for loudspeaker, microphone, and hydrophone arrays.  */

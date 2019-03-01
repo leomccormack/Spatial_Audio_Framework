@@ -80,7 +80,7 @@ void dirass_create
     pData->gridOption = GRID_GEOSPHERE_8;
     pData->pmapAvgCoeff = 0.666f;
     pData->minFreq_hz = 100.0f;
-    pData->maxFreq_hz = 20e3f;
+    pData->maxFreq_hz = 8e3f;
     pData->dispWidth = 120;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
@@ -149,6 +149,8 @@ void dirass_init
         memset(pData->prev_pmap, 0, pars->grid_nDirs*sizeof(float));
     if(pars->prev_intensity!=NULL)
         memset(pars->prev_intensity, 0, pars->grid_nDirs*3*sizeof(float));
+    memset(pData->Wz12_hpf, 0, MAX_NUM_INPUT_SH_SIGNALS*2*sizeof(float));
+    memset(pData->Wz12_lpf, 0, MAX_NUM_INPUT_SH_SIGNALS*2*sizeof(float));
     pData->pmapReady = 0;
     pData->dispSlotIdx = 0;
 
@@ -218,12 +220,20 @@ void dirass_analysis
                 break;
         }
         
-        
         /* update the dirass powermap */
         if(pData->recalcPmap==1){
             pData->recalcPmap = 0;
             pData->pmapReady = 0;
- 
+            
+            /* filter input signals */
+            float b[3], a[3];
+            biQuadCoeffs(BIQUAD_FILTER_HPF, minFreq_hz, pData->fs, 0.7071f, 0.0f, b, a);
+            for(i=0; i<nSH; i++)
+                applyBiQuadFilter(b, a, pData->Wz12_hpf[i], pData->SHframeTD[i], FRAME_SIZE);
+            biQuadCoeffs(BIQUAD_FILTER_LPF, maxFreq_hz, pData->fs, 0.7071f, 0.0f, b, a);
+            for(i=0; i<nSH; i++)
+                applyBiQuadFilter(b, a, pData->Wz12_lpf[i], pData->SHframeTD[i], FRAME_SIZE);
+            
             /* DoA estimation for each spatially-localised sector */
             if(DirAssMode==REASS_UPSCALE || DirAssMode==REASS_NEAREST){
                 /* Beamform using the sector patterns */
