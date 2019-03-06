@@ -76,6 +76,7 @@ typedef struct _codecPars
     float* ssxyz;                           /* beamformer velocity signals; FLAT: 3 x FRAME_SIZE */
     int* est_dirs_idx;                      /* DoA indices, into the interpolation directions; grid_nDirs x 1 */
     float* prev_intensity;                  /* previous intensity vectors (for averaging); FLAT: grid_nDirs x 3 */
+    float* prev_energy;                     /* previous energy (for averaging); FLAT: grid_nDirs x 1 */
     
     /* sector beamforming and upscaling */
     float* Cxyz;                            /* beamforming weights for velocity patterns; FLAT: nDirs x (order+1)^2 x 3 */
@@ -106,8 +107,7 @@ typedef struct _dirass
     codecPars* pars;                        /* codec parameters */
     
     /* display */
-    float* pmap;                            /* grid_nDirs x 1 */
-    float* prev_pmap;                       /* grid_nDirs x 1 */
+    float* pmap;                            /* grid_nDirs x 1 */ 
     float* pmap_grid[NUM_DISP_SLOTS];       /* dirass interpolated to grid; interp_nDirs x 1 */
     int dispSlotIdx;                        /* current display slot index */
     float pmap_grid_minVal;                 /* minimum value in pmap */

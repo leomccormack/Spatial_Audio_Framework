@@ -60,13 +60,13 @@ void dirass_create
     pars->est_dirs = NULL;
     pars->est_dirs_idx = NULL;
     pars->prev_intensity = NULL;
+    pars->prev_energy = NULL;
     
     /* internal */
 	pData->reInitAna = 1; 
 
     /* display */
     pData->pmap = NULL;
-    pData->prev_pmap = NULL;
     for(i=0; i<NUM_DISP_SLOTS; i++)
         pData->pmap_grid[i] = NULL;
     pData->pmapReady = 0;
@@ -100,8 +100,6 @@ void dirass_destroy
     if (pData != NULL) {
         if(pData->pmap!=NULL)
             free(pData->pmap);
-        if(pData->prev_pmap!=NULL)
-            free(pData->prev_pmap);
         for(i=0; i<NUM_DISP_SLOTS; i++)
             if(pData->pmap_grid[i] !=NULL)
                 free(pData->pmap_grid[i]);
@@ -126,6 +124,10 @@ void dirass_destroy
             free(pars->Uw);
         if(pars->est_dirs!=NULL)
             free(pars->est_dirs);
+        if(pars->prev_intensity!=NULL)
+            free(pars->prev_intensity);
+        if(pars->prev_energy!=NULL)
+            free(pars->prev_energy);
         
         free(pData->pars);
         free(pData);
@@ -145,10 +147,10 @@ void dirass_init
     pData->fs = sampleRate;
     
     /* intialise parameters */
-    if(pData->prev_pmap!=NULL)
-        memset(pData->prev_pmap, 0, pars->grid_nDirs*sizeof(float));
     if(pars->prev_intensity!=NULL)
         memset(pars->prev_intensity, 0, pars->grid_nDirs*3*sizeof(float));
+    if(pars->prev_energy!=NULL)
+        memset(pars->prev_energy, 0, pars->grid_nDirs*sizeof(float));
     memset(pData->Wz12_hpf, 0, MAX_NUM_INPUT_SH_SIGNALS*2*sizeof(float));
     memset(pData->Wz12_lpf, 0, MAX_NUM_INPUT_SH_SIGNALS*2*sizeof(float));
     pData->pmapReady = 0;
@@ -286,10 +288,11 @@ void dirass_analysis
                         for(j=0; j<FRAME_SIZE; j++)
                             pData->pmap[i] += (pars->ss[i*FRAME_SIZE+j])*(pars->ss[i*FRAME_SIZE+j]);
                     
-                    /* average the actual pmap over time (averaging is achieved for the reassignment modes via averaging the intensity) */
-                    for(i=0; i<pars->grid_nDirs; i++)
-                        pData->pmap[i] =  (1.0f-pmapAvgCoeff) * (pData->pmap[i] )+ pmapAvgCoeff * (pData->prev_pmap[i]);
-                    memcpy(pData->prev_pmap,  pData->pmap , pars->grid_nDirs*sizeof(float));
+                    /* average energy over time */
+                    for(i=0; i<pars->grid_nDirs; i++){
+                        pData->pmap[i] = pmapAvgCoeff * (pars->prev_energy[i]) + (1.0f-pmapAvgCoeff) * (pData->pmap[i]);
+                        pars->prev_energy[i] = pData->pmap[i];
+                    }
                     
                     /* interpolate the pmap */
                     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->interp_nDirs, 1, pars->grid_nDirs, 1.0f,
@@ -318,6 +321,12 @@ void dirass_analysis
                         for(j=0; j<FRAME_SIZE; j++)
                             pData->pmap[i] += (pars->ss[i*FRAME_SIZE+j])*(pars->ss[i*FRAME_SIZE+j]);
                     
+                    /* average energy over time */
+                    for(i=0; i<pars->grid_nDirs; i++){
+                        pData->pmap[i] = pmapAvgCoeff * (pars->prev_energy[i]) + (1.0f-pmapAvgCoeff) * (pData->pmap[i]);
+                        pars->prev_energy[i] = pData->pmap[i];
+                    }
+                    
                     /* interpolate the pmap */
                     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->interp_nDirs, 1, pars->grid_nDirs, 1.0f,
                                 pars->interp_table, pars->grid_nDirs,
@@ -331,7 +340,14 @@ void dirass_analysis
                     memset(pData->pmap_grid[pData->dispSlotIdx], 0, pars->interp_nDirs * sizeof(float));
                     for(i=0; i< pars->grid_nDirs; i++)
                         for(j=0; j<FRAME_SIZE; j++)
-                            pData->pmap_grid[pData->dispSlotIdx][pars->est_dirs_idx[i]] = (pars->ss[i*FRAME_SIZE+j])*(pars->ss[i*FRAME_SIZE+j]);
+                            pData->pmap[i] = (pars->ss[i*FRAME_SIZE+j])*(pars->ss[i*FRAME_SIZE+j]); 
+                    
+                    /* average energy over time, and assign to nearest grid direction */
+                    for(i=0; i<pars->grid_nDirs; i++){
+                        pData->pmap[i] = pmapAvgCoeff * (pars->prev_energy[i]) + (1.0f-pmapAvgCoeff) * (pData->pmap[i]);
+                        pars->prev_energy[i] = pData->pmap[i];
+                        pData->pmap_grid[pData->dispSlotIdx][pars->est_dirs_idx[i]] += pData->pmap[i];
+                    }
                     break;
             }
              
@@ -379,11 +395,8 @@ void dirass_checkReInit(void* const hDir)
 
 void dirass_setBeamType(void* const hDir, int newType)
 {
-    dirass_data *pData = (dirass_data*)(hDir);
-    codecPars* pars = pData->pars;
+    dirass_data *pData = (dirass_data*)(hDir); 
     pData->beamType = (BEAM_TYPES)newType;
-    if(pData->prev_pmap!=NULL)
-        memset(pData->prev_pmap, 0, pars->grid_nDirs*sizeof(float));
     pData->reInitAna = 1;
 }
 
@@ -418,7 +431,11 @@ void dirass_setUpscaleOrder(void* const hDir,  int newValue)
 void dirass_setDiRAssMode(void* const hDir,  int newMode)
 {
     dirass_data *pData = (dirass_data*)(hDir);
+    codecPars* pars = pData->pars;
     pData->DirAssMode = newMode;
+    if(pars->prev_intensity!=NULL)
+        memset(pars->prev_intensity, 0, pars->grid_nDirs*3*sizeof(float));
+    memset(pars->prev_energy, 0, pars->grid_nDirs*sizeof(float));
 }
 
 void dirass_setMinFreq(void* const hDir,  float newValue)
@@ -449,12 +466,14 @@ void dirass_setDispFOV(void* const hDir, int newOption)
 {
     dirass_data *pData = (dirass_data*)(hDir);
     pData->HFOVoption = (HFOV_OPTIONS)newOption;
+    pData->reInitAna = 1;
 }
 
 void dirass_setAspectRatio(void* const hDir, int newOption)
 {
     dirass_data *pData = (dirass_data*)(hDir);
     pData->aspectRatioOption = (ASPECT_RATIO_OPTIONS)newOption;
+    pData->reInitAna = 1;
 }
 
 void dirass_setMapAvgCoeff(void* const hDir, float newValue)
@@ -562,8 +581,7 @@ float dirass_getMapAvgCoeff(void* const hDir)
     return pData->pmapAvgCoeff;
 }
 
-int dirass_getPmap(void* const hDir, float** grid_dirs, float** pmap, int* nDirs,int* pmapWidth, int* hfov, int* aspectRatio)
-//TODO: hfov and aspectRatio should be float, if 16:9 etc options are added
+int dirass_getPmap(void* const hDir, float** grid_dirs, float** pmap, int* nDirs,int* pmapWidth, int* hfov, float* aspectRatio) 
 {
     dirass_data *pData = (dirass_data*)(hDir);
     codecPars* pars = pData->pars;
@@ -574,15 +592,16 @@ int dirass_getPmap(void* const hDir, float** grid_dirs, float** pmap, int* nDirs
         (*pmapWidth) = pData->dispWidth;
         switch(pData->HFOVoption){
             default:
-            case HFOV_360:
-                (*hfov) = 360;
-                break;
+            case HFOV_360: (*hfov) = 360; break;
+            case HFOV_180: (*hfov) = 180; break;
+            case HFOV_90:  (*hfov) = 90;  break;
+            case HFOV_60:  (*hfov) = 60;  break;
         }
         switch(pData->aspectRatioOption){
             default:
-            case ASPECT_RATIO_2_1:
-                (*aspectRatio) = 2;
-                break;
+            case ASPECT_RATIO_2_1:  (*aspectRatio) = 2.0f; break;
+            case ASPECT_RATIO_16_9: (*aspectRatio) = 16.0f/9.0f; break;
+            case ASPECT_RATIO_4_3:  (*aspectRatio) = 4.0f/3.0f; break;
         }
     }
     return pData->pmapReady;

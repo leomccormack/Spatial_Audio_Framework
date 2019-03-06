@@ -60,6 +60,18 @@ typedef enum _CONJ_FLAG{
     CONJ = 2
 }CONJ_FLAG;
 
+/*----------------------------------- vector-abs (?vabs) ------------------------------------*/
+
+/* s, single-precision, absolute value of vector elements, c = fabsf(a) */
+void utility_svabs(const float* a,                 /* input vector a; len x 1 */
+                   const int len,                  /* vector length */
+                   float* c);                      /* output vector c; len x 1 */
+
+/* s, single-precision, complex, absolute value of vector elements, c = cabsf(a) */
+void utility_cvabs(const float_complex* a,         /* input vector a; len x 1 */
+                   const int len,                  /* vector length */
+                   float* c);                      /* output vector c; len x 1 */
+
 /*------------------------------ vector-vector copy (?vvcopy) -------------------------------*/
 
 /* s, single-precision, vector-vector copy, c = a */
@@ -128,10 +140,10 @@ void utility_svsadd(float* a,
 /*---------------------------- vector-scalar subtraction (?vssub) ---------------------------*/
 
 /* s, single-precision, subtracts a scalar 's' from each element in vector 'a' */
-void utility_svssub(float* a,
-                    const float* s,
-                    const int len,
-                    float* c);
+void utility_svssub(float* a,              /* vector; len x 1 */
+                    const float* s,        /* scalar */
+                    const int len,         /* length of vector */
+                    float* c);             /* c = a-s, set to NULL for a = a-s; len x 1 */
 
 /*---------------------------- singular-value decomposition (?svd) --------------------------*/
 
@@ -139,9 +151,19 @@ void utility_svssub(float* a,
 void utility_ssvd(const float* A,          /* in matrix; flat: dim1 x dim2 */
                   const int dim1,          /* first dimension of A */
                   const int dim2,          /* second dimension of A */
-                  float** U,               /* & left matrix; flat: dim1 x dim1 */
-                  float** S,               /* & singular values along the diagonal min(dim1, dim2), the rest 0s; flat: dim1 x dim2 */
-                  float** V);              /* & right matrix (UNTRANSPOSED!); flat: dim2 x dim2 */
+                  float* U,                /* left matrix (set to NULL if not needed); flat: dim1 x dim1 */
+                  float* S,                /* singular values along the diagonal min(dim1, dim2), (set to NULL if not needed); flat: dim1 x dim2 */
+                  float* V,                /* right matrix (UNTRANSPOSED!) (set to NULL if not needed); flat: dim2 x dim2 */
+                  float* sing);            /* singular values as a vector, (set to NULL if not needed); min(dim1, dim2) x 1 */
+
+/* s, row-major, singular value decomposition: single precision complex */
+void utility_csvd(const float_complex* A,  /* in matrix; flat: dim1 x dim2 */
+                  const int dim1,          /* first dimension of A */
+                  const int dim2,          /* second dimension of A */
+                  float_complex* U,        /* left matrix (set to NULL if not needed); flat: dim1 x dim1 */
+                  float_complex* S,        /* singular values along the diagonal min(dim1, dim2), (set to NULL if not needed); flat: dim1 x dim2 */
+                  float_complex* V,        /* right matrix (UNTRANSPOSED!) (set to NULL if not needed); flat: dim2 x dim2 */
+                  float* sing);            /* singular values as a vector, (set to NULL if not needed); min(dim1, dim2) x 1 */
 
 /*------------------------ symmetric eigenvalue decomposition (?seig) -----------------------*/
 

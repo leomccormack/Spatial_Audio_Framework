@@ -44,7 +44,7 @@ void getEPAD
     nSH = (order+1)*(order+1);
     Y_ls = U = S = V = NULL;
     getRSH(order, ls_dirs_deg, nLS, &Y_ls);
-    utility_ssvd(Y_ls, nSH, nLS, &U, &S, &V);
+    utility_ssvd(Y_ls, nSH, nLS, U, S, V, NULL);         ////////////SVD FUNCTION HAS CHANGED!
     if(nSH>nLS){
         /* truncate the U matrix */
         U_tr = malloc(nSH*nLS*sizeof(float));

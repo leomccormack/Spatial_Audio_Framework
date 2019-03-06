@@ -1,4 +1,4 @@
-    /*
+/*
  Copyright 2016-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -34,8 +34,7 @@ long double factorial(int n)
 {
     int i;
     long double ff;
-    ff = 1.0;
-    /* more robust approach for higher values of 'f' */
+    ff = 1.0; 
     for(i = 1; i<=n; i++)
         ff *= (long double)i;
     return ff;
@@ -481,7 +480,6 @@ float getV
 {
     int d;
     float ret, p0, p1;
-    ret = 0.0f;
     
     if (m == 0) {
         p0 = getP(1, l, 1, n, R_1, R_lm1);

@@ -131,12 +131,17 @@ typedef enum _REASS_MODE {
 } REASS_MODES;
     
 typedef enum _HFOV_OPTIONS{
-    HFOV_360 = 1
+    HFOV_360 = 1,
+    HFOV_180,
+    HFOV_90,
+    HFOV_60
     
 }HFOV_OPTIONS;
     
 typedef enum _ASPECT_RATIO_OPTIONS{
-    ASPECT_RATIO_2_1 = 1
+    ASPECT_RATIO_2_1 = 1,
+    ASPECT_RATIO_16_9,
+    ASPECT_RATIO_4_3
     
 }ASPECT_RATIO_OPTIONS;
     
@@ -235,15 +240,14 @@ int dirass_getDispFOV(void* const hDir);
 int dirass_getAspectRatio(void* const hDir);
     
 float dirass_getMapAvgCoeff(void* const hDir);
-    
-//TODO: hfov and aspectRatio should be float, if 16:9 etc options are added
+     
 int dirass_getPmap(void* const hDir,
                    float** grid_dirs,
                    float** pmap,
                    int* nDirs,
                    int* pmapWidth,
                    int* hfov,
-                   int* aspectRatio);
+                   float* aspectRatio);
 
 
 #ifdef __cplusplus

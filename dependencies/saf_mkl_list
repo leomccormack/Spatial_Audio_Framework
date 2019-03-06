@@ -32,6 +32,7 @@ cblas_dscal
 cblas_cscal
 cblas_dgemm
 cgeev_
+cheev_
 cgesv_
 cgetrf_
 cgetri_
@@ -46,3 +47,6 @@ sgetri_
 sposv_
 ssyev_
 vsMul
+vcMul
+vsAbs
+vcAbs

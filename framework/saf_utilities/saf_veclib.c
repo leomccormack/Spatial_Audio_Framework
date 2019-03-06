@@ -38,6 +38,30 @@
   #define MAX(a,b) (( (a) > (b) ) ? (a) : (b))
 #endif
 
+/*----------------------------------- vector-abs (?vabs) ------------------------------------*/
+
+void utility_svabs(const float* a, const int len, float* c)
+{
+#ifdef INTEL_MKL_VERSION
+    vsAbs(len, a, c);
+#else
+    int i;
+    for(i=0; i<len; i++)
+        c[i] = fabsf(a[i]);
+#endif
+}
+
+void utility_cvabs(const float_complex* a, const int len, float* c)
+{
+#ifdef INTEL_MKL_VERSION
+    vcAbs(len, (MKL_Complex8*)a, c);
+#else
+    int i;
+    for(i=0; i<len; i++)
+        c[i] = cabsf(a[i]);
+#endif
+}
+
 /*------------------------------ vector-vector copy (?vvcopy) -------------------------------*/
 
 void utility_svvcopy(const float* a, const int len, float* c)
@@ -205,7 +229,7 @@ void utility_svssub(float* a, const float* s, const int len, float* c)
 
 /*---------------------------- singular-value decomposition (?svd) --------------------------*/
 
-void utility_ssvd(const float* A, const int dim1, const int dim2, float** U, float** S, float** V)
+void utility_ssvd(const float* A, const int dim1, const int dim2, float* U, float* S, float* V, float* sing)
 {
     int i, j, m, n, lda, ldu, ldvt, info, lwork;
     m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
@@ -227,29 +251,32 @@ void utility_ssvd(const float* A, const int dim1, const int dim2, float** U, flo
     work = (float*)malloc( lwork*sizeof(float) );
     sgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork,
            &info );
-    free(*U);
-    free(*S);
-    free(*V);
     if( info > 0 ) {
         /* svd failed to converge */
-        (*U) = (*S) = (*V) = NULL;
     }
     else {
         /* svd successful */
-        (*U) = malloc(dim1*dim1*sizeof(float));
-        (*S) = calloc(dim1*dim2,sizeof(float));
-        (*V) = malloc(dim2*dim2*sizeof(float));
+        if (S != NULL){
+            memset(S, 0, dim1*dim2*sizeof(float));
+            /* singular values on the diagonal MIN(dim1, dim2). The remaining elements are 0.  */
+            for(i=0; i<MIN(dim1, dim2); i++)
+                S[i*dim2+i] = s[i];
+        }
         /*return as row-major*/
-        for(i=0; i<dim1; i++)
-            for(j=0; j<dim1; j++)
-                (*U)[i*dim1+j] = u[j*dim1+i];
-        /* singular values on the diagonal MIN(dim1, dim2). The remaining elements are 0.  */
-        for(i=0; i<MIN(dim1, dim2); i++)
-            (*S)[i*dim2+i] = s[i];
+        if (U != NULL)
+            for(i=0; i<dim1; i++)
+                for(j=0; j<dim1; j++)
+                    U[i*dim1+j] = u[j*dim1+i];
+        
         /* lapack returns VT, i.e. row-major V already */
-        for(i=0; i<dim2; i++)
-            for(j=0; j<dim2; j++)
-                (*V)[i*dim2+j] = vt[i*dim2+j];
+        if (V != NULL)
+            for(i=0; i<dim2; i++)
+                for(j=0; j<dim2; j++)
+                    V[i*dim2+j] = vt[i*dim2+j];
+        
+        if (sing != NULL)
+            for(i=0; i<MIN(dim1, dim2); i++)
+                sing[i] = s[i];
     }
     
     free( (void*)a );
@@ -257,6 +284,76 @@ void utility_ssvd(const float* A, const int dim1, const int dim2, float** U, flo
     free( (void*)u );
     free( (void*)vt );
     free( (void*)work );
+}
+
+void utility_csvd(const float_complex* A, const int dim1, const int dim2, float_complex* U, float_complex* S, float_complex* V, float* sing)
+{
+    int i, j, m, n, lda, ldu, ldvt, info, lwork;
+    m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
+    float_complex wkopt;
+    float_complex* a, *u, *vt, *work;
+    float* s, *rwork;
+    
+    a = malloc(lda*n*sizeof(float_complex));
+    s = malloc(MIN(n,m)*sizeof(float));
+    u = malloc(ldu*m*sizeof(float_complex));
+    vt = malloc(ldvt*n*sizeof(float_complex));
+    rwork = malloc(m*MAX(1, 5*MIN(n,m))*sizeof(float));
+    /* store in column major order */
+    for(i=0; i<dim1; i++)
+        for(j=0; j<dim2; j++)
+            a[j*dim1+i] = A[i*dim2 +j];
+    lwork = -1;
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+    INCOMPLETE
+    cgesvd_( "A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_complex*)a, (__CLPK_integer*)&lda, s,
+            (__CLPK_complex*)u, (__CLPK_integer*)&ldu, (__CLPK_complex*)vt, &ldvt, (__CLPK_complex*)&wkopt, &lwork, rwork, (__CLPK_integer*)&info );
+#elif INTEL_MKL_VERSION
+    cgesvd_( "A", "A", &m, &n, (MKL_Complex8*)a, &lda, s, (MKL_Complex8*)u, &ldu, (MKL_Complex8*)vt, &ldvt,
+            (MKL_Complex8*)&wkopt, &lwork, rwork, &info );
+#endif
+    lwork = (int)(crealf(wkopt)+0.01f);
+    work = malloc( lwork*sizeof(float_complex) );
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+    INCOMPLETE
+#elif INTEL_MKL_VERSION
+    cgesvd_( "A", "A", &m, &n, (MKL_Complex8*)a, &lda, s, (MKL_Complex8*)u, &ldu, (MKL_Complex8*)vt, &ldvt,
+            (MKL_Complex8*)work, &lwork, rwork, &info);
+#endif
+    if( info > 0 ) {
+        /* svd failed to converge */
+    }
+    else {
+        /* svd successful */
+        if (S != NULL){
+            memset(S, 0, dim1*dim2*sizeof(float_complex));
+            /* singular values on the diagonal MIN(dim1, dim2). The remaining elements are 0.  */
+            for(i=0; i<MIN(dim1, dim2); i++)
+                S[i*dim2+i] = cmplxf(s[i], 0.0f);
+        }
+        /*return as row-major*/
+        if (U != NULL)
+            for(i=0; i<dim1; i++)
+                for(j=0; j<dim1; j++)
+                    U[i*dim1+j] = u[j*dim1+i];
+        
+        /* lapack returns VT, i.e. row-major V already */
+        if (V != NULL)
+            for(i=0; i<dim2; i++)
+                for(j=0; j<dim2; j++)
+                    V[i*dim2+j] = conjf(vt[i*dim2+j]); /* v^H */
+        
+        if (sing != NULL)
+            for(i=0; i<MIN(dim1, dim2); i++)
+                sing[i] = s[i];
+    }
+    
+    free( (void*)a );
+    free( (void*)s );
+    free( (void*)u );
+    free( (void*)vt );
+    free( (void*)work );
+    free(rwork);
 }
 
 /*------------------------ symmetric eigenvalue decomposition (?seig) -----------------------*/

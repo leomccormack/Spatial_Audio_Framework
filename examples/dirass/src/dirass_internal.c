@@ -115,10 +115,15 @@ void dirass_initAna(void* const hDir)
     switch(pData->HFOVoption){
         default:
         case HFOV_360: hfov = 360.0f; break;
+        case HFOV_180: hfov = 180.0f; break;
+        case HFOV_90:  hfov = 90.0f;  break;
+        case HFOV_60:  hfov = 60.0f;  break;
     }
     switch(pData->aspectRatioOption){
         default:
-        case ASPECT_RATIO_2_1: aspectRatio = 2.0f; break;
+        case ASPECT_RATIO_2_1:  aspectRatio = 2.0f; break;
+        case ASPECT_RATIO_16_9: aspectRatio = 16.0f/9.0f; break;
+        case ASPECT_RATIO_4_3:  aspectRatio = 4.0f/3.0f; break;
     }
     N_azi = pData->dispWidth;
     N_ele = (int)((float)pData->dispWidth/aspectRatio + 0.5f);
@@ -162,16 +167,6 @@ void dirass_initAna(void* const hDir)
         rotateAxisCoeffsReal(order_sec, c_n, M_PI/2.0f - pars->grid_dirs_deg[i*2+1]*M_PI/180.0f,
                              pars->grid_dirs_deg[i*2]*M_PI/180.0f, &(pars->Cw[i*nSH_sec]));
     }
-//
-//    float c_nTEST[3];
-//    float_complex A_xyzTEST[16][9][3];
-//    float CxyzTEST[812][16][3];
-//    float CwTEST[812][9];
-//    memcpy(c_nTEST, c_n, 3*sizeof(float));
-//    memcpy(A_xyzTEST, A_xyz, 16*9*3*sizeof(float_complex));
-//    memcpy(CxyzTEST, pars->Cxyz, 812*16*3*sizeof(float));
-//    memcpy(CwTEST, pars->Cw, 812*9*sizeof(float));
-
     free(A_xyz);
     free(c_n);
 
@@ -209,11 +204,11 @@ void dirass_initAna(void* const hDir)
     pars->ss = realloc(pars->ss, pars->grid_nDirs * FRAME_SIZE * sizeof(float));
     pars->ssxyz = realloc(pars->ssxyz, 3 * FRAME_SIZE * sizeof(float));
     pData->pmap = realloc(pData->pmap, pars->grid_nDirs*sizeof(float));
-    pData->prev_pmap = realloc(pData->prev_pmap, pars->grid_nDirs*sizeof(float));
     pars->est_dirs_idx = realloc(pars->est_dirs_idx, pars->grid_nDirs*sizeof(int));
     pars->prev_intensity = realloc(pars->prev_intensity, pars->grid_nDirs*3*sizeof(float));
+    pars->prev_energy = realloc(pars->prev_energy, pars->grid_nDirs*sizeof(float));
     memset(pars->prev_intensity, 0, pars->grid_nDirs*3*sizeof(float));
-    memset(pData->prev_pmap, 0, pars->grid_nDirs*sizeof(float));
+    memset(pars->prev_energy, 0, pars->grid_nDirs*sizeof(float)); 
     for(i=0; i<NUM_DISP_SLOTS; i++){
         pData->pmap_grid[i] = realloc(pData->pmap_grid[i], pars->interp_nDirs*sizeof(float));
         memset(pData->pmap_grid[i], 0, pars->interp_nDirs*sizeof(float));
