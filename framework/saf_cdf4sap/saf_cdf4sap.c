@@ -31,7 +31,7 @@ typedef struct _cdf4sap_data {
     int nXcols, nYcols;
     
     /* intermediate vectors & matrices */
-    float* lambda, *U_Cy, *S_Cy, *Ky, *U_Cx, *S_Cx, *Kx, *Kx_reg_inverse, *U, *V, *P;
+    float* lambda, *U_Cy, *S_Cy, *Ky, *U_Cx, *S_Cx, *s_Cx, *Kx, *Kx_reg_inverse, *U, *V, *P;
     float* G_hat, *Cx_QH;
     float* GhatH_Ky, *QH_GhatH_Ky, *KxH_QH_GhatH_Ky, *lambda_UH;
     float* P_Kxreginverse;
@@ -45,6 +45,7 @@ typedef struct _cdf4sap_cmplx_data {
     int nXcols, nYcols;
     
     /* intermediate vectors & matrices */
+    float_complex* Cr_cmplx;
     float_complex* lambda, *U_Cy, *S_Cy, *S_Cx, *Ky, *U_Cx, *Kx, *Kx_reg_inverse, *U, *V, *P;
     float* s_Cx;
     float_complex* G_hat, *Cx_QH;
@@ -77,6 +78,7 @@ void cdf4sap_create
     /* For the decomposition of Cx */
     h->U_Cx = malloc(nXcols*nXcols*sizeof(float));
     h->S_Cx = malloc(nXcols*nXcols*sizeof(float));
+    h->s_Cx = malloc(nXcols*sizeof(float));
     h->Kx = malloc(nXcols*nXcols*sizeof(float));
     
     /* For the formulation of regularised Kx^-1 */
@@ -119,6 +121,7 @@ void cdf4sap_cmplx_create
     h->nXcols = nXcols;
     h->nYcols = nYcols;
     h->lambda = malloc(nYcols * nXcols * sizeof(float_complex));
+    h->Cr_cmplx = malloc(nYcols * nYcols * sizeof(float_complex));
     
     /* For the decomposition of Cy */
     h->U_Cy = malloc(nYcols*nYcols*sizeof(float_complex));
@@ -171,6 +174,7 @@ void cdf4sap_destroy
     free(h->Ky);
     free(h->U_Cx);
     free(h->S_Cx);
+    free(h->s_Cx);
     free(h->Kx);
     free(h->Kx_reg_inverse);
     free(h->G_hat);
@@ -198,6 +202,7 @@ void cdf4sap_cmplx_destroy
     cdf4sap_cmplx_data *h = (cdf4sap_cmplx_data*)(*phCdf);
     
     free(h->lambda);
+    free(h->Cr_cmplx);
     free(h->U_Cy);
     free(h->S_Cy);
     free(h->Ky);
@@ -254,20 +259,21 @@ void formulate_M_and_Cr
                 h->Ky, nYcols);
     
     /* Decomposition of Cx */
-    utility_ssvd(Cx, nXcols, nXcols, h->U_Cx, h->S_Cx, NULL, NULL);
-    for(i=0; i< nXcols; i++)
+    utility_ssvd(Cx, nXcols, nXcols, h->U_Cx, h->S_Cx, NULL, h->s_Cx);
+    for(i=0; i< nXcols; i++){
         h->S_Cx[i*nXcols+i] = sqrtf(h->S_Cx[i*nXcols+i]);
+        h->s_Cx[i] = sqrtf(h->s_Cx[i]);
+    }
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nXcols, nXcols, nXcols, 1.0f,
                 h->U_Cx, nXcols,
                 h->S_Cx, nXcols, 0.0f,
                 h->Kx, nXcols);
     
     /* Regularisation of S_Cx */
-    float maxVal, limit;
-    maxVal = -2.23e7f;
-    for(i=0; i< nXcols; i++)
-        maxVal = h->S_Cx[i*nXcols+i]  > maxVal ? h->S_Cx[i*nXcols+i] : maxVal;
-    limit = maxVal * reg + 2.23e-7f;
+    int ind;
+    float limit, maxVal;
+    utility_simaxv(h->s_Cx, nXcols, &ind);
+    limit = h->s_Cx[ind] * reg + 2.23e-7f;
     for(i=0; i < nXcols; i++)
         h->S_Cx[i*nXcols+i] = 1.0f / MAX(h->S_Cx[i*nXcols+i], limit);
     
@@ -286,7 +292,7 @@ void formulate_M_and_Cr
                 Q, nXcols,
                 h->Cx_QH, nYcols, 0.0f,
                 h->G_hat, nYcols);
-    maxVal = -2.23e7f;
+    maxVal = -2.23e13f;
     for(i=0; i< nYcols; i++)
         maxVal = h->G_hat[i*nYcols+i]  > maxVal ? h->G_hat[i*nYcols+i] : maxVal;
     limit = maxVal * 0.001f + 2.23e-7f;
@@ -362,7 +368,7 @@ void formulate_M_and_Cr_cmplx
     int useEnergyFLAG,
     float reg,
     float_complex* M,
-    float_complex* Cr
+    float* Cr
 )
 {
     cdf4sap_cmplx_data *h = (cdf4sap_cmplx_data*)(hCdf);
@@ -376,7 +382,6 @@ void formulate_M_and_Cr_cmplx
         h->lambda[i*nXcols + i] = cmplxf(1.0f, 0.0f);
     
     /* Decomposition of Cy */
-    
     utility_csvd(Cy, nYcols, nYcols, h->U_Cy, h->S_Cy, NULL, NULL);
     for(i=0; i< nYcols; i++)
         h->S_Cy[i*nYcols+i] = sqrtf(h->S_Cy[i*nYcols+i]);
@@ -397,11 +402,10 @@ void formulate_M_and_Cr_cmplx
                 h->Kx, nXcols);
     
     /* Regularisation of S_Cx */
-    float maxVal, limit;
-    maxVal = -2.23e7f;
-    for(i=0; i< nXcols; i++)
-        maxVal = h->s_Cx[i] > maxVal ? h->s_Cx[i] : maxVal;
-    limit = maxVal * reg + 2.23e-7f;
+    int ind;
+    float limit, maxVal;
+    utility_simaxv(h->s_Cx, nXcols, &ind);
+    limit = h->s_Cx[ind] * reg + 2.23e-7f;
     for(i=0; i < nXcols; i++)
         h->S_Cx[i*nXcols+i] = cmplxf(1.0f / MAX(h->s_Cx[i], limit), 0.0f);
     
@@ -420,13 +424,13 @@ void formulate_M_and_Cr_cmplx
                 Q, nXcols,
                 h->Cx_QH, nYcols, &cbeta,
                 h->G_hat, nYcols); /* imaginary parts along the diagonal are ~0, so it's OK to take the real below: */
-    maxVal = -2.23e7f;
+    maxVal = -2.23e13f;
     for(i=0; i< nYcols; i++)
         maxVal = crealf(h->G_hat[i*nYcols+i]) > maxVal ? crealf(h->G_hat[i*nYcols+i]) : maxVal;
     limit = maxVal * 0.001f + 2.23e-7f;
     for(i=0; i < nYcols; i++)
         for(j=0; j < nYcols; j++)
-            h->G_hat[i*nYcols+j] = i==j ? cmplxf(sqrtf(crealf(Cy[i*nYcols+j]) / MAX(crealf(h->G_hat[i*nYcols+j]), limit)), 0.0f) : cmplxf(0.0f, 0.0f);
+            h->G_hat[i*nYcols+j] = i==j ? cmplxf(crealf(csqrtf( ccdivf(Cy[i*nYcols+j], cmplxf(MAX(crealf(h->G_hat[i*nYcols+j]), limit), 0.0f)))), 0.0f) : cmplxf(0.0f, 0.0f); 
     
     /* Formulate optimal P */
     cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans, nYcols, nYcols, nYcols, &calpha,
@@ -471,21 +475,21 @@ void formulate_M_and_Cr_cmplx
                 h->Cx_MH, nYcols, &cbeta,
                 h->Cy_tilde, nYcols);
     for(i=0; i < nYcols*nYcols; i++){
-        Cr[i] = ccsubf(Cy[i], h->Cy_tilde[i]);
-        Cr[i] = cmplxf(crealf(Cr[i]), 0.0f);
+        h->Cr_cmplx[i] = ccsubf(Cy[i], h->Cy_tilde[i]);
+        Cr[i] = crealf(h->Cr_cmplx[i]);
     }
   
     /* Use energy compensation instead of residuals */
     if(useEnergyFLAG){
         for(i=0; i < nYcols; i++)
             for(j=0; j < nYcols; j++)
-                h->G_hat[i*nYcols+j] = i==j ? cmplxf(sqrtf(crealf(Cy[i*nYcols+j]) / (crealf(h->Cy_tilde[i*nYcols+j]+2.23e-7f))), 0.0f) : cmplxf(0.0f, 0.0f);
+                h->G_hat[i*nYcols+j] = i==j ? cmplxf(crealf(csqrtf(ccdivf(Cy[i*nYcols+j], cmplxf(MAX(crealf(h->Cy_tilde[i*nYcols+j])+2.23e-7f, limit), 0.0f)))), 0.0f) : cmplxf(0.0f, 0.0f);
         cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nYcols, nXcols, nYcols, &calpha,
                     h->G_hat, nYcols,
                     M, nXcols, &cbeta,
                     h->G_M, nXcols);
         memcpy(M, h->G_M, nYcols*nXcols*sizeof(float_complex));
-        memset(Cr, 0, nYcols*nYcols*sizeof(float_complex));
+        memset(Cr, 0, nYcols*nYcols*sizeof(float));
     }
 }
  

@@ -30,6 +30,7 @@
 #include "saf_veclib.h"
 #include "saf_complex.h"
 #include "saf_sort.h"
+#include <float.h>
 
 #ifndef MIN
   #define MIN(a,b) (( (a) < (b) ) ? (a) : (b))
@@ -37,6 +38,82 @@
 #ifndef MAX
   #define MAX(a,b) (( (a) > (b) ) ? (a) : (b))
 #endif
+
+/*----------------------------- index of max-abs-value (?imaxv) -----------------------------*/
+
+void utility_siminv(const float* a, const int len, int* index)
+{
+#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
+    *index = (int)cblas_isamin(len, a, 1);
+#else
+    UNTESTED
+    int j;
+    float minVal;
+    minVal = 3.402823e+38f;
+    for(j=0; j<len; j++){
+        if(fabsf(a[j])<minVal){
+            minVal = fabsf(a[j]);
+            (*index) = j;
+        }
+    }
+#endif
+}
+
+void utility_ciminv(const float_complex* a, const int len, int* index)
+{
+#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
+    *index = (int)cblas_icamin(len, a, 1);
+#else
+    UNTESTED
+    int j;
+    float minVal;
+    minVal = 3.402823e+38f;
+    for(j=0; j<len; j++){
+        if(cabsf(a[j])<maxVal){
+            minVal = cabsf(a[j]);
+            (*index) = j;
+        }
+    }
+#endif
+}
+
+/*----------------------------- index of max-abs-value (?imaxv) -----------------------------*/
+
+void utility_simaxv(const float* a, const int len, int* index)
+{
+#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
+    *index = (int)cblas_isamax(len, a, 1);
+#else
+    UNTESTED
+    int j;
+    float maxVal;
+    maxVal = 1.175494e-38f;
+    for(j=0; j<len; j++){
+        if(fabsf(a[j])>maxVal){
+            maxVal = fabsf(a[j]);
+            (*index) = j;
+        }
+    }
+#endif
+}
+
+void utility_cimaxv(const float_complex* a, const int len, int* index)
+{
+#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
+    *index = (int)cblas_icamax(len, a, 1);
+#else
+    UNTESTED
+    int j;
+    float maxVal;
+    maxVal = 1.175494e-38f;
+    for(j=0; j<len; j++){
+        if(cabsf(a[j])>maxVal){
+            maxVal = cabsf(a[j]);
+            (*index) = j;
+        }
+    }
+#endif
+}
 
 /*----------------------------------- vector-abs (?vabs) ------------------------------------*/
 

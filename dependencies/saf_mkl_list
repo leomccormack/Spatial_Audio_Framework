@@ -31,6 +31,10 @@ cblas_sscal
 cblas_dscal
 cblas_cscal
 cblas_dgemm
+cblas_isamax
+cblas_isamin
+cblas_icamax
+cblas_icamin
 cgeev_
 cheev_
 cgesv_

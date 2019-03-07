@@ -81,7 +81,7 @@ void formulate_M_and_Cr_cmplx(void * const hCdf,      /* Covariance Domain Frame
                               int useEnergyFLAG,      /* 0: apply energy compensation to 'M' instead of outputing 'Cr', 1: output 'Cr' too */
                               float reg,              /* regularisation term */
                               float_complex* M,       /* Mixing matrix; FLAT: nYcols x nXcols */
-                              float_complex* Cr);     /* Mixing matrix for residual; FLAT: nYcols x nYcols */
+                              float* Cr);             /* Mixing matrix for residual; FLAT: nYcols x nYcols */
     
 
 #ifdef __cplusplus

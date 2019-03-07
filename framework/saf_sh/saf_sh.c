@@ -278,9 +278,7 @@ void getRSH
     float* dirs_rad;
     
     nSH = (N+1)*(N+1);
-    if((*Y)!=NULL)
-        free(*Y);
-    (*Y) = malloc(nSH*nDirs*sizeof(float));
+    (*Y) = realloc((*Y), nSH*nDirs*sizeof(float));
     scale = sqrtf(4.0f*M_PI);
    
     /* convert [azi, elev] in degrees, to [azi, inclination] in radians */
@@ -320,9 +318,7 @@ void getRSH_recur
     nSH = (N+1)*(N+1);
     index_n = 0;
     
-    if((*Y)!=NULL)
-        free(*Y);
-    (*Y) = malloc(nSH*nDirs*sizeof(float));
+    (*Y) = realloc((*Y), nSH*nDirs*sizeof(float));
     
     /* precompute factorials */
     for (i = 0; i < 2*N+1; i++)

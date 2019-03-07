@@ -60,6 +60,30 @@ typedef enum _CONJ_FLAG{
     CONJ = 2
 }CONJ_FLAG;
 
+/*----------------------------- index of min-abs-value (?imaxv) -----------------------------*/
+
+/* s, single-precision, index of minimum absolute value in a vector, [~,ind] = min(abs(a) */
+void utility_siminv(const float* a,                /* input vector a; len x 1 */
+                    const int len,                 /* vector length */
+                    int* index);                   /* & index of value; 1 x 1 */
+
+/* s, single-precision, complex, index of maximum absolute value in a vector, [~,ind] = min(abs(a) */
+void utility_ciminv(const float_complex* a,        /* input vector a; len x 1 */
+                    const int len,                 /* vector length */
+                    int* index);                   /* & index of value; 1 x 1 */
+
+/*----------------------------- index of max-abs-value (?imaxv) -----------------------------*/
+
+/* s, single-precision, index of maximum absolute value in a vector, [~,ind] = max(abs(a) */
+void utility_simaxv(const float* a,                /* input vector a; len x 1 */
+                    const int len,                 /* vector length */
+                    int* index);                   /* & index of value; 1 x 1 */
+
+/* s, single-precision, complex, index of maximum absolute value in a vector, [~,ind] = max(abs(a) */
+void utility_cimaxv(const float_complex* a,        /* input vector a; len x 1 */
+                    const int len,                 /* vector length */
+                    int* index);                   /* & index of value; 1 x 1 */
+
 /*----------------------------------- vector-abs (?vabs) ------------------------------------*/
 
 /* s, single-precision, absolute value of vector elements, c = fabsf(a) */
