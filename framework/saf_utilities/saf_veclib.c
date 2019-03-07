@@ -39,7 +39,7 @@
   #define MAX(a,b) (( (a) > (b) ) ? (a) : (b))
 #endif
 
-/*----------------------------- index of max-abs-value (?imaxv) -----------------------------*/
+/*----------------------------- index of min-abs-value (?iminv) -----------------------------*/
 
 void utility_siminv(const float* a, const int len, int* index)
 {
