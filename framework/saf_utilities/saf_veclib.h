@@ -60,7 +60,7 @@ typedef enum _CONJ_FLAG{
     CONJ = 2
 }CONJ_FLAG;
 
-/*----------------------------- index of min-abs-value (?imaxv) -----------------------------*/
+/*----------------------------- index of min-abs-value (?iminv) -----------------------------*/
 
 /* s, single-precision, index of minimum absolute value in a vector, [~,ind] = min(abs(a) */
 void utility_siminv(const float* a,                /* input vector a; len x 1 */

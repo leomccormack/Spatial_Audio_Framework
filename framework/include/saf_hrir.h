@@ -75,6 +75,16 @@ void interpFilterbankHRTFs(/* Input arguments */
                            /* Output arguments */
                            float_complex* hrtf_interp);   /* pre-alloc, interpolated HRTFs; FLAT: N_bands x 2 x N_interp_dirs */
     
+/* computes the binaural diffuse coherence per frequency */
+void binauralDiffuseCoherence(/* Input arguments */
+                              float_complex* hrtfs,       /* HRTFs as filterbank coeffs; FLAT: N_bands x 2 x N_hrtf_dirs */
+                              float* itds,                /* the inter-aural time difference for each HRIR; N_hrtf_dirs x 1 */
+                              float* freqVector,          /* frequency vector; N_bands x 1 */
+                              int N_hrtf_dirs,            /* number of HRTF directions */
+                              int N_bands,                /* number of frequency bands */
+                              /* Output arguments */
+                              float* HRTFcoh);            /* binaural coeherence per frequency; N_bands x 1 */
+    
 
 #ifdef __cplusplus
 }

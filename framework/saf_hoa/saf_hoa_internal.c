@@ -39,12 +39,14 @@ void getEPAD
 )
 {
     int i, j, nSH;
-    float* Y_ls, *U, *S, *V, *U_tr, *V_tr;
+    float* Y_ls, *U, *V, *U_tr, *V_tr;
     
     nSH = (order+1)*(order+1);
-    Y_ls = U = S = V = NULL;
+    Y_ls = NULL;
+    U = malloc(nSH*nSH*sizeof(float));
+    V = malloc(nLS*nLS*sizeof(float));
     getRSH(order, ls_dirs_deg, nLS, &Y_ls);
-    utility_ssvd(Y_ls, nSH, nLS, U, S, V, NULL);         ////////////SVD FUNCTION HAS CHANGED!
+    utility_ssvd(Y_ls, nSH, nLS, U, NULL, V, NULL);
     if(nSH>nLS){
         /* truncate the U matrix */
         U_tr = malloc(nSH*nLS*sizeof(float));
@@ -73,7 +75,6 @@ void getEPAD
         (*decMtx)[i] /= (float)nLS;
     
     free(U);
-    free(S);
     free(V);
     free(Y_ls);
 }
