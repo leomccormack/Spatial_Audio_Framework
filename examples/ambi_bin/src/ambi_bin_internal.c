@@ -194,7 +194,7 @@ void ambi_bin_initTFT
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
 
-	/* Initialise afSTFT */
+    /* Initialise afSTFT */
     if(pData->hSTFT==NULL)
         afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, NUM_EARS, 0, 1);
     else /* Or change the number of channels */

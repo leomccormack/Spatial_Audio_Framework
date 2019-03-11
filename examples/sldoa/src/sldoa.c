@@ -66,7 +66,7 @@ void sldoa_create
             pData->grid_Y[i][j] = (float)__grid_Y[i][j] * sqrtf(4.0*M_PI);
     for(i=0; i<3; i++)
         for(j=0; j<NUM_GRID_DIRS; j++)
-            pData->grid_Y_dipoles_norm[i][j] = pData->grid_Y[i+1][j]/1.732050807568878f; /* scale by largest SH magnitude, to normalise to [0..1] */
+            pData->grid_Y_dipoles_norm[i][j] = pData->grid_Y[i+1][j]/sqrtf(3); /* scale to [0..1] */
     for(i=0; i<NUM_GRID_DIRS; i++)
         for(j=0; j<2; j++)
             pData->grid_dirs_deg[i][j] = (float)__grid_dirs_deg[i][j];

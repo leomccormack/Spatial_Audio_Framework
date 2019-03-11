@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -41,23 +41,23 @@ void ambi_dec_create
     *phAmbi = (void*)pData;
     int i, j, t, ch, band;
 
-	/* default user parameters */
-	pData->masterOrder = pData->new_masterOrder = 1;
-	pData->nSH = pData->new_nSH = (pData->masterOrder + 1)*(pData->masterOrder + 1);
-	for (band = 0; band<HYBRID_BANDS; band++)
-		pData->orderPerBand[band] = 1;
-	pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
-	ambi_dec_loadPreset(PRESET_T_DESIGN_24, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
-	pData->nLoudpkrs = pData->new_nLoudpkrs;
-	pData->chOrdering = CH_ACN;
-	pData->norm = NORM_SN3D;
-	pData->dec_method[0] = DECODER_ALLRAD;
-	pData->dec_method[1] = DECODER_ALLRAD;
-	pData->rE_WEIGHT[0] = 0;
-	pData->rE_WEIGHT[1] = 1;
-	pData->diffEQmode[0] = AMPLITUDE_PRESERVING;
-	pData->diffEQmode[1] = ENERGY_PRESERVING;
-	pData->transitionFreq = 1000.0f;
+    /* default user parameters */
+    pData->masterOrder = pData->new_masterOrder = 1;
+    pData->nSH = pData->new_nSH = (pData->masterOrder + 1)*(pData->masterOrder + 1);
+    for (band = 0; band<HYBRID_BANDS; band++)
+        pData->orderPerBand[band] = 1;
+    pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
+    ambi_dec_loadPreset(PRESET_T_DESIGN_24, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
+    pData->nLoudpkrs = pData->new_nLoudpkrs;
+    pData->chOrdering = CH_ACN;
+    pData->norm = NORM_SN3D;
+    pData->dec_method[0] = DECODER_ALLRAD;
+    pData->dec_method[1] = DECODER_ALLRAD;
+    pData->rE_WEIGHT[0] = 0;
+    pData->rE_WEIGHT[1] = 1;
+    pData->diffEQmode[0] = AMPLITUDE_PRESERVING;
+    pData->diffEQmode[1] = ENERGY_PRESERVING;
+    pData->transitionFreq = 1000.0f;
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
@@ -194,8 +194,8 @@ void ambi_dec_init
             pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
     } 
 
-	/* reinitialise if needed */
-	ambi_dec_checkReInit(hAmbi);
+    /* reinitialise if needed */
+    ambi_dec_checkReInit(hAmbi);
 }
 
 void ambi_dec_process
@@ -378,23 +378,23 @@ void ambi_dec_refreshSettings(void* const hAmbi)
 
 void ambi_dec_checkReInit(void* const hAmbi)
 {
-	ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-	/* reinitialise if needed */
-	if (pData->reInitTFT == 1) {
-		pData->reInitTFT = 2;
-		ambi_dec_initTFT(hAmbi); /* always init before codec or hrtfs  */
-		pData->reInitTFT = 0;
-	}
-	if (pData->reInitCodec == 1) {
-		pData->reInitCodec = 2;
-		ambi_dec_initCodec(hAmbi);
-		pData->reInitCodec = 0;
-	}
-	if (pData->reInitHRTFs == 1) {
-		pData->reInitHRTFs = 2;
-		ambi_dec_initHRTFs(hAmbi);
-		pData->reInitHRTFs = 0;
-	}
+    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    /* reinitialise if needed */
+    if (pData->reInitTFT == 1) {
+        pData->reInitTFT = 2;
+        ambi_dec_initTFT(hAmbi); /* always init before codec or hrtfs  */
+        pData->reInitTFT = 0;
+    }
+    if (pData->reInitCodec == 1) {
+        pData->reInitCodec = 2;
+        ambi_dec_initCodec(hAmbi);
+        pData->reInitCodec = 0;
+    }
+    if (pData->reInitHRTFs == 1) {
+        pData->reInitHRTFs = 2;
+        ambi_dec_initHRTFs(hAmbi);
+        pData->reInitHRTFs = 0;
+    }
 }
 
 void ambi_dec_setMasterDecOrder(void  * const hAmbi, int newValue)

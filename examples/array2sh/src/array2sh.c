@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -82,7 +82,7 @@ void array2sh_create
     pData->new_order = pData->order;
     pData->nSH = pData->new_nSH = (pData->order+1)*(pData->order+1);
     pData->bN = NULL;
-	pData->evalReady = 0;
+    pData->evalReady = 0;
     
     /* display related stuff */
     pData->bN_modal_dB = (float**)malloc2d(HYBRID_BANDS, MAX_SH_ORDER + 1, sizeof(float));
@@ -150,16 +150,9 @@ void array2sh_init
             pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
     } 
     pData->freqVector[0] = pData->freqVector[1]/4.0f; /* avoids NaNs at DC */
-    
-//    for(band=0; band <HYBRID_BANDS-1; band++){
-//        if(sampleRate==44100)
-//            pData->disp_freqVector[band] =  (float)__afCenterFreq44100[band+1];
-//        else /* assume 48e3 */
-//            pData->disp_freqVector[band] =  (float)__afCenterFreq48e3[band+1];
-//    }
 
-	/* reinitialise if needed */
-	array2sh_checkReInit(hA2sh);
+    /* reinitialise if needed */
+    array2sh_checkReInit(hA2sh);
 }
 
 void array2sh_process
@@ -295,27 +288,27 @@ void array2sh_refreshSettings(void* const hA2sh)
 
 void array2sh_checkReInit(void* const hA2sh)
 {
-	array2sh_data *pData = (array2sh_data*)(hA2sh);
-	/* reinitialise if needed */
-	if (pData->reinitTFTFLAG == 1) {
-		pData->reinitTFTFLAG = 2;
-		array2sh_initTFT(hA2sh);
-		pData->reinitTFTFLAG = 0;
-	}
-	if (pData->reinitSHTmatrixFLAG == 1) {
-		pData->reinitSHTmatrixFLAG = 2;
-		/* compute encoding matrix */
-		array2sh_calculate_sht_matrix(hA2sh);
-		/* calculate magnitude response curves */
-		array2sh_calculate_mag_curves(hA2sh);
-		pData->reinitSHTmatrixFLAG = 0;
-	}
-	/* Too heavy to put in main loop: */
-	if (pData->recalcEvalFLAG == 1) {
-		pData->recalcEvalFLAG = 2;
-		array2sh_evaluateSHTfilters(hA2sh);
-		pData->recalcEvalFLAG = 0;
-	}
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    /* reinitialise if needed */
+    if (pData->reinitTFTFLAG == 1) {
+        pData->reinitTFTFLAG = 2;
+        array2sh_initTFT(hA2sh);
+        pData->reinitTFTFLAG = 0;
+    }
+    if (pData->reinitSHTmatrixFLAG == 1) {
+        pData->reinitSHTmatrixFLAG = 2;
+        /* compute encoding matrix */
+        array2sh_calculate_sht_matrix(hA2sh);
+        /* calculate magnitude response curves */
+        array2sh_calculate_mag_curves(hA2sh);
+        pData->reinitSHTmatrixFLAG = 0;
+    }
+    /* Too heavy to put in main loop: */
+    if (pData->recalcEvalFLAG == 1) {
+        pData->recalcEvalFLAG = 2;
+        array2sh_evaluateSHTfilters(hA2sh);
+        pData->recalcEvalFLAG = 0;
+    }
     if (pData->applyDiffEQFLAG == 1) {
         pData->applyDiffEQFLAG = 2;
         array2sh_apply_diff_EQ(hA2sh);
@@ -496,13 +489,13 @@ void array2sh_setMaxFreq(void* const hA2sh, float newF)
 
 int array2sh_getEvalReady(void* const hA2sh)
 {
-	array2sh_data *pData = (array2sh_data*)(hA2sh);
-	if (pData->evalReady) {
-		pData->evalReady = 0;
-		return 1;
-	}
-	else
-		return 0;
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    if (pData->evalReady) {
+        pData->evalReady = 0;
+        return 1;
+    }
+    else
+        return 0;
 }
 
 int array2sh_getIsEvalValid(void* const hA2sh)

@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -550,7 +550,7 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
     float* Y_grid_real;
     float_complex* Y_grid, *H_array, *Wshort;
     
-	pData->evalReady = 0;
+    pData->evalReady = 0;
     assert(pData->W != NULL);
     
     /* simulate the current array by firing 812 plane-waves around the surface of a theoretical version of the array
@@ -626,7 +626,7 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
                 Wshort[band*nSH*(arraySpecs->Q) + i*(arraySpecs->Q) + j] = pData->W[band][i][j];
     evaluateSHTfilters(order, Wshort, arraySpecs->Q, HYBRID_BANDS, H_array, 812, Y_grid, pData->cSH, pData->lSH);
 
-	pData->evalReady = 1;
+    pData->evalReady = 1;
     pData->currentEvalIsValid = 1;
 
     free(Y_grid_real);

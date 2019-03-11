@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -131,8 +131,8 @@ void panner_init
     /* calculate pValue per frequency */
     panner_getPvalue(pData->DTT, pData->freqVector, pData->pValue);
 
-	/* reinitialise if needed */
-	panner_checkReInit(hPan);
+    /* reinitialise if needed */
+    panner_checkReInit(hPan);
 }
 
 void panner_process
@@ -156,7 +156,7 @@ void panner_process
     panner_checkReInit(hPan);
 #else
     if(pData->reInitTFT==1){
-		pData->reInitTFT = 2;
+        pData->reInitTFT = 2;
         panner_initTFT(hPan);
         pData->reInitTFT = 0;
     }
@@ -164,7 +164,7 @@ void panner_process
 
     /* apply panner */
     if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && (pData->vbap_gtable != NULL) 
-		&& (pData->reInitTFT == 0) && (pData->reInitGainTables == 0)) {
+        && (pData->reInitTFT == 0) && (pData->reInitGainTables == 0)) {
         memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
         memcpy(pValue, pData->pValue, HYBRID_BANDS*sizeof(float));
         nSources = pData->nSources;
@@ -308,19 +308,19 @@ void panner_refreshSettings(void* const hPan)
 
 void panner_checkReInit(void* const hPan)
 {
-	panner_data *pData = (panner_data*)(hPan);
+    panner_data *pData = (panner_data*)(hPan);
 
-	/* reinitialise if needed */
-	if (pData->reInitTFT==1) {
-		pData->reInitTFT = 2;
-		panner_initTFT(hPan);
-		pData->reInitTFT = 0;
-	}
-	if (pData->reInitGainTables==1) {
-		pData->reInitGainTables = 2;
-		panner_initGainTables(hPan);
-		pData->reInitGainTables = 0;
-	}
+    /* reinitialise if needed */
+    if (pData->reInitTFT==1) {
+        pData->reInitTFT = 2;
+        panner_initTFT(hPan);
+        pData->reInitTFT = 0;
+    }
+    if (pData->reInitGainTables==1) {
+        pData->reInitGainTables = 2;
+        panner_initGainTables(hPan);
+        pData->reInitGainTables = 0;
+    }
 }
 
 void panner_setSourceAzi_deg(void* const hPan, int index, float newAzi_deg)

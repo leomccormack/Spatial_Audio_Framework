@@ -1,4 +1,4 @@
-    /*
+        /*
  Copyright 2016-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -59,8 +59,8 @@ void powermap_create
     pars->interp_table = NULL;
     
     /* internal */
-	pData->reInitTFT = 1;
-	pData->reInitAna = 1;
+    pData->reInitTFT = 1;
+    pData->reInitAna = 1;
     pData->dispWidth = 140;
 
     /* display */
@@ -163,8 +163,8 @@ void powermap_init
     pData->pmapReady = 0;
     pData->dispSlotIdx = 0;
 
-	/* reinitialise if needed */
-	powermap_checkReInit(hPm);
+    /* reinitialise if needed */
+    powermap_checkReInit(hPm);
 }
 
 
@@ -356,12 +356,11 @@ void powermap_analysis
                         pData->pmap_grid[pData->dispSlotIdx], 1);
 
             /* ascertain minimum and maximum values for powermap colour scaling */
-            pData->pmap_grid_minVal = FLT_MAX;
-            pData->pmap_grid_maxVal = FLT_MIN;
-            for(i=0; i<pars->interp_nDirs; i++){
-                pData->pmap_grid_minVal = pData->pmap_grid[pData->dispSlotIdx][i] < pData->pmap_grid_minVal ? pData->pmap_grid[pData->dispSlotIdx][i] : pData->pmap_grid_minVal;
-                pData->pmap_grid_maxVal = pData->pmap_grid[pData->dispSlotIdx][i] > pData->pmap_grid_maxVal ? pData->pmap_grid[pData->dispSlotIdx][i] : pData->pmap_grid_maxVal;
-            }
+            int ind;
+            utility_siminv(pData->pmap_grid[pData->dispSlotIdx], pars->interp_nDirs, &ind);
+            pData->pmap_grid_minVal = pData->pmap_grid[pData->dispSlotIdx][ind];
+            utility_simaxv(pData->pmap_grid[pData->dispSlotIdx], pars->interp_nDirs, &ind);
+            pData->pmap_grid_maxVal = pData->pmap_grid[pData->dispSlotIdx][ind];
 
             /* normalise the powermap to 0..1 */
             for(i=0; i<pars->interp_nDirs; i++)
@@ -380,27 +379,27 @@ void powermap_analysis
  
 void powermap_refreshSettings(void* const hPm)
 {
-	powermap_data *pData = (powermap_data*)(hPm);
-	pData->reInitTFT = 1;
-	pData->reInitAna = 1; 
+    powermap_data *pData = (powermap_data*)(hPm);
+    pData->reInitTFT = 1;
+    pData->reInitAna = 1; 
 }
  
 void powermap_checkReInit(void* const hPm)
 {
-	powermap_data *pData = (powermap_data*)(hPm); 
-	/* reinitialise if needed */
-	if (pData->reInitTFT == 1) {
-		pData->reInitTFT = 2;
-		powermap_initTFT(hPm);
-		pData->reInitTFT = 0;
-	}
-	if (pData->reInitAna == 1) {
-		pData->reInitAna = 2;  /* indicate init in progress */
-		pData->pmapReady = 0;  /* avoid trying to draw pmap during reinit */
-		powermap_initAna(hPm);
-		pData->reInitAna = 0;  /* indicate init complete */
-		pData->recalcPmap = 1; /* recalculate powermap with new configuration */
-	}
+    powermap_data *pData = (powermap_data*)(hPm); 
+    /* reinitialise if needed */
+    if (pData->reInitTFT == 1) {
+        pData->reInitTFT = 2;
+        powermap_initTFT(hPm);
+        pData->reInitTFT = 0;
+    }
+    if (pData->reInitAna == 1) {
+        pData->reInitAna = 2;  /* indicate init in progress */
+        pData->pmapReady = 0;  /* avoid trying to draw pmap during reinit */
+        powermap_initAna(hPm);
+        pData->reInitAna = 0;  /* indicate init complete */
+        pData->recalcPmap = 1; /* recalculate powermap with new configuration */
+    }
 }
 
 void powermap_setPowermapMode(void* const hPm, int newMode)

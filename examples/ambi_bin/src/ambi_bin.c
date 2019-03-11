@@ -36,24 +36,24 @@ void ambi_bin_create
     *phAmbi = (void*)pData;
     int t, ch, band;
 
-	/* default user parameters */
-	for (band = 0; band<HYBRID_BANDS; band++)
-		pData->EQ[band] = 1.0f;
-	pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
-	pData->chOrdering = CH_ACN;
-	pData->norm = NORM_SN3D;
-	pData->rE_WEIGHT = 1;
-	pData->enableRotation = 0;
-	pData->yaw = 0.0f;
-	pData->pitch = 0.0f;
-	pData->roll = 0.0f;
-	pData->bFlipYaw = 0;
-	pData->bFlipPitch = 0;
-	pData->bFlipRoll = 0;
-	pData->useRollPitchYawFlag = 0;
-	ambi_bin_setInputOrderPreset(*phAmbi, INPUT_ORDER_FIRST);
-	pData->nSH = pData->new_nSH;
-	pData->enablePhaseManip = 1;
+    /* default user parameters */
+    for (band = 0; band<HYBRID_BANDS; band++)
+        pData->EQ[band] = 1.0f;
+    pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
+    pData->chOrdering = CH_ACN;
+    pData->norm = NORM_SN3D;
+    pData->rE_WEIGHT = 1;
+    pData->enableRotation = 0;
+    pData->yaw = 0.0f;
+    pData->pitch = 0.0f;
+    pData->roll = 0.0f;
+    pData->bFlipYaw = 0;
+    pData->bFlipPitch = 0;
+    pData->bFlipRoll = 0;
+    pData->useRollPitchYawFlag = 0;
+    ambi_bin_setInputOrderPreset(*phAmbi, INPUT_ORDER_FIRST);
+    pData->nSH = pData->new_nSH;
+    pData->enablePhaseManip = 1;
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
@@ -151,8 +151,8 @@ void ambi_bin_init
             pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
     } 
 
-	/* reinitialise if needed */
-	ambi_bin_checkReInit(hAmbi);
+    /* reinitialise if needed */
+    ambi_bin_checkReInit(hAmbi);
 }
 
 void ambi_bin_process
@@ -183,11 +183,11 @@ void ambi_bin_process
 #ifdef __APPLE__
     ambi_bin_checkReInit(hAmbi);
 #else
-	if (pData->reInitTFT == 1) {
-		pData->reInitTFT = 2;
-		ambi_bin_initTFT(hAmbi); /* always init before codec */
-		pData->reInitTFT = 0;
-	}
+    if (pData->reInitTFT == 1) {
+        pData->reInitTFT = 2;
+        ambi_bin_initTFT(hAmbi); /* always init before codec */
+        pData->reInitTFT = 0;
+    }
 #endif
 
     /* decode audio to loudspeakers or headphones */
@@ -232,21 +232,21 @@ void ambi_bin_process
                     pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
     
         /* Apply rotation */
-		if (order > 0 && enableRot) {
-			M_rot_tmp = malloc(nSH*nSH * sizeof(float));
-			yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
-			getSHrotMtxReal(Rxyz, M_rot_tmp, order);
-			for (i = 0; i < nSH; i++)
-				for (j = 0; j < nSH; j++)
-					M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH + j], 0.0f);
-			free(M_rot_tmp);
+        if (order > 0 && enableRot) {
+            M_rot_tmp = malloc(nSH*nSH * sizeof(float));
+            yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
+            getSHrotMtxReal(Rxyz, M_rot_tmp, order);
+            for (i = 0; i < nSH; i++)
+                for (j = 0; j < nSH; j++)
+                    M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH + j], 0.0f);
+            free(M_rot_tmp);
             for (band = 0; band < HYBRID_BANDS; band++) {
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, nSH, &calpha,
                             M_rot, MAX_NUM_SH_SIGNALS,
                             pData->SHframeTF[band], TIME_SLOTS, &cbeta,
                             pData->SHframeTF_rot[band], TIME_SLOTS);
             }
-		}
+        }
         else
             memcpy(pData->SHframeTF_rot, pData->SHframeTF, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
         
@@ -294,19 +294,19 @@ void ambi_bin_refreshParams(void* const hAmbi)
 
 void ambi_bin_checkReInit(void* const hAmbi)
 {
-	ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
 
-	/* reinitialise if needed */
-	if (pData->reInitTFT == 1) {
-		pData->reInitTFT = 2;
-		ambi_bin_initTFT(hAmbi); /* always init before codec */
-		pData->reInitTFT = 0;
-	}
-	if (pData->reInitCodec == 1) {
-		pData->reInitCodec = 2;
-		ambi_bin_initCodec(hAmbi);
-		pData->reInitCodec = 0;
-	}
+    /* reinitialise if needed */
+    if (pData->reInitTFT == 1) {
+        pData->reInitTFT = 2;
+        ambi_bin_initTFT(hAmbi); /* always init before codec */
+        pData->reInitTFT = 0;
+    }
+    if (pData->reInitCodec == 1) {
+        pData->reInitCodec = 2;
+        ambi_bin_initCodec(hAmbi);
+        pData->reInitCodec = 0;
+    }
 }
 
 void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState)

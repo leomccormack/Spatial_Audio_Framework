@@ -1,4 +1,4 @@
-/*
+    /*
  Copyright 2019 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -63,7 +63,7 @@ void dirass_create
     pars->prev_energy = NULL;
     
     /* internal */
-	pData->reInitAna = 1; 
+    pData->reInitAna = 1; 
 
     /* display */
     pData->pmap = NULL;
@@ -156,8 +156,8 @@ void dirass_init
     pData->pmapReady = 0;
     pData->dispSlotIdx = 0;
 
-	/* reinitialise if needed */
-	dirass_checkReInit(hDir);
+    /* reinitialise if needed */
+    dirass_checkReInit(hDir);
 }
 
 
@@ -352,12 +352,11 @@ void dirass_analysis
             }
              
             /* ascertain the minimum and maximum values for pmap colour scaling */
-            pData->pmap_grid_minVal = FLT_MAX;
-            pData->pmap_grid_maxVal = FLT_MIN;
-            for(i=0; i<pars->interp_nDirs; i++){
-                pData->pmap_grid_minVal = pData->pmap_grid[pData->dispSlotIdx][i] < pData->pmap_grid_minVal ? pData->pmap_grid[pData->dispSlotIdx][i] : pData->pmap_grid_minVal;
-                pData->pmap_grid_maxVal = pData->pmap_grid[pData->dispSlotIdx][i] > pData->pmap_grid_maxVal ? pData->pmap_grid[pData->dispSlotIdx][i] : pData->pmap_grid_maxVal;
-            }
+            int ind;
+            utility_siminv(pData->pmap_grid[pData->dispSlotIdx], pars->interp_nDirs, &ind);
+            pData->pmap_grid_minVal = pData->pmap_grid[pData->dispSlotIdx][ind];
+            utility_simaxv(pData->pmap_grid[pData->dispSlotIdx], pars->interp_nDirs, &ind);
+            pData->pmap_grid_maxVal = pData->pmap_grid[pData->dispSlotIdx][ind];
 
             /* normalise the pmap to 0..1 */
             for(i=0; i<pars->interp_nDirs; i++)
@@ -376,21 +375,21 @@ void dirass_analysis
  
 void dirass_refreshSettings(void* const hDir)
 {
-	dirass_data *pData = (dirass_data*)(hDir);
-	pData->reInitAna = 1; 
+    dirass_data *pData = (dirass_data*)(hDir);
+    pData->reInitAna = 1; 
 }
  
 void dirass_checkReInit(void* const hDir)
 {
-	dirass_data *pData = (dirass_data*)(hDir); 
-	/* reinitialise if needed */
-	if (pData->reInitAna == 1) {
-		pData->reInitAna = 2;  /* indicate init in progress */
-		pData->pmapReady = 0;  /* avoid trying to draw pmap during reinit */
-		dirass_initAna(hDir);
-		pData->reInitAna = 0;  /* indicate init complete */
-		pData->recalcPmap = 1; /* recalculate dirass with new configuration */
-	}
+    dirass_data *pData = (dirass_data*)(hDir); 
+    /* reinitialise if needed */
+    if (pData->reInitAna == 1) {
+        pData->reInitAna = 2;  /* indicate init in progress */
+        pData->pmapReady = 0;  /* avoid trying to draw pmap during reinit */
+        dirass_initAna(hDir);
+        pData->reInitAna = 0;  /* indicate init complete */
+        pData->recalcPmap = 1; /* recalculate dirass with new configuration */
+    }
 }
 
 void dirass_setBeamType(void* const hDir, int newType)
