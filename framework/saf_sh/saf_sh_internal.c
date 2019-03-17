@@ -222,7 +222,7 @@ void SPHK
         }
         return;
     }
-    SK[0]=0.5*PI/X*exp(-X);
+    SK[0]=0.5*M_PI/X*exp(-X);
     SK[1]=SK[0]*(1.0+1.0/X);
     F0=SK[0];
     F1=SK[1];

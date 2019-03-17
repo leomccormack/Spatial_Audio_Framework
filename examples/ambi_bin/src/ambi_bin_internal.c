@@ -17,7 +17,6 @@
  *     ambi_bin_internal.c
  * Description:
  *     A binaural Ambisonic decoder for reproducing ambisonic signals over headphones.
- *     Optionally, a SOFA file may be loaded for personalised headphone listening.
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_hrir, saf_sh
  * Author, date created:
@@ -25,9 +24,8 @@
  */
 
 #include "ambi_bin_internal.h"
- 
 #define SAF_ENABLE_SOFA_READER
-#include "saf_sofa_reader.h" 
+#include "saf_sofa_reader.h"
 
 void ambi_bin_initCodec
 (
@@ -36,14 +34,10 @@ void ambi_bin_initCodec
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     codecPars* pars = pData->pars;
-    int i, j, k, nSH, band, t, nDirs_td;
-    int* hrir_closest_idx;
-    float scale;
-    float* Y_td, *t_dirs;
-    float_complex* M_dec_t, *hrtf_fb_short;
-    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+    int i, j, k, nSH, order, band;
     
-    nSH = (pData->order+1)*(pData->order+1);
+    order = pData->new_order;
+    nSH = (order+1)*(order+1);
     
     /* load sofa file or load default hrir data */
     if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
@@ -88,103 +82,40 @@ void ambi_bin_initCodec
     estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, &(pars->itds_s));
     
     /* convert hrirs to filterbank coefficients */
-    for (i=0; i<2; i++){ /* [0] WITHOUT, [1] WITH phase manipulation */
-        if(pars->hrtf_fb[i]!= NULL){
-            free(pars->hrtf_fb[i]);
-            pars->hrtf_fb[i] = NULL; 
-        }
-#if USE_NEAREST_HRIRS
-        HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->itds_s, (float*)pData->freqVector, HYBRID_BANDS, i, &(pars->hrtf_fb[i]));
-#else
-        HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->itds_s, (float*)pData->freqVector, HYBRID_BANDS, 0, &(pars->hrtf_fb[i]));
-#endif
+    if(pars->hrtf_fb!= NULL){
+        free(pars->hrtf_fb);
+        pars->hrtf_fb = NULL;
     }
-    
-    /* define t-design for this order */
-    if(pData->order == 0)
-        t = 2;
-    else if(pData->order <= 1)
-        t = 4*(pData->order);
-    else
-        t = 2*(pData->order);
-    if (t<=20){
-        nDirs_td = __Tdesign_nPoints_per_degree[t-1];
-        t_dirs = (float*)__HANDLES_Tdesign_dirs_deg[t-1];
-    }
-    else {
-        t_dirs = (float*)__Tdesign_degree_30_dirs_deg;
-        nDirs_td = 480;
-    }
-    
-    /* define M_dec_td (decoder to t-design) */
-    Y_td = NULL;
-    getRSH(pData->order, t_dirs, nDirs_td, &Y_td);
-    float* Y_td_mrE,* a_n;
-    M_dec_t = malloc(nSH*nDirs_td*sizeof(float_complex));
-    if(pData->rE_WEIGHT){
-        Y_td_mrE  = malloc(nSH*nDirs_td*sizeof(float));
-        a_n = malloc(nSH*nSH*sizeof(float));
-        getMaxREweights(pData->order, a_n);
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, nDirs_td, nSH, 1.0f,
-                    a_n, nSH,
-                    Y_td, nDirs_td, 0.0f,
-                    Y_td_mrE, nDirs_td);
-        memcpy(Y_td, Y_td_mrE, nSH*nDirs_td*sizeof(float));
-        free(Y_td_mrE);
-        free(a_n);
-    }
-    scale = 1.0f/(float)nDirs_td;
-    for(i=0; i<nDirs_td*nSH; i++)
-        M_dec_t[i] = cmplxf(Y_td[i] * scale, 0.0f);
-    
-#if USE_NEAREST_HRIRS
-    /* M_dec(f) = H(f) * M_dec_td */
-    hrir_closest_idx = malloc(nDirs_td*sizeof(int));
-    hrtf_fb_short = malloc(NUM_EARS*nDirs_td*sizeof(float_complex));
-    findClosestGridPoints(pars->hrir_dirs_deg, pars->N_hrir_dirs, t_dirs, nDirs_td, 1, hrir_closest_idx, NULL, NULL);
-    memset(pars->M_dec, 0, 2*HYBRID_BANDS*NUM_EARS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
-    for(j=0; j<2; j++){ /* [0] WITHOUT, [1] WITH phase manipulation */
-        for(band=0; band<HYBRID_BANDS; band++){
-            for(i=0; i<nDirs_td; i++){
-                hrtf_fb_short[0*nDirs_td+i] = pars->hrtf_fb[j][band*NUM_EARS*(pars->N_hrir_dirs)+0*(pars->N_hrir_dirs) + hrir_closest_idx[i]];
-                hrtf_fb_short[1*nDirs_td+i] = pars->hrtf_fb[j][band*NUM_EARS*(pars->N_hrir_dirs)+1*(pars->N_hrir_dirs) + hrir_closest_idx[i]];
-            }
-            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, NUM_EARS, nSH, nDirs_td, &calpha,
-                        hrtf_fb_short, nDirs_td,
-                        M_dec_t, nDirs_td, &cbeta,
-                        pars->M_dec[j][band], MAX_NUM_SH_SIGNALS);
-        }
-    }
-    free(hrir_closest_idx);
-    free(hrtf_fb_short);
-    
-    /* Alternatively, use triangular interpolation: */
-#else
-    /* calculate interpolation table */
-    int N_gtable,nTriangles;
-    float* gtable;
-    gtable = NULL;
-    generateVBAPgainTable3D_srcs(t_dirs, nDirs_td, pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, 1, 0.0f, &gtable, &N_gtable, &nTriangles);
-    VBAPgainTable2InterpTable(gtable, nDirs_td, pars->N_hrir_dirs);
-    
-    /* M_dec(f) = H(f) * M_dec_td */
-    hrtf_fb_short = malloc(HYBRID_BANDS*NUM_EARS*nDirs_td*sizeof(float_complex));
-    memset(pars->M_dec, 0, 2*HYBRID_BANDS*NUM_EARS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
-    for(j=0; j<2; j++){ /* [0] WITHOUT, [1] WITH phase manipulation */
-        interpFilterbankHRTFs(pars->hrtf_fb[j], pars->itds_s, pData->freqVector, gtable, pars->N_hrir_dirs, HYBRID_BANDS, nDirs_td, j, hrtf_fb_short);
+    HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->itds_s, (float*)pData->freqVector, HYBRID_BANDS, 0, &(pars->hrtf_fb));
 
-        for(band=0; band<HYBRID_BANDS; band++){
-            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, NUM_EARS, nSH, nDirs_td, &calpha,
-                        &hrtf_fb_short[band*NUM_EARS*nDirs_td], nDirs_td,
-                        M_dec_t, nDirs_td, &cbeta,
-                        pars->M_dec[j][band], MAX_NUM_SH_SIGNALS);
-        }
+    /* getDecoder */
+    float_complex* decMtx;
+    decMtx = calloc(HYBRID_BANDS*NUM_EARS*nSH, sizeof(float_complex));
+    switch(pData->method){
+        case DECODING_METHOD_LS:
+            getBinauralAmbiDecoder(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS, BINAURAL_DECODER_LS, order, pData->freqVector, pars->itds_s, NULL, decMtx);
+            break;
+        case DECODING_METHOD_LSDIFFEQ:
+            getBinauralAmbiDecoder(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS, BINAURAL_DECODER_LSDIFFEQ, order, pData->freqVector, pars->itds_s, NULL, decMtx);
+            break;
+        case DECODING_METHOD_SPR:
+            getBinauralAmbiDecoder(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS, BINAURAL_DECODER_SPR, order, pData->freqVector, pars->itds_s, NULL, decMtx);
+            break;
+        case DECODING_METHOD_TAC:
+            getBinauralAmbiDecoder(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS, BINAURAL_DECODER_TAC, order, pData->freqVector, pars->itds_s, NULL, decMtx);
+            break;
+        case DECODING_METHOD_MAGLS:
+            getBinauralAmbiDecoder(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS, BINAURAL_DECODER_MAGLS, order, pData->freqVector, pars->itds_s, NULL, decMtx);
+            break;
     }
-    free(gtable);
-#endif
+    memset(pars->M_dec, 0, HYBRID_BANDS*NUM_EARS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
+    for(band=0; band<HYBRID_BANDS; band++)
+        for(i=0; i<NUM_EARS; i++)
+            for(j=0; j<nSH; j++)
+                pars->M_dec[band][i][j] = decMtx[band*2*nSH + i*nSH + j];
+    free(decMtx);
     
-    free(M_dec_t);
-    free(Y_td);
+    pData->order = order;
 }
 
 void ambi_bin_initTFT

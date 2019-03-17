@@ -243,8 +243,8 @@ void utility_sslslv(const float* A,          /* square symmetric positive-defina
                     int nCol,                /* number of columns in right hand side matrix */
                     float* X);               /* the solution; dim x nCol */
 
-/* c, row-major, linear solver (AX=B) for symmetric positive-definate 'A': single precision complex */
-void utility_cslslv(const float_complex* A,  /* square symmetric positive-definate matrix; flat: dim x dim */
+/* c, row-major, linear solver (AX=B) for hermitian positive-definate 'A': single precision complex */
+void utility_cslslv(const float_complex* A,  /* square hermitian positive-definate matrix; flat: dim x dim */
                     const int dim,           /* dimensions for the square matrix, A */
                     float_complex* B,        /* right hand side matrix; flat: dim x nCol */
                     int nCol,                /* number of columns in right hand side matrix */
@@ -253,16 +253,28 @@ void utility_cslslv(const float_complex* A,  /* square symmetric positive-defina
 /*------------------------------- matrix pseudo-inverse (?pinv) -----------------------------*/
 
 /* s, row-major, general matrix pseudo-inverse (the svd way): single precision */
-void utility_spinv(const float* inM,          /* in matrix; flat:[dim1][dim2] */
-                   const int dim1,
-                   const int dim2,
-                   float* outM);              /* out matrix; flat:[dim2][dim1] */
+void utility_spinv(const float* inM,          /* in matrix; flat: dim1 x dim2 */
+                   const int dim1,            /*  */
+                   const int dim2,            /*  */
+                   float* outM);              /* out matrix; flat: dim2 x dim1 */
 
 /* d, row-major, general matrix pseudo-inverse (the svd way): double precision */
-void utility_dpinv(const double* inM,          /* in matrix; flat:[dim1][dim2] */
-                   const int dim1,
-                   const int dim2,
-                   double* outM);              /* out matrix; flat:[dim2][dim1] */
+void utility_dpinv(const double* inM,          /* in matrix; flat: dim1 x dim2 */
+                   const int dim1,             /*  */
+                   const int dim2,             /*  */
+                   double* outM);              /* out matrix; flat: dim2 x dim1 */
+
+/*------------------------------- Cholesky factorisation (?chol) -----------------------------*/
+
+/* s, row-major, Cholesky factorisation (X'*X = A): single precision */
+void utility_schol(const float* A,          /* square symmetric positive-definate matrix; flat: dim x dim */
+                   const int dim,           /* dimensions for the square matrix, A */
+                   float* X);               /* the solution; dim x dim */
+
+/* c, row-major, Cholesky factorisation (X'*X = A): single precision, complex */
+void utility_cchol(const float_complex* A,  /* square symmetric positive-definate matrix; flat: dim x dim */
+                   const int dim,           /* dimensions for the square matrix, A */
+                   float_complex* X);       /* the solution; dim x dim */
 
 /*-------------------------------- matrix inversion (?inv) ----------------------------------*/
 //TODO: rewrite for row-major:

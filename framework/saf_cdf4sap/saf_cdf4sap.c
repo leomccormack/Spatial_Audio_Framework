@@ -25,6 +25,7 @@
  */
 
 #include "saf_cdf4sap.h"
+#include "saf_utilities.h"   /* for blas/lapack and complex number support */
 
 typedef struct _cdf4sap_data {
     /* Dimensions of Cx and Cy */

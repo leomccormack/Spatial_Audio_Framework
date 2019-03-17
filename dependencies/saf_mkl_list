@@ -41,6 +41,7 @@ cgesv_
 cgetrf_
 cgetri_
 cposv_
+cpotrf_
 dgesvd_
 dgetrf_
 dgetri_
@@ -50,6 +51,7 @@ sgetrf_
 sgetri_
 sposv_
 ssyev_
+spotrf_
 vsMul
 vcMul
 vsAbs

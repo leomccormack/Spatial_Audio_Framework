@@ -34,7 +34,7 @@
 extern "C" {
 #endif
     
-#include "saf_utilities.h"
+#include "../saf_utilities/saf_complex.h"
     
 /****************/
 /* Enum options */
@@ -293,7 +293,16 @@ void rotateAxisCoeffsComplex(/* Input arguments */
                              /* Output arguments */
                              float_complex* c_nm); /* coefficients of rotated pattern expressed as a sum of SHs; (N+1)^2 x 1 */
     
-
+/* computes the condition numbers for a least-squares SHT */
+void checkCondNumberSHTReal(/* Input arguments */
+                            int order,            /* order */
+                            float* dirs_rad,      /* directions on the sphere [azi, INCLINATION] convention, radians; FLAT: nDirs x 2 */
+                            int nDirs,            /* number of directions */
+                            float* w,             /* weights; nDirs x 1 */
+                            /* Output arguments */
+                            float* cond_N);       /* condition numbers; (order+1) x 1 */
+    
+    
 /**************************************/
 /* Localisation Functions in the  SHD */
 /**************************************/

@@ -16,8 +16,7 @@
  * Filename:
  *     ambi_bin.h (include header)
  * Description:
- *     A binaural Ambisonic decoder for reproducing ambisonic signals over headphones.
- *     Optionally, a SOFA file may be loaded for personalised headphone listening.
+ *     A binaural Ambisonic decoder for reproducing ambisonic signals over headphones. 
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_hrir, saf_vbap, saf_sh
  * Author, date created:
@@ -36,8 +35,7 @@ extern "C" {
 /***********/
     
 typedef enum _INPUT_ORDERS{
-    INPUT_OMNI = 1,
-    INPUT_ORDER_FIRST,
+    INPUT_ORDER_FIRST = 1,
     INPUT_ORDER_SECOND,
     INPUT_ORDER_THIRD,
     INPUT_ORDER_FOURTH,
@@ -46,6 +44,15 @@ typedef enum _INPUT_ORDERS{
     INPUT_ORDER_SEVENTH
     
 }INPUT_ORDERS;
+    
+typedef enum _DECODING_METHODS{
+    DECODING_METHOD_LS = 1,         /* Least-squares (LS) decoder */
+    DECODING_METHOD_LSDIFFEQ,       /* Least-squares (LS) decoder with diffuse-field spectral equalisation */
+    DECODING_METHOD_SPR,            /* Spatial resampling decoder (on the same lines as the virtual loudspeaker approach) */
+    DECODING_METHOD_TAC,            /* Time-alignment and covariance contraint decoder */
+    DECODING_METHOD_MAGLS           /* Magnitude least-squares decoder */
+    
+}DECODING_METHODS;
 
 typedef enum _CH_ORDER{
     CH_ACN = 1
@@ -96,14 +103,14 @@ void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState);
 void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path);
 
 void ambi_bin_setInputOrderPreset(void* const hAmbi, INPUT_ORDERS newPreset);
+    
+void ambi_bin_setDecodingMethod(void* const hAmbi, DECODING_METHODS newMethod);
 
 void ambi_bin_setChOrder(void* const hAmbi, int newOrder);
 
 void ambi_bin_setNormType(void* const hAmbi, int newType);
 
 void ambi_bin_setDecEnableMaxrE(void* const hAmbi, int newState);
-    
-void ambi_bin_setEnablePhaseManip(void* const hAmbi, int newState);
     
 void ambi_bin_setEnableRotation(void* const hAmbi, int newState);
     
@@ -129,6 +136,8 @@ void ambi_bin_setRPYflag(void* const hAmbi, int newState);
 int ambi_bin_getUseDefaultHRIRsflag(void* const hAmbi);
     
 int ambi_bin_getInputOrderPreset(void* const hAmbi);
+    
+int ambi_bin_getDecodingMethod(void* const hAmbi);
 
 char* ambi_bin_getSofaFilePath(void* const hAmbi);
 
@@ -136,9 +145,7 @@ int ambi_bin_getChOrder(void* const hAmbi);
 
 int ambi_bin_getNormType(void* const hAmbi);
     
-int ambi_bin_getDecEnableMaxrE(void* const hAmbi);
-    
-int ambi_bin_getEnablePhaseManip(void* const hAmbi);
+int ambi_bin_getDecEnableMaxrE(void* const hAmbi); 
     
 int ambi_bin_getNumEars(void);
     

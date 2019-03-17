@@ -26,11 +26,11 @@
 #ifndef __SAF_HRIR_H_INCLUDED__
 #define __SAF_HRIR_H_INCLUDED__
 
-#include "saf_utilities.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+    
+#include "../saf_utilities/saf_complex.h"
     
 #ifndef M_PI
   #define M_PI ( 3.14159265359f )

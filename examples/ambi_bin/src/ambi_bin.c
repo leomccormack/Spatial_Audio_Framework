@@ -16,8 +16,7 @@
  * Filename:
  *     ambi_bin.c
  * Description:
- *     A binaural Ambisonic decoder for reproducing ambisonic signals over headphones.
- *     Optionally, a SOFA file may be loaded for personalised headphone listening.
+ *     A binaural Ambisonic decoder for reproducing ambisonic signals over headphones. 
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_hrir, saf_sh
  * Author, date created:
@@ -51,9 +50,9 @@ void ambi_bin_create
     pData->bFlipPitch = 0;
     pData->bFlipRoll = 0;
     pData->useRollPitchYawFlag = 0;
-    ambi_bin_setInputOrderPreset(*phAmbi, INPUT_ORDER_FIRST);
-    pData->nSH = pData->new_nSH;
-    pData->enablePhaseManip = 1;
+    pData->method = DECODING_METHOD_LS;
+    pData->order = pData->new_order = 1;
+    pData->nSH = pData->new_nSH = (pData->order+1)*(pData->order+1);
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
@@ -80,8 +79,7 @@ void ambi_bin_create
     pars->hrirs = NULL;
     pars->hrir_dirs_deg = NULL;
     pars->itds_s = NULL;
-    pars->hrtf_fb[0] = NULL;
-    pars->hrtf_fb[1] = NULL;
+    pars->hrtf_fb = NULL;
     
     /* flags */
     pData->reInitCodec = 1;
@@ -95,7 +93,7 @@ void ambi_bin_destroy
 {
     ambi_bin_data *pData = (ambi_bin_data*)(*phAmbi);
     codecPars *pars = pData->pars;
-    int i, t, ch;
+    int t, ch;
     
     if (pData != NULL) {
         if(pData->hSTFT!=NULL)
@@ -117,9 +115,8 @@ void ambi_bin_destroy
         if(pData->tempHopFrameTD!=NULL)
             free2d((void**)pData->tempHopFrameTD, MAX(NUM_EARS, MAX_NUM_SH_SIGNALS));
         
-        for(i=0; i<2; i++)
-            if(pars->hrtf_fb[i]!= NULL)
-                free(pars->hrtf_fb[i]);
+        if(pars->hrtf_fb!= NULL)
+            free(pars->hrtf_fb);
         if(pars->itds_s!= NULL)
             free(pars->itds_s);
         if(pars->hrirs!= NULL)
@@ -176,7 +173,7 @@ void ambi_bin_process
     float* M_rot_tmp;
     
     /* local copies of user parameters */
-    int order, nSH, rE_WEIGHT, enablePhaseManip, enableRot;
+    int order, nSH, rE_WEIGHT, enableRot;
     NORM_TYPES norm;
  
     /* reinitialise if needed */
@@ -198,7 +195,6 @@ void ambi_bin_process
         rE_WEIGHT = pData->rE_WEIGHT;
         order = pData->order;
         nSH = (order+1)*(order+1);
-        enablePhaseManip = pData->enablePhaseManip;
         enableRot = pData->enableRotation;
         
         /* Load time-domain data */
@@ -253,7 +249,7 @@ void ambi_bin_process
         /* mix to headphones */
         for (band = 0; band < HYBRID_BANDS; band++) {
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
-                        pars->M_dec[enablePhaseManip][band], MAX_NUM_SH_SIGNALS,
+                        pars->M_dec[band], MAX_NUM_SH_SIGNALS,
                         pData->SHframeTF_rot[band], TIME_SLOTS, &cbeta,
                         pData->binframeTF[band], TIME_SLOTS);
         }
@@ -330,27 +326,23 @@ void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path)
     pData->reInitCodec = 1;
 }
 
-void ambi_bin_setInputOrderPreset(void* const hAmbi, INPUT_ORDERS newPreset)
+void ambi_bin_setInputOrderPreset(void* const hAmbi, INPUT_ORDERS newOrder)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    if(pData->orderSelected != (INPUT_ORDERS)newPreset ){
-        pData->orderSelected = (INPUT_ORDERS)newPreset;
-        switch(pData->orderSelected){
-            case INPUT_OMNI:          pData->order = 0; break;
-            default:
-            case INPUT_ORDER_FIRST:   pData->order = 1; break;
-            case INPUT_ORDER_SECOND:  pData->order = 2; break;
-            case INPUT_ORDER_THIRD:   pData->order = 3; break;
-            case INPUT_ORDER_FOURTH:  pData->order = 4; break;
-            case INPUT_ORDER_FIFTH:   pData->order = 5; break;
-            case INPUT_ORDER_SIXTH:   pData->order = 6; break;
-            case INPUT_ORDER_SEVENTH: pData->order = 7; break;
-        }
-        pData->new_nSH = (pData->order+1)*(pData->order+1);
+    if(pData->order != (int)newOrder ){
+        pData->new_order = (int)newOrder;
+        pData->new_nSH = (pData->new_order+1)*(pData->new_order+1);
         if(pData->new_nSH!=pData->nSH)
             pData->reInitTFT = 1;
         pData->reInitCodec = 1;
     }
+}
+
+void ambi_bin_setDecodingMethod(void* const hAmbi, DECODING_METHODS newMethod)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    pData->method = newMethod;
+    pData->reInitCodec = 1;
 }
 
 void ambi_bin_setChOrder(void* const hAmbi, int newOrder)
@@ -372,12 +364,6 @@ void ambi_bin_setDecEnableMaxrE(void* const hAmbi, int newState)
         pData->rE_WEIGHT = newState;
         pData->reInitCodec=1;
     }
-}
-
-void ambi_bin_setEnablePhaseManip(void* const hAmbi, int newState)
-{
-    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    pData->enablePhaseManip = newState;
 }
 
 void ambi_bin_setEnableRotation(void* const hAmbi, int newState)
@@ -448,7 +434,13 @@ int ambi_bin_getUseDefaultHRIRsflag(void* const hAmbi)
 int ambi_bin_getInputOrderPreset(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    return (int)pData->orderSelected;
+    return pData->order;
+}
+
+int ambi_bin_getDecodingMethod(void* const hAmbi)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    return pData->method;
 }
 
 char* ambi_bin_getSofaFilePath(void* const hAmbi)
@@ -477,12 +469,6 @@ int ambi_bin_getDecEnableMaxrE(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     return pData->rE_WEIGHT;
-}
-
-int ambi_bin_getEnablePhaseManip(void* const hAmbi)
-{
-    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    return pData->enablePhaseManip;
 }
 
 int ambi_bin_getNumEars()

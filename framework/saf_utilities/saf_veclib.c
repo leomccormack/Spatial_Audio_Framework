@@ -946,8 +946,83 @@ void utility_dpinv(const double* inM, const int dim1, const int dim2, double* ou
     free((void*)work);
 }
 
+/*------------------------------- Cholesky factorisation (?chol) -----------------------------*/
+
+void utility_schol
+(
+    const float* A,
+    const int dim,
+    float* X
+)
+{
+    int i, j, info, n, lda;
+    n = lda = dim;
+    float* a;
+    a = malloc(dim*dim*sizeof(float));
+    
+    /* store in column major order */
+    for(i=0; i<dim; i++)
+        for(j=0; j<dim; j++)
+            a[j*dim+i] = A[i*dim+j];
+    
+    /* a is replaced by solution */
+    spotrf_( "U", &n, a, &lda, &info );
+    
+    if(info>0){
+        /* A is not positive definate, solution not possible */
+        memset(X, 0, dim*dim*sizeof(float));
+    }
+    else{
+        /* store solution in row-major order */
+        for(i=0; i<dim; i++)
+            for(j=0; j<dim; j++)
+                X[i*dim+j] = a[j*dim+i];
+    }
+    
+    free(a);
+}
+
+void utility_cchol
+(
+    const float_complex* A,
+    const int dim,
+    float_complex* X
+)
+{
+    int i, j, info, n, lda;
+    n = lda = dim;
+    float_complex* a;
+    a = malloc(dim*dim*sizeof(float_complex));
+    
+    /* store in column major order */
+    for(i=0; i<dim; i++)
+        for(j=0; j<dim; j++)
+            a[j*dim+i] = A[i*dim+j];
+    
+    /* a is replaced by solution */
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+    cpotrf_( "U", &n, (__CLPK_complex*)a, &lda, &info );
+#elif INTEL_MKL_VERSION
+    cpotrf_( "U", &n, (MKL_Complex8*)a, &lda, &info );
+#endif
+    
+    if(info>0){
+        /* A is not positive definate, solution not possible */
+        memset(X, 0, dim*dim*sizeof(float_complex));
+    }
+    else{
+        /* store solution in row-major order */
+        for(i=0; i<dim; i++)
+            for(j=0; j<dim; j++)
+                X[i*dim+j] = a[j*dim+i];
+    }
+    
+    free(a);
+}
+
 /*-------------------------------- matrix inversion (?inv) ----------------------------------*/
 
+// TODO: rewrite for row-major
 void utility_sinv(float * A, const int N)
 {
     int *IPIV;

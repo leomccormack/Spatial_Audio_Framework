@@ -854,7 +854,7 @@ void rotateAxisCoeffsComplex
     int order,
     float* c_n,
     float theta_0,  /* inclination*/
-    float phi_0,  /* azimuth */
+    float phi_0,    /* azimuth */
     float_complex* c_nm
 )
 {
@@ -872,6 +872,77 @@ void rotateAxisCoeffsComplex
             c_nm[q] = crmulf(conj(Y_N[q]), sqrtf(4.0f*M_PI/(2.0f*(float)n+1.0f)) * c_n[n]);
     
     free(Y_N);
+}
+
+void checkCondNumberSHTReal
+(
+    int order,
+    float* dirs_rad,
+    int nDirs,
+    float* w,
+    float* cond_N
+)
+{
+    int n, i, j, nSH, nSH_n, ind;
+    float minVal, maxVal;
+    float* Y_N, *Y_n, *YY_n, *W, *W_Yn, *s;
+    
+    /* get SH */
+    nSH = (order+1)*(order+1);
+    Y_N = malloc(nSH * nDirs *sizeof(float));
+    Y_n = malloc(nDirs * nSH* sizeof(float));
+    YY_n = malloc(nSH*nSH*sizeof(float));
+    getSHreal(order, dirs_rad, nDirs, Y_N);
+    
+    /* diagonalise the integration weights, if available */
+    if(w!=NULL){
+        W = calloc(nDirs*nDirs, sizeof(float));
+        W_Yn = malloc(nDirs*nSH*sizeof(float));
+        for(i=0; i<nDirs; i++)
+            W[i*nDirs+i] = cmplxf(w[i], 0.0f); 
+    }
+    
+    /* compute the condition number for each order up to N */
+    s = malloc(nSH*sizeof(float));
+    for(n=0; n<=order; n++){
+        nSH_n = (n+1)*(n+1);
+        for(i=0; i<nDirs; i++)
+            for(j=0; j<nSH_n; j++)
+                Y_n[i*nSH_n+j] = Y_N[j*nDirs+i]; /* truncate to current order and transpose */
+        if(w==NULL){
+            cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nSH_n, nSH_n, nDirs, 1.0f,
+                        Y_n, nSH_n,
+                        Y_n, nSH_n, 0.0f,
+                        YY_n, nSH_n);
+        }
+        else{
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nDirs, nSH_n, nDirs, 1.0f,
+                        W, nDirs,
+                        Y_n, nSH_n, 0.0f,
+                        W_Yn, nSH_n);
+            cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nSH_n, nSH_n, nDirs, 1.0f,
+                        Y_n, nSH_n,
+                        W_Yn, nSH_n, 0.0f,
+                        YY_n, nSH_n);
+        }
+        
+        /* condition number = max(singularValues)/min(singularValues) */
+        utility_ssvd(YY_n, nSH_n, nSH_n, NULL, NULL, NULL, s);
+        utility_simaxv(s, nSH_n, &ind);
+        maxVal = s[ind];
+        utility_siminv(s, nSH_n, &ind);
+        minVal = s[ind];
+        cond_N[n] = maxVal/(minVal+2.23e-7f);
+    }
+    
+    free(Y_N);
+    free(Y_n);
+    free(YY_n);
+    if(w!=NULL){
+        free(W);
+        free(W_Yn);
+    }
+    free(s);
 }
 
 void generatePWDmap

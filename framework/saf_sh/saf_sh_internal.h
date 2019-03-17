@@ -36,6 +36,7 @@
 #include <string.h>
 #include <assert.h>
 #include "saf_sh.h" 
+#include "saf_utilities.h" /* for linear algebra speed-ups */
 
 #ifdef __cplusplus
 extern "C" {

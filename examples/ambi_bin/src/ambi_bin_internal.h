@@ -16,8 +16,7 @@
  * Filename:
  *     ambi_bin_internal.h
  * Description:
- *     A binaural Ambisonic decoder for reproducing ambisonic signals over headphones.
- *     Optionally, a SOFA file may be loaded for personalised headphone listening.
+ *     A binaural Ambisonic decoder for reproducing ambisonic signals over headphones. 
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_hrir, saf_sh
  * Author, date created:
@@ -33,7 +32,7 @@
 #include "ambi_bin.h"
 #include "ambi_bin_database.h"
 #define SAF_ENABLE_AFSTFT   /* for time-frequency transform */
-#define SAF_ENABLE_HOA      /* for ambisonic decoding matrices and max_rE weigting */
+#define SAF_ENABLE_HOA      /* for ambisonic decoding matrices */
 #define SAF_ENABLE_SH       /* for spherical harmonic weights */
 #define SAF_ENABLE_HRIR     /* for HRIR->HRTF filterbank coefficients conversion */
 #define SAF_ENABLE_VBAP     /* for interpolation table */
@@ -70,19 +69,19 @@ extern "C" {
 typedef struct _codecPars
 {
     /* Decoder */
-    float_complex M_dec[2][HYBRID_BANDS][NUM_EARS][MAX_NUM_SH_SIGNALS]; /* [0][][][] WITHOUT, [1][][][] WITH phase manip */
+    float_complex M_dec[HYBRID_BANDS][NUM_EARS][MAX_NUM_SH_SIGNALS];
     
     /* sofa file info */
-    char* sofa_filepath;                                      /* absolute/relevative file path for a sofa file */
-    float* hrirs;                                             /* time domain HRIRs; N_hrir_dirs x 2 x hrir_len */
-    float* hrir_dirs_deg;                                     /* directions of the HRIRs in degrees [azi elev]; N_hrir_dirs x 2 */
-    int N_hrir_dirs;                                          /* number of HRIR directions in the current sofa file */
-    int hrir_len;                                             /* length of the HRIRs, this can be truncated, see "saf_sofa_reader.h" */
-    int hrir_fs;                                              /* sampling rate of the HRIRs, should ideally match the host sampling rate, although not required */
+    char* sofa_filepath;                     /* absolute/relevative file path for a sofa file */
+    float* hrirs;                            /* time domain HRIRs; N_hrir_dirs x 2 x hrir_len */
+    float* hrir_dirs_deg;                    /* directions of the HRIRs in degrees [azi elev]; N_hrir_dirs x 2 */
+    int N_hrir_dirs;                         /* number of HRIR directions in the current sofa file */
+    int hrir_len;                            /* length of the HRIRs, this can be truncated, see "saf_sofa_reader.h" */
+    int hrir_fs;                             /* sampling rate of the HRIRs, should ideally match the host sampling rate, although not required */
    
     /* hrir filterbank coefficients */
-    float* itds_s;                                            /* interaural-time differences for each HRIR (in seconds); N_hrirs x 1 */
-    float_complex* hrtf_fb[2];                                /* HRTF filterbank coeffs, [0] WITHOUT, [1] WITH phase manip.; 2 x [nBands x nCH x N_hrirs] */
+    float* itds_s;                           /* interaural-time differences for each HRIR (in seconds); N_hrirs x 1 */
+    float_complex* hrtf_fb;                  /* HRTF filterbank coeffs; nBands x nCH x N_hrirs */
     
 }codecPars;
 
@@ -105,7 +104,7 @@ typedef struct _ambi_bin
     codecPars* pars;                         /* codec parameters */
     
     /* internal variables */ 
-    int order;                               /* current decoding order */
+    int new_order;                           /* new decoding order */
     int new_nSH;                             /* if new_nSH != nSH, afSTFT is reinitialised */
     int nSH;                                 /* number of spherical harmonic signals */
     
@@ -114,13 +113,13 @@ typedef struct _ambi_bin
     int reInitTFT;                           /* 0: no init required, 1: init required, 2: init in progress */
     
     /* user parameters */
+    int order;                               /* current decoding order */
+    DECODING_METHODS method;                 /* current decoding method */
     float EQ[HYBRID_BANDS];                  /* EQ curve */
-    int rE_WEIGHT;                           /* 0:disabled, 1: enable max_rE weight */
-    int enablePhaseManip;                    /* 0:disabled, 1: enable phase manipulation */
+    int rE_WEIGHT;                           /* 0:disabled, 1: enable max_rE weight */ 
     int useDefaultHRIRsFLAG;                 /* 1: use default HRIRs in database, 0: use those from SOFA file */
     CH_ORDER chOrdering;                     /* only ACN is supported */
     NORM_TYPES norm;                         /* N3D or SN3D */
-    INPUT_ORDERS orderSelected;              /* current decoding order PRESET */
     int enableRotation;
     float yaw, roll, pitch;                  /* rotation angles in degrees */
     int bFlipYaw, bFlipPitch, bFlipRoll;     /* flag to flip the sign of the individual rotation angles */
