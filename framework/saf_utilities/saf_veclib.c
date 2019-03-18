@@ -976,7 +976,7 @@ void utility_schol
         /* store solution in row-major order */
         for(i=0; i<dim; i++)
             for(j=0; j<dim; j++)
-                X[i*dim+j] = a[j*dim+i];
+                X[i*dim+j] = j>=i ? a[j*dim+i] : 0.0f;
     }
     
     free(a);
@@ -1014,7 +1014,7 @@ void utility_cchol
         /* store solution in row-major order */
         for(i=0; i<dim; i++)
             for(j=0; j<dim; j++)
-                X[i*dim+j] = a[j*dim+i];
+                X[i*dim+j] = j>=i ? a[j*dim+i] : cmplxf(0.0f, 0.0f);
     }
     
     free(a);

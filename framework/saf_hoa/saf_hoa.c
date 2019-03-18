@@ -132,14 +132,12 @@ void getBinauralAmbiDecoder
             getBinDecoder_SPR(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, weights, decMtx);
             break;
             
-        case BINAURAL_DECODER_TAC:
-            getBinDecoder_TAC(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, freqVector, itd_s, weights, decMtx);
-            //applyDiffCovMatching(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, weights, decMtx);
+        case BINAURAL_DECODER_TA:
+            getBinDecoder_TA(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, freqVector, itd_s, weights, decMtx);
             break;
             
         case BINAURAL_DECODER_MAGLS:
             getBinDecoder_MAGLS(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, freqVector, weights, decMtx);
-            //applyDiffCovMatching(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, weights, decMtx);
             break;
     }
 }

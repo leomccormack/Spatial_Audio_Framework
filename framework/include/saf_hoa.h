@@ -51,7 +51,7 @@ typedef enum _BINAURAL_AMBI_DECODER_METHODS {
     BINAURAL_DECODER_LS,             /* Least-squares (LS) decoder */
     BINAURAL_DECODER_LSDIFFEQ,       /* Least-squares (LS) decoder with diffuse-field spectral equalisation */
     BINAURAL_DECODER_SPR,            /* Spatial resampling decoder (on the same lines as the virtual loudspeaker approach) */
-    BINAURAL_DECODER_TAC,            /* Time-alignment and covariance contraint decoder */
+    BINAURAL_DECODER_TA,             /* Time-alignment decoder */
     BINAURAL_DECODER_MAGLS           /* Magnitude least-squares decoder */
     
 } BINAURAL_AMBI_DECODER_METHODS;

@@ -35,6 +35,7 @@ void ambi_bin_initCodec
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     codecPars* pars = pData->pars;
     int i, j, k, nSH, order, band;
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
     order = pData->new_order;
     nSH = (order+1)*(order+1);
@@ -88,10 +89,11 @@ void ambi_bin_initCodec
     }
     HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->itds_s, (float*)pData->freqVector, HYBRID_BANDS, 0, &(pars->hrtf_fb));
 
-    /* getDecoder */
+    /* get new decoder */
     float_complex* decMtx;
     decMtx = calloc(HYBRID_BANDS*NUM_EARS*nSH, sizeof(float_complex));
     switch(pData->method){
+        default:
         case DECODING_METHOD_LS:
             getBinauralAmbiDecoder(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS, BINAURAL_DECODER_LS, order, pData->freqVector, pars->itds_s, NULL, decMtx);
             break;
@@ -101,19 +103,55 @@ void ambi_bin_initCodec
         case DECODING_METHOD_SPR:
             getBinauralAmbiDecoder(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS, BINAURAL_DECODER_SPR, order, pData->freqVector, pars->itds_s, NULL, decMtx);
             break;
-        case DECODING_METHOD_TAC:
-            getBinauralAmbiDecoder(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS, BINAURAL_DECODER_TAC, order, pData->freqVector, pars->itds_s, NULL, decMtx);
+        case DECODING_METHOD_TA:
+            getBinauralAmbiDecoder(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS, BINAURAL_DECODER_TA, order, pData->freqVector, pars->itds_s, NULL, decMtx);
             break;
         case DECODING_METHOD_MAGLS:
             getBinauralAmbiDecoder(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS, BINAURAL_DECODER_MAGLS, order, pData->freqVector, pars->itds_s, NULL, decMtx);
             break;
     }
+    
+    /* Apply Phase Warping */
+    if(pData->enablePhaseWarping){
+        // COMING SOON
+    }
+    
+    /* Apply Max RE */
+    float* tmp;
+    float_complex* a_n, *decMtx_rE;
+    if (pData->enableMaxRE){
+        tmp = malloc(nSH*nSH*sizeof(float));
+        a_n = malloc(nSH*nSH*sizeof(float_complex));
+        decMtx_rE = malloc(NUM_EARS*nSH*sizeof(float_complex));
+        getMaxREweights(order, tmp);
+        for(i=0; i<nSH*nSH; i++)
+            a_n[i] = cmplxf(tmp[i], 0.0f);
+        
+        /* apply per band */
+        for(band=0; band<HYBRID_BANDS; band++){
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, nSH, nSH, &calpha,
+                        &decMtx[band*NUM_EARS*nSH], nSH,
+                        a_n, nSH, &cbeta,
+                        decMtx_rE, nSH);
+            memcpy(&decMtx[band*NUM_EARS*nSH], decMtx_rE, NUM_EARS*nSH*sizeof(float_complex));
+        }
+        free(tmp);
+        free(a_n);
+        free(decMtx_rE);
+    }
+    
+    /* Apply diffuse Matching/Correction */
+    if (pData->enableDiffuseMatching)
+        applyDiffCovMatching(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS, order, NULL, decMtx);
+    
+    /* replace current decoder */
     memset(pars->M_dec, 0, HYBRID_BANDS*NUM_EARS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
     for(band=0; band<HYBRID_BANDS; band++)
         for(i=0; i<NUM_EARS; i++)
             for(j=0; j<nSH; j++)
                 pars->M_dec[band][i][j] = decMtx[band*2*nSH + i*nSH + j];
     free(decMtx);
+    
     
     pData->order = order;
 }

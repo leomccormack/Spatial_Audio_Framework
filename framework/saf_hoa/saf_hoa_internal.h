@@ -93,15 +93,15 @@ void getBinDecoder_SPR(float_complex* hrtfs,          /* the HRTFs; FLAT: N_band
                        float_complex* decMtx);        /* decoding matrix; FLAT: N_bands x 2 x (order+1)^2 */
 
 /*  */
-void getBinDecoder_TAC(float_complex* hrtfs,          /* the HRTFs; FLAT: N_bands x 2 x N_dirs */
-                       float* hrtf_dirs_deg,          /* HRTF directions; FLAT: N_dirs x 2  */
-                       int N_dirs,                    /* number of HRTF directions */
-                       int N_bands,                   /* number of frequency bands/bins */
-                       int order,                     /* decoding order */
-                       float* freqVector,             /* frequency vector; N_bands x 1 * */
-                       float* itd_s,                  /* interaural time differences (ITDs), seconds; N_dirs x 1 * */
-                       float* weights,                /* (set to NULL if not available); N_dirs x 1 */
-                       float_complex* decMtx);        /* decoding matrix; FLAT: N_bands x 2 x (order+1)^2 */
+void getBinDecoder_TA(float_complex* hrtfs,           /* the HRTFs; FLAT: N_bands x 2 x N_dirs */
+                      float* hrtf_dirs_deg,           /* HRTF directions; FLAT: N_dirs x 2  */
+                      int N_dirs,                     /* number of HRTF directions */
+                      int N_bands,                    /* number of frequency bands/bins */
+                      int order,                      /* decoding order */
+                      float* freqVector,              /* frequency vector; N_bands x 1 * */
+                      float* itd_s,                   /* interaural time differences (ITDs), seconds; N_dirs x 1 * */
+                      float* weights,                 /* (set to NULL if not available); N_dirs x 1 */
+                      float_complex* decMtx);         /* decoding matrix; FLAT: N_bands x 2 x (order+1)^2 */
     
 /*  */
 void getBinDecoder_MAGLS(float_complex* hrtfs,        /* the HRTFs; FLAT: N_bands x 2 x N_dirs */

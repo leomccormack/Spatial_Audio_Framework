@@ -114,9 +114,11 @@ typedef struct _ambi_bin
     
     /* user parameters */
     int order;                               /* current decoding order */
+    int enableMaxRE;                         /* 0: disabled, 1: enabled */
+    int enableDiffuseMatching;               /* 0: disabled, 1: enabled */
+    int enablePhaseWarping;                  /* 0: disabled, 1: enabled */
     DECODING_METHODS method;                 /* current decoding method */
-    float EQ[HYBRID_BANDS];                  /* EQ curve */
-    int rE_WEIGHT;                           /* 0:disabled, 1: enable max_rE weight */ 
+    float EQ[HYBRID_BANDS];                  /* EQ curve */ 
     int useDefaultHRIRsFLAG;                 /* 1: use default HRIRs in database, 0: use those from SOFA file */
     CH_ORDER chOrdering;                     /* only ACN is supported */
     NORM_TYPES norm;                         /* N3D or SN3D */

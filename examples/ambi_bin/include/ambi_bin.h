@@ -49,8 +49,8 @@ typedef enum _DECODING_METHODS{
     DECODING_METHOD_LS = 1,         /* Least-squares (LS) decoder */
     DECODING_METHOD_LSDIFFEQ,       /* Least-squares (LS) decoder with diffuse-field spectral equalisation */
     DECODING_METHOD_SPR,            /* Spatial resampling decoder (on the same lines as the virtual loudspeaker approach) */
-    DECODING_METHOD_TAC,            /* Time-alignment and covariance contraint decoder */
-    DECODING_METHOD_MAGLS           /* Magnitude least-squares decoder */
+    DECODING_METHOD_TA,             /* Time-alignment */
+    DECODING_METHOD_MAGLS,          /* Magnitude least-squares decoder */
     
 }DECODING_METHODS;
 
@@ -110,7 +110,11 @@ void ambi_bin_setChOrder(void* const hAmbi, int newOrder);
 
 void ambi_bin_setNormType(void* const hAmbi, int newType);
 
-void ambi_bin_setDecEnableMaxrE(void* const hAmbi, int newState);
+void ambi_bin_setEnableMaxRE(void* const hAmbi, int newState);
+    
+void ambi_bin_setEnableDiffuseMatching(void* const hAmbi, int newState);
+    
+void ambi_bin_setEnablePhaseWarping(void* const hAmbi, int newState);
     
 void ambi_bin_setEnableRotation(void* const hAmbi, int newState);
     
@@ -143,13 +147,17 @@ char* ambi_bin_getSofaFilePath(void* const hAmbi);
 
 int ambi_bin_getChOrder(void* const hAmbi);
 
-int ambi_bin_getNormType(void* const hAmbi);
-    
-int ambi_bin_getDecEnableMaxrE(void* const hAmbi); 
+int ambi_bin_getNormType(void* const hAmbi); 
     
 int ambi_bin_getNumEars(void);
     
 int ambi_bin_getNSHrequired(void* const hAmbi);
+    
+int ambi_bin_getEnableMaxRE(void* const hAmbi);
+
+int ambi_bin_getEnableDiffuseMatching(void* const hAmbi);
+
+int ambi_bin_getEnablePhaseWarping(void* const hAmbi);
     
 int ambi_bin_getEnableRotation(void* const hAmbi);
     

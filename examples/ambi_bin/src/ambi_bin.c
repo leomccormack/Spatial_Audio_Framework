@@ -41,7 +41,9 @@ void ambi_bin_create
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
-    pData->rE_WEIGHT = 1;
+    pData->enableMaxRE = 1;
+    pData->enableDiffuseMatching = 1;
+    pData->enablePhaseWarping = 1;
     pData->enableRotation = 0;
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
@@ -50,7 +52,7 @@ void ambi_bin_create
     pData->bFlipPitch = 0;
     pData->bFlipRoll = 0;
     pData->useRollPitchYawFlag = 0;
-    pData->method = DECODING_METHOD_LS;
+    pData->method = DECODING_METHOD_MAGLS;
     pData->order = pData->new_order = 1;
     pData->nSH = pData->new_nSH = (pData->order+1)*(pData->order+1);
     
@@ -173,7 +175,7 @@ void ambi_bin_process
     float* M_rot_tmp;
     
     /* local copies of user parameters */
-    int order, nSH, rE_WEIGHT, enableRot;
+    int order, nSH, enableRot;
     NORM_TYPES norm;
  
     /* reinitialise if needed */
@@ -192,7 +194,6 @@ void ambi_bin_process
         /* copy user parameters to local variables */
         for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
         norm = pData->norm;
-        rE_WEIGHT = pData->rE_WEIGHT;
         order = pData->order;
         nSH = (order+1)*(order+1);
         enableRot = pData->enableRotation;
@@ -357,11 +358,29 @@ void ambi_bin_setNormType(void* const hAmbi, int newType)
     pData->norm = (NORM_TYPES)newType;
 }
 
-void ambi_bin_setDecEnableMaxrE(void* const hAmbi, int newState)
+void ambi_bin_setEnableMaxRE(void* const hAmbi, int newState)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    if(pData->rE_WEIGHT != newState){
-        pData->rE_WEIGHT = newState;
+    if(pData->enableMaxRE != newState){
+        pData->enableMaxRE = newState;
+        pData->reInitCodec=1;
+    }
+}
+
+void ambi_bin_setEnableDiffuseMatching(void* const hAmbi, int newState)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    if(pData->enableDiffuseMatching != newState){
+        pData->enableDiffuseMatching = newState;
+        pData->reInitCodec=1;
+    }
+}
+
+void ambi_bin_setEnablePhaseWarping(void* const hAmbi, int newState)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    if(pData->enablePhaseWarping != newState){
+        pData->enablePhaseWarping = newState;
         pData->reInitCodec=1;
     }
 }
@@ -465,10 +484,22 @@ int ambi_bin_getNormType(void* const hAmbi)
     return (int)pData->norm;
 }
 
-int ambi_bin_getDecEnableMaxrE(void* const hAmbi)
+int ambi_bin_getEnableMaxRE(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    return pData->rE_WEIGHT;
+    return pData->enableMaxRE;
+}
+
+int ambi_bin_getEnableDiffuseMatching(void* const hAmbi)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    return pData->enableDiffuseMatching;
+}
+
+int ambi_bin_getEnablePhaseWarping(void* const hAmbi)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    return pData->enablePhaseWarping;
 }
 
 int ambi_bin_getNumEars()

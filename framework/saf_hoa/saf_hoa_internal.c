@@ -249,7 +249,7 @@ void getBinDecoder_LSDIFFEQ
                     Yna_W_H, 2);
         utility_cglslv(Yna_W_Yna, nSH, Yna_W_H, 2, B_ls);
         cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans, 2, N_dirs, nSH, &calpha,
-                    B_ls, N_dirs,
+                    B_ls, 2,
                     Y_na, N_dirs, &cbeta,
                     hrtfs_ls, N_dirs);
         
@@ -332,8 +332,11 @@ void getBinDecoder_SPR
     nSH_nh = (Nh+1)*(Nh+1);
     Y_nh = NULL;
     getRSH(Nh, hrtf_dirs_deg, N_dirs, &Y_nh);
-    Y_na = malloc(nSH_nh * N_dirs *sizeof(float));
-    memcpy(Y_na, Y_nh, nSH_nh * N_dirs *sizeof(float));
+    Y_na = malloc(nSH * N_dirs *sizeof(float));
+    for(i=0; i<nSH; i++)
+        for(j=0; j<N_dirs; j++)
+            Y_na[i*N_dirs+j] = Y_nh[i*N_dirs+j];
+    //memcpy(Y_na, Y_nh, nSH * N_dirs *sizeof(float));
     
     /* Get t-design for ambisonic signals */
     tdirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[2*order-1];
@@ -366,7 +369,7 @@ void getBinDecoder_SPR
                     W_Ynh_Ytd, K_td, &cbeta,
                     hrtfs_td, K_td);
         cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, 2, K_td, &calpha,
-                    Y_td_cmplx, N_dirs,
+                    Y_td_cmplx, K_td,
                     hrtfs_td, K_td, &cbeta,
                     B, 2);
         for(i=0; i<nSH; i++)
@@ -388,7 +391,7 @@ void getBinDecoder_SPR
     free(B);
 }
 
-void getBinDecoder_TAC
+void getBinDecoder_TA
 (
     float_complex* hrtfs, /* the HRTFs; FLAT: N_bands x 2 x N_dirs */
     float* hrtf_dirs_deg,
@@ -455,9 +458,9 @@ void getBinDecoder_TAC
         if(band>=band_cutoff){
             for(j=0; j<N_dirs; j++){
                 hrtfs_mod[0*N_dirs+j] = ccmulf(hrtfs[band*2*N_dirs + 0*N_dirs + j],
-                                               cexpf( crmulf(cmplxf(0.0f, -(2.0f*M_PI*freqVector[band] - 2.0f*M_PI*freqVector[band_cutoff])), (itd_s[j]/2.0f))));
+                                               cexpf( crmulf(cmplxf(0.0f, 0.0f), (itd_s[j]/2.0f))));
                 hrtfs_mod[1*N_dirs+j] = ccmulf(hrtfs[band*2*N_dirs + 1*N_dirs + j],
-                                               cexpf( crmulf(cmplxf(0.0f, -(2.0f*M_PI*freqVector[band] - 2.0f*M_PI*freqVector[band_cutoff])), (-itd_s[j]/2.0f))));
+                                               cexpf( crmulf(cmplxf(0.0f, 0.0f), (-itd_s[j]/2.0f))));
             }
         }
         else
