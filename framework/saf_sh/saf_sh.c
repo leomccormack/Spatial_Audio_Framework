@@ -588,7 +588,7 @@ void complex2realCoeffs
     R_N_c = malloc(nSH*K*sizeof(float_complex));
     complex2realSHMtx(order, T_c2r);
     for(i=0; i<nSH*nSH; i++)
-        T_c2r[i] = conj(T_c2r[i]);
+        T_c2r[i] = conjf(T_c2r[i]);
     cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, K, nSH, &calpha,
                 T_c2r, nSH,
                 C_N, K, &cbeta,
@@ -869,7 +869,7 @@ void rotateAxisCoeffsComplex
     getSHcomplex(order, (float*)phi_theta, 1, Y_N);
     for(n=0, q = 0; n<=order; n++)
         for(m=-n; m<=n; m++, q++)
-            c_nm[q] = crmulf(conj(Y_N[q]), sqrtf(4.0f*M_PI/(2.0f*(float)n+1.0f)) * c_n[n]);
+            c_nm[q] = crmulf(conjf(Y_N[q]), sqrtf(4.0f*M_PI/(2.0f*(float)n+1.0f)) * c_n[n]);
     
     free(Y_N);
 }
@@ -899,7 +899,7 @@ void checkCondNumberSHTReal
         W = calloc(nDirs*nDirs, sizeof(float));
         W_Yn = malloc(nDirs*nSH*sizeof(float));
         for(i=0; i<nDirs; i++)
-            W[i*nDirs+i] = cmplxf(w[i], 0.0f); 
+            W[i*nDirs+i] = w[i]; 
     }
     
     /* compute the condition number for each order up to N */
@@ -1399,7 +1399,7 @@ void bessel_jn
     
     j_n_tmp = malloc((N+1)*sizeof(double));
     dj_n_tmp = malloc((N+1)*sizeof(double));
-    *maxN = 1e8;
+    *maxN = 1000000000;
     for(i=0; i<nZ; i++){
         if(z[i] <= 1e-15){
             if(j_n!=NULL){
@@ -1450,7 +1450,7 @@ void bessel_in /* untested */
     
     i_n_tmp = malloc((N+1)*sizeof(double));
     di_n_tmp = malloc((N+1)*sizeof(double));
-    *maxN = 1e8;
+    *maxN = 1000000000;
     for(i=0; i<nZ; i++){
         if(z[i] <= 1e-15){
             if(i_n!=NULL){
@@ -1501,7 +1501,7 @@ void bessel_yn
     
     y_n_tmp = malloc((N+1)*sizeof(double));
     dy_n_tmp = malloc((N+1)*sizeof(double));
-    *maxN = 1e8;
+    *maxN = 1000000000;
     for(i=0; i<nZ; i++){
         if(z[i] <= 1e-15){
             if(y_n!=NULL)
@@ -1547,7 +1547,7 @@ void bessel_kn /* untested */
     
     k_n_tmp = malloc((N+1)*sizeof(double));
     dk_n_tmp = malloc((N+1)*sizeof(double));
-    *maxN = 1e8;
+    *maxN = 1000000000;
     for(i=0; i<nZ; i++){
         if(z[i] <= 1e-15){
             if(k_n!=NULL)
@@ -1595,7 +1595,7 @@ void hankel_hn1
     dj_n_tmp = calloc((N+1),sizeof(double));
     y_n_tmp = calloc((N+1),sizeof(double));
     dy_n_tmp = calloc((N+1),sizeof(double));
-    *maxN = 1e8;
+    *maxN = 1000000000;
     for(i=0; i<nZ; i++){
         if(z[i] <= 1e-15){
             if(h_n1!=NULL){
@@ -1649,7 +1649,7 @@ void hankel_hn2
     dj_n_tmp = calloc((N+1),sizeof(double));
     y_n_tmp = calloc((N+1),sizeof(double));
     dy_n_tmp = calloc((N+1),sizeof(double));
-    *maxN = 1e8;
+    *maxN = 1000000000;
     for(i=0; i<nZ; i++){
         if(z[i] <= 1e-15){
             if(h_n2!=NULL){
@@ -1845,7 +1845,7 @@ void sphModalCoeffs
             jnprime = malloc(nBands*(order+1)*sizeof(double));
             hn2 = malloc(nBands*(order+1)*sizeof(double_complex));
             hn2prime = malloc(nBands*(order+1)*sizeof(double_complex));
-            maxN = 1e8;
+            maxN = 1000000000;
             bessel_jn(order, kr, nBands, &maxN_tmp, jn, jnprime);
             maxN = MIN(maxN_tmp, maxN);
             hankel_hn2(order, kr, nBands, &maxN_tmp, hn2, hn2prime);
@@ -1891,7 +1891,7 @@ void sphScattererModalCoeffs
     jnprime = malloc(nBands*(order+1)*sizeof(double));
     hn2 = malloc(nBands*(order+1)*sizeof(double_complex));
     hn2prime = malloc(nBands*(order+1)*sizeof(double_complex));
-    maxN = 1e8;
+    maxN = 1000000000;
     bessel_jn(order, kr, nBands, &maxN_tmp, jn, NULL);
     maxN = MIN(maxN_tmp, maxN);
     bessel_jn(order, kR, nBands, &maxN_tmp, NULL, jnprime);
@@ -1943,7 +1943,7 @@ void sphScattererDirModalCoeffs
     hn2_kr = malloc(nBands*(order+1)*sizeof(double_complex));
     hn2prime_kr = malloc(nBands*(order+1)*sizeof(double_complex));
     hn2prime_kR = malloc(nBands*(order+1)*sizeof(double_complex));
-    maxN = 1e8;
+    maxN = 1000000000;
     bessel_jn(order, kr, nBands, &maxN_tmp, jn_kr, jnprime_kr);
     maxN = MIN(maxN_tmp, maxN);
     bessel_jn(order, kR, nBands, &maxN_tmp, NULL, jnprime_kR);
@@ -2025,7 +2025,7 @@ void sphDiffCohMtxTheory
             break;
     }
     for(i=0; i<nBands * (order+1); i++)
-        b_N2[i] = powf(cabs(ccdiv(b_N[i], cmplx(4.0*M_PI, 0.0))), 2.0f);
+        b_N2[i] = pow(cabs(ccdiv(b_N[i], cmplx(4.0*M_PI, 0.0))), 2.0);
     
     /* determine theoretical diffuse-coherence matrix for sensor array */
     ppm = malloc((order+1)*sizeof(double));

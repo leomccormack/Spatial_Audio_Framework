@@ -192,7 +192,7 @@ extern "C" {
     return z;
   }
     
-  inline double_complex crdivf(double_complex x, double y) {
+  inline double_complex crdiv(double_complex x, double y) {
       double_complex z;
       z._Val[0] = x._Val[0] / y;
       z._Val[1] = x._Val[1] / y;

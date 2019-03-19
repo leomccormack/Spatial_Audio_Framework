@@ -270,7 +270,7 @@ void binauralDiffuseCoherence
     
     /* due to almost axisymmetry of ITD, the coherence is almost real */
     for(i=0; i<N_bands; i++)
-        HRTFcoh[i] = crealf(hrtf_ipd_lr[i]) < 0.0f ? 0.0 : crealf(hrtf_ipd_lr[i]);
+        HRTFcoh[i] = crealf(hrtf_ipd_lr[i]) < 0.0f ? 0.0f : crealf(hrtf_ipd_lr[i]);
     HRTFcoh[0] = 1.0f; /* force 1 at DC */
     
     free(ipd);

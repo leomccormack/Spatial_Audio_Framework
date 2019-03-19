@@ -385,7 +385,7 @@ void formulate_M_and_Cr_cmplx
     /* Decomposition of Cy */
     utility_csvd(Cy, nYcols, nYcols, h->U_Cy, h->S_Cy, NULL, NULL);
     for(i=0; i< nYcols; i++)
-        h->S_Cy[i*nYcols+i] = sqrtf(h->S_Cy[i*nYcols+i]);
+        h->S_Cy[i*nYcols+i] = csqrtf(h->S_Cy[i*nYcols+i]);
     cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nYcols, nYcols, nYcols, &calpha,
                 h->U_Cy, nYcols,
                 h->S_Cy, nYcols, &cbeta,

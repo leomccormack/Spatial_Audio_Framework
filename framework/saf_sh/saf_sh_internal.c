@@ -64,7 +64,7 @@ float wigner_3j
     else {
         /* evaluate the Wigner-3J symbol using the Racah formula (http://mathworld.wolfram.com/Wigner3j-Symbol.html)
          number of terms for the summation */
-        N_t = -10e9;
+        N_t = -1000000000;
         N_t = j1+m1 > N_t ? j1+m1 : N_t;
         N_t = j1-m1 > N_t ? j1-m1 : N_t;
         N_t = j2+m2 > N_t ? j2+m2 : N_t;

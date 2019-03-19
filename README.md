@@ -32,7 +32,7 @@ saf_mkl_custom.lib; (for Windows users)
 The "saf_mkl_custom.dll" may be generated with Intel's custom dll builder and the included "dependencies/saf_mkl_list" file, with the following command:
 
 ```c
-nmake dllintel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_mkl_list
+nmake intel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_mkl_list
 ```
 Alternatively, this .dll is also installed in a system PATH folder, alongside the software found [here](http://research.spa.aalto.fi/projects/sparta_vsts/download/); if you're feeling lazy ;-) 
 
