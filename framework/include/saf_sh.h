@@ -136,7 +136,7 @@ void getRSH_recur(/* Input arguments */
                   float* dirs_deg,                /* directions on the sphere [azi, ELEVATION] convention, degrees; FLAT: nDirs x 2 */
                   int nDirs,                      /* number of directions */
                   /* Output arguments */
-                  float** Y);                     /* & the SH weights: FLAT: (order+1)^2 x nDirs */
+                  float** Y);                     /* & the SH weights; FLAT: (order+1)^2 x nDirs */
     
 /* returns real spherical harmonics for each direction on the sphere. WITH the 1/sqrt(4*pi) term.  i.e. max(omni)= 1/sqrt(4*pi)
  * compared to 'getSHreal_recur', this function employs 'unnorm_legendreP' and double precision, which is slower but more precise.
@@ -147,7 +147,7 @@ void getSHreal(/* Input arguments */
                float* dirs_rad,                   /* directions on the sphere [azi, INCLINATION] convention, radians; FLAT: nDirs x 2 */
                int nDirs,                         /* number of directions */
                /* Output arguments */
-               float* Y);                         /* the SH weights: (order+1)^2 x nDirs */
+               float* Y);                         /* the SH weights; FLAT:  (order+1)^2 x nDirs */
     
 /* returns real spherical harmonics for each direction on the sphere. WITH the 1/sqrt(4*pi) term.  i.e. max(omni)= 1/sqrt(4*pi)
  * compared to 'getSHreal', this function employs 'unnorm_legendreP_recur' and single precision, which is faster but less precise.
@@ -158,7 +158,7 @@ void getSHreal_recur(/* Input arguments */
                      float* dirs_rad,             /* directions on the sphere [azi, INCLINATION] convention, radians; FLAT: nDirs x 2 */
                      int nDirs,                   /* number of directions */
                      /* Output arguments */
-                     float* Y);                   /* the SH weights: (order+1)^2 x nDirs */
+                     float* Y);                   /* the SH weights; FLAT: (order+1)^2 x nDirs */
     
 /* returns complex spherical harmonics for each direction on the sphere. WITH the 1/sqrt(4*pi) term.  i.e. max(cabs(omni))= 1/sqrt(4*pi)
  * this function employs 'unnorm_legendreP' and double precision.
@@ -174,13 +174,13 @@ void getSHcomplex(/* Input arguments */
 /* Returns the unitary transformation matrix T_c2r. It expresses the real spherical harmonics with respect to the complex ones,
  * so that r_N = T_c2r * y_N, where r_N and y_N is are the real and complex SH vectors, respectively */
 void complex2realSHMtx(int order,                 /* order */
-                       float_complex* T_c2r);     /* transformation matrix for complex->real; flat: (order+1)^2 x (order+1)^2  */
+                       float_complex* T_c2r);     /* transformation matrix for complex->real; FLAT: (order+1)^2 x (order+1)^2  */
     
 /* Convert SH coeffs from the complex to real basis */
 void complex2realCoeffs(int order,                 /* order */
-                        float_complex* C_N,        /* complex coeffients; flat: (order+1)^2 x K */
+                        float_complex* C_N,        /* complex coeffients; FLAT: (order+1)^2 x K */
                         int K,                     /* number of columns */
-                        float* R_N);               /* real coefficients; flat: (order+1)^2 x K */
+                        float* R_N);               /* real coefficients; FLAT: (order+1)^2 x K */
     
 /* generates a real-valued spherical harmonic rotation matrix (assumes ACN/N3D convention)
  * For more information, the reader is referred to:
@@ -198,7 +198,7 @@ void getSHrotMtxReal(float R[3][3],               /* zyx rotation matrix */
 void computeVelCoeffsMtx(/* Input arguments */
                          int sectorOrder,         /* order of patterns; */
                          /* Output arguments */
-                         float_complex* A_xyz);   /* Velocity coefficients; flat: (sectorOrder+2)^2  x (sectorOrder+1)^2 x 3 */
+                         float_complex* A_xyz);   /* Velocity coefficients; FLAT: (sectorOrder+2)^2  x (sectorOrder+1)^2 x 3 */
     
 /* Generate spherical coefficients for cardioids. For a specific order N of a higher order cardioid of the form
  * D(theta)=(1/2)^N * (1+cos(theta))^N, generate the beamweights for the same pattern in the SHD. Because the
@@ -254,9 +254,9 @@ void beamWeightsVelocityPatternsReal(/* Input arguments */
                                      float* b_n,                   /* axisymmetric beamformer weights; (order+1) x 1 */
                                      float azi_rad,                /* orientation, azimuth in radius */
                                      float elev_rad,               /* orientation, elevation in radius */
-                                     float_complex* A_xyz,         /* flat: (order+2)^2 x (order+1)^2 x 3 */
+                                     float_complex* A_xyz,         /* FLAT: (order+2)^2 x (order+1)^2 x 3 */
                                      /* Output arguments */
-                                     float* velCoeffs);            /* flat: (order+2)^2 x 3 */
+                                     float* velCoeffs);            /* FLAT: (order+2)^2 x 3 */
     
 /* If the sound-field is weighted with an axisymmetric spatial distribution described by the N+1 SH coefficients
  * b_n, then the beamweights capturing the velocity signals for the weighted sound-field are of an order one higher
@@ -269,9 +269,9 @@ void beamWeightsVelocityPatternsComplex(/* Input arguments */
                                         float* b_n,                /* axisymmetric beamformer weights; (order+1) x 1 */
                                         float azi_rad,             /* orientation, azimuth in radius */
                                         float elev_rad,            /* orientation, elevation in radius */
-                                        float_complex* A_xyz,      /* flat: (order+2)^2 x (order+1)^2 x 3 */
+                                        float_complex* A_xyz,      /* FLAT: (order+2)^2 x (order+1)^2 x 3 */
                                         /* Output arguments */
-                                        float_complex* velCoeffs); /* flat: (order+2)^2 x 3 */
+                                        float_complex* velCoeffs); /* FLAT: (order+2)^2 x 3 */
     
 /* returns spherical coefficients for a rotated axisymmetric pattern */
 void rotateAxisCoeffsReal(/* Input arguments */
@@ -347,7 +347,7 @@ void generateCroPaCLCMVmap(/* Input arguments */
                            /* Output arguments */
                            float* pmap);          /* resulting CroPaC LCMV powermap; nGrid_dirs x 1 */
     
-/* generates a powermap utilising the subspace-based MUSIC method*/
+/* generates a powermap utilising the subspace-based MUSIC method */
 void generateMUSICmap(/* Input arguments */
                       int order,                  /* analysis order */
                       float_complex* Cx,          /* covarience matrix; FLAT: (order+1)^2 x (order+1)^2 */
@@ -358,7 +358,7 @@ void generateMUSICmap(/* Input arguments */
                       /* Output arguments */
                       float* pmap);               /* resulting MUSIC pseudo-spectrum; nGrid_dirs x 1 */
 
-/* generates a powermap utilising the subspace-based MinNorm method*/
+/* generates a powermap utilising the subspace-based MinNorm method */
 void generateMinNormMap(/* Input arguments */
                         int order,                /* analysis order */
                         float_complex* Cx,        /* covarience matrix; FLAT: (order+1)^2 x (order+1)^2 */

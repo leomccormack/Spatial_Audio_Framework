@@ -51,8 +51,8 @@ void ambi_dec_create
     pData->nLoudpkrs = pData->new_nLoudpkrs;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
-    pData->dec_method[0] = DECODER_ALLRAD;
-    pData->dec_method[1] = DECODER_ALLRAD;
+    pData->dec_method[0] = DECODING_METHOD_ALLRAD;
+    pData->dec_method[1] = DECODING_METHOD_ALLRAD;
     pData->rE_WEIGHT[0] = 0;
     pData->rE_WEIGHT[1] = 1;
     pData->diffEQmode[0] = AMPLITUDE_PRESERVING;

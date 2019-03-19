@@ -213,8 +213,7 @@ void array2sh_calculate_sht_matrix
             case WEIGHT_RIGID_OMNI:
             case WEIGHT_RIGID_CARD:
             case WEIGHT_RIGID_DIPOLE:
-                /* Currently no support for estimating the noise cut-off frequencies for rigid scatterers. However, since we only need a rough estimate,
-                   maybe this is OK. */
+                /* Currently no support for estimating the noise cut-off frequencies for rigid scatterers. */
                 sphArrayNoiseThreshold(order, arraySpecs->Q, arraySpecs->r, pData->c, ARRAY_CONSTRUCTION_RIGID, 1.0, pData->regPar, f_lim); break;
         }
         

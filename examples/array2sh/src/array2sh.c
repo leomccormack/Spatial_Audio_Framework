@@ -43,7 +43,7 @@ void array2sh_create
     array2sh_data* pData = (array2sh_data*)malloc(sizeof(array2sh_data));
     if (pData == NULL) { return;/*error*/ }
     *phA2sh = (void*)pData;
-    int band, t, ch;
+    int t, ch;
      
     /* defualt parameters */
     array2sh_createArray(&(pData->arraySpecs)); 
@@ -89,7 +89,6 @@ void array2sh_create
     pData->bN_inv_dB = (float**)malloc2d(HYBRID_BANDS, MAX_SH_ORDER + 1, sizeof(float));
     pData->cSH = (float*)calloc((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
     pData->lSH = (float*)calloc((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
-    //pData->disp_freqVector = (float*)malloc((HYBRID_BANDS-1)*sizeof(float));
     
     pData->recalcEvalFLAG = 1;
 }
@@ -126,7 +125,6 @@ void array2sh_destroy
         /* Display stuff */
         free2d((void**)pData->bN_modal_dB, HYBRID_BANDS-1);
         free2d((void**)pData->bN_inv_dB, HYBRID_BANDS-1);
-        //free(pData->disp_freqVector);
         
         free(pData);
         pData = NULL;

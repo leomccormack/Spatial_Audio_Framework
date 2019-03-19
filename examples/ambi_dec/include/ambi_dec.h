@@ -79,6 +79,14 @@ typedef enum _MASTER_ORDERS{
     
 }MASTER_ORDERS;
     
+typedef enum _DECODING_METHODS {
+    DECODING_METHOD_SAD = 1,   /* Sampling Ambisonic Decoder (SAD)*/
+    DECODING_METHOD_MMD,       /* Mode-Matching Decoder (MMD) */
+    DECODING_METHOD_EPAD,      /* Energy-Preserving Ambisonic Decoder (EPAD) */
+    DECODING_METHOD_ALLRAD     /* All-Round Ambisonic Decoder (AllRAD) */
+    
+} DECODING_METHODS;
+    
 typedef enum _MIC_PRESETS{
     MIC_PRESET_IDEAL = 1
 #ifdef ENABLE_ZYLIA_MIC_PRESET

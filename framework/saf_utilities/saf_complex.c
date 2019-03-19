@@ -45,7 +45,7 @@
   inline float_complex cccmulf(float_complex x, float_complex y, float_complex z) { return x * y * z; };
   inline float_complex crmulf(float_complex x, float y) { return x * y; }
   inline float_complex ccdivf(float_complex x, float_complex y) { return x / y; }
-
+  inline float_complex crdivf(float_complex x, float y) { return x / y; }
 
   /*
   Double-Precision Complex Operations
@@ -59,7 +59,7 @@
   inline double_complex cccmul(double_complex x, double_complex y, double_complex z) { return x * y * z; };
   inline double_complex crmul(double_complex x, double y) { return x * y; }
   inline double_complex ccdiv(double_complex x, double_complex y) { return x / y; }
-
+  inline double_complex crdiv(double_complex x, double y) { return x / y; }
 
 #else
 

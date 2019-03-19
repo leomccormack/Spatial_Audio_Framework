@@ -110,7 +110,7 @@ typedef enum _BEAM_TYPES {
 } BEAM_TYPES;
     
 typedef enum _REASS_MODE {
-    /* Re-assignment is disabled. i.e. just calculates (beamformer) energy-based maps */
+    /* Re-assignment is disabled. i.e. it just calculates (beamformer) energy-based maps */
     REASS_MODE_OFF = 1,
     /* Each sector beamformer energy is re-assigned to the nearest interpolation grid point,
      * based on the analysed DoA. More information can be found in:

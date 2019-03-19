@@ -32,7 +32,6 @@
 #include "ambi_dec_internal.h"
 #define SAF_ENABLE_SOFA_READER   
 #include "saf_sofa_reader.h"
- 
 
 static inline float matlab_fmodf(float x, float y) {
     float tmp = fmodf(x, y);
@@ -48,7 +47,7 @@ void ambi_dec_initCodec
     codecPars* pars = pData->pars;
     int i, ch, d, j, n, ng, nGrid_dirs, masterOrder, nSH_order, max_nSH, nLoudspeakers;
     float* grid_dirs_deg, *Y, *M_dec_tmp, *g, *a, *e, *a_n;
-    float a_avg[MAX_SH_ORDER], e_avg[MAX_SH_ORDER], sum_elev;
+    float a_avg[MAX_SH_ORDER], e_avg[MAX_SH_ORDER], azi_incl[2], sum_elev;
     
     masterOrder = pData->new_masterOrder;
     max_nSH = (masterOrder+1)*(masterOrder+1);
@@ -81,7 +80,20 @@ void ambi_dec_initCodec
     
     /* calculate loudspeaker decoding matrices */
     for( d=0; d<NUM_DECODERS; d++){
-        getAmbiDecoder((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, pData->dec_method[d], masterOrder, &(M_dec_tmp));
+        switch(pData->dec_method[d]){
+            case DECODING_METHOD_SAD:
+                getAmbiDecoder((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, DECODER_SAD, masterOrder, &(M_dec_tmp));
+                break;
+            case DECODING_METHOD_MMD:
+                getAmbiDecoder((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, DECODER_MMD, masterOrder, &(M_dec_tmp));
+                break;
+            case DECODING_METHOD_EPAD:
+                getAmbiDecoder((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, DECODER_EPAD, masterOrder, &(M_dec_tmp));
+                break;
+            case DECODING_METHOD_ALLRAD:
+                getAmbiDecoder((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, DECODER_ALLRAD, masterOrder, &(M_dec_tmp));
+                break;
+        }
         
         /* diffuse-field EQ for orders 1..masterOrder */
         for( n=1; n<=masterOrder; n++){
@@ -116,7 +128,9 @@ void ambi_dec_initCodec
             Y = malloc(nSH_order*sizeof(float));
             grid_dirs_deg = (float*)(&__Tdesign_degree_30_dirs_deg[0][0]);
             for(ng=0; ng<nGrid_dirs; ng++){
-                getSHreal(n, grid_dirs_deg[ng*2]*M_PI/180.0f, M_PI/2.0f-grid_dirs_deg[ng*2+1]*M_PI/180.0f, Y);
+                azi_incl[0] = grid_dirs_deg[ng*2]*M_PI/180.0f;
+                azi_incl[1] = M_PI/2.0f-grid_dirs_deg[ng*2+1]*M_PI/180.0f;
+                getSHreal(n, (float*)azi_incl, 1,  Y);
                 cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nLoudspeakers, 1, nSH_order, 1.0f,
                             pars->M_dec[d][n-1], nSH_order,
                             Y, nSH_order, 0.0f,

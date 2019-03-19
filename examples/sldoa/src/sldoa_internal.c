@@ -75,9 +75,7 @@ void sldoa_initAna(void* const hSld)
         pData->secCoeffs[i] = malloc(4 * (nSH*nSectors) * sizeof(float_complex));
         w_SG = malloc(4 * (nSH) * sizeof(float));
         pinv_Y = malloc(NUM_GRID_DIRS*nSH*sizeof(float));
-        for(n=0; n<nSectors; n++){
-            //for(j=0; j<4; j++)
-            //    utility_svvmul((float*)grid_vbap_gtable_T[n], pData->grid_Y[j], NUM_GRID_DIRS, secPatterns[j]);
+        for(n=0; n<nSectors; n++){ 
             utility_svvmul(&(grid_vbap_gtable_T[n*NUM_GRID_DIRS]), pData->grid_Y[0], NUM_GRID_DIRS, secPatterns[0]);
             for(j=0; j<3; j++)
                 utility_svvmul(&(grid_vbap_gtable_T[n*NUM_GRID_DIRS]), pData->grid_Y_dipoles_norm[j], NUM_GRID_DIRS, secPatterns[j+1]);

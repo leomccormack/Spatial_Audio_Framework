@@ -43,7 +43,12 @@
 
 void utility_siminv(const float* a, const int len, int* index)
 {
-#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
+#if defined(__ACCELERATE__)
+    float minVal;
+    vDSP_Length ind_tmp;
+    vDSP_minvi(a, 1, &minVal, &ind_tmp, len);
+    *index = (int)ind_tmp;
+#elif defined(INTEL_MKL_VERSION)
     *index = (int)cblas_isamin(len, a, 1);
 #else
     UNTESTED
@@ -61,7 +66,18 @@ void utility_siminv(const float* a, const int len, int* index)
 
 void utility_ciminv(const float_complex* a, const int len, int* index)
 {
-#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
+#if defined(__ACCELERATE__)
+    int i;
+    float* abs_a;
+    float minVal;
+    abs_a = malloc(len*sizeof(float));
+    for(i=0; i<len; i++)
+        abs_a[i] = cabsf(a[i]);
+    vDSP_Length ind_tmp;
+    vDSP_minvi(abs_a, 1, &minVal, &ind_tmp, len);
+    *index = (int)ind_tmp;
+    free(abs_a);
+#elif defined(INTEL_MKL_VERSION)
     *index = (int)cblas_icamin(len, a, 1);
 #else
     UNTESTED
@@ -382,7 +398,6 @@ void utility_csvd(const float_complex* A, const int dim1, const int dim2, float_
             a[j*dim1+i] = A[i*dim2 +j];
     lwork = -1;
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
-    INCOMPLETE
     cgesvd_( "A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_complex*)a, (__CLPK_integer*)&lda, s,
             (__CLPK_complex*)u, (__CLPK_integer*)&ldu, (__CLPK_complex*)vt, &ldvt, (__CLPK_complex*)&wkopt, &lwork, rwork, (__CLPK_integer*)&info );
 #elif INTEL_MKL_VERSION
@@ -392,7 +407,8 @@ void utility_csvd(const float_complex* A, const int dim1, const int dim2, float_
     lwork = (int)(crealf(wkopt)+0.01f);
     work = malloc( lwork*sizeof(float_complex) );
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
-    INCOMPLETE
+    cgesvd_( "A", "A", &m, &n, (__CLPK_complex*)a, &lda, s, (__CLPK_complex*)u, &ldu, (__CLPK_complex*)vt, &ldvt,
+            (__CLPK_complex*)work, &lwork, rwork, &info);
 #elif INTEL_MKL_VERSION
     cgesvd_( "A", "A", &m, &n, (MKL_Complex8*)a, &lda, s, (MKL_Complex8*)u, &ldu, (MKL_Complex8*)vt, &ldvt,
             (MKL_Complex8*)work, &lwork, rwork, &info);

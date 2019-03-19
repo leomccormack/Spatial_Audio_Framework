@@ -170,6 +170,7 @@ void ambi_bin_process
     int n, t, sample, ch, i, j, band;
     int o[MAX_SH_ORDER+2];
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
+    float postGain;
     float Rxyz[3][3];
     float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     float* M_rot_tmp;
@@ -256,6 +257,7 @@ void ambi_bin_process
         }
           
         /* inverse-TFT */
+        postGain = powf(10.0f, POST_GAIN/20.0f);
         for (band = 0; band < HYBRID_BANDS; band++) {
             for (ch = 0; ch < NUM_EARS; ch++) {
                 for (t = 0; t < TIME_SLOTS; t++) {
@@ -268,7 +270,7 @@ void ambi_bin_process
             afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF[t], pData->tempHopFrameTD);
             for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
                 for (sample = 0; sample < HOP_SIZE; sample++)
-                    outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD[ch][sample];
+                    outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD[ch][sample]*postGain;
             for (; ch < nOutputs; ch++) /* fill remaining channels with zeros */
                 for (sample = 0; sample < HOP_SIZE; sample++)
                     outputs[ch][sample + t* HOP_SIZE] = 0.0f;

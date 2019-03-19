@@ -53,6 +53,7 @@ extern "C" {
   float_complex cccmulf(float_complex x, float_complex y, float_complex z);
   float_complex crmulf(float_complex x, float y);
   float_complex ccdivf(float_complex x, float_complex y);
+  float_complex crdivf(float_complex x, float y);
 
   /*
   Double-Precision Complex Operations
@@ -66,6 +67,7 @@ extern "C" {
   double_complex cccmul(double_complex x, double_complex y, double_complex z);
   double_complex crmul(double_complex x, double y);
   double_complex ccdiv(double_complex x, double_complex y);
+  double_complex crdiv(double_complex x, double y);
 
 
 #elif _MSC_VER >= 1900
@@ -131,14 +133,12 @@ extern "C" {
     return z;
   }
 
-  inline float_complex rcdivf(float x, float_complex y) {
+  inline float_complex crdivf(float_complex x, float y) {
     float_complex z;
-    z._Val[0] = (  x * y._Val[0]) / (y._Val[0] * y._Val[0] + y._Val[1] * y._Val[1]);
-    z._Val[1] = (- x * y._Val[1]) / (y._Val[0] * y._Val[0] + y._Val[1] * y._Val[1]);
+    z._Val[0] = x._Val[0] / y;
+    z._Val[1] = x._Val[1] / y;
     return z;
   }
-
-
 
   /* 
   Double-Precision Complex Operations 
@@ -192,6 +192,13 @@ extern "C" {
     return z;
   }
     
+  inline double_complex crdivf(double_complex x, double y) {
+      double_complex z;
+      z._Val[0] = x._Val[0] / y;
+      z._Val[1] = x._Val[1] / y;
+      return z;
+  }
+
 #endif
 
     
