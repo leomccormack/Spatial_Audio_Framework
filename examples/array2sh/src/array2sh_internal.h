@@ -103,8 +103,7 @@ typedef struct _array2sh
     float** bN_modal_dB;            /* modal responses / no regulaisation; HYBRID_BANDS x (MAX_SH_ORDER +1)  */
     float** bN_inv_dB;              /* modal responses / with regularisation; HYBRID_BANDS x (MAX_SH_ORDER +1)  */
     float* cSH;                     /* spatial correlation; HYBRID_BANDS x 1 */
-    float* lSH;                     /* level difference; HYBRID_BANDS x 1 */
-    float* disp_freqVector;         /* frequency vector used for display; HYBRID_BANDS x 1 */
+    float* lSH;                     /* level difference; HYBRID_BANDS x 1 */ 
     
     /* time-frequency transform and array details */
     float freqVector[HYBRID_BANDS]; /* frequency vector */

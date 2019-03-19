@@ -30,6 +30,7 @@
 #include "saf_veclib.h"
 #include "saf_complex.h"
 #include "saf_sort.h"
+#include <float.h>
 
 #ifndef MIN
   #define MIN(a,b) (( (a) < (b) ) ? (a) : (b))
@@ -37,6 +38,122 @@
 #ifndef MAX
   #define MAX(a,b) (( (a) > (b) ) ? (a) : (b))
 #endif
+
+/*----------------------------- index of min-abs-value (?iminv) -----------------------------*/
+
+void utility_siminv(const float* a, const int len, int* index)
+{
+#if defined(__ACCELERATE__)
+    float minVal;
+    vDSP_Length ind_tmp;
+    vDSP_minvi(a, 1, &minVal, &ind_tmp, len);
+    *index = (int)ind_tmp;
+#elif defined(INTEL_MKL_VERSION)
+    *index = (int)cblas_isamin(len, a, 1);
+#else
+    UNTESTED
+    int j;
+    float minVal;
+    minVal = 3.402823e+38f;
+    for(j=0; j<len; j++){
+        if(fabsf(a[j])<minVal){
+            minVal = fabsf(a[j]);
+            (*index) = j;
+        }
+    }
+#endif
+}
+
+void utility_ciminv(const float_complex* a, const int len, int* index)
+{
+#if defined(__ACCELERATE__)
+    int i;
+    float* abs_a;
+    float minVal;
+    abs_a = malloc(len*sizeof(float));
+    for(i=0; i<len; i++)
+        abs_a[i] = cabsf(a[i]);
+    vDSP_Length ind_tmp;
+    vDSP_minvi(abs_a, 1, &minVal, &ind_tmp, len);
+    *index = (int)ind_tmp;
+    free(abs_a);
+#elif defined(INTEL_MKL_VERSION)
+    *index = (int)cblas_icamin(len, a, 1);
+#else
+    UNTESTED
+    int j;
+    float minVal;
+    minVal = 3.402823e+38f;
+    for(j=0; j<len; j++){
+        if(cabsf(a[j])<maxVal){
+            minVal = cabsf(a[j]);
+            (*index) = j;
+        }
+    }
+#endif
+}
+
+/*----------------------------- index of max-abs-value (?imaxv) -----------------------------*/
+
+void utility_simaxv(const float* a, const int len, int* index)
+{
+#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
+    *index = (int)cblas_isamax(len, a, 1);
+#else
+    UNTESTED
+    int j;
+    float maxVal;
+    maxVal = 1.175494e-38f;
+    for(j=0; j<len; j++){
+        if(fabsf(a[j])>maxVal){
+            maxVal = fabsf(a[j]);
+            (*index) = j;
+        }
+    }
+#endif
+}
+
+void utility_cimaxv(const float_complex* a, const int len, int* index)
+{
+#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
+    *index = (int)cblas_icamax(len, a, 1);
+#else
+    UNTESTED
+    int j;
+    float maxVal;
+    maxVal = 1.175494e-38f;
+    for(j=0; j<len; j++){
+        if(cabsf(a[j])>maxVal){
+            maxVal = cabsf(a[j]);
+            (*index) = j;
+        }
+    }
+#endif
+}
+
+/*----------------------------------- vector-abs (?vabs) ------------------------------------*/
+
+void utility_svabs(const float* a, const int len, float* c)
+{
+#ifdef INTEL_MKL_VERSION
+    vsAbs(len, a, c);
+#else
+    int i;
+    for(i=0; i<len; i++)
+        c[i] = fabsf(a[i]);
+#endif
+}
+
+void utility_cvabs(const float_complex* a, const int len, float* c)
+{
+#ifdef INTEL_MKL_VERSION
+    vcAbs(len, (MKL_Complex8*)a, c);
+#else
+    int i;
+    for(i=0; i<len; i++)
+        c[i] = cabsf(a[i]);
+#endif
+}
 
 /*------------------------------ vector-vector copy (?vvcopy) -------------------------------*/
 
@@ -205,7 +322,7 @@ void utility_svssub(float* a, const float* s, const int len, float* c)
 
 /*---------------------------- singular-value decomposition (?svd) --------------------------*/
 
-void utility_ssvd(const float* A, const int dim1, const int dim2, float** U, float** S, float** V)
+void utility_ssvd(const float* A, const int dim1, const int dim2, float* U, float* S, float* V, float* sing)
 {
     int i, j, m, n, lda, ldu, ldvt, info, lwork;
     m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
@@ -227,29 +344,32 @@ void utility_ssvd(const float* A, const int dim1, const int dim2, float** U, flo
     work = (float*)malloc( lwork*sizeof(float) );
     sgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork,
            &info );
-    free(*U);
-    free(*S);
-    free(*V);
     if( info > 0 ) {
         /* svd failed to converge */
-        (*U) = (*S) = (*V) = NULL;
     }
     else {
         /* svd successful */
-        (*U) = malloc(dim1*dim1*sizeof(float));
-        (*S) = calloc(dim1*dim2,sizeof(float));
-        (*V) = malloc(dim2*dim2*sizeof(float));
+        if (S != NULL){
+            memset(S, 0, dim1*dim2*sizeof(float));
+            /* singular values on the diagonal MIN(dim1, dim2). The remaining elements are 0.  */
+            for(i=0; i<MIN(dim1, dim2); i++)
+                S[i*dim2+i] = s[i];
+        }
         /*return as row-major*/
-        for(i=0; i<dim1; i++)
-            for(j=0; j<dim1; j++)
-                (*U)[i*dim1+j] = u[j*dim1+i];
-        /* singular values on the diagonal MIN(dim1, dim2). The remaining elements are 0.  */
-        for(i=0; i<MIN(dim1, dim2); i++)
-            (*S)[i*dim2+i] = s[i];
+        if (U != NULL)
+            for(i=0; i<dim1; i++)
+                for(j=0; j<dim1; j++)
+                    U[i*dim1+j] = u[j*dim1+i];
+        
         /* lapack returns VT, i.e. row-major V already */
-        for(i=0; i<dim2; i++)
-            for(j=0; j<dim2; j++)
-                (*V)[i*dim2+j] = vt[i*dim2+j];
+        if (V != NULL)
+            for(i=0; i<dim2; i++)
+                for(j=0; j<dim2; j++)
+                    V[i*dim2+j] = vt[i*dim2+j];
+        
+        if (sing != NULL)
+            for(i=0; i<MIN(dim1, dim2); i++)
+                sing[i] = s[i];
     }
     
     free( (void*)a );
@@ -257,6 +377,76 @@ void utility_ssvd(const float* A, const int dim1, const int dim2, float** U, flo
     free( (void*)u );
     free( (void*)vt );
     free( (void*)work );
+}
+
+void utility_csvd(const float_complex* A, const int dim1, const int dim2, float_complex* U, float_complex* S, float_complex* V, float* sing)
+{
+    int i, j, m, n, lda, ldu, ldvt, info, lwork;
+    m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
+    float_complex wkopt;
+    float_complex* a, *u, *vt, *work;
+    float* s, *rwork;
+    
+    a = malloc(lda*n*sizeof(float_complex));
+    s = malloc(MIN(n,m)*sizeof(float));
+    u = malloc(ldu*m*sizeof(float_complex));
+    vt = malloc(ldvt*n*sizeof(float_complex));
+    rwork = malloc(m*MAX(1, 5*MIN(n,m))*sizeof(float));
+    /* store in column major order */
+    for(i=0; i<dim1; i++)
+        for(j=0; j<dim2; j++)
+            a[j*dim1+i] = A[i*dim2 +j];
+    lwork = -1;
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+    cgesvd_( "A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_complex*)a, (__CLPK_integer*)&lda, s,
+            (__CLPK_complex*)u, (__CLPK_integer*)&ldu, (__CLPK_complex*)vt, &ldvt, (__CLPK_complex*)&wkopt, &lwork, rwork, (__CLPK_integer*)&info );
+#elif INTEL_MKL_VERSION
+    cgesvd_( "A", "A", &m, &n, (MKL_Complex8*)a, &lda, s, (MKL_Complex8*)u, &ldu, (MKL_Complex8*)vt, &ldvt,
+            (MKL_Complex8*)&wkopt, &lwork, rwork, &info );
+#endif
+    lwork = (int)(crealf(wkopt)+0.01f);
+    work = malloc( lwork*sizeof(float_complex) );
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+    cgesvd_( "A", "A", &m, &n, (__CLPK_complex*)a, &lda, s, (__CLPK_complex*)u, &ldu, (__CLPK_complex*)vt, &ldvt,
+            (__CLPK_complex*)work, &lwork, rwork, &info);
+#elif INTEL_MKL_VERSION
+    cgesvd_( "A", "A", &m, &n, (MKL_Complex8*)a, &lda, s, (MKL_Complex8*)u, &ldu, (MKL_Complex8*)vt, &ldvt,
+            (MKL_Complex8*)work, &lwork, rwork, &info);
+#endif
+    if( info > 0 ) {
+        /* svd failed to converge */
+    }
+    else {
+        /* svd successful */
+        if (S != NULL){
+            memset(S, 0, dim1*dim2*sizeof(float_complex));
+            /* singular values on the diagonal MIN(dim1, dim2). The remaining elements are 0.  */
+            for(i=0; i<MIN(dim1, dim2); i++)
+                S[i*dim2+i] = cmplxf(s[i], 0.0f);
+        }
+        /*return as row-major*/
+        if (U != NULL)
+            for(i=0; i<dim1; i++)
+                for(j=0; j<dim1; j++)
+                    U[i*dim1+j] = u[j*dim1+i];
+        
+        /* lapack returns VT, i.e. row-major V already */
+        if (V != NULL)
+            for(i=0; i<dim2; i++)
+                for(j=0; j<dim2; j++)
+                    V[i*dim2+j] = conjf(vt[i*dim2+j]); /* v^H */
+        
+        if (sing != NULL)
+            for(i=0; i<MIN(dim1, dim2); i++)
+                sing[i] = s[i];
+    }
+    
+    free( (void*)a );
+    free( (void*)s );
+    free( (void*)u );
+    free( (void*)vt );
+    free( (void*)work );
+    free(rwork);
 }
 
 /*------------------------ symmetric eigenvalue decomposition (?seig) -----------------------*/
@@ -772,8 +962,83 @@ void utility_dpinv(const double* inM, const int dim1, const int dim2, double* ou
     free((void*)work);
 }
 
+/*------------------------------- Cholesky factorisation (?chol) -----------------------------*/
+
+void utility_schol
+(
+    const float* A,
+    const int dim,
+    float* X
+)
+{
+    int i, j, info, n, lda;
+    n = lda = dim;
+    float* a;
+    a = malloc(dim*dim*sizeof(float));
+    
+    /* store in column major order */
+    for(i=0; i<dim; i++)
+        for(j=0; j<dim; j++)
+            a[j*dim+i] = A[i*dim+j];
+    
+    /* a is replaced by solution */
+    spotrf_( "U", &n, a, &lda, &info );
+    
+    if(info>0){
+        /* A is not positive definate, solution not possible */
+        memset(X, 0, dim*dim*sizeof(float));
+    }
+    else{
+        /* store solution in row-major order */
+        for(i=0; i<dim; i++)
+            for(j=0; j<dim; j++)
+                X[i*dim+j] = j>=i ? a[j*dim+i] : 0.0f;
+    }
+    
+    free(a);
+}
+
+void utility_cchol
+(
+    const float_complex* A,
+    const int dim,
+    float_complex* X
+)
+{
+    int i, j, info, n, lda;
+    n = lda = dim;
+    float_complex* a;
+    a = malloc(dim*dim*sizeof(float_complex));
+    
+    /* store in column major order */
+    for(i=0; i<dim; i++)
+        for(j=0; j<dim; j++)
+            a[j*dim+i] = A[i*dim+j];
+    
+    /* a is replaced by solution */
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+    cpotrf_( "U", &n, (__CLPK_complex*)a, &lda, &info );
+#elif INTEL_MKL_VERSION
+    cpotrf_( "U", &n, (MKL_Complex8*)a, &lda, &info );
+#endif
+    
+    if(info>0){
+        /* A is not positive definate, solution not possible */
+        memset(X, 0, dim*dim*sizeof(float_complex));
+    }
+    else{
+        /* store solution in row-major order */
+        for(i=0; i<dim; i++)
+            for(j=0; j<dim; j++)
+                X[i*dim+j] = j>=i ? a[j*dim+i] : cmplxf(0.0f, 0.0f);
+    }
+    
+    free(a);
+}
+
 /*-------------------------------- matrix inversion (?inv) ----------------------------------*/
 
+// TODO: rewrite for row-major
 void utility_sinv(float * A, const int N)
 {
     int *IPIV;

@@ -60,6 +60,42 @@ typedef enum _CONJ_FLAG{
     CONJ = 2
 }CONJ_FLAG;
 
+/*----------------------------- index of min-abs-value (?iminv) -----------------------------*/
+
+/* s, single-precision, index of minimum absolute value in a vector, [~,ind] = min(abs(a) */
+void utility_siminv(const float* a,                /* input vector a; len x 1 */
+                    const int len,                 /* vector length */
+                    int* index);                   /* & index of value; 1 x 1 */
+
+/* s, single-precision, complex, index of maximum absolute value in a vector, [~,ind] = min(abs(a) */
+void utility_ciminv(const float_complex* a,        /* input vector a; len x 1 */
+                    const int len,                 /* vector length */
+                    int* index);                   /* & index of value; 1 x 1 */
+
+/*----------------------------- index of max-abs-value (?imaxv) -----------------------------*/
+
+/* s, single-precision, index of maximum absolute value in a vector, [~,ind] = max(abs(a) */
+void utility_simaxv(const float* a,                /* input vector a; len x 1 */
+                    const int len,                 /* vector length */
+                    int* index);                   /* & index of value; 1 x 1 */
+
+/* s, single-precision, complex, index of maximum absolute value in a vector, [~,ind] = max(abs(a) */
+void utility_cimaxv(const float_complex* a,        /* input vector a; len x 1 */
+                    const int len,                 /* vector length */
+                    int* index);                   /* & index of value; 1 x 1 */
+
+/*----------------------------------- vector-abs (?vabs) ------------------------------------*/
+
+/* s, single-precision, absolute value of vector elements, c = fabsf(a) */
+void utility_svabs(const float* a,                 /* input vector a; len x 1 */
+                   const int len,                  /* vector length */
+                   float* c);                      /* output vector c; len x 1 */
+
+/* s, single-precision, complex, absolute value of vector elements, c = cabsf(a) */
+void utility_cvabs(const float_complex* a,         /* input vector a; len x 1 */
+                   const int len,                  /* vector length */
+                   float* c);                      /* output vector c; len x 1 */
+
 /*------------------------------ vector-vector copy (?vvcopy) -------------------------------*/
 
 /* s, single-precision, vector-vector copy, c = a */
@@ -128,10 +164,10 @@ void utility_svsadd(float* a,
 /*---------------------------- vector-scalar subtraction (?vssub) ---------------------------*/
 
 /* s, single-precision, subtracts a scalar 's' from each element in vector 'a' */
-void utility_svssub(float* a,
-                    const float* s,
-                    const int len,
-                    float* c);
+void utility_svssub(float* a,              /* vector; len x 1 */
+                    const float* s,        /* scalar */
+                    const int len,         /* length of vector */
+                    float* c);             /* c = a-s, set to NULL for a = a-s; len x 1 */
 
 /*---------------------------- singular-value decomposition (?svd) --------------------------*/
 
@@ -139,9 +175,19 @@ void utility_svssub(float* a,
 void utility_ssvd(const float* A,          /* in matrix; flat: dim1 x dim2 */
                   const int dim1,          /* first dimension of A */
                   const int dim2,          /* second dimension of A */
-                  float** U,               /* & left matrix; flat: dim1 x dim1 */
-                  float** S,               /* & singular values along the diagonal min(dim1, dim2), the rest 0s; flat: dim1 x dim2 */
-                  float** V);              /* & right matrix (UNTRANSPOSED!); flat: dim2 x dim2 */
+                  float* U,                /* left matrix (set to NULL if not needed); flat: dim1 x dim1 */
+                  float* S,                /* singular values along the diagonal min(dim1, dim2), (set to NULL if not needed); flat: dim1 x dim2 */
+                  float* V,                /* right matrix (UNTRANSPOSED!) (set to NULL if not needed); flat: dim2 x dim2 */
+                  float* sing);            /* singular values as a vector, (set to NULL if not needed); min(dim1, dim2) x 1 */
+
+/* s, row-major, singular value decomposition: single precision complex */
+void utility_csvd(const float_complex* A,  /* in matrix; flat: dim1 x dim2 */
+                  const int dim1,          /* first dimension of A */
+                  const int dim2,          /* second dimension of A */
+                  float_complex* U,        /* left matrix (set to NULL if not needed); flat: dim1 x dim1 */
+                  float_complex* S,        /* singular values along the diagonal min(dim1, dim2), (set to NULL if not needed); flat: dim1 x dim2 */
+                  float_complex* V,        /* right matrix (UNTRANSPOSED!) (set to NULL if not needed); flat: dim2 x dim2 */
+                  float* sing);            /* singular values as a vector, (set to NULL if not needed); min(dim1, dim2) x 1 */
 
 /*------------------------ symmetric eigenvalue decomposition (?seig) -----------------------*/
 
@@ -197,8 +243,8 @@ void utility_sslslv(const float* A,          /* square symmetric positive-defina
                     int nCol,                /* number of columns in right hand side matrix */
                     float* X);               /* the solution; dim x nCol */
 
-/* c, row-major, linear solver (AX=B) for symmetric positive-definate 'A': single precision complex */
-void utility_cslslv(const float_complex* A,  /* square symmetric positive-definate matrix; flat: dim x dim */
+/* c, row-major, linear solver (AX=B) for hermitian positive-definate 'A': single precision complex */
+void utility_cslslv(const float_complex* A,  /* square hermitian positive-definate matrix; flat: dim x dim */
                     const int dim,           /* dimensions for the square matrix, A */
                     float_complex* B,        /* right hand side matrix; flat: dim x nCol */
                     int nCol,                /* number of columns in right hand side matrix */
@@ -207,16 +253,28 @@ void utility_cslslv(const float_complex* A,  /* square symmetric positive-defina
 /*------------------------------- matrix pseudo-inverse (?pinv) -----------------------------*/
 
 /* s, row-major, general matrix pseudo-inverse (the svd way): single precision */
-void utility_spinv(const float* inM,          /* in matrix; flat:[dim1][dim2] */
-                   const int dim1,
-                   const int dim2,
-                   float* outM);              /* out matrix; flat:[dim2][dim1] */
+void utility_spinv(const float* inM,          /* in matrix; flat: dim1 x dim2 */
+                   const int dim1,            /*  */
+                   const int dim2,            /*  */
+                   float* outM);              /* out matrix; flat: dim2 x dim1 */
 
 /* d, row-major, general matrix pseudo-inverse (the svd way): double precision */
-void utility_dpinv(const double* inM,          /* in matrix; flat:[dim1][dim2] */
-                   const int dim1,
-                   const int dim2,
-                   double* outM);              /* out matrix; flat:[dim2][dim1] */
+void utility_dpinv(const double* inM,          /* in matrix; flat: dim1 x dim2 */
+                   const int dim1,             /*  */
+                   const int dim2,             /*  */
+                   double* outM);              /* out matrix; flat: dim2 x dim1 */
+
+/*------------------------------- Cholesky factorisation (?chol) -----------------------------*/
+
+/* s, row-major, Cholesky factorisation (X'*X = A): single precision */
+void utility_schol(const float* A,          /* square symmetric positive-definate matrix; flat: dim x dim */
+                   const int dim,           /* dimensions for the square matrix, A */
+                   float* X);               /* the solution; dim x dim */
+
+/* c, row-major, Cholesky factorisation (X'*X = A): single precision, complex */
+void utility_cchol(const float_complex* A,  /* square symmetric positive-definate matrix; flat: dim x dim */
+                   const int dim,           /* dimensions for the square matrix, A */
+                   float_complex* X);       /* the solution; dim x dim */
 
 /*-------------------------------- matrix inversion (?inv) ----------------------------------*/
 //TODO: rewrite for row-major:

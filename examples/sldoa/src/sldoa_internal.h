@@ -23,10 +23,10 @@
  *     each frequency band.
  *     The algorithms within sldoa were developed in collaboration with Symeon Delikaris-
  *     Manias, and are explained in more detail in:
- *     McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
- *     “Real-time conversion of sensor array signals into spherical harmonic signals with
- *     applications to spatially localised sub-band sound-field analysis,” in Audio
- *     Engineering Society Convention 144, Audio Engineering Society, 2018.
+ *         McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
+ *         “Real-time conversion of sensor array signals into spherical harmonic signals with
+ *         applications to spatially localised sub-band sound-field analysis,” in Audio
+ *         Engineering Society Convention 144, Audio Engineering Society, 2018.
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
  * Author, date created:
@@ -49,7 +49,8 @@
 
 #define ORDER2NUMSIGS(L) ( (L+1) * (L+1) )
 #define ELEV2INCL(E) ( (M_PI/2 - E) )
-#define ORDER2NUMSECTORS(L) ( 2*L )
+//#define ORDER2NUMSECTORS(L) ( 2*L )
+#define ORDER2NUMSECTORS(L) ( L*L )
 
 #define MAX_SH_ORDER ( 7 )
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1)  )   /* (L+1)^2 */
@@ -86,6 +87,7 @@ typedef struct _sldoa
     int reInitAna; /* 0: no init required, 1: init required, 2: init in progress */
     int reInitTFT; /* 0: no init required, 1: init required, 2: init in progress */
     float grid_Y[64][NUM_GRID_DIRS];
+    float grid_Y_dipoles_norm[3][NUM_GRID_DIRS];
     float grid_dirs_deg[NUM_GRID_DIRS][2];
     float_complex* secCoeffs[MAX_SH_ORDER-1];
     float doa_rad[HYBRID_BANDS][MAX_NUM_SECTORS][2];

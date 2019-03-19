@@ -6,13 +6,7 @@ A Spatial Audio Framework (SAF) written in C. The framework includes functions f
 
 ## Getting Started
 
-To use this framework, first add the following folder and all of its contained files to your project:
-
-```
-Spatial_Audio_Framework/framework
-```
-
-Add the following directories to the relevant header and library search paths:
+To use this framework, add the following directories to the relevant header and library search paths:
 
 ```
 Spatial_Audio_Framework/framework/include
@@ -20,7 +14,7 @@ Spatial_Audio_Framework/dependencies/.../include
 Spatial_Audio_Framework/dependencies/.../lib
 ```
 
-To enable the SOFA loading feature, your project must link against the following included static libraries:
+To enable the SOFA loading feature, your project must also link against the following included static libraries:
 
 ```
 netcdf; hdf5; hdf5_hl; z; (for MacOSX users)
@@ -35,7 +29,7 @@ Windows users must also link against a custom [Intel MKL](https://software.intel
 saf_mkl_custom.lib; (for Windows users)
 ```
 
-The "saf_mkl_custom.dll" may be generated with Intel's custom dll builder and the included "saf_mkl_list", with the following command:
+The "saf_mkl_custom.dll" may be generated with Intel's custom dll builder and the included "dependencies/saf_mkl_list" file, with the following command:
 
 ```c
 nmake dllintel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_mkl_list
@@ -49,7 +43,7 @@ By default, the framework uses Apple's Accelerate library for the linear algebra
 The required "saf_mkl_custom.dylib" may be obtained in a similar manner as in the above, by either installing the software found [here](http://research.spa.aalto.fi/projects/sparta_vsts/download/) or by generating it with the following command:
 
 ```c
-make intel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_mkl_list
+make intel64 interface=lp64 threading=sequential name=libsaf_mkl_custom export=saf_mkl_list
 ```
 
 ## Examples
@@ -58,13 +52,14 @@ Several examples are also included in the repository:
 * **ambi_bin** - a binaural Ambisonic decoder with built-in rotator
 * **ambi_dec** - a frequency-dependent Ambisonic decoder (AllRAD, EPAD, MMD etc)
 * **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for spherical harmonic signals (aka Ambisonic signals)
-* **ambi_enc** - a simple Ambisonic encoder/panner
+* **ambi_enc** - a simple Ambisonic encoder
 * **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals)
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file
+* **dirass** - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction.
 * **panner** - a frequency-dependent VBAP panner
 * **powermap** - sound-field visualiser using beamformers (PWD, MVDR) or sub-space methods (MUSIC)
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles
-* **sldoa** - spatially-localised direction of arrival estimator
+* **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors
 * **upmix** - a (soon to be) collection of upmixing algorithms (currently only stereo to 5.x upmixing)
 
 ### GUI implementations

@@ -17,7 +17,7 @@
  *     saf_cdf4sap.h (include header)
  * Description:
  *     Covariance Domain Framework for Spatial Audio Processing (CDF4SAP). A C implementation
- *     of the matlab code by J. Vilkamo.
+ *     of the MatLab code, originally written by Dr. Juha Vilkamo.
  * Dependencies:
  *     saf_utilities
  * Author, date created:
@@ -27,101 +27,59 @@
 #ifndef __SAF_CDF4SAP_H_INCLUDED__
 #define __SAF_CDF4SAP_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h> 
-#include "saf_utilities.h"   /* for blas/lapack and complex number support */
+#include "../saf_utilities/saf_complex.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-typedef struct _cdf4sap {
-    int xsize, ysize, qsize1, qsize2;
-    float* S_Cy, *S_Cy_Mtx, *U_Cy, *VT_Cy, *A_Cy, *Ky;
-    float* S_Cx, *S_Cx_Mtx, *U_Cx, *VT_Cx, *A_Cx, *Kx, *Sx_reg_diag, *Sx_reg_invMtx, *Kx_reg_inverse;
-    float* Q, *QCx, *QCxQ, *KxQ, *KxQG, *KxQGKy, *G_hat;
-    float* S, *U, *VT, *Vlamb, *P, *KyP, *M_CM, *MCx, *Cy_tilde;
-    float* G, *Mtmp;
-    float* lambda;
-
-}cdf4sap;
-
     
-typedef struct _cdf4sap_cmplx {
-    int xsize, ysize, qsize1, qsize2;
-    float* S_Cy_real, *S_Cx_real, *S_real;
-    float_complex* S_Cy, *S_Cy_Mtx, *U_Cy, *VH_Cy, *A_Cy, *Ky;
-    float_complex* S_Cx, *S_Cx_Mtx, *U_Cx, *VH_Cx, *A_Cx, *Kx, *Sx_reg_diag, *Sx_reg_invMtx, *Kx_reg_inverse;
-    float_complex* Q, *QCx, *QCxQ, *KxQ, *KxQG, *KxQGKy, *G_hat;
-    float_complex* S, *U, *VH, *Vlamb, *P, *KyP, *M_CM, *MCx, *Cy_tilde;
-    float_complex* G, *Mtmp;
-    float_complex* lambda;
-
-}cdf4sap_cmplx;
-
-
-/* creates an instance of the Covariance Domain Framework */
-void cdf4sap_alloc(void ** const phCdf,                             /* address of Covariance Domain Framework handle */
-                   int CxMN,                                        /* dimension m=n length of Cx */
-                   int CyMN,                                        /* dimension m=n length of Cy */
-                   int QmM,                                         /* dimension m of Q */
-                   int QmN);                                        /* dimension n of Q */
+/* creates an instance of the Covariance Domain Framework, REAL-VALUED MATRICES */
+void cdf4sap_create(void ** const phCdf,              /* address of Covariance Domain Framework handle */
+                    int nXcols,                       /* number of columns/rows in Cx */
+                    int nYcols);                      /* number of columns/rows in Cy */
     
+/* creates an instance of the Covariance Domain Framework, COMPLEX-VALUED MATRICES */
+void cdf4sap_cmplx_create(void ** const phCdf,        /* address of Covariance Domain Framework handle */
+                          int nXcols,                 /* number of columns/rows in Cx */
+                          int nYcols);                /* number of columns/rows in Cy */
     
-/* creates an instance of the Covariance Domain Framework */
-void cdf4sap_alloc_cmplx(void ** const phCdf,                       /* address of Covariance Domain Framework handle */
-                         int CxMN,                                  /* dimension m=n length of Cx */
-                         int CyMN,                                  /* dimension m=n length of Cy */
-                         int QmM,                                   /* dimension m of Q */
-                         int QmN);                                  /* dimension n of Q */
+/* destroys an instance of the Covariance Domain Framework, for REAL-VALUED MATRICES */
+void cdf4sap_destroy(void ** const phCdf);            /* address of Covariance Domain Framework handle */
     
+/* destroys an instance of the Covariance Domain Framework, for COMPLEX-VALUED MATRICES */
+void cdf4sap_cmplx_destroy(void ** const phCdf);      /* address of Covariance Domain Framework handle */
     
-/* destroys an instance of the Covariance Domain Framework */
-void cdf4sap_free(void ** const phCdf);                             /* address of Covariance Domain Framework handle */
-    
-    
-/* destroys an instance of the Covariance Domain Framework */
-void cdf4sap_free_cmplx(void ** const phCdf);                       /* address of Covariance Domain Framework handle */
-    
-
-/* Formulate mixing and residual matrices
- * note: input arguments must be in row-major order, despite the processing using column-major;
- * input matricies do not need to be contiguously allocated for this
+/* This function solves the problem of determining the optimal mixing matrices 'M' and 'Cr',
+ * such that the covariance matrix of the output: y_out = M*x + B*decorrelated(x), is aligned
+ * with the target matrix 'Cy', given the covariance matrix of input x, Cx=x*x^H, and a prototype
+ * decoding matrix Q.
  *
- * For the derivation and a detailed description, the reader is referred to:
- * Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance domain
- * framework for time–frequency processing of spatial audio. Journal of the Audio
- * Engineering Society, 61(6), 403-411. */
-void cdf4sap_formulate_M_and_Cr(/* Input arguments */
-                                void * const hCdf,                  /* Covariance Domain Framework handle */
-                                float** Cx,                         /* [xsize][xsize], Input Covarience matrix */
-                                float** Cy,                         /* [ysize][ysize], Target Covarience matrix */
-                                float** Qm,                         /* [qsize1][qsize2], decoding matrix */
-                                int flag,                           /* 0 or 1; 1=Use energy compensation instead of residual */
-                                float regularisationConstant,       /* suggested value, 0.2f */
-                                /* Output arguments */
-                                float** M,                          /* [xsize][ysize], Output Mixing matrix */
-                                float** Cr);                        /* [ysize][ysize], Output Residual matrix */
+ * For the derivation and a more detailed description, the reader is referred to:
+ *     Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance domain framework
+ *     for time–frequency processing of spatial audio. Journal of the Audio Engineering Society,
+ *     61(6), 403-411.
+ * and:
+ *     Vilkamo, J., & Backstrom, T. (2018). Time--Frequency Processing: Methods and Tools. In
+ *     Parametric Time-Frequency Domain Spatial Audio. John Wiley & Sons. */
+void formulate_M_and_Cr(void * const hCdf,            /* Covariance Domain Framework handle */
+                        float* Cx,                    /* covariance matrix of input, x; FLAT: nXcols x nXcols */
+                        float* Cy,                    /* target covariance matrix; FLAT: nYcols x nYcols */
+                        float* Q,                     /* prototype matrix; FLAT: nYcols x nXcols */
+                        int useEnergyFLAG,            /* 0: apply energy compensation to 'M' instead of outputing 'Cr', 1: output 'Cr' too */
+                        float reg,                    /* regularisation term */
+                        float* M,                     /* Mixing matrix; FLAT: nYcols x nXcols */
+                        float* Cr);                   /* Mixing matrix for residual; FLAT: nYcols x nYcols */
 
-
-/* Formulate mixing and residual matrices
- * note: input arguments must be in row-major order, despite the processing using column-major
- *
- * For the derivation and a detailed description, the reader is referred to:
- * Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance domain
- * framework for time–frequency processing of spatial audio. Journal of the Audio
- * Engineering Society, 61(6), 403-411. */
-void cdf4sap_formulate_M_and_Cr_cmplx(/* Input arguments */
-                                      void * const hCdf,            /* Covariance Domain Framework handle */
-                                      float_complex** Cx,           /* [xsize][xsize], Input Covarience matrix */
-                                      float_complex** Cy,           /* [ysize][ysize], Target Covarience matrix */
-                                      float_complex** Qm,           /* [qsize1][qsize2], decoding matrix */
-                                      int flag,                     /* 0 or 1; 1=Use energy compensation instead of residual */
-                                      float regularisationConstant, /* suggested value, 0.2f */
-                                      /* Output arguments */
-                                      float_complex** M,            /* [xsize][ysize], Output Mixing matrix */
-                                      float_complex** Cr);          /* [ysize][ysize], Output Residual matrix */
+/* This is the same as 'formulate_M_and_Cr', except it employs COMPLEX-VALUED MATRICES */
+void formulate_M_and_Cr_cmplx(void * const hCdf,      /* Covariance Domain Framework handle */
+                              float_complex* Cx,      /* covariance matrix of input, x; FLAT: nXcols x nXcols */
+                              float_complex* Cy,      /* target covariance matrix; FLAT: nYcols x nYcols */
+                              float_complex* Q,       /* prototype matrix; FLAT: nYcols x nXcols */
+                              int useEnergyFLAG,      /* 0: apply energy compensation to 'M' instead of outputing 'Cr', 1: output 'Cr' too */
+                              float reg,              /* regularisation term */
+                              float_complex* M,       /* Mixing matrix; FLAT: nYcols x nXcols */
+                              float* Cr);             /* Mixing matrix for residual; FLAT: nYcols x nYcols */
+    
 
 #ifdef __cplusplus
 }

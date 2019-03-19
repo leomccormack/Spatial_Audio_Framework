@@ -95,7 +95,7 @@ void panner_loadPreset(PRESETS preset, float dirs_deg[MAX_NUM_INPUTS][2], int* n
     int ch, i, nCH;
     
     switch(preset){
-	    default:
+        default:
         case PRESET_DEFAULT:
             nCH = 1;
             for(ch=0; ch<nCH; ch++)

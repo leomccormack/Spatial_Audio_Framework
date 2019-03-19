@@ -1,4 +1,4 @@
-    /*
+        /*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -86,12 +86,12 @@ void ambi_drc_initTFT
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
 
-	/* Initialise afSTFT */
-	if (pData->hSTFT == NULL)
-		afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, pData->new_nSH, 0, 1);
-	else /* Or change the number of channels */
-		afSTFTchannelChange(pData->hSTFT, pData->new_nSH, pData->new_nSH);
-	pData->nSH = pData->new_nSH; 
+    /* Initialise afSTFT */
+    if (pData->hSTFT == NULL)
+        afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, pData->new_nSH, 0, 1);
+    else /* Or change the number of channels */
+        afSTFTchannelChange(pData->hSTFT, pData->new_nSH, pData->new_nSH);
+    pData->nSH = pData->new_nSH; 
 }
 
 

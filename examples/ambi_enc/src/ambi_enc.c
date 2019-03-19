@@ -84,7 +84,7 @@ void ambi_enc_process
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
     int i, j, ch, n, nSources, nSH;
     int o[MAX_ORDER+2];
-    float src_dirs[MAX_NUM_INPUTS][2], scale;
+    float src_dirs[MAX_NUM_INPUTS][2], azi_incl[2], scale;
     float* Y_src;
     CH_ORDER chOrdering;
     NORM_TYPES norm;
@@ -110,7 +110,9 @@ void ambi_enc_process
         /* recalulate SHs */
         for(i=0; i<nSources; i++){
             if(pData->recalc_SH_FLAG[i]){
-                getSHreal(order, pData->src_dirs_deg[i][0]*M_PI/180.0f, M_PI/2.0f - pData->src_dirs_deg[i][1]*M_PI/180.0f, Y_src);
+                azi_incl[0] = pData->src_dirs_deg[i][0]*M_PI/180.0f;
+                azi_incl[1] =  M_PI/2.0f - pData->src_dirs_deg[i][1]*M_PI/180.0f;
+                getSHreal(order, azi_incl, 1, Y_src);
                 for(j=0; j<nSH; j++)
                     pData->Y[j][i] = sqrtf(4.0f*M_PI)*Y_src[j];
                 for(; j<MAX_NUM_SH_SIGNALS; j++)

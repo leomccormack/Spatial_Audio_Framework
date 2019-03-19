@@ -1,4 +1,4 @@
-    /*
+/*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -23,10 +23,10 @@
  *     each frequency band.
  *     The algorithms within sldoa were developed in collaboration with Symeon Delikaris-
  *     Manias, and are explained in more detail in:
- *     McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
- *     “Real-time conversion of sensor array signals into spherical harmonic signals with
- *     applications to spatially localised sub-band sound-field analysis,” in Audio
- *     Engineering Society Convention 144, Audio Engineering Society, 2018.
+ *         McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
+ *         “Real-time conversion of sensor array signals into spherical harmonic signals with
+ *         applications to spatially localised sub-band sound-field analysis,” in Audio
+ *         Engineering Society Convention 144, Audio Engineering Society, 2018.
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
  * Author, date created:
@@ -63,7 +63,10 @@ void sldoa_create
         pData->secCoeffs[i] = NULL;
     for(i=0; i<64; i++)
         for(j=0; j<NUM_GRID_DIRS; j++)
-            pData->grid_Y[i][j] = (float)__grid_Y[i][j];
+            pData->grid_Y[i][j] = (float)__grid_Y[i][j] * sqrtf(4.0*M_PI);
+    for(i=0; i<3; i++)
+        for(j=0; j<NUM_GRID_DIRS; j++)
+            pData->grid_Y_dipoles_norm[i][j] = pData->grid_Y[i+1][j]/sqrtf(3); /* scale to [0..1] */
     for(i=0; i<NUM_GRID_DIRS; i++)
         for(j=0; j<2; j++)
             pData->grid_dirs_deg[i][j] = (float)__grid_dirs_deg[i][j];
@@ -293,7 +296,7 @@ void sldoa_analysis
                     if( analysisOrderPerBand[band]==1  )
                         pData->alphaScale[current_disp_idx][band*MAX_NUM_SECTORS + i] = 1.0f;
                     else
-                        pData->alphaScale[current_disp_idx][band*MAX_NUM_SECTORS + i] = MIN(MAX((pData->energy[band][i]-min_en[band])/(max_en[band]-min_en[band]+2.3e-10f), 0.11f),1.0f);
+                        pData->alphaScale[current_disp_idx][band*MAX_NUM_SECTORS + i] = MIN(MAX((pData->energy[band][i]-min_en[band])/(max_en[band]-min_en[band]+2.3e-10f), 0.05f),1.0f);
                 }
             }
             else{

@@ -146,7 +146,7 @@ typedef struct _ambi_dec
     /* user parameters */
     int masterOrder;
     int orderPerBand[HYBRID_BANDS];                           /* Ambisonic decoding order per frequency band 1..SH_ORDER */
-    AMBI_DECODER_METHODS dec_method[NUM_DECODERS];            /* decoding methods for each decoder, see "AMBI_DECODER_METHODS" enum */
+    DECODING_METHODS dec_method[NUM_DECODERS];                /* decoding methods for each decoder, see "DECODING_METHODS" enum */
     int rE_WEIGHT[NUM_DECODERS];                              /* 0:disabled, 1: enable max_rE weight */
     DIFFUSE_FIELD_EQ_APPROACH diffEQmode[NUM_DECODERS];       /* diffuse-field EQ approach; see "DIFFUSE_FIELD_EQ_APPROACH" enum */
     float transitionFreq;                                     /* transition frequency for the 2 decoders, in Hz */

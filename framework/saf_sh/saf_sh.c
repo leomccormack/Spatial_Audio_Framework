@@ -1,4 +1,4 @@
-    /*
+/*
  Copyright 2016-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -16,10 +16,11 @@
  * Filename:
  *     saf_sh.c  
  * Description:
- *     A collection of spherical harmonic related functions. Some of which have been
- *     derived from the Matlab library by Archontis Politis; found here:
+ *     A collection of spherical harmonic related functions. Many of which have been
+ *     derived from Matlab libraries by Archontis Politis; found here:
  *     https://github.com/polarch/Spherical-Harmonic-Transform
- *     and MATLAB code by Symeon Delikaris-Manias
+ *     https://github.com/polarch/Array-Response-Simulator
+ *     https://github.com/polarch/Spherical-Array-Processing
  * Dependencies:
  *     saf_utilities
  * Author, date created:
@@ -31,7 +32,7 @@
 
 static double Jn(int n, double z)
 {
-#ifdef __APPLE__
+#ifndef _MSC_VER
     return jn(n,z);
 #else
     return _jn(n,z);
@@ -40,402 +41,111 @@ static double Jn(int n, double z)
 
 static double Yn(int n, double z)
 {
-#ifdef __APPLE__
+#ifndef _MSC_VER
     return yn(n,z);
 #else
     return _yn(n,z);
 #endif
 }
 
-static int MSTA1(double, int);
-static int MSTA2(double,int,int);
-static double ENVJ(int N, double X);
-
-static unsigned long factorial(unsigned long f)
-{
-    if ( f == 0 )
-        return 1;
-    else
-        return(f * factorial(f - 1));
-}
-
-/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
- * jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
-static void SPHI(int N, double X, int *NM, double *SI, double *DI)
-{
-    int K, M, i;
-    double CS, F, F0, F1, SI0;
-    
-    *NM=N;
-    if (fabs(X) < 1e-20) {
-        for (K=0; K<=N; K++) {
-            SI[K]=0.0;
-            DI[K]=0.0;
-        }
-        SI[0]=1.0;
-        DI[1]=0.333333333333333;
-        return;
-    }
-    SI[0]=sinh(X)/X;
-    SI[1]=-(sinh(X)/X-cosh(X))/X;
-    SI0=SI[0];
-    if (N >= 2) {
-        M=MSTA1(X,200);
-        if (M < N)
-            *NM=M;
-        else
-            M=MSTA2(X,N,15);
-        /* I had to add this while loop to avoid NaNs and sacrifice some precision, but only when needed */
-        i=0;
-        while (M < 0) {
-            M=MSTA2(X,N,14-i);
-            i++;
-            if(i==14)
-                M=0;
-        }
-        F0=0.0;
-        F1=1.0-100;
-		F=1;
-        for (K=M; K>-1; K--) {
-            F=(2.0*K+3.0)*F1/X+F0;
-            if (K <= *NM) SI[K]=F;
-            F0=F1;
-            F1=F;
-        }
-        CS=SI0/F;
-        for (K=0; K<=*NM; K++)  SI[K] *= CS;
-    }
-    DI[0]=SI[1];
-    for (K=1; K<=*NM; K++)
-        DI[K]=SI[K-1]-(K+1.0)/X*SI[K];
-}
-
-/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
- * jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
-static void SPHK(int N, double X, int *NM, double *SK, double *DK)
-{
-    int K;
-    double F, F0, F1;
-    
-    *NM=N;
-    if (X < 1e-20) {
-        for (K=0; K<=N; K++) {
-            SK[K]=1.0e+300;
-            DK[K]=-1.0e+300;
-        }
-        return;
-    }
-    SK[0]=0.5*PI/X*exp(-X);
-    SK[1]=SK[0]*(1.0+1.0/X);
-    F0=SK[0];
-    F1=SK[1];
-    for (K=2; K<=N; K++) {
-        F=(2.0*K-1.0)*F1/X+F0;
-        SK[K]=F;
-        if (fabs(F) > 1.0e+300) goto e20;
-        F0=F1;
-        F1=F;
-    }
-e20:    *NM=K-1;
-    DK[0]=-SK[1];
-    for (K=1; K<=*NM; K++)
-        DK[K]=-SK[K-1]-(K+1.0)/X*SK[K];
-}
-
-/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
- * jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
-static void SPHJ(int N, double X, int *NM, double *SJ, double *DJ)
-{
-    int K, M, i;
-    double CS, F, F0, F1, SA, SB;
-    
-    *NM=N;
-    if (fabs(X) < 1e-80) {
-        for (K=0; K<=N; K++) {
-            SJ[K]=0.0;
-            DJ[K]=0.0;
-        }
-        SJ[0]=1.0;
-        DJ[1]=0.333333333333333;
-        return;
-    }
-    SJ[0]=sin(X)/X;
-    SJ[1]=(SJ[0]-cos(X))/X;
-    if (N >= 2) {
-        SA=SJ[0];
-        SB=SJ[1];
-        M=MSTA1(X,200);
-        if (M < N)
-            *NM=M;
-        else
-            M=MSTA2(X,N,15);
-        /* I had to add this while loop to avoid NaNs and sacrifice some precision, but only when needed */
-        i=0;
-        while (M < 0) {
-            M=MSTA2(X,N,14-i);
-            i++;
-            if(i==14)
-                M=0;
-        } 
-        F0=0.0;
-        F1=1.0-100;
-		F=1;
-		CS=1;
-        for (K=M; K>-1; K--) {
-            F=(2.0*K+3.0)*F1/X-F0;
-            if (K <= *NM)  SJ[K]=F;
-            F0=F1;
-            F1=F;
-        }
-        if (fabs(SA) > fabs(SB))  CS=SA/F;
-        if (fabs(SA) <= fabs(SB)) CS=SB/F0;
-        for (K=0; K<=*NM; K++) SJ[K] *= CS;
-    }
-    DJ[0]=(cos(X)-sin(X)/X)/X;
-    for (K=1; K<=*NM; K++)
-        DJ[K]=SJ[K-1]-(K+1.0)*SJ[K]/X;
-}
-
-/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
- * jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
-static int MSTA1(double X, int MP)
-{
-    double A0,F,F0,F1;
-    int IT,NN,N0,N1;
-    
-    A0=fabs(X);
-    N0=floor(1.1*A0)+1;
-    F0=ENVJ(N0,A0)-MP;
-    N1=N0+5;
-    F1=ENVJ(N1,A0)-MP;
-    for (IT=1; IT<=20; IT++) {
-        NN=N1-(N1-N0)/(1.0-F0/F1);
-        F=ENVJ(NN,A0)-MP;
-        if (abs(NN-N1) < 1) goto e20;
-        N0=N1;
-        F0=F1;
-        N1=NN;
-        F1=F;
-    }
-e20:    return NN;
-}
-
-/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
- * jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
-static int MSTA2(double X, int N, int MP)
-{
-    double A0,EJN,F,F0,F1,HMP,OBJ;
-    int IT,N0,N1,NN;
-    
-    A0=fabs(X);
-    HMP=0.5*MP;
-    EJN=ENVJ(N,A0);
-    if (EJN <= HMP) {
-        OBJ=MP;
-        N0=floor(1.1*A0);
-    }
-    else {
-        OBJ=HMP+EJN;
-        N0=N;
-    }
-    F0=ENVJ(N0,A0)-OBJ;
-    N1=N0+5;
-    F1=ENVJ(N1,A0)-OBJ;
-    for (IT=1; IT<=20; IT++) {
-        NN=N1-(N1-N0)/(1.0-F0/F1);
-        F=ENVJ(NN,A0)-OBJ;
-        if (abs(NN-N1) < 1) goto e20;
-        N0=N1;
-        F0=F1;
-        N1=NN;
-        F1=F;
-    }
-e20:    return NN+10;
-}
-
-/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
- * jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
-static double ENVJ(int N, double X) {
-    return (0.5*log(6.28*N)-N*log(1.36*X/N));
-}
-
-/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
- * jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
-static void SPHY(int N, double X, int *NM, double *SY, double *DY)
-{
-    int K;
-    double F, F0, F1;
-    
-    *NM=N;
-    if (X < 1e-20) {
-        for (K=0; K<=N; K++) {
-            SY[K]=-1.0e+300;
-            DY[K]=1e+300;
-        }
-        return;
-    }
-    SY[0]=-cos(X)/X;
-    SY[1]=(SY[0]-sin(X))/X;
-    F0=SY[0];
-    F1=SY[1];
-    for (K=2; K<=N; K++) {
-        F=(2.0*K-1.0)*F1/X-F0;
-        SY[K]=F;
-        if (fabs(F) >= 1e+300) goto e20;
-        F0=F1;
-        F1=F;
-    }
-e20:    *NM=K-1;
-    DY[0]=(sin(X)+cos(X)/X)/X;
-    for (K=1; K<=*NM; K++)
-        DY[K]=SY[K-1]-(K+1.0)*SY[K]/X;
-}
-
-
-/* Used in the calculation of spherical harmonic rotation matrices
- * Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination
- * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */
-static float getP(int i, int l, int a, int b, float** R_1, float** R_lm1)
-{
-    float ret, ri1, rim1, ri0;
-    //ret = 0.0f;
-
-    ri1 = R_1[i + 1][1 + 1];
-    rim1 = R_1[i + 1][-1 + 1];
-    ri0 = R_1[i + 1][0 + 1];
-
-    if (b == -l)
-        ret = ri1 * R_lm1[a + l - 1][0] + rim1 * R_lm1[a + l - 1][2 * l - 2];
-    else {
-        if (b == l)
-            ret = ri1*R_lm1[a + l - 1][2 * l - 2] - rim1 * R_lm1[a + l - 1][0];
-        else
-            ret = ri0 * R_lm1[a + l - 1][b + l - 1];
-    }
-
-    return ret;
-}
-
-/* Used in the calculation of spherical harmonic rotation matrices
- * Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination
- * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */
-static float getU(int l, int m, int n, float** R_1, float** R_lm1)
-{
-    return getP(0, l, m, n, R_1, R_lm1);
-}
-
-/* Used in the calculation of spherical harmonic rotation matrices
- * Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination
- * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */
-static float getV(int l, int m, int n, float** R_1, float** R_lm1)
-{
-    int d;
-    float ret, p0, p1;
-    ret = 0.0f;
-
-    if (m == 0) {
-        p0 = getP(1, l, 1, n, R_1, R_lm1);
-        p1 = getP(-1, l, -1, n, R_1, R_lm1);
-        ret = p0 + p1;
-    }
-    else {
-        if (m>0) {
-            d = m == 1 ? 1 : 0;
-            p0 = getP(1, l, m - 1, n, R_1, R_lm1);
-            p1 = getP(-1, l, -m + 1, n, R_1, R_lm1);
-            ret = p0*sqrtf(1.0f + d) - p1*(1.0f - d);
-        }
-        else {
-            d = m == -1 ? 1 : 0;
-            p0 = getP(1, l, m + 1, n, R_1, R_lm1);
-            p1 = getP(-1, l, -m - 1, n, R_1, R_lm1);
-            ret = p0*(1.0f - (float)d) + p1*sqrtf(1.0f + (float)d);
-        }
-    }
-
-    return ret;
-}
-
-/* Used in the calculation of spherical harmonic rotation matrices
- * Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination
- * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */
-static float getW(int l, int m, int n, float** R_1, float** R_lm1)
-{
-    float ret, p0, p1;
-    ret = 0.0f;
-
-    if (m != 0) {
-        if (m>0) {
-            p0 = getP(1, l, m + 1, n, R_1, R_lm1);
-            p1 = getP(-1, l, -m - 1, n, R_1, R_lm1);
-            ret = p0 + p1;
-        }
-        else {
-            p0 = getP(1, l, m - 1, n, R_1, R_lm1);
-            p1 = getP(-1, l, -m + 1, n, R_1, R_lm1);
-            ret = p0 - p1;
-        }
-    }
-    return ret;
-}
-
-/* Will be removed in a later version: use "unnorm_legendreP" */
-void legendreP
+void yawPitchRoll2Rzyx
 (
-    int l,
-    float x,
-    float* ppm
+    float yaw,
+    float pitch,
+    float roll,
+    int rollPitchYawFLAG, /* use Rxyz, i.e. apply roll, pitch and then yaw */
+    float R[3][3]
 )
 {
-    int m, j, p_x;
-    float c_f, c_l, maxc_f, xx, p;
-
-    memset(ppm, 0, (l+1)*sizeof(float));
-    if (l>0){
-        for (m=0;m<=l;m++){
-            c_f = 1.0f;
-            c_l = powf((-1.0f), (float)m) * c_f * (float)factorial(2*l) /
-                ( powf(2.0f,(float)l) * (float)factorial(l)* (float)factorial(l-m));
-            maxc_f = fabsf(c_l);
-            p_x = l-m;
-            xx = x*x;
-
-            /* Calculate P_l^m (x)/sqrt(1-x^2)^(m/2) */
-            p=c_l;
-            for (j=l-1; j>=0; j--){
-                if(p_x>=2){
-                    c_l=-(2.0f*(float)j+2.0f-(float)l-(float)m)*(2.0f*(float)j+1.0f-(float)l-(float)m)
-                        /(2.0f*(2.f*(float)j+1.0f)*((float)l-(float)j))*c_l;
-                    if (maxc_f < fabsf(c_l))
-                        maxc_f = fabsf(c_l);
-                    p=p*xx + c_l;
-                    p_x=p_x-2;
-                }
-            }
-            if(p_x==1)
-                p*=x;
-            if(m!=0){
-                xx=1.0f-xx;
-                for (j=1; j<=(int)((float)m/2.0f); j++)
-                    p=p*xx;
-                if(m != 2*(int)((float)m/2.0f))
-                    p = p*sqrtf(xx);
-            }
-            ppm[m] = p;
-        }
+    int m,n,k;
+    float Rtmp[3][3] = {{0.0f}};
+    float Rx[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
+    float Ry[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
+    float Rz[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
+    
+    /* var Rx, Ry, Rz; */
+    if (roll != 0) {
+        Rx[1][1] =  cosf(roll); Rx[1][2] = sinf(roll);
+        Rx[2][1] = -sinf(roll); Rx[2][2] = cosf(roll);
     }
-    else
-        ppm[0] = 1.0f;
+    if (pitch != 0){
+        Ry[0][0] = cosf(pitch); Ry[0][2] = -sinf(pitch);
+        Ry[2][0] = sinf(pitch); Ry[2][2] =  cosf(pitch);
+    }
+    if (yaw != 0){
+        Rz[0][0] =  cosf(yaw); Rz[0][1] = sinf(yaw);
+        Rz[1][0] = -sinf(yaw); Rz[1][1] = cosf(yaw);
+    }
+    if(rollPitchYawFLAG){
+        /* rotation order: roll-pitch-yaw */
+        for (m=0;m<3; m++){
+            memset(R[m], 0, 3*sizeof(float));
+            for(n=0;n<3; n++)
+                for(k=0; k<3; k++)
+                    Rtmp[m][n] += Ry[m][k] * Rx[k][n];
+        }
+        for (m=0;m<3; m++)
+            for(n=0;n<3; n++)
+                for(k=0; k<3; k++)
+                    R[m][n] += Rz[m][k] * Rtmp[k][n];
+    }
+    else{
+        /* rotation order: yaw-pitch-roll */
+        for (m=0;m<3; m++){
+            memset(R[m], 0, 3*sizeof(float));
+            for(n=0;n<3; n++)
+                for(k=0; k<3; k++)
+                    Rtmp[m][n] += Ry[m][k] * Rz[k][n];
+        }
+        for (m=0;m<3; m++)
+            for(n=0;n<3; n++)
+                for(k=0; k<3; k++)
+                    R[m][n] += Rx[m][k] * Rtmp[k][n];
+    }
 }
 
-void unnorm_legendreP(int n, double* x, int lenX, double* y)
+void unitSph2Cart
+(
+    float azi_rad,
+    float elev_rad,
+    float xyz[3]
+)
+{
+    xyz[0] = cosf(elev_rad) * cosf(azi_rad);
+    xyz[1] = cosf(elev_rad) * sinf(azi_rad);
+    xyz[2] = sinf(elev_rad);
+}
+
+void unitCart2Sph
+(
+    float xyz[3],
+    float AziElev_rad[2]
+)
+{
+    float hypotxy = sqrtf(powf(xyz[0], 2.0f) + powf(xyz[1], 2.0f));
+    AziElev_rad[0] = atan2f(xyz[1], xyz[0]);
+    AziElev_rad[1] = atan2f(xyz[2], hypotxy);
+}
+
+void unitCart2Sph_aziElev
+(
+    float xyz[3],
+    float* azi_rad,
+    float* elev_rad
+)
+{
+    float hypotxy = sqrtf(powf(xyz[0], 2.0f) + powf(xyz[1], 2.0f));
+    (*azi_rad) = atan2f(xyz[1], xyz[0]);
+    (*elev_rad) = atan2f(xyz[2], hypotxy);
+}
+
+void unnorm_legendreP
+(
+    int n,
+    double* x,
+    int lenX,
+    double* y /* FLAT: (n+1) x lenX  */
+)
 {
     int i, m;
     double s, norm, scale;
@@ -504,6 +214,56 @@ void unnorm_legendreP(int n, double* x, int lenX, double* y)
     free(tc);
     free(sqrt_n);
 }
+ 
+void unnorm_legendreP_recur
+(
+    int n,
+    float* x,
+    int lenX,
+    float* Pnm_minus1,
+    float* Pnm_minus2,
+    float* Pnm
+)
+{
+    int i, m, k, kk;
+    float x2, one_min_x2, dfact_k;
+    
+    for(i=0; i<lenX; i++){
+        x2 = (x[i])*(x[i]);
+        switch(n) {
+            case 1:
+                Pnm[0*lenX+i] = x[i];
+                Pnm[1*lenX+i] = sqrtf(1.0f-x2);
+                break;
+            case 2:
+                Pnm[0*lenX+i] = (3.0f*x2-1.0f)/2.0f;
+                Pnm[1*lenX+i] = (x[i])*3.0f*sqrtf(1.0f-x2);
+                Pnm[2*lenX+i] = 3.0f*(1.0f-x2);
+                break;
+            default:
+                one_min_x2 = 1.0f-x2;
+                /* last term m=n */
+                k = 2*n-1;
+                dfact_k = 1.0f;
+                if ((k % 2) == 0)
+                    for (kk=1; kk<k/2+1; kk++)
+                        dfact_k *= 2.0f*(float)kk;
+                else
+                    for (kk=1; kk<(k+1)/2+1; kk++)
+                        dfact_k *= (2.0f*(float)kk-1.0f);
+                
+                Pnm[n*lenX+i] = dfact_k * powf(one_min_x2, (float)n/2.0f);
+                /* before last term */
+                /* P_{n(n-1)} = (2*n-1)*x*P_{(n-1)(n-1)} */
+                Pnm[(n-1)*lenX+i] = (float)k * (x[i]) *Pnm_minus1[(n-1)*lenX+i];
+                /* three term recurence for the rest */
+                for (m=0; m<n-1; m++)
+                    /* P_l = ( (2l-1)xP_(l-1) - (l+m-1)P_(l-2) )/(l-m) */
+                    Pnm[m*lenX+i] = ( ((float)k * (x[i]) *Pnm_minus1[m*lenX+i]) - ((float)(n+m-1) * Pnm_minus2[m*lenX+i])) / (float)(n-m);
+                break;
+        }
+    }
+}
 
 void getRSH
 (
@@ -513,145 +273,331 @@ void getRSH
     float** Y
 )
 {
-    int i, j, nSH;
+    int i, nSH;
     float scale;
-    float* Y_dir;
+    float* dirs_rad;
     
-    scale = sqrtf(4.0f*M_PI);
     nSH = (N+1)*(N+1);
-    if((*Y)!=NULL)
-        free(*Y);
-    (*Y) = malloc(nSH*nDirs*sizeof(float));
-    Y_dir = malloc(nSH*sizeof(float));
+    (*Y) = realloc((*Y), nSH*nDirs*sizeof(float));
+    scale = sqrtf(4.0f*M_PI);
+   
+    /* convert [azi, elev] in degrees, to [azi, inclination] in radians */
+    dirs_rad = malloc(nDirs*2*sizeof(float));
     for(i=0; i<nDirs; i++){
-        /* compute spherical harmonics for each direction */
-        getSHreal(N, dirs_deg[i*2]*M_PI/180.0f, M_PI/2.0f- dirs_deg[i*2+1]*M_PI/180.0f, Y_dir);
-        for( j=0; j<nSH; j++)
-            (*Y)[j*nDirs + i] = Y_dir[j]*scale;
+        dirs_rad[i*2+0] = dirs_deg[i*2+0] * M_PI/180.0f;
+        dirs_rad[i*2+1] = M_PI/2.0f - (dirs_deg[i*2+1] * M_PI/180.0f);
     }
-    free(Y_dir);
+
+    /* get real-valued spherical harmonics */
+    getSHreal(N, dirs_rad, nDirs, (*Y));
+
+    /* remove sqrt(4*pi) term */
+    utility_svsmul((*Y), &scale, nSH*nDirs, NULL);
+ 
+    free(dirs_rad);
+}
+
+void getRSH_recur
+(
+    int N,
+    float* dirs_deg,
+    int nDirs,
+    float** Y
+)
+{
+    int n, m, i, dir, nSH, index_n;
+    int* factorials_n;
+    float Nn0, Nnm;
+    float* leg_n, *leg_n_1, *leg_n_2, *sin_el;
+    
+    factorials_n = malloc((2*N+1)*sizeof(int));
+    leg_n = malloc((N+1)*nDirs * sizeof(float));
+    leg_n_1 = calloc((N+1)*nDirs, sizeof(float));
+    leg_n_2 = calloc((N+1)*nDirs, sizeof(float));
+    sin_el = malloc(nDirs * sizeof(float));
+    nSH = (N+1)*(N+1);
+    index_n = 0;
+    
+    (*Y) = realloc((*Y), nSH*nDirs*sizeof(float));
+    
+    /* precompute factorials */
+    for (i = 0; i < 2*N+1; i++)
+        factorials_n[i] = (int)factorial(i);
+    
+    /* sinf(elevation) */
+    for (dir = 0; dir<nDirs; dir++)
+        sin_el[dir] = sinf(dirs_deg[dir*2+1] * M_PI/180.0f);
+    
+    /* compute SHs with the recursive Legendre function */
+    for (n = 0; n<N+1; n++) {
+        if (n==0) {
+            for (dir = 0; dir<nDirs; dir++)
+                (*Y)[n*nDirs+dir] = 1.0f;
+            index_n = 1;
+        }
+        else {
+            unnorm_legendreP_recur(n, sin_el, nDirs, leg_n_1, leg_n_2, leg_n); /* does NOT include Condon-Shortley phase */
+            
+            Nn0 = sqrtf(2.0f*(float)n+1.0f);
+            for (dir = 0; dir<nDirs; dir++){
+                for (m = 0; m<n+1; m++) {
+                    if (m==0)
+                        (*Y)[(index_n+n)*nDirs+dir] = Nn0  * leg_n[m*nDirs+dir];
+                    else {
+                        Nnm = Nn0* sqrtf( 2.0f * (float)factorials_n[n-m]/(float)factorials_n[n+m] );
+                        (*Y)[(index_n+n-m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_deg[dir*2])*M_PI/180.0f);
+                        (*Y)[(index_n+n+m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_deg[dir*2])*M_PI/180.0f);
+                    }
+                }
+            }
+            index_n += 2*n+1;
+        }
+        memcpy(leg_n_2, leg_n_1, (N+1)*nDirs * sizeof(float));
+        memcpy(leg_n_1, leg_n, (N+1)*nDirs * sizeof(float));
+    }
+    
+    free(factorials_n);
+    free(leg_n);
+    free(leg_n_1);
+    free(leg_n_2);
+    free(sin_el);
 }
 
 void getSHreal
 (
+    int order,
+    float* dirs_rad,
+    int nDirs,
+    float* Y  /* the SH weights: (order+1)^2 x nDirs */
+)
+{
+    int dir, j, n, m, idx_Y;
+    double* Lnm, *CosSin;
+    double *p_nm, *cos_incl;
+    double *norm_real;
+    
+    Lnm = malloc((2*order+1)*nDirs*sizeof(double));
+    norm_real = malloc((2*order+1)*sizeof(double));
+    CosSin = malloc((2*order+1)*sizeof(double));
+    cos_incl = malloc(nDirs*sizeof(double));
+    p_nm = malloc((order+1)*nDirs * sizeof(double));
+    for (dir = 0; dir<nDirs; dir++)
+        cos_incl[dir] = cos((double)dirs_rad[dir*2+1]);
+    
+    idx_Y = 0;
+    for(n=0; n<=order; n++){
+        /* vector of unnormalised associated Legendre functions of current order */
+        unnorm_legendreP(n, cos_incl, nDirs, p_nm); /* includes Condon-Shortley phase */
+        
+        for(dir=0; dir<nDirs; dir++){
+            /* cancel the Condon-Shortley phase from the definition of the Legendre functions to result in signless real SH */
+            if (n != 0)
+                for(m=-n, j=0; m<=n; m++, j++)
+                    Lnm[j*nDirs+dir] = pow(-1.0, (double)abs(m)) * p_nm[abs(m)*nDirs+dir];
+            else
+                Lnm[dir] = p_nm[dir];
+        }
+        
+        /* normalisation */
+        for(m=-n, j=0; m<=n; m++, j++)
+            norm_real[j] = sqrt( (2.0*(double)n+1.0) * (double)factorial(n-abs(m)) / (4.0*M_PI*(double)factorial(n+abs(m))) );
+        
+        /* norm_real * Lnm_real .* CosSin; */
+        for(dir=0; dir<nDirs; dir++){
+            for(m=-n, j=0; m<=n; m++, j++){
+                if(j<n)
+                    Y[(j+idx_Y)*nDirs+dir] = (float)(norm_real[j] * Lnm[j*nDirs+dir] * sqrt(2.0)*sin((double)(n-j)*(double)dirs_rad[dir*2]));
+                else if(j==n)
+                    Y[(j+idx_Y)*nDirs+dir] = (float)(norm_real[j] * Lnm[j*nDirs+dir]);
+                else /* (j>n) */
+                    Y[(j+idx_Y)*nDirs+dir] = (float)(norm_real[j] * Lnm[j*nDirs+dir] * sqrt(2.0)*cos((double)(abs(m))*(double)dirs_rad[dir*2]));
+            }
+        }
+        
+        /* increment */
+        idx_Y = idx_Y + (2*n+1);
+    }
+    
+    free(p_nm);
+    free(Lnm);
+    free(norm_real);
+    free(CosSin);
+    free(cos_incl);
+}
+
+void getSHreal_recur
+(
     int N,
-    float azi,
-    float incl,
+    float* dirs_rad,
+    int nDirs,
     float* Y
 )
 {
-    int i, j, n, m, idx_Y;
-    float *p_mm, *Lnm_real, *condon, *norm_real, *Nnm_real, *CosSin, *Ynm;
-    //Nharm = (N+1)*(N+1);
+    int n, m, i, dir, index_n;
+    float Nn0, Nnm;
+    float* leg_n, *leg_n_1, *leg_n_2, *cos_incl, *factorials_n;
+    
+    factorials_n = malloc((2*N+1)*sizeof(float));
+    leg_n = malloc((N+1)*nDirs * sizeof(float));
+    leg_n_1 = calloc((N+1)*nDirs, sizeof(float));
+    leg_n_2 = calloc((N+1)*nDirs, sizeof(float));
+    cos_incl = malloc(nDirs * sizeof(float));
+    index_n = 0;
 
-    p_mm = (float*)malloc((N+1) * sizeof(float));
-    norm_real = (float*)malloc((N+1) * sizeof(float));
-    CosSin = (float*)malloc((N*2+1) * sizeof(float));
-    Ynm = (float*)malloc((N*2+1) * sizeof(float));
-    Nnm_real = (float*)malloc((N*2+1) * sizeof(float));
-    Lnm_real = (float*)malloc((N*2+1) * sizeof(float));
-    condon = (float*)malloc((N*2+1) * sizeof(float));
-
-    idx_Y = 0;
-    for(n=0; n<=N; n++){
-        legendreP(n, cosf(incl), p_mm);
-        if (n != 0){
-            for(i=-n, j=0; i<=n; i++, j++){
-                condon[j] = powf(-1.0f, fabsf((float)i));
-                Lnm_real[j] = condon[j] * p_mm[abs(i)];
+    /* precompute factorials */
+    for (i = 0; i < 2*N+1; i++)
+        factorials_n[i] = (float)factorial(i);
+    
+    /* sinf(elevation) */
+    for (dir = 0; dir<nDirs; dir++)
+        cos_incl[dir] = cosf(dirs_rad[dir*2+1]);
+    
+    /* compute SHs with the recursive Legendre function */
+    for (n = 0; n<N+1; n++) {
+        if (n==0) {
+            for (dir = 0; dir<nDirs; dir++)
+                Y[n*nDirs+dir] = 1.0f/sqrtf(4.0f*M_PI);
+            index_n = 1;
+        }
+        else {
+            unnorm_legendreP_recur(n, cos_incl, nDirs, leg_n_1, leg_n_2, leg_n); /* does NOT include Condon-Shortley phase */
+            
+            Nn0 = sqrtf(2.0f*(float)n+1.0f);
+            for (dir = 0; dir<nDirs; dir++){
+                for (m = 0; m<n+1; m++) {
+                    if (m==0)
+                        Y[(index_n+n)*nDirs+dir] = Nn0/sqrtf(4.0f*M_PI)  * leg_n[m*nDirs+dir];
+                    else {
+                        Nnm = Nn0* sqrtf( 2.0f * factorials_n[n-m]/factorials_n[n+m] );
+                        Y[(index_n+n-m)*nDirs+dir] = Nnm/sqrtf(4.0f*M_PI) * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_rad[dir*2]));
+                        Y[(index_n+n+m)*nDirs+dir] = Nnm/sqrtf(4.0f*M_PI) * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_rad[dir*2]));
+                    }
+                }
             }
+            index_n += 2*n+1;
         }
-        else
-            Lnm_real[0] = p_mm[0];
-        for(m=0; m <= n; m++)
-            norm_real[m] = sqrtf( (2.0f*(float)n+1.0f)* (float)factorial(n-m) / (4.0f*M_PI*(float)factorial(n+m)) );
-        if (n != 0){
-            for(i=-n, j=0; i<=n; i++, j++){
-                Nnm_real[j] = norm_real[abs(i)];
-            }
-        }
-        else
-            Nnm_real[0] = norm_real[0];
-        memset(CosSin, 0, (2*n+1)*sizeof(float));
-        CosSin[n] = 1.0f;
-        if (n != 0){
-            for(j=0; j<2*n+1; j++){
-                if (j>n)
-                    CosSin[j] = sqrtf(2.0f)*cosf((float)(j-n)*azi);
-                else if (j<n)
-                    CosSin[j] = sqrtf(2.0f)*sinf((float)(n-j)*azi);
-            }
-        }
-        for(j=0; j<2*n+1; j++){
-            Ynm[j] = Nnm_real[j] * Lnm_real[j] * CosSin[j];
-            Y[idx_Y+j] = Ynm[j];
-        }
-        idx_Y = idx_Y + (2*n+1);
+        memcpy(leg_n_2, leg_n_1, (N+1)*nDirs * sizeof(float));
+        memcpy(leg_n_1, leg_n, (N+1)*nDirs * sizeof(float));
     }
-
-    free(p_mm);
-    free(norm_real);
-    free(CosSin);
-    free(Ynm);
-    free(Nnm_real);
-    free(Lnm_real);
-    free(condon);
+    
+    free(factorials_n);
+    free(leg_n);
+    free(leg_n_1);
+    free(leg_n_2);
+    free(cos_incl);
 }
 
-void yawPitchRoll2Rzyx
+void getSHcomplex
 (
-    float yaw,
-    float pitch,
-    float roll,
-    int rollPitchYawFLAG, /* use Rxyz, i.e. apply roll, pitch and then yaw */
-    float R[3][3]
+    int order,
+    float* dirs_rad,
+    int nDirs,
+    float_complex* Y
 )
 {
-    int m,n,k;
-    float Rtmp[3][3] = {{0.0f}};
-    float Rx[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
-    float Ry[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
-    float Rz[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
+    int dir, j, n, m, idx_Y;
+    double *norm_real;
+    double *Lnm, *cos_incl;
+    double_complex Ynm;
     
-    /* var Rx, Ry, Rz; */
-    if (roll != 0) {
-        Rx[1][1] =  cosf(roll); Rx[1][2] = sinf(roll);
-        Rx[2][1] = -sinf(roll); Rx[2][2] = cosf(roll);
-    }
-    if (pitch != 0){
-        Ry[0][0] = cosf(pitch); Ry[0][2] = -sinf(pitch);
-        Ry[2][0] = sinf(pitch); Ry[2][2] =  cosf(pitch);
-    }
-    if (yaw != 0){
-        Rz[0][0] =  cosf(yaw); Rz[0][1] = sinf(yaw);
-        Rz[1][0] = -sinf(yaw); Rz[1][1] = cosf(yaw);
-    }
-    if(rollPitchYawFLAG){
-        /* rotation order: roll-pitch-yaw */
-        for (m=0;m<3; m++){
-            memset(R[m], 0, 3*sizeof(float));
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    Rtmp[m][n] += Ry[m][k] * Rx[k][n];
+    Lnm = malloc((order+1)*nDirs*sizeof(double));
+    norm_real = malloc((order+1)*sizeof(double));
+    cos_incl = malloc(nDirs*sizeof(double));
+    for (dir = 0; dir<nDirs; dir++)
+        cos_incl[dir] = cos((double)dirs_rad[dir*2+1]);
+    
+    idx_Y = 0;
+    for(n=0; n<=order; n++){
+        /* vector of unnormalised associated Legendre functions of current order */
+        unnorm_legendreP(n, cos_incl, nDirs, Lnm); /* includes Condon-Shortley phase */
+        
+        /* normalisation */
+        for(m=0; m<=n; m++)
+            norm_real[m] = sqrt( (2.0*(double)n+1.0)*(double)factorial(n-m) / (4.0*M_PI*(double)factorial(n+m)) );
+        
+        /* norm_real .* Lnm_real .* CosSin; */
+        for(dir=0; dir<nDirs; dir++){
+            for(m=-n, j=0; m<=n; m++, j++){
+                if(m<0){
+                    Ynm = crmul(conj(crmul(cexp(cmplx(0.0, (double)abs(m)*(double)dirs_rad[dir*2])), norm_real[abs(m)] * Lnm[abs(m)*nDirs+dir])), pow(-1.0, (double)abs(m)));
+                    Y[(j+idx_Y)*nDirs+dir] = cmplxf((float)creal(Ynm), (float)cimag(Ynm));
+                }
+                else {/* (m>=0) */
+                    Ynm = crmul(cexp(cmplx(0.0, (double)abs(m)*(double)dirs_rad[dir*2])), norm_real[m] * Lnm[m*nDirs+dir]);
+                    Y[(j+idx_Y)*nDirs+dir] = cmplxf((float)creal(Ynm), (float)cimag(Ynm));
+                }
+            }
         }
-        for (m=0;m<3; m++)
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    R[m][n] += Rz[m][k] * Rtmp[k][n];
+        
+        /* increment */
+        idx_Y = idx_Y + (2*n+1);
     }
-    else{
-        /* rotation order: yaw-pitch-roll */
-        for (m=0;m<3; m++){
-            memset(R[m], 0, 3*sizeof(float));
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    Rtmp[m][n] += Ry[m][k] * Rz[k][n];
+    
+    free(Lnm);
+    free(norm_real);
+    free(cos_incl);
+}
+
+void complex2realSHMtx
+(
+    int order,
+    float_complex* T_c2r
+)
+{
+    int n, m, q, p, idx, nSH;
+    
+    nSH = (order+1)*(order+1);
+    memset(T_c2r, 0, nSH*nSH*sizeof(float_complex));
+    T_c2r[0] = cmplxf(1.0f, 0.0f);
+    if(order == 0)
+        return;
+    
+    idx = 1;
+    for(n=1, q = 1; n<=order; n++){
+        idx += (2*n+1);
+        for(m=-n, p=0; m<=n; m++, q++, p++){
+            if(m<0){
+                T_c2r[(q)*nSH+(q)] = cmplxf(0.0f, 1.0f/sqrtf(2.0f));
+                T_c2r[(idx-p-1)*nSH+(q)] = cmplxf(1.0f/sqrtf(2.0f), 0.0f);
+            }
+            else if(m==0)
+                T_c2r[(q)*nSH+(q)] = cmplxf(1.0f, 0.0f);
+            else{
+                T_c2r[(q)*nSH+(q)] = cmplxf(powf(-1.0f,(float)m)/sqrtf(2.0f), 0.0f);
+                T_c2r[(idx-p-1)*nSH+(q)] = cmplxf(0.0f, -powf(-1.0f, (float)abs(m))/sqrtf(2.0f));
+            } 
         }
-        for (m=0;m<3; m++)
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    R[m][n] += Rx[m][k] * Rtmp[k][n];
+        
     }
+}
+
+void complex2realCoeffs
+(
+    int order,
+    float_complex* C_N,
+    int K,
+    float* R_N
+)
+{
+    int i, nSH;
+    float_complex* T_c2r, *R_N_c;
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+    
+    nSH = (order+1)*(order+1);
+    T_c2r = malloc(nSH*nSH*sizeof(float_complex));
+    R_N_c = malloc(nSH*K*sizeof(float_complex));
+    complex2realSHMtx(order, T_c2r);
+    for(i=0; i<nSH*nSH; i++)
+        T_c2r[i] = conj(T_c2r[i]);
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, K, nSH, &calpha,
+                T_c2r, nSH,
+                C_N, K, &cbeta,
+                R_N_c, K);
+    for(i=0; i<nSH*K; i++)
+        R_N[i] = crealf(R_N_c[i]);
+    
+    free(T_c2r);
+    free(R_N_c);
 }
 
 /* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination
@@ -732,97 +678,271 @@ void getSHrotMtxReal
     free2d((void**)R_l, M);
 }
 
-void calcBFweights
-(
-    BEAMFORMING_WEIGHT_TYPES BFW_type,
-    int order,
-    float azi,
-    float elev,
-    float* weights
-)
+void computeVelCoeffsMtx(int sectorOrder, float_complex* A_xyz)
 {
-    int i, j, nSH;
-    int o[9] = { 0,1,4,9,16,25,36,49,64 };
-    float *d, *Y;
-    nSH = (order + 1)*(order + 1);
-
-    /* compute real spherical hamonics */
-    Y = (float*)malloc(nSH * sizeof(float));
-    getSHreal(order, azi, M_PI / 2.0f - elev, Y);
-
-    /* calculate beamforming weights */
-    switch (BFW_type) {
-        case BFW_BASIC:
-            for (i = 0; i<nSH; i++)
-                weights[i] = Y[i];
-            break;
-
-        case BFW_MAX_RE:
-            d = (float*)calloc((order + 1), sizeof(float));
-            maxre3d(order, d);
-            for (i = 0; i< (order + 1); i++)
-                for (j = o[i]; j< o[i + 1]; j++)
-                    weights[j] = Y[j] * d[i];
-            free(d);
-            break;
-
-        case BFW_DOLPH_CHEBY_MAIN:
-            d = (float*)calloc((order + 1), sizeof(float));
-            dolph_chebyshev(order, d, 0);
-            for (i = 0; i< (order + 1); i++)
-                for (j = o[i]; j< o[i + 1]; j++)
-                    weights[j] = Y[j] * d[i];
-            free(d);
-            break;
-
-        case BFW_DOLPH_CHEBY_DESIRED:
-            d = (float*)calloc((order + 1), sizeof(float));
-            dolph_chebyshev(order, d, 1);
-            for (i = 0; i< (order + 1); i++) 
-                for (j = o[i]; j< o[i + 1]; j++)
-                    weights[j] = Y[j] * d[i];
-            free(d);
-            break;
-
-        default:
-            break;
+    int i, j, Nxyz, Ns, nC_xyz, nC_s;
+    float x1, x3, z2, y1, y3;
+    float* G_mtx;
+    
+    Ns = sectorOrder;
+    Nxyz = Ns+1;
+    nC_xyz = (Nxyz+1)*(Nxyz+1);
+    nC_s = (Ns+1)*(Ns+1);
+    x1 = sqrtf(2.0f*M_PI/3.0f);
+    x3 = -x1;
+    y1 = y3 = sqrtf(2.0f*M_PI/3.0f);
+    z2 = sqrtf(4.0f*M_PI/3.0f); 
+    G_mtx = malloc(nC_s*4*nC_xyz*sizeof(float));
+    gaunt_mtx(Ns, 1, Nxyz, G_mtx);
+    
+    for (i=0; i<nC_xyz; i++){
+        for (j=0; j<nC_s; j++){
+            A_xyz[i*nC_s*3 + j*3 + 0] = cmplxf(x1*G_mtx[j*4*nC_xyz + 1*nC_xyz + i] + x3*G_mtx[j*4*nC_xyz + 3*nC_xyz + i], 0.0f);
+            A_xyz[i*nC_s*3 + j*3 + 1] = cmplxf(0.0f, y1*G_mtx[j*4*nC_xyz + 1*nC_xyz + i] + y3*G_mtx[j*4*nC_xyz + 3*nC_xyz + i]);
+            A_xyz[i*nC_s*3 + j*3 + 2] = cmplxf(z2*G_mtx[j*4*nC_xyz + 2*nC_xyz + i], 0.0f);
+        }
     }
-    free(Y);
+     
+    free(G_mtx);
 }
 
-void unitSph2Cart
+void beamWeightsCardioid2Spherical
 (
+    int N,
+    float* b_n
+)
+{
+    int n;
+    
+    /* The coefficients can be derived by the binomial expansion of the cardioid function */
+    for(n=0; n<N+1; n++) {
+        b_n[n] = sqrtf(4.0f*M_PI*(2.0f*(float)n+1.0f)) *
+                 (float)factorial(N)* (float)factorial(N+1)/
+                 ((float)factorial(N+n+1)*(float)factorial(N-n))/
+                 ((float)N+1.0f);
+    }
+}
+
+void beamWeightsHypercardioid2Spherical
+(
+    int N,
+    float* b_n
+)
+{
+    int n;
+    float* c_n;
+    float dirs_rad[2] = {0.0f, 0.0f};
+    
+    c_n = malloc((N+1)*(N+1)*sizeof(float));
+    getSHreal(N, dirs_rad, 1, c_n);
+    for(n=0; n<N+1; n++)
+        b_n[n] = c_n[(n+1)*(n+1)-n-1] * 4.0f * M_PI/(powf((float)N+1.0f, 2.0f));
+    
+    free(c_n);
+}
+
+void beamWeightsMaxEV
+(
+    int N,
+    float* b_n
+)
+{
+    int n;
+    float norm;
+    double temp_i;
+    double* temp_o;
+    
+    temp_o = malloc( (N+1)*sizeof(double));
+    norm = 0.0f;
+    for (n=0; n<=N; n++) {
+        temp_i = cos(2.4068f/((double)N+1.51));
+        unnorm_legendreP(n, &temp_i, 1, temp_o);
+        b_n[n] = sqrtf((2.0f*(float)n+1.0f)/(4.0f*M_PI))*(float)temp_o[0];
+        norm +=  sqrtf((2.0f*(float)n+1.0f)/(4.0f*M_PI))*b_n[n];
+    }
+    
+    /* normalise to unity response on look-direction */
+    for (n=0; n<=N; n++)
+        b_n[n] /= norm;
+    
+    free(temp_o);
+}
+
+void beamWeightsVelocityPatternsReal
+(
+    int order,
+    float* b_n,
     float azi_rad,
     float elev_rad,
-    float xyz[3]
+    float_complex* A_xyz,
+    float* velCoeffs
 )
 {
-    xyz[0] = cosf(elev_rad) * cosf(azi_rad);
-    xyz[1] = cosf(elev_rad) * sinf(azi_rad);
-    xyz[2] = sinf(elev_rad);
+    int nSH;
+    float_complex* velCoeffs_c;
+    
+    nSH = (order+2)*(order+2);
+    velCoeffs_c = malloc(nSH*3*sizeof(float_complex));
+    beamWeightsVelocityPatternsComplex(order, b_n, azi_rad, elev_rad, A_xyz, velCoeffs_c);
+    complex2realCoeffs(order+1, velCoeffs_c, 3, velCoeffs);
+      
+    free(velCoeffs_c);
 }
 
-void unitCart2Sph
+void beamWeightsVelocityPatternsComplex
 (
-    float xyz[3],
-    float AziElev_rad[2]
+    int order,
+    float* b_n,
+    float azi_rad,
+    float elev_rad,
+    float_complex* A_xyz,
+    float_complex* velCoeffs
 )
 {
-    float hypotxy = sqrtf(powf(xyz[0], 2.0f) + powf(xyz[1], 2.0f));
-    AziElev_rad[0] = atan2f(xyz[1], xyz[0]);
-    AziElev_rad[1] = atan2f(xyz[2], hypotxy);
+    int i, j, d3, nSH_l, nSH;
+    float_complex* c_nm, *A_1, *velCoeffs_T;
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+    
+    nSH_l = (order+1)*(order+1);
+    nSH = (order+2)*(order+2);
+    c_nm = malloc(nSH_l*sizeof(float_complex));
+    A_1 = malloc(nSH*nSH_l*sizeof(float_complex));
+    velCoeffs_T = malloc(3*nSH*sizeof(float_complex));
+    rotateAxisCoeffsComplex(order, b_n, M_PI/2.0f-elev_rad, azi_rad, c_nm);
+    
+    /* x_nm, y_nm, z_nm */
+    for(d3 = 0; d3<3; d3++){
+        for(i=0; i<nSH; i++)
+            for(j=0; j<nSH_l; j++)
+                A_1[i*nSH_l+j] = A_xyz[i*nSH_l*3 + j*3 + d3];
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, 1, nSH_l, &calpha,
+                    A_1, nSH_l,
+                    c_nm, 1, &cbeta,
+                    &velCoeffs_T[d3*nSH], 1);
+    }
+    for(d3 = 0; d3<3; d3++)
+        for(i=0; i<nSH; i++)
+            velCoeffs[i*3+d3] = velCoeffs_T[d3*nSH+i]; /* transpose */
+
+    free(c_nm);
+    free(A_1);
+    free(velCoeffs_T);
 }
 
-void unitCart2Sph_aziElev
+void rotateAxisCoeffsReal
 (
-    float xyz[3],
-    float* azi_rad,
-    float* elev_rad
+    int order,
+    float* c_n,
+    float theta_0, /* inclination*/
+    float phi_0,  /* azimuth */
+    float* c_nm
 )
 {
-    float hypotxy = sqrtf(powf(xyz[0], 2.0f) + powf(xyz[1], 2.0f));
-    (*azi_rad) = atan2f(xyz[1], xyz[0]);
-    (*elev_rad) = atan2f(xyz[2], hypotxy);
+    int nSH;
+    float_complex* c_nm_c;
+
+    nSH = (order+1)*(order+1);
+    c_nm_c = malloc(nSH*sizeof(float_complex));
+    rotateAxisCoeffsComplex(order, c_n, theta_0, phi_0, c_nm_c);
+    complex2realCoeffs(order, c_nm_c, 1, c_nm);
+    
+    free(c_nm_c);
+}
+
+void rotateAxisCoeffsComplex
+(
+    int order,
+    float* c_n,
+    float theta_0,  /* inclination*/
+    float phi_0,    /* azimuth */
+    float_complex* c_nm
+)
+{
+    int n, m, q, nSH;
+    float phi_theta[2];
+    float_complex* Y_N;
+    
+    phi_theta[0] = phi_0;
+    phi_theta[1] = theta_0;
+    nSH = (order+1)*(order+1);
+    Y_N = malloc(nSH*sizeof(float_complex));
+    getSHcomplex(order, (float*)phi_theta, 1, Y_N);
+    for(n=0, q = 0; n<=order; n++)
+        for(m=-n; m<=n; m++, q++)
+            c_nm[q] = crmulf(conj(Y_N[q]), sqrtf(4.0f*M_PI/(2.0f*(float)n+1.0f)) * c_n[n]);
+    
+    free(Y_N);
+}
+
+void checkCondNumberSHTReal
+(
+    int order,
+    float* dirs_rad,
+    int nDirs,
+    float* w,
+    float* cond_N
+)
+{
+    int n, i, j, nSH, nSH_n, ind;
+    float minVal, maxVal;
+    float* Y_N, *Y_n, *YY_n, *W, *W_Yn, *s;
+    
+    /* get SH */
+    nSH = (order+1)*(order+1);
+    Y_N = malloc(nSH * nDirs *sizeof(float));
+    Y_n = malloc(nDirs * nSH* sizeof(float));
+    YY_n = malloc(nSH*nSH*sizeof(float));
+    getSHreal(order, dirs_rad, nDirs, Y_N);
+    
+    /* diagonalise the integration weights, if available */
+    if(w!=NULL){
+        W = calloc(nDirs*nDirs, sizeof(float));
+        W_Yn = malloc(nDirs*nSH*sizeof(float));
+        for(i=0; i<nDirs; i++)
+            W[i*nDirs+i] = cmplxf(w[i], 0.0f); 
+    }
+    
+    /* compute the condition number for each order up to N */
+    s = malloc(nSH*sizeof(float));
+    for(n=0; n<=order; n++){
+        nSH_n = (n+1)*(n+1);
+        for(i=0; i<nDirs; i++)
+            for(j=0; j<nSH_n; j++)
+                Y_n[i*nSH_n+j] = Y_N[j*nDirs+i]; /* truncate to current order and transpose */
+        if(w==NULL){
+            cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nSH_n, nSH_n, nDirs, 1.0f,
+                        Y_n, nSH_n,
+                        Y_n, nSH_n, 0.0f,
+                        YY_n, nSH_n);
+        }
+        else{
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nDirs, nSH_n, nDirs, 1.0f,
+                        W, nDirs,
+                        Y_n, nSH_n, 0.0f,
+                        W_Yn, nSH_n);
+            cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nSH_n, nSH_n, nDirs, 1.0f,
+                        Y_n, nSH_n,
+                        W_Yn, nSH_n, 0.0f,
+                        YY_n, nSH_n);
+        }
+        
+        /* condition number = max(singularValues)/min(singularValues) */
+        utility_ssvd(YY_n, nSH_n, nSH_n, NULL, NULL, NULL, s);
+        utility_simaxv(s, nSH_n, &ind);
+        maxVal = s[ind];
+        utility_siminv(s, nSH_n, &ind);
+        minVal = s[ind];
+        cond_N[n] = maxVal/(minVal+2.23e-7f);
+    }
+    
+    free(Y_N);
+    free(Y_n);
+    free(YY_n);
+    if(w!=NULL){
+        free(W);
+        free(W_Yn);
+    }
+    free(s);
 }
 
 void generatePWDmap
@@ -1901,10 +2021,7 @@ void sphDiffCohMtxTheory
             sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, dirCoeff, b_N); break;
         case ARRAY_CONSTRUCTION_RIGID:
         case ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL:
-            if(kR==NULL)
-                sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_RIGID, 1.0, b_N); /* if kr==kR, dirCoeff is irrelevant */
-            else
-                sphScattererDirModalCoeffs(order, kr, kR, nBands, dirCoeff, b_N);
+            sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_RIGID, 1.0, b_N);
             break;
     }
     for(i=0; i<nBands * (order+1); i++)

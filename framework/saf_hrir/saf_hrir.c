@@ -235,7 +235,47 @@ void interpFilterbankHRTFs
     free(ipd_interp);
 }
 
-
+void binauralDiffuseCoherence
+(
+    float_complex* hrtfs, /* N_bands x 2 x N_hrtf_dirs */
+    float* itds,
+    float* freqVector,
+    int N_hrtf_dirs,
+    int N_bands,
+    float* HRTFcoh
+)
+{
+    int i, j;
+    float* ipd;
+    float_complex *hrtf_ipd_lr;
+    
+    /* convert ITDs to phase differences -pi..pi */
+    ipd = malloc(N_bands*N_hrtf_dirs*sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_bands, N_hrtf_dirs, 1, 1.0,
+                freqVector, 1,
+                itds, 1, 0.0,
+                ipd, N_hrtf_dirs);
+    for(i=0; i<N_bands; i++)
+        for(j=0; j<N_hrtf_dirs; j++)
+            ipd[i*N_hrtf_dirs+j] = (matlab_fmodf(2.0f*M_PI*ipd[i*N_hrtf_dirs+j] + M_PI, 2.0f*M_PI) - M_PI);
+    
+    /* compute complex coherence */
+    hrtf_ipd_lr = calloc(N_bands, sizeof(float_complex));
+    for(i=0; i<N_bands; i++){
+        for(j=0; j<N_hrtf_dirs; j++)
+            hrtf_ipd_lr[i] = ccaddf(hrtf_ipd_lr[i], crmulf(cexpf(crmulf(cmplxf(0.0f, 1.0f), ipd[i*N_hrtf_dirs+j])),
+                                                    cabsf(hrtfs[i*2*N_hrtf_dirs + 0*N_hrtf_dirs + j])*cabsf(hrtfs[i*2*N_hrtf_dirs + 1*N_hrtf_dirs + j])));
+        hrtf_ipd_lr[i] = ccdivf(hrtf_ipd_lr[i], cmplxf((float)N_hrtf_dirs, 0.0f));
+    }
+    
+    /* due to almost axisymmetry of ITD, the coherence is almost real */
+    for(i=0; i<N_bands; i++)
+        HRTFcoh[i] = crealf(hrtf_ipd_lr[i]) < 0.0f ? 0.0 : crealf(hrtf_ipd_lr[i]);
+    HRTFcoh[0] = 1.0f; /* force 1 at DC */
+    
+    free(ipd);
+    free(hrtf_ipd_lr);
+}
 
 
 

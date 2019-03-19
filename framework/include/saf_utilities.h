@@ -46,24 +46,16 @@ extern "C" {
 #ifndef M_PI
   #define M_PI ( 3.14159265358979323846264338327950288f )
 #endif
-
-/* For multi-dimensional memory handling */
-#include "../saf_utilities/saf_malloc.h"
-#include "../saf_utilities/saf_calloc.h"
-#include "../saf_utilities/saf_free.h"
-
-/* For sorting vectors */
-#include "../saf_utilities/saf_sort.h"
-
-/* For BLAS/LAPACK functions, plus some other handy linear algebra functions */
-#include "../saf_utilities/saf_veclib.h"
-
-/* For cross-platform complex numbers wrapper */
-#include "../saf_utilities/saf_complex.h"
-
-/* For various presets for loudspeaker, microphone, and hydrophone arrays.  */
-#include "../saf_utilities/saf_loudspeaker_presets.h"
-#include "../saf_utilities/saf_sensorarray_presets.h"
+ 
+#include "../saf_utilities/saf_complex.h"             /* For cross-platform complex numbers wrapper */
+#include "../saf_utilities/saf_malloc.h"              /* For multi-dimensional memory handling */
+#include "../saf_utilities/saf_calloc.h"              /* For multi-dimensional memory handling */
+#include "../saf_utilities/saf_free.h"                /* For multi-dimensional memory handling */
+#include "../saf_utilities/saf_sort.h"                /* For sorting vectors */
+#include "../saf_utilities/saf_filters.h"             /* For filter coefficients (IIR/FIR) */
+#include "../saf_utilities/saf_veclib.h"              /* For BLAS/LAPACK functions, plus some other handy linear algebra functions */
+#include "../saf_utilities/saf_loudspeaker_presets.h" /* For various presets for loudspeaker, microphone, and hydrophone arrays.  */
+#include "../saf_utilities/saf_sensorarray_presets.h" /* For various presets for loudspeaker, microphone, and hydrophone arrays.  */
 
 #ifdef __cplusplus
 }

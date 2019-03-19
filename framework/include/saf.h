@@ -38,7 +38,8 @@
  * Dependencies:
  *     Windows users only: Intel's MKL must be installed, which can be freely aquired via:
  *     https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries
- *     Mac users only: saf_utilities will utilise Apple's Accelerate library.
+ *     Mac users only: by defaultsaf_utilities will utilise Apple's Accelerate library.
+ *     However, you may use Intel's MKL instead, with the flag: "SAF_USE_INTEL_MKL"
  */
 #include "saf_utilities.h"
 

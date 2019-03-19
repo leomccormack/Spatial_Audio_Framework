@@ -1,4 +1,4 @@
-    /*
+/*
  Copyright 2016-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -16,10 +16,11 @@
  * Filename:
  *     saf_sh_internal.c
  * Description:
- *     A collection of spherical harmonic related functions. Some of which have been
- *     derived from the Matlab library by Archontis Politis; found here:
+ *     A collection of spherical harmonic related functions. Many of which have been
+ *     derived from Matlab libraries by Archontis Politis; found here:
  *     https://github.com/polarch/Spherical-Harmonic-Transform
- *     and MATLAB code by Symeon Delikaris-Manias
+ *     https://github.com/polarch/Array-Response-Simulator
+ *     https://github.com/polarch/Spherical-Array-Processing
  * Dependencies:
  *     saf_utilities
  * Author, date created:
@@ -29,253 +30,505 @@
 #include "saf_sh.h"
 #include "saf_sh_internal.h"
 
-static unsigned long factorial(unsigned long f)
+long double factorial(int n)
 {
-    if (f == 0)
-        return 1;
-    else
-        return(f * factorial(f - 1));
+    int i;
+    long double ff;
+    ff = 1.0; 
+    for(i = 1; i<=n; i++)
+        ff *= (long double)i;
+    return ff;
 }
 
-/* A C implementation of a MatLab function by Symeon Delikaris-Manias; published with permission */
-void ChebyshevPolyCoeff
+float wigner_3j
 (
-    int     n,
-    float * t_coeff
+    int j1,
+    int j2,
+    int j3,
+    int m1,
+    int m2,
+    int m3
 )
 {
-    int k, e, i;
-    float* t_coeffm2, *t_coeffm1;
-
-    if (n == 0)
-        t_coeff[0] = 1.0f;
-    else if (n == 1) {
-        t_coeff[0] = 1.0f;
-        t_coeff[1] = 0.0f;
-    }
-    else {
-        t_coeffm2 = (float*)calloc((n + 1), sizeof(float));
-        t_coeffm2[n] = 1.0f;
-        t_coeffm1 = (float*)calloc((n + 1), sizeof(float));
-        t_coeffm1[n - 1] = 1.0f;
-        for (k = 2; k <= n; k++) {
-            memset(t_coeff, 0, (n + 1) * sizeof(float));
-            for (e = (n - k + 1); e <= n; e = e + 2)
-                t_coeff[e - 1] = 2.0f*t_coeffm1[e] - t_coeffm2[e - 1];
-            if ((k % 2) == 0)
-                t_coeff[n] = powf(-1.0f, (float)k / 2.0f);
-            if (k<n) {
-                for (i = 0; i < n + 1; i++) { /* shuffle */
-                    t_coeffm2[i] = t_coeffm1[i];
-                    t_coeffm1[i] = t_coeff[i];
-                }
-            }
-        }
-        free(t_coeffm2);
-        free(t_coeffm1);
-    }
-}
-
-/* A C implementation of a MatLab function by Symeon Delikaris-Manias; published with permission */
-void LegendrePolyCoeff
-(
-    int     n,
-    float * p_coeff
-)
-{
-    int k, e, i;
-    float* p_coeffm2, *p_coeffm1;
-
-    if (n == 0)
-        p_coeff[0] = 1.0f;
-    else if (n == 1) {
-        p_coeff[0] = 1.0f;
-        p_coeff[1] = 0.0f;
-    }
-    else {
-        p_coeffm2 = (float*)calloc((n + 1), sizeof(float));
-        p_coeffm2[n] = 1.0f;
-        p_coeffm1 = (float*)calloc((n + 1), sizeof(float));
-        p_coeffm1[n - 1] = 1.0f;
-        for (k = 2; k <= n; k++) {
-            memset(p_coeff, 0, (n + 1) * sizeof(float));
-            for (e = (n - k + 1); e <= n; e = e + 2)
-                p_coeff[e - 1] = (2.0f*(float)k - 1.0f)*p_coeffm1[e] + (1.0f - (float)k)*p_coeffm2[e - 1];
-            p_coeff[n] += (1.0f - (float)k)*p_coeffm2[n];
-            for (i = 0; i <= n; i++)
-                p_coeff[i] = p_coeff[i] / (float)k;
-            if (k<n) {
-                for (i = 0; i < n + 1; i++) { /* shuffle */
-                    p_coeffm2[i] = p_coeffm1[i];
-                    p_coeffm1[i] = p_coeff[i];
-                }
-            }
-        }
-        free(p_coeffm2);
-        free(p_coeffm1);
-    }
-}
-
-/* A C implementation of a MatLab function by Symeon Delikaris-Manias; published with permission */
-void dolph_chebyshev
-(
-    int                M,
-    float            * d,
-    int   type
-)
-{
-    int n, i, j, k, q, s, m;
-    float SNR, R, x0, theta0;
-    float *x00, **P, **A, **C, **T, **PA, **CT, **PACT;
-    float* p_coeff, *t_coeff;
-
-    x00 = (float*)malloc((M + 1) * sizeof(float));
-    P = (float**)malloc2d((M + 1), (M + 1), sizeof(float));
-    A = (float**)calloc2d((M + 1), (M + 1), sizeof(float));
-    C = (float**)calloc2d((M + 1), (M + 1), sizeof(float));
-    T = (float**)calloc2d((M + 1), (M + 1), sizeof(float));
-    PA = (float**)calloc2d((M + 1), (M + 1), sizeof(float));
-    CT = (float**)calloc2d((M + 1), (M + 1), sizeof(float));
-    PACT = (float**)calloc2d((M + 1), (M + 1), sizeof(float));
-    p_coeff = (float*)calloc((M + 1), sizeof(float));
-    t_coeff = (float*)calloc((2 * M + 1), sizeof(float));
-
-    switch (type) {
-        case 1: /* DESIRED_LOBE */
-            SNR = 25.0f;
-            R = powf(10.0f, SNR / 20.0f);
-            x0 = coshf(1.0f / (2.0f*(float)M)*acoshf(R));
-            //theta0 = 2.0f*acosf((1.f / x0)*cosf((float)PI / (4.0f*(float)M))) * (180.0f / (float)PI);
-            break;
-            
-        case 0: /* MAIN_LOBE */
-            theta0 = 60.0f* (float)PI / 180.0f;
-            x0 = cosf((float)PI / (4.0f*(float)M)) / (cosf(theta0 / 2.0f));
-            R = coshf(2.0f*(float)M*acoshf(x0));
-            break;
-            
-        default:
-            R = 0.0f;
-            x0 = 0.0f;
-            break;
-    }
-    for (n = 0; n <= M; n++)
-        x00[n] = powf(x0, 2.0f*(float)n);
-    for (n = 0; n <= M; n++) {
-        LegendrePolyCoeff(n, p_coeff);
-        memset(P[n], 0, (M + 1) * sizeof(float));
-        for (i = 0; i <= n; i++)
-            P[n][i] = p_coeff[n - i];
-    }
-    for (q = 0; q <= M; q++)
-        for (s = 0; s <= M; s++)
-            A[q][s] = ((1.0f - powf(-1.0f, (float)q + (float)s + 1.0f)) / ((float)q + (float)s + 1.0f));
-    for (n = 0; n <= M; n++)
-        for (m = 0; m <= n; m++)
-            C[m][n] = (powf(2.0f, -(float)n) * (float)factorial(n)) / (float)(factorial(m) * (factorial(n - m)));
-    ChebyshevPolyCoeff(M * 2, t_coeff);
-    for (n = 0; n <= M; n++)
-        T[n][n] = t_coeff[2 * (M - n)];
-    for (i = 0; i <= M; i++) {
-        for (j = 0; j <= M; j++) {
-            for (k = 0; k <= M; k++) {
-                PA[i][j] += P[i][k] * A[k][j];
-                CT[i][j] += C[i][k] * T[k][j];
-            }
-        }
-    }
-    for (i = 0; i <= M; i++)
-        for (j = 0; j <= M; j++)
-            for (k = 0; k <= M; k++)
-                PACT[i][j] += PA[i][k] * CT[k][j];
-    memset(d, 0, (M + 1) * sizeof(float));
-    for (i = 0; i <= M; i++)
-        for (j = 0; j <= M; j++)
-            d[i] += PACT[i][j] * x00[j] * (2.0f*(float)PI / R);
-
-    free(x00);
-    free2d((void**)P, (M + 1));
-    free2d((void**)A, (M + 1));
-    free2d((void**)C, (M + 1));
-    free2d((void**)T, (M + 1));
-    free2d((void**)PA, (M + 1));
-    free2d((void**)CT, (M + 1));
-    free2d((void**)PACT, (M + 1));
-    free(p_coeff);
-    free(t_coeff);
-}
-
-/* A C implementation of a MatLab function by Symeon Delikaris-Manias; published with permission */
-void maxre3d
-(
-    int                M,
-    float            * gm
-)
-{
-    int i, nz, k, i0;
-    float zmin, zmax, dz, zc, dz2, rE;
-    float* z, **p;
-
-    nz = 3 * M + 10;
-    zmin = 0.5f;
-    z = (float*)malloc(nz * sizeof(float));
-    for (i = 0; i<nz; i++) 
-        z[i] = (float)(i + 1) / (float)nz*(1.0f - zmin) + zmin;
-    p = (float**)malloc(nz * sizeof(float*));
-    for (i = 0; i<nz; i++) {
-        p[i] = (float*)malloc((M + 2) * sizeof(float));
-        legendreP(M + 1, z[i], p[i]);
-    }
-    k = 0;
-    dz = 1.0f;
-
-    /* Finding the smallest root of the Legendre polynomial gives rE, which is
-        one of the first terms of the recurrence applied later */
-    while ((dz>1e-7f) && (k<7)) {
-        i0 = 0;
-        for (i = 1; i<nz; i++)
-            if ((p[i - 1][0] <= 0.0f) && (p[i][0] > 0.0f))
-                i0 = MAX(i0, i);
-        dz = z[i0 + 1] - z[i0];
-        zc = (z[i0] * p[i0 + 1][0] - z[i0 + 1] * p[i0][0]) / (p[i0 + 1][0] - p[i0][0]);
-
-        dz2 = MAX(zc - z[i0], z[i0 + 1] - zc);
-        k++;
-        free(z);
-        for (i = 0; i<nz; i++)
-            free(p[i]);
-        free(p);
-        nz = 14;
-        zmin = zc - dz2;
-        zmax = zc + dz2;
-        z = (float*)malloc(nz * sizeof(float));
-        for (i = 0; i<nz; i++)
-            z[i] = (float)(i + 1) / (float)nz*(zmax - zmin) + zmin;
-        p = (float**)malloc(nz * sizeof(float*));
-        for (i = 0; i<nz; i++) {
-            p[i] = (float*)malloc((M + 2) * sizeof(float));
-            legendreP(M + 1, z[i], p[i]);
-        }
-    }
-    rE = 0.0f;
-    for (i = 0; i<nz; i++)
-        rE += z[i];
-    rE /= (float)nz;
-
-    gm[0] = 1.0f;
-    gm[1] = rE;
-    for (i = 1; i<M; i++)
-        gm[i + 1] = ((2.0f*(float)i + 1.0f)*rE*gm[i] - (float)i*gm[i - 1]) / ((float)i + 1.0f);
+    int t, N_t;
+    float w, coeff1, coeff2, tri_coeff, sum_s, x_t;
     
-    free(z);
-    for (i = 0; i<nz; i++)
-        free(p[i]);
-    free(p);
+    /* Check selection rules (http://mathworld.wolfram.com/Wigner3j-Symbol.html) */
+    if (abs(m1)>abs(j1) || abs(m2)>abs(j2) || abs(m3)>abs(j3))
+        w = 0.0f;
+    else if (m1+m2+m3 !=0)
+        w = 0.0f;
+    else if ( j3<abs(j1-j2) || j3>(j1+j2) ) /* triangle inequality */
+        w = 0.0f;
+    
+    else {
+        /* evaluate the Wigner-3J symbol using the Racah formula (http://mathworld.wolfram.com/Wigner3j-Symbol.html)
+         number of terms for the summation */
+        N_t = -10e9;
+        N_t = j1+m1 > N_t ? j1+m1 : N_t;
+        N_t = j1-m1 > N_t ? j1-m1 : N_t;
+        N_t = j2+m2 > N_t ? j2+m2 : N_t;
+        N_t = j2-m2 > N_t ? j2-m2 : N_t;
+        N_t = j3+m3 > N_t ? j3+m3 : N_t;
+        N_t = j3-m3 > N_t ? j3-m3 : N_t;
+        N_t = j1+j2-j3 > N_t ? j1+j2-j3 : N_t;
+        N_t = j2+j3-j1 > N_t ? j2+j3-j1 : N_t;
+        N_t = j3+j1-j2 > N_t ? j3+j1-j2 : N_t;
+        
+        /* coefficients before the summation */
+        coeff1 = powf(-1.0f,(float)(j1-j2-m3));
+        coeff2 = (float)(factorial(j1+m1)*(float)factorial(j1-m1)*(float)factorial(j2+m2)*(float)factorial(j2-m2)* (float)factorial(j3+m3)*(float)factorial(j3-m3));
+        tri_coeff = (float)(factorial(j1 + j2 - j3)*(float)factorial(j1 - j2 + j3)*(float)factorial(-j1 + j2 + j3)/(float)factorial(j1 + j2 + j3 + 1));
+        
+        /* summation over integers that do not result in negative factorials */
+        sum_s = 0.0f;
+        for (t = 0; t<=N_t; t++){
+            
+            /* check factorial for negative values, include in sum if not */
+            if (j3-j2+t+m1 >= 0 && j3-j1+t-m2 >=0 && j1+j2-j3-t >= 0 && j1-t-m1 >=0 && j2-t+m2 >= 0){
+                x_t = (float)factorial(t)*(float)factorial(j1+j2-j3-t)*(float)factorial(j3-j2+t+m1)*(float)factorial(j3-j1+t-m2)*(float)factorial(j1-t-m1)*(float)factorial(j2-t+m2);
+                sum_s += powf(-1.0f, (float)t)/x_t;
+            }
+        }
+        w = coeff1*sqrtf(coeff2*tri_coeff)*sum_s;
+    }
+    return w;
 }
 
+void gaunt_mtx
+(
+    int N1,
+    int N2,
+    int N,
+    float* A
+)
+{
+    int n, m, q, n1, m1, q1, n2, m2, q2, D1, D2, D3;
+    float wigner3jm, wigner3j0;
+     
+    D1 = (N1+1)*(N1+1);
+    D2 = (N2+1)*(N2+1);
+    D3 = (N+1)*(N+1);
+    memset(A, 0, D1*D2*D3*sizeof(float));
+    for (n = 0; n<=N; n++){
+        for (m = -n; m<=n; m++){
+            q = n*(n+1)+m;
+            
+            for (n1 = 0; n1<=N1; n1++){
+                for (m1 = -n1; m1<=n1; m1++){
+                    q1 = n1*(n1+1)+m1;
+                    
+                    for (n2 = 0; n2<=N2; n2++){
+                        for (m2 = -n2; m2<=n2; m2++){
+                            q2 = n2*(n2+1)+m2;
+                            
+                            if (n<abs(n1-n2) || n>n1+n2)
+                                A[q1*D2*D3 + q2*D3 + q] = 0.0f;
+                            else{
+                                wigner3jm = wigner_3j(n1, n2, n, m1, m2, -m);
+                                wigner3j0 = wigner_3j(n1, n2, n, 0, 0, 0);
+                                A[q1*D2*D3 + q2*D3 + q] = powf(-1.0f,(float)m) *
+                                                          sqrtf((2.0f*(float)n1+1.0f)*(2.0f*(float)n2+1.0f)*(2.0f*(float)n+1.0f)/(4.0f*M_PI)) *
+                                                          wigner3jm * wigner3j0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
+/* MODIFIED- improved numerical stability at the cost of some precision */
+/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
+ * jin.ece.uiuc.edu/routines/routines.html.
+ * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
+void SPHI
+(
+    int N,
+    double X,
+    int *NM,
+    double *SI,
+    double *DI
+)
+{
+    int K, M, i;
+    double CS, F, F0, F1, SI0;
+    
+    *NM=N;
+    if (fabs(X) < 1e-20) {
+        for (K=0; K<=N; K++) {
+            SI[K]=0.0;
+            DI[K]=0.0;
+        }
+        SI[0]=1.0;
+        DI[1]=0.333333333333333;
+        return;
+    }
+    SI[0]=sinh(X)/X;
+    SI[1]=-(sinh(X)/X-cosh(X))/X;
+    SI0=SI[0];
+    if (N >= 2) {
+        M=MSTA1(X,200);
+        if (M < N)
+            *NM=M;
+        else
+            M=MSTA2(X,N,15);
+        /* I had to add this while loop to avoid NaNs and sacrifice some precision, but only when needed */
+        i=0;
+        while (M < 0) {
+            M=MSTA2(X,N,14-i);
+            i++;
+            if(i==14)
+                M=0;
+        }
+        F0=0.0;
+        F1=1.0-100;
+        F=1;
+        for (K=M; K>-1; K--) {
+            F=(2.0*K+3.0)*F1/X+F0;
+            if (K <= *NM) SI[K]=F;
+            F0=F1;
+            F1=F;
+        }
+        CS=SI0/F;
+        for (K=0; K<=*NM; K++)  SI[K] *= CS;
+    }
+    DI[0]=SI[1];
+    for (K=1; K<=*NM; K++)
+        DI[K]=SI[K-1]-(K+1.0)/X*SI[K];
+}
 
+/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
+ * jin.ece.uiuc.edu/routines/routines.html.
+ * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
+void SPHK
+(
+    int N,
+    double X,
+    int *NM,
+    double *SK,
+    double *DK
+)
+{
+    int K;
+    double F, F0, F1;
+    
+    *NM=N;
+    if (X < 1e-20) {
+        for (K=0; K<=N; K++) {
+            SK[K]=1.0e+300;
+            DK[K]=-1.0e+300;
+        }
+        return;
+    }
+    SK[0]=0.5*M_PI/X*exp(-X);
+    SK[1]=SK[0]*(1.0+1.0/X);
+    F0=SK[0];
+    F1=SK[1];
+    for (K=2; K<=N; K++) {
+        F=(2.0*K-1.0)*F1/X+F0;
+        SK[K]=F;
+        if (fabs(F) > 1.0e+300) goto e20;
+        F0=F1;
+        F1=F;
+    }
+e20:    *NM=K-1;
+    DK[0]=-SK[1];
+    for (K=1; K<=*NM; K++)
+        DK[K]=-SK[K-1]-(K+1.0)/X*SK[K];
+}
 
+/* MODIFIED- improved numerical stability at the cost of some precision */
+/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
+ * jin.ece.uiuc.edu/routines/routines.html.
+ * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
+void SPHJ
+(
+    int N,
+    double X,
+    int *NM,
+    double *SJ,
+    double *DJ
+)
+{
+    int K, M, i;
+    double CS, F, F0, F1, SA, SB;
+    
+    *NM=N;
+    if (fabs(X) < 1e-80) {
+        for (K=0; K<=N; K++) {
+            SJ[K]=0.0;
+            DJ[K]=0.0;
+        }
+        SJ[0]=1.0;
+        DJ[1]=0.333333333333333;
+        return;
+    }
+    SJ[0]=sin(X)/X;
+    SJ[1]=(SJ[0]-cos(X))/X;
+    if (N >= 2) {
+        SA=SJ[0];
+        SB=SJ[1];
+        M=MSTA1(X,200);
+        if (M < N)
+            *NM=M;
+        else
+            M=MSTA2(X,N,15);
+        /* I had to add this while loop to avoid NaNs and sacrifice some precision, but only when needed */
+        i=0;
+        while (M < 0) {
+            M=MSTA2(X,N,14-i);
+            i++;
+            if(i==14)
+                M=0;
+        }
+        F0=0.0;
+        F1=1.0-100;
+        F=1;
+        CS=1;
+        for (K=M; K>-1; K--) {
+            F=(2.0*K+3.0)*F1/X-F0;
+            if (K <= *NM)  SJ[K]=F;
+            F0=F1;
+            F1=F;
+        }
+        if (fabs(SA) > fabs(SB))  CS=SA/F;
+        if (fabs(SA) <= fabs(SB)) CS=SB/F0;
+        for (K=0; K<=*NM; K++) SJ[K] *= CS;
+    }
+    DJ[0]=(cos(X)-sin(X)/X)/X;
+    for (K=1; K<=*NM; K++)
+        DJ[K]=SJ[K-1]-(K+1.0)*SJ[K]/X;
+}
 
+/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
+ * jin.ece.uiuc.edu/routines/routines.html.
+ * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
+int MSTA1
+(
+    double X,
+    int MP
+)
+{
+    double A0,F,F0,F1;
+    int IT,NN,N0,N1;
+    
+    A0=fabs(X);
+    N0=floor(1.1*A0)+1;
+    F0=ENVJ(N0,A0)-MP;
+    N1=N0+5;
+    F1=ENVJ(N1,A0)-MP;
+    for (IT=1; IT<=20; IT++) {
+        NN=N1-(N1-N0)/(1.0-F0/F1);
+        F=ENVJ(NN,A0)-MP;
+        if (abs(NN-N1) < 1) goto e20;
+        N0=N1;
+        F0=F1;
+        N1=NN;
+        F1=F;
+    }
+e20:    return NN;
+}
 
+/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
+ * jin.ece.uiuc.edu/routines/routines.html.
+ * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
+int MSTA2
+(
+    double X,
+    int N,
+    int MP
+)
+{
+    double A0,EJN,F,F0,F1,HMP,OBJ;
+    int IT,N0,N1,NN;
+    
+    A0=fabs(X);
+    HMP=0.5*MP;
+    EJN=ENVJ(N,A0);
+    if (EJN <= HMP) {
+        OBJ=MP;
+        N0=floor(1.1*A0);
+    }
+    else {
+        OBJ=HMP+EJN;
+        N0=N;
+    }
+    F0=ENVJ(N0,A0)-OBJ;
+    N1=N0+5;
+    F1=ENVJ(N1,A0)-OBJ;
+    for (IT=1; IT<=20; IT++) {
+        NN=N1-(N1-N0)/(1.0-F0/F1);
+        F=ENVJ(NN,A0)-OBJ;
+        if (abs(NN-N1) < 1) goto e20;
+        N0=N1;
+        F0=F1;
+        N1=NN;
+        F1=F;
+    }
+e20:    return NN+10;
+}
 
+/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
+ * jin.ece.uiuc.edu/routines/routines.html.
+ * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
+double ENVJ
+(
+    int N,
+    double X
+)
+{
+    return (0.5*log(6.28*N)-N*log(1.36*X/N));
+}
+
+/* Original Fortran code: "Fortran Routines for Computation of Special Functions":
+ * jin.ece.uiuc.edu/routines/routines.html.
+ * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
+void SPHY
+(
+    int N,
+    double X,
+    int *NM,
+    double *SY,
+    double *DY
+)
+{
+    int K;
+    double F, F0, F1;
+    
+    *NM=N;
+    if (X < 1e-20) {
+        for (K=0; K<=N; K++) {
+            SY[K]=-1.0e+300;
+            DY[K]=1e+300;
+        }
+        return;
+    }
+    SY[0]=-cos(X)/X;
+    SY[1]=(SY[0]-sin(X))/X;
+    F0=SY[0];
+    F1=SY[1];
+    for (K=2; K<=N; K++) {
+        F=(2.0*K-1.0)*F1/X-F0;
+        SY[K]=F;
+        if (fabs(F) >= 1e+300) goto e20;
+        F0=F1;
+        F1=F;
+    }
+e20:    *NM=K-1;
+    DY[0]=(sin(X)+cos(X)/X)/X;
+    for (K=1; K<=*NM; K++)
+        DY[K]=SY[K-1]-(K+1.0)*SY[K]/X;
+}
+
+/* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination
+ * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */
+float getP
+(
+    int i,
+    int l,
+    int a,
+    int b,
+    float** R_1,
+    float** R_lm1
+)
+{
+    float ret, ri1, rim1, ri0;
+    //ret = 0.0f;
+    
+    ri1 = R_1[i + 1][1 + 1];
+    rim1 = R_1[i + 1][-1 + 1];
+    ri0 = R_1[i + 1][0 + 1];
+    
+    if (b == -l)
+        ret = ri1 * R_lm1[a + l - 1][0] + rim1 * R_lm1[a + l - 1][2 * l - 2];
+    else {
+        if (b == l)
+            ret = ri1*R_lm1[a + l - 1][2 * l - 2] - rim1 * R_lm1[a + l - 1][0];
+        else
+            ret = ri0 * R_lm1[a + l - 1][b + l - 1];
+    }
+    
+    return ret;
+}
+
+/* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination
+ * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */
+float getU
+(
+    int l,
+    int m,
+    int n,
+    float** R_1,
+    float** R_lm1
+)
+{
+    return getP(0, l, m, n, R_1, R_lm1);
+}
+
+/* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination
+ * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */
+float getV
+(
+    int l,
+    int m,
+    int n,
+    float** R_1,
+    float** R_lm1
+)
+{
+    int d;
+    float ret, p0, p1;
+    
+    if (m == 0) {
+        p0 = getP(1, l, 1, n, R_1, R_lm1);
+        p1 = getP(-1, l, -1, n, R_1, R_lm1);
+        ret = p0 + p1;
+    }
+    else {
+        if (m>0) {
+            d = m == 1 ? 1 : 0;
+            p0 = getP(1, l, m - 1, n, R_1, R_lm1);
+            p1 = getP(-1, l, -m + 1, n, R_1, R_lm1);
+            ret = p0*sqrtf(1.0f + d) - p1*(1.0f - d);
+        }
+        else {
+            d = m == -1 ? 1 : 0;
+            p0 = getP(1, l, m + 1, n, R_1, R_lm1);
+            p1 = getP(-1, l, -m - 1, n, R_1, R_lm1);
+            ret = p0*(1.0f - (float)d) + p1*sqrtf(1.0f + (float)d);
+        }
+    }
+    
+    return ret;
+}
+
+/* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination
+ * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */
+float getW
+(
+    int l,
+    int m,
+    int n,
+    float** R_1,
+    float** R_lm1
+)
+{
+    float ret, p0, p1;
+    ret = 0.0f;
+    
+    if (m != 0) {
+        if (m>0) {
+            p0 = getP(1, l, m + 1, n, R_1, R_lm1);
+            p1 = getP(-1, l, -m - 1, n, R_1, R_lm1);
+            ret = p0 + p1;
+        }
+        else {
+            p0 = getP(1, l, m - 1, n, R_1, R_lm1);
+            p1 = getP(-1, l, -m + 1, n, R_1, R_lm1);
+            ret = p0 - p1;
+        }
+    }
+    return ret;
+}

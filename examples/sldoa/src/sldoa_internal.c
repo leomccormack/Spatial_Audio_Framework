@@ -23,10 +23,10 @@
  *     each frequency band.
  *     The algorithms within sldoa were developed in collaboration with Symeon Delikaris-
  *     Manias, and are explained in more detail in:
- *     McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
- *     “Real-time conversion of sensor array signals into spherical harmonic signals with
- *     applications to spatially localised sub-band sound-field analysis,” in Audio
- *     Engineering Society Convention 144, Audio Engineering Society, 2018.
+ *         McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
+ *         “Real-time conversion of sensor array signals into spherical harmonic signals with
+ *         applications to spatially localised sub-band sound-field analysis,” in Audio
+ *         Engineering Society Convention 144, Audio Engineering Society, 2018.
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
  * Author, date created:
@@ -41,10 +41,13 @@ void sldoa_initAna(void* const hSld)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
     int i, n, j, k, order, nSectors, nSH, grid_N_vbap_gtable, grid_nGroups, maxOrder;
-    float* sec_dirs_deg, *grid_vbap_gtable, *w_SG, *pinv_Y;
-    float secPatterns[4][NUM_GRID_DIRS], grid_vbap_gtable_T[ORDER2NUMSECTORS(MAX_SH_ORDER)][NUM_GRID_DIRS];
+    float* sec_dirs_deg, *grid_vbap_gtable, *w_SG, *pinv_Y, *grid_vbap_gtable_T;
+    float secPatterns[4][NUM_GRID_DIRS];
 
     maxOrder = pData->new_masterOrder;
+    
+    if(maxOrder>1)
+        grid_vbap_gtable_T = malloc(ORDER2NUMSECTORS(maxOrder) * NUM_GRID_DIRS * sizeof(float));
     
     for(i=0, order=2; order<=maxOrder; i++,order++){
         nSectors = ORDER2NUMSECTORS(order);
@@ -64,7 +67,7 @@ void sldoa_initAna(void* const hSld)
         /* transpose */
         for(n=0; n<nSectors; n++)
             for(j=0; j<NUM_GRID_DIRS; j++)
-                grid_vbap_gtable_T[n][j] = grid_vbap_gtable[j*nSectors+n];
+                grid_vbap_gtable_T[n*NUM_GRID_DIRS+j] = grid_vbap_gtable[j*nSectors+n];
         
         /* generate sector coefficients */
         if(pData->secCoeffs[i]!=NULL)
@@ -72,9 +75,10 @@ void sldoa_initAna(void* const hSld)
         pData->secCoeffs[i] = malloc(4 * (nSH*nSectors) * sizeof(float_complex));
         w_SG = malloc(4 * (nSH) * sizeof(float));
         pinv_Y = malloc(NUM_GRID_DIRS*nSH*sizeof(float));
-        for(n=0; n<nSectors; n++){
-            for(j=0; j<4; j++)
-                utility_svvmul((float*)grid_vbap_gtable_T[n], pData->grid_Y[j], NUM_GRID_DIRS, secPatterns[j]);
+        for(n=0; n<nSectors; n++){ 
+            utility_svvmul(&(grid_vbap_gtable_T[n*NUM_GRID_DIRS]), pData->grid_Y[0], NUM_GRID_DIRS, secPatterns[0]);
+            for(j=0; j<3; j++)
+                utility_svvmul(&(grid_vbap_gtable_T[n*NUM_GRID_DIRS]), pData->grid_Y_dipoles_norm[j], NUM_GRID_DIRS, secPatterns[j+1]);
             utility_spinv(&(pData->grid_Y[0][0]), nSH, NUM_GRID_DIRS, pinv_Y);
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 4, nSH, NUM_GRID_DIRS, 1.0f,
                         &(secPatterns[0][0]), NUM_GRID_DIRS,
@@ -91,6 +95,9 @@ void sldoa_initAna(void* const hSld)
         free(grid_vbap_gtable);
         free(sec_dirs_deg);
     }
+    
+    if(maxOrder>1)
+        free(grid_vbap_gtable_T);
     
     pData->masterOrder = maxOrder;
 }

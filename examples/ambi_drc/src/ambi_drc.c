@@ -1,4 +1,4 @@
- /*
+     /*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -43,7 +43,7 @@ void ambi_drc_create
     ambi_drc_data* pData = (ambi_drc_data*)malloc(sizeof(ambi_drc_data));
     if (pData == NULL) { return;/*error*/ }
     *phAmbi = (void*)pData;
-	int t, ch;
+    int t, ch;
  
     /* afSTFT stuff */
     pData->hSTFT = NULL;
@@ -151,12 +151,12 @@ void ambi_drc_init
     }
 #endif
 
-	/* reinitialise if needed */
-	if (pData->reInitTFT == 1) {
-		pData->reInitTFT = 2;
-		ambi_drc_initTFT(hAmbi);
-		pData->reInitTFT = 0;
-	}
+    /* reinitialise if needed */
+    if (pData->reInitTFT == 1) {
+        pData->reInitTFT = 2;
+        ambi_drc_initTFT(hAmbi);
+        pData->reInitTFT = 0;
+    }
 }
 
 void ambi_drc_process
