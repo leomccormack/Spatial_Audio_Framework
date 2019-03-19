@@ -323,7 +323,7 @@ void array2sh_calculate_sht_matrix
      
             scale = 0.0;
             for (i=0; i<n+1; i++)
-                scale += (double)(2*i+1)*powf((double)wn[(2*i)*nSH_n + (2*i)], 2.0f);
+                scale += (double)(2*i+1)*pow((double)wn[(2*i)*nSH_n + (2*i)], 2.0);
             for (i=0; i<n+1; i++)
                 W[i][n] = (double)wn[(2*i)*nSH_n + (2*i)]/ sqrt(scale);
             free(wn);
@@ -479,7 +479,7 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
                     L_diff, MAX_NUM_SH_SIGNALS);
         for(i=0; i<nSH; i++)
             for(j=0; j<nSH; j++)
-                L_diff[i][j] = i==j? csqrtf(ccdiv(L_diff_fal[i][j], crmulf(L_diff[i][j], 1.0f/(4.0f*M_PI)))) : cmplxf(0.0f,0.0f);
+                L_diff[i][j] = i==j? csqrtf(ccdivf(L_diff_fal[i][j], crmulf(L_diff[i][j], 1.0f/(4.0f*M_PI)))) : cmplxf(0.0f,0.0f);
         cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, (arraySpecs->Q), nSH, &calpha,
                     L_diff, MAX_NUM_SH_SIGNALS,
                     pData->W[band], MAX_NUM_SENSORS, &cbeta,
