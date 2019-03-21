@@ -209,7 +209,7 @@ void ambi_bin_process
         switch(norm){
             case NORM_N3D:  /* already in N3D, do nothing */
                 break;
-            case NORM_SN3D: /* convert to N3D */
+            case NORM_SN3D: /* convert to SN3D */
                 for (n = 0; n<order+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
