@@ -128,7 +128,7 @@ void ambi_enc_process
                     (float*)pData->outputFrameTD, FRAME_SIZE);
         
         /* scale by 1/sqrt(nSources) */
-        scale = 1.0f/sqrt(nSources);
+        scale = 1.0f/sqrtf((float)nSources);
         utility_svsmul((float*)pData->outputFrameTD, &scale, nSH*FRAME_SIZE, NULL);
         
         /* norm scheme */

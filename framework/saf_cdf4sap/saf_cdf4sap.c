@@ -299,7 +299,7 @@ void formulate_M_and_Cr
     limit = maxVal * 0.001f + 2.23e-7f;
     for(i=0; i < nYcols; i++)
         for(j=0; j < nYcols; j++)
-            h->G_hat[i*nYcols+j] = i==j ? sqrtf(Cy[i*nYcols+j] / MAX(h->G_hat[i*nYcols+j], limit)) : 0.0f;
+            h->G_hat[i*nYcols+j] = i==j ? sqrtf(MAX(Cy[i*nYcols+j], 0.0f) / MAX(h->G_hat[i*nYcols+j], limit)) : 0.0f;
     
     /* Formulate optimal P */
     cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nYcols, nYcols, nYcols, 1.0f,
@@ -350,7 +350,7 @@ void formulate_M_and_Cr
     if(useEnergyFLAG){
         for(i=0; i < nYcols; i++)
             for(j=0; j < nYcols; j++)
-                h->G_hat[i*nYcols+j] = i==j ? sqrtf(Cy[i*nYcols+j] / (h->Cy_tilde[i*nYcols+j]+2.23e-7f)) : 0.0f;
+                h->G_hat[i*nYcols+j] = i==j ? sqrtf( MAX(Cy[i*nYcols+j], 0.0f) / (h->Cy_tilde[i*nYcols+j]+2.23e-7f)) : 0.0f;
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nYcols, nXcols, nYcols, 1.0f,
                     h->G_hat, nYcols,
                     M, nXcols, 0.0f,
