@@ -46,14 +46,13 @@ void sldoa_initAna(void* const hSld)
 
     maxOrder = pData->new_masterOrder;
     
-    if(maxOrder>1)
-        grid_vbap_gtable_T = malloc(ORDER2NUMSECTORS(maxOrder) * NUM_GRID_DIRS * sizeof(float));
+    grid_vbap_gtable_T = malloc(ORDER2NUMSECTORS(maxOrder) * NUM_GRID_DIRS * sizeof(float));
     
     for(i=0, order=2; order<=maxOrder; i++,order++){
         nSectors = ORDER2NUMSECTORS(order);
         nSH = (order+1)*(order+1);
         
-        /* define sector coordinates */
+        /* define sector directions */
         sec_dirs_deg = malloc(nSectors*2*sizeof(float));
         memcpy(sec_dirs_deg, __HANDLES_SphCovering_dirs_deg[nSectors-1], nSectors*2*sizeof(float));
         
@@ -96,8 +95,7 @@ void sldoa_initAna(void* const hSld)
         free(sec_dirs_deg);
     }
     
-    if(maxOrder>1)
-        free(grid_vbap_gtable_T);
+    free(grid_vbap_gtable_T);
     
     pData->masterOrder = maxOrder;
 }
