@@ -57,3 +57,10 @@ vsMul
 vcMul
 vsAbs
 vcAbs
+DftiCommitDescriptor
+DftiComputeBackward
+DftiComputeForward
+DftiCreateDescriptor_s_1d
+DftiCreateDescriptor_d_1d
+DftiFreeDescriptor
+DftiSetValue

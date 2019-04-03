@@ -43,7 +43,7 @@ void array2sh_create
     array2sh_data* pData = (array2sh_data*)malloc(sizeof(array2sh_data));
     if (pData == NULL) { return;/*error*/ }
     *phA2sh = (void*)pData;
-    int t, ch;
+    int ch;
      
     /* defualt parameters */
     array2sh_createArray(&(pData->arraySpecs)); 
@@ -59,21 +59,18 @@ void array2sh_create
     
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_SENSORS, sizeof(complexVector));
-    for(t=0; t<TIME_SLOTS; t++) {
-        for(ch=0; ch< MAX_NUM_SENSORS; ch++) {
-            pData->STFTInputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-            pData->STFTInputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        }
+    pData->STFTInputFrameTF = (complexVector*)malloc(MAX_NUM_SENSORS * sizeof(complexVector));
+    for(ch=0; ch< MAX_NUM_SENSORS; ch++) {
+        pData->STFTInputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
     }
-    pData->STFTOutputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_SH_SIGNALS, sizeof(complexVector));
-    for(t=0; t<TIME_SLOTS; t++) {
-        for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-            pData->STFTOutputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-            pData->STFTOutputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        }
+    pData->STFTOutputFrameTF = (complexVector*)malloc(MAX_NUM_SH_SIGNALS * sizeof(complexVector));
+    for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
+        pData->STFTOutputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
     }
-    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));;
+    pData->tempHopFrameTD_in = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));
+    pData->tempHopFrameTD_out = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));
     pData->reinitTFTFLAG = 1;
     pData->applyDiffEQFLAG = 1;
     
@@ -99,27 +96,24 @@ void array2sh_destroy
 )
 {
     array2sh_data *pData = (array2sh_data*)(*phM2sh);
-    int t, ch;
+    int ch;
 
     if (pData != NULL) {
         /* TFT stuff */
         if (pData->hSTFT != NULL)
             afSTFTfree(pData->hSTFT);
-        for (t = 0; t<TIME_SLOTS; t++) {
-            for (ch = 0; ch< MAX_NUM_SENSORS; ch++) {
-                free(pData->STFTInputFrameTF[t][ch].re);
-                free(pData->STFTInputFrameTF[t][ch].im);
-            }
+        for (ch = 0; ch< MAX_NUM_SENSORS; ch++) {
+            free(pData->STFTInputFrameTF[ch].re);
+            free(pData->STFTInputFrameTF[ch].im);
         }
-        for (t = 0; t<TIME_SLOTS; t++) {
-            for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-                free(pData->STFTOutputFrameTF[t][ch].re);
-                free(pData->STFTOutputFrameTF[t][ch].im);
-            }
+        for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
+            free(pData->STFTOutputFrameTF[ch].re);
+            free(pData->STFTOutputFrameTF[ch].im);
         }
-        free2d((void**)pData->STFTOutputFrameTF, TIME_SLOTS);
-        free2d((void**)pData->STFTInputFrameTF, TIME_SLOTS);
-        free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_SENSORS, MAX_NUM_SH_SIGNALS));
+        free(pData->STFTOutputFrameTF);
+        free(pData->STFTInputFrameTF);
+        free2d((void**)pData->tempHopFrameTD_in, MAX(MAX_NUM_SENSORS, MAX_NUM_SH_SIGNALS));
+        free2d((void**)pData->tempHopFrameTD_out, MAX(MAX_NUM_SENSORS, MAX_NUM_SH_SIGNALS));
         array2sh_destroyArray(&(pData->arraySpecs));
         
         /* Display stuff */
@@ -153,6 +147,11 @@ void array2sh_init
     array2sh_checkReInit(hA2sh);
 }
 
+//#include "mkl.h"
+//#include "mkl_dfti.h"
+//#include <float.h>
+//#define N 256
+
 void array2sh_process
 (
     void  *  const hA2sh,
@@ -173,6 +172,71 @@ void array2sh_process
     NORM_TYPES norm;
     float gain_lin, maxFreq;
     
+    
+    
+    ///////////////////////////
+
+//    n=N;///2;
+//    float  x_in [N]; ///////should be 2x hop size, not sure how it is wrapped up in afstft
+//    float_complex  x_out[(N/2+1)]; ///////will be 129
+//    float  x_exp[N];
+//    float  x_diff[N];
+//
+//
+//    memset(&x_in[0], 0, N*sizeof(float));
+//    for(i=0; i<N; i++)
+//        x_in[i] = 20.0*sinf((float)i/(float)N *M_PI);
+//
+//    cblas_scopy(N, &x_in[0], 1, &x_exp[0], 1);
+//
+//
+//    DFTI_DESCRIPTOR_HANDLE MKL_FFT_Handle = 0;
+//    float  Scale;
+//    MKL_LONG input_strides[2];
+//    MKL_LONG output_strides[2];
+//    MKL_LONG Status;
+//    const int number_of_channels = 1; /* hard coded here for 1 channel */
+//
+//    /* create handle */
+//    Status = DftiCreateDescriptor(&MKL_FFT_Handle, DFTI_SINGLE, DFTI_REAL, 1, n); /* 1-D, single precision, real_input->fft->half_complex->ifft->real_output */
+//
+//    /* Configure handle */
+//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_PLACEMENT, DFTI_NOT_INPLACE); /* Not inplace, i.e. output has its own dedicated memory */
+//    /* specify output format as complex conjugate-symmetric data. This is the same as MatLab, except only the
+//     * first N/2+1 elements are returned. The inverse transform will automatically symmetrically+conjugate
+//     * replicate these elements, in order to get the required N elements internally. */
+//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_CONJUGATE_EVEN_STORAGE, DFTI_COMPLEX_COMPLEX);
+//    if(number_of_channels > 1) /* only required for multiple channels */
+//        Status = DftiSetValue(MKL_FFT_Handle, DFTI_NUMBER_OF_TRANSFORMS, number_of_channels);
+//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_INPUT_DISTANCE, 1);  /* strides between samples (default=1) */
+//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_OUTPUT_DISTANCE, 1); /* strides between samples (default=1) */
+//    input_strides[0]  = 0; input_strides[1]  = 1;
+//    output_strides[0] = 0; output_strides[1] = 1;
+//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_INPUT_STRIDES, input_strides);   /* strides between channels (default=[0,1]) */
+//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_OUTPUT_STRIDES, output_strides); /* strides between channels (default=[0,1]) */
+//
+//    /* Configuration parameters for backward-FFT */
+//    Scale = 1.0f/(float)n;
+//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_BACKWARD_SCALE, Scale);      /* scalar applied after ifft */
+//
+//    /* commit these chosen parameters */
+//    Status = DftiCommitDescriptor(MKL_FFT_Handle);
+//
+//    /* Compute forward-FFT */
+//    Status = DftiComputeForward(MKL_FFT_Handle, x_in, x_out);
+//
+//    /* Compute backward-FFT */
+//    Status = DftiComputeBackward(MKL_FFT_Handle, x_out, x_in);
+//
+//    /* free handle */
+//    Status = DftiFreeDescriptor(&MKL_FFT_Handle);
+//
+//
+//    for(i=0; i<N; i++)
+//        x_diff[i] = x_exp[i] - x_in[i] ;
+    
+    //////////////
+    
     /* reinitialise if needed */
 #ifdef __APPLE__
     array2sh_checkReInit(hA2sh);
@@ -191,9 +255,7 @@ void array2sh_process
         pData->reinitSHTmatrixFLAG = 0;
     }
 #endif
-
-    if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && !(pData->recalcEvalFLAG) &&
-        !(pData->reinitSHTmatrixFLAG) && !(pData->reinitTFTFLAG)) {
+    if ((nSamples == FRAME_SIZE) && !(pData->recalcEvalFLAG) && !(pData->reinitSHTmatrixFLAG) && !(pData->reinitTFTFLAG)) {
         /* prep */
         for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
         chOrdering = pData->chOrdering;
@@ -211,46 +273,48 @@ void array2sh_process
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
         
         /* Apply time-frequency transform (TFT) */
-        for ( t=0; t< TIME_SLOTS; t++) {
-            for( ch=0; ch < Q; ch++)
-                for ( sample=0; sample < HOP_SIZE; sample++)
-                    pData->tempHopFrameTD[ch][sample] = pData->inputFrameTD[ch][sample + t*HOP_SIZE];
-            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF[t]);
+        for(t=0; t< TIME_SLOTS; t++) {
+            for(ch=0; ch < Q; ch++)
+                for(sample=0; sample < HOP_SIZE; sample++)
+                    pData->tempHopFrameTD_in[ch][sample] = pData->inputFrameTD[ch][sample + t*HOP_SIZE];
+            afSTFTforward(pData->hSTFT, pData->tempHopFrameTD_in, pData->STFTInputFrameTF);
+            for(band=0; band<HYBRID_BANDS; band++)
+                for(ch=0; ch < Q; ch++)
+                    pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
         }
-        for(band=0; band<HYBRID_BANDS; band++)
-            if(pData->freqVector[band] < maxFreq)
-                for( ch=0; ch < Q; ch++)
-                    for ( t=0; t<TIME_SLOTS; t++)
-                        pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
         
-        /* Apply spherical harmonic transform */
-        for(band=0; band<HYBRID_BANDS; band++){
-            if(pData->freqVector[band] < maxFreq){
+        /* Apply spherical harmonic transform (SHT) */
+        if(isPlaying){
+            for(band=0; band<HYBRID_BANDS; band++){
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, Q, &calpha,
                             pData->W[band], MAX_NUM_SENSORS,
                             pData->inputframeTF[band], TIME_SLOTS, &cbeta,
                             pData->SHframeTF[band], TIME_SLOTS);
             }
-            else
-                memset(pData->SHframeTF[band], 0, MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
         }
+        else
+            memset(pData->SHframeTF, 0, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
         
         /* inverse-TFT */
-        for (band = 0; band < HYBRID_BANDS; band++) {
-            if(pData->freqVector[band] < maxFreq){
-                for (ch = 0; ch < nSH; ch++) {
-                    for (t = 0; t < TIME_SLOTS; t++) {
-                        pData->STFTOutputFrameTF[t][ch].re[band] = crealf(pData->SHframeTF[band][ch][t]);
-                        pData->STFTOutputFrameTF[t][ch].im[band] = cimagf(pData->SHframeTF[band][ch][t]);
+        for(t = 0; t < TIME_SLOTS; t++) {
+            for(band = 0; band < HYBRID_BANDS; band++) {
+                if(pData->freqVector[band] < maxFreq){
+                    for (ch = 0; ch < nSH; ch++) {
+                        pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->SHframeTF[band][ch][t]);
+                        pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->SHframeTF[band][ch][t]);
+                    }
+                }
+                else{
+                    for (ch = 0; ch < nSH; ch++) {
+                        pData->STFTOutputFrameTF[ch].re[band] = 0.0f;
+                        pData->STFTOutputFrameTF[ch].im[band] = 0.0f;
                     }
                 }
             }
-        }
-        for (t = 0; t < TIME_SLOTS; t++) {
-            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF[t], pData->tempHopFrameTD);
+            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD_out);
             for (ch = 0; ch < MIN(nSH, nOutputs); ch++)
                 for (sample = 0; sample < HOP_SIZE; sample++)
-                    outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD[ch][sample] * gain_lin;
+                    outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD_out[ch][sample] * gain_lin;
             for (; ch < nOutputs; ch++)
                 for (sample = 0; sample < HOP_SIZE; sample++)
                     outputs[ch][sample + t* HOP_SIZE] = 0.0f;

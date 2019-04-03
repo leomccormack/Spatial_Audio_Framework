@@ -43,25 +43,21 @@ void ambi_drc_create
     ambi_drc_data* pData = (ambi_drc_data*)malloc(sizeof(ambi_drc_data));
     if (pData == NULL) { return;/*error*/ }
     *phAmbi = (void*)pData;
-    int t, ch;
+    int ch;
  
     /* afSTFT stuff */
     pData->hSTFT = NULL;
-    pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_SH_SIGNALS, sizeof(complexVector));
-    for(t=0; t<TIME_SLOTS; t++) {
-        for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-            pData->STFTInputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-            pData->STFTInputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        }
+    pData->STFTInputFrameTF = malloc(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
+    for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
+        pData->STFTInputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
     }
     pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SH_SIGNALS), HOP_SIZE, sizeof(float));
-    pData->STFTOutputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_SH_SIGNALS, sizeof(complexVector));
-    for(t=0; t<TIME_SLOTS; t++) {
-        for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-            pData->STFTOutputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-            pData->STFTOutputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        }
-    }
+    pData->STFTOutputFrameTF = malloc(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
+    for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
+        pData->STFTOutputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+    } 
     
     /* internal */
     pData->fs = 48000;
@@ -95,21 +91,19 @@ void ambi_drc_destroy
 )
 {
     ambi_drc_data *pData = (ambi_drc_data*)(*phAmbi);
-    int t, ch;
+    int ch;
 
     if (pData != NULL) {
         if (pData->hSTFT != NULL) {
             afSTFTfree(pData->hSTFT);
-            for (t = 0; t < TIME_SLOTS; t++) {
-                for (ch = 0; ch < MAX_NUM_SH_SIGNALS; ch++) {
-                    free(pData->STFTInputFrameTF[t][ch].re);
-                    free(pData->STFTInputFrameTF[t][ch].im);
-                    free(pData->STFTOutputFrameTF[t][ch].re);
-                    free(pData->STFTOutputFrameTF[t][ch].im);
-                }
+            for (ch = 0; ch < MAX_NUM_SH_SIGNALS; ch++) {
+                free(pData->STFTInputFrameTF[ch].re);
+                free(pData->STFTInputFrameTF[ch].im);
+                free(pData->STFTOutputFrameTF[ch].re);
+                free(pData->STFTOutputFrameTF[ch].im);
             }
-            free2d((void**)pData->STFTInputFrameTF, TIME_SLOTS);
-            free2d((void**)pData->STFTOutputFrameTF, TIME_SLOTS);
+            free(pData->STFTInputFrameTF);
+            free(pData->STFTOutputFrameTF);
             free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SH_SIGNALS));
         }
      
@@ -183,7 +177,7 @@ void ambi_drc_process
     }
 
     /* Main processing loop */
-    if (nSamples == FRAME_SIZE && pData->reInitTFT == 0 && isPlaying) {
+    if (nSamples == FRAME_SIZE && pData->reInitTFT == 0) {
         /* prep */
         for(n=0; n<MAX_ORDER+2; n++){  o[n] = n*n;  }
         alpha_a = expf(-1.0f / ( (pData->attack_ms  / ((float)FRAME_SIZE / (float)TIME_SLOTS)) * pData->fs * 0.001f));
@@ -201,78 +195,81 @@ void ambi_drc_process
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform */
-        for ( t=0; t< TIME_SLOTS; t++) {
-            for( ch=0; ch < pData->nSH; ch++)
-                for ( sample=0; sample < HOP_SIZE; sample++)
+        for(t=0; t< TIME_SLOTS; t++) {
+            for(ch=0; ch < pData->nSH; ch++)
+                for(sample=0; sample < HOP_SIZE; sample++)
                     pData->tempHopFrameTD[ch][sample] = pData->inputFrameTD[ch][sample + t*HOP_SIZE];
-            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF[t]);
+            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
+            for (band = 0; band < HYBRID_BANDS; band++)
+                for (ch = 0; ch < pData->nSH; ch++)
+                    pData->inputFrameTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
         }
-        for (band = 0; band < HYBRID_BANDS; band++)
-            for (ch = 0; ch < pData->nSH; ch++)
-                for (t = 0; t < TIME_SLOTS; t++)
-                    pData->inputFrameTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
         
-        /* Calculate the dynamic range compression gain factors per frequency band based on the omnidirectional component.
-         * McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range Compression". in Proceedings of the 14th
-         * Sound and Music Computing Conference, July 5-8, Espoo, Finland.*/
-        for (t = 0; t < TIME_SLOTS; t++) {
-            for (band = 0; band < HYBRID_BANDS; band++) {
-                /* apply input boost */
-                for (ch = 0; ch < pData->nSH; ch++)
-                    pData->inputFrameTF[band][ch][t] = crmulf(pData->inputFrameTF[band][ch][t], boost);
+        /* Processing loop */
+        if(isPlaying){
+            /* Calculate the dynamic range compression gain factors per frequency band based on the omnidirectional component.
+             * McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range Compression". in Proceedings of the 14th
+             * Sound and Music Computing Conference, July 5-8, Espoo, Finland.*/
+            for (t = 0; t < TIME_SLOTS; t++) {
+                for (band = 0; band < HYBRID_BANDS; band++) {
+                    /* apply input boost */
+                    for (ch = 0; ch < pData->nSH; ch++)
+                        pData->inputFrameTF[band][ch][t] = crmulf(pData->inputFrameTF[band][ch][t], boost);
 
-                /* calculate gain factor for this frequency based on the omni component */
-                xG = 10.0f*log10f(powf(cabsf(pData->inputFrameTF[band][0/* omni */][t]), 2.0f) + 2e-13f);
-                yG = ambi_drc_gainComputer(xG, theshold, ratio, knee);
-                xL = xG - yG;
-                yL = ambi_drc_smoothPeakDetector(xL, pData->yL_z1[band], alpha_a, alpha_r);
-                pData->yL_z1[band] = yL;
-                cdB = -yL;
-                cdB = MAX(SPECTRAL_FLOOR, sqrtf(powf(10.0f, cdB / 20.0f)));
+                    /* calculate gain factor for this frequency based on the omni component */
+                    xG = 10.0f*log10f(powf(cabsf(pData->inputFrameTF[band][0/* omni */][t]), 2.0f) + 2e-13f);
+                    yG = ambi_drc_gainComputer(xG, theshold, ratio, knee);
+                    xL = xG - yG;
+                    yL = ambi_drc_smoothPeakDetector(xL, pData->yL_z1[band], alpha_a, alpha_r);
+                    pData->yL_z1[band] = yL;
+                    cdB = -yL;
+                    cdB = MAX(SPECTRAL_FLOOR, sqrtf(powf(10.0f, cdB / 20.0f)));
 
-#ifdef ENABLE_TF_DISPLAY
-                /* store gain factors in circular buffer for plotting */
-                if(pData->storeIdx==0)
-                    pData->gainsTF_bank0[band][pData->wIdx] = cdB;
-                else
-                    pData->gainsTF_bank1[band][pData->wIdx] = cdB;
-#endif
-                /* apply same gain factor to all SH components, the spatial characteristics will be preserved */
-                for (ch = 0; ch < pData->nSH; ch++)
-                    pData->outputFrameTF[band][ch][t] = crmulf(pData->inputFrameTF[band][ch][t], cdB*makeup);
+    #ifdef ENABLE_TF_DISPLAY
+                    /* store gain factors in circular buffer for plotting */
+                    if(pData->storeIdx==0)
+                        pData->gainsTF_bank0[band][pData->wIdx] = cdB;
+                    else
+                        pData->gainsTF_bank1[band][pData->wIdx] = cdB;
+    #endif
+                    /* apply same gain factor to all SH components, the spatial characteristics will be preserved
+                     * (although, ones perception of them may of course change) */
+                    for (ch = 0; ch < pData->nSH; ch++)
+                        pData->outputFrameTF[band][ch][t] = crmulf(pData->inputFrameTF[band][ch][t], cdB*makeup);
+                }
+    #ifdef ENABLE_TF_DISPLAY
+                /* increment circular buffer indices */
+                pData->wIdx++;
+                pData->rIdx++;
+                if (pData->wIdx >= NUM_DISPLAY_TIME_SLOTS){
+                    pData->wIdx = 0;
+                    pData->storeIdx = pData->storeIdx == 0 ? 1 : 0;
+                }
+                if (pData->rIdx >= NUM_DISPLAY_TIME_SLOTS)
+                    pData->rIdx = 0;
+    #endif
             }
-#ifdef ENABLE_TF_DISPLAY
-            /* increment circular buffer indices */
-            pData->wIdx++;
-            pData->rIdx++;
-            if (pData->wIdx >= NUM_DISPLAY_TIME_SLOTS){
-                pData->wIdx = 0;
-                pData->storeIdx = pData->storeIdx == 0 ? 1 : 0;
-            }
-            if (pData->rIdx >= NUM_DISPLAY_TIME_SLOTS)
-                pData->rIdx = 0;
-#endif
+        }
+        else{
+            memset(pData->outputFrameTF, 0, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
         }
 
         /* Inverse time-frequency transform */
-        for (t = 0; t < TIME_SLOTS; t++) {
+        for(t = 0; t < TIME_SLOTS; t++) {
             for (ch = 0; ch < pData->nSH; ch++) {
                 for (band = 0; band < HYBRID_BANDS; band++) {
-                    pData->STFTOutputFrameTF[t][ch].re[band] = crealf(pData->outputFrameTF[band][ch][t]);
-                    pData->STFTOutputFrameTF[t][ch].im[band] = cimagf(pData->outputFrameTF[band][ch][t]);
+                    pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->outputFrameTF[band][ch][t]);
+                    pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->outputFrameTF[band][ch][t]);
                 }
             }
-        }
-        for (t = 0; t < TIME_SLOTS; t++) {
-            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF[t], pData->tempHopFrameTD);
-            for (ch = 0; ch < MIN(pData->nSH, nCh); ch++)
+            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
+            for(ch = 0; ch < MIN(pData->nSH, nCh); ch++)
                 for (sample = 0; sample < HOP_SIZE; sample++)
                     outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD[ch][sample];
-            for (; ch <  nCh; ch++)
+            for(; ch < nCh; ch++)
                 for (sample = 0; sample < HOP_SIZE; sample++)
                     outputs[ch][sample + t* HOP_SIZE] = 0.0f;
         }
-        
     }
     else {
         for (ch=0; ch < nCh; ch++)

@@ -67,8 +67,8 @@ typedef struct _panner
     float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
     float_complex inputframeTF[HYBRID_BANDS][MAX_NUM_INPUTS][TIME_SLOTS];
     float_complex outputframeTF[HYBRID_BANDS][MAX_NUM_OUTPUTS][TIME_SLOTS];
-    complexVector** STFTInputFrameTF;
-    complexVector** STFTOutputFrameTF;
+    complexVector* STFTInputFrameTF;
+    complexVector* STFTOutputFrameTF;
     float** tempHopFrameTD;
     int fs;
     

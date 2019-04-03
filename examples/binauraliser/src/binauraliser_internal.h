@@ -75,8 +75,8 @@ typedef struct _binauraliser
     float outframeTD[NUM_EARS][FRAME_SIZE];
     float_complex inputframeTF[HYBRID_BANDS][MAX_NUM_INPUTS][TIME_SLOTS];
     float_complex outputframeTF[HYBRID_BANDS][NUM_EARS][TIME_SLOTS];
-    complexVector** STFTInputFrameTF;
-    complexVector** STFTOutputFrameTF;
+    complexVector* STFTInputFrameTF;
+    complexVector* STFTOutputFrameTF;
     float** tempHopFrameTD;
     int fs;
     

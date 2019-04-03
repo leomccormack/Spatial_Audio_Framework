@@ -42,21 +42,19 @@ void panner_create
     panner_data* pData = (panner_data*)malloc(sizeof(panner_data));
     if (pData == NULL) { return;/*error*/ }
     *phPan = (void*)pData;
-    int t, ch, dummy;
+    int ch, dummy;
     
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_INPUTS, sizeof(complexVector));
-    pData->STFTOutputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_OUTPUTS, sizeof(complexVector));
-    for(t=0; t<TIME_SLOTS; t++) {
-        for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
-            pData->STFTInputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-            pData->STFTInputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        }
-        for(ch=0; ch< MAX_NUM_OUTPUTS; ch++) {
-            pData->STFTOutputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-            pData->STFTOutputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        }
+    pData->STFTInputFrameTF = malloc(MAX_NUM_INPUTS*sizeof(complexVector));
+    pData->STFTOutputFrameTF = malloc(MAX_NUM_OUTPUTS*sizeof(complexVector));
+    for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
+        pData->STFTInputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+    }
+    for(ch=0; ch< MAX_NUM_OUTPUTS; ch++) {
+        pData->STFTOutputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
     }
     pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_INPUTS, MAX_NUM_OUTPUTS), HOP_SIZE, sizeof(float));
     
@@ -82,24 +80,22 @@ void panner_destroy
 )
 {
     panner_data *pData = (panner_data*)(*phPan);
-    int t, ch;
+    int ch;
 
     if (pData != NULL) {
         if(pData->hSTFT !=NULL)
             afSTFTfree(pData->hSTFT);
-        for (t = 0; t<TIME_SLOTS; t++) {
-            for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
-                free(pData->STFTInputFrameTF[t][ch].re);
-                free(pData->STFTInputFrameTF[t][ch].im);
-            }
-        
-            for (ch = 0; ch< MAX_NUM_OUTPUTS; ch++) {
-                free(pData->STFTOutputFrameTF[t][ch].re);
-                free(pData->STFTOutputFrameTF[t][ch].im);
-            }
+        for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
+            free(pData->STFTInputFrameTF[ch].re);
+            free(pData->STFTInputFrameTF[ch].im);
         }
-        free2d((void**)pData->STFTInputFrameTF, TIME_SLOTS);
-        free2d((void**)pData->STFTOutputFrameTF, TIME_SLOTS);
+    
+        for (ch = 0; ch< MAX_NUM_OUTPUTS; ch++) {
+            free(pData->STFTOutputFrameTF[ch].re);
+            free(pData->STFTOutputFrameTF[ch].im);
+        }
+        free(pData->STFTInputFrameTF);
+        free(pData->STFTOutputFrameTF);
         free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_INPUTS, MAX_NUM_OUTPUTS));
     
         if(pData->vbap_gtable!= NULL)
@@ -163,7 +159,7 @@ void panner_process
 #endif
 
     /* apply panner */
-    if ((nSamples == FRAME_SIZE) && (isPlaying == 1) && (pData->vbap_gtable != NULL) 
+    if ((nSamples == FRAME_SIZE) && (pData->vbap_gtable != NULL)
         && (pData->reInitTFT == 0) && (pData->reInitGainTables == 0)) {
         memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
         memcpy(pValue, pData->pValue, HYBRID_BANDS*sizeof(float));
@@ -177,109 +173,109 @@ void panner_process
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
         
         /* Apply time-frequency transform (TFT) */
-        for ( t=0; t< TIME_SLOTS; t++) {
-            for( ch=0; ch < nSources; ch++)
-                for ( sample=0; sample < HOP_SIZE; sample++)
+        for(t=0; t< TIME_SLOTS; t++) {
+            for(ch=0; ch < nSources; ch++)
+                for(sample=0; sample < HOP_SIZE; sample++)
                     pData->tempHopFrameTD[ch][sample] = pData->inputFrameTD[ch][sample + t*HOP_SIZE];
-            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF[t]);
+            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
+            for(band=0; band<HYBRID_BANDS; band++)
+                for(ch=0; ch < nSources; ch++)
+                    pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
         }
-        for(band=0; band<HYBRID_BANDS; band++)
-            for( ch=0; ch < nSources; ch++)
-                for ( t=0; t<TIME_SLOTS; t++)
-                    pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
         memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
         
         /* Apply VBAP Panning */
-        if(pData->output_nDims == 3){/* 3-D case */
-            aziRes = (float)pData->vbapTableRes[0];
-            elevRes = (float)pData->vbapTableRes[1];
-            N_azi = (int)(360.0f / aziRes + 0.5f) + 1;
-            for (ch = 0; ch < nSources; ch++) {
-                /* recalculate frequency dependent panning gains */
-                if(pData->recalc_gainsFLAG[ch]){
-                    //memset(pData->G_src[band][ch], 0, MAX_NUM_OUTPUTS * sizeof(float));
-                    aziIndex = (int)(matlab_fmodf(pData->src_dirs_deg[ch][0] + 180.0f, 360.0f) / aziRes + 0.5f);
-                    elevIndex = (int)((pData->src_dirs_deg[ch][1] + 90.0f) / elevRes + 0.5f);
-                    idx3d = elevIndex * N_azi + aziIndex;
-                    for (ls = 0; ls < nLoudspeakers; ls++)
-                        gains3D[ls] =  pData->vbap_gtable[idx3d*nLoudspeakers+ls];
-                    for (band = 0; band < HYBRID_BANDS; band++){
-                        /* apply pValue per frequency */
-                        pv_f = pData->pValue[band];
-                        if(pv_f != 2.0f){
-                            gains3D_sum_pvf = 0.0f;
-                            for (ls = 0; ls < nLoudspeakers; ls++)
-                                gains3D_sum_pvf += powf(MAX(gains3D[ls], 0.0f), pv_f);
-                            gains3D_sum_pvf = powf(gains3D_sum_pvf, 1.0f/(pv_f+2.23e-9f));
-                            for (ls = 0; ls < nLoudspeakers; ls++)
-                                pData->G_src[band][ch][ls] = gains3D[ls] / (gains3D_sum_pvf+2.23e-9f);
+        if(isPlaying){
+            if(pData->output_nDims == 3){/* 3-D case */
+                aziRes = (float)pData->vbapTableRes[0];
+                elevRes = (float)pData->vbapTableRes[1];
+                N_azi = (int)(360.0f / aziRes + 0.5f) + 1;
+                for (ch = 0; ch < nSources; ch++) {
+                    /* recalculate frequency dependent panning gains */
+                    if(pData->recalc_gainsFLAG[ch]){
+                        //memset(pData->G_src[band][ch], 0, MAX_NUM_OUTPUTS * sizeof(float));
+                        aziIndex = (int)(matlab_fmodf(pData->src_dirs_deg[ch][0] + 180.0f, 360.0f) / aziRes + 0.5f);
+                        elevIndex = (int)((pData->src_dirs_deg[ch][1] + 90.0f) / elevRes + 0.5f);
+                        idx3d = elevIndex * N_azi + aziIndex;
+                        for (ls = 0; ls < nLoudspeakers; ls++)
+                            gains3D[ls] =  pData->vbap_gtable[idx3d*nLoudspeakers+ls];
+                        for (band = 0; band < HYBRID_BANDS; band++){
+                            /* apply pValue per frequency */
+                            pv_f = pData->pValue[band];
+                            if(pv_f != 2.0f){
+                                gains3D_sum_pvf = 0.0f;
+                                for (ls = 0; ls < nLoudspeakers; ls++)
+                                    gains3D_sum_pvf += powf(MAX(gains3D[ls], 0.0f), pv_f);
+                                gains3D_sum_pvf = powf(gains3D_sum_pvf, 1.0f/(pv_f+2.23e-9f));
+                                for (ls = 0; ls < nLoudspeakers; ls++)
+                                    pData->G_src[band][ch][ls] = gains3D[ls] / (gains3D_sum_pvf+2.23e-9f);
+                            }
+                            else
+                                for (ls = 0; ls < nLoudspeakers; ls++)
+                                    pData->G_src[band][ch][ls] = gains3D[ls];
                         }
-                        else
-                            for (ls = 0; ls < nLoudspeakers; ls++)
-                                pData->G_src[band][ch][ls] = gains3D[ls];
+                        pData->recalc_gainsFLAG[ch] = 0;
                     }
-                    pData->recalc_gainsFLAG[ch] = 0;
-                }
-                /* apply panning gains */
-                for (band = 0; band < HYBRID_BANDS; band++){
-                    for (ls = 0; ls < nLoudspeakers; ls++)
-                        for (t = 0; t < TIME_SLOTS; t++)
-                            pData->outputframeTF[band][ls][t] = ccaddf(pData->outputframeTF[band][ls][t], crmulf(pData->inputframeTF[band][ch][t], pData->G_src[band][ch][ls]));
+                    /* apply panning gains */
+                    for (band = 0; band < HYBRID_BANDS; band++){
+                        for (ls = 0; ls < nLoudspeakers; ls++)
+                            for (t = 0; t < TIME_SLOTS; t++)
+                                pData->outputframeTF[band][ls][t] = ccaddf(pData->outputframeTF[band][ls][t], crmulf(pData->inputframeTF[band][ch][t], pData->G_src[band][ch][ls]));
+                    }
                 }
             }
-        }
-        else{/* 2-D case */
-            aziRes = (float)pData->vbapTableRes[0];
-            for (ch = 0; ch < nSources; ch++) {
-                /* recalculate frequency dependent panning gains */
-                if(pData->recalc_gainsFLAG[ch]){
-                    //memset(pData->G_src[band][ch], 0, MAX_NUM_OUTPUTS*sizeof(float));
-                    idx2D = (int)((matlab_fmodf(pData->src_dirs_deg[ch][0]+180.0f,360.0f)/aziRes)+0.5f);
-                    for (ls = 0; ls < nLoudspeakers; ls++)
-                        gains2D[ls] = pData->vbap_gtable[idx2D*nLoudspeakers+ls];
-                    for (band = 0; band < HYBRID_BANDS; band++){
-                        /* apply pValue per frequency */
-                        pv_f = pData->pValue[band];
-                        if(pv_f != 2.0f){
-                            gains2D_sum_pvf = 0.0f;
-                            for (ls = 0; ls < nLoudspeakers; ls++)
-                                gains2D_sum_pvf += powf(MAX(gains2D[ls], 0.0f), pv_f);
-                            gains2D_sum_pvf = powf(gains2D_sum_pvf, 1.0f/(pv_f+2.23e-9f));
-                            for (ls = 0; ls < nLoudspeakers; ls++)
-                                pData->G_src[band][ch][ls] = gains2D[ls] / (gains2D_sum_pvf+2.23e-9f);
+            else{/* 2-D case */
+                aziRes = (float)pData->vbapTableRes[0];
+                for (ch = 0; ch < nSources; ch++) {
+                    /* recalculate frequency dependent panning gains */
+                    if(pData->recalc_gainsFLAG[ch]){
+                        //memset(pData->G_src[band][ch], 0, MAX_NUM_OUTPUTS*sizeof(float));
+                        idx2D = (int)((matlab_fmodf(pData->src_dirs_deg[ch][0]+180.0f,360.0f)/aziRes)+0.5f);
+                        for (ls = 0; ls < nLoudspeakers; ls++)
+                            gains2D[ls] = pData->vbap_gtable[idx2D*nLoudspeakers+ls];
+                        for (band = 0; band < HYBRID_BANDS; band++){
+                            /* apply pValue per frequency */
+                            pv_f = pData->pValue[band];
+                            if(pv_f != 2.0f){
+                                gains2D_sum_pvf = 0.0f;
+                                for (ls = 0; ls < nLoudspeakers; ls++)
+                                    gains2D_sum_pvf += powf(MAX(gains2D[ls], 0.0f), pv_f);
+                                gains2D_sum_pvf = powf(gains2D_sum_pvf, 1.0f/(pv_f+2.23e-9f));
+                                for (ls = 0; ls < nLoudspeakers; ls++)
+                                    pData->G_src[band][ch][ls] = gains2D[ls] / (gains2D_sum_pvf+2.23e-9f);
+                            }
+                            else
+                                for (ls = 0; ls < nLoudspeakers; ls++)
+                                    pData->G_src[band][ch][ls] = gains2D[ls];
                         }
-                        else
-                            for (ls = 0; ls < nLoudspeakers; ls++)
-                                pData->G_src[band][ch][ls] = gains2D[ls];
+                        pData->recalc_gainsFLAG[ch] = 0;
                     }
-                    pData->recalc_gainsFLAG[ch] = 0;
-                }
-                /* apply panning gains */
-                for (band = 0; band < HYBRID_BANDS; band++){
-                    for (ls = 0; ls < nLoudspeakers; ls++)
-                        for (t = 0; t < TIME_SLOTS; t++)
-                            pData->outputframeTF[band][ls][t] = ccaddf(pData->outputframeTF[band][ls][t], crmulf(pData->inputframeTF[band][ch][t], pData->G_src[band][ch][ls]));
+                    /* apply panning gains */
+                    for (band = 0; band < HYBRID_BANDS; band++){
+                        for (ls = 0; ls < nLoudspeakers; ls++)
+                            for (t = 0; t < TIME_SLOTS; t++)
+                                pData->outputframeTF[band][ls][t] = ccaddf(pData->outputframeTF[band][ls][t], crmulf(pData->inputframeTF[band][ch][t], pData->G_src[band][ch][ls]));
+                    }
                 }
             }
+            /* scale by sqrt(number of sources) */
+            for (band = 0; band < HYBRID_BANDS; band++)
+                for (ls = 0; ls < nLoudspeakers; ls++)
+                    for (t = 0; t < TIME_SLOTS; t++)
+                        pData->outputframeTF[band][ls][t] = crmulf(pData->outputframeTF[band][ls][t], 1.0f/sqrtf((float)nSources));
         }
-        
-        /* scale by sqrt(number of sources) */
-        for (band = 0; band < HYBRID_BANDS; band++)
-            for (ls = 0; ls < nLoudspeakers; ls++)
-                for (t = 0; t < TIME_SLOTS; t++)
-                    pData->outputframeTF[band][ls][t] = crmulf(pData->outputframeTF[band][ls][t], 1.0f/sqrtf((float)nSources));
-        
+        else
+            memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_OUTPUTS*TIME_SLOTS*sizeof(float_complex));
+            
         /* inverse-TFT */
-        for (band = 0; band < HYBRID_BANDS; band++) {
-            for (ch = 0; ch < nLoudspeakers; ch++) {
-                for (t = 0; t < TIME_SLOTS; t++) {
-                    pData->STFTOutputFrameTF[t][ch].re[band] = crealf(pData->outputframeTF[band][ch][t]);
-                    pData->STFTOutputFrameTF[t][ch].im[band] = cimagf(pData->outputframeTF[band][ch][t]);
+        for(t = 0; t < TIME_SLOTS; t++) {
+            for(band = 0; band < HYBRID_BANDS; band++) {
+                for(ch = 0; ch < nLoudspeakers; ch++) {
+                    pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->outputframeTF[band][ch][t]);
+                    pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->outputframeTF[band][ch][t]);
                 }
             }
-        }
-        for (t = 0; t < TIME_SLOTS; t++) {
-            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF[t], pData->tempHopFrameTD);
+            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
             for (ch = 0; ch < MIN(nLoudspeakers, nOutputs); ch++)
                 for (sample = 0; sample < HOP_SIZE; sample++)
                     outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD[ch][sample];

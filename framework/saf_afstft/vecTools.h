@@ -26,17 +26,15 @@
 #include "saf_utilities.h"
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
   #ifdef NDEBUG
-    #define VDSP 1
+    #define VDSP
   #endif
-#elif defined(_MSC_VER) && defined(INTEL_MKL_VERSION)
-  /* Real to Complex FFT is not currently supported by intel! WTF. */
-  //#define MKL_FFT 1
+#elif defined(_MSC_VER) || defined(INTEL_MKL_VERSION)
+  #define MKL_FFT
 #endif
-
-#ifdef VDSP
-#include <Accelerate/Accelerate.h>
-#elif MKL_FFT
-#include "mkl_dfti.h"
+#if defined(VDSP)
+  #include <Accelerate/Accelerate.h>
+#elif defined(MKL_FFT)
+  #include "mkl_dfti.h"
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,21 +42,17 @@
 #include <string.h>
 #include "fft4g.h"
 
-
 typedef struct {
     float *timeData;
     float *frequencyData;
     int N;
     int log2n;
-#ifdef VDSP
-    FFTSetup FFT; 
+#if defined(VDSP)
+    FFTSetup FFT;
     DSPSplitComplex VDSP_split;
-#elif MKL_FFT
-	float_complex *timeData_mkl;
-	float_complex *frequencyData_mkl;
-	DFTI_DESCRIPTOR_HANDLE my_desc1_handle;
-	DFTI_DESCRIPTOR_HANDLE my_desc2_handle;
-	MKL_LONG status;
+#elif defined(MKL_FFT)
+    DFTI_DESCRIPTOR_HANDLE MKL_FFT_Handle;
+    float* mkl_fft_out;
 #else
     float *a,*w;
     int *ip;
@@ -68,6 +62,12 @@ typedef struct {
 void vtClr(float* vec, int N);
 
 void vtVma(float* vec1, float* vec2, float* vec3, int N);
+
+void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n);
+
+void vtFreeFFT(void* planPr);
+
+void vtRunFFT(void* planPr, int positiveForForwardTransform);
 
 
 #endif /* defined(__afSTFT_MEXfile__vecTools__) */

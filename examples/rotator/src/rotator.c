@@ -118,7 +118,8 @@ void rotator_process
             case NORM_N3D: /* already N3D */
                 break;
             case NORM_SN3D: /* convert to N3D before rotation */
-#if 0 /* actually doesn't matter */
+#if 0 /* actually doesn't matter, since only components of the same order are used to rotate a given order of component
+* i.e, dipoles are used to rotate dipoles, quadrapoles-qaudrapoles etc.. so scaling doesn't matter */
                 for (n = 0; n<order+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)

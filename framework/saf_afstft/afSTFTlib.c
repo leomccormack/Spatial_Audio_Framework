@@ -21,7 +21,6 @@
  */
 
 #include "afSTFTlib.h"
-#include "vecTools.h"
 #include "afSTFT_protoFilter.h"
 
 /* Coefficients for a half-band filter, i.e., the "hybrid filter" applied optionally at the bands 1--4. */
@@ -65,7 +64,6 @@ void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int
     h->log2n=log2n;
     h->inChannels = inChannels;
     h->outChannels = outChannels;
-    h->maxChannels = inChannels > outChannels ? inChannels : outChannels;
     h->hopSize = hopSize;
     dsFactor=1024/hopSize;
     h->hLen = 10240/dsFactor;
@@ -124,14 +122,14 @@ void afSTFTchannelChange(void* handle, int new_inChannels, int new_outChannels)
 {
     afSTFT *h = (afSTFT*)(handle);
     afHybrid *hyb_h = h->h_afHybrid;
- 
+    
     int i, ch, sample;
     if(h->inChannels!=new_inChannels){
         for(i=new_inChannels; i<h->inChannels; i++)
             free(h->inBuffer[i]);
         h->inBuffer = (float**)realloc(h->inBuffer, sizeof(float*)*new_inChannels);
         for(i=h->inChannels; i<new_inChannels; i++)
-             h->inBuffer[i] = (float*)calloc(h->hLen,sizeof(float));
+            h->inBuffer[i] = (float*)calloc(h->hLen,sizeof(float));
     }
     
     if(h->outChannels!=new_outChannels){
@@ -365,8 +363,6 @@ void afSTFTfree(void* handle)
 }
 
 
-
-
 void afHybridInit(void** handle, int hopSize, int inChannels, int outChannels)
 {
     /* Allocates 7 samples of memory for FIR filtering at lowest bands, and for delays at other bands. */
@@ -440,7 +436,7 @@ void afHybridForward(void* handle, complexVector* FD)
             pr1 = FD[ch].im;
             pr2 = h->analysisBuffer[ch][loopPointerThis].im;
         }
-        
+    
         for (sample=0;sample<7;sample++)
         {
             sampleIndices[sample]=h->loopPointer+1+sample;
@@ -463,7 +459,7 @@ void afHybridForward(void* handle, complexVector* FD)
             im -= COEFF1*h->analysisBuffer[ch][sampleIndices[0]].re[band];
             
             /* The addition or subtraction process below provides the upper and lower half-band spectra (the coefficient 0.5 had the same sign for both bands).
-             The half-band orders are switched for bands=1,3 with respect to band=2,4, because of the organization of the spectral data at the downsampled frequency band signals. As the result of the order switching, the bands are organized by the ascending spectral position. */
+               The half-band orders are switched for bands=1,3 with respect to band=2,4, because of the organization of the spectral data at the downsampled frequency band signals. As the result of the order switching, the bands are organized by the ascending spectral position. */
             if (band == 1 || band== 3)
             {
                 FD[ch].re[band*2-1] -= re;
@@ -490,7 +486,7 @@ void afHybridInverse(void* handle, complexVector* FD)
     afHybrid *h = (afHybrid*)(handle);
     int ch,realImag;
     float *pr;
-    
+
     for (ch=0;ch<h->outChannels;ch++)
     {
         pr = FD[ch].re;

@@ -93,8 +93,8 @@ typedef struct _ambi_bin
     float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     float_complex SHframeTF_rot[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     float_complex binframeTF[HYBRID_BANDS][NUM_EARS][TIME_SLOTS];
-    complexVector** STFTInputFrameTF;
-    complexVector** STFTOutputFrameTF;
+    complexVector* STFTInputFrameTF;
+    complexVector* STFTOutputFrameTF;
     void* hSTFT;                             /* afSTFT handle */
     int afSTFTdelay;                         /* for host delay compensation */
     float** tempHopFrameTD;                  /* temporary multi-channel time-domain buffer of size "HOP_SIZE". */

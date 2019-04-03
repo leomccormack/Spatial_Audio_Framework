@@ -33,7 +33,7 @@ void ambi_bin_create
     ambi_bin_data* pData = (ambi_bin_data*)malloc(sizeof(ambi_bin_data));
     if (pData == NULL) { return;/*error*/ }
     *phAmbi = (void*)pData;
-    int t, ch, band;
+    int ch, band;
 
     /* default user parameters */
     for (band = 0; band<HYBRID_BANDS; band++)
@@ -58,20 +58,16 @@ void ambi_bin_create
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
-    pData->STFTOutputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, NUM_EARS, sizeof(complexVector));
-    for(t=0; t<TIME_SLOTS; t++) {
-        for(ch=0; ch< NUM_EARS; ch++) {
-            pData->STFTOutputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-            pData->STFTOutputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        }
+    pData->STFTOutputFrameTF = malloc(NUM_EARS * sizeof(complexVector));
+    for(ch=0; ch< NUM_EARS; ch++) {
+        pData->STFTOutputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
     }
     pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, NUM_EARS), HOP_SIZE, sizeof(float));
-    pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_SH_SIGNALS, sizeof(complexVector));
-    for(t=0; t<TIME_SLOTS; t++) {
-        for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-            pData->STFTInputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-            pData->STFTInputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        }
+    pData->STFTInputFrameTF = malloc(MAX_NUM_SH_SIGNALS * sizeof(complexVector));
+    for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
+        pData->STFTInputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
     }
 
     /* codec data */
@@ -95,25 +91,23 @@ void ambi_bin_destroy
 {
     ambi_bin_data *pData = (ambi_bin_data*)(*phAmbi);
     codecPars *pars = pData->pars;
-    int t, ch;
+    int ch;
     
     if (pData != NULL) {
         if(pData->hSTFT!=NULL)
             afSTFTfree(pData->hSTFT);
-        for (t = 0; t<TIME_SLOTS; t++) {
-            if(pData->STFTInputFrameTF!=NULL){
-                for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-                    free(pData->STFTInputFrameTF[t][ch].re);
-                    free(pData->STFTInputFrameTF[t][ch].im);
-                }
-            }
-            for (ch = 0; ch< NUM_EARS; ch++) {
-                free(pData->STFTOutputFrameTF[t][ch].re);
-                free(pData->STFTOutputFrameTF[t][ch].im);
+        if(pData->STFTInputFrameTF!=NULL){
+            for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
+                free(pData->STFTInputFrameTF[ch].re);
+                free(pData->STFTInputFrameTF[ch].im);
             }
         }
-        free2d((void**)pData->STFTInputFrameTF, TIME_SLOTS);
-        free2d((void**)pData->STFTOutputFrameTF, TIME_SLOTS);
+        for (ch = 0; ch< NUM_EARS; ch++) {
+            free(pData->STFTOutputFrameTF[ch].re);
+            free(pData->STFTOutputFrameTF[ch].im);
+        }
+        free(pData->STFTInputFrameTF);
+        free(pData->STFTOutputFrameTF);
         if(pData->tempHopFrameTD!=NULL)
             free2d((void**)pData->tempHopFrameTD, MAX(NUM_EARS, MAX_NUM_SH_SIGNALS));
         
@@ -191,7 +185,7 @@ void ambi_bin_process
 #endif
 
     /* decode audio to loudspeakers or headphones */
-    if ( (nSamples == FRAME_SIZE) && (isPlaying) && (pData->reInitCodec==0) && (pData->reInitTFT==0) ) {
+    if ( (nSamples == FRAME_SIZE) && (pData->reInitCodec==0) && (pData->reInitTFT==0) ) {
         /* copy user parameters to local variables */
         for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
         norm = pData->norm;
@@ -218,56 +212,58 @@ void ambi_bin_process
         }
         
         /* Apply time-frequency transform (TFT) */
-        for ( t=0; t< TIME_SLOTS; t++) {
-            for( ch=0; ch < nSH; ch++)
-                for ( sample=0; sample < HOP_SIZE; sample++)
+        for(t=0; t< TIME_SLOTS; t++) {
+            for(ch=0; ch < nSH; ch++)
+                for(sample=0; sample < HOP_SIZE; sample++)
                     pData->tempHopFrameTD[ch][sample] = pData->SHFrameTD[ch][sample + t*HOP_SIZE];
-            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF[t]);
+            afSTFTforward(pData->hSTFT, pData->tempHopFrameTD, pData->STFTInputFrameTF);
+            for(band=0; band<HYBRID_BANDS; band++)
+                for(ch=0; ch < nSH; ch++)
+                    pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
         }
-        for(band=0; band<HYBRID_BANDS; band++)
-            for( ch=0; ch < nSH; ch++)
-                for ( t=0; t<TIME_SLOTS; t++)
-                    pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
     
-        /* Apply rotation */
-        if (order > 0 && enableRot) {
-            M_rot_tmp = malloc(nSH*nSH * sizeof(float));
-            yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
-            getSHrotMtxReal(Rxyz, M_rot_tmp, order);
-            for (i = 0; i < nSH; i++)
-                for (j = 0; j < nSH; j++)
-                    M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH + j], 0.0f);
-            free(M_rot_tmp);
-            for (band = 0; band < HYBRID_BANDS; band++) {
-                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, nSH, &calpha,
-                            M_rot, MAX_NUM_SH_SIGNALS,
-                            pData->SHframeTF[band], TIME_SLOTS, &cbeta,
-                            pData->SHframeTF_rot[band], TIME_SLOTS);
+        /* Processing loop */
+        if(isPlaying){
+            /* Apply rotation */
+            if(order > 0 && enableRot) {
+                M_rot_tmp = malloc(nSH*nSH * sizeof(float));
+                yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
+                getSHrotMtxReal(Rxyz, M_rot_tmp, order);
+                for (i = 0; i < nSH; i++)
+                    for (j = 0; j < nSH; j++)
+                        M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH + j], 0.0f);
+                free(M_rot_tmp);
+                for (band = 0; band < HYBRID_BANDS; band++) {
+                    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, nSH, &calpha,
+                                M_rot, MAX_NUM_SH_SIGNALS,
+                                pData->SHframeTF[band], TIME_SLOTS, &cbeta,
+                                pData->SHframeTF_rot[band], TIME_SLOTS);
+                }
+            }
+            else
+                memcpy(pData->SHframeTF_rot, pData->SHframeTF, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
+            
+            /* mix to headphones */
+            for(band = 0; band < HYBRID_BANDS; band++) {
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
+                            pars->M_dec[band], MAX_NUM_SH_SIGNALS,
+                            pData->SHframeTF_rot[band], TIME_SLOTS, &cbeta,
+                            pData->binframeTF[band], TIME_SLOTS);
             }
         }
         else
-            memcpy(pData->SHframeTF_rot, pData->SHframeTF, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
-        
-        /* mix to headphones */
-        for (band = 0; band < HYBRID_BANDS; band++) {
-            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
-                        pars->M_dec[band], MAX_NUM_SH_SIGNALS,
-                        pData->SHframeTF_rot[band], TIME_SLOTS, &cbeta,
-                        pData->binframeTF[band], TIME_SLOTS);
-        }
+            memset(pData->binframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS*sizeof(float_complex));
           
         /* inverse-TFT */
         postGain = powf(10.0f, POST_GAIN/20.0f);
-        for (band = 0; band < HYBRID_BANDS; band++) {
-            for (ch = 0; ch < NUM_EARS; ch++) {
-                for (t = 0; t < TIME_SLOTS; t++) {
-                    pData->STFTOutputFrameTF[t][ch].re[band] = crealf(pData->binframeTF[band][ch][t]);
-                    pData->STFTOutputFrameTF[t][ch].im[band] = cimagf(pData->binframeTF[band][ch][t]);
+        for(t = 0; t < TIME_SLOTS; t++) {
+            for(band = 0; band < HYBRID_BANDS; band++) {
+                for(ch = 0; ch < NUM_EARS; ch++) {
+                    pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->binframeTF[band][ch][t]);
+                    pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->binframeTF[band][ch][t]);
                 }
             }
-        }
-        for (t = 0; t < TIME_SLOTS; t++) {
-            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF[t], pData->tempHopFrameTD);
+            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
             for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
                 for (sample = 0; sample < HOP_SIZE; sample++)
                     outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD[ch][sample]*postGain;

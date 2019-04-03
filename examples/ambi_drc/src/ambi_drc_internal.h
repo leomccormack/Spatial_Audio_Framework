@@ -54,8 +54,8 @@ typedef struct _ambi_drc
     float_complex inputFrameTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     float_complex outputFrameTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     void* hSTFT; 
-    complexVector** STFTInputFrameTF;
-    complexVector** STFTOutputFrameTF;    
+    complexVector* STFTInputFrameTF;
+    complexVector* STFTOutputFrameTF;    
     float** tempHopFrameTD;
     float freqVector[HYBRID_BANDS];
 

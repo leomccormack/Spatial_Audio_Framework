@@ -23,21 +23,21 @@
 #ifndef __afSTFTlib_tester__afSTFTlib__
 #define __afSTFTlib_tester__afSTFTlib__
 
+/* The original afSTFT code, written by Juha Vilkamo, can be found here: https://github.com/jvilkamo/afSTFT
+ * This version is slightly modified. It adds a function to change the number of channels on the fly.
+ * It also supports Intel's MKL FFT if "SAF_USE_INTEL_MKL" is defined. */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../saf_afstft/vecTools.h"
 
-typedef struct
-{
+typedef struct {
     float *re;
     float *im;
-    
 } complexVector;
 
-
-typedef struct
-{
+typedef struct{
     int inChannels;
     int outChannels;
     int maxChannels;
@@ -53,19 +53,14 @@ typedef struct
     float **inBuffer;
     float *fftProcessFrameTD;
     float *fftProcessFrameFD;
-    //float_complex *fftProcessFrameTD_mkl;
-    //float_complex *fftProcessFrameFD_mkl;
     float **outBuffer;
     int log2n;
     void *vtFFT;
     void *h_afHybrid;
     int hybridMode;
-    
 } afSTFT;
 
-
-typedef struct
-{
+typedef struct{
     int inChannels;
     int outChannels;
     int hopSize;
@@ -80,19 +75,13 @@ typedef struct
 
 void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int LDmode, int hybridMode);
 
-void afSTFTchannelChange(void* handle, int inChannels, int outChannels);
+void afSTFTchannelChange(void* handle, int new_inChannels, int new_outChannels);
 
 void afSTFTforward(void* handle, float** inTD, complexVector* outFD);
 
 void afSTFTinverse(void* handle, complexVector* inFD, float** outTD);
 
 void afSTFTfree(void* handle);
-
-void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n); 
-
-void vtFreeFFT(void* planPr);
-
-void vtRunFFT(void* planPr, int positiveForForwardTransform);
 
 
 /* Internal functions */

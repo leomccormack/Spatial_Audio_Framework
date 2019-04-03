@@ -78,7 +78,7 @@ typedef struct _sldoa
     float SHframeTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     void* hSTFT;
-    complexVector** STFTInputFrameTF;
+    complexVector* STFTInputFrameTF;
     float** tempHopFrameTD;
     float freqVector[HYBRID_BANDS];
     float fs;

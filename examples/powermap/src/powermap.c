@@ -36,15 +36,13 @@ void powermap_create
     powermap_data* pData = (powermap_data*)malloc(sizeof(powermap_data));
     if (pData == NULL) { return;/*error*/ }
     *phPm = (void*)pData;
-    int n, i, t, ch, band;
+    int n, i, ch, band;
     
     afSTFTinit(&(pData->hSTFT), HOP_SIZE, MAX_NUM_SH_SIGNALS, 0, 0, 1);
-    pData->STFTInputFrameTF = (complexVector**)malloc2d(TIME_SLOTS, MAX_NUM_SH_SIGNALS, sizeof(complexVector));
-    for(t=0; t<TIME_SLOTS; t++) {
-        for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-            pData->STFTInputFrameTF[t][ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-            pData->STFTInputFrameTF[t][ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        }
+    pData->STFTInputFrameTF = malloc(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
+    for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
+        pData->STFTInputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
     }
     pData->tempHopFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, HOP_SIZE, sizeof(float));
     
@@ -95,17 +93,15 @@ void powermap_destroy
 {
     powermap_data *pData = (powermap_data*)(*phPm);
     codecPars* pars = pData->pars;
-    int i, t, ch;
+    int i, ch;
     
     if (pData != NULL) {
         afSTFTfree(pData->hSTFT);
-        for (t = 0; t<TIME_SLOTS; t++) {
-            for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-                free(pData->STFTInputFrameTF[t][ch].re);
-                free(pData->STFTInputFrameTF[t][ch].im);
-            }
+        for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
+            free(pData->STFTInputFrameTF[ch].re);
+            free(pData->STFTInputFrameTF[ch].im);
         }
-        free2d((void**)pData->STFTInputFrameTF, TIME_SLOTS);
+        free(pData->STFTInputFrameTF);
         free2d((void**)pData->tempHopFrameTD, MAX_NUM_SH_SIGNALS);
         
         if(pData->pmap!=NULL)
@@ -238,16 +234,15 @@ void powermap_analysis
         }
         
         /* apply the time-frequency transform */
-        for (t = 0; t < TIME_SLOTS; t++) {
-            for (ch = 0; ch < nSH; ch++)
-                for (sample = 0; sample < HOP_SIZE; sample++)
+        for(t = 0; t < TIME_SLOTS; t++) {
+            for(ch = 0; ch < nSH; ch++)
+                for(sample = 0; sample < HOP_SIZE; sample++)
                     pData->tempHopFrameTD[ch][sample] = pData->SHframeTD[ch][sample + t*HOP_SIZE];
-            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF[t]);
+            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
+            for (band = 0; band < HYBRID_BANDS; band++)
+                for (ch = 0; ch < nSH; ch++)
+                    pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
         }
-        for (band = 0; band < HYBRID_BANDS; band++)
-            for (ch = 0; ch < nSH; ch++)
-                for (t = 0; t < TIME_SLOTS; t++)
-                    pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[t][ch].re[band], pData->STFTInputFrameTF[t][ch].im[band]);
 
         /* Update covarience matrix per band */
         covScale = 1.0f/(float)(nSH);
