@@ -75,7 +75,11 @@ typedef struct{
 
 void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int LDmode, int hybridMode);
 
+/* Re-allocates memory to support a channel change. Do not call in the real-time loop. */
 void afSTFTchannelChange(void* handle, int new_inChannels, int new_outChannels);
+
+/* Flushes time-domain buffers with zeros. Do not call in the real-time loop. */
+void afSTFTclearBuffers(void* handle);
 
 void afSTFTforward(void* handle, float** inTD, complexVector* outFD);
 

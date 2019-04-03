@@ -154,18 +154,37 @@ void afSTFTchannelChange(void* handle, int new_inChannels, int new_outChannels)
             for (ch=hyb_h->inChannels; ch<new_inChannels; ch++) {
                 hyb_h->analysisBuffer[ch] = (complexVector*)malloc(sizeof(complexVector)*7);
                 for (sample=0;sample<7;sample++) {
-                    hyb_h->analysisBuffer[ch][sample].re=(float*)calloc(sizeof(float),h->hopSize+1);
-                    hyb_h->analysisBuffer[ch][sample].im=(float*)calloc(sizeof(float),h->hopSize+1);
+                    hyb_h->analysisBuffer[ch][sample].re = (float*)calloc(sizeof(float), h->hopSize+1);
+                    hyb_h->analysisBuffer[ch][sample].im = (float*)calloc(sizeof(float), h->hopSize+1);
                 }
             }
         }
     }
-    
     h->inChannels = new_inChannels;
     h->outChannels = new_outChannels;
     if (h->hybridMode){
         hyb_h->inChannels = new_inChannels;
         hyb_h->outChannels = new_outChannels;
+    }
+}
+
+void afSTFTclearBuffers(void* handle)
+{
+    afSTFT *h = (afSTFT*)(handle);
+    afHybrid *hyb_h = h->h_afHybrid;
+    int i, ch, sample;
+    
+    for(i=0; i<h->inChannels; i++)
+        memset(h->inBuffer[i], 0, h->hLen*sizeof(float));
+    for(i=0; i<h->outChannels; i++)
+        memset(h->outBuffer[i], 0, h->hLen*sizeof(float));
+    if (h->hybridMode){
+        for(ch=0; ch<hyb_h->inChannels; ch++) {
+            for (sample=0;sample<7;sample++) {
+                memset(hyb_h->analysisBuffer[ch][sample].re, 0, sizeof(float)*(h->hopSize+1));
+                memset(hyb_h->analysisBuffer[ch][sample].im, 0, sizeof(float)*(h->hopSize+1));
+            }
+        }
     }
 }
 

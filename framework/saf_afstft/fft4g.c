@@ -56,7 +56,7 @@ void rdft(int n, int isgn, float *a, int *ip, float *w)
         a[0] += a[1];
         a[1] = xi;
     } else {
-        a[1] = 0.5f * (a[0] - a[1]);
+        a[1] = 0.5 * (a[0] - a[1]);
         a[0] -= a[1];
         if (n > 4) {
             rftbsub(n, a, nc, w + nw);
@@ -353,15 +353,15 @@ void makewt(int nw, int *ip, float *w)
     ip[1] = 1;
     if (nw > 2) {
         nwh = nw >> 1;
-        delta = atanf(1.0f) / (float)nwh;
+        delta = atan(1.0) / nwh;
         w[0] = 1;
         w[1] = 0;
-        w[nwh] = cosf(delta * (float)nwh);
+        w[nwh] = cos(delta * nwh);
         w[nwh + 1] = w[nwh];
         if (nwh > 2) {
             for (j = 2; j < nwh; j += 2) {
-                x = cosf(delta * (float)j);
-                y = sinf(delta * (float)j);
+                x = cos(delta * j);
+                y = sin(delta * j);
                 w[j] = x;
                 w[j + 1] = y;
                 w[nw - j] = y;
@@ -381,12 +381,12 @@ void makect(int nc, int *ip, float *c)
     ip[1] = nc;
     if (nc > 1) {
         nch = nc >> 1;
-        delta = atanf(1.0f) / (float)nch;
-        c[0] = cosf(delta * nch);
-        c[nch] = 0.5f * c[0];
+        delta = atan(1.0) / nch;
+        c[0] = cos(delta * nch);
+        c[nch] = 0.5 * c[0];
         for (j = 1; j < nch; j++) {
-            c[j] = 0.5f * cosf(delta * (float)j);
-            c[nc - j] = 0.5f * sinf(delta * (float)j);
+            c[j] = 0.5 * cos(delta * j);
+            c[nc - j] = 0.5 * sin(delta * j);
         }
     }
 }
@@ -947,7 +947,7 @@ void rftfsub(int n, float *a, int nc, float *c)
     for (j = 2; j < m; j += 2) {
         k = n - j;
         kk += ks;
-        wkr = 0.5f - c[nc - kk];
+        wkr = 0.5 - c[nc - kk];
         wki = c[kk];
         xr = a[j] - a[k];
         xi = a[j + 1] + a[k + 1];
@@ -973,7 +973,7 @@ void rftbsub(int n, float *a, int nc, float *c)
     for (j = 2; j < m; j += 2) {
         k = n - j;
         kk += ks;
-        wkr = 0.5f - c[nc - kk];
+        wkr = 0.5 - c[nc - kk];
         wki = c[kk];
         xr = a[j] - a[k];
         xi = a[j + 1] + a[k + 1];
