@@ -26,7 +26,6 @@
 #include "rotator.h"
 #include "rotator_internal.h"
 
-
 void rotator_create
 (
     void ** const phRot
@@ -35,6 +34,8 @@ void rotator_create
     rotator_data* pData = (rotator_data*)malloc(sizeof(rotator_data));
     if (pData == NULL) { return;/*error*/ }
     *phRot = (void*)pData;
+    
+    pData->recalc_M_rotFLAG = 1;
   
     /* Default user parameters */
     pData->yaw = 0.0f;
@@ -49,7 +50,6 @@ void rotator_create
     rotator_setOrder(*phRot,  OUTPUT_ORDER_FIRST);
 }
 
-
 void rotator_destroy
 (
     void ** const phRot
@@ -62,7 +62,6 @@ void rotator_destroy
         pData = NULL;
     }
 }
-
 
 void rotator_init
 (
@@ -79,8 +78,8 @@ void rotator_init
     memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
     memset(pData->prev_M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
     memset(pData->prev_inputFrameTD, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
+    pData->recalc_M_rotFLAG = 1;
 }
-
 
 void rotator_process
 (
@@ -119,7 +118,7 @@ void rotator_process
                 break;
             case NORM_SN3D: /* convert to N3D before rotation */
 #if 0 /* actually doesn't matter, since only components of the same order are used to rotate a given order of component
-* i.e, dipoles are used to rotate dipoles, quadrapoles-qaudrapoles etc.. so scaling doesn't matter */
+* i.e, dipoles are used to rotate dipoles, quadrapoles-qaudrapoles etc.. so this scaling doesn't matter */
                 for (n = 0; n<order+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
@@ -130,13 +129,19 @@ void rotator_process
         
         if (order>0){
             /* calculate rotation matrix */
-            M_rot_tmp = malloc(nSH*nSH*sizeof(float));
-            yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
-            getSHrotMtxReal(Rxyz, M_rot_tmp, order);
-            for(i=0; i<nSH; i++)
-                for(j=0; j<nSH; j++)
-                    pData->M_rot[i][j] = M_rot_tmp[i*nSH+j];
-            free(M_rot_tmp);
+            if(pData->recalc_M_rotFLAG){
+                memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
+                M_rot_tmp = malloc(nSH*nSH*sizeof(float));
+                yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
+                getSHrotMtxReal(Rxyz, M_rot_tmp, order);
+                for(i=0; i<nSH; i++)
+                    for(j=0; j<nSH; j++)
+                        pData->M_rot[i][j] = M_rot_tmp[i*nSH+j];
+                free(M_rot_tmp);
+                pData->recalc_M_rotFLAG = 0;
+            }
+            else
+                memcpy(pData->M_rot, pData->prev_M_rot, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
             
             /* apply rotation */
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSH, 1.0f,
@@ -153,8 +158,7 @@ void rotator_process
             
             /* for next frame */
             memcpy(pData->prev_inputFrameTD, pData->inputFrameTD, nSH*FRAME_SIZE*sizeof(float));
-            for(i=0; i<nSH; i++)
-                memcpy(pData->prev_M_rot[i], pData->M_rot[i], nSH*sizeof(float));
+            memcpy(pData->prev_M_rot, pData->M_rot, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
         }
         else
             memcpy(pData->outputFrameTD[0], pData->inputFrameTD[0], FRAME_SIZE*sizeof(float));
@@ -187,18 +191,21 @@ void rotator_setYaw(void  * const hRot, float newYaw)
 {
     rotator_data *pData = (rotator_data*)(hRot);
     pData->yaw = pData->bFlipYaw == 1 ? -DEG2RAD(newYaw) : DEG2RAD(newYaw);
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void rotator_setPitch(void* const hRot, float newPitch)
 {
     rotator_data *pData = (rotator_data*)(hRot);
     pData->pitch = pData->bFlipPitch == 1 ? -DEG2RAD(newPitch) : DEG2RAD(newPitch);
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void rotator_setRoll(void* const hRot, float newRoll)
 {
     rotator_data *pData = (rotator_data*)(hRot);
     pData->roll = pData->bFlipRoll == 1 ? -DEG2RAD(newRoll) : DEG2RAD(newRoll);
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void rotator_setFlipYaw(void* const hRot, int newState)

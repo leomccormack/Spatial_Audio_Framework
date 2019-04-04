@@ -201,7 +201,7 @@ void ambi_dec_process
     codecPars* pars = pData->pars;
     int n, t, sample, ch, ear, i, band, orderBand, nSH_band, decIdx;
     int o[MAX_SH_ORDER+2];
-    const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
     /* local copies of user parameters */
     int nLoudspeakers, binauraliseLS, masterOrder;
@@ -227,7 +227,7 @@ void ambi_dec_process
 #endif
 
     /* decode audio to loudspeakers or headphones */
-    if ( (nSamples == FRAME_SIZE) && (pData->reInitCodec==0) && (pData->reInitTFT==0) && (pData->reInitHRTFs==0) ) {
+    if( (nSamples == FRAME_SIZE) && (pData->reInitCodec==0) && (pData->reInitTFT==0) && (pData->reInitHRTFs==0) ) {
         /* copy user parameters to local variables */
         for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
         masterOrder = pData->masterOrder;
@@ -269,7 +269,7 @@ void ambi_dec_process
                     pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
         }
         
-        /* Processing loop */
+        /* Main processing: */
         if(isPlaying){
             /* Decode to loudspeaker set-up */
             memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_LOUDSPEAKERS*TIME_SLOTS*sizeof(float_complex));
@@ -336,17 +336,17 @@ void ambi_dec_process
                     }
                 }
                 else {
-                    for (ch = 0; ch < nLoudspeakers; ch++) {
+                    for(ch = 0; ch < nLoudspeakers; ch++) {
                         pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->outputframeTF[band][ch][t]);
                         pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->outputframeTF[band][ch][t]);
                     }
                 }
             }
             afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
-            for (ch = 0; ch < MIN(binauraliseLS==1 ? NUM_EARS : nLoudspeakers, nOutputs); ch++)
+            for(ch = 0; ch < MIN(binauraliseLS==1 ? NUM_EARS : nLoudspeakers, nOutputs); ch++)
                 for (sample = 0; sample < HOP_SIZE; sample++)
                     outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD[ch][sample];
-            for (; ch < nOutputs; ch++) /* fill remaining channels with zeros */
+            for(; ch < nOutputs; ch++) /* fill remaining channels with zeros */
                 for (sample = 0; sample < HOP_SIZE; sample++)
                     outputs[ch][sample + t* HOP_SIZE] = 0.0f;
         }

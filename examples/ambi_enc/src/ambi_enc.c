@@ -67,7 +67,13 @@ void ambi_enc_init
 )
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
+    int i;
+    
     pData->fs = (float)sampleRate;
+    for(i=1; i<=FRAME_SIZE; i++)
+        pData->interpolator[i-1] = (float)i*1.0f/(float)FRAME_SIZE;
+    memset(pData->prev_Y, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
+    memset(pData->prev_inputFrameTD, 0, MAX_NUM_INPUTS*FRAME_SIZE*sizeof(float));
 }
 
 void ambi_enc_process
@@ -106,31 +112,47 @@ void ambi_enc_process
             memcpy(pData->inputFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
         for(; i<MAX_NUM_INPUTS; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
-        
+
         /* recalulate SHs */
         for(i=0; i<nSources; i++){
             if(pData->recalc_SH_FLAG[i]){
                 azi_incl[0] = pData->src_dirs_deg[i][0]*M_PI/180.0f;
                 azi_incl[1] =  M_PI/2.0f - pData->src_dirs_deg[i][1]*M_PI/180.0f;
-                getSHreal(order, azi_incl, 1, Y_src);
+                getSHreal_recur(order, azi_incl, 1, Y_src);
                 for(j=0; j<nSH; j++)
                     pData->Y[j][i] = sqrtf(4.0f*M_PI)*Y_src[j];
                 for(; j<MAX_NUM_SH_SIGNALS; j++)
                     pData->Y[j][i] = 0.0f;
                 pData->recalc_SH_FLAG[i] = 0;
             }
+            else{
+                for(; j<MAX_NUM_SH_SIGNALS; j++)
+                    pData->Y[j][i] = pData->prev_Y[j][i];
+            }
         }
         
         /* spatially encode the input signals into spherical harmonic signals */
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0,
+                    (float*)pData->prev_Y, MAX_NUM_INPUTS,
+                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0,
+                    (float*)pData->tempFrame, FRAME_SIZE);
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0,
                     (float*)pData->Y, MAX_NUM_INPUTS,
-                    (float*)pData->inputFrameTD, FRAME_SIZE, 0.0,
+                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0,
                     (float*)pData->outputFrameTD, FRAME_SIZE);
+        
+        for (i=0; i < nSH; i++)
+            for(j=0; j<FRAME_SIZE; j++)
+                pData->outputFrameTD[i][j] = pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
+        
+        /* for next frame */
+        memcpy(pData->prev_inputFrameTD, pData->inputFrameTD, nSH*FRAME_SIZE*sizeof(float));
+        memcpy(pData->prev_Y, pData->Y, MAX_NUM_INPUTS*MAX_NUM_SH_SIGNALS*sizeof(float));
         
         /* scale by 1/sqrt(nSources) */
         scale = 1.0f/sqrtf((float)nSources);
         utility_svsmul((float*)pData->outputFrameTD, &scale, nSH*FRAME_SIZE, NULL);
-        
+
         /* norm scheme */
         switch(norm){
             case NORM_N3D: /* already N3D */
@@ -142,7 +164,7 @@ void ambi_enc_process
                             pData->outputFrameTD[ch][i] /= sqrtf(2.0f*(float)n+1.0f);
                 break;
         }
-        
+
         /* save SH signals to output buffer */
         for(i = 0; i < MIN(nSH,nOutputs); i++)
             memcpy(outputs[i], pData->outputFrameTD[i], FRAME_SIZE * sizeof(float));

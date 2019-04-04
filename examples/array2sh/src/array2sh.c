@@ -147,11 +147,6 @@ void array2sh_init
     array2sh_checkReInit(hA2sh);
 }
 
-//#include "mkl.h"
-//#include "mkl_dfti.h"
-//#include <float.h>
-//#define N 256
-
 void array2sh_process
 (
     void  *  const hA2sh,
@@ -171,71 +166,6 @@ void array2sh_process
     CH_ORDER chOrdering;
     NORM_TYPES norm;
     float gain_lin, maxFreq;
-    
-    
-    
-    ///////////////////////////
-
-//    n=N;///2;
-//    float  x_in [N]; ///////should be 2x hop size, not sure how it is wrapped up in afstft
-//    float_complex  x_out[(N/2+1)]; ///////will be 129
-//    float  x_exp[N];
-//    float  x_diff[N];
-//
-//
-//    memset(&x_in[0], 0, N*sizeof(float));
-//    for(i=0; i<N; i++)
-//        x_in[i] = 20.0*sinf((float)i/(float)N *M_PI);
-//
-//    cblas_scopy(N, &x_in[0], 1, &x_exp[0], 1);
-//
-//
-//    DFTI_DESCRIPTOR_HANDLE MKL_FFT_Handle = 0;
-//    float  Scale;
-//    MKL_LONG input_strides[2];
-//    MKL_LONG output_strides[2];
-//    MKL_LONG Status;
-//    const int number_of_channels = 1; /* hard coded here for 1 channel */
-//
-//    /* create handle */
-//    Status = DftiCreateDescriptor(&MKL_FFT_Handle, DFTI_SINGLE, DFTI_REAL, 1, n); /* 1-D, single precision, real_input->fft->half_complex->ifft->real_output */
-//
-//    /* Configure handle */
-//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_PLACEMENT, DFTI_NOT_INPLACE); /* Not inplace, i.e. output has its own dedicated memory */
-//    /* specify output format as complex conjugate-symmetric data. This is the same as MatLab, except only the
-//     * first N/2+1 elements are returned. The inverse transform will automatically symmetrically+conjugate
-//     * replicate these elements, in order to get the required N elements internally. */
-//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_CONJUGATE_EVEN_STORAGE, DFTI_COMPLEX_COMPLEX);
-//    if(number_of_channels > 1) /* only required for multiple channels */
-//        Status = DftiSetValue(MKL_FFT_Handle, DFTI_NUMBER_OF_TRANSFORMS, number_of_channels);
-//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_INPUT_DISTANCE, 1);  /* strides between samples (default=1) */
-//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_OUTPUT_DISTANCE, 1); /* strides between samples (default=1) */
-//    input_strides[0]  = 0; input_strides[1]  = 1;
-//    output_strides[0] = 0; output_strides[1] = 1;
-//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_INPUT_STRIDES, input_strides);   /* strides between channels (default=[0,1]) */
-//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_OUTPUT_STRIDES, output_strides); /* strides between channels (default=[0,1]) */
-//
-//    /* Configuration parameters for backward-FFT */
-//    Scale = 1.0f/(float)n;
-//    Status = DftiSetValue(MKL_FFT_Handle, DFTI_BACKWARD_SCALE, Scale);      /* scalar applied after ifft */
-//
-//    /* commit these chosen parameters */
-//    Status = DftiCommitDescriptor(MKL_FFT_Handle);
-//
-//    /* Compute forward-FFT */
-//    Status = DftiComputeForward(MKL_FFT_Handle, x_in, x_out);
-//
-//    /* Compute backward-FFT */
-//    Status = DftiComputeBackward(MKL_FFT_Handle, x_out, x_in);
-//
-//    /* free handle */
-//    Status = DftiFreeDescriptor(&MKL_FFT_Handle);
-//
-//
-//    for(i=0; i<N; i++)
-//        x_diff[i] = x_exp[i] - x_in[i] ;
-    
-    //////////////
     
     /* reinitialise if needed */
 #ifdef __APPLE__

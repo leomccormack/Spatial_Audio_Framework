@@ -82,6 +82,7 @@ void ambi_bin_create
     /* flags */
     pData->reInitCodec = 1;
     pData->reInitTFT = 1;
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void ambi_bin_destroy
@@ -146,6 +147,10 @@ void ambi_bin_init
 
     /* reinitialise if needed */
     ambi_bin_checkReInit(hAmbi);
+    
+    /* default starting values */
+    memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void ambi_bin_process
@@ -166,7 +171,6 @@ void ambi_bin_process
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float postGain;
     float Rxyz[3][3];
-    float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     float* M_rot_tmp;
     
     /* local copies of user parameters */
@@ -222,20 +226,24 @@ void ambi_bin_process
                     pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
         }
     
-        /* Processing loop */
+        /* Main processing: */
         if(isPlaying){
             /* Apply rotation */
             if(order > 0 && enableRot) {
-                M_rot_tmp = malloc(nSH*nSH * sizeof(float));
-                yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
-                getSHrotMtxReal(Rxyz, M_rot_tmp, order);
-                for (i = 0; i < nSH; i++)
-                    for (j = 0; j < nSH; j++)
-                        M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH + j], 0.0f);
-                free(M_rot_tmp);
-                for (band = 0; band < HYBRID_BANDS; band++) {
+                if(pData->recalc_M_rotFLAG){
+                    memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
+                    M_rot_tmp = malloc(nSH*nSH * sizeof(float));
+                    yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
+                    getSHrotMtxReal(Rxyz, M_rot_tmp, order);
+                    for (i = 0; i < nSH; i++)
+                        for (j = 0; j < nSH; j++)
+                            pData->M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH + j], 0.0f);
+                    free(M_rot_tmp);
+                    pData->recalc_M_rotFLAG = 0;
+                }
+                for(band = 0; band < HYBRID_BANDS; band++) {
                     cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, nSH, &calpha,
-                                M_rot, MAX_NUM_SH_SIGNALS,
+                                pData->M_rot, MAX_NUM_SH_SIGNALS,
                                 pData->SHframeTF[band], TIME_SLOTS, &cbeta,
                                 pData->SHframeTF_rot[band], TIME_SLOTS);
                 }
@@ -253,7 +261,7 @@ void ambi_bin_process
         }
         else
             memset(pData->binframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS*sizeof(float_complex));
-          
+        
         /* inverse-TFT */
         postGain = powf(10.0f, POST_GAIN/20.0f);
         for(t = 0; t < TIME_SLOTS; t++) {
@@ -393,18 +401,21 @@ void ambi_bin_setYaw(void  * const hAmbi, float newYaw)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     pData->yaw = pData->bFlipYaw == 1 ? -DEG2RAD(newYaw) : DEG2RAD(newYaw);
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void ambi_bin_setPitch(void* const hAmbi, float newPitch)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     pData->pitch = pData->bFlipPitch == 1 ? -DEG2RAD(newPitch) : DEG2RAD(newPitch);
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void ambi_bin_setRoll(void* const hAmbi, float newRoll)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     pData->roll = pData->bFlipRoll == 1 ? -DEG2RAD(newRoll) : DEG2RAD(newRoll);
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void ambi_bin_setFlipYaw(void* const hAmbi, int newState)

@@ -205,7 +205,7 @@ void ambi_drc_process
                     pData->inputFrameTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
         }
         
-        /* Processing loop */
+        /* Main processing: */
         if(isPlaying){
             /* Calculate the dynamic range compression gain factors per frequency band based on the omnidirectional component.
              * McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range Compression". in Proceedings of the 14th

@@ -104,7 +104,8 @@ typedef struct _ambi_bin
     /* our codec configuration */
     codecPars* pars;                         /* codec parameters */
     
-    /* internal variables */ 
+    /* internal variables */
+    float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     int new_order;                           /* new decoding order */
     int new_nSH;                             /* if new_nSH != nSH, afSTFT is reinitialised */
     int nSH;                                 /* number of spherical harmonic signals */
@@ -112,6 +113,7 @@ typedef struct _ambi_bin
     /* flags */
     int reInitCodec;                         /* 0: no init required, 1: init required, 2: init in progress */
     int reInitTFT;                           /* 0: no init required, 1: init required, 2: init in progress */
+    int recalc_M_rotFLAG;                    /* 0: no init required, 1: init required */
     
     /* user parameters */
     int order;                               /* current decoding order */

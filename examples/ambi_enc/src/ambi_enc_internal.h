@@ -44,10 +44,14 @@ extern "C" {
 typedef struct _ambi_enc
 {
     float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
+    float prev_inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
+    float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float fs;
     int recalc_SH_FLAG[MAX_NUM_INPUTS];
     float Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
+    float prev_Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
+    float interpolator[FRAME_SIZE];
     int order;
     
     /* user parameters */

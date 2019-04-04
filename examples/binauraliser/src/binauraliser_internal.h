@@ -109,6 +109,7 @@ typedef struct _binauraliser
     int recalc_hrtf_interpFLAG[MAX_NUM_OUTPUTS];
     int reInitHRTFsAndGainTables;
     int reInitTFT;
+    int recalc_M_rotFLAG;
     
     /* misc. */
     float src_dirs_rot_deg[MAX_NUM_INPUTS][2];
