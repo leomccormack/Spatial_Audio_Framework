@@ -29,7 +29,7 @@
     #define VDSP
   #endif
 #elif defined(_MSC_VER) || defined(INTEL_MKL_VERSION)
-  #define MKL_FFT
+  #define MKL_FFT 
 #endif
 #if defined(VDSP)
   #include <Accelerate/Accelerate.h>

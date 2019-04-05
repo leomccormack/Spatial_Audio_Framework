@@ -126,7 +126,7 @@ void ambi_enc_process
                 pData->recalc_SH_FLAG[i] = 0;
             }
             else{
-                for(; j<MAX_NUM_SH_SIGNALS; j++)
+                for(j=0; j<MAX_NUM_SH_SIGNALS; j++)
                     pData->Y[j][i] = pData->prev_Y[j][i];
             }
         }

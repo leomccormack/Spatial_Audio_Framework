@@ -146,6 +146,8 @@ void panner_process
     int t, sample, ch, ls, i, band, nSources, nLoudspeakers, N_azi, aziIndex, elevIndex, idx3d, idx2D;
     float aziRes, elevRes, pv_f, gains3D_sum_pvf, gains2D_sum_pvf;
     float src_dirs[MAX_NUM_INPUTS][2], pValue[HYBRID_BANDS], gains3D[MAX_NUM_OUTPUTS], gains2D[MAX_NUM_OUTPUTS];
+	const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+	float_complex outputTemp[MAX_NUM_OUTPUTS][TIME_SLOTS];
     
     /* reinitialise if needed */
 #ifdef __APPLE__
@@ -183,6 +185,7 @@ void panner_process
                     pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
         }
         memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
+		memset(outputTemp, 0, MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
         
         /* Apply VBAP Panning */
         if(isPlaying){
@@ -208,21 +211,26 @@ void panner_process
                                     gains3D_sum_pvf += powf(MAX(gains3D[ls], 0.0f), pv_f);
                                 gains3D_sum_pvf = powf(gains3D_sum_pvf, 1.0f/(pv_f+2.23e-9f));
                                 for (ls = 0; ls < nLoudspeakers; ls++)
-                                    pData->G_src[band][ch][ls] = gains3D[ls] / (gains3D_sum_pvf+2.23e-9f);
+                                    pData->G_src[band][ch][ls] = cmplxf(gains3D[ls] / (gains3D_sum_pvf+2.23e-9f), 0.0f);
                             }
                             else
                                 for (ls = 0; ls < nLoudspeakers; ls++)
-                                    pData->G_src[band][ch][ls] = gains3D[ls];
+                                    pData->G_src[band][ch][ls] = cmplxf(gains3D[ls], 0.0f);
                         }
                         pData->recalc_gainsFLAG[ch] = 0;
-                    }
-                    /* apply panning gains */
-                    for (band = 0; band < HYBRID_BANDS; band++){
-                        for (ls = 0; ls < nLoudspeakers; ls++)
-                            for (t = 0; t < TIME_SLOTS; t++)
-                                pData->outputframeTF[band][ls][t] = ccaddf(pData->outputframeTF[band][ls][t], crmulf(pData->inputframeTF[band][ch][t], pData->G_src[band][ch][ls]));
-                    }
+                    } 
                 }
+				/* apply panning gains */
+				for (band = 0; band < HYBRID_BANDS; band++) {
+					cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nLoudspeakers, TIME_SLOTS, nSources, &calpha,
+						pData->G_src[band], MAX_NUM_OUTPUTS,
+						pData->inputframeTF[band], TIME_SLOTS, &cbeta,
+						outputTemp, TIME_SLOTS);
+					for (i = 0; i < nLoudspeakers; i++)
+						for (t = 0; t < TIME_SLOTS; t++)
+							pData->outputframeTF[band][i][t] = ccaddf(pData->outputframeTF[band][i][t], outputTemp[i][t]);
+					//utility_cvvadd((float_complex*)pData->outputframeTF[band], (float_complex*)outputTemp, MAX_NUM_OUTPUTS*TIME_SLOTS, NULL);
+				}
             }
             else{/* 2-D case */
                 aziRes = (float)pData->vbapTableRes[0];
@@ -242,11 +250,11 @@ void panner_process
                                     gains2D_sum_pvf += powf(MAX(gains2D[ls], 0.0f), pv_f);
                                 gains2D_sum_pvf = powf(gains2D_sum_pvf, 1.0f/(pv_f+2.23e-9f));
                                 for (ls = 0; ls < nLoudspeakers; ls++)
-                                    pData->G_src[band][ch][ls] = gains2D[ls] / (gains2D_sum_pvf+2.23e-9f);
+                                    pData->G_src[band][ch][ls] = cmplxf(gains2D[ls] / (gains2D_sum_pvf+2.23e-9f), 0.0f);
                             }
                             else
                                 for (ls = 0; ls < nLoudspeakers; ls++)
-                                    pData->G_src[band][ch][ls] = gains2D[ls];
+                                    pData->G_src[band][ch][ls] = cmplxf(gains2D[ls], 0.0f);
                         }
                         pData->recalc_gainsFLAG[ch] = 0;
                     }
@@ -254,7 +262,7 @@ void panner_process
                     for (band = 0; band < HYBRID_BANDS; band++){
                         for (ls = 0; ls < nLoudspeakers; ls++)
                             for (t = 0; t < TIME_SLOTS; t++)
-                                pData->outputframeTF[band][ls][t] = ccaddf(pData->outputframeTF[band][ls][t], crmulf(pData->inputframeTF[band][ch][t], pData->G_src[band][ch][ls]));
+                                pData->outputframeTF[band][ls][t] = ccaddf(pData->outputframeTF[band][ls][t], ccmulf(pData->inputframeTF[band][ch][t], pData->G_src[band][ch][ls]));
                     }
                 }
             }

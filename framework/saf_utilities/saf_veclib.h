@@ -108,13 +108,47 @@ void utility_cvvcopy(const float_complex* a,       /* input vector a; len x 1 */
                      const int len,                /* vector length */
                      float_complex* c);            /* output vector c; len x 1 */
 
+/*---------------------------- vector-vector addition (?vvadd) ------------------------------*/
+
+/* s, single-precision, vector-vector addition, c = a+b || a = a+b */
+void utility_svvadd(float* a,		/* input vector a, and output if c==NULL; len x 1 */
+                    const float* b,                /* input vector b; len x 1 */
+                    const int len,                 /* length of vectors a,b,c */
+                    float* c);                     /* output vector c (set to NULL if you want 'a' as output); len x 1 */
+
+ /* c, single-precision, complex, vector-vector addition, c = a+b || a = a+b */
+void utility_cvvadd(float_complex* a,             /* input vector a, and output if c==NULL; len x 1 */
+                    const float_complex* b,       /* input vector b; len x 1 */
+                    const int len,                /* length of vectors a,b,c */
+                    float_complex* c);            /* output vector c (set to NULL if you want 'a' as output); len x 1 */
+
+/*--------------------------- vector-vector subtraction (?vvsub) ----------------------------*/
+
+/* s, single-precision, vector-vector subtraction, c = a-b || a = a-b */
+void utility_svvsub(float* a,		               /* input vector a, and output if c==NULL; len x 1 */
+                    const float* b,                /* input vector b; len x 1 */
+                    const int len,                 /* length of vectors a,b,c */
+	                float* c);                     /* output vector c (set to NULL if you want 'a' as output); len x 1 */
+
+/* c, single-precision, complex, vector-vector subtraction, c = a-b || a = a-b */
+void utility_cvvsub(float_complex* a,             /* input vector a, and output if c==NULL; len x 1 */
+                    const float_complex* b,       /* input vector b; len x 1 */
+                    const int len,                /* length of vectors a,b,c */
+                    float_complex* c);            /* output vector c (set to NULL if you want 'a' as output); len x 1 */
+
 /*------------------------- vector-vector multiplication (?vvmul) ---------------------------*/
 
 /* s, single-precision, element-wise vector-vector multiplication, c = a.*b || a = a.*b */
 void utility_svvmul(float* a,                      /* input vector a, and output if c==NULL; len x 1 */
                     const float* b,                /* input vector b; len x 1 */
                     const int len,                 /* length of vectors a,b,c */
-                    float* c);                     /* output vector c; len x 1 */
+                    float* c);                     /* output vector c (set to NULL if you want 'a' as output); len x 1 */
+
+/* c, single-precision, complex, element-wise vector-vector multiplication, c = a.*b || a = a.*b */
+void utility_cvvmul(float_complex* a,             /* input vector a, and output if c==NULL; len x 1 */
+	                const float_complex* b,       /* input vector b; len x 1 */
+	                const int len,                /* length of vectors a,b,c */
+	                float_complex* c);            /* output vector c (set to NULL if you want 'a' as output); len x 1 */
 
 /*--------------------------- vector-vector dot product (?vvdot) ----------------------------*/
 
@@ -122,14 +156,14 @@ void utility_svvmul(float* a,                      /* input vector a, and output
 void utility_svvdot(const float* a,              /* input vector a; len x 1 */
                     const float* b,              /* input vector b; len x 1 */
                     const int len,               /* length of vectors a,b,c */
-                    float* c);                   /* output vector c; len x 1 */
+                    float* c);                   /* output scalar c; 1 x 1 */
 
 /* c, single-precision, complex, vector-vector dot product */
 void utility_cvvdot(const float_complex* a,      /* input vector a; len x 1 */
                     const float_complex* b,      /* input vector b; len x 1 */
                     const int len,               /* length of vectors a,b,c */
                     CONJ_FLAG flag,              /* flag, should vector a should be conjugated */
-                    float_complex* c);           /* output vector c; len x 1 */
+                    float_complex* c);           /* output scalar c; 1 x 1 */
 
 /*------------------------------ vector-scalar product (?vsmul) -----------------------------*/
 
@@ -195,16 +229,16 @@ void utility_csvd(const float_complex* A,  /* in matrix; flat: dim1 x dim2 */
 void utility_sseig(const float* A,         /* in symmetric square matrix; flat: dim x dim */
                    const int dim,          /* dimensions for the square matrix, A */
                    int sortDecFLAG,        /* 1: sort eigen values and vectors in decending order. 0: ascending */
-                   float* V,               /* Eigen vectors (set to NULL if not needed); dim x dim */
-                   float* D,               /* Eigen values along the diagonal (set to NULL if not needed); dim x dim */
+                   float* V,               /* Eigen vectors (set to NULL if not needed); flat: dim x dim */
+                   float* D,               /* Eigen values along the diagonal (set to NULL if not needed); flat: dim x dim */
                    float* eig);            /* Eigen values not diagonalised (set to NULL if not needed); dim x 1 */
 
 /* c, row-major, eigenvalue decomposition of a symmetric/Hermitian matrix: single precision complex */
 void utility_cseig(const float_complex* A, /* in symmetric square matrix; flat: dim x dim */
                    const int dim,          /* dimensions for the square matrix, A */
                    int sortDecFLAG,        /* 1: sort eigen values and vectors in decending order. 0: ascending */
-                   float_complex* V,       /* Eigen vectors (set to NULL if not needed); dim x dim */
-                   float_complex* D,       /* Eigen values along the diagonal (set to NULL if not needed); dim x dim */
+                   float_complex* V,       /* Eigen vectors (set to NULL if not needed); flat: dim x dim */
+                   float_complex* D,       /* Eigen values along the diagonal (set to NULL if not needed); flat: dim x dim */
                    float* eig);            /* Eigen values not diagonalised (set to NULL if not needed); dim x 1 */
 
 /*-----------------------------  eigenvalue decomposition (?eig) ----------------------------*/
@@ -213,9 +247,9 @@ void utility_cseig(const float_complex* A, /* in symmetric square matrix; flat: 
 void utility_ceig(const float_complex* A,  /* in nonsymmetric square matrix; flat: dim x dim */
                   const int dim,           /* dimensions for the square matrix, A */
                   int sortDecFLAG,         /* 1: sort eigen values and vectors in decending order. 0: ascending */
-                  float_complex* VL,       /* Left Eigen vectors (set to NULL if not needed); dim x dim */
-                  float_complex* VR,       /* Right Eigen vectors (set to NULL if not needed); dim x dim */
-                  float_complex* D,        /* Eigen values along the diagonal (set to NULL if not needed); dim x dim */
+                  float_complex* VL,       /* Left Eigen vectors (set to NULL if not needed); flat: dim x dim */
+                  float_complex* VR,       /* Right Eigen vectors (set to NULL if not needed); flat: dim x dim */
+                  float_complex* D,        /* Eigen values along the diagonal (set to NULL if not needed); flat: dim x dim */
                   float* eig);             /* Eigen values not diagonalised (set to NULL if not needed); dim x 1 */
 
 /*------------------------------ general linear solver (?glslv) -----------------------------*/
@@ -225,14 +259,14 @@ void utility_sglslv(const float* A,          /* input square matrix; flat: dim x
                     const int dim,           /* dimensions for the square matrix, A */
                     float* B,                /* right hand side matrix; flat: dim x nCol */
                     int nCol,                /* number of columns in right hand side matrix */
-                    float* X);               /* the solution; dim x nCol */
+                    float* X);               /* the solution; flat: dim x nCol */
 
 /* c, row-major, general linear solver (AX=B): single precision complex */
 void utility_cglslv(const float_complex* A,  /* input square matrix; flat: dim x dim */
                     const int dim,           /* dimensions for the square matrix, A */
                     float_complex* B,        /* right hand side matrix; flat: dim x nCol */
                     int nCol,                /* number of columns in right hand side matrix */
-                    float_complex* X);       /* the solution; dim x nCol */
+                    float_complex* X);       /* the solution; flat: dim x nCol */
 
 /*----------------------------- symmetric linear solver (?slslv) ----------------------------*/
 
@@ -241,14 +275,14 @@ void utility_sslslv(const float* A,          /* square symmetric positive-defina
                     const int dim,           /* dimensions for the square matrix, A */
                     float* B,                /* right hand side matrix; flat: dim x nCol */
                     int nCol,                /* number of columns in right hand side matrix */
-                    float* X);               /* the solution; dim x nCol */
+                    float* X);               /* the solution; flat: dim x nCol */
 
 /* c, row-major, linear solver (AX=B) for hermitian positive-definate 'A': single precision complex */
 void utility_cslslv(const float_complex* A,  /* square hermitian positive-definate matrix; flat: dim x dim */
                     const int dim,           /* dimensions for the square matrix, A */
                     float_complex* B,        /* right hand side matrix; flat: dim x nCol */
                     int nCol,                /* number of columns in right hand side matrix */
-                    float_complex* X);       /* the solution; dim x nCol */
+                    float_complex* X);       /* the solution; flat: dim x nCol */
 
 /*------------------------------- matrix pseudo-inverse (?pinv) -----------------------------*/
 
@@ -269,12 +303,12 @@ void utility_dpinv(const double* inM,          /* in matrix; flat: dim1 x dim2 *
 /* s, row-major, Cholesky factorisation (X'*X = A): single precision */
 void utility_schol(const float* A,          /* square symmetric positive-definate matrix; flat: dim x dim */
                    const int dim,           /* dimensions for the square matrix, A */
-                   float* X);               /* the solution; dim x dim */
+                   float* X);               /* the solution; flat: dim x dim */
 
 /* c, row-major, Cholesky factorisation (X'*X = A): single precision, complex */
 void utility_cchol(const float_complex* A,  /* square symmetric positive-definate matrix; flat: dim x dim */
                    const int dim,           /* dimensions for the square matrix, A */
-                   float_complex* X);       /* the solution; dim x dim */
+                   float_complex* X);       /* the solution; flat: dim x dim */
 
 /*-------------------------------- matrix inversion (?inv) ----------------------------------*/
 //TODO: rewrite for row-major:

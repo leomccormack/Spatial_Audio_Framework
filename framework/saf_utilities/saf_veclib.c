@@ -175,6 +175,126 @@ void utility_cvvcopy(const float_complex* a, const int len, float_complex* c)
 #endif
 }
 
+/*---------------------------- vector-vector addition (?vvadd) ------------------------------*/
+
+void utility_svvadd(float* a, const float* b, const int len, float* c)
+{
+#ifdef __ACCELERATE__
+	if (c == NULL) {
+		float* tmp;
+		tmp = malloc(len * sizeof(float));
+		vDSP_vadd(a, 1, b, 1, tmp, 1, len);
+		utility_svvcopy(tmp, len, a);
+		free(tmp);
+	}
+	else
+		vDSP_vadd(a, 1, b, 1, c, 1, len);
+#elif INTEL_MKL_VERSION
+	if (c == NULL) {
+		float* tmp;
+		tmp = malloc(len * sizeof(float));
+		vsAdd(len, a, b, tmp);
+		utility_svvcopy(tmp, len, a);
+		free(tmp);
+	}
+	else
+		vsAdd(len, a, b, c);
+#else
+	int i;
+	for (i = 0; i < len; i++)
+		c[i] = a[i] + b[i];
+#endif
+}
+
+void utility_cvvadd(float_complex* a, const float_complex* b, const int len, float_complex* c)
+{
+#ifdef __ACCELERATE__
+	if (c == NULL) {
+		float* tmp;
+		tmp = malloc(len * sizeof(float));
+		vDSP_zvadd(a, 1, b, 1, tmp, 1, len);
+		utility_cvvcopy(tmp, len, a);
+		free(tmp);
+	}
+	else
+		vDSP_zvadd(a, 1, b, 1, c, 1, len);
+#elif INTEL_MKL_VERSION
+	if (c == NULL) {
+		float_complex* tmp;
+		tmp = malloc(len * sizeof(float_complex));
+		vcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, tmp);
+		utility_cvvcopy(tmp, len, a);
+		free(tmp);
+	}
+	else
+		vcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
+#else
+	int i;
+	for (i = 0; i < len; i++)
+		c[i] = ccaddf(a[i], b[i]);
+#endif
+}
+
+/*--------------------------- vector-vector subtraction (?vvsub) ----------------------------*/
+
+void utility_svvsub(float* a, const float* b, const int len, float* c)
+{
+#ifdef __ACCELERATE__
+	if (c == NULL) {
+		float* tmp;
+		tmp = malloc(len * sizeof(float));
+		vDSP_vsub(a, 1, b, 1, tmp, 1, len);
+		utility_svvcopy(tmp, len, a);
+		free(tmp);
+	}
+	else
+		vDSP_vsub(a, 1, b, 1, c, 1, len);
+#elif INTEL_MKL_VERSION
+	if (c == NULL) {
+		float* tmp;
+		tmp = malloc(len * sizeof(float));
+		vsSub(len, a, b, tmp);
+		utility_svvcopy(tmp, len, a);
+		free(tmp);
+	}
+	else
+		vsSub(len, a, b, c);
+#else
+	int i;
+	for (i = 0; i < len; i++)
+		c[i] = a[i] + b[i];
+#endif
+}
+
+void utility_cvvsub(float_complex* a, const float_complex* b, const int len, float_complex* c)
+{
+#ifdef __ACCELERATE__
+	if (c == NULL) {
+		float* tmp;
+		tmp = malloc(len * sizeof(float));
+		vDSP_zvsub(a, 1, b, 1, tmp, 1, len);
+		utility_cvvcopy(tmp, len, a);
+		free(tmp);
+	}
+	else
+		vDSP_zvsub(a, 1, b, 1, c, 1, len);
+#elif INTEL_MKL_VERSION
+	if (c == NULL) {
+		float_complex* tmp;
+		tmp = malloc(len * sizeof(float_complex));
+		vcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, tmp);
+		utility_cvvcopy(tmp, len, a);
+		free(tmp);
+	}
+	else
+		vcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
+#else
+	int i;
+	for (i = 0; i < len; i++)
+		c[i] = ccaddf(a[i], b[i]);
+#endif
+}
+
 /*------------------------- vector-vector multiplication (?vvmul) ---------------------------*/
 
 void utility_svvmul(float* a, const float* b, const int len, float* c)
@@ -190,11 +310,48 @@ void utility_svvmul(float* a, const float* b, const int len, float* c)
     else
         vDSP_vmul(a, 1, b, 1, c, 1, len);
 #elif INTEL_MKL_VERSION
-    vsMul(len, a, b, c);
+	if (c == NULL) {
+		float* tmp;
+		tmp = malloc(len * sizeof(float));
+        vsMul(len, a, b, tmp);
+		utility_svvcopy(tmp, len, a);
+		free(tmp);
+	}
+	else
+		vsMul(len, a, b, c);
 #else
     int i;
     for (i = 0; i < len; i++)
         c[i] = a[i] * b[i];
+#endif
+}
+
+void utility_cvvmul(float_complex* a, const float_complex* b, const int len, float_complex* c)
+{
+#ifdef __ACCELERATE__
+	if (c == NULL) {
+		float* tmp;
+		tmp = malloc(len * sizeof(float));
+		vDSP_vmul(a, 1, b, 1, tmp, 1, len);
+		utility_cvvcopy(tmp, len, a);
+		free(tmp);
+	}
+	else
+		vDSP_vmul(a, 1, b, 1, c, 1, len);
+#elif INTEL_MKL_VERSION
+	if (c == NULL) {
+		float_complex* tmp;
+		tmp = malloc(len * sizeof(float_complex));
+		vcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, tmp);
+		utility_cvvcopy(tmp, len, a);
+		free(tmp);
+	}
+	else
+		vcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
+#else
+	int i;
+	for (i = 0; i < len; i++)
+		c[i] = ccmulf(a[i], b[i]);
 #endif
 }
 

@@ -80,7 +80,7 @@ typedef struct _panner
     int vbapTableRes[2];
     float* vbap_gtable; /* N_hrtf_vbap_gtable x nLoudpkrs */
     int N_vbap_gtable;
-    float G_src[HYBRID_BANDS][MAX_NUM_INPUTS][MAX_NUM_OUTPUTS];
+    float_complex G_src[HYBRID_BANDS][MAX_NUM_INPUTS][MAX_NUM_OUTPUTS];
     int recalc_gainsFLAG[MAX_NUM_INPUTS];
     int reInitGainTables;
     int reInitTFT;

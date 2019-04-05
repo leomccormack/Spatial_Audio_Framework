@@ -53,6 +53,10 @@ sgetri_
 sposv_
 ssyev_
 spotrf_
+vsAdd
+vcAdd
+vsSub
+vcSub
 vsMul
 vcMul
 vsAbs

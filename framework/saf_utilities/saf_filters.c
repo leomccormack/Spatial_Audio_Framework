@@ -104,7 +104,7 @@ void biQuadCoeffs
                 D = 1.0f + sqrtf(2.0f) * K + KK;
                 b[0] = (V0 + sqrtf(2.0f * V0) * K + KK)/D;
                 b[1] = (2.0f*(KK - V0))/D;
-                b[2] = (V0 - sqrtf(2.0 * V0) * K + KK)/D;
+                b[2] = (V0 - sqrtf(2.0f * V0) * K + KK)/D;
                 a[1] = (2.0f*(KK - 1.0f))/D;
                 a[2] = (1.0f - sqrtf(2.0f) * K + KK)/D;
             }
