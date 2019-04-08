@@ -36,10 +36,11 @@
  * Enable instructions:
  *     Cannot be disabled.
  * Dependencies:
- *     Windows users only: Intel's MKL must be installed, which can be freely aquired via:
- *     https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries
- *     Mac users only: by defaultsaf_utilities will utilise Apple's Accelerate library.
- *     However, you may use Intel's MKL instead, with the flag: "SAF_USE_INTEL_MKL"
+ *     Windows users only: custom Intel MKL '.lib/.dll' files are required.
+ *     Mac users only: saf_utilities will utilise Apple's Accelerate library by default.
+ *     However, Mac users may elect to use a custom Intel MKL '.dylib' instead.
+ *     Further instructions for both Windows/Mac users can be found here:
+ *     https://github.com/leomccormack/Spatial_Audio_Framework 
  */
 #include "saf_utilities.h"
 

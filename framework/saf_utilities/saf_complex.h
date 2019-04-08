@@ -20,9 +20,11 @@
  *     complex number wrappers. Optimised linear algebra routines utilising BLAS and LAPACK
  *     are also included.
  * Dependencies:
- *     Windows users only: Intel's MKL must be installed, which can be freely aquired via:
- *     https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries
- *     Mac users only: saf_utilities will utilise Apple's Accelerate library.
+ *     Windows users only: custom Intel MKL '.lib/.dll' files are required.
+ *     Mac users only: saf_utilities will utilise Apple's Accelerate library by default.
+ *     However, Mac users may elect to use a custom Intel MKL '.dylib' instead.
+ *     Further instructions for both Windows/Mac users can be found here:
+ *     https://github.com/leomccormack/Spatial_Audio_Framework
  * Author, date created:
  *     Leo McCormack, 11.07.2016
  */

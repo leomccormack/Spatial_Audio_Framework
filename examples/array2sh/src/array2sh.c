@@ -185,6 +185,7 @@ void array2sh_process
         pData->reinitSHTmatrixFLAG = 0;
     }
 #endif
+    
     if ((nSamples == FRAME_SIZE) && !(pData->recalcEvalFLAG) && !(pData->reinitSHTmatrixFLAG) && !(pData->reinitTFTFLAG)) {
         /* prep */
         for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }

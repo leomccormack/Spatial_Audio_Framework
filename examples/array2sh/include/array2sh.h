@@ -126,6 +126,7 @@ typedef enum _WEIGHT_TYPES{
     WEIGHT_OPEN_DIPOLE
 }WEIGHT_TYPES;
     
+    
 /******************/
 /* Main Functions */
 /******************/  

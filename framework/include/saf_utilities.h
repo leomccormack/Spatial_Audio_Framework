@@ -54,6 +54,8 @@ extern "C" {
 #include "../saf_utilities/saf_sort.h"                /* For sorting vectors */
 #include "../saf_utilities/saf_filters.h"             /* For filter coefficients (IIR/FIR) */
 #include "../saf_utilities/saf_veclib.h"              /* For BLAS/LAPACK functions, plus some other handy linear algebra functions */
+#include "../saf_utilities/saf_fft.h"                 /* For optimised FFT routines */
+#include "../saf_utilities/saf_matrixConv.h"          /* For the matrix convolver */
 #include "../saf_utilities/saf_loudspeaker_presets.h" /* For various presets for loudspeaker, microphone, and hydrophone arrays.  */
 #include "../saf_utilities/saf_sensorarray_presets.h" /* For various presets for loudspeaker, microphone, and hydrophone arrays.  */
 
