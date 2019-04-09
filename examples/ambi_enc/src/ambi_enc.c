@@ -74,6 +74,8 @@ void ambi_enc_init
         pData->interpolator[i-1] = (float)i*1.0f/(float)FRAME_SIZE;
     memset(pData->prev_Y, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
     memset(pData->prev_inputFrameTD, 0, MAX_NUM_INPUTS*FRAME_SIZE*sizeof(float));
+    for(i=0; i<MAX_NUM_INPUTS; i++)
+        pData->recalc_SH_FLAG[i] = 1;
 }
 
 void ambi_enc_process

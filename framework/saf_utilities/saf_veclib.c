@@ -1033,6 +1033,82 @@ void utility_spinv(const float* inM, const int dim1, const int dim2, float* outM
     free((void*)work);
 }
 
+void utility_cpinv(const float_complex* inM, const int dim1, const int dim2, float_complex* outM)
+{
+    int i, j, m, n, k, lda, ldu, ldvt, lwork, info;
+    float_complex* a,  *u, *vt, *inva, *work;
+    float_complex wkopt, ss_cmplx;
+    const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f); /* blas */
+    float* rwork, *s;
+    float ss;
+    
+    m = lda = ldu = dim1;
+    n = dim2;
+    k = ldvt = m < n ? m : n;
+    a = malloc(m*n*sizeof(float_complex) );
+    for(i=0; i<m; i++)
+        for(j=0; j<n; j++)
+            a[j*m+i] = inM[i*n+j]; /* store in column major order */
+    s = malloc(k*sizeof(float));
+    u = malloc(ldu*k*sizeof(float_complex));
+    vt = malloc(ldvt*n*sizeof(float_complex));
+    rwork = malloc(m*MAX(1, 5*MIN(n,m))*sizeof(float));
+    lwork = -1;
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+    cgesvd_( "A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_complex*)a, (__CLPK_integer*)&lda, s,
+            (__CLPK_complex*)u, (__CLPK_integer*)&ldu, (__CLPK_complex*)vt, &ldvt, (__CLPK_complex*)&wkopt, &lwork, rwork, (__CLPK_integer*)&info );
+#elif INTEL_MKL_VERSION
+    cgesvd_( "A", "A", &m, &n, (MKL_Complex8*)a, &lda, s, (MKL_Complex8*)u, &ldu, (MKL_Complex8*)vt, &ldvt,
+            (MKL_Complex8*)&wkopt, &lwork, rwork, &info );
+#endif
+    lwork = (int)(crealf(wkopt)+0.01f);
+    work = malloc( lwork*sizeof(float_complex) );
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+    cgesvd_( "A", "A", &m, &n, (__CLPK_complex*)a, &lda, s, (__CLPK_complex*)u, &ldu, (__CLPK_complex*)vt, &ldvt,
+            (__CLPK_complex*)work, &lwork, rwork, &info);
+#elif INTEL_MKL_VERSION
+    cgesvd_( "A", "A", &m, &n, (MKL_Complex8*)a, &lda, s, (MKL_Complex8*)u, &ldu, (MKL_Complex8*)vt, &ldvt,
+            (MKL_Complex8*)work, &lwork, rwork, &info);
+#endif
+    if( info > 0 ) {
+        memset(outM, 0, dim1*dim2*sizeof(float_complex));
+        free(a);
+        free(s);
+        free(u);
+        free(vt);
+        free(work);
+        free(rwork);
+        return; /*failed to converge, output 0s */
+    }
+    int incx=1;
+    for(i=0; i<k; i++){
+        if(s[i] > 1.0e-5f)
+            ss=1.0f/s[i];
+        else
+            ss=s[i];
+        ss_cmplx = cmplxf(ss, 0.0f);
+        cblas_cscal(m, &ss_cmplx, &u[i*m], incx);
+    }
+    inva = malloc(n*m*sizeof(float_complex));
+    int ld_inva=n;
+    cblas_cgemm(CblasColMajor, CblasTrans, CblasTrans, n, m, k, &calpha,
+                vt, ldvt,
+                u, ldu, &cbeta,
+                inva, ld_inva);
+    for(i=0; i<m; i++)
+        for(j=0; j<n; j++)
+            outM[j*m+i] = inva[i*n+j]; /* return in row-major order */
+
+    /* clean-up */
+    free(a);
+    free(s);
+    free(u);
+    free(vt);
+    free(inva);
+    free(work);
+    free(rwork);
+}
+
 void utility_dpinv(const double* inM, const int dim1, const int dim2, double* outM)
 {
     

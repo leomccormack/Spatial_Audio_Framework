@@ -243,9 +243,19 @@ void utility_cseig(const float_complex* A, /* in symmetric square matrix; flat: 
                    float_complex* D,       /* Eigen values along the diagonal (set to NULL if not needed); flat: dim x dim */
                    float* eig);            /* Eigen values not diagonalised (set to NULL if not needed); dim x 1 */
 
+/*---------------------------  eigenvalues of matrix pair (?eigmp) --------------------------*/
+
+// NOT IMPLEMENTED:
+/* c, row-major, finds eigenvalues of a matrix pair using the QZ method: [V,D] = EIG(A,B); A*V = B*V*D: single precision complex */
+void utility_ceigmp(const float_complex* A, /* left square matrix; flat: dim x dim */
+                    const float_complex* B, /* right square matrix; flat: dim x dim */
+                    const int dim,         /* dimensions for the square matrices, A, B */
+                    float_complex* V,      /* Left Eigen vectors (set to NULL if not needed); flat: dim x dim */
+                    float_complex* D);     /* Right Eigen vectors (set to NULL if not needed); flat: dim x dim */
+
 /*-----------------------------  eigenvalue decomposition (?eig) ----------------------------*/
 
-/* s, row-major, eigenvalue decomposition of a non-symmetric matrix: single precision complex */
+/* c, row-major, eigenvalue decomposition of a non-symmetric matrix: single precision complex */
 void utility_ceig(const float_complex* A,  /* in nonsymmetric square matrix; flat: dim x dim */
                   const int dim,           /* dimensions for the square matrix, A */
                   int sortDecFLAG,         /* 1: sort eigen values and vectors in decending order. 0: ascending */
@@ -293,6 +303,12 @@ void utility_spinv(const float* inM,          /* in matrix; flat: dim1 x dim2 */
                    const int dim1,            /*  */
                    const int dim2,            /*  */
                    float* outM);              /* out matrix; flat: dim2 x dim1 */
+
+/* c, row-major, general matrix pseudo-inverse (the svd way): single precision complex */
+void utility_cpinv(const float_complex* inM,  /* in matrix; flat: dim1 x dim2 */
+                   const int dim1,            /*  */
+                   const int dim2,            /*  */
+                   float_complex* outM);      /* out matrix; flat: dim2 x dim1 */
 
 /* d, row-major, general matrix pseudo-inverse (the svd way): double precision */
 void utility_dpinv(const double* inM,          /* in matrix; flat: dim1 x dim2 */

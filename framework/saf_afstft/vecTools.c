@@ -22,7 +22,6 @@
 
 #include "vecTools.h"
 
-
 /* VECTOR FLUSH */
 void vtClr(float* vec, int N)
 {
@@ -45,7 +44,6 @@ void vtVma(float* vec1, float* vec2, float* vec3, int N)
     }
 #endif
 }
-
 
 /* FFT INITIALISATION */
 void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n)

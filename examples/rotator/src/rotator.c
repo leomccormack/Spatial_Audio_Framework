@@ -268,6 +268,7 @@ void rotator_setOrder(void* const hRot, int newOrder)
         case OUTPUT_ORDER_SIXTH:   pData->order = 6; break;
         case OUTPUT_ORDER_SEVENTH: pData->order = 7; break;
     }
+    pData->recalc_M_rotFLAG = 1;
 }
 
 /*gets*/
