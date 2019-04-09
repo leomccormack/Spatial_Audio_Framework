@@ -960,8 +960,6 @@ void utility_cslslv(const float_complex* A, const int dim, float_complex* B, int
     free(b);
 }
 
-
-
 /*----------------------------- matrix pseudo-inverse (?pinv) -------------------------------*/
 
 void utility_spinv(const float* inM, const int dim1, const int dim2, float* outM)
@@ -1045,14 +1043,15 @@ void utility_cpinv(const float_complex* inM, const int dim1, const int dim2, flo
     m = lda = ldu = dim1;
     n = dim2;
     k = ldvt = m < n ? m : n;
-    a = malloc(m*n*sizeof(float_complex) );
-    for(i=0; i<m; i++)
-        for(j=0; j<n; j++)
-            a[j*m+i] = inM[i*n+j]; /* store in column major order */
-    s = malloc(k*sizeof(float));
-    u = malloc(ldu*k*sizeof(float_complex));
+    a = malloc(lda*n*sizeof(float_complex));
+    s = malloc(MIN(n,m)*sizeof(float));
+    u = malloc(ldu*m*sizeof(float_complex));
     vt = malloc(ldvt*n*sizeof(float_complex));
     rwork = malloc(m*MAX(1, 5*MIN(n,m))*sizeof(float));
+    /* store in column major order */
+    for(i=0; i<dim1; i++)
+        for(j=0; j<dim2; j++)
+            a[j*dim1+i] = inM[i*dim2 +j];
     lwork = -1;
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgesvd_( "A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_complex*)a, (__CLPK_integer*)&lda, s,
@@ -1091,7 +1090,7 @@ void utility_cpinv(const float_complex* inM, const int dim1, const int dim2, flo
     }
     inva = malloc(n*m*sizeof(float_complex));
     int ld_inva=n;
-    cblas_cgemm(CblasColMajor, CblasTrans, CblasTrans, n, m, k, &calpha,
+    cblas_cgemm(CblasColMajor, CblasConjTrans, CblasConjTrans, n, m, k, &calpha,
                 vt, ldvt,
                 u, ldu, &cbeta,
                 inva, ld_inva);

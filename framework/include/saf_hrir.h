@@ -35,6 +35,9 @@ extern "C" {
 #ifndef M_PI
   #define M_PI ( 3.14159265359f )
 #endif
+    
+/* misc. */
+float matlab_fmodf(float x,  float y);
 
 /* estimates the interaural time-differences (ITDs) for each HRIR via the cross-correlation between the left and right IRs */
 void estimateITDs(/* Input arguments */

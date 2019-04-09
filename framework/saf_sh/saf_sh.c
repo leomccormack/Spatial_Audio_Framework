@@ -567,7 +567,38 @@ void complex2realSHMtx
                 T_c2r[(idx-p-1)*nSH+(q)] = cmplxf(0.0f, -powf(-1.0f, (float)abs(m))/sqrtf(2.0f));
             } 
         }
-        
+    }
+}
+
+void real2complexSHMtx
+(
+    int order,
+    float_complex* T_r2c
+)
+{
+    int n, m, q, p, idx, nSH;
+    
+    nSH = (order+1)*(order+1);
+    memset(T_r2c, 0, nSH*nSH*sizeof(float_complex));
+    T_r2c[0] = cmplxf(1.0f, 0.0f);
+    if(order == 0)
+        return;
+    
+    idx = 1;
+    for(n=1, q = 1; n<=order; n++){
+        idx += (2*n+1);
+        for(m=-n, p=0; m<=n; m++, q++, p++){
+            if(m<0){
+                T_r2c[(q)*nSH+(q)] = cmplxf(0.0f, -1.0f/sqrtf(2.0f));
+                T_r2c[(idx-p-1)*nSH+(q)] = cmplxf(0.0f, powf(-1.0f, (float)abs(m))/sqrtf(2.0f));; //cmplxf(1.0f/sqrtf(2.0f), 0.0f);
+            }
+            else if(m==0)
+                T_r2c[(q)*nSH+(q)] = cmplxf(1.0f, 0.0f);
+            else{
+                T_r2c[(q)*nSH+(q)] = cmplxf(powf(-1.0f,(float)m)/sqrtf(2.0f), 0.0f);
+                T_r2c[(idx-p-1)*nSH+(q)] = cmplxf(1.0f/sqrtf(2.0f), 0.0f); //cmplxf(0.0f, -powf(-1.0f, (float)abs(m))/sqrtf(2.0f));
+            }
+        }
     }
 }
 

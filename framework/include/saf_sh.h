@@ -176,6 +176,11 @@ void getSHcomplex(/* Input arguments */
 void complex2realSHMtx(int order,                 /* order */
                        float_complex* T_c2r);     /* transformation matrix for complex->real; FLAT: (order+1)^2 x (order+1)^2  */
     
+/* Returns the unitary transformation matrix T_r2c the expresses the complex spherical harmonics with respect to the real ones,
+ * so that y_N = T_r2c * r_N, where r_N and y_N are the real and complex SH vectors respectively. */
+void real2complexSHMtx(int order,                 /* order */
+                       float_complex* T_r2c);     /* transformation matrix for real->complex; FLAT: (order+1)^2 x (order+1)^2  */
+    
 /* Convert SH coeffs from the complex to real basis */
 void complex2realCoeffs(int order,                 /* order */
                         float_complex* C_N,        /* complex coeffients; FLAT: (order+1)^2 x K */
