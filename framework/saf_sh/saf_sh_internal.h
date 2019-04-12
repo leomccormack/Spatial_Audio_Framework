@@ -42,12 +42,10 @@
 extern "C" {
 #endif
  
-    
 #ifndef M_PI
   #define M_PI ( 3.14159265359f )
 #endif
-    
-    
+        
 /****************************/
 /* Misc. Internal Functions */
 /****************************/

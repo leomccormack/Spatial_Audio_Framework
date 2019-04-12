@@ -30,6 +30,12 @@
 #include "saf_sh.h"
 #include "saf_sh_internal.h"
 
+/* first-order ACN/N3D to WXYZ matrix */
+const float wxyzCoeffs[4][4] = { {3.544907701811032f, 0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f, 2.046653415892977f},
+    {0.0f, 2.046653415892977f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 2.046653415892977f, 0.0f} };
+
 static double Jn(int n, double z)
 {
 #ifndef _MSC_VER
@@ -709,7 +715,11 @@ void getSHrotMtxReal
     free2d((void**)R_l, M);
 }
 
-void computeVelCoeffsMtx(int sectorOrder, float_complex* A_xyz)
+void computeVelCoeffsMtx
+(
+    int sectorOrder,
+    float_complex* A_xyz
+)
 {
     int i, j, Nxyz, Ns, nC_xyz, nC_s;
     float x1, x3, z2, y1, y3;
@@ -735,6 +745,119 @@ void computeVelCoeffsMtx(int sectorOrder, float_complex* A_xyz)
     }
      
     free(G_mtx);
+}
+
+void computeSectorCoeffsEP
+(
+    int orderSec,
+    float_complex* A_xyz, /* FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3 */
+    SECTOR_PATTERNS pattern,
+    float* sec_dirs_deg,
+    int nSecDirs,
+    float* sectorCoeffs /* FLAT: (nSecDirs*4) x (orderSec+2)^2 */
+)
+{
+    int i, j, ns, orderVel, nSH;
+    float normSec, azi_sec, elev_sec, Q;
+    float* b_n, *c_nm, *xyz_nm;
+    
+    if(orderSec==0)
+        memcpy(sectorCoeffs, wxyzCoeffs, 16*sizeof(float)); /* ACN/N3D to WXYZ */
+    else{
+        orderVel = orderSec+1;
+        nSH = (orderSec+2)*(orderSec+2);
+        b_n = malloc((orderSec+1)*sizeof(float));
+        c_nm = calloc((orderVel+1)*(orderVel+1), sizeof(float)); /* pad with zeros */
+        xyz_nm = malloc((orderVel+1)*(orderVel+1)*3*sizeof(float));
+        switch(pattern){
+            case SECTOR_PATTERN_PWD:
+                beamWeightsHypercardioid2Spherical(orderSec, b_n);
+                Q = 2.0f*(float)orderSec + 1.0f;
+                break;
+            case SECTOR_PATTERN_MAXRE:
+                beamWeightsMaxEV(orderSec, b_n);
+                cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, 1, 1, orderSec+1, 1.0f,
+                            b_n, 1,
+                            b_n, 1, 0.0f,
+                            &Q, 1);
+                Q = 4.0f*M_PI/(Q);
+                break;
+            case SECTOR_PATTERN_CARDIOID:
+                beamWeightsCardioid2Spherical(orderSec, b_n);
+                Q = (float)((orderSec+1) * (orderSec+1));
+                break;
+        }
+        normSec = Q/(float)nSecDirs; /* directivity factor / number of sectors */
+        
+        for(ns=0; ns<nSecDirs; ns++){
+            /* rotate the pattern by rotating the coefficients */
+            azi_sec = sec_dirs_deg[ns*2] * M_PI/180.0f;
+            elev_sec = sec_dirs_deg[ns*2+1] * M_PI/180.0; /* from elevation to inclination */
+            rotateAxisCoeffsReal(orderSec, b_n, M_PI/2.0f-elev_sec, azi_sec, c_nm);
+            beamWeightsVelocityPatternsReal(orderSec, b_n, azi_sec, elev_sec, A_xyz, xyz_nm);
+     
+            /* store coefficients */
+            for(j=0; j<nSH; j++){
+                sectorCoeffs[ns*4*nSH + 0*nSH +j] = sqrt(normSec) * c_nm[j];
+                for(i=0; i<3; i++)
+                    sectorCoeffs[ns*4*nSH + (i+1)*nSH +j] = sqrt(normSec) * xyz_nm[j*3+i];
+            }
+        }
+        
+        free(b_n);
+        free(c_nm);
+        free(xyz_nm);
+    }
+}
+
+void computeSectorCoeffsAP
+(
+    int orderSec,
+    float_complex* A_xyz,
+    SECTOR_PATTERNS pattern,
+    float* sec_dirs_deg,
+    int nSecDirs,
+    float* sectorCoeffs
+)
+{
+    int i, j, ns, orderVel, nSH;
+    float normSec, azi_sec, elev_sec;
+    float* b_n, *c_nm, *xyz_nm;
+    
+    if(orderSec==0)
+        memcpy(sectorCoeffs, wxyzCoeffs, 16*sizeof(float)); /* ACN/N3D to WXYZ */
+    else{
+        orderVel = orderSec+1;
+        nSH = (orderSec+2)*(orderSec+2);
+        b_n = malloc((orderSec+1)*sizeof(float));
+        c_nm = calloc((orderVel+1)*(orderVel+1), sizeof(float)); /* pad with zeros */
+        xyz_nm = malloc((orderVel+1)*(orderVel+1)*3*sizeof(float));
+        switch(pattern){
+            case SECTOR_PATTERN_PWD: beamWeightsHypercardioid2Spherical(orderSec, b_n); break;
+            case SECTOR_PATTERN_MAXRE: beamWeightsMaxEV(orderSec, b_n); break;
+            case SECTOR_PATTERN_CARDIOID: beamWeightsCardioid2Spherical(orderSec, b_n); break;
+        }
+        normSec = (float)(orderSec+1)/(float)nSecDirs;
+        
+        for(ns=0; ns<nSecDirs; ns++){
+            /* rotate the pattern by rotating the coefficients */
+            azi_sec = sec_dirs_deg[ns*2] * M_PI/180.0f;
+            elev_sec = sec_dirs_deg[ns*2+1] * M_PI/180.0;
+            rotateAxisCoeffsReal(orderSec, b_n, M_PI/2.0f-elev_sec, azi_sec, c_nm);
+            beamWeightsVelocityPatternsReal(orderSec, b_n, azi_sec, elev_sec, A_xyz, xyz_nm);
+            
+            /* store coefficients */
+            for(j=0; j<nSH; j++){
+                sectorCoeffs[ns*4*nSH + 0*nSH +j] = normSec * c_nm[j];
+                for(i=0; i<3; i++)
+                    sectorCoeffs[ns*4*nSH + (i+1)*nSH +j] = normSec * xyz_nm[j*3+i];
+            }
+        }
+        
+        free(b_n);
+        free(c_nm);
+        free(xyz_nm);
+    }
 }
 
 void beamWeightsCardioid2Spherical

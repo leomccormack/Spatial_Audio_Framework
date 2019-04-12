@@ -47,6 +47,12 @@ typedef enum _ARRAY_CONSTRUCTION_TYPES {
     ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL
 }ARRAY_CONSTRUCTION_TYPES;
     
+typedef enum _SECTOR_PATTERNS{
+    SECTOR_PATTERN_PWD,
+    SECTOR_PATTERN_MAXRE,
+    SECTOR_PATTERN_CARDIOID
+}SECTOR_PATTERNS;
+
 
 /*******************/
 /* Misc. Functions */
@@ -204,6 +210,42 @@ void computeVelCoeffsMtx(/* Input arguments */
                          int sectorOrder,         /* order of patterns; */
                          /* Output arguments */
                          float_complex* A_xyz);   /* Velocity coefficients; FLAT: (sectorOrder+2)^2  x (sectorOrder+1)^2 x 3 */
+    
+/* Computes the beamforming matrices of sector and velocity coefficients for ENERGY-preserving (EP) sectors for real SH.
+ * For more information.
+ * This partitioning of the sound-field into spatially-localised sectors has been used for parametric reproduction in:
+ *     Politis, A., Vilkamo, J., Pulkki, V. (2015). Sector-Based Parametric Sound field Reproduction in the
+ *     spherical harmonic domain.
+ * and also for sound-field visualision in:
+ *     McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular spectra based on a directional re-assignment
+ *     approach for ambisonic sound-field visualisation". IEEE International Conference on Acoustics, Speech and Signal
+ *     Processing (ICASSP).*/
+void computeSectorCoeffsEP(/* Input arguments */
+                           int orderSec,
+                           float_complex* A_xyz,  /* Velocity coefficients; FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3 */
+                           SECTOR_PATTERNS pattern, /* see "SECTOR_PATTERNS" enum for the options*/
+                           float* sec_dirs_deg,   /* sector directions [azi elev], in degrees; FLAT: nSecDirs x 2 */
+                           int nSecDirs,          /* number of sectors */
+                           /* Output arguments */
+                           float* sectorCoeffs);  /* the sector coefficients; FLAT: (nSecDirs*4) x (orderSec+2)^2 */
+    
+/* Computes the beamforming matrices of sector and velocity coefficients for AMPLITUDE-preserving (AP) sectors for real SH.
+ * For more information.
+ * This partitioning of the sound-field into spatially-localised sectors has been used for parametric reproduction in:
+ *     Politis, A., Vilkamo, J., Pulkki, V. (2015). Sector-Based Parametric Sound field Reproduction in the
+ *     spherical harmonic domain.
+ * and also for sound-field visualision in:
+ *     McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular spectra based on a directional re-assignment
+ *     approach for ambisonic sound-field visualisation". IEEE International Conference on Acoustics, Speech and Signal
+ *     Processing (ICASSP).*/
+void computeSectorCoeffsAP(/* Input arguments */
+                           int orderSec,
+                           float_complex* A_xyz,  /* Velocity coefficients; FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3 */
+                           SECTOR_PATTERNS pattern, /* see "SECTOR_PATTERNS" enum for the options*/
+                           float* sec_dirs_deg,   /* sector directions [azi elev], in degrees; FLAT: nSecDirs x 2 */
+                           int nSecDirs,          /* number of sectors */
+                           /* Output arguments */
+                           float* sectorCoeffs);  /* the sector coefficients; FLAT: (nSecDirs*4) x (orderSec+2)^2 */
     
 /* Generate spherical coefficients for cardioids. For a specific order N of a higher order cardioid of the form
  * D(theta)=(1/2)^N * (1+cos(theta))^N, generate the beamweights for the same pattern in the SHD. Because the
