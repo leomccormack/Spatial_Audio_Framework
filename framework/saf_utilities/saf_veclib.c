@@ -395,7 +395,7 @@ void utility_svsmul(float* a, const float* s, const int len, float* c)
     if (c == NULL)
         cblas_sscal(len, s[0], a, 1);
     else {
-        memcpy(c, a, len*sizeof(float));
+        utility_svvcopy(a, len, c); 
         cblas_sscal(len, s[0], c, 1);
     }
 #else
@@ -487,6 +487,14 @@ void utility_ssvd(const float* A, const int dim1, const int dim2, float* U, floa
            &info );
     if( info > 0 ) {
         /* svd failed to converge */
+        if (S != NULL)
+            memset(S, 0, dim1*dim2*sizeof(float));
+        if (U != NULL)
+            memset(U, 0, dim1*dim1*sizeof(float));
+        if (V != NULL)
+            memset(U, 0, dim2*dim2*sizeof(float));
+        if (sing != NULL)
+            memset(sing, 0, MIN(dim1, dim2)*sizeof(float));
     }
     else {
         /* svd successful */
@@ -556,6 +564,14 @@ void utility_csvd(const float_complex* A, const int dim1, const int dim2, float_
 #endif
     if( info > 0 ) {
         /* svd failed to converge */
+        if (S != NULL)
+            memset(S, 0, dim1*dim2*sizeof(float_complex));
+        if (U != NULL)
+            memset(U, 0, dim1*dim1*sizeof(float_complex));
+        if (V != NULL)
+            memset(U, 0, dim2*dim2*sizeof(float_complex));
+        if (sing != NULL)
+            memset(sing, 0, MIN(dim1, dim2)*sizeof(float_complex));
     }
     else {
         /* svd successful */

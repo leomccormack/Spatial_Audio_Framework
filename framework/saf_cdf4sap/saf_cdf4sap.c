@@ -247,9 +247,9 @@ void formulate_M_and_Cr
     nYcols = h->nYcols;
     
     memset(h->lambda, 0, nYcols * nXcols * sizeof(float));
-    for(i = 0; i<nXcols; i++)
+    for(i = 0; i<MIN(nXcols,nYcols); i++)
         h->lambda[i*nXcols + i] = 1.0f;
-    
+
     /* Decomposition of Cy */
     utility_ssvd(Cy, nYcols, nYcols, h->U_Cy, h->S_Cy, NULL, NULL);
     for(i=0; i< nYcols; i++)
@@ -258,18 +258,18 @@ void formulate_M_and_Cr
                 h->U_Cy, nYcols,
                 h->S_Cy, nYcols, 0.0f,
                 h->Ky, nYcols);
-    
+
     /* Decomposition of Cx */
     utility_ssvd(Cx, nXcols, nXcols, h->U_Cx, h->S_Cx, NULL, h->s_Cx);
     for(i=0; i< nXcols; i++){
         h->S_Cx[i*nXcols+i] = sqrtf(h->S_Cx[i*nXcols+i]);
-        h->s_Cx[i] = sqrtf(h->s_Cx[i]);
+        h->s_Cx[i] = sqrtf(MAX(h->s_Cx[i], 2.23e-20f));
     }
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nXcols, nXcols, nXcols, 1.0f,
                 h->U_Cx, nXcols,
                 h->S_Cx, nXcols, 0.0f,
                 h->Kx, nXcols);
-    
+
     /* Regularisation of S_Cx */
     int ind;
     float limit, maxVal;
@@ -277,13 +277,13 @@ void formulate_M_and_Cr
     limit = h->s_Cx[ind] * reg + 2.23e-7f;
     for(i=0; i < nXcols; i++)
         h->S_Cx[i*nXcols+i] = 1.0f / MAX(h->S_Cx[i*nXcols+i], limit);
-    
+
     /* Formulate regularised Kx^-1 */
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nXcols, nXcols, nXcols, 1.0f,
                 h->S_Cx, nXcols,
                 h->U_Cx, nXcols, 0.0f,
                 h->Kx_reg_inverse, nXcols);
-    
+
     /* Formulate normalisation matrix G_hat */
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nXcols, nYcols, nXcols, 1.0f,
                 Cx, nXcols,
@@ -299,8 +299,8 @@ void formulate_M_and_Cr
     limit = maxVal * 0.001f + 2.23e-7f;
     for(i=0; i < nYcols; i++)
         for(j=0; j < nYcols; j++)
-            h->G_hat[i*nYcols+j] = i==j ? sqrtf(MAX(Cy[i*nYcols+j], 0.0f) / MAX(h->G_hat[i*nYcols+j], limit)) : 0.0f;
-    
+            h->G_hat[i*nYcols+j] = i==j ? sqrtf(MAX(Cy[i*nYcols+j], 2.23e-20f) / MAX(h->G_hat[i*nYcols+j], limit)) : 0.0f;
+
     /* Formulate optimal P */
     cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nYcols, nYcols, nYcols, 1.0f,
                 h->G_hat, nYcols,
@@ -323,7 +323,7 @@ void formulate_M_and_Cr
                 h->V, nYcols,
                 h->lambda_UH, nXcols, 0.0f,
                 h->P, nXcols);
-    
+
     /* Formulate M */
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nYcols, nXcols, nXcols, 1.0f,
                 h->P, nXcols,
@@ -333,7 +333,7 @@ void formulate_M_and_Cr
                 h->Ky, nYcols,
                 h->P_Kxreginverse, nXcols, 0.0f,
                 M, nXcols);
-    
+
     /* Formulate residual covariance matrix */
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nXcols, nYcols, nXcols, 1.0f,
                 Cx, nXcols,
@@ -345,12 +345,12 @@ void formulate_M_and_Cr
                 h->Cy_tilde, nYcols);
     for(i=0; i < nYcols*nYcols; i++)
         Cr[i] = Cy[i] - h->Cy_tilde[i];
-    
+
     /* Use energy compensation instead of residuals */
     if(useEnergyFLAG){
         for(i=0; i < nYcols; i++)
             for(j=0; j < nYcols; j++)
-                h->G_hat[i*nYcols+j] = i==j ? sqrtf( MAX(Cy[i*nYcols+j], 0.0f) / (h->Cy_tilde[i*nYcols+j]+2.23e-7f)) : 0.0f;
+                h->G_hat[i*nYcols+j] = i==j ? sqrtf( MAX(Cy[i*nYcols+j], 2.23e-20f) / (h->Cy_tilde[i*nYcols+j]+2.23e-7f)) : 0.0f;
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nYcols, nXcols, nYcols, 1.0f,
                     h->G_hat, nYcols,
                     M, nXcols, 0.0f,
@@ -379,7 +379,7 @@ void formulate_M_and_Cr_cmplx
     nYcols = h->nYcols;
     
     memset(h->lambda, 0, nYcols * nXcols * sizeof(float_complex));
-    for(i = 0; i<nXcols; i++)
+    for(i = 0; i<MIN(nXcols,nYcols); i++)
         h->lambda[i*nXcols + i] = cmplxf(1.0f, 0.0f);
     
     /* Decomposition of Cy */

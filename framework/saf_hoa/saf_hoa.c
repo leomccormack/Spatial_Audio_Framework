@@ -113,10 +113,7 @@ void getBinauralAmbiDecoder
     float* weights,
     float_complex* decMtx
 )
-{
-    int nSH;
-    
-    nSH = (order+1) * (order+1);
+{ 
     switch(method){
         default:
         case BINAURAL_DECODER_DEFAULT:
