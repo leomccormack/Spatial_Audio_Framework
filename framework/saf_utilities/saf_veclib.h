@@ -244,14 +244,22 @@ void utility_cseig(const float_complex* A, /* in symmetric square matrix; flat: 
                    float* eig);            /* Eigen values not diagonalised (set to NULL if not needed); dim x 1 */
 
 /*---------------------------  eigenvalues of matrix pair (?eigmp) --------------------------*/
-
-// NOT IMPLEMENTED:
-/* c, row-major, finds eigenvalues of a matrix pair using the QZ method: [V,D] = EIG(A,B); A*V = B*V*D: single precision complex */
+ 
+/* c, row-major, finds eigenvalues of a matrix pair using the QZ method: [VL,VR] = EIG(A,B); A*VL = B*VL*VR: single precision complex */
 void utility_ceigmp(const float_complex* A, /* left square matrix; flat: dim x dim */
                     const float_complex* B, /* right square matrix; flat: dim x dim */
                     const int dim,         /* dimensions for the square matrices, A, B */
-                    float_complex* V,      /* Left Eigen vectors (set to NULL if not needed); flat: dim x dim */
-                    float_complex* D);     /* Right Eigen vectors (set to NULL if not needed); flat: dim x dim */
+                    float_complex* VL,     /* Left Eigen vectors (set to NULL if not needed); flat: dim x dim */
+                    float_complex* VR,     /* Right Eigen vectors (set to NULL if not needed); flat: dim x dim */
+                    float_complex* D);     /* Eigen values along the diagonal (set to NULL if not needed); flat: dim x dim */
+
+/* z, row-major, finds eigenvalues of a matrix pair using the QZ method: [VL,VR, D] = EIG(A,B); A*VL = B*VL*D: double precision complex */
+void utility_zeigmp(const double_complex* A, /* left square matrix; flat: dim x dim */
+                    const double_complex* B, /* right square matrix; flat: dim x dim */
+                    const int dim,         /* dimensions for the square matrices, A, B */
+                    double_complex* VL,    /* Left Eigen vectors (set to NULL if not needed); flat: dim x dim */
+                    double_complex* VR,    /* Right Eigen vectors (set to NULL if not needed); flat: dim x dim */
+                    double_complex* D);    /* Eigen values along the diagonal (set to NULL if not needed); flat: dim x dim */
 
 /*-----------------------------  eigenvalue decomposition (?eig) ----------------------------*/
 
@@ -279,6 +287,20 @@ void utility_cglslv(const float_complex* A,  /* input square matrix; flat: dim x
                     float_complex* B,        /* right hand side matrix; flat: dim x nCol */
                     int nCol,                /* number of columns in right hand side matrix */
                     float_complex* X);       /* the solution; flat: dim x nCol */
+
+/* d, row-major, general linear solver (AX=B): double precision */
+void utility_dglslv(const double* A,         /* input square matrix; flat: dim x dim */
+                    const int dim,           /* dimensions for the square matrix, A */
+                    double* B,               /* right hand side matrix; flat: dim x nCol */
+                    int nCol,                /* number of columns in right hand side matrix */
+                    double* X);              /* the solution; flat: dim x nCol */
+
+/* z, row-major, general linear solver (AX=B): double precision complex */
+void utility_zglslv(const double_complex* A, /* input square matrix; flat: dim x dim */
+                    const int dim,           /* dimensions for the square matrix, A */
+                    double_complex* B,       /* right hand side matrix; flat: dim x nCol */
+                    int nCol,                /* number of columns in right hand side matrix */
+                    double_complex* X);      /* the solution; flat: dim x nCol */
 
 /*----------------------------- symmetric linear solver (?slslv) ----------------------------*/
 
@@ -315,6 +337,12 @@ void utility_dpinv(const double* inM,          /* in matrix; flat: dim1 x dim2 *
                    const int dim1,             /*  */
                    const int dim2,             /*  */
                    double* outM);              /* out matrix; flat: dim2 x dim1 */
+
+/* z, row-major, general matrix pseudo-inverse (the svd way): double precision complex */
+void utility_zpinv(const double_complex* inM,  /* in matrix; flat: dim1 x dim2 */
+                   const int dim1,             /*  */
+                   const int dim2,             /*  */
+                   double_complex* outM);      /* out matrix; flat: dim2 x dim1 */
 
 /*------------------------------- Cholesky factorisation (?chol) -----------------------------*/
 

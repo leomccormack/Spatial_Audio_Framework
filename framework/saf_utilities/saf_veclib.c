@@ -644,7 +644,7 @@ void utility_sseig(const float* A, const int dim, int sortDecFLAG, float* V, flo
             for(i=0; i<dim; i++){
                 if(V!=NULL)
                     for(j=0; j<dim; j++)
-                        V[i*dim+j] = a[(dim-j-1)*dim+i]; /* traspose, back to row-major and reverse order */
+                        V[i*dim+j] = a[(dim-j-1)*dim+i]; /* transpose, back to row-major and reverse order */
                 if(D!=NULL)
                     D[i*dim+i] = w[dim-i-1]; /* store along the diagonal, reversing the order */
                 if(eig!=NULL)
@@ -655,7 +655,7 @@ void utility_sseig(const float* A, const int dim, int sortDecFLAG, float* V, flo
             for(i=0; i<dim; i++){
                 if(V!=NULL)
                     for(j=0; j<dim; j++)
-                        V[i*dim+j] = a[j*dim+i]; /* traspose, back to row-major */
+                        V[i*dim+j] = a[j*dim+i]; /* transpose, back to row-major */
                 if(D!=NULL)
                     D[i*dim+i] = w[i]; /* store along the diagonal */
                 if(eig!=NULL)
@@ -717,7 +717,7 @@ void utility_cseig(const float_complex* A, const int dim, int sortDecFLAG, float
             for(i=0; i<dim; i++){
                 if(V!=NULL)
                     for(j=0; j<dim; j++)
-                        V[i*dim+j] = a[(dim-j-1)*dim+i]; /* traspose, back to row-major and reverse order */
+                        V[i*dim+j] = a[(dim-j-1)*dim+i]; /* transpose, back to row-major and reverse order */
                 if(D!=NULL)
                     D[i*dim+i] = cmplxf(w[dim-i-1], 0.0f); /* store along the diagonal, reversing the order */
                 if(eig!=NULL)
@@ -728,7 +728,7 @@ void utility_cseig(const float_complex* A, const int dim, int sortDecFLAG, float
             for(i=0; i<dim; i++){
                 if(V!=NULL)
                     for(j=0; j<dim; j++)
-                        V[i*dim+j] = a[j*dim+i]; /* traspose, back to row-major */
+                        V[i*dim+j] = a[j*dim+i]; /* transpose, back to row-major */
                 if(D!=NULL)
                     D[i*dim+i] = cmplxf(w[i], 0.0f); /* store along the diagonal */
                 if(eig!=NULL)
@@ -741,6 +741,143 @@ void utility_cseig(const float_complex* A, const int dim, int sortDecFLAG, float
     free(a);
     free(work);
 }
+
+/*---------------------------  eigenvalues of matrix pair (?eigmp) --------------------------*/
+
+void utility_ceigmp(const float_complex* A, const float_complex* B, const int dim, float_complex* VL, float_complex* VR, float_complex* D)
+{
+    int i, j;
+    int n, lda, ldb, ldvl, ldvr, lwork, info;
+    float_complex* a, *b, *vl, *vr, *work, *alpha, *beta;
+    float* rwork;
+    
+    n = lda = ldb = ldvl = ldvr = dim;
+    lwork = 4*n; /* 2x more than required, but is faster */
+    a = malloc(dim*dim*sizeof(float_complex));
+    b = malloc(dim*dim*sizeof(float_complex));
+    vl = malloc(dim*dim*sizeof(float_complex));
+    vr = malloc(dim*dim*sizeof(float_complex));
+    alpha = malloc(dim*sizeof(float_complex));
+    beta = malloc(dim*sizeof(float_complex));
+    work = malloc(lwork*sizeof(float_complex));
+    rwork = malloc(4*lwork*sizeof(float)); /* 2x more than required, but is faster */
+    for(i=0; i<dim; i++)
+        for(j=0; j<dim; j++)
+            a[j*dim+i] = A[i*dim+j]; /* store in column major order */
+    for(i=0; i<dim; i++)
+        for(j=0; j<dim; j++)
+            b[j*dim+i] = B[i*dim+j]; /* store in column major order */
+    
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+    cggev_("V", "V", &n, (__CLPK_complex*)a, &lda, (__CLPK_complex*)b, &ldb, (__CLPK_complex*)alpha, (__CLPK_complex*)beta,
+           (__CLPK_complex*)vl, &ldvl, (__CLPK_complex*)vr, &ldvr, (__CLPK_complex*)work, &lwork, rwork, &info);
+#elif INTEL_MKL_VERSION
+    cggev_("V", "V", &n, (MKL_Complex8*)a, &lda, (MKL_Complex8*)b, &ldb, (MKL_Complex8*)alpha, (MKL_Complex8*)beta,
+           (MKL_Complex8*)vl, &ldvl, (MKL_Complex8*)vr, &ldvr, (MKL_Complex8*)work, &lwork, rwork, &info);
+#endif
+    
+    if(D!=NULL)
+        memset(D, 0, dim*dim*sizeof(float_complex));
+    
+    if( info > 0 ) {
+        /* failed to converge and find the eigenvalues */
+        if(VL!=NULL)
+            memset(VL, 0, dim*dim*sizeof(float_complex));
+        if(VR!=NULL)
+            memset(VR, 0, dim*dim*sizeof(float_complex));
+    }
+    else{
+        if(D!=NULL)
+            for(i=0; i<dim; i++)
+                D[i*dim+i] = ccdivf(alpha[i],beta[i]);
+        
+        if(VL!=NULL)
+            for(i=0; i<dim; i++)
+                for(j=0; j<dim; j++)
+                    VL[i*dim+j] = vl[j*dim+i]; /* transpose, back to row-major */
+        if(VR!=NULL)
+            for(i=0; i<dim; i++)
+                for(j=0; j<dim; j++)
+                    VR[i*dim+j] = vr[j*dim+i]; /* transpose, back to row-major */
+    }
+    
+    free(a);
+    free(b);
+    free(vl);
+    free(vr);
+    free(alpha);
+    free(beta);
+    free(work);
+    free(rwork);
+}
+
+void utility_zeigmp(const double_complex* A, const double_complex* B, const int dim, double_complex* VL, double_complex* VR, double_complex* D)
+{
+    int i, j;
+    int n, lda, ldb, ldvl, ldvr, lwork, info;
+    double_complex* a, *b, *vl, *vr, *work, *alpha, *beta;
+    double* rwork;
+    
+    n = lda = ldb = ldvl = ldvr = dim;
+    lwork = 4*n; /* 2x more than required, but is faster */
+    a = malloc(dim*dim*sizeof(double_complex));
+    b = malloc(dim*dim*sizeof(double_complex));
+    vl = malloc(dim*dim*sizeof(double_complex));
+    vr = malloc(dim*dim*sizeof(double_complex));
+    alpha = malloc(dim*sizeof(double_complex));
+    beta = malloc(dim*sizeof(double_complex));
+    work = malloc(lwork*sizeof(double_complex));
+    rwork = malloc(4*lwork*sizeof(double)); /* 2x more than required, but is faster */
+    for(i=0; i<dim; i++)
+        for(j=0; j<dim; j++)
+            a[j*dim+i] = A[i*dim+j]; /* store in column major order */
+    for(i=0; i<dim; i++)
+        for(j=0; j<dim; j++)
+            b[j*dim+i] = B[i*dim+j]; /* store in column major order */
+    
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+    zggev_("V", "V", &n, a, &lda, b, &ldb, alpha, beta,
+           vl, &ldvl, vr, &ldvr, work, &lwork, rwork, &info);
+#elif INTEL_MKL_VERSION
+    zggev_("V", "V", &n, (MKL_Complex16*)a, &lda, (MKL_Complex16*)b, &ldb, (MKL_Complex16*)alpha, (MKL_Complex16*)beta,
+           (MKL_Complex16*)vl, &ldvl, (MKL_Complex16*)vr, &ldvr, (MKL_Complex16*)work, &lwork, rwork, &info);
+#endif
+    
+    if(D!=NULL)
+        memset(D, 0, dim*dim*sizeof(double_complex));
+    
+    if( info > 0 ) {
+        /* failed to converge and find the eigenvalues */
+        if(VL!=NULL)
+            memset(VL, 0, dim*dim*sizeof(double_complex));
+        if(VR!=NULL)
+            memset(VR, 0, dim*dim*sizeof(double_complex));
+    }
+    else{
+        if(D!=NULL)
+            for(i=0; i<dim; i++)
+                D[i*dim+i] = ccdivf(alpha[i],beta[i]);
+        
+        if(VL!=NULL)
+            for(i=0; i<dim; i++)
+                for(j=0; j<dim; j++)
+                    VL[i*dim+j] = vl[j*dim+i]; /* transpose, back to row-major */
+        if(VR!=NULL)
+            for(i=0; i<dim; i++)
+                for(j=0; j<dim; j++)
+                    VR[i*dim+j] = vr[j*dim+i]; /* transpose, back to row-major */
+    }
+    
+    free(a);
+    free(b);
+    free(vl);
+    free(vr);
+    free(alpha);
+    free(beta);
+    free(work);
+    free(rwork);
+}
+
 
 /*-----------------------------  eigenvalue decomposition (?eig) ----------------------------*/
 
@@ -904,6 +1041,82 @@ void utility_cglslv(const float_complex* A, const int dim, float_complex* B, int
     free(b);
 }
 
+void utility_dglslv(const double* A, const int dim, double* B, int nCol, double* X)
+{
+    int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
+    int* IPIV;
+    IPIV = malloc(dim*sizeof(int));
+    double* a, *b;
+    a = malloc(dim*dim*sizeof(double));
+    b = malloc(dim*nrhs*sizeof(double));
+    
+    /* store in column major order */
+    for(i=0; i<dim; i++)
+        for(j=0; j<dim; j++)
+            a[j*dim+i] = A[i*dim+j];
+    for(i=0; i<dim; i++)
+        for(j=0; j<nCol; j++)
+            b[j*dim+i] = B[i*nCol+j];
+    
+    /* solve Ax = b for each column in b (b is replaced by the solution: x) */
+    dgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
+    
+    if(info>0){
+        /* A is singular, solution not possible */
+        memset(X, 0, dim*nCol*sizeof(double));
+    }
+    else{
+        /* store solution in row-major order */
+        for(i=0; i<dim; i++)
+            for(j=0; j<nCol; j++)
+                X[i*nCol+j] = b[j*dim+i];
+    }
+    
+    free(IPIV);
+    free(a);
+    free(b);
+}
+
+void utility_zglslv(const double_complex* A, const int dim, double_complex* B, int nCol, double_complex* X)
+{
+    int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
+    int* IPIV;
+    IPIV = malloc(dim*sizeof(int));
+    double_complex* a, *b;
+    a = malloc(dim*dim*sizeof(double_complex));
+    b = malloc(dim*nrhs*sizeof(double_complex));
+    
+    /* store in column major order */
+    for(i=0; i<dim; i++)
+        for(j=0; j<dim; j++)
+            a[j*dim+i] = A[i*dim+j];
+    for(i=0; i<dim; i++)
+        for(j=0; j<nCol; j++)
+            b[j*dim+i] = B[i*nCol+j];
+    
+    /* solve Ax = b for each column in b (b is replaced by the solution: x) */
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+    zgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
+#elif INTEL_MKL_VERSION
+    zgesv_( &n, &nrhs, (MKL_Complex16*)a, &lda, IPIV, (MKL_Complex16*)b, &ldb, &info );
+#endif
+    
+    if(info>0){
+        /* A is singular, solution not possible */
+        memset(X, 0, dim*nCol*sizeof(double_complex));
+    }
+    else{
+        /* store solution in row-major order */
+        for(i=0; i<dim; i++)
+            for(j=0; j<nCol; j++)
+                X[i*nCol+j] = b[j*dim+i];
+    }
+    
+    free(IPIV);
+    free(a);
+    free(b);
+}
+
 /*----------------------------- symmetric linear solver (?slslv) ----------------------------*/
 
 void utility_sslslv(const float* A, const int dim, float* B, int nCol, float* X)
@@ -987,7 +1200,7 @@ void utility_spinv(const float* inM, const int dim1, const int dim2, float* outM
     
     m = lda = ldu = dim1;
     n = dim2;
-    k = ldvt = m < n ? m : n; 
+    k = ldvt = m < n ? m : n;
     a = malloc(m*n*sizeof(float) );
     for(i=0; i<m; i++)
         for(j=0; j<n; j++)
@@ -1004,7 +1217,6 @@ void utility_spinv(const float* inM, const int dim1, const int dim2, float* outM
 #endif
     lwork = (int)wkopt;
     work = (float*)malloc(lwork*sizeof(float));
-    
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     sgesvd_("S", "S", (__CLPK_integer*)&m, (__CLPK_integer*)&n, a, (__CLPK_integer*)&lda,
             s, u, (__CLPK_integer*)&ldu, vt, (__CLPK_integer*)&ldvt, work, (__CLPK_integer*) &lwork, (__CLPK_integer*)&info); /* Compute SVD */
@@ -1026,18 +1238,18 @@ void utility_spinv(const float* inM, const int dim1, const int dim2, float* outM
             ss=1.0f/s[i];
         else
             ss=s[i];
-        cblas_sscal(m, ss, &u[i*m], incx);     
+        cblas_sscal(m, ss, &u[i*m], incx);
     }
     inva = (float*)malloc(n*m*sizeof(float));
     int ld_inva=n;
-    cblas_sgemm( CblasColMajor, CblasTrans, CblasTrans, n, m, k, 1.0f,
+    cblas_sgemm(CblasColMajor, CblasTrans, CblasTrans, n, m, k, 1.0f,
                 vt, ldvt,
                 u, ldu, 0.0f,
                 inva, ld_inva);
     for(i=0; i<m; i++)
         for(j=0; j<n; j++)
             outM[j*m+i] = inva[i*n+j]; /* return in row-major order */
-
+    
     /* clean-up */
     free((void*)a);
     free((void*)s);
@@ -1168,17 +1380,17 @@ void utility_dpinv(const double* inM, const int dim1, const int dim2, double* ou
     }
     int incx=1;
     for(i=0; i<k; i++){
-        if(s[i] > 1.0e-9f)
-            ss=1.0f/s[i];
+        if(s[i] > 1.0e-9)
+            ss=1.0/s[i];
         else
             ss=s[i];
         cblas_dscal(m, ss, &u[i*m], incx);
     }
     inva = (double*)malloc(n*m*sizeof(double));
     int ld_inva=n;
-    cblas_dgemm( CblasColMajor, CblasTrans, CblasTrans, n, m, k, 1.0f,
+    cblas_dgemm( CblasColMajor, CblasTrans, CblasTrans, n, m, k, 1.0,
                 vt, ldvt,
-                u, ldu, 0.0f,
+                u, ldu, 0.0,
                 inva, ld_inva);
     
     for(i=0; i<m; i++)
@@ -1192,6 +1404,83 @@ void utility_dpinv(const double* inM, const int dim1, const int dim2, double* ou
     free((void*)vt);
     free((void*)inva);
     free((void*)work);
+}
+
+void utility_zpinv(const double_complex* inM, const int dim1, const int dim2, double_complex* outM)
+{
+    int i, j, m, n, k, lda, ldu, ldvt, lwork, info;
+    double_complex* a,  *u, *vt, *inva, *work;
+    double_complex wkopt, ss_cmplx;
+    const double_complex calpha = cmplx(1.0, 0.0); const double_complex cbeta = cmplx(0.0, 0.0); /* blas */
+    double* rwork, *s;
+    double ss;
+    
+    m = lda = ldu = dim1;
+    n = dim2;
+    k = ldvt = m < n ? m : n;
+    a = malloc(lda*n*sizeof(double_complex));
+    s = malloc(MIN(n,m)*sizeof(double));
+    u = malloc(ldu*m*sizeof(double_complex));
+    vt = malloc(ldvt*n*sizeof(double_complex));
+    rwork = malloc(m*MAX(1, 5*MIN(n,m))*sizeof(double));
+    /* store in column major order */
+    for(i=0; i<dim1; i++)
+        for(j=0; j<dim2; j++)
+            a[j*dim1+i] = inM[i*dim2 +j];
+    lwork = -1;
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+    zgesvd_( "A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, a, (__CLPK_integer*)&lda, s,
+            u, (__CLPK_integer*)&ldu, vt, &ldvt, &wkopt, &lwork, rwork, (__CLPK_integer*)&info );
+#elif INTEL_MKL_VERSION
+    zgesvd_( "A", "A", &m, &n, (MKL_Complex16*)a, &lda, s, (MKL_Complex16*)u, &ldu, (MKL_Complex16*)vt, &ldvt,
+            (MKL_Complex16*)&wkopt, &lwork, rwork, &info );
+#endif
+    lwork = (int)(creal(wkopt)+0.01);
+    work = malloc( lwork*sizeof(double_complex) );
+#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+    zgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt,
+            work, &lwork, rwork, &info);
+#elif INTEL_MKL_VERSION
+    zgesvd_( "A", "A", &m, &n, (MKL_Complex16*)a, &lda, s, (MKL_Complex16*)u, &ldu, (MKL_Complex16*)vt, &ldvt,
+            (MKL_Complex16*)work, &lwork, rwork, &info);
+#endif
+    if( info > 0 ) {
+        memset(outM, 0, dim1*dim2*sizeof(double_complex));
+        free(a);
+        free(s);
+        free(u);
+        free(vt);
+        free(work);
+        free(rwork);
+        return; /*failed to converge, output 0s */
+    }
+    int incx=1;
+    for(i=0; i<k; i++){
+        if(s[i] > 1.0e-5)
+            ss=1.0/s[i];
+        else
+            ss=s[i];
+        ss_cmplx = cmplx(ss, 0.0);
+        cblas_zscal(m, &ss_cmplx, &u[i*m], incx);
+    }
+    inva = malloc(n*m*sizeof(double_complex));
+    int ld_inva=n;
+    cblas_zgemm(CblasColMajor, CblasConjTrans, CblasConjTrans, n, m, k, &calpha,
+                vt, ldvt,
+                u, ldu, &cbeta,
+                inva, ld_inva);
+    for(i=0; i<m; i++)
+        for(j=0; j<n; j++)
+            outM[j*m+i] = inva[i*n+j]; /* return in row-major order */
+    
+    /* clean-up */
+    free(a);
+    free(s);
+    free(u);
+    free(vt);
+    free(inva);
+    free(work);
+    free(rwork);
 }
 
 /*------------------------------- Cholesky factorisation (?chol) -----------------------------*/

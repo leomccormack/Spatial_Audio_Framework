@@ -358,8 +358,8 @@ void getRSH_recur
             }
             index_n += 2*n+1;
         }
-        memcpy(leg_n_2, leg_n_1, (N+1)*nDirs * sizeof(float));
-        memcpy(leg_n_1, leg_n, (N+1)*nDirs * sizeof(float));
+        utility_svvcopy(leg_n_1, (N+1)*nDirs, leg_n_2);
+        utility_svvcopy(leg_n,   (N+1)*nDirs, leg_n_1);
     }
     
     free(factorials_n);
@@ -482,8 +482,8 @@ void getSHreal_recur
             }
             index_n += 2*n+1;
         }
-        memcpy(leg_n_2, leg_n_1, (N+1)*nDirs * sizeof(float));
-        memcpy(leg_n_1, leg_n, (N+1)*nDirs * sizeof(float));
+        utility_svvcopy(leg_n_1, (N+1)*nDirs, leg_n_2);
+        utility_svvcopy(leg_n,   (N+1)*nDirs, leg_n_1);  
     }
     
     free(factorials_n);
