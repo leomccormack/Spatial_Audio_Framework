@@ -164,7 +164,7 @@ void sldoa_analysis
 )
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    int i, j, t, n, ch, sample, band, nSectors, min_band, numAnalysisBands, current_disp_idx;
+    int i, j, t, n, ch, band, nSectors, min_band, numAnalysisBands, current_disp_idx;
     float avgCoeff, max_en[HYBRID_BANDS], min_en[HYBRID_BANDS];
     float new_doa[MAX_NUM_SECTORS][TIME_SLOTS][2], new_doa_xyz[3], doa_xyz[3], avg_xyz[3];
     float new_energy[MAX_NUM_SECTORS][TIME_SLOTS];
@@ -199,7 +199,7 @@ void sldoa_analysis
         
         /* load intput time-domain data */
         for (i = 0; i < MIN(nSH, nInputs); i++)
-            memcpy(pData->SHframeTD[i], inputs[i], FRAME_SIZE*sizeof(float));
+            utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHframeTD[i]);
         for (; i < nSH; i++)
             memset(pData->SHframeTD[i], 0, FRAME_SIZE*sizeof(float));
         
@@ -219,8 +219,7 @@ void sldoa_analysis
         /* apply the time-frequency transform */
         for(t = 0; t < TIME_SLOTS; t++) {
             for(ch = 0; ch < nSH; ch++)
-                for(sample = 0; sample < HOP_SIZE; sample++)
-                    pData->tempHopFrameTD[ch][sample] = pData->SHframeTD[ch][sample + t*HOP_SIZE];
+                utility_svvcopy(&(pData->SHframeTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
             afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
             for(band = 0; band < HYBRID_BANDS; band++)
                 for(ch = 0; ch < nSH; ch++)

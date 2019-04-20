@@ -1,4 +1,4 @@
-    /*
+/*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -107,8 +107,10 @@ void rotator_process
         norm = pData->norm;
         order = pData->order;
         nSH = (order+1)*(order+1);
+        
+        /* Load time-domain data */
         for (i = 0; i < MIN(nSH, nInputs); i++)
-            memcpy(pData->inputFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
+            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for (; i < nSH; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
         
@@ -141,7 +143,7 @@ void rotator_process
                 pData->recalc_M_rotFLAG = 0;
             }
             else
-                memcpy(pData->M_rot, pData->prev_M_rot, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
+                utility_svvcopy((const float*)pData->prev_M_rot, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS, (float*)pData->M_rot);
             
             /* apply rotation */
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSH, 1.0f,
@@ -157,11 +159,11 @@ void rotator_process
                     pData->outputFrameTD[i][j] = pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
             
             /* for next frame */
-            memcpy(pData->prev_inputFrameTD, pData->inputFrameTD, nSH*FRAME_SIZE*sizeof(float));
-            memcpy(pData->prev_M_rot, pData->M_rot, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
+            utility_svvcopy((const float*)pData->inputFrameTD, nSH*FRAME_SIZE, (float*)pData->prev_inputFrameTD);
+            utility_svvcopy((const float*)pData->M_rot, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_M_rot);
         }
         else
-            memcpy(pData->outputFrameTD[0], pData->inputFrameTD[0], FRAME_SIZE*sizeof(float));
+            utility_svvcopy((const float*)pData->inputFrameTD[0], FRAME_SIZE, (float*)pData->outputFrameTD[0]);
         
         /* account for norm scheme */
         switch(norm){
@@ -176,8 +178,10 @@ void rotator_process
 #endif
                 break;
         }
+        
+        /* copy rotated signals to output buffer */
         for (i = 0; i < MIN(nSH, nOutputs); i++)
-            memcpy(outputs[i], pData->outputFrameTD[i], FRAME_SIZE*sizeof(float));
+            utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
         for (; i < nOutputs; i++)
             memset(outputs[i], 0, FRAME_SIZE*sizeof(float));
     }

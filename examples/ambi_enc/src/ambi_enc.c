@@ -111,7 +111,7 @@ void ambi_enc_process
         
         /* Load time-domain data */
         for(i=0; i < MIN(nSources,nInputs); i++)
-            memcpy(pData->inputFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
+            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<MAX_NUM_INPUTS; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 
@@ -134,13 +134,13 @@ void ambi_enc_process
         }
         
         /* spatially encode the input signals into spherical harmonic signals */
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0,
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0f,
                     (float*)pData->prev_Y, MAX_NUM_INPUTS,
-                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0,
+                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
                     (float*)pData->tempFrame, FRAME_SIZE);
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0,
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0f,
                     (float*)pData->Y, MAX_NUM_INPUTS,
-                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0,
+                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
                     (float*)pData->outputFrameTD, FRAME_SIZE);
         
         for (i=0; i < nSH; i++)
@@ -148,8 +148,8 @@ void ambi_enc_process
                 pData->outputFrameTD[i][j] = pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
         
         /* for next frame */
-        memcpy(pData->prev_inputFrameTD, pData->inputFrameTD, nSH*FRAME_SIZE*sizeof(float));
-        memcpy(pData->prev_Y, pData->Y, MAX_NUM_INPUTS*MAX_NUM_SH_SIGNALS*sizeof(float));
+        utility_svvcopy((const float*)pData->inputFrameTD, nSH*FRAME_SIZE, (float*)pData->prev_inputFrameTD);
+        utility_svvcopy((const float*)pData->Y, MAX_NUM_INPUTS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_Y);
         
         /* scale by 1/sqrt(nSources) */
         scale = 1.0f/sqrtf((float)nSources);
@@ -169,7 +169,7 @@ void ambi_enc_process
 
         /* save SH signals to output buffer */
         for(i = 0; i < MIN(nSH,nOutputs); i++)
-            memcpy(outputs[i], pData->outputFrameTD[i], FRAME_SIZE * sizeof(float));
+            utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
         for(; i < nOutputs; i++)
             memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
         free((void*)Y_src);

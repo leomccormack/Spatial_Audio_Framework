@@ -175,7 +175,7 @@ void powermap_analysis
 {
     powermap_data *pData = (powermap_data*)(hPm);
     codecPars* pars = pData->pars;
-    int i, j, t, n, ch, sample, band, nSH_order, order_band, nSH_maxOrder, maxOrder;
+    int i, j, t, n, ch, band, nSH_order, order_band, nSH_maxOrder, maxOrder;
     float C_grp_trace, covScale, pmapEQ_band;
     int o[MAX_SH_ORDER+2];
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
@@ -216,7 +216,7 @@ void powermap_analysis
         
         /* load intput time-domain data */
         for (i = 0; i < MIN(nSH, nInputs); i++)
-            memcpy(pData->SHframeTD[i], inputs[i], FRAME_SIZE*sizeof(float));
+            utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHframeTD[i]);
         for (; i < nSH; i++)
             memset(pData->SHframeTD[i], 0, FRAME_SIZE*sizeof(float));
         
@@ -236,8 +236,7 @@ void powermap_analysis
         /* apply the time-frequency transform */
         for(t = 0; t < TIME_SLOTS; t++) {
             for(ch = 0; ch < nSH; ch++)
-                for(sample = 0; sample < HOP_SIZE; sample++)
-                    pData->tempHopFrameTD[ch][sample] = pData->SHframeTD[ch][sample + t*HOP_SIZE];
+                utility_svvcopy(&(pData->SHframeTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
             afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
             for (band = 0; band < HYBRID_BANDS; band++)
                 for (ch = 0; ch < nSH; ch++)
@@ -342,7 +341,7 @@ void powermap_analysis
             /* average powermap over time */
             for(i=0; i<pars->grid_nDirs; i++)
                 pData->pmap[i] =  (1.0f-pmapAvgCoeff) * (pData->pmap[i] )+ pmapAvgCoeff * (pData->prev_pmap[i]);
-            memcpy(pData->prev_pmap,  pData->pmap , pars->grid_nDirs*sizeof(float));
+            utility_svvcopy(pData->pmap, pars->grid_nDirs, pData->prev_pmap);
 
             /* interpolate powermap */
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->interp_nDirs, 1, pars->grid_nDirs, 1.0f,

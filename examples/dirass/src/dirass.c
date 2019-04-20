@@ -205,7 +205,7 @@ void dirass_analysis
         
         /* load intput time-domain data */
         for (i = 0; i < MIN(nSH, nInputs); i++)
-            memcpy(pData->SHframeTD[i], inputs[i], FRAME_SIZE*sizeof(float));
+            utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHframeTD[i]);
         for (; i < nSH; i++)
             memset(pData->SHframeTD[i], 0, FRAME_SIZE*sizeof(float));
         

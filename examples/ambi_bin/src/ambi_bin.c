@@ -166,7 +166,7 @@ void ambi_bin_process
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     codecPars* pars = pData->pars;
-    int n, t, sample, ch, i, j, band;
+    int n, t, ch, i, j, band;
     int o[MAX_SH_ORDER+2];
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float postGain;
@@ -199,7 +199,7 @@ void ambi_bin_process
         
         /* Load time-domain data */
         for(i=0; i < MIN(nSH, nInputs); i++)
-            memcpy(pData->SHFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
+            utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
         for(; i<nSH; i++)
             memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros, to avoid funky behaviour */
         
@@ -217,9 +217,8 @@ void ambi_bin_process
         
         /* Apply time-frequency transform (TFT) */
         for(t=0; t< TIME_SLOTS; t++) {
-            for(ch=0; ch < nSH; ch++)
-                for(sample=0; sample < HOP_SIZE; sample++)
-                    pData->tempHopFrameTD[ch][sample] = pData->SHFrameTD[ch][sample + t*HOP_SIZE];
+            for(ch = 0; ch < nSH; ch++)
+                utility_svvcopy(&(pData->SHFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
             afSTFTforward(pData->hSTFT, pData->tempHopFrameTD, pData->STFTInputFrameTF);
             for(band=0; band<HYBRID_BANDS; band++)
                 for(ch=0; ch < nSH; ch++)
@@ -249,7 +248,7 @@ void ambi_bin_process
                 }
             }
             else
-                memcpy(pData->SHframeTF_rot, pData->SHframeTF, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
+                utility_cvvcopy((const float_complex*)pData->SHframeTF, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS, (float_complex*)pData->SHframeTF_rot);
             
             /* mix to headphones */
             for(band = 0; band < HYBRID_BANDS; band++) {
@@ -273,11 +272,9 @@ void ambi_bin_process
             }
             afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
             for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
-                for (sample = 0; sample < HOP_SIZE; sample++)
-                    outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD[ch][sample]*postGain;
-            for (; ch < nOutputs; ch++) /* fill remaining channels with zeros */
-                for (sample = 0; sample < HOP_SIZE; sample++)
-                    outputs[ch][sample + t* HOP_SIZE] = 0.0f;
+                utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
+            for (; ch < nOutputs; ch++)
+                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
         }
     }
     else

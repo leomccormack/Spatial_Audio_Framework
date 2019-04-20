@@ -194,7 +194,7 @@ void binauraliser_process
         
         /* Load time-domain data */
         for(i=0; i < MIN(nSources,nInputs); i++)
-            memcpy(pData->inputFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
+            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<MAX_NUM_INPUTS; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 #ifdef ENABLE_FADE_IN_OUT
@@ -206,9 +206,8 @@ void binauraliser_process
         
         /* Apply time-frequency transform (TFT) */
         for(t=0; t< TIME_SLOTS; t++) {
-            for(ch=0; ch < nSources; ch++)
-                for(sample=0; sample < HOP_SIZE; sample++)
-                    pData->tempHopFrameTD[ch][sample] = pData->inputFrameTD[ch][sample + t*HOP_SIZE];
+            for(ch = 0; ch < nSources; ch++)
+                utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
             afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
             for(band=0; band<HYBRID_BANDS; band++)
                 for(ch=0; ch < nSources; ch++)
@@ -273,11 +272,9 @@ void binauraliser_process
             }
             afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
             for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
-                for (sample = 0; sample < HOP_SIZE; sample++)
-                    outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD[ch][sample];
+                utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
             for (; ch < nOutputs; ch++)
-                for (sample = 0; sample < HOP_SIZE; sample++)
-                    outputs[ch][sample + t* HOP_SIZE] = 0.0f;
+                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
         }
     }
     else{

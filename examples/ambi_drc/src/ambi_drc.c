@@ -190,15 +190,14 @@ void ambi_drc_process
         
         /* Load time-domain data */
         for(i=0; i < MIN(pData->nSH, nCh); i++)
-            memcpy(pData->inputFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
+            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<pData->nSH; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform */
         for(t=0; t< TIME_SLOTS; t++) {
-            for(ch=0; ch < pData->nSH; ch++)
-                for(sample=0; sample < HOP_SIZE; sample++)
-                    pData->tempHopFrameTD[ch][sample] = pData->inputFrameTD[ch][sample + t*HOP_SIZE];
+            for(ch = 0; ch < pData->nSH; ch++)
+                utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
             afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
             for (band = 0; band < HYBRID_BANDS; band++)
                 for (ch = 0; ch < pData->nSH; ch++)
@@ -208,8 +207,8 @@ void ambi_drc_process
         /* Main processing: */
         if(isPlaying){
             /* Calculate the dynamic range compression gain factors per frequency band based on the omnidirectional component.
-             * McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range Compression". in Proceedings of the 14th
-             * Sound and Music Computing Conference, July 5-8, Espoo, Finland.*/
+             *     McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range Compression". in Proceedings of the 14th
+             *     Sound and Music Computing Conference, July 5-8, Espoo, Finland.*/
             for (t = 0; t < TIME_SLOTS; t++) {
                 for (band = 0; band < HYBRID_BANDS; band++) {
                     /* apply input boost */
@@ -264,11 +263,9 @@ void ambi_drc_process
             }
             afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
             for(ch = 0; ch < MIN(pData->nSH, nCh); ch++)
-                for (sample = 0; sample < HOP_SIZE; sample++)
-                    outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD[ch][sample];
-            for(; ch < nCh; ch++)
-                for (sample = 0; sample < HOP_SIZE; sample++)
-                    outputs[ch][sample + t* HOP_SIZE] = 0.0f;
+                utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
+            for (; ch < nCh; ch++)
+                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
         }
     }
     else {

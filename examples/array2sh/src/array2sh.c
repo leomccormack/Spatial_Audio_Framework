@@ -160,7 +160,7 @@ void array2sh_process
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
-    int n, t, sample, ch, i, band, Q, order, nSH;
+    int n, t, ch, i, band, Q, order, nSH;
     int o[MAX_SH_ORDER+2];
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
     CH_ORDER chOrdering;
@@ -199,15 +199,14 @@ void array2sh_process
         
         /* Load time-domain data */
         for(i=0; i < nInputs; i++)
-            memcpy(pData->inputFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
+            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<Q; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
         
         /* Apply time-frequency transform (TFT) */
         for(t=0; t< TIME_SLOTS; t++) {
-            for(ch=0; ch < Q; ch++)
-                for(sample=0; sample < HOP_SIZE; sample++)
-                    pData->tempHopFrameTD_in[ch][sample] = pData->inputFrameTD[ch][sample + t*HOP_SIZE];
+            for(ch = 0; ch < nSH; ch++)
+                utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD_in[ch]);
             afSTFTforward(pData->hSTFT, pData->tempHopFrameTD_in, pData->STFTInputFrameTF);
             for(band=0; band<HYBRID_BANDS; band++)
                 for(ch=0; ch < Q; ch++)
@@ -244,18 +243,16 @@ void array2sh_process
             }
             afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD_out);
             for (ch = 0; ch < MIN(nSH, nOutputs); ch++)
-                for (sample = 0; sample < HOP_SIZE; sample++)
-                    outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD_out[ch][sample] * gain_lin;
+                utility_svvcopy(pData->tempHopFrameTD_out[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
             for (; ch < nOutputs; ch++)
-                for (sample = 0; sample < HOP_SIZE; sample++)
-                    outputs[ch][sample + t* HOP_SIZE] = 0.0f;
+                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
         }
         
         /* apply normalisation scheme */
         switch(norm){
             case NORM_N3D: /* already N3D */
                 break;
-            case NORM_SN3D:
+            case NORM_SN3D: /* convert to SN3D */
                 for (n = 0; n<order+1; n++)
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)

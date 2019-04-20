@@ -31,12 +31,6 @@
 #define SAF_ENABLE_SOFA_READER
 #include "saf_sofa_reader.h"
 
-
-static inline float matlab_fmodf(float x, float y) {
-    float tmp = fmodf(x, y);
-    return tmp >= 0 ? tmp : tmp + y; 
-}
-
 void binauraliser_interpHRTFs
 (
     void* const hBin,

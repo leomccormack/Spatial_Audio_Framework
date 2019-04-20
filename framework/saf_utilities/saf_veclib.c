@@ -836,8 +836,8 @@ void utility_zeigmp(const double_complex* A, const double_complex* B, const int 
             b[j*dim+i] = B[i*dim+j]; /* store in column major order */
     
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
-    zggev_("V", "V", &n, a, &lda, b, &ldb, alpha, beta,
-           vl, &ldvl, vr, &ldvr, work, &lwork, rwork, &info);
+    zggev_("V", "V", &n, (__CLPK_doublecomplex*)a, &lda, (__CLPK_doublecomplex*)b, &ldb, (__CLPK_doublecomplex*)alpha, (__CLPK_doublecomplex*)beta,
+           (__CLPK_doublecomplex*)vl, &ldvl, (__CLPK_doublecomplex*)vr, &ldvr, (__CLPK_doublecomplex*)work, &lwork, rwork, &info);
 #elif INTEL_MKL_VERSION
     zggev_("V", "V", &n, (MKL_Complex16*)a, &lda, (MKL_Complex16*)b, &ldb, (MKL_Complex16*)alpha, (MKL_Complex16*)beta,
            (MKL_Complex16*)vl, &ldvl, (MKL_Complex16*)vr, &ldvr, (MKL_Complex16*)work, &lwork, rwork, &info);
@@ -1096,7 +1096,7 @@ void utility_zglslv(const double_complex* A, const int dim, double_complex* B, i
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
-    zgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
+    zgesv_( &n, &nrhs, (__CLPK_doublecomplex*)a, &lda, IPIV, (__CLPK_doublecomplex*)b, &ldb, &info );
 #elif INTEL_MKL_VERSION
     zgesv_( &n, &nrhs, (MKL_Complex16*)a, &lda, IPIV, (MKL_Complex16*)b, &ldb, &info );
 #endif
@@ -1429,8 +1429,8 @@ void utility_zpinv(const double_complex* inM, const int dim1, const int dim2, do
             a[j*dim1+i] = inM[i*dim2 +j];
     lwork = -1;
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
-    zgesvd_( "A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, a, (__CLPK_integer*)&lda, s,
-            u, (__CLPK_integer*)&ldu, vt, &ldvt, &wkopt, &lwork, rwork, (__CLPK_integer*)&info );
+    zgesvd_( "A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_doublecomplex*)a, (__CLPK_integer*)&lda, s, (__CLPK_doublecomplex*)u,
+            (__CLPK_integer*)&ldu, (__CLPK_doublecomplex*)vt, &ldvt, (__CLPK_doublecomplex*)&wkopt, &lwork, rwork, (__CLPK_integer*)&info );
 #elif INTEL_MKL_VERSION
     zgesvd_( "A", "A", &m, &n, (MKL_Complex16*)a, &lda, s, (MKL_Complex16*)u, &ldu, (MKL_Complex16*)vt, &ldvt,
             (MKL_Complex16*)&wkopt, &lwork, rwork, &info );
@@ -1438,8 +1438,8 @@ void utility_zpinv(const double_complex* inM, const int dim1, const int dim2, do
     lwork = (int)(creal(wkopt)+0.01);
     work = malloc( lwork*sizeof(double_complex) );
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
-    zgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt,
-            work, &lwork, rwork, &info);
+    zgesvd_( "A", "A", &m, &n, (__CLPK_doublecomplex*)a, &lda, s, (__CLPK_doublecomplex*)u, &ldu, (__CLPK_doublecomplex*)vt, &ldvt,
+            (__CLPK_doublecomplex*)work, &lwork, rwork, &info);
 #elif INTEL_MKL_VERSION
     zgesvd_( "A", "A", &m, &n, (MKL_Complex16*)a, &lda, s, (MKL_Complex16*)u, &ldu, (MKL_Complex16*)vt, &ldvt,
             (MKL_Complex16*)work, &lwork, rwork, &info);

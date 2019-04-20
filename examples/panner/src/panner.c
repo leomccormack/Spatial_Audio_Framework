@@ -143,7 +143,7 @@ void panner_process
 )
 {
     panner_data *pData = (panner_data*)(hPan);
-    int t, sample, ch, ls, i, band, nSources, nLoudspeakers, N_azi, aziIndex, elevIndex, idx3d, idx2D;
+    int t, ch, ls, i, band, nSources, nLoudspeakers, N_azi, aziIndex, elevIndex, idx3d, idx2D;
     float aziRes, elevRes, pv_f, gains3D_sum_pvf, gains2D_sum_pvf;
     float src_dirs[MAX_NUM_INPUTS][2], pValue[HYBRID_BANDS], gains3D[MAX_NUM_OUTPUTS], gains2D[MAX_NUM_OUTPUTS];
 	const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
@@ -170,15 +170,14 @@ void panner_process
         
         /* Load time-domain data */
         for(i=0; i < MIN(nSources,nInputs); i++)
-            memcpy(pData->inputFrameTD[i], inputs[i], FRAME_SIZE * sizeof(float));
+            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<MAX_NUM_INPUTS; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
         
         /* Apply time-frequency transform (TFT) */
         for(t=0; t< TIME_SLOTS; t++) {
-            for(ch=0; ch < nSources; ch++)
-                for(sample=0; sample < HOP_SIZE; sample++)
-                    pData->tempHopFrameTD[ch][sample] = pData->inputFrameTD[ch][sample + t*HOP_SIZE];
+            for(ch = 0; ch < nSources; ch++)
+                utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
             afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
             for(band=0; band<HYBRID_BANDS; band++)
                 for(ch=0; ch < nSources; ch++)
@@ -229,7 +228,6 @@ void panner_process
 					for (i = 0; i < nLoudspeakers; i++)
 						for (t = 0; t < TIME_SLOTS; t++)
 							pData->outputframeTF[band][i][t] = ccaddf(pData->outputframeTF[band][i][t], outputTemp[i][t]);
-					//utility_cvvadd((float_complex*)pData->outputframeTF[band], (float_complex*)outputTemp, MAX_NUM_OUTPUTS*TIME_SLOTS, NULL);
 				}
             }
             else{/* 2-D case */
@@ -285,11 +283,9 @@ void panner_process
             }
             afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
             for (ch = 0; ch < MIN(nLoudspeakers, nOutputs); ch++)
-                for (sample = 0; sample < HOP_SIZE; sample++)
-                    outputs[ch][sample + t* HOP_SIZE] = pData->tempHopFrameTD[ch][sample];
+                utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
             for (; ch < nOutputs; ch++)
-                for (sample = 0; sample < HOP_SIZE; sample++)
-                    outputs[ch][sample + t* HOP_SIZE] = 0.0f;
+                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
         }
     }
     else 
