@@ -64,14 +64,21 @@ void panner_create
     pData->reInitGainTables = 1;
     pData->vbap_gtable = NULL;
     pData->reInitTFT = 1;
+    pData->recalc_M_rotFLAG = 1;
     
-    /* user parameters */
+    /* default user parameters */
     panner_loadPreset(PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
     pData->nSources = pData->new_nSources;
     pData->DTT = 0.0f;
     pData->spread_deg = 0.0f;
     panner_loadPreset(PRESET_5PX, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->output_nDims)); /*check setStateInformation if you change default preset*/
     pData->nLoudpkrs = pData->new_nLoudpkrs;
+    pData->yaw = 0.0f;
+    pData->pitch = 0.0f;
+    pData->roll = 0.0f;
+    pData->bFlipYaw = 0;
+    pData->bFlipPitch = 0;
+    pData->bFlipRoll = 0;
 }
 
 void panner_destroy
@@ -129,6 +136,7 @@ void panner_init
 
     /* reinitialise if needed */
     panner_checkReInit(hPan);
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void panner_process
@@ -144,7 +152,7 @@ void panner_process
 {
     panner_data *pData = (panner_data*)(hPan);
     int t, ch, ls, i, band, nSources, nLoudspeakers, N_azi, aziIndex, elevIndex, idx3d, idx2D;
-    float aziRes, elevRes, pv_f, gains3D_sum_pvf, gains2D_sum_pvf;
+    float aziRes, elevRes, pv_f, gains3D_sum_pvf, gains2D_sum_pvf, Rxyz[3][3], hypotxy;
     float src_dirs[MAX_NUM_INPUTS][2], pValue[HYBRID_BANDS], gains3D[MAX_NUM_OUTPUTS], gains2D[MAX_NUM_OUTPUTS];
 	const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 	float_complex outputTemp[MAX_NUM_OUTPUTS][TIME_SLOTS];
@@ -186,8 +194,30 @@ void panner_process
         memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
 		memset(outputTemp, 0, MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
         
-        /* Apply VBAP Panning */
+        /* Main processing: */
         if(isPlaying){
+            /* Rotate source directions */
+            if(pData->recalc_M_rotFLAG){
+                yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, 0, Rxyz);
+                for(i=0; i<nSources; i++){
+                    pData->src_dirs_xyz[i][0] = cosf(DEG2RAD(pData->src_dirs_deg[i][1])) * cosf(DEG2RAD(pData->src_dirs_deg[i][0]));
+                    pData->src_dirs_xyz[i][1] = cosf(DEG2RAD(pData->src_dirs_deg[i][1])) * sinf(DEG2RAD(pData->src_dirs_deg[i][0]));
+                    pData->src_dirs_xyz[i][2] = sinf(DEG2RAD(pData->src_dirs_deg[i][1]));
+                    pData->recalc_gainsFLAG[i] = 1;
+                }
+                cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSources, 3, 3, 1.0f,
+                            (float*)(pData->src_dirs_xyz), 3,
+                            (float*)Rxyz, 3, 0.0f,
+                            (float*)(pData->src_dirs_rot_xyz), 3);
+                for(i=0; i<nSources; i++){
+                    hypotxy = sqrtf(powf(pData->src_dirs_rot_xyz[i][0], 2.0f) + powf(pData->src_dirs_rot_xyz[i][1], 2.0f));
+                    pData->src_dirs_rot_deg[i][0] = RAD2DEG(atan2f(pData->src_dirs_rot_xyz[i][1], pData->src_dirs_rot_xyz[i][0]));
+                    pData->src_dirs_rot_deg[i][1] = RAD2DEG(atan2f(pData->src_dirs_rot_xyz[i][2], hypotxy));
+                }
+                pData->recalc_M_rotFLAG = 0;
+            }
+            
+            /* Apply VBAP Panning */
             if(pData->output_nDims == 3){/* 3-D case */
                 aziRes = (float)pData->vbapTableRes[0];
                 elevRes = (float)pData->vbapTableRes[1];
@@ -195,9 +225,10 @@ void panner_process
                 for (ch = 0; ch < nSources; ch++) {
                     /* recalculate frequency dependent panning gains */
                     if(pData->recalc_gainsFLAG[ch]){
-                        //memset(pData->G_src[band][ch], 0, MAX_NUM_OUTPUTS * sizeof(float));
-                        aziIndex = (int)(matlab_fmodf(pData->src_dirs_deg[ch][0] + 180.0f, 360.0f) / aziRes + 0.5f);
-                        elevIndex = (int)((pData->src_dirs_deg[ch][1] + 90.0f) / elevRes + 0.5f);
+                        //aziIndex = (int)(matlab_fmodf(pData->src_dirs_deg[ch][0] + 180.0f, 360.0f) / aziRes + 0.5f);
+                        //elevIndex = (int)((pData->src_dirs_deg[ch][1] + 90.0f) / elevRes + 0.5f);
+                        aziIndex = (int)(matlab_fmodf(pData->src_dirs_rot_deg[ch][0] + 180.0f, 360.0f) / aziRes + 0.5f);
+                        elevIndex = (int)((pData->src_dirs_rot_deg[ch][1] + 90.0f) / elevRes + 0.5f);
                         idx3d = elevIndex * N_azi + aziIndex;
                         for (ls = 0; ls < nLoudspeakers; ls++)
                             gains3D[ls] =  pData->vbap_gtable[idx3d*nLoudspeakers+ls];
@@ -235,8 +266,8 @@ void panner_process
                 for (ch = 0; ch < nSources; ch++) {
                     /* recalculate frequency dependent panning gains */
                     if(pData->recalc_gainsFLAG[ch]){
-                        //memset(pData->G_src[band][ch], 0, MAX_NUM_OUTPUTS*sizeof(float));
-                        idx2D = (int)((matlab_fmodf(pData->src_dirs_deg[ch][0]+180.0f,360.0f)/aziRes)+0.5f);
+                        //idx2D = (int)((matlab_fmodf(pData->src_dirs_deg[ch][0]+180.0f,360.0f)/aziRes)+0.5f);
+                        idx2D = (int)((matlab_fmodf(pData->src_dirs_rot_deg[ch][0]+180.0f,360.0f)/aziRes)+0.5f);
                         for (ls = 0; ls < nLoudspeakers; ls++)
                             gains2D[ls] = pData->vbap_gtable[idx2D*nLoudspeakers+ls];
                         for (band = 0; band < HYBRID_BANDS; band++){
@@ -332,6 +363,7 @@ void panner_setSourceAzi_deg(void* const hPan, int index, float newAzi_deg)
     newAzi_deg = MIN(newAzi_deg, 180.0f);
     pData->src_dirs_deg[index][0] = newAzi_deg;
     pData->recalc_gainsFLAG[index] = 1;
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void panner_setSourceElev_deg(void* const hPan, int index, float newElev_deg)
@@ -341,6 +373,7 @@ void panner_setSourceElev_deg(void* const hPan, int index, float newElev_deg)
     newElev_deg = MIN(newElev_deg, 90.0f);
     pData->src_dirs_deg[index][1] = newElev_deg;
     pData->recalc_gainsFLAG[index] = 1;
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void panner_setNumSources(void* const hPan, int new_nSources)
@@ -353,6 +386,7 @@ void panner_setNumSources(void* const hPan, int new_nSources)
         pData->reInitTFT = 1;
         for(ch=pData->nSources; ch<pData->new_nSources; ch++)
             pData->recalc_gainsFLAG[ch] = 1;
+        pData->recalc_M_rotFLAG = 1;
     }
 }
 
@@ -368,6 +402,7 @@ void panner_setLoudspeakerAzi_deg(void* const hPan, int index, float newAzi_deg)
     pData->reInitGainTables=1;
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void panner_setLoudspeakerElev_deg(void* const hPan, int index, float newElev_deg)
@@ -380,6 +415,7 @@ void panner_setLoudspeakerElev_deg(void* const hPan, int index, float newElev_de
     pData->reInitGainTables=1;
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void panner_setNumLoudspeakers(void* const hPan, int new_nLoudspeakers)
@@ -392,6 +428,7 @@ void panner_setNumLoudspeakers(void* const hPan, int new_nLoudspeakers)
     pData->reInitGainTables=1;
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void panner_setOutputConfigPreset(void* const hPan, int newPresetID)
@@ -404,6 +441,7 @@ void panner_setOutputConfigPreset(void* const hPan, int newPresetID)
     pData->reInitGainTables=1;
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void panner_setInputConfigPreset(void* const hPan, int newPresetID)
@@ -415,6 +453,7 @@ void panner_setInputConfigPreset(void* const hPan, int newPresetID)
         pData->reInitTFT = 1;
     for(ch=0; ch<pData->new_nSources; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void panner_setDTT(void* const hPan, float newValue)
@@ -425,6 +464,7 @@ void panner_setDTT(void* const hPan, float newValue)
     panner_getPvalue(pData->DTT, pData->freqVector, pData->pValue);
     for(ch=0; ch<pData->new_nSources; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
+    pData->recalc_M_rotFLAG = 1;
 }
 
 void panner_setSpread(void* const hPan, float newValue)
@@ -436,6 +476,55 @@ void panner_setSpread(void* const hPan, float newValue)
         pData->reInitGainTables=1;
         for(ch=0; ch<MAX_NUM_INPUTS; ch++)
             pData->recalc_gainsFLAG[ch] = 1;
+        pData->recalc_M_rotFLAG = 1;
+    }
+}
+
+void panner_setYaw(void  * const hBin, float newYaw)
+{
+    panner_data *pData = (panner_data*)(hBin);
+    pData->yaw = pData->bFlipYaw == 1 ? -DEG2RAD(newYaw) : DEG2RAD(newYaw);
+    pData->recalc_M_rotFLAG = 1;
+}
+
+void panner_setPitch(void* const hBin, float newPitch)
+{
+    panner_data *pData = (panner_data*)(hBin);
+    pData->pitch = pData->bFlipPitch == 1 ? -DEG2RAD(newPitch) : DEG2RAD(newPitch);
+    pData->recalc_M_rotFLAG = 1;
+}
+
+void panner_setRoll(void* const hBin, float newRoll)
+{
+    panner_data *pData = (panner_data*)(hBin);
+    pData->roll = pData->bFlipRoll == 1 ? -DEG2RAD(newRoll) : DEG2RAD(newRoll);
+    pData->recalc_M_rotFLAG = 1;
+}
+
+void panner_setFlipYaw(void* const hBin, int newState)
+{
+    panner_data *pData = (panner_data*)(hBin);
+    if(newState !=pData->bFlipYaw ){
+        pData->bFlipYaw = newState;
+        panner_setYaw(hBin, -panner_getYaw(hBin));
+    }
+}
+
+void panner_setFlipPitch(void* const hBin, int newState)
+{
+    panner_data *pData = (panner_data*)(hBin);
+    if(newState !=pData->bFlipPitch ){
+        pData->bFlipPitch = newState;
+        panner_setPitch(hBin, -panner_getPitch(hBin));
+    }
+}
+
+void panner_setFlipRoll(void* const hBin, int newState)
+{
+    panner_data *pData = (panner_data*)(hBin);
+    if(newState !=pData->bFlipRoll ){
+        pData->bFlipRoll = newState;
+        panner_setRoll(hBin, -panner_getRoll(hBin));
     }
 }
 
@@ -504,6 +593,42 @@ float panner_getSpread(void* const hPan)
 {
     panner_data *pData = (panner_data*)(hPan);
     return pData->spread_deg;
+}
+
+float panner_getYaw(void* const hBin)
+{
+    panner_data *pData = (panner_data*)(hBin);
+    return pData->bFlipYaw == 1 ? -RAD2DEG(pData->yaw) : RAD2DEG(pData->yaw);
+}
+
+float panner_getPitch(void* const hBin)
+{
+    panner_data *pData = (panner_data*)(hBin);
+    return pData->bFlipPitch == 1 ? -RAD2DEG(pData->pitch) : RAD2DEG(pData->pitch);
+}
+
+float panner_getRoll(void* const hBin)
+{
+    panner_data *pData = (panner_data*)(hBin);
+    return pData->bFlipRoll == 1 ? -RAD2DEG(pData->roll) : RAD2DEG(pData->roll);
+}
+
+int panner_getFlipYaw(void* const hBin)
+{
+    panner_data *pData = (panner_data*)(hBin);
+    return pData->bFlipYaw;
+}
+
+int panner_getFlipPitch(void* const hBin)
+{
+    panner_data *pData = (panner_data*)(hBin);
+    return pData->bFlipPitch;
+}
+
+int panner_getFlipRoll(void* const hBin)
+{
+    panner_data *pData = (panner_data*)(hBin);
+    return pData->bFlipRoll;
 }
 
 int panner_getProcessingDelay()

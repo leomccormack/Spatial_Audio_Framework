@@ -38,6 +38,7 @@
 #include "panner_database.h"
 #define SAF_ENABLE_AFSTFT /* for time-frequency transform */
 #define SAF_ENABLE_VBAP   /* for VBAP gains */
+#define SAF_ENABLE_SH     /* for rotations */
 #include "saf.h"
 
 #ifdef __cplusplus
@@ -56,6 +57,13 @@ extern "C" {
 #define MAX_NUM_INPUTS ( 64 )                               /* Maximum permited channels for the VST standard */
 #define MAX_NUM_OUTPUTS ( 64 )                              /* Maximum permited channels for the VST standard */
  
+#ifndef DEG2RAD
+  #define DEG2RAD(x) (x * PI / 180.0f)
+#endif
+#ifndef RAD2DEG
+  #define RAD2DEG(x) (x * 180.0f / PI)
+#endif
+    
     
 /***********/
 /* Structs */
@@ -81,11 +89,17 @@ typedef struct _panner
     float* vbap_gtable; /* N_hrtf_vbap_gtable x nLoudpkrs */
     int N_vbap_gtable;
     float_complex G_src[HYBRID_BANDS][MAX_NUM_INPUTS][MAX_NUM_OUTPUTS];
+    
+    /* flags */
     int recalc_gainsFLAG[MAX_NUM_INPUTS];
     int reInitGainTables;
     int reInitTFT;
+    int recalc_M_rotFLAG;
     
     /* misc. */
+    float src_dirs_rot_deg[MAX_NUM_INPUTS][2];
+    float src_dirs_rot_xyz[MAX_NUM_INPUTS][3];
+    float src_dirs_xyz[MAX_NUM_INPUTS][3]; 
     int nTriangles;
     int output_nDims; /* 2: 2-D, 3: 3-D */
     
@@ -98,6 +112,8 @@ typedef struct _panner
     float DTT, spread_deg;
     int nLoudpkrs, new_nLoudpkrs;
     float loudpkrs_dirs_deg[MAX_NUM_OUTPUTS][2];
+    float yaw, roll, pitch;                  /* rotation angles in degrees */
+    int bFlipYaw, bFlipPitch, bFlipRoll;     /* flag to flip the sign of the individual rotation angles */
     
 } panner_data;
      

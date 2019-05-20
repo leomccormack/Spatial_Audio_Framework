@@ -190,6 +190,18 @@ void panner_setDTT(void* const hPan, float newValue);
     
 void panner_setSpread(void* const hPan, float newValue);
     
+void panner_setYaw(void* const hPan, float newYaw);
+
+void panner_setPitch(void* const hPan, float newPitch);
+
+void panner_setRoll(void* const hPan, float newRoll);
+
+void panner_setFlipYaw(void* const hPan, int newState);
+
+void panner_setFlipPitch(void* const hPan, int newState);
+
+void panner_setFlipRoll(void* const hPan, int newState);
+    
     
 /*****************/
 /* Get Functions */
@@ -216,6 +228,18 @@ int panner_getDAWsamplerate(void* const hPan);
 float panner_getDTT(void* const hPan);
     
 float panner_getSpread(void* const hPan);
+    
+float panner_getYaw(void* const hPan);
+
+float panner_getPitch(void* const hPan);
+
+float panner_getRoll(void* const hPan);
+
+int panner_getFlipYaw(void* const hPan);
+
+int panner_getFlipPitch(void* const hPan);
+
+int panner_getFlipRoll(void* const hPan);
     
 int panner_getProcessingDelay(void);
     

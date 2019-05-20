@@ -170,7 +170,7 @@ void binauraliser_process
 )
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    int t, sample, ch, ear, i, band, nSources; 
+    int t, ch, ear, i, band, nSources;
     float src_dirs[MAX_NUM_INPUTS][2], Rxyz[3][3], hypotxy;
     int enableRotation;
     

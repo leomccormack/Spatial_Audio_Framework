@@ -254,7 +254,7 @@ void array2sh_process
                 break;
             case NORM_SN3D: /* convert to SN3D */
                 for (n = 0; n<order+1; n++)
-                    for (ch = o[n]; ch<o[n+1]; ch++)
+                    for (ch = o[n]; ch < MIN(o[n+1],nOutputs); ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             outputs[ch][i] /= sqrtf(2.0f*(float)n+1.0f);
                 break;
