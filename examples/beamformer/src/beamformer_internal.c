@@ -24,9 +24,7 @@
  *     Leo McCormack, 17.05.2019
  */
 
-#include "beamformer_internal.h"
-#define SAF_ENABLE_SOFA_READER   
-#include "saf_sofa_reader.h"
+#include "beamformer_internal.h" 
 
 void beamformer_initTFT
 (

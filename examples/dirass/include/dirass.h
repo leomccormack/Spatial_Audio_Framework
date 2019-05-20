@@ -120,12 +120,7 @@ typedef enum _REASS_MODE {
      *     Processing (ICASSP).*/
     REASS_NEAREST,
     /* Each sector beamformer is re-encoded into spherical harmonics of a higher order.
-     * The map is then derived from the upscaled SHs as normal. More information can be found
-     * in:
-     *     McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular
-     *     spectra based on a directional re-assignment approach for ambisonic sound-field
-     *     visualisation". IEEE International Conference on Acoustics, Speech and Signal
-     *     Processing (ICASSP).*/
+     * The map is then derived from the upscaled SHs as normal. */
     REASS_UPSCALE
     
 } REASS_MODES;

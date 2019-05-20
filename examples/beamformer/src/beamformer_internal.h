@@ -50,15 +50,6 @@ extern "C" {
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER+1)*(MAX_SH_ORDER+1) ) /* Maximum number of spherical harmonic components */
 #define MAX_NUM_BEAMS ( 64 )                    /* Maximum permitted channels for the VST standard */
     
-typedef enum _CH_ORDER{
-    CH_ACN = 1
-}CH_ORDER;
-
-typedef enum _NORM_TYPES{
-    NORM_N3D = 1,
-    NORM_SN3D
-}NORM_TYPES;
-    
     
 /***********/
 /* Structs */
@@ -81,23 +72,20 @@ typedef struct _beamformer
     
     /* internal variables */
     int nSH;
-    
-    /* to still keep track of current config and preparing for new config */
     int new_nBeams;                          /* if new_nLoudpkrs != nLoudpkrs, afSTFT is reinitialised */
-    int new_nSH;
-    int new_beamOrder;
+    int new_nSH; 
+    float beamWeights[MAX_NUM_BEAMS][MAX_NUM_SH_SIGNALS];
+    float_complex beamWeights_cmplx[MAX_NUM_BEAMS][MAX_NUM_SH_SIGNALS];
     
     /* flags */
-    int recalc_beamWeights[MAX_NUM_BEAMS];   /* 0: no init required, 1: init required */
-    int reInitCodec;                         /* 0: no init required, 1: init required, 2: init in progress */
+    int recalc_beamWeights[MAX_NUM_BEAMS];   /* 0: no init required, 1: init required */ 
     int reInitTFT;                           /* 0: no init required, 1: init required, 2: init in progress */
-    int reInitHRTFs;                         /* 0: no init required, 1: init required, 2: init in progress */
     
     /* user parameters */
     int beamOrder;                           /* beam order */
     int nBeams;                              /* number of loudspeakers/virtual loudspeakers */
-    float beam_dirs_deg[MAX_NUM_BEAMS][2];      /* beam directions in degrees [azi, elev] */
-    BEAM_TYPES beamType;
+    float beam_dirs_deg[MAX_NUM_BEAMS][2];   /* beam directions in degrees [azi, elev] */
+    BEAM_TYPES beamType;                     /* see 'BEAM_TYPES' enum */
     CH_ORDER chOrdering;                     /* only ACN is supported */
     NORM_TYPES norm;                         /* N3D or SN3D */
     

@@ -75,6 +75,7 @@ Several examples are also included in the repository:
 * **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for spherical harmonic signals (aka Ambisonic signals)
 * **ambi_enc** - a simple Ambisonic encoder
 * **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals)
+* **beamformer** - a beamforming example with several different beamforming options
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file
 * **dirass** - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction.
 * **panner** - a frequency-dependent VBAP panner

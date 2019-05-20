@@ -47,10 +47,21 @@ typedef enum _BEAM_ORDERS{
 }BEAM_ORDERS;
     
 typedef enum _BEAM_TYPES {
-    BEAM_TYPE_HYPER_CARDIOID = 1   
+    BEAM_TYPE_CARDIOID = 1,
+    BEAM_TYPE_HYPERCARDIOID,
+    BEAM_TYPE_MAX_EV
     
 } BEAM_TYPES;
  
+typedef enum _CH_ORDER{
+    CH_ACN = 1
+}CH_ORDER;
+
+typedef enum _NORM_TYPES{
+    NORM_N3D = 1,
+    NORM_SN3D
+}NORM_TYPES;
+    
     
 /******************/
 /* Main Functions */
