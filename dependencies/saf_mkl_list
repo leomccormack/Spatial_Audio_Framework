@@ -30,6 +30,7 @@ cblas_ccopy
 cblas_sscal
 cblas_dscal
 cblas_cscal
+cblas_zscal
 cblas_dgemm
 cblas_isamax
 cblas_isamin
@@ -42,10 +43,15 @@ cgesv_
 cgetrf_
 cgetri_
 cposv_
+cggev_
 cpotrf_
+zgesvd_
+zggev_
+zgesv_
 dgesvd_
 dgetrf_
 dgetri_
+dgesv_
 sgesvd_
 sgesv_
 sgetrf_

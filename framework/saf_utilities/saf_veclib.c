@@ -856,7 +856,7 @@ void utility_zeigmp(const double_complex* A, const double_complex* B, const int 
     else{
         if(D!=NULL)
             for(i=0; i<dim; i++)
-                D[i*dim+i] = ccdivf(alpha[i],beta[i]);
+                D[i*dim+i] = ccdiv(alpha[i],beta[i]);
         
         if(VL!=NULL)
             for(i=0; i<dim; i++)
