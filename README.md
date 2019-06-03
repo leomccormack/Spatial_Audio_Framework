@@ -144,16 +144,27 @@ This framework is provided under the [ISC license](https://choosealicense.com/li
 ## References
 
 [1] Zaunschirm M, Schörkhuber C, Höldrich R. Binaural rendering of Ambisonic signals by head-related impulse response time alignment and a diffuseness constraint. The Journal of the Acoustical Society of America. 2018 Jun 19;143(6):3616-27.
+
 [2] Schörkhuber C, Zaunschirm M, Höldrich R. Binaural Rendering of Ambisonic Signals via Magnitude Least Squares. InProceedings of the DAGA 2018 (Vol. 44, pp. 339-342).
+
 [3] Zotter F, Frank M. All-round ambisonic panning and decoding. Journal of the audio engineering society. 2012 Nov 26;60(10):807-20.
+
 [4] Zotter F, Pomberger H, Noisternig M. Energy-preserving ambisonic decoding. Acta Acustica united with Acustica. 2012 Jan 1;98(1):37-47.
+
 [5] McCormack L, Välimäki V. FFT-based Dynamic Range Compression. InProceedings of the 14th Sound and Music Computing Conference, July 5--8, Espoo, Finland, At Espoo, Finland 2017 Jul 5.
+
 [6] Williams EG. Fourier acoustics: sound radiation and nearfield acoustical holography. Elsevier; 1999 Jun 10.
+
 [7] Rafaely B. Fundamentals of spherical array processing. Berlin: Springer; 2015 Feb 18.
+
 [8] McCormack L, Delikaris-Manias S, Farina A, Pinardi D, Pulkki V. Real-Time Conversion of Sensor Array Signals into Spherical Harmonic Signals with Applications to Spatially Localized Sub-Band Sound-Field Analysis. InAudio Engineering Society Convention 144 2018 May 14. Audio Engineering Society.
+
 [9] McCormack L, Politis A, Pulkki V. Sharpening of Angular Spectra Based on a Directional Re-assignment Approach for Ambisonic Sound-field Visualisation. InICASSP 2019-2019 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) 2019 Apr 17 (pp. 576-580). IEEE.
+
 [10] Pulkki V. Virtual sound source positioning using vector base amplitude panning. Journal of the audio engineering society. 1997 Jun 1;45(6):456-66.
+
 [11] Laitinen MV, Vilkamo J, Jussila K, Politis A, Pulkki V. Gain normalization in amplitude panning as a function of frequency and room reverberance. InAudio Engineering Society Conference: 55th International Conference: Spatial Audio 2014 Aug 26. Audio Engineering Society.
+
 [12] Ivanic J, Ruedenberg K. Rotation Matrices for Real Spherical Harmonics. Direct Determination by Recursion. The Journal of Physical Chemistry A. 1998 Nov 5;102(45):9099-100.
 
 
