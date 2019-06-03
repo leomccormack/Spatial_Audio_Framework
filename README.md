@@ -87,7 +87,7 @@ To generate and copy the library to a system path folder, use the following comm
 ```
 cd /opt⁩/intel⁩/compilers_and_libraries/linux/mkl⁩/tools⁩/builder⁩
 sudo make intel64 interface=lp64 threading=sequential name=libsaf_mkl_custom export=saf_mkl_list
-sudo cp saf_mkl_custom.dylib /usr/lib
+sudo cp saf_mkl_custom.so /usr/lib
 
 ```
 
