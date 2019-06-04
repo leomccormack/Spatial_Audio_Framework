@@ -57,7 +57,7 @@ void ambi_dec_create
     pData->rE_WEIGHT[1] = 1;
     pData->diffEQmode[0] = AMPLITUDE_PRESERVING;
     pData->diffEQmode[1] = ENERGY_PRESERVING;
-    pData->transitionFreq = 1000.0f;
+    pData->transitionFreq = 800.0f;
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
@@ -209,6 +209,7 @@ void ambi_dec_process
     float transitionFreq;
     DIFFUSE_FIELD_EQ_APPROACH diffEQmode[NUM_DECODERS];
     NORM_TYPES norm;
+    CH_ORDER chOrdering;
     
     /* reinitialise if needed */
 #ifdef __APPLE__
@@ -237,13 +238,28 @@ void ambi_dec_process
         memcpy(diffEQmode, pData->diffEQmode, NUM_DECODERS*sizeof(int));
         binauraliseLS = pData->binauraliseLS;
         norm = pData->norm;
+        chOrdering = pData->chOrdering;
         memcpy(rE_WEIGHT, pData->rE_WEIGHT, NUM_DECODERS*sizeof(int));
         
         /* Load time-domain data */
-        for(i=0; i < MIN(pData->nSH, nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
-        for(; i<pData->nSH; i++)
-            memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float));
+        switch(chOrdering){
+            case CH_ACN:
+                for(i=0; i < MIN(pData->nSH, nInputs); i++)
+                    utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
+                for(; i<pData->nSH; i++)
+                    memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                break;
+            case CH_FUMA:   /* only for first-order, convert to ACN */
+                if(nInputs>=4){
+                    utility_svvcopy(inputs[0], FRAME_SIZE, pData->SHFrameTD[0]);
+                    utility_svvcopy(inputs[1], FRAME_SIZE, pData->SHFrameTD[3]);
+                    utility_svvcopy(inputs[2], FRAME_SIZE, pData->SHFrameTD[1]);
+                    utility_svvcopy(inputs[3], FRAME_SIZE, pData->SHFrameTD[2]);
+                }
+                for(i=MIN(nInputs,4); i<pData->nSH; i++)
+                    memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                break;
+        }
         
         /* account for input normalisation scheme */
         switch(norm){
@@ -254,6 +270,13 @@ void ambi_dec_process
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->SHFrameTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
+                break;
+            case NORM_FUMA: /* only for first-order, convert to N3D */
+                for(i = 0; i<FRAME_SIZE; i++)
+                    pData->SHFrameTD[0][i] *= sqrtf(2.0f);
+                for (ch = 1; ch<4; ch++)
+                    for(i = 0; i<FRAME_SIZE; i++)
+                        pData->SHFrameTD[ch][i] *= sqrtf(3.0f);
                 break;
         }
         
@@ -391,6 +414,11 @@ void ambi_dec_setMasterDecOrder(void  * const hAmbi, int newValue)
     pData->new_nSH = (pData->new_masterOrder+1)*(pData->new_masterOrder+1);
     pData->reInitTFT = 1;
     pData->reInitCodec = 1;
+    /* FUMA only supports 1st order */
+    if(pData->new_masterOrder!=MASTER_ORDER_FIRST && pData->chOrdering == CH_FUMA)
+        pData->chOrdering = CH_ACN;
+    if(pData->new_masterOrder!=MASTER_ORDER_FIRST && pData->norm == NORM_FUMA)
+        pData->norm = NORM_SN3D;
 }
 
 void ambi_dec_setDecOrder(void  * const hAmbi, int newValue, int bandIdx)
@@ -564,13 +592,15 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID)
 void ambi_dec_setChOrder(void* const hAmbi, int newOrder)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    pData->chOrdering = (CH_ORDER)newOrder;
+    if((CH_ORDER)newOrder != CH_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST) /* FUMA only supports 1st order */
+        pData->chOrdering = (CH_ORDER)newOrder;
 }
 
 void ambi_dec_setNormType(void* const hAmbi, int newType)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    pData->norm = (NORM_TYPES)newType;
+    if((NORM_TYPES)newType != NORM_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST) /* FUMA only supports 1st order */
+        pData->norm = (NORM_TYPES)newType;
 }
 
 void ambi_dec_setDecMethod(void* const hAmbi, int index, int newID)
@@ -595,7 +625,7 @@ void ambi_dec_setDecNormType(void* const hAmbi, int index, int newID)
 void ambi_dec_setTransitionFreq(void* const hAmbi, float newValue)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    pData->transitionFreq = newValue;
+    pData->transitionFreq = CLAMP(newValue, AMBI_DEC_TRANSITION_MIN_VALUE, AMBI_DEC_TRANSITION_MAX_VALUE);
 }
 
 

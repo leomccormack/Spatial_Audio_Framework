@@ -40,7 +40,10 @@
 extern "C" {
 #endif
     
-/* Array presets: */
+/***********************/
+/* Presets + Constants */
+/***********************/
+    
 #define ENABLE_AALTO_HYDROPHONE_PRESET
 #define ENABLE_SENNHEISER_AMBEO_PRESET
 #define ENABLE_CORE_SOUND_TETRAMIC_PRESET
@@ -49,6 +52,7 @@ extern "C" {
 #define ENABLE_EIGENMIKE32_PRESET
 #define ENABLE_DTU_MIC_PRESET
     
+#define ARRAY2SH_MAX_SH_ORDER ( 7 )
 typedef enum _ENCODING_ORDERS{
     ENCODING_ORDER_FIRST = 1,
     ENCODING_ORDER_SECOND,
@@ -85,6 +89,7 @@ typedef enum _PRESETS{
 #endif
 }PRESETS;
 
+#define ARRAY2SH_NUM_FILTER_TYPES ( 4 )
 typedef enum _FILTER_TYPES{
     /* encoding filters based on a 'soft-limiting' regularised inversion of the modal responses, see:
            Bernschutz, B., Porschmann, C., Spors, S., Weinzierl, S., Versterkung, B., 2011. Soft-limiting der
@@ -102,21 +107,26 @@ typedef enum _FILTER_TYPES{
     FILTER_Z_STYLE_MAXRE
 }FILTER_TYPES;
 
+#define ARRAY2SH_NUM_CH_ORDERINGS ( 2 )
 typedef enum _CH_ORDER{
     CH_ACN = 1,
-    CH_SID
+    CH_FUMA     /* first-order only */
 }CH_ORDER;
 
+#define ARRAY2SH_NUM_NORM_TYPES ( 3 )
 typedef enum _NORM_TYPES{
     NORM_N3D = 1,
-    NORM_SN3D
+    NORM_SN3D,
+    NORM_FUMA   /* first-order only */
 }NORM_TYPES;
 
+#define ARRAY2SH_NUM_ARRAY_TYPES ( 2 )
 typedef enum _ARRAY_TYPES{
     ARRAY_SPHERICAL = 1,
-    ARRAY_CYLINDRICAL    /* FYI: although supported, cylindrical arrays have not really been tested */
+    ARRAY_CYLINDRICAL    /* FYI: although supported, cylindrical arrays have not really been tested as we don't own one */
 }ARRAY_TYPES;
 
+#define ARRAY2SH_NUM_WEIGHT_TYPES ( 6 )
 typedef enum _WEIGHT_TYPES{
     WEIGHT_RIGID_OMNI = 1, 
     WEIGHT_RIGID_CARD,
@@ -125,6 +135,18 @@ typedef enum _WEIGHT_TYPES{
     WEIGHT_OPEN_CARD,
     WEIGHT_OPEN_DIPOLE
 }WEIGHT_TYPES;
+    
+#define ARRAY2SH_MAX_NUM_SENSORS ( 64 )
+#define ARRAY2SH_MAX_GAIN_MIN_VALUE ( 0.0f )
+#define ARRAY2SH_MAX_GAIN_MAX_VALUE ( 80.0f )
+#define ARRAY2SH_POST_GAIN_MIN_VALUE ( -60.0f )
+#define ARRAY2SH_POST_GAIN_MAX_VALUE ( 12.0f )
+#define ARRAY2SH_SPEED_OF_SOUND_MIN_VALUE ( 200.0f )
+#define ARRAY2SH_SPEED_OF_SOUND_MAX_VALUE ( 2000.0f )
+#define ARRAY2SH_ARRAY_RADIUS_MIN_VALUE ( 1.0f )
+#define ARRAY2SH_ARRAY_RADIUS_MAX_VALUE ( 200.0f )
+#define ARRAY2SH_BAFFLE_RADIUS_MIN_VALUE ( 1.0f )
+#define ARRAY2SH_BAFFLE_RADIUS_MAX_VALUE ( 200.0f )
     
     
 /******************/
@@ -265,10 +287,10 @@ int array2sh_getSamplingRate(void* const hA2sh);
     
 int array2sh_getProcessingDelay(void);
     
+    
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif /* __ARRAY2SH_H_INCLUDED__ */
 

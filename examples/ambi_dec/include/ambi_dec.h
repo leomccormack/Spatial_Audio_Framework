@@ -36,9 +36,9 @@
 extern "C" {
 #endif
     
-/***********/
-/* Presets */
-/***********/
+/***********************/
+/* Presets + Constants */
+/***********************/
     
 /* Microphone array options */
 #define ENABLE_ZYLIA_MIC_PRESET
@@ -79,7 +79,7 @@ typedef enum _MASTER_ORDERS{
     MASTER_ORDER_SEVENTH
     
 }MASTER_ORDERS;
-    
+     
 #define AMBI_DEC_NUM_DECODING_METHODS ( 4 )
 typedef enum _DECODING_METHODS {
     DECODING_METHOD_SAD = 1,   /* Sampling Ambisonic Decoder (SAD)*/
@@ -189,6 +189,10 @@ typedef enum _NORM_TYPES{
     NORM_FUMA   /* first-order only */
 }NORM_TYPES;
     
+#define AMBI_DEC_MAX_NUM_OUTPUTS ( 64 )
+#define AMBI_DEC_TRANSITION_MIN_VALUE ( 500.0f )
+#define AMBI_DEC_TRANSITION_MAX_VALUE ( 2000.0f )
+    
 
 /******************/
 /* Main Functions */
@@ -284,11 +288,7 @@ int ambi_dec_getNumLoudspeakers(void* const hAmbi);
 
 int ambi_dec_getMaxNumLoudspeakers(void);
     
-int  ambi_dec_getNSHrequired(void* const hAmbi);
-
-float ambi_dec_getSourceAzi_deg(void* const hAmbi, int index);
-
-float ambi_dec_getSourceElev_deg(void* const hAmbi, int index);
+int  ambi_dec_getNSHrequired(void* const hAmbi); 
     
 int ambi_dec_getUseDefaultHRIRsflag(void* const hAmbi);
     

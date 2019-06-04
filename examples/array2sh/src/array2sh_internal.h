@@ -56,12 +56,12 @@ extern "C" {
 /* Definitions */
 /***************/
     
-#define MAX_SH_ORDER ( 7 )                     /* maximum encoding order */
+#define MAX_SH_ORDER ( ARRAY2SH_MAX_SH_ORDER ) /* maximum encoding order */
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1) ) /* (L+1)^2 */
 #define HOP_SIZE ( 128 )                       /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )          /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )   /* 4/8/16 */
-#define MAX_NUM_SENSORS ( 64 )                 /* Maximum permited channels for the VST standard */
+#define MAX_NUM_SENSORS ( ARRAY2SH_MAX_NUM_SENSORS ) /* Maximum permited channels for the VST standard */
 #define MAX_EVAL_FREQ_HZ ( 20e3f )             /* Up to which frequency should the evaluation be accurate */
     
 
@@ -74,7 +74,7 @@ typedef struct _arrayPars {
     float r;                        /* radius of sensors */
     float R;                        /* radius of scatterer (only for rigid arrays) */
     ARRAY_TYPES arrayType;          /* array type, spherical/cylindrical */
-    WEIGHT_TYPES weightType;        /*  */
+    WEIGHT_TYPES weightType;        /* open/rigid etc */
     float sensorCoords_rad[MAX_NUM_SENSORS][2];
     float sensorCoords_deg[MAX_NUM_SENSORS][2];
         

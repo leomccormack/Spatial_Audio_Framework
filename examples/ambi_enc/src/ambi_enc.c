@@ -165,13 +165,35 @@ void ambi_enc_process
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->outputFrameTD[ch][i] /= sqrtf(2.0f*(float)n+1.0f);
                 break;
+            case NORM_FUMA: /* only for first-order */
+                for(i = 0; i<FRAME_SIZE; i++)
+                    pData->outputFrameTD[0][i] /= sqrtf(2.0f);
+                for (ch = 1; ch<4; ch++)
+                    for(i = 0; i<FRAME_SIZE; i++)
+                        pData->outputFrameTD[ch][i] /= sqrtf(3.0f);
+                break;
         }
 
-        /* save SH signals to output buffer */
-        for(i = 0; i < MIN(nSH,nOutputs); i++)
-            utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
-        for(; i < nOutputs; i++)
-            memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
+        /* copy SH signals to output buffer */
+        switch(chOrdering){
+            case CH_ACN:
+                for(i = 0; i < MIN(nSH,nOutputs); i++)
+                    utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
+                for(; i < nOutputs; i++)
+                    memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
+                break;
+            case CH_FUMA: /* only for first-order */
+                if(nOutputs>=4){
+                    utility_svvcopy(pData->outputFrameTD[0], FRAME_SIZE, outputs[0]);
+                    utility_svvcopy(pData->outputFrameTD[1], FRAME_SIZE, outputs[2]);
+                    utility_svvcopy(pData->outputFrameTD[2], FRAME_SIZE, outputs[3]);
+                    utility_svvcopy(pData->outputFrameTD[3], FRAME_SIZE, outputs[1]);
+                }
+                else
+                    for(i=0; i<nOutputs; i++)
+                        memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
+                break;
+        }
         free((void*)Y_src);
     }
     else{

@@ -207,18 +207,15 @@ void ambi_bin_process
                 for(; i<nSH; i++)
                     memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
                 break;
-            case CH_FUMA:   /* only first-order, convert to ACN */
+            case CH_FUMA:   /* only for first-order, convert to ACN */
                 if(nInputs>=4){
                     utility_svvcopy(inputs[0], FRAME_SIZE, pData->SHFrameTD[0]);
                     utility_svvcopy(inputs[1], FRAME_SIZE, pData->SHFrameTD[3]);
                     utility_svvcopy(inputs[2], FRAME_SIZE, pData->SHFrameTD[1]);
                     utility_svvcopy(inputs[3], FRAME_SIZE, pData->SHFrameTD[2]);
-                    for(i=4; i<nSH; i++)
-                        memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
                 }
-                else
-                    for(i=0; i<nSH; i++)
-                        memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                for(i=MIN(nInputs,4); i<nSH; i++)
+                    memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
                 break;
         }
         
@@ -232,7 +229,7 @@ void ambi_bin_process
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->SHFrameTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
                 break;
-            case NORM_FUMA: /* only first-order, convert to N3D */
+            case NORM_FUMA: /* only for first-order, convert to N3D */
                 for(i = 0; i<FRAME_SIZE; i++)
                     pData->SHFrameTD[0][i] *= sqrtf(2.0f);
                 for (ch = 1; ch<4; ch++)
@@ -383,14 +380,14 @@ void ambi_bin_setDecodingMethod(void* const hAmbi, DECODING_METHODS newMethod)
 void ambi_bin_setChOrder(void* const hAmbi, int newOrder)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    if((CH_ORDER)newOrder != CH_FUMA || pData->order==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+    if((CH_ORDER)newOrder != CH_FUMA || pData->new_order==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
         pData->chOrdering = (CH_ORDER)newOrder;
 }
 
 void ambi_bin_setNormType(void* const hAmbi, int newType)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    if((NORM_TYPES)newType != NORM_FUMA || pData->order==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+    if((NORM_TYPES)newType != NORM_FUMA || pData->new_order==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
         pData->norm = (NORM_TYPES)newType;
 }
 

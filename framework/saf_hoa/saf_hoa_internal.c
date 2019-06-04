@@ -88,7 +88,7 @@ void getAllRAD(int order, float* ls_dirs_deg, int nLS, float **decMtx)
     nSH = (order+1)*(order+1);
     
     /* define a sufficiently dense t-design for this decoding order, as to conserve omni energy */
-    t = 2*order + 1; ///////////////////////////////////////////////////////////////////////////4*order;
+    t = 4*order;
     Y_td = G_td = NULL;
     if(t<=21){
         /* suitable for up to 5th order */
