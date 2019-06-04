@@ -43,7 +43,9 @@ The generated "saf_mkl_custom.dll" file should be placed in a suitable system PA
 C:/Windows/System32
 ```
 
-(Optional) To enable the [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reading feature, your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For convenience, the following statically built libraries are included in "dependencies/Win64/":
+##### Enable SOFA reader (Optional)
+
+To enable the [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) file reading feature, your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For convenience, the following statically built libraries are included in "dependencies/Win64/":
 
 ```
 libszip.lib; libzlib.lib; libhdf5.lib; libhdf5_hl.lib; netcdf.lib;
@@ -74,7 +76,8 @@ Then add the following linker flag to your project:
 -L/usr/local/lib -lsaf_mkl_custom
 ```
 
-(Optional) To enable the [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reading feature, your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For convenience, the following statically built libraries are included in "dependencies/MacOSX/":
+##### Enable SOFA reader (Optional)
+To enable the [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) file reading feature, your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For convenience, the following statically built libraries are included in "dependencies/MacOSX/":
 
 ```
 netcdf; hdf5; hdf5_hl; z; 
@@ -104,15 +107,15 @@ Then add the following linker flag to your project:
 ```
 -L/usr/lib -lsaf_mkl_custom
 ```
-
-(Optional) To enable the SOFA loading feature, you must install netcdf and hdf5 on your system. For ubuntu based distros, this is simply:
+##### Enable SOFA reader (Optional)
+To enable the [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) file reading feature, you must install netcdf and hdf5 on your system. For ubuntu based distros, this is simply:
 
 ```
 sudo apt-get install libhdf5-dev
 sudo apt-get install libnetcdf-dev libnetcdff-dev
 ```
 
-Then add the following to the header search path:
+Then add the following directory to the header search path:
 
 ```
 /usr/include  
@@ -157,30 +160,26 @@ This framework is provided under the [ISC license](https://choosealicense.com/li
 
 ## References
 
-[1] Zaunschirm M, Schörkhuber C, Höldrich R. Binaural rendering of Ambisonic signals by head-related impulse response time alignment and a diffuseness constraint. The Journal of the Acoustical Society of America. 2018 Jun 19;143(6):3616-27.
+[1] **Zaunschirm M, Schörkhuber C, Höldrich R**. Binaural rendering of Ambisonic signals by head-related impulse response time alignment and a diffuseness constraint. The Journal of the Acoustical Society of America. 2018 Jun 19;143(6):3616-27.
 
-[2] Schörkhuber C, Zaunschirm M, Höldrich R. Binaural Rendering of Ambisonic Signals via Magnitude Least Squares. InProceedings of the DAGA 2018 (Vol. 44, pp. 339-342).
+[2] **Schörkhuber C, Zaunschirm M, Höldrich R**. Binaural Rendering of Ambisonic Signals via Magnitude Least Squares. InProceedings of the DAGA 2018 (Vol. 44, pp. 339-342).
 
-[3] Zotter F, Frank M. All-round ambisonic panning and decoding. Journal of the audio engineering society. 2012 Nov 26;60(10):807-20.
+[3] **Zotter F, Frank M**. All-round ambisonic panning and decoding. Journal of the audio engineering society. 2012 Nov 26;60(10):807-20.
 
-[4] Zotter F, Pomberger H, Noisternig M. Energy-preserving ambisonic decoding. Acta Acustica united with Acustica. 2012 Jan 1;98(1):37-47.
+[4] **Zotter F, Pomberger H, Noisternig M**. Energy-preserving ambisonic decoding. Acta Acustica united with Acustica. 2012 Jan 1;98(1):37-47.
 
-[5] McCormack L, Välimäki V. FFT-based Dynamic Range Compression. InProceedings of the 14th Sound and Music Computing Conference, July 5--8, Espoo, Finland, At Espoo, Finland 2017 Jul 5.
+[5] **McCormack L, Välimäki V**. FFT-based Dynamic Range Compression. InProceedings of the 14th Sound and Music Computing Conference, July 5--8, Espoo, Finland, At Espoo, Finland 2017 Jul 5.
 
-[6] Williams EG. Fourier acoustics: sound radiation and nearfield acoustical holography. Elsevier; 1999 Jun 10.
+[6] **Williams EG**. Fourier acoustics: sound radiation and nearfield acoustical holography. Elsevier; 1999 Jun 10.
 
-[7] Rafaely B. Fundamentals of spherical array processing. Berlin: Springer; 2015 Feb 18.
+[7] **Rafaely B**. Fundamentals of spherical array processing. Berlin: Springer; 2015 Feb 18.
 
-[8] McCormack L, Delikaris-Manias S, Farina A, Pinardi D, Pulkki V. Real-Time Conversion of Sensor Array Signals into Spherical Harmonic Signals with Applications to Spatially Localized Sub-Band Sound-Field Analysis. InAudio Engineering Society Convention 144 2018 May 14. Audio Engineering Society.
+[8] **McCormack L, Delikaris-Manias S, Farina A, Pinardi D, Pulkki V**. Real-Time Conversion of Sensor Array Signals into Spherical Harmonic Signals with Applications to Spatially Localized Sub-Band Sound-Field Analysis. InAudio Engineering Society Convention 144 2018 May 14. Audio Engineering Society.
 
-[9] McCormack L, Politis A, Pulkki V. Sharpening of Angular Spectra Based on a Directional Re-assignment Approach for Ambisonic Sound-field Visualisation. InICASSP 2019-2019 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) 2019 Apr 17 (pp. 576-580). IEEE.
+[9] **McCormack L, Politis A, Pulkki V**. Sharpening of Angular Spectra Based on a Directional Re-assignment Approach for Ambisonic Sound-field Visualisation. InICASSP 2019-2019 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) 2019 Apr 17 (pp. 576-580). IEEE.
 
-[10] Pulkki V. Virtual sound source positioning using vector base amplitude panning. Journal of the audio engineering society. 1997 Jun 1;45(6):456-66.
+[10] **Pulkki V**. Virtual sound source positioning using vector base amplitude panning. Journal of the audio engineering society. 1997 Jun 1;45(6):456-66.
 
-[11] Laitinen MV, Vilkamo J, Jussila K, Politis A, Pulkki V. Gain normalization in amplitude panning as a function of frequency and room reverberance. InAudio Engineering Society Conference: 55th International Conference: Spatial Audio 2014 Aug 26. Audio Engineering Society.
+[11] **Laitinen MV, Vilkamo J, Jussila K, Politis A, Pulkki V**. Gain normalization in amplitude panning as a function of frequency and room reverberance. InAudio Engineering Society Conference: 55th International Conference: Spatial Audio 2014 Aug 26. Audio Engineering Society.
 
-[12] Ivanic J, Ruedenberg K. Rotation Matrices for Real Spherical Harmonics. Direct Determination by Recursion. The Journal of Physical Chemistry A. 1998 Nov 5;102(45):9099-100.
-
-
-
-
+[12] **Ivanic J, Ruedenberg K**. Rotation Matrices for Real Spherical Harmonics. Direct Determination by Recursion. The Journal of Physical Chemistry A. 1998 Nov 5;102(45):9099-100.
