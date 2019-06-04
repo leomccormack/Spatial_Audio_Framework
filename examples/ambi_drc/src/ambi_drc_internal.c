@@ -97,10 +97,7 @@ void ambi_drc_initTFT
 
 void ambi_drc_setInputOrder(INPUT_ORDER inOrder, int* nSH)
 {
-    switch(inOrder){
-        case INPUT_OMNI:
-            (*nSH) = 1;
-            break;
+    switch(inOrder){ 
         case INPUT_ORDER_1:
             (*nSH) = 4;
             break;

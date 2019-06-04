@@ -37,7 +37,7 @@ void ambi_enc_create
     int i;
     pData->order = 1;
     
-    /* user parameters */
+    /* default user parameters */
     ambi_enc_loadPreset(PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources)); /*check setStateInformation if you change default preset*/
     pData->nSources = pData->new_nSources;
     for(i=0; i<MAX_NUM_INPUTS; i++)
@@ -196,8 +196,7 @@ void ambi_enc_setOutputOrder(void* const hAmbi, int newOrder)
     int i;
     if(newOrder != pData->outputOrderPreset){
         pData->outputOrderPreset = (OUTPUT_ORDERS)newOrder;
-        switch(pData->outputOrderPreset){
-            case OUTPUT_OMNI: pData->order = 0; break;
+        switch(pData->outputOrderPreset){ 
             case OUTPUT_ORDER_FIRST:   pData->order = 1; break;
             case OUTPUT_ORDER_SECOND:  pData->order = 2; break;
             case OUTPUT_ORDER_THIRD:   pData->order = 3; break;
@@ -208,6 +207,11 @@ void ambi_enc_setOutputOrder(void* const hAmbi, int newOrder)
         }
         for(i=0; i<MAX_NUM_INPUTS; i++)
             pData->recalc_SH_FLAG[i] = 1;
+        /* FUMA only supports 1st order */
+        if(pData->order!=OUTPUT_ORDER_FIRST && pData->chOrdering == CH_FUMA)
+            pData->chOrdering = CH_ACN;
+        if(pData->order!=OUTPUT_ORDER_FIRST && pData->norm == NORM_FUMA)
+            pData->norm = NORM_SN3D;
     }
 }
 
@@ -254,13 +258,15 @@ void ambi_enc_setInputConfigPreset(void* const hAmbi, int newPresetID)
 void ambi_enc_setChOrder(void* const hAmbi, int newOrder)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
-    pData->chOrdering = (CH_ORDER)newOrder;
+    if((CH_ORDER)newOrder != CH_FUMA || pData->order==OUTPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (CH_ORDER)newOrder;
 }
 
 void ambi_enc_setNormType(void* const hAmbi, int newType)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
-    pData->norm = (NORM_TYPES)newType;
+    if((NORM_TYPES)newType != NORM_FUMA || pData->order==OUTPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (NORM_TYPES)newType;
 }
 
 /* Get Functions */

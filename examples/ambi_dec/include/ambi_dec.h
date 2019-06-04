@@ -68,6 +68,7 @@ extern "C" {
 #define ENABLE_T_DESIGN_48_PRESET
 #define ENABLE_T_DESIGN_60_PRESET
     
+#define AMBI_DEC_MAX_SH_ORDER ( 7 )
 typedef enum _MASTER_ORDERS{
     MASTER_ORDER_FIRST = 1,
     MASTER_ORDER_SECOND,
@@ -79,6 +80,7 @@ typedef enum _MASTER_ORDERS{
     
 }MASTER_ORDERS;
     
+#define AMBI_DEC_NUM_DECODING_METHODS ( 4 )
 typedef enum _DECODING_METHODS {
     DECODING_METHOD_SAD = 1,   /* Sampling Ambisonic Decoder (SAD)*/
     DECODING_METHOD_MMD,       /* Mode-Matching Decoder (MMD) */
@@ -173,6 +175,19 @@ typedef enum _DIFFUSE_FIELD_EQ_APPROACH {
     ENERGY_PRESERVING            /* preserve omni energy */
     
 } DIFFUSE_FIELD_EQ_APPROACH;
+
+#define AMBI_DEC_NUM_CH_ORDERINGS ( 2 )
+typedef enum _CH_ORDER{
+    CH_ACN = 1,
+    CH_FUMA     /* first-order only */
+}CH_ORDER;
+
+#define AMBI_DEC_NUM_NORM_TYPES ( 3 )
+typedef enum _NORM_TYPES{
+    NORM_N3D = 1,
+    NORM_SN3D,
+    NORM_FUMA   /* first-order only */
+}NORM_TYPES;
     
 
 /******************/

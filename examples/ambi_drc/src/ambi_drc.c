@@ -164,7 +164,7 @@ void ambi_drc_process
 )                                         
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    int i, n, t, ch, band, sample;
+    int i, n, t, ch, band;
     int o[MAX_ORDER+2];
     float xG, yG, xL, yL, cdB, alpha_a, alpha_r;
     float makeup, boost, theshold, ratio, knee;
@@ -285,55 +285,57 @@ void ambi_drc_refreshSettings(void* const hAmbi)
 void ambi_drc_setThreshold(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->theshold = MAX(MIN(newValue, 0.0f), -60.0f);
+    pData->theshold = CLAMP(newValue, AMBI_DRC_THRESHOLD_MIN_VAL, AMBI_DRC_THRESHOLD_MAX_VAL);
 }
 
 void ambi_drc_setRatio(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->ratio = MAX(MIN(newValue, 30.0f), 1.0f);
+    pData->ratio = CLAMP(newValue, AMBI_DRC_RATIO_MIN_VAL, AMBI_DRC_RATIO_MAX_VAL);
 }
 
 void ambi_drc_setKnee(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->knee = MAX(MIN(newValue, 10.0f), 0.0f);
+    pData->knee = CLAMP(newValue, AMBI_DRC_KNEE_MIN_VAL, AMBI_DRC_KNEE_MAX_VAL);
 }
 
 void ambi_drc_setInGain(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->inGain = MAX(MIN(newValue, 40.0f), -40.0f);
+    pData->inGain = CLAMP(newValue, AMBI_DRC_IN_GAIN_MIN_VAL, AMBI_DRC_IN_GAIN_MAX_VAL);
 }
 
 void ambi_drc_setOutGain(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->outGain = MAX(MIN(newValue, 40.0f), -20.0f);
+    pData->outGain = CLAMP(newValue, AMBI_DRC_OUT_GAIN_MIN_VAL, AMBI_DRC_OUT_GAIN_MAX_VAL);
 }
 
 void ambi_drc_setAttack(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->attack_ms = MAX(MIN(newValue, 200.0f), 10.0f);
+    pData->attack_ms = CLAMP(newValue, AMBI_DRC_ATTACK_MIN_VAL, AMBI_DRC_ATTACK_MAX_VAL);
 }
 
 void ambi_drc_setRelease(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->release_ms = MAX(MIN(newValue, 1000.0f), 50.0f);
+    pData->release_ms = CLAMP(newValue, AMBI_DRC_RELEASE_MIN_VAL, AMBI_DRC_RELEASE_MAX_VAL);
 }
 
 void ambi_drc_setChOrder(void* const hAmbi, int newOrder)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->chOrdering = (CH_ORDER)newOrder;
+    if((CH_ORDER)newOrder != CH_FUMA || pData->currentOrder==INPUT_ORDER_1)/* FUMA only supports 1st order */
+        pData->chOrdering = (CH_ORDER)newOrder;
 }
 
 void ambi_drc_setNormType(void* const hAmbi, int newType)
 {
     ambi_drc_data *pData = (ambi_drc_data*)hAmbi;
-    pData->norm = (NORM_TYPES)newType;
+    if((NORM_TYPES)newType != NORM_FUMA || pData->currentOrder==INPUT_ORDER_1)/* FUMA only supports 1st order */
+        pData->norm = (NORM_TYPES)newType;
 }
 
 void ambi_drc_setInputPreset(void* const hAmbi, INPUT_ORDER newPreset)
@@ -343,6 +345,11 @@ void ambi_drc_setInputPreset(void* const hAmbi, INPUT_ORDER newPreset)
     pData->currentOrder = newPreset;
     if(pData->new_nSH!=pData->nSH)
         pData->reInitTFT = 1;
+    /* FUMA only supports 1st order */
+    if(pData->currentOrder!=INPUT_ORDER_1 && pData->chOrdering == CH_FUMA)
+        pData->chOrdering = CH_ACN;
+    if(pData->currentOrder!=INPUT_ORDER_1 && pData->norm == NORM_FUMA)
+        pData->norm = NORM_SN3D;
 }
 
 

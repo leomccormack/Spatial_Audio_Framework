@@ -36,10 +36,19 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  
-#define MAX_ORDER ( 7 )
-#define MAX_NUM_INPUTS ( 64 )
+
+/***************/
+/* Definitions */
+/***************/
+    
+#define MAX_ORDER ( AMBI_ENC_MAX_SH_ORDER )
+#define MAX_NUM_INPUTS ( AMBI_ENC_MAX_NUM_INPUTS )
 #define MAX_NUM_SH_SIGNALS ( (MAX_ORDER + 1)*(MAX_ORDER + 1) )    /* (L+1)^2 */
+    
+    
+/***********/
+/* Structs */
+/***********/
     
 typedef struct _ambi_enc
 {
@@ -64,6 +73,11 @@ typedef struct _ambi_enc
     
 } ambi_enc_data;
     
+    
+/**********************/
+/* Internal Functions */
+/**********************/
+
 /* Loads directions from preset */
 void ambi_enc_loadPreset(PRESETS preset,                         /* PRESET enum */
                          float dirs_deg[MAX_NUM_INPUTS][2],      /* source/loudspeaker directions */

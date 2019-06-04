@@ -121,7 +121,7 @@ Then add the following to the header search path:
 And finally, add this linker flag:
 
 ```
--L/usr/lib -lnetcdf
+-L/lib/x86_64-linux-gnu -lnetcdf
 ```
 
 ## Examples

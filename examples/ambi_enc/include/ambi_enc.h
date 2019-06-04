@@ -30,9 +30,9 @@
 extern "C" {
 #endif
     
-/***********/
-/* Presets */
-/***********/
+/***********************/
+/* Presets + Constants */
+/***********************/
     
 #define ENABLE_MONO_PRESET
 #define ENABLE_STEREO_PRESET
@@ -128,9 +128,9 @@ typedef enum _PRESETS{
     
 }PRESETS;
     
-typedef enum _OUTPUT_ORDERS{
-    OUTPUT_OMNI = 1,
-    OUTPUT_ORDER_FIRST,
+#define AMBI_ENC_MAX_SH_ORDER ( 7 )
+typedef enum _OUTPUT_ORDERS{ 
+    OUTPUT_ORDER_FIRST=1,
     OUTPUT_ORDER_SECOND,
     OUTPUT_ORDER_THIRD,
     OUTPUT_ORDER_FOURTH,
@@ -140,14 +140,21 @@ typedef enum _OUTPUT_ORDERS{
     
 }OUTPUT_ORDERS;
     
+#define AMBI_ENC_NUM_CH_ORDERINGS ( 2 )
 typedef enum _CH_ORDER{
-    CH_ACN = 1
+    CH_ACN = 1,
+    CH_FUMA     /* first-order only */
 }CH_ORDER;
 
+#define AMBI_ENC_NUM_NORM_TYPES ( 3 )
 typedef enum _NORM_TYPES{
     NORM_N3D = 1,
-    NORM_SN3D
+    NORM_SN3D,
+    NORM_FUMA   /* first-order only */
 }NORM_TYPES;
+    
+#define AMBI_ENC_MAX_NUM_INPUTS ( 64 )
+    
     
 /******************/
 /* Main Functions */

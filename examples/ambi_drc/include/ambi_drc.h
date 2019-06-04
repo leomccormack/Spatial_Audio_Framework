@@ -41,11 +41,16 @@ extern "C" {
     
 #define ENABLE_TF_DISPLAY
 
-#define HOP_SIZE ( 128 )                   /* STFT hop size, can be flexible, but only 'hybrid' mode afSTFT is supported (i.e. non uniform) */ 
+/***********************/
+/* Presets + Constants */
+/***********************/
+
+#define HOP_SIZE ( 128 )                   /* STFT hop size, can be flexible, but only 'hybrid' mode afSTFT is supported (i.e. non uniform) */
 #define TIME_SLOTS ( FRAME_SIZE/HOP_SIZE ) /* time-frequency domain frame size */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )      /* hybrid mode incurs an additional 5 bands  */ 
+#define HYBRID_BANDS ( HOP_SIZE + 5 )      /* hybrid mode incurs an additional 5 bands  */
 #define SPECTRAL_FLOOR (0.1585)            /* -16dB, maximum gain reduction for a given frequency band */
-#define MAX_ORDER ( 7 )
+#define AMBI_DRC_MAX_SH_ORDER ( 7 )
+#define MAX_ORDER ( AMBI_DRC_MAX_SH_ORDER )
 #define MAX_NUM_SH_SIGNALS ( (MAX_ORDER+1)*(MAX_ORDER+1) )
 #ifdef ENABLE_TF_DISPLAY
   #define NUM_DISPLAY_SECONDS   ( 8 )      /* How many seconds the display will show historic TF data */
@@ -53,18 +58,21 @@ extern "C" {
   #define READ_OFFSET ( 200 )
 #endif
     
+#define AMBI_DRC_NUM_CH_ORDERINGS ( 2 )
 typedef enum _CH_ORDER{
-    CH_ACN = 1
+    CH_ACN = 1,
+    CH_FUMA     /* first-order only */
 }CH_ORDER;
 
+#define AMBI_DRC_NUM_NORM_TYPES ( 3 )
 typedef enum _NORM_TYPES{
     NORM_N3D = 1,
-    NORM_SN3D
+    NORM_SN3D,
+    NORM_FUMA   /* first-order only */
 }NORM_TYPES;
     
 typedef enum _INPUT_ORDER{
-    INPUT_OMNI = 1,
-    INPUT_ORDER_1,
+    INPUT_ORDER_1 = 1,
     INPUT_ORDER_2,
     INPUT_ORDER_3,
     INPUT_ORDER_4,
@@ -74,27 +82,43 @@ typedef enum _INPUT_ORDER{
     
 }INPUT_ORDER;
     
+#define AMBI_DRC_IN_GAIN_MIN_VAL ( -40.0f )
+#define AMBI_DRC_IN_GAIN_MAX_VAL ( 20.0f )
+#define AMBI_DRC_THRESHOLD_MIN_VAL ( -60.0f )
+#define AMBI_DRC_THRESHOLD_MAX_VAL ( 0.0f )
+#define AMBI_DRC_RATIO_MIN_VAL ( 1.0f )
+#define AMBI_DRC_RATIO_MAX_VAL ( 30.0f )
+#define AMBI_DRC_KNEE_MIN_VAL ( 0.0f )
+#define AMBI_DRC_KNEE_MAX_VAL ( 10.0f )
+#define AMBI_DRC_ATTACK_MIN_VAL ( 10.0f )
+#define AMBI_DRC_ATTACK_MAX_VAL ( 200.0f )
+#define AMBI_DRC_RELEASE_MIN_VAL ( 50.0f )
+#define AMBI_DRC_RELEASE_MAX_VAL ( 1000.0f )
+#define AMBI_DRC_OUT_GAIN_MIN_VAL ( -20.0f )
+#define AMBI_DRC_OUT_GAIN_MAX_VAL ( 40.0f )
+    
+    
 /******************/
 /* Main Functions */
 /******************/
 
 /* creates an instance of ambi_drc */
-void ambi_drc_create(void** const phAmbi);              /* address of ambi_drc handle */ 
+void ambi_drc_create(void** const phAmbi);    /* address of ambi_drc handle */
 
 /* destroys an instance of ambi_drc */
-void ambi_drc_destroy(void** const phAmbi);             /* address of ambi_drc handle */
+void ambi_drc_destroy(void** const phAmbi);   /* address of ambi_drc handle */
 
 /* initialises an instance of ambi_drc */
-void ambi_drc_init(void* const hAmbi,                   /* ambi_drc handle */
-                   int samplerate);                     /* host sample rate */
+void ambi_drc_init(void* const hAmbi,         /* ambi_drc handle */
+                   int samplerate);           /* host sample rate */
     
 /* performs the frequency-dependent multi-channel compression on input signals */
-void ambi_drc_process(void* const hAmbi,                /* ambi_drc handle */
-                      float** const inputs,             /* input channels, [nCh][nSampes] */
-                      float** const outputs,            /* output channels, [nOutputs][nSampes] */
-                      int nCH,                          /* number of channels in 'inputs'/'outputs' matrix */
-                      int nSamples,                     /* number of samples in 'inputs'/'outputs' matrix */
-                      int isPlaying);                   /* Flag, 1: if there is audio in buffers */
+void ambi_drc_process(void* const hAmbi,      /* ambi_drc handle */
+                      float** const inputs,   /* input channels, [nCh][nSampes] */
+                      float** const outputs,  /* output channels, [nOutputs][nSampes] */
+                      int nCH,                /* number of channels in 'inputs'/'outputs' matrix */
+                      int nSamples,           /* number of samples in 'inputs'/'outputs' matrix */
+                      int isPlaying);         /* Flag, 1: if there is audio in buffers */
 
 
 /*****************/

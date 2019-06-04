@@ -40,6 +40,9 @@ extern "C" {
 #ifndef MAX
   #define MAX(a,b) (( (a) > (b) ) ? (a) : (b))
 #endif
+#ifndef CLAMP
+  #define CLAMP(a,min,max) (MAX(min, MIN(max, a)))
+#endif
 #ifndef PI
   #define PI ( 3.14159265358979323846264338327950288f )
 #endif
@@ -47,17 +50,17 @@ extern "C" {
   #define M_PI ( 3.14159265358979323846264338327950288f )
 #endif
  
-#include "../saf_utilities/saf_complex.h"             /* For cross-platform complex numbers wrapper */
-#include "../saf_utilities/saf_malloc.h"              /* For multi-dimensional memory handling */
-#include "../saf_utilities/saf_calloc.h"              /* For multi-dimensional memory handling */
-#include "../saf_utilities/saf_free.h"                /* For multi-dimensional memory handling */
-#include "../saf_utilities/saf_sort.h"                /* For sorting vectors */
-#include "../saf_utilities/saf_filters.h"             /* For filter coefficients (IIR/FIR) */
-#include "../saf_utilities/saf_veclib.h"              /* For BLAS/LAPACK functions, plus some other handy linear algebra functions */
-#include "../saf_utilities/saf_fft.h"                 /* For optimised FFT routines */
-#include "../saf_utilities/saf_matrixConv.h"          /* For the matrix convolver */
-#include "../saf_utilities/saf_loudspeaker_presets.h" /* For various presets for loudspeaker, microphone, and hydrophone arrays.  */
-#include "../saf_utilities/saf_sensorarray_presets.h" /* For various presets for loudspeaker, microphone, and hydrophone arrays.  */
+#include "../saf_utilities/saf_complex.h"             /* for cross-platform complex numbers wrapper */
+#include "../saf_utilities/saf_malloc.h"              /* multi-dimensional memory handling */
+#include "../saf_utilities/saf_calloc.h"              /* multi-dimensional memory handling */
+#include "../saf_utilities/saf_free.h"                /* multi-dimensional memory handling */
+#include "../saf_utilities/saf_sort.h"                /* for sorting vectors */
+#include "../saf_utilities/saf_filters.h"             /* filter coefficients (IIR/FIR) */
+#include "../saf_utilities/saf_veclib.h"              /* BLAS/LAPACK functions, plus some other handy linear algebra functions */
+#include "../saf_utilities/saf_fft.h"                 /* optimised FFT routines */
+#include "../saf_utilities/saf_matrixConv.h"          /* matrix convolver */
+#include "../saf_utilities/saf_loudspeaker_presets.h" /* various presets for loudspeaker, microphone, and hydrophone arrays.  */
+#include "../saf_utilities/saf_sensorarray_presets.h" /* various presets for loudspeaker, microphone, and hydrophone arrays.  */
 
 #ifdef __cplusplus
 }

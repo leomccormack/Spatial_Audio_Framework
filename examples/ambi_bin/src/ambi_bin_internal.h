@@ -52,10 +52,9 @@ extern "C" {
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
 #define NUM_EARS ( 2 )                                      /* true for most humans */
-#define MAX_SH_ORDER ( 7 )                                  /* 7->64 channels; maximum for most hosts */
+#define MAX_SH_ORDER ( AMBI_BIN_MAX_SH_ORDER )              /* 7->64 channels; maximum for most hosts */
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER+1)*(MAX_SH_ORDER+1) )
 #define POST_GAIN ( -9.0f )   /* dB */
-    
 #ifndef DEG2RAD
   #define DEG2RAD(x) (x * PI / 180.0f)
 #endif

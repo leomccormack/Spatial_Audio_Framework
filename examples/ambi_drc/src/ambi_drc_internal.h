@@ -46,7 +46,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-     
+    
+/***********/
+/* Structs */
+/***********/
+    
 typedef struct _ambi_drc
 {    
     /* audio buffers and afSTFT handle */
@@ -74,7 +78,6 @@ typedef struct _ambi_drc
 
     /* user parameters */
     float theshold, ratio, knee, inGain, outGain, attack_ms, release_ms;
-    int enableTF;
     CH_ORDER chOrdering;
     NORM_TYPES norm;
     INPUT_ORDER currentOrder;

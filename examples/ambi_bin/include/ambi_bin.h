@@ -29,11 +29,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+ 
+/***********************/
+/* Presets + Constants */
+/***********************/
 
-/***********/
-/* Presets */
-/***********/
-    
+#define AMBI_BIN_MAX_SH_ORDER ( 7 )
 typedef enum _INPUT_ORDERS{
     INPUT_ORDER_FIRST = 1,
     INPUT_ORDER_SECOND,
@@ -45,6 +46,7 @@ typedef enum _INPUT_ORDERS{
     
 }INPUT_ORDERS;
     
+#define AMBI_BIN_NUM_DECODING_METHODS ( 5 )
 typedef enum _DECODING_METHODS{
     DECODING_METHOD_LS = 1,         /* Least-squares (LS) decoder */
     DECODING_METHOD_LSDIFFEQ,       /* Least-squares (LS) decoder with diffuse-field spectral equalisation */
@@ -54,13 +56,17 @@ typedef enum _DECODING_METHODS{
     
 }DECODING_METHODS;
 
+#define AMBI_BIN_NUM_CH_ORDERINGS ( 2 )
 typedef enum _CH_ORDER{
-    CH_ACN = 1
+    CH_ACN = 1,
+    CH_FUMA     /* first-order only */
 }CH_ORDER;
 
+#define AMBI_BIN_NUM_NORM_TYPES ( 3 )
 typedef enum _NORM_TYPES{
     NORM_N3D = 1,
-    NORM_SN3D
+    NORM_SN3D,
+    NORM_FUMA   /* first-order only */
 }NORM_TYPES;
     
     
@@ -189,7 +195,6 @@ int ambi_bin_getProcessingDelay(void);
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif /* __SAF_AMBI_BIN_H_INCLUDED__ */
 
