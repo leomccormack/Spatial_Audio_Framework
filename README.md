@@ -1,24 +1,30 @@
 # Spatial_Audio_Framework
 
-A Spatial Audio Framework (SAF) written in C. The framework includes functions for performing Vector-Base Amplitude Panning (VBAP), Spherical Harmonic Transforms (SHT), and Higher-order Ambisonics (HOA); among others.
+A cross-platform Spatial Audio Framework (SAF) written in C. The framework includes functions for performing Vector-Base Amplitude Panning (VBAP), Spherical Harmonic Transforms (SHT), Beamforming, and Higher-order Ambisonics (HOA); to name a few.
 
 ![](saf.png)
 
 ## Getting Started
 
-To use this framework, add the following directories to the relevant header and library search paths:
+To use this framework in your project, first add the following directories to the header search paths:
 
 ```
 Spatial_Audio_Framework/framework/include
 Spatial_Audio_Framework/dependencies/.../include
+```
+Then add the following directory to the library search paths:
+
+```
 Spatial_Audio_Framework/dependencies/.../lib
 ```
 
-The rest of the instructions are tailored for individual operating systems and described below.
+The remaining instructions are tailored for individual operating systems and described below.
 
 ### For Windows users
 
-Windows users must link against a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library. The "dependencies/Win64/lib/saf_mkl_custom.lib" and "saf_mkl_custom.dll" files may be generated using Intel's custom dll builder. First copy the included "dependencies/saf_mkl_list" file into this folder:
+Windows users must link against a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library. The "dependencies/Win64/lib/**saf_mkl_custom.lib**" and "**saf_mkl_custom.dll**" files may be generated using Intel's custom dll builder. 
+
+First copy the included "dependencies/saf_mkl_list" file to this folder:
 
 ```
 C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
@@ -37,7 +43,7 @@ The generated "saf_mkl_custom.dll" file should be placed in a suitable system PA
 C:/Windows/System32
 ```
 
-To enable the SOFA loading feature, your project must also link against the following included static libraries:
+(Optional) To enable the [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reading feature, your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For convenience, the following statically built libraries are included in "dependencies/Win64/":
 
 ```
 libszip.lib; libzlib.lib; libhdf5.lib; libhdf5_hl.lib; netcdf.lib;
@@ -47,7 +53,7 @@ libszip.lib; libzlib.lib; libhdf5.lib; libhdf5_hl.lib; netcdf.lib;
 
 By default, the framework uses Apple's Accelerate library for the linear algebra speed-ups. However, Mac users may choose to instead use [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) via the global pre-processor definition: "SAF_USE_INTEL_MKL" (often faster than Accelerate). 
 
-The required "saf_mkl_custom.dylib" may be obtained by first placing the "dependencies/saf_mkl_list" file in:
+The required "**saf_mkl_custom.dylib**" may be obtained by first placing the "dependencies/saf_mkl_list" file in:
 
 ```
 /opt⁩/intel⁩/compilers_and_libraries/mac⁩/mkl⁩/tools⁩/builder⁩ 
@@ -68,7 +74,7 @@ Then add the following linker flag to your project:
 -L/usr/local/lib -lsaf_mkl_custom
 ```
 
-To enable the SOFA loading feature, your project must also link against the following included static libraries:
+(Optional) To enable the [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reading feature, your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For convenience, the following statically built libraries are included in "dependencies/MacOSX/":
 
 ```
 netcdf; hdf5; hdf5_hl; z; 
@@ -76,13 +82,15 @@ netcdf; hdf5; hdf5_hl; z;
 
 ### For Linux users
 
-Linux users must also link against a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library, and your project must include the global pre-processor definition: "SAF_USE_INTEL_MKL". The required "saf_mkl_custom.so" may be obtained by first placing the "dependencies/saf_mkl_list" file in:
+Linux users must also link against a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library, and your project must include the global pre-processor definition: "SAF_USE_INTEL_MKL". 
+
+The required "**saf_mkl_custom.so**" may be obtained by first placing the "dependencies/saf_mkl_list" file in:
 
 ```
 /opt⁩/intel⁩/compilers_and_libraries/linux/mkl⁩/tools⁩/builder⁩ 
 ```
 
-To generate and copy the library to a system path folder, use the following commands (requires root permissions):
+To generate and copy this library to a system path folder, use the following commands (requires root permissions):
 
 ```
 cd /opt⁩/intel⁩/compilers_and_libraries/linux/mkl⁩/tools⁩/builder⁩
@@ -97,17 +105,23 @@ Then add the following linker flag to your project:
 -L/usr/lib -lsaf_mkl_custom
 ```
 
-To enable the SOFA loading feature, you must also install netcdf and hdf5. For ubuntu based distros, this is simply:
+(Optional) To enable the SOFA loading feature, you must install netcdf and hdf5 on your system. For ubuntu based distros, this is simply:
 
 ```
-sudo apt-get install libnetcdf-dev libnetcdff-dev
 sudo apt-get install libhdf5-dev
+sudo apt-get install libnetcdf-dev libnetcdff-dev
 ```
 
-And finally add the following header search path:
+Then add the following to the header search path:
 
 ```
 /usr/include  
+```
+
+And finally, add this linker flag:
+
+```
+-L/usr/lib -lnetcdf
 ```
 
 ## Examples
