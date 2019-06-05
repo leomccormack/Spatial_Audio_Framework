@@ -31,10 +31,11 @@
 extern "C" {
 #endif
     
-/***********/
-/* Presets */
-/***********/
+/***********************/
+/* Presets + Constants */
+/***********************/
     
+#define BEAMFORMER_MAX_SH_ORDER ( 7 )
 typedef enum _BEAM_ORDERS{
     BEAM_ORDER_FIRST = 1,
     BEAM_ORDER_SECOND,
@@ -46,6 +47,7 @@ typedef enum _BEAM_ORDERS{
     
 }BEAM_ORDERS;
     
+#define BEAMFORMER_NUM_BEAM_TYPES ( 3 )
 typedef enum _BEAM_TYPES {
     BEAM_TYPE_CARDIOID = 1,
     BEAM_TYPE_HYPERCARDIOID,
@@ -53,14 +55,20 @@ typedef enum _BEAM_TYPES {
     
 } BEAM_TYPES;
  
+#define BEAMFORMER_NUM_CH_ORDERINGS ( 2 )
 typedef enum _CH_ORDER{
-    CH_ACN = 1
+    CH_ACN = 1,
+    CH_FUMA     /* first-order only */
 }CH_ORDER;
 
+#define BEAMFORMER_NUM_NORM_TYPES ( 3 )
 typedef enum _NORM_TYPES{
     NORM_N3D = 1,
-    NORM_SN3D
+    NORM_SN3D,
+    NORM_FUMA   /* first-order only */
 }NORM_TYPES;
+    
+#define BEAMFORMER_MAX_NUM_BEAMS ( 64 )
     
     
 /******************/

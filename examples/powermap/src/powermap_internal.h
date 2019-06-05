@@ -42,17 +42,20 @@
 extern "C" {
 #endif
     
-#ifndef M_PI
-#define M_PI ( 3.14159265359f )
-#endif
+/***************/
+/* Definitions */
+/***************/
     
 #define MAX_SH_ORDER ( 7 )
-#define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* Processing relies on fdHop = 16 */
+#define HOP_SIZE ( 128 )                   /* STFT hop size = nBands */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )      /* hybrid mode incurs an additional 5 bands  */
+#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /* Processing relies on fdHop = 16 */
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER+1)*(MAX_SH_ORDER+1) )
 #define NUM_DISP_SLOTS ( 2 )
-#define MAX_COV_AVG_COEFF ( 0.45f )                         /*  */
+#define MAX_COV_AVG_COEFF ( 0.45f )    /*  */
+#ifndef M_PI
+  #define M_PI ( 3.14159265359f )
+#endif
     
     
 /***********/
@@ -131,10 +134,10 @@ void powermap_initAna(void* const hPm);           /* handle for powermap */
 /* Initialise the filterbank used by Powermap */
 void powermap_initTFT(void* const hPm);           /* powermap handle */
     
+    
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif /* __POWERMAP_INTERNAL_H_INCLUDED__ */
 

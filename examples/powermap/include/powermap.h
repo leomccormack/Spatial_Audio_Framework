@@ -31,9 +31,11 @@
 extern "C" {
 #endif
  
-/***********/
-/* Presets */
-/***********/
+/***********************/
+/* Presets + Constants */
+/***********************/
+    
+#define POWERMAP_MAX_NUM_INPUT_CHANNELS ( 64 )
 
 /* Microphone/Hydrophone array options */
 #define ENABLE_ZYLIA_MIC_PRESET
@@ -69,12 +71,14 @@ typedef enum _MIC_PRESETS{
 }MIC_PRESETS;
 
 typedef enum _CH_ORDER{
-    CH_ACN = 1
+    CH_ACN = 1,
+    CH_FUMA     /* first-order only */
 }CH_ORDER;
 
 typedef enum _NORM_TYPES{
     NORM_N3D = 1,
-    NORM_SN3D
+    NORM_SN3D,
+    NORM_FUMA   /* first-order only */
 }NORM_TYPES;
 
 typedef enum _POWERMAP_MODES {
@@ -104,21 +108,21 @@ typedef enum _ASPECT_RATIO_OPTIONS{
 /******************/  
 
 /* creates an instance of powermap */
-void powermap_create(void** const phPm);                     /* address of powermap handle */
+void powermap_create(void** const phPm);         /* address of powermap handle */
 
 /* destroys an instance of accropac */
-void powermap_destroy(void** const phPm);                    /* address of powermap handle */
+void powermap_destroy(void** const phPm);        /* address of powermap handle */
 
 /* initialises an instance of powermap */
-void powermap_init(void* const hPm,                          /* powermap handle */
-                   float  samplerate);                       /* host sample rate */
+void powermap_init(void* const hPm,              /* powermap handle */
+                   float  samplerate);           /* host sample rate */
     
 /* applies powermap analysis to input frame  */
-void powermap_analysis(void* const hPm,                      /* powermap handle */
-                       float** const inputs,                 /* input channels [NUM_SH_SIGNALS][FRAME_SIZE] */
-                       int nInputs,                          /* number of channels in 'inputs' matrix */
-                       int nSamples,                         /* number of samples in 'inputs' and 'outputs' matrices */
-                       int isPlaying);                       /* flag, 0: no audio in buffer, 1: buffers have been filled */
+void powermap_analysis(void* const hPm,          /* powermap handle */
+                       float** const inputs,     /* input channels [NUM_SH_SIGNALS][FRAME_SIZE] */
+                       int nInputs,              /* number of channels in 'inputs' matrix */
+                       int nSamples,             /* number of samples in 'inputs' and 'outputs' matrices */
+                       int isPlaying);           /* flag, 0: no audio in buffer, 1: buffers have been filled */
     
    
 /*****************/
@@ -222,10 +226,5 @@ int powermap_getPmap(void* const hPm,
 }
 #endif
 
-
 #endif /* __POWERMAP_H_INCLUDED__ */
-
-
-
-
 

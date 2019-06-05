@@ -39,10 +39,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
-/***********/
-/* Presets */
-/***********/
+
+/***********************/
+/* Presets + Constants */
+/***********************/
+
+#define SLDOA_MAX_NUM_INPUT_CHANNELS ( 64 )
     
 /* Microphone/Hydrophone array options */
 #define ENABLE_ZYLIA_MIC_PRESET
@@ -78,12 +80,14 @@ typedef enum _MIC_PRESETS{
 }MIC_PRESETS;
     
 typedef enum _CH_ORDER{
-    CH_ACN = 1
+    CH_ACN = 1,
+    CH_FUMA     /* first-order only */
 }CH_ORDER;
 
 typedef enum _NORM_TYPES{
     NORM_N3D = 1,
-    NORM_SN3D
+    NORM_SN3D,
+    NORM_FUMA   /* first-order only */
 }NORM_TYPES;
 
     

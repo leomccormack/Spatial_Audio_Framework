@@ -188,6 +188,7 @@ void powermap_analysis
     float covAvgCoeff, pmapAvgCoeff;
     float pmapEQ[HYBRID_BANDS];
     NORM_TYPES norm;
+    CH_ORDER chOrdering;
     POWERMAP_MODES pmap_mode;
     
     /* reinitialise if needed */
@@ -207,6 +208,7 @@ void powermap_analysis
         memcpy(analysisOrderPerBand, pData->analysisOrderPerBand, HYBRID_BANDS*sizeof(int));
         memcpy(pmapEQ, pData->pmapEQ, HYBRID_BANDS*sizeof(float));
         norm = pData->norm;
+        chOrdering = pData->chOrdering;
         nSources = pData->nSources;
         covAvgCoeff = MIN(pData->covAvgCoeff, MAX_COV_AVG_COEFF);
         pmapAvgCoeff = pData->pmapAvgCoeff;
@@ -214,11 +216,28 @@ void powermap_analysis
         masterOrder = pData->masterOrder;
         nSH = pData->nSH;
         
-        /* load intput time-domain data */
-        for (i = 0; i < MIN(nSH, nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHframeTD[i]);
-        for (; i < nSH; i++)
-            memset(pData->SHframeTD[i], 0, FRAME_SIZE*sizeof(float));
+        /* Load time-domain data */
+        switch(chOrdering){
+            case CH_ACN:
+                for(i=0; i < MIN(nSH, nInputs); i++)
+                    utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHframeTD[i]);
+                for(; i<nSH; i++)
+                    memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                break;
+            case CH_FUMA:   /* only for first-order, convert to ACN */
+                if(nInputs>=4){
+                    utility_svvcopy(inputs[0], FRAME_SIZE, pData->SHframeTD[0]);
+                    utility_svvcopy(inputs[1], FRAME_SIZE, pData->SHframeTD[3]);
+                    utility_svvcopy(inputs[2], FRAME_SIZE, pData->SHframeTD[1]);
+                    utility_svvcopy(inputs[3], FRAME_SIZE, pData->SHframeTD[2]);
+                    for(i=4; i<nSH; i++)
+                        memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                }
+                else
+                    for(i=0; i<nSH; i++)
+                        memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float));
+                break;
+        }
         
         /* account for input normalisation scheme */
         switch(norm){
@@ -230,6 +249,13 @@ void powermap_analysis
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->SHframeTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
+                break;
+            case NORM_FUMA: /* only for first-order, convert to N3D */
+                for(i = 0; i<FRAME_SIZE; i++)
+                    pData->SHframeTD[0][i] *= sqrtf(2.0f);
+                for (ch = 1; ch<4; ch++)
+                    for(i = 0; i<FRAME_SIZE; i++)
+                        pData->SHframeTD[ch][i] *= sqrtf(3.0f);
                 break;
         }
         
@@ -412,6 +438,11 @@ void powermap_setMasterOrder(void* const hPm,  int newValue)
     pData->new_nSH = (newValue+1)*(newValue+1);
     pData->reInitTFT = 1;
     pData->reInitAna = 1;
+    /* FUMA only supports 1st order */
+    if(pData->new_masterOrder!=MASTER_ORDER_FIRST && pData->chOrdering == CH_FUMA)
+        pData->chOrdering = CH_ACN;
+    if(pData->new_masterOrder!=MASTER_ORDER_FIRST && pData->norm == NORM_FUMA)
+        pData->norm = NORM_SN3D;
 }
 
 void powermap_setCovAvgCoeff(void* const hPm, float newAvg)
@@ -536,13 +567,15 @@ void powermap_setPowermapEQAllBands(void  * const hPm, float newValue)
 void powermap_setChOrder(void* const hPm, int newOrder)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    pData->chOrdering = (CH_ORDER)newOrder;
+    if((CH_ORDER)newOrder != CH_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (CH_ORDER)newOrder;
 }
 
 void powermap_setNormType(void* const hPm, int newType)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    pData->norm = (NORM_TYPES)newType;
+    if((NORM_TYPES)newType != NORM_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (NORM_TYPES)newType;
 }
 
 void powermap_setDispFOV(void* const hPm, int newOption)

@@ -1,4 +1,4 @@
-    /*
+/*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -334,7 +334,7 @@ void binauraliser_setSourceElev_deg(void* const hBin, int index, float newElev_d
 void binauraliser_setNumSources(void* const hBin, int new_nSources)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    pData->new_nSources = new_nSources > MAX_NUM_INPUTS ? MAX_NUM_INPUTS : new_nSources;
+    pData->new_nSources = CLAMP(new_nSources, 1, MAX_NUM_INPUTS);
     if(pData->nSources != pData->new_nSources)
         pData->reInitTFT = 1;
     pData->recalc_M_rotFLAG = 1;

@@ -34,9 +34,9 @@
 extern "C" {
 #endif
     
-/***********/
-/* Presets */
-/***********/
+/***********************/
+/* Presets + Constants */
+/***********************/
      
 #define ENABLE_MONO_PRESET
 #define ENABLE_STEREO_PRESET
@@ -140,6 +140,9 @@ typedef enum _INTERP_MODES{
     INTERP_TRI = 1  /* Triangular interpolation */
 }INTERP_MODES;
     
+#define BINAURALISER_MAX_NUM_INPUTS ( 64 )
+    
+    
 /******************/
 /* Main Functions */
 /******************/
@@ -147,15 +150,12 @@ typedef enum _INTERP_MODES{
 /* creates an instance of the binauraliser */
 void binauraliser_create(void** const phBin);            /* address of binauraliser handle */
 
-
 /* destroys an instance of binauraliser */
 void binauraliser_destroy(void** const phBin);           /* address of binauraliser handle */
-
 
 /* initialises an instance of binauraliser */
 void binauraliser_init(void* const hBin,                 /* binauraliser handle */
                        int samplerate);                  /* host sample rate */
-    
     
 /* pan input sources to HRIR directions using amplitude-normalised VBAP gains  */
 void binauraliser_process(void* const hBin,              /* binauraliser handle */
@@ -265,10 +265,5 @@ int binauraliser_getProcessingDelay(void);
 }
 #endif
 
-
 #endif /* __BINAURALISER_H_INCLUDED__ */
-
-
-
-
 

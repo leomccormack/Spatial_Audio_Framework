@@ -47,17 +47,20 @@
 extern "C" {
 #endif
     
-#ifndef M_PI
-#define M_PI ( 3.14159265359f )
-#endif
-    
+/***************/
+/* Definitions */
+/***************/
+
 #define MAX_INPUT_SH_ORDER ( 7 )
 #define MAX_DISPLAY_SH_ORDER ( 20 )
 #define MAX_NUM_INPUT_SH_SIGNALS ( (MAX_INPUT_SH_ORDER+1)*(MAX_INPUT_SH_ORDER+1) )
 #define MAX_NUM_DISPLAY_SH_SIGNALS ( (MAX_DISPLAY_SH_ORDER+1)*(MAX_DISPLAY_SH_ORDER+1) )
 #define NUM_DISP_SLOTS ( 2 )
+#ifndef M_PI
+  #define M_PI ( 3.14159265359f )
+#endif
 
-
+    
 /***********/
 /* Structs */
 /***********/
@@ -144,25 +147,5 @@ void dirass_initAna(void* const hDir);      /* handle for dirass */
 }
 #endif
 
-
 #endif /* __DIRASS_INTERNAL_H_INCLUDED__ */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

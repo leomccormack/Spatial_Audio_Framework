@@ -47,7 +47,7 @@ void rotator_create
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->useRollPitchYawFlag = 0;
-    rotator_setOrder(*phRot,  OUTPUT_ORDER_FIRST);
+    rotator_setOrder(*phRot, INPUT_ORDER_FIRST);
 }
 
 void rotator_destroy
@@ -105,14 +105,31 @@ void rotator_process
         for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
         chOrdering = pData->chOrdering;
         norm = pData->norm;
-        order = pData->order;
+        order = (int)pData->inputOrder;
         nSH = (order+1)*(order+1);
         
         /* Load time-domain data */
-        for (i = 0; i < MIN(nSH, nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
-        for (; i < nSH; i++)
-            memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
+        switch(chOrdering){
+            case CH_ACN:
+                for(i=0; i < MIN(nSH, nInputs); i++)
+                    utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
+                for(; i<nSH; i++)
+                    memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                break;
+            case CH_FUMA:   /* only for first-order, convert to ACN */
+                if(nInputs>=4){
+                    utility_svvcopy(inputs[0], FRAME_SIZE, pData->inputFrameTD[0]);
+                    utility_svvcopy(inputs[1], FRAME_SIZE, pData->inputFrameTD[3]);
+                    utility_svvcopy(inputs[2], FRAME_SIZE, pData->inputFrameTD[1]);
+                    utility_svvcopy(inputs[3], FRAME_SIZE, pData->inputFrameTD[2]);
+                    for(i=4; i<nSH; i++)
+                        memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                }
+                else{
+                    for(i=0; i<nSH; i++)
+                        memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
+                break;
+        }
         
         /* account for norm scheme */
         switch(norm){
@@ -125,6 +142,15 @@ void rotator_process
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->inputFrameTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
+#endif
+                break;
+            case NORM_FUMA: /* only for first-order, convert to N3D */
+#if 0 /* actually doesn't matter */
+                for(i = 0; i<FRAME_SIZE; i++)
+                    pData->inputFrameTD[0][i] *= sqrtf(2.0f);
+                for (ch = 1; ch<4; ch++)
+                    for(i = 0; i<FRAME_SIZE; i++)
+                        pData->inputFrameTD[ch][i] *= sqrtf(3.0f);
 #endif
                 break;
         }
@@ -177,13 +203,36 @@ void rotator_process
                             pData->outputFrameTD[ch][i] /= sqrtf(2.0f*(float)n+1.0f);
 #endif
                 break;
+            case NORM_FUMA: /* only for first-order */
+#if 0 /* actually doesn't matter */
+                for(i = 0; i<FRAME_SIZE; i++)
+                    pData->outputFrameTD[0][i] /= sqrtf(2.0f);
+                for (ch = 1; ch<4; ch++)
+                    for(i = 0; i<FRAME_SIZE; i++)
+                        pData->outputFrameTD[ch][i] /= sqrtf(3.0f);
+#endif
+                break;
         }
         
         /* copy rotated signals to output buffer */
-        for (i = 0; i < MIN(nSH, nOutputs); i++)
-            utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
-        for (; i < nOutputs; i++)
-            memset(outputs[i], 0, FRAME_SIZE*sizeof(float));
+        switch(chOrdering){
+            case CH_ACN:
+                for (i = 0; i < MIN(nSH, nOutputs); i++)
+                    utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
+                for (; i < nOutputs; i++)
+                    memset(outputs[i], 0, FRAME_SIZE*sizeof(float));
+            case CH_FUMA: /* only for first-order */
+                if(nOutputs>=4){
+                    utility_svvcopy(pData->outputFrameTD[0], FRAME_SIZE, outputs[0]);
+                    utility_svvcopy(pData->outputFrameTD[1], FRAME_SIZE, outputs[2]);
+                    utility_svvcopy(pData->outputFrameTD[2], FRAME_SIZE, outputs[3]);
+                    utility_svvcopy(pData->outputFrameTD[3], FRAME_SIZE, outputs[1]);
+                }
+                else
+                    for(i=0; i<nOutputs; i++)
+                        memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
+                break;
+        }
     }
     else{
         for (i = 0; i < nOutputs; i++)
@@ -248,32 +297,29 @@ void rotator_setRPYflag(void* const hRot, int newState)
 void rotator_setChOrder(void* const hRot, int newOrder)
 {
     rotator_data *pData = (rotator_data*)(hRot);
-    pData->chOrdering = (CH_ORDER)newOrder;
+    if((CH_ORDER)newOrder != CH_FUMA || pData->inputOrder==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (CH_ORDER)newOrder;
 }
 
 void rotator_setNormType(void* const hRot, int newType)
 {
     rotator_data *pData = (rotator_data*)(hRot);
-    pData->norm = (NORM_TYPES)newType;
+    if((NORM_TYPES)newType != NORM_FUMA || pData->inputOrder==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (NORM_TYPES)newType;
 }
 
 void rotator_setOrder(void* const hRot, int newOrder)
 {
     rotator_data *pData = (rotator_data*)(hRot);
-    pData->outputOrder = (OUTPUT_ORDERS)newOrder;
-    switch(pData->outputOrder){
-        case OUTPUT_OMNI:          pData->order = 0; break;
-        default:
-        case OUTPUT_ORDER_FIRST:   pData->order = 1; break;
-        case OUTPUT_ORDER_SECOND:  pData->order = 2; break;
-        case OUTPUT_ORDER_THIRD:   pData->order = 3; break;
-        case OUTPUT_ORDER_FOURTH:  pData->order = 4; break;
-        case OUTPUT_ORDER_FIFTH:   pData->order = 5; break;
-        case OUTPUT_ORDER_SIXTH:   pData->order = 6; break;
-        case OUTPUT_ORDER_SEVENTH: pData->order = 7; break;
-    }
+    pData->inputOrder = (INPUT_ORDERS)newOrder;
     pData->recalc_M_rotFLAG = 1;
+    /* FUMA only supports 1st order */
+    if(pData->inputOrder!=INPUT_ORDER_FIRST && pData->chOrdering == CH_FUMA)
+        pData->chOrdering = CH_ACN;
+    if(pData->inputOrder!=INPUT_ORDER_FIRST && pData->norm == NORM_FUMA)
+        pData->norm = NORM_SN3D;
 }
+
 
 /*gets*/
 
@@ -334,13 +380,13 @@ int rotator_getNormType(void* const hRot)
 int rotator_getOrder(void* const hRot)
 {
     rotator_data *pData = (rotator_data*)(hRot);
-    return (int)pData->outputOrder;
+    return (int)pData->inputOrder;
 }
 
 int rotator_getNSHrequired(void* const hRot)
 {
     rotator_data *pData = (rotator_data*)(hRot);
-    return (pData->order+1)*(pData->order+1);
+    return (pData->inputOrder+1)*(pData->inputOrder+1);
 }
 
 

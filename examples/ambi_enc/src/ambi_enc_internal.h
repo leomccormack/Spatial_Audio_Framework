@@ -61,7 +61,6 @@ typedef struct _ambi_enc
     float Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
     float prev_Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
     float interpolator[FRAME_SIZE];
-    int order;
     
     /* user parameters */
     int nSources;
@@ -69,7 +68,7 @@ typedef struct _ambi_enc
     float src_dirs_deg[MAX_NUM_INPUTS][2];
     CH_ORDER chOrdering;
     NORM_TYPES norm;
-    OUTPUT_ORDERS outputOrderPreset;
+    OUTPUT_ORDERS order;
     
 } ambi_enc_data;
     
@@ -88,25 +87,4 @@ void ambi_enc_loadPreset(PRESETS preset,                         /* PRESET enum 
 }
 #endif
 
-
 #endif /* __AMBI_ENC_INTERNAL_H_INCLUDED__ */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

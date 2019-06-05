@@ -51,12 +51,11 @@ extern "C" {
     
 #define FORCE_3D_LAYOUT /* Even 2D loudspeaker setups will use 3D VBAP, with 2 virtual loudspeakers on the top/bottom */
     
-#define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
-#define MAX_NUM_INPUTS ( 64 )                               /* Maximum permited channels for the VST standard */
-#define MAX_NUM_OUTPUTS ( 64 )                              /* Maximum permited channels for the VST standard */
- 
+#define HOP_SIZE ( 128 )                            /* STFT hop size = nBands */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )               /* hybrid mode incurs an additional 5 bands  */
+#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )        /* 4/8/16 */
+#define MAX_NUM_INPUTS ( PANNER_MAX_NUM_INPUTS )    /* Maximum permited channels for the VST standard */
+#define MAX_NUM_OUTPUTS ( PANNER_MAX_NUM_OUTPUTS )  /* Maximum permited channels for the VST standard */
 #ifndef DEG2RAD
   #define DEG2RAD(x) (x * PI / 180.0f)
 #endif

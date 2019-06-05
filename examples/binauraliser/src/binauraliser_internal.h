@@ -53,16 +53,15 @@ extern "C" {
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
-#define MAX_NUM_INPUTS ( 64 )                               /* Maximum permited channels for the VST standard */
-#define MAX_NUM_OUTPUTS ( 64 )                              /* Maximum permited channels for the VST standard */
+#define MAX_NUM_INPUTS ( BINAURALISER_MAX_NUM_INPUTS )      /* Maximum permited channels for the VST standard */
 #define NUM_EARS ( 2 )                                      /* true for most humans */
- 
 #ifndef DEG2RAD
   #define DEG2RAD(x) (x * PI / 180.0f)
 #endif
 #ifndef RAD2DEG
   #define RAD2DEG(x) (x * 180.0f / PI)
 #endif
+    
     
 /***********/
 /* Structs */
@@ -103,10 +102,10 @@ typedef struct _binauraliser
     float* itds_s; /* interaural-time differences for each HRIR (in seconds); nBands x 1 */
     float_complex* hrtf_fb; /* hrtf filterbank coefficients; nBands x nCH x N_hrirs */
     float* hrtf_fb_mag; /* magnitudes of the hrtf filterbank coefficients; nBands x nCH x N_hrirs */
-    float_complex hrtf_interp[MAX_NUM_OUTPUTS][HYBRID_BANDS][NUM_EARS];
+    float_complex hrtf_interp[MAX_NUM_INPUTS][HYBRID_BANDS][NUM_EARS];
     
     /* flags */
-    int recalc_hrtf_interpFLAG[MAX_NUM_OUTPUTS];
+    int recalc_hrtf_interpFLAG[MAX_NUM_INPUTS];
     int reInitHRTFsAndGainTables;
     int reInitTFT;
     int recalc_M_rotFLAG;

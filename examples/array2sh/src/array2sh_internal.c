@@ -1,4 +1,4 @@
-    /*
+/*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -802,7 +802,4 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
     else
         pars->newQ = Q;
 }
-
-
-
 

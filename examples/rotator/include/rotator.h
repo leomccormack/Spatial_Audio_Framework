@@ -30,30 +30,36 @@
 extern "C" {
 #endif
     
-/***********/
-/* Presets */
-/***********/
-
-typedef enum _OUTPUT_ORDERS{
-    OUTPUT_OMNI = 1,
-    OUTPUT_ORDER_FIRST,
-    OUTPUT_ORDER_SECOND,
-    OUTPUT_ORDER_THIRD,
-    OUTPUT_ORDER_FOURTH,
-    OUTPUT_ORDER_FIFTH,
-    OUTPUT_ORDER_SIXTH,
-    OUTPUT_ORDER_SEVENTH
+/***********************/
+/* Presets + Constants */
+/***********************/
     
-}OUTPUT_ORDERS;
+#define ROTATOR_MAX_SH_ORDER ( 7 )
+typedef enum _INPUT_ORDERS{
+    INPUT_ORDER_FIRST = 1,
+    INPUT_ORDER_SECOND,
+    INPUT_ORDER_THIRD,
+    INPUT_ORDER_FOURTH,
+    INPUT_ORDER_FIFTH,
+    INPUT_ORDER_SIXTH,
+    INPUT_ORDER_SEVENTH
+    
+}INPUT_ORDERS;
 
+#define ROTATOR_NUM_CH_ORDERINGS ( 2 )
 typedef enum _CH_ORDER{
-    CH_ACN = 1
+    CH_ACN = 1,
+    CH_FUMA     /* first-order only */
 }CH_ORDER;
 
+#define ROTATOR_NUM_NORM_TYPES ( 3 )
 typedef enum _NORM_TYPES{
     NORM_N3D = 1,
-    NORM_SN3D
+    NORM_SN3D,
+    NORM_FUMA   /* first-order only */
 }NORM_TYPES;
+    
+#define ROTATOR_MAX_NUM_CHANNELS ( 64 )
     
     
 /******************/
@@ -61,23 +67,23 @@ typedef enum _NORM_TYPES{
 /******************/
     
 /* creates an instance of rotator */
-void rotator_create(void** const phRot);                /* address of rotator handle */
+void rotator_create(void** const phRot);       /* address of rotator handle */
 
 /* destroys an instance of rotator */
-void rotator_destroy(void** const phRot);               /* address of rotator handle */
+void rotator_destroy(void** const phRot);      /* address of rotator handle */
 
 /* initialises an instance of rotator */
-void rotator_init(void* const hRot,                     /* rotator handle */
-                  int samplerate);                      /* host sample rate */
+void rotator_init(void* const hRot,            /* rotator handle */
+                  int samplerate);             /* host sample rate */
     
 /* performs rotation of the SH signals */
-void rotator_process(void* const hRot,                  /* rotator handle */
-                     float** const inputs,              /* input channels, [nInputs][nSampes] */
-                     float** const outputs,             /* output channels, [nOutputs][nSampes] */
-                     int nInputs,                       /* number of channels in 'inputs' matrix */
-                     int nOutputs,                      /* number of channels in 'outputs' matrix */
-                     int nSamples,                      /* number of samples in 'inputs' matrix */
-                     int isPlaying);                    /* set to 1 if there is audio in the buffers */
+void rotator_process(void* const hRot,         /* rotator handle */
+                     float** const inputs,     /* input channels, [nInputs][nSampes] */
+                     float** const outputs,    /* output channels, [nOutputs][nSampes] */
+                     int nInputs,              /* number of channels in 'inputs' matrix */
+                     int nOutputs,             /* number of channels in 'outputs' matrix */
+                     int nSamples,             /* number of samples in 'inputs' matrix */
+                     int isPlaying);           /* set to 1 if there is audio in the buffers */
 
     
 /*****************/
@@ -136,7 +142,4 @@ int rotator_getNSHrequired(void* const hRot);
 }
 #endif
 
-
 #endif /* __ROTATOR_H_INCLUDED__ */
-
-

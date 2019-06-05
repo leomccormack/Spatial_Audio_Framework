@@ -44,7 +44,7 @@ void ambi_enc_create
         pData->recalc_SH_FLAG[i] = 1;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
-    pData->outputOrderPreset = OUTPUT_ORDER_FIRST;
+    pData->order = OUTPUT_ORDER_FIRST;
 }
 
 void ambi_enc_destroy
@@ -216,17 +216,8 @@ void ambi_enc_setOutputOrder(void* const hAmbi, int newOrder)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
     int i;
-    if(newOrder != pData->outputOrderPreset){
-        pData->outputOrderPreset = (OUTPUT_ORDERS)newOrder;
-        switch(pData->outputOrderPreset){ 
-            case OUTPUT_ORDER_FIRST:   pData->order = 1; break;
-            case OUTPUT_ORDER_SECOND:  pData->order = 2; break;
-            case OUTPUT_ORDER_THIRD:   pData->order = 3; break;
-            case OUTPUT_ORDER_FOURTH:  pData->order = 4; break;
-            case OUTPUT_ORDER_FIFTH:   pData->order = 5; break;
-            case OUTPUT_ORDER_SIXTH:   pData->order = 6; break;
-            case OUTPUT_ORDER_SEVENTH: pData->order = 7; break;
-        }
+    if(newOrder != pData->order){
+        pData->order = newOrder; 
         for(i=0; i<MAX_NUM_INPUTS; i++)
             pData->recalc_SH_FLAG[i] = 1;
         /* FUMA only supports 1st order */
@@ -261,7 +252,7 @@ void ambi_enc_setNumSources(void* const hAmbi, int new_nSources)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
     int i;
-    pData->new_nSources = new_nSources > MAX_NUM_INPUTS ? MAX_NUM_INPUTS : new_nSources;
+    pData->new_nSources = CLAMP(new_nSources, 1, MAX_NUM_INPUTS);
     pData->nSources = pData->new_nSources;
     for(i=0; i<MAX_NUM_INPUTS; i++)
         pData->recalc_SH_FLAG[i] = 1;
@@ -291,12 +282,13 @@ void ambi_enc_setNormType(void* const hAmbi, int newType)
         pData->norm = (NORM_TYPES)newType;
 }
 
+
 /* Get Functions */
 
 int ambi_enc_getOutputOrder(void* const hAmbi)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
-    return (int)pData->outputOrderPreset;
+    return (int)pData->order;
 }
 
 float ambi_enc_getSourceAzi_deg(void* const hAmbi, int index)

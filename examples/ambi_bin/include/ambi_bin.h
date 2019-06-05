@@ -75,23 +75,23 @@ typedef enum _NORM_TYPES{
 /******************/
     
 /* creates an instance of ambi_bin */
-void ambi_bin_create(void** const phAmbi);              /* address of ambi_bin handle */
+void ambi_bin_create(void** const phAmbi);    /* address of ambi_bin handle */
 
 /* destroys an instance of ambi_bin */
-void ambi_bin_destroy(void** const phAmbi);             /* address of ambi_bin handle */
+void ambi_bin_destroy(void** const phAmbi);   /* address of ambi_bin handle */
 
 /* initialises an instance of ambi_bin */
-void ambi_bin_init(void* const hAmbi,                   /* ambi_bin handle */
-                   int samplerate);                     /* host sample rate */
+void ambi_bin_init(void* const hAmbi,         /* ambi_bin handle */
+                   int samplerate);           /* host sample rate */
     
 /* decodes the input spherical harmonic signals to loudspeaker or headphone signals */
-void ambi_bin_process(void* const hAmbi,                /* ambi_bin handle */
-                      float** const inputs,             /* input channels, [nInputs][nSampes] */
-                      float** const outputs,            /* output channels, [nOutputs][nSampes] */
-                      int nInputs,                      /* number of channels in 'inputs' matrix */
-                      int nOutputs,                     /* number of channels in 'outputs' matrix */
-                      int nSamples,                     /* number of samples in 'inputs' matrix */
-                      int isPlaying);                   /* flag, 1: if there is signal in the buffers */
+void ambi_bin_process(void* const hAmbi,      /* ambi_bin handle */
+                      float** const inputs,   /* input channels, [nInputs][nSampes] */
+                      float** const outputs,  /* output channels, [nOutputs][nSampes] */
+                      int nInputs,            /* number of channels in 'inputs' matrix */
+                      int nOutputs,           /* number of channels in 'outputs' matrix */
+                      int nSamples,           /* number of samples in 'inputs' matrix */
+                      int isPlaying);         /* flag, 1: if there is signal in the buffers */
 
     
 /*****************/

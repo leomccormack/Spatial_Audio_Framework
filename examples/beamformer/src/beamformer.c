@@ -153,6 +153,7 @@ void beamformer_process
     /* local copies of user parameters */
     int nBeams, beamOrder;
     NORM_TYPES norm;
+    CH_ORDER chOrdering;
     
     /* reinitialise if needed */
 #ifdef __APPLE__
@@ -172,12 +173,30 @@ void beamformer_process
         beamOrder = pData->beamOrder;
         nBeams = pData->nBeams;
         norm = pData->norm;
+        chOrdering = pData->chOrdering;
         
         /* Load time-domain data */
-        for(i=0; i < MIN(pData->nSH, nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
-        for(; i<pData->nSH; i++)
-            memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float));
+        switch(chOrdering){
+            case CH_ACN:
+                for(i=0; i < MIN(pData->nSH, nInputs); i++)
+                    utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
+                for(; i<pData->nSH; i++)
+                    memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                break;
+            case CH_FUMA:   /* only for first-order, convert to ACN */
+                if(nInputs>=4){
+                    utility_svvcopy(inputs[0], FRAME_SIZE, pData->SHFrameTD[0]);
+                    utility_svvcopy(inputs[1], FRAME_SIZE, pData->SHFrameTD[3]);
+                    utility_svvcopy(inputs[2], FRAME_SIZE, pData->SHFrameTD[1]);
+                    utility_svvcopy(inputs[3], FRAME_SIZE, pData->SHFrameTD[2]);
+                    for(i=4; i<pData->nSH; i++)
+                        memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                }
+                else
+                    for(i=0; i<pData->nSH; i++)
+                        memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float));
+                break;
+        }
         
         /* account for input normalisation scheme */
         switch(norm){
@@ -188,6 +207,13 @@ void beamformer_process
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->SHFrameTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
+                break;
+            case NORM_FUMA: /* only for first-order, convert to N3D */
+                for(i = 0; i<FRAME_SIZE; i++)
+                    pData->SHFrameTD[0][i] *= sqrtf(2.0f);
+                for (ch = 1; ch<4; ch++)
+                    for(i = 0; i<FRAME_SIZE; i++)
+                        pData->SHFrameTD[ch][i] *= sqrtf(3.0f);
                 break;
         }
         
@@ -302,6 +328,11 @@ void beamformer_setBeamOrder(void  * const hBeam, int newValue)
     pData->reInitTFT = 1;
     for(ch=0; ch<MAX_NUM_BEAMS; ch++)
         pData->recalc_beamWeights[ch] = 1;
+    /* FUMA only supports 1st order */
+    if(pData->beamOrder!=BEAM_ORDER_FIRST && pData->chOrdering == CH_FUMA)
+        pData->chOrdering = CH_ACN;
+    if(pData->beamOrder!=BEAM_ORDER_FIRST && pData->norm == NORM_FUMA)
+        pData->norm = NORM_SN3D;
 }
 
 void beamformer_setBeamAzi_deg(void* const hBeam, int index, float newAzi_deg)
@@ -327,8 +358,8 @@ void beamformer_setBeamElev_deg(void* const hBeam, int index, float newElev_deg)
 void beamformer_setNumBeams(void* const hBeam, int new_nBeams)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    int ch; 
-    pData->new_nBeams = new_nBeams > MAX_NUM_BEAMS ? MAX_NUM_BEAMS : new_nBeams;
+    int ch;
+    pData->new_nBeams = CLAMP(new_nBeams, 1, MAX_NUM_BEAMS);
     if(pData->nBeams != pData->new_nBeams){
         pData->reInitTFT = 1;
         for(ch=0; ch<MAX_NUM_BEAMS; ch++)
@@ -339,13 +370,15 @@ void beamformer_setNumBeams(void* const hBeam, int new_nBeams)
 void beamformer_setChOrder(void* const hBeam, int newOrder)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    pData->chOrdering = (CH_ORDER)newOrder;
+    if((CH_ORDER)newOrder != CH_FUMA || pData->beamOrder==BEAM_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (CH_ORDER)newOrder;
 }
 
 void beamformer_setNormType(void* const hBeam, int newType)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    pData->norm = (NORM_TYPES)newType;
+    if((NORM_TYPES)newType != NORM_FUMA || pData->beamOrder==BEAM_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (NORM_TYPES)newType;
 }
 
 void beamformer_setBeamType(void* const hBeam, int newID)

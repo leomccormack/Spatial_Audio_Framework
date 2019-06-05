@@ -197,11 +197,28 @@ void sldoa_analysis
         masterOrder = pData->masterOrder;
         nSH = (masterOrder+1)*(masterOrder+1);
         
-        /* load intput time-domain data */
-        for (i = 0; i < MIN(nSH, nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHframeTD[i]);
-        for (; i < nSH; i++)
-            memset(pData->SHframeTD[i], 0, FRAME_SIZE*sizeof(float));
+        /* Load time-domain data */
+        switch(chOrdering){
+            case CH_ACN:
+                for(i=0; i < MIN(nSH, nInputs); i++)
+                    utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHframeTD[i]);
+                for(; i<nSH; i++)
+                    memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                break;
+            case CH_FUMA:   /* only for first-order, convert to ACN */
+                if(nInputs>=4){
+                    utility_svvcopy(inputs[0], FRAME_SIZE, pData->SHframeTD[0]);
+                    utility_svvcopy(inputs[1], FRAME_SIZE, pData->SHframeTD[3]);
+                    utility_svvcopy(inputs[2], FRAME_SIZE, pData->SHframeTD[1]);
+                    utility_svvcopy(inputs[3], FRAME_SIZE, pData->SHframeTD[2]);
+                    for(i=4; i<nSH; i++)
+                        memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                }
+                else
+                    for(i=0; i<nSH; i++)
+                        memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float));
+                break;
+        }
         
         /* account for input normalisation scheme */
         switch(norm){
@@ -213,6 +230,13 @@ void sldoa_analysis
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->SHframeTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
+                break;
+            case NORM_FUMA: /* only for first-order, convert to N3D */
+                for(i = 0; i<FRAME_SIZE; i++)
+                    pData->SHframeTD[0][i] *= sqrtf(2.0f);
+                for (ch = 1; ch<4; ch++)
+                    for(i = 0; i<FRAME_SIZE; i++)
+                        pData->SHframeTD[ch][i] *= sqrtf(3.0f);
                 break;
         }
         
@@ -311,6 +335,11 @@ void sldoa_setMasterOrder(void* const hSld,  int newValue)
     pData->new_masterOrder = newValue; 
     pData->reInitTFT = 1;
     pData->reInitAna = 1;
+    /* FUMA only supports 1st order */
+    if(pData->new_masterOrder!=MASTER_ORDER_FIRST && pData->chOrdering == CH_FUMA)
+        pData->chOrdering = CH_ACN;
+    if(pData->new_masterOrder!=MASTER_ORDER_FIRST && pData->norm == NORM_FUMA)
+        pData->norm = NORM_SN3D;
 }
 
 void sldoa_refreshSettings(void* const hSld)
@@ -436,14 +465,17 @@ void sldoa_setAnaOrderAllBands(void * const hSld, int newValue)
 void sldoa_setChOrder(void* const hSld, int newOrder)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    pData->chOrdering = (CH_ORDER)newOrder;
+    if((CH_ORDER)newOrder != CH_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (CH_ORDER)newOrder;
 }
 
 void sldoa_setNormType(void* const hSld, int newType)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    pData->norm = (NORM_TYPES)newType;
+    if((NORM_TYPES)newType != NORM_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (NORM_TYPES)newType;
 }
+
 
 /* GETS */
 

@@ -37,11 +37,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/***********************/
+/* Presets + Constants */
+/***********************/
  
-/***********/
-/* Presets */
-/***********/
- 
+#define DIRASS_MAX_NUM_INPUT_CHANNELS ( 64 )
+    
 typedef enum _INPUT_ORDERS{
     INPUT_ORDER_FIRST = 1,
     INPUT_ORDER_SECOND,
@@ -94,12 +96,14 @@ typedef enum _GRID_OPTIONS{
 }GRID_OPTIONS;
 
 typedef enum _CH_ORDER{
-    CH_ACN = 1
+    CH_ACN = 1,
+    CH_FUMA     /* first-order only */
 }CH_ORDER;
 
 typedef enum _NORM_TYPES{
     NORM_N3D = 1,
-    NORM_SN3D
+    NORM_SN3D,
+    NORM_FUMA   /* first-order only */
 }NORM_TYPES;
 
 typedef enum _BEAM_TYPES {
@@ -110,7 +114,7 @@ typedef enum _BEAM_TYPES {
 } BEAM_TYPES;
     
 typedef enum _REASS_MODE {
-    /* Re-assignment is disabled. i.e. it just calculates (beamformer) energy-based maps */
+    /* Re-assignment is disabled. i.e. it generates a standard (beamformer)energy-based map */
     REASS_MODE_OFF = 1,
     /* Each sector beamformer energy is re-assigned to the nearest interpolation grid point,
      * based on the analysed DoA. More information can be found in:
@@ -249,10 +253,6 @@ int dirass_getPmap(void* const hDir,
 }
 #endif
 
-
 #endif /* __DIRASS_H_INCLUDED__ */
-
-
-
 
 

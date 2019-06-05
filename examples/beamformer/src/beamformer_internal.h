@@ -46,9 +46,9 @@ extern "C" {
 #define HOP_SIZE ( 128 )                        /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )           /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )    /* 4/8/16 */
-#define MAX_SH_ORDER ( 7 )
+#define MAX_SH_ORDER ( BEAMFORMER_MAX_SH_ORDER )
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER+1)*(MAX_SH_ORDER+1) ) /* Maximum number of spherical harmonic components */
-#define MAX_NUM_BEAMS ( 64 )                    /* Maximum permitted channels for the VST standard */
+#define MAX_NUM_BEAMS ( BEAMFORMER_MAX_NUM_BEAMS ) /* Maximum permitted channels for the VST standard */
     
     
 /***********/
@@ -64,11 +64,11 @@ typedef struct _beamformer
     float outputFrameTD[MAX_NUM_BEAMS][FRAME_SIZE];
     //complexVector* STFTInputFrameTF;
     //complexVector* STFTOutputFrameTF;
-    //void* hSTFT;                             /* afSTFT handle */
-    //int afSTFTdelay;                         /* for host delay compensation */
-    //float** tempHopFrameTD;                  /* temporary multi-channel time-domain buffer of size "HOP_SIZE". */
+    //void* hSTFT;                           /* afSTFT handle */
+    //int afSTFTdelay;                       /* for host delay compensation */
+    //float** tempHopFrameTD;                /* temporary multi-channel time-domain buffer of size "HOP_SIZE". */
     int fs;                                  /* host sampling rate */
-    //float freqVector[HYBRID_BANDS];          /* frequency vector for time-frequency transform, in Hz */
+    //float freqVector[HYBRID_BANDS];        /* frequency vector for time-frequency transform, in Hz */
     
     /* internal variables */
     int nSH;
@@ -103,7 +103,6 @@ void beamformer_initTFT(void* const hBeam);  /* beamformer handle */
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif /* __BEAMFORMER_INTERNAL_H_INCLUDED__ */
 

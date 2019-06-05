@@ -1,4 +1,4 @@
-    /*
+/*
  Copyright 2019 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -160,7 +160,6 @@ void dirass_init
     dirass_checkReInit(hDir);
 }
 
-
 void dirass_analysis
 (
     void  *  const hDir,
@@ -180,6 +179,7 @@ void dirass_analysis
     int inputOrder, DirAssMode, upscaleOrder;
     float pmapAvgCoeff, minFreq_hz, maxFreq_hz;
     NORM_TYPES norm;
+    CH_ORDER chOrdering;
     
     /* reinitialise if needed */
 #ifdef __APPLE__
@@ -192,6 +192,7 @@ void dirass_analysis
         
         /* copy current parameters to be thread safe */
         norm = pData->norm;
+        chOrdering = pData->chOrdering;
         pmapAvgCoeff = pData->pmapAvgCoeff;
         DirAssMode = pData->DirAssMode;
         upscaleOrder = pData->upscaleOrder;
@@ -203,11 +204,28 @@ void dirass_analysis
         sec_nSH = (secOrder+1)*(secOrder+1);
         up_nSH = (upscaleOrder+1)*(upscaleOrder+1);
         
-        /* load intput time-domain data */
-        for (i = 0; i < MIN(nSH, nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHframeTD[i]);
-        for (; i < nSH; i++)
-            memset(pData->SHframeTD[i], 0, FRAME_SIZE*sizeof(float));
+        /* Load time-domain data */
+        switch(chOrdering){
+            case CH_ACN:
+                for(i=0; i < MIN(nSH, nInputs); i++)
+                    utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHframeTD[i]);
+                for(; i<nSH; i++)
+                    memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                break;
+            case CH_FUMA:   /* only for first-order, convert to ACN */
+                if(nInputs>=4){
+                    utility_svvcopy(inputs[0], FRAME_SIZE, pData->SHframeTD[0]);
+                    utility_svvcopy(inputs[1], FRAME_SIZE, pData->SHframeTD[3]);
+                    utility_svvcopy(inputs[2], FRAME_SIZE, pData->SHframeTD[1]);
+                    utility_svvcopy(inputs[3], FRAME_SIZE, pData->SHframeTD[2]);
+                    for(i=4; i<nSH; i++)
+                        memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                }
+                else
+                    for(i=0; i<nSH; i++)
+                        memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float));
+                break;
+        }
         
         /* account for input normalisation scheme */
         switch(norm){
@@ -219,6 +237,13 @@ void dirass_analysis
                     for (ch = o[n]; ch<o[n+1]; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             pData->SHframeTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
+                break;
+            case NORM_FUMA: /* only for first-order, convert to N3D */
+                for(i = 0; i<FRAME_SIZE; i++)
+                    pData->SHframeTD[0][i] *= sqrtf(2.0f);
+                for (ch = 1; ch<4; ch++)
+                    for(i = 0; i<FRAME_SIZE; i++)
+                        pData->SHframeTD[ch][i] *= sqrtf(3.0f);
                 break;
         }
         
@@ -404,6 +429,11 @@ void dirass_setInputOrder(void* const hDir,  int newValue)
     dirass_data *pData = (dirass_data*)(hDir);
     pData->new_inputOrder = newValue;
     pData->reInitAna = 1;
+    /* FUMA only supports 1st order */
+    if(pData->new_inputOrder!=INPUT_ORDER_FIRST && pData->chOrdering == CH_FUMA)
+        pData->chOrdering = CH_ACN;
+    if(pData->new_inputOrder!=INPUT_ORDER_FIRST && pData->norm == NORM_FUMA)
+        pData->norm = NORM_SN3D;
 }
 
 void dirass_setDisplayGridOption(void* const hDir,  int newState)
@@ -452,13 +482,15 @@ void dirass_setMaxFreq(void* const hDir,  float newValue)
 void dirass_setChOrder(void* const hDir, int newOrder)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->chOrdering = (CH_ORDER)newOrder;
+    if((CH_ORDER)newOrder != CH_FUMA || pData->new_inputOrder==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (CH_ORDER)newOrder;
 }
 
 void dirass_setNormType(void* const hDir, int newType)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->norm = (NORM_TYPES)newType;
+    if((NORM_TYPES)newType != NORM_FUMA || pData->new_inputOrder==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (NORM_TYPES)newType;
 }
 
 void dirass_setDispFOV(void* const hDir, int newOption)

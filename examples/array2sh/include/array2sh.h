@@ -293,8 +293,3 @@ int array2sh_getProcessingDelay(void);
 #endif
 
 #endif /* __ARRAY2SH_H_INCLUDED__ */
-
-
-
-
-

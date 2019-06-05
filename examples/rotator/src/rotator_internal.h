@@ -37,15 +37,23 @@
 extern "C" {
 #endif
 
-#define MAX_SH_ORDER ( 7 )
+/***************/
+/* Definitions */
+/***************/
+
+#define MAX_SH_ORDER ( ROTATOR_MAX_SH_ORDER )
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1)  )    /* (L+1)^2 */
-    
 #ifndef DEG2RAD
   #define DEG2RAD(x) (x * PI / 180.0f)
 #endif
 #ifndef RAD2DEG
   #define RAD2DEG(x) (x * 180.0f / PI)
 #endif
+    
+    
+/***********/
+/* Structs */
+/***********/
 
 typedef struct _rotator
 {
@@ -61,39 +69,19 @@ typedef struct _rotator
     int recalc_M_rotFLAG;
 
     /* user parameters */
-    float yaw, roll, pitch;                  /* rotation angles in degrees */
-    int bFlipYaw, bFlipPitch, bFlipRoll;     /* flag to flip the sign of the individual rotation angles */
-    int order;                               /* current decoding order */
-    CH_ORDER chOrdering;                     /* only ACN is supported */
-    NORM_TYPES norm;                         /* N3D or SN3D */
-    OUTPUT_ORDERS outputOrder;               /* current decoding order PRESET */
-    int useRollPitchYawFlag;                 /* rotation order flag, 1: r-p-y, 0: y-p-r */
+    float yaw, roll, pitch;      /* rotation angles in degrees */
+    int bFlipYaw, bFlipPitch, bFlipRoll;  /* flag to flip the sign of the individual rotation angles */
+    CH_ORDER chOrdering;         /* only ACN is supported */
+    NORM_TYPES norm;             /* N3D or SN3D */
+    INPUT_ORDERS inputOrder;     /* current input/output order int order;*/
+    int useRollPitchYawFlag;     /* rotation order flag, 1: r-p-y, 0: y-p-r */
     
 } rotator_data;
+    
     
 #ifdef __cplusplus
 }
 #endif
 
-
 #endif /* __ROTATOR_INTERNAL_H_INCLUDED__ */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

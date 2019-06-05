@@ -255,9 +255,12 @@ void ambi_dec_process
                     utility_svvcopy(inputs[1], FRAME_SIZE, pData->SHFrameTD[3]);
                     utility_svvcopy(inputs[2], FRAME_SIZE, pData->SHFrameTD[1]);
                     utility_svvcopy(inputs[3], FRAME_SIZE, pData->SHFrameTD[2]);
+                    for(i=4; i<pData->nSH; i++)
+                        memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
                 }
-                for(i=MIN(nInputs,4); i<pData->nSH; i++)
-                    memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+                else
+                    for(i=0; i<pData->nSH; i++)
+                        memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float));
                 break;
         }
         

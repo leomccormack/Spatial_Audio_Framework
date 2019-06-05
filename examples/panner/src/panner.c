@@ -472,7 +472,7 @@ void panner_setSpread(void* const hPan, float newValue)
     panner_data *pData = (panner_data*)(hPan);
     int ch;
     if(pData->spread_deg!=newValue){
-        pData->spread_deg = newValue;
+        pData->spread_deg = CLAMP(newValue, PANNER_SPREAD_MIN_VALUE, PANNER_SPREAD_MAX_VALUE);
         pData->reInitGainTables=1;
         for(ch=0; ch<MAX_NUM_INPUTS; ch++)
             pData->recalc_gainsFLAG[ch] = 1;

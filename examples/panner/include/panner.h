@@ -33,10 +33,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
-/***********/
-/* Presets */
-/***********/
+
+/***********************/
+/* Presets + Constants */
+/***********************/
      
 #define ENABLE_MONO_PRESET
 #define ENABLE_STEREO_PRESET
@@ -131,7 +131,12 @@ typedef enum _PRESETS{
 #endif
     
 }PRESETS;
-
+    
+#define PANNER_MAX_NUM_INPUTS ( 64 )
+#define PANNER_MAX_NUM_OUTPUTS ( 64 )
+#define PANNER_SPREAD_MIN_VALUE ( 0.0f )
+#define PANNER_SPREAD_MAX_VALUE ( 90.0f )
+    
 
 /******************/
 /* Main Functions */
@@ -140,15 +145,12 @@ typedef enum _PRESETS{
 /* creates an instance of the panner */
 void panner_create(void** const phPan);                  /* address of panner handle */
 
-
 /* destroys an instance of panner */
 void panner_destroy(void** const phBp);                  /* address of panner handle */
-
 
 /* initialises an instance of panner */
 void panner_init(void* const hPan,                       /* panner handle */
                  int samplerate);                        /* host sample rate */
-    
     
 /* pan input sources using VBAP */
 void panner_process(void* const hPan,                    /* panner handle */
@@ -248,10 +250,4 @@ int panner_getProcessingDelay(void);
 }
 #endif
 
-
 #endif /* __PANNER_H_INCLUDED__ */
-
-
-
-
-

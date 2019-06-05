@@ -1,4 +1,4 @@
-    /*
+/*
  Copyright 2017-2018 Leo McCormack
  
  Permission to use, copy, modify, and/or distribute this software for any purpose with or
@@ -242,10 +242,24 @@ void array2sh_process
                 }
             }
             afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD_out);
-            for (ch = 0; ch < MIN(nSH, nOutputs); ch++)
-                utility_svvcopy(pData->tempHopFrameTD_out[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
-            for (; ch < nOutputs; ch++)
-                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
+            
+            /* copy SH signals to output buffer */
+            switch(chOrdering){
+                case CH_ACN:  /* already ACN */
+                    for (ch = 0; ch < MIN(nSH, nOutputs); ch++)
+                        utility_svvcopy(pData->tempHopFrameTD_out[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
+                    for (; ch < nOutputs; ch++)
+                        memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
+                    break;
+                case CH_FUMA: /* convert to FuMa, only for first-order */
+                    if(nOutputs>=4){
+                        utility_svvcopy(pData->tempHopFrameTD_out[0], HOP_SIZE, &(outputs[0][t* HOP_SIZE]));
+                        utility_svvcopy(pData->tempHopFrameTD_out[1], HOP_SIZE, &(outputs[2][t* HOP_SIZE]));
+                        utility_svvcopy(pData->tempHopFrameTD_out[2], HOP_SIZE, &(outputs[3][t* HOP_SIZE]));
+                        utility_svvcopy(pData->tempHopFrameTD_out[3], HOP_SIZE, &(outputs[1][t* HOP_SIZE]));
+                    }
+                    break;
+            }
         }
         
         /* apply normalisation scheme */
@@ -257,6 +271,18 @@ void array2sh_process
                     for (ch = o[n]; ch < MIN(o[n+1],nOutputs); ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             outputs[ch][i] /= sqrtf(2.0f*(float)n+1.0f);
+                break;
+            case NORM_FUMA: /* convert to FuMa, only for first-order */
+                if(nOutputs>=4){
+                    for(i = 0; i<FRAME_SIZE; i++)
+                        outputs[0][i] /= sqrtf(2.0f);
+                    for (ch = 1; ch<4; ch++)
+                        for(i = 0; i<FRAME_SIZE; i++)
+                            outputs[ch][i] /= sqrtf(3.0f);
+                }
+                else
+                    for(i=0; i<nOutputs; i++)
+                        memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
                 break;
         }
     }
@@ -313,6 +339,11 @@ void array2sh_setEncodingOrder(void* const hA2sh, int newOrder)
     pData->new_nSH = (newOrder+1)*(newOrder+1);
     pData->reinitTFTFLAG = 1;
     pData->reinitSHTmatrixFLAG = 1;
+    /* FUMA only supports 1st order */
+    if(pData->order!=ENCODING_ORDER_FIRST && pData->chOrdering == CH_FUMA)
+        pData->chOrdering = CH_ACN;
+    if(pData->order!=ENCODING_ORDER_FIRST && pData->norm == NORM_FUMA)
+        pData->norm = NORM_SN3D;
 }
 
 void array2sh_evaluateFilters(void* const hA2sh)
@@ -399,7 +430,7 @@ void array2sh_setr(void* const hA2sh, float newr)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
-    arraySpecs->r = newr;
+    arraySpecs->r = CLAMP(newr, ARRAY2SH_ARRAY_RADIUS_MIN_VALUE/1e3f, ARRAY2SH_ARRAY_RADIUS_MAX_VALUE/1e3f);
     pData->reinitSHTmatrixFLAG = 1;
 }
 
@@ -407,7 +438,7 @@ void array2sh_setR(void* const hA2sh, float newR)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
-    arraySpecs->R = newR;
+    arraySpecs->R = CLAMP(newR, ARRAY2SH_BAFFLE_RADIUS_MIN_VALUE/1e3f, ARRAY2SH_BAFFLE_RADIUS_MAX_VALUE/1e3f);
     pData->reinitSHTmatrixFLAG = 1;
 }
 
@@ -438,34 +469,35 @@ void array2sh_setFilterType(void* const hA2sh, int newType)
 void array2sh_setRegPar(void* const hA2sh, float newVal)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->regPar = newVal;
+    pData->regPar = CLAMP(newVal, ARRAY2SH_MAX_GAIN_MIN_VALUE, ARRAY2SH_MAX_GAIN_MAX_VALUE);
     pData->reinitSHTmatrixFLAG = 1;
 }
 
 void array2sh_setChOrder(void* const hA2sh, int newOrder)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->chOrdering = (CH_ORDER)newOrder;
+    if((CH_ORDER)newOrder != CH_FUMA || pData->order==ENCODING_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (CH_ORDER)newOrder;
 }
 
 void array2sh_setNormType(void* const hA2sh, int newType)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->norm = (NORM_TYPES)newType;
+    if((NORM_TYPES)newType != NORM_FUMA || pData->order==ENCODING_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (NORM_TYPES)newType;
 }
 
 void array2sh_setc(void* const hA2sh, float newc)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->c = newc;
+    pData->c = CLAMP(newc, ARRAY2SH_SPEED_OF_SOUND_MIN_VALUE, ARRAY2SH_SPEED_OF_SOUND_MAX_VALUE);
     pData->reinitSHTmatrixFLAG = 1;
 }
-
 
 void array2sh_setGain(void* const hA2sh, float newGain)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->gain_dB = newGain;
+    pData->gain_dB = CLAMP(newGain, ARRAY2SH_POST_GAIN_MIN_VALUE, ARRAY2SH_POST_GAIN_MAX_VALUE);
 }
 
 void array2sh_setMaxFreq(void* const hA2sh, float newF)
