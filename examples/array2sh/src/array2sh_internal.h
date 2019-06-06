@@ -89,8 +89,7 @@ typedef struct _array2sh
     float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     complexVector* STFTInputFrameTF;
     complexVector* STFTOutputFrameTF;
-    float** tempHopFrameTD_in;
-    float** tempHopFrameTD_out;
+    float** tempHopFrameTD;
     
     /* intermediates */
     double_complex bN_modal[HYBRID_BANDS][MAX_SH_ORDER + 1];
@@ -132,8 +131,7 @@ typedef struct _array2sh
     CH_ORDER chOrdering;            /* ACN */
     NORM_TYPES norm;                /* N3D/SN3D */
     float c;                        /* speed of sound, m/s */
-    float gain_dB;                  /* post gain, dB */
-    float maxFreq;                  /* maximum encoding frequency, hz */
+    float gain_dB;                  /* post gain, dB */ 
     
 } array2sh_data;
      

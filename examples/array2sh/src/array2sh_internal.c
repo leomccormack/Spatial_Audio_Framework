@@ -65,7 +65,7 @@ void array2sh_initTFT
         afSTFTinit(&(pData->hSTFT), HOP_SIZE, arraySpecs->newQ, pData->new_nSH, 0, 1);
     else
         afSTFTchannelChange(pData->hSTFT, arraySpecs->newQ, pData->new_nSH);
-
+ 
     arraySpecs->Q = arraySpecs->newQ;
     pData->nSH = pData->new_nSH;
     pData->reinitSHTmatrixFLAG = 1; /* filters need to be updated too */
@@ -86,6 +86,7 @@ void array2sh_calculate_sht_matrix
     const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta  = cmplxf(0.0f, 0.0f);
     
     /* prep */
+    memset(pData->W, 0, HYBRID_BANDS*MAX_NUM_SENSORS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
     order = pData->new_order;
     nSH = (order+1)*(order+1);
     arraySpecs->R = MIN(arraySpecs->R, arraySpecs->r);
@@ -96,10 +97,10 @@ void array2sh_calculate_sht_matrix
     
     /* Spherical harmponic weights for each sensor direction */
     Y_mic = NULL;
-    getRSH(order, (float*)arraySpecs->sensorCoords_deg, arraySpecs->Q, &Y_mic); /* nSH x Q */
+    getRSH_recur(order, (float*)arraySpecs->sensorCoords_deg, arraySpecs->Q, &Y_mic); /* nSH x Q */
     pinv_Y_mic = malloc( arraySpecs->Q * nSH *sizeof(float));
     utility_spinv(Y_mic, nSH, arraySpecs->Q, pinv_Y_mic);
-    pinv_Y_mic_cmplx =  malloc((arraySpecs->Q) * nSH *sizeof(float_complex));
+    pinv_Y_mic_cmplx = malloc((arraySpecs->Q) * nSH *sizeof(float_complex));
     for(i=0; i<(arraySpecs->Q)*nSH; i++)
         pinv_Y_mic_cmplx[i] = cmplxf(pinv_Y_mic[i], 0.0f);
     
@@ -182,7 +183,6 @@ void array2sh_calculate_sht_matrix
         
         /* diag(filters) * Y */
         array2sh_replicate_order(hA2sh, order); /* replicate orders */
-        
         diag_bN_inv_R = calloc(nSH*nSH, sizeof(float_complex));
         for(band=0; band<HYBRID_BANDS; band++){
             for(i=0; i<nSH; i++)
@@ -244,7 +244,7 @@ void array2sh_calculate_sht_matrix
         hn2prime_kr = malloc((HYBRID_BANDS)*(order+1)*sizeof(double_complex));
         maxN = 1e8;
         hankel_hn2(order, kr, HYBRID_BANDS, &maxN, NULL, hn2prime_kr);
-        for(band=0; band<HYBRID_BANDS-1; band++)
+        for(band=0; band<HYBRID_BANDS; band++)
             for (n=0; n<order+1; n++)
                 Hs[band][n] = crmul(ccmul(hn2prime_kr[band*(order+1)+n], cpow(cmplx(0.0, 1.0), -(double)n+1.0)), pow(kr[band], 2.0));
         free(hn2prime_kr);
@@ -359,7 +359,6 @@ void array2sh_calculate_sht_matrix
     }
      
     pData->order = order;
-    pData->nSH = nSH;
     pData->currentEvalIsValid = 0;
     
     free(Y_mic);

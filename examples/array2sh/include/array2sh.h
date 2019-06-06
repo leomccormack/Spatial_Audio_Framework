@@ -219,9 +219,7 @@ void array2sh_setNormType(void* const hA2sh, int newType);
 
 void array2sh_setc(void* const hA2sh, float newc);
     
-void array2sh_setGain(void* const hA2sh, float newGain);
-    
-void array2sh_setMaxFreq(void* const hA2sh, float newF);
+void array2sh_setGain(void* const hA2sh, float newGain);  
 
     
 /*****************/
@@ -270,8 +268,6 @@ int array2sh_getNormType(void* const hA2sh);
 float array2sh_getc(void* const hA2sh);
     
 float array2sh_getGain(void* const hA2sh);
-    
-float array2sh_getMaxFreq(void* const hA2sh);
     
 float* array2sh_getFreqVector(void* const hA2sh, int* nFreqPoints);
     

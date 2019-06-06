@@ -53,7 +53,6 @@ void array2sh_create
     pData->norm = NORM_SN3D;
     pData->c = 343.0f;
     pData->gain_dB = 0.0f; /* post-gain */
-    pData->maxFreq = 20e3f;
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
     array2sh_initArray(arraySpecs, PRESET_DEFAULT, &(pData->order), 1);
     
@@ -69,8 +68,7 @@ void array2sh_create
         pData->STFTOutputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
         pData->STFTOutputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
     }
-    pData->tempHopFrameTD_in = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));
-    pData->tempHopFrameTD_out = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));
+    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));
     pData->reinitTFTFLAG = 1;
     pData->applyDiffEQFLAG = 1;
     
@@ -112,8 +110,7 @@ void array2sh_destroy
         }
         free(pData->STFTOutputFrameTF);
         free(pData->STFTInputFrameTF);
-        free2d((void**)pData->tempHopFrameTD_in, MAX(MAX_NUM_SENSORS, MAX_NUM_SH_SIGNALS));
-        free2d((void**)pData->tempHopFrameTD_out, MAX(MAX_NUM_SENSORS, MAX_NUM_SH_SIGNALS));
+        free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_SENSORS, MAX_NUM_SH_SIGNALS));
         array2sh_destroyArray(&(pData->arraySpecs));
         
         /* Display stuff */
@@ -165,7 +162,7 @@ void array2sh_process
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
     CH_ORDER chOrdering;
     NORM_TYPES norm;
-    float gain_lin, maxFreq;
+    float gain_lin;
     
     /* reinitialise if needed */
 #ifdef __APPLE__
@@ -192,22 +189,21 @@ void array2sh_process
         chOrdering = pData->chOrdering;
         norm = pData->norm;
         gain_lin = powf(10.0f, pData->gain_dB/20.0f);
-        maxFreq = pData->maxFreq;
         Q = arraySpecs->Q;
         order = pData->order;
         nSH = pData->nSH;
         
         /* Load time-domain data */
-        for(i=0; i < nInputs; i++)
+        for(i=0; i < MIN(nInputs,Q); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<Q; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
         
-        /* Apply time-frequency transform (TFT) */
+        /* Apply time-frequency transform (TFT) */ 
         for(t=0; t< TIME_SLOTS; t++) {
-            for(ch = 0; ch < nSH; ch++)
-                utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD_in[ch]);
-            afSTFTforward(pData->hSTFT, pData->tempHopFrameTD_in, pData->STFTInputFrameTF);
+            for(ch = 0; ch < Q; ch++)
+                utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
+            afSTFTforward(pData->hSTFT, pData->tempHopFrameTD, pData->STFTInputFrameTF);
             for(band=0; band<HYBRID_BANDS; band++)
                 for(ch=0; ch < Q; ch++)
                     pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
@@ -219,7 +215,7 @@ void array2sh_process
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, Q, &calpha,
                             pData->W[band], MAX_NUM_SENSORS,
                             pData->inputframeTF[band], TIME_SLOTS, &cbeta,
-                            pData->SHframeTF[band], TIME_SLOTS);
+                            pData->SHframeTF[band], TIME_SLOTS); 
             }
         }
         else
@@ -228,36 +224,33 @@ void array2sh_process
         /* inverse-TFT */
         for(t = 0; t < TIME_SLOTS; t++) {
             for(band = 0; band < HYBRID_BANDS; band++) {
-                if(pData->freqVector[band] < maxFreq){
-                    for (ch = 0; ch < nSH; ch++) {
-                        pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->SHframeTF[band][ch][t]);
-                        pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->SHframeTF[band][ch][t]);
-                    }
-                }
-                else{
-                    for (ch = 0; ch < nSH; ch++) {
-                        pData->STFTOutputFrameTF[ch].re[band] = 0.0f;
-                        pData->STFTOutputFrameTF[ch].im[band] = 0.0f;
-                    }
+                for (ch = 0; ch < nSH; ch++) {
+                    pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->SHframeTF[band][ch][t]) * gain_lin;
+                    pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->SHframeTF[band][ch][t]) * gain_lin;
                 }
             }
-            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD_out);
+            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
             
             /* copy SH signals to output buffer */
             switch(chOrdering){
                 case CH_ACN:  /* already ACN */
                     for (ch = 0; ch < MIN(nSH, nOutputs); ch++)
-                        utility_svvcopy(pData->tempHopFrameTD_out[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
+                        utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
                     for (; ch < nOutputs; ch++)
                         memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
                     break;
                 case CH_FUMA: /* convert to FuMa, only for first-order */
                     if(nOutputs>=4){
-                        utility_svvcopy(pData->tempHopFrameTD_out[0], HOP_SIZE, &(outputs[0][t* HOP_SIZE]));
-                        utility_svvcopy(pData->tempHopFrameTD_out[1], HOP_SIZE, &(outputs[2][t* HOP_SIZE]));
-                        utility_svvcopy(pData->tempHopFrameTD_out[2], HOP_SIZE, &(outputs[3][t* HOP_SIZE]));
-                        utility_svvcopy(pData->tempHopFrameTD_out[3], HOP_SIZE, &(outputs[1][t* HOP_SIZE]));
+                        utility_svvcopy(pData->tempHopFrameTD[0], HOP_SIZE, &(outputs[0][t* HOP_SIZE]));
+                        utility_svvcopy(pData->tempHopFrameTD[1], HOP_SIZE, &(outputs[2][t* HOP_SIZE]));
+                        utility_svvcopy(pData->tempHopFrameTD[2], HOP_SIZE, &(outputs[3][t* HOP_SIZE]));
+                        utility_svvcopy(pData->tempHopFrameTD[3], HOP_SIZE, &(outputs[1][t* HOP_SIZE]));
+                        for(i=4; i<nOutputs; i++)
+                            memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
                     }
+                    else
+                        for(i=0; i<nOutputs; i++)
+                            memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
                     break;
             }
         }
@@ -279,6 +272,8 @@ void array2sh_process
                     for (ch = 1; ch<4; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             outputs[ch][i] /= sqrtf(3.0f);
+                    for(i=4; i<nOutputs; i++)
+                        memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
                 }
                 else
                     for(i=0; i<nOutputs; i++)
@@ -340,9 +335,9 @@ void array2sh_setEncodingOrder(void* const hA2sh, int newOrder)
     pData->reinitTFTFLAG = 1;
     pData->reinitSHTmatrixFLAG = 1;
     /* FUMA only supports 1st order */
-    if(pData->order!=ENCODING_ORDER_FIRST && pData->chOrdering == CH_FUMA)
+    if(pData->new_order!=ENCODING_ORDER_FIRST && pData->chOrdering == CH_FUMA)
         pData->chOrdering = CH_ACN;
-    if(pData->order!=ENCODING_ORDER_FIRST && pData->norm == NORM_FUMA)
+    if(pData->new_order!=ENCODING_ORDER_FIRST && pData->norm == NORM_FUMA)
         pData->norm = NORM_SN3D;
 }
 
@@ -500,12 +495,6 @@ void array2sh_setGain(void* const hA2sh, float newGain)
     pData->gain_dB = CLAMP(newGain, ARRAY2SH_POST_GAIN_MIN_VALUE, ARRAY2SH_POST_GAIN_MAX_VALUE);
 }
 
-void array2sh_setMaxFreq(void* const hA2sh, float newF)
-{
-    array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->maxFreq = newF;
-}
-
 
 /* Get Functions */
 
@@ -648,13 +637,7 @@ float array2sh_getGain(void* const hA2sh)
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     return pData->gain_dB;
 }
-
-float array2sh_getMaxFreq(void* const hA2sh)
-{
-    array2sh_data *pData = (array2sh_data*)(hA2sh);
-    return pData->maxFreq;
-}
-
+ 
 float* array2sh_getFreqVector(void* const hA2sh, int* nFreqPoints)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
