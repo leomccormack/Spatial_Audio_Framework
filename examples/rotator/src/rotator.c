@@ -125,7 +125,7 @@ void rotator_process
                     for(i=4; i<nSH; i++)
                         memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
                 }
-                else{
+                else
                     for(i=0; i<nSH; i++)
                         memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
                 break;
