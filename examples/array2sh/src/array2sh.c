@@ -211,7 +211,7 @@ void array2sh_process
         
         /* Apply time-frequency transform (TFT) */
         for(t=0; t< TIME_SLOTS; t++) {
-            for(ch = 0; ch < nSH; ch++)
+            for(ch = 0; ch < Q; ch++)
                 utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD_in[ch]);
             afSTFTforward(pData->hSTFT, pData->tempHopFrameTD_in, pData->STFTInputFrameTF);
             for(band=0; band<HYBRID_BANDS; band++)
