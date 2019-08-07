@@ -26,6 +26,7 @@
  */
 
 #include "saf_filters.h" 
+#include "saf_utilities.h" 
 
 void biQuadCoeffs
 (

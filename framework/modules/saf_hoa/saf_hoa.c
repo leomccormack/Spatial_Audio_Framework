@@ -69,7 +69,7 @@ void getAmbiDecoder
     float** decMtx
 )
 {
-    unsigned int i, j, nSH;
+    int i, j, nSH;
     float* Y_ls;
 
     nSH = (order+1) * (order+1);
