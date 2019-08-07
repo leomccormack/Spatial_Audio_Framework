@@ -1,26 +1,33 @@
 /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     rotator_internal.h  
- * Description:
- *     A simple spherical harmonic domain rotator.
+ * Filename: rotator_internal.h
+ * ----------------------------
+ * A simple spherical harmonic domain rotator, based on the recursive approach
+ * detailed in [1].
+ *
  * Dependencies:
  *     saf_utilities, saf_sh
  * Author, date created:
  *     Leo McCormack, 02.11.2017
+ *
+ * [1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical
+ *     Harmonics. Direct Determination by Recursion Page: Additions and
+ *     Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100.
  */
 
 #ifndef __ROTATOR_INTERNAL_H_INCLUDED__
@@ -35,11 +42,11 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-/***************/
-/* Definitions */
-/***************/
+#endif /* __cplusplus */
+    
+/* ========================================================================== */
+/*                            Internal Parameters                             */
+/* ========================================================================== */
 
 #define MAX_SH_ORDER ( ROTATOR_MAX_SH_ORDER )
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1)  )    /* (L+1)^2 */
@@ -51,9 +58,9 @@ extern "C" {
 #endif
     
     
-/***********/
-/* Structs */
-/***********/
+/* ========================================================================== */
+/*                                 Structures                                 */
+/* ========================================================================== */
 
 typedef struct _rotator
 {
@@ -80,8 +87,7 @@ typedef struct _rotator
     
     
 #ifdef __cplusplus
-}
-#endif
+} /* extern "C" { */
+#endif /* __cplusplus */
 
 #endif /* __ROTATOR_INTERNAL_H_INCLUDED__ */
-

@@ -1,36 +1,43 @@
 /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     array2sh.c
- * Description:
- *     Spatially encodes spherical or cylindrical sensor array signals into spherical harmonic
- *     signals utilising theoretical encoding filters.
- *     The algorithms within array2sh were pieced together and developed in collaboration
- *     with Symeon Delikaris-Manias.
- *     A more detailed explanation of the algorithms in array2sh can be found in:
- *         McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
- *         “Real-time conversion of sensor array signals into spherical harmonic signals with
- *         applications to spatially localised sub-band sound-field analysis,” in Audio
- *         Engineering Society Convention 144, Audio Engineering Society, 2018.
- *     Also included, is a diffuse-field equalisation option for frequencies past aliasing,
- *     developed in collaboration with Archontis Politis, 8.02.2019
+ * Filename: array2sh.c
+ * --------------------
+ * Spatially encodes spherical or cylindrical sensor array signals into
+ * spherical harmonic signals utilising theoretical encoding filters.
+ * The algorithms within array2sh were pieced together and developed in
+ * collaboration with Symeon Delikaris-Manias and Angelo Farina.
+ * A detailed explanation of the algorithms within array2sh can be found in [1].
+ * Also included, is a diffuse-field equalisation option for frequencies past
+ * aliasing, developed in collaboration with Archontis Politis, 8.02.2019
+ * Note: since the algorithms are based on theory, only array designs where
+ * there are analytical solutions available are supported. i.e. only spherical
+ * or cylindrical arrays, which have phase-matched sensors.
+ *
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_sh
  * Author, date created:
  *     Leo McCormack, 13.09.2017
+ *
+ * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
+ *     V., “Real-time conversion of sensor array signals into spherical harmonic
+ *     signals with applications to spatially localised sub-band sound-field
+ *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
+ *     Society, 2018.
  */
 
 #include "array2sh_internal.h" 
@@ -40,8 +47,7 @@ void array2sh_create
     void ** const phA2sh
 )
 {
-    array2sh_data* pData = (array2sh_data*)malloc(sizeof(array2sh_data));
-    if (pData == NULL) { return;/*error*/ }
+    array2sh_data* pData = (array2sh_data*)malloc1d(sizeof(array2sh_data));
     *phA2sh = (void*)pData;
     int ch;
      
@@ -53,22 +59,24 @@ void array2sh_create
     pData->norm = NORM_SN3D;
     pData->c = 343.0f;
     pData->gain_dB = 0.0f; /* post-gain */
+    pData->maxFreq = 20e3f;
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
     array2sh_initArray(arraySpecs, PRESET_DEFAULT, &(pData->order), 1);
     
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->STFTInputFrameTF = (complexVector*)malloc(MAX_NUM_SENSORS * sizeof(complexVector));
+    pData->STFTInputFrameTF = (complexVector*)malloc1d(MAX_NUM_SENSORS * sizeof(complexVector));
     for(ch=0; ch< MAX_NUM_SENSORS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     }
-    pData->STFTOutputFrameTF = (complexVector*)malloc(MAX_NUM_SH_SIGNALS * sizeof(complexVector));
+    pData->STFTOutputFrameTF = (complexVector*)malloc1d(MAX_NUM_SH_SIGNALS * sizeof(complexVector));
     for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-        pData->STFTOutputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTOutputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     }
-    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));
+    pData->tempHopFrameTD_in = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));
+    pData->tempHopFrameTD_out = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));
     pData->reinitTFTFLAG = 1;
     pData->applyDiffEQFLAG = 1;
     
@@ -82,8 +90,8 @@ void array2sh_create
     /* display related stuff */
     pData->bN_modal_dB = (float**)malloc2d(HYBRID_BANDS, MAX_SH_ORDER + 1, sizeof(float));
     pData->bN_inv_dB = (float**)malloc2d(HYBRID_BANDS, MAX_SH_ORDER + 1, sizeof(float));
-    pData->cSH = (float*)calloc((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
-    pData->lSH = (float*)calloc((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
+    pData->cSH = (float*)calloc1d((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
+    pData->lSH = (float*)calloc1d((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
     
     pData->recalcEvalFLAG = 1;
 }
@@ -110,12 +118,13 @@ void array2sh_destroy
         }
         free(pData->STFTOutputFrameTF);
         free(pData->STFTInputFrameTF);
-        free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_SENSORS, MAX_NUM_SH_SIGNALS));
+        free(pData->tempHopFrameTD_in);
+        free(pData->tempHopFrameTD_out);
         array2sh_destroyArray(&(pData->arraySpecs));
         
         /* Display stuff */
-        free2d((void**)pData->bN_modal_dB, HYBRID_BANDS-1);
-        free2d((void**)pData->bN_inv_dB, HYBRID_BANDS-1);
+        free((void**)pData->bN_modal_dB);
+        free((void**)pData->bN_inv_dB);
         
         free(pData);
         pData = NULL;
@@ -162,7 +171,7 @@ void array2sh_process
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
     CH_ORDER chOrdering;
     NORM_TYPES norm;
-    float gain_lin;
+    float gain_lin, maxFreq;
     
     /* reinitialise if needed */
 #ifdef __APPLE__
@@ -189,21 +198,22 @@ void array2sh_process
         chOrdering = pData->chOrdering;
         norm = pData->norm;
         gain_lin = powf(10.0f, pData->gain_dB/20.0f);
+        maxFreq = pData->maxFreq;
         Q = arraySpecs->Q;
         order = pData->order;
         nSH = pData->nSH;
         
         /* Load time-domain data */
-        for(i=0; i < MIN(nInputs,Q); i++)
+        for(i=0; i < nInputs; i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<Q; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
         
-        /* Apply time-frequency transform (TFT) */ 
+        /* Apply time-frequency transform (TFT) */
         for(t=0; t< TIME_SLOTS; t++) {
-            for(ch = 0; ch < Q; ch++)
-                utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
-            afSTFTforward(pData->hSTFT, pData->tempHopFrameTD, pData->STFTInputFrameTF);
+            for(ch = 0; ch < nSH; ch++)
+                utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD_in[ch]);
+            afSTFTforward(pData->hSTFT, pData->tempHopFrameTD_in, pData->STFTInputFrameTF);
             for(band=0; band<HYBRID_BANDS; band++)
                 for(ch=0; ch < Q; ch++)
                     pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
@@ -215,7 +225,7 @@ void array2sh_process
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, Q, &calpha,
                             pData->W[band], MAX_NUM_SENSORS,
                             pData->inputframeTF[band], TIME_SLOTS, &cbeta,
-                            pData->SHframeTF[band], TIME_SLOTS); 
+                            pData->SHframeTF[band], TIME_SLOTS);
             }
         }
         else
@@ -224,33 +234,36 @@ void array2sh_process
         /* inverse-TFT */
         for(t = 0; t < TIME_SLOTS; t++) {
             for(band = 0; band < HYBRID_BANDS; band++) {
-                for (ch = 0; ch < nSH; ch++) {
-                    pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->SHframeTF[band][ch][t]) * gain_lin;
-                    pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->SHframeTF[band][ch][t]) * gain_lin;
+                if(pData->freqVector[band] < maxFreq){
+                    for (ch = 0; ch < nSH; ch++) {
+                        pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->SHframeTF[band][ch][t]);
+                        pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->SHframeTF[band][ch][t]);
+                    }
+                }
+                else{
+                    for (ch = 0; ch < nSH; ch++) {
+                        pData->STFTOutputFrameTF[ch].re[band] = 0.0f;
+                        pData->STFTOutputFrameTF[ch].im[band] = 0.0f;
+                    }
                 }
             }
-            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
+            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD_out);
             
             /* copy SH signals to output buffer */
             switch(chOrdering){
                 case CH_ACN:  /* already ACN */
                     for (ch = 0; ch < MIN(nSH, nOutputs); ch++)
-                        utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
+                        utility_svvcopy(pData->tempHopFrameTD_out[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
                     for (; ch < nOutputs; ch++)
                         memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
                     break;
                 case CH_FUMA: /* convert to FuMa, only for first-order */
                     if(nOutputs>=4){
-                        utility_svvcopy(pData->tempHopFrameTD[0], HOP_SIZE, &(outputs[0][t* HOP_SIZE]));
-                        utility_svvcopy(pData->tempHopFrameTD[1], HOP_SIZE, &(outputs[2][t* HOP_SIZE]));
-                        utility_svvcopy(pData->tempHopFrameTD[2], HOP_SIZE, &(outputs[3][t* HOP_SIZE]));
-                        utility_svvcopy(pData->tempHopFrameTD[3], HOP_SIZE, &(outputs[1][t* HOP_SIZE]));
-                        for(i=4; i<nOutputs; i++)
-                            memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
+                        utility_svvcopy(pData->tempHopFrameTD_out[0], HOP_SIZE, &(outputs[0][t* HOP_SIZE]));
+                        utility_svvcopy(pData->tempHopFrameTD_out[1], HOP_SIZE, &(outputs[2][t* HOP_SIZE]));
+                        utility_svvcopy(pData->tempHopFrameTD_out[2], HOP_SIZE, &(outputs[3][t* HOP_SIZE]));
+                        utility_svvcopy(pData->tempHopFrameTD_out[3], HOP_SIZE, &(outputs[1][t* HOP_SIZE]));
                     }
-                    else
-                        for(i=0; i<nOutputs; i++)
-                            memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
                     break;
             }
         }
@@ -272,8 +285,6 @@ void array2sh_process
                     for (ch = 1; ch<4; ch++)
                         for(i = 0; i<FRAME_SIZE; i++)
                             outputs[ch][i] /= sqrtf(3.0f);
-                    for(i=4; i<nOutputs; i++)
-                        memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
                 }
                 else
                     for(i=0; i<nOutputs; i++)
@@ -335,9 +346,9 @@ void array2sh_setEncodingOrder(void* const hA2sh, int newOrder)
     pData->reinitTFTFLAG = 1;
     pData->reinitSHTmatrixFLAG = 1;
     /* FUMA only supports 1st order */
-    if(pData->new_order!=ENCODING_ORDER_FIRST && pData->chOrdering == CH_FUMA)
+    if(pData->order!=ENCODING_ORDER_FIRST && pData->chOrdering == CH_FUMA)
         pData->chOrdering = CH_ACN;
-    if(pData->new_order!=ENCODING_ORDER_FIRST && pData->norm == NORM_FUMA)
+    if(pData->order!=ENCODING_ORDER_FIRST && pData->norm == NORM_FUMA)
         pData->norm = NORM_SN3D;
 }
 
@@ -495,6 +506,12 @@ void array2sh_setGain(void* const hA2sh, float newGain)
     pData->gain_dB = CLAMP(newGain, ARRAY2SH_POST_GAIN_MIN_VALUE, ARRAY2SH_POST_GAIN_MAX_VALUE);
 }
 
+void array2sh_setMaxFreq(void* const hA2sh, float newF)
+{
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    pData->maxFreq = newF;
+}
+
 
 /* Get Functions */
 
@@ -637,7 +654,13 @@ float array2sh_getGain(void* const hA2sh)
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     return pData->gain_dB;
 }
- 
+
+float array2sh_getMaxFreq(void* const hA2sh)
+{
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    return pData->maxFreq;
+}
+
 float* array2sh_getFreqVector(void* const hA2sh, int* nFreqPoints)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
@@ -687,15 +710,3 @@ int array2sh_getProcessingDelay()
 {
     return 12*HOP_SIZE;
 }
-
-
-
-
-
-
-
-
-
-
-    
-    

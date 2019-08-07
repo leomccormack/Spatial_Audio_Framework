@@ -1,22 +1,24 @@
 /*
- Copyright 2016-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2016-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     ambi_enc_internal.h
- * Description:
- *     A simple, but flexible, Ambisonic encoder (aka: Ambisonic Panner).
+ * Filename: ambi_enc_internal.h
+ * -----------------------------
+ * A simple, but flexible, Ambisonic encoder,
+ *
  * Dependencies:
  *     saf_utilities, saf_sh
  * Author, date created:
@@ -35,21 +37,27 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
-/***************/
-/* Definitions */
-/***************/
-    
+/* ========================================================================== */
+/*                            Internal Parameters                             */
+/* ========================================================================== */
+
 #define MAX_ORDER ( AMBI_ENC_MAX_SH_ORDER )
 #define MAX_NUM_INPUTS ( AMBI_ENC_MAX_NUM_INPUTS )
-#define MAX_NUM_SH_SIGNALS ( (MAX_ORDER + 1)*(MAX_ORDER + 1) )    /* (L+1)^2 */
+#define MAX_NUM_SH_SIGNALS ( (MAX_ORDER + 1)*(MAX_ORDER + 1) ) /* (L+1)^2 */
     
     
-/***********/
-/* Structs */
-/***********/
-    
+/* ========================================================================== */
+/*                                 Structures                                 */
+/* ========================================================================== */
+
+/*
+ * Struct: ambi_enc
+ * ----------------
+ * Main structure for ambi_enc. Contains variables for audio buffers, internal
+ * variables, user parameters
+ */
 typedef struct _ambi_enc
 {
     float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
@@ -72,19 +80,28 @@ typedef struct _ambi_enc
     
 } ambi_enc_data;
     
-    
-/**********************/
-/* Internal Functions */
-/**********************/
 
-/* Loads directions from preset */
-void ambi_enc_loadPreset(PRESETS preset,                         /* PRESET enum */
-                         float dirs_deg[MAX_NUM_INPUTS][2],      /* source/loudspeaker directions */
-                         int* newNCH);                           /* & new number of channels */
+/* ========================================================================== */
+/*                             Internal Functions                             */
+/* ========================================================================== */
+
+/*
+ * ambi_enc_loadPreset
+ * -------------------
+ * Loads encoding directions from a preset
+ *
+ * Input Arguments:
+ *     preset   - see "PRESET" enum
+ *     dirs_deg - source directions
+ *     newNCH   - & new number of channels for this preset
+ */
+void ambi_enc_loadPreset(PRESETS preset,
+                         float dirs_deg[MAX_NUM_INPUTS][2],
+                         int* newNCH);                       
 
 
 #ifdef __cplusplus
-}
-#endif
+} /* extern "C" { */
+#endif /* __cplusplus */
 
 #endif /* __AMBI_ENC_INTERNAL_H_INCLUDED__ */

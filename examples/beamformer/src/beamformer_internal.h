@@ -1,23 +1,25 @@
 /*
- Copyright 2019 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2019 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     beamformer_internal.h  
- * Description:
- *     Generates beamformers/virtual microphones in arbitrary directions. Several
- *     different beam pattern types are included.
+ * Filename: beamformer_internal.h
+ * -------------------------------
+ * Generates beamformers/virtual microphones in arbitrary directions. Several
+ * different beam pattern types are included.
+ *
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_sh
  * Author, date created:
@@ -37,12 +39,12 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
     
-/***************/
-/* Definitions */
-/***************/
-    
+/* ========================================================================== */
+/*                            Internal Parameters                             */
+/* ========================================================================== */
+
 #define HOP_SIZE ( 128 )                        /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )           /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )    /* 4/8/16 */
@@ -51,10 +53,16 @@ extern "C" {
 #define MAX_NUM_BEAMS ( BEAMFORMER_MAX_NUM_BEAMS ) /* Maximum permitted channels for the VST standard */
     
     
-/***********/
-/* Structs */
-/***********/
-    
+/* ========================================================================== */
+/*                                 Structures                                 */
+/* ========================================================================== */
+
+/*
+ * Struct: beamformer_data
+ * -----------------------
+ * Main structure for beamformer. Contains variables for audio buffers, afSTFT,
+ * beamforming weights, internal variables, flags, user parameters
+ */
 typedef struct _beamformer
 {
     /* audio buffers + afSTFT time-frequency transform handle */
@@ -92,36 +100,23 @@ typedef struct _beamformer
 } beamformer_data;
 
 
-/**********************/
-/* Internal functions */
-/**********************/
-    
-/* Initialise the filterbank */
-void beamformer_initTFT(void* const hBeam);  /* beamformer handle */
+/* ========================================================================== */
+/*                             Internal Functions                             */
+/* ========================================================================== */
+
+/*
+ * beamformer_initTFT
+ * ----------------
+ * Initialise the filterbank used by beamformer.
+ *
+ * Input Arguments:
+ *     hBeam - beamformer handle
+ */
+void beamformer_initTFT(void* const hBeam);
     
 
 #ifdef __cplusplus
-}
-#endif
+} /* extern "C" { */
+#endif /* __cplusplus */
 
 #endif /* __BEAMFORMER_INTERNAL_H_INCLUDED__ */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

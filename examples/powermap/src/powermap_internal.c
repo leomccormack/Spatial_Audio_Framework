@@ -1,23 +1,24 @@
 /*
- Copyright 2016-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2016-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     powermap_internal.c
- * Description:
- *     A powermap-based sound-field visualiser, which utilises spherical harmonic
- *     signals as input.
+ * Filename: powermap_internal.c
+ * -----------------------------
+ * A sound-field visualiser, which utilises spherical harmonic signals as input.
+ *
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
  * Author, date created:
@@ -26,7 +27,6 @@
 
 #include "powermap.h"
 #include "powermap_internal.h"
-#include "powermap_database.h"
 
 void powermap_initAna(void* const hPm)
 {
@@ -49,8 +49,8 @@ void powermap_initAna(void* const hPm)
         scaleY = 1.0f/(float)nSH_order;
         free(pars->Y_grid[n-1]);
         free(pars->Y_grid_cmplx[n-1]);
-        pars->Y_grid[n-1] = malloc(nSH_order * (pars->grid_nDirs)*sizeof(float));
-        pars->Y_grid_cmplx[n-1] = malloc(nSH_order * (pars->grid_nDirs)*sizeof(float_complex));
+        pars->Y_grid[n-1] = malloc1d(nSH_order * (pars->grid_nDirs)*sizeof(float));
+        pars->Y_grid_cmplx[n-1] = malloc1d(nSH_order * (pars->grid_nDirs)*sizeof(float_complex));
         memcpy(pars->Y_grid[n-1], Y_grid_N, nSH_order * (pars->grid_nDirs)*sizeof(float));
         utility_svsmul(pars->Y_grid[n-1], &scaleY, nSH_order * (pars->grid_nDirs), NULL);
         for(i=0; i<nSH_order; i++)
@@ -69,15 +69,15 @@ void powermap_initAna(void* const hPm)
     }
     N_azi = pData->dispWidth;
     N_ele = (int)((float)pData->dispWidth/aspectRatio + 0.5f);
-    grid_x_axis = malloc(N_azi * sizeof(float));
-    grid_y_axis = malloc(N_ele * sizeof(float));
+    grid_x_axis = malloc1d(N_azi * sizeof(float));
+    grid_y_axis = malloc1d(N_ele * sizeof(float));
     vfov = hfov/aspectRatio;
     for(fi = -hfov/2.0f, i = 0; i<N_azi; fi+=hfov/N_azi, i++)
         grid_x_axis[i] = fi;
     for(fi = -vfov/2.0f,  i = 0; i<N_ele; fi+=vfov/N_ele, i++)
         grid_y_axis[i] = fi;
     free(pars->interp_dirs_deg);
-    pars->interp_dirs_deg = malloc(N_azi*N_ele*2*sizeof(float));
+    pars->interp_dirs_deg = malloc1d(N_azi*N_ele*2*sizeof(float));
     for(i = 0; i<N_ele; i++){
         for(j=0; j<N_azi; j++){
             pars->interp_dirs_deg[(i*N_azi + j)*2]   = grid_x_axis[j];
@@ -90,12 +90,12 @@ void powermap_initAna(void* const hPm)
     
     /* reallocate memory for storing the powermaps */
     free(pData->pmap);
-    pData->pmap = malloc(pars->grid_nDirs*sizeof(float));
+    pData->pmap = malloc1d(pars->grid_nDirs*sizeof(float));
     free(pData->prev_pmap);
-    pData->prev_pmap = calloc(pars->grid_nDirs, sizeof(float));
+    pData->prev_pmap = calloc1d(pars->grid_nDirs, sizeof(float));
     for(i=0; i<NUM_DISP_SLOTS; i++){
         free(pData->pmap_grid[i]);
-        pData->pmap_grid[i] = calloc(pars->interp_nDirs,sizeof(float));
+        pData->pmap_grid[i] = calloc1d(pars->interp_nDirs,sizeof(float));
     }
     
     pData->masterOrder = order;
@@ -121,12 +121,3 @@ void powermap_initTFT
     pData->nSH = pData->new_nSH;
     memset(pData->Cx, 0 , MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*HYBRID_BANDS*sizeof(float_complex));
 }
-
-
-
-
-
-
-
-
-

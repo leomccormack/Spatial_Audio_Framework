@@ -1,22 +1,26 @@
 /*
- Copyright 2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     ambi_bin.c
- * Description:
- *     A binaural Ambisonic decoder for reproducing ambisonic signals over headphones. 
+ * Filename: ambi_bin.c
+ * --------------------
+ * A binaural Ambisonic decoder for reproducing ambisonic signals over
+ * headphones. The decoder supports sound-field rotation for head-tracking and
+ * may also accomodate custom HRIR sets via the SOFA standard.
+ *
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_hrir, saf_sh
  * Author, date created:
@@ -30,8 +34,7 @@ void ambi_bin_create
     void ** const phAmbi
 )
 {
-    ambi_bin_data* pData = (ambi_bin_data*)malloc(sizeof(ambi_bin_data));
-    if (pData == NULL) { return;/*error*/ }
+    ambi_bin_data* pData = (ambi_bin_data*)malloc1d(sizeof(ambi_bin_data));
     *phAmbi = (void*)pData;
     int ch, band;
 
@@ -42,7 +45,7 @@ void ambi_bin_create
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->enableMaxRE = 1;
-    pData->enableDiffuseMatching = 0;
+    pData->enableDiffuseMatching = 1;
     pData->enablePhaseWarping = 0;
     pData->enableRotation = 0;
     pData->yaw = 0.0f;
@@ -58,20 +61,20 @@ void ambi_bin_create
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
-    pData->STFTOutputFrameTF = malloc(NUM_EARS * sizeof(complexVector));
+    pData->STFTOutputFrameTF = malloc1d(NUM_EARS * sizeof(complexVector));
     for(ch=0; ch< NUM_EARS; ch++) {
-        pData->STFTOutputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTOutputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     }
     pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, NUM_EARS), HOP_SIZE, sizeof(float));
-    pData->STFTInputFrameTF = malloc(MAX_NUM_SH_SIGNALS * sizeof(complexVector));
+    pData->STFTInputFrameTF = malloc1d(MAX_NUM_SH_SIGNALS * sizeof(complexVector));
     for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     }
 
     /* codec data */
-    pData->pars = (codecPars*)malloc(sizeof(codecPars));
+    pData->pars = (codecPars*)malloc1d(sizeof(codecPars));
     codecPars* pars = pData->pars; 
     pars->sofa_filepath = NULL;
     pars->hrirs = NULL;
@@ -109,19 +112,12 @@ void ambi_bin_destroy
         }
         free(pData->STFTInputFrameTF);
         free(pData->STFTOutputFrameTF);
-        if(pData->tempHopFrameTD!=NULL)
-            free2d((void**)pData->tempHopFrameTD, MAX(NUM_EARS, MAX_NUM_SH_SIGNALS));
-        
-        if(pars->hrtf_fb!= NULL)
-            free(pars->hrtf_fb);
-        if(pars->itds_s!= NULL)
-            free(pars->itds_s);
-        if(pars->hrirs!= NULL)
-            free(pars->hrirs);
-        if(pars->hrir_dirs_deg!= NULL)
-            free(pars->hrir_dirs_deg);
+        free(pData->tempHopFrameTD);
+        free1d((void**)&(pars->hrtf_fb));
+        free1d((void**)&(pars->itds_s));
+        free1d((void**)&(pars->hrirs));
+        free1d((void**)&(pars->hrir_dirs_deg));
         free(pars);
-
         free(pData);
         pData = NULL;
     }
@@ -257,7 +253,7 @@ void ambi_bin_process
             if(order > 0 && enableRot) {
                 if(pData->recalc_M_rotFLAG){
                     memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
-                    M_rot_tmp = malloc(nSH*nSH * sizeof(float));
+                    M_rot_tmp = malloc1d(nSH*nSH * sizeof(float));
                     yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
                     getSHrotMtxReal(Rxyz, M_rot_tmp, order);
                     for (i = 0; i < nSH; i++)
@@ -350,7 +346,7 @@ void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path)
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     codecPars* pars = pData->pars;
     
-    pars->sofa_filepath = malloc(strlen(path) + 1);
+    pars->sofa_filepath = malloc1d(strlen(path) + 1);
     strcpy(pars->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
     pData->reInitCodec = 1;

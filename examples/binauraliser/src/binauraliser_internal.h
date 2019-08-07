@@ -1,26 +1,28 @@
 /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     binauraliser_internal.h
- * Description:
- *     Convolves input audio (up to 64 channels) with interpolated HRTFs in the time-frequency
- *     domain. The HRTFs are interpolated by applying amplitude-preserving VBAP gains to the
- *     HRTF magnitude responses and inter-aural time differences (ITDs) individually, before
- *     being re-combined. The example allows the user to specify an external SOFA file for the
- *     convolution.
+ * Filename: binauraliser_internal.h
+ * ---------------------------------
+ * Convolves input audio (up to 64 channels) with interpolated HRTFs in the
+ * time-frequency domain. The HRTFs are interpolated by applying amplitude-
+ * preserving VBAP gains to the HRTF magnitude responses and inter-aural time
+ * differences (ITDs) individually, before being re-combined. The example also
+ * allows the user to specify an external SOFA file for the convolution.
+ *
  * Dependencies:
  *     saf_utilities, saf_hrir, saf_vbap, afSTFTlib
  * Author, date created:
@@ -35,20 +37,20 @@
 #include <math.h>
 #include <string.h>
 #include "binauraliser.h"
-#include "binauraliser_database.h"
 #define SAF_ENABLE_AFSTFT  /* for time-frequency transform */
 #define SAF_ENABLE_HRIR    /* for HRIR->HRTF filterbank coefficients conversion etc. */
 #define SAF_ENABLE_VBAP    /* for amplitude-normalised VBAP gains used for interpolating HRTFs */
 #define SAF_ENABLE_SH
+#define SAF_ENABLE_SOFA_READER
 #include "saf.h"
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-/***************/
-/* Definitions */
-/***************/
+#endif /* __cplusplus */
+    
+/* ========================================================================== */
+/*                            Internal Parameters                             */
+/* ========================================================================== */
       
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
@@ -56,17 +58,23 @@ extern "C" {
 #define MAX_NUM_INPUTS ( BINAURALISER_MAX_NUM_INPUTS )      /* Maximum permited channels for the VST standard */
 #define NUM_EARS ( 2 )                                      /* true for most humans */
 #ifndef DEG2RAD
-  #define DEG2RAD(x) (x * PI / 180.0f)
+# define DEG2RAD(x) (x * PI / 180.0f)
 #endif
 #ifndef RAD2DEG
-  #define RAD2DEG(x) (x * 180.0f / PI)
+# define RAD2DEG(x) (x * 180.0f / PI)
 #endif
     
     
-/***********/
-/* Structs */
-/***********/
+/* ========================================================================== */
+/*                                 Structures                                 */
+/* ========================================================================== */
 
+/*
+ * Struct: binauraliser
+ * --------------------
+ * Main structure for binauraliser. Contains variables for audio buffers,
+ * afSTFT, HRTFs, internal variables, flags, user parameters
+ */
 typedef struct _binauraliser
 {
     /* audio buffers */
@@ -131,32 +139,71 @@ typedef struct _binauraliser
 } binauraliser_data;
      
 
-/**********************/
-/* Internal functions */
-/**********************/
-    
-/* interpolates between 3 HRTFs via AN-VBAP gains. The HRTF magnitude responses and HRIR ITDs are interpolated seperately
- * before being re-combined */
-void binauraliser_interpHRTFs(void* const hPan,                    /* pannerlib handle (includes VBAP gains, HRTFs and ITDs) */
-                              float azimuth_deg,                   /* source azimuth in degrees */
-                              float elevation_deg,                 /* source elevation in degrees */
+/* ========================================================================== */
+/*                             Internal Functions                             */
+/* ========================================================================== */
+
+/*
+ * binauraliser_interpHRTFs
+ * ------------------------
+ * interpolates between 3 HRTFs via AN-VBAP gains. The HRTF magnitude responses
+ * and HRIR ITDs are interpolated seperately before re-introducing the phase.
+ *
+ * Input Arguments:
+ *     hBin          - binauraliser handle
+ *     azimuth_deg   - source azimuth in DEGREES
+ *     elevation_deg - source elevation in DEGREES
+ * Output Arguments:
+ *     h_intrp       - interpolated HRTF
+ */
+void binauraliser_interpHRTFs(void* const hBin,
+                              float azimuth_deg,
+                              float elevation_deg,
                               float_complex h_intrp[HYBRID_BANDS][NUM_EARS]);
     
-/* Initialise the HRTFs: either loading the default set or loading from a SOFA file, Then generate a VBAP gain table. */
-void binauraliser_initHRTFsAndGainTables(void* const hBin);        /* binauraliser handle */
+/*
+ * binauraliser_initHRTFsAndGainTables
+ * -----------------------------------
+ * Initialise the HRTFs: either loading the default set or loading from a SOFA
+ * file. It then generates a VBAP gain table for interpolation.
+ * Note: call "binauraliser_initTFT" (if needed) before calling this function
+ *
+ * Input Arguments:
+ *     hBin - binauraliser handle
+ */
+void binauraliser_initHRTFsAndGainTables(void* const hBin);
     
-/* Initialise the filterbank used by binauraliser */
-void binauraliser_initTFT(void* const hBin);                       /* binauraliser handle */
-    
-/* Loads directions from preset */
-void binauraliser_loadPreset(PRESETS preset,                       /* PRESET enum */
-                             float dirs_deg[MAX_NUM_INPUTS][2],    /* source/loudspeaker directions */
-                             int* newNCH,                          /* & new number of channels */
-                             int* nDims);                          /* & estimate of the number of dimensions (2 or 3) */
+/*
+ * binauraliser_initTFT
+ * --------------------
+ * Initialise the filterbank used by binauraliser.
+ * Note: Call this function before 'binauraliser_initHRTFsAndGainTables'
+ *
+ * Input Arguments:
+ *     hBin - binauraliser handle
+ */
+void binauraliser_initTFT(void* const hBin);
+
+/*
+ * binauraliser_loadPreset
+ * --------------------
+ * Sets source directions based on a preset. See "PRESET" enum.
+ *
+ * Input Arguments:
+ *     preset   - See "PRESET" enum.
+ * Output Arguments:
+ *     dirs_deg - source directions
+ *     newNCH   - & new number of channels
+ *     nDims    - & estimate of the number of dimensions (2 or 3)
+ */
+void binauraliser_loadPreset(PRESETS preset,
+                             float dirs_deg[MAX_NUM_INPUTS][2],
+                             int* newNCH,
+                             int* nDims);
 
     
 #ifdef __cplusplus
-}
-#endif
+} /* extern "C" { */
+#endif /* __cplusplus */
 
 #endif /* __BINAURALISER_INTERNAL_H_INCLUDED__ */

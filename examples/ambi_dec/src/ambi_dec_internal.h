@@ -1,30 +1,34 @@
 /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     ambi_dec_internal.h
- * Description:
- *     A frequency-dependent Ambisonic decoder for loudspeakers or headphones. Different
- *     decoder settings can be specified for the low and high frequencies. When utilising
- *     spherical harmonic signals derived from real microphone arrays, this implementation
- *     also allows the decoding order per frequency band to be specified. Optionally, a SOFA
- *     file may be loaded for personalised headphone listening.
- *     The algorithms utilised in this Ambisonic decoder were pieced together and developed
- *     in collaboration with Archontis Politis.
+ * Filename: ambi_dec_internal.h
+ * -----------------------------
+ * A frequency-dependent Ambisonic decoder for loudspeakers or headphones.
+ * Different decoder settings can be specified for the low and high frequencies.
+ * When utilising spherical harmonic signals derived from real microphone
+ * arrays, this implementation also allows the decoding order per frequency band
+ * to be specified. Optionally, a SOFA file may be loaded for personalised
+ * headphone listening.
+ * The algorithms utilised in this Ambisonic decoder were pieced together and
+ * developed in collaboration with Archontis Politis.
+ *
  * Dependencies:
- *     saf_utilities, afSTFTlib, saf_hoa, saf_vbap, saf_hrir, saf_sh
+ *     saf_utilities, afSTFTlib, saf_hoa, saf_vbap, saf_hrir, saf_sh,
+ *     saf_sofa_reader
  * Author, date created:
  *     Leo McCormack, 07.12.2017
  */
@@ -36,21 +40,21 @@
 #include <math.h>
 #include <string.h>
 #include "ambi_dec.h"
-#include "ambi_dec_database.h"
-#define SAF_ENABLE_AFSTFT   /* for time-frequency transform */
-#define SAF_ENABLE_HOA      /* for ambisonic decoding matrices */
-#define SAF_ENABLE_SH       /* for spherical harmonic weights */
-#define SAF_ENABLE_HRIR     /* for HRIR->HRTF filterbank coefficients conversion */
-#define SAF_ENABLE_VBAP     /* for interpolating HRTFs */
+#define SAF_ENABLE_AFSTFT /* for time-frequency transform */
+#define SAF_ENABLE_HOA    /* for ambisonic decoding matrices */
+#define SAF_ENABLE_SH     /* for spherical harmonic weights */
+#define SAF_ENABLE_HRIR   /* for HRIR->HRTF filterbank conversion */
+#define SAF_ENABLE_VBAP   /* for interpolating HRTFs */
+#define SAF_ENABLE_SOFA_READER   
 #include "saf.h"
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
     
-/***************/
-/* Definitions */
-/***************/
+/* ========================================================================== */
+/*                            Internal Parameters                             */
+/* ========================================================================== */
     
 #define HOP_SIZE ( 128 )                      /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )         /* hybrid mode incurs an additional 5 bands  */
@@ -63,10 +67,16 @@ extern "C" {
 #define NUM_DECODERS ( 2 )                    /* one for low-frequencies and another for high-frequencies */
     
 
-/***********/
-/* Structs */
-/***********/
-    
+/* ========================================================================== */
+/*                                 Structures                                 */
+/* ========================================================================== */
+
+/*
+ * Struct: codecPars
+ * -----------------
+ * Contains variables for sofa file loading, HRTF interpolation, and the
+ * loudspeaker decoders.
+ */
 typedef struct _codecPars
 {
     /* decoders */
@@ -99,6 +109,12 @@ typedef struct _codecPars
     
 }codecPars;
 
+/*
+ * Struct: ambi_dec
+ * ----------------
+ * Main structure for ambi_dec. Contains variables for audio buffers, afSTFT,
+ * internal variables, flags, user parameters
+ */
 typedef struct _ambi_dec
 {
     /* audio buffers + afSTFT time-frequency transform handle */
@@ -150,38 +166,82 @@ typedef struct _ambi_dec
 } ambi_dec_data;
 
 
-/**********************/
-/* Internal functions */
-/**********************/
-    
-/* Intialises the codec parameters */
-/* Note: take care to initalise time-frequency transform "ambi_dec_initTFT" first */
-void ambi_dec_initCodec(void* const hAmbi);         /* ambi_dec handle */
+/* ========================================================================== */
+/*                             Internal Functions                             */
+/* ========================================================================== */
 
-/* Intialises the hrtf filterbank coefficients and vbap look-up tables */
-/* Note: take care to initalise time-frequency transform "ambi_dec_initTFT" first */
-void ambi_dec_initHRTFs(void* const hAmbi);         /* ambi_dec handle */
+/*
+ * ambi_dec_initCodec
+ * ------------------
+ * Intialises the codec variables, based on current global/user parameters
+ * Note: call "ambi_dec_initTFT" (if needed) before calling this function
+ *
+ * Input Arguments:
+ *     hAmbi - ambi_dec handle
+ */
+void ambi_dec_initCodec(void* const hAmbi);
 
-/* Initialise the filterbank used by ambiDEC */
-void ambi_dec_initTFT(void* const hAmbi);           /* ambi_dec handle */
+/*
+ * ambi_dec_initHRTFs
+ * ------------------
+ * Intialises the hrtf filterbank coefficients and vbap look-up tables
+ * Note: call "ambi_dec_initTFT" (if needed) before calling this function
+ *
+ * Input Arguments:
+ *     hAmbi - ambi_dec handle
+ */
+void ambi_dec_initHRTFs(void* const hAmbi);
+
+/*
+ * ambi_dec_initTFT
+ * ----------------
+ * Initialise the filterbank used by ambi_dec.
+ * Note: Call this function before ambi_dec_initCodec/ambi_dec_initHRTFs
+ *
+ * Input Arguments:
+ *     hAmbi - ambi_dec handle
+ */
+void ambi_dec_initTFT(void* const hAmbi);
     
-/* interpolates between 3 HRTFs using amplitude-preserving VBAP gains. The HRTF magnitude responses and HRIR ITDs are interpolated seperately
- * before being re-combined */
-void ambi_dec_interpHRTFs(void* const hAmbi,        /* ambi_dec handle (includes VBAP gains, HRTFs and ITDs) */
-                          float azimuth_deg,        /* source azimuth in degrees */
-                          float elevation_deg,      /* source elevation in degrees */
+/*
+ * ambi_dec_interpHRTFs
+ * --------------------
+ * Interpolates between the 3 nearest HRTFs using amplitude-preserving VBAP
+ * gains. The HRTF magnitude responses and HRIR ITDs are interpolated seperately
+ * before being re-combined.
+ *
+ * Input Arguments:
+ *     hAmbi         - ambi_dec handle
+ *     azimuth_deg   - interpolation direction azimuth in DEGREES
+ *     elevation_deg - interpolation direction elevation in DEGREES
+ * Output Arguments:
+ *     h_intrp       - interpolated HRTF
+ */
+void ambi_dec_interpHRTFs(void* const hAmbi,
+                          float azimuth_deg,
+                          float elevation_deg,
                           float_complex h_intrp[HYBRID_BANDS][NUM_EARS]);
 
-/* Loads loudspeaker directions from preset */
-void ambi_dec_loadPreset(PRESETS preset,            /* PRESET enum tag */
-                         float dirs_deg[MAX_NUM_LOUDSPEAKERS][2], /* loudspeaker directions */
-                         int* newNCH,               /* & new number of channels */
-                         int* nDims);               /* & estimate of the number of dimensions (2 or 3) */
+/*
+ * ambi_dec_loadPreset
+ * --------------------
+ * Loads loudspeaker directions from preset
+ *
+ * Input Arguments:
+ *     preset   - see PRESET enum
+ * Output Arguments:
+ *     dirs_deg - loudspeaker directions
+ *     newNCH   - & new number of channels
+ *     nDims    - & estimate of the number of dimensions (2 or 3)
+ */
+void ambi_dec_loadPreset(PRESETS preset,
+                         float dirs_deg[MAX_NUM_LOUDSPEAKERS][2],
+                         int* newNCH,
+                         int* nDims);
 
     
 #ifdef __cplusplus
-}
-#endif
+} /* extern "C" */
+#endif /* __cplusplus */
 
 #endif /* __AMBI_DEC_INTERNAL_H_INCLUDED__ */
-

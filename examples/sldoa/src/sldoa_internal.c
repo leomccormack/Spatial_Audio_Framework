@@ -1,36 +1,39 @@
 /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     sldoa_internal.c
- * Description:
- *     A spatially-localised pressure-intensity based direction-of-arrival estimator (SLDoA).
- *     VBAP gain patterns are imposed on the spherical harmonic signals, such that the DoA
- *     can be estimated in a spatially-constrained region; thus mitigating interferes and
- *     reflections arriving from other directions. The DoA is estimated per sector for
- *     each frequency band.
- *     The algorithms within sldoa were developed in collaboration with Symeon Delikaris-
- *     Manias, and are explained in more detail in:
- *         McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
- *         “Real-time conversion of sensor array signals into spherical harmonic signals with
- *         applications to spatially localised sub-band sound-field analysis,” in Audio
- *         Engineering Society Convention 144, Audio Engineering Society, 2018.
+ * Filename: sldoa_internal.c
+ * --------------------------
+ * A spatially-localised active-intensity based direction-of-arrival estimator
+ * (SLDoA). VBAP gain patterns are imposed on the spherical harmonic signals,
+ * such that the DoA can be estimated in a spatially-constrained region; thus
+ * mitigating the effect of interferes and reflections arriving from other
+ * directions. The DoA is estimated per sector for each frequency band.
+ * The algorithms within sldoa were developed in collaboration with Symeon
+ * Delikaris-Manias and Angelo Farina, and are explained in more detail in [1].
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
  * Author, date created:
  *     Leo McCormack, 18.10.2017
+ *
+ * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
+ *     V., “Real-time conversion of sensor array signals into spherical harmonic
+ *     signals with applications to spatially localised sub-band sound-field
+ *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
+ *     Society, 2018.
  */
 
 #include "sldoa.h"
@@ -46,14 +49,14 @@ void sldoa_initAna(void* const hSld)
 
     maxOrder = pData->new_masterOrder;
     
-    grid_vbap_gtable_T = malloc(ORDER2NUMSECTORS(maxOrder) * NUM_GRID_DIRS * sizeof(float));
+    grid_vbap_gtable_T = malloc1d(ORDER2NUMSECTORS(maxOrder) * NUM_GRID_DIRS * sizeof(float));
     
     for(i=0, order=2; order<=maxOrder; i++,order++){
         nSectors = ORDER2NUMSECTORS(order);
         nSH = (order+1)*(order+1);
         
         /* define sector directions */
-        sec_dirs_deg = malloc(nSectors*2*sizeof(float));
+        sec_dirs_deg = malloc1d(nSectors*2*sizeof(float));
         memcpy(sec_dirs_deg, __HANDLES_SphCovering_dirs_deg[nSectors-1], nSectors*2*sizeof(float));
         
         /* generate VBAP gain table */
@@ -71,9 +74,9 @@ void sldoa_initAna(void* const hSld)
         /* generate sector coefficients */
         if(pData->secCoeffs[i]!=NULL)
             free(pData->secCoeffs[i]);
-        pData->secCoeffs[i] = malloc(4 * (nSH*nSectors) * sizeof(float_complex));
-        w_SG = malloc(4 * (nSH) * sizeof(float));
-        pinv_Y = malloc(NUM_GRID_DIRS*nSH*sizeof(float));
+        pData->secCoeffs[i] = malloc1d(4 * (nSH*nSectors) * sizeof(float_complex));
+        w_SG = malloc1d(4 * (nSH) * sizeof(float));
+        pinv_Y = malloc1d(NUM_GRID_DIRS*nSH*sizeof(float));
         for(n=0; n<nSectors; n++){ 
             utility_svvmul(&(grid_vbap_gtable_T[n*NUM_GRID_DIRS]), pData->grid_Y[0], NUM_GRID_DIRS, secPatterns[0]);
             for(j=0; j<3; j++)
@@ -100,7 +103,6 @@ void sldoa_initAna(void* const hSld)
     pData->masterOrder = maxOrder;
 }
 
-
 void sldoa_estimateDoA
 (
     float_complex SHframeTF[MAX_NUM_SH_SIGNALS][TIME_SLOTS],
@@ -124,7 +126,7 @@ void sldoa_estimateDoA
     analysisOrder = MAX(MIN(MAX_SH_ORDER, anaOrder),1);
     nSectors = ORDER2NUMSECTORS(analysisOrder);
     nSH = (analysisOrder+1)*(analysisOrder+1);
-    sec_c = malloc(4*nSH*sizeof(float_complex));
+    sec_c = malloc1d(4*nSH*sizeof(float_complex));
     
     /* calculate energy and DoA for each sector */
     for( n=0; n<nSectors; n++){
@@ -171,11 +173,4 @@ void sldoa_estimateDoA
     
     free(sec_c);
 }
- 
-
-
-
-
-
-
 

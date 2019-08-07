@@ -1,36 +1,43 @@
 /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     array2sh_internal.h
- * Description:
- *     Spatially encodes spherical or cylindrical sensor array signals into spherical harmonic
- *     signals utilising theoretical encoding filters.
- *     The algorithms within array2sh were pieced together and developed in collaboration
- *     with Symeon Delikaris-Manias.
- *     A more detailed explanation of the algorithms in array2sh can be found in:
- *         McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
- *         “Real-time conversion of sensor array signals into spherical harmonic signals with
- *         applications to spatially localised sub-band sound-field analysis,” in Audio
- *         Engineering Society Convention 144, Audio Engineering Society, 2018.
- *     Also included, is a diffuse-field equalisation option for frequencies past aliasing,
- *     developed in collaboration with Archontis Politis, 8.02.2019
+ * Filename: array2sh_internal.h
+ * -----------------------------
+ * Spatially encodes spherical or cylindrical sensor array signals into
+ * spherical harmonic signals utilising theoretical encoding filters.
+ * The algorithms within array2sh were pieced together and developed in
+ * collaboration with Symeon Delikaris-Manias and Angelo Farina.
+ * A detailed explanation of the algorithms within array2sh can be found in [1].
+ * Also included, is a diffuse-field equalisation option for frequencies past
+ * aliasing, developed in collaboration with Archontis Politis, 8.02.2019
+ * Note: since the algorithms are based on theory, only array designs where
+ * there are analytical solutions available are supported. i.e. only spherical
+ * or cylindrical arrays, which have phase-matched sensors.
+ *
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_sh
  * Author, date created:
  *     Leo McCormack, 13.09.2017
+ *
+ * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
+ *     V., “Real-time conversion of sensor array signals into spherical harmonic
+ *     signals with applications to spatially localised sub-band sound-field
+ *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
+ *     Society, 2018.
  */
 
 #ifndef __ARRAY2SH_INTERNAL_H_INCLUDED__
@@ -41,8 +48,7 @@
 #include <math.h>
 #include <string.h>
 #include <assert.h>
-#include "array2sh.h"
-#include "array2sh_database.h"
+#include "array2sh.h" 
 #define SAF_ENABLE_AFSTFT /* for time-frequency transform */
 #define SAF_ENABLE_SH     /* for spherical harmonic weights */
 #define SAF_ENABLE_HOA    /* for max-rE weights */
@@ -50,12 +56,12 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-/***************/
-/* Definitions */
-/***************/
+#endif /* __cplusplus */
     
+/* ========================================================================== */
+/*                            Internal Parameters                             */
+/* ========================================================================== */
+
 #define MAX_SH_ORDER ( ARRAY2SH_MAX_SH_ORDER ) /* maximum encoding order */
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1) ) /* (L+1)^2 */
 #define HOP_SIZE ( 128 )                       /* STFT hop size = nBands */
@@ -65,9 +71,15 @@ extern "C" {
 #define MAX_EVAL_FREQ_HZ ( 20e3f )             /* Up to which frequency should the evaluation be accurate */
     
 
-/***********/
-/* Structs */
-/***********/
+/* ========================================================================== */
+/*                                 Structures                                 */
+/* ========================================================================== */
+
+/*
+ * Struct: arrayPars
+ * -----------------
+ * Contains variables for describing the microphone/hydrophone array
+ */
     
 typedef struct _arrayPars {
     int Q, newQ;                    /* number of sensors */
@@ -80,6 +92,12 @@ typedef struct _arrayPars {
         
 }arrayPars;
 
+/*
+ * Struct: array2sh
+ * ----------------
+ * Main structure for array2sh. Contains variables for audio buffers, afSTFT,
+ * encoding matrices, internal variables, flags, user parameters
+ */
 typedef struct _array2sh
 {
     /* audio buffers */
@@ -89,7 +107,8 @@ typedef struct _array2sh
     float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     complexVector* STFTInputFrameTF;
     complexVector* STFTOutputFrameTF;
-    float** tempHopFrameTD;
+    float** tempHopFrameTD_in;
+    float** tempHopFrameTD_out;
     
     /* intermediates */
     double_complex bN_modal[HYBRID_BANDS][MAX_SH_ORDER + 1];
@@ -131,37 +150,116 @@ typedef struct _array2sh
     CH_ORDER chOrdering;            /* ACN */
     NORM_TYPES norm;                /* N3D/SN3D */
     float c;                        /* speed of sound, m/s */
-    float gain_dB;                  /* post gain, dB */ 
+    float gain_dB;                  /* post gain, dB */
+    float maxFreq;                  /* maximum encoding frequency, hz */
     
 } array2sh_data;
      
 
-/**********************/
-/* Internal functions */
-/**********************/
-    
+/* ========================================================================== */
+/*                             Internal Functions                             */
+/* ========================================================================== */
+
+/*
+ * array2sh_initTFT
+ * ----------------
+ * Initialise the filterbank used by array2sh.
+ * Note: Call this function before array2sh_calculate_sht_matrix
+ *
+ * Input Arguments:
+ *     hA2sh - array2sh handle
+ */
 void array2sh_initTFT(void* const hA2sh);
     
+/*
+ * array2sh_calculate_sht_matrix
+ * -----------------------------
+ * Computes the spherical harmonic transform (SHT) matrix, to spatially encode
+ * input microphone/hydrophone signals into spherical harmonic signals.
+ *
+ * Input Arguments:
+ *     hA2sh - array2sh handle
+ */
 void array2sh_calculate_sht_matrix(void* const hA2sh);
     
+/*
+ * array2sh_apply_diff_EQ
+ * ----------------------
+ * Applies diffuse-field equalisation at frequencies above the spatial aliasing
+ * limit.
+ *
+ * Input Arguments:
+ *     hA2sh - array2sh handle
+ */
 void array2sh_apply_diff_EQ(void* const hA2sh);
     
+/*
+ * array2sh_calculate_mag_curves
+ * -----------------------------
+ * Computes the magnitude responses of the equalisation filters. i.e. the
+ * absolute values of the regularised inversed modal coefficients.
+ *
+ * Input Arguments:
+ *     hA2sh - array2sh handle
+ */
 void array2sh_calculate_mag_curves(void* const hA2sh);
     
+/*
+ * array2sh_evaluateSHTfilters
+ * ---------------------------
+ * Evaluates the spherical harmonic transform performance with the currently
+ * configured microphone/hydrophone array.
+ * Note: this is based on an analytical model of the array, so may differ in
+ * practice (although, it is usually pretty close, and saves from having to
+ * measure the array)
+ *
+ * Input Arguments:
+ *     hA2sh - array2sh handle
+ */
 void array2sh_evaluateSHTfilters(void* hA2sh);
     
+/*
+ * array2sh_createArray
+ * --------------------
+ * Creates an instance of a struct, which contains the array configuration
+ * data.
+ *
+ * Input Arguments:
+ *     hPars - & array configuration handle
+ */
 void array2sh_createArray(void ** const hPars);
 
+/*
+ * array2sh_destroyArray
+ * ---------------------
+ * Destroys an instance of a struct, which contains the array configuration
+ * data.
+ *
+ * Input Arguments:
+ *     hPars - & array configuration handle
+ */
 void array2sh_destroyArray(void ** const hPars);
-    
+
+/*
+ * array2sh_destroyArray
+ * ---------------------
+ * Intialises an instance of a struct, which contains the array configuration
+ * data, based on a preset
+ *
+ * Input Arguments:
+ *     hPars         - array configuration handle
+ *     preset        - array preset (see "PRESET" enum)
+ *     arrayOrder    - & maximum encoding order of the current preset
+ *     firstInitFLAG - 1: this is the first time function is being called
+ */
 void array2sh_initArray(void * const hPars,
                         PRESETS preset,
                         int* arrayOrder,
                         int firstInitFLAG);
 
+    
 #ifdef __cplusplus
-}
-#endif
+} /* extern "C" { */
+#endif /* __cplusplus */
 
 #endif /* __ARRAY2SH_INTERNAL_H_INCLUDED__ */
-

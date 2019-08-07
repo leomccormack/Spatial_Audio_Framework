@@ -1,36 +1,43 @@
 /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     array2sh_internal.c
- * Description:
- *     Spatially encodes spherical or cylindrical sensor array signals into spherical harmonic
- *     signals utilising theoretical encoding filters.
- *     The algorithms within array2sh were pieced together and developed in collaboration
- *     with Symeon Delikaris-Manias.
- *     A more detailed explanation of the algorithms in array2sh can be found in:
- *         McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
- *         “Real-time conversion of sensor array signals into spherical harmonic signals with
- *         applications to spatially localised sub-band sound-field analysis,” in Audio
- *         Engineering Society Convention 144, Audio Engineering Society, 2018.
- *     Also included, is a diffuse-field equalisation option for frequencies past aliasing,
- *     developed in collaboration with Archontis Politis, 8.02.2019
+ * Filename: array2sh_internal.c
+ * -----------------------------
+ * Spatially encodes spherical or cylindrical sensor array signals into
+ * spherical harmonic signals utilising theoretical encoding filters.
+ * The algorithms within array2sh were pieced together and developed in
+ * collaboration with Symeon Delikaris-Manias and Angelo Farina.
+ * A detailed explanation of the algorithms within array2sh can be found in [1].
+ * Also included, is a diffuse-field equalisation option for frequencies past
+ * aliasing, developed in collaboration with Archontis Politis, 8.02.2019
+ * Note: since the algorithms are based on theory, only array designs where
+ * there are analytical solutions available are supported. i.e. only spherical
+ * or cylindrical arrays, which have phase-matched sensors.
+ *
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_sh
  * Author, date created:
  *     Leo McCormack, 13.09.2017
+ *
+ * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
+ *     V., “Real-time conversion of sensor array signals into spherical harmonic
+ *     signals with applications to spatially localised sub-band sound-field
+ *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
+ *     Society, 2018.
  */
 
 #include "array2sh_internal.h"
@@ -65,7 +72,7 @@ void array2sh_initTFT
         afSTFTinit(&(pData->hSTFT), HOP_SIZE, arraySpecs->newQ, pData->new_nSH, 0, 1);
     else
         afSTFTchannelChange(pData->hSTFT, arraySpecs->newQ, pData->new_nSH);
- 
+
     arraySpecs->Q = arraySpecs->newQ;
     pData->nSH = pData->new_nSH;
     pData->reinitSHTmatrixFLAG = 1; /* filters need to be updated too */
@@ -86,7 +93,6 @@ void array2sh_calculate_sht_matrix
     const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta  = cmplxf(0.0f, 0.0f);
     
     /* prep */
-    memset(pData->W, 0, HYBRID_BANDS*MAX_NUM_SENSORS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
     order = pData->new_order;
     nSH = (order+1)*(order+1);
     arraySpecs->R = MIN(arraySpecs->R, arraySpecs->r);
@@ -97,10 +103,10 @@ void array2sh_calculate_sht_matrix
     
     /* Spherical harmponic weights for each sensor direction */
     Y_mic = NULL;
-    getRSH_recur(order, (float*)arraySpecs->sensorCoords_deg, arraySpecs->Q, &Y_mic); /* nSH x Q */
-    pinv_Y_mic = malloc( arraySpecs->Q * nSH *sizeof(float));
+    getRSH(order, (float*)arraySpecs->sensorCoords_deg, arraySpecs->Q, &Y_mic); /* nSH x Q */
+    pinv_Y_mic = malloc1d( arraySpecs->Q * nSH *sizeof(float));
     utility_spinv(Y_mic, nSH, arraySpecs->Q, pinv_Y_mic);
-    pinv_Y_mic_cmplx = malloc((arraySpecs->Q) * nSH *sizeof(float_complex));
+    pinv_Y_mic_cmplx =  malloc1d((arraySpecs->Q) * nSH *sizeof(float_complex));
     for(i=0; i<(arraySpecs->Q)*nSH; i++)
         pinv_Y_mic_cmplx[i] = cmplxf(pinv_Y_mic[i], 0.0f);
     
@@ -110,7 +116,7 @@ void array2sh_calculate_sht_matrix
     if ( (pData->filterType==FILTER_SOFT_LIM) || (pData->filterType==FILTER_TIKHONOV) ){
         /* Compute modal responses */
         free(pData->bN);
-        pData->bN = malloc((HYBRID_BANDS)*(order+1)*sizeof(double_complex));
+        pData->bN = malloc1d((HYBRID_BANDS)*(order+1)*sizeof(double_complex));
         switch(arraySpecs->arrayType){
             case ARRAY_CYLINDRICAL:
                 switch (arraySpecs->weightType){
@@ -183,7 +189,8 @@ void array2sh_calculate_sht_matrix
         
         /* diag(filters) * Y */
         array2sh_replicate_order(hA2sh, order); /* replicate orders */
-        diag_bN_inv_R = calloc(nSH*nSH, sizeof(float_complex));
+        
+        diag_bN_inv_R = calloc1d(nSH*nSH, sizeof(float_complex));
         for(band=0; band<HYBRID_BANDS; band++){
             for(i=0; i<nSH; i++)
                 diag_bN_inv_R[i*nSH+i] = cmplxf((float)creal(pData->bN_inv_R[band][i]), (float)cimag(pData->bN_inv_R[band][i]));
@@ -241,16 +248,16 @@ void array2sh_calculate_sht_matrix
 #if 0
         int maxN;
         double_complex* hn2prime_kr;
-        hn2prime_kr = malloc((HYBRID_BANDS)*(order+1)*sizeof(double_complex));
+        hn2prime_kr = malloc1d((HYBRID_BANDS)*(order+1)*sizeof(double_complex));
         maxN = 1e8;
         hankel_hn2(order, kr, HYBRID_BANDS, &maxN, NULL, hn2prime_kr);
-        for(band=0; band<HYBRID_BANDS; band++)
+        for(band=0; band<HYBRID_BANDS-1; band++)
             for (n=0; n<order+1; n++)
                 Hs[band][n] = crmul(ccmul(hn2prime_kr[band*(order+1)+n], cpow(cmplx(0.0, 1.0), -(double)n+1.0)), pow(kr[band], 2.0));
         free(hn2prime_kr);
 #else
         free(pData->bN);
-        pData->bN = malloc((HYBRID_BANDS)*(order+1)*sizeof(double_complex));
+        pData->bN = malloc1d((HYBRID_BANDS)*(order+1)*sizeof(double_complex));
         switch(arraySpecs->arrayType){
             case ARRAY_CYLINDRICAL:
                 switch (arraySpecs->weightType){
@@ -307,7 +314,7 @@ void array2sh_calculate_sht_matrix
         memset(W, 0, (MAX_SH_ORDER+1)*(MAX_SH_ORDER+1)*sizeof(double));
         for (n=0; n<order+1; n++){
             nSH_n = (n+1)*(n+1);
-            wn = calloc(nSH_n*nSH_n, sizeof(float));
+            wn = calloc1d(nSH_n*nSH_n, sizeof(float));
             if(pData->filterType==FILTER_Z_STYLE)
                 for (i=0; i<n+1; i++)
                     wn[(i*i)*nSH_n+(i*i)] = 1.0f;
@@ -345,7 +352,7 @@ void array2sh_calculate_sht_matrix
         
         /* diag(filters) * Y */
         array2sh_replicate_order(hA2sh, order); /* replicate orders */
-        diag_bN_inv_R = calloc(nSH*nSH, sizeof(float_complex));
+        diag_bN_inv_R = calloc1d(nSH*nSH, sizeof(float_complex));
         for(band=0; band<HYBRID_BANDS; band++){
             for(i=0; i<nSH; i++)
                 diag_bN_inv_R[i*nSH+i] = cmplxf((float)creal(pData->bN_inv_R[band][i]), (float)cimag(pData->bN_inv_R[band][i])); /* double->single */
@@ -359,6 +366,7 @@ void array2sh_calculate_sht_matrix
     }
      
     pData->order = order;
+    pData->nSH = nSH;
     pData->currentEvalIsValid = 0;
     
     free(Y_mic);
@@ -386,8 +394,8 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
     
     /* prep */
     nSH = (pData->order+1)*(pData->order+1);
-    dM_diffcoh = malloc((arraySpecs->Q)*(arraySpecs->Q)* (HYBRID_BANDS) * sizeof(double_complex));
-    dM_diffcoh_s = malloc((arraySpecs->Q)*(arraySpecs->Q) * sizeof(double_complex));
+    dM_diffcoh = malloc1d((arraySpecs->Q)*(arraySpecs->Q)* (HYBRID_BANDS) * sizeof(double_complex));
+    dM_diffcoh_s = malloc1d((arraySpecs->Q)*(arraySpecs->Q) * sizeof(double_complex));
     f_max = 20e3f;
     kR_max = 2.0f*M_PI*f_max*(arraySpecs->r)/pData->c;
     array_order = (int)(ceilf(2.0f*kR_max)+0.01f);
@@ -558,7 +566,7 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
         kr[band] = 2.0*M_PI*(pData->freqVector[band])*(arraySpecs->r)/pData->c;
         kR[band] = 2.0*M_PI*(pData->freqVector[band])*(arraySpecs->R)/pData->c;
     }
-    H_array = malloc((HYBRID_BANDS) * (arraySpecs->Q) * 812*sizeof(float_complex));
+    H_array = malloc1d((HYBRID_BANDS) * (arraySpecs->Q) * 812*sizeof(float_complex));
     switch(arraySpecs->arrayType){
         case ARRAY_SPHERICAL:
             switch(arraySpecs->weightType){
@@ -612,12 +620,12 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
     nSH = (order+1)*(order+1);
     Y_grid_real = NULL;
     getRSH(order, (float*)__geosphere_ico_9_0_dirs_deg, 812, &Y_grid_real);
-    Y_grid = malloc(nSH*812*sizeof(float_complex));
+    Y_grid = malloc1d(nSH*812*sizeof(float_complex));
     for(i=0; i<nSH*812; i++)
         Y_grid[i] = cmplxf(Y_grid_real[i], 0.0f); /* "evaluateSHTfilters" function requires complex data type */
     
     /* compare the spherical harmonics obtained from encoding matrix 'W' with the ideal patterns */
-    Wshort = malloc(HYBRID_BANDS*nSH*(arraySpecs->Q)*sizeof(float_complex));
+    Wshort = malloc1d(HYBRID_BANDS*nSH*(arraySpecs->Q)*sizeof(float_complex));
     for(band=0; band<HYBRID_BANDS; band++)
         for(i=0; i<nSH; i++)
             for(j=0; j<(arraySpecs->Q); j++)
@@ -635,15 +643,13 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
 
 void array2sh_createArray(void ** const hPars)
 {
-    arrayPars* pars = (arrayPars*)malloc(sizeof(arrayPars));
-    if (pars == NULL) { return;/*error*/ }
+    arrayPars* pars = (arrayPars*)malloc1d(sizeof(arrayPars));
     *hPars = (void*)pars;
 }
 
 void array2sh_destroyArray(void ** const hPars)
 {
     arrayPars *pars = (arrayPars*)(*hPars);
-    
     if(pars!=NULL) {
         free(pars);
         pars=NULL;

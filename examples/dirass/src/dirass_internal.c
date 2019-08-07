@@ -1,34 +1,36 @@
 /*
- Copyright 2019 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2019 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     dirass_internal.c
- * Description:
- *     A sound-field visualiser based on the directional re-assignment of beamformer energy,
- *     utilising the DoA estimates extracted from spatially-localised active-intensity
- *     (SLAI) vectors, which correspond to the scanning grid directions.
- *     For more information on the method, refer to:
- *         McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular
- *         spectra based on a directional re-assignment approach for ambisonic sound-field
- *         visualisation". IEEE International Conference on Acoustics, Speech and Signal
- *         Processing (ICASSP).
+ * Filename: dirass_internal.c
+ * ---------------------------
+ * A sound-field visualiser based on the directional re-assignment of beamformer
+ * energy, utilising the DoA estimates extracted from spatially-localised
+ * active-intensity (SLAI) vectors; which are centred around each of the
+ * corresponding scanning grid directions [1].
  *
  * Dependencies:
  *     saf_utilities, saf_vbap, saf_sh
  * Author, date created:
  *     Leo McCormack, 21.02.2019
+ *
+ * [1] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular
+ *     spectra based on a directional re-assignment approach for ambisonic
+ *     sound-field visualisation". IEEE International Conference on Acoustics,
+ *     Speech and Signal Processing (ICASSP).
  */
 
 #include "dirass.h"
@@ -127,8 +129,8 @@ void dirass_initAna(void* const hDir)
     }
     N_azi = pData->dispWidth;
     N_ele = (int)((float)pData->dispWidth/aspectRatio + 0.5f);
-    grid_x_axis = malloc(N_azi * sizeof(float));
-    grid_y_axis = malloc(N_ele * sizeof(float));
+    grid_x_axis = malloc1d(N_azi * sizeof(float));
+    grid_y_axis = malloc1d(N_ele * sizeof(float));
     vfov = hfov/aspectRatio;
     for(fi = -hfov/2.0f, i = 0; i<N_azi; fi+=hfov/N_azi, i++)
         grid_x_axis[i] = fi;
@@ -151,8 +153,8 @@ void dirass_initAna(void* const hDir)
     /* get beamforming matrices for sector velocity and sector patterns */
     order_sec = order-1;
     nSH_sec = (order_sec+1)*(order_sec+1);
-    A_xyz = malloc(nSH_order*nSH_sec*3*sizeof(float_complex));
-    c_n = malloc((order_sec+1)*sizeof(float));
+    A_xyz = malloc1d(nSH_order*nSH_sec*3*sizeof(float_complex));
+    c_n = malloc1d((order_sec+1)*sizeof(float));
     computeVelCoeffsMtx(order_sec, A_xyz);
     switch(pData->beamType){
         case BEAM_TYPE_CARD: beamWeightsCardioid2Spherical(order_sec, c_n); break;
@@ -171,7 +173,7 @@ void dirass_initAna(void* const hDir)
     free(c_n);
 
     /* get regular beamforming weights */
-    c_n = malloc((order+1)*sizeof(float));
+    c_n = malloc1d((order+1)*sizeof(float));
     switch(pData->beamType){
         case BEAM_TYPE_CARD: beamWeightsCardioid2Spherical(order, c_n); break;
         case BEAM_TYPE_HYPERCARD: beamWeightsHypercardioid2Spherical(order, c_n); break;
@@ -185,7 +187,7 @@ void dirass_initAna(void* const hDir)
     free(c_n);
  
     /* beamforming weights for upscaled */
-    c_n = malloc((order_up+1)*sizeof(float)); 
+    c_n = malloc1d((order_up+1)*sizeof(float)); 
     switch(pData->beamType){
         case BEAM_TYPE_CARD: beamWeightsCardioid2Spherical(order_up, c_n); break;
         case BEAM_TYPE_HYPERCARD: beamWeightsHypercardioid2Spherical(order_up, c_n); break;

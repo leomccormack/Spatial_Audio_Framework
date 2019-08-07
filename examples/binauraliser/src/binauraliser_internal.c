@@ -1,35 +1,35 @@
 /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     binauraliser_internal.h
- * Description:
- *     Convolves input audio (up to 64 channels) with interpolated HRTFs in the time-frequency
- *     domain. The HRTFs are interpolated by applying amplitude-preserving VBAP gains to the
- *     HRTF magnitude responses and inter-aural time differences (ITDs) individually, before
- *     being re-combined. The example allows the user to specify an external SOFA file for the
- *     convolution.
+ * Filename: binauraliser_internal.h
+ * ---------------------------------
+ * Convolves input audio (up to 64 channels) with interpolated HRTFs in the
+ * time-frequency domain. The HRTFs are interpolated by applying amplitude-
+ * preserving VBAP gains to the HRTF magnitude responses and inter-aural time
+ * differences (ITDs) individually, before being re-combined. The example also
+ * allows the user to specify an external SOFA file for the convolution.
+ *
  * Dependencies:
  *     saf_utilities, saf_hrir, saf_vbap, afSTFTlib
  * Author, date created:
  *     Leo McCormack, 25.09.2017
  */
 
-#include "binauraliser_internal.h" 
-#define SAF_ENABLE_SOFA_READER
-#include "saf_sofa_reader.h"
+#include "binauraliser_internal.h"  
 
 void binauraliser_interpHRTFs
 (
@@ -114,16 +114,14 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
         pData->N_hrir_dirs = __default_N_hrir_dirs;
         pData->hrir_len = __default_hrir_len;
         pData->hrir_fs = __default_hrir_fs;
-        if(pData->hrirs != NULL)
-            free(pData->hrirs);
-        pData->hrirs = malloc(pData->N_hrir_dirs * 2 * (pData->hrir_len)*sizeof(float));
+        free1d((void**)&(pData->hrirs));
+        pData->hrirs = malloc1d(pData->N_hrir_dirs * 2 * (pData->hrir_len)*sizeof(float));
         for(i=0; i<pData->N_hrir_dirs; i++)
             for(j=0; j<2; j++)
                 for(k=0; k< pData->hrir_len; k++)
                     pData->hrirs[i*2*(pData->hrir_len) + j*(pData->hrir_len) + k] = (float)__default_hrirs[i][j][k];
-        if(pData->hrir_dirs_deg != NULL)
-            free(pData->hrir_dirs_deg);
-        pData->hrir_dirs_deg = malloc(pData->N_hrir_dirs * 2 * sizeof(float)); 
+        free1d((void**)&(pData->hrir_dirs_deg));
+        pData->hrir_dirs_deg = malloc1d(pData->N_hrir_dirs * 2 * sizeof(float));
         for(i=0; i<pData->N_hrir_dirs; i++){
             pData->hrir_dirs_deg[i*2+0] = __default_hrir_dirs_deg[i][0]>180.0 ?
                                    (float)__default_hrir_dirs_deg[i][0]-360.0f : (float)__default_hrir_dirs_deg[i][0];
@@ -132,10 +130,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     }
     
     /* estimate the ITDs for each HRIR */
-    if(pData->itds_s!= NULL){
-        free(pData->itds_s);
-        pData->itds_s = NULL;
-    }
+    free1d((void**)&(pData->itds_s));
     estimateITDs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrir_fs, &(pData->itds_s));
     
     /* generate VBAP gain table */
@@ -162,22 +157,17 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     compressVBAPgainTable3D(hrtf_vbap_gtable, pData->N_hrtf_vbap_gtable, pData->N_hrir_dirs, &(pData->hrtf_vbap_gtableComp), &(pData->hrtf_vbap_gtableIdx));
     
     /* convert hrirs to filterbank coefficients */
-    if(pData->hrtf_fb!= NULL){
-        free(pData->hrtf_fb);
-        pData->hrtf_fb = NULL;
-    }
+    free1d((void**)&(pData->hrtf_fb));
     HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->itds_s, pData->freqVector, HYBRID_BANDS, 0, &(pData->hrtf_fb));
     
     /* calculate magnitude responses */
-    if(pData->hrtf_fb_mag!= NULL)
-        free(pData->hrtf_fb_mag);
-    pData->hrtf_fb_mag = malloc(HYBRID_BANDS*NUM_EARS* (pData->N_hrir_dirs)*sizeof(float));
+    free1d((void**)&(pData->hrtf_fb_mag));
+    pData->hrtf_fb_mag = malloc1d(HYBRID_BANDS*NUM_EARS* (pData->N_hrir_dirs)*sizeof(float));
     for(i=0; i<HYBRID_BANDS*NUM_EARS* (pData->N_hrir_dirs); i++)
         pData->hrtf_fb_mag[i] = cabsf(pData->hrtf_fb[i]);
     
     /* clean-up */
-    if(hrtf_vbap_gtable!=NULL)
-        free(hrtf_vbap_gtable);
+    free1d((void**)&(hrtf_vbap_gtable));
 }
 
 void binauraliser_initTFT

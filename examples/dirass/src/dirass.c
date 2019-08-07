@@ -1,34 +1,36 @@
 /*
- Copyright 2019 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2019 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     dirass.c
- * Description:
- *     A sound-field visualiser based on the directional re-assignment of beamformer energy,
- *     utilising the DoA estimates extracted from spatially-localised active-intensity
- *     (SLAI) vectors; which correspond to the scanning grid directions.
- *     For more information on the method, refer to:
- *         McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular
- *         spectra based on a directional re-assignment approach for ambisonic sound-field
- *         visualisation". IEEE International Conference on Acoustics, Speech and Signal
- *         Processing (ICASSP).
+ * Filename: dirass.c
+ * ------------------
+ * A sound-field visualiser based on the directional re-assignment of beamformer
+ * energy, utilising the DoA estimates extracted from spatially-localised
+ * active-intensity (SLAI) vectors; which are centred around each of the
+ * corresponding scanning grid directions [1].
  *
  * Dependencies:
  *     saf_utilities, saf_vbap, saf_sh
  * Author, date created:
  *     Leo McCormack, 21.02.2019
+ *
+ * [1] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular
+ *     spectra based on a directional re-assignment approach for ambisonic
+ *     sound-field visualisation". IEEE International Conference on Acoustics,
+ *     Speech and Signal Processing (ICASSP).
  */
 
 #include "dirass.h"
@@ -39,13 +41,12 @@ void dirass_create
     void ** const phDir
 )
 {
-    dirass_data* pData = (dirass_data*)malloc(sizeof(dirass_data));
-    if (pData == NULL) { return;/*error*/ }
+    dirass_data* pData = (dirass_data*)malloc1d(sizeof(dirass_data));
     *phDir = (void*)pData;
     int i;
     
     /* codec data */
-    pData->pars = (codecPars*)malloc(sizeof(codecPars));
+    pData->pars = (codecPars*)malloc1d(sizeof(codecPars));
     codecPars* pars = pData->pars;
     pars->interp_dirs_deg = NULL;
     pars->interp_dirs_rad = NULL;
@@ -101,33 +102,20 @@ void dirass_destroy
         if(pData->pmap!=NULL)
             free(pData->pmap);
         for(i=0; i<NUM_DISP_SLOTS; i++)
-            if(pData->pmap_grid[i] !=NULL)
-                free(pData->pmap_grid[i]);
+            free1d((void**)&(pData->pmap_grid[i]));
         
-        if(pars->interp_dirs_deg!=NULL)
-            free(pars->interp_dirs_deg);
-        if(pars->Y_up !=NULL)
-            free(pars->Y_up);
-        if(pars->interp_table!=NULL)
-            free(pars->interp_table);
-        if(pars->ss !=NULL)
-            free(pars->ss);
-        if(pars->ssxyz!=NULL)
-            free(pars->ssxyz);
-        if(pars->Cxyz !=NULL)
-            free(pars->Cxyz);
-        if(pars->w!=NULL)
-            free(pars->w);
-        if(pars->Cw!=NULL)
-            free(pars->Cw);
-        if(pars->Uw!=NULL)
-            free(pars->Uw);
-        if(pars->est_dirs!=NULL)
-            free(pars->est_dirs);
-        if(pars->prev_intensity!=NULL)
-            free(pars->prev_intensity);
-        if(pars->prev_energy!=NULL)
-            free(pars->prev_energy);
+        free1d((void**)&(pars->interp_dirs_deg));
+        free1d((void**)&(pars->Y_up));
+        free1d((void**)&(pars->interp_table));
+        free1d((void**)&(pars->ss));
+        free1d((void**)&(pars->ssxyz));
+        free1d((void**)&(pars->Cxyz));
+        free1d((void**)&(pars->w));
+        free1d((void**)&(pars->Cw));
+        free1d((void**)&(pars->Uw));
+        free1d((void**)&(pars->est_dirs));
+        free1d((void**)&(pars->prev_intensity));
+        free1d((void**)&(pars->prev_energy));
         
         free(pData->pars);
         free(pData);

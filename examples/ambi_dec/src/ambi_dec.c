@@ -1,30 +1,34 @@
-    /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
 /*
- * Filename:
- *     ambi_dec.c
- * Description:
- *     A frequency-dependent Ambisonic decoder for loudspeakers or headphones. Different
- *     decoder settings can be specified for the low and high frequencies. When utilising
- *     spherical harmonic signals derived from real microphone arrays, this implementation
- *     also allows the decoding order per frequency band to be specified. Optionally, a SOFA
- *     file may be loaded for personalised headphone listening.
- *     The algorithms utilised in this Ambisonic decoder were pieced together and developed
- *     in collaboration with Archontis Politis.
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
+/*
+ * Filename: ambi_dec.c
+ * --------------------
+ * A frequency-dependent Ambisonic decoder for loudspeakers or headphones.
+ * Different decoder settings can be specified for the low and high frequencies.
+ * When utilising spherical harmonic signals derived from real microphone
+ * arrays, this implementation also allows the decoding order per frequency band
+ * to be specified. Optionally, a SOFA file may be loaded for personalised
+ * headphone listening.
+ * The algorithms utilised in this Ambisonic decoder were pieced together and
+ * developed in collaboration with Archontis Politis.
+ *
  * Dependencies:
- *     saf_utilities, afSTFTlib, saf_hoa, saf_vbap, saf_hrir, saf_sh
+ *     saf_utilities, afSTFTlib, saf_hoa, saf_vbap, saf_hrir, saf_sh,
+ *     saf_sofa_reader
  * Author, date created:
  *     Leo McCormack, 07.12.2017
  */
@@ -36,8 +40,7 @@ void ambi_dec_create
     void ** const phAmbi
 )
 {
-    ambi_dec_data* pData = (ambi_dec_data*)malloc(sizeof(ambi_dec_data));
-    if (pData == NULL) { return;/*error*/ }
+    ambi_dec_data* pData = (ambi_dec_data*)malloc1d(sizeof(ambi_dec_data));
     *phAmbi = (void*)pData;
     int i, j, ch, band;
 
@@ -61,20 +64,20 @@ void ambi_dec_create
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
-    pData->STFTInputFrameTF = malloc(MAX_NUM_SH_SIGNALS * sizeof(complexVector));
+    pData->STFTInputFrameTF = malloc1d(MAX_NUM_SH_SIGNALS * sizeof(complexVector));
     for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     }
     pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_LOUDSPEAKERS), HOP_SIZE, sizeof(float));
-    pData->STFTOutputFrameTF = malloc(MAX_NUM_LOUDSPEAKERS * sizeof(complexVector));
+    pData->STFTOutputFrameTF = malloc1d(MAX_NUM_LOUDSPEAKERS * sizeof(complexVector));
     for(ch=0; ch< MAX_NUM_LOUDSPEAKERS; ch++) {
-        pData->STFTOutputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTOutputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     }
     
     /* codec data */
-    pData->pars = (codecPars*)malloc(sizeof(codecPars));
+    pData->pars = (codecPars*)malloc1d(sizeof(codecPars));
     codecPars* pars = pData->pars;
     for (i=0; i<NUM_DECODERS; i++){
         for(j=0; j<MAX_SH_ORDER; j++){
@@ -131,34 +134,22 @@ void ambi_dec_destroy
         }
         free(pData->STFTInputFrameTF);
         free(pData->STFTOutputFrameTF);
-        if(pData->binauraliseLS && (pData->tempHopFrameTD!=NULL) )
-            free2d((void**)pData->tempHopFrameTD, MAX(NUM_EARS, MAX_NUM_SH_SIGNALS));
-        else if(pData->tempHopFrameTD!=NULL)
-            free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_LOUDSPEAKERS, MAX_NUM_SH_SIGNALS));
-        
-        if(pars->hrtf_vbap_gtableComp!= NULL)
-            free(pars->hrtf_vbap_gtableComp);
-        if(pars->hrtf_vbap_gtableIdx!= NULL)
-            free(pars->hrtf_vbap_gtableIdx);
-        if(pars->hrtf_fb!= NULL)
-            free(pars->hrtf_fb);
-        if(pars->hrtf_fb_mag!= NULL)
-            free(pars->hrtf_fb_mag);
-        if(pars->itds_s!= NULL)
-            free(pars->itds_s);
-        if(pars->hrirs!= NULL)
-            free(pars->hrirs);
-        if(pars->hrir_dirs_deg!= NULL)
-            free(pars->hrir_dirs_deg);
+        free(pData->tempHopFrameTD);
+        free1d((void**)&(pars->hrtf_vbap_gtableComp));
+        free1d((void**)&(pars->hrtf_vbap_gtableIdx));
+        free1d((void**)&(pars->hrtf_fb));
+        free1d((void**)&(pars->hrtf_fb_mag));
+        free1d((void**)&(pars->itds_s));
+        free1d((void**)&(pars->hrirs));
+        free1d((void**)&(pars->hrir_dirs_deg));
         for (i=0; i<NUM_DECODERS; i++){
             for(j=0; j<MAX_SH_ORDER; j++){
-                free(pars->M_dec[i][j]);
-                free(pars->M_dec_cmplx[i][j]);
-                free(pars->M_dec_maxrE[i][j]);
-                free(pars->M_dec_cmplx_maxrE[i][j]);
+                free1d((void**)&(pars->M_dec[i][j]));
+                free1d((void**)&(pars->M_dec_cmplx[i][j]));
+                free1d((void**)&(pars->M_dec_maxrE[i][j]));
+                free1d((void**)&(pars->M_dec_cmplx_maxrE[i][j]));
             }
         }
-
         free(pData);
         pData = NULL;
     }
@@ -501,7 +492,7 @@ void ambi_dec_setSofaFilePath(void* const hAmbi, const char* path)
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     codecPars* pars = pData->pars;
     
-    pars->sofa_filepath = malloc(strlen(path) + 1);
+    pars->sofa_filepath = malloc1d(strlen(path) + 1);
     strcpy(pars->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
     pData->reInitHRTFs = 1;

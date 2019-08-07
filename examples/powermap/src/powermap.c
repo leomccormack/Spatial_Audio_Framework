@@ -1,23 +1,24 @@
 /*
- Copyright 2016-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2016-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     powermap.c
- * Description:
- *     A powermap-based sound-field visualiser, which utilises spherical harmonic
- *     signals as input.
+ * Filename: powermap.c
+ * --------------------
+ * A sound-field visualiser, which utilises spherical harmonic signals as input.
+ *
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
  * Author, date created:
@@ -25,29 +26,27 @@
  */
 
 #include "powermap.h"
-#include "powermap_internal.h"
-#include "powermap_database.h"
+#include "powermap_internal.h" 
 
 void powermap_create
 (
     void ** const phPm
 )
 {
-    powermap_data* pData = (powermap_data*)malloc(sizeof(powermap_data));
-    if (pData == NULL) { return;/*error*/ }
+    powermap_data* pData = (powermap_data*)malloc1d(sizeof(powermap_data));
     *phPm = (void*)pData;
     int n, i, ch, band;
     
     afSTFTinit(&(pData->hSTFT), HOP_SIZE, MAX_NUM_SH_SIGNALS, 0, 0, 1);
-    pData->STFTInputFrameTF = malloc(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
+    pData->STFTInputFrameTF = malloc1d(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
     for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     }
     pData->tempHopFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, HOP_SIZE, sizeof(float));
     
     /* codec data */
-    pData->pars = (codecPars*)malloc(sizeof(codecPars));
+    pData->pars = (codecPars*)malloc1d(sizeof(codecPars));
     codecPars* pars = pData->pars;
     pars->interp_dirs_deg = NULL;
     for(n=0; n<MAX_SH_ORDER; n++){
@@ -102,25 +101,18 @@ void powermap_destroy
             free(pData->STFTInputFrameTF[ch].im);
         }
         free(pData->STFTInputFrameTF);
-        free2d((void**)pData->tempHopFrameTD, MAX_NUM_SH_SIGNALS);
+        free(pData->tempHopFrameTD);
         
-        if(pData->pmap!=NULL)
-            free(pData->pmap);
-        if(pData->prev_pmap!=NULL)
-            free(pData->prev_pmap);
+        free1d((void**)&(pData->pmap));
+        free1d((void**)&(pData->prev_pmap));
         for(i=0; i<NUM_DISP_SLOTS; i++)
-            if(pData->pmap_grid[i] !=NULL)
-                free(pData->pmap_grid[i]);
-        if(pars->interp_dirs_deg!=NULL)
-            free(pars->interp_dirs_deg);
+            free1d((void**)&(pData->pmap_grid[i]));
+        free1d((void**)&(pars->interp_dirs_deg));
         for(i=0; i<MAX_SH_ORDER; i++){
-            if(pars->Y_grid[i] !=NULL)
-                free(pars->Y_grid[i]);
-            if(pars->Y_grid_cmplx[i]!=NULL)
-                free(pars->Y_grid_cmplx[i]);
+            free1d((void**)&(pars->Y_grid[i]));
+            free1d((void**)&(pars->Y_grid_cmplx[i]));
         }
-        if(pars->interp_table!=NULL)
-            free(pars->interp_table);
+        free1d((void**)&(pars->interp_table));
         free(pData->pars);
         free(pData);
         pData = NULL;
@@ -162,7 +154,6 @@ void powermap_init
     /* reinitialise if needed */
     powermap_checkReInit(hPm);
 }
-
 
 void powermap_analysis
 (
@@ -300,7 +291,7 @@ void powermap_analysis
             nSH_maxOrder = (maxOrder+1)*(maxOrder+1);
 
             /* group covarience matrices */
-            C_grp = calloc(nSH_maxOrder*nSH_maxOrder, sizeof(float_complex));
+            C_grp = calloc1d(nSH_maxOrder*nSH_maxOrder, sizeof(float_complex));
             for (band=0; band<HYBRID_BANDS; band++){
                 order_band = MAX(MIN(pData->analysisOrderPerBand[band], masterOrder),1);
                 nSH_order = (order_band+1)*(order_band+1);

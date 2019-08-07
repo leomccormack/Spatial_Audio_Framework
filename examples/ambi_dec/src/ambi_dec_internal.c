@@ -1,37 +1,39 @@
 /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     ambi_dec_internal.c
- * Description:
- *     A frequency-dependent Ambisonic decoder for loudspeakers or headphones. Different
- *     decoder settings can be specified for the low and high frequencies. When utilising
- *     spherical harmonic signals derived from real microphone arrays, this implementation
- *     also allows the decoding order per frequency band to be specified. Optionally, a SOFA
- *     file may be loaded for personalised headphone listening.
- *     The algorithms utilised in this Ambisonic decoder were pieced together and developed
- *     in collaboration with Archontis Politis.
+ * Filename: ambi_dec_internal.c
+ * -----------------------------
+ * A frequency-dependent Ambisonic decoder for loudspeakers or headphones.
+ * Different decoder settings can be specified for the low and high frequencies.
+ * When utilising spherical harmonic signals derived from real microphone
+ * arrays, this implementation also allows the decoding order per frequency band
+ * to be specified. Optionally, a SOFA file may be loaded for personalised
+ * headphone listening.
+ * The algorithms utilised in this Ambisonic decoder were pieced together and
+ * developed in collaboration with Archontis Politis.
+ *
  * Dependencies:
- *     saf_utilities, afSTFTlib, saf_hoa, saf_vbap, saf_hrir, saf_sh
+ *     saf_utilities, afSTFTlib, saf_hoa, saf_vbap, saf_hrir, saf_sh,
+ *     saf_sofa_reader
  * Author, date created:
  *     Leo McCormack, 07.12.2017
  */
 
-#include "ambi_dec_internal.h"
-#define SAF_ENABLE_SOFA_READER   
-#include "saf_sofa_reader.h"
+#include "ambi_dec_internal.h" 
   
 void ambi_dec_initCodec
 (
@@ -69,9 +71,9 @@ void ambi_dec_initCodec
     /* prep */
     M_dec_tmp = NULL;
     nGrid_dirs = 480; /* Minimum t-design of degree 30, has 480 points */
-    g = malloc(nLoudspeakers*sizeof(float));
-    a = malloc(nGrid_dirs*sizeof(float));
-    e = malloc(nGrid_dirs*sizeof(float));
+    g = malloc1d(nLoudspeakers*sizeof(float));
+    a = malloc1d(nGrid_dirs*sizeof(float));
+    e = malloc1d(nGrid_dirs*sizeof(float));
     
     /* calculate loudspeaker decoding matrices */
     for( d=0; d<NUM_DECODERS; d++){
@@ -95,9 +97,9 @@ void ambi_dec_initCodec
             /* truncate M_dec for each order */
             nSH_order = (n+1)*(n+1);
             free(pars->M_dec[d][n-1]); 
-            pars->M_dec[d][n-1] = malloc(nLoudspeakers* nSH_order * sizeof(float));
+            pars->M_dec[d][n-1] = malloc1d(nLoudspeakers* nSH_order * sizeof(float));
             free(pars->M_dec_cmplx[d][n-1]);
-            pars->M_dec_cmplx[d][n-1] = malloc(nLoudspeakers * nSH_order * sizeof(float_complex));
+            pars->M_dec_cmplx[d][n-1] = malloc1d(nLoudspeakers * nSH_order * sizeof(float_complex));
             for(i=0; i<nLoudspeakers; i++){
                 for(j=0; j<nSH_order; j++){
                     pars->M_dec[d][n-1][i*nSH_order+j] = M_dec_tmp[i*max_nSH +j]; /* for applying in the time domain, and... */
@@ -106,12 +108,12 @@ void ambi_dec_initCodec
             }
             
             /* create dedicated maxrE weighted versions */
-            a_n = malloc(nSH_order*nSH_order*sizeof(float));
+            a_n = malloc1d(nSH_order*nSH_order*sizeof(float));
             getMaxREweights(n, a_n); /* weights returned as diagonal matrix */
             free(pars->M_dec_maxrE[d][n-1]);
-            pars->M_dec_maxrE[d][n-1] = malloc(nLoudspeakers * nSH_order * sizeof(float));
+            pars->M_dec_maxrE[d][n-1] = malloc1d(nLoudspeakers * nSH_order * sizeof(float));
             free(pars->M_dec_cmplx_maxrE[d][n-1]);
-            pars->M_dec_cmplx_maxrE[d][n-1] = malloc(nLoudspeakers * nSH_order * sizeof(float_complex));
+            pars->M_dec_cmplx_maxrE[d][n-1] = malloc1d(nLoudspeakers * nSH_order * sizeof(float_complex));
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLoudspeakers, nSH_order, nSH_order, 1.0f,
                         pars->M_dec[d][n-1], nSH_order,
                         a_n, nSH_order, 0.0f,
@@ -120,7 +122,7 @@ void ambi_dec_initCodec
                 pars->M_dec_cmplx_maxrE[d][n-1][i] = cmplxf(pars->M_dec_maxrE[d][n-1][i], 0.0f); /* for the time-frequency domain */
             
             /* fire a plane-wave from each grid direction to find the total energy/amplitude (using non-maxrE weighted versions) */
-            Y = malloc(nSH_order*sizeof(float));
+            Y = malloc1d(nSH_order*sizeof(float));
             grid_dirs_deg = (float*)(&__Tdesign_degree_30_dirs_deg[0][0]);
             for(ng=0; ng<nGrid_dirs; ng++){
                 azi_incl[0] = grid_dirs_deg[ng*2]*M_PI/180.0f;
@@ -200,26 +202,21 @@ void ambi_dec_initHRTFs
         pars->N_hrir_dirs = __default_N_hrir_dirs;
         pars->hrir_len = __default_hrir_len;
         pars->hrir_fs = __default_hrir_fs;
-        if(pars->hrirs != NULL)
-            free(pars->hrirs);
-        pars->hrirs = malloc(pars->N_hrir_dirs * 2 * (pars->hrir_len)*sizeof(float));
+        free1d((void**)&(pars->hrirs));
+        pars->hrirs = malloc1d(pars->N_hrir_dirs * 2 * (pars->hrir_len)*sizeof(float));
         for(i=0; i<pars->N_hrir_dirs; i++)
             for(j=0; j<2; j++)
                 for(k=0; k< pars->hrir_len; k++)
                     pars->hrirs[i*2*(pars->hrir_len) + j*(pars->hrir_len) + k] = (float)__default_hrirs[i][j][k];
-        if(pars->hrir_dirs_deg != NULL)
-            free(pars->hrir_dirs_deg);
-        pars->hrir_dirs_deg = malloc(pars->N_hrir_dirs * 2 * sizeof(float));
+        free1d((void**)&(pars->hrir_dirs_deg));
+        pars->hrir_dirs_deg = malloc1d(pars->N_hrir_dirs * 2 * sizeof(float));
         for(i=0; i<pars->N_hrir_dirs; i++)
             for(j=0; j<2; j++)
                 pars->hrir_dirs_deg[i*2+j] = (float)__default_hrir_dirs_deg[i][j];
     }
     
     /* estimate the ITDs for each HRIR */
-    if(pars->itds_s!= NULL){
-        free(pars->itds_s);
-        pars->itds_s = NULL;
-    }
+    free1d((void**)&(pars->itds_s));
     estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, &(pars->itds_s));
     
     /* generate VBAP gain table for the hrir_dirs */
@@ -235,33 +232,22 @@ void ambi_dec_initHRTFs
     }
     
     /* compress VBAP table (i.e. remove the zero elements) */
-    if(pars->hrtf_vbap_gtableComp!= NULL){
-        free(pars->hrtf_vbap_gtableComp);
-        pars->hrtf_vbap_gtableComp = NULL;
-    }
-    if(pars->hrtf_vbap_gtableIdx!= NULL){
-        free(pars->hrtf_vbap_gtableIdx);
-        pars->hrtf_vbap_gtableIdx = NULL;
-    }
+    free1d((void**)&(pars->hrtf_vbap_gtableComp));
+    free1d((void**)&(pars->hrtf_vbap_gtableIdx));
     compressVBAPgainTable3D(hrtf_vbap_gtable, pars->N_hrtf_vbap_gtable, pars->N_hrir_dirs, &(pars->hrtf_vbap_gtableComp), &(pars->hrtf_vbap_gtableIdx));
     
     /* convert hrirs to filterbank coefficients */
-    if(pars->hrtf_fb!= NULL){
-        free(pars->hrtf_fb);
-        pars->hrtf_fb = NULL;
-    }
+    free1d((void**)&(pars->hrtf_fb));
     HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->itds_s, (float*)pData->freqVector, HYBRID_BANDS, 0, &(pars->hrtf_fb));
     
     /* calculate magnitude responses */
-    if(pars->hrtf_fb_mag!= NULL)
-        free(pars->hrtf_fb_mag);
-    pars->hrtf_fb_mag = malloc(HYBRID_BANDS*NUM_EARS* (pars->N_hrir_dirs)*sizeof(float));
+    free1d((void**)&(pars->hrtf_fb_mag));
+    pars->hrtf_fb_mag = malloc1d(HYBRID_BANDS*NUM_EARS* (pars->N_hrir_dirs)*sizeof(float));
     for(i=0; i<HYBRID_BANDS*NUM_EARS* (pars->N_hrir_dirs); i++)
         pars->hrtf_fb_mag[i] = cabsf(pars->hrtf_fb[i]);
     
     /* clean-up */
-    if(hrtf_vbap_gtable!=NULL)
-        free(hrtf_vbap_gtable);
+    free1d((void**)&(hrtf_vbap_gtable));
 }
 
 void ambi_dec_initTFT

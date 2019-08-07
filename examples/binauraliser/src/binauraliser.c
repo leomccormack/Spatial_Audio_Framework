@@ -1,26 +1,28 @@
 /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     binauraliser.c
- * Description:
- *     Convolves input audio (up to 64 channels) with interpolated HRTFs in the time-frequency
- *     domain. The HRTFs are interpolated by applying amplitude-preserving VBAP gains to the
- *     HRTF magnitude responses and inter-aural time differences (ITDs) individually, before
- *     being re-combined. The example allows the user to specify an external SOFA file for the
- *     convolution.
+ * Filename: binauraliser.c
+ * ------------------------
+ * Convolves input audio (up to 64 channels) with interpolated HRTFs in the
+ * time-frequency domain. The HRTFs are interpolated by applying amplitude-
+ * preserving VBAP gains to the HRTF magnitude responses and inter-aural time
+ * differences (ITDs) individually, before being re-combined. The example also
+ * allows the user to specify an external SOFA file for the convolution.
+ *
  * Dependencies:
  *     saf_utilities, saf_hrir, saf_vbap, afSTFTlib
  * Author, date created:
@@ -34,23 +36,22 @@ void binauraliser_create
     void ** const phBin
 )
 {
-    binauraliser_data* pData = (binauraliser_data*)malloc(sizeof(binauraliser_data));
-    if (pData == NULL) { return;/*error*/ }
+    binauraliser_data* pData = (binauraliser_data*)malloc1d(sizeof(binauraliser_data));
     *phBin = (void*)pData;
     int ch;
     
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->STFTInputFrameTF = malloc(MAX_NUM_INPUTS * sizeof(complexVector));
+    pData->STFTInputFrameTF = malloc1d(MAX_NUM_INPUTS * sizeof(complexVector));
     for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     }
     pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_INPUTS, NUM_EARS), HOP_SIZE, sizeof(float));
-    pData->STFTOutputFrameTF = malloc(NUM_EARS*sizeof(complexVector));
+    pData->STFTOutputFrameTF = malloc1d(NUM_EARS*sizeof(complexVector));
     for(ch=0; ch< NUM_EARS; ch++) {
-        pData->STFTOutputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTOutputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     }
     
     /* hrir data */
@@ -111,22 +112,15 @@ void binauraliser_destroy
         }
         free(pData->STFTInputFrameTF);
         free(pData->STFTOutputFrameTF);
-        free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_INPUTS, NUM_EARS));
+        free(pData->tempHopFrameTD);
         
-        if(pData->hrtf_vbap_gtableComp!= NULL)
-            free(pData->hrtf_vbap_gtableComp);
-        if(pData->hrtf_vbap_gtableIdx!= NULL)
-            free(pData->hrtf_vbap_gtableIdx);
-        if(pData->hrtf_fb!= NULL)
-            free(pData->hrtf_fb);
-        if(pData->hrtf_fb_mag!= NULL)
-            free(pData->hrtf_fb_mag);
-        if(pData->itds_s!= NULL)
-            free(pData->itds_s);
-        if(pData->hrirs!= NULL)
-            free(pData->hrirs);
-        if(pData->hrir_dirs_deg!= NULL)
-            free(pData->hrir_dirs_deg);
+        free1d((void**)&(pData->hrtf_vbap_gtableComp));
+        free1d((void**)&(pData->hrtf_vbap_gtableIdx));
+        free1d((void**)&(pData->hrtf_fb));
+        free1d((void**)&(pData->hrtf_fb_mag));
+        free1d((void**)&(pData->itds_s));
+        free1d((void**)&(pData->hrirs));
+        free1d((void**)&(pData->hrir_dirs_deg));
          
         free(pData);
         pData = NULL;
@@ -353,7 +347,7 @@ void binauraliser_setSofaFilePath(void* const hBin, const char* path)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     
-    pData->sofa_filepath = malloc(strlen(path) + 1);
+    pData->sofa_filepath = malloc1d(strlen(path) + 1);
     strcpy(pData->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
     pData->reInitHRTFsAndGainTables = 1; 

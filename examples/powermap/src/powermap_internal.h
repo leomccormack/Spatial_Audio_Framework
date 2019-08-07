@@ -1,23 +1,24 @@
 /*
- Copyright 2016-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2016-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     powermap_internal.h
- * Description:
- *     A powermap-based sound-field visualiser, which utilises spherical harmonic
- *     signals as input.
+ * Filename: powermap_internal.h
+ * -----------------------------
+ * A sound-field visualiser, which utilises spherical harmonic signals as input.
+ *
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
  * Author, date created:
@@ -32,7 +33,6 @@
 #include <string.h>
 #include <float.h>
 #include "powermap.h"
-#include "powermap_database.h"
 #define SAF_ENABLE_AFSTFT /* for time-frequency transform */
 #define SAF_ENABLE_SH     /* for spherical harmonic weights */
 #define SAF_ENABLE_VBAP   /* for vbap-based interpolation tables */
@@ -40,11 +40,11 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
     
-/***************/
-/* Definitions */
-/***************/
+/* ========================================================================== */
+/*                            Internal Parameters                             */
+/* ========================================================================== */
     
 #define MAX_SH_ORDER ( 7 )
 #define HOP_SIZE ( 128 )                   /* STFT hop size = nBands */
@@ -54,14 +54,19 @@ extern "C" {
 #define NUM_DISP_SLOTS ( 2 )
 #define MAX_COV_AVG_COEFF ( 0.45f )    /*  */
 #ifndef M_PI
-  #define M_PI ( 3.14159265359f )
+# define M_PI ( 3.14159265359f )
 #endif
     
     
-/***********/
-/* Structs */
-/***********/
-    
+/* ========================================================================== */
+/*                                 Structures                                 */
+/* ========================================================================== */
+
+/*
+ * Struct: codecPars
+ * -----------------
+ * Contains variables for scanning grids, and beamforming
+ */
 typedef struct _codecPars
 {
     float* grid_dirs_deg; /* grid_nDirs x 2 */
@@ -76,6 +81,12 @@ typedef struct _codecPars
     
 }codecPars;
     
+/*
+ * Struct: powermap_data
+ * ---------------------
+ * Main structure for powermap. Contains variables for audio buffers, internal
+ * variables, flags, user parameters
+ */
 typedef struct _powermap
 {
     /* TFT */
@@ -124,39 +135,34 @@ typedef struct _powermap
 } powermap_data;
 
 
-/**********************/
-/* Internal functions */
-/**********************/
+/* ========================================================================== */
+/*                             Internal Functions                             */
+/* ========================================================================== */
 
-/* generates spherical harmonic steering vectors and interpolation tables etc. */
-void powermap_initAna(void* const hPm);           /* handle for powermap */
+/*
+ * powermap_initAna
+ * ----------------
+ * Intialises the codec variables, based on current global/user parameters
+ *
+ * Input Arguments:
+ *     hPm - powermap handle
+ */
+void powermap_initAna(void* const hPm);
 
-/* Initialise the filterbank used by Powermap */
-void powermap_initTFT(void* const hPm);           /* powermap handle */
+/*
+ * powermap_initTFT
+ * ----------------
+ * Initialise the filterbank used by powermap.
+ * Note: Call this function before powermap_initAna
+ *
+ * Input Arguments:
+ *     hPm - powermap handle
+ */
+void powermap_initTFT(void* const hPm);
     
     
 #ifdef __cplusplus
-}
-#endif
+} /* extern "C" */
+#endif /* __cplusplus */
 
 #endif /* __POWERMAP_INTERNAL_H_INCLUDED__ */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

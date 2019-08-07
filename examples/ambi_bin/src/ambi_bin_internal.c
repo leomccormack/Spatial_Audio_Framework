@@ -1,31 +1,33 @@
 /*
- Copyright 2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     ambi_bin_internal.c
- * Description:
- *     A binaural Ambisonic decoder for reproducing ambisonic signals over headphones.
+ * Filename: ambi_bin_internal.c
+ * -----------------------------
+ * A binaural Ambisonic decoder for reproducing ambisonic signals over
+ * headphones. The decoder supports sound-field rotation for head-tracking and
+ * may also accomodate custom HRIR sets via the SOFA standard.
+ *
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_hrir, saf_sh
  * Author, date created:
  *     Leo McCormack, 14.04.2018
  */
 
-#include "ambi_bin_internal.h"
-#define SAF_ENABLE_SOFA_READER
-#include "saf_sofa_reader.h"
+#include "ambi_bin_internal.h" 
 
 void ambi_bin_initCodec
 (
@@ -60,33 +62,25 @@ void ambi_bin_initCodec
         pars->N_hrir_dirs = __default_N_hrir_dirs;
         pars->hrir_len = __default_hrir_len;
         pars->hrir_fs = __default_hrir_fs;
-        if(pars->hrirs != NULL)
-            free(pars->hrirs);
-        pars->hrirs = malloc(pars->N_hrir_dirs * NUM_EARS * (pars->hrir_len)*sizeof(float));
+        free1d((void**)&(pars->hrirs));
+        pars->hrirs = malloc1d(pars->N_hrir_dirs * NUM_EARS * (pars->hrir_len)*sizeof(float));
         for(i=0; i<pars->N_hrir_dirs; i++)
             for(j=0; j<NUM_EARS; j++)
                 for(k=0; k< pars->hrir_len; k++)
                     pars->hrirs[i*NUM_EARS*(pars->hrir_len) + j*(pars->hrir_len) + k] = (float)__default_hrirs[i][j][k];
-        if(pars->hrir_dirs_deg != NULL)
-            free(pars->hrir_dirs_deg);
-        pars->hrir_dirs_deg = malloc(pars->N_hrir_dirs * NUM_EARS * sizeof(float));
+        free1d((void**)&(pars->hrir_dirs_deg));
+        pars->hrir_dirs_deg = malloc1d(pars->N_hrir_dirs * NUM_EARS * sizeof(float));
         for(i=0; i<pars->N_hrir_dirs; i++)
             for(j=0; j<2; j++)
                 pars->hrir_dirs_deg[i*2+j] = (float)__default_hrir_dirs_deg[i][j];
     }
     
     /* estimate the ITDs for each HRIR */
-    if(pars->itds_s!= NULL){
-        free(pars->itds_s);
-        pars->itds_s = NULL;
-    }
+    free1d((void**)&(pars->itds_s));
     estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, &(pars->itds_s));
     
     /* convert hrirs to filterbank coefficients */
-    if(pars->hrtf_fb!= NULL){
-        free(pars->hrtf_fb);
-        pars->hrtf_fb = NULL;
-    }
+    free1d((void**)&(pars->hrtf_fb));
     HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->itds_s, (float*)pData->freqVector, HYBRID_BANDS, 0, &(pars->hrtf_fb));
 
     /* get new decoder */
@@ -120,9 +114,9 @@ void ambi_bin_initCodec
     float* tmp;
     float_complex* a_n, *decMtx_rE;
     if (pData->enableMaxRE){
-        tmp = malloc(nSH*nSH*sizeof(float));
-        a_n = malloc(nSH*nSH*sizeof(float_complex));
-        decMtx_rE = malloc(NUM_EARS*nSH*sizeof(float_complex));
+        tmp = malloc1d(nSH*nSH*sizeof(float));
+        a_n = malloc1d(nSH*nSH*sizeof(float_complex));
+        decMtx_rE = malloc1d(NUM_EARS*nSH*sizeof(float_complex));
         getMaxREweights(order, tmp);
         for(i=0; i<nSH*nSH; i++)
             a_n[i] = cmplxf(tmp[i], 0.0f);
@@ -151,8 +145,7 @@ void ambi_bin_initCodec
             for(j=0; j<nSH; j++)
                 pars->M_dec[band][i][j] = decMtx[band*2*nSH + i*nSH + j];
     free(decMtx);
-    
-    
+     
     pData->order = order;
 }
 
@@ -170,9 +163,4 @@ void ambi_bin_initTFT
         afSTFTchannelChange(pData->hSTFT, pData->new_nSH, NUM_EARS);
     pData->nSH = pData->new_nSH;
 }
-
-
-
-
-
 

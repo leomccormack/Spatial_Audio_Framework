@@ -8,9 +8,7 @@
 #define __SLDOA_DATABASE_INCLUDED__
 
 #define NUM_GRID_DIRS ( 2562 )
-
-extern const double __afCenterFreq48e3[133];
-extern const double __afCenterFreq44100[133];
+ 
 extern const double __grid_Y[64][2562];
 extern const double __grid_dirs_deg[2562][2];
 

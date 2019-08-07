@@ -1,35 +1,39 @@
-     /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
 /*
- * Filename:
- *     ambi_drc.c
- * Description:
- *     A frequency-dependent spherical harmonic domain dynamic range compressor (DRC). The
- *     implementation can also keep track of the frequency-dependent gain factors for
- *     the omnidirectional component over time, for optional plotting. The design utilises
- *     a similar approach as in:
- *         McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range Compression". in
- *         Proceedings of the 14th Sound and Music Computing Conference, July 5-8, Espoo,
- *         Finland.
- *     The DRC gain factors are determined based on analysing the omnidirectional component.
- *     These gain factors are then applied to the higher-order components, in a such a manner
- *     as to retain the spatial information within them.
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
+/*
+ * Filename: ambi_drc.c
+ * --------------------
+ * A frequency-dependent spherical harmonic domain dynamic range compressor
+ * (DRC). The implementation can also keep track of the frequency-dependent gain
+ * factors for the omnidirectional component over time, for optional plotting.
+ * The design is based on the algorithm presented in [1].
+ * The DRC gain factors are determined based on analysing the omnidirectional
+ * component. These gain factors are then applied to the higher-order
+ * components, in a such a manner as to retain the spatial information within
+ * them.
+ *
  * Dependencies:
  *     saf_utilities, afSTFTlib
  * Author, date created:
  *     Leo McCormack, 07.01.2017
+ *
+ * [1] McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range
+ *     Compression". in Proceedings of the 14th Sound and Music Computing
+ *     Conference, July 5-8, Espoo, Finland.
  */
 
 #include "ambi_drc.h"
@@ -40,23 +44,22 @@ void ambi_drc_create
     void ** const phAmbi
 )
 {
-    ambi_drc_data* pData = (ambi_drc_data*)malloc(sizeof(ambi_drc_data));
-    if (pData == NULL) { return;/*error*/ }
+    ambi_drc_data* pData = (ambi_drc_data*)malloc1d(sizeof(ambi_drc_data));
     *phAmbi = (void*)pData;
     int ch;
  
     /* afSTFT stuff */
     pData->hSTFT = NULL;
-    pData->STFTInputFrameTF = malloc(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
+    pData->STFTInputFrameTF = malloc1d(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
     for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     }
     pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SH_SIGNALS), HOP_SIZE, sizeof(float));
-    pData->STFTOutputFrameTF = malloc(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
+    pData->STFTOutputFrameTF = malloc1d(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
     for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-        pData->STFTOutputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTOutputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     } 
     
     /* internal */
@@ -104,14 +107,12 @@ void ambi_drc_destroy
             }
             free(pData->STFTInputFrameTF);
             free(pData->STFTOutputFrameTF);
-            free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SH_SIGNALS));
+            free(pData->tempHopFrameTD);
         }
-     
 #ifdef ENABLE_TF_DISPLAY
-        free2d((void**)pData->gainsTF_bank0, HYBRID_BANDS);
-        free2d((void**)pData->gainsTF_bank1, HYBRID_BANDS);
-#endif 
-
+        free(pData->gainsTF_bank0);
+        free(pData->gainsTF_bank1);
+#endif
         free(pData);
         pData = NULL;
     }

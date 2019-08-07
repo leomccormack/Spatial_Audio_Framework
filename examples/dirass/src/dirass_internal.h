@@ -1,34 +1,36 @@
 /*
- Copyright 2019 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2019 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     dirass_internal.h
- * Description:
- *     A sound-field visualiser based on the directional re-assignment of beamformer energy,
- *     utilising the DoA estimates extracted from spatially-localised active-intensity
- *     (SLAI) vectors; which correspond to the scanning grid directions.
- *     For more information on the method, refer to:
- *         McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular
- *         spectra based on a directional re-assignment approach for ambisonic sound-field
- *         visualisation". IEEE International Conference on Acoustics, Speech and Signal
- *         Processing (ICASSP).
+ * Filename: dirass_internal.h
+ * ---------------------------
+ * A sound-field visualiser based on the directional re-assignment of beamformer
+ * energy, utilising the DoA estimates extracted from spatially-localised
+ * active-intensity (SLAI) vectors; which are centred around each of the
+ * corresponding scanning grid directions [1].
  *
  * Dependencies:
  *     saf_utilities, saf_vbap, saf_sh
  * Author, date created:
  *     Leo McCormack, 21.02.2019
+ *
+ * [1] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular
+ *     spectra based on a directional re-assignment approach for ambisonic
+ *     sound-field visualisation". IEEE International Conference on Acoustics,
+ *     Speech and Signal Processing (ICASSP).
  */
 
 #ifndef __DIRASS_INTERNAL_H_INCLUDED__
@@ -39,17 +41,17 @@
 #include <string.h>
 #include <float.h>
 #include "dirass.h"
-#define SAF_ENABLE_SH     /* for spherical harmonics and beamforming weights */
+#define SAF_ENABLE_SH   /* for spherical harmonics and beamforming weights */
 #define SAF_ENABLE_VBAP   /* for vbap-based interpolation tables */
 #include "saf.h"
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
     
-/***************/
-/* Definitions */
-/***************/
+/* ========================================================================== */
+/*                            Internal Parameters                             */
+/* ========================================================================== */
 
 #define MAX_INPUT_SH_ORDER ( 7 )
 #define MAX_DISPLAY_SH_ORDER ( 20 )
@@ -57,42 +59,53 @@ extern "C" {
 #define MAX_NUM_DISPLAY_SH_SIGNALS ( (MAX_DISPLAY_SH_ORDER+1)*(MAX_DISPLAY_SH_ORDER+1) )
 #define NUM_DISP_SLOTS ( 2 )
 #ifndef M_PI
-  #define M_PI ( 3.14159265359f )
+# define M_PI ( 3.14159265359f )
 #endif
 
-    
-/***********/
-/* Structs */
-/***********/
-    
+
+/* ========================================================================== */
+/*                                 Structures                                 */
+/* ========================================================================== */
+
+/*
+ * Struct: codecPars
+ * -----------------
+ * Contains variables for scanning grids, and sector beamforming
+ */
 typedef struct _codecPars
 {
     /* scanning grid and intepolation table */
-    float* grid_dirs_deg;                   /* scanning grid directions; FLAT: grid_nDirs x 2 */
-    int grid_nDirs;                         /* number of grid directions */ 
-    float* interp_dirs_deg;                 /* interpolation directions, in degrees; FLAT: interp_nDirs x 2 */
-    float* interp_dirs_rad;                 /* interpolation directions, in radians; FLAT: interp_nDirs x 2 */
-    float* interp_table;                    /* interpolation table (spherical->rectangular grid); FLAT: interp_nDirs x grid_nDirs */
-    int interp_nDirs;                       /* number of interpolation directions */
-    int interp_nTri;                        /* number of triangles in the spherical scanning grid mesh */
-    float* ss;                              /* beamformer sector signals; FLAT: grid_nDirs x FRAME_SIZE */
-    float* ssxyz;                           /* beamformer velocity signals; FLAT: 3 x FRAME_SIZE */
-    int* est_dirs_idx;                      /* DoA indices, into the interpolation directions; grid_nDirs x 1 */
-    float* prev_intensity;                  /* previous intensity vectors (for averaging); FLAT: grid_nDirs x 3 */
-    float* prev_energy;                     /* previous energy (for averaging); FLAT: grid_nDirs x 1 */
+    float* grid_dirs_deg;     /* scanning grid directions; FLAT: grid_nDirs x 2 */
+    int grid_nDirs;           /* number of grid directions */
+    float* interp_dirs_deg;   /* interpolation directions, in degrees; FLAT: interp_nDirs x 2 */
+    float* interp_dirs_rad;   /* interpolation directions, in radians; FLAT: interp_nDirs x 2 */
+    float* interp_table;      /* interpolation table (spherical->rectangular grid); FLAT: interp_nDirs x grid_nDirs */
+    int interp_nDirs;         /* number of interpolation directions */
+    int interp_nTri;          /* number of triangles in the spherical scanning grid mesh */
+    float* ss;                /* beamformer sector signals; FLAT: grid_nDirs x FRAME_SIZE */
+    float* ssxyz;             /* beamformer velocity signals; FLAT: 3 x FRAME_SIZE */
+    int* est_dirs_idx;        /* DoA indices, into the interpolation directions; grid_nDirs x 1 */
+    float* prev_intensity;    /* previous intensity vectors (for averaging); FLAT: grid_nDirs x 3 */
+    float* prev_energy;       /* previous energy (for averaging); FLAT: grid_nDirs x 1 */
     
     /* sector beamforming and upscaling */
-    float* Cxyz;                            /* beamforming weights for velocity patterns; FLAT: nDirs x (order+1)^2 x 3 */
-    float* Cw;                              /* beamforming weights; FLAT: nDirs x (order)^2 */
-    float* Uw;                              /* beamforming weights; FLAT: nDirs x (upscaleOrder+1)^2 */
-    float* Y_up;                            /* real SH weights for upscaling; FLAT: (upscaleOrder+1)^2 x grid_nDirs */
-    float* est_dirs;                        /* estimated DoA per grid direction; grid_nDirs x 2 */
+    float* Cxyz;              /* beamforming weights for velocity patterns; FLAT: nDirs x (order+1)^2 x 3 */
+    float* Cw;                /* beamforming weights; FLAT: nDirs x (order)^2 */
+    float* Uw;                /* beamforming weights; FLAT: nDirs x (upscaleOrder+1)^2 */
+    float* Y_up;              /* real SH weights for upscaling; FLAT: (upscaleOrder+1)^2 x grid_nDirs */
+    float* est_dirs;          /* estimated DoA per grid direction; grid_nDirs x 2 */
     
     /* regular beamforming */
-    float* w;                               /* beamforming weights; FLAT: nDirs x (order+1)^2 */
+    float* w;                 /* beamforming weights; FLAT: nDirs x (order+1)^2 */
      
 }codecPars;
     
+/*
+ * Struct: dirass_data
+ * -------------------
+ * Main structure for dirass. Contains variables for audio buffers, filtering,
+ * internal variables, flags, user parameters
+ */
 typedef struct _dirass
 {
     /* Buffers */
@@ -135,17 +148,23 @@ typedef struct _dirass
 } dirass_data;
 
 
-/**********************/
-/* Internal functions */
-/**********************/
+/* ========================================================================== */
+/*                             Internal Functions                             */
+/* ========================================================================== */
 
-/* generates spherical harmonic steering vectors and interpolation tables etc. */
-void dirass_initAna(void* const hDir);      /* handle for dirass */
+/*
+ * dirass_initAna
+ * --------------
+ * Intialises the codec variables, based on current global/user parameters
+ *
+ * Input Arguments:
+ *     hDir - dirass handle
+ */
+void dirass_initAna(void* const hDir);
 
     
 #ifdef __cplusplus
-}
-#endif
+} /* extern "C" */
+#endif /* __cplusplus */
 
 #endif /* __DIRASS_INTERNAL_H_INCLUDED__ */
-

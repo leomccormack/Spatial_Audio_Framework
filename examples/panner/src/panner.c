@@ -1,30 +1,37 @@
-    /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
 /*
- * Filename:
- *     panner.c
- * Description:
- *     A frequency-dependent 3D panner, based on the Vector-base Amplitude Panning (VBAP)
- *     method. Depending on the room, it may be beneficial to utilise amplitude-normalised
- *     gains for low frequencies, and energy-normalised gains for high frequencies; which
- *     this implemenation takes into account with one parameter "DTT". Set "DTT" to 0 for a
- *     normal room, 0.5 for listening room, and 1 for anechoic.
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
+/*
+ * Filename: panner.c
+ * ------------------
+ * A frequency-dependent 3D panner, based on the Vector-base Amplitude Panning
+ * (VBAP) method. Depending on the room, it may be beneficial to employ
+ * amplitude-normalised gains for low frequencies, and energy-normalised gains
+ * for high frequencies. Therefore, this VBAP implementation uses the method
+ * described in [1], to do just that.
+ *
  * Dependencies:
  *     saf_utilities, saf_vbap, afSTFTlib
  * Author, date created:
  *     Leo McCormack, 25.09.2017
+ *
+ * [1] Laitinen, M., Vilkamo, J., Jussila, K., Politis, A., Pulkki, V. (2014).
+ *     Gain normalisation in amplitude panning as a function of frequency and
+ *     room reverberance. 55th International Conference of the AES. Helsinki,
+ *     Finland.
  */
  
 #include "panner_internal.h"
@@ -39,22 +46,21 @@ void panner_create
     void ** const phPan
 )
 {
-    panner_data* pData = (panner_data*)malloc(sizeof(panner_data));
-    if (pData == NULL) { return;/*error*/ }
+    panner_data* pData = (panner_data*)malloc1d(sizeof(panner_data));
     *phPan = (void*)pData;
     int ch, dummy;
     
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->STFTInputFrameTF = malloc(MAX_NUM_INPUTS*sizeof(complexVector));
-    pData->STFTOutputFrameTF = malloc(MAX_NUM_OUTPUTS*sizeof(complexVector));
+    pData->STFTInputFrameTF = malloc1d(MAX_NUM_INPUTS*sizeof(complexVector));
+    pData->STFTOutputFrameTF = malloc1d(MAX_NUM_OUTPUTS*sizeof(complexVector));
     for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     }
     for(ch=0; ch< MAX_NUM_OUTPUTS; ch++) {
-        pData->STFTOutputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTOutputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTOutputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     }
     pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_INPUTS, MAX_NUM_OUTPUTS), HOP_SIZE, sizeof(float));
     
@@ -103,10 +109,8 @@ void panner_destroy
         }
         free(pData->STFTInputFrameTF);
         free(pData->STFTOutputFrameTF);
-        free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_INPUTS, MAX_NUM_OUTPUTS));
-    
-        if(pData->vbap_gtable!= NULL)
-            free(pData->vbap_gtable);
+        free(pData->tempHopFrameTD);
+        free1d((void**)&(pData->vbap_gtable));
          
         free(pData);
         pData = NULL;
@@ -132,7 +136,7 @@ void panner_init
     }
     
     /* calculate pValue per frequency */
-    panner_getPvalue(pData->DTT, pData->freqVector, pData->pValue);
+    getPvalues(pData->DTT, pData->freqVector, HYBRID_BANDS, pData->pValue);
 
     /* reinitialise if needed */
     panner_checkReInit(hPan);
@@ -461,7 +465,7 @@ void panner_setDTT(void* const hPan, float newValue)
     panner_data *pData = (panner_data*)(hPan);
     int ch;
     pData->DTT = newValue;
-    panner_getPvalue(pData->DTT, pData->freqVector, pData->pValue);
+    getPvalues(pData->DTT, pData->freqVector, HYBRID_BANDS, pData->pValue);
     for(ch=0; ch<pData->new_nSources; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
     pData->recalc_M_rotFLAG = 1;

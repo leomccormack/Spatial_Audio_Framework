@@ -1,30 +1,37 @@
 /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     panner_internal.c
- * Description:
- *     A frequency-dependent 3D panner, based on the Vector-base Amplitude Panning (VBAP)
- *     method. Depending on the room, it may be beneficial to utilise amplitude-normalised
- *     gains for low frequencies, and energy-normalised gains for high frequencies; which
- *     this implemenation takes into account with one parameter "DTT". Set "DTT" to 0 for a
- *     normal room, 0.5 for listening room, and 1 for anechoic.
+ * Filename: panner_internal.c
+ * ---------------------------
+ * A frequency-dependent 3D panner, based on the Vector-base Amplitude Panning
+ * (VBAP) method. Depending on the room, it may be beneficial to employ
+ * amplitude-normalised gains for low frequencies, and energy-normalised gains
+ * for high frequencies. Therefore, this VBAP implementation uses the method
+ * described in [1], to do just that.
+ *
  * Dependencies:
  *     saf_utilities, saf_vbap, afSTFTlib
  * Author, date created:
  *     Leo McCormack, 25.09.2017
+ *
+ * [1] Laitinen, M., Vilkamo, J., Jussila, K., Politis, A., Pulkki, V. (2014).
+ *     Gain normalisation in amplitude panning as a function of frequency and
+ *     room reverberance. 55th International Conference of the AES. Helsinki,
+ *     Finland.
  */
 
 #include "panner_internal.h" 
@@ -47,10 +54,7 @@ void panner_initGainTables(void* const hPan)
 #endif
     
     /* generate VBAP gain table */
-    if(pData->vbap_gtable!= NULL){
-        free(pData->vbap_gtable);
-        pData->vbap_gtable = NULL;
-    } 
+    free1d((void**)&(pData->vbap_gtable));
     pData->vbapTableRes[0] = 2;
     pData->vbapTableRes[1] = 5;
 #ifdef FORCE_3D_LAYOUT
@@ -300,35 +304,4 @@ void panner_loadPreset(PRESETS preset, float dirs_deg[MAX_NUM_INPUTS][2], int* n
     else
         (*nDims) = 3;
 }
-
-void panner_getPvalue
-(
-    float DTT,
-    float f[HYBRID_BANDS],
-    float p[HYBRID_BANDS]
-)
-{
-    int band;
-    float a1, a2, p0;
-    
-    a1 = 0.00045f;
-    a2 = 0.000085f;
-    
-    for(band=0; band<HYBRID_BANDS; band++){
-        p0 = 1.5f - 0.5f * cosf(4.7f*tanhf(a1*f[band]))*MAX(0.0f,1.0f-a2*f[band]);
-        p[band] = (p0-2.0f)*sqrtf(DTT)+2.0f;
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
  

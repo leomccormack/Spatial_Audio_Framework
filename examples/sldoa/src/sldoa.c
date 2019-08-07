@@ -1,36 +1,39 @@
 /*
- Copyright 2017-2018 Leo McCormack
- 
- Permission to use, copy, modify, and/or distribute this software for any purpose with or
- without fee is hereby granted, provided that the above copyright notice and this permission
- notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
- THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT
- SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
- CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
- OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * Copyright 2017-2018 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*
- * Filename:
- *     sldoa.c
- * Description:
- *     A spatially-localised pressure-intensity based direction-of-arrival estimator (SLDoA).
- *     VBAP gain patterns are imposed on the spherical harmonic signals, such that the DoA
- *     can be estimated in a spatially-constrained region; thus mitigating interferes and
- *     reflections arriving from other directions. The DoA is estimated per sector for
- *     each frequency band.
- *     The algorithms within sldoa were developed in collaboration with Symeon Delikaris-
- *     Manias, and are explained in more detail in:
- *         McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki, V.,
- *         “Real-time conversion of sensor array signals into spherical harmonic signals with
- *         applications to spatially localised sub-band sound-field analysis,” in Audio
- *         Engineering Society Convention 144, Audio Engineering Society, 2018.
+ * Filename: sldoa.c
+ * -----------------
+ * A spatially-localised active-intensity based direction-of-arrival estimator
+ * (SLDoA). VBAP gain patterns are imposed on the spherical harmonic signals,
+ * such that the DoA can be estimated in a spatially-constrained region; thus
+ * mitigating the effect of interferes and reflections arriving from other
+ * directions. The DoA is estimated per sector for each frequency band.
+ * The algorithms within sldoa were developed in collaboration with Symeon
+ * Delikaris-Manias and Angelo Farina, and are explained in more detail in [1].
  * Dependencies:
  *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
  * Author, date created:
  *     Leo McCormack, 18.10.2017
+ *
+ * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
+ *     V., “Real-time conversion of sensor array signals into spherical harmonic
+ *     signals with applications to spatially localised sub-band sound-field
+ *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
+ *     Society, 2018.
  */
 
 #include "sldoa.h"
@@ -42,16 +45,15 @@ void sldoa_create
     void ** const phSld
 )
 {
-    sldoa_data* pData = (sldoa_data*)malloc(sizeof(sldoa_data));
-    if (pData == NULL) { return;/*error*/ }
+    sldoa_data* pData = (sldoa_data*)malloc1d(sizeof(sldoa_data));
     *phSld = (void*)pData;
     int i, j, ch, band;
     
     afSTFTinit(&(pData->hSTFT), HOP_SIZE, MAX_NUM_SH_SIGNALS, 0, 0, 1);
-    pData->STFTInputFrameTF = malloc(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
+    pData->STFTInputFrameTF = malloc1d(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
     for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
+        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
     }
     pData->tempHopFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, HOP_SIZE, sizeof(float));
     
@@ -71,10 +73,10 @@ void sldoa_create
     
     /* display */
     for(i=0; i<NUM_DISP_SLOTS; i++){
-        pData->azi_deg[i] = malloc(HYBRID_BANDS*MAX_NUM_SECTORS * sizeof(float));
-        pData->elev_deg[i] = malloc(HYBRID_BANDS*MAX_NUM_SECTORS * sizeof(float));
-        pData->colourScale[i] = malloc(HYBRID_BANDS*MAX_NUM_SECTORS * sizeof(float));
-        pData->alphaScale[i] = malloc(HYBRID_BANDS*MAX_NUM_SECTORS * sizeof(float));
+        pData->azi_deg[i] = malloc1d(HYBRID_BANDS*MAX_NUM_SECTORS * sizeof(float));
+        pData->elev_deg[i] = malloc1d(HYBRID_BANDS*MAX_NUM_SECTORS * sizeof(float));
+        pData->colourScale[i] = malloc1d(HYBRID_BANDS*MAX_NUM_SECTORS * sizeof(float));
+        pData->alphaScale[i] = malloc1d(HYBRID_BANDS*MAX_NUM_SECTORS * sizeof(float));
     }
     
     /* Default user parameters */
@@ -105,7 +107,7 @@ void sldoa_destroy
             free(pData->STFTInputFrameTF[ch].im);
         }
         free(pData->STFTInputFrameTF);
-        free2d((void**)pData->tempHopFrameTD, MAX_NUM_SH_SIGNALS);
+        free(pData->tempHopFrameTD);
         for(i=0; i<NUM_DISP_SLOTS; i++){
             free(pData->azi_deg[i]);
             free(pData->elev_deg[i]);
