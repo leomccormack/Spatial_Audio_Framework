@@ -65,10 +65,7 @@ typedef enum _ARRAY_CONSTRUCTION_TYPES {
 /*
  * Enum: SECTOR_PATTERNS
  * ---------------------
- * Sector pattern designs for directionally-contraining sound-fields
- *     Politis, A., & Pulkki, V. (2016). Acoustic intensity, energy-density and
- *     diffuseness estimation in a directionally-constrained region. arXiv
- *     preprint arXiv:1609.03409
+ * Sector pattern designs for directionally-contraining sound-fields [1].
  *
  * Options:
  *     SECTOR_PATTERN_PWD      - plane-wave decomposition/Hyper-cardioid
@@ -76,6 +73,10 @@ typedef enum _ARRAY_CONSTRUCTION_TYPES {
  *                               has maximum energy concentrated in the look-
  *                               direction
  *     SECTOR_PATTERN_CARDIOID - cardioid pattern
+ *
+ * [1] Politis, A., & Pulkki, V. (2016). Acoustic intensity, energy-density and
+ *     diffuseness estimation in a directionally-constrained region. arXiv
+ *     preprint arXiv:1609.03409
  */
 typedef enum _SECTOR_PATTERNS{
     SECTOR_PATTERN_PWD,
@@ -120,7 +121,7 @@ void yawPitchRoll2Rzyx (/* Input Arguments */
  *     azi_rad  - azimuth in radians
  *     elev_rad - elevation in radians
  * Output Arguments:
- *     xyz      - unit cartesian coords, xyz
+ *     xyz      - unit cartesian coords, xyz; 3 x 1
  */
 void unitSph2Cart(/* Input Arguments */
                   float azi_rad,
@@ -427,7 +428,9 @@ void complex2realCoeffs(/* Input Arguments */
  * Function: getSHrotMtxReal
  * -------------------------
  * Generates a real-valued spherical harmonic rotation matrix [1]
- * (assumes ACN/N3D convention).
+ * (assumes ACN channel ordering convention).
+ * Note: the normalisation convention does not matter, as e.g. only dipoles
+ * are used to rotated dipoles, quadrapoles to rotate quadrapoles etc.
  *
  * Input Arguments:
  *     R      - zyx rotation matrix; 3 x 3
@@ -487,8 +490,9 @@ void computeVelCoeffsMtx(/* Input Arguments */
  *     sectorCoeffs - the sector coefficients;
  *                    FLAT: (nSecDirs*4) x (orderSec+2)^2
  *
- * [1] Politis, A., Vilkamo, J., Pulkki, V. (2015). Sector-Based Parametric
- *     Sound field Reproduction in the spherical harmonic domain.
+ * [1] Politis, A., Vilkamo, J., & Pulkki, V. (2015). Sector-based parametric
+ *     sound field reproduction in the spherical harmonic domain. IEEE Journal
+ *     of Selected Topics in Signal Processing, 9(5), 852-866.
  * [2] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular
  *     spectra based on a directional re-assignment approach for ambisonic
  *     sound-field visualisation". IEEE International Conference on Acoustics,
@@ -524,8 +528,9 @@ void computeSectorCoeffsEP(/* Input Arguments */
  *     sectorCoeffs - the sector coefficients;
  *                    FLAT: (nSecDirs*4) x (orderSec+2)^2
  *
- * [1] Politis, A., Vilkamo, J., Pulkki, V. (2015). Sector-Based Parametric
- *     Sound field Reproduction in the spherical harmonic domain.
+ * [1] Politis, A., Vilkamo, J., & Pulkki, V. (2015). Sector-based parametric
+ *     sound field reproduction in the spherical harmonic domain. IEEE Journal
+ *     of Selected Topics in Signal Processing, 9(5), 852-866.
  * [2] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular
  *     spectra based on a directional re-assignment approach for ambisonic
  *     sound-field visualisation". IEEE International Conference on Acoustics,
@@ -591,7 +596,7 @@ void beamWeightsDolphChebyshev2Spherical(/* Input Arguments */
  * certain SH order N. The hypercardioid is also the plane-wave decomposition
  * beamformer in the SHD, also called 'regular' because the beamweights are just
  * the SH values on the beam-direction. Since the pattern is axisymmetric only
- * the N+1 coefficients of m=0 are  returned.
+ * the N+1 coefficients of m=0 are returned.
  *
  * Input Arguments:
  *     N  - order of spherical harmonic expansion

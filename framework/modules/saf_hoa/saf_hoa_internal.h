@@ -17,8 +17,8 @@
 /*
  * Filename: saf_hoa_internal.h
  * ----------------------------
- * A Higher-order Ambisonics C library; largely derived from the MatLab library
- * by Archontis Politis:
+ * A collection of higher-order Ambisonics related functions. Some of which are
+ * derived from the Matlab library by Archontis Politis, found here:
  *     https://github.com/polarch/Higher-Order-Ambisonics
  *
  * Dependencies:
@@ -49,15 +49,15 @@ extern "C" {
 /*
  * Function: getEPAD
  * -----------------
- * Computes an "Energy preserving Ambisonic decoder", as detailed in [1]
- * The function has been written to also work when the number of spherical
+ * Computes the "Energy preserving Ambisonic decoder", as detailed in [1]
+ * Note: the function has been written to also work when the number of spherical
  * harmonic components exceeds the number of loudspeakers. In which case, the
  * 'U' matrix from the SVD is truncated instead. However, ideally, nLS > nSH,
  * like in the paper
  *
  * Input Arguments:
  *     order       - decoding order
- *     ls_dirs_deg - loudspeaker directions in degrees [azi elev]; FLAT: nLS x 2
+ *     ls_dirs_deg - loudspeaker directions in DEGREES [azi elev]; FLAT: nLS x 2
  *     nLS         - number of loudspeakers
  * Output Arguments:
  *     decMtx      - & decoding matrix; FLAT: nLS x (order+1)^2
@@ -75,11 +75,11 @@ void getEPAD(/* Input Arguments */
 /*
  * Function: getAllRAD
  * -------------------
- * Computes an "All-round Ambisonics decoder", as detailed in [1].
+ * Computes the "All-round Ambisonics decoder", as detailed in [1].
  *
  * Input Arguments:
  *     order       - decoding order
- *     ls_dirs_deg - loudspeaker directions in degrees [azi elev]; FLAT: nLS x 2
+ *     ls_dirs_deg - loudspeaker directions in DEGREES [azi elev]; FLAT: nLS x 2
  *     nLS         - number of loudspeakers
  * Output Arguments:
  *     decMtx      - & decoding matrix; FLAT: nLS x (order+1)^2
@@ -107,9 +107,10 @@ void getAllRAD(/* Input Arguments */
  * domain, or, take the inverse-FFT and apply it via matrix convolution.
  * Note: This standard LS decoder typically exhibits strong timbral colourations
  * in the output when using lower-order input. This is due to input order
- * truncation, as the HRTF grid is typically of much higher modal order.
- * This colouration especially affects high-frequencies, since high-frequency
- * energy is predominantly concentrated in the higher-order components.
+ * truncation, as the HRTF grid is typically of much higher modal order than
+ * that of the input. This colouration especially affects high-frequencies,
+ * since high-frequency energy is predominantly concentrated in the higher-order
+ * components.
  *
  * Input Arguments:
  *     hrtfs         - the HRTFs; FLAT: N_bands x 2 x N_dirs
@@ -117,7 +118,7 @@ void getAllRAD(/* Input Arguments */
  *     N_dirs        - number of HRTF directions in set
  *     N_bands       - number of frequency bands/bins
  *     order         - decoding order
- *     weights       - intergration weights (set to NULL if not available);
+ *     weights       - integration weights (set to NULL if not available);
  *                     N_dirs x 1
  * Output Arguments:
  *     decMtx        - decoding matrix; FLAT: N_bands x 2 x (order+1)^2
@@ -136,9 +137,9 @@ void getBinDecoder_LS(/* Input Arguments */
  * Function: getBinDecoder_LSDIFFEQ
  * --------------------------------
  * Computes a least-squares (LS) binaural ambisonic decoder for each
- * frequency with diffuse-equalisation [1], ready to be applied to input SH
- * signals in the time-frequency domain, or, take the inverse-FFT and apply it
- * via matrix convolution.
+ * frequency with diffuse-field equalisation [1], ready to be applied to input
+ * SH signals in the time-frequency domain, or, take the inverse-FFT and apply
+ * it via matrix convolution.
  * Note: this equalisation mitagates some of the timbral colourations exhibited
  * by standard LS decoding at lower input orders.
  *
@@ -148,7 +149,7 @@ void getBinDecoder_LS(/* Input Arguments */
  *     N_dirs        - number of HRTF directions in set
  *     N_bands       - number of frequency bands/bins
  *     order         - decoding order
- *     weights       - intergration weights (set to NULL if not available);
+ *     weights       - integration weights (set to NULL if not available);
  *                     N_dirs x 1
  * Output Arguments:
  *     decMtx        - decoding matrix; FLAT: N_bands x 2 x (order+1)^2
@@ -178,7 +179,7 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
  * However, it operates without equalisation. Instead, the modal order of the
  * HRTF grid is brought closer to the decoding order, by simply reducing the
  * number of HRTF points used, and calculating the LS decoder with this reduced
- * number of HRTFs. Therefore, Rather than assigning high-frequency energy to
+ * number of HRTFs. Therefore, rather than assigning high-frequency energy to
  * higher-order components and subsequently discarding it, due to order
  * truncation, the energy is instead aliased back into the lower-order
  * components and preserved.
@@ -189,12 +190,12 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
  *     N_dirs        - number of HRTF directions in set
  *     N_bands       - number of frequency bands/bins
  *     order         - decoding order
- *     weights       - intergration weights (set to NULL if not available);
+ *     weights       - integration weights (set to NULL if not available);
  *                     N_dirs x 1
  * Output Arguments:
  *     decMtx        - decoding matrix; FLAT: N_bands x 2 x (order+1)^2
  *
- * [1] B. Bernschu ̈tz, A. V. Giner, C. Po ̈rschmann, and J. Arend, “Binaural
+ * [1] B. Bernschu ̈tz, A. V. Giner, C. Pörschmann, and J. Arend, “Binaural
  *     reproduction of plane waves with reduced modal order,” Acta Acustica
  *     united with Acustica, vol. 100, no. 5, pp. 972–983, 2014.
  */
@@ -239,7 +240,7 @@ void getBinDecoder_SPR(/* Input Arguments */
  *     order         - decoding order
  *     freqVector    - frequency vector; N_bands x 1
  *     itd_s         - interaural time differences (ITDs), seconds; N_dirs x 1
- *     weights       - intergration weights (set to NULL if not available);
+ *     weights       - integration weights (set to NULL if not available);
  *                     N_dirs x 1
  * Output Arguments:
  *     decMtx        - decoding matrix; FLAT: N_bands x 2 x (order+1)^2
@@ -267,7 +268,7 @@ void getBinDecoder_TA(/* Input Arguments */
  * Computes a binaural ambisonic decoder based on the magnitude least-squares
  * (MagLS) method described in [1].
  * Note: Mag-LS operates under the same principles held by the TA/TAC decoder,
- * differing in the manner in which the phase is deglected at frequencies above
+ * differing in the manner in which the phase is neglected at frequencies above
  * 1.5kHz.
  *
  * Input Arguments:
@@ -277,7 +278,7 @@ void getBinDecoder_TA(/* Input Arguments */
  *     N_bands       - number of frequency bands/bins
  *     order         - decoding order
  *     freqVector    - frequency vector; N_bands x 1
- *     weights       - intergration weights (set to NULL if not available);
+ *     weights       - integration weights (set to NULL if not available);
  *                     N_dirs x 1
  * Output Arguments:
  *     decMtx        - decoding matrix; FLAT: N_bands x 2 x (order+1)^2

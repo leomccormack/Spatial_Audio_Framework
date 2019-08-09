@@ -21,19 +21,23 @@
  * LAPACK.
  *
  * Dependencies:
- *     A performance library comprising CBLAS and LAPACK functions is required
- *     by the framework.
+ *     A performance library comprising CBLAS and LAPACK routines is required
+ *     by the module and, thus, also by the SAF framework as a whole.
  *     Add one of the following FLAGS to your project's preprocessor definitions
  *     list, in order to enable one of these suitable performance libraries,
- *     which must also be linked correctly to your project:
- *       SAF_USE_INTEL_MKL
- *         to enable Intel's Math Kernal Library
- *       SAF_USE_OPENBLAS_AND_REF_LAPACK
- *         to enable OpenBLAS and to use the reference implementation of LAPACK
+ *     which must also be linked correctly to your project.
+ *         SAF_USE_INTEL_MKL
+ *             to enable Intel's Math Kernal Library
+ *         SAF_USE_ATLAS_WITH_LAPACK
+ *             to enable ATLAS BLAS routines with netlib's LAPACK
+ *             see: http://math-atlas.sourceforge.net/atlas_install/node8.html
+ *         SAF_USE_OPENBLAS_WITH_LAPACK
+ *             to enable OpenBLAS and use netlib's LAPACK
  *     More information can be found here:
- *     https://github.com/leomccormack/Spatial_Audio_Framework
- *     Mac users only: saf_utilities will employ Apple's Accelerate library by
- *     default, if none of the above FLAGS are defined.
+ *         https://github.com/leomccormack/Spatial_Audio_Framework
+ *     Mac users only:
+ *         saf_utilities will employ Apple's Accelerate library by default, if
+ *         none of the above FLAGS are defined.
  * Author, date created:
  *     Leo McCormack, 11.07.2016
  */
@@ -54,9 +58,7 @@ void utility_siminv
     float minVal;
     vDSP_Length ind_tmp;
     vDSP_minvi(a, 1, &minVal, &ind_tmp, len);
-    *index = (int)ind_tmp;
-#elif defined(INTEL_MKL_VERSION)
-    *index = (int)cblas_isamin(len, a, 1);
+    *index = (int)ind_tmp; 
 #else
     *index = (int)cblas_isamin(len, a, 1);
 #endif
@@ -80,8 +82,6 @@ void utility_ciminv
     vDSP_minvi(abs_a, 1, &minVal, &ind_tmp, len);
     *index = (int)ind_tmp;
     free(abs_a);
-#elif defined(INTEL_MKL_VERSION)
-    *index = (int)cblas_icamin(len, a, 1);
 #else
     *index = (int)cblas_icamin(len, a, 1);
 #endif
@@ -97,11 +97,7 @@ void utility_simaxv
     int* index
 )
 {
-#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
     *index = (int)cblas_isamax(len, a, 1);
-#else
-    *index = (int)cblas_isamax(len, a, 1);
-#endif
 }
 
 void utility_cimaxv
@@ -111,11 +107,7 @@ void utility_cimaxv
     int* index
 )
 {
-#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
     *index = (int)cblas_icamax(len, a, 1);
-#else
-    *index = (int)cblas_icamax(len, a, 1);
-#endif
 }
 
 
@@ -163,11 +155,7 @@ void utility_svvcopy
     float* c
 )
 {
-#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
     cblas_scopy(len, a, 1, c, 1);
-#else
-    memcpy(c, a, len*sizeof(float));
-#endif
 }
 
 void utility_cvvcopy
@@ -177,11 +165,7 @@ void utility_cvvcopy
     float_complex* c
 )
 {
-#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
     cblas_ccopy(len, a, 1, c, 1);
-#else
-    memcpy(c, a, len*sizeof(float_complex));
-#endif
 }
 
 
@@ -396,14 +380,7 @@ void utility_svvdot
     float* c
 )
 {
-#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
     c[0] = cblas_sdot (len, a, 1, b, 1);
-#else
-    int i;
-    c[0] = 0.0f;
-    for(i=0; i<len; i++)
-        c[0] += a[i] * b[i];
-#endif
 }
 
 void utility_cvvdot
@@ -415,7 +392,6 @@ void utility_cvvdot
     float_complex* c
 )
 {
-#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
     switch(flag){
         default:
         case NO_CONJ:
@@ -425,21 +401,6 @@ void utility_cvvdot
             cblas_cdotc_sub(len, a, 1, b, 1, c);
             break;
     }
-#else
-    int i;
-    c[0] = cmplxf(0.0f,0.0f);
-    switch(flag){
-        default:
-        case NO_CONJ:
-            for(i=0; i<len; i++)
-                c[0] = ccaddf(c[0], ccmulf(a[i], b[i]));
-            break;
-        case CONJ:
-            for(i=0; i<len; i++)
-                c[0] = ccaddf(c[0], ccmulf(conjf(a[i]), b[i]));
-            break;
-    }
-#endif
 }
 
 
@@ -458,17 +419,13 @@ void utility_svsmul
         cblas_sscal(len, s[0], a, 1);
     else
         vDSP_vsmul(a, 1, s, c, 1, len);
-#elif INTEL_MKL_VERSION
+#else
     if (c == NULL)
         cblas_sscal(len, s[0], a, 1);
     else {
         utility_svvcopy(a, len, c); 
         cblas_sscal(len, s[0], c, 1);
     }
-#else
-    int i;
-    for(i=0; i<len; i++)
-        c[i] = a[i] * s[0];
 #endif
 }
 
@@ -480,7 +437,6 @@ void utility_cvsmul
     float_complex* c
 )
 {
-#if defined(__ACCELERATE__) || defined(INTEL_MKL_VERSION)
     if (c == NULL)
         cblas_cscal(len, s, a, 1);
     else {
@@ -488,11 +444,6 @@ void utility_cvsmul
         for (i = 0; i<len; i++)
             c[i] = ccmulf(a[i], s[0]);
     }
-#else
-    int i;
-    for(i=0; i<len; i++)
-        c[i] = ccmulf(a[i], s[0]);
-#endif
 }
 
 

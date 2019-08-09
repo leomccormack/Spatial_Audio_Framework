@@ -17,7 +17,10 @@
 /*
  * Filename: saf_hrir_internal.h
  * -----------------------------
- * A collection of head-related impulse-response (HRIR)- related functions.
+ * A collection of head-related impulse-response (HRIR) functions. Including
+ * estimation of the interaural time differences (ITDs), conversion of HRIRs to
+ * HRTF filterbank coefficients, and HRTF interpolation utilising amplitude-
+ * normalised VBAP gains.
  *
  * Dependencies:
  *     saf_utilities, afSTFTlib

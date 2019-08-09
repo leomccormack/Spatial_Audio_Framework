@@ -65,8 +65,8 @@ void getDecorrelationDelays(int nChannels,
                             int maxTFdelay,
                             int hopSize,
                             int* delayTF);
- 
- 
+
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif /* __cplusplus */

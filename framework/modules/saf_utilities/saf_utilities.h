@@ -22,19 +22,23 @@
  * BLAS and LAPACK are also included.
  *
  * Dependencies:
- *     A performance library comprising CBLAS and LAPACK functions is required
- *     by the framework.
+ *     A performance library comprising CBLAS and LAPACK routines is required
+ *     by the module and, thus, also by the SAF framework as a whole.
  *     Add one of the following FLAGS to your project's preprocessor definitions
  *     list, in order to enable one of these suitable performance libraries,
- *     which must also be linked correctly to your project:
- *       SAF_USE_INTEL_MKL
- *         to enable Intel's Math Kernal Library
- *       SAF_USE_OPENBLAS_AND_REF_LAPACK
- *         to enable OpenBLAS and to use the reference implementation of LAPACK
+ *     which must also be linked correctly to your project.
+ *         SAF_USE_INTEL_MKL
+ *             to enable Intel's Math Kernal Library
+ *         SAF_USE_ATLAS_WITH_LAPACK
+ *             to enable ATLAS BLAS routines with netlib's LAPACK
+ *             see: http://math-atlas.sourceforge.net/atlas_install/node8.html
+ *         SAF_USE_OPENBLAS_WITH_LAPACK
+ *             to enable OpenBLAS and use netlib's LAPACK
  *     More information can be found here:
- *     https://github.com/leomccormack/Spatial_Audio_Framework
- *     Mac users only: saf_utilities will employ Apple's Accelerate library by
- *     default, if none of the above FLAGS are defined.
+ *         https://github.com/leomccormack/Spatial_Audio_Framework
+ *     Mac users only:
+ *         saf_utilities will employ Apple's Accelerate library by default, if
+ *         none of the above FLAGS are defined.
  * Author, date created:
  *     Leo McCormack, 11.07.2016
  */
@@ -49,14 +53,14 @@ extern "C" {
 /* ========================================================================== */
 /*                        Performance Library to Employ                       */
 /* ========================================================================== */
-    
-#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
-# include "Accelerate/Accelerate.h"
-#elif defined(SAF_USE_INTEL_MKL)
+
+#if defined(SAF_USE_INTEL_MKL)
 # include "mkl.h"
-#elif defined(SAF_USE_OPENBLAS_AND_REF_LAPACK)
+#elif defined(SAF_USE_ATLAS_WITH_LAPACK) || defined(SAF_USE_OPENBLAS_WITH_LAPACK)
 # include "cblas.h"
 # include "lapack.h"
+#elif defined(__APPLE__)
+# include "Accelerate/Accelerate.h"
 #else
 # error "SAF requires a performance library that supports CBLAS and LAPACK"
 #endif

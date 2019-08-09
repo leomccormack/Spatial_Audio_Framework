@@ -44,15 +44,18 @@
  * Enable instructions:
  *     Cannot be disabled.
  * Dependencies:
- *     A performance library comprising CBLAS and LAPACK functions is required
- *     by the module and, thus, also by the SAF framework.
+ *     A performance library comprising CBLAS and LAPACK routines is required
+ *     by the module and, thus, also by the SAF framework as a whole.
  *     Add one of the following FLAGS to your project's preprocessor definitions
  *     list, in order to enable one of these suitable performance libraries,
- *     which must also be linked correctly to your project:
- *      - SAF_USE_INTEL_MKL
- *         to enable Intel's Math Kernal Library
- *      - SAF_USE_OPENBLAS_AND_REF_LAPACK
- *         to enable OpenBLAS and to use the reference implementation of LAPACK
+ *     which must also be linked correctly to your project.
+ *         SAF_USE_INTEL_MKL
+ *             to enable Intel's Math Kernal Library
+ *         SAF_USE_ATLAS_WITH_LAPACK
+ *             to enable ATLAS BLAS routines with netlib's LAPACK
+ *             see: http://math-atlas.sourceforge.net/atlas_install/node8.html
+ *         SAF_USE_OPENBLAS_WITH_LAPACK
+ *             to enable OpenBLAS and use netlib's LAPACK
  *     More information can be found here:
  *         https://github.com/leomccormack/Spatial_Audio_Framework
  *     Mac users only:
@@ -104,8 +107,8 @@
 /*
  * SAF Module: HOA
  * ---------------
- * A collection of higher-order Ambisonics related functions. Largely derived
- * from the Matlab library by Archontis Politis; found here:
+ * A collection of higher-order Ambisonics related functions. Some of which are
+ * derived from the Matlab library by Archontis Politis, found here:
  *     https://github.com/polarch/Higher-Order-Ambisonics
  *
  * Enable instructions:
@@ -151,10 +154,11 @@
 /*
  * SAF Module: SH
  * --------------
- * A collection of spherical harmonic related functions. Largely derived from
- * the Matlab library by Archontis Politis; found here:
+ * A collection of spherical harmonic related functions. Many of which have been
+ * derived from Matlab libraries by Archontis Politis; found here:
  *     https://github.com/polarch/Spherical-Harmonic-Transform
- * and MATLAB code by Symeon Delikaris-Manias.
+ *     https://github.com/polarch/Array-Response-Simulator
+ *     https://github.com/polarch/Spherical-Array-Processing
  *
  * Enable instructions:
  *     Place: #define SAF_ENABLE_SH, before: #include "saf.h"
@@ -168,9 +172,8 @@
 /*
  * SAF Module: VBAP
  * ----------------
- * A collection of vector-base amplitude panning (VBAP) functions. Largely
- * derived from the Matlab library by Archontis Politis; found here:
- *     https://github.com/polarch/Vector-Base-Amplitude-Panning
+ * VBAP functions largely derived from the MATLAB library by Archontis Politis,
+ * found here: https://github.com/polarch/Vector-Base-Amplitude-Panning
  *
  * Enable instructions:
  *     Place: #define SAF_ENABLE_VBAP, before: #include "saf.h"

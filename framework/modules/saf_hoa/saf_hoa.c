@@ -17,8 +17,8 @@
 /*
  * Filename: saf_hoa.c
  * -------------------
- * A Higher-order Ambisonics C library; largely derived from the MatLab library
- * by Archontis Politis:
+ * A collection of higher-order Ambisonics related functions. Some of which are
+ * derived from the Matlab library by Archontis Politis, found here:
  *     https://github.com/polarch/Higher-Order-Ambisonics
  *
  * Dependencies:

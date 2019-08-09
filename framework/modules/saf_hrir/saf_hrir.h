@@ -17,7 +17,10 @@
 /*
  * Filename: saf_hrir.h (include header)
  * -------------------------------------
- * A collection of head-related impulse-response (HRIR)- related functions.
+ * A collection of head-related impulse-response (HRIR) functions. Including
+ * estimation of the interaural time differences (ITDs), conversion of HRIRs to
+ * HRTF filterbank coefficients, and HRTF interpolation utilising amplitude-
+ * normalised VBAP gains.
  *
  * Dependencies:
  *     saf_utilities, afSTFTlib
@@ -42,7 +45,7 @@ float matlab_fmodf(float x,  float y);
 /* ========================================================================== */
     
 /* Default HRIRs, measured at one of Aalto University's anechoic chambers, using
- * a KEMAR Dummy Head */
+ * a KEMAR Dummy Head. 217 measurements in total @48kHz. */
 extern const double __default_hrirs[217][2][1024];
 extern const double __default_hrir_dirs_deg[217][2];
 extern const int __default_N_hrir_dirs;
@@ -87,7 +90,7 @@ void estimateITDs(/* Input Arguments */
  * Note: this function is NOT suitable for binaural room impulse responses
  * (BRIRs).
  * Further note: Currently, this is hard-coded for 128 hop size with hybrid mode
- * enabled, only.
+ * enabled.
  *
  * Input Arguments:
  *     hrirs                - HRIRs; FLAT: N_dirs x 2 x hrir_len
@@ -116,8 +119,8 @@ void HRIRs2FilterbankHRTFs(/* Input Arguments */
 /*
  * Function: interpFilterbankHRTFs
  * -------------------------------
- * Interpolates a set of HRTFs for specified directions; defined by a amplitude
- * normalised vbap interpolation table (see saf_vbap). The interpolation is
+ * Interpolates a set of HRTFs for specified directions; defined by an amplitude
+ * normalised VBAP interpolation table (see saf_vbap.h). The interpolation is
  * performed by applying interpolation gains to the HRTF magnitudes and HRIR
  * inter-aural time differences separately. The inter-aural phase differences
  * are then reintroduced for each frequency band
@@ -157,7 +160,8 @@ void interpFilterbankHRTFs(/* Input Arguments */
 /*
  * Function: binauralDiffuseCoherence
  * -------------------------------
- * Computes the binaural diffuse coherence per frequency for a HRTF set [1].
+ * Computes the binaural diffuse coherence per frequency for a given HRTF set,
+ * as in [1].
  *
  * Input Arguments:
  *     hrtfs       - HRTFs as filterbank coeffs; FLAT: N_bands x 2 x N_hrtf_dirs

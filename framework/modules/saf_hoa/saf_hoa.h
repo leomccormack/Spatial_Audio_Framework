@@ -17,8 +17,8 @@
 /*
  * Filename: saf_hoa.h (include header)
  * ------------------------------------
- * A Higher-order Ambisonics C library; largely derived from the MatLab library
- * by Archontis Politis:
+ * A collection of higher-order Ambisonics related functions. Some of which are
+ * derived from the Matlab library by Archontis Politis, found here:
  *     https://github.com/polarch/Higher-Order-Ambisonics
  *
  * Dependencies:
@@ -45,18 +45,35 @@ extern "C" {
  * Enum: AMBI_DECODER_METHODS
  * --------------------------
  * Ambisonic decoding options for loudspeaker playback
+ * Note: all of these decoding options revert to "SAD" if the loudspeakers are
+ * uniformly distributed on the sphere. The benefits afforded by MMD and AllRAD,
+ * relate to their improved performance when using irregular loudspeaker
+ * arrangements.
  *
  * Options:
  *     DECODER_DEFAULT - DECODER_DEFAULT is "DECODER_SAD"
- *     DECODER_SAD     - Sampling Ambisonic Decoder (SAD): transpose of
- *                       loudspeaker spherical harmonic matrix, scaled by number
- *                       of loudspeakers
+ *     DECODER_SAD     - Sampling Ambisonic Decoder (SAD): transpose of the
+ *                       loudspeaker spherical harmonic matrix, scaled by the
+ *                       number of loudspeakers. This is the simplest decoding
+ *                       approach, as it simply relies on generating hyper-
+ *                       cardioid beamformers for each loudspeaker direction.
  *     DECODER_MMD     - Mode-Matching Decoder (MMD): pseudo-inverse of the
- *                       loudspeaker spherical harmonic matrix
+ *                       loudspeaker spherical harmonic matrix. Due to the
+ *                       pseudo-inverse, more signal energy is lent to regions
+ *                       on the surface of the sphere that are more sparsely
+ *                       populated with loudspeakers. Therefore, one must also
+ *                       be careful, as some loudspeakers may be given a huge
+ *                       amount of signal energy and wake the dead.
  *     DECODER_EPAD    - Energy-Preserving Ambisonic Decoder (EPAD) [1]
  *     DECODER_ALLRAD  - All-Round Ambisonic Decoder (AllRAD): SAD decoding to
  *                       t-design, panned for the target loudspeaker directions
- *                       using VBAP [2]
+ *                       using VBAP [2]. Perhaps the only Ambisonic decoder we
+ *                       would actually recommend for irregular loudspeaker
+ *                       layouts. It just simply makes the most sense and sounds
+ *                       the most reasonable. Interestingly, prior to its
+ *                       proposal, we had almost 40 years! of people insisting
+ *                       Ambisonics could only work for uniformly distributed
+ *                       loudspeaker arrays... So thank you Franz & Frank!
  *
  * [1] Zotter F, Pomberger H, Noisternig M. Energy- preserving ambisonic
  *     decoding. Acta Acustica united with Acustica. 2012 Jan 1; 98(1):37-47.
@@ -75,23 +92,31 @@ typedef enum _AMBI_DECODER_METHODS {
 /*
  * Enum: BINAURAL_AMBI_DECODER_METHODS
  * -----------------------------------
- * Ambisonic decoding options for headphone playback
+ * Ambisonic decoding options for headphone playback.
+ * Note: more detailed descriptions of each method may be found in:
+ * "saf_hoa_internal.h"
  *
  * Options:
  *     BINAURAL_DECODER_DEFAULT  - DECODER_DEFAULT is "DECODER_SAD"
- *     BINAURAL_DECODER_LS       - Least-squares (LS) decoder
+ *     BINAURAL_DECODER_LS       - Least-squares (LS) decoder. The simplest
+ '                                 binaural decoder.
  *     BINAURAL_DECODER_LSDIFFEQ - Least-squares (LS) decoder with diffuse-field
  *                                 spectral equalisation  [1]
  *     BINAURAL_DECODER_SPR      - Spatial resampling decoder (on the same lines
  *                                 as the virtual loudspeaker approach) [2]
- *     BINAURAL_DECODER_TA       - Time-alignment decoder [3]
- *     BINAURAL_DECODER_MAGLS    - Magnitude least-squares decoder [4]
- 
+ *     BINAURAL_DECODER_TA       - Time-alignment decoder [3]. Relies on
+ *                                 discarding the phase information in HRTFs,
+ *                                 past the frequency at which humans are less
+ *                                 sensitive to inter-aural time differences.
+ *     BINAURAL_DECODER_MAGLS    - Magnitude least-squares decoder [4]. On
+ *                                 similar lines to the time-alignment decoder,
+ *                                 but differing in its execution.
+ *
  * [1] Z. Ben-Hur, F. Brinkmann, J. Sheaffer, S. Weinzierl, and B. Rafaely,
  *     "Spectral equalization in binaural signals represented by order-
- *     truncated spherical harmonics," The Jour- nal of the Acoustical Society
+ *     truncated spherical harmonics," The Journal of the Acoustical Society
  *     of America, vol. 141, no. 6, pp. 4087–4096, 2017.
- * [2] B. Bernschu ̈tz, A. V. Giner, C. Po ̈rschmann, and J. Arend, “Binaural
+ * [2] B. Bernschutz, A. V. Giner, C. Pörschmann, and J. Arend, “Binaural
  *     reproduction of plane waves with reduced modal order,” Acta Acustica
  *     united with Acustica, vol. 100, no. 5, pp. 972–983, 2014.
  * [3] Zaunschirm M, Schörkhuber C, Höldrich R. Binaural rendering of
@@ -120,8 +145,16 @@ typedef enum _BINAURAL_AMBI_DECODER_METHODS {
 /*
  * Function: getMaxREweights
  * -------------------------
- * Returns the weights required to manipulate the beam-patterns, such that they
- * aim to have maximum energy towards a given look-direction [1]
+ * Returns the weights required to manipulate a hyper-cardioid beam-pattern,
+ * such that it has maximum energy in the given look-direction [1].
+ * Traditionally, due to the back lobes of beamformers when panning a source
+ * via Ambisonics encoding/decoding, there is unwanted energy given to
+ * loudspeakers directly opposite the true source direction. This max_rE
+ * weighting essentially spatially "tapers" the spherical harmonic patterns
+ * used to generate said beams, by reducing the contribution of the higher
+ * orders to the beam patterns. This results in worse spatial selectivity, as
+ * the width of the beam pattern main lobe is widened. However, the back lobes
+ * are also reduced, thus mitigating the aforementioned problem.
  *
  * Input Arguments:
  *     order - decoding order
@@ -141,12 +174,12 @@ void getMaxREweights(/* Input Arguments */
  * Function: getAmbiDecoder
  * ------------------------
  * Returns an ambisonic decoding matrix of a specific order, for a specific
- * loudspeaker set-up
+ * loudspeaker layout
  *
  * Input Arguments:
- *     ls_dirs_deg - loudspeaker directions in degrees [azi elev]; FLAT: nLS x 2
+ *     ls_dirs_deg - loudspeaker directions in DEGREES [azi elev]; FLAT: nLS x 2
  *     nLS         - number of loudspeakers
- *     method      - decoding method (see AMBI_DECODER_METHODS enum)
+ *     method      - decoding method (see "AMBI_DECODER_METHODS" enum)
  *     order       - decoding order
  * Output Arguments:
  *     decMtx      - & decoding matrix; FLAT: nLS x (order+1)^2

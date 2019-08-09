@@ -100,7 +100,7 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
  * ----------------------------
  * This function solves the problem of determining the optimal mixing matrices
  * 'M' and 'Cr', such that the covariance matrix of the output:
- * y_out = M*x + B*decorrelated(x), is aligned with the target matrix 'Cy',
+ * y_out = M*x + Mr*decorrelated(x), is aligned with the target matrix 'Cy',
  * given the covariance matrix of input x, Cx=x*x^H, and a prototype decoding
  * matrix Q.
  * For the derivation and a more detailed description, the reader is referred
