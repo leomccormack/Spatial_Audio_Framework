@@ -211,7 +211,7 @@ void getBinDecoder_SPR(/* Input Arguments */
 
 /*
  * Function: getBinDecoder_TA
- * ---------------------------
+ * --------------------------
  * Computes a binaural ambisonic decoder based on the time-alignment (TA) method
  * described in [1].
  * Note: Since the standard LS decoder is unable to sufficiently fit lower-order

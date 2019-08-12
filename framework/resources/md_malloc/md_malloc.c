@@ -54,7 +54,7 @@ void* malloc1d(size_t dim1_data_size)
     void *ptr = malloc(dim1_data_size);
 #ifndef NDEBUG
     if (ptr == NULL)
-        fprintf(stderr, "Error: failed to allocate %zu bytes.\n", dim1_data_size);
+        fprintf(stderr, "Error: 'malloc1d' failed to allocate %zu bytes.\n", dim1_data_size);
 #endif
     return ptr;
 }
@@ -64,7 +64,7 @@ void* calloc1d(size_t dim1, size_t data_size)
     void *ptr = calloc(dim1, data_size);
 #ifndef NDEBUG
     if (ptr == NULL)
-        fprintf(stderr, "Error: failed to allocate %zu bytes.\n", dim1*data_size);
+        fprintf(stderr, "Error: 'calloc1d' failed to allocate %zu bytes.\n", dim1*data_size);
 #endif
     return ptr;
 }
@@ -74,7 +74,7 @@ void* realloc1d(void* ptr, size_t dim1_data_size)
     ptr = realloc(ptr, dim1_data_size);
 #ifndef NDEBUG
     if (ptr == NULL)
-        fprintf(stderr, "Error: failed to allocate %zu bytes.\n", dim1_data_size);
+        fprintf(stderr, "Error: 'realloc1d' failed to allocate %zu bytes.\n", dim1_data_size);
 #endif
     return ptr;
 }
@@ -96,7 +96,7 @@ void** malloc2d(size_t dim1, size_t dim2, size_t data_size)
     ptr = malloc(dim1*sizeof(void*) + dim1*stride);
 #ifndef NDEBUG
     if(ptr==NULL)
-        fprintf(stderr, "Error: failed to allocate %zu bytes.\n", dim1*sizeof(void*) + dim1*stride);
+        fprintf(stderr, "Error: 'malloc2d' failed to allocate %zu bytes.\n", dim1*sizeof(void*) + dim1*stride);
 #endif
     p2 = (unsigned char*)(ptr + dim1);
     for(i=0; i<dim1; i++)
@@ -113,7 +113,7 @@ void** calloc2d(size_t dim1, size_t dim2, size_t data_size)
     ptr = calloc(dim1, sizeof(void*) + stride);
 #ifndef NDEBUG
     if(ptr==NULL)
-        fprintf(stderr, "Error: failed to allocate %zu bytes.\n", dim1*sizeof(void*) + dim1*stride);
+        fprintf(stderr, "Error: 'calloc2d' failed to allocate %zu bytes.\n", dim1*sizeof(void*) + dim1*stride);
 #endif
     p2 = (unsigned char*)(ptr + dim1);
     for(i=0; i<dim1; i++)
@@ -129,7 +129,7 @@ void** realloc2d(void** ptr, size_t dim1, size_t dim2, size_t data_size)
     ptr = realloc (ptr, dim1*sizeof(void*) + dim1*stride);
 #ifndef NDEBUG
     if(ptr==NULL)
-        fprintf(stderr, "Error: failed to allocate %zu bytes.\n", dim1*sizeof(void*) + dim1*stride);
+        fprintf(stderr, "Error: 'realloc2d' failed to allocate %zu bytes.\n", dim1*sizeof(void*) + dim1*stride);
 #endif
     p2 = (unsigned char*)(ptr + dim1);
     for(i=0;i<dim1;i++)
@@ -156,7 +156,7 @@ void*** malloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size)
     ptr = malloc(dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
 #ifndef NDEBUG
     if(ptr==NULL)
-        fprintf(stderr, "Error: failed to allocate %zu bytes.\n", dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
+        fprintf(stderr, "Error: 'malloc3d' failed to allocate %zu bytes.\n", dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
 #endif
     p2 = (void**)(ptr + dim1);
     p3 = (unsigned char*)(p2 + dim1*dim2);
@@ -179,7 +179,7 @@ void*** calloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size)
     ptr = calloc(dim1, sizeof(void**) + dim2*sizeof(void*) + stride1);
 #ifndef NDEBUG
     if(ptr==NULL)
-        fprintf(stderr, "Error: failed to allocate %zu bytes.\n", dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
+        fprintf(stderr, "Error: 'calloc3d' failed to allocate %zu bytes.\n", dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
 #endif
     p2 = (void**)(ptr + dim1);
     p3 = (unsigned char*)(p2 + dim1*dim2);
@@ -201,7 +201,7 @@ void*** realloc3d(void*** ptr, size_t dim1, size_t dim2, size_t dim3, size_t dat
     ptr = realloc(ptr, dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
 #ifndef NDEBUG
     if(ptr==NULL)
-        fprintf(stderr, "Error: failed to allocate %zu bytes.\n", dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
+        fprintf(stderr, "Error: 'realloc3d' failed to allocate %zu bytes.\n", dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
 #endif
     p2 = (void**)(ptr + dim1);
     p3 = (unsigned char*)(p2 + dim1*dim2);

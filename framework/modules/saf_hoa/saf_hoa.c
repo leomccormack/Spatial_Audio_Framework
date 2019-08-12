@@ -199,7 +199,7 @@ void applyDiffCovMatching
     H_W = malloc1d(2*N_dirs*sizeof(float_complex));
     H_ambi = malloc1d(2*N_dirs*sizeof(float_complex));
     decMtx_diffMatched = malloc1d(2*nSH*sizeof(float_complex));
-    for(band=0; band<N_bands; band++){
+    for(band=0; band<N_bands-1 /* skip Nyquist */; band++){
         /* Diffuse-field responses */
         cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 2, N_dirs, N_dirs, &calpha,
                     &hrtfs[band*2*N_dirs], N_dirs,

@@ -61,7 +61,7 @@ void getEPAD
                     V, nLS,
                     U_tr, nLS, 0.0f,
                     (*decMtx), nSH);
-        free1d((void*)&U_tr);
+        free(U_tr);
     }
     else{
         /* truncate the V matrix (NOT V^T!) */
@@ -73,14 +73,14 @@ void getEPAD
                     V_tr, nSH,
                     U, nSH, 0.0f,
                     (*decMtx), nSH);
-        free1d((void*)&V_tr);
+        free(V_tr);
     }
     for(i=0; i<nLS*nSH; i++)
         (*decMtx)[i] /= (float)nLS;
     
-    free1d((void*)&U);
-    free1d((void*)&V);
-    free1d((void*)&Y_ls);
+    free(U);
+    free(V);
+    free(Y_ls);
 }
  
 void getAllRAD
@@ -128,8 +128,8 @@ void getAllRAD
     for(i=0; i<nLS*nSH; i++)
         (*decMtx)[i] /= (float)nDirs_td;
  
-    free1d((void*)&Y_td);
-    free1d((void*)&G_td);
+    free(Y_td);
+    free(G_td);
 }
 
 void getBinDecoder_LS
@@ -150,7 +150,16 @@ void getBinDecoder_LS
     
     nSH = (order+1)*(order+1);
     
-    /* integration weights */
+    /* SH */
+    Y_tmp = NULL;
+    Y_na = malloc1d(nSH*N_dirs*sizeof(float_complex));
+    B = malloc1d(nSH * 2 * sizeof(float_complex));
+    getRSH(order, hrtf_dirs_deg, N_dirs, &Y_tmp);
+    for(i=0; i<nSH*N_dirs; i++)
+        Y_na[i] = cmplxf(Y_tmp[i], 0.0f);
+    free(Y_tmp);
+    
+    /* compute decoding matrix, including integration weights */
     W = calloc1d(N_dirs*N_dirs, sizeof(float_complex));
     if(weights!=NULL)
         for(i=0; i<N_dirs; i++)
@@ -158,20 +167,11 @@ void getBinDecoder_LS
     else
         for(i=0; i<N_dirs; i++)
             W[i*N_dirs+i] = cmplxf(1.0f/(float)N_dirs, 0.0f);
-    
-    /* SH */
-    Y_tmp = NULL;
-    Y_na = malloc1d(nSH*N_dirs*sizeof(float_complex));
-    getRSH(order, hrtf_dirs_deg, N_dirs, &Y_tmp);
-    for(i=0; i<nSH*N_dirs; i++)
-        Y_na[i] = cmplxf(Y_tmp[i], 0.0f);
-    free1d((void*)&Y_tmp);
-    
+
     /* calculate decoding matrix per band */
     Yna_W = malloc1d(nSH * N_dirs*sizeof(float_complex));
     Yna_W_Yna = malloc1d(nSH * nSH * sizeof(float_complex));
     Yna_W_H = malloc1d(nSH * 2 * sizeof(float_complex));
-    B = malloc1d(nSH * 2 * sizeof(float_complex));
     cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, N_dirs, N_dirs, &calpha,
                 Y_na, N_dirs,
                 W, N_dirs, &cbeta,
@@ -190,13 +190,14 @@ void getBinDecoder_LS
             for(j=0; j<2; j++)
                 decMtx[band*2*nSH + j*nSH + i] = conjf(B[i*2+j]); /* ^H */
     }
-     
-    free1d((void*)&W);
-    free1d((void*)&Y_na);
-    free1d((void*)&Yna_W);
-    free1d((void*)&Yna_W_Yna);
-    free1d((void*)&Yna_W_H);
-    free1d((void*)&B);
+    
+    /* clean-up */
+    free(W);
+    free(Yna_W);
+    free(Yna_W_Yna);
+    free(Yna_W_H);
+    free(Y_na);
+    free(B);
 }
 
 void getBinDecoder_LSDIFFEQ
@@ -234,7 +235,7 @@ void getBinDecoder_LSDIFFEQ
     getRSH(order, hrtf_dirs_deg, N_dirs, &Y_tmp);
     for(i=0; i<nSH*N_dirs; i++)
         Y_na[i] = cmplxf(Y_tmp[i], 0.0f);
-    free1d((void*)&Y_tmp);
+    free(Y_tmp);
     
     /* calculate decoding matrix per band */
     Yna_W = malloc1d(nSH * N_dirs*sizeof(float_complex));
@@ -291,14 +292,14 @@ void getBinDecoder_LSDIFFEQ
                 decMtx[band*2*nSH + j*nSH + i] = crmulf(conjf(B_ls[i*2+j]), Gh); /* ^H */
     }
     
-    free1d((void*)&W);
-    free1d((void*)&Y_na);
-    free1d((void*)&Yna_W);
-    free1d((void*)&Yna_W_Yna);
-    free1d((void*)&Yna_W_H);
-    free1d((void*)&B_ls);
-    free1d((void*)&hrtfs_ls);
-    free1d((void*)&H_W);
+    free(W);
+    free(Y_na);
+    free(Yna_W);
+    free(Yna_W_Yna);
+    free(Yna_W_H);
+    free(B_ls);
+    free(hrtfs_ls);
+    free(H_W);
 }
 
 void getBinDecoder_SPR
@@ -387,18 +388,18 @@ void getBinDecoder_SPR
                 decMtx[band*2*nSH + j*nSH + i] = crmulf(conjf(B[i*2+j]), 1.0f/(float)K_td); /* ^H */
     }
     
-    free1d((void*)&hrtf_dirs_rad);
-    free1d((void*)&W);
-    free1d((void*)&cnd_num);
-    free1d((void*)&Y_nh);
-    free1d((void*)&Y_na);
-    free1d((void*)&Y_td);
-    free1d((void*)&Y_td_cmplx);
-    free1d((void*)&Ynh_Ytd);
-    free1d((void*)&tmp);
-    free1d((void*)&W_Ynh_Ytd);
-    free1d((void*)&hrtfs_td);
-    free1d((void*)&B);
+    free(hrtf_dirs_rad);
+    free(W);
+    free(cnd_num);
+    free(Y_nh);
+    free(Y_na);
+    free(Y_td);
+    free(Y_td_cmplx);
+    free(Ynh_Ytd);
+    free(tmp);
+    free(W_Ynh_Ytd);
+    free(hrtfs_td);
+    free(B);
 }
 
 void getBinDecoder_TA
@@ -437,7 +438,7 @@ void getBinDecoder_TA
     getRSH(order, hrtf_dirs_deg, N_dirs, &Y_tmp);
     for(i=0; i<nSH*N_dirs; i++)
         Y_na[i] = cmplxf(Y_tmp[i], 0.0f);
-    free1d((void*)&Y_tmp);
+    free(Y_tmp);
     
     /* find band index for cutoff frequency */
     cutoff = 1.5e3f;
@@ -485,13 +486,13 @@ void getBinDecoder_TA
                 decMtx[band*2*nSH + j*nSH + i] = conjf(B[i*2+j]); /* ^H */
     }
     
-    free1d((void*)&Y_na);
-    free1d((void*)&W);
-    free1d((void*)&Yna_W);
-    free1d((void*)&Yna_W_Yna);
-    free1d((void*)&Yna_W_H);
-    free1d((void*)&B);
-    free1d((void*)&hrtfs_mod);
+    free(Y_na);
+    free(W);
+    free(Yna_W);
+    free(Yna_W_Yna);
+    free(Yna_W_H);
+    free(B);
+    free(hrtfs_mod);
 }
 
 void getBinDecoder_MAGLS
@@ -529,7 +530,7 @@ void getBinDecoder_MAGLS
     getRSH(order, hrtf_dirs_deg, N_dirs, &Y_tmp);
     for(i=0; i<nSH*N_dirs; i++)
         Y_na[i] = cmplxf(Y_tmp[i], 0.0f);
-    free1d((void*)&Y_tmp);
+    free(Y_tmp);
     
     /* find band index for cutoff frequency */
     cutoff = 1.5e3f;
@@ -584,13 +585,13 @@ void getBinDecoder_MAGLS
                 decMtx[band*2*nSH + j*nSH + i] = conjf(B_magls[i*2+j]); /* ^H */
     }
     
-    free1d((void*)&W);
-    free1d((void*)&Y_na);
-    free1d((void*)&Yna_W_Yna);
-    free1d((void*)&Yna_W_H);
-    free1d((void*)&B_magls);
-    free1d((void*)&hrtfs_ls);
-    free1d((void*)&H_mod);
+    free(W);
+    free(Y_na);
+    free(Yna_W_Yna);
+    free(Yna_W_H);
+    free(B_magls);
+    free(hrtfs_ls);
+    free(H_mod);
 }
 
 

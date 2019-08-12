@@ -38,39 +38,39 @@ SAF_ERRORS saf_error_print(SAF_ERRORS err)
         /* errors */
         case SAF_ERROR__NO_ERROR: break;
         case SAF_ERROR__ILLEGAL_INPUT_VALUE:
-            fprintf(stderr, "%s", "Error: One or more input variable was assigned an illegal value.\n");
+            fprintf(stderr, "%s", "SAF Error: One or more input variable was assigned an illegal value.\n");
             break;
         case SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT:
-            fprintf(stderr, "%s", "Error: Memory for one or more input/output matrix/vector was not allocated.\n");
+            fprintf(stderr, "%s", "SAF Error: Memory for one or more input/output matrix/vector was not allocated.\n");
             break;
             
         /* saf_vbap errors */
         case SAF_ERROR__FAILED_TO_BUILD_CONVEX_HULL:
-            fprintf(stderr, "%s", "Error: Failed to build Convex Hull.\n");
+            fprintf(stderr, "%s", "SAF Error: Failed to build Convex Hull.\n");
             break;
             
         /* saf_hrir warnings */
         case SAF_WARNING__SOFA_FILE_NOT_FOUND:
-            fprintf(stdout, "%s", "Warning: Could not find SOFA file. HRIR data is returned as NULL. \n");
+            fprintf(stdout, "%s", "SAF Warning: Could not find SOFA file. HRIR data is returned as NULL. \n");
             break;
             
         /* saf_sh warnings */
         case SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER:
-            fprintf(stdout, "%s", "Warning: Could not compute spherical Bessel/Hankel at specified order. \n");
+            fprintf(stdout, "%s", "SAF Warning: Could not compute spherical Bessel/Hankel at specified order. \n");
             break;
         
         /* saf_utilites warnings */
         case SAF_WARNING__FAILED_TO_COMPUTE_SVD:
-            fprintf(stdout, "%s", "Warning: Could not compute SVD. Output matrices/vectors have been zeroed. \n");
+            fprintf(stdout, "%s", "SAF Warning: Could not compute SVD. Output matrices/vectors have been zeroed. \n");
             break;
         case SAF_WARNING__FAILED_TO_COMPUTE_EVG:
-            fprintf(stdout, "%s", "Warning: Could not compute EVD. Output matrices/vectors have been zeroed. \n");
+            fprintf(stdout, "%s", "SAF Warning: Could not compute EVD. Output matrices/vectors have been zeroed. \n");
             break;
         case SAF_WARNING__FAILED_TO_SOLVE_LINEAR_EQUATION:
-            fprintf(stdout, "%s", "Warning: Could not solve linear equation. Output matrix has been zeroed. \n");
+            fprintf(stdout, "%s", "SAF Warning: Could not solve linear equation. Output matrix has been zeroed. \n");
             break;
         case SAF_WARNING__FAILED_TO_COMPUTE_CHOL:
-            fprintf(stdout, "%s", "Warning: Could not compute Choleksy Factorisation. Output matrix has been zeroed. \n");
+            fprintf(stdout, "%s", "SAF Warning: Could not compute Choleksy Factorisation. Output matrix has been zeroed. \n");
             break;
     }
     

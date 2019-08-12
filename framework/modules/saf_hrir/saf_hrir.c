@@ -149,7 +149,7 @@ void HRIRs2FilterbankHRTFs
     for(band=0; band<N_bands; band++)
         for(i=0; i<NUM_EARS; i++)
             for(nd=0; nd<N_dirs; nd++)
-                (*hrtf_fb)[band*NUM_EARS*N_dirs + i*N_dirs + nd] = ccdivf((*hrtf_fb)[band*NUM_EARS*N_dirs + i*N_dirs + nd], cmplxf(hrtf_diff[band*NUM_EARS + i], 0.0f));
+                (*hrtf_fb)[band*NUM_EARS*N_dirs + i*N_dirs + nd] = ccdivf((*hrtf_fb)[band*NUM_EARS*N_dirs + i*N_dirs + nd], cmplxf(hrtf_diff[band*NUM_EARS + i] + 2.23e-8f, 0.0f));
     
     /* create complex HRTFs by introducing the interaural phase differences
      * (IPDs) to the HRTF magnitude responses */

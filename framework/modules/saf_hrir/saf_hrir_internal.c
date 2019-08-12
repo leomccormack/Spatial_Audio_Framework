@@ -186,7 +186,7 @@ void FIRtoFilterbankCoeffs
                 irFB_energy = 0;
                 for(t=0; t<nTimeSlots; t++)
                     irFB_energy += powf(cabsf(irFB[i*nTimeSlots*nCH + t*nCH + nm]), 2.0f); /* out_nBands x nTimeslots x nCH */
-                irFB_gain = sqrtf(irFB_energy/centerImpulseFB_energy[i]);
+                irFB_gain = sqrtf(irFB_energy/MAX(centerImpulseFB_energy[i], 2.23e-8f));
                 cross = cmplxf(0.0f,0.0f);
                 for(t=0; t<nTimeSlots; t++)
                     cross = ccaddf(cross, ccmulf(irFB[i*nTimeSlots*nCH + t*nCH + nm], conjf(centerImpulseFB[i*nTimeSlots + t])));

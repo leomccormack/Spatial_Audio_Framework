@@ -6,7 +6,7 @@ A cross-platform Spatial Audio Framework (SAF) written in C. The framework inclu
 
 ## 1  Getting Started
 
-The installation instructions are tailored for individual operating systems and described below.
+The suggested installation instructions are tailored for individual operating systems and described below. 
 
 ### 1.1  Windows users
 
@@ -139,7 +139,7 @@ Then add the following linker flag to your project:
 -L/usr/lib -lsaf_mkl_custom
 ```
 ##### 1.3.2  Enable SOFA reader (Optional)
-To enable the [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) file reading feature, you must install [netCDF](https://www.unidata.ucar.edu/software/netcdf/)  and [HDF5](https://www.hdfgroup.org/downloads/hdf5/) on your system. For ubuntu based distros, this is simply:
+To enable the [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) file reading feature, you must install [netCDF](https://www.unidata.ucar.edu/software/netcdf/) and [HDF5](https://www.hdfgroup.org/downloads/hdf5/) on your system. For ubuntu based distros, this is simply:
 
 ```
 sudo apt-get install libhdf5-dev
@@ -179,11 +179,11 @@ Many examples have been included in the repository:
 
 Many of these examples have been integrated into VST audio plug-ins using the JUCE framework and can be found [here](http://research.spa.aalto.fi/projects/sparta_vsts/).
 
-## 3  Authors
+## 3  Developers
 
-* **Leo McCormack** - C programmer and DSP researcher (contact: leo.mccormack@aalto.fi)
-* **Symeon Delikaris-Manias** - DSP researcher
-* **Archontis Politis** - DSP researcher
+* **Leo McCormack** - C programmer and algorithm designer (contact: leo.mccormack@aalto.fi)
+* **Symeon Delikaris-Manias** - algorithm designer
+* **Archontis Politis** - algorithm designer
 
 ## 4  License
 
