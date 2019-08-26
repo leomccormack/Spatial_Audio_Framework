@@ -725,6 +725,22 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
             }
             break;
 #endif
+#ifdef ENABLE_ZOOM_H3VR_PRESET
+        case PRESET_ZOOM_H3VR_PRESET:
+            (*arrayOrder) = 1;
+            Q = 4;
+            pars->r = 0.011f;
+            pars->R = 0.011f;
+            pars->arrayType = ARRAY_SPHERICAL;
+            pars->weightType = WEIGHT_OPEN_CARD;
+            for(ch=0; ch<Q; ch++){
+                for(i=0; i<2; i++){
+                    pars->sensorCoords_rad[ch][i] = __Zoom_H3VR_coords_rad[ch][i];
+                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);
+                }
+            }
+            break;
+#endif
 #ifdef ENABLE_SOUND_FIELD_SPS200_PRESET
         case PRESET_SOUND_FIELD_SPS200:
             (*arrayOrder) = 1;
