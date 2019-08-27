@@ -51,7 +51,7 @@ SAF_ERRORS saf_error_print(SAF_ERRORS err)
             
         /* saf_hrir warnings */
         case SAF_WARNING__SOFA_FILE_NOT_FOUND:
-            fprintf(stdout, "%s", "SAF Warning: Could not find SOFA file. HRIR data is returned as NULL. \n");
+            fprintf(stdout, "%s", "SAF Warning: Could not open SOFA file. Loading default HRIR data. \n");
             break;
             
         /* saf_sh warnings */

@@ -26,6 +26,7 @@
  */
  
 #include "saf_sofa_reader.h"
+#include "saf_hrir.h"
 
 void loadSofaFile
 (
@@ -49,17 +50,44 @@ void loadSofaFile
     free1d((void**)&(*hrir_dirs_deg));
     
     /* open sofa file */
+    /* (returns error value if sofa_filepath==NULL (intentional), or if the file
+     * path/name was not found (unintentional). */
     if ((retval = nc_open(sofa_filepath, NC_NOWRITE, &ncid)))
         errorMessage = nc_strerror(retval);
     
-    /* return NULLs and print warning if not a real file */
-#ifndef NDEBUG
+    /* if error: */
     if(retval!=NC_NOERR){
-        saf_error_print(SAF_WARNING__SOFA_FILE_NOT_FOUND);
+        is0_360 = 0;
+        /* return default HRIR data */
+        (*N_hrir_dirs) = __default_N_hrir_dirs;
+        (*hrir_len) = __default_hrir_len;
+        (*hrir_fs) = __default_hrir_fs;
+        (*hrirs) = malloc1d((*N_hrir_dirs) * 2 * (*hrir_len)*sizeof(float));
+        for(i=0; i<(*N_hrir_dirs); i++)
+            for(j=0; j<2; j++)
+                for(k=0; k< (*hrir_len); k++)
+                    (*hrirs)[i*2*(*hrir_len) + j*(*hrir_len) + k] = (float)__default_hrirs[i][j][k];
+        (*hrir_dirs_deg) = malloc1d((*N_hrir_dirs) * 2 * sizeof(float));
+        for(i=0; i<(*N_hrir_dirs); i++){
+            for(j=0; j<2; j++)
+                (*hrir_dirs_deg)[i*2+j] = (float)__default_hrir_dirs_deg[i][j];
+            if((*hrir_dirs_deg)[2*i+0]>=181.0f)
+                is0_360 = 1;
+        }
+        /* convert to -180..180, if azi is 0..360 */
+        if(is0_360)
+            for(i=0; i<(*N_hrir_dirs); i++)
+                (*hrir_dirs_deg)[2*i+0] = (*hrir_dirs_deg)[2*i+0]>180.0f ? (*hrir_dirs_deg)[2*i+0] -360.0f : (*hrir_dirs_deg)[2*i+0];
+        
+#ifndef NDEBUG
+        /* also output warning message, if encountering this error value was
+         * unintentional (i.e. sofa_filepath!=NULL) */
+        if(sofa_filepath!=NULL)
+            saf_error_print(SAF_WARNING__SOFA_FILE_NOT_FOUND);
+#endif
         return;
     }
-#endif
-    
+ 
     /* Determine dimension IDs and lengths */
     /* Note: there are 6 possible dimension lengths in the sofa standard */
     for (i=0; i<6; i++){

@@ -58,6 +58,8 @@ extern "C" {
  *
  * Input Arguments:
  *     sofa_filepath - directory/file_name of the SOFA file you wish to load
+ *                     Optionally, you may set this as NULL, and the function
+ *                     will return the default HRIR data.
  * Output Arguments:
  *     hrirs         - & of the HRIR data; FLAT:  N_hrir_dirs x 2 x hrir_len
  *     hrir_dirs_deg - & of the HRIR positions; FLAT: N_hrir_dirs x 2

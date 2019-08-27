@@ -117,7 +117,6 @@ void HRIRs2FilterbankHRTFs
     float* itds_s,
     float* centreFreq,
     int N_bands,
-    int enablePhaseManipFLAG,
     float_complex** hrtf_fb /* &, N_bands x 2 x N_dirs */
 )
 {
@@ -155,19 +154,14 @@ void HRIRs2FilterbankHRTFs
      * (IPDs) to the HRTF magnitude responses */
     for(band=0; band<N_bands; band++){
         for(nd=0; nd<N_dirs; nd++){
-            if( (!enablePhaseManipFLAG) || (centreFreq[band]<1.5e3f) ){
-                (*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f, ipd[band*N_dirs + nd])), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd]) );
-                (*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f,-ipd[band*N_dirs + nd])), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd]) );
-            }
-            else{
-                (*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd] = cmplxf(cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd]), 0.0f);
-                (*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd] = cmplxf(cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd]), 0.0f);
-            }
+            (*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f, ipd[band*N_dirs + nd])), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd]) );
+            (*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f,-ipd[band*N_dirs + nd])), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd]) );
         }
     }
 
     free(ipd);
     free(hrtf_diff);
+    
 #endif
 }
 
@@ -182,7 +176,6 @@ void interpFilterbankHRTFs
     int N_hrtf_dirs,
     int N_bands,
     int N_interp_dirs,
-    int enablePhaseManipFLAG,      /* 0: off, 1: on */
     float_complex* hrtfs_interp /* pre-alloc, N_bands x 2 x N_interp_dirs */
 )
 {
@@ -219,16 +212,8 @@ void interpFilterbankHRTFs
                     mags_interp, NUM_EARS);
         
         /* convert ITDs to phase differences -pi..pi */
-        for(i=0; i<N_interp_dirs; i++){
-            if (enablePhaseManipFLAG){
-                if(freqVector[band]<1.5e3f)
-                    ipd_interp[i] = (matlab_fmodf(2.0f*M_PI*freqVector[band]*itd_interp[i] + M_PI, 2.0f*M_PI) - M_PI)/2.0f; /* /2 here, not later */
-                else
-                    ipd_interp[i] = 0.0f;
-            }
-            else
-                ipd_interp[i] = (matlab_fmodf(2.0f*M_PI*freqVector[band]*itd_interp[i] + M_PI, 2.0f*M_PI) - M_PI)/2.0f; /* /2 here, not later */
-        }
+        for(i=0; i<N_interp_dirs; i++)
+            ipd_interp[i] = (matlab_fmodf(2.0f*M_PI*freqVector[band]*itd_interp[i] + M_PI, 2.0f*M_PI) - M_PI)/2.0f; /* /2 here, not later */
         
         /* reintroduce the interaural phase differences (IPD) */
         for(i=0; i<N_interp_dirs; i++){

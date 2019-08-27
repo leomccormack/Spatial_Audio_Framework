@@ -57,9 +57,8 @@ extern "C" {
  * Warning Codes:
  *     SAF_WARNING__SOFA_FILE_NOT_FOUND
  *         loadSofaFile - sofa file was not found at the specified directory.
- *         rememeber to include the ".sofa" suffix. In this case, the HRIR data
- *         is returned as NULL. The default HRIR set could be loaded instead by
- *         your program, or prompt the user to enter the path again.
+ *         rememeber to include the ".sofa" suffix. In this case, the default
+ *         HRIR set is loaded instead.
  *     SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER
  *         bessel_jn/bessel_in/bessel_yn/bessel_kn/hankel_hn1/hankel_hn2 -
  *         Unable to compute the spherical Bessel/Hankel function at the

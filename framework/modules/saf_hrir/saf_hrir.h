@@ -99,7 +99,6 @@ void estimateITDs(/* Input Arguments */
  *     itds_s               - HRIR ITDs; N_dirs x 1
  *     centreFreq           - filterbank centre frequencies; N_bands x 1
  *     N_bands              - number of frequency bands
- *     enablePhaseManipFLAG - removes phase above 1.5kHz, 0: off, 1: on
  *
  * Output Arguments:
  *     hrtf_fb              - & HRTFs as filterbank coeffs;
@@ -112,7 +111,6 @@ void HRIRs2FilterbankHRTFs(/* Input Arguments */
                            float* itds_s,
                            float* centreFreq,
                            int N_bands,
-                           int enablePhaseManipFLAG,
                            /* Output Arguments */
                            float_complex** hrtf_fb);
 
@@ -138,8 +136,7 @@ void HRIRs2FilterbankHRTFs(/* Input Arguments */
  *                            FLAT: N_interp_dirs x N_hrtf_dirs
  *     N_hrtf_dirs          - number of HRTF directions
  *     N_bands              - number of frequency bands
- *     N_interp_dirs        - number of interpolated hrtf positions
- *     enablePhaseManipFLAG - removes phase above 1.5kHz, 0: off, 1: on
+ *     N_interp_dirs        - number of interpolated hrtf positions 
  *
  * Output Arguments:
  *     hrtf_interp          - pre-alloc, interpolated HRTFs;
@@ -153,7 +150,6 @@ void interpFilterbankHRTFs(/* Input Arguments */
                            int N_hrtf_dirs,
                            int N_bands,
                            int N_interp_dirs,
-                           int enablePhaseManipFLAG,
                            /* Output Arguments */
                            float_complex* hrtf_interp);
    

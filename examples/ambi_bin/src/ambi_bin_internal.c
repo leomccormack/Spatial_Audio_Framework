@@ -36,7 +36,7 @@ void ambi_bin_initCodec
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     codecPars* pars = pData->pars;
-    int i, j, k, nSH, order, band;
+    int i, j, nSH, order, band;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
     order = pData->new_order;
@@ -44,35 +44,20 @@ void ambi_bin_initCodec
     
     /* load sofa file or load default hrir data */
     if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
-#ifdef SAF_ENABLE_SOFA_READER
         loadSofaFile(pars->sofa_filepath,
-                     &pars->hrirs,
-                     &pars->hrir_dirs_deg,
-                     &pars->N_hrir_dirs,
-                     &pars->hrir_len,
-                     &pars->hrir_fs);
-        if((pars->hrirs==NULL) || (pars->hrir_dirs_deg == NULL))
-            pData->useDefaultHRIRsFLAG = 1;
-#else
-        pData->useDefaultHRIRsFLAG = 1;
-#endif
+                     &(pars->hrirs),
+                     &(pars->hrir_dirs_deg),
+                     &(pars->N_hrir_dirs),
+                     &(pars->hrir_len),
+                     &(pars->hrir_fs));
     }
-    if(pData->useDefaultHRIRsFLAG){
-        /* load defaults */
-        pars->N_hrir_dirs = __default_N_hrir_dirs;
-        pars->hrir_len = __default_hrir_len;
-        pars->hrir_fs = __default_hrir_fs;
-        free1d((void**)&(pars->hrirs));
-        pars->hrirs = malloc1d(pars->N_hrir_dirs * NUM_EARS * (pars->hrir_len)*sizeof(float));
-        for(i=0; i<pars->N_hrir_dirs; i++)
-            for(j=0; j<NUM_EARS; j++)
-                for(k=0; k< pars->hrir_len; k++)
-                    pars->hrirs[i*NUM_EARS*(pars->hrir_len) + j*(pars->hrir_len) + k] = (float)__default_hrirs[i][j][k];
-        free1d((void**)&(pars->hrir_dirs_deg));
-        pars->hrir_dirs_deg = malloc1d(pars->N_hrir_dirs * NUM_EARS * sizeof(float));
-        for(i=0; i<pars->N_hrir_dirs; i++)
-            for(j=0; j<2; j++)
-                pars->hrir_dirs_deg[i*2+j] = (float)__default_hrir_dirs_deg[i][j];
+    else{
+        loadSofaFile(NULL, /* setting path to NULL loads default HRIR data */
+                     &(pars->hrirs),
+                     &(pars->hrir_dirs_deg),
+                     &(pars->N_hrir_dirs),
+                     &(pars->hrir_len),
+                     &(pars->hrir_fs));
     }
     
     /* estimate the ITDs for each HRIR */
@@ -81,7 +66,7 @@ void ambi_bin_initCodec
     
     /* convert hrirs to filterbank coefficients */
     free1d((void**)&(pars->hrtf_fb));
-    HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->itds_s, (float*)pData->freqVector, HYBRID_BANDS, 0, &(pars->hrtf_fb));
+    HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->itds_s, (float*)pData->freqVector, HYBRID_BANDS, &(pars->hrtf_fb));
 
     /* get new decoder */
     float_complex* decMtx;

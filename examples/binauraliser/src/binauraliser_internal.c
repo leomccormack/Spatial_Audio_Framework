@@ -91,42 +91,25 @@ void binauraliser_interpHRTFs
 void binauraliser_initHRTFsAndGainTables(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    int i, j, k;
+    int i;
     float* hrtf_vbap_gtable;
     
     /* load sofa file or load default hrir data */
-    if(!pData->useDefaultHRIRsFLAG){
-#ifdef SAF_ENABLE_SOFA_READER
+    if(!pData->useDefaultHRIRsFLAG && pData->sofa_filepath!=NULL){
         loadSofaFile(pData->sofa_filepath,
                      &(pData->hrirs),
                      &(pData->hrir_dirs_deg),
                      &(pData->N_hrir_dirs),
                      &(pData->hrir_len),
                      &(pData->hrir_fs));
-        if((pData->hrirs==NULL) || (pData->hrir_dirs_deg == NULL))
-            pData->useDefaultHRIRsFLAG = 1;
-#else
-        pData->useDefaultHRIRsFLAG = 1;
-#endif
     }
-    if(pData->useDefaultHRIRsFLAG){
-        /* load defaults */
-        pData->N_hrir_dirs = __default_N_hrir_dirs;
-        pData->hrir_len = __default_hrir_len;
-        pData->hrir_fs = __default_hrir_fs;
-        free1d((void**)&(pData->hrirs));
-        pData->hrirs = malloc1d(pData->N_hrir_dirs * 2 * (pData->hrir_len)*sizeof(float));
-        for(i=0; i<pData->N_hrir_dirs; i++)
-            for(j=0; j<2; j++)
-                for(k=0; k< pData->hrir_len; k++)
-                    pData->hrirs[i*2*(pData->hrir_len) + j*(pData->hrir_len) + k] = (float)__default_hrirs[i][j][k];
-        free1d((void**)&(pData->hrir_dirs_deg));
-        pData->hrir_dirs_deg = malloc1d(pData->N_hrir_dirs * 2 * sizeof(float));
-        for(i=0; i<pData->N_hrir_dirs; i++){
-            pData->hrir_dirs_deg[i*2+0] = __default_hrir_dirs_deg[i][0]>180.0 ?
-                                   (float)__default_hrir_dirs_deg[i][0]-360.0f : (float)__default_hrir_dirs_deg[i][0];
-            pData->hrir_dirs_deg[i*2+1] = (float)__default_hrir_dirs_deg[i][1];
-        }
+    else{
+        loadSofaFile(NULL, /* setting path to NULL loads default HRIR data */
+                     &(pData->hrirs),
+                     &(pData->hrir_dirs_deg),
+                     &(pData->N_hrir_dirs),
+                     &(pData->hrir_len),
+                     &(pData->hrir_fs));
     }
     
     /* estimate the ITDs for each HRIR */
@@ -158,7 +141,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     
     /* convert hrirs to filterbank coefficients */
     free1d((void**)&(pData->hrtf_fb));
-    HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->itds_s, pData->freqVector, HYBRID_BANDS, 0, &(pData->hrtf_fb));
+    HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->itds_s, pData->freqVector, HYBRID_BANDS, &(pData->hrtf_fb));
     
     /* calculate magnitude responses */
     free1d((void**)&(pData->hrtf_fb_mag));
