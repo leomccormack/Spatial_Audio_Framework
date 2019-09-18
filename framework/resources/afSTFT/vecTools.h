@@ -25,21 +25,22 @@
 
 #include "../../modules/saf_utilities/saf_utilities.h"
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
-  #ifdef NDEBUG
-    #define VDSP
-  #endif
+# ifdef NDEBUG
+#  define VDSP
+# endif
 #elif defined(_MSC_VER) || defined(INTEL_MKL_VERSION)
-  #define MKL_FFT 
+# define MKL_FFT
 #endif
 #if defined(VDSP)
-  #include <Accelerate/Accelerate.h>
+# include <Accelerate/Accelerate.h>
 #elif defined(MKL_FFT)
-  #include "mkl_dfti.h"
+# include "mkl_dfti.h"
 #endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <assert.h>
 #include "fft4g.h"
 
 typedef struct {
@@ -52,7 +53,7 @@ typedef struct {
     DSPSplitComplex VDSP_split;
 #elif defined(MKL_FFT)
     DFTI_DESCRIPTOR_HANDLE MKL_FFT_Handle;
-    float* mkl_fft_out;
+    float* mkl_fft_out; 
 #else
     float *a,*w;
     int *ip;

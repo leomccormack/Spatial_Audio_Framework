@@ -62,7 +62,7 @@ void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n)
     float  Scale;
     const int number_of_channels = 1; /* hard coded here for 1 channel */
     MKL_LONG input_strides[2], output_strides[2], Status;
-    h->mkl_fft_out = malloc(sizeof(float)*((h->N)/2+1)*2);
+    h->mkl_fft_out = calloc(((h->N)/2+1)*2, sizeof(float)); 
     /* create handle */
     Status = DftiCreateDescriptor(&(h->MKL_FFT_Handle), DFTI_SINGLE, DFTI_REAL, 1, h->N); /* 1-D, single precision, real_input->fft->half_complex->ifft->real_output */
     /* Configure handle */
@@ -109,7 +109,7 @@ void vtFreeFFT(void* planPr)
 #elif defined(MKL_FFT)
     MKL_LONG Status;
     Status = DftiFreeDescriptor(&(h->MKL_FFT_Handle));
-    free(h->mkl_fft_out);
+    free(h->mkl_fft_out); 
 #else
     free(h->w);
     free(h->ip);
@@ -150,6 +150,11 @@ void vtRunFFT(void* planPr, int positiveForForwardTransform)
             h->mkl_fft_out[2*i] = h->frequencyData[i];
             h->mkl_fft_out[2*i+1] = h->frequencyData[i+(h->N)/2];
         }
+        /* not 100% why, but if I don't zero this value here, then small numerical
+         * distortions creep into the output signals of afSTFT.
+         * This also makes it consistent with the other 2 FFT options. */
+        h->mkl_fft_out[(h->N)] = 0.0f;
+        h->mkl_fft_out[(h->N)+1] = 0.0f;
         Status = DftiComputeBackward(h->MKL_FFT_Handle, h->mkl_fft_out, h->timeData);
     }
 #else
