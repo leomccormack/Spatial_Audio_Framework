@@ -1,30 +1,41 @@
 # Spatial_Audio_Framework
 
-A cross-platform Spatial Audio Framework (SAF) written in C. The framework includes functions for performing Vector-Base Amplitude Panning (VBAP), Spherical Harmonic Transforms (SHT), Beamforming, and Higher-order Ambisonics (HOA); to name a few.
+A cross-platform Spatial Audio Framework (SAF) written in C. The framework includes functions for performing Vector-Base Amplitude Panning (VBAP), Spherical Array Processing, and Higher-order Ambisonics (HOA); to name a few.
 
 ![](saf.png)
 
-## 1  Getting Started
+## Getting Started
 
-The suggested installation instructions are tailored for individual operating systems and described below. 
+### Prerequisites
 
-### 1.1  Windows users
+The framework requires the following libraries:
+* Any Library/Libraries conforming to the [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
+* (Optional) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
 
-To use this framework in your project, first add the following directories to the header search paths:
+The rationale for the former requirement is that the framework employs the use of BLAS/LAPACK routines for tackling all of the linear algebra operations, which are used quite prolifically throughout the code. Therefore, a performance library, which conforms to the BLAS/LAPACK standards, is required by most of the framework modules. In principle, any such library (or combination of libraries) may be employed for this task, and if you've worked with such libraries before, then you probably already know what to do. However, it is still generally recommended to use a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library, as this is the approach used by the developers. 
+
+In order to make this a painless endevour, detailed instructions regarding the acquisition and linking of this custom Intel MKL library have been tailored for specific operating systems and provided below. 
+
+## Acquiring and linking a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library tailored for SAF (Recommended)
+
+### Windows (x86_64) users
+
+0. Add the following directories to your project's header search paths:
 
 ```
 Spatial_Audio_Framework/framework/include
 Spatial_Audio_Framework/dependencies/Win64/include
 ```
-Then add the following directory to the library search paths:
+
+1. Add the following directory to your project's library search paths:
 
 ```
 Spatial_Audio_Framework/dependencies/Win64/lib
 ```
 
-##### 1.1.1  Link with custom Intel MKL library
+2. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). 
 
-Windows users must link against a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library. The "dependencies/Win64/lib/**saf_mkl_custom.lib**" and "**saf_mkl_custom.dll**" files may be generated using Intel's custom dll builder. 
+3. The required "dependencies/Win64/lib/**saf_mkl_custom.lib**" and "**saf_mkl_custom.dll**" files may be generated using Intel's custom dll builder. 
 
 First copy the included "dependencies/saf_mkl_list" file to this folder:
 
@@ -45,31 +56,27 @@ The generated "saf_mkl_custom.dll" file should be placed in a suitable system PA
 C:/Windows/System32
 ```
 
-##### 1.1.2  Enable SOFA reader (Optional)
+4. Add "SAF_USE_INTEL_MKL" to your pre-processor definitions.
 
-To enable the [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) file reading feature, your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For convenience, the following statically built libraries are included in "dependencies/Win64/":
 
-```
-libszip.lib; libzlib.lib; libhdf5.lib; libhdf5_hl.lib; netcdf.lib;
-```
+### MacOSX (x86_64) users 
 
-### 1.2  Mac OSX users 
-
-To use this framework in your project, first add the following directories to the header search paths:
+0. Add the following directories to your project's header search paths:
 
 ```
 Spatial_Audio_Framework/framework/include
 Spatial_Audio_Framework/dependencies/MacOSX/include
 ```
-Then add the following directory to the library search paths:
+
+1. Add the following directory to your project's library search paths:
 
 ```
 Spatial_Audio_Framework/dependencies/MacOSX/lib
 ```
 
-##### 1.2.1  Link with custom Intel MKL library (Optional)
+2. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). 
 
-By default, the framework uses Apple's Accelerate library for the linear algebra speed-ups. However, Mac users may choose to instead use [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) via the global pre-processor definition: "SAF_USE_INTEL_MKL" (often faster than Accelerate). 
+3. By default, the framework will use Apple's Accelerate library for the BLAS/LAPACK routines. However, Mac users may still elect to use [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries), which is often faster than Accelerate. 
 
 The required "**saf_mkl_custom.dylib**" may be obtained by first placing the "dependencies/saf_mkl_list" file in:
 
@@ -77,7 +84,7 @@ The required "**saf_mkl_custom.dylib**" may be obtained by first placing the "de
 /opt⁩/intel⁩/compilers_and_libraries/mac⁩/mkl⁩/tools⁩/builder⁩ 
 ```
 
-To generate and copy the library to a system path folder, use the following commands (requires root permissions):
+To generate and copy the library to a system path folder, use the following commands (root permissions required):
 
 ```
 cd /opt⁩/intel⁩/compilers_and_libraries/mac⁩/mkl⁩/tools⁩/builder⁩
@@ -92,39 +99,35 @@ Then add the following linker flag to your project:
 -L/usr/local/lib -lsaf_mkl_custom
 ```
 
-##### 1.2.2  Enable SOFA reader (Optional)
+4. Add "SAF_USE_INTEL_MKL" to your pre-processor definitions.
 
-To enable the [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) file reading feature, your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For convenience, the following statically built libraries are included in "dependencies/MacOSX/":
 
-```
-netcdf; hdf5; hdf5_hl; z; 
-```
+### Linux (x86_64) users
 
-### 1.3  Linux users
-
-To use this framework in your project, first add the following directories to the header search paths:
+0. Add the following directories to the header search paths:
 
 ```
 Spatial_Audio_Framework/framework/include
 Spatial_Audio_Framework/dependencies/Linux/include
 ```
-Then add the following directory to the library search paths:
+
+1. Add the following directory to the library search paths:
 
 ```
 Spatial_Audio_Framework/dependencies/Linux/lib
 ```
 
-##### 1.3.1  Link with custom Intel MKL library 
+2. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). 
 
-Linux users must also link against a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library, and your project must include the global pre-processor definition: "SAF_USE_INTEL_MKL". 
+Linux users may link against a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library to fufil the BLAS/LAPACK requirement. Add the global pre-processor definition: "SAF_USE_INTEL_MKL". 
 
-The required "**saf_mkl_custom.so**" may be obtained by first placing the "dependencies/saf_mkl_list" file in:
+3. The required "**saf_mkl_custom.so**" may be obtained by first placing the "dependencies/saf_mkl_list" file in:
 
 ```
 /opt⁩/intel⁩/compilers_and_libraries/linux/mkl⁩/tools⁩/builder⁩ 
 ```
 
-To generate and copy this library to a system path folder, use the following commands (requires root permissions):
+To generate and copy this library to a system path folder, use the following commands (root permissions required):
 
 ```
 cd /opt⁩/intel⁩/compilers_and_libraries/linux/mkl⁩/tools⁩/builder⁩
@@ -138,29 +141,73 @@ Then add the following linker flag to your project:
 ```
 -L/usr/lib -lsaf_mkl_custom
 ```
-##### 1.3.2  Enable SOFA reader (Optional)
-To enable the [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) file reading feature, you must install [netCDF](https://www.unidata.ucar.edu/software/netcdf/) and [HDF5](https://www.hdfgroup.org/downloads/hdf5/) on your system. For ubuntu based distros, this is simply:
+
+4. Add "SAF_USE_INTEL_MKL" to your pre-processor definitions.
+
+
+## Enable SOFA support (Optional)
+
+In order to use the built-in [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reader (framework/modules/saf_hrir/saf_sofa_reader.h), your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For those already familar with building and linking this particular library, you know what to do. However, for convenience, suggested platform specfic instructions have been provided below.
+
+### Windows (x86_64) users
+
+For convenience, the following statically built libraries are included in "dependencies/Win64/"; simply link your project against them:
+
+```
+libszip.lib; libzlib.lib; libhdf5.lib; libhdf5_hl.lib; netcdf.lib;
+```
+
+### MacOSX (x86_64) users 
+
+For convenience, the following statically built libraries are included in "dependencies/MacOSX/"; simply link your project against them:
+
+```
+netcdf; hdf5; hdf5_hl; z; 
+```
+
+###  Linux (x86_64) users
+
+For ubuntu based distros, you may install [netCDF](https://www.unidata.ucar.edu/software/netcdf/) and its dependencies with these terminal commands:
 
 ```
 sudo apt-get install libhdf5-dev
 sudo apt-get install libnetcdf-dev libnetcdff-dev
 ```
 
-Then add the following directory to the header search path:
+Then simply add the following directory to the header search path:
 
 ```
 /usr/include  
 ```
 
-And finally, add this linker flag:
+And add this linker flag to your project:
 
 ```
 -L/lib/x86_64-linux-gnu -lnetcdf
 ```
 
-## 2  Examples
+## Using the framework
 
-Many examples have been included in the repository:
+The framework is divided into individual modules and instructions on how to enable these modules is provided in the main header file (framework/include/saf.h). However, the general idea is that you enable modules by defining specific flags prior including "saf.h": 
+
+```c
+
+#define SAF_ENABLE_AFSTFT      /* to enable use of the alias-free STFT library */
+#define SAF_ENABLE_CDF4SAP     /* to enable use of the covariance-domain framework module */ 
+#define SAF_ENABLE_HOA         /* to enable use of the higher-order Ambisonics module */ 
+#define SAF_ENABLE_SH          /* to enable use of the spherical harmonic domain related stuff module */ 
+#define SAF_ENABLE_HRIR        /* to enable use of the HRIR related stuff module */
+#define SAF_ENABLE_VBAP        /* to enable use of the VBAP module */
+#define SAF_ENABLE_SOFA_READER /* to enable the SOFA reader */
+#include "saf.h"  
+```
+
+Detailed instructions regarding how to use the functions offered by each module is provided in the main header file for the respective module (e.g. "/modules/saf_sh/saf_sh.h", or  "/modules/saf_vbap/saf_vbap.h").
+
+### Examples
+
+Many examples have been included in the repository, which may also serve as a starting point for learning the framework:
+
 * **ambi_bin** - a binaural Ambisonic decoder with built-in rotator. It includes the following decoding approaches: least-squares (LS), spatial re-sampling (SPR), Time-alignment (TA) [1], Magnitude Least-Squares (MagLS) [2].
 * **ambi_dec** - a frequency-dependent Ambisonic decoder. Including the following decoding approaches: sampling ambisonic decoder (SAD), AllRAD [3], Energy-Preserving decoder (EPAD) [4], Mode-Matching decoder (MMD).
 * **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for Ambisonic signals, based on the design proposed in [5].
@@ -175,17 +222,15 @@ Many examples have been included in the repository:
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors; as proposed in [8].
 * **upmix** - a (soon to be) collection of upmixing algorithms (currently only stereo to 5.x upmixing).
 
-### 2.1  GUI implementations
+Many of these examples have also been integrated into VST audio plug-ins using the JUCE framework and can be found [here](http://research.spa.aalto.fi/projects/sparta_vsts/).
 
-Many of these examples have been integrated into VST audio plug-ins using the JUCE framework and can be found [here](http://research.spa.aalto.fi/projects/sparta_vsts/).
-
-## 3  Developers
+## Developers
 
 * **Leo McCormack** - C programmer and algorithm designer (contact: leo.mccormack@aalto.fi)
 * **Symeon Delikaris-Manias** - algorithm designer
 * **Archontis Politis** - algorithm designer
 
-## 4  License
+## License
 
 This framework is provided under the [ISC license](https://choosealicense.com/licenses/isc/). However, it also includes a modified version of the ['alias-free STFT'](https://github.com/jvilkamo/afSTFT) implementation by Juha Vilkamo (MIT license); and the ['convhull_3d'](https://github.com/leomccormack/convhull_3d) header only 3-D Convex Hull implementation by Leo McCormack (MIT license).
 
