@@ -55,7 +55,7 @@ void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n)
     h->N = powf(2,log2n);
     h->log2n = log2n;
 #if defined(VDSP)
-    h->FFT = (void*)vDSP_create_fftsetup( h->log2n, FFT_RADIX2);
+    h->FFT = (void*)vDSP_create_fftsetup(h->log2n, FFT_RADIX2);
     h->VDSP_split.realp = frequencyData;
     h->VDSP_split.imagp = &(frequencyData[(h->N)/2]);
 #elif defined(MKL_FFT)
@@ -150,9 +150,8 @@ void vtRunFFT(void* planPr, int positiveForForwardTransform)
             h->mkl_fft_out[2*i] = h->frequencyData[i];
             h->mkl_fft_out[2*i+1] = h->frequencyData[i+(h->N)/2];
         }
-        /* not 100% why, but if I don't zero this value here, then small numerical
-         * distortions creep into the output signals of afSTFT.
-         * This also makes it consistent with the other 2 FFT options. */
+        /* If I don't zero this value here, then small numerical distortions creep into the output signals of afSTFT.
+         * This makes it consistent with the other 2 FFT options. */
         h->mkl_fft_out[(h->N)] = 0.0f;
         h->mkl_fft_out[(h->N)+1] = 0.0f;
         Status = DftiComputeBackward(h->MKL_FFT_Handle, h->mkl_fft_out, h->timeData);

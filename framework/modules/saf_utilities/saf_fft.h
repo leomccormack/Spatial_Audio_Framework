@@ -17,10 +17,14 @@
 /*
  * Filename: saf_fft.h
  * -------------------
- * Wrapper for optimised fast Fourier transform (FFT) routines.
+ * Wrappers for optimised fast Fourier transform (FFT) routines. If none are
+ * linked, then it employs the highly respectable KissFFT from here
+ * (BSD 3-Clause License): https://github.com/mborgerding/kissfft
+ * If linking Apple Accelerate: KissFFT is also used in cases where the FFT size
+ * is not a power of 2.
  *
  * Dependencies:
- *     Intel MKL, or Apple Accelerate
+ *     Intel MKL, Apple Accelerate, or KissFFT (included in framework)
  * Author, date created:
  *     Leo McCormack, 06.04.2019
  */
@@ -36,23 +40,21 @@ extern "C" {
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <assert.h>
 #include "saf_complex.h"
-    
-/* NOTE: vDSP_fft hasn't been extensively tested, and doesn't seem to return the
- * Nyquist value?! */
-/* INTEL MKL Allows for any even FFT size, vDSP must be 2^(int value) */
     
 /*
  * Example Usage:
  * const int N = 256;                  // FFT size
- * float x_in[N];                      // input  (time-domain)
- * float_complex x_out[(N/2+1)];       // output (frequency-domain)
+ * float x_in[N];                      // input buffer (time-domain)
+ * x_in[0] = ... x_in[N-1] =           // fill with data
+ * float_complex x_out[(N/2+1)];       // output buffer (frequency-domain)
  * float test[N];                      // test (time-domain)
  * void *hFFT;                         // safFFT handle
  *
  * safFFT_create(&hFFT, N);            // creates an instance of safFFT, with size 'N'
  * safFFT_forward(hFFT, x_in, x_out);  // perform forward transform
- * safFFT_backward(hFFT, x_out, test); // perform backwards transform, (here x_in should = test)
+ * safFFT_backward(hFFT, x_out, test); // perform backwards transform, (here x_in (should) = test)
  * safFFT_destroy(&hFFT);              // destroys an instance of safFFT
  */
     
@@ -65,7 +67,7 @@ extern "C" {
  * Function: safFFT_create
  * -----------------------
  * Creates an instance of safFFT.
- * Note: Only 2^(int value) FFT sizes are supported for vDSP.
+ * Note: Only Even FFT sizes are supported.
  *
  * Input Arguments:
  *     phFFT - & address of safFFT handle
