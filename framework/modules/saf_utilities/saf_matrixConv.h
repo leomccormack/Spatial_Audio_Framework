@@ -17,8 +17,9 @@
 /*
  * Filename: saf_matrixConv.h
  * --------------------------
- * Matrix convolver functions stolen from some Matlab scripts by Archontis
- * Politis ;-)
+ * Matrix convolver functions mostly stolen from some Matlab scripts by
+ * Archontis Politis ;-)
+ * (with permission of course)
  *
  * Dependencies:
  *     saf_fft
@@ -38,6 +39,27 @@ extern "C" {
 #include <string.h>
 #include <math.h>
 
+/* Included:
+ *   Matrix Convolver
+ *     y = H * x; looped/summed over in/output channels, applied block-by-block
+ *       where
+ *         y: nOutputChannels x blockSize
+ *         x: nInputChannels  x blockSize
+ *         H: nOutputChannels x nInputChannels x filterLength
+ *
+ *   Matrix Convolver Partitioned
+ *     same as "Matrix Convolver", but with partitioned convolution
+ *
+ *   Multi Convolver
+ *     y = H * x; looped over channels, applied block-by-block
+ *       where
+ *         y: nChannels x blockSize
+ *         x: nChannels x blockSize
+ *         H: nChannels x filterLength
+ *
+ *   Multi Convolver Partitioned
+ *     same as "Multi Convolver", but with partitioned convolution
+ */
 
 /* ========================================================================== */
 /*                              Matrix Convolver                              */
@@ -135,7 +157,6 @@ void matrixConvPart_destroy(/*Input Arguments*/
  * Function: matrixConvPart_apply
  * ------------------------------
  * Performs the matrix convolution (with partitioned convolution)
- * Note: consider using "matrixConvPart" over "matrixConv" for longer filters
  * Note: if the number of input+output channels, the filters, or the hopsize
  * change: simply destroy and re-create the matrixConvPart handle
  *
@@ -148,6 +169,59 @@ void matrixConvPart_destroy(/*Input Arguments*/
 void matrixConvPart_apply(void * const hMC,
                           float* inputSigs,
                           float* outputSigs);
+    
+    
+/* ========================================================================== */
+/*                            Multi-Channel Convolver                         */
+/* ========================================================================== */
+
+/*
+ * Function: multiConv_create
+ * --------------------------
+ * Creates an instance of multiConv
+ * This is a multi-channel convolver intended for block-by-block processing.
+ * Note: nCH can just be 1, in which case this is simply a single-channel
+ * convolver.
+ *
+ * Input Arguments:
+ *     phMC     - & address of multiConv handle
+ *     hopSize  - hop size in samples.
+ *     H        - time-domain filters; FLAT: nCH x length_h
+ *     length_h - length of the filters
+ *     nCH      - number of filters & input/output channels
+ */
+void multiConv_create(/* Input Arguments */
+                      void ** const phMC,
+                      int hopSize,
+                      float* H,
+                      int length_h,
+                      int nCH);
+
+/*
+ * Function: multiConv_destroy
+ * ---------------------------
+ * Destroys an instance of multiConv
+ *
+ * Input Arguments:
+ *     phMC     - & address of multiConv handle
+ */
+void multiConv_destroy(/*Input Arguments*/
+                       void ** const phMC);
+
+/*
+ * Function: multiConv_apply
+ * -------------------------
+ * Performs the multi-channel convolution
+ *
+ * Input Arguments:
+ *     hMC        - multiConv handle
+ *     inputSigs  - input signals;  FLAT: nCH x hopSize
+ * Output Arguments:
+ *     outputSigs - output signals; FLAT: nCH x hopSize
+ */
+void multiConv_apply(void * const hMC,
+                     float* inputSigs,
+                     float* outputSigs);
     
     
 /* ========================================================================== */

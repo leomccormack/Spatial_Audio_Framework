@@ -67,6 +67,7 @@ typedef struct _multiconv
     
     /* user parameters */
     int numChannels;
+    int enablePartitionedConv;
     
 } multiconv_data;
     

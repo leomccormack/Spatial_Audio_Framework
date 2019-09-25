@@ -43,7 +43,8 @@ void multiconv_create
     pData->hMultiConv = NULL;
     
     /* Default user parameters */
-    pData->numChannels = 64;
+    pData->numChannels = 1;
+    pData->enablePartitionedConv = 0;
 }
 
 void multiconv_destroy
@@ -56,7 +57,10 @@ void multiconv_destroy
     if (pData != NULL) {
         free(pData->inputFrameTD);
         free(pData->outputFrameTD);
-        multiConvPart_destroy(&(pData->hMultiConv));
+        if(pData->enablePartitionedConv)
+            multiConvPart_destroy(&(pData->hMultiConv));
+        else
+            multiConv_destroy(&(pData->hMultiConv));
         free(pData);
         pData = NULL;
     }
@@ -70,13 +74,13 @@ void multiconv_init
 )
 {
     multiconv_data *pData = (multiconv_data*)(hMCnv);
-    const int length_h = 9000;
+    const int length_h = 48000*13;//9000;
     float* H; //[64][length_h];
     
     
     int i,j;
     if(pData->hostBlockSize != hostBlockSize){
-        H = calloc1d(64*length_h,sizeof(float));
+        H = calloc1d(pData->numChannels*length_h,sizeof(float));
         pData->hostBlockSize = hostBlockSize;
         pData->inputFrameTD  = (float**)realloc2d((void**)pData->inputFrameTD, MAX_NUM_CHANNELS, hostBlockSize, sizeof(float));
         pData->outputFrameTD = (float**)realloc2d((void**)pData->outputFrameTD, MAX_NUM_CHANNELS, hostBlockSize, sizeof(float));
@@ -85,14 +89,21 @@ void multiconv_init
 //        for(i=0; i<64; i++)
 //            for(j=0; j<length_h; j++)
 //                H[i][j] =
-        multiConvPart_destroy(&(pData->hMultiConv));
-        multiConvPart_create(&(pData->hMultiConv), hostBlockSize, (float*)H, length_h, pData->numChannels);
+        if(pData->enablePartitionedConv){
+            multiConvPart_destroy(&(pData->hMultiConv));
+            multiConvPart_create(&(pData->hMultiConv), hostBlockSize, (float*)H, length_h, pData->numChannels);
+        }
+        else{
+            multiConv_destroy(&(pData->hMultiConv));
+            multiConv_create(&(pData->hMultiConv), hostBlockSize, (float*)H, length_h, pData->numChannels);
+        }
         free(H);
     }
     
     /* starting values */
     
 } 
+
 
 void multiconv_process
 (
@@ -119,10 +130,16 @@ void multiconv_process
 //        for(; i<numChannels; i++)
 //            memset(pData->inputFrameTD[i], 0, pData->hostBlockSize * sizeof(float)); /* fill remaining channels with zeros */
 
-        multiConvPart_apply(pData->hMultiConv, ADR2D(pData->inputFrameTD), ADR2D(pData->outputFrameTD));
+        if(pData->enablePartitionedConv)
+            multiConvPart_apply(pData->hMultiConv, ADR2D(pData->inputFrameTD), ADR2D(pData->outputFrameTD));
+        else
+            multiConv_apply(pData->hMultiConv, ADR2D(pData->inputFrameTD), ADR2D(pData->outputFrameTD));
         
         n=0;
-        
+
+
+
+
         
 //        if (isPlaying){
 //
