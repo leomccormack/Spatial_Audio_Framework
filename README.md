@@ -12,7 +12,7 @@ The framework requires the following libraries:
 * Any Library/Libraries conforming to the [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 * (Optional) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
 
-The rationale for the former requirement is that the framework employs the use of BLAS/LAPACK routines for tackling all of the linear algebra operations, which are used quite prolifically throughout the code. Therefore, a performance library, which conforms to the BLAS/LAPACK standards, is required by most of the framework modules. In principle, any such library (or combination of libraries) may be employed for this task, and if you've worked with such libraries before, then you probably already know what to do. However, it is still generally recommended to use a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library, as this is the approach used by the developers. 
+The rationale for the former requirement is that the framework employs the use of BLAS/LAPACK routines for tackling all of the linear algebra operations, which are used quite prolifically throughout the code. Therefore, a performance library, which conforms to the BLAS/LAPACK standards, is required by most of the framework modules. In principle, any such library (or combination of libraries) may be employed for this task, and if you've worked with such libraries before, then you probably already know what to do. However, it is still generally recommended to use a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library, as this is the approach used by the developers; and the framework will also employ Intel MKL's FFT, which is pretty damn fast.
 
 In order to make this a painless endevour, detailed instructions regarding the acquisition and linking of this custom Intel MKL library have been tailored for specific operating systems and provided below. 
 
@@ -37,26 +37,26 @@ Spatial_Audio_Framework/dependencies/Win64/lib
 
 3. The required "dependencies/Win64/lib/**saf_mkl_custom.lib**" and "**saf_mkl_custom.dll**" files may be generated using Intel's custom dll builder. 
 
-First copy the included "dependencies/saf_mkl_list" file to this folder:
+4. First copy the included "dependencies/saf_mkl_list" file to this folder:
 
 ```
 C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
 ```
 
-Then enter the following commands into "x64 Developer Command Prompt for VS.exe" (admin rights required):
+5. Then enter the following commands into "x64 Developer Command Prompt for VS.exe" (admin rights required):
 
 ```
 cd /Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
 nmake intel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_mkl_list
 ```
 
-The generated "saf_mkl_custom.dll" file should be placed in a suitable system PATH folder, for example:
+6. The generated "saf_mkl_custom.dll" file should be placed in a suitable system PATH folder, for example:
 
 ```
 C:/Windows/System32
 ```
 
-4. Add "SAF_USE_INTEL_MKL" to your pre-processor definitions.
+7. Add "SAF_USE_INTEL_MKL" to your pre-processor definitions.
 
 
 ### MacOSX (x86_64) users 
@@ -78,13 +78,13 @@ Spatial_Audio_Framework/dependencies/MacOSX/lib
 
 3. By default, the framework will use Apple's Accelerate library for the BLAS/LAPACK routines. However, Mac users may still elect to use [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries), which is often faster than Accelerate. 
 
-The required "**saf_mkl_custom.dylib**" may be obtained by first placing the "dependencies/saf_mkl_list" file in:
+4. The required "**saf_mkl_custom.dylib**" may be obtained by first placing the "dependencies/saf_mkl_list" file in:
 
 ```
 /opt⁩/intel⁩/compilers_and_libraries/mac⁩/mkl⁩/tools⁩/builder⁩ 
 ```
 
-To generate and copy the library to a system path folder, use the following commands (root permissions required):
+5. To generate and copy the library to a system path folder, use the following commands (root permissions required):
 
 ```
 cd /opt⁩/intel⁩/compilers_and_libraries/mac⁩/mkl⁩/tools⁩/builder⁩
@@ -93,13 +93,13 @@ sudo cp saf_mkl_custom.dylib /usr/local/lib
 
 ```
 
-Then add the following linker flag to your project:
+6. Then add the following linker flag to your project:
 
 ```
 -L/usr/local/lib -lsaf_mkl_custom
 ```
 
-4. Add "SAF_USE_INTEL_MKL" to your pre-processor definitions.
+7. Add "SAF_USE_INTEL_MKL" to your pre-processor definitions.
 
 
 ### Linux (x86_64) users
@@ -119,15 +119,15 @@ Spatial_Audio_Framework/dependencies/Linux/lib
 
 2. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). 
 
-Linux users may link against a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library to fufil the BLAS/LAPACK requirement. Add the global pre-processor definition: "SAF_USE_INTEL_MKL". 
+3. The required "**saf_mkl_custom.so**" file may be generated using Intel's custom dll builder. 
 
-3. The required "**saf_mkl_custom.so**" may be obtained by first placing the "dependencies/saf_mkl_list" file in:
+4. First copy the included "dependencies/saf_mkl_list" file to this folder:
 
 ```
 /opt⁩/intel⁩/compilers_and_libraries/linux/mkl⁩/tools⁩/builder⁩ 
 ```
 
-To generate and copy this library to a system path folder, use the following commands (root permissions required):
+5. To generate and copy this library to a system path folder, use the following commands (root permissions required):
 
 ```
 cd /opt⁩/intel⁩/compilers_and_libraries/linux/mkl⁩/tools⁩/builder⁩
@@ -136,13 +136,13 @@ sudo cp saf_mkl_custom.so /usr/lib
 
 ```
 
-Then add the following linker flag to your project:
+6. Then add the following linker flag to your project:
 
 ```
 -L/usr/lib -lsaf_mkl_custom
 ```
 
-4. Add "SAF_USE_INTEL_MKL" to your pre-processor definitions.
+7. Add "SAF_USE_INTEL_MKL" to your pre-processor definitions.
 
 
 ## Enable SOFA support (Optional)
@@ -226,9 +226,9 @@ Many of these examples have also been integrated into VST audio plug-ins using t
 
 ## Developers
 
-* **Leo McCormack** - C programmer and algorithm designer (contact: leo.mccormack@aalto.fi)
-* **Symeon Delikaris-Manias** - algorithm designer
-* **Archontis Politis** - algorithm designer
+* **Leo McCormack** - C programmer and algorithm design (contact: leo.mccormack@aalto.fi)
+* **Symeon Delikaris-Manias** - algorithm design
+* **Archontis Politis** - algorithm design
 
 ## License
 

@@ -72,12 +72,14 @@ extern "C" {
  * This is a matrix convolver intended for block-by-block processing.
  *
  * Input Arguments:
- *     phMC     - & address of matrixConv handle
- *     hopSize  - hop size in samples.
- *     H        - time-domain filters; FLAT: nCHout x nCHin x length_h
- *     length_h - length of the filters
- *     nCHin    - number of input channels
- *     nCHout   - number of output channels
+ *     phMC        - & address of matrixConv handle
+ *     hopSize     - hop size in samples.
+ *     H           - time-domain filters; FLAT: nCHout x nCHin x length_h
+ *     length_h    - length of the filters
+ *     nCHin       - number of input channels
+ *     nCHout      - number of output channels
+ *     usePartFLAG - 0: normal fft-based convolution, 1: fft-based partitioned
+ *                   convolution
  */
 void matrixConv_create(/* Input Arguments */
                        void ** const phMC,
@@ -85,7 +87,8 @@ void matrixConv_create(/* Input Arguments */
                        float* H,
                        int length_h,
                        int nCHin,
-                       int nCHout);
+                       int nCHout,
+                       int usePartFLAG);
 
 /*
  * Function: matrixConv_destroy
@@ -116,6 +119,7 @@ void matrixConv_apply(void * const hMC,
                       float* outputSigs);
     
     
+#if 0 /* now merged together */
 /* ========================================================================== */
 /*                        Partitioned Matrix Convolver                        */
 /* ========================================================================== */
@@ -169,6 +173,7 @@ void matrixConvPart_destroy(/*Input Arguments*/
 void matrixConvPart_apply(void * const hMC,
                           float* inputSigs,
                           float* outputSigs);
+#endif
     
     
 /* ========================================================================== */
@@ -184,18 +189,21 @@ void matrixConvPart_apply(void * const hMC,
  * convolver.
  *
  * Input Arguments:
- *     phMC     - & address of multiConv handle
- *     hopSize  - hop size in samples.
- *     H        - time-domain filters; FLAT: nCH x length_h
- *     length_h - length of the filters
- *     nCH      - number of filters & input/output channels
+ *     phMC        - & address of multiConv handle
+ *     hopSize     - hop size in samples.
+ *     H           - time-domain filters; FLAT: nCH x length_h
+ *     length_h    - length of the filters
+ *     nCH         - number of filters & input/output channels
+ *     usePartFLAG - 0: normal fft-based convolution, 1: fft-based partitioned
+ *                   convolution
  */
 void multiConv_create(/* Input Arguments */
                       void ** const phMC,
                       int hopSize,
                       float* H,
                       int length_h,
-                      int nCH);
+                      int nCH,
+                      int usePartFLAG);
 
 /*
  * Function: multiConv_destroy
@@ -224,6 +232,7 @@ void multiConv_apply(void * const hMC,
                      float* outputSigs);
     
     
+#if 0 /* now merged together */
 /* ========================================================================== */
 /*                     Partitioned Multi-Channel Convolver                    */
 /* ========================================================================== */
@@ -275,7 +284,8 @@ void multiConvPart_destroy(/*Input Arguments*/
 void multiConvPart_apply(void * const hMC,
                          float* inputSigs,
                          float* outputSigs);
-
+#endif
+    
 
 #ifdef __cplusplus
 }/* extern "C" */

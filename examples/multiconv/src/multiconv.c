@@ -41,10 +41,12 @@ void multiconv_create
     pData->inputFrameTD = NULL;
     pData->outputFrameTD = NULL;
     pData->hMultiConv = NULL;
+    pData->filters = NULL;
+    pData->reInitFilters = 1;
     
     /* Default user parameters */
-    pData->numChannels = 1;
-    pData->enablePartitionedConv = 0;
+    pData->nInputChannels = 1;
+    pData->enablePartitionedConv = 1;
 }
 
 void multiconv_destroy
@@ -57,10 +59,7 @@ void multiconv_destroy
     if (pData != NULL) {
         free(pData->inputFrameTD);
         free(pData->outputFrameTD);
-        if(pData->enablePartitionedConv)
-            multiConvPart_destroy(&(pData->hMultiConv));
-        else
-            multiConv_destroy(&(pData->hMultiConv));
+        multiConv_destroy(&(pData->hMultiConv));
         free(pData);
         pData = NULL;
     }
@@ -74,34 +73,17 @@ void multiconv_init
 )
 {
     multiconv_data *pData = (multiconv_data*)(hMCnv);
-    const int length_h = 48000*13;//9000;
-    float* H; //[64][length_h];
     
-    
-    int i,j;
+    pData->host_fs = sampleRate;
     if(pData->hostBlockSize != hostBlockSize){
-        H = calloc1d(pData->numChannels*length_h,sizeof(float));
         pData->hostBlockSize = hostBlockSize;
         pData->inputFrameTD  = (float**)realloc2d((void**)pData->inputFrameTD, MAX_NUM_CHANNELS, hostBlockSize, sizeof(float));
         pData->outputFrameTD = (float**)realloc2d((void**)pData->outputFrameTD, MAX_NUM_CHANNELS, hostBlockSize, sizeof(float));
         memset(ADR2D(pData->inputFrameTD), 0, MAX_NUM_CHANNELS*hostBlockSize*sizeof(float));
-   
-//        for(i=0; i<64; i++)
-//            for(j=0; j<length_h; j++)
-//                H[i][j] =
-        if(pData->enablePartitionedConv){
-            multiConvPart_destroy(&(pData->hMultiConv));
-            multiConvPart_create(&(pData->hMultiConv), hostBlockSize, (float*)H, length_h, pData->numChannels);
-        }
-        else{
-            multiConv_destroy(&(pData->hMultiConv));
-            multiConv_create(&(pData->hMultiConv), hostBlockSize, (float*)H, length_h, pData->numChannels);
-        }
-        free(H);
+        pData->reInitFilters = 1;
     }
     
-    /* starting values */
-    
+    multiconv_checkReInit(hMCnv);
 } 
 
 
@@ -117,42 +99,35 @@ void multiconv_process
 )
 {
     multiconv_data *pData = (multiconv_data*)(hMCnv);
-    int i, j, n;
-    int numChannels;
+    int i;
+    int numChannels, nFilters;
  
-    if (nSamples == pData->hostBlockSize) {
+    multiconv_checkReInit(hMCnv);
+    
+    if (nSamples == pData->hostBlockSize && pData->reInitFilters == 0) {
         /* prep */
-        numChannels = pData->numChannels;
+        nFilters = pData->nfilters;
+        numChannels = pData->nInputChannels;
         
-//        /* Load time-domain data */
-//        for(i=0; i < MIN(numChannels, nInputs); i++)
-//            utility_svvcopy(inputs[i], pData->hostBlockSize, pData->inputFrameTD[i]);
-//        for(; i<numChannels; i++)
-//            memset(pData->inputFrameTD[i], 0, pData->hostBlockSize * sizeof(float)); /* fill remaining channels with zeros */
+        /* Load time-domain data */
+        for(i=0; i < MIN(MIN(nFilters,numChannels), nInputs); i++)
+            utility_svvcopy(inputs[i], pData->hostBlockSize, pData->inputFrameTD[i]);
+        for(; i<MIN(nFilters,numChannels); i++)
+            memset(pData->inputFrameTD[i], 0, pData->hostBlockSize * sizeof(float)); /* fill remaining channels with zeros */
 
-        if(pData->enablePartitionedConv)
-            multiConvPart_apply(pData->hMultiConv, ADR2D(pData->inputFrameTD), ADR2D(pData->outputFrameTD));
-        else
+        // COPY
+        for(i=1; i<nFilters ;i++)
+            memcpy(pData->inputFrameTD[i], pData->inputFrameTD[0], pData->hostBlockSize * sizeof(float));
+        
+        if(pData->hMultiConv != NULL){
             multiConv_apply(pData->hMultiConv, ADR2D(pData->inputFrameTD), ADR2D(pData->outputFrameTD));
+        }
         
-        n=0;
-
-
-
-
-        
-//        if (isPlaying){
-//
-//
-//        }
-//        else
-//            memset(pData->outputFrameTD, 0, MAX_NUM_CHANNELS*FRAME_SIZE*sizeof(float));
-//
-//        /* copy signals to output buffer */
-//        for (i = 0; i < MIN(numChannels, nOutputs); i++)
-//            utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
-//        for (; i < nOutputs; i++)
-//            memset(outputs[i], 0, FRAME_SIZE*sizeof(float));
+        /* copy signals to output buffer */
+        for (i = 0; i < MIN(64, nOutputs); i++)//MIN(MIN(nFilters,numChannels), nOutputs); i++)
+            utility_svvcopy(pData->outputFrameTD[i], pData->hostBlockSize, outputs[i]);
+        for (; i < nOutputs; i++)
+            memset(outputs[i], 0, pData->hostBlockSize*sizeof(float));
     }
     else{
 //        for (i = 0; i < nOutputs; i++)
@@ -161,4 +136,62 @@ void multiconv_process
 }
 
 
+/*sets*/
+
+void multiconv_refreshParams(void* const hMCnv)
+{
+    multiconv_data *pData = (multiconv_data*)(hMCnv);
+    pData->reInitFilters = 1;
+}
+
+void multiconv_checkReInit(void* const hMCnv)
+{
+    multiconv_data *pData = (multiconv_data*)(hMCnv);
+    
+    /* reinitialise if needed */
+    if ((pData->reInitFilters == 1) && (pData->filters !=NULL)) {
+        pData->reInitFilters = 2;
+        multiConv_destroy(&(pData->hMultiConv));
+        multiConv_create(&(pData->hMultiConv), pData->hostBlockSize, pData->filters, pData->filter_length, pData->nfilters, pData->enablePartitionedConv);
+        pData->reInitFilters = 0;
+    }
+}
+
+
+void multiconv_setFilters
+(
+    void* const hMCnv,
+    const float** H,
+    int numChannels,
+    int numSamples,
+    int sampleRate
+)
+{
+    multiconv_data *pData = (multiconv_data*)(hMCnv);
+    int i;
+    
+    pData->filters = realloc1d(pData->filters, numChannels*numSamples*sizeof(float));
+    pData->nfilters = numChannels;
+    pData->filter_length = numSamples;
+    for(i=0; i<numChannels; i++)
+        memcpy(&(pData->filters[i*numSamples]), H[i], numSamples*sizeof(float));
+    pData->filter_fs = sampleRate;
+    pData->reInitFilters = 1;
+}
+
+void multiconv_setEnablePart(void* const hMCnv, int newState)
+{
+    multiconv_data *pData = (multiconv_data*)(hMCnv);
+    if(pData->enablePartitionedConv!=newState){
+        pData->enablePartitionedConv = newState;
+        pData->reInitFilters = 1;
+    }
+}
+
 /*gets*/
+
+int multiconv_getEnablePart(void* const hMCnv)
+{
+    multiconv_data *pData = (multiconv_data*)(hMCnv);
+    return pData->enablePartitionedConv;
+}

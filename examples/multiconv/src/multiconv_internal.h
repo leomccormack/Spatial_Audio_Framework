@@ -63,10 +63,16 @@ typedef struct _multiconv
     
     /* internal */
     void* hMultiConv;
-    int hostBlockSize;
+    int hostBlockSize; 
+    float* filters;   /* FLAT: nfilters x filter_length */
+    int nfilters;
+    int filter_length;
+    int filter_fs;
+    int host_fs;
+    int reInitFilters;
     
     /* user parameters */
-    int numChannels;
+    int nInputChannels;
     int enablePartitionedConv;
     
 } multiconv_data;

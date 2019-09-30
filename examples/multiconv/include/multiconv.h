@@ -102,13 +102,27 @@ void multiconv_process(void* const hMCnv,
 /* ========================================================================== */
 /*                                Set Functions                               */
 /* ========================================================================== */
+    
+void multiconv_refreshParams(void* const hMCnv);
 
+void multiconv_checkReInit(void* const hMCnv);
 
+void multiconv_setFilters(void* const hMCnv,
+                          const float** H,
+                          int numChannels,
+                          int numSamples,
+                          int sampleRate);
+    
+void multiconv_setEnablePart(void* const hMCnv, int newState);
+    
 
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
  
+int multiconv_getEnablePart(void* const hMCnv);
+    
+    
     
 #ifdef __cplusplus
 } /* extern "C" { */
