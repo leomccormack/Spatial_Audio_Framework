@@ -60,8 +60,8 @@ extern "C" {
 /* ========================================================================== */
 
 /*
- * Function: matrixConv_create
- * ---------------------------
+ * Function: saf_matrixConv_create
+ * -------------------------------
  * Creates an instance of matrixConv
  * This is a matrix convolver intended for block-by-block processing.
  *
@@ -75,29 +75,29 @@ extern "C" {
  *     usePartFLAG - 0: normal fft-based convolution, 1: fft-based partitioned
  *                   convolution
  */
-void matrixConv_create(/* Input Arguments */
-                       void ** const phMC,
-                       int hopSize,
-                       float* H,
-                       int length_h,
-                       int nCHin,
-                       int nCHout,
-                       int usePartFLAG);
+void saf_matrixConv_create(/* Input Arguments */
+                           void ** const phMC,
+                           int hopSize,
+                           float* H,
+                           int length_h,
+                           int nCHin,
+                           int nCHout,
+                           int usePartFLAG);
 
 /*
- * Function: matrixConv_destroy
- * ----------------------------
+ * Function: saf_matrixConv_destroy
+ * --------------------------------
  * Destroys an instance of matrixConv
  *
  * Input Arguments:
  *     phMC     - & address of matrixConv handle
  */
-void matrixConv_destroy(/*Input Arguments*/
-                        void ** const phMC);
+void saf_matrixConv_destroy(/*Input Arguments*/
+                            void ** const phMC);
 
 /*
- * Function: matrixConv_apply
- * --------------------------
+ * Function: saf_matrixConv_apply
+ * ------------------------------
  * Performs the matrix convolution.
  * Note: if the number of input+output channels, the filters, or the hopsize
  * change: simply destroy and re-create the matrixConv instance
@@ -108,9 +108,9 @@ void matrixConv_destroy(/*Input Arguments*/
  * Output Arguments:
  *     outputSigs - output signals; FLAT: nCHout x hopSize
  */
-void matrixConv_apply(void * const hMC,
-                      float* inputSigs,
-                      float* outputSigs);
+void saf_matrixConv_apply(void * const hMC,
+                          float* inputSigs,
+                          float* outputSigs);
     
     
 /* ========================================================================== */
@@ -118,8 +118,8 @@ void matrixConv_apply(void * const hMC,
 /* ========================================================================== */
 
 /*
- * Function: multiConv_create
- * --------------------------
+ * Function: saf_multiConv_create
+ * ------------------------------
  * Creates an instance of multiConv
  * This is a multi-channel convolver intended for block-by-block processing.
  * Note: nCH can just be 1, in which case this is simply a single-channel
@@ -134,28 +134,28 @@ void matrixConv_apply(void * const hMC,
  *     usePartFLAG - 0: normal fft-based convolution, 1: fft-based partitioned
  *                   convolution
  */
-void multiConv_create(/* Input Arguments */
-                      void ** const phMC,
-                      int hopSize,
-                      float* H,
-                      int length_h,
-                      int nCH,
-                      int usePartFLAG);
+void saf_multiConv_create(/* Input Arguments */
+                          void ** const phMC,
+                          int hopSize,
+                          float* H,
+                          int length_h,
+                          int nCH,
+                          int usePartFLAG);
 
 /*
- * Function: multiConv_destroy
- * ---------------------------
+ * Function: saf_multiConv_destroy
+ * -------------------------------
  * Destroys an instance of multiConv
  *
  * Input Arguments:
  *     phMC     - & address of multiConv handle
  */
-void multiConv_destroy(/*Input Arguments*/
-                       void ** const phMC);
+void saf_multiConv_destroy(/*Input Arguments*/
+                           void ** const phMC);
 
 /*
- * Function: multiConv_apply
- * -------------------------
+ * Function: saf_multiConv_apply
+ * -----------------------------
  * Performs the multi-channel convolution
  *
  * Input Arguments:
@@ -164,9 +164,9 @@ void multiConv_destroy(/*Input Arguments*/
  * Output Arguments:
  *     outputSigs - output signals; FLAT: nCH x hopSize
  */
-void multiConv_apply(void * const hMC,
-                     float* inputSigs,
-                     float* outputSigs);
+void saf_multiConv_apply(void * const hMC,
+                         float* inputSigs,
+                         float* outputSigs);
     
 
 #ifdef __cplusplus

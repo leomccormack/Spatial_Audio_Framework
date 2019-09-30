@@ -60,9 +60,10 @@ void multiconv_destroy
     multiconv_data *pData = (multiconv_data*)(*phMCnv);
     
     if (pData != NULL) {
-        free(pData->inputFrameTD);
-        free(pData->outputFrameTD);
-        multiConv_destroy(&(pData->hMultiConv));
+        free2d((void***)&(pData->inputFrameTD));
+        free2d((void***)&(pData->outputFrameTD));
+        free1d((void**)&(pData->filters));
+        saf_multiConv_destroy(&(pData->hMultiConv));
         free(pData);
         pData = NULL;
     }
@@ -119,7 +120,7 @@ void multiconv_process
  
         /* Apply convolution */
         if(pData->hMultiConv != NULL)
-            multiConv_apply(pData->hMultiConv, ADR2D(pData->inputFrameTD), ADR2D(pData->outputFrameTD));
+            saf_multiConv_apply(pData->hMultiConv, ADR2D(pData->inputFrameTD), ADR2D(pData->outputFrameTD));
         else
             memcpy(ADR2D(pData->outputFrameTD), ADR2D(pData->inputFrameTD), MAX(nFilters,numChannels) * (pData->hostBlockSize)*sizeof(float));
         
@@ -151,12 +152,11 @@ void multiconv_checkReInit(void* const hMCnv)
     /* reinitialise if needed */
     if ((pData->reInitFilters == 1) && (pData->filters !=NULL)) {
         pData->reInitFilters = 2;
-        multiConv_destroy(&(pData->hMultiConv));
-        multiConv_create(&(pData->hMultiConv), pData->hostBlockSize, pData->filters, pData->filter_length, pData->nfilters, pData->enablePartitionedConv);
+        saf_multiConv_destroy(&(pData->hMultiConv));
+        saf_multiConv_create(&(pData->hMultiConv), pData->hostBlockSize, pData->filters, pData->filter_length, pData->nfilters, pData->enablePartitionedConv);
         pData->reInitFilters = 0;
     }
 }
-
 
 void multiconv_setFilters
 (

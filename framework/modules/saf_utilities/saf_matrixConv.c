@@ -47,7 +47,7 @@ typedef struct _safMatConv_data {
     
 }safMatConv_data;
  
-void matrixConv_create
+void saf_matrixConv_create
 (
     void ** const phMC,
     int hopSize,
@@ -68,6 +68,8 @@ void matrixConv_create
     h->nCHin = nCHin;
     h->nCHout = nCHout;
     h->usePartFLAG = usePartFLAG;
+    if(hopSize>length_h && h->usePartFLAG)
+        h->usePartFLAG = 0; /* no benefit in partitioning in this case */
     
     if(!h->usePartFLAG){
         /* intialise non-partitioned convolution mode */
@@ -128,7 +130,7 @@ void matrixConv_create
     }
 }
 
-void matrixConv_destroy
+void saf_matrixConv_destroy
 (
     void ** const phMC
 )
@@ -160,7 +162,7 @@ void matrixConv_destroy
     }
 }
 
-void matrixConv_apply
+void saf_matrixConv_apply
 (
     void * const hMC,
     float* inputSig,
@@ -244,7 +246,7 @@ typedef struct _safMulConv_data {
     
 }safMulConv_data;
 
-void multiConv_create
+void saf_multiConv_create
 (
     void ** const phMC,
     int hopSize,
@@ -263,6 +265,8 @@ void multiConv_create
     h->length_h = length_h;
     h->nCH = nCH;
     h->usePartFLAG = usePartFLAG;
+    if(hopSize>length_h && h->usePartFLAG)
+        h->usePartFLAG = 0; /* no benefit in partitioning in this case */
     
     if(!h->usePartFLAG){
         /* intialise non-partitioned convolution mode */
@@ -317,7 +321,7 @@ void multiConv_create
     }
 }
 
-void multiConv_destroy
+void saf_multiConv_destroy
 (
     void ** const phMC
 )
@@ -344,7 +348,7 @@ void multiConv_destroy
     }
 }
 
-void multiConv_apply
+void saf_multiConv_apply
 (
     void * const hMC,
     float* inputSig,
