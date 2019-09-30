@@ -800,6 +800,7 @@ void generatePWDmap(/* Input arguments */
                     int nGrid_dirs,
                     /* Output arguments */
                     float* pmap);
+    
 /*
  * Function: generateMVDRmap
  * -------------------------
@@ -870,7 +871,7 @@ void generateCroPaCLCMVmap(/* Input arguments */
                            float lambda,
                            /* Output arguments */
                            float* pmap);
-    
+
 /*
  * Function: generateMUSICmap
  * --------------------------
@@ -1053,7 +1054,7 @@ void bessel_jn(/* Input arguments */
                int* maxN,
                double* j_n,
                double* dj_n);
-    
+
 /*
  * Function: bessel_in
  * -------------------
@@ -1105,7 +1106,7 @@ void bessel_yn(/* Input arguments */
                int* maxN,
                double* y_n,
                double* dy_n);
-    
+
 /*
  * Function: bessel_kn
  * -------------------
@@ -1183,8 +1184,8 @@ void hankel_hn2(/* Input arguments */
                 int* maxN,
                 double_complex* h_n2,
                 double_complex* dh_n2);
-    
-    
+
+
 /* ========================================================================== */
 /*              Microphone/Hydrophone array processing functions              */
 /* ========================================================================== */

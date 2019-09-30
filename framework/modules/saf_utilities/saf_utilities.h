@@ -87,7 +87,6 @@ extern "C" {
 #endif
 #define SAF_ISPOW2(x) (((x & ~(x-1))==x) ? x : 0);
  
- 
     
 /* ========================================================================== */
 /*                       Resources and Utility Headers                        */

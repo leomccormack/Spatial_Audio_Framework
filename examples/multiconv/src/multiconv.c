@@ -43,9 +43,12 @@ void multiconv_create
     pData->hMultiConv = NULL;
     pData->filters = NULL;
     pData->reInitFilters = 1;
+    pData->nfilters = 0;
+    pData->filter_length = 0;
+    pData->filter_fs = 0;
     
     /* Default user parameters */
-    pData->nInputChannels = 1;
+    pData->nChannels = 1;
     pData->enablePartitionedConv = 1;
 }
 
@@ -94,8 +97,7 @@ void multiconv_process
     float ** const outputs,
     int            nInputs,
     int            nOutputs,
-    int            nSamples,
-    int            isPlaying
+    int            nSamples
 )
 {
     multiconv_data *pData = (multiconv_data*)(hMCnv);
@@ -107,31 +109,29 @@ void multiconv_process
     if (nSamples == pData->hostBlockSize && pData->reInitFilters == 0) {
         /* prep */
         nFilters = pData->nfilters;
-        numChannels = pData->nInputChannels;
+        numChannels = pData->nChannels;
         
         /* Load time-domain data */
         for(i=0; i < MIN(MIN(nFilters,numChannels), nInputs); i++)
             utility_svvcopy(inputs[i], pData->hostBlockSize, pData->inputFrameTD[i]);
-        for(; i<MIN(nFilters,numChannels); i++)
+        for(; i<MAX(nFilters,numChannels); i++)
             memset(pData->inputFrameTD[i], 0, pData->hostBlockSize * sizeof(float)); /* fill remaining channels with zeros */
-
-        // COPY
-        for(i=1; i<nFilters ;i++)
-            memcpy(pData->inputFrameTD[i], pData->inputFrameTD[0], pData->hostBlockSize * sizeof(float));
-        
-        if(pData->hMultiConv != NULL){
+ 
+        /* Apply convolution */
+        if(pData->hMultiConv != NULL)
             multiConv_apply(pData->hMultiConv, ADR2D(pData->inputFrameTD), ADR2D(pData->outputFrameTD));
-        }
+        else
+            memcpy(ADR2D(pData->outputFrameTD), ADR2D(pData->inputFrameTD), MAX(nFilters,numChannels) * (pData->hostBlockSize)*sizeof(float));
         
         /* copy signals to output buffer */
-        for (i = 0; i < MIN(64, nOutputs); i++)//MIN(MIN(nFilters,numChannels), nOutputs); i++)
+        for (i = 0; i < MIN(MAX(nFilters,numChannels), nOutputs); i++)
             utility_svvcopy(pData->outputFrameTD[i], pData->hostBlockSize, outputs[i]);
         for (; i < nOutputs; i++)
             memset(outputs[i], 0, pData->hostBlockSize*sizeof(float));
     }
     else{
-//        for (i = 0; i < nOutputs; i++)
-//            memset(outputs[i], 0, FRAME_SIZE*sizeof(float));
+        for (i = 0; i < nOutputs; i++)
+            memset(outputs[i], 0, nSamples*sizeof(float));
     }
 }
 
@@ -188,10 +188,52 @@ void multiconv_setEnablePart(void* const hMCnv, int newState)
     }
 }
 
+void multiconv_setNumChannels(void* const hMCnv, int newValue)
+{
+    multiconv_data *pData = (multiconv_data*)(hMCnv);
+    pData->nChannels = CLAMP(newValue, 1, MULTICONV_MAX_NUM_CHANNELS);
+}
+
 /*gets*/
 
 int multiconv_getEnablePart(void* const hMCnv)
 {
     multiconv_data *pData = (multiconv_data*)(hMCnv);
     return pData->enablePartitionedConv;
+}
+
+int multiconv_getNumChannels(void* const hMCnv)
+{
+    multiconv_data *pData = (multiconv_data*)(hMCnv);
+    return pData->nChannels;
+}
+
+int multiconv_getHostBlockSize(void* const hMCnv)
+{
+    multiconv_data *pData = (multiconv_data*)(hMCnv);
+    return pData->hostBlockSize;
+}
+
+int multiconv_getNfilters(void* const hMCnv)
+{
+    multiconv_data *pData = (multiconv_data*)(hMCnv);
+    return pData->nfilters;
+}
+
+int multiconv_getFilterLength(void* const hMCnv)
+{
+    multiconv_data *pData = (multiconv_data*)(hMCnv);
+    return pData->filter_length;
+}
+
+int multiconv_getFilterFs(void* const hMCnv)
+{
+    multiconv_data *pData = (multiconv_data*)(hMCnv);
+    return pData->filter_fs;
+}
+
+int multiconv_getHostFs(void* const hMCnv)
+{
+    multiconv_data *pData = (multiconv_data*)(hMCnv);
+    return pData->host_fs;
 }

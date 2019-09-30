@@ -72,7 +72,7 @@ typedef struct _multiconv
     int reInitFilters;
     
     /* user parameters */
-    int nInputChannels;
+    int nChannels;
     int enablePartitionedConv;
     
 } multiconv_data;

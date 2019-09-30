@@ -47,18 +47,12 @@ extern "C" {
  *         x: nInputChannels  x blockSize
  *         H: nOutputChannels x nInputChannels x filterLength
  *
- *   Matrix Convolver Partitioned
- *     same as "Matrix Convolver", but with partitioned convolution
- *
  *   Multi Convolver
  *     y = H * x; looped over channels, applied block-by-block
  *       where
  *         y: nChannels x blockSize
  *         x: nChannels x blockSize
  *         H: nChannels x filterLength
- *
- *   Multi Convolver Partitioned
- *     same as "Multi Convolver", but with partitioned convolution
  */
 
 /* ========================================================================== */
@@ -106,7 +100,7 @@ void matrixConv_destroy(/*Input Arguments*/
  * --------------------------
  * Performs the matrix convolution.
  * Note: if the number of input+output channels, the filters, or the hopsize
- * change: simply destroy and re-create the matrixConv handle
+ * change: simply destroy and re-create the matrixConv instance
  *
  * Input Arguments:
  *     hMC        - matrixConv handle
@@ -117,63 +111,6 @@ void matrixConv_destroy(/*Input Arguments*/
 void matrixConv_apply(void * const hMC,
                       float* inputSigs,
                       float* outputSigs);
-    
-    
-#if 0 /* now merged together */
-/* ========================================================================== */
-/*                        Partitioned Matrix Convolver                        */
-/* ========================================================================== */
-    
-/*
- * Function: matrixConvPart_create
- * -------------------------------
- * Creates an instance of matrixConvPart
- * This is a matrix convolver intended for block-by-block processing.
- *
- * Input Arguments:
- *     phMC     - & address of matrixConvPart handle
- *     hopSize  - hop size in samples.
- *     H        - time-domain filters; FLAT: nCHout x nCHin x length_h
- *     length_h - length of the filters
- *     nCHin    - number of input channels
- *     nCHout   - number of output channels
- */
-void matrixConvPart_create(/* Input Arguments */
-                           void ** const phMC,
-                           int hopSize,
-                           float* H,
-                           int length_h,
-                           int nCHin,
-                           int nCHout);
-
-/*
- * Function: matrixConvPart_destroy
- * --------------------------------
- * Destroys an instance of matrixConvPart
- *
- * Input Arguments:
- *     phMC     - & address of matrixConvPart handle
- */
-void matrixConvPart_destroy(/*Input Arguments*/
-                            void ** const phMC);
-
-/*
- * Function: matrixConvPart_apply
- * ------------------------------
- * Performs the matrix convolution (with partitioned convolution)
- * Note: if the number of input+output channels, the filters, or the hopsize
- * change: simply destroy and re-create the matrixConvPart handle
- *
- * Input Arguments:
- *     hMC        - matrixConvPart handle
- *     inputSigs  - input signals;  FLAT: nCHin  x hopSize
- * Output Arguments:
- *     outputSigs - output signals; FLAT: nCHout x hopSize
- */
-void matrixConvPart_apply(void * const hMC,
-                          float* inputSigs,
-                          float* outputSigs);
-#endif
     
     
 /* ========================================================================== */
@@ -230,61 +167,6 @@ void multiConv_destroy(/*Input Arguments*/
 void multiConv_apply(void * const hMC,
                      float* inputSigs,
                      float* outputSigs);
-    
-    
-#if 0 /* now merged together */
-/* ========================================================================== */
-/*                     Partitioned Multi-Channel Convolver                    */
-/* ========================================================================== */
-
-/*
- * Function: multiConvPart_create
- * ------------------------------
- * Creates an instance of multiConvPart
- * This is a multi-channel convolver intended for block-by-block processing.
- * Note: nCH can just be 1, in which case this is simply a single-channel
- * partitioned convolver.
- *
- * Input Arguments:
- *     phMC     - & address of multiConvPart handle
- *     hopSize  - hop size in samples.
- *     H        - time-domain filters; FLAT: nCH x length_h
- *     length_h - length of the filters
- *     nCH      - number of filters & input/output channels
- */
-void multiConvPart_create(/* Input Arguments */
-                          void ** const phMC,
-                          int hopSize,
-                          float* H,
-                          int length_h,
-                          int nCH);
-
-/*
- * Function: multiConvPart_destroy
- * -------------------------------
- * Destroys an instance of multiConvPart
- *
- * Input Arguments:
- *     phMC     - & address of multiConvPart handle
- */
-void multiConvPart_destroy(/*Input Arguments*/
-                           void ** const phMC);
-
-/*
- * Function: multiConvPart_apply
- * -----------------------------
- * Performs the multi-channel convolution (with partitioned convolution)
- *
- * Input Arguments:
- *     hMC        - multiConvPart handle
- *     inputSigs  - input signals;  FLAT: nCH x hopSize
- * Output Arguments:
- *     outputSigs - output signals; FLAT: nCH x hopSize
- */
-void multiConvPart_apply(void * const hMC,
-                         float* inputSigs,
-                         float* outputSigs);
-#endif
     
 
 #ifdef __cplusplus

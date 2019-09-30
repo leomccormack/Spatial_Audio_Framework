@@ -73,7 +73,7 @@ extern "C" {
  *                       the most reasonable. Interestingly, prior to its
  *                       proposal, we had almost 40 years! of people insisting
  *                       Ambisonics could only work for uniformly distributed
- *                       loudspeaker arrays... So thank you Franz & Frank!
+ *                       loudspeaker arrays... So thank you Franz & Matthias!
  *
  * [1] Zotter F, Pomberger H, Noisternig M. Energy- preserving ambisonic
  *     decoding. Acta Acustica united with Acustica. 2012 Jan 1; 98(1):37-47.

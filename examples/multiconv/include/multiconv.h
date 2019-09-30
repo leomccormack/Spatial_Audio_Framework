@@ -95,8 +95,7 @@ void multiconv_process(void* const hMCnv,
                        float** const outputs,
                        int nInputs,
                        int nOutputs,
-                       int nSamples,
-                       int isPlaying);
+                       int nSamples);
 
     
 /* ========================================================================== */
@@ -115,6 +114,8 @@ void multiconv_setFilters(void* const hMCnv,
     
 void multiconv_setEnablePart(void* const hMCnv, int newState);
     
+void multiconv_setNumChannels(void* const hMCnv, int newValue);
+    
 
 /* ========================================================================== */
 /*                                Get Functions                               */
@@ -122,6 +123,17 @@ void multiconv_setEnablePart(void* const hMCnv, int newState);
  
 int multiconv_getEnablePart(void* const hMCnv);
     
+int multiconv_getNumChannels(void* const hMCnv);
+    
+int multiconv_getHostBlockSize(void* const hMCnv);
+    
+int multiconv_getNfilters(void* const hMCnv);
+    
+int multiconv_getFilterLength(void* const hMCnv);
+    
+int multiconv_getFilterFs(void* const hMCnv);
+    
+int multiconv_getHostFs(void* const hMCnv);
     
     
 #ifdef __cplusplus
