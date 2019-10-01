@@ -217,6 +217,8 @@ Many examples have been included in the repository, which may also serve as a st
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file.
 * **dirass** - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction [9].
 * **panner** - a frequency-dependent VBAP panner [10], which allows for more consistent source loudness as a function of the room [11].
+* **matrixconv** - a matrix convolver with an optional partitioned convolution mode. 
+* **multiconv** - a multi-channel convolver with an optional partitioned convolution mode. 
 * **powermap** - sound-field visualiser using beamformers (PWD, MVDR) or sub-space methods (MUSIC).
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles [12].
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors; as proposed in [8].
