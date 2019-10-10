@@ -35,6 +35,7 @@ xcopy saf_mkl_list C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\w
 ```
 cd /Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
 nmake intel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_mkl_list
+
 xcopy saf_mkl_custom.dll C:\Windows\System32 /R
 xcopy saf_mkl_custom.lib C:\Users\[YOUR WORKING DIRECTORY]\Spatial_Audio_Framework\dependencies\Win64\lib /R
 ```
@@ -44,11 +45,14 @@ xcopy saf_mkl_custom.lib C:\Users\[YOUR WORKING DIRECTORY]\Spatial_Audio_Framewo
 ```
 cd /Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
 nmake intel64 interface=lp64 threading=parallel name=saf_mkl_custom export=saf_mkl_list
+
 xcopy saf_mkl_custom.dll C:\Windows\System32 /R
 xcopy saf_mkl_custom.lib C:\Users\[YOUR WORKING DIRECTORY]\Spatial_Audio_Framework\dependencies\Win64\lib /R
+
 cd C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/compiler/lib/intel64/ 
 xcopy libiomp5md.lib C:\Users\[YOUR WORKING DIRECTORY]\Spatial_Audio_Framework\dependencies\Win64\lib /R
-cd C:\Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/redist/intel64/compiler
+
+cd C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/redist/intel64/compiler
 xcopy libiomp5md.dll C:\Windows\System32 /R
 ```
 
@@ -104,6 +108,7 @@ sudo cp saf_mkl_custom.dylib /usr/local/lib
 ```
 cd /opt/intel/compilers_and_libraries/mac/mkl/tools/builder
 sudo make intel64 interface=lp64 threading=parallel name=libsaf_mkl_custom export=saf_mkl_list
+
 sudo cp saf_mkl_custom.dylib /usr/local/lib
 sudo cp /opt/intel/compilers_and_libraries/mac/compiler/lib/libiomp5.dylib /usr/local/lib
 ```
