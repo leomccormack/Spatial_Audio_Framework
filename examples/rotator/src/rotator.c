@@ -227,6 +227,7 @@ void rotator_process
                     utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
                 for (; i < nOutputs; i++)
                     memset(outputs[i], 0, FRAME_SIZE*sizeof(float));
+                break;
             case CH_FUMA: /* only for first-order */
                 if(nOutputs>=4){
                     utility_svvcopy(pData->outputFrameTD[0], FRAME_SIZE, outputs[0]);
