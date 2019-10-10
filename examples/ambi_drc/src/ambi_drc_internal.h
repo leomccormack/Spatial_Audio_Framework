@@ -43,7 +43,6 @@
 #include <math.h>
 #include <string.h>
 #include "ambi_drc.h" 
-#define SAF_ENABLE_AFSTFT
 #include "saf.h"
 
 #ifdef __cplusplus

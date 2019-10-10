@@ -18,7 +18,9 @@
 ; notice or  any  other  notice   embedded  in  Materials  by  Intel  or Intel's
 ; suppliers or licensors in any way.
 ;===============================================================================
-
+MKL_Set_Num_Threads
+MKL_Set_Dynamic
+MKL_Get_Max_Threads
 cblas_sgemm
 cblas_cgemm
 cblas_zgemm

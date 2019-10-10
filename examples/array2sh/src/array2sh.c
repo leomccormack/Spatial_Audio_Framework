@@ -29,7 +29,7 @@
  * or cylindrical arrays, which have phase-matched sensors.
  *
  * Dependencies:
- *     saf_utilities, afSTFTlib, saf_sh
+ *     saf_utilities, afSTFTlib, saf_sh, saf_hoa, saf_vbap
  * Author, date created:
  *     Leo McCormack, 13.09.2017
  *
@@ -62,6 +62,7 @@ void array2sh_create
     pData->maxFreq = 20e3f;
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
     array2sh_initArray(arraySpecs, PRESET_DEFAULT, &(pData->order), 1);
+    pData->enableDiffEQpastAliasing = 1;
     
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
@@ -78,7 +79,6 @@ void array2sh_create
     pData->tempHopFrameTD_in = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));
     pData->tempHopFrameTD_out = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));
     pData->reinitTFTFLAG = 1;
-    pData->applyDiffEQFLAG = 1;
     
     /* internal */
     pData->reinitSHTmatrixFLAG = 1;
@@ -236,8 +236,8 @@ void array2sh_process
             for(band = 0; band < HYBRID_BANDS; band++) {
                 if(pData->freqVector[band] < maxFreq){
                     for (ch = 0; ch < nSH; ch++) {
-                        pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->SHframeTF[band][ch][t]);
-                        pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->SHframeTF[band][ch][t]);
+                        pData->STFTOutputFrameTF[ch].re[band] = gain_lin*crealf(pData->SHframeTF[band][ch][t]);
+                        pData->STFTOutputFrameTF[ch].im[band] = gain_lin*cimagf(pData->SHframeTF[band][ch][t]);
                     }
                 }
                 else{
@@ -304,8 +304,7 @@ void array2sh_refreshSettings(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     pData->reinitTFTFLAG = 1;
-    pData->reinitSHTmatrixFLAG = 1; 
-    pData->applyDiffEQFLAG = 1;
+    pData->reinitSHTmatrixFLAG = 1;
 }
 
 void array2sh_checkReInit(void* const hA2sh)
@@ -331,11 +330,6 @@ void array2sh_checkReInit(void* const hA2sh)
         array2sh_evaluateSHTfilters(hA2sh);
         pData->recalcEvalFLAG = 0;
     }
-    if (pData->applyDiffEQFLAG == 1) {
-        pData->applyDiffEQFLAG = 2;
-        array2sh_apply_diff_EQ(hA2sh);
-        pData->applyDiffEQFLAG = 0;
-    }
 }
 
 void array2sh_setEncodingOrder(void* const hA2sh, int newOrder)
@@ -358,10 +352,13 @@ void array2sh_evaluateFilters(void* const hA2sh)
     pData->recalcEvalFLAG = 1;
 }
 
-void array2sh_applyDiffEQpastAliasing(void* const hA2sh)
+void array2sh_setDiffEQpastAliasing(void* const hA2sh, int newState)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->applyDiffEQFLAG = 1;
+    if(pData->enableDiffEQpastAliasing != newState){
+        pData->enableDiffEQpastAliasing = newState;
+        pData->reinitSHTmatrixFLAG = 1;
+    }
 }
 
 void array2sh_setPreset(void* const hA2sh, int preset)
@@ -524,6 +521,12 @@ int array2sh_getEvalReady(void* const hA2sh)
     }
     else
         return 0;
+}
+
+int array2sh_getDiffEQpastAliasing(void* const hA2sh)
+{
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    return pData->enableDiffEQpastAliasing;
 }
 
 int array2sh_getIsEvalValid(void* const hA2sh)

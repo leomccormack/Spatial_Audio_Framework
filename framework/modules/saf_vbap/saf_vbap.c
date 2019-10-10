@@ -26,6 +26,8 @@
  *     Leo McCormack, 02.10.2017
  */
 
+#ifdef SAF_ENABLE_VBAP
+
 #include "saf_vbap.h"
 #include "saf_vbap_internal.h" 
 
@@ -476,3 +478,10 @@ void getPvalues
         pValues[i] = (p0-2.0f)*sqrtf(DTT)+2.0f;
     } 
 }
+
+#else
+/* To conform to the ISO standard, a '.c' file should not be empty. 
+ * This typedef is a lie: */
+typedef int saf_vbap_is_empty;
+
+#endif /* SAF_ENABLE_VBAP */

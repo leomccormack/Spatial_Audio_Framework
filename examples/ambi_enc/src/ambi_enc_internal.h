@@ -32,7 +32,6 @@
 #include <math.h>
 #include <string.h>
 #include "ambi_enc.h"
-#define SAF_ENABLE_SH /* for spherical harmonic weights */
 #include "saf.h"
 
 #ifdef __cplusplus

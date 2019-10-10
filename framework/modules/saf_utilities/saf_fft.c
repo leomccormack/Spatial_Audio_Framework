@@ -172,7 +172,7 @@ void safFFT_backward
 #if defined(__ACCELERATE__)
     if(!h->useKissFFT_flag){
         h->VDSP_split.realp[0] = crealf(inputFD[0]);
-        h->VDSP_split.imagp[0] = crealf(inputFD[h->N/2]); /* ... */
+        h->VDSP_split.imagp[0] = crealf(inputFD[h->N/2]);
         for(i=1; i<h->N/2; i++){
             h->VDSP_split.realp[i] = crealf(inputFD[i]);
             h->VDSP_split.imagp[i] = cimagf(inputFD[i]);

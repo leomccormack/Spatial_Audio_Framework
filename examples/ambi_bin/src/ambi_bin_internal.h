@@ -22,7 +22,7 @@
  * may also accomodate custom HRIR sets via the SOFA standard.
  *
  * Dependencies:
- *     saf_utilities, afSTFTlib, saf_hrir, saf_sh
+ *     saf_utilities, afSTFTlib, saf_hrir, saf_vbap, saf_sh, saf_sofa_reader
  * Author, date created:
  *     Leo McCormack, 14.04.2018
  */
@@ -34,12 +34,6 @@
 #include <math.h>
 #include <string.h>
 #include "ambi_bin.h" 
-#define SAF_ENABLE_AFSTFT /* for time-frequency transform */
-#define SAF_ENABLE_HOA    /* for ambisonic decoding matrices */
-#define SAF_ENABLE_SH     /* for spherical harmonic weights */
-#define SAF_ENABLE_HRIR   /* for HRIR->HRTF filterbank conversion*/
-#define SAF_ENABLE_VBAP   /* for interpolation table */
-#define SAF_ENABLE_SOFA_READER
 #include "saf.h"
 
 #ifdef __cplusplus

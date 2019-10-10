@@ -73,11 +73,11 @@
  * SAF Module: afSTFT
  * ------------------
  * The Alias-free STFT implementation by Juha Vilkamo, with some minor changes.
- * The Orginal source code can be found here:
+ * The Original source code can be found here:
  *     https://github.com/jvilkamo/afSTFT
  *
  * Enable instructions:
- *     Place: #define SAF_ENABLE_AFSTFT, before: #include "saf.h"
+ *     Add this pre-processor definition to your project: SAF_ENABLE_AFSTFT
  * Dependencies:
  *     saf_utilities
  */
@@ -92,7 +92,7 @@
  * implementation of the framework described in [1].
  *
  * Enable instructions:
- *     Place: #define SAF_ENABLE_CDF4SAP, before: #include "saf.h"
+ *     Add this pre-processor definition to your project: SAF_ENABLE_CDF4SAP
  * Dependencies:
  *     saf_utilities
  *
@@ -112,7 +112,7 @@
  *     https://github.com/polarch/Higher-Order-Ambisonics
  *
  * Enable instructions:
- *     Place: #define SAF_ENABLE_HOA, before: #include "saf.h"
+ *     Add this pre-processor definition to your project: SAF_ENABLE_HOA
  * Dependencies:
  *     saf_utilities, saf_vbap, saf_sh
  */
@@ -129,7 +129,7 @@
  * normalised VBAP gains.
  *
  * Enable instructions:
- *     Place: #define SAF_ENABLE_HRIR, before: #include "saf.h"
+ *     Add this pre-processor definition to your project: SAF_ENABLE_HRIR
  * Dependencies:
  *     saf_utilities, afSTFTlib
  */
@@ -143,7 +143,7 @@
  * A simple SOFA file reader that returns only the bare minimum.
  *
  * Enable instructions:
- *     Place: #define SAF_ENABLE_SOFA_READER, before: #include "saf.h"
+ *     Add this pre-processor definition to your project: SAF_ENABLE_SOFA_READER
  * Dependencies:
  *     netcdf library
  */
@@ -161,7 +161,7 @@
  *     https://github.com/polarch/Spherical-Array-Processing
  *
  * Enable instructions:
- *     Place: #define SAF_ENABLE_SH, before: #include "saf.h"
+ *     Add this pre-processor definition to your project: SAF_ENABLE_SH
  * Dependencies:
  *     saf_utilities
  */
@@ -176,7 +176,7 @@
  * found here: https://github.com/polarch/Vector-Base-Amplitude-Panning
  *
  * Enable instructions:
- *     Place: #define SAF_ENABLE_VBAP, before: #include "saf.h"
+ *     Add this pre-processor definition to your project: SAF_ENABLE_VBAP 
  * Dependencies:
  *     saf_utilities
  */

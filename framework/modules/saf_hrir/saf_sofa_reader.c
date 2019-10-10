@@ -24,6 +24,8 @@
  * Author, date created:
  *     Leo McCormack, 21.11.2017
  */
+
+#ifdef SAF_ENABLE_SOFA_READER
  
 #include "saf_sofa_reader.h"
 #include "saf_hrir.h"
@@ -175,3 +177,9 @@ void loadSofaFile
     free(SourcePosition);
 }
 
+#else
+/* To conform to the ISO standard, a '.c' file should not be empty.
+ * This typedef is a lie: */
+typedef int saf_sofa_reader_is_empty;
+
+#endif /* SAF_ENABLE_SOFA_READER */

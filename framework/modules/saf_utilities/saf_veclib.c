@@ -322,15 +322,15 @@ void utility_svvmul
     else
         vDSP_vmul(a, 1, b, 1, c, 1, len);
 #elif INTEL_MKL_VERSION
-	if (c == NULL) {
-		float* tmp;
-		tmp = malloc1d(len * sizeof(float));
+    if (c == NULL) {
+        float* tmp;
+        tmp = malloc1d(len * sizeof(float));
         vsMul(len, a, b, tmp);
-		utility_svvcopy(tmp, len, a);
-		free(tmp);
-	}
-	else
-		vsMul(len, a, b, c);
+        utility_svvcopy(tmp, len, a);
+        free(tmp);
+    }
+    else
+        vsMul(len, a, b, c);
 #else
     int i;
     for (i = 0; i < len; i++)
@@ -347,15 +347,15 @@ void utility_cvvmul
 )
 {
 #ifdef INTEL_MKL_VERSION
-	if (c == NULL) {
-		float_complex* tmp;
-		tmp = malloc1d(len * sizeof(float_complex));
-		vcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)tmp);
-		utility_cvvcopy(tmp, len, a);
-		free(tmp);
-	}
-	else
-		vcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
+    if (c == NULL) {
+        float_complex* tmp;
+        tmp = malloc1d(len * sizeof(float_complex));
+        vcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)tmp);
+        utility_cvvcopy(tmp, len, a);
+        free(tmp);
+    }
+    else
+        vcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
 #else
 	int i;
     if (c == NULL) {

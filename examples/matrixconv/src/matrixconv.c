@@ -46,6 +46,7 @@ void matrixconv_create
     pData->nfilters = 0;
     pData->filter_length = 0;
     pData->filter_fs = 0;
+    pData->input_wav_length = 0;
     pData->nOutputChannels = 0;
     
     /* Default user parameters */
@@ -82,9 +83,9 @@ void matrixconv_init
     pData->host_fs = sampleRate;
     if(pData->hostBlockSize != hostBlockSize){
         pData->hostBlockSize = hostBlockSize;
-        pData->inputFrameTD  = (float**)realloc2d((void**)pData->inputFrameTD, MAX_NUM_CHANNELS_FOR_WAV, hostBlockSize, sizeof(float));
-        pData->outputFrameTD = (float**)realloc2d((void**)pData->outputFrameTD, MAX_NUM_CHANNELS_FOR_WAV, hostBlockSize, sizeof(float));
-        memset(ADR2D(pData->inputFrameTD), 0, MAX_NUM_CHANNELS_FOR_WAV*hostBlockSize*sizeof(float));
+        pData->inputFrameTD  = (float**)realloc2d((void**)pData->inputFrameTD, MAX_NUM_CHANNELS, hostBlockSize, sizeof(float));
+        pData->outputFrameTD = (float**)realloc2d((void**)pData->outputFrameTD, MAX_NUM_CHANNELS, hostBlockSize, sizeof(float));
+        memset(ADR2D(pData->inputFrameTD), 0, MAX_NUM_CHANNELS*hostBlockSize*sizeof(float));
         pData->reInitFilters = 1;
     }
     
@@ -115,14 +116,15 @@ void matrixconv_process
         nFilters = pData->nfilters;
         
         /* Load time-domain data */
-        for(i=0; i < MIN(numInputChannels, nInputs); i++)
+        for(i=0; i < MIN(numInputChannels, MIN(nInputs, MAX_NUM_CHANNELS)); i++)
             utility_svvcopy(inputs[i], pData->hostBlockSize, pData->inputFrameTD[i]);
-        for(; i<MIN(MAX(numInputChannels,numOutputChannels), MATRIXCONV_MAX_NUM_CHANNELS); i++)
+        for(; i<MAX_NUM_CHANNELS; i++)
             memset(pData->inputFrameTD[i], 0, pData->hostBlockSize * sizeof(float)); /* fill remaining channels with zeros */
  
         /* Apply convolution */
-        if(pData->hMatrixConv != NULL)
+        if(pData->hMatrixConv != NULL && pData->filter_length>0)
             saf_matrixConv_apply(pData->hMatrixConv, ADR2D(pData->inputFrameTD), ADR2D(pData->outputFrameTD));
+        /* if the matrix convolver handle has not been initialised yet (i.e. no filters have been loaded) then the processing is bypassed */
         else
             memcpy(ADR2D(pData->outputFrameTD), ADR2D(pData->inputFrameTD), MIN(MAX(numInputChannels,numOutputChannels), MATRIXCONV_MAX_NUM_CHANNELS) * (pData->hostBlockSize)*sizeof(float));
         
@@ -154,12 +156,12 @@ void matrixconv_checkReInit(void* const hMCnv)
     /* reinitialise if needed */
     if ((pData->reInitFilters == 1) && (pData->filters !=NULL)) {
         pData->reInitFilters = 2;
-        saf_matrixConv_destroy(&(pData->hMatrixConv)); /* returned as NULL */
+        saf_matrixConv_destroy(&(pData->hMatrixConv));
+        pData->hMatrixConv = NULL;
         
-        /* if number of filters is not divisable by the specified number of inputs, then the handle remains NULL,
+        /* if length of the loaded wav file was not divisable by the specified number of inputs, then the handle remains NULL,
          * and no convolution is applied */
-        if(pData->nOutputChannels != 0) {
-            pData->nOutputChannels = pData->nfilters / pData->nInputChannels;
+        if(pData->filter_length>0){
             saf_matrixConv_create(&(pData->hMatrixConv),
                                   pData->hostBlockSize,
                                   pData->filters,
@@ -176,28 +178,31 @@ void matrixconv_setFilters
 (
     void* const hMCnv,
     const float** H,
-    int numFilters,
+    int numChannels,
     int numSamples,
     int sampleRate
 )
 {
     matrixconv_data *pData = (matrixconv_data*)(hMCnv);
-    int i;
+
+    assert(numChannels<=MAX_NUM_CHANNELS_FOR_WAV && numChannels > 0 && numSamples > 0);
     
-    assert(numFilters<=MAX_NUM_CHANNELS_FOR_WAV);
+    pData->nOutputChannels = MIN(numChannels, MAX_NUM_CHANNELS);
+    pData->input_wav_length = numSamples;
+    pData->nfilters = (pData->nOutputChannels) * (pData->nInputChannels);
     
-    /* if the number of filters is divisable by */
-    if(numFilters % pData->nInputChannels == 0) {
-        pData->nOutputChannels = numFilters / pData->nInputChannels;
-        pData->filters = realloc1d(pData->filters, (pData->nOutputChannels) * (pData->nInputChannels) * numSamples*sizeof(float));
-        pData->nfilters = numFilters;
-        pData->filter_length = numSamples;
-        for(i=0; i<numFilters; i++)
-            memcpy(&(pData->filters[i*numSamples]), H[i], numSamples*sizeof(float));
-        pData->filter_fs = sampleRate;
-    }
+    /* store the loaded filters */
+    pData->filters = realloc1d(pData->filters, numChannels * numSamples * sizeof(float));
+    memcpy(pData->filters, H, numChannels * numSamples * sizeof(float));
+    pData->filter_fs = sampleRate;
+    
+    /* if the number of samples in loaded data is not divisable by the currently specified number of
+     * inputs, then the filter length is set to 0 and no further processing is conducted. */
+    if(pData->input_wav_length % pData->nInputChannels == 0)
+        pData->filter_length = (pData->input_wav_length) / (pData->nInputChannels);
     else
-        pData->nOutputChannels = 0;
+        pData->filter_length = 0;
+
     pData->reInitFilters = 1;
 }
 
@@ -213,11 +218,13 @@ void matrixconv_setEnablePart(void* const hMCnv, int newState)
 void matrixconv_setNumInputChannels(void* const hMCnv, int newValue)
 {
     matrixconv_data *pData = (matrixconv_data*)(hMCnv);
-    pData->nInputChannels = CLAMP(newValue, 1, MATRIXCONV_MAX_NUM_CHANNELS);
-    if(pData->nfilters % pData->nInputChannels == 0)
-        pData->nOutputChannels = pData->nfilters / pData->nInputChannels;
+    pData->nInputChannels = CLAMP(newValue, 1, MAX_NUM_CHANNELS);
+    pData->nfilters = (pData->nOutputChannels) * (pData->nInputChannels);
+    if((pData->nOutputChannels > 0) && (pData->input_wav_length % pData->nInputChannels == 0))
+        pData->filter_length = (pData->input_wav_length) / (pData->nInputChannels);
     else
-        pData->nOutputChannels = 0;
+        pData->filter_length = 0;
+    pData->reInitFilters = 1;
 }
 
 

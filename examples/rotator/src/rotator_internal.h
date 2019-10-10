@@ -37,7 +37,6 @@
 #include <math.h>
 #include <string.h>
 #include "rotator.h"
-#define SAF_ENABLE_SH /* for spherical harmonic domain rotation matrices */
 #include "saf.h"
 
 #ifdef __cplusplus

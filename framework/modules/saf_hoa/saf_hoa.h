@@ -27,7 +27,15 @@
  *     Leo McCormack, 19.03.2018
  */
 
-#ifndef __SAF_HOA_H_INCLUDED__
+#if defined(SAF_ENABLE_HOA) && !defined(SAF_ENABLE_SH)
+# error "This module is reliant on the saf_sh module. Please enable it too."
+#endif
+#if defined(SAF_ENABLE_HOA) && !defined(SAF_ENABLE_VBAP)
+# error "This module is reliant on the saf_vbap module. Please enable it too."
+#endif
+
+/* ========================================================================== */
+#if defined(SAF_ENABLE_HOA) && !defined(__SAF_HOA_H_INCLUDED__)
 #define __SAF_HOA_H_INCLUDED__
 
 #ifdef __cplusplus
@@ -264,4 +272,4 @@ void applyDiffCovMatching(/* Input Arguments */
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* __SAF_HOA_H_INCLUDED__ */
+#endif /* defined(SAF_ENABLE_HOA) && !defined(__SAF_HOA_H_INCLUDED__) */

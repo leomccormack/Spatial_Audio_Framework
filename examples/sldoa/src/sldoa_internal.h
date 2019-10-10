@@ -45,9 +45,6 @@
 #include <float.h>
 #include "sldoa.h"
 #include "sldoa_database.h"
-#define SAF_ENABLE_AFSTFT      /* for time-frequency transform */
-#define SAF_ENABLE_SH          /* for spherical harmonic related functions */
-#define SAF_ENABLE_VBAP        /* for vbap gain tables */
 #include "saf.h"
 
 

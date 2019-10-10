@@ -41,8 +41,6 @@
 #include <string.h>
 #include <float.h>
 #include "dirass.h"
-#define SAF_ENABLE_SH   /* for spherical harmonics and beamforming weights */
-#define SAF_ENABLE_VBAP   /* for vbap-based interpolation tables */
 #include "saf.h"
 
 #ifdef __cplusplus

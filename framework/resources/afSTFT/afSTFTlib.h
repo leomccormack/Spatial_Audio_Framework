@@ -20,25 +20,30 @@
  THE SOFTWARE.
  */
 
-#ifndef __afSTFTlib_tester__afSTFTlib__
+#if defined(SAF_ENABLE_AFSTFT) && !defined(__afSTFTlib_tester__afSTFTlib__)
 #define __afSTFTlib_tester__afSTFTlib__
-
-/* The original afSTFT code, written by Juha Vilkamo, can be found here:
- * https://github.com/jvilkamo/afSTFT
- * This version is slightly modified. It adds a function to change the number of
- * channels on the fly and includes vectors for the hybrid mode centre
- * frequencies @44.1kHz/48kHz with 128 hop size.
- * It also supports Intel's MKL FFT if "SAF_USE_INTEL_MKL" is defined. */
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+   
+/* The original afSTFT code, written by Juha Vilkamo, can be found here:
+ * https://github.com/jvilkamo/afSTFT
+ * This version is slightly modified. It adds a function to change the number of
+ * channels on the fly and includes vectors for the hybrid mode centre
+ * frequencies @44.1kHz/48kHz with 128 hop size for convenience.
+ * It also supports the use of SAF utilities (for the vectorisation and FFT).
+ *
+ * Remove the "AFSTFT_USE_SAF_UTILITIES" definition, and add the vecTools.h/c
+ * and fft4g.h/c to your project, if you want to use the original afSTFT code.
+ * Note the vecTools.h/c and fft4g.h/c files, may be found here:
+ *     https://github.com/jvilkamo/afSTFT */
+#define AFSTFT_USE_SAF_UTILITIES
     
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "vecTools.h"
-
+    
 extern const double __afCenterFreq48e3[133];
 extern const double __afCenterFreq44100[133];
 
@@ -47,41 +52,7 @@ typedef struct {
     float *im;
 } complexVector;
 
-typedef struct{
-    int inChannels;
-    int outChannels;
-    int maxChannels;
-    int hopSize;
-    int hLen;
-    int pr;
-    int LDmode;
-    int hopIndexIn;
-    int hopIndexOut;
-    int totalHops;
-    float *protoFilter;
-    float *protoFilterI;
-    float **inBuffer;
-    float *fftProcessFrameTD;
-    float *fftProcessFrameFD;
-    float **outBuffer;
-    int log2n;
-    void *vtFFT;
-    void *h_afHybrid;
-    int hybridMode;
-} afSTFT;
-
-typedef struct{
-    int inChannels;
-    int outChannels;
-    int hopSize;
-    float hybridCoeffs[3];
-    complexVector **analysisBuffer;
-    int loopPointer;
-
-} afHybrid;
-
-
-/* Call these */
+/* Main Functions: */
 
 void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int LDmode, int hybridMode);
 
@@ -98,19 +69,8 @@ void afSTFTinverse(void* handle, complexVector* inFD, float** outTD);
 void afSTFTfree(void* handle);
 
 
-/* Internal functions */
-
-void afHybridInit(void** handle, int hopSize, int inChannels, int outChannels);
-
-void afHybridForward(void* handle, complexVector* FD);
-
-void afHybridInverse(void* handle, complexVector* FD);
-
-void afHybridFree(void* handle);
-
-
 #ifdef __cplusplus
 }/* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* defined(__afSTFTlib_tester__afSTFTlib__) */
+#endif /* defined(SAF_ENABLE_AFSTFT) && !defined(__afSTFTlib_tester__afSTFTlib__) */ 

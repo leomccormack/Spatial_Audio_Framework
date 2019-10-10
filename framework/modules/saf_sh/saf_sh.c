@@ -28,6 +28,8 @@
  *     Leo McCormack, 22.05.2016
  */
 
+#ifdef SAF_ENABLE_SH
+
 #include "saf_sh.h"
 #include "saf_sh_internal.h"
 
@@ -832,15 +834,15 @@ void computeSectorCoeffsEP
         for(ns=0; ns<nSecDirs; ns++){
             /* rotate the pattern by rotating the coefficients */
             azi_sec = sec_dirs_deg[ns*2] * M_PI/180.0f;
-            elev_sec = sec_dirs_deg[ns*2+1] * M_PI/180.0; /* from elevation to inclination */
+            elev_sec = sec_dirs_deg[ns*2+1] * M_PI/180.0f; /* from elevation to inclination */
             rotateAxisCoeffsReal(orderSec, b_n, M_PI/2.0f-elev_sec, azi_sec, c_nm);
             beamWeightsVelocityPatternsReal(orderSec, b_n, azi_sec, elev_sec, A_xyz, xyz_nm);
      
             /* store coefficients */
             for(j=0; j<nSH; j++){
-                sectorCoeffs[ns*4*nSH + 0*nSH +j] = sqrt(normSec) * c_nm[j];
+                sectorCoeffs[ns*4*nSH + 0*nSH +j] = sqrtf(normSec) * c_nm[j];
                 for(i=0; i<3; i++)
-                    sectorCoeffs[ns*4*nSH + (i+1)*nSH +j] = sqrt(normSec) * xyz_nm[j*3+i];
+                    sectorCoeffs[ns*4*nSH + (i+1)*nSH +j] = sqrtf(normSec) * xyz_nm[j*3+i];
             }
         }
         
@@ -886,7 +888,7 @@ void computeSectorCoeffsAP
         for(ns=0; ns<nSecDirs; ns++){
             /* rotate the pattern by rotating the coefficients */
             azi_sec = sec_dirs_deg[ns*2] * M_PI/180.0f;
-            elev_sec = sec_dirs_deg[ns*2+1] * M_PI/180.0;
+            elev_sec = sec_dirs_deg[ns*2+1] * M_PI/180.0f;
             rotateAxisCoeffsReal(orderSec, b_n, M_PI/2.0f-elev_sec, azi_sec, c_nm);
             beamWeightsVelocityPatternsReal(orderSec, b_n, azi_sec, elev_sec, A_xyz, xyz_nm);
             
@@ -2582,4 +2584,5 @@ void evaluateSHTfilters
     free(EigV);
 }
 
+#endif /* SAF_ENABLE_SH */
 

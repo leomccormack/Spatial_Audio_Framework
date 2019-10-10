@@ -42,9 +42,6 @@
 #include <math.h>
 #include <string.h>
 #include "panner.h"
-#define SAF_ENABLE_AFSTFT /* for time-frequency transform */
-#define SAF_ENABLE_VBAP   /* for VBAP gains */
-#define SAF_ENABLE_SH     /* for rotations */
 #include "saf.h"
 
 #ifdef __cplusplus

@@ -18,88 +18,114 @@ In order to make this a painless endevour, detailed instructions regarding the a
 
 ## Acquiring and linking a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library tailored for SAF (Recommended)
 
-### Windows (x86_64) users
+### Windows (64-bit) users
 
-0. Add the following directories to your project's header search paths:
+Note: use the "x64 Developer Command Prompt for VS.exe" (open as administrator) to run the following commands.
 
-```
-Spatial_Audio_Framework/framework/include
-Spatial_Audio_Framework/dependencies/Win64/include
-```
+1. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). 
 
-1. Add the following directory to your project's library search paths:
+2. The required custom library may be obtained by first copying the included "**dependencies/saf_mkl_list**" file into the MKL "builder" folder:
 
 ```
-Spatial_Audio_Framework/dependencies/Win64/lib
+xcopy saf_mkl_list C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder /R
 ```
 
-2. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). 
-
-3. The required "dependencies/Win64/lib/**saf_mkl_custom.lib**" and "**saf_mkl_custom.dll**" files may be generated using Intel's custom dll builder. 
-
-4. First copy the included "dependencies/saf_mkl_list" file to this folder:
-
-```
-C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
-```
-
-5. Then enter the following commands into "x64 Developer Command Prompt for VS.exe" (admin rights required):
+3. EITHER (The blue pill): to generate and copy the "**saf_mkl_custom.dll**" library to a system path folder, and the "**saf_mkl_custom.lib**" for you to use locally, enter the following commands:
 
 ```
 cd /Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
 nmake intel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_mkl_list
+xcopy saf_mkl_custom.dll C:\Windows\System32 /R
+xcopy saf_mkl_custom.lib C:\Users\[YOUR WORKING DIRECTORY]\Spatial_Audio_Framework\dependencies\Win64\lib /R
 ```
 
-6. The generated "saf_mkl_custom.dll" file should be placed in a suitable system PATH folder, for example:
+3. OR (The red pill): you may instead build a threaded version of the library (which involves some additional steps):
 
 ```
-C:/Windows/System32
+cd /Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
+nmake intel64 interface=lp64 threading=parallel name=saf_mkl_custom export=saf_mkl_list
+xcopy saf_mkl_custom.dll C:\Windows\System32 /R
+xcopy saf_mkl_custom.lib C:\Users\[YOUR WORKING DIRECTORY]\Spatial_Audio_Framework\dependencies\Win64\lib /R
+cd C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/compiler/lib/intel64/ 
+xcopy libiomp5md.lib C:\Users\[YOUR WORKING DIRECTORY]\Spatial_Audio_Framework\dependencies\Win64\lib /R
+cd C:\Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/redist/intel64/compiler
+xcopy libiomp5md.dll C:\Windows\System32 /R
+```
+
+4. Add the following header search path to your project:
+
+```
+C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include
+```
+
+5. Add the following library search path to your project:
+
+```
+C:/Users/[YOUR WORKING DIRECTORY]/SDKs/Spatial_Audio_Framework/dependencies/Win64/lib
+```
+
+6. link your project against the following libraries (note that the second library is only needed if you built the threaded version):
+```
+saf_mkl_custom.lib
+libiomp5md.lib
 ```
 
 7. Add "SAF_USE_INTEL_MKL" to your pre-processor definitions.
 
+Note: If you built the threaded version of the library, then there are some more pre-processors defintions you can use. See below.
 
-### MacOSX (x86_64) users 
 
-0. Add the following directories to your project's header search paths:
+### MacOSX users 
 
-```
-Spatial_Audio_Framework/framework/include
-Spatial_Audio_Framework/dependencies/MacOSX/include
-```
+ By default, the framework will use Apple's Accelerate library for the BLAS/LAPACK routines and FFT, so you may ignore all of these steps if you wish. However, Mac users may still elect to use Intel MKL, as is it often faster than Accelerate. 
 
-1. Add the following directory to your project's library search paths:
+1. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries).  
 
-```
-Spatial_Audio_Framework/dependencies/MacOSX/lib
-```
-
-2. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). 
-
-3. By default, the framework will use Apple's Accelerate library for the BLAS/LAPACK routines. However, Mac users may still elect to use [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries), which is often faster than Accelerate. 
-
-4. The required "**saf_mkl_custom.dylib**" may be obtained by first placing the "dependencies/saf_mkl_list" file in:
+1. 1. Optionally, you may want to add the MKL global environment variables using this command:
 
 ```
-/opt⁩/intel⁩/compilers_and_libraries/mac⁩/mkl⁩/tools⁩/builder⁩ 
+source /opt/intel/compilers_and_libraries/mac/mkl/bin/mklvars.sh intel64
 ```
 
-5. To generate and copy the library to a system path folder, use the following commands (root permissions required):
+2. The required custom library may be obtained by first copying the included "**dependencies/saf_mkl_list**" file into the MKL "builder" folder:
 
 ```
-cd /opt⁩/intel⁩/compilers_and_libraries/mac⁩/mkl⁩/tools⁩/builder⁩
+sudo cp saf_mkl_list /opt/intel/compilers_and_libraries/mac/mkl/tools/builder
+```
+
+3. EITHER (The blue pill): to generate and copy the "**saf_mkl_custom.dylib**" library to a system path folder, ready for you to use, enter the following commands:
+
+```
+cd /opt/intel/compilers_and_libraries/mac/mkl/tools/builder
 sudo make intel64 interface=lp64 threading=sequential name=libsaf_mkl_custom export=saf_mkl_list
 sudo cp saf_mkl_custom.dylib /usr/local/lib
-
 ```
 
-6. Then add the following linker flag to your project:
+3. OR (The red pill): you may instead build a threaded version of the library (which involves some additional steps):
+
+```
+cd /opt/intel/compilers_and_libraries/mac/mkl/tools/builder
+sudo make intel64 interface=lp64 threading=parallel name=libsaf_mkl_custom export=saf_mkl_list
+sudo cp saf_mkl_custom.dylib /usr/local/lib
+sudo cp /opt/intel/compilers_and_libraries/mac/compiler/lib/libiomp5.dylib /usr/local/lib
+```
+
+4. Add the following header search path to your project (where the X's are the version numbers):
+
+```
+/opt/intel/compilers_and_libraries_20XX.X.XXX/mac/mkl/include
+```
+
+5. Then add the following linker flags to your project (note that the second library is only needed if you built the threaded version):
 
 ```
 -L/usr/local/lib -lsaf_mkl_custom
+-L/usr/local/lib -liomp5    
 ```
 
-7. Add "SAF_USE_INTEL_MKL" to your pre-processor definitions.
+6. Finally, add "SAF_USE_INTEL_MKL" to your project's pre-processor definitions.
+
+Note: If you built the threaded version of the library, then there are some more pre-processors defintions you can use. See below.
 
 
 ### Linux (x86_64) users
@@ -124,13 +150,13 @@ Spatial_Audio_Framework/dependencies/Linux/lib
 4. First copy the included "dependencies/saf_mkl_list" file to this folder:
 
 ```
-/opt⁩/intel⁩/compilers_and_libraries/linux/mkl⁩/tools⁩/builder⁩ 
+/opt/intel/compilers_and_libraries/linux/mkl/tools/builder
 ```
 
 5. To generate and copy this library to a system path folder, use the following commands (root permissions required):
 
 ```
-cd /opt⁩/intel⁩/compilers_and_libraries/linux/mkl⁩/tools⁩/builder⁩
+cd /opt/intel/compilers_and_libraries/linux/mkl/tools/builder
 sudo make intel64 interface=lp64 threading=sequential name=libsaf_mkl_custom export=saf_mkl_list
 sudo cp saf_mkl_custom.so /usr/lib
 
@@ -145,11 +171,25 @@ sudo cp saf_mkl_custom.so /usr/lib
 7. Add "SAF_USE_INTEL_MKL" to your pre-processor definitions.
 
 
+### Intel MKL threading options (Optional)
+
+If you built a threaded version of the custom library, then there are some additional options you may specify. More information can be found [here](https://software.intel.com/en-us/articles/recommended-settings-for-calling-intel-mkl-routines-from-multi-threaded-applications).
+
+Note by default: MKL_NUM_THREADS = [number of CPU cores], MKL_DYNAMIC = 1. 
+
+You may also change these at run time using the following functions:
+
+```
+/* for example: */
+MKL_Set_Num_Threads(2);
+MKL_Set_Dynamic(1);
+```
+
 ## Enable SOFA support (Optional)
 
 In order to use the built-in [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reader (framework/modules/saf_hrir/saf_sofa_reader.h), your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For those already familar with building and linking this particular library, you know what to do. However, for convenience, suggested platform specfic instructions have been provided below.
 
-### Windows (x86_64) users
+### Windows (64-bit) users
 
 For convenience, the following statically built libraries are included in "dependencies/Win64/"; simply link your project against them:
 
@@ -157,12 +197,26 @@ For convenience, the following statically built libraries are included in "depen
 libszip.lib; libzlib.lib; libhdf5.lib; libhdf5_hl.lib; netcdf.lib;
 ```
 
-### MacOSX (x86_64) users 
+Also add the following two directories to your project's header and library search paths, respectively:
+
+``` 
+Spatial_Audio_Framework/dependencies/Win64/include
+Spatial_Audio_Framework/dependencies/Win64/lib
+```
+
+### MacOSX users 
 
 For convenience, the following statically built libraries are included in "dependencies/MacOSX/"; simply link your project against them:
 
 ```
 netcdf; hdf5; hdf5_hl; z; 
+```
+
+Also add the following two directories to your project's header and library search paths, respectively:
+
+``` 
+Spatial_Audio_Framework/dependencies/MacOSX/include
+Spatial_Audio_Framework/dependencies/MacOSX/lib
 ```
 
 ###  Linux (x86_64) users
@@ -180,7 +234,7 @@ Then simply add the following directory to the header search path:
 /usr/include  
 ```
 
-And add this linker flag to your project:
+And add this linker flag to your project (or wherever it was installed):
 
 ```
 -L/lib/x86_64-linux-gnu -lnetcdf
@@ -188,21 +242,28 @@ And add this linker flag to your project:
 
 ## Using the framework
 
-The framework is divided into individual modules and instructions on how to enable these modules is provided in the main header file (framework/include/saf.h). However, the general idea is that you enable modules by defining specific flags prior including "saf.h": 
+Add this directory to your header search paths:
+
+```
+Spatial_Audio_Framework/framework/include 
+```
+
+Note the framework is divided into individual modules and instructions on how to enable these modules is provided in the main header include file (saf.h). However, the general idea is that you enable modules by defining specific preprocessor flags:
 
 ```c
+SAF_ENABLE_AFSTFT       - to enable use of the alias-free STFT library 
+SAF_ENABLE_CDF4SAP      - to enable use of the covariance-domain framework module 
+SAF_ENABLE_HOA          - to enable use of the higher-order Ambisonics module 
+SAF_ENABLE_SH           - to enable use of the spherical harmonic domain related stuff module 
+SAF_ENABLE_HRIR         - to enable use of the HRIR related stuff module 
+SAF_ENABLE_VBAP         - to enable use of the VBAP module 
+SAF_ENABLE_SOFA_READER  - to enable the SOFA reader (requires netcdf) 
 
-#define SAF_ENABLE_AFSTFT      /* to enable use of the alias-free STFT library */
-#define SAF_ENABLE_CDF4SAP     /* to enable use of the covariance-domain framework module */ 
-#define SAF_ENABLE_HOA         /* to enable use of the higher-order Ambisonics module */ 
-#define SAF_ENABLE_SH          /* to enable use of the spherical harmonic domain related stuff module */ 
-#define SAF_ENABLE_HRIR        /* to enable use of the HRIR related stuff module */
-#define SAF_ENABLE_VBAP        /* to enable use of the VBAP module */
-#define SAF_ENABLE_SOFA_READER /* to enable the SOFA reader */
-#include "saf.h"  
+#include "saf.h"
 ```
 
 Detailed instructions regarding how to use the functions offered by each module is provided in the main header file for the respective module (e.g. "/modules/saf_sh/saf_sh.h", or  "/modules/saf_vbap/saf_vbap.h").
+
 
 ### Examples
 
@@ -217,8 +278,8 @@ Many examples have been included in the repository, which may also serve as a st
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file.
 * **dirass** - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction [9].
 * **panner** - a frequency-dependent VBAP panner [10], which allows for more consistent source loudness as a function of the room [11].
-* **matrixconv** - a matrix convolver with an optional partitioned convolution mode. 
-* **multiconv** - a multi-channel convolver with an optional partitioned convolution mode. 
+* **matrixconv** - a basic matrix convolver with an optional partitioned convolution mode. 
+* **multiconv** - a basic multi-channel convolver with an optional partitioned convolution mode. 
 * **powermap** - sound-field visualiser using beamformers (PWD, MVDR) or sub-space methods (MUSIC).
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles [12].
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors; as proposed in [8].

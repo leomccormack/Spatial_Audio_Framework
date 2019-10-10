@@ -47,7 +47,7 @@ typedef struct _safMatConv_data {
     
 }safMatConv_data;
  
-void saf_matrixConv_create
+void  saf_matrixConv_create
 (
     void ** const phMC,
     int hopSize,
@@ -60,7 +60,7 @@ void saf_matrixConv_create
 {
     *phMC = malloc1d(sizeof(safMatConv_data));
     safMatConv_data *h = (safMatConv_data*)(*phMC);
-    int ni, no, nb;
+    int no, ni, nb;
     float* h_pad, *h_pad_2hops;
     
     h->hopSize = hopSize;
@@ -88,10 +88,10 @@ void saf_matrixConv_create
         h->z_n = malloc1d((h->fftSize) * sizeof(float));
         safFFT_create(&(h->hFFT), h->fftSize);
         h_pad = calloc1d(h->fftSize, sizeof(float));
-        for(ni=0; ni<nCHout; ni++){
-            for(no=0; no<nCHin; no++){
-                memcpy(h_pad, &(H[ni*nCHin*length_h+no*length_h]), length_h*sizeof(float));
-                safFFT_forward(h->hFFT, h_pad, &(h->H_f[ni*nCHin*(h->nBins)+no*(h->nBins)]));
+        for(no=0; no<nCHout; no++){
+            for(ni=0; ni<nCHin; ni++){
+                memcpy(h_pad, &(H[no*nCHin*length_h+ni*length_h]), length_h*sizeof(float));
+                safFFT_forward(h->hFFT, h_pad, &(h->H_f[no*nCHin*(h->nBins)+ni*(h->nBins)]));
             }
         }
         free(h_pad);
@@ -211,7 +211,7 @@ void saf_matrixConv_apply
         
         /* apply convolution and inverse fft */
         for(no=0; no<h->nCHout; no++){
-            utility_cvvmul(h->Hpart_f[no], h->X_n, h->numFilterBlocks * (h->nCHin) * (h->nBins), h->HX_n); /* This is the bulk of the CPU work */
+            utility_cvvmul(h->Hpart_f[no], h->X_n, h->numFilterBlocks * (h->nCHin) * (h->nBins), h->HX_n); /* This is the bulk of the CPU work */ 
             for(nb=0; nb<h->numFilterBlocks; nb++)
                 for(ni=0; ni<h->nCHin; ni++)
                     safFFT_backward(h->hFFT, &(h->HX_n[nb*(h->nCHin)*(h->nBins)+ni*(h->nBins)]), &(h->hx_n[nb*(h->nCHin)*(h->fftSize)+ni*(h->fftSize)]));

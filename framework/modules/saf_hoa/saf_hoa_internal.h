@@ -27,7 +27,7 @@
  *     Leo McCormack, 19.03.2018
  */
 
-#ifndef __SAF_HOA_INTERNAL_H_INCLUDED__
+#if defined(SAF_ENABLE_HOA) && !defined(__SAF_HOA_INTERNAL_H_INCLUDED__)
 #define __SAF_HOA_INTERNAL_H_INCLUDED__
 
 #include <stdio.h>
@@ -303,4 +303,4 @@ void getBinDecoder_MAGLS(/* Input Arguments */
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* __SAF_HOA_INTERNAL_H_INCLUDED__ */
+#endif /* defined(SAF_ENABLE_HOA) && !defined(__SAF_HOA_INTERNAL_H_INCLUDED__) */

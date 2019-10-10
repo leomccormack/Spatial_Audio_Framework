@@ -104,11 +104,29 @@ void matrixconv_refreshParams(void* const hMCnv);
 
 void matrixconv_checkReInit(void* const hMCnv);
 
+/*
+ * Function: matrixconv_setFilters
+ * -------------------------------
+ * matrixconv loads the matrix of filters, which should have the input filters
+ * concatenated for each output.
+ * for example, a matrix: 25 x 32 x 512 (numInputs x numOutputs x filterLength)
+ * should be loaded as a 25 x 16384   (note 32x512=16384).
+ * This is then divided by the number of inputs, which should be user specified
+ * to be 32 in this case.
+ *
+ * Input Arguments:
+ *     hMCnv       - matrixconv handle
+ *     H           - input channel buffers; 2-D array: numChannels x nSamples
+ *     numChannels - number of channels in loaded data (also the number of
+ *                   outputs)
+ *     numSamples  - number of samples (per channel) in the loaded data
+ *     sampleRate  - samplerate of the loaded data
+ */
 void matrixconv_setFilters(void* const hMCnv,
-                          const float** H,
-                          int numChannels,
-                          int numSamples,
-                          int sampleRate);
+                           const float** H,
+                           int numChannels,
+                           int numSamples,
+                           int sampleRate);
     
 void matrixconv_setEnablePart(void* const hMCnv, int newState);
     

@@ -62,7 +62,7 @@ extern "C" {
 #elif defined(__APPLE__)
 # include "Accelerate/Accelerate.h"
 #else
-# error "SAF requires a performance library that supports CBLAS and LAPACK"
+# error "SAF requires a library (or libraries) which supports CBLAS and LAPACK"
 #endif
     
     
@@ -106,7 +106,7 @@ extern "C" {
 #include "../saf_utilities/saf_sort.h"
 /* filter coefficients (IIR/FIR) */
 #include "../saf_utilities/saf_filters.h"
-/* BLAS/LAPACK functions, plus many other handy linear algebra functions */
+/* Many handy linear algebra functions based on CBLAS/LAPACK/IntelMKL/Accelerate */
 #include "../saf_utilities/saf_veclib.h"
 /* optimised FFT routines */
 #include "../saf_utilities/saf_fft.h"

@@ -29,7 +29,7 @@
  * or cylindrical arrays, which have phase-matched sensors.
  *
  * Dependencies:
- *     saf_utilities, afSTFTlib, saf_sh
+ *     saf_utilities, afSTFTlib, saf_sh, saf_hoa, saf_vbap
  * Author, date created:
  *     Leo McCormack, 13.09.2017
  *
@@ -367,6 +367,10 @@ void array2sh_calculate_sht_matrix
      
     pData->order = order;
     pData->nSH = nSH;
+    
+    if(pData->enableDiffEQpastAliasing)
+        array2sh_apply_diff_EQ(hA2sh);
+    
     pData->currentEvalIsValid = 0;
     
     free(Y_mic);
@@ -390,7 +394,7 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
     if(arraySpecs->arrayType==ARRAY_CYLINDRICAL)
         return; /* unsupported */
     
-    array2sh_calculate_sht_matrix(hA2sh);
+    //array2sh_calculate_sht_matrix(hA2sh);
     
     /* prep */
     nSH = (pData->order+1)*(pData->order+1);
@@ -525,12 +529,12 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
     }
 #endif
     
-    pData->recalcEvalFLAG = 1;
+    //pData->recalcEvalFLAG = 1;
+    pData->currentEvalIsValid = 0;
     
     free(dM_diffcoh);
     free(dM_diffcoh_s);
 }
-
 
 void array2sh_calculate_mag_curves(void* const hA2sh)
 {

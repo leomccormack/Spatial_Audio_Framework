@@ -33,8 +33,6 @@
 #include <math.h>
 #include <string.h>
 #include "beamformer.h"
-#define SAF_ENABLE_AFSTFT   /* for time-frequency transform */
-#define SAF_ENABLE_SH       /* for spherical harmonic weights */
 #include "saf.h"
 
 #ifdef __cplusplus

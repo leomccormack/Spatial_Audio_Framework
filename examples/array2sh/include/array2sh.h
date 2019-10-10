@@ -29,7 +29,7 @@
  * or cylindrical arrays, which have phase-matched sensors.
  *
  * Dependencies:
- *     saf_utilities, afSTFTlib, saf_sh
+ *     saf_utilities, afSTFTlib, saf_sh, saf_hoa, saf_vbap
  * Author, date created:
  *     Leo McCormack, 13.09.2017
  *
@@ -357,8 +357,8 @@ void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
 void array2sh_evaluateFilters(void* const hA2sh);
 
 /*
- * Function: array2sh_applyDiffEQpastAliasing
- * ------------------------------------------
+ * Function: array2sh_setDiffEQpastAliasing
+ * ----------------------------------------
  * Analyses what the theoretical spatial aliasing frequency is, and conducts
  * diffuse-field equalisation above this.
  * Thanks to Dr. Archontis Politis for suggesting and designing this feature.
@@ -366,7 +366,7 @@ void array2sh_evaluateFilters(void* const hA2sh);
  * Input Arguments:
  *     hA2sh - array2sh handle
  */
-void array2sh_applyDiffEQpastAliasing(void* const hA2sh);
+void array2sh_setDiffEQpastAliasing(void* const hA2sh, int newState);
     
 /*
  * Function: array2sh_setPreset
@@ -572,6 +572,17 @@ void array2sh_setMaxFreq(void* const hA2sh, float newF);
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
+
+/*
+ * Function: array2sh_getDiffEQpastAliasing
+ * ----------------------------------------
+ *
+ * Input Arguments:
+ *     hA2sh - array2sh handle
+ * Returns:
+ *     current flag state, 0: disabled, 1: enabled
+ */
+int array2sh_getDiffEQpastAliasing(void* const hA2sh);
 
 /*
  * Function: array2sh_getEvalReady

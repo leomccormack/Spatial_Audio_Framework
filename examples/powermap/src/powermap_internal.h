@@ -33,9 +33,11 @@
 #include <string.h>
 #include <float.h>
 #include "powermap.h"
-#define SAF_ENABLE_AFSTFT /* for time-frequency transform */
-#define SAF_ENABLE_SH     /* for spherical harmonic weights */
-#define SAF_ENABLE_VBAP   /* for vbap-based interpolation tables */
+/*
+ * #define SAF_ENABLE_AFSTFT - for time-frequency transform
+ * #define SAF_ENABLE_SH     - for spherical harmonic weights
+ * #define SAF_ENABLE_VBAP   - for vbap-based interpolation tables
+ */
 #include "saf.h"
 
 #ifdef __cplusplus

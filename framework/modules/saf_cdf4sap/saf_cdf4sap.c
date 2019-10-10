@@ -17,14 +17,23 @@
 /*
  * Filename: saf_cdf4sap.c
  * -----------------------
- * Covariance Domain Framework for Spatial Audio Processing (CDF4SAP). A C
+ * Covariance Domain Framework for Spatial Audio Processing (CDF4SAP) [1,2]. A C
  * implementation of the MatLab code, originally written by Dr. Juha Vilkamo.
+ *
+ * [1] Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance
+ *     domain framework for time–frequency processing of spatial audio. Journal
+ *     of the Audio Engineering Society, 61(6), 403-411.
+ * [2] Vilkamo, J., & Backstrom, T. (2018). Time--Frequency Processing: Methods
+ *     and Tools. In Parametric Time-Frequency Domain Spatial Audio. John Wiley
+ *     & Sons.
  *
  * Dependencies:
  *     saf_utilities
  * Author, date created:
  *     Leo McCormack, 25.11.2016
  */
+
+#ifdef SAF_ENABLE_CDF4SAP
 
 #include "saf_cdf4sap.h"
 #include "../saf_utilities/saf_utilities.h"
@@ -532,14 +541,10 @@ void formulate_M_and_Cr_cmplx
     } 
 }
  
+#else
+/* To conform to the ISO standard, a '.c' file should not be empty.
+ * This typedef is a lie: */
+typedef int saf_cdf4sap_is_empty;
 
-
-
-
-
-
-
-
-
-
-
+#endif /* SAF_ENABLE_CDF4SAP */
+ 

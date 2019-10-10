@@ -59,23 +59,25 @@ extern "C" {
 
 typedef struct _matrixconv
 {
+    /* input/output buffers */
     float** inputFrameTD;
     float** outputFrameTD;
     
     /* internal */
-    void* hMatrixConv;
-    int hostBlockSize; 
-    float* filters;   /* FLAT: nfilters x filter_length, & (nOutputChannels x nInputChannels) x filter_length */
-    int nfilters;
-    int filter_length;
-    int filter_fs;
-    int host_fs;
-    int reInitFilters;
-    int nOutputChannels; 
+    void* hMatrixConv;     /* saf_matrixConv handle */
+    int hostBlockSize;     /* current host block size */
+    float* filters;        /* the matrix of filters; FLAT: nOutputChannels x nInputChannels x filter_length */
+    int nfilters;          /* the number of filters (nOutputChannels x nInputChannels) */
+    int input_wav_length;  /* length of the wav files loaded in samples (inputs are concatenated) */
+    int filter_length;     /* length of the filters (i.e. input_wav_length/nInputChannels) */
+    int filter_fs;         /* current samplerate of the filters */
+    int host_fs;           /* current samplerate of the host */
+    int reInitFilters;     /* FLAG: 0: do not reinit, 1: reinit, 2: reinit in progress */
+    int nOutputChannels;   /* number of output channels (same as the number of channels in the loaded wav) */
     
     /* user parameters */
-    int nInputChannels;
-    int enablePartitionedConv;
+    int nInputChannels;        /* number of input channels */
+    int enablePartitionedConv; /* 0: disabled, 1: enabled */
     
 } matrixconv_data;
     

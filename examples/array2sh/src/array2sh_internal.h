@@ -29,7 +29,7 @@
  * or cylindrical arrays, which have phase-matched sensors.
  *
  * Dependencies:
- *     saf_utilities, afSTFTlib, saf_sh
+ *     saf_utilities, afSTFTlib, saf_sh, saf_hoa, saf_vbap
  * Author, date created:
  *     Leo McCormack, 13.09.2017
  *
@@ -49,9 +49,6 @@
 #include <string.h>
 #include <assert.h>
 #include "array2sh.h" 
-#define SAF_ENABLE_AFSTFT /* for time-frequency transform */
-#define SAF_ENABLE_SH     /* for spherical harmonic weights */
-#define SAF_ENABLE_HOA    /* for max-rE weights */
 #include "saf.h"
 
 #ifdef __cplusplus
@@ -67,7 +64,7 @@ extern "C" {
 #define HOP_SIZE ( 128 )                       /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )          /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )   /* 4/8/16 */
-#define MAX_NUM_SENSORS ( ARRAY2SH_MAX_NUM_SENSORS ) /* Maximum permited channels for the VST standard */
+#define MAX_NUM_SENSORS ( ARRAY2SH_MAX_NUM_SENSORS ) /* Maximum permitted number of channels for the VST standard */
 #define MAX_EVAL_FREQ_HZ ( 20e3f )             /* Up to which frequency should the evaluation be accurate */
     
 
@@ -139,8 +136,7 @@ typedef struct _array2sh
     /* flags */
     int reinitSHTmatrixFLAG;        /* 0: do not reinit; 1: reinit; 2: reinit in progress; */
     int reinitTFTFLAG;              /* 0: do not reinit; 1: reinit; 2: reinit in progress; */
-    int recalcEvalFLAG;             /* 0: do not reinit; 1: reinit; 2: reinit in progress; */
-    int applyDiffEQFLAG;            /* 0: do not reinit; 1: reinit; 2: reinit in progress; */
+    int recalcEvalFLAG;             /* 0: do not reinit; 1: reinit; 2: reinit in progress; */ 
     
     /* additional user parameters that are not included in the array presets */
     int order;                      /* current encoding order */
@@ -152,6 +148,7 @@ typedef struct _array2sh
     float c;                        /* speed of sound, m/s */
     float gain_dB;                  /* post gain, dB */
     float maxFreq;                  /* maximum encoding frequency, hz */
+    int enableDiffEQpastAliasing;   /* 0: disabled, 1: enabled */
     
 } array2sh_data;
      

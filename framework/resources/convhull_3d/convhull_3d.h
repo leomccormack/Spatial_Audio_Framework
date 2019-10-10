@@ -40,21 +40,23 @@
 #ifndef CONVHULL_3D_INCLUDED
 #define CONVHULL_3D_INCLUDED
 
+#pragma warning(disable : 4201)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #ifdef CONVHULL_3D_USE_FLOAT_PRECISION
-typedef float CH_FLOAT;
+ typedef float CH_FLOAT;
 #else
-typedef double CH_FLOAT;
+ typedef double CH_FLOAT;
 #endif
 typedef struct _ch_vertex {
-    union {
-        CH_FLOAT v[3];
+    union{
         struct{
-             CH_FLOAT x, y, z;
+            CH_FLOAT x, y, z;
         };
+		CH_FLOAT v[3];
     };
 } ch_vertex;
 typedef ch_vertex ch_vec3;

@@ -39,13 +39,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include "ambi_dec.h"
-#define SAF_ENABLE_AFSTFT /* for time-frequency transform */
-#define SAF_ENABLE_HOA    /* for ambisonic decoding matrices */
-#define SAF_ENABLE_SH     /* for spherical harmonic weights */
-#define SAF_ENABLE_HRIR   /* for HRIR->HRTF filterbank conversion */
-#define SAF_ENABLE_VBAP   /* for interpolating HRTFs */
-#define SAF_ENABLE_SOFA_READER   
+#include "ambi_dec.h" 
 #include "saf.h"
 
 #ifdef __cplusplus

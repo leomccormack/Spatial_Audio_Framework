@@ -37,11 +37,6 @@
 #include <math.h>
 #include <string.h>
 #include "binauraliser.h"
-#define SAF_ENABLE_AFSTFT  /* for time-frequency transform */
-#define SAF_ENABLE_HRIR    /* for HRIR->HRTF filterbank coefficients conversion etc. */
-#define SAF_ENABLE_VBAP    /* for amplitude-normalised VBAP gains used for interpolating HRTFs */
-#define SAF_ENABLE_SH
-#define SAF_ENABLE_SOFA_READER
 #include "saf.h"
 
 #ifdef __cplusplus

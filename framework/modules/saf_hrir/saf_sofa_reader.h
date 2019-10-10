@@ -25,13 +25,16 @@
  *     Leo McCormack, 21.11.2017
  */
 
-#ifndef __SAF_SOFA_READER_H_INCLUDED__
+#if defined(SAF_ENABLE_SOFA_READER) && !defined(__SAF_SOFA_READER_H_INCLUDED__)
 #define __SAF_SOFA_READER_H_INCLUDED__
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+/* If your compiler stopped at this point:
+ * Instructions for linking the required "netcdf" library may be found here:
+ * https://github.com/leomccormack/Spatial_Audio_Framework */
 #include <netcdf.h>
 #include "../saf_utilities/saf_utilities.h"
 
@@ -81,4 +84,4 @@ void loadSofaFile(/* Input Arguments */
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* __SOFA_READER_H_INCLUDED__ */
+#endif /* defined(SAF_ENABLE_SOFA_READER) && !defined(__SAF_SOFA_READER_H_INCLUDED__) */

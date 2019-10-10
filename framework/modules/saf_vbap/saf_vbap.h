@@ -25,7 +25,7 @@
  *     Leo McCormack, 02.10.2017
  */
 
-#ifndef __SAF_VBAP_H_INCLUDED__
+#if defined(SAF_ENABLE_VBAP) && !defined(__SAF_VBAP_H_INCLUDED__)
 #define __SAF_VBAP_H_INCLUDED__
 
 #ifdef __cplusplus
@@ -281,7 +281,7 @@ void getPvalues(/* Input arguments */
     
     
 #ifdef __cplusplus
-}
+} /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* __SAF_VBAP_H_INCLUDED__ */
+#endif /* defined(SAF_ENABLE_VBAP) && !defined(__SAF_VBAP_H_INCLUDED__) */
