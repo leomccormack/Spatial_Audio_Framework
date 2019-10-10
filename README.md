@@ -79,9 +79,7 @@ Note: If you built the threaded version of the library, then there are some more
 
  By default, the framework will use Apple's Accelerate library for the BLAS/LAPACK routines and FFT, so you may ignore all of these steps if you wish. However, Mac users may still elect to use Intel MKL, as is it often faster than Accelerate. 
 
-1. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries).  
-
-1. 1. Optionally, you may want to add the MKL global environment variables using this command:
+1. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). Optionally, you may want to add the MKL global environment variables using this command:
 
 ```
 source /opt/intel/compilers_and_libraries/mac/mkl/bin/mklvars.sh intel64
