@@ -28,12 +28,7 @@
  *     Leo McCormack, 12.12.2016
  */
 
-#if defined(SAF_ENABLE_HRIR) && !defined(SAF_ENABLE_AFSTFT)
-# error "This module is reliant on the afSTFT module. Please enable it too."
-#endif
-
-/* ========================================================================== */
-#if defined(SAF_ENABLE_HRIR) && !defined(__SAF_HRIR_H_INCLUDED__)
+#ifndef __SAF_HRIR_H_INCLUDED__
 #define __SAF_HRIR_H_INCLUDED__
 
 #ifdef __cplusplus
@@ -192,4 +187,4 @@ void binauralDiffuseCoherence(/* Input Arguments */
 } /* extern "C" */
 #endif  /* __cplusplus */
 
-#endif /* defined(SAF_ENABLE_HRIR) && !defined(__SAF_HRIR_H_INCLUDED__) */
+#endif /* __SAF_HRIR_H_INCLUDED__ */

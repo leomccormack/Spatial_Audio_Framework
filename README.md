@@ -192,6 +192,11 @@ MKL_Set_Dynamic(1);
 
 In order to use the built-in [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reader (framework/modules/saf_hrir/saf_sofa_reader.h), your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For those already familar with building and linking this particular library, you know what to do. However, for convenience, suggested platform specfic instructions have been provided below.
 
+Also, the following preprocessor definition is required:
+```
+SAF_ENABLE_SOFA_READER
+```
+
 ### Windows (64-bit) users
 
 For convenience, the following statically built libraries are included in "dependencies/Win64/"; simply link your project against them:
@@ -200,7 +205,7 @@ For convenience, the following statically built libraries are included in "depen
 libszip.lib; libzlib.lib; libhdf5.lib; libhdf5_hl.lib; netcdf.lib;
 ```
 
-Also add the following two directories to your project's header and library search paths, respectively:
+And also add the following two directories to your project's header and library search paths, respectively:
 
 ``` 
 Spatial_Audio_Framework/dependencies/Win64/include
@@ -215,7 +220,7 @@ For convenience, the following statically built libraries are included in "depen
 netcdf; hdf5; hdf5_hl; z; 
 ```
 
-Also add the following two directories to your project's header and library search paths, respectively:
+And also add the following two directories to your project's header and library search paths, respectively:
 
 ``` 
 Spatial_Audio_Framework/dependencies/MacOSX/include
@@ -251,17 +256,9 @@ Add this directory to your header search paths:
 Spatial_Audio_Framework/framework/include 
 ```
 
-Note the framework is divided into individual modules and instructions on how to enable these modules is provided in the main header include file (saf.h). However, the general idea is that you enable modules by defining specific preprocessor flags:
+And include the main header file:
 
 ```c
-SAF_ENABLE_AFSTFT       - to enable use of the alias-free STFT library 
-SAF_ENABLE_CDF4SAP      - to enable use of the covariance-domain framework module 
-SAF_ENABLE_HOA          - to enable use of the higher-order Ambisonics module 
-SAF_ENABLE_SH           - to enable use of the spherical harmonic domain related stuff module 
-SAF_ENABLE_HRIR         - to enable use of the HRIR related stuff module 
-SAF_ENABLE_VBAP         - to enable use of the VBAP module 
-SAF_ENABLE_SOFA_READER  - to enable the SOFA reader (requires netcdf) 
-
 #include "saf.h"
 ```
 

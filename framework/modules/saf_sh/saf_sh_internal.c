@@ -28,8 +28,6 @@
  *     Leo McCormack, 22.05.2016
  */
 
-#ifdef SAF_ENABLE_SH
-
 #include "saf_sh.h"
 #include "saf_sh_internal.h"
 
@@ -535,5 +533,3 @@ float getW
     }
     return ret;
 }
-
-#endif /* SAF_ENABLE_SH */

@@ -28,8 +28,6 @@
  *     Leo McCormack, 12.12.2016
  */
 
-#ifdef SAF_ENABLE_HRIR
-
 #include "saf_hrir.h"
 #include "saf_hrir_internal.h"
 
@@ -205,11 +203,4 @@ void FIRtoFilterbankCoeffs
     free(centerImpulseFB);
     free(ir);
     free(irFB);
-}
-
-#else
-/* To conform to the ISO standard, a '.c' file should not be empty.
- * This typedef is a lie: */
-typedef int saf_hrir_internal_is_empty;
-
-#endif /* SAF_ENABLE_HRIR */
+} 

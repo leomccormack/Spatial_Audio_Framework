@@ -26,9 +26,7 @@
  * Author, date created:
  *     Leo McCormack, 19.03.2018
  */
-
-#ifdef SAF_ENABLE_HOA
-
+ 
 #include "saf_hoa.h"
 #include "saf_hoa_internal.h"
 
@@ -596,9 +594,3 @@ void getBinDecoder_MAGLS
     free(H_mod);
 }
 
-#else
-/* To conform to the ISO standard, a '.c' file should not be empty.
- * This typedef is a lie: */
-typedef int saf_hoa_internal_is_empty;
-
-#endif /* SAF_ENABLE_HOA */

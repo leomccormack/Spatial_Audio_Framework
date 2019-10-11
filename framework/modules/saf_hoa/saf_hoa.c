@@ -27,8 +27,6 @@
  *     Leo McCormack, 19.03.2018
  */
 
-#ifdef SAF_ENABLE_HOA
-
 #include "saf_hoa.h"
 #include "saf_hoa_internal.h"
 
@@ -260,10 +258,4 @@ void applyDiffCovMatching
     free(H_ambi);
     free(decMtx_diffMatched);
 }
-
-#else
-/* To conform to the ISO standard, a '.c' file should not be empty.
- * This typedef is a lie: */
-typedef int saf_hoa_is_empty;
-
-#endif /* SAF_ENABLE_HOA */
+ 

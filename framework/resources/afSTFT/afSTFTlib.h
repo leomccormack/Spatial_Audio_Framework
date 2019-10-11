@@ -20,7 +20,7 @@
  THE SOFTWARE.
  */
 
-#if defined(SAF_ENABLE_AFSTFT) && !defined(__afSTFTlib_tester__afSTFTlib__)
+#ifndef __afSTFTlib_tester__afSTFTlib__
 #define __afSTFTlib_tester__afSTFTlib__
 
 #ifdef __cplusplus
@@ -73,4 +73,4 @@ void afSTFTfree(void* handle);
 }/* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* defined(SAF_ENABLE_AFSTFT) && !defined(__afSTFTlib_tester__afSTFTlib__) */ 
+#endif /* __afSTFTlib_tester__afSTFTlib__ */ 

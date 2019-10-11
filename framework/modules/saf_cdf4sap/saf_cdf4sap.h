@@ -33,7 +33,7 @@
  *     Leo McCormack, 25.11.2016
  */
 
-#if defined(SAF_ENABLE_CDF4SAP) && !defined(__SAF_CDF4SAP_H_INCLUDED__)
+#ifndef __SAF_CDF4SAP_H_INCLUDED__
 #define __SAF_CDF4SAP_H_INCLUDED__
 
 #include "../saf_utilities/saf_complex.h"
@@ -185,12 +185,12 @@ void formulate_M_and_Cr_cmplx(/* Input Arguments */
                               /* Output Arguments */
                               float_complex* M,
                               float* Cr);
-    
+
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif  /* defined(SAF_ENABLE_CDF4SAP) && !defined(__SAF_CDF4SAP_H_INCLUDED__) */
+#endif  /* __SAF_CDF4SAP_H_INCLUDED__ */
 
 

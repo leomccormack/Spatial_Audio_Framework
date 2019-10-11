@@ -25,7 +25,7 @@
  *     Leo McCormack, 02.10.2017
  */
  
-#if defined(SAF_ENABLE_VBAP) && !defined(__SAF_VBAP_INTERNAL_H_INCLUDED__)
+#ifndef __SAF_VBAP_INTERNAL_H_INCLUDED__
 #define __SAF_VBAP_INTERNAL_H_INCLUDED__
 
 #include <stdio.h>
@@ -226,4 +226,4 @@ void vbap2D(/* Input Arguments */
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* defined(SAF_ENABLE_VBAP) && !defined(__SAF_VBAP_INTERNAL_H_INCLUDED__) */
+#endif /* __SAF_VBAP_INTERNAL_H_INCLUDED__ */

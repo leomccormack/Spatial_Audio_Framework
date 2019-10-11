@@ -25,26 +25,24 @@
  *     Leo McCormack, 21.11.2017
  */
 
-#if defined(SAF_ENABLE_SOFA_READER) && !defined(__SAF_SOFA_READER_H_INCLUDED__)
+#ifndef __SAF_SOFA_READER_H_INCLUDED__
 #define __SAF_SOFA_READER_H_INCLUDED__
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef SAF_ENABLE_SOFA_READER
 /* If your compiler stopped at this point:
  * Instructions for linking the required "netcdf" library may be found here:
  * https://github.com/leomccormack/Spatial_Audio_Framework */
-#include <netcdf.h>
+# include <netcdf.h>
+#endif
 #include "../saf_utilities/saf_utilities.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-   
-#ifndef MAX_HRIR_LENGTH
-# define MAX_HRIR_LENGTH 1024 /* truncates HRIRs to this length */
-#endif
     
 /* ========================================================================== */
 /*                               Main Functions                               */
@@ -84,4 +82,4 @@ void loadSofaFile(/* Input Arguments */
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* defined(SAF_ENABLE_SOFA_READER) && !defined(__SAF_SOFA_READER_H_INCLUDED__) */
+#endif /* __SAF_SOFA_READER_H_INCLUDED__ */

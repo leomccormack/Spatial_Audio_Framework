@@ -18,11 +18,14 @@
  * Filename: saf.h (include header)
  * --------------------------------
  * Main include header for the spatial audio framework. Instructions on how
- * to enable the framework modules is provided below.
+ * to enable the optional framework modules is provided below.
  *
- * Included modules:
- *     afSTFTlib, saf_cdf4sap, saf_hoa, saf_hrir, saf_sh, saf_sofa_reader,
- *     saf_utilities, saf_vbap
+ * Included core modules:
+ *     afSTFTlib, saf_cdf4sap, saf_hoa, saf_hrir, saf_sh, saf_utilities,
+ *     saf_vbap
+ * Optional modules:
+ *     saf_sofa_reader
+ *
  * Author, date created:
  *     Leo McCormack, 06.04.2018
  */
@@ -64,11 +67,6 @@
  */
 #include "../modules/saf_utilities/saf_utilities.h"
 
-
-/* ========================================================================== */
-/*                              Optional Modules                              */
-/* ========================================================================== */
-
 /*
  * SAF Module: afSTFT
  * ------------------
@@ -76,14 +74,10 @@
  * The Original source code can be found here:
  *     https://github.com/jvilkamo/afSTFT
  *
- * Enable instructions:
- *     Add this pre-processor definition to your project: SAF_ENABLE_AFSTFT
  * Dependencies:
  *     saf_utilities
  */
-#ifdef SAF_ENABLE_AFSTFT
-# include "../resources/afSTFT/afSTFTlib.h"
-#endif
+#include "../resources/afSTFT/afSTFTlib.h"
 
 /*
  * SAF Module: CDF4SAP
@@ -91,8 +85,6 @@
  * Covarience Domain Framework for Spatial Audio Processing (CDF4SAP). A C
  * implementation of the framework described in [1].
  *
- * Enable instructions:
- *     Add this pre-processor definition to your project: SAF_ENABLE_CDF4SAP
  * Dependencies:
  *     saf_utilities
  *
@@ -100,9 +92,7 @@
  *     domain framework for time–frequency processing of spatial audio. Journal
  *     of the Audio Engineering Society, 61(6), 403-411.
  */
-#ifdef SAF_ENABLE_CDF4SAP
-# include "../modules/saf_cdf4sap/saf_cdf4sap.h"
-#endif
+#include "../modules/saf_cdf4sap/saf_cdf4sap.h"
 
 /*
  * SAF Module: HOA
@@ -111,14 +101,10 @@
  * derived from the Matlab library by Archontis Politis, found here:
  *     https://github.com/polarch/Higher-Order-Ambisonics
  *
- * Enable instructions:
- *     Add this pre-processor definition to your project: SAF_ENABLE_HOA
  * Dependencies:
  *     saf_utilities, saf_vbap, saf_sh
  */
-#ifdef SAF_ENABLE_HOA
-# include "../modules/saf_hoa/saf_hoa.h"
-#endif
+#include "../modules/saf_hoa/saf_hoa.h"
 
 /*
  * SAF Module: HRIR
@@ -128,28 +114,10 @@
  * HRTF filterbank coefficients, and HRTF interpolation utilising amplitude-
  * normalised VBAP gains.
  *
- * Enable instructions:
- *     Add this pre-processor definition to your project: SAF_ENABLE_HRIR
  * Dependencies:
  *     saf_utilities, afSTFTlib
  */
-#ifdef SAF_ENABLE_HRIR
-# include "../modules/saf_hrir/saf_hrir.h"
-#endif
-
-/*
- * SAF Module: SOFA Reader
- * -----------------------
- * A simple SOFA file reader that returns only the bare minimum.
- *
- * Enable instructions:
- *     Add this pre-processor definition to your project: SAF_ENABLE_SOFA_READER
- * Dependencies:
- *     netcdf library
- */
-#ifdef SAF_ENABLE_SOFA_READER
-# include "../modules/saf_hrir/saf_sofa_reader.h"
-#endif
+#include "../modules/saf_hrir/saf_hrir.h"
 
 /*
  * SAF Module: SH
@@ -160,14 +128,10 @@
  *     https://github.com/polarch/Array-Response-Simulator
  *     https://github.com/polarch/Spherical-Array-Processing
  *
- * Enable instructions:
- *     Add this pre-processor definition to your project: SAF_ENABLE_SH
  * Dependencies:
  *     saf_utilities
  */
-#ifdef SAF_ENABLE_SH
-# include "../modules/saf_sh/saf_sh.h"
-#endif
+#include "../modules/saf_sh/saf_sh.h"
 
 /*
  * SAF Module: VBAP
@@ -175,13 +139,29 @@
  * VBAP functions largely derived from the MATLAB library by Archontis Politis,
  * found here: https://github.com/polarch/Vector-Base-Amplitude-Panning
  *
- * Enable instructions:
- *     Add this pre-processor definition to your project: SAF_ENABLE_VBAP 
  * Dependencies:
  *     saf_utilities
  */
-#ifdef SAF_ENABLE_VBAP
-# include "../modules/saf_vbap/saf_vbap.h"
+#include "../modules/saf_vbap/saf_vbap.h"
+
+
+/* ========================================================================== */
+/*                              Optional Modules                              */
+/* ========================================================================== */
+
+/*
+ * SAF Module: SOFA Reader
+ * -----------------------
+ * A simple SOFA file reader that returns only the bare minimum needed to
+ * load HRIR data.
+ *
+ * Enable instructions:
+ *     Add this pre-processor definition to your project: SAF_ENABLE_SOFA_READER
+ * Dependencies:
+ *     netcdf library
+ */
+#ifdef SAF_ENABLE_SOFA_READER
+# include "../modules/saf_hrir/saf_sofa_reader.h"
 #endif
 
 

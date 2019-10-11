@@ -20,8 +20,6 @@
  THE SOFTWARE.
  */
 
-#ifdef SAF_ENABLE_AFSTFT
-
 #include "afSTFTlib.h"
 #include "afSTFT_protoFilter.h"
 #ifdef AFSTFT_USE_SAF_UTILITIES
@@ -664,10 +662,3 @@ void afHybridFree(void* handle)
     }
     free(h->analysisBuffer);
 }
-
-#else
-/* To conform to the ISO standard, a '.c' file should not be empty.
- * This typedef is a lie: */
-typedef int afSTFT_is_empty;
-
-#endif /* SAF_ENABLE_AFSTFT */

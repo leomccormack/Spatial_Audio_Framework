@@ -28,7 +28,7 @@
  *     Leo McCormack, 22.05.2016
  */
 
-#if defined(SAF_ENABLE_SH) && !defined(__SAF_SH_H_INCLUDED__)
+#ifndef __SAF_SH_H_INCLUDED__
 #define __SAF_SH_H_INCLUDED__
 
 #ifdef __cplusplus
@@ -1496,4 +1496,4 @@ void evaluateSHTfilters(/* Input arguments */
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* defined(SAF_ENABLE_SH) && !defined(__SAF_SH_H_INCLUDED__) */
+#endif /* __SAF_SH_H_INCLUDED__ */

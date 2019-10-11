@@ -28,8 +28,6 @@
  *     Leo McCormack, 22.05.2016
  */
 
-#ifdef SAF_ENABLE_SH
-
 #include "saf_sh.h"
 #include "saf_sh_internal.h"
 
@@ -2583,6 +2581,4 @@ void evaluateSHTfilters
     free(MH_M);
     free(EigV);
 }
-
-#endif /* SAF_ENABLE_SH */
 

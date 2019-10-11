@@ -25,10 +25,13 @@
  *     Leo McCormack, 21.11.2017
  */
 
-#ifdef SAF_ENABLE_SOFA_READER
- 
 #include "saf_sofa_reader.h"
 #include "saf_hrir.h"
+
+#ifdef SAF_ENABLE_SOFA_READER
+# ifndef MAX_SOFA_HRIR_LENGTH
+#  define MAX_SOFA_HRIR_LENGTH 1024 /* truncates HRIRs to this length */
+# endif
 
 void loadSofaFile
 (
@@ -138,7 +141,7 @@ void loadSofaFile
         errorMessage = nc_strerror(retval);
     
     /* Allocate sufficient memory */
-    (*hrir_len) = MIN((int)IR_dims[2], MAX_HRIR_LENGTH); /* truncate the HRIR length (1024 should be plenty) */
+    (*hrir_len) = MIN((int)IR_dims[2], MAX_SOFA_HRIR_LENGTH); /* truncate the HRIR length (1024 should be plenty) */
     (*hrirs) = malloc1d(IR_dims[0]*IR_dims[1]*(*hrir_len) *sizeof(float));
     (*hrir_dirs_deg) = malloc1d(SourcePosition_dims[0]*2*sizeof(float));
     
@@ -176,10 +179,4 @@ void loadSofaFile
     free(IR);
     free(SourcePosition);
 }
-
-#else
-/* To conform to the ISO standard, a '.c' file should not be empty.
- * This typedef is a lie: */
-typedef int saf_sofa_reader_is_empty;
-
 #endif /* SAF_ENABLE_SOFA_READER */

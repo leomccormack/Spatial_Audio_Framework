@@ -33,8 +33,6 @@
  *     Leo McCormack, 25.11.2016
  */
 
-#ifdef SAF_ENABLE_CDF4SAP
-
 #include "saf_cdf4sap.h"
 #include "../saf_utilities/saf_utilities.h"
 
@@ -540,11 +538,4 @@ void formulate_M_and_Cr_cmplx
         memset(Cr, 0, nYcols*nYcols*sizeof(float));
     } 
 }
- 
-#else
-/* To conform to the ISO standard, a '.c' file should not be empty.
- * This typedef is a lie: */
-typedef int saf_cdf4sap_is_empty;
 
-#endif /* SAF_ENABLE_CDF4SAP */
- 
