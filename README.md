@@ -113,10 +113,10 @@ sudo cp saf_mkl_custom.dylib /usr/local/lib
 sudo cp /opt/intel/compilers_and_libraries/mac/compiler/lib/libiomp5.dylib /usr/local/lib
 ```
 
-4. Add the following header search path to your project (where the X's are the version numbers):
+4. Add the following header search path to your project:
 
 ```
-/opt/intel/compilers_and_libraries_20XX.X.XXX/mac/mkl/include
+/opt/intel/compilers_and_libraries/mac/mkl/include
 ```
 
 5. Then add the following linker flags to your project (note that the second library is only needed if you built the threaded version):
