@@ -59,8 +59,18 @@ void utility_siminv
     vDSP_Length ind_tmp;
     vDSP_minvi(a, 1, &minVal, &ind_tmp, len);
     *index = (int)ind_tmp; 
-#else
+#elif defined(INTEL_MKL_VERSION)
     *index = (int)cblas_isamin(len, a, 1);
+#else
+    int i;
+    *index = 0;
+    float minVal=FLT_MAX;
+    for(i=0; i<len; i++){
+        if(fabsf(a[i])<minVal){
+            minVal = fabsf(a[i]);
+            *index = i;
+        } 
+    }
 #endif
 }
 
@@ -82,8 +92,18 @@ void utility_ciminv
     vDSP_minvi(abs_a, 1, &minVal, &ind_tmp, len);
     *index = (int)ind_tmp;
     free(abs_a);
-#else
+#elif defined(INTEL_MKL_VERSION)
     *index = (int)cblas_icamin(len, a, 1);
+#else
+    int i;
+    *index = 0;
+    float minVal=FLT_MAX;
+    for(i=0; i<len; i++){
+        if(cabsf(a[i])<minVal){
+            minVal = cabsf(a[i]);
+            *index = i;
+        } 
+    }
 #endif
 }
 
@@ -534,12 +554,20 @@ void utility_ssvd
         for(j=0; j<dim2; j++)
             a[j*dim1+i] = A[i*dim2 +j];
     lwork = -1;
+#ifdef SAF_USE_CLAPACK_INTERFACE
+    assert(0); /* no such implementation in clapack */
+#else
     sgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork,
            &info );
+#endif
     lwork = (int)wkopt;
     work = malloc1d( lwork*sizeof(float) );
+#ifdef SAF_USE_CLAPACK_INTERFACE
+    assert(0); /* no such implementation in clapack */
+#else
     sgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork,
            &info );
+#endif
     if( info != 0 ) {
         /* svd failed to converge */
         if (S != NULL)
@@ -616,9 +644,11 @@ void utility_csvd
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgesvd_( "A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_complex*)a, (__CLPK_integer*)&lda, s,
             (__CLPK_complex*)u, (__CLPK_integer*)&ldu, (__CLPK_complex*)vt, &ldvt, (__CLPK_complex*)&wkopt, &lwork, rwork, (__CLPK_integer*)&info );
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     cgesvd_( "A", "A", &m, &n, (MKL_Complex8*)a, &lda, s, (MKL_Complex8*)u, &ldu, (MKL_Complex8*)vt, &ldvt,
             (MKL_Complex8*)&wkopt, &lwork, rwork, &info );
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     cgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, rwork, &info );
 #endif
@@ -627,9 +657,11 @@ void utility_csvd
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgesvd_( "A", "A", &m, &n, (__CLPK_complex*)a, &lda, s, (__CLPK_complex*)u, &ldu, (__CLPK_complex*)vt, &ldvt,
             (__CLPK_complex*)work, &lwork, rwork, &info);
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     cgesvd_( "A", "A", &m, &n, (MKL_Complex8*)a, &lda, s, (MKL_Complex8*)u, &ldu, (MKL_Complex8*)vt, &ldvt,
             (MKL_Complex8*)work, &lwork, rwork, &info);
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     cgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, rwork, &info);
 #endif
@@ -709,10 +741,16 @@ void utility_sseig
     
     /* solve the eigenproblem */
     lwork = -1;
+#ifdef SAF_USE_CLAPACK_INTERFACE
+    assert(0); /* no such implementation in clapack */
+#else
     ssyev_( "Vectors", "Upper", &n, a, &lda, w, &wkopt, &lwork, &info );
+#endif
     lwork = (int)wkopt;
     work = (float*)malloc1d( lwork*sizeof(float) );
+#ifndef SAF_USE_CLAPACK_INTERFACE
     ssyev_( "Vectors", "Upper", &n, a, &lda, w, work, &lwork, &info );
+#endif
 
     /* output */
     if(D!=NULL)
@@ -786,8 +824,10 @@ void utility_cseig
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cheev_( "Vectors", "Upper", (__CLPK_integer*)&n, (__CLPK_complex*)a, (__CLPK_integer*)&lda,
            (__CLPK_real*)w, (__CLPK_complex*)&wkopt, (__CLPK_integer*)&lwork, (__CLPK_real*)rwork, (__CLPK_integer*)&info );
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     cheev_( "Vectors", "Upper", &n, (MKL_Complex8*)a, &lda, w, (MKL_Complex8*)&wkopt, &lwork, rwork, &info );
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     cheev_( "Vectors", "Upper", &n, a, &lda, w, &wkopt, &lwork, rwork, &info );
 #endif
@@ -796,8 +836,10 @@ void utility_cseig
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cheev_( "Vectors", "Upper", (__CLPK_integer*)&n, (__CLPK_complex*)a, (__CLPK_integer*)&lda,
            (__CLPK_real*)w, (__CLPK_complex*)work, (__CLPK_integer*)&lwork, (__CLPK_real*)rwork, (__CLPK_integer*)&info );
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     cheev_( "Vectors", "Upper", &n, (MKL_Complex8*)a, &lda, w, (MKL_Complex8*)work, &lwork, rwork, &info );
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     cheev_( "Vectors", "Upper", &n, a, &lda, w, work, &lwork, rwork, &info );
 #endif
@@ -882,9 +924,11 @@ void utility_ceigmp
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cggev_("V", "V", &n, (__CLPK_complex*)a, &lda, (__CLPK_complex*)b, &ldb, (__CLPK_complex*)alpha, (__CLPK_complex*)beta,
            (__CLPK_complex*)vl, &ldvl, (__CLPK_complex*)vr, &ldvr, (__CLPK_complex*)work, &lwork, rwork, &info);
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     cggev_("V", "V", &n, (MKL_Complex8*)a, &lda, (MKL_Complex8*)b, &ldb, (MKL_Complex8*)alpha, (MKL_Complex8*)beta,
            (MKL_Complex8*)vl, &ldvl, (MKL_Complex8*)vr, &ldvr, (MKL_Complex8*)work, &lwork, rwork, &info);
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     cggev_("V", "V", &n, a, &lda, b, &ldb, alpha, beta, vl, &ldvl, vr, &ldvr, work, &lwork, rwork, &info);
 #endif
@@ -962,9 +1006,11 @@ void utility_zeigmp
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     zggev_("V", "V", &n, (__CLPK_doublecomplex*)a, &lda, (__CLPK_doublecomplex*)b, &ldb, (__CLPK_doublecomplex*)alpha, (__CLPK_doublecomplex*)beta,
            (__CLPK_doublecomplex*)vl, &ldvl, (__CLPK_doublecomplex*)vr, &ldvr, (__CLPK_doublecomplex*)work, &lwork, rwork, &info);
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     zggev_("V", "V", &n, (MKL_Complex16*)a, &lda, (MKL_Complex16*)b, &ldb, (MKL_Complex16*)alpha, (MKL_Complex16*)beta,
            (MKL_Complex16*)vl, &ldvl, (MKL_Complex16*)vr, &ldvr, (MKL_Complex16*)work, &lwork, rwork, &info);
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     zggev_("V", "V", &n, a, &lda, b, &ldb, alpha, beta, vl, &ldvl, vr, &ldvr, work, &lwork, rwork, &info);
 #endif
@@ -1043,9 +1089,11 @@ void utility_ceig
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgeev_( "Vectors", "Vectors", &n, (__CLPK_complex*)a, &lda, (__CLPK_complex*)w, (__CLPK_complex*)vl,
            &ldvl, (__CLPK_complex*)vr, &ldvr, (__CLPK_complex*)&wkopt, &lwork, rwork, &info );
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     cgeev_( "Vectors", "Vectors", &n, (MKL_Complex8*)a, &lda, (MKL_Complex8*)w, (MKL_Complex8*)vl, &ldvl,
            (MKL_Complex8*)vr, &ldvr, (MKL_Complex8*)&wkopt, &lwork, rwork, &info );
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     cgeev_( "Vectors", "Vectors", &n, a, &lda, w, vl, &ldvl, vr, &ldvr, &wkopt, &lwork, rwork, &info );
 #endif
@@ -1054,9 +1102,11 @@ void utility_ceig
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgeev_( "Vectors", "Vectors", &n, (__CLPK_complex*)a, &lda, (__CLPK_complex*)w, (__CLPK_complex*)vl,
            &ldvl, (__CLPK_complex*)vr, &ldvr, (__CLPK_complex*)work, &lwork, rwork, &info );
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     cgeev_( "Vectors", "Vectors", &n, (MKL_Complex8*)a, &lda, (MKL_Complex8*)w, (MKL_Complex8*)vl, &ldvl,
            (MKL_Complex8*)vr, &ldvr, (MKL_Complex8*)work, &lwork, rwork, &info );
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     cgeev_( "Vectors", "Vectors", &n, a, &lda, w, vl, &ldvl, vr, &ldvr, work, &lwork, rwork, &info );
 #endif
@@ -1139,7 +1189,11 @@ void utility_sglslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
+#ifdef SAF_USE_CLAPACK_INTERFACE
+    clapack_sgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
+#else
     sgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
+#endif
     
     if(info!=0){
         /* A is singular, solution not possible */
@@ -1188,8 +1242,10 @@ void utility_cglslv
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgesv_( &n, &nrhs, (__CLPK_complex*)a, &lda, IPIV, (__CLPK_complex*)b, &ldb, &info );
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     cgesv_( &n, &nrhs, (MKL_Complex8*)a, &lda, IPIV, (MKL_Complex8*)b, &ldb, &info );
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    clapack_cgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
 #else
     cgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
 #endif
@@ -1239,7 +1295,11 @@ void utility_dglslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
+#ifdef SAF_USE_CLAPACK_INTERFACE
+    clapack_dgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
+#else
     dgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
+#endif
     
     if(info!=0){
         /* A is singular, solution not possible */
@@ -1288,8 +1348,10 @@ void utility_zglslv
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     zgesv_( &n, &nrhs, (__CLPK_doublecomplex*)a, &lda, IPIV, (__CLPK_doublecomplex*)b, &ldb, &info );
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     zgesv_( &n, &nrhs, (MKL_Complex16*)a, &lda, IPIV, (MKL_Complex16*)b, &ldb, &info );
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    clapack_zgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
 #else
     zgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
 #endif
@@ -1340,7 +1402,11 @@ void utility_sslslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
+#ifdef SAF_USE_CLAPACK_INTERFACE
+    clapack_sposv(CblasColMajor, CblasUpper, n, nrhs, a, lda, b, ldb);
+#else
     sposv_( "U", &n, &nrhs, a, &lda, b, &ldb, &info );
+#endif
     
     if(info!=0){
         /* A is not positive definate, solution not possible */
@@ -1386,8 +1452,10 @@ void utility_cslslv
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cposv_( "U", &n, &nrhs, (__CLPK_complex*)a, &lda, (__CLPK_complex*)b, &ldb, &info );
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     cposv_( "U", &n, &nrhs, (MKL_Complex8*)a, &lda, (MKL_Complex8*)b, &ldb, &info );
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    clapack_cposv(CblasColMajor, CblasUpper, n, nrhs, a, lda, b, ldb);
 #else
     cposv_( "U", &n, &nrhs, a, &lda, b, &ldb, &info );
 #endif
@@ -1440,8 +1508,10 @@ void utility_spinv
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     sgesvd_("S", "S", (__CLPK_integer*)&m, (__CLPK_integer*)&n, a, (__CLPK_integer*)&lda,
             s, u, (__CLPK_integer*)&ldu, vt, (__CLPK_integer*)&ldvt, &wkopt, (__CLPK_integer*)&lwork, (__CLPK_integer*)&info);
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
 #endif
@@ -1450,8 +1520,10 @@ void utility_spinv
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     sgesvd_("S", "S", (__CLPK_integer*)&m, (__CLPK_integer*)&n, a, (__CLPK_integer*)&lda,
             s, u, (__CLPK_integer*)&ldu, vt, (__CLPK_integer*)&ldvt, work, (__CLPK_integer*) &lwork, (__CLPK_integer*)&info);
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
 #endif
@@ -1519,9 +1591,11 @@ void utility_cpinv
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgesvd_( "A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_complex*)a, (__CLPK_integer*)&lda, s,
             (__CLPK_complex*)u, (__CLPK_integer*)&ldu, (__CLPK_complex*)vt, &ldvt, (__CLPK_complex*)&wkopt, &lwork, rwork, (__CLPK_integer*)&info );
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     cgesvd_( "A", "A", &m, &n, (MKL_Complex8*)a, &lda, s, (MKL_Complex8*)u, &ldu, (MKL_Complex8*)vt, &ldvt,
             (MKL_Complex8*)&wkopt, &lwork, rwork, &info );
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     cgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, rwork, &info );
 #endif
@@ -1530,9 +1604,11 @@ void utility_cpinv
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgesvd_( "A", "A", &m, &n, (__CLPK_complex*)a, &lda, s, (__CLPK_complex*)u, &ldu, (__CLPK_complex*)vt, &ldvt,
             (__CLPK_complex*)work, &lwork, rwork, &info);
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     cgesvd_( "A", "A", &m, &n, (MKL_Complex8*)a, &lda, s, (MKL_Complex8*)u, &ldu, (MKL_Complex8*)vt, &ldvt,
             (MKL_Complex8*)work, &lwork, rwork, &info);
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     cgesvd_( "A", "A", &m, &n, (MKL_Complex8*)a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, rwork, &info);
 #endif
@@ -1598,8 +1674,10 @@ void utility_dpinv
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     dgesvd_("S", "S", (__CLPK_integer*)&m, (__CLPK_integer*)&n, a, (__CLPK_integer*)&lda,
             s, u, (__CLPK_integer*)&ldu, vt, (__CLPK_integer*)&ldvt, &wkopt, (__CLPK_integer*)&lwork, (__CLPK_integer*)&info);
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
 #endif
@@ -1609,8 +1687,10 @@ void utility_dpinv
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     dgesvd_("S", "S", (__CLPK_integer*)&m, (__CLPK_integer*)&n, a, (__CLPK_integer*)&lda,
             s, u, (__CLPK_integer*)&ldu, vt, (__CLPK_integer*)&ldvt, work, (__CLPK_integer*) &lwork, (__CLPK_integer*)&info);
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
 #endif
@@ -1679,9 +1759,11 @@ void utility_zpinv
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     zgesvd_( "A", "A", (__CLPK_integer*)&m, (__CLPK_integer*)&n, (__CLPK_doublecomplex*)a, (__CLPK_integer*)&lda, s, (__CLPK_doublecomplex*)u,
             (__CLPK_integer*)&ldu, (__CLPK_doublecomplex*)vt, &ldvt, (__CLPK_doublecomplex*)&wkopt, &lwork, rwork, (__CLPK_integer*)&info );
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     zgesvd_( "A", "A", &m, &n, (MKL_Complex16*)a, &lda, s, (MKL_Complex16*)u, &ldu, (MKL_Complex16*)vt, &ldvt,
             (MKL_Complex16*)&wkopt, &lwork, rwork, &info );
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     zgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, rwork, &info );
 #endif
@@ -1690,9 +1772,11 @@ void utility_zpinv
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     zgesvd_( "A", "A", &m, &n, (__CLPK_doublecomplex*)a, &lda, s, (__CLPK_doublecomplex*)u, &ldu, (__CLPK_doublecomplex*)vt, &ldvt,
             (__CLPK_doublecomplex*)work, &lwork, rwork, &info);
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     zgesvd_( "A", "A", &m, &n, (MKL_Complex16*)a, &lda, s, (MKL_Complex16*)u, &ldu, (MKL_Complex16*)vt, &ldvt,
             (MKL_Complex16*)work, &lwork, rwork, &info);
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
 #else
     zgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, rwork, &info);
 #endif
@@ -1753,7 +1837,11 @@ void utility_schol
             a[j*dim+i] = A[i*dim+j];
     
     /* a is replaced by solution */
+#ifdef SAF_USE_CLAPACK_INTERFACE
+    clapack_spotrf(CblasColMajor, CblasUpper, n, a, lda);
+#else
     spotrf_( "U", &n, a, &lda, &info );
+#endif
     
     if(info>0){
         /* A is not positive definate, solution not possible */
@@ -1793,8 +1881,10 @@ void utility_cchol
     /* a is replaced by solution */
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cpotrf_( "U", &n, (__CLPK_complex*)a, &lda, &info );
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     cpotrf_( "U", &n, (MKL_Complex8*)a, &lda, &info );
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    clapack_cpotrf(CblasColMajor, CblasUpper, n, a, lda);
 #else
     cpotrf_( "U", &n, a, &lda, &info );
 #endif
@@ -1831,9 +1921,12 @@ void utility_sinv(float * A, const int N)
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     sgetrf_((__CLPK_integer*)&N, (__CLPK_integer*)&N, A, (__CLPK_integer*)&N, (__CLPK_integer*)IPIV, (__CLPK_integer*)&INFO);
     sgetri_((__CLPK_integer*)&N, A, (__CLPK_integer*)&N, (__CLPK_integer*)IPIV, WORK, (__CLPK_integer*)&LWORK, (__CLPK_integer*)&INFO);
-#else
+#elif defined(SAF_USE_INTEL_MKL)
     sgetrf_(&N, &N, A, &N, IPIV, &INFO);
     sgetri_(&N, A, &N, IPIV, WORK, &LWORK, &INFO);
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    clapack_sgetrf(CblasColMajor, N, N, A, N, IPIV);
+    clapack_sgetri(CblasColMajor, N, A, N, IPIV);
 #endif
     
     free(IPIV);
@@ -1852,9 +1945,12 @@ void utility_dinv(double* A, const int N)
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     dgetrf_((__CLPK_integer*)&N, (__CLPK_integer*)&N, A, (__CLPK_integer*)&N, (__CLPK_integer*)IPIV, (__CLPK_integer*)&INFO);
     dgetri_((__CLPK_integer*)&N, A, (__CLPK_integer*)&N, (__CLPK_integer*)IPIV, WORK, (__CLPK_integer*)&LWORK, (__CLPK_integer*)&INFO);
-#else
+#elif defined(SAF_USE_INTEL_MKL)
     dgetrf_(&N, &N, A, &N, IPIV, &INFO);
     dgetri_(&N, A, &N, IPIV, WORK, &LWORK, &INFO);
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    clapack_dgetrf(CblasColMajor, N, N, A, N, IPIV);
+    clapack_dgetri(CblasColMajor, N, A, N, IPIV);
 #endif
     
     free(IPIV);
@@ -1873,12 +1969,12 @@ void utility_cinv(float_complex * A, const int N)
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
     cgetrf_((__CLPK_integer*)&N, (__CLPK_integer*)&N, (__CLPK_complex*)A, (__CLPK_integer*)&N, (__CLPK_integer*)IPIV, (__CLPK_integer*)&INFO);
     cgetri_((__CLPK_integer*)&N, (__CLPK_complex*)A, (__CLPK_integer*)&N, (__CLPK_integer*)IPIV, (__CLPK_complex*)WORK, (__CLPK_integer*)&LWORK, (__CLPK_integer*)&INFO);
-#elif INTEL_MKL_VERSION
+#elif defined(INTEL_MKL_VERSION)
     cgetrf_(&N, &N, (MKL_Complex8*)A, &N, IPIV, &INFO);
     cgetri_(&N, (MKL_Complex8*)A, &N, IPIV, (MKL_Complex8*)WORK, &LWORK, &INFO);
-#else
-    cgetrf_(&N, &N, A, &N, IPIV, &INFO);
-    cgetri_(&N, A, &N, IPIV, WORK, &LWORK, &INFO);
+#elif defined(SAF_USE_CLAPACK_INTERFACE)
+    clapack_cgetrf(CblasColMajor, N, N, A, N, IPIV);
+    clapack_cgetri(CblasColMajor, N, A, N, IPIV);
 #endif
     
     free(IPIV);

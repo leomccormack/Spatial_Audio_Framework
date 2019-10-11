@@ -56,9 +56,11 @@ extern "C" {
 
 #if defined(SAF_USE_INTEL_MKL)
 # include "mkl.h"
-#elif defined(SAF_USE_ATLAS_WITH_LAPACK) || defined(SAF_USE_OPENBLAS_WITH_LAPACK)
-# include "cblas.h"
-# include "lapack.h"
+#elif defined(SAF_USE_ATLAS) 
+/* (default is the classic lapack fortran interface:) */
+#define SAF_USE_CLAPACK_INTERFACE 
+# include "cblas-atlas.h"
+# include "clapack.h"
 #elif defined(__APPLE__)
 # include "Accelerate/Accelerate.h"
 #else
