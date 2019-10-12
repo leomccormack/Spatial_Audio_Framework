@@ -556,6 +556,12 @@ void utility_ssvd
     lwork = -1;
 #ifdef SAF_USE_CLAPACK_INTERFACE
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    float* superb;
+    superb = malloc((MIN(m,n)-1)*sizeof(float));
+    info = LAPACKE_sgesvd(CblasColMajor, 'A', 'A', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
+    free(superb);
+    wkopt = 0;
 #else
     sgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork,
            &info );
@@ -564,6 +570,8 @@ void utility_ssvd
     work = malloc1d( lwork*sizeof(float) );
 #ifdef SAF_USE_CLAPACK_INTERFACE
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    /* nothing to be done */
 #else
     sgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork,
            &info );
@@ -649,6 +657,12 @@ void utility_csvd
             (MKL_Complex8*)&wkopt, &lwork, rwork, &info );
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    float* superb;
+    superb = malloc((MIN(m,n)-1)*sizeof(float));
+    info = LAPACKE_cgesvd(CblasColMajor, 'A', 'A', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
+    free(superb);
+    wkopt = cmplxf(0.0f, 0.0f);
 #else
     cgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, rwork, &info );
 #endif
@@ -662,6 +676,8 @@ void utility_csvd
             (MKL_Complex8*)work, &lwork, rwork, &info);
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    /* nothing to be done */
 #else
     cgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, rwork, &info);
 #endif
@@ -743,12 +759,19 @@ void utility_sseig
     lwork = -1;
 #ifdef SAF_USE_CLAPACK_INTERFACE
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_ssyev( LAPACK_COL_MAJOR, 'V', 'U', n, a, lda, w );
+    wkopt = 0.0f;
 #else
     ssyev_( "Vectors", "Upper", &n, a, &lda, w, &wkopt, &lwork, &info );
 #endif
     lwork = (int)wkopt;
     work = (float*)malloc1d( lwork*sizeof(float) );
-#ifndef SAF_USE_CLAPACK_INTERFACE
+#ifdef SAF_USE_CLAPACK_INTERFACE
+    assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    /* nothing to be done */
+#else
     ssyev_( "Vectors", "Upper", &n, a, &lda, w, work, &lwork, &info );
 #endif
 
@@ -828,6 +851,9 @@ void utility_cseig
     cheev_( "Vectors", "Upper", &n, (MKL_Complex8*)a, &lda, w, (MKL_Complex8*)&wkopt, &lwork, rwork, &info );
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_cheev( LAPACK_COL_MAJOR, 'V', 'U', n, a, lda, w );
+    wkopt = cmplxf(0.0f, 0.0f);
 #else
     cheev_( "Vectors", "Upper", &n, a, &lda, w, &wkopt, &lwork, rwork, &info );
 #endif
@@ -840,6 +866,8 @@ void utility_cseig
     cheev_( "Vectors", "Upper", &n, (MKL_Complex8*)a, &lda, w, (MKL_Complex8*)work, &lwork, rwork, &info );
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    /* nothing needed to be done */
 #else
     cheev_( "Vectors", "Upper", &n, a, &lda, w, work, &lwork, rwork, &info );
 #endif
@@ -857,7 +885,7 @@ void utility_cseig
     }
     else{
         if(sortDecFLAG){
-            for(i=0; i<dim; i++){
+            for(i=0; i<dim; i++) {
                 if(V!=NULL)
                     for(j=0; j<dim; j++)
                         V[i*dim+j] = a[(dim-j-1)*dim+i]; /* transpose, back to row-major and reverse order */
@@ -867,7 +895,7 @@ void utility_cseig
                     eig[i] = w[dim-i-1];
             }
         }
-        else{
+        else {
             for(i=0; i<dim; i++){
                 if(V!=NULL)
                     for(j=0; j<dim; j++)
@@ -929,6 +957,8 @@ void utility_ceigmp
            (MKL_Complex8*)vl, &ldvl, (MKL_Complex8*)vr, &ldvr, (MKL_Complex8*)work, &lwork, rwork, &info);
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    //NEEDS TO BE IMPLEMENTED
 #else
     cggev_("V", "V", &n, a, &lda, b, &ldb, alpha, beta, vl, &ldvl, vr, &ldvr, work, &lwork, rwork, &info);
 #endif
@@ -1011,6 +1041,8 @@ void utility_zeigmp
            (MKL_Complex16*)vl, &ldvl, (MKL_Complex16*)vr, &ldvr, (MKL_Complex16*)work, &lwork, rwork, &info);
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    //NEEDS TO BE IMPLEMENTED
 #else
     zggev_("V", "V", &n, a, &lda, b, &ldb, alpha, beta, vl, &ldvl, vr, &ldvr, work, &lwork, rwork, &info);
 #endif
@@ -1094,6 +1126,9 @@ void utility_ceig
            (MKL_Complex8*)vr, &ldvr, (MKL_Complex8*)&wkopt, &lwork, rwork, &info );
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_cgeev(CblasColMajor, 'V', 'V', n, a, lda, w, vl, ldvl, vr, ldvr );
+    wkopt = 0.0f;
 #else
     cgeev_( "Vectors", "Vectors", &n, a, &lda, w, vl, &ldvl, vr, &ldvr, &wkopt, &lwork, rwork, &info );
 #endif
@@ -1107,6 +1142,8 @@ void utility_ceig
            (MKL_Complex8*)vr, &ldvr, (MKL_Complex8*)work, &lwork, rwork, &info );
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    /* do nothing */
 #else
     cgeev_( "Vectors", "Vectors", &n, a, &lda, w, vl, &ldvl, vr, &ldvr, work, &lwork, rwork, &info );
 #endif
@@ -1190,7 +1227,9 @@ void utility_sglslv
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
 #ifdef SAF_USE_CLAPACK_INTERFACE
-    clapack_sgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
+    info = clapack_sgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_sgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb );
 #else
     sgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
 #endif
@@ -1245,7 +1284,9 @@ void utility_cglslv
 #elif defined(INTEL_MKL_VERSION)
     cgesv_( &n, &nrhs, (MKL_Complex8*)a, &lda, IPIV, (MKL_Complex8*)b, &ldb, &info );
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
-    clapack_cgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
+    info = clapack_cgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_cgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
 #else
     cgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
 #endif
@@ -1296,7 +1337,9 @@ void utility_dglslv
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
 #ifdef SAF_USE_CLAPACK_INTERFACE
-    clapack_dgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
+    info = clapack_dgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_dgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
 #else
     dgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
 #endif
@@ -1351,7 +1394,9 @@ void utility_zglslv
 #elif defined(INTEL_MKL_VERSION)
     zgesv_( &n, &nrhs, (MKL_Complex16*)a, &lda, IPIV, (MKL_Complex16*)b, &ldb, &info );
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
-    clapack_zgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
+    info = clapack_zgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_zgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
 #else
     zgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
 #endif
@@ -1403,7 +1448,9 @@ void utility_sslslv
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
 #ifdef SAF_USE_CLAPACK_INTERFACE
-    clapack_sposv(CblasColMajor, CblasUpper, n, nrhs, a, lda, b, ldb);
+    info = clapack_sposv(CblasColMajor, CblasUpper, n, nrhs, a, lda, b, ldb);
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_sposv(CblasColMajor, CblasUpper, n, nrhs, a, lda, b, ldb);
 #else
     sposv_( "U", &n, &nrhs, a, &lda, b, &ldb, &info );
 #endif
@@ -1455,7 +1502,9 @@ void utility_cslslv
 #elif defined(INTEL_MKL_VERSION)
     cposv_( "U", &n, &nrhs, (MKL_Complex8*)a, &lda, (MKL_Complex8*)b, &ldb, &info );
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
-    clapack_cposv(CblasColMajor, CblasUpper, n, nrhs, a, lda, b, ldb);
+    info = clapack_cposv(CblasColMajor, CblasUpper, n, nrhs, a, lda, b, ldb);
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_cposv(CblasColMajor, CblasUpper, n, nrhs, a, lda, b, ldb);
 #else
     cposv_( "U", &n, &nrhs, a, &lda, b, &ldb, &info );
 #endif
@@ -1512,6 +1561,12 @@ void utility_spinv
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    float* superb;
+    superb = malloc((MIN(m,n)-1)*sizeof(float));
+    info = LAPACKE_sgesvd(CblasColMajor, 'S', 'S', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
+    free(superb);
+    wkopt = 0;
 #else
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
 #endif
@@ -1524,6 +1579,8 @@ void utility_spinv
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    /* nothing neeeded to be done */
 #else
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
 #endif
@@ -1596,6 +1653,12 @@ void utility_cpinv
             (MKL_Complex8*)&wkopt, &lwork, rwork, &info );
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    float* superb;
+    superb = malloc((MIN(m,n)-1)*sizeof(float));
+    info = LAPACKE_cgesvd(CblasColMajor, 'S', 'S', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
+    free(superb);
+    wkopt = cmplxf(0.0f, 0.0f);
 #else
     cgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, rwork, &info );
 #endif
@@ -1609,6 +1672,8 @@ void utility_cpinv
             (MKL_Complex8*)work, &lwork, rwork, &info);
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    /* not needed */
 #else
     cgesvd_( "A", "A", &m, &n, (MKL_Complex8*)a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, rwork, &info);
 #endif
@@ -1678,6 +1743,12 @@ void utility_dpinv
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    double* superb;
+    superb = malloc((MIN(m,n)-1)*sizeof(double));
+    info = LAPACKE_dgesvd(CblasColMajor, 'S', 'S', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
+    free(superb);
+    wkopt = 0.0f;
 #else
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
 #endif
@@ -1691,6 +1762,8 @@ void utility_dpinv
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    // do nothing
 #else
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
 #endif
@@ -1764,6 +1837,12 @@ void utility_zpinv
             (MKL_Complex16*)&wkopt, &lwork, rwork, &info );
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    double* superb;
+    superb = malloc((MIN(m,n)-1)*sizeof(double));
+    info = LAPACKE_zgesvd(CblasColMajor, 'A', 'A', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
+    free(superb);
+    wkopt = cmplx(0.0, 0.0);
 #else
     zgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, rwork, &info );
 #endif
@@ -1777,6 +1856,8 @@ void utility_zpinv
             (MKL_Complex16*)work, &lwork, rwork, &info);
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
     assert(0); /* no such implementation in clapack */
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    // do nothing
 #else
     zgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, rwork, &info);
 #endif
@@ -1838,7 +1919,9 @@ void utility_schol
     
     /* a is replaced by solution */
 #ifdef SAF_USE_CLAPACK_INTERFACE
-    clapack_spotrf(CblasColMajor, CblasUpper, n, a, lda);
+    info = clapack_spotrf(CblasColMajor, CblasUpper, n, a, lda);
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_spotrf(CblasColMajor, CblasUpper, n, a, lda);
 #else
     spotrf_( "U", &n, a, &lda, &info );
 #endif
@@ -1884,7 +1967,9 @@ void utility_cchol
 #elif defined(INTEL_MKL_VERSION)
     cpotrf_( "U", &n, (MKL_Complex8*)a, &lda, &info );
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
-    clapack_cpotrf(CblasColMajor, CblasUpper, n, a, lda);
+    info = clapack_cpotrf(CblasColMajor, CblasUpper, n, a, lda);
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_cpotrf(CblasColMajor, CblasUpper, n, a, lda);
 #else
     cpotrf_( "U", &n, a, &lda, &info );
 #endif
@@ -1925,8 +2010,11 @@ void utility_sinv(float * A, const int N)
     sgetrf_(&N, &N, A, &N, IPIV, &INFO);
     sgetri_(&N, A, &N, IPIV, WORK, &LWORK, &INFO);
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
-    clapack_sgetrf(CblasColMajor, N, N, A, N, IPIV);
-    clapack_sgetri(CblasColMajor, N, A, N, IPIV);
+    INFO = clapack_sgetrf(CblasColMajor, N, N, A, N, IPIV);
+    INFO = clapack_sgetri(CblasColMajor, N, A, N, IPIV);
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    INFO = LAPACKE_sgetrf(CblasColMajor, N, N, A, N, IPIV);
+    INFO = LAPACKE_sgetri(CblasColMajor, N, A, N, IPIV);
 #endif
     
     free(IPIV);
@@ -1949,8 +2037,11 @@ void utility_dinv(double* A, const int N)
     dgetrf_(&N, &N, A, &N, IPIV, &INFO);
     dgetri_(&N, A, &N, IPIV, WORK, &LWORK, &INFO);
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
-    clapack_dgetrf(CblasColMajor, N, N, A, N, IPIV);
-    clapack_dgetri(CblasColMajor, N, A, N, IPIV);
+    INFO = clapack_dgetrf(CblasColMajor, N, N, A, N, IPIV);
+    INFO = clapack_dgetri(CblasColMajor, N, A, N, IPIV);
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    INFO = LAPACKE_dgetrf(CblasColMajor, N, N, A, N, IPIV);
+    INFO = LAPACKE_dgetri(CblasColMajor, N, A, N, IPIV);
 #endif
     
     free(IPIV);
@@ -1973,8 +2064,11 @@ void utility_cinv(float_complex * A, const int N)
     cgetrf_(&N, &N, (MKL_Complex8*)A, &N, IPIV, &INFO);
     cgetri_(&N, (MKL_Complex8*)A, &N, IPIV, (MKL_Complex8*)WORK, &LWORK, &INFO);
 #elif defined(SAF_USE_CLAPACK_INTERFACE)
-    clapack_cgetrf(CblasColMajor, N, N, A, N, IPIV);
-    clapack_cgetri(CblasColMajor, N, A, N, IPIV);
+    INFO = clapack_cgetrf(CblasColMajor, N, N, A, N, IPIV);
+    INFO = clapack_cgetri(CblasColMajor, N, A, N, IPIV);
+#elif defined(SAF_USE_LAPACKE_INTERFACE)
+    INFO = LAPACKE_cgetrf(CblasColMajor, N, N, A, N, IPIV);
+    INFO = LAPACKE_cgetri(CblasColMajor, N, A, N, IPIV);
 #endif
     
     free(IPIV);

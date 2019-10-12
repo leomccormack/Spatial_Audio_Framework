@@ -58,13 +58,18 @@ extern "C" {
 # include "mkl.h"
 #elif defined(SAF_USE_ATLAS) 
 /* (default is the classic lapack fortran interface:) */
-#define SAF_USE_CLAPACK_INTERFACE 
+# define SAF_USE_CLAPACK_INTERFACE 
 # include "cblas-atlas.h"
-# include "clapack.h"
+# include "clapack.h" /* note: ATLAS's CLAPACK does not include some LAPACK functions */
+#elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
+/* (default is the classic lapack fortran interface:) */
+# define SAF_USE_LAPACKE_INTERFACE 
+# include "cblas.h"
+# include "lapacke.h"
 #elif defined(__APPLE__)
 # include "Accelerate/Accelerate.h"
 #else
-# error "SAF requires a library (or libraries) which supports CBLAS and LAPACK"
+# error "SAF requires a library (or libraries) which supports CBLAS and LAPACK(E)"
 #endif
     
     
