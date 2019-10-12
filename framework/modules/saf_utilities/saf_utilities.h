@@ -29,11 +29,10 @@
  *     which must also be linked correctly to your project.
  *         SAF_USE_INTEL_MKL
  *             to enable Intel's Math Kernal Library
- *         SAF_USE_ATLAS_WITH_LAPACK
- *             to enable ATLAS BLAS routines with netlib's LAPACK
- *             see: http://math-atlas.sourceforge.net/atlas_install/node8.html
- *         SAF_USE_OPENBLAS_WITH_LAPACK
- *             to enable OpenBLAS and use netlib's LAPACK
+ *         SAF_USE_ATLAS
+ *             to enable ATLAS BLAS routines with CLAPACK
+ *         SAF_USE_OPEN_BLAS_AND_LAPACKE
+ *             to enable OpenBLAS and use the LAPACK(E) interface
  *     More information can be found here:
  *         https://github.com/leomccormack/Spatial_Audio_Framework
  *     Mac users only:
@@ -55,21 +54,22 @@ extern "C" {
 /* ========================================================================== */
 
 #if defined(SAF_USE_INTEL_MKL)
+# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE  
 # include "mkl.h"
-#elif defined(SAF_USE_ATLAS) 
-/* (default is the classic lapack fortran interface:) */
-# define SAF_USE_CLAPACK_INTERFACE 
+#elif defined(SAF_USE_ATLAS)
+# define VECLIB_USE_CLAPACK_INTERFACE
 # include "cblas-atlas.h"
-# include "clapack.h" /* note: ATLAS's CLAPACK does not include some LAPACK functions */
+/* note: ATLAS's CLAPACK does not include some LAPACK functions */
+# include "clapack.h"
 #elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
-/* (default is the classic lapack fortran interface:) */
-# define SAF_USE_LAPACKE_INTERFACE 
+# define VECLIB_USE_LAPACKE_INTERFACE
 # include "cblas.h"
 # include "lapacke.h"
 #elif defined(__APPLE__)
+# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE
 # include "Accelerate/Accelerate.h"
 #else
-# error "SAF requires a library (or libraries) which supports CBLAS and LAPACK(E)"
+# error "SAF requires a library (or libraries) which supports CBLAS and LAPACK"
 #endif
     
     

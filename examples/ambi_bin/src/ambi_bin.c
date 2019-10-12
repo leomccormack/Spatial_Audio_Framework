@@ -284,7 +284,7 @@ void ambi_bin_process
             memset(pData->binframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS*sizeof(float_complex));
         
         /* inverse-TFT */
-        postGain = powf(10.0f, POST_GAIN/20.0f);
+        //postGain = powf(10.0f, POST_GAIN/20.0f);
         for(t = 0; t < TIME_SLOTS; t++) {
             for(band = 0; band < HYBRID_BANDS; band++) {
                 for(ch = 0; ch < NUM_EARS; ch++) {
