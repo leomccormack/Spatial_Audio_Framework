@@ -91,7 +91,9 @@ And add this linker flag to your project (or wherever it was installed):
 
 ## Using the framework
 
-Add all of the files found in the "framework" folder to your project (you may simply drag the folder into your IDE if you wish), and add the following directory to your header search paths:
+Once a CBLAS/LAPACK flag is defined (see above), and the correct libraries are linked to your project, you can now add all of the files found in the "framework" folder to your project. (You may simply drag the folder into your IDE if you wish).
+
+Then add the following directory to your header search paths:
 
 ```
 Spatial_Audio_Framework/framework/include 
