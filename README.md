@@ -11,11 +11,11 @@ The framework requires the following libraries:
 * Any Library/Libraries conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 * (Optional) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
 
-The rationale for the former requirement is that the framework employs the use of CBLAS/LAPACK routines for tackling all of the linear algebra operations, which are used quite prolifically throughout the code. Therefore, a performance library, which conforms to the CBLAS/LAPACK standards, is required by most of the framework modules. In principle, any such library (or combination of libraries) may be employed for this task, and if you've worked with such libraries before, then you probably already know what to do. 
+The rationale for the former requirement is that the framework employs the use of CBLAS/LAPACK routines for tackling all of the linear algebra operations, which are used quite prolifically throughout the code. Therefore, a performance library, which conforms to the CBLAS/LAPACK standards, is required by most of the framework modules. In principle, any such library (or combination of libraries) may be employed for this task, and if you've worked with such libraries before, then you probably already know what to do. Although, using a [custom Intel MKL library](CUSTOM_INTEL_MKL_INTRUCTIONS.md) for this requirement is still generally recommended, as this is the approach used by the developers.
 
-## CBLAS/LAPACK options
+## Available CBLAS/LAPACK options
 
-Define one of the following preprocessor definitions, depending on which library/libraries you want to use:
+Define one of the following preprocessor definitions, which will dictate which library/libraries you should link to your project:
 
 ```
 SAF_USE_INTEL_MKL
@@ -23,11 +23,11 @@ SAF_USE_OPEN_BLAS_AND_LAPACKE
 SAF_USE_ATLAS
 ```
 
-* SAF_USE_INTEL_MKL - to use [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries), or a [custom MKL library](CUSTOM_INTEL_MKL_INTRUCTIONS.md)  (recommended for x86_64/amd64).
+* SAF_USE_INTEL_MKL - to use [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries), or a [**custom Intel MKL library**](CUSTOM_INTEL_MKL_INTRUCTIONS.md)  (recommended for x86_64/amd64).
 * SAF_USE_OPEN_BLAS_AND_LAPACKE - to use [OpenBLAS](https://github.com/xianyi/OpenBLAS) and the LAPACKE interface (recommended for ARM)
-* SAF_USE_ATLAS - to use [ALTAS](http://math-atlas.sourceforge.net/), which is not recommended as some LAPACK functions are missing. (However, if you don't mind loosing some SAF functionality, then it may be a good choice).
+* SAF_USE_ATLAS - to use [ALTAS](http://math-atlas.sourceforge.net/) which is not recommended, as some LAPACK functions are missing. However, if you don't mind loosing some SAF functionality then it may still be a good choice for your particular project.
 
-Note: If you are using MacOSX and do not define one of the above flags, then SAF will use [Apple Accelerate](https://developer.apple.com/documentation/accelerate) for CBLAS/LAPACK and also the vDSP FFT. (However, Intel MKL is still usually faster).
+**MacOSX users only**: If you do not define one of the above flags, then SAF will use [Apple Accelerate](https://developer.apple.com/documentation/accelerate) for CBLAS/LAPACK and also vDSP for the FFT. However, note that Intel MKL is still the more recommended option, as it is usually faster than Accelerate.
 
 ## Enable SOFA support (Optional)
 
@@ -68,7 +68,7 @@ Spatial_Audio_Framework/dependencies/MacOSX/include
 Spatial_Audio_Framework/dependencies/MacOSX/lib
 ```
 
-###  Linux (amd64) and Raspberry PI (ARM) users
+###  Linux (amd64) and Raspberry Pi (ARM) users
 
 For ubuntu based distros, you may install [netCDF](https://www.unidata.ucar.edu/software/netcdf/) and its dependencies with these terminal commands:
 
@@ -91,19 +91,19 @@ And add this linker flag to your project (or wherever it was installed):
 
 ## Using the framework
 
-Add this directory to your header search paths:
+Add all of the files found in the "framework" folder to your project (you may simply drag the folder into your IDE if you wish), and add the following directory to your header search paths:
 
 ```
 Spatial_Audio_Framework/framework/include 
 ```
 
-And include the main header file:
+The framework's master include header is:
 
 ```c
 #include "saf.h"
 ```
 
-Detailed instructions regarding how to use the functions offered by each module is provided in the main header file for the respective module (e.g. "/modules/saf_sh/saf_sh.h", or  "/modules/saf_vbap/saf_vbap.h").
+Detailed instructions regarding how to use the functions offered by each of the framework's module, is provided in the main header file for the respective module (e.g. "/modules/saf_**sh**/saf_**sh**.h", or  "/modules/saf_**vbap**/saf_**vbap**.h").
 
 ### Examples
 
@@ -152,7 +152,7 @@ Journal of the audio engineering society. 2012 Nov 26;60(10):807-20.
 Acta Acustica united with Acustica. 2012 Jan 1;98(1):37-47.
 
 [5] McCormack L, Välimäki V. **FFT-based Dynamic Range Compression**.   
-In Proceedings of the 14th Sound and Music Computing Conference, July 5--8, Espoo, Finland, At Espoo, Finland 2017 Jul 5.
+In Proceedings of the 14th Sound and Music Computing Conference, July 5--8, Espoo, Finland, At Espoo, Finland 2017
 
 [6] Williams EG. **Fourier acoustics: sound radiation and nearfield acoustical holography**.   
 Elsevier; 1999 Jun 10.
