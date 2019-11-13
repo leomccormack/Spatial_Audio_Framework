@@ -300,17 +300,14 @@ void compressVBAPgainTable3D
     float* vbap_gtable,
     int nTable,
     int nDirs,
-    float** vbap_gtableComp, /* nTable x 3  */
-    int** vbap_gtableIdx     /* nTable x 3  */
+    float* vbap_gtableComp, /* nTable x 3  */
+    int* vbap_gtableIdx     /* nTable x 3  */
 )
 {
     int i, j, nt;
     int idx_nt[3];
     float gains_nt[3];
     float gains_sum;
-    
-    (*vbap_gtableComp) = calloc1d(nTable*3,sizeof(float));
-    (*vbap_gtableIdx) = calloc1d(nTable*3,sizeof(int));
     
     /* compress table by keeping only the non-zero gains and their indices, and also convert to AMPLITUDE NORMALISED */
     for(nt=0; nt<nTable; nt++){
@@ -325,8 +322,8 @@ void compressVBAPgainTable3D
         }
         //assert(j<4);
         for(i=0; i<j; i++){
-            (*vbap_gtableComp)[nt*3+i] = MAX(gains_nt[i]/gains_sum, 0.0f);
-            (*vbap_gtableIdx)[nt*3+i] = idx_nt[i];
+            vbap_gtableComp[nt*3+i] = MAX(gains_nt[i]/gains_sum, 0.0f);
+            vbap_gtableIdx[nt*3+i] = idx_nt[i];
         }
     }
 #if 0
@@ -335,17 +332,17 @@ void compressVBAPgainTable3D
     fprintf(objfile, "vbap_gtableComp = [\n");
     for (i = 0; i < nTable; i++) {
         fprintf(objfile, " %f, %f, %f;\n",
-                (*vbap_gtableComp)[3*i+0],
-                (*vbap_gtableComp)[3*i+1],
-                (*vbap_gtableComp)[3*i+2]);
+                vbap_gtableComp[3*i+0],
+                vbap_gtableComp[3*i+1],
+                vbap_gtableComp[3*i+2]);
     }
     fprintf(objfile, "];\n\n\n");
     fprintf(objfile, "vbap_gtableIdx = [\n");
     for (i = 0; i < nTable; i++) {
         fprintf(objfile, " %u, %u, %u;\n",
-                (*vbap_gtableIdx)[3*i+0],
-                (*vbap_gtableIdx)[3*i+1],
-                (*vbap_gtableIdx)[3*i+2]);
+                vbap_gtableIdx[3*i+0],
+                vbap_gtableIdx[3*i+1],
+                vbap_gtableIdx[3*i+2]);
     }
     fprintf(objfile, "];\n\n\n");
     fclose(objfile);

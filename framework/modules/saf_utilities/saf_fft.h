@@ -58,6 +58,26 @@ extern "C" {
  * safFFT_destroy(&hFFT);              // destroys an instance of safFFT
  */
     
+/* ========================================================================== */
+/*                               Misc. Functions                              */
+/* ========================================================================== */
+
+/*
+ * Function: getUniformFreqVector
+ * ------------------------------
+ * Calcuates the frequencies (in Hz) of uniformly spaced bins, for a given
+ * FFT size and sampling rate.
+ *
+ * Input Arguments:
+ *     fftSize    - FFT size
+ *     fs         - sampling rate
+ * Output Arguments:
+ *     freqVector - 0:fs/(fftSize/2):fs/2; (fftSize/2+1) x 1
+ */
+void getUniformFreqVector(int fftSize,
+                          float fs,
+                          float* freqVector);
+    
  
 /* ========================================================================== */
 /*                               Main Functions                               */
@@ -115,7 +135,7 @@ void safFFT_forward(void * const hFFT,
 void safFFT_backward(void * const hFFT,
                      float_complex* inputFD,
                      float* outputTD);
-    
+
 
 #ifdef __cplusplus
 }/* extern "C" */

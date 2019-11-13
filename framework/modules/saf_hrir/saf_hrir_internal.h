@@ -84,7 +84,7 @@ void cxcorr(float* a,
  *     ir_len  - length of the FIR
  *     N_bands - number of time-frequency domain bands
  * Output Arguments:
- *     hFB     - & the FIRs as Filterbank coefficients;
+ *     hFB     - the FIRs as Filterbank coefficients;
  *               FLAT: N_bands x nCH x N_dirs
  */
 void FIRtoFilterbankCoeffs(/* Input Arguments */
@@ -94,7 +94,7 @@ void FIRtoFilterbankCoeffs(/* Input Arguments */
                            int ir_len,
                            int N_bands,
                            /* Output Arguments */
-                           float_complex** hFB);
+                           float_complex* hFB);
     
     
 #ifdef __cplusplus

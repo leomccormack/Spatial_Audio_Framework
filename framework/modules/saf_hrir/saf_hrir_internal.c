@@ -129,7 +129,7 @@ void FIRtoFilterbankCoeffs
     int nCH,
     int ir_len,
     int nBands,
-    float_complex** hFB /* nBands x nCH x N_dirs */
+    float_complex* hFB /* nBands x nCH x N_dirs */
 )
 {
     int i, j, t, nd, nm, nTimeSlots, ir_pad, hopSize;
@@ -173,7 +173,6 @@ void FIRtoFilterbankCoeffs
             centerImpulseFB_energy[i] += powf(cabsf(centerImpulseFB[i*nTimeSlots + t]), 2.0f);
     
     /* initialise FB coefficients */
-    (*hFB) = malloc1d(nBands*nCH*N_dirs*sizeof(float_complex));
     ir = calloc1d( (ir_len+ir_pad) * nCH, sizeof(float));
     irFB = malloc1d(nBands*nCH*nTimeSlots*sizeof(float_complex));
     for(nd=0; nd<N_dirs; nd++){
@@ -191,7 +190,7 @@ void FIRtoFilterbankCoeffs
                 for(t=0; t<nTimeSlots; t++)
                     cross = ccaddf(cross, ccmulf(irFB[i*nTimeSlots*nCH + t*nCH + nm], conjf(centerImpulseFB[i*nTimeSlots + t])));
                 phase = atan2f(cimagf(cross), crealf(cross));
-                (*hFB)[i*nCH*N_dirs + nm*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f, phase)), irFB_gain);
+                hFB[i*nCH*N_dirs + nm*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f, phase)), irFB_gain);
             }
         }
     }

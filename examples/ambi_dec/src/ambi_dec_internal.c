@@ -61,6 +61,7 @@ void ambi_dec_initCodec
     
     /* add virtual loudspeakers for 2D case */
     if (pData->loudpkrs_nDims == 2){
+        assert(nLoudspeakers<=MAX_NUM_LOUDSPEAKERS-2);
         pData->loudpkrs_dirs_deg[nLoudspeakers][0] = 0.0f;
         pData->loudpkrs_dirs_deg[nLoudspeakers][1] = -90.0f;
         pData->loudpkrs_dirs_deg[nLoudspeakers+1][0] = 0.0f;
@@ -69,7 +70,6 @@ void ambi_dec_initCodec
     }
     
     /* prep */
-    M_dec_tmp = NULL;
     nGrid_dirs = 480; /* Minimum t-design of degree 30, has 480 points */
     g = malloc1d(nLoudspeakers*sizeof(float));
     a = malloc1d(nGrid_dirs*sizeof(float));
@@ -77,18 +77,19 @@ void ambi_dec_initCodec
     
     /* calculate loudspeaker decoding matrices */
     for( d=0; d<NUM_DECODERS; d++){
+        M_dec_tmp = malloc1d(nLoudspeakers * max_nSH * sizeof(float));
         switch(pData->dec_method[d]){
             case DECODING_METHOD_SAD:
-                getAmbiDecoder((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, DECODER_SAD, masterOrder, &(M_dec_tmp));
+                getLoudspeakerAmbiDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_SAD, masterOrder, 0, M_dec_tmp);
                 break;
             case DECODING_METHOD_MMD:
-                getAmbiDecoder((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, DECODER_MMD, masterOrder, &(M_dec_tmp));
+                getLoudspeakerAmbiDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_MMD, masterOrder, 0, M_dec_tmp);
                 break;
             case DECODING_METHOD_EPAD:
-                getAmbiDecoder((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, DECODER_EPAD, masterOrder, &(M_dec_tmp));
+                getLoudspeakerAmbiDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_EPAD, masterOrder, 0, M_dec_tmp);
                 break;
             case DECODING_METHOD_ALLRAD:
-                getAmbiDecoder((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, DECODER_ALLRAD, masterOrder, &(M_dec_tmp));
+                getLoudspeakerAmbiDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_ALLRAD, masterOrder, 0, M_dec_tmp);
                 break;
         }
         
@@ -109,7 +110,7 @@ void ambi_dec_initCodec
             
             /* create dedicated maxrE weighted versions */
             a_n = malloc1d(nSH_order*nSH_order*sizeof(float));
-            getMaxREweights(n, a_n); /* weights returned as diagonal matrix */
+            getMaxREweights(n, 1, a_n); /* weights returned as diagonal matrix */
             free(pars->M_dec_maxrE[d][n-1]);
             pars->M_dec_maxrE[d][n-1] = malloc1d(nLoudspeakers * nSH_order * sizeof(float));
             free(pars->M_dec_cmplx_maxrE[d][n-1]);
@@ -161,7 +162,6 @@ void ambi_dec_initCodec
             }
         }
         free(M_dec_tmp);
-        M_dec_tmp = NULL;
     }
     
     /* update order */
@@ -201,8 +201,8 @@ void ambi_dec_initHRTFs
     }
     
     /* estimate the ITDs for each HRIR */
-    free1d((void**)&(pars->itds_s));
-    estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, &(pars->itds_s));
+    pars->itds_s = realloc1d(pars->itds_s, pars->N_hrir_dirs*sizeof(float));
+    estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pars->itds_s);
     
     /* generate VBAP gain table for the hrir_dirs */
     hrtf_vbap_gtable = NULL;
@@ -217,17 +217,17 @@ void ambi_dec_initHRTFs
     }
     
     /* compress VBAP table (i.e. remove the zero elements) */
-    free1d((void**)&(pars->hrtf_vbap_gtableComp));
-    free1d((void**)&(pars->hrtf_vbap_gtableIdx));
-    compressVBAPgainTable3D(hrtf_vbap_gtable, pars->N_hrtf_vbap_gtable, pars->N_hrir_dirs, &(pars->hrtf_vbap_gtableComp), &(pars->hrtf_vbap_gtableIdx));
+    pars->hrtf_vbap_gtableComp = realloc1d(pars->hrtf_vbap_gtableComp, pars->N_hrtf_vbap_gtable * 3 * sizeof(float));
+    pars->hrtf_vbap_gtableIdx  = realloc1d(pars->hrtf_vbap_gtableIdx,  pars->N_hrtf_vbap_gtable * 3 * sizeof(int));
+    compressVBAPgainTable3D(hrtf_vbap_gtable, pars->N_hrtf_vbap_gtable, pars->N_hrir_dirs, pars->hrtf_vbap_gtableComp, pars->hrtf_vbap_gtableIdx);
     
     /* convert hrirs to filterbank coefficients */
-    free1d((void**)&(pars->hrtf_fb));
-    HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->itds_s, (float*)pData->freqVector, HYBRID_BANDS, &(pars->hrtf_fb));
+    pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
+    HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrtf_fb);
+    diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
     
     /* calculate magnitude responses */
-    free1d((void**)&(pars->hrtf_fb_mag));
-    pars->hrtf_fb_mag = malloc1d(HYBRID_BANDS*NUM_EARS* (pars->N_hrir_dirs)*sizeof(float));
+    pars->hrtf_fb_mag = realloc1d(pars->hrtf_fb_mag, HYBRID_BANDS*NUM_EARS*(pars->N_hrir_dirs)*sizeof(float));
     for(i=0; i<HYBRID_BANDS*NUM_EARS* (pars->N_hrir_dirs); i++)
         pars->hrtf_fb_mag[i] = cabsf(pars->hrtf_fb[i]);
     

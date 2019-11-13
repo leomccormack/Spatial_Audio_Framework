@@ -39,11 +39,11 @@ void powermap_initAna(void* const hPm)
     order = pData->new_masterOrder;
     
     /* Store Y_grid per order */
-    Y_grid_N = NULL;
     int geosphere_ico_freq = 9;
     pars->grid_dirs_deg = (float*)__HANDLES_geosphere_ico_dirs_deg[geosphere_ico_freq];
     pars->grid_nDirs = __geosphere_ico_nPoints[geosphere_ico_freq];
-    getRSH(order, pars->grid_dirs_deg, pars->grid_nDirs, &Y_grid_N);
+    Y_grid_N = malloc1d(((order+1)*(order+1))*(pars->grid_nDirs)*sizeof(float));
+    getRSH(order, pars->grid_dirs_deg, pars->grid_nDirs, Y_grid_N);
     for(n=1; n<=order; n++){
         nSH_order = (n+1)*(n+1);
         scaleY = 1.0f/(float)nSH_order;
@@ -84,7 +84,7 @@ void powermap_initAna(void* const hPm)
             pars->interp_dirs_deg[(i*N_azi + j)*2+1] = grid_y_axis[i];
         }
     }
-    free(pars->interp_table);
+    free1d((void**)&(pars->interp_table));
     generateVBAPgainTable3D_srcs(pars->interp_dirs_deg, N_azi*N_ele, pars->grid_dirs_deg, pars->grid_nDirs, 0, 0, 0.0f, &(pars->interp_table), &(pars->interp_nDirs), &(pars->interp_nTri));
     VBAPgainTable2InterpTable(pars->interp_table, pars->interp_nDirs, pars->grid_nDirs);
     

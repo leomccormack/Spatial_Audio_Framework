@@ -161,8 +161,8 @@ void dirass_initAna(void* const hDir)
         case BEAM_TYPE_HYPERCARD: beamWeightsHypercardioid2Spherical(order_sec, c_n); break;
         case BEAM_TYPE_MAX_EV: beamWeightsMaxEV(order_sec, c_n); break;
     }
-    pars->Cxyz = realloc(pars->Cxyz, pars->grid_nDirs * nSH_order * 3 * sizeof(float));
-    pars->Cw = realloc(pars->Cw, pars->grid_nDirs * nSH_sec * sizeof(float));
+    pars->Cxyz = realloc1d(pars->Cxyz, pars->grid_nDirs * nSH_order * 3 * sizeof(float));
+    pars->Cw = realloc1d(pars->Cw, pars->grid_nDirs * nSH_sec * sizeof(float));
     for(i=0; i<pars->grid_nDirs; i++){
         beamWeightsVelocityPatternsReal(order_sec, c_n, pars->grid_dirs_deg[i*2]*M_PI/180.0f,
                                         pars->grid_dirs_deg[i*2+1]*M_PI/180.0f, A_xyz, &(pars->Cxyz[i*nSH_order*3]));
@@ -179,7 +179,7 @@ void dirass_initAna(void* const hDir)
         case BEAM_TYPE_HYPERCARD: beamWeightsHypercardioid2Spherical(order, c_n); break;
         case BEAM_TYPE_MAX_EV: beamWeightsMaxEV(order, c_n); break;
     }
-    pars->w = realloc(pars->w, pars->grid_nDirs * nSH_order * sizeof(float));
+    pars->w = realloc1d(pars->w, pars->grid_nDirs * nSH_order * sizeof(float));
     for(i=0; i<pars->grid_nDirs; i++){
         rotateAxisCoeffsReal(order, c_n, M_PI/2.0f - pars->grid_dirs_deg[i*2+1]*M_PI/180.0f,
                              pars->grid_dirs_deg[i*2]*M_PI/180.0f, &(pars->w[i*nSH_order]));
@@ -193,7 +193,7 @@ void dirass_initAna(void* const hDir)
         case BEAM_TYPE_HYPERCARD: beamWeightsHypercardioid2Spherical(order_up, c_n); break;
         case BEAM_TYPE_MAX_EV: beamWeightsMaxEV(order_up, c_n); break;
     } 
-    pars->Uw = realloc(pars->Uw, pars->grid_nDirs * nSH_up * sizeof(float));
+    pars->Uw = realloc1d(pars->Uw, pars->grid_nDirs * nSH_up * sizeof(float));
     for(i=0; i<pars->grid_nDirs; i++){
         rotateAxisCoeffsReal(order_up, c_n, M_PI/2.0f - pars->grid_dirs_deg[i*2+1]*M_PI/180.0f,
                              pars->grid_dirs_deg[i*2]*M_PI/180.0f, &(pars->Uw[i*nSH_up]));
@@ -201,18 +201,18 @@ void dirass_initAna(void* const hDir)
     free(c_n);
  
     /* reallocate memory */
-    pars->Y_up = realloc(pars->Y_up, nSH_up* (pars->grid_nDirs)*sizeof(float));
-    pars->est_dirs = realloc(pars->est_dirs, pars->grid_nDirs * 2 * sizeof(float));
-    pars->ss = realloc(pars->ss, pars->grid_nDirs * FRAME_SIZE * sizeof(float));
-    pars->ssxyz = realloc(pars->ssxyz, 3 * FRAME_SIZE * sizeof(float));
-    pData->pmap = realloc(pData->pmap, pars->grid_nDirs*sizeof(float));
-    pars->est_dirs_idx = realloc(pars->est_dirs_idx, pars->grid_nDirs*sizeof(int));
-    pars->prev_intensity = realloc(pars->prev_intensity, pars->grid_nDirs*3*sizeof(float));
-    pars->prev_energy = realloc(pars->prev_energy, pars->grid_nDirs*sizeof(float));
+    pars->Y_up = realloc1d(pars->Y_up, nSH_up* (pars->grid_nDirs)*sizeof(float));
+    pars->est_dirs = realloc1d(pars->est_dirs, pars->grid_nDirs * 2 * sizeof(float));
+    pars->ss = realloc1d(pars->ss, pars->grid_nDirs * FRAME_SIZE * sizeof(float));
+    pars->ssxyz = realloc1d(pars->ssxyz, 3 * FRAME_SIZE * sizeof(float));
+    pData->pmap = realloc1d(pData->pmap, pars->grid_nDirs*sizeof(float));
+    pars->est_dirs_idx = realloc1d(pars->est_dirs_idx, pars->grid_nDirs*sizeof(int));
+    pars->prev_intensity = realloc1d(pars->prev_intensity, pars->grid_nDirs*3*sizeof(float));
+    pars->prev_energy = realloc1d(pars->prev_energy, pars->grid_nDirs*sizeof(float));
     memset(pars->prev_intensity, 0, pars->grid_nDirs*3*sizeof(float));
     memset(pars->prev_energy, 0, pars->grid_nDirs*sizeof(float)); 
     for(i=0; i<NUM_DISP_SLOTS; i++){
-        pData->pmap_grid[i] = realloc(pData->pmap_grid[i], pars->interp_nDirs*sizeof(float));
+        pData->pmap_grid[i] = realloc1d(pData->pmap_grid[i], pars->interp_nDirs*sizeof(float));
         memset(pData->pmap_grid[i], 0, pars->interp_nDirs*sizeof(float));
     }
     

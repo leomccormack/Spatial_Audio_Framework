@@ -113,8 +113,8 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     }
     
     /* estimate the ITDs for each HRIR */
-    free1d((void**)&(pData->itds_s));
-    estimateITDs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrir_fs, &(pData->itds_s));
+    pData->itds_s = realloc1d(pData->itds_s, pData->N_hrir_dirs*sizeof(float));
+    estimateITDs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrir_fs, pData->itds_s);
     
     /* generate VBAP gain table */
     hrtf_vbap_gtable = NULL;
@@ -128,23 +128,18 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
         binauraliser_initHRTFsAndGainTables(hBin);
     }
     
-    /* compress VBAP table */
-    if(pData->hrtf_vbap_gtableComp!= NULL){
-        free(pData->hrtf_vbap_gtableComp);
-        pData->hrtf_vbap_gtableComp = NULL;
-    }
-    if(pData->hrtf_vbap_gtableIdx!= NULL){
-        free(pData->hrtf_vbap_gtableIdx);
-        pData->hrtf_vbap_gtableIdx = NULL;
-    }
-    compressVBAPgainTable3D(hrtf_vbap_gtable, pData->N_hrtf_vbap_gtable, pData->N_hrir_dirs, &(pData->hrtf_vbap_gtableComp), &(pData->hrtf_vbap_gtableIdx));
+    /* compress VBAP table (i.e. remove the zero elements) */
+    pData->hrtf_vbap_gtableComp = realloc1d(pData->hrtf_vbap_gtableComp, pData->N_hrtf_vbap_gtable * 3 * sizeof(float));
+    pData->hrtf_vbap_gtableIdx  = realloc1d(pData->hrtf_vbap_gtableIdx,  pData->N_hrtf_vbap_gtable * 3 * sizeof(int));
+    compressVBAPgainTable3D(hrtf_vbap_gtable, pData->N_hrtf_vbap_gtable, pData->N_hrir_dirs, pData->hrtf_vbap_gtableComp, pData->hrtf_vbap_gtableIdx);
     
     /* convert hrirs to filterbank coefficients */
-    free1d((void**)&(pData->hrtf_fb));
-    HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->itds_s, pData->freqVector, HYBRID_BANDS, &(pData->hrtf_fb));
+    pData->hrtf_fb = realloc1d(pData->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pData->N_hrir_dirs)*sizeof(float_complex));
+    HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrtf_fb);
+    diffuseFieldEqualiseHRTFs(pData->N_hrir_dirs, pData->itds_s, pData->freqVector, HYBRID_BANDS, pData->hrtf_fb);
     
     /* calculate magnitude responses */
-    free1d((void**)&(pData->hrtf_fb_mag));
+    pData->hrtf_fb_mag = realloc1d(pData->hrtf_fb_mag, HYBRID_BANDS*NUM_EARS*(pData->N_hrir_dirs)*sizeof(float));
     pData->hrtf_fb_mag = malloc1d(HYBRID_BANDS*NUM_EARS* (pData->N_hrir_dirs)*sizeof(float));
     for(i=0; i<HYBRID_BANDS*NUM_EARS* (pData->N_hrir_dirs); i++)
         pData->hrtf_fb_mag[i] = cabsf(pData->hrtf_fb[i]);

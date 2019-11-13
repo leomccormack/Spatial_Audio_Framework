@@ -39,17 +39,17 @@ void getEPAD
     int order,
     float* ls_dirs_deg,
     int nLS,
-    float **decMtx
+    float* decMtx
 )
 {
     int i, j, nSH;
     float* Y_ls, *U, *V, *U_tr, *V_tr;
     
     nSH = (order+1)*(order+1);
-    Y_ls = NULL;
+    Y_ls = malloc1d(nSH*nLS*sizeof(float));
     U = malloc1d(nSH*nSH*sizeof(float));
     V = malloc1d(nLS*nLS*sizeof(float));
-    getRSH(order, ls_dirs_deg, nLS, &Y_ls);
+    getRSH(order, ls_dirs_deg, nLS, Y_ls);
     utility_ssvd(Y_ls, nSH, nLS, U, NULL, V, NULL);
     if(nSH>nLS){
         /* truncate the U matrix */
@@ -60,7 +60,7 @@ void getEPAD
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nLS, nSH, nLS, 1.0f,
                     V, nLS,
                     U_tr, nLS, 0.0f,
-                    (*decMtx), nSH);
+                    decMtx, nSH);
         free(U_tr);
     }
     else{
@@ -72,11 +72,11 @@ void getEPAD
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nLS, nSH, nSH, 1.0f,
                     V_tr, nSH,
                     U, nSH, 0.0f,
-                    (*decMtx), nSH);
+                    decMtx, nSH);
         free(V_tr);
     }
     for(i=0; i<nLS*nSH; i++)
-        (*decMtx)[i] /= (float)nLS;
+        decMtx[i] /= (float)nLS;
     
     free(U);
     free(V);
@@ -88,7 +88,7 @@ void getAllRAD
     int order,
     float* ls_dirs_deg,
     int nLS,
-    float **decMtx
+    float* decMtx
 )
 {
     int i, t, nDirs_td, N_gtable, nGroups, nSH;
@@ -99,7 +99,7 @@ void getAllRAD
     /* define a sufficiently dense t-design for this decoding order, as to
      * conserve omni energy */
     t = 4*order;
-    Y_td = G_td = NULL;
+    G_td = NULL;
     if(t<=21){
         /* suitable for up to 5th order */
         nDirs_td = __Tdesign_nPoints_per_degree[t-1];
@@ -116,17 +116,18 @@ void getAllRAD
         t_dirs = (float*)__Tdesign_degree_30_dirs_deg;
     }
     
-    /* calculate vbap gains and SH matrix for this t-design */
+    /* calculate vbap gains and SH matrix for this t-design */ 
     generateVBAPgainTable3D_srcs(t_dirs, nDirs_td, ls_dirs_deg, nLS, 0, 0, 0.0f, &G_td, &N_gtable, &nGroups);
-    getRSH(order, t_dirs, nDirs_td, &Y_td);
+    Y_td = malloc1d(nSH*nDirs_td*sizeof(float));
+    getRSH(order, t_dirs, nDirs_td, Y_td);
     
     /* AllRAD decoder is simply (G_td * T_td * 1/nDirs_td) */
     cblas_sgemm(CblasRowMajor, CblasTrans, CblasTrans, nLS, nSH, nDirs_td, 1.0f,
                 G_td, nLS,
                 Y_td, nDirs_td, 0.0f,
-                (*decMtx), nSH);
+                decMtx, nSH);
     for(i=0; i<nLS*nSH; i++)
-        (*decMtx)[i] /= (float)nDirs_td;
+        decMtx[i] /= (float)nDirs_td;
  
     free(Y_td);
     free(G_td);
@@ -151,15 +152,15 @@ void getBinDecoder_LS
     nSH = (order+1)*(order+1);
     
     /* SH */
-    Y_tmp = NULL;
+    Y_tmp = malloc1d(nSH*N_dirs*sizeof(float));
     Y_na = malloc1d(nSH*N_dirs*sizeof(float_complex));
     B = malloc1d(nSH * 2 * sizeof(float_complex));
-    getRSH(order, hrtf_dirs_deg, N_dirs, &Y_tmp);
+    getRSH(order, hrtf_dirs_deg, N_dirs, Y_tmp);
     for(i=0; i<nSH*N_dirs; i++)
         Y_na[i] = cmplxf(Y_tmp[i], 0.0f);
     free(Y_tmp);
     
-    /* compute decoding matrix, including integration weights */
+    /* compute decoding matrix, incorporating integration weights */
     W = calloc1d(N_dirs*N_dirs, sizeof(float_complex));
     if(weights!=NULL)
         for(i=0; i<N_dirs; i++)
@@ -230,9 +231,9 @@ void getBinDecoder_LSDIFFEQ
             W[i*N_dirs+i] = cmplxf(1.0f/(float)N_dirs, 0.0f);
     
     /* SH */
-    Y_tmp = NULL;
+    Y_tmp = malloc1d(nSH*N_dirs*sizeof(float));
     Y_na = malloc1d(nSH*N_dirs*sizeof(float_complex));
-    getRSH(order, hrtf_dirs_deg, N_dirs, &Y_tmp);
+    getRSH(order, hrtf_dirs_deg, N_dirs, Y_tmp);
     for(i=0; i<nSH*N_dirs; i++)
         Y_na[i] = cmplxf(Y_tmp[i], 0.0f);
     free(Y_tmp);
@@ -340,20 +341,21 @@ void getBinDecoder_SPR
     checkCondNumberSHTReal(Nh_max, hrtf_dirs_rad, N_dirs, weights, cnd_num);
     for(i=0, Nh=0; i<Nh_max+1; i++)
         Nh = cnd_num[i] < 100.0f ? i : Nh;
+    assert(Nh>=order);
     nSH_nh = (Nh+1)*(Nh+1);
-    Y_nh = NULL;
-    getRSH(Nh, hrtf_dirs_deg, N_dirs, &Y_nh);
+    Y_nh = malloc1d(nSH_nh*N_dirs*sizeof(float));
+    getRSH(Nh, hrtf_dirs_deg, N_dirs, Y_nh);
     Y_na = malloc1d(nSH * N_dirs *sizeof(float));
     for(i=0; i<nSH; i++)
         for(j=0; j<N_dirs; j++)
             Y_na[i*N_dirs+j] = Y_nh[i*N_dirs+j];
     //memcpy(Y_na, Y_nh, nSH * N_dirs *sizeof(float));
     
-    /* Get t-design for ambisonic signals */
+    /* Get t-design SH for ambisonic signals */
     tdirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[2*order-1];
     K_td = __Tdesign_nPoints_per_degree[2*order-1];
-    Y_td = NULL;
-    getRSH(Nh, tdirs_deg, K_td, &Y_td);
+    Y_td = malloc1d(nSH_nh*K_td*sizeof(float));
+    getRSH(Nh, tdirs_deg, K_td, Y_td);
     Y_td_cmplx = malloc1d(nSH_nh*K_td*sizeof(float_complex));
     for(i=0; i<nSH_nh*K_td; i++)
         Y_td_cmplx[i] = cmplxf(Y_td[i], 0.0f);
@@ -433,9 +435,9 @@ void getBinDecoder_TA
             W[i*N_dirs+i] = cmplxf(1.0f/(float)N_dirs, 0.0f);
     
     /* SH */
-    Y_tmp = NULL;
+    Y_tmp = malloc1d(nSH*N_dirs*sizeof(float));
     Y_na = malloc1d(nSH*N_dirs*sizeof(float_complex));
-    getRSH(order, hrtf_dirs_deg, N_dirs, &Y_tmp);
+    getRSH(order, hrtf_dirs_deg, N_dirs, Y_tmp);
     for(i=0; i<nSH*N_dirs; i++)
         Y_na[i] = cmplxf(Y_tmp[i], 0.0f);
     free(Y_tmp);
@@ -525,9 +527,9 @@ void getBinDecoder_MAGLS
             W[i*N_dirs+i] = cmplxf(1.0f/(float)N_dirs, 0.0f);
     
     /* SH */
-    Y_tmp = NULL;
+    Y_tmp = malloc1d(nSH*N_dirs*sizeof(float));
     Y_na = malloc1d(nSH*N_dirs*sizeof(float_complex));
-    getRSH(order, hrtf_dirs_deg, N_dirs, &Y_tmp);
+    getRSH(order, hrtf_dirs_deg, N_dirs, Y_tmp);
     for(i=0; i<nSH*N_dirs; i++)
         Y_na[i] = cmplxf(Y_tmp[i], 0.0f);
     free(Y_tmp);

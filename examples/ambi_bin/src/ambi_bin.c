@@ -165,7 +165,7 @@ void ambi_bin_process
     int n, t, ch, i, j, band;
     int o[MAX_SH_ORDER+2];
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
-    float postGain;
+    //float postGain;
     float Rxyz[3][3];
     float* M_rot_tmp;
     

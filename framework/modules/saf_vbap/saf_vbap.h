@@ -144,9 +144,9 @@ void generateVBAPgainTable3D(/* Input arguments */
  *     nTable          - number of points in the gain table
  *     nDirs           - number of loudspeakers
  * Output Arguments:
- *     vbap_gtableComp - & The compressed 3D VBAP gain table AMPLITUDE-
+ *     vbap_gtableComp - The compressed 3D VBAP gain table AMPLITUDE-
  *                       NORMALISED; FLAT: nTable x 3
- *     vbap_gtableIdx  - & The indices for the compressed 3D VBAP gain table;
+ *     vbap_gtableIdx  - The indices for the compressed 3D VBAP gain table;
  *                       FLAT: nTable x 3
  */
 void compressVBAPgainTable3D(/* Input arguments */
@@ -154,8 +154,8 @@ void compressVBAPgainTable3D(/* Input arguments */
                              int nTable,
                              int nDirs,
                              /* Output arguments */
-                             float** vbap_gtableComp,
-                             int** vbap_gtableIdx);
+                             float* vbap_gtableComp,
+                             int* vbap_gtableIdx);
     
 /*
  * Function: VBAPgainTable2InterpTable

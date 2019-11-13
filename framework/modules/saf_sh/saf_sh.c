@@ -285,7 +285,7 @@ void getRSH
     int N,
     float* dirs_deg,
     int nDirs,
-    float** Y
+    float* Y
 )
 {
     int i, nSH;
@@ -293,7 +293,6 @@ void getRSH
     float* dirs_rad;
     
     nSH = (N+1)*(N+1);
-    (*Y) = realloc((*Y), nSH*nDirs*sizeof(float));
     scale = sqrtf(4.0f*M_PI);
    
     /* convert [azi, elev] in degrees, to [azi, inclination] in radians */
@@ -304,10 +303,10 @@ void getRSH
     }
 
     /* get real-valued spherical harmonics */
-    getSHreal(N, dirs_rad, nDirs, (*Y));
+    getSHreal(N, dirs_rad, nDirs, Y);
 
     /* remove sqrt(4*pi) term */
-    utility_svsmul((*Y), &scale, nSH*nDirs, NULL);
+    utility_svsmul(Y, &scale, nSH*nDirs, NULL);
  
     free(dirs_rad);
 }
@@ -317,7 +316,7 @@ void getRSH_recur
     int N,
     float* dirs_deg,
     int nDirs,
-    float** Y
+    float* Y
 )
 {
     int n, m, i, dir, nSH, index_n;
@@ -332,8 +331,6 @@ void getRSH_recur
     nSH = (N+1)*(N+1);
     index_n = 0;
     
-    (*Y) = realloc((*Y), nSH*nDirs*sizeof(float));
-    
     /* precompute factorials */
     for (i = 0; i < 2*N+1; i++)
         factorials_n[i] = (float)factorial(i);
@@ -346,7 +343,7 @@ void getRSH_recur
     for (n = 0; n<N+1; n++) {
         if (n==0) {
             for (dir = 0; dir<nDirs; dir++)
-                (*Y)[n*nDirs+dir] = 1.0f;
+                Y[n*nDirs+dir] = 1.0f;
             index_n = 1;
         }
         else {
@@ -356,11 +353,11 @@ void getRSH_recur
             for (dir = 0; dir<nDirs; dir++){
                 for (m = 0; m<n+1; m++) {
                     if (m==0)
-                        (*Y)[(index_n+n)*nDirs+dir] = Nn0  * leg_n[m*nDirs+dir];
+                        Y[(index_n+n)*nDirs+dir] = Nn0  * leg_n[m*nDirs+dir];
                     else {
                         Nnm = Nn0* sqrtf( 2.0f * factorials_n[n-m]/factorials_n[n+m] );
-                        (*Y)[(index_n+n-m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_deg[dir*2])*M_PI/180.0f);
-                        (*Y)[(index_n+n+m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_deg[dir*2])*M_PI/180.0f);
+                        Y[(index_n+n-m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_deg[dir*2])*M_PI/180.0f);
+                        Y[(index_n+n+m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_deg[dir*2])*M_PI/180.0f);
                     }
                 }
             }

@@ -241,7 +241,7 @@ void unnorm_legendreP_recur(/* Input Arguments */
  *                DEGREES; FLAT: nDirs x 2
  *     nDirs    - number of directions
  * Output Arguments:
- *     Y        - & the SH weights [WITHOUT the 1/sqrt(4*pi)];
+ *     Y        - the SH weights [WITHOUT the 1/sqrt(4*pi)];
  *                FLAT: (order+1)^2 x nDirs
  *
  * [1] Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8).
@@ -252,7 +252,7 @@ void getRSH(/* Input Arguments */
             float* dirs_deg,
             int nDirs,
             /* Output Arguments */
-            float** Y);
+            float* Y);
 
 /*
  * Function: getRSH_recur
@@ -275,7 +275,7 @@ void getRSH(/* Input Arguments */
  *                DEGREES; FLAT: nDirs x 2
  *     nDirs    - number of directions
  * Output Arguments:
- *     Y        - & the SH weights [WITHOUT the 1/sqrt(4*pi)];
+ *     Y        - the SH weights [WITHOUT the 1/sqrt(4*pi)];
  *                FLAT: (order+1)^2 x nDirs
  *
  * [1] Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8).
@@ -286,7 +286,7 @@ void getRSH_recur(/* Input Arguments */
                   float* dirs_deg,
                   int nDirs,
                   /* Output Arguments */
-                  float** Y);
+                  float* Y);
     
 /*
  * Function: getSHreal
@@ -302,7 +302,7 @@ void getRSH_recur(/* Input Arguments */
  *                RADIANS; FLAT: nDirs x 2
  *     nDirs    - number of directions
  * Output Arguments:
- *     Y        - & the SH weights [WITH the 1/sqrt(4*pi)];
+ *     Y        - the SH weights [WITH the 1/sqrt(4*pi)];
  *                FLAT: (order+1)^2 x nDirs
  *
  * [1] Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8).
@@ -314,7 +314,7 @@ void getSHreal(/* Input Arguments */
                int nDirs,
                /* Output Arguments */
                float* Y);
-    
+
 /*
  * Function: getSHreal_recur
  * -------------------------
@@ -329,7 +329,7 @@ void getSHreal(/* Input Arguments */
  *                in RADIANS; FLAT: nDirs x 2
  *     nDirs    - number of directions
  * Output Arguments:
- *     Y        - & the SH weights [WITH the 1/sqrt(4*pi)];
+ *     Y        - the SH weights [WITH the 1/sqrt(4*pi)];
  *                FLAT: (order+1)^2 x nDirs
  *
  * [1] Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8).
@@ -355,7 +355,7 @@ void getSHreal_recur(/* Input Arguments */
  *                RADIANS; FLAT: nDirs x 2
  *     nDirs    - number of directions
  * Output Arguments:
- *     Y        - & the SH weights [WITH the 1/sqrt(4*pi)];
+ *     Y        - the SH weights [WITH the 1/sqrt(4*pi)];
  *                FLAT: (order+1)^2 x nDirs
  *
  * [1] Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8).
@@ -415,7 +415,7 @@ void real2complexSHMtx(/* Input Arguments */
  *     C_N   - complex coeffients; FLAT: (order+1)^2 x K
  *     K     - number of columns
  * Output Arguments:
- *     R_N  - real coefficients; FLAT: (order+1)^2 x K
+ *     R_N   - real coefficients; FLAT: (order+1)^2 x K
  */
 void complex2realCoeffs(/* Input Arguments */
                         int order,
@@ -599,7 +599,7 @@ void beamWeightsDolphChebyshev2Spherical(/* Input Arguments */
  * the N+1 coefficients of m=0 are returned.
  *
  * Input Arguments:
- *     N  - order of spherical harmonic expansion
+ *     N   - order of spherical harmonic expansion
  * Output Arguments:
  *     b_n - beamformer weights; (N+1) x 1
  */
@@ -622,7 +622,7 @@ void beamWeightsHypercardioid2Spherical(/* Input Arguments */
  * Details for their theory can be found e.g. in [1].
  *
  * Input Arguments:
- *     N  - order of spherical harmonic expansion
+ *     N   - order of spherical harmonic expansion
  * Output Arguments:
  *     b_n - beamformer weights; (N+1) x 1
  *

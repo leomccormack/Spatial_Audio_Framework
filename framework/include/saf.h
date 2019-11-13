@@ -44,8 +44,6 @@
  * platform complex number wrappers. Optimised linear algebra routines utilising
  * BLAS and LAPACK are also included.
  *
- * Enable instructions:
- *     Cannot be disabled.
  * Dependencies:
  *     A performance library comprising CBLAS and LAPACK routines is required
  *     by the module and, thus, also by the SAF framework as a whole.

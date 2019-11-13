@@ -42,8 +42,8 @@ extern "C" {
 /* ========================================================================== */
     
 /*
- * Enum: AMBI_DECODER_METHODS
- * --------------------------
+ * Enum: LOUDSPEAKER_AMBI_DECODER_METHODS
+ * --------------------------------------
  * Ambisonic decoding options for loudspeaker playback
  * Note: all of these decoding options revert to "SAD" if the loudspeakers are
  * uniformly distributed on the sphere. The benefits afforded by MMD and AllRAD,
@@ -51,53 +51,55 @@ extern "C" {
  * arrangements.
  *
  * Options:
- *     DECODER_DEFAULT - DECODER_DEFAULT is "DECODER_SAD"
- *     DECODER_SAD     - Sampling Ambisonic Decoder (SAD): transpose of the
- *                       loudspeaker spherical harmonic matrix, scaled by the
- *                       number of loudspeakers. This is the simplest decoding
- *                       approach, as it simply relies on generating hyper-
- *                       cardioid beamformers for each loudspeaker direction.
- *     DECODER_MMD     - Mode-Matching Decoder (MMD): pseudo-inverse of the
- *                       loudspeaker spherical harmonic matrix. Due to the
- *                       pseudo-inverse, more signal energy is lent to regions
- *                       on the surface of the sphere that are more sparsely
- *                       populated with loudspeakers. Therefore, one must also
- *                       be careful, as some loudspeakers may be given a huge
- *                       amount of signal energy and wake the dead.
- *     DECODER_EPAD    - Energy-Preserving Ambisonic Decoder (EPAD) [1]
- *     DECODER_ALLRAD  - All-Round Ambisonic Decoder (AllRAD): SAD decoding to
- *                       t-design, panned for the target loudspeaker directions
- *                       using VBAP [2]. Perhaps the only Ambisonic decoder we
- *                       would actually recommend for irregular loudspeaker
- *                       layouts. It just simply makes the most sense and sounds
- *                       the most reasonable. Interestingly, prior to its
- *                       proposal, we had almost 40 years! of people insisting
- *                       Ambisonics could only work for uniformly distributed
- *                       loudspeaker arrays... So thank you Franz & Matthias!
+ *     LOUDSPEAKER_DECODER_DEFAULT - the default is "LOUDSPEAKER_DECODER_SAD"
+ *     LOUDSPEAKER_DECODER_SAD     - Sampling Ambisonic Decoder (SAD): transpose
+ *                                   of the loudspeaker spherical harmonic
+ *                                   matrix, scaled by the number of
+ *                                   loudspeakers. This is the simplest decoding
+ *                                   approach, as it simply relies on generating
+ *                                   hyper-cardioid beamformers for each
+ *                                   loudspeaker direction.
+ *     LOUDSPEAKER_DECODER_MMD     - Mode-Matching Decoder (MMD): pseudo-inverse
+ *                                   of the loudspeaker spherical harmonic
+ *                                   matrix. Due to the pseudo-inverse, more
+ *                                   signal energy is lent to regions on the
+ *                                   surface of the sphere that are more
+ *                                   sparsely populated with loudspeakers.
+ *                                   Therefore, one must also be careful, as
+ *                                   some loudspeakers may be given a huge
+ *                                   amount of signal energy and wake the dead.
+ *     LOUDSPEAKER_DECODER_EPAD    - Energy-Preserving Ambisonic Decoder (EPAD)
+ *                                   [1].
+ *     LOUDSPEAKER_DECODER_ALLRAD  - All-Round Ambisonic Decoder (AllRAD): SAD
+ *                                   decoding to t-design, panned for the target
+ *                                   loudspeaker directions using VBAP [2].
+ *                                   Perhaps the only Ambisonic decoder we would
+ *                                   actually recommend for irregular
+ *                                   loudspeaker layouts.
  *
  * [1] Zotter F, Pomberger H, Noisternig M. Energy- preserving ambisonic
  *     decoding. Acta Acustica united with Acustica. 2012 Jan 1; 98(1):37-47.
  * [2] Zotter F, Frank M. All-round ambisonic panning and decoding. Journal of
  *     the audio engineering society. 2012 Nov 26; 60(10):807-20.
  */
-typedef enum _AMBI_DECODER_METHODS {
-    DECODER_DEFAULT,
-    DECODER_SAD,
-    DECODER_MMD,
-    DECODER_EPAD,
-    DECODER_ALLRAD
+typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
+    LOUDSPEAKER_DECODER_DEFAULT,
+    LOUDSPEAKER_DECODER_SAD,
+    LOUDSPEAKER_DECODER_MMD,
+    LOUDSPEAKER_DECODER_EPAD,
+    LOUDSPEAKER_DECODER_ALLRAD
     
-} AMBI_DECODER_METHODS;
+} LOUDSPEAKER_AMBI_DECODER_METHODS;
     
 /*
  * Enum: BINAURAL_AMBI_DECODER_METHODS
  * -----------------------------------
- * Ambisonic decoding options for headphone playback.
+ * Ambisonic decoding options for binaural/headphone playback.
  * Note: more detailed descriptions of each method may be found in:
  * "saf_hoa_internal.h"
  *
  * Options:
- *     BINAURAL_DECODER_DEFAULT  - DECODER_DEFAULT is "DECODER_SAD"
+ *     BINAURAL_DECODER_DEFAULT  - the default decoder is "BINAURAL_DECODER_LS"
  *     BINAURAL_DECODER_LS       - Least-squares (LS) decoder. The simplest
  '                                 binaural decoder.
  *     BINAURAL_DECODER_LSDIFFEQ - Least-squares (LS) decoder with diffuse-field
@@ -157,75 +159,130 @@ typedef enum _BINAURAL_AMBI_DECODER_METHODS {
  * are also reduced, thus mitigating the aforementioned problem.
  *
  * Input Arguments:
- *     order - decoding order
+ *     order       - decoding order
+ *     diagMtxFlag - 0: weights returned as a vector, 1: as a diagonal matrix
  * Output Arguments:
- *     a_n   - the max_rE weights, as a diagonal matrix;
- *             FLAT: (order+1)^2 x (order+1)^2
+ *     a_n         - the max_rE weights, as a diagonal matrix;
+ *                   if diagMtxFlag=0, (order+1)^2 x 1
+ *                   if diagMtxFlag=1, FLAT: (order+1)^2 x (order+1)^2
  *
  * [1] Zotter, F., Frank, M. (2012). All-Round Ambisonic Panning and Decoding.
  *     Journal of the Audio Engineering Society, 60(10), 807--820.
  */
 void getMaxREweights(/* Input Arguments */
                      int order,
+                     int diagMtxFlag,
                      /* Output Arguments */
                      float* a_n);
 
 /*
- * Function: getAmbiDecoder
- * ------------------------
+ * Function: getLoudspeakerAmbiDecoderMtx
+ * --------------------------------------
  * Returns an ambisonic decoding matrix of a specific order, for a specific
  * loudspeaker layout
  *
  * Input Arguments:
- *     ls_dirs_deg - loudspeaker directions in DEGREES [azi elev]; FLAT: nLS x 2
- *     nLS         - number of loudspeakers
- *     method      - decoding method (see "AMBI_DECODER_METHODS" enum)
- *     order       - decoding order
+ *     ls_dirs_deg          - loudspeaker directions in DEGREES [azi elev];
+ *                            FLAT: nLS x 2
+ *     nLS                  - number of loudspeakers
+ *     method               - decoding method
+ *                            (see "LOUDSPEAKER_AMBI_DECODER_METHODS" enum)
+ *     order                - decoding order
+ *     enableMaxReWeighting - 0: disabled, 1: enabled
  * Output Arguments:
- *     decMtx      - & decoding matrix; FLAT: nLS x (order+1)^2
+ *     decMtx               - decoding matrix; FLAT: nLS x (order+1)^2
  */
-void getAmbiDecoder(/* Input Arguments */
-                    float* ls_dirs_deg,
-                    int nLS,
-                    AMBI_DECODER_METHODS method,
-                    int order,
-                    /* Output Arguments */
-                    float** decMtx);
-    
+void getLoudspeakerAmbiDecoderMtx(/* Input Arguments */
+                                  float* ls_dirs_deg,
+                                  int nLS,
+                                  LOUDSPEAKER_AMBI_DECODER_METHODS method,
+                                  int order,
+                                  int enableMaxReWeighting,
+                                  /* Output Arguments */
+                                  float* decMtx);
+
 /*
- * Function: getBinauralAmbiDecoder
- * --------------------------------
- * Returns an ambisonic decoding matrix of a specific order, for a specific set
- * of HRTFs
+ * Function: getBinauralAmbiDecoderMtx
+ * -----------------------------------
+ * Returns binaural ambisonic decoding matrices (one per frequency) at a
+ * specific order, for a given HRTF set.
  *
  * Input Arguments:
- *     hrtfs         - the HRTFs; FLAT: N_bands x 2 x N_dirs
- *     hrtf_dirs_deg - HRTF directions; FLAT: N_dirs x 2
- *     N_dirs        - number of HRTF directions
- *     N_bands       - number of frequency bands/bins
- *     method        - decoding method (see BINAURAL_AMBI_DECODER_METHODS enum)
- *     order         - decoding order
- *     freqVector    - only needed for TAC/Mag-LS decoders (can set to NULL if
- *                     not needed); N_bands x 1
- *     itd_s         - only needed for TAC  decoder (can set to NULL if
- *                     not needed); N_dirs x 1
- *     weights       - integration weights (set to NULL if not available);
- *                     N_dirs x 1
+ *     hrtfs                 - the HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
+ *     hrtf_dirs_deg         - HRTF directions; FLAT: N_dirs x 2
+ *     N_dirs                - number of HRTF directions
+ *     N_bands               - number of frequency bands/bins
+ *     method                - decoding method (see
+ *                             BINAURAL_AMBI_DECODER_METHODS enum)
+ *     order                 - decoding order
+ *     freqVector            - only needed for BINAURAL_DECODER_TA or
+ *                             BINAURAL_DECODER_MAGLS decoders (set to NULL if
+ *                             using a different method); N_bands x 1
+ *     itd_s                 - only needed for BINAURAL_DECODER_TA decoder (set
+ *                             to NULL if using different method); N_dirs x 1
+ *     weights               - integration weights (set to NULL if not
+ *                             available); N_dirs x 1
+ *     enableDiffCovMatching - 0: disabled, 1: enabled
+ *     enableMaxReWeighting  - 0: disabled, 1: enabled
  * Output Arguments:
- *     decMtx        - decoding matrix; FLAT: N_bands x 2 x (order+1)^2
+ *     decMtx                - decoding matrices (one per frequency);
+ *                             FLAT: N_bands x NUM_EARS x (order+1)^2
  */
-void getBinauralAmbiDecoder(/* Input Arguments */
-                            float_complex* hrtfs,
-                            float* hrtf_dirs_deg,
-                            int N_dirs,
-                            int N_bands,
-                            BINAURAL_AMBI_DECODER_METHODS method,
-                            int order,
-                            float* freqVector,
-                            float* itd_s,
-                            float* weights,
-                            /* Output Arguments */
-                            float_complex* decMtx);
+void getBinauralAmbiDecoderMtx(/* Input Arguments */
+                               float_complex* hrtfs,
+                               float* hrtf_dirs_deg,
+                               int N_dirs,
+                               int N_bands,
+                               BINAURAL_AMBI_DECODER_METHODS method,
+                               int order,
+                               float* freqVector,
+                               float* itd_s,
+                               float* weights,
+                               int enableDiffCovMatching,
+                               int enableMaxReWeighting,
+                               /* Output Arguments */
+                               float_complex* decMtx);
+
+/*
+ * Function: getBinauralAmbiDecodingFilters
+ * ----------------------------------------
+ * Returns ambisonic decoding filters for a given HRTF set.
+ *
+ * Input Arguments:
+ *     hrtfs                 - the HRTFs;
+ *                             FLAT: (fftSize/2+1) x NUM_EARS x N_dirs
+ *     hrtf_dirs_deg         - HRTF directions; FLAT: N_dirs x 2
+ *     N_dirs                - number of HRTF directions
+ *     fftSize               - FFT size
+ *     fs                    - sampling rate
+ *     method                - decoding method (see
+ *                             BINAURAL_AMBI_DECODER_METHODS enum)
+ *     order                 - decoding order
+ *     itd_s                 - only needed for BINAURAL_DECODER_TA decoder (can
+ *                             set to NULL if using different method);
+ *                             N_dirs x 1
+ *     weights               - integration weights (set to NULL if not
+ *                             available); N_dirs x 1
+ *     enableDiffCovMatching - 0: disabled, 1: enabled
+ *     enableMaxReWeighting  - 0: disabled, 1: enabled
+ * Output Arguments:
+ *     decFilters            - decoding filters;
+ *                             FLAT: NUM_EARS x (order+1)^2 x fftSize
+ */
+void getBinauralAmbiDecoderFilters(/* Input Arguments */
+                                   float_complex* hrtfs,
+                                   float* hrtf_dirs_deg,
+                                   int N_dirs,
+                                   int fftSize,
+                                   float fs,
+                                   BINAURAL_AMBI_DECODER_METHODS method,
+                                   int order,
+                                   float* itd_s,
+                                   float* weights,
+                                   int enableDiffCovMatching,
+                                   int enableMaxReWeighting,
+                                   /* Output Arguments */
+                                   float* decFilters);
 
 /*
  * Function: applyDiffCovMatching
@@ -234,7 +291,7 @@ void getBinauralAmbiDecoder(/* Input Arguments */
  * Note: decMtx is altered in-place.
  *
  * Input Arguments:
- *     hrtfs         - the HRTFs; FLAT: N_bands x 2 x N_dirs
+ *     hrtfs         - the HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
  *     hrtf_dirs_deg - HRTF directions; FLAT: N_dirs x 2
  *     N_dirs        - number of HRTF directions
  *     N_bands       - number of frequency bands/bins
@@ -242,7 +299,7 @@ void getBinauralAmbiDecoder(/* Input Arguments */
  *     weights       - integration weights (set to NULL if not available);
  *                     N_dirs x 1
  * Input/Output Arguments:
- *     decMtx        - decoding matrix; FLAT: N_bands x 2 x (order+1)^2
+ *     decMtx        - decoding matrix; FLAT: N_bands x NUM_EARS x (order+1)^2
  *
  * [1] Zaunschirm M, Schörkhuber C, Höldrich R. Binaural rendering of
  *     Ambisonic signals by head-related impulse response time alignment and

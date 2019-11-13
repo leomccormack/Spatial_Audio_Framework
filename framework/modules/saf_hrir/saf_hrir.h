@@ -69,7 +69,7 @@ extern const int __default_hrir_fs;
  *     hrir_len - length of the HRIRs in samples
  *     fs       - sampling rate of the HRIRs
  * Output Arguments:
- *     itds_s   -  & ITDs in seconds; N_dirs x 1
+ *     itds_s   - ITDs in seconds; N_dirs x 1
  */
 void estimateITDs(/* Input Arguments */
                   float* hrirs,
@@ -77,42 +77,78 @@ void estimateITDs(/* Input Arguments */
                   int hrir_len,
                   int fs,
                   /* Output Arguments */
-                  float** itds_s);
+                  float* itds_s);
 
 /*
  * Function: HRIRs2FilterbankHRTFs
  * -------------------------------
  * Passes zero padded HRIRs through the afSTFT filterbank. The filterbank
  * coefficients are then normalised with the energy of an impulse, which is
- * centered at approximately the beginning of the HRIR peak. The HRTF FB
- * coefficients are then diffuse-field equalised before reintroducing the
- * interaural phase differences (IPDs) per frequency band.
+ * centered at approximately the beginning of the HRIR peak.
  * Note: this function is NOT suitable for binaural room impulse responses
  * (BRIRs).
  * Further note: Currently, this is hard-coded for 128 hop size with hybrid mode
- * enabled.
+ * enabled. (133 bands in total)
  *
  * Input Arguments:
- *     hrirs                - HRIRs; FLAT: N_dirs x 2 x hrir_len
- *     N_dirs               - number of HRIRs
- *     hrir_len             - length of the HRIRs in samples
- *     itds_s               - HRIR ITDs; N_dirs x 1
- *     centreFreq           - filterbank centre frequencies; N_bands x 1
- *     N_bands              - number of frequency bands
- *
+ *     hrirs    - HRIRs; FLAT: N_dirs x 2 x hrir_len
+ *     N_dirs   - number of HRIRs
+ *     hrir_len - length of the HRIRs in samples
  * Output Arguments:
- *     hrtf_fb              - & HRTFs as filterbank coeffs;
- *                            FLAT: N_bands x 2 x N_dirs
+ *     hrtf_fb  - HRTFs as filterbank coeffs; FLAT: 133 x 2 x N_dirs
  */
 void HRIRs2FilterbankHRTFs(/* Input Arguments */
                            float* hrirs,
                            int N_dirs,
                            int hrir_len,
-                           float* itds_s,
-                           float* centreFreq,
-                           int N_bands,
                            /* Output Arguments */
-                           float_complex** hrtf_fb);
+                           float_complex* hrtf_fb);
+
+/*
+ * Function: HRIRs2HRTFs
+ * ---------------------
+ * Converts a HRIR set to HRTFs, with a given FFT size.
+ * Note: if the HRIRs are shorter than the FFT size (hrir_len<fftSize), then the
+ * HRIRs are zero-padded. If they are longer, then they are truncated.
+ *
+ * Input Arguments:
+ *     hrirs    - HRIRs; FLAT: N_dirs x 2 x hrir_len
+ *     N_dirs   - number of HRIRs
+ *     hrir_len - length of the HRIRs in samples
+ *     fftSize  - FFT size
+ * Output Arguments:
+ *     hrtf     - HRTFs; FLAT: (fftSize/2+1) x 2 x N_dirs
+ */
+void HRIRs2HRTFs(/* Input Arguments */
+                 float* hrirs,
+                 int N_dirs,
+                 int hrir_len,
+                 int fftSize,
+                 /* Output Arguments */
+                 float_complex* hrtfs);
+
+/*
+ * Function: diffuseFieldEqualiseHRTFs
+ * -----------------------------------
+ * Applies diffuse-field equalisation to a set of HRTFs
+ * Note: this function is NOT suitable for binaural room impulse responses
+ * (BRIRs).
+ *
+ * Input Arguments:
+ *     N_dirs      - number of HRTFs
+ *     itds_s      - HRIR ITDs; N_dirs x 1
+ *     centreFreq  - frequency vector; N_bands x 1
+ *     N_bands     - number of frequency bands/bins
+ * Input/Output Arguments:
+ *     hrtfs       - the HRTFs; FLAT: N_bands x 2 x N_dirs
+ */
+void diffuseFieldEqualiseHRTFs(/* Input Arguments */
+                               int N_dirs,
+                               float* itds_s,
+                               float* centreFreq,
+                               int N_bands,
+                               /* Input/Output Arguments */
+                               float_complex* hrtfs);
 
 /*
  * Function: interpFilterbankHRTFs
@@ -136,8 +172,7 @@ void HRIRs2FilterbankHRTFs(/* Input Arguments */
  *                            FLAT: N_interp_dirs x N_hrtf_dirs
  *     N_hrtf_dirs          - number of HRTF directions
  *     N_bands              - number of frequency bands
- *     N_interp_dirs        - number of interpolated hrtf positions 
- *
+ *     N_interp_dirs        - number of interpolated hrtf positions
  * Output Arguments:
  *     hrtf_interp          - pre-alloc, interpolated HRTFs;
  *                            FLAT: N_bands x 2 x N_interp_dirs
@@ -155,7 +190,7 @@ void interpFilterbankHRTFs(/* Input Arguments */
    
 /*
  * Function: binauralDiffuseCoherence
- * -------------------------------
+ * ----------------------------------
  * Computes the binaural diffuse coherence per frequency for a given HRTF set,
  * as in [1].
  *
@@ -166,7 +201,6 @@ void interpFilterbankHRTFs(/* Input Arguments */
  *     freqVector  - frequency vector; N_bands x 1
  *     N_hrtf_dirs - number of HRTF directions
  *     N_bands     - number of frequency bands
- *
  * Output Arguments:
  *     HRTFcoh     -  binaural coeherence per frequency; N_bands x 1
  *

@@ -53,7 +53,7 @@ extern "C" {
  * Note: Use this function if using REAL-VALUED input/output matrices.
  *
  * Input Arguments:
- *     phCdf  - address of Covariance Domain Framework handle
+ *     phCdf  - & (address) of Covariance Domain Framework handle
  *     nXcols - number of columns/rows in square input matrix 'Cx'
  *     nYcols - number of columns/rows in square input matrix 'Cy'
  */
@@ -69,7 +69,7 @@ void cdf4sap_create(/* Input Arguments */
  * Note: Use this function if using COMPLEX-VALUED input/output matrices.
  *
  * Input Arguments:
- *     phCdf  - address of Covariance Domain Framework handle
+ *     phCdf  - & (address) of Covariance Domain Framework handle
  *     nXcols - number of columns/rows in square input matrix 'Cx'
  *     nYcols - number of columns/rows in square input matrix 'Cy'
  */
@@ -85,7 +85,7 @@ void cdf4sap_cmplx_create(/* Input Arguments */
  * Note: Use this function if using REAL-VALUED input/output matrices.
  *
  * Input Arguments:
- *     phCdf - address of Covariance Domain Framework handle
+ *     phCdf - & (address) of Covariance Domain Framework handle
  */
 void cdf4sap_destroy(/* Input Arguments */
                      void ** const phCdf);
@@ -97,7 +97,7 @@ void cdf4sap_destroy(/* Input Arguments */
  * Note: Use this function if using COMPLEX-VALUED input/output matrices.
  *
  * Input Arguments:
- *     phCdf - address of Covariance Domain Framework handle
+ *     phCdf - & (address) of Covariance Domain Framework handle
  */
 void cdf4sap_cmplx_destroy(/* Input Arguments */
                            void ** const phCdf);

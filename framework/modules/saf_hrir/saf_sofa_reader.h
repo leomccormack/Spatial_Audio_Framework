@@ -33,9 +33,10 @@
 #include <stdlib.h>
 #include <string.h>
 #ifdef SAF_ENABLE_SOFA_READER
-/* If your compiler stopped at this point:
- * Instructions for linking the required "netcdf" library may be found here:
- * https://github.com/leomccormack/Spatial_Audio_Framework */
+/* If your compiler stopped at this point, then please add the path to the
+ * netcdf include files to your project include header paths.
+ * Instructions for linking the required "netcdf" library may also be found
+ * here: https://github.com/leomccormack/Spatial_Audio_Framework */
 # include <netcdf.h>
 #endif
 #include "../saf_utilities/saf_utilities.h"

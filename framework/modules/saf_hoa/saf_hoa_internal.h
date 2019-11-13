@@ -42,6 +42,10 @@
 extern "C" {
 #endif /* __cplusplus */
     
+#ifndef NUM_EARS
+# define NUM_EARS 2
+#endif
+    
 /* ========================================================================== */
 /*                       Loudspeaker Ambisonic Decoders                       */
 /* ========================================================================== */
@@ -60,7 +64,7 @@ extern "C" {
  *     ls_dirs_deg - loudspeaker directions in DEGREES [azi elev]; FLAT: nLS x 2
  *     nLS         - number of loudspeakers
  * Output Arguments:
- *     decMtx      - & decoding matrix; FLAT: nLS x (order+1)^2
+ *     decMtx      - decoding matrix; FLAT: nLS x (order+1)^2
  *
  * [1] Zotter, F., Pomberger, H., Noisternig, M. (2012). Energy-Preserving
  *     Ambisonic Decoding. Acta Acustica United with Acustica, 98(1), 37:47.
@@ -70,7 +74,7 @@ void getEPAD(/* Input Arguments */
              float* ls_dirs_deg,
              int nLS,
              /* Output Arguments */
-             float** decMtx);
+             float* decMtx);
 
 /*
  * Function: getAllRAD
@@ -82,7 +86,7 @@ void getEPAD(/* Input Arguments */
  *     ls_dirs_deg - loudspeaker directions in DEGREES [azi elev]; FLAT: nLS x 2
  *     nLS         - number of loudspeakers
  * Output Arguments:
- *     decMtx      - & decoding matrix; FLAT: nLS x (order+1)^2
+ *     decMtx      - decoding matrix; FLAT: nLS x (order+1)^2
  *
  * [1] Zotter, F., Frank, M. (2012). All-Round Ambisonic Panning and Decoding.
  *     Journal of the Audio Engineering Society, 60(10), 807:820
@@ -92,7 +96,7 @@ void getAllRAD(/* Input Arguments */
                float* ls_dirs_deg,
                int nLS,
                /* Output Arguments */
-               float **decMtx);
+               float* decMtx);
 
     
 /* ========================================================================== */
@@ -113,7 +117,7 @@ void getAllRAD(/* Input Arguments */
  * components.
  *
  * Input Arguments:
- *     hrtfs         - the HRTFs; FLAT: N_bands x 2 x N_dirs
+ *     hrtfs         - the HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
  *     hrtf_dirs_deg - HRTF directions; FLAT: N_dirs x 2
  *     N_dirs        - number of HRTF directions in set
  *     N_bands       - number of frequency bands/bins
@@ -121,7 +125,7 @@ void getAllRAD(/* Input Arguments */
  *     weights       - integration weights (set to NULL if not available);
  *                     N_dirs x 1
  * Output Arguments:
- *     decMtx        - decoding matrix; FLAT: N_bands x 2 x (order+1)^2
+ *     decMtx        - decoding matrix; FLAT: N_bands x NUM_EARS x (order+1)^2
  */
 void getBinDecoder_LS(/* Input Arguments */
                       float_complex* hrtfs,
@@ -144,7 +148,7 @@ void getBinDecoder_LS(/* Input Arguments */
  * by standard LS decoding at lower input orders.
  *
  * Input Arguments:
- *     hrtfs         - the HRTFs; FLAT: N_bands x 2 x N_dirs
+ *     hrtfs         - the HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
  *     hrtf_dirs_deg - HRTF directions; FLAT: N_dirs x 2
  *     N_dirs        - number of HRTF directions in set
  *     N_bands       - number of frequency bands/bins
@@ -152,7 +156,7 @@ void getBinDecoder_LS(/* Input Arguments */
  *     weights       - integration weights (set to NULL if not available);
  *                     N_dirs x 1
  * Output Arguments:
- *     decMtx        - decoding matrix; FLAT: N_bands x 2 x (order+1)^2
+ *     decMtx        - decoding matrix; FLAT: N_bands x NUM_EARS x (order+1)^2
  *
  * [1] Z. Ben-Hur, F. Brinkmann, J. Sheaffer, S. Weinzierl, and B. Rafaely,
  *     "Spectral equalization in binaural signals represented by order-
@@ -185,7 +189,7 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
  * components and preserved.
  *
  * Input Arguments:
- *     hrtfs         - the HRTFs; FLAT: N_bands x 2 x N_dirs
+ *     hrtfs         - the HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
  *     hrtf_dirs_deg - HRTF directions; FLAT: N_dirs x 2
  *     N_dirs        - number of HRTF directions in set
  *     N_bands       - number of frequency bands/bins
@@ -193,7 +197,7 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
  *     weights       - integration weights (set to NULL if not available);
  *                     N_dirs x 1
  * Output Arguments:
- *     decMtx        - decoding matrix; FLAT: N_bands x 2 x (order+1)^2
+ *     decMtx        - decoding matrix; FLAT: N_bands x NUM_EARS x (order+1)^2
  *
  * [1] B. Bernschu ̈tz, A. V. Giner, C. Pörschmann, and J. Arend, “Binaural
  *     reproduction of plane waves with reduced modal order,” Acta Acustica
@@ -233,7 +237,7 @@ void getBinDecoder_SPR(/* Input Arguments */
  * binaural decoder using the "applyDiffCovMatching" function.
  *
  * Input Arguments:
- *     hrtfs         - the HRTFs; FLAT: N_bands x 2 x N_dirs
+ *     hrtfs         - the HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
  *     hrtf_dirs_deg - HRTF directions; FLAT: N_dirs x 2
  *     N_dirs        - number of HRTF directions in set
  *     N_bands       - number of frequency bands/bins
@@ -243,7 +247,7 @@ void getBinDecoder_SPR(/* Input Arguments */
  *     weights       - integration weights (set to NULL if not available);
  *                     N_dirs x 1
  * Output Arguments:
- *     decMtx        - decoding matrix; FLAT: N_bands x 2 x (order+1)^2
+ *     decMtx        - decoding matrix; FLAT: N_bands x NUM_EARS x (order+1)^2
  *
  * [1] Zaunschirm M, Schörkhuber C, Höldrich R. Binaural rendering of
  *     Ambisonic signals by head-related impulse response time alignment and
@@ -272,7 +276,7 @@ void getBinDecoder_TA(/* Input Arguments */
  * 1.5kHz.
  *
  * Input Arguments:
- *     hrtfs         - the HRTFs; FLAT: N_bands x 2 x N_dirs
+ *     hrtfs         - the HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
  *     hrtf_dirs_deg - HRTF directions; FLAT: N_dirs x 2
  *     N_dirs        - number of HRTF directions in set
  *     N_bands       - number of frequency bands/bins
@@ -281,7 +285,7 @@ void getBinDecoder_TA(/* Input Arguments */
  *     weights       - integration weights (set to NULL if not available);
  *                     N_dirs x 1
  * Output Arguments:
- *     decMtx        - decoding matrix; FLAT: N_bands x 2 x (order+1)^2
+ *     decMtx        - decoding matrix; FLAT: N_bands x NUM_EARS x (order+1)^2
  *
  * [1] Schörkhuber C, Zaunschirm M, Höldrich R. Binaural Rendering of
  *     Ambisonic Signals via Magnitude Least Squares. InProceedings of the

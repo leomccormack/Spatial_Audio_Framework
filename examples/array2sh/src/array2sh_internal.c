@@ -102,8 +102,8 @@ void array2sh_calculate_sht_matrix
     }
     
     /* Spherical harmponic weights for each sensor direction */
-    Y_mic = NULL;
-    getRSH(order, (float*)arraySpecs->sensorCoords_deg, arraySpecs->Q, &Y_mic); /* nSH x Q */
+    Y_mic = malloc1d(nSH*(arraySpecs->Q)*sizeof(float));
+    getRSH(order, (float*)arraySpecs->sensorCoords_deg, arraySpecs->Q, Y_mic); /* nSH x Q */
     pinv_Y_mic = malloc1d( arraySpecs->Q * nSH *sizeof(float));
     utility_spinv(Y_mic, nSH, arraySpecs->Q, pinv_Y_mic);
     pinv_Y_mic_cmplx =  malloc1d((arraySpecs->Q) * nSH *sizeof(float_complex));
@@ -319,7 +319,7 @@ void array2sh_calculate_sht_matrix
                 for (i=0; i<n+1; i++)
                     wn[(i*i)*nSH_n+(i*i)] = 1.0f;
             else if(pData->filterType==FILTER_Z_STYLE_MAXRE)
-                getMaxREweights(n, wn);
+                getMaxREweights(n, 1, wn);
             scale = 0.0;
             for (i=0; i<n+1; i++)
                 scale += (double)(2*i+1)*pow((double)wn[(i*i)*nSH_n + (i*i)], 2.0);
@@ -622,8 +622,8 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
     /* generate ideal (real) spherical harmonics to compare with */
     order = pData->order;
     nSH = (order+1)*(order+1);
-    Y_grid_real = NULL;
-    getRSH(order, (float*)__geosphere_ico_9_0_dirs_deg, 812, &Y_grid_real);
+    Y_grid_real = malloc1d(nSH*812*sizeof(float));
+    getRSH(order, (float*)__geosphere_ico_9_0_dirs_deg, 812, Y_grid_real);
     Y_grid = malloc1d(nSH*812*sizeof(float_complex));
     for(i=0; i<nSH*812; i++)
         Y_grid[i] = cmplxf(Y_grid_real[i], 0.0f); /* "evaluateSHTfilters" function requires complex data type */

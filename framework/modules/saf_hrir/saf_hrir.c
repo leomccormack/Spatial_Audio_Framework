@@ -38,11 +38,11 @@ float matlab_fmodf(float x, float y) {
 
 void estimateITDs
 (
-    float* hrirs /*N_dirs x 2 x hrir_len*/,
+    float* hrirs /* N_dirs x NUM_EARS x hrir_len*/,
     int N_dirs,
     int hrir_len,
     int fs,
-    float** itds_s /* & */
+    float* itds_s
 )
 {
     int i, n, j, k, maxIdx, xcorr_len;
@@ -61,8 +61,6 @@ void estimateITDs
     /* determine the ITD via the cross-correlation between the LPF'd left and right HRIR signals */
     xcorr_len = 2*(hrir_len)-1;
     itd_bounds = sqrtf(2.0f)/2e3f;
-    free1d((void**)&(*itds_s));
-    (*itds_s) = malloc1d(N_dirs*sizeof(float));
     xcorr_LR = (float*)malloc1d(xcorr_len*sizeof(float));
     ir_L = (float*)malloc1d(hrir_len*sizeof(float));
     ir_R = (float*)malloc1d(hrir_len*sizeof(float));
@@ -72,9 +70,9 @@ void estimateITDs
         memset(Wz1, 0, 2*sizeof(float));
         memset(Wz2, 0, 2*sizeof(float));
         for (n=0; n<hrir_len; n++){
-            for(j=0; j<2; j++){
+            for(j=0; j<NUM_EARS; j++){
                 /* biquad difference equation (Direct form 2) */
-                wn = hrirs[i*2*hrir_len + j*hrir_len + n] - a[1] * Wz1[j] - a[2] * Wz2[j];
+                wn = hrirs[i*NUM_EARS*hrir_len + j*hrir_len + n] - a[1] * Wz1[j] - a[2] * Wz2[j];
                 hrir_lpf[n*2+j]  = b[0] * wn + b[1]*Wz1[j] + b[2]*Wz2[j];
                 
                 /* shuffle delays */
@@ -97,9 +95,9 @@ void estimateITDs
                 maxVal = xcorr_LR[j];
             }
         }
-        (*itds_s)[i] = ((float)hrir_len-(float)maxIdx-1.0f)/(float)fs;
-        (*itds_s)[i] = (*itds_s)[i]>itd_bounds  ? itd_bounds  : (*itds_s)[i];
-        (*itds_s)[i] = (*itds_s)[i]<-itd_bounds ? -itd_bounds : (*itds_s)[i];
+        itds_s[i] = ((float)hrir_len-(float)maxIdx-1.0f)/(float)fs;
+        itds_s[i] = itds_s[i] >  itd_bounds ?  itd_bounds : itds_s[i];
+        itds_s[i] = itds_s[i] < -itd_bounds ? -itd_bounds : itds_s[i];
     }
     
     free(xcorr_LR);
@@ -108,24 +106,63 @@ void estimateITDs
     free(hrir_lpf);
 }
 
-/* A C implementation of a MatLab function by Archontis Politis; published with permission */
 void HRIRs2FilterbankHRTFs
 (
-    float* hrirs, /*N_bands x 2 x hrir_len*/
+    float* hrirs, /* N_dirs x 2 x hrir_len */
     int N_dirs,
     int hrir_len,
+    float_complex* hrtf_fb /* 133 x 2 x N_dirs */
+)
+{
+    /* convert the HRIRs to filterbank coefficients */
+    /* hard-coded to 128 hopsize and hybrid mode enabled (133 bins total) */
+    FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, 133, hrtf_fb);
+}
+
+void HRIRs2HRTFs
+(
+    float* hrirs, /* N_dirs x NUM_EARS x hrir_len */
+    int N_dirs,
+    int hrir_len,
+    int fftSize,
+    float_complex* hrtfs /* (fftSize/2+1) x 2 x N_dirs  */
+)
+{
+    int i, j, k, nBins;
+    void* hSafFFT;
+    float* hrir_pad;
+    float_complex* hrtf;
+ 
+    nBins = fftSize/2 + 1;
+    safFFT_create(&hSafFFT, fftSize);
+    hrir_pad = calloc1d(fftSize, sizeof(float));
+    hrtf = malloc1d(nBins*sizeof(float_complex));
+    for(i=0; i<N_dirs; i++){
+        for(j=0; j<NUM_EARS; j++){
+            memcpy(hrir_pad, &hrirs[i*NUM_EARS*hrir_len+j*hrir_len], MIN(fftSize, hrir_len)*sizeof(float));
+            safFFT_forward(hSafFFT, hrir_pad, hrtf);
+            for(k=0; k<nBins; k++)
+                hrtfs[k*NUM_EARS*N_dirs + j*N_dirs + i] = hrtf[k];
+         }
+    }
+    
+    safFFT_destroy(&hSafFFT);
+    free(hrir_pad);
+    free(hrtf);
+}
+
+void diffuseFieldEqualiseHRTFs
+(
+    int N_dirs,
     float* itds_s,
     float* centreFreq,
     int N_bands,
-    float_complex** hrtf_fb /* &, N_bands x 2 x N_dirs */
+    float_complex* hrtfs   /* N_bands x 2 x N_dirs */
 )
 {
     int i, j, nd, band;
     float* ipd, *hrtf_diff;
-
-    /* convert the HRIRs to filterbank coefficients */
-    FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, N_bands, hrtf_fb);
-#if 1
+    
     /* convert ITDs to phase differences -pi..pi */
     ipd = malloc1d(N_bands*N_dirs*sizeof(float));
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_bands, N_dirs, 1, 1.0,
@@ -141,28 +178,26 @@ void HRIRs2FilterbankHRTFs
     for(band=0; band<N_bands; band++)
         for(i=0; i<NUM_EARS; i++)
             for(j=0; j<N_dirs; j++)
-                hrtf_diff[band*NUM_EARS + i] += powf(cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + i*N_dirs + j]), 2.0f);
+                hrtf_diff[band*NUM_EARS + i] += powf(cabsf(hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + j]), 2.0f);
     for(band=0; band<N_bands; band++)
         for(i=0; i<NUM_EARS; i++)
             hrtf_diff[band*NUM_EARS + i] = sqrtf(hrtf_diff[band*NUM_EARS + i]/(float)N_dirs);
     for(band=0; band<N_bands; band++)
         for(i=0; i<NUM_EARS; i++)
             for(nd=0; nd<N_dirs; nd++)
-                (*hrtf_fb)[band*NUM_EARS*N_dirs + i*N_dirs + nd] = ccdivf((*hrtf_fb)[band*NUM_EARS*N_dirs + i*N_dirs + nd], cmplxf(hrtf_diff[band*NUM_EARS + i] + 2.23e-8f, 0.0f));
+                hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + nd] = ccdivf(hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + nd], cmplxf(hrtf_diff[band*NUM_EARS + i] + 2.23e-8f, 0.0f));
     
     /* create complex HRTFs by introducing the interaural phase differences
      * (IPDs) to the HRTF magnitude responses */
     for(band=0; band<N_bands; band++){
         for(nd=0; nd<N_dirs; nd++){
-            (*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f, ipd[band*N_dirs + nd])), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 0*N_dirs + nd]) );
-            (*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f,-ipd[band*N_dirs + nd])), cabsf((*hrtf_fb)[band*NUM_EARS*N_dirs + 1*N_dirs + nd]) );
+            hrtfs[band*NUM_EARS*N_dirs + 0*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f, ipd[band*N_dirs + nd])), cabsf(hrtfs[band*NUM_EARS*N_dirs + 0*N_dirs + nd]) );
+            hrtfs[band*NUM_EARS*N_dirs + 1*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f,-ipd[band*N_dirs + nd])), cabsf(hrtfs[band*NUM_EARS*N_dirs + 1*N_dirs + nd]) );
         }
     }
-
-    free(ipd);
-    free(hrtf_diff);
     
-#endif
+    free(ipd);
+    free(hrtf_diff); 
 }
 
 /* A C implementation of a MatLab function by Archontis Politis; published with
@@ -259,7 +294,8 @@ void binauralDiffuseCoherence
     for(i=0; i<N_bands; i++){
         for(j=0; j<N_hrtf_dirs; j++)
             hrtf_ipd_lr[i] = ccaddf(hrtf_ipd_lr[i], crmulf(cexpf(crmulf(cmplxf(0.0f, 1.0f), ipd[i*N_hrtf_dirs+j])),
-                                                    cabsf(hrtfs[i*2*N_hrtf_dirs + 0*N_hrtf_dirs + j])*cabsf(hrtfs[i*2*N_hrtf_dirs + 1*N_hrtf_dirs + j])));
+                                                    cabsf(hrtfs[i*NUM_EARS*N_hrtf_dirs + 0*N_hrtf_dirs + j])*
+                                                    cabsf(hrtfs[i*NUM_EARS*N_hrtf_dirs + 1*N_hrtf_dirs + j])));
         hrtf_ipd_lr[i] = ccdivf(hrtf_ipd_lr[i], cmplxf((float)N_hrtf_dirs, 0.0f));
     }
     

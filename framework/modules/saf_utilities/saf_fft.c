@@ -32,6 +32,18 @@
 #include "saf_utilities.h"
 #include "saf_fft.h"
 
+void getUniformFreqVector
+(
+    int fftSize,
+    float fs,
+    float* freqVector
+)
+{
+    int k;
+    for(k=0; k<fftSize/2+1; k++)
+        freqVector[k] = (float)k * fs/(float)fftSize;
+}
+
 typedef struct _safFFT_data {
     int N;
     float  Scale;
