@@ -79,7 +79,9 @@ void getLoudspeakerAmbiDecoderMtx
 )
 {
     int i, j, nSH;
-    float* Y_ls;
+    float* Y_ls, *a_n, *decMtx_maxrE;
+    
+    nSH = (order+1) * (order+1);
  
     switch(method){
         default:
@@ -88,7 +90,6 @@ void getLoudspeakerAmbiDecoderMtx
             /* Sampling Ambisonic Decoder (SAD) is simply the loudspeaker
              * spherical harmonic matrix scaled by the number of loudspeakers.
              */
-            nSH = (order+1) * (order+1);
             Y_ls = malloc1d(nSH*nLS*sizeof(float));
             getRSH(order, ls_dirs_deg, nLS, Y_ls);
             for(i=0; i<nLS; i++)
@@ -100,7 +101,6 @@ void getLoudspeakerAmbiDecoderMtx
         case LOUDSPEAKER_DECODER_MMD:
             /* Mode-Matching Decoder (MMD) is simply the psuedo inverse of the
              * loudspeaker spherical harmonic matrix. */
-            nSH = (order+1) * (order+1);
             Y_ls = malloc1d(nSH*nLS*sizeof(float));
             getRSH(order, ls_dirs_deg, nLS, Y_ls);
             utility_spinv(Y_ls, nSH, nLS, decMtx);
@@ -114,6 +114,21 @@ void getLoudspeakerAmbiDecoderMtx
         case LOUDSPEAKER_DECODER_ALLRAD:
             getAllRAD(order, ls_dirs_deg, nLS, decMtx);
             break;
+    }
+    
+    /* Apply maxRE weighting */
+    if(enableMaxReWeighting){
+        a_n = malloc1d(nSH*nSH*sizeof(float));
+        getMaxREweights(order, 1, a_n); /* 1: weights returned as diagonal matrix */
+        decMtx_maxrE = malloc1d(nLS * nSH * sizeof(float));
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLS, nSH, nSH, 1.0f,
+                    decMtx, nSH,
+                    a_n, nSH, 0.0f,
+                    decMtx_maxrE, nSH);
+        memcpy(decMtx, decMtx_maxrE, nLS*nSH*sizeof(float));
+        
+        free(a_n);
+        free(decMtx_maxrE);
     }
 }
 
