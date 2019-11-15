@@ -139,8 +139,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     diffuseFieldEqualiseHRTFs(pData->N_hrir_dirs, pData->itds_s, pData->freqVector, HYBRID_BANDS, pData->hrtf_fb);
     
     /* calculate magnitude responses */
-    pData->hrtf_fb_mag = realloc1d(pData->hrtf_fb_mag, HYBRID_BANDS*NUM_EARS*(pData->N_hrir_dirs)*sizeof(float));
-    pData->hrtf_fb_mag = malloc1d(HYBRID_BANDS*NUM_EARS* (pData->N_hrir_dirs)*sizeof(float));
+    pData->hrtf_fb_mag = realloc1d(pData->hrtf_fb_mag, HYBRID_BANDS*NUM_EARS*(pData->N_hrir_dirs)*sizeof(float)); 
     for(i=0; i<HYBRID_BANDS*NUM_EARS* (pData->N_hrir_dirs); i++)
         pData->hrtf_fb_mag[i] = cabsf(pData->hrtf_fb[i]);
     

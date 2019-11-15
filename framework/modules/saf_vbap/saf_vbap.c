@@ -309,6 +309,9 @@ void compressVBAPgainTable3D
     float gains_nt[3];
     float gains_sum;
     
+    memset(vbap_gtableComp, 0, nTable*3*sizeof(float));
+    memset(vbap_gtableIdx, 0, nTable*3*sizeof(int));
+    
     /* compress table by keeping only the non-zero gains and their indices, and also convert to AMPLITUDE NORMALISED */
     for(nt=0; nt<nTable; nt++){
         gains_sum = 0.0f;

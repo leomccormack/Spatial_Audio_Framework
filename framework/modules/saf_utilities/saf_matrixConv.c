@@ -155,7 +155,6 @@ void saf_matrixConv_destroy
             for(no=0; no<h->nCHout; no++)
                 free(h->Hpart_f[no]);
             free(h->Hpart_f);
-            
         }
         free(h);
         h=NULL;

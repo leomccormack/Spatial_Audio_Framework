@@ -44,7 +44,7 @@ extern "C" {
  * applied to an input signal (via simple frequency-dependent delay lines), the
  * resulting signal is decorrelated w.r.t the original.
  * Note: this is a very basic algorithm and sounds particulary bad for transient
- * signals. Consider using a transient detector to "duck" the deccorelated
+ * signals. Consider using a transient detector to "duck" the decorrelated
  * signal during such transients, to improve signal fidelity.
  *
  * Input Arguments:

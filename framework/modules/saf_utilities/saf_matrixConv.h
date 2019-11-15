@@ -111,8 +111,8 @@ void saf_matrixConv_destroy(/*Input Arguments*/
 void saf_matrixConv_apply(void * const hMC,
                           float* inputSigs,
                           float* outputSigs);
-    
-    
+
+
 /* ========================================================================== */
 /*                            Multi-Channel Convolver                         */
 /* ========================================================================== */
@@ -167,7 +167,7 @@ void saf_multiConv_destroy(/*Input Arguments*/
 void saf_multiConv_apply(void * const hMC,
                          float* inputSigs,
                          float* outputSigs);
-    
+
 
 #ifdef __cplusplus
 }/* extern "C" */

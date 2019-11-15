@@ -115,7 +115,7 @@ void applyBiQuadFilter(/* Input arguments */
                        float w_z_12[2],
                        float* signal,
                        int nSamples);
-    
+
 /*
  * Function: evalBiQuadTransferFunction
  * ------------------------------------

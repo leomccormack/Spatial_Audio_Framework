@@ -219,7 +219,7 @@ void unnorm_legendreP_recur(/* Input Arguments */
                             float* Pnm_minus2,
                             /* Output Arguments */
                             float* Pnm);
-    
+
 /*
  * Function: getRSH
  * ----------------
@@ -287,7 +287,7 @@ void getRSH_recur(/* Input Arguments */
                   int nDirs,
                   /* Output Arguments */
                   float* Y);
-    
+
 /*
  * Function: getSHreal
  * -------------------
@@ -341,7 +341,7 @@ void getSHreal_recur(/* Input Arguments */
                      int nDirs,
                      /* Output Arguments */
                      float* Y);
-    
+
 /*
  * Function: getSHcomplex
  * ----------------------
@@ -367,7 +367,7 @@ void getSHcomplex(/* Input Arguments */
                   int nDirs,
                   /* Output Arguments */
                   float_complex* Y);
-    
+
 /*
  * Function: complex2realSHMtx
  * ---------------------------
@@ -386,7 +386,7 @@ void complex2realSHMtx(/* Input Arguments */
                        int order,
                        /* Output Arguments */
                        float_complex* T_c2r);
-    
+
 /*
  * Function: real2complexSHMtx
  * ---------------------------
@@ -404,7 +404,7 @@ void real2complexSHMtx(/* Input Arguments */
                        int order,
                        /* Output Arguments */
                        float_complex* T_r2c);
-    
+
 /*
  * Function: complex2realCoeffs
  * ----------------------------
@@ -423,7 +423,7 @@ void complex2realCoeffs(/* Input Arguments */
                         int K,
                         /* Output Arguments */
                         float* R_N);
-    
+
 /*
  * Function: getSHrotMtxReal
  * -------------------------
@@ -468,7 +468,7 @@ void computeVelCoeffsMtx(/* Input Arguments */
                          int sectorOrder,
                          /* Output Arguments */
                          float_complex* A_xyz);
-    
+
 /*
  * Function: computeSectorCoeffsEP
  * -------------------------------
@@ -506,7 +506,7 @@ void computeSectorCoeffsEP(/* Input Arguments */
                            int nSecDirs,
                            /* Output Arguments */
                            float* sectorCoeffs);
-    
+
 /*
  * Function: computeSectorCoeffsAP
  * -------------------------------
@@ -544,7 +544,7 @@ void computeSectorCoeffsAP(/* Input Arguments */
                            int nSecDirs,
                            /* Output Arguments */
                            float* sectorCoeffs);
-    
+
 /*
  * Function: beamWeightsCardioid2Spherical
  * ---------------------------------------
@@ -562,7 +562,7 @@ void beamWeightsCardioid2Spherical(/* Input Arguments */
                                    int N,
                                    /* Output Arguments */
                                    float* b_n);
-    
+
     /**** NOT IMPLEMENTED YET ****/
 /*
  * Function: beamWeightsDolphChebyshev2Spherical
@@ -588,7 +588,7 @@ void beamWeightsDolphChebyshev2Spherical(/* Input Arguments */
                                          float arrayParam,
                                          /* Output Arguments */
                                          float* b_n);
-    
+
 /*
  * Function: beamWeightsHypercardioid2Spherical
  * --------------------------------------------
@@ -633,7 +633,7 @@ void beamWeightsMaxEV(/* Input Arguments */
                       int N,
                       /* Output Arguments */
                       float* b_n);
-    
+
 /*
  * Function: beamWeightsVelocityPatternsReal
  * -----------------------------------------
@@ -701,7 +701,7 @@ void beamWeightsVelocityPatternsComplex(/* Input Arguments */
                                         float_complex* A_xyz,
                                         /* Output Arguments */
                                         float_complex* velCoeffs);
-    
+
 /*
  * Function: rotateAxisCoeffsReal
  * ------------------------------
@@ -725,7 +725,7 @@ void rotateAxisCoeffsReal(/* Input arguments */
                           float phi_0,
                           /* Output arguments */
                           float* c_nm);          
-    
+
 /*
  * Function: rotateAxisCoeffsComplex
  * ---------------------------------

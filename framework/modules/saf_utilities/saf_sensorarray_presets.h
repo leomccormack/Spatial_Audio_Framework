@@ -61,16 +61,17 @@ extern const int __Zylia_maxOrder;
 extern const int __Eigenmike32_maxOrder;
 extern const int __DTU_mic_maxOrder;
   
-/* sensor array frequency ranges for each SH order - should only be used as a rough estimate.
- * The upper frequency limits were selected as the point where the spatial correlation went <0.9.
- * The lower frequency limits were selected as the point where the level difference exceeded 6dB
- * (assuming a 15dB maximum amplification with the Tikhonov regularisation method for all mics).
+/* sensor array frequency ranges for each SH order - should only be used as a
+ * rough estimate. The upper frequency limits were selected as the point where
+ * the spatial correlation went <0.9. The lower frequency limits were selected
+ * as the point where the level difference exceeded 6dB (assuming a 15dB maximum
+ * amplification with the Tikhonov regularisation method for all mics).
  *
- * For more information on determining the usable frequency range per spherical harmonic order, for
- * a given microphone array, the reader is directed to:
- * Moreau, S., Daniel, J., & Bertet, S. (2006, May). 3D sound field recording with higher order
- * ambisonics–Objective measurements and validation of a 4th order spherical microphone.
- * In 120th Convention of the AES (pp. 20-23).
+ * For more information on determining the usable frequency range per spherical
+ * harmonic order, for a given microphone array, the reader is directed to:
+ * Moreau, S., Daniel, J., & Bertet, S. (2006, May). 3D sound field recording
+ * with higher order ambisonics–Objective measurements and validation of a 4th
+ * order spherical microphone. In 120th Convention of the AES (pp. 20-23).
  */
 extern const float __Zylia_freqRange[4];
 extern const float __Eigenmike32_freqRange[6];
