@@ -70,7 +70,7 @@ void panner_create
     /* default user parameters */
     panner_loadPreset(PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
     pData->nSources = pData->new_nSources;
-    pData->DTT = 0.0f;
+    pData->DTT = 0.5f;
     pData->spread_deg = 0.0f;
     panner_loadPreset(PRESET_5PX, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->output_nDims)); /*check setStateInformation if you change default preset*/
     pData->nLoudpkrs = pData->new_nLoudpkrs;

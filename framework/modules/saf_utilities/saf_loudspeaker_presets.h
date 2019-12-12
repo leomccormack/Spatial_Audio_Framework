@@ -33,7 +33,7 @@
 extern "C" {
 #endif /* __cplusplus */
     
-#include <stdio.h>
+#include <stdio.h>  
     
 /* ========================================================================== */
 /*                      Loudspeaker Array Configurations                      */
@@ -50,9 +50,8 @@ extern const float __11pX_dirs_deg[11][2];
 extern const float __11pX_7_4_dirs_deg[11][2];
 extern const float __13pX_dirs_deg[13][2];
 extern const float __22pX_dirs_deg[22][2];
-extern const float __Aalto_MCC_dirs_deg[29][2];
+extern const float __Aalto_MCC_dirs_deg[44][2];
 extern const float __Aalto_Apaja_dirs_deg[29][2];
-extern const float __Aalto_Apaja2_dirs_deg[39][2];
 extern const float __Aalto_LR_dirs_deg[13][2];
 extern const float __DTU_AVIL_dirs_deg[64][2];
 extern const float __Zylia_Lab_dirs_deg[22][2];

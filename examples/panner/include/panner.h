@@ -44,98 +44,35 @@ extern "C" {
 /* ========================================================================== */
 /*                             Presets + Constants                            */
 /* ========================================================================== */
-     
-#define ENABLE_MONO_PRESET
-#define ENABLE_STEREO_PRESET
-#define ENABLE_5PX_PRESET
-#define ENABLE_7PX_PRESET
-#define ENABLE_8PX_PRESET
-#define ENABLE_9PX_PRESET
-#define ENABLE_10PX_PRESET
-#define ENABLE_11PX_PRESET
-#define ENABLE_11PX_7_4_PRESET
-#define ENABLE_13PX_PRESET
-#define ENABLE_22PX_PRESET
-#define ENABLE_AALTO_MCC_PRESET
-#define ENABLE_AALTO_APAJA_PRESET
-#define ENABLE_AALTO_APAJA2_PRESET
-#define ENABLE_AALTO_LR_PRESET
-#define ENABLE_DTU_AVIL_PRESET
-#define ENABLE_T_DESIGN_4_PRESET
-#define ENABLE_T_DESIGN_12_PRESET
-#define ENABLE_T_DESIGN_24_PRESET
-#define ENABLE_T_DESIGN_36_PRESET
-#define ENABLE_T_DESIGN_48_PRESET
-#define ENABLE_T_DESIGN_60_PRESET
     
+/*
+ * Enum: PRESETS
+ * -------------
+ * Available source/loudspeaker configurations presets
+ */
 typedef enum _PRESETS{
-    PRESET_DEFAULT = 1
-#ifdef ENABLE_MONO_PRESET
-    , PRESET_MONO
-#endif
-#ifdef ENABLE_STEREO_PRESET
-    , PRESET_STEREO
-#endif
-#ifdef ENABLE_5PX_PRESET
-    , PRESET_5PX
-#endif
-#ifdef ENABLE_7PX_PRESET
-    , PRESET_7PX
-#endif
-#ifdef ENABLE_8PX_PRESET
-    , PRESET_8PX
-#endif
-#ifdef ENABLE_9PX_PRESET
-    , PRESET_9PX
-#endif
-#ifdef ENABLE_10PX_PRESET
-    , PRESET_10PX
-#endif
-#ifdef ENABLE_11PX_PRESET
-    , PRESET_11PX
-#endif
-#ifdef ENABLE_11PX_7_4_PRESET
-    , PRESET_11PX_7_4
-#endif
-#ifdef ENABLE_13PX_PRESET
-    , PRESET_13PX
-#endif
-#ifdef ENABLE_22PX_PRESET
-    , PRESET_22PX
-#endif
-#ifdef ENABLE_AALTO_MCC_PRESET
-    , PRESET_AALTO_MCC
-#endif
-#ifdef ENABLE_AALTO_APAJA_PRESET
-    , PRESET_AALTO_APAJA
-#endif
-#ifdef ENABLE_AALTO_APAJA2_PRESET
-    , PRESET_AALTO_APAJA2
-#endif
-#ifdef ENABLE_AALTO_LR_PRESET
-    , PRESET_AALTO_LR
-#endif
-#ifdef ENABLE_DTU_AVIL_PRESET
-    , PRESET_DTU_AVIL
-#endif
-#ifdef ENABLE_T_DESIGN_4_PRESET
-    , PRESET_T_DESIGN_4
-#endif
-#ifdef ENABLE_T_DESIGN_12_PRESET
-    , PRESET_T_DESIGN_12
-#endif
-#ifdef ENABLE_T_DESIGN_24_PRESET
-    , PRESET_T_DESIGN_24
-#endif
-#ifdef ENABLE_T_DESIGN_36_PRESET
-    , PRESET_T_DESIGN_36
-#endif
-#ifdef ENABLE_T_DESIGN_48_PRESET
-    , PRESET_T_DESIGN_48
-#endif
-#ifdef ENABLE_T_DESIGN_60_PRESET
-    , PRESET_T_DESIGN_60
-#endif
+    PRESET_DEFAULT = 1,
+    PRESET_MONO,
+    PRESET_STEREO,
+    PRESET_5PX,
+    PRESET_7PX,
+    PRESET_8PX,
+    PRESET_9PX,
+    PRESET_10PX,
+    PRESET_11PX,
+    PRESET_11PX_7_4,
+    PRESET_13PX,
+    PRESET_22PX,
+    PRESET_AALTO_MCC,
+    PRESET_AALTO_APAJA,
+    PRESET_AALTO_LR,
+    PRESET_DTU_AVIL,
+    PRESET_T_DESIGN_4,
+    PRESET_T_DESIGN_12,
+    PRESET_T_DESIGN_24,
+    PRESET_T_DESIGN_36,
+    PRESET_T_DESIGN_48,
+    PRESET_T_DESIGN_60
     
 }PRESETS;
     

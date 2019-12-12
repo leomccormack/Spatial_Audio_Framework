@@ -182,16 +182,22 @@ void binauraliser_initTFT(void* const hBin);
 /*
  * binauraliser_loadPreset
  * --------------------
- * Sets source directions based on a preset. See "PRESET" enum.
+ * Returns the source directions for a specified source config preset.
+ * The function also returns the number of source in the configuration
+ * Note: default uniformly distributed points are used to pad the
+ * dirs_deg matrix up to the MAX_NUM_SOURCES_IN_PRESET, if nCH is less than
+ * this. This can help avoid scenarios of many sources being panned in the same
+ * direction, or triangulations errors.
  *
  * Input Arguments:
  *     preset   - See "PRESET" enum.
  * Output Arguments:
- *     dirs_deg - source directions
+ *     dirs_deg - source directions, [azimuth elevation] convention, in
+ *                DEGREES;
  *     newNCH   - & new number of channels
  *     nDims    - & estimate of the number of dimensions (2 or 3)
  */
-void binauraliser_loadPreset(PRESETS preset,
+void binauraliser_loadPreset(SOURCE_CONFIG_PRESETS preset,
                              float dirs_deg[MAX_NUM_INPUTS][2],
                              int* newNCH,
                              int* nDims);

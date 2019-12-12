@@ -317,194 +317,152 @@ void ambi_dec_interpHRTFs
     }
 }
 
-void ambi_dec_loadPreset(PRESETS preset, float dirs_deg[MAX_NUM_LOUDSPEAKERS][2], int* newNCH, int* nDims)
+void loadLoudspeakerArrayPreset
+(
+    LOUDSPEAKER_ARRAY_PRESETS preset,
+    float dirs_deg[MAX_NUM_LOUDSPEAKERS_IN_PRESET][2],
+    int* newNCH,
+    int* nDims
+)
 {
     float sum_elev;
     int ch, i, nCH;
     
     switch(preset){
         default:
-        case PRESET_DEFAULT: 
-#ifdef ENABLE_5PX_PRESET
-        case PRESET_5PX:
+        case LOUDSPEAKER_ARRAY_PRESET_DEFAULT:
+        case LOUDSPEAKER_ARRAY_PRESET_5PX:
             nCH = 5;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __5pX_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_7PX_PRESET
-        case PRESET_7PX:
+        case LOUDSPEAKER_ARRAY_PRESET_7PX:
             nCH = 7;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __7pX_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_8PX_PRESET
-        case PRESET_8PX:
+        case LOUDSPEAKER_ARRAY_PRESET_8PX:
             nCH = 8;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __8pX_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_9PX_PRESET
-        case PRESET_9PX:
+        case LOUDSPEAKER_ARRAY_PRESET_9PX:
             nCH = 9;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __9pX_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_10PX_PRESET
-        case PRESET_10PX:
+        case LOUDSPEAKER_ARRAY_PRESET_10PX:
             nCH = 10;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __10pX_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_11PX_PRESET
-        case PRESET_11PX:
+        case LOUDSPEAKER_ARRAY_PRESET_11PX:
             nCH = 11;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __11pX_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_11PX_7_4_PRESET
-        case PRESET_11PX_7_4:
+        case LOUDSPEAKER_ARRAY_PRESET_11PX_7_4:
             nCH = 11;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __11pX_7_4_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_13PX_PRESET
-        case PRESET_13PX:
+        case LOUDSPEAKER_ARRAY_PRESET_13PX:
             nCH = 13;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __13pX_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_22PX_PRESET
-        case PRESET_22PX:
+        case LOUDSPEAKER_ARRAY_PRESET_22PX:
             nCH = 22;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __22pX_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_AALTO_MCC_PRESET
-        case PRESET_AALTO_MCC:
-            nCH = 29;
+        case LOUDSPEAKER_ARRAY_PRESET_AALTO_MCC:
+            nCH = 44;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __Aalto_MCC_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_AALTO_APAJA_PRESET
-        case PRESET_AALTO_APAJA:
+        case LOUDSPEAKER_ARRAY_PRESET_AALTO_APAJA:
             nCH = 29;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __Aalto_Apaja_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_AALTO_APAJA2_PRESET
-        case PRESET_AALTO_APAJA2:
-            nCH = 39;
-            for(ch=0; ch<nCH; ch++)
-                for(i=0; i<2; i++)
-                    dirs_deg[ch][i] = __Aalto_Apaja2_dirs_deg[ch][i];
-            break;
-#endif
-#ifdef ENABLE_AALTO_LR_PRESET
-        case PRESET_AALTO_LR:
+        case LOUDSPEAKER_ARRAY_PRESET_AALTO_LR:
             nCH = 13;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __Aalto_LR_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_DTU_AVIL_PRESET
-        case PRESET_DTU_AVIL:
+        case LOUDSPEAKER_ARRAY_PRESET_DTU_AVIL:
             nCH = 64;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __DTU_AVIL_dirs_deg[ch][i];
             break;
-#endif
-#ifdef  ENABLE_ZYLIA_LAB_PRESET
-        case PRESET_ZYLIA_LAB:
+        case LOUDSPEAKER_ARRAY_PRESET_ZYLIA_LAB:
             nCH = 22;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __Zylia_Lab_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_T_DESIGN_4_PRESET
-        case PRESET_T_DESIGN_4:
+        case LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_4:
             nCH = 4;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __Tdesign_degree_2_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_T_DESIGN_12_PRESET
-        case PRESET_T_DESIGN_12:
+        case LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_12:
             nCH = 12;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __Tdesign_degree_4_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_T_DESIGN_24_PRESET
-        case PRESET_T_DESIGN_24:
+        case LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_24:
             nCH = 24;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __Tdesign_degree_6_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_T_DESIGN_36_PRESET
-        case PRESET_T_DESIGN_36:
+        case LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_36:
             nCH = 36;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __Tdesign_degree_8_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_T_DESIGN_48_PRESET
-        case PRESET_T_DESIGN_48:
+        case LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_48:
             nCH = 48;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __Tdesign_degree_9_dirs_deg[ch][i];
             break;
-#endif
-#ifdef ENABLE_T_DESIGN_60_PRESET
-        case PRESET_T_DESIGN_60:
+        case LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_60:
             nCH = 60;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __Tdesign_degree_10_dirs_deg[ch][i];
             break;
-#endif
     }
     
     /* Fill remaining slots with default coords */
-    for(; ch<MAX_NUM_LOUDSPEAKERS; ch++)
+    for(; ch<MAX_NUM_LOUDSPEAKERS_IN_PRESET; ch++)
         for(i=0; i<2; i++)
             dirs_deg[ch][i] = default_LScoords64_rad[ch][i]* (180.0f/M_PI);
     
     /* specify new number of channels (for dynamically changing the number of TFT channels) */
     (*newNCH) = nCH;
     
-    /* estimate number of dimensions. (Obviously fails if using 2D setups that are elevated.
-     However, in these cases, triangulation should fail and revert to 2D anyway) */
+    /* Estimate number of dimensions.
+     * (Fails if using 2D setups are not on the horizontal plane ) */
     sum_elev = 0.0f;
     for(i=0; i<nCH; i++)
         sum_elev += fabsf(dirs_deg[i][1]);
@@ -513,11 +471,3 @@ void ambi_dec_loadPreset(PRESETS preset, float dirs_deg[MAX_NUM_LOUDSPEAKERS][2]
     else
         (*nDims) = 3;
 }
- 
-
-
-
-
-
-
-

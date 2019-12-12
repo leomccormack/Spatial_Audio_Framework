@@ -66,6 +66,7 @@ extern "C" {
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )   /* 4/8/16 */
 #define MAX_NUM_SENSORS ( ARRAY2SH_MAX_NUM_SENSORS ) /* Maximum permitted number of channels for the VST standard */
 #define MAX_EVAL_FREQ_HZ ( 20e3f )             /* Up to which frequency should the evaluation be accurate */
+#define MAX_NUM_SENSORS_IN_PRESET ( MAX_NUM_SENSORS )
     
 
 /* ========================================================================== */
@@ -140,7 +141,7 @@ typedef struct _array2sh
     
     /* additional user parameters that are not included in the array presets */
     int order;                      /* current encoding order */
-    PRESETS preset;                 /* currently selected MIC preset */
+    MICROPHONE_ARRAY_PRESETS preset; /* currently selected MIC preset */
     FILTER_TYPES filterType;        /* encoding filter approach */
     float regPar;                   /* regularisation upper gain limit, dB; */
     CH_ORDER chOrdering;            /* ACN */
@@ -250,7 +251,7 @@ void array2sh_destroyArray(void ** const hPars);
  *     firstInitFLAG - 1: this is the first time function is being called
  */
 void array2sh_initArray(void * const hPars,
-                        PRESETS preset,
+                        MICROPHONE_ARRAY_PRESETS preset,
                         int* arrayOrder,
                         int firstInitFLAG);
 

@@ -44,34 +44,6 @@ extern "C" {
 /*                             Presets + Constants                            */
 /* ========================================================================== */
     
-/* Microphone array options */
-#define ENABLE_ZYLIA_MIC_PRESET
-#define ENABLE_EIGENMIKE32_MIC_PRESET
-#define ENABLE_DTU_MIC_MIC_PRESET
-    
-/* Loudspeaker configurations */
-#define ENABLE_5PX_PRESET
-#define ENABLE_7PX_PRESET
-#define ENABLE_8PX_PRESET
-#define ENABLE_9PX_PRESET
-#define ENABLE_10PX_PRESET
-#define ENABLE_11PX_PRESET
-#define ENABLE_11PX_7_4_PRESET
-#define ENABLE_13PX_PRESET
-#define ENABLE_22PX_PRESET
-#define ENABLE_AALTO_MCC_PRESET
-#define ENABLE_AALTO_APAJA_PRESET
-#define ENABLE_AALTO_APAJA2_PRESET
-#define ENABLE_AALTO_LR_PRESET
-#define ENABLE_DTU_AVIL_PRESET
-#define ENABLE_ZYLIA_LAB_PRESET
-#define ENABLE_T_DESIGN_4_PRESET
-#define ENABLE_T_DESIGN_12_PRESET
-#define ENABLE_T_DESIGN_24_PRESET
-#define ENABLE_T_DESIGN_36_PRESET
-#define ENABLE_T_DESIGN_48_PRESET
-#define ENABLE_T_DESIGN_60_PRESET
-    
 /*
  * Enum: MASTER_ORDERS
  * -------------------
@@ -120,87 +92,51 @@ typedef enum _DECODING_METHODS {
     
 } DECODING_METHODS;
     
+/*
+ * Enum: MIC_PRESETS
+ * -----------------
+ * Available microphone array presets. These determine the frequency ranges
+ * where the microphone array provides usable spherical harmonic components
+ * at each order.
+ */
 typedef enum _MIC_PRESETS{
-    MIC_PRESET_IDEAL = 1
-#ifdef ENABLE_ZYLIA_MIC_PRESET
-    , MIC_PRESET_ZYLIA
-#endif
-#ifdef ENABLE_EIGENMIKE32_MIC_PRESET
-    , MIC_PRESET_EIGENMIKE32
-#endif
-#ifdef ENABLE_DTU_MIC_MIC_PRESET
-    , MIC_PRESET_DTU_MIC
-#endif
+    MIC_PRESET_IDEAL = 1,
+    MIC_PRESET_ZYLIA,
+    MIC_PRESET_EIGENMIKE32,
+    MIC_PRESET_DTU_MIC
+    
 }MIC_PRESETS;
+   
+/*
+ * Enum: LOUDSPEAKER_ARRAY_PRESETS
+ * -------------------------------
+ * Available loudspeaker array presets
+ */
+typedef enum _LOUDSPEAKER_ARRAY_PRESETS{
+    LOUDSPEAKER_ARRAY_PRESET_DEFAULT = 1,
+    LOUDSPEAKER_ARRAY_PRESET_5PX,
+    LOUDSPEAKER_ARRAY_PRESET_7PX,
+    LOUDSPEAKER_ARRAY_PRESET_8PX,
+    LOUDSPEAKER_ARRAY_PRESET_9PX,
+    LOUDSPEAKER_ARRAY_PRESET_10PX,
+    LOUDSPEAKER_ARRAY_PRESET_11PX,
+    LOUDSPEAKER_ARRAY_PRESET_11PX_7_4,
+    LOUDSPEAKER_ARRAY_PRESET_13PX,
+    LOUDSPEAKER_ARRAY_PRESET_22PX,
+    LOUDSPEAKER_ARRAY_PRESET_AALTO_MCC,
+    LOUDSPEAKER_ARRAY_PRESET_AALTO_APAJA,
+    LOUDSPEAKER_ARRAY_PRESET_AALTO_LR,
+    LOUDSPEAKER_ARRAY_PRESET_DTU_AVIL,
+    LOUDSPEAKER_ARRAY_PRESET_ZYLIA_LAB,
+    LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_4,
+    LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_12,
+    LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_24,
+    LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_36,
+    LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_48,
+    LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_60
+    
+}LOUDSPEAKER_ARRAY_PRESETS;
 
-typedef enum _PRESETS{
-    PRESET_DEFAULT = 1 
-#ifdef ENABLE_5PX_PRESET
-    , PRESET_5PX
-#endif
-#ifdef ENABLE_7PX_PRESET
-    , PRESET_7PX
-#endif
-#ifdef ENABLE_8PX_PRESET
-    , PRESET_8PX
-#endif
-#ifdef ENABLE_9PX_PRESET
-    , PRESET_9PX
-#endif
-#ifdef ENABLE_10PX_PRESET
-    , PRESET_10PX
-#endif
-#ifdef ENABLE_11PX_PRESET
-    , PRESET_11PX
-#endif
-#ifdef ENABLE_11PX_7_4_PRESET
-    , PRESET_11PX_7_4
-#endif
-#ifdef ENABLE_13PX_PRESET
-    , PRESET_13PX
-#endif
-#ifdef ENABLE_22PX_PRESET
-    , PRESET_22PX
-#endif
-#ifdef ENABLE_AALTO_MCC_PRESET
-    , PRESET_AALTO_MCC
-#endif
-#ifdef ENABLE_AALTO_APAJA_PRESET
-    , PRESET_AALTO_APAJA
-#endif
-#ifdef ENABLE_AALTO_APAJA2_PRESET
-    , PRESET_AALTO_APAJA2
-#endif
-#ifdef ENABLE_AALTO_LR_PRESET
-    , PRESET_AALTO_LR
-#endif
-#ifdef ENABLE_DTU_AVIL_PRESET
-    , PRESET_DTU_AVIL
-#endif
-#ifdef ENABLE_ZYLIA_LAB_PRESET
-    , PRESET_ZYLIA_LAB
-#endif
-#ifdef ENABLE_T_DESIGN_4_PRESET
-    , PRESET_T_DESIGN_4
-#endif
-#ifdef ENABLE_T_DESIGN_12_PRESET
-    , PRESET_T_DESIGN_12
-#endif
-#ifdef ENABLE_T_DESIGN_24_PRESET
-    , PRESET_T_DESIGN_24
-#endif
-#ifdef ENABLE_T_DESIGN_36_PRESET
-    , PRESET_T_DESIGN_36
-#endif
-#ifdef ENABLE_T_DESIGN_48_PRESET
-    , PRESET_T_DESIGN_48
-#endif
-#ifdef ENABLE_T_DESIGN_60_PRESET
-    , PRESET_T_DESIGN_60
-#endif
-    
-}PRESETS;
-    
 /*
  * Enum: DIFFUSE_FIELD_EQ_APPROACH
  * -------------------------------

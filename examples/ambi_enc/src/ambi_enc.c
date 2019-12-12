@@ -39,7 +39,7 @@ void ambi_enc_create
     pData->order = 1;
     
     /* default user parameters */
-    ambi_enc_loadPreset(PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources)); /*check setStateInformation if you change default preset*/
+    loadSourceConfigPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources));
     pData->nSources = pData->new_nSources;
     for(i=0; i<MAX_NUM_INPUTS; i++)
         pData->recalc_SH_FLAG[i] = 1;
@@ -263,7 +263,7 @@ void ambi_enc_setInputConfigPreset(void* const hAmbi, int newPresetID)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
     int ch;
-    ambi_enc_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources));
+    loadSourceConfigPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources));
     pData->nSources = pData->new_nSources;
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_SH_FLAG[ch] = 1;

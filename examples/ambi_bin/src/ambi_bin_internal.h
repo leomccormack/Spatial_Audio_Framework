@@ -96,7 +96,8 @@ typedef struct _codecPars
 typedef struct _ambi_bin
 {
     /* audio buffers + afSTFT time-frequency transform handle */
-    float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
+    int fs; /* host sampling rate */
+    float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     float_complex SHframeTF_rot[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     float_complex binframeTF[HYBRID_BANDS][NUM_EARS][TIME_SLOTS];
@@ -105,7 +106,6 @@ typedef struct _ambi_bin
     void* hSTFT; /* afSTFT handle */
     int afSTFTdelay; /* for host delay compensation */
     float** tempHopFrameTD; /* temporary multi-channel time-domain buffer of size "HOP_SIZE". */
-    int fs; /* host sampling rate */
     float freqVector[HYBRID_BANDS]; /* frequency vector for time-frequency transform, in Hz */
     
     /* our codec configuration */

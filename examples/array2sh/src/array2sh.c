@@ -61,7 +61,7 @@ void array2sh_create
     pData->gain_dB = 0.0f; /* post-gain */
     pData->maxFreq = 20e3f;
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
-    array2sh_initArray(arraySpecs, PRESET_DEFAULT, &(pData->order), 1);
+    array2sh_initArray(arraySpecs, MICROPHONE_ARRAY_PRESET_DEFAULT, &(pData->order), 1);
     pData->enableDiffEQpastAliasing = 1;
     
     /* time-frequency transform + buffers */
@@ -366,8 +366,8 @@ void array2sh_setPreset(void* const hA2sh, int preset)
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
     
-    array2sh_initArray(arraySpecs,(PRESETS)preset, &(pData->new_order), 0);
-    pData->c = (PRESETS)preset == PRESET_AALTO_HYDROPHONE ? 1484.0f : 343.0f;
+    array2sh_initArray(arraySpecs,(MICROPHONE_ARRAY_PRESETS)preset, &(pData->new_order), 0);
+    pData->c = (MICROPHONE_ARRAY_PRESETS)preset == MICROPHONE_ARRAY_PRESET_AALTO_HYDROPHONE ? 1484.0f : 343.0f;
     pData->new_nSH = (pData->new_order+1)*(pData->new_order+1);
     pData->reinitTFTFLAG = 1;
     pData->reinitSHTmatrixFLAG = 1;

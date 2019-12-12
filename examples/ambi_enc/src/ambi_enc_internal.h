@@ -45,7 +45,8 @@ extern "C" {
 #define MAX_ORDER ( AMBI_ENC_MAX_SH_ORDER )
 #define MAX_NUM_INPUTS ( AMBI_ENC_MAX_NUM_INPUTS )
 #define MAX_NUM_SH_SIGNALS ( (MAX_ORDER + 1)*(MAX_ORDER + 1) ) /* (L+1)^2 */
-    
+#define MAX_NUM_SOURCES_IN_PRESET ( AMBI_ENC_MAX_NUM_INPUTS )
+
     
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -85,18 +86,25 @@ typedef struct _ambi_enc
 /* ========================================================================== */
 
 /*
- * ambi_enc_loadPreset
- * -------------------
- * Loads encoding directions from a preset
+ * Function: loadSourceConfigPreset
+ * --------------------------------
+ * Returns the source directions for a specified source config preset.
+ * The function also returns the number of source in the configuration
+ * Note: default uniformly distributed points are used to pad the
+ * dirs_deg matrix up to the MAX_NUM_SOURCES_IN_PRESET, if nCH is less than
+ * this. This can help avoid scenarios of many sources being panned in the same
+ * direction, or triangulations errors.
  *
  * Input Arguments:
- *     preset   - see "PRESET" enum
- *     dirs_deg - source directions
- *     newNCH   - & new number of channels for this preset
+ *     preset   - see "SOURCE_CONFIG_PRESETS" enum
+ * Output Arguments:
+ *     dirs_deg - source directions, [azimuth elevation] convention, in
+ *                DEGREES;
+ *     nCH      - & number of source directions in the configuration
  */
-void ambi_enc_loadPreset(PRESETS preset,
-                         float dirs_deg[MAX_NUM_INPUTS][2],
-                         int* newNCH);                       
+void loadSourceConfigPreset(SOURCE_CONFIG_PRESETS preset,
+                            float dirs_deg[MAX_NUM_SOURCES_IN_PRESET][2],
+                            int* nCH);
 
 
 #ifdef __cplusplus

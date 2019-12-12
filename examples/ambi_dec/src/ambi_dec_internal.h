@@ -59,8 +59,9 @@ extern "C" {
 #define MIN_NUM_LOUDSPEAKERS ( 4 )            /* To help avoid traingulation errors when using AllRAD */
 #define NUM_EARS ( 2 )                        /* true for most humans */
 #define NUM_DECODERS ( 2 )                    /* one for low-frequencies and another for high-frequencies */
-    
+#define MAX_NUM_LOUDSPEAKERS_IN_PRESET ( MAX_NUM_LOUDSPEAKERS )
 
+    
 /* ========================================================================== */
 /*                                 Structures                                 */
 /* ========================================================================== */
@@ -217,21 +218,31 @@ void ambi_dec_interpHRTFs(void* const hAmbi,
                           float_complex h_intrp[HYBRID_BANDS][NUM_EARS]);
 
 /*
- * ambi_dec_loadPreset
- * --------------------
- * Loads loudspeaker directions from preset
+ * Function: loadLoudspeakerArrayPreset
+ * ------------------------------------
+ * Returns the loudspeaker directions for a specified loudspeaker array preset.
+ * The function also returns the number of loudspeakers in the array, and a
+ * crude estimate of whether it is 2D or 3D (based on whether the sum of the
+ * absolute loudspeaker elevation angle is not zero).
+ * Note: 2-D setups which are not on the horizontal plane (i.e.
+ * all elevations==0) will be registered as a 3-D setup.
+ * Further Note: default uniformly distributed points are used to pad the
+ * dirs_deg matrix up to the MAX_NUM_LOUDSPEAKERS_IN_PRESET, if nCH is less than
+ * this. This can help avoid scenarios of many sources being panned in the same
+ * direction, or triangulations errors.
  *
  * Input Arguments:
- *     preset   - see PRESET enum
+ *     preset   - see "LOUDSPEAKER_ARRAY_PRESETS" enum
  * Output Arguments:
- *     dirs_deg - loudspeaker directions
- *     newNCH   - & new number of channels
- *     nDims    - & estimate of the number of dimensions (2 or 3)
+ *     dirs_deg - loudspeaker directions, [azimuth elevation] convention, in
+ *                DEGREES;
+ *     nCH      - & number of loudspeaker directions in the array
+ *     nDims    - & number of dimensions (2 or 3)
  */
-void ambi_dec_loadPreset(PRESETS preset,
-                         float dirs_deg[MAX_NUM_LOUDSPEAKERS][2],
-                         int* newNCH,
-                         int* nDims);
+void loadLoudspeakerArrayPreset(LOUDSPEAKER_ARRAY_PRESETS preset,
+                                float dirs_deg[MAX_NUM_LOUDSPEAKERS_IN_PRESET][2],
+                                int* nCH,
+                                int* nDims);
 
     
 #ifdef __cplusplus

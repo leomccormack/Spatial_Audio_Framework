@@ -660,14 +660,14 @@ void array2sh_destroyArray(void ** const hPars)
     }
 }
  
-void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int firstInitFlag)
+void array2sh_initArray(void* const hPars, MICROPHONE_ARRAY_PRESETS preset, int* arrayOrder, int firstInitFlag)
 {
     arrayPars *pars = (arrayPars*)(hPars);
     int ch, i, Q;
     
     switch(preset){
         default:
-        case PRESET_DEFAULT:
+        case MICROPHONE_ARRAY_PRESET_DEFAULT:
             (*arrayOrder) = 1;
             Q = 4; /* number of mics */
             pars->r = 0.042f; /* array radius */
@@ -681,8 +681,7 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
                 }
             }
             break;
-#ifdef ENABLE_AALTO_HYDROPHONE_PRESET
-        case PRESET_AALTO_HYDROPHONE:
+        case MICROPHONE_ARRAY_PRESET_AALTO_HYDROPHONE:
             (*arrayOrder) = 1;
             Q = 4;
             pars->r = 0.173f;
@@ -696,13 +695,11 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
                 }
             }
             break;
-#endif
-#ifdef ENABLE_SENNHEISER_AMBEO_PRESET
-        case PRESET_SENNHEISER_AMBEO:
+        case MICROPHONE_ARRAY_PRESET_SENNHEISER_AMBEO:
             (*arrayOrder) = 1;
             Q = 4;
-            pars->r = 0.02f;
-            pars->R = 0.02f;
+            pars->r = 0.014f;
+            pars->R = 0.014f;
             pars->arrayType = ARRAY_SPHERICAL;
             pars->weightType = WEIGHT_OPEN_CARD;
             for(ch=0; ch<Q; ch++){
@@ -712,9 +709,7 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
                 }
             }
             break;
-#endif
-#ifdef ENABLE_CORE_SOUND_TETRAMIC_PRESET
-        case PRESET_CORE_SOUND_TETRAMIC:
+        case MICROPHONE_ARRAY_PRESET_CORE_SOUND_TETRAMIC:
             (*arrayOrder) = 1;
             Q = 4;
             pars->r = 0.02f;
@@ -728,13 +723,11 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
                 }
             }
             break;
-#endif
-#ifdef ENABLE_ZOOM_H3VR_PRESET
-        case PRESET_ZOOM_H3VR_PRESET:
+        case MICROPHONE_ARRAY_PRESET_ZOOM_H3VR_PRESET:
             (*arrayOrder) = 1;
             Q = 4;
-            pars->r = 0.011f;
-            pars->R = 0.011f;
+            pars->r = 0.012f;
+            pars->R = 0.012f;
             pars->arrayType = ARRAY_SPHERICAL;
             pars->weightType = WEIGHT_OPEN_CARD;
             for(ch=0; ch<Q; ch++){
@@ -744,9 +737,7 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
                 }
             }
             break;
-#endif
-#ifdef ENABLE_SOUND_FIELD_SPS200_PRESET
-        case PRESET_SOUND_FIELD_SPS200:
+        case MICROPHONE_ARRAY_PRESET_SOUND_FIELD_SPS200:
             (*arrayOrder) = 1;
             Q = 4;
             pars->r = 0.02f;
@@ -760,9 +751,7 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
                 }
             }
             break;
-#endif
-#ifdef ENABLE_ZYLIA_1D_PRESET
-        case PRESET_ZYLIA_1D:
+        case MICROPHONE_ARRAY_PRESET_ZYLIA_1D:
             (*arrayOrder) = 3;
             Q = 19;
             pars->r = 0.049f;
@@ -776,9 +765,7 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
                 }
             }
             break;
-#endif
-#ifdef ENABLE_EIGENMIKE32_PRESET
-        case PRESET_EIGENMIKE32:
+        case MICROPHONE_ARRAY_PRESET_EIGENMIKE32:
             (*arrayOrder) = 4;
             Q = 32;
             pars->r = 0.042f;
@@ -792,9 +779,7 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
                 }
             }
             break;
-#endif
-#ifdef ENABLE_DTU_MIC_PRESET
-        case PRESET_DTU_MIC:
+        case MICROPHONE_ARRAY_PRESET_DTU_MIC:
             (*arrayOrder) = 6;
             Q = 52;
             pars->r = 0.05f;
@@ -808,11 +793,10 @@ void array2sh_initArray(void* const hPars, PRESETS preset, int* arrayOrder, int 
                 }
             }
             break;
-#endif 
     }
     
     /* Fill remaining slots with default coords */
-    for(; ch<MAX_NUM_SENSORS; ch++){
+    for(; ch<MAX_NUM_SENSORS_IN_PRESET; ch++){
         for(i=0; i<2; i++){
             pars->sensorCoords_rad[ch][i] = __default_SENSORcoords64_rad[ch][i];
             pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);

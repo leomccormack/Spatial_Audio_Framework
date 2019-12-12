@@ -50,13 +50,13 @@ void ambi_dec_create
     for (band = 0; band<HYBRID_BANDS; band++)
         pData->orderPerBand[band] = 1;
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
-    ambi_dec_loadPreset(PRESET_T_DESIGN_24, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
+    loadLoudspeakerArrayPreset(LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_24, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
     pData->nLoudpkrs = pData->new_nLoudpkrs;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->dec_method[0] = DECODING_METHOD_ALLRAD;
     pData->dec_method[1] = DECODING_METHOD_ALLRAD;
-    pData->rE_WEIGHT[0] = 0;
+    pData->rE_WEIGHT[0] = 1;
     pData->rE_WEIGHT[1] = 1;
     pData->diffEQmode[0] = AMPLITUDE_PRESERVING;
     pData->diffEQmode[1] = ENERGY_PRESERVING;
@@ -503,7 +503,7 @@ void ambi_dec_setOutputConfigPreset(void* const hAmbi, int newPresetID)
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     int ch;
     
-    ambi_dec_loadPreset(newPresetID, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
+    loadLoudspeakerArrayPreset(newPresetID, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
     if(pData->nLoudpkrs != pData->new_nLoudpkrs)
         pData->reInitTFT = 1;
     pData->reInitCodec = 1;
