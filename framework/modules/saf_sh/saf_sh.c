@@ -780,7 +780,7 @@ void computeVelCoeffsMtx
     free(G_mtx);
 }
 
-void computeSectorCoeffsEP
+float computeSectorCoeffsEP
 (
     int orderSec,
     float_complex* A_xyz, /* FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3 */
@@ -798,8 +798,10 @@ void computeSectorCoeffsEP
     if(sectorCoeffs==NULL)
         saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
 #endif
-    if(orderSec==0)
+    if(orderSec==0){
         memcpy(sectorCoeffs, wxyzCoeffs, 16*sizeof(float)); /* ACN/N3D to WXYZ */
+        normSec = 1.0f;
+    }
     else{
         orderVel = orderSec+1;
         nSH = (orderSec+2)*(orderSec+2);
@@ -845,9 +847,10 @@ void computeSectorCoeffsEP
         free(c_nm);
         free(xyz_nm);
     }
+    return normSec;
 }
 
-void computeSectorCoeffsAP
+float computeSectorCoeffsAP
 (
     int orderSec,
     float_complex* A_xyz,
@@ -865,8 +868,10 @@ void computeSectorCoeffsAP
     if(sectorCoeffs==NULL)
         saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
 #endif
-    if(orderSec==0)
+    if(orderSec==0){
         memcpy(sectorCoeffs, wxyzCoeffs, 16*sizeof(float)); /* ACN/N3D to WXYZ */
+        normSec = 1.0f;
+    }
     else{
         orderVel = orderSec+1;
         nSH = (orderSec+2)*(orderSec+2);
@@ -899,6 +904,7 @@ void computeSectorCoeffsAP
         free(c_nm);
         free(xyz_nm);
     }
+    return normSec;
 }
 
 void beamWeightsCardioid2Spherical

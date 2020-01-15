@@ -251,16 +251,16 @@ void getBinauralAmbiDecoderFilters
     
     /* ifft, to obtain time-domain filters */
     decMtx_bins = malloc1d(nBins*sizeof(float_complex));
-    safFFT_create(&hSafFFT, fftSize);
+    saf_rfft_create(&hSafFFT, fftSize);
     for(i=0; i<NUM_EARS; i++){
         for(j=0; j<nSH; j++){
             for(k=0; k<nBins; k++)
                 decMtx_bins[k] = decMtx[k*NUM_EARS*nSH + i*nSH + j];
-            safFFT_backward(hSafFFT, decMtx_bins, &decFilters[i*nSH*fftSize + j*fftSize]);
+            saf_rfft_backward(hSafFFT, decMtx_bins, &decFilters[i*nSH*fftSize + j*fftSize]);
         }
     }
     
-    safFFT_destroy(&hSafFFT);
+    saf_rfft_destroy(&hSafFFT);
     free(freqVector);
     free(decMtx);
     free(decMtx_bins);

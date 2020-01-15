@@ -149,7 +149,7 @@ void ambi_enc_process
                 pData->outputFrameTD[i][j] = pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
         
         /* for next frame */
-        utility_svvcopy((const float*)pData->inputFrameTD, nSH*FRAME_SIZE, (float*)pData->prev_inputFrameTD);
+        utility_svvcopy((const float*)pData->inputFrameTD, nSources*FRAME_SIZE, (float*)pData->prev_inputFrameTD);
         utility_svvcopy((const float*)pData->Y, MAX_NUM_INPUTS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_Y);
         
         /* scale by 1/sqrt(nSources) */

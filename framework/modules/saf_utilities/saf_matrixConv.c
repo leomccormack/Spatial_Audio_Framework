@@ -86,12 +86,12 @@ void  saf_matrixConv_create
         h->X_n = malloc1d((h->nCHin)*(h->nBins)*sizeof(float_complex));
         h->HX_n = malloc1d((h->nBins)*sizeof(float_complex));
         h->z_n = malloc1d((h->fftSize) * sizeof(float));
-        safFFT_create(&(h->hFFT), h->fftSize);
+        saf_rfft_create(&(h->hFFT), h->fftSize);
         h_pad = calloc1d(h->fftSize, sizeof(float));
         for(no=0; no<nCHout; no++){
             for(ni=0; ni<nCHin; ni++){
                 memcpy(h_pad, &(H[no*nCHin*length_h+ni*length_h]), length_h*sizeof(float));
-                safFFT_forward(h->hFFT, h_pad, &(h->H_f[no*nCHin*(h->nBins)+ni*(h->nBins)]));
+                saf_rfft_forward(h->hFFT, h_pad, &(h->H_f[no*nCHin*(h->nBins)+ni*(h->nBins)]));
             }
         }
         free(h_pad);
@@ -113,14 +113,14 @@ void  saf_matrixConv_create
         h->hx_n = malloc1d(h->numFilterBlocks*nCHin*(h->fftSize)*sizeof(float));
         h->y_n_overlap = calloc1d(nCHout*hopSize, sizeof(float));
         h->z_n = malloc1d((h->fftSize) * sizeof(float));
-        safFFT_create(&(h->hFFT), h->fftSize);
+        saf_rfft_create(&(h->hFFT), h->fftSize);
         for(no=0; no<nCHout; no++){
             h->Hpart_f[no] = malloc1d(h->numFilterBlocks*nCHin*(h->nBins)*sizeof(float_complex));
             for(ni=0; ni<nCHin; ni++){
                 memcpy(h_pad, &H[no*nCHin*length_h+ni*length_h], length_h*sizeof(float)); /* zero pad filter, to be multiple of hopsize */
                 for (nb=0; nb<h->numFilterBlocks; nb++){
                     memcpy(h_pad_2hops, &(h_pad[nb*hopSize]), hopSize*sizeof(float));
-                    safFFT_forward(h->hFFT, h_pad_2hops, &(h->Hpart_f[no][nb*nCHin*(h->nBins)+ni*(h->nBins)]));
+                    saf_rfft_forward(h->hFFT, h_pad_2hops, &(h->Hpart_f[no][nb*nCHin*(h->nBins)+ni*(h->nBins)]));
                 }
             }
         }
@@ -139,7 +139,7 @@ void saf_matrixConv_destroy
     int no;
     
     if(h!=NULL){
-        safFFT_destroy(&(h->hFFT));
+        saf_rfft_destroy(&(h->hFFT));
         free(h->X_n);
         free(h->x_pad);
         free(h->z_n);
@@ -176,7 +176,7 @@ void saf_matrixConv_apply
         /* zero-pad input signals and perform fft */
         for(ni=0; ni<h->nCHin; ni++){
             memcpy(&(h->x_pad[ni*(h->fftSize)]), &inputSig[ni*(h->hopSize)], h->hopSize *sizeof(float));
-            safFFT_forward(h->hFFT, &(h->x_pad[ni*(h->fftSize)]), &(h->X_n[ni*(h->nBins)]));
+            saf_rfft_forward(h->hFFT, &(h->x_pad[ni*(h->fftSize)]), &(h->X_n[ni*(h->nBins)]));
         }
         
         for(no=0; no<h->nCHout; no++){
@@ -184,7 +184,7 @@ void saf_matrixConv_apply
             memset(h->z_n, 0, (h->fftSize) * sizeof(float));
             for(ni=0; ni<h->nCHin; ni++){
                 utility_cvvmul(&(h->H_f[no*(h->nCHin)*(h->nBins)+ni*(h->nBins)]), &(h->X_n[ni*(h->nBins)]), h->nBins, h->HX_n); /* This is the bulk of the CPU work */
-                safFFT_backward(h->hFFT, h->HX_n, h->hx_n);
+                saf_rfft_backward(h->hFFT, h->HX_n, h->hx_n);
                 utility_svvadd(h->z_n,  h->hx_n, h->fftSize, h->z_n);
             }
             
@@ -205,7 +205,7 @@ void saf_matrixConv_apply
         memcpy(&(h->X_n[1*(h->nCHin)*(h->nBins)]), h->X_n, (h->numFilterBlocks-1)*(h->nCHin)*(h->nBins)*sizeof(float_complex)); /* shuffle */
         for(ni=0; ni<h->nCHin; ni++){
             memcpy(h->x_pad, &(inputSig[ni*(h->hopSize)]), h->hopSize *sizeof(float));
-            safFFT_forward(h->hFFT, h->x_pad, &(h->X_n[0*(h->nCHin)*(h->nBins)+ni*(h->nBins)]));
+            saf_rfft_forward(h->hFFT, h->x_pad, &(h->X_n[0*(h->nCHin)*(h->nBins)+ni*(h->nBins)]));
         }
         
         /* apply convolution and inverse fft */
@@ -213,7 +213,7 @@ void saf_matrixConv_apply
             utility_cvvmul(h->Hpart_f[no], h->X_n, h->numFilterBlocks * (h->nCHin) * (h->nBins), h->HX_n); /* This is the bulk of the CPU work */ 
             for(nb=0; nb<h->numFilterBlocks; nb++)
                 for(ni=0; ni<h->nCHin; ni++)
-                    safFFT_backward(h->hFFT, &(h->HX_n[nb*(h->nCHin)*(h->nBins)+ni*(h->nBins)]), &(h->hx_n[nb*(h->nCHin)*(h->fftSize)+ni*(h->fftSize)]));
+                    saf_rfft_backward(h->hFFT, &(h->HX_n[nb*(h->nCHin)*(h->nBins)+ni*(h->nBins)]), &(h->hx_n[nb*(h->nCHin)*(h->fftSize)+ni*(h->fftSize)]));
             
             /* output frame for this channel is the sum over all partitions and input channels */
             memset(h->z_n, 0, (h->fftSize) * sizeof(float));
@@ -281,10 +281,10 @@ void saf_multiConv_create
         h->Z_n = malloc1d(nCH * (h->nBins) * sizeof(float_complex));
         h->x_pad = calloc1d(h->fftSize, sizeof(float));
         h->z_n = malloc1d(nCH*(h->fftSize)*sizeof(float));
-        safFFT_create(&(h->hFFT), h->fftSize);
+        saf_rfft_create(&(h->hFFT), h->fftSize);
         for(nc=0; nc<nCH; nc++){
             memcpy(h_pad, &H[nc*length_h], length_h*sizeof(float)); /* zero pad filter, to be multiple of hopsize */
-            safFFT_forward(h->hFFT, h_pad, &(h->H_f[nc*(h->nBins)]));
+            saf_rfft_forward(h->hFFT, h_pad, &(h->H_f[nc*(h->nBins)]));
         }
         
         free(h_pad);
@@ -306,12 +306,12 @@ void saf_multiConv_create
         h->hx_n = malloc1d(h->numFilterBlocks*nCH*(h->fftSize)*sizeof(float));
         h->z_n = calloc1d(h->fftSize, sizeof(float));
         h->y_n_overlap = calloc1d(nCH*hopSize, sizeof(float));
-        safFFT_create(&(h->hFFT), h->fftSize);
+        saf_rfft_create(&(h->hFFT), h->fftSize);
         for(nc=0; nc<nCH; nc++){
             memcpy(h_pad, &H[nc*length_h], length_h*sizeof(float)); /* zero pad filter, to be multiple of hopsize */
             for (nb=0; nb<h->numFilterBlocks; nb++){
                 memcpy(h_pad_2hops, &(h_pad[nb*hopSize]), hopSize*sizeof(float));
-                safFFT_forward(h->hFFT, h_pad_2hops, &(h->Hpart_f[nb*nCH*(h->nBins)+nc*(h->nBins)]));
+                saf_rfft_forward(h->hFFT, h_pad_2hops, &(h->Hpart_f[nb*nCH*(h->nBins)+nc*(h->nBins)]));
             }
         }
         
@@ -328,7 +328,7 @@ void saf_multiConv_destroy
     safMulConv_data *h = (safMulConv_data*)(*phMC);
     
     if(h!=NULL){
-        safFFT_destroy(&(h->hFFT));
+        saf_rfft_destroy(&(h->hFFT));
         free(h->X_n);
         free(h->x_pad);
         free(h->z_n);
@@ -362,13 +362,13 @@ void saf_multiConv_apply
         /* zero-pad input signals and perform fft. */
         for(nc=0; nc<h->nCH; nc++){
             memcpy(h->x_pad, &(inputSig[nc*(h->hopSize)]), h->hopSize *sizeof(float));
-            safFFT_forward(h->hFFT, h->x_pad, &(h->X_n[nc*(h->nBins)]));
+            saf_rfft_forward(h->hFFT, h->x_pad, &(h->X_n[nc*(h->nBins)]));
         }
         
         /* apply convolution and inverse fft */
         utility_cvvmul(h->H_f, h->X_n, (h->nCH) * (h->nBins), h->Z_n); /* This is the bulk of the CPU work */
         for(nc=0; nc<h->nCH; nc++){
-            safFFT_backward(h->hFFT, &(h->Z_n[nc*(h->nBins)]), &(h->z_n[nc*(h->fftSize)]));
+            saf_rfft_backward(h->hFFT, &(h->Z_n[nc*(h->nBins)]), &(h->z_n[nc*(h->fftSize)]));
             
             /* sum with overlap buffer and copy the result to the output buffer */
             utility_svvcopy(&(h->ovrlpAddBuffer[nc*(h->fftSize)+(h->hopSize)]), (h->numOvrlpAddBlocks-1)*(h->hopSize), &(h->ovrlpAddBuffer[nc*(h->fftSize)]));
@@ -383,14 +383,14 @@ void saf_multiConv_apply
         memcpy(&(h->X_n[1*(h->nCH)*(h->nBins)]), h->X_n, (h->numFilterBlocks-1)*(h->nCH)*(h->nBins)*sizeof(float_complex));
         for(nc=0; nc<h->nCH; nc++){
             memcpy(h->x_pad, &(inputSig[nc*(h->hopSize)]), h->hopSize * sizeof(float));
-            safFFT_forward(h->hFFT, h->x_pad, &(h->X_n[0*(h->nCH)*(h->nBins)+nc*(h->nBins)]));
+            saf_rfft_forward(h->hFFT, h->x_pad, &(h->X_n[0*(h->nCH)*(h->nBins)+nc*(h->nBins)]));
         }
         
         /* apply convolution and inverse fft */
         utility_cvvmul(h->Hpart_f, h->X_n, h->numFilterBlocks * (h->nCH) * (h->nBins), h->HX_n); /* This is the bulk of the CPU work */
         for(nc=0; nc<h->nCH; nc++){
             for(nb=0; nb<h->numFilterBlocks; nb++)
-                safFFT_backward(h->hFFT, &(h->HX_n[nb*(h->nCH)*(h->nBins)+nc*(h->nBins)]), &(h->hx_n[nb*(h->nCH)*(h->fftSize)+nc*(h->fftSize)]));
+                saf_rfft_backward(h->hFFT, &(h->HX_n[nb*(h->nCH)*(h->nBins)+nc*(h->nBins)]), &(h->hx_n[nb*(h->nCH)*(h->fftSize)+nc*(h->fftSize)]));
             
             /* output frame for this channel is the sum over all partitions */
             memset(h->z_n, 0, h->fftSize*sizeof(float));

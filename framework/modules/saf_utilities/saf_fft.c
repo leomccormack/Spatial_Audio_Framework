@@ -32,6 +32,21 @@
 #include "saf_utilities.h"
 #include "saf_fft.h"
 
+/* from: https://github.com/amaggi/legacy-code */
+static int nextpow2(int numsamp)
+{
+    int npts_max;
+    
+    if (numsamp > INT_MAX)
+        return 0;
+    npts_max = 1;
+    while( 1 ){
+        npts_max *= 2;
+        if (npts_max >= numsamp)
+            return npts_max;
+    }
+}
+
 void getUniformFreqVector
 (
     int fftSize,
@@ -44,7 +59,7 @@ void getUniformFreqVector
         freqVector[k] = (float)k * fs/(float)fftSize;
 }
 
-typedef struct _safFFT_data {
+typedef struct _saf_rfft_data {
     int N;
     float  Scale;
 #if defined(__ACCELERATE__)
@@ -59,16 +74,69 @@ typedef struct _safFFT_data {
     kiss_fftr_cfg kissFFThandle_fwd;
     kiss_fftr_cfg kissFFThandle_bkw;
     
-}safFFT_data;
+}saf_rfft_data;
 
-void safFFT_create
+void fftconv
+(
+    float* x,
+    float* h,
+    int x_len,
+    int h_len,
+    int nCH,
+    float* y
+)
+{
+    int i, y_len, fftSize, nBins;
+    float* h0, *x0, *y0;
+    float_complex* H, *X, *Y;
+    void* hfft;
+    
+    /* prep */
+    y_len = x_len + h_len - 1;
+    fftSize = (int)(pow(2.0, (double)nextpow2(y_len)) + 0.5);
+    nBins = fftSize/2+1;
+    h0 = calloc1d(fftSize, sizeof(float));
+    x0 = calloc1d(fftSize, sizeof(float));
+    y0 = malloc1d(fftSize * sizeof(float));
+    H = malloc1d(nBins*sizeof(float_complex));
+    X = malloc1d(nBins*sizeof(float_complex));
+    Y = malloc1d(nBins*sizeof(float_complex));
+    saf_rfft_create(&hfft, fftSize);
+    
+    /* apply convolution per channel */
+    for(i=0; i<nCH; i++){
+        /* zero pad to avoid circular convolution artefacts, prior to fft */
+        memcpy(h0, &h[i*h_len], h_len*sizeof(float));
+        memcpy(x0, &x[i*x_len], x_len*sizeof(float));
+        saf_rfft_forward(hfft, x0, X);
+        saf_rfft_forward(hfft, h0, H);
+        
+        /* multiply the two spectra */
+        utility_cvvmul(X, H, nBins, Y);
+        
+        /* ifft, truncate and store to output */
+        saf_rfft_backward(hfft, Y, y0);
+        memcpy(&y[i*y_len], y0, y_len*sizeof(float));
+    }
+    
+    /* tidy up */
+    saf_rfft_destroy(&hfft);
+    free(h0);
+    free(x0);
+    free(y0);
+    free(H);
+    free(X);
+    free(Y);
+}
+
+void saf_rfft_create
 (
     void ** const phFFT,
     int N
 )
 {
-    *phFFT = malloc1d(sizeof(safFFT_data));
-    safFFT_data *h = (safFFT_data*)(*phFFT);
+    *phFFT = malloc1d(sizeof(saf_rfft_data));
+    saf_rfft_data *h = (saf_rfft_data*)(*phFFT);
     
     h->N = N;
     h->Scale = 1.0f/(float)N; /* output scaling after ifft */
@@ -116,12 +184,12 @@ void safFFT_create
     }
 }
 
-void safFFT_destroy
+void saf_rfft_destroy
 (
     void ** const phFFT
 )
 {
-    safFFT_data *h = (safFFT_data*)(*phFFT);
+    saf_rfft_data *h = (saf_rfft_data*)(*phFFT);
     if(h!=NULL){
 #if defined(__ACCELERATE__)
         if(!h->useKissFFT_flag){
@@ -141,14 +209,14 @@ void safFFT_destroy
     }
 }
 
-void safFFT_forward
+void saf_rfft_forward
 (
     void * const hFFT,
     float* inputTD,
     float_complex* outputFD
 )
 {
-    safFFT_data *h = (safFFT_data*)(hFFT);
+    saf_rfft_data *h = (saf_rfft_data*)(hFFT);
 #if defined(__ACCELERATE__)
     int i;
     if(!h->useKissFFT_flag){
@@ -157,11 +225,11 @@ void safFFT_forward
         /* DC */
         outputFD[0] = cmplxf(h->VDSP_split.realp[0]/2.0f, 0.0f);
         /* Note: the output is scaled by 2, because vDSP_fft automatically compensates for the loss of energy
-         * when removing the symmetric/conjugate (N/2+2:N) bins. However, this is dumb, so the 2x scaling
-         * is removed here, so it has parity with the other FFT implementations supported by SAF. */
+         * when removing the symmetric/conjugate (N/2+2:N) bins. However, this is dumb... so the 2x scaling
+         * is removed here; so it has parity with the other FFT implementations supported by SAF. */
         for(i=1; i<h->N/2; i++)
             outputFD[i] = cmplxf(h->VDSP_split.realp[i]/2.0f, h->VDSP_split.imagp[i]/2.0f);
-        /* the real part of the Nyquist value is the imaginary part of DC. (At least for this fucked up library it is). */
+        /* the real part of the Nyquist value is the imaginary part of DC. */
         outputFD[h->N/2] = cmplxf(h->VDSP_split.imagp[0]/2.0f, 0.0f);
         /* https://stackoverflow.com/questions/43289265/implementing-an-fft-using-vdsp */
     }
@@ -172,14 +240,14 @@ void safFFT_forward
         kiss_fftr(h->kissFFThandle_fwd, inputTD, (kiss_fft_cpx*)outputFD);
 }
 
-void safFFT_backward
+void saf_rfft_backward
 (
     void * const hFFT,
     float_complex* inputFD,
     float* outputTD
 )
 {
-    safFFT_data *h = (safFFT_data*)(hFFT);
+    saf_rfft_data *h = (saf_rfft_data*)(hFFT);
     int i;
 #if defined(__ACCELERATE__)
     if(!h->useKissFFT_flag){
@@ -202,10 +270,3 @@ void safFFT_backward
             outputTD[i] /= (float)(h->N);
     }
 }
-
-
-
-
-
-
- 

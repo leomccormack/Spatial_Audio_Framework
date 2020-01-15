@@ -134,19 +134,19 @@ void HRIRs2HRTFs
     float_complex* hrtf;
  
     nBins = fftSize/2 + 1;
-    safFFT_create(&hSafFFT, fftSize);
+    saf_rfft_create(&hSafFFT, fftSize);
     hrir_pad = calloc1d(fftSize, sizeof(float));
     hrtf = malloc1d(nBins*sizeof(float_complex));
     for(i=0; i<N_dirs; i++){
         for(j=0; j<NUM_EARS; j++){
             memcpy(hrir_pad, &hrirs[i*NUM_EARS*hrir_len+j*hrir_len], MIN(fftSize, hrir_len)*sizeof(float));
-            safFFT_forward(hSafFFT, hrir_pad, hrtf);
+            saf_rfft_forward(hSafFFT, hrir_pad, hrtf);
             for(k=0; k<nBins; k++)
                 hrtfs[k*NUM_EARS*N_dirs + j*N_dirs + i] = hrtf[k];
          }
     }
     
-    safFFT_destroy(&hSafFFT);
+    saf_rfft_destroy(&hSafFFT);
     free(hrir_pad);
     free(hrtf);
 }

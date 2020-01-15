@@ -65,6 +65,14 @@ void getDecorrelationDelays(int nChannels,
                             int maxTFdelay,
                             int hopSize,
                             int* delayTF);
+    
+    
+void synthesiseNoiseReverb(int nChannels,
+                           float fs,
+                           float* t60,
+                           float* fc,
+                           int nBands,
+                           int flattenFLAG);
 
 
 #ifdef __cplusplus

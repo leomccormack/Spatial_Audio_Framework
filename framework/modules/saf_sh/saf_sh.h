@@ -489,6 +489,8 @@ void computeVelCoeffsMtx(/* Input Arguments */
  * Output Arguments:
  *     sectorCoeffs - the sector coefficients;
  *                    FLAT: (nSecDirs*4) x (orderSec+2)^2
+ * Returns:
+ *     normalisation coefficient
  *
  * [1] Politis, A., Vilkamo, J., & Pulkki, V. (2015). Sector-based parametric
  *     sound field reproduction in the spherical harmonic domain. IEEE Journal
@@ -498,14 +500,14 @@ void computeVelCoeffsMtx(/* Input Arguments */
  *     sound-field visualisation". IEEE International Conference on Acoustics,
  *     Speech and Signal Processing (ICASSP).
  */
-void computeSectorCoeffsEP(/* Input Arguments */
-                           int orderSec,
-                           float_complex*  A_xyz,
-                           SECTOR_PATTERNS pattern,
-                           float* sec_dirs_deg,
-                           int nSecDirs,
-                           /* Output Arguments */
-                           float* sectorCoeffs);
+float computeSectorCoeffsEP(/* Input Arguments */
+                            int orderSec,
+                            float_complex*  A_xyz,
+                            SECTOR_PATTERNS pattern,
+                            float* sec_dirs_deg,
+                            int nSecDirs,
+                            /* Output Arguments */
+                            float* sectorCoeffs);
 
 /*
  * Function: computeSectorCoeffsAP
@@ -527,6 +529,8 @@ void computeSectorCoeffsEP(/* Input Arguments */
  * Output Arguments:
  *     sectorCoeffs - the sector coefficients;
  *                    FLAT: (nSecDirs*4) x (orderSec+2)^2
+ * Returns:
+ *     normalisation coefficient
  *
  * [1] Politis, A., Vilkamo, J., & Pulkki, V. (2015). Sector-based parametric
  *     sound field reproduction in the spherical harmonic domain. IEEE Journal
@@ -536,14 +540,14 @@ void computeSectorCoeffsEP(/* Input Arguments */
  *     sound-field visualisation". IEEE International Conference on Acoustics,
  *     Speech and Signal Processing (ICASSP).
  */
-void computeSectorCoeffsAP(/* Input Arguments */
-                           int orderSec,
-                           float_complex* A_xyz,
-                           SECTOR_PATTERNS pattern,
-                           float* sec_dirs_deg,
-                           int nSecDirs,
-                           /* Output Arguments */
-                           float* sectorCoeffs);
+float computeSectorCoeffsAP(/* Input Arguments */
+                            int orderSec,
+                            float_complex* A_xyz,
+                            SECTOR_PATTERNS pattern,
+                            float* sec_dirs_deg,
+                            int nSecDirs,
+                            /* Output Arguments */
+                            float* sectorCoeffs);
 
 /*
  * Function: beamWeightsCardioid2Spherical

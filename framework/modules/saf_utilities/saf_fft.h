@@ -35,14 +35,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
 #include <assert.h>
+#include <limits.h>
 #include "saf_complex.h"
-    
+
 /*
  * Example Usage:
  * const int N = 256;                  // FFT size
@@ -57,7 +58,7 @@ extern "C" {
  * safFFT_backward(hFFT, x_out, test); // perform backwards transform, (here x_in (should) = test)
  * safFFT_destroy(&hFFT);              // destroys an instance of safFFT
  */
-    
+
 /* ========================================================================== */
 /*                               Misc. Functions                              */
 /* ========================================================================== */
@@ -78,64 +79,154 @@ void getUniformFreqVector(int fftSize,
                           float fs,
                           float* freqVector);
     
- 
-/* ========================================================================== */
-/*                               Main Functions                               */
-/* ========================================================================== */
-    
 /*
- * Function: safFFT_create
- * -----------------------
- * Creates an instance of safFFT.
+ * Function: fftconv
+ * -----------------
+ * FFT-based convolution. Input channels and filters are zero padded to avoid
+ * circular convolution artefacts.
+ * Note: the output must be of size: nCH x (x_len+h_len-1)
+ *
+ * Input Arguments:
+ *     x     - input(s); FLAT: nCH x x_len
+ *     h     - filter(s); FLAT: nCH x h_len
+ *     x_len - length of input signal, in samples
+ *     h_len - length of filter, in samples
+ *     nCH   - number of channels
+ * Output Arguments:
+ *     y     - output signal(s); FLAT: nCH x (x_len+h_len-1)
+ */
+void fftconv(float* x,
+             float* h,
+             int x_len,
+             int h_len,
+             int nCH,
+             float* y);
+
+
+/* ========================================================================== */
+/*                  Real<->Complex (Conjugate-Symmetric) FFT                  */
+/* ========================================================================== */
+
+/*
+ * Function: saf_rfft_create
+ * -------------------------
+ * Creates an instance of saf_rfft.
  * Note: Only Even FFT sizes are supported.
  *
  * Input Arguments:
- *     phFFT - & address of safFFT handle
+ *     phFFT - & address of saf_rfft handle
  *     N     - FFT size
  */
-void safFFT_create(void ** const phFFT,
-                   int N);
+void saf_rfft_create(void ** const phFFT,
+                     int N);
 
 /*
- * Function: safFFT_destroy
- * ------------------------
- * Destroys an instance of safFFT.
+ * Function: saf_rfft_destroy
+ * --------------------------
+ * Destroys an instance of saf_rfft.
  *
  * Input Arguments:
- *     phFFT - & address of safFFT handle
+ *     phFFT - & address of saf_rfft handle
  */
-void safFFT_destroy(void ** const phFFT);
+void saf_rfft_destroy(void ** const phFFT);
 
 /*
- * Function: safFFT_forward
- * ------------------------
- * Performs the forward-FFT operation.
+ * Function: saf_rfft_forward
+ * --------------------------
+ * Performs the forward-FFT operation. Use for real to complex (conjugate
+ * symmetric) transformations.
+ * Note: only the first N/2 + 1 bins are returned in outputFD.
  *
  * Input Arguments:
- *     hFFT     - safFFT handle
+ *     hFFT     - saf_rfft handle
  *     inputTD  - time-domain input; N x 1
  * Output Arguments:
  *     outputFD - frequency-domain output; (N/2 + 1) x 1
  */
-void safFFT_forward(void * const hFFT,
-                    float* inputTD,
-                    float_complex* outputFD);
+void saf_rfft_forward(void * const hFFT,
+                      float* inputTD,
+                      float_complex* outputFD);
 
 /*
- * Function: safFFT_backward
- * -------------------------
- * Performs the backward-FFT operation.
+ * Function: saf_rfft_backward
+ * ---------------------------
+ * Performs the backward-FFT operation. Use for complex (conjugate symmetric)
+ * to real transformations.
+ * Note: only the first N/2 + 1 bins are needed to be passed in inputFD.
  *
  * Input Arguments:
- *     hFFT     - safFFT handle
+ *     hFFT     - saf_rfft handle
  *     inputFD  - frequency-domain input; (N/2 + 1) x 1
  * Output Arguments:
  *     outputTD - time-domain output;  N x 1
  */
-void safFFT_backward(void * const hFFT,
-                     float_complex* inputFD,
-                     float* outputTD);
+void saf_rfft_backward(void * const hFFT,
+                       float_complex* inputFD,
+                       float* outputTD);
 
+
+/* ========================================================================== */
+/*                            Complex<->Complex FFT                           */
+/* ========================================================================== */
+
+    // NOT IMPLEMENTED YET!
+#if 0
+/*
+ * Function: saf_fft_create
+ * ------------------------
+ * Creates an instance of saf_fft.
+ * Note: Only Even FFT sizes are supported.
+ *
+ * Input Arguments:
+ *     phFFT - & address of saf_fft handle
+ *     N     - FFT size
+ */
+void saf_fft_create(void ** const phFFT,
+                    int N);
+
+/*
+ * Function: saf_fft_destroy
+ * -------------------------
+ * Destroys an instance of saf_fft.
+ *
+ * Input Arguments:
+ *     phFFT - & address of saf_fft handle
+ */
+void saf_fft_destroy(void ** const phFFT);
+
+/*
+ * Function: saf_fft_forward
+ * -------------------------
+ * Performs the forward-FFT operation. Use for complex to complex
+ * transformations.
+ *
+ * Input Arguments:
+ *     hFFT     - saf_rfft handle
+ *     inputTD  - time-domain input; N x 1
+ * Output Arguments:
+ *     outputFD - frequency-domain output; (N/2 + 1) x 1
+ */
+void saf_fft_forward(void * const hFFT,
+                     float* inputTD,
+                     float_complex* outputFD);
+
+/*
+ * Function: saf_fft_backward
+ * ---------------------------
+ * Performs the backward-FFT operation. Use for complex to complex
+ * transformations.
+ *
+ * Input Arguments:
+ *     hFFT     - saf_rfft handle
+ *     inputFD  - frequency-domain input; (N/2 + 1) x 1
+ * Output Arguments:
+ *     outputTD - time-domain output;  N x 1
+ */
+void saf_fft_backward(void * const hFFT,
+                      float_complex* inputFD,
+                      float* outputTD);
+#endif
+    
 
 #ifdef __cplusplus
 }/* extern "C" */

@@ -117,7 +117,7 @@ void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int
     h->outBuffer = (float**)malloc(sizeof(float*)*h->outChannels);
     h->fftProcessFrameTD = (float*)calloc(sizeof(float),h->hopSize*2);
 #ifdef AFSTFT_USE_SAF_UTILITIES
-    safFFT_create(&(h->hSafFFT), h->hopSize*2);
+    saf_rfft_create(&(h->hSafFFT), h->hopSize*2);
     h->fftProcessFrameFD  = calloc((h->hopSize+1), sizeof(float_complex));
     h->tempHopBuffer = malloc(h->hopSize*sizeof(float));
 #else
@@ -320,7 +320,7 @@ void afSTFTforward(void* handle, float** inTD, complexVector* outFD)
         
         /* Apply FFT and copy the data to the output vector */
 #ifdef AFSTFT_USE_SAF_UTILITIES
-        safFFT_forward(h->hSafFFT, h->fftProcessFrameTD, h->fftProcessFrameFD);
+        saf_rfft_forward(h->hSafFFT, h->fftProcessFrameTD, h->fftProcessFrameFD);
         for(k = 0; k<h->hopSize+1; k++){
             outFD[ch].re[k] = crealf(h->fftProcessFrameFD[k]);
             outFD[ch].im[k] = cimagf(h->fftProcessFrameFD[k]);
@@ -383,7 +383,7 @@ void afSTFTinverse(void* handle, complexVector* inFD, float** outTD)
             for (k=1; k<h->hopSize; k+=2)
                 h->fftProcessFrameFD[k] = crmulf(h->fftProcessFrameFD[k], -1.0f);
         
-        safFFT_backward(h->hSafFFT, h->fftProcessFrameFD, h->fftProcessFrameTD);
+        saf_rfft_backward(h->hSafFFT, h->fftProcessFrameFD, h->fftProcessFrameTD);
 #else
         h->fftProcessFrameFD[0] = inFD[ch].re[0]; /* DC */
         h->fftProcessFrameFD[h->hopSize] = inFD[ch].re[h->hopSize]; /* Nyquist */
@@ -494,7 +494,7 @@ void afSTFTfree(void* handle)
     free(h->fftProcessFrameTD);
     free(h->fftProcessFrameFD);
 #ifdef AFSTFT_USE_SAF_UTILITIES
-    safFFT_destroy(&(h->hSafFFT));
+    saf_rfft_destroy(&(h->hSafFFT));
     free(h->tempHopBuffer);
 #else
     vtFreeFFT(h->vtFFT);
