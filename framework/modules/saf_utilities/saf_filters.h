@@ -164,6 +164,20 @@ void getWindowingFunction(WINDOWING_FUNCTION_TYPES type,
 void getOctaveBandCutoffFreqs(float* centreFreqs,
                               int nCentreFreqs,
                               float* cutoffFreqs);
+    
+/*
+ * Function: flattenMinphase
+ * -------------------------
+ * Equalises input sequence by its minimum phase form, in order to bring its
+ * magnitude response to unity.
+ *
+ * Input/output Arguments:
+ *     x   - input; len x 1
+ * Input Arguments:
+ *     len - length of input.
+ */
+void flattenMinphase(float* x,
+                     int len);
 
 
 /* ========================================================================== */

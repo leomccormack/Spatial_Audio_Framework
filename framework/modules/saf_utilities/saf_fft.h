@@ -102,9 +102,50 @@ void fftconv(float* x,
              int nCH,
              float* y);
 
+/*
+ * Function: fftfilt
+ * -----------------
+ * FFT-based convolution for FIR filters. Similar to fftconv, other than only
+ * the first x_len samples of y are returned. It has parity with the 'fftfilt'
+ * function in Matlab, except it just uses one big FFT (i.e. no overlap-add).
+ *
+ * Input Arguments:
+ *     x     - input(s); FLAT: nCH x x_len
+ *     h     - filter(s); FLAT: nCH x h_len
+ *     x_len - length of input signal, in samples
+ *     h_len - length of filter, in samples
+ *     nCH   - number of channels
+ * Output Arguments:
+ *     y     - output signal(s); FLAT: nCH x x_len
+ */
+void fftfilt(float* x,
+             float* h,
+             int x_len,
+             int h_len,
+             int nCH,
+             float* y);
+
+/*
+ * Function: hilbert
+ * -----------------
+ * Computes the discrete-time analytic signal via the Hilbert transform.
+ * The magnitude of the output is the envelope, and imaginary part is the
+ * actual Hilbert transform.
+ * (Functionally identical to Matlab's 'hilbert' function)
+ *
+ * Input Arguments:
+ *     x     - input; x_len x 1
+ *     x_len - length of input signal, in samples
+ * Output Arguments:
+ *     y     - output analytic signal; x_len x 1
+ */
+void hilbert(float_complex* x,
+             int x_len,
+             float_complex* y);
+
 
 /* ========================================================================== */
-/*                  Real<->Complex (Conjugate-Symmetric) FFT                  */
+/*                Real<->Half-Complex (Conjugate-Symmetric) FFT               */
 /* ========================================================================== */
 
 /*
@@ -169,8 +210,6 @@ void saf_rfft_backward(void * const hFFT,
 /*                            Complex<->Complex FFT                           */
 /* ========================================================================== */
 
-    // NOT IMPLEMENTED YET!
-#if 0
 /*
  * Function: saf_fft_create
  * ------------------------
@@ -204,10 +243,10 @@ void saf_fft_destroy(void ** const phFFT);
  *     hFFT     - saf_rfft handle
  *     inputTD  - time-domain input; N x 1
  * Output Arguments:
- *     outputFD - frequency-domain output; (N/2 + 1) x 1
+ *     outputFD - frequency-domain output; N x 1
  */
 void saf_fft_forward(void * const hFFT,
-                     float* inputTD,
+                     float_complex* inputTD,
                      float_complex* outputFD);
 
 /*
@@ -218,15 +257,14 @@ void saf_fft_forward(void * const hFFT,
  *
  * Input Arguments:
  *     hFFT     - saf_rfft handle
- *     inputFD  - frequency-domain input; (N/2 + 1) x 1
+ *     inputFD  - frequency-domain input; N x 1
  * Output Arguments:
  *     outputTD - time-domain output;  N x 1
  */
 void saf_fft_backward(void * const hFFT,
                       float_complex* inputFD,
-                      float* outputTD);
-#endif
-    
+                      float_complex* outputTD);
+
 
 #ifdef __cplusplus
 }/* extern "C" */

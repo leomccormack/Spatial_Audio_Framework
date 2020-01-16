@@ -65,14 +65,34 @@ void getDecorrelationDelays(int nChannels,
                             int maxTFdelay,
                             int hopSize,
                             int* delayTF);
-    
-    
+
+/*
+ * Function: synthesiseNoiseReverb
+ * -------------------------------
+ * Returns quick and dirty exponentially decaying noise bursts. With long
+ * t60 times, it can be used to approximate the late reverberation tail of
+ * room impulse responses. With much shorter t60 times, it can be used for
+ * decorrelation purposes.
+ *
+ * Input Arguments:
+ *     nChannels   - number of channels
+ *     fs          - sampling rate
+ *     t60         - t60 times (in seconds) per octave band; nBands x 1
+ *     fcen_oct    - octave band centre frequencies; nBands x 1
+ *     nBands      - number of octave bands
+ *     flattenFLAG - 0: nothing, 1: flattens the magnitude response to unity
+ * Output Arguments:
+ *     rir_filt    - & the shaped noise bursts; FLAT: nChannels x rir_len
+ *     rir_len     - & length of filters
+ */
 void synthesiseNoiseReverb(int nChannels,
                            float fs,
                            float* t60,
-                           float* fc,
+                           float* fcen_oct,
                            int nBands,
-                           int flattenFLAG);
+                           int flattenFLAG,
+                           float** rir_filt,
+                           int* rir_len);
 
 
 #ifdef __cplusplus

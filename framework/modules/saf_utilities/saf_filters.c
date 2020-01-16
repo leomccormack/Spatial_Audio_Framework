@@ -133,6 +133,56 @@ void getOctaveBandCutoffFreqs
 //    mid of log
 //    exp(1)^((log(400)+log(2000))/2)
 
+void flattenMinphase
+(
+    float* x,
+    int len
+)
+{
+    int i;
+    float_complex* ctd_tmp, *tdi_f, *tdi_f_labs, *dt_min_f, *tdi_eq;
+    void* hFFT;
+    
+    /* prep */
+    ctd_tmp = malloc1d(len*sizeof(float_complex));
+    tdi_f = malloc1d(len*sizeof(float_complex));
+    tdi_f_labs = malloc1d(len*sizeof(float_complex));
+    dt_min_f = malloc1d(len*sizeof(float_complex));
+    tdi_eq = malloc1d(len*sizeof(float_complex));
+    saf_fft_create(&hFFT, len);
+    
+    /* fft */
+    for(i=0; i<len; i++)
+        ctd_tmp[i] = cmplxf(x[i], 0.0f);
+    saf_fft_forward(hFFT, (float_complex*)ctd_tmp, (float_complex*)tdi_f);
+    
+    /* take log(cabs()) */
+    for(int i=0; i<len; i++)
+        tdi_f_labs[i] = cmplxf(logf(cabsf(tdi_f[i])), 0.0f);
+    
+    /* Hilbert to acquire discrete-time analytic signal */
+    hilbert(tdi_f_labs, len, dt_min_f);
+    
+    /* compute minimum-phase response, and apply to tdi_f to flatten it to unity magnitude */
+    for(i=0; i<len; i++)
+        dt_min_f[i] = ccdivf(tdi_f[i], cexpf(conjf(dt_min_f[i])));
+    
+    /* ifft */
+    saf_fft_backward(hFFT, dt_min_f, ctd_tmp);
+    
+    /* overwrite input with EQ'd version */
+    for(i=0; i<len; i++)
+        x[i] = crealf(ctd_tmp[i]);
+    
+    /* tidy up */
+    saf_fft_destroy(&hFFT);
+    free(ctd_tmp);
+    free(tdi_f);
+    free(tdi_f_labs);
+    free(dt_min_f);
+    free(tdi_eq);
+}
+
 void biQuadCoeffs
 (
     BIQUAD_FILTER_TYPES filterType,  
