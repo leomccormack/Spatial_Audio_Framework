@@ -811,7 +811,7 @@ float computeSectorCoeffsEP
         switch(pattern){
             case SECTOR_PATTERN_PWD:
                 beamWeightsHypercardioid2Spherical(orderSec, b_n);
-                Q = 2.0f*(float)orderSec + 1.0f;
+                Q = (float)((orderSec+1) * (orderSec+1));
                 break;
             case SECTOR_PATTERN_MAXRE:
                 beamWeightsMaxEV(orderSec, b_n);
@@ -823,7 +823,7 @@ float computeSectorCoeffsEP
                 break;
             case SECTOR_PATTERN_CARDIOID:
                 beamWeightsCardioid2Spherical(orderSec, b_n);
-                Q = (float)((orderSec+1) * (orderSec+1));
+                Q = 2.0f*(float)orderSec + 1.0f;
                 break;
         }
         normSec = Q/(float)nSecDirs; /* directivity factor / number of sectors */

@@ -164,7 +164,7 @@ void getWindowingFunction(WINDOWING_FUNCTION_TYPES type,
 void getOctaveBandCutoffFreqs(float* centreFreqs,
                               int nCentreFreqs,
                               float* cutoffFreqs);
-    
+
 /*
  * Function: flattenMinphase
  * -------------------------

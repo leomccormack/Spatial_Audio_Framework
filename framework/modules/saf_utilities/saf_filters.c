@@ -140,7 +140,7 @@ void flattenMinphase
 )
 {
     int i;
-    float_complex* ctd_tmp, *tdi_f, *tdi_f_labs, *dt_min_f, *tdi_eq;
+    float_complex* ctd_tmp, *tdi_f, *tdi_f_labs, *dt_min_f;
     void* hFFT;
     
     /* prep */
@@ -148,7 +148,6 @@ void flattenMinphase
     tdi_f = malloc1d(len*sizeof(float_complex));
     tdi_f_labs = malloc1d(len*sizeof(float_complex));
     dt_min_f = malloc1d(len*sizeof(float_complex));
-    tdi_eq = malloc1d(len*sizeof(float_complex));
     saf_fft_create(&hFFT, len);
     
     /* fft */
@@ -180,7 +179,6 @@ void flattenMinphase
     free(tdi_f);
     free(tdi_f_labs);
     free(dt_min_f);
-    free(tdi_eq);
 }
 
 void biQuadCoeffs
