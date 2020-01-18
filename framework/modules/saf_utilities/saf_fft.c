@@ -189,17 +189,17 @@ void hilbert
     memset(h, 0, sizeof(float_complex)*92);
     if(x_len % 2 == 0){
         /* even */
-        h[0] = 1.0f;
-        h[x_len/2] = 1.0f;
+        h[0] = cmplxf(1.0f, 0.0f);
+        h[x_len/2] = cmplxf(1.0f, 0.0f);
         for(i=1;i<x_len/2;i++)
-            h[i] = 2.0f;
+            h[i] = cmplxf(2.0f, 0.0f);
     }
     else{
         assert(0); // uneven lengths not actually supported by saf_fft
         /* odd */
-        h[0] = 1.0f;
+        h[0] = cmplxf(1.0f, 0.0f);
         for(i=1;i<(x_len+1)/2;i++)
-            h[i] = 2.0f;
+            h[i] = cmplxf(2.0f, 0.0f);
     }
     
     /* apply h, and ifft */
