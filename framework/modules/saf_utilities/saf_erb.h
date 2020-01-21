@@ -32,13 +32,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
 #include <float.h>
-    
+
 /*
  * Function: findERBpartitions
  * ---------------------------
@@ -65,8 +65,8 @@ void findERBpartitions(/* Input Arguments */
                        int** erb_idx,
                        float** erb_freqs,
                        int* nERBBands);  
- 
- 
+
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif /* __cplusplus */

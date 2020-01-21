@@ -31,16 +31,6 @@
 #include "saf_sh.h"
 #include "saf_sh_internal.h"
 
-long double factorial(int n)
-{
-    int i;
-    long double ff;
-    ff = 1.0; 
-    for(i = 1; i<=n; i++)
-        ff *= (long double)i;
-    return ff;
-}
-
 float wigner_3j
 (
     int j1,
@@ -140,10 +130,10 @@ void gaunt_mtx
     }
 }
 
-/* MODIFIED- improved numerical stability at the cost of some precision */
 /* Original Fortran code: "Fortran Routines for Computation of Special Functions":
  * jin.ece.uiuc.edu/routines/routines.html.
  * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
+/* MODIFIED - improved numerical stability at the cost of some precision */
 void SPHI
 (
     int N,
@@ -240,10 +230,10 @@ e20:    *NM=K-1;
         DK[K]=-SK[K-1]-(K+1.0)/X*SK[K];
 }
 
-/* MODIFIED- improved numerical stability at the cost of some precision */
 /* Original Fortran code: "Fortran Routines for Computation of Special Functions":
  * jin.ece.uiuc.edu/routines/routines.html.
  * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
+/* MODIFIED - improved numerical stability at the cost of some precision */
 void SPHJ
 (
     int N,
@@ -436,7 +426,6 @@ float getP
 )
 {
     float ret, ri1, rim1, ri0;
-    //ret = 0.0f;
     
     ri1 = R_1[i + 1][1 + 1];
     rim1 = R_1[i + 1][-1 + 1];

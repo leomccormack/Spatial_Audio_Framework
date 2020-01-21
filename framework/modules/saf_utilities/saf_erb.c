@@ -53,8 +53,8 @@ void findERBpartitions
     next_erb_idx = 0;
     while((*erb_freqs)[counter]<maxFreqLim){
         erb = 24.7f + 0.108f * (*erb_freqs)[counter] * band_centreFreq;
-        (*erb_idx) = realloc((*erb_idx), (counter+2)*sizeof(int));
-        (*erb_freqs) = realloc((*erb_freqs), (counter+2)*sizeof(float));
+        (*erb_idx) = realloc1d((*erb_idx), (counter+2)*sizeof(int));
+        (*erb_freqs) = realloc1d((*erb_freqs), (counter+2)*sizeof(float));
         (*erb_freqs)[counter+1] = (*erb_freqs)[counter] + erb;
         erb_centre = FLT_MAX;
         /*  find closest band frequency as upper partition limit */
@@ -72,8 +72,8 @@ void findERBpartitions
         counter++;
     }
     /* last limit set at last band */
-    (*erb_idx) = realloc((*erb_idx), (counter + 2) * sizeof(int));
-    (*erb_freqs) = realloc((*erb_freqs), (counter + 2) * sizeof(float));
+    (*erb_idx) = realloc1d((*erb_idx), (counter + 2) * sizeof(int));
+    (*erb_freqs) = realloc1d((*erb_freqs), (counter + 2) * sizeof(float));
     (*erb_idx)[counter+1] = nBands;
     (*erb_freqs)[counter+1] = centerFreq[nBands-1];
     (*nERBBands) = counter+2;

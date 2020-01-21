@@ -44,7 +44,7 @@ extern "C" {
 /*
  * Enum: BIQUAD_FILTER_TYPES
  * -------------------------
- * Bi-quadratic (second-order) IIR filter design options
+ * Bi-quadratic (second-order) IIR filter design options.
  *
  * Options:
  *     BIQUAD_FILTER_LPF       - low-pass filter
@@ -85,7 +85,7 @@ typedef enum _FIR_FILTER_TYPES {
  * Enum: WINDOWING_FUNCTION_TYPES
  * ------------------------------
  * Windowing function types. Symmetric if winlength is odd, and asymmetric if
- * winlength is even. Windows are evaluated: 0 <= n < winlength
+ * winlength is even. Windows are evaluated: 0 <= n < winlength.
  * Largely taken from: https://en.wikipedia.org/wiki/Window_function
  *
  * Options:
@@ -210,7 +210,7 @@ void biQuadCoeffs(/* input arguments */
                   /* output arguments */
                   float b[3],
                   float a[3]);
-    
+
 /*
  * Function: applyBiQuadFilter
  * ---------------------------
@@ -261,7 +261,7 @@ void evalBiQuadTransferFunction(/* Input arguments */
                                 float* magnitude_dB,
                                 float* phase_rad);
 
-    
+
 /* ========================================================================== */
 /*                            FIR Filter Functions                            */
 /* ========================================================================== */

@@ -55,7 +55,7 @@ extern "C" {
  *
  * safFFT_create(&hFFT, N);            // creates an instance of safFFT, with size 'N'
  * safFFT_forward(hFFT, x_in, x_out);  // perform forward transform
- * safFFT_backward(hFFT, x_out, test); // perform backwards transform, (here x_in (should) = test)
+ * safFFT_backward(hFFT, x_out, test); // perform backwards transform, (here, 'x_in' should equal 'test')
  * safFFT_destroy(&hFFT);              // destroys an instance of safFFT
  */
 
@@ -78,7 +78,7 @@ extern "C" {
 void getUniformFreqVector(int fftSize,
                           float fs,
                           float* freqVector);
-    
+
 /*
  * Function: fftconv
  * -----------------

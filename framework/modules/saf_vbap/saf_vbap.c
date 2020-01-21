@@ -29,8 +29,8 @@
 #include "saf_vbap.h"
 #include "saf_vbap_internal.h" 
 
-#if 0
-/* for debugging: */
+#define ENABLE_VBAP_DEBUGGING_CODE 0
+#if ENABLE_VBAP_DEBUGGING_CODE
 #define SAVE_PATH "../faces.txt"
 #define SAVE_PATH2 "../vbapGains_compressed.txt"
 #define SAVE_PATH3 "../vbapGains_table.txt"
@@ -92,7 +92,7 @@ void generateVBAPgainTable3D_srcs
     }
     else
         findLsTriplets(ls_dirs_deg, L, omitLargeTriangles, &out_vertices, &numOutVertices, &out_faces, &numOutFaces);
-#if 0
+#if ENABLE_VBAP_DEBUGGING_CODE
     /* save faces and vertices for verification in matlab: */
     FILE* objfile = fopen(SAVE_PATH, "wt");
     fprintf(objfile, "faces = [\n");
@@ -133,7 +133,7 @@ void generateVBAPgainTable3D_srcs
     /* output */
     (*N_gtable) = N_points;
     (*nTriangles) = numOutFaces;
-#if 0
+#if ENABLE_VBAP_DEBUGGING_CODE
     /* save gain table for verification in matlab: */
     FILE* objfile2 = fopen(SAVE_PATH3, "wt");
     fprintf(objfile2, "vbap_gtable = [\n");
@@ -229,7 +229,7 @@ void generateVBAPgainTable3D
     }
     else /* triangulate as normal */
         findLsTriplets(ls_dirs_deg, L, omitLargeTriangles, &out_vertices, &numOutVertices, &out_faces, &numOutFaces);
-#if 0
+#if ENABLE_VBAP_DEBUGGING_CODE
     /* save faces and vertices for verification in matlab: */
     FILE* objfile = fopen(SAVE_PATH, "wt");
     fprintf(objfile, "faces = [\n");
@@ -271,13 +271,13 @@ void generateVBAPgainTable3D
     /* output */
     (*N_gtable) = N_points;
     (*nTriangles) = numOutFaces;
-#if 0
+#if ENABLE_VBAP_DEBUGGING_CODE
     /* save gain table for verification in matlab: */
     FILE* objfile2 = fopen(SAVE_PATH3, "wt");
     fprintf(objfile2, "vbap_gtable = [\n");
     for (i = 0; i < N_points; i++) {
         for (j = 0; j < L; j++) {
-            fprintf(objfile2, " %f", (*gtable)[3*L+j] );
+            fprintf(objfile2, " %f", (*gtable)[i*L+j] );
             if(j<L-1)
                 fprintf(objfile2,",");
         }
@@ -329,7 +329,7 @@ void compressVBAPgainTable3D
             vbap_gtableIdx[nt*3+i] = idx_nt[i];
         }
     }
-#if 0
+#if ENABLE_VBAP_DEBUGGING_CODE
     /* save gain table for verification in matlab: */
     FILE* objfile = fopen(SAVE_PATH2, "wt");
     fprintf(objfile, "vbap_gtableComp = [\n");

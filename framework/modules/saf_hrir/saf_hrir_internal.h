@@ -50,7 +50,7 @@ extern "C" {
 /* ========================================================================== */
 /*                             Internal Functions                             */
 /* ========================================================================== */
-    
+
 /*
  * Function: cxcorr
  * ----------------
@@ -69,7 +69,7 @@ void cxcorr(float* a,
             float* x_ab,
             size_t la,
             size_t lb);
- 
+
 /*
  * Function: FIRtoFilterbankCoeffs
  * -------------------------------
@@ -95,8 +95,8 @@ void FIRtoFilterbankCoeffs(/* Input Arguments */
                            int N_bands,
                            /* Output Arguments */
                            float_complex* hFB);
-    
-    
+
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */

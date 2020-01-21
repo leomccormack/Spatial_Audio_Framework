@@ -104,7 +104,7 @@ void synthesiseNoiseReverb
     int* rir_len
 )
 {
-    int i, j, k, rir_filt_len, rir_filt_lpad, rir_filt_lout, filterOrder;
+    int i, j, k, rir_filt_len, rir_filt_lout, filterOrder;
     float alpha, max_t60, t;
     float *rir, *fcut, *h_filt, *rir_filt_tmp;
     
@@ -115,21 +115,20 @@ void synthesiseNoiseReverb
     for(i=0; i<nBands; i++)
         max_t60 = max_t60 < t60[i] ? t60[i] : max_t60;
     rir_filt_len = (int)(max_t60*fs+0.5f); /* length of RIRs */
-    rir_filt_lpad = rir_filt_len + filterOrder; /* length after convolution with filterbank */
     rir_filt_lout = rir_filt_len + filterOrder/2; /* truncated output length */
     
     /* Generate noise and shape with exponentially decaying envelopes */
-    rir = calloc1d(nCH*nBands*rir_filt_lpad, sizeof(float));
+    rir = calloc1d(nCH*nBands*rir_filt_lout, sizeof(float));
     for(i=0; i<nCH; i++){
         for(j=0; j<nBands; j++){
             /* decay constants for t60 */
             alpha = 3.0f*logf(10.0f)/t60[j];
             for(k=0, t=0.0f; k<rir_filt_len; k++, t+=1.0f/fs)
-                rir[i*nBands*rir_filt_lpad + j*rir_filt_lpad + k] = expf(-t*alpha) *     /* envelope */
+                rir[i*nBands*rir_filt_lout + j*rir_filt_lout + k] = expf(-t*alpha) *     /* envelope */
                                                                     2.0f * ((float)rand()/(float)RAND_MAX-0.5f); /* whitenoise */
         }
     }
-    
+
     /* get bank of FIRs filters - octave bands */
     fcut = malloc1d((nBands-1)*sizeof(float));
     h_filt = malloc1d(nBands*(filterOrder+1)*sizeof(float));
@@ -139,13 +138,13 @@ void synthesiseNoiseReverb
     /* filter RIRs with filterbank */
     (*rir_filt) = realloc1d((*rir_filt), nCH*rir_filt_lout*sizeof(float));
     memset((*rir_filt), 0, nCH*rir_filt_lout*sizeof(float));
-    rir_filt_tmp = malloc1d(nBands*rir_filt_lpad*sizeof(float));
+    rir_filt_tmp = malloc1d(nBands*rir_filt_lout*sizeof(float));
     for(i=0; i<nCH; i++){
-        fftconv(&rir[i*nBands*rir_filt_lpad], h_filt, rir_filt_lpad, filterOrder+1, nBands, rir_filt_tmp);
+        fftfilt(&rir[i*nBands*rir_filt_lout], h_filt, rir_filt_lout, filterOrder+1, nBands, rir_filt_tmp);
         /* sum over bands */
         for(j=0; j<nBands; j++){
             for(k=0; k<rir_filt_lout; k++)
-                (*rir_filt)[i*rir_filt_lout] += rir_filt_tmp[j*rir_filt_lpad+k];
+                (*rir_filt)[i*rir_filt_lout+k] += rir_filt_tmp[j*rir_filt_lout+k];
         }
     }
     

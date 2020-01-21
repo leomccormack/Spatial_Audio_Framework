@@ -22,8 +22,7 @@
  * BLAS and LAPACK are also included.
  *
  * Dependencies:
- *     A performance library comprising CBLAS and LAPACK routines is required
- *     by the module and, thus, also by the SAF framework as a whole.
+ *     A performance library comprising CBLAS and LAPACK routines is required.
  *     Add one of the following FLAGS to your project's preprocessor definitions
  *     list, in order to enable one of these suitable performance libraries,
  *     which must also be linked correctly to your project.
@@ -71,8 +70,8 @@ extern "C" {
 #else
 # error "SAF requires a library (or libraries) which supports CBLAS and LAPACK"
 #endif
-    
-    
+
+
 /* ========================================================================== */
 /*                        Macros and Global Constants                         */
 /* ========================================================================== */

@@ -17,7 +17,7 @@
 /*
  * Filename: saf_hoa_internal.h
  * ----------------------------
- * A collection of higher-order Ambisonics related functions. Some of which are
+ * A collection of higher-order Ambisonics related functions. Many of which are
  * derived from the Matlab library by Archontis Politis, found here:
  *     https://github.com/polarch/Higher-Order-Ambisonics
  *
@@ -114,7 +114,7 @@ void getAllRAD(/* Input Arguments */
  * truncation, as the HRTF grid is typically of much higher modal order than
  * that of the input. This colouration especially affects high-frequencies,
  * since high-frequency energy is predominantly concentrated in the higher-order
- * components.
+ * components. This actually gets worse the more HRTFs you have.
  *
  * Input Arguments:
  *     hrtfs         - the HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
@@ -271,7 +271,7 @@ void getBinDecoder_TA(/* Input Arguments */
  * -----------------------------
  * Computes a binaural ambisonic decoder based on the magnitude least-squares
  * (MagLS) method described in [1].
- * Note: Mag-LS operates under the same principles held by the TA/TAC decoder,
+ * Note: Mag-LS operates under similar principles held by the TA/TAC decoder,
  * differing in the manner in which the phase is neglected at frequencies above
  * 1.5kHz.
  *

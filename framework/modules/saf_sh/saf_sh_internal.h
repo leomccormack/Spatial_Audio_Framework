@@ -52,19 +52,6 @@ extern "C" {
 /* ========================================================================== */
     
 /*
- * Function: factorial
- * ----------------------
- * Factorial algorithm, accurate up to n<=25. The magnitude will still be
- * correct >25, but it will be truncated.
- *
- * Input Arguments:
- *     n - order
- * Returns:
- *     factorial(n)
- */
-long double factorial(int n);
-    
-/*
  * Function: wigner_3j
  * ----------------------
  * Computes the Wigner 3j symbol through the Racah formula found in

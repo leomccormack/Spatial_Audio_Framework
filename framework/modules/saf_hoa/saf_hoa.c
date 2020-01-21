@@ -17,7 +17,7 @@
 /*
  * Filename: saf_hoa.c
  * -------------------
- * A collection of higher-order Ambisonics related functions. Some of which are
+ * A collection of higher-order Ambisonics related functions. Many of which are
  * derived from the Matlab library by Archontis Politis, found here:
  *     https://github.com/polarch/Higher-Order-Ambisonics
  *
@@ -30,6 +30,100 @@
 #include "saf_hoa.h"
 #include "saf_hoa_internal.h"
 
+void getRSH
+(
+    int N,
+    float* dirs_deg,
+    int nDirs,
+    float* Y
+)
+{
+    int i, nSH;
+    float scale;
+    float* dirs_rad;
+    
+    nSH = (N+1)*(N+1);
+    scale = sqrtf(4.0f*M_PI);
+    
+    /* convert [azi, elev] in degrees, to [azi, inclination] in radians */
+    dirs_rad = malloc1d(nDirs*2*sizeof(float));
+    for(i=0; i<nDirs; i++){
+        dirs_rad[i*2+0] = dirs_deg[i*2+0] * M_PI/180.0f;
+        dirs_rad[i*2+1] = M_PI/2.0f - (dirs_deg[i*2+1] * M_PI/180.0f);
+    }
+    
+    /* get real-valued spherical harmonics */
+    getSHreal(N, dirs_rad, nDirs, Y);
+    
+    /* remove sqrt(4*pi) term */
+    utility_svsmul(Y, &scale, nSH*nDirs, NULL);
+    
+    free(dirs_rad);
+}
+
+void getRSH_recur
+(
+    int N,
+    float* dirs_deg,
+    int nDirs,
+    float* Y
+)
+{
+    int n, m, i, dir, nSH, index_n;
+    float Nn0, Nnm;
+    float* factorials_n, *leg_n, *leg_n_1, *leg_n_2, *sin_el;
+    
+    factorials_n = malloc1d((2*N+1)*sizeof(float));
+    leg_n = malloc1d((N+1)*nDirs * sizeof(float));
+    leg_n_1 = calloc1d((N+1)*nDirs, sizeof(float));
+    leg_n_2 = calloc1d((N+1)*nDirs, sizeof(float));
+    sin_el = malloc1d(nDirs * sizeof(float));
+    nSH = (N+1)*(N+1);
+    index_n = 0;
+    
+    /* precompute factorials */
+    for (i = 0; i < 2*N+1; i++)
+        factorials_n[i] = (float)factorial(i);
+    
+    /* cos(inclination) = sin(elevation) */
+    for (dir = 0; dir<nDirs; dir++)
+        sin_el[dir] = sinf(dirs_deg[dir*2+1] * M_PI/180.0f);
+    
+    /* compute SHs with the recursive Legendre function */
+    for (n = 0; n<N+1; n++) {
+        if (n==0) {
+            for (dir = 0; dir<nDirs; dir++)
+                Y[n*nDirs+dir] = 1.0f;
+            index_n = 1;
+        }
+        else {
+            unnorm_legendreP_recur(n, sin_el, nDirs, leg_n_1, leg_n_2, leg_n); /* does NOT include Condon-Shortley phase term */
+            
+            Nn0 = sqrtf(2.0f*(float)n+1.0f);
+            for (dir = 0; dir<nDirs; dir++){
+                for (m = 0; m<n+1; m++) {
+                    if (m==0)
+                        Y[(index_n+n)*nDirs+dir] = Nn0  * leg_n[m*nDirs+dir];
+                    else {
+                        Nnm = Nn0* sqrtf( 2.0f * factorials_n[n-m]/factorials_n[n+m] );
+                        Y[(index_n+n-m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_deg[dir*2])*M_PI/180.0f);
+                        Y[(index_n+n+m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_deg[dir*2])*M_PI/180.0f);
+                    }
+                }
+            }
+            index_n += 2*n+1;
+        }
+        utility_svvcopy(leg_n_1, (N+1)*nDirs, leg_n_2);
+        utility_svvcopy(leg_n,   (N+1)*nDirs, leg_n_1);
+    }
+    
+    free(factorials_n);
+    free(leg_n);
+    free(leg_n_1);
+    free(leg_n_2);
+    free(sin_el);
+}
+
 void getMaxREweights
 (
     int order,
@@ -41,10 +135,6 @@ void getMaxREweights
     double x;
     double* ppm;
     
-#ifndef NDEBUG
-    if(a_n==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     x = cosf(137.9f*(M_PI/180.0f)/((float)order+1.51f));
     nSH = (order+1)*(order+1);
     if(diagMtxFlag)
@@ -155,10 +245,6 @@ void getBinauralAmbiDecoderMtx
     
     nSH = (order+1)*(order+1);
     
-#ifndef NDEBUG
-    if(decMtx==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     switch(method){
         default:
         case BINAURAL_DECODER_DEFAULT:
@@ -175,18 +261,10 @@ void getBinauralAmbiDecoderMtx
             break;
             
         case BINAURAL_DECODER_TA:
-#ifndef NDEBUG
-            if(freqVector==NULL || itd_s==NULL)
-                saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
             getBinDecoder_TA(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, freqVector, itd_s, weights, decMtx);
             break;
             
         case BINAURAL_DECODER_MAGLS:
-#ifndef NDEBUG
-            if(freqVector==NULL)
-                saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
             getBinDecoder_MAGLS(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, freqVector, weights, decMtx);
             break;
     }

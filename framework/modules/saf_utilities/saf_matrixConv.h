@@ -55,6 +55,7 @@ extern "C" {
  *         H: nChannels x filterLength
  */
 
+
 /* ========================================================================== */
 /*                              Matrix Convolver                              */
 /* ========================================================================== */
@@ -92,7 +93,7 @@ void saf_matrixConv_create(/* Input Arguments */
  * Input Arguments:
  *     phMC     - & address of matrixConv handle
  */
-void saf_matrixConv_destroy(/*Input Arguments*/
+void saf_matrixConv_destroy(/* Input Arguments */
                             void ** const phMC);
 
 /*
@@ -108,8 +109,10 @@ void saf_matrixConv_destroy(/*Input Arguments*/
  * Output Arguments:
  *     outputSigs - output signals; FLAT: nCHout x hopSize
  */
-void saf_matrixConv_apply(void * const hMC,
+void saf_matrixConv_apply(/* Input Arguments */
+                          void * const hMC,
                           float* inputSigs,
+                          /* Output Arguments */
                           float* outputSigs);
 
 
@@ -164,8 +167,10 @@ void saf_multiConv_destroy(/*Input Arguments*/
  * Output Arguments:
  *     outputSigs - output signals; FLAT: nCH x hopSize
  */
-void saf_multiConv_apply(void * const hMC,
+void saf_multiConv_apply(/* Input Arguments */
+                         void * const hMC,
                          float* inputSigs,
+                         /* Output Arguments */
                          float* outputSigs);
 
 

@@ -21,8 +21,7 @@
  * LAPACK.
  *
  * Dependencies:
- *     A performance library comprising CBLAS and LAPACK routines is required
- *     by the module and, thus, also by the SAF framework as a whole.
+ *     A performance library comprising CBLAS and LAPACK routines is required.
  *     Add one of the following FLAGS to your project's preprocessor definitions
  *     list, in order to enable one of these suitable performance libraries,
  *     which must also be linked correctly to your project.
@@ -390,7 +389,7 @@ void utility_cvvmul(/* Input Arguments */
  * Function: utility_svvdot
  * ------------------------
  * s, single-precision, vector-vector dot product, i.e.
- *     c = a*b^T, (where size(c) = 1 x 1)
+ *     c = a*b^T, (where size(c) = [1  1])
  *
  * Input Arguments:
  *     a   - input vector a; len x 1
@@ -410,7 +409,7 @@ void utility_svvdot(/* Input Arguments */
  * Function: utility_cvvdot
  * ------------------------
  * c, single-precision, complex, vector-vector dot product, i.e.
- *     c = a*b^T, (where size(c) = 1 x 1)
+ *     c = a*b^T, (where size(c) = [1  1])
  *
  * Input Arguments:
  *     a    - input vector a; len x 1
@@ -690,7 +689,7 @@ void utility_cseig(/* Input Arguments */
 /* ========================================================================== */
 /*                     Eigenvalues of Matrix Pair (?eigmp)                    */
 /* ========================================================================== */
- 
+
 /*
  * Function: utility_ceigmp
  * ------------------------
@@ -716,7 +715,7 @@ void utility_ceigmp(/* Input Arguments */
                     float_complex* VL,
                     float_complex* VR,
                     float_complex* D);
-    
+
 /*
  * Function: utility_zeigmp
  * ------------------------

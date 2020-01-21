@@ -51,12 +51,12 @@ extern const double __default_hrir_dirs_deg[217][2];
 extern const int __default_N_hrir_dirs;
 extern const int __default_hrir_len;
 extern const int __default_hrir_fs;
-    
+
 
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
-    
+
 /*
  * Function: estimateITDs
  * ----------------------
@@ -157,10 +157,10 @@ void diffuseFieldEqualiseHRTFs(/* Input Arguments */
  * normalised VBAP interpolation table (see saf_vbap.h). The interpolation is
  * performed by applying interpolation gains to the HRTF magnitudes and HRIR
  * inter-aural time differences separately. The inter-aural phase differences
- * are then reintroduced for each frequency band
+ * are then reintroduced for each frequency band.
  * Note: use "VBAPgainTable2InterpTable" to take a conventional energy-
  * normalised VBAP gain table, and convert it to an amplitude-normalised
- * interpolation table
+ * interpolation table.
  *
  * Input Arguments:
  *     hrtfs                - HRTFs as filterbank coeffs;
@@ -187,7 +187,7 @@ void interpFilterbankHRTFs(/* Input Arguments */
                            int N_interp_dirs,
                            /* Output Arguments */
                            float_complex* hrtf_interp);
-   
+
 /*
  * Function: binauralDiffuseCoherence
  * ----------------------------------
@@ -202,7 +202,7 @@ void interpFilterbankHRTFs(/* Input Arguments */
  *     N_hrtf_dirs - number of HRTF directions
  *     N_bands     - number of frequency bands
  * Output Arguments:
- *     HRTFcoh     -  binaural coeherence per frequency; N_bands x 1
+ *     HRTFcoh     - binaural coeherence per frequency; N_bands x 1
  *
  * [1] A. Politis, "Diffuse-field coherence of sensors with arbitrary
  *     directional responses," arXiv preprint arXiv:1608.07713,2016.
@@ -215,7 +215,7 @@ void binauralDiffuseCoherence(/* Input Arguments */
                               int N_bands,
                               /* Output Arguments */
                               float* HRTFcoh);
-    
+
 
 #ifdef __cplusplus
 } /* extern "C" */

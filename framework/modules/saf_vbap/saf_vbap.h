@@ -31,7 +31,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
@@ -156,7 +156,7 @@ void compressVBAPgainTable3D(/* Input arguments */
                              /* Output arguments */
                              float* vbap_gtableComp,
                              int* vbap_gtableIdx);
-    
+
 /*
  * Function: VBAPgainTable2InterpTable
  * -----------------------------------
@@ -173,7 +173,7 @@ void compressVBAPgainTable3D(/* Input arguments */
 void VBAPgainTable2InterpTable(float* vbap_gtable,
                                int nTable,
                                int nDirs);
-    
+
 /*
  * Function: generateVBAPgainTable2D_srcs
  * --------------------------------------
@@ -205,7 +205,7 @@ void generateVBAPgainTable2D_srcs(/* Input arguments */
                                   float** gtable,
                                   int* N_gtable,
                                   int* nPairs);
-    
+
 /*
  * Function: generateVBAPgainTable2D
  * ---------------------------------
@@ -240,7 +240,7 @@ void generateVBAPgainTable2D(/* Input arguments */
                              float** gtable,
                              int* N_gtable,
                              int* nPairs);
-    
+
 /*
  * Function: getPvalues
  * --------------------

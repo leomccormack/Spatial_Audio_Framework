@@ -55,6 +55,16 @@ static double Yn(int n, double z)
 #endif
 }
 
+long double factorial(int n)
+{
+    int i;
+    long double ff;
+    ff = 1.0;
+    for(i = 1; i<=n; i++)
+        ff *= (long double)i;
+    return ff;
+}
+
 void yawPitchRoll2Rzyx
 (
     float yaw,
@@ -158,10 +168,6 @@ void unnorm_legendreP
     double s, norm, scale;
     double* P, *s_n, *tc, *sqrt_n;
     
-#ifndef NDEBUG
-    if(y==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     if(n==0){
         for(i=0; i<lenX; i++)
             y[i] = 1.0;
@@ -239,10 +245,6 @@ void unnorm_legendreP_recur
     int i, m, k, kk;
     float x2, one_min_x2, dfact_k;
     
-#ifndef NDEBUG
-    if(Pnm==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     for(i=0; i<lenX; i++){
         x2 = (x[i])*(x[i]);
         switch(n) {
@@ -280,99 +282,6 @@ void unnorm_legendreP_recur
     }
 }
 
-void getRSH
-(
-    int N,
-    float* dirs_deg,
-    int nDirs,
-    float* Y
-)
-{
-    int i, nSH;
-    float scale;
-    float* dirs_rad;
-    
-    nSH = (N+1)*(N+1);
-    scale = sqrtf(4.0f*M_PI);
-   
-    /* convert [azi, elev] in degrees, to [azi, inclination] in radians */
-    dirs_rad = malloc1d(nDirs*2*sizeof(float));
-    for(i=0; i<nDirs; i++){
-        dirs_rad[i*2+0] = dirs_deg[i*2+0] * M_PI/180.0f;
-        dirs_rad[i*2+1] = M_PI/2.0f - (dirs_deg[i*2+1] * M_PI/180.0f);
-    }
-
-    /* get real-valued spherical harmonics */
-    getSHreal(N, dirs_rad, nDirs, Y);
-
-    /* remove sqrt(4*pi) term */
-    utility_svsmul(Y, &scale, nSH*nDirs, NULL);
- 
-    free(dirs_rad);
-}
-
-void getRSH_recur
-(
-    int N,
-    float* dirs_deg,
-    int nDirs,
-    float* Y
-)
-{
-    int n, m, i, dir, nSH, index_n;
-    float Nn0, Nnm;
-    float* factorials_n, *leg_n, *leg_n_1, *leg_n_2, *sin_el;
-    
-    factorials_n = malloc1d((2*N+1)*sizeof(float));
-    leg_n = malloc1d((N+1)*nDirs * sizeof(float));
-    leg_n_1 = calloc1d((N+1)*nDirs, sizeof(float));
-    leg_n_2 = calloc1d((N+1)*nDirs, sizeof(float));
-    sin_el = malloc1d(nDirs * sizeof(float));
-    nSH = (N+1)*(N+1);
-    index_n = 0;
-    
-    /* precompute factorials */
-    for (i = 0; i < 2*N+1; i++)
-        factorials_n[i] = (float)factorial(i);
-    
-    /* sinf(elevation) */
-    for (dir = 0; dir<nDirs; dir++)
-        sin_el[dir] = sinf(dirs_deg[dir*2+1] * M_PI/180.0f);
-    
-    /* compute SHs with the recursive Legendre function */
-    for (n = 0; n<N+1; n++) {
-        if (n==0) {
-            for (dir = 0; dir<nDirs; dir++)
-                Y[n*nDirs+dir] = 1.0f;
-            index_n = 1;
-        }
-        else {
-            unnorm_legendreP_recur(n, sin_el, nDirs, leg_n_1, leg_n_2, leg_n); /* does NOT include Condon-Shortley phase */
-            
-            Nn0 = sqrtf(2.0f*(float)n+1.0f);
-            for (dir = 0; dir<nDirs; dir++){
-                for (m = 0; m<n+1; m++) {
-                    if (m==0)
-                        Y[(index_n+n)*nDirs+dir] = Nn0  * leg_n[m*nDirs+dir];
-                    else {
-                        Nnm = Nn0* sqrtf( 2.0f * factorials_n[n-m]/factorials_n[n+m] );
-                        Y[(index_n+n-m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_deg[dir*2])*M_PI/180.0f);
-                        Y[(index_n+n+m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_deg[dir*2])*M_PI/180.0f);
-                    }
-                }
-            }
-            index_n += 2*n+1;
-        }
-        utility_svvcopy(leg_n_1, (N+1)*nDirs, leg_n_2);
-        utility_svvcopy(leg_n,   (N+1)*nDirs, leg_n_1);
-    }
-    
-    free(factorials_n);
-    free(leg_n);
-    free(leg_n_1);
-    free(leg_n_2);
-    free(sin_el);
-}
 
 void getSHreal
 (
@@ -387,10 +296,6 @@ void getSHreal
     double *p_nm, *cos_incl;
     double *norm_real;
     
-#ifndef NDEBUG
-    if(Y==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     Lnm = malloc1d((2*order+1)*nDirs*sizeof(double));
     norm_real = malloc1d((2*order+1)*sizeof(double));
     CosSin = malloc1d((2*order+1)*sizeof(double));
@@ -402,7 +307,7 @@ void getSHreal
     idx_Y = 0;
     for(n=0; n<=order; n++){
         /* vector of unnormalised associated Legendre functions of current order */
-        unnorm_legendreP(n, cos_incl, nDirs, p_nm); /* includes Condon-Shortley phase */
+        unnorm_legendreP(n, cos_incl, nDirs, p_nm); /* includes Condon-Shortley phase term */
         
         for(dir=0; dir<nDirs; dir++){
             /* cancel the Condon-Shortley phase from the definition of the Legendre functions to result in signless real SH */
@@ -452,10 +357,6 @@ void getSHreal_recur
     float Nn0, Nnm;
     float* leg_n, *leg_n_1, *leg_n_2, *cos_incl, *factorials_n;
     
-#ifndef NDEBUG
-    if(Y==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     factorials_n = malloc1d((2*N+1)*sizeof(float));
     leg_n = malloc1d((N+1)*nDirs * sizeof(float));
     leg_n_1 = calloc1d((N+1)*nDirs, sizeof(float));
@@ -467,7 +368,7 @@ void getSHreal_recur
     for (i = 0; i < 2*N+1; i++)
         factorials_n[i] = (float)factorial(i);
     
-    /* sinf(elevation) */
+    /* cos(inclination) = sin(elevation) */
     for (dir = 0; dir<nDirs; dir++)
         cos_incl[dir] = cosf(dirs_rad[dir*2+1]);
     
@@ -479,7 +380,7 @@ void getSHreal_recur
             index_n = 1;
         }
         else {
-            unnorm_legendreP_recur(n, cos_incl, nDirs, leg_n_1, leg_n_2, leg_n); /* does NOT include Condon-Shortley phase */
+            unnorm_legendreP_recur(n, cos_incl, nDirs, leg_n_1, leg_n_2, leg_n); /* does NOT include Condon-Shortley phase term */
             
             Nn0 = sqrtf(2.0f*(float)n+1.0f);
             for (dir = 0; dir<nDirs; dir++){
@@ -519,10 +420,6 @@ void getSHcomplex
     double *Lnm, *cos_incl;
     double_complex Ynm;
     
-#ifndef NDEBUG
-    if(Y==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     Lnm = malloc1d((order+1)*nDirs*sizeof(double));
     norm_real = malloc1d((order+1)*sizeof(double));
     cos_incl = malloc1d(nDirs*sizeof(double));
@@ -532,7 +429,7 @@ void getSHcomplex
     idx_Y = 0;
     for(n=0; n<=order; n++){
         /* vector of unnormalised associated Legendre functions of current order */
-        unnorm_legendreP(n, cos_incl, nDirs, Lnm); /* includes Condon-Shortley phase */
+        unnorm_legendreP(n, cos_incl, nDirs, Lnm); /* includes Condon-Shortley phase term */
         
         /* normalisation */
         for(m=0; m<=n; m++)
@@ -569,10 +466,6 @@ void complex2realSHMtx
 {
     int n, m, q, p, idx, nSH;
     
-#ifndef NDEBUG
-    if(T_c2r==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     nSH = (order+1)*(order+1);
     memset(T_c2r, 0, nSH*nSH*sizeof(float_complex));
     T_c2r[0] = cmplxf(1.0f, 0.0f);
@@ -605,10 +498,6 @@ void real2complexSHMtx
 {
     int n, m, q, p, idx, nSH;
     
-#ifndef NDEBUG
-    if(T_r2c==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     nSH = (order+1)*(order+1);
     memset(T_r2c, 0, nSH*nSH*sizeof(float_complex));
     T_r2c[0] = cmplxf(1.0f, 0.0f);
@@ -621,7 +510,7 @@ void real2complexSHMtx
         for(m=-n, p=0; m<=n; m++, q++, p++){
             if(m<0){
                 T_r2c[(q)*nSH+(q)] = cmplxf(0.0f, -1.0f/sqrtf(2.0f));
-                T_r2c[(idx-p-1)*nSH+(q)] = cmplxf(0.0f, powf(-1.0f, (float)abs(m))/sqrtf(2.0f));; //cmplxf(1.0f/sqrtf(2.0f), 0.0f);
+                T_r2c[(idx-p-1)*nSH+(q)] = cmplxf(0.0f, powf(-1.0f, (float)abs(m))/sqrtf(2.0f)); //cmplxf(1.0f/sqrtf(2.0f), 0.0f);
             }
             else if(m==0)
                 T_r2c[(q)*nSH+(q)] = cmplxf(1.0f, 0.0f);
@@ -675,10 +564,6 @@ void getSHrotMtxReal
     float u, v, w;
     float** R_1,  **R_lm1, **R_l;
     
-#ifndef NDEBUG
-    if(RotMtx==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     M = (L+1) * (L+1);
     R_1 = (float**)calloc2d(3, 3, sizeof(float));
     R_lm1 = (float**)calloc2d(M, M, sizeof(float));
@@ -754,10 +639,6 @@ void computeVelCoeffsMtx
     float x1, x3, z2, y1, y3;
     float* G_mtx;
     
-#ifndef NDEBUG
-    if(A_xyz==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     Ns = sectorOrder;
     Nxyz = Ns+1;
     nC_xyz = (Nxyz+1)*(Nxyz+1);
@@ -794,10 +675,6 @@ float computeSectorCoeffsEP
     float normSec, azi_sec, elev_sec, Q;
     float* b_n, *c_nm, *xyz_nm;
     
-#ifndef NDEBUG
-    if(sectorCoeffs==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     if(orderSec==0){
         memcpy(sectorCoeffs, wxyzCoeffs, 16*sizeof(float)); /* ACN/N3D to WXYZ */
         normSec = 1.0f;
@@ -864,10 +741,6 @@ float computeSectorCoeffsAP
     float normSec, azi_sec, elev_sec;
     float* b_n, *c_nm, *xyz_nm;
     
-#ifndef NDEBUG
-    if(sectorCoeffs==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     if(orderSec==0){
         memcpy(sectorCoeffs, wxyzCoeffs, 16*sizeof(float)); /* ACN/N3D to WXYZ */
         normSec = 1.0f;
@@ -915,10 +788,6 @@ void beamWeightsCardioid2Spherical
 {
     int n;
     
-#ifndef NDEBUG
-    if(b_n==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     /* The coefficients can be derived by the binomial expansion of the cardioid function */
     for(n=0; n<N+1; n++) {
         b_n[n] = sqrtf(4.0f*M_PI*(2.0f*(float)n+1.0f)) *
@@ -938,10 +807,6 @@ void beamWeightsHypercardioid2Spherical
     float* c_n;
     float dirs_rad[2] = {0.0f, 0.0f};
     
-#ifndef NDEBUG
-    if(b_n==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     c_n = malloc1d((N+1)*(N+1)*sizeof(float));
     getSHreal(N, dirs_rad, 1, c_n);
     for(n=0; n<N+1; n++)
@@ -961,10 +826,6 @@ void beamWeightsMaxEV
     double temp_i;
     double* temp_o;
     
-#ifndef NDEBUG
-    if(b_n==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     temp_o = malloc1d( (N+1)*sizeof(double));
     norm = 0.0f;
     for (n=0; n<=N; n++) {
@@ -994,10 +855,6 @@ void beamWeightsVelocityPatternsReal
     int nSH;
     float_complex* velCoeffs_c;
     
-#ifndef NDEBUG
-    if(velCoeffs==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     nSH = (order+2)*(order+2);
     velCoeffs_c = malloc1d(nSH*3*sizeof(float_complex));
     beamWeightsVelocityPatternsComplex(order, b_n, azi_rad, elev_rad, A_xyz, velCoeffs_c);
@@ -1020,10 +877,6 @@ void beamWeightsVelocityPatternsComplex
     float_complex* c_nm, *A_1, *velCoeffs_T;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
-#ifndef NDEBUG
-    if(velCoeffs==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     nSH_l = (order+1)*(order+1);
     nSH = (order+2)*(order+2);
     c_nm = malloc1d(nSH_l*sizeof(float_complex));
@@ -1062,10 +915,6 @@ void rotateAxisCoeffsReal
     int nSH;
     float_complex* c_nm_c;
 
-#ifndef NDEBUG
-    if(c_nm==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     nSH = (order+1)*(order+1);
     c_nm_c = malloc1d(nSH*sizeof(float_complex));
     rotateAxisCoeffsComplex(order, c_n, theta_0, phi_0, c_nm_c);
@@ -1087,10 +936,6 @@ void rotateAxisCoeffsComplex
     float phi_theta[2];
     float_complex* Y_N;
     
-#ifndef NDEBUG
-    if(c_nm==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     phi_theta[0] = phi_0;
     phi_theta[1] = theta_0;
     nSH = (order+1)*(order+1);
@@ -1116,10 +961,6 @@ void checkCondNumberSHTReal
     float minVal, maxVal;
     float* Y_N, *Y_n, *YY_n, *W, *W_Yn, *s;
     
-#ifndef NDEBUG
-    if(cond_N==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     /* get SH */
     nSH = (order+1)*(order+1);
     Y_N = malloc1d(nSH * nDirs *sizeof(float));
@@ -1191,10 +1032,6 @@ void generatePWDmap
     float_complex* Cx_Y, *Y_Cx_Y, *Cx_Y_s, *Y_grid_s;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
-#ifndef NDEBUG
-    if(pmap==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     nSH = (order+1)*(order+1);
     Cx_Y = malloc1d(nSH * nGrid_dirs * sizeof(float_complex));
     Y_Cx_Y = malloc1d(nGrid_dirs*sizeof(float_complex));
@@ -1240,10 +1077,6 @@ void generateMVDRmap
     float_complex *Cx_d, *invCx_Ygrid, *w_MVDR, *invCx_Ygrid_s, *Y_grid_s;
     float_complex denum;
     
-#ifndef NDEBUG
-    if(pmap==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     nSH = (order+1)*(order+1);
     w_MVDR = malloc1d(nSH * nGrid_dirs*sizeof(float_complex));
     Cx_d = malloc1d(nSH*nSH*sizeof(float_complex));
@@ -1314,10 +1147,6 @@ void generateCroPaCLCMVmap
     float_complex A_invCxd_A[2][2];
     float_complex Y_wo_xspec;
     
-#ifndef NDEBUG
-    if(pmap==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     b[0] = cmplxf(1.0f, 0.0f);
     b[1] = cmplxf(0.0f, 0.0f);
     nSH = (order+1)*(order+1);
@@ -1419,10 +1248,6 @@ void generateMUSICmap
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float_complex tmp;
     
-#ifndef NDEBUG
-    if(pmap==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     nSH = (order+1)*(order+1);
     nSources = MIN(nSources, nSH/2);
     V = malloc1d(nSH*nSH*sizeof(float_complex));
@@ -1471,10 +1296,6 @@ void generateMinNormMap
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float_complex Vn1_Vn1H;
     
-#ifndef NDEBUG
-    if(pmap==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     nSH = (order+1)*(order+1);
     nSources = MIN(nSources, nSH/2);
     V = malloc1d(nSH*nSH*sizeof(float_complex));
@@ -1976,10 +1797,6 @@ void cylModalCoeffs
     double* Jn, *Jnprime;
     double_complex* Hn2, *Hn2prime;
     
-#ifndef NDEBUG
-    if(b_N==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     memset(b_N, 0, nBands*(order+1)*sizeof(double_complex));
     switch(arrayType){
         default:
@@ -2059,10 +1876,6 @@ void sphArrayNoiseThreshold
     double kr;
     double_complex* b_N;
     
-#ifndef NDEBUG
-    if(f_lim==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     maxG = powf(10.0f, maxG_db/10.0f);
     kr = 1.0f;
     for (n=1; n<maxN+1; n++){
@@ -2088,10 +1901,6 @@ void sphModalCoeffs
     double* jn, *jnprime;
     double_complex* hn2, *hn2prime;
     
-#ifndef NDEBUG
-    if(b_N==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     memset(b_N, 0, nBands*(order+1)*sizeof(double_complex));
     switch(arrayType){
         default:
@@ -2175,10 +1984,6 @@ void sphScattererModalCoeffs
     double* jn, *jnprime;
     double_complex* hn2, *hn2prime;
     
-#ifndef NDEBUG
-    if(b_N==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     /* compute spherical Bessels/Hankels and their derivatives */
     jn = malloc1d(nBands*(order+1)*sizeof(double));
     jnprime = malloc1d(nBands*(order+1)*sizeof(double));
@@ -2229,10 +2034,6 @@ void sphScattererDirModalCoeffs
     double* jn_kr, *jnprime_kr, *jnprime_kR;
     double_complex* hn2_kr, *hn2prime_kr, *hn2prime_kR;
     
-#ifndef NDEBUG
-    if(b_N==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     /* compute spherical Bessels/Hankels and their derivatives */
     jn_kr = malloc1d(nBands*(order+1)*sizeof(double));
     jnprime_kr = malloc1d(nBands*(order+1)*sizeof(double));
@@ -2306,10 +2107,6 @@ void sphDiffCohMtxTheory
     double *ppm, *b_N2, *Pn;
     double_complex* b_N;
     
-#ifndef NDEBUG
-    if(M_diffcoh==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     /* sph->cart */
     sensor_dirs_xyz = malloc1d(N_sensors*3*sizeof(float));
     for(i=0; i<N_sensors; i++){
@@ -2382,10 +2179,6 @@ void simulateCylArray /*untested*/
     double_complex* b_N, *C, *b_NC;
     const double_complex calpha = cmplx(1.0, 0.0), cbeta = cmplx(0.0, 0.0);
     
-#ifndef NDEBUG
-    if(H_array==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     /* calculate modal coefficients */
     b_N = malloc1d(nBands * (order+1) * sizeof(double_complex));
     cylModalCoeffs(order, kr, nBands, arrayType, b_N);
@@ -2443,10 +2236,6 @@ void simulateSphArray
     double_complex* b_N, *P, *b_NP;
     const double_complex calpha = cmplx(1.0, 0.0), cbeta = cmplx(0.0, 0.0);
     
-#ifndef NDEBUG
-    if(H_array==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     /* calculate modal coefficients */
     b_N = malloc1d(nBands * (order+1) * sizeof(double_complex));
     switch (arrayType){
@@ -2526,10 +2315,6 @@ void evaluateSHTfilters
     float_complex cSH_n, cSH_nm, yre_yre_dot, yre_yid_dot;
     float_complex *y_recon_kk, *y_recon_nm, *w_y_recon_nm, *y_ideal_nm, *MH_M, *EigV;
     
-#ifndef NDEBUG
-    if(cSH==NULL || lSH==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     nSH = (order+1)*(order+1);
     w_uni_grid = 1.0f/(float)nDirs;
     y_recon_kk = malloc1d(nSH*nDirs*sizeof(float_complex));

@@ -110,7 +110,7 @@ void fftconv
     
     /* prep */
     y_len = x_len + h_len - 1;
-    fftSize = (int)(pow(2.0, (double)nextpow2(y_len)) + 0.5);
+    fftSize =  (int)((float)nextpow2(y_len)+0.5f);
     nBins = fftSize/2+1;
     h0 = calloc1d(fftSize, sizeof(float));
     x0 = calloc1d(fftSize, sizeof(float));

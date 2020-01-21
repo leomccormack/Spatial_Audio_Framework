@@ -57,7 +57,7 @@ extern "C" {
  * Warning Codes:
  *     SAF_WARNING__SOFA_FILE_NOT_FOUND
  *         loadSofaFile - sofa file was not found at the specified directory.
- *         rememeber to include the ".sofa" suffix. In this case, the default
+ *         remember to include the ".sofa" suffix. In this case, the default
  *         HRIR set is loaded instead.
  *     SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER
  *         bessel_jn/bessel_in/bessel_yn/bessel_kn/hankel_hn1/hankel_hn2 -
@@ -108,7 +108,7 @@ typedef enum _SAF_ERRORS {
     SAF_WARNING__FAILED_TO_COMPUTE_CHOL
     
 } SAF_ERRORS;
-  
+
 
 /* ========================================================================== */
 /*                               Main Functions                               */
@@ -134,8 +134,8 @@ typedef enum _SAF_ERRORS {
 #ifndef NDEBUG
 SAF_ERRORS saf_error_print(SAF_ERRORS err);
 #endif /* NDEBUG */
-    
-    
+
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */

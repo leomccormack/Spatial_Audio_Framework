@@ -38,7 +38,7 @@ float matlab_fmodf(float x, float y) {
 
 void estimateITDs
 (
-    float* hrirs /* N_dirs x NUM_EARS x hrir_len*/,
+    float* hrirs /* N_dirs x NUM_EARS x hrir_len */,
     int N_dirs,
     int hrir_len,
     int fs,
@@ -218,10 +218,6 @@ void interpFilterbankHRTFs
     float* itd_interp, *mags_interp, *ipd_interp;
     float** mags;
     
-#ifndef NDEBUG
-    if(hrtfs_interp==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     mags = (float**)malloc1d(N_bands*sizeof(float*));
     itd_interp = malloc1d(N_interp_dirs*sizeof(float));
     mags_interp = malloc1d(N_interp_dirs*NUM_EARS*sizeof(float));

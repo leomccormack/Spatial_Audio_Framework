@@ -17,7 +17,7 @@
 /*
  * Filename: saf_hoa_internal.c
  * ----------------------------
- * A collection of higher-order Ambisonics related functions. Some of which are
+ * A collection of higher-order Ambisonics related functions. Many of which are
  * derived from the Matlab library by Archontis Politis, found here:
  *     https://github.com/polarch/Higher-Order-Ambisonics
  *
@@ -348,8 +348,7 @@ void getBinDecoder_SPR
     Y_na = malloc1d(nSH * N_dirs *sizeof(float));
     for(i=0; i<nSH; i++)
         for(j=0; j<N_dirs; j++)
-            Y_na[i*N_dirs+j] = Y_nh[i*N_dirs+j];
-    //memcpy(Y_na, Y_nh, nSH * N_dirs *sizeof(float));
+            Y_na[i*N_dirs+j] = Y_nh[i*N_dirs+j]; 
     
     /* Get t-design SH for ambisonic signals */
     tdirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[2*order-1];

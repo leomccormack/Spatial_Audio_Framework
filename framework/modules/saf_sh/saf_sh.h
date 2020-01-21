@@ -90,10 +90,23 @@ typedef enum _SECTOR_PATTERNS{
 /* ========================================================================== */
 
 /*
+ * Function: factorial
+ * ----------------------
+ * Factorial algorithm, accurate up to n<=25. The magnitude will still be
+ * correct >25, but it will be truncated.
+ *
+ * Input Arguments:
+ *     n - order
+ * Returns:
+ *     factorial(n)
+ */
+long double factorial(int n);
+
+/*
  * Function: yawPitchRoll2Rzyx
  * ---------------------------
  * Contructs a 3x3 rotation matrix from the Euler angles, using the
- * yaw-pitch-roll (zyx) convention
+ * yaw-pitch-roll (zyx) convention.
  *
  * Input Arguments:
  *     yaw              - yaw angle in radians
@@ -115,7 +128,7 @@ void yawPitchRoll2Rzyx (/* Input Arguments */
 /*
  * Function: unitSph2Cart
  * ----------------------
- * Converts spherical coordinates to cartesian coordinates of unit length
+ * Converts spherical coordinates to cartesian coordinates of unit length.
  *
  * Input Arguments:
  *     azi_rad  - azimuth in radians
@@ -132,7 +145,7 @@ void unitSph2Cart(/* Input Arguments */
 /*
  * Function: unitCart2Sph
  * ----------------------
- * Converts cartesian coordinates of unit length to spherical coordinates
+ * Converts cartesian coordinates of unit length to spherical coordinates.
  *
  * Input Arguments:
  *     xyz         - unit cartesian coords, xyz
@@ -147,7 +160,7 @@ void unitCart2Sph(/* Input Arguments */
 /*
  * Function: unitCart2Sph_aziElev
  * ------------------------------
- * Converts cartesian coordinates of unit length to spherical coordinates
+ * Converts cartesian coordinates of unit length to spherical coordinates.
  *
  * Input Arguments:
  *     xyz      - unit cartesian coords, xyz
@@ -160,27 +173,22 @@ void unitCart2Sph_aziElev(/* Input Arguments */
                           /* Output Arguments */
                           float* azi_rad,
                           float* elev_rad);
-    
-    
-/* ========================================================================== */
-/*                    SH and Beamforming related Functions                    */
-/* ========================================================================== */
-    
+
 /*
  * Function: unnorm_legendreP
  * --------------------------
  * Calculates unnormalised legendre polynomials up to order N, for all values
  * in vector x [1].
  * Note: This INCLUDES the Condon-Shortley phase term. It is functionally
- * identical to MatLab's legendre function, 'unnorm' (with default settings).
+ * identical to Matlab's legendre function (with default settings ['unnorm']).
  *
  * Input Arguments:
  *     n    - order of  legendre polynomial
  *     x    - vector of input values; lenX x 1
  *     lenX - number of input values
  * Output Arguments:
- *     y  - resulting unnormalised legendre values for each x value;
- *          FLAT: (n+1) x lenX
+ *     y    - resulting unnormalised legendre values for each x value;
+ *            FLAT: (n+1) x lenX
  *
  * [1] M, Abramowitz., I.A. Stegun. (1965). "Handbook of Mathematical
  *     Functions: Chapter 8", Dover Publications.
@@ -220,73 +228,10 @@ void unnorm_legendreP_recur(/* Input Arguments */
                             /* Output Arguments */
                             float* Pnm);
 
-/*
- * Function: getRSH
- * ----------------
- * This function returns REAL spherical harmonics [1] for multiple directions on
- * the sphere. WITHOUT the 1/sqrt(4*pi) term. i.e. max(omni) = 1
- * Note: Compared to 'getRSH_recur', this function uses 'unnorm_legendreP' and
- * double precision, so is more suitable for determining 'Y' in an
- * initialisation stage. This version is indeed slower, but more precise;
- * especially for high orders.
- * Further Note: this function is mainly INTENDED FOR AMBISONICS, due to the
- * omission of the 1/sqrt(4*pi) scaling, and the directions are given in
- * [azimuth elevation] (degrees).
- * In Ambisonics literature, the format convention of 'Y' is referred to as
- * ACN/N3D
- *
- * Input Arguments:
- *     order    - order of spherical harmonic expansion
- *     dirs_deg - directions on the sphere [azi, ELEVATION] convention, in
- *                DEGREES; FLAT: nDirs x 2
- *     nDirs    - number of directions
- * Output Arguments:
- *     Y        - the SH weights [WITHOUT the 1/sqrt(4*pi)];
- *                FLAT: (order+1)^2 x nDirs
- *
- * [1] Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8).
- *     Berlin: Springer.
- */
-void getRSH(/* Input Arguments */
-            int order,
-            float* dirs_deg,
-            int nDirs,
-            /* Output Arguments */
-            float* Y);
 
-/*
- * Function: getRSH_recur
- * ----------------------
- * This function returns REAL spherical harmonics [1] for multiple directions on
- * the sphere. WITHOUT the 1/sqrt(4*pi) term. i.e. max(omni) = 1
- * Note: Compared to 'getRSH', this function uses 'unnorm_legendreP_recur' and
- * single precision, so is more suitable for determining 'Y' in a real-time
- * loop. It sacrifices some precision, as numerical error propogates through
- * the recursion, but it is faster.
- * Further Note: this function is mainly INTENDED FOR AMBISONICS, due to the
- * omission of the 1/sqrt(4*pi) scaling, and the directions are given in
- * [azimuth elevation] (degrees).
- * In Ambisonics literature, the format convention of 'Y' is referred to as
- * ACN/N3D
- *
- * Input Arguments:
- *     order    - order of spherical harmonic expansion
- *     dirs_deg - directions on the sphere [azi, ELEVATION] convention, in
- *                DEGREES; FLAT: nDirs x 2
- *     nDirs    - number of directions
- * Output Arguments:
- *     Y        - the SH weights [WITHOUT the 1/sqrt(4*pi)];
- *                FLAT: (order+1)^2 x nDirs
- *
- * [1] Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8).
- *     Berlin: Springer.
- */
-void getRSH_recur(/* Input Arguments */
-                  int order,
-                  float* dirs_deg,
-                  int nDirs,
-                  /* Output Arguments */
-                  float* Y);
+/* ========================================================================== */
+/*                    SH and Beamforming related Functions                    */
+/* ========================================================================== */
 
 /*
  * Function: getSHreal
@@ -345,7 +290,7 @@ void getSHreal_recur(/* Input Arguments */
 /*
  * Function: getSHcomplex
  * ----------------------
- * This function returns COMPLEX spherical harmonics [1]for each direction on
+ * This function returns COMPLEX spherical harmonics [1] for each direction on
  * the sphere. WITH the 1/sqrt(4*pi) term.  i.e. max(omni) = 1/sqrt(4*pi) + i0
  * Note: This function employs 'unnorm_legendreP' and double precision.
  *
@@ -475,8 +420,8 @@ void computeVelCoeffsMtx(/* Input Arguments */
  * Computes the beamforming matrices of sector and velocity coefficients for
  * ENERGY-preserving (EP) sectors for real SH.
  * This partitioning of the sound-field into spatially-localised sectors has
- * been used for parametric reproduction in [1] and also for sound-field
- * visualision [2].
+ * been used for parametric sound-field reproduction in [1] and visualision in
+ * [2].
  *
  * Input Arguments:
  *     sectorOrder  - order of sector patterns
@@ -515,8 +460,8 @@ float computeSectorCoeffsEP(/* Input Arguments */
  * Computes the beamforming matrices of sector and velocity coefficients for
  * AMPLITUDE-preserving (AP) sectors for real SH.
  * This partitioning of the sound-field into spatially-localised sectors has
- * been used for parametric reproduction in [1] and also for sound-field
- * visualision [2].
+ * been used for parametric sound-field reproduction in [1] and visualision in
+ * [2].
  *
  * Input Arguments:
  *     sectorOrder  - order of sector patterns
@@ -1494,8 +1439,8 @@ void evaluateSHTfilters(/* Input arguments */
                         /* Output arguments */
                         float* cSH,
                         float* lSH);
-    
-    
+
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */

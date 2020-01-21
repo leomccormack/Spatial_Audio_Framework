@@ -17,7 +17,7 @@
 /*
  * Filename: saf_hoa.h (include header)
  * ------------------------------------
- * A collection of higher-order Ambisonics related functions. Some of which are
+ * A collection of higher-order Ambisonics related functions. Many of which are
  * derived from the Matlab library by Archontis Politis, found here:
  *     https://github.com/polarch/Higher-Order-Ambisonics
  *
@@ -73,9 +73,9 @@ extern "C" {
  *     LOUDSPEAKER_DECODER_ALLRAD  - All-Round Ambisonic Decoder (AllRAD): SAD
  *                                   decoding to t-design, panned for the target
  *                                   loudspeaker directions using VBAP [2].
- *                                   Perhaps the only Ambisonic decoder we would
- *                                   actually recommend for irregular
- *                                   loudspeaker layouts.
+ *                                   Perhaps the Ambisonic decoder we would most
+ *                                   recommend for irregular loudspeaker
+ *                                   layouts.
  *
  * [1] Zotter F, Pomberger H, Noisternig M. Energy- preserving ambisonic
  *     decoding. Acta Acustica united with Acustica. 2012 Jan 1; 98(1):37-47.
@@ -143,7 +143,75 @@ typedef enum _BINAURAL_AMBI_DECODER_METHODS {
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
-    
+
+/*
+ * Function: getRSH
+ * ----------------
+ * This function returns REAL spherical harmonics [1] for multiple directions on
+ * the sphere. WITHOUT the 1/sqrt(4*pi) term. i.e. max(omni) = 1
+ * Note: Compared to 'getRSH_recur', this function uses 'unnorm_legendreP' and
+ * double precision, so is more suitable for determining 'Y' in an
+ * initialisation stage. This version is indeed slower, but more precise;
+ * especially for high orders.
+ * Further Note: this function is mainly INTENDED FOR AMBISONICS, due to the
+ * omission of the 1/sqrt(4*pi) scaling, and the directions are given in
+ * [azimuth elevation] (degrees).
+ * In Ambisonics literature, the format convention of 'Y' is referred to as
+ * ACN/N3D
+ *
+ * Input Arguments:
+ *     order    - order of spherical harmonic expansion
+ *     dirs_deg - directions on the sphere [azi, ELEVATION] convention, in
+ *                DEGREES; FLAT: nDirs x 2
+ *     nDirs    - number of directions
+ * Output Arguments:
+ *     Y        - the SH weights [WITHOUT the 1/sqrt(4*pi)];
+ *                FLAT: (order+1)^2 x nDirs
+ *
+ * [1] Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8).
+ *     Berlin: Springer.
+ */
+void getRSH(/* Input Arguments */
+            int order,
+            float* dirs_deg,
+            int nDirs,
+            /* Output Arguments */
+            float* Y);
+
+/*
+ * Function: getRSH_recur
+ * ----------------------
+ * This function returns REAL spherical harmonics [1] for multiple directions on
+ * the sphere. WITHOUT the 1/sqrt(4*pi) term. i.e. max(omni) = 1
+ * Note: Compared to 'getRSH', this function uses 'unnorm_legendreP_recur' and
+ * single precision, so is more suitable for determining 'Y' in a real-time
+ * loop. It sacrifices some precision, as numerical error propogates through
+ * the recursion, but it is faster.
+ * Further Note: this function is mainly INTENDED FOR AMBISONICS, due to the
+ * omission of the 1/sqrt(4*pi) scaling, and the directions are given in
+ * [azimuth elevation] (degrees).
+ * In Ambisonics literature, the format convention of 'Y' is referred to as
+ * ACN/N3D
+ *
+ * Input Arguments:
+ *     order    - order of spherical harmonic expansion
+ *     dirs_deg - directions on the sphere [azi, ELEVATION] convention, in
+ *                DEGREES; FLAT: nDirs x 2
+ *     nDirs    - number of directions
+ * Output Arguments:
+ *     Y        - the SH weights [WITHOUT the 1/sqrt(4*pi)];
+ *                FLAT: (order+1)^2 x nDirs
+ *
+ * [1] Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8).
+ *     Berlin: Springer.
+ */
+void getRSH_recur(/* Input Arguments */
+                  int order,
+                  float* dirs_deg,
+                  int nDirs,
+                  /* Output Arguments */
+                  float* Y);
+
 /*
  * Function: getMaxREweights
  * -------------------------
@@ -153,10 +221,10 @@ typedef enum _BINAURAL_AMBI_DECODER_METHODS {
  * via Ambisonics encoding/decoding, there is unwanted energy given to
  * loudspeakers directly opposite the true source direction. This max_rE
  * weighting essentially spatially "tapers" the spherical harmonic patterns
- * used to generate said beams, by reducing the contribution of the higher
+ * used to generate said beams, reducing the contribution of the higher
  * orders to the beam patterns. This results in worse spatial selectivity, as
- * the width of the beam pattern main lobe is widened. However, the back lobes
- * are also reduced, thus mitigating the aforementioned problem.
+ * the width of the beam pattern main lobe is widened, however, the back lobes
+ * are also reduced; thus mitigating the aforementioned (bigger) problem.
  *
  * Input Arguments:
  *     order       - decoding order
@@ -179,7 +247,7 @@ void getMaxREweights(/* Input Arguments */
  * Function: getLoudspeakerAmbiDecoderMtx
  * --------------------------------------
  * Returns an ambisonic decoding matrix of a specific order, for a specific
- * loudspeaker layout
+ * loudspeaker layout.
  *
  * Input Arguments:
  *     ls_dirs_deg          - loudspeaker directions in DEGREES [azi elev];

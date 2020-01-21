@@ -194,11 +194,12 @@ extern "C" {
       z._Val[1] = x._Val[1] / y;
       return z;
   }
+
 #else
-# error "SAF requires a compiler that supports the C99 standard, or MSVC"
+# error "SAF requires a compiler that supports the C99 standard, or MSVC version 1900 or newer"
 #endif
 
-    
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif /* __cplusplus */

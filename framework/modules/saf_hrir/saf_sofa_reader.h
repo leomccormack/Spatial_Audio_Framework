@@ -56,7 +56,7 @@ extern "C" {
  * SOFA file to the output arguments.
  * Note: This function is not suitable for binaural room impulse responses
  * (BRIRs), as the IRs are truncated to "MAX_HRIR_LENGTH"
- * Further note: The hrirs are returned as NULL if the file does not exist
+ * Further note: The hrirs are returned as NULL if the file does not exist.
  *
  * Input Arguments:
  *     sofa_filepath - directory/file_name of the SOFA file you wish to load

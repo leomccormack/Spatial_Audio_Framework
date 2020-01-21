@@ -76,11 +76,6 @@ void cdf4sap_create
     *phCdf = malloc1d(sizeof(cdf4sap_data));
     cdf4sap_data *h = (cdf4sap_data*)(*phCdf);
     
-#ifndef NDEBUG
-    if(nXcols < 1 || nYcols < 1)
-        saf_error_print(SAF_ERROR__ILLEGAL_INPUT_VALUE);
-#endif
-    
     h->nXcols = nXcols;
     h->nYcols = nYcols;
     h->lambda = malloc1d(nYcols * nXcols * sizeof(float));
@@ -132,11 +127,6 @@ void cdf4sap_cmplx_create
 {
     *phCdf = malloc1d(sizeof(cdf4sap_cmplx_data));
     cdf4sap_cmplx_data *h = (cdf4sap_cmplx_data*)(*phCdf);
-    
-#ifndef NDEBUG
-    if(nXcols < 1 || nYcols < 1)
-        saf_error_print(SAF_ERROR__ILLEGAL_INPUT_VALUE);
-#endif
     
     h->nXcols = nXcols;
     h->nYcols = nYcols;
@@ -266,16 +256,9 @@ void formulate_M_and_Cr
 {
     cdf4sap_data *h = (cdf4sap_data*)(hCdf);
     int i, j, nXcols, nYcols;
-    SAF_ERRORS err;
     
-    err = SAF_ERROR__NO_ERROR;
     nXcols = h->nXcols;
     nYcols = h->nYcols;
-    
-#ifndef NDEBUG
-    if(M==NULL || Cr==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     
     memset(h->lambda, 0, nYcols * nXcols * sizeof(float));
     for(i = 0; i<MIN(nXcols,nYcols); i++)
@@ -409,11 +392,6 @@ void formulate_M_and_Cr_cmplx
 
     nXcols = h->nXcols;
     nYcols = h->nYcols;
-    
-#ifndef NDEBUG
-    if(M==NULL || Cr==NULL)
-        saf_error_print(SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT);
-#endif
     
     memset(h->lambda, 0, nYcols * nXcols * sizeof(float_complex));
     for(i = 0; i<MIN(nXcols,nYcols); i++)
