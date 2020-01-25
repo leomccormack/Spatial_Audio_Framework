@@ -43,11 +43,11 @@ float matlab_fmodf(float x,  float y);
 /* ========================================================================== */
 /*                               Default HRIRs                                */
 /* ========================================================================== */
-    
-/* Default HRIRs, measured at one of Aalto University's anechoic chambers, using
- * a KEMAR Dummy Head. 217 measurements in total @48kHz. */
-extern const double __default_hrirs[217][2][1024];
-extern const double __default_hrir_dirs_deg[217][2];
+
+/* Default HRIRs: Genelec Aural ID of a KEMAR Dummy Head. (@48kHz)
+ * Kindly provided by Aki Mäkivirta and Jaan Johansson */
+extern const double __default_hrirs[836][2][1024];
+extern const double __default_hrir_dirs_deg[836][2];
 extern const int __default_N_hrir_dirs;
 extern const int __default_hrir_len;
 extern const int __default_hrir_fs;

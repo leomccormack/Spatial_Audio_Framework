@@ -69,7 +69,7 @@ void getRSH_recur
     float* Y
 )
 {
-    int n, m, i, dir, nSH, index_n;
+    int n, m, i, dir, index_n;
     float Nn0, Nnm;
     float* factorials_n, *leg_n, *leg_n_1, *leg_n_2, *sin_el;
     
@@ -78,7 +78,6 @@ void getRSH_recur
     leg_n_1 = calloc1d((N+1)*nDirs, sizeof(float));
     leg_n_2 = calloc1d((N+1)*nDirs, sizeof(float));
     sin_el = malloc1d(nDirs * sizeof(float));
-    nSH = (N+1)*(N+1);
     index_n = 0;
     
     /* precompute factorials */

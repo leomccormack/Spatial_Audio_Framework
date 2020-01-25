@@ -41,7 +41,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
@@ -61,7 +61,7 @@ void cdf4sap_create(/* Input Arguments */
                     void ** const phCdf,
                     int nXcols,
                     int nYcols);
-    
+
 /*
  * Function: cdf4sap_cmplx_create
  * ------------------------------
@@ -77,7 +77,7 @@ void cdf4sap_cmplx_create(/* Input Arguments */
                           void ** const phCdf,
                           int nXcols,
                           int nYcols);
-    
+
 /*
  * Function: cdf4sap_destroy
  * ------------------------
@@ -89,7 +89,7 @@ void cdf4sap_cmplx_create(/* Input Arguments */
  */
 void cdf4sap_destroy(/* Input Arguments */
                      void ** const phCdf);
-    
+
 /*
  * Function: cdf4sap_cmplx_destroy
  * -------------------------------
@@ -101,7 +101,7 @@ void cdf4sap_destroy(/* Input Arguments */
  */
 void cdf4sap_cmplx_destroy(/* Input Arguments */
                            void ** const phCdf);
-    
+
 /*
  * Function: formulate_M_and_Cr
  * ----------------------------
