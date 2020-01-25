@@ -40,6 +40,23 @@
 extern "C" {
 #endif /* __cplusplus */
     
+/*
+ * Enum: PROC_STATUS
+ * -----------------
+ * Current status of the processing loop.
+ *
+ * Options:
+ *     PROC_STATUS_ONGOING     - Codec is processing input audio, and should not
+ *                               be reinitialised at this time.
+ *     PROC_STATUS_NOT_ONGOING - Codec is not processing input audio, and may
+ *                               be reinitialised if needed.
+ */
+typedef enum _PROC_STATUS{
+    PROC_STATUS_ONGOING = 0,
+    PROC_STATUS_NOT_ONGOING
+}PROC_STATUS;
+    
+    
 /* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
@@ -107,19 +124,20 @@ typedef struct _ambi_bin
     int afSTFTdelay; /* for host delay compensation */
     float** tempHopFrameTD; /* temporary multi-channel time-domain buffer of size "HOP_SIZE". */
     float freqVector[HYBRID_BANDS]; /* frequency vector for time-frequency transform, in Hz */
-    
+     
     /* our codec configuration */
+    CODEC_STATUS codecStatus;
+    float progressBar0_1;
+    char* progressBarText;
     codecPars* pars;
     
     /* internal variables */
+    PROC_STATUS procStatus;
     float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS]; 
     int new_order; /* new decoding order */
-    int new_nSH; /* if new_nSH != nSH, afSTFT is reinitialised */
     int nSH; /* number of spherical harmonic signals */
     
-    /* flags */
-    int reInitCodec; /* 0: no init required, 1: init required, 2: init in progress */
-    int reInitTFT; /* 0: no init required, 1: init required, 2: init in progress */
+    /* flags */ 
     int recalc_M_rotFLAG; /* 0: no init required, 1: init required */
     
     /* user parameters */
@@ -143,28 +161,6 @@ typedef struct _ambi_bin
 /* ========================================================================== */
 /*                             Internal Functions                             */
 /* ========================================================================== */
-
-/*
- * ambi_bin_initCodec
- * ------------------
- * Intialises the codec variables, based on current global/user parameters
- * Note: call "ambi_bin_initTFT" (if needed) before calling this function
- *
- * Input Arguments:
- *     hAmbi - ambi_bin handle
- */
-void ambi_bin_initCodec(void* const hAmbi);
-
-/*
- * ambi_bin_initTFT
- * ----------------
- * Initialise the filterbank used by ambi_bin.
- * Note: Call this function before ambi_bin_initCodec
- *
- * Input Arguments:
- *     hAmbi - ambi_bin handle
- */
-void ambi_bin_initTFT(void* const hAmbi);
     
     
 #ifdef __cplusplus

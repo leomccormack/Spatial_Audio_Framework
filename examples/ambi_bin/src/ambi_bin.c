@@ -57,7 +57,7 @@ void ambi_bin_create
     pData->useRollPitchYawFlag = 0;
     pData->method = DECODING_METHOD_MAGLS;
     pData->order = pData->new_order = 1;
-    pData->nSH = pData->new_nSH = (pData->order+1)*(pData->order+1);
+    pData->nSH =  (pData->order+1)*(pData->order+1);  
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
@@ -74,6 +74,9 @@ void ambi_bin_create
     }
 
     /* codec data */
+    pData->progressBar0_1 = 0.0f;
+    pData->progressBarText = malloc1d(AMBI_BIN_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+    strcpy(pData->progressBarText,"HOSIRR");
     pData->pars = (codecPars*)malloc1d(sizeof(codecPars));
     codecPars* pars = pData->pars; 
     pars->sofa_filepath = NULL;
@@ -83,8 +86,8 @@ void ambi_bin_create
     pars->hrtf_fb = NULL;
     
     /* flags */
-    pData->reInitCodec = 1;
-    pData->reInitTFT = 1;
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     pData->recalc_M_rotFLAG = 1;
 }
 
@@ -118,6 +121,7 @@ void ambi_bin_destroy
         free1d((void**)&(pars->hrirs));
         free1d((void**)&(pars->hrir_dirs_deg));
         free(pars);
+        free(pData->progressBarText);
         free(pData);
         pData = NULL;
     }
@@ -139,14 +143,133 @@ void ambi_bin_init
             pData->freqVector[band] =  (float)__afCenterFreq44100[band];
         else /* Assume 48kHz */
             pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
-    } 
-
-    /* reinitialise if needed */
-    ambi_bin_checkReInit(hAmbi);
+    }
     
+    /* reinitialise codec if needed */
+    if (pData->codecStatus == CODEC_STATUS_NOT_INITIALISED)
+        ambi_bin_initCodec(hAmbi);
+ 
     /* default starting values */
     memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
     pData->recalc_M_rotFLAG = 1;
+}
+
+void ambi_bin_initCodec
+(
+    void* const hAmbi
+)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    codecPars* pars = pData->pars;
+    int i, j, nSH, order, band;
+    
+    if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
+        return; /* re-init not required */
+    if (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but need to wait for processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING;
+        ambi_bin_initCodec(hAmbi);
+    }
+    
+    /* for progress bar */
+    pData->codecStatus = CODEC_STATUS_INITIALISING;
+    strcpy(pData->progressBarText,"Preparing HRIRs");
+    pData->progressBar0_1 = 0.0f;
+    
+    /* (Re)Initialise afSTFT */
+    order = pData->new_order;
+    nSH = (order+1)*(order+1);
+    if(pData->hSTFT==NULL)
+        afSTFTinit(&(pData->hSTFT), HOP_SIZE, nSH, NUM_EARS, 0, 1);
+    else if(pData->nSH != nSH) {/* Or change the number of channels */
+        afSTFTchannelChange(pData->hSTFT, nSH, NUM_EARS);
+        afSTFTclearBuffers(pData->hSTFT);
+    }
+    pData->nSH = nSH;
+    
+    /* load sofa file or default hrir data */
+    strcpy(pData->progressBarText,"Preparing HRIRs");
+    pData->progressBar0_1 = 0.15f;
+    if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
+        loadSofaFile(pars->sofa_filepath,
+                     &(pars->hrirs),
+                     &(pars->hrir_dirs_deg),
+                     &(pars->N_hrir_dirs),
+                     &(pars->hrir_len),
+                     &(pars->hrir_fs));
+    }
+    else{
+        loadSofaFile(NULL, /* setting path to NULL loads default HRIR data */
+                     &(pars->hrirs),
+                     &(pars->hrir_dirs_deg),
+                     &(pars->N_hrir_dirs),
+                     &(pars->hrir_len),
+                     &(pars->hrir_fs));
+    }
+    
+    /* estimate the ITDs for each HRIR */
+    pData->progressBar0_1 = 0.3f;
+    pars->itds_s = realloc1d(pars->itds_s, pars->N_hrir_dirs*sizeof(float));
+    estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pars->itds_s);
+    
+    /* convert hrirs to filterbank coefficients */
+    pData->progressBar0_1 = 0.9f;
+    pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
+    HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrtf_fb);
+    diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
+    
+    /* get new decoder */
+    strcpy(pData->progressBarText,"Computing Decoder");
+    pData->progressBar0_1 = 0.95f;
+    float_complex* decMtx;
+    decMtx = calloc1d(HYBRID_BANDS*NUM_EARS*nSH, sizeof(float_complex));
+    switch(pData->method){
+        default:
+        case DECODING_METHOD_LS:
+            getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
+                                      BINAURAL_DECODER_LS, order, pData->freqVector, pars->itds_s, NULL,
+                                      pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
+            break;
+        case DECODING_METHOD_LSDIFFEQ:
+            getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
+                                      BINAURAL_DECODER_LSDIFFEQ, order, pData->freqVector, pars->itds_s, NULL,
+                                      pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
+            break;
+        case DECODING_METHOD_SPR:
+            getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
+                                      BINAURAL_DECODER_SPR, order, pData->freqVector, pars->itds_s, NULL,
+                                      pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
+            break;
+        case DECODING_METHOD_TA:
+            getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
+                                      BINAURAL_DECODER_TA, order, pData->freqVector, pars->itds_s, NULL,
+                                      pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
+            break;
+        case DECODING_METHOD_MAGLS:
+            getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
+                                      BINAURAL_DECODER_MAGLS, order, pData->freqVector, pars->itds_s, NULL,
+                                      pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
+            break;
+    }
+    
+    /* Apply Phase Warping */
+    if(pData->enablePhaseWarping){
+        // COMING SOON
+    }
+    
+    /* replace current decoder */
+    memset(pars->M_dec, 0, HYBRID_BANDS*NUM_EARS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
+    for(band=0; band<HYBRID_BANDS; band++)
+        for(i=0; i<NUM_EARS; i++)
+            for(j=0; j<nSH; j++)
+                pars->M_dec[band][i][j] = decMtx[band*2*nSH + i*nSH + j];
+    free(decMtx);
+    
+    /* done! */
+    strcpy(pData->progressBarText,"Done!");
+    pData->progressBar0_1 = 1.0f;
+    pData->codecStatus = CODEC_STATUS_INITIALISED;
+    pData->order = order;
 }
 
 void ambi_bin_process
@@ -165,7 +288,6 @@ void ambi_bin_process
     int n, t, ch, i, j, band;
     int o[MAX_SH_ORDER+2];
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
-    //float postGain;
     float Rxyz[3][3];
     float* M_rot_tmp;
     
@@ -173,20 +295,11 @@ void ambi_bin_process
     int order, nSH, enableRot;
     NORM_TYPES norm;
     CH_ORDER chOrdering;
- 
-    /* reinitialise if needed */
-#ifdef __APPLE__
-    ambi_bin_checkReInit(hAmbi);
-#else
-    if (pData->reInitTFT == 1) {
-        pData->reInitTFT = 2;
-        ambi_bin_initTFT(hAmbi); /* always init before codec */
-        pData->reInitTFT = 0;
-    }
-#endif
-
+  
     /* decode audio to loudspeakers or headphones */
-    if ( (nSamples == FRAME_SIZE) && (pData->reInitCodec==0) && (pData->reInitTFT==0) ) {
+    if ( (nSamples == FRAME_SIZE) && (pData->codecStatus == CODEC_STATUS_INITIALISED) ){
+        pData->procStatus = PROC_STATUS_ONGOING;
+        
         /* copy user parameters to local variables */
         for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
         norm = pData->norm;
@@ -302,6 +415,8 @@ void ambi_bin_process
     else
         for (ch=0; ch < nOutputs; ch++)
             memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
+    
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
 
 
@@ -310,25 +425,7 @@ void ambi_bin_process
 void ambi_bin_refreshParams(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    pData->reInitCodec = 1;
-    pData->reInitTFT = 1;
-}
-
-void ambi_bin_checkReInit(void* const hAmbi)
-{
-    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-
-    /* reinitialise if needed */
-    if (pData->reInitTFT == 1) {
-        pData->reInitTFT = 2;
-        ambi_bin_initTFT(hAmbi); /* always init before codec */
-        pData->reInitTFT = 0;
-    }
-    if (pData->reInitCodec == 1) {
-        pData->reInitCodec = 2;
-        ambi_bin_initCodec(hAmbi);
-        pData->reInitCodec = 0;
-    }
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
 void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState)
@@ -337,7 +434,7 @@ void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState)
     
     if((!pData->useDefaultHRIRsFLAG) && (newState)){
         pData->useDefaultHRIRsFLAG = newState;
-        pData->reInitCodec = 1;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     }
 }
 
@@ -349,7 +446,7 @@ void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path)
     pars->sofa_filepath = malloc1d(strlen(path) + 1);
     strcpy(pars->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
-    pData->reInitCodec = 1;
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
 void ambi_bin_setInputOrderPreset(void* const hAmbi, INPUT_ORDERS newOrder)
@@ -357,10 +454,8 @@ void ambi_bin_setInputOrderPreset(void* const hAmbi, INPUT_ORDERS newOrder)
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     if(pData->order != (int)newOrder){
         pData->new_order = (int)newOrder;
-        pData->new_nSH = (pData->new_order+1)*(pData->new_order+1);
-        if(pData->new_nSH!=pData->nSH)
-            pData->reInitTFT = 1;
-        pData->reInitCodec = 1;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        
         /* FUMA only supports 1st order */
         if(pData->new_order!=INPUT_ORDER_FIRST && pData->chOrdering == CH_FUMA)
             pData->chOrdering = CH_ACN;
@@ -373,7 +468,7 @@ void ambi_bin_setDecodingMethod(void* const hAmbi, DECODING_METHODS newMethod)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     pData->method = newMethod;
-    pData->reInitCodec = 1;
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
 void ambi_bin_setChOrder(void* const hAmbi, int newOrder)
@@ -395,7 +490,7 @@ void ambi_bin_setEnableMaxRE(void* const hAmbi, int newState)
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     if(pData->enableMaxRE != newState){
         pData->enableMaxRE = newState;
-        pData->reInitCodec=1;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     }
 }
 
@@ -404,7 +499,7 @@ void ambi_bin_setEnableDiffuseMatching(void* const hAmbi, int newState)
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     if(pData->enableDiffuseMatching != newState){
         pData->enableDiffuseMatching = newState;
-        pData->reInitCodec=1;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     }
 }
 
@@ -413,7 +508,7 @@ void ambi_bin_setEnablePhaseWarping(void* const hAmbi, int newState)
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     if(pData->enablePhaseWarping != newState){
         pData->enablePhaseWarping = newState;
-        pData->reInitCodec=1;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     }
 }
 
@@ -477,7 +572,26 @@ void ambi_bin_setRPYflag(void* const hAmbi, int newState)
     pData->useRollPitchYawFlag = newState;
 }
 
+
 /* Get Functions */
+
+CODEC_STATUS ambi_bin_getCodecStatus(void* const hAmbi)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    return pData->codecStatus;
+}
+
+float ambi_bin_getProgressBar0_1(void* const hAmbi)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    return pData->progressBar0_1;
+}
+
+void ambi_bin_getProgressBarText(void* const hAmbi, char* text)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    memcpy(text, pData->progressBarText, AMBI_BIN_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+}
 
 int ambi_bin_getUseDefaultHRIRsflag(void* const hAmbi)
 {

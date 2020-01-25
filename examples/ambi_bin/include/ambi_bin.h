@@ -128,6 +128,28 @@ typedef enum _NORM_TYPES{
     
 }NORM_TYPES;
     
+/*
+ * Enum: CODEC_STATUS
+ * ------------------
+ * Current status of the codec.
+ *
+ * Options:
+ *     CODEC_STATUS_INITIALISED     - Codec is initialised and ready to process
+ *                                    input audio.
+ *     CODEC_STATUS_NOT_INITIALISED - Codec has not yet been initialised, or
+ *                                    the codec configuration has changed. Input
+ *                                    audio should not be processed.
+ *     CODEC_STATUS_INITIALISING    - Codec is currently being initialised,
+ *                                    input audio should not be processed.
+ */
+typedef enum _CODEC_STATUS{
+    CODEC_STATUS_INITIALISED = 0,
+    CODEC_STATUS_NOT_INITIALISED,
+    CODEC_STATUS_INITIALISING
+}CODEC_STATUS;
+     
+#define AMBI_BIN_PROGRESSBARTEXT_CHAR_LENGTH 256
+    
     
 /* ========================================================================== */
 /*                               Main Functions                               */
@@ -156,7 +178,7 @@ void ambi_bin_destroy(void** const phAmbi);
 /*
  * Function: ambi_bin_init
  * -----------------------
- * Initialises an instance of ambi_bin with default settings
+ * Initialises ambi_bin with default settings, and samplerate
  *
  * Input Arguments:
  *     hAmbi      - ambi_bin handle
@@ -164,6 +186,28 @@ void ambi_bin_destroy(void** const phAmbi);
  */
 void ambi_bin_init(void* const hAmbi,
                    int samplerate);
+
+/*
+ * ambi_bin_initCodec
+ * ------------------
+ * Intialises the codec variables, based on current global/user parameters
+ * Note: call "ambi_bin_initTFT" (if needed) before calling this function
+ *
+ * Input Arguments:
+ *     hAmbi - ambi_bin handle
+ */
+void ambi_bin_initCodec(void* const hAmbi);
+
+///*
+// * ambi_bin_initTFT
+// * ----------------
+// * Initialise the filterbank used by ambi_bin.
+// * Note: Call this function before ambi_bin_initCodec
+// *
+// * Input Arguments:
+// *     hAmbi - ambi_bin handle
+// */
+//void ambi_bin_initTFT(void* const hAmbi);
 
 /*
  * Function: ambi_bin_process
@@ -196,24 +240,13 @@ void ambi_bin_process(void* const hAmbi,
 /*
  * Function: ambi_bin_refreshParams
  * --------------------------------
- * Sets all intialisation flags to 1. i.e. re-initialise all settings/variables
+ * Sets intialisation flags to 1. i.e. re-initialise all settings/variables
  * as ambi_bin is currently configured, at next available opportunity.
  *
  * Input Arguments:
  *     hAmbi - ambi_bin handle
  */
 void ambi_bin_refreshParams(void* const hAmbi);
-
-/*
- * Function: ambi_bin_checkReInit
- * ------------------------------
- * Check if any reInit Flags are active, and reinitialise if they are.
- * Note: Only call when playback has stopped.
- *
- * Input Arguments:
- *     hAmbi - ambi_bin handle
- */
-void ambi_bin_checkReInit(void* const hAmbi);
 
 /*
  * Function: ambi_bin_setUseDefaultHRIRsflag
@@ -422,6 +455,46 @@ void ambi_bin_setRPYflag(void* const hAmbi, int newState);
 /* ========================================================================== */
 
 /*
+ * Function: ambi_bin_getCodecStatus
+ * ---------------------------------
+ * Returns current codec status.
+ *
+ * Input Arguments:
+ *     hAmbi - ambi_bin handle
+ * Returns:
+ *     codec status (see 'CODEC_STATUS' enum)
+ */
+CODEC_STATUS ambi_bin_getCodecStatus(void* const hAmbi);
+    
+/*
+ * Function: ambi_bin_getProgressBar0_1
+ * ------------------------------------
+ * (Optional) Returns current intialisation/processing progress, between 0..1
+ * 0: intialisation/processing has started
+ * 1: intialisation/processing has ended
+ *
+ * Input Arguments:
+ *     hAmbi - ambi_bin handle
+ * Returns:
+ *     current progress, 0..1
+ */
+float ambi_bin_getProgressBar0_1(void* const hAmbi);
+    
+/*
+ * Function: ambi_bin_getProgressBarText
+ * -------------------------------------
+ * (Optional) Returns current intialisation/processing progress text
+ * Note: "text" string should be (at least) of length:
+ *     AMBI_BIN_PROGRESSBARTEXT_CHAR_LENGTH
+ *
+ * Input Arguments:
+ *     hAmbi - ambi_bin handle
+ * Output Arguments:
+ *     text  - process bar text; AMBI_BIN_PROGRESSBARTEXT_CHAR_LENGTH x 1
+ */
+void ambi_bin_getProgressBarText(void* const hAmbi, char* text);
+    
+/*
  * Function: ambi_bin_getUseDefaultHRIRsflag
  * -----------------------------------------
  * Returns the value of a flag used to dictate whether the default HRIRs in the
@@ -436,7 +509,6 @@ void ambi_bin_setRPYflag(void* const hAmbi, int newState);
  *     0: use custom HRIR set, 1: use default HRIR set
  */
 int ambi_bin_getUseDefaultHRIRsflag(void* const hAmbi);
-
 
 /*
  * Function: ambi_bin_getInputOrderPreset
