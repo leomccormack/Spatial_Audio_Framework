@@ -76,7 +76,7 @@ void ambi_bin_create
     /* codec data */
     pData->progressBar0_1 = 0.0f;
     pData->progressBarText = malloc1d(AMBI_BIN_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
-    strcpy(pData->progressBarText,"HOSIRR");
+    strcpy(pData->progressBarText,"");
     pData->pars = (codecPars*)malloc1d(sizeof(codecPars));
     codecPars* pars = pData->pars; 
     pars->sofa_filepath = NULL;

@@ -78,7 +78,7 @@ void ambi_dec_create
     /* codec data */
     pData->progressBar0_1 = 0.0f;
     pData->progressBarText = malloc1d(AMBI_DEC_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
-    strcpy(pData->progressBarText,"HOSIRR");
+    strcpy(pData->progressBarText,"");
     pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     pData->pars = (codecPars*)malloc1d(sizeof(codecPars));
     codecPars* pars = pData->pars;
@@ -151,6 +151,7 @@ void ambi_dec_destroy
                 free1d((void**)&(pars->M_dec_cmplx_maxrE[i][j]));
             }
         }
+        free(pData->progressBarText);
         free(pData);
         pData = NULL;
     }

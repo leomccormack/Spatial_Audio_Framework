@@ -67,15 +67,18 @@ void array2sh_initTFT
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    int new_nSH, nSH;
     
+    new_nSH = (pData->new_order+1)*(pData->new_order+1);
+    nSH = (pData->order+1)*(pData->order+1);
     if(pData->hSTFT==NULL)
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, arraySpecs->newQ, pData->new_nSH, 0, 1);
-    else
-        afSTFTchannelChange(pData->hSTFT, arraySpecs->newQ, pData->new_nSH);
-
+        afSTFTinit(&(pData->hSTFT), HOP_SIZE, arraySpecs->newQ, new_nSH, 0, 1);
+    else if(arraySpecs->newQ != arraySpecs->Q || nSH != new_nSH){
+        afSTFTchannelChange(pData->hSTFT, arraySpecs->newQ, new_nSH);
+        afSTFTclearBuffers(pData->hSTFT); 
+        pData->reinitSHTmatrixFLAG = 1; /* filters will need to be updated too */
+    }
     arraySpecs->Q = arraySpecs->newQ;
-    pData->nSH = pData->new_nSH;
-    pData->reinitSHTmatrixFLAG = 1; /* filters need to be updated too */
 }
 
 void array2sh_calculate_sht_matrix
@@ -244,18 +247,7 @@ void array2sh_calculate_sht_matrix
                 H[band][n] = H[band][n]/normH;
         }
                 
-        /* compute inverse radial response */
-#if 0
-        int maxN;
-        double_complex* hn2prime_kr;
-        hn2prime_kr = malloc1d((HYBRID_BANDS)*(order+1)*sizeof(double_complex));
-        maxN = 1e8;
-        hankel_hn2(order, kr, HYBRID_BANDS, &maxN, NULL, hn2prime_kr);
-        for(band=0; band<HYBRID_BANDS-1; band++)
-            for (n=0; n<order+1; n++)
-                Hs[band][n] = crmul(ccmul(hn2prime_kr[band*(order+1)+n], cpow(cmplx(0.0, 1.0), -(double)n+1.0)), pow(kr[band], 2.0));
-        free(hn2prime_kr);
-#else
+        /* compute inverse radial response */ 
         free(pData->bN);
         pData->bN = malloc1d((HYBRID_BANDS)*(order+1)*sizeof(double_complex));
         switch(arraySpecs->arrayType){
@@ -294,7 +286,6 @@ void array2sh_calculate_sht_matrix
                 }
                 break;
         }
-#endif
         
         /* direct inverse (only required for GUI) */
         for(band=0; band<HYBRID_BANDS; band++)
@@ -366,12 +357,9 @@ void array2sh_calculate_sht_matrix
     }
      
     pData->order = order;
-    pData->nSH = nSH;
     
     if(pData->enableDiffEQpastAliasing)
         array2sh_apply_diff_EQ(hA2sh);
-    
-    pData->currentEvalIsValid = 0;
     
     free(Y_mic);
     free(pinv_Y_mic);
@@ -387,14 +375,16 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
     float f_max, kR_max, f_alias, f_f_alias;
     double_complex* dM_diffcoh_s;
     const double_complex calpha = cmplx(1.0, 0.0); const double_complex cbeta  = cmplx(0.0, 0.0);
-    double kr[HYBRID_BANDS];
-    double kR[HYBRID_BANDS];
+    double kr[HYBRID_BANDS], kR[HYBRID_BANDS];
+    double_complex L_diff_fal[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
+    double_complex L_diff[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
+    double_complex E_diff[MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
+    double_complex W_diffEQ[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
+    double_complex W_tmp[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     double* dM_diffcoh; 
     
     if(arraySpecs->arrayType==ARRAY_CYLINDRICAL)
         return; /* unsupported */
-    
-    //array2sh_calculate_sht_matrix(hA2sh);
     
     /* prep */
     nSH = (pData->order+1)*(pData->order+1);
@@ -448,13 +438,6 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
         }
     }
     
-#if 1
-    double_complex L_diff_fal[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
-    double_complex L_diff[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
-    double_complex E_diff[MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
-    double_complex W_diffEQ[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
-    double_complex W_tmp[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
-    
     /* baseline */
     for(i=0; i<arraySpecs->Q; i++)
         for(j=0; j<arraySpecs->Q; j++)
@@ -500,37 +483,8 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
             for(j=0; j<arraySpecs->Q; j++)
                 pData->W[band][i][j] = cmplxf((float)creal(W_diffEQ[i][j]), (float)cimag(W_diffEQ[i][j]));
     }
-#else /* old approach, doesn't work for Zotter-style encoder, so we switched to the above ^ */
-    float_complex Ws[MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
-    float_complex W_diffEQ[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
-    float_complex Ws_M_diffcoh[MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
     
-    /* apply diffuse equalisation above aliasing */
-    for(band = MAX(idxf_alias,0); band<HYBRID_BANDS; band++){
-        memcpy(Ws, pData->W[band], MAX_NUM_SH_SIGNALS*MAX_NUM_SENSORS*sizeof(float_complex));
-        for(i=0; i<arraySpecs->Q; i++)
-            for(j=0; j<arraySpecs->Q; j++)
-                M_diffcoh[i*(arraySpecs->Q)+j] = cmplxf( (float)dM_diffcoh[i*(arraySpecs->Q)* (HYBRID_BANDS) + j*(HYBRID_BANDS) + (band-1)], 0.0f);
-        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, (arraySpecs->Q), (arraySpecs->Q), &calpha,
-                    Ws, MAX_NUM_SENSORS,
-                    M_diffcoh, (arraySpecs->Q), &cbeta,
-                    Ws_M_diffcoh, MAX_NUM_SENSORS);
-        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, (arraySpecs->Q), &calpha,
-                    Ws_M_diffcoh, MAX_NUM_SENSORS,
-                    Ws, MAX_NUM_SENSORS, &cbeta,
-                    W_diffEQ, MAX_NUM_SH_SIGNALS);
-        for(i=0; i<nSH; i++)
-            for(j=0; j<nSH; j++)
-                W_diffEQ[i][j] =  i==j ? ccdivf(cmplxf(1.0f,0.0f), csqrtf(ccdivf(W_diffEQ[i][j], 4.0f*M_PI))) : cmplxf(0.0f,0.0f);
-        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, (arraySpecs->Q), nSH, &calpha,
-                    W_diffEQ, MAX_NUM_SH_SIGNALS,
-                    Ws, MAX_NUM_SENSORS, &cbeta,
-                    pData->W[band], MAX_NUM_SENSORS);
-    }
-#endif
-    
-    //pData->recalcEvalFLAG = 1;
-    pData->currentEvalIsValid = 0;
+    pData->evalStatus = EVAL_STATUS_NOT_EVALUATED;
     
     free(dM_diffcoh);
     free(dM_diffcoh_s);
@@ -547,7 +501,6 @@ void array2sh_calculate_mag_curves(void* const hA2sh)
             pData->bN_modal_dB[band][n] = 20.0f * (float)log10(cabs(pData->bN_modal[band][n]));
         }
     }
-    pData->evalReady = 1;
 }
 
 void array2sh_evaluateSHTfilters(void* hA2sh)
@@ -559,9 +512,11 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
     double kR[HYBRID_BANDS];
     float* Y_grid_real;
     float_complex* Y_grid, *H_array, *Wshort;
-    
-    pData->evalReady = 0;
+     
     assert(pData->W != NULL);
+    
+    strcpy(pData->progressBarText,"Simulating microphone array");
+    pData->progressBar0_1 = 0.35f;
     
     /* simulate the current array by firing 812 plane-waves around the surface of a theoretical version of the array
      * and ascertaining the transfer function for each */
@@ -619,6 +574,9 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
             break;
     }
     
+    strcpy(pData->progressBarText,"Evaluating encoding performance");
+    pData->progressBar0_1 = 0.8f;
+    
     /* generate ideal (real) spherical harmonics to compare with */
     order = pData->order;
     nSH = (order+1)*(order+1);
@@ -635,9 +593,6 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
             for(j=0; j<(arraySpecs->Q); j++)
                 Wshort[band*nSH*(arraySpecs->Q) + i*(arraySpecs->Q) + j] = pData->W[band][i][j];
     evaluateSHTfilters(order, Wshort, arraySpecs->Q, HYBRID_BANDS, H_array, 812, Y_grid, pData->cSH, pData->lSH);
-
-    pData->evalReady = 1;
-    pData->currentEvalIsValid = 1;
 
     free(Y_grid_real);
     free(Y_grid);

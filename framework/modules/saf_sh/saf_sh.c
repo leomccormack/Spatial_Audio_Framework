@@ -245,6 +245,12 @@ void unnorm_legendreP_recur
     int i, m, k, kk;
     float x2, one_min_x2, dfact_k;
     
+    if(n==0){
+        for(i=0; i<lenX; i++)
+            Pnm[i] = 1.0f;
+        return;
+    }
+    
     for(i=0; i<lenX; i++){
         x2 = (x[i])*(x[i]);
         switch(n) {
@@ -281,7 +287,6 @@ void unnorm_legendreP_recur
         }
     }
 }
-
 
 void getSHreal
 (
@@ -2102,9 +2107,8 @@ void sphDiffCohMtxTheory
 {
     int i, j, k, n;
     float cosangle;
-    float* sensor_dirs_xyz;
-    double dcosangle;
-    double *ppm, *b_N2, *Pn;
+    float* sensor_dirs_xyz, *ppm, *ppm_z1, *ppm_z2;
+    double* b_N2, *Pn;
     double_complex* b_N;
     
     /* sph->cart */
@@ -2132,7 +2136,9 @@ void sphDiffCohMtxTheory
         b_N2[i] = pow(cabs(ccdiv(b_N[i], cmplx(4.0*M_PI, 0.0))), 2.0);
     
     /* determine theoretical diffuse-coherence matrix for sensor array */
-    ppm = malloc1d((order+1)*sizeof(double));
+    ppm = malloc1d((order+1)*sizeof(float));
+    ppm_z1 = malloc1d((order+1)*sizeof(float));
+    ppm_z2 = malloc1d((order+1)*sizeof(float));
     Pn = malloc1d((order+1)*sizeof(double));
     for(i=0; i<N_sensors; i++){
         for(j=i; j<N_sensors; j++){
@@ -2141,15 +2147,16 @@ void sphDiffCohMtxTheory
                 cosangle += sensor_dirs_xyz[j*3+k] * sensor_dirs_xyz[i*3+k];
             cosangle = cosangle>1.0f ? 1.0f : (cosangle<-1.0f ? -1.0f : cosangle);
             for(n=0; n<order+1; n++){
-                dcosangle = (double)cosangle;
-                unnorm_legendreP(n, &dcosangle, 1, ppm);
-                Pn[n] =  (2.0*(double)n+1.0) * 4.0f*M_PI * ppm[0];
+                unnorm_legendreP_recur(n, &cosangle, 1, ppm_z1, ppm_z2, ppm);  
+                Pn[n] =  (2.0*(double)n+1.0) * 4.0f*M_PI * (double)ppm[0];
+                memcpy(ppm_z2, ppm_z1, (order+1)*sizeof(float));
+                memcpy(ppm_z1, ppm, (order+1)*sizeof(float));
             }
             cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBands, 1, order+1, 1.0,
                         b_N2, order+1,
                         Pn, 1, 0.0,
                         &M_diffcoh[j*N_sensors*nBands + i*nBands], 1);
-            
+
             memcpy(&M_diffcoh[i*N_sensors*nBands + j*nBands], &M_diffcoh[j*N_sensors*nBands + i*nBands], nBands*sizeof(double));
         }
     }
@@ -2158,6 +2165,8 @@ void sphDiffCohMtxTheory
     free(b_N2);
     free(sensor_dirs_xyz);
     free(ppm);
+    free(ppm_z1);
+    free(ppm_z2);
     free(Pn);
 }
 

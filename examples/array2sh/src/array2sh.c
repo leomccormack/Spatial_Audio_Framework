@@ -58,8 +58,7 @@ void array2sh_create
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->c = 343.0f;
-    pData->gain_dB = 0.0f; /* post-gain */
-    pData->maxFreq = 20e3f;
+    pData->gain_dB = 0.0f; /* post-gain */ 
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
     array2sh_initArray(arraySpecs, MICROPHONE_ARRAY_PRESET_DEFAULT, &(pData->order), 1);
     pData->enableDiffEQpastAliasing = 1;
@@ -78,14 +77,18 @@ void array2sh_create
     }
     pData->tempHopFrameTD_in = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));
     pData->tempHopFrameTD_out = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_SENSORS), HOP_SIZE, sizeof(float));
-    pData->reinitTFTFLAG = 1;
+    //pData->reinitTFTFLAG = 1;
     
     /* internal */
+    pData->progressBar0_1 = 0.0f;
+    pData->progressBarText = malloc1d(ARRAY2SH_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+    strcpy(pData->progressBarText,"");
+    pData->evalStatus = EVAL_STATUS_NOT_EVALUATED;
+    pData->evalRequestedFLAG = 0;
     pData->reinitSHTmatrixFLAG = 1;
     pData->new_order = pData->order;
-    pData->nSH = pData->new_nSH = (pData->order+1)*(pData->order+1);
+    //pData->nSH = pData->new_nSH = (pData->order+1)*(pData->order+1);
     pData->bN = NULL;
-    pData->evalReady = 0;
     
     /* display related stuff */
     pData->bN_modal_dB = (float**)malloc2d(HYBRID_BANDS, MAX_SH_ORDER + 1, sizeof(float));
@@ -93,7 +96,7 @@ void array2sh_create
     pData->cSH = (float*)calloc1d((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
     pData->lSH = (float*)calloc1d((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
     
-    pData->recalcEvalFLAG = 1;
+    //pData->recalcEvalFLAG = 1;
 }
 
 void array2sh_destroy
@@ -126,6 +129,8 @@ void array2sh_destroy
         free((void**)pData->bN_modal_dB);
         free((void**)pData->bN_inv_dB);
         
+        free(pData->progressBarText);
+        
         free(pData);
         pData = NULL;
     }
@@ -148,9 +153,30 @@ void array2sh_init
             pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
     } 
     pData->freqVector[0] = pData->freqVector[1]/4.0f; /* avoids NaNs at DC */
+}
 
-    /* reinitialise if needed */
-    array2sh_checkReInit(hA2sh);
+void array2sh_evalEncoder
+(
+    void* const hA2sh
+)
+{
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    
+    if (pData->evalStatus != EVAL_STATUS_NOT_EVALUATED)
+        return; /* eval not required */
+    
+    /* for progress bar */
+    pData->evalStatus = EVAL_STATUS_EVALUATING;
+    strcpy(pData->progressBarText,"Initialising evaluation");
+    pData->progressBar0_1 = 0.0f;
+    
+    /* Evaluate Encoder */
+    array2sh_evaluateSHTfilters(hA2sh);
+    
+    /* done! */
+    strcpy(pData->progressBarText,"Done!");
+    pData->progressBar0_1 = 1.0f; 
+    pData->evalStatus = EVAL_STATUS_RECENTLY_EVALUATED;
 }
 
 void array2sh_process
@@ -171,37 +197,30 @@ void array2sh_process
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
     CH_ORDER chOrdering;
     NORM_TYPES norm;
-    float gain_lin, maxFreq;
+    float gain_lin;
     
-    /* reinitialise if needed */
-#ifdef __APPLE__
-    array2sh_checkReInit(hA2sh);
-#else
-    if (pData->reinitTFTFLAG==1) {
-        pData->reinitTFTFLAG = 2;
-        array2sh_initTFT(hA2sh);
-        pData->reinitTFTFLAG=0;
-    }
-    if (pData->reinitSHTmatrixFLAG==1) {
-        pData->reinitSHTmatrixFLAG = 2;
-        /* compute encoding matrix */
-        array2sh_calculate_sht_matrix(hA2sh);
-        /* calculate magnitude response curves */
-        array2sh_calculate_mag_curves(hA2sh);
+    /* reinit TFT if needed */
+    array2sh_initTFT(hA2sh);
+    
+    /* compute encoding matrix if needed */
+    if (pData->reinitSHTmatrixFLAG) {
+        array2sh_calculate_sht_matrix(hA2sh); /* compute encoding matrix */
+        array2sh_calculate_mag_curves(hA2sh); /* calculate magnitude response curves */
         pData->reinitSHTmatrixFLAG = 0;
     }
-#endif
-    
-    if ((nSamples == FRAME_SIZE) && !(pData->recalcEvalFLAG) && !(pData->reinitSHTmatrixFLAG) && !(pData->reinitTFTFLAG)) {
+
+    /* processing loop */
+    if ((nSamples == FRAME_SIZE) && (pData->reinitSHTmatrixFLAG==0) ) {
+        pData->procStatus = PROC_STATUS_ONGOING;
+        
         /* prep */
         for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
         chOrdering = pData->chOrdering;
         norm = pData->norm;
         gain_lin = powf(10.0f, pData->gain_dB/20.0f);
-        maxFreq = pData->maxFreq;
         Q = arraySpecs->Q;
         order = pData->order;
-        nSH = pData->nSH;
+        nSH = (order+1)*(order+1);
         
         /* Load time-domain data */
         for(i=0; i < nInputs; i++)
@@ -234,17 +253,9 @@ void array2sh_process
         /* inverse-TFT */
         for(t = 0; t < TIME_SLOTS; t++) {
             for(band = 0; band < HYBRID_BANDS; band++) {
-                if(pData->freqVector[band] < maxFreq){
-                    for (ch = 0; ch < nSH; ch++) {
-                        pData->STFTOutputFrameTF[ch].re[band] = gain_lin*crealf(pData->SHframeTF[band][ch][t]);
-                        pData->STFTOutputFrameTF[ch].im[band] = gain_lin*cimagf(pData->SHframeTF[band][ch][t]);
-                    }
-                }
-                else{
-                    for (ch = 0; ch < nSH; ch++) {
-                        pData->STFTOutputFrameTF[ch].re[band] = 0.0f;
-                        pData->STFTOutputFrameTF[ch].im[band] = 0.0f;
-                    }
+                for (ch = 0; ch < nSH; ch++) {
+                    pData->STFTOutputFrameTF[ch].re[band] = gain_lin*crealf(pData->SHframeTF[band][ch][t]);
+                    pData->STFTOutputFrameTF[ch].im[band] = gain_lin*cimagf(pData->SHframeTF[band][ch][t]);
                 }
             }
             afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD_out);
@@ -296,6 +307,8 @@ void array2sh_process
         for (ch=0; ch < nOutputs; ch++)
             memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
     }
+    
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
 
 /* Set Functions */
@@ -303,53 +316,36 @@ void array2sh_process
 void array2sh_refreshSettings(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->reinitTFTFLAG = 1;
     pData->reinitSHTmatrixFLAG = 1;
-}
-
-void array2sh_checkReInit(void* const hA2sh)
-{
-    array2sh_data *pData = (array2sh_data*)(hA2sh);
-    /* reinitialise if needed */
-    if (pData->reinitTFTFLAG == 1) {
-        pData->reinitTFTFLAG = 2;
-        array2sh_initTFT(hA2sh);
-        pData->reinitTFTFLAG = 0;
-    }
-    if (pData->reinitSHTmatrixFLAG == 1) {
-        pData->reinitSHTmatrixFLAG = 2;
-        /* compute encoding matrix */
-        array2sh_calculate_sht_matrix(hA2sh);
-        /* calculate magnitude response curves */
-        array2sh_calculate_mag_curves(hA2sh);
-        pData->reinitSHTmatrixFLAG = 0;
-    }
-    /* Too heavy to put in main loop: */
-    if (pData->recalcEvalFLAG == 1) {
-        pData->recalcEvalFLAG = 2;
-        array2sh_evaluateSHTfilters(hA2sh);
-        pData->recalcEvalFLAG = 0;
-    }
+    pData->evalStatus = EVAL_STATUS_NOT_EVALUATED;
 }
 
 void array2sh_setEncodingOrder(void* const hA2sh, int newOrder)
 {
-    array2sh_data *pData = (array2sh_data*)(hA2sh); 
-    pData->new_order = newOrder;
-    pData->new_nSH = (newOrder+1)*(newOrder+1);
-    pData->reinitTFTFLAG = 1;
-    pData->reinitSHTmatrixFLAG = 1;
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    
+    if(pData->new_order != newOrder){
+        pData->new_order = newOrder;
+        pData->reinitSHTmatrixFLAG = 1;
+        pData->evalStatus = EVAL_STATUS_NOT_EVALUATED;
+    }
     /* FUMA only supports 1st order */
-    if(pData->order!=ENCODING_ORDER_FIRST && pData->chOrdering == CH_FUMA)
+    if(pData->new_order!=ENCODING_ORDER_FIRST && pData->chOrdering == CH_FUMA)
         pData->chOrdering = CH_ACN;
-    if(pData->order!=ENCODING_ORDER_FIRST && pData->norm == NORM_FUMA)
+    if(pData->new_order!=ENCODING_ORDER_FIRST && pData->norm == NORM_FUMA)
         pData->norm = NORM_SN3D;
 }
 
-void array2sh_evaluateFilters(void* const hA2sh)
+void array2sh_setRequestEncoderEvalFLAG(void* const hA2sh, int newState)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->recalcEvalFLAG = 1;
+    pData->evalRequestedFLAG = newState;
+}
+
+void array2sh_setEvalStatus(void* const hA2sh, EVAL_STATUS new_evalStatus)
+{
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    pData->evalStatus = new_evalStatus;
 }
 
 void array2sh_setDiffEQpastAliasing(void* const hA2sh, int newState)
@@ -358,6 +354,7 @@ void array2sh_setDiffEQpastAliasing(void* const hA2sh, int newState)
     if(pData->enableDiffEQpastAliasing != newState){
         pData->enableDiffEQpastAliasing = newState;
         pData->reinitSHTmatrixFLAG = 1;
+        pData->evalStatus = EVAL_STATUS_NOT_EVALUATED;
     }
 }
 
@@ -368,8 +365,6 @@ void array2sh_setPreset(void* const hA2sh, int preset)
     
     array2sh_initArray(arraySpecs,(MICROPHONE_ARRAY_PRESETS)preset, &(pData->new_order), 0);
     pData->c = (MICROPHONE_ARRAY_PRESETS)preset == MICROPHONE_ARRAY_PRESET_AALTO_HYDROPHONE ? 1484.0f : 343.0f;
-    pData->new_nSH = (pData->new_order+1)*(pData->new_order+1);
-    pData->reinitTFTFLAG = 1;
     pData->reinitSHTmatrixFLAG = 1;
 }
 
@@ -378,9 +373,11 @@ void array2sh_setSensorAzi_rad(void* const hA2sh, int index, float newAzi_rad)
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
     
-    arraySpecs->sensorCoords_rad[index][0] = newAzi_rad;
-    arraySpecs->sensorCoords_deg[index][0] = newAzi_rad * (180.0f/M_PI);
-    pData->reinitSHTmatrixFLAG = 1;
+    if(arraySpecs->sensorCoords_rad[index][0] != newAzi_rad){
+        arraySpecs->sensorCoords_rad[index][0] = newAzi_rad;
+        arraySpecs->sensorCoords_deg[index][0] = newAzi_rad * (180.0f/M_PI);
+        pData->reinitSHTmatrixFLAG = 1;
+    }
 }
 
 void array2sh_setSensorElev_rad(void* const hA2sh, int index, float newElev_rad)
@@ -388,9 +385,11 @@ void array2sh_setSensorElev_rad(void* const hA2sh, int index, float newElev_rad)
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
     
-    arraySpecs->sensorCoords_rad[index][1] = newElev_rad;
-    arraySpecs->sensorCoords_deg[index][1] = newElev_rad * (180.0f/M_PI);
-    pData->reinitSHTmatrixFLAG = 1;
+    if(arraySpecs->sensorCoords_rad[index][1] != newElev_rad){
+        arraySpecs->sensorCoords_rad[index][1] = newElev_rad;
+        arraySpecs->sensorCoords_deg[index][1] = newElev_rad * (180.0f/M_PI);
+        pData->reinitSHTmatrixFLAG = 1;
+    }
 }
 
 void array2sh_setSensorAzi_deg(void* const hA2sh, int index, float newAzi_deg)
@@ -399,9 +398,11 @@ void array2sh_setSensorAzi_deg(void* const hA2sh, int index, float newAzi_deg)
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
     
-    arraySpecs->sensorCoords_rad[index][0] = newAzi_deg * (M_PI/180.0f);
-    arraySpecs->sensorCoords_deg[index][0] = newAzi_deg;
-    pData->reinitSHTmatrixFLAG = 1;
+    if(arraySpecs->sensorCoords_deg[index][0] != newAzi_deg){
+        arraySpecs->sensorCoords_rad[index][0] = newAzi_deg * (M_PI/180.0f);
+        arraySpecs->sensorCoords_deg[index][0] = newAzi_deg;
+        pData->reinitSHTmatrixFLAG = 1;
+    }
 }
 
 void array2sh_setSensorElev_deg(void* const hA2sh, int index, float newElev_deg)
@@ -409,48 +410,66 @@ void array2sh_setSensorElev_deg(void* const hA2sh, int index, float newElev_deg)
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
     
-    arraySpecs->sensorCoords_rad[index][1] = newElev_deg * (M_PI/180.0f);
-    arraySpecs->sensorCoords_deg[index][1] = newElev_deg;
-    pData->reinitSHTmatrixFLAG = 1;
+    if(arraySpecs->sensorCoords_deg[index][1] != newElev_deg){
+        arraySpecs->sensorCoords_rad[index][1] = newElev_deg * (M_PI/180.0f);
+        arraySpecs->sensorCoords_deg[index][1] = newElev_deg;
+        pData->reinitSHTmatrixFLAG = 1;
+    }
 }
 
 void array2sh_setNumSensors(void* const hA2sh, int newQ)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    int nSH;
     
-    if (newQ < pData->nSH){
+    nSH = (pData->new_order+1)*(pData->new_order+1);
+    if (newQ < nSH){
         pData->new_order = 1;
-        pData->new_nSH = (pData->new_order+1)*(pData->new_order+1);
+        pData->reinitSHTmatrixFLAG = 1;
     }
-    arraySpecs->newQ = newQ;
-    //arraySpecs->newQ = newQ <= pData->new_nSH ? pData->new_nSH : newQ;
-    pData->reinitTFTFLAG = arraySpecs->Q != arraySpecs->newQ ? 1 : 0;
-    pData->reinitSHTmatrixFLAG = arraySpecs->Q != arraySpecs->newQ ? 1 : 0;
+    if(arraySpecs->Q != newQ){
+        arraySpecs->newQ = newQ;
+        pData->reinitSHTmatrixFLAG = 1;
+    }
 }
 
 void array2sh_setr(void* const hA2sh, float newr)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
-    arraySpecs->r = CLAMP(newr, ARRAY2SH_ARRAY_RADIUS_MIN_VALUE/1e3f, ARRAY2SH_ARRAY_RADIUS_MAX_VALUE/1e3f);
-    pData->reinitSHTmatrixFLAG = 1;
+    
+    newr = CLAMP(newr, ARRAY2SH_ARRAY_RADIUS_MIN_VALUE/1e3f, ARRAY2SH_ARRAY_RADIUS_MAX_VALUE/1e3f);
+    if(arraySpecs->r!=newr){
+        arraySpecs->r = newr;
+        pData->reinitSHTmatrixFLAG = 1;
+        pData->evalStatus = EVAL_STATUS_NOT_EVALUATED;
+    }
 }
 
 void array2sh_setR(void* const hA2sh, float newR)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
-    arraySpecs->R = CLAMP(newR, ARRAY2SH_BAFFLE_RADIUS_MIN_VALUE/1e3f, ARRAY2SH_BAFFLE_RADIUS_MAX_VALUE/1e3f);
-    pData->reinitSHTmatrixFLAG = 1;
+    
+    newR = CLAMP(newR, ARRAY2SH_BAFFLE_RADIUS_MIN_VALUE/1e3f, ARRAY2SH_BAFFLE_RADIUS_MAX_VALUE/1e3f);
+    if(arraySpecs->R!=newR){
+        arraySpecs->R = newR;
+        pData->reinitSHTmatrixFLAG = 1;
+        pData->evalStatus = EVAL_STATUS_NOT_EVALUATED;
+    }
 }
 
 void array2sh_setArrayType(void* const hA2sh, int newType)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
-    arraySpecs->arrayType = (ARRAY_TYPES)newType;
-    pData->reinitSHTmatrixFLAG = 1;
+    
+    if(arraySpecs->arrayType != (ARRAY_TYPES)newType){
+        arraySpecs->arrayType = (ARRAY_TYPES)newType;
+        pData->reinitSHTmatrixFLAG = 1;
+        pData->evalStatus = EVAL_STATUS_NOT_EVALUATED;
+    }
 }
 
 void array2sh_setWeightType(void* const hA2sh, int newType)
@@ -458,22 +477,33 @@ void array2sh_setWeightType(void* const hA2sh, int newType)
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
     
-    arraySpecs->weightType = (WEIGHT_TYPES)newType;
-    pData->reinitSHTmatrixFLAG = 1;
+    if(arraySpecs->weightType!=(WEIGHT_TYPES)newType){
+        arraySpecs->weightType = (WEIGHT_TYPES)newType;
+        pData->reinitSHTmatrixFLAG = 1;
+        pData->evalStatus = EVAL_STATUS_NOT_EVALUATED;
+    }
 }
 
 void array2sh_setFilterType(void* const hA2sh, int newType)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->filterType = (FILTER_TYPES)newType;
-    pData->reinitSHTmatrixFLAG = 1;
+    
+    if(pData->filterType!=(FILTER_TYPES)newType){
+        pData->filterType = (FILTER_TYPES)newType;
+        pData->reinitSHTmatrixFLAG = 1;
+        pData->evalStatus = EVAL_STATUS_NOT_EVALUATED;
+    }
 }
 
 void array2sh_setRegPar(void* const hA2sh, float newVal)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->regPar = CLAMP(newVal, ARRAY2SH_MAX_GAIN_MIN_VALUE, ARRAY2SH_MAX_GAIN_MAX_VALUE);
-    pData->reinitSHTmatrixFLAG = 1;
+     newVal = CLAMP(newVal, ARRAY2SH_MAX_GAIN_MIN_VALUE, ARRAY2SH_MAX_GAIN_MAX_VALUE);
+    if(pData->regPar!=newVal){
+        pData->regPar = newVal;
+        pData->reinitSHTmatrixFLAG = 1;
+        pData->evalStatus = EVAL_STATUS_NOT_EVALUATED;
+    }
 }
 
 void array2sh_setChOrder(void* const hA2sh, int newOrder)
@@ -493,8 +523,12 @@ void array2sh_setNormType(void* const hA2sh, int newType)
 void array2sh_setc(void* const hA2sh, float newc)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->c = CLAMP(newc, ARRAY2SH_SPEED_OF_SOUND_MIN_VALUE, ARRAY2SH_SPEED_OF_SOUND_MAX_VALUE);
-    pData->reinitSHTmatrixFLAG = 1;
+    newc = CLAMP(newc, ARRAY2SH_SPEED_OF_SOUND_MIN_VALUE, ARRAY2SH_SPEED_OF_SOUND_MAX_VALUE);
+    if(newc!=pData->c){
+        pData->c = newc;
+        pData->reinitSHTmatrixFLAG = 1;
+        pData->evalStatus = EVAL_STATUS_NOT_EVALUATED;
+    }
 }
 
 void array2sh_setGain(void* const hA2sh, float newGain)
@@ -503,36 +537,37 @@ void array2sh_setGain(void* const hA2sh, float newGain)
     pData->gain_dB = CLAMP(newGain, ARRAY2SH_POST_GAIN_MIN_VALUE, ARRAY2SH_POST_GAIN_MAX_VALUE);
 }
 
-void array2sh_setMaxFreq(void* const hA2sh, float newF)
-{
-    array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->maxFreq = newF;
-}
-
 
 /* Get Functions */
 
-int array2sh_getEvalReady(void* const hA2sh)
+EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    if (pData->evalReady) {
-        pData->evalReady = 0;
-        return 1;
-    }
-    else
-        return 0;
+    return pData->evalStatus;
+}
+
+float array2sh_getProgressBar0_1(void* const hA2sh)
+{
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    return pData->progressBar0_1;
+}
+
+void array2sh_getProgressBarText(void* const hA2sh, char* text)
+{
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    memcpy(text, pData->progressBarText, ARRAY2SH_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+}
+
+int array2sh_getRequestEncoderEvalFLAG(void* const hA2sh)
+{
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    return pData->evalRequestedFLAG;
 }
 
 int array2sh_getDiffEQpastAliasing(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     return pData->enableDiffEQpastAliasing;
-}
-
-int array2sh_getIsEvalValid(void* const hA2sh)
-{
-    array2sh_data *pData = (array2sh_data*)(hA2sh);
-    return pData->currentEvalIsValid;
 }
 
 int array2sh_getEncodingOrder(void* const hA2sh)
@@ -585,13 +620,13 @@ int array2sh_getMaxNumSensors(void)
 int array2sh_getMinNumSensors(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    return pData->new_nSH;
+    return (pData->new_order+1)*(pData->new_order+1);
 }
 
 int array2sh_getNSHrequired(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    return pData->new_nSH;
+    return (pData->new_order+1)*(pData->new_order+1);
 }
 
 float array2sh_getr(void* const hA2sh)
@@ -656,12 +691,6 @@ float array2sh_getGain(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     return pData->gain_dB;
-}
-
-float array2sh_getMaxFreq(void* const hA2sh)
-{
-    array2sh_data *pData = (array2sh_data*)(hA2sh);
-    return pData->maxFreq;
 }
 
 float* array2sh_getFreqVector(void* const hA2sh, int* nFreqPoints)

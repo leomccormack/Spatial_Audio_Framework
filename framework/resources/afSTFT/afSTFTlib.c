@@ -55,8 +55,7 @@ const double __afCenterFreq44100[133] =
 /* main struct */
 typedef struct{
     int inChannels;
-    int outChannels;
-    int maxChannels;
+    int outChannels; 
     int hopSize;
     int hLen;
     int pr;

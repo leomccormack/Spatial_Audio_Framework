@@ -56,6 +56,27 @@ extern "C" {
 #endif /* __cplusplus */
     
 /* ========================================================================== */
+/*                               Internal Enums                               */
+/* ========================================================================== */
+
+/*
+ * Enum: PROC_STATUS
+ * -----------------
+ * Current status of the processing loop.
+ *
+ * Options:
+ *     PROC_STATUS_ONGOING     - Codec is processing input audio, and should not
+ *                               be reinitialised at this time.
+ *     PROC_STATUS_NOT_ONGOING - Codec is not processing input audio, and may
+ *                               be reinitialised if needed.
+ */
+typedef enum _PROC_STATUS{
+    PROC_STATUS_ONGOING = 0,
+    PROC_STATUS_NOT_ONGOING
+}PROC_STATUS;
+
+    
+/* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
@@ -128,16 +149,16 @@ typedef struct _array2sh
     void* arraySpecs;               /* array configuration */
     
     /* internal parameters */
+    EVAL_STATUS evalStatus;
+    float progressBar0_1;
+    char* progressBarText;
     int fs;                         /* sampling rate, hz */
     int new_order;                  /* new encoding order */
-    int nSH, new_nSH;               /* number of SH components (N+1)^2 */
-    int evalReady;                  /* 0: eval is ongoing; 1: eval is ready for plotting */
-    int currentEvalIsValid;         /* 0: current evaluation results are invalid (call recalcEvalFLAG); 1: they are valid */
     
     /* flags */
-    int reinitSHTmatrixFLAG;        /* 0: do not reinit; 1: reinit; 2: reinit in progress; */
-    int reinitTFTFLAG;              /* 0: do not reinit; 1: reinit; 2: reinit in progress; */
-    int recalcEvalFLAG;             /* 0: do not reinit; 1: reinit; 2: reinit in progress; */ 
+    PROC_STATUS procStatus;
+    int reinitSHTmatrixFLAG;        /* 0: do not reinit; 1: reinit; */
+    int evalRequestedFLAG;             /* 0: do not reinit; 1: reinit; */
     
     /* additional user parameters that are not included in the array presets */
     int order;                      /* current encoding order */
@@ -147,8 +168,7 @@ typedef struct _array2sh
     CH_ORDER chOrdering;            /* ACN */
     NORM_TYPES norm;                /* N3D/SN3D */
     float c;                        /* speed of sound, m/s */
-    float gain_dB;                  /* post gain, dB */
-    float maxFreq;                  /* maximum encoding frequency, hz */
+    float gain_dB;                  /* post gain, dB */ 
     int enableDiffEQpastAliasing;   /* 0: disabled, 1: enabled */
     
 } array2sh_data;

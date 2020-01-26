@@ -210,6 +210,24 @@ typedef enum _WEIGHT_TYPES{
     
 }WEIGHT_TYPES;
     
+/*
+ * Enum: EVAL_STATUS
+ * -----------------
+ * Current status of the encoder.
+ *
+ * Options:
+ *     EVAL_STATUS_EVALUATED          - Encoder has been evaluated
+ *     EVAL_STATUS_RECENTLY_EVALUATED - Encoder has recently been evaluated
+ *     EVAL_STATUS_NOT_EVALUATED      - Encoder has not been evaluated
+ *     EVAL_STATUS_EVALUATING         - Encoder is being evaluated
+ */
+typedef enum _EVAL_STATUS{
+    EVAL_STATUS_EVALUATED = 0,
+    EVAL_STATUS_RECENTLY_EVALUATED,
+    EVAL_STATUS_NOT_EVALUATED,
+    EVAL_STATUS_EVALUATING
+}EVAL_STATUS;
+    
 #define ARRAY2SH_MAX_NUM_SENSORS ( 64 )
 #define ARRAY2SH_MAX_GAIN_MIN_VALUE ( 0.0f )
 #define ARRAY2SH_MAX_GAIN_MAX_VALUE ( 80.0f )
@@ -221,6 +239,7 @@ typedef enum _WEIGHT_TYPES{
 #define ARRAY2SH_ARRAY_RADIUS_MAX_VALUE ( 200.0f )
 #define ARRAY2SH_BAFFLE_RADIUS_MIN_VALUE ( 1.0f )
 #define ARRAY2SH_BAFFLE_RADIUS_MAX_VALUE ( 200.0f )
+#define ARRAY2SH_PROGRESSBARTEXT_CHAR_LENGTH 256
     
     
 /* ========================================================================== */
@@ -258,6 +277,16 @@ void array2sh_destroy(void** const phA2sh);
  */
 void array2sh_init(void* const hA2sh,
                    int samplerate);
+    
+/*
+ * Function: array2sh_evalEncoder
+ * ------------------------------
+ * Evaluates the encoder, based on current global/user parameters
+ *
+ * Input Arguments:
+ *     hA2sh - array2sh handle
+ */
+void array2sh_evalEncoder(void* const hA2sh);
 
 /*
  * Function: array2sh_process
@@ -298,18 +327,7 @@ void array2sh_process(void* const hA2sh,
  *     hA2sh - array2sh handle
  */
 void array2sh_refreshSettings(void* const hA2sh);
-
-/*
- * Function: array2sh_checkReInit
- * ------------------------------
- * Check if any reInit Flags are active, and reinitialise if they are.
- * Note: Only call when playback has stopped.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- */
-void array2sh_checkReInit(void* const hA2sh);
-    
+ 
 /*
  * Function: array2sh_setEncodingOrder
  * -----------------------------------
@@ -322,8 +340,8 @@ void array2sh_checkReInit(void* const hA2sh);
 void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
     
 /*
- * Function: array2sh_evaluateFilters
- * ----------------------------------
+ * Function: array2sh_setRequestEncoderEvalFLAG
+ * --------------------------------------------
  * Evaluates the performance of the current encoding filters when applied to a
  * theoretical model of the currently configured array. Two established
  * objective metrics are computed. More information in [1]
@@ -335,7 +353,18 @@ void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
  *     higher order ambisonics-objective measurements and validation of
  *     spherical microphone. In Audio Engineering Society Convention 120.
  */
-void array2sh_evaluateFilters(void* const hA2sh);
+void array2sh_setRequestEncoderEvalFLAG(void* const hA2sh, int newState);
+    
+/*
+ * Function: array2sh_setEvalStatus
+ * --------------------------------
+ * Sets current eval status.
+ *
+ * Input Arguments:
+ *     hA2sh      - array2sh handle
+ *     evalStatus - see 'EVAL_STATUS' enum
+ */
+void array2sh_setEvalStatus(void* const hA2sh, EVAL_STATUS evalStatus);
 
 /*
  * Function: array2sh_setDiffEQpastAliasing
@@ -534,25 +563,51 @@ void array2sh_setc(void* const hA2sh, float newc);
  *     newGain - new post gain, in DECIBELS
  */
 void array2sh_setGain(void* const hA2sh, float newGain);
-    
-/*
- * Function: array2sh_setMaxFreq
- * -----------------------------
- * Sets the maximum frequency at which to encode.
- * May be used to reduce CPU usage, if you know the spatial aliasing frequency
- * of the currently configured array, and decide not the render the output
- * signals past this frequency.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- *     newF  - new maximum encoding frequency, in Hz
- */
-void array2sh_setMaxFreq(void* const hA2sh, float newF);
 
-    
+
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
+
+/*
+ * Function: array2sh_getEvalStatus
+ * --------------------------------
+ * Returns current eval status.
+ *
+ * Input Arguments:
+ *     hA2sh - array2sh handle
+ * Returns:
+ *     codec status (see 'EVAL_STATUS' enum)
+ */
+EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh);
+
+/*
+ * Function: array2sh_getProgressBar0_1
+ * ------------------------------------
+ * (Optional) Returns current intialisation/processing progress, between 0..1
+ * 0: intialisation/processing has started
+ * 1: intialisation/processing has ended
+ *
+ * Input Arguments:
+ *     hA2sh - array2sh handle
+ * Returns:
+ *     current progress, 0..1
+ */
+float array2sh_getProgressBar0_1(void* const hA2sh);
+
+/*
+ * Function: array2sh_getProgressBarText
+ * -------------------------------------
+ * (Optional) Returns current intialisation/processing progress text
+ * Note: "text" string should be (at least) of length:
+ *     ARRAY2SH_PROGRESSBARTEXT_CHAR_LENGTH
+ *
+ * Input Arguments:
+ *     hA2sh - array2sh handle
+ * Output Arguments:
+ *     text  - process bar text; ARRAY2SH_PROGRESSBARTEXT_CHAR_LENGTH x 1
+ */
+void array2sh_getProgressBarText(void* const hA2sh, char* text);
 
 /*
  * Function: array2sh_getDiffEQpastAliasing
@@ -566,31 +621,16 @@ void array2sh_setMaxFreq(void* const hA2sh, float newF);
 int array2sh_getDiffEQpastAliasing(void* const hA2sh);
 
 /*
- * Function: array2sh_getEvalReady
- * -------------------------------
- * Returns the value of a flag, used to determine if the currently configured
- * array has been evaluated. (Data is ready for plotting)
+ * Function: array2sh_getRequestEncoderEvalFLAG
+ * --------------------------------------------
+ * Returns
  *
  * Input Arguments:
  *     hA2sh - array2sh handle
  * Returns:
- *     0: not ready, 1: data ready for plotting.
+ *     0:
  */
-int array2sh_getEvalReady(void* const hA2sh);
-    
-/*
- * Function: array2sh_getIsEvalValid
- * ---------------------------------
- * Returns the value of a flag, used to determine if the currently configured
- * array matched with the currently available evaluation data. i.e. 0: implies
- * that the array needs to be re-evaluated, 1: it does not.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     0: not ready, 1: data ready for plotting.
- */
-int array2sh_getIsEvalValid(void* const hA2sh);
+int array2sh_getRequestEncoderEvalFLAG(void* const hA2sh);
     
 /*
  * Function: array2sh_getEncodingOrder
@@ -828,21 +868,6 @@ float array2sh_getc(void* const hA2sh);
  */
 float array2sh_getGain(void* const hA2sh);
 
-/*
- * Function: array2sh_getMaxFreq
- * -----------------------------
- * Returns the maximum frequency at which to encode.
- * May be used to reduce CPU usage, if you know the spatial aliasing frequency
- * of the currently configured array, and decide not the render the output
- * signals past this frequency.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     maximum encoding frequency, in Hz
- */
-float array2sh_getMaxFreq(void* const hA2sh);
-    
 /*
  * Function: array2sh_getFreqVector
  * --------------------------------
