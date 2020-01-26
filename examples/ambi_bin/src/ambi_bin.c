@@ -89,6 +89,7 @@ void ambi_bin_create
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
     pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     pData->recalc_M_rotFLAG = 1;
+    pData->reinit_hrtfsFLAG = 1;
 }
 
 void ambi_bin_destroy
@@ -145,10 +146,6 @@ void ambi_bin_init
             pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
     }
     
-    /* reinitialise codec if needed */
-    if (pData->codecStatus == CODEC_STATUS_NOT_INITIALISED)
-        ambi_bin_initCodec(hAmbi);
- 
     /* default starting values */
     memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
     pData->recalc_M_rotFLAG = 1;
@@ -187,36 +184,40 @@ void ambi_bin_initCodec
     }
     pData->nSH = nSH;
     
-    /* load sofa file or default hrir data */
-    strcpy(pData->progressBarText,"Preparing HRIRs");
-    pData->progressBar0_1 = 0.15f;
-    if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
-        loadSofaFile(pars->sofa_filepath,
-                     &(pars->hrirs),
-                     &(pars->hrir_dirs_deg),
-                     &(pars->N_hrir_dirs),
-                     &(pars->hrir_len),
-                     &(pars->hrir_fs));
+    if(pData->reinit_hrtfsFLAG){
+        /* load sofa file or default hrir data */
+        strcpy(pData->progressBarText,"Preparing HRIRs");
+        pData->progressBar0_1 = 0.15f;
+        if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
+            loadSofaFile(pars->sofa_filepath,
+                         &(pars->hrirs),
+                         &(pars->hrir_dirs_deg),
+                         &(pars->N_hrir_dirs),
+                         &(pars->hrir_len),
+                         &(pars->hrir_fs));
+        }
+        else{
+            loadSofaFile(NULL, /* setting path to NULL loads default HRIR data */
+                         &(pars->hrirs),
+                         &(pars->hrir_dirs_deg),
+                         &(pars->N_hrir_dirs),
+                         &(pars->hrir_len),
+                         &(pars->hrir_fs));
+        }
+        
+        /* estimate the ITDs for each HRIR */
+        pData->progressBar0_1 = 0.3f;
+        pars->itds_s = realloc1d(pars->itds_s, pars->N_hrir_dirs*sizeof(float));
+        estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pars->itds_s);
+        
+        /* convert hrirs to filterbank coefficients */
+        pData->progressBar0_1 = 0.9f;
+        pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
+        HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrtf_fb);
+        diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
+        
+        pData->reinit_hrtfsFLAG = 0;
     }
-    else{
-        loadSofaFile(NULL, /* setting path to NULL loads default HRIR data */
-                     &(pars->hrirs),
-                     &(pars->hrir_dirs_deg),
-                     &(pars->N_hrir_dirs),
-                     &(pars->hrir_len),
-                     &(pars->hrir_fs));
-    }
-    
-    /* estimate the ITDs for each HRIR */
-    pData->progressBar0_1 = 0.3f;
-    pars->itds_s = realloc1d(pars->itds_s, pars->N_hrir_dirs*sizeof(float));
-    estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pars->itds_s);
-    
-    /* convert hrirs to filterbank coefficients */
-    pData->progressBar0_1 = 0.9f;
-    pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
-    HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrtf_fb);
-    diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
     
     /* get new decoder */
     strcpy(pData->progressBarText,"Computing Decoder");
@@ -265,11 +266,12 @@ void ambi_bin_initCodec
                 pars->M_dec[band][i][j] = decMtx[band*2*nSH + i*nSH + j];
     free(decMtx);
     
+    pData->order = order;
+    
     /* done! */
     strcpy(pData->progressBarText,"Done!");
     pData->progressBar0_1 = 1.0f;
     pData->codecStatus = CODEC_STATUS_INITIALISED;
-    pData->order = order;
 }
 
 void ambi_bin_process
@@ -425,6 +427,7 @@ void ambi_bin_process
 void ambi_bin_refreshParams(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    pData->reinit_hrtfsFLAG = 1;
     pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
@@ -435,6 +438,7 @@ void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState)
     if((!pData->useDefaultHRIRsFLAG) && (newState)){
         pData->useDefaultHRIRsFLAG = newState;
         pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        pData->reinit_hrtfsFLAG = 1;
     }
 }
 
@@ -447,6 +451,7 @@ void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path)
     strcpy(pars->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
     pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    pData->reinit_hrtfsFLAG = 1;
 }
 
 void ambi_bin_setInputOrderPreset(void* const hAmbi, INPUT_ORDERS newOrder)

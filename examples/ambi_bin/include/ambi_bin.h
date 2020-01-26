@@ -147,14 +147,14 @@ typedef enum _CODEC_STATUS{
     CODEC_STATUS_NOT_INITIALISED,
     CODEC_STATUS_INITIALISING
 }CODEC_STATUS;
-     
+
 #define AMBI_BIN_PROGRESSBARTEXT_CHAR_LENGTH 256
-    
-    
+
+
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
-    
+
 /*
  * Function: ambi_bin_create
  * -------------------------
@@ -178,7 +178,7 @@ void ambi_bin_destroy(void** const phAmbi);
 /*
  * Function: ambi_bin_init
  * -----------------------
- * Initialises ambi_bin with default settings, and samplerate
+ * Initialises ambi_bin with default settings, and samplerate.
  *
  * Input Arguments:
  *     hAmbi      - ambi_bin handle
@@ -188,26 +188,14 @@ void ambi_bin_init(void* const hAmbi,
                    int samplerate);
 
 /*
- * ambi_bin_initCodec
- * ------------------
+ * Function: ambi_bin_initCodec
+ * ----------------------------
  * Intialises the codec variables, based on current global/user parameters
- * Note: call "ambi_bin_initTFT" (if needed) before calling this function
  *
  * Input Arguments:
  *     hAmbi - ambi_bin handle
  */
 void ambi_bin_initCodec(void* const hAmbi);
-
-///*
-// * ambi_bin_initTFT
-// * ----------------
-// * Initialise the filterbank used by ambi_bin.
-// * Note: Call this function before ambi_bin_initCodec
-// *
-// * Input Arguments:
-// *     hAmbi - ambi_bin handle
-// */
-//void ambi_bin_initTFT(void* const hAmbi);
 
 /*
  * Function: ambi_bin_process

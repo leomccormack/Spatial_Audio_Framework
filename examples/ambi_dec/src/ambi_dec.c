@@ -46,7 +46,6 @@ void ambi_dec_create
 
     /* default user parameters */
     pData->masterOrder = pData->new_masterOrder = 1;
-    pData->nSH = pData->new_nSH = (pData->masterOrder + 1)*(pData->masterOrder + 1);
     for (band = 0; band<HYBRID_BANDS; band++)
         pData->orderPerBand[band] = 1;
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
@@ -77,6 +76,10 @@ void ambi_dec_create
     }
     
     /* codec data */
+    pData->progressBar0_1 = 0.0f;
+    pData->progressBarText = malloc1d(AMBI_DEC_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+    strcpy(pData->progressBarText,"HOSIRR");
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     pData->pars = (codecPars*)malloc1d(sizeof(codecPars));
     codecPars* pars = pData->pars;
     for (i=0; i<NUM_DECODERS; i++){
@@ -96,14 +99,12 @@ void ambi_dec_create
     pars->hrtf_fb = NULL;
     pars->hrtf_fb_mag = NULL;
     
-    /* internal parameters */
-    pData->new_binauraliseLS = 0;
-    pData->binauraliseLS = pData->new_binauraliseLS;
+    /* internal parameters */ 
+    pData->binauraliseLS = pData->new_binauraliseLS = 0;
     
     /* flags */
-    pData->reInitCodec = 1;
-    pData->reInitTFT = 1;
-    pData->reInitHRTFs = 1;
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
+    pData->reinit_hrtfsFLAG = 1;
     for(ch=0; ch<MAX_NUM_LOUDSPEAKERS; ch++)
         pData->recalc_hrtf_interpFLAG[ch] = 1; 
 }
@@ -171,10 +172,242 @@ void ambi_dec_init
             pData->freqVector[band] =  (float)__afCenterFreq44100[band];
         else /* Assume 48kHz */
             pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
-    } 
+    }
+}
 
-    /* reinitialise if needed */
-    ambi_dec_checkReInit(hAmbi);
+void ambi_dec_initCodec
+(
+    void* const hAmbi
+)
+{
+    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    codecPars* pars = pData->pars;
+    int i, ch, d, j, n, ng, nGrid_dirs, masterOrder, nSH_order, max_nSH, nLoudspeakers;
+    float* grid_dirs_deg, *Y, *M_dec_tmp, *g, *a, *e, *a_n, *hrtf_vbap_gtable;;
+    float a_avg[MAX_SH_ORDER], e_avg[MAX_SH_ORDER], azi_incl[2], sum_elev;
+    
+    if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
+        return; /* re-init not required */
+    if (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but need to wait for processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING;
+        ambi_dec_initCodec(hAmbi);
+    }
+    
+    /* for progress bar */
+    pData->codecStatus = CODEC_STATUS_INITIALISING;
+    strcpy(pData->progressBarText,"Initialising");
+    pData->progressBar0_1 = 0.0f;
+    
+    /* reinit afSTFT */
+    masterOrder = pData->new_masterOrder;
+    max_nSH = (masterOrder+1)*(masterOrder+1);
+    nLoudspeakers = pData->new_nLoudpkrs;
+    if(pData->hSTFT==NULL){
+        if(pData->new_binauraliseLS)
+            afSTFTinit(&(pData->hSTFT), HOP_SIZE, max_nSH, NUM_EARS, 0, 1);
+        else
+            afSTFTinit(&(pData->hSTFT), HOP_SIZE, max_nSH, nLoudspeakers, 0, 1);
+        afSTFTclearBuffers(pData->hSTFT);
+    }
+    else{
+        if(pData->new_binauraliseLS)
+            afSTFTchannelChange(pData->hSTFT, max_nSH, NUM_EARS);
+        else
+            afSTFTchannelChange(pData->hSTFT, max_nSH, nLoudspeakers);
+        afSTFTclearBuffers(pData->hSTFT);
+    }
+    pData->binauraliseLS = pData->new_binauraliseLS;
+    pData->nLoudpkrs = nLoudspeakers;
+    
+    /* Quick and dirty check to find loudspeaker dimensionality */
+    strcpy(pData->progressBarText,"Computing decoder");
+    pData->progressBar0_1 = 0.2f;
+    sum_elev = 0.0f;
+    for(ch=0; ch < nLoudspeakers; ch++)
+        sum_elev += fabsf(pData->loudpkrs_dirs_deg[ch][1]);
+    if( (((sum_elev < 5.0f) && (sum_elev > -5.0f))) || (nLoudspeakers < 4) )
+        pData->loudpkrs_nDims = 2;
+    else
+        pData->loudpkrs_nDims = 3;
+    
+    /* add virtual loudspeakers for 2D case */
+    if (pData->loudpkrs_nDims == 2){
+        assert(nLoudspeakers<=MAX_NUM_LOUDSPEAKERS-2);
+        pData->loudpkrs_dirs_deg[nLoudspeakers][0] = 0.0f;
+        pData->loudpkrs_dirs_deg[nLoudspeakers][1] = -90.0f;
+        pData->loudpkrs_dirs_deg[nLoudspeakers+1][0] = 0.0f;
+        pData->loudpkrs_dirs_deg[nLoudspeakers+1][1] = 90.0f;
+        nLoudspeakers += 2;
+    }
+    
+    /* prep */
+    nGrid_dirs = 480; /* Minimum t-design of degree 30, has 480 points */
+    g = malloc1d(nLoudspeakers*sizeof(float));
+    a = malloc1d(nGrid_dirs*sizeof(float));
+    e = malloc1d(nGrid_dirs*sizeof(float));
+    
+    /* calculate loudspeaker decoding matrices */
+    for( d=0; d<NUM_DECODERS; d++){
+        M_dec_tmp = malloc1d(nLoudspeakers * max_nSH * sizeof(float));
+        switch(pData->dec_method[d]){
+            case DECODING_METHOD_SAD:
+                getLoudspeakerAmbiDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_SAD, masterOrder, 0, M_dec_tmp);
+                break;
+            case DECODING_METHOD_MMD:
+                getLoudspeakerAmbiDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_MMD, masterOrder, 0, M_dec_tmp);
+                break;
+            case DECODING_METHOD_EPAD:
+                getLoudspeakerAmbiDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_EPAD, masterOrder, 0, M_dec_tmp);
+                break;
+            case DECODING_METHOD_ALLRAD:
+                getLoudspeakerAmbiDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_ALLRAD, masterOrder, 0, M_dec_tmp);
+                break;
+        }
+        
+        /* diffuse-field EQ for orders 1..masterOrder */
+        for( n=1; n<=masterOrder; n++){
+            /* truncate M_dec for each order */
+            nSH_order = (n+1)*(n+1);
+            free(pars->M_dec[d][n-1]);
+            pars->M_dec[d][n-1] = malloc1d(nLoudspeakers* nSH_order * sizeof(float));
+            free(pars->M_dec_cmplx[d][n-1]);
+            pars->M_dec_cmplx[d][n-1] = malloc1d(nLoudspeakers * nSH_order * sizeof(float_complex));
+            for(i=0; i<nLoudspeakers; i++){
+                for(j=0; j<nSH_order; j++){
+                    pars->M_dec[d][n-1][i*nSH_order+j] = M_dec_tmp[i*max_nSH +j]; /* for applying in the time domain, and... */
+                    pars->M_dec_cmplx[d][n-1][i*nSH_order+j] = cmplxf(pars->M_dec[d][n-1][i*nSH_order+j], 0.0f); /* for the time-frequency domain */
+                }
+            }
+            
+            /* create dedicated maxrE weighted versions */
+            a_n = malloc1d(nSH_order*nSH_order*sizeof(float));
+            getMaxREweights(n, 1, a_n); /* weights returned as diagonal matrix */
+            free(pars->M_dec_maxrE[d][n-1]);
+            pars->M_dec_maxrE[d][n-1] = malloc1d(nLoudspeakers * nSH_order * sizeof(float));
+            free(pars->M_dec_cmplx_maxrE[d][n-1]);
+            pars->M_dec_cmplx_maxrE[d][n-1] = malloc1d(nLoudspeakers * nSH_order * sizeof(float_complex));
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLoudspeakers, nSH_order, nSH_order, 1.0f,
+                        pars->M_dec[d][n-1], nSH_order,
+                        a_n, nSH_order, 0.0f,
+                        pars->M_dec_maxrE[d][n-1], nSH_order); /* for applying in the time domain */
+            for(i=0; i<nLoudspeakers * nSH_order; i++)
+                pars->M_dec_cmplx_maxrE[d][n-1][i] = cmplxf(pars->M_dec_maxrE[d][n-1][i], 0.0f); /* for the time-frequency domain */
+            
+            /* fire a plane-wave from each grid direction to find the total energy/amplitude (using non-maxrE weighted versions) */
+            Y = malloc1d(nSH_order*sizeof(float));
+            grid_dirs_deg = (float*)(&__Tdesign_degree_30_dirs_deg[0][0]);
+            for(ng=0; ng<nGrid_dirs; ng++){
+                azi_incl[0] = grid_dirs_deg[ng*2]*M_PI/180.0f;
+                azi_incl[1] = M_PI/2.0f-grid_dirs_deg[ng*2+1]*M_PI/180.0f;
+                getSHreal(n, (float*)azi_incl, 1,  Y);
+                cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nLoudspeakers, 1, nSH_order, 1.0f,
+                            pars->M_dec[d][n-1], nSH_order,
+                            Y, nSH_order, 0.0f,
+                            g, 1);
+                a[ng] = e[ng] = 0.0f;
+                for(i=0; i<nLoudspeakers; i++){
+                    a[ng] += g[i];
+                    e[ng] += powf(g[i], 2.0f);
+                }
+            }
+            
+            /* determine the order+decoder dependent normalisation factor for energy+amplitude preserving decoding */
+            a_avg[n-1] = e_avg[n-1] = 0.0f;
+            for(ng=0; ng<nGrid_dirs; ng++){
+                a_avg[n-1] += a[ng];
+                e_avg[n-1] += e[ng];
+            }
+            a_avg[n-1] /= (float)nGrid_dirs;
+            e_avg[n-1] /= (float)nGrid_dirs;
+            pars->M_norm[d][n-1][0] = 1.0f/(a_avg[n-1]+2.23e-6f); /* use this to preserve omni amplitude */
+            pars->M_norm[d][n-1][1] = sqrtf(1.0f/(e_avg[n-1]+2.23e-6f));  /* use this to preserve omni energy */
+            free(a_n);
+            free(Y);
+            
+            /* remove virtual loudspeakers from the decoder */
+            if (pData->loudpkrs_nDims == 2){
+                pars->M_dec[d][n-1] = realloc1d(pars->M_dec[d][n-1], pData->nLoudpkrs * nSH_order * sizeof(float));
+                pars->M_dec_cmplx[d][n-1] = realloc1d(pars->M_dec_cmplx[d][n-1], pData->nLoudpkrs * nSH_order * sizeof(float_complex));
+                pars->M_dec_maxrE[d][n-1] = realloc1d(pars->M_dec_maxrE[d][n-1], pData->nLoudpkrs * nSH_order * sizeof(float));
+                pars->M_dec_cmplx_maxrE[d][n-1] = realloc1d(pars->M_dec_cmplx_maxrE[d][n-1], pData->nLoudpkrs * nSH_order * sizeof(float_complex));
+            }
+        }
+        free(M_dec_tmp);
+    }
+    
+    /* update order */
+    pData->masterOrder = pData->new_masterOrder;
+    
+    /* Binaural-related initialisations */
+    if(pData->reinit_hrtfsFLAG){
+        strcpy(pData->progressBarText,"Computing VBAP gain table");
+        pData->progressBar0_1 = 0.4f;
+        
+        /* load sofa file or load default hrir data */
+        if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
+            loadSofaFile(pars->sofa_filepath,
+                         &(pars->hrirs),
+                         &(pars->hrir_dirs_deg),
+                         &(pars->N_hrir_dirs),
+                         &(pars->hrir_len),
+                         &(pars->hrir_fs));
+        }
+        else{
+            loadSofaFile(NULL, /* setting path to NULL loads default HRIR data */
+                         &(pars->hrirs),
+                         &(pars->hrir_dirs_deg),
+                         &(pars->N_hrir_dirs),
+                         &(pars->hrir_len),
+                         &(pars->hrir_fs));
+        }
+        
+        /* estimate the ITDs for each HRIR */
+        pars->itds_s = realloc1d(pars->itds_s, pars->N_hrir_dirs*sizeof(float));
+        estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pars->itds_s);
+        
+        /* generate VBAP gain table for the hrir_dirs */
+        hrtf_vbap_gtable = NULL;
+        pars->hrtf_vbapTableRes[0] = 2; /* azimuth resolution in degrees */
+        pars->hrtf_vbapTableRes[1] = 5; /* elevation resolution in degrees */
+        generateVBAPgainTable3D(pars->hrir_dirs_deg, pars->N_hrir_dirs, pars->hrtf_vbapTableRes[0], pars->hrtf_vbapTableRes[1], 1, 0, 0.0f,
+                                &hrtf_vbap_gtable, &(pars->N_hrtf_vbap_gtable), &(pars->hrtf_nTriangles));
+        if(hrtf_vbap_gtable==NULL){
+            /* if generating vbap gain tabled failed, re-calculate with default HRIR set (which is known to triangulate correctly) */
+            pData->useDefaultHRIRsFLAG = 1;
+            ambi_dec_initCodec(hAmbi);
+        }
+        
+        /* compress VBAP table (i.e. remove the zero elements) */
+        pars->hrtf_vbap_gtableComp = realloc1d(pars->hrtf_vbap_gtableComp, pars->N_hrtf_vbap_gtable * 3 * sizeof(float));
+        pars->hrtf_vbap_gtableIdx  = realloc1d(pars->hrtf_vbap_gtableIdx,  pars->N_hrtf_vbap_gtable * 3 * sizeof(int));
+        compressVBAPgainTable3D(hrtf_vbap_gtable, pars->N_hrtf_vbap_gtable, pars->N_hrir_dirs, pars->hrtf_vbap_gtableComp, pars->hrtf_vbap_gtableIdx);
+        
+        /* convert hrirs to filterbank coefficients */
+        strcpy(pData->progressBarText,"Preparing HRIRs");
+        pData->progressBar0_1 = 0.85f;
+        pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
+        HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrtf_fb);
+        diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
+        
+        /* calculate magnitude responses */
+        pars->hrtf_fb_mag = realloc1d(pars->hrtf_fb_mag, HYBRID_BANDS*NUM_EARS*(pars->N_hrir_dirs)*sizeof(float));
+        for(i=0; i<HYBRID_BANDS*NUM_EARS* (pars->N_hrir_dirs); i++)
+            pars->hrtf_fb_mag[i] = cabsf(pars->hrtf_fb[i]);
+        
+        /* clean-up */
+        free(hrtf_vbap_gtable);
+        pData->reinit_hrtfsFLAG = 0;
+    }
+    
+    /* done! */
+    strcpy(pData->progressBarText,"Done!");
+    pData->progressBar0_1 = 1.0f;
+    pData->codecStatus = CODEC_STATUS_INITIALISED;
+    
+    free(g);
+    free(a);
+    free(e);
 }
 
 void ambi_dec_process
@@ -190,7 +423,7 @@ void ambi_dec_process
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     codecPars* pars = pData->pars;
-    int n, t, ch, ear, i, band, orderBand, nSH_band, decIdx;
+    int n, t, ch, ear, i, band, orderBand, nSH_band, decIdx, nSH;
     int o[MAX_SH_ORDER+2];
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
@@ -202,27 +435,14 @@ void ambi_dec_process
     NORM_TYPES norm;
     CH_ORDER chOrdering;
     
-    /* reinitialise if needed */
-#ifdef __APPLE__
-    ambi_dec_checkReInit(hAmbi);
-#else
-    if(pData->reInitTFT==1){
-        pData->reInitTFT = 2;
-        ambi_dec_initTFT(hAmbi); /* always init before codec or hrtfs  */
-        pData->reInitTFT = 0;
-    }  
-    if(pData->reInitCodec==1){
-        pData->reInitCodec = 2;
-        ambi_dec_initCodec(hAmbi);
-        pData->reInitCodec = 0;
-    }
-#endif
-
     /* decode audio to loudspeakers or headphones */
-    if( (nSamples == FRAME_SIZE) && (pData->reInitCodec==0) && (pData->reInitTFT==0) && (pData->reInitHRTFs==0) ) {
+    if( (nSamples == FRAME_SIZE) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ) {
+        pData->procStatus = PROC_STATUS_ONGOING;
+        
         /* copy user parameters to local variables */
         for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
         masterOrder = pData->masterOrder;
+        nSH = (masterOrder+1)*(masterOrder+1);
         nLoudspeakers = pData->nLoudpkrs;
         memcpy(orderPerBand, pData->orderPerBand, HYBRID_BANDS*sizeof(int));
         transitionFreq = pData->transitionFreq;
@@ -235,9 +455,9 @@ void ambi_dec_process
         /* Load time-domain data */
         switch(chOrdering){
             case CH_ACN:
-                for(i=0; i < MIN(pData->nSH, nInputs); i++)
+                for(i=0; i < MIN(nSH, nInputs); i++)
                     utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
-                for(; i<pData->nSH; i++)
+                for(; i<nSH; i++)
                     memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
                 break;
             case CH_FUMA:   /* only for first-order, convert to ACN */
@@ -246,11 +466,11 @@ void ambi_dec_process
                     utility_svvcopy(inputs[1], FRAME_SIZE, pData->SHFrameTD[3]);
                     utility_svvcopy(inputs[2], FRAME_SIZE, pData->SHFrameTD[1]);
                     utility_svvcopy(inputs[3], FRAME_SIZE, pData->SHFrameTD[2]);
-                    for(i=4; i<pData->nSH; i++)
+                    for(i=4; i<nSH; i++)
                         memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
                 }
                 else
-                    for(i=0; i<pData->nSH; i++)
+                    for(i=0; i<nSH; i++)
                         memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float));
                 break;
         }
@@ -276,11 +496,11 @@ void ambi_dec_process
         
         /* Apply time-frequency transform (TFT) */
         for(t=0; t< TIME_SLOTS; t++) {
-            for(ch = 0; ch < pData->nSH; ch++)
+            for(ch = 0; ch < nSH; ch++)
                 utility_svvcopy(&(pData->SHFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
             afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
             for(band=0; band<HYBRID_BANDS; band++)
-                for(ch=0; ch < pData->nSH; ch++)
+                for(ch=0; ch < nSH; ch++)
                     pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
         }
         
@@ -367,6 +587,8 @@ void ambi_dec_process
     else
         for (ch=0; ch < nOutputs; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+    
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
 
 
@@ -375,39 +597,18 @@ void ambi_dec_process
 void ambi_dec_refreshSettings(void* const hAmbi)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    pData->reInitCodec = 1;
-    pData->reInitTFT = 1;
-    pData->reInitHRTFs = 1;
-}
-
-void ambi_dec_checkReInit(void* const hAmbi)
-{
-    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    /* reinitialise if needed */
-    if (pData->reInitTFT == 1) {
-        pData->reInitTFT = 2;
-        ambi_dec_initTFT(hAmbi); /* always init before codec or hrtfs  */
-        pData->reInitTFT = 0;
-    }
-    if (pData->reInitCodec == 1) {
-        pData->reInitCodec = 2;
-        ambi_dec_initCodec(hAmbi);
-        pData->reInitCodec = 0;
-    }
-    if (pData->reInitHRTFs == 1) {
-        pData->reInitHRTFs = 2;
-        ambi_dec_initHRTFs(hAmbi);
-        pData->reInitHRTFs = 0;
-    }
+    int ch;
+    for(ch=0; ch<MAX_NUM_LOUDSPEAKERS; ch++)
+        pData->recalc_hrtf_interpFLAG[ch] = 1;
+    pData->reinit_hrtfsFLAG = 1;
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
 void ambi_dec_setMasterDecOrder(void  * const hAmbi, int newValue)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     pData->new_masterOrder = MIN(MAX(newValue,1), MAX_SH_ORDER);
-    pData->new_nSH = (pData->new_masterOrder+1)*(pData->new_masterOrder+1);
-    pData->reInitTFT = 1;
-    pData->reInitCodec = 1;
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     /* FUMA only supports 1st order */
     if(pData->new_masterOrder!=MASTER_ORDER_FIRST && pData->chOrdering == CH_FUMA)
         pData->chOrdering = CH_ACN;
@@ -437,9 +638,11 @@ void ambi_dec_setLoudspeakerAzi_deg(void* const hAmbi, int index, float newAzi_d
         newAzi_deg = -360.0f + newAzi_deg;
     newAzi_deg = MAX(newAzi_deg, -180.0f);
     newAzi_deg = MIN(newAzi_deg, 180.0f);
-    pData->loudpkrs_dirs_deg[index][0] = newAzi_deg;
-    pData->reInitCodec=1;
-    pData->recalc_hrtf_interpFLAG[index] = 1;
+    if(pData->loudpkrs_dirs_deg[index][0] != newAzi_deg){
+        pData->loudpkrs_dirs_deg[index][0] = newAzi_deg;
+        pData->recalc_hrtf_interpFLAG[index] = 1;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    }
 }
 
 void ambi_dec_setLoudspeakerElev_deg(void* const hAmbi, int index, float newElev_deg)
@@ -447,9 +650,11 @@ void ambi_dec_setLoudspeakerElev_deg(void* const hAmbi, int index, float newElev
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     newElev_deg = MAX(newElev_deg, -90.0f);
     newElev_deg = MIN(newElev_deg, 90.0f);
-    pData->loudpkrs_dirs_deg[index][1] = newElev_deg;
-    pData->reInitCodec=1;
-    pData->recalc_hrtf_interpFLAG[index] = 1;
+    if(pData->loudpkrs_dirs_deg[index][1] != newElev_deg){
+        pData->loudpkrs_dirs_deg[index][1] = newElev_deg;
+        pData->recalc_hrtf_interpFLAG[index] = 1;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    }
 }
 
 void ambi_dec_setNumLoudspeakers(void* const hAmbi, int new_nLoudspeakers)
@@ -459,10 +664,9 @@ void ambi_dec_setNumLoudspeakers(void* const hAmbi, int new_nLoudspeakers)
     pData->new_nLoudpkrs = new_nLoudspeakers > MAX_NUM_LOUDSPEAKERS ? MAX_NUM_LOUDSPEAKERS : new_nLoudspeakers;
     pData->new_nLoudpkrs = MAX(MIN_NUM_LOUDSPEAKERS, pData->new_nLoudpkrs);
     if(pData->nLoudpkrs != pData->new_nLoudpkrs){
-        pData->reInitTFT = 1;
-        pData->reInitCodec=1;
         for(ch=0; ch<MAX_NUM_LOUDSPEAKERS; ch++)
             pData->recalc_hrtf_interpFLAG[ch] = 1;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     }
 }
 
@@ -470,11 +674,9 @@ void ambi_dec_setBinauraliseLSflag(void* const hAmbi, int newState)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     
-    pData->new_binauraliseLS = newState;
+    pData->new_binauraliseLS = newState; 
     if(pData->new_binauraliseLS != pData->binauraliseLS)
-        pData->reInitTFT = 1;
-    if(pData->new_binauraliseLS)
-        pData->reInitHRTFs = 1;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
 void ambi_dec_setUseDefaultHRIRsflag(void* const hAmbi, int newState)
@@ -483,7 +685,8 @@ void ambi_dec_setUseDefaultHRIRsflag(void* const hAmbi, int newState)
     
     if((!pData->useDefaultHRIRsFLAG) && (newState)){
         pData->useDefaultHRIRsFLAG = newState;
-        pData->reInitHRTFs = 1;
+        pData->reinit_hrtfsFLAG = 1;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     }
 }
 
@@ -495,7 +698,8 @@ void ambi_dec_setSofaFilePath(void* const hAmbi, const char* path)
     pars->sofa_filepath = malloc1d(strlen(path) + 1);
     strcpy(pars->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
-    pData->reInitHRTFs = 1;
+    pData->reinit_hrtfsFLAG = 1;
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
 void ambi_dec_setOutputConfigPreset(void* const hAmbi, int newPresetID)
@@ -504,9 +708,7 @@ void ambi_dec_setOutputConfigPreset(void* const hAmbi, int newPresetID)
     int ch;
     
     loadLoudspeakerArrayPreset(newPresetID, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
-    if(pData->nLoudpkrs != pData->new_nLoudpkrs)
-        pData->reInitTFT = 1;
-    pData->reInitCodec = 1;
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     for(ch=0; ch<MAX_NUM_LOUDSPEAKERS; ch++)
         pData->recalc_hrtf_interpFLAG[ch] = 1;
 }
@@ -601,7 +803,7 @@ void ambi_dec_setDecMethod(void* const hAmbi, int index, int newID)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     pData->dec_method[index] = newID;
-    pData->reInitCodec = 1;
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
 void ambi_dec_setDecEnableMaxrE(void* const hAmbi, int index, int newID)
@@ -624,6 +826,24 @@ void ambi_dec_setTransitionFreq(void* const hAmbi, float newValue)
 
 
 /* Get Functions */
+
+CODEC_STATUS ambi_dec_getCodecStatus(void* const hAmbi)
+{
+    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    return pData->codecStatus;
+}
+
+float ambi_dec_getProgressBar0_1(void* const hAmbi)
+{
+    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    return pData->progressBar0_1;
+}
+
+void ambi_dec_getProgressBarText(void* const hAmbi, char* text)
+{
+    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    memcpy(text, pData->progressBarText, AMBI_DEC_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+}
 
 int ambi_dec_getMasterDecOrder(void  * const hAmbi)
 {
@@ -688,7 +908,7 @@ int ambi_dec_getMaxNumLoudspeakers()
 int  ambi_dec_getNSHrequired(void* const hAmbi)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    return pData->nSH;
+    return (pData->masterOrder+1)*(pData->masterOrder+1);
 }
 
 int ambi_dec_getBinauraliseLSflag(void* const hAmbi)

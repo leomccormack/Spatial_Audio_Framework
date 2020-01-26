@@ -45,7 +45,28 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
+/* ========================================================================== */
+/*                               Internal Enums                               */
+/* ========================================================================== */
+
+/*
+ * Enum: PROC_STATUS
+ * -----------------
+ * Current status of the processing loop.
+ *
+ * Options:
+ *     PROC_STATUS_ONGOING     - Codec is processing input audio, and should not
+ *                               be reinitialised at this time.
+ *     PROC_STATUS_NOT_ONGOING - Codec is not processing input audio, and may
+ *                               be reinitialised if needed.
+ */
+typedef enum _PROC_STATUS{
+    PROC_STATUS_ONGOING = 0,
+    PROC_STATUS_NOT_ONGOING
+}PROC_STATUS;
+
+
 /* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
@@ -126,23 +147,21 @@ typedef struct _ambi_dec
     float freqVector[HYBRID_BANDS];      /* frequency vector for time-frequency transform, in Hz */
     
     /* our codec configuration */
+    CODEC_STATUS codecStatus;
+    float progressBar0_1;
+    char* progressBarText;
     codecPars* pars;                     /* codec parameters */
     
     /* internal variables */
     int loudpkrs_nDims;                  /* dimensionality of the current loudspeaker set-up */
-    int nSH;
-    
-    /* to still keep track of current config and preparing for new config */
     int new_nLoudpkrs;                   /* if new_nLoudpkrs != nLoudpkrs, afSTFT is reinitialised */
     int new_binauraliseLS;               /* if new_binauraliseLS != binauraliseLS, ambi_dec is reinitialised */
-    int new_nSH;
     int new_masterOrder;
     
     /* flags */
+    PROC_STATUS procStatus;
+    int reinit_hrtfsFLAG; /* 0: no init required, 1: init required */
     int recalc_hrtf_interpFLAG[MAX_NUM_LOUDSPEAKERS]; /* 0: no init required, 1: init required */
-    int reInitCodec;                     /* 0: no init required, 1: init required, 2: init in progress */
-    int reInitTFT;                       /* 0: no init required, 1: init required, 2: init in progress */
-    int reInitHRTFs;                     /* 0: no init required, 1: init required, 2: init in progress */
     
     /* user parameters */
     int masterOrder;
@@ -165,39 +184,6 @@ typedef struct _ambi_dec
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/*
- * ambi_dec_initCodec
- * ------------------
- * Intialises the codec variables, based on current global/user parameters
- * Note: call "ambi_dec_initTFT" (if needed) before calling this function
- *
- * Input Arguments:
- *     hAmbi - ambi_dec handle
- */
-void ambi_dec_initCodec(void* const hAmbi);
-
-/*
- * ambi_dec_initHRTFs
- * ------------------
- * Intialises the hrtf filterbank coefficients and vbap look-up tables
- * Note: call "ambi_dec_initTFT" (if needed) before calling this function
- *
- * Input Arguments:
- *     hAmbi - ambi_dec handle
- */
-void ambi_dec_initHRTFs(void* const hAmbi);
-
-/*
- * ambi_dec_initTFT
- * ----------------
- * Initialise the filterbank used by ambi_dec.
- * Note: Call this function before ambi_dec_initCodec/ambi_dec_initHRTFs
- *
- * Input Arguments:
- *     hAmbi - ambi_dec handle
- */
-void ambi_dec_initTFT(void* const hAmbi);
-    
 /*
  * ambi_dec_interpHRTFs
  * --------------------

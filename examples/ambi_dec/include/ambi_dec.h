@@ -192,9 +192,30 @@ typedef enum _NORM_TYPES{
     NORM_FUMA   /* first-order only */
 }NORM_TYPES;
     
+/*
+ * Enum: CODEC_STATUS
+ * ------------------
+ * Current status of the codec.
+ *
+ * Options:
+ *     CODEC_STATUS_INITIALISED     - Codec is initialised and ready to process
+ *                                    input audio.
+ *     CODEC_STATUS_NOT_INITIALISED - Codec has not yet been initialised, or
+ *                                    the codec configuration has changed. Input
+ *                                    audio should not be processed.
+ *     CODEC_STATUS_INITIALISING    - Codec is currently being initialised,
+ *                                    input audio should not be processed.
+ */
+typedef enum _CODEC_STATUS{
+    CODEC_STATUS_INITIALISED = 0,
+    CODEC_STATUS_NOT_INITIALISED,
+    CODEC_STATUS_INITIALISING
+}CODEC_STATUS;
+    
 #define AMBI_DEC_MAX_NUM_OUTPUTS ( 64 )
 #define AMBI_DEC_TRANSITION_MIN_VALUE ( 500.0f )
 #define AMBI_DEC_TRANSITION_MAX_VALUE ( 2000.0f )
+#define AMBI_DEC_PROGRESSBARTEXT_CHAR_LENGTH 256
     
 
 /* ========================================================================== */
@@ -232,7 +253,17 @@ void ambi_dec_destroy(void** const phAmbi);
  */
 void ambi_dec_init(void* const hAmbi,
                    int samplerate);
-    
+
+/*
+ * Function: ambi_dec_initCodec
+ * ----------------------------
+ * Intialises the codec variables, based on current global/user parameters
+ *
+ * Input Arguments:
+ *     hAmbi - ambi_dec handle
+ */
+void ambi_dec_initCodec(void* const hAmbi);
+
 /*
  * Function: ambi_dec_process
  * --------------------------
@@ -271,17 +302,6 @@ void ambi_dec_process(void* const hAmbi,
  *     hAmbi - ambi_dec handle
  */
 void ambi_dec_refreshSettings(void* const hAmbi);
-
-/*
- * Function: ambi_dec_checkReInit
- * ------------------------------
- * Check if any reInit Flags are active, and reinitialise if they are.
- * Note: Only call when playback has stopped.
- *
- * Input Arguments:
- *     hAmbi - ambi_dec handle
- */
-void ambi_dec_checkReInit(void* const hAmbi);
     
 /*
  * Function: ambi_dec_setMasterDecOrder
@@ -513,6 +533,46 @@ void ambi_dec_setTransitionFreq(void* const hAmbi, float newValue);
 /*                                Get Functions                               */
 /* ========================================================================== */
     
+/*
+ * Function: ambi_dec_getCodecStatus
+ * ---------------------------------
+ * Returns current codec status.
+ *
+ * Input Arguments:
+ *     hAmbi - ambi_dec handle
+ * Returns:
+ *     codec status (see 'CODEC_STATUS' enum)
+ */
+CODEC_STATUS ambi_dec_getCodecStatus(void* const hAmbi);
+
+/*
+ * Function: ambi_dec_getProgressBar0_1
+ * ------------------------------------
+ * (Optional) Returns current intialisation/processing progress, between 0..1
+ * 0: intialisation/processing has started
+ * 1: intialisation/processing has ended
+ *
+ * Input Arguments:
+ *     hAmbi - ambi_dec handle
+ * Returns:
+ *     current progress, 0..1
+ */
+float ambi_dec_getProgressBar0_1(void* const hAmbi);
+
+/*
+ * Function: ambi_dec_getProgressBarText
+ * -------------------------------------
+ * (Optional) Returns current intialisation/processing progress text
+ * Note: "text" string should be (at least) of length:
+ *     AMBI_DEC_PROGRESSBARTEXT_CHAR_LENGTH
+ *
+ * Input Arguments:
+ *     hAmbi - ambi_dec handle
+ * Output Arguments:
+ *     text  - process bar text; AMBI_DEC_PROGRESSBARTEXT_CHAR_LENGTH x 1
+ */
+void ambi_dec_getProgressBarText(void* const hAmbi, char* text);
+
 /*
  * Function: ambi_dec_getMasterDecOrder
  * ------------------------------------

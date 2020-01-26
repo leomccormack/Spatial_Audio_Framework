@@ -39,7 +39,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
+/* ========================================================================== */
+/*                               Internal Enums                               */
+/* ========================================================================== */
+
 /*
  * Enum: PROC_STATUS
  * -----------------
@@ -55,8 +59,8 @@ typedef enum _PROC_STATUS{
     PROC_STATUS_ONGOING = 0,
     PROC_STATUS_NOT_ONGOING
 }PROC_STATUS;
-    
-    
+
+
 /* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
@@ -139,6 +143,7 @@ typedef struct _ambi_bin
     
     /* flags */ 
     int recalc_M_rotFLAG; /* 0: no init required, 1: init required */
+    int reinit_hrtfsFLAG; /* 0: no init required, 1: init required */
     
     /* user parameters */
     int order; /* current decoding order */
@@ -161,8 +166,8 @@ typedef struct _ambi_bin
 /* ========================================================================== */
 /*                             Internal Functions                             */
 /* ========================================================================== */
-    
-    
+
+
 #ifdef __cplusplus
 } /* extern "C" { */
 #endif /* __cplusplus */
