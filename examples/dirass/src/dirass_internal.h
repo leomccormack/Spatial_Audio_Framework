@@ -46,7 +46,28 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
+/* ========================================================================== */
+/*                               Internal Enums                               */
+/* ========================================================================== */
+
+/*
+ * Enum: PROC_STATUS
+ * -----------------
+ * Current status of the processing loop.
+ *
+ * Options:
+ *     PROC_STATUS_ONGOING     - Codec is processing input audio, and should not
+ *                               be reinitialised at this time.
+ *     PROC_STATUS_NOT_ONGOING - Codec is not processing input audio, and may
+ *                               be reinitialised if needed.
+ */
+typedef enum _PROC_STATUS{
+    PROC_STATUS_ONGOING = 0,
+    PROC_STATUS_NOT_ONGOING
+}PROC_STATUS;
+
+
 /* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
@@ -111,13 +132,16 @@ typedef struct _dirass
     float SHframe_upTD[MAX_NUM_DISPLAY_SH_SIGNALS][FRAME_SIZE];
     float fs;                               /* host sampling rate */
     
-    /* internal */
-    int reInitAna;                          /* 0: no init required, 1: init required, 2: init in progress */
+    /* internal */ 
     int dispWidth;                          /* number of interpolation points on the horizontal */
     float Wz12_hpf[MAX_NUM_INPUT_SH_SIGNALS][2]; /* delayed elements used in the HPF */
     float Wz12_lpf[MAX_NUM_INPUT_SH_SIGNALS][2]; /* delayed elements used in the LPF */
     
     /* ana configuration */
+    CODEC_STATUS codecStatus;
+    PROC_STATUS procStatus;
+    float progressBar0_1;
+    char* progressBarText;
     codecPars* pars;                        /* codec parameters */
     
     /* display */

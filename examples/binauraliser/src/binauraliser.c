@@ -69,11 +69,15 @@ void binauraliser_create
     pData->hrtf_fb = NULL;
     pData->hrtf_fb_mag = NULL;
     
-    /* flags */
+    /* flags/status */
+    pData->progressBar0_1 = 0.0f;
+    pData->progressBarText = malloc1d(BINAURALISER_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+    strcpy(pData->progressBarText,"");
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
     pData->reInitHRTFsAndGainTables = 1;
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_hrtf_interpFLAG[ch] = 1;
-    pData->reInitTFT = 1;
     pData->recalc_M_rotFLAG = 1;
     
     /* user parameters */
@@ -121,6 +125,7 @@ void binauraliser_destroy
         free1d((void**)&(pData->itds_s));
         free1d((void**)&(pData->hrirs));
         free1d((void**)&(pData->hrir_dirs_deg));
+        free(pData->progressBarText);
          
         free(pData);
         pData = NULL;
@@ -144,12 +149,44 @@ void binauraliser_init
         else
             pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
     }
-
-    /* reinitialise if needed */
-    binauraliser_checkReInit(hBin);
-    
     /* defaults */
     pData->recalc_M_rotFLAG = 1;
+}
+
+void binauraliser_initCodec
+(
+    void* const hBin
+)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    
+    if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
+        return; /* re-init not required */
+    if (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but need to wait for processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING;
+        binauraliser_initCodec(hBin);
+    }
+    
+    /* for progress bar */
+    pData->codecStatus = CODEC_STATUS_INITIALISING;
+    strcpy(pData->progressBarText,"Initialising");
+    pData->progressBar0_1 = 0.0f;
+    
+    /* check if TFT needs to be reinitialised */
+    binauraliser_initTFT(hBin);
+    
+    /* reinit HRTFs and interpolation tables */
+    if(pData->reInitHRTFsAndGainTables){
+        binauraliser_initHRTFsAndGainTables(hBin);
+        pData->reInitHRTFsAndGainTables = 0;
+    }
+    
+    /* done! */
+    strcpy(pData->progressBarText,"Done!");
+    pData->progressBar0_1 = 1.0f;
+    pData->codecStatus = CODEC_STATUS_INITIALISED;
+    
 }
 
 void binauraliser_process
@@ -168,20 +205,11 @@ void binauraliser_process
     float src_dirs[MAX_NUM_INPUTS][2], Rxyz[3][3], hypotxy;
     int enableRotation;
     
-    /* reinitialise if needed */
-#ifdef __APPLE__
-    binauraliser_checkReInit(hBin);
-#else
-    if(pData->reInitTFT==1){
-        pData->reInitTFT = 2;
-        binauraliser_initTFT(hBin);
-        pData->reInitTFT = 0; 
-    }
-#endif
-    
     /* apply binaural panner */
-    if ((nSamples == FRAME_SIZE) && (pData->hrtf_fb!=NULL) && (pData->reInitTFT == 0) &&
-        (pData->reInitHRTFsAndGainTables == 0)) {
+    if ((nSamples == FRAME_SIZE) && (pData->hrtf_fb!=NULL) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ){
+        pData->procStatus = PROC_STATUS_ONGOING;
+        
+        /* copy user parameters to local variables */
         nSources = pData->nSources;
         enableRotation = pData->enableRotation;
         memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
@@ -191,12 +219,6 @@ void binauraliser_process
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<MAX_NUM_INPUTS; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
-#ifdef ENABLE_FADE_IN_OUT
-        if(applyFadeIn)
-            for(ch=0; ch < nSources;ch++)
-                for(i=0; i<FRAME_SIZE; i++)
-                    pData->inputFrameTD[ch][i] *= (float)i/(float)FRAME_SIZE;
-#endif
         
         /* Apply time-frequency transform (TFT) */
         for(t=0; t< TIME_SLOTS; t++) {
@@ -275,6 +297,8 @@ void binauraliser_process
         for (ch=0; ch < nOutputs; ch++)
             memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
     }
+    
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
 
 /* Set Functions */
@@ -282,25 +306,11 @@ void binauraliser_process
 void binauraliser_refreshSettings(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
+    int ch;
     pData->reInitHRTFsAndGainTables = 1;
-    pData->reInitTFT = 1;
-}
-
-void binauraliser_checkReInit(void* const hBin)
-{
-    binauraliser_data *pData = (binauraliser_data*)(hBin);
-
-    /* reinitialise if needed */
-    if (pData->reInitTFT==1) {
-        pData->reInitTFT = 2;
-        binauraliser_initTFT(hBin);
-        pData->reInitTFT = 0;
-    }
-    if (pData->reInitHRTFsAndGainTables==1) {
-        pData->reInitHRTFsAndGainTables = 2;
-        binauraliser_initHRTFsAndGainTables(hBin);
-        pData->reInitHRTFsAndGainTables = 0;
-    }
+    for(ch=0; ch<MAX_NUM_INPUTS; ch++)
+        pData->recalc_hrtf_interpFLAG[ch] = 1;
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
 void binauraliser_setSourceAzi_deg(void* const hBin, int index, float newAzi_deg)
@@ -310,28 +320,31 @@ void binauraliser_setSourceAzi_deg(void* const hBin, int index, float newAzi_deg
         newAzi_deg = -360.0f + newAzi_deg;
     newAzi_deg = MAX(newAzi_deg, -180.0f);
     newAzi_deg = MIN(newAzi_deg, 180.0f);
-    pData->recalc_hrtf_interpFLAG[index] = 1;
-    pData->src_dirs_deg[index][0] = newAzi_deg;
-    pData->recalc_M_rotFLAG = 1;
+    if(pData->src_dirs_deg[index][0]!=newAzi_deg){
+        pData->src_dirs_deg[index][0] = newAzi_deg;
+        pData->recalc_hrtf_interpFLAG[index] = 1;
+        pData->recalc_M_rotFLAG = 1;
+    }
 }
 
 void binauraliser_setSourceElev_deg(void* const hBin, int index, float newElev_deg)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);  
-    pData->recalc_hrtf_interpFLAG[index] = 1;
-    pData->src_dirs_deg[index][1] = newElev_deg;
-    pData->recalc_M_rotFLAG = 1;
+    newElev_deg = MIN(newElev_deg, 90.0f);
+    if(pData->src_dirs_deg[index][1] != newElev_deg){
+        pData->src_dirs_deg[index][1] = newElev_deg;
+        pData->recalc_hrtf_interpFLAG[index] = 1;
+        pData->recalc_M_rotFLAG = 1;
+    }
 }
 
 void binauraliser_setNumSources(void* const hBin, int new_nSources)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     pData->new_nSources = CLAMP(new_nSources, 1, MAX_NUM_INPUTS);
-    if(pData->nSources != pData->new_nSources)
-        pData->reInitTFT = 1;
     pData->recalc_M_rotFLAG = 1;
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
 void binauraliser_setUseDefaultHRIRsflag(void* const hBin, int newState)
@@ -340,6 +353,7 @@ void binauraliser_setUseDefaultHRIRsflag(void* const hBin, int newState)
     if((!pData->useDefaultHRIRsFLAG) && (newState)){
         pData->useDefaultHRIRsFLAG = newState;
         pData->reInitHRTFsAndGainTables = 1;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     }
 }
 
@@ -350,7 +364,8 @@ void binauraliser_setSofaFilePath(void* const hBin, const char* path)
     pData->sofa_filepath = malloc1d(strlen(path) + 1);
     strcpy(pData->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
-    pData->reInitHRTFsAndGainTables = 1; 
+    pData->reInitHRTFsAndGainTables = 1;
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
 void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID)
@@ -360,7 +375,7 @@ void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID)
     
     binauraliser_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims));
     if(pData->nSources != pData->new_nSources)
-        pData->reInitTFT = 1;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_hrtf_interpFLAG[ch] = 1;
 }
@@ -437,6 +452,24 @@ void binauraliser_setInterpMode(void* const hBin, int newMode)
 }
 
 /* Get Functions */
+
+CODEC_STATUS binauraliser_getCodecStatus(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->codecStatus;
+}
+
+float binauraliser_getProgressBar0_1(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->progressBar0_1;
+}
+
+void binauraliser_getProgressBarText(void* const hBin, char* text)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    memcpy(text, pData->progressBarText, BINAURALISER_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+}
 
 float binauraliser_getSourceAzi_deg(void* const hBin, int index)
 {

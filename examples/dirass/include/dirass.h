@@ -273,7 +273,29 @@ typedef enum _ASPECT_RATIO_OPTIONS{
     ASPECT_RATIO_4_3
 
 }ASPECT_RATIO_OPTIONS;
+    
+/*
+ * Enum: CODEC_STATUS
+ * ------------------
+ * Current status of the codec.
+ *
+ * Options:
+ *     CODEC_STATUS_INITIALISED     - Codec is initialised and ready to process
+ *                                    input audio.
+ *     CODEC_STATUS_NOT_INITIALISED - Codec has not yet been initialised, or
+ *                                    the codec configuration has changed. Input
+ *                                    audio should not be processed.
+ *     CODEC_STATUS_INITIALISING    - Codec is currently being initialised,
+ *                                    input audio should not be processed.
+ */
+typedef enum _CODEC_STATUS{
+    CODEC_STATUS_INITIALISED = 0,
+    CODEC_STATUS_NOT_INITIALISED,
+    CODEC_STATUS_INITIALISING
+}CODEC_STATUS;
 
+#define DIRASS_PROGRESSBARTEXT_CHAR_LENGTH 256
+    
 
 /* ========================================================================== */
 /*                               Main Functions                               */
@@ -310,6 +332,16 @@ void dirass_destroy(void** const phDir);
  */
 void dirass_init(void* const hDir,
                  float  samplerate);
+    
+/*
+ * Function: dirass_initCodec
+ * --------------------------
+ * Intialises the codec variables, based on current global/user parameters
+ *
+ * Input Arguments:
+ *     hDir - dirass handle
+ */
+void dirass_initCodec(void* const hDir);
 
 /*
  * Function: dirass_process
@@ -351,17 +383,6 @@ void dirass_analysis(void* const hDir,
  *     hDir - dirass handle
  */
 void dirass_refreshSettings(void* const hDir);
-
-/*
- * Function: dirass_checkReInit
- * ----------------------------
- * Check if any reInit Flags are active, and reinitialise if they are.
- * Note: Only call when playback has stopped.
- *
- * Input Arguments:
- *     hDir - dirass handle
- */
-void dirass_checkReInit(void* const hDir);
     
 /*
  * Function: dirass_setBeamType
@@ -524,6 +545,46 @@ void dirass_requestPmapUpdate(void* const hDir);
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
+
+/*
+ * Function: dirass_getCodecStatus
+ * -------------------------------
+ * Returns current codec status.
+ *
+ * Input Arguments:
+ *     hDir - dirass handle
+ * Returns:
+ *     codec status (see 'CODEC_STATUS' enum)
+ */
+CODEC_STATUS dirass_getCodecStatus(void* const hDir);
+
+/*
+ * Function: dirass_getProgressBar0_1
+ * ----------------------------------
+ * (Optional) Returns current intialisation/processing progress, between 0..1
+ * 0: intialisation/processing has started
+ * 1: intialisation/processing has ended
+ *
+ * Input Arguments:
+ *     hDir - dirass handle
+ * Returns:
+ *     current progress, 0..1
+ */
+float dirass_getProgressBar0_1(void* const hDir);
+
+/*
+ * Function: dirass_getProgressBarText
+ * -----------------------------------
+ * (Optional) Returns current intialisation/processing progress text
+ * Note: "text" string should be (at least) of length:
+ *     DIRASS_PROGRESSBARTEXT_CHAR_LENGTH
+ *
+ * Input Arguments:
+ *     hDir - dirass handle
+ * Output Arguments:
+ *     text - process bar text; DIRASS_PROGRESSBARTEXT_CHAR_LENGTH x 1
+ */
+void dirass_getProgressBarText(void* const hDir, char* text);
 
 /*
  * Function: dirass_getInputOrder

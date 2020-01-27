@@ -76,10 +76,31 @@ typedef enum _PRESETS{
     
 }PRESETS;
     
+/*
+ * Enum: CODEC_STATUS
+ * ------------------
+ * Current status of the codec.
+ *
+ * Options:
+ *     CODEC_STATUS_INITIALISED     - Codec is initialised and ready to process
+ *                                    input audio.
+ *     CODEC_STATUS_NOT_INITIALISED - Codec has not yet been initialised, or
+ *                                    the codec configuration has changed. Input
+ *                                    audio should not be processed.
+ *     CODEC_STATUS_INITIALISING    - Codec is currently being initialised,
+ *                                    input audio should not be processed.
+ */
+typedef enum _CODEC_STATUS{
+    CODEC_STATUS_INITIALISED = 0,
+    CODEC_STATUS_NOT_INITIALISED,
+    CODEC_STATUS_INITIALISING
+}CODEC_STATUS;
+    
 #define PANNER_MAX_NUM_INPUTS ( 64 )
 #define PANNER_MAX_NUM_OUTPUTS ( 64 )
 #define PANNER_SPREAD_MIN_VALUE ( 0.0f )
 #define PANNER_SPREAD_MAX_VALUE ( 90.0f )
+#define PANNER_PROGRESSBARTEXT_CHAR_LENGTH 256
     
 
 /* ========================================================================== */
@@ -117,6 +138,16 @@ void panner_destroy(void** const phPan);
  */
 void panner_init(void* const hPan,
                  int samplerate);
+    
+/*
+ * Function: panner_initCodec
+ * ----------------------------
+ * Intialises the codec variables, based on current global/user parameters
+ *
+ * Input Arguments:
+ *     hPan - panner handle
+ */
+void panner_initCodec(void* const hPan);
 
 /*
  * Function: panner_process
@@ -156,17 +187,6 @@ void panner_process(void* const hPan,
  *     hPan - panner handle
  */
 void panner_refreshSettings(void* const hPan);
-
-/*
- * Function: panner_checkReInit
- * ----------------------------
- * Check if any reInit Flags are active, and reinitialise if they are.
- * Note: Only call when playback has stopped.
- *
- * Input Arguments:
- *     hPan - panner handle
- */
-void panner_checkReInit(void* const hPan);
 
 /*
  * Function: panner_setSourceAzi_deg
@@ -359,6 +379,46 @@ void panner_setFlipRoll(void* const hPan, int newState);
 /*                                Get Functions                               */
 /* ========================================================================== */
 
+/*
+ * Function: panner_getCodecStatus
+ * -------------------------------
+ * Returns current codec status.
+ *
+ * Input Arguments:
+ *     hPan - panner handle
+ * Returns:
+ *     codec status (see 'CODEC_STATUS' enum)
+ */
+CODEC_STATUS panner_getCodecStatus(void* const hPan);
+
+/*
+ * Function: panner_getProgressBar0_1
+ * ----------------------------------
+ * (Optional) Returns current intialisation/processing progress, between 0..1
+ * 0: intialisation/processing has started
+ * 1: intialisation/processing has ended
+ *
+ * Input Arguments:
+ *     hPan - panner handle
+ * Returns:
+ *     current progress, 0..1
+ */
+float panner_getProgressBar0_1(void* const hPan);
+
+/*
+ * Function: panner_getProgressBarText
+ * -----------------------------------
+ * (Optional) Returns current intialisation/processing progress text
+ * Note: "text" string should be (at least) of length:
+ *     PANNER_PROGRESSBARTEXT_CHAR_LENGTH
+ *
+ * Input Arguments:
+ *     hPan - panner handle
+ * Output Arguments:
+ *     text - process bar text; PANNER_PROGRESSBARTEXT_CHAR_LENGTH x 1
+ */
+void panner_getProgressBarText(void* const hPan, char* text);
+    
 /*
  * Function: panner_getSourceAzi_deg
  * ---------------------------------

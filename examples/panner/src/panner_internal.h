@@ -47,6 +47,27 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+    
+/* ========================================================================== */
+/*                               Internal Enums                               */
+/* ========================================================================== */
+
+/*
+ * Enum: PROC_STATUS
+ * -----------------
+ * Current status of the processing loop.
+ *
+ * Options:
+ *     PROC_STATUS_ONGOING     - Codec is processing input audio, and should not
+ *                               be reinitialised at this time.
+ *     PROC_STATUS_NOT_ONGOING - Codec is not processing input audio, and may
+ *                               be reinitialised if needed.
+ */
+typedef enum _PROC_STATUS{
+    PROC_STATUS_ONGOING = 0,
+    PROC_STATUS_NOT_ONGOING
+}PROC_STATUS;
+    
 
 /* ========================================================================== */
 /*                            Internal Parameters                             */
@@ -99,10 +120,13 @@ typedef struct _panner
     float_complex G_src[HYBRID_BANDS][MAX_NUM_INPUTS][MAX_NUM_OUTPUTS];
     
     /* flags */
+    CODEC_STATUS codecStatus;
+    PROC_STATUS procStatus;
+    float progressBar0_1;
+    char* progressBarText;
     int recalc_gainsFLAG[MAX_NUM_INPUTS];
-    int reInitGainTables;
-    int reInitTFT;
     int recalc_M_rotFLAG;
+    int reInitGainTables;
     
     /* misc. */
     float src_dirs_rot_deg[MAX_NUM_INPUTS][2];

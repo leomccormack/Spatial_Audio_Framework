@@ -130,7 +130,29 @@ typedef enum _NORM_TYPES{
     NORM_SN3D,
     NORM_FUMA   /* first-order only */
 }NORM_TYPES;
+    
+/*
+ * Enum: CODEC_STATUS
+ * ------------------
+ * Current status of the codec.
+ *
+ * Options:
+ *     CODEC_STATUS_INITIALISED     - Codec is initialised and ready to process
+ *                                    input audio.
+ *     CODEC_STATUS_NOT_INITIALISED - Codec has not yet been initialised, or
+ *                                    the codec configuration has changed. Input
+ *                                    audio should not be processed.
+ *     CODEC_STATUS_INITIALISING    - Codec is currently being initialised,
+ *                                    input audio should not be processed.
+ */
+typedef enum _CODEC_STATUS{
+    CODEC_STATUS_INITIALISED = 0,
+    CODEC_STATUS_NOT_INITIALISED,
+    CODEC_STATUS_INITIALISING
+}CODEC_STATUS;
 
+#define SLDOA_PROGRESSBARTEXT_CHAR_LENGTH ( 256 )
+    
 
 /* ========================================================================== */
 /*                               Main Functions                               */
@@ -167,6 +189,16 @@ void sldoa_destroy(void** const phSld);
  */
 void sldoa_init(void* const hSld,
                 float samplerate);
+    
+/*
+ * Function: sldoa_initCodec
+ * -------------------------
+ * Intialises the codec variables, based on current global/user parameters
+ *
+ * Input Arguments:
+ *     hSld - sldoa handle
+ */
+void sldoa_initCodec(void* const hSld);
     
 /*
  * Function: sldoa_process
@@ -317,6 +349,46 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID);
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
+
+/*
+ * Function: sldoa_getCodecStatus
+ * ------------------------------
+ * Returns current codec status.
+ *
+ * Input Arguments:
+ *     hSld - sldoa handle
+ * Returns:
+ *     codec status (see 'CODEC_STATUS' enum)
+ */
+CODEC_STATUS sldoa_getCodecStatus(void* const hSld);
+
+/*
+ * Function: sldoa_getProgressBar0_1
+ * ---------------------------------
+ * (Optional) Returns current intialisation/processing progress, between 0..1
+ * 0: intialisation/processing has started
+ * 1: intialisation/processing has ended
+ *
+ * Input Arguments:
+ *     hSld - sldoa handle
+ * Returns:
+ *     current progress, 0..1
+ */
+float sldoa_getProgressBar0_1(void* const hSld);
+
+/*
+ * Function: sldoa_getProgressBarText
+ * ----------------------------------
+ * (Optional) Returns current intialisation/processing progress text
+ * Note: "text" string should be (at least) of length:
+ *     SLDOA_PROGRESSBARTEXT_CHAR_LENGTH
+ *
+ * Input Arguments:
+ *     hSld - sldoa handle
+ * Output Arguments:
+ *     text - process bar text; SLDOA_PROGRESSBARTEXT_CHAR_LENGTH x 1
+ */
+void sldoa_getProgressBarText(void* const hSld, char* text);
 
 /*
  * Function: sldoa_getMasterOrder

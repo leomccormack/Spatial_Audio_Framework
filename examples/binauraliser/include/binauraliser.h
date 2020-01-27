@@ -76,7 +76,28 @@ typedef enum _INTERP_MODES{
     INTERP_TRI = 1  /* Triangular interpolation */
 }INTERP_MODES;
     
+/*
+ * Enum: CODEC_STATUS
+ * ------------------
+ * Current status of the codec.
+ *
+ * Options:
+ *     CODEC_STATUS_INITIALISED     - Codec is initialised and ready to process
+ *                                    input audio.
+ *     CODEC_STATUS_NOT_INITIALISED - Codec has not yet been initialised, or
+ *                                    the codec configuration has changed. Input
+ *                                    audio should not be processed.
+ *     CODEC_STATUS_INITIALISING    - Codec is currently being initialised,
+ *                                    input audio should not be processed.
+ */
+typedef enum _CODEC_STATUS{
+    CODEC_STATUS_INITIALISED = 0,
+    CODEC_STATUS_NOT_INITIALISED,
+    CODEC_STATUS_INITIALISING
+}CODEC_STATUS;
+    
 #define BINAURALISER_MAX_NUM_INPUTS ( 64 )
+#define BINAURALISER_PROGRESSBARTEXT_CHAR_LENGTH 256
     
     
 /* ========================================================================== */
@@ -116,6 +137,16 @@ void binauraliser_init(void* const hBin,
                        int samplerate);
 
 /*
+ * Function: binauraliser_initCodec
+ * --------------------------------
+ * Intialises the codec variables, based on current global/user parameters
+ *
+ * Input Arguments:
+ *     hBin - binauraliser handle
+ */
+void binauraliser_initCodec(void* const hBin);
+
+/*
  * Function: binauraliser_process
  * ------------------------------
  * Binauralises the input signals at the user specified directions
@@ -153,17 +184,6 @@ void binauraliser_process(void* const hBin,
  *     hBin - binauraliser handle
  */
 void binauraliser_refreshSettings(void* const hBin);
-
-/*
- * Function: binauraliser_checkReInit
- * ----------------------------------
- * Check if any reInit Flags are active, and reinitialise if they are.
- * Note: Only call when playback has stopped.
- *
- * Input Arguments:
- *     hBin - binauraliser handle
- */
-void binauraliser_checkReInit(void* const hBin);
     
 /*
  * Function: binauraliser_setSourceAzi_deg
@@ -337,6 +357,46 @@ void binauraliser_setInterpMode(void* const hBin, int newMode);
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
+
+/*
+ * Function: binauraliser_getCodecStatus
+ * -------------------------------------
+ * Returns current codec status.
+ *
+ * Input Arguments:
+ *     hBin - binauraliser handle
+ * Returns:
+ *     codec status (see 'CODEC_STATUS' enum)
+ */
+CODEC_STATUS binauraliser_getCodecStatus(void* const hBin);
+
+/*
+ * Function: binauraliser_getProgressBar0_1
+ * ----------------------------------------
+ * (Optional) Returns current intialisation/processing progress, between 0..1
+ * 0: intialisation/processing has started
+ * 1: intialisation/processing has ended
+ *
+ * Input Arguments:
+ *     hBin - binauraliser handle
+ * Returns:
+ *     current progress, 0..1
+ */
+float binauraliser_getProgressBar0_1(void* const hBin);
+
+/*
+ * Function: binauraliser_getProgressBarText
+ * -----------------------------------------
+ * (Optional) Returns current intialisation/processing progress text
+ * Note: "text" string should be (at least) of length:
+ *     BINAURALISER_PROGRESSBARTEXT_CHAR_LENGTH
+ *
+ * Input Arguments:
+ *     hBin - binauraliser handle
+ * Output Arguments:
+ *     text - process bar text; BINAURALISER_PROGRESSBARTEXT_CHAR_LENGTH x 1
+ */
+void binauraliser_getProgressBarText(void* const hBin, char* text);
 
 /*
  * Function: binauraliser_getSourceAzi_deg

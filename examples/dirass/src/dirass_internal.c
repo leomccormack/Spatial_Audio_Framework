@@ -50,6 +50,9 @@ void dirass_initAna(void* const hDir)
     nSH_order = (order+1)*(order+1);
     nSH_up = (order_up+1)*(order_up+1);
     
+    strcpy(pData->progressBarText,"Preparing scanning grid");
+    pData->progressBar0_1 = 0.4f;
+    
     /* Determine scanning grid */
     switch(pData->gridOption){
         case T_DESIGN_3:           /* 6 points */
@@ -149,6 +152,9 @@ void dirass_initAna(void* const hDir)
     free(pars->interp_table);
     generateVBAPgainTable3D_srcs(pars->interp_dirs_deg, N_azi*N_ele, pars->grid_dirs_deg, pars->grid_nDirs, 0, 0, 0.0f, &(pars->interp_table), &(pars->interp_nDirs), &(pars->interp_nTri));
     VBAPgainTable2InterpTable(pars->interp_table, pars->interp_nDirs, pars->grid_nDirs);
+    
+    strcpy(pData->progressBarText,"Computing Sector coefficients");
+    pData->progressBar0_1 = 0.85f;
     
     /* get beamforming matrices for sector velocity and sector patterns */
     order_sec = order-1;

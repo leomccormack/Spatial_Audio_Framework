@@ -56,8 +56,11 @@ void powermap_create
     pars->interp_table = NULL;
     
     /* internal */
-    pData->reInitTFT = 1;
-    pData->reInitAna = 1;
+    pData->progressBar0_1 = 0.0f;
+    pData->progressBarText = malloc1d(POWERMAP_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+    strcpy(pData->progressBarText,"");
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
     pData->dispWidth = 140;
 
     /* display */
@@ -70,7 +73,6 @@ void powermap_create
     
     /* Default user parameters */
     pData->masterOrder = pData->new_masterOrder = MASTER_ORDER_FIRST;
-    pData->nSH = pData->new_nSH = (pData->masterOrder+1)*(pData->masterOrder+1);
     for(band=0; band<HYBRID_BANDS; band++){
         pData->analysisOrderPerBand[band] = pData->masterOrder;
         pData->pmapEQ[band] = 1.0f;
@@ -114,6 +116,7 @@ void powermap_destroy
         }
         free1d((void**)&(pars->interp_table));
         free(pData->pars);
+        free(pData->progressBarText);
         free(pData);
         pData = NULL;
     }
@@ -150,9 +153,35 @@ void powermap_init
         memset(pData->prev_pmap, 0, pars->grid_nDirs*sizeof(float));
     pData->pmapReady = 0;
     pData->dispSlotIdx = 0;
+}
 
-    /* reinitialise if needed */
-    powermap_checkReInit(hPm);
+void powermap_initCodec
+(
+    void* const hPm
+)
+{
+    powermap_data *pData = (powermap_data*)(hPm);
+    
+    if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
+        return; /* re-init not required */
+    if (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but need to wait for processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING;
+        powermap_initCodec(hPm);
+    }
+    
+    /* for progress bar */
+    pData->codecStatus = CODEC_STATUS_INITIALISING;
+    strcpy(pData->progressBarText,"Initialising");
+    pData->progressBar0_1 = 0.0f;
+    
+    powermap_initTFT(hPm);
+    powermap_initAna(hPm);
+    
+    /* done! */
+    strcpy(pData->progressBarText,"Done!");
+    pData->progressBar0_1 = 1.0f;
+    pData->codecStatus = CODEC_STATUS_INITIALISED;
 }
 
 void powermap_analysis
@@ -182,19 +211,10 @@ void powermap_analysis
     CH_ORDER chOrdering;
     POWERMAP_MODES pmap_mode;
     
-    /* reinitialise if needed */
-#ifdef __APPLE__
-    powermap_checkReInit(hPm);
-#else
-    if(pData->reInitTFT==1){
-        pData->reInitTFT = 2;
-        powermap_initTFT(hPm);
-        pData->reInitTFT = 0;
-    }
-#endif
-    
     /* The main processing: */
-    if (nSamples == FRAME_SIZE && (pData->reInitAna == 0) && (pData->reInitTFT == 0) && isPlaying ) {
+    if (nSamples == FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying ) {
+        pData->procStatus = PROC_STATUS_ONGOING;
+        
         /* copy current parameters to be thread safe */
         memcpy(analysisOrderPerBand, pData->analysisOrderPerBand, HYBRID_BANDS*sizeof(int));
         memcpy(pmapEQ, pData->pmapEQ, HYBRID_BANDS*sizeof(float));
@@ -205,7 +225,7 @@ void powermap_analysis
         pmapAvgCoeff = pData->pmapAvgCoeff;
         pmap_mode = pData->pmap_mode;
         masterOrder = pData->masterOrder;
-        nSH = pData->nSH;
+        nSH = (masterOrder+1)*(masterOrder+1);
         
         /* Load time-domain data */
         switch(chOrdering){
@@ -384,6 +404,8 @@ void powermap_analysis
             pData->pmapReady = 1;
         }
     }
+    
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
 
 /* SETS */
@@ -391,26 +413,7 @@ void powermap_analysis
 void powermap_refreshSettings(void* const hPm)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    pData->reInitTFT = 1;
-    pData->reInitAna = 1; 
-}
- 
-void powermap_checkReInit(void* const hPm)
-{
-    powermap_data *pData = (powermap_data*)(hPm); 
-    /* reinitialise if needed */
-    if (pData->reInitTFT == 1) {
-        pData->reInitTFT = 2;
-        powermap_initTFT(hPm);
-        pData->reInitTFT = 0;
-    }
-    if (pData->reInitAna == 1) {
-        pData->reInitAna = 2;  /* indicate init in progress */
-        pData->pmapReady = 0;  /* avoid trying to draw pmap during reinit */
-        powermap_initAna(hPm);
-        pData->reInitAna = 0;  /* indicate init complete */
-        pData->recalcPmap = 1; /* recalculate powermap with new configuration */
-    }
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
 void powermap_setPowermapMode(void* const hPm, int newMode)
@@ -425,10 +428,10 @@ void powermap_setPowermapMode(void* const hPm, int newMode)
 void powermap_setMasterOrder(void* const hPm,  int newValue)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    pData->new_masterOrder = newValue;
-    pData->new_nSH = (newValue+1)*(newValue+1);
-    pData->reInitTFT = 1;
-    pData->reInitAna = 1;
+    if(pData->new_masterOrder != newValue){
+        pData->new_masterOrder = newValue;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    }
     /* FUMA only supports 1st order */
     if(pData->new_masterOrder!=MASTER_ORDER_FIRST && pData->chOrdering == CH_FUMA)
         pData->chOrdering = CH_ACN;
@@ -572,13 +575,19 @@ void powermap_setNormType(void* const hPm, int newType)
 void powermap_setDispFOV(void* const hPm, int newOption)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    pData->HFOVoption = (HFOV_OPTIONS)newOption;
+    if(pData->HFOVoption != (HFOV_OPTIONS)newOption){
+        pData->HFOVoption = (HFOV_OPTIONS)newOption;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    }
 }
 
 void powermap_setAspectRatio(void* const hPm, int newOption)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    pData->aspectRatioOption = (ASPECT_RATIO_OPTIONS)newOption;
+    if(pData->aspectRatioOption != (ASPECT_RATIO_OPTIONS)newOption){
+        pData->aspectRatioOption = (ASPECT_RATIO_OPTIONS)newOption;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    }
 }
 
 void powermap_setPowermapAvgCoeff(void* const hPm, float newValue)
@@ -595,6 +604,24 @@ void powermap_requestPmapUpdate(void* const hPm)
 
 
 /* GETS */
+
+CODEC_STATUS powermap_getCodecStatus(void* const hPm)
+{
+    powermap_data *pData = (powermap_data*)(hPm);
+    return pData->codecStatus;
+}
+
+float powermap_getProgressBar0_1(void* const hPm)
+{
+    powermap_data *pData = (powermap_data*)(hPm);
+    return pData->progressBar0_1;
+}
+
+void powermap_getProgressBarText(void* const hPm, char* text)
+{
+    powermap_data *pData = (powermap_data*)(hPm);
+    memcpy(text, pData->progressBarText, POWERMAP_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+}
 
 int powermap_getMasterOrder(void* const hPm)
 {
@@ -680,7 +707,7 @@ int powermap_getNumberOfBands(void)
 int powermap_getNSHrequired(void* const hPm)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    return pData->new_nSH;
+    return (pData->new_masterOrder+1)*(pData->new_masterOrder+1);
 }
 
 int powermap_getChOrder(void* const hPm)
@@ -723,7 +750,7 @@ int powermap_getPmap(void* const hPm, float** grid_dirs, float** pmap, int* nDir
 {
     powermap_data *pData = (powermap_data*)(hPm);
     codecPars* pars = pData->pars;
-    if((pData->reInitAna == 0) && pData->pmapReady){
+    if((pData->codecStatus == CODEC_STATUS_INITIALISED) && pData->pmapReady){
         (*grid_dirs) = pars->interp_dirs_deg;
         (*pmap) = pData->pmap_grid[pData->dispSlotIdx-1 < 0 ? NUM_DISP_SLOTS-1 : pData->dispSlotIdx-1];
         (*nDirs) = pars->interp_nDirs;

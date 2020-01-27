@@ -42,6 +42,27 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+    
+/* ========================================================================== */
+/*                               Internal Enums                               */
+/* ========================================================================== */
+
+/*
+ * Enum: PROC_STATUS
+ * -----------------
+ * Current status of the processing loop.
+ *
+ * Options:
+ *     PROC_STATUS_ONGOING     - Codec is processing input audio, and should not
+ *                               be reinitialised at this time.
+ *     PROC_STATUS_NOT_ONGOING - Codec is not processing input audio, and may
+ *                               be reinitialised if needed.
+ */
+typedef enum _PROC_STATUS{
+    PROC_STATUS_ONGOING = 0,
+    PROC_STATUS_NOT_ONGOING
+}PROC_STATUS;
+
 
 /* ========================================================================== */
 /*                            Internal Parameters                             */
@@ -58,8 +79,8 @@ extern "C" {
 #ifndef RAD2DEG
 # define RAD2DEG(x) (x * 180.0f / PI)
 #endif
-    
-    
+
+
 /* ========================================================================== */
 /*                                 Structures                                 */
 /* ========================================================================== */
@@ -81,8 +102,6 @@ typedef struct _binauraliser
     complexVector* STFTOutputFrameTF;
     float** tempHopFrameTD;
     int fs;
-    
-    /* time-frequency transform */
     float freqVector[HYBRID_BANDS]; 
     void* hSTFT;
     
@@ -107,10 +126,13 @@ typedef struct _binauraliser
     float* hrtf_fb_mag; /* magnitudes of the hrtf filterbank coefficients; nBands x nCH x N_hrirs */
     float_complex hrtf_interp[MAX_NUM_INPUTS][HYBRID_BANDS][NUM_EARS];
     
-    /* flags */
+    /* flags/status */
+    CODEC_STATUS codecStatus;
+    float progressBar0_1;
+    char* progressBarText;
+    PROC_STATUS procStatus;
     int recalc_hrtf_interpFLAG[MAX_NUM_INPUTS];
     int reInitHRTFsAndGainTables;
-    int reInitTFT;
     int recalc_M_rotFLAG;
     
     /* misc. */

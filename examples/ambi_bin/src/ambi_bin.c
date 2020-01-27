@@ -607,7 +607,7 @@ int ambi_bin_getUseDefaultHRIRsflag(void* const hAmbi)
 int ambi_bin_getInputOrderPreset(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    return pData->order;
+    return pData->new_order;
 }
 
 int ambi_bin_getDecodingMethod(void* const hAmbi)

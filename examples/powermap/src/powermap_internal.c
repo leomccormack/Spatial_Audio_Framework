@@ -111,13 +111,15 @@ void powermap_initTFT
 )
 {
     powermap_data *pData = (powermap_data*)(hPm);
+    int nSH, new_nSH;
     
-    if(pData->hSTFT==NULL){
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, 0, 0, 1);
+    nSH = (pData->masterOrder+1)*(pData->masterOrder+1);
+    new_nSH = (pData->new_masterOrder+1)*(pData->new_masterOrder+1);
+    if(pData->hSTFT==NULL)
+        afSTFTinit(&(pData->hSTFT), HOP_SIZE, new_nSH, 0, 0, 1);
+    else if(nSH!=new_nSH){
+        afSTFTchannelChange(pData->hSTFT, new_nSH, 0);
+        afSTFTclearBuffers(pData->hSTFT);
+        memset(pData->Cx, 0 , MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*HYBRID_BANDS*sizeof(float_complex));
     }
-    else{
-        afSTFTchannelChange(pData->hSTFT, pData->new_nSH, 0);
-    }
-    pData->nSH = pData->new_nSH;
-    memset(pData->Cx, 0 , MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*HYBRID_BANDS*sizeof(float_complex));
 }

@@ -178,6 +178,28 @@ typedef enum _ASPECT_RATIO_OPTIONS{
     
 }ASPECT_RATIO_OPTIONS;
     
+/*
+ * Enum: CODEC_STATUS
+ * ------------------
+ * Current status of the codec.
+ *
+ * Options:
+ *     CODEC_STATUS_INITIALISED     - Codec is initialised and ready to process
+ *                                    input audio.
+ *     CODEC_STATUS_NOT_INITIALISED - Codec has not yet been initialised, or
+ *                                    the codec configuration has changed. Input
+ *                                    audio should not be processed.
+ *     CODEC_STATUS_INITIALISING    - Codec is currently being initialised,
+ *                                    input audio should not be processed.
+ */
+typedef enum _CODEC_STATUS{
+    CODEC_STATUS_INITIALISED = 0,
+    CODEC_STATUS_NOT_INITIALISED,
+    CODEC_STATUS_INITIALISING
+}CODEC_STATUS;
+    
+#define POWERMAP_PROGRESSBARTEXT_CHAR_LENGTH 256
+    
 
 /* ========================================================================== */
 /*                               Main Functions                               */
@@ -214,6 +236,16 @@ void powermap_destroy(void** const phPm);
  */
 void powermap_init(void* const hPm,
                    float  samplerate);
+    
+/*
+ * Function: powermap_initCodec
+ * ----------------------------
+ * Intialises the codec variables, based on current global/user parameters
+ *
+ * Input Arguments:
+ *     hPm - powermap handle
+ */
+void powermap_initCodec(void* const hPm);
 
 /*
  * Function: powermap_process
@@ -233,8 +265,8 @@ void powermap_analysis(void* const hPm,
                        int nInputs,
                        int nSamples,
                        int isPlaying);
-    
-   
+
+
 /* ========================================================================== */
 /*                                Set Functions                               */
 /* ========================================================================== */
@@ -249,17 +281,6 @@ void powermap_analysis(void* const hPm,
  *     hPm - powermap handle
  */
 void powermap_refreshSettings(void* const hPm);
-
-/*
- * Function: powermap_checkReInit
- * ------------------------------
- * Check if any reInit Flags are active, and reinitialise if they are.
- * Note: Only call when playback has stopped.
- *
- * Input Arguments:
- *     hPm - powermap handle
- */
-void powermap_checkReInit(void* const hPm);
 
 /*
  * Function: powermap_setPowermapMode
@@ -436,6 +457,46 @@ void powermap_requestPmapUpdate(void* const hPm);
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
+
+/*
+ * Function: powermap_getCodecStatus
+ * ---------------------------------
+ * Returns current codec status.
+ *
+ * Input Arguments:
+ *     hPm - powermap handle
+ * Returns:
+ *     codec status (see 'CODEC_STATUS' enum)
+ */
+CODEC_STATUS powermap_getCodecStatus(void* const hPm);
+
+/*
+ * Function: powermap_getProgressBar0_1
+ * ------------------------------------
+ * (Optional) Returns current intialisation/processing progress, between 0..1
+ * 0: intialisation/processing has started
+ * 1: intialisation/processing has ended
+ *
+ * Input Arguments:
+ *     hPm - powermap handle
+ * Returns:
+ *     current progress, 0..1
+ */
+float powermap_getProgressBar0_1(void* const hPm);
+
+/*
+ * Function: powermap_getProgressBarText
+ * -------------------------------------
+ * (Optional) Returns current intialisation/processing progress text
+ * Note: "text" string should be (at least) of length:
+ *     POWERMAP_PROGRESSBARTEXT_CHAR_LENGTH
+ *
+ * Input Arguments:
+ *     hPm  - powermap handle
+ * Output Arguments:
+ *     text - process bar text; POWERMAP_PROGRESSBARTEXT_CHAR_LENGTH x 1
+ */
+void powermap_getProgressBarText(void* const hPm, char* text);
 
 /*
  * Function: powermap_getMasterOrder

@@ -86,11 +86,12 @@ void panner_initTFT
     
     if(pData->hSTFT==NULL)
         afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSources, pData->new_nLoudpkrs, 0, 1);
-    else
+    else if (pData->new_nSources!=pData->nSources || pData->new_nLoudpkrs!=pData->nLoudpkrs){
         afSTFTchannelChange(pData->hSTFT, pData->new_nSources, pData->new_nLoudpkrs);
-    
-    pData->nSources = pData->new_nSources;
-    pData->nLoudpkrs = pData->new_nLoudpkrs;
+        afSTFTclearBuffers(pData->hSTFT);
+        pData->nSources = pData->new_nSources;
+        pData->nLoudpkrs = pData->new_nLoudpkrs;
+    }
 }
 
 void panner_loadPreset(PRESETS preset, float dirs_deg[MAX_NUM_INPUTS][2], int* newNCH, int* nDims)

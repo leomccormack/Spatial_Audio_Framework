@@ -33,17 +33,34 @@
 #include <string.h>
 #include <float.h>
 #include "powermap.h"
-/*
- * #define SAF_ENABLE_AFSTFT - for time-frequency transform
- * #define SAF_ENABLE_SH     - for spherical harmonic weights
- * #define SAF_ENABLE_VBAP   - for vbap-based interpolation tables
- */
+
 #include "saf.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
     
+/* ========================================================================== */
+/*                               Internal Enums                               */
+/* ========================================================================== */
+
+/*
+ * Enum: PROC_STATUS
+ * -----------------
+ * Current status of the processing loop.
+ *
+ * Options:
+ *     PROC_STATUS_ONGOING     - Codec is processing input audio, and should not
+ *                               be reinitialised at this time.
+ *     PROC_STATUS_NOT_ONGOING - Codec is not processing input audio, and may
+ *                               be reinitialised if needed.
+ */
+typedef enum _PROC_STATUS{
+    PROC_STATUS_ONGOING = 0,
+    PROC_STATUS_NOT_ONGOING
+}PROC_STATUS;
+
+
 /* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
@@ -101,14 +118,15 @@ typedef struct _powermap
     float fs;
     
     /* internal */
-    float_complex Cx[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];     /* cov matrices */ 
-    int reInitAna; /* 0: no init required, 1: init required, 2: init in progress */
-    int reInitTFT; /* 0: no init required, 1: init required, 2: init in progress */
+    float_complex Cx[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];     /* cov matrices */
     int new_masterOrder;
-    int nSH, new_nSH;
     int dispWidth;
     
     /* ana configuration */
+    CODEC_STATUS codecStatus;
+    PROC_STATUS procStatus;
+    float progressBar0_1;
+    char* progressBarText;
     codecPars* pars;                                          /* codec parameters */
     
     /* display */

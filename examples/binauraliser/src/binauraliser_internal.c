@@ -94,6 +94,9 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     int i;
     float* hrtf_vbap_gtable;
     
+    strcpy(pData->progressBarText,"Loading HRIRs");
+    pData->progressBar0_1 = 0.2f;
+    
     /* load sofa file or load default hrir data */
     if(!pData->useDefaultHRIRsFLAG && pData->sofa_filepath!=NULL){
         loadSofaFile(pData->sofa_filepath,
@@ -117,6 +120,8 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     estimateITDs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrir_fs, pData->itds_s);
     
     /* generate VBAP gain table */
+    strcpy(pData->progressBarText,"Generating interpolation table");
+    pData->progressBar0_1 = 0.6f;
     hrtf_vbap_gtable = NULL;
     pData->hrtf_vbapTableRes[0] = 2;
     pData->hrtf_vbapTableRes[1] = 5;
@@ -134,6 +139,8 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     compressVBAPgainTable3D(hrtf_vbap_gtable, pData->N_hrtf_vbap_gtable, pData->N_hrir_dirs, pData->hrtf_vbap_gtableComp, pData->hrtf_vbap_gtableIdx);
     
     /* convert hrirs to filterbank coefficients */
+    strcpy(pData->progressBarText,"Applying HRIR diffuse-field EQ");
+    pData->progressBar0_1 = 0.8f;
     pData->hrtf_fb = realloc1d(pData->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pData->N_hrir_dirs)*sizeof(float_complex));
     HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrtf_fb);
     diffuseFieldEqualiseHRTFs(pData->N_hrir_dirs, pData->itds_s, pData->freqVector, HYBRID_BANDS, pData->hrtf_fb);
@@ -156,9 +163,11 @@ void binauraliser_initTFT
  
     if(pData->hSTFT==NULL)
         afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSources, NUM_EARS, 0, 1);
-    else 
+    else if(pData->new_nSources!=pData->nSources){
         afSTFTchannelChange(pData->hSTFT, pData->new_nSources, NUM_EARS);
-    pData->nSources = pData->new_nSources;
+        afSTFTclearBuffers(pData->hSTFT);
+        pData->nSources = pData->new_nSources;
+    }
 }
 
 void binauraliser_loadPreset(SOURCE_CONFIG_PRESETS preset, float dirs_deg[MAX_NUM_INPUTS][2], int* newNCH, int* nDims)

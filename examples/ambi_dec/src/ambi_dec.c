@@ -730,7 +730,6 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID)
             break;
             
         /* For real microphone arrays, the maximum usable spherical harmonic order will depend on frequency  */
-#ifdef ENABLE_ZYLIA_MIC_PRESET
         case MIC_PRESET_ZYLIA:
             for(band=0; band<HYBRID_BANDS; band++){
                 if(rangeIdx<2*(__Zylia_maxOrder-1)){
@@ -746,9 +745,7 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID)
                 pData->orderPerBand[band] = MIN(pData->masterOrder,curOrder);
             }
             break;
-#endif
-            
-#ifdef ENABLE_EIGENMIKE32_MIC_PRESET
+
         case MIC_PRESET_EIGENMIKE32:
             for(band=0; band<HYBRID_BANDS; band++){
                 if(rangeIdx<2*(__Eigenmike32_maxOrder-1)){
@@ -764,9 +761,7 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID)
                 pData->orderPerBand[band] = MIN(pData->masterOrder,curOrder);
             }
             break;
-#endif
-            
-#ifdef ENABLE_DTU_MIC_MIC_PRESET
+
         case MIC_PRESET_DTU_MIC:
             for(band=0; band<HYBRID_BANDS; band++){
                 if(rangeIdx<2*(__DTU_mic_maxOrder-1)){
@@ -782,7 +777,6 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID)
                 pData->orderPerBand[band] = MIN(pData->masterOrder,curOrder);
             }
             break;
-#endif
     }
 }
 

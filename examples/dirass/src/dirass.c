@@ -64,7 +64,11 @@ void dirass_create
     pars->prev_energy = NULL;
     
     /* internal */
-    pData->reInitAna = 1; 
+    pData->progressBar0_1 = 0.0f;
+    pData->progressBarText = malloc1d(DIRASS_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+    strcpy(pData->progressBarText,"");
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
 
     /* display */
     pData->pmap = NULL;
@@ -118,6 +122,7 @@ void dirass_destroy
         free1d((void**)&(pars->prev_energy));
         
         free(pData->pars);
+        free(pData->progressBarText);
         free(pData);
         pData = NULL;
     }
@@ -143,10 +148,36 @@ void dirass_init
     memset(pData->Wz12_lpf, 0, MAX_NUM_INPUT_SH_SIGNALS*2*sizeof(float));
     pData->pmapReady = 0;
     pData->dispSlotIdx = 0;
-
-    /* reinitialise if needed */
-    dirass_checkReInit(hDir);
 }
+
+void dirass_initCodec
+(
+    void* const hDir
+)
+{
+    dirass_data *pData = (dirass_data*)(hDir);
+    
+    if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
+        return; /* re-init not required */
+    if (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but need to wait for processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING;
+        dirass_initCodec(hDir);
+    }
+    
+    /* for progress bar */
+    pData->codecStatus = CODEC_STATUS_INITIALISING;
+    strcpy(pData->progressBarText,"Initialising");
+    pData->progressBar0_1 = 0.0f;
+    
+    dirass_initAna(hDir);
+    
+    /* done! */
+    strcpy(pData->progressBarText,"Done!");
+    pData->progressBar0_1 = 1.0f;
+    pData->codecStatus = CODEC_STATUS_INITIALISED;
+}
+
 
 void dirass_analysis
 (
@@ -169,16 +200,12 @@ void dirass_analysis
     NORM_TYPES norm;
     CH_ORDER chOrdering;
     
-    /* reinitialise if needed */
-#ifdef __APPLE__
-    dirass_checkReInit(hDir);
-#endif
-    
     /* The main processing: */
-    if (nSamples == FRAME_SIZE && (pData->reInitAna == 0)  && isPlaying ) {
-        for(n=0; n<MAX_INPUT_SH_ORDER+2; n++){  o[n] = n*n;  }
+    if (nSamples == FRAME_SIZE && (pData->codecStatus==CODEC_STATUS_INITIALISED) && isPlaying ) {
+        pData->procStatus = PROC_STATUS_ONGOING;
         
         /* copy current parameters to be thread safe */
+        for(n=0; n<MAX_INPUT_SH_ORDER+2; n++){  o[n] = n*n;  }
         norm = pData->norm;
         chOrdering = pData->chOrdering;
         pmapAvgCoeff = pData->pmapAvgCoeff;
@@ -382,6 +409,8 @@ void dirass_analysis
             pData->pmapReady = 1;
         }
     }
+    
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
 
 /* SETS */
@@ -389,34 +418,25 @@ void dirass_analysis
 void dirass_refreshSettings(void* const hDir)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->reInitAna = 1; 
-}
- 
-void dirass_checkReInit(void* const hDir)
-{
-    dirass_data *pData = (dirass_data*)(hDir); 
-    /* reinitialise if needed */
-    if (pData->reInitAna == 1) {
-        pData->reInitAna = 2;  /* indicate init in progress */
-        pData->pmapReady = 0;  /* avoid trying to draw pmap during reinit */
-        dirass_initAna(hDir);
-        pData->reInitAna = 0;  /* indicate init complete */
-        pData->recalcPmap = 1; /* recalculate dirass with new configuration */
-    }
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
 void dirass_setBeamType(void* const hDir, int newType)
 {
-    dirass_data *pData = (dirass_data*)(hDir); 
-    pData->beamType = (BEAM_TYPES)newType;
-    pData->reInitAna = 1;
+    dirass_data *pData = (dirass_data*)(hDir);
+    if(pData->beamType != (BEAM_TYPES)newType){
+        pData->beamType = (BEAM_TYPES)newType;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    }
 }
 
 void dirass_setInputOrder(void* const hDir,  int newValue)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->new_inputOrder = newValue;
-    pData->reInitAna = 1;
+    if(pData->new_inputOrder != newValue){
+        pData->new_inputOrder = newValue;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    }
     /* FUMA only supports 1st order */
     if(pData->new_inputOrder!=INPUT_ORDER_FIRST && pData->chOrdering == CH_FUMA)
         pData->chOrdering = CH_ACN;
@@ -427,32 +447,40 @@ void dirass_setInputOrder(void* const hDir,  int newValue)
 void dirass_setDisplayGridOption(void* const hDir,  int newState)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->gridOption = newState;
-    pData->reInitAna = 1;
+    if(pData->gridOption != newState){
+        pData->gridOption = newState;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    }
 }
 
 void dirass_setDispWidth(void* const hDir,  int newValue)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->dispWidth = newValue;
-    pData->reInitAna = 1;
+    if(pData->dispWidth != newValue){
+        pData->dispWidth = newValue;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    }
 }
 
 void dirass_setUpscaleOrder(void* const hDir,  int newValue)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->new_upscaleOrder = newValue;
-    pData->reInitAna = 1;
+    if(pData->new_upscaleOrder != newValue){
+        pData->new_upscaleOrder = newValue;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    }
 }
 
 void dirass_setDiRAssMode(void* const hDir,  int newMode)
 {
     dirass_data *pData = (dirass_data*)(hDir);
     codecPars* pars = pData->pars;
-    pData->DirAssMode = newMode;
-    if(pars->prev_intensity!=NULL)
-        memset(pars->prev_intensity, 0, pars->grid_nDirs*3*sizeof(float));
-    memset(pars->prev_energy, 0, pars->grid_nDirs*sizeof(float));
+    if(pData->DirAssMode!=newMode){
+        pData->DirAssMode = newMode;
+        if(pars->prev_intensity!=NULL)
+            memset(pars->prev_intensity, 0, pars->grid_nDirs*3*sizeof(float));
+        memset(pars->prev_energy, 0, pars->grid_nDirs*sizeof(float));
+    }
 }
 
 void dirass_setMinFreq(void* const hDir,  float newValue)
@@ -484,15 +512,19 @@ void dirass_setNormType(void* const hDir, int newType)
 void dirass_setDispFOV(void* const hDir, int newOption)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->HFOVoption = (HFOV_OPTIONS)newOption;
-    pData->reInitAna = 1;
+    if(pData->HFOVoption != (HFOV_OPTIONS)newOption){
+        pData->HFOVoption = (HFOV_OPTIONS)newOption;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    }
 }
 
 void dirass_setAspectRatio(void* const hDir, int newOption)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->aspectRatioOption = (ASPECT_RATIO_OPTIONS)newOption;
-    pData->reInitAna = 1;
+    if(pData->aspectRatioOption != (ASPECT_RATIO_OPTIONS)newOption){
+        pData->aspectRatioOption = (ASPECT_RATIO_OPTIONS)newOption;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    }
 }
 
 void dirass_setMapAvgCoeff(void* const hDir, float newValue)
@@ -509,6 +541,24 @@ void dirass_requestPmapUpdate(void* const hDir)
 
 
 /* GETS */
+
+CODEC_STATUS dirass_getCodecStatus(void* const hDir)
+{
+    dirass_data *pData = (dirass_data*)(hDir);
+    return pData->codecStatus;
+}
+
+float dirass_getProgressBar0_1(void* const hDir)
+{
+    dirass_data *pData = (dirass_data*)(hDir);
+    return pData->progressBar0_1;
+}
+
+void dirass_getProgressBarText(void* const hDir, char* text)
+{
+    dirass_data *pData = (dirass_data*)(hDir);
+    memcpy(text, pData->progressBarText, DIRASS_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+}
 
 int dirass_getInputOrder(void* const hDir)
 {
@@ -604,7 +654,7 @@ int dirass_getPmap(void* const hDir, float** grid_dirs, float** pmap, int* nDirs
 {
     dirass_data *pData = (dirass_data*)(hDir);
     codecPars* pars = pData->pars;
-    if((pData->reInitAna == 0) && pData->pmapReady){
+    if((pData->codecStatus == CODEC_STATUS_INITIALISED) && pData->pmapReady){
         (*grid_dirs) = pars->interp_dirs_deg;
         (*pmap) = pData->pmap_grid[pData->dispSlotIdx-1 < 0 ? NUM_DISP_SLOTS-1 : pData->dispSlotIdx-1];
         (*nDirs) = pars->interp_nDirs;

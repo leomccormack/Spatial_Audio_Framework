@@ -58,7 +58,11 @@ void sldoa_create
     pData->tempHopFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, HOP_SIZE, sizeof(float));
     
     /* internal */
-    pData->reInitAna = 1;
+    pData->progressBar0_1 = 0.0f;
+    pData->progressBarText = malloc1d(SLDOA_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+    strcpy(pData->progressBarText,"");
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
     for(i=0; i<MAX_SH_ORDER; i++)
         pData->secCoeffs[i] = NULL;
     for(i=0; i<64; i++)
@@ -114,6 +118,7 @@ void sldoa_destroy
             free(pData->colourScale[i]);
             free(pData->alphaScale[i]);
         }
+        free(pData->progressBarText);
         free(pData);
         pData = NULL;
     }
@@ -155,6 +160,34 @@ void sldoa_init
     }
 }
 
+void sldoa_initCodec
+(
+    void* const hSld
+)
+{
+    sldoa_data *pData = (sldoa_data*)(hSld);
+    
+    if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
+        return; /* re-init not required */
+    if (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but need to wait for processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING;
+        sldoa_initCodec(hSld);
+    }
+    
+    /* for progress bar */
+    pData->codecStatus = CODEC_STATUS_INITIALISING;
+    strcpy(pData->progressBarText,"Initialising");
+    pData->progressBar0_1 = 0.0f;
+    
+    sldoa_initTFT(hSld);
+    sldoa_initAna(hSld);
+    
+    /* done! */
+    strcpy(pData->progressBarText,"Done!");
+    pData->progressBar0_1 = 1.0f;
+    pData->codecStatus = CODEC_STATUS_INITIALISED;
+}
 
 void sldoa_analysis
 (
@@ -180,14 +213,10 @@ void sldoa_analysis
     CH_ORDER chOrdering;
     NORM_TYPES norm;
     
-    /* reinitialise if needed */
-    if(pData->reInitAna == 1){
-        pData->reInitAna = 2; /* indicate init in progress */
-        sldoa_initAna(hSld);
-        pData->reInitAna = 0; /* indicate init complete */
-    }
-    if (nSamples == FRAME_SIZE && (pData->reInitAna == 0) && isPlaying) {
+    if (nSamples == FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying) {
+        pData->procStatus = PROC_STATUS_ONGOING;
         current_disp_idx = pData->current_disp_idx;
+        
         /* copy current parameters to be thread safe */
         memcpy(analysisOrderPerBand, pData->analysisOrderPerBand, HYBRID_BANDS*sizeof(int));
         memcpy(nSectorsPerBand, pData->nSectorsPerBand, HYBRID_BANDS*sizeof(int));
@@ -327,6 +356,8 @@ void sldoa_analysis
             }
         }
     }
+    
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
 
 /* SETS */
@@ -334,9 +365,10 @@ void sldoa_analysis
 void sldoa_setMasterOrder(void* const hSld,  int newValue)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    pData->new_masterOrder = newValue; 
-    pData->reInitTFT = 1;
-    pData->reInitAna = 1;
+    if(pData->new_masterOrder != newValue){
+        pData->new_masterOrder = newValue;
+        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    }
     /* FUMA only supports 1st order */
     if(pData->new_masterOrder!=MASTER_ORDER_FIRST && pData->chOrdering == CH_FUMA)
         pData->chOrdering = CH_ACN;
@@ -347,7 +379,7 @@ void sldoa_setMasterOrder(void* const hSld,  int newValue)
 void sldoa_refreshSettings(void* const hSld)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    pData->reInitAna = 1;
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 }
 
 void sldoa_setMaxFreq(void* const hSld, float newFreq)
@@ -480,6 +512,24 @@ void sldoa_setNormType(void* const hSld, int newType)
 
 
 /* GETS */
+
+CODEC_STATUS sldoa_getCodecStatus(void* const hSld)
+{
+    sldoa_data *pData = (sldoa_data*)(hSld);
+    return pData->codecStatus;
+}
+
+float sldoa_getProgressBar0_1(void* const hSld)
+{
+    sldoa_data *pData = (sldoa_data*)(hSld);
+    return pData->progressBar0_1;
+}
+
+void sldoa_getProgressBarText(void* const hSld, char* text)
+{
+    sldoa_data *pData = (sldoa_data*)(hSld);
+    memcpy(text, pData->progressBarText, SLDOA_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+}
 
 int sldoa_getMasterOrder(void* const hSld)
 {

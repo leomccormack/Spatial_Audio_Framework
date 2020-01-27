@@ -103,6 +103,25 @@ void sldoa_initAna(void* const hSld)
     pData->masterOrder = maxOrder;
 }
 
+void sldoa_initTFT
+(
+    void* const hSld
+)
+{
+    sldoa_data *pData = (sldoa_data*)(hSld);
+    int nSH, new_nSH;
+    
+    nSH = (pData->masterOrder+1)*(pData->masterOrder+1);
+    new_nSH = (pData->new_masterOrder+1)*(pData->new_masterOrder+1);
+    if(pData->hSTFT==NULL)
+        afSTFTinit(&(pData->hSTFT), HOP_SIZE, new_nSH, 0, 0, 1);
+    else if(nSH!=new_nSH){
+        afSTFTchannelChange(pData->hSTFT, new_nSH, 0);
+        afSTFTclearBuffers(pData->hSTFT);
+    }
+}
+
+
 void sldoa_estimateDoA
 (
     float_complex SHframeTF[MAX_NUM_SH_SIGNALS][TIME_SLOTS],
