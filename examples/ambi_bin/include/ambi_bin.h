@@ -148,7 +148,7 @@ typedef enum _CODEC_STATUS{
     CODEC_STATUS_INITIALISING
 }CODEC_STATUS;
 
-#define AMBI_BIN_PROGRESSBARTEXT_CHAR_LENGTH 256
+#define AMBI_BIN_PROGRESSBARTEXT_CHAR_LENGTH ( 256 )
 
 
 /* ========================================================================== */

@@ -45,7 +45,7 @@ void ambi_bin_create
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->enableMaxRE = 1;
-    pData->enableDiffuseMatching = 1;
+    pData->enableDiffuseMatching = 0;
     pData->enablePhaseWarping = 0;
     pData->enableRotation = 0;
     pData->yaw = 0.0f;
