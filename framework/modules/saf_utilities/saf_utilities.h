@@ -122,6 +122,8 @@ extern "C" {
 #include "../saf_utilities/saf_decor.h"
 /* for determining ERBs */
 #include "../saf_utilities/saf_erb.h"
+/* for misc. functions */
+#include "../saf_utilities/saf_misc.h"
 /* various presets for loudspeaker arrays and uniform distributions of points on
  * spheres. */
 #include "../saf_utilities/saf_loudspeaker_presets.h"
