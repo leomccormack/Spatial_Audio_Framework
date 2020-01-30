@@ -167,6 +167,17 @@ typedef struct _ambi_bin
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
+/*
+ * Function: ambi_bin_setCodecStatus
+ * ------------------------------------
+ * Sets codec status.
+ *
+ * Input Arguments:
+ *     hAmbi     - ambi_bin handle
+ *     newStatus - codec status (see 'CODEC_STATUS' enum)
+ */
+void ambi_bin_setCodecStatus(void* const hAmbi, CODEC_STATUS newStatus);
+
 
 #ifdef __cplusplus
 } /* extern "C" { */

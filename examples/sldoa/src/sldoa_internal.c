@@ -40,6 +40,17 @@
 #include "sldoa_internal.h"
 #include "sldoa_database.h"
 
+void sldoa_setCodecStatus(void* const hSld, CODEC_STATUS newStatus)
+{
+    sldoa_data *pData = (sldoa_data*)(hSld);
+    if(newStatus==CODEC_STATUS_NOT_INITIALISED){
+        /* Pause until current initialisation is complete */
+        while(pData->codecStatus == CODEC_STATUS_INITIALISING)
+            SAF_SLEEP(10);
+    }
+    pData->codecStatus = newStatus;
+}
+
 void sldoa_initAna(void* const hSld)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);

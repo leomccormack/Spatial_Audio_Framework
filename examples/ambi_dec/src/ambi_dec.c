@@ -119,6 +119,13 @@ void ambi_dec_destroy
     int i, j, ch;
     
     if (pData != NULL) {
+        /* not safe to free memory during intialisation/processing loop */
+        while (pData->codecStatus == CODEC_STATUS_INITIALISING ||
+               pData->procStatus == PROC_STATUS_ONGOING){
+            SAF_SLEEP(10);
+        }
+        
+        /* free afSTFT and buffers */
         if(pData->hSTFT!=NULL)
             afSTFTfree(pData->hSTFT);
         if(pData->STFTInputFrameTF!=NULL){
@@ -136,19 +143,19 @@ void ambi_dec_destroy
         free(pData->STFTInputFrameTF);
         free(pData->STFTOutputFrameTF);
         free(pData->tempHopFrameTD);
-        free1d((void**)&(pars->hrtf_vbap_gtableComp));
-        free1d((void**)&(pars->hrtf_vbap_gtableIdx));
-        free1d((void**)&(pars->hrtf_fb));
-        free1d((void**)&(pars->hrtf_fb_mag));
-        free1d((void**)&(pars->itds_s));
-        free1d((void**)&(pars->hrirs));
-        free1d((void**)&(pars->hrir_dirs_deg));
+        free(pars->hrtf_vbap_gtableComp);
+        free(pars->hrtf_vbap_gtableIdx);
+        free(pars->hrtf_fb);
+        free(pars->hrtf_fb_mag);
+        free(pars->itds_s);
+        free(pars->hrirs);
+        free(pars->hrir_dirs_deg);
         for (i=0; i<NUM_DECODERS; i++){
             for(j=0; j<MAX_SH_ORDER; j++){
-                free1d((void**)&(pars->M_dec[i][j]));
-                free1d((void**)&(pars->M_dec_cmplx[i][j]));
-                free1d((void**)&(pars->M_dec_maxrE[i][j]));
-                free1d((void**)&(pars->M_dec_cmplx_maxrE[i][j]));
+                free(pars->M_dec[i][j]);
+                free(pars->M_dec_cmplx[i][j]);
+                free(pars->M_dec_maxrE[i][j]);
+                free(pars->M_dec_cmplx_maxrE[i][j]);
             }
         }
         free(pData->progressBarText);
@@ -188,11 +195,11 @@ void ambi_dec_initCodec
     float a_avg[MAX_SH_ORDER], e_avg[MAX_SH_ORDER], azi_incl[2], sum_elev;
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
-        return; /* re-init not required */
-    if (pData->procStatus == PROC_STATUS_ONGOING){
-        /* re-init required, but need to wait for processing loop to end */
-        pData->codecStatus = CODEC_STATUS_INITIALISING;
-        ambi_dec_initCodec(hAmbi);
+        return; /* re-init not required, or already happening */
+    while (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but we need to wait for the current processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING; /* indicate that we want to init */
+        SAF_SLEEP(10);
     }
     
     /* for progress bar */
@@ -602,14 +609,14 @@ void ambi_dec_refreshSettings(void* const hAmbi)
     for(ch=0; ch<MAX_NUM_LOUDSPEAKERS; ch++)
         pData->recalc_hrtf_interpFLAG[ch] = 1;
     pData->reinit_hrtfsFLAG = 1;
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void ambi_dec_setMasterDecOrder(void  * const hAmbi, int newValue)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     pData->new_masterOrder = MIN(MAX(newValue,1), MAX_SH_ORDER);
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     /* FUMA only supports 1st order */
     if(pData->new_masterOrder!=MASTER_ORDER_FIRST && pData->chOrdering == CH_FUMA)
         pData->chOrdering = CH_ACN;
@@ -642,7 +649,7 @@ void ambi_dec_setLoudspeakerAzi_deg(void* const hAmbi, int index, float newAzi_d
     if(pData->loudpkrs_dirs_deg[index][0] != newAzi_deg){
         pData->loudpkrs_dirs_deg[index][0] = newAzi_deg;
         pData->recalc_hrtf_interpFLAG[index] = 1;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -654,7 +661,7 @@ void ambi_dec_setLoudspeakerElev_deg(void* const hAmbi, int index, float newElev
     if(pData->loudpkrs_dirs_deg[index][1] != newElev_deg){
         pData->loudpkrs_dirs_deg[index][1] = newElev_deg;
         pData->recalc_hrtf_interpFLAG[index] = 1;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -667,7 +674,7 @@ void ambi_dec_setNumLoudspeakers(void* const hAmbi, int new_nLoudspeakers)
     if(pData->nLoudpkrs != pData->new_nLoudpkrs){
         for(ch=0; ch<MAX_NUM_LOUDSPEAKERS; ch++)
             pData->recalc_hrtf_interpFLAG[ch] = 1;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -677,7 +684,7 @@ void ambi_dec_setBinauraliseLSflag(void* const hAmbi, int newState)
     
     pData->new_binauraliseLS = newState; 
     if(pData->new_binauraliseLS != pData->binauraliseLS)
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void ambi_dec_setUseDefaultHRIRsflag(void* const hAmbi, int newState)
@@ -687,7 +694,7 @@ void ambi_dec_setUseDefaultHRIRsflag(void* const hAmbi, int newState)
     if((!pData->useDefaultHRIRsFLAG) && (newState)){
         pData->useDefaultHRIRsFLAG = newState;
         pData->reinit_hrtfsFLAG = 1;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -700,7 +707,7 @@ void ambi_dec_setSofaFilePath(void* const hAmbi, const char* path)
     strcpy(pars->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
     pData->reinit_hrtfsFLAG = 1;
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void ambi_dec_setOutputConfigPreset(void* const hAmbi, int newPresetID)
@@ -709,9 +716,9 @@ void ambi_dec_setOutputConfigPreset(void* const hAmbi, int newPresetID)
     int ch;
     
     loadLoudspeakerArrayPreset(newPresetID, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     for(ch=0; ch<MAX_NUM_LOUDSPEAKERS; ch++)
         pData->recalc_hrtf_interpFLAG[ch] = 1;
+    ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID)
@@ -798,7 +805,7 @@ void ambi_dec_setDecMethod(void* const hAmbi, int index, int newID)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     pData->dec_method[index] = newID;
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void ambi_dec_setDecEnableMaxrE(void* const hAmbi, int index, int newID)

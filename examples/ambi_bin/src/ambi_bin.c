@@ -102,6 +102,13 @@ void ambi_bin_destroy
     int ch;
     
     if (pData != NULL) {
+        /* not safe to free memory during intialisation/processing loop */
+        while (pData->codecStatus == CODEC_STATUS_INITIALISING ||
+               pData->procStatus == PROC_STATUS_ONGOING){
+            SAF_SLEEP(10);
+        }
+        
+        /* free afSTFT and buffers */
         if(pData->hSTFT!=NULL)
             afSTFTfree(pData->hSTFT);
         if(pData->STFTInputFrameTF!=NULL){
@@ -117,12 +124,13 @@ void ambi_bin_destroy
         free(pData->STFTInputFrameTF);
         free(pData->STFTOutputFrameTF);
         free(pData->tempHopFrameTD);
-        free1d((void**)&(pars->hrtf_fb));
-        free1d((void**)&(pars->itds_s));
-        free1d((void**)&(pars->hrirs));
-        free1d((void**)&(pars->hrir_dirs_deg));
+        free(pars->hrtf_fb);
+        free(pars->itds_s);
+        free(pars->hrirs);
+        free(pars->hrir_dirs_deg);
         free(pars);
         free(pData->progressBarText);
+        
         free(pData);
         pData = NULL;
     }
@@ -161,11 +169,11 @@ void ambi_bin_initCodec
     int i, j, nSH, order, band;
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
-        return; /* re-init not required */
-    if (pData->procStatus == PROC_STATUS_ONGOING){
-        /* re-init required, but need to wait for processing loop to end */
-        pData->codecStatus = CODEC_STATUS_INITIALISING;
-        ambi_bin_initCodec(hAmbi);
+        return; /* re-init not required, or already happening */
+    while (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but we need to wait for the current processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING; /* indicate that we want to init */
+        SAF_SLEEP(10);
     }
     
     /* for progress bar */
@@ -428,7 +436,7 @@ void ambi_bin_refreshParams(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     pData->reinit_hrtfsFLAG = 1;
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState)
@@ -437,8 +445,8 @@ void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState)
     
     if((!pData->useDefaultHRIRsFLAG) && (newState)){
         pData->useDefaultHRIRsFLAG = newState;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
         pData->reinit_hrtfsFLAG = 1;
+        ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -450,8 +458,8 @@ void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path)
     pars->sofa_filepath = malloc1d(strlen(path) + 1);
     strcpy(pars->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     pData->reinit_hrtfsFLAG = 1;
+    ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void ambi_bin_setInputOrderPreset(void* const hAmbi, INPUT_ORDERS newOrder)
@@ -459,21 +467,20 @@ void ambi_bin_setInputOrderPreset(void* const hAmbi, INPUT_ORDERS newOrder)
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     if(pData->order != (int)newOrder){
         pData->new_order = (int)newOrder;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
-        
-        /* FUMA only supports 1st order */
-        if(pData->new_order!=INPUT_ORDER_FIRST && pData->chOrdering == CH_FUMA)
-            pData->chOrdering = CH_ACN;
-        if(pData->new_order!=INPUT_ORDER_FIRST && pData->norm == NORM_FUMA)
-            pData->norm = NORM_SN3D;
+        ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     }
+    /* FUMA only supports 1st order */
+    if(pData->new_order!=INPUT_ORDER_FIRST && pData->chOrdering == CH_FUMA)
+        pData->chOrdering = CH_ACN;
+    if(pData->new_order!=INPUT_ORDER_FIRST && pData->norm == NORM_FUMA)
+        pData->norm = NORM_SN3D;
 }
 
 void ambi_bin_setDecodingMethod(void* const hAmbi, DECODING_METHODS newMethod)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     pData->method = newMethod;
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void ambi_bin_setChOrder(void* const hAmbi, int newOrder)
@@ -495,7 +502,7 @@ void ambi_bin_setEnableMaxRE(void* const hAmbi, int newState)
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     if(pData->enableMaxRE != newState){
         pData->enableMaxRE = newState;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -504,7 +511,7 @@ void ambi_bin_setEnableDiffuseMatching(void* const hAmbi, int newState)
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     if(pData->enableDiffuseMatching != newState){
         pData->enableDiffuseMatching = newState;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -513,7 +520,7 @@ void ambi_bin_setEnablePhaseWarping(void* const hAmbi, int newState)
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     if(pData->enablePhaseWarping != newState){
         pData->enablePhaseWarping = newState;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 

@@ -175,6 +175,17 @@ typedef struct _dirass
 /* ========================================================================== */
 
 /*
+ * Function: dirass_setCodecStatus
+ * ------------------------------------
+ * Sets codec status.
+ *
+ * Input Arguments:
+ *     hDir      - dirass handle
+ *     newStatus - codec status (see 'CODEC_STATUS' enum)
+ */
+void dirass_setCodecStatus(void* const hDir, CODEC_STATUS newStatus);
+
+/*
  * dirass_initAna
  * --------------
  * Intialises the codec variables, based on current global/user parameters

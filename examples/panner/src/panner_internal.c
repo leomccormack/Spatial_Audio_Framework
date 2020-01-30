@@ -34,7 +34,19 @@
  *     Finland.
  */
 
-#include "panner_internal.h" 
+#include "panner.h"
+#include "panner_internal.h"
+
+void panner_setCodecStatus(void* const hPan, CODEC_STATUS newStatus)
+{
+    panner_data *pData = (panner_data*)(hPan);
+    if(newStatus==CODEC_STATUS_NOT_INITIALISED){
+        /* Pause until current initialisation is complete */
+        while(pData->codecStatus == CODEC_STATUS_INITIALISING)
+            SAF_SLEEP(10);
+    }
+    pData->codecStatus = newStatus;
+}
 
 void panner_initGainTables(void* const hPan)
 {

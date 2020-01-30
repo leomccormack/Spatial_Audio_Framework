@@ -149,6 +149,17 @@ typedef struct _sldoa
 /* ========================================================================== */
 
 /*
+ * Function: sldoa_setCodecStatus
+ * ------------------------------------
+ * Sets codec status.
+ *
+ * Input Arguments:
+ *     hSld      - sldoa handle
+ *     newStatus - codec status (see 'CODEC_STATUS' enum)
+ */
+void sldoa_setCodecStatus(void* const hSld, CODEC_STATUS newStatus);
+
+/*
  * sldoa_initAna
  * -------------
  * Intialises the codec variables, based on current global/user parameters.

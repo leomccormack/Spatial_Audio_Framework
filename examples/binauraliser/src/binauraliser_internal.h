@@ -161,6 +161,17 @@ typedef struct _binauraliser
 /* ========================================================================== */
 
 /*
+ * Function: binauraliser_setCodecStatus
+ * -------------------------------------
+ * Sets codec status.
+ *
+ * Input Arguments:
+ *     hBin      - binauraliser handle
+ *     newStatus - codec status (see 'CODEC_STATUS' enum)
+ */
+void binauraliser_setCodecStatus(void* const hBin, CODEC_STATUS newStatus);
+
+/*
  * binauraliser_interpHRTFs
  * ------------------------
  * interpolates between 3 HRTFs via AN-VBAP gains. The HRTF magnitude responses

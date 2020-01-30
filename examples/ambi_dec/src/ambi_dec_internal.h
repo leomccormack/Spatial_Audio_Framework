@@ -185,6 +185,17 @@ typedef struct _ambi_dec
 /* ========================================================================== */
 
 /*
+ * Function: ambi_dec_setCodecStatus
+ * ------------------------------------
+ * Sets codec status.
+ *
+ * Input Arguments:
+ *     hAmbi     - ambi_dec handle
+ *     newStatus - codec status (see 'CODEC_STATUS' enum)
+ */
+void ambi_dec_setCodecStatus(void* const hCmp, CODEC_STATUS newStatus);
+
+/*
  * ambi_dec_interpHRTFs
  * --------------------
  * Interpolates between the 3 nearest HRTFs using amplitude-preserving VBAP

@@ -28,6 +28,18 @@
 #include "powermap.h"
 #include "powermap_internal.h"
 
+void powermap_setCodecStatus(void* const hPm, CODEC_STATUS newStatus)
+{
+    powermap_data *pData = (powermap_data*)(hPm);
+    if(newStatus==CODEC_STATUS_NOT_INITIALISED){
+        /* Pause until current initialisation is complete */
+        while(pData->codecStatus == CODEC_STATUS_INITIALISING)
+            SAF_SLEEP(10);
+    }
+    pData->codecStatus = newStatus;
+}
+
+
 void powermap_initAna(void* const hPm)
 {
     powermap_data *pData = (powermap_data*)(hPm);

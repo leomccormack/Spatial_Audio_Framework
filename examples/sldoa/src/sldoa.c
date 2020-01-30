@@ -105,6 +105,13 @@ void sldoa_destroy
     int i, ch;
 
     if (pData != NULL) {
+        /* not safe to free memory during intialisation/processing loop */
+        while (pData->codecStatus == CODEC_STATUS_INITIALISING ||
+               pData->procStatus == PROC_STATUS_ONGOING){
+            SAF_SLEEP(10);
+        }
+        
+        /* free afSTFT and buffers */
         afSTFTfree(pData->hSTFT);
         for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
             free(pData->STFTInputFrameTF[ch].re);
@@ -168,11 +175,11 @@ void sldoa_initCodec
     sldoa_data *pData = (sldoa_data*)(hSld);
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
-        return; /* re-init not required */
-    if (pData->procStatus == PROC_STATUS_ONGOING){
-        /* re-init required, but need to wait for processing loop to end */
-        pData->codecStatus = CODEC_STATUS_INITIALISING;
-        sldoa_initCodec(hSld);
+        return; /* re-init not required, or already happening */
+    while (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but we need to wait for the current processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING; /* indicate that we want to init */
+        SAF_SLEEP(10);
     }
     
     /* for progress bar */
@@ -367,7 +374,7 @@ void sldoa_setMasterOrder(void* const hSld,  int newValue)
     sldoa_data *pData = (sldoa_data*)(hSld);
     if(pData->new_masterOrder != newValue){
         pData->new_masterOrder = newValue;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        sldoa_setCodecStatus(hSld, CODEC_STATUS_NOT_INITIALISED);
     }
     /* FUMA only supports 1st order */
     if(pData->new_masterOrder!=MASTER_ORDER_FIRST && pData->chOrdering == CH_FUMA)
@@ -378,8 +385,7 @@ void sldoa_setMasterOrder(void* const hSld,  int newValue)
 
 void sldoa_refreshSettings(void* const hSld)
 {
-    sldoa_data *pData = (sldoa_data*)(hSld);
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    sldoa_setCodecStatus(hSld, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void sldoa_setMaxFreq(void* const hSld, float newFreq)

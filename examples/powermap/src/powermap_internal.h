@@ -160,6 +160,17 @@ typedef struct _powermap
 /* ========================================================================== */
 
 /*
+ * Function: powermap_setCodecStatus
+ * ------------------------------------
+ * Sets codec status.
+ *
+ * Input Arguments:
+ *     hPm       - powermap handle
+ *     newStatus - codec status (see 'CODEC_STATUS' enum)
+ */
+void powermap_setCodecStatus(void* const hPm, CODEC_STATUS newStatus);
+
+/*
  * powermap_initAna
  * ----------------
  * Intialises the codec variables, based on current global/user parameters

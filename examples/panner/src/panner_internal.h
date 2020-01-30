@@ -155,6 +155,17 @@ typedef struct _panner
 /* ========================================================================== */
 
 /*
+ * Function: panner_setCodecStatus
+ * -------------------------------
+ * Sets codec status.
+ *
+ * Input Arguments:
+ *     hPan      - panner handle
+ *     newStatus - codec status (see 'CODEC_STATUS' enum)
+ */
+void panner_setCodecStatus(void* const hPan, CODEC_STATUS newStatus);
+    
+/*
  * panner_initGainTables
  * ---------------------
  * Intialises the VBAP gain table used for panning.

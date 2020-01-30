@@ -104,6 +104,13 @@ void binauraliser_destroy
     int ch;
 
     if (pData != NULL) {
+        /* not safe to free memory during intialisation/processing loop */
+        while (pData->codecStatus == CODEC_STATUS_INITIALISING ||
+               pData->procStatus == PROC_STATUS_ONGOING){
+            SAF_SLEEP(10);
+        }
+        
+        /* free afSTFT and buffers */
         if(pData->hSTFT !=NULL)
             afSTFTfree(pData->hSTFT);
         for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
@@ -117,14 +124,13 @@ void binauraliser_destroy
         free(pData->STFTInputFrameTF);
         free(pData->STFTOutputFrameTF);
         free(pData->tempHopFrameTD);
-        
-        free1d((void**)&(pData->hrtf_vbap_gtableComp));
-        free1d((void**)&(pData->hrtf_vbap_gtableIdx));
-        free1d((void**)&(pData->hrtf_fb));
-        free1d((void**)&(pData->hrtf_fb_mag));
-        free1d((void**)&(pData->itds_s));
-        free1d((void**)&(pData->hrirs));
-        free1d((void**)&(pData->hrir_dirs_deg));
+        free(pData->hrtf_vbap_gtableComp);
+        free(pData->hrtf_vbap_gtableIdx);
+        free(pData->hrtf_fb);
+        free(pData->hrtf_fb_mag);
+        free(pData->itds_s);
+        free(pData->hrirs);
+        free(pData->hrir_dirs_deg);
         free(pData->progressBarText);
          
         free(pData);
@@ -161,11 +167,11 @@ void binauraliser_initCodec
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
-        return; /* re-init not required */
-    if (pData->procStatus == PROC_STATUS_ONGOING){
-        /* re-init required, but need to wait for processing loop to end */
-        pData->codecStatus = CODEC_STATUS_INITIALISING;
-        binauraliser_initCodec(hBin);
+        return; /* re-init not required, or already happening */
+    while (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but we need to wait for the current processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING; /* indicate that we want to init */
+        SAF_SLEEP(10);
     }
     
     /* for progress bar */
@@ -310,7 +316,7 @@ void binauraliser_refreshSettings(void* const hBin)
     pData->reInitHRTFsAndGainTables = 1;
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_hrtf_interpFLAG[ch] = 1;
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void binauraliser_setSourceAzi_deg(void* const hBin, int index, float newAzi_deg)
@@ -344,7 +350,7 @@ void binauraliser_setNumSources(void* const hBin, int new_nSources)
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     pData->new_nSources = CLAMP(new_nSources, 1, MAX_NUM_INPUTS);
     pData->recalc_M_rotFLAG = 1;
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void binauraliser_setUseDefaultHRIRsflag(void* const hBin, int newState)
@@ -353,7 +359,7 @@ void binauraliser_setUseDefaultHRIRsflag(void* const hBin, int newState)
     if((!pData->useDefaultHRIRsFLAG) && (newState)){
         pData->useDefaultHRIRsFLAG = newState;
         pData->reInitHRTFsAndGainTables = 1;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -365,7 +371,7 @@ void binauraliser_setSofaFilePath(void* const hBin, const char* path)
     strcpy(pData->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
     pData->reInitHRTFsAndGainTables = 1;
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID)
@@ -375,7 +381,7 @@ void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID)
     
     binauraliser_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims));
     if(pData->nSources != pData->new_nSources)
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_hrtf_interpFLAG[ch] = 1;
 }
@@ -450,6 +456,7 @@ void binauraliser_setInterpMode(void* const hBin, int newMode)
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     pData->interpMode = newMode;
 }
+
 
 /* Get Functions */
 

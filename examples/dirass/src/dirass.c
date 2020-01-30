@@ -103,23 +103,29 @@ void dirass_destroy
     int i;
     
     if (pData != NULL) {
+        /* not safe to free memory during intialisation/processing loop */
+        while (pData->codecStatus == CODEC_STATUS_INITIALISING ||
+               pData->procStatus == PROC_STATUS_ONGOING){
+            SAF_SLEEP(10);
+        }
+        
         if(pData->pmap!=NULL)
             free(pData->pmap);
         for(i=0; i<NUM_DISP_SLOTS; i++)
-            free1d((void**)&(pData->pmap_grid[i]));
+            free(pData->pmap_grid[i]);
         
-        free1d((void**)&(pars->interp_dirs_deg));
-        free1d((void**)&(pars->Y_up));
-        free1d((void**)&(pars->interp_table));
-        free1d((void**)&(pars->ss));
-        free1d((void**)&(pars->ssxyz));
-        free1d((void**)&(pars->Cxyz));
-        free1d((void**)&(pars->w));
-        free1d((void**)&(pars->Cw));
-        free1d((void**)&(pars->Uw));
-        free1d((void**)&(pars->est_dirs));
-        free1d((void**)&(pars->prev_intensity));
-        free1d((void**)&(pars->prev_energy));
+        free(pars->interp_dirs_deg);
+        free(pars->Y_up);
+        free(pars->interp_table);
+        free(pars->ss);
+        free(pars->ssxyz);
+        free(pars->Cxyz);
+        free(pars->w);
+        free(pars->Cw);
+        free(pars->Uw);
+        free(pars->est_dirs);
+        free(pars->prev_intensity);
+        free(pars->prev_energy);
         
         free(pData->pars);
         free(pData->progressBarText);
@@ -158,11 +164,11 @@ void dirass_initCodec
     dirass_data *pData = (dirass_data*)(hDir);
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
-        return; /* re-init not required */
-    if (pData->procStatus == PROC_STATUS_ONGOING){
-        /* re-init required, but need to wait for processing loop to end */
-        pData->codecStatus = CODEC_STATUS_INITIALISING;
-        dirass_initCodec(hDir);
+        return; /* re-init not required, or already happening */
+    while (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but we need to wait for the current processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING; /* indicate that we want to init */
+        SAF_SLEEP(10);
     }
     
     /* for progress bar */
@@ -417,8 +423,7 @@ void dirass_analysis
  
 void dirass_refreshSettings(void* const hDir)
 {
-    dirass_data *pData = (dirass_data*)(hDir);
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    dirass_setCodecStatus(hDir, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void dirass_setBeamType(void* const hDir, int newType)
@@ -426,7 +431,7 @@ void dirass_setBeamType(void* const hDir, int newType)
     dirass_data *pData = (dirass_data*)(hDir);
     if(pData->beamType != (BEAM_TYPES)newType){
         pData->beamType = (BEAM_TYPES)newType;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        dirass_setCodecStatus(hDir, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -435,7 +440,7 @@ void dirass_setInputOrder(void* const hDir,  int newValue)
     dirass_data *pData = (dirass_data*)(hDir);
     if(pData->new_inputOrder != newValue){
         pData->new_inputOrder = newValue;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        dirass_setCodecStatus(hDir, CODEC_STATUS_NOT_INITIALISED);
     }
     /* FUMA only supports 1st order */
     if(pData->new_inputOrder!=INPUT_ORDER_FIRST && pData->chOrdering == CH_FUMA)
@@ -449,7 +454,7 @@ void dirass_setDisplayGridOption(void* const hDir,  int newState)
     dirass_data *pData = (dirass_data*)(hDir);
     if(pData->gridOption != newState){
         pData->gridOption = newState;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        dirass_setCodecStatus(hDir, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -458,7 +463,7 @@ void dirass_setDispWidth(void* const hDir,  int newValue)
     dirass_data *pData = (dirass_data*)(hDir);
     if(pData->dispWidth != newValue){
         pData->dispWidth = newValue;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        dirass_setCodecStatus(hDir, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -467,7 +472,7 @@ void dirass_setUpscaleOrder(void* const hDir,  int newValue)
     dirass_data *pData = (dirass_data*)(hDir);
     if(pData->new_upscaleOrder != newValue){
         pData->new_upscaleOrder = newValue;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        dirass_setCodecStatus(hDir, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -514,7 +519,7 @@ void dirass_setDispFOV(void* const hDir, int newOption)
     dirass_data *pData = (dirass_data*)(hDir);
     if(pData->HFOVoption != (HFOV_OPTIONS)newOption){
         pData->HFOVoption = (HFOV_OPTIONS)newOption;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        dirass_setCodecStatus(hDir, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -523,7 +528,7 @@ void dirass_setAspectRatio(void* const hDir, int newOption)
     dirass_data *pData = (dirass_data*)(hDir);
     if(pData->aspectRatioOption != (ASPECT_RATIO_OPTIONS)newOption){
         pData->aspectRatioOption = (ASPECT_RATIO_OPTIONS)newOption;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        dirass_setCodecStatus(hDir, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 

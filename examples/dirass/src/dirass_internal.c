@@ -34,7 +34,18 @@
  */
 
 #include "dirass.h"
-#include "dirass_internal.h" 
+#include "dirass_internal.h"
+
+void dirass_setCodecStatus(void* const hDir, CODEC_STATUS newStatus)
+{
+    dirass_data *pData = (dirass_data*)(hDir);
+    if(newStatus==CODEC_STATUS_NOT_INITIALISED){
+        /* Pause until current initialisation is complete */
+        while(pData->codecStatus == CODEC_STATUS_INITIALISING)
+            SAF_SLEEP(10);
+    }
+    pData->codecStatus = newStatus;
+}
 
 void dirass_initAna(void* const hDir)
 {

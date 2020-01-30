@@ -29,7 +29,18 @@
  *     Leo McCormack, 25.09.2017
  */
 
-#include "binauraliser_internal.h"  
+#include "binauraliser_internal.h"
+
+void binauraliser_setCodecStatus(void* const hBin, CODEC_STATUS newStatus)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    if(newStatus==CODEC_STATUS_NOT_INITIALISED){
+        /* Pause until current initialisation is complete */
+        while(pData->codecStatus == CODEC_STATUS_INITIALISING)
+            SAF_SLEEP(10);
+    }
+    pData->codecStatus = newStatus;
+}
 
 void binauraliser_interpHRTFs
 (

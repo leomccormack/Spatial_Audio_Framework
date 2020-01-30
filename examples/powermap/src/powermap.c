@@ -97,6 +97,13 @@ void powermap_destroy
     int i, ch;
     
     if (pData != NULL) {
+        /* not safe to free memory during intialisation/processing loop */
+        while (pData->codecStatus == CODEC_STATUS_INITIALISING ||
+               pData->procStatus == PROC_STATUS_ONGOING){
+            SAF_SLEEP(10);
+        }
+        
+        /* free afSTFT and buffers */
         afSTFTfree(pData->hSTFT);
         for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
             free(pData->STFTInputFrameTF[ch].re);
@@ -163,11 +170,11 @@ void powermap_initCodec
     powermap_data *pData = (powermap_data*)(hPm);
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
-        return; /* re-init not required */
-    if (pData->procStatus == PROC_STATUS_ONGOING){
-        /* re-init required, but need to wait for processing loop to end */
-        pData->codecStatus = CODEC_STATUS_INITIALISING;
-        powermap_initCodec(hPm);
+        return; /* re-init not required, or already happening */
+    while (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but we need to wait for the current processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING; /* indicate that we want to init */
+        SAF_SLEEP(10);
     }
     
     /* for progress bar */
@@ -412,8 +419,7 @@ void powermap_analysis
  
 void powermap_refreshSettings(void* const hPm)
 {
-    powermap_data *pData = (powermap_data*)(hPm);
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    powermap_setCodecStatus(hPm, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void powermap_setPowermapMode(void* const hPm, int newMode)
@@ -430,7 +436,7 @@ void powermap_setMasterOrder(void* const hPm,  int newValue)
     powermap_data *pData = (powermap_data*)(hPm);
     if(pData->new_masterOrder != newValue){
         pData->new_masterOrder = newValue;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        powermap_setCodecStatus(hPm, CODEC_STATUS_NOT_INITIALISED);
     }
     /* FUMA only supports 1st order */
     if(pData->new_masterOrder!=MASTER_ORDER_FIRST && pData->chOrdering == CH_FUMA)
@@ -577,7 +583,7 @@ void powermap_setDispFOV(void* const hPm, int newOption)
     powermap_data *pData = (powermap_data*)(hPm);
     if(pData->HFOVoption != (HFOV_OPTIONS)newOption){
         pData->HFOVoption = (HFOV_OPTIONS)newOption;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        powermap_setCodecStatus(hPm, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -586,7 +592,7 @@ void powermap_setAspectRatio(void* const hPm, int newOption)
     powermap_data *pData = (powermap_data*)(hPm);
     if(pData->aspectRatioOption != (ASPECT_RATIO_OPTIONS)newOption){
         pData->aspectRatioOption = (ASPECT_RATIO_OPTIONS)newOption;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        powermap_setCodecStatus(hPm, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 

@@ -26,5 +26,17 @@
  * Author, date created:
  *     Leo McCormack, 14.04.2018
  */
- 
-#include "ambi_bin_internal.h" 
+
+#include "ambi_bin.h"
+#include "ambi_bin_internal.h"
+
+void ambi_bin_setCodecStatus(void* const hAmbi, CODEC_STATUS newStatus)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    if(newStatus==CODEC_STATUS_NOT_INITIALISED){
+        /* Pause until current initialisation is complete */
+        while(pData->codecStatus == CODEC_STATUS_INITIALISING)
+            SAF_SLEEP(10);
+    }
+    pData->codecStatus = newStatus;
+}

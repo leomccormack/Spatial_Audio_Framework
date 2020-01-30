@@ -36,6 +36,8 @@ extern "C" {
 #endif /* __cplusplus */
     
 #include "../saf_utilities/saf_complex.h"
+    
+#define ORDER2NSH(order) ((order+1)*(order+1))
 
 /* ========================================================================== */
 /*                                    Enums                                   */

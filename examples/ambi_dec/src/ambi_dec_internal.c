@@ -35,6 +35,17 @@
 
 #include "ambi_dec_internal.h" 
 
+void ambi_dec_setCodecStatus(void* const hAmbi, CODEC_STATUS newStatus)
+{
+    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    if(newStatus==CODEC_STATUS_NOT_INITIALISED){
+        /* Pause until current initialisation is complete */
+        while(pData->codecStatus == CODEC_STATUS_INITIALISING)
+            SAF_SLEEP(10);
+    }
+    pData->codecStatus = newStatus;
+}
+
 void ambi_dec_interpHRTFs
 (
     void* const hAmbi,

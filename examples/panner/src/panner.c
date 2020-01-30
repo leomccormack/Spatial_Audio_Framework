@@ -95,6 +95,13 @@ void panner_destroy
     int ch;
 
     if (pData != NULL) {
+        /* not safe to free memory during intialisation/processing loop */
+        while (pData->codecStatus == CODEC_STATUS_INITIALISING ||
+               pData->procStatus == PROC_STATUS_ONGOING){
+            SAF_SLEEP(10);
+        }
+        
+        /* free afSTFT and buffers */
         if(pData->hSTFT !=NULL)
             afSTFTfree(pData->hSTFT);
         for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
@@ -150,11 +157,11 @@ void panner_initCodec
     panner_data *pData = (panner_data*)(hPan);
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
-        return; /* re-init not required */
-    if (pData->procStatus == PROC_STATUS_ONGOING){
-        /* re-init required, but need to wait for processing loop to end */
-        pData->codecStatus = CODEC_STATUS_INITIALISING;
-        panner_initCodec(hPan);
+        return; /* re-init not required, or already happening */
+    while (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but we need to wait for the current processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING; /* indicate that we want to init */
+        SAF_SLEEP(10);
     }
     
     /* for progress bar */
@@ -366,7 +373,7 @@ void panner_refreshSettings(void* const hPan)
     pData->reInitGainTables = 1;
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    panner_setCodecStatus(hPan, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void panner_setSourceAzi_deg(void* const hPan, int index, float newAzi_deg)
@@ -406,7 +413,7 @@ void panner_setNumSources(void* const hPan, int new_nSources)
         for(ch=pData->nSources; ch<pData->new_nSources; ch++)
             pData->recalc_gainsFLAG[ch] = 1;
         pData->recalc_M_rotFLAG = 1;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        panner_setCodecStatus(hPan, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -424,7 +431,7 @@ void panner_setLoudspeakerAzi_deg(void* const hPan, int index, float newAzi_deg)
         for(ch=0; ch<MAX_NUM_INPUTS; ch++)
             pData->recalc_gainsFLAG[ch] = 1;
         pData->recalc_M_rotFLAG = 1;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        panner_setCodecStatus(hPan, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -440,7 +447,7 @@ void panner_setLoudspeakerElev_deg(void* const hPan, int index, float newElev_de
         for(ch=0; ch<MAX_NUM_INPUTS; ch++)
             pData->recalc_gainsFLAG[ch] = 1;
         pData->recalc_M_rotFLAG = 1;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        panner_setCodecStatus(hPan, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -456,7 +463,7 @@ void panner_setNumLoudspeakers(void* const hPan, int new_nLoudspeakers)
         for(ch=0; ch<MAX_NUM_INPUTS; ch++)
             pData->recalc_gainsFLAG[ch] = 1;
         pData->recalc_M_rotFLAG = 1;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        panner_setCodecStatus(hPan, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -469,7 +476,7 @@ void panner_setOutputConfigPreset(void* const hPan, int newPresetID)
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
     pData->recalc_M_rotFLAG = 1;
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    panner_setCodecStatus(hPan, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void panner_setInputConfigPreset(void* const hPan, int newPresetID)
@@ -480,7 +487,7 @@ void panner_setInputConfigPreset(void* const hPan, int newPresetID)
     for(ch=0; ch<pData->new_nSources; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
     pData->recalc_M_rotFLAG = 1;
-    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    panner_setCodecStatus(hPan, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void panner_setDTT(void* const hPan, float newValue)
@@ -493,7 +500,7 @@ void panner_setDTT(void* const hPan, float newValue)
         for(ch=0; ch<pData->new_nSources; ch++)
             pData->recalc_gainsFLAG[ch] = 1;
         pData->recalc_M_rotFLAG = 1;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        panner_setCodecStatus(hPan, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
@@ -507,7 +514,7 @@ void panner_setSpread(void* const hPan, float newValue)
         for(ch=0; ch<MAX_NUM_INPUTS; ch++)
             pData->recalc_gainsFLAG[ch] = 1;
         pData->recalc_M_rotFLAG = 1;
-        pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+        panner_setCodecStatus(hPan, CODEC_STATUS_NOT_INITIALISED);
     }
 }
 
