@@ -65,23 +65,18 @@ typedef struct _beamformer
 {
     /* audio buffers + afSTFT time-frequency transform handle */
     float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    //float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    //float_complex outputFrameTF[HYBRID_BANDS][MAX_NUM_BEAMS][TIME_SLOTS];
+    float prev_SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float tempFrame[MAX_NUM_BEAMS][FRAME_SIZE];
     float outputFrameTD[MAX_NUM_BEAMS][FRAME_SIZE];
-    //complexVector* STFTInputFrameTF;
-    //complexVector* STFTOutputFrameTF;
-    //void* hSTFT;                           /* afSTFT handle */
-    //int afSTFTdelay;                       /* for host delay compensation */
-    //float** tempHopFrameTD;                /* temporary multi-channel time-domain buffer of size "HOP_SIZE". */
-    int fs;                                  /* host sampling rate */
-    //float freqVector[HYBRID_BANDS];        /* frequency vector for time-frequency transform, in Hz */
+    int fs;
     
     /* internal variables */
     int nSH;
     int new_nBeams;                          /* if new_nLoudpkrs != nLoudpkrs, afSTFT is reinitialised */
     int new_nSH; 
     float beamWeights[MAX_NUM_BEAMS][MAX_NUM_SH_SIGNALS];
-    float_complex beamWeights_cmplx[MAX_NUM_BEAMS][MAX_NUM_SH_SIGNALS];
+    float prev_beamWeights[MAX_NUM_BEAMS][MAX_NUM_SH_SIGNALS];
+    float interpolator[FRAME_SIZE];
     
     /* flags */
     int recalc_beamWeights[MAX_NUM_BEAMS];   /* 0: no init required, 1: init required */ 

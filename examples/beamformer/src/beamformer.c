@@ -35,7 +35,7 @@ void beamformer_create
 {
     beamformer_data* pData = (beamformer_data*)malloc1d(sizeof(beamformer_data));
     *phBeam = (void*)pData;
-    int i, j, ch, band;
+    int i, ch;
 
     /* default user parameters */
     pData->beamOrder = 1;
@@ -50,20 +50,6 @@ void beamformer_create
     pData->beamType = BEAM_TYPE_HYPERCARDIOID;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
-    
-    /* afSTFT stuff */
-//    pData->hSTFT = NULL;
-//    pData->STFTInputFrameTF = malloc1d(MAX_NUM_SH_SIGNALS * sizeof(complexVector));
-//    for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-//        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-//        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-//    }
-//    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, MAX_NUM_LOUDSPEAKERS), HOP_SIZE, sizeof(float));
-//    pData->STFTOutputFrameTF = malloc1d(MAX_NUM_LOUDSPEAKERS * sizeof(complexVector));
-//    for(ch=0; ch< MAX_NUM_LOUDSPEAKERS; ch++) {
-//        pData->STFTOutputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-//        pData->STFTOutputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-//    }
     
     /* internal parameters */
     pData->new_nSH = pData->new_nSH = (pData->beamOrder+1)*(pData->beamOrder+1);
@@ -80,28 +66,9 @@ void beamformer_destroy
 )
 {
     beamformer_data *pData = (beamformer_data*)(*phBeam);
-    int i, j, ch;
     
     if (pData != NULL) {
-//        if(pData->hSTFT!=NULL)
-//            afSTFTfree(pData->hSTFT);
-//        if(pData->STFTInputFrameTF!=NULL){
-//            for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-//                free(pData->STFTInputFrameTF[ch].re);
-//                free(pData->STFTInputFrameTF[ch].im);
-//            }
-//        }
-//        if((pData->STFTOutputFrameTF!=NULL)){
-//            for (ch = 0; ch < MAX_NUM_LOUDSPEAKERS; ch++) {
-//                free(pData->STFTOutputFrameTF[ch].re);
-//                free(pData->STFTOutputFrameTF[ch].im);
-//            }
-//        }
-//        free(pData->STFTInputFrameTF);
-//        free(pData->STFTOutputFrameTF);
-//        free2d((void**)pData->tempHopFrameTD, MAX(NUM_EARS, MAX_NUM_SH_SIGNALS));
-//        free2d((void**)pData->tempHopFrameTD, MAX(MAX_NUM_LOUDSPEAKERS, MAX_NUM_SH_SIGNALS));
-
+        
         free(pData);
         pData = NULL;
     }
@@ -114,25 +81,19 @@ void beamformer_init
 )
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    int band, ch;
+    int i, ch;
     
     /* define frequency vector */
     pData->fs = sampleRate;
-//    for(band=0; band <HYBRID_BANDS; band++){
-//        if(sampleRate == 44100)
-//            pData->freqVector[band] =  (float)__afCenterFreq44100[band];
-//        else /* Assume 48kHz */
-//            pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
-//    }
-
-    /* reinitialise if needed */
-    beamformer_checkReInit(hBeam);
-    
+   
     /* defaults */
     memset(pData->beamWeights, 0, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS*sizeof(float));
-    //memset(pData->beamWeights_cmplx, 0, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
+    memset(pData->prev_beamWeights, 0, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS*sizeof(float));
+    memset(pData->prev_SHFrameTD, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
     for(ch=0; ch<MAX_NUM_BEAMS; ch++)
         pData->recalc_beamWeights[ch] = 1;
+    for(i=1; i<=FRAME_SIZE; i++)
+        pData->interpolator[i-1] = (float)i*1.0f/(float)FRAME_SIZE;
 }
 
 void beamformer_process
@@ -147,9 +108,8 @@ void beamformer_process
 )
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    int n, t, ch, i, j, bi, band;
+    int n, ch, i, j, bi;
     int o[MAX_SH_ORDER+2];
-    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
     /* local copies of user parameters */
     int nBeams, beamOrder;
@@ -157,15 +117,11 @@ void beamformer_process
     CH_ORDER chOrdering;
     
     /* reinitialise if needed */
-#ifdef __APPLE__
-    beamformer_checkReInit(hBeam);
-#else
     if(pData->reInitTFT==1){
         pData->reInitTFT = 2;
-        beamformer_initTFT(hBeam); /* always init before codec or hrtfs  */
+        beamformer_initTFT(hBeam);
         pData->reInitTFT = 0;
     }
-#endif
 
     /* decode audio to loudspeakers or headphones */
     if( (nSamples == FRAME_SIZE) && (pData->reInitTFT==0) ) {
@@ -218,16 +174,6 @@ void beamformer_process
                 break;
         }
         
-//        /* Apply time-frequency transform (TFT) */
-//        for(t=0; t< TIME_SLOTS; t++) {
-//            for(ch = 0; ch < pData->nSH; ch++)
-//                utility_svvcopy(&(pData->SHFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
-//            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
-//            for(band=0; band<HYBRID_BANDS; band++)
-//                for(ch=0; ch < pData->nSH; ch++)
-//                    pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
-//        }
-        
         /* Main processing: */
         if(isPlaying){
             float* c_n;
@@ -237,7 +183,6 @@ void beamformer_process
             for(bi=0; bi<nBeams; bi++){
                 if(pData->recalc_beamWeights[bi]){
                     memset(pData->beamWeights[bi], 0, MAX_NUM_SH_SIGNALS*sizeof(float));
-                    //memset(pData->beamWeights_cmplx[bi], 0, MAX_NUM_SH_SIGNALS*sizeof(float_complex));
                     switch(pData->beamType){
                         case BEAM_TYPE_CARDIOID: beamWeightsCardioid2Spherical(beamOrder, c_n); break;
                         case BEAM_TYPE_HYPERCARDIOID: beamWeightsHypercardioid2Spherical(beamOrder, c_n); break;
@@ -245,50 +190,36 @@ void beamformer_process
                     }
                     rotateAxisCoeffsReal(beamOrder, c_n, M_PI/2.0f - pData->beam_dirs_deg[bi][1]*M_PI/180.0f,
                                          pData->beam_dirs_deg[bi][0]*M_PI/180.0f, (float*)pData->beamWeights[bi]);
-//                    for(i=0; i<pData->new_nSH; i++)
-//                        pData->beamWeights_cmplx[bi][i] = cmplxf(pData->beamWeights[bi][i], 0.0f);
                     
-                     pData->recalc_beamWeights[bi] = 0;
+                    pData->recalc_beamWeights[bi] = 0;
                 }
+                else
+                    memcpy(pData->beamWeights[bi], pData->prev_beamWeights[bi], pData->nSH*sizeof(float));
             }
             free(c_n);
             
-            /* apply beam weights (frequency-domain, for future adaptive beamformers) */
-//            for(bi=0; bi<nBeams; bi++){
-//                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, TIME_SLOTS, pData->nSH, &calpha,
-//                            pData->beamWeights_cmplx, MAX_NUM_SH_SIGNALS,
-//                            pData->SHframeTF[band], TIME_SLOTS, &cbeta,
-//                            pData->outputframeTF[band], TIME_SLOTS);
-//            }
-            
             /* apply beam weights */
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, pData->nSH, 1.0f,
+                        (const float*)pData->prev_beamWeights, MAX_NUM_SH_SIGNALS,
+                        (const float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
+                        (float*)pData->tempFrame, FRAME_SIZE);
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, pData->nSH, 1.0f,
                         (const float*)pData->beamWeights, MAX_NUM_SH_SIGNALS,
-                        (const float*)pData->SHFrameTD, FRAME_SIZE, 0.0f,
+                        (const float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
                         (float*)pData->outputFrameTD, FRAME_SIZE);
- 
+            
+            for (i=0; i <nBeams; i++)
+                for(j=0; j<FRAME_SIZE; j++)
+                    pData->outputFrameTD[i][j] =  pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
+            
+            /* for next frame */
+            utility_svvcopy((const float*)pData->SHFrameTD, pData->nSH*FRAME_SIZE, (float*)pData->prev_SHFrameTD);
+            utility_svvcopy((const float*)pData->beamWeights, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_beamWeights);
             
         }
-        else{
-            //memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_BEAMS*TIME_SLOTS*sizeof(float_complex));
+        else
             memset(pData->outputFrameTD, 0, MAX_NUM_BEAMS*FRAME_SIZE*sizeof(float));
-        }
         
-//        /* inverse-TFT */
-//        for(t = 0; t < TIME_SLOTS; t++) {
-//            for(band = 0; band < HYBRID_BANDS; band++) {
-//                for(ch = 0; ch < nLoudspeakers; ch++) {
-//                    pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->outputframeTF[band][ch][t]);
-//                    pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->outputframeTF[band][ch][t]);
-//                }
-//            }
-//
-//            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
-//            for(ch = 0; ch < MIN(nBeams, nOutputs); ch++)
-//                utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
-//            for (; ch < nOutputs; ch++)
-//                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
-//        }
         
         for(ch = 0; ch < MIN(nBeams, nOutputs); ch++)
             utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
@@ -307,17 +238,6 @@ void beamformer_refreshSettings(void* const hBeam)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
     pData->reInitTFT = 1;
-}
-
-void beamformer_checkReInit(void* const hBeam)
-{
-    beamformer_data *pData = (beamformer_data*)(hBeam);
-    /* reinitialise if needed */
-    if (pData->reInitTFT == 1) {
-        pData->reInitTFT = 2;
-        beamformer_initTFT(hBeam); /* always init before codec or hrtfs  */
-        pData->reInitTFT = 0;
-    }
 }
 
 void beamformer_setBeamOrder(void  * const hBeam, int newValue)

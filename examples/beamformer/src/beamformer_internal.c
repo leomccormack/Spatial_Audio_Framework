@@ -34,19 +34,6 @@ void beamformer_initTFT
 )
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-
-//    if(pData->hSTFT==NULL){
-//        if(pData->new_binauraliseLS)
-//            afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, NUM_EARS, 0, 1);
-//        else
-//            afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, pData->new_nLoudpkrs, 0, 1);
-//    }
-//    else{
-//        if(pData->new_binauraliseLS)
-//            afSTFTchannelChange(pData->hSTFT, pData->new_nSH, NUM_EARS);
-//        else
-//            afSTFTchannelChange(pData->hSTFT, pData->new_nSH, pData->new_nLoudpkrs);
-//    }
     pData->nBeams = pData->new_nBeams;
     pData->nSH = pData->new_nSH;
 }
