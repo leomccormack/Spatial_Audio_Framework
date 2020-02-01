@@ -217,8 +217,7 @@ void ambi_bin_process(void* const hAmbi,
                       float** const outputs,
                       int nInputs,
                       int nOutputs,
-                      int nSamples,
-                      int isPlaying);
+                      int nSamples);
 
 
 /* ========================================================================== */

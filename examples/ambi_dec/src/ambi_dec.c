@@ -425,8 +425,7 @@ void ambi_dec_process
     float ** const outputs,
     int            nInputs,
     int            nOutputs,
-    int            nSamples,
-    int            isPlaying
+    int            nSamples
 )
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
@@ -513,61 +512,56 @@ void ambi_dec_process
         }
         
         /* Main processing: */
-        if(isPlaying){
-            /* Decode to loudspeaker set-up */
-            memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_LOUDSPEAKERS*TIME_SLOTS*sizeof(float_complex));
-            for(band=0; band<HYBRID_BANDS; band++){
-                orderBand = MAX(MIN(orderPerBand[band], masterOrder),1);
-                nSH_band = (orderBand+1)*(orderBand+1);
-                decIdx = pData->freqVector[band] < transitionFreq ? 0 : 1; /* different decoder for low (0) and high (1) frequencies */
-                if(rE_WEIGHT[decIdx]){
-                    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLoudspeakers, TIME_SLOTS, nSH_band, &calpha,
-                                pars->M_dec_cmplx_maxrE[decIdx][orderBand-1], nSH_band,
-                                pData->SHframeTF[band], TIME_SLOTS, &cbeta,
-                                pData->outputframeTF[band], TIME_SLOTS);
-                }
-                else{
-                    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLoudspeakers, TIME_SLOTS, nSH_band, &calpha,
-                                pars->M_dec_cmplx[decIdx][orderBand-1], nSH_band,
-                                pData->SHframeTF[band], TIME_SLOTS, &cbeta,
-                                pData->outputframeTF[band], TIME_SLOTS);
-                }
-                for(i=0; i<nLoudspeakers; i++){
-                    for(t=0; t<TIME_SLOTS; t++){
-                        if(diffEQmode[decIdx]==AMPLITUDE_PRESERVING)
-                            pData->outputframeTF[band][i][t] = crmulf(pData->outputframeTF[band][i][t], pars->M_norm[decIdx][orderBand-1][0]);
-                        else
-                            pData->outputframeTF[band][i][t] = crmulf(pData->outputframeTF[band][i][t], pars->M_norm[decIdx][orderBand-1][1]);
-                    }
+        /* Decode to loudspeaker set-up */
+        memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_LOUDSPEAKERS*TIME_SLOTS*sizeof(float_complex));
+        for(band=0; band<HYBRID_BANDS; band++){
+            orderBand = MAX(MIN(orderPerBand[band], masterOrder),1);
+            nSH_band = (orderBand+1)*(orderBand+1);
+            decIdx = pData->freqVector[band] < transitionFreq ? 0 : 1; /* different decoder for low (0) and high (1) frequencies */
+            if(rE_WEIGHT[decIdx]){
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLoudspeakers, TIME_SLOTS, nSH_band, &calpha,
+                            pars->M_dec_cmplx_maxrE[decIdx][orderBand-1], nSH_band,
+                            pData->SHframeTF[band], TIME_SLOTS, &cbeta,
+                            pData->outputframeTF[band], TIME_SLOTS);
+            }
+            else{
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLoudspeakers, TIME_SLOTS, nSH_band, &calpha,
+                            pars->M_dec_cmplx[decIdx][orderBand-1], nSH_band,
+                            pData->SHframeTF[band], TIME_SLOTS, &cbeta,
+                            pData->outputframeTF[band], TIME_SLOTS);
+            }
+            for(i=0; i<nLoudspeakers; i++){
+                for(t=0; t<TIME_SLOTS; t++){
+                    if(diffEQmode[decIdx]==AMPLITUDE_PRESERVING)
+                        pData->outputframeTF[band][i][t] = crmulf(pData->outputframeTF[band][i][t], pars->M_norm[decIdx][orderBand-1][0]);
+                    else
+                        pData->outputframeTF[band][i][t] = crmulf(pData->outputframeTF[band][i][t], pars->M_norm[decIdx][orderBand-1][1]);
                 }
             }
+        }
             
-            /* binauralise the loudspeaker signals */
-            if(binauraliseLS){
-                memset(pData->binframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
-                /* interpolate hrtfs and apply to each source */
-                for (ch = 0; ch < nLoudspeakers; ch++) {
-                    if(pData->recalc_hrtf_interpFLAG[ch]){
-                        ambi_dec_interpHRTFs(hAmbi, pData->loudpkrs_dirs_deg[ch][0], pData->loudpkrs_dirs_deg[ch][1], pars->hrtf_interp[ch]);
-                        pData->recalc_hrtf_interpFLAG[ch] = 0;
-                    }
-                    for (band = 0; band < HYBRID_BANDS; band++)
-                        for (ear = 0; ear < NUM_EARS; ear++)
-                            for (t = 0; t < TIME_SLOTS; t++)
-                                pData->binframeTF[band][ear][t] = ccaddf(pData->binframeTF[band][ear][t], ccmulf(pData->outputframeTF[band][ch][t], pars->hrtf_interp[ch][band][ear]));
+        /* binauralise the loudspeaker signals */
+        if(binauraliseLS){
+            memset(pData->binframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
+            /* interpolate hrtfs and apply to each source */
+            for (ch = 0; ch < nLoudspeakers; ch++) {
+                if(pData->recalc_hrtf_interpFLAG[ch]){
+                    ambi_dec_interpHRTFs(hAmbi, pData->loudpkrs_dirs_deg[ch][0], pData->loudpkrs_dirs_deg[ch][1], pars->hrtf_interp[ch]);
+                    pData->recalc_hrtf_interpFLAG[ch] = 0;
                 }
-                
-                /* scale by sqrt(number of loudspeakers) */
                 for (band = 0; band < HYBRID_BANDS; band++)
                     for (ear = 0; ear < NUM_EARS; ear++)
                         for (t = 0; t < TIME_SLOTS; t++)
-                            pData->binframeTF[band][ear][t] = crmulf(pData->binframeTF[band][ear][t], 1.0f/sqrtf((float)nLoudspeakers));
+                            pData->binframeTF[band][ear][t] = ccaddf(pData->binframeTF[band][ear][t], ccmulf(pData->outputframeTF[band][ch][t], pars->hrtf_interp[ch][band][ear]));
             }
+                
+            /* scale by sqrt(number of loudspeakers) */
+            for (band = 0; band < HYBRID_BANDS; band++)
+                for (ear = 0; ear < NUM_EARS; ear++)
+                    for (t = 0; t < TIME_SLOTS; t++)
+                        pData->binframeTF[band][ear][t] = crmulf(pData->binframeTF[band][ear][t], 1.0f/sqrtf((float)nLoudspeakers));
         }
-        else{
-            memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_LOUDSPEAKERS*TIME_SLOTS*sizeof(float_complex));
-            memset(pData->binframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS*sizeof(float_complex));
-        }
+        
         
         /* inverse-TFT */
         for(t = 0; t < TIME_SLOTS; t++) {

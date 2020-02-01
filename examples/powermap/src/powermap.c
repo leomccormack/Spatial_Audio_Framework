@@ -325,7 +325,7 @@ void powermap_analysis
                 pmapEQ_band = MIN(MAX(pmapEQ[band], 0.0f), 2.0f);
                 for(i=0; i<nSH_order; i++)
                     for(j=0; j<nSH_order; j++)
-                        C_grp[i*nSH_maxOrder+j] = ccaddf(C_grp[i*nSH_maxOrder+j], crmulf(pData->Cx[band][i][j], 1e10f*pmapEQ_band));
+                        C_grp[i*nSH_maxOrder+j] = ccaddf(C_grp[i*nSH_maxOrder+j], crmulf(pData->Cx[band][i][j], 1e3f*pmapEQ_band));
             }
 
             /* generate powermap */

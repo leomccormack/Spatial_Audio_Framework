@@ -158,16 +158,13 @@ void binauraliser_initCodec(void* const hBin);
  *     nInputs   - number of input channels
  *     nOutputs  - number of output channels
  *     nSamples  - number of samples in 'inputs'/'output' matrices
- *     isPlaying - flag to say if there is audio in the input buffers, 0: no
- *                 audio, reduced processing, 1: audio, full processing
  */
 void binauraliser_process(void* const hBin,
                           float** const inputs,
                           float** const outputs,
                           int nInputs,
                           int nOutputs,
-                          int nSamples,
-                          int isPlaying);
+                          int nSamples);
     
     
 /* ========================================================================== */

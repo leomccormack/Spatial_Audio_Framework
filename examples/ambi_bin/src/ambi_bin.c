@@ -289,8 +289,7 @@ void ambi_bin_process
     float ** const outputs,
     int            nInputs,
     int            nOutputs,
-    int            nSamples,
-    int            isPlaying
+    int            nSamples
 )
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
@@ -371,41 +370,37 @@ void ambi_bin_process
         }
     
         /* Main processing: */
-        if(isPlaying){
             /* Apply rotation */
-            if(order > 0 && enableRot) {
-                if(pData->recalc_M_rotFLAG){
-                    memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
-                    M_rot_tmp = malloc1d(nSH*nSH * sizeof(float));
-                    yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
-                    getSHrotMtxReal(Rxyz, M_rot_tmp, order);
-                    for (i = 0; i < nSH; i++)
-                        for (j = 0; j < nSH; j++)
-                            pData->M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH + j], 0.0f);
-                    free(M_rot_tmp);
-                    pData->recalc_M_rotFLAG = 0;
-                }
-                for(band = 0; band < HYBRID_BANDS; band++) {
-                    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, nSH, &calpha,
-                                pData->M_rot, MAX_NUM_SH_SIGNALS,
-                                pData->SHframeTF[band], TIME_SLOTS, &cbeta,
-                                pData->SHframeTF_rot[band], TIME_SLOTS);
-                }
+        if(order > 0 && enableRot) {
+            if(pData->recalc_M_rotFLAG){
+                memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
+                M_rot_tmp = malloc1d(nSH*nSH * sizeof(float));
+                yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
+                getSHrotMtxReal(Rxyz, M_rot_tmp, order);
+                for (i = 0; i < nSH; i++)
+                    for (j = 0; j < nSH; j++)
+                        pData->M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH + j], 0.0f);
+                free(M_rot_tmp);
+                pData->recalc_M_rotFLAG = 0;
             }
-            else
-                utility_cvvcopy((const float_complex*)pData->SHframeTF, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS, (float_complex*)pData->SHframeTF_rot);
-            
-            /* mix to headphones */
             for(band = 0; band < HYBRID_BANDS; band++) {
-                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
-                            pars->M_dec[band], MAX_NUM_SH_SIGNALS,
-                            pData->SHframeTF_rot[band], TIME_SLOTS, &cbeta,
-                            pData->binframeTF[band], TIME_SLOTS);
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, nSH, &calpha,
+                            pData->M_rot, MAX_NUM_SH_SIGNALS,
+                            pData->SHframeTF[band], TIME_SLOTS, &cbeta,
+                            pData->SHframeTF_rot[band], TIME_SLOTS);
             }
         }
         else
-            memset(pData->binframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS*sizeof(float_complex));
-        
+            utility_cvvcopy((const float_complex*)pData->SHframeTF, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS, (float_complex*)pData->SHframeTF_rot);
+            
+        /* mix to headphones */
+        for(band = 0; band < HYBRID_BANDS; band++) {
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
+                        pars->M_dec[band], MAX_NUM_SH_SIGNALS,
+                        pData->SHframeTF_rot[band], TIME_SLOTS, &cbeta,
+                        pData->binframeTF[band], TIME_SLOTS);
+        }
+   
         /* inverse-TFT */
         //postGain = powf(10.0f, POST_GAIN/20.0f);
         for(t = 0; t < TIME_SLOTS; t++) {

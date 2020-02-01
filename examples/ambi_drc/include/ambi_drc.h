@@ -195,8 +195,7 @@ void ambi_drc_process(void* const hAmbi,
                       float** const inputs,
                       float** const outputs,
                       int nCH,
-                      int nSamples,
-                      int isPlaying);
+                      int nSamples);
 
 
 /* ========================================================================== */

@@ -1153,17 +1153,19 @@ void utility_ceig
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
             a[i*dim+j] = A[j*dim+i];
+
+	assert(0); /* below code was crashing. Consider using utility_cseig instead, if A is hermitian */
     
     /* solve the eigenproblem */
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     rwork = malloc1d(2*dim*sizeof(float));
-    cgeev_( "Vectors", "Vectors", &n, (veclib_float_complex*)a, &lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, &ldvl,
-           (veclib_float_complex*)vr, &ldvr, (veclib_float_complex*)&wkopt, &lwork, rwork, &info );
+    cgeev_( "Vectors", "Vectors", &n, a, &lda, w, vl, &ldvl,
+           vr, &ldvr, &wkopt, &lwork, rwork, &info );
     lwork = (int)crealf(wkopt);
-    work = (float_complex*)malloc1d( lwork*sizeof(float_complex) );
-    cgeev_( "Vectors", "Vectors", &n, (veclib_float_complex*)a, &lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, &ldvl,
-           (veclib_float_complex*)vr, &ldvr, (veclib_float_complex*)work, &lwork, rwork, &info );
+    work = malloc1d( lwork*sizeof(float_complex) );
+    cgeev_( "Vectors", "Vectors", &n, a, &lda, w, vl, &ldvl,
+           vr, &ldvr, work, &lwork, rwork, &info );
     free(rwork);
     free(work);
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)

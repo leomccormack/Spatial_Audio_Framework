@@ -186,8 +186,7 @@ void array2sh_process
     float ** const outputs,
     int            nInputs,
     int            nOutputs,
-    int            nSamples,
-    int            isPlaying
+    int            nSamples
 )
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
@@ -239,17 +238,13 @@ void array2sh_process
         }
         
         /* Apply spherical harmonic transform (SHT) */
-        if(isPlaying){
-            for(band=0; band<HYBRID_BANDS; band++){
-                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, Q, &calpha,
-                            pData->W[band], MAX_NUM_SENSORS,
-                            pData->inputframeTF[band], TIME_SLOTS, &cbeta,
-                            pData->SHframeTF[band], TIME_SLOTS);
-            }
+        for(band=0; band<HYBRID_BANDS; band++){
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, Q, &calpha,
+                        pData->W[band], MAX_NUM_SENSORS,
+                        pData->inputframeTF[band], TIME_SLOTS, &cbeta,
+                        pData->SHframeTF[band], TIME_SLOTS);
         }
-        else
-            memset(pData->SHframeTF, 0, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
-        
+      
         /* inverse-TFT */
         for(t = 0; t < TIME_SLOTS; t++) {
             for(band = 0; band < HYBRID_BANDS; band++) {

@@ -94,8 +94,7 @@ void rotator_process
     float ** const outputs,
     int            nInputs,
     int            nOutputs,
-    int            nSamples,
-    int            isPlaying
+    int            nSamples
 )
 {
     rotator_data *pData = (rotator_data*)(hRot);
@@ -106,7 +105,7 @@ void rotator_process
     CH_ORDER chOrdering;
     NORM_TYPES norm;
  
-    if (nSamples == FRAME_SIZE && isPlaying) {
+    if (nSamples == FRAME_SIZE) {
         /* prep */
         for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
         chOrdering = pData->chOrdering;

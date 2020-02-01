@@ -103,8 +103,7 @@ void beamformer_process
     float ** const outputs,
     int            nInputs,
     int            nOutputs,
-    int            nSamples,
-    int            isPlaying
+    int            nSamples
 )
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
@@ -175,52 +174,47 @@ void beamformer_process
         }
         
         /* Main processing: */
-        if(isPlaying){
-            float* c_n;
-            c_n = malloc1d((beamOrder+1)*sizeof(float));
+        float* c_n;
+        c_n = malloc1d((beamOrder+1)*sizeof(float));
             
-            /* calculate beamforming coeffients */
-            for(bi=0; bi<nBeams; bi++){
-                if(pData->recalc_beamWeights[bi]){
-                    memset(pData->beamWeights[bi], 0, MAX_NUM_SH_SIGNALS*sizeof(float));
-                    switch(pData->beamType){
-                        case BEAM_TYPE_CARDIOID: beamWeightsCardioid2Spherical(beamOrder, c_n); break;
-                        case BEAM_TYPE_HYPERCARDIOID: beamWeightsHypercardioid2Spherical(beamOrder, c_n); break;
-                        case BEAM_TYPE_MAX_EV: beamWeightsMaxEV(beamOrder, c_n); break;
-                    }
-                    rotateAxisCoeffsReal(beamOrder, c_n, M_PI/2.0f - pData->beam_dirs_deg[bi][1]*M_PI/180.0f,
-                                         pData->beam_dirs_deg[bi][0]*M_PI/180.0f, (float*)pData->beamWeights[bi]);
-                    
-                    pData->recalc_beamWeights[bi] = 0;
+        /* calculate beamforming coeffients */
+        for(bi=0; bi<nBeams; bi++){
+            if(pData->recalc_beamWeights[bi]){
+                memset(pData->beamWeights[bi], 0, MAX_NUM_SH_SIGNALS*sizeof(float));
+                switch(pData->beamType){
+                    case BEAM_TYPE_CARDIOID: beamWeightsCardioid2Spherical(beamOrder, c_n); break;
+                    case BEAM_TYPE_HYPERCARDIOID: beamWeightsHypercardioid2Spherical(beamOrder, c_n); break;
+                    case BEAM_TYPE_MAX_EV: beamWeightsMaxEV(beamOrder, c_n); break;
                 }
-                else
-                    memcpy(pData->beamWeights[bi], pData->prev_beamWeights[bi], pData->nSH*sizeof(float));
+                rotateAxisCoeffsReal(beamOrder, c_n, M_PI/2.0f - pData->beam_dirs_deg[bi][1]*M_PI/180.0f,
+                                        pData->beam_dirs_deg[bi][0]*M_PI/180.0f, (float*)pData->beamWeights[bi]);
+                    
+                pData->recalc_beamWeights[bi] = 0;
             }
-            free(c_n);
-            
-            /* apply beam weights */
-            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, pData->nSH, 1.0f,
-                        (const float*)pData->prev_beamWeights, MAX_NUM_SH_SIGNALS,
-                        (const float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
-                        (float*)pData->tempFrame, FRAME_SIZE);
-            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, pData->nSH, 1.0f,
-                        (const float*)pData->beamWeights, MAX_NUM_SH_SIGNALS,
-                        (const float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
-                        (float*)pData->outputFrameTD, FRAME_SIZE);
-            
-            for (i=0; i <nBeams; i++)
-                for(j=0; j<FRAME_SIZE; j++)
-                    pData->outputFrameTD[i][j] =  pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
-            
-            /* for next frame */
-            utility_svvcopy((const float*)pData->SHFrameTD, pData->nSH*FRAME_SIZE, (float*)pData->prev_SHFrameTD);
-            utility_svvcopy((const float*)pData->beamWeights, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_beamWeights);
-            
+            else
+                memcpy(pData->beamWeights[bi], pData->prev_beamWeights[bi], pData->nSH*sizeof(float));
         }
-        else
-            memset(pData->outputFrameTD, 0, MAX_NUM_BEAMS*FRAME_SIZE*sizeof(float));
-        
-        
+        free(c_n);
+            
+        /* apply beam weights */
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, pData->nSH, 1.0f,
+                    (const float*)pData->prev_beamWeights, MAX_NUM_SH_SIGNALS,
+                    (const float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
+                    (float*)pData->tempFrame, FRAME_SIZE);
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, pData->nSH, 1.0f,
+                    (const float*)pData->beamWeights, MAX_NUM_SH_SIGNALS,
+                    (const float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
+                    (float*)pData->outputFrameTD, FRAME_SIZE);
+            
+        for (i=0; i <nBeams; i++)
+            for(j=0; j<FRAME_SIZE; j++)
+                pData->outputFrameTD[i][j] =  pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
+            
+        /* for next frame */
+        utility_svvcopy((const float*)pData->SHFrameTD, pData->nSH*FRAME_SIZE, (float*)pData->prev_SHFrameTD);
+        utility_svvcopy((const float*)pData->beamWeights, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_beamWeights);
+            
+        /* copy to output buffer */
         for(ch = 0; ch < MIN(nBeams, nOutputs); ch++)
             utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)

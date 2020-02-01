@@ -156,7 +156,7 @@ void flattenMinphase
     saf_fft_forward(hFFT, (float_complex*)ctd_tmp, (float_complex*)tdi_f);
     
     /* take log(cabs()) */
-    for(int i=0; i<len; i++)
+    for(i=0; i<len; i++)
         tdi_f_labs[i] = cmplxf(logf(cabsf(tdi_f[i])), 0.0f);
     
     /* Hilbert to acquire discrete-time analytic signal */

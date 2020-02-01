@@ -202,8 +202,7 @@ void binauraliser_process
     float ** const outputs,
     int            nInputs,
     int            nOutputs,
-    int            nSamples,
-    int            isPlaying
+    int            nSamples
 )
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
@@ -237,53 +236,49 @@ void binauraliser_process
         }
         
         /* Main processing: */
-        if(isPlaying){
-            /* Rotate source directions */
-            if(enableRotation && pData->recalc_M_rotFLAG){
-                yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
-                for(i=0; i<nSources; i++){
-                    pData->src_dirs_xyz[i][0] = cosf(DEG2RAD(pData->src_dirs_deg[i][1])) * cosf(DEG2RAD(pData->src_dirs_deg[i][0]));
-                    pData->src_dirs_xyz[i][1] = cosf(DEG2RAD(pData->src_dirs_deg[i][1])) * sinf(DEG2RAD(pData->src_dirs_deg[i][0]));
-                    pData->src_dirs_xyz[i][2] = sinf(DEG2RAD(pData->src_dirs_deg[i][1]));
-                    pData->recalc_hrtf_interpFLAG[i] = 1;
-                }
-                cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSources, 3, 3, 1.0f,
-                            (float*)(pData->src_dirs_xyz), 3,
-                            (float*)Rxyz, 3, 0.0f,
-                            (float*)(pData->src_dirs_rot_xyz), 3);
-                for(i=0; i<nSources; i++){
-                    hypotxy = sqrtf(powf(pData->src_dirs_rot_xyz[i][0], 2.0f) + powf(pData->src_dirs_rot_xyz[i][1], 2.0f));
-                    pData->src_dirs_rot_deg[i][0] = RAD2DEG(atan2f(pData->src_dirs_rot_xyz[i][1], pData->src_dirs_rot_xyz[i][0]));
-                    pData->src_dirs_rot_deg[i][1] = RAD2DEG(atan2f(pData->src_dirs_rot_xyz[i][2], hypotxy));
-                }
-                pData->recalc_M_rotFLAG = 0;
+        /* Rotate source directions */
+        if(enableRotation && pData->recalc_M_rotFLAG){
+            yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
+            for(i=0; i<nSources; i++){
+                pData->src_dirs_xyz[i][0] = cosf(DEG2RAD(pData->src_dirs_deg[i][1])) * cosf(DEG2RAD(pData->src_dirs_deg[i][0]));
+                pData->src_dirs_xyz[i][1] = cosf(DEG2RAD(pData->src_dirs_deg[i][1])) * sinf(DEG2RAD(pData->src_dirs_deg[i][0]));
+                pData->src_dirs_xyz[i][2] = sinf(DEG2RAD(pData->src_dirs_deg[i][1]));
+                pData->recalc_hrtf_interpFLAG[i] = 1;
             }
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSources, 3, 3, 1.0f,
+                        (float*)(pData->src_dirs_xyz), 3,
+                        (float*)Rxyz, 3, 0.0f,
+                        (float*)(pData->src_dirs_rot_xyz), 3);
+            for(i=0; i<nSources; i++){
+                hypotxy = sqrtf(powf(pData->src_dirs_rot_xyz[i][0], 2.0f) + powf(pData->src_dirs_rot_xyz[i][1], 2.0f));
+                pData->src_dirs_rot_deg[i][0] = RAD2DEG(atan2f(pData->src_dirs_rot_xyz[i][1], pData->src_dirs_rot_xyz[i][0]));
+                pData->src_dirs_rot_deg[i][1] = RAD2DEG(atan2f(pData->src_dirs_rot_xyz[i][2], hypotxy));
+            }
+            pData->recalc_M_rotFLAG = 0;
+        }
          
-            /* interpolate hrtfs and apply to each source */
-            memset(pData->outputframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
-            for (ch = 0; ch < nSources; ch++) {
-                if(pData->recalc_hrtf_interpFLAG[ch]){
-                    if(enableRotation)
-                        binauraliser_interpHRTFs(hBin, pData->src_dirs_rot_deg[ch][0], pData->src_dirs_rot_deg[ch][1], pData->hrtf_interp[ch]);
-                    else
-                        binauraliser_interpHRTFs(hBin, pData->src_dirs_deg[ch][0], pData->src_dirs_deg[ch][1], pData->hrtf_interp[ch]);
-                    pData->recalc_hrtf_interpFLAG[ch] = 0;
-                }
-                for (band = 0; band < HYBRID_BANDS; band++)
-                    for (ear = 0; ear < NUM_EARS; ear++)
-                        for (t = 0; t < TIME_SLOTS; t++)
-                            pData->outputframeTF[band][ear][t] = ccaddf(pData->outputframeTF[band][ear][t], ccmulf(pData->inputframeTF[band][ch][t], pData->hrtf_interp[ch][band][ear]));
+        /* interpolate hrtfs and apply to each source */
+        memset(pData->outputframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
+        for (ch = 0; ch < nSources; ch++) {
+            if(pData->recalc_hrtf_interpFLAG[ch]){
+                if(enableRotation)
+                    binauraliser_interpHRTFs(hBin, pData->src_dirs_rot_deg[ch][0], pData->src_dirs_rot_deg[ch][1], pData->hrtf_interp[ch]);
+                else
+                    binauraliser_interpHRTFs(hBin, pData->src_dirs_deg[ch][0], pData->src_dirs_deg[ch][1], pData->hrtf_interp[ch]);
+                pData->recalc_hrtf_interpFLAG[ch] = 0;
             }
-            
-            /* scale by number of sources */
             for (band = 0; band < HYBRID_BANDS; band++)
                 for (ear = 0; ear < NUM_EARS; ear++)
                     for (t = 0; t < TIME_SLOTS; t++)
-                        pData->outputframeTF[band][ear][t] = crmulf(pData->outputframeTF[band][ear][t], 1.0f/sqrtf((float)nSources));
+                        pData->outputframeTF[band][ear][t] = ccaddf(pData->outputframeTF[band][ear][t], ccmulf(pData->inputframeTF[band][ch][t], pData->hrtf_interp[ch][band][ear]));
         }
-        else
-            memset(pData->outputframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS*sizeof(float_complex));
-        
+            
+        /* scale by number of sources */
+        for (band = 0; band < HYBRID_BANDS; band++)
+            for (ear = 0; ear < NUM_EARS; ear++)
+                for (t = 0; t < TIME_SLOTS; t++)
+                    pData->outputframeTF[band][ear][t] = crmulf(pData->outputframeTF[band][ear][t], 1.0f/sqrtf((float)nSources));
+       
         /* inverse-TFT */
         for (t = 0; t < TIME_SLOTS; t++) {
             for (band = 0; band < HYBRID_BANDS; band++) {

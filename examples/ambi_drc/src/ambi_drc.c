@@ -160,8 +160,7 @@ void ambi_drc_process
     float** const inputs,
     float** const outputs,
     int nCh,
-    int nSamples,
-    int isPlaying
+    int nSamples
 )                                         
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
@@ -206,54 +205,49 @@ void ambi_drc_process
         }
         
         /* Main processing: */
-        if(isPlaying){
-            /* Calculate the dynamic range compression gain factors per frequency band based on the omnidirectional component.
-             *     McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range Compression". in Proceedings of the 14th
-             *     Sound and Music Computing Conference, July 5-8, Espoo, Finland.*/
-            for (t = 0; t < TIME_SLOTS; t++) {
-                for (band = 0; band < HYBRID_BANDS; band++) {
-                    /* apply input boost */
-                    for (ch = 0; ch < pData->nSH; ch++)
-                        pData->inputFrameTF[band][ch][t] = crmulf(pData->inputFrameTF[band][ch][t], boost);
+        /* Calculate the dynamic range compression gain factors per frequency band based on the omnidirectional component.
+            *     McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range Compression". in Proceedings of the 14th
+            *     Sound and Music Computing Conference, July 5-8, Espoo, Finland.*/
+        for (t = 0; t < TIME_SLOTS; t++) {
+            for (band = 0; band < HYBRID_BANDS; band++) {
+                /* apply input boost */
+                for (ch = 0; ch < pData->nSH; ch++)
+                    pData->inputFrameTF[band][ch][t] = crmulf(pData->inputFrameTF[band][ch][t], boost);
 
-                    /* calculate gain factor for this frequency based on the omni component */
-                    xG = 10.0f*log10f(powf(cabsf(pData->inputFrameTF[band][0/* omni */][t]), 2.0f) + 2e-13f);
-                    yG = ambi_drc_gainComputer(xG, theshold, ratio, knee);
-                    xL = xG - yG;
-                    yL = ambi_drc_smoothPeakDetector(xL, pData->yL_z1[band], alpha_a, alpha_r);
-                    pData->yL_z1[band] = yL;
-                    cdB = -yL;
-                    cdB = MAX(SPECTRAL_FLOOR, sqrtf(powf(10.0f, cdB / 20.0f)));
+                /* calculate gain factor for this frequency based on the omni component */
+                xG = 10.0f*log10f(powf(cabsf(pData->inputFrameTF[band][0/* omni */][t]), 2.0f) + 2e-13f);
+                yG = ambi_drc_gainComputer(xG, theshold, ratio, knee);
+                xL = xG - yG;
+                yL = ambi_drc_smoothPeakDetector(xL, pData->yL_z1[band], alpha_a, alpha_r);
+                pData->yL_z1[band] = yL;
+                cdB = -yL;
+                cdB = MAX(SPECTRAL_FLOOR, sqrtf(powf(10.0f, cdB / 20.0f)));
 
-    #ifdef ENABLE_TF_DISPLAY
-                    /* store gain factors in circular buffer for plotting */
-                    if(pData->storeIdx==0)
-                        pData->gainsTF_bank0[band][pData->wIdx] = cdB;
-                    else
-                        pData->gainsTF_bank1[band][pData->wIdx] = cdB;
-    #endif
-                    /* apply same gain factor to all SH components, the spatial characteristics will be preserved
-                     * (although, ones perception of them may of course change) */
-                    for (ch = 0; ch < pData->nSH; ch++)
-                        pData->outputFrameTF[band][ch][t] = crmulf(pData->inputFrameTF[band][ch][t], cdB*makeup);
-                }
-    #ifdef ENABLE_TF_DISPLAY
-                /* increment circular buffer indices */
-                pData->wIdx++;
-                pData->rIdx++;
-                if (pData->wIdx >= NUM_DISPLAY_TIME_SLOTS){
-                    pData->wIdx = 0;
-                    pData->storeIdx = pData->storeIdx == 0 ? 1 : 0;
-                }
-                if (pData->rIdx >= NUM_DISPLAY_TIME_SLOTS)
-                    pData->rIdx = 0;
-    #endif
+#ifdef ENABLE_TF_DISPLAY
+                /* store gain factors in circular buffer for plotting */
+                if(pData->storeIdx==0)
+                    pData->gainsTF_bank0[band][pData->wIdx] = cdB;
+                else
+                    pData->gainsTF_bank1[band][pData->wIdx] = cdB;
+#endif
+                /* apply same gain factor to all SH components, the spatial characteristics will be preserved
+                    * (although, ones perception of them may of course change) */
+                for (ch = 0; ch < pData->nSH; ch++)
+                    pData->outputFrameTF[band][ch][t] = crmulf(pData->inputFrameTF[band][ch][t], cdB*makeup);
             }
+#ifdef ENABLE_TF_DISPLAY
+            /* increment circular buffer indices */
+            pData->wIdx++;
+            pData->rIdx++;
+            if (pData->wIdx >= NUM_DISPLAY_TIME_SLOTS){
+                pData->wIdx = 0;
+                pData->storeIdx = pData->storeIdx == 0 ? 1 : 0;
+            }
+            if (pData->rIdx >= NUM_DISPLAY_TIME_SLOTS)
+                pData->rIdx = 0;
+#endif
         }
-        else{
-            memset(pData->outputFrameTF, 0, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
-        }
-
+       
         /* Inverse time-frequency transform */
         for(t = 0; t < TIME_SLOTS; t++) {
             for (ch = 0; ch < pData->nSH; ch++) {

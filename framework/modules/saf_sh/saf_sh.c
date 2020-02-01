@@ -1260,12 +1260,13 @@ void generateMUSICmap
     Vn_Y = malloc1d((nSH-nSources)*nGrid_dirs*sizeof(float_complex));
     
     /* obtain eigenvectors */
-    utility_ceig(Cx, nSH, 1, NULL, V, NULL, NULL);
+    //utility_ceig(Cx, nSH, 1, NULL, V, NULL, NULL);
+	utility_cseig(Cx, nSH, 1, V, NULL, NULL);
     
     /* truncate, to obtain noise sub-space */
-    for(i=0; i<nSH; i++)
-        for(j=0; j<nSH-nSources; j++)
-            Vn[i*(nSH-nSources)+j] = V[i*nSH + j + nSources];
+	for (i = 0; i < nSH; i++)
+		for (j = 0; j < nSH - nSources; j++)
+			Vn[i*(nSH - nSources) + j] = V[i*nSH + j + nSources];
     
     /* derive the pseudo-spectrum value for each grid direction */
     cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nSH-nSources, nGrid_dirs, nSH, &calpha,
