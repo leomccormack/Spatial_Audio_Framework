@@ -1160,12 +1160,12 @@ void utility_ceig
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     rwork = malloc1d(2*dim*sizeof(float));
-    cgeev_( "Vectors", "Vectors", &n, a, &lda, w, vl, &ldvl,
-           vr, &ldvr, &wkopt, &lwork, rwork, &info );
+    cgeev_( "Vectors", "Vectors", &n, (veclib_float_complex*)a, &lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, &ldvl,
+           (veclib_float_complex*)vr, &ldvr, (veclib_float_complex*)&wkopt, &lwork, rwork, &info );
     lwork = (int)crealf(wkopt);
     work = malloc1d( lwork*sizeof(float_complex) );
-    cgeev_( "Vectors", "Vectors", &n, a, &lda, w, vl, &ldvl,
-           vr, &ldvr, work, &lwork, rwork, &info );
+    cgeev_( "Vectors", "Vectors", &n, (veclib_float_complex*)a, &lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, &ldvl,
+           (veclib_float_complex*)vr, &ldvr, (veclib_float_complex*)work, &lwork, rwork, &info );
     free(rwork);
     free(work);
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)

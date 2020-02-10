@@ -40,7 +40,9 @@ extern "C" {
 # define SAF_SLEEP(msecs) Sleep(msecs)
 #elif defined(__unix) || defined(__APPLE__)
     /* For linux, OSX, and other unixes */
-# define _POSIX_C_SOURCE 199309L /* or greater */
+# ifndef _POSIX_C_SOURCE
+#  define _POSIX_C_SOURCE 199309L /* or greater */
+# endif
 # include <time.h>
 # define SAF_SLEEP(msecs) do {            \
    struct timespec ts;             \
