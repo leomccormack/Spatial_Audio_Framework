@@ -1,7 +1,5 @@
 :: "Batch script to build and install a custom MKL library for SAF. Run using: x64 Command Prompt for VS 2017." 
 ::
-:: If you get "msbuild" command missing errors, then use (or wherever it is):
-::call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
 @echo off
 cd /d "%~dp0"
 
@@ -16,6 +14,7 @@ ECHO "Spatial_Audio_Framework/dependencies/Win64/lib/saf_mkl_custom.lib"
 ECHO "C:/Windows/System32/saf_mkl_custom.dll".  
 ECHO You may choose between sequential and threaded versions of the library. The latter option
 ECHO will also place libiomp5md.lib and libiomp5md.dll, in these same folders.
+ECHO (Note, you will likely need to run this script in Administrator mode)
 
 :: ========================================================================= ::
 :: Check that MKL is installed
