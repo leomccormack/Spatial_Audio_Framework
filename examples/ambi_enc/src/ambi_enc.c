@@ -98,7 +98,7 @@ void ambi_enc_process
     NORM_TYPES norm;
     int order;
     
-    if ( (nSamples == FRAME_SIZE) ) {
+    if (nSamples == FRAME_SIZE) {
         /* prep */
         for(n=0; n<MAX_ORDER+2; n++){  o[n] = n*n;  }
         chOrdering = pData->chOrdering;

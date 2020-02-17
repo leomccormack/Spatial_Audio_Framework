@@ -32,7 +32,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/* Cross-platform sleep macro from:
+/* Cross-platform sleep macro from (slightly modified):
  https://cboard.cprogramming.com/c-programming/170381-cross-platform-wait-sleep.html */
 #ifdef _WIN32
     /* For Windows (32- and 64-bit) */
