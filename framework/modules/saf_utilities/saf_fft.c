@@ -186,7 +186,7 @@ void hilbert
     saf_fft_forward(hfft, x, xfft);
     
     /* define vector h */
-    memset(h, 0, sizeof(float_complex)*92);
+    memset(h, 0, sizeof(float_complex)*x_len);
     if(x_len % 2 == 0){
         /* even */
         h[0] = cmplxf(1.0f, 0.0f);
