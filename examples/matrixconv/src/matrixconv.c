@@ -51,7 +51,7 @@ void matrixconv_create
     
     /* Default user parameters */
     pData->nInputChannels = 1;
-    pData->enablePartitionedConv = 1;
+    pData->enablePartitionedConv = 0;
 }
 
 void matrixconv_destroy
@@ -184,7 +184,7 @@ void matrixconv_setFilters
 )
 {
     matrixconv_data *pData = (matrixconv_data*)(hMCnv);
-
+    int i;
     assert(numChannels<=MAX_NUM_CHANNELS_FOR_WAV && numChannels > 0 && numSamples > 0);
     
     pData->nOutputChannels = MIN(numChannels, MAX_NUM_CHANNELS);
@@ -193,7 +193,8 @@ void matrixconv_setFilters
     
     /* store the loaded filters */
     pData->filters = realloc1d(pData->filters, numChannels * numSamples * sizeof(float));
-    memcpy(pData->filters, H, numChannels * numSamples * sizeof(float));
+    for(i=0; i<numChannels; i++)
+        memcpy(&(pData->filters[i*numSamples]), H[i], numSamples * sizeof(float));
     pData->filter_fs = sampleRate;
     
     /* if the number of samples in loaded data is not divisable by the currently specified number of

@@ -177,8 +177,8 @@ void binauraliser_initTFT
     else if(pData->new_nSources!=pData->nSources){
         afSTFTchannelChange(pData->hSTFT, pData->new_nSources, NUM_EARS);
         afSTFTclearBuffers(pData->hSTFT);
-        pData->nSources = pData->new_nSources;
     }
+    pData->nSources = pData->new_nSources;
 }
 
 void binauraliser_loadPreset(SOURCE_CONFIG_PRESETS preset, float dirs_deg[MAX_NUM_INPUTS][2], int* newNCH, int* nDims)

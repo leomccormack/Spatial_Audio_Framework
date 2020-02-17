@@ -452,7 +452,7 @@ void panner_setNumLoudspeakers(void* const hPan, int new_nLoudspeakers)
     int ch;
     
     new_nLoudspeakers  = new_nLoudspeakers > MAX_NUM_OUTPUTS ? MAX_NUM_OUTPUTS : new_nLoudspeakers;
-    if(pData->nLoudpkrs != new_nLoudspeakers){
+    if(pData->new_nLoudpkrs != new_nLoudspeakers){
         pData->new_nLoudpkrs = new_nLoudspeakers;
         pData->reInitGainTables=1;
         for(ch=0; ch<MAX_NUM_INPUTS; ch++)

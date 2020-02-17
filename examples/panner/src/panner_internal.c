@@ -66,9 +66,9 @@ void panner_initGainTables(void* const hPan)
 #endif
     
     /* generate VBAP gain table */
-    free1d((void**)&(pData->vbap_gtable));
-    pData->vbapTableRes[0] = 2;
-    pData->vbapTableRes[1] = 5;
+    free(pData->vbap_gtable);
+    pData->vbapTableRes[0] = 1;
+    pData->vbapTableRes[1] = 1;
 #ifdef FORCE_3D_LAYOUT
     pData->output_nDims = 3;
     generateVBAPgainTable3D((float*)pData->loudpkrs_dirs_deg, pData->nLoudpkrs, pData->vbapTableRes[0], pData->vbapTableRes[1], 1, 1, pData->spread_deg,
@@ -100,10 +100,10 @@ void panner_initTFT
         afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSources, pData->new_nLoudpkrs, 0, 1);
     else if (pData->new_nSources!=pData->nSources || pData->new_nLoudpkrs!=pData->nLoudpkrs){
         afSTFTchannelChange(pData->hSTFT, pData->new_nSources, pData->new_nLoudpkrs);
-        afSTFTclearBuffers(pData->hSTFT);
-        pData->nSources = pData->new_nSources;
-        pData->nLoudpkrs = pData->new_nLoudpkrs;
+        afSTFTclearBuffers(pData->hSTFT); 
     }
+    pData->nSources = pData->new_nSources;
+    pData->nLoudpkrs = pData->new_nLoudpkrs;
 }
 
 void panner_loadPreset(PRESETS preset, float dirs_deg[MAX_NUM_INPUTS][2], int* newNCH, int* nDims)

@@ -236,12 +236,12 @@ typedef enum _EVAL_STATUS{
 #define ARRAY2SH_SPEED_OF_SOUND_MIN_VALUE ( 200.0f )
 #define ARRAY2SH_SPEED_OF_SOUND_MAX_VALUE ( 2000.0f )
 #define ARRAY2SH_ARRAY_RADIUS_MIN_VALUE ( 1.0f )
-#define ARRAY2SH_ARRAY_RADIUS_MAX_VALUE ( 200.0f )
+#define ARRAY2SH_ARRAY_RADIUS_MAX_VALUE ( 400.0f )
 #define ARRAY2SH_BAFFLE_RADIUS_MIN_VALUE ( 1.0f )
-#define ARRAY2SH_BAFFLE_RADIUS_MAX_VALUE ( 200.0f )
+#define ARRAY2SH_BAFFLE_RADIUS_MAX_VALUE ( 400.0f )
 #define ARRAY2SH_PROGRESSBARTEXT_CHAR_LENGTH 256
-    
-    
+
+
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */

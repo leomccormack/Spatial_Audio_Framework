@@ -93,8 +93,10 @@ void ambi_drc_initTFT
     /* Initialise afSTFT */
     if (pData->hSTFT == NULL)
         afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSH, pData->new_nSH, 0, 1);
-    else /* Or change the number of channels */
+    else if(pData->nSH!=pData->new_nSH){/* Or change the number of channels */
         afSTFTchannelChange(pData->hSTFT, pData->new_nSH, pData->new_nSH);
+        afSTFTclearBuffers(pData->hSTFT);
+    }
     pData->nSH = pData->new_nSH; 
 }
 

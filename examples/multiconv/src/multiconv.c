@@ -49,7 +49,7 @@ void multiconv_create
     
     /* Default user parameters */
     pData->nChannels = 1;
-    pData->enablePartitionedConv = 1;
+    pData->enablePartitionedConv = 0;
 }
 
 void multiconv_destroy
