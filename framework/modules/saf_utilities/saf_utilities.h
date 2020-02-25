@@ -43,10 +43,6 @@
 
 #ifndef __SAF_UTILITIES_H_INCLUDED__
 #define __SAF_UTILITIES_H_INCLUDED__
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
     
 /* ========================================================================== */
 /*                        Performance Library to Employ                       */
@@ -130,9 +126,5 @@ extern "C" {
 /* various presets for microphone and hydrophone arrays. */
 #include "../saf_utilities/saf_sensorarray_presets.h"
 
-    
-#ifdef __cplusplus
-} /* extern "C" */
-#endif /* __cplusplus */
 
 #endif /* __SAF_UTILITIES_H_INCLUDED__ */

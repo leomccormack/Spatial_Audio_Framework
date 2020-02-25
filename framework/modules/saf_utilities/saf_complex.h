@@ -29,14 +29,44 @@
 #ifndef SAF_COMPLEX_H_INCLUDED
 #define SAF_COMPLEX_H_INCLUDED
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-    
-#if __STDC_VERSION__ >= 199901L
-  /* for fully C99+ compliant compilers */
+#if defined(__cplusplus)
+# include <complex>
+  typedef std::complex<float> float_complex;
+  typedef std::complex<double> double_complex;
 
-  #include <complex.h>
+  /*
+  Single-Precision Complex Operations
+  */
+  inline float_complex cmplxf(float re, float im) {return std::polar(re, im); }
+  inline float_complex ccaddf(float_complex x, float_complex y) { return x + y; }
+  inline float_complex craddf(float_complex x, float y) { return x + y; }
+  inline float_complex ccsubf(float_complex x, float_complex y) { return x - y; }
+  inline float_complex crsubf(float_complex x, float y) { return x - y; }
+  inline float_complex ccmulf(float_complex x, float_complex y) { return x * y; }
+  inline float_complex cccmulf(float_complex x, float_complex y, float_complex z) { return x * y * z; }
+  inline float_complex crmulf(float_complex x, float y) { return x * y; }
+  inline float_complex ccdivf(float_complex x, float_complex y) { return x / y; }
+  inline float_complex crdivf(float_complex x, float y) { return x / y; }
+
+  /*
+  Double-Precision Complex Operations
+  */
+  inline double_complex cmplx(double re, double im) {return std::polar(re, im); }
+  inline double_complex ccadd(double_complex x, double_complex y) { return x + y; }
+  inline double_complex cradd(double_complex x, double y) { return x + y; }
+  inline double_complex ccsub(double_complex x, double_complex y) { return x - y; }
+  inline double_complex crsub(double_complex x, double y) { return x - y; }
+  inline double_complex ccmul(double_complex x, double_complex y) { return x * y; }
+  inline double_complex cccmul(double_complex x, double_complex y, double_complex z) { return x * y * z; }
+  inline double_complex crmul(double_complex x, double y) { return x * y; }
+  inline double_complex ccdiv(double_complex x, double_complex y) { return x / y; }
+  inline double_complex crdiv(double_complex x, double y) { return x / y; }
+
+
+#elif __STDC_VERSION__ >= 199901L
+  /* for fully C99+/C++11 compliant compilers */
+
+# include <complex.h>
   typedef float _Complex float_complex;
   typedef double _Complex double_complex;
 
@@ -198,10 +228,5 @@ extern "C" {
 #else
 # error "SAF requires a compiler that supports the C99 standard, or MSVC version 1900 or newer"
 #endif
-
-
-#ifdef __cplusplus
-}/* extern "C" */
-#endif /* __cplusplus */
 
 #endif /* SAF_COMPLEX_H_INCLUDED */
