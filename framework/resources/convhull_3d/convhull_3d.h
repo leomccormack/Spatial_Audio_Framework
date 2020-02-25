@@ -40,7 +40,9 @@
 #ifndef CONVHULL_3D_INCLUDED
 #define CONVHULL_3D_INCLUDED
 
-#pragma warning(disable : 4201)
+#ifndef __cplusplus
+# pragma warning(disable : 4201)
+#endif
 
 #ifdef __cplusplus
 extern "C" {

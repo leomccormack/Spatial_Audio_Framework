@@ -28,7 +28,6 @@
 
 #include "saf_complex.h"
 
-
 #if __STDC_VERSION__ >= 199901L
   /* for C99 (and above) compliant compilers */
 
@@ -60,8 +59,4 @@
   inline double_complex ccdiv(double_complex x, double_complex y) { return x / y; }
   inline double_complex crdiv(double_complex x, double y) { return x / y; }
 
-#elif _MSC_VER >= 1900
-/* for non-C99 compliant compilers, e.g. MSVC */ 
-
 #endif
-
