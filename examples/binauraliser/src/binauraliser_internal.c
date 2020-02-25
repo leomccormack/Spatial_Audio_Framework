@@ -261,10 +261,16 @@ void binauraliser_loadPreset(SOURCE_CONFIG_PRESETS preset, float dirs_deg[MAX_NU
                     dirs_deg[ch][i] = __22pX_dirs_deg[ch][i];
             break;
         case SOURCE_CONFIG_PRESET_AALTO_MCC:
-            nCH = 44;
+            nCH = 45;
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __Aalto_MCC_dirs_deg[ch][i];
+            break;
+        case SOURCE_CONFIG_PRESET_AALTO_MCC_SUBSET:
+            nCH = 37;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __Aalto_MCCsubset_dirs_deg[ch][i];
             break;
         case SOURCE_CONFIG_PRESET_AALTO_APAJA:
             nCH = 29;
