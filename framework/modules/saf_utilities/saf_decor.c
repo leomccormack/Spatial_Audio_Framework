@@ -14,15 +14,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_decor.c
- * ---------------------
- * A collection of signal decorrelators.
+/**
+ * @file saf_decor.c
+ * @brief Collection of signal decorrelators.
  *
- * Dependencies:
- *     none
- * Author, date created:
- *     Leo McCormack, 30.07.2018
+ * @author Leo McCormack
+ * @date 30.07.2018
  */
 
 #include "saf_decor.h"

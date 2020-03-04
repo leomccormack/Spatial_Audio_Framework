@@ -14,15 +14,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_error.c
- * ---------------------
- * List of error and warning codes.
+/**
+ * @file saf_error.c
+ * @brief List of error and warning codes.
  *
- * Dependencies:
- *     none
- * Author, date created:
- *     Leo McCormack, 05.08.2019
+ * @author Leo McCormack
+ * @date 05.08.2019
  */
 
 #include "saf_error.h"

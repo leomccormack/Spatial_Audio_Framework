@@ -14,18 +14,17 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_hrir.c
- * --------------------
+/**
+ * @file saf_hrir.c
+ * @brief Public part of the "saf_hrir" module
+ *
  * A collection of head-related impulse-response (HRIR) functions. Including
  * estimation of the interaural time differences (ITDs), conversion of HRIRs to
  * HRTF filterbank coefficients, and HRTF interpolation utilising amplitude-
  * normalised VBAP gains.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib
- * Author, date created:
- *     Leo McCormack, 12.12.2016
+ * @author Leo McCormack
+ * @date 12.12.2016
  */
  
 #include "saf_hrir.h"

@@ -23,7 +23,7 @@
  *       License): https://github.com/mborgerding/kissfft
  *
  * @note If linking Apple Accelerate: KissFFT is also used in cases where the
- *       FFT size is not a power of 2.
+ *       FFT size is not 2^x.
  *
  * ## Dependencies
  *   Intel MKL, Apple Accelerate, or KissFFT (included in framework)

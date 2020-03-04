@@ -15,7 +15,7 @@
  */
 
 /**
- * @file saf_sofa_reader.h (include header)
+ * @file saf_sofa_reader.h 
  * @brief A simple sofa reader, which returns only the bare minimum.
  *
  * @note This (optional) SOFA reader, requires netcdf to be linked.

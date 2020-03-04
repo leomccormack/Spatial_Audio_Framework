@@ -14,17 +14,17 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_hoa_internal.c
- * ----------------------------
- * A collection of higher-order Ambisonics related functions. Many of which are
- * derived from the Matlab library by Archontis Politis, found here:
- *     https://github.com/polarch/Higher-Order-Ambisonics
+/**
+ * @file saf_hoa_internal.c
+ * @brief Internal part of the "saf_hoa" module
  *
- * Dependencies:
- *     saf_utilities, saf_sh, saf_vbap
- * Author, date created:
- *     Leo McCormack, 19.03.2018
+ * A collection of Ambisonics related functions. Many of which are derived from
+ * the Matlab library by Archontis Politis [1].
+ *
+ * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
+ *
+ * @author Leo McCormack
+ * @date 19.03.2018
  */
  
 #include "saf_hoa.h"

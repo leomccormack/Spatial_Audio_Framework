@@ -40,7 +40,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
- 
+
 /** In degrees, if no ls_dirs have elevation +/- this value. Dummies are placed
  * at +/- 90 elevation.  */
 #define ADD_DUMMY_LIMIT ( 60.0f )
@@ -75,7 +75,7 @@ void findLsTriplets(/* Input Arguments */
                     int* numOutVertices,
                     int** out_faces,
                     int* numOutFaces);
-    
+
 /**
  * Inverts a loudspeaker matrix
  *
@@ -92,7 +92,7 @@ void invertLsMtx3D(/* Input Arguments */
                    int N_group,
                    /* Output Arguments */
                    float** layoutInvMtx);
-    
+
 /**
  * Computes a set of points that surround the source direction with a specific
  * degree of spread.
@@ -114,7 +114,7 @@ void getSpreadSrcDirs3D(/* Input Arguments */
                         int num_rings_3d,
                         /* Output Arguments */
                         float* U_spread);
-    
+
 /**
  * Calculates 3D VBAP gains for pre-calculated loudspeaker triangles and
  * predefined source directions
@@ -140,7 +140,7 @@ void vbap3D(/* Input Arguments */
             float* layoutInvMtx,
             /* Output Arguments */
             float** GainMtx);
-    
+
 /**
  * Calculates loudspeaker pairs for a circular grid of loudspeaker directions
  *
@@ -155,7 +155,7 @@ void findLsPairs(/* Input Arguments */
                  /* Output Arguments */
                  int** out_pairs,
                  int* numOutPairs);
-    
+
 /**
  * Inverts the loudspeaker matrix
  *
@@ -172,7 +172,7 @@ void invertLsMtx2D(/* Input Arguments */
                    int N_pairs,
                    /* Output Arguments */
                    float** layoutInvMtx);
-    
+
 /**
  * Calculates 2D VBAP gains for pre-calculated loudspeaker pairs and predefined
  * source positions
@@ -196,8 +196,8 @@ void vbap2D(/* Input Arguments */
             float* layoutInvMtx,
             /* Output Arguments */
             float** GainMtx);
-    
-    
+
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */

@@ -14,15 +14,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_filters.c
- * -----------------------
- * Contains a collection of filter design equations.
+/**
+ * @file: saf_filters.c
+ * @brief Contains a collection of filter design equations.
  *
- * Dependencies:
- *     none
- * Author, date created:
- *     Leo McCormack, 01.03.2019
+ * @author Leo McCormack
+ * @date 01.03.2019
  */
 
 #include "saf_filters.h" 

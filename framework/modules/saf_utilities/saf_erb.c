@@ -14,16 +14,13 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_erb.c
- * -------------------
- * A function to ascertain frequencies that fall within critical bands.
- * [Equivalent-Rectangular Bandwidth (ERB)]
+/**
+ * @file saf_erb.c
+ * @brief A function to ascertain frequencies that fall within critical bands.
+ *        [Equivalent-Rectangular Bandwidth (ERB)]
  *
- * Dependencies:
- *     none
- * Author, date created:
- *     Leo McCormack, 30.07.2018
+ * @author Leo McCormack
+ * @date 30.07.2018
  */
 
 #include "saf_utilities.h"

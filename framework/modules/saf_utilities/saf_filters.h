@@ -106,47 +106,45 @@ void getWindowingFunction(WINDOWING_FUNCTION_TYPES type,
                           int winlength,
                           float* win);
 
-/*
- * Function: getOctaveBandCutoffFreqs
- * ----------------------------------
+/**
  * Converts octave band CENTRE frequencies into CUTOFF frequencies.
- * Note: the lower and upper CENTRE frequencies only have their upper and lower
+ *
+ * The lower and upper CENTRE frequencies only have their upper and lower
  * CUTOFF frequencies computed, respectively. e.g.:
- *   centreFreqs[6] = { 125, 250, 500, 1000, 2000, 4000 }, becomes:
- *   cutoffFreqs[5] = { 176, 354, 707, 1410, 2830 }
- * Passing cutoffFreqs[5] to "FIRFilterbank", will give filter coefficients for
+ *  - centreFreqs[6] = { 125, 250, 500, 1000, 2000, 4000 },
+ *
+ * becomes:
+ *  - cutoffFreqs[5] = { 176, 354, 707, 1410, 2830 }
+ *
+ * Passing cutoffFreqs[5] to FIRFilterbank(), will give filter coefficients for
  * the following:
- *    Band1: LPF @ 176Hz
- *    Band2: BFP @ 176-354Hz
- *    Band3: BFP @ 354-707Hz
- *    Band4: BFP @ 707-1410Hz
- *    Band5: BFP @ 1410-2830Hz
- *    Band6: HPF @ 2830Hz
+ *  - Band1: LPF @ 176Hz
+ *  - Band2: BFP @ 176-354Hz
+ *  - Band3: BFP @ 354-707Hz
+ *  - Band4: BFP @ 707-1410Hz
+ *  - Band5: BFP @ 1410-2830Hz
+ *  - Band6: HPF @ 2830Hz
+ *
  * (Basically, band 125Hz also encapsulates everything down to DC, and band 4kHz
  * also encapsulates everything up to Nyquist)
- * Also note: cutoffFreqs vector is shorter than centreFreqs by 1 element.
  *
- * Input Arguments:
- *     centreFreqs  - centre frequencies (octave bands); nCentreFreqs x 1
- *     nCentreFreqs - number of centre frequencies
- * Output Arguments:
- *     cutoffFreqs  - cutoff frequencies, which encapsulate the specified centre
- *                    frequencies by 1 octave; (nCentreFreqs-1) x 1
+ * @note cutoffFreqs vector is shorter than centreFreqs by 1 element.
+ *
+ * @param[in]  centreFreqs  Centre frequencies (octave bands); nCentreFreqs x 1
+ * @param[in]  nCentreFreqs Number of centre frequencies
+ * @param[out] cutoffFreqs  Cutoff frequencies, which encapsulate the specified
+ *                          centre frequencies by 1 octave; (nCentreFreqs-1) x 1
  */
 void getOctaveBandCutoffFreqs(float* centreFreqs,
                               int nCentreFreqs,
                               float* cutoffFreqs);
 
-/*
- * Function: flattenMinphase
- * -------------------------
+/**
  * Equalises input sequence by its minimum phase form, in order to bring its
  * magnitude response to unity.
  *
- * Input/output Arguments:
- *     x   - input; len x 1
- * Input Arguments:
- *     len - length of input.
+ * @param[in,out] x   Input; len x 1
+ * @param[in]     len Length of input
  */
 void flattenMinphase(float* x,
                      int len);
@@ -156,22 +154,19 @@ void flattenMinphase(float* x,
 /*                              Bi-Quad Functions                             */
 /* ========================================================================== */
 
-/*
- * Function: biQuadCoeffs
- * ----------------------
+/**
  * Calculates 2nd order IIR filter coefficients [1]
  *
- * Input Arguments:
- *     filterType - see 'BIQUAD_FILTER_TYPES' enum
- *     fc         - centre frequency, Hz
- *     fs         - sampling frequency, Hz
- *     Q          - Q-factor
- *     gain_dB    - gain, dB
- * Output Arguments:
- *     b          - b filter coefficients; 3 x 1
- *     a          - a filter coefficients; 3 x 1
+ * @param[in]  filterType See 'BIQUAD_FILTER_TYPES' enum
+ * @param[in]  fc         Centre frequency, Hz
+ * @param[in]  fs         Sampling frequency, Hz
+ * @param[in]  Q          Q-factor
+ * @param[in]  gain_dB    Gain, dB
+ * @param[out] b          b filter coefficients; 3 x 1
+ * @param[out] a          a filter coefficients; 3 x 1
  *
- * [1] Zölzer, U. (Ed.). (2011). DAFX: digital audio effects. John Wiley & Sons.
+ * @see [1] Zölzer, U. (Ed.). (2011). DAFX: digital audio effects. John Wiley
+ *          & Sons.
  */
 void biQuadCoeffs(/* input arguments */
                   BIQUAD_FILTER_TYPES filterType,
@@ -183,20 +178,17 @@ void biQuadCoeffs(/* input arguments */
                   float b[3],
                   float a[3]);
 
-/*
- * Function: applyBiQuadFilter
- * ---------------------------
+/**
  * Applies biQuad filter to an input signal using the direct form II difference
  * equation: https://en.wikipedia.org/wiki/Digital_biquad_filter
- * Note: input 'signal' is filtered in place (i.e. it becomes the output signal)
  *
- * Input Arguments:
- *     b        - b filter coefficients; 3 x 1
- *     a        - a filter coefficients; 3 x 1
- *     w_z_12   - previous 2 wn samples (init as 0s); 2 x 1
- *     signal   - signal to be filtered/filtered signal; nSamples x 1
- *     gain_dB  - gain, dB
- *     nSamples - number of samples in the signal
+ * @note input 'signal' is filtered in place (i.e. it becomes the output signal)
+ *
+ * @param[in]      b        b filter coefficients; 3 x 1
+ * @param[in]      a        a filter coefficients; 3 x 1
+ * @param[in,out]  w_z_12   Previous 2 wn samples (init as 0s); 2 x 1
+ * @param[in,out]  signal   Signal to be filtered/filtered signal; nSamples x 1
+ * @param[in]      nSamples Number of samples in the signal
  */
 void applyBiQuadFilter(/* Input arguments */
                        float b[3],
@@ -205,23 +197,19 @@ void applyBiQuadFilter(/* Input arguments */
                        float* signal,
                        int nSamples);
 
-/*
- * Function: evalBiQuadTransferFunction
- * ------------------------------------
+/**
  * Evaluates the 2nd order IIR transfer function at one or more frequencies,
  * returning its magnitude and/or phase response
  *
- * Input Arguments:
- *     b            - b filter coefficients; 3 x 1
- *     a            - a filter coefficients; 3 x 1
- *     freqs        - frequencies at which to evaluate, Hz; nFreqs x 1
- *     nFreqs       - number of frequencies at which to avaluate
- *     fs           - sampling frequency, Hz
- * Output arguments
- *     magnitude_dB - magnitude, dB, at each frequency (set to NULL of not
- *                    wanted); nFreqs x 1
- *     phase_rad    - phase, radians, at each frequency (set to NULL of not
- *                    wanted); nFreqs x 1
+ * @param[in]  b            b filter coefficients; 3 x 1
+ * @param[in]  a            a filter coefficients; 3 x 1
+ * @param[in]  freqs        Frequencies at which to evaluate, Hz; nFreqs x 1
+ * @param[in]  nFreqs       Number of frequencies at which to avaluate
+ * @param[in]  fs           Sampling frequency, Hz
+ * @param[out] magnitude_dB Magnitude, dB, at each frequency (set to NULL of not
+ *                          wanted); nFreqs x 1
+ * @param[out] phase_rad    Phase, radians, at each frequency (set to NULL of
+ *                          not wanted); nFreqs x 1
  */
 void evalBiQuadTransferFunction(/* Input arguments */
                                 float b[3],
@@ -238,13 +226,14 @@ void evalBiQuadTransferFunction(/* Input arguments */
 /*                            FIR Filter Functions                            */
 /* ========================================================================== */
 
-/*
- * Function: FIRCoeffs
- * -------------------
- * FIR filters by windowing. When using the Hamming window, and scalingFLAG=1,
- * the function is numerically identical to the default 'fir1' function in
- * Matlab (when using it in single precision mode) [1].
- * Note: input argument 'order' cannot be odd valued.
+/**
+ * Computes FIR filter coefficients by windowing.
+ *
+ * When using the Hamming window, and scalingFLAG=1, the function is numerically
+ * identical to the default 'fir1' function in Matlab (when using it in single
+ * precision mode) [1].
+ *
+ * @note Input argument 'order' cannot be odd valued.
  *
  * Some guidelines regarding the approx order (N) for certain filters. i.e.
  * the orders where you actually get the expected -6dB attenuation at the cutoff
@@ -260,63 +249,66 @@ void evalBiQuadTransferFunction(/* Input arguments */
  *  - HPF @ 200Hz - N~450
  *  - HPF @ 4kHz  - N~60
  *
- * Input Arguments:
- *     filterType  - see 'FIR_FILTER_TYPES' enum
- *     order       - filter order (N). Must be even.
- *     cutoff1     - filter1 cutoff in Hz, for LPF/HPF, and lower cutoff for
- *                   BPF/BSF
- *     cutoff2     - filter2 cutoff in Hz, not needed for LPF/HPF, this is the
- *                   upper cutoff for BPF/BSF
- *     samplerate  - sampling rate in Hz
- *     windowType  - see 'WINDOWING_FUNCTION_TYPES' enum
- *     scalingFLAG - 0: none, 1: scaling applied to ensure passband is at 0dB
- * Output Arguments:
- *     filter      - filter coefficients/weights/taps; (order+1) x 1
+ * @param[in]  filterType  See 'FIR_FILTER_TYPES' enum
+ * @param[in]  order       Filter order (N). Must be even.
+ * @param[in]  cutoff1     Filter1 cutoff in Hz, for LPF/HPF, and lower cutoff
+ *                         for BPF/BSF
+ * @param[in]  cutoff2     Filter2 cutoff in Hz, not needed for LPF/HPF, this is
+ *                         the upper cutoff for BPF/BSF
+ * @param[in]  samplerate  Sampling rate in Hz
+ * @param[in]  windowType  See 'WINDOWING_FUNCTION_TYPES' enum
+ * @param[in]  scalingFLAG '0' none, '1' scaling applied to ensure passband is
+ *                         at 0dB
+ * @param[out] filter      Filter coefficients/weights/taps; (order+1) x 1
  *
- * [1] "Programs for Digital Signal Processing", IEEE Press John Wiley & Sons,
- *     1979, pg. 5.2-1.
+ * @see [1] "Programs for Digital Signal Processing", IEEE Press John Wiley &
+ *          Sons, 1979, pg. 5.2-1.
  */
-void FIRCoeffs(FIR_FILTER_TYPES filterType,
+void FIRCoeffs(/* Input arguments */
+               FIR_FILTER_TYPES filterType,
                int order,
                float cutoff1,
                float cutoff2,
                float sampleRate,
                WINDOWING_FUNCTION_TYPES windowType,
                int scalingFLAG,
+               /* Output arguments */
                float* filter);
 
-/*
- * Function: FIRFilterbank
- * -----------------------
- * Returns a bank of FIR filter coefficients required to divide a signal into
- * frequency bands. Provided the order is sufficient, the sum of the bands
+/**
+ * Computes a bank of FIR filter coefficients required to divide a signal into
+ * frequency bands.
+ *
+ * Provided the order is sufficient, the sum of the bands
  * should recontruct the original (although, shifted in time due to group delay)
  * e.g fc[1] = { 1000 };
- *   Band1, &filter[0*(order+1)] : LPF @ 1kHz
- *   Band2, &filter[1*(order+1)] : HPF @ 1kHz
- * e.g fc[3] = { 1000, 2000, 4000 };
- *   Band1, &filter[0*(order+1)] : LPF @ 1kHz
- *   Band2, &filter[1*(order+1)] : BPF @ 1-2kHz
- *   Band3, &filter[2*(order+1)] : BPF @ 2-4kHz
- *   Band4, &filter[3*(order+1)] : HPF @ 4kHz
+ *  - Band1, &filter[0*(order+1)] : LPF @ 1kHz
+ *  - Band2, &filter[1*(order+1)] : HPF @ 1kHz
  *
- * Input Arguments:
- *     order        - filter order. Must be even.
- *     fc           - vector of cutoff frequencies; nCutoffFreqs x 1
- *     nCutoffFreqs - number of cutoff frequencies in vector 'fc'.
- *     samplerate   - sampling rate in Hz
- *     windowType   - see 'WINDOWING_FUNCTION_TYPES' enum
- *     scalingFLAG  - 0: none, 1: scaling applied to ensure passbands are at 0dB
- * Output Arguments:
- *     filter       - filter coefficients/weights/taps;
- *                    FLAT: (nCutoffFreqs+1) x (order+1)
+ * e.g fc[3] = { 1000, 2000, 4000 };
+ *  - Band1, &filter[0*(order+1)] : LPF @ 1kHz
+ *  - Band2, &filter[1*(order+1)] : BPF @ 1-2kHz
+ *  - Band3, &filter[2*(order+1)] : BPF @ 2-4kHz
+ *  - Band4, &filter[3*(order+1)] : HPF @ 4kHz
+ *
+ * @param[in]  order        Filter order. Must be even.
+ * @param[in]  fc           Vector of cutoff frequencies; nCutoffFreqs x 1
+ * @param[in]  nCutoffFreqs Number of cutoff frequencies in vector 'fc'.
+ * @param[in]  samplerate   Sampling rate in Hz
+ * @param[in]  windowType   See 'WINDOWING_FUNCTION_TYPES' enum
+ * @param[in]  scalingFLAG  '0' none, '1' scaling applied to ensure passbands
+ *                          are at 0dB
+ * @param[out] filter       Filter coefficients/weights/taps;
+ *                          FLAT: (nCutoffFreqs+1) x (order+1)
  */
-void FIRFilterbank(int order,
+void FIRFilterbank(/* Input arguments */
+                   int order,
                    float* fc,
                    int nCutoffFreqs,
                    float sampleRate,
                    WINDOWING_FUNCTION_TYPES windowType,
                    int scalingFLAG,
+                   /* Output arguments */
                    float* filterbank);
 
 

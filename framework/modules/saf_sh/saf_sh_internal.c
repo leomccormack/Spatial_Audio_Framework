@@ -14,18 +14,19 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_sh_internal.c
- * ---------------------------
+/**
+ * @file saf_sh_internal.c
+ * @brief Internal part of the "saf_sh" module
+ *
  * A collection of spherical harmonic related functions. Many of which have been
- * derived from Matlab libraries by Archontis Politis; found here:
- *     https://github.com/polarch/Spherical-Harmonic-Transform
- *     https://github.com/polarch/Array-Response-Simulator
- *     https://github.com/polarch/Spherical-Array-Processing
- * Dependencies:
- *     saf_utilities
- * Author, date created:
- *     Leo McCormack, 22.05.2016
+ * derived from Matlab libraries by Archontis Politis [1-3].
+ *
+ * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
+ * @see [2] https://github.com/polarch/Array-Response-Simulator
+ * @see [3] https://github.com/polarch/Spherical-Array-Processing
+ *
+ * @author Leo McCormack
+ * @date 22.05.2016
  */
 
 #include "saf_sh.h"

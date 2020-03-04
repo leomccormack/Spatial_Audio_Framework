@@ -14,19 +14,38 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_fft.c
- * -------------------
- * Wrapper for optimised fast Fourier transform (FFT) routines. If none are
- * linked, then it employs the highly respectable KissFFT from here
- * (BSD 3-Clause License): https://github.com/mborgerding/kissfft
- * If linking Apple Accelerate: KissFFT is also used in cases where the FFT size
- * is not a power of 2.
+/**
+ * @file saf_fft.c
+ * @brief Wrappers for optimised fast Fourier transform (FFT) routines.
  *
- * Dependencies:
- *     Intel MKL, Apple Accelerate, or KissFFT (included in framework)
- * Author, date created:
- *     Leo McCormack, 06.04.2019
+ * @note If none of the supported optimised FFT implementations are linked, then
+ *       saf_fft employs the highly respectable KissFFT from here (BSD 3-Clause
+ *       License): https://github.com/mborgerding/kissfft
+ *
+ * @note If linking Apple Accelerate: KissFFT is also used in cases where the
+ *       FFT size is not 2^x.
+ *
+ * ## Dependencies
+ *   Intel MKL, Apple Accelerate, or KissFFT (included in framework)
+ *
+ * ## Example Usage
+ * \code{.c}
+ *   const int N = 256;                  // FFT size
+ *   float x_in[N];                      // input buffer (time-domain)
+ *   x_in[0] = ... x_in[N-1] =           // fill with data
+ *   float_complex x_out[(N/2+1)];       // output buffer (frequency-domain)
+ *   float test[N];                      // test (time-domain)
+ *   void *hFFT;                         // safFFT handle
+ *
+ *   safFFT_create(&hFFT, N);            // creates instance of safFFT
+ *   safFFT_forward(hFFT, x_in, x_out);  // perform forward transform
+ *   safFFT_backward(hFFT, x_out, test); // perform backwards transform
+ *   // 'x_in' should equal 'test' (given some numerical error)
+ *   safFFT_destroy(&hFFT);              // destroys instance of safFFT
+ * \endcode
+ *
+ * @author Leo McCormack
+ * @date 06.04.2019
  */
 
 #include "saf_utilities.h"

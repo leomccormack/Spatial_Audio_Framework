@@ -14,15 +14,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_sort.c
- * --------------------
- * Contains some useful sorting functions
+/**
+ * @file saf_sort.c
+ * @brief Contains some useful sorting functions
  *
- * Dependencies:
- *     none
- * Author, date created:
- *     Leo McCormack, 30.07.2018
+ * @author Leo McCormack
+ * @date 30.07.2018
  */
 
 #include "saf_utilities.h"

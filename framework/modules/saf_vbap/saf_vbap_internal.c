@@ -13,16 +13,18 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/*
- * Filename: saf_vbap_internal.c
- * -----------------------------
- * VBAP functions largely derived from the MATLAB library by Archontis Politis,
- * found here: https://github.com/polarch/Vector-Base-Amplitude-Panning
+
+/**
+ * @file saf_vbap_internal.c
+ * @brief Internal part of the "saf_vbap" module
  *
- * Dependencies:
- *     saf_utilities
- * Author, date created:
- *     Leo McCormack, 02.10.2017
+ * VBAP functions largely derived from the MATLAB library by Archontis Politis,
+ * found in [1].
+ *
+ * @see [1] https://github.com/polarch/Vector-Base-Amplitude-Panning
+ *
+ * @author Leo McCormack
+ * @date 02.10.2017
  */
  
 #include "saf_vbap.h"

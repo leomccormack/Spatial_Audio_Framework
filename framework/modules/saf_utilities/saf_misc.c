@@ -14,15 +14,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_misc.c
- * --------------------
- * Miscellaneous functions
+/**
+ * @file saf_misc.c
+ * @brief Miscellaneous functions
  *
- * Dependencies:
- *     none
- * Author, date created:
- *     Leo McCormack, 29.01.2020
+ * @author Leo McCormack
+ * @date 29.01.2020
  */
 
 #include "saf_misc.h"

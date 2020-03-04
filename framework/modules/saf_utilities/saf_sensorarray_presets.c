@@ -14,15 +14,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_sensorarray_presets.c
- * -----------------------------------
- * Comprises the directions of microphone array sensors
+/**
+ * @file saf_sensorarray_presets.c
+ * @brief Comprises the directions of microphone array sensors
  *
- * Dependencies:
- *     none
- * Author, date created:
- *     Leo McCormack, 11.07.2016
+ * @author Leo McCormack
+ * @date 11.07.2016
  */
 
 #include "saf_sensorarray_presets.h"

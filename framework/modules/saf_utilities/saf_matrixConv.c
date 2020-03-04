@@ -14,17 +14,13 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_matrixConv.c
- * --------------------------
- * Matrix convolver functions mostly stolen from some Matlab scripts by
- * Archontis Politis ;-)
- * (with permission of course)
+/**
+ * @file saf_matrixConv.c
+ * @brief Matrix convolver functions mostly taken from some Matlab scripts by
+ *        Archontis Politis
  *
- * Dependencies:
- *     saf_fft
- * Author, date created:
- *     Leo McCormack, 06.04.2019
+ * @author Leo McCormack
+ * @date 06.04.2019
  */
 
 #include "saf_utilities.h"

@@ -14,15 +14,14 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_sofa_reader.h (include header)
- * --------------------------------------------
- * A simple sofa reader, which returns only the bare minimum.
+/**
+ * @file saf_sofa_reader.c
+ * @brief A simple sofa reader, which returns only the bare minimum.
  *
- * Dependencies:
- *     netcdf
- * Author, date created:
- *     Leo McCormack, 21.11.2017
+ * @note This (optional) SOFA reader, requires netcdf to be linked.
+ *
+ * @author Leo McCormack
+ * @date 21.11.2017
  */
 
 #include "saf_sofa_reader.h"
