@@ -255,7 +255,7 @@ void evalBiQuadTransferFunction(/* Input arguments */
  *                         for BPF/BSF
  * @param[in]  cutoff2     Filter2 cutoff in Hz, not needed for LPF/HPF, this is
  *                         the upper cutoff for BPF/BSF
- * @param[in]  samplerate  Sampling rate in Hz
+ * @param[in]  sampleRate  Sampling rate in Hz
  * @param[in]  windowType  See 'WINDOWING_FUNCTION_TYPES' enum
  * @param[in]  scalingFLAG '0' none, '1' scaling applied to ensure passband is
  *                         at 0dB
@@ -294,11 +294,11 @@ void FIRCoeffs(/* Input arguments */
  * @param[in]  order        Filter order. Must be even.
  * @param[in]  fc           Vector of cutoff frequencies; nCutoffFreqs x 1
  * @param[in]  nCutoffFreqs Number of cutoff frequencies in vector 'fc'.
- * @param[in]  samplerate   Sampling rate in Hz
+ * @param[in]  sampleRate   Sampling rate in Hz
  * @param[in]  windowType   See 'WINDOWING_FUNCTION_TYPES' enum
  * @param[in]  scalingFLAG  '0' none, '1' scaling applied to ensure passbands
  *                          are at 0dB
- * @param[out] filter       Filter coefficients/weights/taps;
+ * @param[out] filterbank   Filter coefficients/weights/taps;
  *                          FLAT: (nCutoffFreqs+1) x (order+1)
  */
 void FIRFilterbank(/* Input arguments */

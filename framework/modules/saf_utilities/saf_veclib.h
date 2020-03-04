@@ -385,10 +385,12 @@ void utility_svvdot(/* Input Arguments */
  *     c = a*b^T, (where size(c) = [1  1])
  * \endcode
  *
- * @param[in]  a   Input vector a; len x 1
- * @param[in]  b   Input vector b; len x 1
- * @param[in]  len Vector length
- * @param[out] c   (&) output vector c; 1 x 1
+ * @param[in]  a    Input vector a; len x 1
+ * @param[in]  b    Input vector b; len x 1
+ * @param[in]  flag '0' do not take the conjugate of 'b', '1', take the
+ *                  conjugate of 'b'.
+ * @param[in]  len  Vector length
+ * @param[out] c    (&) output vector c; 1 x 1
  */
 void utility_cvvdot(/* Input Arguments */
                     const float_complex* a,

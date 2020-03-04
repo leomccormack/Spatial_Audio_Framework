@@ -103,7 +103,7 @@ void HRIRs2FilterbankHRTFs(/* Input Arguments */
  * @param[in]  N_dirs   Number of HRIRs
  * @param[in]  hrir_len Length of the HRIRs in samples
  * @param[in]  fftSize  FFT size
- * @param[out] hrtf     HRTFs; FLAT: (fftSize/2+1) x 2 x N_dirs
+ * @param[out] hrtfs    HRTFs; FLAT: (fftSize/2+1) x 2 x N_dirs
  */
 void HRIRs2HRTFs(/* Input Arguments */
                  float* hrirs,

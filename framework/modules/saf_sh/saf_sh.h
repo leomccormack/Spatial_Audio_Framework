@@ -288,7 +288,7 @@ void complex2realSHMtx(/* Input Arguments */
  * where r_N and y_N are the real and complex SH vectors, respectively.
  *
  * @param[in]  order Order of spherical harmonic expansion
- * @param[out] T_c2r Transformation matrix for real->complex;
+ * @param[out] T_r2c Transformation matrix for real->complex;
  *                   FLAT: (order+1)^2 x (order+1)^2
  */
 void real2complexSHMtx(/* Input Arguments */
@@ -360,7 +360,7 @@ void computeVelCoeffsMtx(/* Input Arguments */
  * been used for parametric sound-field reproduction in [1] and visualisation in
  * [2].
  *
- * @param[in]  sectorOrder  Order of sector patterns
+ * @param[in]  orderSec     Order of sector patterns
  * @param[in]  A_xyz        Velocity coefficients (see "computeVelCoeffsMtx");
  *                          FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3
  * @param[in]  pattern      See "SECTOR_PATTERNS" enum for the options
@@ -369,7 +369,7 @@ void computeVelCoeffsMtx(/* Input Arguments */
  * @param[in]  nSecDirs     Number of sectors
  * @param[out] sectorCoeffs The sector coefficients;
  *                          FLAT: (nSecDirs*4) x (orderSec+2)^2
- * @returns normalisation coefficient
+ * @returns                 Normalisation coefficient
  *
  * @see [1] Politis, A., Vilkamo, J., & Pulkki, V. (2015). Sector-based
  *          parametric sound field reproduction in the spherical harmonic
@@ -397,7 +397,7 @@ float computeSectorCoeffsEP(/* Input Arguments */
  * been used for parametric sound-field reproduction in [1] and visualision in
  * [2].
  *
- * @param[in]  sectorOrder  Order of sector patterns
+ * @param[in]  orderSec     Order of sector patterns
  * @param[in]  A_xyz        Velocity coefficients (see "computeVelCoeffsMtx");
  *                          FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3
  * @param[in]  pattern      See "SECTOR_PATTERNS" enum for the options
@@ -406,7 +406,7 @@ float computeSectorCoeffsEP(/* Input Arguments */
  * @param[in]  nSecDirs     Number of sectors
  * @param[out] sectorCoeffs The sector coefficients;
  *                          FLAT: (nSecDirs*4) x (orderSec+2)^2
- * @returns normalisation coefficient
+ * @returns                 Normalisation coefficient
  *
  * @see [1] Politis, A., Vilkamo, J., & Pulkki, V. (2015). Sector-based
  *          parametric sound field reproduction in the spherical harmonic
