@@ -14,16 +14,13 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_complex.h
- * -----------------------
- * Contains wrappers for handling complex numbers across both C99-compliant
- * compilers and Microsoft Visual Compiler (MSVC).
+/**
+ * @file saf_complex.h
+ * @brief Contains wrappers for handling complex numbers across both C99-
+ *        compliant compilers and Microsoft Visual Compiler (MSVC).
  *
- * Dependencies:
- *     A C99-compliant compiler, or MSVC 14.0 (Visual Studio 2015) or newer.
- * Author, date created:
- *     Leo McCormack, 11.07.2016
+ * @author Leo McCormack
+ * @date 11.07.2016
  */
 
 #ifndef SAF_COMPLEX_H_INCLUDED

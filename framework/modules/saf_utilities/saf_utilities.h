@@ -14,31 +14,33 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_utilities.h (include header)
- * ------------------------------------------
- * Contains a collection of useful memory allocation functions and cross-
- * platform complex number wrappers. Optimised linear algebra routines utilising
- * BLAS and LAPACK are also included.
+/**
+ * @file saf_utilities.h  
+ * @brief Contains a collection of useful memory allocation functions and cross-
+ *        platform complex number wrappers. Optimised linear algebra routines
+ *        utilising BLAS and LAPACK are also included.
  *
- * Dependencies:
- *     A performance library comprising CBLAS and LAPACK routines is required.
- *     Add one of the following FLAGS to your project's preprocessor definitions
- *     list, in order to enable one of these suitable performance libraries,
- *     which must also be linked correctly to your project.
- *         SAF_USE_INTEL_MKL
- *             to enable Intel's Math Kernal Library
- *         SAF_USE_ATLAS
- *             to enable ATLAS BLAS routines with CLAPACK
- *         SAF_USE_OPEN_BLAS_AND_LAPACKE
- *             to enable OpenBLAS and use the LAPACK(E) interface
- *     More information can be found here:
- *         https://github.com/leomccormack/Spatial_Audio_Framework
- *     Mac users only:
- *         saf_utilities will employ Apple's Accelerate library by default, if
- *         none of the above FLAGS are defined.
- * Author, date created:
- *     Leo McCormack, 11.07.2016
+ * ## Dependencies
+ *   A performance library comprising CBLAS and LAPACK routines is required by
+ *   the module and, thus, also by the SAF framework as a whole. Add one of the
+ *   following FLAGS to your project's preprocessor definitions list, in order
+ *   to enable one of these suitable performance libraries, which must also be
+ *   linked correctly to your project.
+ *   - SAF_USE_INTEL_MKL:
+ *       to enable Intel's Math Kernal Library
+ *   - SAF_USE_ATLAS_WITH_LAPACK:
+ *       to enable ATLAS BLAS routines with netlib's LAPACK see:
+ *       http://math-atlas.sourceforge.net/atlas_install/node8.html
+ *   - SAF_USE_OPENBLAS_WITH_LAPACK:
+ *       to enable OpenBLAS and use netlib's LAPACK
+ *
+ * @see More information can be found here:
+ *      https://github.com/leomccormack/Spatial_Audio_Framework
+ * @note MacOSX users only: saf_utilities will employ Apple's Accelerate library
+ *       by default, if none of the above FLAGS are defined.
+ *
+ * @author Leo McCormack
+ * @date 11.07.2016
  */
 
 #ifndef __SAF_UTILITIES_H_INCLUDED__

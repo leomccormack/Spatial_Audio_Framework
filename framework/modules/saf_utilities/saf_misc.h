@@ -14,15 +14,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_misc.h
- * --------------------
- * Miscellaneous functions
+/**
+ * @file saf_misc.h
+ * @brief Miscellaneous functions
  *
- * Dependencies:
- *     none
- * Author, date created:
- *     Leo McCormack, 29.01.2020
+ * @author Leo McCormack
+ * @date 29.01.2020 
  */
 
 #ifndef SAF_MISC_H_INCLUDED
@@ -44,7 +41,7 @@ extern "C" {
 #  define _POSIX_C_SOURCE 199309L /* or greater */
 # endif
 # include <time.h>
-# define SAF_SLEEP(msecs) do {            \
+# define SAF_SLEEP(msecs) do {     \
    struct timespec ts;             \
    ts.tv_sec = msecs/1000;         \
    ts.tv_nsec = msecs%1000*1000;   \
@@ -53,7 +50,44 @@ extern "C" {
 #else
 # error "Unknown system"
 #endif
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
 
+/**
+ * Factorial, accurate up to n<=25.
+ *
+ * @note The magnitude will still be correct >25, but the precision will be
+ *       truncated.
+ *
+ * @param[in] n Order
+ * @returns     factorial(n)
+ */
+long double factorial(int n);
+
+/**
+ * C fmodf function, which behaves like 'mod' in Matlab (with the wrap around)
+ *
+ * @param[in] x Value 'x'
+ * @param[in] y Value 'y'
+ * @returns     fmodf(n)
+ */
+float matlab_fmodf(float x,  float y);
+
+/**
+ * Calculates the cross correlation between two vectors
+ *
+ * @param[in]  a    Vector a; la x 1
+ * @param[in]  b    Vector b; lb x 1
+ * @param[in]  la   Length of vector a
+ * @param[in]  lb   Length of vector b
+ * @param[out] x_ab Cross-correlation between a and b; (la + lb - 1) x 1
+ */
+void cxcorr(float* a,
+            float* b,
+            float* x_ab,
+            size_t la,
+            size_t lb);
 
 #ifdef __cplusplus
 }/* extern "C" */

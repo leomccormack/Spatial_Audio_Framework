@@ -31,11 +31,6 @@
 #include "saf_hrir.h"
 #include "saf_hrir_internal.h"
 
-float matlab_fmodf(float x, float y) {
-    float tmp = fmodf(x, y);
-    return tmp >= 0 ? tmp : tmp + y;
-}
-
 void estimateITDs
 (
     float* hrirs /* N_dirs x NUM_EARS x hrir_len */,

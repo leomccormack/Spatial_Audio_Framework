@@ -55,16 +55,6 @@ static double Yn(int n, double z)
 #endif
 }
 
-long double factorial(int n)
-{
-    int i;
-    long double ff;
-    ff = 1.0;
-    for(i = 1; i<=n; i++)
-        ff *= (long double)i;
-    return ff;
-}
-
 void yawPitchRoll2Rzyx
 (
     float yaw,

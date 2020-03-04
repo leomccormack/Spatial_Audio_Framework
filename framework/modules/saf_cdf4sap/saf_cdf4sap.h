@@ -14,23 +14,23 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_cdf4sap.h (include header)
- * ----------------------------------------
- * Covariance Domain Framework for Spatial Audio Processing (CDF4SAP) [1,2]. A C
- * implementation of the MatLab code, originally written by Dr. Juha Vilkamo.
+/**
+ * @file saf_cdf4sap.h
+ * @brief Public part of the "saf_cdf4sap" module
  *
- * [1] Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance
- *     domain framework for time–frequency processing of spatial audio. Journal
- *     of the Audio Engineering Society, 61(6), 403-411.
- * [2] Vilkamo, J., & Backstrom, T. (2018). Time--Frequency Processing: Methods
- *     and Tools. In Parametric Time-Frequency Domain Spatial Audio. John Wiley
- *     & Sons.
+ * Covariance Domain Framework for Spatial Audio Processing (CDF4SAP). This is a
+ * direct C port of the Matlab function given in [1], which was originally
+ * written by Juha Vilkamo. The algorithm is explained in further detail in [2].
  *
- * Dependencies:
- *     saf_utilities
- * Author, date created:
- *     Leo McCormack, 25.11.2016
+ * @see [1] Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance
+ *          domain framework for time–frequency processing of spatial audio.
+ *          Journal of the Audio Engineering Society, 61(6), 403-411.
+ * @see [2] Vilkamo, J., & Backstrom, T. (2018). Time--Frequency Processing:
+ *          Methods and Tools. In Parametric Time-Frequency Domain Spatial
+ *          Audio. John Wiley & Sons.
+ *
+ * @author Leo McCormack
+ * @date 25.11.2016
  */
 
 #ifndef __SAF_CDF4SAP_H_INCLUDED__
@@ -46,65 +46,73 @@ extern "C" {
 /*                               Main Functions                               */
 /* ========================================================================== */
 
-/*
- * Function: cdf4sap_create
- * ------------------------
- * Creates an instance of the Covariance Domain Framework.
- * Note: Use this function if using REAL-VALUED input/output matrices.
+/**
+ * Creates an instance of the Covariance Domain Framework (REAL).
  *
- * Input Arguments:
- *     phCdf  - & (address) of Covariance Domain Framework handle
- *     nXcols - number of columns/rows in square input matrix 'Cx'
- *     nYcols - number of columns/rows in square input matrix 'Cy'
+ * Allocates memory for a Covariance Domain Framework for Spatial Audio
+ * Processing (CDF4SAP) handle.
+ *
+ * @note Use this function for REAL-VALUED input/output matrices. For
+ *       COMPLEX-VALUED input/output matrices use "cdf4sap_cmplx_create".
+ *
+ * @param[in] phCdf  The address (&) of the CDF4SAP handle
+ * @param[in] nXcols Number of columns/rows in square input matrix 'Cx'
+ * @param[in] nYcols Number of columns/rows in square input matrix 'Cy'
  */
 void cdf4sap_create(/* Input Arguments */
                     void ** const phCdf,
                     int nXcols,
                     int nYcols);
 
-/*
- * Function: cdf4sap_cmplx_create
- * ------------------------------
- * Creates an instance of the Covariance Domain Framework.
- * Note: Use this function if using COMPLEX-VALUED input/output matrices.
+/**
+ * Creates an instance of the Covariance Domain Framework (COMPLEX).
  *
- * Input Arguments:
- *     phCdf  - & (address) of Covariance Domain Framework handle
- *     nXcols - number of columns/rows in square input matrix 'Cx'
- *     nYcols - number of columns/rows in square input matrix 'Cy'
+ * Allocates memory for a Covariance Domain Framework for Spatial Audio
+ * Processing (CDF4SAP) handle.
+ *
+ * @note Use this function for COMPLEX-VALUED input/output matrices. For
+ *       REAL-VALUED input/output matrices use "cdf4sap_create".
+ *
+ * @param[in] phCdf  The address (&) of the CDF4SAP handle
+ * @param[in] nXcols Number of columns/rows in square input matrix 'Cx'
+ * @param[in] nYcols Number of columns/rows in square input matrix 'Cy'
  */
 void cdf4sap_cmplx_create(/* Input Arguments */
                           void ** const phCdf,
                           int nXcols,
                           int nYcols);
 
-/*
- * Function: cdf4sap_destroy
- * ------------------------
- * Destroys an instance of the Covariance Domain Framework.
- * Note: Use this function if using REAL-VALUED input/output matrices.
+/**
+ * Destroys an instance of the Covariance Domain Framework (REAL).
  *
- * Input Arguments:
- *     phCdf - & (address) of Covariance Domain Framework handle
+ * Frees memory for a Covariance Domain Framework for Spatial Audio
+ * Processing (CDF4SAP) handle.
+ *
+ * @note Use this function for REAL-VALUED input/output matrices. For
+ *       COMPLEX-VALUED input/output matrices use "cdf4sap_cmplx_destroy".
+ *
+ * @param[in] phCdf The address (&) of the CDF4SAP handle
  */
 void cdf4sap_destroy(/* Input Arguments */
                      void ** const phCdf);
 
-/*
- * Function: cdf4sap_cmplx_destroy
- * -------------------------------
- * Destroys an instance of the Covariance Domain Framework.
- * Note: Use this function if using COMPLEX-VALUED input/output matrices.
+/**
+ * Destroys an instance of the Covariance Domain Framework (COMPLEX).
  *
- * Input Arguments:
- *     phCdf - & (address) of Covariance Domain Framework handle
+ * Frees memory for a Covariance Domain Framework for Spatial Audio
+ * Processing (CDF4SAP) handle.
+ *
+ * @note Use this function for COMPLEX-VALUED input/output matrices. For
+ *       REAL-VALUED input/output matrices use "cdf4sap_destroy".
+ *
+ * @param[in] phCdf The address (&) of the CDF4SAP handle
  */
 void cdf4sap_cmplx_destroy(/* Input Arguments */
                            void ** const phCdf);
 
-/*
- * Function: formulate_M_and_Cr
- * ----------------------------
+/**
+ * Computes the optimal mixing matrices (REAL).
+ *
  * This function solves the problem of determining the optimal mixing matrices
  * 'M' and 'Cr', such that the covariance matrix of the output:
  * y_out = M*x + Mr*decorrelated(x), is aligned with the target matrix 'Cy',
@@ -112,26 +120,27 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
  * matrix Q.
  * For the derivation and a more detailed description, the reader is referred
  * to [1,2].
- * Note: Use this function if using REAL-VALUED input/output matrices.
  *
- * Input Arguments:
- *     hCdf          - Covariance Domain Framework handle
- *     Cx            - Covariance matrix of input 'x'; FLAT: nXcols x nXcols
- *     Cy            - Target covariance matrix; FLAT: nXcols x nXcols
- *     Q             - Prototype matrix; FLAT: nYcols x nXcols
- *     useEnergyFLAG - 0: Apply energy compensation to 'M' instead of outputing
- *                     'Cr', 1: output 'Cr' too
- *     reg           - regularisation term (suggested: 0.2f)
- * Output Arguments:
- *     M             - Mixing matrix; FLAT: nYcols x nXcols
- *     Cr            - Mixing matrix for residual; FLAT: nYcols x nYcols
+ * @note Use this function for REAL-VALUED input/output matrices. For
+ *       COMPLEX-VALUED input/output use "formulate_M_and_Cr_cmplx".
  *
- * [1] Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance
- *     domain framework for time–frequency processing of spatial audio. Journal
- *     of the Audio Engineering Society, 61(6), 403-411.
- * [2] Vilkamo, J., & Backstrom, T. (2018). Time--Frequency Processing: Methods
- *     and Tools. In Parametric Time-Frequency Domain Spatial Audio. John Wiley
- *     & Sons.
+ * @param[in]  hCdf          Covariance Domain Framework handle
+ * @param[in]  Cx            Covariance matrix of input 'x';
+ *                           FLAT: nXcols x nXcols
+ * @param[in]  Cy            Target covariance matrix; FLAT: nXcols x nXcols
+ * @param[in]  Q             Prototype matrix; FLAT: nYcols x nXcols
+ * @param[in]  useEnergyFLAG Set to '0' to apply energy compensation to 'M'
+ *                           instead of outputing 'Cr'. Set to '1' to output 'Cr'
+ * @param[in]  reg           Regularisation term (suggested: 0.2f)
+ * @param[out] M             Mixing matrix; FLAT: nYcols x nXcols
+ * @param[out] Cr            Mixing matrix residual; FLAT: nYcols x nYcols
+ *
+ * @see [1] Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance
+ *          domain framework for time–frequency processing of spatial audio.
+ *          Journal of the Audio Engineering Society, 61(6), 403-411.
+ * @see [2] Vilkamo, J., & Backstrom, T. (2018). Time--Frequency Processing:
+ *          Methods and Tools. In Parametric Time-Frequency Domain Spatial
+ *          Audio. John Wiley & Sons.
  */
 void formulate_M_and_Cr(/* Input Arguments */
                         void * const hCdf,
@@ -144,36 +153,38 @@ void formulate_M_and_Cr(/* Input Arguments */
                         float* M,
                         float* Cr);
 
-/*
- * Function: formulate_M_and_Cr_cmplx
- * ----------------------------------
+/**
+ * Computes the optimal mixing matrices (COMPLEX).
+ *
  * This function solves the problem of determining the optimal mixing matrices
  * 'M' and 'Cr', such that the covariance matrix of the output:
- * y_out = M*x + B*decorrelated(x), is aligned with the target matrix 'Cy',
+ * y_out = M*x + Mr*decorrelated(x), is aligned with the target matrix 'Cy',
  * given the covariance matrix of input x, Cx=x*x^H, and a prototype decoding
  * matrix Q.
  * For the derivation and a more detailed description, the reader is referred
  * to [1,2].
- * Note: Use this function if using COMPLEX-VALUED input/output matrices.
  *
- * Input Arguments:
- *     hCdf          - Covariance Domain Framework handle
- *     Cx            - Covariance matrix of input 'x'; FLAT: nXcols x nXcols
- *     Cy            - Target covariance matrix; FLAT: nXcols x nXcols
- *     Q             - Prototype matrix; FLAT: nYcols x nXcols
- *     useEnergyFLAG - 0: Apply energy compensation to 'M' instead of outputing
- *                     'Cr', 1: output 'Cr' too
- *     reg           - regularisation term (suggested: 0.2f)
- * Output Arguments:
- *     M             - Mixing matrix; FLAT: nYcols x nXcols
- *     Cr            - Mixing matrix for residual; FLAT: nYcols x nYcols
+ * @note Use this function for COMPLEX-VALUED input/output matrices. For
+ *       REAL-VALUED input/output use "formulate_M_and_Cr".
  *
- * [1] Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance
- *     domain framework for time–frequency processing of spatial audio. Journal
- *     of the Audio Engineering Society, 61(6), 403-411.
- * [2] Vilkamo, J., & Backstrom, T. (2018). Time--Frequency Processing: Methods
- *     and Tools. In Parametric Time-Frequency Domain Spatial Audio. John Wiley
- *     & Sons.
+ * @param[in]  hCdf          Covariance Domain Framework handle
+ * @param[in]  Cx            Covariance matrix of input 'x';
+ *                           FLAT: nXcols x nXcols
+ * @param[in]  Cy            Target covariance matrix; FLAT: nXcols x nXcols
+ * @param[in]  Q             Prototype matrix; FLAT: nYcols x nXcols
+ * @param[in]  useEnergyFLAG Set to '0' to apply energy compensation to 'M'
+ *                           instead of outputing 'Cr'. Set to '1' to output
+ *                           'Cr'
+ * @param[in]  reg           Regularisation term (suggested: 0.2f)
+ * @param[out] M             Mixing matrix; FLAT: nYcols x nXcols
+ * @param[out] Cr            Mixing matrix residual; FLAT: nYcols x nYcols
+ *
+ * @see [1] Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance
+ *          domain framework for time–frequency processing of spatial audio.
+ *          Journal of the Audio Engineering Society, 61(6), 403-411.
+ * @see [2] Vilkamo, J., & Backstrom, T. (2018). Time--Frequency Processing:
+ *          Methods and Tools. In Parametric Time-Frequency Domain Spatial
+ *          Audio. John Wiley & Sons.
  */
 void formulate_M_and_Cr_cmplx(/* Input Arguments */
                               void * const hCdf,

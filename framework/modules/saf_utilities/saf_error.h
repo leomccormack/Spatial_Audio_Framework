@@ -14,15 +14,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_error.h
- * ---------------------
- * List of error and warning codes.
+/**
+ * @file saf_error.h
+ * @brief List of error and warning codes.
  *
- * Dependencies:
- *     none
- * Author, date created:
- *     Leo McCormack, 05.08.2019
+ * @author Leo McCormack
+ * @date 05.08.2019 
  */
 
 #ifndef __SAF_ERROR_H_INCLUDED__
@@ -38,73 +35,71 @@ extern "C" {
 /*                                    Enums                                   */
 /* ========================================================================== */
     
-/*
- * Enum: SAF_ERRORS
- * ----------------
+/**
  * Error and warning codes. Error codes are considered fatal. Whereas warnings
- * are given if alternative measures were conducted due to some kind of strange
- * behaviour, but the program may still continue.
- *
- * Error Codes:
- *     SAF_ERROR__NO_ERROR
- *         No error was encountered.
- *     SAF_ERROR__ILLEGAL_INPUT_VALUE
- *         One or more input variable is assigned an illegal value.
- *     SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT
- *         One or more input/output variable is NULL.
- *     SAF_ERROR__FAILED_TO_BUILD_CONVEX_HULL
- *         findLsTriplets - Failed to build Convex Hull.
- * Warning Codes:
- *     SAF_WARNING__SOFA_FILE_NOT_FOUND
- *         loadSofaFile - sofa file was not found at the specified directory.
- *         remember to include the ".sofa" suffix. In this case, the default
- *         HRIR set is loaded instead.
- *     SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER
- *         bessel_jn/bessel_in/bessel_yn/bessel_kn/hankel_hn1/hankel_hn2 -
- *         Unable to compute the spherical Bessel/Hankel function at the
- *         specified order and input value. In this case, the Bessel/Hankel
- *         functions are returned at the maximum order that was possible, and
- *         this maximum order is returned by the function.
- *     SAF_WARNING__FAILED_TO_COMPUTE_SVD
- *         utility_?svd/utility_?pinv - The SVD failed to converge, or the input
- *         matrix contained illegal values so no solution was attempted. In
- *         these cases the function will zero all output matrices and vectors.
- *     SAF_WARNING__FAILED_TO_COMPUTE_EVG
- *         utility_?seig/utility_?eigmp/utility_?eig - Failed to compute all of
- *         the eigenvalues, no eigenvectors have been computed, or the input
- *         matrix contained illegal values so no solution was attempted. In
- *         these cases the function will zero all output matrices and vectors.
- *     SAF_WARNING__FAILED_TO_SOLVE_LINEAR_EQUATION
- *         utility_?glslv/utility_?slslv - Input matrix was singular, solution
- *         not computed, or the input matrix contained illegal values so no
- *         solution was attempted. In these cases the function will zero the
- *         output matrix.
- *     SAF_WARNING__FAILED_TO_COMPUTE_CHOL
- *         utility_?chol - input matrix is not positive definite, and the
- *         Cholesky factorization could not be computed, or the input matrix
- *         contained illegal values so no solution was attempted. In these cases
- *         the function will zero the output matrix.
+ * are given if alternative measures have taken place (due to some kind of
+ * strange behaviour), but the program may still continue.
  */
 typedef enum _SAF_ERRORS {
-    
-    /* errors */
+    /* ---------------------------------------------------------------------- */
+    /**
+     * No error was encountered.
+     */
     SAF_ERROR__NO_ERROR = 0,
+    /**
+     * One or more input variable is assigned an illegal value.
+     */
     SAF_ERROR__ILLEGAL_INPUT_VALUE,
-    SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT,
-    
-    /* saf_vbap errors */
+    /**
+     * One or more input/output variable is NULL.
+     */
+    SAF_ERROR__UNALLOCATED_FUNCTION_ARGUMENT, 
+    /**
+     * findLsTriplets - Failed to build Convex Hull.
+     */
     SAF_ERROR__FAILED_TO_BUILD_CONVEX_HULL,
     
-    /* saf_hrir warnings */
+    /* ---------------------------------------------------------------------- */
+    /**
+     * loadSofaFile(): sofa file was not found at the specified directory.
+     * Remember to include the ".sofa" suffix. In this case, the default HRIR
+     * set is loaded instead.
+     */
     SAF_WARNING__SOFA_FILE_NOT_FOUND,
-    
-    /* saf_sh warnings */
+    /**
+     * bessel_jn(), bessel_in(), bessel_yn(), bessel_kn(), hankel_hn1(), or
+     * hankel_hn2():
+     * Unable to compute the spherical Bessel/Hankel function at the specified
+     * order and input value. In this case, the Bessel/Hankel functions are
+     * returned at the maximum order that was possible, and this maximum order
+     * is returned by the function.
+     */
     SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER,
-    
-    /* saf_utilites warnings */
+    /**
+     * utility_?svd/utility_?pinv - The SVD failed to converge, or the input
+     * matrix contained illegal values so no solution was attempted. In these
+     * cases the function will zero all output matrices and vectors.
+     */
     SAF_WARNING__FAILED_TO_COMPUTE_SVD,
+    /**
+     * utility_?seig/utility_?eigmp/utility_?eig - Failed to compute all of the
+     * eigenvalues, no eigenvectors have been computed, or the input matrix
+     * contained illegal values so no solution was attempted. In these cases the
+     * function will zero all output matrices and vectors.
+     */
     SAF_WARNING__FAILED_TO_COMPUTE_EVG,
+    /**
+     * utility_?glslv/utility_?slslv - Input matrix was singular, solution not
+     * computed, or the input matrix contained illegal values so no solution was
+     * attempted. In these cases the function will zero the output matrix.
+     */
     SAF_WARNING__FAILED_TO_SOLVE_LINEAR_EQUATION,
+    /**
+     * utility_?chol - input matrix is not positive definite, and the Cholesky
+     * factorization could not be computed, or the input matrix contained
+     * illegal values so no solution was attempted. In these cases the function
+     * will zero the output matrix.
+     */
     SAF_WARNING__FAILED_TO_COMPUTE_CHOL
     
 } SAF_ERRORS;
@@ -114,10 +109,9 @@ typedef enum _SAF_ERRORS {
 /*                               Main Functions                               */
 /* ========================================================================== */
 
-/*
- * Function: saf_error_print
- * -------------------------
- * Checks current error/warning code. Used when in debug mode.
+/**
+ * Checks current error/warning code, and prints out a message if needed (used
+ * when in debug mode).
  *
  * If there is no error/warning (SAF_ERROR__NO_ERROR), then the function does
  * nothing.
@@ -126,10 +120,8 @@ typedef enum _SAF_ERRORS {
  * If there is an error code, then an appropriate error message is printed, and
  * the program is terminated.
  *
- * Input Arguments:
- *     err - & address saf error code (see "SAF_ERRORS" enum)
- * returns
- *     SAF_ERROR__NO_ERROR
+ * @param[in] err SAF error code (see "SAF_ERRORS" enum)
+ * @returns SAF_ERROR__NO_ERROR
  */
 #ifndef NDEBUG
 SAF_ERRORS saf_error_print(SAF_ERRORS err);

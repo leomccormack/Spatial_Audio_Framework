@@ -13,15 +13,13 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/*
- * Filename: saf_filters.h
- * -----------------------
- * Contains a collection of filter design equations.
+
+/**
+ * @file: saf_filters.h
+ * @brief Contains a collection of filter design equations.
  *
- * Dependencies:
- *     none
- * Author, date created:
- *     Leo McCormack, 01.03.2019
+ * @author Leo McCormack
+ * @date 01.03.2019 
  */
 
 #ifndef SAF_FILTERS_H_INCLUDED
@@ -41,71 +39,45 @@ extern "C" {
 /*                                    Enums                                   */
 /* ========================================================================== */
 
-/*
- * Enum: BIQUAD_FILTER_TYPES
- * -------------------------
+/**
  * Bi-quadratic (second-order) IIR filter design options.
- *
- * Options:
- *     BIQUAD_FILTER_LPF       - low-pass filter
- *     BIQUAD_FILTER_HPF       - high-pass filter
- *     BIQUAD_FILTER_PEAK      - peaking filter
- *     BIQUAD_FILTER_LOW_SHELF - low-shelving filter
- *     BIQUAD_FILTER_HI_SHELF  - high-shelving filter
  */
 typedef enum _BIQUAD_FILTER_TYPES {
-    BIQUAD_FILTER_LPF,
-    BIQUAD_FILTER_HPF,
-    BIQUAD_FILTER_PEAK,
-    BIQUAD_FILTER_LOW_SHELF,
-    BIQUAD_FILTER_HI_SHELF
+    BIQUAD_FILTER_LPF,       /**< low-pass filter */
+    BIQUAD_FILTER_HPF,       /**< high-pass filter */
+    BIQUAD_FILTER_PEAK,      /**< peaking filter */
+    BIQUAD_FILTER_LOW_SHELF, /**< low-shelving filter */
+    BIQUAD_FILTER_HI_SHELF   /**< high-shelving filter */
     
 }BIQUAD_FILTER_TYPES;
 
-/*
- * Enum: FIR_FILTER_TYPES
- * ----------------------
+/**
  * Finite Impulse Response (FIR) filter design options.
- *
- * Options:
- *     FIR_FILTER_LPF - low-pass filter
- *     FIR_FILTER_HPF - high-pass filter
- *     FIR_FILTER_BPF - band-pass filter
- *     FIR_FILTER_BSF - band-stop filter
  */
 typedef enum _FIR_FILTER_TYPES {
-    FIR_FILTER_LPF,
-    FIR_FILTER_HPF,
-    FIR_FILTER_BPF,
-    FIR_FILTER_BSF
+    FIR_FILTER_LPF, /**< low-pass filter */
+    FIR_FILTER_HPF, /**< high-pass filter */
+    FIR_FILTER_BPF, /**< band-pass filter */
+    FIR_FILTER_BSF  /**< band-stop filter */
     
 }FIR_FILTER_TYPES;
 
-/*
- * Enum: WINDOWING_FUNCTION_TYPES
- * ------------------------------
- * Windowing function types. Symmetric if winlength is odd, and asymmetric if
- * winlength is even. Windows are evaluated: 0 <= n < winlength.
- * Largely taken from: https://en.wikipedia.org/wiki/Window_function
+/**
+ * Windowing function types.
  *
- * Options:
- *     WINDOWING_FUNCTION_RECTANGULAR
- *     WINDOWING_FUNCTION_HAMMING
- *     WINDOWING_FUNCTION_HANN
- *     WINDOWING_FUNCTION_BLACKMAN
- *     WINDOWING_FUNCTION_NUTTALL
- *     WINDOWING_FUNCTION_BLACKMAN_NUTTALL
- *     WINDOWING_FUNCTION_BLACKMAN_HARRIS  
+ * Symmetric if winlength is odd, and asymmetric if winlength is even. Windows
+ * are evaluated: 0 <= n < winlength. Largely taken from:
+ * https://en.wikipedia.org/wiki/Window_function
  */
 typedef enum _WINDOWING_FUNCTION_TYPES {
-    WINDOWING_FUNCTION_RECTANGULAR,
-    WINDOWING_FUNCTION_HAMMING,
-    WINDOWING_FUNCTION_HANN,
-    WINDOWING_FUNCTION_BARTLETT,
-    WINDOWING_FUNCTION_BLACKMAN,
-    WINDOWING_FUNCTION_NUTTALL,
-    WINDOWING_FUNCTION_BLACKMAN_NUTTALL,
-    WINDOWING_FUNCTION_BLACKMAN_HARRIS
+    WINDOWING_FUNCTION_RECTANGULAR,      /**< Rectangular */
+    WINDOWING_FUNCTION_HAMMING,          /**< Hamming */
+    WINDOWING_FUNCTION_HANN,             /**< Hann */
+    WINDOWING_FUNCTION_BARTLETT,         /**< Bartlett */
+    WINDOWING_FUNCTION_BLACKMAN,         /**< Blackman */
+    WINDOWING_FUNCTION_NUTTALL,          /**< Nuttall */
+    WINDOWING_FUNCTION_BLACKMAN_NUTTALL, /**< Blackman-Nuttall */
+    WINDOWING_FUNCTION_BLACKMAN_HARRIS   /**< Blackman-Harris */
     
 }WINDOWING_FUNCTION_TYPES;
 
@@ -114,21 +86,21 @@ typedef enum _WINDOWING_FUNCTION_TYPES {
 /*                               Misc. Functions                              */
 /* ========================================================================== */
 
-/*
- * Function: getWindowingFunction
- * ------------------------------
+/**
  * Computes the weights of a specific windowing function.
- * Weights symmetric if winlength is odd, and asymmetric if winlength is even
+ *
+ * Weights are symmetric if winlength is odd, and are asymmetric if winlength is
+ * even.
+ *
  * i.e. if winlength is even:
  *  - index "winlength/2" = 1, and first value!=last value
+ *
  * if odd:
  *  - index "(winlength-1)/2" = 1, and first value==last value
  *
- * Input Arguments:
- *     type      - see 'WINDOWING_FUNCTION_TYPES' enum
- *     winlength - window length in samples
- * Output Arguments:
- *     win       - windowing function; winlength x 1
+ * @param[in]  type      See 'WINDOWING_FUNCTION_TYPES' enum
+ * @param[in]  winlength Window length in samples
+ * @param[out] win       Windowing function; winlength x 1
  */
 void getWindowingFunction(WINDOWING_FUNCTION_TYPES type,
                           int winlength,

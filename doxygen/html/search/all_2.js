@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['beamweightscardioid2spherical_182',['beamWeightsCardioid2Spherical',['../saf__sh_8h.html#a7ad01934dabcf7a8f8b08bcdd4439fe3',1,'saf_sh.h']]],
+  ['beamweightsdolphchebyshev2spherical_183',['beamWeightsDolphChebyshev2Spherical',['../saf__sh_8h.html#a45f95b52193c9d94633463106c86cb63',1,'saf_sh.h']]],
+  ['beamweightshypercardioid2spherical_184',['beamWeightsHypercardioid2Spherical',['../saf__sh_8h.html#a9ce9116273f897fe0ecf9b46d580be48',1,'saf_sh.h']]],
+  ['beamweightsmaxev_185',['beamWeightsMaxEV',['../saf__sh_8h.html#a7c35ba6af7f1f13e53ee473bb622398b',1,'saf_sh.h']]],
+  ['beamweightsvelocitypatternscomplex_186',['beamWeightsVelocityPatternsComplex',['../saf__sh_8h.html#a6077cbef3c4d075dd47e833f9675ae37',1,'saf_sh.h']]],
+  ['beamweightsvelocitypatternsreal_187',['beamWeightsVelocityPatternsReal',['../saf__sh_8h.html#a4fcf376f908a5403bc31989ac986ab78',1,'saf_sh.h']]],
+  ['bessel_5fin_188',['bessel_in',['../saf__sh_8h.html#aa3d6e2f3eef8cc0cf2f93fef693446c4',1,'saf_sh.h']]],
+  ['bessel_5fjn_189',['bessel_jn',['../saf__sh_8h.html#aa2621b74729df0c3480df268df93c6d2',1,'bessel_jn(int N, double *z, int nZ, int *maxN, double *j_n, double *dj_n):&#160;saf_sh.h'],['../saf__sh_8h.html#a34663eefbf80e9df6c46243e5f21de67',1,'bessel_Jn(int N, double *z, int nZ, double *J_n, double *dJ_n):&#160;saf_sh.h']]],
+  ['bessel_5fkn_190',['bessel_kn',['../saf__sh_8h.html#a9929b3494ce7831d8ec455963c32b3b7',1,'saf_sh.h']]],
+  ['bessel_5fyn_191',['bessel_Yn',['../saf__sh_8h.html#ae67f4ff2d969b3724f75eb48e31e91a7',1,'bessel_Yn(int N, double *z, int nZ, double *Y_n, double *dY_n):&#160;saf_sh.h'],['../saf__sh_8h.html#aa03183e136f8f2fe053e97778707ea5f',1,'bessel_yn(int N, double *z, int nZ, int *maxN, double *y_n, double *dy_n):&#160;saf_sh.h']]],
+  ['binaural_5fambi_5fdecoder_5fmethods_192',['BINAURAL_AMBI_DECODER_METHODS',['../saf__hoa_8h.html#a35e46e1cae92fe146d3037df17c22e0a',1,'saf_hoa.h']]],
+  ['binaural_5fdecoder_5fdefault_193',['BINAURAL_DECODER_DEFAULT',['../saf__hoa_8h.html#ad74dc367c1472fd60b3a66934aa92d41ab9d8239b3e918ada247720015cee827f',1,'saf_hoa.h']]],
+  ['binaural_5fdecoder_5fls_194',['BINAURAL_DECODER_LS',['../saf__hoa_8h.html#ad74dc367c1472fd60b3a66934aa92d41a25059f43250b90fb659563953d6e52a4',1,'saf_hoa.h']]],
+  ['binaural_5fdecoder_5flsdiffeq_195',['BINAURAL_DECODER_LSDIFFEQ',['../saf__hoa_8h.html#ad74dc367c1472fd60b3a66934aa92d41aea7d5ff9e0fec9c3e86274cde48a6436',1,'saf_hoa.h']]],
+  ['binaural_5fdecoder_5fmagls_196',['BINAURAL_DECODER_MAGLS',['../saf__hoa_8h.html#ad74dc367c1472fd60b3a66934aa92d41a02f30e94818bd69708ce020110589ce4',1,'saf_hoa.h']]],
+  ['binaural_5fdecoder_5fspr_197',['BINAURAL_DECODER_SPR',['../saf__hoa_8h.html#ad74dc367c1472fd60b3a66934aa92d41ab52d181ecdf9d10fcb9c5d761cac8a98',1,'saf_hoa.h']]],
+  ['binaural_5fdecoder_5fta_198',['BINAURAL_DECODER_TA',['../saf__hoa_8h.html#ad74dc367c1472fd60b3a66934aa92d41ad06de101e3b304af994c611b744df457',1,'saf_hoa.h']]],
+  ['binauraldiffusecoherence_199',['binauralDiffuseCoherence',['../saf__hrir_8h.html#adbd157cc21c2840342448509f1bec412',1,'saf_hrir.h']]],
+  ['biquad_5ffilter_5fhi_5fshelf_200',['BIQUAD_FILTER_HI_SHELF',['../saf__filters_8h.html#ade773006a98b2afa8007ca561dd1c38caf344b1e5cdbae06206820ab524add14c',1,'saf_filters.h']]],
+  ['biquad_5ffilter_5fhpf_201',['BIQUAD_FILTER_HPF',['../saf__filters_8h.html#ade773006a98b2afa8007ca561dd1c38cafeb5977dffa5364bc2c60b1f0c795edd',1,'saf_filters.h']]],
+  ['biquad_5ffilter_5flow_5fshelf_202',['BIQUAD_FILTER_LOW_SHELF',['../saf__filters_8h.html#ade773006a98b2afa8007ca561dd1c38ca95811cb885d4ef040e422d4011cfd2ba',1,'saf_filters.h']]],
+  ['biquad_5ffilter_5flpf_203',['BIQUAD_FILTER_LPF',['../saf__filters_8h.html#ade773006a98b2afa8007ca561dd1c38ca1d4fc0ac684f1e2267c32cb6389addb5',1,'saf_filters.h']]],
+  ['biquad_5ffilter_5fpeak_204',['BIQUAD_FILTER_PEAK',['../saf__filters_8h.html#ade773006a98b2afa8007ca561dd1c38ca5b7219720397e8e2482a483ab6748e04',1,'saf_filters.h']]],
+  ['biquad_5ffilter_5ftypes_205',['BIQUAD_FILTER_TYPES',['../saf__filters_8h.html#a6791bdce30d9c7923567db91489fe856',1,'saf_filters.h']]]
+];

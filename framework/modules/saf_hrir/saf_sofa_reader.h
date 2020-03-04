@@ -14,15 +14,14 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_sofa_reader.h (include header)
- * --------------------------------------------
- * A simple sofa reader, which returns only the bare minimum.
+/**
+ * @file saf_sofa_reader.h (include header)
+ * @brief A simple sofa reader, which returns only the bare minimum.
  *
- * Dependencies:
- *     netcdf
- * Author, date created:
- *     Leo McCormack, 21.11.2017
+ * @note This (optional) SOFA reader, requires netcdf to be linked.
+ *
+ * @author Leo McCormack
+ * @date 21.11.2017
  */
 
 #ifndef __SAF_SOFA_READER_H_INCLUDED__
@@ -44,30 +43,30 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
-    
-/*
- * Function: loadSofaFile
- * ----------------------
+
+/**
+ * A bare-bones SOFA file reader.
+ *
  * Allocates memory and copies the values of the essential data contained in a
  * SOFA file to the output arguments.
- * Note: This function is not suitable for binaural room impulse responses
- * (BRIRs), as the IRs are truncated to "MAX_HRIR_LENGTH"
- * Further note: The hrirs are returned as NULL if the file does not exist.
  *
- * Input Arguments:
- *     sofa_filepath - directory/file_name of the SOFA file you wish to load
- *                     Optionally, you may set this as NULL, and the function
- *                     will return the default HRIR data.
- * Output Arguments:
- *     hrirs         - & of the HRIR data; FLAT:  N_hrir_dirs x 2 x hrir_len
- *     hrir_dirs_deg - & of the HRIR positions; FLAT: N_hrir_dirs x 2
- *     N_hrir_dirs   - & number of HRIR positions
- *     hrir_len      - & length of the HRIRs in samples
- *     hrir_fs       - & sampling rate used to record HRIRs
+ * @note This function is not suitable for binaural room impulse responses
+ *       (BRIRs), as the IRs are truncated to "MAX_HRIR_LENGTH". Also, the hrirs
+ *       are returned as NULL if the file does not exist.
+ *
+ * @param[in]  sofa_filepath Directory/file_name of the SOFA file you wish to
+ *                           load. Optionally, you may set this as NULL, and the
+ *                           function will return the default HRIR data.
+ * @param[out] hrirs         (&) the HRIR data;
+ *                           FLAT:  N_hrir_dirs x 2 x hrir_len
+ * @param[out] hrir_dirs_deg (&) the HRIR positions; FLAT: N_hrir_dirs x 2
+ * @param[out] N_hrir_dirs   (&) number of HRIR positions
+ * @param[out] hrir_len      (&) length of the HRIRs, in samples
+ * @param[out] hrir_fs       (&) sampling rate of the HRIRs
  */ 
 void loadSofaFile(/* Input Arguments */
                   char* sofa_filepath,
@@ -77,8 +76,8 @@ void loadSofaFile(/* Input Arguments */
                   int* N_hrir_dirs,
                   int* hrir_len,
                   int* hrir_fs );
-    
-    
+
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */

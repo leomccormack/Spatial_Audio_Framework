@@ -191,10 +191,10 @@ void saf_matrixConv_apply
             /* over-lap add buffer */
             memcpy(&(h->ovrlpAddBuffer[no*(h->fftSize)]), &(h->ovrlpAddBuffer[no*(h->fftSize)+(h->hopSize)]), (h->numOvrlpAddBlocks-1)*(h->hopSize)*sizeof(float));
             memset(&(h->ovrlpAddBuffer[no*(h->fftSize)+(h->numOvrlpAddBlocks-1)*(h->hopSize)]), 0, (h->hopSize)*sizeof(float));
-            
+
             /* sum with overlap buffer and copy the result to the output buffer */
             utility_svvadd(&(h->ovrlpAddBuffer[no*(h->fftSize)]),  h->z_n, (h->fftSize), &(h->ovrlpAddBuffer[no*(h->fftSize)]));
-            
+
             /* truncate buffer and output */
             memcpy(&(outputSig[no*(h->hopSize)]), &(h->ovrlpAddBuffer[no*(h->fftSize)]), h->hopSize*sizeof(float));
         }
@@ -210,7 +210,7 @@ void saf_matrixConv_apply
         
         /* apply convolution and inverse fft */
         for(no=0; no<h->nCHout; no++){
-            utility_cvvmul(h->Hpart_f[no], h->X_n, h->numFilterBlocks * (h->nCHin) * (h->nBins), h->HX_n); /* This is the bulk of the CPU work */ 
+            utility_cvvmul(h->Hpart_f[no], h->X_n, h->numFilterBlocks * (h->nCHin) * (h->nBins), h->HX_n); /* This is the bulk of the CPU work */
             for(nb=0; nb<h->numFilterBlocks; nb++)
                 for(ni=0; ni<h->nCHin; ni++)
                     saf_rfft_backward(h->hFFT, &(h->HX_n[nb*(h->nCHin)*(h->nBins)+ni*(h->nBins)]), &(h->hx_n[nb*(h->nCHin)*(h->fftSize)+ni*(h->fftSize)]));
@@ -219,10 +219,10 @@ void saf_matrixConv_apply
             memset(h->z_n, 0, (h->fftSize) * sizeof(float));
             for(nb=0; nb<h->numFilterBlocks*(h->nCHin); nb++)
                 utility_svvadd(h->z_n, (const float*)&(h->hx_n[nb*(h->fftSize)]), h->fftSize, h->z_n);
-            
+
             /* sum with overlap buffer and copy the result to the output buffer */
             utility_svvadd(h->z_n, (const float*)&(h->y_n_overlap[no*(h->hopSize)]), h->hopSize, &(outputSig[no*(h->hopSize)]));
-            
+
             /* for next iteration: */
             memcpy(&(h->y_n_overlap[no*(h->hopSize)]), &(h->z_n[h->hopSize]), h->hopSize*sizeof(float));
         }

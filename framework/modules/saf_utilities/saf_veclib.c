@@ -407,7 +407,7 @@ void utility_cvvmul
         free(tmp);
     }
     else
-        vcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c); 
+        vcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
 #else
 	int i;
     if (c == NULL) {

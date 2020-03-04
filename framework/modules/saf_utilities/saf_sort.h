@@ -14,15 +14,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_sort.h
- * --------------------
- * Contains some useful sorting functions
+/**
+ * @file saf_sort.h
+ * @brief Contains some useful sorting functions
  *
- * Dependencies:
- *     none
- * Author, date created:
- *     Leo McCormack, 30.07.2018
+ * @author Leo McCormack
+ * @date 30.07.2018  
  */
 
 #ifndef SAF_SORT_H_INCLUDED
@@ -42,18 +39,17 @@ extern "C" {
 /*                               Main Functions                               */
 /* ========================================================================== */
 
-/*
- * Function: sorti
- * ---------------
- * Sort a vector of integer values into ascending/decending order. Optionally
- * returning the new indices.
+/**
+ * Sort a vector of integer values into ascending/decending order (optionally
+ * returning the new indices as well).
  *
- * Input/Output Arguments:
- *     in_vec      - vector to be sorted; len x 1
- *     out_vec     - output vector. If NULL, then in_vec is sorted "in-place"
- *     new_idices  - indices to sort in_vec (set to NULL if you don't need them)
- *     len         - number of elements in vectors
- *     descendFLAG - !1:ascending, 1:descending
+ * @param [in,out] in_vec      Vector to be sorted; len x 1
+ * @param [out]    out_vec     Output vector. If NULL, then 'in_vec' is sorted
+ *                             "in-place"
+ * @param [out]    new_idices  Indices used to sort 'in_vec' (set to NULL if you
+ *                             don't want them)
+ * @param [in]     len         Number of elements in vectors
+ * @param [in]     descendFLAG '0' ascending, '1' descending
  */
 void sorti(int* in_vec,
            int* out_vec,
@@ -61,18 +57,17 @@ void sorti(int* in_vec,
            int len,
            int descendFLAG);
     
-/*
- * Function: sortf
- * ---------------
- * Sort a vector of floating-point values into ascending/decending order.
- * Optionally returning the new indices.
+/**
+ * Sort a vector of floating-point values into ascending/decending order
+ * (optionally returning the new indices as well).
  *
- * Input/Output Arguments:
- *     in_vec      - vector to be sorted; len x 1
- *     out_vec     - output vector. If NULL, then in_vec is sorted "in-place"
- *     new_idices  - indices to sort in_vec (set to NULL if you don't need them)
- *     len         - number of elements in vectors
- *     descendFLAG - !1:ascending, 1:descending
+ * @param [in,out] in_vec      Vector to be sorted; len x 1
+ * @param [out]    out_vec     Output vector. If NULL, then 'in_vec' is sorted
+ *                             "in-place"
+ * @param [out]    new_idices  Indices used to sort 'in_vec' (set to NULL if you
+ *                             don't want them)
+ * @param [in]     len         Number of elements in vectors
+ * @param [in]     descendFLAG '0' ascending, '1' descending
  */
 void sortf(float* in_vec,
            float* out_vec,
@@ -80,18 +75,17 @@ void sortf(float* in_vec,
            int len,
            int descendFLAG);
 
-/*
- * Function: sortd
- * ---------------
- * Sort a vector of double floating-point values into ascending/decending order.
- * Optionally returning the new indices.
+/**
+ * Sort a vector of double floating-point values into ascending/decending order
+ * (optionally returning the new indices as well).
  *
- * Input/Output Arguments:
- *     in_vec      - vector to be sorted; len x 1
- *     out_vec     - output vector. If NULL, then in_vec is sorted "in-place"
- *     new_idices  - indices to sort in_vec (set to NULL if you don't need them)
- *     len         - number of elements in vectors
- *     descendFLAG - !1:ascending, 1:descending
+ * @param [in,out] in_vec      Vector to be sorted; len x 1
+ * @param [out]    out_vec     Output vector. If NULL, then 'in_vec' is sorted
+ *                             "in-place"
+ * @param [out]    new_idices  Indices used to sort 'in_vec' (set to NULL if you
+ *                             don't want them)
+ * @param [in]     len         Number of elements in vectors
+ * @param [in]     descendFLAG '0' ascending, '1' descending
  */
 void sortd(double* in_vec,
            double* out_vec,
@@ -99,25 +93,26 @@ void sortd(double* in_vec,
            int len,
            int descendFLAG);
 
-/*
- * Function: findClosestGridPoints
- * -------------------------------
- * Finds indicies into "grid_dirs" that are the closest to "target dirs". e.g.
- *     grid_dirs[idx_closest[0]] will be the closest direction in "grid_dirs"
- *     to target_dirs[0].
+/**
+ * Finds indicies into "grid_dirs" that are the closest to "target dirs".
  *
- * Input Arguments:
- *     grid_dirs    - sph coordinates of grid directions; FLAT: nGrid x 2
- *     nGrid        - number of directions in grid
- *     target_dirs  - sph coordinates of target directions; FLAT: nTarget x 2
- *     nTarget      - number of target directions to find
- *     degFLAG      - 0: coordinates are in RADIANS, 1: coords are in DEGREES
- * Output Arguments:
- *     idx_closest  - resulting indices (set to NULL to ignore); nTarget x 1
- *     dirs_closest - grid_dirs(idx_closest); (set to NULL to ignore);
- *                    nTarget x 1
- *     angle_diff   - angle diff btwn target + grid dir, in degrees (set to NULL
- *                    to ignore); nTarget x 1
+ * - grid_dirs[idx_closest[0]] will be the closest direction in "grid_dirs"
+ *   to target_dirs[0].
+ *
+ * @param [in]  grid_dirs    Spherical coordinates of grid directions;
+ *                           FLAT: nGrid x 2
+ * @param [in]  nGrid        Number of directions in grid
+ * @param [in]  target_dirs  Spherical coordinates of target directions;
+ *                           FLAT: nTarget x 2
+ * @param [in]  nTarget      Number of target directions to find
+ * @param [in]  degFLAG      '0' coordinates are in RADIANS, '1' coords are in
+ *                           DEGREES
+ * @param [out] idx_closest  Resulting indices (set to NULL to ignore);
+ *                           nTarget x 1
+ * @param [out] dirs_closest grid_dirs(idx_closest); (set to NULL to ignore);
+ *                           nTarget x 1
+ * @param [out] angle_diff   Angle diff between target a d grid dir, in degrees
+ *                           (set to NULL to ignore); nTarget x 1
  */
 void findClosestGridPoints(float* grid_dirs,
                            int nGrid,
@@ -127,8 +122,8 @@ void findClosestGridPoints(float* grid_dirs,
                            int* idx_closest,
                            float* dirs_closest,
                            float* angle_diff);
-    
-    
+
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif /* __cplusplus */

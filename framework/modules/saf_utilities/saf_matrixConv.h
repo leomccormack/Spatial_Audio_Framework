@@ -14,17 +14,13 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_matrixConv.h
- * --------------------------
- * Matrix convolver functions mostly stolen from some Matlab scripts by
- * Archontis Politis ;-)
- * (with permission of course)
+/**
+ * @file saf_matrixConv.h
+ * @brief Matrix convolver functions mostly taken from some Matlab scripts by
+ *        Archontis Politis
  *
- * Dependencies:
- *     saf_fft
- * Author, date created:
- *     Leo McCormack, 06.04.2019
+ * @author Leo McCormack
+ * @date 06.04.2019 
  */
 
 #ifndef SAF_MATRIXCOLV_H_INCLUDED
@@ -55,26 +51,23 @@ extern "C" {
  *         H: nChannels x filterLength
  */
 
-
 /* ========================================================================== */
 /*                              Matrix Convolver                              */
 /* ========================================================================== */
 
-/*
- * Function: saf_matrixConv_create
- * -------------------------------
+/**
  * Creates an instance of matrixConv
+ *
  * This is a matrix convolver intended for block-by-block processing.
  *
- * Input Arguments:
- *     phMC        - & address of matrixConv handle
- *     hopSize     - hop size in samples.
- *     H           - time-domain filters; FLAT: nCHout x nCHin x length_h
- *     length_h    - length of the filters
- *     nCHin       - number of input channels
- *     nCHout      - number of output channels
- *     usePartFLAG - 0: normal fft-based convolution, 1: fft-based partitioned
- *                   convolution
+ * @param[in] phMC        (&) address of matrixConv handle
+ * @param[in] hopSize     Hop size in samples.
+ * @param[in] H           Time-domain filters; FLAT: nCHout x nCHin x length_h
+ * @param[in] length_h    Length of the filters
+ * @param[in] nCHin       Number of input channels
+ * @param[in] nCHout      Number of output channels
+ * @param[in] usePartFLAG '0': normal fft-based convolution, '1': fft-based
+ *                        partitioned convolution
  */
 void saf_matrixConv_create(/* Input Arguments */
                            void ** const phMC,
@@ -85,29 +78,23 @@ void saf_matrixConv_create(/* Input Arguments */
                            int nCHout,
                            int usePartFLAG);
 
-/*
- * Function: saf_matrixConv_destroy
- * --------------------------------
+/**
  * Destroys an instance of matrixConv
  *
- * Input Arguments:
- *     phMC     - & address of matrixConv handle
+ * @param[in] phMC (&) address of matrixConv handle
  */
 void saf_matrixConv_destroy(/* Input Arguments */
                             void ** const phMC);
 
-/*
- * Function: saf_matrixConv_apply
- * ------------------------------
+/**
  * Performs the matrix convolution.
- * Note: if the number of input+output channels, the filters, or the hopsize
- * change: simply destroy and re-create the matrixConv instance
  *
- * Input Arguments:
- *     hMC        - matrixConv handle
- *     inputSigs  - input signals;  FLAT: nCHin  x hopSize
- * Output Arguments:
- *     outputSigs - output signals; FLAT: nCHout x hopSize
+ * @note If the number of input+output channels, the filters, or the hopsize
+ *       need tochange: simply destroy and re-create the matrixConv instance.
+ *
+ * @param[in]  hMC        matrixConv handle
+ * @param[in]  inputSigs  Input signals;  FLAT: nCHin  x hopSize
+ * @param[out] outputSigs Output signals; FLAT: nCHout x hopSize
  */
 void saf_matrixConv_apply(/* Input Arguments */
                           void * const hMC,
@@ -120,22 +107,21 @@ void saf_matrixConv_apply(/* Input Arguments */
 /*                            Multi-Channel Convolver                         */
 /* ========================================================================== */
 
-/*
- * Function: saf_multiConv_create
- * ------------------------------
+/**
  * Creates an instance of multiConv
- * This is a multi-channel convolver intended for block-by-block processing.
- * Note: nCH can just be 1, in which case this is simply a single-channel
- * convolver.
  *
- * Input Arguments:
- *     phMC        - & address of multiConv handle
- *     hopSize     - hop size in samples.
- *     H           - time-domain filters; FLAT: nCH x length_h
- *     length_h    - length of the filters
- *     nCH         - number of filters & input/output channels
- *     usePartFLAG - 0: normal fft-based convolution, 1: fft-based partitioned
- *                   convolution
+ * This is a multi-channel convolver intended for block-by-block processing.
+ *
+ * @note nCH can just be 1, in which case this is simply a single-channel
+ *       convolver.
+ *
+ * @param[in] phMC        (&) address of multiConv handle
+ * @param[in] hopSize     Hop size in samples.
+ * @param[in] H           Time-domain filters; FLAT: nCH x length_h
+ * @param[in] length_h    Length of the filters
+ * @param[in] nCH         Number of filters & input/output channels
+ * @param[in] usePartFLAG '0': normal fft-based convolution, '1': fft-based
+ *                        partitioned convolution
  */
 void saf_multiConv_create(/* Input Arguments */
                           void ** const phMC,
@@ -145,27 +131,20 @@ void saf_multiConv_create(/* Input Arguments */
                           int nCH,
                           int usePartFLAG);
 
-/*
- * Function: saf_multiConv_destroy
- * -------------------------------
+/**
  * Destroys an instance of multiConv
  *
- * Input Arguments:
- *     phMC     - & address of multiConv handle
+ * @param[in] phMC (&) address of multiConv handle
  */
-void saf_multiConv_destroy(/*Input Arguments*/
+void saf_multiConv_destroy(/* Input Arguments */
                            void ** const phMC);
 
-/*
- * Function: saf_multiConv_apply
- * -----------------------------
+/**
  * Performs the multi-channel convolution
  *
- * Input Arguments:
- *     hMC        - multiConv handle
- *     inputSigs  - input signals;  FLAT: nCH x hopSize
- * Output Arguments:
- *     outputSigs - output signals; FLAT: nCH x hopSize
+ * @param[in] hMC         multiConv handle
+ * @param[in] inputSigs   Input signals;  FLAT: nCH x hopSize
+ * @param[out] outputSigs Output signals; FLAT: nCH x hopSize
  */
 void saf_multiConv_apply(/* Input Arguments */
                          void * const hMC,

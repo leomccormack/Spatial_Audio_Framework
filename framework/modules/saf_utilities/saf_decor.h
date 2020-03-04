@@ -14,15 +14,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: saf_decor.h
- * ---------------------
- * A collection of signal decorrelators.
+/**
+ * @file saf_decor.h
+ * @brief Collection of signal decorrelators.
  *
- * Dependencies:
- *     none
- * Author, date created:
- *     Leo McCormack, 30.07.2018
+ * @author Leo McCormack
+ * @date 30.07.2018 
  */
 
 #ifndef SAF_DECOR_H_INCLUDED
@@ -31,32 +28,29 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
 
-/*
- * Function: getDecorrelationDelays
- * --------------------------------
+/**
  * Returns delay values for multiple channels per frequency, such that once
  * applied to an input signal (via simple frequency-dependent delay lines), the
  * resulting signal is decorrelated w.r.t the original.
- * Note: this is a very basic algorithm and sounds particulary bad for transient
- * signals. Consider using a transient detector to "duck" the decorrelated
- * signal during such transients, to improve signal fidelity.
  *
- * Input Arguments:
- *     nChannels  - number of channels
- *     freqs      - centre frequencies; nFreqs x 1
- *     nFreqs     - number of elements in frequency vector
- *     fs         - sampling rate
- *     maxTFdelay - max number of time-slots to delay
- *     hopSize    - STFT hop size
- * Output Arguments:
- *     delayTF    - the resulting time delays per channel and frequency;
- *                  FLAT: nFreq x nChannels
+ * @note This is a very basic algorithm and sounds particulary bad for transient
+ *       signals. Consider using a transient detector to "duck" the decorrelated
+ *       signal during such transients, to improve signal fidelity.
+ *
+ * @param[in]  nChannels  Number of channels
+ * @param[in]  freqs      Centre frequencies; nFreqs x 1
+ * @param[in]  nFreqs     Number of elements in frequency vector
+ * @param[in]  fs         Sampling rate
+ * @param[in]  maxTFdelay Max number of time-slots to delay
+ * @param[in]  hopSize    STFT hop size
+ * @param[out] delayTF    The resulting time delays per channel and frequency;
+ *                        FLAT: nFreq x nChannels
  */
 void getDecorrelationDelays(int nChannels,
                             float* freqs,
@@ -66,24 +60,23 @@ void getDecorrelationDelays(int nChannels,
                             int hopSize,
                             int* delayTF);
 
-/*
- * Function: synthesiseNoiseReverb
- * -------------------------------
- * Returns quick and dirty exponentially decaying noise bursts. With long
- * t60 times, it can be used to approximate the late reverberation tail of
- * room impulse responses. With much shorter t60 times, it can be used for
- * decorrelation purposes.
+/**
+ * Returns quick and dirty exponentially decaying noise bursts.
  *
- * Input Arguments:
- *     nChannels   - number of channels
- *     fs          - sampling rate
- *     t60         - t60 times (in seconds) per octave band; nBands x 1
- *     fcen_oct    - octave band centre frequencies; nBands x 1
- *     nBands      - number of octave bands
- *     flattenFLAG - 0: nothing, 1: flattens the magnitude response to unity
- * Output Arguments:
- *     rir_filt    - & the shaped noise bursts; FLAT: nChannels x rir_len
- *     rir_len     - & length of filters
+ * With long T60 times, it can be used to approximate the late reverberation
+ * tail of room impulse responses. With much shorter t60 times, it can be used
+ * for decorrelation purposes.
+ *
+ * @param[in]  nChannels   Number of channels
+ * @param[in]  fs          Sampling rate
+ * @param[in]  t60         T60 times (in seconds) per octave band; nBands x 1
+ * @param[in]  fcen_oct    Octave band centre frequencies; nBands x 1
+ * @param[in]  nBands      Number of octave bands
+ * @param[in]  flattenFLAG '0' nothing, '1' flattens the magnitude response to
+ *                         unity
+ * @param[out] rir_filt    (&) the shaped noise bursts;
+ *                         FLAT: nChannels x rir_len
+ * @param[out] rir_len     (&) length of filters, in samples
  */
 void synthesiseNoiseReverb(int nChannels,
                            float fs,
