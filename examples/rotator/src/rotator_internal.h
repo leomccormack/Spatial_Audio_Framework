@@ -14,20 +14,18 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: rotator_internal.h
- * ----------------------------
- * A simple spherical harmonic domain rotator, based on the recursive approach
- * detailed in [1].
+/**
+ * @file rotator_internal.h
+ * @brief  A simple spherical harmonic domain rotator, based on the recursive
+ *         approach detailed in [1].
  *
- * Dependencies:
- *     saf_utilities, saf_sh
- * Author, date created:
- *     Leo McCormack, 02.11.2017
+ * @see [1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real
+ *          Spherical Harmonics. Direct Determination by Recursion Page:
+ *          Additions and Corrections. Journal of Physical Chemistry A, 102(45),
+ *          9099?9100.
  *
- * [1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical
- *     Harmonics. Direct Determination by Recursion Page: Additions and
- *     Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100.
+ * @author Leo McCormack
+ * @date 02.11.2017
  */
 
 #ifndef __ROTATOR_INTERNAL_H_INCLUDED__
@@ -61,6 +59,9 @@ extern "C" {
 /*                                 Structures                                 */
 /* ========================================================================== */
 
+/**
+ * Main struct for the rotator
+ */
 typedef struct _rotator
 {
     float inputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
@@ -75,12 +76,12 @@ typedef struct _rotator
     int recalc_M_rotFLAG;
 
     /* user parameters */
-    float yaw, roll, pitch;      /* rotation angles in degrees */
-    int bFlipYaw, bFlipPitch, bFlipRoll;  /* flag to flip the sign of the individual rotation angles */
-    CH_ORDER chOrdering;         /* only ACN is supported */
-    NORM_TYPES norm;             /* N3D or SN3D */
-    INPUT_ORDERS inputOrder;     /* current input/output order int order;*/
-    int useRollPitchYawFlag;     /* rotation order flag, 1: r-p-y, 0: y-p-r */
+    float yaw, roll, pitch;               /**< rotation angles in degrees */
+    int bFlipYaw, bFlipPitch, bFlipRoll;  /**< flag to flip the sign of the individual rotation angles */
+    ROTATOR_CH_ORDER chOrdering;          /**< only ACN is supported */
+    ROTATOR_NORM_TYPES norm;              /**< N3D or SN3D */
+    ROTATOR_INPUT_ORDERS inputOrder;      /**< current input/output order int order;*/
+    int useRollPitchYawFlag;              /**< rotation order flag, 1: r-p-y, 0: y-p-r */
     
 } rotator_data;
     

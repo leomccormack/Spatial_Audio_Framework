@@ -14,23 +14,25 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: dirass.c
- * ------------------
- * A sound-field visualiser based on the directional re-assignment of beamformer
- * energy, utilising the DoA estimates extracted from spatially-localised
- * active-intensity (SLAI) vectors; which are centred around each of the
- * corresponding scanning grid directions [1].
+/**
+ * @file dirass.c
+ * @brief A sound-field visualiser based on the directional re-assignment of
+ *        beamformer energy, utilising the DoA estimates extracted from
+ *        spatially-localised active-intensity (SLAI) vectors; which are centred
+ *        around each of the corresponding scanning grid directions [1,2].
  *
- * Dependencies:
- *     saf_utilities, saf_vbap, saf_sh
- * Author, date created:
- *     Leo McCormack, 21.02.2019
+ * @see [1] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of
+ *          angular spectra based on a directional re-assignment approach for
+ *          ambisonic sound-field visualisation". IEEE International Conference
+ *          on Acoustics, Speech and Signal Processing (ICASSP).
+ * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
+ *          Spatially Localized Active-Intensity Vectors for Sound-Field
+ *          Visualization. Journal of the Audio Engineering Society, 67(11),
+ *          pp.840-854.
  *
- * [1] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular
- *     spectra based on a directional re-assignment approach for ambisonic
- *     sound-field visualisation". IEEE International Conference on Acoustics,
- *     Speech and Signal Processing (ICASSP).
+ * @author Leo McCormack
+ * @date 21.02.2019
  */
 
 #include "dirass.h"
@@ -46,8 +48,8 @@ void dirass_create
     int i;
     
     /* codec data */
-    pData->pars = (codecPars*)malloc1d(sizeof(codecPars));
-    codecPars* pars = pData->pars;
+    pData->pars = (dirass_codecPars*)malloc1d(sizeof(dirass_codecPars));
+    dirass_codecPars* pars = pData->pars;
     pars->interp_dirs_deg = NULL;
     pars->interp_dirs_rad = NULL;
     pars->Y_up = NULL;
@@ -99,7 +101,7 @@ void dirass_destroy
 )
 {
     dirass_data *pData = (dirass_data*)(*phDir);
-    codecPars* pars = pData->pars;
+    dirass_codecPars* pars = pData->pars;
     int i;
     
     if (pData != NULL) {
@@ -141,7 +143,7 @@ void dirass_init
 )
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    codecPars* pars = pData->pars;
+    dirass_codecPars* pars = pData->pars;
 
     pData->fs = sampleRate;
     
@@ -195,7 +197,7 @@ void dirass_analysis
 )
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    codecPars* pars = pData->pars;
+    dirass_codecPars* pars = pData->pars;
     int i, j, k, n, ch, sec_nSH, secOrder, nSH, up_nSH;
     int o[MAX_INPUT_SH_ORDER+2];
     float intensity[3];
@@ -203,8 +205,8 @@ void dirass_analysis
     /* local parameters */
     int inputOrder, DirAssMode, upscaleOrder;
     float pmapAvgCoeff, minFreq_hz, maxFreq_hz;
-    NORM_TYPES norm;
-    CH_ORDER chOrdering;
+    DIRASS_NORM_TYPES norm;
+    DIRASS_CH_ORDER chOrdering;
     
     /* The main processing: */
     if (nSamples == FRAME_SIZE && (pData->codecStatus==CODEC_STATUS_INITIALISED) && isPlaying ) {
@@ -429,8 +431,8 @@ void dirass_refreshSettings(void* const hDir)
 void dirass_setBeamType(void* const hDir, int newType)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    if(pData->beamType != (BEAM_TYPES)newType){
-        pData->beamType = (BEAM_TYPES)newType;
+    if(pData->beamType != (DIRASS_BEAM_TYPES)newType){
+        pData->beamType = (DIRASS_BEAM_TYPES)newType;
         dirass_setCodecStatus(hDir, CODEC_STATUS_NOT_INITIALISED);
     }
 }
@@ -479,7 +481,7 @@ void dirass_setUpscaleOrder(void* const hDir,  int newValue)
 void dirass_setDiRAssMode(void* const hDir,  int newMode)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    codecPars* pars = pData->pars;
+    dirass_codecPars* pars = pData->pars;
     if(pData->DirAssMode!=newMode){
         pData->DirAssMode = newMode;
         if(pars->prev_intensity!=NULL)
@@ -503,22 +505,22 @@ void dirass_setMaxFreq(void* const hDir,  float newValue)
 void dirass_setChOrder(void* const hDir, int newOrder)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    if((CH_ORDER)newOrder != CH_FUMA || pData->new_inputOrder==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->chOrdering = (CH_ORDER)newOrder;
+    if((DIRASS_CH_ORDER)newOrder != CH_FUMA || pData->new_inputOrder==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (DIRASS_CH_ORDER)newOrder;
 }
 
 void dirass_setNormType(void* const hDir, int newType)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    if((NORM_TYPES)newType != NORM_FUMA || pData->new_inputOrder==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->norm = (NORM_TYPES)newType;
+    if((DIRASS_NORM_TYPES)newType != NORM_FUMA || pData->new_inputOrder==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (DIRASS_NORM_TYPES)newType;
 }
 
 void dirass_setDispFOV(void* const hDir, int newOption)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    if(pData->HFOVoption != (HFOV_OPTIONS)newOption){
-        pData->HFOVoption = (HFOV_OPTIONS)newOption;
+    if(pData->HFOVoption != (DIRASS_HFOV_OPTIONS)newOption){
+        pData->HFOVoption = (DIRASS_HFOV_OPTIONS)newOption;
         dirass_setCodecStatus(hDir, CODEC_STATUS_NOT_INITIALISED);
     }
 }
@@ -526,8 +528,8 @@ void dirass_setDispFOV(void* const hDir, int newOption)
 void dirass_setAspectRatio(void* const hDir, int newOption)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    if(pData->aspectRatioOption != (ASPECT_RATIO_OPTIONS)newOption){
-        pData->aspectRatioOption = (ASPECT_RATIO_OPTIONS)newOption;
+    if(pData->aspectRatioOption != (DIRASS_ASPECT_RATIO_OPTIONS)newOption){
+        pData->aspectRatioOption = (DIRASS_ASPECT_RATIO_OPTIONS)newOption;
         dirass_setCodecStatus(hDir, CODEC_STATUS_NOT_INITIALISED);
     }
 }
@@ -547,7 +549,7 @@ void dirass_requestPmapUpdate(void* const hDir)
 
 /* GETS */
 
-CODEC_STATUS dirass_getCodecStatus(void* const hDir)
+DIRASS_CODEC_STATUS dirass_getCodecStatus(void* const hDir)
 {
     dirass_data *pData = (dirass_data*)(hDir);
     return pData->codecStatus;
@@ -658,7 +660,7 @@ float dirass_getMapAvgCoeff(void* const hDir)
 int dirass_getPmap(void* const hDir, float** grid_dirs, float** pmap, int* nDirs,int* pmapWidth, int* hfov, float* aspectRatio) 
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    codecPars* pars = pData->pars;
+    dirass_codecPars* pars = pData->pars;
     if((pData->codecStatus == CODEC_STATUS_INITIALISED) && pData->pmapReady){
         (*grid_dirs) = pars->interp_dirs_deg;
         (*pmap) = pData->pmap_grid[pData->dispSlotIdx-1 < 0 ? NUM_DISP_SLOTS-1 : pData->dispSlotIdx-1];
@@ -680,7 +682,3 @@ int dirass_getPmap(void* const hDir, float** grid_dirs, float** pmap, int* nDirs
     }
     return pData->pmapReady;
 }
-
-
-
-

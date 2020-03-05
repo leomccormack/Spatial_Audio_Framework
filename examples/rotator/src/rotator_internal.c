@@ -14,20 +14,18 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: rotator_internal.c
- * ----------------------------
- * A simple spherical harmonic domain rotator, based on the recursive approach
- * detailed in [1].
+/**
+ * @file rotator_internal.c
+ * @brief  A simple spherical harmonic domain rotator, based on the recursive
+ *         approach detailed in [1].
  *
- * Dependencies:
- *     saf_utilities, saf_sh
- * Author, date created:
- *     Leo McCormack, 02.11.2017
+ * @see [1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real
+ *          Spherical Harmonics. Direct Determination by Recursion Page:
+ *          Additions and Corrections. Journal of Physical Chemistry A, 102(45),
+ *          9099?9100.
  *
- * [1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical
- *     Harmonics. Direct Determination by Recursion Page: Additions and
- *     Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100.
+ * @author Leo McCormack
+ * @date 02.11.2017
  */
 
 #include "rotator.h"

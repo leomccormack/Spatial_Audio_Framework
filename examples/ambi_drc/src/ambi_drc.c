@@ -14,26 +14,26 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: ambi_drc.c
- * --------------------
- * A frequency-dependent spherical harmonic domain dynamic range compressor
- * (DRC). The implementation can also keep track of the frequency-dependent gain
+/**
+ * @file ambi_drc.c
+ * @brief A frequency-dependent spherical harmonic domain dynamic range
+ *        compressor (DRC).
+ *
+ * The implementation can also keep track of the frequency-dependent gain
  * factors for the omnidirectional component over time, for optional plotting.
  * The design is based on the algorithm presented in [1].
+ *
  * The DRC gain factors are determined based on analysing the omnidirectional
  * component. These gain factors are then applied to the higher-order
  * components, in a such a manner as to retain the spatial information within
  * them.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib
- * Author, date created:
- *     Leo McCormack, 07.01.2017
+ * @author Leo McCormack
+ * @date 07.01.2017
  *
- * [1] McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range
- *     Compression". in Proceedings of the 14th Sound and Music Computing
- *     Conference, July 5-8, Espoo, Finland.
+ * @see [1] McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range
+ *          Compression". in Proceedings of the 14th Sound and Music Computing
+ *          Conference, July 5-8, Espoo, Finland.
  */
 
 #include "ambi_drc.h"
@@ -322,18 +322,18 @@ void ambi_drc_setRelease(void* const hAmbi, float newValue)
 void ambi_drc_setChOrder(void* const hAmbi, int newOrder)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    if((CH_ORDER)newOrder != CH_FUMA || pData->currentOrder==INPUT_ORDER_1)/* FUMA only supports 1st order */
-        pData->chOrdering = (CH_ORDER)newOrder;
+    if((AMBI_DRC_CH_ORDER)newOrder != CH_FUMA || pData->currentOrder==INPUT_ORDER_1)/* FUMA only supports 1st order */
+        pData->chOrdering = (AMBI_DRC_CH_ORDER)newOrder;
 }
 
 void ambi_drc_setNormType(void* const hAmbi, int newType)
 {
     ambi_drc_data *pData = (ambi_drc_data*)hAmbi;
-    if((NORM_TYPES)newType != NORM_FUMA || pData->currentOrder==INPUT_ORDER_1)/* FUMA only supports 1st order */
-        pData->norm = (NORM_TYPES)newType;
+    if((AMBI_DRC_NORM_TYPES)newType != NORM_FUMA || pData->currentOrder==INPUT_ORDER_1)/* FUMA only supports 1st order */
+        pData->norm = (AMBI_DRC_NORM_TYPES)newType;
 }
 
-void ambi_drc_setInputPreset(void* const hAmbi, INPUT_ORDER newPreset)
+void ambi_drc_setInputPreset(void* const hAmbi, AMBI_DRC_INPUT_ORDER newPreset)
 {
     ambi_drc_data *pData = (ambi_drc_data*)hAmbi;
     ambi_drc_setInputOrder(newPreset, &(pData->new_nSH));
@@ -434,7 +434,7 @@ int ambi_drc_getNormType(void* const hAmbi)
     return (int)pData->norm;
 }
 
-INPUT_ORDER ambi_drc_getInputPreset(void* const hAmbi)
+AMBI_DRC_INPUT_ORDER ambi_drc_getInputPreset(void* const hAmbi)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
     return pData->currentOrder;

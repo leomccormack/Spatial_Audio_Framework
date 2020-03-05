@@ -14,15 +14,11 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: matrixconv.h (include header)
- * ---------------------------------------
- * A matrix convolver
- *
- * Dependencies:
- *     saf_utilities
- * Author, date created:
- *     Leo McCormack, 30.09.2019
+/**
+ * @file matrixconv.h
+ * @brief A standard matrix convolver
+ * @author Leo McCormack
+ * @date 30.09.2019
  */
 
 #ifndef __MATRIXCONV_H_INCLUDED__
@@ -43,50 +39,39 @@ extern "C" {
 /*                               Main Functions                               */
 /* ========================================================================== */
 
-/*
- * Function: matrixconv_create
- * ---------------------------
+/**
  * Creates an instance of matrixconv
  *
- * Input Arguments:
- *     phMCnv - & address of matrixconv handle
+ * @param[in] phMCnv (&) address of matrixconv handle
  */
 void matrixconv_create(void** const phMCnv);
 
-/*
- * Function: matrixconv_destroy
- * ----------------------------
+/**
  * Destroys an instance of matrixconv
  *
- * Input Arguments:
- *     phMCnv - & address of matrixconv handle
+ * @param[in] phMCnv (&) address of matrixconv handle
  */
 void matrixconv_destroy(void** const phMCnv);
 
-/*
- * Function: matrixconv_init
- * -------------------------
+/**
  * Initialises an instance of matrixconv with default settings
  *
- * Input Arguments:
- *     hMCnv      - matrixconv handle
- *     samplerate - host samplerate.
+ * @param[in] hMCnv      matrixconv handle
+ * @param[in] samplerate Host samplerate.
  */
 void matrixconv_init(void* const hMCnv,
                     int samplerate,
                     int hostBlockSize);
-    
-/*
- * Function: matrixconv_process
- * ----------------------------
+
+/**
+ * Performs the matrix convolution processing
  *
- * Input Arguments:
- *     hMCnv     - matrixconv handle
- *     inputs    - input channel buffers; 2-D array: nInputs x nSamples
- *     outputs   - Output channel buffers; 2-D array: nOutputs x nSamples
- *     nInputs   - number of input channels
- *     nOutputs  - number of output channels
- *     nSamples  - number of samples in 'inputs'/'output' matrices
+ * @param[in] hMCnv     matrixconv handle
+ * @param[in] inputs    Input channel buffers; 2-D array: nInputs x nSamples
+ * @param[in] outputs   Output channel buffers; 2-D array: nOutputs x nSamples
+ * @param[in] nInputs   Number of input channels
+ * @param[in] nOutputs  Number of output channels
+ * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void matrixconv_process(void* const hMCnv,
                        float** const inputs,
@@ -95,41 +80,59 @@ void matrixconv_process(void* const hMCnv,
                        int nOutputs,
                        int nSamples);
 
-    
+
 /* ========================================================================== */
 /*                                Set Functions                               */
 /* ========================================================================== */
     
+/**
+ * Sets all intialisation flags to 1. Re-initialising all settings/variables,
+ * as matrixconv is currently configured, at next available opportunity.
+ */
 void matrixconv_refreshParams(void* const hMCnv);
 
+/**
+ * Checks whether things have to be reinitialised, and does so if it is needed
+ */
 void matrixconv_checkReInit(void* const hMCnv);
 
-/*
- * Function: matrixconv_setFilters
- * -------------------------------
- * matrixconv loads the matrix of filters, which should have the input filters
+/**
+ * Loads the matrix of filters, which should have the input filters
  * concatenated for each output.
- * for example, a matrix: 25 x 32 x 512 (numInputs x numOutputs x filterLength)
+ *
+ * For example, a matrix: 25 x 32 x 512 (numInputs x numOutputs x filterLength)
  * should be loaded as a 25 x 16384   (note 32x512=16384).
+ *
  * This is then divided by the number of inputs, which should be user specified
  * to be 32 in this case.
  *
- * Input Arguments:
- *     hMCnv       - matrixconv handle
- *     H           - input channel buffers; 2-D array: numChannels x nSamples
- *     numChannels - number of channels in loaded data (also the number of
- *                   outputs)
- *     numSamples  - number of samples (per channel) in the loaded data
- *     sampleRate  - samplerate of the loaded data
+ * @param[in] hMCnv       matrixconv handle
+ * @param[in] H           Input channel buffers; 2-D array:
+ *                        numChannels x nSamples
+ * @param[in] numChannels Number of channels in loaded data (also the number of
+ *                        outputs)
+ * @param[in] numSamples  Number of samples (per channel) in the loaded data
+ * @param[in] sampleRate  Samplerate of the loaded data
  */
 void matrixconv_setFilters(void* const hMCnv,
                            const float** H,
                            int numChannels,
                            int numSamples,
                            int sampleRate);
-    
+
+/**
+ * Enable (1), disable (0), partitioned convolution
+ */
 void matrixconv_setEnablePart(void* const hMCnv, int newState);
     
+/**
+ * Sets the number of input channels.
+ *
+ * @note The loaded wav data channels are divided by the number of channels
+ *       (into equal lengths). These are interpreted by matrixconv as the
+ *       filters to apply to each input channel to acquire the corresponding
+ *       output channel
+ */
 void matrixconv_setNumInputChannels(void* const hMCnv, int newValue);
     
 
@@ -137,20 +140,47 @@ void matrixconv_setNumInputChannels(void* const hMCnv, int newValue);
 /*                                Get Functions                               */
 /* ========================================================================== */
  
+/**
+ * Returns a flag indicating whether partitioned convolution is enabled (1) or
+ * disabled (0)
+ */
 int matrixconv_getEnablePart(void* const hMCnv);
     
+/**
+ * Returns the number input channels
+ */
 int matrixconv_getNumInputChannels(void* const hMCnv);
-    
+
+/**
+ * Returns the number of output channels (the same as the number of channels in
+ * the loaded wav file)
+ */
 int matrixconv_getNumOutputChannels(void* const hMCnv);
-    
+
+/**
+ * Returns the currect host block size
+ */
 int matrixconv_getHostBlockSize(void* const hMCnv);
-    
+
+/**
+ * Returns the number of filters in the loaded wav file (number of outputs
+ * multiplied by the number of inputs)
+ */
 int matrixconv_getNfilters(void* const hMCnv);
-    
+
+/**
+ * Returns the current filter length, in samples
+ */
 int matrixconv_getFilterLength(void* const hMCnv);
-    
+
+/**
+ * Returns the samplerate of the loaded filters
+ */
 int matrixconv_getFilterFs(void* const hMCnv);
-    
+
+/**
+ * Returns the samperate of the host
+ */
 int matrixconv_getHostFs(void* const hMCnv);
     
     

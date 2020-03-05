@@ -272,7 +272,7 @@ void getBinDecoder_TA(/* Input Arguments */
 
 /**
  * Computes a binaural ambisonic decoder based on the magnitude least-squares
- * (MagLS) method described in [1].
+ * (MagLS) method first described in [1], and with the algorithm given in [2].
  *
  * The binaural ambisonic decoder is computed for each frequency bin/band,
  * ready to be applied to input SH signals in the time-frequency domain, or,
@@ -296,6 +296,7 @@ void getBinDecoder_TA(/* Input Arguments */
  * @see [1] Schörkhuber C, Zaunschirm M, Höldrich R. Binaural Rendering of
  *          Ambisonic Signals via Magnitude Least Squares. InProceedings of the
  *          DAGA 2018 (Vol. 44, pp. 339-342).
+ * @see [2] Zotter, F., & Frank, M. (2019). Ambisonics. Springer Open.
  */
 void getBinDecoder_MAGLS(/* Input Arguments */
                          float_complex* hrtfs,

@@ -358,7 +358,7 @@ void computeVelCoeffsMtx(/* Input Arguments */
  *
  * This partitioning of the sound-field into spatially-localised sectors has
  * been used for parametric sound-field reproduction in [1] and visualisation in
- * [2].
+ * [2,3].
  *
  * @param[in]  orderSec     Order of sector patterns
  * @param[in]  A_xyz        Velocity coefficients (see "computeVelCoeffsMtx");
@@ -379,6 +379,11 @@ void computeVelCoeffsMtx(/* Input Arguments */
  *          angular spectra based on a directional re-assignment approach for
  *          ambisonic sound-field visualisation". IEEE International Conference '
  *          on Acoustics, Speech and Signal Processing (ICASSP).
+ * @see [3] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
+ *          Spatially Localized Active-Intensity Vectors for Sound-Field
+ *          Visualization. Journal of the Audio Engineering Society, 67(11),
+ *          pp.840-854.
  */
 float computeSectorCoeffsEP(/* Input Arguments */
                             int orderSec,
@@ -395,7 +400,7 @@ float computeSectorCoeffsEP(/* Input Arguments */
  *
  * This partitioning of the sound-field into spatially-localised sectors has
  * been used for parametric sound-field reproduction in [1] and visualision in
- * [2].
+ * [2,3].
  *
  * @param[in]  orderSec     Order of sector patterns
  * @param[in]  A_xyz        Velocity coefficients (see "computeVelCoeffsMtx");
@@ -416,6 +421,11 @@ float computeSectorCoeffsEP(/* Input Arguments */
  *          angular spectra based on a directional re-assignment approach for
  *          ambisonic sound-field visualisation". IEEE International Conference
  *          on Acoustics, Speech and Signal Processing (ICASSP).
+ * @see [3] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
+ *          Spatially Localized Active-Intensity Vectors for Sound-Field
+ *          Visualization. Journal of the Audio Engineering Society, 67(11),
+ *          pp.840-854.
  */
 float computeSectorCoeffsAP(/* Input Arguments */
                             int orderSec,
@@ -683,7 +693,7 @@ void generateMVDRmap(/* Input arguments */
                      float_complex* w_MVDR);
 
 /**
- * EXPERIMENTAL Generates a powermap utilising the CroPaC LCMV post-filter
+ * EXPERIMENTAL! Generates a powermap utilising the CroPaC LCMV post-filter
  * described in [1].
  *
  * The spatial post-filter is estimated for all directions on the grid, and is

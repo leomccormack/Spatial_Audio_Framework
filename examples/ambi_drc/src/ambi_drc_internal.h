@@ -14,26 +14,26 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: ambi_drc_internal.h
- * -----------------------------
- * A frequency-dependent spherical harmonic domain dynamic range compressor
- * (DRC). The implementation can also keep track of the frequency-dependent gain
+/**
+ * @file ambi_drc_internal.h
+ * @brief A frequency-dependent spherical harmonic domain dynamic range
+ *        compressor (DRC).
+ *
+ * The implementation can also keep track of the frequency-dependent gain
  * factors for the omnidirectional component over time, for optional plotting.
  * The design is based on the algorithm presented in [1].
+ *
  * The DRC gain factors are determined based on analysing the omnidirectional
  * component. These gain factors are then applied to the higher-order
  * components, in a such a manner as to retain the spatial information within
  * them.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib
- * Author, date created:
- *     Leo McCormack, 07.01.2017
+ * @author Leo McCormack
+ * @date 07.01.2017
  *
- * [1] McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range
- *     Compression". in Proceedings of the 14th Sound and Music Computing
- *     Conference, July 5-8, Espoo, Finland.
+ * @see [1] McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range
+ *          Compression". in Proceedings of the 14th Sound and Music Computing
+ *          Conference, July 5-8, Espoo, Finland.
  */
 
 #ifndef __AMBI_DRC_INTERNAL_H_INCLUDED__
@@ -53,6 +53,10 @@ extern "C" {
 /*                                 Structures                                 */
 /* ========================================================================== */
     
+/**
+ * Main structure for ambi_drc. Contains variables for audio buffers, afSTFT,
+ * internal variables, user parameters
+ */
 typedef struct _ambi_drc
 {    
     /* audio buffers and afSTFT handle */
@@ -69,7 +73,7 @@ typedef struct _ambi_drc
     int nSH, new_nSH;
     float fs;
     float yL_z1[HYBRID_BANDS];
-    int reInitTFT; /* 0: no init required, 1: init required, 2: init in progress */
+    int reInitTFT; /**< 0: no init required, 1: init required, 2: init in progress */
 
 #ifdef ENABLE_TF_DISPLAY
     int wIdx, rIdx;
@@ -80,9 +84,9 @@ typedef struct _ambi_drc
 
     /* user parameters */
     float theshold, ratio, knee, inGain, outGain, attack_ms, release_ms;
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
-    INPUT_ORDER currentOrder;
+    AMBI_DRC_CH_ORDER chOrdering;
+    AMBI_DRC_NORM_TYPES norm;
+    AMBI_DRC_INPUT_ORDER currentOrder;
     
 } ambi_drc_data;
      
@@ -95,17 +99,12 @@ float ambi_drc_gainComputer(float xG, float T, float R, float W);
 
 float ambi_drc_smoothPeakDetector(float xL, float yL_z1, float alpha_a, float alpha_r);
     
-/*
- * ambi_drc_initTFT
- * ----------------
- * Initialise the filterbank used by ambi_drc. 
- *
- * Input Arguments:
- *     hAmbi - ambi_drc handle
+/**
+ * Initialise the filterbank used by ambi_drc.
  */
 void ambi_drc_initTFT(void* const hAmbi);
 
-void ambi_drc_setInputOrder(INPUT_ORDER inOrder, int* nSH);
+void ambi_drc_setInputOrder(AMBI_DRC_INPUT_ORDER inOrder, int* nSH);
 
     
 #ifdef __cplusplus

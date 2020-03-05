@@ -14,15 +14,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: ambi_enc_internal.h
- * -----------------------------
- * A simple, but flexible, Ambisonic encoder,
+/**
+ * @file ambi_enc_internal.h
+ * @brief A simple, but flexible, Ambisonic encoder.
  *
- * Dependencies:
- *     saf_utilities, saf_sh
- * Author, date created:
- *     Leo McCormack, 07.10.2016
+ * @author Leo McCormack
+ * @date 07.10.2016
  */
 
 #ifndef __AMBI_ENC_INTERNAL_H_INCLUDED__
@@ -47,14 +44,12 @@ extern "C" {
 #define MAX_NUM_SH_SIGNALS ( (MAX_ORDER + 1)*(MAX_ORDER + 1) ) /* (L+1)^2 */
 #define MAX_NUM_SOURCES_IN_PRESET ( AMBI_ENC_MAX_NUM_INPUTS )
 
-    
+
 /* ========================================================================== */
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/*
- * Struct: ambi_enc
- * ----------------
+/**
  * Main structure for ambi_enc. Contains variables for audio buffers, internal
  * variables, user parameters
  */
@@ -74,9 +69,9 @@ typedef struct _ambi_enc
     int nSources;
     int new_nSources;
     float src_dirs_deg[MAX_NUM_INPUTS][2];
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
-    OUTPUT_ORDERS order;
+    AMBI_ENC_CH_ORDER chOrdering;
+    AMBI_ENC_NORM_TYPES norm;
+    AMBI_ENC_OUTPUT_ORDERS order;
     
 } ambi_enc_data;
     
@@ -85,24 +80,21 @@ typedef struct _ambi_enc
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/*
- * Function: loadSourceConfigPreset
- * --------------------------------
+/**
  * Returns the source directions for a specified source config preset.
+ *
  * The function also returns the number of source in the configuration
  * Note: default uniformly distributed points are used to pad the
  * dirs_deg matrix up to the MAX_NUM_SOURCES_IN_PRESET, if nCH is less than
  * this. This can help avoid scenarios of many sources being panned in the same
  * direction, or triangulations errors.
  *
- * Input Arguments:
- *     preset   - see "SOURCE_CONFIG_PRESETS" enum
- * Output Arguments:
- *     dirs_deg - source directions, [azimuth elevation] convention, in
- *                DEGREES;
- *     nCH      - & number of source directions in the configuration
+ * @param[in]  preset   See "AMBI_ENC_SOURCE_CONFIG_PRESETS" enum
+ * @param[out] dirs_deg Source directions, [azimuth elevation] convention, in
+ *                      DEGREES;
+ * @param[out] nCH      (&) number of source directions in the configuration
  */
-void loadSourceConfigPreset(SOURCE_CONFIG_PRESETS preset,
+void loadSourceConfigPreset(AMBI_ENC_SOURCE_CONFIG_PRESETS preset,
                             float dirs_deg[MAX_NUM_SOURCES_IN_PRESET][2],
                             int* nCH);
 

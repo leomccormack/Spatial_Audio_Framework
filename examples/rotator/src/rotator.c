@@ -14,20 +14,18 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: rotator.c
- * -------------------
- * A simple spherical harmonic domain rotator, based on the recursive approach
- * detailed in [1].
+/**
+ * @file rotator.c
+ * @brief  A simple spherical harmonic domain rotator, based on the recursive
+ *         approach detailed in [1].
  *
- * Dependencies:
- *     saf_utilities, saf_sh
- * Author, date created:
- *     Leo McCormack, 02.11.2017
+ * @see [1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real
+ *          Spherical Harmonics. Direct Determination by Recursion Page:
+ *          Additions and Corrections. Journal of Physical Chemistry A, 102(45),
+ *          9099?9100.
  *
- * [1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical
- *     Harmonics. Direct Determination by Recursion Page: Additions and
- *     Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100.
+ * @author Leo McCormack
+ * @date 02.11.2017
  */
 
 #include "rotator.h"
@@ -102,8 +100,8 @@ void rotator_process
     int o[MAX_SH_ORDER+2];
     float Rxyz[3][3];
     float* M_rot_tmp;
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
+    ROTATOR_CH_ORDER chOrdering;
+    ROTATOR_NORM_TYPES norm;
  
     if (nSamples == FRAME_SIZE) {
         /* prep */
@@ -303,21 +301,21 @@ void rotator_setRPYflag(void* const hRot, int newState)
 void rotator_setChOrder(void* const hRot, int newOrder)
 {
     rotator_data *pData = (rotator_data*)(hRot);
-    if((CH_ORDER)newOrder != CH_FUMA || pData->inputOrder==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->chOrdering = (CH_ORDER)newOrder;
+    if((ROTATOR_CH_ORDER)newOrder != CH_FUMA || pData->inputOrder==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (ROTATOR_CH_ORDER)newOrder;
 }
 
 void rotator_setNormType(void* const hRot, int newType)
 {
     rotator_data *pData = (rotator_data*)(hRot);
-    if((NORM_TYPES)newType != NORM_FUMA || pData->inputOrder==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->norm = (NORM_TYPES)newType;
+    if((ROTATOR_NORM_TYPES)newType != NORM_FUMA || pData->inputOrder==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (ROTATOR_NORM_TYPES)newType;
 }
 
 void rotator_setOrder(void* const hRot, int newOrder)
 {
     rotator_data *pData = (rotator_data*)(hRot);
-    pData->inputOrder = (INPUT_ORDERS)newOrder;
+    pData->inputOrder = (ROTATOR_INPUT_ORDERS)newOrder;
     pData->recalc_M_rotFLAG = 1;
     /* FUMA only supports 1st order */
     if(pData->inputOrder!=INPUT_ORDER_FIRST && pData->chOrdering == CH_FUMA)

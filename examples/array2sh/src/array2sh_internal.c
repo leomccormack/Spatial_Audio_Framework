@@ -14,30 +14,29 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: array2sh_internal.c
- * -----------------------------
- * Spatially encodes spherical or cylindrical sensor array signals into
- * spherical harmonic signals utilising theoretical encoding filters.
+/**
+ * @file array2sh_internal.c
+ * @brief Spatially encodes spherical or cylindrical sensor array signals into
+ *        spherical harmonic signals utilising theoretical encoding filters.
+ *
  * The algorithms within array2sh were pieced together and developed in
  * collaboration with Symeon Delikaris-Manias and Angelo Farina.
  * A detailed explanation of the algorithms within array2sh can be found in [1].
  * Also included, is a diffuse-field equalisation option for frequencies past
  * aliasing, developed in collaboration with Archontis Politis, 8.02.2019
- * Note: since the algorithms are based on theory, only array designs where
- * there are analytical solutions available are supported. i.e. only spherical
- * or cylindrical arrays, which have phase-matched sensors.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_sh, saf_hoa, saf_vbap
- * Author, date created:
- *     Leo McCormack, 13.09.2017
+ * @note Since the algorithms are based on theory, only array designs where
+ *       there are analytical solutions available are supported. i.e. only
+ *       spherical or cylindrical arrays, which have phase-matched sensors.
  *
- * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
- *     V., “Real-time conversion of sensor array signals into spherical harmonic
- *     signals with applications to spatially localised sub-band sound-field
- *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
- *     Society, 2018.
+ * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
+ *          Pulkki, V., “Real-time conversion of sensor array signals into
+ *          spherical harmonic signals with applications to spatially localised
+ *          sub-band sound-field analysis,” in Audio Engineering Society
+ *          Convention 144, Audio Engineering Society, 2018.
+ *
+ * @author Leo McCormack
+ * @date 13.09.2017
  */
 
 #include "array2sh_internal.h"
@@ -66,7 +65,7 @@ void array2sh_initTFT
 )
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     int new_nSH, nSH;
     
     new_nSH = (pData->new_order+1)*(pData->new_order+1);
@@ -87,7 +86,7 @@ void array2sh_calculate_sht_matrix
 )
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     int i, j, band, n, order, nSH;
     double alpha, beta, g_lim, regPar;
     double kr[HYBRID_BANDS], kR[HYBRID_BANDS];
@@ -370,7 +369,7 @@ void array2sh_calculate_sht_matrix
 void array2sh_apply_diff_EQ(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     int i, j, band, array_order, idxf_alias, nSH;
     float f_max, kR_max, f_alias, f_f_alias;
     double_complex* dM_diffcoh_s;
@@ -506,7 +505,7 @@ void array2sh_calculate_mag_curves(void* const hA2sh)
 void array2sh_evaluateSHTfilters(void* hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     int band, i, j, simOrder, order, nSH;
     double kr[HYBRID_BANDS];
     double kR[HYBRID_BANDS];
@@ -602,22 +601,22 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
 
 void array2sh_createArray(void ** const hPars)
 {
-    arrayPars* pars = (arrayPars*)malloc1d(sizeof(arrayPars));
+    array2sh_arrayPars* pars = (array2sh_arrayPars*)malloc1d(sizeof(array2sh_arrayPars));
     *hPars = (void*)pars;
 }
 
 void array2sh_destroyArray(void ** const hPars)
 {
-    arrayPars *pars = (arrayPars*)(*hPars);
+    array2sh_arrayPars *pars = (array2sh_arrayPars*)(*hPars);
     if(pars!=NULL) {
         free(pars);
         pars=NULL;
     }
 }
  
-void array2sh_initArray(void* const hPars, MICROPHONE_ARRAY_PRESETS preset, int* arrayOrder, int firstInitFlag)
+void array2sh_initArray(void* const hPars, ARRAY2SH_MICROPHONE_ARRAY_PRESETS preset, int* arrayOrder, int firstInitFlag)
 {
-    arrayPars *pars = (arrayPars*)(hPars);
+    array2sh_arrayPars *pars = (array2sh_arrayPars*)(hPars);
     int ch, i, Q;
     
     switch(preset){

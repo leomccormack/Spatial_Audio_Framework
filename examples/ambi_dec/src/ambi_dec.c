@@ -14,23 +14,21 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: ambi_dec.c
- * --------------------
- * A frequency-dependent Ambisonic decoder for loudspeakers or headphones.
+/**
+ * @file ambi_dec.c
+ * @brief A frequency-dependent Ambisonic decoder for loudspeakers.
+ *
  * Different decoder settings can be specified for the low and high frequencies.
  * When utilising spherical harmonic signals derived from real microphone
  * arrays, this implementation also allows the decoding order per frequency band
- * to be specified. Optionally, a SOFA file may be loaded for personalised
- * headphone listening.
+ * to be specified; of course, this may also be used creatively. Optionally, a
+ * SOFA file may be loaded for personalised headphone listening.
+ *
  * The algorithms utilised in this Ambisonic decoder were pieced together and
  * developed in collaboration with Archontis Politis.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_hoa, saf_vbap, saf_hrir, saf_sh,
- *     saf_sofa_reader
- * Author, date created:
- *     Leo McCormack, 07.12.2017
+ * @author Leo McCormack
+ * @date 07.12.2017
  */
  
 #include "ambi_dec_internal.h"
@@ -80,8 +78,8 @@ void ambi_dec_create
     pData->progressBarText = malloc1d(AMBI_DEC_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
     strcpy(pData->progressBarText,"");
     pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
-    pData->pars = (codecPars*)malloc1d(sizeof(codecPars));
-    codecPars* pars = pData->pars;
+    pData->pars = (ambi_dec_codecPars*)malloc1d(sizeof(ambi_dec_codecPars));
+    ambi_dec_codecPars* pars = pData->pars;
     for (i=0; i<NUM_DECODERS; i++){
         for(j=0; j<MAX_SH_ORDER; j++){
             pars->M_dec[i][j] = NULL;
@@ -115,7 +113,7 @@ void ambi_dec_destroy
 )
 {
     ambi_dec_data *pData = (ambi_dec_data*)(*phAmbi);
-    codecPars *pars = pData->pars;
+    ambi_dec_codecPars *pars = pData->pars;
     int i, j, ch;
     
     if (pData != NULL) {
@@ -189,7 +187,7 @@ void ambi_dec_initCodec
 )
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    codecPars* pars = pData->pars;
+    ambi_dec_codecPars* pars = pData->pars;
     int i, ch, d, j, n, ng, nGrid_dirs, masterOrder, nSH_order, max_nSH, nLoudspeakers;
     float* grid_dirs_deg, *Y, *M_dec_tmp, *g, *a, *e, *a_n, *hrtf_vbap_gtable;;
     float a_avg[MAX_SH_ORDER], e_avg[MAX_SH_ORDER], azi_incl[2], sum_elev;
@@ -429,7 +427,7 @@ void ambi_dec_process
 )
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    codecPars* pars = pData->pars;
+    ambi_dec_codecPars* pars = pData->pars;
     int n, t, ch, ear, i, band, orderBand, nSH_band, decIdx, nSH;
     int o[MAX_SH_ORDER+2];
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
@@ -438,9 +436,9 @@ void ambi_dec_process
     int nLoudspeakers, binauraliseLS, masterOrder;
     int orderPerBand[HYBRID_BANDS], rE_WEIGHT[NUM_DECODERS];
     float transitionFreq;
-    DIFFUSE_FIELD_EQ_APPROACH diffEQmode[NUM_DECODERS];
-    NORM_TYPES norm;
-    CH_ORDER chOrdering;
+    AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH diffEQmode[NUM_DECODERS];
+    AMBI_DEC_NORM_TYPES norm;
+    AMBI_DEC_CH_ORDER chOrdering;
     
     /* decode audio to loudspeakers or headphones */
     if( (nSamples == FRAME_SIZE) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ) {
@@ -695,7 +693,7 @@ void ambi_dec_setUseDefaultHRIRsflag(void* const hAmbi, int newState)
 void ambi_dec_setSofaFilePath(void* const hAmbi, const char* path)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    codecPars* pars = pData->pars;
+    ambi_dec_codecPars* pars = pData->pars;
     
     pars->sofa_filepath = malloc1d(strlen(path) + 1);
     strcpy(pars->sofa_filepath, path);
@@ -784,15 +782,15 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID)
 void ambi_dec_setChOrder(void* const hAmbi, int newOrder)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    if((CH_ORDER)newOrder != CH_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST) /* FUMA only supports 1st order */
-        pData->chOrdering = (CH_ORDER)newOrder;
+    if((AMBI_DEC_CH_ORDER)newOrder != CH_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST) /* FUMA only supports 1st order */
+        pData->chOrdering = (AMBI_DEC_CH_ORDER)newOrder;
 }
 
 void ambi_dec_setNormType(void* const hAmbi, int newType)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    if((NORM_TYPES)newType != NORM_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST) /* FUMA only supports 1st order */
-        pData->norm = (NORM_TYPES)newType;
+    if((AMBI_DEC_NORM_TYPES)newType != NORM_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST) /* FUMA only supports 1st order */
+        pData->norm = (AMBI_DEC_NORM_TYPES)newType;
 }
 
 void ambi_dec_setDecMethod(void* const hAmbi, int index, int newID)
@@ -823,7 +821,7 @@ void ambi_dec_setTransitionFreq(void* const hAmbi, float newValue)
 
 /* Get Functions */
 
-CODEC_STATUS ambi_dec_getCodecStatus(void* const hAmbi)
+AMBI_DEC_CODEC_STATUS ambi_dec_getCodecStatus(void* const hAmbi)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     return pData->codecStatus;
@@ -922,7 +920,7 @@ int ambi_dec_getUseDefaultHRIRsflag(void* const hAmbi)
 char* ambi_dec_getSofaFilePath(void* const hAmbi)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    codecPars* pars = pData->pars;
+    ambi_dec_codecPars* pars = pData->pars;
     if(pars->sofa_filepath!=NULL)
         return pars->sofa_filepath;
     else
@@ -968,7 +966,7 @@ float ambi_dec_getTransitionFreq(void* const hAmbi)
 int ambi_dec_getHRIRsamplerate(void* const hAmbi)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    codecPars* pars = pData->pars;
+    ambi_dec_codecPars* pars = pData->pars;
     return pars->hrir_fs;
 }
 

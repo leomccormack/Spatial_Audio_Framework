@@ -14,24 +14,30 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: panner_internal.h
- * ---------------------------
- * A frequency-dependent 3D panner, based on the Vector-base Amplitude Panning
- * (VBAP) method. Depending on the room, it may be beneficial to employ
- * amplitude-normalised gains for low frequencies, and energy-normalised gains
- * for high frequencies. Therefore, this VBAP implementation uses the method
- * described in [1], to do just that.
+/**
+ * @file panner_internal.h
+ * @brief A frequency-dependent 3D panner based on the Vector-base Amplitude
+ *        Panning (VBAP) method [1], with an optional spread control [2].
  *
- * Dependencies:
- *     saf_utilities, saf_vbap, afSTFTlib
- * Author, date created:
- *     Leo McCormack, 25.09.2017
+ * Depending on the listening room, it may be beneficial to employ amplitude-
+ * normalised gains for low frequencies, and energy-normalised gains for high
+ * frequencies. Therefore, this VBAP implementation also uses the method
+ * described in [3], to do just that.
  *
- * [1] Laitinen, M., Vilkamo, J., Jussila, K., Politis, A., Pulkki, V. (2014).
- *     Gain normalisation in amplitude panning as a function of frequency and
- *     room reverberance. 55th International Conference of the AES. Helsinki,
- *     Finland.
+ * @see [1] Pulkki, V. (1997). Virtual sound source positioning using vector
+ *          base amplitude panning. Journal of the audio engineering society,
+ *          45(6), 456-466.
+ * @see [2] Pulkki, V. (1999). Uniform spreading of amplitude panned virtual
+ *          sources. In Proceedings of the 1999 IEEE Workshop on Applications of
+ *          Signal Processing to Audio and Acoustics. WASPAA'99 (Cat. No.
+ *          99TH8452) (pp. 187-190). IEEE.
+ * @see [3] Laitinen, M., Vilkamo, J., Jussila, K., Politis, A., Pulkki, V.
+ *          (2014). Gain normalisation in amplitude panning as a function of
+ *          frequency and room reverberance. 55th International Conference of
+ *          the AES. Helsinki, Finland.
+ *
+ * @author Leo McCormack
+ * @date 25.09.2017
  */
 
 #ifndef __PANNER_INTERNAL_H_INCLUDED__
@@ -52,21 +58,15 @@ extern "C" {
 /*                               Internal Enums                               */
 /* ========================================================================== */
 
-/*
- * Enum: PROC_STATUS
- * -----------------
+/**
  * Current status of the processing loop.
- *
- * Options:
- *     PROC_STATUS_ONGOING     - Codec is processing input audio, and should not
- *                               be reinitialised at this time.
- *     PROC_STATUS_NOT_ONGOING - Codec is not processing input audio, and may
- *                               be reinitialised if needed.
  */
-typedef enum _PROC_STATUS{
-    PROC_STATUS_ONGOING = 0,
-    PROC_STATUS_NOT_ONGOING
-}PROC_STATUS;
+typedef enum _PANNER_PROC_STATUS{
+    PROC_STATUS_ONGOING = 0, /**< Codec is processing input audio, and should
+                              *   not be reinitialised at this time. */
+    PROC_STATUS_NOT_ONGOING  /**< Codec is not processing input audio, and may
+                              *   be reinitialised if needed. */
+}PANNER_PROC_STATUS;
     
 
 /* ========================================================================== */
@@ -92,9 +92,7 @@ typedef enum _PROC_STATUS{
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/*
- * Struct: panner_data
- * -------------------
+/**
  * Main structure for panner. Contains variables for audio buffers, afSTFT,
  * internal variables, flags, user parameters
  */
@@ -115,13 +113,13 @@ typedef struct _panner
     
     /* Internal */
     int vbapTableRes[2];
-    float* vbap_gtable; /* N_hrtf_vbap_gtable x nLoudpkrs */
+    float* vbap_gtable; /**< N_hrtf_vbap_gtable x nLoudpkrs */
     int N_vbap_gtable;
     float_complex G_src[HYBRID_BANDS][MAX_NUM_INPUTS][MAX_NUM_OUTPUTS];
     
     /* flags */
-    CODEC_STATUS codecStatus;
-    PROC_STATUS procStatus;
+    PANNER_CODEC_STATUS codecStatus;
+    PANNER_PROC_STATUS procStatus;
     float progressBar0_1;
     char* progressBarText;
     int recalc_gainsFLAG[MAX_NUM_INPUTS];
@@ -133,7 +131,7 @@ typedef struct _panner
     float src_dirs_rot_xyz[MAX_NUM_INPUTS][3];
     float src_dirs_xyz[MAX_NUM_INPUTS][3]; 
     int nTriangles;
-    int output_nDims; /* 2: 2-D, 3: 3-D */
+    int output_nDims; /**< 2: 2-D, 3: 3-D */
     
     /* pValue */
     float pValue[HYBRID_BANDS];
@@ -144,8 +142,8 @@ typedef struct _panner
     float DTT, spread_deg;
     int nLoudpkrs, new_nLoudpkrs;
     float loudpkrs_dirs_deg[MAX_NUM_OUTPUTS][2];
-    float yaw, roll, pitch;                  /* rotation angles in degrees */
-    int bFlipYaw, bFlipPitch, bFlipRoll;     /* flag to flip the sign of the individual rotation angles */
+    float yaw, roll, pitch;                  /**< rotation angles in degrees */
+    int bFlipYaw, bFlipPitch, bFlipRoll;     /**< flag to flip the sign of the individual rotation angles */
     
 } panner_data;
      
@@ -154,52 +152,34 @@ typedef struct _panner
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/*
- * Function: panner_setCodecStatus
- * -------------------------------
- * Sets codec status.
- *
- * Input Arguments:
- *     hPan      - panner handle
- *     newStatus - codec status (see 'CODEC_STATUS' enum)
+/**
+ * Sets codec status (see 'PANNER_CODEC_STATUS' enum)
  */
-void panner_setCodecStatus(void* const hPan, CODEC_STATUS newStatus);
+void panner_setCodecStatus(void* const hPan, PANNER_CODEC_STATUS newStatus);
     
-/*
- * panner_initGainTables
- * ---------------------
+/**
  * Intialises the VBAP gain table used for panning.
- * Note: call "ambi_dec_initTFT" (if needed) before calling this function
  *
- * Input Arguments:
- *     hPan - panner handle
+ * @note Call ambi_dec_initTFT() (if needed) before calling this function
  */
 void panner_initGainTables(void* const hPan);
     
-/*
- * panner_initTFT
- * --------------
+/**
  * Initialise the filterbank used by panner.
- * Note: Call this function before "panner_initGainTables"
  *
- * Input Arguments:
- *     hPan - panner handle
+ * @note Call this function before panner_initGainTables()
  */
 void panner_initTFT(void* const hPan);
     
-/*
- * panner_loadPreset
- * -----------------
+/**
  * Loads source/loudspeaker directions from preset
  *
- * Input Arguments:
- *     preset   - see PRESET enum
- * Output Arguments:
- *     dirs_deg - source/loudspeaker directions
- *     newNCH   - & new number of channels
- *     nDims    - & estimate of the number of dimensions (2 or 3)
+ * @param[in]  preset   See PANNER_PRESET enum
+ * @param[out] dirs_deg Source/loudspeaker directions
+ * @param[out] newNCH   (&) new number of channels
+ * @param[out] nDims    (&) estimate of the number of dimensions (2 or 3)
  */
-void panner_loadPreset(PRESETS preset,
+void panner_loadPreset(PANNER_PRESETS preset,
                        float dirs_deg[MAX_NUM_INPUTS][2],
                        int* newNCH,
                        int* nDims);

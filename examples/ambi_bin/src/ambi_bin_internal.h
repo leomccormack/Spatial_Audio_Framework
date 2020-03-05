@@ -14,17 +14,17 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: ambi_bin_internal.h
- * -----------------------------
- * A binaural Ambisonic decoder for reproducing ambisonic signals over
- * headphones. The decoder supports sound-field rotation for head-tracking and
- * may also accomodate custom HRIR sets via the SOFA standard.
+/**
+ * @file ambi_bin_internal.h
+ * @brief A binaural Ambisonic decoder for reproducing ambisonic signals over
+ *        headphones.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_hrir, saf_vbap, saf_sh, saf_sofa_reader
- * Author, date created:
- *     Leo McCormack, 14.04.2018
+ * The decoder includes many historic and current state-of-the-art decoding
+ * approaches. It also supports sound-field rotation for head-tracking and may
+ * also accomodate custom HRIR sets via the SOFA standard.
+ *
+ * @author Leo McCormack
+ * @date 14.04.2018
  */
 
 #ifndef __AMBI_BIN_INTERNAL_H_INCLUDED__
@@ -44,21 +44,15 @@ extern "C" {
 /*                               Internal Enums                               */
 /* ========================================================================== */
 
-/*
- * Enum: PROC_STATUS
- * -----------------
+/**
  * Current status of the processing loop.
- *
- * Options:
- *     PROC_STATUS_ONGOING     - Codec is processing input audio, and should not
- *                               be reinitialised at this time.
- *     PROC_STATUS_NOT_ONGOING - Codec is not processing input audio, and may
- *                               be reinitialised if needed.
  */
-typedef enum _PROC_STATUS{
-    PROC_STATUS_ONGOING = 0,
-    PROC_STATUS_NOT_ONGOING
-}PROC_STATUS;
+typedef enum _AMBI_BIN_PROC_STATUS{
+    PROC_STATUS_ONGOING = 0, /**< Codec is processing input audio, and should
+                              *   not be reinitialised at this time. */
+    PROC_STATUS_NOT_ONGOING  /**< Codec is not processing input audio, and may
+                              *   be reinitialised if needed. */
+}AMBI_BIN_PROC_STATUS;
 
 
 /* ========================================================================== */
@@ -84,81 +78,77 @@ typedef enum _PROC_STATUS{
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/*
- * Struct: codecPars
- * -----------------
+/**
  * Contains variables for sofa file loading, HRIRs, and the binaural decoder.
  */
-typedef struct _codecPars
+typedef struct _ambi_bin_codecPars
 {
     /* Decoder */
     float_complex M_dec[HYBRID_BANDS][NUM_EARS][MAX_NUM_SH_SIGNALS];
     
     /* sofa file info */
-    char* sofa_filepath; /* absolute/relevative file path for a sofa file */
-    float* hrirs; /* time domain HRIRs; FLAT: N_hrir_dirs x 2 x hrir_len */
-    float* hrir_dirs_deg; /* directions of the HRIRs in degrees [azi elev]; FLAT: N_hrir_dirs x 2 */
-    int N_hrir_dirs; /* number of HRIR directions in the current sofa file */
-    int hrir_len; /* length of the HRIRs, this can be truncated, see "saf_sofa_reader.h" */
-    int hrir_fs; /* sampling rate of the HRIRs, should ideally match the host sampling rate, although not required */
+    char* sofa_filepath;    /**< absolute/relevative file path for a sofa file */
+    float* hrirs;           /**< time domain HRIRs; FLAT: N_hrir_dirs x 2 x hrir_len */
+    float* hrir_dirs_deg;   /**< directions of the HRIRs in degrees [azi elev]; FLAT: N_hrir_dirs x 2 */
+    int N_hrir_dirs;        /**< number of HRIR directions in the current sofa file */
+    int hrir_len;           /**< length of the HRIRs, this can be truncated, see "saf_sofa_reader.h" */
+    int hrir_fs;            /**< sampling rate of the HRIRs, should ideally match the host sampling rate, although not required */
    
     /* hrtf filterbank coefficients */
-    float* itds_s; /* interaural-time differences for each HRIR (in seconds); N_hrirs x 1 */
-    float_complex* hrtf_fb; /* HRTF filterbank coeffs; FLAT: nBands x nCH x N_hrirs */
+    float* itds_s;          /**< interaural-time differences for each HRIR (in seconds); N_hrirs x 1 */
+    float_complex* hrtf_fb; /**< HRTF filterbank coeffs; FLAT: nBands x nCH x N_hrirs */
     
-}codecPars;
+}ambi_bin_codecPars;
     
-/*
- * Struct: ambi_bin
- * ----------------
+/**
  * Main structure for ambi_bin. Contains variables for audio buffers, afSTFT,
  * rotation matrices, internal variables, flags, user parameters
  */
 typedef struct _ambi_bin
 {
     /* audio buffers + afSTFT time-frequency transform handle */
-    int fs; /* host sampling rate */
+    int fs;                         /**< host sampling rate */
     float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     float_complex SHframeTF_rot[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     float_complex binframeTF[HYBRID_BANDS][NUM_EARS][TIME_SLOTS];
     complexVector* STFTInputFrameTF;
     complexVector* STFTOutputFrameTF;
-    void* hSTFT; /* afSTFT handle */
-    int afSTFTdelay; /* for host delay compensation */
-    float** tempHopFrameTD; /* temporary multi-channel time-domain buffer of size "HOP_SIZE". */
-    float freqVector[HYBRID_BANDS]; /* frequency vector for time-frequency transform, in Hz */
+    void* hSTFT;                    /**< afSTFT handle */
+    int afSTFTdelay;                /**< for host delay compensation */
+    float** tempHopFrameTD;         /**< temporary multi-channel time-domain buffer of size "HOP_SIZE". */
+    float freqVector[HYBRID_BANDS]; /**< frequency vector for time-frequency transform, in Hz */
      
     /* our codec configuration */
-    CODEC_STATUS codecStatus;
+    AMBI_BIN_CODEC_STATUS codecStatus;
     float progressBar0_1;
     char* progressBarText;
-    codecPars* pars;
+    ambi_bin_codecPars* pars;
     
     /* internal variables */
-    PROC_STATUS procStatus;
+    AMBI_BIN_PROC_STATUS procStatus;
     float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS]; 
-    int new_order; /* new decoding order */
-    int nSH; /* number of spherical harmonic signals */
+    int new_order;                  /**< new decoding order */
+    int nSH;                        /**< number of spherical harmonic signals */
     
     /* flags */ 
-    int recalc_M_rotFLAG; /* 0: no init required, 1: init required */
-    int reinit_hrtfsFLAG; /* 0: no init required, 1: init required */
+    int recalc_M_rotFLAG;           /**< 0: no init required, 1: init required */
+    int reinit_hrtfsFLAG;           /**< 0: no init required, 1: init required */
     
     /* user parameters */
-    int order; /* current decoding order */
-    int enableMaxRE; /* 0: disabled, 1: enabled */
-    int enableDiffuseMatching; /* 0: disabled, 1: enabled */
-    int enablePhaseWarping; /* 0: disabled, 1: enabled */
-    DECODING_METHODS method; /* current decoding method */
-    float EQ[HYBRID_BANDS]; /* EQ curve */
-    int useDefaultHRIRsFLAG; /* 1: use default HRIRs in database, 0: use those from SOFA file */
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
+    int order;                      /**< current decoding order */
+    int enableMaxRE;                /**< 0: disabled, 1: enabled */
+    int enableDiffuseMatching;      /**< 0: disabled, 1: enabled */
+    int enablePhaseWarping;         /**< 0: disabled, 1: enabled */
+    AMBI_BIN_DECODING_METHODS method; /* current decoding method */
+    float EQ[HYBRID_BANDS];         /**< EQ curve */
+    int useDefaultHRIRsFLAG;        /**< 1: use default HRIRs in database, 0: use those from SOFA file */
+    AMBI_BIN_CH_ORDER chOrdering;
+    AMBI_BIN_NORM_TYPES norm;
     int enableRotation;
-    float yaw, roll, pitch; /* rotation angles in degrees */
-    int bFlipYaw, bFlipPitch, bFlipRoll; /* flag to flip the sign of the individual rotation angles */
-    int useRollPitchYawFlag; /* rotation order flag, 1: r-p-y, 0: y-p-r */
+    float yaw, roll, pitch;         /**< rotation angles in degrees */
+    int bFlipYaw, bFlipPitch, bFlipRoll; /**< flag to flip the sign of the individual rotation angles */
+    int useRollPitchYawFlag;        /**< rotation order flag, 1: r-p-y, 0: y-p-r */
     
 } ambi_bin_data;
 
@@ -167,16 +157,11 @@ typedef struct _ambi_bin
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/*
- * Function: ambi_bin_setCodecStatus
- * ------------------------------------
- * Sets codec status.
- *
- * Input Arguments:
- *     hAmbi     - ambi_bin handle
- *     newStatus - codec status (see 'CODEC_STATUS' enum)
+/**
+ * Sets codec status. 
  */
-void ambi_bin_setCodecStatus(void* const hAmbi, CODEC_STATUS newStatus);
+void ambi_bin_setCodecStatus(void* const hAmbi,
+                             AMBI_BIN_CODEC_STATUS newStatus);
 
 
 #ifdef __cplusplus

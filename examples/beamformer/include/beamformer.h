@@ -14,16 +14,13 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: beamformer.h (include header)
- * ---------------------------------------
- * Generates beamformers/virtual microphones in arbitrary directions. Several
- * different beam pattern types are included.
- *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_sh
- * Author, date created:
- *     Leo McCormack, 17.05.2019
+/**
+ * @file beamformer.h
+ * @brief Generates beamformers/virtual microphones in arbitrary directions
+ *        with several different beam pattern to choose from
+ * 
+ * @author Leo McCormack
+ * @date 17.05.2019
  */
 
 #ifndef __BEAMFORMER_H_INCLUDED__
@@ -37,87 +34,67 @@ extern "C" {
 /*                             Presets + Constants                            */
 /* ========================================================================== */
 
-/*
- * Enum: BEAM_ORDERS
- * -----------------
+/**
  * Available beamforming orders
- *
- * Options:
- *     BEAM_ORDER_FIRST   - First-order beamforming (4 channel input)
- *     BEAM_ORDER_SECOND  - Second-order beamforming (9 channel input)
- *     BEAM_ORDER_THIRD   - Third-order beamforming (16 channel input)
- *     BEAM_ORDER_FOURTH  - Fourth-order beamforming (25 channel input)
- *     BEAM_ORDER_FIFTH   - Fifth-order beamforming (36 channel input)
- *     BEAM_ORDER_SIXTH   - Sixth-order beamforming (49 channel input)
- *     BEAM_ORDER_SEVENTH - Seventh-order beamforming (64 channel input)
  */
+typedef enum _BEAMFORMER_BEAM_ORDERS{
+    BEAM_ORDER_FIRST = 1, /**< First-order beamforming (4 channel input) */
+    BEAM_ORDER_SECOND,    /**< Second-order beamforming (9 channel input) */
+    BEAM_ORDER_THIRD,     /**< Third-order beamforming (16 channel input) */
+    BEAM_ORDER_FOURTH,    /**< Fourth-order beamforming (25 channel input) */
+    BEAM_ORDER_FIFTH,     /**< Fifth-order beamforming (36 channel input) */
+    BEAM_ORDER_SIXTH,     /**< Sixth-order beamforming (49 channel input) */
+    BEAM_ORDER_SEVENTH    /**< Seventh-order beamforming (64 channel input) */
+    
+}BEAMFORMER_BEAM_ORDERS;
+    
+/** Maximum supported Ambisonic order */
 #define BEAMFORMER_MAX_SH_ORDER ( 7 )
-typedef enum _BEAM_ORDERS{
-    BEAM_ORDER_FIRST = 1,
-    BEAM_ORDER_SECOND,
-    BEAM_ORDER_THIRD,
-    BEAM_ORDER_FOURTH,
-    BEAM_ORDER_FIFTH,
-    BEAM_ORDER_SIXTH,
-    BEAM_ORDER_SEVENTH
     
-}BEAM_ORDERS;
-    
-/*
- * Enum: BEAM_TYPES
- * ----------------
+/**
  * Available beamforming approaches
- *
- * Options:
- *     BEAM_TYPE_CARDIOID      - cardioid
- *     BEAM_TYPE_HYPERCARDIOID - hyper-cardioid
- *     BEAM_TYPE_MAX_EV        - hyper-cardioid with max_rE weighting
  */
+typedef enum _BEAMFORMER_BEAM_TYPES {
+    BEAM_TYPE_CARDIOID = 1,  /**< cardioid */
+    BEAM_TYPE_HYPERCARDIOID, /**< hyper-cardioid */
+    BEAM_TYPE_MAX_EV         /**< hyper-cardioid with max_rE weighting */
+    
+} BEAMFORMER_BEAM_TYPES;
+    
+/* Number of available beamformer types */
 #define BEAMFORMER_NUM_BEAM_TYPES ( 3 )
-typedef enum _BEAM_TYPES {
-    BEAM_TYPE_CARDIOID = 1,
-    BEAM_TYPE_HYPERCARDIOID,
-    BEAM_TYPE_MAX_EV
-    
-} BEAM_TYPES;
  
-/*
- * Enum: CH_ORDER
- * --------------
+/**
  * Available Ambisonic channel ordering conventions
- * Note: CH_FUMA only supported for 1st order input.
- * Further note: FuMa: CH_FUMA+NORM_FUMA, AmbiX: CH_ACN+NORM_SN3D
  *
- * Options:
- *     CH_ACN  - Ambisonic Channel Numbering (ACN)
- *     CH_FUMA - (Obsolete) Furse-Malham/B-format (WXYZ)
+ * @note CH_FUMA only supported for 1st order input.
  */
-#define BEAMFORMER_NUM_CH_ORDERINGS ( 2 )
-typedef enum _CH_ORDER{
-    CH_ACN = 1,
-    CH_FUMA     /* first-order only */
-}CH_ORDER;
-
-/*
- * Enum: NORM_TYPES
- * ---------------
- * Available Ambisonic normalisation conventions
- * Note: NORM_FUMA only supported for 1st order input and does NOT have the
- * 1/sqrt(2) scaling on the omni.
- * Further note: FuMa: CH_FUMA+NORM_FUMA, AmbiX: CH_ACN+NORM_SN3D
- *
- * Options:
- *     NORM_N3D  - orthonormalised (N3D)
- *     NORM_SN3D - Schmidt semi-normalisation (SN3D)
- *     NORM_FUMA - (Obsolete) Same as NORM_SN3D for 1st order
- */
-#define BEAMFORMER_NUM_NORM_TYPES ( 3 )
-typedef enum _NORM_TYPES{
-    NORM_N3D = 1,
-    NORM_SN3D,
-    NORM_FUMA   /* first-order only */
-}NORM_TYPES;
+typedef enum _BEAMFORMER_CH_ORDER {
+    CH_ACN = 1, /**< Ambisonic Channel Numbering (ACN) */
+    CH_FUMA     /**< (Obsolete) Furse-Malham/B-format (WXYZ) */
     
+} BEAMFORMER_CH_ORDER;
+
+/** Number of channel ordering options */
+#define BEAMFORMER_NUM_CH_ORDERINGS ( 2 )
+
+/**
+ * Available Ambisonic normalisation conventions
+ *
+ * @note NORM_FUMA only supported for 1st order input and does NOT have the
+ *       1/sqrt(2) scaling on the omni.
+ */
+typedef enum _BEAMFORMER_NORM_TYPES {
+    NORM_N3D = 1, /**< orthonormalised (N3D) */
+    NORM_SN3D,    /**< Schmidt semi-normalisation (SN3D) */
+    NORM_FUMA     /**< (Obsolete) Same as NORM_SN3D for 1st order */
+    
+} BEAMFORMER_NORM_TYPES;
+
+/** Number of normalisation options */
+#define BEAMFORMER_NUM_NORM_TYPES ( 3 )
+    
+/** Maximum number of beams supported */
 #define BEAMFORMER_MAX_NUM_BEAMS ( 64 )
     
     
@@ -125,50 +102,38 @@ typedef enum _NORM_TYPES{
 /*                               Main Functions                               */
 /* ========================================================================== */
 
-/*
- * Function: beamformer_create
- * ---------------------------
+/**
  * Creates an instance of beamformer
  *
- * Input Arguments:
- *     phBeam - & address of beamformer handle
+ * @param[in] phBeam (&) address of beamformer handle
  */
 void beamformer_create(void** const phBeam);
 
-/*
- * Function: beamformer_destroy
- * ----------------------------
+/**
  * Destroys an instance of beamformer
  *
- * Input Arguments:
- *     phBeam - & address of beamformer handle
+ * @param[in] phBeam (&) address of beamformer handle
  */
 void beamformer_destroy(void** const phBeam);
 
-/*
- * Function: beamformer_init
- * -------------------------
+/**
  * Initialises an instance of beamformer with default settings
  *
- * Input Arguments:
- *     hBeam      - beamformer handle
- *     samplerate - host samplerate.
+ * @param[in] hBeam      beamformer handle
+ * @param[in] samplerate Host samplerate.
  */
 void beamformer_init(void* const hBeam,
-                 int samplerate);
+                     int samplerate);
 
-/*
- * Function: beamformer_process
- * ----------------------------
+/**
  * Generates beamformers/virtual microphones in the specified directions
  *
- * Input Arguments:
- *     hBeam     - beamformer handle
- *     inputs    - input channel buffers; 2-D array: nInputs x nSamples
- *     outputs   - output channel buffers; 2-D array: nOutputs x nSamples
- *     nInputs   - number of input channels
- *     nOutputs  - number of output channels
- *     nSamples  - number of samples in 'inputs'/'output' matrices
+ * @param[in] hBeam     beamformer handle
+ * @param[in] inputs    Input channel buffers; 2-D array: nInputs x nSamples
+ * @param[in] outputs   Output channel buffers; 2-D array: nOutputs x nSamples
+ * @param[in] nInputs   Number of input channels
+ * @param[in] nOutputs  Number of output channels
+ * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void beamformer_process(void* const hBeam,
                         float** const inputs,
@@ -182,109 +147,53 @@ void beamformer_process(void* const hBeam,
 /*                                Set Functions                               */
 /* ========================================================================== */
 
-/*
- * Function: beamformer_refreshSettings
- * ------------------------------------
- * Sets all intialisation flags to 1. i.e. re-initialise all settings/variables
+/**
+ * Sets all intialisation flags to 1; re-initialising all settings/variables
  * as beamformer is currently configured, at next available opportunity.
- *
- * Input Arguments:
- *     hBeam - beamformer handle
  */
 void beamformer_refreshSettings(void* const hBeam);
-
-/*
- * Function: beamformer_checkReInit
- * --------------------------------
- * Check if any reInit Flags are active, and reinitialise if they are.
- * Note: Only call when playback has stopped.
- *
- * Input Arguments:
- *     hBeam - beamformer handle
- */
-void beamformer_checkReInit(void* const hBeam);
     
-/*
- * Function: beamformer_setBeamOrder
- * ---------------------------------
- * Sets the beamforming order. If the beamforming order is higher than the
+/**
+ * Sets the beamforming order (see 'BEAMFORMER_BEAM_ORDERS' enum)
+ *
+ * If the beamforming order is higher than the
  * input signal order, the extra required channels are filled with zeros. If the
  * beamforming order is lower than the input signal order, the number input
  * signals is truncated accordingly.
- *
- * Input Arguments:
- *     hBeam    - beamformer handle
- *     newValue - new beamforming order (see 'BEAM_ORDERS' enum)
  */
 void beamformer_setBeamOrder(void* const hBeam,  int newValue);
 
-/*
- * Function: beamformer_setBeamAzi_deg
- * -----------------------------------
- * Sets a beamformer azimuth direction for a given beamforming index
- *
- * Input Arguments:
- *     hBeam      - beamformer handle
- *     index      - beamformer index
- *     newAzi_deg - new beamforming azimuth, in DEGREES
+/**
+ * Sets a beamformer azimuth direction of a given index, in DEGREES
  */
 void beamformer_setBeamAzi_deg(void* const hBeam, int index, float newAzi_deg);
 
-/*
- * Function: beamformer_setBeamElev_deg
- * ------------------------------------
- * Sets a beamformer elevation direction for a given beamforming index
- *
- * Input Arguments:
- *     hBeam       - beamformer handle
- *     index       - beamformer index
- *     newElev_deg - new beamforming elevation, in DEGREES
+/**
+ * Sets a beamformer elevation direction for a given index, in DEGREES
  */
 void beamformer_setBeamElev_deg(void* const hBeam, int index, float newElev_deg);
 
-/*
- * Function: beamformer_setNumBeams
- * --------------------------------
+/**
  * Sets the number of beamformers to generate
- *
- * Input Arguments:
- *     hBeam      - beamformer handle
- *     new_nBeams - new number of beamformers
  */
 void beamformer_setNumBeams(void* const hBeam, int new_nBeams);
 
-/*
- * Function: beamformer_setChOrder
- * -------------------------------
+/**
  * Sets the Ambisonic channel ordering convention to decode with, in order to
- * match the convention employed by the input signals
- *
- * Input Arguments:
- *     hBeam    - beamformer handle
- *     newOrder - convention to use (see 'CH_ORDER' enum)
+ * match the convention employed by the input signals (see 'BEAMFORMER_CH_ORDER'
+ * enum)
  */
 void beamformer_setChOrder(void* const hBeam, int newOrder);
 
-/*
- * Function: beamformer_setNormType
- * --------------------------------
+/**
  * Sets the Ambisonic normalisation convention to decode with, in order to match
- * with the convention employed by the input signals.
- *
- * Input Arguments:
- *     hBeam   - beamformer handle
- *     newType - convention to use (see 'NORM_TYPE' enum)
+ * with the convention employed by the input signals (see 'BEAMFORMER_NORM_TYPE'
+ * enum)
  */
 void beamformer_setNormType(void* const hBeam, int newType);
     
-/*
- * Function: beamformer_setBeamType
- * --------------------------------
- * Sets the beamforming approach to employ
- *
- * Input Arguments:
- *     hBeam - beamformer handle
- *     newID - approach to use (see 'BEAM_TYPE' enum)
+/**
+ * Sets the beamforming approach to employ (see 'BEAMFORMER_BEAM_TYPE' enum)
  */
 void beamformer_setBeamType(void* const hBeam, int newID);
 
@@ -293,129 +202,59 @@ void beamformer_setBeamType(void* const hBeam, int newID);
 /*                                Get Functions                               */
 /* ========================================================================== */
 
-/*
- * Function: beamformer_setBeamOrder
- * ---------------------------------
- * Sets the beamforming order. If the beamforming order is higher than the
- * input signal order, the extra required channels are filled with zeros. If the
- * beamforming order is lower than the input signal order, the number input
- * signals is truncated accordingly.
- *
- * Input Arguments:
- *     hBeam - beamformer handle
- * Returns:
- *     beamforming order (see 'BEAM_ORDERS' enum)
+/**
+ * Returns tje beamforming order (see 'BEAMFORMER_BEAM_ORDERS' enum)
  */
 int beamformer_getBeamOrder(void* const hBeam);
     
-/*
- * Function: beamformer_getNumberOfBands
- * -------------------------------------
+/**
  * Returns the number of frequency bands used by beamformer (only for adaptive
  * beamformer algorithms).
- *
- * Returns:
- *     number of frequency bands
  */
 int beamformer_getNumberOfBands(void);
 
-/*
- * Function: beamformer_getBeamAzi_deg
- * -----------------------------------
- * Returns the beamformer azimuth direction for a given beamforming index
- *
- * Input Arguments:
- *     hBeam      - beamformer handle
- *     index      - beamformer index
- * Returns:
- *     new beamforming azimuth, in DEGREES
+/**
+ * Returns the beamformer azimuth direction of a given index h, in DEGREES
  */
 float beamformer_getBeamAzi_deg(void* const hBeam, int index);
 
-/*
- * Function: beamformer_getBeamElev_deg
- * ------------------------------------
- * Returns the beamformer elevation direction for a given beamforming index
- *
- * Input Arguments:
- *     hBeam       - beamformer handle
- *     index       - beamformer index
- * Returns:
- *     new beamforming elevation, in DEGREES
+/**
+ * Returns the beamformer elevation direction of a given index, in DEGREES
  */
 float beamformer_getBeamElev_deg(void* const hBeam, int index);
 
-/*
- * Function: beamformer_getNumBeams
- * --------------------------------
- * Returns the number of beamformers to generate
- *
- * Input Arguments:
- *     hBeam      - beamformer handle
- * Returns:
- *     new number of beamformers
+/**
+ * Returns the number of beamformers being generated
  */
 int beamformer_getNumBeams(void* const hBeam);
     
-/*
- * Function: beamformer_getMaxNumBeams
- * -----------------------------------
+/**
  * Returns the maximum number of beamformers permitted
- *
- * Returns:
- *     maximum number of beamformers permitted
  */
 int beamformer_getMaxNumBeams(void);
     
-/*
- * Function: beamformer_getNSHrequired
- * -----------------------------------
- * Returns the number of spherical harmonic signals required by the current
- * beamforming order i.e. (current_order+1)^2
- *
- * Input Arguments:
- *     hBeam - beamformer handle
- * Returns:
- *     number of required spherical harmonic signals required by current
- *     beamforming order
+/**
+ * Returns the number of spherical harmonic signals required by the currently
+ * selected beamforming order: (current_order+1)^2
  */
 int  beamformer_getNSHrequired(void* const hBeam);
 
-/*
- * Function: beamformer_getChOrder
- * -------------------------------
+/**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- *
- * Input Arguments:
- *     hBeam - beamformer handle
- * Returns:
- *     convention currently being used (see 'CH_ORDER' enum)
+ * (see 'BEAMFORMER_CH_ORDER' enum)
  */
 int beamformer_getChOrder(void* const hBeam);
 
-/*
- * Function: beamformer_getNormType
- * --------------------------------
+/**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals.
- *
- * Input Arguments:
- *     hBeam - beamformer handle
- * Returns:
- *     convention currently being used (see 'NORM_TYPE' enum)
+ * (see 'BEAMFORMER_NORM_TYPE' enum)
  */
 int beamformer_getNormType(void* const hBeam);
     
-/*
- * Function: beamformer_getBeamType
- * --------------------------------
- * Returns the beamforming approach to employ
- *
- * Input Arguments:
- *     hBeam - beamformer handle
- * Returns:
- *    approach in use (see 'BEAM_TYPE' enum)
+/**
+ * Returns the beamforming approach employed (see 'BEAMFORMER_BEAM_TYPE' enum)
  */
 int beamformer_getBeamType(void* const hBeam); 
     

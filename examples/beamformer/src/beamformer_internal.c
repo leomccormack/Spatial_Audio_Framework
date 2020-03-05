@@ -14,16 +14,13 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename:  beamformer_internal.c
- * --------------------------------
- * Generates beamformers/virtual microphones in arbitrary directions. Several
- * different beam pattern types are included.
+/**
+ * @file beamformer_internal.c
+ * @brief Generates beamformers/virtual microphones in arbitrary directions
+ *        with several different beam pattern to choose from
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_sh
- * Author, date created:
- *     Leo McCormack, 17.05.2019
+ * @author Leo McCormack
+ * @date 17.05.2019
  */
 
 #include "beamformer_internal.h" 

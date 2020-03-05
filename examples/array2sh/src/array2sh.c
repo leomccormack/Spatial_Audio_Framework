@@ -14,30 +14,29 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: array2sh.c
- * --------------------
- * Spatially encodes spherical or cylindrical sensor array signals into
- * spherical harmonic signals utilising theoretical encoding filters.
+/**
+ * @file array2sh.c
+ * @brief Spatially encodes spherical or cylindrical sensor array signals into
+ *        spherical harmonic signals utilising theoretical encoding filters.
+ *
  * The algorithms within array2sh were pieced together and developed in
  * collaboration with Symeon Delikaris-Manias and Angelo Farina.
  * A detailed explanation of the algorithms within array2sh can be found in [1].
  * Also included, is a diffuse-field equalisation option for frequencies past
  * aliasing, developed in collaboration with Archontis Politis, 8.02.2019
- * Note: since the algorithms are based on theory, only array designs where
- * there are analytical solutions available are supported. i.e. only spherical
- * or cylindrical arrays, which have phase-matched sensors.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_sh, saf_hoa, saf_vbap
- * Author, date created:
- *     Leo McCormack, 13.09.2017
+ * @note Since the algorithms are based on theory, only array designs where
+ *       there are analytical solutions available are supported. i.e. only
+ *       spherical or cylindrical arrays, which have phase-matched sensors.
  *
- * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
- *     V., “Real-time conversion of sensor array signals into spherical harmonic
- *     signals with applications to spatially localised sub-band sound-field
- *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
- *     Society, 2018.
+ * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
+ *          Pulkki, V., “Real-time conversion of sensor array signals into
+ *          spherical harmonic signals with applications to spatially localised
+ *          sub-band sound-field analysis,” in Audio Engineering Society
+ *          Convention 144, Audio Engineering Society, 2018.
+ *
+ * @author Leo McCormack
+ * @date 13.09.2017
  */
 
 #include "array2sh_internal.h" 
@@ -59,7 +58,7 @@ void array2sh_create
     pData->norm = NORM_SN3D;
     pData->c = 343.0f;
     pData->gain_dB = 0.0f; /* post-gain */ 
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     array2sh_initArray(arraySpecs, MICROPHONE_ARRAY_PRESET_DEFAULT, &(pData->order), 1);
     pData->enableDiffEQpastAliasing = 1;
     
@@ -190,12 +189,12 @@ void array2sh_process
 )
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     int n, t, ch, i, band, Q, order, nSH;
     int o[MAX_SH_ORDER+2];
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
+    ARRAY2SH_CH_ORDER chOrdering;
+    ARRAY2SH_NORM_TYPES norm;
     float gain_lin;
     
     /* reinit TFT if needed */
@@ -337,7 +336,7 @@ void array2sh_setRequestEncoderEvalFLAG(void* const hA2sh, int newState)
     pData->evalRequestedFLAG = newState;
 }
 
-void array2sh_setEvalStatus(void* const hA2sh, EVAL_STATUS new_evalStatus)
+void array2sh_setEvalStatus(void* const hA2sh, ARRAY2SH_EVAL_STATUS new_evalStatus)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     if(new_evalStatus==EVAL_STATUS_NOT_EVALUATED){
@@ -361,10 +360,10 @@ void array2sh_setDiffEQpastAliasing(void* const hA2sh, int newState)
 void array2sh_setPreset(void* const hA2sh, int preset)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     
-    array2sh_initArray(arraySpecs,(MICROPHONE_ARRAY_PRESETS)preset, &(pData->new_order), 0);
-    pData->c = (MICROPHONE_ARRAY_PRESETS)preset == MICROPHONE_ARRAY_PRESET_AALTO_HYDROPHONE ? 1484.0f : 343.0f;
+    array2sh_initArray(arraySpecs,(ARRAY2SH_MICROPHONE_ARRAY_PRESETS)preset, &(pData->new_order), 0);
+    pData->c = (ARRAY2SH_MICROPHONE_ARRAY_PRESETS)preset == MICROPHONE_ARRAY_PRESET_AALTO_HYDROPHONE ? 1484.0f : 343.0f;
     pData->reinitSHTmatrixFLAG = 1;
     array2sh_setEvalStatus(hA2sh, EVAL_STATUS_NOT_EVALUATED);
 }
@@ -372,7 +371,7 @@ void array2sh_setPreset(void* const hA2sh, int preset)
 void array2sh_setSensorAzi_rad(void* const hA2sh, int index, float newAzi_rad)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     
     if(arraySpecs->sensorCoords_rad[index][0] != newAzi_rad){
         arraySpecs->sensorCoords_rad[index][0] = newAzi_rad;
@@ -385,7 +384,7 @@ void array2sh_setSensorAzi_rad(void* const hA2sh, int index, float newAzi_rad)
 void array2sh_setSensorElev_rad(void* const hA2sh, int index, float newElev_rad)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     
     if(arraySpecs->sensorCoords_rad[index][1] != newElev_rad){
         arraySpecs->sensorCoords_rad[index][1] = newElev_rad;
@@ -399,7 +398,7 @@ void array2sh_setSensorAzi_deg(void* const hA2sh, int index, float newAzi_deg)
 
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     
     if(arraySpecs->sensorCoords_deg[index][0] != newAzi_deg){
         arraySpecs->sensorCoords_rad[index][0] = newAzi_deg * (M_PI/180.0f);
@@ -412,7 +411,7 @@ void array2sh_setSensorAzi_deg(void* const hA2sh, int index, float newAzi_deg)
 void array2sh_setSensorElev_deg(void* const hA2sh, int index, float newElev_deg)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     
     if(arraySpecs->sensorCoords_deg[index][1] != newElev_deg){
         arraySpecs->sensorCoords_rad[index][1] = newElev_deg * (M_PI/180.0f);
@@ -425,7 +424,7 @@ void array2sh_setSensorElev_deg(void* const hA2sh, int index, float newElev_deg)
 void array2sh_setNumSensors(void* const hA2sh, int newQ)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     int nSH;
     
     nSH = (pData->new_order+1)*(pData->new_order+1);
@@ -444,7 +443,7 @@ void array2sh_setNumSensors(void* const hA2sh, int newQ)
 void array2sh_setr(void* const hA2sh, float newr)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     
     newr = CLAMP(newr, ARRAY2SH_ARRAY_RADIUS_MIN_VALUE/1e3f, ARRAY2SH_ARRAY_RADIUS_MAX_VALUE/1e3f);
     if(arraySpecs->r!=newr){
@@ -457,7 +456,7 @@ void array2sh_setr(void* const hA2sh, float newr)
 void array2sh_setR(void* const hA2sh, float newR)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     
     newR = CLAMP(newR, ARRAY2SH_BAFFLE_RADIUS_MIN_VALUE/1e3f, ARRAY2SH_BAFFLE_RADIUS_MAX_VALUE/1e3f);
     if(arraySpecs->R!=newR){
@@ -470,10 +469,10 @@ void array2sh_setR(void* const hA2sh, float newR)
 void array2sh_setArrayType(void* const hA2sh, int newType)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     
-    if(arraySpecs->arrayType != (ARRAY_TYPES)newType){
-        arraySpecs->arrayType = (ARRAY_TYPES)newType;
+    if(arraySpecs->arrayType != (ARRAY2SH_ARRAY_TYPES)newType){
+        arraySpecs->arrayType = (ARRAY2SH_ARRAY_TYPES)newType;
         pData->reinitSHTmatrixFLAG = 1;
         array2sh_setEvalStatus(hA2sh, EVAL_STATUS_NOT_EVALUATED);
     }
@@ -482,10 +481,10 @@ void array2sh_setArrayType(void* const hA2sh, int newType)
 void array2sh_setWeightType(void* const hA2sh, int newType)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     
-    if(arraySpecs->weightType!=(WEIGHT_TYPES)newType){
-        arraySpecs->weightType = (WEIGHT_TYPES)newType;
+    if(arraySpecs->weightType!=(ARRAY2SH_WEIGHT_TYPES)newType){
+        arraySpecs->weightType = (ARRAY2SH_WEIGHT_TYPES)newType;
         pData->reinitSHTmatrixFLAG = 1;
         array2sh_setEvalStatus(hA2sh, EVAL_STATUS_NOT_EVALUATED);
     }
@@ -495,8 +494,8 @@ void array2sh_setFilterType(void* const hA2sh, int newType)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     
-    if(pData->filterType!=(FILTER_TYPES)newType){
-        pData->filterType = (FILTER_TYPES)newType;
+    if(pData->filterType!=(ARRAY2SH_FILTER_TYPES)newType){
+        pData->filterType = (ARRAY2SH_FILTER_TYPES)newType;
         pData->reinitSHTmatrixFLAG = 1;
         array2sh_setEvalStatus(hA2sh, EVAL_STATUS_NOT_EVALUATED);
     }
@@ -516,15 +515,15 @@ void array2sh_setRegPar(void* const hA2sh, float newVal)
 void array2sh_setChOrder(void* const hA2sh, int newOrder)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    if((CH_ORDER)newOrder != CH_FUMA || pData->order==ENCODING_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->chOrdering = (CH_ORDER)newOrder;
+    if((ARRAY2SH_CH_ORDER)newOrder != CH_FUMA || pData->order==ENCODING_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (ARRAY2SH_CH_ORDER)newOrder;
 }
 
 void array2sh_setNormType(void* const hA2sh, int newType)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    if((NORM_TYPES)newType != NORM_FUMA || pData->order==ENCODING_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->norm = (NORM_TYPES)newType;
+    if((ARRAY2SH_NORM_TYPES)newType != NORM_FUMA || pData->order==ENCODING_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (ARRAY2SH_NORM_TYPES)newType;
 }
 
 void array2sh_setc(void* const hA2sh, float newc)
@@ -547,7 +546,7 @@ void array2sh_setGain(void* const hA2sh, float newGain)
 
 /* Get Functions */
 
-EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh)
+ARRAY2SH_EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     return pData->evalStatus;
@@ -586,35 +585,35 @@ int array2sh_getEncodingOrder(void* const hA2sh)
 float array2sh_getSensorAzi_rad(void* const hA2sh, int index)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     return arraySpecs->sensorCoords_rad[index][0];
 }
 
 float array2sh_getSensorElev_rad(void* const hA2sh, int index)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     return arraySpecs->sensorCoords_rad[index][1];
 }
 
 float array2sh_getSensorAzi_deg(void* const hA2sh, int index)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     return arraySpecs->sensorCoords_deg[index][0];
 }
 
 float array2sh_getSensorElev_deg(void* const hA2sh, int index)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     return arraySpecs->sensorCoords_deg[index][1];
 }
 
 int array2sh_getNumSensors(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
    // return arraySpecs->Q;
     return arraySpecs->newQ; /* return the new Q, incase the plug-in is still waiting for a refresh */
 }
@@ -639,28 +638,28 @@ int array2sh_getNSHrequired(void* const hA2sh)
 float array2sh_getr(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     return arraySpecs->r;
 }
 
 float array2sh_getR(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     return arraySpecs->R;
 } 
 
 int array2sh_getArrayType(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     return (int)arraySpecs->arrayType;
 }
 
 int array2sh_getWeightType(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    arrayPars* arraySpecs = (arrayPars*)(pData->arraySpecs);
+    array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     return (int)arraySpecs->weightType;
 }
 

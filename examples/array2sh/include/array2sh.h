@@ -14,30 +14,29 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: array2sh.h (include header)
- * -------------------------------------
- * Spatially encodes spherical or cylindrical sensor array signals into
- * spherical harmonic signals utilising theoretical encoding filters.
+/**
+ * @file array2sh.h
+ * @brief Spatially encodes spherical or cylindrical sensor array signals into
+ *        spherical harmonic signals utilising theoretical encoding filters.
+ *
  * The algorithms within array2sh were pieced together and developed in
  * collaboration with Symeon Delikaris-Manias and Angelo Farina.
  * A detailed explanation of the algorithms within array2sh can be found in [1].
  * Also included, is a diffuse-field equalisation option for frequencies past
  * aliasing, developed in collaboration with Archontis Politis, 8.02.2019
- * Note: since the algorithms are based on theory, only array designs where
- * there are analytical solutions available are supported. i.e. only spherical
- * or cylindrical arrays, which have phase-matched sensors.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_sh, saf_hoa, saf_vbap
- * Author, date created:
- *     Leo McCormack, 13.09.2017
+ * @note Since the algorithms are based on theory, only array designs where
+ *       there are analytical solutions available are supported. i.e. only
+ *       spherical or cylindrical arrays, which have phase-matched sensors.
  *
- * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
- *     V., “Real-time conversion of sensor array signals into spherical harmonic
- *     signals with applications to spatially localised sub-band sound-field
- *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
- *     Society, 2018.
+ * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
+ *          Pulkki, V., “Real-time conversion of sensor array signals into
+ *          spherical harmonic signals with applications to spatially localised
+ *          sub-band sound-field analysis,” in Audio Engineering Society
+ *          Convention 144, Audio Engineering Society, 2018.
+ *
+ * @author Leo McCormack
+ * @date 13.09.2017
  */
 
 #ifndef __ARRAY2SH_H_INCLUDED__
@@ -51,38 +50,27 @@ extern "C" {
 /*                             Presets + Constants                            */
 /* ========================================================================== */
     
-/*
- * Enum: ENCODING_ORDERS
- * ---------------------
+/**
  * Available encoding orders
- *
- * Options:
- *     ENCODING_ORDER_FIRST   - First-order encoding (4 channel output)
- *     ENCODING_ORDER_SECOND  - Second-order encoding (9 channel output)
- *     ENCODING_ORDER_THIRD   - Third-order encoding (16 channel output)
- *     ENCODING_ORDER_FOURTH  - Fourth-order encoding (25 channel output)
- *     ENCODING_ORDER_FIFTH   - Fifth-order encoding (36 channel output)
- *     ENCODING_ORDER_SIXTH   - Sixth-order encoding (49 channel output)
- *     ENCODING_ORDER_SEVENTH - Seventh-order encoding (64 channel output)
  */
+typedef enum _ARRAY2SH_ENCODING_ORDERS{
+    ENCODING_ORDER_FIRST = 1, /**< First-order encoding (4 channel output) */
+    ENCODING_ORDER_SECOND,    /**< Second-order encoding (9 channel output) */
+    ENCODING_ORDER_THIRD,     /**< Third-order encoding (16 channel output) */
+    ENCODING_ORDER_FOURTH,    /**< Fourth-order encoding (25 channel output) */
+    ENCODING_ORDER_FIFTH,     /**< Fifth-order encoding (36 channel output) */
+    ENCODING_ORDER_SIXTH,     /**< Sixth-order encoding (49 channel output) */
+    ENCODING_ORDER_SEVENTH    /**< Seventh-order encoding (64 channel output) */
+    
+}ARRAY2SH_ENCODING_ORDERS;
+    
+/** Maximum supported Ambisonic order */
 #define ARRAY2SH_MAX_SH_ORDER ( 7 )
-typedef enum _ENCODING_ORDERS{
-    ENCODING_ORDER_FIRST = 1,
-    ENCODING_ORDER_SECOND,
-    ENCODING_ORDER_THIRD,
-    ENCODING_ORDER_FOURTH,
-    ENCODING_ORDER_FIFTH,
-    ENCODING_ORDER_SIXTH,
-    ENCODING_ORDER_SEVENTH
     
-}ENCODING_ORDERS;
-    
-/*
- * Enum: MICROPHONE_ARRAY_PRESETS
- * -------------------------------
+/**
  * Available microphone array presets
  */
-typedef enum _MICROPHONE_ARRAY_PRESETS{
+typedef enum _ARRAY2SH_MICROPHONE_ARRAY_PRESETS{
     MICROPHONE_ARRAY_PRESET_DEFAULT = 1,
     MICROPHONE_ARRAY_PRESET_AALTO_HYDROPHONE,
     MICROPHONE_ARRAY_PRESET_SENNHEISER_AMBEO,
@@ -93,141 +81,116 @@ typedef enum _MICROPHONE_ARRAY_PRESETS{
     MICROPHONE_ARRAY_PRESET_EIGENMIKE32,
     MICROPHONE_ARRAY_PRESET_DTU_MIC
 
-}MICROPHONE_ARRAY_PRESETS;
+}ARRAY2SH_MICROPHONE_ARRAY_PRESETS;
 
-/*
- * Enum: FILTER_TYPES
- * ----------------------
+/**
  * Available encoding filter approaches.
  *
- * Options:
- *     FILTER_SOFT_LIM      - encoding filters based on a 'soft-limiting'
- *                            regularised inversion of the modal responses [1]
- *     FILTER_TIKHONOV      - encoding filters based on a 'Tikhonov' regularised
- *                            inversion of the modal responses [2]
- *     FILTER_Z_STYLE       - encoding filters based on a linear-phase filter-
- *                            bank approach [3]
- *     FILTER_Z_STYLE_MAXRE - same as 'FILTER_Z_STYLE', only it also has max_rE
- *                            weights baked in
- *
- * [1] Bernschutz, B., Porschmann, C., Spors, S., Weinzierl, S., Versterkung,
- *     B., 2011. Soft-limiting der modalen amplitudenverst?rkung bei sph?rischen
- *     mikrofonarrays im plane wave decomposition verfahren. Proceedings of the
- *     37. Deutsche Jahrestagung fur Akustik (DAGA 2011)
- * [2] Moreau, S., Daniel, J., Bertet, S., 2006, 3D sound field recording with
- *     higher order ambisonics-objective measurements and validation of
- *     spherical microphone. In Audio Engineering Society Convention 120.
- * [3] Zotter, F. A Linear-Phase Filter-Bank Approach to Process Rigid Spherical
- *     Microphone Array Recordings.
+ * @see [1] Bernschutz, B., Porschmann, C., Spors, S., Weinzierl, S.,
+ *          Versterkung,  B., 2011. Soft-limiting der modalen
+ *          amplitudenverst?rkung bei sph?rischen mikrofonarrays im plane wave
+ *          decomposition verfahren. Proceedings of the 37. Deutsche
+ *          Jahrestagung fur Akustik (DAGA 2011)
+ * @see [2] Moreau, S., Daniel, J., Bertet, S., 2006, 3D sound field recording
+ *          with higher order ambisonics-objective measurements and validation
+ *          of spherical microphone. In Audio Engineering Society Convention
+ *          120.
+ * @see [3] Zotter, F. A Linear-Phase Filter-Bank Approach to Process Rigid
+ *          Spherical  Microphone Array Recordings.
  */
+typedef enum _ARRAY2SH_FILTER_TYPES{
+    FILTER_SOFT_LIM = 1, /**< Encoding filters based on a 'soft-limiting'
+                          *   regularised inversion of the modal responses [1]
+                          */
+    FILTER_TIKHONOV,     /**< Encoding filters based on a 'Tikhonov' regularised
+                          *   inversion of the modal responses [2] */
+    FILTER_Z_STYLE,      /**< Encoding filters based on a linear-phase filter-
+                          *   bank approach [3] */
+    FILTER_Z_STYLE_MAXRE /**< Same as 'FILTER_Z_STYLE', only it also has max_rE
+                          *   weights baked in */
+    
+}ARRAY2SH_FILTER_TYPES;
+    
+/** Number of available filter types */
 #define ARRAY2SH_NUM_FILTER_TYPES ( 4 )
-typedef enum _FILTER_TYPES{
-    FILTER_SOFT_LIM = 1,
-    FILTER_TIKHONOV,
-    FILTER_Z_STYLE,
-    FILTER_Z_STYLE_MAXRE
-    
-}FILTER_TYPES;
 
-/*
- * Enum: CH_ORDER
- * --------------
+/**
  * Available Ambisonic channel ordering conventions
- * Note: CH_FUMA only supported for 1st order output.
- * Further note: FuMa: CH_FUMA+NORM_FUMA, AmbiX: CH_ACN+NORM_SN3D
  *
- * Options:
- *     CH_ACN  - Ambisonic Channel Numbering (ACN)
- *     CH_FUMA - (Obsolete) Furse-Malham/B-format (WXYZ)
+ * @note CH_FUMA only supported for 1st order input.
  */
+typedef enum _ARRAY2SH_CH_ORDER {
+    CH_ACN = 1, /**< Ambisonic Channel Numbering (ACN) */
+    CH_FUMA     /**< (Obsolete) Furse-Malham/B-format (WXYZ) */
+    
+} ARRAY2SH_CH_ORDER;
+
+/** Number of channel ordering options */
 #define ARRAY2SH_NUM_CH_ORDERINGS ( 2 )
-typedef enum _CH_ORDER{
-    CH_ACN = 1,
-    CH_FUMA     /* first-order only */
-    
-}CH_ORDER;
 
-/*
- * Enum: NORM_TYPES
- * ---------------
+/**
  * Available Ambisonic normalisation conventions
- * Note: NORM_FUMA only supported for 1st order output and does NOT have the
- * 1/sqrt(2) scaling on the omni.
- * Further note: FuMa: CH_FUMA+NORM_FUMA, AmbiX: CH_ACN+NORM_SN3D
  *
- * Options:
- *     NORM_N3D  - orthonormalised (N3D)
- *     NORM_SN3D - Schmidt semi-normalisation (SN3D)
- *     NORM_FUMA - (Obsolete) Same as NORM_SN3D for 1st order
+ * @note NORM_FUMA only supported for 1st order input and does NOT have the
+ *       1/sqrt(2) scaling on the omni.
  */
-#define ARRAY2SH_NUM_NORM_TYPES ( 3 )
-typedef enum _NORM_TYPES{
-    NORM_N3D = 1,
-    NORM_SN3D,
-    NORM_FUMA   /* first-order only */
+typedef enum _ARRAY2SH_NORM_TYPES {
+    NORM_N3D = 1, /**< orthonormalised (N3D) */
+    NORM_SN3D,    /**< Schmidt semi-normalisation (SN3D) */
+    NORM_FUMA     /**< (Obsolete) Same as NORM_SN3D for 1st order */
     
-}NORM_TYPES;
+} ARRAY2SH_NORM_TYPES;
 
-/*
- * Enum: ARRAY_TYPES
- * -----------------
+/** Number of normalisation options */
+#define ARRAY2SH_NUM_NORM_TYPES ( 3 )
+
+/**
  * List of supported array types.
- * Note: although supported, cylindrical arrays have not really been tested as
- * we don't own one
+ *
+ * @note Although supported, cylindrical arrays have not really been tested as
+ *       we don't own one. Just to keep in mind.
  *
  * Options:
  *     ARRAY_SPHERICAL   - spherical arrangement of sensors (open/rigid)
  *     ARRAY_CYLINDRICAL - cylindrial arrangement of sensors (open/rigid)
  */
-#define ARRAY2SH_NUM_ARRAY_TYPES ( 2 )
-typedef enum _ARRAY_TYPES{
-    ARRAY_SPHERICAL = 1,
-    ARRAY_CYLINDRICAL
-    
-}ARRAY_TYPES;
 
-/*
- * Enum: WEIGHT_TYPES
- * ------------------
+typedef enum _ARRAY2SH_ARRAY_TYPES{
+    ARRAY_SPHERICAL = 1, /**< Spherical arrangement of sensors (open/rigid) */
+    ARRAY_CYLINDRICAL    /**< Cylindrial arrangement of sensors (open/rigid) */
+    
+}ARRAY2SH_ARRAY_TYPES;
+    
+/** Number of supported array types */
+#define ARRAY2SH_NUM_ARRAY_TYPES ( 2 )
+
+/**
  * List of supported sensor directivities and array construction types.
- *
- * Options:
- *     WEIGHT_RIGID_OMNI   - rigid baffle construction with omni sensors
- *     WEIGHT_RIGID_CARD   - rigid baffle construction with cardioid sensors
- *     WEIGHT_RIGID_DIPOLE - rigid baffle construction with dipole sensors
- *     WEIGHT_OPEN_OMNI    - open array construction with omni sensors
- *     WEIGHT_OPEN_CARD    - open array construction with cardioid sensors
- *     WEIGHT_OPEN_DIPOLE  - open array construction with dipole sensors
  */
+typedef enum _ARRAY2SH_WEIGHT_TYPES{
+    WEIGHT_RIGID_OMNI = 1, /**< Rigid baffle construction with omni sensors */
+    WEIGHT_RIGID_CARD,     /**< Rigid baffle construction with cardioid sensors
+                            */
+    WEIGHT_RIGID_DIPOLE,   /**< Rigid baffle construction with dipole sensors */
+    WEIGHT_OPEN_OMNI,      /**< Open array construction with omni sensors */
+    WEIGHT_OPEN_CARD,      /**< Open array construction with cardioid sensors */
+    WEIGHT_OPEN_DIPOLE     /**< Open array construction with dipole sensors */
+    
+}ARRAY2SH_WEIGHT_TYPES;
+    
+/** Number of supported sensor directivities and array construction types */
 #define ARRAY2SH_NUM_WEIGHT_TYPES ( 6 )
-typedef enum _WEIGHT_TYPES{
-    WEIGHT_RIGID_OMNI = 1, 
-    WEIGHT_RIGID_CARD,
-    WEIGHT_RIGID_DIPOLE,
-    WEIGHT_OPEN_OMNI,
-    WEIGHT_OPEN_CARD,
-    WEIGHT_OPEN_DIPOLE
     
-}WEIGHT_TYPES;
-    
-/*
- * Enum: EVAL_STATUS
- * -----------------
+/**
  * Current status of the encoder.
- *
- * Options:
- *     EVAL_STATUS_EVALUATED          - Encoder has been evaluated
- *     EVAL_STATUS_RECENTLY_EVALUATED - Encoder has recently been evaluated
- *     EVAL_STATUS_NOT_EVALUATED      - Encoder has not been evaluated
- *     EVAL_STATUS_EVALUATING         - Encoder is being evaluated
  */
-typedef enum _EVAL_STATUS{
-    EVAL_STATUS_EVALUATED = 0,
-    EVAL_STATUS_RECENTLY_EVALUATED,
-    EVAL_STATUS_NOT_EVALUATED,
-    EVAL_STATUS_EVALUATING
-}EVAL_STATUS;
-    
+typedef enum _ARRAY2SH_EVAL_STATUS{
+    EVAL_STATUS_EVALUATED = 0,      /**< Encoder has been evaluated */
+    EVAL_STATUS_RECENTLY_EVALUATED, /**< Encoder has recently been evaluated */
+    EVAL_STATUS_NOT_EVALUATED,      /**< Encoder has not been evaluated */
+    EVAL_STATUS_EVALUATING          /**< Encoder is being evaluated */
+}ARRAY2SH_EVAL_STATUS;
+
 #define ARRAY2SH_MAX_NUM_SENSORS ( 64 )
 #define ARRAY2SH_MAX_GAIN_MIN_VALUE ( 0.0f )
 #define ARRAY2SH_MAX_GAIN_MAX_VALUE ( 80.0f )
@@ -246,61 +209,46 @@ typedef enum _EVAL_STATUS{
 /*                               Main Functions                               */
 /* ========================================================================== */
 
-/*
- * Function: array2sh_create
- * -------------------------
+/**
  * Creates an instance of array2sh
  *
- * Input Arguments:
- *     phA2sh - & address of array2sh handle
+ * @param[in] phA2sh (&) address of array2sh handle
  */
 void array2sh_create(void** const phA2sh);
 
-/*
- * Function: array2sh_destroy
- * --------------------------
+/**
  * Destroys an instance of array2sh
  *
- * Input Arguments:
- *     phA2sh - & address of array2sh handle
+ * @param[in] phA2sh (&) address of array2sh handle
  */
 void array2sh_destroy(void** const phA2sh);
 
-/*
- * Function: array2sh_init
- * -----------------------
+/**
  * Initialises an instance of array2sh with default settings
  *
- * Input Arguments:
- *     hA2sh      - array2sh handle
- *     samplerate - host samplerate.
+ * @param[in] hA2sh      array2sh handle
+ * @param[in] samplerate Host samplerate.
  */
 void array2sh_init(void* const hA2sh,
                    int samplerate);
-    
-/*
- * Function: array2sh_evalEncoder
- * ------------------------------
+
+/**
  * Evaluates the encoder, based on current global/user parameters
  *
- * Input Arguments:
- *     hA2sh - array2sh handle
+ * @param[in] hA2sh array2sh handle
  */
 void array2sh_evalEncoder(void* const hA2sh);
 
-/*
- * Function: array2sh_process
- * --------------------------
+/**
  * Spatially encode microphone/hydrophone array signals into spherical harmonic
  * signals
  *
- * Input Arguments:
- *     hA2sh     - array2sh handle
- *     inputs    - input channel buffers; 2-D array: nInputs x nSamples
- *     outputs   - Output channel buffers; 2-D array: nOutputs x nSamples
- *     nInputs   - number of input channels
- *     nOutputs  - number of output channels
- *     nSamples  - number of samples in 'inputs'/'output' matrices
+ * @param[in] hA2sh     array2sh handle
+ * @param[in] inputs    Input channel buffers; 2-D array: nInputs x nSamples
+ * @param[in] outputs   Output channel buffers; 2-D array: nOutputs x nSamples
+ * @param[in] nInputs   Number of input channels
+ * @param[in] nOutputs  Number of output channels
+ * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void array2sh_process(void* const hA2sh,
                       float** const inputs,
@@ -314,106 +262,71 @@ void array2sh_process(void* const hA2sh,
 /*                                Set Functions                               */
 /* ========================================================================== */
 
-/*
- * Function: array2sh_refreshSettings
- * ----------------------------------
- * Sets all intialisation flags to 1. i.e. re-initialise all settings/variables
+/**
+ * Sets all intialisation flags to 1; re-initialising all settings/variables
  * as array2sh is currently configured, at next available opportunity.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
  */
 void array2sh_refreshSettings(void* const hA2sh);
  
-/*
- * Function: array2sh_setEncodingOrder
- * -----------------------------------
- * Sets the encoding order.
- *
- * Input Arguments:
- *     hA2sh    - array2sh handle
- *     newOrder - new encoding order (see 'ENCODING_ORDERS' enum)
+/**
+ * Sets the encoding order (see 'ENCODING_ORDERS' enum)
  */
 void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
-    
-/*
- * Function: array2sh_setRequestEncoderEvalFLAG
- * --------------------------------------------
+
+/**
  * Evaluates the performance of the current encoding filters when applied to a
- * theoretical model of the currently configured array. Two established
- * objective metrics are computed. More information in [1]
+ * theoretical model of the currently configured array; two established
+ * objective metrics are then computed; more information in [1]
  *
- * Input Arguments:
- *     hA2sh - array2sh handle
- *
- * [1] Moreau, S., Daniel, J., Bertet, S., 2006, 3D sound field recording with
- *     higher order ambisonics-objective measurements and validation of
- *     spherical microphone. In Audio Engineering Society Convention 120.
+ * @see [1] Moreau, S., Daniel, J., Bertet, S., 2006, 3D sound field recording
+ *          with higher order ambisonics-objective measurements and validation
+ *          of spherical microphone. In Audio Engineering Society Convention
+ *          120.
  */
 void array2sh_setRequestEncoderEvalFLAG(void* const hA2sh, int newState);
     
-/*
- * Function: array2sh_setEvalStatus
- * --------------------------------
- * Sets current eval status.
- *
- * Input Arguments:
- *     hA2sh      - array2sh handle
- *     evalStatus - see 'EVAL_STATUS' enum
+/**
+ * Sets current eval status (see 'EVAL_STATUS' enum)
  */
-void array2sh_setEvalStatus(void* const hA2sh, EVAL_STATUS evalStatus);
+void array2sh_setEvalStatus(void* const hA2sh, ARRAY2SH_EVAL_STATUS evalStatus);
 
-/*
- * Function: array2sh_setDiffEQpastAliasing
- * ----------------------------------------
+/**
  * Analyses what the theoretical spatial aliasing frequency is, and conducts
- * diffuse-field equalisation above this.
- * Thanks to Dr. Archontis Politis for suggesting and designing this feature.
+ * diffuse-field equalisation above this (enable: 1, disable: 0).
  *
- * Input Arguments:
- *     hA2sh - array2sh handle
+ * Thanks to Dr. Archontis Politis for suggesting and designing this feature.
  */
 void array2sh_setDiffEQpastAliasing(void* const hA2sh, int newState);
-    
-/*
- * Function: array2sh_setPreset
- * ----------------------------
- * Sets a pre-defined microphone/hydrophone array preset. See PRESETS enum
- *
- * Input Arguments:
- *     hA2sh  - array2sh handle
- *     preset - see PRESETS enum
+
+/**
+ * Sets a pre-defined microphone/hydrophone array preset (See
+ * ARRAY2SH_MICROPHONE_ARRAY_PRESETS enum) 
  */
 void array2sh_setPreset(void* const hA2sh, int preset);
     
-/*
- * Function: array2sh_setSensorAzi_rad
- * -----------------------------------
- * Sets a particular sensor's azimuth w.r.t to the origin of the array.
+/**
+ * Sets a particular sensor's azimuth (radians) w.r.t to the origin of the
+ * array.
  *
- * Input Arguments:
- *     hA2sh      - array2sh handle
- *     index      - sensor index
- *     newAzi_rad - sensor azimuth in RADIANS
+ * @param[in] hA2sh      array2sh handle
+ * @param[in] index      Sensor index
+ * @param[in] newAzi_rad Sensor azimuth in RADIANS
  */
 void array2sh_setSensorAzi_rad(void* const hA2sh, int index, float newAzi_rad);
     
-/*
- * Function: array2sh_setSensorElev_rad
- * ------------------------------------
- * Sets a particular sensor's elevation w.r.t to the origin of the array.
+/**
+ * Sets a particular sensor's elevation (radians) w.r.t to the origin of the
+ * array.
  *
- * Input Arguments:
- *     hA2sh       - array2sh handle
- *     index       - sensor index
- *     newElev_rad - sensor elevation in RADIANS
+ * @param[in] hA2sh       array2sh handle
+ * @param[in] index       Sensor index
+ * @param[in] newElev_rad Sensor elevation in RADIANS
  */
 void array2sh_setSensorElev_rad(void* const hA2sh, int index, float newElev_rad);
     
-/*
- * Function: array2sh_setSensorAzi_deg
- * -----------------------------------
- * Sets a particular sensor's azimuth w.r.t to the origin of the array.
+/**
+ * Sets a particular sensor's azimuth (degrees) w.r.t to the origin of the
+ * array.
  *
  * Input Arguments:
  *     hA2sh      - array2sh handle
@@ -422,142 +335,77 @@ void array2sh_setSensorElev_rad(void* const hA2sh, int index, float newElev_rad)
  */
 void array2sh_setSensorAzi_deg(void* const hA2sh, int index, float newAzi_deg);
     
-/*
- * Function: array2sh_setSensorElev_deg
- * ------------------------------------
- * Sets a particular sensor's elevation w.r.t to the origin of the array.
+/**
+ * Sets a particular sensor's elevation (degrees) w.r.t to the origin of the
+ * array.
  *
- * Input Arguments:
- *     hA2sh       - array2sh handle
- *     index       - sensor index
- *     newElev_deg - sensor elevation in DEGREES
+ * @param[in] hA2sh       array2sh handle
+ * @param[in] index       Sensor index
+ * @param[in] newElev_deg Sensor elevation in DEGREES
  */
 void array2sh_setSensorElev_deg(void* const hA2sh, int index, float newElev_deg);
     
-/*
- * Function: array2sh_setNumSensors
- * --------------------------------
+/**
  * Sets the number of sensors in the array.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- *     newQ  - new number of sensors
  */
 void array2sh_setNumSensors(void* const hA2sh, int newQ);
     
-/*
- * Function: array2sh_setr
- * -----------------------
+/**
  * Sets the radius of the array
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- *     newr  - new array radius
  */
 void array2sh_setr(void* const hA2sh, float newr);
     
-/*
- * Function: array2sh_setR
- * -----------------------
- * Sets the radius of the scatterer. Only for Rigid arrays.
- * Note: R <= r. i.e. the sensors may protrude of the rigid scattering surface,
- * or be flush with the surface of the array
+/**
+ * Sets the radius (in meters) of the scatterer (only for Rigid arrays).
  *
- * Input Arguments:
- *     hA2sh - array2sh handle
- *     newr  - new scatterer radius
+ * @note R <= r. i.e. the sensors may protrude from the rigid scattering
+ *       surface, or be flush with the surface of the array
  */
 void array2sh_setR(void* const hA2sh, float newR);
     
-/*
- * Function: array2sh_setArrayType
- * -------------------------------
- * Sets the type of array. See ARRAY_TYPES enum
- *
- * Input Arguments:
- *     hA2sh   - array2sh handle
- *     newType - new array type. See ARRAY_TYPES enum
+/**
+ * Sets the type of array (see ARRAY2SH_ARRAY_TYPES enum)
  */
 void array2sh_setArrayType(void* const hA2sh, int newType);
 
-/*
- * Function: array2sh_setWeightType
- * --------------------------------
- * Sets the type of weights to use. See WEIGHT_TYPES enum
- *
- * Input Arguments:
- *     hA2sh   - array2sh handle
- *     newType - new weight type. See WEIGHT_TYPES enum
+/**
+ * Sets the type of weights to use (see ARRAY2SH_WEIGHT_TYPES enum)
  */
 void array2sh_setWeightType(void* const hA2sh, int newType);
     
-/*
- * Function: array2sh_setFilterType
- * --------------------------------
- * Sets the type filter design to employ for computing the encoding matrices.
- * See FILTER_TYPES enum
- *
- * Input Arguments:
- *     hA2sh   - array2sh handle
- *     newType - new filter type. See FILTER_TYPES enum
+/**
+ * Sets the type filter design to employ for computing the encoding matrices
+ * (see ARRAY2SH_FILTER_TYPES enum)
  */
 void array2sh_setFilterType(void* const hA2sh, int newType);
     
-/*
- * Function: array2sh_setRegPar
- * ----------------------------
- * Sets the value of the regurlisation parameter. i.e. the maximum permitted
- * gain provided by the filters
- *
- * Input Arguments:
- *     hA2sh  - array2sh handle
- *     newVal - new filter maximum gain, in DECIBELS
+/**
+ * Sets the value of the regularisation parameter (the maximum permitted gain
+ * of the filters), in DECIBELS
  */
 void array2sh_setRegPar(void* const hA2sh, float newVal);
     
-    /*
- * Function: array2sh_setChOrder
- * -----------------------------
+/**
  * Sets the Ambisonic channel ordering convention to encode with, in order to
- * match the convention employed by the input signals
- *
- * Input Arguments:
- *     hA2sh    - array2sh handle
- *     newOrder - convention to use (see 'CH_ORDER' enum)
+ * match the convention employed by the input signals (see 'ARRAY2SH_CH_ORDER'
+ * enum)
  */
 void array2sh_setChOrder(void* const hA2sh, int newOrder);
     
-/*
- * Function: array2sh_setNormType
- * ------------------------------
+/**
  * Sets the Ambisonic normalisation convention to encode with, in order to match
- * with the convention employed by the input signals.
- *
- * Input Arguments:
- *     hA2sh   - array2sh handle
- *     newType - convention to use (see 'NORM_TYPE' enum)
+ * with the convention employed by the input signals (see 'ARRAY2SH_NORM_TYPE'
+ * enum)
  */
 void array2sh_setNormType(void* const hA2sh, int newType);
 
-/*
- * Function: array2sh_setc
- * -----------------------
- * Sets the speed of sound of the medium (~343m/s air, ~1480m/s water).
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- *     newc  - new speed of sound, in m/s
+/**
+ * Sets the speed of sound of the medium (~343m/s air, ~1480m/s water), in m/s
  */
 void array2sh_setc(void* const hA2sh, float newc);
     
-/*
- * Function: array2sh_setGain
- * --------------------------
- * Sets the amount of post gain to apply after the encoding
- *
- * Input Arguments:
- *     hA2sh   - array2sh handle
- *     newGain - new post gain, in DECIBELS
+/**
+ * Sets the amount of post gain to apply after the encoding, in DECIBELS
  */
 void array2sh_setGain(void* const hA2sh, float newGain);
 
@@ -566,423 +414,245 @@ void array2sh_setGain(void* const hA2sh, float newGain);
 /*                                Get Functions                               */
 /* ========================================================================== */
 
-/*
- * Function: array2sh_getEvalStatus
- * --------------------------------
- * Returns current eval status.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     codec status (see 'EVAL_STATUS' enum)
+/**
+ * Returns current eval status (see 'ARRAY2SH_EVAL_STATUS' enum)
  */
-EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh);
+ARRAY2SH_EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh);
 
-/*
- * Function: array2sh_getProgressBar0_1
- * ------------------------------------
+/**
  * (Optional) Returns current intialisation/processing progress, between 0..1
- * 0: intialisation/processing has started
- * 1: intialisation/processing has ended
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     current progress, 0..1
+ *  - 0: intialisation/processing has started
+ *  - 1: intialisation/processing has ended
  */
 float array2sh_getProgressBar0_1(void* const hA2sh);
 
-/*
- * Function: array2sh_getProgressBarText
- * -------------------------------------
+/**
  * (Optional) Returns current intialisation/processing progress text
- * Note: "text" string should be (at least) of length:
- *     ARRAY2SH_PROGRESSBARTEXT_CHAR_LENGTH
  *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Output Arguments:
- *     text  - process bar text; ARRAY2SH_PROGRESSBARTEXT_CHAR_LENGTH x 1
+ * @note "text" string should be (at least) of length:
+ *       ARRAY2SH_PROGRESSBARTEXT_CHAR_LENGTH
  */
 void array2sh_getProgressBarText(void* const hA2sh, char* text);
 
-/*
- * Function: array2sh_getDiffEQpastAliasing
- * ----------------------------------------
+/**
+ * Flag to enabled/disable diffuse equalisation above the spatial aliasing
+ * limit of the array (0: disabled, 1: enabled).
  *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     current flag state, 0: disabled, 1: enabled
+ * Developed in collaboration with Archontis Politis.
+ *
+ * @ note In general, theoretical encoding filters have a tendency to boost
+ *        the aliased frequencies. Whereas, measurement-based filters (through a
+ *        least-squares solution), tend to attenuate them. Neither of these
+ *        are correct or incorrect, since, strictly (and spatially) speaking, we
+ *        should be placing a low-pass filter at the spatial aliasing frequency.
+ *        However, since we usually do not want to remove this high frequency
+ *        energy from e.g. an Ambisonic reproduction, we would argue that
+ *        equalising the aliased components so that they have a flat spectrum,
+ *        is probably the way to go; and is exactly what this feature does.
  */
 int array2sh_getDiffEQpastAliasing(void* const hA2sh);
 
-/*
- * Function: array2sh_getRequestEncoderEvalFLAG
- * --------------------------------------------
- * Returns
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     0:
+/**
+ * Returns a flag, which is '1' if there has been a recent request to evaluate
+ * the current encoding performance, or '0', if there hasn't.
  */
 int array2sh_getRequestEncoderEvalFLAG(void* const hA2sh);
     
-/*
- * Function: array2sh_getEncodingOrder
- * -----------------------------------
- * Returns the encoding order.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     current encoding order (see 'ENCODING_ORDERS' enum)
+/**
+ * Returns the current encoding order (see 'ARRAY2SH_ENCODING_ORDERS' enum)
  */
 int array2sh_getEncodingOrder(void* const hA2sh);
     
-/*
- * Function: array2sh_getSensorAzi_rad
- * -----------------------------------
- * Returns a particular sensor's azimuth w.r.t to the origin of the array.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- *     index - sensor index
- * Returns:
- *     sensor azimuth in RADIANS
+/**
+ * Returns a particular sensor's azimuth w.r.t to the origin of the array, in
+ * RADIANS
  */
 float array2sh_getSensorAzi_rad(void* const hA2sh, int index);
     
-/*
- * Function: array2sh_getSensorElev_rad
- * ------------------------------------
- * Returns a particular sensor's elevation w.r.t to the origin of the array.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- *     index - sensor index
- * Returns:
- *     sensor elevation in RADIANS
+/**
+ * Returns a particular sensor's elevation w.r.t to the origin of the array, in
+ * RADIANS
  */
 float array2sh_getSensorElev_rad(void* const hA2sh, int index);
     
-/*
- * Function: array2sh_getSensorAzi_deg
- * -----------------------------------
- * Returns a particular sensor's azimuth w.r.t to the origin of the array.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- *     index - sensor index
- * Returns:
- *     sensor azimuth in DEGREES
+/**
+ * Returns a particular sensor's azimuth w.r.t to the origin of the array, in
+ * DEGREES
  */
 float array2sh_getSensorAzi_deg(void* const hA2sh, int index);
     
-/*
- * Function: array2sh_getSensorElev_deg
- * ------------------------------------
- * Returns a particular sensor's elevation w.r.t to the origin of the array.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- *     index - sensor index
- * Returns:
- *     sensor elevation in DEGREES
+/**
+ * Returns a particular sensor's elevation w.r.t to the origin of the array, in
+ * DEGREES
  */
 float array2sh_getSensorElev_deg(void* const hA2sh, int index);
 
-/*
- * Function: array2sh_getNumSensors
- * --------------------------------
+/**
  * Returns the number of sensors in the array.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     current number of sensors
  */
 int array2sh_getNumSensors(void* const hA2sh);
     
-/*
- * Function: array2sh_getMaxNumSensors
- * -----------------------------------
- * Returns the maximum number of sensors which can be in the array.
- *
- * Returns:
- *     maximum number of sensors (64)
+/**
+ * Returns the maximum supported number of sensors which can be in the array.
  */
 int array2sh_getMaxNumSensors(void);
     
-/*
- * Function: array2sh_getMinNumSensors
- * -----------------------------------
- * Returns the minimum number of sensors which can be in the array.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     minimum number of sensors [(current_order+1)^2]
+/**
+ * Returns the minimum number of sensors which can be in the array
+ * [(current_order+1)^2]
  */
 int array2sh_getMinNumSensors(void* const hA2sh);
     
-/*
- * Function: array2sh_getNSHrequired
- * ---------------------------------
+/**
  * Returns the number of spherical harmonic signals required by the current
- * encoding order i.e. (current_order+1)^2
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     number of required spherical harmonic signals required by current
- *     encoding order
+ * encoding order: (current_order+1)^2
  */
 int array2sh_getNSHrequired(void* const hA2sh);
     
-/*
- * Function: array2sh_getr
- * -----------------------
- * Returns the radius of the array
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     current array radius
+/**
+ * Returns the radius of the array, in meters
  */
 float array2sh_getr(void* const hA2sh);
     
-/*
- * Function: array2sh_getR
- * -----------------------
- * Returns the radius of the scatterer.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     current scatterer radius
+/**
+ * Returns the radius of the scatterer, in meters
  */
 float array2sh_getR(void* const hA2sh);
     
-/*
- * Function: array2sh_getArrayType
- * -------------------------------
- * Returns the type of array. See ARRAY_TYPES enum
- *
- * Input Arguments:
- *     hA2sh   - array2sh handle
- * Returns:
- *     current array type. See ARRAY_TYPES enum
+/**
+ * Returns the type of array. See ARRAY2SH_ARRAY_TYPES enum
  */
 int array2sh_getArrayType(void* const hA2sh);
 
-/*
- * Function: array2sh_getWeightType
- * --------------------------------
- * Returns the type of weights to use. See WEIGHT_TYPES enum
- *
- * Input Arguments:
- *     hA2sh   - array2sh handle
- * Returns:
- *     current weight type. See WEIGHT_TYPES enum
+/**
+ * Returns the type of weights to use see ARRAY2SH_WEIGHT_TYPES enum
  */
 int array2sh_getWeightType(void* const hA2sh);
 
-/*
- * Function: array2sh_getFilterType
- * --------------------------------
- * Returns the type filter design to employ for computing the encoding matrices.
- * See FILTER_TYPES enum
- *
- * Input Arguments:
- *     hA2sh   - array2sh handle
- * Returns:
- *     filter type. See FILTER_TYPES enum
+/**
+ * Returns the type filter design to employ for computing the encoding matrices
+ * (see ARRAY2SH_FILTER_TYPES enum)
  */
 int array2sh_getFilterType(void* const hA2sh);
 
-/*
- * Function: array2sh_getRegPar
- * ----------------------------
- * Returns the value of the regurlisation parameter. i.e. the maximum permitted
- * gain provided by the filters
- *
- * Input Arguments:
- *     hA2sh  - array2sh handle
- * Returns:
- *     current filter maximum gain, in DECIBELS
+/**
+ * Returns the value of the regurlisation parameter; the maximum permitted
+ * gain provided by the filters, in DECIBELS
  */
 float array2sh_getRegPar(void* const hA2sh);
     
 /*
- * Function: array2sh_getChOrder
- * -----------------------------
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     convention currently being used (see 'CH_ORDER' enum)
+ * (see 'ARRAY2SH_CH_ORDER' enum)
  */
 int array2sh_getChOrder(void* const hA2sh);
 
-/*
- * Function: array2sh_getNormType
- * ------------------------------
+/**
  * Returns the Ambisonic normalisation convention currently being usedto decode
- * with, which should match the convention employed by the input signals.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     convention currently being used (see 'NORM_TYPE' enum)
+ * with, which should match the convention employed by the input signals
+ * (see 'ARRAY2SH_NORM_TYPE' enum)
  */
 int array2sh_getNormType(void* const hA2sh);
     
-/*
- * Function: array2sh_getc
- * -----------------------
- * Returns the speed of sound of the medium (~343m/s air, ~1480m/s water).
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *      speed of sound, in m/s
+/**
+ * Returns the speed of sound of the medium (~343m/s air, ~1480m/s water), in
+ * m/s
  */
 float array2sh_getc(void* const hA2sh);
 
-/*
- * Function: array2sh_getGain
- * --------------------------
- * Returns the amount of post gain to apply after the encoding
- *
- * Input Arguments:
- *     hA2sh   - array2sh handle
- * Returns:
- *     post gain, in DECIBELS
+/**
+ * Returns the amount of post gain to apply after the encoding, in DECIBELS
  */
 float array2sh_getGain(void* const hA2sh);
 
-/*
- * Function: array2sh_getFreqVector
- * --------------------------------
+/**
  * Returns a pointer to the frequency vector
  *
- * Input Arguments:
- *     hA2sh       - array2sh handle
- * Output Arguments:
- *     nFreqPoints - & number of frequencies
- * Returns:
- *     vector of centre frequencies; nFreqPoints x 1
+ * @param[in]  hA2sh       array2sh handle
+ * @param[out] nFreqPoints (&) number of frequencies
+ * @returns                Vector of centre frequencies; nFreqPoints x 1
  */
 float* array2sh_getFreqVector(void* const hA2sh, int* nFreqPoints);
     
-/*
- * Function: array2sh_getbN_inv
- * ----------------------------
- * Returns the regularised inversion of the modal coefficients per frequency.
- * May be used for optional plotting purposes.
+/**
+ * Returns the regularised inversion of the modal coefficients per frequency
+ * (may be used for optional plotting purposes).
  *
- * Input Arguments:
- *     hA2sh       - array2sh handle
- * Output Arguments:
- *     nCurves     - & number of equalisation curves (current_order+1)
- *     nFreqPoints - & number of frequencies
- * Returns:
- *     equalisation curves/regularised modal coefficients; nCurves x nFreqPoints
+ * @param[in]  hA2sh       array2sh handle
+ * @param[out] nCurves     (&) number of equalisation curves (current_order+1)
+ * @param[out] nFreqPoints (&) number of frequencies
+ * @returns                Equalisation curves/regularised modal coefficients;
+ *                         nCurves x nFreqPoints
  */
 float** array2sh_getbN_inv(void* const hA2sh, int* nCurves, int* nFreqPoints);
     
-/*
- * Function: array2sh_getbN_modal
- * ------------------------------
- * Returns the direct inversion of the modal coefficients per frequency.
- * May be used for optional plotting purposes.
+/**
+ * Returns the direct inversion of the modal coefficients per frequency
+ * (may be used for optional plotting purposes).
  *
- * Input Arguments:
- *     hA2sh       - array2sh handle
- * Output Arguments:
- *     nCurves     - & number of equalisation curves (current_order+1)
- *     nFreqPoints - & number of frequencies
- * Returns:
- *     unregularised modal coefficients; nCurves x nFreqPoints
+ * @param[in]  hA2sh       array2sh handle
+ * @param[out] nCurves     (&) number of equalisation curves (current_order+1)
+ * @param[out] nFreqPoints (&) number of frequencies
+ * @returns                Unregularised modal coefficients;
+ *                         nCurves x nFreqPoints
  */
 float** array2sh_getbN_modal(void* const hA2sh, int* nCurves, int* nFreqPoints);
 
-/*
- * Function: array2sh_getSpatialCorrelation_Handle
- * -----------------------------------------------
- * Returns a pointer to the spatial correlation  [1] data. This is given per
+/**
+ * Returns a pointer to the spatial correlation [1] data. This is given per
  * frequency, and is measure of how similar the encoded spherical harmonics
  * using the current configuration is to ideal spherical harmonics. 1=perfect
  * <1: less good/ aliasing
- * Note: that this objective measure is based on analytical models of the
- * currently configured array, and may differ in practice (i.e. with a real
- * microphone array)
  *
- * Input Arguments:
- *     hA2sh       - array2sh handle
- * Output Arguments:
- *     nCurves     - & number of equalisation curves (current_order+1)
- *     nFreqPoints - & number of frequencies
- * Returns:
- *     spatial correlation per order and frequency; FLAT: nCurves x nFreqPoints
+ * @note This objective measure is based on analytical models of the currently
+ *       configured array, and may differ in practice (i.e. with a real
+ *       microphone array)
  *
- * [1] Moreau, S., Daniel, J., Bertet, S., 2006, 3D sound field recording with
- *     higher order ambisonics-objective measurements and validation of
- *     spherical microphone. In Audio Engineering Society Convention 120.
+ * @param[in]  hA2sh       array2sh handle
+ * @param[out] nCurves     (&) number of equalisation curves (current_order+1)
+ * @param[out] nFreqPoints (&) number of frequencies
+ * @returns                Spatial correlation per order and frequency;
+ *                         FLAT: nCurves x nFreqPoints
+ *
+ * @see [1] Moreau, S., Daniel, J., Bertet, S., 2006, 3D sound field recording
+ *          with higher order ambisonics-objective measurements and validation
+ *          of spherical microphone. In Audio Engineering Society Convention
+ *          120.
  */
 float* array2sh_getSpatialCorrelation_Handle(void* const hA2sh, int* nCurves, int* nFreqPoints);
 
-/*
- * Function: array2sh_getLevelDifference_Handle
- * --------------------------------------------
- * Returns a pointer to the level-difference  [1] data. This is given per
+/**
+ * Returns a pointer to the level-difference [1] data. This is given per
  * frequency, and is measure of the mean level difference between the encoded
  * spherical harmonics using the current configuration is to ideal spherical
  * harmonics
- * Note: that this objective measure is based on analytical models of the
- * currently configured array, and may differ in practice (i.e. with a real
- * microphone array)
  *
- * Input Arguments:
- *     hA2sh       - array2sh handle
- * Output Arguments:
- *     nCurves     - & number of equalisation curves (current_order+1)
- *     nFreqPoints - & number of frequencies
- * Returns:
- *     level difference per order and frequency; FLAT: nCurves x nFreqPoints
+ * @note This objective measure is based on analytical models of the currently
+ *       configured array, and may differ in practice (i.e. with a real
+ *       microphone array)
  *
- * [1] Moreau, S., Daniel, J., Bertet, S., 2006, 3D sound field recording with
- *     higher order ambisonics-objective measurements and validation of
- *     spherical microphone. In Audio Engineering Society Convention 120.
+ * @param[in]  hA2sh       array2sh handle
+ * @param[out] nCurves     (&) number of equalisation curves (current_order+1)
+ * @param[out] nFreqPoints (&) number of frequencies
+ * @returns                Level difference per order and frequency;
+ *                         FLAT: nCurves x nFreqPoints
+ *
+ * @see [1] Moreau, S., Daniel, J., Bertet, S., 2006, 3D sound field recording
+ *          with higher order ambisonics-objective measurements and validation
+ *          of spherical microphone. In Audio Engineering Society Convention
+ *          120.
  */
 float* array2sh_getLevelDifference_Handle(void* const hA2sh, int* nCurves, int* nFreqPoints);
     
-/*
- * Function: array2sh_getSamplingRate
- * ----------------------------------
+/**
  * Returns the DAW/Host sample rate
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     DAW/Host sampling rate
  */
 int array2sh_getSamplingRate(void* const hA2sh);
     
-/*
- * Function: array2sh_getProcessingDelay
- * -------------------------------------
- * Returns the processing delay in samples. May be used for delay compensation
- * features
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
- * Returns:
- *     processing delay in samples
+/**
+ * Returns the processing delay in samples (may be used for delay compensation
+ * features) 
  */
 int array2sh_getProcessingDelay(void);
    

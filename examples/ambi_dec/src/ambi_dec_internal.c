@@ -14,28 +14,26 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: ambi_dec_internal.c
- * -----------------------------
- * A frequency-dependent Ambisonic decoder for loudspeakers or headphones.
+/**
+ * @file ambi_dec_internal.c
+ * @brief A frequency-dependent Ambisonic decoder for loudspeakers.
+ *
  * Different decoder settings can be specified for the low and high frequencies.
  * When utilising spherical harmonic signals derived from real microphone
  * arrays, this implementation also allows the decoding order per frequency band
- * to be specified. Optionally, a SOFA file may be loaded for personalised
- * headphone listening.
+ * to be specified; of course, this may also be used creatively. Optionally, a
+ * SOFA file may be loaded for personalised headphone listening.
+ *
  * The algorithms utilised in this Ambisonic decoder were pieced together and
  * developed in collaboration with Archontis Politis.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_hoa, saf_vbap, saf_hrir, saf_sh,
- *     saf_sofa_reader
- * Author, date created:
- *     Leo McCormack, 07.12.2017
+ * @author Leo McCormack
+ * @date 07.12.2017
  */
 
 #include "ambi_dec_internal.h" 
 
-void ambi_dec_setCodecStatus(void* const hAmbi, CODEC_STATUS newStatus)
+void ambi_dec_setCodecStatus(void* const hAmbi, AMBI_DEC_CODEC_STATUS newStatus)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     if(newStatus==CODEC_STATUS_NOT_INITIALISED){
@@ -55,7 +53,7 @@ void ambi_dec_interpHRTFs
 )
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    codecPars* pars = pData->pars;
+    ambi_dec_codecPars* pars = pData->pars;
     int i, band;
     int aziIndex, elevIndex, N_azi, idx3d;
     float_complex ipd;
@@ -106,7 +104,7 @@ void ambi_dec_interpHRTFs
 
 void loadLoudspeakerArrayPreset
 (
-    LOUDSPEAKER_ARRAY_PRESETS preset,
+    AMBI_DEC_LOUDSPEAKER_ARRAY_PRESETS preset,
     float dirs_deg[MAX_NUM_LOUDSPEAKERS_IN_PRESET][2],
     int* newNCH,
     int* nDims

@@ -14,15 +14,11 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: matrixconv_internal.c
- * -------------------------------
- * A matrix convolver
- *
- * Dependencies:
- *     saf_utilities
- * Author, date created:
- *     Leo McCormack, 30.09.2019
+/**
+ * @file matrixconv_internal.c
+ * @brief A standard matrix convolver
+ * @author Leo McCormack
+ * @date 30.09.2019
  */
 
 #include "matrixconv.h"

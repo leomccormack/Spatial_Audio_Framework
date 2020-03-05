@@ -14,15 +14,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: ambi_enc_internal.c
- * -----------------------------
- * A simple, but flexible, Ambisonic encoder.
+/**
+ * @file ambi_enc_internal.c
+ * @brief A simple, but flexible, Ambisonic encoder.
  *
- * Dependencies:
- *     saf_utilities, saf_sh
- * Author, date created:
- *     Leo McCormack, 07.10.2016
+ * @author Leo McCormack
+ * @date 07.10.2016
  */
 
 #include "ambi_enc.h"
@@ -30,7 +27,7 @@
 
 void loadSourceConfigPreset
 (
-    SOURCE_CONFIG_PRESETS preset,
+    AMBI_ENC_SOURCE_CONFIG_PRESETS preset,
     float dirs_deg[MAX_NUM_SOURCES_IN_PRESET][2],
     int* newNCH
 )

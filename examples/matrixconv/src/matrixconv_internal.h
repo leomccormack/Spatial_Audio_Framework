@@ -14,15 +14,11 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: matrixconv_internal.h
- * -------------------------------
- * A matrix convolver
- *
- * Dependencies:
- *     saf_utilities
- * Author, date created:
- *     Leo McCormack, 30.09.2019
+/**
+ * @file matrixconv_internal.h
+ * @brief A standard matrix convolver
+ * @author Leo McCormack
+ * @date 30.09.2019
  */
 
 #ifndef __MATRIXCONV_INTERNAL_H_INCLUDED__
@@ -57,6 +53,9 @@ extern "C" {
 /*                                 Structures                                 */
 /* ========================================================================== */
 
+/**
+ * Main structure for matrixconv.
+ */
 typedef struct _matrixconv
 {
     /* input/output buffers */
@@ -64,20 +63,20 @@ typedef struct _matrixconv
     float** outputFrameTD;
     
     /* internal */
-    void* hMatrixConv;     /* saf_matrixConv handle */
-    int hostBlockSize;     /* current host block size */
-    float* filters;        /* the matrix of filters; FLAT: nOutputChannels x nInputChannels x filter_length */
-    int nfilters;          /* the number of filters (nOutputChannels x nInputChannels) */
-    int input_wav_length;  /* length of the wav files loaded in samples (inputs are concatenated) */
-    int filter_length;     /* length of the filters (i.e. input_wav_length/nInputChannels) */
-    int filter_fs;         /* current samplerate of the filters */
-    int host_fs;           /* current samplerate of the host */
-    int reInitFilters;     /* FLAG: 0: do not reinit, 1: reinit, 2: reinit in progress */
-    int nOutputChannels;   /* number of output channels (same as the number of channels in the loaded wav) */
+    void* hMatrixConv;     /**< saf_matrixConv handle */
+    int hostBlockSize;     /**< current host block size */
+    float* filters;        /**< the matrix of filters; FLAT: nOutputChannels x nInputChannels x filter_length */
+    int nfilters;          /**< the number of filters (nOutputChannels x nInputChannels) */
+    int input_wav_length;  /**< length of the wav files loaded in samples (inputs are concatenated) */
+    int filter_length;     /**< length of the filters (i.e. input_wav_length/nInputChannels) */
+    int filter_fs;         /**< current samplerate of the filters */
+    int host_fs;           /**< current samplerate of the host */
+    int reInitFilters;     /**< FLAG: 0: do not reinit, 1: reinit, 2: reinit in progress */
+    int nOutputChannels;   /**< number of output channels (same as the number of channels in the loaded wav) */
     
     /* user parameters */
-    int nInputChannels;        /* number of input channels */
-    int enablePartitionedConv; /* 0: disabled, 1: enabled */
+    int nInputChannels;        /**< number of input channels */
+    int enablePartitionedConv; /**< 0: disabled, 1: enabled */
     
 } matrixconv_data;
     

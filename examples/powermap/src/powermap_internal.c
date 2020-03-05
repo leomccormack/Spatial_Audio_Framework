@@ -14,21 +14,24 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: powermap_internal.c
- * -----------------------------
- * A sound-field visualiser, which utilises spherical harmonic signals as input.
+/**
+ * @file powermap_internal.c
+ * @brief A sound-field visualiser, which utilises spherical harmonic signals as
+ *        input; note this code is a remnant from the work described in [1]
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
- * Author, date created:
- *     Leo McCormack, 26.04.2016
+ * @see [1] McCormack, L., Delikaris-Manias, S. and Pulkki, V., 2017. Parametric
+ *          acoustic camera for real-time sound capture, analysis and tracking.
+ *          In Proceedings of the 20th International Conference on Digital Audio
+ *          Effects (DAFx-17) (pp. 412-419)
+ *
+ * @author Leo McCormack
+ * @date 26.04.2016
  */
 
 #include "powermap.h"
 #include "powermap_internal.h"
 
-void powermap_setCodecStatus(void* const hPm, CODEC_STATUS newStatus)
+void powermap_setCodecStatus(void* const hPm, POWERMAP_CODEC_STATUS newStatus)
 {
     powermap_data *pData = (powermap_data*)(hPm);
     if(newStatus==CODEC_STATUS_NOT_INITIALISED){
@@ -43,7 +46,7 @@ void powermap_setCodecStatus(void* const hPm, CODEC_STATUS newStatus)
 void powermap_initAna(void* const hPm)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    codecPars* pars = pData->pars;
+    powermap_codecPars* pars = pData->pars;
     int i, j, n, N_azi, N_ele, nSH_order, order;
     float scaleY, hfov, vfov, fi, aspectRatio;
     float* Y_grid_N, *grid_x_axis, *grid_y_axis;

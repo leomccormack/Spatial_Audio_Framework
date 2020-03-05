@@ -14,26 +14,26 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: ambi_drc.h (include header)
- * -------------------------------------
- * A frequency-dependent spherical harmonic domain dynamic range compressor
- * (DRC). The implementation can also keep track of the frequency-dependent gain
+/**
+ * @file ambi_drc.h
+ * @brief A frequency-dependent spherical harmonic domain dynamic range
+ *        compressor (DRC).
+ *
+ * The implementation can also keep track of the frequency-dependent gain
  * factors for the omnidirectional component over time, for optional plotting.
  * The design is based on the algorithm presented in [1].
+ *
  * The DRC gain factors are determined based on analysing the omnidirectional
  * component. These gain factors are then applied to the higher-order
  * components, in a such a manner as to retain the spatial information within
  * them.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib
- * Author, date created:
- *     Leo McCormack, 07.01.2017
+ * @author Leo McCormack
+ * @date 07.01.2017
  *
- * [1] McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range
- *     Compression". in Proceedings of the 14th Sound and Music Computing
- *     Conference, July 5-8, Espoo, Finland.
+ * @see [1] McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range
+ *          Compression". in Proceedings of the 14th Sound and Music Computing
+ *          Conference, July 5-8, Espoo, Finland.
  */
 
 #ifndef __AMBI_DRC_H_INCLUDED__
@@ -42,7 +42,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
 #define ENABLE_TF_DISPLAY
 
 /* ========================================================================== */
@@ -61,69 +61,51 @@ extern "C" {
 # define NUM_DISPLAY_TIME_SLOTS ( (int)(NUM_DISPLAY_SECONDS*48000.0f/(float)HOP_SIZE) )
 # define READ_OFFSET ( 200 )
 #endif
-    
-/*
- * Enum: _CH_ORDER
- * ---------------
- * Available Ambisonic channel ordering conventions
- * Note: CH_FUMA only supported for 1st order input.
- * Further note: FuMa: CH_FUMA+NORM_FUMA, AmbiX: CH_ACN+NORM_SN3D
- *
- * Options:
- *     CH_ACN  - Ambisonic Channel Numbering (ACN)
- *     CH_FUMA - (Obsolete) Furse-Malham/B-format (WXYZ)
- */
-#define AMBI_DRC_NUM_CH_ORDERINGS ( 2 )
-typedef enum _CH_ORDER{
-    CH_ACN = 1,
-    CH_FUMA     /* first-order only */
-}CH_ORDER;
 
-/*
- * Enum: NORM_TYPES
- * ---------------
+/**
+ * Available Ambisonic channel ordering conventions
+ *
+ * @note CH_FUMA only supported for 1st order input.
+ */
+typedef enum _AMBI_DRC_CH_ORDER {
+    CH_ACN = 1, /**< Ambisonic Channel Numbering (ACN) */
+    CH_FUMA     /**< (Obsolete) Furse-Malham/B-format (WXYZ) */
+    
+} AMBI_DRC_CH_ORDER;
+
+/** Number of channel ordering options */
+#define AMBI_DRC_NUM_CH_ORDERINGS ( 2 )
+
+/**
  * Available Ambisonic normalisation conventions
- * Note: NORM_FUMA only supported for 1st order input and does NOT have the
- * 1/sqrt(2) scaling on the omni.
- * Further note: FuMa: CH_FUMA+NORM_FUMA, AmbiX: CH_ACN+NORM_SN3D
  *
- * Options:
- *     NORM_N3D  - orthonormalised (N3D)
- *     NORM_SN3D - Schmidt semi-normalisation (SN3D)
- *     NORM_FUMA - (Obsolete) Same as NORM_SN3D for 1st order
+ * @note NORM_FUMA only supported for 1st order input and does NOT have the
+ *       1/sqrt(2) scaling on the omni.
  */
+typedef enum _AMBI_DRC_NORM_TYPES {
+    NORM_N3D = 1, /**< orthonormalised (N3D) */
+    NORM_SN3D,    /**< Schmidt semi-normalisation (SN3D) */
+    NORM_FUMA     /**< (Obsolete) Same as NORM_SN3D for 1st order */
+    
+} AMBI_DRC_NORM_TYPES;
+
+/** Number of normalisation options */
 #define AMBI_DRC_NUM_NORM_TYPES ( 3 )
-typedef enum _NORM_TYPES{
-    NORM_N3D = 1,
-    NORM_SN3D,
-    NORM_FUMA   /* first-order only */
-}NORM_TYPES;
-    
-/*
- * Enum: INPUT_ORDERS
- * ------------------
+
+/**
  * Available decoding orders
- *
- * Options:
- *     INPUT_ORDER_FIRST   - First-order decoding (4 channel input)
- *     INPUT_ORDER_SECOND  - Second-order decoding (9 channel input)
- *     INPUT_ORDER_THIRD   - Third-order decoding (16 channel input)
- *     INPUT_ORDER_FOURTH  - Fourth-order decoding (25 channel input)
- *     INPUT_ORDER_FIFTH   - Fifth-order decoding (36 channel input)
- *     INPUT_ORDER_SIXTH   - Sixth-order decoding (49 channel input)
- *     INPUT_ORDER_SEVENTH - Seventh-order decoding (64 channel input)
  */
-typedef enum _INPUT_ORDER{
-    INPUT_ORDER_1 = 1,
-    INPUT_ORDER_2,
-    INPUT_ORDER_3,
-    INPUT_ORDER_4,
-    INPUT_ORDER_5,
-    INPUT_ORDER_6,
-    INPUT_ORDER_7
+typedef enum _AMBI_DRC_INPUT_ORDER{
+    INPUT_ORDER_1 = 1, /**< First-order decoding (4 channel input) */
+    INPUT_ORDER_2,     /**< Second-order decoding (9 channel input) */
+    INPUT_ORDER_3,     /**< Third-order decoding (16 channel input) */
+    INPUT_ORDER_4,     /**< Fourth-order decoding (25 channel input) */
+    INPUT_ORDER_5,     /**< Fifth-order decoding (36 channel input) */
+    INPUT_ORDER_6,     /**< Sixth-order decoding (49 channel input) */
+    INPUT_ORDER_7      /**< Seventh-order decoding (64 channel input) */
     
-}INPUT_ORDER;
-    
+}AMBI_DRC_INPUT_ORDER;
+
 #define AMBI_DRC_IN_GAIN_MIN_VAL ( -40.0f )
 #define AMBI_DRC_IN_GAIN_MAX_VAL ( 20.0f )
 #define AMBI_DRC_THRESHOLD_MIN_VAL ( -60.0f )
@@ -138,58 +120,44 @@ typedef enum _INPUT_ORDER{
 #define AMBI_DRC_RELEASE_MAX_VAL ( 1000.0f )
 #define AMBI_DRC_OUT_GAIN_MIN_VAL ( -20.0f )
 #define AMBI_DRC_OUT_GAIN_MAX_VAL ( 40.0f )
-    
-    
+
+
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
 
-/*
- * Function: ambi_drc_create
- * -------------------------
+/**
  * Creates an instance of the ambi_drc
  *
- * Input Arguments:
- *     phAmbi - & address of ambi_drc handle
+ * @param[in] phAmbi (&) address of ambi_drc handle
  */
 void ambi_drc_create(void** const phAmbi);
 
-/*
- * Function: ambi_drc_destroy
- * -------------------------
+/**
  * Destroys an instance of the ambi_drc
  *
- * Input Arguments:
- *     phAmbi - & address of ambi_drc handle
+ * @param[in] phAmbi (&) address of ambi_drc handle
  */
 void ambi_drc_destroy(void** const phAmbi);
 
-/*
- * Function: ambi_drc_init
- * -----------------------
+/**
  * Initialises an instance of ambi_drc with default settings
  *
- * Input Arguments:
- *     hAmbi      - ambi_drc handle
- *     samplerate - host samplerate.
+ * @param[in] hAmbi      ambi_drc handle
+ * @param[in] samplerate Host samplerate.
  */
 void ambi_drc_init(void* const hAmbi,
                    int samplerate);
-    
-/*
- * Function: ambi_drc_process
- * --------------------------
+
+/**
  * Applies the frequency-dependent dynamic range compression to the input
  * spherical harmonic signals.
  *
- * Input Arguments:
- *     hAmbi     - ambi_drc handle
- *     inputs    - input channel buffers; 2-D array: nCH x nSamples
- *     outputs   - Output channel buffers; 2-D array: nCH x nSamples
- *     nCH       - number of input/output channels
- *     nSamples  - number of samples in 'inputs'/'output' matrices
- *     isPlaying - flag to say if there is audio in the input buffers, 0: no
- *                 audio, reduced processing, 1: audio, full processing
+ * @param[in] hAmbi    ambi_drc handle
+ * @param[in] inputs   Input channel buffers; 2-D array: nCH x nSamples
+ * @param[in] outputs  Output channel buffers; 2-D array: nCH x nSamples
+ * @param[in] nCH      Number of input/output channels
+ * @param[in] nSamples Number of samples in 'inputs'/'output' matrices
  */
 void ambi_drc_process(void* const hAmbi,
                       float** const inputs,
@@ -202,131 +170,70 @@ void ambi_drc_process(void* const hAmbi,
 /*                                Set Functions                               */
 /* ========================================================================== */
 
-/*
- * Function: ambi_drc_refreshParams
- * --------------------------------
- * Sets all intialisation flags to 1. i.e. re-initialise all settings/variables
+/**
+ * Sets all intialisation flags to 1; re-initialising all settings/variables
  * as ambi_drc is currently configured, at next available opportunity.
- *
- * Input Arguments:
- *     hAmbi - ambi_drc handle
  */
 void ambi_drc_refreshSettings(void* const hAmbi);
 
-/*
- * Function: ambi_drc_setThreshold
- * -------------------------------
- * Sets the compressor threshold value
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- *     newValue - new Threshold value, in DECIBELS
+/**
+ * Sets the compressor threshold value in DECIBELS
  */
 void ambi_drc_setThreshold(void* const hAmbi, float newValue);
 
-/*
- * Function: ambi_drc_setRatio
- * ---------------------------
+/**
  * Sets the compression ratio
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- *     newValue - new ratio value
  */
 void ambi_drc_setRatio(void* const hAmbi, float newValue);
 
-/*
- * Function: ambi_drc_setKnee
- * --------------------------
- * Sets the compressor knee value. 0: hard knee, >0: soft knee
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- *     newValue - new Knee value, in DECIBELS
+/**
+ * Sets the compressor knee value; 0: hard knee, >0: soft knee, in DECIBELS
  */
 void ambi_drc_setKnee(void* const hAmbi, float newValue);
 
-/*
- * Function: ambi_drc_setInGain
- * ----------------------------
- * Sets the compressor input gain value
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- *     newValue - new input gain value, in DECIBELS
+/**
+ * Sets the compressor input gain value, in DECIBELS
  */
 void ambi_drc_setInGain(void* const hAmbi, float newValue);
     
-/*
- * Function: ambi_drc_setOutGain
- * -----------------------------
- * Sets the compressor output gain value
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- *     newValue - new output gain value, in DECIBELS
+/**
+ * Sets the compressor output gain value, in DECIBELS
  */
 void ambi_drc_setOutGain(void* const hAmbi, float newValue);
     
-/*
- * Function: ambi_drc_setAttack
- * ----------------------------
- * Sets the compressor envelope attack time
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- *     newValue - new attack time, in miliseconds
+/**
+ * Sets the compressor envelope attack time, in miliseconds
  */
 void ambi_drc_setAttack(void* const hAmbi, float newValue);
 
-/*
- * Function: ambi_drc_setRelease
- * -----------------------------
- * Sets the compressor envelope release time
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- *     newValue - new release time, in miliseconds
+/**
+ * Sets the compressor envelope release time, in miliseconds
  */
 void ambi_drc_setRelease(void* const hAmbi, float newValue);
     
-/*
- * Function: ambi_drc_setChOrder
- * -----------------------------
+/**
  * Sets the Ambisonic channel ordering convention to decode with, in order to
- * match the convention employed by the input signals
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- *     newOrder - convention to use (see 'CH_ORDER' enum)
+ * match the convention employed by the input signals (see
+ * 'AMBI_DRC_CH_ORDER' enum)
  */
 void ambi_drc_setChOrder(void* const hAmbi, int newOrder);
 
-/*
- * Function: ambi_drc_setNormType
- * ------------------------------
+/**
  * Sets the Ambisonic normalisation convention to decode with, in order to match
- * with the convention employed by the input signals.
- *
- * Input Arguments:
- *     hAmbi   - ambi_drc handle
- *     newType - convention to use (see 'NORM_TYPE' enum)
+ * with the convention employed by the input signals (see
+ * 'AMBI_DRC_NORM_TYPE' enum)
  */
 void ambi_drc_setNormType(void* const hAmbi, int newType);
     
-/*
- * Function: ambi_drc_setInputPreset
- * ---------------------------------
- * Sets processing order. If input order is set higher than the input signal
- * order, the extra required channels are filled with zeros. If the input order
- * is set lower than the input signal order, the number input signals are
- * truncated accordingly.
+/**
+ * Sets processing order.
  *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- *     newValue - new processing order (see 'INPUT_ORDERS' enum)
+ * If input order is set higher than the input signal order, the extra required
+ * channels are filled with zeros. If the input order is set lower than the
+ * input signal order, the number input signals are truncated accordingly (see
+ * 'AMBI_DRC_INPUT_ORDERS' enum)
  */
-void ambi_drc_setInputPreset(void* const hAmbi, INPUT_ORDER newPreset);
+void ambi_drc_setInputPreset(void* const hAmbi, AMBI_DRC_INPUT_ORDER newPreset);
 
     
 /* ========================================================================== */
@@ -343,164 +250,74 @@ int ambi_drc_getGainTFrIdx(void* const hAmbi);
 float* ambi_drc_getFreqVector(void* const hAmbi, int* nFreqPoints);
 #endif
     
-/*
- * Function: ambi_drc_getThreshold
- * -------------------------------
- * Returns the compressor threshold value
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- * Returns:
- *     Threshold value, in DECIBELS
+/**
+ * Returns the compressor threshold value, in DECIBELS
  */
 float ambi_drc_getThreshold(void* const hAmbi);
 
-/*
- * Function: ambi_drc_getRatio
- * ---------------------------
+/**
  * Returns the compression ratio
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- * Returns:
- *     ratio value
  */
 float ambi_drc_getRatio(void* const hAmbi);
 
-/*
- * Function: ambi_drc_getKnee
- * --------------------------
- * Returns the compressor knee value. 0: hard knee, >0: soft knee
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- * Returns:
- *     Knee value, in DECIBELS
+/**
+ * Returns the compressor knee value 0: hard knee, >0: soft knee, in DECIBELS
  */
 float ambi_drc_getKnee(void* const hAmbi);
 
-/*
- * Function: ambi_drc_getInGain
- * ----------------------------
- * Returns the compressor input gain value
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- * Returns:
- *     input gain value, in DECIBELS
+/**
+ * Returns the compressor input gain value, in DECIBELS
  */
 float ambi_drc_getInGain(void* const hAmbi);
 
-/*
- * Function: ambi_drc_getOutGain
- * -----------------------------
- * Returns the compressor output gain value
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- * Returns:
- *     output gain value, in DECIBELS
+/**
+ * Returns the compressor output gain value, in DECIBELS
  */
 float ambi_drc_getOutGain(void* const hAmbi);
 
-/*
- * Function: ambi_drc_getAttack
- * ----------------------------
- * Returns the compressor envelope attack time
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- * Returns:
- *     attack time, in miliseconds
+/**
+ * Returns the compressor envelope attack time, in miliseconds
  */
 float ambi_drc_getAttack(void* const hAmbi);
 
-/*
- * Function: ambi_drc_getRelease
- * -----------------------------
- * Returns the compressor envelope release time
- *
- * Input Arguments:
- *     hAmbi    - ambi_drc handle
- * Returns:
- *     release time, in miliseconds
+/**
+ * Returns the compressor envelope release time, in miliseconds
  */
 float ambi_drc_getRelease(void* const hAmbi);
 
-/*
- * Function: ambi_drc_getChOrder
- * -----------------------------
+/**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- *
- * Input Arguments:
- *     hAmbi - ambi_drc handle
- * Returns:
- *     convention currently being used (see 'CH_ORDER' enum)
+ * (see 'AMBI_DRC_CH_ORDER' enum)
  */
 int ambi_drc_getChOrder(void* const hAmbi);
 
-/*
- * Function: ambi_drc_getNormType
- * ------------------------------
+/**
  * Returns the Ambisonic normalisation convention currently being usedto decode
- * with, which should match the convention employed by the input signals.
- *
- * Input Arguments:
- *     hAmbi - ambi_drc handle
- * Returns:
- *     convention currently being used (see 'NORM_TYPE' enum)
+ * with, which should match the convention employed by the input signals
+ * (see 'AMBI_DRC_NORM_TYPE' enum)
  */
 int ambi_drc_getNormType(void* const hAmbi);
     
-/*
- * Function: ambi_drc_getInputPreset
- * ---------------------------------
- * Returns the current processing order.
- *
- * Input Arguments:
- *     hAmbi - ambi_drc handle
- * Returns:
- *     current decoding order (see 'INPUT_ORDERS' enum)
+/**
+ * Returns the current processing order (see 'AMBI_DRC_INPUT_ORDERS' enum)
  */
-INPUT_ORDER ambi_drc_getInputPreset(void* const hAmbi);
+AMBI_DRC_INPUT_ORDER ambi_drc_getInputPreset(void* const hAmbi);
     
-/*
- * Function: ambi_drc_getNSHrequired
- * ---------------------------------
+/**
  * Returns the number of spherical harmonic signals required by the current
- * decoding order i.e. (current_order+1)^2
- *
- * Input Arguments:
- *     hAmbi - ambi_drc handle
- * Returns:
- *     number of required spherical harmonic signals required by current
- *     decoding order
+ * decoding order: (current_order+1)^2
  */
 int ambi_drc_getNSHrequired(void* const hAmbi);
     
-/*
- * Function: ambi_drc_getSamplerate
- * --------------------------------
+/**
  * Returns the DAW/Host sample rate
- *
- * Input Arguments:
- *     hAmbi - ambi_drc handle
- * Returns:
- *     DAW/Host sampling rate
  */
 int ambi_drc_getSamplerate(void* const hAmbi);
     
-/*
- * Function: ambi_drc_getProcessingDelay
- * -------------------------------------
- * Returns the processing delay in samples. May be used for delay compensation
+/**
+ * Returns the processing delay in samples; may be used for delay compensation
  * features
- *
- * Input Arguments:
- *     hAmbi - ambi_drc handle
- * Returns:
- *     processing delay in samples
  */
 int ambi_drc_getProcessingDelay(void);
     

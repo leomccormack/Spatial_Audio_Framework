@@ -14,26 +14,32 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: sldoa.c
- * -----------------
- * A spatially-localised active-intensity based direction-of-arrival estimator
- * (SLDoA). VBAP gain patterns are imposed on the spherical harmonic signals,
- * such that the DoA can be estimated in a spatially-constrained region; thus
- * mitigating the effect of interferes and reflections arriving from other
- * directions. The DoA is estimated per sector for each frequency band.
- * The algorithms within sldoa were developed in collaboration with Symeon
- * Delikaris-Manias and Angelo Farina, and are explained in more detail in [1].
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
- * Author, date created:
- *     Leo McCormack, 18.10.2017
+/**
+ * @file sldoa.c
+ * @brief A spatially-localised active-intensity based direction-of-arrival
+ *        estimator (SLDoA).
  *
- * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
- *     V., “Real-time conversion of sensor array signals into spherical harmonic
- *     signals with applications to spatially localised sub-band sound-field
- *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
- *     Society, 2018.
+ * VBAP gain patterns are imposed on the spherical harmonic signals, such that
+ * the DoA can be estimated in a spatially-constrained region; thus mitigating
+ * the effect of interferes and reflections arriving from other directions.
+ * The DoA is estimated per sector for each frequency band.
+ *
+ * The algorithms within sldoa were developed in collaboration with Symeon
+ * Delikaris-Manias and Angelo Farina, and are explained in more detail in [1,2]
+ *
+ * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
+ *          Pulkki, V., “Real-time conversion of sensor array signals into
+ *          spherical harmonic signals with applications to spatially localised
+ *          sub-band sound-field analysis,” in Audio Engineering Society
+ *          Convention 144, Audio Engineering Society, 2018.
+ * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
+ *          Spatially Localized Active-Intensity Vectors for Sound-Field
+ *          Visualization. Journal of the Audio Engineering Society, 67(11),
+ *          pp.840-854.
+ *
+ * @author Leo McCormack
+ * @date 18.10.2017
  */
 
 #include "sldoa.h"
@@ -217,8 +223,8 @@ void sldoa_analysis
     int analysisOrderPerBand[HYBRID_BANDS];
     int nSectorsPerBand[HYBRID_BANDS];
     float minFreq, maxFreq, avg_ms;
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
+    SLDOA_CH_ORDER chOrdering;
+    SLDOA_NORM_TYPES norm;
     
     if (nSamples == FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying) {
         pData->procStatus = PROC_STATUS_ONGOING;
@@ -505,21 +511,21 @@ void sldoa_setAnaOrderAllBands(void * const hSld, int newValue)
 void sldoa_setChOrder(void* const hSld, int newOrder)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    if((CH_ORDER)newOrder != CH_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->chOrdering = (CH_ORDER)newOrder;
+    if((SLDOA_CH_ORDER)newOrder != CH_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (SLDOA_CH_ORDER)newOrder;
 }
 
 void sldoa_setNormType(void* const hSld, int newType)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    if((NORM_TYPES)newType != NORM_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->norm = (NORM_TYPES)newType;
+    if((SLDOA_NORM_TYPES)newType != NORM_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (SLDOA_NORM_TYPES)newType;
 }
 
 
 /* GETS */
 
-CODEC_STATUS sldoa_getCodecStatus(void* const hSld)
+SLDOA_CODEC_STATUS sldoa_getCodecStatus(void* const hSld)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
     return pData->codecStatus;

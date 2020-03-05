@@ -14,30 +14,36 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: panner_internal.c
- * ---------------------------
- * A frequency-dependent 3D panner, based on the Vector-base Amplitude Panning
- * (VBAP) method. Depending on the room, it may be beneficial to employ
- * amplitude-normalised gains for low frequencies, and energy-normalised gains
- * for high frequencies. Therefore, this VBAP implementation uses the method
- * described in [1], to do just that.
+/**
+ * @file panner_internal.c
+ * @brief A frequency-dependent 3D panner based on the Vector-base Amplitude
+ *        Panning (VBAP) method [1], with an optional spread control [2].
  *
- * Dependencies:
- *     saf_utilities, saf_vbap, afSTFTlib
- * Author, date created:
- *     Leo McCormack, 25.09.2017
+ * Depending on the listening room, it may be beneficial to employ amplitude-
+ * normalised gains for low frequencies, and energy-normalised gains for high
+ * frequencies. Therefore, this VBAP implementation also uses the method
+ * described in [3], to do just that.
  *
- * [1] Laitinen, M., Vilkamo, J., Jussila, K., Politis, A., Pulkki, V. (2014).
- *     Gain normalisation in amplitude panning as a function of frequency and
- *     room reverberance. 55th International Conference of the AES. Helsinki,
- *     Finland.
+ * @see [1] Pulkki, V. (1997). Virtual sound source positioning using vector
+ *          base amplitude panning. Journal of the audio engineering society,
+ *          45(6), 456-466.
+ * @see [2] Pulkki, V. (1999). Uniform spreading of amplitude panned virtual
+ *          sources. In Proceedings of the 1999 IEEE Workshop on Applications of
+ *          Signal Processing to Audio and Acoustics. WASPAA'99 (Cat. No.
+ *          99TH8452) (pp. 187-190). IEEE.
+ * @see [3] Laitinen, M., Vilkamo, J., Jussila, K., Politis, A., Pulkki, V.
+ *          (2014). Gain normalisation in amplitude panning as a function of
+ *          frequency and room reverberance. 55th International Conference of
+ *          the AES. Helsinki, Finland.
+ *
+ * @author Leo McCormack
+ * @date 25.09.2017
  */
 
 #include "panner.h"
 #include "panner_internal.h"
 
-void panner_setCodecStatus(void* const hPan, CODEC_STATUS newStatus)
+void panner_setCodecStatus(void* const hPan, PANNER_CODEC_STATUS newStatus)
 {
     panner_data *pData = (panner_data*)(hPan);
     if(newStatus==CODEC_STATUS_NOT_INITIALISED){
@@ -106,7 +112,13 @@ void panner_initTFT
     pData->nLoudpkrs = pData->new_nLoudpkrs;
 }
 
-void panner_loadPreset(PRESETS preset, float dirs_deg[MAX_NUM_INPUTS][2], int* newNCH, int* nDims)
+void panner_loadPreset
+(
+    PANNER_PRESETS preset,
+    float dirs_deg[MAX_NUM_INPUTS][2],
+    int* newNCH,
+    int* nDims
+)
 {
     float sum_elev;
     int ch, i, nCH;

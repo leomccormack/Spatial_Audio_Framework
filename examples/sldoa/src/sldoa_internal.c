@@ -14,33 +14,39 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: sldoa_internal.c
- * --------------------------
- * A spatially-localised active-intensity based direction-of-arrival estimator
- * (SLDoA). VBAP gain patterns are imposed on the spherical harmonic signals,
- * such that the DoA can be estimated in a spatially-constrained region; thus
- * mitigating the effect of interferes and reflections arriving from other
- * directions. The DoA is estimated per sector for each frequency band.
- * The algorithms within sldoa were developed in collaboration with Symeon
- * Delikaris-Manias and Angelo Farina, and are explained in more detail in [1].
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
- * Author, date created:
- *     Leo McCormack, 18.10.2017
+/**
+ * @file sldoa_internal.c
+ * @brief A spatially-localised active-intensity based direction-of-arrival
+ *        estimator (SLDoA).
  *
- * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
- *     V., “Real-time conversion of sensor array signals into spherical harmonic
- *     signals with applications to spatially localised sub-band sound-field
- *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
- *     Society, 2018.
+ * VBAP gain patterns are imposed on the spherical harmonic signals, such that
+ * the DoA can be estimated in a spatially-constrained region; thus mitigating
+ * the effect of interferes and reflections arriving from other directions.
+ * The DoA is estimated per sector for each frequency band.
+ *
+ * The algorithms within sldoa were developed in collaboration with Symeon
+ * Delikaris-Manias and Angelo Farina, and are explained in more detail in [1,2]
+ *
+ * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
+ *          Pulkki, V., “Real-time conversion of sensor array signals into
+ *          spherical harmonic signals with applications to spatially localised
+ *          sub-band sound-field analysis,” in Audio Engineering Society
+ *          Convention 144, Audio Engineering Society, 2018.
+ * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
+ *          Spatially Localized Active-Intensity Vectors for Sound-Field
+ *          Visualization. Journal of the Audio Engineering Society, 67(11),
+ *          pp.840-854.
+ *
+ * @author Leo McCormack
+ * @date 18.10.2017
  */
 
 #include "sldoa.h"
 #include "sldoa_internal.h"
 #include "sldoa_database.h"
 
-void sldoa_setCodecStatus(void* const hSld, CODEC_STATUS newStatus)
+void sldoa_setCodecStatus(void* const hSld, SLDOA_CODEC_STATUS newStatus)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
     if(newStatus==CODEC_STATUS_NOT_INITIALISED){

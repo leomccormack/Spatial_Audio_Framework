@@ -14,29 +14,31 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: dirass_internal.c
- * ---------------------------
- * A sound-field visualiser based on the directional re-assignment of beamformer
- * energy, utilising the DoA estimates extracted from spatially-localised
- * active-intensity (SLAI) vectors; which are centred around each of the
- * corresponding scanning grid directions [1].
+/**
+ * @file dirass_internal.c
+ * @brief A sound-field visualiser based on the directional re-assignment of
+ *        beamformer energy, utilising the DoA estimates extracted from
+ *        spatially-localised active-intensity (SLAI) vectors; which are centred
+ *        around each of the corresponding scanning grid directions [1,2].
  *
- * Dependencies:
- *     saf_utilities, saf_vbap, saf_sh
- * Author, date created:
- *     Leo McCormack, 21.02.2019
+ * @see [1] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of
+ *          angular spectra based on a directional re-assignment approach for
+ *          ambisonic sound-field visualisation". IEEE International Conference
+ *          on Acoustics, Speech and Signal Processing (ICASSP).
+ * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
+ *          Spatially Localized Active-Intensity Vectors for Sound-Field
+ *          Visualization. Journal of the Audio Engineering Society, 67(11),
+ *          pp.840-854.
  *
- * [1] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of angular
- *     spectra based on a directional re-assignment approach for ambisonic
- *     sound-field visualisation". IEEE International Conference on Acoustics,
- *     Speech and Signal Processing (ICASSP).
+ * @author Leo McCormack
+ * @date 21.02.2019
  */
 
 #include "dirass.h"
 #include "dirass_internal.h"
 
-void dirass_setCodecStatus(void* const hDir, CODEC_STATUS newStatus)
+void dirass_setCodecStatus(void* const hDir, DIRASS_CODEC_STATUS newStatus)
 {
     dirass_data *pData = (dirass_data*)(hDir);
     if(newStatus==CODEC_STATUS_NOT_INITIALISED){
@@ -50,7 +52,7 @@ void dirass_setCodecStatus(void* const hDir, CODEC_STATUS newStatus)
 void dirass_initAna(void* const hDir)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    codecPars* pars = pData->pars;
+    dirass_codecPars* pars = pData->pars;
     int i, j, N_azi, N_ele, nSH_order, order, nSH_sec, order_sec, order_up, nSH_up, geosphere_ico_freq, td_degree;
     float hfov, vfov, fi, aspectRatio;
     float *grid_x_axis, *grid_y_axis, *c_n;

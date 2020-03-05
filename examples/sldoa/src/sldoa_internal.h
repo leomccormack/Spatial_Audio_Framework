@@ -14,26 +14,32 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: sldoa_internal.h
- * --------------------------
- * A spatially-localised active-intensity based direction-of-arrival estimator
- * (SLDoA). VBAP gain patterns are imposed on the spherical harmonic signals,
- * such that the DoA can be estimated in a spatially-constrained region; thus
- * mitigating the effect of interferes and reflections arriving from other
- * directions. The DoA is estimated per sector for each frequency band.
- * The algorithms within sldoa were developed in collaboration with Symeon
- * Delikaris-Manias and Angelo Farina, and are explained in more detail in [1].
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
- * Author, date created:
- *     Leo McCormack, 18.10.2017
+/**
+ * @file sldoa_internal.h
+ * @brief A spatially-localised active-intensity based direction-of-arrival
+ *        estimator (SLDoA).
  *
- * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
- *     V., “Real-time conversion of sensor array signals into spherical harmonic
- *     signals with applications to spatially localised sub-band sound-field
- *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
- *     Society, 2018.
+ * VBAP gain patterns are imposed on the spherical harmonic signals, such that
+ * the DoA can be estimated in a spatially-constrained region; thus mitigating
+ * the effect of interferes and reflections arriving from other directions.
+ * The DoA is estimated per sector for each frequency band.
+ *
+ * The algorithms within sldoa were developed in collaboration with Symeon
+ * Delikaris-Manias and Angelo Farina, and are explained in more detail in [1,2]
+ *
+ * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
+ *          Pulkki, V., “Real-time conversion of sensor array signals into
+ *          spherical harmonic signals with applications to spatially localised
+ *          sub-band sound-field analysis,” in Audio Engineering Society
+ *          Convention 144, Audio Engineering Society, 2018.
+ * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
+ *          Spatially Localized Active-Intensity Vectors for Sound-Field
+ *          Visualization. Journal of the Audio Engineering Society, 67(11),
+ *          pp.840-854.
+ *
+ * @author Leo McCormack
+ * @date 18.10.2017
  */
 
 #ifndef __SLDOA_INTERNAL_H_INCLUDED__
@@ -47,7 +53,6 @@
 #include "sldoa_database.h"
 #include "saf.h"
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -56,21 +61,15 @@ extern "C" {
 /*                               Internal Enums                               */
 /* ========================================================================== */
 
-/*
- * Enum: PROC_STATUS
- * -----------------
+/**
  * Current status of the processing loop.
- *
- * Options:
- *     PROC_STATUS_ONGOING     - Codec is processing input audio, and should not
- *                               be reinitialised at this time.
- *     PROC_STATUS_NOT_ONGOING - Codec is not processing input audio, and may
- *                               be reinitialised if needed.
  */
-typedef enum _PROC_STATUS{
-    PROC_STATUS_ONGOING = 0,
-    PROC_STATUS_NOT_ONGOING
-}PROC_STATUS;
+typedef enum _SLDOA_PROC_STATUS{
+    PROC_STATUS_ONGOING = 0, /**< Codec is processing input audio, and should
+                              *   not be reinitialised at this time.*/
+    PROC_STATUS_NOT_ONGOING  /**< Codec is not processing input audio, and may
+                              *   be reinitialised if needed. */
+}SLDOA_PROC_STATUS;
 
 
 /* ========================================================================== */
@@ -97,7 +96,10 @@ typedef enum _PROC_STATUS{
 /* ========================================================================== */
 /*                                 Structures                                 */
 /* ========================================================================== */
-    
+   
+/**
+ * Main struct for sldoa
+ */
 typedef struct _sldoa
 {
     /* TFT */
@@ -110,8 +112,8 @@ typedef struct _sldoa
     float fs;
       
     /* ana configuration */
-    CODEC_STATUS codecStatus;
-    PROC_STATUS procStatus;
+    SLDOA_CODEC_STATUS codecStatus;
+    SLDOA_PROC_STATUS procStatus;
     float progressBar0_1;
     char* progressBarText;
     
@@ -138,8 +140,8 @@ typedef struct _sldoa
     float maxFreq;
     float minFreq;
     float avg_ms;
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
+    SLDOA_CH_ORDER chOrdering;
+    SLDOA_NORM_TYPES norm;
 
 } sldoa_data;
      
@@ -148,66 +150,62 @@ typedef struct _sldoa
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/*
- * Function: sldoa_setCodecStatus
- * ------------------------------------
- * Sets codec status.
- *
- * Input Arguments:
- *     hSld      - sldoa handle
- *     newStatus - codec status (see 'CODEC_STATUS' enum)
+/**
+ * Sets codec status (see 'SLDOA_CODEC_STATUS' enum)
  */
-void sldoa_setCodecStatus(void* const hSld, CODEC_STATUS newStatus);
+void sldoa_setCodecStatus(void* const hSld, SLDOA_CODEC_STATUS newStatus);
 
-/*
- * sldoa_initAna
- * -------------
+/**
  * Intialises the codec variables, based on current global/user parameters.
- * The formulae for calculating the sector coefficients can be found in [1].
  *
- * Input Arguments:
- *     hSld - sldoa handle
+ * The formulae for calculating the sector coefficients can be found in [1,2].
  *
- * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
- *     V., “Real-time conversion of sensor array signals into spherical harmonic
- *     signals with applications to spatially localised sub-band sound-field
- *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
- *     Society, 2018.
+ * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
+ *          Pulkki, V., “Real-time conversion of sensor array signals into
+ *          spherical harmonic signals with applications to spatially localised
+ *          sub-band sound-field analysis,” in Audio Engineering Society
+ *          Convention 144, Audio Engineering Society, 2018.
+ * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
+ *          Spatially Localized Active-Intensity Vectors for Sound-Field
+ *          Visualization. Journal of the Audio Engineering Society, 67(11),
+ *          pp.840-854.
  */
 void sldoa_initAna(void* const hSld);
     
-/*
- * sldoa_initTFT
- * -------------
+/**
  * Initialise the filterbank used by sldoa.
- * Note: Call this function before sldoa_initAna
+ *
+ * @note Call this function before sldoa_initAna()
  *
  * Input Arguments:
  *     hSld - sldoa handle
  */
 void sldoa_initTFT(void* const hSld);
   
-/*
- * sldoa_estimateDoA
- * ----------------
+/**
  * Estimates the DoA using the active intensity vectors derived from spatially
- * localised sectors, as in [1].
- * Note: if anaOrder is 1, then the algorithm reverts to the standard active-
- * intensity based DoA estimation.
+ * localised sectors, as in [1,2].
  *
- * Input Arguments:
- *     SHframeTF - input SH frame
- *     anaOrder  - analysis order (1:AI, 2+: SLAI)
- *     secCoeffs - sector coefficients for this order
- * Output Arguments:
- *     doa       - resulting DoA estimates per timeslot and sector
- *     energy    - resulting sector energies per time slot
+ * @note If anaOrder is 1, then the algorithm reverts to the standard active-
+ *       intensity based DoA estimation.
  *
- * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
- *     V., “Real-time conversion of sensor array signals into spherical harmonic
- *     signals with applications to spatially localised sub-band sound-field
- *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
- *     Society, 2018.
+ * @param[in]  SHframeTF Input SH frame
+ * @param[in]  anaOrder  Analysis order (1:AI, 2+: SLAI)
+ * @param[in]  secCoeffs Sector coefficients for this order
+ * @param[out] doa       Resulting DoA estimates per timeslot and sector
+ * @param[out] energy    Resulting sector energies per time slot
+ *
+ * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
+ *          Pulkki, V., “Real-time conversion of sensor array signals into
+ *          spherical harmonic signals with applications to spatially localised
+ *          sub-band sound-field analysis,” in Audio Engineering Society
+ *          Convention 144, Audio Engineering Society, 2018.
+ * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
+ *          Spatially Localized Active-Intensity Vectors for Sound-Field
+ *          Visualization. Journal of the Audio Engineering Society, 67(11),
+ *          pp.840-854.
  */
 void sldoa_estimateDoA(float_complex SHframeTF[MAX_NUM_SH_SIGNALS][TIME_SLOTS],
                        int anaOrder,

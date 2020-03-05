@@ -14,30 +14,29 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: array2sh_internal.h
- * -----------------------------
- * Spatially encodes spherical or cylindrical sensor array signals into
- * spherical harmonic signals utilising theoretical encoding filters.
+/**
+ * @file array2sh_internal.h
+ * @brief Spatially encodes spherical or cylindrical sensor array signals into
+ *        spherical harmonic signals utilising theoretical encoding filters.
+ *
  * The algorithms within array2sh were pieced together and developed in
  * collaboration with Symeon Delikaris-Manias and Angelo Farina.
  * A detailed explanation of the algorithms within array2sh can be found in [1].
  * Also included, is a diffuse-field equalisation option for frequencies past
  * aliasing, developed in collaboration with Archontis Politis, 8.02.2019
- * Note: since the algorithms are based on theory, only array designs where
- * there are analytical solutions available are supported. i.e. only spherical
- * or cylindrical arrays, which have phase-matched sensors.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_sh, saf_hoa, saf_vbap
- * Author, date created:
- *     Leo McCormack, 13.09.2017
+ * @note Since the algorithms are based on theory, only array designs where
+ *       there are analytical solutions available are supported. i.e. only
+ *       spherical or cylindrical arrays, which have phase-matched sensors.
  *
- * [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and Pulkki,
- *     V., “Real-time conversion of sensor array signals into spherical harmonic
- *     signals with applications to spatially localised sub-band sound-field
- *     analysis,” in Audio Engineering Society Convention 144, Audio Engineering
- *     Society, 2018.
+ * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
+ *          Pulkki, V., “Real-time conversion of sensor array signals into
+ *          spherical harmonic signals with applications to spatially localised
+ *          sub-band sound-field analysis,” in Audio Engineering Society
+ *          Convention 144, Audio Engineering Society, 2018.
+ *
+ * @author Leo McCormack
+ * @date 13.09.2017
  */
 
 #ifndef __ARRAY2SH_INTERNAL_H_INCLUDED__
@@ -54,28 +53,22 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
 /* ========================================================================== */
 /*                               Internal Enums                               */
 /* ========================================================================== */
 
-/*
- * Enum: PROC_STATUS
- * -----------------
+/**
  * Current status of the processing loop.
- *
- * Options:
- *     PROC_STATUS_ONGOING     - Codec is processing input audio, and should not
- *                               be reinitialised at this time.
- *     PROC_STATUS_NOT_ONGOING - Codec is not processing input audio, and may
- *                               be reinitialised if needed.
  */
-typedef enum _PROC_STATUS{
-    PROC_STATUS_ONGOING = 0,
-    PROC_STATUS_NOT_ONGOING
-}PROC_STATUS;
+typedef enum _ARRAY2SH_PROC_STATUS{
+    PROC_STATUS_ONGOING = 0, /**< Codec is processing input audio, and should
+                              *   not be reinitialised at this time. */
+    PROC_STATUS_NOT_ONGOING  /**< Codec is not processing input audio, and may
+                              *   be reinitialised if needed. */
+}ARRAY2SH_PROC_STATUS;
 
-    
+
 /* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
@@ -88,32 +81,27 @@ typedef enum _PROC_STATUS{
 #define MAX_NUM_SENSORS ( ARRAY2SH_MAX_NUM_SENSORS ) /* Maximum permitted number of channels for the VST standard */
 #define MAX_EVAL_FREQ_HZ ( 20e3f )             /* Up to which frequency should the evaluation be accurate */
 #define MAX_NUM_SENSORS_IN_PRESET ( MAX_NUM_SENSORS )
-    
+
 
 /* ========================================================================== */
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/*
- * Struct: arrayPars
- * -----------------
+/**
  * Contains variables for describing the microphone/hydrophone array
  */
-    
-typedef struct _arrayPars {
+typedef struct _array2sh_arrayPars {
     int Q, newQ;                    /* number of sensors */
     float r;                        /* radius of sensors */
     float R;                        /* radius of scatterer (only for rigid arrays) */
-    ARRAY_TYPES arrayType;          /* array type, spherical/cylindrical */
-    WEIGHT_TYPES weightType;        /* open/rigid etc */
+    ARRAY2SH_ARRAY_TYPES arrayType;          /* array type, spherical/cylindrical */
+    ARRAY2SH_WEIGHT_TYPES weightType;        /* open/rigid etc */
     float sensorCoords_rad[MAX_NUM_SENSORS][2];
     float sensorCoords_deg[MAX_NUM_SENSORS][2];
         
-}arrayPars;
+}array2sh_arrayPars;
 
-/*
- * Struct: array2sh
- * ----------------
+/**
  * Main structure for array2sh. Contains variables for audio buffers, afSTFT,
  * encoding matrices, internal variables, flags, user parameters
  */
@@ -149,133 +137,102 @@ typedef struct _array2sh
     void* arraySpecs;               /* array configuration */
     
     /* internal parameters */
-    EVAL_STATUS evalStatus;
+    ARRAY2SH_EVAL_STATUS evalStatus;
     float progressBar0_1;
     char* progressBarText;
     int fs;                         /* sampling rate, hz */
     int new_order;                  /* new encoding order */
     
     /* flags */
-    PROC_STATUS procStatus;
+    ARRAY2SH_PROC_STATUS procStatus;
     int reinitSHTmatrixFLAG;        /* 0: do not reinit; 1: reinit; */
-    int evalRequestedFLAG;             /* 0: do not reinit; 1: reinit; */
+    int evalRequestedFLAG;          /* 0: do not reinit; 1: reinit; */
     
     /* additional user parameters that are not included in the array presets */
     int order;                      /* current encoding order */
-    MICROPHONE_ARRAY_PRESETS preset; /* currently selected MIC preset */
-    FILTER_TYPES filterType;        /* encoding filter approach */
+    ARRAY2SH_MICROPHONE_ARRAY_PRESETS preset; /* currently selected MIC preset */
+    ARRAY2SH_FILTER_TYPES filterType;  /* encoding filter approach */
     float regPar;                   /* regularisation upper gain limit, dB; */
-    CH_ORDER chOrdering;            /* ACN */
-    NORM_TYPES norm;                /* N3D/SN3D */
+    ARRAY2SH_CH_ORDER chOrdering;   /* ACN */
+    ARRAY2SH_NORM_TYPES norm;       /* N3D/SN3D */
     float c;                        /* speed of sound, m/s */
     float gain_dB;                  /* post gain, dB */ 
     int enableDiffEQpastAliasing;   /* 0: disabled, 1: enabled */
     
 } array2sh_data;
-     
+
 
 /* ========================================================================== */
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/*
- * array2sh_initTFT
- * ----------------
+/**
  * Initialise the filterbank used by array2sh.
- * Note: Call this function before array2sh_calculate_sht_matrix
  *
- * Input Arguments:
- *     hA2sh - array2sh handle
+ * @note Call this function before array2sh_calculate_sht_matrix
  */
 void array2sh_initTFT(void* const hA2sh);
-    
-/*
- * array2sh_calculate_sht_matrix
- * -----------------------------
+
+/**
  * Computes the spherical harmonic transform (SHT) matrix, to spatially encode
  * input microphone/hydrophone signals into spherical harmonic signals.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
  */
 void array2sh_calculate_sht_matrix(void* const hA2sh);
-    
-/*
- * array2sh_apply_diff_EQ
- * ----------------------
+
+/**
  * Applies diffuse-field equalisation at frequencies above the spatial aliasing
  * limit.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
  */
 void array2sh_apply_diff_EQ(void* const hA2sh);
-    
-/*
- * array2sh_calculate_mag_curves
- * -----------------------------
- * Computes the magnitude responses of the equalisation filters. i.e. the
+
+/**
+ * Computes the magnitude responses of the equalisation filters; the
  * absolute values of the regularised inversed modal coefficients.
- *
- * Input Arguments:
- *     hA2sh - array2sh handle
  */
 void array2sh_calculate_mag_curves(void* const hA2sh);
-    
-/*
- * array2sh_evaluateSHTfilters
- * ---------------------------
+
+/**
  * Evaluates the spherical harmonic transform performance with the currently
  * configured microphone/hydrophone array.
- * Note: this is based on an analytical model of the array, so may differ in
- * practice (although, it is usually pretty close, and saves from having to
- * measure the array)
  *
- * Input Arguments:
- *     hA2sh - array2sh handle
+ * @note This is based on an analytical model of the array, so may differ in
+ *       practice (although, it is usually pretty close, and saves from having
+ *       to measure the array)
  */
 void array2sh_evaluateSHTfilters(void* hA2sh);
-    
-/*
- * array2sh_createArray
- * --------------------
+
+/**
  * Creates an instance of a struct, which contains the array configuration
  * data.
  *
- * Input Arguments:
- *     hPars - & array configuration handle
+ * @param[in] hPars (&) array configuration handle
  */
 void array2sh_createArray(void ** const hPars);
 
-/*
- * array2sh_destroyArray
- * ---------------------
+/**
  * Destroys an instance of a struct, which contains the array configuration
  * data.
  *
- * Input Arguments:
- *     hPars - & array configuration handle
+ * @param[in] hPars (&) array configuration handle
  */
 void array2sh_destroyArray(void ** const hPars);
 
-/*
- * array2sh_destroyArray
- * ---------------------
- * Intialises an instance of a struct, which contains the array configuration
- * data, based on a preset
+/**
+ * Intialises an instance of a struct based on a preset, which contains the
+ * array configuration data
  *
- * Input Arguments:
- *     hPars         - array configuration handle
- *     preset        - array preset (see "PRESET" enum)
- *     arrayOrder    - & maximum encoding order of the current preset
- *     firstInitFLAG - 1: this is the first time function is being called
+ * @param[in] hPars         (&) array configuration handle
+ * @param[in] preset        Array preset (see
+ *                          "ARRAY2SH_MICROPHONE_ARRAY_PRESETS" enum)
+ * @param[in] arrayOrder    (&) maximum encoding order of the current preset
+ * @param[in] firstInitFLAG '1' this is the first time function is being called
  */
 void array2sh_initArray(void * const hPars,
-                        MICROPHONE_ARRAY_PRESETS preset,
+                        ARRAY2SH_MICROPHONE_ARRAY_PRESETS preset,
                         int* arrayOrder,
                         int firstInitFLAG);
 
-    
+
 #ifdef __cplusplus
 } /* extern "C" { */
 #endif /* __cplusplus */

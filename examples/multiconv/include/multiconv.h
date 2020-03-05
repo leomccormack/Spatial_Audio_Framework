@@ -14,15 +14,11 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: multiconv.h (include header)
- * --------------------------------------
- * A multi-channel convolver
- *
- * Dependencies:
- *     saf_utilities
- * Author, date created:
- *     Leo McCormack, 23.09.2019
+/**
+ * @file multiconv.h
+ * @brief A multi-channel convolver 
+ * @author Leo McCormack
+ * @date 23.09.2019
  */
 
 #ifndef __MULTICONV_H_INCLUDED__
@@ -31,64 +27,51 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
 /* ========================================================================== */
 /*                             Presets + Constants                            */
 /* ========================================================================== */
 
 #define MULTICONV_MAX_NUM_CHANNELS ( 64 )
-    
+
 
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
 
-/*
- * Function: multiconv_create
- * --------------------------
+/**
  * Creates an instance of multiconv
  *
- * Input Arguments:
- *     phMCnv - & address of multiconv handle
+ * @param[in] phMCnv (&) address of multiconv handle
  */
 void multiconv_create(void** const phMCnv);
 
-/*
- * Function: multiconv_destroy
- * ---------------------------
+/**
  * Destroys an instance of multiconv
  *
- * Input Arguments:
- *     phMCnv - & address of multiconv handle
+ * @param[in] phMCnv (&) address of multiconv handle
  */
 void multiconv_destroy(void** const phMCnv);
 
-/*
- * Function: multiconv_init
- * ------------------------
+/**
  * Initialises an instance of multiconv with default settings
  *
- * Input Arguments:
- *     hMCnv      - multiconv handle
- *     samplerate - host samplerate.
+ * @param[in] hMCnv      multiconv handle
+ * @param[in] samplerate Host samplerate.
  */
 void multiconv_init(void* const hMCnv,
                     int samplerate,
                     int hostBlockSize);
-    
-/*
- * Function: multiconv_process
- * ---------------------------
+
+/**
+ * Performs the multuchannel convolution processing
  *
- * Input Arguments:
- *     hMCnv     - multiconv handle
- *     inputs    - input channel buffers; 2-D array: nInputs x nSamples
- *     outputs   - Output channel buffers; 2-D array: nOutputs x nSamples
- *     nInputs   - number of input channels
- *     nOutputs  - number of output channels
- *     nSamples  - number of samples in 'inputs'/'output' matrices
- *     isPlaying - flag to say if there is audio in the input buffers, 0: no
- *                 audio, reduced processing, 1: audio, full processing
+ * @param[in] hMCnv     multiconv handle
+ * @param[in] inputs    Input channel buffers; 2-D array: nInputs x nSamples
+ * @param[in] outputs   Output channel buffers; 2-D array: nOutputs x nSamples
+ * @param[in] nInputs   Number of input channels
+ * @param[in] nOutputs  Number of output channels
+ * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void multiconv_process(void* const hMCnv,
                        float** const inputs,
@@ -97,45 +80,91 @@ void multiconv_process(void* const hMCnv,
                        int nOutputs,
                        int nSamples);
 
-    
+
 /* ========================================================================== */
 /*                                Set Functions                               */
 /* ========================================================================== */
-    
+
+/**
+ * Sets all intialisation flags to 1. Re-initialising all settings/variables,
+ * as multiconv is currently configured, at next available opportunity.
+ */
 void multiconv_refreshParams(void* const hMCnv);
 
+/**
+ * Checks whether things have to be reinitialised, and does so if it is needed
+ */
 void multiconv_checkReInit(void* const hMCnv);
 
+/**
+ * Loads the multichannel of filters
+ *
+ * @param[in] hMCnv       multiconv handle
+ * @param[in] H           Input channel buffers; 2-D array:
+ *                        numChannels x nSamples
+ * @param[in] numChannels Number of channels in loaded data (also the number of
+ *                        outputs)
+ * @param[in] numSamples  Number of samples (per channel) in the loaded data
+ * @param[in] sampleRate  Samplerate of the loaded data
+ */
 void multiconv_setFilters(void* const hMCnv,
                           const float** H,
                           int numChannels,
                           int numSamples,
                           int sampleRate);
     
+/**
+ * Enable (1), disable (0), partitioned convolution
+ */
 void multiconv_setEnablePart(void* const hMCnv, int newState);
     
+/**
+ * Sets the number of input/output channels.
+ */
 void multiconv_setNumChannels(void* const hMCnv, int newValue);
     
 
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
- 
+
+/**
+ * Returns a flag indicating whether partitioned convolution is enabled (1) or
+ * disabled (0)
+ */
 int multiconv_getEnablePart(void* const hMCnv);
-    
+
+/**
+ * Returns the number input/output channels
+ */
 int multiconv_getNumChannels(void* const hMCnv);
-    
+
+/**
+ * Returns the currect host block size
+ */
 int multiconv_getHostBlockSize(void* const hMCnv);
-    
+
+/**
+ * Returns the number of filters in the loaded wav file
+ */
 int multiconv_getNfilters(void* const hMCnv);
-    
+
+/**
+ * Returns the current filter length, in samples
+ */
 int multiconv_getFilterLength(void* const hMCnv);
-    
+
+/**
+ * Returns the samplerate of the loaded filters
+ */
 int multiconv_getFilterFs(void* const hMCnv);
-    
+
+/**
+ * Returns the samperate of the host
+ */
 int multiconv_getHostFs(void* const hMCnv);
-    
-    
+
+
 #ifdef __cplusplus
 } /* extern "C" { */
 #endif /* __cplusplus */

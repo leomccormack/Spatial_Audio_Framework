@@ -14,15 +14,18 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: powermap_internal.h
- * -----------------------------
- * A sound-field visualiser, which utilises spherical harmonic signals as input.
+/**
+ * @file powermap_internal.h
+ * @brief A sound-field visualiser, which utilises spherical harmonic signals as
+ *        input; note this code is a remnant from the work described in [1]
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
- * Author, date created:
- *     Leo McCormack, 26.04.2016
+ * @see [1] McCormack, L., Delikaris-Manias, S. and Pulkki, V., 2017. Parametric
+ *          acoustic camera for real-time sound capture, analysis and tracking.
+ *          In Proceedings of the 20th International Conference on Digital Audio
+ *          Effects (DAFx-17) (pp. 412-419)
+ *
+ * @author Leo McCormack
+ * @date 26.04.2016
  */
 
 #ifndef __POWERMAP_INTERNAL_H_INCLUDED__
@@ -44,21 +47,15 @@ extern "C" {
 /*                               Internal Enums                               */
 /* ========================================================================== */
 
-/*
- * Enum: PROC_STATUS
- * -----------------
+/**
  * Current status of the processing loop.
- *
- * Options:
- *     PROC_STATUS_ONGOING     - Codec is processing input audio, and should not
- *                               be reinitialised at this time.
- *     PROC_STATUS_NOT_ONGOING - Codec is not processing input audio, and may
- *                               be reinitialised if needed.
  */
-typedef enum _PROC_STATUS{
-    PROC_STATUS_ONGOING = 0,
-    PROC_STATUS_NOT_ONGOING
-}PROC_STATUS;
+typedef enum _POWERMAP_PROC_STATUS{
+    PROC_STATUS_ONGOING = 0, /**< Codec is processing input audio, and should
+                              *   not be reinitialised at this time. */
+    PROC_STATUS_NOT_ONGOING  /**< Codec is not processing input audio, and may
+                              *   be reinitialised if needed. */
+}POWERMAP_PROC_STATUS;
 
 
 /* ========================================================================== */
@@ -81,12 +78,10 @@ typedef enum _PROC_STATUS{
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/*
- * Struct: codecPars
- * -----------------
+/**
  * Contains variables for scanning grids, and beamforming
  */
-typedef struct _codecPars
+typedef struct _powermap_codecPars
 {
     float* grid_dirs_deg; /* grid_nDirs x 2 */
     int grid_nDirs;
@@ -98,11 +93,9 @@ typedef struct _codecPars
     float* Y_grid[MAX_SH_ORDER];                 /* MAX_NUM_SH_SIGNALS x grid_nDirs */
     float_complex* Y_grid_cmplx[MAX_SH_ORDER];   /* MAX_NUM_SH_SIGNALS x grid_nDirs */
     
-}codecPars;
+}powermap_codecPars;
     
-/*
- * Struct: powermap_data
- * ---------------------
+/**
  * Main structure for powermap. Contains variables for audio buffers, internal
  * variables, flags, user parameters
  */
@@ -123,11 +116,11 @@ typedef struct _powermap
     int dispWidth;
     
     /* ana configuration */
-    CODEC_STATUS codecStatus;
-    PROC_STATUS procStatus;
+    POWERMAP_CODEC_STATUS codecStatus;
+    POWERMAP_PROC_STATUS procStatus;
     float progressBar0_1;
     char* progressBarText;
-    codecPars* pars;                                          /* codec parameters */
+    powermap_codecPars* pars;                                          /* codec parameters */
     
     /* display */
     float* pmap;                           /* grid_nDirs x 1 */
@@ -143,14 +136,14 @@ typedef struct _powermap
     int masterOrder;
     int analysisOrderPerBand[HYBRID_BANDS];
     float pmapEQ[HYBRID_BANDS]; 
-    HFOV_OPTIONS HFOVoption; 
-    ASPECT_RATIO_OPTIONS aspectRatioOption;
+    POWERMAP_HFOV_OPTIONS HFOVoption;
+    POWERMAP_ASPECT_RATIO_OPTIONS aspectRatioOption;
     float covAvgCoeff;
     float pmapAvgCoeff;
     int nSources;
     POWERMAP_MODES pmap_mode;
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
+    POWERMAP_CH_ORDER chOrdering;
+    POWERMAP_NORM_TYPES norm;
     
 } powermap_data;
 
@@ -159,39 +152,24 @@ typedef struct _powermap
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/*
- * Function: powermap_setCodecStatus
- * ------------------------------------
- * Sets codec status.
- *
- * Input Arguments:
- *     hPm       - powermap handle
- *     newStatus - codec status (see 'CODEC_STATUS' enum)
+/**
+ * Sets codec status (see 'POWERMAP_CODEC_STATUS' enum)
  */
-void powermap_setCodecStatus(void* const hPm, CODEC_STATUS newStatus);
+void powermap_setCodecStatus(void* const hPm, POWERMAP_CODEC_STATUS newStatus);
 
-/*
- * powermap_initAna
- * ----------------
+/**
  * Intialises the codec variables, based on current global/user parameters
- *
- * Input Arguments:
- *     hPm - powermap handle
  */
 void powermap_initAna(void* const hPm);
 
-/*
- * powermap_initTFT
- * ----------------
+/**
  * Initialise the filterbank used by powermap.
- * Note: Call this function before powermap_initAna
  *
- * Input Arguments:
- *     hPm - powermap handle
+ * @note Call this function before powermap_initAna()
  */
 void powermap_initTFT(void* const hPm);
-    
-    
+
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */

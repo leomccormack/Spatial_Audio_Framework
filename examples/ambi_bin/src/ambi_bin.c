@@ -14,17 +14,17 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: ambi_bin.c
- * --------------------
- * A binaural Ambisonic decoder for reproducing ambisonic signals over
- * headphones. The decoder supports sound-field rotation for head-tracking and
- * may also accomodate custom HRIR sets via the SOFA standard.
+/**
+ * @file ambi_bin.c
+ * @brief A binaural Ambisonic decoder for reproducing ambisonic signals over
+ *        headphones.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_hrir, saf_vbap, saf_sh, saf_sofa_reader
- * Author, date created:
- *     Leo McCormack, 14.04.2018
+ * The decoder includes many historic and current state-of-the-art decoding
+ * approaches. It also supports sound-field rotation for head-tracking and may
+ * also accomodate custom HRIR sets via the SOFA standard.
+ *
+ * @author Leo McCormack
+ * @date 14.04.2018
  */
  
 #include "ambi_bin_internal.h"
@@ -77,8 +77,8 @@ void ambi_bin_create
     pData->progressBar0_1 = 0.0f;
     pData->progressBarText = malloc1d(AMBI_BIN_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
     strcpy(pData->progressBarText,"");
-    pData->pars = (codecPars*)malloc1d(sizeof(codecPars));
-    codecPars* pars = pData->pars; 
+    pData->pars = (ambi_bin_codecPars*)malloc1d(sizeof(ambi_bin_codecPars));
+    ambi_bin_codecPars* pars = pData->pars;
     pars->sofa_filepath = NULL;
     pars->hrirs = NULL;
     pars->hrir_dirs_deg = NULL;
@@ -98,7 +98,7 @@ void ambi_bin_destroy
 )
 {
     ambi_bin_data *pData = (ambi_bin_data*)(*phAmbi);
-    codecPars *pars = pData->pars;
+    ambi_bin_codecPars *pars = pData->pars;
     int ch;
     
     if (pData != NULL) {
@@ -165,7 +165,7 @@ void ambi_bin_initCodec
 )
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    codecPars* pars = pData->pars;
+    ambi_bin_codecPars* pars = pData->pars;
     int i, j, nSH, order, band;
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
@@ -293,7 +293,7 @@ void ambi_bin_process
 )
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    codecPars* pars = pData->pars;
+    ambi_bin_codecPars* pars = pData->pars;
     int n, t, ch, i, j, band;
     int o[MAX_SH_ORDER+2];
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
@@ -302,8 +302,8 @@ void ambi_bin_process
     
     /* local copies of user parameters */
     int order, nSH, enableRot;
-    NORM_TYPES norm;
-    CH_ORDER chOrdering;
+    AMBI_BIN_NORM_TYPES norm;
+    AMBI_BIN_CH_ORDER chOrdering;
   
     /* decode audio to loudspeakers or headphones */
     if ( (nSamples == FRAME_SIZE) && (pData->codecStatus == CODEC_STATUS_INITIALISED) ){
@@ -448,7 +448,7 @@ void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState)
 void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    codecPars* pars = pData->pars;
+    ambi_bin_codecPars* pars = pData->pars;
     
     pars->sofa_filepath = malloc1d(strlen(path) + 1);
     strcpy(pars->sofa_filepath, path);
@@ -457,7 +457,7 @@ void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path)
     ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
 }
 
-void ambi_bin_setInputOrderPreset(void* const hAmbi, INPUT_ORDERS newOrder)
+void ambi_bin_setInputOrderPreset(void* const hAmbi, AMBI_BIN_INPUT_ORDERS newOrder)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     if(pData->order != (int)newOrder){
@@ -471,7 +471,7 @@ void ambi_bin_setInputOrderPreset(void* const hAmbi, INPUT_ORDERS newOrder)
         pData->norm = NORM_SN3D;
 }
 
-void ambi_bin_setDecodingMethod(void* const hAmbi, DECODING_METHODS newMethod)
+void ambi_bin_setDecodingMethod(void* const hAmbi, AMBI_BIN_DECODING_METHODS newMethod)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     pData->method = newMethod;
@@ -481,15 +481,15 @@ void ambi_bin_setDecodingMethod(void* const hAmbi, DECODING_METHODS newMethod)
 void ambi_bin_setChOrder(void* const hAmbi, int newOrder)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    if((CH_ORDER)newOrder != CH_FUMA || pData->new_order==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->chOrdering = (CH_ORDER)newOrder;
+    if((AMBI_BIN_CH_ORDER)newOrder != CH_FUMA || pData->new_order==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (AMBI_BIN_CH_ORDER)newOrder;
 }
 
 void ambi_bin_setNormType(void* const hAmbi, int newType)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    if((NORM_TYPES)newType != NORM_FUMA || pData->new_order==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->norm = (NORM_TYPES)newType;
+    if((AMBI_BIN_NORM_TYPES)newType != NORM_FUMA || pData->new_order==INPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (AMBI_BIN_NORM_TYPES)newType;
 }
 
 void ambi_bin_setEnableMaxRE(void* const hAmbi, int newState)
@@ -582,7 +582,7 @@ void ambi_bin_setRPYflag(void* const hAmbi, int newState)
 
 /* Get Functions */
 
-CODEC_STATUS ambi_bin_getCodecStatus(void* const hAmbi)
+AMBI_BIN_CODEC_STATUS ambi_bin_getCodecStatus(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     return pData->codecStatus;
@@ -621,7 +621,7 @@ int ambi_bin_getDecodingMethod(void* const hAmbi)
 char* ambi_bin_getSofaFilePath(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    codecPars* pars = pData->pars;
+    ambi_bin_codecPars* pars = pData->pars;
     if(pars->sofa_filepath!=NULL)
         return pars->sofa_filepath;
     else
@@ -720,21 +720,21 @@ int ambi_bin_getRPYflag(void* const hAmbi)
 int ambi_bin_getNDirs(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    codecPars* pars = pData->pars;
+    ambi_bin_codecPars* pars = pData->pars;
     return pars->N_hrir_dirs;
 }
 
 int ambi_bin_getHRIRlength(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    codecPars* pars = pData->pars;
+    ambi_bin_codecPars* pars = pData->pars;
     return pars->hrir_len;
 }
 
 int ambi_bin_getHRIRsamplerate(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    codecPars* pars = pData->pars;
+    ambi_bin_codecPars* pars = pData->pars;
     return pars->hrir_fs;
 }
 

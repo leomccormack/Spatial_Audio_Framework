@@ -14,15 +14,11 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: multiconv_internal.c
- * ------------------------------
- * A multi-channel convolver
- *
- * Dependencies:
- *     saf_utilities
- * Author, date created:
- *     Leo McCormack, 23.09.2019
+/**
+ * @file multiconv_internal.c
+ * @brief A multi-channel convolver
+ * @author Leo McCormack
+ * @date 23.09.2019
  */
 
 #include "multiconv.h"

@@ -14,26 +14,26 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: ambi_drc_internal.c
- * -----------------------------
- * A frequency-dependent spherical harmonic domain dynamic range compressor
- * (DRC). The implementation can also keep track of the frequency-dependent gain
+/**
+ * @file ambi_drc_internal.c
+ * @brief A frequency-dependent spherical harmonic domain dynamic range
+ *        compressor (DRC).
+ *
+ * The implementation can also keep track of the frequency-dependent gain
  * factors for the omnidirectional component over time, for optional plotting.
  * The design is based on the algorithm presented in [1].
+ *
  * The DRC gain factors are determined based on analysing the omnidirectional
  * component. These gain factors are then applied to the higher-order
  * components, in a such a manner as to retain the spatial information within
  * them.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib
- * Author, date created:
- *     Leo McCormack, 07.01.2017
+ * @author Leo McCormack
+ * @date 07.01.2017
  *
- * [1] McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range
- *     Compression". in Proceedings of the 14th Sound and Music Computing
- *     Conference, July 5-8, Espoo, Finland.
+ * @see [1] McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range
+ *          Compression". in Proceedings of the 14th Sound and Music Computing
+ *          Conference, July 5-8, Espoo, Finland.
  */
 
 #include "ambi_drc.h"
@@ -100,7 +100,7 @@ void ambi_drc_initTFT
     pData->nSH = pData->new_nSH; 
 }
 
-void ambi_drc_setInputOrder(INPUT_ORDER inOrder, int* nSH)
+void ambi_drc_setInputOrder(AMBI_DRC_INPUT_ORDER inOrder, int* nSH)
 {
     switch(inOrder){ 
         case INPUT_ORDER_1:

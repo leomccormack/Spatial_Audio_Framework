@@ -14,15 +14,18 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: powermap.c
- * --------------------
- * A sound-field visualiser, which utilises spherical harmonic signals as input.
+/**
+ * @file powermap.c
+ * @brief A sound-field visualiser, which utilises spherical harmonic signals as
+ *        input; note this code is a remnant from the work described in [1]
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_vbap, saf_sh
- * Author, date created:
- *     Leo McCormack, 26.04.2016
+ * @see [1] McCormack, L., Delikaris-Manias, S. and Pulkki, V., 2017. Parametric
+ *          acoustic camera for real-time sound capture, analysis and tracking.
+ *          In Proceedings of the 20th International Conference on Digital Audio
+ *          Effects (DAFx-17) (pp. 412-419)
+ *
+ * @author Leo McCormack
+ * @date 26.04.2016
  */
 
 #include "powermap.h"
@@ -46,8 +49,8 @@ void powermap_create
     pData->tempHopFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, HOP_SIZE, sizeof(float));
     
     /* codec data */
-    pData->pars = (codecPars*)malloc1d(sizeof(codecPars));
-    codecPars* pars = pData->pars;
+    pData->pars = (powermap_codecPars*)malloc1d(sizeof(powermap_codecPars));
+    powermap_codecPars* pars = pData->pars;
     pars->interp_dirs_deg = NULL;
     for(n=0; n<MAX_SH_ORDER; n++){
         pars->Y_grid[n] = NULL;
@@ -93,7 +96,7 @@ void powermap_destroy
 )
 {
     powermap_data *pData = (powermap_data*)(*phPm);
-    codecPars* pars = pData->pars;
+    powermap_codecPars* pars = pData->pars;
     int i, ch;
     
     if (pData != NULL) {
@@ -136,7 +139,7 @@ void powermap_init
 )
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    codecPars* pars = pData->pars;
+    powermap_codecPars* pars = pData->pars;
     int band;
     
     pData->fs = sampleRate;
@@ -201,7 +204,7 @@ void powermap_analysis
 )
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    codecPars* pars = pData->pars;
+    powermap_codecPars* pars = pData->pars;
     int i, j, t, n, ch, band, nSH_order, order_band, nSH_maxOrder, maxOrder;
     float C_grp_trace, covScale, pmapEQ_band;
     int o[MAX_SH_ORDER+2];
@@ -214,8 +217,8 @@ void powermap_analysis
     int nSources, masterOrder, nSH;
     float covAvgCoeff, pmapAvgCoeff;
     float pmapEQ[HYBRID_BANDS];
-    NORM_TYPES norm;
-    CH_ORDER chOrdering;
+    POWERMAP_NORM_TYPES norm;
+    POWERMAP_CH_ORDER chOrdering;
     POWERMAP_MODES pmap_mode;
     
     /* The main processing: */
@@ -425,7 +428,7 @@ void powermap_refreshSettings(void* const hPm)
 void powermap_setPowermapMode(void* const hPm, int newMode)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    codecPars* pars = pData->pars;
+    powermap_codecPars* pars = pData->pars;
     pData->pmap_mode = (POWERMAP_MODES)newMode;
     if(pData->prev_pmap!=NULL)
         memset(pData->prev_pmap, 0, pars->grid_nDirs*sizeof(float));
@@ -567,22 +570,22 @@ void powermap_setPowermapEQAllBands(void  * const hPm, float newValue)
 void powermap_setChOrder(void* const hPm, int newOrder)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    if((CH_ORDER)newOrder != CH_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->chOrdering = (CH_ORDER)newOrder;
+    if((POWERMAP_CH_ORDER)newOrder != CH_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (POWERMAP_CH_ORDER)newOrder;
 }
 
 void powermap_setNormType(void* const hPm, int newType)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    if((NORM_TYPES)newType != NORM_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->norm = (NORM_TYPES)newType;
+    if((POWERMAP_NORM_TYPES)newType != NORM_FUMA || pData->new_masterOrder==MASTER_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (POWERMAP_NORM_TYPES)newType;
 }
 
 void powermap_setDispFOV(void* const hPm, int newOption)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    if(pData->HFOVoption != (HFOV_OPTIONS)newOption){
-        pData->HFOVoption = (HFOV_OPTIONS)newOption;
+    if(pData->HFOVoption != (POWERMAP_HFOV_OPTIONS)newOption){
+        pData->HFOVoption = (POWERMAP_HFOV_OPTIONS)newOption;
         powermap_setCodecStatus(hPm, CODEC_STATUS_NOT_INITIALISED);
     }
 }
@@ -590,8 +593,8 @@ void powermap_setDispFOV(void* const hPm, int newOption)
 void powermap_setAspectRatio(void* const hPm, int newOption)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    if(pData->aspectRatioOption != (ASPECT_RATIO_OPTIONS)newOption){
-        pData->aspectRatioOption = (ASPECT_RATIO_OPTIONS)newOption;
+    if(pData->aspectRatioOption != (POWERMAP_ASPECT_RATIO_OPTIONS)newOption){
+        pData->aspectRatioOption = (POWERMAP_ASPECT_RATIO_OPTIONS)newOption;
         powermap_setCodecStatus(hPm, CODEC_STATUS_NOT_INITIALISED);
     }
 }
@@ -608,10 +611,9 @@ void powermap_requestPmapUpdate(void* const hPm)
     pData->recalcPmap = 1;
 }
 
-
 /* GETS */
 
-CODEC_STATUS powermap_getCodecStatus(void* const hPm)
+POWERMAP_CODEC_STATUS powermap_getCodecStatus(void* const hPm)
 {
     powermap_data *pData = (powermap_data*)(hPm);
     return pData->codecStatus;
@@ -755,7 +757,7 @@ float powermap_getPowermapAvgCoeff(void* const hPm)
 int powermap_getPmap(void* const hPm, float** grid_dirs, float** pmap, int* nDirs,int* pmapWidth, int* hfov, int* aspectRatio) //TODO: hfov and aspectRatio should be float, if 16:9 etc options are added
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    codecPars* pars = pData->pars;
+    powermap_codecPars* pars = pData->pars;
     if((pData->codecStatus == CODEC_STATUS_INITIALISED) && pData->pmapReady){
         (*grid_dirs) = pars->interp_dirs_deg;
         (*pmap) = pData->pmap_grid[pData->dispSlotIdx-1 < 0 ? NUM_DISP_SLOTS-1 : pData->dispSlotIdx-1];
@@ -776,7 +778,3 @@ int powermap_getPmap(void* const hPm, float** grid_dirs, float** pmap, int* nDir
     }
     return pData->pmapReady;
 }
-
-
-
-

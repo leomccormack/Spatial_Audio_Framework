@@ -14,19 +14,19 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: binauraliser_internal.h
- * ---------------------------------
- * Convolves input audio (up to 64 channels) with interpolated HRTFs in the
- * time-frequency domain. The HRTFs are interpolated by applying amplitude-
- * preserving VBAP gains to the HRTF magnitude responses and inter-aural time
- * differences (ITDs) individually, before being re-combined. The example also
- * allows the user to specify an external SOFA file for the convolution.
+/**
+ * @file: binauraliser_internal.h
+ * @brief Convolves input audio (up to 64 channels) with interpolated HRTFs in
+ *        the time-frequency domain.
  *
- * Dependencies:
- *     saf_utilities, saf_hrir, saf_vbap, afSTFTlib
- * Author, date created:
- *     Leo McCormack, 25.09.2017
+ * The HRTFs are interpolated by applying amplitude-preserving VBAP gains to the
+ * HRTF magnitude responses and inter-aural time differences (ITDs)
+ * individually, before being re-combined. The example also allows the user to
+ * specify an external SOFA file for the convolution, and rotations of the
+ * source directions to accomodate head-tracking.
+ *
+ * @author Leo McCormack
+ * @date 25.09.2017
  */
 
 #ifndef __BINAURALISER_INTERNAL_H_INCLUDED__
@@ -42,32 +42,26 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
 /* ========================================================================== */
 /*                               Internal Enums                               */
 /* ========================================================================== */
 
-/*
- * Enum: PROC_STATUS
- * -----------------
+/**
  * Current status of the processing loop.
- *
- * Options:
- *     PROC_STATUS_ONGOING     - Codec is processing input audio, and should not
- *                               be reinitialised at this time.
- *     PROC_STATUS_NOT_ONGOING - Codec is not processing input audio, and may
- *                               be reinitialised if needed.
  */
-typedef enum _PROC_STATUS{
-    PROC_STATUS_ONGOING = 0,
-    PROC_STATUS_NOT_ONGOING
-}PROC_STATUS;
+typedef enum _BINAURALISER_PROC_STATUS{
+    PROC_STATUS_ONGOING = 0, /**< Codec is processing input audio, and should
+                              *   not be reinitialised at this time. */
+    PROC_STATUS_NOT_ONGOING  /**< Codec is not processing input audio, and may
+                              *   be reinitialised if needed. */
+}BINAURALISER_PROC_STATUS;
 
 
 /* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
-      
+
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
@@ -85,9 +79,7 @@ typedef enum _PROC_STATUS{
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/*
- * Struct: binauraliser
- * --------------------
+/**
  * Main structure for binauraliser. Contains variables for audio buffers,
  * afSTFT, HRTFs, internal variables, flags, user parameters
  */
@@ -116,21 +108,21 @@ typedef struct _binauraliser
     /* vbap gain table */
     int hrtf_vbapTableRes[2];
     int N_hrtf_vbap_gtable;
-    int* hrtf_vbap_gtableIdx; /* N_hrtf_vbap_gtable x 3 */
-    float* hrtf_vbap_gtableComp; /* N_hrtf_vbap_gtable x 3 */
+    int* hrtf_vbap_gtableIdx;        /**< N_hrtf_vbap_gtable x 3 */
+    float* hrtf_vbap_gtableComp;     /**< N_hrtf_vbap_gtable x 3 */
     
     /* hrir filterbank coefficients */
     int useDefaultHRIRsFLAG; 
-    float* itds_s; /* interaural-time differences for each HRIR (in seconds); nBands x 1 */
-    float_complex* hrtf_fb; /* hrtf filterbank coefficients; nBands x nCH x N_hrirs */
-    float* hrtf_fb_mag; /* magnitudes of the hrtf filterbank coefficients; nBands x nCH x N_hrirs */
+    float* itds_s;                   /**< interaural-time differences for each HRIR (in seconds); nBands x 1 */
+    float_complex* hrtf_fb;          /**< hrtf filterbank coefficients; nBands x nCH x N_hrirs */
+    float* hrtf_fb_mag;              /**< magnitudes of the hrtf filterbank coefficients; nBands x nCH x N_hrirs */
     float_complex hrtf_interp[MAX_NUM_INPUTS][HYBRID_BANDS][NUM_EARS];
     
     /* flags/status */
-    CODEC_STATUS codecStatus;
+    BINAURALISER_CODEC_STATUS codecStatus;
     float progressBar0_1;
     char* progressBarText;
-    PROC_STATUS procStatus;
+    BINAURALISER_PROC_STATUS procStatus;
     int recalc_hrtf_interpFLAG[MAX_NUM_INPUTS];
     int reInitHRTFsAndGainTables;
     int recalc_M_rotFLAG;
@@ -149,93 +141,75 @@ typedef struct _binauraliser
     float src_dirs_deg[MAX_NUM_INPUTS][2];
     INTERP_MODES interpMode;
     int enableRotation;
-    float yaw, roll, pitch;                  /* rotation angles in degrees */
-    int bFlipYaw, bFlipPitch, bFlipRoll;     /* flag to flip the sign of the individual rotation angles */
-    int useRollPitchYawFlag;                 /* rotation order flag, 1: r-p-y, 0: y-p-r */
+    float yaw, roll, pitch;                  /**< rotation angles in degrees */
+    int bFlipYaw, bFlipPitch, bFlipRoll;     /**< flag to flip the sign of the individual rotation angles */
+    int useRollPitchYawFlag;                 /**< rotation order flag, 1: r-p-y, 0: y-p-r */
     
 } binauraliser_data;
-     
+
 
 /* ========================================================================== */
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/*
- * Function: binauraliser_setCodecStatus
- * -------------------------------------
- * Sets codec status.
- *
- * Input Arguments:
- *     hBin      - binauraliser handle
- *     newStatus - codec status (see 'CODEC_STATUS' enum)
+/**
+ * Sets codec status (see 'BINAURALISER_CODEC_STATUS' enum)
  */
-void binauraliser_setCodecStatus(void* const hBin, CODEC_STATUS newStatus);
+void binauraliser_setCodecStatus(void* const hBin,
+                                 BINAURALISER_CODEC_STATUS newStatus);
 
-/*
- * binauraliser_interpHRTFs
- * ------------------------
- * interpolates between 3 HRTFs via AN-VBAP gains. The HRTF magnitude responses
- * and HRIR ITDs are interpolated seperately before re-introducing the phase.
+/**
+ * Interpolates between (up to) 3 HRTFs via amplitude-normalised VBAP gains.
  *
- * Input Arguments:
- *     hBin          - binauraliser handle
- *     azimuth_deg   - source azimuth in DEGREES
- *     elevation_deg - source elevation in DEGREES
- * Output Arguments:
- *     h_intrp       - interpolated HRTF
+ * The HRTF magnitude responses and HRIR ITDs are interpolated seperately before
+ * re-introducing the phase.
+ *
+ * @param[in]  hBin          binauraliser handle
+ * @param[in]  azimuth_deg   Source azimuth in DEGREES
+ * @param[in]  elevation_deg Source elevation in DEGREES
+ * @param[out] h_intrp       Interpolated HRTF
  */
 void binauraliser_interpHRTFs(void* const hBin,
                               float azimuth_deg,
                               float elevation_deg,
                               float_complex h_intrp[HYBRID_BANDS][NUM_EARS]);
-    
-/*
- * binauraliser_initHRTFsAndGainTables
- * -----------------------------------
+
+/**
  * Initialise the HRTFs: either loading the default set or loading from a SOFA
- * file. It then generates a VBAP gain table for interpolation.
- * Note: call "binauraliser_initTFT" (if needed) before calling this function
+ * file; and then generate a VBAP gain table for interpolation.
  *
- * Input Arguments:
- *     hBin - binauraliser handle
+ * @note Call binauraliser_initTFT() (if needed) before calling this function
  */
 void binauraliser_initHRTFsAndGainTables(void* const hBin);
-    
-/*
- * binauraliser_initTFT
- * --------------------
+
+/**
  * Initialise the filterbank used by binauraliser.
- * Note: Call this function before 'binauraliser_initHRTFsAndGainTables'
  *
- * Input Arguments:
- *     hBin - binauraliser handle
+ * @note Call this function before binauraliser_initHRTFsAndGainTables()
  */
 void binauraliser_initTFT(void* const hBin);
 
-/*
- * binauraliser_loadPreset
- * --------------------
+/**
  * Returns the source directions for a specified source config preset.
+ *
  * The function also returns the number of source in the configuration
  * Note: default uniformly distributed points are used to pad the
  * dirs_deg matrix up to the MAX_NUM_SOURCES_IN_PRESET, if nCH is less than
  * this. This can help avoid scenarios of many sources being panned in the same
  * direction, or triangulations errors.
  *
- * Input Arguments:
- *     preset   - See "PRESET" enum.
- * Output Arguments:
- *     dirs_deg - source directions, [azimuth elevation] convention, in
- *                DEGREES;
- *     newNCH   - & new number of channels
- *     nDims    - & estimate of the number of dimensions (2 or 3)
+ * @param[in]  preset   See "BINAURALISER_SOURCE_CONFIG_PRESETS" enum.
+ * @param[out] dirs_deg Source directions, [azimuth elevation] convention, in
+ *                      DEGREES;
+ * @param[out] newNCH   (&) new number of channels
+ * @param[out] nDims    (&) estimate of the number of dimensions (2 or 3)
  */
-void binauraliser_loadPreset(SOURCE_CONFIG_PRESETS preset,
+void binauraliser_loadPreset(BINAURALISER_SOURCE_CONFIG_PRESETS preset,
                              float dirs_deg[MAX_NUM_INPUTS][2],
                              int* newNCH,
                              int* nDims);
 
-    
+
 #ifdef __cplusplus
 } /* extern "C" { */
 #endif /* __cplusplus */

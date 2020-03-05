@@ -14,16 +14,13 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: beamformer.c
- * ----------------------
- * Generates beamformers/virtual microphones in arbitrary directions. Several
- * different beam pattern types are included.
+/**
+ * @file beamformer.c
+ * @brief Generates beamformers/virtual microphones in arbitrary directions
+ *        with several different beam pattern to choose from
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_sh
- * Author, date created:
- *     Leo McCormack, 17.05.2019
+ * @author Leo McCormack
+ * @date 17.05.2019
  */
  
 #include "beamformer_internal.h"
@@ -112,8 +109,8 @@ void beamformer_process
 
     /* local copies of user parameters */
     int nBeams, beamOrder;
-    NORM_TYPES norm;
-    CH_ORDER chOrdering;
+    BEAMFORMER_NORM_TYPES norm;
+    BEAMFORMER_CH_ORDER chOrdering;
     
     /* reinitialise if needed */
     if(pData->reInitTFT==1){
@@ -285,15 +282,15 @@ void beamformer_setNumBeams(void* const hBeam, int new_nBeams)
 void beamformer_setChOrder(void* const hBeam, int newOrder)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    if((CH_ORDER)newOrder != CH_FUMA || pData->beamOrder==BEAM_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->chOrdering = (CH_ORDER)newOrder;
+    if((BEAMFORMER_CH_ORDER)newOrder != CH_FUMA || pData->beamOrder==BEAM_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (BEAMFORMER_CH_ORDER)newOrder;
 }
 
 void beamformer_setNormType(void* const hBeam, int newType)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    if((NORM_TYPES)newType != NORM_FUMA || pData->beamOrder==BEAM_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->norm = (NORM_TYPES)newType;
+    if((BEAMFORMER_NORM_TYPES)newType != NORM_FUMA || pData->beamOrder==BEAM_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (BEAMFORMER_NORM_TYPES)newType;
 }
 
 void beamformer_setBeamType(void* const hBeam, int newID)

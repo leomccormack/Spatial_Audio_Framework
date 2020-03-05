@@ -14,15 +14,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: ambi_enc.c
- * --------------------
- * A simple, but flexible, Ambisonic encoder.
+/**
+ * @file ambi_enc.c
+ * @brief A simple, but flexible, Ambisonic encoder.
  *
- * Dependencies:
- *     saf_utilities, saf_sh
- * Author, date created:
- *     Leo McCormack, 07.10.2016
+ * @author Leo McCormack
+ * @date 07.10.2016
  */
 
 #include "ambi_enc.h"
@@ -94,8 +91,8 @@ void ambi_enc_process
     int o[MAX_ORDER+2];
     float src_dirs[MAX_NUM_INPUTS][2], azi_incl[2], scale;
     float* Y_src;
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
+    AMBI_ENC_CH_ORDER chOrdering;
+    AMBI_ENC_NORM_TYPES norm;
     int order;
     
     if (nSamples == FRAME_SIZE) {
@@ -271,15 +268,15 @@ void ambi_enc_setInputConfigPreset(void* const hAmbi, int newPresetID)
 void ambi_enc_setChOrder(void* const hAmbi, int newOrder)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
-    if((CH_ORDER)newOrder != CH_FUMA || pData->order==OUTPUT_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->chOrdering = (CH_ORDER)newOrder;
+    if((AMBI_ENC_CH_ORDER)newOrder != CH_FUMA || pData->order==OUTPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->chOrdering = (AMBI_ENC_CH_ORDER)newOrder;
 }
 
 void ambi_enc_setNormType(void* const hAmbi, int newType)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
-    if((NORM_TYPES)newType != NORM_FUMA || pData->order==OUTPUT_ORDER_FIRST)/* FUMA only supports 1st order */
-        pData->norm = (NORM_TYPES)newType;
+    if((AMBI_ENC_NORM_TYPES)newType != NORM_FUMA || pData->order==OUTPUT_ORDER_FIRST)/* FUMA only supports 1st order */
+        pData->norm = (AMBI_ENC_NORM_TYPES)newType;
 }
 
 

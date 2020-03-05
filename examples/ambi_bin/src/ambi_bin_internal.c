@@ -14,23 +14,23 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: ambi_bin_internal.c
- * -----------------------------
- * A binaural Ambisonic decoder for reproducing ambisonic signals over
- * headphones. The decoder supports sound-field rotation for head-tracking and
- * may also accomodate custom HRIR sets via the SOFA standard.
+/**
+ * @file ambi_bin_internal.c
+ * @brief A binaural Ambisonic decoder for reproducing ambisonic signals over
+ *        headphones.
  *
- * Dependencies:
- *     saf_utilities, afSTFTlib, saf_hrir, saf_vbap, saf_sh, saf_sofa_reader
- * Author, date created:
- *     Leo McCormack, 14.04.2018
+ * The decoder includes many historic and current state-of-the-art decoding
+ * approaches. It also supports sound-field rotation for head-tracking and may
+ * also accomodate custom HRIR sets via the SOFA standard.
+ *
+ * @author Leo McCormack
+ * @date 14.04.2018
  */
 
 #include "ambi_bin.h"
 #include "ambi_bin_internal.h"
 
-void ambi_bin_setCodecStatus(void* const hAmbi, CODEC_STATUS newStatus)
+void ambi_bin_setCodecStatus(void* const hAmbi, AMBI_BIN_CODEC_STATUS newStatus)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     if(newStatus==CODEC_STATUS_NOT_INITIALISED){

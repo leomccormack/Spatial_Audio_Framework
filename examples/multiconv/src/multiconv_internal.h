@@ -14,15 +14,11 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: multiconv_internal.h
- * ------------------------------
- * A multi-channel convolver
- *
- * Dependencies:
- *     saf_utilities
- * Author, date created:
- *     Leo McCormack, 23.09.2019
+/**
+ * @file multiconv_internal.h
+ * @brief A multi-channel convolver
+ * @author Leo McCormack
+ * @date 23.09.2019
  */
 
 #ifndef __MULTICONV_INTERNAL_H_INCLUDED__
@@ -56,6 +52,9 @@ extern "C" {
 /*                                 Structures                                 */
 /* ========================================================================== */
 
+/**
+ * Main structure for multiconv.
+ */
 typedef struct _multiconv
 {
     float** inputFrameTD;
@@ -64,7 +63,7 @@ typedef struct _multiconv
     /* internal */
     void* hMultiConv;
     int hostBlockSize; 
-    float* filters;   /* FLAT: nfilters x filter_length */
+    float* filters;   /**< FLAT: nfilters x filter_length */
     int nfilters;
     int filter_length;
     int filter_fs;
@@ -76,8 +75,8 @@ typedef struct _multiconv
     int enablePartitionedConv;
     
 } multiconv_data;
-    
-    
+
+
 #ifdef __cplusplus
 } /* extern "C" { */
 #endif /* __cplusplus */

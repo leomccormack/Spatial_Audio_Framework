@@ -14,24 +14,24 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * Filename: binauraliser_internal.h
- * ---------------------------------
- * Convolves input audio (up to 64 channels) with interpolated HRTFs in the
- * time-frequency domain. The HRTFs are interpolated by applying amplitude-
- * preserving VBAP gains to the HRTF magnitude responses and inter-aural time
- * differences (ITDs) individually, before being re-combined. The example also
- * allows the user to specify an external SOFA file for the convolution.
+/**
+ * @file: binauraliser_internal.c
+ * @brief Convolves input audio (up to 64 channels) with interpolated HRTFs in
+ *        the time-frequency domain.
  *
- * Dependencies:
- *     saf_utilities, saf_hrir, saf_vbap, afSTFTlib
- * Author, date created:
- *     Leo McCormack, 25.09.2017
+ * The HRTFs are interpolated by applying amplitude-preserving VBAP gains to the
+ * HRTF magnitude responses and inter-aural time differences (ITDs)
+ * individually, before being re-combined. The example also allows the user to
+ * specify an external SOFA file for the convolution, and rotations of the
+ * source directions to accomodate head-tracking.
+ *
+ * @author Leo McCormack
+ * @date 25.09.2017
  */
 
 #include "binauraliser_internal.h"
 
-void binauraliser_setCodecStatus(void* const hBin, CODEC_STATUS newStatus)
+void binauraliser_setCodecStatus(void* const hBin, BINAURALISER_CODEC_STATUS newStatus)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     if(newStatus==CODEC_STATUS_NOT_INITIALISED){
@@ -181,7 +181,13 @@ void binauraliser_initTFT
     pData->nSources = pData->new_nSources;
 }
 
-void binauraliser_loadPreset(SOURCE_CONFIG_PRESETS preset, float dirs_deg[MAX_NUM_INPUTS][2], int* newNCH, int* nDims)
+void binauraliser_loadPreset
+(
+    BINAURALISER_SOURCE_CONFIG_PRESETS preset,
+    float dirs_deg[MAX_NUM_INPUTS][2],
+    int* newNCH,
+    int* nDims
+)
 {
     float sum_elev;
     int ch, i, nCH;
