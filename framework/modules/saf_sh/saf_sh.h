@@ -139,7 +139,8 @@ void unitCart2Sph_aziElev(/* Input Arguments */
  * vector x [1].
  *
  * @note This INCLUDES the Condon-Shortley phase term. It is functionally
- * identical to Matlab's legendre function (with default settings ['unnorm']).
+ *       identical to Matlab's legendre function (with default settings
+ *       ['unnorm']).
  *
  * @param[in]  n    Order of  legendre polynomial
  * @param[in]  x    Vector of input values; lenX x 1
@@ -193,8 +194,8 @@ void unnorm_legendreP_recur(/* Input Arguments */
  * Computes REAL spherical harmonics [1] for each direction on the sphere.
  *
  * The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term.
- * i.e. max(omni) = 1/sqrt(4*pi). Compared to 'getSHreal_recur', this function
- * employs 'unnorm_legendreP' and double precision, which is slower but more
+ * i.e. max(omni) = 1/sqrt(4*pi). Compared to getSHreal_recur(), this function
+ * employs unnorm_legendreP() and double precision, which is slower but more
  * precise.
  *
  * @param[in]  order    Order of spherical harmonic expansion
@@ -218,8 +219,8 @@ void getSHreal(/* Input Arguments */
  * Computes REAL spherical harmonics [1] for each direction on the sphere.
  *
  * The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term.
- * i.e. max(omni) = 1/sqrt(4*pi). Compared to 'getSHreal', this function employs
- * 'unnorm_legendreP_recur' and single precision, which is faster but less
+ * i.e. max(omni) = 1/sqrt(4*pi). Compared to getSHreal(), this function employs
+ * unnorm_legendreP_recur() and single precision, which is faster but less
  * precise.
  *
  * @param[in]  order    Order of spherical harmonic expansion
@@ -243,7 +244,7 @@ void getSHreal_recur(/* Input Arguments */
  * Computes COMPLEX spherical harmonics [1] for each direction on the sphere.
  *
  * The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term.
- * i.e. max(omni) = 1/sqrt(4*pi) + i0. This function employs 'unnorm_legendreP'
+ * i.e. max(omni) = 1/sqrt(4*pi) + i0. This function employs unnorm_legendreP()
  * and double precision.
  *
  * @param[in]  order    Order of spherical harmonic expansion
@@ -534,7 +535,7 @@ void beamWeightsMaxEV(/* Input Arguments */
  * @param[in]  b_n       Axisymmetric beamformer weights; (order+1) x 1
  * @param[in]  azi_rad   Orientation, azimuth in RADIANS
  * @param[in]  elev_rad  Orientation, ELEVATION in RADIANS
- * @param[in]  A_xyz     Velocity coefficients (see "computeVelCoeffsMtx");
+ * @param[in]  A_xyz     Velocity coefficients; see computeVelCoeffsMtx();
  *                       FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3
  * @param[out] velCoeffs Beamforming coefficients for velocity patterns;
  *                       FLAT: (order+2)^2 x 3
@@ -566,7 +567,7 @@ void beamWeightsVelocityPatternsReal(/* Input Arguments */
  * @param[in]  b_n       Axisymmetric beamformer weights; (order+1) x 1
  * @param[in]  azi_rad   Orientation, azimuth in RADIANS
  * @param[in]  elev_rad  Orientation, ELEVATION in RADIANS
- * @param[in]  A_xyz     Velocity coefficients (see "computeVelCoeffsMtx");
+ * @param[in]  A_xyz     Velocity coefficients; see computeVelCoeffsMtx();
  *                       FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3
  * @param[out] velCoeffs Beamforming coefficients for velocity patterns;
  *                       FLAT: (order+2)^2 x 3
@@ -1045,7 +1046,7 @@ void cylModalCoeffs(/* Input arguments */
  * @param[in] r    Array radius, meters
  * @param[in] c    Speed of sound, m/s
  * @param[in] maxN Order
- * @returns spatial aliasing limit estimate
+ * @returns        Spatial aliasing limit estimate, in Hz
  */
 float sphArrayAliasLim(/* Input arguments */
                        float r,

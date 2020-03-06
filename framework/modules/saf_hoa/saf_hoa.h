@@ -94,7 +94,7 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
  * Ambisonic decoding options for binaural/headphone playback.
  *
  * @note A more detailed description of each method may be found in
- *       "saf_hoa_internal.h".
+ *       saf_hoa_internal.h.
  *
  * @see [1] Z. Ben-Hur, F. Brinkmann, J. Sheaffer, S. Weinzierl, and B. Rafaely,
  *          "Spectral equalization in binaural signals represented by order-
@@ -154,8 +154,8 @@ typedef enum _BINAURAL_AMBI_DECODER_METHODS {
  * Computes REAL spherical harmonics [1] for multiple directions on the sphere.
  *
  * The real spherical harmonics are computed WITHOUT the 1/sqrt(4*pi) term.
- * i.e. max(omni) = 1. Also, compared to 'getRSH_recur', this function uses
- * 'unnorm_legendreP' and double precision, so is more suitable for determining
+ * i.e. max(omni) = 1. Also, compared to getRSH_recur(), this function uses
+ * unnorm_legendreP() and double precision, so is more suitable for determining
  * 'Y' in an initialisation stage. This version is indeed slower, but more
  * precise; especially for high orders.
  *
@@ -185,8 +185,8 @@ void getRSH(/* Input Arguments */
  * Computes REAL spherical harmonics [1] for multiple directions on the sphere.
  *
  * The real spherical harmonics are computed WITHOUT the 1/sqrt(4*pi) term.
- * i.e. max(omni) = 1. Also, Compared to 'getRSH', this function uses
- * 'unnorm_legendreP_recur' and single precision, so is more suitable for
+ * i.e. max(omni) = 1. Also, Compared to getRSH(), this function uses
+ * unnorm_legendreP_recur() and single precision, so is more suitable for
  * determining 'Y' in a real-time loop. It sacrifices some precision, as
  * numerical error propogates through the recursion, but it is faster.
  *

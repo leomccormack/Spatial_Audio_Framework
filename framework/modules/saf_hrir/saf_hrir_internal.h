@@ -53,7 +53,7 @@ extern "C" {
  * Converts and FIR filter into Filterbank Coefficients
  *
  * @note This is currently hard coded for a 128 hop size with hybrid mode
- *       enabled (see afSTFTlib).
+ *       enabled (see afSTFTlib.h).
  *
  * @param[in]  hIR     Time-domain FIR; FLAT: N_dirs x nCH x ir_len
  * @param[in]  N_dirs  Number of FIR sets
