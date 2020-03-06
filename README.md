@@ -1,6 +1,6 @@
 # Spatial_Audio_Framework
 
-A cross-platform Spatial Audio Framework (SAF) written in C. The framework includes functions for performing Vector-Base Amplitude Panning (VBAP), Spherical Array Processing, and Higher-order Ambisonics (HOA); to name a few.
+A cross-platform Spatial Audio Framework (SAF) for developing spatial audio related applications.
 
 ![](saf.png)
 
@@ -11,7 +11,7 @@ The framework requires the following libraries:
 * Any Library/Libraries conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 * (Optional) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
 
-The rationale for the former requirement is that the framework employs the use of CBLAS/LAPACK routines for tackling all of the linear algebra operations, which are used quite prolifically throughout the code. Therefore, a performance library, which conforms to the CBLAS/LAPACK standards, is required by most of the framework modules. In principle, any such library (or combination of libraries) may be employed for this task, and if you've worked with such libraries before, then you probably already know what to do. Although, using a [custom Intel MKL library](CUSTOM_INTEL_MKL_INTRUCTIONS.md) for this requirement is still generally recommended, as this is the approach used by the developers.
+The rationale for the former requirement is that the framework employs the use of CBLAS/LAPACK routines for tackling all of the linear algebra operations, which are used quite prolifically throughout the code. Therefore, a performance library, which conforms to the CBLAS/LAPACK standards, is required by most of the framework modules. In principle, any such library (or combination of libraries) may be employed for this task, and if you've worked with such libraries before, then you probably already know what to do. However, using a [custom Intel MKL library](CUSTOM_INTEL_MKL_INTRUCTIONS.md) for this requirement is still generally recommended, as this is the approach used by the developers.
 
 ## Available CBLAS/LAPACK options
 
@@ -33,7 +33,7 @@ SAF_USE_ATLAS
 
 In order to use the built-in [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reader (framework/modules/saf_hrir/saf_sofa_reader.h), your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For those already familar with building and linking this particular library, you know what to do. However, for convenience, suggested platform specfic instructions have been provided below.
 
-Also, the following preprocessor definition is required:
+Note that the following preprocessor definition is also required:
 ```
 SAF_ENABLE_SOFA_READER
 ```
@@ -107,6 +107,15 @@ The framework's master include header is:
 
 Detailed instructions regarding how to use the functions offered by each of the framework's module, is provided in the main header file for the respective module (e.g. "/modules/saf_**sh**/saf_**sh**.h", or  "/modules/saf_**vbap**/saf_**vbap**.h").
 
+### Documentation
+
+Documentation generated using [Doxygen](http://www.doxygen.nl/index.html) may also be found [here](http://research.spa.aalto.fi/projects/spatial_audio_framework/index.html).
+
+Alternatively, you may compile the most recent documentation yourself using the following command:
+```
+doxygen doxygen/doxygen_config
+```
+
 ### Examples
 
 Many examples have been included in the repository, which may also serve as a starting point for learning the framework:
@@ -141,10 +150,10 @@ This framework is provided under the [ISC license](https://choosealicense.com/li
 
 ## References
 
-[1] Zaunschirm M, Schörkhuber C, Höldrich R. **Binaural rendering of Ambisonic signals by head-related impulse response time alignment and a diffuseness constraint**.  
+[1] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. **Binaural rendering of Ambisonic signals by head-related impulse response time alignment and a diffuseness constraint**.  
 The Journal of the Acoustical Society of America. 2018 Jun 19;143(6):3616-27.
 
-[2] Schörkhuber C, Zaunschirm M, Höldrich R. **Binaural Rendering of Ambisonic Signals via Magnitude Least Squares**.   
+[2] Scho"rkhuber C, Zaunschirm M, Ho"ldrich R. **Binaural Rendering of Ambisonic Signals via Magnitude Least Squares**.   
 InProceedings of the DAGA 2018 (Vol. 44, pp. 339-342).
 
 [3] Zotter F, Frank M. **All-round ambisonic panning and decoding**.   
@@ -153,7 +162,7 @@ Journal of the audio engineering society. 2012 Nov 26;60(10):807-20.
 [4] Zotter F, Pomberger H, Noisternig M. **Energy-preserving ambisonic decoding**.   
 Acta Acustica united with Acustica. 2012 Jan 1;98(1):37-47.
 
-[5] McCormack L, Välimäki V. **FFT-based Dynamic Range Compression**.   
+[5] McCormack L, Va"lima"ki V. **FFT-based Dynamic Range Compression**.   
 In Proceedings of the 14th Sound and Music Computing Conference, July 5--8, Espoo, Finland, At Espoo, Finland 2017
 
 [6] Williams EG. **Fourier acoustics: sound radiation and nearfield acoustical holography**.   
