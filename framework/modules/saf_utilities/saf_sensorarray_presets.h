@@ -111,7 +111,7 @@ extern const int __DTU_mic_maxOrder;
  * harmonic order, for a given microphone array, the reader is directed to [1].
  *
  * @see [1] Moreau, S., Daniel, J., & Bertet, S. (2006, May). 3D sound field
- *          recording with higher order ambisonics–Objective measurements and
+ *          recording with higher order ambisonics--objective measurements and
  *          validation of a 4th order spherical microphone. In 120th Convention
  *          of the AES (pp. 20-23).
  */

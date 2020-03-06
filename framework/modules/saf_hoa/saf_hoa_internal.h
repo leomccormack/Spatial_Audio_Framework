@@ -156,8 +156,8 @@ void getBinDecoder_LS(/* Input Arguments */
  *
  * @see [1] Z. Ben-Hur, F. Brinkmann, J. Sheaffer, S. Weinzierl, and B. Rafaely,
  *          "Spectral equalization in binaural signals represented by order-
- *          truncated spherical harmonics," The Jour- nal of the Acoustical
- *          Society of America, vol. 141, no. 6, pp. 4087–4096, 2017.
+ *          truncated spherical harmonics," The Journal of the Acoustical
+ *          Society of America, vol. 141, no. 6, pp. 4087--4096, 2017.
  */
 void getBinDecoder_LSDIFFEQ(/* Input Arguments */
                             float_complex* hrtfs,
@@ -197,9 +197,9 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
  * @param[out] decMtx        Decoding matrix;
  *                           FLAT: N_bands x NUM_EARS x (order+1)^2
  *
- * @see [1] B. Bernschu ̈tz, A. V. Giner, C. Pörschmann, and J. Arend, “Binaural
- *          reproduction of plane waves with reduced modal order,” Acta Acustica
- *          united with Acustica, vol. 100, no. 5, pp. 972–983, 2014.
+ * @see [1] B. Bernschu"tz, A. V. Giner, C. Po"rschmann, and J. Arend, "Binaural
+ *          reproduction of plane waves with reduced modal order" Acta Acustica
+ *          united with Acustica, vol. 100, no. 5, pp. 972--983, 2014.
  */
 void getBinDecoder_SPR(/* Input Arguments */
                        float_complex* hrtfs,
@@ -253,10 +253,10 @@ void getBinDecoder_SPR(/* Input Arguments */
  * @param[out] decMtx        Decoding matrix;
  *                           FLAT: N_bands x NUM_EARS x (order+1)^2
  *
- * @see [1] Zaunschirm M, Schörkhuber C, Höldrich R. Binaural rendering of
+ * @see [1] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. Binaural rendering of
  *          Ambisonic signals by head-related impulse response time alignment
  *          and a diffuseness constraint. The Journal of the Acoustical Society
- *          of America. 2018 Jun 19;143(6):3616-27
+ *          of America. 2018 Jun 19;143(6):3616--27
  */
 void getBinDecoder_TA(/* Input Arguments */
                       float_complex* hrtfs,
@@ -293,9 +293,9 @@ void getBinDecoder_TA(/* Input Arguments */
  * @param[out] decMtx        Decoding matrix;
  *                           FLAT: N_bands x NUM_EARS x (order+1)^2
  *
- * @see [1] Schörkhuber C, Zaunschirm M, Höldrich R. Binaural Rendering of
+ * @see [1] Scho"rkhuber C, Zaunschirm M, Ho"ldrich R. Binaural Rendering of
  *          Ambisonic Signals via Magnitude Least Squares. InProceedings of the
- *          DAGA 2018 (Vol. 44, pp. 339-342).
+ *          DAGA 2018 (Vol. 44, pp. 339--342).
  * @see [2] Zotter, F., & Frank, M. (2019). Ambisonics. Springer Open.
  */
 void getBinDecoder_MAGLS(/* Input Arguments */

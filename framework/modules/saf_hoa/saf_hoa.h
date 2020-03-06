@@ -49,7 +49,7 @@ extern "C" {
  * AllRAD, etc. relate to their improved performance when using irregular
  * loudspeaker arrangements.
  *
- * @see [1] Zotter F, Pomberger H, Noisternig M. Energy- preserving ambisonic
+ * @see [1] Zotter F, Pomberger H, Noisternig M. Energy--preserving ambisonic
  *          decoding. Acta Acustica united with Acustica. 2012 Jan 1;
  *          98(1):37-47.
  * @see [2] Zotter F, Frank M. All-round ambisonic panning and decoding. Journal
@@ -98,16 +98,16 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
  *
  * @see [1] Z. Ben-Hur, F. Brinkmann, J. Sheaffer, S. Weinzierl, and B. Rafaely,
  *          "Spectral equalization in binaural signals represented by order-
- *          truncated spherical harmonics," The Journal of the Acoustical
- *          Society of America, vol. 141, no. 6, pp. 4087–4096, 2017.
- * @see [2] B. Bernschutz, A. V. Giner, C. Pörschmann, and J. Arend, “Binaural
- *          reproduction of plane waves with reduced modal order,” Acta Acustica
- *          united with Acustica, vol. 100, no. 5, pp. 972–983, 2014.
- * @see [3] Zaunschirm M, Schörkhuber C, Höldrich R. Binaural rendering of
+ *          truncated spherical harmonics" The Journal of the Acoustical
+ *          Society of America, vol. 141, no. 6, pp. 4087--4096, 2017.
+ * @see [2] B. Bernschutz, A. V. Giner, C. Po"rschmann, and J. Arend, "Binaural
+ *          reproduction of plane waves with reduced modal order" Acta Acustica
+ *          united with Acustica, vol. 100, no. 5, pp. 972--983, 2014.
+ * @see [3] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. Binaural rendering of
  *          Ambisonic signals by head-related impulse response time alignment
  *          and a diffuseness constraint. The Journal of the Acoustical Society
  *          of America. 2018 Jun 19;143(6):3616-27
- * @see [4] Schörkhuber C, Zaunschirm M, Höldrich R. Binaural Rendering of
+ * @see [4] Scho"rkhuber C, Zaunschirm M, Ho"ldrich R. Binaural Rendering of
  *          Ambisonic Signals via Magnitude Least Squares. InProceedings of the
  *          DAGA 2018 (Vol. 44, pp. 339-342).
  */
@@ -355,7 +355,7 @@ void getBinauralAmbiDecoderFilters(/* Input Arguments */
  * @param[in,out] decMtx        Decoding matrix;
  *                              FLAT: N_bands x NUM_EARS x (order+1)^2
  *
- * @see [1] Zaunschirm M, Schörkhuber C, Höldrich R. Binaural rendering of
+ * @see [1] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. Binaural rendering of
  *          Ambisonic signals by head-related impulse response time alignment
  *          and a diffuseness constraint. The Journal of the Acoustical Society
  *          of America. 2018 Jun 19;143(6):3616-27

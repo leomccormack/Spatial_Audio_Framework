@@ -170,9 +170,9 @@ extern const float __Tdesign_degree_20_dirs_deg[216][2];
 extern const float __Tdesign_degree_21_dirs_deg[240][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 30
- * @see Gräf, M., & Potts, D. (2011). On the computation of spherical designs by
- *      a new optimization approach based on fast spherical Fourier transforms.
- *      Numerische Mathematik, 119(4), 699-724. */
+ * @see Gra"f, M., & Potts, D. (2011). On the computation of spherical designs
+ *      by a new optimization approach based on fast spherical Fourier
+ *      transforms. Numerische Mathematik, 119(4), 699-724. */
 extern const float __Tdesign_degree_30_dirs_deg[480][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 40 */
@@ -214,9 +214,9 @@ extern const int __Tdesign_nPoints_per_degree[21];
 
 /** Directions [azimuth, Elevation] in degrees, for sphere covering: 4 dirs
  * @see Belger, M. (1989). JH Conway, NJA Sloane. Sphere packings, lattices and
- *      groups. Springer Verlag New York‐Berlin‐Heidelberg‐London‐Paris Tokyo
- *      1988, 663 pages, 112 illustrations, DM 178.00, ISBN 0‐387‐96617‐X.
- *      Crystal Research and Technology, 24(1), 90-90. */
+ *      groups. Springer Verlag New York--Berlin--Heidelberg--London--Paris
+ *      Tokyo 1988, 663 pages, 112 illustrations, DM 178.00, ISBN 0--387--96617
+ *      --X. Crystal Research and Technology, 24(1), 90--90. */
 extern const float __SphCovering_4_dirs_deg[4][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for sphere covering: 5 dirs */

@@ -4,6 +4,7 @@ A cross-platform Spatial Audio Framework (SAF) for developing spatial audio rela
 
 ![](saf.png)
 
+[https://github.com/leomccormack/Spatial_Audio_Framework](https://github.com/leomccormack/Spatial_Audio_Framework)
 
 ## Prerequisites
 
@@ -34,6 +35,7 @@ SAF_USE_ATLAS
 In order to use the built-in [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reader (framework/modules/saf_hrir/saf_sofa_reader.h), your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For those already familar with building and linking this particular library, you know what to do. However, for convenience, suggested platform specfic instructions have been provided below.
 
 Note that the following preprocessor definition is also required:
+
 ```
 SAF_ENABLE_SOFA_READER
 ```

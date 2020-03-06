@@ -165,7 +165,7 @@ void flattenMinphase(float* x,
  * @param[out] b          b filter coefficients; 3 x 1
  * @param[out] a          a filter coefficients; 3 x 1
  *
- * @see [1] Zölzer, U. (Ed.). (2011). DAFX: digital audio effects. John Wiley
+ * @see [1] Zo"lzer, U. (Ed.). (2011). DAFX: digital audio effects. John Wiley
  *          & Sons.
  */
 void biQuadCoeffs(/* input arguments */

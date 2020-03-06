@@ -49,7 +49,8 @@ extern "C" {
  * @param[in]  S                  Number of Sources
  * @param[in]  ls_dirs_deg        Loudspeaker directions in DEGREES; FLAT: L x 2
  * @param[in]  L                  Number of loudspeakers
- * @param[in]  omitLargeTriangles '0' normal triangulation, '1' remove large triangles
+ * @param[in]  omitLargeTriangles '0' normal triangulation, '1' remove large
+ *                                triangles
  * @param[in]  enableDummies      '0' disabled, '1' enabled, and dummies are
  *                                placed at +/-90 elevation if required
  * @param[in]  spread             Spreading factor in DEGREES, 0: VBAP, >0: MDAP
@@ -258,12 +259,12 @@ void generateVBAPgainTable2D(/* Input arguments */
  * This should be applied as:
  * \code{.c}
  *   if(pValues[band] != 2.0f){
- *       gains3D_sum_pvf = 0.0f;
- *       for (i = 0; i < nLoudspeakers; i++){
- *           gains3D_sum_pvf += powf(MAX(gains[i], 0.0f), pValues[band]);}
- *       gains3D_sum_pvf = powf(gains3D_sum_pvf, 1.0f/(pValues[band]+2.23e-13f));
- *       for (i = 0; i < nLoudspeakers; i++){
- *           gains_p[i] = gains[i] / (gains3D_sum_pvf+2.23e-13f);}
+ *      gains3D_sum_pvf = 0.0f;
+ *      for (i = 0; i < nLoudspeakers; i++){
+ *          gains3D_sum_pvf += powf(MAX(gains[i], 0.0f), pValues[band]);}
+ *      gains3D_sum_pvf = powf(gains3D_sum_pvf, 1.0f/(pValues[band]+2.23e-13f));
+ *      for (i = 0; i < nLoudspeakers; i++){
+ *          gains_p[i] = gains[i] / (gains3D_sum_pvf+2.23e-13f);}
  *   }
  * \endcode
  *

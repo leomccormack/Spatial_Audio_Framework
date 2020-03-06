@@ -22,11 +22,12 @@
  * direct C port of the Matlab function given in [1], which was originally
  * written by Juha Vilkamo. The algorithm is explained in further detail in [2].
  *
- * @see [1] Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance
- *          domain framework for time–frequency processing of spatial audio.
- *          Journal of the Audio Engineering Society, 61(6), 403-411.
- * @see [2] Vilkamo, J., & Backstrom, T. (2018). Time--Frequency Processing:
- *          Methods and Tools. In Parametric Time-Frequency Domain Spatial
+ * @see [1] Vilkamo, J., Ba"ckstro"m, T., & Kuntz, A. (2013). Optimized
+ *          covariance domain framework for time--frequency processing of
+ *          spatial audio. Journal of the Audio Engineering Society, 61(6),
+ *          403-411.
+ * @see [2] Vilkamo, J., & Ba"ckstro"m, T. (2018). Time--Frequency Processing:
+ *          Methods and Tools. In Parametric Time--Frequency Domain Spatial
  *          Audio. John Wiley & Sons.
  *
  * @author Leo McCormack

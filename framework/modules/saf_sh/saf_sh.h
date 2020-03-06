@@ -1075,9 +1075,10 @@ float sphArrayAliasLim(/* Input arguments */
  *                       maxG_db = 20*log10(maxG)
  * @param[out] f_lim     Noise limit estimate; (maxN+1) x 1
  *
- * @see [1] Sector-based Parametric Sound Field Reproduction in the Spherical
- *          Harmonic Domain A Politis, J Vilkamo, V Pulkki. 2015. IEEE Journal
- *          of Selected Topics in Signal Processing 9 (5), 852 - 866
+ * @see [1] Politis, A., Vilkamo, J., & Pulkki, V. (2015). Sector-based
+ *          parametric sound field reproduction in the spherical harmonic
+ *          domain. IEEE Journal of Selected Topics in Signal Processing, 9(5),
+ *          852-866.
  */
 void sphArrayNoiseThreshold(/* Input arguments */
                             int maxN,
@@ -1277,7 +1278,7 @@ void simulateSphArray(/* Input arguments */
  *                        FLAT: nBands x (order+1)
  *
  * @see [1] Moreau, S., Daniel, J., Bertet, S., 2006, 3D sound field recording
- *          with higher order ambisonics-objective measurements and validation
+ *          with higher order ambisonics--objective measurements and validation
  *          of spherical microphone. In Audio Engineering Society Convention
  *          120.
  * @see [2] Politis, A., Gamper, H. (2017). "Comparing Modelled And Measurement-

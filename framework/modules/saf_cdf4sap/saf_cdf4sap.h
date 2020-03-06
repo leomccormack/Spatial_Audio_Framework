@@ -22,11 +22,12 @@
  * direct C port of the Matlab function given in [1], which was originally
  * written by Juha Vilkamo. The algorithm is explained in further detail in [2].
  *
- * @see [1] Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance
- *          domain framework for time–frequency processing of spatial audio.
- *          Journal of the Audio Engineering Society, 61(6), 403-411.
- * @see [2] Vilkamo, J., & Backstrom, T. (2018). Time--Frequency Processing:
- *          Methods and Tools. In Parametric Time-Frequency Domain Spatial
+ * @see [1] Vilkamo, J., Ba"ckstro"m, T., & Kuntz, A. (2013). Optimized
+ *          covariance domain framework for time--frequency processing of
+ *          spatial audio. Journal of the Audio Engineering Society, 61(6),
+ *          403-411.
+ * @see [2] Vilkamo, J., & Ba"ckstro"m, T. (2018). Time--Frequency Processing:
+ *          Methods and Tools. In Parametric Time--Frequency Domain Spatial
  *          Audio. John Wiley & Sons.
  *
  * @author Leo McCormack
@@ -53,7 +54,7 @@ extern "C" {
  * Processing (CDF4SAP) handle.
  *
  * @note Use this function for REAL-VALUED input/output matrices. For
- *       COMPLEX-VALUED input/output matrices use "cdf4sap_cmplx_create".
+ *       COMPLEX-VALUED input/output matrices use cdf4sap_cmplx_create().
  *
  * @param[in] phCdf  The address (&) of the CDF4SAP handle
  * @param[in] nXcols Number of columns/rows in square input matrix 'Cx'
@@ -71,7 +72,7 @@ void cdf4sap_create(/* Input Arguments */
  * Processing (CDF4SAP) handle.
  *
  * @note Use this function for COMPLEX-VALUED input/output matrices. For
- *       REAL-VALUED input/output matrices use "cdf4sap_create".
+ *       REAL-VALUED input/output matrices use cdf4sap_create().
  *
  * @param[in] phCdf  The address (&) of the CDF4SAP handle
  * @param[in] nXcols Number of columns/rows in square input matrix 'Cx'
@@ -89,7 +90,7 @@ void cdf4sap_cmplx_create(/* Input Arguments */
  * Processing (CDF4SAP) handle.
  *
  * @note Use this function for REAL-VALUED input/output matrices. For
- *       COMPLEX-VALUED input/output matrices use "cdf4sap_cmplx_destroy".
+ *       COMPLEX-VALUED input/output matrices use cdf4sap_cmplx_destroy().
  *
  * @param[in] phCdf The address (&) of the CDF4SAP handle
  */
@@ -103,7 +104,7 @@ void cdf4sap_destroy(/* Input Arguments */
  * Processing (CDF4SAP) handle.
  *
  * @note Use this function for COMPLEX-VALUED input/output matrices. For
- *       REAL-VALUED input/output matrices use "cdf4sap_destroy".
+ *       REAL-VALUED input/output matrices use cdf4sap_destroy().
  *
  * @param[in] phCdf The address (&) of the CDF4SAP handle
  */
@@ -122,7 +123,7 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
  * to [1,2].
  *
  * @note Use this function for REAL-VALUED input/output matrices. For
- *       COMPLEX-VALUED input/output use "formulate_M_and_Cr_cmplx".
+ *       COMPLEX-VALUED input/output use formulate_M_and_Cr_cmplx().
  *
  * @param[in]  hCdf          Covariance Domain Framework handle
  * @param[in]  Cx            Covariance matrix of input 'x';
@@ -135,11 +136,12 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
  * @param[out] M             Mixing matrix; FLAT: nYcols x nXcols
  * @param[out] Cr            Mixing matrix residual; FLAT: nYcols x nYcols
  *
- * @see [1] Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance
- *          domain framework for time–frequency processing of spatial audio.
- *          Journal of the Audio Engineering Society, 61(6), 403-411.
- * @see [2] Vilkamo, J., & Backstrom, T. (2018). Time--Frequency Processing:
- *          Methods and Tools. In Parametric Time-Frequency Domain Spatial
+ * @see [1] Vilkamo, J., Ba"ckstro"m, T., & Kuntz, A. (2013). Optimized
+ *          covariance domain framework for time--frequency processing of
+ *          spatial audio. Journal of the Audio Engineering Society, 61(6),
+ *          403-411.
+ * @see [2] Vilkamo, J., & Ba"ckstro"m, T. (2018). Time--Frequency Processing:
+ *          Methods and Tools. In Parametric Time--Frequency Domain Spatial
  *          Audio. John Wiley & Sons.
  */
 void formulate_M_and_Cr(/* Input Arguments */
@@ -165,7 +167,7 @@ void formulate_M_and_Cr(/* Input Arguments */
  * to [1,2].
  *
  * @note Use this function for COMPLEX-VALUED input/output matrices. For
- *       REAL-VALUED input/output use "formulate_M_and_Cr".
+ *       REAL-VALUED input/output use formulate_M_and_Cr().
  *
  * @param[in]  hCdf          Covariance Domain Framework handle
  * @param[in]  Cx            Covariance matrix of input 'x';
@@ -179,11 +181,12 @@ void formulate_M_and_Cr(/* Input Arguments */
  * @param[out] M             Mixing matrix; FLAT: nYcols x nXcols
  * @param[out] Cr            Mixing matrix residual; FLAT: nYcols x nYcols
  *
- * @see [1] Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance
- *          domain framework for time–frequency processing of spatial audio.
- *          Journal of the Audio Engineering Society, 61(6), 403-411.
- * @see [2] Vilkamo, J., & Backstrom, T. (2018). Time--Frequency Processing:
- *          Methods and Tools. In Parametric Time-Frequency Domain Spatial
+ * @see [1] Vilkamo, J., Ba"ckstro"m, T., & Kuntz, A. (2013). Optimized
+ *          covariance domain framework for time--frequency processing of
+ *          spatial audio. Journal of the Audio Engineering Society, 61(6),
+ *          403-411.
+ * @see [2] Vilkamo, J., & Ba"ckstro"m, T. (2018). Time--Frequency Processing:
+ *          Methods and Tools. In Parametric Time--Frequency Domain Spatial
  *          Audio. John Wiley & Sons.
  */
 void formulate_M_and_Cr_cmplx(/* Input Arguments */
