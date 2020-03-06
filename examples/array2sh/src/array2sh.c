@@ -30,9 +30,9 @@
  *       spherical or cylindrical arrays, which have phase-matched sensors.
  *
  * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
- *          Pulkki, V., “Real-time conversion of sensor array signals into
+ *          Pulkki, V., "Real-time conversion of sensor array signals into
  *          spherical harmonic signals with applications to spatially localised
- *          sub-band sound-field analysis,” in Audio Engineering Society
+ *          sub-band sound-field analysis," in Audio Engineering Society
  *          Convention 144, Audio Engineering Society, 2018.
  *
  * @author Leo McCormack

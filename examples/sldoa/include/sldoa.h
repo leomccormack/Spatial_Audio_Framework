@@ -28,9 +28,9 @@
  * Delikaris-Manias and Angelo Farina, and are explained in more detail in [1,2]
  *
  * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
- *          Pulkki, V., “Real-time conversion of sensor array signals into
+ *          Pulkki, V., "Real-time conversion of sensor array signals into
  *          spherical harmonic signals with applications to spatially localised
- *          sub-band sound-field analysis,” in Audio Engineering Society
+ *          sub-band sound-field analysis," in Audio Engineering Society
  *          Convention 144, Audio Engineering Society, 2018.
  * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
  *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
