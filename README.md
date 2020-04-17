@@ -118,13 +118,11 @@ Note that these examples have also been integrated into VST audio plug-ins using
 
 ## Contributing
 
-Suggestions and contributions to the code are both welcomed and encouraged. It should be highlighted that, in general, the framework has been designed to be highly modular with plenty of room for expansion. Therefore:
-* if you are researcher who has, for example, developed a new spatial-audio related method and want to integrate it into the framework... or
+Suggestions and contributions to the code are both welcomed and encouraged. It should be highlighted that, in general, the framework has been designed to be highly modular with plenty of room for expansion. Therefore,
+* if you are researcher who has developed a new spatial-audio related method and want to integrate it into the framework... or
 * if you notice that an existing piece of code can be rewritten to make it clearer/faster, or to fix a bug...
 
-then please feel free to do so. Although, note that if you wish to make a substantial change or addition, then consider first discussing it by raising a github "issue" or contacting the developers directly via email; we may be able to help.
-
-Note that we also very much appreciate feedback from developers who are using this framework, so if you are using it for an interesting project, then please let us know :-)
+then please feel free to do so. 
 
 ## Developers
 
