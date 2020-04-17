@@ -16,7 +16,8 @@
 
 /**
  * @file saf_sh_internal.c
- * @brief Internal part of the "saf_sh" module
+ * @brief Internal part of the Spherical Harmonic Transform and Spherical Array
+ *        Processing module (saf_sh)
  *
  * A collection of spherical harmonic related functions. Many of which have been
  * derived from Matlab libraries by Archontis Politis [1-3].

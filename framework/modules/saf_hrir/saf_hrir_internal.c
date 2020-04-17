@@ -16,7 +16,7 @@
 
 /**
  * @file saf_hrir_internal.c
- * @brief Internal part of the "saf_hrir" module
+ * @brief Internal part of the HRIR/HRTF processing module (saf_hrir)
  *
  * A collection of head-related impulse-response (HRIR) functions. Including
  * estimation of the interaural time differences (ITDs), conversion of HRIRs to
@@ -30,8 +30,12 @@
 #include "saf_hrir.h"
 #include "saf_hrir_internal.h"
 
-/* currently hard coded for a 128 hop size with hybrid mode enabled */
-/* Copyright (c) 2015 Juha Vilkamo, MIT license */
+/**
+ * Passes input time-domain data through afSTFT.
+ *
+ * Copyright (c) 2015 Juha Vilkamo, MIT license
+ * @note Currently hard coded for a 128 hop size with hybrid mode enabled
+ */
 static void afAnalyse
 (
     float* inTD/* nSamplesTD x nCH */,

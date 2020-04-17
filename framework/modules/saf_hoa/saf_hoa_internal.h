@@ -16,7 +16,7 @@
 
 /**
  * @file saf_hoa_internal.h
- * @brief Internal part of the "saf_hoa" module
+ * @brief Internal part of the higher-order Ambisonics module (saf_hoa)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
  * the Matlab library by Archontis Politis [1].
@@ -75,7 +75,7 @@ void getEPAD(/* Input Arguments */
              float* decMtx);
 
 /**
- * Computes the "All-round Ambisonics decoder", as detailed in [1].
+ * Computes the "All-round Ambisonics decoder", as detailed in [1]
  *
  * @param[in]  order       Decoding order
  * @param[in]  ls_dirs_deg Loudspeaker directions in DEGREES [azi elev];
@@ -135,7 +135,7 @@ void getBinDecoder_LS(/* Input Arguments */
 
 /**
  * Computes a least-squares (LS) binaural ambisonic decoder with diffuse-field
- * equalisation.
+ * equalisation
  *
  * The binaural ambisonic decoder is computed for each frequency bin/band,
  * ready to be applied to input SH signals in the time-frequency domain, or,
@@ -171,7 +171,7 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
 
 /**
  * Computes a binaural ambisonic decoder based on spatial resampling (aka
- * virtual loudspeaker decoding) [1].
+ * virtual loudspeaker decoding) [1]
  *
  * The binaural ambisonic decoder is computed for each frequency bin/band,
  * ready to be applied to input SH signals in the time-frequency domain, or,
@@ -213,7 +213,7 @@ void getBinDecoder_SPR(/* Input Arguments */
 
 /**
  * Computes a binaural ambisonic decoder based on the time-alignment (TA) method
- * described in [1].
+ * described in [1]
  *
  * The binaural ambisonic decoder is computed for each frequency bin/band,
  * ready to be applied to input SH signals in the time-frequency domain, or,
@@ -272,7 +272,7 @@ void getBinDecoder_TA(/* Input Arguments */
 
 /**
  * Computes a binaural ambisonic decoder based on the magnitude least-squares
- * (MagLS) method first described in [1], and with the algorithm given in [2].
+ * (MagLS) method first described in [1], and with the algorithm given in [2]
  *
  * The binaural ambisonic decoder is computed for each frequency bin/band,
  * ready to be applied to input SH signals in the time-frequency domain, or,

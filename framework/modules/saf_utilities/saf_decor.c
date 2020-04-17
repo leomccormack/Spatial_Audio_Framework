@@ -16,7 +16,7 @@
 
 /**
  * @file saf_decor.c
- * @brief Collection of signal decorrelators.
+ * @brief Collection of signal decorrelators
  *
  * @author Leo McCormack
  * @date 30.07.2018
@@ -25,6 +25,9 @@
 #include "saf_decor.h"
 #include "saf_utilities.h"
 
+/**
+ * Random permutation of a vector of integers
+ */
 static void randperm(int len, int* randperm)
 {
     int i, j, tmp;

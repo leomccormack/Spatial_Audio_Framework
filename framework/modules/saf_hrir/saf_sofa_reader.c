@@ -28,9 +28,6 @@
 #include "saf_hrir.h"
 
 #ifdef SAF_ENABLE_SOFA_READER
-# ifndef MAX_SOFA_HRIR_LENGTH
-#  define MAX_SOFA_HRIR_LENGTH 1024 /* truncates HRIRs to this length */
-# endif
 
 void loadSofaFile
 (
@@ -54,10 +51,14 @@ void loadSofaFile
     free1d((void**)&(*hrir_dirs_deg));
     
     /* open sofa file */
-    /* (returns error value if sofa_filepath==NULL (intentional), or if the file
+    /* (retval is set to error value if sofa_filepath==NULL (intentional), or if the file
      * path/name was not found (unintentional). */
-    if ((retval = nc_open(sofa_filepath, NC_NOWRITE, &ncid)))
-        errorMessage = nc_strerror(retval);
+    if(sofa_filepath!=NULL){
+        if ((retval = nc_open(sofa_filepath, NC_NOWRITE, &ncid)))
+            errorMessage = nc_strerror(retval);
+    }
+    else
+        retval = NC_FATAL;
     
     /* if error: */
     if(retval!=NC_NOERR){
@@ -139,8 +140,8 @@ void loadSofaFile
     if ((retval = nc_close(ncid)))
         errorMessage = nc_strerror(retval);
     
-    /* Allocate sufficient memory */
-    (*hrir_len) = MIN((int)IR_dims[2], MAX_SOFA_HRIR_LENGTH); /* truncate the HRIR length (1024 should be plenty) */
+    /* Allocate memory */
+    (*hrir_len) = (int)IR_dims[2]; 
     (*hrirs) = malloc1d(IR_dims[0]*IR_dims[1]*(*hrir_len) *sizeof(float));
     (*hrir_dirs_deg) = malloc1d(SourcePosition_dims[0]*2*sizeof(float));
     

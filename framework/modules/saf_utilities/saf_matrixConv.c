@@ -31,6 +31,9 @@
 /*                              Matrix Convolver                              */
 /* ========================================================================== */
 
+/**
+ * Data structure for the matrix convolver.
+ */
 typedef struct _safMatConv_data {
     int hopSize, fftSize, nBins;
     int length_h, nCHin, nCHout;
@@ -230,6 +233,9 @@ void saf_matrixConv_apply
 /*                           Multi-Channel Convolver                          */
 /* ========================================================================== */
 
+/**
+ * Data structure for the multi-channel convolver.
+ */
 typedef struct _safMulConv_data {
     int hopSize, fftSize, nBins;
     int length_h, nCH;

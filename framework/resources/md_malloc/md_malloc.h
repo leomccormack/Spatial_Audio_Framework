@@ -23,7 +23,7 @@
 /**
  * @file md_malloc.h
  * @brief Implementations of dynamic memory allocation functions for
- *        contiguous multidimensional "arrays".
+ *        contiguous multidimensional "arrays"
  *
  * Taken from: https://github.com/leomccormack/md_malloc
  *

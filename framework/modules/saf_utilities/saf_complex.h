@@ -17,7 +17,7 @@
 /**
  * @file saf_complex.h
  * @brief Contains wrappers for handling complex numbers across both C99-
- *        compliant compilers and Microsoft Visual Compiler (MSVC).
+ *        compliant compilers and Microsoft Visual Compiler (MSVC)
  *
  * @author Leo McCormack
  * @date 11.07.2016
@@ -34,7 +34,7 @@
   /*
   Single-Precision Complex Operations
   */
-  inline float_complex cmplxf(float re, float im) {return std::polar(re, im); }
+  inline float_complex cmplxf(float re, float im) {return float_complex(re, im); }
   inline float_complex ccaddf(float_complex x, float_complex y) { return x + y; }
   inline float_complex craddf(float_complex x, float y) { return x + y; }
   inline float_complex ccsubf(float_complex x, float_complex y) { return x - y; }
@@ -48,7 +48,7 @@
   /*
   Double-Precision Complex Operations
   */
-  inline double_complex cmplx(double re, double im) {return std::polar(re, im); }
+  inline double_complex cmplx(double re, double im) {return double_complex(re, im);}
   inline double_complex ccadd(double_complex x, double_complex y) { return x + y; }
   inline double_complex cradd(double_complex x, double y) { return x + y; }
   inline double_complex ccsub(double_complex x, double_complex y) { return x - y; }
@@ -97,12 +97,12 @@
 
 
 #elif _MSC_VER >= 1900
-  /* for Microsoft's ancient C compiler (MS VC++ 14.0 _MSC_VER = 1900, Visual Studio 2015) */
+  /* for Microsoft's ancient C compiler (MS VC++ 14.0 _MSC_VER = 1900, Visual
+   * Studio 2015) */
     
 # include <complex.h>
   typedef _Fcomplex float_complex;
   typedef _Dcomplex double_complex;
-
 
   /*
   Single-Precision Complex Operations

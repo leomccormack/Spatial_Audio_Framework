@@ -16,7 +16,7 @@
 
 /**
  * @file saf_hoa.h
- * @brief Public part of the "saf_hoa" module
+ * @brief Public part of the higher-order Ambisonics module (saf_hoa)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
  * the Matlab library by Archontis Politis [1].
@@ -91,7 +91,7 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
 } LOUDSPEAKER_AMBI_DECODER_METHODS;
 
 /**
- * Ambisonic decoding options for binaural/headphone playback.
+ * Ambisonic decoding options for binaural/headphone playback
  *
  * @note A more detailed description of each method may be found in
  *       saf_hoa_internal.h.
@@ -151,7 +151,7 @@ typedef enum _BINAURAL_AMBI_DECODER_METHODS {
 /* ========================================================================== */
 
 /**
- * Computes REAL spherical harmonics [1] for multiple directions on the sphere.
+ * Computes REAL spherical harmonics [1] for multiple directions on the sphere
  *
  * The real spherical harmonics are computed WITHOUT the 1/sqrt(4*pi) term.
  * i.e. max(omni) = 1. Also, compared to getRSH_recur(), this function uses
@@ -182,7 +182,7 @@ void getRSH(/* Input Arguments */
             float* Y);
 
 /**
- * Computes REAL spherical harmonics [1] for multiple directions on the sphere.
+ * Computes REAL spherical harmonics [1] for multiple directions on the sphere
  *
  * The real spherical harmonics are computed WITHOUT the 1/sqrt(4*pi) term.
  * i.e. max(omni) = 1. Also, Compared to getRSH(), this function uses
@@ -214,7 +214,7 @@ void getRSH_recur(/* Input Arguments */
 
 /**
  * Computes the weights required to manipulate a hyper-cardioid beam-pattern,
- * such that it has maximum energy in the given look-direction.
+ * such that it has maximum energy in the given look-direction
  *
  * Traditionally, due to the back lobes of beamformers when panning a source
  * via Ambisonics encoding/decoding, there is unwanted energy given to
@@ -223,7 +223,7 @@ void getRSH_recur(/* Input Arguments */
  * used to generate said beams, reducing the contribution of the higher
  * orders to the beam patterns. This results in worse spatial selectivity, as
  * the width of the beam pattern main lobe is widened, however, the back lobes
- * are also reduced; thus mitigating the aforementioned (bigger) problem.
+ * are also reduced; thus mitigating the aforementioned problem.
  *
  * @param[in]  order       Order of spherical harmonic expansion
  * @param[in]  diagMtxFlag Set to '0' if you want the weights to be returned as
@@ -242,7 +242,7 @@ void getMaxREweights(/* Input Arguments */
 
 /**
  * Computes an ambisonic decoding matrix of a specific order, for a specific
- * loudspeaker layout.
+ * loudspeaker layout
  *
  * @param[in]  ls_dirs_deg Loudspeaker directions in DEGREES [azi elev];
  *                         FLAT: nLS x 2
@@ -264,7 +264,7 @@ void getLoudspeakerAmbiDecoderMtx(/* Input Arguments */
 
 /**
  * Computes binaural ambisonic decoding matrices (one per frequency) at a
- * specific order, for a given HRTF set.
+ * specific order, for a given HRTF set
  *
  * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
@@ -303,7 +303,7 @@ void getBinauralAmbiDecoderMtx(/* Input Arguments */
                                float_complex* decMtx);
 
 /**
- * Computes ambisonic decoding filters for a given HRTF set.
+ * Computes ambisonic decoding filters for a given HRTF set
  *
  * @param[in]  hrtfs         The HRTFs; FLAT: (fftSize/2+1) x NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
@@ -341,7 +341,7 @@ void getBinauralAmbiDecoderFilters(/* Input Arguments */
 
 /**
  * Imposes a diffuse-field covariance constraint on a given binaural decoding
- * matrix [1].
+ * matrix [1]
  *
  * @note decMtx is altered in-place.
  *

@@ -19,28 +19,27 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  */
-/*
- * Filename:
- *     md_malloc.c
- * Description:
- *     Implementations of dynamic memory allocation functions for
- *     contiguous multidimensional "arrays".
- *     Taken from: https://github.com/leomccormack/md_malloc
- * Example:
- *     An example of allocating, indexing and freeing a 3-D "array":
- *       float*** example3D = (float***)malloc3d(10, 20, 5, sizeof(float);
- *       // Due to the contiguous nature of the allocation, this is possible:
- *       memset(&example3D[0][0][0], 0, 10*20*5*sizeof(float));
- *       // And my still be indexed normally as:
- *       example3D[3][19][2] = 22.0f;
- *       // To free, simply call:
- *       free(example3D);
- *       // Or:
- *       free3d((void****)&example3D);
- * Dependencies:
- *     (none)
- * Author, date created:
- *     Leo McCormack, 11.06.2019
+
+/**
+ * @file md_malloc.c
+ * @brief Implementations of dynamic memory allocation functions for
+ *        contiguous multidimensional "arrays"
+ *
+ * Taken from: https://github.com/leomccormack/md_malloc
+ *
+ * An example of allocating, indexing and freeing a 3-D "array":
+ * \code{.c}
+ *   float*** example3D = (float***)malloc3d(10, 20, 5, sizeof(float);
+ *   // Due to the contiguous nature of the allocation, this is possible:
+ *   memset(ADR3D(example3D), 0, 10*20*5*sizeof(float));
+ *   // And my still be indexed normally as:
+ *   example3D[3][19][2] = 22.0f;
+ *   // To free, simply call:
+ *   free(example3D);
+ * \endcode
+ *
+ * @author Leo McCormack
+ * @date 11.06.2019
  */
 
 #include <stdio.h>

@@ -17,7 +17,7 @@
 /**
  * @file saf_veclib.c
  * @brief Contains wrappers for optimised linear algebra routines, utilising
- *        CBLAS and LAPACK.
+ *        CBLAS and LAPACK
  *
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by
@@ -26,12 +26,11 @@
  *   to enable one of these suitable performance libraries, which must also be
  *   linked correctly to your project.
  *   - SAF_USE_INTEL_MKL:
- *       to enable Intel's Math Kernal Library
- *   - SAF_USE_ATLAS_WITH_LAPACK:
- *       to enable ATLAS BLAS routines with netlib's LAPACK see:
- *       http://math-atlas.sourceforge.net/atlas_install/node8.html
- *   - SAF_USE_OPENBLAS_WITH_LAPACK:
- *       to enable OpenBLAS and use netlib's LAPACK
+ *       to enable Intel's Math Kernal Library with Fortran LAPACK interface
+ *   - SAF_USE_ATLAS:
+ *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
+ *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
+ *       to enable OpenBLAS with LAPACKE interface
  *
  * @see More information can be found here:
  *      https://github.com/leomccormack/Spatial_Audio_Framework
@@ -45,7 +44,7 @@
 #include "saf_utilities.h"
 #include <float.h>
 
-/* to remove compiler warnings: */
+/* just to remove compiler warnings: */
 #if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
   typedef __CLPK_integer       veclib_int;
   typedef __CLPK_real          veclib_float;

@@ -16,7 +16,8 @@
 
 /**
  * @file saf_sh.c
- * @brief Public part of the "saf_sh" module
+ * @brief Public part of the Spherical Harmonic Transform and Spherical Array
+ *        Processing module (saf_sh)
  *
  * A collection of spherical harmonic related functions. Many of which have been
  * derived from Matlab libraries by Archontis Politis [1-3].
@@ -32,12 +33,17 @@
 #include "saf_sh.h"
 #include "saf_sh_internal.h"
 
-/* first-order ACN/N3D to WXYZ matrix */
+/**
+ * First-order ACN/N3D to WXYZ conversion matrix
+ */
 const float wxyzCoeffs[4][4] = { {3.544907701811032f, 0.0f, 0.0f, 0.0f},
     {0.0f, 0.0f, 0.0f, 2.046653415892977f},
     {0.0f, 2.046653415892977f, 0.0f, 0.0f},
     {0.0f, 0.0f, 2.046653415892977f, 0.0f} };
 
+/**
+ * Wrapper for the xylindrical bessel function of the first kind  
+ */
 static double Jn(int n, double z)
 {
 #ifndef _MSC_VER
@@ -47,6 +53,9 @@ static double Jn(int n, double z)
 #endif
 }
 
+/**
+ * Wrapper for the xylindrical bessel function of the second kind
+ */
 static double Yn(int n, double z)
 {
 #ifndef _MSC_VER

@@ -16,7 +16,7 @@
 
 /**
  * @file saf.h
- * @brief Main include header for the spatial audio framework.
+ * @brief Main include header for the Spatial_Audio_Framework.
  *
  * ## Core modules
  *   afSTFTlib, saf_cdf4sap, saf_hoa, saf_hrir, saf_sh, saf_utilities, saf_vbap
@@ -37,7 +37,7 @@
 
 /**
  * SAF Module: Utilities
- * ---------------------
+ *
  * Contains a collection of useful memory allocation functions and cross-
  * platform complex number wrappers. Optimised linear algebra routines utilising
  * BLAS and LAPACK are also included.
@@ -49,12 +49,11 @@
  *   to enable one of these suitable performance libraries, which must also be
  *   linked correctly to your project.
  *   - SAF_USE_INTEL_MKL:
- *       to enable Intel's Math Kernal Library
- *   - SAF_USE_ATLAS_WITH_LAPACK:
- *       to enable ATLAS BLAS routines with netlib's LAPACK see:
- *       http://math-atlas.sourceforge.net/atlas_install/node8.html
- *   - SAF_USE_OPENBLAS_WITH_LAPACK:
- *       to enable OpenBLAS and use netlib's LAPACK
+ *       to enable Intel's Math Kernal Library with Fortran LAPACK interface
+ *   - SAF_USE_ATLAS:
+ *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
+ *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
+ *       to enable OpenBLAS with LAPACKE interface
  *
  * @see More information can be found here:
  *      https://github.com/leomccormack/Spatial_Audio_Framework
@@ -65,8 +64,8 @@
 #include "../modules/saf_utilities/saf_utilities.h"
 
 /**
- * SAF Module: afSTFT
- * ------------------
+ * SAF Module: afSTFTlib
+ *
  * The Alias-free STFT implementation by Juha Vilkamo, with some minor changes.
  * The Original source code can be found here:
  *  - https://github.com/jvilkamo/afSTFT
@@ -79,7 +78,7 @@
 
 /**
  * SAF Module: CDF4SAP
- * -------------------
+ *
  * Covarience Domain Framework for Spatial Audio Processing (CDF4SAP). A C
  * implementation of the framework described in [1].
  *
@@ -95,7 +94,7 @@
 
 /**
  * SAF Module: HOA
- * ---------------
+ *
  * A collection of higher-order Ambisonics related functions. Some of which are
  * derived from the Matlab library by Archontis Politis, found here:
  *  - https://github.com/polarch/Higher-Order-Ambisonics
@@ -108,7 +107,7 @@
 
 /**
  * SAF Module: HRIR
- * ----------------
+ *
  * A collection of head-related impulse-response (HRIR) functions. Including
  * estimation of the interaural time differences (ITDs), conversion of HRIRs to
  * HRTF filterbank coefficients, and HRTF interpolation utilising amplitude-
@@ -122,7 +121,7 @@
 
 /**
  * SAF Module: SH
- * --------------
+ *
  * A collection of spherical harmonic related functions. Many of which have been
  * derived from Matlab libraries by Archontis Politis; found here:
  *   - https://github.com/polarch/Spherical-Harmonic-Transform
@@ -137,7 +136,7 @@
 
 /**
  * SAF Module: VBAP
- * ----------------
+ *
  * VBAP functions largely derived from the MATLAB library by Archontis Politis,
  * found here:
  *  - https://github.com/polarch/Vector-Base-Amplitude-Panning
@@ -155,7 +154,7 @@
 
 /**
  * SAF Module: SOFA Reader
- * -----------------------
+ *
  * A simple SOFA file reader that returns only the bare minimum needed to
  * load HRIR data.
  *
@@ -168,5 +167,6 @@
 #ifdef SAF_ENABLE_SOFA_READER
 # include "../modules/saf_hrir/saf_sofa_reader.h"
 #endif /* SAF_ENABLE_SOFA_READER */
+
 
 #endif /* SAF_H_INCLUDED */

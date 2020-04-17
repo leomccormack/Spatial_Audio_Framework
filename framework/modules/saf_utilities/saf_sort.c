@@ -24,21 +24,34 @@
 
 #include "saf_utilities.h"
 
+/**
+ * Helper struct for sorting a vector of integers using 'qsort'
+ */
 typedef struct saf_sort_int {
     int val;
     int idx;
 }saf_sort_int;
 
+/**
+ * Helper struct for sorting a vector of floats using 'qsort'
+ */
 typedef struct saf_sort_float {
     float val;
     int idx;
 }saf_sort_float;
 
+/**
+ * Helper struct for sorting a vector of doubles using 'qsort'
+ */
 typedef struct saf_sort_double {
     double val;
     int idx;
 }saf_sort_double;
 
+/**
+ * Helper function for sorting a vector of integers using 'qsort' in ascending
+ * order
+ */
 static int cmp_asc_int(const void *a,const void *b) {
     struct saf_sort_int *a1 = (struct saf_sort_int*)a;
     struct saf_sort_int *a2 = (struct saf_sort_int*)b;
@@ -47,6 +60,10 @@ static int cmp_asc_int(const void *a,const void *b) {
     else return 0;
 }
 
+/**
+ * Helper function for a sorting vector of integers using 'qsort' in decending
+ * order
+ */
 static int cmp_desc_int(const void *a,const void *b) {
     struct saf_sort_int *a1 = (struct saf_sort_int*)a;
     struct saf_sort_int *a2 = (struct saf_sort_int*)b;
@@ -55,6 +72,10 @@ static int cmp_desc_int(const void *a,const void *b) {
     else return 0;
 }
 
+/**
+ * Helper function for a sorting vector of floats using 'qsort' in ascending
+ * order
+ */
 static int cmp_asc_float(const void *a,const void *b) {
     struct saf_sort_float *a1 = (struct saf_sort_float*)a;
     struct saf_sort_float *a2 = (struct saf_sort_float*)b;
@@ -63,6 +84,10 @@ static int cmp_asc_float(const void *a,const void *b) {
     else return 0;
 }
 
+/**
+ * Helper function for a sorting vector of floats using 'qsort' in decending
+ * order
+ */
 static int cmp_desc_float(const void *a,const void *b) {
     struct saf_sort_float *a1 = (struct saf_sort_float*)a;
     struct saf_sort_float *a2 = (struct saf_sort_float*)b;
@@ -71,6 +96,10 @@ static int cmp_desc_float(const void *a,const void *b) {
     else return 0;
 }
 
+/**
+ * Helper function for a sorting vector of doubles using 'qsort' in ascending
+ * order
+ */
 static int cmp_asc_double(const void *a,const void *b) {
     struct saf_sort_double *a1 = (struct saf_sort_double*)a;
     struct saf_sort_double *a2 = (struct saf_sort_double*)b;
@@ -79,6 +108,10 @@ static int cmp_asc_double(const void *a,const void *b) {
     else return 0;
 }
 
+/**
+ * Helper function for a sorting vector of doubles using 'qsort' in decending
+ * order
+ */
 static int cmp_desc_double(const void *a,const void *b) {
     struct saf_sort_double *a1 = (struct saf_sort_double*)a;
     struct saf_sort_double *a2 = (struct saf_sort_double*)b;
@@ -89,11 +122,11 @@ static int cmp_desc_double(const void *a,const void *b) {
 
 void sorti
 (
-    int* in_vec,      /* vector[len] to be sorted */
-    int* out_vec,     /* if NULL, then in_vec is sorted "in-place" */
-    int* new_idices,  /* set to NULL if you don't need them */
-    int len,          /* number of elements in vectors, must be consistent with the input data */
-    int descendFLAG   /* !1:ascending, 1:descending */
+    int* in_vec,
+    int* out_vec,
+    int* new_idices,
+    int len,
+    int descendFLAG
 )
 {
     int i;
@@ -121,11 +154,11 @@ void sorti
 
 void sortf
 (
-    float* in_vec,    /* vector[len] to be sorted */
-    float* out_vec,   /* if NULL, then in_vec is sorted "in-place" */
-    int* new_idices,  /* set to NULL if you don't need them */
-    int len,          /* number of elements in vectors, must be consistent with the input data */
-    int descendFLAG   /* !1:ascending, 1:descending */
+    float* in_vec,
+    float* out_vec,
+    int* new_idices,
+    int len,
+    int descendFLAG
 )
 {
     int i;
@@ -153,11 +186,11 @@ void sortf
 
 void sortd
 (
-    double* in_vec,   /* vector[len] to be sorted */
-    double* out_vec,  /* if NULL, then in_vec is sorted "in-place" */
-    int* new_idices,  /* set to NULL if you don't need them */
-    int len,          /* number of elements in vectors, must be consistent with the input data */
-    int descendFLAG   /* !1:ascending, 1:descending */
+    double* in_vec,
+    double* out_vec,
+    int* new_idices,
+    int len,
+    int descendFLAG
 )
 {
     int i;

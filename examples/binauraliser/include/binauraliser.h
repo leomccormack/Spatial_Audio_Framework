@@ -86,7 +86,7 @@ typedef enum _BINAURALISER_CODEC_STATUS{
                                    *   Input audio should not be processed. */
     CODEC_STATUS_INITIALISING     /**< Codec is currently being initialised,
                                    *   input audio should not be processed. */
-    
+
 }BINAURALISER_CODEC_STATUS;
 
 #define BINAURALISER_MAX_NUM_INPUTS ( 64 )
@@ -143,8 +143,8 @@ void binauraliser_process(void* const hBin,
                           int nInputs,
                           int nOutputs,
                           int nSamples);
-    
-    
+
+
 /* ========================================================================== */
 /*                                Set Functions                               */
 /* ========================================================================== */

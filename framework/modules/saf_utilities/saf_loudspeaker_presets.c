@@ -17,7 +17,7 @@
 /**
  * @file saf_loudspeaker_presets.c
  * @brief Comprises the directions of loudspeaker arrays and (nearly) uniform
- *        spherical grids.
+ *        spherical grids
  *
  * @author Leo McCormack
  * @date 11.07.2016

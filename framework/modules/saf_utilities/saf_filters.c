@@ -16,7 +16,7 @@
 
 /**
  * @file: saf_filters.c
- * @brief Contains a collection of filter design equations.
+ * @brief Contains a collection of filter design equations
  *
  * @author Leo McCormack
  * @date 01.03.2019
@@ -25,6 +25,10 @@
 #include "saf_filters.h" 
 #include "saf_utilities.h"
 
+/**
+ * Applies a windowing function (see WINDOWING_FUNCTION_TYPES enum) of length
+ * 'winlength', to vector 'x'.
+ */
 static void applyWindowingFunction
 (
     WINDOWING_FUNCTION_TYPES type,

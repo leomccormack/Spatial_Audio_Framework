@@ -16,7 +16,7 @@
 
 /**
  * @file: saf_filters.h
- * @brief Contains a collection of filter design equations.
+ * @brief Contains a collection of filter design equations
  *
  * @author Leo McCormack
  * @date 01.03.2019 

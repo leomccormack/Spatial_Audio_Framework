@@ -1,2 +1,3 @@
 doxygen/html
 doxygen/latex
+*.DS_Store

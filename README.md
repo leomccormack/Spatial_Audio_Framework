@@ -1,10 +1,11 @@
 # Spatial_Audio_Framework
 
-A cross-platform Spatial Audio Framework (SAF) for developing spatial audio related applications.
+A cross-platform Spatial Audio Framework for developing spatial audio related applications.
 
 ![](saf.png)
 
-[https://github.com/leomccormack/Spatial_Audio_Framework](https://github.com/leomccormack/Spatial_Audio_Framework)
+git: [https://github.com/leomccormack/Spatial_Audio_Framework](https://github.com/leomccormack/Spatial_Audio_Framework), 
+doxygen: [http://research.spa.aalto.fi/projects/spatial_audio_framework](http://research.spa.aalto.fi/projects/spatial_audio_framework)
 
 ## Prerequisites
 
@@ -26,9 +27,9 @@ SAF_USE_ATLAS
 
 * SAF_USE_INTEL_MKL - to use [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries), or a [**custom Intel MKL library**](CUSTOM_INTEL_MKL_INTRUCTIONS.md)  (recommended for x86_64/amd64).
 * SAF_USE_OPEN_BLAS_AND_LAPACKE - to use [OpenBLAS](https://github.com/xianyi/OpenBLAS) and the LAPACKE interface (recommended for ARM)
-* SAF_USE_ATLAS - to use [ALTAS](http://math-atlas.sourceforge.net/) which is not recommended, as some LAPACK functions are missing. However, if you don't mind loosing some SAF functionality then it may still be a good choice for your particular project.
+* SAF_USE_ATLAS - to use [ALTAS](http://math-atlas.sourceforge.net/) which is not recommended, since some LAPACK functions are missing. However, if you don't mind loosing some framework functionality, then ATLAS may still be a good choice for your particular project.
 
-**MacOSX users only**: If you do not define one of the above flags, then SAF will use [Apple Accelerate](https://developer.apple.com/documentation/accelerate) for CBLAS/LAPACK and also vDSP for the FFT. However, note that Intel MKL is still the more recommended option, as it is usually faster than Accelerate.
+**MacOSX users only**: If you do not define one of the above flags, then SAF will use [Apple Accelerate](https://developer.apple.com/documentation/accelerate) for CBLAS/LAPACK and also vDSP for the FFT. However, note that Intel MKL is still the more recommended option, as it is generally faster than Accelerate.
 
 ## Enable SOFA support (Optional)
 
@@ -40,82 +41,58 @@ Note that the following preprocessor definition is also required:
 SAF_ENABLE_SOFA_READER
 ```
 
-### Windows (64-bit) users
+### Windows (64-bit) and MacOSX users
 
-For convenience, the following statically built libraries are included in "dependencies/Win64/"; simply link your project against them:
-
-```
-libszip.lib; libzlib.lib; libhdf5.lib; libhdf5_hl.lib; netcdf.lib;
-```
-
-And also add the following two directories to your project's header and library search paths, respectively:
-
-``` 
-Spatial_Audio_Framework/dependencies/Win64/include
-Spatial_Audio_Framework/dependencies/Win64/lib
-```
-
-### MacOSX users 
-
-For convenience, the following statically built libraries are included in "dependencies/MacOSX/"; simply link your project against them:
+For convenience, the following statically built libraries are included in the "dependencies" folder; simply link your project against them:
 
 ```
-netcdf; hdf5; hdf5_hl; z; 
+libszip.lib; libzlib.lib; libhdf5.lib; libhdf5_hl.lib; netcdf.lib; # Win64
+netcdf; hdf5; hdf5_hl; z; # MacOSX
 ```
 
-And also add the following two directories to your project's header and library search paths, respectively:
+ Also, make sure to add the appropriate 'include' and 'lib' directories to your project's header and library search paths, respectively.
 
-``` 
-Spatial_Audio_Framework/dependencies/MacOSX/include
-Spatial_Audio_Framework/dependencies/MacOSX/lib
-```
 
 ###  Linux (amd64) and Raspberry Pi (ARM) users
 
-For ubuntu based distros, you may install [netCDF](https://www.unidata.ucar.edu/software/netcdf/) and its dependencies with these terminal commands:
+For ubuntu based distros, you may install [netCDF](https://www.unidata.ucar.edu/software/netcdf/) and its dependencies with the following:
 
 ```
 sudo apt-get install libhdf5-dev
 sudo apt-get install libnetcdf-dev libnetcdff-dev
 ```
 
-Then simply add the following directory to the header search path:
-
-```
-/usr/include  
-```
-
-And add this linker flag to your project (or wherever it was installed):
-
+Then simply add the appropriate directory to the header search path, and add this linker flag to your project (or wherever it was installed):
 ```
 -L/lib/x86_64-linux-gnu -lnetcdf
 ```
 
 ## Using the framework
 
-Once a CBLAS/LAPACK flag is defined (see above), and the correct libraries are linked to your project, you can now add all of the files found in the "framework" folder to your project. (You may simply drag the folder into your IDE if you wish).
-
-Then add the following directory to your header search paths:
+Once a CBLAS/LAPACK flag is defined (see above), and the correct libraries are linked to your project, you can now add the files found in the "framework" folder to your project. Then add the following directory to your header search paths:
 
 ```
 Spatial_Audio_Framework/framework/include 
 ```
 
-The framework's master include header is:
+The framework's master include header is then:
 
 ```c
 #include "saf.h"
 ```
 
-Detailed instructions regarding how to use the functions offered by each of the framework's module, is provided in the main header file for the respective module (e.g. "/modules/saf_**sh**/saf_**sh**.h", or  "/modules/saf_**vbap**/saf_**vbap**.h").
+Detailed instructions regarding how to use the functions offered by each of the framework's module, is provided in the main header file for the respective module (e.g. "/modules/saf_sh/saf_sh.h", or  "/modules/saf_vbap/saf_vbap.h").
 
 ### Documentation
 
 Documentation generated using [Doxygen](http://www.doxygen.nl/index.html) may also be found [here](http://research.spa.aalto.fi/projects/spatial_audio_framework/index.html).
 
-Alternatively, you may compile the most recent documentation yourself using the following command:
+Alternatively, you may compile the most recent documentation (HTML) yourself using the following command:
 ```
 doxygen doxygen/doxygen_config
+# optional, to build the pdf version:
+cd doxygen/latex
+make
 ```
 
 ### Examples
@@ -126,19 +103,28 @@ Many examples have been included in the repository, which may also serve as a st
 * **ambi_dec** - a frequency-dependent Ambisonic decoder. Including the following decoding approaches: sampling ambisonic decoder (SAD), AllRAD [3], Energy-Preserving decoder (EPAD) [4], Mode-Matching decoder (MMD).
 * **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for Ambisonic signals, based on the design proposed in [5].
 * **ambi_enc** - a simple Ambisonic encoder.
-* **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals), based on theoretical descriptions [6,7]. More details in [8].
+* **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals), based on theoretical descriptions [6,7]. More details found in [8].
 * **beamformer** - a beamforming example with several different beamforming options.
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file.
 * **dirass** - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction [9].
-* **panner** - a frequency-dependent VBAP panner [10], which allows for more consistent source loudness as a function of the room [11].
+* **panner** - a frequency-dependent VBAP panner [10], which permits source loudness compensation as a function of the room [11].
 * **matrixconv** - a basic matrix convolver with an optional partitioned convolution mode. 
 * **multiconv** - a basic multi-channel convolver with an optional partitioned convolution mode. 
-* **powermap** - sound-field visualiser using beamformers (PWD, MVDR) or sub-space methods (MUSIC).
+* **powermap** - sound-field visualiser based on beamformer (PWD, MVDR) energy or sub-space methods (MUSIC).
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles [12].
-* **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors; as proposed in [8].
-* **upmix** - a (soon to be) collection of upmixing algorithms (currently only stereo to 5.x upmixing).
+* **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors; as proposed in [8]. 
 
-Many of these examples have also been integrated into VST audio plug-ins using the JUCE framework and can be found [here](http://research.spa.aalto.fi/projects/sparta_vsts/).
+Note that these examples have also been integrated into VST audio plug-ins using the JUCE framework and can be found [here](http://research.spa.aalto.fi/projects/sparta_vsts/).   
+
+## Contributing
+
+Suggestions and contributions to the code are both welcomed and encouraged. It should be highlighted that, in general, the framework has been designed to be highly modular with plenty of room for expansion. Therefore:
+* if you are researcher who has, for example, developed a new spatial-audio related method and want to integrate it into the framework... or
+* if you notice that an existing piece of code can be rewritten to make it clearer/faster, or to fix a bug...
+
+then please feel free to do so. Although, note that if you wish to make a substantial change or addition, then consider first discussing it by raising a github "issue" or contacting the developers directly via email; we may be able to help.
+
+Note that we also very much appreciate feedback from developers who are using this framework, so if you are using it for an interesting project, then please let us know :-)
 
 ## Developers
 

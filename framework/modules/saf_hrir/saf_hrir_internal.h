@@ -16,7 +16,7 @@
 
 /**
  * @file saf_hrir_internal.h
- * @brief Internal part of the "saf_hrir" module
+ * @brief Internal part of the HRIR/HRTF processing module (saf_hrir)
  *
  * A collection of head-related impulse-response (HRIR) functions. Including
  * estimation of the interaural time differences (ITDs), conversion of HRIRs to
@@ -50,7 +50,7 @@ extern "C" {
 /* ========================================================================== */
 
 /**
- * Converts and FIR filter into Filterbank Coefficients
+ * Converts FIR filters into Filterbank Coefficients
  *
  * @note This is currently hard coded for a 128 hop size with hybrid mode
  *       enabled (see afSTFTlib.h).

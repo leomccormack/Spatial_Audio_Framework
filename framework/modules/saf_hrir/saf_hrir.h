@@ -16,7 +16,7 @@
 
 /**
  * @file saf_hrir.h
- * @brief Public part of the "saf_hrir" module
+ * @brief Public part of the HRIR/HRTF processing module (saf_hrir)
  *
  * A collection of head-related impulse-response (HRIR) functions. Including
  * estimation of the interaural time differences (ITDs), conversion of HRIRs to
@@ -55,7 +55,7 @@ extern const int __default_hrir_fs;
 
 /**
  * Estimates the interaural time-differences (ITDs) for each HRIR in a
- * set via the cross-correlation between the left and right IRs.
+ * set via the cross-correlation between the left and right IRs
  *
  * @param[in]  hrirs    HRIRs; FLAT: N_dirs x 2 x hrir_len
  * @param[in]  N_dirs   Number of HRIRs
@@ -72,7 +72,7 @@ void estimateITDs(/* Input Arguments */
                   float* itds_s);
 
 /**
- * Passes zero padded HRIRs through the afSTFT filterbank.
+ * Passes zero padded HRIRs through the afSTFT filterbank
  *
  * The filterbank coefficients are then normalised with the energy of an
  * impulse, which is centered at approximately the beginning of the HRIR peak.
@@ -94,7 +94,7 @@ void HRIRs2FilterbankHRTFs(/* Input Arguments */
                            float_complex* hrtf_fb);
 
 /**
- * Converts a HRIR set to HRTFs, with a given FFT size.
+ * Converts a HRIR set to HRTFs, with a given FFT size
  *
  * @note If the HRIRs are shorter than the FFT size (hrir_len<fftSize), then the
  *       HRIRs are zero-padded. If they are longer, then they are truncated.
@@ -135,11 +135,13 @@ void diffuseFieldEqualiseHRTFs(/* Input Arguments */
 
 /**
  * Interpolates a set of HRTFs for specified directions; defined by an amplitude
- * normalised VBAP interpolation table (see saf_vbap.h).
+ * normalised VBAP interpolation table (see saf_vbap.h)
  *
  * The interpolation is performed by applying interpolation gains to the HRTF
  * magnitudes and HRIR inter-aural time differences separately. The inter-aural
  * phase differences are then reintroduced for each frequency band.
+ * Note that this essentially a C implementation of a MatLab function by
+ * Archontis Politis.
  *
  * @note Use VBAPgainTable2InterpTable() to take a conventional energy-
  *       normalised VBAP gain table, and convert it to an amplitude-normalised
@@ -155,23 +157,23 @@ void diffuseFieldEqualiseHRTFs(/* Input Arguments */
  * @param[in]  N_hrtf_dirs   Number of HRTF directions
  * @param[in]  N_bands       Number of frequency bands
  * @param[in]  N_interp_dirs Number of interpolated hrtf positions
- * @param[out] hrtf_interp   Pre-alloc, interpolated HRTFs;
+ * @param[out] hrtf_interp   interpolated HRTFs;
  *                           FLAT: N_bands x 2 x N_interp_dirs
  */
-void interpFilterbankHRTFs(/* Input Arguments */
-                           float_complex* hrtfs,
-                           float* itds,
-                           float* freqVector,
-                           float* vbap_gtable,
-                           int N_hrtf_dirs,
-                           int N_bands,
-                           int N_interp_dirs,
-                           /* Output Arguments */
-                           float_complex* hrtf_interp);
+void interpHRTFs(/* Input Arguments */
+                 float_complex* hrtfs,
+                 float* itds,
+                 float* freqVector,
+                 float* vbap_gtable,
+                 int N_hrtf_dirs,
+                 int N_bands,
+                 int N_interp_dirs,
+                 /* Output Arguments */
+                 float_complex* hrtf_interp);
 
 /**
  * Computes the binaural diffuse coherence per frequency for a given HRTF set,
- * as in [1].
+ * as in [1]
  *
  * @param[in]  hrtfs       HRTFs as filterbank coeffs;
  *                         FLAT: N_bands x 2 x N_hrtf_dirs
@@ -180,7 +182,7 @@ void interpFilterbankHRTFs(/* Input Arguments */
  * @param[in]  freqVector  Frequency vector; N_bands x 1
  * @param[in]  N_hrtf_dirs Number of HRTF directions
  * @param[in]  N_bands     Number of frequency bands
- * @param[out] HRTFcoh     Binaural coeherence per frequency; N_bands x 1
+ * @param[out] HRTFcoh     Binaural coherence per frequency; N_bands x 1
  *
  * @see [1] A. Politis, "Diffuse-field coherence of sensors with arbitrary
  *          directional responses," arXiv preprint arXiv:1608.07713,2016.

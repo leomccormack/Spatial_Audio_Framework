@@ -1,3 +1,8 @@
+/**
+ * @file afSTFT_protoFilter.h
+ * @brief Prototype filter used by afSTFTlib
+ */
+
 const float protoFilter1024[10240] = {
 -1.990581e-23f, -1.926720e-05f, -4.541477e-05f, -7.849927e-05f, -1.181909e-04f, -1.637716e-04f, -2.141617e-04f, 
 -2.679742e-04f, -3.235936e-04f, -3.789680e-04f, -4.325932e-04f, -4.828658e-04f, -5.284030e-04f, -5.681260e-04f, 

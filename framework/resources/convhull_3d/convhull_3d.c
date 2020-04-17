@@ -19,22 +19,24 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-/*
- * Filename:
- *     convhull_3d.c
- * Description:
- *     An implementation of the 3-D quickhull algorithm.
- *     The code is largely derived from the "computational-geometry-toolbox"
- *     by George Papazafeiropoulos (c) 2014, originally distributed under
- *     the BSD (2-clause) license.
- *     Taken from: https://github.com/leomccormack/convhull_3d
- *     Reference: "The Quickhull Algorithm for Convex Hull, C. Bradford
- *                 Barber, David P. Dobkin and Hannu Huhdanpaa, Geometry
- *                 Center Technical Report GCG53, July 30, 1993"
- * Dependencies:
- *     cblas (optional for speed ups, especially for very large meshes)
- * Author, date created:
- *     Leo McCormack, 02.10.2017
+
+/**
+ * @file: convhull_3d.c
+ * @brief An implementation of the 3-D quickhull algorithm [1]
+ *
+ * The code is largely derived from the "computational-geometry-toolbox" by
+ * George Papazafeiropoulos (c) 2014, originally distributed under the BSD
+ * (2-clause) license. Taken from: https://github.com/leomccormack/convhull_3d
+ *
+ * ## Dependencies
+ *   CBLAS (optional) for speed ups, especially for very large meshes
+ *
+ * @see [1] C. Bradford, Barber, David P. Dobkin and Hannu Huhdanpaa, "The
+ *          Quickhull Algorithm for Convex Hull". Geometry Center Technical
+ *          Report GCG53, July 30, 1993
+ *
+ * @author Leo McCormack
+ * @date 02.10.2017
  */
 
 #include <stdlib.h>
@@ -73,12 +75,15 @@
 #endif
 #define CH_MAX_NUM_FACES 50000
 
-/* structs for qsort */
+/**
+ * Helper struct for qsort in convhull_3d_build() */
 typedef struct float_w_idx {
     CH_FLOAT val;
     int idx;
 }float_w_idx;
 
+/**
+ * Helper struct for qsort in convhull_3d_build() */
 typedef struct int_w_idx {
     int val;
     int idx;

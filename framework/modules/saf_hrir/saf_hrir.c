@@ -16,7 +16,7 @@
 
 /**
  * @file saf_hrir.c
- * @brief Public part of the "saf_hrir" module
+ * @brief Public part of the HRIR/HRTF processing module (saf_hrir)
  *
  * A collection of head-related impulse-response (HRIR) functions. Including
  * estimation of the interaural time differences (ITDs), conversion of HRIRs to
@@ -193,10 +193,8 @@ void diffuseFieldEqualiseHRTFs
     free(ipd);
     free(hrtf_diff); 
 }
-
-/* A C implementation of a MatLab function by Archontis Politis; published with
- * permission */
-void interpFilterbankHRTFs
+ 
+void interpHRTFs
 (
     float_complex* hrtfs, /* N_bands x 2 x N_hrtf_dirs */
     float* itds,

@@ -22,7 +22,7 @@
 
 /**
  * @file afSTFTlib.h
- * @brief Slightly modified version of afSTFT.
+ * @brief Slightly modified version of afSTFTlib
  *
  * The original afSTFT code, written by Juha Vilkamo, can be found here:
  * https://github.com/jvilkamo/afSTFT

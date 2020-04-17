@@ -18,7 +18,8 @@
  * @file saf_sofa_reader.h 
  * @brief A simple sofa reader, which returns only the bare minimum.
  *
- * @note This (optional) SOFA reader, requires netcdf to be linked.
+ * @note This (optional) SOFA reader, requires netcdf to be linked to the
+ *       project.
  *
  * @author Leo McCormack
  * @date 21.11.2017
@@ -49,20 +50,18 @@ extern "C" {
 /* ========================================================================== */
 
 /**
- * A bare-bones SOFA file reader.
+ * A bare-bones SOFA file reader
  *
  * Allocates memory and copies the values of the essential data contained in a
  * SOFA file to the output arguments.
  *
- * @note This function is not suitable for binaural room impulse responses
- *       (BRIRs), as the IRs are truncated to "MAX_HRIR_LENGTH". Also, the hrirs
- *       are returned as NULL if the file does not exist.
+ * @note The hrirs are returned as NULL if the file does not exist.
  *
  * @param[in]  sofa_filepath Directory/file_name of the SOFA file you wish to
  *                           load. Optionally, you may set this as NULL, and the
  *                           function will return the default HRIR data.
  * @param[out] hrirs         (&) the HRIR data;
- *                           FLAT:  N_hrir_dirs x 2 x hrir_len
+ *                           FLAT: N_hrir_dirs x 2 x hrir_len
  * @param[out] hrir_dirs_deg (&) the HRIR positions; FLAT: N_hrir_dirs x 2
  * @param[out] N_hrir_dirs   (&) number of HRIR positions
  * @param[out] hrir_len      (&) length of the HRIRs, in samples

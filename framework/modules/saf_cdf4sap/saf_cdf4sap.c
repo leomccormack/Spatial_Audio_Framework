@@ -16,7 +16,7 @@
 
 /**
  * @file saf_cdf4sap.c
- * @brief Public part of the "saf_cdf4sap" module
+ * @brief Public part of the Covariance Domain Framework module (saf_cdf4sap)
  *
  * Covariance Domain Framework for Spatial Audio Processing (CDF4SAP). This is a
  * direct C port of the Matlab function given in [1], which was originally
@@ -37,6 +37,10 @@
 #include "saf_cdf4sap.h"
 #include "../saf_utilities/saf_utilities.h"
 
+/**
+ * Main data structure for the Covariance Domain Framework for Spatial Audio
+ * Processing (CDF4SAP), for real-valued matrices.
+ */
 typedef struct _cdf4sap_data {
     /* Dimensions of Cx and Cy */
     int nXcols, nYcols;
@@ -51,6 +55,10 @@ typedef struct _cdf4sap_data {
     
 }cdf4sap_data;
 
+/**
+* Main data structure for the Covariance Domain Framework for Spatial Audio
+* Processing (CDF4SAP), for complex-valued matrices.
+*/
 typedef struct _cdf4sap_cmplx_data {
     /* Dimensions of Cx and Cy */
     int nXcols, nYcols;

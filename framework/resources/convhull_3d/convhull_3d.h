@@ -22,7 +22,7 @@
 
 /**
  * @file: convhull_3d.h
- * @brief An implementation of the 3-D quickhull algorithm [1].
+ * @brief An implementation of the 3-D quickhull algorithm [1]
  *
  * The code is largely derived from the "computational-geometry-toolbox" by
  * George Papazafeiropoulos (c) 2014, originally distributed under the BSD

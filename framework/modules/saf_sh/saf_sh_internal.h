@@ -16,7 +16,8 @@
 
 /**
  * @file saf_sh_internal.h
- * @brief Internal part of the "saf_sh" module
+ * @brief Internal part of the Spherical Harmonic Transform and Spherical Array
+ *        Processing module (saf_sh)
  *
  * A collection of spherical harmonic related functions. Many of which have been
  * derived from Matlab libraries by Archontis Politis [1-3].
@@ -54,7 +55,7 @@ extern "C" {
 
 /**
  * Computes the Wigner 3j symbol through the Racah formula found in
- * http://mathworld.wolfram.com/Wigner3j-Symbol.html, Eq.7.
+ * http://mathworld.wolfram.com/Wigner3j-Symbol.html, Eq.7
  *
  * @param[in] j1 Wigner 3 j-symbol, j1
  * @param[in] j2 Wigner 3 j-symbol, j2

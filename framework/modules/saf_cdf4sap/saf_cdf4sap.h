@@ -16,7 +16,7 @@
 
 /**
  * @file saf_cdf4sap.h
- * @brief Public part of the "saf_cdf4sap" module
+ * @brief Public part of the Covariance Domain Framework module (saf_cdf4sap)
  *
  * Covariance Domain Framework for Spatial Audio Processing (CDF4SAP). This is a
  * direct C port of the Matlab function given in [1], which was originally
@@ -48,7 +48,7 @@ extern "C" {
 /* ========================================================================== */
 
 /**
- * Creates an instance of the Covariance Domain Framework (REAL).
+ * Creates an instance of the Covariance Domain Framework (REAL)
  *
  * Allocates memory for a Covariance Domain Framework for Spatial Audio
  * Processing (CDF4SAP) handle.
@@ -66,7 +66,7 @@ void cdf4sap_create(/* Input Arguments */
                     int nYcols);
 
 /**
- * Creates an instance of the Covariance Domain Framework (COMPLEX).
+ * Creates an instance of the Covariance Domain Framework (COMPLEX)
  *
  * Allocates memory for a Covariance Domain Framework for Spatial Audio
  * Processing (CDF4SAP) handle.
@@ -84,7 +84,7 @@ void cdf4sap_cmplx_create(/* Input Arguments */
                           int nYcols);
 
 /**
- * Destroys an instance of the Covariance Domain Framework (REAL).
+ * Destroys an instance of the Covariance Domain Framework (REAL)
  *
  * Frees memory for a Covariance Domain Framework for Spatial Audio
  * Processing (CDF4SAP) handle.
@@ -98,7 +98,7 @@ void cdf4sap_destroy(/* Input Arguments */
                      void ** const phCdf);
 
 /**
- * Destroys an instance of the Covariance Domain Framework (COMPLEX).
+ * Destroys an instance of the Covariance Domain Framework (COMPLEX)
  *
  * Frees memory for a Covariance Domain Framework for Spatial Audio
  * Processing (CDF4SAP) handle.
@@ -112,7 +112,7 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
                            void ** const phCdf);
 
 /**
- * Computes the optimal mixing matrices (REAL).
+ * Computes the optimal mixing matrices (REAL)
  *
  * This function solves the problem of determining the optimal mixing matrices
  * 'M' and 'Cr', such that the covariance matrix of the output:
@@ -124,6 +124,10 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
  *
  * @note Use this function for REAL-VALUED input/output matrices. For
  *       COMPLEX-VALUED input/output use formulate_M_and_Cr_cmplx().
+ *
+ * @note For an example of how to use this function, one may refer to the
+ *       implementation of the parametric binaural Ambisonic decoder (described
+ *       in [3]) found here: https://github.com/leomccormack/CroPaC-Binaural
  *
  * @param[in]  hCdf          Covariance Domain Framework handle
  * @param[in]  Cx            Covariance matrix of input 'x';
@@ -143,6 +147,10 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
  * @see [2] Vilkamo, J., & Ba"ckstro"m, T. (2018). Time--Frequency Processing:
  *          Methods and Tools. In Parametric Time--Frequency Domain Spatial
  *          Audio. John Wiley & Sons.
+ * @see [3] McCormack, L., Delikaris-Manias, S. (2019). "Parametric first-order
+ *          ambisonic decoding for headphones utilising the Cross-Pattern
+ *          Coherence algorithm". inProc 1st EAA Spatial Audio Signal Processing
+ *          Symposium, Paris, France.
  */
 void formulate_M_and_Cr(/* Input Arguments */
                         void * const hCdf,
@@ -156,7 +164,7 @@ void formulate_M_and_Cr(/* Input Arguments */
                         float* Cr);
 
 /**
- * Computes the optimal mixing matrices (COMPLEX).
+ * Computes the optimal mixing matrices (COMPLEX)
  *
  * This function solves the problem of determining the optimal mixing matrices
  * 'M' and 'Cr', such that the covariance matrix of the output:
@@ -168,6 +176,10 @@ void formulate_M_and_Cr(/* Input Arguments */
  *
  * @note Use this function for COMPLEX-VALUED input/output matrices. For
  *       REAL-VALUED input/output use formulate_M_and_Cr().
+ *
+ * @note For an example of how to use this function, one may refer to the
+ *       implementation of the parametric binaural Ambisonic decoder (described
+ *       in [3]) found here: https://github.com/leomccormack/CroPaC-Binaural
  *
  * @param[in]  hCdf          Covariance Domain Framework handle
  * @param[in]  Cx            Covariance matrix of input 'x';
@@ -188,6 +200,10 @@ void formulate_M_and_Cr(/* Input Arguments */
  * @see [2] Vilkamo, J., & Ba"ckstro"m, T. (2018). Time--Frequency Processing:
  *          Methods and Tools. In Parametric Time--Frequency Domain Spatial
  *          Audio. John Wiley & Sons.
+ * @see [3] McCormack, L., Delikaris-Manias, S. (2019). "Parametric first-order
+ *          ambisonic decoding for headphones utilising the Cross-Pattern
+ *          Coherence algorithm". inProc 1st EAA Spatial Audio Signal Processing
+ *          Symposium, Paris, France.
  */
 void formulate_M_and_Cr_cmplx(/* Input Arguments */
                               void * const hCdf,

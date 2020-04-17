@@ -25,7 +25,7 @@
 
 #include "saf_utilities.h"
 
-/* erb_idx start from 1 (matlab style), not 0 */
+/* note: erb_idx start from 1 (matlab style), not 0 */
 void findERBpartitions
 (
     float* centerFreq,

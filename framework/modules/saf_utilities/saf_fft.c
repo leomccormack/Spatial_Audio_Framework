@@ -16,7 +16,7 @@
 
 /**
  * @file saf_fft.c
- * @brief Wrappers for optimised fast Fourier transform (FFT) routines.
+ * @brief Wrappers for optimised fast Fourier transform (FFT) routines
  *
  * @note If none of the supported optimised FFT implementations are linked, then
  *       saf_fft employs the highly respectable KissFFT from here (BSD 3-Clause
@@ -51,6 +51,9 @@
 #include "saf_utilities.h"
 #include "saf_fft.h"
 
+/**
+ * Data structure for real-(half)complex FFT transforms.
+ */
 typedef struct _saf_rfft_data {
     int N;
     float  Scale;
@@ -68,6 +71,9 @@ typedef struct _saf_rfft_data {
     
 }saf_rfft_data;
 
+/**
+ * Data structure for complex-complex FFT transforms.
+ */
 typedef struct _saf_fft_data {
     int N;
     float  Scale;
@@ -85,7 +91,10 @@ typedef struct _saf_fft_data {
     
 }saf_fft_data;
 
-/* from: https://github.com/amaggi/legacy-code */
+/**
+ * A simple function which returns the next power of 2, taken from:
+ * https://github.com/amaggi/legacy-code
+ */
 static int nextpow2(int numsamp)
 {
     int npts_max;
