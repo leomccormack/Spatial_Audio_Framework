@@ -122,7 +122,7 @@ Suggestions and contributions to the code are both welcomed and encouraged. It s
 * if you are researcher who has developed a new spatial-audio related method and want to integrate it into the framework... or
 * if you notice that an existing piece of code can be rewritten to make it clearer/faster, or to fix a bug...
 
-then please feel free to do so. 
+then please feel free to do so and submit a pull request. However, if the changes/additions are major, then consider first discussing it via a github "issue" or by contacting the developers directly via email. We may also be able to help in the implementation.
 
 ## Developers
 
