@@ -113,7 +113,11 @@ void afSTFTclearBuffers(void* handle);
  * @param[in] inTD   input time-domain signals; inChannels x hopSize
  * @param[in] outFD  input time-frequency domain signals; inChannels x nBands
  */
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+void afSTFTforward(void* handle, float** inTD, float_complex** outFD);
+#else
 void afSTFTforward(void* handle, float** inTD, complexVector* outFD);
+#endif
 
 /**
  * Applies the backward afSTFT transform.
@@ -122,7 +126,11 @@ void afSTFTforward(void* handle, float** inTD, complexVector* outFD);
  * @param[in] inFD   output time-domain signals; outChannels x hopSize
  * @param[in] outTD  output time-frequency domain signals; outChannels x nBands
  */
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+void afSTFTinverse(void* handle, float_complex** inFD, float** outTD);
+#else
 void afSTFTinverse(void* handle, complexVector* inFD, float** outTD);
+#endif
 
 /**
  * Destroys an instance of afSTFTlib
