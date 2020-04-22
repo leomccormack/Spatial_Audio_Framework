@@ -30,13 +30,27 @@
 # include "vecTools.h"
 #endif
 
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+# ifndef AFSTFT_USE_SAF_UTILITIES
+# error You must use SAF utilities to make afSTFT output float_complex
+# endif
+#endif
+
 /* Internal function prototypes */
 
 void afHybridInit(void** handle, int hopSize, int inChannels, int outChannels);
 
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+void afHybridForward(void* handle, float_complex**);
+#else
 void afHybridForward(void* handle, complexVector* FD);
+#endif
 
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+void afHybridInverse(void* handle, float_complex**);
+#else
 void afHybridInverse(void* handle, complexVector* FD);
+#endif
 
 void afHybridFree(void* handle);
 
@@ -88,7 +102,9 @@ typedef struct{
     float hybridCoeffs[3];
     complexVector **analysisBuffer;
     int loopPointer;
-    
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+    complexVector *FDtmp;
+#endif
 } afHybrid;
 
 void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int LDmode, int hybridMode)
@@ -225,6 +241,20 @@ void afSTFTchannelChange(void* handle, int new_inChannels, int new_outChannels)
                     hyb_h->analysisBuffer[ch][sample].im = (float*)calloc(sizeof(float), h->hopSize+1);
                 }
             }
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+            int old_nCh = hyb_h->inChannels < hyb_h->outChannels ? hyb_h->outChannels : hyb_h->inChannels;
+            int new_nCh = new_inChannels < new_outChannels ? new_outChannels : new_inChannels;
+            for (ch = new_nCh; ch < old_nCh; ch++) {
+                free(hyb_h->FDtmp[ch].re);
+                free(hyb_h->FDtmp[ch].im);
+            }
+            hyb_h->FDtmp = (complexVector*) realloc(hyb_h->FDtmp,
+                                                    sizeof(complexVector) * new_nCh);
+            for (ch = old_nCh; ch < new_nCh; ch++) {
+                hyb_h->FDtmp[ch].re = (float*) calloc(h->hopSize + 5, sizeof(float));
+                hyb_h->FDtmp[ch].im = (float*) calloc(h->hopSize + 5, sizeof(float));
+            }
+#endif
         }
     }
     h->inChannels = new_inChannels;
@@ -250,12 +280,25 @@ void afSTFTclearBuffers(void* handle)
             for (sample=0;sample<7;sample++) {
                 memset(hyb_h->analysisBuffer[ch][sample].re, 0, sizeof(float)*(h->hopSize+1));
                 memset(hyb_h->analysisBuffer[ch][sample].im, 0, sizeof(float)*(h->hopSize+1));
+
             }
         }
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+        // TODO is this actually necessary?
+        int nCh = h->inChannels < h->outChannels ? h->outChannels : h->inChannels;
+        for (ch = 0; ch < nCh; ch++) {
+            memset(hyb_h->FDtmp[ch].re, 0, sizeof(float) * (h->hopSize + 5));
+            memset(hyb_h->FDtmp[ch].im, 0, sizeof(float) * (h->hopSize + 5));
+        }
+#endif
     }
 }
 
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+void afSTFTforward(void* handle, float** inTD, float_complex** outFD)
+#else
 void afSTFTforward(void* handle, float** inTD, complexVector* outFD)
+#endif
 {
     afSTFT *h = (afSTFT*)(handle);
     int ch,k,j,hopIndex_this,hopIndex_this2;
@@ -320,10 +363,14 @@ void afSTFTforward(void* handle, float** inTD, complexVector* outFD)
         /* Apply FFT and copy the data to the output vector */
 #ifdef AFSTFT_USE_SAF_UTILITIES
         saf_rfft_forward(h->hSafFFT, h->fftProcessFrameTD, h->fftProcessFrameFD);
+# ifdef AFSTFT_USE_FLOAT_COMPLEX
+        utility_cvvcopy(h->fftProcessFrameFD, h->hopSize+1, outFD[ch]);
+# else
         for(k = 0; k<h->hopSize+1; k++){
             outFD[ch].re[k] = crealf(h->fftProcessFrameFD[k]);
             outFD[ch].im[k] = cimagf(h->fftProcessFrameFD[k]);
         }
+# endif // AFSTFT_USE_FLOAT_COMPLEX
 #else
         vtRunFFT(h->vtFFT,1);
         outFD[ch].re[0]=h->fftProcessFrameFD[0];
@@ -351,7 +398,11 @@ void afSTFTforward(void* handle, float** inTD, complexVector* outFD)
     }
 }
 
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+void afSTFTinverse(void* handle, float_complex** inFD, float** outTD)
+#else
 void afSTFTinverse(void* handle, complexVector* inFD, float** outTD)
+#endif
 {
     afSTFT *h = (afSTFT*)(handle);
     int ch,k,j,hopIndex_this,hopIndex_this2;
@@ -374,8 +425,12 @@ void afSTFTinverse(void* handle, complexVector* inFD, float** outTD)
         
         /* Inverse FFT */
 #ifdef AFSTFT_USE_SAF_UTILITIES
+# ifdef AFSTFT_USE_FLOAT_COMPLEX
+        utility_cvvcopy(inFD[ch], h->hopSize + 1, h->fftProcessFrameFD);
+# else
         for(k = 0; k<h->hopSize+1; k++)
             h->fftProcessFrameFD[k] = cmplxf(inFD[ch].re[k], inFD[ch].im[k]);
+# endif
         
         /* The low delay mode requires this procedure corresponding to the circular shift of the data in the time domain */
         if (h->LDmode == 1)
@@ -522,9 +577,21 @@ void afHybridInit(void** handle, int hopSize, int inChannels, int outChannels)
             h->analysisBuffer[ch][sample].im=(float*)calloc(sizeof(float),h->hopSize+1);
         }
     }
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+    int nCh = inChannels < outChannels ? outChannels : inChannels;
+    h->FDtmp = (complexVector*) malloc(nCh * sizeof(complexVector));
+    for (ch = 0; ch < nCh; ch++) {
+        h->FDtmp[ch].re = (float*) calloc((h->hopSize + 5), sizeof(float));
+        h->FDtmp[ch].im = (float*) calloc((h->hopSize + 5), sizeof(float));
+    }
+#endif
 }
 
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+void afHybridForward(void* handle, float_complex** FDin)
+#else
 void afHybridForward(void* handle, complexVector* FD)
+#endif
 {
     afHybrid *h = (afHybrid*)(handle);
     int ch,band,sample,realImag;
@@ -537,6 +604,16 @@ void afHybridForward(void* handle, complexVector* FD)
     {
         h->loopPointer = 0;
     }
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+    complexVector *FD = h->FDtmp;
+    int b;
+    for (ch = 0; ch < h->inChannels; ch++) {
+        for (b = 0; b < h->hopSize + 5; b++) {
+            FD[ch].re[b] = crealf(FDin[ch][b]);
+            FD[ch].im[b] = cimagf(FDin[ch][b]);
+        }
+    }
+#endif
     for (ch=0;ch<h->inChannels;ch++)
     {
         /* Copy data from input to the memory buffer */
@@ -616,13 +693,35 @@ void afHybridForward(void* handle, complexVector* FD)
             
         }
     }
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+    for (ch = 0; ch < h->inChannels; ch++) {
+        for (b = 0; b < h->hopSize + 5; b++) {
+            FDin[ch][b] = cmplxf(FD[ch].re[b], FD[ch].im[b]);
+        }
+    }
+#endif
 }
 
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+void afHybridInverse(void* handle, float_complex** FDin)
+#else
 void afHybridInverse(void* handle, complexVector* FD)
+#endif
 {
     afHybrid *h = (afHybrid*)(handle);
     int ch,realImag;
     float *pr;
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+    int b;
+    complexVector *FD = h->FDtmp;
+
+    for (ch = 0; ch < h->outChannels; ch++) {
+        for (b = 0; b < h->hopSize + 5; b++) {
+            FD[ch].re[b] = crealf(FDin[ch][b]);
+            FD[ch].im[b] = cimagf(FDin[ch][b]);
+        }
+    }
+#endif
 
     for (ch=0;ch<h->outChannels;ch++)
     {
@@ -642,6 +741,13 @@ void afHybridInverse(void* handle, complexVector* FD)
             pr = FD[ch].im;
         }
     }
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+    for (ch = 0; ch < h->outChannels; ch++) {
+        for (b = 0; b < h->hopSize + 5; b++) {
+            FDin[ch][b] = cmplxf(FD[ch].re[b], FD[ch].im[b]);
+        }
+    }
+#endif
 }
 
 void afHybridFree(void* handle)
@@ -660,4 +766,13 @@ void afHybridFree(void* handle)
           
     }
     free(h->analysisBuffer);
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+    int nCh = h->inChannels < h->outChannels ? h->outChannels : h->inChannels;
+    for (ch = 0; ch < nCh; ch++) {
+        free(h->FDtmp[ch].re);
+        free(h->FDtmp[ch].im);
+    }
+    free(h->FDtmp);
+#endif
+    free(handle);
 }
