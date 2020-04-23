@@ -244,25 +244,27 @@ void afSTFTchannelChange(void* handle, int new_inChannels, int new_outChannels)
             h->outBuffer[i] = (float*)calloc(h->hLen,sizeof(float));
     }
     
-    if (h->hybridMode){
+    if (h->hybridMode) {
         hyb_h = h->h_afHybrid;
-        if(hyb_h->inChannels!=new_inChannels){
-            for (ch=new_inChannels; ch<hyb_h->inChannels; ch++) {
-                for (sample=0;sample<7;sample++) {
+        if (hyb_h->inChannels != new_inChannels) {
+            for (ch = new_inChannels; ch < hyb_h->inChannels; ch++) {
+                for (sample = 0; sample < 7; sample++) {
                     free(hyb_h->analysisBuffer[ch][sample].re);
                     free(hyb_h->analysisBuffer[ch][sample].im);
                 }
                 free(hyb_h->analysisBuffer[ch]);
             }
-            hyb_h->analysisBuffer = (complexVector**)realloc(hyb_h->analysisBuffer, sizeof(complexVector*)*new_inChannels);
-            for (ch=hyb_h->inChannels; ch<new_inChannels; ch++) {
-                hyb_h->analysisBuffer[ch] = (complexVector*)malloc(sizeof(complexVector)*7);
-                for (sample=0;sample<7;sample++) {
-                    hyb_h->analysisBuffer[ch][sample].re = (float*)calloc(sizeof(float), h->hopSize+1);
-                    hyb_h->analysisBuffer[ch][sample].im = (float*)calloc(sizeof(float), h->hopSize+1);
+            hyb_h->analysisBuffer = (complexVector**) realloc(hyb_h->analysisBuffer, sizeof(complexVector*) * new_inChannels);
+            for (ch = hyb_h->inChannels; ch < new_inChannels; ch++) {
+                hyb_h->analysisBuffer[ch] = (complexVector*) malloc(sizeof(complexVector) * 7);
+                for (sample = 0; sample < 7; sample++) {
+                    hyb_h->analysisBuffer[ch][sample].re = (float*) calloc(sizeof(float), h->hopSize + 1);
+                    hyb_h->analysisBuffer[ch][sample].im = (float*) calloc(sizeof(float), h->hopSize + 1);
                 }
             }
+        }
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
+        if (hyb_h->inChannels != new_inChannels || hyb_h->outChannels != new_outChannels) {
             int old_nCh = hyb_h->inChannels < hyb_h->outChannels ? hyb_h->outChannels : hyb_h->inChannels;
             int new_nCh = new_inChannels < new_outChannels ? new_outChannels : new_inChannels;
             for (ch = new_nCh; ch < old_nCh; ch++) {
@@ -270,13 +272,13 @@ void afSTFTchannelChange(void* handle, int new_inChannels, int new_outChannels)
                 free(hyb_h->FDtmp[ch].im);
             }
             hyb_h->FDtmp = (complexVector*) realloc(hyb_h->FDtmp,
-                                                    sizeof(complexVector) * new_nCh);
+                sizeof(complexVector) * new_nCh);
             for (ch = old_nCh; ch < new_nCh; ch++) {
                 hyb_h->FDtmp[ch].re = (float*) calloc(h->hopSize + 5, sizeof(float));
                 hyb_h->FDtmp[ch].im = (float*) calloc(h->hopSize + 5, sizeof(float));
             }
-#endif
         }
+#endif
     }
     h->inChannels = new_inChannels;
     h->outChannels = new_outChannels;
