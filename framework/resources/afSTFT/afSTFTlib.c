@@ -262,6 +262,20 @@ void afSTFTchannelChange(void* handle, int new_inChannels, int new_outChannels)
                     hyb_h->analysisBuffer[ch][sample].im = (float*) calloc(sizeof(float), h->hopSize + 1);
                 }
             }
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+            int old_nCh = hyb_h->inChannels < hyb_h->outChannels ? hyb_h->outChannels : hyb_h->inChannels;
+            int new_nCh = new_inChannels < new_outChannels ? new_outChannels : new_inChannels;
+            for (ch = new_nCh; ch < old_nCh; ch++) {
+                free(hyb_h->FDtmp[ch].re);
+                free(hyb_h->FDtmp[ch].im);
+            }
+            hyb_h->FDtmp = (complexVector*) realloc(hyb_h->FDtmp,
+                                                    sizeof(complexVector) * new_nCh);
+            for (ch = old_nCh; ch < new_nCh; ch++) {
+                hyb_h->FDtmp[ch].re = (float*) calloc(h->hopSize + 5, sizeof(float));
+                hyb_h->FDtmp[ch].im = (float*) calloc(h->hopSize + 5, sizeof(float));
+            }
+#endif
         }
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
         if (hyb_h->inChannels != new_inChannels || hyb_h->outChannels != new_outChannels) {
