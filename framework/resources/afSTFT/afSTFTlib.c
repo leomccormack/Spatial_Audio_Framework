@@ -128,6 +128,16 @@ typedef struct{
 #endif
 } afHybrid;
 
+typedef struct {
+    int nBands;
+    int nSamples;
+    int nHops;
+    int hopSize;
+    float **TDptrs;
+    float_complex*** FDtmp;
+    afSTFT *a;
+} afMatrix;
+
 void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int LDmode, int hybridMode)
 {
     int k, ch, dsFactor;
@@ -798,4 +808,56 @@ void afHybridFree(void* handle)
     free(h->FDtmp);
 #endif
     free(handle);
+}
+
+void afSTFTMatrixInit(void** handle,
+                      const int hopSize,
+                      const int inChannels,
+                      const int outChannels,
+                      const int LDmode,
+                      const int hybridMode,
+                      const int nSamples)
+{
+    // we only work with nicely-behaved ratios
+    if (nSamples % hopSize != 0)
+        return
+
+    *handle = malloc(sizeof(afMatrix));
+    afMatrix *h = (afMatrix*) (*handle);
+    h->nBands = hopSize + (hybridMode ? 5 : 1);
+    h->nSamples = nSamples;
+    h->hopSize = hopSize;
+    h->nHops = nSamples / hopSize;
+    h->maxCh = inChannels > outChannels ? inChannels : outChannels;
+    h->TDptrs = malloc(h->maxCh * sizeof(float*));
+    h->FDtmp = malloc3d(h->nHops, h->maxCh, h->nBands, sizeof(float_complex));
+    afSTFTinit(&h->a, h->hopSize, inChannels, outChannels, LDmode, hybridMode);
+}
+
+void afSTFTMatrixFree(void *handle) {
+    free(h->FDtmp);
+    free(TDptrs);
+    afSTFTfree(h->a);
+    free(handle);
+}
+
+void afSTFTMatrixForward(void* handle, float** inTD, float_complex*** outFD) {
+    afMatrix *h = (afMatrix*) handle;
+    const int nCh = h->a->inChannels;
+    int hop, ch, b;
+
+    for (hop = 0; hop < h->nHops; hop++) {
+        for (ch = 0; ch < nCh; ch++) {
+            h->TDptrs[ch] = inTD[ch] + hop * h->hopSize;
+        }
+        afSTFTforward(h->a, h->TDptrs, h->FDtmp[hop]);
+    }
+
+    for (hop = 0; hop < h->nHops; hop++) {
+        for (ch = 0; ch < nCh; ch++) {
+            for (b = 0; b < h->nBands; b++) {
+                outFD[b][ch][t] = h->FDtmp[hop][ch][b];
+            }
+        }
+    }
 }
