@@ -163,9 +163,9 @@ void afSTFTMatrixFree(void *handle);
  * @param[in] inTD input time-domain signals; inChannels x hopSize
  * @param[out] outFD output time-frequency domain signals; nBands x inChannels x nHops
  */
-void afSTFTMatrixForward(void* handle,
-                      float** inTD,
-                      float_complex*** outFD);
+void afSTFTMatrixForward(void* handle, float** inTD, float_complex*** outFD);
+
+void afSTFTMatrixInverse(void* handle, float_complex*** inFD, float** outTD);
 
 #ifdef __cplusplus
 }/* extern "C" */

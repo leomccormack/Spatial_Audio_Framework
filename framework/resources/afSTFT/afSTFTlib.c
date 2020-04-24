@@ -835,8 +835,9 @@ void afSTFTMatrixInit(void** handle,
 }
 
 void afSTFTMatrixFree(void *handle) {
+    afMatrix *h = (afMatrix*) handle;
     free(h->FDtmp);
-    free(TDptrs);
+    free(h->TDptrs);
     afSTFTfree(h->a);
     free(handle);
 }
@@ -853,11 +854,26 @@ void afSTFTMatrixForward(void* handle, float** inTD, float_complex*** outFD) {
         afSTFTforward(h->a, h->TDptrs, h->FDtmp[hop]);
     }
 
+    for (hop = 0; hop < h->nHops; hop++)
+        for (ch = 0; ch < nCh; ch++)
+            for (b = 0; b < h->nBands; b++)
+                outFD[b][ch][hop] = h->FDtmp[hop][ch][b];
+}
+
+void afSTFTMatrixInverse(void* handle, float_complex*** inFD, float** outTD) {
+    afMatrix *h = (afMatrix*) handle;
+    const int nCh = h->a->outChannels;
+    int hop, ch, b;
+
+    for (hop = 0; hop < h->nHops; hop++)
+        for (ch = 0; ch < nCh; ch++)
+            for (b = 0; b < h->nBands; b++)
+                h->FDtmp[hop][ch][b] = inFD[b][ch][hop];
+
     for (hop = 0; hop < h->nHops; hop++) {
         for (ch = 0; ch < nCh; ch++) {
-            for (b = 0; b < h->nBands; b++) {
-                outFD[b][ch][t] = h->FDtmp[hop][ch][b];
-            }
+            h->TDptrs[ch] = outTD[ch] + hop * h->hopSize;
         }
+        afSTFTinverse(h->a, h->FDtmp[hop], h->TDptrs);
     }
 }
