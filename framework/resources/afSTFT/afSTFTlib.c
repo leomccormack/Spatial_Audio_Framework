@@ -85,8 +85,7 @@ typedef struct{
     int inChannels;
     int outChannels; 
     int hopSize;
-    int hLen;
-    int pr;
+    int hLen; 
     int LDmode;
     int hopIndexIn;
     int hopIndexOut;
@@ -96,12 +95,13 @@ typedef struct{
     float **inBuffer;
     float *fftProcessFrameTD;
     float **outBuffer;
-    int log2n;
 #ifdef AFSTFT_USE_SAF_UTILITIES
     void* hSafFFT;
     float_complex *fftProcessFrameFD;
     float* tempHopBuffer;
 #else
+    int pr;
+    int log2n;
     void *vtFFT;
     float *fftProcessFrameFD;
 #endif
@@ -133,9 +133,10 @@ typedef struct {
     int nSamples;
     int nHops;
     int hopSize;
+    int maxCh;
     float **TDptrs;
-    float_complex*** FDtmp;
-    afSTFT *a;
+    float_complex** FDtmp;
+    void* a;
 } afMatrix;
 
 void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int LDmode, int hybridMode)
@@ -810,6 +811,7 @@ void afHybridFree(void* handle)
     free(handle);
 }
 
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
 void afSTFTMatrixInit(void** handle,
                       const int hopSize,
                       const int inChannels,
@@ -820,7 +822,7 @@ void afSTFTMatrixInit(void** handle,
 {
     // we only work with nicely-behaved ratios
     if (nSamples % hopSize != 0)
-        return
+        return;
 
     *handle = malloc(sizeof(afMatrix));
     afMatrix *h = (afMatrix*) (*handle);
@@ -830,8 +832,18 @@ void afSTFTMatrixInit(void** handle,
     h->nHops = nSamples / hopSize;
     h->maxCh = inChannels > outChannels ? inChannels : outChannels;
     h->TDptrs = malloc(h->maxCh * sizeof(float*));
-    h->FDtmp = malloc3d(h->nHops, h->maxCh, h->nBands, sizeof(float_complex));
-    afSTFTinit(&h->a, h->hopSize, inChannels, outChannels, LDmode, hybridMode);
+    h->FDtmp = (float_complex**) malloc2d(h->maxCh, h->nBands, sizeof(float_complex));
+    afSTFTinit(&(h->a), h->hopSize, inChannels, outChannels, LDmode, hybridMode);
+}
+
+void afSTFTMatrixChannelChange(void* handle, int new_inChannels, int new_outChannels)
+{ 
+    afMatrix *h = (afMatrix*) handle;
+    afSTFTchannelChange(h->a, new_inChannels, new_outChannels);
+
+    h->maxCh = new_inChannels > new_outChannels ? new_inChannels : new_outChannels;
+    h->TDptrs = realloc(h->TDptrs, h->maxCh * sizeof(float*));
+    h->FDtmp = (float_complex**) realloc2d((void**)h->FDtmp, h->maxCh, h->nBands, sizeof(float_complex)); 
 }
 
 void afSTFTMatrixFree(void *handle) {
@@ -842,38 +854,42 @@ void afSTFTMatrixFree(void *handle) {
     free(handle);
 }
 
-void afSTFTMatrixForward(void* handle, float** inTD, float_complex*** outFD) {
+void afSTFTMatrixForward(void* handle, float** inTD, float_complex*** outFD)
+{
     afMatrix *h = (afMatrix*) handle;
-    const int nCh = h->a->inChannels;
+    afSTFT *a = (afSTFT*)(h->a);
+
+    int nCh = a->inChannels;
     int hop, ch, b;
 
     for (hop = 0; hop < h->nHops; hop++) {
         for (ch = 0; ch < nCh; ch++) {
             h->TDptrs[ch] = inTD[ch] + hop * h->hopSize;
         }
-        afSTFTforward(h->a, h->TDptrs, h->FDtmp[hop]);
-    }
-
-    for (hop = 0; hop < h->nHops; hop++)
+        afSTFTforward(h->a, h->TDptrs, h->FDtmp);
         for (ch = 0; ch < nCh; ch++)
             for (b = 0; b < h->nBands; b++)
-                outFD[b][ch][hop] = h->FDtmp[hop][ch][b];
+                outFD[b][ch][hop] = h->FDtmp[ch][b];
+     }
 }
 
-void afSTFTMatrixInverse(void* handle, float_complex*** inFD, float** outTD) {
+void afSTFTMatrixInverse(void* handle, float_complex*** inFD, float** outTD)
+{
     afMatrix *h = (afMatrix*) handle;
-    const int nCh = h->a->outChannels;
+    afSTFT *a = (afSTFT*)(h->a);
+
+    int nCh = a->outChannels;
     int hop, ch, b;
 
-    for (hop = 0; hop < h->nHops; hop++)
+    for (hop = 0; hop < h->nHops; hop++){
         for (ch = 0; ch < nCh; ch++)
             for (b = 0; b < h->nBands; b++)
-                h->FDtmp[hop][ch][b] = inFD[b][ch][hop];
-
-    for (hop = 0; hop < h->nHops; hop++) {
+                h->FDtmp[ch][b] = inFD[b][ch][hop];
         for (ch = 0; ch < nCh; ch++) {
             h->TDptrs[ch] = outTD[ch] + hop * h->hopSize;
         }
-        afSTFTinverse(h->a, h->FDtmp[hop], h->TDptrs);
+        afSTFTinverse(h->a, h->FDtmp, h->TDptrs);
     }
+    //memset(ADR2D(outTD), 0, h->hopSize * h->nHops * nCh*sizeof(float));
 }
+#endif

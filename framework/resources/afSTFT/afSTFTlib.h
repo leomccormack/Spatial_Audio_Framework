@@ -143,7 +143,7 @@ void afSTFTinverse(void* handle, complexVector* inFD, float** outTD);
  */
 void afSTFTfree(void* handle);
 
-
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
 void afSTFTMatrixInit(void** handle,
                       const int hopSize,
                       const int inChannels,
@@ -153,6 +153,8 @@ void afSTFTMatrixInit(void** handle,
                       const int nSamples);
 
 void afSTFTMatrixFree(void *handle);
+
+void afSTFTMatrixChannelChange(void* handle, int new_inChannels, int new_outChannels);
 
 /**
  * A wrapper for different-shaped matrix of float_complex. Hopsize from afSTFT struct is used.
@@ -166,6 +168,7 @@ void afSTFTMatrixFree(void *handle);
 void afSTFTMatrixForward(void* handle, float** inTD, float_complex*** outFD);
 
 void afSTFTMatrixInverse(void* handle, float_complex*** inFD, float** outTD);
+#endif
 
 #ifdef __cplusplus
 }/* extern "C" */
