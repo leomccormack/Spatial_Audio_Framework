@@ -144,6 +144,29 @@ void afSTFTinverse(void* handle, complexVector* inFD, float** outTD);
 void afSTFTfree(void* handle);
 
 
+void afSTFTMatrixInit(void** handle,
+                      const int hopSize,
+                      const int inChannels,
+                      const int outChannels,
+                      const int LDmode,
+                      const int hybridMode,
+                      const int nSamples);
+
+void afSTFTMatrixFree(void *handle);
+
+/**
+ * A wrapper for different-shaped matrix of float_complex. Hopsize from afSTFT struct is used.
+ * If the nSamples isn't divisible with hopSize, will do nothing.
+ *
+ * @param[in] handle afSTFTlib handle
+ * @param[in] nSamples number of samples in time-domain signals
+ * @param[in] inTD input time-domain signals; inChannels x hopSize
+ * @param[out] outFD output time-frequency domain signals; nBands x inChannels x nHops
+ */
+void afSTFTMatrixForward(void* handle, float** inTD, float_complex*** outFD);
+
+void afSTFTMatrixInverse(void* handle, float_complex*** inFD, float** outTD);
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif /* __cplusplus */
