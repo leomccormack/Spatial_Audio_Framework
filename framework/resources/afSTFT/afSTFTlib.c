@@ -396,10 +396,10 @@ void afSTFTforward(void* handle, float** inTD, complexVector* outFD)
         
         /* Apply FFT and copy the data to the output vector */
 #ifdef AFSTFT_USE_SAF_UTILITIES
-        saf_rfft_forward(h->hSafFFT, h->fftProcessFrameTD, h->fftProcessFrameFD);
 # ifdef AFSTFT_USE_FLOAT_COMPLEX
-        utility_cvvcopy(h->fftProcessFrameFD, h->hopSize+1, outFD[ch]);
+        saf_rfft_forward(h->hSafFFT, h->fftProcessFrameTD, outFD[ch]);
 # else
+        saf_rfft_forward(h->hSafFFT, h->fftProcessFrameTD, h->fftProcessFrameFD);
         for(k = 0; k<h->hopSize+1; k++){
             outFD[ch].re[k] = crealf(h->fftProcessFrameFD[k]);
             outFD[ch].im[k] = cimagf(h->fftProcessFrameFD[k]);
