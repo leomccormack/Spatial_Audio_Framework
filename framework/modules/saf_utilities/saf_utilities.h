@@ -85,9 +85,7 @@
 #ifndef PI
 # define PI ( 3.14159265358979323846264338327950288f )
 #endif
-#ifndef M_PI
-# define M_PI ( 3.14159265358979323846264338327950288f )
-#endif
+#define SAF_PI ( 3.14159265358979323846264338327950288f )
 #define SAF_ISPOW2(x) (((x & ~(x-1))==x) ? x : 0);
  
     
@@ -98,11 +96,11 @@
 /* for error message handling */
 #include "../saf_utilities/saf_error.h"
 /* for allocating multi-dimensional arrays */
-#include "../resources/md_malloc/md_malloc.h"
+#include "../../resources/md_malloc/md_malloc.h"
 /* default FFT implementation, if no optimised implementation is available */
-#include "../resources/kissFFT/kiss_fftr.h"
+#include "../../resources/kissFFT/kiss_fftr.h"
 /* for generating 3-D convex hulls */
-#include "../resources/convhull_3d/convhull_3d.h"
+#include "../../resources/convhull_3d/convhull_3d.h"
 /* for cross-platform complex numbers wrapper */
 #include "../saf_utilities/saf_complex.h"
 /* for sorting vectors */

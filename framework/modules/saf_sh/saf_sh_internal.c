@@ -306,7 +306,8 @@ int MSTA1
 {
     double A0,F,F0,F1;
     int IT,NN,N0,N1;
-    
+
+    NN = 0;
     A0=fabs(X);
     N0=floor(1.1*A0)+1;
     F0=ENVJ(N0,A0)-MP;
@@ -336,7 +337,8 @@ int MSTA2
 {
     double A0,EJN,F,F0,F1,HMP,OBJ;
     int IT,N0,N1,NN;
-    
+
+    NN = 0;
     A0=fabs(X);
     HMP=0.5*MP;
     EJN=ENVJ(N,A0);

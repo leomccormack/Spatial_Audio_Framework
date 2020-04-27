@@ -53,6 +53,7 @@ void loadSofaFile
     /* open sofa file */
     /* (retval is set to error value if sofa_filepath==NULL (intentional), or if the file
      * path/name was not found (unintentional). */
+    ncid = -1;
     if(sofa_filepath!=NULL){
         if ((retval = nc_open(sofa_filepath, NC_NOWRITE, &ncid)))
             errorMessage = nc_strerror(retval);

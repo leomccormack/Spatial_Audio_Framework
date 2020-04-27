@@ -980,6 +980,10 @@ void checkCondNumberSHTReal
         for(i=0; i<nDirs; i++)
             W[i*nDirs+i] = w[i]; 
     }
+    else{
+        W = NULL;
+        W_Yn = NULL;
+    }
     
     /* compute the condition number for each order up to N */
     s = malloc1d(nSH*sizeof(float));
@@ -1017,10 +1021,8 @@ void checkCondNumberSHTReal
     free(Y_N);
     free(Y_n);
     free(YY_n);
-    if(w!=NULL){
-        free(W);
-        free(W_Yn);
-    }
+    free(W);
+    free(W_Yn); 
     free(s);
 }
 
