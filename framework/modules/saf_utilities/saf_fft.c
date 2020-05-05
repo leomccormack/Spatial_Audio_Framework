@@ -30,18 +30,18 @@
  *
  * ## Example Usage
  * \code{.c}
- *   const int N = 256;                  // FFT size
- *   float x_in[N];                      // input buffer (time-domain)
- *   x_in[0] = ... x_in[N-1] =           // fill with data
- *   float_complex x_out[(N/2+1)];       // output buffer (frequency-domain)
- *   float test[N];                      // test (time-domain)
- *   void *hFFT;                         // safFFT handle
+ *   const int N = 256;                    // FFT size
+ *   float x_in[N];                        // input buffer (time-domain)
+ *   x_in[0] = ... x_in[N-1] =             // fill with data
+ *   float_complex x_out[(N/2+1)];         // output buffer (frequency-domain)
+ *   float test[N];                        // test (time-domain)
+ *   void *hFFT;                           // safFFT handle
  *
- *   safFFT_create(&hFFT, N);            // creates instance of safFFT
- *   safFFT_forward(hFFT, x_in, x_out);  // perform forward transform
- *   safFFT_backward(hFFT, x_out, test); // perform backwards transform
+ *   saf_rfft_create(&hFFT, N);            // creates instance of safFFT
+ *   saf_rfft_forward(hFFT, x_in, x_out);  // perform forward transform
+ *   saf_rfft_backward(hFFT, x_out, test); // perform backwards transform
  *   // 'x_in' should equal 'test' (given some numerical error)
- *   safFFT_destroy(&hFFT);              // destroys instance of safFFT
+ *   saf_rfft_destroy(&hFFT);              // destroys instance of safFFT
  * \endcode
  *
  * @author Leo McCormack

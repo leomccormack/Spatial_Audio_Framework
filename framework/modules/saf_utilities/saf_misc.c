@@ -23,6 +23,8 @@
  */
 
 #include "saf_misc.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 long double factorial(int n)
 {
@@ -70,4 +72,26 @@ void cxcorr
                 x_ab[m-1] += (a[n-1] * b[n-arg-1]);
         }
     }
+}
+
+void rand_m1_1
+(
+    float* vector,
+    int length
+)
+{
+    int i;
+    for(i=0; i<length; i++)
+        vector[i] = (2.0f*rand()/(float)RAND_MAX)-1.0f;
+}
+
+void rand_0_1
+(
+    float* vector,
+    int length
+)
+{
+    int i;
+    for(i=0; i<length; i++)
+        vector[i] = rand()/(float)RAND_MAX;
 }

@@ -89,6 +89,25 @@ void cxcorr(float* a,
             size_t la,
             size_t lb);
 
+/**
+ * Generates random numbers between -1 and 1 and stores them in the input vector
+ *
+ * @param[in,out] vector Vector to populate with random numbers; length x 1
+ * @param[in]     length Length of the vector
+ */
+void rand_m1_1(float* vector,
+               int length);
+
+/**
+ * Generates random numbers between 0 and 1 and stores them in the input vector
+ *
+ * @param[in,out] vector Vector to populate with random numbers; length x 1
+ * @param[in]     length Length of the vector
+ */
+void rand_0_1(float* vector,
+              int length);
+
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif /* __cplusplus */

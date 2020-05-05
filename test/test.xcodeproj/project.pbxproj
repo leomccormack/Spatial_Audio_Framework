@@ -38,6 +38,7 @@
 		508FBE082456D3400076C205 /* saf_hrir_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBDEC2456D3400076C205 /* saf_hrir_internal.c */; };
 		508FBE092456D3400076C205 /* saf_sofa_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBDED2456D3400076C205 /* saf_sofa_reader.c */; };
 		508FBE0A2456D3400076C205 /* saf_hrir.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBDEE2456D3400076C205 /* saf_hrir.c */; };
+		508FBE36246027D80076C205 /* saf_pitch.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBE34246027D80076C205 /* saf_pitch.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -119,6 +120,8 @@
 		508FBDEC2456D3400076C205 /* saf_hrir_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hrir_internal.c; sourceTree = "<group>"; };
 		508FBDED2456D3400076C205 /* saf_sofa_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_sofa_reader.c; sourceTree = "<group>"; };
 		508FBDEE2456D3400076C205 /* saf_hrir.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hrir.c; sourceTree = "<group>"; };
+		508FBE34246027D80076C205 /* saf_pitch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_pitch.c; sourceTree = "<group>"; };
+		508FBE35246027D80076C205 /* saf_pitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_pitch.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -293,6 +296,8 @@
 				508FBDD22456D3400076C205 /* saf_error.h */,
 				508FBDD32456D3400076C205 /* saf_decor.c */,
 				508FBDD42456D3400076C205 /* saf_misc.h */,
+				508FBE34246027D80076C205 /* saf_pitch.c */,
+				508FBE35246027D80076C205 /* saf_pitch.h */,
 				508FBDD52456D3400076C205 /* saf_sort.c */,
 				508FBDD62456D3400076C205 /* saf_erb.h */,
 				508FBDD72456D3400076C205 /* saf_complex.c */,
@@ -411,6 +416,7 @@
 				508FBDF62456D3400076C205 /* saf_hoa.c in Sources */,
 				508FBDEF2456D3400076C205 /* md_malloc.c in Sources */,
 				508FBE072456D3400076C205 /* saf_default_hrirs.c in Sources */,
+				508FBE36246027D80076C205 /* saf_pitch.c in Sources */,
 				508FBE002456D3400076C205 /* saf_filters.c in Sources */,
 				508FBDA52456D3300076C205 /* timer.c in Sources */,
 				508FBE022456D3400076C205 /* saf_sensorarray_presets.c in Sources */,

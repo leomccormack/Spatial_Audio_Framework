@@ -113,6 +113,8 @@
 #include "../saf_utilities/saf_fft.h"
 /* matrix convolver */
 #include "../saf_utilities/saf_matrixConv.h"
+/* pitch shifting algorithms */
+#include "../saf_utilities/saf_pitch.h"
 /* for decorrelators */
 #include "../saf_utilities/saf_decor.h"
 /* for determining ERBs */
