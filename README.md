@@ -29,7 +29,7 @@ SAF_USE_ATLAS
 * SAF_USE_OPEN_BLAS_AND_LAPACKE - to use [OpenBLAS](https://github.com/xianyi/OpenBLAS) and the LAPACKE interface (recommended for ARM)
 * SAF_USE_ATLAS - to use [ALTAS](http://math-atlas.sourceforge.net/) which is not recommended, since some LAPACK functions are missing. However, if you don't mind loosing some framework functionality, then ATLAS may still be a good choice for your particular project.
 
-**MacOSX users only**: If you do not define one of the above flags, then SAF will use [Apple Accelerate](https://developer.apple.com/documentation/accelerate) for CBLAS/LAPACK and also vDSP for the FFT. However, note that Intel MKL is still the more recommended option, as it is generally faster than Accelerate.
+**MacOSX users only**: if you do not define one of the above flags, then SAF will use [Apple Accelerate](https://developer.apple.com/documentation/accelerate) for CBLAS/LAPACK and also vDSP for the FFT. However, note that Intel MKL is still the more recommended option, as it is generally faster than Accelerate.
 
 ## Enable SOFA support (Optional)
 
@@ -41,35 +41,29 @@ Note that the following preprocessor definition is also required:
 SAF_ENABLE_SOFA_READER
 ```
 
-### Windows (64-bit) and MacOSX users
-
-For convenience, the following statically built libraries are included in the "dependencies" folder; simply link your project against them:
+**Windows (64-bit) and MacOSX users**: for convenience, the following statically built libraries are included in the "dependencies" folder; simply link your project against them:
 
 ```
 libszip.lib; libzlib.lib; libhdf5.lib; libhdf5_hl.lib; netcdf.lib; # Win64
 netcdf; hdf5; hdf5_hl; z; # MacOSX
 ```
 
- Also, make sure to add the appropriate 'include' and 'lib' directories to your project's header and library search paths, respectively.
-
-
-###  Linux (amd64) and Raspberry Pi (ARM) users
-
-For ubuntu based distros, you may install [netCDF](https://www.unidata.ucar.edu/software/netcdf/) and its dependencies with the following:
+Make sure to also add the appropriate 'include' and 'lib' directories to your project's header and library search paths, respectively.
+ 
+ **Linux (amd64) and Raspberry Pi (ARM) users**: for Ubuntu/Debian based distros, you may install [netCDF](https://www.unidata.ucar.edu/software/netcdf/) and its dependencies with the following command:
 
 ```
-sudo apt-get install libhdf5-dev
-sudo apt-get install libnetcdf-dev libnetcdff-dev
+sudo apt-get install libhdf5-dev libnetcdf-dev libnetcdff-dev
 ```
 
-Then simply add the appropriate directory to the header search path, and add this linker flag to your project (or wherever it was installed):
+Then add the directory of the "netcdf.h" file to your project's header search paths,  along with this linker flag:
 ```
--L/lib/x86_64-linux-gnu -lnetcdf
+-L/lib/x86_64-linux-gnu -lnetcdf  # (or wherever it was installed) 
 ```
 
 ## Using the framework
 
-Once a CBLAS/LAPACK flag is defined (see above), and the correct libraries are linked to your project, you can now add the files found in the "framework" folder to your project. Then add the following directory to your header search paths:
+Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to your project), you can now add the files found in the "framework" folder to your project and add the following directory to your header search paths:
 
 ```
 Spatial_Audio_Framework/framework/include 
@@ -81,7 +75,7 @@ The framework's master include header is then:
 #include "saf.h"
 ```
 
-Detailed instructions regarding how to use the functions offered by each of the framework's module, is provided in the main header file for the respective module (e.g. "/modules/saf_sh/saf_sh.h", or  "/modules/saf_vbap/saf_vbap.h").
+Detailed instructions regarding how to use the functions offered by each framework module, is provided in the main header file for the respective module (e.g. "/modules/saf_sh/saf_sh.h", or "/modules/saf_vbap/saf_vbap.h").
 
 ### Documentation
 
@@ -107,14 +101,15 @@ Many examples have been included in the repository, which may also serve as a st
 * **beamformer** - a beamforming example with several different beamforming options.
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file.
 * **dirass** - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction [9].
-* **panner** - a frequency-dependent VBAP panner [10], which permits source loudness compensation as a function of the room [11].
 * **matrixconv** - a basic matrix convolver with an optional partitioned convolution mode. 
 * **multiconv** - a basic multi-channel convolver with an optional partitioned convolution mode. 
+* **panner** - a frequency-dependent VBAP panner [10], which permits source loudness compensation as a function of the room [11].
+* **pitch_shifter** - a very basic pitch shifter, inspired by the phase vocoder approach.
 * **powermap** - sound-field visualiser based on beamformer (PWD, MVDR) energy or sub-space methods (MUSIC).
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles [12].
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors; as proposed in [8]. 
 
-Note that these examples have also been integrated into VST audio plug-ins using the JUCE framework and can be found [here](http://research.spa.aalto.fi/projects/sparta_vsts/).   
+Note that many of these examples have also been integrated into VST audio plug-ins using the JUCE framework and can be found [here](http://research.spa.aalto.fi/projects/sparta_vsts/).   
 
 ## Contributing
 
@@ -122,17 +117,17 @@ Suggestions and contributions to the code are both welcomed and encouraged. It s
 * if you are researcher who has developed a new spatial-audio related method and want to integrate it into the framework... or
 * if you notice that an existing piece of code can be rewritten to make it clearer/faster, or to fix a bug...
 
-then please feel free to do so and submit a pull request. However, if the changes/additions are major, then consider first discussing it via a github "issue" or by contacting the developers directly via email. We may also be able to help in the implementation.
+then please feel free to do so and submit a pull request. Note, however, that if the changes/additions are major, then maybe consider first discussing it via a github "issue" or by contacting the developers directly via email. We may also be able to help in the implementation if needed :- )
 
 ## Developers
 
-* **Leo McCormack** - C programmer and algorithm design (contact: leo.mccormack@aalto.fi)
+* **Leo McCormack** - C programmer and algorithm design (contact: leo.mccormack(at)aalto.fi)
 * **Symeon Delikaris-Manias** - algorithm design
 * **Archontis Politis** - algorithm design
 
 ## License
 
-This framework is provided under the [ISC license](https://choosealicense.com/licenses/isc/). However, it also includes a modified version of the ['alias-free STFT'](https://github.com/jvilkamo/afSTFT) implementation by Juha Vilkamo (MIT license); [kissFFT](https://github.com/mborgerding/kissfft) (BSD 3-clause license) by Mark Borgerding; and the ['convhull_3d'](https://github.com/leomccormack/convhull_3d) 3-D Convex Hull implementation by Leo McCormack (MIT license).
+This framework is provided under the [ISC license](https://choosealicense.com/licenses/isc/). However, it also includes a modified version of the ['alias-free STFT'](https://github.com/jvilkamo/afSTFT) implementation by Juha Vilkamo (MIT license); [kissFFT](https://github.com/mborgerding/kissfft) (BSD 3-clause license) by Mark Borgerding; and the ['convhull_3d'](https://github.com/leomccormack/convhull_3d) 3-D Convex Hull implementation by Leo McCormack (MIT license). The original license files may also be found in the dependencies/licences folder.
 
 ## References
 
