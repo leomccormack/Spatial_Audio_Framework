@@ -545,7 +545,7 @@ void UnityConcludeTest(void)
     }
     else if (!Unity.CurrentTestFailed)
     {
-        UnityTestResultsBegin(Unity.TestFile, Unity.CurrentTestLineNumber);
+        UnityTestResultsBegin("LINE", Unity.CurrentTestLineNumber);
         UnityPrint(UnityStrPass);
     }
     else

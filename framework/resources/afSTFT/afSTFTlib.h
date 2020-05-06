@@ -161,7 +161,6 @@ void afSTFTMatrixChannelChange(void* handle, int new_inChannels, int new_outChan
  * If the nSamples isn't divisible with hopSize, will do nothing.
  *
  * @param[in] handle afSTFTlib handle
- * @param[in] nSamples number of samples in time-domain signals
  * @param[in] inTD input time-domain signals; inChannels x hopSize
  * @param[out] outFD output time-frequency domain signals; nBands x inChannels x nHops
  */

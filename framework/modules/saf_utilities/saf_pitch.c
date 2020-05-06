@@ -26,8 +26,8 @@
 #include "saf_pitch.h"
 
 /**
- * Enables the use of the saf_fft wrapper, instead of "smbFft" that was used
- * in the original implementation
+ * Enables the use of the saf_fft wrapper, instead of "smbFft" used in the
+ * original implementation
  */
 #define SMB_ENABLE_SAF_FFT
 

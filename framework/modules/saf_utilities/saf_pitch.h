@@ -42,7 +42,7 @@ extern "C" {
  * Creates an instance of SMB PitchShifter
  *
  * @note Higher FFT sizes will permit more drastic pitch shifts. Increasing the
- *       Oversampling factor will increase latency, but also improve ignal
+ *       Oversampling factor will increase latency, but also improve signal
  *       fidelity.
  *
  * @param[in] hSmb         (&) address of smb pitchShifter handle

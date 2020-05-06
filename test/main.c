@@ -1,27 +1,84 @@
-//
-//  main.c
-//  test
-//
-//  Created by Leo McCormack on 27.4.2020. 
-//
+/*
+ * Copyright 2020 Leo McCormack
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
+/**
+ * @file main.c
+ * @brief testing program for the Spatial_Audio_Framework
+ *
+ * @author Leo McCormack
+ * @date 27.04.2020
+ */
 
 #include "unity.h"
 #include "timer.h"
 #include "saf.h"
 
-tick_t start;
+/* Prototypes */
+void test__saf_rfft(void);
+void test__afSTFTMatrix(void);
+void test__afSTFT(void);
+void test__smb_pitchShifter(void);
 
-void setUp(void){
-    // set stuff up here
+/* ========================================================================== */
+/*                                 Test Config                                */
+/* ========================================================================== */
+
+static tick_t start, start_test;
+void setUp(void){ start_test = timer_current(); }
+void tearDown(void){ }
+static void timerResult(void) {
+    printf( "    (Time elapsed: %lfs) \n", (double)timer_elapsed( start_test ) );
 }
 
-void tearDown(void){
-    // clean stuff up here
+#undef RUN_TEST
+#define RUN_TEST(testfunc)  UNITY_NEW_TEST(#testfunc) \
+    if (TEST_PROTECT()) {  setUp();  testfunc();  } \
+    if (TEST_PROTECT() && (!TEST_IS_IGNORED))  {tearDown(); } \
+    UnityConcludeTest(); timerResult();
+
+int main(void){
+printf("*****************************************************************\n"
+       "******** Spatial_Audio_Framework Unit Testing Program ***********\n"
+       "*****************************************************************\n\n");
+
+    /* initialise */
+    timer_lib_initialize();
+    start = timer_current();
+    UNITY_BEGIN();
+
+    /* run each unit test */
+    RUN_TEST(test__saf_rfft);
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+    RUN_TEST(test__afSTFTMatrix);
+#endif
+    RUN_TEST(test__afSTFT);
+    RUN_TEST(test__smb_pitchShifter);
+
+    /* close */
+    timer_lib_shutdown();
+    printf( "\nTotal time elapsed: %lfs", (double)timer_elapsed( start ) );
+    return UNITY_END();
 }
+
+
+/* ========================================================================== */
+/*                                 Unit Tests                                 */
+/* ========================================================================== */
 
 void test__saf_rfft(void){
-    printf( "\n - test__saf_rfft\n");
-    start = timer_current();
     int i, j, N;
     float* x_td, *test;
     float_complex* x_fd;
@@ -29,7 +86,8 @@ void test__saf_rfft(void){
 
     /* Config */
     const float acceptedTolerance = 0.000001f;
-    const int fftSizesToTest[12] = {16,256,512,1024,2048,4096,8192,16384,32768,65536,1048576,67108864};
+    const int fftSizesToTest[12] =
+        {16,256,512,1024,2048,4096,8192,16384,32768,65536,1048576,67108864};
 
     /* Loop over the different FFT sizes */
     for (i=0; i<11; i++){
@@ -56,13 +114,10 @@ void test__saf_rfft(void){
         free(x_td);
         free(test);
     }
-
-    printf( "Time elapsed: %lfs\n", (double)timer_elapsed( start ) );
 }
 
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
 void test__afSTFTMatrix(void){
-    printf("\n - test__afSTFTMatrix\n");
-    start = timer_current();
     int idx,frameIdx,c,t;
     int numChannels;
     float** inputTimeDomainData, **outputTimeDomainData, **tempFrame;
@@ -70,7 +125,7 @@ void test__afSTFTMatrix(void){
 
     /* Config */
     const float acceptedTolerance = 0.01f; // Seems pretty high.. ?
-    const int nTestFrames = 4;
+    const int nTestFrames = 1000;
     const int frameSize = 512;
     const int hopSize = 128;
     numChannels = 10;
@@ -120,12 +175,88 @@ void test__afSTFTMatrix(void){
     free(inputTimeDomainData);
     free(outputTimeDomainData);
     free(frequencyDomainData);
-    printf( "Time elapsed: %lfs\n", (double)timer_elapsed( start ) );
+}
+#endif
+
+void test__afSTFT(void){
+    int idx,hopIdx,c,t;
+    int numChannels;
+    float** inputTimeDomainData, **outputTimeDomainData, **tempHop;
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+    float_complex** frequencyDomainData;
+#else
+    complexVector* frequencyDomainData;
+#endif
+
+    /* Config */
+    const float acceptedTolerance = 0.01f; // Seems pretty high.. ? (same for AFSTFT_USE_FLOAT_COMPLEX defined/undefined)
+    const int nTestHops = 5000;
+    const int hopSize = 128;
+    numChannels = 10;
+    const int hybridMode = 1;
+
+    /* prep */
+    const int nBands = hopSize + (hybridMode ? 5 : 1);
+    const int afSTFTdelay = hopSize * (hybridMode ? 12 : 9);
+    const int lSig = nTestHops*hopSize+afSTFTdelay;
+    void* hSTFT;
+    inputTimeDomainData = (float**) malloc2d(numChannels, lSig, sizeof(float));
+    outputTimeDomainData = (float**) malloc2d(numChannels, lSig, sizeof(float));
+    tempHop = (float**) malloc2d(numChannels, hopSize, sizeof(float));
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+    frequencyDomainData = (float_complex**) malloc2d(numChannels, nBands, sizeof(float_complex));
+#else
+    frequencyDomainData = malloc1d(numChannels * sizeof(complexVector));
+    for(c=0; c<numChannels; c++){
+        frequencyDomainData[c].re = malloc1d(nBands*sizeof(float));
+        frequencyDomainData[c].im = malloc1d(nBands*sizeof(float));
+    }
+#endif
+
+    /* Initialise afSTFT and input data */
+    afSTFTinit(&hSTFT, hopSize, numChannels, numChannels, 0, hybridMode);
+    rand_m1_1(ADR2D(inputTimeDomainData), numChannels*lSig); /* populate with random numbers */
+
+    /* Pass input data through afSTFT */
+    idx = 0;
+    hopIdx = 0;
+    while(idx<lSig){
+        for(c=0; c<numChannels; c++)
+            memcpy(tempHop[c], &(inputTimeDomainData[c][hopIdx*hopSize]), hopSize*sizeof(float));
+
+        /* forward and inverse */
+        afSTFTforward(hSTFT, tempHop, frequencyDomainData);
+        afSTFTinverse(hSTFT, frequencyDomainData, tempHop);
+
+        for(c=0; c<numChannels; c++)
+            memcpy(&(outputTimeDomainData[c][hopIdx*hopSize]), tempHop[c], hopSize*sizeof(float));
+        idx+=hopSize;
+        hopIdx++;
+    }
+
+    /* Compensate for afSTFT delay, and check that input==output, given some numerical precision */
+    for(c=0; c<numChannels; c++){
+        memcpy(outputTimeDomainData[c], &(outputTimeDomainData[c][afSTFTdelay]), (lSig-afSTFTdelay) *sizeof(float));
+        for(t=0; t<(lSig-afSTFTdelay); t++)
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, inputTimeDomainData[c][t], outputTimeDomainData[c][t]);
+    }
+
+    /* tidy-up */
+    afSTFTfree(hSTFT);
+    free(inputTimeDomainData);
+    free(outputTimeDomainData);
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
+    free(frequencyDomainData);
+#else
+    for(c=0; c<numChannels; c++){
+        free(frequencyDomainData[c].re);
+        free(frequencyDomainData[c].im);
+    }
+    free(frequencyDomainData);
+#endif
 }
 
 void test__smb_pitchShifter(void){
-    printf( "\n - test__smb_pitchShifter\n");
-    start = timer_current();
     float* inputData, *outputData;
     void* hPS;
     float frequency;
@@ -156,25 +287,5 @@ void test__smb_pitchShifter(void){
     smb_pitchShift_destroy(&hPS);
     free(inputData);
     free(outputData);
-    printf( "Time elapsed: %lfs\n", (double)timer_elapsed( start ) );
-}
-
-int main(void){
-printf("*****************************************************************\n"
-       "******** Spatial_Audio_Framework Unit Testing Program ***********\n"
-       "*****************************************************************\n");
-
-    /* initialise */
-    timer_lib_initialize();
-    UNITY_BEGIN();
-
-    /* run each unit test */
-    RUN_TEST(test__saf_rfft);
-    RUN_TEST(test__afSTFTMatrix);
-    RUN_TEST(test__smb_pitchShifter);
-
-    /* close */
-    timer_lib_shutdown();
-    return UNITY_END();
 }
 

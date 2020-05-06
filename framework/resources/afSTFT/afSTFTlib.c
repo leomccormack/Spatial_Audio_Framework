@@ -590,7 +590,6 @@ void afSTFTfree(void* handle)
     free(h);
 }
 
-
 void afHybridInit(void** handle, int hopSize, int inChannels, int outChannels)
 {
     /* Allocates 7 samples of memory for FIR filtering at lowest bands, and for delays at other bands. */
