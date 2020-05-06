@@ -26,8 +26,8 @@
 #include "saf_pitch.h"
 
 /**
- * Enables the use of the saf_fft wrapper, instead of "smbFft" which the method
- * originally used
+ * Enables the use of the saf_fft wrapper, instead of "smbFft" that was used
+ * in the original implementation
  */
 #define SMB_ENABLE_SAF_FFT
 
@@ -99,7 +99,7 @@ typedef struct _smb_pitchShift_data
 {
     /* parameters */
     int fftFrameSize, osamp, nCH;
-    float sampleRate;
+    float sampleRate, pitchShiftFactor;
 
     /* internals */
     void* hFFT;
@@ -122,30 +122,31 @@ typedef struct _smb_pitchShift_data
 
 void smb_pitchShift_create
 (
-    void** hPS,
+    void** hSmb,
     int nCH,
     int fftFrameSize,
     int osamp,
     float sampleRate
 )
 {
-    *hPS = malloc(sizeof(smb_pitchShift_data));
-    smb_pitchShift_data *h = (smb_pitchShift_data*)(*hPS);
+    *hSmb = malloc(sizeof(smb_pitchShift_data));
+    smb_pitchShift_data *h = (smb_pitchShift_data*)(*hSmb);
     int i;
 
     h->fftFrameSize = fftFrameSize;
     h->osamp = osamp;
     h->sampleRate = sampleRate;
     h->nCH = nCH;
+    h->pitchShiftFactor = 1.0f;
 
     /* internals */
     saf_fft_create(&(h->hFFT), fftFrameSize);
     h->stepSize = fftFrameSize/h->osamp;
     h->inFifoLatency = fftFrameSize - (h->stepSize);
-    h->gRover = (int*)malloc(nCH * sizeof(int));
+    h->gRover = (int*)malloc1d(nCH * sizeof(int));
     for(i=0; i<nCH; i++)
         h->gRover[i] = h->inFifoLatency;
-    h->window = (double*)malloc(fftFrameSize*sizeof(double));
+    h->window = (double*)malloc1d(fftFrameSize*sizeof(double));
     for (i = 0; i < fftFrameSize; i++)
         h->window[i] = -.5*cos(2.*M_PI*(double)i/(double)fftFrameSize)+.5;
     h->gInFIFO = (float**)calloc2d(nCH,fftFrameSize,sizeof(float));
@@ -167,10 +168,10 @@ void smb_pitchShift_create
 
 void smb_pitchShift_destroy
 (
-    void ** const hPS
+    void ** const hSmb
 )
 {
-    smb_pitchShift_data *h = (smb_pitchShift_data*)(*hPS);
+    smb_pitchShift_data *h = (smb_pitchShift_data*)(*hSmb);
     if(h!=NULL){
         saf_fft_destroy(&(h->hFFT));
         free(h->window);
@@ -209,14 +210,14 @@ void smb_pitchShift_destroy
  */
 void smb_pitchShift_apply
 (
-    void* hPS,
+    void* hSmb,
     float pitchShift,
     int frameSize,
     float *indata,
     float *outdata
 )
 {
-    smb_pitchShift_data *h = (smb_pitchShift_data*)(hPS);
+    smb_pitchShift_data *h = (smb_pitchShift_data*)(hSmb);
     double magn, phase, tmp, real, imag;
     double freqPerBin, expct;
     int ch, i, k, qpd, index, fftFrameSize2;
@@ -226,12 +227,22 @@ void smb_pitchShift_apply
     freqPerBin = h->sampleRate/(double)h->fftFrameSize;
     expct = 2.*M_PI*(double)(h->stepSize)/(double)h->fftFrameSize;
 
+    /* flush buffers */
+    if(h->pitchShiftFactor!=pitchShift){
+        h->pitchShiftFactor = pitchShift;
+        for(ch=0; ch<h->nCH; ch++){
+            memset(h->gOutputAccum[ch], 0, h->stepSize*sizeof(float));
+            memset(h->gLastPhase[ch], 0, (h->fftFrameSize/2+1)*sizeof(float));
+            memset(h->gSumPhase[ch], 0, (h->fftFrameSize/2+1)*sizeof(float));
+        }
+    }
+
     /* main processing loop */
     for(ch=0; ch<h->nCH; ch++){
         for (i = 0; i < frameSize; i++){
             /* As long as we have not yet collected enough data just read in */
             h->gInFIFO[ch][h->gRover[ch]] = indata[ch*frameSize+i];
-            outdata[i] = h->gOutFIFO[ch][h->gRover[ch]-(h->inFifoLatency)];
+            outdata[ch*frameSize+i] = h->gOutFIFO[ch][h->gRover[ch]-(h->inFifoLatency)];
             h->gRover[ch]++;
 
             /* now we have enough data for processing */
@@ -239,25 +250,21 @@ void smb_pitchShift_apply
                 h->gRover[ch] = h->inFifoLatency;
 
 #ifdef SMB_ENABLE_SAF_FFT
-                /* apply windowing and copy to complex buffer */
                 for (k = 0; k < h->fftFrameSize;k++)
                     h->gFFTworksp_td[ch][k] = cmplxf(h->gInFIFO[ch][k] * h->window[k], 0.0f);
+                saf_fft_forward(h->hFFT, h->gFFTworksp_td[ch], h->gFFTworksp_fd[ch]);
 #else
                 /* do windowing and re,im interleave */
                 for (k = 0; k < h->fftFrameSize;k++) {
                     h->gFFTworksp[ch][2*k] = h->gInFIFO[ch][k] * h->window[k];
                     h->gFFTworksp[ch][2*k+1] = 0.;
                 }
+
+                /* do transform */
+                smbFft(h->gFFTworksp[ch], h->fftFrameSize, -1);
 #endif
 
                 /* ***************** ANALYSIS ******************* */
-                /* do transform */
-#ifdef SMB_ENABLE_SAF_FFT
-                saf_fft_forward(h->hFFT, h->gFFTworksp_td[ch], h->gFFTworksp_fd[ch]);
-#else
-                smbFft(h->gFFTworksp[ch], h->fftFrameSize, -1);
-#endif
-                /* this is the analysis step */
                 for (k = 0; k <= fftFrameSize2; k++) {
 #ifdef SMB_ENABLE_SAF_FFT
                     real = crealf(h->gFFTworksp_fd[ch][k]);
@@ -301,10 +308,10 @@ void smb_pitchShift_apply
                 memset(h->gSynMagn[ch], 0, h->fftFrameSize*sizeof(float));
                 memset(h->gSynFreq[ch], 0, h->fftFrameSize*sizeof(float));
                 for (k = 0; k <= fftFrameSize2; k++) {
-                    index = k*pitchShift;
+                    index = k*(h->pitchShiftFactor);
                     if (index <= fftFrameSize2) {
                         h->gSynMagn[ch][index] += (h->gAnaMagn[ch][k]);
-                        h->gSynFreq[ch][index] = h->gAnaFreq[ch][k] * pitchShift;
+                        h->gSynFreq[ch][index] = h->gAnaFreq[ch][k] * (h->pitchShiftFactor);
                     }
                 }
 
@@ -340,26 +347,23 @@ void smb_pitchShift_apply
 #endif
                 }
 
-                /* zero negative frequencies */
 #ifdef SMB_ENABLE_SAF_FFT
                 for (k = fftFrameSize2+1; k < h->fftFrameSize; k++)
                     h->gFFTworksp_fd[ch][k] = cmplxf(0.0f, 0.0f);
+
+                saf_fft_backward(h->hFFT, h->gFFTworksp_fd[ch], h->gFFTworksp_td[ch]);
+
+                for(k=0; k < h->fftFrameSize; k++)
+                    h->gOutputAccum[ch][k] += 2.*(h->window[k])*crealf(h->gFFTworksp_td[ch][k])/((h->osamp)); 
 #else
+                /* zero negative frequencies */
                 for (k = h->fftFrameSize+2; k < 2*(h->fftFrameSize); k++)
                     h->gFFTworksp[ch][k] = 0.;
-#endif
 
                 /* do inverse transform */
-#ifdef SMB_ENABLE_SAF_FFT
-                saf_fft_backward(h->hFFT, h->gFFTworksp_fd[ch], h->gFFTworksp_td[ch]);
-#else
                 smbFft(h->gFFTworksp[ch], h->fftFrameSize, 1);
-#endif
+
                 /* do windowing and add to output accumulator */
-#ifdef SMB_ENABLE_SAF_FFT
-                for(k=0; k < h->fftFrameSize; k++)
-                    h->gOutputAccum[ch][k] += 2.*(h->window[k])*crealf(h->gFFTworksp_td[ch][k])/(fftFrameSize2*(h->osamp));
-#else
                 for(k=0; k < h->fftFrameSize; k++)
                     h->gOutputAccum[ch][k] += 2.*(h->window[k])*(h->gFFTworksp[ch][2*k])/(fftFrameSize2*(h->osamp));
 #endif

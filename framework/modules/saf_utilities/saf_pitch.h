@@ -45,14 +45,14 @@ extern "C" {
  *       Oversampling factor will increase latency, but also improve ignal
  *       fidelity.
  *
- * @param[in] hPS          (&) address of smb pitchShifter handle
+ * @param[in] hSmb         (&) address of smb pitchShifter handle
  * @param[in] nCH          number of channels
  * @param[in] fftFrameSize FFT size
  * @param[in] osamp        Oversampling/overlapping factor
  * @param[in] sampleRate   Sampling rate, Hz
  */
 void smb_pitchShift_create(/* Input Arguments */
-                           void** hPS,
+                           void** hSmb,
                            int nCH,
                            int fftFrameSize,
                            int osamp,
@@ -61,10 +61,10 @@ void smb_pitchShift_create(/* Input Arguments */
 /**
  * Destroys an instance of SMB PitchShifter
  *
- * @param[in] hPS (&) address of smb pitchShifter handle
+ * @param[in] hSmb (&) address of smb pitchShifter handle
  */
 void smb_pitchShift_destroy(/* Input Arguments */
-                            void ** const hPS);
+                            void ** const hSmb);
 
 /**
  * Performs pitch shifting of the input signals, while retaining the same time
@@ -75,9 +75,9 @@ void smb_pitchShift_destroy(/* Input Arguments */
  * frame-by-frame processing. It also supports multiple input channels and
  * employs saf_fft and saf_veclib for additional run-time optimisations.
  *
- * @param[in]  hPS        (&) smb pitchShifter handle
- * @param[in]  pitchShift Pitch shifting factor, e.g. 0.5: down 1 octave, 1: no
- *                        shift, 2: up 1 octave
+ * @param[in]  hSmb       (&) smb pitchShifter handle
+ * @param[in]  pitchShift Pitch shift factor, 0.5: down 1 octave, 1: no shift,
+ *                        2: up 1 octave
  * @param[in]  frameSize  Number of samples in frame
  * @param[in]  inFrame    Input frame;  FLAT: nCH x frameSize
  * @param[out] outFrame   Output frame; FLAT: nCH x frameSize
@@ -85,7 +85,7 @@ void smb_pitchShift_destroy(/* Input Arguments */
  * @see [1] http://blogs.zynaptiq.com/bernsee/pitch-shifting-using-the-ft/
  */
 void smb_pitchShift_apply(/* Input Arguments */
-                          void* hPS,
+                          void* hSmb,
                           float pitchShift,
                           int frameSize,
                           float *inFrame,
