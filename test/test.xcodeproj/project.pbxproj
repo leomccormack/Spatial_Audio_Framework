@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		50687DC92463E46B00D70279 /* saf_reverb.c in Sources */ = {isa = PBXBuildFile; fileRef = 50687DC6246330E500D70279 /* saf_reverb.c */; };
+		50687DCA2463E46F00D70279 /* saf_reverb_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50687DC7246330E500D70279 /* saf_reverb_internal.c */; };
 		508FBD982456D2650076C205 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBD7D2456BE070076C205 /* main.c */; };
 		508FBDA12456D31F0076C205 /* unity.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBD9E2456D31F0076C205 /* unity.c */; };
 		508FBDA52456D3300076C205 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBDA32456D3300076C205 /* timer.c */; };
@@ -55,6 +57,10 @@
 
 /* Begin PBXFileReference section */
 		506254B92456BCCB00C304A7 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
+		50687DC5246330E500D70279 /* saf_reverb_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_reverb_internal.h; sourceTree = "<group>"; };
+		50687DC6246330E500D70279 /* saf_reverb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_reverb.c; sourceTree = "<group>"; };
+		50687DC7246330E500D70279 /* saf_reverb_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_reverb_internal.c; sourceTree = "<group>"; };
+		50687DC8246330E500D70279 /* saf_reverb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_reverb.h; sourceTree = "<group>"; };
 		508FBD7D2456BE070076C205 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		508FBD9E2456D31F0076C205 /* unity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unity.c; sourceTree = "<group>"; };
 		508FBD9F2456D31F0076C205 /* unity_internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unity_internals.h; sourceTree = "<group>"; };
@@ -154,6 +160,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		50687DC4246330E500D70279 /* saf_reverb */ = {
+			isa = PBXGroup;
+			children = (
+				50687DC8246330E500D70279 /* saf_reverb.h */,
+				50687DC5246330E500D70279 /* saf_reverb_internal.h */,
+				50687DC6246330E500D70279 /* saf_reverb.c */,
+				50687DC7246330E500D70279 /* saf_reverb_internal.c */,
+			);
+			path = saf_reverb;
+			sourceTree = "<group>";
+		};
 		508FBD9D2456D31F0076C205 /* unity */ = {
 			isa = PBXGroup;
 			children = (
@@ -246,6 +263,7 @@
 		508FBDBA2456D3400076C205 /* modules */ = {
 			isa = PBXGroup;
 			children = (
+				50687DC4246330E500D70279 /* saf_reverb */,
 				508FBDBB2456D3400076C205 /* saf_cdf4sap */,
 				508FBDBE2456D3400076C205 /* saf_hoa */,
 				508FBDC32456D3400076C205 /* saf_utilities */,
@@ -412,6 +430,7 @@
 				508FBE092456D3400076C205 /* saf_sofa_reader.c in Sources */,
 				508FBDFC2456D3400076C205 /* saf_fft.c in Sources */,
 				508FBE0A2456D3400076C205 /* saf_hrir.c in Sources */,
+				50687DCA2463E46F00D70279 /* saf_reverb_internal.c in Sources */,
 				508FBDFA2456D3400076C205 /* saf_loudspeaker_presets.c in Sources */,
 				508FBDF62456D3400076C205 /* saf_hoa.c in Sources */,
 				508FBDEF2456D3400076C205 /* md_malloc.c in Sources */,
@@ -434,6 +453,7 @@
 				508FBDF12456D3400076C205 /* kiss_fftr.c in Sources */,
 				508FBDF22456D3400076C205 /* afSTFTlib.c in Sources */,
 				508FBDF32456D3400076C205 /* convhull_3d.c in Sources */,
+				50687DC92463E46B00D70279 /* saf_reverb.c in Sources */,
 				508FBDF72456D3400076C205 /* saf_error.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

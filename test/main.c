@@ -27,6 +27,7 @@
 #include "saf.h"
 
 /* Prototypes */
+void test__ims_shoebox(void);
 void test__saf_rfft(void);
 void test__afSTFTMatrix(void);
 void test__afSTFT(void);
@@ -60,6 +61,7 @@ printf("*****************************************************************\n"
     UNITY_BEGIN();
 
     /* run each unit test */
+    RUN_TEST(test__ims_shoebox);
     RUN_TEST(test__saf_rfft);
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
     RUN_TEST(test__afSTFTMatrix);
@@ -78,6 +80,31 @@ printf("*****************************************************************\n"
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
 
+void test__ims_shoebox(void){
+    void* hIms;
+    const int nBands = 7;
+    const float abs_wall[nBands][6] =  /* Absorption Coefficients per Octave band, and per wall */
+      { {0.180791250000000f, 0.207307300000001f, 0.134990800000000f, 0.229002250000001f, 0.212128400000001f, 0.241055000000001f},
+        {0.225971250000001f, 0.259113700000001f, 0.168725200000000f, 0.286230250000001f, 0.265139600000001f, 0.301295000000001f},
+        {0.258251250000001f, 0.296128100000001f, 0.192827600000001f, 0.327118250000001f, 0.303014800000001f, 0.344335000000001f},
+        {0.301331250000001f, 0.345526500000001f, 0.224994000000001f, 0.381686250000001f, 0.353562000000001f, 0.401775000000001f},
+        {0.361571250000001f, 0.414601700000001f, 0.269973200000001f, 0.457990250000001f, 0.424243600000001f, 0.482095000000001f},
+        {0.451931250000001f, 0.518214500000001f, 0.337442000000001f, 0.572446250000002f, 0.530266000000002f, 0.602575000000002f},
+        {0.602591250000002f, 0.690971300000002f, 0.449934800000001f, 0.763282250000002f, 0.707040400000002f, 0.803455000000002f} };
+    const float src_pos[3] = {5.1f, 6.0f, 1.1f};
+    const float rec_pos[3] = {5.0f, 4.0f, 1.0f};
+
+    /* Set-up shoebox room simulator */
+    ims_shoeboxroom_create(&hIms, 10, 7, 3, (float*)abs_wall, 125, nBands, 343.0f);
+    ims_shoeboxroom_addSource(hIms, (float*)src_pos);
+    ims_shoeboxroom_addReciever(hIms, (float*)rec_pos);
+
+    
+    ims_shoeboxroom_renderEchogramSH(hIms, 0.1f, 1); 
+
+
+}
+
 void test__saf_rfft(void){
     int i, j, N;
     float* x_td, *test;
@@ -87,10 +114,10 @@ void test__saf_rfft(void){
     /* Config */
     const float acceptedTolerance = 0.000001f;
     const int fftSizesToTest[12] =
-        {16,256,512,1024,2048,4096,8192,16384,32768,65536,1048576,67108864};
+        {16,256,512,1024,2048,4096,8192,16384,32768,65536,1048576,33554432};
 
     /* Loop over the different FFT sizes */
-    for (i=0; i<11; i++){
+    for (i=0; i<12; i++){
         N = fftSizesToTest[i];
 
         /* prep */

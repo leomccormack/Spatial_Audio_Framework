@@ -120,6 +120,15 @@
 #include "../modules/saf_hrir/saf_hrir.h"
 
 /**
+ * SAF Module: REVERB
+ *
+ * ## Dependencies
+ *   saf_utilities, saf_sh
+ */
+#define SAF_MODULE_REVERB
+#include "../modules/saf_reverb/saf_reverb.h"
+
+/**
  * SAF Module: SH
  *
  * A collection of spherical harmonic related functions. Many of which have been
