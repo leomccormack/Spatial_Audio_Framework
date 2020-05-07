@@ -49,6 +49,8 @@ extern "C" {
 # define ISODD(n)    ((n%2 != 0) ? 1 : 0)
 #endif
 
+#define NUM_WALLS_SHOEBOX ( 6 )
+
 typedef void* voidPtr;
 
 typedef struct _position_xyz {
@@ -60,12 +62,19 @@ typedef struct _position_xyz {
 
 typedef position_xyz reflOrder;
 
+/**
+ * Helper structure, comprising variables used when computing echograms and
+ * rendering RIRs. The idea is that there should be one instance of this per
+ * source/reciever/band.
+ */
 typedef struct _ims_core_workspace
 {
     /* Locals */
     int room[3];
     float d_max;
     position_xyz src, rec;
+    float** abs_wall;
+    int nBands;
 
     /* Internal */
     float Nx, Ny, Nz;
@@ -73,11 +82,20 @@ typedef struct _ims_core_workspace
     int* validIDs;
     float* II, *JJ, *KK;
     float* s_x, *s_y, *s_z, *s_d, *s_t, *s_att;
+
+    /* Echograms */
+    int refreshEchogramFLAG;
     void* hEchogram;
-    void* hEchogram_rec; 
+    void* hEchogram_rec;
+    voidPtr* hEchogram_abs;
  
 }ims_core_workspace;
 
+/**
+ * Main structure for IMS. It comprises variables describing the room, and the
+ * sources and recievers inside it. It also includes "core workspace" handles
+ * for each source/receiver position
+ */
 typedef struct _ims_scene_data
 {
     /* Copy of input arguments */
@@ -92,13 +110,12 @@ typedef struct _ims_scene_data
     long* src_IDs;
     long* rec_IDs;
     long nSources;
-    long nRecievers;
+    long nReceivers;
 
     /* Internal */
     float* band_centerfreqs;
     float fs;
-    voidPtr** hCoreWrkSpc;    //per source/receiver combination
-    voidPtr*** hEchograms_abs;  //per source/receiver/octaveBand
+    voidPtr** hCoreWrkSpc;   /* one per source/receiver combination */
 
 } ims_scene_data;
 
@@ -107,16 +124,17 @@ typedef struct _ims_scene_data
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-void ims_shoebox_coreWorkspaceCreate(void** hWork);
+void ims_shoebox_coreWorkspaceCreate(void** hWork, int nBands);
 
 void ims_shoebox_echogramCreate(void** hEcho);
 
-/*
-Calculates an echogram of a rectangular space using ISM.
-%   IMS_CORE calculates an echogram of a rectangular space using
-%   the Image-Source Method, for a given source and receiver. Input
-%   argument room should be a structure with the following fields:
-%   room-->length, width, height, absorption. room.absoprtion is a 2x3 matrix
+/**
+ * Calculates an echogram of a rectangular space using the image source method
+ *
+ * coreInit calculates an echogram of a rectangular space using the Image-Source
+ * Method, for a given source and receiver. Input argument room should be a
+ * structure with the following fields: room-->length, width, height,
+ * absorption. room.absoprtion is a 2x3 matrix
 %   with absorption coefficients (broadband) for each of the walls on the
 %   respective planes [x+ y+ z+; x- y- z-].
 %
@@ -144,16 +162,18 @@ void ims_shoebox_coreInit(void* hWork,
                           position_xyz src,
                           position_xyz rec,
                           float maxTime,
-                          float c_ms);//,
-                      //void* hEchogram);
+                          float c_ms);
 
 
 void ims_shoebox_coreRecModuleSH(void* hWork,
                                  int sh_order);
 
 void ims_shoebox_coreAbsorptionModule(void* hWork,
-                                      float* abs_wall,
-                                      void* hEchogram_abs);
+                                      float** abs_wall);
+
+void ims_shoebox_renderRIR(void* hWork,
+                           int fractionalDelayFLAG,
+                           float* rir);
 
 
 #ifdef __cplusplus

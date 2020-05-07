@@ -67,27 +67,41 @@ void ims_shoebox_echogramResize
 
 void ims_shoebox_coreWorkspaceCreate
 (
-    void** hWork
+    void** hWork,
+    int nBands
 )
 {
     *hWork = malloc1d(sizeof(ims_core_workspace));
     ims_core_workspace *h = (ims_core_workspace*)(*hWork);
-    int i;
+    int i, band;
 
+    /* locals */
     h->d_max = 0.0f;
     h->lengthVec = 0;
     h->numImageSources = 0;
+//    for(i=0; i<NUM_WALLS_SHOEBOX; i++)
+//        h->abs_wall[i] = -1.0f; /* illegal value (forces reinit) */
     memset(h->room, 0, 3*sizeof(int));
     for(i=0; i<3; i++){
         h->src.v[i] = -1; /* outside the room (forces reinit) */
         h->rec.v[i] = -1;
     }
+    h->nBands = nBands;
+
+    /* Internals */
     h->validIDs = NULL;
     h->II = h->JJ = h->KK = NULL;
     h->s_x = h->s_y = h->s_z = h->s_d = NULL;
     h->s_t = h->s_att = NULL;
+
+    h->refreshEchogramFLAG = 1;
+
+    /* Echograms */
     ims_shoebox_echogramCreate( &(h->hEchogram) );
     ims_shoebox_echogramCreate( &(h->hEchogram_rec) );
+    h->hEchogram_abs = malloc1d(nBands*sizeof(voidPtr));
+    for(band=0; band< nBands; band++)
+        ims_shoebox_echogramCreate( &(h->hEchogram_abs[band]) );
 }
 
 void ims_shoebox_coreInit
@@ -272,71 +286,91 @@ void ims_shoebox_coreRecModuleSH
 void ims_shoebox_coreAbsorptionModule
 (
     void* hWork,
-    float* abs_wall,
-    void* hEchogram_abs
+    float** abs_wall//,
+    //void* hEchogram_abs
 )
 {
     ims_core_workspace *h = (ims_core_workspace*)(hWork);
     echogram_data *echogram_rec = (echogram_data*)(h->hEchogram_rec);
-    echogram_data *echogram_abs = (echogram_data*)(hEchogram_abs);
-    int i,j;
+    echogram_data *echogram_abs;
+    int i,j,band;
     float r_x[2], r_y[2], r_z[2];
     float abs_x, abs_y, abs_z, s_abs_tot;
 
-    /* Resize container (only done if needed) */
-    ims_shoebox_echogramResize(hEchogram_abs, echogram_rec->numImageSources, echogram_rec->nChannels);
 
-    /* Copy data */
-    for(i=0; i<echogram_abs->numImageSources; i++){
-        for(j=0; j<echogram_abs->nChannels; j++)
-            echogram_abs->value[i][j] = echogram_rec->value[i][j];
-        echogram_abs->time[i] = echogram_rec->time[i];
-        for(j=0; j<3; j++){
-            echogram_abs->order[i][j] = echogram_rec->order[i][j];
-            echogram_abs->coords[i][j] = echogram_rec->coords[i][j];
+    for(band=0; band < h->nBands; band++){
+        echogram_abs = h->hEchogram_abs[band];
+
+        /* Resize container (only done if needed) */
+        ims_shoebox_echogramResize(h->hEchogram_abs[band], echogram_rec->numImageSources, echogram_rec->nChannels);
+
+        /* Copy data */
+        for(i=0; i<echogram_abs->numImageSources; i++){
+            for(j=0; j<echogram_abs->nChannels; j++)
+                echogram_abs->value[i][j] = echogram_rec->value[i][j];
+            echogram_abs->time[i] = echogram_rec->time[i];
+            for(j=0; j<3; j++){
+                echogram_abs->order[i][j] = echogram_rec->order[i][j];
+                echogram_abs->coords[i][j] = echogram_rec->coords[i][j];
+            }
+            echogram_abs->sortedIdx[i] = i;
         }
-        echogram_abs->sortedIdx[i] = i;
+
+        /* Reflection coefficients given the absorption coefficients for x, y, z
+         * walls per frequency */
+        r_x[0] = sqrtf(1.0f - abs_wall[band][0]);
+        r_x[1] = sqrtf(1.0f - abs_wall[band][1]);
+        r_y[0] = sqrtf(1.0f - abs_wall[band][2]);
+        r_y[1] = sqrtf(1.0f - abs_wall[band][3]);
+        r_z[0] = sqrtf(1.0f - abs_wall[band][4]);
+        r_z[1] = sqrtf(1.0f - abs_wall[band][5]);
+
+        /* find total absorption coefficients by calculating the number of hits on
+         * every surface, based on the order per dimension */
+        for(i=0; i<echogram_abs->numImageSources; i++){
+            /* Surfaces intersecting the x-axis */
+            if(ISEVEN(echogram_abs->order[i][0]))
+                abs_x = powf(r_x[0], (float)abs(echogram_abs->order[i][0])/2.0f) * powf(r_x[1], (float)abs(echogram_abs->order[i][0])/2.0f);
+            else if (/* ISODD AND */echogram_abs->order[i][0]>0)
+                abs_x = powf(r_x[0], ceilf((float)echogram_abs->order[i][0]/2.0f)) * powf(r_x[1], floorf((float)echogram_abs->order[i][0]/2.0f));
+            else /* ISODD AND NEGATIVE */
+                abs_x = powf(r_x[0], floorf((float)abs(echogram_abs->order[i][0])/2.0f)) * powf(r_x[1], ceilf((float)abs(echogram_abs->order[i][0])/2.0f));
+
+            /* Surfaces intersecting the y-axis */
+            if(ISEVEN(echogram_abs->order[i][1]))
+                abs_y = powf(r_y[0], (float)abs(echogram_abs->order[i][1])/2.0f) * powf(r_y[1], (float)abs(echogram_abs->order[i][1])/2.0f);
+            else if (/* ISODD AND */echogram_abs->order[i][1]>0)
+                abs_y = powf(r_y[0], ceilf((float)echogram_abs->order[i][1]/2.0f)) * powf(r_y[1], floorf((float)echogram_abs->order[i][1]/2.0f));
+            else /* ISODD AND NEGATIVE */
+                abs_y = powf(r_y[0], floorf((float)abs(echogram_abs->order[i][1])/2.0f)) * powf(r_y[1], ceilf((float)abs(echogram_abs->order[i][1])/2.0f));
+
+            /* Surfaces intersecting the y-axis */
+            if(ISEVEN(echogram_abs->order[i][2]))
+                abs_z = powf(r_z[0], (float)abs(echogram_abs->order[i][2])/2.0f) * powf(r_z[1], (float)abs(echogram_abs->order[i][2])/2.0f);
+            else if (/* ISODD AND */echogram_abs->order[i][2]>0)
+                abs_z = powf(r_z[0], ceilf((float)echogram_abs->order[i][2]/2.0f)) * powf(r_z[1], floorf((float)echogram_abs->order[i][2]/2.0f));
+            else /* ISODD AND NEGATIVE */
+                abs_z = powf(r_z[0], floorf((float)abs(echogram_abs->order[i][2])/2.0f)) * powf(r_z[1], ceilf((float)abs(echogram_abs->order[i][2])/2.0f));
+
+            /* Apply Absorption */
+            s_abs_tot = abs_x * abs_y * abs_z;
+            for(j=0; j<echogram_abs->nChannels; j++)
+                echogram_abs->value[i][j] *= s_abs_tot;
+        }
     }
+}
 
-    /* Reflection coefficients given the absorption coefficients for x, y, z
-     * walls per frequency */
-    r_x[0] = sqrtf(1.0f - abs_wall[0]);
-    r_x[1] = sqrtf(1.0f - abs_wall[1]);
-    r_y[0] = sqrtf(1.0f - abs_wall[3]);
-    r_y[1] = sqrtf(1.0f - abs_wall[4]);
-    r_z[0] = sqrtf(1.0f - abs_wall[5]);
-    r_z[1] = sqrtf(1.0f - abs_wall[6]);
 
-    /* find total absorption coefficients by calculating the number of hits on
-     * every surface, based on the order per dimension */
-    for(i=0; i<echogram_abs->numImageSources; i++){
-        /* Surfaces intersecting the x-axis */
-        if(ISEVEN(echogram_abs->order[i][0]))
-            abs_x = powf(r_x[0], (float)abs(echogram_abs->order[i][0])/2.0f) * powf(r_x[1], (float)abs(echogram_abs->order[i][0])/2.0f);
-        else if (/* ISODD AND */echogram_abs->order[i][0]>0)
-            abs_x = powf(r_x[0], ceilf((float)echogram_abs->order[i][0]/2.0f)) * powf(r_x[1], floorf((float)echogram_abs->order[i][0]/2.0f));
-        else /* ISODD AND NEGATIVE */
-            abs_x = powf(r_x[0], floorf((float)abs(echogram_abs->order[i][0])/2.0f)) * powf(r_x[1], ceilf((float)abs(echogram_abs->order[i][0])/2.0f));
+void ims_shoebox_renderRIR
+(
+    void* hWork,
+    //void* hEchogram_abs,
+    int fractionalDelayFLAG,
+    float* rir // precompute, we know the maxlength and fs already, so should be able to do this for each workspace handle?
+)
+{
+    ims_core_workspace *h = (ims_core_workspace*)(hWork);
+    //echogram_data *echogram_abs = (echogram_data*)(hEchogram_abs);
 
-        /* Surfaces intersecting the y-axis */
-        if(ISEVEN(echogram_abs->order[i][1]))
-            abs_y = powf(r_y[1], (float)abs(echogram_abs->order[i][1])/2.0f) * powf(r_y[1], (float)abs(echogram_abs->order[i][1])/2.0f);
-        else if (/* ISODD AND */echogram_abs->order[i][1]>0)
-            abs_y = powf(r_y[1], ceilf((float)echogram_abs->order[i][1]/2.0f)) * powf(r_y[1], floorf((float)echogram_abs->order[i][1]/2.0f));
-        else /* ISODD AND NEGATIVE */
-            abs_y = powf(r_y[1], floorf((float)abs(echogram_abs->order[i][1])/2.0f)) * powf(r_y[1], ceilf((float)abs(echogram_abs->order[i][1])/2.0f));
-
-        /* Surfaces intersecting the y-axis */
-        if(ISEVEN(echogram_abs->order[i][2]))
-            abs_z = powf(r_z[0], (float)abs(echogram_abs->order[i][2])/2.0f) * powf(r_z[1], (float)abs(echogram_abs->order[i][2])/2.0f);
-        else if (/* ISODD AND */echogram_abs->order[i][2]>0)
-            abs_z = powf(r_z[0], ceilf((float)echogram_abs->order[i][2]/2.0f)) * powf(r_z[1], floorf((float)echogram_abs->order[i][2]/2.0f));
-        else /* ISODD AND NEGATIVE */
-            abs_z = powf(r_z[0], floorf((float)abs(echogram_abs->order[i][2])/2.0f)) * powf(r_z[1], ceilf((float)abs(echogram_abs->order[i][2])/2.0f));
-
-        /* Apply Absorption */
-        s_abs_tot = abs_x * abs_y * abs_z;
-        for(j=0; j<echogram_abs->nChannels; j++)
-            echogram_abs->value[i][j] *= s_abs_tot;
-    } 
+    
 }

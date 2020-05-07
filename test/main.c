@@ -82,34 +82,12 @@ printf("*****************************************************************\n"
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
 
-void test__sortf(void){
-    float* values;
-    int* sortedIdx;
+void test__ims_shoebox(void){
+    void* hIms;
+    float mov_src_pos[3];
     int i;
 
     /* Config */
-    const int numValues = 10e5;
-
-    /* Prep */
-    sortedIdx = malloc1d(numValues*sizeof(int));
-    values = malloc1d(numValues*sizeof(float));
-    rand_m1_1(values, numValues);
-
-    /* Sort in accending order */
-    sortf(values, NULL, sortedIdx, numValues, 0);
-
-    /* Check that the next value is either the same or greater than current value */
-    for(i=0; i<numValues-1; i++)
-        TEST_ASSERT_TRUE(values[sortedIdx[i]]<=values[sortedIdx[i+1]]);
-
-
-    /* clean-up */
-    free(values);
-    free(sortedIdx);
-}
-
-void test__ims_shoebox(void){
-    void* hIms;
     const int nBands = 7;
     const float abs_wall[nBands][6] =  /* Absorption Coefficients per Octave band, and per wall */
       { {0.180791250000000f, 0.207307300000001f, 0.134990800000000f, 0.229002250000001f, 0.212128400000001f, 0.241055000000001f},
@@ -125,10 +103,19 @@ void test__ims_shoebox(void){
     /* Set-up shoebox room simulator */
     ims_shoeboxroom_create(&hIms, 10, 7, 3, (float*)abs_wall, 125, nBands, 343.0f, 48e3f);
     ims_shoeboxroom_addSource(hIms, (float*)src_pos);
-    ims_shoeboxroom_addReciever(hIms, (float*)rec_pos);
+    ims_shoeboxroom_addReceiver(hIms, (float*)rec_pos);
 
-    
-    ims_shoeboxroom_renderEchogramSH(hIms, 0.1f, 1); 
+
+    memcpy(mov_src_pos, src_pos, 3*sizeof(float));
+    for(i=0; i<1500; i++){
+        mov_src_pos[1] = 2.0f * 1.0f/(float)1500;
+        ims_shoeboxroom_updateSource(hIms, 0, mov_src_pos); 
+        ims_shoeboxroom_renderEchogramSH(hIms, 0.1f, 0);
+    }
+
+
+
+    int sdsds = 0;
 
 
 }
@@ -344,3 +331,27 @@ void test__smb_pitchShifter(void){
     free(outputData);
 }
 
+void test__sortf(void){
+    float* values;
+    int* sortedIdx;
+    int i;
+
+    /* Config */
+    const int numValues = 10e5;
+
+    /* Prep */
+    sortedIdx = malloc1d(numValues*sizeof(int));
+    values = malloc1d(numValues*sizeof(float));
+    rand_m1_1(values, numValues);
+
+    /* Sort in accending order */
+    sortf(values, NULL, sortedIdx, numValues, 0);
+
+    /* Check that the next value is either the same or greater than current value */
+    for(i=0; i<numValues-1; i++)
+        TEST_ASSERT_TRUE(values[sortedIdx[i]]<=values[sortedIdx[i+1]]);
+
+    /* clean-up */
+    free(values);
+    free(sortedIdx);
+}

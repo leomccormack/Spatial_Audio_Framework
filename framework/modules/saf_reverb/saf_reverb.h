@@ -31,6 +31,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+typedef float* ims_rir;
+
 typedef struct _echogram_data
 {
     int numImageSources; /**< Number of image sources in echogram */
@@ -91,9 +93,13 @@ void ims_shoeboxroom_create(void** phIms,
 long ims_shoeboxroom_addSource(void* hIms,
                                float position_xyz[3]);
 
-long ims_shoeboxroom_addReciever(void* hIms,
+long ims_shoeboxroom_addReceiver(void* hIms,
                                  float rec_xyz[3]);
 
+void ims_shoeboxroom_updateSource(void* hIms,
+                                  long sourceID,
+                                  float position_xyz[3]);
+ 
 void ims_shoeboxroom_renderEchogramSH(void* hIms,
                                       float maxTime_ms,
                                       int sh_order);
