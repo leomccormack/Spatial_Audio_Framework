@@ -33,6 +33,7 @@
 #include <assert.h>
 #include "saf_reverb.h"
 #include "../saf_utilities/saf_utilities.h"
+#include "../saf_sh/saf_sh.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,6 +41,12 @@ extern "C" {
 
 #ifndef NUM_EARS
 # define NUM_EARS 2
+#endif
+#ifndef ISEVEN
+# define ISEVEN(n)   ((n%2 == 0) ? 1 : 0)
+#endif
+#ifndef ISODD
+# define ISODD(n)    ((n%2 != 0) ? 1 : 0)
 #endif
 
 typedef void* voidPtr;
@@ -52,16 +59,6 @@ typedef struct _position_xyz {
 } position_xyz;
 
 typedef position_xyz reflOrder;
-
-typedef struct _echogram_data {
-    int numImageSources;
-    float** value;
-    float* time;
-    reflOrder* order;
-    position_xyz* coords;
-    int* sortedIdx;
-
-} echogram_data;
 
 typedef struct _ims_core_workspace
 {
@@ -76,9 +73,10 @@ typedef struct _ims_core_workspace
     int* validIDs;
     float* II, *JJ, *KK;
     float* s_x, *s_y, *s_z, *s_d, *s_t, *s_att;
+    void* hEchogram;
+    void* hEchogram_rec; 
  
 }ims_core_workspace;
-
 
 typedef struct _ims_scene_data
 {
@@ -98,9 +96,9 @@ typedef struct _ims_scene_data
 
     /* Internal */
     float* band_centerfreqs;
-    float max_time_s;
-    voidPtr** ims_core_work;    //per source/receiver combination
-    echogram_data** echograms;  //per source/receiver combination
+    float fs;
+    voidPtr** hCoreWrkSpc;    //per source/receiver combination
+    voidPtr*** hEchograms_abs;  //per source/receiver/octaveBand
 
 } ims_scene_data;
 
@@ -110,6 +108,8 @@ typedef struct _ims_scene_data
 /* ========================================================================== */
 
 void ims_shoebox_coreWorkspaceCreate(void** hWork);
+
+void ims_shoebox_echogramCreate(void** hEcho);
 
 /*
 Calculates an echogram of a rectangular space using ISM.
@@ -139,13 +139,21 @@ Calculates an echogram of a rectangular space using ISM.
 %                w
 %
 */
-void ims_shoebox_core(void* hWork,
-                      int room[3],
-                      position_xyz src,
-                      position_xyz rec,
-                      float maxTime,
-                      float c_ms,
-                      echogram_data* echogram);
+void ims_shoebox_coreInit(void* hWork,
+                          int room[3],
+                          position_xyz src,
+                          position_xyz rec,
+                          float maxTime,
+                          float c_ms);//,
+                      //void* hEchogram);
+
+
+void ims_shoebox_coreRecModuleSH(void* hWork,
+                                 int sh_order);
+
+void ims_shoebox_coreAbsorptionModule(void* hWork,
+                                      float* abs_wall,
+                                      void* hEchogram_abs);
 
 
 #ifdef __cplusplus

@@ -28,6 +28,43 @@
 #include "saf_reverb_internal.h"
 
 
+void ims_shoebox_echogramCreate
+(
+    void** hEcho
+)
+{
+    *hEcho = malloc1d(sizeof(echogram_data));
+    echogram_data *h = (echogram_data*)(*hEcho);
+
+    h->numImageSources = 0;
+    h->nChannels = 0;
+    h->value = NULL;
+    h->time = NULL;
+    h->order = NULL;
+    h->coords = NULL;
+    h->sortedIdx = NULL;
+}
+
+void ims_shoebox_echogramResize
+(
+    void* hEcho,
+    int numImageSources,
+    int nChannels
+)
+{
+    echogram_data *echogram = (echogram_data*)(hEcho);
+
+    if(echogram->nChannels != nChannels ||  echogram->numImageSources != numImageSources){
+        echogram->nChannels = nChannels;
+        echogram->numImageSources = numImageSources;
+        echogram->value = (float**)realloc2d((void**)echogram->value, numImageSources, nChannels, sizeof(float));
+        echogram->time = realloc1d(echogram->time, numImageSources*sizeof(float));
+        echogram->order = (int**)realloc2d((void**)echogram->order, numImageSources, 3, sizeof(int));
+        echogram->coords = (float**)realloc2d((void**)echogram->coords, numImageSources, 3, sizeof(float));
+        echogram->sortedIdx = realloc1d(echogram->sortedIdx, numImageSources*sizeof(int));
+    }
+}
+
 void ims_shoebox_coreWorkspaceCreate
 (
     void** hWork
@@ -49,20 +86,22 @@ void ims_shoebox_coreWorkspaceCreate
     h->II = h->JJ = h->KK = NULL;
     h->s_x = h->s_y = h->s_z = h->s_d = NULL;
     h->s_t = h->s_att = NULL;
+    ims_shoebox_echogramCreate( &(h->hEchogram) );
+    ims_shoebox_echogramCreate( &(h->hEchogram_rec) );
 }
 
-void ims_shoebox_core
+void ims_shoebox_coreInit
 (
     void* hWork,
     int room[3],
     position_xyz src,
     position_xyz rec,
     float maxTime_s,
-    float c_ms,
-    echogram_data* echogram
+    float c_ms
 )
 {
     ims_core_workspace *h = (ims_core_workspace*)(hWork);
+    echogram_data *echogram = (echogram_data*)(h->hEchogram);
     position_xyz src_orig, rec_orig;
     int imsrc, vIdx;
     int ii, jj, kk;
@@ -149,15 +188,8 @@ void ims_shoebox_core
                 h->validIDs[imsrc] = 0;
         }
 
-        /* Resize echogram struct if needed */
-        if(echogram->numImageSources != h->numImageSources){
-            echogram->numImageSources = h->numImageSources;
-            echogram->value = (float**)realloc2d((void**)echogram->value, h->numImageSources, 1/*omni-pressure*/, sizeof(float));
-            echogram->time = realloc1d(echogram->time, h->numImageSources*sizeof(float));
-            echogram->order = realloc1d(echogram->order, h->numImageSources*sizeof(reflOrder));
-            echogram->coords = realloc1d(echogram->coords, h->numImageSources*sizeof(position_xyz));
-            echogram->sortedIdx = realloc1d(echogram->sortedIdx, h->numImageSources*sizeof(int));
-        }
+        /* Resize echogram container (only done if needed) */
+        ims_shoebox_echogramResize(h->hEchogram, h->numImageSources, 1/*omni-pressure*/);
 
         /* Copy data into echogram struct */
         for(imsrc = 0, vIdx = 0; imsrc<h->lengthVec; imsrc++){
@@ -169,14 +201,14 @@ void ims_shoebox_core
                 echogram->value[vIdx][0]   = h->s_d[imsrc]<=1 ? 1.0f : 1.0f / h->s_d[imsrc];
 
                 /* Order */
-                echogram->order[vIdx].v[0] = h->II[imsrc];
-                echogram->order[vIdx].v[1] = h->JJ[imsrc];
-                echogram->order[vIdx].v[2] = h->KK[imsrc];
+                echogram->order[vIdx][0] = h->II[imsrc];
+                echogram->order[vIdx][1] = h->JJ[imsrc];
+                echogram->order[vIdx][2] = h->KK[imsrc];
 
                 /* Coordinates */
-                echogram->coords[vIdx].x = h->s_x[imsrc];
-                echogram->coords[vIdx].y = h->s_y[imsrc];
-                echogram->coords[vIdx].z = h->s_z[imsrc];
+                echogram->coords[vIdx][0] = h->s_x[imsrc];
+                echogram->coords[vIdx][1] = h->s_y[imsrc];
+                echogram->coords[vIdx][2] = h->s_z[imsrc];
                 vIdx++;
             }
         }
@@ -184,4 +216,127 @@ void ims_shoebox_core
         /* Find indices to sort reflections according to propagation time (accending order) */
         sortf(echogram->time, NULL, echogram->sortedIdx, echogram->numImageSources, 0);
     }
+}
+
+void ims_shoebox_coreRecModuleSH
+(
+    void* hWork,
+    int sh_order
+)
+{
+    ims_core_workspace *h = (ims_core_workspace*)(hWork);
+    echogram_data *echogram = (echogram_data*)(h->hEchogram);
+    echogram_data *echogram_rec = (echogram_data*)(h->hEchogram_rec);
+    int i, j, nSH;
+    float aziElev_rad[2];
+    float* sh_gains;
+
+    nSH = ORDER2NSH(sh_order);
+
+    /* Resize container (only done if needed) */
+    ims_shoebox_echogramResize(h->hEchogram_rec, echogram->numImageSources, nSH);
+
+    /* Copy 'time', 'coord', 'order', except in accending order w.r.t propogation time  */
+    for(i=0; i<echogram_rec->numImageSources; i++){
+        echogram_rec->time[i] = echogram->time[echogram->sortedIdx[i]];
+        for(j=0; j<3; j++){
+            echogram_rec->order[i][j] = echogram->order[echogram->sortedIdx[i]][j];
+            echogram_rec->coords[i][j] = echogram->coords[echogram->sortedIdx[i]][j];
+        }
+        echogram_rec->sortedIdx[i] = i;
+    }
+
+    /* Copy 'value' (the core omni-pressure), except also in accending order w.r.t propogation time */
+    if(sh_order==0){
+        for(i=0; i<echogram_rec->numImageSources; i++)
+            echogram_rec->value[i][0] = echogram->value[echogram->sortedIdx[i]][0];
+    }
+    /* Impose spherical harmonic directivities onto 'value', and store in accending order w.r.t propogation time */
+    else{
+        sh_gains = malloc1d(nSH*sizeof(float));
+        for(i=0; i<echogram_rec->numImageSources; i++){
+            /* Cartesian coordinates to spherical coordinates */
+            unitCart2Sph(echogram_rec->coords[i], (float*)aziElev_rad);
+            aziElev_rad[1] = M_PI/2.0f-aziElev_rad[1]; /* AziElev to AziInclination convention */
+
+            /* Apply spherical harmonic weights */
+            getSHreal_recur(sh_order, (float*)aziElev_rad, 1, sh_gains);
+            for(j=0; j<nSH; j++){
+                echogram_rec->value[i][j] = sh_gains[j] * (echogram->value[echogram->sortedIdx[i]][0]);
+            }
+        }
+        free(sh_gains);
+    }
+}
+
+void ims_shoebox_coreAbsorptionModule
+(
+    void* hWork,
+    float* abs_wall,
+    void* hEchogram_abs
+)
+{
+    ims_core_workspace *h = (ims_core_workspace*)(hWork);
+    echogram_data *echogram_rec = (echogram_data*)(h->hEchogram_rec);
+    echogram_data *echogram_abs = (echogram_data*)(hEchogram_abs);
+    int i,j;
+    float r_x[2], r_y[2], r_z[2];
+    float abs_x, abs_y, abs_z, s_abs_tot;
+
+    /* Resize container (only done if needed) */
+    ims_shoebox_echogramResize(hEchogram_abs, echogram_rec->numImageSources, echogram_rec->nChannels);
+
+    /* Copy data */
+    for(i=0; i<echogram_abs->numImageSources; i++){
+        for(j=0; j<echogram_abs->nChannels; j++)
+            echogram_abs->value[i][j] = echogram_rec->value[i][j];
+        echogram_abs->time[i] = echogram_rec->time[i];
+        for(j=0; j<3; j++){
+            echogram_abs->order[i][j] = echogram_rec->order[i][j];
+            echogram_abs->coords[i][j] = echogram_rec->coords[i][j];
+        }
+        echogram_abs->sortedIdx[i] = i;
+    }
+
+    /* Reflection coefficients given the absorption coefficients for x, y, z
+     * walls per frequency */
+    r_x[0] = sqrtf(1.0f - abs_wall[0]);
+    r_x[1] = sqrtf(1.0f - abs_wall[1]);
+    r_y[0] = sqrtf(1.0f - abs_wall[3]);
+    r_y[1] = sqrtf(1.0f - abs_wall[4]);
+    r_z[0] = sqrtf(1.0f - abs_wall[5]);
+    r_z[1] = sqrtf(1.0f - abs_wall[6]);
+
+    /* find total absorption coefficients by calculating the number of hits on
+     * every surface, based on the order per dimension */
+    for(i=0; i<echogram_abs->numImageSources; i++){
+        /* Surfaces intersecting the x-axis */
+        if(ISEVEN(echogram_abs->order[i][0]))
+            abs_x = powf(r_x[0], (float)abs(echogram_abs->order[i][0])/2.0f) * powf(r_x[1], (float)abs(echogram_abs->order[i][0])/2.0f);
+        else if (/* ISODD AND */echogram_abs->order[i][0]>0)
+            abs_x = powf(r_x[0], ceilf((float)echogram_abs->order[i][0]/2.0f)) * powf(r_x[1], floorf((float)echogram_abs->order[i][0]/2.0f));
+        else /* ISODD AND NEGATIVE */
+            abs_x = powf(r_x[0], floorf((float)abs(echogram_abs->order[i][0])/2.0f)) * powf(r_x[1], ceilf((float)abs(echogram_abs->order[i][0])/2.0f));
+
+        /* Surfaces intersecting the y-axis */
+        if(ISEVEN(echogram_abs->order[i][1]))
+            abs_y = powf(r_y[1], (float)abs(echogram_abs->order[i][1])/2.0f) * powf(r_y[1], (float)abs(echogram_abs->order[i][1])/2.0f);
+        else if (/* ISODD AND */echogram_abs->order[i][1]>0)
+            abs_y = powf(r_y[1], ceilf((float)echogram_abs->order[i][1]/2.0f)) * powf(r_y[1], floorf((float)echogram_abs->order[i][1]/2.0f));
+        else /* ISODD AND NEGATIVE */
+            abs_y = powf(r_y[1], floorf((float)abs(echogram_abs->order[i][1])/2.0f)) * powf(r_y[1], ceilf((float)abs(echogram_abs->order[i][1])/2.0f));
+
+        /* Surfaces intersecting the y-axis */
+        if(ISEVEN(echogram_abs->order[i][2]))
+            abs_z = powf(r_z[0], (float)abs(echogram_abs->order[i][2])/2.0f) * powf(r_z[1], (float)abs(echogram_abs->order[i][2])/2.0f);
+        else if (/* ISODD AND */echogram_abs->order[i][2]>0)
+            abs_z = powf(r_z[0], ceilf((float)echogram_abs->order[i][2]/2.0f)) * powf(r_z[1], floorf((float)echogram_abs->order[i][2]/2.0f));
+        else /* ISODD AND NEGATIVE */
+            abs_z = powf(r_z[0], floorf((float)abs(echogram_abs->order[i][2])/2.0f)) * powf(r_z[1], ceilf((float)abs(echogram_abs->order[i][2])/2.0f));
+
+        /* Apply Absorption */
+        s_abs_tot = abs_x * abs_y * abs_z;
+        for(j=0; j<echogram_abs->nChannels; j++)
+            echogram_abs->value[i][j] *= s_abs_tot;
+    } 
 }

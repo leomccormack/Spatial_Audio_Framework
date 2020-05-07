@@ -123,7 +123,7 @@ void test__ims_shoebox(void){
     const float rec_pos[3] = {5.0f, 4.0f, 1.0f};
 
     /* Set-up shoebox room simulator */
-    ims_shoeboxroom_create(&hIms, 10, 7, 3, (float*)abs_wall, 125, nBands, 343.0f);
+    ims_shoeboxroom_create(&hIms, 10, 7, 3, (float*)abs_wall, 125, nBands, 343.0f, 48e3f);
     ims_shoeboxroom_addSource(hIms, (float*)src_pos);
     ims_shoeboxroom_addReciever(hIms, (float*)rec_pos);
 

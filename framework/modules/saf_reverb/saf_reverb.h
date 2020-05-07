@@ -31,6 +31,24 @@
 extern "C" {
 #endif /* __cplusplus */
 
+typedef struct _echogram_data
+{
+    int numImageSources; /**< Number of image sources in echogram */
+    int nChannels;       /**< Number of channels */
+    float** value;       /**< Echogram magnitudes per image source and channel;
+                          *   numImageSources x nChannels */
+    float* time;         /**< Propagation time (in seconds) for each image
+                          *   source; numImageSources x 1 */
+    int** order;         /**< Reflection order for each image and dimension;
+                          *   numImageSources x 3 */
+    float** coords;      /**< Reflection coordinates (Cartesian);
+                          *   numImageSources x 3 */
+    int* sortedIdx;      /**< Indices that sort the echogram based on
+                          *   propagation time, in accending order;
+                          *   numImageSources x 1*/
+
+} echogram_data;
+
 /* ========================================================================== */
 /*                               IMS Functions                                */
 /* ========================================================================== */
@@ -67,7 +85,8 @@ void ims_shoeboxroom_create(void** phIms,
                             float* abs_wall,  /* Absorption coefficients for each octave band, and each wall; nOctBands x 6 */
                             float lowestOctaveBand,
                             int nOctBands,
-                            float c_ms);
+                            float c_ms,
+                            float fs);
 
 long ims_shoeboxroom_addSource(void* hIms,
                                float position_xyz[3]);
@@ -78,6 +97,9 @@ long ims_shoeboxroom_addReciever(void* hIms,
 void ims_shoeboxroom_renderEchogramSH(void* hIms,
                                       float maxTime_ms,
                                       int sh_order);
+
+void ims_shoeboxroom_renderSHRIRs(void* hIms,
+                                  int fractionalDelaysFLAG);
 
 
 #ifdef __cplusplus
