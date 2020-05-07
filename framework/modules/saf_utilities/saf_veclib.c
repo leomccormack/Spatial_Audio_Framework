@@ -1176,13 +1176,14 @@ void utility_ceig
 #endif
     
     /* sort the eigenvalues */
-    float* wr;
+    float* wr, *wr_sorted;
     int* sort_idx;
     wr=malloc1d(dim*sizeof(float));
+    wr_sorted=malloc1d(dim*sizeof(float));
     sort_idx=malloc1d(dim*sizeof(int));
     for(i=0; i<dim; i++)
         wr[i] = crealf(w[i]);
-    sortf(wr, NULL, sort_idx, dim, sortDecFLAG);
+    sortf(wr, wr_sorted, sort_idx, dim, sortDecFLAG);
     
     /* output */
     if(D!=NULL)
@@ -1210,9 +1211,9 @@ void utility_ceig
                 for(j=0; j<dim; j++)
                     VR[i*dim+j] = vr[sort_idx[j]*dim+i];
             if(D!=NULL)
-                D[i*dim+i] = cmplxf(wr[i], 0.0f); /* store along the diagonal */
+                D[i*dim+i] = cmplxf(wr_sorted[i], 0.0f); /* store along the diagonal */
             if(eig!=NULL)
-                eig[i] = wr[i];
+                eig[i] = wr_sorted[i];
         }
     }
     
@@ -1221,6 +1222,7 @@ void utility_ceig
     free(vr);
     free(a);
     free(wr);
+    free(wr_sorted);
     free(sort_idx);
 }
 

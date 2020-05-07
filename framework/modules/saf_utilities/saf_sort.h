@@ -44,8 +44,7 @@ extern "C" {
  * returning the new indices as well).
  *
  * @param [in,out] in_vec      Vector to be sorted; len x 1
- * @param [out]    out_vec     Output vector. If NULL, then 'in_vec' is sorted
- *                             "in-place"
+ * @param [out]    out_vec     Output vector (set to NULL if you don't want it)
  * @param [out]    new_idices  Indices used to sort 'in_vec' (set to NULL if you
  *                             don't want them)
  * @param [in]     len         Number of elements in vectors
@@ -62,8 +61,7 @@ void sorti(int* in_vec,
  * (optionally returning the new indices as well).
  *
  * @param [in,out] in_vec      Vector to be sorted; len x 1
- * @param [out]    out_vec     Output vector. If NULL, then 'in_vec' is sorted
- *                             "in-place"
+ * @param [out]    out_vec     Output vector (set to NULL if you don't want it)
  * @param [out]    new_idices  Indices used to sort 'in_vec' (set to NULL if you
  *                             don't want them)
  * @param [in]     len         Number of elements in vectors
@@ -80,8 +78,7 @@ void sortf(float* in_vec,
  * (optionally returning the new indices as well).
  *
  * @param [in,out] in_vec      Vector to be sorted; len x 1
- * @param [out]    out_vec     Output vector. If NULL, then 'in_vec' is sorted
- *                             "in-place"
+ * @param [out]    out_vec     Output vector (set to NULL if you don't want it)
  * @param [out]    new_idices  Indices used to sort 'in_vec' (set to NULL if you
  *                             don't want them)
  * @param [in]     len         Number of elements in vectors

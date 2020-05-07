@@ -81,7 +81,7 @@ static int cmp_asc_float(const void *a,const void *b) {
     struct saf_sort_float *a2 = (struct saf_sort_float*)b;
     if((*a1).val<(*a2).val)return -1;
     else if((*a1).val>(*a2).val)return 1;
-    else return 0;
+    else return 0; 
 }
 
 /**
@@ -144,8 +144,6 @@ void sorti
     for(i=0;i<len;i++){
         if (out_vec!=NULL)
             out_vec[i] = data[i].val;
-        else
-            in_vec[i] = data[i].val; /* overwrite input vector */
         if(new_idices!=NULL)
             new_idices[i] = data[i].idx;
     }
@@ -170,14 +168,12 @@ void sortf
         data[i].idx=i;
     }
     if(descendFLAG)
-        qsort(data,len,sizeof(data[0]),cmp_desc_float);
+        qsort(data,len,sizeof(saf_sort_float),cmp_desc_float);
     else
-        qsort(data,len,sizeof(data[0]),cmp_asc_float);
+        qsort(data,len,sizeof(saf_sort_float),cmp_asc_float);
     for(i=0;i<len;i++){
         if (out_vec!=NULL)
             out_vec[i] = data[i].val;
-        else
-            in_vec[i] = data[i].val; /* overwrite input vector */
         if(new_idices!=NULL)
             new_idices[i] = data[i].idx;
     }
@@ -208,8 +204,6 @@ void sortd
     for(i=0;i<len;i++){
         if (out_vec!=NULL)
             out_vec[i] = data[i].val;
-        else
-            in_vec[i] = data[i].val; /* overwrite input vector */
         if(new_idices!=NULL)
             new_idices[i] = data[i].idx;
     }

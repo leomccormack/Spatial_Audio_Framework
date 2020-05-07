@@ -51,6 +51,18 @@ typedef struct _position_xyz {
     };
 } position_xyz;
 
+typedef position_xyz reflOrder;
+
+typedef struct _echogram_data {
+    int numImageSources;
+    float** value;
+    float* time;
+    reflOrder* order;
+    position_xyz* coords;
+    int* sortedIdx;
+
+} echogram_data;
+
 typedef struct _ims_core_workspace
 {
     /* Locals */
@@ -58,13 +70,13 @@ typedef struct _ims_core_workspace
     float d_max;
     position_xyz src, rec;
 
-    /* Intermediates */
+    /* Internal */
     float Nx, Ny, Nz;
-    int lengthVec;
+    int lengthVec, numImageSources;
+    int* validIDs;
     float* II, *JJ, *KK;
     float* s_x, *s_y, *s_z, *s_d, *s_t, *s_att;
-
-
+ 
 }ims_core_workspace;
 
 
@@ -87,7 +99,8 @@ typedef struct _ims_scene_data
     /* Internal */
     float* band_centerfreqs;
     float max_time_s;
-    voidPtr** ims_core_work;
+    voidPtr** ims_core_work;    //per source/receiver combination
+    echogram_data** echograms;  //per source/receiver combination
 
 } ims_scene_data;
 
@@ -131,7 +144,8 @@ void ims_shoebox_core(void* hWork,
                       position_xyz src,
                       position_xyz rec,
                       float maxTime,
-                      float c_ms);
+                      float c_ms,
+                      echogram_data* echogram);
 
 
 #ifdef __cplusplus

@@ -32,6 +32,7 @@ void test__saf_rfft(void);
 void test__afSTFTMatrix(void);
 void test__afSTFT(void);
 void test__smb_pitchShifter(void);
+void test__sortf(void);
 
 /* ========================================================================== */
 /*                                 Test Config                                */
@@ -52,7 +53,7 @@ static void timerResult(void) {
 
 int main(void){
 printf("*****************************************************************\n"
-       "******** Spatial_Audio_Framework Unit Testing Program ***********\n"
+       "********* Spatial_Audio_Framework Unit Testing Program **********\n"
        "*****************************************************************\n\n");
 
     /* initialise */
@@ -68,6 +69,7 @@ printf("*****************************************************************\n"
 #endif
     RUN_TEST(test__afSTFT);
     RUN_TEST(test__smb_pitchShifter);
+    RUN_TEST(test__sortf);
 
     /* close */
     timer_lib_shutdown();
@@ -79,6 +81,32 @@ printf("*****************************************************************\n"
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__sortf(void){
+    float* values;
+    int* sortedIdx;
+    int i;
+
+    /* Config */
+    const int numValues = 10e5;
+
+    /* Prep */
+    sortedIdx = malloc1d(numValues*sizeof(int));
+    values = malloc1d(numValues*sizeof(float));
+    rand_m1_1(values, numValues);
+
+    /* Sort in accending order */
+    sortf(values, NULL, sortedIdx, numValues, 0);
+
+    /* Check that the next value is either the same or greater than current value */
+    for(i=0; i<numValues-1; i++)
+        TEST_ASSERT_TRUE(values[sortedIdx[i]]<=values[sortedIdx[i+1]]);
+
+
+    /* clean-up */
+    free(values);
+    free(sortedIdx);
+}
 
 void test__ims_shoebox(void){
     void* hIms;
