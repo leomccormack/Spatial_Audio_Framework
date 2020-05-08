@@ -842,7 +842,8 @@ void afSTFTMatrixChannelChange(void* handle, int new_inChannels, int new_outChan
 
     h->maxCh = new_inChannels > new_outChannels ? new_inChannels : new_outChannels;
     h->TDptrs = realloc(h->TDptrs, h->maxCh * sizeof(float*));
-    h->FDtmp = (float_complex**) realloc2d((void**)h->FDtmp, h->maxCh, h->nBands, sizeof(float_complex)); 
+    free(h->FDtmp);
+    h->FDtmp = (float_complex**) malloc2d(h->maxCh, h->nBands, sizeof(float_complex));
 }
 
 void afSTFTMatrixFree(void *handle) {

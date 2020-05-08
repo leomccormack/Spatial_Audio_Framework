@@ -65,12 +65,36 @@ void ims_shoebox_echogramResize
     }
 }
 
+void ims_shoebox_coreWorkspaceDestroy
+(
+    void** hWork
+)
+{
+    ims_core_workspace *h = (ims_core_workspace*)(*hWork);
+
+    if(h!=NULL){
+        free(h->validIDs);
+        free(h->II);
+        free(h->JJ);
+        free(h->KK);
+        free(h->s_x);
+        free(h->s_y);
+        free(h->s_z);
+        free(h->s_d);
+        free(h->s_t);
+        free(h->s_att);
+        free(h);
+        h=NULL;
+    }
+}
+
 void ims_shoebox_coreWorkspaceCreate
 (
     void** hWork,
     int nBands
 )
 {
+    ims_shoebox_coreWorkspaceDestroy(hWork); 
     *hWork = malloc1d(sizeof(ims_core_workspace));
     ims_core_workspace *h = (ims_core_workspace*)(*hWork);
     int i, band;
@@ -79,8 +103,6 @@ void ims_shoebox_coreWorkspaceCreate
     h->d_max = 0.0f;
     h->lengthVec = 0;
     h->numImageSources = 0;
-//    for(i=0; i<NUM_WALLS_SHOEBOX; i++)
-//        h->abs_wall[i] = -1.0f; /* illegal value (forces reinit) */
     memset(h->room, 0, 3*sizeof(int));
     for(i=0; i<3; i++){
         h->src.v[i] = -1; /* outside the room (forces reinit) */

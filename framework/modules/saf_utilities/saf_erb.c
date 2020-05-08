@@ -40,8 +40,8 @@ void findERBpartitions
     float band_centreFreq, erb, erb_centre, tmp;
     
     band_centreFreq = (powf(2.0f, 1.0f/3.0f)+1.0f)/2.0f;
-    free1d((void*)&(*erb_idx));
-    free1d((void*)&(*erb_freqs)); 
+    free(*erb_idx);
+    free(*erb_freqs);
     (*erb_idx) = malloc1d(sizeof(int));
     (*erb_freqs) = malloc1d(sizeof(float));
     (*erb_idx)[0] = 1;

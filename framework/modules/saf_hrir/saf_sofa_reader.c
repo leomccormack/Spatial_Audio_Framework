@@ -47,8 +47,8 @@ void loadSofaFile
     double* IR, *SourcePosition, IR_fs;
     
     /* free any existing memory */
-    free1d((void**)&(*hrirs));
-    free1d((void**)&(*hrir_dirs_deg));
+    free(*hrirs);
+    free(*hrir_dirs_deg);
     
     /* open sofa file */
     /* (retval is set to error value if sofa_filepath==NULL (intentional), or if the file

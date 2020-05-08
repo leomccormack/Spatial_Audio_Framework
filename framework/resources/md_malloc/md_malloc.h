@@ -71,10 +71,6 @@ void* calloc1d(size_t dim1, size_t data_size);
  * 1-D realloc
  */
 void* realloc1d(void* ptr, size_t dim1_data_size);
-/**
- * 1-D free
- */
-void free1d(void** ptr);
 
 /**
  * 2-D malloc */
@@ -83,11 +79,12 @@ void** malloc2d(size_t dim1, size_t dim2, size_t data_size);
  * 2-D calloc */
 void** calloc2d(size_t dim1, size_t dim2, size_t data_size);
 /**
- * 2-D realloc */
+ * 2-D realloc that does NOT retain previous data order */
 void** realloc2d(void** ptr, size_t dim1, size_t dim2, size_t data_size);
 /**
- * 2-D free */
-void free2d(void*** ptr);
+ * 2-D realloc that does retain previous data order */
+void** realloc2d_r(void** ptr, size_t new_dim1, size_t new_dim2,
+                   size_t prev_dim1, size_t prev_dim2, size_t data_size);
  
 /**
  * 3-D malloc */
@@ -97,10 +94,8 @@ void*** malloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size);
 void*** calloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size);
 /**
  * 3-D realloc */
-void*** realloc3d(void*** ptr, size_t dim1, size_t dim2, size_t dim3, size_t data_size);
-/**
- * 3-D free */
-void free3d(void**** ptr);
+void*** realloc3d(void*** ptr, size_t dim1, size_t dim2, size_t dim3,
+                  size_t data_size);
 
 
 #ifdef __cplusplus

@@ -49,7 +49,7 @@ extern "C" {
 # define ISODD(n)    ((n%2 != 0) ? 1 : 0)
 #endif
 
-#define NUM_WALLS_SHOEBOX ( 6 )
+#define IMS_NUM_WALLS_SHOEBOX ( 6 )
 
 typedef void* voidPtr;
 
@@ -72,8 +72,7 @@ typedef struct _ims_core_workspace
     /* Locals */
     int room[3];
     float d_max;
-    position_xyz src, rec;
-    float** abs_wall;
+    position_xyz src, rec; 
     int nBands;
 
     /* Internal */
@@ -98,23 +97,23 @@ typedef struct _ims_core_workspace
  */
 typedef struct _ims_scene_data
 {
-    /* Copy of input arguments */
+    /* Locals */
     int room_dimensions[3];
     float c_ms;
+    float fs;
     int nBands;
     float** abs_wall;
 
     /* Source and receiver positions */
-    position_xyz* src_xyz;
-    position_xyz* rec_xyz;
-    long* src_IDs;
-    long* rec_IDs;
+    position_xyz src_xyz[IMS_MAX_NUM_SOURCES];
+    position_xyz rec_xyz[IMS_MAX_NUM_RECEIVERS];
+    long src_IDs[IMS_MAX_NUM_SOURCES];
+    long rec_IDs[IMS_MAX_NUM_RECEIVERS];
     long nSources;
     long nReceivers;
 
     /* Internal */
     float* band_centerfreqs;
-    float fs;
     voidPtr** hCoreWrkSpc;   /* one per source/receiver combination */
 
 } ims_scene_data;
@@ -125,6 +124,8 @@ typedef struct _ims_scene_data
 /* ========================================================================== */
 
 void ims_shoebox_coreWorkspaceCreate(void** hWork, int nBands);
+
+void ims_shoebox_coreWorkspaceDestroy(void** hWork);
 
 void ims_shoebox_echogramCreate(void** hEcho);
 

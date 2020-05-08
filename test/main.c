@@ -27,12 +27,14 @@
 #include "saf.h"
 
 /* Prototypes */
+
 void test__ims_shoebox(void);
 void test__saf_rfft(void);
 void test__afSTFTMatrix(void);
 void test__afSTFT(void);
 void test__smb_pitchShifter(void);
 void test__sortf(void);
+void test__realloc2d_r(void);
 
 /* ========================================================================== */
 /*                                 Test Config                                */
@@ -42,7 +44,7 @@ static tick_t start, start_test;
 void setUp(void){ start_test = timer_current(); }
 void tearDown(void){ }
 static void timerResult(void) {
-    printf( "    (Time elapsed: %lfs) \n", (double)timer_elapsed( start_test ) );
+    printf( "    (Time elapsed: %lfs) \n", (double)timer_elapsed(start_test) );
 }
 
 #undef RUN_TEST
@@ -70,6 +72,7 @@ printf("*****************************************************************\n"
     RUN_TEST(test__afSTFT);
     RUN_TEST(test__smb_pitchShifter);
     RUN_TEST(test__sortf);
+    RUN_TEST(test__realloc2d_r);
 
     /* close */
     timer_lib_shutdown();
@@ -84,38 +87,45 @@ printf("*****************************************************************\n"
 
 void test__ims_shoebox(void){
     void* hIms;
-    float mov_src_pos[3];
+    float maxTime_s;
+    float mov_src_pos[3], mov_rec_pos[3];
+    long sourceID_1, sourceID_2, receiverID;
     int i;
 
     /* Config */
+    const int sh_order = 3;
     const int nBands = 7;
     const float abs_wall[nBands][6] =  /* Absorption Coefficients per Octave band, and per wall */
-      { {0.180791250000000f, 0.207307300000001f, 0.134990800000000f, 0.229002250000001f, 0.212128400000001f, 0.241055000000001f},
-        {0.225971250000001f, 0.259113700000001f, 0.168725200000000f, 0.286230250000001f, 0.265139600000001f, 0.301295000000001f},
-        {0.258251250000001f, 0.296128100000001f, 0.192827600000001f, 0.327118250000001f, 0.303014800000001f, 0.344335000000001f},
-        {0.301331250000001f, 0.345526500000001f, 0.224994000000001f, 0.381686250000001f, 0.353562000000001f, 0.401775000000001f},
-        {0.361571250000001f, 0.414601700000001f, 0.269973200000001f, 0.457990250000001f, 0.424243600000001f, 0.482095000000001f},
-        {0.451931250000001f, 0.518214500000001f, 0.337442000000001f, 0.572446250000002f, 0.530266000000002f, 0.602575000000002f},
-        {0.602591250000002f, 0.690971300000002f, 0.449934800000001f, 0.763282250000002f, 0.707040400000002f, 0.803455000000002f} };
+      { {0.180791250f, 0.207307300f, 0.134990800f, 0.229002250f, 0.212128400f, 0.241055000f},
+        {0.225971250f, 0.259113700f, 0.168725200f, 0.286230250f, 0.265139600f, 0.301295000f},
+        {0.258251250f, 0.296128100f, 0.192827600f, 0.327118250f, 0.303014800f, 0.344335000f},
+        {0.301331250f, 0.345526500f, 0.224994001f, 0.381686250f, 0.353562000f, 0.401775000f},
+        {0.361571250f, 0.414601700f, 0.269973200f, 0.457990250f, 0.424243600f, 0.482095000f},
+        {0.451931250f, 0.518214500f, 0.337442000f, 0.572446250f, 0.530266000f, 0.602575000f},
+        {0.602591250f, 0.690971300f, 0.449934800f, 0.763282250f, 0.707040400f, 0.803455000f} };
     const float src_pos[3] = {5.1f, 6.0f, 1.1f};
+    const float src2_pos[3] = {2.1f, 4.0f, 1.3f};
     const float rec_pos[3] = {5.0f, 4.0f, 1.0f};
 
-    /* Set-up shoebox room simulator */
-    ims_shoeboxroom_create(&hIms, 10, 7, 3, (float*)abs_wall, 125, nBands, 343.0f, 48e3f);
-    ims_shoeboxroom_addSource(hIms, (float*)src_pos);
-    ims_shoeboxroom_addReceiver(hIms, (float*)rec_pos);
+    /* Set-up the shoebox room simulator, with two sources and one receiver */
+    ims_shoebox_create(&hIms, 10, 7, 3, (float*)abs_wall, 125.0f, nBands, 343.0f, 48e3f);
+    sourceID_1 = ims_shoebox_addSource(hIms, (float*)src_pos);
+    sourceID_2 = ims_shoebox_addSource(hIms, (float*)src2_pos);
+    receiverID = ims_shoebox_addReceiver(hIms, (float*)rec_pos);
 
-
+    /* Moving source No.1 and the receiver */
+    maxTime_s = 0.08f; /* 80ms */
     memcpy(mov_src_pos, src_pos, 3*sizeof(float));
-    for(i=0; i<1500; i++){
-        mov_src_pos[1] = 2.0f * 1.0f/(float)1500;
-        ims_shoeboxroom_updateSource(hIms, 0, mov_src_pos); 
-        ims_shoeboxroom_renderEchogramSH(hIms, 0.1f, 0);
+    memcpy(mov_rec_pos, rec_pos, 3*sizeof(float));
+    for(i=0; i<500; i++){
+        mov_src_pos[1] = 2.0f * 500.0f/(float)i;
+        mov_rec_pos[0] = 3.0f * 500.0f/(float)i;
+        ims_shoebox_updateSource(hIms, sourceID_1, mov_src_pos);
+        ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
+        ims_shoebox_renderEchogramSH(hIms, maxTime_s, sh_order);
     }
 
-
-
-    int sdsds = 0;
+    /* Remove source No.1 */
 
 
 }
@@ -354,4 +364,64 @@ void test__sortf(void){
     /* clean-up */
     free(values);
     free(sortedIdx);
+}
+
+void test__realloc2d_r(void){
+    int s, r, i, j, k;
+    typedef struct _test_data{
+        int ID;
+        float val1, val2;
+    }test_data;
+    test_data** test;
+
+    /* Configure reference data structures */
+    test_data reference[6][6];
+    for(i=0, k=0; i<6; i++){
+        for(j=0; j<6; j++, k++){
+            reference[i][j].ID = k;
+            rand_m1_1(&reference[i][j].val1,1);
+            rand_m1_1(&reference[i][j].val2,1);
+        }
+    }
+
+    /* Starting size */
+    test = (test_data**)malloc2d(1,3,sizeof(test_data));
+    for(s=0; s<1; s++)
+        for(r=0; r<3; r++)
+            memcpy(&test[s][r], &reference[s][r], sizeof(test_data));
+
+    /* Check that increasing the size of the array, still retains the previous data */
+    test = (test_data**)realloc2d_r((void**)test, 4, 3, 1, 3, sizeof(test_data));
+    for(i=0; i<1; i++){
+        for(j=0; j<3; j++){
+            TEST_ASSERT_TRUE(test[i][j].ID==reference[i][j].ID);
+            TEST_ASSERT_TRUE(test[i][j].val1==reference[i][j].val1);
+            TEST_ASSERT_TRUE(test[i][j].val2==reference[i][j].val2);
+        }
+    }
+
+    /* Check that new data can then be added and indexed correctly */
+    for(s=1; s<4; s++)
+        for(r=0; r<3; r++)
+             memcpy(&test[s][r], &reference[s][r], sizeof(test_data));
+    for(i=0; i<4; i++){
+        for(j=0; j<3; j++){
+            TEST_ASSERT_TRUE(test[i][j].ID==reference[i][j].ID);
+            TEST_ASSERT_TRUE(test[i][j].val1==reference[i][j].val1);
+            TEST_ASSERT_TRUE(test[i][j].val2==reference[i][j].val2);
+        }
+    }
+
+    /* Check that the array can be shrunk, but still retain the original data (except truncated) */
+    test = (test_data**)realloc2d_r((void**)test, 4, 2, 4, 3, sizeof(test_data));
+    for(i=0; i<4; i++){
+        for(j=0; j<2; j++){
+            TEST_ASSERT_TRUE(test[i][j].ID==reference[i][j].ID);
+            TEST_ASSERT_TRUE(test[i][j].val1==reference[i][j].val1);
+            TEST_ASSERT_TRUE(test[i][j].val2==reference[i][j].val2);
+        }
+    }
+
+    /* clean-up */
+    free(test);
 }

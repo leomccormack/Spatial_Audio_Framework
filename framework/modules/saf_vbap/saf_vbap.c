@@ -151,9 +151,9 @@ void generateVBAPgainTable3D_srcs
 #endif
     
     /* clean up */
-    free1d((void**)&(out_vertices));
-    free1d((void**)&(out_faces));
-    free1d((void**)&(layoutInvMtx));
+    free(out_vertices);
+    free(out_faces);
+    free(layoutInvMtx);
 }
 
 void generateVBAPgainTable3D
@@ -289,9 +289,9 @@ void generateVBAPgainTable3D
 #endif
     
     /* clean up */
-    free1d((void**)&(out_vertices));
-    free1d((void**)&(out_faces));
-    free1d((void**)&(layoutInvMtx));
+    free(out_vertices);
+    free(out_faces);
+    free(layoutInvMtx);
     free(azi);
     free(ele);
 }
@@ -408,8 +408,8 @@ void generateVBAPgainTable2D_srcs
     (*N_gtable) = N_points;
     
     free(ls_vertices);
-    free1d((void**)&(out_pairs));
-    free1d((void**)&(layoutInvMtx));
+    free(out_pairs);
+    free(layoutInvMtx);
 }
 
 void generateVBAPgainTable2D
@@ -452,8 +452,8 @@ void generateVBAPgainTable2D
     
     free(ls_vertices);
     free(src_dirs);
-    free1d((void**)&(out_pairs));
-    free1d((void**)&(layoutInvMtx));
+    free(out_pairs);
+    free(layoutInvMtx);
 }
 
 /* Laitinen, M., Vilkamo, J., Jussila, K., Politis, A., Pulkki, V. (2014). Gain
@@ -659,7 +659,7 @@ void findLsTriplets
         memcpy((*out_faces), valid_faces, numValidFaces*3*sizeof(int));
 
     /* clean-up */
-    free1d((void**)&(faces));
+    free(faces);
     free(vertices);
     free(valid_faces);
     if(omitLargeTriangles)

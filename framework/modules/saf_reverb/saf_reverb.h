@@ -31,6 +31,12 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/* ========================================================================== */
+/*                         IMS Shoebox Room Simulator                         */
+/* ========================================================================== */
+
+#define IMS_MAX_NUM_SOURCES 100
+#define IMS_MAX_NUM_RECEIVERS 100
 typedef float* ims_rir;
 
 typedef struct _echogram_data
@@ -47,13 +53,9 @@ typedef struct _echogram_data
                           *   numImageSources x 3 */
     int* sortedIdx;      /**< Indices that sort the echogram based on
                           *   propagation time, in accending order;
-                          *   numImageSources x 1*/
+                          *   numImageSources x 1 */
 
 } echogram_data;
-
-/* ========================================================================== */
-/*                               IMS Functions                                */
-/* ========================================================================== */
 
 /*
 % Here set up you scene parameters, source locations, microphone locations,
@@ -80,32 +82,44 @@ typedef struct _echogram_data
 % falling inside the boundaries of the room. */
 
 // create empty room. Hint: add a reciever and source
-void ims_shoeboxroom_create(void** phIms,
-                            int length,
-                            int width,
-                            int height,
-                            float* abs_wall,  /* Absorption coefficients for each octave band, and each wall; nOctBands x 6 */
-                            float lowestOctaveBand,
-                            int nOctBands,
-                            float c_ms,
-                            float fs);
-
-long ims_shoeboxroom_addSource(void* hIms,
-                               float position_xyz[3]);
-
-long ims_shoeboxroom_addReceiver(void* hIms,
-                                 float rec_xyz[3]);
-
-void ims_shoeboxroom_updateSource(void* hIms,
-                                  long sourceID,
-                                  float position_xyz[3]);
+void ims_shoebox_create(void** phIms,
+                        int length,
+                        int width,
+                        int height,
+                        float* abs_wall,  /* Absorption coefficients for each octave band, and each wall; nOctBands x 6 */
+                        float lowestOctaveBand,
+                        int nOctBands,
+                        float c_ms,
+                        float fs);
  
-void ims_shoeboxroom_renderEchogramSH(void* hIms,
-                                      float maxTime_ms,
-                                      int sh_order);
+void ims_shoebox_renderEchogramSH(void* hIms,
+                                  float maxTime_ms,
+                                  int sh_order);
 
-void ims_shoeboxroom_renderSHRIRs(void* hIms,
-                                  int fractionalDelaysFLAG);
+void ims_shoebox_renderSHRIRs(void* hIms,
+                              int fractionalDelaysFLAG);
+
+
+
+
+/* add/remove/update functions: */
+
+long ims_shoebox_addSource(void* hIms,
+                           float position_xyz[3]);
+
+long ims_shoebox_addReceiver(void* hIms,
+                             float rec_xyz[3]);
+
+void ims_shoebox_updateSource(void* hIms,
+                              long sourceID,
+                              float position_xyz[3]);
+
+void ims_shoebox_updateReceiver(void* hIms,
+                                long receiverID,
+                                float position_xyz[3]);
+
+void ims_shoebox_removeSource(void* hIms,
+                              long sourceID);
 
 
 #ifdef __cplusplus
