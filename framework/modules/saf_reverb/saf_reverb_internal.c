@@ -85,6 +85,7 @@ void ims_shoebox_coreWorkspaceDestroy
         free(h->s_att);
         free(h);
         h=NULL;
+        *hWork = NULL;
     }
 }
 

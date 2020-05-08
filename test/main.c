@@ -89,7 +89,7 @@ void test__ims_shoebox(void){
     void* hIms;
     float maxTime_s;
     float mov_src_pos[3], mov_rec_pos[3];
-    long sourceID_1, sourceID_2, receiverID;
+    long sourceID_1, sourceID_2, sourceID_3, sourceID_4, sourceID_5, receiverID;
     int i;
 
     /* Config */
@@ -104,8 +104,11 @@ void test__ims_shoebox(void){
         {0.451931250f, 0.518214500f, 0.337442000f, 0.572446250f, 0.530266000f, 0.602575000f},
         {0.602591250f, 0.690971300f, 0.449934800f, 0.763282250f, 0.707040400f, 0.803455000f} };
     const float src_pos[3] = {5.1f, 6.0f, 1.1f};
-    const float src2_pos[3] = {2.1f, 4.0f, 1.3f};
-    const float rec_pos[3] = {5.0f, 4.0f, 1.0f};
+    const float src2_pos[3] = {2.1f, 1.0f, 1.3f};
+    const float src3_pos[3] = {4.4f, 3.0f, 1.4f};
+    const float src4_pos[3] = {6.4f, 4.0f, 1.3f};
+    const float src5_pos[3] = {8.5f, 5.0f, 1.8f};
+    const float rec_pos[3] = {8.8f, 5.5f, 0.9f};
 
     /* Set-up the shoebox room simulator, with two sources and one receiver */
     ims_shoebox_create(&hIms, 10, 7, 3, (float*)abs_wall, 125.0f, nBands, 343.0f, 48e3f);
@@ -126,6 +129,17 @@ void test__ims_shoebox(void){
     }
 
     /* Remove source No.1 */
+    ims_shoebox_removeSource(hIms, 0);
+
+    /* Add 3 more sources, then remove 2, and add one back again */
+    sourceID_3 = ims_shoebox_addSource(hIms, (float*)src3_pos);
+    sourceID_4 = ims_shoebox_addSource(hIms, (float*)src4_pos);
+    sourceID_5 = ims_shoebox_addSource(hIms, (float*)src5_pos);
+    ims_shoebox_removeSource(hIms, sourceID_3);
+    ims_shoebox_removeSource(hIms, sourceID_4);
+    sourceID_4 = ims_shoebox_addSource(hIms, (float*)src4_pos);
+
+ 
 
 
 }

@@ -68,7 +68,7 @@ void ims_shoebox_create
 
     /* Default is no sources or receivers in the room */
     for(i=0; i<IMS_MAX_NUM_SOURCES; i++)
-        h->src_IDs[i] = -1;
+        h->src_IDs[i] = -1; /* -1 indicates not in use */
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++)
         h->rec_IDs[i] = -1;
     h->nSources = 0;
@@ -123,20 +123,7 @@ void ims_shoebox_renderEchogramSH
                 workspace->refreshEchogramFLAG = 0;
             }
         }
-    } 
-////TEST
-//    int i;
-//    float echograms_value[823];
-//    float echograms_time[823];
-//    reflOrder echograms_order[823];
-//    position_xyz echograms_coords[823];
-//
-//    for(i=0; i<823; i++){
-//        echograms_value[i] = h->echograms[0][0]->value[h->echograms[0][0].sortedIdx[i]][0];
-//        echograms_time[i] = h->echograms[0][0]->time[h->echograms[0][0].sortedIdx[i]];
-//        echograms_order[i] = h->echograms[0][0]->order[h->echograms[0][0].sortedIdx[i]];
-//        echograms_coords[i] = h->echograms[0][0].coords[h->echograms[0][0].sortedIdx[i]];
-//    }
+    }  
 }
 
 void ims_shoebox_renderSHRIRs
@@ -171,26 +158,44 @@ long ims_shoebox_addSource
 )
 {
     ims_scene_data *h = (ims_scene_data*)(hIms);
-    int i, rec;
-    long newID;
+    int i, rec, slot_idx;
 
-    /* Append new source coordinates */
-    h->nSources++;
-    for(i=0; i<3; i++)
-        h->src_xyz[h->nSources-1].v[i] = src_xyz[i];
+    /* Increment number of sources */
+      h->nSources++;
+      assert(h->nSources <= IMS_MAX_NUM_SOURCES);
 
-    /* Assign unique ID */
-    newID = 0;
-    for(i=0; i<h->nSources-1; i++)
-        if(h->src_IDs[i]==newID) /* check ID is not in use */
-            newID++;
-    h->src_IDs[h->nSources-1] = newID;
+      /* Find an unoccupied slot */
+      slot_idx = -1;
+      for(i=0; i<h->nSources; i++){
+          /* an ID of '-1' indicates that it is free to use */
+          if(h->src_IDs[i] == -1){
+              slot_idx = i;
+              break;
+          }
+      }
+      assert(slot_idx != -1); 
 
-    /* Create workspace for all source/receiver combinations, for this new source */
-    for(rec=0; rec<h->nReceivers; rec++)
-        ims_shoebox_coreWorkspaceCreate(&(h->hCoreWrkSpc[rec][h->nSources-1]), h->nBands);
+      /* Assign unique ID */
+      h->src_IDs[slot_idx] = 0;
+      for(i=0; i<h->nSources; i++)
+          if(i!=slot_idx)
+              if(h->src_IDs[i]==h->src_IDs[slot_idx])
+                  h->src_IDs[slot_idx]++; /* increment if ID is in use */
 
-    return newID;
+      //CHECK
+      for(i=0; i<h->nSources; i++)
+          if(i!=slot_idx)
+              assert(h->src_IDs[slot_idx]!=h->src_IDs[i]);
+
+      /* Set starting position */
+      for(i=0; i<3; i++)
+          h->src_xyz[slot_idx].v[i] = src_xyz[i];
+
+      /* Create workspace for all receiver/source combinations, for this new source slot */
+      for(rec=0; rec<h->nReceivers; rec++)
+          ims_shoebox_coreWorkspaceCreate(&(h->hCoreWrkSpc[rec][slot_idx]), h->nBands);
+
+      return h->src_IDs[slot_idx];
 }
 
 long ims_shoebox_addReceiver
@@ -200,26 +205,44 @@ long ims_shoebox_addReceiver
 )
 {
     ims_scene_data *h = (ims_scene_data*)(hIms);
-    int i, src;
-    long newID;
+    int i, src, slot_idx; 
 
-    /* Append new source coordinates */
+    /* Increment number of receivers */
     h->nReceivers++;
-    for(i=0; i<3; i++)
-        h->rec_xyz[h->nReceivers-1].v[i] = rec_xyz[i];
+    assert(h->nReceivers <= IMS_MAX_NUM_RECEIVERS);
+
+    /* Find an unoccupied slot */
+    slot_idx = -1;
+    for(i=0; i<h->nReceivers; i++){
+        /* an ID of '-1' indicates that it is free to use */
+        if(h->rec_IDs[i] == -1){
+            slot_idx = i;
+            break;
+        }
+    }
+    assert(slot_idx != -1);
 
     /* Assign unique ID */
-    newID = 0;
-    for(i=0; i<h->nReceivers-1; i++)
-        if(h->rec_IDs[i]==newID) /* check ID is not in use */
-            newID++;
-    h->rec_IDs[h->nReceivers-1] = newID;
+    h->rec_IDs[slot_idx] = 0;
+    for(i=0; i<h->nReceivers; i++)
+        if(i!=slot_idx)
+            if(h->rec_IDs[i]==h->rec_IDs[slot_idx])
+                h->rec_IDs[slot_idx]++; /* increment if ID is in use */
 
-    /* Create workspace for all receiver/source combinations, for this new receiver */ 
+    //CHECK
+    for(i=0; i<h->nReceivers; i++)
+        if(i!=slot_idx)
+            assert(h->rec_IDs[slot_idx]!=h->rec_IDs[i]);
+
+    /* Set starting position */
+    for(i=0; i<3; i++)
+        h->rec_xyz[slot_idx].v[i] = rec_xyz[i];
+
+    /* Create workspace for all receiver/source combinations, for this new receiver slot */
     for(src=0; src<h->nSources; src++)
-        ims_shoebox_coreWorkspaceCreate(&(h->hCoreWrkSpc[h->nReceivers-1][src]), h->nBands);
+        ims_shoebox_coreWorkspaceCreate(&(h->hCoreWrkSpc[slot_idx][src]), h->nBands);
 
-    return newID;
+    return h->rec_IDs[slot_idx];
 }
 
 void ims_shoebox_updateSource
@@ -287,31 +310,22 @@ void ims_shoebox_removeSource
 )
 {
     ims_scene_data *h = (ims_scene_data*)(hIms);
-    ims_core_workspace* work;
-    voidPtr** new_hCoreWrkSpc;
-    int i, src_idx;
+    int i, slot_idx, rec;
 
     /* Find index corresponding to this source ID */
-    src_idx = -1;
+    slot_idx = -1;
     for(i=0; i<h->nSources; i++)
         if(h->src_IDs[i] == sourceID)
-            src_idx = i;
-    assert(src_idx != -1);
+            slot_idx = i;
+    assert(slot_idx != -1);
 
-//    /* Shift all the sources above this index down 1 slot, and truncate the src_xyz and src_IDs arrays */
-//    for(i=src_idx; src_idx < h->nSources-1; src_idx++){
-//        memcpy(&(h->src_xyz[i]), &(h->src_xyz[i+1]), sizeof(position_xyz));
-//        memcpy(&(h->src_IDs[i]), &(h->src_IDs[i+1]), sizeof(long));
-//    }
-//    h->nSources--;
-//    h->src_xyz = realloc1d(h->src_xyz, h->nSources*sizeof(position_xyz));
-//    h->src_IDs = realloc1d(h->src_IDs, h->nSources*sizeof(long));
+    /* Set ID to -1 (invalid, so no longer rendered) */
+    h->src_IDs[slot_idx] = -1;
 
-    /* Work space handles should also be shifted down */
-//    new_hCoreWrkSpc =
-//    for(i=src_idx; src_idx < h->nSources; src_idx++){
-//
-//    }
+    /* Destroy workspace for all receiver/source combinations, for this new source */
+    for(rec=0; rec<h->nReceivers; rec++)
+        ims_shoebox_coreWorkspaceDestroy(&(h->hCoreWrkSpc[rec][slot_idx]));
 
-
+    /* De-increment number of sources */
+    h->nSources--;
 }

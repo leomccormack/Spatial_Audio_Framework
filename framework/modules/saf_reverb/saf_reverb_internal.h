@@ -108,7 +108,7 @@ typedef struct _ims_scene_data
     position_xyz src_xyz[IMS_MAX_NUM_SOURCES];
     position_xyz rec_xyz[IMS_MAX_NUM_RECEIVERS];
     long src_IDs[IMS_MAX_NUM_SOURCES];
-    long rec_IDs[IMS_MAX_NUM_RECEIVERS];
+    long rec_IDs[IMS_MAX_NUM_RECEIVERS]; 
     long nSources;
     long nReceivers;
 
@@ -136,35 +136,34 @@ void ims_shoebox_echogramCreate(void** hEcho);
  * Method, for a given source and receiver. Input argument room should be a
  * structure with the following fields: room-->length, width, height,
  * absorption. room.absoprtion is a 2x3 matrix
-%   with absorption coefficients (broadband) for each of the walls on the
-%   respective planes [x+ y+ z+; x- y- z-].
-%
-%   source and receiver are structures holding the coordinates of the
-%   source/receiver as: source.coord = [Sx Sy Sz]. There are plans to
-%   include directivity coefficients in the source structure.
-%
-%   Coordinates of source/receiver are specified from the left ground corner
-%   of the room:
-%                ^x
-%              __|__    _
-%             |  |  |   |
-%             |  |  |   |
-%          y<----.  |   | l
-%             |     |   |
-%             |     |   |
-%             o_____|   -
-%
-%             |-----|
-%                w
-%
-*/
+ *   with absorption coefficients (broadband) for each of the walls on the
+ *   respective planes [x+ y+ z+; x- y- z-].
+ *
+ *   source and receiver are structures holding the coordinates of the
+ *   source/receiver as: source.coord = [Sx Sy Sz]. There are plans to
+ *   include directivity coefficients in the source structure.
+ *
+ *   Coordinates of source/receiver are specified from the left ground corner
+ *   of the room:
+ *                ^x
+ *             __|__    _
+ *             |  |  |   |
+ *             |  |  |   |
+ *          y<----.  |   | l
+ *             |     |   |
+ *             |     |   |
+ *             o_____|   -
+ *
+ *             |-----|
+ *                w
+ *
+ */
 void ims_shoebox_coreInit(void* hWork,
                           int room[3],
                           position_xyz src,
                           position_xyz rec,
                           float maxTime,
                           float c_ms);
-
 
 void ims_shoebox_coreRecModuleSH(void* hWork,
                                  int sh_order);
