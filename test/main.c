@@ -120,15 +120,16 @@ void test__ims_shoebox(void){
     receiverID = ims_shoebox_addReceiver(hIms, (float*)rec_pos);
 
     /* Moving source No.1 and the receiver */
-    maxTime_s = 0.08f; /* 50ms */
+    maxTime_s = 0.08f; /* 80ms */
     memcpy(mov_src_pos, src_pos, 3*sizeof(float));
     memcpy(mov_rec_pos, rec_pos, 3*sizeof(float));
     for(i=0; i<500; i++){
-        mov_src_pos[1] = 2.0f * 500.0f/(float)i;
-        mov_rec_pos[0] = 3.0f * 500.0f/(float)i;
+        mov_src_pos[1] = 2.0f + (float)i/500.0f;
+        mov_rec_pos[0] = 3.0f + (float)i/500.0f;
         ims_shoebox_updateSource(hIms, sourceID_1, mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
         ims_shoebox_renderEchogramSH(hIms, maxTime_s, sh_order);
+        ims_shoebox_renderSHRIRs(hIms, 0);
     }
 
     /* Remove source No.1 */
@@ -145,11 +146,12 @@ void test__ims_shoebox(void){
 
     /* Continue rendering */
     for(i=0; i<500; i++){
-        mov_src_pos[1] = 2.0f * 500.0f/(float)i;
-        mov_rec_pos[0] = 3.0f * 500.0f/(float)i;
+        mov_src_pos[1] = 2.0f + (float)i/500.0f;
+        mov_rec_pos[0] = 3.0f + (float)i/500.0f;
         ims_shoebox_updateSource(hIms, sourceID_4, mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
         ims_shoebox_renderEchogramSH(hIms, maxTime_s, sh_order);
+        ims_shoebox_renderSHRIRs(hIms, 0);
     }
 
     /* clean-up */

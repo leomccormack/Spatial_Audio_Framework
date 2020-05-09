@@ -51,7 +51,7 @@ extern "C" {
 
 #define IMS_NUM_WALLS_SHOEBOX ( 6 )
 
-typedef void* voidPtr;
+typedef void* voidPtr; 
 
 typedef struct _position_xyz {
     union {
@@ -89,8 +89,7 @@ typedef struct _ims_core_workspace
     int room[3];
     float d_max;
     position_xyz src, rec; 
-    int nBands;
-    float fs;
+    int nBands; 
 
     /* Internal */
     float Nx, Ny, Nz;
@@ -106,7 +105,11 @@ typedef struct _ims_core_workspace
     voidPtr* hEchogram_abs;
 
     /* Room impulse responses */
-    float** rir_bands;
+    int refreshRIRFLAG;
+    int rir_len_samples;
+    float rir_len_seconds;
+    float*** rir_bands; /* Per band and per channel */
+    float** rir;        /* final combined RIR, per channel */
  
 }ims_core_workspace;
 
@@ -199,8 +202,7 @@ void ims_shoebox_coreAbsorptionModule(void* hWork,
 
 void ims_shoebox_renderRIR(void* hWork,
                            int fractionalDelayFLAG,
-                           float* rir,
-                           int len_rir);
+                           float fs);
 
 
 #ifdef __cplusplus

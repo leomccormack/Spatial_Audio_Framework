@@ -141,8 +141,9 @@ void ims_shoebox_renderEchogramSH
                     /* Apply boundary absoption per band */
                     ims_shoebox_coreAbsorptionModule(workspace, h->abs_wall);
 
-                    /* Indicate that the echogram is now up to date */
+                    /* Indicate that the echogram is now up to date, and that the RIR should now be updated */
                     workspace->refreshEchogramFLAG = 0;
+                    workspace->refreshRIRFLAG = 1;
                 }
             }
         }
@@ -156,16 +157,27 @@ void ims_shoebox_renderSHRIRs
 )
 {
     ims_scene_data *h = (ims_scene_data*)(hIms);
+    ims_core_workspace* workspace;
     int src_idx, rec_idx;
 
     for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++){
         for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
             if( (h->src_IDs[src_idx]!=-1) && (h->rec_IDs[rec_idx]!=-1) ){
 
+                /* Workspace handle for this source/receiver combination */
+                workspace = h->hCoreWrkSpc[rec_idx][src_idx];
+
+                /* Only update if it is required */
+                if(workspace->refreshRIRFLAG){
+                    ims_shoebox_renderRIR(workspace, fractionalDelayFLAG, h->fs);
+
+
+
+                    workspace->refreshRIRFLAG = 0;
+                }
             }
         }
     }
-
 }
 
 

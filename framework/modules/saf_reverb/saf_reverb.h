@@ -36,8 +36,7 @@ extern "C" {
 /* ========================================================================== */
 
 #define IMS_MAX_NUM_SOURCES 100
-#define IMS_MAX_NUM_RECEIVERS 100
-typedef float* ims_rir;
+#define IMS_MAX_NUM_RECEIVERS 100 
 
 /*
  * Here set up you scene parameters, source locations, microphone locations,
