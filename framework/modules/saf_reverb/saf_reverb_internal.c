@@ -65,27 +65,22 @@ void ims_shoebox_echogramResize
     }
 }
 
-void ims_shoebox_coreWorkspaceDestroy
+void ims_shoebox_echogramDestroy
 (
-    void** hWork
+    void** hEcho
 )
 {
-    ims_core_workspace *h = (ims_core_workspace*)(*hWork);
+    echogram_data *h = (echogram_data*)(*hEcho);
 
     if(h!=NULL){
-        free(h->validIDs);
-        free(h->II);
-        free(h->JJ);
-        free(h->KK);
-        free(h->s_x);
-        free(h->s_y);
-        free(h->s_z);
-        free(h->s_d);
-        free(h->s_t);
-        free(h->s_att);
+        free(h->value);
+        free(h->time);
+        free(h->order);
+        free(h->coords);
+        free(h->sortedIdx);
         free(h);
         h=NULL;
-        *hWork = NULL;
+        *hEcho = NULL;
     }
 }
 
@@ -116,7 +111,6 @@ void ims_shoebox_coreWorkspaceCreate
     h->II = h->JJ = h->KK = NULL;
     h->s_x = h->s_y = h->s_z = h->s_d = NULL;
     h->s_t = h->s_att = NULL;
-
     h->refreshEchogramFLAG = 1;
 
     /* Echograms */
@@ -125,6 +119,39 @@ void ims_shoebox_coreWorkspaceCreate
     h->hEchogram_abs = malloc1d(nBands*sizeof(voidPtr));
     for(band=0; band< nBands; band++)
         ims_shoebox_echogramCreate( &(h->hEchogram_abs[band]) );
+
+    /* Room impulse responses */
+    h->rir_bands = NULL;
+}
+
+void ims_shoebox_coreWorkspaceDestroy
+(
+    void** hWork
+)
+{
+    ims_core_workspace *h = (ims_core_workspace*)(*hWork);
+    int band;
+
+    if(h!=NULL){
+        free(h->validIDs);
+        free(h->II);
+        free(h->JJ);
+        free(h->KK);
+        free(h->s_x);
+        free(h->s_y);
+        free(h->s_z);
+        free(h->s_d);
+        free(h->s_t);
+        free(h->s_att);
+        ims_shoebox_echogramDestroy( &(h->hEchogram) );
+        ims_shoebox_echogramDestroy( &(h->hEchogram_rec) );
+        for(band=0; band< h->nBands; band++)
+            ims_shoebox_echogramDestroy( &(h->hEchogram_abs[band]) );
+        free(h->hEchogram_abs);
+        free(h);
+        h=NULL;
+        *hWork = NULL;
+    }
 }
 
 void ims_shoebox_coreInit
@@ -309,8 +336,7 @@ void ims_shoebox_coreRecModuleSH
 void ims_shoebox_coreAbsorptionModule
 (
     void* hWork,
-    float** abs_wall//,
-    //void* hEchogram_abs
+    float** abs_wall
 )
 {
     ims_core_workspace *h = (ims_core_workspace*)(hWork);
@@ -320,24 +346,18 @@ void ims_shoebox_coreAbsorptionModule
     float r_x[2], r_y[2], r_z[2];
     float abs_x, abs_y, abs_z, s_abs_tot;
 
-
     for(band=0; band < h->nBands; band++){
-        echogram_abs = h->hEchogram_abs[band];
+        echogram_abs = (echogram_data*)h->hEchogram_abs[band];
 
         /* Resize container (only done if needed) */
         ims_shoebox_echogramResize(h->hEchogram_abs[band], echogram_rec->numImageSources, echogram_rec->nChannels);
 
         /* Copy data */
-        for(i=0; i<echogram_abs->numImageSources; i++){
-            for(j=0; j<echogram_abs->nChannels; j++)
-                echogram_abs->value[i][j] = echogram_rec->value[i][j];
-            echogram_abs->time[i] = echogram_rec->time[i];
-            for(j=0; j<3; j++){
-                echogram_abs->order[i][j] = echogram_rec->order[i][j];
-                echogram_abs->coords[i][j] = echogram_rec->coords[i][j];
-            }
-            echogram_abs->sortedIdx[i] = i;
-        }
+        memcpy(ADR2D(echogram_abs->value), ADR2D(echogram_rec->value), (echogram_abs->numImageSources)*(echogram_abs->nChannels)*sizeof(float));
+        memcpy(echogram_abs->time, echogram_rec->time, (echogram_abs->numImageSources)*sizeof(float));
+        memcpy(ADR2D(echogram_abs->order), ADR2D(echogram_rec->order), (echogram_abs->numImageSources)*3*sizeof(int));
+        memcpy(ADR2D(echogram_abs->coords), ADR2D(echogram_rec->coords), (echogram_abs->numImageSources)*3*sizeof(float));
+        memcpy(echogram_abs->sortedIdx, echogram_rec->sortedIdx, (echogram_abs->numImageSources)*sizeof(int));
 
         /* Reflection coefficients given the absorption coefficients for x, y, z
          * walls per frequency */
@@ -383,13 +403,12 @@ void ims_shoebox_coreAbsorptionModule
     }
 }
 
-
 void ims_shoebox_renderRIR
 (
     void* hWork,
-    //void* hEchogram_abs,
     int fractionalDelayFLAG,
-    float* rir // precompute, we know the maxlength and fs already, so should be able to do this for each workspace handle?
+    float* rir,
+    int len_rir
 )
 {
     ims_core_workspace *h = (ims_core_workspace*)(hWork);

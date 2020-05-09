@@ -26,11 +26,12 @@
 #include "timer.h"
 #include "saf.h"
 
-/* Prototypes */
-
+/* Prototypes for available unit tests */
 void test__ims_shoebox(void);
 void test__saf_rfft(void);
+#ifdef AFSTFT_USE_FLOAT_COMPLEX
 void test__afSTFTMatrix(void);
+#endif
 void test__afSTFT(void);
 void test__smb_pitchShifter(void);
 void test__sortf(void);
@@ -117,7 +118,7 @@ void test__ims_shoebox(void){
     receiverID = ims_shoebox_addReceiver(hIms, (float*)rec_pos);
 
     /* Moving source No.1 and the receiver */
-    maxTime_s = 0.08f; /* 80ms */
+    maxTime_s = 0.08f; /* 50ms */
     memcpy(mov_src_pos, src_pos, 3*sizeof(float));
     memcpy(mov_rec_pos, rec_pos, 3*sizeof(float));
     for(i=0; i<500; i++){
@@ -131,7 +132,8 @@ void test__ims_shoebox(void){
     /* Remove source No.1 */
     ims_shoebox_removeSource(hIms, 0);
 
-    /* Add 3 more sources, then remove 2, and add one back again */
+    /* Add 3 more sources, then remove 2, and add one back again
+     * (Just messing around, trying to trip up an IMS internal assertion) */
     sourceID_3 = ims_shoebox_addSource(hIms, (float*)src3_pos);
     sourceID_4 = ims_shoebox_addSource(hIms, (float*)src4_pos);
     sourceID_5 = ims_shoebox_addSource(hIms, (float*)src5_pos);
@@ -139,9 +141,17 @@ void test__ims_shoebox(void){
     ims_shoebox_removeSource(hIms, sourceID_4);
     sourceID_4 = ims_shoebox_addSource(hIms, (float*)src4_pos);
 
- 
+    /* Continue rendering */
+//    for(i=0; i<500; i++){
+//        mov_src_pos[1] = 2.0f * 500.0f/(float)i;
+//        mov_rec_pos[0] = 3.0f * 500.0f/(float)i;
+//        ims_shoebox_updateSource(hIms, sourceID_4, mov_src_pos);
+//        ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
+//        ims_shoebox_renderEchogramSH(hIms, maxTime_s, sh_order);
+//    }
 
-
+    /* clean-up */
+    ims_shoebox_destroy(&hIms);
 }
 
 void test__saf_rfft(void){
@@ -366,7 +376,7 @@ void test__sortf(void){
     /* Prep */
     sortedIdx = malloc1d(numValues*sizeof(int));
     values = malloc1d(numValues*sizeof(float));
-    rand_m1_1(values, numValues);
+    rand_m1_1(values, numValues); /* populate with random numbers */
 
     /* Sort in accending order */
     sortf(values, NULL, sortedIdx, numValues, 0);
@@ -374,6 +384,13 @@ void test__sortf(void){
     /* Check that the next value is either the same or greater than current value */
     for(i=0; i<numValues-1; i++)
         TEST_ASSERT_TRUE(values[sortedIdx[i]]<=values[sortedIdx[i+1]]);
+
+    /* Sort in decending order */
+    sortf(values, NULL, sortedIdx, numValues, 1);
+
+    /* Check that the next value is either the same or less than current value */
+    for(i=0; i<numValues-1; i++)
+        TEST_ASSERT_TRUE(values[sortedIdx[i]]>=values[sortedIdx[i+1]]);
 
     /* clean-up */
     free(values);

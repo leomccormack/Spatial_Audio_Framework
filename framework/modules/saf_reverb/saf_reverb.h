@@ -39,47 +39,30 @@ extern "C" {
 #define IMS_MAX_NUM_RECEIVERS 100
 typedef float* ims_rir;
 
-typedef struct _echogram_data
-{
-    int numImageSources; /**< Number of image sources in echogram */
-    int nChannels;       /**< Number of channels */
-    float** value;       /**< Echogram magnitudes per image source and channel;
-                          *   numImageSources x nChannels */
-    float* time;         /**< Propagation time (in seconds) for each image
-                          *   source; numImageSources x 1 */
-    int** order;         /**< Reflection order for each image and dimension;
-                          *   numImageSources x 3 */
-    float** coords;      /**< Reflection coordinates (Cartesian);
-                          *   numImageSources x 3 */
-    int* sortedIdx;      /**< Indices that sort the echogram based on
-                          *   propagation time, in accending order;
-                          *   numImageSources x 1 */
-
-} echogram_data;
-
 /*
-% Here set up you scene parameters, source locations, microphone locations,
-% room boundaries and target reverberation times (or directly wall
-% absorption coefficients). If there is no room (anechoic rendering) the
-% global origin is arbitrary (e.g. can be at one of the microphones),
-% however if there is a room (reverberant rendering), all receiver and
-% source positions should be given with respect to the bottom left corner
-% of the room (top view), with positive x+ extending to the east, and
-% positive y+ extending to the north, while z+ is extending purpendicular
-% to them towards the viewer (right-hand rule)
-%
-%   length/width
-%   |----------|
-%   ^ y           .
-%   |    ^z      /height
-%   |   /       /
-%   .__/_______.           _
-%   | /        |           |
-%   |/         |           | width/length
-%   o__________.------> x  _
-%
-% Note that there is no checking for the source-microphone coordinates
-% falling inside the boundaries of the room. */
+ * Here set up you scene parameters, source locations, microphone locations,
+ * room boundaries and target reverberation times (or directly wall
+ * absorption coefficients). If there is no room (anechoic rendering) the
+ * global origin is arbitrary (e.g. can be at one of the microphones),
+ * however if there is a room (reverberant rendering), all receiver and
+ * source positions should be given with respect to the bottom left corner
+ * of the room (top view), with positive x+ extending to the east, and
+ * positive y+ extending to the north, while z+ is extending purpendicular
+ * to them towards the viewer (right-hand rule)
+ *
+ *   length/width
+ *   |----------|
+ *   ^ y           .
+ *   |    ^z      /height
+ *   |   /       /
+ *   .__/_______.           _
+ *   | /        |           |
+ *   |/         |           | width/length
+ *   o__________.------> x  _
+ *
+ * Note that there is no checking for the source-microphone coordinates
+ * falling inside the boundaries of the room.
+ */
 
 // create empty room. Hint: add a reciever and source
 void ims_shoebox_create(void** phIms,
@@ -91,6 +74,8 @@ void ims_shoebox_create(void** phIms,
                         int nOctBands,
                         float c_ms,
                         float fs);
+
+void ims_shoebox_destroy(void** phIms);
  
 void ims_shoebox_renderEchogramSH(void* hIms,
                                   float maxTime_ms,
@@ -120,6 +105,9 @@ void ims_shoebox_updateReceiver(void* hIms,
 
 void ims_shoebox_removeSource(void* hIms,
                               long sourceID);
+
+void ims_shoebox_removeReceiver(void* hIms,
+                                long receiverID);
 
 
 #ifdef __cplusplus

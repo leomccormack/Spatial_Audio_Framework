@@ -60,12 +60,28 @@ typedef struct _position_xyz {
     };
 } position_xyz;
 
-typedef position_xyz reflOrder;
+typedef struct _echogram_data
+{
+    int numImageSources; /**< Number of image sources in echogram */
+    int nChannels;       /**< Number of channels */
+    float** value;       /**< Echogram magnitudes per image source and channel;
+                          *   numImageSources x nChannels */
+    float* time;         /**< Propagation time (in seconds) for each image
+                          *   source; numImageSources x 1 */
+    int** order;         /**< Reflection order for each image and dimension;
+                          *   numImageSources x 3 */
+    float** coords;      /**< Reflection coordinates (Cartesian);
+                          *   numImageSources x 3 */
+    int* sortedIdx;      /**< Indices that sort the echogram based on
+                          *   propagation time, in accending order;
+                          *   numImageSources x 1 */
+
+} echogram_data;
 
 /**
  * Helper structure, comprising variables used when computing echograms and
  * rendering RIRs. The idea is that there should be one instance of this per
- * source/reciever/band.
+ * source/reciever combination.
  */
 typedef struct _ims_core_workspace
 {
@@ -74,6 +90,7 @@ typedef struct _ims_core_workspace
     float d_max;
     position_xyz src, rec; 
     int nBands;
+    float fs;
 
     /* Internal */
     float Nx, Ny, Nz;
@@ -87,13 +104,16 @@ typedef struct _ims_core_workspace
     void* hEchogram;
     void* hEchogram_rec;
     voidPtr* hEchogram_abs;
+
+    /* Room impulse responses */
+    float** rir_bands;
  
 }ims_core_workspace;
 
 /**
  * Main structure for IMS. It comprises variables describing the room, and the
- * sources and recievers inside it. It also includes "core workspace" handles
- * for each source/receiver position
+ * sources and receivers within it. It also includes "core workspace" handles
+ * for each source/receiver combination.
  */
 typedef struct _ims_scene_data
 {
@@ -108,7 +128,7 @@ typedef struct _ims_scene_data
     position_xyz src_xyz[IMS_MAX_NUM_SOURCES];
     position_xyz rec_xyz[IMS_MAX_NUM_RECEIVERS];
     long src_IDs[IMS_MAX_NUM_SOURCES];
-    long rec_IDs[IMS_MAX_NUM_RECEIVERS]; 
+    long rec_IDs[IMS_MAX_NUM_RECEIVERS];
     long nSources;
     long nReceivers;
 
@@ -128,6 +148,12 @@ void ims_shoebox_coreWorkspaceCreate(void** hWork, int nBands);
 void ims_shoebox_coreWorkspaceDestroy(void** hWork);
 
 void ims_shoebox_echogramCreate(void** hEcho);
+
+void ims_shoebox_echogramResize(void* hEcho,
+                                int numImageSources,
+                                int nChannels);
+
+void ims_shoebox_echogramDestroy(void** hEcho);
 
 /**
  * Calculates an echogram of a rectangular space using the image source method
@@ -173,7 +199,8 @@ void ims_shoebox_coreAbsorptionModule(void* hWork,
 
 void ims_shoebox_renderRIR(void* hWork,
                            int fractionalDelayFLAG,
-                           float* rir);
+                           float* rir,
+                           int len_rir);
 
 
 #ifdef __cplusplus

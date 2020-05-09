@@ -49,7 +49,7 @@
 extern "C" {
 #endif /* __cplusplus */
     
-/* These macros return a pointer to the address of the first element in the
+/* These macros return the address of a pointer to the first element in the
  * array. Use them for passing arrays to memset/memcpy, or blas/lapack functions
  * etc. e.g.
  *   float** array2D = (float**)malloc2d(10, 40, sizeof(float));
