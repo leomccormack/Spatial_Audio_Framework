@@ -26,14 +26,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/**
+ * Precomputed factorials for up to !15 (i.e. the "getSH" functions will employ
+ * these up to 7th order)
+ */
+static const long double factorials_15[15] =
+{1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0, 39916800.0, 479001600.0, 6.2270208e9, 8.71782891e10};
+
 long double factorial(int n)
 {
     int i;
     long double ff;
-    ff = 1.0;
-    for(i = 1; i<=n; i++)
-        ff *= (long double)i;
-    return ff;
+    if(n<15)
+        return factorials_15[n];
+    else{
+        ff = 1.0;
+        for(i = 1; i<=n; i++)
+            ff *= (long double)i;
+        return ff;
+    }
 }
 
 float matlab_fmodf(float x, float y) {

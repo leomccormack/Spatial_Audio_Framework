@@ -33,6 +33,8 @@
 #include "saf_sh.h"
 #include "saf_sh_internal.h"
 
+#define SQRT4PI ( 3.544907701811032f ) 
+
 /**
  * First-order ACN/N3D to WXYZ conversion matrix
  */
@@ -360,56 +362,69 @@ void getSHreal_recur
 {
     int n, m, i, dir, index_n;
     float Nn0, Nnm;
+    float sleg_n[8], sleg_n_1[8], sleg_n_2[8], scos_incl, sfactorials_n[15];
     float* leg_n, *leg_n_1, *leg_n_2, *cos_incl, *factorials_n;
-    
-    factorials_n = malloc1d((2*N+1)*sizeof(float));
-    leg_n = malloc1d((N+1)*nDirs * sizeof(float));
-    leg_n_1 = calloc1d((N+1)*nDirs, sizeof(float));
-    leg_n_2 = calloc1d((N+1)*nDirs, sizeof(float));
-    cos_incl = malloc1d(nDirs * sizeof(float));
+
+    if(N<=7 && nDirs == 1){
+        /* Single direction optimisation for up to 7th order */
+        leg_n = sleg_n;
+        leg_n_1 = sleg_n_1;
+        leg_n_2 = sleg_n_2;
+        cos_incl = &scos_incl;
+        factorials_n = sfactorials_n;
+    }
+    else{
+        factorials_n = malloc1d((2*N+1)*sizeof(float));
+        leg_n = malloc1d((N+1)*nDirs * sizeof(float));
+        leg_n_1 = malloc1d((N+1)*nDirs * sizeof(float));
+        leg_n_2 = malloc1d((N+1)*nDirs * sizeof(float));
+        cos_incl = malloc1d(nDirs * sizeof(float));
+    }
     index_n = 0;
 
     /* precompute factorials */
     for (i = 0; i < 2*N+1; i++)
-        factorials_n[i] = (float)factorial(i);
-    
+        factorials_n[i] = (float)factorial(i); 
+
     /* cos(inclination) = sin(elevation) */
     for (dir = 0; dir<nDirs; dir++)
         cos_incl[dir] = cosf(dirs_rad[dir*2+1]);
-    
+
     /* compute SHs with the recursive Legendre function */
     for (n = 0; n<N+1; n++) {
         if (n==0) {
             for (dir = 0; dir<nDirs; dir++)
-                Y[n*nDirs+dir] = 1.0f/sqrtf(4.0f*M_PI);
+                Y[n*nDirs+dir] = 1.0f/SQRT4PI;
             index_n = 1;
         }
         else {
             unnorm_legendreP_recur(n, cos_incl, nDirs, leg_n_1, leg_n_2, leg_n); /* does NOT include Condon-Shortley phase term */
-            
+
             Nn0 = sqrtf(2.0f*(float)n+1.0f);
             for (dir = 0; dir<nDirs; dir++){
                 for (m = 0; m<n+1; m++) {
                     if (m==0)
-                        Y[(index_n+n)*nDirs+dir] = Nn0/sqrtf(4.0f*M_PI)  * leg_n[m*nDirs+dir];
+                        Y[(index_n+n)*nDirs+dir] = Nn0/SQRT4PI * leg_n[m*nDirs+dir];
                     else {
                         Nnm = Nn0* sqrtf( 2.0f * factorials_n[n-m]/factorials_n[n+m] );
-                        Y[(index_n+n-m)*nDirs+dir] = Nnm/sqrtf(4.0f*M_PI) * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_rad[dir*2]));
-                        Y[(index_n+n+m)*nDirs+dir] = Nnm/sqrtf(4.0f*M_PI) * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_rad[dir*2]));
+                        Y[(index_n+n-m)*nDirs+dir] = Nnm/SQRT4PI * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_rad[dir*2]));
+                        Y[(index_n+n+m)*nDirs+dir] = Nnm/SQRT4PI * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_rad[dir*2]));
                     }
                 }
             }
             index_n += 2*n+1;
         }
         utility_svvcopy(leg_n_1, (N+1)*nDirs, leg_n_2);
-        utility_svvcopy(leg_n,   (N+1)*nDirs, leg_n_1);  
+        utility_svvcopy(leg_n,   (N+1)*nDirs, leg_n_1);
     }
-    
-    free(factorials_n);
-    free(leg_n);
-    free(leg_n_1);
-    free(leg_n_2);
-    free(cos_incl);
+
+    if(N>7 || nDirs > 1){
+        free(factorials_n);
+        free(leg_n);
+        free(leg_n_1);
+        free(leg_n_2);
+        free(cos_incl);
+    }
 }
 
 void getSHcomplex

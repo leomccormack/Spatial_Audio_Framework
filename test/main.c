@@ -36,6 +36,7 @@ void test__afSTFT(void);
 void test__smb_pitchShifter(void);
 void test__sortf(void);
 void test__realloc2d_r(void);
+void test__getSHreal_recur(void);
 
 /* ========================================================================== */
 /*                                 Test Config                                */
@@ -74,6 +75,7 @@ printf("*****************************************************************\n"
     RUN_TEST(test__smb_pitchShifter);
     RUN_TEST(test__sortf);
     RUN_TEST(test__realloc2d_r);
+    RUN_TEST(test__getSHreal_recur);
 
     /* close */
     timer_lib_shutdown();
@@ -142,13 +144,13 @@ void test__ims_shoebox(void){
     sourceID_4 = ims_shoebox_addSource(hIms, (float*)src4_pos);
 
     /* Continue rendering */
-//    for(i=0; i<500; i++){
-//        mov_src_pos[1] = 2.0f * 500.0f/(float)i;
-//        mov_rec_pos[0] = 3.0f * 500.0f/(float)i;
-//        ims_shoebox_updateSource(hIms, sourceID_4, mov_src_pos);
-//        ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
-//        ims_shoebox_renderEchogramSH(hIms, maxTime_s, sh_order);
-//    }
+    for(i=0; i<500; i++){
+        mov_src_pos[1] = 2.0f * 500.0f/(float)i;
+        mov_rec_pos[0] = 3.0f * 500.0f/(float)i;
+        ims_shoebox_updateSource(hIms, sourceID_4, mov_src_pos);
+        ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
+        ims_shoebox_renderEchogramSH(hIms, maxTime_s, sh_order);
+    }
 
     /* clean-up */
     ims_shoebox_destroy(&hIms);
@@ -455,4 +457,32 @@ void test__realloc2d_r(void){
 
     /* clean-up */
     free(test);
+}
+
+void test__getSHreal_recur(void){
+    int i, j;
+
+    /* Config */
+    /* In general, this recusive alternative is well below this tolerance value.
+     * However, the error does get larger for higher-orders and when dir[1]
+     * is near 0. */
+    float acceptedTolerance = 0.005f;
+    const int order = 7;
+    const int nSH = ORDER2NSH(order);
+    float dir[2];
+
+    /* Check that the output of getSHreal_recur matches that of getSH_recur */
+    float Yr[nSH];
+    float Y[nSH];
+    for(i=0; i<1e5; i++){
+        rand_m1_1(&dir[0] , 1);
+        rand_m1_1(&dir[1] , 1);
+        dir[0] *= M_PI;
+        dir[1] *= M_PI/2.0f;
+        getSHreal_recur(order, (float*)dir, 1, (float*)Yr);
+        getSHreal(order, (float*)dir, 1, (float*)Y);
+        for(j=0; j<nSH; j++)
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, Yr[j], Y[j]);
+            //assert(fabsf(Yr[j]-Y[j])<acceptedTolerance);
+    }
 }
