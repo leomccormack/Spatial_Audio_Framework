@@ -49,7 +49,13 @@ extern "C" {
 # define ISODD(n)    ((n%2 != 0) ? 1 : 0)
 #endif
 
+
+/* ========================================================================== */
+/*                         IMS Shoebox Room Simulator                         */
+/* ========================================================================== */
+
 #define IMS_NUM_WALLS_SHOEBOX ( 6 )
+#define IMS_FIR_FILTERBANK_ORDER ( 1000 )
 
 typedef void* voidPtr; 
 
@@ -62,19 +68,19 @@ typedef struct _position_xyz {
 
 typedef struct _echogram_data
 {
-    int numImageSources; /**< Number of image sources in echogram */
-    int nChannels;       /**< Number of channels */
-    float** value;       /**< Echogram magnitudes per image source and channel;
-                          *   numImageSources x nChannels */
-    float* time;         /**< Propagation time (in seconds) for each image
-                          *   source; numImageSources x 1 */
-    int** order;         /**< Reflection order for each image and dimension;
-                          *   numImageSources x 3 */
-    float** coords;      /**< Reflection coordinates (Cartesian);
-                          *   numImageSources x 3 */
-    int* sortedIdx;      /**< Indices that sort the echogram based on
-                          *   propagation time, in accending order;
-                          *   numImageSources x 1 */
+    int numImageSources;  /**< Number of image sources in echogram */
+    int nChannels;        /**< Number of channels */
+    float** value;        /**< Echogram magnitudes per image source and channel;
+                           *   numImageSources x nChannels */
+    float* time;          /**< Propagation time (in seconds) for each image
+                           *   source; numImageSources x 1 */
+    int** order;          /**< Reflection order for each image and dimension;
+                           *   numImageSources x 3 */
+    position_xyz* coords; /**< Reflection coordinates (Cartesian);
+                           *   numImageSources x 3 */
+    int* sortedIdx;       /**< Indices that sort the echogram based on
+                           *   propagation time, in accending order;
+                           *   numImageSources x 1 */
 
 } echogram_data;
 
@@ -108,8 +114,7 @@ typedef struct _ims_core_workspace
     int refreshRIRFLAG;
     int rir_len_samples;
     float rir_len_seconds;
-    float*** rir_bands; /* Per band and per channel */
-    float** rir;        /* final combined RIR, per channel */
+    float*** rir_bands; /* nBands x nChannels x rir_len_samples */ 
  
 }ims_core_workspace;
 
@@ -136,44 +141,69 @@ typedef struct _ims_scene_data
     long nReceivers;
 
     /* Internal */
-    float* band_centerfreqs;
     voidPtr** hCoreWrkSpc;   /* one per source/receiver combination */
+    float* band_centerfreqs;
+    float** H_filt;  /* nBands x (IMS_FIR_FILTERBANK_ORDER+1) */
+    ims_rir** rirs;  /* one per source/receiver combination */
 
 } ims_scene_data;
 
 
-/* ========================================================================== */
-/*                             Internal Functions                             */
-/* ========================================================================== */
+/* =========================== Internal Functions =========================== */
 
-void ims_shoebox_coreWorkspaceCreate(void** hWork, int nBands);
+/**
+ * Creates an instance of the core workspace
+ *
+ * The idea is that there is one core workspace instance per source/receiver
+ * combination.
+ *
+ * @param[in] phWork (&) address of the workspace handle
+ * @param[in] nBands Number of bands
+ */
+void ims_shoebox_coreWorkspaceCreate(void** phWork,
+                                     int nBands);
 
-void ims_shoebox_coreWorkspaceDestroy(void** hWork);
+/**
+ * Destroys an instance of the core workspace
+ *
+ * @param[in] phWork  (&) address of the workspace handle
+ */
+void ims_shoebox_coreWorkspaceDestroy(void** phWork);
 
-void ims_shoebox_echogramCreate(void** hEcho);
+/**
+ * Creates an instance of an echogram container
+ *
+ * @param[in] phEcho (&) address of the echogram container
+ */
+void ims_shoebox_echogramCreate(void** phEcho);
 
+/**
+ * Resizes an echogram container
+ *
+ * @note The container is only resized if the number of image sources or
+ *       channels have changed.
+ *
+ * @param[in] hEcho           echogram container
+ * @param[in] numImageSources New number of image sources
+ * @param[in] nChannels       New number of channels
+ */
 void ims_shoebox_echogramResize(void* hEcho,
                                 int numImageSources,
                                 int nChannels);
 
-void ims_shoebox_echogramDestroy(void** hEcho);
+/**
+ * Destroys an instance of an echogram container
+ *
+ * @param[in] phEcho (&) address of the echogram container
+ */
+void ims_shoebox_echogramDestroy(void** phEcho);
 
 /**
- * Calculates an echogram of a rectangular space using the image source method
+ * Calculates an echogram of a rectangular space using the image source method,
+ * for a specific source/reciever combination
  *
- * coreInit calculates an echogram of a rectangular space using the Image-Source
- * Method, for a given source and receiver. Input argument room should be a
- * structure with the following fields: room-->length, width, height,
- * absorption. room.absoprtion is a 2x3 matrix
- *   with absorption coefficients (broadband) for each of the walls on the
- *   respective planes [x+ y+ z+; x- y- z-].
- *
- *   source and receiver are structures holding the coordinates of the
- *   source/receiver as: source.coord = [Sx Sy Sz]. There are plans to
- *   include directivity coefficients in the source structure.
- *
- *   Coordinates of source/receiver are specified from the left ground corner
- *   of the room:
+ * Note the coordinates of source/receiver are specified from the left ground
+ * corner of the room:
  *                ^x
  *             __|__    _
  *             |  |  |   |
@@ -186,6 +216,12 @@ void ims_shoebox_echogramDestroy(void** hEcho);
  *             |-----|
  *                w
  *
+ * @param[in] hWork   workspace handle
+ * @param[in] room    Room dimensions, in meters
+ * @param[in] src     Source position, in meters
+ * @param[in] rec     Receiver position, in meters
+ * @param[in] maxTime Maximum propagation time to compute the echogram, seconds
+ * @param[in] c_ms    Speed of source, in meters per second
  */
 void ims_shoebox_coreInit(void* hWork,
                           int room[3],
@@ -194,15 +230,49 @@ void ims_shoebox_coreInit(void* hWork,
                           float maxTime,
                           float c_ms);
 
+/**
+ * Imposes spherical harmonic directivies onto the echogram computed with
+ * ims_shoebox_coreInit, for a specific source/reciever combination
+ *
+ * @note Call ims_shoebox_coreInit before applying the directivities
+ *
+ * @param[in] hWork    workspace handle
+ * @param[in] sh_order Spherical harmonic order
+ */
 void ims_shoebox_coreRecModuleSH(void* hWork,
                                  int sh_order);
 
+/**
+ * Applies boundary absoption per frequency band, onto the echogram computed
+ * with ims_shoebox_coreRecModuleSH, for a specific source/reciever combination
+ *
+ * Absorption coefficients are given for each of the walls on the respective
+ * planes [x+ y+ z+; x- y- z-].
+ *
+ * @note Call ims_shoebox_coreRecModuleSH before applying the absoption
+ *
+ * @param[in] hWork    workspace handle
+ * @param[in] abs_wall Absorption coefficients; nBands x 6
+ */
 void ims_shoebox_coreAbsorptionModule(void* hWork,
                                       float** abs_wall);
 
+/**
+ * Renders a room impulse response for a specific source/reciever combination
+ *
+ * @note Call ims_shoebox_coreAbsorptionModule before rendering rir
+ *
+ * @param[in]  hWork               workspace handle
+ * @param[in]  fractionalDelayFLAG 0: disabled, 1: use Lagrange interpolation
+ * @param[in]  fs                  SampleRate, Hz
+ * @param[in]  H_filt              filterbank; nBands x (filterOrder+1)
+ * @param[out] rir                 Room impulse response
+ */
 void ims_shoebox_renderRIR(void* hWork,
                            int fractionalDelayFLAG,
-                           float fs);
+                           float fs,
+                           float** H_filt,
+                           ims_rir* rir);
 
 
 #ifdef __cplusplus
