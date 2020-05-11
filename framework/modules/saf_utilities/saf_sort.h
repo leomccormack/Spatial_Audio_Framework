@@ -41,14 +41,14 @@ extern "C" {
 
 /**
  * Sort a vector of integer values into ascending/decending order (optionally
- * returning the new indices as well).
+ * returning the new indices as well)
  *
- * @param [in,out] in_vec      Vector to be sorted; len x 1
- * @param [out]    out_vec     Output vector (set to NULL if you don't want it)
- * @param [out]    new_idices  Indices used to sort 'in_vec' (set to NULL if you
- *                             don't want them)
- * @param [in]     len         Number of elements in vectors
- * @param [in]     descendFLAG '0' ascending, '1' descending
+ * @param [in]  in_vec      Vector to be sorted; len x 1
+ * @param [out] out_vec     Output vector (set to NULL if you don't want it)
+ * @param [out] new_idices  Indices used to sort 'in_vec' (set to NULL if you
+ *                          don't want them)
+ * @param [in]  len         Number of elements in vectors
+ * @param [in]  descendFLAG '0' ascending, '1' descending
  */
 void sorti(int* in_vec,
            int* out_vec,
@@ -58,14 +58,14 @@ void sorti(int* in_vec,
     
 /**
  * Sort a vector of floating-point values into ascending/decending order
- * (optionally returning the new indices as well).
+ * (optionally returning the new indices as well)
  *
- * @param [in,out] in_vec      Vector to be sorted; len x 1
- * @param [out]    out_vec     Output vector (set to NULL if you don't want it)
- * @param [out]    new_idices  Indices used to sort 'in_vec' (set to NULL if you
- *                             don't want them)
- * @param [in]     len         Number of elements in vectors
- * @param [in]     descendFLAG '0' ascending, '1' descending
+ * @param [in]  in_vec      Vector to be sorted; len x 1
+ * @param [out] out_vec     Output vector (set to NULL if you don't want it)
+ * @param [out] new_idices  Indices used to sort 'in_vec' (set to NULL if you
+ *                          don't want them)
+ * @param [in]  len         Number of elements in vectors
+ * @param [in]  descendFLAG '0' ascending, '1' descending
  */
 void sortf(float* in_vec,
            float* out_vec,
@@ -75,20 +75,57 @@ void sortf(float* in_vec,
 
 /**
  * Sort a vector of double floating-point values into ascending/decending order
- * (optionally returning the new indices as well).
+ * (optionally returning the new indices as well)
  *
- * @param [in,out] in_vec      Vector to be sorted; len x 1
- * @param [out]    out_vec     Output vector (set to NULL if you don't want it)
- * @param [out]    new_idices  Indices used to sort 'in_vec' (set to NULL if you
- *                             don't want them)
- * @param [in]     len         Number of elements in vectors
- * @param [in]     descendFLAG '0' ascending, '1' descending
+ * @param [in]  in_vec      Vector to be sorted; len x 1
+ * @param [out] out_vec     Output vector (set to NULL if you don't want it)
+ * @param [out] new_idices  Indices used to sort 'in_vec' (set to NULL if you
+ *                          don't want them)
+ * @param [in]  len         Number of elements in vectors
+ * @param [in]  descendFLAG '0' ascending, '1' descending
  */
 void sortd(double* in_vec,
            double* out_vec,
            int* new_idices,
            int len,
            int descendFLAG);
+
+/**
+ * Sort a vector of complex floating-point values into ascending/decending order
+ *
+ * @note The values are first sorted based on their real parts. Duplicate real
+ *       parts are then sorted based on their imaginary parts.
+ *
+ * @param [in]  in_vec      Vector to be sorted; len x 1
+ * @param [out] out_vec     Output vector
+ * @param [in]  len         Number of elements in vectors
+ * @param [in]  descendFLAG '0' ascending, '1' descending
+ */
+void sortcmplxf(float_complex* in_vec,
+                float_complex* out_vec,
+                int len,
+                int descendFLAG);
+
+/**
+ * Sort a vector of complex double floating-point values into ascending/
+ * decending order
+ *
+ * @note The values are first sorted based on their real parts. Duplicate real
+ *       parts are then sorted based on their imaginary parts.
+ *
+ * @param [in]  in_vec      Vector to be sorted; len x 1
+ * @param [out] out_vec     Output vector
+ * @param [in]  len         Number of elements in vectors
+ * @param [in]  descendFLAG '0' ascending, '1' descending
+ */
+void sortcmplxd(double_complex* in_vec,
+                double_complex* out_vec,
+                int len,
+                int descendFLAG);
+
+void cmplxPairUp(double_complex* in_vec,
+                 double_complex* out_vec,
+                 int len);
 
 /**
  * Finds indicies into "grid_dirs" that are the closest to "target dirs".

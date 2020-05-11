@@ -35,6 +35,8 @@ void test__afSTFTMatrix(void);
 void test__afSTFT(void);
 void test__smb_pitchShifter(void);
 void test__sortf(void);
+void test__sortcmplxd(void);
+void test__cmplxPairUp(void);
 void test__realloc2d_r(void);
 void test__getSHreal_recur(void);
 
@@ -65,7 +67,7 @@ printf("*****************************************************************\n"
     start = timer_current();
     UNITY_BEGIN();
 
-    /* run each unit test */
+    /* run each unit test */ 
     RUN_TEST(test__ims_shoebox);
     RUN_TEST(test__saf_rfft);
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
@@ -74,6 +76,8 @@ printf("*****************************************************************\n"
     RUN_TEST(test__afSTFT);
     RUN_TEST(test__smb_pitchShifter);
     RUN_TEST(test__sortf);
+    RUN_TEST(test__sortcmplxd);
+    RUN_TEST(test__cmplxPairUp);
     RUN_TEST(test__realloc2d_r);
     RUN_TEST(test__getSHreal_recur);
 
@@ -399,6 +403,95 @@ void test__sortf(void){
     /* clean-up */
     free(values);
     free(sortedIdx);
+}
+
+void test__sortcmplxd(void){
+    int i;
+    const int N = 36;
+    double_complex vals[N] ={
+        cmplx(1.0, 1.0), cmplx(7.0, 1.0),  cmplx(10.0, 5.0),
+        cmplx(12.0, 4.0), cmplx(4.0, 4.0), cmplx(8.0, 0.0),
+        cmplx(10.0, -1.0), cmplx(7.0, 5.0), cmplx(7.0, 2.0),
+        cmplx(5.0, 1.0), cmplx(4.0, -1.0), cmplx(32.0, 3.0),
+        cmplx(32.0, 32.5), cmplx(25.0, 0.0), cmplx(2.0, -2.0),
+        cmplx(7.0, -2.0), cmplx(1.0, -1.0), cmplx(12.0, -1.0),
+        cmplx(2.0, -1.0), cmplx(4.0, 2.0), cmplx(10.0, 6.0),
+        cmplx(5.0, 2.0), cmplx(32.0, 1.5), cmplx(7.0, -10.0),
+        cmplx(1.0, -1.5), cmplx(4.0, 25.0), cmplx(3.0, 2.0),
+        cmplx(1.0, 4.5), cmplx(10.0, 5.0), cmplx(10.0, 2.0),
+        cmplx(10.0, -3.5), cmplx(30.0, -10.0), cmplx(7.0, -12.0),
+        cmplx(1.0, -13.5), cmplx(12.0, -12.0), cmplx(32.0, 23.0)
+    };
+    double_complex sorted_vals[N];
+
+    /* Sort assending order */
+    sortcmplxd(vals, sorted_vals, N, 0);
+
+    /* Check that the next real(value) is either the same or greater than current real(value) */
+    for(i=0; i<N-1; i++)
+        TEST_ASSERT_TRUE(creal(sorted_vals[i])<=creal(sorted_vals[i+1]));
+
+    /* Check that if the next real(value) is the same as the current real(value), then
+     * the next imag(value) is greater that the current image(value)*/
+    for(i=0; i<N-1; i++)
+        if(fabs(creal(sorted_vals[i])-creal(sorted_vals[i+1])) < 0.00001 )
+            TEST_ASSERT_TRUE(cimag(sorted_vals[i])<=cimag(sorted_vals[i+1]));
+
+    /* Sort decending order */
+    sortcmplxd(vals, sorted_vals, N, 1);
+
+    /* Check that the next real(value) is either the same or smaller than current real(value) */
+    for(i=0; i<N-1; i++)
+        TEST_ASSERT_TRUE(creal(sorted_vals[i])>=creal(sorted_vals[i+1]));
+
+    /* Check that if the next real(value) is the same as the current real(value), then
+     * the next imag(value) is smaller that the current image(value)*/
+    for(i=0; i<N-1; i++)
+        if(fabs(creal(sorted_vals[i])-creal(sorted_vals[i+1])) < 0.00001 )
+            TEST_ASSERT_TRUE(cimag(sorted_vals[i])>=cimag(sorted_vals[i+1]));
+}
+
+void test__cmplxPairUp(void){
+    int i;
+    const int N = 36;
+    double_complex vals[N] ={
+        cmplx(1.0, 1.0), cmplx(7.0, 1.0),  cmplx(10.0, 5.0),
+        cmplx(12.0, 4.0), cmplx(4.0, 4.0), cmplx(8.0, 0.0),
+        cmplx(10.0, -1.0), cmplx(7.0, 5.0), cmplx(7.0, 2.0),
+        cmplx(5.0, 1.0), cmplx(4.0, -1.0), cmplx(32.0, 3.0),
+        cmplx(32.0, 32.5), cmplx(25.0, 0.0), cmplx(2.0, -2.0),
+        cmplx(7.0, -2.0), cmplx(1.0, -1.0), cmplx(12.0, -1.0),
+        cmplx(2.0, -1.0), cmplx(4.0, 2.0), cmplx(10.0, 6.0),
+        cmplx(5.0, 0.0), cmplx(32.0, 1.5), cmplx(7.0, -10.0),
+        cmplx(1.0, -1.5), cmplx(4.0, 25.0), cmplx(3.0, 2.0),
+        cmplx(1.0, 0.0), cmplx(10.0, 5.0), cmplx(10.0, 2.0),
+        cmplx(10.0, -3.5), cmplx(30.0, -10.0), cmplx(7.0, -12.0),
+        cmplx(1.0, -13.5), cmplx(12.0, -12.0), cmplx(32.0, 23.0)
+    };
+    double_complex sorted_vals[N];
+
+    /* Sort assending order */
+    cmplxPairUp(vals, sorted_vals, N);
+
+    /* Check that the next real(value) is either the same or greater than current real(value),
+     * Ignoring purely real numbers */
+    for(i=0; i<N-1; i++)
+        if( !(fabs(cimag(sorted_vals[i])) < 0.0001) && !(fabs(cimag(sorted_vals[i+1])) < 0.0001) )
+            TEST_ASSERT_TRUE(creal(sorted_vals[i])<=creal(sorted_vals[i+1]));
+
+    /* Check that the next real(value) is either the same or greater than current real(value),
+     * Only considering purely real numbers */
+    for(i=0; i<N-1; i++)
+        if( (fabs(cimag(sorted_vals[i])) < 0.0001) && (fabs(cimag(sorted_vals[i+1])) < 0.0001) )
+            TEST_ASSERT_TRUE(creal(sorted_vals[i])<=creal(sorted_vals[i+1]));
+
+    /* Check that if the next real(value) is the same as the current real(value), then
+     * the next imag(value) is greater that the current image(value)
+     * Ignoring purely real numbers */
+    for(i=0; i<N-1; i++)
+        if(fabs(creal(sorted_vals[i])-creal(sorted_vals[i+1])) < 0.00001 )
+            if( !(fabs(cimag(sorted_vals[i])) < 0.0001) && !(fabs(cimag(sorted_vals[i+1])) < 0.0001) )
+                TEST_ASSERT_TRUE(cimag(sorted_vals[i])<=cimag(sorted_vals[i+1]));
 }
 
 void test__realloc2d_r(void){

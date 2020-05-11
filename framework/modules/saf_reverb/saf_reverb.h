@@ -18,7 +18,7 @@
  * @file saf_reverb.h
  * @brief Public part of the reverb processing module (saf_reverb)
  *
- * ...
+ * A collection of reverb and room simulation algorithms.
  *
  * @author Leo McCormack
  * @date 06.05.2020
@@ -127,13 +127,24 @@ void ims_shoebox_computeEchogramSH(void* hIms,
  * receiver combinations
  *
  * @note This function is not intended to be used for real-time dynamic scenes,
- *       rather, it is more suited as a static 3DoF option
+ *       rather, it is more suited for high-quality static 3DoF scenarios
  *
  * @param[in] hIms                 ims_shoebox handle
  * @param[in] fractionalDelaysFLAG 0: disabled, 1: use Lagrange interpolation
  */
 void ims_shoebox_renderSHRIRs(void* hIms,
                               int fractionalDelaysFLAG);
+
+/**
+ * Applies the currently computed echogram to the input audio in the time-domain
+ *
+ * @note This function is intended for real-time 6DoF dynamic scenarios
+ *
+ * @param[in] hIms                 ims_shoebox handle
+ * @param[in] fractionalDelaysFLAG 0: disabled, 1: use Lagrange interpolation
+ */
+void ims_shoebox_applyEchogramTD(void* hIms,
+                                 int fractionalDelaysFLAG);
 
 
 /* ===================== Add/Remove/Update functions ======================== */

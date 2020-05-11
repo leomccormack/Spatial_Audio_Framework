@@ -18,7 +18,7 @@
  * @file saf_reverb_internal.h
  * @brief Internal part of the reverb processing module (saf_reverb)
  *
- * ...
+ * A collection of reverb and room simulation algorithms.
  *
  * @author Leo McCormack
  * @date 06.05.2020
@@ -110,11 +110,15 @@ typedef struct _ims_core_workspace
     void* hEchogram_rec;
     voidPtr* hEchogram_abs;
 
-    /* Room impulse responses */
+    /* Room impulse responses (only used/allocated when a render function is
+     * called) */
     int refreshRIRFLAG;
     int rir_len_samples;
     float rir_len_seconds;
-    float*** rir_bands; /* nBands x nChannels x rir_len_samples */ 
+    float*** rir_bands; /* nBands x nChannels x rir_len_samples */
+
+    /* Circular buffers (only used/allocated when a "applyEchogram" function is
+     * called) */
  
 }ims_core_workspace;
 

@@ -473,3 +473,46 @@ void FIRFilterbank
             FIRCoeffs(FIR_FILTER_BPF, order, fc[k-1], fc[k], sampleRate, windowType, scalingFLAG, &filterbank[k*(order+1)]);
     }
 }
+
+void butterCoeffs
+(
+    BUTTER_FILTER_TYPES filterType,
+    int order,
+    float cutoff1,
+    float cutoff2,
+    float sampleRate,
+    float* filter
+)
+{
+    int i, j, np, tmp_len, numStates;
+    double wlow, whi, w0;
+    double_complex* proto, *proto_tmp;
+
+    wlow = (double)cutoff1/((double)sampleRate/2.0);
+    whi = (double)cutoff2/((double)sampleRate/2.0);
+    w0 = 4.0 * tan(M_PI*wlow/2.0);
+
+    /* Compute prototype for Nth order Butterworth analogue lowpass filter */
+    if (order%2 != 0){/* ISODD */
+        tmp_len = (int)((float)order/2.0f); /* floor */
+        np = 2*tmp_len+1;
+        proto = malloc1d(np*sizeof(double_complex));
+        proto[np-1] = cmplx(-1.0,0.0);
+    }
+    else{ /* ISEVEN */
+        tmp_len = order/2;
+        np = 2*tmp_len;
+        proto = malloc1d(np*sizeof(double_complex));
+    }
+    proto_tmp = malloc1d(tmp_len*sizeof(double_complex));
+    for(i=1, j=0; i<=order-1; i+=2, j++)
+        proto_tmp[j] = cexp(cmplx(0.0, M_PI*(double)i/(2.0*(double)order)) + M_PI/2.0 );
+    for (i=0; i<tmp_len; i++){
+        proto[2*i] = proto_tmp[i];
+        proto[2*i+1] = conj(proto_tmp[i]);
+    }
+
+    /* Transform prototype into state space  */
+    numStates = np;
+}
+

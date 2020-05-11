@@ -18,7 +18,7 @@
  * @file saf_reverb_internal.c
  * @brief Internal part of the reverb processing module (saf_reverb)
  *
- * ...
+ * A collection of reverb and room simulation algorithms.
  *
  * @author Leo McCormack
  * @date 06.05.2020
@@ -27,6 +27,9 @@
 #include "saf_reverb.h"
 #include "saf_reverb_internal.h"
 
+/* ========================================================================== */
+/*                         IMS Shoebox Room Simulator                         */
+/* ========================================================================== */
 
 void ims_shoebox_echogramCreate
 (
@@ -274,7 +277,7 @@ void ims_shoebox_coreInit
                 echogram->time[vIdx]     = wrk->s_d[imsrc]/c_ms;
 
                 /* reflection propagation attenuation - if distance is <1m set
-                 * at attenuation at 1 to avoid amplification */
+                 * attenuation to 1 to avoid amplification */
                 echogram->value[vIdx][0]   = wrk->s_d[imsrc]<=1 ? 1.0f : 1.0f / wrk->s_d[imsrc];
 
                 /* Order */

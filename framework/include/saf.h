@@ -85,8 +85,8 @@
  * ## Dependencies
  *   saf_utilities
  *
- * @see [1] Vilkamo, J., Bäckström, T., & Kuntz, A. (2013). Optimized covariance
- *          domain framework for time–frequency processing of spatial audio.
+ * @see [1] Vilkamo, J., Backstrom, T., & Kuntz, A. (2013). Optimized covariance
+ *          domain framework for time--frequency processing of spatial audio.
  *          Journal of the Audio Engineering Society, 61(6), 403-411.
  */
 #define SAF_MODULE_CDF4SAP
@@ -121,6 +121,8 @@
 
 /**
  * SAF Module: REVERB
+ *
+ * A collection of reverb and room simulation algorithms.
  *
  * ## Dependencies
  *   saf_utilities, saf_sh

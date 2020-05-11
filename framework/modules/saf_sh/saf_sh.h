@@ -224,6 +224,9 @@ void getSHreal(/* Input Arguments */
  * unnorm_legendreP_recur() and single precision, which is faster but less
  * precise.
  *
+ * The function also uses static memory buffers for single direction and up to
+ * 7th order, which speeds things up considerably for such use cases.
+ *
  * @param[in]  order    Order of spherical harmonic expansion
  * @param[in]  dirs_rad Directions on the sphere [azi, INCLINATION] convention,
  *                      in RADIANS; FLAT: nDirs x 2

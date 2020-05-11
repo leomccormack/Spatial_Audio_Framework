@@ -210,6 +210,162 @@ void sortd
     free(data);
 }
 
+void sortcmplxf
+(
+    float_complex* in_vec,
+    float_complex* out_vec,
+    int len,
+    int descendFLAG
+)
+{
+    int i, start_idx, end_idx, sFlag, eFlag;
+    int* ind;
+    const float tol = 0.0001f;
+    float* vec_real, *vec_imag;
+
+    ind = malloc1d(len*sizeof(int));
+
+    /* First sort in_vec based on its real part */
+    vec_real = malloc1d(len*sizeof(float));
+    vec_imag = malloc1d(len*sizeof(float));
+    for(i=0; i<len; i++)
+        vec_real[i] = crealf(in_vec[i]);
+    sortf(vec_real, vec_real, ind, len, descendFLAG); /* real parts sorted based on the real parts */
+    for(i=0; i<len; i++)
+        vec_imag[i] = cimagf(in_vec[ind[i]]); /* imaginary parts sorted based on the real parts */
+
+    /* Then take the values of in_vec that have identical real parts (given some
+     * tolerance), and sort them based on their imaginary parts */
+    sFlag = eFlag = 0;
+    start_idx = end_idx = -1;
+    for(i=0; i<len-1; i++){
+        /* Find duplicate real values (given some tolerance) */
+        if(fabsf(vec_real[i]-vec_real[i+1])<tol){
+            if(!sFlag){
+                start_idx = i;
+                sFlag = 1;
+            }
+        }
+        else if (sFlag){
+            end_idx = i;
+            eFlag = 1;
+        }
+
+        /* Special case for last one */
+        if(sFlag && i==len-2){
+            end_idx = len-1;
+            eFlag = 1;
+        }
+
+        /* Sort imaginary parts */
+        if( (sFlag) && (eFlag) ){
+            sortf(&vec_imag[start_idx], &vec_imag[start_idx], NULL, end_idx-start_idx+1, descendFLAG);
+            sFlag = 0; eFlag = 0;
+        }
+    }
+
+    /* output */
+    for(i=0; i<len; i++)
+        out_vec[i] = cmplxf(vec_real[i], vec_imag[i]);
+
+    /* clean-up */
+    free(ind);
+    free(vec_real);
+    free(vec_imag);
+}
+
+void sortcmplxd
+(
+    double_complex* in_vec,
+    double_complex* out_vec,
+    int len,
+    int descendFLAG
+)
+{
+    int i, start_idx, end_idx, sFlag, eFlag;
+    int* ind;
+    const double tol = 0.00001;
+    double* vec_real, *vec_imag;
+
+    ind = malloc1d(len*sizeof(int));
+
+    /* First sort in_vec based on its real part */
+    vec_real = malloc1d(len*sizeof(double));
+    vec_imag = malloc1d(len*sizeof(double));
+    for(i=0; i<len; i++)
+        vec_real[i] = creal(in_vec[i]);
+    sortd(vec_real, vec_real, ind, len, descendFLAG); /* real parts sorted based on the real parts */
+    for(i=0; i<len; i++)
+        vec_imag[i] = cimag(in_vec[ind[i]]); /* imaginary parts sorted based on the real parts */
+
+    /* Then take the values of in_vec that have identical real parts (given some
+     * tolerance), and sort them based on their imaginary parts */
+    sFlag = eFlag = 0;
+    start_idx = end_idx = -1;
+    for(i=0; i<len-1; i++){
+        /* Find duplicate real values (given some tolerance) */
+        if(fabs(vec_real[i]-vec_real[i+1])<tol){
+            if(!sFlag){
+                start_idx = i;
+                sFlag = 1;
+            }
+        }
+        else if (sFlag){
+            end_idx = i;
+            eFlag = 1;
+        }
+
+        /* Special case for last one */
+        if(sFlag && i==len-2){
+            end_idx = len-1;
+            eFlag = 1;
+        }
+
+        /* Sort imaginary parts */
+        if( (sFlag) && (eFlag) ){
+            sortd(&vec_imag[start_idx], &vec_imag[start_idx], NULL, end_idx-start_idx+1, descendFLAG);
+            sFlag = 0; eFlag = 0;
+        }
+    }
+
+    /* output */
+    for(i=0; i<len; i++)
+        out_vec[i] = cmplx(vec_real[i], vec_imag[i]);
+
+    /* clean-up */
+    free(ind);
+    free(vec_real);
+    free(vec_imag);
+}
+
+void cmplxPairUp
+(
+    double_complex* in_vec,
+    double_complex* out_vec,
+    int len
+)
+{
+    int i, j, realCount;
+    double_complex tmp;
+
+    /* First sort input vector in ascending order. The complex conjugate pairs
+     * are now in the correct order. */
+    sortcmplxd(in_vec, out_vec, len, 0);
+
+    /* Now identify any purely real values, and push them to the end of the
+     * vector */ 
+    realCount = 0;
+    for(i=0; i<len-1-realCount; i++){
+        if(fabs(cimag(out_vec[i])) < 0.00001 ){
+            tmp = out_vec[i];
+            /* Push this value to the end */
+            memmove(&out_vec[i], &out_vec[i+1], (len-i-1)*sizeof(double_complex));
+            out_vec[len-1] = tmp;
+            realCount++;
+        }
+    }
+}
+
 void findClosestGridPoints
 (
     float* grid_dirs,

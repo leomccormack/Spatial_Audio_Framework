@@ -18,7 +18,7 @@
  * @file saf_reverb.c
  * @brief Public part of the reverb processing module (saf_reverb)
  *
- * ...
+ * A collection of reverb and room simulation algorithms.
  *
  * @author Leo McCormack
  * @date 06.05.2020
@@ -26,6 +26,10 @@
  
 #include "saf_reverb.h"
 #include "saf_reverb_internal.h"
+
+/* ========================================================================== */
+/*                         IMS Shoebox Room Simulator                         */
+/* ========================================================================== */
 
 void ims_shoebox_create
 (

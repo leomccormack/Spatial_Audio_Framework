@@ -63,6 +63,17 @@ typedef enum _FIR_FILTER_TYPES {
 }FIR_FILTER_TYPES;
 
 /**
+ * Butterworth IIR filter design options.
+ */
+typedef enum _BUTTER_FILTER_TYPES {
+    BUTTER_FILTER_LPF, /**< low-pass filter */
+    BUTTER_FILTER_HPF, /**< high-pass filter */
+    BUTTER_FILTER_BPF, /**< band-pass filter */
+    BUTTER_FILTER_BSF  /**< band-stop filter */
+
+}BUTTER_FILTER_TYPES;
+
+/**
  * Windowing function types.
  *
  * Symmetric if winlength is odd, and asymmetric if winlength is even. Windows
@@ -310,6 +321,20 @@ void FIRFilterbank(/* Input arguments */
                    int scalingFLAG,
                    /* Output arguments */
                    float* filterbank);
+
+
+/* ========================================================================== */
+/*                        Butterworth Filter Functions                        */
+/* ========================================================================== */
+
+void butterCoeffs(/* Input arguments */
+                  BUTTER_FILTER_TYPES filterType,
+                  int order,
+                  float cutoff1,
+                  float cutoff2,
+                  float sampleRate,
+                  /* Output arguments */
+                  float* filter);
 
 
 #ifdef __cplusplus
