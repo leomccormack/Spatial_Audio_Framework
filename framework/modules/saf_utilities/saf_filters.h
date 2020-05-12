@@ -334,7 +334,8 @@ void butterCoeffs(/* Input arguments */
                   float cutoff2,
                   float sampleRate,
                   /* Output arguments */
-                  float* filter);
+                  float* b_coeffs,
+                  float* a_coeffs);
 
 
 #ifdef __cplusplus

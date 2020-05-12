@@ -1328,7 +1328,7 @@ void generateMinNormMap
     Un_Y = malloc1d(nGrid_dirs*sizeof(float_complex));
     
     /* obtain eigenvectors */
-    utility_ceig(Cx, nSH, 1, NULL, V, NULL, NULL);
+    utility_ceig(Cx, nSH, NULL, V, NULL, NULL);
     
     /* truncate, to obtain noise sub-space */
     for(i=0; i<nSH; i++)

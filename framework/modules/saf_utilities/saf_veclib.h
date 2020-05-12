@@ -723,8 +723,6 @@ void utility_zeigmp(/* Input Arguments */
  *
  * @param[in]  A           Input NON-SYMMETRIC square matrix; FLAT: dim x dim
  * @param[in]  dim         Dimensions for square matrix 'A'
- * @param[in]  sortDecFLAG '1' sort eigen values and vectors in decending order.
- *                         '0' ascending
  * @param[out] VL          Left Eigen vectors (set to NULL if not needed);
  *                         FLAT: dim x dim
  * @param[out] VR          Right Eigen vectors (set to NULL if not needed);
@@ -736,13 +734,42 @@ void utility_zeigmp(/* Input Arguments */
  */
 void utility_ceig(/* Input Arguments */
                   const float_complex* A,
-                  const int dim,
-                  int sortDecFLAG,
+                  const int dim, 
                   /* Output Arguments */
                   float_complex* VL,
                   float_complex* VR,
                   float_complex* D,
-                  float* eig);
+                  float_complex* eig);
+
+/**
+ * Row-major, eigenvalue decomposition of a NON-SYMMETRIC matrix: double
+ * precision complex, i.e.
+ * \code{.m}
+ *     [VL,VR,D] = eig(A); where A*VR = VR*D, and  A*VR = VR*diag(eig)
+ * \endcode
+ *
+ * @note 'D' contains the eigen values along the diagonal, while 'eig' are the
+ *       eigen values as a vector
+ *
+ * @param[in]  A           Input NON-SYMMETRIC square matrix; FLAT: dim x dim
+ * @param[in]  dim         Dimensions for square matrix 'A'
+ * @param[out] VL          Left Eigen vectors (set to NULL if not needed);
+ *                         FLAT: dim x dim
+ * @param[out] VR          Right Eigen vectors (set to NULL if not needed);
+ *                         FLAT: dim x dim
+ * @param[out] D           Eigen values along the diagonal (set to NULL if not
+ *                         needed); FLAT: dim x dim
+ * @param[out] eig         Eigen values not diagonalised (set to NULL if not
+ *                         needed); dim x 1
+ */
+void utility_zeig(/* Input Arguments */
+                  const double_complex* A,
+                  const int dim,
+                  /* Output Arguments */
+                  double_complex* VL,
+                  double_complex* VR,
+                  double_complex* D,
+                  double_complex* eig);
 
 
 /* ========================================================================== */

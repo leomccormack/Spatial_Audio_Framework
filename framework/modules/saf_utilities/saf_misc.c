@@ -106,3 +106,64 @@ void rand_0_1
     for(i=0; i<length; i++)
         vector[i] = rand()/(float)RAND_MAX;
 }
+
+void polyd_v
+(
+    double* x,
+    double* roots,
+    int len_x
+)
+{
+    int j,i;
+
+    memset(roots, 0, (len_x+1)*sizeof(double));
+    for (j=0; j<len_x; j++){
+        for(i=0; i<j; i++)
+            roots[i+1] = roots[i+1] - x[j] * (roots[i]);
+    }
+}
+
+void polycmplxd_v
+(
+    double_complex* x,
+    double_complex* roots,
+    int len_x
+)
+{
+    int j,i;
+
+    memset(roots, 0, (len_x+1)*sizeof(double_complex));
+    for (j=0; j<len_x; j++){
+        for(i=0; i<j; i++)
+            roots[i+1] = ccsub(roots[i+1], ccmul(x[j],roots[i]));
+    }
+}
+
+void polyd_m
+(
+    double* X,
+    double_complex* roots,
+    int size_x
+)
+{
+    int j,i;
+    double_complex* Xcmplx, *e;
+
+    /* Characteristic polynomial */
+    Xcmplx = malloc1d(size_x*size_x*sizeof(double_complex));
+    e = malloc1d(size_x*sizeof(double_complex));
+    for(i=0; i<size_x*size_x; i++)
+        Xcmplx[i] = cmplx(X[i], 0.0);
+    utility_zeig(Xcmplx, size_x, NULL, NULL, NULL, e);
+
+    /* recursion formula */
+    memset(roots, 0, (size_x+1)*sizeof(double_complex));
+    for (j=0; j<size_x; j++){
+        for(i=0; i<j; i++)
+            roots[i+1] = ccsub(roots[i+1], ccmul(e[j],roots[i]));
+    }
+
+    /* clean-up */
+    free(Xcmplx);
+    free(e);
+}

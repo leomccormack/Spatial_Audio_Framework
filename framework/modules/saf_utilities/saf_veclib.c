@@ -1127,11 +1127,10 @@ void utility_ceig
 (
     const float_complex* A,
     const int dim,
-    int sortDecFLAG,
     float_complex* VL,
     float_complex* VR,
     float_complex* D,
-    float* eig
+    float_complex* eig
 )
 {
     int i, j, n, lda, ldvl, ldvr, info;
@@ -1154,8 +1153,6 @@ void utility_ceig
         for(j=0; j<dim; j++)
             a[i*dim+j] = A[j*dim+i];
 
-	assert(0); /* below code was crashing. Consider using utility_cseig instead, if A is hermitian */
-    
     /* solve the eigenproblem */
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
@@ -1174,17 +1171,7 @@ void utility_ceig
     info = LAPACKE_cgeev(CblasColMajor, 'V', 'V', n, (veclib_float_complex*)a, lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, ldvl,
                          (veclib_float_complex*)vr, ldvr );
 #endif
-    
-    /* sort the eigenvalues */
-    float* wr, *wr_sorted;
-    int* sort_idx;
-    wr=malloc1d(dim*sizeof(float));
-    wr_sorted=malloc1d(dim*sizeof(float));
-    sort_idx=malloc1d(dim*sizeof(int));
-    for(i=0; i<dim; i++)
-        wr[i] = crealf(w[i]);
-    sortf(wr, wr_sorted, sort_idx, dim, sortDecFLAG);
-    
+
     /* output */
     if(D!=NULL)
         memset(D, 0, dim*dim*sizeof(float_complex));
@@ -1196,7 +1183,7 @@ void utility_ceig
         if(VR!=NULL)
             memset(VR, 0, dim*dim*sizeof(float_complex));
         if(eig!=NULL)
-            memset(eig, 0, dim*sizeof(float));
+            memset(eig, 0, dim*sizeof(float_complex));
 #ifndef NDEBUG
         saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_EVG);
 #endif
@@ -1206,14 +1193,14 @@ void utility_ceig
         for(i=0; i<dim; i++){
             if(VL!=NULL)
                 for(j=0; j<dim; j++)
-                    VL[i*dim+j] = vl[sort_idx[j]*dim+i];
+                    VL[i*dim+j] = vl[j*dim+i];
             if(VR!=NULL)
                 for(j=0; j<dim; j++)
-                    VR[i*dim+j] = vr[sort_idx[j]*dim+i];
+                    VR[i*dim+j] = vr[j*dim+i];
             if(D!=NULL)
-                D[i*dim+i] = cmplxf(wr_sorted[i], 0.0f); /* store along the diagonal */
+                D[i*dim+i] = w[i]; /* store along the diagonal */
             if(eig!=NULL)
-                eig[i] = wr_sorted[i];
+                eig[i] = w[i];
         }
     }
     
@@ -1221,9 +1208,93 @@ void utility_ceig
     free(vl);
     free(vr);
     free(a);
-    free(wr);
-    free(wr_sorted);
-    free(sort_idx);
+}
+
+void utility_zeig
+(
+    const double_complex* A,
+    const int dim,
+    double_complex* VL,
+    double_complex* VR,
+    double_complex* D,
+    double_complex* eig
+)
+{
+    int i, j, n, lda, ldvl, ldvr, info;
+    double_complex *w, *vl, *vr, *a;
+#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    int lwork;
+    double* rwork;
+    double_complex wkopt;
+    double_complex* work;
+#endif
+
+    n = lda = ldvl = ldvr = dim;
+    w = malloc1d(dim*sizeof(double_complex));
+    vl = malloc1d(dim*dim*sizeof(double_complex));
+    vr = malloc1d(dim*dim*sizeof(double_complex));
+    a = malloc1d(dim*dim*sizeof(double_complex));
+
+    /* store in column major order (i.e. transpose) */
+    for(i=0; i<dim; i++)
+        for(j=0; j<dim; j++)
+            a[i*dim+j] = A[j*dim+i];
+
+    /* solve the eigenproblem */
+#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    lwork = -1;
+    rwork = malloc1d(2*dim*sizeof(double));
+    zgeev_( "Vectors", "Vectors", &n, (veclib_double_complex*)a, &lda, (veclib_double_complex*)w, (veclib_double_complex*)vl, &ldvl,
+           (veclib_double_complex*)vr, &ldvr, (veclib_double_complex*)&wkopt, &lwork, rwork, &info );
+    lwork = (int)creal(wkopt);
+    work = malloc1d( lwork*sizeof(double_complex) );
+    zgeev_( "Vectors", "Vectors", &n, (veclib_double_complex*)a, &lda, (veclib_double_complex*)w, (veclib_double_complex*)vl, &ldvl,
+           (veclib_double_complex*)vr, &ldvr, (veclib_double_complex*)work, &lwork, rwork, &info );
+    free(rwork);
+    free(work);
+#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+    assert(0); /* no such implementation in clapack */
+#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_zgeev(CblasColMajor, 'V', 'V', n, (veclib_double_complex*)a, lda, (veclib_double_complex*)w, (veclib_double_complex*)vl, ldvl,
+                         (veclib_double_complex*)vr, ldvr );
+#endif
+
+    /* output */
+    if(D!=NULL)
+        memset(D, 0, dim*dim*sizeof(double_complex));
+
+    /* failed to converge and find the eigenvalues */
+    if( info != 0 ) {
+        if(VL!=NULL)
+            memset(VL, 0, dim*dim*sizeof(double_complex));
+        if(VR!=NULL)
+            memset(VR, 0, dim*dim*sizeof(double_complex));
+        if(eig!=NULL)
+            memset(eig, 0, dim*sizeof(double_complex));
+#ifndef NDEBUG
+        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_EVG);
+#endif
+    }
+    /* transpose, back to row-major */
+    else{
+        for(i=0; i<dim; i++){
+            if(VL!=NULL)
+                for(j=0; j<dim; j++)
+                    VL[i*dim+j] = vl[j*dim+i];
+            if(VR!=NULL)
+                for(j=0; j<dim; j++)
+                    VR[i*dim+j] = vr[j*dim+i];
+            if(D!=NULL)
+                D[i*dim+i] = w[i]; /* store along the diagonal */
+            if(eig!=NULL)
+                eig[i] = w[i];
+        }
+    }
+
+    free(w);
+    free(vl);
+    free(vr);
+    free(a);
 }
 
 

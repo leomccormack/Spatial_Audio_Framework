@@ -29,6 +29,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#include "saf_utilities.h"
+
 /* Cross-platform sleep macro from (slightly modified):
  https://cboard.cprogramming.com/c-programming/170381-cross-platform-wait-sleep.html */
 #ifdef _WIN32
@@ -106,6 +108,40 @@ void rand_m1_1(float* vector,
  */
 void rand_0_1(float* vector,
               int length);
+
+/**
+ * Solves the roots of a double vector
+ *
+ * @param[in]  x     Input vector; len_x x 1
+ * @param[out] roots Roots; (len_x+1) x 1
+ * @param[in]  len_x Length of vector 'x'
+ */
+void polyd_v(double* x,
+             double* roots,
+             int len_x);
+
+/**
+ * Solves the roots of a double_complex vector
+ *
+ * @param[in]  x     Input vector; len_x x 1
+ * @param[out] roots Roots; (len_x+1) x 1
+ * @param[in]  len_x Length of vector 'x'
+ */
+void polycmplxd_v(double_complex* x,
+                  double_complex* roots,
+                  int len_x);
+
+/**
+ * Solves the roots of a double_complex vector
+ *
+ * @param[in]  X      Square input matrix; size_x x size_x
+ * @param[out] roots  Roots; (size_x+1) x 1
+ * @param[in]  size_x Dimensions of square matrix 'X'
+ */
+void polyd_m(double* X,
+             double_complex* roots,
+             int size_x);
+
 
 
 #ifdef __cplusplus
