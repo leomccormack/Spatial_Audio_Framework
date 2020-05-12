@@ -1031,23 +1031,50 @@ void utility_cchol(/* Input Arguments */
 /* ========================================================================== */
 /*                           Matrix Inversion (?inv)                          */
 /* ========================================================================== */
- 
-//DEPRECATED
-//TODO: rewrite for row-major:
 
-/* s, column-major, matrix inversion: single precision */
-void utility_sinv(float * A,
-                  const int  N);
+/**
+ * Row-major, matrix inversion: single precision, i.e.
+ * \code{.m}
+ *     B = inv(A);
+ * \endcode
+ *
+ * @param[in]  A   Input square matrix; FLAT: dim x dim
+ * @param[out] B   Inverted square matrix; FLAT: dim x dim
+ * @param[in]  dim size of matrix
+ */
+void utility_sinv(float* A,
+                  float* B,
+                  const int dim);
 
-/* d, column-major, matrix inversion: double precision */
+/**
+ * Row-major, matrix inversion: double precision, i.e.
+ * \code{.m}
+ *     B = inv(A);
+ * \endcode
+ *
+ * @param[in]  A   Input square matrix; FLAT: dim x dim
+ * @param[out] B   Inverted square matrix; FLAT: dim x dim
+ * @param[in]  dim size of matrix
+ */
 void utility_dinv(double* A,
-                  const int N);
+                  double* B,
+                  const int dim);
 
-/* c, column-major, matrix inversion: single precision complex */
-void utility_cinv(float_complex * A,
-                  const int N );
+/**
+ * Row-major, matrix inversion: double precision complex, i.e.
+ * \code{.m}
+ *     B = inv(A);
+ * \endcode
+ *
+ * @param[in]  A   Input square matrix; FLAT: dim x dim
+ * @param[out] B   Inverted square matrix; FLAT: dim x dim
+ * @param[in]  dim size of matrix
+ */
+void utility_cinv(float_complex* A,
+                  float_complex* B,
+                  const int dim);
 
-    
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif  /* __cplusplus */

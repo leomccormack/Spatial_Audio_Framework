@@ -2072,75 +2072,128 @@ void utility_cchol
 /*                           Matrix Inversion (?inv)                          */
 /* ========================================================================== */
 
-// TODO: rewrite for row-major
-void utility_sinv(float * A, const int N)
+void utility_sinv
+(
+    float* A,
+    float * B,
+    const int N
+)
 {
+    int i,j;
     int *IPIV;
     IPIV = malloc1d(N * sizeof(int));
     int LWORK = N*N;
-    float *WORK;
+    float *WORK, *tmp;
     WORK = (float*)malloc1d(LWORK * sizeof(float));
+    tmp = malloc1d(N*N*sizeof(float));
     int INFO;
-    
+
+    /* Store in column major order */
+    for(i=0; i<N; i++)
+        for(j=0; j<N; j++)
+            tmp[j*N+i] = A[i*N+j];
+
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    sgetrf_((veclib_int*)&N, (veclib_int*)&N, A, (veclib_int*)&N, IPIV, &INFO);
-    sgetri_((veclib_int*)&N, A, (veclib_int*)&N, IPIV, WORK, &LWORK, &INFO);
+    sgetrf_((veclib_int*)&N, (veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, &INFO);
+    sgetri_((veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, WORK, &LWORK, &INFO);
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    INFO = clapack_sgetrf(CblasColMajor, N, N, A, N, IPIV);
-    INFO = clapack_sgetri(CblasColMajor, N, A, N, IPIV);
+    INFO = clapack_sgetrf(CblasColMajor, N, N, tmp, N, IPIV);
+    INFO = clapack_sgetri(CblasColMajor, N, tmp, N, IPIV);
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    INFO = LAPACKE_sgetrf(CblasColMajor, N, N, A, N, IPIV);
-    INFO = LAPACKE_sgetri(CblasColMajor, N, A, N, IPIV);
+    INFO = LAPACKE_sgetrf(CblasColMajor, N, N, tmp, N, IPIV);
+    INFO = LAPACKE_sgetri(CblasColMajor, N, tmp, N, IPIV);
 #endif
+
+    /* Output in row major order */
+    for(i=0; i<N; i++)
+        for(j=0; j<N; j++)
+            B[j*N+i] = tmp[i*N+j];
     
     free(IPIV);
     free(WORK);
+    free(tmp);
 }
 
-void utility_dinv(double* A, const int N)
+void utility_dinv
+(
+    double* A,
+    double* B,
+    const int N
+)
 {
+    int i, j;
     int *IPIV;
     IPIV = malloc1d( (N+1)*sizeof(int));
     int LWORK = N*N;
-    double *WORK;
+    double *WORK, *tmp;
     WORK = malloc1d( LWORK*sizeof(double));
+    tmp = malloc1d(N*N*sizeof(double));
     int INFO;
-    
+
+    /* Store in column major order */
+    for(i=0; i<N; i++)
+        for(j=0; j<N; j++)
+            tmp[j*N+i] = A[i*N+j];
+
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    dgetrf_((veclib_int*)&N, (veclib_int*)&N, A, (veclib_int*)&N, IPIV, &INFO);
-    dgetri_((veclib_int*)&N, A, (veclib_int*)&N, IPIV, WORK, &LWORK, &INFO);
+    dgetrf_((veclib_int*)&N, (veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, &INFO);
+    dgetri_((veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, WORK, &LWORK, &INFO);
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    INFO = clapack_dgetrf(CblasColMajor, N, N, A, N, IPIV);
-    INFO = clapack_dgetri(CblasColMajor, N, A, N, IPIV);
+    INFO = clapack_dgetrf(CblasColMajor, N, N, tmp, N, IPIV);
+    INFO = clapack_dgetri(CblasColMajor, N, tmp, N, IPIV);
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    INFO = LAPACKE_dgetrf(CblasColMajor, N, N, A, N, IPIV);
-    INFO = LAPACKE_dgetri(CblasColMajor, N, A, N, IPIV);
+    INFO = LAPACKE_dgetrf(CblasColMajor, N, N, tmp, N, IPIV);
+    INFO = LAPACKE_dgetri(CblasColMajor, N, tmp, N, IPIV);
 #endif
+
+    /* Output in row major order */
+    for(i=0; i<N; i++)
+        for(j=0; j<N; j++)
+            B[j*N+i] = tmp[i*N+j];
     
     free(IPIV);
     free(WORK);
+    free(tmp);
 }
 
-void utility_cinv(float_complex * A, const int N)
+void utility_cinv
+(
+    float_complex* A,
+    float_complex* B,
+    const int N
+)
 {
+    int i, j;
     int *IPIV;
     IPIV = malloc1d(N * sizeof(int));
     int LWORK = N*N;
-    float_complex *WORK;
+    float_complex *WORK, *tmp;
     WORK = (float_complex*)malloc1d(LWORK * sizeof(float_complex));
+    tmp = malloc1d(N*N*sizeof(float_complex));
     int INFO;
+
+    /* Store in column major order */
+    for(i=0; i<N; i++)
+        for(j=0; j<N; j++)
+            tmp[j*N+i] = A[i*N+j];
     
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    cgetrf_((veclib_int*)&N, (veclib_int*)&N, (veclib_float_complex*)A, (veclib_int*)&N, IPIV, &INFO);
-    cgetri_((veclib_int*)&N, (veclib_float_complex*)A, (veclib_int*)&N, IPIV, (veclib_float_complex*)WORK, &LWORK, &INFO);
+    cgetrf_((veclib_int*)&N, (veclib_int*)&N, (veclib_float_complex*)tmp, (veclib_int*)&N, IPIV, &INFO);
+    cgetri_((veclib_int*)&N, (veclib_float_complex*)tmp, (veclib_int*)&N, IPIV, (veclib_float_complex*)WORK, &LWORK, &INFO);
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    INFO = clapack_cgetrf(CblasColMajor, N, N, (veclib_float_complex*)A, N, IPIV);
-    INFO = clapack_cgetri(CblasColMajor, N, (veclib_float_complex*)A, N, IPIV);
+    INFO = clapack_cgetrf(CblasColMajor, N, N, (veclib_float_complex*)tmp, N, IPIV);
+    INFO = clapack_cgetri(CblasColMajor, N, (veclib_float_complex*)tmp, N, IPIV);
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    INFO = LAPACKE_cgetrf(CblasColMajor, N, N, (veclib_float_complex*)A, N, IPIV);
-    INFO = LAPACKE_cgetri(CblasColMajor, N, (veclib_float_complex*)A, N, IPIV);
+    INFO = LAPACKE_cgetrf(CblasColMajor, N, N, (veclib_float_complex*)tmp, N, IPIV);
+    INFO = LAPACKE_cgetri(CblasColMajor, N, (veclib_float_complex*)tmp, N, IPIV);
 #endif
-    
+
+    /* Output in row major order */
+    for(i=0; i<N; i++)
+        for(j=0; j<N; j++)
+            B[j*N+i] = tmp[i*N+j];
+
     free(IPIV);
     free(WORK);
+    free(tmp);
 }

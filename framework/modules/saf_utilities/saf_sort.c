@@ -345,7 +345,7 @@ void cmplxPairUp
     int len
 )
 {
-    int i, j, realCount;
+    int i, realCount;
     double_complex tmp;
 
     /* First sort input vector in ascending order. The complex conjugate pairs

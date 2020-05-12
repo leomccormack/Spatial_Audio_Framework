@@ -486,17 +486,18 @@ void butterCoeffs
 )
 {
     int i, j, k, np, tmp_len, numStates, oddPolesFLAG, nCoeffs;
-    double wlow, whi, w0, wl;
+    double wlow, whi, w0, wl, w1, BW, Wn1, q;
     double den[3];
-    double* c_state, *r, *b_coeffs_double;
+    double* c_state, *r, *b_coeffs_real;
     double** a_state, **bf_ss, **tmp1, **tmp2, **a_bili;
     double_complex kaT, kbT;
     double_complex den_cmplx[3];
-    double_complex* proto, *proto_tmp, *a_coeffs_cmplx, *kern;
+    double_complex* proto, *proto_tmp, *a_coeffs_cmplx, *kern, *rcmplx, *b_coeffs_cmplx;
 
     wlow = (double)cutoff1/((double)sampleRate/2.0);
     whi = (double)cutoff2/((double)sampleRate/2.0);
     w0 = 4.0 * tan(M_PI*wlow/2.0);
+    Wn1 = 0.0;
 
     /* Compute prototype for Nth order Butterworth analogue lowpass filter */
     if (order%2 != 0){/* ISODD */
@@ -512,7 +513,7 @@ void butterCoeffs
     }
     proto_tmp = malloc1d(np*sizeof(double_complex));
     for(i=1, j=0; i<=order-1; i+=2, j++)
-        proto_tmp[j] = cexp(cmplx(0.0, M_PI*(double)i/(2.0*(double)order)) + M_PI/2.0 );
+        proto_tmp[j] = cexp(cmplx(0.0, M_PI*(double)i/(2.0*(double)order) + M_PI/2.0) );
     for (i=0; i<tmp_len; i++){
         proto[2*i] = proto_tmp[i];
         proto[2*i+1] = conj(proto_tmp[i]);
@@ -523,7 +524,7 @@ void butterCoeffs
     cmplxPairUp(proto, proto_tmp, np);
     memcpy(proto, proto_tmp, np*sizeof(double_complex));
     free(proto_tmp);
-    a_state = (double**)malloc2d(numStates,numStates,sizeof(double));
+    a_state = (double**)calloc2d(numStates,numStates,sizeof(double));
     c_state = malloc1d(numStates*sizeof(double));
     if (np%2 != 0){/* ISODD */
         a_state[0][0] = creal(proto[np-1]);
@@ -537,17 +538,17 @@ void butterCoeffs
     /* Adjust indices as needed */
     for(i=1; i<np; i+=2){
         polycmplxd_v(&proto[i-1], den_cmplx, 2);
-        for(j=1; j<3; j++)
+        for(j=0; j<3; j++)
             den[j] = creal(den_cmplx[j]);
         j = oddPolesFLAG ? i-1 : i-2;
 
         if(j==-1){
             a_state[0][0] = -den[1];
             a_state[0][1] = -den[2];
-            a_state[1][0] = 1;
-            a_state[1][1] = 0;
-            c_state[0] = 0;
-            c_state[1] = 1;
+            a_state[1][0] = 1.0;
+            a_state[1][1] = 0.0;
+            c_state[0] = 0.0;
+            c_state[1] = 1.0;
         }
         else{
             for(k=0; k<j+1; k++)
@@ -558,28 +559,43 @@ void butterCoeffs
             a_state[j+2][j+2] = 0.0;
 
             for(k=0; k<j+1; k++)
-                c_state[k] = 0;
-            c_state[j+1] = 0;
-            c_state[j+2] = 1;
+                c_state[k] = 0.0;
+            c_state[j+1] = 0.0;
+            c_state[j+2] = 1.0;
         }
     }
 
     /* Transform lowpass filter into the desired filter (while in state space) */
     switch(filterType){
+        case BUTTER_FILTER_HPF:
+            utility_dinv(ADR2D(a_state), ADR2D(a_state), numStates);
         case BUTTER_FILTER_LPF:
-            nCoeffs = numStates+1;
             bf_ss = (double**)malloc2d(numStates,numStates,sizeof(double));
             for(i=0; i<numStates; i++)
                 for(j=0; j<numStates; j++)
                     bf_ss[i][j] = w0*(a_state[i][j]);
             break;
-        case BUTTER_FILTER_HPF:
-            break;
-        case BUTTER_FILTER_BPF:
-            break;
         case BUTTER_FILTER_BSF:
+            utility_dinv(ADR2D(a_state), ADR2D(a_state), numStates);
+        case BUTTER_FILTER_BPF:
+            numStates = numStates*2;
+            w1 = 4.0*tan(M_PI*whi/2.0);
+            BW = w1 - w0;
+            Wn1 = sqrt(w0*w1);
+            q = Wn1/BW;
+            bf_ss = (double**)calloc2d(numStates,numStates,sizeof(double));
+            for(i=0; i<numStates/2; i++)
+                for(j=0; j<numStates/2; j++)
+                    bf_ss[i][j] = Wn1 * (a_state[i][j]) /q;
+            for(i=numStates/2; i<numStates; i++)
+                for(j=0; j<numStates/2; j++)
+                    bf_ss[i][j] = (i-numStates/2) == j ? -Wn1 : 0.0;
+            for(i=0; i<numStates/2; i++)
+                for(j=numStates/2; j<numStates; j++)
+                    bf_ss[i][j] = i == (j-numStates/2) ? Wn1 : 0.0;
             break;
     }
+    nCoeffs = numStates+1;
 
     /* Bilinear transformation to find the discrete equivalent of the filter */
     tmp1 = (double**)malloc2d(numStates,numStates,sizeof(double));
@@ -591,11 +607,13 @@ void butterCoeffs
             tmp2[i][j] = (i==j ? 1.0f : 0.0f) - bf_ss[i][j]*0.25;
         }
     }
-    utility_dglslv(ADR2D(tmp1), numStates, ADR2D(tmp2), numStates, ADR2D(a_bili));
+    utility_dglslv(ADR2D(tmp2), numStates, ADR2D(tmp1), numStates, ADR2D(a_bili));
 
     /* Compute the filter coefficients for the numerator and denominator */
     a_coeffs_cmplx = malloc1d(nCoeffs*sizeof(double_complex));
-    polyd_m(ADR2D(a_bili), a_coeffs_cmplx, nCoeffs);
+    polyd_m(ADR2D(a_bili), a_coeffs_cmplx, numStates);
+    rcmplx = NULL;
+    r = NULL;
     switch(filterType){
         case BUTTER_FILTER_LPF:
             r = malloc1d(numStates*sizeof(double));
@@ -604,29 +622,62 @@ void butterCoeffs
             wl = 0.0;
             break;
         case BUTTER_FILTER_HPF:
+            r = malloc1d(numStates*sizeof(double));
+            for(i=0; i<numStates; i++)
+                r[i] = 1.0;
+            wl = M_PI;
             break;
         case BUTTER_FILTER_BPF:
+            r = malloc1d(numStates*sizeof(double));
+            wl = 2.0*atan2(Wn1, 4.0);
+            for(i=0; i<order;i++)
+                r[i] = 1.0;
+            for(; i<2*order;i++)
+                r[i] = -1.0;
             break;
         case BUTTER_FILTER_BSF:
+            rcmplx = malloc1d(numStates*sizeof(double_complex));
+            Wn1 = 2.0*atan2(Wn1,4.0);
+            wl = 0.0;
+            for(i=0; i<numStates;i++)
+                rcmplx[i] = cexp(cmplx(0.0, Wn1*pow(-1.0,(double)i)));
             break;
     }
-    b_coeffs_double = malloc1d(nCoeffs*sizeof(double));
-    polyd_v(r, b_coeffs_double, numStates);
-    kern = malloc1d(nCoeffs*sizeof(double_complex));
-    kaT = cmplx(0.0,0.0f);
-    kaT = cmplx(0.0,0.0f);
+    b_coeffs_real = malloc1d(nCoeffs*sizeof(double));
+    if(filterType == BUTTER_FILTER_BSF){
+        b_coeffs_cmplx = malloc1d(nCoeffs*sizeof(double_complex));
+        polycmplxd_v(rcmplx, b_coeffs_cmplx, numStates);
+        for(i=0; i<nCoeffs; i++)
+            b_coeffs_real[i] = creal(b_coeffs_cmplx[i]);
+        free(b_coeffs_cmplx);
+    }
+    else
+        polyd_v(r, b_coeffs_real, numStates);
+    kern = calloc1d(nCoeffs,sizeof(double_complex));
+    kaT = cmplx(0.0,0.0);
+    kbT = cmplx(0.0,0.0);
     for(i=0; i<nCoeffs; i++){
         kern[i] = cexp(cmplx(0.0,-wl*(double)i));
-        kaT = ccadd(kaT, crmul(kern[i],creal(a_coeffs[i])));
-        kbT = ccadd(kaT, crmul(kern[i],b_coeffs_double[i]));
+        kaT = ccadd(kaT, crmul(kern[i],creal(a_coeffs_cmplx[i])));
+        kbT = ccadd(kbT, crmul(kern[i],b_coeffs_real[i]));
     }
 
     /* output */
     for(i=0; i<nCoeffs; i++){
-        b_coeffs[i] = (float)creal(crmul(ccdiv(kaT,kbT), b_coeffs_double[i]));
+        b_coeffs[i] = (float)creal(crmul(ccdiv(kaT,kbT), b_coeffs_real[i]));
         a_coeffs[i] = (float)creal(a_coeffs_cmplx[i]);
     }
 
     /* clean-up */
+    free(proto);
+    free(a_state);
+    free(c_state);
+    free(bf_ss);
+    free(tmp1);
+    free(tmp2);
+    free(a_bili);
+    free(a_coeffs_cmplx);
+    free(b_coeffs_real);
+    free(kern);
 }
 

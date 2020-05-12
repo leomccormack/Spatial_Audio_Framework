@@ -117,10 +117,12 @@ void polyd_v
     int j,i;
 
     memset(roots, 0, (len_x+1)*sizeof(double));
+    roots[0] = 1.0;
     for (j=0; j<len_x; j++){
-        for(i=0; i<j; i++)
-            roots[i+1] = roots[i+1] - x[j] * (roots[i]);
-    }
+        for(i=j+1; i>0; i--){
+            roots[i] = roots[i] - x[j] * (roots[i-1]);
+        }
+    } 
 }
 
 void polycmplxd_v
@@ -133,9 +135,11 @@ void polycmplxd_v
     int j,i;
 
     memset(roots, 0, (len_x+1)*sizeof(double_complex));
+    roots[0] = 1.0;
     for (j=0; j<len_x; j++){
-        for(i=0; i<j; i++)
-            roots[i+1] = ccsub(roots[i+1], ccmul(x[j],roots[i]));
+        for(i=j+1; i>0; i--){
+            roots[i] = ccsub(roots[i], ccmul(x[j], roots[i-1]));
+        }
     }
 }
 
@@ -158,9 +162,11 @@ void polyd_m
 
     /* recursion formula */
     memset(roots, 0, (size_x+1)*sizeof(double_complex));
+    roots[0] = 1.0;
     for (j=0; j<size_x; j++){
-        for(i=0; i<j; i++)
-            roots[i+1] = ccsub(roots[i+1], ccmul(e[j],roots[i]));
+        for(i=j+1; i>0; i--){
+            roots[i] = ccsub(roots[i], ccmul(e[j], roots[i-1]));
+        }
     }
 
     /* clean-up */

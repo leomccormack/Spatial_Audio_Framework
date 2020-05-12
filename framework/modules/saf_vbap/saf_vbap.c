@@ -689,11 +689,11 @@ void invertLsMtx3D
         /* get the unit vectors for the current group */
         for(i=0; i<3; i++)
             for(j=0; j<3; j++)
-                tempGroup[i*3+j] = U_spkr[ls_groups[n*3+i]*3 + j];
+                tempGroup[j*3+i] = U_spkr[ls_groups[n*3+i]*3 + j]; 
 
         /* get inverse of current group */
-        utility_sinv(tempGroup,3);
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 3, 3, 1.0,
+        utility_sinv(tempGroup,tempGroup,3);
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 3, 3, 3, 1.0,
                     eye3, 3,
                     tempGroup, 3, 0.0,
                     tempInv, 3);
@@ -952,11 +952,11 @@ void invertLsMtx2D
         /* get the unit vectors for the current group */
         for(i=0; i<2; i++)
             for(j=0; j<2; j++)
-                tempGroup[i*2+j] = U_spkr[ls_pairs[n*2+i]*2 + j];
+                tempGroup[j*2+i] = U_spkr[ls_pairs[n*2+i]*2 + j];
 
         /* get inverse of current group */
-        utility_sinv(tempGroup,2);
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 2, 2, 2, 1.0,
+        utility_sinv(tempGroup,tempGroup,2);
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 2, 2, 2, 1.0,
                     eye2, 2,
                     tempGroup, 2, 0.0,
                     tempInv, 2);
