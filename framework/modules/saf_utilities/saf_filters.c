@@ -521,7 +521,7 @@ void butterCoeffs
 
     /* Transform prototype into state space  */
     numStates = np;
-    cmplxPairUp(proto, proto_tmp, np);
+    cmplxPairUpz(proto, proto_tmp, np);
     memcpy(proto, proto_tmp, np*sizeof(double_complex));
     free(proto_tmp);
     a_state = (double**)calloc2d(numStates,numStates,sizeof(double));

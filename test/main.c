@@ -36,7 +36,7 @@ void test__afSTFTMatrix(void);
 void test__afSTFT(void);
 void test__smb_pitchShifter(void);
 void test__sortf(void);
-void test__sortcmplxd(void);
+void test__sortz(void);
 void test__cmplxPairUp(void);
 void test__realloc2d_r(void);
 void test__getSHreal_recur(void);
@@ -79,7 +79,7 @@ printf("*****************************************************************\n"
     RUN_TEST(test__afSTFT);
     RUN_TEST(test__smb_pitchShifter);
     RUN_TEST(test__sortf);
-    RUN_TEST(test__sortcmplxd);
+    RUN_TEST(test__sortz);
     RUN_TEST(test__cmplxPairUp);
     RUN_TEST(test__realloc2d_r);
     RUN_TEST(test__getSHreal_recur);
@@ -419,7 +419,7 @@ void test__sortf(void){
     free(sortedIdx);
 }
 
-void test__sortcmplxd(void){
+void test__sortz(void){
     int i;
     const int N = 36;
     double_complex vals[N] ={
@@ -439,7 +439,7 @@ void test__sortcmplxd(void){
     double_complex sorted_vals[N];
 
     /* Sort assending order */
-    sortcmplxd(vals, sorted_vals, N, 0);
+    sortz(vals, sorted_vals, N, 0);
 
     /* Check that the next real(value) is either the same or greater than current real(value) */
     for(i=0; i<N-1; i++)
@@ -452,7 +452,7 @@ void test__sortcmplxd(void){
             TEST_ASSERT_TRUE(cimag(sorted_vals[i])<=cimag(sorted_vals[i+1]));
 
     /* Sort decending order */
-    sortcmplxd(vals, sorted_vals, N, 1);
+    sortz(vals, sorted_vals, N, 1);
 
     /* Check that the next real(value) is either the same or smaller than current real(value) */
     for(i=0; i<N-1; i++)
@@ -485,7 +485,7 @@ void test__cmplxPairUp(void){
     double_complex sorted_vals[N];
 
     /* Sort assending order */
-    cmplxPairUp(vals, sorted_vals, N);
+    cmplxPairUpz(vals, sorted_vals, N);
 
     /* Check that the next real(value) is either the same or greater than current real(value),
      * Ignoring purely real numbers */

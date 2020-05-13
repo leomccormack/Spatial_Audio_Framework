@@ -101,10 +101,10 @@ void sortd(double* in_vec,
  * @param [in]  len         Number of elements in vectors
  * @param [in]  descendFLAG '0' ascending, '1' descending
  */
-void sortcmplxf(float_complex* in_vec,
-                float_complex* out_vec,
-                int len,
-                int descendFLAG);
+void sortc(float_complex* in_vec,
+           float_complex* out_vec,
+           int len,
+           int descendFLAG);
 
 /**
  * Sort a vector of complex double floating-point values into ascending/
@@ -118,14 +118,23 @@ void sortcmplxf(float_complex* in_vec,
  * @param [in]  len         Number of elements in vectors
  * @param [in]  descendFLAG '0' ascending, '1' descending
  */
-void sortcmplxd(double_complex* in_vec,
-                double_complex* out_vec,
-                int len,
-                int descendFLAG);
+void sortz(double_complex* in_vec,
+           double_complex* out_vec,
+           int len,
+           int descendFLAG);
 
-void cmplxPairUp(double_complex* in_vec,
-                 double_complex* out_vec,
-                 int len);
+/**
+ * Pairs up complex numbers and sorts them ascending order
+ *
+ * Any purely real parts are pushed to the end of the output vector
+ *
+ * @param [in]  in_vec      Vector to be sorted; len x 1
+ * @param [out] out_vec     Output vector
+ * @param [in]  len         Number of elements in vectors
+ */
+void cmplxPairUpz(double_complex* in_vec,
+                  double_complex* out_vec,
+                  int len);
 
 /**
  * Finds indicies into "grid_dirs" that are the closest to "target dirs".

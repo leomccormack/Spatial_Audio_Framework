@@ -210,7 +210,7 @@ void sortd
     free(data);
 }
 
-void sortcmplxf
+void sortc
 (
     float_complex* in_vec,
     float_complex* out_vec,
@@ -274,7 +274,7 @@ void sortcmplxf
     free(vec_imag);
 }
 
-void sortcmplxd
+void sortz
 (
     double_complex* in_vec,
     double_complex* out_vec,
@@ -338,7 +338,7 @@ void sortcmplxd
     free(vec_imag);
 }
 
-void cmplxPairUp
+void cmplxPairUpz
 (
     double_complex* in_vec,
     double_complex* out_vec,
@@ -350,7 +350,7 @@ void cmplxPairUp
 
     /* First sort input vector in ascending order. The complex conjugate pairs
      * are now in the correct order. */
-    sortcmplxd(in_vec, out_vec, len, 0);
+    sortz(in_vec, out_vec, len, 0);
 
     /* Now identify any purely real values, and push them to the end of the
      * vector */ 
