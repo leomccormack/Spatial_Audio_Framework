@@ -372,22 +372,36 @@ void butterCoeffs(/* Input arguments */
  * filter for the first band, high-pass filter for the last band, and band-pass
  * filter for the inbetween bands (nCutoffFreqs must be 2 or more).
  *
- * @note The warnings regarding the limitations of the 'butterCoeffs' function
- *       still apply. e.g. If you are after an octaveband filterbank:
- *           cutoffFreqs[5] = { 176, 354, 707, 1410, 2830 }
- *       Then do not expect to go above 2nd order!
+ * @param[in] hFaF          (&) address of the saf_IIRFilterbank handle
+ * @param[in] order         Filter order
+ * @param[in] fc            Vector of cutoff frequencies; nCutoffFreqs x 1
+ * @param[in] nCutoffFreqs  Number of cutoff frequencies in vector 'fc'.
+ * @param[in] sampleRate    Sampling rate in Hz
+ * @param[in] maxNumSamples Maximum number of samples to expect when calling
+ *                          faf_IIRFilterbank_apply
  *
- * @param[in] hFaF         (&) address of the saf_IIRFilterbank handle
- * @param[in] order        Filter order
- * @param[in] fc           Vector of cutoff frequencies; nCutoffFreqs x 1
- * @param[in] nCutoffFreqs Number of cutoff frequencies in vector 'fc'.
- * @param[in] sampleRate   Sampling rate in Hz
+ * @see [1] Favrot, A. and Faller, C., 2010. Complementary N-band IIR filterbank
+ *          based on 2-band complementary filters. Proc. Intl. Works. on Acoust.
+ *          Echo and Noise Control (IWAENC).
  */
 void faf_IIRFilterbank_create(void** hFaF,
-                              int order, // ENUM 1st or 3rd order only
+                              int order,  
                               float* fc,
                               int nCutoffFreqs,
-                              float sampleRate);
+                              float sampleRate,
+                              int maxNumSamples);
+
+void faf_IIRFilterbank_apply(void* hFaF,
+                             float* inSig,
+                             float** outBands,
+                             int nSamples);
+
+/**
+ * Destroys an instance of the faf_IIRFilterbank
+ *
+ * @param[in] hFaF (&) address of the saf_IIRFilterbank handle
+ */
+void faf_IIRFilterbank_destroy(void** hFaF);
 
 ///**
 // * Applies IIR filter to an input signal using the direct form II difference

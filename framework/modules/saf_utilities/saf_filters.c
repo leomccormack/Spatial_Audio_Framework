@@ -521,7 +521,7 @@ void butterCoeffs
 
     /* Transform prototype into state space  */
     numStates = np;
-    cmplxPairUpz(proto, proto_tmp, np);
+    cmplxPairUp(proto, proto_tmp, np);
     memcpy(proto, proto_tmp, np*sizeof(double_complex));
     free(proto_tmp);
     a_state = (double**)calloc2d(numStates,numStates,sizeof(double));
@@ -682,8 +682,10 @@ void butterCoeffs
 }
 
 typedef struct _faf_IIRFB_data{
-    int nBands;
+    int nBands, filtLen, filtOrder;
     float** b_lpf, **a_lpf, **b_hpf, **a_hpf;
+    float*** wz_lpf, ***wz_hpf, ***wz_apf1, ***wz_apf2;
+    float* tmp, *tmp2;
 
 }faf_IIRFB_data;
 
@@ -693,7 +695,8 @@ void faf_IIRFilterbank_create
     int order, // ENUM 1st or 3rd order only
     float* fc,
     int nCutoffFreq,
-    float sampleRate
+    float sampleRate,
+    int maxNumSamples
 )
 {
     *hFaF = malloc1d(sizeof(faf_IIRFB_data));
@@ -704,15 +707,30 @@ void faf_IIRFilterbank_create
     double_complex z[3], A[3][3], ztmp[7], ztmp2[7];
     int i, j, f, filtLen, d1_len, d2_len;
 
-    assert(nCutoffFreq>=1);
-
+    assert(nCutoffFreq>1);
     filtLen = order + 1;
+    fb->filtOrder = order;
+    fb->filtLen = filtLen;
 
-    /* Number of filters returned is always one more than the number of cut-off frequencies */
+    /* Number of filters returned is always one more than the number of cut-off
+     * frequencies */
     fb->nBands = nCutoffFreq + 1;
 
-    for(f=0; f<nCutoffFreq; f++){
+    /* Allocate memory for filter coefficients and delay buffers */
+    fb->b_hpf = (float**)malloc2d(nCutoffFreq, filtLen, sizeof(float));
+    fb->a_hpf = (float**)malloc2d(nCutoffFreq, filtLen, sizeof(float));
+    fb->b_lpf = (float**)malloc2d(nCutoffFreq, filtLen, sizeof(float));
+    fb->a_lpf = (float**)malloc2d(nCutoffFreq, filtLen, sizeof(float));
+    fb->wz_hpf = (float***)calloc3d(fb->nBands, nCutoffFreq, order, sizeof(float));
+    fb->wz_lpf = (float***)calloc3d(fb->nBands, nCutoffFreq, order, sizeof(float));
+    fb->wz_apf1 = (float***)calloc3d(fb->nBands, nCutoffFreq, order, sizeof(float));
+    fb->wz_apf2 = (float***)calloc3d(fb->nBands, nCutoffFreq, order, sizeof(float));
+    fb->tmp = malloc1d(maxNumSamples*sizeof(float));
+    fb->tmp2 = malloc1d(maxNumSamples*sizeof(float));
 
+    /* Compute low-pass and complementary high-pass filter coefficients for each
+     * cut-off frequency */
+    for(f=0; f<nCutoffFreq; f++){
         /* Low-pass filter */
         butterCoeffs(BUTTER_FILTER_LPF, order, fc[f], 0.0f, sampleRate, (double*)b_lpf, (double*)a_lpf);
 
@@ -771,14 +789,13 @@ void faf_IIRFilterbank_create
             }
         }
 
-        /* Convert coupled allpass filter to transfer function form
-         * (code from https://github.com/nsk1001/Scilab-functions written by
-         * Nagma Samreen Khan.) */
+        /* Convert coupled allpass filter to transfer function form (code from:
+         * https://github.com/nsk1001/Scilab-functions written by Nagma Samreen
+         * Khan) */
         for(i=0; i<d1_len; i++)
             d1_num[i] = conj(d1[d1_len-i-1]);
         for(i=0; i<d2_len; i++)
             d2_num[i] = conj(d2[d2_len-i-1]);
-
         convz(d1_num, d2, d1_len, d2_len, ztmp);
         convz(d2_num, d1, d2_len, d1_len, ztmp2);
         for(i=0; i<filtLen; i++){
@@ -786,6 +803,121 @@ void faf_IIRFilterbank_create
             a_hpf[i] = b_lpf[i];
         }
 
+        /* Store in single precision for run-time */
+        for(i=0; i<filtLen; i++){
+            fb->b_hpf[f][i] = (float)b_hpf[i];
+            fb->a_hpf[f][i] = (float)a_hpf[i];
+            fb->b_lpf[f][i] = (float)b_lpf[i];
+            fb->a_lpf[f][i] = (float)a_lpf[i];
+        }
+    }
+}
+
+void applyIIR
+(
+    int order,
+    float* in_signal,
+    int nSamples,
+    float* b,
+    float* a,
+    float* wz,
+    float* out_signal
+)
+{
+    int n, i, len;
+    float wn;
+
+    len = order+1;
+
+    /*  difference equation (Direct form 2) */
+    for (n=0; n<nSamples; n++){
+        /* numerator */
+        wn = in_signal[n];
+        for (i=1; i<len;i++)
+            wn = wn - a[i] * wz[i-1];
+
+        /* denominator */
+        out_signal[n] = b[0] * wn;
+        for (i=1; i<len; i++)
+            out_signal[n] = out_signal[n] + b[i] * wz[i-1];
+
+        /* shuffle delays */
+        for(i=(len-2); i>0; i--)
+            wz[i-1] = wz[i];
+        wz[0] = wn;
+    }
+}
+
+void faf_IIRFilterbank_apply
+(
+    void* hFaF,
+    float* inSig,
+    float** outBands,
+    int nSamples
+)
+{
+    faf_IIRFB_data *fb = (faf_IIRFB_data*)(hFaF);
+    int band,j;
+
+    /* Copy input signal to all output bands/channels */
+    for(band=0; band<fb->nBands; band++)
+        memcpy(outBands[band], inSig, nSamples*sizeof(float));
+
+    /* Band 0 */
+    for (band = 0; band<fb->nBands-1; band++)
+        applyIIR(fb->filtOrder, outBands[0], nSamples, fb->b_lpf[band], fb->a_lpf[band], fb->wz_lpf[0][band], outBands[0]);
+
+    /* Band 1 */
+    applyIIR(fb->filtOrder, outBands[1], nSamples, fb->b_hpf[0], fb->a_hpf[0], fb->wz_hpf[1][0], outBands[1]);
+    for (band = 1; band<fb->nBands-1; band++)
+        applyIIR(fb->filtOrder, outBands[1], nSamples, fb->b_lpf[band], fb->a_lpf[band], fb->wz_lpf[1][band], outBands[1]);
+
+    /* All-pass filters (bands 2..N-1) */
+    for (band = 2; band<fb->nBands; band++){
+        for (j=0; j<band-2; j++){
+            applyIIR(fb->filtOrder, outBands[band], nSamples, fb->b_lpf[j], fb->a_lpf[j], fb->wz_apf1[band][j], fb->tmp);
+            applyIIR(fb->filtOrder, outBands[band], nSamples, fb->b_hpf[j], fb->a_hpf[j], fb->wz_apf2[band][j], fb->tmp2);
+            utility_svvadd(fb->tmp, fb->tmp2, nSamples, outBands[band]);
+        } 
+    }
+
+    /* Bands 2..N-2 */
+    for(band = 2; band< fb->nBands-1; band++){
+        /* high-pass filter */
+        applyIIR(fb->filtOrder, outBands[band], nSamples, fb->b_hpf[band-1], fb->a_hpf[band-1], fb->wz_hpf[band][band-1], outBands[band]);
+
+        /* low-pass filters */
+        for(j=band; j<fb->nBands-1; j++)
+            applyIIR(fb->filtOrder, outBands[band], nSamples, fb->b_lpf[j], fb->a_lpf[j], fb->wz_lpf[band][j], outBands[band]);
+
+    }
+
+    /* Band N-1 */
+    if (fb->nBands>2)
+        applyIIR(fb->filtOrder, outBands[fb->nBands-1], nSamples, fb->b_hpf[fb->nBands-2], fb->a_hpf[fb->nBands-2],
+                 fb->wz_hpf[fb->nBands-1][fb->nBands-2], outBands[fb->nBands-1]);
+}
+
+void faf_IIRFilterbank_destroy
+(
+    void** hFaF
+)
+{
+    faf_IIRFB_data *fb = (faf_IIRFB_data*)(*hFaF);
+
+    if(fb!=NULL){
+        free(fb->b_hpf);
+        free(fb->a_hpf);
+        free(fb->b_lpf);
+        free(fb->a_lpf);
+        free(fb->wz_lpf);
+        free(fb->wz_hpf);
+        free(fb->wz_apf1);
+        free(fb->wz_apf2);
+        free(fb->tmp);
+        free(fb->tmp2);
+        fb=NULL;
+        *hFaF = NULL;
     }
 }
 

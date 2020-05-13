@@ -98,12 +98,34 @@ printf("*****************************************************************\n"
 
 void test__faf_IIRFilterbank(void){
     void* hFaF;
+    int i, band;
 
+    /* Config */
+    const int signalLength = 256;
+    const int frameSize = 16;
     float fs = 48e3;
     int order = 3;
     float fc[6] = {176.776695296637, 353.553390593274, 707.106781186547, 1414.21356237309, 2828.42712474619, 5656.85424949238};
+    float inSig[signalLength];
+    float outSig[7][signalLength];
+    float** outFrame;
+    outFrame = (float**)malloc2d(7, frameSize, sizeof(float));
 
-    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs);
+    /* Impulse */
+    memset(inSig, 0, signalLength*sizeof(float));
+    inSig[0] = 1.0f;
+
+    /* Pass impulse through filterbank */
+    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
+    for(i=0; i< signalLength/frameSize; i++){
+        faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
+        for(band=0; band<7; band++)
+            memcpy(&outSig[band][i*frameSize], outFrame[band], frameSize*sizeof(float));
+    }
+
+    /* clean-up */
+    faf_IIRFilterbank_destroy(&hFaF);
+    free(outFrame);
 }
 
 void test__ims_shoebox(void){
@@ -188,7 +210,7 @@ void test__saf_rfft(void){
         {16,256,512,1024,2048,4096,8192,16384,32768,65536,1048576,33554432};
 
     /* Loop over the different FFT sizes */
-    for (i=0; i<12; i++){
+    for (i=0; i<11; i++){
         N = fftSizesToTest[i];
 
         /* prep */
@@ -485,7 +507,7 @@ void test__cmplxPairUp(void){
     double_complex sorted_vals[N];
 
     /* Sort assending order */
-    cmplxPairUpz(vals, sorted_vals, N);
+    cmplxPairUp(vals, sorted_vals, N);
 
     /* Check that the next real(value) is either the same or greater than current real(value),
      * Ignoring purely real numbers */

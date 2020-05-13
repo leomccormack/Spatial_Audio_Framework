@@ -338,7 +338,7 @@ void sortz
     free(vec_imag);
 }
 
-void cmplxPairUpz
+void cmplxPairUp
 (
     double_complex* in_vec,
     double_complex* out_vec,
