@@ -40,7 +40,7 @@ extern "C" {
 /* ========================================================================== */
 
 /**
- * Bi-quadratic (second-order) IIR filter design options.
+ * Bi-quadratic (second-order) IIR filter design options
  */
 typedef enum _BIQUAD_FILTER_TYPES {
     BIQUAD_FILTER_LPF,       /**< low-pass filter */
@@ -52,7 +52,7 @@ typedef enum _BIQUAD_FILTER_TYPES {
 }BIQUAD_FILTER_TYPES;
 
 /**
- * Finite Impulse Response (FIR) filter design options.
+ * Finite Impulse Response (FIR) filter design options
  */
 typedef enum _FIR_FILTER_TYPES {
     FIR_FILTER_LPF, /**< low-pass filter */
@@ -63,7 +63,7 @@ typedef enum _FIR_FILTER_TYPES {
 }FIR_FILTER_TYPES;
 
 /**
- * Butterworth IIR filter design options.
+ * Butterworth Infinite Impulse Response (IIR) filter design options
  */
 typedef enum _BUTTER_FILTER_TYPES {
     BUTTER_FILTER_LPF, /**< low-pass filter */
@@ -74,7 +74,7 @@ typedef enum _BUTTER_FILTER_TYPES {
 }BUTTER_FILTER_TYPES;
 
 /**
- * Windowing function types.
+ * Windowing function types
  *
  * Symmetric if winlength is odd, and asymmetric if winlength is even. Windows
  * are evaluated: 0 <= n < winlength. Largely taken from:
@@ -98,7 +98,7 @@ typedef enum _WINDOWING_FUNCTION_TYPES {
 /* ========================================================================== */
 
 /**
- * Computes the weights of a specific windowing function.
+ * Computes the weights of a specific windowing function
  *
  * Weights are symmetric if winlength is odd, and are asymmetric if winlength is
  * even.
@@ -118,7 +118,7 @@ void getWindowingFunction(WINDOWING_FUNCTION_TYPES type,
                           float* win);
 
 /**
- * Converts octave band CENTRE frequencies into CUTOFF frequencies.
+ * Converts octave band CENTRE frequencies into CUTOFF frequencies
  *
  * The lower and upper CENTRE frequencies only have their upper and lower
  * CUTOFF frequencies computed, respectively. e.g.:
@@ -152,7 +152,7 @@ void getOctaveBandCutoffFreqs(float* centreFreqs,
 
 /**
  * Equalises input sequence by its minimum phase form, in order to bring its
- * magnitude response to unity.
+ * magnitude response to unity
  *
  * @param[in,out] x   Input; len x 1
  * @param[in]     len Length of input
@@ -238,7 +238,7 @@ void evalBiQuadTransferFunction(/* Input arguments */
 /* ========================================================================== */
 
 /**
- * Computes FIR filter coefficients by windowing.
+ * Computes FIR filter coefficients by windowing
  *
  * When using the Hamming window, and scalingFLAG=1, the function is numerically
  * identical to the default 'fir1' function in Matlab (when using it in single
@@ -288,7 +288,7 @@ void FIRCoeffs(/* Input arguments */
 
 /**
  * Computes a bank of FIR filter coefficients required to divide a signal into
- * frequency bands.
+ * frequency bands
  *
  * Provided the order is sufficient, the sum of the bands
  * should recontruct the original (although, shifted in time due to group delay)
@@ -327,6 +327,33 @@ void FIRFilterbank(/* Input arguments */
 /*                        Butterworth Filter Functions                        */
 /* ========================================================================== */
 
+/**
+ * Computes Butterworth IIR filter coefficients
+ *
+ * The function is numerically identical to the default 'butter' function in
+ * Matlab
+ *
+ * @warning The function still shares the same limitations of the Matlab
+ *          'butter' function, which may also be emphasised by applying the
+ *          filter to single precision input data. Higher orders and lower
+ *          cut-off frequencies can easily become unstable! Consider trying
+ *          things out in Matlab before using this function.
+ *
+ * @param[in]  filterType  See 'BUTTER_FILTER_TYPES' enum
+ * @param[in]  order       Filter order (N)
+ * @param[in]  cutoff1     Filter1 cutoff in Hz, for LPF/HPF, and lower cutoff
+ *                         for BPF/BSF
+ * @param[in]  cutoff2     Filter2 cutoff in Hz, not needed for LPF/HPF, this is
+ *                         the upper cutoff for BPF/BSF
+ * @param[in]  sampleRate  Sampling rate in Hz
+ * @param[out] b_coeffs    Filter coefficients for the numerator;
+ *                         LPF/HPF: (order+1) x 1; BPF/BSF: (2*order+1) x 1
+ * @param[out] a_coeffs    Filter coefficients for the denominator;
+ *                         LPF/HPF: (order+1) x 1; BPF/BSF: (2*order+1) x 1
+ *
+ * @see [1] T. W. Parks and C. S. Burrus, Digital Filter Design, John Wiley &
+ *          Sons, 1987, chapter 7, section 7.3.3.
+ */
 void butterCoeffs(/* Input arguments */
                   BUTTER_FILTER_TYPES filterType,
                   int order,
@@ -334,9 +361,53 @@ void butterCoeffs(/* Input arguments */
                   float cutoff2,
                   float sampleRate,
                   /* Output arguments */
-                  float* b_coeffs,
-                  float* a_coeffs);
+                  double* b_coeffs,
+                  double* a_coeffs);
 
+/**
+ * Computes a bank of IIR filter coefficients required to divide a signal into
+ * frequency bands
+ *
+ * The function employs the 'butterCoeffs' function to compute a low-pass
+ * filter for the first band, high-pass filter for the last band, and band-pass
+ * filter for the inbetween bands (nCutoffFreqs must be 2 or more).
+ *
+ * @note The warnings regarding the limitations of the 'butterCoeffs' function
+ *       still apply. e.g. If you are after an octaveband filterbank:
+ *           cutoffFreqs[5] = { 176, 354, 707, 1410, 2830 }
+ *       Then do not expect to go above 2nd order!
+ *
+ * @param[in] hFaF         (&) address of the saf_IIRFilterbank handle
+ * @param[in] order        Filter order
+ * @param[in] fc           Vector of cutoff frequencies; nCutoffFreqs x 1
+ * @param[in] nCutoffFreqs Number of cutoff frequencies in vector 'fc'.
+ * @param[in] sampleRate   Sampling rate in Hz
+ */
+void faf_IIRFilterbank_create(void** hFaF,
+                              int order, // ENUM 1st or 3rd order only
+                              float* fc,
+                              int nCutoffFreqs,
+                              float sampleRate);
+
+///**
+// * Applies IIR filter to an input signal using the direct form II difference
+// * equation
+// *
+// * @note input 'signal' is filtered in place (i.e. it becomes the output signal)
+// *
+// * @param[in]      b        b filter coefficients; 3 x 1
+// * @param[in]      a        a filter coefficients; 3 x 1
+// * @param[in,out]  w_z_12   Previous 2 wn samples (init as 0s); 2 x 1
+// * @param[in,out]  signal   Signal to be filtered/filtered signal; nSamples x 1
+// * @param[in]      nSamples Number of samples in the signal
+// */
+//void applyIIRFilter(/* Input arguments */
+//                    double* b_coeffs,
+//                    double* a_coeffs,
+//                    float* w_z,
+//                    int filterLength,
+//                    float* signal,
+//                    int nSamples);
 
 #ifdef __cplusplus
 }/* extern "C" */

@@ -110,36 +110,54 @@ void rand_0_1(float* vector,
               int length);
 
 /**
- * Solves the roots of a double vector
+ * Basic 1D convolution
+ */
+void convd(double* x,
+           double* h,
+           int len_x,
+           int len_h,
+           double* y);
+
+/**
+ * Basic 1D convolution
+ */
+void convz(double_complex* x,
+           double_complex* h,
+           int len_x,
+           int len_h,
+           double_complex* y);
+
+/**
+ * Convert roots to polynomial
  *
  * @param[in]  x     Input vector; len_x x 1
- * @param[out] roots Roots; (len_x+1) x 1
+ * @param[out] poly  Polynomials; (len_x+1) x 1
  * @param[in]  len_x Length of vector 'x'
  */
 void polyd_v(double* x,
-             double* roots,
+             double* poly,
              int len_x);
 
 /**
- * Solves the roots of a double_complex vector
+ * Convert roots to polynomial
  *
  * @param[in]  x     Input vector; len_x x 1
- * @param[out] roots Roots; (len_x+1) x 1
+ * @param[out] poly  Polynomials; (len_x+1) x 1
  * @param[in]  len_x Length of vector 'x'
  */
-void polycmplxd_v(double_complex* x,
-                  double_complex* roots,
-                  int len_x);
+void polyz_v(double_complex* x,
+             double_complex* poly,
+             int len_x);
 
 /**
- * Solves the roots of a double_complex vector
+ * Convert roots to polynomial
  *
  * @param[in]  X      Square input matrix; size_x x size_x
- * @param[out] roots  Roots; (size_x+1) x 1
+ * @param[out] poly   Polynomials; (size_x+1) x 1
  * @param[in]  size_x Dimensions of square matrix 'X'
  */
 void polyd_m(double* X,
-             double_complex* roots,
+             double_complex* poly,
              int size_x);
 
 

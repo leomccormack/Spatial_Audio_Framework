@@ -107,38 +107,82 @@ void rand_0_1
         vector[i] = rand()/(float)RAND_MAX;
 }
 
+void convd
+(
+    double* x,
+    double* h,
+    int len_x,
+    int len_h,
+    double* y
+)
+{
+    int i, j, h_start, x_start, x_end, len_y;
+
+    len_y = len_h+len_x-1;
+    memset(y, 0, len_y*sizeof(double));
+    for (i=0; i<len_y; i++) {
+        x_start = MAX(0,i-len_h+1);
+        x_end   = MIN(i+1,len_x);
+        h_start = MIN(i,len_h-1);
+        for(j=x_start; j<x_end; j++)
+            y[i] += h[h_start--]*x[j];
+    }
+}
+
+void convz
+(
+    double_complex* x,
+    double_complex* h,
+    int len_x,
+    int len_h,
+    double_complex* y
+)
+{
+    int i, j, h_start, x_start, x_end, len_y;
+
+    len_y = len_h+len_x-1;
+    memset(y, 0, len_y*sizeof(double_complex));
+    for (i=0; i<len_y; i++) {
+        x_start = MAX(0,i-len_h+1);
+        x_end   = MIN(i+1,len_x);
+        h_start = MIN(i,len_h-1);
+        for(j=x_start; j<x_end; j++)
+            y[i] = ccadd(y[i], ccmul(h[h_start--], x[j]));
+    }
+}
+
 void polyd_v
 (
     double* x,
-    double* roots,
+    double* poly,
     int len_x
 )
 {
     int j,i;
 
-    memset(roots, 0, (len_x+1)*sizeof(double));
-    roots[0] = 1.0;
+    memset(poly, 0, (len_x+1)*sizeof(double));
+    poly[0] = 1.0;
     for (j=0; j<len_x; j++){
         for(i=j+1; i>0; i--){
-            roots[i] = roots[i] - x[j] * (roots[i-1]);
+            poly[i] = poly[i] - x[j] * (poly[i-1]);
         }
     } 
 }
 
-void polycmplxd_v
+void polyz_v
 (
     double_complex* x,
-    double_complex* roots,
+    double_complex* poly,
     int len_x
 )
 {
     int j,i;
 
-    memset(roots, 0, (len_x+1)*sizeof(double_complex));
-    roots[0] = 1.0;
+    memset(poly, 0, (len_x+1)*sizeof(double_complex));
+    poly[0] = 1.0;
     for (j=0; j<len_x; j++){
         for(i=j+1; i>0; i--){
-            roots[i] = ccsub(roots[i], ccmul(x[j], roots[i-1]));
+            poly[i] = ccsub(poly[i], ccmul(x[j], poly[i-1]));
         }
     }
 }
@@ -146,7 +190,7 @@ void polycmplxd_v
 void polyd_m
 (
     double* X,
-    double_complex* roots,
+    double_complex* poly,
     int size_x
 )
 {
@@ -161,11 +205,11 @@ void polyd_m
     utility_zeig(Xcmplx, size_x, NULL, NULL, NULL, e);
 
     /* recursion formula */
-    memset(roots, 0, (size_x+1)*sizeof(double_complex));
-    roots[0] = 1.0;
+    memset(poly, 0, (size_x+1)*sizeof(double_complex));
+    poly[0] = 1.0;
     for (j=0; j<size_x; j++){
         for(i=j+1; i>0; i--){
-            roots[i] = ccsub(roots[i], ccmul(e[j], roots[i-1]));
+            poly[i] = ccsub(poly[i], ccmul(e[j], poly[i-1]));
         }
     }
 

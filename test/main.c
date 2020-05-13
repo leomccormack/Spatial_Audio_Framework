@@ -27,6 +27,7 @@
 #include "saf.h"
 
 /* Prototypes for available unit tests */
+void test__faf_IIRFilterbank(void);
 void test__ims_shoebox(void);
 void test__saf_rfft(void);
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
@@ -69,6 +70,7 @@ printf("*****************************************************************\n"
     UNITY_BEGIN();
 
     /* run each unit test */
+    RUN_TEST(test__faf_IIRFilterbank);
     RUN_TEST(test__ims_shoebox);
     RUN_TEST(test__saf_rfft);
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
@@ -93,6 +95,16 @@ printf("*****************************************************************\n"
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__faf_IIRFilterbank(void){
+    void* hFaF;
+
+    float fs = 48e3;
+    int order = 3;
+    float fc[6] = {176.776695296637, 353.553390593274, 707.106781186547, 1414.21356237309, 2828.42712474619, 5656.85424949238};
+
+    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs);
+}
 
 void test__ims_shoebox(void){
     void* hIms;
@@ -589,16 +601,16 @@ void test__butterCoeffs(void){
     int order;
 
     /* Config */
-    const float acceptedTolerance = 0.00001f;
+    const double acceptedTolerance = 0.000001f;
 
     /* 1st order Low-pass filter */
     fs = 48e3f;
     cutoff_freq = 3000.0f;
     order = 1;
-    float a_test1[2], b_test1[2];
-    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (float*)b_test1, (float*)a_test1);
-    const float a_ref1[2] = {1,-0.668178637919299};
-    const float b_ref1[2] = {0.165910681040351,0.165910681040351};
+    double a_test1[2], b_test1[2];
+    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test1, (double*)a_test1);
+    const double a_ref1[2] = {1,-0.668178637919299};
+    const double b_ref1[2] = {0.165910681040351,0.165910681040351};
     for(i=0; i<2; i++){ /* Compare with the values given by Matlab's butter function */
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test1[i], a_ref1[i]);
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test1[i], b_ref1[i]);
@@ -608,10 +620,10 @@ void test__butterCoeffs(void){
     fs = 48e3f;
     cutoff_freq = 12000.0f;
     order = 2;
-    float a_test2[3], b_test2[3];
-    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (float*)b_test2, (float*)a_test2);
-    const float a_ref2[3] = {1.0,-2.22044604925031e-16,0.171572875253810};
-    const float b_ref2[3] = {0.292893218813452,0.585786437626905,0.292893218813452};
+    double a_test2[3], b_test2[3];
+    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test2, (double*)a_test2);
+    const double a_ref2[3] = {1.0,-2.22044604925031e-16,0.171572875253810};
+    const double b_ref2[3] = {0.292893218813452,0.585786437626905,0.292893218813452};
     for(i=0; i<3; i++){ /* Compare with the values given by Matlab's butter function */
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test2[i], a_ref2[i]);
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test2[i], b_ref2[i]);
@@ -621,10 +633,10 @@ void test__butterCoeffs(void){
     fs = 48e3f;
     cutoff_freq = 200.0f;
     order = 3;
-    float a_test3[4], b_test3[4];
-    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (float*)b_test3, (float*)a_test3);
-    const float a_ref3[4] = {1.0,-2.94764161678340,2.89664496645376,-0.948985866903327};
-    const float b_ref3[4] = {2.18534587909103e-06,6.55603763727308e-06,6.55603763727308e-06,2.18534587909103e-06};
+    double a_test3[4], b_test3[4];
+    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test3, (double*)a_test3);
+    const double a_ref3[4] = {1.0,-2.94764161678340,2.89664496645376,-0.948985866903327};
+    const double b_ref3[4] = {2.18534587909103e-06,6.55603763727308e-06,6.55603763727308e-06,2.18534587909103e-06};
     for(i=0; i<4; i++){ /* Compare with the values given by Matlab's butter function */
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test3[i], a_ref3[i]);
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test3[i], b_ref3[i]);
@@ -634,10 +646,10 @@ void test__butterCoeffs(void){
     fs = 48e3f;
     cutoff_freq = 1e3f;
     order = 6;
-    float a_test4[7], b_test4[7];
-    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (float*)b_test4, (float*)a_test4);
-    const float a_ref4[7] = {1,-5.49431292177096,12.5978414666894,-15.4285267903275,10.6436770055305,-3.92144696766748,0.602772146971300};
-    const float b_ref4[7] = {6.15535184628202e-08,3.69321110776921e-07,9.23302776942303e-07,1.23107036925640e-06,9.23302776942303e-07,3.69321110776921e-07,6.15535184628202e-08};
+    double a_test4[7], b_test4[7];
+    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test4, (double*)a_test4);
+    const double a_ref4[7] = {1,-5.49431292177096,12.5978414666894,-15.4285267903275,10.6436770055305,-3.92144696766748,0.602772146971300};
+    const double b_ref4[7] = {6.15535184628202e-08,3.69321110776921e-07,9.23302776942303e-07,1.23107036925640e-06,9.23302776942303e-07,3.69321110776921e-07,6.15535184628202e-08};
     for(i=0; i<7; i++){ /* Compare with the values given by Matlab's butter function */
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test4[i], a_ref4[i]);
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test4[i], b_ref4[i]);
@@ -647,10 +659,10 @@ void test__butterCoeffs(void){
     fs = 48e3f;
     cutoff_freq = 3000.0f;
     order = 3;
-    float a_test5[4], b_test5[4];
-    butterCoeffs(BUTTER_FILTER_HPF, order, cutoff_freq, 0.0f, fs, (float*)b_test5, (float*)a_test5);
-    const float a_ref5[4] = {1,-2.21916861831167,1.71511783003340,-0.453545933365530};
-    const float b_ref5[4] = {0.673479047713825,-2.02043714314147,2.02043714314147,-0.673479047713825};
+    double a_test5[4], b_test5[4];
+    butterCoeffs(BUTTER_FILTER_HPF, order, cutoff_freq, 0.0f, fs, (double*)b_test5, (double*)a_test5);
+    const double a_ref5[4] = {1,-2.21916861831167,1.71511783003340,-0.453545933365530};
+    const double b_ref5[4] = {0.673479047713825,-2.02043714314147,2.02043714314147,-0.673479047713825};
     for(i=0; i<4; i++){ /* Compare with the values given by Matlab's butter function */
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test5[i], a_ref5[i]);
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test5[i], b_ref5[i]);
@@ -660,10 +672,10 @@ void test__butterCoeffs(void){
     fs = 48e3f;
     cutoff_freq = 100.0;
     order = 4;
-    float a_test6[5], b_test6[5];
-    butterCoeffs(BUTTER_FILTER_HPF, order, cutoff_freq, 0.0f, fs, (float*)b_test6, (float*)a_test6);
-    const float a_ref6[5] = {1.0,-3.96579438007005,5.89796693861409,-3.89854491737242,0.966372387692057};
-    const float b_ref6[5] = {0.983042413984288,-3.93216965593715,5.89825448390573,-3.93216965593715,0.983042413984288};
+    double a_test6[5], b_test6[5];
+    butterCoeffs(BUTTER_FILTER_HPF, order, cutoff_freq, 0.0f, fs, (double*)b_test6, (double*)a_test6);
+    const double a_ref6[5] = {1.0,-3.96579438007005,5.89796693861409,-3.89854491737242,0.966372387692057};
+    const double b_ref6[5] = {0.983042413984288,-3.93216965593715,5.89825448390573,-3.93216965593715,0.983042413984288};
     for(i=0; i<5; i++){ /* Compare with the values given by Matlab's butter function */
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test6[i], a_ref6[i]);
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test6[i], b_ref6[i]);
@@ -674,10 +686,10 @@ void test__butterCoeffs(void){
     cutoff_freq = 100.0;
     cutoff_freq2 = 400.0;
     order = 2;
-    float a_test7[5], b_test7[5];
-    butterCoeffs(BUTTER_FILTER_BPF, order, cutoff_freq, cutoff_freq2, fs, (float*)b_test7, (float*)a_test7);
-    const float a_ref7[5] = {1.0,-3.94312581006024,5.83226704209421,-3.83511871130750,0.945977936232284};
-    const float b_ref7[5] = {0.000375069616051004,0.0,-0.000750139232102008,0.0,0.000375069616051004};
+    double a_test7[5], b_test7[5];
+    butterCoeffs(BUTTER_FILTER_BPF, order, cutoff_freq, cutoff_freq2, fs, (double*)b_test7, (double*)a_test7);
+    const double a_ref7[5] = {1.0,-3.94312581006024,5.83226704209421,-3.83511871130750,0.945977936232284};
+    const double b_ref7[5] = {0.000375069616051004,0.0,-0.000750139232102008,0.0,0.000375069616051004};
     for(i=0; i<5; i++){ /* Compare with the values given by Matlab's butter function */
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test7[i], a_ref7[i]);
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test7[i], b_ref7[i]);
@@ -688,10 +700,10 @@ void test__butterCoeffs(void){
     cutoff_freq = 3000.0;
     cutoff_freq2 = 4000.0;
     order = 5;
-    float a_test8[11], b_test8[11];
-    butterCoeffs(BUTTER_FILTER_BPF, order, cutoff_freq, cutoff_freq2, fs, (float*)b_test8, (float*)a_test8);
-    const float a_ref8[11] = {1,-8.60731950623859,34.2242398041717,-82.6257246948528,133.981888459727,-152.384379445120,123.086708653719,-69.7343363903346   ,26.5359636148454,-6.13120614266377,0.654440467219936};
-    const float b_ref8[11] = {9.78547616240529e-07,0,-4.89273808120264e-06,0,9.78547616240529e-06,0,-9.78547616240529e-06,0,4.89273808120264e-06,0    ,-9.78547616240529e-07};
+    double a_test8[11], b_test8[11];
+    butterCoeffs(BUTTER_FILTER_BPF, order, cutoff_freq, cutoff_freq2, fs, (double*)b_test8, (double*)a_test8);
+    const double a_ref8[11] = {1,-8.60731950623859,34.2242398041717,-82.6257246948528,133.981888459727,-152.384379445120,123.086708653719,-69.7343363903346   ,26.5359636148454,-6.13120614266377,0.654440467219936};
+    const double b_ref8[11] = {9.78547616240529e-07,0,-4.89273808120264e-06,0,9.78547616240529e-06,0,-9.78547616240529e-06,0,4.89273808120264e-06,0    ,-9.78547616240529e-07};
     for(i=0; i<11; i++){ /* Compare with the values given by Matlab's butter function */
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test8[i], a_ref8[i]);
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test8[i], b_ref8[i]);
@@ -702,10 +714,10 @@ void test__butterCoeffs(void){
     cutoff_freq = 240.0;
     cutoff_freq2 = 1600.0;
     order = 3;
-    float a_test9[7], b_test9[7];
-    butterCoeffs(BUTTER_FILTER_BSF, order, cutoff_freq, cutoff_freq2, fs, (float*)b_test9, (float*)a_test9);
-    const float a_ref9[7] = {1,-5.62580309774365,13.2124846784594,-16.5822627287366,11.7304049556188,-4.43493124452282,0.700107676775329};
-    const float b_ref9[7] = {0.836724592951539,-5.00379660039217,12.4847741945760,-16.6354041344203,12.4847741945760,-5.00379660039217,0.836724592951539};
+    double a_test9[7], b_test9[7];
+    butterCoeffs(BUTTER_FILTER_BSF, order, cutoff_freq, cutoff_freq2, fs, (double*)b_test9, (double*)a_test9);
+    const double a_ref9[7] = {1,-5.62580309774365,13.2124846784594,-16.5822627287366,11.7304049556188,-4.43493124452282,0.700107676775329};
+    const double b_ref9[7] = {0.836724592951539,-5.00379660039217,12.4847741945760,-16.6354041344203,12.4847741945760,-5.00379660039217,0.836724592951539};
     for(i=0; i<7; i++){ /* Compare with the values given by Matlab's butter function */
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test9[i], a_ref9[i]);
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test9[i], b_ref9[i]);

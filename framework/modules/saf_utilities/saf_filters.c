@@ -481,8 +481,8 @@ void butterCoeffs
     float cutoff1,
     float cutoff2,
     float sampleRate,
-    float* b_coeffs,
-    float* a_coeffs
+    double* b_coeffs,
+    double* a_coeffs
 )
 {
     int i, j, k, np, tmp_len, numStates, oddPolesFLAG, nCoeffs;
@@ -537,7 +537,7 @@ void butterCoeffs
 
     /* Adjust indices as needed */
     for(i=1; i<np; i+=2){
-        polycmplxd_v(&proto[i-1], den_cmplx, 2);
+        polyz_v(&proto[i-1], den_cmplx, 2);
         for(j=0; j<3; j++)
             den[j] = creal(den_cmplx[j]);
         j = oddPolesFLAG ? i-1 : i-2;
@@ -646,7 +646,7 @@ void butterCoeffs
     b_coeffs_real = malloc1d(nCoeffs*sizeof(double));
     if(filterType == BUTTER_FILTER_BSF){
         b_coeffs_cmplx = malloc1d(nCoeffs*sizeof(double_complex));
-        polycmplxd_v(rcmplx, b_coeffs_cmplx, numStates);
+        polyz_v(rcmplx, b_coeffs_cmplx, numStates);
         for(i=0; i<nCoeffs; i++)
             b_coeffs_real[i] = creal(b_coeffs_cmplx[i]);
         free(b_coeffs_cmplx);
@@ -664,8 +664,8 @@ void butterCoeffs
 
     /* output */
     for(i=0; i<nCoeffs; i++){
-        b_coeffs[i] = (float)creal(crmul(ccdiv(kaT,kbT), b_coeffs_real[i]));
-        a_coeffs[i] = (float)creal(a_coeffs_cmplx[i]);
+        b_coeffs[i] = creal(crmul(ccdiv(kaT,kbT), b_coeffs_real[i]));
+        a_coeffs[i] = creal(a_coeffs_cmplx[i]);
     }
 
     /* clean-up */
@@ -679,5 +679,113 @@ void butterCoeffs
     free(a_coeffs_cmplx);
     free(b_coeffs_real);
     free(kern);
+}
+
+typedef struct _faf_IIRFB_data{
+    int nBands;
+    float** b_lpf, **a_lpf, **b_hpf, **a_hpf;
+
+}faf_IIRFB_data;
+
+void faf_IIRFilterbank_create
+(
+    void** hFaF,
+    int order, // ENUM 1st or 3rd order only
+    float* fc,
+    int nCutoffFreq,
+    float sampleRate
+)
+{
+    *hFaF = malloc1d(sizeof(faf_IIRFB_data));
+    faf_IIRFB_data *fb = (faf_IIRFB_data*)(*hFaF);
+    double b_lpf[4], a_lpf[4], b_hpf[4], a_hpf[4], r[7], revb[4], reva[4], q[4];
+    double tmp[7], tmp2[7];
+    double_complex d1[3], d2[3], d1_num[3], d2_num[3];
+    double_complex z[3], A[3][3], ztmp[7], ztmp2[7];
+    int i, j, f, filtLen, d1_len, d2_len;
+
+    assert(nCutoffFreq>=1);
+
+    filtLen = order + 1;
+
+    /* Number of filters returned is always one more than the number of cut-off frequencies */
+    fb->nBands = nCutoffFreq + 1;
+
+    for(f=0; f<nCutoffFreq; f++){
+
+        /* Low-pass filter */
+        butterCoeffs(BUTTER_FILTER_LPF, order, fc[f], 0.0f, sampleRate, (double*)b_lpf, (double*)a_lpf);
+
+        /* IIR power complementary filter design (i.e. High-pass) */
+        for(i=0; i<filtLen; i++){
+            reva[i] = a_lpf[filtLen-i-1];
+            revb[i] = b_lpf[filtLen-i-1];
+        }
+        convd(revb, b_lpf, filtLen, filtLen, tmp);
+        convd(a_lpf, reva, filtLen, filtLen, tmp2);
+        for(i=0; i<2*filtLen-1; i++)
+            r[i] = tmp[i] - tmp2[i];
+        q[0] = sqrt(-r[0]/-1.0);
+        q[1] = -r[1]/(2.0*-1.0*q[0]);
+        if(order==3){
+            q[3]=conj(-1.0*q[0]);
+            q[2]=conj(-1.0*q[1]);
+        }
+        for(i=0; i<filtLen; i++)
+            q[i] =  b_lpf[i] - q[i];
+
+        /* Find roots of polynomial  */
+        if(order==1)
+            z[0] = cmplx(-q[1]/q[0], 0.0);
+        else{ /* 3rd order */
+            memset(A, 0, 9*sizeof(double_complex));
+            A[0][0] = cmplx(-q[1]/q[0], 0.0);
+            A[0][1] = cmplx(-q[2]/q[0], 0.0);
+            A[0][2] = cmplx(-q[3]/q[0], 0.0);
+            A[1][0] = cmplx(1.0, 0.0);
+            A[2][1] = cmplx(1.0, 0.0);
+            utility_zeig((double_complex*)A, 3, NULL, NULL, NULL, (double_complex*)z);
+        }
+
+        /* Separate the zeros inside the unit circle and the ones outside to
+         * form the allpass functions */
+        d1[0] = cmplx(1.0, 0.0);
+        d2[0] = cmplx(1.0, 0.0);
+        d1_len = d2_len = 1;
+        for(i=0; i<order; i++){
+            if (cabs(z[i]) < 1.0){
+                ztmp[0] = cmplx(1.0, 0.0);
+                ztmp[1] = -z[i];
+                convz(d2,ztmp,d2_len,2,ztmp2);
+                d2_len++;
+                for(j=0; j<d2_len; j++)
+                    d2[j] = ztmp2[j];
+            }
+            else{
+                ztmp[0] = cmplx(1.0, 0.0);
+                ztmp[1] = ccdiv(-1.0, conj(z[i]));
+                convz(d1,ztmp,d1_len,2,ztmp2);
+                d1_len++;
+                for(j=0; j<d1_len; j++)
+                    d1[j] = ztmp2[j];
+            }
+        }
+
+        /* Convert coupled allpass filter to transfer function form
+         * (code from https://github.com/nsk1001/Scilab-functions written by
+         * Nagma Samreen Khan.) */
+        for(i=0; i<d1_len; i++)
+            d1_num[i] = conj(d1[d1_len-i-1]);
+        for(i=0; i<d2_len; i++)
+            d2_num[i] = conj(d2[d2_len-i-1]);
+
+        convz(d1_num, d2, d1_len, d2_len, ztmp);
+        convz(d2_num, d1, d2_len, d1_len, ztmp2);
+        for(i=0; i<filtLen; i++){
+            b_hpf[i] = -0.5 * creal(ccsub(ztmp[filtLen-i-1], ztmp2[filtLen-i-1]));
+            a_hpf[i] = b_lpf[i];
+        }
+
+    }
 }
 
