@@ -63,7 +63,7 @@ void ims_shoebox_echogramResize
         ec->value = (float**)realloc2d((void**)ec->value, numImageSources, nChannels, sizeof(float));
         ec->time = realloc1d(ec->time, numImageSources*sizeof(float));
         ec->order = (int**)realloc2d((void**)ec->order, numImageSources, 3, sizeof(int));
-        ec->coords = realloc1d(ec->coords, numImageSources * sizeof(position_xyz));
+        ec->coords = realloc1d(ec->coords, numImageSources * sizeof(ims_pos_xyz));
         ec->sortedIdx = realloc1d(ec->sortedIdx, numImageSources*sizeof(int));
     }
 }
@@ -174,15 +174,15 @@ void ims_shoebox_coreInit
 (
     void* hWork,
     int room[3],
-    position_xyz src,
-    position_xyz rec,
+    ims_pos_xyz src,
+    ims_pos_xyz rec,
     float maxTime_s,
     float c_ms
 )
 {
     ims_core_workspace *wrk = (ims_core_workspace*)(hWork);
     echogram_data *echogram = (echogram_data*)(wrk->hEchogram);
-    position_xyz src_orig, rec_orig;
+    ims_pos_xyz src_orig, rec_orig;
     int imsrc, vIdx;
     int ii, jj, kk;
     float d_max;
@@ -247,8 +247,8 @@ void ims_shoebox_coreInit
         (wrk->room[0] != room[0]) || (wrk->room[1] != room[1]) || (wrk->room[2] != room[2]))
     {
         memcpy(wrk->room, room, 3*sizeof(int));
-        memcpy(&(wrk->rec), &rec_orig, sizeof(position_xyz));
-        memcpy(&(wrk->src), &src_orig, sizeof(position_xyz));
+        memcpy(&(wrk->rec), &rec_orig, sizeof(ims_pos_xyz));
+        memcpy(&(wrk->src), &src_orig, sizeof(ims_pos_xyz));
 
         /* image source coordinates with respect to receiver, and distance */
         for(imsrc = 0; imsrc<wrk->lengthVec; imsrc++){
@@ -371,7 +371,7 @@ void ims_shoebox_coreAbsorptionModule
         memcpy(ADR2D(echogram_abs->value), ADR2D(echogram_rec->value), (echogram_abs->numImageSources)*(echogram_abs->nChannels)*sizeof(float));
         memcpy(echogram_abs->time, echogram_rec->time, (echogram_abs->numImageSources)*sizeof(float));
         memcpy(ADR2D(echogram_abs->order), ADR2D(echogram_rec->order), (echogram_abs->numImageSources)*3*sizeof(int));
-        memcpy(echogram_abs->coords, echogram_rec->coords, (echogram_abs->numImageSources)*sizeof(position_xyz));
+        memcpy(echogram_abs->coords, echogram_rec->coords, (echogram_abs->numImageSources)*sizeof(ims_pos_xyz));
         memcpy(echogram_abs->sortedIdx, echogram_rec->sortedIdx, (echogram_abs->numImageSources)*sizeof(int));
 
         /* Reflection coefficients given the absorption coefficients for x, y, z

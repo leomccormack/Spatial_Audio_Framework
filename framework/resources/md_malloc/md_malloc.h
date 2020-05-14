@@ -58,7 +58,6 @@ extern "C" {
 #define ADR2D(A) (&A[0][0])
 #define ADR3D(A) (&A[0][0][0])
     
-
 /**
  * 1-D malloc
  */

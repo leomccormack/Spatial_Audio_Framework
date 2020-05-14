@@ -56,16 +56,44 @@ extern "C" {
 
 #define IMS_NUM_WALLS_SHOEBOX ( 6 )
 #define IMS_FIR_FILTERBANK_ORDER ( 1000 )
+#define IMS_IIR_FILTERBANK_ORDER ( 3 )
 
-typedef void* voidPtr; 
+typedef void* voidPtr;
 
-typedef struct _position_xyz {
+typedef struct _ims_pos_xyz {
     union {
         struct { float x, y, z; };
         float v[3];
     };
-} position_xyz;
+} ims_pos_xyz;
 
+typedef enum _RECEIVER_TYPES{
+    RECEIVER_SH
+}RECEIVER_TYPES;
+
+/**
+ * Source object
+ */
+typedef struct _ims_src_obj{
+    float* sig;
+    ims_pos_xyz pos;
+    int ID;
+} ims_src_obj;
+
+/**
+ * Receiver object
+ */
+typedef struct _ims_rec_obj{
+    float** sigs;
+    RECEIVER_TYPES type;
+    int nChannels;
+    ims_pos_xyz pos;
+    int ID;
+} ims_rec_obj;
+
+/**
+ * Echogram structure
+ */
 typedef struct _echogram_data
 {
     int numImageSources;  /**< Number of image sources in echogram */
@@ -76,7 +104,7 @@ typedef struct _echogram_data
                            *   source; numImageSources x 1 */
     int** order;          /**< Reflection order for each image and dimension;
                            *   numImageSources x 3 */
-    position_xyz* coords; /**< Reflection coordinates (Cartesian);
+    ims_pos_xyz* coords;  /**< Reflection coordinates (Cartesian);
                            *   numImageSources x 3 */
     int* sortedIdx;       /**< Indices that sort the echogram based on
                            *   propagation time, in accending order;
@@ -94,7 +122,7 @@ typedef struct _ims_core_workspace
     /* Locals */
     int room[3];
     float d_max;
-    position_xyz src, rec; 
+    ims_pos_xyz src, rec;
     int nBands; 
 
     /* Internal */
@@ -124,8 +152,8 @@ typedef struct _ims_core_workspace
 
 /**
  * Main structure for IMS. It comprises variables describing the room, and the
- * sources and receivers within it. It also includes "core workspace" handles
- * for each source/receiver combination.
+ * source and receiver objects within it. It also includes "core workspace"
+ * handles for each source/receiver combination.
  */
 typedef struct _ims_scene_data
 {
@@ -137,18 +165,19 @@ typedef struct _ims_scene_data
     float** abs_wall;
 
     /* Source and receiver positions */
-    position_xyz src_xyz[IMS_MAX_NUM_SOURCES];
-    position_xyz rec_xyz[IMS_MAX_NUM_RECEIVERS];
-    long src_IDs[IMS_MAX_NUM_SOURCES];
-    long rec_IDs[IMS_MAX_NUM_RECEIVERS];
+    ims_src_obj srcs[IMS_MAX_NUM_SOURCES];
+    ims_rec_obj recs[IMS_MAX_NUM_RECEIVERS];
     long nSources;
     long nReceivers;
 
     /* Internal */
-    voidPtr** hCoreWrkSpc;   /* one per source/receiver combination */
-    float* band_centerfreqs;
-    float** H_filt;  /* nBands x (IMS_FIR_FILTERBANK_ORDER+1) */
-    ims_rir** rirs;  /* one per source/receiver combination */
+    voidPtr** hCoreWrkSpc;   /**< One per source/receiver combination */
+    float* band_centerfreqs; /**< Octave band Centre frequencies */
+    float** H_filt;          /**< nBands x (IMS_FIR_FILTERBANK_ORDER+1) */
+    ims_rir** rirs;          /**< One per source/receiver combination */
+
+    /* IIR filterbank */
+    voidPtr* hFaFbank;       /**< One per source */
 
 } ims_scene_data;
 
@@ -229,8 +258,8 @@ void ims_shoebox_echogramDestroy(void** phEcho);
  */
 void ims_shoebox_coreInit(void* hWork,
                           int room[3],
-                          position_xyz src,
-                          position_xyz rec,
+                          ims_pos_xyz src,
+                          ims_pos_xyz rec,
                           float maxTime,
                           float c_ms);
 

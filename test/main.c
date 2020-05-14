@@ -27,7 +27,8 @@
 #include "saf.h"
 
 /* Prototypes for available unit tests */
-void test__ims_shoebox(void);
+void test__ims_shoebox_TD(void);
+void test__ims_shoebox_SHRIR(void);
 void test__saf_rfft(void);
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
 void test__afSTFTMatrix(void);
@@ -70,7 +71,8 @@ printf("*****************************************************************\n"
     UNITY_BEGIN();
 
     /* run each unit test */
-    RUN_TEST(test__ims_shoebox);
+    RUN_TEST(test__ims_shoebox_TD);
+    RUN_TEST(test__ims_shoebox_SHRIR);
     RUN_TEST(test__saf_rfft);
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
     RUN_TEST(test__afSTFTMatrix);
@@ -96,7 +98,61 @@ printf("*****************************************************************\n"
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
 
-void test__ims_shoebox(void){
+void test__ims_shoebox_TD(void){
+    void* hIms;
+    float maxTime_s;
+    float mov_src_pos[3], mov_rec_pos[3];
+    float** src_sigs, ***rec_sh_outsigs;
+    long sourceIDs[2], receiverIDs[1];
+    int i;
+
+    /* Config */
+    const int signalLength = 10e3;
+    const int sh_order = 3;
+    const int nBands = 7;
+    const float abs_wall[nBands][6] =  /* Absorption Coefficients per Octave band, and per wall */
+      { {0.180791250f, 0.207307300f, 0.134990800f, 0.229002250f, 0.212128400f, 0.241055000f},
+        {0.225971250f, 0.259113700f, 0.168725200f, 0.286230250f, 0.265139600f, 0.301295000f},
+        {0.258251250f, 0.296128100f, 0.192827600f, 0.327118250f, 0.303014800f, 0.344335000f},
+        {0.301331250f, 0.345526500f, 0.224994001f, 0.381686250f, 0.353562000f, 0.401775000f},
+        {0.361571250f, 0.414601700f, 0.269973200f, 0.457990250f, 0.424243600f, 0.482095000f},
+        {0.451931250f, 0.518214500f, 0.337442000f, 0.572446250f, 0.530266000f, 0.602575000f},
+        {0.602591250f, 0.690971300f, 0.449934800f, 0.763282250f, 0.707040400f, 0.803455000f} };
+    const float src_pos[3]  = {5.1f, 6.0f, 1.1f};
+    const float src2_pos[3] = {2.1f, 1.0f, 1.3f};
+    const float rec_pos[3]  = {8.8f, 5.5f, 0.9f};
+
+    /* Allocate memory for 2 sources and 1 spherical harmonic receiver */
+    rec_sh_outsigs = (float***)malloc3d(1, ORDER2NSH(sh_order), signalLength, sizeof(float));
+    src_sigs = (float**)malloc2d(2, signalLength, sizeof(float));
+    rand_m1_1(ADR2D(src_sigs), 2*signalLength);
+
+    /* Set-up the shoebox room simulator for these two sources and SH receiver */
+    ims_shoebox_create(&hIms, 10, 7, 3, (float*)abs_wall, 125.0f, nBands, 343.0f, 48e3f);
+    sourceIDs[0] = ims_shoebox_addSource(hIms, (float*)src_pos, src_sigs[0]);
+    sourceIDs[1] = ims_shoebox_addSource(hIms, (float*)src2_pos, src_sigs[1]);
+    receiverIDs[0] = ims_shoebox_addReceiverSH(hIms, sh_order, (float*)rec_pos, rec_sh_outsigs[0]);
+
+    /* Moving source No.1 and the receiver */
+    maxTime_s = 0.08f; /* 80ms */
+    memcpy(mov_src_pos, src_pos, 3*sizeof(float));
+    memcpy(mov_rec_pos, rec_pos, 3*sizeof(float));
+    for(i=0; i<100; i++){
+        mov_src_pos[1] = 2.0f + (float)i/100.0f;
+        mov_rec_pos[0] = 3.0f + (float)i/100.0f;
+        ims_shoebox_updateSource(hIms, sourceIDs[0], mov_src_pos);
+        ims_shoebox_updateReceiver(hIms, receiverIDs[0], mov_rec_pos);
+        ims_shoebox_computeEchograms(hIms, maxTime_s);
+
+    }
+
+    /* clean-up */
+    free(src_sigs);
+    free(rec_sh_outsigs);
+    ims_shoebox_destroy(&hIms);
+}
+
+void test__ims_shoebox_SHRIR(void){
     void* hIms;
     float maxTime_s;
     float mov_src_pos[3], mov_rec_pos[3];
@@ -121,22 +177,22 @@ void test__ims_shoebox(void){
     const float src5_pos[3] = {8.5f, 5.0f, 1.8f};
     const float rec_pos[3] = {8.8f, 5.5f, 0.9f};
 
-    /* Set-up the shoebox room simulator, with two sources and one receiver */
+    /* Set-up the shoebox room simulator, with two sources and one spherical harmonic receiver */
     ims_shoebox_create(&hIms, 10, 7, 3, (float*)abs_wall, 125.0f, nBands, 343.0f, 48e3f);
-    sourceID_1 = ims_shoebox_addSource(hIms, (float*)src_pos);
-    sourceID_2 = ims_shoebox_addSource(hIms, (float*)src2_pos);
-    receiverID = ims_shoebox_addReceiver(hIms, (float*)rec_pos);
+    sourceID_1 = ims_shoebox_addSource(hIms, (float*)src_pos, NULL);
+    sourceID_2 = ims_shoebox_addSource(hIms, (float*)src2_pos, NULL);
+    receiverID = ims_shoebox_addReceiverSH(hIms, sh_order, (float*)rec_pos, NULL);
 
     /* Moving source No.1 and the receiver */
     maxTime_s = 0.08f; /* 80ms */
     memcpy(mov_src_pos, src_pos, 3*sizeof(float));
     memcpy(mov_rec_pos, rec_pos, 3*sizeof(float));
-    for(i=0; i<25; i++){
-        mov_src_pos[1] = 2.0f + (float)i/25.0f;
-        mov_rec_pos[0] = 3.0f + (float)i/25.0f;
+    for(i=0; i<15; i++){
+        mov_src_pos[1] = 2.0f + (float)i/15.0f;
+        mov_rec_pos[0] = 3.0f + (float)i/15.0f;
         ims_shoebox_updateSource(hIms, sourceID_1, mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
-        ims_shoebox_computeEchogramSH(hIms, maxTime_s, sh_order);
+        ims_shoebox_computeEchograms(hIms, maxTime_s);
         ims_shoebox_renderSHRIRs(hIms, 0);
     }
 
@@ -145,20 +201,20 @@ void test__ims_shoebox(void){
 
     /* Add 3 more sources, then remove 2, and add one back again
      * (Just messing around, trying to trip up an IMS internal assertion) */
-    sourceID_3 = ims_shoebox_addSource(hIms, (float*)src3_pos);
-    sourceID_4 = ims_shoebox_addSource(hIms, (float*)src4_pos);
-    sourceID_5 = ims_shoebox_addSource(hIms, (float*)src5_pos);
+    sourceID_3 = ims_shoebox_addSource(hIms, (float*)src3_pos, NULL);
+    sourceID_4 = ims_shoebox_addSource(hIms, (float*)src4_pos, NULL);
+    sourceID_5 = ims_shoebox_addSource(hIms, (float*)src5_pos, NULL);
     ims_shoebox_removeSource(hIms, sourceID_3);
     ims_shoebox_removeSource(hIms, sourceID_4);
-    sourceID_4 = ims_shoebox_addSource(hIms, (float*)src4_pos);
+    sourceID_4 = ims_shoebox_addSource(hIms, (float*)src4_pos, NULL);
 
     /* Continue rendering */
-    for(i=0; i<25; i++){
-        mov_src_pos[1] = 2.0f + (float)i/25.0f;
-        mov_rec_pos[0] = 3.0f + (float)i/25.0f;
+    for(i=0; i<15; i++){
+        mov_src_pos[1] = 2.0f + (float)i/15.0f;
+        mov_rec_pos[0] = 3.0f + (float)i/15.0f;
         ims_shoebox_updateSource(hIms, sourceID_4, mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
-        ims_shoebox_computeEchogramSH(hIms, maxTime_s, sh_order);
+        ims_shoebox_computeEchograms(hIms, maxTime_s);
         ims_shoebox_renderSHRIRs(hIms, 0);
     }
 

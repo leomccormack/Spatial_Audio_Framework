@@ -40,6 +40,7 @@ extern "C" {
 #include "../saf_utilities/saf_complex.h"
 
 #define ORDER2NSH(order) ((order+1)*(order+1))
+#define NSH2ORDER(nSH) ( (int)(sqrt((double)nSH)-0.999) )
 
 /* ========================================================================== */
 /*                                    Enums                                   */

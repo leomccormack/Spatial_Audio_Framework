@@ -72,9 +72,9 @@ void ims_shoebox_create
 
     /* Default is no sources or receivers in the room */
     for(i=0; i<IMS_MAX_NUM_SOURCES; i++)
-        sc->src_IDs[i] = -1; /* -1 indicates not in use */
+        sc->srcs[i].ID = -1; /* -1 indicates not in use */
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++)
-        sc->rec_IDs[i] = -1;
+        sc->recs[i].ID = -1;
     sc->nSources = 0;
     sc->nReceivers = 0;
 
@@ -84,7 +84,7 @@ void ims_shoebox_create
         for(j=0; j<IMS_MAX_NUM_SOURCES; j++)
             sc->hCoreWrkSpc[i][j] = NULL;
 
-    /* Fiterbank */
+    /* FIR Fiterbank */
     sc->H_filt = NULL;
 
     /* RIRs per source / receiver combination  */
@@ -95,6 +95,11 @@ void ims_shoebox_create
             sc->rirs[i][j].length = sc->rirs[i][j].nChannels = 0;
         }
     }
+
+    /* IIR Filterbank per source */
+    sc->hFaFbank = malloc1d(IMS_MAX_NUM_SOURCES*sizeof(voidPtr));
+    for(j=0; j<IMS_MAX_NUM_SOURCES; j++)
+        sc->hFaFbank[j] = NULL;
 }
 
 void ims_shoebox_destroy
@@ -117,35 +122,38 @@ void ims_shoebox_destroy
             for(j=0; j<IMS_MAX_NUM_SOURCES; j++)
                 free(sc->rirs[i][j].data);
         free(sc->rirs);
+        for(j=0; j<IMS_MAX_NUM_SOURCES; j++)
+            free(sc->hFaFbank[j]);
+        free(sc->hFaFbank);
         free(sc);
         sc=NULL;
         *phIms = NULL;
     }
 }
 
-void ims_shoebox_computeEchogramSH
+void ims_shoebox_computeEchograms
 (
     void* hIms,
-    float maxTime_ms,
-    int sh_order
+    float maxTime_ms
 )
 {
     ims_scene_data *sc = (ims_scene_data*)(hIms);
     ims_core_workspace* workspace;
-    position_xyz src2, rec2;
+    ims_pos_xyz src2, rec2;
     int src_idx, rec_idx;
 
     /* Compute echograms for active source/receiver combinations */
     for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++){
         for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
-            if( (sc->src_IDs[src_idx]!=-1) && (sc->rec_IDs[rec_idx]!=-1) ){
-                /* Change y coord for Source to match convention used inside the coreInit function */
-                rec2.x = sc->rec_xyz[rec_idx].x;
-                rec2.y = (float)sc->room_dimensions[1] - sc->rec_xyz[rec_idx].y;
-                rec2.z = sc->rec_xyz[rec_idx].z;
-                src2.x = sc->src_xyz[src_idx].x;
-                src2.y = (float)sc->room_dimensions[1] - sc->src_xyz[src_idx].y;
-                src2.z = sc->src_xyz[src_idx].z;
+            if( (sc->srcs[src_idx].ID != -1) && (sc->recs[rec_idx].ID != -1) ){
+                /* Change y coord for Receiver and Source to match convention
+                 * used inside the coreInit function */
+                rec2.x = sc->recs[rec_idx].pos.x;
+                rec2.y = (float)sc->room_dimensions[1] - sc->recs[rec_idx].pos.y;
+                rec2.z = sc->recs[rec_idx].pos.z;
+                src2.x = sc->srcs[src_idx].pos.x;
+                src2.y = (float)sc->room_dimensions[1] - sc->srcs[src_idx].pos.y;
+                src2.z = sc->srcs[src_idx].pos.z;
 
                 /* Workspace handle for this source/receiver combination */
                 workspace = sc->hCoreWrkSpc[rec_idx][src_idx];
@@ -156,10 +164,14 @@ void ims_shoebox_computeEchogramSH
                     ims_shoebox_coreInit(workspace,
                                          sc->room_dimensions, src2, rec2, maxTime_ms, sc->c_ms);
 
-                    /* Apply spherical harmonic directivities */
-                    ims_shoebox_coreRecModuleSH(workspace, sh_order);
+                    /* Apply receiver directivities */
+                    switch(sc->recs[rec_idx].type){
+                        case RECEIVER_SH:
+                            ims_shoebox_coreRecModuleSH(workspace, NSH2ORDER(sc->recs[rec_idx].nChannels));
+                            break;
+                    }
 
-                    /* Apply boundary absoption per band */
+                    /* Apply boundary absoption per frequency band */
                     ims_shoebox_coreAbsorptionModule(workspace, sc->abs_wall);
 
                     /* Indicate that the echogram is now up to date, and that the RIR should now be updated */
@@ -194,7 +206,7 @@ void ims_shoebox_renderSHRIRs
     /* Render RIRs for all active source/receiver combinations */
     for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++){
         for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
-            if( (sc->src_IDs[src_idx]!=-1) && (sc->rec_IDs[rec_idx]!=-1) ){
+            if( (sc->srcs[src_idx].ID!=-1) && (sc->recs[rec_idx].ID!=-1) ){
 
                 /* Workspace handle for this source/receiver combination */
                 workspace = sc->hCoreWrkSpc[rec_idx][src_idx];
@@ -211,6 +223,34 @@ void ims_shoebox_renderSHRIRs
     }
 }
 
+void ims_shoebox_applyEchogramTD
+(
+    void* hIms,
+    int* sourceIDs,
+    int nSourceIDs,
+    int receiverID,
+    int nSamples,
+    int fractionalDelaysFLAG
+)
+{
+//{
+//    ims_scene_data *sc = (ims_scene_data*)(hIms);
+//    ims_core_workspace* workspace;
+//    int rec_idx, src_idx;
+//
+//    /* Process all active source/receiver combinations directly in the
+//     * time-domain */
+//    for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++){
+//        for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
+//            if( (sc->src_IDs[src_idx]!=-1) && (sc->rec_IDs[rec_idx]!=-1) ){
+//
+//                /* Workspace handle for this source/receiver combination */
+//                workspace = sc->hCoreWrkSpc[rec_idx][src_idx];
+//
+//            }
+//        }
+//    }
+}
 
 
 /* add/remove/update functions: */
@@ -218,98 +258,107 @@ void ims_shoebox_renderSHRIRs
 long ims_shoebox_addSource
 (
     void* hIms,
-    float src_xyz[3]
+    float src_xyz[3],
+    float* pSrc_sig
 )
 {
     ims_scene_data *sc = (ims_scene_data*)(hIms);
-    int i, rec, slot_idx;
+    int i, rec, obj_idx;
 
     /* Increment number of sources */
     sc->nSources++;
     assert(sc->nSources <= IMS_MAX_NUM_SOURCES);
 
-    /* Find an unoccupied slot */
-    slot_idx = -1;
+    /* Find an unoccupied object */
+    obj_idx = -1;
     for(i=0; i<IMS_MAX_NUM_SOURCES; i++){
         /* an ID of '-1' indicates that it is free to use */
-        if(sc->src_IDs[i] == -1){
-            slot_idx = i;
+        if(sc->srcs[i].ID == -1){
+            obj_idx = i;
             break;
         }
     }
-    assert(slot_idx != -1);
+    assert(obj_idx != -1);
 
     /* Assign unique ID */
-    sc->src_IDs[slot_idx] = 0;
+    sc->srcs[obj_idx].ID = 0;
     for(i=0; i<IMS_MAX_NUM_SOURCES; i++)
-        if(i!=slot_idx)
-            if(sc->src_IDs[i]==sc->src_IDs[slot_idx])
-                sc->src_IDs[slot_idx]++; /* increment if ID is in use */
+        if(i!=obj_idx)
+            if(sc->srcs[i].ID == sc->srcs[obj_idx].ID)
+                sc->srcs[obj_idx].ID++; /* increment if ID is in use */
 
     //CHECK
     for(i=0; i<IMS_MAX_NUM_SOURCES; i++)
-        if(i!=slot_idx)
-            assert(sc->src_IDs[slot_idx]!=sc->src_IDs[i]);
+        if(i!=obj_idx)
+            assert(sc->srcs[obj_idx].ID != sc->srcs[i].ID);
 
-    /* Set source starting position */
-    for(i=0; i<3; i++)
-        sc->src_xyz[slot_idx].v[i] = src_xyz[i];
+    /* Set source starting position and signal pointer */
+    sc->srcs[obj_idx].pos.x = src_xyz[0];
+    sc->srcs[obj_idx].pos.y = src_xyz[1];
+    sc->srcs[obj_idx].pos.z = src_xyz[2]; 
+    sc->srcs[obj_idx].sig = pSrc_sig;
 
-    /* Create workspace for all receiver/source combinations, for this new source slot */
+    /* Create workspace for all receiver/source combinations, for this new source object */
     for(rec=0; rec<IMS_MAX_NUM_RECEIVERS; rec++)
-        if(sc->rec_IDs[rec]!=-1)
-            ims_shoebox_coreWorkspaceCreate(&(sc->hCoreWrkSpc[rec][slot_idx]), sc->nBands);
+        if(sc->recs[rec].ID!=-1)
+            ims_shoebox_coreWorkspaceCreate(&(sc->hCoreWrkSpc[rec][obj_idx]), sc->nBands);
 
-
-    return sc->src_IDs[slot_idx];
+    return sc->srcs[obj_idx].ID;
 }
 
-long ims_shoebox_addReceiver
+long ims_shoebox_addReceiverSH
 (
     void* hIms,
-    float rec_xyz[3]
+    int sh_order,
+    float rec_xyz[3],
+    float** pSH_sigs
 )
 {
     ims_scene_data *sc = (ims_scene_data*)(hIms);
-    int i, src, slot_idx; 
+    int i, src, obj_idx;
 
     /* Increment number of receivers */
     sc->nReceivers++;
     assert(sc->nReceivers <= IMS_MAX_NUM_RECEIVERS);
 
-    /* Find an unoccupied slot */
-    slot_idx = -1;
+    /* Find an unoccupied object */
+    obj_idx = -1;
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++){
         /* an ID of '-1' indicates that it is free to use */
-        if(sc->rec_IDs[i] == -1){
-            slot_idx = i;
+        if(sc->recs[i].ID == -1){
+            obj_idx = i;
             break;
         }
     }
-    assert(slot_idx != -1);
+    assert(obj_idx != -1);
 
     /* Assign unique ID */
-    sc->rec_IDs[slot_idx] = 0;
+    sc->recs[obj_idx].ID = 0;
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++)
-        if(i!=slot_idx)
-            if(sc->rec_IDs[i]==sc->rec_IDs[slot_idx])
-                sc->rec_IDs[slot_idx]++; /* increment if ID is in use */
+        if(i!=obj_idx)
+            if(sc->recs[i].ID == sc->recs[obj_idx].ID)
+                sc->recs[obj_idx].ID++; /* increment if ID is in use */
 
     //CHECK
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++)
-        if(i!=slot_idx)
-            assert(sc->rec_IDs[slot_idx] != sc->rec_IDs[i]);
+        if(i!=obj_idx)
+            assert(sc->recs[obj_idx].ID != sc->recs[i].ID);
 
-    /* Set starting position */
-    for(i=0; i<3; i++)
-        sc->rec_xyz[slot_idx].v[i] = rec_xyz[i];
+    /* Set starting position, signal pointers, and indicate that this object is
+     * a spherical harmonic receiver of order: "sh_order" */
+    sc->recs[obj_idx].pos.x = rec_xyz[0];
+    sc->recs[obj_idx].pos.y = rec_xyz[1];
+    sc->recs[obj_idx].pos.z = rec_xyz[2];
+    sc->recs[obj_idx].sigs = pSH_sigs;
+    sc->recs[obj_idx].type = RECEIVER_SH;
+    sc->recs[obj_idx].nChannels = ORDER2NSH(sh_order);
 
-    /* Create workspace for all receiver/source combinations, for this new receiver slot */
+    /* Create workspace for all receiver/source combinations, for this new receiver object */
     for(src=0; src<IMS_MAX_NUM_SOURCES; src++)
-        if(sc->src_IDs[src]!=-1)
-            ims_shoebox_coreWorkspaceCreate(&(sc->hCoreWrkSpc[slot_idx][src]), sc->nBands);
+        if(sc->srcs[src].ID!=-1)
+            ims_shoebox_coreWorkspaceCreate(&(sc->hCoreWrkSpc[obj_idx][src]), sc->nBands);
 
-    return sc->rec_IDs[slot_idx];
+    return sc->recs[obj_idx].ID;
 }
 
 void ims_shoebox_updateSource
@@ -328,22 +377,30 @@ void ims_shoebox_updateSource
     /* Find index corresponding to this source ID */
     src_idx = -1;
     for(i=0; i<IMS_MAX_NUM_SOURCES; i++){
-        if(sc->src_IDs[i] == sourceID){
+        if(sc->srcs[i].ID == sourceID){
             src_idx = i;
             break;
         }
     }
     assert(src_idx != -1);
 
-    /* update source position */
-    for(i=0; i<3; i++)
-        sc->src_xyz[src_idx].v[i] = new_position_xyz[i];
+    /* Check if source has actually moved */
+    if( (new_position_xyz[0] != sc->srcs[src_idx].pos.x) ||
+        (new_position_xyz[1] != sc->srcs[src_idx].pos.y) ||
+        (new_position_xyz[2] != sc->srcs[src_idx].pos.z))
+    {
+       /* update source position */
+        sc->srcs[src_idx].pos.x = new_position_xyz[0];
+        sc->srcs[src_idx].pos.y = new_position_xyz[1];
+        sc->srcs[src_idx].pos.z = new_position_xyz[2];
 
-    /* All source/receiver combinations for this source index will require refreshing */
-    for(rec=0; rec<IMS_MAX_NUM_RECEIVERS; rec++){
-        if(sc->rec_IDs[rec]!=-1){
-            work = (ims_core_workspace*)(sc->hCoreWrkSpc[rec][src_idx]);
-            work->refreshEchogramFLAG = 1;
+        /* All source/receiver combinations for this source index will need to
+         * be refreshed */
+        for(rec=0; rec<IMS_MAX_NUM_RECEIVERS; rec++){
+            if(sc->recs[rec].ID!=-1){
+                work = (ims_core_workspace*)(sc->hCoreWrkSpc[rec][src_idx]);
+                work->refreshEchogramFLAG = 1;
+            }
         }
     }
 }
@@ -364,22 +421,30 @@ void ims_shoebox_updateReceiver
     /* Find index corresponding to this source ID */
     rec_idx = -1;
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++){
-        if(sc->rec_IDs[i] == receiverID){
+        if(sc->recs[i].ID == receiverID){
             rec_idx = i;
             break;
         }
     }
     assert(rec_idx != -1);
 
-    /* update position */
-    for(i=0; i<3; i++)
-        sc->rec_xyz[rec_idx].v[i] = new_position_xyz[i];
+    /* Check if Receiver has actually moved */
+    if( (new_position_xyz[0] != sc->recs[rec_idx].pos.x) ||
+        (new_position_xyz[1] != sc->recs[rec_idx].pos.y) ||
+        (new_position_xyz[2] != sc->recs[rec_idx].pos.z))
+    {
+        /* update receiver position */
+        sc->recs[rec_idx].pos.x = new_position_xyz[0];
+        sc->recs[rec_idx].pos.y = new_position_xyz[1];
+        sc->recs[rec_idx].pos.z = new_position_xyz[2];
 
-    /* All source/receiver combinations for this receiver index will require refreshing */
-    for(src=0; src<IMS_MAX_NUM_SOURCES; src++){
-        if(sc->src_IDs[src]!=-1){
-            work = (ims_core_workspace*)(sc->hCoreWrkSpc[rec_idx][src]);
-            work->refreshEchogramFLAG = 1;
+        /* All source/receiver combinations for this receiver index will need to
+         * be refreshed */
+        for(src=0; src<IMS_MAX_NUM_SOURCES; src++){
+            if(sc->srcs[src].ID != -1){
+                work = (ims_core_workspace*)(sc->hCoreWrkSpc[rec_idx][src]);
+                work->refreshEchogramFLAG = 1;
+            }
         }
     }
 }
@@ -391,27 +456,27 @@ void ims_shoebox_removeSource
 )
 {
     ims_scene_data *sc = (ims_scene_data*)(hIms);
-    int i, slot_idx, rec;
+    int i, obj_idx, rec;
 
     assert(sourceID >= 0);
 
     /* Find index corresponding to this source ID */
-    slot_idx = -1;
+    obj_idx = -1;
     for(i=0; i<IMS_MAX_NUM_SOURCES; i++){
-        if(sc->src_IDs[i] == sourceID){
-            slot_idx = i;
+        if(sc->srcs[i].ID == sourceID){
+            obj_idx = i;
             break;
         }
     }
-    assert(slot_idx != -1);
+    assert(obj_idx != -1);
 
     /* Set ID to -1 (invalid, so no longer rendered) */
-    sc->src_IDs[slot_idx] = -1;
+    sc->srcs[obj_idx].ID = -1;
 
     /* Destroy workspace for all receiver/source combinations, for this dead source */
     for(rec=0; rec<IMS_MAX_NUM_RECEIVERS; rec++)
-        if(sc->rec_IDs[rec]!=-1)
-            ims_shoebox_coreWorkspaceDestroy(&(sc->hCoreWrkSpc[rec][slot_idx]));
+        if(sc->recs[rec].ID != -1)
+            ims_shoebox_coreWorkspaceDestroy(&(sc->hCoreWrkSpc[rec][obj_idx]));
 
     /* De-increment number of sources */
     sc->nSources--;
@@ -424,27 +489,27 @@ void ims_shoebox_removeReceiver
 )
 {
     ims_scene_data *sc = (ims_scene_data*)(hIms);
-    int i, slot_idx, src;
+    int i, obj_idx, src;
 
     assert(receiverID >= 0);
 
     /* Find index corresponding to this source ID */
-    slot_idx = -1;
+    obj_idx = -1;
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++){
-        if(sc->rec_IDs[i] == receiverID){
-            slot_idx = i;
+        if(sc->recs[i].ID == receiverID){
+            obj_idx = i;
             break;
         }
     }
-    assert(slot_idx != -1);
+    assert(obj_idx != -1);
 
     /* Set ID to -1 (invalid, so no longer active) */
-    sc->rec_IDs[slot_idx] = -1;
+    sc->recs[obj_idx].ID = -1;
 
     /* Destroy workspace for all receiver/source combinations, for this dead receiver */
     for(src=0; src<IMS_MAX_NUM_SOURCES; src++)
-        if(sc->src_IDs[src]!=-1)
-            ims_shoebox_coreWorkspaceDestroy(&(sc->hCoreWrkSpc[slot_idx][src]));
+        if(sc->srcs[src].ID != -1)
+            ims_shoebox_coreWorkspaceDestroy(&(sc->hCoreWrkSpc[obj_idx][src]));
 
     /* De-increment number of receivers */
     sc->nReceivers--;
