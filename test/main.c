@@ -27,7 +27,6 @@
 #include "saf.h"
 
 /* Prototypes for available unit tests */
-void test__faf_IIRFilterbank(void);
 void test__ims_shoebox(void);
 void test__saf_rfft(void);
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
@@ -41,6 +40,7 @@ void test__cmplxPairUp(void);
 void test__realloc2d_r(void);
 void test__getSHreal_recur(void);
 void test__butterCoeffs(void);
+void test__faf_IIRFilterbank(void);
 
 /* ========================================================================== */
 /*                                 Test Config                                */
@@ -70,7 +70,6 @@ printf("*****************************************************************\n"
     UNITY_BEGIN();
 
     /* run each unit test */
-    RUN_TEST(test__faf_IIRFilterbank);
     RUN_TEST(test__ims_shoebox);
     RUN_TEST(test__saf_rfft);
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
@@ -84,6 +83,7 @@ printf("*****************************************************************\n"
     RUN_TEST(test__realloc2d_r);
     RUN_TEST(test__getSHreal_recur);
     RUN_TEST(test__butterCoeffs);
+    RUN_TEST(test__faf_IIRFilterbank);
 
     /* close */
     timer_lib_shutdown();
@@ -95,38 +95,6 @@ printf("*****************************************************************\n"
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
-
-void test__faf_IIRFilterbank(void){
-    void* hFaF;
-    int i, band;
-
-    /* Config */
-    const int signalLength = 256;
-    const int frameSize = 16;
-    float fs = 48e3;
-    int order = 3;
-    float fc[6] = {176.776695296637, 353.553390593274, 707.106781186547, 1414.21356237309, 2828.42712474619, 5656.85424949238};
-    float inSig[signalLength];
-    float outSig[7][signalLength];
-    float** outFrame;
-    outFrame = (float**)malloc2d(7, frameSize, sizeof(float));
-
-    /* Impulse */
-    memset(inSig, 0, signalLength*sizeof(float));
-    inSig[0] = 1.0f;
-
-    /* Pass impulse through filterbank */
-    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
-    for(i=0; i< signalLength/frameSize; i++){
-        faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
-        for(band=0; band<7; band++)
-            memcpy(&outSig[band][i*frameSize], outFrame[band], frameSize*sizeof(float));
-    }
-
-    /* clean-up */
-    faf_IIRFilterbank_destroy(&hFaF);
-    free(outFrame);
-}
 
 void test__ims_shoebox(void){
     void* hIms;
@@ -378,19 +346,18 @@ void test__afSTFT(void){
 
 void test__smb_pitchShifter(void){
     float* inputData, *outputData;
-    void* hPS;
+    void* hPS, *hFFT;
     float frequency;
-    int i, nSamples,smbLatency;
+    int i, smbLatency, ind;
 
     /* Config */
-    const int signalLength_seconds = 10;
     const int sampleRate = 48e3;
     const int FFTsize = 8192;
     const int osfactor = 16;
+    const int nSamples = 8*FFTsize;
 
     /* prep */
     smb_pitchShift_create(&hPS, 1, FFTsize, osfactor, sampleRate);
-    nSamples = sampleRate*signalLength_seconds;
     inputData = malloc1d(nSamples*sizeof(float));
     outputData = calloc1d(nSamples,sizeof(float));
     frequency = (float)sampleRate/8.0f;
@@ -401,10 +368,16 @@ void test__smb_pitchShifter(void){
     /* Pitch shift down one octave */
     smb_pitchShift_apply(hPS, 0.5, nSamples, inputData, outputData);
 
-    // TODO: Take FFT, the bin with the highest energy should correspond to 1/8 Nyquist
-
+    /* Take FFT, the bin with the highest energy should correspond to 1/8 Nyquist */
+    float_complex out_fft[nSamples/2+1];
+    saf_rfft_create(&hFFT, nSamples);
+    saf_rfft_forward(hFFT, outputData, out_fft);
+    utility_cimaxv(out_fft, nSamples/2+1, &ind);
+    TEST_ASSERT_TRUE(ind == nSamples/16);
+ 
     /* clean-up */
     smb_pitchShift_destroy(&hPS);
+    saf_rfft_destroy(&hFFT);
     free(inputData);
     free(outputData);
 }
@@ -744,4 +717,53 @@ void test__butterCoeffs(void){
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test9[i], a_ref9[i]);
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test9[i], b_ref9[i]);
     }
+}
+
+void test__faf_IIRFilterbank(void){
+    void* hFaF;
+    int i, band;
+    float** outFrame;
+    void* hFFT;
+
+    /* Config */
+    const float acceptedTolerance_dB = 0.5f;
+    const int signalLength = 256;
+    const int frameSize = 16;
+    float fs = 48e3;
+    int order = 3;
+    float fc[6] = {176.776695296637, 353.553390593274, 707.106781186547, 1414.21356237309, 2828.42712474619, 5656.85424949238};
+    float inSig[signalLength];
+    float outSig_bands[7][signalLength] = {{0.0f}};
+    float outSig[signalLength] = {0.0f};
+    float_complex insig_fft[signalLength/2+1];
+    float_complex outsig_fft[signalLength/2+1];
+
+    /* Impulse */
+    memset(inSig, 0, signalLength*sizeof(float));
+    inSig[0] = 1.0f;
+
+    /* Pass impulse through filterbank */
+    outFrame = (float**)malloc2d(7, frameSize, sizeof(float));
+    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
+    for(i=0; i< signalLength/frameSize; i++){
+        faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
+        for(band=0; band<7; band++)
+            memcpy(&outSig_bands[band][i*frameSize], outFrame[band], frameSize*sizeof(float));
+    }
+
+    /* Sum the individual bands */
+    for(band=0; band<7; band++)
+        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
+
+    /* Check that the magnitude difference between input and output is below 1dB */
+    saf_rfft_create(&hFFT, signalLength);
+    saf_rfft_forward(hFFT, inSig, insig_fft);
+    saf_rfft_forward(hFFT, outSig, outsig_fft);
+    for(i=0; i<signalLength/2+1; i++)
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance_dB, 0.0f, 20.0f * log10f(cabsf(outsig_fft[i]/insig_fft[i])));
+
+    /* clean-up */
+    saf_rfft_destroy(&hFFT);
+    faf_IIRFilterbank_destroy(&hFaF);
+    free(outFrame);
 }

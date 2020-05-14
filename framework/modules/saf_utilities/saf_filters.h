@@ -162,7 +162,7 @@ void flattenMinphase(float* x,
 
 
 /* ========================================================================== */
-/*                              Bi-Quad Functions                             */
+/*                             IIR Filter Functions                           */
 /* ========================================================================== */
 
 /**
@@ -231,6 +231,90 @@ void evalBiQuadTransferFunction(/* Input arguments */
                                 /* Output arguments */
                                 float* magnitude_dB,
                                 float* phase_rad);
+
+/**
+ * Computes Butterworth IIR filter coefficients
+ *
+ * The function is numerically identical to the default 'butter' function in
+ * Matlab
+ *
+ * @warning The function still shares the same limitations of the Matlab
+ *          'butter' function, which may also be emphasised by applying the
+ *          filter to single precision input data. Higher orders and lower
+ *          cut-off frequencies can easily become unstable! Consider trying
+ *          things out in Matlab before using this function.
+ *
+ * @param[in]  filterType  See 'BUTTER_FILTER_TYPES' enum
+ * @param[in]  order       Filter order (N)
+ * @param[in]  cutoff1     Filter1 cutoff in Hz, for LPF/HPF, and lower cutoff
+ *                         for BPF/BSF
+ * @param[in]  cutoff2     Filter2 cutoff in Hz, not needed for LPF/HPF, this is
+ *                         the upper cutoff for BPF/BSF
+ * @param[in]  sampleRate  Sampling rate in Hz
+ * @param[out] b_coeffs    Filter coefficients for the numerator;
+ *                         LPF/HPF: (order+1) x 1; BPF/BSF: (2*order+1) x 1
+ * @param[out] a_coeffs    Filter coefficients for the denominator;
+ *                         LPF/HPF: (order+1) x 1; BPF/BSF: (2*order+1) x 1
+ *
+ * @see [1] T. W. Parks and C. S. Burrus, Digital Filter Design, John Wiley &
+ *          Sons, 1987, chapter 7, section 7.3.3.
+ */
+void butterCoeffs(/* Input arguments */
+                  BUTTER_FILTER_TYPES filterType,
+                  int order,
+                  float cutoff1,
+                  float cutoff2,
+                  float sampleRate,
+                  /* Output arguments */
+                  double* b_coeffs,
+                  double* a_coeffs);
+
+/**
+ * Computes a bank of IIR filter coefficients required to divide a signal into
+ * frequency bands, based on design by Favrot & Faller [1]
+ *
+ * The function employs the 'butterCoeffs' function to compute a low-pass
+ * filter for the first band, high-pass filter for the last band, and band-pass
+ * filter for the inbetween bands (nCutoffFreqs must be 2 or more).
+ *
+ * @param[in] phFaF         (&) address of the faf_IIRFilterbank handle
+ * @param[in] order         Filter order
+ * @param[in] fc            Vector of cutoff frequencies; nCutoffFreqs x 1
+ * @param[in] nCutoffFreqs  Number of cutoff frequencies in vector 'fc'.
+ * @param[in] sampleRate    Sampling rate in Hz
+ * @param[in] maxNumSamples Maximum number of samples to expect when calling
+ *                          faf_IIRFilterbank_apply
+ *
+ * @see [1] Favrot, A. and Faller, C., 2010. Complementary N-band IIR filterbank
+ *          based on 2-band complementary filters. Proc. Intl. Works. on Acoust.
+ *          Echo and Noise Control (IWAENC).
+ */
+void faf_IIRFilterbank_create(void** phFaF,
+                              int order,
+                              float* fc,
+                              int nCutoffFreqs,
+                              float sampleRate,
+                              int maxNumSamples);
+
+/**
+ * Applies the Favrot & Faller filterbank
+ *
+ * @param[in]  phFaF    faf_IIRFilterbank handle
+ * @param[in]  inSig    Input signal; nSamples x 1
+ * @param[out] outBands Output band signals; (nCutoffFreqs+1) x nSamples
+ * @param[in]  nSamples Number of samples to process
+ */
+void faf_IIRFilterbank_apply(void* phFaF,
+                             float* inSig,
+                             float** outBands,
+                             int nSamples);
+
+/**
+ * Destroys an instance of the Favrot & Faller filterbank
+ *
+ * @param[in] hFaF (&) address of the faf_IIRFilterbank handle
+ */
+void faf_IIRFilterbank_destroy(void** hFaF);
 
 
 /* ========================================================================== */
@@ -323,105 +407,6 @@ void FIRFilterbank(/* Input arguments */
                    float* filterbank);
 
 
-/* ========================================================================== */
-/*                        Butterworth Filter Functions                        */
-/* ========================================================================== */
-
-/**
- * Computes Butterworth IIR filter coefficients
- *
- * The function is numerically identical to the default 'butter' function in
- * Matlab
- *
- * @warning The function still shares the same limitations of the Matlab
- *          'butter' function, which may also be emphasised by applying the
- *          filter to single precision input data. Higher orders and lower
- *          cut-off frequencies can easily become unstable! Consider trying
- *          things out in Matlab before using this function.
- *
- * @param[in]  filterType  See 'BUTTER_FILTER_TYPES' enum
- * @param[in]  order       Filter order (N)
- * @param[in]  cutoff1     Filter1 cutoff in Hz, for LPF/HPF, and lower cutoff
- *                         for BPF/BSF
- * @param[in]  cutoff2     Filter2 cutoff in Hz, not needed for LPF/HPF, this is
- *                         the upper cutoff for BPF/BSF
- * @param[in]  sampleRate  Sampling rate in Hz
- * @param[out] b_coeffs    Filter coefficients for the numerator;
- *                         LPF/HPF: (order+1) x 1; BPF/BSF: (2*order+1) x 1
- * @param[out] a_coeffs    Filter coefficients for the denominator;
- *                         LPF/HPF: (order+1) x 1; BPF/BSF: (2*order+1) x 1
- *
- * @see [1] T. W. Parks and C. S. Burrus, Digital Filter Design, John Wiley &
- *          Sons, 1987, chapter 7, section 7.3.3.
- */
-void butterCoeffs(/* Input arguments */
-                  BUTTER_FILTER_TYPES filterType,
-                  int order,
-                  float cutoff1,
-                  float cutoff2,
-                  float sampleRate,
-                  /* Output arguments */
-                  double* b_coeffs,
-                  double* a_coeffs);
-
-/**
- * Computes a bank of IIR filter coefficients required to divide a signal into
- * frequency bands
- *
- * The function employs the 'butterCoeffs' function to compute a low-pass
- * filter for the first band, high-pass filter for the last band, and band-pass
- * filter for the inbetween bands (nCutoffFreqs must be 2 or more).
- *
- * @param[in] hFaF          (&) address of the saf_IIRFilterbank handle
- * @param[in] order         Filter order
- * @param[in] fc            Vector of cutoff frequencies; nCutoffFreqs x 1
- * @param[in] nCutoffFreqs  Number of cutoff frequencies in vector 'fc'.
- * @param[in] sampleRate    Sampling rate in Hz
- * @param[in] maxNumSamples Maximum number of samples to expect when calling
- *                          faf_IIRFilterbank_apply
- *
- * @see [1] Favrot, A. and Faller, C., 2010. Complementary N-band IIR filterbank
- *          based on 2-band complementary filters. Proc. Intl. Works. on Acoust.
- *          Echo and Noise Control (IWAENC).
- */
-void faf_IIRFilterbank_create(void** hFaF,
-                              int order,  
-                              float* fc,
-                              int nCutoffFreqs,
-                              float sampleRate,
-                              int maxNumSamples);
-
-void faf_IIRFilterbank_apply(void* hFaF,
-                             float* inSig,
-                             float** outBands,
-                             int nSamples);
-
-/**
- * Destroys an instance of the faf_IIRFilterbank
- *
- * @param[in] hFaF (&) address of the saf_IIRFilterbank handle
- */
-void faf_IIRFilterbank_destroy(void** hFaF);
-
-///**
-// * Applies IIR filter to an input signal using the direct form II difference
-// * equation
-// *
-// * @note input 'signal' is filtered in place (i.e. it becomes the output signal)
-// *
-// * @param[in]      b        b filter coefficients; 3 x 1
-// * @param[in]      a        a filter coefficients; 3 x 1
-// * @param[in,out]  w_z_12   Previous 2 wn samples (init as 0s); 2 x 1
-// * @param[in,out]  signal   Signal to be filtered/filtered signal; nSamples x 1
-// * @param[in]      nSamples Number of samples in the signal
-// */
-//void applyIIRFilter(/* Input arguments */
-//                    double* b_coeffs,
-//                    double* a_coeffs,
-//                    float* w_z,
-//                    int filterLength,
-//                    float* signal,
-//                    int nSamples);
 
 #ifdef __cplusplus
 }/* extern "C" */

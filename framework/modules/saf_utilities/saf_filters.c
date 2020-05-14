@@ -25,6 +25,15 @@
 #include "saf_filters.h" 
 #include "saf_utilities.h"
 
+/** Main structure for the Favrot&Faller filterbank */
+typedef struct _faf_IIRFB_data{
+    int nBands, nFilters, filtLen, filtOrder;
+    float** b_lpf, **a_lpf, **b_hpf, **a_hpf;
+    float*** wz_lpf, ***wz_hpf, ***wz_apf1, ***wz_apf2;
+    float* tmp, *tmp2;
+
+}faf_IIRFB_data;
+
 /**
  * Applies a windowing function (see WINDOWING_FUNCTION_TYPES enum) of length
  * 'winlength', to vector 'x'.
@@ -104,6 +113,98 @@ static void applyWindowingFunction
     }
 }
 
+/**
+ * Applies IIR filter of order 1 */
+static void applyIIR_1
+(
+    float* in_signal,
+    int nSamples,
+    float* b,
+    float* a,
+    float* wz,
+    float* out_signal
+)
+{
+    int n;
+    float wn;
+
+    /*  difference equation (Direct form 2) */
+    for (n=0; n<nSamples; n++){
+        /* numerator */
+        wn = in_signal[n] - (a[1] * wz[0]);
+
+        /* denominator */
+        out_signal[n] = b[0] * wn + b[1] * wz[0];
+
+        /* shuffle delays */
+        wz[0] = wn;
+    }
+}
+
+/**
+ * Applies IIR filter of order 2 */
+static void applyIIR_2
+(
+    float* in_signal,
+    int nSamples,
+    float* b,
+    float* a,
+    float* wz,
+    float* out_signal
+)
+{
+    int n;
+    float wn;
+
+    /* Difference equation (Direct form 2) */
+    for (n=0; n<nSamples; n++){
+        /* numerator */
+        wn = in_signal[n] - a[1] * wz[0] - a[2] * wz[1];
+
+        /* denominator */
+        out_signal[n] = b[0] * wn + b[1] * wz[0] + b[2] * wz[1];
+
+        /* shuffle delays */
+        wz[1] = wz[0];
+        wz[0] = wn;
+    }
+}
+
+/**
+ * Applies IIR filter of order 3 */
+static void applyIIR_3
+(
+    float* in_signal,
+    int nSamples,
+    float* b,
+    float* a,
+    float* wz,
+    float* out_signal
+)
+{
+    int n;
+    float wn;
+
+    /* Difference equation (Direct form 2) */
+    for (n=0; n<nSamples; n++){
+        /* numerator */
+        wn = in_signal[n] - a[1] * wz[0] - a[2] * wz[1] - a[3] * wz[2];
+
+        /* denominator */
+        out_signal[n] = b[0] * wn + b[1] * wz[0] + b[2] * wz[1] + b[3] * wz[2];
+
+        /* shuffle delays */
+        wz[2] = wz[1];
+        wz[1] = wz[0];
+        wz[0] = wn;
+    }
+}
+
+
+/* ========================================================================== */
+/*                               Misc. Functions                              */
+/* ========================================================================== */
+
 void getWindowingFunction
 (
     WINDOWING_FUNCTION_TYPES type,
@@ -112,7 +213,6 @@ void getWindowingFunction
 )
 {
     int i;
-    
     for(i=0; i<winlength; i++)
         win[i] = 1.0f;
     applyWindowingFunction(type, winlength, win);
@@ -120,19 +220,15 @@ void getWindowingFunction
 
 void getOctaveBandCutoffFreqs
 (
-    float* centreFreqs,  /* nCutoffFreq x 1 */
+    float* centreFreqs,
     int nCentreFreqs,
-    float* cutoffFreqs   /* (nCutoffFreq+1) x 1 */
+    float* cutoffFreqs
 )
 {
     int i;
     for(i=0; i<nCentreFreqs-1; i++)
         cutoffFreqs[i] = 2.0f*centreFreqs[i]/sqrtf(2.0f);
 }
-
-// TODO:
-//    mid of log
-//    exp(1)^((log(400)+log(2000))/2)
 
 void flattenMinphase
 (
@@ -181,6 +277,11 @@ void flattenMinphase
     free(tdi_f_labs);
     free(dt_min_f);
 }
+
+
+/* ========================================================================== */
+/*                             IIR Filter Functions                           */
+/* ========================================================================== */
 
 void biQuadCoeffs
 (
@@ -352,125 +453,50 @@ void evalBiQuadTransferFunction
     }
 }
 
-void FIRCoeffs
+void applyIIR
 (
-    FIR_FILTER_TYPES filterType,
     int order,
-    float fc1,
-    float fc2, /* only needed for band-pass/stop */
-    float fs,
-    WINDOWING_FUNCTION_TYPES windowType,
-    int scalingFLAG,
-    float* h_filt
+    float* in_signal,
+    int nSamples,
+    float* b,
+    float* a,
+    float* wz,
+    float* out_signal
 )
 {
-    int i, h_len;
-    float ft1, ft2, h_sum, f0;
-    float_complex h_z_sum;
-    
-    h_len = order + 1;
-    ft1 = fc1/(fs*2.0f);
-    
-    /* compute filter weights */
-    if(order % 2 == 0){
-        /* if order is multiple of 2 */
-        switch(filterType){
-            case FIR_FILTER_LPF:
-                for(i=0; i<h_len; i++)
-                    h_filt[i] = i==order/2 ? 2.0f*ft1 : sinf(2.0f*M_PI*ft1*(float)(i-order/2)) / (M_PI*(float)(i-order/2));
-                break;
-                
-            case FIR_FILTER_HPF:
-                for(i=0; i<h_len; i++)
-                    h_filt[i] = i==order/2 ? 1.0f - 2.0f*ft1 : -sinf(2.0f*ft1*M_PI*(float)(i-order/2)) / (M_PI*(float)(i-order/2));
-                break;
-                
-            case FIR_FILTER_BPF:
-                ft2 = fc2/(fs*2.0f);
-                for(i=0; i<h_len; i++){
-                    h_filt[i] = i==order/2 ? 2.0f*(ft2-ft1) :
-                        sinf(2.0f*M_PI*ft2*(float)(i-order/2)) / (M_PI*(float)(i-order/2)) - sinf(2.0f*M_PI*ft1*(float)(i-order/2)) / (M_PI*(float)(i-order/2));
-                }
-                break;
-                
-            case FIR_FILTER_BSF:
-                ft2 = fc2/(fs*2.0f);
-                for(i=0; i<h_len; i++){
-                    h_filt[i] = i==order/2 ? 1.0f - 2.0f*(ft2-ft1) :
-                        sinf(2.0f*M_PI*ft1*(float)(i-order/2)) / (M_PI*(float)(i-order/2)) - sinf(2.0f*M_PI*ft2*(float)(i-order/2)) / (M_PI*(float)(i-order/2));
-                }
-                break;
-        }
-    }
-    else
-        assert(0); /* please specify an even value for the filter 'order' argument */
-    
-    /* Apply windowing function */
-    applyWindowingFunction(windowType, h_len, h_filt);
-    
-    /* Scaling, to ensure pass-band is truely at 1 (0dB).
-     * [1] "Programs for Digital Signal Processing", IEEE Press John Wiley &
-     *     Sons, 1979, pg. 5.2-1.
-     */
-    if(scalingFLAG){ 
-        switch(filterType){
-            case FIR_FILTER_LPF:
-            case FIR_FILTER_BSF:
-                h_sum = 0.0f;
-                for(i=0; i<h_len; i++)
-                    h_sum += h_filt[i];
-                for(i=0; i<h_len; i++)
-                    h_filt[i] /= h_sum;
-                break;
-                
-            case FIR_FILTER_HPF:
-                f0 = 1.0f;
-                h_z_sum = cmplxf(0.0f, 0.0f);
-                for(i=0; i<h_len; i++)
-                    h_z_sum = ccaddf(h_z_sum, crmulf(cexpf(cmplxf(0.0f, -2.0f*M_PI*(float)i*f0/2.0f)), h_filt[i]));
-                h_sum = cabsf(h_z_sum);
-                for(i=0; i<h_len; i++)
-                    h_filt[i] /= h_sum;
-                break;
-                
-            case FIR_FILTER_BPF:
-                f0 = (fc1/fs+fc2/fs)/2.0f;
-                h_z_sum = cmplxf(0.0f, 0.0f);
-                for(i=0; i<h_len; i++)
-                    h_z_sum = ccaddf(h_z_sum, crmulf(cexpf(cmplxf(0.0f, -2.0f*M_PI*(float)i*f0/2.0f)), h_filt[i]));
-                h_sum = cabsf(h_z_sum);
-                for(i=0; i<h_len; i++)
-                    h_filt[i] /= h_sum;
-                break;
-        }
-    }
-}
+    int n, i, len;
+    float wn;
 
-void FIRFilterbank
-(
-    int order,
-    float* fc,  /* cut-off frequencies; nCutoffFreq x 1 */
-    int nCutoffFreq,
-    float sampleRate,
-    WINDOWING_FUNCTION_TYPES windowType,
-    int scalingFLAG,
-    float* filterbank /* (nCutoffFreq+1) x (order+1) */
-)
-{
-    int k, nFilt;
-    
-    /* Number of filters returned is always one more than the number of cut-off frequencies */
-    nFilt = nCutoffFreq + 1;
-    
-    /* first and last bands are low-pass and high pass filters, using the first
-     * and last cut-off frequencies in vector 'fc', respectively.  */
-    FIRCoeffs(FIR_FILTER_LPF, order, fc[0], 0.0f, sampleRate, windowType, scalingFLAG, filterbank);
-    FIRCoeffs(FIR_FILTER_HPF, order, fc[nCutoffFreq-1], 0.0f, sampleRate, windowType, scalingFLAG, &filterbank[(nFilt-1)*(order+1)]);
-    
-    /* the inbetween bands are then band-pass filters: */
-    if(nCutoffFreq>1){
-        for(k=1; k<nFilt-1; k++)
-            FIRCoeffs(FIR_FILTER_BPF, order, fc[k-1], fc[k], sampleRate, windowType, scalingFLAG, &filterbank[k*(order+1)]);
+    /* For speed-ups */ /* TODO: explore the use of Intel IPP IIR functions */
+    switch(order){
+        case 1: applyIIR_1(in_signal, nSamples, b, a, wz, out_signal); return;
+        case 2: applyIIR_2(in_signal, nSamples, b, a, wz, out_signal); return;
+        case 3: applyIIR_3(in_signal, nSamples, b, a, wz, out_signal); return;
+    }
+
+    len = order+1;
+
+    /*  difference equation (Direct form 2) */
+    for (n=0; n<nSamples; n++){
+        /* numerator */
+        wn = in_signal[n];
+        for (i=1; i<len;i++)
+            wn = wn - (a[i] * wz[i-1]);
+
+        /* denominator */
+        out_signal[n] = b[0] * wn;
+        for (i=1; i<len; i++)
+            out_signal[n] = out_signal[n] + (b[i] * wz[i-1]);
+
+        /* shuffle delays */
+        switch(order){
+            case 5: wz[4] = wz[3];
+            case 4: wz[3] = wz[2];
+            case 3: wz[2] = wz[1];
+            case 2: wz[1] = wz[0];
+            case 1: wz[0] = wn; break;
+            default: assert(0); /* Not supported */
+        }
     }
 }
 
@@ -681,17 +707,9 @@ void butterCoeffs
     free(kern);
 }
 
-typedef struct _faf_IIRFB_data{
-    int nBands, filtLen, filtOrder;
-    float** b_lpf, **a_lpf, **b_hpf, **a_hpf;
-    float*** wz_lpf, ***wz_hpf, ***wz_apf1, ***wz_apf2;
-    float* tmp, *tmp2;
-
-}faf_IIRFB_data;
-
 void faf_IIRFilterbank_create
 (
-    void** hFaF,
+    void** phFaF,
     int order, // ENUM 1st or 3rd order only
     float* fc,
     int nCutoffFreq,
@@ -699,8 +717,8 @@ void faf_IIRFilterbank_create
     int maxNumSamples
 )
 {
-    *hFaF = malloc1d(sizeof(faf_IIRFB_data));
-    faf_IIRFB_data *fb = (faf_IIRFB_data*)(*hFaF);
+    *phFaF = malloc1d(sizeof(faf_IIRFB_data));
+    faf_IIRFB_data *fb = (faf_IIRFB_data*)(*phFaF);
     double b_lpf[4], a_lpf[4], b_hpf[4], a_hpf[4], r[7], revb[4], reva[4], q[4];
     double tmp[7], tmp2[7];
     double_complex d1[3], d2[3], d1_num[3], d2_num[3];
@@ -714,6 +732,7 @@ void faf_IIRFilterbank_create
 
     /* Number of filters returned is always one more than the number of cut-off
      * frequencies */
+    fb->nFilters = nCutoffFreq;
     fb->nBands = nCutoffFreq + 1;
 
     /* Allocate memory for filter coefficients and delay buffers */
@@ -800,7 +819,7 @@ void faf_IIRFilterbank_create
         convz(d2_num, d1, d2_len, d1_len, ztmp2);
         for(i=0; i<filtLen; i++){
             b_hpf[i] = -0.5 * creal(ccsub(ztmp[filtLen-i-1], ztmp2[filtLen-i-1]));
-            a_hpf[i] = b_lpf[i];
+            a_hpf[i] = a_lpf[i];
         }
 
         /* Store in single precision for run-time */
@@ -810,41 +829,6 @@ void faf_IIRFilterbank_create
             fb->b_lpf[f][i] = (float)b_lpf[i];
             fb->a_lpf[f][i] = (float)a_lpf[i];
         }
-    }
-}
-
-void applyIIR
-(
-    int order,
-    float* in_signal,
-    int nSamples,
-    float* b,
-    float* a,
-    float* wz,
-    float* out_signal
-)
-{
-    int n, i, len;
-    float wn;
-
-    len = order+1;
-
-    /*  difference equation (Direct form 2) */
-    for (n=0; n<nSamples; n++){
-        /* numerator */
-        wn = in_signal[n];
-        for (i=1; i<len;i++)
-            wn = wn - a[i] * wz[i-1];
-
-        /* denominator */
-        out_signal[n] = b[0] * wn;
-        for (i=1; i<len; i++)
-            out_signal[n] = out_signal[n] + b[i] * wz[i-1];
-
-        /* shuffle delays */
-        for(i=(len-2); i>0; i--)
-            wz[i-1] = wz[i];
-        wz[0] = wn;
     }
 }
 
@@ -864,21 +848,21 @@ void faf_IIRFilterbank_apply
         memcpy(outBands[band], inSig, nSamples*sizeof(float));
 
     /* Band 0 */
-    for (band = 0; band<fb->nBands-1; band++)
-        applyIIR(fb->filtOrder, outBands[0], nSamples, fb->b_lpf[band], fb->a_lpf[band], fb->wz_lpf[0][band], outBands[0]);
+    for (j = 0; j<fb->nFilters; j++)
+        applyIIR(fb->filtOrder, outBands[0], nSamples, fb->b_lpf[j], fb->a_lpf[j], fb->wz_lpf[0][j], outBands[0]);
 
     /* Band 1 */
     applyIIR(fb->filtOrder, outBands[1], nSamples, fb->b_hpf[0], fb->a_hpf[0], fb->wz_hpf[1][0], outBands[1]);
-    for (band = 1; band<fb->nBands-1; band++)
-        applyIIR(fb->filtOrder, outBands[1], nSamples, fb->b_lpf[band], fb->a_lpf[band], fb->wz_lpf[1][band], outBands[1]);
+    for (j = 1; j<fb->nFilters; j++)
+        applyIIR(fb->filtOrder, outBands[1], nSamples, fb->b_lpf[j], fb->a_lpf[j], fb->wz_lpf[1][j], outBands[1]);
 
     /* All-pass filters (bands 2..N-1) */
-    for (band = 2; band<fb->nBands; band++){
-        for (j=0; j<band-2; j++){
+    for (band = 2; band < fb->nBands; band++){
+        for (j=0; j<=band-2; j++){
             applyIIR(fb->filtOrder, outBands[band], nSamples, fb->b_lpf[j], fb->a_lpf[j], fb->wz_apf1[band][j], fb->tmp);
             applyIIR(fb->filtOrder, outBands[band], nSamples, fb->b_hpf[j], fb->a_hpf[j], fb->wz_apf2[band][j], fb->tmp2);
             utility_svvadd(fb->tmp, fb->tmp2, nSamples, outBands[band]);
-        } 
+        }
     }
 
     /* Bands 2..N-2 */
@@ -894,16 +878,16 @@ void faf_IIRFilterbank_apply
 
     /* Band N-1 */
     if (fb->nBands>2)
-        applyIIR(fb->filtOrder, outBands[fb->nBands-1], nSamples, fb->b_hpf[fb->nBands-2], fb->a_hpf[fb->nBands-2],
-                 fb->wz_hpf[fb->nBands-1][fb->nBands-2], outBands[fb->nBands-1]);
+        applyIIR(fb->filtOrder, outBands[fb->nBands-1], nSamples, fb->b_hpf[fb->nFilters-1], fb->a_hpf[fb->nFilters-1],
+                 fb->wz_hpf[fb->nBands-1][fb->nFilters-1], outBands[fb->nBands-1]);
 }
 
 void faf_IIRFilterbank_destroy
 (
-    void** hFaF
+    void** phFaF
 )
 {
-    faf_IIRFB_data *fb = (faf_IIRFB_data*)(*hFaF);
+    faf_IIRFB_data *fb = (faf_IIRFB_data*)(*phFaF);
 
     if(fb!=NULL){
         free(fb->b_hpf);
@@ -917,7 +901,134 @@ void faf_IIRFilterbank_destroy
         free(fb->tmp);
         free(fb->tmp2);
         fb=NULL;
-        *hFaF = NULL;
+        *phFaF = NULL;
+    }
+}
+
+
+/* ========================================================================== */
+/*                            FIR Filter Functions                            */
+/* ========================================================================== */
+
+void FIRCoeffs
+(
+    FIR_FILTER_TYPES filterType,
+    int order,
+    float fc1,
+    float fc2, /* only needed for band-pass/stop */
+    float fs,
+    WINDOWING_FUNCTION_TYPES windowType,
+    int scalingFLAG,
+    float* h_filt
+)
+{
+    int i, h_len;
+    float ft1, ft2, h_sum, f0;
+    float_complex h_z_sum;
+    
+    h_len = order + 1;
+    ft1 = fc1/(fs*2.0f);
+    
+    /* compute filter weights */
+    if(order % 2 == 0){
+        /* if order is multiple of 2 */
+        switch(filterType){
+            case FIR_FILTER_LPF:
+                for(i=0; i<h_len; i++)
+                    h_filt[i] = i==order/2 ? 2.0f*ft1 : sinf(2.0f*M_PI*ft1*(float)(i-order/2)) / (M_PI*(float)(i-order/2));
+                break;
+                
+            case FIR_FILTER_HPF:
+                for(i=0; i<h_len; i++)
+                    h_filt[i] = i==order/2 ? 1.0f - 2.0f*ft1 : -sinf(2.0f*ft1*M_PI*(float)(i-order/2)) / (M_PI*(float)(i-order/2));
+                break;
+                
+            case FIR_FILTER_BPF:
+                ft2 = fc2/(fs*2.0f);
+                for(i=0; i<h_len; i++){
+                    h_filt[i] = i==order/2 ? 2.0f*(ft2-ft1) :
+                        sinf(2.0f*M_PI*ft2*(float)(i-order/2)) / (M_PI*(float)(i-order/2)) - sinf(2.0f*M_PI*ft1*(float)(i-order/2)) / (M_PI*(float)(i-order/2));
+                }
+                break;
+                
+            case FIR_FILTER_BSF:
+                ft2 = fc2/(fs*2.0f);
+                for(i=0; i<h_len; i++){
+                    h_filt[i] = i==order/2 ? 1.0f - 2.0f*(ft2-ft1) :
+                        sinf(2.0f*M_PI*ft1*(float)(i-order/2)) / (M_PI*(float)(i-order/2)) - sinf(2.0f*M_PI*ft2*(float)(i-order/2)) / (M_PI*(float)(i-order/2));
+                }
+                break;
+        }
+    }
+    else
+        assert(0); /* please specify an even value for the filter 'order' argument */
+    
+    /* Apply windowing function */
+    applyWindowingFunction(windowType, h_len, h_filt);
+    
+    /* Scaling, to ensure pass-band is truely at 1 (0dB).
+     * [1] "Programs for Digital Signal Processing", IEEE Press John Wiley &
+     *     Sons, 1979, pg. 5.2-1.
+     */
+    if(scalingFLAG){ 
+        switch(filterType){
+            case FIR_FILTER_LPF:
+            case FIR_FILTER_BSF:
+                h_sum = 0.0f;
+                for(i=0; i<h_len; i++)
+                    h_sum += h_filt[i];
+                for(i=0; i<h_len; i++)
+                    h_filt[i] /= h_sum;
+                break;
+                
+            case FIR_FILTER_HPF:
+                f0 = 1.0f;
+                h_z_sum = cmplxf(0.0f, 0.0f);
+                for(i=0; i<h_len; i++)
+                    h_z_sum = ccaddf(h_z_sum, crmulf(cexpf(cmplxf(0.0f, -2.0f*M_PI*(float)i*f0/2.0f)), h_filt[i]));
+                h_sum = cabsf(h_z_sum);
+                for(i=0; i<h_len; i++)
+                    h_filt[i] /= h_sum;
+                break;
+                
+            case FIR_FILTER_BPF:
+                f0 = (fc1/fs+fc2/fs)/2.0f;
+                h_z_sum = cmplxf(0.0f, 0.0f);
+                for(i=0; i<h_len; i++)
+                    h_z_sum = ccaddf(h_z_sum, crmulf(cexpf(cmplxf(0.0f, -2.0f*M_PI*(float)i*f0/2.0f)), h_filt[i]));
+                h_sum = cabsf(h_z_sum);
+                for(i=0; i<h_len; i++)
+                    h_filt[i] /= h_sum;
+                break;
+        }
+    }
+}
+
+void FIRFilterbank
+(
+    int order,
+    float* fc,  /* cut-off frequencies; nCutoffFreq x 1 */
+    int nCutoffFreq,
+    float sampleRate,
+    WINDOWING_FUNCTION_TYPES windowType,
+    int scalingFLAG,
+    float* filterbank /* (nCutoffFreq+1) x (order+1) */
+)
+{
+    int k, nFilt;
+    
+    /* Number of filters returned is always one more than the number of cut-off frequencies */
+    nFilt = nCutoffFreq + 1;
+    
+    /* first and last bands are low-pass and high pass filters, using the first
+     * and last cut-off frequencies in vector 'fc', respectively.  */
+    FIRCoeffs(FIR_FILTER_LPF, order, fc[0], 0.0f, sampleRate, windowType, scalingFLAG, filterbank);
+    FIRCoeffs(FIR_FILTER_HPF, order, fc[nCutoffFreq-1], 0.0f, sampleRate, windowType, scalingFLAG, &filterbank[(nFilt-1)*(order+1)]);
+    
+    /* the inbetween bands are then band-pass filters: */
+    if(nCutoffFreq>1){
+        for(k=1; k<nFilt-1; k++)
+            FIRCoeffs(FIR_FILTER_BPF, order, fc[k-1], fc[k], sampleRate, windowType, scalingFLAG, &filterbank[k*(order+1)]);
     }
 }
 
