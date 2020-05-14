@@ -1,6 +1,21 @@
 /**
  * @file afSTFT_protoFilter.h
  * @brief Prototype filter used by afSTFTlib
+ *
+ * The code to compute the prototype filter is:
+ * \code{.c}
+ *    f = 5.845594e-04;
+ *    K = 1024;
+ *    C = 5;
+ *    N = 2*K*C;
+ *    prototypeFilter = firceqrip(N-1, f, [1e-6 1e-5]);
+ *    prototypeFilter = prototypeFilter./max(prototypeFilter);
+ * \endcode
+ * Where 'f' is computed using the design detailed in [1].
+ *
+ * @see [1] Creusere, C.D. and Mitra, S.K., 1995. A simple method for designing
+ *          high-quality prototype filters for M-band pseudo QMF banks. IEEE
+ *          Transactions on signal processing, 43(4), pp.1005-1007.
  */
 
 const float protoFilter1024[10240] = {
