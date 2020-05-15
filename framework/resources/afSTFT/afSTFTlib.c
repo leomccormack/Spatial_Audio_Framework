@@ -30,6 +30,15 @@
  * channels on the fly and includes vectors for the hybrid mode centre
  * frequencies @44.1kHz/48kHz with 128 hop size for convenience.
  * It also supports the use of SAF utilities (for the vectorisation and FFT).
+ *
+ * Note that the design is also detailed in chapter 1 of [1]
+ *
+ * @see [1] Pulkki, V., Delikaris-Manias, S. and Politis, A. 2018. Parametric
+ *          time--frequency domain spatial audio. John Wiley & Sons,
+ *          Incorporated.
+ *
+ * @author Juha Vilkamo
+ * @date 08.04.2015
  */
 
 #include "afSTFTlib.h"

@@ -27,7 +27,7 @@
 
 /** Main structure for the Favrot&Faller filterbank */
 typedef struct _faf_IIRFB_data{
-    int nBands, nFilters, filtLen, filtOrder;
+    int nBands, nFilters, filtLen, filtOrder, maxNSamplesToExpect;
     float** b_lpf, **a_lpf, **b_hpf, **a_hpf;
     float*** wz_lpf, ***wz_hpf, ***wz_apf1, ***wz_apf2;
     float* tmp, *tmp2;
@@ -710,7 +710,7 @@ void butterCoeffs
 void faf_IIRFilterbank_create
 (
     void** phFaF,
-    int order, // ENUM 1st or 3rd order only
+    int order,
     float* fc,
     int nCutoffFreq,
     float sampleRate,
@@ -725,6 +725,7 @@ void faf_IIRFilterbank_create
     double_complex z[3], A[3][3], ztmp[7], ztmp2[7];
     int i, j, f, filtLen, d1_len, d2_len;
 
+    assert( (order==1) || (order==3) );
     assert(nCutoffFreq>1);
     filtLen = order + 1;
     fb->filtOrder = order;
@@ -744,6 +745,7 @@ void faf_IIRFilterbank_create
     fb->wz_lpf = (float***)calloc3d(fb->nBands, nCutoffFreq, order, sizeof(float));
     fb->wz_apf1 = (float***)calloc3d(fb->nBands, nCutoffFreq, order, sizeof(float));
     fb->wz_apf2 = (float***)calloc3d(fb->nBands, nCutoffFreq, order, sizeof(float));
+    fb->maxNSamplesToExpect = maxNumSamples;
     fb->tmp = malloc1d(maxNumSamples*sizeof(float));
     fb->tmp2 = malloc1d(maxNumSamples*sizeof(float));
 
@@ -842,6 +844,8 @@ void faf_IIRFilterbank_apply
 {
     faf_IIRFB_data *fb = (faf_IIRFB_data*)(hFaF);
     int band,j;
+
+    assert(nSamples <= fb->maxNSamplesToExpect);
 
     /* Copy input signal to all output bands/channels */
     for(band=0; band<fb->nBands; band++)

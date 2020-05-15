@@ -35,6 +35,27 @@
 #include "../saf_utilities/saf_utilities.h"
 #include "../saf_sh/saf_sh.h"
 
+/////////
+
+#include <immintrin.h>
+#ifdef __SSE__
+# include <xmmintrin.h>
+#endif
+#ifdef __SSE2__
+# include <emmintrin.h>
+#endif
+#ifdef __SSE3__
+# include <pmmintrin.h>
+#endif
+#ifdef __SSSE3__
+# include <tmmintrin.h>
+#endif
+#ifdef __SSE4_1__
+# include <smmintrin.h>
+#endif
+
+/////////
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -49,14 +70,16 @@ extern "C" {
 # define ISODD(n)    ((n%2 != 0) ? 1 : 0)
 #endif
 
-
 /* ========================================================================== */
 /*                         IMS Shoebox Room Simulator                         */
 /* ========================================================================== */
 
 #define IMS_NUM_WALLS_SHOEBOX ( 6 )
-#define IMS_FIR_FILTERBANK_ORDER ( 1000 )
-#define IMS_IIR_FILTERBANK_ORDER ( 3 )
+#define IMS_FIR_FILTERBANK_ORDER ( 1000 ) /* Must be even */
+#define IMS_IIR_FILTERBANK_ORDER ( 3 ) /* Only 1st or 3rd order supported */
+#define IMS_CIRC_BUFFER_LENGTH ( 2*8192U )
+#define IMS_CIRC_BUFFER_LENGTH_MASK ( IMS_CIRC_BUFFER_LENGTH - 1U )
+#define IMS_MAX_NSAMPLES_PER_FRAME ( 20000 ) // set to 8192 after debugging
 
 typedef void* voidPtr;
 
@@ -144,9 +167,6 @@ typedef struct _ims_core_workspace
     int rir_len_samples;
     float rir_len_seconds;
     float*** rir_bands; /* nBands x nChannels x rir_len_samples */
-
-    /* Circular buffers (only used/allocated when a "applyEchogram" function is
-     * called) */
  
 }ims_core_workspace;
 
@@ -172,12 +192,21 @@ typedef struct _ims_scene_data
 
     /* Internal */
     voidPtr** hCoreWrkSpc;   /**< One per source/receiver combination */
-    float* band_centerfreqs; /**< Octave band Centre frequencies */
+    float* band_centerfreqs; /**< Octave band CENTRE frequencies; nBands x 1 */
+    float* band_cutofffreqs; /**< Octave band CUTOFF frequencies;
+                              *   (nBands-1) x 1 */
     float** H_filt;          /**< nBands x (IMS_FIR_FILTERBANK_ORDER+1) */
     ims_rir** rirs;          /**< One per source/receiver combination */
 
-    /* IIR filterbank */
+    /* Circular buffers (only used/allocated when "applyEchogramTD" function is
+     * called for the first time) */
+    unsigned int wIdx;
+    float*** circ_buffer;    /**< nChannels x nBands x IMS_CIRC_BUFFER_LENGTH */
+
+    /* IIR filterbank (only used/allocated when "applyEchogramTD" function is
+     * called for the first time) */
     voidPtr* hFaFbank;       /**< One per source */
+    float*** src_sigs_bands; /**< nSources x nBands x nSamples */
 
 } ims_scene_data;
 

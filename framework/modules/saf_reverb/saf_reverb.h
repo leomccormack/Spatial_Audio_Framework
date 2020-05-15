@@ -73,7 +73,7 @@ typedef struct _ims_rir{
  *   |/         |           | width/length
  *   o__________.------> x  _
  *
- * @warning There is currently no checking whether the source-receiver
+ * @warning There is currently no checking whether the source/receiver
  *          coordinates fall inside the boundaries of the room!
  *
  * @param[in] phIms            (&) address of the ims_shoebox handle
@@ -101,7 +101,7 @@ void ims_shoebox_create(void** phIms,
 /**
  * Destroys an instance of ims_shoebox room simulator
  *
- * @param[in] phIms            (&) address of the ims_shoebox handle
+ * @param[in] phIms (&) address of the ims_shoebox handle
  */
 void ims_shoebox_destroy(void** phIms);
 
@@ -109,10 +109,10 @@ void ims_shoebox_destroy(void** phIms);
  * Computes echograms for all active source/receiver combinations
  *
  * The sources are omnidirectional point sources, whereas the receiver will
- * have the directivity of whatever they are configured as.
+ * have the directivity of whatever they are configured to have
  *
  * @note The echograms are only updated if needed, so it is "OK" to call this
- *       function as many times as you wish; since there will be virtually no
+ *       function as many times as you wish, since there will be virtually no
  *       CPU overhead incurred if no update is required.
  *
  * @param[in] hIms      ims_shoebox handle
@@ -126,7 +126,8 @@ void ims_shoebox_computeEchograms(void* hIms,
  * receiver combinations
  *
  * @note This function is not intended to be used for real-time dynamic scenes,
- *       rather, it is more suited for high-quality static 3DoF use cases
+ *       rather, it is more suited for high-quality static scene use cases. Use
+ *       ims_shoebox_applyEchogramTD for real-time dynamic use cases.
  *
  * @param[in] hIms                 ims_shoebox handle
  * @param[in] fractionalDelaysFLAG 0: disabled, 1: use Lagrange interpolation
@@ -136,34 +137,24 @@ void ims_shoebox_renderSHRIRs(void* hIms,
 
 /**
  * Applies the currently computed echograms in the time-domain, for all
- * specified sources and the specified receiver
+ * sources and one specified receiver
  *
  * Note the following:
  *  - The signal pointers must be valid, and have allocated enough memory for
  *    the number of channels and be of (at least) nSamples in length.
- *  - The given sourceIDs and receiverID must exist in the simulation. If they
- *    do not, then an assertion error is triggered.
- *  - Not all sourceIDs need to rendered. For example, if echograms have been
- *    computed IDs = [1,2,3,4], then passing sourceIDs = [2,4], will only
- *    process source signals corresponding to IDs 2 and 4. The circular buffers
- *    following source IDs 1 and 3 will instead be padded zeros up to length:
- *    "nSamples".
+ *  - The given receiverID must exist in the simulation. If it does not, then an
+ *    assertion error is triggered.
  *
- * @note This function is intended for real-time 6DoF dynamic use cases
+ * @note This function is intended for real-time dynamic scene use cases.
  *
  * @param[in] hIms                 ims_shoebox handle
- * @param[in] sourceIDs            IDs for each source you wish to render;
- *                                 nSourceIDs x 1
- * @param[in] nSourceIDs           Number of source IDs
  * @param[in] receiverID           ID of the receiver you wish to render
  * @param[in] nSamples             Number of samples to process
  * @param[in] fractionalDelaysFLAG 0: disabled, 1: use Lagrange interpolation
  */
 void ims_shoebox_applyEchogramTD(/* Input Arguments */
                                  void* hIms,
-                                 int* sourceIDs,
-                                 int nSourceIDs,
-                                 int receiverID,
+                                 long receiverID,
                                  int nSamples,
                                  int fractionalDelaysFLAG);
 
@@ -171,28 +162,48 @@ void ims_shoebox_applyEchogramTD(/* Input Arguments */
 /* ====================== Add/Remove/Update functions ======================= */
 
 /**
- * Adds a source to the simulator, and returns a unique ID corresponding to it
+ * Adds a source object to the simulator, and returns a unique ID corresponding
+ * to it
  *
- * @note There is currently no checking whether the source-receiver coordinates
- *       fall inside the boundaries of the room!
+ * @warning There is currently no checking whether the source/receiver
+ *          coordinates fall inside the boundaries of the room!
+ * @warning You are responsible for making sure that the signal pointers
+ *          actually point to allocated memory of sufficient size, before
+ *          calling ims_shoebox_applyEchogramTD!
+ *
+ * @param[in] hIms         ims_shoebox handle
+ * @param[in] position_xyz Starting source position, in metres, x,y,z
+ * @param[in] pSrc_sig     (&) address of the pointer to the 1-D input buffer
+ *                         for this source: nSamples x 1
+ *
+ * @returns A unique ID corresponding to this source object
  */
 long ims_shoebox_addSource(void* hIms,
                            float position_xyz[3],
-                           float* pSrc_sig);
+                           float** pSrc_sig);
 
 /**
- * Adds a spherical harmonic (SH) receiver to the simulator of a given order,
- * and returns a unique ID corresponding to it
+ * Adds a spherical harmonic (SH) receiver object to the simulator of a given
+ * order, and returns a unique ID corresponding to it
  *
- * @note There is currently no checking whether the source-receiver coordinates
- *       fall inside the boundaries of the room!
+ * @warning There is currently no checking whether the source/receiver
+ *          coordinates fall inside the boundaries of the room!
+ * @warning You are responsible for making sure that the signal pointers
+ *          actually point to allocated memory of sufficient size, before
+ *          calling ims_shoebox_applyEchogramTD!
  *
- * @param[in] sh_order  Spherical harmonic order of the receiver
+ * @param[in] hIms         ims_shoebox handle
+ * @param[in] sh_order     Spherical harmonic order of the receiver
+ * @param[in] position_xyz Starting receiver position, in metres, x,y,z
+ * @param[in] pSH_sigs     (&) address of the pointer to the 2-D output buffer
+ *                         for this receiver: (sh_order+1)^2 x nSamples
+ *
+ * @returns A unique ID corresponding to this receiver object
  */
 long ims_shoebox_addReceiverSH(void* hIms,
                                int sh_order,
                                float position_xyz[3],
-                               float** pSH_sigs);
+                               float*** pSH_sigs);
 
 /**
  * Updates the position of a specific source in the simulation
@@ -210,12 +221,16 @@ void ims_shoebox_updateReceiver(void* hIms,
 
 /**
  * Removes a specific source from the simulation
+ *
+ * @note This does NOT free the source signal 'pSrc_sig'.
  */
 void ims_shoebox_removeSource(void* hIms,
                               long sourceID);
 
 /**
  * Removes a specific receiver from the simulation
+ *
+ * @note This does NOT free the receiver signals 'pSH_sigs'.
  */
 void ims_shoebox_removeReceiver(void* hIms,
                                 long receiverID);

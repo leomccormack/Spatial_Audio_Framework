@@ -271,14 +271,18 @@ void butterCoeffs(/* Input arguments */
 
 /**
  * Computes a bank of IIR filter coefficients required to divide a signal into
- * frequency bands, based on design by Favrot & Faller [1]
+ * frequency bands, based on the design by Favrot & Faller [1]
  *
  * The function employs the 'butterCoeffs' function to compute a low-pass
  * filter for the first band, high-pass filter for the last band, and band-pass
  * filter for the inbetween bands (nCutoffFreqs must be 2 or more).
  *
+ * @note Only odd number orders work with the design. However, due to practical
+ *       numerical limitations, only 1st and 3rd order options make sense, which
+ *       is why this implementation will only accept order = 1 or 3
+ *
  * @param[in] phFaF         (&) address of the faf_IIRFilterbank handle
- * @param[in] order         Filter order
+ * @param[in] order         Filter order, 1st or 3rd
  * @param[in] fc            Vector of cutoff frequencies; nCutoffFreqs x 1
  * @param[in] nCutoffFreqs  Number of cutoff frequencies in vector 'fc'.
  * @param[in] sampleRate    Sampling rate in Hz

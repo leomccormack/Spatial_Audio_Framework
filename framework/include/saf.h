@@ -66,12 +66,17 @@
 /**
  * SAF Module: afSTFTlib
  *
- * The Alias-free STFT implementation by Juha Vilkamo, with some minor changes.
- * The Original source code can be found here:
+ * The alias-free STFT implementation by Juha Vilkamo, with some minor changes.
+ * The original source code can be found here:
  *  - https://github.com/jvilkamo/afSTFT
+ * The design is also detailed in chapter 1 of [1]
  *
  * ## Dependencies
  *    saf_utilities
+ *
+ * @see [1] Pulkki, V., Delikaris-Manias, S. and Politis, A. 2018. Parametric
+ *          time--frequency domain spatial audio. John Wiley & Sons,
+ *          Incorporated.
  */
 #define SAF_MODULE_AFSTFT
 #include "../resources/afSTFT/afSTFTlib.h"

@@ -61,7 +61,9 @@ void ims_shoebox_create
     sc->band_centerfreqs = malloc1d(nOctBands*sizeof(float));
     sc->band_centerfreqs[0] = lowestOctaveBand;
     for(band=1; band<nOctBands; band++)
-        sc->band_centerfreqs[band] = sc->band_centerfreqs[band-1];
+        sc->band_centerfreqs[band] = sc->band_centerfreqs[band-1]*2.0f;
+    sc->band_cutofffreqs = malloc1d((sc->nBands-1)*sizeof(float));
+    getOctaveBandCutoffFreqs(sc->band_centerfreqs, sc->nBands, sc->band_cutofffreqs);
     sc->fs = fs;
 
     /* Absorption coeffients per wall and octave band */
@@ -96,10 +98,17 @@ void ims_shoebox_create
         }
     }
 
+    /* Circular buffer */
+    sc->wIdx = 0;
+    sc->circ_buffer = NULL;
+
     /* IIR Filterbank per source */
     sc->hFaFbank = malloc1d(IMS_MAX_NUM_SOURCES*sizeof(voidPtr));
-    for(j=0; j<IMS_MAX_NUM_SOURCES; j++)
+    sc->src_sigs_bands = malloc1d(IMS_MAX_NUM_SOURCES*sizeof(float**));
+    for(j=0; j<IMS_MAX_NUM_SOURCES; j++){
         sc->hFaFbank[j] = NULL;
+        sc->src_sigs_bands[j] = NULL;
+    }
 }
 
 void ims_shoebox_destroy
@@ -112,6 +121,7 @@ void ims_shoebox_destroy
 
     if(sc!=NULL){
         free(sc->band_centerfreqs);
+        free(sc->band_cutofffreqs);
         free(sc->abs_wall);
         for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++)
             for(j=0; j<IMS_MAX_NUM_SOURCES; j++)
@@ -122,9 +132,13 @@ void ims_shoebox_destroy
             for(j=0; j<IMS_MAX_NUM_SOURCES; j++)
                 free(sc->rirs[i][j].data);
         free(sc->rirs);
-        for(j=0; j<IMS_MAX_NUM_SOURCES; j++)
-            free(sc->hFaFbank[j]);
+        free(sc->circ_buffer);
+        for(j=0; j<IMS_MAX_NUM_SOURCES; j++){
+            faf_IIRFilterbank_destroy(&(sc->hFaFbank[j]));
+            free(sc->src_sigs_bands[j]);
+        }
         free(sc->hFaFbank);
+        free(sc->src_sigs_bands);
         free(sc);
         sc=NULL;
         *phIms = NULL;
@@ -190,17 +204,15 @@ void ims_shoebox_renderSHRIRs
 )
 {
     ims_scene_data *sc = (ims_scene_data*)(hIms);
-    ims_core_workspace* workspace;
+    ims_core_workspace* wrk;
     int src_idx, rec_idx;
-    float* fc;
 
-    /* Compute Filterbank coefficients (if they haven't been computed already) */
+    /* Compute FIR Filterbank coefficients (if this is the first time this
+     * function is being called) */
     if(sc->H_filt==NULL){
-        fc = malloc1d((sc->nBands-1)*sizeof(float));
-        getOctaveBandCutoffFreqs(sc->band_centerfreqs, sc->nBands, fc);
         sc->H_filt = (float**)realloc2d((void**)sc->H_filt, sc->nBands, (IMS_FIR_FILTERBANK_ORDER+1), sizeof(float));
-        FIRFilterbank(IMS_FIR_FILTERBANK_ORDER, fc, sc->nBands, sc->fs, WINDOWING_FUNCTION_HAMMING, 1, ADR2D(sc->H_filt));
-        free(fc);
+        FIRFilterbank(IMS_FIR_FILTERBANK_ORDER, sc->band_cutofffreqs, sc->nBands-1,
+                      sc->fs, WINDOWING_FUNCTION_HAMMING, 1, ADR2D(sc->H_filt));
     }
 
     /* Render RIRs for all active source/receiver combinations */
@@ -209,14 +221,14 @@ void ims_shoebox_renderSHRIRs
             if( (sc->srcs[src_idx].ID!=-1) && (sc->recs[rec_idx].ID!=-1) ){
 
                 /* Workspace handle for this source/receiver combination */
-                workspace = sc->hCoreWrkSpc[rec_idx][src_idx];
+                wrk = sc->hCoreWrkSpc[rec_idx][src_idx];
 
                 /* Only update if it is required */
-                if(workspace->refreshRIRFLAG){
+                if(wrk->refreshRIRFLAG){
                     /* Render the RIRs for each band  */
-                    ims_shoebox_renderRIR(workspace, fractionalDelayFLAG, sc->fs, sc->H_filt, &(sc->rirs[rec_idx][src_idx]));
+                    ims_shoebox_renderRIR(wrk, fractionalDelayFLAG, sc->fs, sc->H_filt, &(sc->rirs[rec_idx][src_idx]));
 
-                    workspace->refreshRIRFLAG = 0;
+                    wrk->refreshRIRFLAG = 0;
                 }
             }
         }
@@ -225,31 +237,96 @@ void ims_shoebox_renderSHRIRs
 
 void ims_shoebox_applyEchogramTD
 (
-    void* hIms,
-    int* sourceIDs,
-    int nSourceIDs,
-    int receiverID,
+    void* hIms, 
+    long receiverID,
     int nSamples,
-    int fractionalDelaysFLAG
+    int fractionalDelaysFLAG // NOT IMPLEMENTED YET
 )
 {
-//{
-//    ims_scene_data *sc = (ims_scene_data*)(hIms);
-//    ims_core_workspace* workspace;
-//    int rec_idx, src_idx;
-//
-//    /* Process all active source/receiver combinations directly in the
-//     * time-domain */
-//    for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++){
-//        for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
-//            if( (sc->src_IDs[src_idx]!=-1) && (sc->rec_IDs[rec_idx]!=-1) ){
-//
-//                /* Workspace handle for this source/receiver combination */
-//                workspace = sc->hCoreWrkSpc[rec_idx][src_idx];
-//
-//            }
-//        }
-//    }
+    ims_scene_data *sc = (ims_scene_data*)(hIms);
+    ims_core_workspace* wrk;
+    echogram_data *echogram_abs;
+    int i, n, im, band, ch, rec_idx, src_idx, time_samples, wIdx_n;
+    float cb_val;
+    unsigned int rIdx;
+
+    assert(nSamples <= IMS_MAX_NSAMPLES_PER_FRAME);
+
+
+    /* Allocate circular buffers and filterbank handles (if this is the first
+     * time this function is being called) */
+    if(sc->circ_buffer==NULL)
+        sc->circ_buffer = (float***)calloc3d(IMS_MAX_NUM_SOURCES, sc->nBands, IMS_CIRC_BUFFER_LENGTH, sizeof(float));
+    for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
+        /* Also, only allocate if source is active: */
+        if( (sc->srcs[src_idx].ID != -1) && (sc->hFaFbank[src_idx] == NULL) ){
+            faf_IIRFilterbank_create(&(sc->hFaFbank[src_idx]), IMS_IIR_FILTERBANK_ORDER, sc->band_cutofffreqs,
+                                     sc->nBands-1, sc->fs, IMS_MAX_NSAMPLES_PER_FRAME);
+            sc->src_sigs_bands[src_idx] = (float**)malloc2d(sc->nBands, IMS_MAX_NSAMPLES_PER_FRAME, sizeof(float));
+        }
+    }
+
+    /* Find index corresponding to this receiver ID */
+    rec_idx = -1;
+    for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++){
+        if(sc->recs[i].ID == receiverID){
+            rec_idx = i;
+            break;
+        }
+    }
+    assert(rec_idx != -1);
+
+    /* Initialise buffer for receiver with zeros */
+    memset(ADR2D(sc->recs[rec_idx].sigs), sc->recs[rec_idx].nChannels * nSamples, sizeof(float));
+ 
+    /* Process all active sources (for this specific receiver) directly in the
+     * time-domain */
+    for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
+        if( (sc->srcs[src_idx].ID!=-1) && (sc->recs[rec_idx].ID!=-1) ){
+            /* Pass source signal through the Favrot & Faller IIR filterbank */
+            faf_IIRFilterbank_apply(sc->hFaFbank[src_idx], sc->srcs[src_idx].sig, sc->src_sigs_bands[src_idx], nSamples);
+
+            /* Workspace handle for this source/receiver combination */
+            wrk = sc->hCoreWrkSpc[rec_idx][src_idx];
+
+            /* Loop over samples */
+            for(n=0; n<nSamples; n++){
+                /* Number of image sources and time indices are the same across
+                 * octave bands: */
+                echogram_abs = (echogram_data*)wrk->hEchogram_abs[0];
+
+                /* Determine write index */
+                wIdx_n = sc->wIdx & IMS_CIRC_BUFFER_LENGTH_MASK;
+
+                /* Loop over all image sources */
+                for(im=0; im <echogram_abs->numImageSources; im++){
+                    /* Determine read index */
+                    time_samples = (int)(echogram_abs->time[im] * (sc->fs) + 0.5f); /* Round to nearest sample */
+                    rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx;          /* read index for this image source */
+                    rIdx = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK;                      /* wrap-around if needed */
+
+                    /* Loop over octave bands */
+                    for(band=0; band < sc->nBands; band++){
+                        /* Echogram for this source/receiver at this band */
+                        echogram_abs = (echogram_data*)wrk->hEchogram_abs[band];
+
+                        /* Pull value from circular buffer at this read index */
+                        cb_val = sc->circ_buffer[src_idx][band][rIdx]; // 5.3% of CPU TIME
+
+                        /*  Loop over channels */
+                        for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++) // 84% of CPU TIME (DEBUG), 65% (RELEASE)
+                            sc->recs[rec_idx].sigs[ch][n] += echogram_abs->value[im][ch] * cb_val;
+
+                        /* Copy input to circular buffer */
+                        sc->circ_buffer[src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
+                    }
+                }
+ 
+                /* Increment write index */
+                sc->wIdx++;
+            }
+        }
+    }
 }
 
 
@@ -259,7 +336,7 @@ long ims_shoebox_addSource
 (
     void* hIms,
     float src_xyz[3],
-    float* pSrc_sig
+    float** pSrc_sig
 )
 {
     ims_scene_data *sc = (ims_scene_data*)(hIms);
@@ -296,7 +373,7 @@ long ims_shoebox_addSource
     sc->srcs[obj_idx].pos.x = src_xyz[0];
     sc->srcs[obj_idx].pos.y = src_xyz[1];
     sc->srcs[obj_idx].pos.z = src_xyz[2]; 
-    sc->srcs[obj_idx].sig = pSrc_sig;
+    sc->srcs[obj_idx].sig = pSrc_sig == NULL ? NULL : *pSrc_sig;
 
     /* Create workspace for all receiver/source combinations, for this new source object */
     for(rec=0; rec<IMS_MAX_NUM_RECEIVERS; rec++)
@@ -311,7 +388,7 @@ long ims_shoebox_addReceiverSH
     void* hIms,
     int sh_order,
     float rec_xyz[3],
-    float** pSH_sigs
+    float*** pSH_sigs
 )
 {
     ims_scene_data *sc = (ims_scene_data*)(hIms);
@@ -349,7 +426,7 @@ long ims_shoebox_addReceiverSH
     sc->recs[obj_idx].pos.x = rec_xyz[0];
     sc->recs[obj_idx].pos.y = rec_xyz[1];
     sc->recs[obj_idx].pos.z = rec_xyz[2];
-    sc->recs[obj_idx].sigs = pSH_sigs;
+    sc->recs[obj_idx].sigs = pSH_sigs == NULL ? NULL : *pSH_sigs;
     sc->recs[obj_idx].type = RECEIVER_SH;
     sc->recs[obj_idx].nChannels = ORDER2NSH(sh_order);
 
@@ -418,7 +495,7 @@ void ims_shoebox_updateReceiver
 
     assert(receiverID >= 0);
 
-    /* Find index corresponding to this source ID */
+    /* Find index corresponding to this receiver ID */
     rec_idx = -1;
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++){
         if(sc->recs[i].ID == receiverID){

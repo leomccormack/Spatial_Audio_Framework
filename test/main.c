@@ -103,47 +103,49 @@ void test__ims_shoebox_TD(void){
     float maxTime_s;
     float mov_src_pos[3], mov_rec_pos[3];
     float** src_sigs, ***rec_sh_outsigs;
-    long sourceIDs[2], receiverIDs[1];
+    long sourceIDs[4], receiverIDs[1];
     int i;
 
     /* Config */
     const int signalLength = 10e3;
     const int sh_order = 3;
-    const int nBands = 7;
+    const int nBands = 5;
     const float abs_wall[nBands][6] =  /* Absorption Coefficients per Octave band, and per wall */
       { {0.180791250f, 0.207307300f, 0.134990800f, 0.229002250f, 0.212128400f, 0.241055000f},
         {0.225971250f, 0.259113700f, 0.168725200f, 0.286230250f, 0.265139600f, 0.301295000f},
         {0.258251250f, 0.296128100f, 0.192827600f, 0.327118250f, 0.303014800f, 0.344335000f},
         {0.301331250f, 0.345526500f, 0.224994001f, 0.381686250f, 0.353562000f, 0.401775000f},
-        {0.361571250f, 0.414601700f, 0.269973200f, 0.457990250f, 0.424243600f, 0.482095000f},
-        {0.451931250f, 0.518214500f, 0.337442000f, 0.572446250f, 0.530266000f, 0.602575000f},
-        {0.602591250f, 0.690971300f, 0.449934800f, 0.763282250f, 0.707040400f, 0.803455000f} };
+        {0.361571250f, 0.414601700f, 0.269973200f, 0.457990250f, 0.424243600f, 0.482095000f} };
     const float src_pos[3]  = {5.1f, 6.0f, 1.1f};
     const float src2_pos[3] = {2.1f, 1.0f, 1.3f};
+    const float src3_pos[3] = {3.1f, 5.0f, 2.3f};
+    const float src4_pos[3] = {7.1f, 2.0f, 1.4f};
     const float rec_pos[3]  = {8.8f, 5.5f, 0.9f};
 
-    /* Allocate memory for 2 sources and 1 spherical harmonic receiver */
+    /* Allocate memory for 4 sources and 1 spherical harmonic receiver */
     rec_sh_outsigs = (float***)malloc3d(1, ORDER2NSH(sh_order), signalLength, sizeof(float));
-    src_sigs = (float**)malloc2d(2, signalLength, sizeof(float));
-    rand_m1_1(ADR2D(src_sigs), 2*signalLength);
+    src_sigs = (float**)malloc2d(4, signalLength, sizeof(float));
+    rand_m1_1(ADR2D(src_sigs), 4*signalLength);
 
-    /* Set-up the shoebox room simulator for these two sources and SH receiver */
-    ims_shoebox_create(&hIms, 10, 7, 3, (float*)abs_wall, 125.0f, nBands, 343.0f, 48e3f);
-    sourceIDs[0] = ims_shoebox_addSource(hIms, (float*)src_pos, src_sigs[0]);
-    sourceIDs[1] = ims_shoebox_addSource(hIms, (float*)src2_pos, src_sigs[1]);
-    receiverIDs[0] = ims_shoebox_addReceiverSH(hIms, sh_order, (float*)rec_pos, rec_sh_outsigs[0]);
+    /* Set-up the shoebox room simulator for these four sources and SH receiver */
+    ims_shoebox_create(&hIms, 10, 7, 3, (float*)abs_wall, 250.0f, nBands, 343.0f, 48e3f);
+    sourceIDs[0] = ims_shoebox_addSource(hIms, (float*)src_pos, &src_sigs[0]);
+    sourceIDs[1] = ims_shoebox_addSource(hIms, (float*)src2_pos, &src_sigs[1]);
+    sourceIDs[2] = ims_shoebox_addSource(hIms, (float*)src3_pos, &src_sigs[2]);
+    sourceIDs[3] = ims_shoebox_addSource(hIms, (float*)src4_pos, &src_sigs[3]);
+    receiverIDs[0] = ims_shoebox_addReceiverSH(hIms, sh_order, (float*)rec_pos, &rec_sh_outsigs[0]);
 
     /* Moving source No.1 and the receiver */
-    maxTime_s = 0.08f; /* 80ms */
+    maxTime_s = 0.05f; /* 50ms */
     memcpy(mov_src_pos, src_pos, 3*sizeof(float));
     memcpy(mov_rec_pos, rec_pos, 3*sizeof(float));
-    for(i=0; i<100; i++){
+    for(i=0; i<5; i++){
         mov_src_pos[1] = 2.0f + (float)i/100.0f;
         mov_rec_pos[0] = 3.0f + (float)i/100.0f;
         ims_shoebox_updateSource(hIms, sourceIDs[0], mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverIDs[0], mov_rec_pos);
         ims_shoebox_computeEchograms(hIms, maxTime_s);
-
+        ims_shoebox_applyEchogramTD(hIms, receiverIDs[0], signalLength, 0);
     }
 
     /* clean-up */
@@ -268,8 +270,8 @@ void test__afSTFTMatrix(void){
     float_complex*** frequencyDomainData;
 
     /* Config */
-    const float acceptedTolerance = 0.01f; // Seems pretty high.. ?
-    const int nTestFrames = 1000;
+    const float acceptedTolerance_dB = -50.0f;
+    const int nTestFrames = 250;
     const int frameSize = 512;
     const int hopSize = 128;
     numChannels = 10;
@@ -311,7 +313,7 @@ void test__afSTFTMatrix(void){
     for(c=0; c<numChannels; c++){
         memcpy(outputTimeDomainData[c], &(outputTimeDomainData[c][afSTFTdelay]), (lSig-afSTFTdelay) *sizeof(float));
         for(t=0; t<(lSig-afSTFTdelay); t++)
-            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, inputTimeDomainData[c][t], outputTimeDomainData[c][t]);
+            TEST_ASSERT_TRUE( 20.0f*log10f(fabsf(inputTimeDomainData[c][t]-outputTimeDomainData[c][t]))<= acceptedTolerance_dB );
     }
 
     /* tidy-up */
@@ -333,8 +335,8 @@ void test__afSTFT(void){
 #endif
 
     /* Config */
-    const float acceptedTolerance = 0.01f; // Seems pretty high.. ? (same for AFSTFT_USE_FLOAT_COMPLEX defined/undefined)
-    const int nTestHops = 5000;
+    const float acceptedTolerance_dB = -50.0f;
+    const int nTestHops = 2000;
     const int hopSize = 128;
     numChannels = 10;
     const int hybridMode = 1;
@@ -382,7 +384,7 @@ void test__afSTFT(void){
     for(c=0; c<numChannels; c++){
         memcpy(outputTimeDomainData[c], &(outputTimeDomainData[c][afSTFTdelay]), (lSig-afSTFTdelay) *sizeof(float));
         for(t=0; t<(lSig-afSTFTdelay); t++)
-            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, inputTimeDomainData[c][t], outputTimeDomainData[c][t]);
+            TEST_ASSERT_TRUE( 20.0f*log10f(fabsf(inputTimeDomainData[c][t]-outputTimeDomainData[c][t]))<= acceptedTolerance_dB );
     }
 
     /* tidy-up */
@@ -444,7 +446,7 @@ void test__sortf(void){
     int i;
 
     /* Config */
-    const int numValues = 10e5;
+    const int numValues = 10e3;
 
     /* Prep */
     sortedIdx = malloc1d(numValues*sizeof(int));
@@ -627,14 +629,14 @@ void test__getSHreal_recur(void){
      * tolerance value. However, the error does get larger for higher-orders and
      * when dir[1] is near 0. */
     float acceptedTolerance = 0.005f;
-    const int order = 7;
+    const int order = 15;
     const int nSH = ORDER2NSH(order);
     float dir[2];
 
     /* Check that the output of getSHreal_recur matches that of getSH_recur */
     float Yr[nSH];
     float Y[nSH];
-    for(i=0; i<1e5; i++){
+    for(i=0; i<1e3; i++){
         rand_m1_1(&dir[0] , 1);
         rand_m1_1(&dir[1] , 1);
         dir[0] *= M_PI;
@@ -806,6 +808,7 @@ void test__faf_IIRFilterbank(void){
         for(band=0; band<7; band++)
             memcpy(&outSig_bands[band][i*frameSize], outFrame[band], frameSize*sizeof(float));
     }
+    faf_IIRFilterbank_destroy(&hFaF);
 
     /* Sum the individual bands */
     for(band=0; band<7; band++)
@@ -818,8 +821,23 @@ void test__faf_IIRFilterbank(void){
     for(i=0; i<signalLength/2+1; i++)
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance_dB, 0.0f, 20.0f * log10f(cabsf(outsig_fft[i]/insig_fft[i])));
 
+    /* Now the same thing, but for 1st order */
+    order = 1;
+    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
+    for(i=0; i< signalLength/frameSize; i++){
+        faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
+        for(band=0; band<7; band++)
+            memcpy(&outSig_bands[band][i*frameSize], outFrame[band], frameSize*sizeof(float));
+    }
+    faf_IIRFilterbank_destroy(&hFaF);
+    memset(outSig, 0, signalLength*sizeof(float));
+    for(band=0; band<7; band++)
+        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
+    saf_rfft_forward(hFFT, outSig, outsig_fft);
+    for(i=0; i<signalLength/2+1; i++)
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance_dB, 0.0f, 20.0f * log10f(cabsf(outsig_fft[i]/insig_fft[i])));
+
     /* clean-up */
     saf_rfft_destroy(&hFFT);
-    faf_IIRFilterbank_destroy(&hFaF);
     free(outFrame);
 }
