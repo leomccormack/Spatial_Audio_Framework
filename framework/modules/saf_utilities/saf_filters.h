@@ -303,15 +303,22 @@ void faf_IIRFilterbank_create(void** phFaF,
 /**
  * Applies the Favrot & Faller filterbank
  *
- * @param[in]  phFaF    faf_IIRFilterbank handle
+ * @param[in]  hFaF     faf_IIRFilterbank handle
  * @param[in]  inSig    Input signal; nSamples x 1
  * @param[out] outBands Output band signals; (nCutoffFreqs+1) x nSamples
  * @param[in]  nSamples Number of samples to process
  */
-void faf_IIRFilterbank_apply(void* phFaF,
+void faf_IIRFilterbank_apply(void* hFaF,
                              float* inSig,
                              float** outBands,
                              int nSamples);
+
+/**
+ * Zeros the delay lines used during faf_IIRFilterbank_apply
+ *
+ * @param[in] hFaF faf_IIRFilterbank handle
+ */
+void faf_IIRFilterbank_flushBuffers(void* hFaF);
 
 /**
  * Destroys an instance of the Favrot & Faller filterbank

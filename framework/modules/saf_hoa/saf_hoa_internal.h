@@ -184,7 +184,7 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
  *       reducing the number of HRTF points used, and calculating the LS decoder
  *       with this reduced number of HRTFs. Therefore, rather than assigning
  *       high-frequency energy to higher-order components and subsequently
- *       discarding it, due to order truncation, the energy is instead aliased
+ *       discarding it due to order truncation, the energy is instead aliased
  *       back into the lower-order components and preserved.
  *
  * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
@@ -234,7 +234,7 @@ void getBinDecoder_SPR(/* Input Arguments */
  *       This method, therefore, mitagates some of the localisation deficiencies
  *       compared with the standard LS decoding at lower input orders.
  *
- * @note The paper [1] also detailed a diffuse-field covariance contraint,
+ * @note The paper [1] also detailed a diffuse-field covariance constraint,
  *       and the original name was TAC (C=contrained), however, in this
  *       framework, this constraint is a seperate independent operation. One may
  *       impose it on any binaural decoder using the applyDiffCovMatching()

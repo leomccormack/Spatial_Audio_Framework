@@ -467,7 +467,7 @@ void applyIIR
     int n, i, len;
     float wn;
 
-    /* For speed-ups */ /* TODO: explore the use of Intel IPP IIR functions */
+    /* For compiler speed-ups */  
     switch(order){
         case 1: applyIIR_1(in_signal, nSamples, b, a, wz, out_signal); return;
         case 2: applyIIR_2(in_signal, nSamples, b, a, wz, out_signal); return;
@@ -884,6 +884,19 @@ void faf_IIRFilterbank_apply
     if (fb->nBands>2)
         applyIIR(fb->filtOrder, outBands[fb->nBands-1], nSamples, fb->b_hpf[fb->nFilters-1], fb->a_hpf[fb->nFilters-1],
                  fb->wz_hpf[fb->nBands-1][fb->nFilters-1], outBands[fb->nBands-1]);
+}
+
+void faf_IIRFilterbank_flushBuffers
+(
+    void* hFaF
+)
+{
+    faf_IIRFB_data *fb = (faf_IIRFB_data*)(hFaF);
+
+    memset(ADR3D(fb->wz_hpf),  0, (fb->nBands) * (fb->nFilters) * (fb->filtOrder) * sizeof(float));
+    memset(ADR3D(fb->wz_lpf),  0, (fb->nBands) * (fb->nFilters) * (fb->filtOrder) * sizeof(float));
+    memset(ADR3D(fb->wz_apf1), 0, (fb->nBands) * (fb->nFilters) * (fb->filtOrder) * sizeof(float));
+    memset(ADR3D(fb->wz_apf2), 0, (fb->nBands) * (fb->nFilters) * (fb->filtOrder) * sizeof(float));
 }
 
 void faf_IIRFilterbank_destroy

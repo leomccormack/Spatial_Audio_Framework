@@ -28,8 +28,9 @@
 
 /* Prototypes for available unit tests */
 void test__ims_shoebox_TD(void);
-void test__ims_shoebox_SHRIR(void);
+void test__ims_shoebox_RIR(void);
 void test__saf_rfft(void);
+void test__saf_matrixConv(void);
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
 void test__afSTFTMatrix(void);
 #endif
@@ -71,9 +72,10 @@ printf("*****************************************************************\n"
     UNITY_BEGIN();
 
     /* run each unit test */
+    RUN_TEST(test__ims_shoebox_RIR);
     RUN_TEST(test__ims_shoebox_TD);
-    RUN_TEST(test__ims_shoebox_SHRIR);
     RUN_TEST(test__saf_rfft);
+    RUN_TEST(test__saf_matrixConv);
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
     RUN_TEST(test__afSTFTMatrix);
 #endif
@@ -139,7 +141,7 @@ void test__ims_shoebox_TD(void){
     maxTime_s = 0.05f; /* 50ms */
     memcpy(mov_src_pos, src_pos, 3*sizeof(float));
     memcpy(mov_rec_pos, rec_pos, 3*sizeof(float));
-    for(i=0; i<5; i++){
+    for(i=0; i<1; i++){
         mov_src_pos[1] = 2.0f + (float)i/100.0f;
         mov_rec_pos[0] = 3.0f + (float)i/100.0f;
         ims_shoebox_updateSource(hIms, sourceIDs[0], mov_src_pos);
@@ -154,7 +156,7 @@ void test__ims_shoebox_TD(void){
     ims_shoebox_destroy(&hIms);
 }
 
-void test__ims_shoebox_SHRIR(void){
+void test__ims_shoebox_RIR(void){
     void* hIms;
     float maxTime_s;
     float mov_src_pos[3], mov_rec_pos[3];
@@ -186,16 +188,16 @@ void test__ims_shoebox_SHRIR(void){
     receiverID = ims_shoebox_addReceiverSH(hIms, sh_order, (float*)rec_pos, NULL);
 
     /* Moving source No.1 and the receiver */
-    maxTime_s = 0.08f; /* 80ms */
+    maxTime_s = 0.05f; /* 50ms */
     memcpy(mov_src_pos, src_pos, 3*sizeof(float));
     memcpy(mov_rec_pos, rec_pos, 3*sizeof(float));
-    for(i=0; i<15; i++){
-        mov_src_pos[1] = 2.0f + (float)i/15.0f;
-        mov_rec_pos[0] = 3.0f + (float)i/15.0f;
+    for(i=0; i<0; i++){
+        mov_src_pos[1] = 2.0f + (float)i/100.0f;
+        mov_rec_pos[0] = 3.0f + (float)i/100.0f;
         ims_shoebox_updateSource(hIms, sourceID_1, mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
         ims_shoebox_computeEchograms(hIms, maxTime_s);
-        ims_shoebox_renderSHRIRs(hIms, 0);
+        ims_shoebox_renderRIRs(hIms, 0);
     }
 
     /* Remove source No.1 */
@@ -211,17 +213,61 @@ void test__ims_shoebox_SHRIR(void){
     sourceID_4 = ims_shoebox_addSource(hIms, (float*)src4_pos, NULL);
 
     /* Continue rendering */
-    for(i=0; i<15; i++){
-        mov_src_pos[1] = 2.0f + (float)i/15.0f;
-        mov_rec_pos[0] = 3.0f + (float)i/15.0f;
+    for(i=0; i<100; i++){
+        mov_src_pos[1] = 2.0f + (float)i/1000.0f;
+        mov_rec_pos[0] = 3.0f + (float)i/1000.0f;
         ims_shoebox_updateSource(hIms, sourceID_4, mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
         ims_shoebox_computeEchograms(hIms, maxTime_s);
-        ims_shoebox_renderSHRIRs(hIms, 0);
+        ims_shoebox_renderRIRs(hIms, 0);
     }
 
     /* clean-up */
     ims_shoebox_destroy(&hIms);
+}
+
+void test__saf_matrixConv(void){
+    int i, frame;
+    float** inputTD, **outputTD, **inputFrameTD, **outputFrameTD;
+    float*** filters;
+    void* hMatrixConv;
+
+    /* config */
+    const int signalLength = 48e3;
+    const int hostBlockSize = 1024;
+    const int filterLength = 512;
+    const int nInputs = 64;
+    const int nOutputs = 64;
+
+    /* prep */
+    inputTD = (float**)malloc2d(nInputs, signalLength, sizeof(float));
+    outputTD = (float**)malloc2d(nOutputs, signalLength, sizeof(float));
+    inputFrameTD = (float**)malloc2d(nInputs, hostBlockSize, sizeof(float));
+    outputFrameTD = (float**)calloc2d(nOutputs, hostBlockSize, sizeof(float));
+    filters = (float***)malloc3d(nOutputs, nInputs, filterLength, sizeof(float));
+    rand_m1_1(ADR3D(filters), nOutputs*nInputs*filterLength);
+    rand_m1_1(ADR2D(inputTD), nInputs*signalLength);
+    saf_matrixConv_create(&hMatrixConv, hostBlockSize, ADR3D(filters), filterLength,
+                          nInputs, nOutputs, 0);
+
+    /* Apply */
+    for(frame = 0; frame<(int)signalLength/hostBlockSize; frame++){
+        for(i = 0; i<nInputs; i++)
+            memcpy(inputFrameTD[i], &inputTD[i][frame*hostBlockSize], hostBlockSize*sizeof(float));
+
+         saf_matrixConv_apply(hMatrixConv, ADR2D(inputFrameTD), ADR2D(outputFrameTD));
+
+        for(i = 0; i<nOutputs; i++)
+            memcpy(&outputTD[i][frame*hostBlockSize], outputFrameTD[i], hostBlockSize*sizeof(float));
+    }
+
+    /* Clean-up */
+    free(inputTD);
+    free(outputTD);
+    free(inputFrameTD);
+    free(outputFrameTD);
+    free(filters);
+    saf_matrixConv_destroy(&hMatrixConv);
 }
 
 void test__saf_rfft(void){
@@ -814,7 +860,7 @@ void test__faf_IIRFilterbank(void){
     for(band=0; band<7; band++)
         utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
 
-    /* Check that the magnitude difference between input and output is below 1dB */
+    /* Check that the magnitude difference between input and output is below 0.5dB */
     saf_rfft_create(&hFFT, signalLength);
     saf_rfft_forward(hFFT, inSig, insig_fft);
     saf_rfft_forward(hFFT, outSig, outsig_fft);

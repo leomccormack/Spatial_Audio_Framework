@@ -28,22 +28,6 @@
  * ## Dependencies
  *   Intel MKL, Apple Accelerate, or KissFFT (included in framework)
  *
- * ## Example Usage
- * \code{.c}
- *   const int N = 256;                    // FFT size
- *   float x_in[N];                        // input buffer (time-domain)
- *   x_in[0] = ... x_in[N-1] =             // fill with data
- *   float_complex x_out[(N/2+1)];         // output buffer (frequency-domain)
- *   float test[N];                        // test (time-domain)
- *   void *hFFT;                           // safFFT handle
- *
- *   saf_rfft_create(&hFFT, N);            // creates instance of safFFT
- *   saf_rfft_forward(hFFT, x_in, x_out);  // perform forward transform
- *   saf_rfft_backward(hFFT, x_out, test); // perform backwards transform
- *   // 'x_in' should equal 'test' (given some numerical error)
- *   saf_rfft_destroy(&hFFT);              // destroys instance of safFFT
- * \endcode
- *
  * @author Leo McCormack
  * @date 06.04.2019
  */
@@ -136,7 +120,7 @@ void fftfilt(float* x,
 void hilbert(float_complex* x,
              int x_len,
              float_complex* y);
-
+ 
 
 /* ========================================================================== */
 /*                Real<->Half-Complex (Conjugate-Symmetric) FFT               */
@@ -144,9 +128,25 @@ void hilbert(float_complex* x,
 
 /**
  * Creates an instance of saf_rfft; real<->half-complex (conjugate-symmetric)
- * FFT.
+ * FFT
  *
  * @note Only Even FFT sizes are supported.
+ *
+ * ## Example Usage
+ * \code{.c}
+ *   const int N = 256;                    // FFT size
+ *   float x_in[N];                        // input buffer (time-domain)
+ *   x_in[0] = ... x_in[N-1] =             // fill with data
+ *   float_complex x_out[(N/2+1)];         // output buffer (frequency-domain)
+ *   float test[N];                        // test (time-domain)
+ *   void *hFFT;                           // safFFT handle
+ *
+ *   saf_rfft_create(&hFFT, N);            // creates instance of safFFT
+ *   saf_rfft_forward(hFFT, x_in, x_out);  // perform forward transform
+ *   saf_rfft_backward(hFFT, x_out, test); // perform backwards transform
+ *   // 'x_in' should equal 'test' (given some numerical error)
+ *   saf_rfft_destroy(&hFFT);              // destroys instance of safFFT
+ * \endcode
  *
  * @param[in] phFFT (&) address of saf_rfft handle
  * @param[in] N     FFT size
@@ -155,7 +155,7 @@ void saf_rfft_create(void ** const phFFT,
                      int N);
 
 /**
- * Destroys an instance of saf_rfft.
+ * Destroys an instance of saf_rfft
  *
  * @param[in] phFFT (&) address of saf_rfft handle
  */
@@ -163,7 +163,7 @@ void saf_rfft_destroy(void ** const phFFT);
 
 /**
  * Performs the forward-FFT operation; use for real to complex (conjugate
- * symmetric) transformations.
+ * symmetric) transformations
  *
  * @note Only the first N/2 + 1 bins are returned in outputFD.
  *
@@ -177,7 +177,7 @@ void saf_rfft_forward(void * const hFFT,
 
 /**
  * Performs the backward-FFT operation; use for complex (conjugate symmetric)
- * to real transformations.
+ * to real transformations
  *
  * @note Only the first N/2 + 1 bins are needed to be passed in inputFD.
  *
@@ -195,7 +195,7 @@ void saf_rfft_backward(void * const hFFT,
 /* ========================================================================== */
 
 /**
- * Creates an instance of saf_fft; complex<->complex FFT.
+ * Creates an instance of saf_fft; complex<->complex FFT
  *
  * @note Only Even FFT sizes are supported.
  *
@@ -206,7 +206,7 @@ void saf_fft_create(void ** const phFFT,
                     int N);
 
 /**
- * Destroys an instance of saf_fft.
+ * Destroys an instance of saf_fft
  *
  * @param[in] phFFT (&) address of saf_fft handle
  */
@@ -214,7 +214,7 @@ void saf_fft_destroy(void ** const phFFT);
 
 /**
  * Performs the forward-FFT operation; use for complex to complex
- * transformations.
+ * transformations
  *
  * @param[in]  hFFT     saf_fft handle
  * @param[in]  inputTD  Time-domain input; N x 1
@@ -226,7 +226,7 @@ void saf_fft_forward(void * const hFFT,
 
 /**
  * Performs the backward-FFT operation; use for complex to complex
- * transformations.
+ * transformations
  *
  * @param[in]  hFFT     saf_fft handle
  * @param[in]  inputFD  Frequency-domain input; N x 1

@@ -197,7 +197,7 @@ void ims_shoebox_computeEchograms
     }  
 }
 
-void ims_shoebox_renderSHRIRs
+void ims_shoebox_renderRIRs
 (
     void* hIms,
     int fractionalDelayFLAG
@@ -313,9 +313,36 @@ void ims_shoebox_applyEchogramTD
                         /* Pull value from circular buffer at this read index */
                         cb_val = sc->circ_buffer[src_idx][band][rIdx]; // 5.3% of CPU TIME
 
-                        /*  Loop over channels */
-                        for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++) // 84% of CPU TIME (DEBUG), 65% (RELEASE)
-                            sc->recs[rec_idx].sigs[ch][n] += echogram_abs->value[im][ch] * cb_val;
+                        /* For compiler optimisations up to 3rd order SH receiver*/
+                        switch(sc->recs[rec_idx].type){
+                            case RECEIVER_SH:
+                                for(ch=16; ch<sc->recs[rec_idx].nChannels; ch++)  
+                                    sc->recs[rec_idx].sigs[ch][n] += echogram_abs->value[im][ch] * cb_val;
+
+                                switch(sc->recs[rec_idx].nChannels){
+                                    case 64: case 49: case 36: case 25: case 16:
+                                        sc->recs[rec_idx].sigs[15][n] += echogram_abs->value[im][15] * cb_val;
+                                        sc->recs[rec_idx].sigs[14][n] += echogram_abs->value[im][14] * cb_val;
+                                        sc->recs[rec_idx].sigs[13][n] += echogram_abs->value[im][13] * cb_val;
+                                        sc->recs[rec_idx].sigs[12][n] += echogram_abs->value[im][12] * cb_val;
+                                        sc->recs[rec_idx].sigs[11][n] += echogram_abs->value[im][11] * cb_val;
+                                        sc->recs[rec_idx].sigs[10][n] += echogram_abs->value[im][10] * cb_val;
+                                        sc->recs[rec_idx].sigs[9][n] += echogram_abs->value[im][9] * cb_val;
+                                    case 9:
+                                        sc->recs[rec_idx].sigs[8][n] += echogram_abs->value[im][8] * cb_val;
+                                        sc->recs[rec_idx].sigs[7][n] += echogram_abs->value[im][7] * cb_val;
+                                        sc->recs[rec_idx].sigs[6][n] += echogram_abs->value[im][6] * cb_val;
+                                        sc->recs[rec_idx].sigs[5][n] += echogram_abs->value[im][5] * cb_val;
+                                        sc->recs[rec_idx].sigs[4][n] += echogram_abs->value[im][4] * cb_val;
+                                    case 4:
+                                        sc->recs[rec_idx].sigs[3][n] += echogram_abs->value[im][3] * cb_val;
+                                        sc->recs[rec_idx].sigs[2][n] += echogram_abs->value[im][2] * cb_val;
+                                        sc->recs[rec_idx].sigs[1][n] += echogram_abs->value[im][1] * cb_val;
+                                    case 1:
+                                        sc->recs[rec_idx].sigs[0][n] += echogram_abs->value[im][0] * cb_val;
+                                }
+                                break;
+                        }
 
                         /* Copy input to circular buffer */
                         sc->circ_buffer[src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];

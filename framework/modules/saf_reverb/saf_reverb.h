@@ -122,18 +122,13 @@ void ims_shoebox_computeEchograms(void* hIms,
                                   float maxTime_s);
 
 /**
- * Renders spherical harmonic room impulse responses for all active source/
- * receiver combinations
- *
- * @note This function is not intended to be used for real-time dynamic scenes,
- *       rather, it is more suited for high-quality static scene use cases. Use
- *       ims_shoebox_applyEchogramTD for real-time dynamic use cases.
+ * Renders room impulse responses for all active source/receiver combinations
  *
  * @param[in] hIms                 ims_shoebox handle
  * @param[in] fractionalDelaysFLAG 0: disabled, 1: use Lagrange interpolation
  */
-void ims_shoebox_renderSHRIRs(void* hIms,
-                              int fractionalDelaysFLAG);
+void ims_shoebox_renderRIRs(void* hIms,
+                            int fractionalDelaysFLAG);
 
 /**
  * Applies the currently computed echograms in the time-domain, for all
@@ -144,8 +139,6 @@ void ims_shoebox_renderSHRIRs(void* hIms,
  *    the number of channels and be of (at least) nSamples in length.
  *  - The given receiverID must exist in the simulation. If it does not, then an
  *    assertion error is triggered.
- *
- * @note This function is intended for real-time dynamic scene use cases.
  *
  * @param[in] hIms                 ims_shoebox handle
  * @param[in] receiverID           ID of the receiver you wish to render

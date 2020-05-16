@@ -53,7 +53,23 @@ extern "C" {
 #include <stdio.h>
 #include <string.h>
 #include "saf_complex.h"
-#include "saf_error.h" 
+#include "saf_error.h"
+#include <immintrin.h>
+#ifdef __SSE__
+# include <xmmintrin.h>
+#endif
+#ifdef __SSE2__
+# include <emmintrin.h>
+#endif
+#ifdef __SSE3__
+# include <pmmintrin.h>
+#endif
+#ifdef __SSSE3__
+# include <tmmintrin.h>
+#endif
+#ifdef __SSE4_1__
+# include <smmintrin.h>
+#endif
 #ifdef CBLAS_H
 # define NO_TRANSPOSE (CblasNoTrans)
 # define TRANSPOSE (CblasTrans)
@@ -322,13 +338,13 @@ void utility_cvvsub(/* Input Arguments */
 /**
  * Single-precision, element-wise vector-vector multiplication i.e.
  * \code{.m}
- *     c = a.*b, OR: a = a.*b (if c==NULL)
+ *     c = a.*b
  * \endcode
  *
- * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  a   Input vector a; len x 1
  * @param[in]  b   Input vector b; len x 1
  * @param[in]  len Vector length
- * @param[out] c   Output vector c (set to NULL if you want 'a' as output); len x 1
+ * @param[out] c   Output vector c
  */
 void utility_svvmul(/* Input Arguments */
                     float* a,
@@ -340,13 +356,13 @@ void utility_svvmul(/* Input Arguments */
 /**
  * Single-precision, complex, element-wise vector-vector multiplication i.e.
  * \code{.m}
- *     c = a.*b, OR: a = a.*b (if c==NULL)
+ *     c = a.*b
  * \endcode
  *
- * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  a   Input vector a; len x 1
  * @param[in]  b   Input vector b; len x 1
  * @param[in]  len Vector length
- * @param[out] c   Output vector c (set to NULL if you want 'a' as output); len x 1
+ * @param[out] c   Output vector c; len x 1
  */
 void utility_cvvmul(/* Input Arguments */
                     float_complex* a,

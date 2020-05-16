@@ -35,27 +35,6 @@
 #include "../saf_utilities/saf_utilities.h"
 #include "../saf_sh/saf_sh.h"
 
-/////////
-
-#include <immintrin.h>
-#ifdef __SSE__
-# include <xmmintrin.h>
-#endif
-#ifdef __SSE2__
-# include <emmintrin.h>
-#endif
-#ifdef __SSE3__
-# include <pmmintrin.h>
-#endif
-#ifdef __SSSE3__
-# include <tmmintrin.h>
-#endif
-#ifdef __SSE4_1__
-# include <smmintrin.h>
-#endif
-
-/////////
-
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -75,7 +54,7 @@ extern "C" {
 /* ========================================================================== */
 
 #define IMS_NUM_WALLS_SHOEBOX ( 6 )
-#define IMS_FIR_FILTERBANK_ORDER ( 1000 ) /* Must be even */
+#define IMS_FIR_FILTERBANK_ORDER ( 400 ) /* Must be even */
 #define IMS_IIR_FILTERBANK_ORDER ( 3 ) /* Only 1st or 3rd order supported */
 #define IMS_CIRC_BUFFER_LENGTH ( 2*8192U )
 #define IMS_CIRC_BUFFER_LENGTH_MASK ( IMS_CIRC_BUFFER_LENGTH - 1U )
@@ -311,7 +290,7 @@ void ims_shoebox_coreRecModuleSH(void* hWork,
  * Absorption coefficients are given for each of the walls on the respective
  * planes [x+ y+ z+; x- y- z-].
  *
- * @note Call ims_shoebox_coreRecModuleSH before applying the absoption
+ * @note Call ims_shoebox_coreRecModuleX before applying the absoption
  *
  * @param[in] hWork    workspace handle
  * @param[in] abs_wall Absorption coefficients; nBands x 6
