@@ -27,6 +27,7 @@
 #include "saf.h"
 
 /* Prototypes for available unit tests */
+void test__saf_stft(void);
 void test__ims_shoebox_TD(void);
 void test__ims_shoebox_RIR(void);
 void test__saf_rfft(void);
@@ -72,6 +73,7 @@ printf("*****************************************************************\n"
     UNITY_BEGIN();
 
     /* run each unit test */
+    RUN_TEST(test__saf_stft);
     RUN_TEST(test__ims_shoebox_RIR);
     RUN_TEST(test__ims_shoebox_TD);
     RUN_TEST(test__saf_rfft);
@@ -99,6 +101,65 @@ printf("*****************************************************************\n"
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__saf_stft(void){
+    int frame, winsize, hopsize, nFrames, ch, i, nBands,nTimesSlots, band;
+    void* hSTFT;
+    float** insig, **outsig, **inframe, **outframe;
+    float_complex*** inspec, ***outspec;
+
+    /* prep */
+    const float acceptedTolerance = 0.00001;
+    const int fs = 48e3;
+    const int framesize = 128;
+    const int nCHin = 1;
+    const int nCHout = 2;
+    insig = (float**)malloc2d(nCHin,fs,sizeof(float)); /* One second long */
+    outsig = (float**)malloc2d(nCHout,fs,sizeof(float));
+    inframe = (float**)malloc2d(nCHin,framesize,sizeof(float));
+    outframe = (float**)malloc2d(nCHout,framesize,sizeof(float));
+    rand_m1_1(ADR2D(insig), nCHin*fs); /* populate with random numbers */
+
+    /* Set-up STFT suitable for LTI filtering applications */
+    winsize = hopsize = 128;
+    nBands = hopsize+1;
+    nTimesSlots = framesize/hopsize;
+    inspec = (float_complex***)malloc3d(nBands, nCHin, nTimesSlots, sizeof(float_complex));
+    outspec = (float_complex***)malloc3d(nBands, nCHout, nTimesSlots, sizeof(float_complex));
+    saf_stft_create(&hSTFT, winsize, hopsize, nCHin, nCHout);
+
+    /* Pass insig through STFT, block-wise processing */
+    nFrames = (int)((float)fs/(float)framesize);
+    for(frame = 0; frame<nFrames; frame++){
+        /* Forward */
+        for(ch=0; ch<nCHin; ch++)
+            memcpy(inframe[ch], &insig[ch][frame*framesize], framesize*sizeof(float));
+        saf_stft_forward(hSTFT, inframe, inspec, framesize, SAF_STFT_BANDS_CH_TIME);
+
+        /* Copy first channel of inspec to all outspec channels */
+        for(band=0; band<nBands; band++)
+            for(ch=0; ch<nCHout; ch++)
+                memcpy(outspec[band][ch], inspec[band][0], nTimesSlots*sizeof(float_complex));
+
+        /* Backward */
+        saf_stft_backward(hSTFT, outspec, outframe, framesize, SAF_STFT_BANDS_CH_TIME);
+        for(ch=0; ch<nCHout; ch++)
+            memcpy(&outsig[ch][frame*framesize], outframe[ch], framesize*sizeof(float));
+    }
+
+    /* Check that input==output (given some numerical precision) */
+    for(i=0; i<fs-framesize; i++)
+        TEST_ASSERT_TRUE( fabsf(insig[0][i] - outsig[0][i]) <= acceptedTolerance );
+
+    /* Clean-up */
+    saf_stft_destroy(&hSTFT);
+    free(insig);
+    free(outsig);
+    free(inframe);
+    free(outframe);
+    free(inspec);
+    free(outspec);
+}
 
 void test__ims_shoebox_TD(void){
     void* hIms;

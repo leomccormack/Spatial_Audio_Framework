@@ -120,7 +120,68 @@ void fftfilt(float* x,
 void hilbert(float_complex* x,
              int x_len,
              float_complex* y);
- 
+
+
+/* ========================================================================== */
+/*                     Short-time Fourier Transform (STFT)                    */
+/* ========================================================================== */
+
+typedef enum _SAF_STFT_FDDATA_FORMAT{
+    SAF_STFT_BANDS_CH_TIME,
+    SAF_STFT_TIME_CH_BANDS
+
+}SAF_STFT_FDDATA_FORMAT;
+
+/**
+ * Creates an instance of saf_stft
+ *
+ * ## Example Usage
+ * \code{.c}
+ *   const int N = 256;                    // FFT size
+ * \endcode
+ *
+ * @param[in] winsize Window size
+ * @param[in] hopsize Hop size
+ */
+void saf_stft_create(void ** const phSTFT,
+                     int winsize,
+                     int hopsize,
+                     int nCHin,
+                     int nCHout);
+
+/**
+ * Destroys an instance of saf_stft
+ *
+ * @param[in] phSTFT (&) address of saf_stft handle
+ */
+void saf_stft_destroy(void ** const phSTFT);
+
+/**
+ * Performs the forward-STFT operation for the current frame
+ *
+ * @param[in]  hSTFT  saf_stft handle
+ * @param[in]  dataTD Time-domain input; N x 1
+ * @param[out] dataFD Frequency-domain output; (N/2 + 1) x 1
+ */
+void saf_stft_forward(void * const hSTFT,
+                      float** dataTD,
+                      float_complex*** dataFD,
+                      int framesize,
+                      SAF_STFT_FDDATA_FORMAT FDformat);
+
+/**
+ * Performs the backward-STFT operation for the current frame
+ *
+ * @param[in]  hSTFT  saf_stft handle
+ * @param[in]  dataFD Frequency-domain input; (N/2 + 1) x 1
+ * @param[out] dataTD Time-domain output;  N x 1
+ */
+void saf_stft_backward(void * const hSTFT,
+                       float_complex*** dataFD,
+                       float** dataTD,
+                       int framesize,
+                       SAF_STFT_FDDATA_FORMAT FDformat);
+
 
 /* ========================================================================== */
 /*                Real<->Half-Complex (Conjugate-Symmetric) FFT               */

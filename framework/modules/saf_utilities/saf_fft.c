@@ -36,7 +36,20 @@
 #include "saf_fft.h"
 
 /**
- * Data structure for real-(half)complex FFT transforms.
+ * Data structure for short-time Fourier transform
+ */
+typedef struct _saf_stft_data {
+    int winsize, hopsize, fftsize, nCHin, nCHout, nBands;
+    void* hFFT;
+    int numOvrlpAddBlocks, bufferlength;
+    float* window, *insig_win, *outsig_win;
+    float** overlapAddBuffer;
+    float_complex* tmp_fft;
+
+}saf_stft_data;
+
+/**
+ * Data structure for real-(half)complex FFT transforms
  */
 typedef struct _saf_rfft_data {
     int N;
@@ -56,7 +69,7 @@ typedef struct _saf_rfft_data {
 }saf_rfft_data;
 
 /**
- * Data structure for complex-complex FFT transforms.
+ * Data structure for complex-complex FFT transforms
  */
 typedef struct _saf_fft_data {
     int N;
@@ -92,6 +105,11 @@ static int nextpow2(int numsamp)
             return npts_max;
     }
 }
+
+
+/* ========================================================================== */
+/*                               Misc. Functions                              */
+/* ========================================================================== */
 
 void getUniformFreqVector
 (
@@ -224,6 +242,158 @@ void hilbert
     free(h);
     free(xhfft);
 }
+
+/* ========================================================================== */
+/*                     Short-time Fourier Transform (STFT)                    */
+/* ========================================================================== */
+
+void saf_stft_create
+(
+    void ** const phSTFT,
+    int winsize,
+    int hopsize,
+    int nCHin,
+    int nCHout
+)
+{
+    *phSTFT = malloc1d(sizeof(saf_stft_data));
+    saf_stft_data *h = (saf_stft_data*)(*phSTFT);
+
+    h->nCHin = nCHin;
+    h->nCHout = nCHout;
+    h->winsize = winsize;
+    h->hopsize = hopsize;
+    h->nBands = winsize+1;
+
+    /* set-up FFT */
+    h->fftsize = 2*winsize;
+    saf_rfft_create(&(h->hFFT), h->fftsize);
+    h->insig_win = calloc1d(h->fftsize, sizeof(float));
+    h->tmp_fft = malloc1d(h->nBands * sizeof(float_complex));
+    h->outsig_win = malloc1d(h->fftsize*sizeof(float));
+
+    /* Windowing function */
+    if(winsize==hopsize)
+        h->window = NULL;
+    else{
+        h->window = malloc1d(winsize*sizeof(float));
+        getWindowingFunction(WINDOWING_FUNCTION_HANN, winsize, h->window);
+    }
+
+    /* Overlap-add buffer */
+    h->numOvrlpAddBlocks = winsize/hopsize;
+    h->bufferlength = h->numOvrlpAddBlocks * (h->fftsize);
+    h->overlapAddBuffer = (float**)calloc2d(nCHout, h->bufferlength, sizeof(float));
+}
+
+void saf_stft_destroy
+(
+    void ** const phSTFT
+)
+{
+    saf_stft_data *h = (saf_stft_data*)(*phSTFT);
+    if(h!=NULL){
+        saf_rfft_destroy(&(h->hFFT));
+        free(h->window);
+        free(h->overlapAddBuffer);
+        free(h->insig_win);
+        free(h->tmp_fft);
+        free(h);
+        h=NULL;
+        *phSTFT = NULL;
+    }
+}
+
+void saf_stft_forward
+(
+    void * const hSTFT,
+    float** dataTD,
+    float_complex*** dataFD,
+    int framesize,
+    SAF_STFT_FDDATA_FORMAT FDformat
+)
+{
+    saf_stft_data *h = (saf_stft_data*)(hSTFT);
+    int ch, nHops, t, band;
+
+    nHops = framesize/h->winsize;
+
+    /* For linear time-invariant (LTI) operation (i.e. no previous hops are
+     * required) */
+    if(h->winsize==h->hopsize){
+        for (t = 0; t<nHops; t++){
+            for(ch=0; ch < h->nCHin; ch++){
+                /* Window input signal (Rectangular) */
+                memcpy(h->insig_win, &dataTD[ch][t*(h->hopsize)], h->winsize*sizeof(float));
+
+                /* Apply FFT and copy data to output dataFD buffer */
+                switch(FDformat){
+                    case SAF_STFT_TIME_CH_BANDS:
+                        saf_rfft_forward(h->hFFT, h->insig_win, dataFD[t][ch]);
+                        break;
+
+                    case SAF_STFT_BANDS_CH_TIME:
+                        saf_rfft_forward(h->hFFT, h->insig_win, h->tmp_fft);
+                        for(band=0; band<h->nBands; band++)
+                            dataFD[band][ch][t] = h->tmp_fft[band];
+                        break;
+                }
+            }
+        }
+    }
+    /* For oversampled TF transforms */
+    else{
+        assert(0); // TODO: DO
+
+//        if(h->window!=NULL)
+//        utility_svvmul(h->insig_win, h->window, h->winsize, h->insig_win);
+    }
+}
+
+void saf_stft_backward
+(
+    void * const hSTFT,
+    float_complex*** dataFD,
+    float** dataTD,
+    int framesize,
+    SAF_STFT_FDDATA_FORMAT FDformat
+)
+{
+    saf_stft_data *h = (saf_stft_data*)(hSTFT);
+    int t, ch, nHops, band;
+    nHops = framesize/h->winsize;
+
+    for (t = 0; t<nHops; t++){
+        for(ch=0; ch < h->nCHout; ch++){ // TODO: this can be optimised to avoid memcpy
+            /* Shift data down */
+            memcpy(h->overlapAddBuffer[ch], &h->overlapAddBuffer[ch][h->hopsize], (h->numOvrlpAddBlocks-1)*(h->hopsize)*sizeof(float));
+
+            /* Append with zeros */
+            memset(&h->overlapAddBuffer[ch][(h->numOvrlpAddBlocks-1)*(h->hopsize)], 0, h->hopsize*sizeof(float));
+
+            /* Apply inverse FFT */
+            switch(FDformat){
+                case SAF_STFT_TIME_CH_BANDS:
+                    saf_rfft_backward(h->hFFT, dataFD[t][ch], h->outsig_win);
+                    break;
+                case SAF_STFT_BANDS_CH_TIME:
+                    for(band=0; band<h->nBands; band++)
+                        h->tmp_fft[band] = dataFD[band][ch][t];
+                    saf_rfft_backward(h->hFFT, h->tmp_fft, h->outsig_win);
+                    break;
+            }
+
+            /* Overlap-Add and copy 1:hopsize to output buffer */
+            utility_svvadd(h->overlapAddBuffer[ch], h->outsig_win, h->fftsize, h->overlapAddBuffer[ch]);
+            memcpy(&dataTD[ch][t*(h->hopsize)], h->overlapAddBuffer[ch], h->hopsize*sizeof(float)); 
+        }
+    }
+}
+
+
+/* ========================================================================== */
+/*                Real<->Half-Complex (Conjugate-Symmetric) FFT               */
+/* ========================================================================== */
 
 void saf_rfft_create
 (
@@ -367,6 +537,10 @@ void saf_rfft_backward
     }
 }
 
+
+/* ========================================================================== */
+/*                            Complex<->Complex FFT                           */
+/* ========================================================================== */
 
 void saf_fft_create
 (

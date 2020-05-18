@@ -252,14 +252,13 @@ void utility_cvvcopy(/* Input Arguments */
 /**
  * Single-precision, vector-vector addition, i.e.
  * \code{.m}
- *     c = a+b, OR: a = a+b (if c==NULL)
+ *     c = a+b
  * \endcode
  *
- * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  a   Input vector a; len x 1
  * @param[in]  b   Input vector b; len x 1
  * @param[in]  len Vector length
- * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
- *                 len x 1
+ * @param[out] c   Output vector c; len x 1
  */
 void utility_svvadd(/* Input Arguments */
                     float* a,
@@ -271,14 +270,13 @@ void utility_svvadd(/* Input Arguments */
 /**
  * Single-precision, complex, vector-vector addition, i.e.
  * \code{.m}
- *     c = a+b, OR: a = a+b (if c==NULL)
+ *     c = a+b
  * \endcode
  *
- * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  a   Input vector a; len x 1
  * @param[in]  b   Input vector b; len x 1
  * @param[in]  len Vector length
- * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
- *                 len x 1
+ * @param[out] c   Output vector c; len x 1
  */
 void utility_cvvadd(/* Input Arguments */
                     float_complex* a,
@@ -295,14 +293,13 @@ void utility_cvvadd(/* Input Arguments */
 /**
  * Single-precision, vector-vector subtraction, i.e.
  * \code{.m}
- *     c = a-b, OR: a = a-b (if c==NULL)
+ *     c = a-b
  * \endcode
  *
- * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  a   Input vector a; len x 1
  * @param[in]  b   Input vector b; len x 1
  * @param[in]  len Vector length
- * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
- *                 len x 1
+ * @param[out] c   Output vector c; len x 1
  */
 void utility_svvsub(/* Input Arguments */
                     float* a,
@@ -314,14 +311,13 @@ void utility_svvsub(/* Input Arguments */
 /**
  * Single-precision, complex, vector-vector subtraction, i.e.
  * \code{.m}
- *     c = a-b, OR: a = a-b (if c==NULL)
+ *     c = a-b
  * \endcode
  *
- * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  a   Input vector a; len x 1
  * @param[in]  b   Input vector b; len x 1
  * @param[in]  len Vector length
- * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
- *                 len x 1
+ * @param[out] c   Output vector c; len x 1
  */
 void utility_cvvsub(/* Input Arguments */
                     float_complex* a,

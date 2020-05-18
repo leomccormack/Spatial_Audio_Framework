@@ -227,26 +227,28 @@ void utility_svvadd
     float* c
 )
 {
+#if NDEBUG
+    int i;
+    if (len<10e4 && len > 7){
+        for(i=0; i<len-8; i+=8){
+            c[i] = a[i] + b[i];
+            c[i+1] = a[i+1] + b[i+1];
+            c[i+2] = a[i+2] + b[i+2];
+            c[i+3] = a[i+3] + b[i+3];
+            c[i+4] = a[i+4] + b[i+4];
+            c[i+5] = a[i+5] + b[i+5];
+            c[i+6] = a[i+6] + b[i+6];
+            c[i+7] = a[i+7] + b[i+7];
+        }
+        for(; i<len; i++)
+            c[i] = a[i] + b[i];
+        return;
+    }
+#endif
 #ifdef __ACCELERATE__
-	if (c == NULL) {
-		float* tmp;
-		tmp = malloc1d(len * sizeof(float));
-		vDSP_vadd(a, 1, b, 1, tmp, 1, len);
-		utility_svvcopy(tmp, len, a);
-		free(tmp);
-	}
-	else
-		vDSP_vadd(a, 1, b, 1, c, 1, len);
+    vDSP_vadd(a, 1, b, 1, c, 1, len);
 #elif defined(INTEL_MKL_VERSION)
-	if (c == NULL) {
-		float* tmp;
-		tmp = malloc1d(len * sizeof(float));
-		vsAdd(len, a, b, tmp);
-		utility_svvcopy(tmp, len, a);
-		free(tmp);
-	}
-	else
-		vsAdd(len, a, b, c);
+    vsAdd(len, a, b, c);
 #else
 	int i;
 	for (i = 0; i < len; i++)
@@ -262,16 +264,26 @@ void utility_cvvadd
     float_complex* c
 )
 {
+#if __STDC_VERSION__ >= 199901L && NDEBUG
+    int i;
+    if (len<10e4 && len > 7){
+        for(i=0; i<len-8; i+=8){
+            c[i] = a[i] + b[i];
+            c[i+1] = a[i+1] + b[i+1];
+            c[i+2] = a[i+2] + b[i+2];
+            c[i+3] = a[i+3] + b[i+3];
+            c[i+4] = a[i+4] + b[i+4];
+            c[i+5] = a[i+5] + b[i+5];
+            c[i+6] = a[i+6] + b[i+6];
+            c[i+7] = a[i+7] + b[i+7];
+        }
+        for(; i<len; i++)
+            c[i] = a[i] + b[i];
+        return;
+    }
+#endif
 #ifdef INTEL_MKL_VERSION
-	if (c == NULL) {
-		float_complex* tmp;
-		tmp = malloc1d(len * sizeof(float_complex));
-		vcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)tmp);
-		utility_cvvcopy(tmp, len, a);
-		free(tmp);
-	}
-	else
-		vcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
+    vcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
 #else
 	int i;
 	for (i = 0; i < len; i++)
@@ -292,30 +304,32 @@ void utility_svvsub
     float* c
 )
 {
+#if NDEBUG
+    int i;
+    if (len<10e4 && len > 7){
+        for(i=0; i<len-8; i+=8){
+            c[i] = a[i] - b[i];
+            c[i+1] = a[i+1] - b[i+1];
+            c[i+2] = a[i+2] - b[i+2];
+            c[i+3] = a[i+3] - b[i+3];
+            c[i+4] = a[i+4] - b[i+4];
+            c[i+5] = a[i+5] - b[i+5];
+            c[i+6] = a[i+6] - b[i+6];
+            c[i+7] = a[i+7] - b[i+7];
+        }
+        for(; i<len; i++)
+            c[i] = a[i] - b[i];
+        return;
+    }
+#endif
 #ifdef __ACCELERATE__
-	if (c == NULL) {
-		float* tmp;
-		tmp = malloc1d(len * sizeof(float));
-		vDSP_vsub(a, 1, b, 1, tmp, 1, len);
-		utility_svvcopy(tmp, len, a);
-		free(tmp);
-	}
-	else
-		vDSP_vsub(a, 1, b, 1, c, 1, len);
+    vDSP_vsub(a, 1, b, 1, c, 1, len);
 #elif defined(INTEL_MKL_VERSION)
-	if (c == NULL) {
-		float* tmp;
-		tmp = malloc1d(len * sizeof(float));
-		vsSub(len, a, b, tmp);
-		utility_svvcopy(tmp, len, a);
-		free(tmp);
-	}
-	else
-		vsSub(len, a, b, c);
+    vsSub(len, a, b, c);
 #else
 	int i;
 	for (i = 0; i < len; i++)
-		c[i] = a[i] + b[i];
+		c[i] = a[i] - b[i];
 #endif
 }
 
@@ -327,26 +341,30 @@ void utility_cvvsub
     float_complex* c
 )
 {
+#if __STDC_VERSION__ >= 199901L && NDEBUG
+    int i;
+    if (len<10e4 && len > 7){
+        for(i=0; i<len-8; i+=8){
+            c[i] = a[i] - b[i];
+            c[i+1] = a[i+1] - b[i+1];
+            c[i+2] = a[i+2] - b[i+2];
+            c[i+3] = a[i+3] - b[i+3];
+            c[i+4] = a[i+4] - b[i+4];
+            c[i+5] = a[i+5] - b[i+5];
+            c[i+6] = a[i+6] - b[i+6];
+            c[i+7] = a[i+7] - b[i+7];
+        }
+        for(; i<len; i++)
+            c[i] = a[i] - b[i];
+        return;
+    }
+#endif
 #ifdef INTEL_MKL_VERSION
-	if (c == NULL) {
-		float_complex* tmp;
-		tmp = malloc1d(len * sizeof(float_complex));
-		vcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)tmp);
-		utility_cvvcopy(tmp, len, a);
-		free(tmp);
-	}
-	else
-		vcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
+    vcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
 #else
 	int i;
-    if (c == NULL) {
-        for (i = 0; i < len; i++)
-            a[i] = ccaddf(a[i], b[i]);
-    }
-    else{
-        for (i = 0; i < len; i++)
-            c[i] = ccaddf(a[i], b[i]);
-    }
+    for (i = 0; i < len; i++)
+        c[i] = ccsubf(a[i], b[i]);
 #endif
 }
 
@@ -363,6 +381,24 @@ void utility_svvmul
     float* c
 )
 {
+#if NDEBUG
+    int i;
+    if (len<10e4 && len > 7){
+        for(i=0; i<len-8; i+=8){
+            c[i] = a[i] * b[i];
+            c[i+1] = a[i+1] * b[i+1];
+            c[i+2] = a[i+2] * b[i+2];
+            c[i+3] = a[i+3] * b[i+3];
+            c[i+4] = a[i+4] * b[i+4];
+            c[i+5] = a[i+5] * b[i+5];
+            c[i+6] = a[i+6] * b[i+6];
+            c[i+7] = a[i+7] * b[i+7];
+        }
+        for(; i<len; i++)
+            c[i] = a[i] * b[i];
+        return;
+    }
+#endif
 #ifdef __ACCELERATE__
     vDSP_vmul(a, 1, b, 1, c, 1, len);
 #elif defined(INTEL_MKL_VERSION)
