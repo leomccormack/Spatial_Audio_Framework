@@ -27,7 +27,8 @@
 #include "saf.h"
 
 /* Prototypes for available unit tests */
-void test__saf_stft(void);
+void test__saf_stft_50pc_overlap(void);
+void test__saf_stft_LTI(void);
 void test__ims_shoebox_TD(void);
 void test__ims_shoebox_RIR(void);
 void test__saf_rfft(void);
@@ -73,7 +74,8 @@ printf("*****************************************************************\n"
     UNITY_BEGIN();
 
     /* run each unit test */
-    RUN_TEST(test__saf_stft);
+    RUN_TEST(test__saf_stft_50pc_overlap);
+    RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
     RUN_TEST(test__ims_shoebox_TD);
     RUN_TEST(test__saf_rfft);
@@ -102,18 +104,82 @@ printf("*****************************************************************\n"
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
 
-void test__saf_stft(void){
-    int frame, winsize, hopsize, nFrames, ch, i, nBands,nTimesSlots, band;
+void test__saf_stft_50pc_overlap(void){
+    int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;
     void* hSTFT;
     float** insig, **outsig, **inframe, **outframe;
     float_complex*** inspec, ***outspec;
 
     /* prep */
-    const float acceptedTolerance = 0.00001;
+    const float acceptedTolerance = 0.000001f;
+    const int fs = 48e3;
+    const int signalLength = 1*fs;
+    const int framesize = 512;
+    const int nCHin = 62;
+    const int nCHout = 64;
+    insig = (float**)malloc2d(nCHin,signalLength,sizeof(float)); /* One second long */
+    outsig = (float**)malloc2d(nCHout,signalLength,sizeof(float));
+    inframe = (float**)malloc2d(nCHin,framesize,sizeof(float));
+    outframe = (float**)malloc2d(nCHout,framesize,sizeof(float));
+    rand_m1_1(ADR2D(insig), nCHin*signalLength); /* populate with random numbers */
+
+    /* Set-up STFT for 50% overlapping */
+    winsize = 128;
+    hopsize = winsize/2;
+    nBands = winsize+1;
+    nTimesSlots = framesize/hopsize;
+    inspec = (float_complex***)malloc3d(nBands, nCHin, nTimesSlots, sizeof(float_complex));
+    outspec = (float_complex***)malloc3d(nBands, nCHout, nTimesSlots, sizeof(float_complex));
+    saf_stft_create(&hSTFT, winsize, hopsize, nCHin, nCHout, SAF_STFT_BANDS_CH_TIME);
+    saf_stft_channelChange(hSTFT, 123, 7);        /* messing about */
+    saf_stft_flushBuffers(hSTFT);                 /* messing about */
+    saf_stft_channelChange(hSTFT, nCHin, nCHout); /* change back */
+
+    /* Pass insig through STFT, block-wise processing */
+    nFrames = (int)((float)signalLength/(float)framesize);
+    for(frame = 0; frame<nFrames; frame++){
+        /* Forward */
+        for(ch=0; ch<nCHin; ch++)
+            memcpy(inframe[ch], &insig[ch][frame*framesize], framesize*sizeof(float));
+        saf_stft_forward(hSTFT, inframe, framesize, inspec);
+
+        /* Copy first channel of inspec to all outspec channels */
+        for(band=0; band<nBands; band++)
+            for(ch=0; ch<nCHout; ch++)
+                memcpy(outspec[band][ch], inspec[band][0], nTimesSlots*sizeof(float_complex));
+
+        /* Backward */
+        saf_stft_backward(hSTFT, outspec, framesize, outframe);
+        for(ch=0; ch<nCHout; ch++)
+            memcpy(&outsig[ch][frame*framesize], outframe[ch], framesize*sizeof(float));
+    }
+
+    /* Check that input==output (given some numerical precision) */
+    for(i=0; i<signalLength-framesize; i++)
+        TEST_ASSERT_TRUE( fabsf(insig[0][i] - outsig[0][i+hopsize]) <= acceptedTolerance );
+
+    /* Clean-up */
+    saf_stft_destroy(&hSTFT);
+    free(insig);
+    free(outsig);
+    free(inframe);
+    free(outframe);
+    free(inspec);
+    free(outspec);
+}
+
+void test__saf_stft_LTI(void){
+    int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;
+    void* hSTFT;
+    float** insig, **outsig, **inframe, **outframe;
+    float_complex*** inspec, ***outspec;
+
+    /* prep */
+    const float acceptedTolerance = 0.000001f;
     const int fs = 48e3;
     const int framesize = 128;
-    const int nCHin = 1;
-    const int nCHout = 2;
+    const int nCHin = 62;
+    const int nCHout = 64;
     insig = (float**)malloc2d(nCHin,fs,sizeof(float)); /* One second long */
     outsig = (float**)malloc2d(nCHout,fs,sizeof(float));
     inframe = (float**)malloc2d(nCHin,framesize,sizeof(float));
@@ -122,11 +188,11 @@ void test__saf_stft(void){
 
     /* Set-up STFT suitable for LTI filtering applications */
     winsize = hopsize = 128;
-    nBands = hopsize+1;
+    nBands = winsize+1;
     nTimesSlots = framesize/hopsize;
     inspec = (float_complex***)malloc3d(nBands, nCHin, nTimesSlots, sizeof(float_complex));
     outspec = (float_complex***)malloc3d(nBands, nCHout, nTimesSlots, sizeof(float_complex));
-    saf_stft_create(&hSTFT, winsize, hopsize, nCHin, nCHout);
+    saf_stft_create(&hSTFT, winsize, hopsize, nCHin, nCHout, SAF_STFT_BANDS_CH_TIME);
 
     /* Pass insig through STFT, block-wise processing */
     nFrames = (int)((float)fs/(float)framesize);
@@ -134,7 +200,7 @@ void test__saf_stft(void){
         /* Forward */
         for(ch=0; ch<nCHin; ch++)
             memcpy(inframe[ch], &insig[ch][frame*framesize], framesize*sizeof(float));
-        saf_stft_forward(hSTFT, inframe, inspec, framesize, SAF_STFT_BANDS_CH_TIME);
+        saf_stft_forward(hSTFT, inframe, framesize, inspec);
 
         /* Copy first channel of inspec to all outspec channels */
         for(band=0; band<nBands; band++)
@@ -142,7 +208,7 @@ void test__saf_stft(void){
                 memcpy(outspec[band][ch], inspec[band][0], nTimesSlots*sizeof(float_complex));
 
         /* Backward */
-        saf_stft_backward(hSTFT, outspec, outframe, framesize, SAF_STFT_BANDS_CH_TIME);
+        saf_stft_backward(hSTFT, outspec, framesize, outframe);
         for(ch=0; ch<nCHout; ch++)
             memcpy(&outsig[ch][frame*framesize], outframe[ch], framesize*sizeof(float));
     }
@@ -199,10 +265,10 @@ void test__ims_shoebox_TD(void){
     receiverIDs[0] = ims_shoebox_addReceiverSH(hIms, sh_order, (float*)rec_pos, &rec_sh_outsigs[0]);
 
     /* Moving source No.1 and the receiver */
-    maxTime_s = 0.05f; /* 50ms */
+    maxTime_s = 0.025f; /* 50ms */
     memcpy(mov_src_pos, src_pos, 3*sizeof(float));
     memcpy(mov_rec_pos, rec_pos, 3*sizeof(float));
-    for(i=0; i<1; i++){
+    for(i=0; i<5; i++){
         mov_src_pos[1] = 2.0f + (float)i/100.0f;
         mov_rec_pos[0] = 3.0f + (float)i/100.0f;
         ims_shoebox_updateSource(hIms, sourceIDs[0], mov_src_pos);

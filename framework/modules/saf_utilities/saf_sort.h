@@ -93,8 +93,8 @@ void sortd(double* in_vec,
 /**
  * Sort a vector of complex floating-point values into ascending/decending order
  *
- * @note The values are first sorted based on their real parts. Duplicate real
- *       parts are then sorted based on their imaginary parts.
+ * @note The values are first sorted based on their real parts. Values with
+ *       identical real parts are then sorted based on their imaginary parts.
  *
  * @param [in]  in_vec      Vector to be sorted; len x 1
  * @param [out] out_vec     Output vector
@@ -110,8 +110,8 @@ void sortc(float_complex* in_vec,
  * Sort a vector of complex double floating-point values into ascending/
  * decending order
  *
- * @note The values are first sorted based on their real parts. Duplicate real
- *       parts are then sorted based on their imaginary parts.
+ * @note The values are first sorted based on their real parts. Values with
+ *       identical real parts are then sorted based on their imaginary parts.
  *
  * @param [in]  in_vec      Vector to be sorted; len x 1
  * @param [out] out_vec     Output vector
@@ -124,11 +124,12 @@ void sortz(double_complex* in_vec,
            int descendFLAG);
 
 /**
- * Pairs up complex numbers and sorts them ascending order based on their real
- * parts, and then on their imaginary parts
+ * Pairs up complex numbers and sorts them in ascending order based on their
+ * real parts first, and then on their imaginary parts
  *
- * Any purely real parts are pushed to the end of the output vector (also in
- * ascending order)
+ * @note This function is the same as 'sortz' except that any values that are
+ *       purely real, are pushed to the end of the output vector (and also in
+ *       ascending order).
  *
  * @param [in]  in_vec      Vector to be sorted; len x 1
  * @param [out] out_vec     Output vector

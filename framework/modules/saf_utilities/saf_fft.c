@@ -41,10 +41,12 @@
 typedef struct _saf_stft_data {
     int winsize, hopsize, fftsize, nCHin, nCHout, nBands;
     void* hFFT;
-    int numOvrlpAddBlocks, bufferlength;
+    int numOvrlpAddBlocks, bufferlength, nPrevHops;
     float* window, *insig_win, *outsig_win;
     float** overlapAddBuffer;
+    float*** prev_inhops;
     float_complex* tmp_fft;
+    SAF_STFT_FDDATA_FORMAT FDformat;
 
 }saf_stft_data;
 
@@ -253,7 +255,8 @@ void saf_stft_create
     int winsize,
     int hopsize,
     int nCHin,
-    int nCHout
+    int nCHout,
+    SAF_STFT_FDDATA_FORMAT FDformat
 )
 {
     *phSTFT = malloc1d(sizeof(saf_stft_data));
@@ -264,13 +267,21 @@ void saf_stft_create
     h->winsize = winsize;
     h->hopsize = hopsize;
     h->nBands = winsize+1;
+    h->FDformat = FDformat;
 
     /* set-up FFT */
     h->fftsize = 2*winsize;
     saf_rfft_create(&(h->hFFT), h->fftsize);
     h->insig_win = calloc1d(h->fftsize, sizeof(float));
+
+    /* Intermediate buffers */
     h->tmp_fft = malloc1d(h->nBands * sizeof(float_complex));
     h->outsig_win = malloc1d(h->fftsize*sizeof(float));
+    h->nPrevHops = winsize/hopsize-1;
+    if (h->nPrevHops>0)
+        h->prev_inhops = (float***)calloc3d(h->nPrevHops, nCHin, hopsize, sizeof(float));
+    else
+        h->prev_inhops = NULL;
 
     /* Windowing function */
     if(winsize==hopsize)
@@ -298,6 +309,7 @@ void saf_stft_destroy
         free(h->overlapAddBuffer);
         free(h->insig_win);
         free(h->tmp_fft);
+        free(h->prev_inhops);
         free(h);
         h=NULL;
         *phSTFT = NULL;
@@ -308,15 +320,16 @@ void saf_stft_forward
 (
     void * const hSTFT,
     float** dataTD,
-    float_complex*** dataFD,
     int framesize,
-    SAF_STFT_FDDATA_FORMAT FDformat
+    float_complex*** dataFD
+
 )
 {
     saf_stft_data *h = (saf_stft_data*)(hSTFT);
-    int ch, nHops, t, band;
+    int ch, j, nHops, t, band, idx, hIdx;
 
-    nHops = framesize/h->winsize;
+    assert(framesize % h->hopsize == 0); /* framesize must be multiple of hopsize */
+    nHops = framesize/h->hopsize;
 
     /* For linear time-invariant (LTI) operation (i.e. no previous hops are
      * required) */
@@ -327,7 +340,7 @@ void saf_stft_forward
                 memcpy(h->insig_win, &dataTD[ch][t*(h->hopsize)], h->winsize*sizeof(float));
 
                 /* Apply FFT and copy data to output dataFD buffer */
-                switch(FDformat){
+                switch(h->FDformat){
                     case SAF_STFT_TIME_CH_BANDS:
                         saf_rfft_forward(h->hFFT, h->insig_win, dataFD[t][ch]);
                         break;
@@ -343,10 +356,35 @@ void saf_stft_forward
     }
     /* For oversampled TF transforms */
     else{
-        assert(0); // TODO: DO
+        idx = 0;
+        for (t = 0; t<nHops; t++){
+            for(ch=0; ch < h->nCHin; ch++){
+                hIdx = 0;
+                /* Window input signal */
+                while (hIdx < h->winsize){
+                    memcpy(&(h->insig_win[hIdx]), h->prev_inhops[0][ch], h->hopsize*sizeof(float));
+                    for(j=0; j< h->nPrevHops-1; j++)
+                        memcpy(h->prev_inhops[j][ch], h->prev_inhops[j+1][ch], h->hopsize*sizeof(float));
+                    memcpy(h->prev_inhops[h->nPrevHops-1][ch], &dataTD[ch][idx], h->hopsize*sizeof(float));
+                    hIdx += h->hopsize;
+                }
+                utility_svvmul(h->insig_win, h->window, h->winsize, h->insig_win);
 
-//        if(h->window!=NULL)
-//        utility_svvmul(h->insig_win, h->window, h->winsize, h->insig_win);
+                /* Apply FFT and copy data to output dataFD buffer */
+                switch(h->FDformat){
+                    case SAF_STFT_TIME_CH_BANDS:
+                        saf_rfft_forward(h->hFFT, h->insig_win, dataFD[t][ch]);
+                        break;
+
+                    case SAF_STFT_BANDS_CH_TIME:
+                        saf_rfft_forward(h->hFFT, h->insig_win, h->tmp_fft);
+                        for(band=0; band<h->nBands; band++)
+                            dataFD[band][ch][t] = h->tmp_fft[band];
+                        break;
+                }
+            }
+            idx += h->hopsize;
+        } 
     }
 }
 
@@ -354,17 +392,18 @@ void saf_stft_backward
 (
     void * const hSTFT,
     float_complex*** dataFD,
-    float** dataTD,
     int framesize,
-    SAF_STFT_FDDATA_FORMAT FDformat
+    float** dataTD
 )
 {
     saf_stft_data *h = (saf_stft_data*)(hSTFT);
     int t, ch, nHops, band;
-    nHops = framesize/h->winsize;
+
+    assert(framesize % h->hopsize == 0); /* framesize must be multiple of hopsize */
+    nHops = framesize/h->hopsize;
 
     for (t = 0; t<nHops; t++){
-        for(ch=0; ch < h->nCHout; ch++){ // TODO: this can be optimised to avoid memcpy
+        for(ch=0; ch < h->nCHout; ch++){
             /* Shift data down */
             memcpy(h->overlapAddBuffer[ch], &h->overlapAddBuffer[ch][h->hopsize], (h->numOvrlpAddBlocks-1)*(h->hopsize)*sizeof(float));
 
@@ -372,7 +411,7 @@ void saf_stft_backward
             memset(&h->overlapAddBuffer[ch][(h->numOvrlpAddBlocks-1)*(h->hopsize)], 0, h->hopsize*sizeof(float));
 
             /* Apply inverse FFT */
-            switch(FDformat){
+            switch(h->FDformat){
                 case SAF_STFT_TIME_CH_BANDS:
                     saf_rfft_backward(h->hFFT, dataFD[t][ch], h->outsig_win);
                     break;
@@ -387,6 +426,52 @@ void saf_stft_backward
             utility_svvadd(h->overlapAddBuffer[ch], h->outsig_win, h->fftsize, h->overlapAddBuffer[ch]);
             memcpy(&dataTD[ch][t*(h->hopsize)], h->overlapAddBuffer[ch], h->hopsize*sizeof(float)); 
         }
+    }
+}
+
+void saf_stft_flushBuffers
+(
+    void * const hSTFT
+)
+{
+    saf_stft_data *h = (saf_stft_data*)(hSTFT);
+    memset(ADR3D(h->prev_inhops), 0, h->nPrevHops * (h->nCHin) * (h->hopsize) * sizeof(float));
+    memset(ADR2D(h->overlapAddBuffer), 0, h->nCHout * (h->bufferlength) * sizeof(float));
+}
+
+void saf_stft_channelChange
+(
+    void * const hSTFT,
+    int new_nCHin,
+    int new_nCHout
+)
+{
+    saf_stft_data *h = (saf_stft_data*)(hSTFT);
+    int i, ch;
+
+    if(new_nCHin != h->nCHin && h->prev_inhops != NULL){
+        /* Reallocate memory while retaining previous values (which will be
+         * truncated if new_nCHin < nCHin) */
+        h->prev_inhops = (float***)realloc3d_r((void***)h->prev_inhops, h->nPrevHops, new_nCHin, h->hopsize,
+                                               h->nPrevHops, h->nCHin, h->hopsize, sizeof(float));
+        /* Zero new channels if new_nCHin > nCHin */
+        for(i=0; i< h->nPrevHops; i++)
+            for(ch=h->nCHin; ch<new_nCHin; ch++)
+                memset(h->prev_inhops[i][ch], 0, h->hopsize * sizeof(float));
+
+        h->nCHin = new_nCHin;
+    }
+
+    if(new_nCHout != h->nCHout){
+        /* Reallocate memory while retaining previous values (which will be
+         * truncated if new_nCHout < nCHout) */
+        h->overlapAddBuffer = (float**)realloc2d_r((void**)h->overlapAddBuffer, new_nCHout, h->bufferlength,
+                                                   h->nCHout, h->bufferlength, sizeof(float));
+        /* Zero new channels if new_nCHout > nCHout */
+        for(ch=h->nCHout; ch<new_nCHout; ch++)
+            memset(h->overlapAddBuffer[ch], 0, h->bufferlength * sizeof(float));
+
+        h->nCHout = new_nCHout;
     }
 }
 

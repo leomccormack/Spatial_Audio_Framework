@@ -47,13 +47,22 @@ extern "C" {
 #include <limits.h>
 #include "saf_complex.h"
 
+/**
+ * Options for how the frequency domain data is permuted when using saf_stft
+ */
+typedef enum _SAF_STFT_FDDATA_FORMAT{
+    SAF_STFT_BANDS_CH_TIME, /**< nBands x nChannels x nTimeHops */
+    SAF_STFT_TIME_CH_BANDS  /**< nTimeHops x nChannels x nBands */
+
+}SAF_STFT_FDDATA_FORMAT;
+
 /* ========================================================================== */
 /*                               Misc. Functions                              */
 /* ========================================================================== */
 
 /**
  * Calcuates the frequencies (in Hz) of uniformly spaced bins, for a given
- * FFT size and sampling rate.
+ * FFT size and sampling rate
  *
  * @param[in]  fftSize    FFT size
  * @param[in]  fs         Sampling rate
@@ -64,7 +73,7 @@ void getUniformFreqVector(int fftSize,
                           float* freqVector);
 
 /**
- * FFT-based convolution of signal 'x' with filter 'h'.
+ * FFT-based convolution of signal 'x' with filter 'h'
  *
  * Input channels and filters are zero padded to avoid circular convolution
  * artefacts.
@@ -86,7 +95,7 @@ void fftconv(float* x,
              float* y);
 
 /**
- * FFT-based convolution for FIR filters.
+ * FFT-based convolution for FIR filters
  *
  * Similar to fftconv, other than only the first x_len samples of y are
  * returned. It has parity with the 'fftfilt' function in Matlab, except it just
@@ -107,7 +116,7 @@ void fftfilt(float* x,
              float* y);
 
 /**
- * Computes the discrete-time analytic signal via the Hilbert transform.
+ * Computes the discrete-time analytic signal via the Hilbert transform [1]
  *
  * The magnitude of the output is the envelope, and imaginary part is the
  * actual Hilbert transform. (Functionally identical to Matlab's 'hilbert'
@@ -116,6 +125,9 @@ void fftfilt(float* x,
  * @param[in]  x     Input; x_len x 1
  * @param[in]  x_len Length of input signal, in samples
  * @param[out] y     Output analytic signal; x_len x 1
+ *
+ * @see [1] Marple, L., 1999. Computing the discrete-time" analytic" signal via
+ *          FFT. IEEE Transactions on signal processing, 47(9), pp.2600-2603.
  */
 void hilbert(float_complex* x,
              int x_len,
@@ -126,28 +138,26 @@ void hilbert(float_complex* x,
 /*                     Short-time Fourier Transform (STFT)                    */
 /* ========================================================================== */
 
-typedef enum _SAF_STFT_FDDATA_FORMAT{
-    SAF_STFT_BANDS_CH_TIME,
-    SAF_STFT_TIME_CH_BANDS
-
-}SAF_STFT_FDDATA_FORMAT;
-
 /**
  * Creates an instance of saf_stft
  *
  * ## Example Usage
  * \code{.c}
- *   const int N = 256;                    // FFT size
  * \endcode
  *
- * @param[in] winsize Window size
- * @param[in] hopsize Hop size
+ * @param[in] winsize  Window size
+ * @param[in] hopsize  Hop size
+ * @param[in] nCHin    Number of input channels
+ * @param[in] nCHout   Number of ooutput channels
+ * @param[in] FDformat Format for the frequency-domain data (see the
+ *                     SAF_STFT_FDDATA_FORMAT enum)
  */
 void saf_stft_create(void ** const phSTFT,
                      int winsize,
                      int hopsize,
                      int nCHin,
-                     int nCHout);
+                     int nCHout,
+                     SAF_STFT_FDDATA_FORMAT FDformat);
 
 /**
  * Destroys an instance of saf_stft
@@ -159,28 +169,54 @@ void saf_stft_destroy(void ** const phSTFT);
 /**
  * Performs the forward-STFT operation for the current frame
  *
- * @param[in]  hSTFT  saf_stft handle
- * @param[in]  dataTD Time-domain input; N x 1
- * @param[out] dataFD Frequency-domain output; (N/2 + 1) x 1
+ * @param[in]  hSTFT     saf_stft handle
+ * @param[in]  dataTD    Time-domain input; nCHin x framesize
+ * @param[in]  framesize Frame size of time-domain data
+ * @param[out] dataFD    Frequency-domain output;
+ *                       if FDformat == SAF_STFT_TIME_CH_BANDS:
+ *                           (framesize/hopsize) x nCHin x (fftsize/2+1)
+ *                       if FDformat == SAF_STFT_BANDS_CH_TIME:
+ *                           (fftsize/2+1)  x nCHin x (framesize/hopsize)
  */
 void saf_stft_forward(void * const hSTFT,
                       float** dataTD,
-                      float_complex*** dataFD,
                       int framesize,
-                      SAF_STFT_FDDATA_FORMAT FDformat);
+                      float_complex*** dataFD);
 
 /**
  * Performs the backward-STFT operation for the current frame
  *
- * @param[in]  hSTFT  saf_stft handle
- * @param[in]  dataFD Frequency-domain input; (N/2 + 1) x 1
- * @param[out] dataTD Time-domain output;  N x 1
+ * @param[in]  hSTFT     saf_stft handle
+ * @param[in]  dataFD    Frequency-domain output;
+ *                       if FDformat == SAF_STFT_TIME_CH_BANDS:
+ *                           (framesize/hopsize) x nCHout x (fftsize/2+1)
+ *                       if FDformat == SAF_STFT_BANDS_CH_TIME:
+ *                           (fftsize/2+1)  x nCHout x (framesize/hopsize)
+ * @param[in]  framesize Frame size of time-domain data
+ * @param[out] dataTD    Time-domain output;  nCHout x framesize
  */
 void saf_stft_backward(void * const hSTFT,
                        float_complex*** dataFD,
-                       float** dataTD,
                        int framesize,
-                       SAF_STFT_FDDATA_FORMAT FDformat);
+                       float** dataTD);
+
+/**
+ * Flushes the internal buffers with zeros
+ *
+ * @param[in] hSTFT saf_stft handle
+ */
+void saf_stft_flushBuffers(void * const hSTFT);
+
+/**
+ * Changes the number of input/output channels
+ *
+ * @param[in] hSTFT      saf_stft handle
+ * @param[in] new_nCHin  New number of input channels
+ * @param[in] new_nCHout New number of ooutput channels
+ */
+void saf_stft_channelChange(void * const hSTFT,
+                            int new_nCHin,
+                            int new_nCHout);
 
 
 /* ========================================================================== */

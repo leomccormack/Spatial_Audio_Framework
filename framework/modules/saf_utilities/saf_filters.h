@@ -152,10 +152,15 @@ void getOctaveBandCutoffFreqs(float* centreFreqs,
 
 /**
  * Equalises input sequence by its minimum phase form, in order to bring its
- * magnitude response to unity
+ * magnitude response to unity, as described in [1]
  *
  * @param[in,out] x   Input; len x 1
  * @param[in]     len Length of input
+ *
+ * @see [1] Hawksford, M.J. and Harris, N., 2002, April. Diffuse signal
+ *          processing and acoustic source characterization for applications in
+ *          synthetic loudspeaker arrays. In Audio Engineering Society
+ *          Convention 112. Audio Engineering Society.
  */
 void flattenMinphase(float* x,
                      int len);
@@ -233,7 +238,7 @@ void evalBiQuadTransferFunction(/* Input arguments */
                                 float* phase_rad);
 
 /**
- * Computes Butterworth IIR filter coefficients
+ * Computes Butterworth IIR filter coefficients [1]
  *
  * The function is numerically identical to the default 'butter' function in
  * Matlab
@@ -339,7 +344,7 @@ void faf_IIRFilterbank_destroy(void** hFaF);
  * identical to the default 'fir1' function in Matlab (when using it in single
  * precision mode) [1].
  *
- * @note Input argument 'order' cannot be odd valued.
+ * @warning Input argument 'order' cannot be odd valued!
  *
  * Some guidelines regarding the approx order (N) for certain filters. i.e.
  * the orders where you actually get the expected -6dB attenuation at the cutoff
@@ -416,7 +421,6 @@ void FIRFilterbank(/* Input arguments */
                    int scalingFLAG,
                    /* Output arguments */
                    float* filterbank);
-
 
 
 #ifdef __cplusplus

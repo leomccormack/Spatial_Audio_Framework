@@ -53,10 +53,9 @@ extern "C" {
  * array. Use them for passing arrays to memset/memcpy, or blas/lapack functions
  * etc. e.g.
  *   float** array2D = (float**)malloc2d(10, 40, sizeof(float));
- *   memset(ADR2D(array2D), 0, 10*40*sizeof(float)); */
-#define ADR1D(A) (&A[0])
-#define ADR2D(A) (&A[0][0])
-#define ADR3D(A) (&A[0][0][0])
+ *   memset(ADR2D(array2D), 0, 10*40*sizeof(float)); */ 
+#define ADR2D(A) (*A)
+#define ADR3D(A) (**A)
     
 /**
  * 1-D malloc
@@ -92,9 +91,14 @@ void*** malloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size);
  * 3-D calloc */
 void*** calloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size);
 /**
- * 3-D realloc */
+ * 3-D realloc that does NOT retain previous data order */
 void*** realloc3d(void*** ptr, size_t dim1, size_t dim2, size_t dim3,
                   size_t data_size);
+/**
+ * 3-D realloc that does retain previous data order */
+void*** realloc3d_r(void*** ptr, size_t new_dim1, size_t new_dim2,
+                    size_t new_dim3, size_t prev_dim1, size_t prev_dim2,
+                    size_t prev_dim3, size_t data_size);
 
 
 #ifdef __cplusplus

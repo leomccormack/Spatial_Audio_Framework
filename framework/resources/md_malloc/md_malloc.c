@@ -148,8 +148,7 @@ void** realloc2d_r(void** ptr, size_t new_dim1, size_t new_dim2, size_t prev_dim
     /* Resize */
     unsigned char* p2;
     stride = new_dim2*data_size;
-    free(ptr);
-    ptr = malloc(new_dim1*sizeof(void*) + new_dim1*stride);
+    ptr = realloc(ptr, new_dim1*sizeof(void*) + new_dim1*stride);
 #ifndef NDEBUG
     if(ptr==NULL)
         fprintf(stderr, "Error: 'realloc2d' failed to allocate %zu bytes.\n", new_dim1*sizeof(void*) + new_dim1*stride);
@@ -238,8 +237,13 @@ void*** realloc3d_r(void*** ptr, size_t new_dim1, size_t new_dim2, size_t new_di
     size_t i, j, stride1, stride2;
     void** p2;
     unsigned char* p3;
+    void*** prev_data;
 
-    assert(0); // NOT IMPLEMENTED YET
+    /* Copy previous data */
+    prev_data = malloc3d(prev_dim1, prev_dim2, prev_dim3, data_size);
+    memcpy(ADR3D(prev_data), ADR3D(ptr), prev_dim1*prev_dim2*prev_dim3*data_size);
+
+    /* Resize */
     stride1 = new_dim2*new_dim3*data_size;
     stride2 = new_dim3*data_size;
     ptr = realloc(ptr, new_dim1*sizeof(void**) + new_dim1*new_dim2*sizeof(void*) + new_dim1*stride1);
@@ -254,6 +258,12 @@ void*** realloc3d_r(void*** ptr, size_t new_dim1, size_t new_dim2, size_t new_di
     for(i=0;i<new_dim1;i++)
         for(j=0;j<new_dim2;j++)
             p2[i*new_dim2+j] = &p3[i*stride1 + j*stride2];
+
+    /* Repopulate */
+    for(i=0; i<MIN(new_dim1,prev_dim1); i++)
+        for(j=0; j<MIN(new_dim2,prev_dim2); j++)
+            memcpy(ptr[i][j], prev_data[i][j], MIN(new_dim3,prev_dim3)*data_size);
+    free(prev_data);
     return ptr;
 }
 
