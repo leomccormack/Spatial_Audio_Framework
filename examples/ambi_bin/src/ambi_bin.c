@@ -91,7 +91,7 @@ void ambi_bin_create
     pData->recalc_M_rotFLAG = 1;
     pData->reinit_hrtfsFLAG = 1;
 
-    /* reset FIFO buffers */
+    /* set FIFO buffers */
     pData->FIFO_idx = 0;
     memset(pData->inFIFO, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
     memset(pData->outFIFO, 0, NUM_EARS*FRAME_SIZE*sizeof(float));

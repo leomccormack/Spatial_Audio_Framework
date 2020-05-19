@@ -39,6 +39,7 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
+#define FRAME_SIZE ( 64 )
 #define MAX_ORDER ( AMBI_ENC_MAX_SH_ORDER )
 #define MAX_NUM_INPUTS ( AMBI_ENC_MAX_NUM_INPUTS )
 #define MAX_NUM_SH_SIGNALS ( (MAX_ORDER + 1)*(MAX_ORDER + 1) ) /* (L+1)^2 */
@@ -55,6 +56,12 @@ extern "C" {
  */
 typedef struct _ambi_enc
 {
+    /* FIFO buffers */
+    int FIFO_idx;
+    float inFIFO[MAX_NUM_INPUTS][FRAME_SIZE];
+    float outFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+
+    /* Internals */
     float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
     float prev_inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
     float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];

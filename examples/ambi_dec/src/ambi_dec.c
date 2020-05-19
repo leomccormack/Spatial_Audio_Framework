@@ -104,7 +104,12 @@ void ambi_dec_create
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
     pData->reinit_hrtfsFLAG = 1;
     for(ch=0; ch<MAX_NUM_LOUDSPEAKERS; ch++)
-        pData->recalc_hrtf_interpFLAG[ch] = 1; 
+        pData->recalc_hrtf_interpFLAG[ch] = 1;
+
+    /* set FIFO buffers */
+    pData->FIFO_idx = 0;
+    memset(pData->inFIFO, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
+    memset(pData->outFIFO, 0, MAX_NUM_LOUDSPEAKERS*FRAME_SIZE*sizeof(float));
 }
 
 void ambi_dec_destroy
@@ -393,7 +398,7 @@ void ambi_dec_initCodec
         strcpy(pData->progressBarText,"Preparing HRIRs");
         pData->progressBar0_1 = 0.85f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
-        HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrtf_fb);
+        HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, 133, pars->hrtf_fb);
         diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
         
         /* calculate magnitude responses */
@@ -428,8 +433,7 @@ void ambi_dec_process
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     ambi_dec_codecPars* pars = pData->pars;
-    int n, t, ch, ear, i, band, orderBand, nSH_band, decIdx, nSH;
-    int o[MAX_SH_ORDER+2];
+    int s, t, ch, ear, i, band, orderBand, nSH_band, decIdx, nSH;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
     /* local copies of user parameters */
@@ -439,155 +443,151 @@ void ambi_dec_process
     AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH diffEQmode[NUM_DECODERS];
     AMBI_DEC_NORM_TYPES norm;
     AMBI_DEC_CH_ORDER chOrdering;
+    masterOrder = pData->masterOrder;
+    nSH = ORDER2NSH(masterOrder);
+    nLoudspeakers = pData->nLoudpkrs;
+    memcpy(orderPerBand, pData->orderPerBand, HYBRID_BANDS*sizeof(int));
+    transitionFreq = pData->transitionFreq;
+    memcpy(diffEQmode, pData->diffEQmode, NUM_DECODERS*sizeof(int));
+    binauraliseLS = pData->binauraliseLS;
+    norm = pData->norm;
+    chOrdering = pData->chOrdering;
+    memcpy(rE_WEIGHT, pData->rE_WEIGHT, NUM_DECODERS*sizeof(int));
     
-    /* decode audio to loudspeakers or headphones */
-    if( (nSamples == FRAME_SIZE) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ) {
-        pData->procStatus = PROC_STATUS_ONGOING;
-        
-        /* copy user parameters to local variables */
-        for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
-        masterOrder = pData->masterOrder;
-        nSH = (masterOrder+1)*(masterOrder+1);
-        nLoudspeakers = pData->nLoudpkrs;
-        memcpy(orderPerBand, pData->orderPerBand, HYBRID_BANDS*sizeof(int));
-        transitionFreq = pData->transitionFreq;
-        memcpy(diffEQmode, pData->diffEQmode, NUM_DECODERS*sizeof(int));
-        binauraliseLS = pData->binauraliseLS;
-        norm = pData->norm;
-        chOrdering = pData->chOrdering;
-        memcpy(rE_WEIGHT, pData->rE_WEIGHT, NUM_DECODERS*sizeof(int));
-        
-        /* Load time-domain data */
-        switch(chOrdering){
-            case CH_ACN:
-                for(i=0; i < MIN(nSH, nInputs); i++)
-                    utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
-                for(; i<nSH; i++)
-                    memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
-                break;
-            case CH_FUMA:   /* only for first-order, convert to ACN */
-                if(nInputs>=4){
-                    utility_svvcopy(inputs[0], FRAME_SIZE, pData->SHFrameTD[0]);
-                    utility_svvcopy(inputs[1], FRAME_SIZE, pData->SHFrameTD[3]);
-                    utility_svvcopy(inputs[2], FRAME_SIZE, pData->SHFrameTD[1]);
-                    utility_svvcopy(inputs[3], FRAME_SIZE, pData->SHFrameTD[2]);
-                    for(i=4; i<nSH; i++)
-                        memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+    /* Loop over all samples */
+    for(s=0; s<nSamples; s++){
+        /* Load input signals into inFIFO buffer */
+        for(ch=0; ch<MIN(nInputs,nSH); ch++)
+            pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
+        for(; ch<nSH; ch++) /* Zero any channels that were not given */
+            pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
+
+        /* Pull output signals from outFIFO buffer */
+        for(ch=0; ch<MIN(nOutputs, binauraliseLS ? NUM_EARS : MAX_NUM_LOUDSPEAKERS); ch++)
+            outputs[ch][s] = pData->outFIFO[ch][pData->FIFO_idx];
+        for(; ch<nOutputs; ch++) /* Zero any extra channels */
+            outputs[ch][s] = 0.0f;
+
+        /* Increment buffer index */
+        pData->FIFO_idx++;
+
+        /* Process frame if inFIFO is full and codec is ready for it */
+        if (pData->FIFO_idx >= FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) ) {
+            pData->FIFO_idx = 0;
+            pData->procStatus = PROC_STATUS_ONGOING;
+
+            /* Load time-domain data */
+            switch(chOrdering){
+                case CH_ACN:
+                    convertHOAChannelConvention((float*)pData->inFIFO, masterOrder, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_ACN, (float*)pData->SHFrameTD);
+                    break;
+                case CH_FUMA:
+                    convertHOAChannelConvention((float*)pData->inFIFO, masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN, (float*)pData->SHFrameTD);
+                    break;
+            }
+
+            /* account for input normalisation scheme */
+            switch(norm){
+                case NORM_N3D:  /* already in N3D, do nothing */
+                    break;
+                case NORM_SN3D: /* convert to N3D */
+                    convertHOANormConvention((float*)pData->SHFrameTD, masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
+                    break;
+                case NORM_FUMA: /* only for first-order, convert to N3D */
+                    convertHOANormConvention((float*)pData->SHFrameTD, masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
+                    break;
+            }
+
+            /* Apply time-frequency transform (TFT) */
+            for(t=0; t< TIME_SLOTS; t++) {
+                for(ch = 0; ch < nSH; ch++)
+                    utility_svvcopy(&(pData->SHFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
+                afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
+                for(band=0; band<HYBRID_BANDS; band++)
+                    for(ch=0; ch < nSH; ch++)
+                        pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
+            }
+
+            /* Main processing: */
+            /* Decode to loudspeaker set-up */
+            memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_LOUDSPEAKERS*TIME_SLOTS*sizeof(float_complex));
+            for(band=0; band<HYBRID_BANDS; band++){
+                orderBand = MAX(MIN(orderPerBand[band], masterOrder),1);
+                nSH_band = (orderBand+1)*(orderBand+1);
+                decIdx = pData->freqVector[band] < transitionFreq ? 0 : 1; /* different decoder for low (0) and high (1) frequencies */
+                if(rE_WEIGHT[decIdx]){
+                    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLoudspeakers, TIME_SLOTS, nSH_band, &calpha,
+                                pars->M_dec_cmplx_maxrE[decIdx][orderBand-1], nSH_band,
+                                pData->SHframeTF[band], TIME_SLOTS, &cbeta,
+                                pData->outputframeTF[band], TIME_SLOTS);
                 }
-                else
-                    for(i=0; i<nSH; i++)
-                        memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float));
-                break;
-        }
-        
-        /* account for input normalisation scheme */
-        switch(norm){
-            case NORM_N3D:  /* already in N3D, do nothing */
-                break;
-            case NORM_SN3D: /* convert to N3D */
-                for (n = 0; n<masterOrder+1; n++)
-                    for (ch = o[n]; ch<o[n+1]; ch++)
-                        for(i = 0; i<FRAME_SIZE; i++)
-                            pData->SHFrameTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
-                break;
-            case NORM_FUMA: /* only for first-order, convert to N3D */
-                for(i = 0; i<FRAME_SIZE; i++)
-                    pData->SHFrameTD[0][i] *= sqrtf(2.0f);
-                for (ch = 1; ch<4; ch++)
-                    for(i = 0; i<FRAME_SIZE; i++)
-                        pData->SHFrameTD[ch][i] *= sqrtf(3.0f);
-                break;
-        }
-        
-        /* Apply time-frequency transform (TFT) */
-        for(t=0; t< TIME_SLOTS; t++) {
-            for(ch = 0; ch < nSH; ch++)
-                utility_svvcopy(&(pData->SHFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
-            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
-            for(band=0; band<HYBRID_BANDS; band++)
-                for(ch=0; ch < nSH; ch++)
-                    pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
-        }
-        
-        /* Main processing: */
-        /* Decode to loudspeaker set-up */
-        memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_LOUDSPEAKERS*TIME_SLOTS*sizeof(float_complex));
-        for(band=0; band<HYBRID_BANDS; band++){
-            orderBand = MAX(MIN(orderPerBand[band], masterOrder),1);
-            nSH_band = (orderBand+1)*(orderBand+1);
-            decIdx = pData->freqVector[band] < transitionFreq ? 0 : 1; /* different decoder for low (0) and high (1) frequencies */
-            if(rE_WEIGHT[decIdx]){
-                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLoudspeakers, TIME_SLOTS, nSH_band, &calpha,
-                            pars->M_dec_cmplx_maxrE[decIdx][orderBand-1], nSH_band,
-                            pData->SHframeTF[band], TIME_SLOTS, &cbeta,
-                            pData->outputframeTF[band], TIME_SLOTS);
-            }
-            else{
-                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLoudspeakers, TIME_SLOTS, nSH_band, &calpha,
-                            pars->M_dec_cmplx[decIdx][orderBand-1], nSH_band,
-                            pData->SHframeTF[band], TIME_SLOTS, &cbeta,
-                            pData->outputframeTF[band], TIME_SLOTS);
-            }
-            for(i=0; i<nLoudspeakers; i++){
-                for(t=0; t<TIME_SLOTS; t++){
-                    if(diffEQmode[decIdx]==AMPLITUDE_PRESERVING)
-                        pData->outputframeTF[band][i][t] = crmulf(pData->outputframeTF[band][i][t], pars->M_norm[decIdx][orderBand-1][0]);
-                    else
-                        pData->outputframeTF[band][i][t] = crmulf(pData->outputframeTF[band][i][t], pars->M_norm[decIdx][orderBand-1][1]);
+                else{
+                    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLoudspeakers, TIME_SLOTS, nSH_band, &calpha,
+                                pars->M_dec_cmplx[decIdx][orderBand-1], nSH_band,
+                                pData->SHframeTF[band], TIME_SLOTS, &cbeta,
+                                pData->outputframeTF[band], TIME_SLOTS);
+                }
+                for(i=0; i<nLoudspeakers; i++){
+                    for(t=0; t<TIME_SLOTS; t++){
+                        if(diffEQmode[decIdx]==AMPLITUDE_PRESERVING)
+                            pData->outputframeTF[band][i][t] = crmulf(pData->outputframeTF[band][i][t], pars->M_norm[decIdx][orderBand-1][0]);
+                        else
+                            pData->outputframeTF[band][i][t] = crmulf(pData->outputframeTF[band][i][t], pars->M_norm[decIdx][orderBand-1][1]);
+                    }
                 }
             }
-        }
-            
-        /* binauralise the loudspeaker signals */
-        if(binauraliseLS){
-            memset(pData->binframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
-            /* interpolate hrtfs and apply to each source */
-            for (ch = 0; ch < nLoudspeakers; ch++) {
-                if(pData->recalc_hrtf_interpFLAG[ch]){
-                    ambi_dec_interpHRTFs(hAmbi, pData->loudpkrs_dirs_deg[ch][0], pData->loudpkrs_dirs_deg[ch][1], pars->hrtf_interp[ch]);
-                    pData->recalc_hrtf_interpFLAG[ch] = 0;
+
+            /* binauralise the loudspeaker signals */
+            if(binauraliseLS){
+                memset(pData->binframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
+                /* interpolate hrtfs and apply to each source */
+                for (ch = 0; ch < nLoudspeakers; ch++) {
+                    if(pData->recalc_hrtf_interpFLAG[ch]){
+                        ambi_dec_interpHRTFs(hAmbi, pData->loudpkrs_dirs_deg[ch][0], pData->loudpkrs_dirs_deg[ch][1], pars->hrtf_interp[ch]);
+                        pData->recalc_hrtf_interpFLAG[ch] = 0;
+                    }
+                    for (band = 0; band < HYBRID_BANDS; band++)
+                        for (ear = 0; ear < NUM_EARS; ear++)
+                            for (t = 0; t < TIME_SLOTS; t++)
+                                pData->binframeTF[band][ear][t] = ccaddf(pData->binframeTF[band][ear][t], ccmulf(pData->outputframeTF[band][ch][t], pars->hrtf_interp[ch][band][ear]));
                 }
+
+                /* scale by sqrt(number of loudspeakers) */
                 for (band = 0; band < HYBRID_BANDS; band++)
                     for (ear = 0; ear < NUM_EARS; ear++)
                         for (t = 0; t < TIME_SLOTS; t++)
-                            pData->binframeTF[band][ear][t] = ccaddf(pData->binframeTF[band][ear][t], ccmulf(pData->outputframeTF[band][ch][t], pars->hrtf_interp[ch][band][ear]));
+                            pData->binframeTF[band][ear][t] = crmulf(pData->binframeTF[band][ear][t], 1.0f/sqrtf((float)nLoudspeakers));
             }
-                
-            /* scale by sqrt(number of loudspeakers) */
-            for (band = 0; band < HYBRID_BANDS; band++)
-                for (ear = 0; ear < NUM_EARS; ear++)
-                    for (t = 0; t < TIME_SLOTS; t++)
-                        pData->binframeTF[band][ear][t] = crmulf(pData->binframeTF[band][ear][t], 1.0f/sqrtf((float)nLoudspeakers));
+
+
+            /* inverse-TFT */
+            for(t = 0; t < TIME_SLOTS; t++) {
+                for(band = 0; band < HYBRID_BANDS; band++) {
+                    if(binauraliseLS){
+                        for (ch = 0; ch < NUM_EARS; ch++) {
+                            pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->binframeTF[band][ch][t]);
+                            pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->binframeTF[band][ch][t]);
+                        }
+                    }
+                    else {
+                        for(ch = 0; ch < nLoudspeakers; ch++) {
+                            pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->outputframeTF[band][ch][t]);
+                            pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->outputframeTF[band][ch][t]);
+                        }
+                    }
+                }
+                afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
+                for(ch = 0; ch < MIN(binauraliseLS==1 ? NUM_EARS : nLoudspeakers, nOutputs); ch++)
+                    utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(pData->outFIFO[ch][t* HOP_SIZE]));
+            }
         }
-        
-        
-        /* inverse-TFT */
-        for(t = 0; t < TIME_SLOTS; t++) {
-            for(band = 0; band < HYBRID_BANDS; band++) {
-                if(binauraliseLS){
-                    for (ch = 0; ch < NUM_EARS; ch++) {
-                        pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->binframeTF[band][ch][t]);
-                        pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->binframeTF[band][ch][t]);
-                    }
-                }
-                else {
-                    for(ch = 0; ch < nLoudspeakers; ch++) {
-                        pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->outputframeTF[band][ch][t]);
-                        pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->outputframeTF[band][ch][t]);
-                    }
-                }
-            }
-            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
-            for(ch = 0; ch < MIN(binauraliseLS==1 ? NUM_EARS : nLoudspeakers, nOutputs); ch++)
-                utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
-            for (; ch < nOutputs; ch++)
-                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
+        else if(pData->FIFO_idx >= FRAME_SIZE){
+            /* clear outFIFO if codec was not ready */
+            pData->FIFO_idx = 0;
+            memset(pData->outFIFO, 0, MAX_NUM_LOUDSPEAKERS*FRAME_SIZE*sizeof(float));
         }
     }
-    else
-        for (ch=0; ch < nOutputs; ch++)
-            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
-    
+
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
 
@@ -978,7 +978,7 @@ int ambi_dec_getDAWsamplerate(void* const hAmbi)
 
 int ambi_dec_getProcessingDelay()
 {
-    return 12*HOP_SIZE;
+    return FRAME_SIZE + 12*HOP_SIZE;
 }
 
 

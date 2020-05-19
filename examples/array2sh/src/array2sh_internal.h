@@ -73,6 +73,7 @@ typedef enum _ARRAY2SH_PROC_STATUS{
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
+#define FRAME_SIZE ( 128 )
 #define MAX_SH_ORDER ( ARRAY2SH_MAX_SH_ORDER ) /* maximum encoding order */
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1) ) /* (L+1)^2 */
 #define HOP_SIZE ( 128 )                       /* STFT hop size = nBands */

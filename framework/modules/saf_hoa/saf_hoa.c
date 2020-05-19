@@ -178,13 +178,24 @@ void getRSH_recur
 {
     int n, m, i, dir, index_n;
     float Nn0, Nnm;
-    float* factorials_n, *leg_n, *leg_n_1, *leg_n_2, *sin_el;
-    
-    factorials_n = malloc1d((2*N+1)*sizeof(float));
-    leg_n = malloc1d((N+1)*nDirs * sizeof(float));
-    leg_n_1 = calloc1d((N+1)*nDirs, sizeof(float));
-    leg_n_2 = calloc1d((N+1)*nDirs, sizeof(float));
-    sin_el = malloc1d(nDirs * sizeof(float));
+    float sleg_n[8], sleg_n_1[8], sleg_n_2[8], ssin_el, sfactorials_n[15];
+    float* leg_n, *leg_n_1, *leg_n_2, *sin_el, *factorials_n;
+
+    if(N<=7 && nDirs == 1){
+        /* Single direction optimisation for up to 7th order */
+        leg_n = sleg_n;
+        leg_n_1 = sleg_n_1;
+        leg_n_2 = sleg_n_2;
+        sin_el = &ssin_el;
+        factorials_n = sfactorials_n;
+    }
+    else{
+        factorials_n = malloc1d((2*N+1)*sizeof(float));
+        leg_n = malloc1d((N+1)*nDirs * sizeof(float));
+        leg_n_1 = malloc1d((N+1)*nDirs * sizeof(float));
+        leg_n_2 = malloc1d((N+1)*nDirs * sizeof(float));
+        sin_el = malloc1d(nDirs * sizeof(float));
+    } 
     index_n = 0;
     
     /* precompute factorials */
@@ -223,11 +234,13 @@ void getRSH_recur
         utility_svvcopy(leg_n,   (N+1)*nDirs, leg_n_1);
     }
     
-    free(factorials_n);
-    free(leg_n);
-    free(leg_n_1);
-    free(leg_n_2);
-    free(sin_el);
+    if(N>7 || nDirs > 1){
+        free(factorials_n);
+        free(leg_n);
+        free(leg_n_1);
+        free(leg_n_2);
+        free(sin_el);
+    }
 }
 
 

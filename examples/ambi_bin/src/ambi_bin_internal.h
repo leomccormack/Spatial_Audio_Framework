@@ -58,7 +58,8 @@ typedef enum _AMBI_BIN_PROC_STATUS{
 /* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
-    
+
+#define FRAME_SIZE ( 128 )
 #define HOP_SIZE ( 128 ) /* STFT hop size */
 #define HYBRID_BANDS ( 133 )
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )

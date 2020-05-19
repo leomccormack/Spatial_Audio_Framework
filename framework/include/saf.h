@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Leo McCormack
+ * Copyright 2018-2020 Leo McCormack
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -45,7 +45,7 @@
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by
  *   the module and, thus, also by the SAF framework as a whole. Add one of the
- *   following FLAGS to your project's preprocessor definitions list, in order
+ *   following FLAGS to your project's preprocessor definitions list in order
  *   to enable one of these suitable performance libraries, which must also be
  *   linked correctly to your project.
  *   - SAF_USE_INTEL_MKL:

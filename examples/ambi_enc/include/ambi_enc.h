@@ -269,6 +269,12 @@ int ambi_enc_getChOrder(void* const hAmbi);
  */
 int ambi_enc_getNormType(void* const hAmbi);
 
+/**
+ * Returns the processing delay in samples (may be used for delay compensation
+ * features)
+ */
+int ambi_enc_getProcessingDelay(void);
+
 
 #ifdef __cplusplus
 } /* extern "C" { */
