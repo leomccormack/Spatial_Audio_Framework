@@ -212,7 +212,7 @@ void ims_shoebox_renderRIRs
     if(sc->H_filt==NULL){
         sc->H_filt = (float**)realloc2d((void**)sc->H_filt, sc->nBands, (IMS_FIR_FILTERBANK_ORDER+1), sizeof(float));
         FIRFilterbank(IMS_FIR_FILTERBANK_ORDER, sc->band_cutofffreqs, sc->nBands-1,
-                      sc->fs, WINDOWING_FUNCTION_HAMMING, 1, ADR2D(sc->H_filt));
+                      sc->fs, WINDOWING_FUNCTION_HAMMING, 1, FLATTEN2D(sc->H_filt));
     }
 
     /* Render RIRs for all active source/receiver combinations */
@@ -277,7 +277,7 @@ void ims_shoebox_applyEchogramTD
     assert(rec_idx != -1);
 
     /* Initialise buffer for receiver with zeros */
-    memset(ADR2D(sc->recs[rec_idx].sigs), sc->recs[rec_idx].nChannels * nSamples, sizeof(float));
+    memset(FLATTEN2D(sc->recs[rec_idx].sigs), sc->recs[rec_idx].nChannels * nSamples, sizeof(float));
  
     /* Process all active sources (for this specific receiver) directly in the
      * time-domain */

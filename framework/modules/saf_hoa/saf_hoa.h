@@ -145,10 +145,85 @@ typedef enum _BINAURAL_AMBI_DECODER_METHODS {
     
 } BINAURAL_AMBI_DECODER_METHODS;
 
+/**
+ * Available Ambisonic channel ordering conventions
+ */
+typedef enum _HOA_CH_ORDER{
+    HOA_CH_ORDER_ACN,  /**< Ambisonic Channel numbering (ACN) convention, as
+                        *   used by the AmbiX standard and the majority of the
+                        *   framework */
+    HOA_CH_ORDER_FUMA  /**< Furse-Malham (FuMa) convention, often used by older
+                        *   recordings. The convention follows the WXYZ ordering
+                        *   of the omni and dipoles, and is suitable only for
+                        *   1st order */
+
+}HOA_CH_ORDER;
+
+/**
+ * Available Ambisonic normalisation conventions
+ */
+typedef enum _HOA_NORM{
+    HOA_NORM_N3D,  /**< Orthonormalised (N3D) convention, which is used by the
+                    *   framework */
+    HOA_NORM_SN3D, /**< Schmidt semi-normalisation (SN3D) convention, as used
+                    *   by the AmbiX standard */
+    HOA_NORM_FUMA  /**< Furse-Malham (FuMa) convention. This is equivalent to
+                    *   SN3D, except theres an additional 1/sqrt(2) scaling on
+                    *   the omni, and it's 1st order only */
+
+}HOA_NORM;
+
 
 /* ========================================================================== */
-/*                               Main Functions                               */
+/*                               Misc. Functions                              */
 /* ========================================================================== */
+
+/**
+ * Converts an Ambisonic signal from one channel ordering convention to another
+ *
+ * @note If inConvention == outConvention, then the 'insig' is simply copied to
+ *       'outsig'. Also, if one of the in/out conventions is FuMa, then only
+ *       the first 4 channels are converted, and any remaining channels of
+ *       'outsig' are set to zeros.
+ *
+ * @param[in]  insig         Input signal with the channel ordering convention
+ *                           of: inConvention; FLAT: (order+1)^2 x signalLength
+ * @param[in]  order         Ambisonic order
+ * @param[in]  signalLength  Signal length in samples
+ * @param[in]  inConvention  Channel order convention of input signals
+ * @param[in]  outConvention Channel order convention of output signals
+ * @param[in]  outsig        Output signal with the channel ordering convention
+ *                           of: outConvention; FLAT: (order+1)^2 x signalLength
+ */
+void convertHOAChannelConvention(/* Input Arguments */
+                                 float* insig,
+                                 int order,
+                                 int signalLength,
+                                 HOA_CH_ORDER inConvention,
+                                 HOA_CH_ORDER outConvention,
+                                 /* Output Arguments */
+                                 float* outsig);
+
+/**
+ * Converts an Ambisonic signal from one normalisation convention to another
+ *
+ * @note insig is converted "in-place".
+ *
+ * @param[in,out] insig         Input signal with the channel ordering
+ *                              convention of: inConvention, which should be
+ *                              converted to: outConvention, "in-place";
+ *                              FLAT: (order+1)^2 x signalLength
+ * @param[in]     order         Ambisonic order
+ * @param[in]     signalLength  Signal length in samples
+ * @param[in]     inConvention  Normalisation convention of the input signals
+ * @param[in]     outConvention Normalisation convention of the output signals
+ */
+void convertHOANormConvention(/* Input Arguments */
+                                 float* insig,
+                                 int order,
+                                 int signalLength,
+                                 HOA_NORM inConvention,
+                                 HOA_NORM outConvention);
 
 /**
  * Computes REAL spherical harmonics [1] for multiple directions on the sphere
@@ -211,6 +286,11 @@ void getRSH_recur(/* Input Arguments */
                   int nDirs,
                   /* Output Arguments */
                   float* Y);
+
+
+/* ========================================================================== */
+/*                               Main Functions                               */
+/* ========================================================================== */
 
 /**
  * Computes the weights required to manipulate a hyper-cardioid beam-pattern,

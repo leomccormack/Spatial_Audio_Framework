@@ -47,8 +47,10 @@ void loadSofaFile
     double* IR, *SourcePosition, IR_fs;
     
     /* free any existing memory */
-    free(*hrirs);
-    free(*hrir_dirs_deg);
+    if(*hrirs!=NULL)
+        free(*hrirs);
+    if(*hrir_dirs_deg!=NULL)
+        free(*hrir_dirs_deg);
     
     /* open sofa file */
     /* (retval is set to error value if sofa_filepath==NULL (intentional), or if the file
@@ -93,6 +95,7 @@ void loadSofaFile
 #endif
         return;
     }
+    assert(ncid!=-1);
  
     /* Determine dimension IDs and lengths */
     /* Note: there are 6 possible dimension lengths in the sofa standard */

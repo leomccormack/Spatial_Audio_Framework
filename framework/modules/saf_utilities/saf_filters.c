@@ -594,7 +594,7 @@ void butterCoeffs
     /* Transform lowpass filter into the desired filter (while in state space) */
     switch(filterType){
         case BUTTER_FILTER_HPF:
-            utility_dinv(ADR2D(a_state), ADR2D(a_state), numStates);
+            utility_dinv(FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
         case BUTTER_FILTER_LPF:
             bf_ss = (double**)malloc2d(numStates,numStates,sizeof(double));
             for(i=0; i<numStates; i++)
@@ -602,7 +602,7 @@ void butterCoeffs
                     bf_ss[i][j] = w0*(a_state[i][j]);
             break;
         case BUTTER_FILTER_BSF:
-            utility_dinv(ADR2D(a_state), ADR2D(a_state), numStates);
+            utility_dinv(FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
         case BUTTER_FILTER_BPF:
             numStates = numStates*2;
             w1 = 4.0*tan(M_PI*whi/2.0);
@@ -633,11 +633,11 @@ void butterCoeffs
             tmp2[i][j] = (i==j ? 1.0f : 0.0f) - bf_ss[i][j]*0.25;
         }
     }
-    utility_dglslv(ADR2D(tmp2), numStates, ADR2D(tmp1), numStates, ADR2D(a_bili));
+    utility_dglslv(FLATTEN2D(tmp2), numStates, FLATTEN2D(tmp1), numStates, FLATTEN2D(a_bili));
 
     /* Compute the filter coefficients for the numerator and denominator */
     a_coeffs_cmplx = malloc1d(nCoeffs*sizeof(double_complex));
-    polyd_m(ADR2D(a_bili), a_coeffs_cmplx, numStates);
+    polyd_m(FLATTEN2D(a_bili), a_coeffs_cmplx, numStates);
     rcmplx = NULL;
     r = NULL;
     switch(filterType){
@@ -893,10 +893,10 @@ void faf_IIRFilterbank_flushBuffers
 {
     faf_IIRFB_data *fb = (faf_IIRFB_data*)(hFaF);
 
-    memset(ADR3D(fb->wz_hpf),  0, (fb->nBands) * (fb->nFilters) * (fb->filtOrder) * sizeof(float));
-    memset(ADR3D(fb->wz_lpf),  0, (fb->nBands) * (fb->nFilters) * (fb->filtOrder) * sizeof(float));
-    memset(ADR3D(fb->wz_apf1), 0, (fb->nBands) * (fb->nFilters) * (fb->filtOrder) * sizeof(float));
-    memset(ADR3D(fb->wz_apf2), 0, (fb->nBands) * (fb->nFilters) * (fb->filtOrder) * sizeof(float));
+    memset(FLATTEN3D(fb->wz_hpf),  0, (fb->nBands) * (fb->nFilters) * (fb->filtOrder) * sizeof(float));
+    memset(FLATTEN3D(fb->wz_lpf),  0, (fb->nBands) * (fb->nFilters) * (fb->filtOrder) * sizeof(float));
+    memset(FLATTEN3D(fb->wz_apf1), 0, (fb->nBands) * (fb->nFilters) * (fb->filtOrder) * sizeof(float));
+    memset(FLATTEN3D(fb->wz_apf2), 0, (fb->nBands) * (fb->nFilters) * (fb->filtOrder) * sizeof(float));
 }
 
 void faf_IIRFilterbank_destroy

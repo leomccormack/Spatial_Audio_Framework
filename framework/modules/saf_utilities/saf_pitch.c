@@ -93,7 +93,7 @@ static void smbFft(float *fftBuffer, int fftFrameSize, long sign)
 #endif
 
 /**
- * Main structure for the SMB pitcher shifter
+ * Main structure for the SMB pitch shifter
  */
 typedef struct _smb_pitchShift_data
 {

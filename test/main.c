@@ -215,7 +215,7 @@ void test__saf_stft_LTI(void){
 
     /* Check that input==output (given some numerical precision) */
     for(i=0; i<fs-framesize; i++)
-        TEST_ASSERT_TRUE( fabsf(insig[0][i] - outsig[0][i]) <= acceptedTolerance );
+        TEST_ASSERT_TRUE( fabsf(insig[0][i] - outsig[63][i]) <= acceptedTolerance );
 
     /* Clean-up */
     saf_stft_destroy(&hSTFT);

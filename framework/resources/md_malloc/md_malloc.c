@@ -22,17 +22,16 @@
 
 /**
  * @file md_malloc.c
- * @brief Implementations of dynamic memory allocation functions for
- *        contiguous multidimensional "arrays"
+ * @brief Memory allocation functions for contiguous multi-dimensional arrays
  *
- * Taken from: https://github.com/leomccormack/md_malloc
+ * Adapted from: https://github.com/leomccormack/md_malloc
  *
  * An example of allocating, indexing and freeing a 3-D "array":
  * \code{.c}
  *   float*** example3D = (float***)malloc3d(10, 20, 5, sizeof(float);
  *   // Due to the contiguous nature of the allocation, this is possible:
- *   memset(ADR3D(example3D), 0, 10*20*5*sizeof(float));
- *   // And my still be indexed normally as:
+ *   memset(FLATTEN3D(example3D), 0, 10*20*5*sizeof(float));
+ *   // And may still be indexed normally as:
  *   example3D[3][19][2] = 22.0f;
  *   // To free, simply call:
  *   free(example3D);
@@ -143,7 +142,7 @@ void** realloc2d_r(void** ptr, size_t new_dim1, size_t new_dim2, size_t prev_dim
 
     /* Copy previous data */
     prev_data = malloc2d(prev_dim1, prev_dim2, data_size);
-    memcpy(ADR2D(prev_data), ADR2D(ptr), prev_dim1*prev_dim2*data_size);
+    memcpy(FLATTEN2D(prev_data), FLATTEN2D(ptr), prev_dim1*prev_dim2*data_size);
 
     /* Resize */
     unsigned char* p2;
@@ -241,7 +240,7 @@ void*** realloc3d_r(void*** ptr, size_t new_dim1, size_t new_dim2, size_t new_di
 
     /* Copy previous data */
     prev_data = malloc3d(prev_dim1, prev_dim2, prev_dim3, data_size);
-    memcpy(ADR3D(prev_data), ADR3D(ptr), prev_dim1*prev_dim2*prev_dim3*data_size);
+    memcpy(FLATTEN3D(prev_data), FLATTEN3D(ptr), prev_dim1*prev_dim2*prev_dim3*data_size);
 
     /* Resize */
     stride1 = new_dim2*new_dim3*data_size;

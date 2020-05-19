@@ -59,8 +59,8 @@ typedef enum _AMBI_BIN_PROC_STATUS{
 /*                            Internal Parameters                             */
 /* ========================================================================== */
     
-#define HOP_SIZE ( 128 ) /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 ) /* hybrid mode incurs an additional 4 bands  */
+#define HOP_SIZE ( 128 ) /* STFT hop size */
+#define HYBRID_BANDS ( 133 )
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )
 #define NUM_EARS ( 2 ) /* true for most humans */
 #define MAX_SH_ORDER ( AMBI_BIN_MAX_SH_ORDER ) /* 7->64 channels; maximum for most hosts */
@@ -106,6 +106,11 @@ typedef struct _ambi_bin_codecPars
  */
 typedef struct _ambi_bin
 {
+    /* FIFO buffers */
+    int FIFO_idx;
+    float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float outFIFO[NUM_EARS][FRAME_SIZE];
+
     /* audio buffers + afSTFT time-frequency transform handle */
     int fs;                         /**< host sampling rate */
     float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];

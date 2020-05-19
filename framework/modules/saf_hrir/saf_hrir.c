@@ -102,12 +102,14 @@ void estimateITDs
 
 void HRIRs2FilterbankHRTFs
 (
-    float* hrirs, /* N_dirs x 2 x hrir_len */
+    float* hrirs, /* N_dirs x NUM_EARS x hrir_len */
     int N_dirs,
     int hrir_len,
-    float_complex* hrtf_fb /* 133 x 2 x N_dirs */
+    int nBands,
+    float_complex* hrtf_fb /* 133 x NUM_EARS x N_dirs */
 )
 {
+    assert(nBands == 133);
     /* convert the HRIRs to filterbank coefficients */
     /* hard-coded to 128 hopsize and hybrid mode enabled (133 bins total) */
     FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, 133, hrtf_fb);
@@ -119,14 +121,16 @@ void HRIRs2HRTFs
     int N_dirs,
     int hrir_len,
     int fftSize,
-    float_complex* hrtfs /* (fftSize/2+1) x 2 x N_dirs  */
+    float_complex* hrtfs /* (fftSize/2+1) x NUM_EARS x N_dirs  */
 )
 {
     int i, j, k, nBins;
     void* hSafFFT;
     float* hrir_pad;
     float_complex* hrtf;
- 
+
+    //TODO: if fftSize is shorter than hrir_len, maybe truncate based on the median peak?
+    /* Perform FFT */
     nBins = fftSize/2 + 1;
     saf_rfft_create(&hSafFFT, fftSize);
     hrir_pad = calloc1d(fftSize, sizeof(float));

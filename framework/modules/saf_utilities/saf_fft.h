@@ -61,7 +61,7 @@ typedef enum _SAF_STFT_FDDATA_FORMAT{
 /* ========================================================================== */
 
 /**
- * Calcuates the frequencies (in Hz) of uniformly spaced bins, for a given
+ * Calculates the frequencies (in Hz) of uniformly spaced bins, for a given
  * FFT size and sampling rate
  *
  * @param[in]  fftSize    FFT size

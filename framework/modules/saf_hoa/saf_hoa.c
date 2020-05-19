@@ -30,6 +30,113 @@
 #include "saf_hoa.h"
 #include "saf_hoa_internal.h"
 
+/* ========================================================================== */
+/*                               Misc. Functions                              */
+/* ========================================================================== */
+
+void convertHOAChannelConvention
+(
+    float* insig,
+    int order,
+    int signalLength,
+    HOA_CH_ORDER inConvention,
+    HOA_CH_ORDER outConvention,
+    float* outsig
+)
+{
+    int i, nSH;
+
+    nSH = ORDER2NSH(order);
+
+    /* bypass, if 0th order, or no conversion required */
+    if(order==0 || inConvention == outConvention){
+        memcpy(outsig, insig, nSH*signalLength*sizeof(float));
+        return;
+    }
+#if 0 /* Now changed to just zeroing the remaining channels */
+    /* Assert that FuMa is not being used for anything other than 1st order */
+    if(order!=1){
+        /* FuMa not supported for more than 1st order */
+        assert(inConvention!=HOA_CH_ORDER_FUMA);
+        assert(outConvention!=HOA_CH_ORDER_FUMA);
+    }
+#endif
+
+    /* Convert FUMA to ACN */
+    if(inConvention==HOA_CH_ORDER_FUMA && outConvention==HOA_CH_ORDER_ACN){
+        memcpy(&outsig[0*signalLength], &insig[0*signalLength], signalLength*sizeof(float));
+        memcpy(&outsig[1*signalLength], &insig[3*signalLength], signalLength*sizeof(float));
+        memcpy(&outsig[2*signalLength], &insig[1*signalLength], signalLength*sizeof(float));
+        memcpy(&outsig[3*signalLength], &insig[2*signalLength], signalLength*sizeof(float));
+    }
+    /* Convert ACN to FUMA */
+    else if(inConvention==HOA_CH_ORDER_ACN && outConvention==HOA_CH_ORDER_FUMA){
+        memcpy(&outsig[0*signalLength], &insig[0*signalLength], signalLength*sizeof(float));
+        memcpy(&outsig[1*signalLength], &insig[2*signalLength], signalLength*sizeof(float));
+        memcpy(&outsig[2*signalLength], &insig[3*signalLength], signalLength*sizeof(float));
+        memcpy(&outsig[3*signalLength], &insig[1*signalLength], signalLength*sizeof(float));
+    }
+    /* Fill any remaining channels with zeros */
+    for(i=4; i<nSH; i++)
+        memset(&outsig[i*signalLength], 0, signalLength * sizeof(float));
+}
+
+void convertHOANormConvention
+(
+    float* insig,
+    int order,
+    int signalLength,
+    HOA_NORM inConvention,
+    HOA_NORM outConvention
+)
+{
+    int n, ch, i;
+
+    if(order==0 || inConvention == outConvention)
+        return; /* Nothing to do */
+
+    if(inConvention==HOA_NORM_N3D){
+        if(outConvention == HOA_NORM_SN3D){
+            for (n = 0; n<order+1; n++)
+                for (ch = ORDER2NSH(n-1); ch < ORDER2NSH(n); ch++)
+                    for(i = 0; i<signalLength; i++)
+                        insig[ch*signalLength+i] /= sqrtf(2.0f*(float)n+1.0f);
+        }
+        else if(outConvention==HOA_NORM_FUMA){
+            for(i = 0; i<signalLength; i++)
+                insig[i] /= sqrtf(2.0f);
+            for (ch = 1; ch<4 /* 1st order only */; ch++)
+                for(i = 0; i<signalLength; i++)
+                    insig[ch*signalLength+i] /= sqrtf(3.0f);
+        }
+    }
+    else if(inConvention==HOA_NORM_SN3D){
+        if(outConvention == HOA_NORM_N3D){
+             for (n = 0; n<order+1; n++)
+                 for (ch = ORDER2NSH(n-1); ch<ORDER2NSH(n); ch++)
+                     for(i = 0; i<signalLength; i++)
+                         insig[ch*signalLength+i] *= sqrtf(2.0f*(float)n+1.0f);
+        }
+        else if(outConvention==HOA_NORM_FUMA){
+             for(i = 0; i<signalLength; i++)
+                 insig[i] /= sqrtf(2.0f);
+        }
+    }
+    else if(inConvention==HOA_NORM_FUMA){
+        if(outConvention == HOA_NORM_N3D){
+            for(i = 0; i<signalLength; i++)
+                insig[i] *= sqrtf(2.0f);
+            for (ch = 1; ch<4 /* 1st order only */; ch++)
+                for(i = 0; i<signalLength; i++)
+                    insig[ch*signalLength+i] *= sqrtf(3.0f);
+        }
+        else if(outConvention == HOA_NORM_SN3D){
+            for(i = 0; i<signalLength; i++)
+                insig[i] *= sqrtf(2.0f);
+        }
+    }
+}
+
 void getRSH
 (
     int N,
@@ -122,6 +229,11 @@ void getRSH_recur
     free(leg_n_2);
     free(sin_el);
 }
+
+
+/* ========================================================================== */
+/*                               Main Functions                               */
+/* ========================================================================== */
 
 void getMaxREweights
 (

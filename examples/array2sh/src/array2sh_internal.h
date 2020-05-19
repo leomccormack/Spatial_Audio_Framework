@@ -107,6 +107,11 @@ typedef struct _array2sh_arrayPars {
  */
 typedef struct _array2sh
 {
+    /* FIFO buffers */
+    int FIFO_idx;
+    float inFIFO[MAX_NUM_SENSORS][FRAME_SIZE];
+    float outFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+
     /* audio buffers */
     float inputFrameTD[MAX_NUM_SENSORS][FRAME_SIZE];
     float SHframeTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];

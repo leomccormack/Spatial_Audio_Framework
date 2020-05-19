@@ -22,17 +22,16 @@
 
 /**
  * @file md_malloc.h
- * @brief Implementations of dynamic memory allocation functions for
- *        contiguous multidimensional "arrays"
+ * @brief Memory allocation functions for contiguous multi-dimensional arrays
  *
- * Taken from: https://github.com/leomccormack/md_malloc
+ * Adapted from: https://github.com/leomccormack/md_malloc
  *
  * An example of allocating, indexing and freeing a 3-D "array":
  * \code{.c}
  *   float*** example3D = (float***)malloc3d(10, 20, 5, sizeof(float);
  *   // Due to the contiguous nature of the allocation, this is possible:
- *   memset(ADR3D(example3D), 0, 10*20*5*sizeof(float));
- *   // And my still be indexed normally as:
+ *   memset(FLATTEN3D(example3D), 0, 10*20*5*sizeof(float));
+ *   // And may still be indexed normally as:
  *   example3D[3][19][2] = 22.0f;
  *   // To free, simply call:
  *   free(example3D);
@@ -49,53 +48,84 @@
 extern "C" {
 #endif /* __cplusplus */
     
-/* These macros return the address of a pointer to the first element in the
- * array. Use them for passing arrays to memset/memcpy, or blas/lapack functions
- * etc. e.g.
+/**
+ * A macro which returns the address of a pointer to the first element in a 2-D
+ * synamic array
+ *
+ * Use this macro when passing a 2-D dynamic multi-dimensional array to
+ * memset/memcpy, blas/lapack functions, and any other function which expects a
+ * flat contiguous 1-D data structure.
+ * e.g.
  *   float** array2D = (float**)malloc2d(10, 40, sizeof(float));
- *   memset(ADR2D(array2D), 0, 10*40*sizeof(float)); */ 
-#define ADR2D(A) (*A)
-#define ADR3D(A) (**A)
+ *   memset(FLATTEN2D(array2D), 0, 10*40*sizeof(float));
+ */
+#define FLATTEN2D(A) (*A)  /* || (&A[0][0]) */
+
+/**
+ * A macro which returns the address of a pointer to the first element in a 3-D
+ * synamic array
+ *
+ * Use this macro when passing a 3-D dynamic multi-dimensional array to
+ * memset/memcpy, blas/lapack functions, and any other function which expects a
+ * flat contiguous 1-D data structure.
+ */
+#define FLATTEN3D(A) (**A) /* || (&A[0][0][0]) */
     
 /**
- * 1-D malloc
+ * 1-D malloc (same as malloc, but with error checking)
  */
 void* malloc1d(size_t dim1_data_size);
+
 /**
- * 1-D calloc
+ * 1-D calloc (same as calloc, but with error checking)
  */
 void* calloc1d(size_t dim1, size_t data_size);
+
 /**
- * 1-D realloc
+ * 1-D realloc (same as realloc, but with error checking)
  */
 void* realloc1d(void* ptr, size_t dim1_data_size);
 
 /**
- * 2-D malloc */
+ * 2-D malloc (contiguously allocated, so use free() as usual to deallocate)
+ */
 void** malloc2d(size_t dim1, size_t dim2, size_t data_size);
+
 /**
- * 2-D calloc */
+ * 2-D calloc (contiguously allocated, so use free() as usual to deallocate)
+ */
 void** calloc2d(size_t dim1, size_t dim2, size_t data_size);
+
 /**
- * 2-D realloc that does NOT retain previous data order */
+ * 2-D realloc which does NOT retain previous data order
+ */
 void** realloc2d(void** ptr, size_t dim1, size_t dim2, size_t data_size);
+
 /**
- * 2-D realloc that does retain previous data order */
+ * 2-D realloc which does retain previous data order
+ */
 void** realloc2d_r(void** ptr, size_t new_dim1, size_t new_dim2,
                    size_t prev_dim1, size_t prev_dim2, size_t data_size);
  
 /**
- * 3-D malloc */
+ * 3-D malloc (contiguously allocated, so use free() as usual to deallocate)
+ */
 void*** malloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size);
+
 /**
- * 3-D calloc */
+ * 3-D calloc (contiguously allocated, so use free() as usual to deallocate)
+ */
 void*** calloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size);
+
 /**
- * 3-D realloc that does NOT retain previous data order */
+ * 3-D realloc which does NOT retain previous data order
+ */
 void*** realloc3d(void*** ptr, size_t dim1, size_t dim2, size_t dim3,
                   size_t data_size);
+
 /**
- * 3-D realloc that does retain previous data order */
+ * 3-D realloc which does retain previous data order
+ */
 void*** realloc3d_r(void*** ptr, size_t new_dim1, size_t new_dim2,
                     size_t new_dim3, size_t prev_dim1, size_t prev_dim2,
                     size_t prev_dim3, size_t data_size);

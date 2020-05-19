@@ -368,9 +368,9 @@ void ims_shoebox_coreAbsorptionModule
         ims_shoebox_echogramResize(wrk->hEchogram_abs[band], echogram_rec->numImageSources, echogram_rec->nChannels);
 
         /* Copy data */
-        memcpy(ADR2D(echogram_abs->value), ADR2D(echogram_rec->value), (echogram_abs->numImageSources)*(echogram_abs->nChannels)*sizeof(float));
+        memcpy(FLATTEN2D(echogram_abs->value), FLATTEN2D(echogram_rec->value), (echogram_abs->numImageSources)*(echogram_abs->nChannels)*sizeof(float));
         memcpy(echogram_abs->time, echogram_rec->time, (echogram_abs->numImageSources)*sizeof(float));
-        memcpy(ADR2D(echogram_abs->order), ADR2D(echogram_rec->order), (echogram_abs->numImageSources)*3*sizeof(int));
+        memcpy(FLATTEN2D(echogram_abs->order), FLATTEN2D(echogram_rec->order), (echogram_abs->numImageSources)*3*sizeof(int));
         memcpy(echogram_abs->coords, echogram_rec->coords, (echogram_abs->numImageSources)*sizeof(ims_pos_xyz));
         memcpy(echogram_abs->sortedIdx, echogram_rec->sortedIdx, (echogram_abs->numImageSources)*sizeof(int));
 
@@ -450,7 +450,7 @@ void ims_shoebox_renderRIR
             wrk->rir_bands[band] = (float**)realloc2d((void**)wrk->rir_bands[band], echogram_abs->nChannels, rir_len_samples, sizeof(float));
             wrk->rir_len_samples = rir_len_samples;
             wrk->rir_len_seconds = rir_len_seconds;
-            memset(ADR2D(wrk->rir_bands[band]), 0, (echogram_abs->nChannels)*rir_len_samples*sizeof(float)); /* flush */
+            memset(FLATTEN2D(wrk->rir_bands[band]), 0, (echogram_abs->nChannels)*rir_len_samples*sizeof(float)); /* flush */
 
             /* Accumulate 'values' for each image source */
             for(i=0; i<echogram_abs->numImageSources; i++){

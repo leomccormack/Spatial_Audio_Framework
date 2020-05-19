@@ -435,8 +435,9 @@ void saf_stft_flushBuffers
 )
 {
     saf_stft_data *h = (saf_stft_data*)(hSTFT);
-    memset(ADR3D(h->prev_inhops), 0, h->nPrevHops * (h->nCHin) * (h->hopsize) * sizeof(float));
-    memset(ADR2D(h->overlapAddBuffer), 0, h->nCHout * (h->bufferlength) * sizeof(float));
+    if(h->nPrevHops > 0)
+        memset(FLATTEN3D(h->prev_inhops), 0, h->nPrevHops * (h->nCHin) * (h->hopsize) * sizeof(float));
+    memset(FLATTEN2D(h->overlapAddBuffer), 0, h->nCHout * (h->bufferlength) * sizeof(float));
 }
 
 void saf_stft_channelChange
@@ -449,7 +450,7 @@ void saf_stft_channelChange
     saf_stft_data *h = (saf_stft_data*)(hSTFT);
     int i, ch;
 
-    if(new_nCHin != h->nCHin && h->prev_inhops != NULL){
+    if(new_nCHin != h->nCHin && h->nPrevHops > 0){
         /* Reallocate memory while retaining previous values (which will be
          * truncated if new_nCHin < nCHin) */
         h->prev_inhops = (float***)realloc3d_r((void***)h->prev_inhops, h->nPrevHops, new_nCHin, h->hopsize,
