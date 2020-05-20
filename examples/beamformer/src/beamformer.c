@@ -36,25 +36,25 @@ void beamformer_create
 
     /* default user parameters */
     pData->beamOrder = 1;
-    pData->nSH = pData->new_nSH = (pData->beamOrder + 1)*(pData->beamOrder + 1);
     for(i=0; i<MAX_NUM_BEAMS; i++){
         pData->beam_dirs_deg[i][0] = default_LScoords64_rad[i][0]*180.0f/M_PI;
         pData->beam_dirs_deg[i][1] = (default_LScoords64_rad[i][1] - M_PI/2.0f) < -M_PI/2.0f ?
         (M_PI/2.0f + default_LScoords64_rad[i][1]) :  (default_LScoords64_rad[i][1] - M_PI/2.0f);
         pData->beam_dirs_deg[i][1] *= 180.0f/M_PI;
     }
-    pData->nBeams = pData->new_nBeams = 1;
+    pData->nBeams = 1;
     pData->beamType = BEAM_TYPE_HYPERCARDIOID;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
-    
-    /* internal parameters */
-    pData->new_nSH = pData->new_nSH = (pData->beamOrder+1)*(pData->beamOrder+1);
-    
+
     /* flags */
-    pData->reInitTFT = 1;
     for(ch=0; ch<MAX_NUM_BEAMS; ch++)
         pData->recalc_beamWeights[ch] = 1;
+
+    /* set FIFO buffers */
+    pData->FIFO_idx = 0;
+    memset(pData->inFIFO, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
+    memset(pData->outFIFO, 0, MAX_NUM_BEAMS*FRAME_SIZE*sizeof(float));
 }
 
 void beamformer_destroy
@@ -104,122 +104,114 @@ void beamformer_process
 )
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    int n, ch, i, j, bi;
+    int s, n, ch, i, j, bi, nSH;
     int o[MAX_SH_ORDER+2];
 
     /* local copies of user parameters */
     int nBeams, beamOrder;
     BEAMFORMER_NORM_TYPES norm;
     BEAMFORMER_CH_ORDER chOrdering;
-    
-    /* reinitialise if needed */
-    if(pData->reInitTFT==1){
-        pData->reInitTFT = 2;
-        beamformer_initTFT(hBeam);
-        pData->reInitTFT = 0;
-    }
+    for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
+    beamOrder = pData->beamOrder;
+    nSH = ORDER2NSH(beamOrder);
+    nBeams = pData->nBeams;
+    norm = pData->norm;
+    chOrdering = pData->chOrdering;
+     
+    /* Loop over all samples */
+    for(s=0; s<nSamples; s++){
+        /* Load input signals into inFIFO buffer */
+        for(ch=0; ch<MIN(nInputs,MAX_NUM_SH_SIGNALS); ch++)
+            pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
+        for(; ch<nSH; ch++) /* Zero any channels that were not given */
+            pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
 
-    /* decode audio to loudspeakers or headphones */
-    if( (nSamples == FRAME_SIZE) && (pData->reInitTFT==0) ) {
-        /* copy user parameters to local variables */
-        for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
-        beamOrder = pData->beamOrder;
-        nBeams = pData->nBeams;
-        norm = pData->norm;
-        chOrdering = pData->chOrdering;
-        
-        /* Load time-domain data */
-        switch(chOrdering){
-            case CH_ACN:
-                for(i=0; i < MIN(pData->nSH, nInputs); i++)
-                    utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
-                for(; i<pData->nSH; i++)
-                    memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
-                break;
-            case CH_FUMA:   /* only for first-order, convert to ACN */
-                if(nInputs>=4){
-                    utility_svvcopy(inputs[0], FRAME_SIZE, pData->SHFrameTD[0]);
-                    utility_svvcopy(inputs[1], FRAME_SIZE, pData->SHFrameTD[3]);
-                    utility_svvcopy(inputs[2], FRAME_SIZE, pData->SHFrameTD[1]);
-                    utility_svvcopy(inputs[3], FRAME_SIZE, pData->SHFrameTD[2]);
-                    for(i=4; i<pData->nSH; i++)
-                        memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+        /* Pull output signals from outFIFO buffer */
+        for(ch=0; ch<MIN(nOutputs, MAX_NUM_BEAMS); ch++)
+            outputs[ch][s] = pData->outFIFO[ch][pData->FIFO_idx];
+        for(; ch<nOutputs; ch++) /* Zero any extra channels */
+            outputs[ch][s] = 0.0f;
+
+        /* Increment buffer index */
+        pData->FIFO_idx++;
+
+        /* Process frame if inFIFO is full and codec is ready for it */
+        if (pData->FIFO_idx >= FRAME_SIZE) {
+            pData->FIFO_idx = 0;
+
+            /* Load time-domain data */
+            switch(chOrdering){
+              case CH_ACN:
+                  convertHOAChannelConvention((float*)pData->inFIFO, beamOrder, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_ACN, (float*)pData->SHFrameTD);
+                  break;
+              case CH_FUMA:
+                  convertHOAChannelConvention((float*)pData->inFIFO, beamOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN, (float*)pData->SHFrameTD);
+                  break;
+            }
+
+            /* account for input normalisation scheme */
+            switch(norm){
+              case NORM_N3D:  /* already in N3D, do nothing */
+                  break;
+              case NORM_SN3D: /* convert to N3D */
+                  convertHOANormConvention((float*)pData->SHFrameTD, beamOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
+                  break;
+              case NORM_FUMA: /* only for first-order, convert to N3D */
+                  convertHOANormConvention((float*)pData->SHFrameTD, beamOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
+                  break;
+            }
+
+            /* Main processing: */
+            float* c_n;
+            c_n = malloc1d((beamOrder+1)*sizeof(float));
+
+            /* calculate beamforming coeffients */
+            for(bi=0; bi<nBeams; bi++){
+                if(pData->recalc_beamWeights[bi]){
+                    memset(pData->beamWeights[bi], 0, MAX_NUM_SH_SIGNALS*sizeof(float));
+                    switch(pData->beamType){
+                        case BEAM_TYPE_CARDIOID: beamWeightsCardioid2Spherical(beamOrder, c_n); break;
+                        case BEAM_TYPE_HYPERCARDIOID: beamWeightsHypercardioid2Spherical(beamOrder, c_n); break;
+                        case BEAM_TYPE_MAX_EV: beamWeightsMaxEV(beamOrder, c_n); break;
+                    }
+                    rotateAxisCoeffsReal(beamOrder, c_n, M_PI/2.0f - pData->beam_dirs_deg[bi][1]*M_PI/180.0f,
+                                            pData->beam_dirs_deg[bi][0]*M_PI/180.0f, (float*)pData->beamWeights[bi]);
+
+                    pData->recalc_beamWeights[bi] = 0;
                 }
                 else
-                    for(i=0; i<pData->nSH; i++)
-                        memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float));
-                break;
-        }
-        
-        /* account for input normalisation scheme */
-        switch(norm){
-            case NORM_N3D:  /* already in N3D, do nothing */
-                break;
-            case NORM_SN3D: /* convert to N3D */
-                for (n = 0; n<beamOrder+1; n++)
-                    for (ch = o[n]; ch<o[n+1]; ch++)
-                        for(i = 0; i<FRAME_SIZE; i++)
-                            pData->SHFrameTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
-                break;
-            case NORM_FUMA: /* only for first-order, convert to N3D */
-                for(i = 0; i<FRAME_SIZE; i++)
-                    pData->SHFrameTD[0][i] *= sqrtf(2.0f);
-                for (ch = 1; ch<4; ch++)
-                    for(i = 0; i<FRAME_SIZE; i++)
-                        pData->SHFrameTD[ch][i] *= sqrtf(3.0f);
-                break;
-        }
-        
-        /* Main processing: */
-        float* c_n;
-        c_n = malloc1d((beamOrder+1)*sizeof(float));
-            
-        /* calculate beamforming coeffients */
-        for(bi=0; bi<nBeams; bi++){
-            if(pData->recalc_beamWeights[bi]){
-                memset(pData->beamWeights[bi], 0, MAX_NUM_SH_SIGNALS*sizeof(float));
-                switch(pData->beamType){
-                    case BEAM_TYPE_CARDIOID: beamWeightsCardioid2Spherical(beamOrder, c_n); break;
-                    case BEAM_TYPE_HYPERCARDIOID: beamWeightsHypercardioid2Spherical(beamOrder, c_n); break;
-                    case BEAM_TYPE_MAX_EV: beamWeightsMaxEV(beamOrder, c_n); break;
-                }
-                rotateAxisCoeffsReal(beamOrder, c_n, M_PI/2.0f - pData->beam_dirs_deg[bi][1]*M_PI/180.0f,
-                                        pData->beam_dirs_deg[bi][0]*M_PI/180.0f, (float*)pData->beamWeights[bi]);
-                    
-                pData->recalc_beamWeights[bi] = 0;
+                    memcpy(pData->beamWeights[bi], pData->prev_beamWeights[bi], nSH*sizeof(float));
             }
-            else
-                memcpy(pData->beamWeights[bi], pData->prev_beamWeights[bi], pData->nSH*sizeof(float));
+            free(c_n);
+
+            /* apply beam weights */
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, nSH, 1.0f,
+                        (const float*)pData->prev_beamWeights, MAX_NUM_SH_SIGNALS,
+                        (const float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
+                        (float*)pData->tempFrame, FRAME_SIZE);
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, nSH, 1.0f,
+                        (const float*)pData->beamWeights, MAX_NUM_SH_SIGNALS,
+                        (const float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
+                        (float*)pData->outputFrameTD, FRAME_SIZE);
+
+            for (i=0; i <nBeams; i++)
+                for(j=0; j<FRAME_SIZE; j++)
+                    pData->outputFrameTD[i][j] =  pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
+
+            /* for next frame */
+            utility_svvcopy((const float*)pData->SHFrameTD, nSH*FRAME_SIZE, (float*)pData->prev_SHFrameTD);
+            utility_svvcopy((const float*)pData->beamWeights, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_beamWeights);
+
+            /* copy to output buffer */
+            for(ch = 0; ch < MIN(nBeams, nOutputs); ch++)
+                utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, pData->outFIFO[ch]);
         }
-        free(c_n);
-            
-        /* apply beam weights */
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, pData->nSH, 1.0f,
-                    (const float*)pData->prev_beamWeights, MAX_NUM_SH_SIGNALS,
-                    (const float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
-                    (float*)pData->tempFrame, FRAME_SIZE);
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, pData->nSH, 1.0f,
-                    (const float*)pData->beamWeights, MAX_NUM_SH_SIGNALS,
-                    (const float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
-                    (float*)pData->outputFrameTD, FRAME_SIZE);
-            
-        for (i=0; i <nBeams; i++)
-            for(j=0; j<FRAME_SIZE; j++)
-                pData->outputFrameTD[i][j] =  pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
-            
-        /* for next frame */
-        utility_svvcopy((const float*)pData->SHFrameTD, pData->nSH*FRAME_SIZE, (float*)pData->prev_SHFrameTD);
-        utility_svvcopy((const float*)pData->beamWeights, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_beamWeights);
-            
-        /* copy to output buffer */
-        for(ch = 0; ch < MIN(nBeams, nOutputs); ch++)
-            utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
-        for (; ch < nOutputs; ch++)
-            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+        else if(pData->FIFO_idx >= FRAME_SIZE){
+            /* clear outFIFO if codec was not ready */
+            pData->FIFO_idx = 0;
+            memset(pData->outFIFO, 0, MAX_NUM_BEAMS*FRAME_SIZE*sizeof(float));
+        }
     }
-    else
-        for (ch=0; ch < nOutputs; ch++)
-            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
 }
 
 
@@ -227,8 +219,6 @@ void beamformer_process
 
 void beamformer_refreshSettings(void* const hBeam)
 {
-    beamformer_data *pData = (beamformer_data*)(hBeam);
-    pData->reInitTFT = 1;
 }
 
 void beamformer_setBeamOrder(void  * const hBeam, int newValue)
@@ -236,8 +226,6 @@ void beamformer_setBeamOrder(void  * const hBeam, int newValue)
     beamformer_data *pData = (beamformer_data*)(hBeam);
     int ch;
     pData->beamOrder = MIN(MAX(newValue,1), MAX_SH_ORDER);
-    pData->new_nSH = (pData->beamOrder+1)*(pData->beamOrder+1);
-    pData->reInitTFT = 1;
     for(ch=0; ch<MAX_NUM_BEAMS; ch++)
         pData->recalc_beamWeights[ch] = 1;
     /* FUMA only supports 1st order */
@@ -271,9 +259,8 @@ void beamformer_setNumBeams(void* const hBeam, int new_nBeams)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
     int ch;
-    pData->new_nBeams = CLAMP(new_nBeams, 1, MAX_NUM_BEAMS);
-    if(pData->nBeams != pData->new_nBeams){
-        pData->reInitTFT = 1;
+    if(pData->nBeams != new_nBeams){
+        pData->nBeams = new_nBeams;
         for(ch=0; ch<MAX_NUM_BEAMS; ch++)
             pData->recalc_beamWeights[ch] = 1;
     }
@@ -330,7 +317,7 @@ float beamformer_getBeamElev_deg(void* const hBeam, int index)
 int beamformer_getNumBeams(void* const hBeam)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    return pData->new_nBeams;
+    return pData->nBeams;
 }
 
 int beamformer_getMaxNumBeams()
@@ -341,7 +328,7 @@ int beamformer_getMaxNumBeams()
 int  beamformer_getNSHrequired(void* const hBeam)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    return pData->nSH;
+    return ORDER2NSH(pData->beamOrder);
 }
 
 int beamformer_getChOrder(void* const hBeam)
@@ -362,5 +349,9 @@ int beamformer_getBeamType(void* const hBeam)
     return pData->beamType;
 }
 
+int beamformer_getProcessingDelay()
+{
+    return FRAME_SIZE;
+}
 
 

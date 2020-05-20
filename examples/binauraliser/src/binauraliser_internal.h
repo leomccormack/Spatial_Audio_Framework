@@ -62,6 +62,7 @@ typedef enum _BINAURALISER_PROC_STATUS{
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
+#define FRAME_SIZE ( 128 )
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
@@ -85,6 +86,11 @@ typedef enum _BINAURALISER_PROC_STATUS{
  */
 typedef struct _binauraliser
 {
+    /* FIFO buffers */
+    int FIFO_idx;
+    float inFIFO[MAX_NUM_INPUTS][FRAME_SIZE];
+    float outFIFO[NUM_EARS][FRAME_SIZE];
+
     /* audio buffers */
     float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
     float outframeTD[NUM_EARS][FRAME_SIZE];

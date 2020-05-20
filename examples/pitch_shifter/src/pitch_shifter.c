@@ -45,10 +45,17 @@ void pitch_shifter_create
     pData->progressBarText = malloc1d(PITCH_SHIFTER_PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
     strcpy(pData->progressBarText,"");
     pData->sampleRate = 0.0f;
+    pData->fftFrameSize = 4096; /* Not important to get right, as it will be overwritten upon init */
+    pData->stepsize = 1024; /* same here */
 
     /* flags */
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
     pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+
+    /* set FIFO buffers */
+    pData->FIFO_idx = 0;
+    memset(pData->inFIFO, 0, PITCH_SHIFTER_MAX_NUM_CHANNELS*FRAME_SIZE*sizeof(float));
+    memset(pData->outFIFO, 0, PITCH_SHIFTER_MAX_NUM_CHANNELS*FRAME_SIZE*sizeof(float));
 }
 
 void pitch_shifter_destroy
@@ -129,8 +136,10 @@ void pitch_shifter_initCodec
         case PITCH_SHIFTER_FFTSIZE_8192:  fftSize = 8192; break;
         case PITCH_SHIFTER_FFTSIZE_16384: fftSize = 16384; break;
     }
+    pData->fftFrameSize = fftSize;
+    pData->stepsize = fftSize/osamp;
 
-    /* Create new handle*/
+    /* Create new handle */
     smb_pitchShift_create(&(pData->hSmb), nChannels, fftSize, osamp, pData->sampleRate);
     pData->nChannels = nChannels;
 
@@ -151,20 +160,47 @@ void pitch_shifter_process
 )
 {
     pitch_shifter_data *pData = (pitch_shifter_data*)(hPS);
-    int ch, nChannels;
+    int s, ch, nChannels;
     nChannels = pData->nChannels;
 
-    if ( (FRAME_SIZE==nSamples) && (pData->codecStatus == CODEC_STATUS_INITIALISED) ){
-        pData->procStatus = PROC_STATUS_ONGOING;
+    /* Loop over all samples */
+    for(s=0; s<nSamples; s++){
+        /* Load input signals into inFIFO buffer */
+        for(ch=0; ch<MIN(nInputs,nChannels); ch++)
+            pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
+        for(; ch<nChannels; ch++) /* Zero any channels that were not given */
+            pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
 
-        for(ch=0; ch<MIN(nChannels,nInputs); ch++)
-            memcpy(pData->inputFrame[ch], inputs[ch], FRAME_SIZE*sizeof(float));
-        for(; ch<nChannels; ch++)
-            memset(pData->inputFrame[ch], 0, FRAME_SIZE*sizeof(float));
+        /* Pull output signals from outFIFO buffer */
+        for(ch=0; ch<MIN(nOutputs, nChannels); ch++)
+            outputs[ch][s] = pData->outFIFO[ch][pData->FIFO_idx];
+        for(; ch<nOutputs; ch++) /* Zero any extra channels */
+            outputs[ch][s] = 0.0f;
 
-        smb_pitchShift_apply(pData->hSmb, pData->pitchShift_factor, nSamples, (float*)pData->inputFrame, (float*)pData->outputFrame);
-        for(ch=0; ch<MIN(nChannels,nOutputs); ch++)
-            memcpy(outputs[ch], pData->outputFrame[ch], FRAME_SIZE*sizeof(float));
+        /* Increment buffer index */
+        pData->FIFO_idx++;
+
+        /* Process frame if inFIFO is full and codec is ready for it */
+        if (pData->FIFO_idx >= FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) ) {
+            pData->FIFO_idx = 0;
+            pData->procStatus = PROC_STATUS_ONGOING;
+
+            /* load input */
+            for(ch=0; ch<nChannels; ch++)
+                memcpy(pData->inputFrame[ch], pData->inFIFO[ch], FRAME_SIZE*sizeof(float));
+
+            /* Apply pitch shifting */
+            smb_pitchShift_apply(pData->hSmb, pData->pitchShift_factor, FRAME_SIZE, (float*)pData->inputFrame, (float*)pData->outputFrame);
+
+            /* Copy to output */
+            for(ch=0; ch<nChannels; ch++)
+                memcpy(pData->outFIFO[ch], pData->outputFrame[ch], FRAME_SIZE*sizeof(float));
+        }
+        else if(pData->FIFO_idx >= FRAME_SIZE){
+            /* clear outFIFO if codec was not ready */
+            pData->FIFO_idx = 0;
+            memset(pData->outFIFO, 0, PITCH_SHIFTER_MAX_NUM_CHANNELS*FRAME_SIZE*sizeof(float));
+        }
     }
 
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
@@ -257,5 +293,9 @@ int pitch_shifter_getNCHrequired(void* const hPS)
     return pData->new_nChannels;
 }
 
-
+int pitch_shifter_getProcessingDelay(void* const hPS)
+{
+    pitch_shifter_data *pData = (pitch_shifter_data*)(hPS);
+    return FRAME_SIZE + pData->fftFrameSize - (pData->stepsize);
+}
 

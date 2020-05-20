@@ -45,6 +45,7 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
+#define FRAME_SIZE ( 64 )
 #define MAX_SH_ORDER ( ROTATOR_MAX_SH_ORDER )
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1)  )    /* (L+1)^2 */
 #ifndef DEG2RAD
@@ -64,12 +65,16 @@ extern "C" {
  */
 typedef struct _rotator
 {
+    /* FIFO buffers */
+    int FIFO_idx;
+    float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float outFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+
+    /* internal */
     float inputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float prev_inputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    
-    /* internal */
     float interpolator[FRAME_SIZE];
     float M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     float prev_M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];

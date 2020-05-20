@@ -393,6 +393,12 @@ int sldoa_getChOrder(void* const hSld);
  */
 int sldoa_getNormType(void* const hSld);
 
+/**
+ * Returns the processing delay in samples (may be used for delay compensation
+ * features)
+ */
+int sldoa_getProcessingDelay(void);
+
     
 #ifdef __cplusplus
 } /* extern "C" */

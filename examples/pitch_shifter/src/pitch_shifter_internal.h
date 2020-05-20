@@ -35,6 +35,10 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/* ========================================================================== */
+/*                               Internal Enums                               */
+/* ========================================================================== */
+
 /**
  * Current status of the processing loop.
  */
@@ -45,6 +49,14 @@ typedef enum _PITCH_SHIFTER_PROC_STATUS{
                               *   be reinitialised if needed.*/
 }PITCH_SHIFTER_PROC_STATUS;
 
+
+/* ========================================================================== */
+/*                            Internal Parameters                             */
+/* ========================================================================== */
+
+#define FRAME_SIZE ( 128 )
+
+
 /* ========================================================================== */
 /*                                 Structures                                 */
 /* ========================================================================== */
@@ -54,6 +66,11 @@ typedef enum _PITCH_SHIFTER_PROC_STATUS{
  */
 typedef struct _pitch_shifter
 {
+    /* FIFO buffers */
+    int FIFO_idx;
+    float inFIFO[PITCH_SHIFTER_MAX_NUM_CHANNELS][FRAME_SIZE];
+    float outFIFO[PITCH_SHIFTER_MAX_NUM_CHANNELS][FRAME_SIZE];
+
     /* internal */
     void* hSmb;
     PITCH_SHIFTER_CODEC_STATUS codecStatus;
@@ -64,6 +81,7 @@ typedef struct _pitch_shifter
     float inputFrame[PITCH_SHIFTER_MAX_NUM_CHANNELS][FRAME_SIZE];
     float outputFrame[PITCH_SHIFTER_MAX_NUM_CHANNELS][FRAME_SIZE];
     int new_nChannels;
+    int fftFrameSize, stepsize;
 
     /* user parameters */
     int nChannels;

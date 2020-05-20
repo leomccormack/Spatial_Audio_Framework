@@ -256,7 +256,14 @@ int beamformer_getNormType(void* const hBeam);
 /**
  * Returns the beamforming approach employed (see 'BEAMFORMER_BEAM_TYPE' enum)
  */
-int beamformer_getBeamType(void* const hBeam); 
+int beamformer_getBeamType(void* const hBeam);
+
+/**
+ * Returns the processing delay in samples (may be used for delay compensation
+ * features)
+ */
+int beamformer_getProcessingDelay(void);
+
     
     
 #ifdef __cplusplus

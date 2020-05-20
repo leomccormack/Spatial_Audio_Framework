@@ -484,6 +484,12 @@ int dirass_getPmap(void* const hDir,
                    int* hfov,
                    float* aspectRatio);
 
+/**
+ * Returns the processing delay in samples (may be used for delay compensation
+ * features)
+ */
+int dirass_getProcessingDelay(void);
+
 
 #ifdef __cplusplus
 } /* extern "C" */

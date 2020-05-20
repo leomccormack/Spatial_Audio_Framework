@@ -58,9 +58,9 @@ void matrixconv_destroy
     matrixconv_data *pData = (matrixconv_data*)(*phMCnv);
     
     if (pData != NULL) {
-        free2d((void***)&(pData->inputFrameTD));
-        free2d((void***)&(pData->outputFrameTD));
-        free1d((void**)&(pData->filters));
+        free(pData->inputFrameTD);
+        free(pData->outputFrameTD);
+        free(pData->filters);
         saf_matrixConv_destroy(&(pData->hMatrixConv));
         free(pData);
         pData = NULL;
@@ -81,7 +81,7 @@ void matrixconv_init
         pData->hostBlockSize = hostBlockSize;
         pData->inputFrameTD  = (float**)realloc2d((void**)pData->inputFrameTD, MAX_NUM_CHANNELS, hostBlockSize, sizeof(float));
         pData->outputFrameTD = (float**)realloc2d((void**)pData->outputFrameTD, MAX_NUM_CHANNELS, hostBlockSize, sizeof(float));
-        memset(ADR2D(pData->inputFrameTD), 0, MAX_NUM_CHANNELS*hostBlockSize*sizeof(float));
+        memset(FLATTEN2D(pData->inputFrameTD), 0, MAX_NUM_CHANNELS*hostBlockSize*sizeof(float));
         pData->reInitFilters = 1;
     }
     
@@ -119,10 +119,10 @@ void matrixconv_process
  
         /* Apply convolution */
         if(pData->hMatrixConv != NULL && pData->filter_length>0)
-            saf_matrixConv_apply(pData->hMatrixConv, ADR2D(pData->inputFrameTD), ADR2D(pData->outputFrameTD));
+            saf_matrixConv_apply(pData->hMatrixConv, FLATTEN2D(pData->inputFrameTD), FLATTEN2D(pData->outputFrameTD));
         /* if the matrix convolver handle has not been initialised yet (i.e. no filters have been loaded) then the processing is bypassed */
         else
-            memcpy(ADR2D(pData->outputFrameTD), ADR2D(pData->inputFrameTD), MIN(MAX(numInputChannels,numOutputChannels), MATRIXCONV_MAX_NUM_CHANNELS) * (pData->hostBlockSize)*sizeof(float));
+            memcpy(FLATTEN2D(pData->outputFrameTD), FLATTEN2D(pData->inputFrameTD), MIN(MAX(numInputChannels,numOutputChannels), MATRIXCONV_MAX_NUM_CHANNELS) * (pData->hostBlockSize)*sizeof(float));
         
         /* copy signals to output buffer */
         for (i = 0; i < MIN(numOutputChannels, nOutputs); i++)

@@ -39,6 +39,21 @@ void powermap_create
     powermap_data* pData = (powermap_data*)malloc1d(sizeof(powermap_data));
     *phPm = (void*)pData;
     int n, i, ch, band;
+
+    /* Default user parameters */
+    pData->masterOrder = pData->new_masterOrder = MASTER_ORDER_FIRST;
+    for(band=0; band<HYBRID_BANDS; band++){
+        pData->analysisOrderPerBand[band] = pData->masterOrder;
+        pData->pmapEQ[band] = 1.0f;
+    }
+    pData->covAvgCoeff = 0.0f;
+    pData->pmapAvgCoeff = 0.666f;
+    pData->nSources = 1;
+    pData->pmap_mode = PM_MODE_MUSIC;
+    pData->HFOVoption = HFOV_360;
+    pData->aspectRatioOption = ASPECT_RATIO_2_1;
+    pData->chOrdering = CH_ACN;
+    pData->norm = NORM_SN3D;
     
     afSTFTinit(&(pData->hSTFT), HOP_SIZE, MAX_NUM_SH_SIGNALS, 0, 0, 1);
     pData->STFTInputFrameTF = malloc1d(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
@@ -73,21 +88,10 @@ void powermap_create
         pData->pmap_grid[i] = NULL;
     pData->pmapReady = 0;
     pData->recalcPmap = 1;
-    
-    /* Default user parameters */
-    pData->masterOrder = pData->new_masterOrder = MASTER_ORDER_FIRST;
-    for(band=0; band<HYBRID_BANDS; band++){
-        pData->analysisOrderPerBand[band] = pData->masterOrder;
-        pData->pmapEQ[band] = 1.0f;
-    }
-    pData->covAvgCoeff = 0.0f;
-    pData->pmapAvgCoeff = 0.666f;
-    pData->nSources = 1;
-    pData->pmap_mode = PM_MODE_MUSIC;
-    pData->HFOVoption = HFOV_360;
-    pData->aspectRatioOption = ASPECT_RATIO_2_1;
-    pData->chOrdering = CH_ACN;
-    pData->norm = NORM_SN3D;
+
+    /* set FIFO buffer */
+    pData->FIFO_idx = 0;
+    memset(pData->inFIFO, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
 }
 
 void powermap_destroy
@@ -115,16 +119,16 @@ void powermap_destroy
         free(pData->STFTInputFrameTF);
         free(pData->tempHopFrameTD);
         
-        free1d((void**)&(pData->pmap));
-        free1d((void**)&(pData->prev_pmap));
+        free(pData->pmap);
+        free(pData->prev_pmap);
         for(i=0; i<NUM_DISP_SLOTS; i++)
-            free1d((void**)&(pData->pmap_grid[i]));
-        free1d((void**)&(pars->interp_dirs_deg));
+            free(pData->pmap_grid[i]);
+        free(pars->interp_dirs_deg);
         for(i=0; i<MAX_SH_ORDER; i++){
-            free1d((void**)&(pars->Y_grid[i]));
-            free1d((void**)&(pars->Y_grid_cmplx[i]));
+            free(pars->Y_grid[i]);
+            free(pars->Y_grid_cmplx[i]);
         }
-        free1d((void**)&(pars->interp_table));
+        free(pars->interp_table);
         free(pData->pars);
         free(pData->progressBarText);
         free(pData);
@@ -205,9 +209,8 @@ void powermap_analysis
 {
     powermap_data *pData = (powermap_data*)(hPm);
     powermap_codecPars* pars = pData->pars;
-    int i, j, t, n, ch, band, nSH_order, order_band, nSH_maxOrder, maxOrder;
+    int s, i, j, t, ch, band, nSH_order, order_band, nSH_maxOrder, maxOrder;
     float C_grp_trace, covScale, pmapEQ_band;
-    int o[MAX_SH_ORDER+2];
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float_complex new_Cx[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     float_complex* C_grp;
@@ -220,201 +223,195 @@ void powermap_analysis
     POWERMAP_NORM_TYPES norm;
     POWERMAP_CH_ORDER chOrdering;
     POWERMAP_MODES pmap_mode;
-    
-    /* The main processing: */
-    if (nSamples == FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying ) {
-        pData->procStatus = PROC_STATUS_ONGOING;
-        
-        /* copy current parameters to be thread safe */
-        memcpy(analysisOrderPerBand, pData->analysisOrderPerBand, HYBRID_BANDS*sizeof(int));
-        memcpy(pmapEQ, pData->pmapEQ, HYBRID_BANDS*sizeof(float));
-        norm = pData->norm;
-        chOrdering = pData->chOrdering;
-        nSources = pData->nSources;
-        covAvgCoeff = MIN(pData->covAvgCoeff, MAX_COV_AVG_COEFF);
-        pmapAvgCoeff = pData->pmapAvgCoeff;
-        pmap_mode = pData->pmap_mode;
-        masterOrder = pData->masterOrder;
-        nSH = (masterOrder+1)*(masterOrder+1);
-        
-        /* Load time-domain data */
-        switch(chOrdering){
-            case CH_ACN:
-                for(i=0; i < MIN(nSH, nInputs); i++)
-                    utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHframeTD[i]);
-                for(; i<nSH; i++)
-                    memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
-                break;
-            case CH_FUMA:   /* only for first-order, convert to ACN */
-                if(nInputs>=4){
-                    utility_svvcopy(inputs[0], FRAME_SIZE, pData->SHframeTD[0]);
-                    utility_svvcopy(inputs[1], FRAME_SIZE, pData->SHframeTD[3]);
-                    utility_svvcopy(inputs[2], FRAME_SIZE, pData->SHframeTD[1]);
-                    utility_svvcopy(inputs[3], FRAME_SIZE, pData->SHframeTD[2]);
-                    for(i=4; i<nSH; i++)
-                        memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+    memcpy(analysisOrderPerBand, pData->analysisOrderPerBand, HYBRID_BANDS*sizeof(int));
+    memcpy(pmapEQ, pData->pmapEQ, HYBRID_BANDS*sizeof(float));
+    norm = pData->norm;
+    chOrdering = pData->chOrdering;
+    nSources = pData->nSources;
+    covAvgCoeff = MIN(pData->covAvgCoeff, MAX_COV_AVG_COEFF);
+    pmapAvgCoeff = pData->pmapAvgCoeff;
+    pmap_mode = pData->pmap_mode;
+    masterOrder = pData->masterOrder;
+    nSH = (masterOrder+1)*(masterOrder+1);
+
+    /* Loop over all samples */
+    for(s=0; s<nSamples; s++){
+        /* Load input signals into inFIFO buffer */
+        for(ch=0; ch<MIN(nInputs,nSH); ch++)
+            pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
+        for(; ch<nSH; ch++) /* Zero any channels that were not given */
+            pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
+
+        /* Increment buffer index */
+        pData->FIFO_idx++;
+
+        /* Process frame if inFIFO is full and codec is ready for it */
+        if (pData->FIFO_idx >= FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying ) {
+            pData->FIFO_idx = 0;
+            pData->procStatus = PROC_STATUS_ONGOING;
+
+            /* Load time-domain data */
+            switch(chOrdering){
+                case CH_ACN:
+                    convertHOAChannelConvention((float*)pData->inFIFO, masterOrder, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_ACN, (float*)pData->SHframeTD);
+                    break;
+                case CH_FUMA:
+                    convertHOAChannelConvention((float*)pData->inFIFO, masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN, (float*)pData->SHframeTD);
+                    break;
+            }
+
+            /* account for input normalisation scheme */
+            switch(norm){
+                case NORM_N3D:  /* already in N3D, do nothing */
+                    break;
+                case NORM_SN3D: /* convert to N3D */
+                    convertHOANormConvention((float*)pData->SHframeTD, masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
+                    break;
+                case NORM_FUMA: /* only for first-order, convert to N3D */
+                    convertHOANormConvention((float*)pData->SHframeTD, masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
+                    break;
+            }
+
+            /* apply the time-frequency transform */
+            for(t = 0; t < TIME_SLOTS; t++) {
+                for(ch = 0; ch < nSH; ch++)
+                    utility_svvcopy(&(pData->SHframeTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
+                afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
+                for (band = 0; band < HYBRID_BANDS; band++)
+                    for (ch = 0; ch < nSH; ch++)
+                        pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
+            }
+
+            /* Update covarience matrix per band */
+            covScale = 1.0f/(float)(nSH);
+            for(band=0; band<HYBRID_BANDS; band++){
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, TIME_SLOTS, &calpha,
+                            pData->SHframeTF[band], TIME_SLOTS,
+                            pData->SHframeTF[band], TIME_SLOTS, &cbeta,
+                            new_Cx, MAX_NUM_SH_SIGNALS);
+
+                /* scale with nSH */
+                for(i=0; i<nSH; i++)
+                    for(j=0; j<nSH; j++)
+                        new_Cx[i][j] = crmulf(new_Cx[i][j], covScale);
+
+                /* average over time */
+                for(i=0; i<nSH; i++)
+                    for(j=0; j<nSH; j++)
+                        pData->Cx[band][i][j] = ccaddf( crmulf(new_Cx[i][j], 1.0f-covAvgCoeff), crmulf(pData->Cx[band][i][j], covAvgCoeff));
+            }
+
+            /* update the powermap */
+            if(pData->recalcPmap==1){
+                pData->recalcPmap = 0;
+                pData->pmapReady = 0;
+
+                /* determine maximum analysis order */
+                maxOrder = 1;
+                for(i=0; i<HYBRID_BANDS; i++)
+                    maxOrder = MAX(maxOrder, MIN(analysisOrderPerBand[i], masterOrder));
+                nSH_maxOrder = (maxOrder+1)*(maxOrder+1);
+
+                /* group covarience matrices */
+                C_grp = calloc1d(nSH_maxOrder*nSH_maxOrder, sizeof(float_complex));
+                for (band=0; band<HYBRID_BANDS; band++){
+                    order_band = MAX(MIN(pData->analysisOrderPerBand[band], masterOrder),1);
+                    nSH_order = (order_band+1)*(order_band+1);
+                    pmapEQ_band = MIN(MAX(pmapEQ[band], 0.0f), 2.0f);
+                    for(i=0; i<nSH_order; i++)
+                        for(j=0; j<nSH_order; j++)
+                            C_grp[i*nSH_maxOrder+j] = ccaddf(C_grp[i*nSH_maxOrder+j], crmulf(pData->Cx[band][i][j], 1e3f*pmapEQ_band));
                 }
-                else
-                    for(i=0; i<nSH; i++)
-                        memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float));
-                break;
-        }
-        
-        /* account for input normalisation scheme */
-        switch(norm){
-            case NORM_N3D:  /* already in N3D, do nothing */
-                break;
-            case NORM_SN3D: /* convert to N3D */
-                for(n=0; n<masterOrder+2; n++){  o[n] = n*n;  };
-                for (n = 0; n<masterOrder+1; n++)
-                    for (ch = o[n]; ch<o[n+1]; ch++)
-                        for(i = 0; i<FRAME_SIZE; i++)
-                            pData->SHframeTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
-                break;
-            case NORM_FUMA: /* only for first-order, convert to N3D */
-                for(i = 0; i<FRAME_SIZE; i++)
-                    pData->SHframeTD[0][i] *= sqrtf(2.0f);
-                for (ch = 1; ch<4; ch++)
-                    for(i = 0; i<FRAME_SIZE; i++)
-                        pData->SHframeTD[ch][i] *= sqrtf(3.0f);
-                break;
-        }
-        
-        /* apply the time-frequency transform */
-        for(t = 0; t < TIME_SLOTS; t++) {
-            for(ch = 0; ch < nSH; ch++)
-                utility_svvcopy(&(pData->SHframeTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
-            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
-            for (band = 0; band < HYBRID_BANDS; band++)
-                for (ch = 0; ch < nSH; ch++)
-                    pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
-        }
 
-        /* Update covarience matrix per band */
-        covScale = 1.0f/(float)(nSH);
-        for(band=0; band<HYBRID_BANDS; band++){
-            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, TIME_SLOTS, &calpha,
-                        pData->SHframeTF[band], TIME_SLOTS,
-                        pData->SHframeTF[band], TIME_SLOTS, &cbeta,
-                        new_Cx, MAX_NUM_SH_SIGNALS);
+                /* generate powermap */
+                C_grp_trace = 0.0f;
+                for(i=0; i<nSH_maxOrder; i++)
+                    C_grp_trace+=crealf(C_grp[i*nSH_maxOrder+ i]);
+                switch(pmap_mode){
+                    default:
+                    case PM_MODE_PWD:
+                        generatePWDmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], pars->grid_nDirs, pData->pmap);
+                        break;
 
-            /* scale with nSH */
-            for(i=0; i<nSH; i++)
-                for(j=0; j<nSH; j++)
-                    new_Cx[i][j] = crmulf(new_Cx[i][j], covScale);
+                    case PM_MODE_MVDR:
+                        if(C_grp_trace>1e-8f)
+                            generateMVDRmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], pars->grid_nDirs, 8.0f, pData->pmap, NULL);
+                        else
+                            memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
+                        break;
 
-            /* average over time */
-            for(i=0; i<nSH; i++)
-                for(j=0; j<nSH; j++)
-                    pData->Cx[band][i][j] = ccaddf( crmulf(new_Cx[i][j], 1.0f-covAvgCoeff), crmulf(pData->Cx[band][i][j], covAvgCoeff));
-        }
-        
-        /* update the powermap */
-        if(pData->recalcPmap==1){
-            pData->recalcPmap = 0;
-            pData->pmapReady = 0;
+                    case PM_MODE_CROPAC_LCMV:
+                        if(C_grp_trace>1e-8f)
+                            generateCroPaCLCMVmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], pars->grid_nDirs, 8.0f, 0.0f, pData->pmap);
+                        else
+                            memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
+                        break;
 
-            /* determine maximum analysis order */
-            maxOrder = 1;
-            for(i=0; i<HYBRID_BANDS; i++)
-                maxOrder = MAX(maxOrder, MIN(analysisOrderPerBand[i], masterOrder));
-            nSH_maxOrder = (maxOrder+1)*(maxOrder+1);
+                    case PM_MODE_MUSIC:
+                        if(C_grp_trace>1e-8f)
+                            generateMUSICmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 0, pData->pmap);
+                        else
+                            memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
+                        break;
 
-            /* group covarience matrices */
-            C_grp = calloc1d(nSH_maxOrder*nSH_maxOrder, sizeof(float_complex));
-            for (band=0; band<HYBRID_BANDS; band++){
-                order_band = MAX(MIN(pData->analysisOrderPerBand[band], masterOrder),1);
-                nSH_order = (order_band+1)*(order_band+1);
-                pmapEQ_band = MIN(MAX(pmapEQ[band], 0.0f), 2.0f);
-                for(i=0; i<nSH_order; i++)
-                    for(j=0; j<nSH_order; j++)
-                        C_grp[i*nSH_maxOrder+j] = ccaddf(C_grp[i*nSH_maxOrder+j], crmulf(pData->Cx[band][i][j], 1e3f*pmapEQ_band));
+                    case PM_MODE_MUSIC_LOG:
+                        if(C_grp_trace>1e-8f)
+                            generateMUSICmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 1, pData->pmap);
+                        else
+                            memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
+                        break;
+
+                    case PM_MODE_MINNORM:
+                        if(C_grp_trace>1e-8f)
+                            generateMinNormMap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 0, pData->pmap);
+                        else
+                            memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
+                        break;
+
+                    case PM_MODE_MINNORM_LOG:
+                        if(C_grp_trace>1e-8f)
+                            generateMinNormMap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 1, pData->pmap);
+                        else
+                            memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
+                        break;
+                }
+                free(C_grp);
+
+                /* average powermap over time */
+                for(i=0; i<pars->grid_nDirs; i++)
+                    pData->pmap[i] =  (1.0f-pmapAvgCoeff) * (pData->pmap[i] )+ pmapAvgCoeff * (pData->prev_pmap[i]);
+                utility_svvcopy(pData->pmap, pars->grid_nDirs, pData->prev_pmap);
+
+                /* interpolate powermap */
+                cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->interp_nDirs, 1, pars->grid_nDirs, 1.0f,
+                            pars->interp_table, pars->grid_nDirs,
+                            pData->pmap, 1, 0.0f,
+                            pData->pmap_grid[pData->dispSlotIdx], 1);
+
+                /* ascertain minimum and maximum values for powermap colour scaling */
+                int ind;
+                utility_siminv(pData->pmap_grid[pData->dispSlotIdx], pars->interp_nDirs, &ind);
+                pData->pmap_grid_minVal = pData->pmap_grid[pData->dispSlotIdx][ind];
+                utility_simaxv(pData->pmap_grid[pData->dispSlotIdx], pars->interp_nDirs, &ind);
+                pData->pmap_grid_maxVal = pData->pmap_grid[pData->dispSlotIdx][ind];
+
+                /* normalise the powermap to 0..1 */
+                for(i=0; i<pars->interp_nDirs; i++)
+                    pData->pmap_grid[pData->dispSlotIdx][i] = (pData->pmap_grid[pData->dispSlotIdx][i]-pData->pmap_grid_minVal)/(pData->pmap_grid_maxVal-pData->pmap_grid_minVal+1e-11f);
+
+                /* signify that the powermap in current slot is ready for plotting */
+                pData->dispSlotIdx++;
+                if(pData->dispSlotIdx>=NUM_DISP_SLOTS)
+                    pData->dispSlotIdx = 0;
+                pData->pmapReady = 1;
             }
-
-            /* generate powermap */
-            C_grp_trace = 0.0f;
-            for(i=0; i<nSH_maxOrder; i++)
-                C_grp_trace+=crealf(C_grp[i*nSH_maxOrder+ i]);
-            switch(pmap_mode){
-                default:
-                case PM_MODE_PWD:
-                    generatePWDmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], pars->grid_nDirs, pData->pmap);
-                    break;
-
-                case PM_MODE_MVDR:
-                    if(C_grp_trace>1e-8f)
-                        generateMVDRmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], pars->grid_nDirs, 8.0f, pData->pmap, NULL);
-                    else
-                        memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
-                    break;
-
-                case PM_MODE_CROPAC_LCMV:
-                    if(C_grp_trace>1e-8f)
-                        generateCroPaCLCMVmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], pars->grid_nDirs, 8.0f, 0.0f, pData->pmap);
-                    else
-                        memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
-                    break;
-
-                case PM_MODE_MUSIC:
-                    if(C_grp_trace>1e-8f)
-                        generateMUSICmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 0, pData->pmap);
-                    else
-                        memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
-                    break;
-                    
-                case PM_MODE_MUSIC_LOG:
-                    if(C_grp_trace>1e-8f)
-                        generateMUSICmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 1, pData->pmap);
-                    else
-                        memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
-                    break; 
-                    
-                case PM_MODE_MINNORM:
-                    if(C_grp_trace>1e-8f)
-                        generateMinNormMap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 0, pData->pmap);
-                    else
-                        memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
-                    break;
-                    
-                case PM_MODE_MINNORM_LOG:
-                    if(C_grp_trace>1e-8f)
-                        generateMinNormMap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 1, pData->pmap);
-                    else
-                        memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
-                    break;
-            }
-            free(C_grp);
-            
-            /* average powermap over time */
-            for(i=0; i<pars->grid_nDirs; i++)
-                pData->pmap[i] =  (1.0f-pmapAvgCoeff) * (pData->pmap[i] )+ pmapAvgCoeff * (pData->prev_pmap[i]);
-            utility_svvcopy(pData->pmap, pars->grid_nDirs, pData->prev_pmap);
-
-            /* interpolate powermap */
-            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->interp_nDirs, 1, pars->grid_nDirs, 1.0f,
-                        pars->interp_table, pars->grid_nDirs,
-                        pData->pmap, 1, 0.0f,
-                        pData->pmap_grid[pData->dispSlotIdx], 1);
-
-            /* ascertain minimum and maximum values for powermap colour scaling */
-            int ind;
-            utility_siminv(pData->pmap_grid[pData->dispSlotIdx], pars->interp_nDirs, &ind);
-            pData->pmap_grid_minVal = pData->pmap_grid[pData->dispSlotIdx][ind];
-            utility_simaxv(pData->pmap_grid[pData->dispSlotIdx], pars->interp_nDirs, &ind);
-            pData->pmap_grid_maxVal = pData->pmap_grid[pData->dispSlotIdx][ind];
-
-            /* normalise the powermap to 0..1 */
-            for(i=0; i<pars->interp_nDirs; i++)
-                pData->pmap_grid[pData->dispSlotIdx][i] = (pData->pmap_grid[pData->dispSlotIdx][i]-pData->pmap_grid_minVal)/(pData->pmap_grid_maxVal-pData->pmap_grid_minVal+1e-11f);
-
-            /* signify that the powermap in current slot is ready for plotting */
-            pData->dispSlotIdx++;
-            if(pData->dispSlotIdx>=NUM_DISP_SLOTS)
-                pData->dispSlotIdx = 0;
-            pData->pmapReady = 1;
+        }
+        else if(pData->FIFO_idx >= FRAME_SIZE){
+            /* reset FIFO_idx if codec was not ready */
+            pData->FIFO_idx = 0;
         }
     }
-    
+
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
 
@@ -778,3 +775,9 @@ int powermap_getPmap(void* const hPm, float** grid_dirs, float** pmap, int* nDir
     }
     return pData->pmapReady;
 }
+
+int powermap_getProcessingDelay()
+{
+    return FRAME_SIZE + 12*HOP_SIZE;
+}
+

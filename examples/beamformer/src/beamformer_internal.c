@@ -25,13 +25,3 @@
 
 #include "beamformer_internal.h" 
 
-void beamformer_initTFT
-(
-    void* const hBeam
-)
-{
-    beamformer_data *pData = (beamformer_data*)(hBeam);
-    pData->nBeams = pData->new_nBeams;
-    pData->nSH = pData->new_nSH;
-}
-

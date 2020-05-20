@@ -61,7 +61,8 @@ typedef enum _POWERMAP_PROC_STATUS{
 /* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
-    
+
+#define FRAME_SIZE ( 1024 )
 #define MAX_SH_ORDER ( 7 )
 #define HOP_SIZE ( 128 )                   /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )      /* hybrid mode incurs an additional 5 bands  */
@@ -101,6 +102,10 @@ typedef struct _powermap_codecPars
  */
 typedef struct _powermap
 {
+    /* FIFO buffers */
+    int FIFO_idx;
+    float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
+
     /* TFT */
     float SHframeTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];        

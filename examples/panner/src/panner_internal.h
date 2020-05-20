@@ -74,7 +74,8 @@ typedef enum _PANNER_PROC_STATUS{
 /* ========================================================================== */
 
 #define FORCE_3D_LAYOUT /* Even 2D loudspeaker setups will use 3D VBAP, with 2 virtual loudspeakers on the top/bottom */
-    
+
+#define FRAME_SIZE ( 128 )
 #define HOP_SIZE ( 128 )                            /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )               /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )        /* 4/8/16 */
@@ -98,6 +99,11 @@ typedef enum _PANNER_PROC_STATUS{
  */
 typedef struct _panner
 {
+    /* FIFO buffers */
+    int FIFO_idx;
+    float inFIFO[MAX_NUM_INPUTS][FRAME_SIZE];
+    float outFIFO[MAX_NUM_OUTPUTS][FRAME_SIZE];
+
     /* audio buffers */
     float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
     float_complex inputframeTF[HYBRID_BANDS][MAX_NUM_INPUTS][TIME_SLOTS];

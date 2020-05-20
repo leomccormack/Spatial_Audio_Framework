@@ -153,7 +153,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     strcpy(pData->progressBarText,"Applying HRIR diffuse-field EQ");
     pData->progressBar0_1 = 0.8f;
     pData->hrtf_fb = realloc1d(pData->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pData->N_hrir_dirs)*sizeof(float_complex));
-    HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrtf_fb);
+    HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, HYBRID_BANDS, pData->hrtf_fb);
     diffuseFieldEqualiseHRTFs(pData->N_hrir_dirs, pData->itds_s, pData->freqVector, HYBRID_BANDS, pData->hrtf_fb);
     
     /* calculate magnitude responses */
@@ -162,7 +162,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
         pData->hrtf_fb_mag[i] = cabsf(pData->hrtf_fb[i]);
     
     /* clean-up */
-    free1d((void**)&(hrtf_vbap_gtable));
+    free(hrtf_vbap_gtable);
 }
 
 void binauraliser_initTFT

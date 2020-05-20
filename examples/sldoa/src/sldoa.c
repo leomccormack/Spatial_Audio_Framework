@@ -54,7 +54,20 @@ void sldoa_create
     sldoa_data* pData = (sldoa_data*)malloc1d(sizeof(sldoa_data));
     *phSld = (void*)pData;
     int i, j, ch, band;
-    
+
+    /* Default user parameters */
+    pData->new_masterOrder = pData->masterOrder = 1;
+    for(band=0; band<HYBRID_BANDS; band++){
+        pData->analysisOrderPerBand[band] = pData->masterOrder;
+        pData->nSectorsPerBand[band] = ORDER2NUMSECTORS(pData->analysisOrderPerBand[band]);
+    }
+    pData->minFreq = 500.0f;
+    pData->maxFreq = 5e3f;
+    pData->avg_ms = 500.0f;
+    pData->chOrdering = CH_ACN;
+    pData->norm = NORM_SN3D;
+
+    /* TFT */
     afSTFTinit(&(pData->hSTFT), HOP_SIZE, MAX_NUM_SH_SIGNALS, 0, 0, 1);
     pData->STFTInputFrameTF = malloc1d(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
     for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
@@ -88,18 +101,10 @@ void sldoa_create
         pData->colourScale[i] = malloc1d(HYBRID_BANDS*MAX_NUM_SECTORS * sizeof(float));
         pData->alphaScale[i] = malloc1d(HYBRID_BANDS*MAX_NUM_SECTORS * sizeof(float));
     }
-    
-    /* Default user parameters */
-    pData->new_masterOrder = pData->masterOrder = 1;
-    for(band=0; band<HYBRID_BANDS; band++){
-        pData->analysisOrderPerBand[band] = pData->masterOrder;
-        pData->nSectorsPerBand[band] = ORDER2NUMSECTORS(pData->analysisOrderPerBand[band]);
-    }
-    pData->minFreq = 500.0f;
-    pData->maxFreq = 5e3f;
-    pData->avg_ms = 500.0f;
-    pData->chOrdering = CH_ACN;
-    pData->norm = NORM_SN3D;
+
+    /* set FIFO buffer */
+    pData->FIFO_idx = 0;
+    memset(pData->inFIFO, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
 }
 
 void sldoa_destroy
@@ -212,11 +217,10 @@ void sldoa_analysis
 )
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    int i, j, t, n, ch, band, nSectors, min_band, numAnalysisBands, current_disp_idx;
+    int s, i, j, t, ch, band, nSectors, min_band, numAnalysisBands, current_disp_idx;
     float avgCoeff, max_en[HYBRID_BANDS], min_en[HYBRID_BANDS];
     float new_doa[MAX_NUM_SECTORS][TIME_SLOTS][2], new_doa_xyz[3], doa_xyz[3], avg_xyz[3];
     float new_energy[MAX_NUM_SECTORS][TIME_SLOTS];
-    int o[MAX_SH_ORDER+2];
     
     /* local parameters */
     int nSH, masterOrder;
@@ -225,151 +229,146 @@ void sldoa_analysis
     float minFreq, maxFreq, avg_ms;
     SLDOA_CH_ORDER chOrdering;
     SLDOA_NORM_TYPES norm;
-    
-    if (nSamples == FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying) {
-        pData->procStatus = PROC_STATUS_ONGOING;
-        current_disp_idx = pData->current_disp_idx;
+    memcpy(analysisOrderPerBand, pData->analysisOrderPerBand, HYBRID_BANDS*sizeof(int));
+    memcpy(nSectorsPerBand, pData->nSectorsPerBand, HYBRID_BANDS*sizeof(int));
+    minFreq = pData->minFreq;
+    maxFreq = pData->maxFreq;
+    avg_ms = pData->avg_ms;
+    chOrdering = pData->chOrdering;
+    norm = pData->norm;
+    masterOrder = pData->masterOrder;
+    nSH = ORDER2NSH(masterOrder);
+
+    /* Loop over all samples */
+    for(s=0; s<nSamples; s++){
+        /* Load input signals into inFIFO buffer */
+        for(ch=0; ch<MIN(nInputs,nSH); ch++)
+            pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
+        for(; ch<nSH; ch++) /* Zero any channels that were not given */
+            pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
+
+        /* Increment buffer index */
+        pData->FIFO_idx++;
+
+        /* Process frame if inFIFO is full and codec is ready for it */
+        if (pData->FIFO_idx >= FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying) {
+            pData->FIFO_idx = 0;
+            pData->procStatus = PROC_STATUS_ONGOING;
+            current_disp_idx = pData->current_disp_idx;
+
+            /* Load time-domain data */
+            switch(chOrdering){
+                case CH_ACN:
+                    convertHOAChannelConvention((float*)pData->inFIFO, masterOrder, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_ACN, (float*)pData->SHframeTD);
+                    break;
+                case CH_FUMA:
+                    convertHOAChannelConvention((float*)pData->inFIFO, masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN, (float*)pData->SHframeTD);
+                    break;
+            }
+
+            /* account for input normalisation scheme */
+            switch(norm){
+                case NORM_N3D:  /* already in N3D, do nothing */
+                    break;
+                case NORM_SN3D: /* convert to N3D */
+                    convertHOANormConvention((float*)pData->SHframeTD, masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
+                    break;
+                case NORM_FUMA: /* only for first-order, convert to N3D */
+                    convertHOANormConvention((float*)pData->SHframeTD, masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
+                    break;
+            }
         
-        /* copy current parameters to be thread safe */
-        memcpy(analysisOrderPerBand, pData->analysisOrderPerBand, HYBRID_BANDS*sizeof(int));
-        memcpy(nSectorsPerBand, pData->nSectorsPerBand, HYBRID_BANDS*sizeof(int));
-        minFreq = pData->minFreq;
-        maxFreq = pData->maxFreq;
-        avg_ms = pData->avg_ms;
-        chOrdering = pData->chOrdering;
-        norm = pData->norm;
-        masterOrder = pData->masterOrder;
-        nSH = (masterOrder+1)*(masterOrder+1);
-        
-        /* Load time-domain data */
-        switch(chOrdering){
-            case CH_ACN:
-                for(i=0; i < MIN(nSH, nInputs); i++)
-                    utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHframeTD[i]);
-                for(; i<nSH; i++)
-                    memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
-                break;
-            case CH_FUMA:   /* only for first-order, convert to ACN */
-                if(nInputs>=4){
-                    utility_svvcopy(inputs[0], FRAME_SIZE, pData->SHframeTD[0]);
-                    utility_svvcopy(inputs[1], FRAME_SIZE, pData->SHframeTD[3]);
-                    utility_svvcopy(inputs[2], FRAME_SIZE, pData->SHframeTD[1]);
-                    utility_svvcopy(inputs[3], FRAME_SIZE, pData->SHframeTD[2]);
-                    for(i=4; i<nSH; i++)
-                        memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
-                }
-                else
-                    for(i=0; i<nSH; i++)
-                        memset(pData->SHframeTD[i], 0, FRAME_SIZE * sizeof(float));
-                break;
-        }
-        
-        /* account for input normalisation scheme */
-        switch(norm){
-            case NORM_N3D:  /* already in N3D, do nothing */
-                break;
-            case NORM_SN3D: /* convert to N3D */
-                for(n=0; n<masterOrder+2; n++){  o[n] = n*n;  };
-                for (n = 0; n<masterOrder+1; n++)
-                    for (ch = o[n]; ch<o[n+1]; ch++)
-                        for(i = 0; i<FRAME_SIZE; i++)
-                            pData->SHframeTD[ch][i] *= sqrtf(2.0f*(float)n+1.0f);
-                break;
-            case NORM_FUMA: /* only for first-order, convert to N3D */
-                for(i = 0; i<FRAME_SIZE; i++)
-                    pData->SHframeTD[0][i] *= sqrtf(2.0f);
-                for (ch = 1; ch<4; ch++)
-                    for(i = 0; i<FRAME_SIZE; i++)
-                        pData->SHframeTD[ch][i] *= sqrtf(3.0f);
-                break;
-        }
-        
-        /* apply the time-frequency transform */
-        for(t = 0; t < TIME_SLOTS; t++) {
-            for(ch = 0; ch < nSH; ch++)
-                utility_svvcopy(&(pData->SHframeTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
-            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
-            for(band = 0; band < HYBRID_BANDS; band++)
+            /* apply the time-frequency transform */
+            for(t = 0; t < TIME_SLOTS; t++) {
                 for(ch = 0; ch < nSH; ch++)
-                    pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
-        }
-        
-        /* apply sector-based, frequency-dependent DOA analysis */
-        numAnalysisBands = 0;
-        min_band = 0;
-        for(band=1/* ignore DC */; band<HYBRID_BANDS; band++){
-            if(pData->freqVector[band] <= minFreq)
-                min_band = band;
-            if(pData->freqVector[band] >= minFreq && pData->freqVector[band]<=maxFreq){
-                nSectors = nSectorsPerBand[band];
-                avgCoeff = avg_ms < 10.0f ? 1.0f : 1.0f / ((avg_ms/1e3f) / (1.0f/(float)HOP_SIZE) + 2.23e-9f);
-                avgCoeff = MAX(MIN(avgCoeff, 0.99999f), 0.0f); /* ensures stability */
-                sldoa_estimateDoA(pData->SHframeTF[band],
-                                  analysisOrderPerBand[band],
-                                  pData->secCoeffs[analysisOrderPerBand[band]-2], /* -2, as first order is skipped */
-                                  new_doa,
-                                  new_energy);
-                
-                /* average the raw data over time */
-                for(i=0; i<nSectors; i++){
-                    for( t = 0; t<TIME_SLOTS; t++){
-                        /* avg doa estimate */
-                        unitSph2Cart(new_doa[i][t][0], new_doa[i][t][1], new_doa_xyz);
-                        unitSph2Cart(pData->doa_rad[band][i][0],
-                                     pData->doa_rad[band][i][1],
-                                     doa_xyz);
-                        for(j=0; j<3; j++)
-                            avg_xyz[j] = new_doa_xyz[j]*avgCoeff + doa_xyz[j] * (1.0f-avgCoeff);
-                        unitCart2Sph_aziElev(avg_xyz, &(pData->doa_rad[band][i][0]), &(pData->doa_rad[band][i][1]));
-                        
-                        /* avg energy */
-                        pData->energy[band][i] = new_energy[i][t]*avgCoeff + pData->energy[band][i] * (1.0f-avgCoeff);
+                    utility_svvcopy(&(pData->SHframeTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
+                afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
+                for(band = 0; band < HYBRID_BANDS; band++)
+                    for(ch = 0; ch < nSH; ch++)
+                        pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
+            }
+
+            /* apply sector-based, frequency-dependent DOA analysis */
+            numAnalysisBands = 0;
+            min_band = 0;
+            for(band=1/* ignore DC */; band<HYBRID_BANDS; band++){
+                if(pData->freqVector[band] <= minFreq)
+                    min_band = band;
+                if(pData->freqVector[band] >= minFreq && pData->freqVector[band]<=maxFreq){
+                    nSectors = nSectorsPerBand[band];
+                    avgCoeff = avg_ms < 10.0f ? 1.0f : 1.0f / ((avg_ms/1e3f) / (1.0f/(float)HOP_SIZE) + 2.23e-9f);
+                    avgCoeff = MAX(MIN(avgCoeff, 0.99999f), 0.0f); /* ensures stability */
+                    sldoa_estimateDoA(pData->SHframeTF[band],
+                                      analysisOrderPerBand[band],
+                                      pData->secCoeffs[analysisOrderPerBand[band]-2], /* -2, as first order is skipped */
+                                      new_doa,
+                                      new_energy);
+
+                    /* average the raw data over time */
+                    for(i=0; i<nSectors; i++){
+                        for( t = 0; t<TIME_SLOTS; t++){
+                            /* avg doa estimate */
+                            unitSph2Cart(new_doa[i][t][0], new_doa[i][t][1], new_doa_xyz);
+                            unitSph2Cart(pData->doa_rad[band][i][0],
+                                         pData->doa_rad[band][i][1],
+                                         doa_xyz);
+                            for(j=0; j<3; j++)
+                                avg_xyz[j] = new_doa_xyz[j]*avgCoeff + doa_xyz[j] * (1.0f-avgCoeff);
+                            unitCart2Sph_aziElev(avg_xyz, &(pData->doa_rad[band][i][0]), &(pData->doa_rad[band][i][1]));
+
+                            /* avg energy */
+                            pData->energy[band][i] = new_energy[i][t]*avgCoeff + pData->energy[band][i] * (1.0f-avgCoeff);
+                        }
+                    }
+                    numAnalysisBands++;
+                }
+            }
+
+            /* determine the minimum and maximum sector energies per frequency (to scale them 0..1) */
+            for(band=1/* ignore DC */; band<HYBRID_BANDS; band++){
+                if(pData->freqVector[band] >= minFreq && pData->freqVector[band]<=maxFreq){
+                    nSectors = nSectorsPerBand[band];
+                    max_en[band] = 2.3e-13f; min_en[band] = 2.3e13f; /* starting values */
+                    for(i=0; i<nSectors; i++){
+                        max_en[band] = pData->energy[band][i] > max_en[band] ? pData->energy[band][i] : max_en[band];
+                        min_en[band] = pData->energy[band][i] < min_en[band] ? pData->energy[band][i] : min_en[band];
                     }
                 }
-                numAnalysisBands++;
             }
-        }
-        
-        /* determine the minimum and maximum sector energies per frequency (to scale them 0..1) */
-        for(band=1/* ignore DC */; band<HYBRID_BANDS; band++){
-            if(pData->freqVector[band] >= minFreq && pData->freqVector[band]<=maxFreq){
-                nSectors = nSectorsPerBand[band];
-                max_en[band] = 2.3e-13f; min_en[band] = 2.3e13f; /* starting values */
-                for(i=0; i<nSectors; i++){
-                    max_en[band] = pData->energy[band][i] > max_en[band] ? pData->energy[band][i] : max_en[band];
-                    min_en[band] = pData->energy[band][i] < min_en[band] ? pData->energy[band][i] : min_en[band];
+
+            /* prep data for plotting */
+            for(band=1/* ignore DC */; band<HYBRID_BANDS; band++){
+                if(pData->freqVector[band] >= minFreq && pData->freqVector[band]<=maxFreq){
+                    nSectors = nSectorsPerBand[band];
+                    /* store averaged values */
+                    for(i=0; i<nSectors; i++){
+                        pData->azi_deg [current_disp_idx][band*MAX_NUM_SECTORS + i] = pData->doa_rad[band][i][0]*180.0f/M_PI;
+                        pData->elev_deg[current_disp_idx][band*MAX_NUM_SECTORS + i] = pData->doa_rad[band][i][1]*180.0f/M_PI;
+
+                        /* colour should indicate the different frequencies */
+                        pData->colourScale[current_disp_idx][band*MAX_NUM_SECTORS + i] = (float)(band-min_band)/(float)(numAnalysisBands+1);
+
+                        /* transparancy should indicate the energy of the sector for each DoA estimate, for each frequency */
+                        if( analysisOrderPerBand[band]==1  )
+                            pData->alphaScale[current_disp_idx][band*MAX_NUM_SECTORS + i] = 1.0f;
+                        else
+                            pData->alphaScale[current_disp_idx][band*MAX_NUM_SECTORS + i] = MIN(MAX((pData->energy[band][i]-min_en[band])/(max_en[band]-min_en[band]+2.3e-10f), 0.05f),1.0f);
+                    }
+                }
+                else{
+                    memset(&(pData->azi_deg [current_disp_idx][band*MAX_NUM_SECTORS]), 0, MAX_NUM_SECTORS*sizeof(float));
+                    memset(&(pData->elev_deg [current_disp_idx][band*MAX_NUM_SECTORS]), 0, MAX_NUM_SECTORS*sizeof(float));
+                    memset(&(pData->colourScale [current_disp_idx][band*MAX_NUM_SECTORS]), 0, MAX_NUM_SECTORS*sizeof(float));
+                    memset(&(pData->alphaScale [current_disp_idx][band*MAX_NUM_SECTORS]), 0, MAX_NUM_SECTORS*sizeof(float));
                 }
             }
         }
-        
-        /* prep data for plotting */
-        for(band=1/* ignore DC */; band<HYBRID_BANDS; band++){
-            if(pData->freqVector[band] >= minFreq && pData->freqVector[band]<=maxFreq){
-                nSectors = nSectorsPerBand[band];
-                /* store averaged values */
-                for(i=0; i<nSectors; i++){
-                    pData->azi_deg [current_disp_idx][band*MAX_NUM_SECTORS + i] = pData->doa_rad[band][i][0]*180.0f/M_PI;
-                    pData->elev_deg[current_disp_idx][band*MAX_NUM_SECTORS + i] = pData->doa_rad[band][i][1]*180.0f/M_PI;
-                    
-                    /* colour should indicate the different frequencies */
-                    pData->colourScale[current_disp_idx][band*MAX_NUM_SECTORS + i] = (float)(band-min_band)/(float)(numAnalysisBands+1);
-                    
-                    /* transparancy should indicate the energy of the sector for each DoA estimate, for each frequency */
-                    if( analysisOrderPerBand[band]==1  )
-                        pData->alphaScale[current_disp_idx][band*MAX_NUM_SECTORS + i] = 1.0f;
-                    else
-                        pData->alphaScale[current_disp_idx][band*MAX_NUM_SECTORS + i] = MIN(MAX((pData->energy[band][i]-min_en[band])/(max_en[band]-min_en[band]+2.3e-10f), 0.05f),1.0f);
-                }
-            }
-            else{
-                memset(&(pData->azi_deg [current_disp_idx][band*MAX_NUM_SECTORS]), 0, MAX_NUM_SECTORS*sizeof(float));
-                memset(&(pData->elev_deg [current_disp_idx][band*MAX_NUM_SECTORS]), 0, MAX_NUM_SECTORS*sizeof(float));
-                memset(&(pData->colourScale [current_disp_idx][band*MAX_NUM_SECTORS]), 0, MAX_NUM_SECTORS*sizeof(float));
-                memset(&(pData->alphaScale [current_disp_idx][band*MAX_NUM_SECTORS]), 0, MAX_NUM_SECTORS*sizeof(float));
-            }
+        else if(pData->FIFO_idx >= FRAME_SIZE){
+            /* reset FIFO_idx if codec was not ready */
+            pData->FIFO_idx = 0;
         }
     }
-    
+
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
 
@@ -659,3 +658,7 @@ int sldoa_getNormType(void* const hSld)
     return (int)pData->norm;
 }
 
+int sldoa_getProcessingDelay()
+{
+    return FRAME_SIZE + 12*HOP_SIZE;
+}

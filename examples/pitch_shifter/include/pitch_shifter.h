@@ -217,6 +217,12 @@ PITCH_SHIFTER_OSAMP_OPTIONS pitch_shifter_getOSampOption(void* const hPS);
  * Returns the number of channels required by the current configuration
  */
 int pitch_shifter_getNCHrequired(void* const hPS);
+
+/**
+ * Returns the processing delay in samples (may be used for delay compensation
+ * features)
+ */
+int pitch_shifter_getProcessingDelay(void* const hPS);
     
     
 #ifdef __cplusplus

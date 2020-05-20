@@ -105,7 +105,7 @@ void ambi_enc_process
     nSources = pData->nSources;
     memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
     order = MIN(pData->order, MAX_ORDER);
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
 
     /* Loop over all samples */
     for(s=0; s<nSamples; s++){

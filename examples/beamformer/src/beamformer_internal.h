@@ -40,6 +40,7 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
+#define FRAME_SIZE ( 128 )
 #define HOP_SIZE ( 128 )                         /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )            /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )     /* 4/8/16 */
@@ -58,6 +59,11 @@ extern "C" {
  */
 typedef struct _beamformer
 {
+    /* FIFO buffers */
+    int FIFO_idx;
+    float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float outFIFO[MAX_NUM_BEAMS][FRAME_SIZE];
+
     /* audio buffers + afSTFT time-frequency transform handle */
     float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float prev_SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
@@ -65,17 +71,13 @@ typedef struct _beamformer
     float outputFrameTD[MAX_NUM_BEAMS][FRAME_SIZE];
     int fs;
     
-    /* internal variables */
-    int nSH;
-    int new_nBeams;                          /**< if new_nLoudpkrs != nLoudpkrs, afSTFT is reinitialised */
-    int new_nSH; 
+    /* internal variables */ 
     float beamWeights[MAX_NUM_BEAMS][MAX_NUM_SH_SIGNALS];
     float prev_beamWeights[MAX_NUM_BEAMS][MAX_NUM_SH_SIGNALS];
     float interpolator[FRAME_SIZE];
     
     /* flags */
-    int recalc_beamWeights[MAX_NUM_BEAMS];   /**< 0: no init required, 1: init required */
-    int reInitTFT;                           /**< 0: no init required, 1: init required, 2: init in progress */
+    int recalc_beamWeights[MAX_NUM_BEAMS];   /**< 0: no init required, 1: init required */ 
     
     /* user parameters */
     int beamOrder;                           /**< beam order */
@@ -91,12 +93,7 @@ typedef struct _beamformer
 /* ========================================================================== */
 /*                             Internal Functions                             */
 /* ========================================================================== */
-
-/**
- * Initialises the filterbank used by beamformer. 
- */
-void beamformer_initTFT(void* const hBeam);
-
+ 
 
 #ifdef __cplusplus
 } /* extern "C" { */

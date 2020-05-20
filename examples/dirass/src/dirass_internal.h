@@ -68,6 +68,7 @@ typedef enum _DIRASS_PROC_STATUS{
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
+#define FRAME_SIZE ( 1024 )
 #define MAX_INPUT_SH_ORDER ( 7 )
 #define MAX_DISPLAY_SH_ORDER ( 20 )
 #define MAX_NUM_INPUT_SH_SIGNALS ( (MAX_INPUT_SH_ORDER+1)*(MAX_INPUT_SH_ORDER+1) )
@@ -119,6 +120,10 @@ typedef struct _dirass_codecPars
  */
 typedef struct _dirass
 {
+    /* FIFO buffers */
+    int FIFO_idx;
+    float inFIFO[MAX_NUM_INPUT_SH_SIGNALS][FRAME_SIZE]; 
+    
     /* Buffers */
     float SHframeTD[MAX_NUM_INPUT_SH_SIGNALS][FRAME_SIZE];
     float SHframe_upTD[MAX_NUM_DISPLAY_SH_SIGNALS][FRAME_SIZE];

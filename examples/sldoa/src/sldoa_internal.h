@@ -76,7 +76,7 @@ typedef enum _SLDOA_PROC_STATUS{
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define ORDER2NUMSIGS(L) ( (L+1) * (L+1) )
+#define FRAME_SIZE ( 512 )
 #define ELEV2INCL(E) ( (M_PI/2 - E) )
 //#define ORDER2NUMSECTORS(L) ( 2*L )
 #define ORDER2NUMSECTORS(L) ( L*L )
@@ -102,6 +102,10 @@ typedef enum _SLDOA_PROC_STATUS{
  */
 typedef struct _sldoa
 {
+    /* FIFO buffers */
+    int FIFO_idx;
+    float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
+
     /* TFT */
     float SHframeTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];

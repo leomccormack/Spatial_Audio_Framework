@@ -99,7 +99,7 @@ void powermap_initAna(void* const hPm)
             pars->interp_dirs_deg[(i*N_azi + j)*2+1] = grid_y_axis[i];
         }
     }
-    free1d((void**)&(pars->interp_table));
+    free(pars->interp_table);
     generateVBAPgainTable3D_srcs(pars->interp_dirs_deg, N_azi*N_ele, pars->grid_dirs_deg, pars->grid_nDirs, 0, 0, 0.0f, &(pars->interp_table), &(pars->interp_nDirs), &(pars->interp_nTri));
     VBAPgainTable2InterpTable(pars->interp_table, pars->interp_nDirs, pars->grid_nDirs);
     
