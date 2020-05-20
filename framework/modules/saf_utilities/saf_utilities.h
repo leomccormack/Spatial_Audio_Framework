@@ -82,10 +82,13 @@
 #ifndef CLAMP
 # define CLAMP(a,min,max) (MAX(min, MIN(max, a)))
 #endif
-#ifndef PI
-# define PI ( 3.14159265358979323846264338327950288f )
+#ifndef M_PI
+# define M_PI ( 3.14159265358979323846264338327950288f )
 #endif
-#define SAF_PI ( 3.14159265358979323846264338327950288f )
+#ifndef PI
+# define PI ( M_PI )
+#endif
+#define SAF_PI ( M_PI )
 #define SAF_ISPOW2(x) (((x & ~(x-1))==x) ? x : 0);
  
     

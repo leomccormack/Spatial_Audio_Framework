@@ -148,7 +148,7 @@ void smb_pitchShift_create
         h->gRover[i] = h->inFifoLatency;
     h->window = (double*)malloc1d(fftFrameSize*sizeof(double));
     for (i = 0; i < fftFrameSize; i++)
-        h->window[i] = -.5*cos(2.*M_PI*(double)i/(double)fftFrameSize)+.5;
+        h->window[i] = -.5*cos(2.*SAF_PI*(double)i/(double)fftFrameSize)+.5;
     h->gInFIFO = (float**)calloc2d(nCH,fftFrameSize,sizeof(float));
     h->gOutFIFO = (float**)calloc2d(nCH,fftFrameSize,sizeof(float));
 #ifdef SMB_ENABLE_SAF_FFT
@@ -225,7 +225,7 @@ void smb_pitchShift_apply
     /* set up some handy variables */
     fftFrameSize2 = h->fftFrameSize/2;
     freqPerBin = h->sampleRate/(double)h->fftFrameSize;
-    expct = 2.*M_PI*(double)(h->stepSize)/(double)h->fftFrameSize;
+    expct = 2.*SAF_PI*(double)(h->stepSize)/(double)h->fftFrameSize;
 
     /* flush buffers */
     if(h->pitchShiftFactor!=pitchShift){
@@ -286,13 +286,13 @@ void smb_pitchShift_apply
                     tmp -= (double)k*expct;
 
                     /* map delta phase into +/- Pi interval */
-                    qpd = tmp/M_PI;
+                    qpd = tmp/SAF_PI;
                     if (qpd >= 0) qpd += qpd&1;
                     else qpd -= qpd&1;
-                    tmp -= M_PI*(double)qpd;
+                    tmp -= SAF_PI*(double)qpd;
 
                     /* get deviation from bin frequency from the +/- Pi interval */
-                    tmp = h->osamp*tmp/(2.*M_PI);
+                    tmp = h->osamp*tmp/(2.*SAF_PI);
 
                     /* compute the k-th partials' true frequency */
                     tmp = (double)k*freqPerBin + tmp*freqPerBin;
@@ -329,7 +329,7 @@ void smb_pitchShift_apply
                     tmp /= freqPerBin;
 
                     /* take osamp into account */
-                    tmp = 2.*M_PI*tmp/(h->osamp);
+                    tmp = 2.*SAF_PI*tmp/(h->osamp);
 
                     /* add the overlap phase advance back in */
                     tmp += (double)k*expct;

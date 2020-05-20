@@ -179,7 +179,7 @@ void polyz_v
     int j,i;
 
     memset(poly, 0, (len_x+1)*sizeof(double_complex));
-    poly[0] = 1.0;
+    poly[0] = cmplx(1.0, 0.0);
     for (j=0; j<len_x; j++){
         for(i=j+1; i>0; i--){
             poly[i] = ccsub(poly[i], ccmul(x[j], poly[i-1]));
@@ -206,7 +206,7 @@ void polyd_m
 
     /* recursion formula */
     memset(poly, 0, (size_x+1)*sizeof(double_complex));
-    poly[0] = 1.0;
+    poly[0] = cmplx(1.0, 0.0);
     for (j=0; j<size_x; j++){
         for(i=j+1; i>0; i--){
             poly[i] = ccsub(poly[i], ccmul(e[j], poly[i-1]));

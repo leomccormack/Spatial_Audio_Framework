@@ -46,7 +46,7 @@ void estimateITDs
     /* calculate LPF coefficients, 2nd order IIR design equations from DAFX (2nd ed) p50 */
     fc = 750.0f;
     Q = 0.7071f;
-    K = tanf(M_PI * fc/(float)fs);
+    K = tanf(SAF_PI * fc/(float)fs);
     KK = K * K; 
     D = KK * Q + K + Q;
 	b[0] = (KK * Q) / D; b[1] = (2.0f * KK * Q) / D; b[2] = (KK * Q) / D;
@@ -169,7 +169,7 @@ void diffuseFieldEqualiseHRTFs
                 ipd, N_dirs);
     for(i=0; i<N_bands; i++)
         for(j=0; j<N_dirs; j++)
-            ipd[i*N_dirs+j] = (matlab_fmodf(2.0f*M_PI*ipd[i*N_dirs+j] + M_PI, 2.0f*M_PI) - M_PI)/2.0f; /* /2 here, not later */
+            ipd[i*N_dirs+j] = (matlab_fmodf(2.0f*SAF_PI*ipd[i*N_dirs+j] + SAF_PI, 2.0f*SAF_PI) - SAF_PI)/2.0f; /* /2 here, not later */
     
     /* diffuse-field equalise */
     hrtf_diff = calloc1d(N_bands*NUM_EARS, sizeof(float));
@@ -240,7 +240,7 @@ void interpHRTFs
         
         /* convert ITDs to phase differences -pi..pi */
         for(i=0; i<N_interp_dirs; i++)
-            ipd_interp[i] = (matlab_fmodf(2.0f*M_PI*freqVector[band]*itd_interp[i] + M_PI, 2.0f*M_PI) - M_PI)/2.0f; /* /2 here, not later */
+            ipd_interp[i] = (matlab_fmodf(2.0f*SAF_PI*freqVector[band]*itd_interp[i] + SAF_PI, 2.0f*SAF_PI) - SAF_PI)/2.0f; /* /2 here, not later */
         
         /* reintroduce the interaural phase differences (IPD) */
         for(i=0; i<N_interp_dirs; i++){
@@ -279,7 +279,7 @@ void binauralDiffuseCoherence
                 ipd, N_hrtf_dirs);
     for(i=0; i<N_bands; i++)
         for(j=0; j<N_hrtf_dirs; j++)
-            ipd[i*N_hrtf_dirs+j] = (matlab_fmodf(2.0f*M_PI*ipd[i*N_hrtf_dirs+j] + M_PI, 2.0f*M_PI) - M_PI);
+            ipd[i*N_hrtf_dirs+j] = (matlab_fmodf(2.0f*SAF_PI*ipd[i*N_hrtf_dirs+j] + SAF_PI, 2.0f*SAF_PI) - SAF_PI);
     
     /* compute complex coherence */
     hrtf_ipd_lr = calloc1d(N_bands, sizeof(float_complex));

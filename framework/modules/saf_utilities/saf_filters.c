@@ -61,14 +61,14 @@ static void applyWindowingFunction
             
         case WINDOWING_FUNCTION_HAMMING:
             for(i=0; i<winlength; i++)
-                x[i] *= 0.54f - 0.46f * (cosf(2.0f*M_PI*(float)i/(float)N)); /* more wide-spread coefficient values */
+                x[i] *= 0.54f - 0.46f * (cosf(2.0f*SAF_PI*(float)i/(float)N)); /* more wide-spread coefficient values */
             /* optimal equiripple coefficient values: */
             /*x[i] *= 0.53836f - 0.46164f * (cosf(2.0f*M_PI*(float)i/(float)N));*/
             break;
             
         case WINDOWING_FUNCTION_HANN:
             for(i=0; i<winlength; i++)
-                x[i] *= 0.5f - 0.5f * (cosf(2.0f*M_PI*(float)i/(float)N));
+                x[i] *= 0.5f - 0.5f * (cosf(2.0f*SAF_PI*(float)i/(float)N));
             break;
             
         case WINDOWING_FUNCTION_BARTLETT:
@@ -79,35 +79,35 @@ static void applyWindowingFunction
         case WINDOWING_FUNCTION_BLACKMAN:
             for(i=0; i<winlength; i++){
                 x[i] *= 0.42659f -
-                        0.49656f *cosf(2.0f*M_PI*(float)i/(float)N) +
-                        0.076849f*cosf(4.0f*M_PI*(float)i/(float)N);
+                        0.49656f *cosf(2.0f*SAF_PI*(float)i/(float)N) +
+                        0.076849f*cosf(4.0f*SAF_PI*(float)i/(float)N);
             }
             break;
             
         case WINDOWING_FUNCTION_NUTTALL:
             for(i=0; i<winlength; i++){
                 x[i] *= 0.355768f -
-                        0.487396f*cosf(2.0f*M_PI*(float)i/(float)N) +
-                        0.144232f*cosf(4.0f*M_PI*(float)i/(float)N) -
-                        0.012604f*cosf(6.0f*M_PI*(float)i/(float)N);
+                        0.487396f*cosf(2.0f*SAF_PI*(float)i/(float)N) +
+                        0.144232f*cosf(4.0f*SAF_PI*(float)i/(float)N) -
+                        0.012604f*cosf(6.0f*SAF_PI*(float)i/(float)N);
             }
             break;
             
         case WINDOWING_FUNCTION_BLACKMAN_NUTTALL:
             for(i=0; i<winlength; i++){
                 x[i] *= 0.3635819f -
-                        0.4891775f*cosf(2.0f*M_PI*(float)i/(float)N) +
-                        0.1365995f*cosf(4.0f*M_PI*(float)i/(float)N) +
-                        0.0106411f*cosf(4.0f*M_PI*(float)i/(float)N);
+                        0.4891775f*cosf(2.0f*SAF_PI*(float)i/(float)N) +
+                        0.1365995f*cosf(4.0f*SAF_PI*(float)i/(float)N) +
+                        0.0106411f*cosf(4.0f*SAF_PI*(float)i/(float)N);
             }
             break;
             
         case WINDOWING_FUNCTION_BLACKMAN_HARRIS:
             for(i=0; i<winlength; i++){
                 x[i] *= 0.35875f -
-                        0.48829f*cosf(2.0f*M_PI*(float)i/(float)N) +
-                        0.14128f*cosf(4.0f*M_PI*(float)i/(float)N) +
-                        0.01168f*cosf(4.0f*M_PI*(float)i/(float)N);
+                        0.48829f*cosf(2.0f*SAF_PI*(float)i/(float)N) +
+                        0.14128f*cosf(4.0f*SAF_PI*(float)i/(float)N) +
+                        0.01168f*cosf(4.0f*SAF_PI*(float)i/(float)N);
             }
             break;
     }
@@ -302,7 +302,7 @@ void biQuadCoeffs
     switch (filterType){
         case BIQUAD_FILTER_LPF:
             /* Filter design equations - DAFX (2nd ed) p50 */
-            K = tanf(M_PI * fc/fs);
+            K = tanf(SAF_PI * fc/fs);
             KK = K * K;
             D = KK * Q + K + Q;
             b[0] = (KK * Q)/D;
@@ -314,7 +314,7 @@ void biQuadCoeffs
             
         case BIQUAD_FILTER_HPF:
             /* Filter design equations - DAFX (2nd ed) p50 */
-            K = tanf(M_PI * fc/fs);
+            K = tanf(SAF_PI * fc/fs);
             KK = K * K;
             D = KK * Q + K + Q;
             b[0] = (Q)/D;
@@ -326,7 +326,7 @@ void biQuadCoeffs
             
         case BIQUAD_FILTER_LOW_SHELF:
             /* Filter design equations - DAFX (2nd ed) p64 */
-            K = tanf(M_PI * fc/fs);
+            K = tanf(SAF_PI * fc/fs);
             V0 = powf(10.0f, (gain_dB/20.0f));
             if (V0 < 1.0f)
                 V0 = 1.0f/V0;
@@ -351,7 +351,7 @@ void biQuadCoeffs
             
         case BIQUAD_FILTER_HI_SHELF:
             /* Filter design equations - DAFX (2nd ed) p64 */
-            K = tanf(M_PI * fc/fs);
+            K = tanf(SAF_PI * fc/fs);
             V0 = powf(10.0f, (gain_dB/20.0f));
             if (V0 < 1.0f)
                 V0 = 1.0f/V0;
@@ -376,7 +376,7 @@ void biQuadCoeffs
             
         case BIQUAD_FILTER_PEAK:
             /* Filter design equations - DAFX (2nd ed) p66 */
-            K = tanf(M_PI * fc/fs);
+            K = tanf(SAF_PI * fc/fs);
             V0 = powf(10.0f, (gain_dB/20.0f));
             KK = K * K;
             if (gain_dB > 0.0f){
@@ -436,7 +436,7 @@ void evalBiQuadTransferFunction
     float w, denom_real, denom_imag, num_real, num_imag;
     
     for(ff=0; ff<nFreqs; ff++){
-        w = tanf(M_PI * freqs[ff]/fs);
+        w = tanf(SAF_PI * freqs[ff]/fs);
         /* substituting Euler, z = e^(-jwn) = cos(wn) + j*sin(wn), into:
          * H(z) = (b0 + b1*z^(-1) + b2*z^(-2)) / (1 + a1*z^(-1) + a2*z^(-2)): */
         denom_real = 1.0f + a[1]*cosf(w) + a[2]*cosf(2.0f*w);
@@ -522,7 +522,7 @@ void butterCoeffs
 
     wlow = (double)cutoff1/((double)sampleRate/2.0);
     whi = (double)cutoff2/((double)sampleRate/2.0);
-    w0 = 4.0 * tan(M_PI*wlow/2.0);
+    w0 = 4.0 * tan(SAF_PI*wlow/2.0);
     Wn1 = 0.0;
 
     /* Compute prototype for Nth order Butterworth analogue lowpass filter */
@@ -539,7 +539,7 @@ void butterCoeffs
     }
     proto_tmp = malloc1d(np*sizeof(double_complex));
     for(i=1, j=0; i<=order-1; i+=2, j++)
-        proto_tmp[j] = cexp(cmplx(0.0, M_PI*(double)i/(2.0*(double)order) + M_PI/2.0) );
+        proto_tmp[j] = cexp(cmplx(0.0, SAF_PI*(double)i/(2.0*(double)order) + SAF_PI/2.0) );
     for (i=0; i<tmp_len; i++){
         proto[2*i] = proto_tmp[i];
         proto[2*i+1] = conj(proto_tmp[i]);
@@ -592,6 +592,7 @@ void butterCoeffs
     }
 
     /* Transform lowpass filter into the desired filter (while in state space) */
+	bf_ss = NULL;
     switch(filterType){
         case BUTTER_FILTER_HPF:
             utility_dinv(FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
@@ -605,7 +606,7 @@ void butterCoeffs
             utility_dinv(FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
         case BUTTER_FILTER_BPF:
             numStates = numStates*2;
-            w1 = 4.0*tan(M_PI*whi/2.0);
+            w1 = 4.0*tan(SAF_PI*whi/2.0);
             BW = w1 - w0;
             Wn1 = sqrt(w0*w1);
             q = Wn1/BW;
@@ -621,6 +622,7 @@ void butterCoeffs
                     bf_ss[i][j] = i == (j-numStates/2) ? Wn1 : 0.0;
             break;
     }
+	assert(bf_ss != NULL);
     nCoeffs = numStates+1;
 
     /* Bilinear transformation to find the discrete equivalent of the filter */
@@ -651,7 +653,7 @@ void butterCoeffs
             r = malloc1d(numStates*sizeof(double));
             for(i=0; i<numStates; i++)
                 r[i] = 1.0;
-            wl = M_PI;
+            wl = SAF_PI;
             break;
         case BUTTER_FILTER_BPF:
             r = malloc1d(numStates*sizeof(double));
@@ -767,8 +769,10 @@ void faf_IIRFilterbank_create
         q[0] = sqrt(-r[0]/-1.0);
         q[1] = -r[1]/(2.0*-1.0*q[0]);
         if(order==3){
-            q[3]=conj(-1.0*q[0]);
-            q[2]=conj(-1.0*q[1]);
+            //q[3]=conj(-1.0*q[0]);
+            //q[2]=conj(-1.0*q[1]);
+			q[3] = -1.0*q[0];
+			q[2] = -1.0*q[1];
         }
         for(i=0; i<filtLen; i++)
             q[i] =  b_lpf[i] - q[i];
@@ -794,7 +798,7 @@ void faf_IIRFilterbank_create
         for(i=0; i<order; i++){
             if (cabs(z[i]) < 1.0){
                 ztmp[0] = cmplx(1.0, 0.0);
-                ztmp[1] = -z[i];
+				ztmp[1] = crmul(z[i], -1.0);
                 convz(d2,ztmp,d2_len,2,ztmp2);
                 d2_len++;
                 for(j=0; j<d2_len; j++)
@@ -802,7 +806,7 @@ void faf_IIRFilterbank_create
             }
             else{
                 ztmp[0] = cmplx(1.0, 0.0);
-                ztmp[1] = ccdiv(-1.0, conj(z[i]));
+                ztmp[1] = ccdiv(cmplx(-1.0, 0.0), conj(z[i]));
                 convz(d1,ztmp,d1_len,2,ztmp2);
                 d1_len++;
                 for(j=0; j<d1_len; j++)
@@ -952,19 +956,19 @@ void FIRCoeffs
         switch(filterType){
             case FIR_FILTER_LPF:
                 for(i=0; i<h_len; i++)
-                    h_filt[i] = i==order/2 ? 2.0f*ft1 : sinf(2.0f*M_PI*ft1*(float)(i-order/2)) / (M_PI*(float)(i-order/2));
+                    h_filt[i] = i==order/2 ? 2.0f*ft1 : sinf(2.0f*SAF_PI*ft1*(float)(i-order/2)) / (SAF_PI*(float)(i-order/2));
                 break;
                 
             case FIR_FILTER_HPF:
                 for(i=0; i<h_len; i++)
-                    h_filt[i] = i==order/2 ? 1.0f - 2.0f*ft1 : -sinf(2.0f*ft1*M_PI*(float)(i-order/2)) / (M_PI*(float)(i-order/2));
+                    h_filt[i] = i==order/2 ? 1.0f - 2.0f*ft1 : -sinf(2.0f*ft1*SAF_PI*(float)(i-order/2)) / (SAF_PI*(float)(i-order/2));
                 break;
                 
             case FIR_FILTER_BPF:
                 ft2 = fc2/(fs*2.0f);
                 for(i=0; i<h_len; i++){
                     h_filt[i] = i==order/2 ? 2.0f*(ft2-ft1) :
-                        sinf(2.0f*M_PI*ft2*(float)(i-order/2)) / (M_PI*(float)(i-order/2)) - sinf(2.0f*M_PI*ft1*(float)(i-order/2)) / (M_PI*(float)(i-order/2));
+                        sinf(2.0f*SAF_PI*ft2*(float)(i-order/2)) / (SAF_PI*(float)(i-order/2)) - sinf(2.0f*SAF_PI*ft1*(float)(i-order/2)) / (SAF_PI*(float)(i-order/2));
                 }
                 break;
                 
@@ -972,7 +976,7 @@ void FIRCoeffs
                 ft2 = fc2/(fs*2.0f);
                 for(i=0; i<h_len; i++){
                     h_filt[i] = i==order/2 ? 1.0f - 2.0f*(ft2-ft1) :
-                        sinf(2.0f*M_PI*ft1*(float)(i-order/2)) / (M_PI*(float)(i-order/2)) - sinf(2.0f*M_PI*ft2*(float)(i-order/2)) / (M_PI*(float)(i-order/2));
+                        sinf(2.0f*SAF_PI*ft1*(float)(i-order/2)) / (SAF_PI*(float)(i-order/2)) - sinf(2.0f*SAF_PI*ft2*(float)(i-order/2)) / (SAF_PI*(float)(i-order/2));
                 }
                 break;
         }
@@ -1002,7 +1006,7 @@ void FIRCoeffs
                 f0 = 1.0f;
                 h_z_sum = cmplxf(0.0f, 0.0f);
                 for(i=0; i<h_len; i++)
-                    h_z_sum = ccaddf(h_z_sum, crmulf(cexpf(cmplxf(0.0f, -2.0f*M_PI*(float)i*f0/2.0f)), h_filt[i]));
+                    h_z_sum = ccaddf(h_z_sum, crmulf(cexpf(cmplxf(0.0f, -2.0f*SAF_PI*(float)i*f0/2.0f)), h_filt[i]));
                 h_sum = cabsf(h_z_sum);
                 for(i=0; i<h_len; i++)
                     h_filt[i] /= h_sum;
@@ -1012,7 +1016,7 @@ void FIRCoeffs
                 f0 = (fc1/fs+fc2/fs)/2.0f;
                 h_z_sum = cmplxf(0.0f, 0.0f);
                 for(i=0; i<h_len; i++)
-                    h_z_sum = ccaddf(h_z_sum, crmulf(cexpf(cmplxf(0.0f, -2.0f*M_PI*(float)i*f0/2.0f)), h_filt[i]));
+                    h_z_sum = ccaddf(h_z_sum, crmulf(cexpf(cmplxf(0.0f, -2.0f*SAF_PI*(float)i*f0/2.0f)), h_filt[i]));
                 h_sum = cabsf(h_z_sum);
                 for(i=0; i<h_len; i++)
                     h_filt[i] /= h_sum;

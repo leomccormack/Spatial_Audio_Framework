@@ -387,16 +387,16 @@ void findClosestGridPoints
     target_xyz = malloc1d(nTarget*3*sizeof(float));
     if(degFLAG){
         for(i=0; i<nGrid; i++){
-            grid_xyz[i*3+2] = sinf(grid_dirs[i*2+1]*M_PI/180.0f);
-            rcoselev = cosf( grid_dirs[i*2+1]*M_PI/180.0f);
-            grid_xyz[i*3] = rcoselev * cosf(grid_dirs[i*2]*M_PI/180.0f);
-            grid_xyz[i*3+1] = rcoselev * sinf(grid_dirs[i*2]*M_PI/180.0f);
+            grid_xyz[i*3+2] = sinf(grid_dirs[i*2+1]* SAF_PI/180.0f);
+            rcoselev = cosf( grid_dirs[i*2+1]* SAF_PI/180.0f);
+            grid_xyz[i*3] = rcoselev * cosf(grid_dirs[i*2]* SAF_PI/180.0f);
+            grid_xyz[i*3+1] = rcoselev * sinf(grid_dirs[i*2]* SAF_PI/180.0f);
         }
         for(i=0; i<nTarget; i++){
-            target_xyz[i*3+2] = sinf(target_dirs[i*2+1]*M_PI/180.0f);
-            rcoselev = cosf(target_dirs[i*2+1]*M_PI/180.0f);
-            target_xyz[i*3] = rcoselev * cosf(target_dirs[i*2]*M_PI/180.0f);
-            target_xyz[i*3+1] = rcoselev * sinf(target_dirs[i*2]*M_PI/180.0f);
+            target_xyz[i*3+2] = sinf(target_dirs[i*2+1]* SAF_PI/180.0f);
+            rcoselev = cosf(target_dirs[i*2+1]* SAF_PI/180.0f);
+            target_xyz[i*3] = rcoselev * cosf(target_dirs[i*2]* SAF_PI/180.0f);
+            target_xyz[i*3+1] = rcoselev * sinf(target_dirs[i*2]* SAF_PI/180.0f);
         }
     }
     else{

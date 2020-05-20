@@ -150,13 +150,13 @@ void getRSH
     float* dirs_rad;
     
     nSH = (N+1)*(N+1);
-    scale = sqrtf(4.0f*M_PI);
+    scale = sqrtf(4.0f*SAF_PI);
     
     /* convert [azi, elev] in degrees, to [azi, inclination] in radians */
     dirs_rad = malloc1d(nDirs*2*sizeof(float));
     for(i=0; i<nDirs; i++){
-        dirs_rad[i*2+0] = dirs_deg[i*2+0] * M_PI/180.0f;
-        dirs_rad[i*2+1] = M_PI/2.0f - (dirs_deg[i*2+1] * M_PI/180.0f);
+        dirs_rad[i*2+0] = dirs_deg[i*2+0] * SAF_PI/180.0f;
+        dirs_rad[i*2+1] = SAF_PI/2.0f - (dirs_deg[i*2+1] * SAF_PI/180.0f);
     }
     
     /* get real-valued spherical harmonics */
@@ -204,7 +204,7 @@ void getRSH_recur
     
     /* cos(inclination) = sin(elevation) */
     for (dir = 0; dir<nDirs; dir++)
-        sin_el[dir] = sinf(dirs_deg[dir*2+1] * M_PI/180.0f);
+        sin_el[dir] = sinf(dirs_deg[dir*2+1] * SAF_PI/180.0f);
     
     /* compute SHs with the recursive Legendre function */
     for (n = 0; n<N+1; n++) {
@@ -223,8 +223,8 @@ void getRSH_recur
                         Y[(index_n+n)*nDirs+dir] = Nn0  * leg_n[m*nDirs+dir];
                     else {
                         Nnm = Nn0* sqrtf( 2.0f * factorials_n[n-m]/factorials_n[n+m] );
-                        Y[(index_n+n-m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_deg[dir*2])*M_PI/180.0f);
-                        Y[(index_n+n+m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_deg[dir*2])*M_PI/180.0f);
+                        Y[(index_n+n-m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_deg[dir*2])*SAF_PI/180.0f);
+                        Y[(index_n+n+m)*nDirs+dir] = Nnm * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_deg[dir*2])*SAF_PI/180.0f);
                     }
                 }
             }
@@ -259,7 +259,7 @@ void getMaxREweights
     double x;
     double* ppm;
     
-    x = cosf(137.9f*(M_PI/180.0f)/((float)order+1.51f));
+    x = cosf(137.9f*(SAF_PI/180.0f)/((float)order+1.51f));
     nSH = (order+1)*(order+1);
     if(diagMtxFlag)
         memset(a_n, 0, nSH*nSH*sizeof(float));

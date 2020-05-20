@@ -393,8 +393,8 @@ void generateVBAPgainTable2D_srcs
     findLsPairs(ls_dirs_deg, L, &out_pairs, &numOutPairs);
     ls_vertices = malloc1d(L*2*sizeof(float));
     for(i=0; i<L; i++){
-        ls_vertices[i*2+0] = cosf(ls_dirs_deg[i*2]*M_PI/180.0f);
-        ls_vertices[i*2+1] = sinf(ls_dirs_deg[i*2]*M_PI/180.0f);
+        ls_vertices[i*2+0] = cosf(ls_dirs_deg[i*2]*SAF_PI/180.0f);
+        ls_vertices[i*2+1] = sinf(ls_dirs_deg[i*2]*SAF_PI/180.0f);
     }
     
     /* Invert matrix */
@@ -436,8 +436,8 @@ void generateVBAPgainTable2D
     findLsPairs(ls_dirs_deg, L, &out_pairs, &numOutPairs);
     ls_vertices = malloc1d(L*2*sizeof(float));
     for(i=0; i<L; i++){
-        ls_vertices[i*2+0] = cosf(ls_dirs_deg[i*2]*M_PI/180.0f);
-        ls_vertices[i*2+1] = sinf(ls_dirs_deg[i*2]*M_PI/180.0f);
+        ls_vertices[i*2+0] = cosf(ls_dirs_deg[i*2]*SAF_PI/180.0f);
+        ls_vertices[i*2+1] = sinf(ls_dirs_deg[i*2]*SAF_PI/180.0f);
     }
     
     /* Invert matrix */
@@ -504,10 +504,10 @@ void findLsTriplets
     (*numOutVertices)  = L;
     (*out_vertices) = (float*)malloc1d(L*3*sizeof(float));
     for ( i = 0; i < L; i++) {
-        (*out_vertices)[i*3+2] = (float)((CH_FLOAT)sin((double)ls_dirs_deg[i*2+1]*M_PI/180.0));
-        rcoselev = (CH_FLOAT)cos((double)ls_dirs_deg[i*2+1]*M_PI/180.0);
-        (*out_vertices)[i*3+0] = (float)(rcoselev * (CH_FLOAT)cos((double)ls_dirs_deg[i*2+0]*M_PI/180.0));
-        (*out_vertices)[i*3+1] = (float)(rcoselev * (CH_FLOAT)sin((double)ls_dirs_deg[i*2+0]*M_PI/180.0));
+        (*out_vertices)[i*3+2] = (float)((CH_FLOAT)sin((double)ls_dirs_deg[i*2+1]* SAF_PI/180.0));
+        rcoselev = (CH_FLOAT)cos((double)ls_dirs_deg[i*2+1]*SAF_PI/180.0);
+        (*out_vertices)[i*3+0] = (float)(rcoselev * (CH_FLOAT)cos((double)ls_dirs_deg[i*2+0]*SAF_PI/180.0));
+        (*out_vertices)[i*3+1] = (float)(rcoselev * (CH_FLOAT)sin((double)ls_dirs_deg[i*2+0]*SAF_PI/180.0));
         vertices[i].x = (*out_vertices)[i*3+0];
         vertices[i].y = (*out_vertices)[i*3+1];
         vertices[i].z = (*out_vertices)[i*3+2];
@@ -592,7 +592,7 @@ void findLsTriplets
         for(j=0; j<3; j++)
             centroid[j] = (vecs[0][j] + vecs[1][j] + vecs[2][j])/3.0f;
         dotcc = cvec[0] * centroid[0] + cvec[1] * centroid[1] + cvec[2] * centroid[2];
-        if(acosf(MAX(MIN(dotcc,0.99999999f),-0.99999999f)/* avoids complex numbers */)<(M_PI/2.0f)){
+        if(acosf(MAX(MIN(dotcc,0.99999999f),-0.99999999f)/* avoids complex numbers */)<(SAF_PI/2.0f)){
             validFacesID[i] = 1;
             numValidFaces++;
         }
@@ -614,7 +614,7 @@ void findLsTriplets
     /* Omit Triangules that have an aperture larger than APERTURE_LIMIT_DEG */
     valid_faces2 = NULL;
     if(omitLargeTriangles) {
-        aperture_lim = APERTURE_LIMIT_DEG * M_PI/180.0f;
+        aperture_lim = APERTURE_LIMIT_DEG * SAF_PI/180.0f;
         nFaces = numValidFaces;
         numValidFaces = 0;
         validFacesID = malloc1d(nFaces*sizeof(int));
@@ -731,7 +731,7 @@ void getSpreadSrcDirs3D
     u_x[0][0] = 0.0f; u_x[0][1] = -u[2]; u_x[0][2] = u[1];
     u_x[1][0] = u[2]; u_x[1][1] = 0.0f; u_x[1][2] = -u[0];
     u_x[2][0] = -u[1]; u_x[2][1] = u[0]; u_x[2][2] = 0.0f;
-    theta = 2.0f*M_PI/(float)num_src;
+    theta = 2.0f*SAF_PI/(float)num_src;
     sin_theta = sinf(theta);
     cos_theta = cosf(theta);
     for(i=0; i<3; i++)
@@ -740,7 +740,7 @@ void getSpreadSrcDirs3D
 
     /*  create a ring of sources on the plane that is purpendicular to the source directions */
     spreadbase = calloc1d(num_src*3, sizeof(float));
-    if ((src_elev_rad > M_PI/2.0f-0.01f ) || (src_elev_rad<-(M_PI/2.0f-0.01f)))
+    if ((src_elev_rad > SAF_PI/2.0f-0.01f ) || (src_elev_rad<-(SAF_PI/2.0f-0.01f)))
         spreadbase[0] = 1.0f;
     else{
         const float u2[3] = {0.0f, 0.0f, 1.0f};
@@ -764,7 +764,7 @@ void getSpreadSrcDirs3D
     }
 
     /* squeeze the perpendicular ring to the desired spread */
-    spread_rad = (spread/2.0f)*M_PI/180.0f;
+    spread_rad = (spread/2.0f)*SAF_PI/180.0f;
     ring_rad = spread_rad/(float)num_rings_3d;
     memset(U_spread, 0, num_rings_3d*num_src*3*sizeof(float));
     for(nr=0; nr<num_rings_3d; nr++)
@@ -812,8 +812,8 @@ void vbap3D
         float* U_spread;
         U_spread = malloc1d((nRings*nSpreadSrcs+1)*3*sizeof(float));
         for(ns=0; ns<src_num; ns++){
-            azi_rad  = src_dirs[ns*2+0]*M_PI/180.0f;
-            elev_rad = src_dirs[ns*2+1]*M_PI/180.0f;
+            azi_rad  = src_dirs[ns*2+0]*SAF_PI/180.0f;
+            elev_rad = src_dirs[ns*2+1]*SAF_PI/180.0f;
             getSpreadSrcDirs3D(azi_rad, elev_rad, spread, nSpreadSrcs, nRings, U_spread);
             memset(gains, 0, ls_num*sizeof(float));
             for(nspr=0; nspr<(nRings*nSpreadSrcs+1); nspr++){
@@ -856,8 +856,8 @@ void vbap3D
     /* VBAP (no spread) */
     else{
         for(ns=0; ns<src_num; ns++){
-            azi_rad  = src_dirs[ns*2+0]*M_PI/180.0f;
-            elev_rad = src_dirs[ns*2+1]*M_PI/180.0f;
+            azi_rad  = src_dirs[ns*2+0]*SAF_PI/180.0f;
+            elev_rad = src_dirs[ns*2+1]*SAF_PI/180.0f;
             u[0] = cosf(azi_rad)*cosf(elev_rad);
             u[1] = sinf(azi_rad)*cosf(elev_rad);
             u[2] = sinf(elev_rad);
@@ -989,7 +989,7 @@ void vbap2D
     (*GainMtx) = malloc1d(src_num*ls_num*sizeof(float));
     gains = malloc1d(ls_num*sizeof(float));
     for(ns=0; ns<src_num; ns++){
-        azi_rad  = src_dirs[ns]*M_PI/180.0f;
+        azi_rad  = src_dirs[ns]*SAF_PI/180.0f;
         u[0] = cosf(azi_rad);
         u[1] = sinf(azi_rad);
         memset(gains, 0, ls_num*sizeof(float));

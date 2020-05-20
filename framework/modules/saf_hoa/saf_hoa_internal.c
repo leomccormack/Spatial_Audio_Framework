@@ -335,8 +335,8 @@ void getBinDecoder_SPR
     hrtf_dirs_rad = malloc1d(N_dirs*2*sizeof(float));
     cnd_num = malloc1d((Nh_max+1)*sizeof(float));
     for(i=0; i<N_dirs; i++){ /* [azi, elev] degrees, to: [azi, inclination] radians */
-        hrtf_dirs_rad[i*2]   = hrtf_dirs_deg[i*2]*(M_PI/180.0f);
-        hrtf_dirs_rad[i*2+1] = M_PI/2.0f - hrtf_dirs_deg[i*2+1]*(M_PI/180.0f);
+        hrtf_dirs_rad[i*2]   = hrtf_dirs_deg[i*2]*(SAF_PI/180.0f);
+        hrtf_dirs_rad[i*2+1] = SAF_PI/2.0f - hrtf_dirs_deg[i*2+1]*(SAF_PI/180.0f);
     }
     checkCondNumberSHTReal(Nh_max, hrtf_dirs_rad, N_dirs, weights, cnd_num);
     for(i=0, Nh=0; i<Nh_max+1; i++)
