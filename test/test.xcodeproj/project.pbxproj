@@ -514,6 +514,21 @@
 				HEADER_SEARCH_PATHS = (
 					unity/,
 					../framework/include/,
+					../examples/ambi_bin/include/,
+					../examples/ambi_dec/include/,
+					../examples/ambi_drc/include/,
+					../examples/ambi_enc/include/,
+					../examples/array2sh/include/,
+					../examples/beamformer/include/,
+					../examples/binauraliser/include/,
+					../examples/dirass/include/,
+					../examples/pitch_shifter/include/,
+					../examples/matrixconv/include/,
+					../examples/multiconv/include/,
+					../examples/powermap/include/,
+					../examples/panner/include/,
+					../examples/rotator/include/,
+					../examples/sldoa/include/,
 				);
 				INSTALL_PATH = bin/;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
@@ -524,6 +539,8 @@
 				USER_HEADER_SEARCH_PATHS = (
 					../framework/include,
 					unity/,
+					../examples/ambi_bin/include,
+					../examples/ambi_dec/include,
 				);
 			};
 			name = Debug;
@@ -575,6 +592,21 @@
 				HEADER_SEARCH_PATHS = (
 					unity/,
 					../framework/include/,
+					../examples/ambi_bin/include/,
+					../examples/ambi_dec/include/,
+					../examples/ambi_drc/include/,
+					../examples/ambi_enc/include/,
+					../examples/array2sh/include/,
+					../examples/beamformer/include/,
+					../examples/binauraliser/include/,
+					../examples/dirass/include/,
+					../examples/pitch_shifter/include/,
+					../examples/matrixconv/include/,
+					../examples/multiconv/include/,
+					../examples/powermap/include/,
+					../examples/panner/include/,
+					../examples/rotator/include/,
+					../examples/sldoa/include/,
 				);
 				INSTALL_PATH = bin/;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
@@ -584,6 +616,8 @@
 				USER_HEADER_SEARCH_PATHS = (
 					../framework/include,
 					unity/,
+					../examples/ambi_bin/include,
+					../examples/ambi_dec/include,
 				);
 			};
 			name = Release;
@@ -598,7 +632,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					SAF_USE_INTEL_MKL,
 					SAF_ENABLE_SOFA_READER,
-					AFSTFT_USE_FLOAT_COMPLEX,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -606,6 +639,21 @@
 					timer,
 					../dependencies/MacOSX/include,
 					/opt/intel/compilers_and_libraries/mac/mkl/include,
+					../examples/ambi_bin/include,
+					../examples/ambi_dec/include,
+					../examples/ambi_drc/include,
+					../examples/ambi_enc/include,
+					../examples/array2sh/include,
+					../examples/beamformer/include,
+					../examples/binauraliser/include,
+					../examples/dirass/include,
+					../examples/matrixconv/include,
+					../examples/multiconv/include,
+					../examples/panner/include,
+					../examples/powermap/include,
+					../examples/pitch_shifter/include,
+					../examples/rotator/include,
+					../examples/sldoa/include,
 				);
 				INSTALL_PATH = bin/;
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;
@@ -638,7 +686,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					SAF_USE_INTEL_MKL,
 					SAF_ENABLE_SOFA_READER,
-					AFSTFT_USE_FLOAT_COMPLEX,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -646,6 +693,21 @@
 					timer,
 					../dependencies/MacOSX/include,
 					/opt/intel/compilers_and_libraries/mac/mkl/include,
+					../examples/ambi_bin/include,
+					../examples/ambi_dec/include,
+					../examples/ambi_drc/include,
+					../examples/ambi_enc/include,
+					../examples/array2sh/include,
+					../examples/beamformer/include,
+					../examples/binauraliser/include,
+					../examples/dirass/include,
+					../examples/matrixconv/include,
+					../examples/multiconv/include,
+					../examples/panner/include,
+					../examples/powermap/include,
+					../examples/pitch_shifter/include,
+					../examples/rotator/include,
+					../examples/sldoa/include,
 				);
 				INSTALL_PATH = bin/;
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;

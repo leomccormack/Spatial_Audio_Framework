@@ -24,6 +24,7 @@
 
 #include "unity.h"
 #include "timer.h"
+/* main framework include header */
 #include "saf.h"
 
 /* Prototypes for available unit tests */
@@ -121,7 +122,7 @@ void test__saf_stft_50pc_overlap(void){
     outsig = (float**)malloc2d(nCHout,signalLength,sizeof(float));
     inframe = (float**)malloc2d(nCHin,framesize,sizeof(float));
     outframe = (float**)malloc2d(nCHout,framesize,sizeof(float));
-    rand_m1_1(ADR2D(insig), nCHin*signalLength); /* populate with random numbers */
+    rand_m1_1(FLATTEN2D(insig), nCHin*signalLength); /* populate with random numbers */
 
     /* Set-up STFT for 50% overlapping */
     winsize = 128;
@@ -184,7 +185,7 @@ void test__saf_stft_LTI(void){
     outsig = (float**)malloc2d(nCHout,fs,sizeof(float));
     inframe = (float**)malloc2d(nCHin,framesize,sizeof(float));
     outframe = (float**)malloc2d(nCHout,framesize,sizeof(float));
-    rand_m1_1(ADR2D(insig), nCHin*fs); /* populate with random numbers */
+    rand_m1_1(FLATTEN2D(insig), nCHin*fs); /* populate with random numbers */
 
     /* Set-up STFT suitable for LTI filtering applications */
     winsize = hopsize = 128;
@@ -254,7 +255,7 @@ void test__ims_shoebox_TD(void){
     /* Allocate memory for 4 sources and 1 spherical harmonic receiver */
     rec_sh_outsigs = (float***)malloc3d(1, ORDER2NSH(sh_order), signalLength, sizeof(float));
     src_sigs = (float**)malloc2d(4, signalLength, sizeof(float));
-    rand_m1_1(ADR2D(src_sigs), 4*signalLength);
+    rand_m1_1(FLATTEN2D(src_sigs), 4*signalLength);
 
     /* Set-up the shoebox room simulator for these four sources and SH receiver */
     ims_shoebox_create(&hIms, 10, 7, 3, (float*)abs_wall, 250.0f, nBands, 343.0f, 48e3f);
@@ -372,9 +373,9 @@ void test__saf_matrixConv(void){
     inputFrameTD = (float**)malloc2d(nInputs, hostBlockSize, sizeof(float));
     outputFrameTD = (float**)calloc2d(nOutputs, hostBlockSize, sizeof(float));
     filters = (float***)malloc3d(nOutputs, nInputs, filterLength, sizeof(float));
-    rand_m1_1(ADR3D(filters), nOutputs*nInputs*filterLength);
-    rand_m1_1(ADR2D(inputTD), nInputs*signalLength);
-    saf_matrixConv_create(&hMatrixConv, hostBlockSize, ADR3D(filters), filterLength,
+    rand_m1_1(FLATTEN3D(filters), nOutputs*nInputs*filterLength);
+    rand_m1_1(FLATTEN2D(inputTD), nInputs*signalLength);
+    saf_matrixConv_create(&hMatrixConv, hostBlockSize, FLATTEN3D(filters), filterLength,
                           nInputs, nOutputs, 0);
 
     /* Apply */
@@ -382,7 +383,7 @@ void test__saf_matrixConv(void){
         for(i = 0; i<nInputs; i++)
             memcpy(inputFrameTD[i], &inputTD[i][frame*hostBlockSize], hostBlockSize*sizeof(float));
 
-         saf_matrixConv_apply(hMatrixConv, ADR2D(inputFrameTD), ADR2D(outputFrameTD));
+         saf_matrixConv_apply(hMatrixConv, FLATTEN2D(inputFrameTD), FLATTEN2D(outputFrameTD));
 
         for(i = 0; i<nOutputs; i++)
             memcpy(&outputTD[i][frame*hostBlockSize], outputFrameTD[i], hostBlockSize*sizeof(float));
@@ -463,7 +464,7 @@ void test__afSTFTMatrix(void){
 
     /* Initialise afSTFT and input data */
     afSTFTMatrixInit(&hSTFT, hopSize, numChannels, numChannels, 0, hybridMode, frameSize);
-    rand_m1_1(ADR2D(inputTimeDomainData), numChannels*lSig); /* populate with random numbers */
+    rand_m1_1(FLATTEN2D(inputTimeDomainData), numChannels*lSig); /* populate with random numbers */
 
     /* Pass input data through afSTFT */
     idx = 0;
@@ -534,7 +535,7 @@ void test__afSTFT(void){
 
     /* Initialise afSTFT and input data */
     afSTFTinit(&hSTFT, hopSize, numChannels, numChannels, 0, hybridMode);
-    rand_m1_1(ADR2D(inputTimeDomainData), numChannels*lSig); /* populate with random numbers */
+    rand_m1_1(FLATTEN2D(inputTimeDomainData), numChannels*lSig); /* populate with random numbers */
 
     /* Pass input data through afSTFT */
     idx = 0;
