@@ -86,9 +86,9 @@
 # define M_PI ( 3.14159265358979323846264338327950288f )
 #endif
 #ifndef PI
-# define PI ( M_PI )
+# define PI ( 3.14159265358979323846264338327950288f )
 #endif
-#define SAF_PI ( M_PI )
+#define SAF_PI ( 3.14159265358979323846264338327950288f )
 #define SAF_ISPOW2(x) (((x & ~(x-1))==x) ? x : 0);
  
     
