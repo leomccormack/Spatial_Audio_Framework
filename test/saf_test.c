@@ -15,7 +15,7 @@
  */
 
 /**
- * @file main.c
+ * @file saf_test.c
  * @brief testing program for the Spatial_Audio_Framework
  *
  * @author Leo McCormack
@@ -23,7 +23,7 @@
  */
 
 #if _MSC_VER >= 1900
-# include "saf_test.h"
+# include "saf_test.h" /* Only required when using the C++ wrapper */
 #endif
 #include "unity.h" /* unit testing suite */
 #include "timer.h" /* for timing the individual tests */
@@ -49,6 +49,7 @@ void test__getSHreal_recur(void);
 void test__butterCoeffs(void);
 void test__faf_IIRFilterbank(void);
 
+
 /* ========================================================================== */
 /*                                 Test Config                                */
 /* ========================================================================== */
@@ -57,7 +58,7 @@ static tick_t start, start_test;
 void setUp(void) { start_test = timer_current(); }
 void tearDown(void) { }
 static void timerResult(void) {
-	printf("    (Time elapsed: %lfs) \n", (double)timer_elapsed(start_test));
+    printf("    (Time elapsed: %lfs) \n", (double)timer_elapsed(start_test));
 }
 
 #undef RUN_TEST
@@ -67,43 +68,45 @@ if (TEST_PROTECT() && (!TEST_IS_IGNORED))  {tearDown(); } \
 UnityConcludeTest(); timerResult();
 
 #if _MSC_VER >= 1900
-int main_test(void) {
+int main_test(void) { /* (for C++ wrapper) */
 #else
 int main(void) {
 #endif
  printf("*****************************************************************\n"
-		"********* Spatial_Audio_Framework Unit Testing Program **********\n"
-		"*****************************************************************\n\n");
+        "********* Spatial_Audio_Framework Unit Testing Program **********\n"
+        "*****************************************************************\n");
+    
+    printf("\nSAF version: %s\n\n", SAF_VERSION);
 
-	/* initialise */
-	timer_lib_initialize();
-	start = timer_current();
-	UNITY_BEGIN();
+    /* initialise */
+    timer_lib_initialize();
+    start = timer_current();
+    UNITY_BEGIN();
 
-	/* run each unit test */
-	RUN_TEST(test__saf_stft_50pc_overlap);
-	RUN_TEST(test__saf_stft_LTI);
-	RUN_TEST(test__ims_shoebox_RIR);
-	RUN_TEST(test__ims_shoebox_TD);
-	RUN_TEST(test__saf_rfft);
-	RUN_TEST(test__saf_matrixConv);
+    /* run each unit test */
+    RUN_TEST(test__saf_stft_50pc_overlap);
+    RUN_TEST(test__saf_stft_LTI);
+    RUN_TEST(test__ims_shoebox_RIR);
+    RUN_TEST(test__ims_shoebox_TD);
+    RUN_TEST(test__saf_rfft);
+    RUN_TEST(test__saf_matrixConv);
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
-	RUN_TEST(test__afSTFTMatrix);
+    RUN_TEST(test__afSTFTMatrix);
 #endif
-	RUN_TEST(test__afSTFT);
-	RUN_TEST(test__smb_pitchShifter);
-	RUN_TEST(test__sortf);
-	RUN_TEST(test__sortz);
-	RUN_TEST(test__cmplxPairUp);
-	RUN_TEST(test__realloc2d_r);
-	RUN_TEST(test__getSHreal_recur);
-	RUN_TEST(test__butterCoeffs);
-	RUN_TEST(test__faf_IIRFilterbank);
+    RUN_TEST(test__afSTFT);
+    RUN_TEST(test__smb_pitchShifter);
+    RUN_TEST(test__sortf);
+    RUN_TEST(test__sortz);
+    RUN_TEST(test__cmplxPairUp);
+    RUN_TEST(test__realloc2d_r);
+    RUN_TEST(test__getSHreal_recur);
+    RUN_TEST(test__butterCoeffs);
+    RUN_TEST(test__faf_IIRFilterbank);
 
-	/* close */
-	timer_lib_shutdown();
-	printf("\nTotal time elapsed: %lfs", (double)timer_elapsed(start));
-	return UNITY_END();
+    /* close */
+    timer_lib_shutdown();
+    printf("\nTotal time elapsed: %lfs", (double)timer_elapsed(start));
+    return UNITY_END();
 }
 
 
@@ -607,8 +610,8 @@ void test__smb_pitchShifter(void){
     smb_pitchShift_apply(hPS, 0.5, nSamples, inputData, outputData);
 
     /* Take FFT, the bin with the highest energy should correspond to 1/8 Nyquist */
-	float_complex* out_fft; // [nSamples / 2 + 1];
-	out_fft = malloc1d((nSamples / 2 + 1) * sizeof(float_complex));
+    float_complex* out_fft; // [nSamples / 2 + 1];
+    out_fft = malloc1d((nSamples / 2 + 1) * sizeof(float_complex));
     saf_rfft_create(&hFFT, nSamples);
     saf_rfft_forward(hFFT, outputData, out_fft);
     utility_cimaxv(out_fft, nSamples/2+1, &ind);
@@ -619,7 +622,7 @@ void test__smb_pitchShifter(void){
     saf_rfft_destroy(&hFFT);
     free(inputData);
     free(outputData);
-	free(out_fft);
+    free(out_fft);
 }
 
 void test__sortf(void){
@@ -948,10 +951,10 @@ void test__butterCoeffs(void){
 void test__faf_IIRFilterbank(void){
     void* hFaF;
     int i, band;
-	float* inSig, *outSig;
+    float* inSig, *outSig;
     float** outFrame, **outSig_bands;
     void* hFFT;
-	float_complex* insig_fft, *outsig_fft;
+    float_complex* insig_fft, *outsig_fft;
 
     /* Config */
     const float acceptedTolerance_dB = 0.5f;
@@ -960,12 +963,12 @@ void test__faf_IIRFilterbank(void){
     float fs = 48e3;
     int order = 3;
     float fc[6] = {176.776695296637f, 353.553390593274f, 707.106781186547f, 1414.21356237309f, 2828.42712474619f, 5656.85424949238f};
-	inSig = malloc1d(signalLength * sizeof(float));
-	outSig_bands = (float**)malloc2d(7, signalLength, sizeof(float));
-	outSig = calloc1d(signalLength, sizeof(float));
-	
-	insig_fft = malloc1d((signalLength / 2 + 1) * sizeof(float_complex));
-	outsig_fft = malloc1d((signalLength / 2 + 1) * sizeof(float_complex));
+    inSig = malloc1d(signalLength * sizeof(float));
+    outSig_bands = (float**)malloc2d(7, signalLength, sizeof(float));
+    outSig = calloc1d(signalLength, sizeof(float));
+
+    insig_fft = malloc1d((signalLength / 2 + 1) * sizeof(float_complex));
+    outsig_fft = malloc1d((signalLength / 2 + 1) * sizeof(float_complex));
 
     /* Impulse */
     memset(inSig, 0, signalLength*sizeof(float));
@@ -1011,10 +1014,10 @@ void test__faf_IIRFilterbank(void){
     /* clean-up */
     saf_rfft_destroy(&hFFT);
     free(outFrame);
-	free(inSig);
-	free(outSig_bands);
-	free(outSig);
-	free(insig_fft);
-	free(outsig_fft);
+    free(inSig);
+    free(outSig_bands);
+    free(outSig);
+    free(insig_fft);
+    free(outsig_fft);
 }
 

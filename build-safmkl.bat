@@ -20,14 +20,13 @@ ECHO (Note, you will likely need to run this script in Administrator mode)
 :: Check that MKL is installed
 IF NOT EXIST "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder" (
     echo Intel MKL not installed on this machine. Note that Intel MKL can be freely acquired from here:
-	echo "https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries"
-	EXIT /B
+    echo "https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries"
+    EXIT /B
 )
 :: Copy saf_mkl_list to MKL builder folder
-IF NOT EXIST "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_list" (
-	echo Copying saf_mkl_list into MKL builder folder
-	xcopy "dependencies\saf_mkl_list" "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder"
-)
+echo Copying saf_mkl_list into MKL builder folder
+xcopy "dependencies\saf_mkl_list" "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder"
+
 
 :: ========================================================================= ::
 ::CLS

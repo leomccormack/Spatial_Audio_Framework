@@ -1,6 +1,6 @@
 # Spatial_Audio_Framework
 
-A cross-platform Spatial Audio Framework for developing spatial audio related applications.
+A cross-platform Spatial Audio Framework for developing spatial audio related applications in C/C++.
 
 ![](saf.png)
 
@@ -26,8 +26,8 @@ SAF_USE_ATLAS
 ```
 
 * SAF_USE_INTEL_MKL - to use [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries), or a [**custom Intel MKL library**](CUSTOM_INTEL_MKL_INTRUCTIONS.md)  (recommended for x86_64/amd64).
-* SAF_USE_OPEN_BLAS_AND_LAPACKE - to use [OpenBLAS](https://github.com/xianyi/OpenBLAS) and the LAPACKE interface (recommended for ARM)
-* SAF_USE_ATLAS - to use [ALTAS](http://math-atlas.sourceforge.net/) which is not recommended, since some LAPACK functions are missing. However, if you don't mind loosing some framework functionality, then ATLAS may still be a good choice for your particular project.
+* SAF_USE_OPEN_BLAS_AND_LAPACKE - to use [OpenBLAS](https://github.com/xianyi/OpenBLAS) and the LAPACKE interface (recommended for ARM).
+* SAF_USE_ATLAS - to use [ALTAS](http://math-atlas.sourceforge.net/) which is not recommended, since some LAPACK functions are missing. However, if you don't mind loosing some framework functionality, then this may still be a good choice for your particular project.
 
 **MacOSX users only**: if you do not define one of the above flags, then SAF will use [Apple Accelerate](https://developer.apple.com/documentation/accelerate) for CBLAS/LAPACK and also vDSP for the FFT. However, note that Intel MKL is still the more recommended option, as it is generally faster than Accelerate.
 
@@ -109,11 +109,12 @@ Many examples have been included in the repository, which may also serve as a st
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles [12].
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors; as proposed in [8]. 
 
-Note that many of these examples have also been integrated into VST audio plug-ins using the JUCE framework and can be found [here](http://research.spa.aalto.fi/projects/sparta_vsts/).   
+Note that many of these examples have also been integrated into VST audio plug-ins using the JUCE framework and can be found [here](https://github.com/leomccormack/SPARTA).   
+
 
 ## Contributing
 
-Suggestions and contributions to the code are both welcomed and encouraged. It should be highlighted that, in general, the framework has been designed to be highly modular with plenty of room for expansion. Therefore,
+Suggestions and contributions to the code are both welcomed and encouraged. It should be highlighted that, in general, the framework has been designed to be highly modular with plenty of room for expansion. Therefore:
 * if you are researcher who has developed a new spatial-audio related method and want to integrate it into the framework... or
 * if you notice that an existing piece of code can be rewritten to make it clearer/faster, or to fix a bug...
 
@@ -124,10 +125,12 @@ then please feel free to do so and submit a pull request. Note, however, that if
 * **Leo McCormack** - C programmer and algorithm design (contact: leo.mccormack(at)aalto.fi)
 * **Symeon Delikaris-Manias** - algorithm design
 * **Archontis Politis** - algorithm design
+* **Ville Pulkki** - algorithm design
+* **Juhani Paasonen** - C programmer
 
 ## License
 
-This framework is provided under the [ISC license](https://choosealicense.com/licenses/isc/). However, it also includes a modified version of the ['alias-free STFT'](https://github.com/jvilkamo/afSTFT) implementation by Juha Vilkamo (MIT license); [kissFFT](https://github.com/mborgerding/kissfft) (BSD 3-clause license) by Mark Borgerding; and the ['convhull_3d'](https://github.com/leomccormack/convhull_3d) 3-D Convex Hull implementation by Leo McCormack (MIT license). The original license files may also be found in the dependencies/licences folder.
+This framework is provided under the [ISC license](https://choosealicense.com/licenses/isc/). However, it also includes a modified version of the ['alias-free STFT'](https://github.com/jvilkamo/afSTFT) implementation by Juha Vilkamo (MIT license); [kissFFT](https://github.com/mborgerding/kissfft) (BSD 3-clause license) by Mark Borgerding; and the ['convhull_3d'](https://github.com/leomccormack/convhull_3d) 3-D Convex Hull implementation by Leo McCormack (MIT license). The original license files may be found in the dependencies/licences folder.
 
 ## References
 

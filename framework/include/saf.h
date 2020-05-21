@@ -16,10 +16,11 @@
 
 /**
  * @file saf.h
- * @brief Main include header for the Spatial_Audio_Framework.
+ * @brief Main include header for the Spatial_Audio_Framework
  *
  * ## Core modules
- *   afSTFTlib, saf_cdf4sap, saf_hoa, saf_hrir, saf_sh, saf_utilities, saf_vbap
+ *   afSTFTlib, saf_cdf4sap, saf_hoa, saf_hrir, saf_sh, saf_utilities, saf_vbap,
+ *   saf_reverb
  *
  * ## Optional modules
  *   saf_sofa_reader
@@ -30,6 +31,17 @@
 
 #ifndef SAF_H_INCLUDED
 #define SAF_H_INCLUDED
+
+/* SAF version: */
+#define SAF_VERSION_MAJOR 1
+#define SAF_VERSION_MINOR 0
+#define SAF_VERSION_MICRO 0
+#define SAF_VERSION_SPECIAL "" /* "alpha", "beta", "dev" etc. */
+
+#define MKSTRING_(s) #s
+#define MKSTRING(s) MKSTRING_(s)
+#define SAF_VERSION MKSTRING(SAF_VERSION_MAJOR)"."MKSTRING(SAF_VERSION_MINOR)\
+                    "."MKSTRING(SAF_VERSION_MICRO)""SAF_VERSION_SPECIAL
 
 /* ========================================================================== */
 /*                                Core Modules                                */
@@ -139,7 +151,7 @@
  * SAF Module: SH
  *
  * A collection of spherical harmonic related functions. Many of which have been
- * derived from Matlab libraries by Archontis Politis; found here:
+ * derived from Matlab libraries by Archontis Politis, found here:
  *   - https://github.com/polarch/Spherical-Harmonic-Transform
  *   - https://github.com/polarch/Array-Response-Simulator
  *   - https://github.com/polarch/Spherical-Array-Processing
