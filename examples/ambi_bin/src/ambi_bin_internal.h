@@ -17,7 +17,7 @@
 /**
  * @file ambi_bin_internal.h
  * @brief A binaural Ambisonic decoder for reproducing ambisonic signals over
- *        headphones.
+ *        headphones
  *
  * The decoder includes many historic and current state-of-the-art decoding
  * approaches. It also supports sound-field rotation for head-tracking and may
@@ -68,10 +68,10 @@ typedef enum _AMBI_BIN_PROC_STATUS{
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER+1)*(MAX_SH_ORDER+1) )
 #define POST_GAIN ( -9.0f )   /* dB */
 #ifndef DEG2RAD
-# define DEG2RAD(x) (x * PI / 180.0f)
+# define DEG2RAD(x) (x * M_PI / 180.0f)
 #endif
 #ifndef RAD2DEG
-# define RAD2DEG(x) (x * 180.0f / PI)
+# define RAD2DEG(x) (x * 180.0f / M_PI)
 #endif
     
     

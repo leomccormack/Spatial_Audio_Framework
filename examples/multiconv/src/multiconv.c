@@ -31,6 +31,10 @@ void multiconv_create
 {
     multiconv_data* pData = (multiconv_data*)malloc1d(sizeof(multiconv_data));
     *phMCnv = (void*)pData;
+
+    /* Default user parameters */
+    pData->nChannels = 1;
+    pData->enablePartitionedConv = 0;
     
     /* internal values */
     pData->hostBlockSize = -1; /* force initialisation */
@@ -42,10 +46,11 @@ void multiconv_create
     pData->nfilters = 0;
     pData->filter_length = 0;
     pData->filter_fs = 0;
-    
-    /* Default user parameters */
-    pData->nChannels = 1;
-    pData->enablePartitionedConv = 0;
+
+    /* set FIFO buffers */
+    pData->FIFO_idx = 0;
+    memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+    memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
 }
 
 void multiconv_destroy
@@ -77,9 +82,6 @@ void multiconv_init
     pData->host_fs = sampleRate;
     if(pData->hostBlockSize != hostBlockSize){
         pData->hostBlockSize = hostBlockSize;
-        pData->inputFrameTD  = (float**)realloc2d((void**)pData->inputFrameTD, MAX_NUM_CHANNELS, hostBlockSize, sizeof(float));
-        pData->outputFrameTD = (float**)realloc2d((void**)pData->outputFrameTD, MAX_NUM_CHANNELS, hostBlockSize, sizeof(float));
-        memset(FLATTEN2D(pData->inputFrameTD), 0, MAX_NUM_CHANNELS*hostBlockSize*sizeof(float));
         pData->reInitFilters = 1;
     }
     
@@ -98,37 +100,54 @@ void multiconv_process
 )
 {
     multiconv_data *pData = (multiconv_data*)(hMCnv);
-    int i;
+    int s, ch, i;
     int numChannels, nFilters;
  
     multiconv_checkReInit(hMCnv);
-    
-    if (nSamples == pData->hostBlockSize && pData->reInitFilters == 0) {
-        /* prep */
-        nFilters = pData->nfilters;
-        numChannels = pData->nChannels;
-        
-        /* Load time-domain data */
-        for(i=0; i < MIN(MIN(nFilters,numChannels), nInputs); i++)
-            utility_svvcopy(inputs[i], pData->hostBlockSize, pData->inputFrameTD[i]);
-        for(; i<MAX(nFilters,numChannels); i++)
-            memset(pData->inputFrameTD[i], 0, pData->hostBlockSize * sizeof(float)); /* fill remaining channels with zeros */
- 
-        /* Apply convolution */
-        if(pData->hMultiConv != NULL)
-            saf_multiConv_apply(pData->hMultiConv, FLATTEN2D(pData->inputFrameTD), FLATTEN2D(pData->outputFrameTD));
-        else
-            memcpy(FLATTEN2D(pData->outputFrameTD), FLATTEN2D(pData->inputFrameTD), MAX(nFilters,numChannels) * (pData->hostBlockSize)*sizeof(float));
-        
-        /* copy signals to output buffer */
-        for (i = 0; i < MIN(MAX(nFilters,numChannels), nOutputs); i++)
-            utility_svvcopy(pData->outputFrameTD[i], pData->hostBlockSize, outputs[i]);
-        for (; i < nOutputs; i++)
-            memset(outputs[i], 0, pData->hostBlockSize*sizeof(float));
-    }
-    else{
-        for (i = 0; i < nOutputs; i++)
-            memset(outputs[i], 0, nSamples*sizeof(float));
+
+    /* prep */
+    nFilters = pData->nfilters;
+    numChannels = pData->nChannels;
+
+    for(s=0; s<nSamples; s++){
+        /* Load input signals into inFIFO buffer */
+        for(ch=0; ch<MIN(MIN(nInputs,numChannels),MAX_NUM_CHANNELS); ch++)
+            pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
+        for(; ch<numChannels; ch++) /* Zero any channels that were not given */
+            pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
+
+        /* Pull output signals from outFIFO buffer */
+        for(ch=0; ch<MIN(MIN(nOutputs, numChannels),MAX_NUM_CHANNELS); ch++)
+            outputs[ch][s] = pData->outFIFO[ch][pData->FIFO_idx];
+        for(; ch<nOutputs; ch++) /* Zero any extra channels */
+            outputs[ch][s] = 0.0f;
+
+        /* Increment buffer index */
+        pData->FIFO_idx++;
+
+        /* Process frame if inFIFO is full and filters are loaded and saf_matrixConv_apply is ready for it */
+        if (pData->FIFO_idx >= pData->hostBlockSize_clamped && pData->reInitFilters == 0 ) {
+            pData->FIFO_idx = 0;
+
+            /* Load time-domain data */
+            for(i=0; i < numChannels; i++)
+                utility_svvcopy(pData->inFIFO[i], pData->hostBlockSize_clamped, pData->inputFrameTD[i]);
+
+            /* Apply convolution */
+            if(pData->hMultiConv != NULL)
+                saf_multiConv_apply(pData->hMultiConv, FLATTEN2D(pData->inputFrameTD), FLATTEN2D(pData->outputFrameTD));
+            else
+                memset(FLATTEN2D(pData->outputFrameTD), 0, MAX_NUM_CHANNELS * (pData->hostBlockSize_clamped)*sizeof(float));
+
+            /* copy signals to output buffer */
+            for (i = 0; i < MIN(numChannels, MAX_NUM_CHANNELS); i++)
+                utility_svvcopy(pData->outputFrameTD[i], pData->hostBlockSize_clamped, pData->outFIFO[i]);
+        }
+        else if(pData->FIFO_idx >= pData->hostBlockSize_clamped){
+            /* clear outFIFO if codec was not ready */
+            pData->FIFO_idx = 0;
+            memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+        }
     }
 }
 
@@ -149,7 +168,24 @@ void multiconv_checkReInit(void* const hMCnv)
     if ((pData->reInitFilters == 1) && (pData->filters !=NULL)) {
         pData->reInitFilters = 2;
         saf_multiConv_destroy(&(pData->hMultiConv));
-        saf_multiConv_create(&(pData->hMultiConv), pData->hostBlockSize, pData->filters, pData->filter_length, pData->nfilters, pData->enablePartitionedConv);
+        pData->hostBlockSize_clamped = CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
+        saf_multiConv_create(&(pData->hMultiConv),
+                             pData->hostBlockSize_clamped,
+                             pData->filters,
+                             pData->filter_length,
+                             pData->nfilters,
+                             pData->enablePartitionedConv);
+
+        /* Resize buffers */
+        pData->inputFrameTD  = (float**)realloc2d((void**)pData->inputFrameTD, MAX_NUM_CHANNELS, pData->hostBlockSize_clamped, sizeof(float));
+        pData->outputFrameTD = (float**)realloc2d((void**)pData->outputFrameTD, MAX_NUM_CHANNELS, pData->hostBlockSize_clamped, sizeof(float));
+        memset(FLATTEN2D(pData->inputFrameTD), 0, MAX_NUM_CHANNELS*(pData->hostBlockSize_clamped)*sizeof(float));
+
+        /* reset FIFO buffers */
+        pData->FIFO_idx = 0;
+        memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+        memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+
         pData->reInitFilters = 0;
     }
 }
@@ -232,4 +268,10 @@ int multiconv_getHostFs(void* const hMCnv)
 {
     multiconv_data *pData = (multiconv_data*)(hMCnv);
     return pData->host_fs;
+}
+
+int multiconv_getProcessingDelay(void* const hMCnv)
+{
+    multiconv_data *pData = (multiconv_data*)(hMCnv);
+    return pData->hostBlockSize_clamped;
 }

@@ -38,15 +38,11 @@ extern "C" {
 /* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
- 
+
+#define MIN_FRAME_SIZE ( 512 )
+#define MAX_FRAME_SIZE ( 8192 )
 #define MAX_NUM_CHANNELS ( MATRIXCONV_MAX_NUM_CHANNELS )
 #define MAX_NUM_CHANNELS_FOR_WAV ( 1024 )
-#ifndef DEG2RAD
-# define DEG2RAD(x) (x * PI / 180.0f)
-#endif
-#ifndef RAD2DEG
-# define RAD2DEG(x) (x * 180.0f / PI)
-#endif
     
     
 /* ========================================================================== */
@@ -58,6 +54,11 @@ extern "C" {
  */
 typedef struct _matrixconv
 {
+    /* FIFO buffers */
+    int FIFO_idx;
+    float inFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
+    float outFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
+
     /* input/output buffers */
     float** inputFrameTD;
     float** outputFrameTD;
@@ -65,6 +66,7 @@ typedef struct _matrixconv
     /* internal */
     void* hMatrixConv;     /**< saf_matrixConv handle */
     int hostBlockSize;     /**< current host block size */
+    int hostBlockSize_clamped; /**< Clamped between MIN and MAX_FRAME_SIZE */
     float* filters;        /**< the matrix of filters; FLAT: nOutputChannels x nInputChannels x filter_length */
     int nfilters;          /**< the number of filters (nOutputChannels x nInputChannels) */
     int input_wav_length;  /**< length of the wav files loaded in samples (inputs are concatenated) */

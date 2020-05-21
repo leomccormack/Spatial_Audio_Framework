@@ -164,6 +164,12 @@ int multiconv_getFilterFs(void* const hMCnv);
  */
 int multiconv_getHostFs(void* const hMCnv);
 
+/**
+ * Returns the processing delay in samples (may be used for delay compensation
+ * features)
+ */
+int multiconv_getProcessingDelay(void* const hMCnv);
+
 
 #ifdef __cplusplus
 } /* extern "C" { */

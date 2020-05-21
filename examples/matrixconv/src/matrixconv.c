@@ -31,7 +31,11 @@ void matrixconv_create
 {
     matrixconv_data* pData = (matrixconv_data*)malloc1d(sizeof(matrixconv_data));
     *phMCnv = (void*)pData;
-    
+
+    /* Default user parameters */
+    pData->nInputChannels = 1;
+    pData->enablePartitionedConv = 0;
+
     /* internal values */
     pData->hostBlockSize = -1; /* force initialisation */
     pData->inputFrameTD = NULL;
@@ -44,10 +48,11 @@ void matrixconv_create
     pData->filter_fs = 0;
     pData->input_wav_length = 0;
     pData->nOutputChannels = 0;
-    
-    /* Default user parameters */
-    pData->nInputChannels = 1;
-    pData->enablePartitionedConv = 0;
+
+    /* set FIFO buffers */
+    pData->FIFO_idx = 0;
+    memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+    memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
 }
 
 void matrixconv_destroy
@@ -75,19 +80,16 @@ void matrixconv_init
 )
 {
     matrixconv_data *pData = (matrixconv_data*)(hMCnv);
-    
+
     pData->host_fs = sampleRate;
+
     if(pData->hostBlockSize != hostBlockSize){
         pData->hostBlockSize = hostBlockSize;
-        pData->inputFrameTD  = (float**)realloc2d((void**)pData->inputFrameTD, MAX_NUM_CHANNELS, hostBlockSize, sizeof(float));
-        pData->outputFrameTD = (float**)realloc2d((void**)pData->outputFrameTD, MAX_NUM_CHANNELS, hostBlockSize, sizeof(float));
-        memset(FLATTEN2D(pData->inputFrameTD), 0, MAX_NUM_CHANNELS*hostBlockSize*sizeof(float));
         pData->reInitFilters = 1;
     }
     
     matrixconv_checkReInit(hMCnv);
 } 
-
 
 void matrixconv_process
 (
@@ -100,39 +102,56 @@ void matrixconv_process
 )
 {
     matrixconv_data *pData = (matrixconv_data*)(hMCnv);
-    int i;
+    int s, ch, i;
     int numInputChannels, numOutputChannels, nFilters;
  
     matrixconv_checkReInit(hMCnv);
-    
-    if (nSamples == pData->hostBlockSize && pData->reInitFilters == 0) {
-        /* prep */
-        numInputChannels = pData->nInputChannels;
-        numOutputChannels = pData->nOutputChannels;
-        nFilters = pData->nfilters;
-        
-        /* Load time-domain data */
-        for(i=0; i < MIN(numInputChannels, MIN(nInputs, MAX_NUM_CHANNELS)); i++)
-            utility_svvcopy(inputs[i], pData->hostBlockSize, pData->inputFrameTD[i]);
-        for(; i<MAX_NUM_CHANNELS; i++)
-            memset(pData->inputFrameTD[i], 0, pData->hostBlockSize * sizeof(float)); /* fill remaining channels with zeros */
- 
-        /* Apply convolution */
-        if(pData->hMatrixConv != NULL && pData->filter_length>0)
-            saf_matrixConv_apply(pData->hMatrixConv, FLATTEN2D(pData->inputFrameTD), FLATTEN2D(pData->outputFrameTD));
-        /* if the matrix convolver handle has not been initialised yet (i.e. no filters have been loaded) then the processing is bypassed */
-        else
-            memcpy(FLATTEN2D(pData->outputFrameTD), FLATTEN2D(pData->inputFrameTD), MIN(MAX(numInputChannels,numOutputChannels), MATRIXCONV_MAX_NUM_CHANNELS) * (pData->hostBlockSize)*sizeof(float));
-        
-        /* copy signals to output buffer */
-        for (i = 0; i < MIN(numOutputChannels, nOutputs); i++)
-            utility_svvcopy(pData->outputFrameTD[i], pData->hostBlockSize, outputs[i]);
-        for (; i < nOutputs; i++)
-            memset(outputs[i], 0, pData->hostBlockSize*sizeof(float));
-    }
-    else{
-        for (i = 0; i < nOutputs; i++)
-            memset(outputs[i], 0, nSamples*sizeof(float));
+
+    /* prep */
+    numInputChannels = pData->nInputChannels;
+    numOutputChannels = pData->nOutputChannels;
+    nFilters = pData->nfilters;
+
+    for(s=0; s<nSamples; s++){
+        /* Load input signals into inFIFO buffer */
+        for(ch=0; ch<MIN(MIN(nInputs,numInputChannels),MAX_NUM_CHANNELS); ch++)
+            pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
+        for(; ch<numInputChannels; ch++) /* Zero any channels that were not given */
+            pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
+
+        /* Pull output signals from outFIFO buffer */
+        for(ch=0; ch<MIN(MIN(nOutputs, numOutputChannels),MAX_NUM_CHANNELS); ch++)
+            outputs[ch][s] = pData->outFIFO[ch][pData->FIFO_idx];
+        for(; ch<nOutputs; ch++) /* Zero any extra channels */
+            outputs[ch][s] = 0.0f;
+
+        /* Increment buffer index */
+        pData->FIFO_idx++;
+
+        /* Process frame if inFIFO is full and filters are loaded and saf_matrixConv_apply is ready for it */
+        if (pData->FIFO_idx >= pData->hostBlockSize_clamped && pData->reInitFilters == 0 ) {
+            pData->FIFO_idx = 0;
+
+            /* Load time-domain data */
+            for(i=0; i < numInputChannels; i++)
+                utility_svvcopy(pData->inFIFO[i], pData->hostBlockSize_clamped, pData->inputFrameTD[i]);
+
+            /* Apply matrix convolution */
+            if(pData->hMatrixConv != NULL && pData->filter_length>0)
+                saf_matrixConv_apply(pData->hMatrixConv, FLATTEN2D(pData->inputFrameTD), FLATTEN2D(pData->outputFrameTD));
+            /* if the matrix convolver handle has not been initialised yet (i.e. no filters have been loaded) then zero the output */
+            else
+                memset(FLATTEN2D(pData->outputFrameTD), 0, MAX_NUM_CHANNELS * (pData->hostBlockSize_clamped)*sizeof(float));
+
+            /* copy signals to output buffer */
+            for (i = 0; i < MIN(numOutputChannels, MAX_NUM_CHANNELS); i++)
+                utility_svvcopy(pData->outputFrameTD[i], pData->hostBlockSize_clamped, pData->outFIFO[i]);
+        }
+        else if(pData->FIFO_idx >= pData->hostBlockSize_clamped){
+            /* clear outFIFO if codec was not ready */
+            pData->FIFO_idx = 0;
+            memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+        }
     }
 }
 
@@ -150,22 +169,34 @@ void matrixconv_checkReInit(void* const hMCnv)
     matrixconv_data *pData = (matrixconv_data*)(hMCnv);
     
     /* reinitialise if needed */
-    if ((pData->reInitFilters == 1) && (pData->filters !=NULL)) {
+    if ((pData->reInitFilters == 1) && (pData->filters != NULL)) {
         pData->reInitFilters = 2;
         saf_matrixConv_destroy(&(pData->hMatrixConv));
         pData->hMatrixConv = NULL;
         
         /* if length of the loaded wav file was not divisable by the specified number of inputs, then the handle remains NULL,
          * and no convolution is applied */
+        pData->hostBlockSize_clamped = CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
         if(pData->filter_length>0){
             saf_matrixConv_create(&(pData->hMatrixConv),
-                                  pData->hostBlockSize,
+                                  pData->hostBlockSize_clamped, /*pData->hostBlockSize,*/
                                   pData->filters,
                                   pData->filter_length,
                                   pData->nInputChannels,
                                   pData->nOutputChannels,
                                   pData->enablePartitionedConv);
         }
+
+        /* Resize buffers */
+        pData->inputFrameTD  = (float**)realloc2d((void**)pData->inputFrameTD, MAX_NUM_CHANNELS, pData->hostBlockSize_clamped, sizeof(float));
+        pData->outputFrameTD = (float**)realloc2d((void**)pData->outputFrameTD, MAX_NUM_CHANNELS, pData->hostBlockSize_clamped, sizeof(float));
+        memset(FLATTEN2D(pData->inputFrameTD), 0, MAX_NUM_CHANNELS*(pData->hostBlockSize_clamped)*sizeof(float));
+
+        /* reset FIFO buffers */
+        pData->FIFO_idx = 0;
+        memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+        memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+
         pData->reInitFilters = 0;
     }
 }
@@ -274,3 +305,10 @@ int matrixconv_getHostFs(void* const hMCnv)
     matrixconv_data *pData = (matrixconv_data*)(hMCnv);
     return pData->host_fs;
 }
+
+int matrixconv_getProcessingDelay(void* const hMCnv)
+{
+    matrixconv_data *pData = (matrixconv_data*)(hMCnv);
+    return pData->hostBlockSize_clamped;
+}
+

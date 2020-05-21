@@ -182,6 +182,13 @@ int matrixconv_getFilterFs(void* const hMCnv);
  * Returns the samperate of the host
  */
 int matrixconv_getHostFs(void* const hMCnv);
+
+/**
+ * Returns the processing delay in samples (may be used for delay compensation
+ * features)
+ */
+int matrixconv_getProcessingDelay(void* const hMCnv);
+
     
     
 #ifdef __cplusplus

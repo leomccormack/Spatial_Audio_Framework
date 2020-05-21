@@ -38,7 +38,9 @@ extern "C" {
 /* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
- 
+
+#define MIN_FRAME_SIZE ( 512 )
+#define MAX_FRAME_SIZE ( 8192 )
 #define MAX_NUM_CHANNELS ( MULTICONV_MAX_NUM_CHANNELS )
 #ifndef DEG2RAD
 # define DEG2RAD(x) (x * PI / 180.0f)
@@ -57,12 +59,19 @@ extern "C" {
  */
 typedef struct _multiconv
 {
+    /* FIFO buffers */
+    int FIFO_idx;
+    float inFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
+    float outFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
+
+    /* Internal buffers */
     float** inputFrameTD;
     float** outputFrameTD;
     
     /* internal */
     void* hMultiConv;
-    int hostBlockSize; 
+    int hostBlockSize;
+    int hostBlockSize_clamped; /**< Clamped between MIN and MAX_FRAME_SIZE */
     float* filters;   /**< FLAT: nfilters x filter_length */
     int nfilters;
     int filter_length;
