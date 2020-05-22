@@ -90,10 +90,7 @@ void binauraliser_interpHRTFs
     
     /* introduce interaural phase difference */
     for (band = 0; band < HYBRID_BANDS; band++) {
-        if(pData->freqVector[band]<1.5e3f)
-            ipd = cmplxf(0.0f, 1.3f*(matlab_fmodf(2.0f*PI*(pData->freqVector[band]) * itdInterp + PI, 2.0f*PI) - PI)/2.0f);
-        else
-            ipd = cmplxf(0.0f, 0.0f);
+        ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*M_PI*(pData->freqVector[band]) * itdInterp + M_PI, 2.0f*M_PI) - M_PI)/2.0f); 
         h_intrp[band][0] = crmulf(cexpf(ipd), magInterp[band][0]);
         h_intrp[band][1] = crmulf(conjf(cexpf(ipd)), magInterp[band][1]);
     }
@@ -153,7 +150,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     strcpy(pData->progressBarText,"Applying HRIR diffuse-field EQ");
     pData->progressBar0_1 = 0.8f;
     pData->hrtf_fb = realloc1d(pData->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pData->N_hrir_dirs)*sizeof(float_complex));
-    HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, HYBRID_BANDS, pData->hrtf_fb);
+    HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, HOP_SIZE, 1, pData->hrtf_fb);
     diffuseFieldEqualiseHRTFs(pData->N_hrir_dirs, pData->itds_s, pData->freqVector, HYBRID_BANDS, pData->hrtf_fb);
     
     /* calculate magnitude responses */

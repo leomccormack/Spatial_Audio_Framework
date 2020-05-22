@@ -69,10 +69,10 @@ typedef enum _BINAURALISER_PROC_STATUS{
 #define MAX_NUM_INPUTS ( BINAURALISER_MAX_NUM_INPUTS )      /* Maximum permited channels for the VST standard */
 #define NUM_EARS ( 2 )                                      /* true for most humans */
 #ifndef DEG2RAD
-# define DEG2RAD(x) (x * PI / 180.0f)
+# define DEG2RAD(x) (x * M_PI / 180.0f)
 #endif
 #ifndef RAD2DEG
-# define RAD2DEG(x) (x * 180.0f / PI)
+# define RAD2DEG(x) (x * 180.0f / M_PI)
 #endif
 
 

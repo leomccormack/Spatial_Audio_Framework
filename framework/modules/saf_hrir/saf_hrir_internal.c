@@ -66,8 +66,8 @@ static void afAnalyse
     FrameTF = (complexVector**)malloc2d(nTimeSlots, nCH, sizeof(complexVector));
     for(t=0; t<nTimeSlots; t++) {
         for(ch=0; ch< nCH; ch++) {
-            FrameTF[t][ch].re = (float*)calloc1d(hybridBands, sizeof(float));
-            FrameTF[t][ch].im = (float*)calloc1d(hybridBands, sizeof(float));
+            FrameTF[t][ch].re = (float*)calloc1d(nBands, sizeof(float));
+            FrameTF[t][ch].im = (float*)calloc1d(nBands, sizeof(float));
         }
     }
 #endif
