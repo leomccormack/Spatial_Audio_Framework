@@ -105,14 +105,13 @@ void HRIRs2FilterbankHRTFs
     float* hrirs, /* N_dirs x NUM_EARS x hrir_len */
     int N_dirs,
     int hrir_len,
-    int nBands,
+    int hopsize,
+    int hybridmode,
     float_complex* hrtf_fb /* 133 x NUM_EARS x N_dirs */
 )
 {
-    assert(nBands == 133);
     /* convert the HRIRs to filterbank coefficients */
-    /* hard-coded to 128 hopsize and hybrid mode enabled (133 bins total) */
-    FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, 133, hrtf_fb);
+    FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, hopsize, hybridmode, hrtf_fb);
 }
 
 void HRIRs2HRTFs

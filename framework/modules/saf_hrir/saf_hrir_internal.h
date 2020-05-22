@@ -68,7 +68,8 @@ void FIRtoFilterbankCoeffs(/* Input Arguments */
                            int N_dirs,
                            int nCH,
                            int ir_len,
-                           int N_bands,
+                           int hopSize,
+                           int hybridmode,
                            /* Output Arguments */
                            float_complex* hFB);
 

@@ -34,13 +34,14 @@
  * Passes input time-domain data through afSTFT.
  *
  * Copyright (c) 2015 Juha Vilkamo, MIT license
- * @note Currently hard coded for a 128 hop size with hybrid mode enabled
  */
 static void afAnalyse
 (
     float* inTD/* nSamplesTD x nCH */,
     int nSamplesTD,
     int nCH,
+    int hopSize,
+    int hybridmode,
     float_complex* outTF /* out_nBands x nTimeslots x nCH */
 )
 {
@@ -52,16 +53,15 @@ static void afAnalyse
     complexVector** FrameTF;
 #endif
     float** tempHopFrameTD;
-    int nTimeSlots, hybridBands, hopSize;
-    
-    hopSize = 128;
-    hybridBands =hopSize+5; 
+    int nTimeSlots, nBands;
+
+    nBands = hopSize + (hybridmode ? 5 : 1);
     nTimeSlots = nSamplesTD/hopSize;
     
     /* allocate memory */
-    afSTFTinit(&(hSTFT), hopSize, nCH, 1, 0, 1);
+    afSTFTinit(&(hSTFT), hopSize, nCH, 1, 0, hybridmode);
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
-    FrameTF = (float_complex***) malloc3d(nTimeSlots, nCH, hybridBands, sizeof(float_complex));
+    FrameTF = (float_complex***) malloc3d(nTimeSlots, nCH, nBands, sizeof(float_complex));
 #else
     FrameTF = (complexVector**)malloc2d(nTimeSlots, nCH, sizeof(complexVector));
     for(t=0; t<nTimeSlots; t++) {
@@ -86,7 +86,7 @@ static void afAnalyse
     }
     
     /* save result to output */
-    for (band = 0; band < hybridBands; band++)
+    for (band = 0; band < nBands; band++)
         for (t = 0; t < nTimeSlots; t++)
             for (ch = 0; ch < nCH; ch++)
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
@@ -116,19 +116,20 @@ void FIRtoFilterbankCoeffs
     int N_dirs,
     int nCH,
     int ir_len,
-    int nBands,
+    int hopSize,
+    int hybridmode,
     float_complex* hFB /* nBands x nCH x N_dirs */
 )
 {
-    int i, j, t, nd, nm, nTimeSlots, ir_pad, hopSize;
+    int i, j, t, nd, nm, nTimeSlots, ir_pad;
     int* maxIdx;
-    float maxVal, idxDel, irFB_energy, irFB_gain, phase;
+    float maxVal, idxDel, irFB_energy, irFB_gain, phase, nBands;
     float* centerImpulse, *centerImpulseFB_energy, *ir;
     float_complex cross;
     float_complex* centerImpulseFB, *irFB;
-    
+
+    nBands = hopSize + (hybridmode ? 5 : 1);
     ir_pad = 1024;//+512;
-    hopSize = 128;
     nTimeSlots = (ir_len+ir_pad)/hopSize;
     maxIdx = calloc1d(nCH,sizeof(int));
     centerImpulse = calloc1d(ir_len+ir_pad, sizeof(float));
@@ -154,7 +155,7 @@ void FIRtoFilterbankCoeffs
     
     /* analyse impulse with the filterbank */
     centerImpulseFB = malloc1d(nBands*nTimeSlots*nCH*sizeof(float_complex));
-    afAnalyse(centerImpulse, ir_len+ir_pad, 1, centerImpulseFB);
+    afAnalyse(centerImpulse, ir_len+ir_pad, 1, hopSize, hybridmode, centerImpulseFB);
     centerImpulseFB_energy = calloc1d(nBands, sizeof(float));
     for(i=0; i<nBands; i++)
         for(t=0; t<nTimeSlots; t++)
@@ -167,7 +168,7 @@ void FIRtoFilterbankCoeffs
         for(j=0; j<ir_len; j++)
             for(i=0; i<nCH; i++)
                 ir[j*nCH+i] = hIR[nd*nCH*ir_len + i*ir_len + j];
-        afAnalyse(ir, ir_len+ir_pad, nCH, irFB);
+        afAnalyse(ir, ir_len+ir_pad, nCH, hopSize, hybridmode, irFB);
         for(nm=0; nm<nCH; nm++){
             for(i=0; i<nBands; i++){
                 irFB_energy = 0;
