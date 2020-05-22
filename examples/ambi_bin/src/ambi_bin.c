@@ -225,7 +225,7 @@ void ambi_bin_initCodec
         /* convert hrirs to filterbank coefficients */
         pData->progressBar0_1 = 0.9f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
-        HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HYBRID_BANDS, pars->hrtf_fb);
+        HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 1, pars->hrtf_fb);
         diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
         pData->reinit_hrtfsFLAG = 0;
     }
@@ -383,8 +383,8 @@ void ambi_bin_process
                 for(band = 0; band < HYBRID_BANDS; band++) {
                     cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, nSH, &calpha,
                                 pData->M_rot, MAX_NUM_SH_SIGNALS,
-                                FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS, &cbeta,
-                                FLATTEN2D(pData->SHframeTF_rot[band]), TIME_SLOTS);
+                                pData->SHframeTF[band], TIME_SLOTS, &cbeta,
+                                pData->SHframeTF_rot[band], TIME_SLOTS);
                 }
             }
             else
@@ -394,8 +394,8 @@ void ambi_bin_process
             for(band = 0; band < HYBRID_BANDS; band++) {
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
                             pars->M_dec[band], MAX_NUM_SH_SIGNALS,
-                            FLATTEN2D(pData->SHframeTF_rot[band]), TIME_SLOTS, &cbeta,
-                            FLATTEN2D(pData->binframeTF[band]), TIME_SLOTS);
+                            pData->SHframeTF_rot[band], TIME_SLOTS, &cbeta,
+                            pData->binframeTF[band], TIME_SLOTS);
             }
 
             /* inverse-TFT */

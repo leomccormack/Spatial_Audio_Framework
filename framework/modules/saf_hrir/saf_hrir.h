@@ -78,8 +78,7 @@ void estimateITDs(/* Input Arguments */
  * impulse, which is centered at approximately the beginning of the HRIR peak.
  *
  * @warning This function is NOT suitable for binaural room impulse responses
- *          (BRIRs). Also, this function is hard-coded for 128 hop size with
- *          hybrid mode enabled (133 bands in total)
+ *          (BRIRs)
  *
  * @param[in]  hrirs      HRIRs; FLAT: N_dirs x 2 x hrir_len
  * @param[in]  N_dirs     Number of HRIRs
