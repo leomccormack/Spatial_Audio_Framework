@@ -49,10 +49,10 @@ extern "C" {
 #define MAX_SH_ORDER ( ROTATOR_MAX_SH_ORDER )
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1)  )    /* (L+1)^2 */
 #ifndef DEG2RAD
-  #define DEG2RAD(x) (x * PI / 180.0f)
+  #define DEG2RAD(x) (x * SAF_PI / 180.0f)
 #endif
 #ifndef RAD2DEG
-  #define RAD2DEG(x) (x * 180.0f / PI)
+  #define RAD2DEG(x) (x * 180.0f / SAF_PI)
 #endif
     
     

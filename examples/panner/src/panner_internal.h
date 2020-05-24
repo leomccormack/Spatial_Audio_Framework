@@ -82,10 +82,10 @@ typedef enum _PANNER_PROC_STATUS{
 #define MAX_NUM_INPUTS ( PANNER_MAX_NUM_INPUTS )    /* Maximum permited channels for the VST standard */
 #define MAX_NUM_OUTPUTS ( PANNER_MAX_NUM_OUTPUTS )  /* Maximum permited channels for the VST standard */
 #ifndef DEG2RAD
-# define DEG2RAD(x) (x * PI / 180.0f)
+# define DEG2RAD(x) (x * SAF_PI / 180.0f)
 #endif
 #ifndef RAD2DEG
-# define RAD2DEG(x) (x * 180.0f / PI)
+# define RAD2DEG(x) (x * 180.0f / SAF_PI)
 #endif
     
     

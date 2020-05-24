@@ -93,10 +93,7 @@ void ambi_dec_interpHRTFs
     
     /* reintroduce the interaural phase difference per band */
     for (band = 0; band < HYBRID_BANDS; band++) {
-        if(pData->freqVector[band]<1.5e3f)
-            ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*PI* (pData->freqVector[band]) * itdInterp[0] + PI, 2.0f*PI) - PI) / 2.0f);
-        else
-            ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*PI* (pData->freqVector[band]) * itdInterp[0] + PI, 2.0f*PI) - PI) / 6.0f);
+        ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*SAF_PI* (pData->freqVector[band]) * itdInterp[0] + SAF_PI, 2.0f*SAF_PI) - SAF_PI) / 2.0f); 
         h_intrp[band][0] = ccmulf(cmplxf(magInterp[band][0], 0.0f), cexpf(ipd));
         h_intrp[band][1] = ccmulf(cmplxf(magInterp[band][1], 0.0f), conjf(cexpf(ipd)));
     }

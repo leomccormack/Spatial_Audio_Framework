@@ -83,9 +83,10 @@ Documentation generated using [Doxygen](http://www.doxygen.nl/index.html) may al
 
 Alternatively, you may compile the most recent documentation (HTML) yourself using the following command:
 ```
-doxygen doxygen/doxygen_config
-# optional, to build the pdf version:
-cd doxygen/latex
+cd doxygen
+doxygen doxygen_config
+# optional, to then build the pdf version:
+cd latex
 make
 ```
 
@@ -97,14 +98,14 @@ Many examples have been included in the repository, which may also serve as a st
 * **ambi_dec** - a frequency-dependent Ambisonic decoder. Including the following decoding approaches: sampling ambisonic decoder (SAD), AllRAD [3], Energy-Preserving decoder (EPAD) [4], Mode-Matching decoder (MMD).
 * **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for Ambisonic signals, based on the design proposed in [5].
 * **ambi_enc** - a simple Ambisonic encoder.
-* **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals), based on theoretical descriptions [6,7]. More details found in [8].
+* **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals), based on theoretical descriptions [6,7]; more details found in [8].
 * **beamformer** - a beamforming example with several different beamforming options.
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file.
 * **dirass** - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction [9].
 * **matrixconv** - a basic matrix convolver with an optional partitioned convolution mode. 
 * **multiconv** - a basic multi-channel convolver with an optional partitioned convolution mode. 
 * **panner** - a frequency-dependent VBAP panner [10], which permits source loudness compensation as a function of the room [11].
-* **pitch_shifter** - a very basic pitch shifter, inspired by the phase vocoder approach.
+* **pitch_shifter** - a very basic multi-channel pitch shifter, based on the phase vocoder approach.
 * **powermap** - sound-field visualiser based on beamformer (PWD, MVDR) energy or sub-space methods (MUSIC).
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles [12].
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors; as proposed in [8]. 

@@ -188,7 +188,6 @@ int matrixconv_getHostFs(void* const hMCnv);
  * features)
  */
 int matrixconv_getProcessingDelay(void* const hMCnv);
-
     
     
 #ifdef __cplusplus
