@@ -36,10 +36,18 @@ extern "C" {
 /* ========================================================================== */
 /*                 Microphone/Hydrophone Array Configurations                 */
 /* ========================================================================== */
+/*
+ * NOTE: All microphone array sensor directions are given in radians, and with
+ * the [azimuth, elevation] convention. [0 0] is looking directly in-front
+ * (positive x-axis), with positive elevations looking upwards (positive z-axis)
+ * and positive azimuth angles looking leftwards (postive y-axis).
+ * In other words: the convention used by the Spatial_Audio_Framework follows
+ * the "right-hand-rule".
+ */
     
 /**
  * Sensor array coordinates for the custom hydrophone array made at Aalto
- * University [1].
+ * University [1]
  *
  * @see [1] Delikaris-Manias, S., McCormack, L., Huhtakallio, I., & Pulkki, V.
  *          (2018, May). Real-time underwater spatial audio: a feasibility
@@ -67,7 +75,7 @@ extern const float __Zylia1D_coords_rad[19][2];
 extern const float __Eigenmike32_coords_rad[32][2];
 /**
  * Sensor array coordinates for the custom 52-sensor array built at the
- * Technical University of Denmark (DTU). */
+ * Technical University of Denmark (DTU) */
 extern const float __DTU_mic_coords_rad[52][2];
 /**
  * Default sensor array coordinates */
@@ -75,6 +83,7 @@ extern const float __default_coords_rad[(UTIL_DEFAULT_SH_ORDER+1)*(UTIL_DEFAULT_
 /**
  * Default sensor array coordinates */
 extern const float __default_SENSORcoords64_rad[64][2];
+
 /**
  * Max spherical harmonic order for the custom hydrophone array made at Aalto
  * University */
@@ -96,8 +105,9 @@ extern const int __Zylia_maxOrder;
 extern const int __Eigenmike32_maxOrder;
 /**
  * Max spherical harmonic order for the custom 52-sensor array built at the
- * Technical University of Denmark (DTU). */
+ * Technical University of Denmark (DTU) */
 extern const int __DTU_mic_maxOrder;
+
 /**
  * Sensor array frequency ranges for each SH order, for the Zylia array (should
  * only be used as a rough estimate).
@@ -118,13 +128,11 @@ extern const int __DTU_mic_maxOrder;
 extern const float __Zylia_freqRange[4];
 /**
  * Sensor array frequency ranges for each SH order, for the Eigenmike32 (should
- * only be used as a rough estimate).
- */
+ * only be used as a rough estimate) */
 extern const float __Eigenmike32_freqRange[6];
 /**
  * Sensor array frequency ranges for each SH order, for the DTU mic (should
- * only be used as a rough estimate).
- */
+ * only be used as a rough estimate) */
 extern const float __DTU_mic_freqRange[10];
 
 

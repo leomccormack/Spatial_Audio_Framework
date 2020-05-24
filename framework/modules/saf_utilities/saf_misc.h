@@ -31,7 +31,7 @@ extern "C" {
 
 #include "saf_utilities.h"
 
-/* Cross-platform sleep macro from (slightly modified):
+/* Cross-platform sleep macro (slightly modified) from:
  https://cboard.cprogramming.com/c-programming/170381-cross-platform-wait-sleep.html */
 #ifdef _WIN32
     /* For Windows (32- and 64-bit) */
@@ -57,22 +57,24 @@ extern "C" {
 #include <math.h>
 
 /**
- * Factorial, accurate up to n<=25.
+ * Factorial, accurate up to n<=25
  *
  * @note The magnitude will still be correct >25, but the precision will be
- *       truncated.
+ *       truncated. The function also returns pre-computed values up to n=15
+ *       to make it faster.
  *
  * @param[in] n Order
- * @returns     factorial(n)
+ * @returns factorial(n)
  */
 long double factorial(int n);
 
 /**
- * C fmodf function, which behaves like 'mod' in Matlab (with the wrap around)
+ * C fmodf function, which behaves like 'mod' in Matlab (i.e. with the wrap
+ * around)
  *
  * @param[in] x Value 'x'
  * @param[in] y Value 'y'
- * @returns     fmodf(n)
+ * @returns fmodf(n)
  */
 float matlab_fmodf(float x,  float y);
 
@@ -110,7 +112,13 @@ void rand_0_1(float* vector,
               int length);
 
 /**
- * Basic 1D convolution
+ * Basic 1-D direct convolution in the time-domain (real double precision)
+ *
+ * @param[in]  x     Input sequence; len_x x 1
+ * @param[in]  h     Filter sequence; len_h x 1
+ * @param[in]  len_x Length of 'x'
+ * @param[in]  len_h Length of 'h'
+ * @param[out] y     Output sequence; (len_x+len_h-1) x 1
  */
 void convd(double* x,
            double* h,
@@ -119,7 +127,13 @@ void convd(double* x,
            double* y);
 
 /**
- * Basic 1D convolution
+ * Basic 1-D direct convolution in the time-domain (complex double precision)
+ *
+ * @param[in]  x     Input sequence; len_x x 1
+ * @param[in]  h     Filter sequence; len_h x 1
+ * @param[in]  len_x Length of 'x'
+ * @param[in]  len_h Length of 'h'
+ * @param[out] y     Output sequence; (len_x+len_h-1) x 1
  */
 void convz(double_complex* x,
            double_complex* h,
@@ -128,7 +142,7 @@ void convz(double_complex* x,
            double_complex* y);
 
 /**
- * Convert roots to polynomial
+ * Convert roots of a vector to polynomial (real double precision)
  *
  * @param[in]  x     Input vector; len_x x 1
  * @param[out] poly  Polynomials; (len_x+1) x 1
@@ -139,7 +153,7 @@ void polyd_v(double* x,
              int len_x);
 
 /**
- * Convert roots to polynomial
+ * Convert roots of a vector to polynomial (complex double precision)
  *
  * @param[in]  x     Input vector; len_x x 1
  * @param[out] poly  Polynomials; (len_x+1) x 1
@@ -150,7 +164,7 @@ void polyz_v(double_complex* x,
              int len_x);
 
 /**
- * Convert roots to polynomial
+ * Convert roots of a matrix to polynomial (real double precision)
  *
  * @param[in]  X      Square input matrix; size_x x size_x
  * @param[out] poly   Polynomials; (size_x+1) x 1
@@ -159,7 +173,6 @@ void polyz_v(double_complex* x,
 void polyd_m(double* X,
              double_complex* poly,
              int size_x);
-
 
 
 #ifdef __cplusplus

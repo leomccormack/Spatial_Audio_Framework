@@ -6,6 +6,12 @@
  *  See COPYING file for more information.
  */
 
+/**
+ * @file kiss_fft.c
+ * @brief KISS FFT, taken from: https://github.com/mborgerding/kissfft
+ * @author Mark Borgerding
+ */
+
 
 #include "_kiss_fft_guts.h"
 /* The guts header contains all the multiplication and addition macros that are defined for

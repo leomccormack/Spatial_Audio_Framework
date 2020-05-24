@@ -52,17 +52,6 @@ typedef enum _BIQUAD_FILTER_TYPES {
 }BIQUAD_FILTER_TYPES;
 
 /**
- * Finite Impulse Response (FIR) filter design options
- */
-typedef enum _FIR_FILTER_TYPES {
-    FIR_FILTER_LPF, /**< low-pass filter */
-    FIR_FILTER_HPF, /**< high-pass filter */
-    FIR_FILTER_BPF, /**< band-pass filter */
-    FIR_FILTER_BSF  /**< band-stop filter */
-    
-}FIR_FILTER_TYPES;
-
-/**
  * Butterworth Infinite Impulse Response (IIR) filter design options
  */
 typedef enum _BUTTER_FILTER_TYPES {
@@ -72,6 +61,17 @@ typedef enum _BUTTER_FILTER_TYPES {
     BUTTER_FILTER_BSF  /**< band-stop filter */
 
 }BUTTER_FILTER_TYPES;
+
+/**
+ * Finite Impulse Response (FIR) filter design options
+ */
+typedef enum _FIR_FILTER_TYPES {
+    FIR_FILTER_LPF, /**< low-pass filter */
+    FIR_FILTER_HPF, /**< high-pass filter */
+    FIR_FILTER_BPF, /**< band-pass filter */
+    FIR_FILTER_BSF  /**< band-stop filter */
+    
+}FIR_FILTER_TYPES;
 
 /**
  * Windowing function types

@@ -37,7 +37,7 @@ extern "C" {
 /**
  * Returns delay values for multiple channels per frequency, such that once
  * applied to an input signal (via simple frequency-dependent delay lines), the
- * resulting signal is decorrelated w.r.t the original.
+ * resulting signal is decorrelated w.r.t the original
  *
  * @note This is a very basic algorithm and sounds particulary bad for transient
  *       signals. Consider using a transient detector to "duck" the decorrelated
@@ -61,7 +61,7 @@ void getDecorrelationDelays(int nChannels,
                             int* delayTF);
 
 /**
- * Returns quick and dirty exponentially decaying noise bursts.
+ * Returns quick and dirty exponentially decaying noise bursts
  *
  * With long T60 times, it can be used to approximate the late reverberation
  * tail of room impulse responses. With much shorter t60 times, it can be used

@@ -39,7 +39,13 @@ extern "C" {
 
 #include "../saf_utilities/saf_complex.h"
 
+/**
+ * Converts spherical harmonic order, to number of spherical harmonic components
+ * i.e: (order+1)^2 */
 #define ORDER2NSH(order) ((order+1)*(order+1))
+/**
+ * Converts number of spherical harmonic components, to spherical harmonic order
+ * i.e: sqrt(nSH)-1 */
 #define NSH2ORDER(nSH) ( (int)(sqrt((double)nSH)-0.999) )
 
 /* ========================================================================== */

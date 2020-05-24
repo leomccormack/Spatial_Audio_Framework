@@ -16,7 +16,7 @@
 
 /**
  * @file saf_sofa_reader.c
- * @brief A simple sofa reader, which returns only the bare minimum.
+ * @brief A simple sofa reader, which returns only the bare minimum
  *
  * @note This (optional) SOFA reader, requires netcdf to be linked.
  *

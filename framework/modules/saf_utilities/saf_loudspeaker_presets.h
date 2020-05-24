@@ -35,7 +35,15 @@ extern "C" {
 /* ========================================================================== */
 /*                      Loudspeaker Array Configurations                      */
 /* ========================================================================== */
-    
+/*
+ * NOTE: All loudspeaker array sensor directions are given in degrees, and with
+ * the [azimuth, elevation] convention. [0 0] is looking directly in-front
+ * (positive x-axis), with positive elevations looking upwards (positive z-axis)
+ * and positive azimuth angles looking leftwards (postive y-axis).
+ * In other words: the convention used by the Spatial_Audio_Framework follows
+ * the "right-hand-rule".
+ */
+
 /**
  * Loudspeaker directions [azimuth, Elevation] in degrees, for a mono setup */
 extern const float __mono_dirs_deg[1][2];

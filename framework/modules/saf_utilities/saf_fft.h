@@ -140,11 +140,7 @@ void hilbert(float_complex* x,
 
 /**
  * Creates an instance of saf_stft
- *
- * ## Example Usage
- * \code{.c}
- * \endcode
- *
+ *  
  * @param[in] winsize  Window size
  * @param[in] hopsize  Hop size
  * @param[in] nCHin    Number of input channels

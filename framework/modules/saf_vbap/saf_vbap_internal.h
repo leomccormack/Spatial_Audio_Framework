@@ -41,10 +41,12 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/** In degrees, if no ls_dirs have elevation +/- this value, dummies are placed
+/**
+ * In degrees, if no ls_dirs have elevation +/- this value, dummies are placed
  * at +/- 90 elevation.  */
 #define ADD_DUMMY_LIMIT ( 60.0f )
-/** if omitLargeTriangles==1, triangles with an aperture larger than this are
+/**
+ * if omitLargeTriangles==1, triangles with an aperture larger than this are
  * discarded */
 #define APERTURE_LIMIT_DEG ( 180.0f )
 

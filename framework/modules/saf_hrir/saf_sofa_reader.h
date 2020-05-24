@@ -16,7 +16,7 @@
 
 /**
  * @file saf_sofa_reader.h 
- * @brief A simple sofa reader, which returns only the bare minimum.
+ * @brief A simple sofa reader, which returns only the bare minimum
  *
  * @note This (optional) SOFA reader, requires netcdf to be linked to the
  *       project.
@@ -34,7 +34,7 @@
 #include <string.h>
 #ifdef SAF_ENABLE_SOFA_READER
 /* If your compiler stopped at this point, then please add the path to the
- * netcdf include files to your project include header paths.
+ * netcdf include file to your project include header paths.
  * Instructions for linking the required "netcdf" library may also be found
  * here: https://github.com/leomccormack/Spatial_Audio_Framework */
 # include <netcdf.h>

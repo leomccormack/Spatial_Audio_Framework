@@ -6,6 +6,12 @@
  *  See COPYING file for more information.
  */
 
+/**
+ * @file kiss_fftr.h
+ * @brief KISS real FFT, taken from: https://github.com/mborgerding/kissfft
+ * @author Mark Borgerding
+ */
+
 #ifndef KISS_FTR_H
 #define KISS_FTR_H
 

@@ -39,7 +39,14 @@ extern "C" {
  * Archontis Politis: https://github.com/polarch/shoebox-roomsim
  */
 
+/**
+ * Maximum number of sources supported by IMS Shoebox
+ */
 #define IMS_MAX_NUM_SOURCES 100
+
+/**
+ * Maximum number of receivers supported by IMS Shoebox
+ */
 #define IMS_MAX_NUM_RECEIVERS 10
 
 /**

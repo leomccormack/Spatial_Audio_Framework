@@ -50,18 +50,17 @@ extern "C" {
 /* ========================================================================== */
 
 /**
- * Converts FIR filters into Filterbank Coefficients
+ * Converts FIR filters into Filterbank Coefficients by passing them through
+ * afSTFT
  *
- * @note This is currently hard coded for a 128 hop size with hybrid mode
- *       enabled (see afSTFTlib.h).
- *
- * @param[in]  hIR     Time-domain FIR; FLAT: N_dirs x nCH x ir_len
- * @param[in]  N_dirs  Number of FIR sets
- * @param[in]  nCH     Number of channels per FIR set
- * @param[in]  ir_len  Length of the FIR
- * @param[in]  N_bands Number of time-frequency domain bands
- * @param[out] hFB     The FIRs as Filterbank coefficients;
- *                     FLAT: N_bands x nCH x N_dirs
+ * @param[in]  hIR        Time-domain FIR; FLAT: N_dirs x nCH x ir_len
+ * @param[in]  N_dirs     Number of FIR sets
+ * @param[in]  nCH        Number of channels per FIR set
+ * @param[in]  ir_len     Length of the FIR
+ * @param[in]  hopSize    Hop size
+ * @param[in]  hybridmode 0: disabled, 1:enabled
+ * @param[out] hFB        The FIRs as Filterbank coefficients;
+ *                        FLAT: N_bands x nCH x N_dirs
  */
 void FIRtoFilterbankCoeffs(/* Input Arguments */
                            float* hIR,

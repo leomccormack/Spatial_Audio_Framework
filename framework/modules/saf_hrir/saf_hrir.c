@@ -107,7 +107,7 @@ void HRIRs2FilterbankHRTFs
     int hrir_len,
     int hopsize,
     int hybridmode,
-    float_complex* hrtf_fb /* 133 x NUM_EARS x N_dirs */
+    float_complex* hrtf_fb /* nBands x NUM_EARS x N_dirs */
 )
 {
     /* convert the HRIRs to filterbank coefficients */

@@ -16,7 +16,7 @@
 
 /**
  * @file saf_erb.h
- * @brief A function to ascertain frequencies that fall within critical bands.
+ * @brief A function to ascertain frequencies that fall within critical bands
  *        [Equivalent-Rectangular Bandwidth (ERB)]
  *
  * @author Leo McCormack

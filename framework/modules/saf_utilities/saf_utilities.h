@@ -49,18 +49,33 @@
 /*                        Performance Library to Employ                       */
 /* ========================================================================== */
 
+/*
+ * When using Intel's Math Kernal Library (MKL)
+ * (Generally the fastest library for x86 based architectures)
+ */
 #if defined(SAF_USE_INTEL_MKL)
 # define VECLIB_USE_LAPACK_FORTRAN_INTERFACE  
 # include "mkl.h"
-#elif defined(SAF_USE_ATLAS)
-# define VECLIB_USE_CLAPACK_INTERFACE
-# include "cblas-atlas.h"
-/* note: ATLAS's CLAPACK does not include some LAPACK functions */
-# include "clapack.h"
+/*
+ * When using OpenBLAS and the LAPACKE interface
+ * (A good option for ARM based architectures)
+ */
 #elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
 # define VECLIB_USE_LAPACKE_INTERFACE
 # include "cblas.h"
 # include "lapacke.h"
+/*
+ * When using the Automatically Tuned Linear Algebra Software (ATLAS) library
+ * (Not recommended, since some saf_veclib functions do not support ATLAS)
+ */
+#elif defined(SAF_USE_ATLAS)
+# define VECLIB_USE_CLAPACK_INTERFACE
+# include "cblas-atlas.h"
+# include "clapack.h" /* NOTE: CLAPACK does not include all LAPACK functions! */
+/*
+ * When using Apple's Accelerate library (vDSP)
+ * (Solid choice, but only works under MacOSX)
+ */
 #elif defined(__APPLE__)
 # define VECLIB_USE_LAPACK_FORTRAN_INTERFACE
 # include "Accelerate/Accelerate.h"

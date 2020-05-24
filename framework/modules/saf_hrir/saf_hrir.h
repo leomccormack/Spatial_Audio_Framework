@@ -54,8 +54,8 @@ extern const int __default_hrir_fs;
 /* ========================================================================== */
 
 /**
- * Estimates the interaural time-differences (ITDs) for each HRIR in a
- * set via the cross-correlation between the left and right IRs
+ * Estimates the interaural time-differences (ITDs) for each HRIR in a set via
+ * the cross-correlation between the left and right IRs
  *
  * @param[in]  hrirs    HRIRs; FLAT: N_dirs x 2 x hrir_len
  * @param[in]  N_dirs   Number of HRIRs
@@ -78,7 +78,7 @@ void estimateITDs(/* Input Arguments */
  * impulse, which is centered at approximately the beginning of the HRIR peak.
  *
  * @warning This function is NOT suitable for binaural room impulse responses
- *          (BRIRs)
+ *          (BRIRs)!
  *
  * @param[in]  hrirs      HRIRs; FLAT: N_dirs x 2 x hrir_len
  * @param[in]  N_dirs     Number of HRIRs
@@ -120,8 +120,8 @@ void HRIRs2HRTFs(/* Input Arguments */
 /**
  * Applies diffuse-field equalisation to a set of HRTFs
  *
- * @note This function is NOT suitable for binaural room impulse responses
- *       (BRIRs).
+ * @warning This function is NOT suitable for binaural room impulse responses
+ *          (BRIRs)!
  *
  * @param[in]     N_dirs     Number of HRTFs
  * @param[in]     itds_s     HRIR ITDs; N_dirs x 1

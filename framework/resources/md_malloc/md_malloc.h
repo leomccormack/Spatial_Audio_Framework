@@ -49,12 +49,10 @@ extern "C" {
 #endif /* __cplusplus */
     
 /**
- * A macro which returns the address of a pointer to the first element in a 2-D
- * synamic array
- *
  * Use this macro when passing a 2-D dynamic multi-dimensional array to
- * memset/memcpy, blas/lapack functions, and any other function which expects a
- * flat contiguous 1-D data structure.
+ * memset, memcpy or any other function that expects a flat contiguous 1-D data
+ * structure
+ *
  * e.g.
  *   float** array2D = (float**)malloc2d(10, 40, sizeof(float));
  *   memset(FLATTEN2D(array2D), 0, 10*40*sizeof(float));
@@ -62,12 +60,9 @@ extern "C" {
 #define FLATTEN2D(A) (*A)  /* || (&A[0][0]) */
 
 /**
- * A macro which returns the address of a pointer to the first element in a 3-D
- * synamic array
- *
  * Use this macro when passing a 3-D dynamic multi-dimensional array to
- * memset/memcpy, blas/lapack functions, and any other function which expects a
- * flat contiguous 1-D data structure.
+ * memset, memcpy or any other function that expects a flat contiguous 1-D data
+ * structure
  */
 #define FLATTEN3D(A) (**A) /* || (&A[0][0][0]) */
     
