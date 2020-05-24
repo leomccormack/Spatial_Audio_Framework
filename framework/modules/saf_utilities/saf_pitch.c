@@ -103,7 +103,7 @@ typedef struct _smb_pitchShift_data
 
     /* internals */
     void* hFFT;
-    double* window;
+    float* window;
     float** gInFIFO, **gOutFIFO;
 #ifdef SMB_ENABLE_SAF_FFT
     float_complex** gFFTworksp_td;
@@ -146,9 +146,9 @@ void smb_pitchShift_create
     h->gRover = (int*)malloc1d(nCH * sizeof(int));
     for(i=0; i<nCH; i++)
         h->gRover[i] = h->inFifoLatency;
-    h->window = (double*)malloc1d(fftFrameSize*sizeof(double));
+    h->window = (float*)malloc1d(fftFrameSize*sizeof(float));
     for (i = 0; i < fftFrameSize; i++)
-        h->window[i] = -.5*cos(2.*SAF_PI*(double)i/(double)fftFrameSize)+.5;
+        h->window[i] = -0.5f*cosf(2.0f*SAF_PI*(float)i/(float)fftFrameSize)+0.5f;
     h->gInFIFO = (float**)calloc2d(nCH,fftFrameSize,sizeof(float));
     h->gOutFIFO = (float**)calloc2d(nCH,fftFrameSize,sizeof(float));
 #ifdef SMB_ENABLE_SAF_FFT
@@ -218,14 +218,14 @@ void smb_pitchShift_apply
 )
 {
     smb_pitchShift_data *h = (smb_pitchShift_data*)(hSmb);
-    double magn, phase, tmp, real, imag;
-    double freqPerBin, expct;
+    float magn, phase, tmp, real, imag;
+	float freqPerBin, expct;
     int ch, i, k, qpd, index, fftFrameSize2;
 
     /* set up some handy variables */
     fftFrameSize2 = h->fftFrameSize/2;
-    freqPerBin = h->sampleRate/(double)h->fftFrameSize;
-    expct = 2.*SAF_PI*(double)(h->stepSize)/(double)h->fftFrameSize;
+    freqPerBin = h->sampleRate/(float)h->fftFrameSize;
+    expct = 2.0f*SAF_PI*(float)(h->stepSize)/(float)h->fftFrameSize;
 
     /* flush buffers */
     if(h->pitchShiftFactor!=pitchShift){
@@ -251,7 +251,7 @@ void smb_pitchShift_apply
 
 #ifdef SMB_ENABLE_SAF_FFT
                 for (k = 0; k < h->fftFrameSize;k++)
-                    h->gFFTworksp_td[ch][k] = cmplxf(h->gInFIFO[ch][k] * h->window[k], 0.0f);
+                    h->gFFTworksp_td[ch][k] = cmplxf(h->gInFIFO[ch][k] * (float)h->window[k], 0.0f);
                 saf_fft_forward(h->hFFT, h->gFFTworksp_td[ch], h->gFFTworksp_fd[ch]);
 #else
                 /* do windowing and re,im interleave */
@@ -275,27 +275,27 @@ void smb_pitchShift_apply
                     imag = h->gFFTworksp[ch][2*k+1];
 #endif
                     /* compute magnitude and phase */
-                    magn = 2.*sqrt(real*real + imag*imag);
-                    phase = atan2(imag,real);
+                    magn = 2.0f*sqrtf(real*real + imag*imag);
+                    phase = atan2f(imag,real);
 
                     /* compute phase difference */
                     tmp = phase - h->gLastPhase[ch][k];
                     h->gLastPhase[ch][k] = phase;
 
                     /* subtract expected phase difference */
-                    tmp -= (double)k*expct;
+                    tmp -= (float)k*expct;
 
                     /* map delta phase into +/- Pi interval */
-                    qpd = tmp/SAF_PI;
+                    qpd = (int)(tmp/SAF_PI);
                     if (qpd >= 0) qpd += qpd&1;
                     else qpd -= qpd&1;
-                    tmp -= SAF_PI*(double)qpd;
+                    tmp -= SAF_PI*(float)qpd;
 
                     /* get deviation from bin frequency from the +/- Pi interval */
-                    tmp = h->osamp*tmp/(2.*SAF_PI);
+                    tmp = (float)h->osamp*tmp/(2.0f*SAF_PI);
 
                     /* compute the k-th partials' true frequency */
-                    tmp = (double)k*freqPerBin + tmp*freqPerBin;
+                    tmp = (float)k*freqPerBin + tmp*freqPerBin;
 
                     /* store magnitude and true frequency in analysis arrays */
                     h->gAnaMagn[ch][k] = magn;
@@ -308,7 +308,7 @@ void smb_pitchShift_apply
                 memset(h->gSynMagn[ch], 0, h->fftFrameSize*sizeof(float));
                 memset(h->gSynFreq[ch], 0, h->fftFrameSize*sizeof(float));
                 for (k = 0; k <= fftFrameSize2; k++) {
-                    index = k*(h->pitchShiftFactor);
+                    index = (int)((float)k*(h->pitchShiftFactor));
                     if (index <= fftFrameSize2) {
                         h->gSynMagn[ch][index] += (h->gAnaMagn[ch][k]);
                         h->gSynFreq[ch][index] = h->gAnaFreq[ch][k] * (h->pitchShiftFactor);
@@ -323,23 +323,23 @@ void smb_pitchShift_apply
                     tmp = h->gSynFreq[ch][k];
 
                     /* subtract bin mid frequency */
-                    tmp -= (double)k*freqPerBin;
+                    tmp -= (float)k*freqPerBin;
 
                     /* get bin deviation from freq deviation */
                     tmp /= freqPerBin;
 
                     /* take osamp into account */
-                    tmp = 2.*SAF_PI*tmp/(h->osamp);
+                    tmp = 2.0f*SAF_PI*tmp/(h->osamp);
 
                     /* add the overlap phase advance back in */
-                    tmp += (double)k*expct;
+                    tmp += (float)k*expct;
 
                     /* accumulate delta phase to get bin phase */
                     h->gSumPhase[ch][k] += tmp;
                     phase = h->gSumPhase[ch][k];
 
 #ifdef SMB_ENABLE_SAF_FFT
-                    h->gFFTworksp_fd[ch][k] = cmplxf(magn*cos(phase), magn*sin(phase));
+                    h->gFFTworksp_fd[ch][k] = cmplxf(magn*cosf(phase), magn*sinf(phase));
 #else
                     /* get real and imag part and re-interleave */
                     h->gFFTworksp[ch][2*k] = magn*cos(phase);
@@ -354,7 +354,7 @@ void smb_pitchShift_apply
                 saf_fft_backward(h->hFFT, h->gFFTworksp_fd[ch], h->gFFTworksp_td[ch]);
 
                 for(k=0; k < h->fftFrameSize; k++)
-                    h->gOutputAccum[ch][k] += 2.*(h->window[k])*crealf(h->gFFTworksp_td[ch][k])/((h->osamp)); 
+                    h->gOutputAccum[ch][k] += 2.0f*(h->window[k])*crealf(h->gFFTworksp_td[ch][k])/((h->osamp)); 
 #else
                 /* zero negative frequencies */
                 for (k = h->fftFrameSize+2; k < 2*(h->fftFrameSize); k++)

@@ -128,7 +128,7 @@ typedef struct _ims_core_workspace
     int nBands; 
 
     /* Internal */
-    float Nx, Ny, Nz;
+    int Nx, Ny, Nz;
     int lengthVec, numImageSources;
     int* validIDs;
     float* II, *JJ, *KK;

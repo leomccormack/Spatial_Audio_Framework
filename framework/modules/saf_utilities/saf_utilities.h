@@ -49,34 +49,37 @@
 /*                        Performance Library to Employ                       */
 /* ========================================================================== */
 
+#if defined(SAF_USE_INTEL_MKL)
 /*
- * When using Intel's Math Kernal Library (MKL)
+ * Using Intel's Math Kernal Library (MKL)
  * (Generally the fastest library for x86 based architectures)
  */
-#if defined(SAF_USE_INTEL_MKL)
 # define VECLIB_USE_LAPACK_FORTRAN_INTERFACE  
 # include "mkl.h"
+
+#elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
 /*
- * When using OpenBLAS and the LAPACKE interface
+ * Using OpenBLAS and the LAPACKE interface
  * (A good option for ARM based architectures)
  */
-#elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
 # define VECLIB_USE_LAPACKE_INTERFACE
 # include "cblas.h"
 # include "lapacke.h"
+
+#elif defined(SAF_USE_ATLAS)
 /*
- * When using the Automatically Tuned Linear Algebra Software (ATLAS) library
+ * Using the Automatically Tuned Linear Algebra Software (ATLAS) library
  * (Not recommended, since some saf_veclib functions do not support ATLAS)
  */
-#elif defined(SAF_USE_ATLAS)
 # define VECLIB_USE_CLAPACK_INTERFACE
 # include "cblas-atlas.h"
 # include "clapack.h" /* NOTE: CLAPACK does not include all LAPACK functions! */
+
+#elif defined(__APPLE__)
 /*
- * When using Apple's Accelerate library (vDSP)
+ * Using Apple's Accelerate library (vDSP)
  * (Solid choice, but only works under MacOSX)
  */
-#elif defined(__APPLE__)
 # define VECLIB_USE_LAPACK_FORTRAN_INTERFACE
 # include "Accelerate/Accelerate.h"
 #else
@@ -98,10 +101,16 @@
 # define CLAMP(a,min,max) (MAX(min, MIN(max, a)))
 #endif
 #ifndef M_PI
-# define M_PI ( 3.14159265358979323846264338327950288 )
+# define M_PI ( 3.14159265358979323846264338327950288f )
+#endif
+#ifndef M_PId
+# define M_PId ( 3.14159265358979323846264338327950288 )
 #endif
 #ifndef SAF_PI
-# define SAF_PI ( 3.14159265358979323846264338327950288 )
+# define SAF_PI ( 3.14159265358979323846264338327950288f )
+#endif
+#ifndef SAF_PId
+# define SAF_PId ( 3.14159265358979323846264338327950288 )
 #endif
 #define SAF_ISPOW2(x) (((x & ~(x-1))==x) ? x : 0);
  

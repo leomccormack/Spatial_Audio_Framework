@@ -121,9 +121,9 @@ void FIRtoFilterbankCoeffs
     float_complex* hFB /* nBands x nCH x N_dirs */
 )
 {
-    int i, j, t, nd, nm, nTimeSlots, ir_pad;
+    int i, j, t, nd, nm, nTimeSlots, ir_pad, nBands;
     int* maxIdx;
-    float maxVal, idxDel, irFB_energy, irFB_gain, phase, nBands;
+    float maxVal, idxDel, irFB_energy, irFB_gain, phase;
     float* centerImpulse, *centerImpulseFB_energy, *ir;
     float_complex cross;
     float_complex* centerImpulseFB, *irFB;

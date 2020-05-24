@@ -281,9 +281,9 @@ void ims_shoebox_coreInit
                 echogram->value[vIdx][0]   = wrk->s_d[imsrc]<=1 ? 1.0f : 1.0f / wrk->s_d[imsrc];
 
                 /* Order */
-                echogram->order[vIdx][0] = wrk->II[imsrc];
-                echogram->order[vIdx][1] = wrk->JJ[imsrc];
-                echogram->order[vIdx][2] = wrk->KK[imsrc];
+                echogram->order[vIdx][0] = (int)(wrk->II[imsrc] + 0.5f); /* round */
+                echogram->order[vIdx][1] = (int)(wrk->JJ[imsrc] + 0.5f);
+                echogram->order[vIdx][2] = (int)(wrk->KK[imsrc] + 0.5f);
 
                 /* Coordinates */
                 echogram->coords[vIdx].x = wrk->s_x[imsrc];
@@ -337,7 +337,7 @@ void ims_shoebox_coreRecModuleSH
         for(i=0; i<echogram_rec->numImageSources; i++){
             /* Cartesian coordinates to spherical coordinates */
             unitCart2Sph(echogram_rec->coords[i].v, (float*)aziElev_rad);
-            aziElev_rad[1] = M_PI/2.0f-aziElev_rad[1]; /* AziElev to AziInclination conversion */
+            aziElev_rad[1] = SAF_PI/2.0f-aziElev_rad[1]; /* AziElev to AziInclination conversion */
 
             /* Apply spherical harmonic weights */
             getSHreal_recur(sh_order, (float*)aziElev_rad, 1, sh_gains);

@@ -663,10 +663,10 @@ void computeVelCoeffsMtx
     Nxyz = Ns+1;
     nC_xyz = (Nxyz+1)*(Nxyz+1);
     nC_s = (Ns+1)*(Ns+1);
-    x1 = sqrtf(2.0f*M_PI/3.0f);
+    x1 = sqrtf(2.0f*SAF_PI/3.0f);
     x3 = -x1;
-    y1 = y3 = sqrtf(2.0f*M_PI/3.0f);
-    z2 = sqrtf(4.0f*M_PI/3.0f); 
+    y1 = y3 = sqrtf(2.0f*SAF_PI/3.0f);
+    z2 = sqrtf(4.0f*SAF_PI/3.0f);
     G_mtx = malloc1d(nC_s*4*nC_xyz*sizeof(float));
     gaunt_mtx(Ns, 1, Nxyz, G_mtx);
     
