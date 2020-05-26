@@ -118,7 +118,7 @@ void ambi_dec_destroy
 )
 {
     ambi_dec_data *pData = (ambi_dec_data*)(*phAmbi);
-    ambi_dec_codecPars *pars = pData->pars;
+    ambi_dec_codecPars *pars;
     int i, j, ch;
     
     if (pData != NULL) {
@@ -146,6 +146,8 @@ void ambi_dec_destroy
         free(pData->STFTInputFrameTF);
         free(pData->STFTOutputFrameTF);
         free(pData->tempHopFrameTD);
+
+        pars = pData->pars;
         free(pars->hrtf_vbap_gtableComp);
         free(pars->hrtf_vbap_gtableIdx);
         free(pars->hrtf_fb);

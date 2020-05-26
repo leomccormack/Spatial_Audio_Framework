@@ -103,14 +103,13 @@ void matrixconv_process
 {
     matrixconv_data *pData = (matrixconv_data*)(hMCnv);
     int s, ch, i;
-    int numInputChannels, numOutputChannels, nFilters;
+    int numInputChannels, numOutputChannels;
  
     matrixconv_checkReInit(hMCnv);
 
     /* prep */
     numInputChannels = pData->nInputChannels;
     numOutputChannels = pData->nOutputChannels;
-    nFilters = pData->nfilters;
 
     for(s=0; s<nSamples; s++){
         /* Load input signals into inFIFO buffer */

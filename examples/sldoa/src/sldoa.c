@@ -82,7 +82,7 @@ void sldoa_create
     strcpy(pData->progressBarText,"");
     pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
-    for(i=0; i<MAX_SH_ORDER; i++)
+    for(i=0; i<MAX_SH_ORDER-1; i++)
         pData->secCoeffs[i] = NULL;
     for(i=0; i<64; i++)
         for(j=0; j<NUM_GRID_DIRS; j++)

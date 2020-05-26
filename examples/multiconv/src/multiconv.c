@@ -101,12 +101,11 @@ void multiconv_process
 {
     multiconv_data *pData = (multiconv_data*)(hMCnv);
     int s, ch, i;
-    int numChannels, nFilters;
+    int numChannels;
  
     multiconv_checkReInit(hMCnv);
 
     /* prep */
-    nFilters = pData->nfilters;
     numChannels = pData->nChannels;
 
     for(s=0; s<nSamples; s++){

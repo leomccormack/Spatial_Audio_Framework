@@ -103,7 +103,7 @@ void ambi_bin_destroy
 )
 {
     ambi_bin_data *pData = (ambi_bin_data*)(*phAmbi);
-    ambi_bin_codecPars *pars = pData->pars;
+    ambi_bin_codecPars *pars;
     int ch;
     
     if (pData != NULL) {
@@ -129,6 +129,8 @@ void ambi_bin_destroy
         free(pData->STFTInputFrameTF);
         free(pData->STFTOutputFrameTF);
         free(pData->tempHopFrameTD);
+
+        pars = pData->pars;
         free(pars->hrtf_fb);
         free(pars->itds_s);
         free(pars->hrirs);

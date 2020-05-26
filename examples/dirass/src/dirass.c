@@ -105,7 +105,7 @@ void dirass_destroy
 )
 {
     dirass_data *pData = (dirass_data*)(*phDir);
-    dirass_codecPars* pars = pData->pars;
+    dirass_codecPars* pars;
     int i;
     
     if (pData != NULL) {
@@ -119,7 +119,8 @@ void dirass_destroy
             free(pData->pmap);
         for(i=0; i<NUM_DISP_SLOTS; i++)
             free(pData->pmap_grid[i]);
-        
+
+        pars = pData->pars; 
         free(pars->interp_dirs_deg);
         free(pars->Y_up);
         free(pars->interp_table);

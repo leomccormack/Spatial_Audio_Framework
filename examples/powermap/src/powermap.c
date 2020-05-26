@@ -100,7 +100,7 @@ void powermap_destroy
 )
 {
     powermap_data *pData = (powermap_data*)(*phPm);
-    powermap_codecPars* pars = pData->pars;
+    powermap_codecPars* pars;
     int i, ch;
     
     if (pData != NULL) {
@@ -109,7 +109,8 @@ void powermap_destroy
                pData->procStatus == PROC_STATUS_ONGOING){
             SAF_SLEEP(10);
         }
-        
+
+        pars = pData->pars;
         /* free afSTFT and buffers */
         afSTFTfree(pData->hSTFT);
         for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
