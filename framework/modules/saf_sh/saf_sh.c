@@ -33,8 +33,6 @@
 #include "saf_sh.h"
 #include "saf_sh_internal.h"
 
-#define SQRT4PI ( 3.544907701811032f ) 
-
 /**
  * First-order ACN/N3D to WXYZ conversion matrix
  */

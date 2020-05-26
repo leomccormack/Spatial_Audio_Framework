@@ -30,11 +30,17 @@
 #include "saf_vbap.h"
 #include "saf_vbap_internal.h" 
 
+/**
+ * Enable to also export VBAP gain tables to a .txt file (for debugging
+ * purposes) */
 #define ENABLE_VBAP_DEBUGGING_CODE 0
 #if ENABLE_VBAP_DEBUGGING_CODE
-#define SAVE_PATH "../faces.txt"
-#define SAVE_PATH2 "../vbapGains_compressed.txt"
-#define SAVE_PATH3 "../vbapGains_table.txt"
+/** Save file path for exporting the face indices (to verify triangulation) */
+# define SAVE_PATH "../faces.txt"
+/** Save file path for exporting the compressed VBAP gain table */
+# define SAVE_PATH2 "../vbapGains_compressed.txt"
+/** Save file path for exporting the computed VBAP gain table */
+# define SAVE_PATH3 "../vbapGains_table.txt"
 #endif
 
 void generateVBAPgainTable3D_srcs

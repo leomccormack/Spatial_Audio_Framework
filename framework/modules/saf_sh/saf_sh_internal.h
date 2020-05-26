@@ -45,10 +45,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#ifndef M_PI
-# define M_PI ( 3.14159265359f )
-#endif
-
 /* ========================================================================== */
 /*                          Misc. Internal Functions                          */
 /* ========================================================================== */
@@ -76,9 +72,10 @@ float wigner_3j(/* Input arguments */
 /**
  * Constructs a matrix of Guant coefficients
  *
- * Constructs the (N1+1)^2x(N2+1)^2x(N+1)^2 matrix of Gaunt coefficients which
- * represent the integral of three spherical harmonics such as:
+ * Constructs the (N1+1)^2 x (N2+1)^2 x (N+1)^2 matrix of Gaunt coefficients
+ * which represent the integral of three spherical harmonics, such as
  * G^q_{q',q''} = \int_\Omega Y_{q'}Y_{q''}Y^*_{q} \mathrm{d}\Omega.
+ *
  * With Gaunt coefficients, the spherical harmonic coefficients of the product
  * of two spherical functions can be given directly as a linear relationship
  * between the harmonic coefficients of the two functions.
@@ -100,37 +97,61 @@ void gaunt_mtx(/* Input arguments */
 /*              Internal Functions for spherical Hankels/Bessels              */
 /* ========================================================================== */
 
-/* Original Fortran code: "Fortran Routines for Computation of Special
+/**
+ * Helper function for bessel_in
+ *
+ * Original Fortran code: "Fortran Routines for Computation of Special
  * Functions": jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
+ * C implementation by J-P Moreau, Paris (www.jpmoreau.fr)
+ */
 void SPHI(int N, double X, int *NM, double *SI, double *DI);
 
-/* Original Fortran code: "Fortran Routines for Computation of Special
+/**
+ * Helper function for bessel_kn
+ *
+ * Original Fortran code: "Fortran Routines for Computation of Special
  * Functions": jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
+ * C implementation by J-P Moreau, Paris (www.jpmoreau.fr)
+ */
 void SPHK(int N, double X, int *NM, double *SK, double *DK);
 
-/* Original Fortran code: "Fortran Routines for Computation of Special
+/**
+ * Helper function for bessel_in
+ *
+ * Original Fortran code: "Fortran Routines for Computation of Special
  * Functions": jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
+ * C implementation by J-P Moreau, Paris (www.jpmoreau.fr)
+ */
 void SPHJ(int N, double X, int *NM, double *SJ, double *DJ);
 
-/* Original Fortran code: "Fortran Routines for Computation of Special
+/**
+ * Helper function for computing spherical bessel function values
+ *
+ * Original Fortran code: "Fortran Routines for Computation of Special
  * Functions": jin.ece.uiuc.edu/routines/routines.html.
  * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
 int MSTA1(double X, int MP);
 
-/* Original Fortran code: "Fortran Routines for Computation of Special
+/**
+ * Helper function for computing spherical bessel function values
+ *
+ * Original Fortran code: "Fortran Routines for Computation of Special
  * Functions": jin.ece.uiuc.edu/routines/routines.html.
  * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
 int MSTA2(double X, int N, int MP);
 
-/* Original Fortran code: "Fortran Routines for Computation of Special
+/**
+ * Helper function for computing spherical bessel function values
+ *
+ * Original Fortran code: "Fortran Routines for Computation of Special
  * Functions": jin.ece.uiuc.edu/routines/routines.html.
  * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
 double ENVJ(int N, double X);
 
-/* Original Fortran code: "Fortran Routines for Computation of Special
+/**
+ * Helper function for bessel_yn
+ *
+ * Original Fortran code: "Fortran Routines for Computation of Special
  * Functions": jin.ece.uiuc.edu/routines/routines.html.
  * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
 void SPHY(int N, double X, int *NM, double *SY, double *DY);
@@ -140,34 +161,29 @@ void SPHY(int N, double X, int *NM, double *SY, double *DY);
 /*             Internal Functions for spherical harmonic rotations            */
 /* ========================================================================== */
 
-/* Used in the calculation of spherical harmonic rotation matrices
- * Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical
- * Harmonics. Direct Determination by Recursion Page: Additions and Corrections.
- * Journal of Physical Chemistry A, 102(45), 9099?9100. */
+/**
+ * Helper function for getSHrotMtxReal
+ */
 float getP(int i, int l, int a, int b, float** R_1, float** R_lm1);
 
-/* Used in the calculation of spherical harmonic rotation matrices
- * Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical
- * Harmonics. Direct Determination by Recursion Page: Additions and Corrections.
- * Journal of Physical Chemistry A, 102(45), 9099?9100. */
+/**
+ * Helper function for getSHrotMtxReal
+ */
 float getU(int l, int m, int n, float** R_1, float** R_lm1);
 
-/* Used in the calculation of spherical harmonic rotation matrices
- * Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical
- * Harmonics. Direct Determination by Recursion Page: Additions and Corrections.
- * Journal of Physical Chemistry A, 102(45), 9099?9100. */
+/**
+ * Helper function for getSHrotMtxReal
+ */
 float getV(int l, int m, int n, float** R_1, float** R_lm1);
 
-/* Used in the calculation of spherical harmonic rotation matrices
- * Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical
- * Harmonics. Direct Determination by Recursion Page: Additions and Corrections.
- * Journal of Physical Chemistry A, 102(45), 9099?9100. */
+/**
+ * Helper function for getSHrotMtxReal
+ */
 float getW(int l, int m, int n, float** R_1, float** R_lm1);
 
-/* Used in the calculation of spherical harmonic rotation matrices
- * Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical
- * Harmonics. Direct Determination by Recursion Page: Additions and Corrections.
- * Journal of Physical Chemistry A, 102(45), 9099?9100. */
+/**
+ * Helper function for getSHrotMtxReal
+ */
 float getW(int l, int m, int n, float** R_1, float** R_lm1);
 
 

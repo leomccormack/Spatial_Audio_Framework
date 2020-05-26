@@ -39,29 +39,31 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#ifndef NUM_EARS
-# define NUM_EARS 2
-#endif
-#ifndef ISEVEN
-# define ISEVEN(n)   ((n%2 == 0) ? 1 : 0)
-#endif
-#ifndef ISODD
-# define ISODD(n)    ((n%2 != 0) ? 1 : 0)
-#endif
-
 /* ========================================================================== */
 /*                         IMS Shoebox Room Simulator                         */
 /* ========================================================================== */
 
+/** Number of wall for a shoebox room */
 #define IMS_NUM_WALLS_SHOEBOX ( 6 )
-#define IMS_FIR_FILTERBANK_ORDER ( 400 ) /* Must be even */
-#define IMS_IIR_FILTERBANK_ORDER ( 3 ) /* Only 1st or 3rd order supported */
+/** FIR filter order (must be even) */
+#define IMS_FIR_FILTERBANK_ORDER ( 400 )
+/** IIR filter order (1st or 3rd) */
+#define IMS_IIR_FILTERBANK_ORDER ( 3 )
+/** Circular buffer length */
 #define IMS_CIRC_BUFFER_LENGTH ( 2*8192U )
+/** Circular buffer length, minus 1 */
 #define IMS_CIRC_BUFFER_LENGTH_MASK ( IMS_CIRC_BUFFER_LENGTH - 1U )
-#define IMS_MAX_NSAMPLES_PER_FRAME ( 20000 ) // set to 8192 after debugging
+/** Maximum number of samples that ims should expect to process at a time */
+#define IMS_MAX_NSAMPLES_PER_FRAME ( 20000 )
 
+/**
+ * Void pointer (improves readability when working with arrays of handles)
+ */
 typedef void* voidPtr;
 
+/**
+ * Union struct for Cartesian coordinates (access as .x,.y,.z, or .v[3])
+ */
 typedef struct _ims_pos_xyz {
     union {
         struct { float x, y, z; };
@@ -69,28 +71,31 @@ typedef struct _ims_pos_xyz {
     };
 } ims_pos_xyz;
 
+/**
+ * Supported receiver types
+ */
 typedef enum _RECEIVER_TYPES{
-    RECEIVER_SH
+    RECEIVER_SH   /**< Spherical harmonic receiver */
 }RECEIVER_TYPES;
 
 /**
  * Source object
  */
 typedef struct _ims_src_obj{
-    float* sig;
-    ims_pos_xyz pos;
-    int ID;
+    float* sig;      /**< Source signal pointer */
+    ims_pos_xyz pos; /**< Source position */
+    int ID;          /**< Unique Source ID */
 } ims_src_obj;
 
 /**
  * Receiver object
  */
 typedef struct _ims_rec_obj{
-    float** sigs;
-    RECEIVER_TYPES type;
-    int nChannels;
-    ims_pos_xyz pos;
-    int ID;
+    float** sigs;        /**< Receiver signal pointers (one per channel) */
+    RECEIVER_TYPES type; /**< Receiver type (see RECEIVER_TYPES enum) */
+    int nChannels;       /**< Number of channels for receiver */
+    ims_pos_xyz pos;     /**< Source position */
+    int ID;              /**< Unique Source ID */
 } ims_rec_obj;
 
 /**
@@ -122,10 +127,11 @@ typedef struct _echogram_data
 typedef struct _ims_core_workspace
 {
     /* Locals */
-    int room[3];
-    float d_max;
-    ims_pos_xyz src, rec;
-    int nBands; 
+    int room[3];          /**< Room dimensions, in meters */
+    float d_max;          /**< Maximum distance, in meters */
+    ims_pos_xyz src;      /**< Source position */
+    ims_pos_xyz rec;      /**< Receiver position */
+    int nBands;           /**< Number of bands */
 
     /* Internal */
     int Nx, Ny, Nz;
@@ -157,17 +163,17 @@ typedef struct _ims_core_workspace
 typedef struct _ims_scene_data
 {
     /* Locals */
-    int room_dimensions[3];
-    float c_ms;
-    float fs;
-    int nBands;
-    float** abs_wall;
+    int room_dimensions[3];  /**< Room dimensions, in meters */
+    float c_ms;              /**< Speed of sound, in ms^1 */
+    float fs;                /**< Sampling rate */
+    int nBands;              /**< Number of frequency bands */
+    float** abs_wall;        /**< Wall aborption coeffs per wall; nBands x 6 */
 
     /* Source and receiver positions */
-    ims_src_obj srcs[IMS_MAX_NUM_SOURCES];
-    ims_rec_obj recs[IMS_MAX_NUM_RECEIVERS];
-    long nSources;
-    long nReceivers;
+    ims_src_obj srcs[IMS_MAX_NUM_SOURCES];   /**< Source positions*/
+    ims_rec_obj recs[IMS_MAX_NUM_RECEIVERS]; /**< Receiver positions*/
+    long nSources;           /**< Current number of sources */
+    long nReceivers;         /**< Current number of receivers */
 
     /* Internal */
     voidPtr** hCoreWrkSpc;   /**< One per source/receiver combination */
@@ -245,6 +251,8 @@ void ims_shoebox_echogramDestroy(void** phEcho);
  *
  * Note the coordinates of source/receiver are specified from the left ground
  * corner of the room:
+ *
+ * \verbatim
  *                ^x
  *             __|__    _
  *             |  |  |   |
@@ -256,6 +264,7 @@ void ims_shoebox_echogramDestroy(void** phEcho);
  *
  *             |-----|
  *                w
+ * \endverbatim
  *
  * @param[in] hWork   workspace handle
  * @param[in] room    Room dimensions, in meters

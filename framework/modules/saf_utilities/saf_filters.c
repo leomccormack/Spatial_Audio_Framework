@@ -27,10 +27,22 @@
 
 /** Main structure for the Favrot&Faller filterbank */
 typedef struct _faf_IIRFB_data{
-    int nBands, nFilters, filtLen, filtOrder, maxNSamplesToExpect;
-    float** b_lpf, **a_lpf, **b_hpf, **a_hpf;
-    float*** wz_lpf, ***wz_hpf, ***wz_apf1, ***wz_apf2;
-    float* tmp, *tmp2;
+    int nBands;       /**< Number of bands in the filterbank */
+    int nFilters;     /**< Number of filters used by the filterbank */
+    int filtLen;      /**< Filter length */
+    int filtOrder;    /**< Filter order (must be 1 or 3) */
+    int maxNSamplesToExpect; /**< Maximum number of samples to expect to process
+                              *   at a time */
+    float** b_lpf;    /**< Numerator filter coeffs for low-pass filters */
+    float** a_lpf;    /**< Denominator filter coeffs for low-pass filters */
+    float** b_hpf;    /**< Numerator filter coeffs for high-pass filters */
+    float** a_hpf;    /**< Denominator filter coeffs for high-pass filters */
+    float*** wz_lpf;  /**< Delay buffers for low-pass filters */
+    float*** wz_hpf;  /**< Delay buffers for high-pass filters */
+    float*** wz_apf1; /**< Delay buffers for all-pass filter part 1 */
+    float*** wz_apf2; /**< Delay buffers for all-pass filter part 2 */
+    float* tmp;       /**< Temporary buffer; maxNSamplesToExpect x 1 */
+    float* tmp2;      /**< Temporary buffer; maxNSamplesToExpect x 1 */
 
 }faf_IIRFB_data;
 
@@ -455,47 +467,52 @@ void evalBiQuadTransferFunction
 
 void applyIIR
 (
-    int order,
     float* in_signal,
     int nSamples,
+    int nCoeffs,
     float* b,
     float* a,
     float* wz,
     float* out_signal
 )
 {
-    int n, i, len;
+    int n, i;
     float wn;
 
     /* For compiler speed-ups */  
-    switch(order){
-        case 1: applyIIR_1(in_signal, nSamples, b, a, wz, out_signal); return;
-        case 2: applyIIR_2(in_signal, nSamples, b, a, wz, out_signal); return;
-        case 3: applyIIR_3(in_signal, nSamples, b, a, wz, out_signal); return;
+    switch(nCoeffs){
+        case 1: assert(0); /* just divide in_signal by b[0]... */
+        case 2: applyIIR_1(in_signal, nSamples, b, a, wz, out_signal); return;
+        case 3: applyIIR_2(in_signal, nSamples, b, a, wz, out_signal); return;
+        case 4: applyIIR_3(in_signal, nSamples, b, a, wz, out_signal); return;
     }
-
-    len = order+1;
 
     /*  difference equation (Direct form 2) */
     for (n=0; n<nSamples; n++){
         /* numerator */
         wn = in_signal[n];
-        for (i=1; i<len;i++)
+        for (i=1; i<nCoeffs;i++)
             wn = wn - (a[i] * wz[i-1]);
 
         /* denominator */
         out_signal[n] = b[0] * wn;
-        for (i=1; i<len; i++)
+        for (i=1; i<nCoeffs; i++)
             out_signal[n] = out_signal[n] + (b[i] * wz[i-1]);
 
         /* shuffle delays */
-        switch(order){
-            case 5: wz[4] = wz[3];
-            case 4: wz[3] = wz[2];
-            case 3: wz[2] = wz[1];
-            case 2: wz[1] = wz[0];
-            case 1: wz[0] = wn; break;
-            default: assert(0); /* Not supported */
+        switch(nCoeffs-1){
+            case 10: wz[9] = wz[8];
+            case 9:  wz[8] = wz[7];
+            case 8:  wz[7] = wz[6];
+            case 7:  wz[6] = wz[5];
+            case 6:  wz[5] = wz[4];
+            case 5:  wz[4] = wz[3];
+            case 4:  wz[3] = wz[2];
+            case 3:  wz[2] = wz[1];
+            case 2:  wz[1] = wz[0];
+            case 1:  wz[0] = wn; break;
+            default: assert(0); /* A 5th order BPF/BSF or 10th order LPF/HPF?
+                                 * Sorry, I gotta put a stop to that... */
         }
     }
 }
@@ -857,18 +874,18 @@ void faf_IIRFilterbank_apply
 
     /* Band 0 */
     for (j = 0; j<fb->nFilters; j++)
-        applyIIR(fb->filtOrder, outBands[0], nSamples, fb->b_lpf[j], fb->a_lpf[j], fb->wz_lpf[0][j], outBands[0]);
+        applyIIR(outBands[0], nSamples, fb->filtLen, fb->b_lpf[j], fb->a_lpf[j], fb->wz_lpf[0][j], outBands[0]);
 
     /* Band 1 */
-    applyIIR(fb->filtOrder, outBands[1], nSamples, fb->b_hpf[0], fb->a_hpf[0], fb->wz_hpf[1][0], outBands[1]);
+    applyIIR(outBands[1], nSamples, fb->filtLen, fb->b_hpf[0], fb->a_hpf[0], fb->wz_hpf[1][0], outBands[1]);
     for (j = 1; j<fb->nFilters; j++)
-        applyIIR(fb->filtOrder, outBands[1], nSamples, fb->b_lpf[j], fb->a_lpf[j], fb->wz_lpf[1][j], outBands[1]);
+        applyIIR(outBands[1], nSamples, fb->filtLen, fb->b_lpf[j], fb->a_lpf[j], fb->wz_lpf[1][j], outBands[1]);
 
     /* All-pass filters (bands 2..N-1) */
     for (band = 2; band < fb->nBands; band++){
         for (j=0; j<=band-2; j++){
-            applyIIR(fb->filtOrder, outBands[band], nSamples, fb->b_lpf[j], fb->a_lpf[j], fb->wz_apf1[band][j], fb->tmp);
-            applyIIR(fb->filtOrder, outBands[band], nSamples, fb->b_hpf[j], fb->a_hpf[j], fb->wz_apf2[band][j], fb->tmp2);
+            applyIIR(outBands[band], nSamples, fb->filtLen, fb->b_lpf[j], fb->a_lpf[j], fb->wz_apf1[band][j], fb->tmp);
+            applyIIR(outBands[band], nSamples, fb->filtLen, fb->b_hpf[j], fb->a_hpf[j], fb->wz_apf2[band][j], fb->tmp2);
             utility_svvadd(fb->tmp, fb->tmp2, nSamples, outBands[band]);
         }
     }
@@ -876,18 +893,19 @@ void faf_IIRFilterbank_apply
     /* Bands 2..N-2 */
     for(band = 2; band< fb->nBands-1; band++){
         /* high-pass filter */
-        applyIIR(fb->filtOrder, outBands[band], nSamples, fb->b_hpf[band-1], fb->a_hpf[band-1], fb->wz_hpf[band][band-1], outBands[band]);
+        applyIIR(outBands[band], nSamples, fb->filtLen, fb->b_hpf[band-1], fb->a_hpf[band-1], fb->wz_hpf[band][band-1], outBands[band]);
 
         /* low-pass filters */
         for(j=band; j<fb->nBands-1; j++)
-            applyIIR(fb->filtOrder, outBands[band], nSamples, fb->b_lpf[j], fb->a_lpf[j], fb->wz_lpf[band][j], outBands[band]);
+            applyIIR(outBands[band], nSamples, fb->filtLen, fb->b_lpf[j], fb->a_lpf[j], fb->wz_lpf[band][j], outBands[band]);
 
     }
 
     /* Band N-1 */
-    if (fb->nBands>2)
-        applyIIR(fb->filtOrder, outBands[fb->nBands-1], nSamples, fb->b_hpf[fb->nFilters-1], fb->a_hpf[fb->nFilters-1],
+    if (fb->nBands>2){
+        applyIIR(outBands[fb->nBands-1], nSamples, fb->filtLen, fb->b_hpf[fb->nFilters-1], fb->a_hpf[fb->nFilters-1],
                  fb->wz_hpf[fb->nBands-1][fb->nFilters-1], outBands[fb->nBands-1]);
+    }
 }
 
 void faf_IIRFilterbank_flushBuffers

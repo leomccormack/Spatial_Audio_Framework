@@ -337,7 +337,7 @@ void complex2realCoeffs(/* Input Arguments */
  * @see [1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real
  *          Spherical Harmonics. Direct Determination by Recursion Page:
  *          Additions and Corrections. Journal of Physical Chemistry A, 102(45),
- *          9099?9100.
+ *          9099?9100. 
  */
 void getSHrotMtxReal(float R[3][3],
                      float* RotMtx,

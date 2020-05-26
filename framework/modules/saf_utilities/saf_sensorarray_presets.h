@@ -28,9 +28,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
+/* TODO: remove and check array2sh example is still OK */
 #ifndef UTIL_DEFAULT_SH_ORDER
-# define UTIL_DEFAULT_SH_ORDER ( 7 )
+# define UTIL_DEFAULT_SH_ORDER ( 7 ) /**< No longer required */
 #endif
     
 /* ========================================================================== */

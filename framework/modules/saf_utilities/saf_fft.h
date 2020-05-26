@@ -140,7 +140,8 @@ void hilbert(float_complex* x,
 
 /**
  * Creates an instance of saf_stft
- *  
+ *
+ * @param[in] phSTFT   (&) address of saf_stft handle
  * @param[in] winsize  Window size
  * @param[in] hopsize  Hop size
  * @param[in] nCHin    Number of input channels

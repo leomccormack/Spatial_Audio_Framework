@@ -29,24 +29,68 @@
 #include "timer.h" /* for timing the individual tests */
 #include "saf.h"   /* framework include header */
 
-/* Prototypes for available unit tests */
+
+/* ========================================================================== */
+/*                    Prototypes for available unit tests                     */
+/* ========================================================================== */
+
+/**
+ * Testing for perfect recontruction of the saf_stft (when configured for 50%
+ * window overlap) */
 void test__saf_stft_50pc_overlap(void);
+/**
+ * Testing for perfect recontruction of the saf_stft (when configured for linear
+ * time-invariant (LTI) filtering applications) */
 void test__saf_stft_LTI(void);
+/**
+ * Testing the ims shoebox simulator, when applying the echograms in the time-
+ * domain */
 void test__ims_shoebox_TD(void);
+/**
+ * Testing the ims shoebox simulator, when generating room impulse respones
+ * (RIRs) from the computed echograms */
 void test__ims_shoebox_RIR(void);
+/**
+ * Testing the forward and backward real-(half)complex FFT (saf_rfft) */
 void test__saf_rfft(void);
+/**
+ * Testing the saf_matrixConv */
 void test__saf_matrixConv(void);
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
+/**
+ * Testing the alias-free STFT filterbank reconstruction */
 void test__afSTFTMatrix(void);
 #endif
+/**
+ * Testing the alias-free STFT filterbank reconstruction */
 void test__afSTFT(void);
+/**
+ * Testing the smb_pitchShifter */
 void test__smb_pitchShifter(void);
+/**
+ * Testing the sortf function (sorting real floating point numbers) */
 void test__sortf(void);
+/**
+ * Testing the sortz function (sorting complex double-floating point numbers) */
 void test__sortz(void);
+/**
+ * Testing the cmplxPairUp function (grouping up conjugate symmetric values) */
 void test__cmplxPairUp(void);
+/**
+ * Testing the realloc2d_r function (reallocating 2-D array, while retaining the
+ * previous data order; except truncated or extended) */
 void test__realloc2d_r(void);
+/**
+ * Testing that the getSHreal_recur function is somewhat numerically simular
+ * to the getSHreal function */
 void test__getSHreal_recur(void);
+/**
+ * Testing that the coefficients computed with butterCoeffs are numerically
+ * similar to the "butter" function in Matlab */
 void test__butterCoeffs(void);
+/**
+ * Testing that the faf_IIRFilterbank can re-construct the original signal power
+ */
 void test__faf_IIRFilterbank(void);
 
 
@@ -54,22 +98,29 @@ void test__faf_IIRFilterbank(void);
 /*                                 Test Config                                */
 /* ========================================================================== */
 
-static tick_t start, start_test;
+static tick_t start;      /**< Start time for whole test program */
+static tick_t start_test; /**< Start time for the current unit test */
+/** Called before a unit test is executed */
 void setUp(void) { start_test = timer_current(); }
+/** Called after a unit test is executed */
 void tearDown(void) { }
+/** Displays the time taken for the current unit test */
 static void timerResult(void) {
     printf("    (Time elapsed: %lfs) \n", (double)timer_elapsed(start_test));
 }
 
 #undef RUN_TEST
+/** Custom UNITY RUN_TEST, to include timerResult upon exiting test */
 #define RUN_TEST(testfunc)  UNITY_NEW_TEST(#testfunc) \
 if (TEST_PROTECT()) {  setUp();  testfunc();  } \
 if (TEST_PROTECT() && (!TEST_IS_IGNORED))  {tearDown(); } \
 UnityConcludeTest(); timerResult();
 
 #if _MSC_VER >= 1900
-int main_test(void) { /* (for C++ wrapper) */
+/** Only used for the C++ wrapper */
+int main_test(void) {
 #else
+/** Main test program */
 int main(void) {
 #endif
  printf("*****************************************************************\n"

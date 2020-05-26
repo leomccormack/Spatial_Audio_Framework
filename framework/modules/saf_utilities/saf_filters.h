@@ -238,6 +238,34 @@ void evalBiQuadTransferFunction(/* Input arguments */
                                 float* phase_rad);
 
 /**
+ * Applies an IIR filter to a time-domain signal (using the direct form II
+ * difference equation)
+ *
+ * @note The function assumes the numerator coefficents are the same length
+ *       as the denominator, i.e. a[0] is assumed to be 1 and ignored. The
+ *       output signal and input signal can also be the same.
+ *
+ * @param[in]     in_signal  Input signal; nSamples x 1
+ * @param[in]     nSamples   Number of samples to process
+ * @param[in]     nCoeffs    Number of filter coefficients
+ * @param[in]     b          Filter coefficients for numerator; nCoeffs x 1
+ * @param[out]    a          Filter coefficients for denominator; nCoeffs x 1
+ * @param[in,out] wz         Previous wn samples (initialise as 0s);
+ *                           (nCoeffs-1) x 1
+ * @param[out]    out_signal Output signal; nSamples x 1
+ */
+void applyIIR(/* Input arguments */
+              float* in_signal,
+              int nSamples,
+              int nCoeffs,
+              float* b,
+              float* a,
+              /* Input/output arguments */
+              float* wz,
+              /* Output arguments */
+              float* out_signal);
+
+/**
  * Computes Butterworth IIR filter coefficients [1]
  *
  * The function is numerically identical to the default 'butter' function in

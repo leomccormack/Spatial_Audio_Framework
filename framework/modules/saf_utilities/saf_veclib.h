@@ -76,12 +76,18 @@ extern "C" {
 # define CONJ_TRANSPOSE (CblasConjTrans)
   typedef enum CBLAS_TRANSPOSE TRANS_FLAG;
 #else
+ /**
+  * Matrix transpose options
+  */
   typedef enum _TRANS_FLAG{
     NO_TRANSPOSE = 1,   /**< Do not transpose */
     TRANSPOSE = 2,      /**< Transpose */
     CONJ_TRANSPOSE = 3  /**< Conjugate transpose / Hermition */
   }TRANS_FLAG;
 #endif
+/**
+ * Whether a vector should be conjugated or not (e.g. prior to dot product)
+ */
 typedef enum _CONJ_FLAG{
   NO_CONJ = 1,  /**< Do not take the conjugate */
   CONJ = 2      /**< Take the conjugate */

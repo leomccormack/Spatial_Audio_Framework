@@ -54,7 +54,7 @@
  * Using Intel's Math Kernal Library (MKL)
  * (Generally the fastest library for x86 based architectures)
  */
-# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE  
+# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortan interface of LAPACK */
 # include "mkl.h"
 
 #elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
@@ -62,7 +62,7 @@
  * Using OpenBLAS and the LAPACKE interface
  * (A good option for ARM based architectures)
  */
-# define VECLIB_USE_LAPACKE_INTERFACE
+# define VECLIB_USE_LAPACKE_INTERFACE /**< LAPACKE interface */
 # include "cblas.h"
 # include "lapacke.h"
 
@@ -71,7 +71,7 @@
  * Using the Automatically Tuned Linear Algebra Software (ATLAS) library
  * (Not recommended, since some saf_veclib functions do not support ATLAS)
  */
-# define VECLIB_USE_CLAPACK_INTERFACE
+# define VECLIB_USE_CLAPACK_INTERFACE /**< CLAPACK interface */
 # include "cblas-atlas.h"
 # include "clapack.h" /* NOTE: CLAPACK does not include all LAPACK functions! */
 
@@ -80,7 +80,7 @@
  * Using Apple's Accelerate library (vDSP)
  * (Solid choice, but only works under MacOSX)
  */
-# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE
+# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortan interface of LAPACK */
 # include "Accelerate/Accelerate.h"
 #else
 # error "SAF requires a library (or libraries) which supports CBLAS and LAPACK"
@@ -90,31 +90,53 @@
 /* ========================================================================== */
 /*                        Macros and Global Constants                         */
 /* ========================================================================== */
-    
+
+#ifndef NUM_EARS
+/** True for most humans */
+# define NUM_EARS 2
+#endif
 #ifndef MIN
+/** Returns the minimum of the two values */
 # define MIN(a,b) (( (a) < (b) ) ? (a) : (b))
 #endif
 #ifndef MAX
+/** Returns the maximum of the two values */
 # define MAX(a,b) (( (a) > (b) ) ? (a) : (b))
 #endif
 #ifndef CLAMP
+/** Ensures value "a" is clamped between the "min" and "max" values */
 # define CLAMP(a,min,max) (MAX(min, MIN(max, a)))
 #endif
 #ifndef M_PI
+/** pi constant (single precision) */
 # define M_PI ( 3.14159265358979323846264338327950288f )
 #endif
 #ifndef M_PId
+/** pi constant (double precision) */
 # define M_PId ( 3.14159265358979323846264338327950288 )
 #endif
 #ifndef SAF_PI
+/** pi constant (single precision) */
 # define SAF_PI ( 3.14159265358979323846264338327950288f )
 #endif
 #ifndef SAF_PId
+/** pi constant (double precision) */
 # define SAF_PId ( 3.14159265358979323846264338327950288 )
 #endif
+/** Returns 0 if "x" is not a power of 2 */
 #define SAF_ISPOW2(x) (((x & ~(x-1))==x) ? x : 0);
- 
-    
+#ifndef ISEVEN
+/** Returns 1 if "n" is even valued, and 0 if it is not */
+# define ISEVEN(n)   ((n%2 == 0) ? 1 : 0)
+#endif
+#ifndef ISODD
+/** Returns 1 if "n" is odd valued, and 0 if it is not */
+# define ISODD(n)    ((n%2 != 0) ? 1 : 0)
+#endif
+/** sqrt(4pi) (single precision) */
+#define SQRT4PI ( 3.544907701811032f )
+
+
 /* ========================================================================== */
 /*                       Resources and Utility Headers                        */
 /* ========================================================================== */

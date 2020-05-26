@@ -32,14 +32,15 @@
 #ifndef SAF_H_INCLUDED
 #define SAF_H_INCLUDED
 
-/* SAF version: */
-#define SAF_VERSION_MAJOR 1
-#define SAF_VERSION_MINOR 0
-#define SAF_VERSION_MICRO 0
-#define SAF_VERSION_SPECIAL "" /* "alpha", "beta", "dev" etc. */
-
-#define MKSTRING_(s) #s
-#define MKSTRING(s) MKSTRING_(s)
+#define SAF_VERSION_MAJOR 1       /**< Major version */
+#define SAF_VERSION_MINOR 0       /**< Minor version */
+#define SAF_VERSION_MICRO 0       /**< Micro version */
+#define SAF_VERSION_SPECIAL ""    /**< Append text, "alpha", "beta", "" etc. */
+#define MKSTRING_(s) #s           /**< Stringify */
+#define MKSTRING(s) MKSTRING_(s)  /**< Stringify */
+/**
+ * The Spatial_Audio_Framework Version
+ */
 #define SAF_VERSION MKSTRING(SAF_VERSION_MAJOR)"."MKSTRING(SAF_VERSION_MINOR)\
                     "."MKSTRING(SAF_VERSION_MICRO)""SAF_VERSION_SPECIAL
 

@@ -70,6 +70,7 @@ typedef struct _ims_rir{
  * x+ extending to the east, and positive y+ extending to the north, while z+ is
  * extending purpendicular to them towards the viewer (right-hand rule).
  *
+ * \verbatim
  *   length/width
  *   |----------|
  *   ^ y           .
@@ -79,6 +80,7 @@ typedef struct _ims_rir{
  *   | /        |           |
  *   |/         |           | width/length
  *   o__________.------> x  _
+ *\endverbatim
  *
  * @warning There is currently no checking whether the source/receiver
  *          coordinates fall inside the boundaries of the room!
