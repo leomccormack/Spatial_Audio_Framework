@@ -39,7 +39,6 @@
  * here: https://github.com/leomccormack/Spatial_Audio_Framework */
 # include <netcdf.h>
 #endif
-#include "../saf_utilities/saf_utilities.h"
 
 #ifdef __cplusplus
 extern "C" {
