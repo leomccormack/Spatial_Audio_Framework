@@ -66,8 +66,7 @@ typedef enum _BINAURALISER_PROC_STATUS{
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
-#define MAX_NUM_INPUTS ( BINAURALISER_MAX_NUM_INPUTS )      /* Maximum permited channels for the VST standard */
-#define NUM_EARS ( 2 )                                      /* true for most humans */
+#define MAX_NUM_INPUTS ( BINAURALISER_MAX_NUM_INPUTS )      /* Maximum permited channels for the VST standard */ 
 #ifndef DEG2RAD
 # define DEG2RAD(x) (x * M_PI / 180.0f)
 #endif

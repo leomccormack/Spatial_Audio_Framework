@@ -34,36 +34,18 @@
 #include "saf_sh_internal.h"
 
 /**
- * First-order ACN/N3D to WXYZ conversion matrix
+ * First-order ACN/N3D to FuMa [without sqrt(4pi) term] conversion matrix
  */
-const float wxyzCoeffs[4][4] = { {3.544907701811032f, 0.0f, 0.0f, 0.0f},
+const float wxyzCoeffs[4][4] = {
+    {3.544907701811032f, 0.0f, 0.0f, 0.0f},
     {0.0f, 0.0f, 0.0f, 2.046653415892977f},
     {0.0f, 2.046653415892977f, 0.0f, 0.0f},
     {0.0f, 0.0f, 2.046653415892977f, 0.0f} };
 
-/**
- * Wrapper for the xylindrical bessel function of the first kind  
- */
-static double Jn(int n, double z)
-{
-#ifndef _MSC_VER
-    return jn(n,z);
-#else
-    return _jn(n,z);
-#endif
-}
 
-/**
- * Wrapper for the xylindrical bessel function of the second kind
- */
-static double Yn(int n, double z)
-{
-#ifndef _MSC_VER
-    return yn(n,z);
-#else
-    return _yn(n,z);
-#endif
-}
+/* ========================================================================== */
+/*                               Misc. Functions                              */
+/* ========================================================================== */
 
 void yawPitchRoll2Rzyx
 (
@@ -287,6 +269,11 @@ void unnorm_legendreP_recur
         }
     }
 }
+
+
+/* ========================================================================== */
+/*                    SH and Beamforming related Functions                    */
+/* ========================================================================== */
 
 void getSHreal
 (
@@ -1039,6 +1026,11 @@ void checkCondNumberSHTReal
     free(s);
 }
 
+
+/* ========================================================================== */
+/*                     Localisation Functions in the  SHD                     */
+/* ========================================================================== */
+
 void generatePWDmap
 (
     int order,
@@ -1251,7 +1243,6 @@ void generateCroPaCLCMVmap
     free(Cx_Y_s);
 }
 
-
 void generateMUSICmap
 (
     int order,
@@ -1299,7 +1290,6 @@ void generateMUSICmap
     free(Vn);
     free(Vn_Y);
 }
-
 
 void generateMinNormMap
 (
@@ -1357,453 +1347,10 @@ void generateMinNormMap
     free(Un_Y);
 }
 
-void bessel_Jn /* untested */
-(
-    int N,
-    double* z,
-    int nZ,
-    double* J_n,
-    double* dJ_n
-)
-{
-    int n, i;
-    
-    for(i=0; i<nZ; i++){
-        if(z[i] <= 1e-15){
-            if(J_n!=NULL)
-                memset(&J_n[0], 0, (N+1)*sizeof(double));
-            if(dJ_n!=NULL)
-                memset(&dJ_n[0], 0, (N+1)*sizeof(double));
-        }
-        else{
-            for(n=0; n<N+1; n++){
-                if(J_n!=NULL)
-                    J_n[i*(N+1)+n] = Jn(n, z[i]);
-                if(n==0 && dJ_n!=NULL)
-                    dJ_n[i*(N+1)+n] = -Jn(1, z[i]);
-                else if(dJ_n!=NULL)
-                    dJ_n[i*(N+1)+n] = (Jn(n-1, z[i])-Jn(n+1, z[i]))/2.0;
-            }
-        }
-    }
-}
 
-void bessel_Yn /* untested */
-(
-    int N,
-    double* z,
-    int nZ,
-    double* Y_n,
-    double* dY_n
-)
-{
-    int n, i;
-    
-    for(i=0; i<nZ; i++){
-        if(z[i] <= 1e-15){
-            if(Y_n!=NULL)
-                memset(&Y_n[0], 0, (N+1)*sizeof(double));
-            if(dY_n!=NULL)
-                memset(&dY_n[0], 0, (N+1)*sizeof(double));
-        }
-        else{
-            for(n=0; n<N+1; n++){
-                if(Y_n!=NULL)
-                    Y_n[i*(N+1)+n] = Yn(n, z[i]);
-                if(n==0 && dY_n!=NULL)
-                    dY_n[i*(N+1)+n] = -Yn(1, z[i]);
-                else if(dY_n!=NULL)
-                    dY_n[i*(N+1)+n] = (Yn(n-1, z[i])-Yn(n+1, z[i]))/2.0;
-            }
-        }
-    }
-}
-
-void hankel_Hn1 /* untested */
-(
-    int N,
-    double* z,
-    int nZ,
-    double_complex* H_n1,
-    double_complex* dH_n1
-)
-{
-    int n, i;
-    
-    for(i=0; i<nZ; i++){
-        if(z[i] <= 1e-15){
-            if(H_n1!=NULL)
-                memset(&H_n1[0], 0, (N+1)*sizeof(double_complex));
-            if(dH_n1!=NULL)
-                memset(&dH_n1[0], 0, (N+1)*sizeof(double_complex));
-        }
-        else{
-            for(n=0; n<N+1; n++){
-                if(H_n1!=NULL)
-                    H_n1[i*(N+1)+n] = cmplx(Jn(n, z[i]), Yn(n, z[i]));
-                if(dH_n1!=NULL)
-                    dH_n1[i*(N+1)+n] = ccsub(crmul(cmplx(Jn(n, z[i]), Yn(n, z[i])), (double)n/MAX(z[i],2.23e-13f)), cmplx(Jn(n+1, z[i]), Yn(n+1, z[i])));
-            }
-        }
-    }
-}
-
-void hankel_Hn2 /* untested */
-(
-    int N,
-    double* z,
-    int nZ,
-    double_complex* H_n2,
-    double_complex* dH_n2
-)
-{
-    int n, i;
-    
-    for(i=0; i<nZ; i++){
-        if(z[i] <= 1e-15){
-            if(H_n2!=NULL)
-                memset(&H_n2[0], 0, (N+1)*sizeof(double_complex));
-            if(dH_n2!=NULL)
-                memset(&dH_n2[0], 0, (N+1)*sizeof(double_complex));
-        }
-        else{
-            for(n=0; n<N+1; n++){
-                if(H_n2!=NULL)
-                    H_n2[i*(N+1)+n] = cmplx(Jn(n, z[i]), -Yn(n, z[i]));
-                if(n==0 && dH_n2!=NULL)
-                    dH_n2[i*(N+1)+n] = crmul(ccsub(ccmul(cmplx(Jn(1, z[i]), Yn(1, z[i])), cexp(cmplx(0.0, -M_PI))), cmplx(Jn(1, z[i]), -Yn(1, z[i]))), 0.5);
-                else if(dH_n2!=NULL)
-                    dH_n2[i*(N+1)+n] = crmul(ccsub(cmplx(Jn(n-1, z[i]), -Yn(n-1, z[i])), cmplx(Jn(n+1, z[i]), -Yn(n+1, z[i]))), 0.5);
-            }
-        }
-    }
-}
-
-void bessel_jn
-(
-    int N,
-    double* z,
-    int nZ,
-    int* maxN,
-    double* j_n,
-    double* dj_n
-)
-{
-    int n, i, NM;
-    double* j_n_tmp, *dj_n_tmp;
-    
-    j_n_tmp = malloc1d((N+1)*sizeof(double));
-    dj_n_tmp = malloc1d((N+1)*sizeof(double));
-    *maxN = 1000000000;
-    for(i=0; i<nZ; i++){
-        if(z[i] <= 1e-15){
-            if(j_n!=NULL){
-                memset(&j_n[0], 0, (N+1)*sizeof(double));
-                j_n[0] = 1.0f;
-            }
-            if(dj_n!=NULL){
-                memset(&dj_n[0], 0, (N+1)*sizeof(double));
-                if(N>0)
-                    dj_n[1] = 1.0/3.0;
-            }
-        }
-        else{
-            SPHJ(N, z[i], &NM, j_n_tmp, dj_n_tmp);
-            *maxN = MIN(NM, *maxN );
-            for(n=0; n<NM+1; n++){
-                if(j_n!=NULL)
-                    j_n [i*(N+1)+n] = j_n_tmp[n];
-                if(dj_n!=NULL)
-                    dj_n[i*(N+1)+n] = dj_n_tmp[n];
-            }
-            for(; n<N+1; n++){
-                if(j_n!=NULL)
-                    j_n [i*(N+1)+n] = 0.0;
-                if(dj_n!=NULL)
-                    dj_n [i*(N+1)+n] = 0.0;
-            }
-        }
-    }
-    *maxN = *maxN==1e8 ? 0 : *maxN; /* maximum order that could be computed */
-#ifndef NDEBUG
-    if(*maxN<N)
-        saf_error_print(SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER);
-#endif
-    
-    free(j_n_tmp);
-    free(dj_n_tmp);
-}
-
-void bessel_in /* untested */
-(
-    int N,
-    double* z,
-    int nZ,
-    int* maxN,
-    double* i_n,
-    double* di_n
-)
-{
-    int n, i, NM;
-    double* i_n_tmp, *di_n_tmp;
-    
-    i_n_tmp = malloc1d((N+1)*sizeof(double));
-    di_n_tmp = malloc1d((N+1)*sizeof(double));
-    *maxN = 1000000000;
-    for(i=0; i<nZ; i++){
-        if(z[i] <= 1e-15){
-            if(i_n!=NULL){
-                memset(&i_n[0], 0, (N+1)*sizeof(double));
-                i_n[0] = 1.0f;
-            }
-            if(di_n!=NULL){
-                memset(&di_n[0], 0, (N+1)*sizeof(double));
-                if(N>0)
-                    di_n[1] = 1.0/3.0;
-            }
-        }
-        else{
-            SPHI(N, z[i], &NM, i_n_tmp, di_n_tmp);
-            *maxN = MIN(NM, *maxN );
-            for(n=0; n<NM+1; n++){
-                if(i_n!=NULL)
-                    i_n [i*(N+1)+n] = i_n_tmp[n];
-                if(di_n!=NULL)
-                    di_n[i*(N+1)+n] = di_n_tmp[n];
-            }
-            for(; n<N+1; n++){
-                if(i_n!=NULL)
-                    i_n [i*(N+1)+n] = 0.0;
-                if(di_n!=NULL)
-                    di_n [i*(N+1)+n] = 0.0;
-            }
-        }
-    }
-    *maxN = *maxN==1e8 ? 0 : *maxN; /* maximum order that could be computed */
-#ifndef NDEBUG
-    if(*maxN<N)
-        saf_error_print(SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER);
-#endif
-    
-    free(i_n_tmp);
-    free(di_n_tmp);
-}
-
-void bessel_yn
-(
-    int N,
-    double* z,
-    int nZ,
-    int* maxN,
-    double* y_n,
-    double* dy_n
-)
-{
-    int n, i, NM;
-    double* y_n_tmp, *dy_n_tmp;
-    
-    y_n_tmp = malloc1d((N+1)*sizeof(double));
-    dy_n_tmp = malloc1d((N+1)*sizeof(double));
-    *maxN = 1000000000;
-    for(i=0; i<nZ; i++){
-        if(z[i] <= 1e-15){
-            if(y_n!=NULL)
-                memset(&y_n[0], 0, (N+1)*sizeof(double));
-            if(dy_n!=NULL)
-                memset(&dy_n[0], 0, (N+1)*sizeof(double));
-        }
-        else{
-            SPHY(N, z[i], &NM, y_n_tmp, dy_n_tmp);
-            *maxN = MIN(NM, *maxN );
-            for(n=0; n<NM+1; n++){
-                if(y_n!=NULL)
-                    y_n [i*(N+1)+n] = y_n_tmp[n];
-                if(dy_n!=NULL)
-                    dy_n[i*(N+1)+n] = dy_n_tmp[n];
-            }
-            for(; n<N+1; n++){
-                if(y_n!=NULL)
-                    y_n [i*(N+1)+n] = 0.0;
-                if(dy_n!=NULL)
-                    dy_n [i*(N+1)+n] = 0.0;
-            }
-        }
-    }
-    *maxN = *maxN==1e8 ? 0 : *maxN; /* maximum order that could be computed */
-#ifndef NDEBUG
-    if(*maxN<N)
-        saf_error_print(SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER);
-#endif
-    
-    free(y_n_tmp);
-    free(dy_n_tmp);
-}
-
-void bessel_kn /* untested */
-(
-    int N,
-    double* z,
-    int nZ,
-    int* maxN,
-    double* k_n,
-    double* dk_n
-)
-{
-    int n, i, NM;
-    double* k_n_tmp, *dk_n_tmp;
-    
-    k_n_tmp = malloc1d((N+1)*sizeof(double));
-    dk_n_tmp = malloc1d((N+1)*sizeof(double));
-    *maxN = 1000000000;
-    for(i=0; i<nZ; i++){
-        if(z[i] <= 1e-15){
-            if(k_n!=NULL)
-                memset(&k_n[0], 0, (N+1)*sizeof(double));
-            if(dk_n!=NULL)
-                memset(&dk_n[0], 0, (N+1)*sizeof(double));
-        }
-        else{
-            SPHK(N, z[i], &NM, k_n_tmp, dk_n_tmp);
-            *maxN = MIN(NM, *maxN );
-            for(n=0; n<NM+1; n++){
-                if(k_n!=NULL)
-                    k_n [i*(N+1)+n] = k_n_tmp[n];
-                if(dk_n!=NULL)
-                    dk_n[i*(N+1)+n] = dk_n_tmp[n];
-            }
-            for(; n<N+1; n++){
-                if(k_n!=NULL)
-                    k_n [i*(N+1)+n] = 0.0;
-                if(dk_n!=NULL)
-                    dk_n [i*(N+1)+n] = 0.0;
-            }
-        }
-    }
-    *maxN = *maxN==1e8 ? 0 : *maxN; /* maximum order that could be computed */
-#ifndef NDEBUG
-    if(*maxN<N)
-        saf_error_print(SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER);
-#endif
-    
-    free(k_n_tmp);
-    free(dk_n_tmp);
-}
-
-void hankel_hn1
-(
-    int N,
-    double* z,
-    int nZ,
-    int* maxN,
-    double_complex* h_n1,
-    double_complex* dh_n1
-)
-{
-    int n, i, NM1, NM2;
-    double* j_n_tmp, *dj_n_tmp, *y_n_tmp, *dy_n_tmp;
-    
-    j_n_tmp = calloc1d((N+1),sizeof(double));
-    dj_n_tmp = calloc1d((N+1),sizeof(double));
-    y_n_tmp = calloc1d((N+1),sizeof(double));
-    dy_n_tmp = calloc1d((N+1),sizeof(double));
-    *maxN = 1000000000;
-    for(i=0; i<nZ; i++){
-        if(z[i] <= 1e-15){
-            if(h_n1!=NULL){
-                memset(&h_n1[0], 0, (N+1)*sizeof(double_complex));
-                h_n1[0] = cmplx(1.0, 0.0);
-            }
-            if(dh_n1!=NULL)
-                memset(&dh_n1[0], 0, (N+1)*sizeof(double_complex));
-        }
-        else{
-            SPHJ(N, z[i], &NM1, j_n_tmp, dj_n_tmp);
-            *maxN = MIN(NM1, *maxN );
-            SPHY(N, z[i], &NM2, y_n_tmp, dy_n_tmp);
-            *maxN = MIN(NM2, *maxN );
-            for(n=0; n<MIN(NM1,NM2)+1; n++){
-                if(h_n1!=NULL)
-                    h_n1 [i*(N+1)+n] = cmplx(j_n_tmp[n], y_n_tmp[n]);
-                if(dh_n1!=NULL)
-                    dh_n1[i*(N+1)+n] = cmplx(dj_n_tmp[n], dy_n_tmp[n]);
-            }
-            for(; n<N+1; n++){
-                if(h_n1!=NULL)
-                    h_n1 [i*(N+1)+n] = cmplx(0.0,0.0);
-                if(dh_n1!=NULL)
-                    dh_n1 [i*(N+1)+n] = cmplx(0.0,0.0);
-            }
-        }
-    }
-    *maxN = *maxN==1e8 ? 0 : *maxN; /* maximum order that could be computed */
-#ifndef NDEBUG
-    if(*maxN<N)
-        saf_error_print(SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER);
-#endif
-    
-    free(j_n_tmp);
-    free(dj_n_tmp);
-    free(y_n_tmp);
-    free(dy_n_tmp);
-}
-
-void hankel_hn2
-(
-    int N,
-    double* z,
-    int nZ,
-    int* maxN,
-    double_complex* h_n2,
-    double_complex* dh_n2
-)
-{
-    int n, i, NM1, NM2;
-    double* j_n_tmp, *dj_n_tmp, *y_n_tmp, *dy_n_tmp;
-    
-    j_n_tmp = calloc1d((N+1),sizeof(double));
-    dj_n_tmp = calloc1d((N+1),sizeof(double));
-    y_n_tmp = calloc1d((N+1),sizeof(double));
-    dy_n_tmp = calloc1d((N+1),sizeof(double));
-    *maxN = 1000000000;
-    for(i=0; i<nZ; i++){
-        if(z[i] <= 1e-15){
-            if(h_n2!=NULL){
-                memset(&h_n2[0], 0, (N+1)*sizeof(double_complex));
-                h_n2[0] = cmplx(1.0, 0.0);
-            }
-            if(dh_n2!=NULL)
-                memset(&dh_n2[0], 0, (N+1)*sizeof(double_complex));
-        }
-        else{
-            SPHJ(N, z[i], &NM1, j_n_tmp, dj_n_tmp);
-            *maxN = MIN(NM1, *maxN );
-            SPHY(N, z[i], &NM2, y_n_tmp, dy_n_tmp);
-            *maxN = MIN(NM2, *maxN );
-            for(n=0; n<MIN(NM1,NM2)+1; n++){
-                if(h_n2!=NULL)
-                    h_n2 [i*(N+1)+n] = cmplx(j_n_tmp[n], -y_n_tmp[n]);
-                if(dh_n2!=NULL)
-                    dh_n2[i*(N+1)+n] = cmplx(dj_n_tmp[n], -dy_n_tmp[n]);
-            }
-            for(; n<N+1; n++){
-                if(h_n2!=NULL)
-                    h_n2 [i*(N+1)+n] = cmplx(0.0,0.0);
-                if(dh_n2!=NULL)
-                    dh_n2 [i*(N+1)+n] = cmplx(0.0,0.0);
-            }
-        }
-    }
-    *maxN = *maxN==1e8 ? 0 : *maxN; /* maximum order that could be computed */
-#ifndef NDEBUG
-    if(*maxN<N)
-        saf_error_print(SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER);
-#endif
-    
-    free(j_n_tmp);
-    free(dj_n_tmp);
-    free(y_n_tmp);
-    free(dy_n_tmp);
-}
+/* ========================================================================== */
+/*              Microphone/Hydrophone array processing functions              */
+/* ========================================================================== */
 
 void cylModalCoeffs
 (

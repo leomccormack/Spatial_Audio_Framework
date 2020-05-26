@@ -34,8 +34,7 @@
 #define __SAF_SH_INTERNAL_H_INCLUDED__
 
 #include <stdio.h>
-#include <math.h>
-#include <complex.h>
+#include <math.h> 
 #include <string.h>
 #include <assert.h>
 #include "saf_sh.h" 
@@ -94,71 +93,7 @@ void gaunt_mtx(/* Input arguments */
 
 
 /* ========================================================================== */
-/*              Internal Functions for spherical Hankels/Bessels              */
-/* ========================================================================== */
-
-/**
- * Helper function for bessel_in
- *
- * Original Fortran code: "Fortran Routines for Computation of Special
- * Functions": jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr)
- */
-void SPHI(int N, double X, int *NM, double *SI, double *DI);
-
-/**
- * Helper function for bessel_kn
- *
- * Original Fortran code: "Fortran Routines for Computation of Special
- * Functions": jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr)
- */
-void SPHK(int N, double X, int *NM, double *SK, double *DK);
-
-/**
- * Helper function for bessel_in
- *
- * Original Fortran code: "Fortran Routines for Computation of Special
- * Functions": jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr)
- */
-void SPHJ(int N, double X, int *NM, double *SJ, double *DJ);
-
-/**
- * Helper function for computing spherical bessel function values
- *
- * Original Fortran code: "Fortran Routines for Computation of Special
- * Functions": jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
-int MSTA1(double X, int MP);
-
-/**
- * Helper function for computing spherical bessel function values
- *
- * Original Fortran code: "Fortran Routines for Computation of Special
- * Functions": jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
-int MSTA2(double X, int N, int MP);
-
-/**
- * Helper function for computing spherical bessel function values
- *
- * Original Fortran code: "Fortran Routines for Computation of Special
- * Functions": jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
-double ENVJ(int N, double X);
-
-/**
- * Helper function for bessel_yn
- *
- * Original Fortran code: "Fortran Routines for Computation of Special
- * Functions": jin.ece.uiuc.edu/routines/routines.html.
- * C implementation by J-P Moreau, Paris (www.jpmoreau.fr) */
-void SPHY(int N, double X, int *NM, double *SY, double *DY);
-
-
-/* ========================================================================== */
-/*             Internal Functions for spherical harmonic rotations            */
+/*             Internal functions for spherical harmonic rotations            */
 /* ========================================================================== */
 
 /**

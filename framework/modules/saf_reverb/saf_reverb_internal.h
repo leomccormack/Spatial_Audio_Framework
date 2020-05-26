@@ -253,6 +253,7 @@ void ims_shoebox_echogramDestroy(void** phEcho);
  * corner of the room:
  *
  * \verbatim
+ *
  *                ^x
  *             __|__    _
  *             |  |  |   |
@@ -264,6 +265,7 @@ void ims_shoebox_echogramDestroy(void** phEcho);
  *
  *             |-----|
  *                w
+ *
  * \endverbatim
  *
  * @param[in] hWork   workspace handle

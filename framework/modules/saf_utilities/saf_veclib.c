@@ -653,7 +653,7 @@ void utility_ssvd
         if (U != NULL)
             memset(U, 0, dim1*dim1*sizeof(float));
         if (V != NULL)
-            memset(U, 0, dim2*dim2*sizeof(float));
+            memset(V, 0, dim2*dim2*sizeof(float));
         if (sing != NULL)
             memset(sing, 0, MIN(dim1, dim2)*sizeof(float));
 #ifndef NDEBUG
@@ -752,7 +752,7 @@ void utility_csvd
         if (U != NULL)
             memset(U, 0, dim1*dim1*sizeof(float_complex));
         if (V != NULL)
-            memset(U, 0, dim2*dim2*sizeof(float_complex));
+            memset(V, 0, dim2*dim2*sizeof(float_complex));
         if (sing != NULL)
             memset(sing, 0, MIN(dim1, dim2)*sizeof(float_complex));
 #ifndef NDEBUG

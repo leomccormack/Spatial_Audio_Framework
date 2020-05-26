@@ -94,6 +94,7 @@ void generateVBAPgainTable3D_srcs(/* Input arguments */
  *   for (ls = 0; ls < L; ls++)
  *       gains3D[ls] =  gtable[idx3d*L+ls];}
  * \endcode
+ *
  * where 'gains3D' are the loudspeaker gains to pan the source to [AZI ELEV],
  * using the nearest grid point
  *
@@ -153,6 +154,7 @@ void generateVBAPgainTable3D(/* Input arguments */
  *       idx[i]   =  vbap_gtableIdx[idx3d*3+i];
  *   }
  * \endcode
+ *
  * where 'gains' are then the gains for loudspeakers('idx') to pan the source to
  * [AZI ELEV], using the nearest grid point
  *
@@ -228,6 +230,7 @@ void generateVBAPgainTable2D_srcs(/* Input arguments */
  *    for (ls = 0; ls < L; ls++){
  *        gains2D[ls] =  gtable[idx2d*L+ls];}
  * \endcode
+ *
  * 'gains2D' are then the loudspeaker gains to pan the source to [AZI 0], using
  * the nearest grid point.
  *

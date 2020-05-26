@@ -36,7 +36,7 @@ extern "C" {
 /*                      Loudspeaker Array Configurations                      */
 /* ========================================================================== */
 /*
- * NOTE: All loudspeaker array sensor directions are given in degrees, and with
+ * NOTE: All loudspeaker array sensor directions are given in degrees, and in
  * the [azimuth, elevation] convention. [0 0] is looking directly in-front
  * (positive x-axis), with positive elevations looking upwards (positive z-axis)
  * and positive azimuth angles looking leftwards (postive y-axis).

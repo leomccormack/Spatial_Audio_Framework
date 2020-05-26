@@ -30,6 +30,10 @@
 #include "saf_hrir.h"
 #include "saf_hrir_internal.h"
 
+/* ========================================================================== */
+/*                               Main Functions                               */
+/* ========================================================================== */
+
 void estimateITDs
 (
     float* hrirs /* N_dirs x NUM_EARS x hrir_len */,

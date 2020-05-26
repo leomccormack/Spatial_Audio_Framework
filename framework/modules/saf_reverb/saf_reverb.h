@@ -71,6 +71,7 @@ typedef struct _ims_rir{
  * extending purpendicular to them towards the viewer (right-hand rule).
  *
  * \verbatim
+ *
  *   length/width
  *   |----------|
  *   ^ y           .
@@ -80,6 +81,7 @@ typedef struct _ims_rir{
  *   | /        |           |
  *   |/         |           | width/length
  *   o__________.------> x  _
+ *
  *\endverbatim
  *
  * @warning There is currently no checking whether the source/receiver

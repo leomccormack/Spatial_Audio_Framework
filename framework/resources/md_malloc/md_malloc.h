@@ -54,8 +54,10 @@ extern "C" {
  * structure
  *
  * e.g.
+ * \code{.c}
  *   float** array2D = (float**)malloc2d(10, 40, sizeof(float));
  *   memset(FLATTEN2D(array2D), 0, 10*40*sizeof(float));
+ * \endcode
  */
 #define FLATTEN2D(A) (*A)  /* || (&A[0][0]) */
 

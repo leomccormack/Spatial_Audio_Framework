@@ -37,10 +37,11 @@
 		508FBE062456D3400076C205 /* saf_vbap.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBDE52456D3400076C205 /* saf_vbap.c */; };
 		508FBE072456D3400076C205 /* saf_default_hrirs.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBDE82456D3400076C205 /* saf_default_hrirs.c */; };
 		508FBE082456D3400076C205 /* saf_hrir_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBDEC2456D3400076C205 /* saf_hrir_internal.c */; };
-		508FBE092456D3400076C205 /* saf_sofa_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBDED2456D3400076C205 /* saf_sofa_reader.c */; };
 		508FBE0A2456D3400076C205 /* saf_hrir.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBDEE2456D3400076C205 /* saf_hrir.c */; };
 		508FBE36246027D80076C205 /* saf_pitch.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBE34246027D80076C205 /* saf_pitch.c */; };
 		50E35D1F2475AECA00B74C25 /* saf_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35D1E2475AECA00B74C25 /* saf_test.c */; };
+		50E35D62247D705100B74C25 /* saf_bessel.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35D61247D705100B74C25 /* saf_bessel.c */; };
+		50E35D7E247D91C700B74C25 /* saf_sofa_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35D7D247D91C700B74C25 /* saf_sofa_reader.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -121,13 +122,15 @@
 		508FBDE82456D3400076C205 /* saf_default_hrirs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_default_hrirs.c; sourceTree = "<group>"; };
 		508FBDE92456D3400076C205 /* saf_hrir_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hrir_internal.h; sourceTree = "<group>"; };
 		508FBDEA2456D3400076C205 /* saf_hrir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hrir.h; sourceTree = "<group>"; };
-		508FBDEB2456D3400076C205 /* saf_sofa_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_sofa_reader.h; sourceTree = "<group>"; };
 		508FBDEC2456D3400076C205 /* saf_hrir_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hrir_internal.c; sourceTree = "<group>"; };
-		508FBDED2456D3400076C205 /* saf_sofa_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_sofa_reader.c; sourceTree = "<group>"; };
 		508FBDEE2456D3400076C205 /* saf_hrir.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hrir.c; sourceTree = "<group>"; };
 		508FBE34246027D80076C205 /* saf_pitch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_pitch.c; sourceTree = "<group>"; };
 		508FBE35246027D80076C205 /* saf_pitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_pitch.h; sourceTree = "<group>"; };
 		50E35D1E2475AECA00B74C25 /* saf_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_test.c; sourceTree = "<group>"; };
+		50E35D60247D705100B74C25 /* saf_bessel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_bessel.h; sourceTree = "<group>"; };
+		50E35D61247D705100B74C25 /* saf_bessel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_bessel.c; sourceTree = "<group>"; };
+		50E35D7C247D91C700B74C25 /* saf_sofa_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_sofa_reader.h; sourceTree = "<group>"; };
+		50E35D7D247D91C700B74C25 /* saf_sofa_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_sofa_reader.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -269,6 +272,7 @@
 				508FBDC32456D3400076C205 /* saf_utilities */,
 				508FBDDD2456D3400076C205 /* saf_sh */,
 				508FBDE22456D3400076C205 /* saf_vbap */,
+				50E35D7B247D91C700B74C25 /* saf_sofa_reader */,
 				508FBDE72456D3400076C205 /* saf_hrir */,
 			);
 			path = modules;
@@ -297,6 +301,8 @@
 		508FBDC32456D3400076C205 /* saf_utilities */ = {
 			isa = PBXGroup;
 			children = (
+				50E35D61247D705100B74C25 /* saf_bessel.c */,
+				50E35D60247D705100B74C25 /* saf_bessel.h */,
 				508FBDC42456D3400076C205 /* saf_error.c */,
 				508FBDC52456D3400076C205 /* saf_fft.h */,
 				508FBDC62456D3400076C205 /* saf_filters.h */,
@@ -356,12 +362,19 @@
 				508FBDE82456D3400076C205 /* saf_default_hrirs.c */,
 				508FBDE92456D3400076C205 /* saf_hrir_internal.h */,
 				508FBDEA2456D3400076C205 /* saf_hrir.h */,
-				508FBDEB2456D3400076C205 /* saf_sofa_reader.h */,
 				508FBDEC2456D3400076C205 /* saf_hrir_internal.c */,
-				508FBDED2456D3400076C205 /* saf_sofa_reader.c */,
 				508FBDEE2456D3400076C205 /* saf_hrir.c */,
 			);
 			path = saf_hrir;
+			sourceTree = "<group>";
+		};
+		50E35D7B247D91C700B74C25 /* saf_sofa_reader */ = {
+			isa = PBXGroup;
+			children = (
+				50E35D7C247D91C700B74C25 /* saf_sofa_reader.h */,
+				50E35D7D247D91C700B74C25 /* saf_sofa_reader.c */,
+			);
+			path = saf_sofa_reader;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -427,7 +440,7 @@
 				508FBDF02456D3400076C205 /* kiss_fft.c in Sources */,
 				508FBE042456D3400076C205 /* saf_sh_internal.c in Sources */,
 				508FBDF92456D3400076C205 /* saf_misc.c in Sources */,
-				508FBE092456D3400076C205 /* saf_sofa_reader.c in Sources */,
+				50E35D7E247D91C700B74C25 /* saf_sofa_reader.c in Sources */,
 				508FBDFC2456D3400076C205 /* saf_fft.c in Sources */,
 				508FBE0A2456D3400076C205 /* saf_hrir.c in Sources */,
 				50687DCA2463E46F00D70279 /* saf_reverb_internal.c in Sources */,
@@ -435,6 +448,7 @@
 				508FBDF62456D3400076C205 /* saf_hoa.c in Sources */,
 				508FBDEF2456D3400076C205 /* md_malloc.c in Sources */,
 				508FBE072456D3400076C205 /* saf_default_hrirs.c in Sources */,
+				50E35D62247D705100B74C25 /* saf_bessel.c in Sources */,
 				508FBE36246027D80076C205 /* saf_pitch.c in Sources */,
 				508FBE002456D3400076C205 /* saf_filters.c in Sources */,
 				50E35D1F2475AECA00B74C25 /* saf_test.c in Sources */,
@@ -632,6 +646,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					SAF_USE_INTEL_MKL,
 					SAF_ENABLE_SOFA_READER,
+					AFSTFT_USE_FLOAT_COMPLEX,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -686,6 +701,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					SAF_USE_INTEL_MKL,
 					SAF_ENABLE_SOFA_READER,
+					AFSTFT_USE_FLOAT_COMPLEX,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,

@@ -157,6 +157,8 @@
 #include "../saf_utilities/saf_filters.h"
 /* Many handy linear algebra functions based on CBLAS/LAPACK/IntelMKL/Accelerate */
 #include "../saf_utilities/saf_veclib.h"
+/* For computing spherical/cylindrical Bessel and Hankel functions */
+#include "../saf_utilities/saf_bessel.h"
 /* optimised FFT routines */
 #include "../saf_utilities/saf_fft.h"
 /* matrix convolver */

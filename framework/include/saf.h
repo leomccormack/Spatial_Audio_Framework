@@ -38,9 +38,7 @@
 #define SAF_VERSION_SPECIAL ""    /**< Append text, "alpha", "beta", "" etc. */
 #define MKSTRING_(s) #s           /**< Stringify */
 #define MKSTRING(s) MKSTRING_(s)  /**< Stringify */
-/**
- * The Spatial_Audio_Framework Version
- */
+/** The Spatial_Audio_Framework Version */
 #define SAF_VERSION MKSTRING(SAF_VERSION_MAJOR)"."MKSTRING(SAF_VERSION_MINOR)\
                     "."MKSTRING(SAF_VERSION_MICRO)""SAF_VERSION_SPECIAL
 
@@ -189,12 +187,13 @@
  *
  * ## Enable instructions
  *   Add this pre-processor definition to your project: SAF_ENABLE_SOFA_READER
+ *   and ensure that netcdf is also linked to your project
  * ## Dependencies
- *   netcdf library
+ *   saf_utilities, saf_hrir, netcdf
  */
 #define SAF_MODULE_SOFA_READER
-#ifdef SAF_ENABLE_SOFA_READER
-# include "../modules/saf_hrir/saf_sofa_reader.h"
+#ifdef  SAF_ENABLE_SOFA_READER
+# include "../modules/saf_sofa_reader/saf_sofa_reader.h"
 #endif /* SAF_ENABLE_SOFA_READER */
 
 

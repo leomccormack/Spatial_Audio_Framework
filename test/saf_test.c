@@ -100,17 +100,17 @@ void test__faf_IIRFilterbank(void);
 
 static tick_t start;      /**< Start time for whole test program */
 static tick_t start_test; /**< Start time for the current unit test */
-/** Called before a unit test is executed */
+/** Called before each unit test is executed */
 void setUp(void) { start_test = timer_current(); }
-/** Called after a unit test is executed */
+/** Called after each unit test is executed */
 void tearDown(void) { }
-/** Displays the time taken for the current unit test */
+/** Displays the time taken to run the current unit test */
 static void timerResult(void) {
     printf("    (Time elapsed: %lfs) \n", (double)timer_elapsed(start_test));
 }
 
 #undef RUN_TEST
-/** Custom UNITY RUN_TEST, to include timerResult upon exiting test */
+/** A custom Unity RUN_TEST, which calls timerResult() upon exiting the test */
 #define RUN_TEST(testfunc)  UNITY_NEW_TEST(#testfunc) \
 if (TEST_PROTECT()) {  setUp();  testfunc();  } \
 if (TEST_PROTECT() && (!TEST_IS_IGNORED))  {tearDown(); } \

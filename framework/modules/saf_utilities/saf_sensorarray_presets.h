@@ -38,7 +38,7 @@ extern "C" {
 /*                 Microphone/Hydrophone Array Configurations                 */
 /* ========================================================================== */
 /*
- * NOTE: All microphone array sensor directions are given in radians, and with
+ * NOTE: All microphone array sensor directions are given in radians, and in
  * the [azimuth, elevation] convention. [0 0] is looking directly in-front
  * (positive x-axis), with positive elevations looking upwards (positive z-axis)
  * and positive azimuth angles looking leftwards (postive y-axis).

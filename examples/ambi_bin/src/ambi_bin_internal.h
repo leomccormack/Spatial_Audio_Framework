@@ -62,8 +62,7 @@ typedef enum _AMBI_BIN_PROC_STATUS{
 #define FRAME_SIZE ( 128 )
 #define HOP_SIZE ( 128 ) /* STFT hop size */
 #define HYBRID_BANDS ( 133 )
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )
-#define NUM_EARS ( 2 ) /* true for most humans */
+#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) 
 #define MAX_SH_ORDER ( AMBI_BIN_MAX_SH_ORDER ) /* 7->64 channels; maximum for most hosts */
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER+1)*(MAX_SH_ORDER+1) )
 #define POST_GAIN ( -9.0f )   /* dB */

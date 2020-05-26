@@ -524,6 +524,7 @@ void findLsTriplets
     if(faces==NULL)
         saf_error_print(SAF_ERROR__FAILED_TO_BUILD_CONVEX_HULL);
 #endif
+    assert(faces!=NULL);
 
     /* circularily shift the indices to start from lowest value */
     for(i=0; i<nFaces; i++){

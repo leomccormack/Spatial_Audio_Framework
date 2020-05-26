@@ -30,10 +30,10 @@
 #include "saf_hoa.h"
 #include "saf_hoa_internal.h"
 
-/* This function has been written to also work when the number of spherical
- * harmonic components exceeds the number of loudspeakers. In which case, the
- * 'U' matrix from the SVD is truncated instead. However, ideally, nLS > nSH,
- * like in the paper */
+/* ========================================================================== */
+/*                       Loudspeaker Ambisonic Decoders                       */
+/* ========================================================================== */
+
 void getEPAD
 (
     int order,
@@ -132,6 +132,11 @@ void getAllRAD
     free(Y_td);
     free(G_td);
 }
+
+
+/* ========================================================================== */
+/*                         Binaural Ambisonic Decoders                        */
+/* ========================================================================== */
 
 void getBinDecoder_LS
 (

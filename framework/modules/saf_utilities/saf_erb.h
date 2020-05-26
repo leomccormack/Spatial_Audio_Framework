@@ -44,7 +44,7 @@ extern "C" {
  *   - centerFreq[erb_idx[0]-1] -> centerFreq[erb_idx[1]-1] is ERB band 1
  *   - centerFreq[erb_idx[1]-1] -> centerFreq[erb_idx[2]-1] is ERB band 2
  *
- * @note erb indices start from 1!
+ * @warning erb indices start from 1!
  *
  * @param[in]  centerFreq Frequency vector; nBands x 1
  * @param[in]  nBands     Number of bins/bands in frequency vector

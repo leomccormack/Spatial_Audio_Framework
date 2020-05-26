@@ -70,8 +70,7 @@ typedef enum _AMBI_DEC_PROC_STATUS{
 #define MAX_SH_ORDER ( AMBI_DEC_MAX_SH_ORDER )
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER+1)*(MAX_SH_ORDER+1) ) /* Maximum number of spherical harmonic components */
 #define MAX_NUM_LOUDSPEAKERS ( AMBI_DEC_MAX_NUM_OUTPUTS ) /* Maximum permitted channels for the VST standard */
-#define MIN_NUM_LOUDSPEAKERS ( 4 )            /* To help avoid traingulation errors when using AllRAD */
-#define NUM_EARS ( 2 )                        /* true for most humans */
+#define MIN_NUM_LOUDSPEAKERS ( 4 )            /* To help avoid traingulation errors when using AllRAD */ 
 #define NUM_DECODERS ( 2 )                    /* one for low-frequencies and another for high-frequencies */
 #define MAX_NUM_LOUDSPEAKERS_IN_PRESET ( MAX_NUM_LOUDSPEAKERS )
 
