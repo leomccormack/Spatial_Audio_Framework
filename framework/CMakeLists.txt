@@ -14,7 +14,7 @@ set(ver_minor ${CMAKE_MATCH_1})
 string(REGEX MATCH "SAF_VERSION_PATCH ([0-9]*)" _ ${ver})
 set(ver_patch ${CMAKE_MATCH_1})
 set(SAF_VERSION "${ver_major}.${ver_minor}.${ver_patch}")
-message("-- **** SAF Version: ${SAF_VERSION} ****")
+message("-- SAF Version: ${SAF_VERSION}")
 
 # Display system info
 message("-- ${CMAKE_SYSTEM_INFO_FILE}, name: ${CMAKE_SYSTEM_NAME}, arch: ${CMAKE_SYSTEM_PROCESSOR}, sys: ${CMAKE_SYSTEM}")
@@ -37,7 +37,7 @@ include(GNUInstallDirs)
 if( ${SAF_PERF_LIB} MATCHES "SAF_USE_INTEL_MKL" )
     message("-- Using Intel MKL...")
 	
-	# Indicate to SAF, that it should emply Intel MKL as the performance library
+	# Indicate to SAF, that it should use Intel MKL as the performance library
     #add_compile_definitions(SAF_USE_INTEL_MKL)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_INTEL_MKL=1)
 
@@ -74,11 +74,11 @@ else()
 endif()
 
 # Sofa reader module
-if(NOT DEFINED ENABLE_SOFA_READER)
-    message("-- ENABLE_SOFA_READER is not defined... The saf_sofa_reader module will not be enabled")
+if(NOT DEFINED SAF_ENABLE_SOFA_READER)
+    message("-- SAF_ENABLE_SOFA_READER is not defined... The saf_sofa_reader module will not be enabled.")
 else()
-	# Indicate to SAF, that the saf_sofa_reader module shoud be enabled
-	target_compile_definitions(${PROJECT_NAME} PRIVATE SAF_ENABLE_SOFA_READER=1)
+	# Indicate that the saf_sofa_reader module should be enabled
+	target_compile_definitions(${PROJECT_NAME} PRIVATE SAF_ENABLE_SOFA_READER=${SAF_ENABLE_SOFA_READER})
 	
 	# Header path and libs are platform dependent
     if(MSVC OR MSYS OR MINGW) 
@@ -95,11 +95,10 @@ else()
         target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/include)
 		target_link_libraries(${PROJECT_NAME} 
 		PRIVATE 
-		    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/netcdf.a
-			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/hdf5.a
-			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/zlib.a
-			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/szip.a
-			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/hdf5_hl.a
+		    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libnetcdf.a
+			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5.a
+			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libz.a 
+			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5_hl.a
 		) 
 	elseif(UNIX AND NOT APPLE) 
 	    message(SEND_ERROR "Incomplete") 
