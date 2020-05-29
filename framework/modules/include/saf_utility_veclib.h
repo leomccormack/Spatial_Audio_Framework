@@ -52,8 +52,8 @@ extern "C" {
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "saf_complex.h"
-#include "saf_error.h"
+#include "saf_utility_complex.h"
+#include "saf_utility_error.h"
 #include <immintrin.h>
 #ifdef __SSE__
 # include <xmmintrin.h>

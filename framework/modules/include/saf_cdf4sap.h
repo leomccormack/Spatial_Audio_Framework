@@ -37,7 +37,7 @@
 #ifndef __SAF_CDF4SAP_H_INCLUDED__
 #define __SAF_CDF4SAP_H_INCLUDED__
 
-#include "saf_complex.h"
+#include "saf_utility_complex.h"
 
 #ifdef __cplusplus
 extern "C" {

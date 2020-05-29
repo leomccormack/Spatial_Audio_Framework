@@ -22,7 +22,7 @@
  * @date 11.07.2016
  */
 
-#include "saf_sensorarray_presets.h"
+#include "saf_utility_sensorarray_presets.h"
 
 /* ========================================================================== */
 /*                             First Order Arrays                             */

@@ -892,6 +892,7 @@ EXCLUDE_SYMLINKS       = NO
 # exclude all test directories for example use the pattern */test/*
  
 EXCLUDE_PATTERNS      = */dependencies/*
+EXCLUDE_PATTERNS      += */build/*
 EXCLUDE_PATTERNS      += */licenses/* 
 EXCLUDE_PATTERNS      += */framework/resources/kissFFT*
 EXCLUDE_PATTERNS      += */examples/*

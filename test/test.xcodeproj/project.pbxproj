@@ -10,39 +10,39 @@
 		508FBDA12456D31F0076C205 /* unity.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBD9E2456D31F0076C205 /* unity.c */; };
 		508FBDA52456D3300076C205 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBDA32456D3300076C205 /* timer.c */; };
 		50E35D1F2475AECA00B74C25 /* saf_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35D1E2475AECA00B74C25 /* saf_test.c */; };
-		50E35E5124812EE100B74C25 /* md_malloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E1D24812EE100B74C25 /* md_malloc.c */; };
-		50E35E5224812EE100B74C25 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E1F24812EE100B74C25 /* kiss_fft.c */; };
-		50E35E5324812EE100B74C25 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E2024812EE100B74C25 /* kiss_fftr.c */; };
-		50E35E5424812EE100B74C25 /* afSTFTlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E2324812EE100B74C25 /* afSTFTlib.c */; };
-		50E35E5524812EE100B74C25 /* convhull_3d.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E2624812EE100B74C25 /* convhull_3d.c */; };
-		50E35E5624812EE100B74C25 /* saf_cdf4sap.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E2924812EE100B74C25 /* saf_cdf4sap.c */; };
-		50E35E5724812EE100B74C25 /* saf_hoa_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E2B24812EE100B74C25 /* saf_hoa_internal.c */; };
-		50E35E5824812EE100B74C25 /* saf_hoa.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E2C24812EE100B74C25 /* saf_hoa.c */; };
-		50E35E5924812EE100B74C25 /* saf_error.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3024812EE100B74C25 /* saf_error.c */; };
-		50E35E5A24812EE100B74C25 /* saf_pitch.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3124812EE100B74C25 /* saf_pitch.c */; };
-		50E35E5B24812EE100B74C25 /* saf_erb.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3224812EE100B74C25 /* saf_erb.c */; };
-		50E35E5C24812EE100B74C25 /* saf_misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3324812EE100B74C25 /* saf_misc.c */; };
-		50E35E5D24812EE100B74C25 /* saf_loudspeaker_presets.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3424812EE100B74C25 /* saf_loudspeaker_presets.c */; };
-		50E35E5E24812EE100B74C25 /* saf_veclib.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3524812EE100B74C25 /* saf_veclib.c */; };
-		50E35E5F24812EE100B74C25 /* saf_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3624812EE100B74C25 /* saf_fft.c */; };
-		50E35E6024812EE100B74C25 /* saf_bessel.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3724812EE100B74C25 /* saf_bessel.c */; };
-		50E35E6124812EE100B74C25 /* saf_decor.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3824812EE100B74C25 /* saf_decor.c */; };
-		50E35E6224812EE100B74C25 /* saf_sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3924812EE100B74C25 /* saf_sort.c */; };
-		50E35E6324812EE100B74C25 /* saf_complex.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3A24812EE100B74C25 /* saf_complex.c */; };
-		50E35E6424812EE100B74C25 /* saf_filters.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3B24812EE100B74C25 /* saf_filters.c */; };
-		50E35E6524812EE100B74C25 /* saf_matrixConv.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3C24812EE100B74C25 /* saf_matrixConv.c */; };
-		50E35E6624812EE100B74C25 /* saf_sensorarray_presets.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E3D24812EE100B74C25 /* saf_sensorarray_presets.c */; };
-		50E35E6724812EE100B74C25 /* saf_reverb.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E4024812EE100B74C25 /* saf_reverb.c */; };
-		50E35E6824812EE100B74C25 /* saf_reverb_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E4124812EE100B74C25 /* saf_reverb_internal.c */; };
-		50E35E6924812EE100B74C25 /* saf_sh.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E4324812EE100B74C25 /* saf_sh.c */; };
-		50E35E6A24812EE100B74C25 /* saf_sh_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E4524812EE100B74C25 /* saf_sh_internal.c */; };
-		50E35E6B24812EE100B74C25 /* saf_sofa_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E4724812EE100B74C25 /* saf_sofa_reader.c */; };
-		50E35E6C24812EE100B74C25 /* saf_vbap_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E4924812EE100B74C25 /* saf_vbap_internal.c */; };
-		50E35E6D24812EE100B74C25 /* saf_vbap.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E4A24812EE100B74C25 /* saf_vbap.c */; };
-		50E35E6E24812EE100B74C25 /* saf_default_hrirs.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E4D24812EE100B74C25 /* saf_default_hrirs.c */; };
-		50E35E6F24812EE100B74C25 /* saf_hrir_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E4F24812EE100B74C25 /* saf_hrir_internal.c */; };
-		50E35E7024812EE100B74C25 /* saf_hrir.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E5024812EE100B74C25 /* saf_hrir.c */; };
 		50E35E732481353300B74C25 /* saf_test_wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E712481353300B74C25 /* saf_test_wrapper.cpp */; };
+		50E35EC82481484B00B74C25 /* afSTFTlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E7F2481484B00B74C25 /* afSTFTlib.c */; };
+		50E35EC92481484B00B74C25 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E802481484B00B74C25 /* kiss_fft.c */; };
+		50E35ECA2481484B00B74C25 /* md_malloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E812481484B00B74C25 /* md_malloc.c */; };
+		50E35ECB2481484B00B74C25 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E822481484B00B74C25 /* kiss_fftr.c */; };
+		50E35ECC2481484B00B74C25 /* convhull_3d.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E852481484B00B74C25 /* convhull_3d.c */; };
+		50E35ECD2481484B00B74C25 /* saf_cdf4sap.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E882481484B00B74C25 /* saf_cdf4sap.c */; };
+		50E35ECE2481484B00B74C25 /* saf_hoa_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E8A2481484B00B74C25 /* saf_hoa_internal.c */; };
+		50E35ECF2481484B00B74C25 /* saf_hoa.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E8B2481484B00B74C25 /* saf_hoa.c */; };
+		50E35ED02481484B00B74C25 /* saf_utility_sensorarray_presets.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EA72481484B00B74C25 /* saf_utility_sensorarray_presets.c */; };
+		50E35ED12481484B00B74C25 /* saf_utility_bessel.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EA82481484B00B74C25 /* saf_utility_bessel.c */; };
+		50E35ED22481484B00B74C25 /* saf_utility_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EA92481484B00B74C25 /* saf_utility_fft.c */; };
+		50E35ED32481484B00B74C25 /* saf_utility_misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EAA2481484B00B74C25 /* saf_utility_misc.c */; };
+		50E35ED42481484B00B74C25 /* saf_utility_error.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EAB2481484B00B74C25 /* saf_utility_error.c */; };
+		50E35ED52481484B00B74C25 /* saf_utility_pitch.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EAC2481484B00B74C25 /* saf_utility_pitch.c */; };
+		50E35ED62481484B00B74C25 /* saf_utility_erb.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EAD2481484B00B74C25 /* saf_utility_erb.c */; };
+		50E35ED72481484B00B74C25 /* saf_utility_filters.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EAE2481484B00B74C25 /* saf_utility_filters.c */; };
+		50E35ED82481484B00B74C25 /* saf_utility_complex.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EAF2481484B00B74C25 /* saf_utility_complex.c */; };
+		50E35ED92481484B00B74C25 /* saf_utility_loudspeaker_presets.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EB02481484B00B74C25 /* saf_utility_loudspeaker_presets.c */; };
+		50E35EDA2481484B00B74C25 /* saf_utility_veclib.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EB12481484B00B74C25 /* saf_utility_veclib.c */; };
+		50E35EDB2481484B00B74C25 /* saf_utility_sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EB22481484B00B74C25 /* saf_utility_sort.c */; };
+		50E35EDC2481484B00B74C25 /* saf_utility_matrixConv.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EB32481484B00B74C25 /* saf_utility_matrixConv.c */; };
+		50E35EDD2481484B00B74C25 /* saf_utility_decor.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EB42481484B00B74C25 /* saf_utility_decor.c */; };
+		50E35EDE2481484B00B74C25 /* saf_reverb.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EB72481484B00B74C25 /* saf_reverb.c */; };
+		50E35EDF2481484B00B74C25 /* saf_reverb_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EB82481484B00B74C25 /* saf_reverb_internal.c */; };
+		50E35EE02481484B00B74C25 /* saf_sh.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EBA2481484B00B74C25 /* saf_sh.c */; };
+		50E35EE12481484B00B74C25 /* saf_sh_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EBC2481484B00B74C25 /* saf_sh_internal.c */; };
+		50E35EE22481484B00B74C25 /* saf_sofa_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EBE2481484B00B74C25 /* saf_sofa_reader.c */; };
+		50E35EE32481484B00B74C25 /* saf_vbap_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EC02481484B00B74C25 /* saf_vbap_internal.c */; };
+		50E35EE42481484B00B74C25 /* saf_vbap.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EC12481484B00B74C25 /* saf_vbap.c */; };
+		50E35EE52481484B00B74C25 /* saf_default_hrirs.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EC42481484B00B74C25 /* saf_default_hrirs.c */; };
+		50E35EE62481484B00B74C25 /* saf_hrir_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EC62481484B00B74C25 /* saf_hrir_internal.c */; };
+		50E35EE72481484B00B74C25 /* saf_hrir.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35EC72481484B00B74C25 /* saf_hrir.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -65,78 +65,78 @@
 		508FBDA32456D3300076C205 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timer.c; sourceTree = "<group>"; };
 		508FBDA42456D3300076C205 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
 		50E35D1E2475AECA00B74C25 /* saf_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_test.c; sourceTree = "<group>"; };
-		50E35DFC24812EE100B74C25 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		50E35DFE24812EE100B74C25 /* saf_bessel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_bessel.h; sourceTree = "<group>"; };
-		50E35DFF24812EE100B74C25 /* saf_vbap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_vbap.h; sourceTree = "<group>"; };
-		50E35E0024812EE100B74C25 /* saf_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_fft.h; sourceTree = "<group>"; };
-		50E35E0124812EE100B74C25 /* saf_filters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_filters.h; sourceTree = "<group>"; };
-		50E35E0224812EE100B74C25 /* saf_complex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_complex.h; sourceTree = "<group>"; };
-		50E35E0324812EE100B74C25 /* saf_hoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hoa.h; sourceTree = "<group>"; };
-		50E35E0424812EE100B74C25 /* saf_sort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_sort.h; sourceTree = "<group>"; };
-		50E35E0524812EE100B74C25 /* saf_decor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_decor.h; sourceTree = "<group>"; };
-		50E35E0624812EE100B74C25 /* saf_hrir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hrir.h; sourceTree = "<group>"; };
-		50E35E0724812EE100B74C25 /* saf_sofa_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_sofa_reader.h; sourceTree = "<group>"; };
-		50E35E0824812EE100B74C25 /* saf_matrixConv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_matrixConv.h; sourceTree = "<group>"; };
-		50E35E0924812EE100B74C25 /* convhull_3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convhull_3d.h; sourceTree = "<group>"; };
-		50E35E0A24812EE100B74C25 /* saf_sensorarray_presets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_sensorarray_presets.h; sourceTree = "<group>"; };
-		50E35E0B24812EE100B74C25 /* saf_utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utilities.h; sourceTree = "<group>"; };
-		50E35E0C24812EE100B74C25 /* saf_cdf4sap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_cdf4sap.h; sourceTree = "<group>"; };
-		50E35E0D24812EE100B74C25 /* afSTFTlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = afSTFTlib.h; sourceTree = "<group>"; };
-		50E35E0E24812EE100B74C25 /* saf_sh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_sh.h; sourceTree = "<group>"; };
-		50E35E0F24812EE100B74C25 /* saf_error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_error.h; sourceTree = "<group>"; };
-		50E35E1024812EE100B74C25 /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
-		50E35E1124812EE100B74C25 /* saf_misc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_misc.h; sourceTree = "<group>"; };
-		50E35E1224812EE100B74C25 /* saf_erb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_erb.h; sourceTree = "<group>"; };
-		50E35E1324812EE100B74C25 /* md_malloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md_malloc.h; sourceTree = "<group>"; };
-		50E35E1424812EE100B74C25 /* saf_pitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_pitch.h; sourceTree = "<group>"; };
-		50E35E1524812EE100B74C25 /* saf_reverb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_reverb.h; sourceTree = "<group>"; };
-		50E35E1624812EE100B74C25 /* saf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf.h; sourceTree = "<group>"; };
-		50E35E1724812EE100B74C25 /* saf_loudspeaker_presets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_loudspeaker_presets.h; sourceTree = "<group>"; };
-		50E35E1824812EE100B74C25 /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
-		50E35E1924812EE100B74C25 /* saf_veclib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_veclib.h; sourceTree = "<group>"; };
-		50E35E1B24812EE100B74C25 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		50E35E1D24812EE100B74C25 /* md_malloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = md_malloc.c; sourceTree = "<group>"; };
-		50E35E1F24812EE100B74C25 /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
-		50E35E2024812EE100B74C25 /* kiss_fftr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fftr.c; sourceTree = "<group>"; };
-		50E35E2124812EE100B74C25 /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
-		50E35E2324812EE100B74C25 /* afSTFTlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = afSTFTlib.c; sourceTree = "<group>"; };
-		50E35E2424812EE100B74C25 /* afSTFT_protoFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = afSTFT_protoFilter.h; sourceTree = "<group>"; };
-		50E35E2624812EE100B74C25 /* convhull_3d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = convhull_3d.c; sourceTree = "<group>"; };
-		50E35E2924812EE100B74C25 /* saf_cdf4sap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_cdf4sap.c; sourceTree = "<group>"; };
-		50E35E2B24812EE100B74C25 /* saf_hoa_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hoa_internal.c; sourceTree = "<group>"; };
-		50E35E2C24812EE100B74C25 /* saf_hoa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hoa.c; sourceTree = "<group>"; };
-		50E35E2D24812EE100B74C25 /* saf_hoa_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hoa_internal.h; sourceTree = "<group>"; };
-		50E35E2E24812EE100B74C25 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		50E35E3024812EE100B74C25 /* saf_error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_error.c; sourceTree = "<group>"; };
-		50E35E3124812EE100B74C25 /* saf_pitch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_pitch.c; sourceTree = "<group>"; };
-		50E35E3224812EE100B74C25 /* saf_erb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_erb.c; sourceTree = "<group>"; };
-		50E35E3324812EE100B74C25 /* saf_misc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_misc.c; sourceTree = "<group>"; };
-		50E35E3424812EE100B74C25 /* saf_loudspeaker_presets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_loudspeaker_presets.c; sourceTree = "<group>"; };
-		50E35E3524812EE100B74C25 /* saf_veclib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_veclib.c; sourceTree = "<group>"; };
-		50E35E3624812EE100B74C25 /* saf_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_fft.c; sourceTree = "<group>"; };
-		50E35E3724812EE100B74C25 /* saf_bessel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_bessel.c; sourceTree = "<group>"; };
-		50E35E3824812EE100B74C25 /* saf_decor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_decor.c; sourceTree = "<group>"; };
-		50E35E3924812EE100B74C25 /* saf_sort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_sort.c; sourceTree = "<group>"; };
-		50E35E3A24812EE100B74C25 /* saf_complex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_complex.c; sourceTree = "<group>"; };
-		50E35E3B24812EE100B74C25 /* saf_filters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_filters.c; sourceTree = "<group>"; };
-		50E35E3C24812EE100B74C25 /* saf_matrixConv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_matrixConv.c; sourceTree = "<group>"; };
-		50E35E3D24812EE100B74C25 /* saf_sensorarray_presets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_sensorarray_presets.c; sourceTree = "<group>"; };
-		50E35E3F24812EE100B74C25 /* saf_reverb_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_reverb_internal.h; sourceTree = "<group>"; };
-		50E35E4024812EE100B74C25 /* saf_reverb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_reverb.c; sourceTree = "<group>"; };
-		50E35E4124812EE100B74C25 /* saf_reverb_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_reverb_internal.c; sourceTree = "<group>"; };
-		50E35E4324812EE100B74C25 /* saf_sh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_sh.c; sourceTree = "<group>"; };
-		50E35E4424812EE100B74C25 /* saf_sh_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_sh_internal.h; sourceTree = "<group>"; };
-		50E35E4524812EE100B74C25 /* saf_sh_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_sh_internal.c; sourceTree = "<group>"; };
-		50E35E4724812EE100B74C25 /* saf_sofa_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_sofa_reader.c; sourceTree = "<group>"; };
-		50E35E4924812EE100B74C25 /* saf_vbap_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_vbap_internal.c; sourceTree = "<group>"; };
-		50E35E4A24812EE100B74C25 /* saf_vbap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_vbap.c; sourceTree = "<group>"; };
-		50E35E4B24812EE100B74C25 /* saf_vbap_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_vbap_internal.h; sourceTree = "<group>"; };
-		50E35E4D24812EE100B74C25 /* saf_default_hrirs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_default_hrirs.c; sourceTree = "<group>"; };
-		50E35E4E24812EE100B74C25 /* saf_hrir_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hrir_internal.h; sourceTree = "<group>"; };
-		50E35E4F24812EE100B74C25 /* saf_hrir_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hrir_internal.c; sourceTree = "<group>"; };
-		50E35E5024812EE100B74C25 /* saf_hrir.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hrir.c; sourceTree = "<group>"; };
 		50E35E712481353300B74C25 /* saf_test_wrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = saf_test_wrapper.cpp; sourceTree = "<group>"; };
 		50E35E722481353300B74C25 /* saf_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_test.h; sourceTree = "<group>"; };
+		50E35E752481484B00B74C25 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		50E35E772481484B00B74C25 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		50E35E792481484B00B74C25 /* convhull_3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convhull_3d.h; sourceTree = "<group>"; };
+		50E35E7A2481484B00B74C25 /* afSTFTlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = afSTFTlib.h; sourceTree = "<group>"; };
+		50E35E7B2481484B00B74C25 /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
+		50E35E7C2481484B00B74C25 /* md_malloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md_malloc.h; sourceTree = "<group>"; };
+		50E35E7D2481484B00B74C25 /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
+		50E35E7F2481484B00B74C25 /* afSTFTlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = afSTFTlib.c; sourceTree = "<group>"; };
+		50E35E802481484B00B74C25 /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
+		50E35E812481484B00B74C25 /* md_malloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = md_malloc.c; sourceTree = "<group>"; };
+		50E35E822481484B00B74C25 /* kiss_fftr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fftr.c; sourceTree = "<group>"; };
+		50E35E832481484B00B74C25 /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
+		50E35E842481484B00B74C25 /* afSTFT_protoFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = afSTFT_protoFilter.h; sourceTree = "<group>"; };
+		50E35E852481484B00B74C25 /* convhull_3d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = convhull_3d.c; sourceTree = "<group>"; };
+		50E35E882481484B00B74C25 /* saf_cdf4sap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_cdf4sap.c; sourceTree = "<group>"; };
+		50E35E8A2481484B00B74C25 /* saf_hoa_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hoa_internal.c; sourceTree = "<group>"; };
+		50E35E8B2481484B00B74C25 /* saf_hoa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hoa.c; sourceTree = "<group>"; };
+		50E35E8C2481484B00B74C25 /* saf_hoa_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hoa_internal.h; sourceTree = "<group>"; };
+		50E35E8D2481484B00B74C25 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		50E35E8F2481484B00B74C25 /* saf_vbap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_vbap.h; sourceTree = "<group>"; };
+		50E35E902481484B00B74C25 /* saf_utility_erb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_erb.h; sourceTree = "<group>"; };
+		50E35E912481484B00B74C25 /* saf_hoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hoa.h; sourceTree = "<group>"; };
+		50E35E922481484B00B74C25 /* saf_utility_complex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_complex.h; sourceTree = "<group>"; };
+		50E35E932481484B00B74C25 /* saf_utility_loudspeaker_presets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_loudspeaker_presets.h; sourceTree = "<group>"; };
+		50E35E942481484B00B74C25 /* saf_utility_filters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_filters.h; sourceTree = "<group>"; };
+		50E35E952481484B00B74C25 /* saf_utility_veclib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_veclib.h; sourceTree = "<group>"; };
+		50E35E962481484B00B74C25 /* saf_hrir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hrir.h; sourceTree = "<group>"; };
+		50E35E972481484B00B74C25 /* saf_utility_sort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_sort.h; sourceTree = "<group>"; };
+		50E35E982481484B00B74C25 /* saf_sofa_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_sofa_reader.h; sourceTree = "<group>"; };
+		50E35E992481484B00B74C25 /* saf_utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utilities.h; sourceTree = "<group>"; };
+		50E35E9A2481484B00B74C25 /* saf_cdf4sap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_cdf4sap.h; sourceTree = "<group>"; };
+		50E35E9B2481484B00B74C25 /* saf_utility_decor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_decor.h; sourceTree = "<group>"; };
+		50E35E9C2481484B00B74C25 /* saf_utility_matrixConv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_matrixConv.h; sourceTree = "<group>"; };
+		50E35E9D2481484B00B74C25 /* saf_sh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_sh.h; sourceTree = "<group>"; };
+		50E35E9E2481484B00B74C25 /* saf_utility_sensorarray_presets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_sensorarray_presets.h; sourceTree = "<group>"; };
+		50E35E9F2481484B00B74C25 /* saf_utility_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_fft.h; sourceTree = "<group>"; };
+		50E35EA02481484B00B74C25 /* saf_reverb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_reverb.h; sourceTree = "<group>"; };
+		50E35EA12481484B00B74C25 /* saf_utility_bessel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_bessel.h; sourceTree = "<group>"; };
+		50E35EA22481484B00B74C25 /* saf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf.h; sourceTree = "<group>"; };
+		50E35EA32481484B00B74C25 /* saf_utility_error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_error.h; sourceTree = "<group>"; };
+		50E35EA42481484B00B74C25 /* saf_utility_misc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_misc.h; sourceTree = "<group>"; };
+		50E35EA52481484B00B74C25 /* saf_utility_pitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_pitch.h; sourceTree = "<group>"; };
+		50E35EA72481484B00B74C25 /* saf_utility_sensorarray_presets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_sensorarray_presets.c; sourceTree = "<group>"; };
+		50E35EA82481484B00B74C25 /* saf_utility_bessel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_bessel.c; sourceTree = "<group>"; };
+		50E35EA92481484B00B74C25 /* saf_utility_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_fft.c; sourceTree = "<group>"; };
+		50E35EAA2481484B00B74C25 /* saf_utility_misc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_misc.c; sourceTree = "<group>"; };
+		50E35EAB2481484B00B74C25 /* saf_utility_error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_error.c; sourceTree = "<group>"; };
+		50E35EAC2481484B00B74C25 /* saf_utility_pitch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_pitch.c; sourceTree = "<group>"; };
+		50E35EAD2481484B00B74C25 /* saf_utility_erb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_erb.c; sourceTree = "<group>"; };
+		50E35EAE2481484B00B74C25 /* saf_utility_filters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_filters.c; sourceTree = "<group>"; };
+		50E35EAF2481484B00B74C25 /* saf_utility_complex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_complex.c; sourceTree = "<group>"; };
+		50E35EB02481484B00B74C25 /* saf_utility_loudspeaker_presets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_loudspeaker_presets.c; sourceTree = "<group>"; };
+		50E35EB12481484B00B74C25 /* saf_utility_veclib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_veclib.c; sourceTree = "<group>"; };
+		50E35EB22481484B00B74C25 /* saf_utility_sort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_sort.c; sourceTree = "<group>"; };
+		50E35EB32481484B00B74C25 /* saf_utility_matrixConv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_matrixConv.c; sourceTree = "<group>"; };
+		50E35EB42481484B00B74C25 /* saf_utility_decor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_decor.c; sourceTree = "<group>"; };
+		50E35EB62481484B00B74C25 /* saf_reverb_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_reverb_internal.h; sourceTree = "<group>"; };
+		50E35EB72481484B00B74C25 /* saf_reverb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_reverb.c; sourceTree = "<group>"; };
+		50E35EB82481484B00B74C25 /* saf_reverb_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_reverb_internal.c; sourceTree = "<group>"; };
+		50E35EBA2481484B00B74C25 /* saf_sh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_sh.c; sourceTree = "<group>"; };
+		50E35EBB2481484B00B74C25 /* saf_sh_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_sh_internal.h; sourceTree = "<group>"; };
+		50E35EBC2481484B00B74C25 /* saf_sh_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_sh_internal.c; sourceTree = "<group>"; };
+		50E35EBE2481484B00B74C25 /* saf_sofa_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_sofa_reader.c; sourceTree = "<group>"; };
+		50E35EC02481484B00B74C25 /* saf_vbap_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_vbap_internal.c; sourceTree = "<group>"; };
+		50E35EC12481484B00B74C25 /* saf_vbap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_vbap.c; sourceTree = "<group>"; };
+		50E35EC22481484B00B74C25 /* saf_vbap_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_vbap_internal.h; sourceTree = "<group>"; };
+		50E35EC42481484B00B74C25 /* saf_default_hrirs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_default_hrirs.c; sourceTree = "<group>"; };
+		50E35EC52481484B00B74C25 /* saf_hrir_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hrir_internal.h; sourceTree = "<group>"; };
+		50E35EC62481484B00B74C25 /* saf_hrir_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hrir_internal.c; sourceTree = "<group>"; };
+		50E35EC72481484B00B74C25 /* saf_hrir.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hrir.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,7 +157,7 @@
 				50E35E712481353300B74C25 /* saf_test_wrapper.cpp */,
 				50E35E722481353300B74C25 /* saf_test.h */,
 				50E35D1E2475AECA00B74C25 /* saf_test.c */,
-				50E35DFB24812EE100B74C25 /* framework */,
+				50E35E742481484B00B74C25 /* framework */,
 				508FBDA22456D3300076C205 /* timer */,
 				508FBD9D2456D31F0076C205 /* unity */,
 			);
@@ -190,200 +190,184 @@
 			path = timer;
 			sourceTree = "<group>";
 		};
-		50E35DFB24812EE100B74C25 /* framework */ = {
+		50E35E742481484B00B74C25 /* framework */ = {
 			isa = PBXGroup;
 			children = (
-				50E35DFC24812EE100B74C25 /* CMakeLists.txt */,
-				50E35DFD24812EE100B74C25 /* include */,
-				50E35E1A24812EE100B74C25 /* resources */,
-				50E35E2724812EE100B74C25 /* modules */,
+				50E35E752481484B00B74C25 /* CMakeLists.txt */,
+				50E35E862481484B00B74C25 /* modules */,
+				50E35E762481484B00B74C25 /* resources */,
 			);
 			name = framework;
 			path = ../framework;
 			sourceTree = "<group>";
 		};
-		50E35DFD24812EE100B74C25 /* include */ = {
+		50E35E762481484B00B74C25 /* resources */ = {
 			isa = PBXGroup;
 			children = (
-				50E35DFE24812EE100B74C25 /* saf_bessel.h */,
-				50E35DFF24812EE100B74C25 /* saf_vbap.h */,
-				50E35E0024812EE100B74C25 /* saf_fft.h */,
-				50E35E0124812EE100B74C25 /* saf_filters.h */,
-				50E35E0224812EE100B74C25 /* saf_complex.h */,
-				50E35E0324812EE100B74C25 /* saf_hoa.h */,
-				50E35E0424812EE100B74C25 /* saf_sort.h */,
-				50E35E0524812EE100B74C25 /* saf_decor.h */,
-				50E35E0624812EE100B74C25 /* saf_hrir.h */,
-				50E35E0724812EE100B74C25 /* saf_sofa_reader.h */,
-				50E35E0824812EE100B74C25 /* saf_matrixConv.h */,
-				50E35E0924812EE100B74C25 /* convhull_3d.h */,
-				50E35E0A24812EE100B74C25 /* saf_sensorarray_presets.h */,
-				50E35E0B24812EE100B74C25 /* saf_utilities.h */,
-				50E35E0C24812EE100B74C25 /* saf_cdf4sap.h */,
-				50E35E0D24812EE100B74C25 /* afSTFTlib.h */,
-				50E35E0E24812EE100B74C25 /* saf_sh.h */,
-				50E35E0F24812EE100B74C25 /* saf_error.h */,
-				50E35E1024812EE100B74C25 /* kiss_fft.h */,
-				50E35E1124812EE100B74C25 /* saf_misc.h */,
-				50E35E1224812EE100B74C25 /* saf_erb.h */,
-				50E35E1324812EE100B74C25 /* md_malloc.h */,
-				50E35E1424812EE100B74C25 /* saf_pitch.h */,
-				50E35E1524812EE100B74C25 /* saf_reverb.h */,
-				50E35E1624812EE100B74C25 /* saf.h */,
-				50E35E1724812EE100B74C25 /* saf_loudspeaker_presets.h */,
-				50E35E1824812EE100B74C25 /* kiss_fftr.h */,
-				50E35E1924812EE100B74C25 /* saf_veclib.h */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		50E35E1A24812EE100B74C25 /* resources */ = {
-			isa = PBXGroup;
-			children = (
-				50E35E1B24812EE100B74C25 /* CMakeLists.txt */,
-				50E35E1C24812EE100B74C25 /* md_malloc */,
-				50E35E1E24812EE100B74C25 /* kissFFT */,
-				50E35E2224812EE100B74C25 /* afSTFT */,
-				50E35E2524812EE100B74C25 /* convhull_3d */,
+				50E35E772481484B00B74C25 /* CMakeLists.txt */,
+				50E35E782481484B00B74C25 /* include */,
+				50E35E7E2481484B00B74C25 /* src */,
 			);
 			path = resources;
 			sourceTree = "<group>";
 		};
-		50E35E1C24812EE100B74C25 /* md_malloc */ = {
+		50E35E782481484B00B74C25 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				50E35E1D24812EE100B74C25 /* md_malloc.c */,
+				50E35E792481484B00B74C25 /* convhull_3d.h */,
+				50E35E7A2481484B00B74C25 /* afSTFTlib.h */,
+				50E35E7B2481484B00B74C25 /* kiss_fft.h */,
+				50E35E7C2481484B00B74C25 /* md_malloc.h */,
+				50E35E7D2481484B00B74C25 /* kiss_fftr.h */,
 			);
-			path = md_malloc;
+			path = include;
 			sourceTree = "<group>";
 		};
-		50E35E1E24812EE100B74C25 /* kissFFT */ = {
+		50E35E7E2481484B00B74C25 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				50E35E1F24812EE100B74C25 /* kiss_fft.c */,
-				50E35E2024812EE100B74C25 /* kiss_fftr.c */,
-				50E35E2124812EE100B74C25 /* _kiss_fft_guts.h */,
+				50E35E7F2481484B00B74C25 /* afSTFTlib.c */,
+				50E35E802481484B00B74C25 /* kiss_fft.c */,
+				50E35E812481484B00B74C25 /* md_malloc.c */,
+				50E35E822481484B00B74C25 /* kiss_fftr.c */,
+				50E35E832481484B00B74C25 /* _kiss_fft_guts.h */,
+				50E35E842481484B00B74C25 /* afSTFT_protoFilter.h */,
+				50E35E852481484B00B74C25 /* convhull_3d.c */,
 			);
-			path = kissFFT;
+			path = src;
 			sourceTree = "<group>";
 		};
-		50E35E2224812EE100B74C25 /* afSTFT */ = {
+		50E35E862481484B00B74C25 /* modules */ = {
 			isa = PBXGroup;
 			children = (
-				50E35E2324812EE100B74C25 /* afSTFTlib.c */,
-				50E35E2424812EE100B74C25 /* afSTFT_protoFilter.h */,
-			);
-			path = afSTFT;
-			sourceTree = "<group>";
-		};
-		50E35E2524812EE100B74C25 /* convhull_3d */ = {
-			isa = PBXGroup;
-			children = (
-				50E35E2624812EE100B74C25 /* convhull_3d.c */,
-			);
-			path = convhull_3d;
-			sourceTree = "<group>";
-		};
-		50E35E2724812EE100B74C25 /* modules */ = {
-			isa = PBXGroup;
-			children = (
-				50E35E2824812EE100B74C25 /* saf_cdf4sap */,
-				50E35E2A24812EE100B74C25 /* saf_hoa */,
-				50E35E2E24812EE100B74C25 /* CMakeLists.txt */,
-				50E35E2F24812EE100B74C25 /* saf_utilities */,
-				50E35E3E24812EE100B74C25 /* saf_reverb */,
-				50E35E4224812EE100B74C25 /* saf_sh */,
-				50E35E4624812EE100B74C25 /* saf_sofa_reader */,
-				50E35E4824812EE100B74C25 /* saf_vbap */,
-				50E35E4C24812EE100B74C25 /* saf_hrir */,
+				50E35E8D2481484B00B74C25 /* CMakeLists.txt */,
+				50E35E8E2481484B00B74C25 /* include */,
+				50E35E872481484B00B74C25 /* saf_cdf4sap */,
+				50E35E892481484B00B74C25 /* saf_hoa */,
+				50E35EC32481484B00B74C25 /* saf_hrir */,
+				50E35EB52481484B00B74C25 /* saf_reverb */,
+				50E35EB92481484B00B74C25 /* saf_sh */,
+				50E35EBD2481484B00B74C25 /* saf_sofa_reader */,
+				50E35EA62481484B00B74C25 /* saf_utilities */,
+				50E35EBF2481484B00B74C25 /* saf_vbap */,
 			);
 			path = modules;
 			sourceTree = "<group>";
 		};
-		50E35E2824812EE100B74C25 /* saf_cdf4sap */ = {
+		50E35E872481484B00B74C25 /* saf_cdf4sap */ = {
 			isa = PBXGroup;
 			children = (
-				50E35E2924812EE100B74C25 /* saf_cdf4sap.c */,
+				50E35E882481484B00B74C25 /* saf_cdf4sap.c */,
 			);
 			path = saf_cdf4sap;
 			sourceTree = "<group>";
 		};
-		50E35E2A24812EE100B74C25 /* saf_hoa */ = {
+		50E35E892481484B00B74C25 /* saf_hoa */ = {
 			isa = PBXGroup;
 			children = (
-				50E35E2B24812EE100B74C25 /* saf_hoa_internal.c */,
-				50E35E2C24812EE100B74C25 /* saf_hoa.c */,
-				50E35E2D24812EE100B74C25 /* saf_hoa_internal.h */,
+				50E35E8A2481484B00B74C25 /* saf_hoa_internal.c */,
+				50E35E8B2481484B00B74C25 /* saf_hoa.c */,
+				50E35E8C2481484B00B74C25 /* saf_hoa_internal.h */,
 			);
 			path = saf_hoa;
 			sourceTree = "<group>";
 		};
-		50E35E2F24812EE100B74C25 /* saf_utilities */ = {
+		50E35E8E2481484B00B74C25 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				50E35E3024812EE100B74C25 /* saf_error.c */,
-				50E35E3124812EE100B74C25 /* saf_pitch.c */,
-				50E35E3224812EE100B74C25 /* saf_erb.c */,
-				50E35E3324812EE100B74C25 /* saf_misc.c */,
-				50E35E3424812EE100B74C25 /* saf_loudspeaker_presets.c */,
-				50E35E3524812EE100B74C25 /* saf_veclib.c */,
-				50E35E3624812EE100B74C25 /* saf_fft.c */,
-				50E35E3724812EE100B74C25 /* saf_bessel.c */,
-				50E35E3824812EE100B74C25 /* saf_decor.c */,
-				50E35E3924812EE100B74C25 /* saf_sort.c */,
-				50E35E3A24812EE100B74C25 /* saf_complex.c */,
-				50E35E3B24812EE100B74C25 /* saf_filters.c */,
-				50E35E3C24812EE100B74C25 /* saf_matrixConv.c */,
-				50E35E3D24812EE100B74C25 /* saf_sensorarray_presets.c */,
+				50E35E9A2481484B00B74C25 /* saf_cdf4sap.h */,
+				50E35E912481484B00B74C25 /* saf_hoa.h */,
+				50E35E962481484B00B74C25 /* saf_hrir.h */,
+				50E35EA02481484B00B74C25 /* saf_reverb.h */,
+				50E35E9D2481484B00B74C25 /* saf_sh.h */,
+				50E35E982481484B00B74C25 /* saf_sofa_reader.h */,
+				50E35E992481484B00B74C25 /* saf_utilities.h */,
+				50E35EA12481484B00B74C25 /* saf_utility_bessel.h */,
+				50E35E922481484B00B74C25 /* saf_utility_complex.h */,
+				50E35E9B2481484B00B74C25 /* saf_utility_decor.h */,
+				50E35E902481484B00B74C25 /* saf_utility_erb.h */,
+				50E35EA32481484B00B74C25 /* saf_utility_error.h */,
+				50E35E9F2481484B00B74C25 /* saf_utility_fft.h */,
+				50E35E942481484B00B74C25 /* saf_utility_filters.h */,
+				50E35E932481484B00B74C25 /* saf_utility_loudspeaker_presets.h */,
+				50E35E9C2481484B00B74C25 /* saf_utility_matrixConv.h */,
+				50E35EA42481484B00B74C25 /* saf_utility_misc.h */,
+				50E35EA52481484B00B74C25 /* saf_utility_pitch.h */,
+				50E35E9E2481484B00B74C25 /* saf_utility_sensorarray_presets.h */,
+				50E35E972481484B00B74C25 /* saf_utility_sort.h */,
+				50E35E952481484B00B74C25 /* saf_utility_veclib.h */,
+				50E35E8F2481484B00B74C25 /* saf_vbap.h */,
+				50E35EA22481484B00B74C25 /* saf.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		50E35EA62481484B00B74C25 /* saf_utilities */ = {
+			isa = PBXGroup;
+			children = (
+				50E35EA82481484B00B74C25 /* saf_utility_bessel.c */,
+				50E35EAF2481484B00B74C25 /* saf_utility_complex.c */,
+				50E35EB42481484B00B74C25 /* saf_utility_decor.c */,
+				50E35EAD2481484B00B74C25 /* saf_utility_erb.c */,
+				50E35EAB2481484B00B74C25 /* saf_utility_error.c */,
+				50E35EA92481484B00B74C25 /* saf_utility_fft.c */,
+				50E35EAE2481484B00B74C25 /* saf_utility_filters.c */,
+				50E35EB02481484B00B74C25 /* saf_utility_loudspeaker_presets.c */,
+				50E35EB32481484B00B74C25 /* saf_utility_matrixConv.c */,
+				50E35EAA2481484B00B74C25 /* saf_utility_misc.c */,
+				50E35EAC2481484B00B74C25 /* saf_utility_pitch.c */,
+				50E35EA72481484B00B74C25 /* saf_utility_sensorarray_presets.c */,
+				50E35EB22481484B00B74C25 /* saf_utility_sort.c */,
+				50E35EB12481484B00B74C25 /* saf_utility_veclib.c */,
 			);
 			path = saf_utilities;
 			sourceTree = "<group>";
 		};
-		50E35E3E24812EE100B74C25 /* saf_reverb */ = {
+		50E35EB52481484B00B74C25 /* saf_reverb */ = {
 			isa = PBXGroup;
 			children = (
-				50E35E3F24812EE100B74C25 /* saf_reverb_internal.h */,
-				50E35E4024812EE100B74C25 /* saf_reverb.c */,
-				50E35E4124812EE100B74C25 /* saf_reverb_internal.c */,
+				50E35EB62481484B00B74C25 /* saf_reverb_internal.h */,
+				50E35EB72481484B00B74C25 /* saf_reverb.c */,
+				50E35EB82481484B00B74C25 /* saf_reverb_internal.c */,
 			);
 			path = saf_reverb;
 			sourceTree = "<group>";
 		};
-		50E35E4224812EE100B74C25 /* saf_sh */ = {
+		50E35EB92481484B00B74C25 /* saf_sh */ = {
 			isa = PBXGroup;
 			children = (
-				50E35E4324812EE100B74C25 /* saf_sh.c */,
-				50E35E4424812EE100B74C25 /* saf_sh_internal.h */,
-				50E35E4524812EE100B74C25 /* saf_sh_internal.c */,
+				50E35EBA2481484B00B74C25 /* saf_sh.c */,
+				50E35EBB2481484B00B74C25 /* saf_sh_internal.h */,
+				50E35EBC2481484B00B74C25 /* saf_sh_internal.c */,
 			);
 			path = saf_sh;
 			sourceTree = "<group>";
 		};
-		50E35E4624812EE100B74C25 /* saf_sofa_reader */ = {
+		50E35EBD2481484B00B74C25 /* saf_sofa_reader */ = {
 			isa = PBXGroup;
 			children = (
-				50E35E4724812EE100B74C25 /* saf_sofa_reader.c */,
+				50E35EBE2481484B00B74C25 /* saf_sofa_reader.c */,
 			);
 			path = saf_sofa_reader;
 			sourceTree = "<group>";
 		};
-		50E35E4824812EE100B74C25 /* saf_vbap */ = {
+		50E35EBF2481484B00B74C25 /* saf_vbap */ = {
 			isa = PBXGroup;
 			children = (
-				50E35E4924812EE100B74C25 /* saf_vbap_internal.c */,
-				50E35E4A24812EE100B74C25 /* saf_vbap.c */,
-				50E35E4B24812EE100B74C25 /* saf_vbap_internal.h */,
+				50E35EC02481484B00B74C25 /* saf_vbap_internal.c */,
+				50E35EC12481484B00B74C25 /* saf_vbap.c */,
+				50E35EC22481484B00B74C25 /* saf_vbap_internal.h */,
 			);
 			path = saf_vbap;
 			sourceTree = "<group>";
 		};
-		50E35E4C24812EE100B74C25 /* saf_hrir */ = {
+		50E35EC32481484B00B74C25 /* saf_hrir */ = {
 			isa = PBXGroup;
 			children = (
-				50E35E4D24812EE100B74C25 /* saf_default_hrirs.c */,
-				50E35E4E24812EE100B74C25 /* saf_hrir_internal.h */,
-				50E35E4F24812EE100B74C25 /* saf_hrir_internal.c */,
-				50E35E5024812EE100B74C25 /* saf_hrir.c */,
+				50E35EC42481484B00B74C25 /* saf_default_hrirs.c */,
+				50E35EC52481484B00B74C25 /* saf_hrir_internal.h */,
+				50E35EC62481484B00B74C25 /* saf_hrir_internal.c */,
+				50E35EC72481484B00B74C25 /* saf_hrir.c */,
 			);
 			path = saf_hrir;
 			sourceTree = "<group>";
@@ -445,42 +429,42 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50E35E5624812EE100B74C25 /* saf_cdf4sap.c in Sources */,
-				50E35E5224812EE100B74C25 /* kiss_fft.c in Sources */,
-				50E35E5824812EE100B74C25 /* saf_hoa.c in Sources */,
-				50E35E5124812EE100B74C25 /* md_malloc.c in Sources */,
-				50E35E5B24812EE100B74C25 /* saf_erb.c in Sources */,
-				50E35E6524812EE100B74C25 /* saf_matrixConv.c in Sources */,
-				50E35E6E24812EE100B74C25 /* saf_default_hrirs.c in Sources */,
-				50E35E6B24812EE100B74C25 /* saf_sofa_reader.c in Sources */,
+				50E35EE22481484B00B74C25 /* saf_sofa_reader.c in Sources */,
+				50E35EE72481484B00B74C25 /* saf_hrir.c in Sources */,
+				50E35ECD2481484B00B74C25 /* saf_cdf4sap.c in Sources */,
+				50E35EE32481484B00B74C25 /* saf_vbap_internal.c in Sources */,
 				50E35D1F2475AECA00B74C25 /* saf_test.c in Sources */,
-				50E35E5E24812EE100B74C25 /* saf_veclib.c in Sources */,
-				50E35E6624812EE100B74C25 /* saf_sensorarray_presets.c in Sources */,
-				50E35E6024812EE100B74C25 /* saf_bessel.c in Sources */,
-				50E35E5724812EE100B74C25 /* saf_hoa_internal.c in Sources */,
-				50E35E5D24812EE100B74C25 /* saf_loudspeaker_presets.c in Sources */,
-				50E35E6C24812EE100B74C25 /* saf_vbap_internal.c in Sources */,
-				50E35E6124812EE100B74C25 /* saf_decor.c in Sources */,
-				50E35E6324812EE100B74C25 /* saf_complex.c in Sources */,
 				508FBDA52456D3300076C205 /* timer.c in Sources */,
-				50E35E5A24812EE100B74C25 /* saf_pitch.c in Sources */,
+				50E35EC92481484B00B74C25 /* kiss_fft.c in Sources */,
+				50E35EDA2481484B00B74C25 /* saf_utility_veclib.c in Sources */,
+				50E35EDF2481484B00B74C25 /* saf_reverb_internal.c in Sources */,
 				508FBDA12456D31F0076C205 /* unity.c in Sources */,
-				50E35E6824812EE100B74C25 /* saf_reverb_internal.c in Sources */,
-				50E35E6424812EE100B74C25 /* saf_filters.c in Sources */,
-				50E35E5C24812EE100B74C25 /* saf_misc.c in Sources */,
-				50E35E5324812EE100B74C25 /* kiss_fftr.c in Sources */,
-				50E35E6924812EE100B74C25 /* saf_sh.c in Sources */,
-				50E35E7024812EE100B74C25 /* saf_hrir.c in Sources */,
-				50E35E5424812EE100B74C25 /* afSTFTlib.c in Sources */,
-				50E35E5524812EE100B74C25 /* convhull_3d.c in Sources */,
-				50E35E5924812EE100B74C25 /* saf_error.c in Sources */,
-				50E35E6A24812EE100B74C25 /* saf_sh_internal.c in Sources */,
+				50E35ED82481484B00B74C25 /* saf_utility_complex.c in Sources */,
+				50E35EE12481484B00B74C25 /* saf_sh_internal.c in Sources */,
+				50E35EDB2481484B00B74C25 /* saf_utility_sort.c in Sources */,
+				50E35EE02481484B00B74C25 /* saf_sh.c in Sources */,
+				50E35ED12481484B00B74C25 /* saf_utility_bessel.c in Sources */,
+				50E35ED62481484B00B74C25 /* saf_utility_erb.c in Sources */,
+				50E35ED02481484B00B74C25 /* saf_utility_sensorarray_presets.c in Sources */,
+				50E35ED22481484B00B74C25 /* saf_utility_fft.c in Sources */,
+				50E35ECC2481484B00B74C25 /* convhull_3d.c in Sources */,
+				50E35EE62481484B00B74C25 /* saf_hrir_internal.c in Sources */,
+				50E35EDC2481484B00B74C25 /* saf_utility_matrixConv.c in Sources */,
+				50E35ECA2481484B00B74C25 /* md_malloc.c in Sources */,
+				50E35ED72481484B00B74C25 /* saf_utility_filters.c in Sources */,
+				50E35ECE2481484B00B74C25 /* saf_hoa_internal.c in Sources */,
+				50E35ED32481484B00B74C25 /* saf_utility_misc.c in Sources */,
+				50E35ED52481484B00B74C25 /* saf_utility_pitch.c in Sources */,
+				50E35ED92481484B00B74C25 /* saf_utility_loudspeaker_presets.c in Sources */,
 				50E35E732481353300B74C25 /* saf_test_wrapper.cpp in Sources */,
-				50E35E6224812EE100B74C25 /* saf_sort.c in Sources */,
-				50E35E6F24812EE100B74C25 /* saf_hrir_internal.c in Sources */,
-				50E35E6D24812EE100B74C25 /* saf_vbap.c in Sources */,
-				50E35E6724812EE100B74C25 /* saf_reverb.c in Sources */,
-				50E35E5F24812EE100B74C25 /* saf_fft.c in Sources */,
+				50E35EDD2481484B00B74C25 /* saf_utility_decor.c in Sources */,
+				50E35EC82481484B00B74C25 /* afSTFTlib.c in Sources */,
+				50E35ED42481484B00B74C25 /* saf_utility_error.c in Sources */,
+				50E35EE52481484B00B74C25 /* saf_default_hrirs.c in Sources */,
+				50E35ECB2481484B00B74C25 /* kiss_fftr.c in Sources */,
+				50E35EDE2481484B00B74C25 /* saf_reverb.c in Sources */,
+				50E35EE42481484B00B74C25 /* saf_vbap.c in Sources */,
+				50E35ECF2481484B00B74C25 /* saf_hoa.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -662,7 +646,8 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
-					"../framework/include/**",
+					../framework/resources/include,
+					"../framework/modules/include/**",
 					timer,
 					../dependencies/MacOSX/include,
 					/opt/intel/compilers_and_libraries/mac/mkl/include,
@@ -717,7 +702,8 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
-					"../framework/include/**",
+					../framework/resources/include,
+					"../framework/modules/include/**",
 					timer,
 					../dependencies/MacOSX/include,
 					/opt/intel/compilers_and_libraries/mac/mkl/include,

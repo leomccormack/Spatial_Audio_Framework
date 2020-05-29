@@ -1,7 +1,18 @@
 cmake_minimum_required(VERSION 3.15)
 
+# Pull version number from main header file
+file(READ "modules/include/saf.h" ver)
+string(REGEX MATCH "SAF_VERSION_MAJOR ([0-9]*)" _ ${ver})
+set(ver_major ${CMAKE_MATCH_1})
+string(REGEX MATCH "SAF_VERSION_MINOR ([0-9]*)" _ ${ver})
+set(ver_minor ${CMAKE_MATCH_1})
+string(REGEX MATCH "SAF_VERSION_PATCH ([0-9]*)" _ ${ver})
+set(ver_patch ${CMAKE_MATCH_1})
+set(SAF_VERSION "${ver_major}.${ver_minor}.${ver_patch}")
+message("SAF Version: ${SAF_VERSION}")
+
 # Configure project
-project(saf VERSION 1.0.0 LANGUAGES C)
+project(saf VERSION ${SAF_VERSION} LANGUAGES C)
 add_library(${PROJECT_NAME} SHARED)
 set_target_properties(${PROJECT_NAME}
 PROPERTIES
@@ -9,19 +20,13 @@ PROPERTIES
     SOVERSION ${PROJECT_VERSION}
 )
 
-# Source
+# Framework source and include files pulled from subdirectories
 add_subdirectory(modules)
 add_subdirectory(resources)
 
-# Main include header
-target_include_directories(${PROJECT_NAME}
-PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>  
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-)
-
 include(GNUInstallDirs)
 
+# User settings
 add_compile_definitions(SAF_USE_INTEL_MKL)
 
 set(INTEL_MKL_HEADER_PATH "/opt/intel/compilers_and_libraries/mac/mkl/include")

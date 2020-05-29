@@ -34,8 +34,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "saf_complex.h"
-#include "saf_error.h"
+#include "saf_utility_complex.h"
+#include "saf_utility_error.h"
 
 /* ========================================================================== */
 /*                                    Enums                                   */

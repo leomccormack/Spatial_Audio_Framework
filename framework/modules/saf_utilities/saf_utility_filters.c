@@ -22,7 +22,7 @@
  * @date 01.03.2019
  */
 
-#include "saf_filters.h" 
+#include "saf_utility_filters.h"
 #include "saf_utilities.h"
 
 /** Main structure for the Favrot&Faller filterbank */

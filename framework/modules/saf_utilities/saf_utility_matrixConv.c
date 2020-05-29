@@ -24,7 +24,7 @@
  */
 
 #include "saf_utilities.h"
-#include "saf_matrixConv.h"
+#include "saf_utility_matrixConv.h"
 
 
 /* ========================================================================== */

@@ -33,7 +33,7 @@
  */
 
 #include "saf_utilities.h"
-#include "saf_fft.h"
+#include "saf_utility_fft.h"
 
 /**
  * Data structure for short-time Fourier transform

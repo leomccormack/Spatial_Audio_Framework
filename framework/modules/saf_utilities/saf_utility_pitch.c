@@ -23,7 +23,7 @@
  */
 
 #include "saf_utilities.h"
-#include "saf_pitch.h"
+#include "saf_utility_pitch.h"
 
 /**
  * Enables the use of the saf_fft wrapper, instead of "smbFft" used in the

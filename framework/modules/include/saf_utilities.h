@@ -142,7 +142,7 @@
 /* ========================================================================== */
     
 /* for error message handling */
-#include "saf_error.h"
+#include "saf_utility_error.h"
 /* for allocating multi-dimensional arrays */
 #include "md_malloc.h"
 /* default FFT implementation, if no optimised implementation is available */
@@ -151,32 +151,32 @@
 /* for generating 3-D convex hulls */
 #include "convhull_3d.h"
 /* for cross-platform complex numbers wrapper */
-#include "saf_complex.h"
+#include "saf_utility_complex.h"
 /* for sorting vectors */
-#include "saf_sort.h"
+#include "saf_utility_sort.h"
 /* filter coefficients (IIR/FIR) */
-#include "saf_filters.h"
+#include "saf_utility_filters.h"
 /* Many handy linear algebra functions based on CBLAS/LAPACK/IntelMKL/Accelerate */
-#include "saf_veclib.h"
+#include "saf_utility_veclib.h"
 /* For computing spherical/cylindrical Bessel and Hankel functions */
-#include "saf_bessel.h"
+#include "saf_utility_bessel.h"
 /* optimised FFT routines */
-#include "saf_fft.h"
+#include "saf_utility_fft.h"
 /* matrix convolver */
-#include "saf_matrixConv.h"
+#include "saf_utility_matrixConv.h"
 /* pitch shifting algorithms */
-#include "saf_pitch.h"
+#include "saf_utility_pitch.h"
 /* for decorrelators */
-#include "saf_decor.h"
+#include "saf_utility_decor.h"
 /* for determining ERBs */
-#include "saf_erb.h"
+#include "saf_utility_erb.h"
 /* for misc. functions */
-#include "saf_misc.h"
+#include "saf_utility_misc.h"
 /* various presets for loudspeaker arrays and uniform distributions of points on
  * spheres. */
-#include "saf_loudspeaker_presets.h"
+#include "saf_utility_loudspeaker_presets.h"
 /* various presets for microphone and hydrophone arrays. */
-#include "saf_sensorarray_presets.h"
+#include "saf_utility_sensorarray_presets.h"
 
 
 #endif /* __SAF_UTILITIES_H_INCLUDED__ */

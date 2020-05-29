@@ -17,21 +17,27 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_sh/saf_sh_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_sh/saf_sh.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_sofa_reader/saf_sofa_reader.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_bessel.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_complex.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_decor.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_erb.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_error.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_fft.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_filters.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_loudspeaker_presets.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_matrixConv.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_misc.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_pitch.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_sensorarray_presets.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_sort.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_veclib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_bessel.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_complex.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_decor.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_erb.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_error.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_fft.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_filters.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_loudspeaker_presets.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_matrixConv.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_misc.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_pitch.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_sensorarray_presets.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_sort.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_veclib.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap_internal.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap.c
+)
+
+target_include_directories(${PROJECT_NAME}
+PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>  
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )

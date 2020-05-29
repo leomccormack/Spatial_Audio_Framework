@@ -45,7 +45,7 @@ extern "C" {
 #include <math.h>
 #include <assert.h>
 #include <limits.h>
-#include "saf_complex.h"
+#include "saf_utility_complex.h"
 
 /**
  * Options for how the frequency domain data is permuted when using saf_stft
