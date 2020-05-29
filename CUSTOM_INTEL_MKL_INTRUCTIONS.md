@@ -1,45 +1,21 @@
-# Acquiring and linking a custom [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries) library tailored for SAF 
+# Building and linking a custom Intel MKL library tailored for SAF 
 
-The Spatial_Audio_Framework (SAF) requires any library (or combination of libraries) which supports the CBLAS and LAPACK standards. Personally, we like Intel MKL for this task, as it works well and also has an optimised FFT implementation which SAF can use too. 
+The Spatial_Audio_Framework (SAF) requires any library (or combination of libraries) that supports the CBLAS and LAPACK standards. Personally, we like Intel MKL for this task, as it works well and also has an optimised FFT implementation that SAF can use too. 
 
-Note that you may link directly to the Intel MKL static or dynamic libraries, but these are stupidly huge. This is why we like to use the MKL builder to build a custom MKL library, and below are instructions for Windows/MacOSX/Linux users rocking x86_64/amd64 CPUs.
+Unfortunetly, while you can indeed link directly to the Intel MKL static/shared libraries, these are files stupidly huge. This is why we use the MKL builder to build a custom MKL library, which contains only the routines that SAF will actually use.
+
+Instructions for Windows, MacOSX, and Linux users rocking x86_64/amd64 CPUs, can be found below.
 
 ## Windows (64-bit) users
 
-Note: use the "x64 Developer Command Prompt for VS.exe" (open as administrator) to run the following commands.
-
 1. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). 
 
-2. The required custom library may be obtained by first copying the included "**dependencies/saf_mkl_list**" file into the MKL "builder" folder:
+2. Open "x64 Developer Command Prompt for VS.exe" as **administrator**.
+
+3. Run the following batch script
 
 ```
-xcopy saf_mkl_list C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder /R
-```
-
-3. EITHER (The blue pill): to generate and copy the "**saf_mkl_custom.dll**" library to a system path folder, and the "**saf_mkl_custom.lib**" for you to use locally, enter the following commands:
-
-```
-cd /Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
-nmake intel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_mkl_list
-
-xcopy saf_mkl_custom.dll C:\Windows\System32 /R
-xcopy saf_mkl_custom.lib C:\Users\[YOUR WORKING DIRECTORY]\Spatial_Audio_Framework\dependencies\Win64\lib /R
-```
-
-3. OR (The red pill): you may instead build a threaded version of the library (which involves some additional steps):
-
-```
-cd /Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
-nmake intel64 interface=lp64 threading=parallel name=saf_mkl_custom export=saf_mkl_list
-
-xcopy saf_mkl_custom.dll C:\Windows\System32 /R
-xcopy saf_mkl_custom.lib C:\Users\[YOUR WORKING DIRECTORY]\Spatial_Audio_Framework\dependencies\Win64\lib /R
-
-cd C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/compiler/lib/intel64/ 
-xcopy libiomp5md.lib C:\Users\[YOUR WORKING DIRECTORY]\Spatial_Audio_Framework\dependencies\Win64\lib /R
-
-cd C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/redist/intel64/compiler
-xcopy libiomp5md.dll C:\Windows\System32 /R
+install-safmkl.bat
 ```
 
 4. Add the following header search path to your project:

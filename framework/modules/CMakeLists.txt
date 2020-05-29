@@ -1,0 +1,37 @@
+
+# Source
+target_sources(${PROJECT_NAME}
+PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_cdf4sap/saf_cdf4sap.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_hoa/saf_hoa_internal.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_hoa/saf_hoa_internal.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_hoa/saf_hoa.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_hrir/saf_default_hrirs.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_hrir/saf_hrir_internal.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_hrir/saf_hrir_internal.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_hrir/saf_hrir.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_reverb/saf_reverb_internal.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_reverb/saf_reverb_internal.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_reverb/saf_reverb.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_sh/saf_sh_internal.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_sh/saf_sh_internal.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_sh/saf_sh.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_sofa_reader/saf_sofa_reader.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_bessel.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_complex.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_decor.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_erb.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_error.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_fft.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_filters.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_loudspeaker_presets.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_matrixConv.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_misc.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_pitch.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_sensorarray_presets.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_sort.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_veclib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap_internal.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap_internal.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap.c
+)
