@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
 
+# Check required variables are defined
+if(NOT DEFINED SAF_PERF_LIB)
+    message(FATAL_ERROR "You must set the SAF_PERF_LIB environment variable")
+endif()
+
 # Pull version number from main header file
 file(READ "modules/include/saf.h" ver)
 string(REGEX MATCH "SAF_VERSION_MAJOR ([0-9]*)" _ ${ver})
@@ -9,9 +14,9 @@ set(ver_minor ${CMAKE_MATCH_1})
 string(REGEX MATCH "SAF_VERSION_PATCH ([0-9]*)" _ ${ver})
 set(ver_patch ${CMAKE_MATCH_1})
 set(SAF_VERSION "${ver_major}.${ver_minor}.${ver_patch}")
-message("SAF Version: ${SAF_VERSION}")
+message("-- **** SAF Version: ${SAF_VERSION} ****")
 
-# Info
+# Display system info
 message("-- ${CMAKE_SYSTEM_INFO_FILE}, name: ${CMAKE_SYSTEM_NAME}, arch: ${CMAKE_SYSTEM_PROCESSOR}, sys: ${CMAKE_SYSTEM}")
 
 # Configure project
@@ -28,7 +33,7 @@ add_subdirectory(modules)
 add_subdirectory(resources)
 include(GNUInstallDirs)
 
-# User configuration options
+# Performance library to employ
 if( ${SAF_PERF_LIB} MATCHES "SAF_USE_INTEL_MKL" )
     message("-- Using Intel MKL...")
 	
@@ -66,6 +71,42 @@ elseif( ${SAF_PERF_LIB} MATCHES "SAF_USE_ATLAS")
 	message(SEND_ERROR "Not yet supported! Please contribute if you use this library.")
 else()
     message(SEND_ERROR "No performance library was specified") 
+endif()
+
+# Sofa reader module
+if(NOT DEFINED ENABLE_SOFA_READER)
+    message("-- ENABLE_SOFA_READER is not defined... The saf_sofa_reader module will not be enabled")
+else()
+	# Indicate to SAF, that the saf_sofa_reader module shoud be enabled
+	target_compile_definitions(${PROJECT_NAME} PRIVATE SAF_ENABLE_SOFA_READER=1)
+	
+	# Header path and libs are platform dependent
+    if(MSVC OR MSYS OR MINGW) 
+		target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include)
+		target_link_libraries(${PROJECT_NAME} 
+		PRIVATE 
+		    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/netcdf.lib
+			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5.lib
+			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libzlib.lib
+			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libszip.lib
+			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5_hl.lib
+		) 
+	elseif(APPLE)
+        target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/include)
+		target_link_libraries(${PROJECT_NAME} 
+		PRIVATE 
+		    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/netcdf.a
+			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/hdf5.a
+			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/zlib.a
+			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/szip.a
+			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/hdf5_hl.a
+		) 
+	elseif(UNIX AND NOT APPLE) 
+	    message(SEND_ERROR "Incomplete") 
+	endif()
+	
+	# Add target header paths and libs
+    
 endif()
 
 # sets the _EXPORT #define for the target (library) to ensure the functions are exported (visible)
