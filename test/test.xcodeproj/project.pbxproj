@@ -214,11 +214,11 @@
 		50E35E782481484B00B74C25 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				50E35E792481484B00B74C25 /* convhull_3d.h */,
 				50E35E7A2481484B00B74C25 /* afSTFTlib.h */,
+				50E35E792481484B00B74C25 /* convhull_3d.h */,
 				50E35E7B2481484B00B74C25 /* kiss_fft.h */,
-				50E35E7C2481484B00B74C25 /* md_malloc.h */,
 				50E35E7D2481484B00B74C25 /* kiss_fftr.h */,
+				50E35E7C2481484B00B74C25 /* md_malloc.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -226,13 +226,13 @@
 		50E35E7E2481484B00B74C25 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				50E35E7F2481484B00B74C25 /* afSTFTlib.c */,
-				50E35E802481484B00B74C25 /* kiss_fft.c */,
-				50E35E812481484B00B74C25 /* md_malloc.c */,
-				50E35E822481484B00B74C25 /* kiss_fftr.c */,
 				50E35E832481484B00B74C25 /* _kiss_fft_guts.h */,
 				50E35E842481484B00B74C25 /* afSTFT_protoFilter.h */,
+				50E35E7F2481484B00B74C25 /* afSTFTlib.c */,
 				50E35E852481484B00B74C25 /* convhull_3d.c */,
+				50E35E802481484B00B74C25 /* kiss_fft.c */,
+				50E35E822481484B00B74C25 /* kiss_fftr.c */,
+				50E35E812481484B00B74C25 /* md_malloc.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
