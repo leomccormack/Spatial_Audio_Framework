@@ -43,8 +43,7 @@
 
 #include "afSTFTlib.h"
 #include "afSTFT_protoFilter.h"
-#ifdef AFSTFT_USE_SAF_UTILITIES
-# include "../../modules/saf_utilities/saf_utilities.h"
+#ifdef AFSTFT_USE_SAF_UTILITIES 
 #else
 /* the vecTools.h/c and fft4g.h/c files, used by the original afSTFTlib
  * may be found here: https://github.com/jvilkamo/afSTFT */

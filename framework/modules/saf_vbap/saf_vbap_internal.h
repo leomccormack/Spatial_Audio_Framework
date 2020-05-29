@@ -35,7 +35,7 @@
 #include <complex.h>
 #include <string.h>
 #include "saf_vbap.h"
-#include "../saf_utilities/saf_utilities.h"
+#include "saf_utilities.h"
 
 #ifdef __cplusplus
 extern "C" {

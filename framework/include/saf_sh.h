@@ -37,7 +37,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "../saf_utilities/saf_complex.h"
+#include "saf_complex.h"
 
 /**
  * Converts spherical harmonic order, to number of spherical harmonic components

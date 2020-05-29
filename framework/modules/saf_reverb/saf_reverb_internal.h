@@ -32,8 +32,8 @@
 #include <string.h>
 #include <assert.h>
 #include "saf_reverb.h"
-#include "../saf_utilities/saf_utilities.h"
-#include "../saf_sh/saf_sh.h"
+#include "saf_utilities.h"
+#include "saf_sh.h"
 
 #ifdef __cplusplus
 extern "C" {

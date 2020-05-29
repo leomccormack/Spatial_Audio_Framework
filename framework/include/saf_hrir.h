@@ -34,7 +34,7 @@
 extern "C" {
 #endif /* __cplusplus */
     
-#include "../saf_utilities/saf_utilities.h"
+#include "saf_utilities.h"
     
 /* ========================================================================== */
 /*                               Default HRIRs                                */

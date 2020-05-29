@@ -25,7 +25,7 @@
  */
 
 #include "saf_sofa_reader.h"
-#include "../saf_hrir/saf_hrir.h" /* for access to default HRIR data */
+#include "saf_hrir.h" /* for access to default HRIR data */
 
 #ifdef SAF_ENABLE_SOFA_READER
 

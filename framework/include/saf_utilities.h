@@ -142,40 +142,41 @@
 /* ========================================================================== */
     
 /* for error message handling */
-#include "../saf_utilities/saf_error.h"
+#include "saf_error.h"
 /* for allocating multi-dimensional arrays */
-#include "../../resources/md_malloc/md_malloc.h"
+#include "md_malloc.h"
 /* default FFT implementation, if no optimised implementation is available */
-#include "../../resources/kissFFT/kiss_fftr.h"
+#include "kiss_fftr.h"
+#include "kiss_fft.h"
 /* for generating 3-D convex hulls */
-#include "../../resources/convhull_3d/convhull_3d.h"
+#include "convhull_3d.h"
 /* for cross-platform complex numbers wrapper */
-#include "../saf_utilities/saf_complex.h"
+#include "saf_complex.h"
 /* for sorting vectors */
-#include "../saf_utilities/saf_sort.h"
+#include "saf_sort.h"
 /* filter coefficients (IIR/FIR) */
-#include "../saf_utilities/saf_filters.h"
+#include "saf_filters.h"
 /* Many handy linear algebra functions based on CBLAS/LAPACK/IntelMKL/Accelerate */
-#include "../saf_utilities/saf_veclib.h"
+#include "saf_veclib.h"
 /* For computing spherical/cylindrical Bessel and Hankel functions */
-#include "../saf_utilities/saf_bessel.h"
+#include "saf_bessel.h"
 /* optimised FFT routines */
-#include "../saf_utilities/saf_fft.h"
+#include "saf_fft.h"
 /* matrix convolver */
-#include "../saf_utilities/saf_matrixConv.h"
+#include "saf_matrixConv.h"
 /* pitch shifting algorithms */
-#include "../saf_utilities/saf_pitch.h"
+#include "saf_pitch.h"
 /* for decorrelators */
-#include "../saf_utilities/saf_decor.h"
+#include "saf_decor.h"
 /* for determining ERBs */
-#include "../saf_utilities/saf_erb.h"
+#include "saf_erb.h"
 /* for misc. functions */
-#include "../saf_utilities/saf_misc.h"
+#include "saf_misc.h"
 /* various presets for loudspeaker arrays and uniform distributions of points on
  * spheres. */
-#include "../saf_utilities/saf_loudspeaker_presets.h"
+#include "saf_loudspeaker_presets.h"
 /* various presets for microphone and hydrophone arrays. */
-#include "../saf_utilities/saf_sensorarray_presets.h"
+#include "saf_sensorarray_presets.h"
 
 
 #endif /* __SAF_UTILITIES_H_INCLUDED__ */

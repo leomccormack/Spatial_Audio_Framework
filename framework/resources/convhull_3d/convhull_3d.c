@@ -47,7 +47,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "convhull_3d.h"
-#include "../../modules/saf_utilities/saf_utilities.h"
+#include "saf_utilities.h"
 
 #define CONVHULL_3D_USE_CBLAS
 

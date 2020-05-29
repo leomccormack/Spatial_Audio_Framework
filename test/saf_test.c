@@ -22,13 +22,10 @@
  * @date 27.04.2020
  */
 
-#if _MSC_VER >= 1900
-# include "saf_test.h" /* Only required when using the C++ wrapper */
-#endif
+#include "saf_test.h"
 #include "unity.h" /* unit testing suite */
 #include "timer.h" /* for timing the individual tests */
 #include "saf.h"   /* framework include header */
-
 
 /* ========================================================================== */
 /*                    Prototypes for available unit tests                     */
@@ -116,13 +113,8 @@ if (TEST_PROTECT()) {  setUp();  testfunc();  } \
 if (TEST_PROTECT() && (!TEST_IS_IGNORED))  {tearDown(); } \
 UnityConcludeTest(); timerResult();
 
-#if _MSC_VER >= 1900
-/** Only used for the C++ wrapper */
-int main_test(void) {
-#else
 /** Main test program */
-int main(void) {
-#endif
+int main_test(void) {
  printf("*****************************************************************\n"
         "********* Spatial_Audio_Framework Unit Testing Program **********\n"
         "*****************************************************************\n");
