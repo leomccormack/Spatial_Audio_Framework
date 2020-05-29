@@ -27,19 +27,26 @@ add_subdirectory(resources)
 include(GNUInstallDirs)
 
 # User settings
-add_compile_definitions(SAF_USE_INTEL_MKL)
+if( ${SAF_PERF_LIB} MATCHES "SAF_USE_INTEL_MKL" )
+    message("Using Intel MKL...")
+    add_compile_definitions(SAF_USE_INTEL_MKL)
 
-set(INTEL_MKL_HEADER_PATH "/opt/intel/compilers_and_libraries/mac/mkl/include")
-set(INTEL_MKL_LIB "/usr/local/lib/libsaf_mkl_custom.dylib")
+    set(INTEL_MKL_HEADER_PATH "/opt/intel/compilers_and_libraries/mac/mkl/include")
+    set(INTEL_MKL_LIB "/usr/local/lib/libsaf_mkl_custom.dylib")
 
-target_include_directories(${PROJECT_NAME} 
-PRIVATE 
-    ${INTEL_MKL_HEADER_PATH}
-)
-target_link_libraries(${PROJECT_NAME}
-PRIVATE 
-    ${INTEL_MKL_LIB}
-)
+    target_include_directories(${PROJECT_NAME} PRIVATE
+        ${INTEL_MKL_HEADER_PATH}
+    )
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        ${INTEL_MKL_LIB}
+    )
+elseif( ${SAF_PERF_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
+    message("Using openBLAS...")
+elseif( ${SAF_PERF_LIB} MATCHES "SAF_USE_ATLAS")
+    message("Using ATLAS...")
+else()
+    message(SEND_ERROR "No performance library was specified")
+endif()
 
 # sets the _EXPORT #define for the target (library)
 # to ensure the functions are exported (visible)

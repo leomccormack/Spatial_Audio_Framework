@@ -82,7 +82,7 @@ Detailed instructions regarding how to use the functions offered by each framewo
 For those who would prefer to use the framework as a more conventional library, then CMake is your friend:
 ```
 mkdir build
-cmake -S . -B build -DCMAKE_INSTALL_PREFIX="build"
+cmake -S . -B build -DCMAKE_INSTALL_PREFIX="build" -DCMAKE_BUILD_TYPE="Release" -DSAF_PERF_LIB="SAF_USE_INTEL_MKL" 
 cd build
 make install
 ```
