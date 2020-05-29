@@ -35,7 +35,7 @@ include(GNUInstallDirs)
 
 # Performance library to employ
 if( ${SAF_PERF_LIB} MATCHES "SAF_USE_INTEL_MKL" )
-    message("-- Using Intel MKL...")
+    message("-- Using Intel MKL. Linking against saf_mkl_custom library...")
 	
 	# Indicate to SAF, that it should use Intel MKL as the performance library
     #add_compile_definitions(SAF_USE_INTEL_MKL)
@@ -75,36 +75,41 @@ endif()
 
 # Sofa reader module
 if(NOT DEFINED SAF_ENABLE_SOFA_READER)
-    message("-- SAF_ENABLE_SOFA_READER is not defined... The saf_sofa_reader module will not be enabled.")
+    message("-- SAF_ENABLE_SOFA_READER is not defined. saf_sofa_reader module disabled...")
 else()
-	# Indicate that the saf_sofa_reader module should be enabled
-	target_compile_definitions(${PROJECT_NAME} PRIVATE SAF_ENABLE_SOFA_READER=${SAF_ENABLE_SOFA_READER})
-	
-	# Header path and libs are platform dependent
-    if(MSVC OR MSYS OR MINGW) 
-		target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include)
-		target_link_libraries(${PROJECT_NAME} 
-		PRIVATE 
-		    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/netcdf.lib
-			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5.lib
-			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libzlib.lib
-			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libszip.lib
-			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5_hl.lib
-		) 
-	elseif(APPLE)
-        target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/include)
-		target_link_libraries(${PROJECT_NAME} 
-		PRIVATE 
-		    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libnetcdf.a
-			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5.a
-			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libz.a 
-			${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5_hl.a
-		) 
-	elseif(UNIX AND NOT APPLE) 
-	    message(SEND_ERROR "Incomplete") 
+    if(SAF_ENABLE_SOFA_READER MATCHES 0)
+        message("-- saf_sofa_reader module disabled.")
+	else()
+	    message("-- saf_sofa_reader module enabled. Linking against netcdf...")
+
+		# Indicate that the saf_sofa_reader module should be enabled
+		target_compile_definitions(${PROJECT_NAME} PRIVATE SAF_ENABLE_SOFA_READER=${SAF_ENABLE_SOFA_READER})
+		
+		# Header path and libs are platform dependent
+	    if(MSVC OR MSYS OR MINGW) 
+			target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include)
+			target_link_libraries(${PROJECT_NAME} 
+			PRIVATE 
+			    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/netcdf.lib
+				${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5.lib
+				${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libzlib.lib
+				${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libszip.lib
+				${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5_hl.lib
+			) 
+		elseif(APPLE)
+	        target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/include)
+			target_link_libraries(${PROJECT_NAME} 
+			PRIVATE 
+			    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libnetcdf.a
+				${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5.a
+				${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libz.a 
+				${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5_hl.a
+			) 
+		elseif(UNIX AND NOT APPLE) 
+		    message(SEND_ERROR "Incomplete") 
+		endif()
+		
 	endif()
-	
-	# Add target header paths and libs
     
 endif()
 
@@ -137,3 +142,4 @@ DIRECTORY
 DESTINATION
     ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
 )
+

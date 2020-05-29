@@ -85,6 +85,7 @@ mkdir build
 cmake -S . -B build -DCMAKE_INSTALL_PREFIX="build" -DCMAKE_BUILD_TYPE="Release" -DSAF_PERF_LIB="SAF_USE_INTEL_MKL" -DSAF_ENABLE_SOFA_READER=1
 cd build
 make install
+test/test # Optional, to run unit tests
 ```
 Note, however, that this is relatively new feature, which has not been fully implemented and tested.
 
