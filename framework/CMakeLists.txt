@@ -20,7 +20,7 @@ PROPERTIES
     SOVERSION ${PROJECT_VERSION}
 )
 
-# Framework source and include files pulled from subdirectories
+# Framework source and include files are pulled from subdirectories
 add_subdirectory(modules)
 add_subdirectory(resources)
 
