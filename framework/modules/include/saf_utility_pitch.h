@@ -15,8 +15,8 @@
  */
 
 /**
- * @file saf_pitch.h
- * @brief Collection of pitch shifting algorithms
+ * @file saf_utility_pitch.h
+ * @brief Utility: A collection of pitch shifting algorithms
  *
  * @author Leo McCormack
  * @date 04.05.2020

@@ -16,10 +16,10 @@
 
 /**
  * @file saf_sofa_reader.h 
- * @brief A simple sofa reader, which returns only the bare minimum
+ * @brief Main header for the sofa reader module (saf_sofa_reader)
  *
- * @note This (optional) SOFA reader, requires netcdf to be linked to the
- *       project.
+ * @note This (optional) SOFA reader, which returns only the bare minimum,
+ *       requires netcdf to be linked to the project.
  *
  * @author Leo McCormack
  * @date 21.11.2017

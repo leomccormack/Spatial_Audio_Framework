@@ -15,9 +15,8 @@
  */
 
 /**
- * @file saf_matrixConv.c
- * @brief Matrix convolver functions mostly taken from some Matlab scripts by
- *        Archontis Politis
+ * @file saf_utility_matrixConv.c
+ * @brief Utility: Matrix convolver functions
  *
  * @author Leo McCormack
  * @date 06.04.2019

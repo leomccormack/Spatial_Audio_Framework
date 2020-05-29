@@ -6,6 +6,12 @@
  *  See COPYING file for more information.
  */
 
+/**
+ * @file kiss_fftr.c
+ * @brief KISS real FFT, taken from: https://github.com/mborgerding/kissfft
+ * @author Mark Borgerding
+ */
+
 #include "kiss_fftr.h"
 #include "_kiss_fft_guts.h"
 

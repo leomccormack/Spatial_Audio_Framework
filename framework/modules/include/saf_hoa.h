@@ -16,7 +16,7 @@
 
 /**
  * @file saf_hoa.h
- * @brief Public part of the higher-order Ambisonics module (saf_hoa)
+ * @brief Main header for the higher-order Ambisonics module (saf_hoa)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
  * the Matlab library by Archontis Politis [1].

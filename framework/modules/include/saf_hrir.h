@@ -16,7 +16,7 @@
 
 /**
  * @file saf_hrir.h
- * @brief Public part of the HRIR/HRTF processing module (saf_hrir)
+ * @brief Main header for the HRIR/HRTF processing module (saf_hrir)
  *
  * A collection of head-related impulse-response (HRIR) functions. Including
  * estimation of the interaural time differences (ITDs), conversion of HRIRs to

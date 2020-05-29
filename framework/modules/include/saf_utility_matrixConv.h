@@ -15,9 +15,10 @@
  */
 
 /**
- * @file saf_matrixConv.h
- * @brief Matrix convolver functions mostly taken from some Matlab scripts by
- *        Archontis Politis
+ * @file saf_utility_matrixConv.h
+ * @brief Utility: Matrix convolver functions
+ *
+ * These have been mostly derived from some Matlab scripts by Archontis Politis
  *
  * @author Leo McCormack
  * @date 06.04.2019 

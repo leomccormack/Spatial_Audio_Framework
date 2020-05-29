@@ -15,8 +15,8 @@
  */
 
 /**
- * @file saf_veclib.h
- * @brief Contains wrappers for optimised linear algebra routines, utilising
+ * @file saf_utility_veclib.h
+ * @brief Utility: Wrappers for optimised linear algebra routines, utilising
  *        CBLAS and LAPACK
  *
  * ## Dependencies

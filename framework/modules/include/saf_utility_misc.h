@@ -15,8 +15,8 @@
  */
 
 /**
- * @file saf_misc.h
- * @brief Miscellaneous functions
+ * @file saf_utility_misc.h
+ * @brief Utility: A collection of miscellaneous functions
  *
  * @author Leo McCormack
  * @date 29.01.2020 

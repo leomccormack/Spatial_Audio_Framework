@@ -16,7 +16,7 @@
 
 /**
  * @file saf_reverb.h
- * @brief Public part of the reverb processing module (saf_reverb)
+ * @brief Main header for the reverb processing module (saf_reverb)
  *
  * A collection of reverb and room simulation algorithms.
  *

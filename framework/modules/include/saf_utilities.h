@@ -16,9 +16,11 @@
 
 /**
  * @file saf_utilities.h  
- * @brief Contains a collection of useful memory allocation functions, cross-
- *        platform complex number wrappers, and optimised linear algebra
- *        routines utilising BLAS and LAPACK
+ * @brief Main header for the utilities module (saf_utilities)
+ *
+ * Contains a collection of useful memory allocation functions, cross-platform
+ * complex number wrappers, and optimised linear algebra routines utilising BLAS
+ * and LAPACK.
  *
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by

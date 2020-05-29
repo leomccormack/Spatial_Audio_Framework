@@ -16,7 +16,7 @@
 
 /**
  * @file saf_sh.h
- * @brief Public part of the Spherical Harmonic Transform and Spherical Array
+ * @brief Main header for the Spherical Harmonic Transform and Spherical Array
  *        Processing module (saf_sh)
  *
  * A collection of spherical harmonic related functions. Many of which have been

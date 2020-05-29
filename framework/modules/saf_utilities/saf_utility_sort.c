@@ -15,8 +15,8 @@
  */
 
 /**
- * @file saf_sort.c
- * @brief Contains some useful sorting functions
+ * @file saf_utility_sort.c
+ * @brief Utility: A collection of useful sorting functions
  *
  * @author Leo McCormack
  * @date 30.07.2018
