@@ -77,6 +77,18 @@ The framework's master include header is then:
 
 Detailed instructions regarding how to use the functions offered by each framework module, is provided in the main header file for the respective module (e.g. "/modules/saf_sh/saf_sh.h", or "/modules/saf_vbap/saf_vbap.h").
 
+### Building with CMake 
+
+For those who would prefer to use the framework as a more conventional library, then CMake is your friend:
+```
+mkdir build
+cmake -S . -B build -DCMAKE_INSTALL_PREFIX="build"
+cd build
+make install
+```
+Note, however, that this is relatively new feature, which has not been fully implemented and tested.
+
+
 ### Documentation
 
 Documentation generated using [Doxygen](http://www.doxygen.nl/index.html) may also be found [here](http://research.spa.aalto.fi/projects/spatial_audio_framework/index.html).
@@ -111,6 +123,7 @@ Many examples have been included in the repository, which may also serve as a st
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors; as proposed in [8]. 
 
 Note that many of these examples have also been integrated into VST audio plug-ins using the JUCE framework and can be found [here](https://github.com/leomccormack/SPARTA).   
+
 
 
 ## Contributing

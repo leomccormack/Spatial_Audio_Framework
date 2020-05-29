@@ -1,6 +1,7 @@
 doxygen/html
 doxygen/latex
 xcuserdata/
+build/
 x64/
 .vs/
 *.DS_Store
