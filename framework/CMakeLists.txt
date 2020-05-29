@@ -11,6 +11,9 @@ set(ver_patch ${CMAKE_MATCH_1})
 set(SAF_VERSION "${ver_major}.${ver_minor}.${ver_patch}")
 message("SAF Version: ${SAF_VERSION}")
 
+# Info
+message("-- ${CMAKE_SYSTEM_INFO_FILE}, name: ${CMAKE_SYSTEM_NAME}, arch: ${CMAKE_SYSTEM_PROCESSOR}, sys: ${CMAKE_SYSTEM}")
+
 # Configure project
 project(saf VERSION ${SAF_VERSION} LANGUAGES C)
 add_library(${PROJECT_NAME} SHARED)
@@ -23,41 +26,57 @@ PROPERTIES
 # Framework source and include files are pulled from subdirectories
 add_subdirectory(modules)
 add_subdirectory(resources)
-
 include(GNUInstallDirs)
 
-# User settings
+# User configuration options
 if( ${SAF_PERF_LIB} MATCHES "SAF_USE_INTEL_MKL" )
-    message("Using Intel MKL...")
-    add_compile_definitions(SAF_USE_INTEL_MKL)
+    message("-- Using Intel MKL...")
+	
+	# Indicate to SAF, that it should emply Intel MKL as the performance library
+    #add_compile_definitions(SAF_USE_INTEL_MKL)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_INTEL_MKL=1)
 
-    set(INTEL_MKL_HEADER_PATH "/opt/intel/compilers_and_libraries/mac/mkl/include")
-    set(INTEL_MKL_LIB "/usr/local/lib/libsaf_mkl_custom.dylib")
+	# Header path and libs are platform dependent
+	if(MSVC) 
+		set(INTEL_MKL_HEADER_PATH "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include")
+        set(INTEL_MKL_LIB "C:/Windows/System32/saf_mkl_custom.dll") 
+		set(INTEL_MKL_LIB_WIN_LOCAL "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_mkl_custom.lib") 
+		target_link_libraries(${PROJECT_NAME} PRIVATE ${INTEL_MKL_LIB_WIN_LOCAL} )
+	elseif(MSYS OR MINGW) 
+		set(INTEL_MKL_HEADER_PATH "/c/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include")
+        set(INTEL_MKL_LIB "/c/Windows/System32/saf_mkl_custom.dll") 
+		set(INTEL_MKL_LIB_WIN_LOCAL "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_mkl_custom.lib") 
+		target_link_libraries(${PROJECT_NAME} PRIVATE ${INTEL_MKL_LIB_WIN_LOCAL} )
+	elseif(APPLE)
+        set(INTEL_MKL_HEADER_PATH "/opt/intel/compilers_and_libraries/mac/mkl/include")
+        set(INTEL_MKL_LIB "/usr/local/lib/libsaf_mkl_custom.dylib")
+	elseif(UNIX AND NOT APPLE)
+	    set(INTEL_MKL_HEADER_PATH "/opt/intel/compilers_and_libraries/mac/mkl/include")
+        set(INTEL_MKL_LIB "/usr/lib/libsaf_mkl_custom.so")
+	endif()
 
-    target_include_directories(${PROJECT_NAME} PRIVATE
-        ${INTEL_MKL_HEADER_PATH}
-    )
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-        ${INTEL_MKL_LIB}
-    )
+	# Add target header paths and libs
+    target_include_directories(${PROJECT_NAME} PUBLIC ${INTEL_MKL_HEADER_PATH} )
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${INTEL_MKL_LIB} )
 elseif( ${SAF_PERF_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
-    message("Using openBLAS...")
+    message("-- Using openBLAS...")
+	message(SEND_ERROR "Not yet supported! Please contribute if you use this library.")
 elseif( ${SAF_PERF_LIB} MATCHES "SAF_USE_ATLAS")
-    message("Using ATLAS...")
+    message("-- Using ATLAS...")
+	message(SEND_ERROR "Not yet supported! Please contribute if you use this library.")
 else()
-    message(SEND_ERROR "No performance library was specified")
+    message(SEND_ERROR "No performance library was specified") 
 endif()
 
-# sets the _EXPORT #define for the target (library)
-# to ensure the functions are exported (visible)
+# sets the _EXPORT #define for the target (library) to ensure the functions are exported (visible)
 target_compile_definitions(${PROJECT_NAME}
 PRIVATE 
     -D_EXPORT
 )
 
-# specify the target to install (calculator library defined above)
-# set the export name <name>-config (does not need to match target name)
-# also specify where the .dylib/.so/.dll+.lib file should be installed
+# Specify the target to install 
+# Set the export name <name>-config (does not need to match target name)
+# Also specify where the .dylib/.so/.dll+.lib file should be installed
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-config
@@ -70,6 +89,7 @@ install(
     NAMESPACE ${PROJECT_NAME}::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
  
+# Install header include folder
 install(
 DIRECTORY
     ${CMAKE_CURRENT_LIST_DIR}/modules/include/
