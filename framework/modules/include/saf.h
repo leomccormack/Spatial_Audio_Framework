@@ -71,7 +71,7 @@
  * @note MacOSX users only: saf_utilities will employ Apple's Accelerate library
  *       by default, if none of the above FLAGS are defined.
  */
-#define SAF_MODULE_UTILITIES_INCLUDED
+#define SAF_MODULE_UTILITIES
 #include "saf_utilities.h"
 
 /**
@@ -89,7 +89,7 @@
  *          time--frequency domain spatial audio. John Wiley & Sons,
  *          Incorporated.
  */
-#define SAF_MODULE_AFSTFT_INCLUDED
+#define SAF_MODULE_AFSTFT
 #include "afSTFTlib.h"
 
 /**
@@ -105,7 +105,7 @@
  *          domain framework for time--frequency processing of spatial audio.
  *          Journal of the Audio Engineering Society, 61(6), 403-411.
  */
-#define SAF_MODULE_CDF4SAP_INCLUDED
+#define SAF_MODULE_CDF4SAP
 #include "saf_cdf4sap.h"
 
 /**
@@ -118,7 +118,7 @@
  * ## Dependencies
  *   saf_utilities, saf_vbap, saf_sh
  */
-#define SAF_MODULE_HOA_INCLUDED
+#define SAF_MODULE_HOA
 #include "saf_hoa.h"
 
 /**
@@ -132,7 +132,7 @@
  * ## Dependencies
  *   saf_utilities, afSTFTlib
  */
-#define SAF_MODULE_HRIR_INCLUDED
+#define SAF_MODULE_HRIR
 #include "saf_hrir.h"
 
 /**
@@ -143,7 +143,7 @@
  * ## Dependencies
  *   saf_utilities, saf_sh
  */
-#define SAF_MODULE_REVERB_INCLUDED
+#define SAF_MODULE_REVERB
 #include "saf_reverb.h"
 
 /**
@@ -158,7 +158,7 @@
  * ## Dependencies
  *   saf_utilities
  */
-#define SAF_MODULE_SH_INCLUDED
+#define SAF_MODULE_SH
 #include "saf_sh.h"
 
 /**
@@ -171,7 +171,7 @@
  * ## Dependencies
  *  saf_utilities
  */
-#define SAF_MODULE_VBAP_INCLUDED
+#define SAF_MODULE_VBAP
 #include "saf_vbap.h"
 
 
@@ -191,7 +191,7 @@
  * ## Dependencies
  *   saf_utilities, saf_hrir, netcdf
  */
-#define SAF_MODULE_SOFA_READER_INCLUDED
+#define SAF_MODULE_SOFA_READER
 #ifdef  SAF_ENABLE_SOFA_READER
 # include "saf_sofa_reader.h"
 #endif /* SAF_ENABLE_SOFA_READER */
