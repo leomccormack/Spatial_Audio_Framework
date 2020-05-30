@@ -119,7 +119,7 @@ int main_test(void) {
         "********* Spatial_Audio_Framework Unit Testing Program **********\n"
         "*****************************************************************\n");
     
-    printf("\nSAF version: %s\n\n", SAF_VERSION);
+    printf("\nSAF version: %s\n\n", SAF_VERSION_STRING);
 
     /* initialise */
     timer_lib_initialize();

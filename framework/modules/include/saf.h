@@ -38,9 +38,15 @@
 #define SAF_VERSION_SPECIAL ""    /**< Append text, "alpha", "beta", "" etc. */
 #define MKSTRING_(s) #s           /**< Stringify */
 #define MKSTRING(s) MKSTRING_(s)  /**< Stringify */
+
 /** The Spatial_Audio_Framework Version */
-#define SAF_VERSION MKSTRING(SAF_VERSION_MAJOR)"."MKSTRING(SAF_VERSION_MINOR)\
-                    "."MKSTRING(SAF_VERSION_PATCH)""SAF_VERSION_SPECIAL
+#define SAF_VERSION ((SAF_VERSION_MAJOR << 16) + (SAF_VERSION_MINOR << 8) + \
+                    SAF_VERSION_PATCH)
+
+/** The Spatial_Audio_Framework Version as string */
+#define SAF_VERSION_STRING MKSTRING(SAF_VERSION_MAJOR)"."MKSTRING( \
+                           SAF_VERSION_MINOR)"."MKSTRING(SAF_VERSION_PATCH)""\
+                           SAF_VERSION_SPECIAL
 
 /* ========================================================================== */
 /*                                Core Modules                                */
