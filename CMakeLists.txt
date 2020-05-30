@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.15)
 
-project(head)
+project(saf_head)
 
 add_subdirectory(framework)
 add_subdirectory(test)
