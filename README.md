@@ -63,10 +63,11 @@ Then add the directory of the "netcdf.h" file to your project's header search pa
 
 ## Using the framework
 
-Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to your project), you can now add the files found in the "framework" folder to your project and add the following directory to your header search paths:
+Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to your project), you can now add the files found in the "framework" folder to your project and add the following 2 directories to your header search paths:
 
 ```
-Spatial_Audio_Framework/framework/include 
+Spatial_Audio_Framework/framework/modules/include   # To include the framework modules
+Spatial_Audio_Framework/framework/resources/include # To include the 3rdparty resources used by the framework
 ```
 
 The framework's master include header is then:
@@ -74,8 +75,6 @@ The framework's master include header is then:
 ```c
 #include "saf.h"
 ```
-
-Detailed instructions regarding how to use the functions offered by each framework module, is provided in the main header file for the respective module (e.g. "/modules/saf_sh/saf_sh.h", or "/modules/saf_vbap/saf_vbap.h").
 
 ### Building with CMake 
 
@@ -87,8 +86,7 @@ cd build
 make install
 test/test # Optional, to run unit tests
 ```
-Note, however, that this is relatively new feature, which has not been fully implemented and tested.
-
+Note, however, that this is relatively new feature which has not been fully implemented and tested. Therefore, please let us know if you encounter any problems or are willing to contribute :- )
 
 ### Documentation
 
@@ -124,8 +122,6 @@ Many examples have been included in the repository, which may also serve as a st
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors; as proposed in [8]. 
 
 Note that many of these examples have also been integrated into VST audio plug-ins using the JUCE framework and can be found [here](https://github.com/leomccormack/SPARTA).   
-
-
 
 ## Contributing
 
