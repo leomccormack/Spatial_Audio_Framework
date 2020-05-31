@@ -32,8 +32,8 @@
  * @date 06.04.2019
  */
 
-#ifndef SAF_FFT_H_INCLUDED
-#define SAF_FFT_H_INCLUDED
+#ifndef SAF_UTILITY_FFT_H_INCLUDED
+#define SAF_UTILITY_FFT_H_INCLUDED
 
 #ifdef __cplusplus
 extern "C" {
@@ -335,4 +335,4 @@ void saf_fft_backward(void * const hFFT,
 }/* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* SAF_FFT_H_INCLUDED */
+#endif /* SAF_UTILITY_FFT_H_INCLUDED */

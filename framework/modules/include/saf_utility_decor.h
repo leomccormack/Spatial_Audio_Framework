@@ -22,8 +22,8 @@
  * @date 30.07.2018 
  */
 
-#ifndef SAF_DECOR_H_INCLUDED
-#define SAF_DECOR_H_INCLUDED
+#ifndef SAF_UTILITY_DECOR_H_INCLUDED
+#define SAF_UTILITY_DECOR_H_INCLUDED
 
 #ifdef __cplusplus
 extern "C" {
@@ -92,4 +92,4 @@ void synthesiseNoiseReverb(int nChannels,
 }/* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* SAF_DECOR_H_INCLUDED */
+#endif /* SAF_UTILITY_DECOR_H_INCLUDED */

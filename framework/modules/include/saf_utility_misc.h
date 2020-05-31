@@ -22,8 +22,8 @@
  * @date 29.01.2020 
  */
 
-#ifndef SAF_MISC_H_INCLUDED
-#define SAF_MISC_H_INCLUDED
+#ifndef SAF_UTILITY_MISC_H_INCLUDED
+#define SAF_UTILITY_MISC_H_INCLUDED
 
 #ifdef __cplusplus
 extern "C" {
@@ -179,4 +179,4 @@ void polyd_m(double* X,
 }/* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* SAF_MISC_H_INCLUDED */
+#endif /* SAF_UTILITY_MISC_H_INCLUDED */

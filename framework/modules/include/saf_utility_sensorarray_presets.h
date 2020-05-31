@@ -22,8 +22,8 @@
  * @date 11.07.2016 
  */
 
-#ifndef __SAF_SENSORARRAY_PRESETS_INCLUDED__
-#define __SAF_SENSORARRAY_PRESETS_INCLUDED__
+#ifndef __SAF_UTILITY_SENSORARRAY_PRESETS_INCLUDED__
+#define __SAF_UTILITY_SENSORARRAY_PRESETS_INCLUDED__
 
 #ifdef __cplusplus
 extern "C" {
@@ -141,4 +141,4 @@ extern const float __DTU_mic_freqRange[10];
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* __SAF_SENSORARRAY_PRESETS_INCLUDED__ */
+#endif /* __SAF_UTILITY_SENSORARRAY_PRESETS_INCLUDED__ */

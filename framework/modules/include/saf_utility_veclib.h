@@ -41,8 +41,8 @@
  * @date 11.07.2016
  */
 
-#ifndef SAF_VECLIB_H_INCLUDED
-#define SAF_VECLIB_H_INCLUDED
+#ifndef SAF_UTILITY_VECLIB_H_INCLUDED
+#define SAF_UTILITY_VECLIB_H_INCLUDED
 
 #ifdef __cplusplus
 extern "C" {
@@ -1097,4 +1097,4 @@ void utility_cinv(float_complex* A,
 }/* extern "C" */
 #endif  /* __cplusplus */
 
-#endif /* SAF_VECLIB_H_INCLUDED */
+#endif /* SAF_UTILITY_VECLIB_H_INCLUDED */

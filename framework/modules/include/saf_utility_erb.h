@@ -23,8 +23,8 @@
  * @date 30.07.2018  
  */
 
-#ifndef SAF_ERB_H_INCLUDED
-#define SAF_ERB_H_INCLUDED
+#ifndef SAF_UTILITY_ERB_H_INCLUDED
+#define SAF_UTILITY_ERB_H_INCLUDED
 
 #ifdef __cplusplus
 extern "C" {
@@ -67,4 +67,4 @@ void findERBpartitions(/* Input Arguments */
 }/* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* SAF_ERB_H_INCLUDED */
+#endif /* SAF_UTILITY_ERB_H_INCLUDED */

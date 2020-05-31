@@ -22,8 +22,8 @@
  * @date 26.05.2020
  */
 
-#ifndef SAF_BESSEL_H_INCLUDED
-#define SAF_BESSEL_H_INCLUDED
+#ifndef SAF_UTILITY_BESSEL_H_INCLUDED
+#define SAF_UTILITY_BESSEL_H_INCLUDED
 
 #ifdef __cplusplus
 extern "C" {
@@ -307,4 +307,4 @@ void hankel_hn2(/* Input arguments */
 }/* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* SAF_BESSEL_H_INCLUDED */
+#endif /* SAF_UTILITY_BESSEL_H_INCLUDED */

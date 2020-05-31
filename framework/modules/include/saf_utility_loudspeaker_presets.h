@@ -23,8 +23,8 @@
  * @date 11.07.2016
  */
 
-#ifndef __SAF_LOUDSPEAKER_PRESETS_H_INCLUDED__
-#define __SAF_LOUDSPEAKER_PRESETS_H_INCLUDED__
+#ifndef __SAF_UTILITY_LOUDSPEAKER_PRESETS_H_INCLUDED__
+#define __SAF_UTILITY_LOUDSPEAKER_PRESETS_H_INCLUDED__
 
 #ifdef __cplusplus
 extern "C" {
@@ -580,5 +580,5 @@ extern const int __geosphere_oct_nPoints[17];
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* __SAF_LOUDSPEAKER_PRESETS_H_INCLUDED__ */
+#endif /* __SAF_UTILITY_LOUDSPEAKER_PRESETS_H_INCLUDED__ */
 

@@ -22,8 +22,8 @@
  * @date 01.03.2019 
  */
 
-#ifndef SAF_FILTERS_H_INCLUDED
-#define SAF_FILTERS_H_INCLUDED
+#ifndef SAF_UTILITY_FILTERS_H_INCLUDED
+#define SAF_UTILITY_FILTERS_H_INCLUDED
 
 #ifdef __cplusplus
 extern "C" {
@@ -455,4 +455,4 @@ void FIRFilterbank(/* Input arguments */
 }/* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* SAF_FILTERS_H_INCLUDED */
+#endif /* SAF_UTILITY_FILTERS_H_INCLUDED */

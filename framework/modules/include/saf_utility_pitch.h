@@ -22,8 +22,8 @@
  * @date 04.05.2020
  */
 
-#ifndef SAF_PITCH_H_INCLUDED
-#define SAF_PITCH_H_INCLUDED
+#ifndef SAF_UTILITY_PITCH_H_INCLUDED
+#define SAF_UTILITY_PITCH_H_INCLUDED
 
 #ifdef __cplusplus
 extern "C" {
@@ -97,4 +97,4 @@ void smb_pitchShift_apply(/* Input Arguments */
 }/* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* SAF_PITCH_H_INCLUDED */
+#endif /* SAF_UTILITY_PITCH_H_INCLUDED */

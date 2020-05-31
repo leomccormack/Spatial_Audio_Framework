@@ -22,8 +22,8 @@
  * @date 30.07.2018  
  */
 
-#ifndef SAF_SORT_H_INCLUDED
-#define SAF_SORT_H_INCLUDED
+#ifndef SAF_UTILITY_SORT_H_INCLUDED
+#define SAF_UTILITY_SORT_H_INCLUDED
 
 #ifdef __cplusplus
 extern "C" {
@@ -174,4 +174,4 @@ void findClosestGridPoints(float* grid_dirs,
 }/* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* SAF_SORT_H_INCLUDED */
+#endif /* SAF_UTILITY_SORT_H_INCLUDED */

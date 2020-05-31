@@ -22,8 +22,8 @@
  * @date 05.08.2019 
  */
 
-#ifndef __SAF_ERROR_H_INCLUDED__
-#define __SAF_ERROR_H_INCLUDED__
+#ifndef __SAF_UTILITY_ERROR_H_INCLUDED__
+#define __SAF_UTILITY_ERROR_H_INCLUDED__
 
 #ifdef __cplusplus
 extern "C" {
@@ -132,4 +132,4 @@ SAF_ERRORS saf_error_print(SAF_ERRORS err);
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* __SAF_ERROR_H_INCLUDED__ */
+#endif /* __SAF_UTILITY_ERROR_H_INCLUDED__ */

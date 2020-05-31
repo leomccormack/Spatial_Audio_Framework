@@ -23,8 +23,8 @@
  * @date 11.07.2016
  */
 
-#ifndef SAF_COMPLEX_H_INCLUDED
-#define SAF_COMPLEX_H_INCLUDED
+#ifndef SAF_UTILITY_COMPLEX_H_INCLUDED
+#define SAF_UTILITY_COMPLEX_H_INCLUDED
 
 #if defined(__cplusplus)
 # include <complex>
@@ -226,4 +226,4 @@
 # error "SAF requires a compiler that supports the C99 standard, or MSVC version 1900 or newer"
 #endif
 
-#endif /* SAF_COMPLEX_H_INCLUDED */
+#endif /* SAF_UTILITY_COMPLEX_H_INCLUDED */
