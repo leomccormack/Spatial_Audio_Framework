@@ -130,7 +130,7 @@ sudo cp ~/intel/compilers_and_libraries/linux/lib/intel64/libiomp5.so /usr/lib
 5. Add the following header search path to your project:
 
 ```
-~/intel/compilers_and_libraries/linux/include
+~/intel/compilers_and_libraries/linux/mkl/include
 ```
 
 6. Then add the following linker flags to your project (note that the second library is only needed if you built the threaded version):
