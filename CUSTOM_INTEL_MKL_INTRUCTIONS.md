@@ -43,9 +43,7 @@ Note: If you built the threaded version of the library, then there are some more
 
 ## MacOSX users 
 
- By default, the framework will use Apple's Accelerate library for the BLAS/LAPACK routines and FFT, so you may ignore all of these steps if you wish. However, Mac users may still elect to use Intel MKL, as is it often faster than Accelerate. 
-
-1. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). Optionally, you may want to add the MKL global environment variables using this command:
+1. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). Optionally, you may want to also add the MKL global environment variables using this command:
 
 ```
 source /opt/intel/compilers_and_libraries/mac/mkl/bin/mklvars.sh intel64
@@ -57,21 +55,21 @@ source /opt/intel/compilers_and_libraries/mac/mkl/bin/mklvars.sh intel64
 sudo cp saf_mkl_list /opt/intel/compilers_and_libraries/mac/mkl/tools/builder
 ```
 
-3. EITHER (The blue pill): to generate and copy the "**saf_mkl_custom.dylib**" library to a system path folder, ready for you to use, enter the following commands:
+3. EITHER (The blue pill): generate and copy the "**saf_mkl_custom.dylib**" library to a system path folder:
 
 ```
 cd /opt/intel/compilers_and_libraries/mac/mkl/tools/builder
 sudo make intel64 interface=lp64 threading=sequential name=libsaf_mkl_custom export=saf_mkl_list
-sudo cp saf_mkl_custom.dylib /usr/local/lib
+sudo cp libsaf_mkl_custom.dylib /usr/local/lib
 ```
 
-3. OR (The red pill): you may instead build a threaded version of the library (which involves some additional steps):
+3. OR (The red pill): you may instead build a threaded version of the library with:
 
 ```
 cd /opt/intel/compilers_and_libraries/mac/mkl/tools/builder
 sudo make intel64 interface=lp64 threading=parallel name=libsaf_mkl_custom export=saf_mkl_list
 
-sudo cp saf_mkl_custom.dylib /usr/local/lib
+sudo cp libsaf_mkl_custom.dylib /usr/local/lib
 sudo cp /opt/intel/compilers_and_libraries/mac/compiler/lib/libiomp5.dylib /usr/local/lib
 ```
 
@@ -93,44 +91,53 @@ sudo cp /opt/intel/compilers_and_libraries/mac/compiler/lib/libiomp5.dylib /usr/
 Note: If you built the threaded version of the library, then there are some more pre-processors defintions you can use. See below.
 
 
-## Linux (amd64) users
+## Linux users
 
-0. Add the following directories to the header search paths:
+1. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). 
 
-```
-Spatial_Audio_Framework/framework/include
-Spatial_Audio_Framework/dependencies/Linux/include
-```
-
-1. Add the following directory to the library search paths:
+2. Depending on the MKL version and how you configure the installer, the "mkl/tools/builder" folder can be in one of two places. Find out which, and keep this path consistent for further commands:
 
 ```
-Spatial_Audio_Framework/dependencies/Linux/lib
-```
-
-2. Install [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). 
-
-3. The required "**saf_mkl_custom.so**" file may be generated using Intel's custom dll builder. 
-
-4. First copy the included "dependencies/saf_mkl_list" file to this folder:
-
-```
+~/intel/compilers_and_libraries/linux/mkl/tools/builder
+# Or it can be here:
 /opt/intel/compilers_and_libraries/linux/mkl/tools/builder
+# note, that if it is located in '/opt/', you will need to run the remaining commands with 'sudo'
 ```
 
-5. To generate and copy this library to a system path folder, use the following commands (root permissions required):
-
+3. Copy the included "**dependencies/saf_mkl_list**" file into the MKL "builder" folder:
 ```
-cd /opt/intel/compilers_and_libraries/linux/mkl/tools/builder
-sudo make intel64 interface=lp64 threading=sequential name=libsaf_mkl_custom export=saf_mkl_list
-sudo cp saf_mkl_custom.so /usr/lib
-
+cp saf_mkl_list ~/intel/compilers_and_libraries/linux/mkl/tools/builder
 ```
 
-6. Then add the following linker flag to your project:
+4. EITHER (The blue pill): generate and copy the "**saf_mkl_custom.so**" library to a system path folder:
+
+```
+cd ~/intel/compilers_and_libraries/linux/mkl/tools/builder
+make intel64 interface=lp64 threading=sequential name=libsaf_mkl_custom export=saf_mkl_list
+sudo cp libsaf_mkl_custom.so /usr/lib
+```
+
+4. OR (The red pill): you may instead build a threaded version of the library with:
+
+```
+cd ~/intel/compilers_and_libraries/linux/mkl/tools/builder
+make intel64 interface=lp64 threading=parallel name=libsaf_mkl_custom export=saf_mkl_list
+
+sudo cp libsaf_mkl_custom.so /usr/lib
+sudo cp ~/intel/compilers_and_libraries/linux/lib/intel64/libiomp5.so /usr/lib
+```
+
+5. Add the following header search path to your project:
+
+```
+~/intel/compilers_and_libraries/linux/include
+```
+
+6. Then add the following linker flags to your project (note that the second library is only needed if you built the threaded version):
 
 ```
 -L/usr/lib -lsaf_mkl_custom
+-L/usr/lib -liomp5
 ```
 
 7. Add "SAF_USE_INTEL_MKL" to your pre-processor definitions.
