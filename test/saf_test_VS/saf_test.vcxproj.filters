@@ -16,44 +16,53 @@
     <Filter Include="framework">
       <UniqueIdentifier>{303b5cda-98e0-40cc-86e3-2c7c97009ec9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="framework\include">
+      <UniqueIdentifier>{bceaf7d8-e437-4c46-b218-7127d0a02c86}</UniqueIdentifier>
+    </Filter>
     <Filter Include="framework\modules">
-      <UniqueIdentifier>{edc47dbd-58d5-44d3-bfd4-cc1fb11945fe}</UniqueIdentifier>
+      <UniqueIdentifier>{534b419d-0348-4ee6-989d-90062435bcd2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="framework\resources">
-      <UniqueIdentifier>{958e341d-8562-4f6c-ae93-adfef18d7500}</UniqueIdentifier>
+    <Filter Include="framework\include\extern">
+      <UniqueIdentifier>{2c02314e-a026-4c2f-8a19-e6e42c84b53a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="framework\modules\include">
-      <UniqueIdentifier>{547c7fd9-174c-4a0e-82e9-244c7683e2c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="framework\resources\include">
-      <UniqueIdentifier>{41358736-a6ac-40d2-990a-16d7391ffd40}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="framework\resources\src">
-      <UniqueIdentifier>{0854bc41-6cb0-4408-8afd-bd36c14b468c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="framework\modules\saf_vbap">
-      <UniqueIdentifier>{3e212540-6449-467e-ba14-ed39c0ef90c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="framework\modules\saf_utilities">
-      <UniqueIdentifier>{6a21c594-b6dd-4dc7-98ed-359de26213a9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="framework\modules\saf_sofa_reader">
-      <UniqueIdentifier>{c8e7cee4-067f-4f8e-98be-3c0eff442a9f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="framework\modules\saf_sh">
-      <UniqueIdentifier>{e66d33c2-72d2-4559-88e4-206d2542f36e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="framework\modules\saf_reverb">
-      <UniqueIdentifier>{34869c68-36a5-432b-b66a-86fa725488cc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="framework\modules\saf_hoa">
-      <UniqueIdentifier>{723eb623-2cbb-4a76-927a-b43d6372df2e}</UniqueIdentifier>
+    <Filter Include="framework\modules\extern">
+      <UniqueIdentifier>{f31715bd-5f17-46d8-a926-61075ffdf0f4}</UniqueIdentifier>
     </Filter>
     <Filter Include="framework\modules\saf_cdf4sap">
-      <UniqueIdentifier>{b8389b2b-d4f5-447f-8ab6-ff4c84c21a7a}</UniqueIdentifier>
+      <UniqueIdentifier>{f4956399-baa1-4d6f-8dca-0f665f7f733f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\modules\saf_hoa">
+      <UniqueIdentifier>{ef539463-29cd-4813-ae3d-6f61d6bf763a}</UniqueIdentifier>
     </Filter>
     <Filter Include="framework\modules\saf_hrir">
-      <UniqueIdentifier>{62a9be64-af6a-4765-a568-936ded0eb855}</UniqueIdentifier>
+      <UniqueIdentifier>{39212280-3e8c-434f-9ce3-46b5ab328264}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\modules\saf_reverb">
+      <UniqueIdentifier>{f20cfdf4-0a64-4e39-9cc6-af93d5546b50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\modules\saf_sh">
+      <UniqueIdentifier>{a23399de-1367-4d7f-8aa9-7c8f541bd7a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\modules\saf_sofa_reader">
+      <UniqueIdentifier>{394d0b8e-ccc7-419e-8951-8fe44ebd1c27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\modules\saf_utilities">
+      <UniqueIdentifier>{f1042f08-419e-4bd5-bc33-ed3fac4f8d13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\modules\saf_vbap">
+      <UniqueIdentifier>{94bb56cc-b809-4d90-b49a-4adb9c180bad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples">
+      <UniqueIdentifier>{0c613ae1-287f-46b5-b24e-ce3dfb928651}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\include">
+      <UniqueIdentifier>{c2cbe3bf-43af-4679-b2de-5207ed5bdde2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\src">
+      <UniqueIdentifier>{bf5045c6-ed6c-4957-bd39-eaf707205520}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\src\ambi_bin">
+      <UniqueIdentifier>{195fb762-4f28-4a56-bf4a-c58709d09688}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -69,77 +78,101 @@
     <ClInclude Include="..\saf_test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\extern\afSTFTlib.h">
+      <Filter>framework\include\extern</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_cdf4sap.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\extern\convhull_3d.h">
+      <Filter>framework\include\extern</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_hoa.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\extern\kiss_fft.h">
+      <Filter>framework\include\extern</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_hrir.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\extern\kiss_fftr.h">
+      <Filter>framework\include\extern</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_reverb.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\extern\md_malloc.h">
+      <Filter>framework\include\extern</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_sh.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_sofa_reader.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_cdf4sap.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utilities.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_hoa.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_bessel.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_hrir.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_complex.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_reverb.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_decor.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_sh.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_erb.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_sofa_reader.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_error.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_utilities.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_fft.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_utility_bessel.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_filters.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_utility_complex.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_loudspeaker_presets.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_utility_decor.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_matrixConv.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_utility_erb.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_misc.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_utility_error.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_pitch.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_utility_fft.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_sensorarray_presets.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_utility_filters.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_sort.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_utility_loudspeaker_presets.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_utility_veclib.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_utility_matrixConv.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\include\saf_vbap.h">
-      <Filter>framework\modules\include</Filter>
+    <ClInclude Include="..\..\framework\include\saf_utility_misc.h">
+      <Filter>framework\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\saf_hoa\saf_hoa_internal.h">
-      <Filter>framework\modules\saf_hoa</Filter>
+    <ClInclude Include="..\..\framework\include\saf_utility_pitch.h">
+      <Filter>framework\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\include\saf_utility_sensorarray_presets.h">
+      <Filter>framework\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\include\saf_utility_sort.h">
+      <Filter>framework\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\include\saf_utility_veclib.h">
+      <Filter>framework\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\include\saf_vbap.h">
+      <Filter>framework\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\extern\_kiss_fft_guts.h">
+      <Filter>framework\modules\extern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\extern\afSTFT_protoFilter.h">
+      <Filter>framework\modules\extern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_vbap\saf_vbap_internal.h">
+      <Filter>framework\modules\saf_vbap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_sh\saf_sh_internal.h">
+      <Filter>framework\modules\saf_sh</Filter>
     </ClInclude>
     <ClInclude Include="..\..\framework\modules\saf_reverb\saf_reverb_internal.h">
       <Filter>framework\modules\saf_reverb</Filter>
@@ -147,32 +180,17 @@
     <ClInclude Include="..\..\framework\modules\saf_hrir\saf_hrir_internal.h">
       <Filter>framework\modules\saf_hrir</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\saf_sh\saf_sh_internal.h">
-      <Filter>framework\modules\saf_sh</Filter>
+    <ClInclude Include="..\..\framework\modules\saf_hoa\saf_hoa_internal.h">
+      <Filter>framework\modules\saf_hoa</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\saf_vbap\saf_vbap_internal.h">
-      <Filter>framework\modules\saf_vbap</Filter>
+    <ClInclude Include="..\..\examples\include\_common.h">
+      <Filter>examples\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\resources\include\afSTFTlib.h">
-      <Filter>framework\resources\include</Filter>
+    <ClInclude Include="..\..\examples\include\ambi_bin.h">
+      <Filter>examples\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\resources\include\convhull_3d.h">
-      <Filter>framework\resources\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\framework\resources\include\kiss_fft.h">
-      <Filter>framework\resources\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\framework\resources\include\kiss_fftr.h">
-      <Filter>framework\resources\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\framework\resources\include\md_malloc.h">
-      <Filter>framework\resources\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\framework\resources\src\_kiss_fft_guts.h">
-      <Filter>framework\resources\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\framework\resources\src\afSTFT_protoFilter.h">
-      <Filter>framework\resources\src</Filter>
+    <ClInclude Include="..\..\examples\src\ambi_bin\ambi_bin_internal.h">
+      <Filter>examples\src\ambi_bin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -188,38 +206,26 @@
     <ClCompile Include="..\saf_test_wrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_cdf4sap\saf_cdf4sap.c">
-      <Filter>framework\modules\saf_cdf4sap</Filter>
+    <ClCompile Include="..\..\framework\modules\extern\afSTFTlib.c">
+      <Filter>framework\modules\extern</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_hoa\saf_hoa.c">
-      <Filter>framework\modules\saf_hoa</Filter>
+    <ClCompile Include="..\..\framework\modules\extern\convhull_3d.c">
+      <Filter>framework\modules\extern</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_hoa\saf_hoa_internal.c">
-      <Filter>framework\modules\saf_hoa</Filter>
+    <ClCompile Include="..\..\framework\modules\extern\kiss_fft.c">
+      <Filter>framework\modules\extern</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_reverb\saf_reverb.c">
-      <Filter>framework\modules\saf_reverb</Filter>
+    <ClCompile Include="..\..\framework\modules\extern\kiss_fftr.c">
+      <Filter>framework\modules\extern</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_reverb\saf_reverb_internal.c">
-      <Filter>framework\modules\saf_reverb</Filter>
+    <ClCompile Include="..\..\framework\modules\extern\md_malloc.c">
+      <Filter>framework\modules\extern</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_hrir\saf_default_hrirs.c">
-      <Filter>framework\modules\saf_hrir</Filter>
+    <ClCompile Include="..\..\framework\modules\saf_vbap\saf_vbap.c">
+      <Filter>framework\modules\saf_vbap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_hrir\saf_hrir.c">
-      <Filter>framework\modules\saf_hrir</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_hrir\saf_hrir_internal.c">
-      <Filter>framework\modules\saf_hrir</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_sh\saf_sh.c">
-      <Filter>framework\modules\saf_sh</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_sh\saf_sh_internal.c">
-      <Filter>framework\modules\saf_sh</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_sofa_reader\saf_sofa_reader.c">
-      <Filter>framework\modules\saf_sofa_reader</Filter>
+    <ClCompile Include="..\..\framework\modules\saf_vbap\saf_vbap_internal.c">
+      <Filter>framework\modules\saf_vbap</Filter>
     </ClCompile>
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_bessel.c">
       <Filter>framework\modules\saf_utilities</Filter>
@@ -263,26 +269,44 @@
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_veclib.c">
       <Filter>framework\modules\saf_utilities</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_vbap\saf_vbap.c">
-      <Filter>framework\modules\saf_vbap</Filter>
+    <ClCompile Include="..\..\framework\modules\saf_sofa_reader\saf_sofa_reader.c">
+      <Filter>framework\modules\saf_sofa_reader</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_vbap\saf_vbap_internal.c">
-      <Filter>framework\modules\saf_vbap</Filter>
+    <ClCompile Include="..\..\framework\modules\saf_sh\saf_sh.c">
+      <Filter>framework\modules\saf_sh</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\resources\src\afSTFTlib.c">
-      <Filter>framework\resources\src</Filter>
+    <ClCompile Include="..\..\framework\modules\saf_sh\saf_sh_internal.c">
+      <Filter>framework\modules\saf_sh</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\resources\src\convhull_3d.c">
-      <Filter>framework\resources\src</Filter>
+    <ClCompile Include="..\..\framework\modules\saf_reverb\saf_reverb.c">
+      <Filter>framework\modules\saf_reverb</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\resources\src\kiss_fft.c">
-      <Filter>framework\resources\src</Filter>
+    <ClCompile Include="..\..\framework\modules\saf_reverb\saf_reverb_internal.c">
+      <Filter>framework\modules\saf_reverb</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\resources\src\kiss_fftr.c">
-      <Filter>framework\resources\src</Filter>
+    <ClCompile Include="..\..\framework\modules\saf_hrir\saf_default_hrirs.c">
+      <Filter>framework\modules\saf_hrir</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\resources\src\md_malloc.c">
-      <Filter>framework\resources\src</Filter>
+    <ClCompile Include="..\..\framework\modules\saf_hrir\saf_hrir.c">
+      <Filter>framework\modules\saf_hrir</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_hrir\saf_hrir_internal.c">
+      <Filter>framework\modules\saf_hrir</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_hoa\saf_hoa.c">
+      <Filter>framework\modules\saf_hoa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_hoa\saf_hoa_internal.c">
+      <Filter>framework\modules\saf_hoa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_cdf4sap\saf_cdf4sap.c">
+      <Filter>framework\modules\saf_cdf4sap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\examples\src\ambi_bin\ambi_bin.c">
+      <Filter>examples\src\ambi_bin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\examples\src\ambi_bin\ambi_bin_internal.c">
+      <Filter>examples\src\ambi_bin</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

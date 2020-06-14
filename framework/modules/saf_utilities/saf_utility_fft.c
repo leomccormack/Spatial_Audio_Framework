@@ -514,15 +514,6 @@ void saf_rfft_create
      * first N/2+1 elements are returned. The inverse transform will automatically symmetrically+conjugate
      * replicate these elements, in order to get the required N elements internally. */
     h->Status = DftiSetValue(h->MKL_FFT_Handle, DFTI_CONJUGATE_EVEN_STORAGE, DFTI_COMPLEX_COMPLEX);
-    const int number_of_channels = 1; /* hard coded here for 1 channel */
-    if(number_of_channels > 1) /* only required for multiple channels */
-        h->Status = DftiSetValue(h->MKL_FFT_Handle, DFTI_NUMBER_OF_TRANSFORMS, number_of_channels);
-    h->Status = DftiSetValue(h->MKL_FFT_Handle, DFTI_INPUT_DISTANCE, 1);  /* strides between samples (default=1) */
-    h->Status = DftiSetValue(h->MKL_FFT_Handle, DFTI_OUTPUT_DISTANCE, 1); /* strides between samples (default=1) */
-    h->input_strides[0]  = 0; h->input_strides[1]  = 1; /* hard coded here for 1 channel */
-    h->output_strides[0] = 0; h->output_strides[1] = 1; /* hard coded here for 1 channel */
-    h->Status = DftiSetValue(h->MKL_FFT_Handle, DFTI_INPUT_STRIDES, h->input_strides);   /* strides between channels (default=[0,1]) */
-    h->Status = DftiSetValue(h->MKL_FFT_Handle, DFTI_OUTPUT_STRIDES, h->output_strides); /* strides between channels (default=[0,1]) */
     /* Configuration parameters for backward-FFT */
     h->Status = DftiSetValue(h->MKL_FFT_Handle, DFTI_BACKWARD_SCALE, h->Scale);      /* scalar applied after ifft */
     /* commit these chosen parameters */

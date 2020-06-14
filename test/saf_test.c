@@ -23,9 +23,28 @@
  */
 
 #include "saf_test.h"
-#include "unity.h" /* unit testing suite */
-#include "timer.h" /* for timing the individual tests */
-#include "saf.h"   /* framework include header */
+#include "unity.h"   /* unit testing suite */
+#include "timer.h"   /* for timing the individual tests */
+#include "saf.h"     /* master framework include header */
+
+#ifdef ENABLE_SAF_EXAMPLES_TESTS
+/* SAF example headers: */
+# include "ambi_bin.h"
+# include "ambi_dec.h"
+# include "ambi_drc.h"
+# include "ambi_enc.h"
+# include "array2sh.h"
+# include "beamformer.h"
+# include "binauraliser.h"
+# include "dirass.h"
+# include "matrixconv.h"
+# include "multiconv.h"
+# include "panner.h"
+# include "pitch_shifter.h"
+# include "powermap.h"
+# include "rotator.h"
+# include "sldoa.h"
+#endif /* ENABLE_SAF_EXAMPLES_TESTS */
 
 /* ========================================================================== */
 /*                    Prototypes for available unit tests                     */
@@ -90,6 +109,21 @@ void test__butterCoeffs(void);
  */
 void test__faf_IIRFilterbank(void);
 
+#ifdef ENABLE_SAF_EXAMPLES_TESTS
+/**
+ * Testing the SAF ambi_bin example (this may also serve as a tutorial on how
+ * to use it) */
+void test__saf_example_ambi_bin(void);
+/**
+ * Testing the SAF ambi_dec example (this may also serve as a tutorial on how
+ * to use it) */
+void test__saf_example_ambi_dec(void);
+/**
+ * Testing the SAF array2sh example (this may also serve as a tutorial on how
+ * to use it) */
+void test__saf_example_array2sh(void);
+#endif /* ENABLE_SAF_EXAMPLES_TESTS */
+
 
 /* ========================================================================== */
 /*                                 Test Config                                */
@@ -115,11 +149,8 @@ UnityConcludeTest(); timerResult();
 
 /** Main test program */
 int main_test(void) {
- printf("*****************************************************************\n"
-        "********* Spatial_Audio_Framework Unit Testing Program **********\n"
-        "*****************************************************************\n");
-    
-    printf("\nSAF version: %s\n\n", SAF_VERSION_STRING);
+    printf("%s", SAF_VERSION_BANNER);
+    printf("Executing the Spatial_Audio_Framework unit testing program:\n\n");
 
     /* initialise */
     timer_lib_initialize();
@@ -145,6 +176,11 @@ int main_test(void) {
     RUN_TEST(test__getSHreal_recur);
     RUN_TEST(test__butterCoeffs);
     RUN_TEST(test__faf_IIRFilterbank);
+#ifdef ENABLE_SAF_EXAMPLES_TESTS
+    RUN_TEST(test__saf_example_ambi_bin);
+    RUN_TEST(test__saf_example_ambi_dec);
+    RUN_TEST(test__saf_example_array2sh);
+#endif /* ENABLE_SAF_EXAMPLES_TESTS */
 
     /* close */
     timer_lib_shutdown();
@@ -1064,3 +1100,214 @@ void test__faf_IIRFilterbank(void){
     free(outsig_fft);
 }
 
+#ifdef ENABLE_SAF_EXAMPLES_TESTS
+void test__saf_example_ambi_bin(void){
+    int nSH, i;
+    void* hAmbi;
+    float leftEarEnergy, rightEarEnergy, direction_deg[2];
+    float* inSig, *y;
+    float** shSig, **binSig;
+
+    /* Config */
+    const int order = 4;
+    const int fs = 48e3;
+    const int signalLength = fs*2;
+
+    /* Create and initialise an instance of ambi_bin */
+    ambi_bin_create(&hAmbi);
+    ambi_bin_init(hAmbi, fs); /* Cannot be called while "process" is on-going */
+
+    /* Configure and initialise the ambi_bin codec */
+    ambi_bin_setInputOrderPreset(hAmbi, (SH_ORDERS)order);
+    ambi_bin_initCodec(hAmbi); /* Can be called whenever (thread-safe) */
+    /* "initCodec" should be called after calling any of the "set" functions.
+     * It should be noted that intialisations are only conducted if they are
+     * needed, so calling this function periodically with a timer on a separate
+     * thread is perfectly safe and viable. Also, if the intialisations take
+     * longer than it takes to "process" the current block of samples, then the
+     * output is simply muted/zeroed during this time. */
+
+    /* Define input mono signal */
+    nSH = ORDER2NSH(order);
+    inSig = malloc1d(signalLength*sizeof(float));
+    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
+    rand_m1_1(inSig, signalLength); /* Mono white-noise signal */
+
+    /* Encode to get input spherical harmonic (Ambisonic) signal */
+    direction_deg[0] = 90.0f; /* encode hard-left */
+    direction_deg[1] = 0.0f;
+    y = malloc1d(nSH*sizeof(float));
+    getRSH(order, (float*)direction_deg, 1, y); /* SH plane-wave weights */
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, signalLength, 1, 1.0f,
+                y, 1,
+                inSig, signalLength, 0.0f,
+                FLATTEN2D(shSig), signalLength);
+
+    /* Decode to binaural */
+    binSig = (float**)malloc2d(NUM_EARS,signalLength,sizeof(float));
+    ambi_bin_process(hAmbi, shSig, binSig, nSH, NUM_EARS, signalLength);
+
+    /* Assert that left ear energy is higher than the right ear */
+    leftEarEnergy = rightEarEnergy = 0.0f;
+    for(i=0; i<signalLength; i++){
+        leftEarEnergy  += powf(fabsf(binSig[0][i]), 2.0f);
+        rightEarEnergy += powf(fabsf(binSig[1][i]), 2.0f);
+    }
+    TEST_ASSERT_TRUE(leftEarEnergy>=rightEarEnergy);
+
+    /* Clean-up */
+    ambi_bin_destroy(&hAmbi);
+    free(inSig);
+    free(shSig);
+    free(y);
+    free(binSig);
+}
+
+void test__saf_example_ambi_dec(void){
+    int nSH, i, j, max_ind;
+    void* hAmbi;
+    float loudspeakerEnergy[22], direction_deg[2];
+    float* inSig, *y;
+    float** shSig, **lsSig;
+
+    /* Config */
+    const int order = 4;
+    const int fs = 48e3;
+    const int signalLength = fs*2;
+
+    /* Create and initialise an instance of ambi_dec */
+    ambi_dec_create(&hAmbi);
+    ambi_dec_init(hAmbi, fs); /* Cannot be called while "process" is on-going */
+
+    /* Configure and initialise the ambi_dec codec */
+    ambi_dec_setMasterDecOrder(hAmbi, (SH_ORDERS)order);
+    /* 22.x loudspeaker layout, SAD decoder */
+    ambi_dec_setOutputConfigPreset(hAmbi, LOUDSPEAKER_ARRAY_PRESET_22PX);
+    ambi_dec_setDecMethod(hAmbi, DECODING_METHOD_SAD, 0/* low-freq decoder */);
+    ambi_dec_setDecMethod(hAmbi, DECODING_METHOD_SAD, 1/* high-freq decoder */);
+    ambi_dec_initCodec(hAmbi); /* Can be called whenever (thread-safe) */
+    /* "initCodec" should be called after calling any of the "set" functions.
+     * It should be noted that intialisations are only conducted if they are
+     * needed, so calling this function periodically with a timer on a separate
+     * thread is perfectly safe and viable. Also, if the intialisations take
+     * longer than it takes to "process" the current block of samples, then the
+     * output is simply muted/zeroed during this time. */
+
+    /* Define input mono signal */
+    nSH = ORDER2NSH(order);
+    inSig = malloc1d(signalLength*sizeof(float));
+    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
+    rand_m1_1(inSig, signalLength); /* Mono white-noise signal */
+
+    /* Encode to get input spherical harmonic (Ambisonic) signal */
+    direction_deg[0] = 90.0f; /* encode to loudspeaker direction: index 8 */
+    direction_deg[1] = 0.0f;
+    y = malloc1d(nSH*sizeof(float));
+    getRSH(order, (float*)direction_deg, 1, y); /* SH plane-wave weights */
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, signalLength, 1, 1.0f,
+                y, 1,
+                inSig, signalLength, 0.0f,
+                FLATTEN2D(shSig), signalLength);
+
+    /* Decode to loudspeakers */
+    lsSig = (float**)malloc2d(22,signalLength,sizeof(float));
+    ambi_dec_process(hAmbi, shSig, lsSig, nSH, 22, signalLength);
+
+    /* Assert that channel 8 (corresponding to the loudspeaker where the plane-
+     * wave was encoded to) has the most energy */
+    memset(loudspeakerEnergy, 0, 22*sizeof(float));
+    for(i=0; i<signalLength; i++){
+        for(j=0; j<22; j++)
+            loudspeakerEnergy[j]  += powf(fabsf(lsSig[j][i]), 2.0f);
+    }
+    utility_simaxv(loudspeakerEnergy, 22, &max_ind);
+    TEST_ASSERT_TRUE(max_ind==7);
+
+    /* Clean-up */
+    ambi_dec_destroy(&hAmbi);
+    free(inSig);
+    free(shSig);
+    free(y);
+    free(lsSig);
+}
+
+void test__saf_example_array2sh(void){
+    int nSH, i, j;
+    void* hA2sh, *safFFT, *hMC;
+    float direction_deg[2], radius;
+    float* inSig, *f;
+    float** shSig, **inSig_32, **micSig, **h_array;
+    double* kr;
+    float_complex* tmp_H;
+    float_complex*** H_array;
+
+    /* Config */
+    const int order = 4;
+    const int fs = 48e3;
+    const int signalLength = fs*2;
+    const int nFFT = 1024;
+    const int nBins = nFFT/2+1;
+
+    /* Create and initialise an instance of array2sh for the Eigenmike32 */
+    array2sh_create(&hA2sh);
+    array2sh_init(hA2sh, fs); /* Cannot be called while "process" is on-going */
+    array2sh_setPreset(hA2sh, MICROPHONE_ARRAY_PRESET_EIGENMIKE32);
+
+    /* Define input mono signal */
+    nSH = ORDER2NSH(order);
+    inSig = malloc1d(signalLength*sizeof(float));
+    rand_m1_1(inSig, signalLength); /* Mono white-noise signal */
+
+    /* Simulate an Eigenmike in a free-field with a single plane-wave */
+    f = malloc1d(nBins*sizeof(float));
+    kr = malloc1d(nBins*sizeof(double));
+    getUniformFreqVector(nFFT, fs, f);
+    f[0] = f[1]/4.0f; /* To avoid NaNs at DC */
+    radius = 0.042f;
+    for(i=0; i<nBins; i++)
+        kr[i] = 2.0*SAF_PId*(f[i])*(radius)/343.0f;
+    direction_deg[0] = 90.0f;
+    direction_deg[1] = 0.0f;
+    H_array = (float_complex***)malloc3d(nBins, 32, 1, sizeof(float_complex));
+    simulateSphArray(order, kr, kr, nBins, (float*)__Eigenmike32_coords_rad, 32,
+                     (float*)direction_deg, 1, ARRAY_CONSTRUCTION_RIGID, 1.0f, FLATTEN3D(H_array));
+
+    /* Inverse FFT to get the time-domain filters */
+    tmp_H = malloc1d(nBins*sizeof(float_complex));
+    h_array = (float**)malloc2d(32, nFFT, sizeof(float));
+    saf_rfft_create(&safFFT, nFFT);
+    for(i=0; i<32; i++){
+        for(j=0; j<nBins; j++)
+            tmp_H[j] = H_array[j][i][0];
+        saf_rfft_backward(safFFT, tmp_H, h_array[i]);
+    }
+
+    /* Simulate the Eigenmike time-domain signals by convolving the mono signal
+     * with each sensor transfer function */
+    micSig = (float**)calloc2d(32, signalLength, sizeof(float));
+    inSig_32 = (float**)malloc2d(32, signalLength, sizeof(float));
+    for(i=0; i<32; i++) /* Replicate inSig for all 32 channels */
+        memcpy(inSig_32[i], inSig, signalLength* sizeof(float));
+    saf_multiConv_create(&hMC, 256, FLATTEN2D(h_array), nFFT, 32, 0);
+    for(i=0; i<(int)((float)signalLength/256.0f); i++){
+        saf_multiConv_apply(hMC, FLATTEN2D(inSig_32), FLATTEN2D(micSig));
+    }
+
+    /* Encode simulated Eigenmike signals into spherical harmonic signals */
+    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
+    array2sh_process(hA2sh, micSig, shSig, 32, nSH, signalLength);
+
+    /* Clean-up */
+    array2sh_destroy(&hA2sh);
+    saf_rfft_destroy(&safFFT);
+    saf_multiConv_destroy(&hMC);
+    free(inSig);
+    free(shSig);
+    free(inSig_32);
+    free(f);
+    free(kr);
+    free(H_array);
+    free(h_array);
+    free(tmp_H);
+}
+#endif /* ENABLE_SAF_EXAMPLES_TESTS */

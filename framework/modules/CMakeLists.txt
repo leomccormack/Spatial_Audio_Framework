@@ -1,8 +1,14 @@
 
 # Source
 target_sources(${PROJECT_NAME}
-PRIVATE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_cdf4sap/saf_cdf4sap.c
+PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/extern/_kiss_fft_guts.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/extern/afSTFT_protoFilter.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/extern/afSTFTlib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/extern/convhull_3d.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/extern/kiss_fft.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/extern/kiss_fftr.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/extern/md_malloc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_hoa/saf_hoa_internal.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_hoa/saf_hoa_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_hoa/saf_hoa.c
@@ -34,10 +40,4 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap_internal.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap.c
-)
-
-target_include_directories(${PROJECT_NAME}
-PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>  
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )

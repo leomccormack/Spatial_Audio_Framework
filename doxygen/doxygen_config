@@ -891,10 +891,11 @@ EXCLUDE_SYMLINKS       = NO
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
  
-EXCLUDE_PATTERNS      = */dependencies/*
+EXCLUDE_PATTERNS      = */_ext_libs/*
 EXCLUDE_PATTERNS      += */build/*
+EXCLUDE_PATTERNS      += */cmake-build-debug/*
+EXCLUDE_PATTERNS      += */cmake-build-release/*
 EXCLUDE_PATTERNS      += */licenses/* 
-EXCLUDE_PATTERNS      += */framework/resources/kissFFT*
 EXCLUDE_PATTERNS      += */examples/*
 EXCLUDE_PATTERNS      += */test/timer*
 EXCLUDE_PATTERNS      += */test/unity*

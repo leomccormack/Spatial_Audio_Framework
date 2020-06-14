@@ -49,7 +49,7 @@ Note: If you built the threaded version of the library, then there are some more
 source /opt/intel/compilers_and_libraries/mac/mkl/bin/mklvars.sh intel64
 ```
 
-2. The required custom library may be obtained by first copying the included "**dependencies/saf_mkl_list**" file into the MKL "builder" folder:
+2. The required custom library may be obtained by first copying the included "**saf_mkl_list**" file into the MKL "builder" folder:
 
 ```
 sudo cp saf_mkl_list /opt/intel/compilers_and_libraries/mac/mkl/tools/builder
@@ -104,7 +104,7 @@ Note: If you built the threaded version of the library, then there are some more
 # note, that if it is located in '/opt/', you will need to run the remaining commands with 'sudo'
 ```
 
-3. Copy the included "**dependencies/saf_mkl_list**" file into the MKL "builder" folder:
+3. Copy the included "**saf_mkl_list**" file into the MKL "builder" folder:
 ```
 cp saf_mkl_list ~/intel/compilers_and_libraries/linux/mkl/tools/builder
 ```
@@ -156,3 +156,4 @@ You may also change these at run time using the following functions:
 MKL_Set_Num_Threads(2);
 MKL_Set_Dynamic(1);
 ```
+
