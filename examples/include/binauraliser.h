@@ -155,7 +155,7 @@ void binauraliser_setUseDefaultHRIRsflag(void* const hBin, int newState);
 void binauraliser_setSofaFilePath(void* const hBin, const char* path);
 
 /**
- * Loads an input preset (see "BINAURALISER_SOURCE_CONFIG_PRESETS" enum)
+ * Loads an input preset (see "SOURCE_CONFIG_PRESETS" enum)
  */
 void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID);
 
@@ -212,8 +212,7 @@ void binauraliser_setInterpMode(void* const hBin, int newMode);
 /* ========================================================================== */
 
 /**
- * Returns current codec status codec status (see 'CODEC_STATUS'
- * enum)
+ * Returns current codec status codec status (see 'CODEC_STATUS' enum)
  */
 CODEC_STATUS binauraliser_getCodecStatus(void* const hBin);
 

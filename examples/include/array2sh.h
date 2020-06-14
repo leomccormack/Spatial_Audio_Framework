@@ -104,12 +104,7 @@ typedef enum _ARRAY2SH_FILTER_TYPES{
  *
  * @note Although supported, cylindrical arrays have not really been tested as
  *       we don't own one. Just to keep in mind.
- *
- * Options:
- *     ARRAY_SPHERICAL   - spherical arrangement of sensors (open/rigid)
- *     ARRAY_CYLINDRICAL - cylindrial arrangement of sensors (open/rigid)
  */
-
 typedef enum _ARRAY2SH_ARRAY_TYPES{
     ARRAY_SPHERICAL = 1, /**< Spherical arrangement of sensors (open/rigid) */
     ARRAY_CYLINDRICAL    /**< Cylindrial arrangement of sensors (open/rigid) */
@@ -137,7 +132,10 @@ typedef enum _ARRAY2SH_WEIGHT_TYPES{
 #define ARRAY2SH_NUM_WEIGHT_TYPES ( 6 )
     
 /**
- * Current status of the encoder.
+ * Current status of the encoder evaluation output data
+ *
+ * These are some objective metrics which you can use to ascertain the
+ * performance of the microphone array and the encoding.
  */
 typedef enum _ARRAY2SH_EVAL_STATUS{
     EVAL_STATUS_EVALUATED = 0,      /**< Encoder has been evaluated */
@@ -240,7 +238,7 @@ void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
 void array2sh_setRequestEncoderEvalFLAG(void* const hA2sh, int newState);
     
 /**
- * Sets current eval status (see 'EVAL_STATUS' enum)
+ * Sets current eval status (see 'ARRAY2SH_EVAL_STATUS' enum)
  */
 void array2sh_setEvalStatus(void* const hA2sh, ARRAY2SH_EVAL_STATUS evalStatus);
 
@@ -342,15 +340,13 @@ void array2sh_setRegPar(void* const hA2sh, float newVal);
     
 /**
  * Sets the Ambisonic channel ordering convention to encode with, in order to
- * match the convention employed by the input signals (see 'ARRAY2SH_CH_ORDER'
- * enum)
+ * match the convention employed by the input signals (see 'CH_ORDER' enum)
  */
 void array2sh_setChOrder(void* const hA2sh, int newOrder);
     
 /**
  * Sets the Ambisonic normalisation convention to encode with, in order to match
- * with the convention employed by the input signals (see 'ARRAY2SH_NORM_TYPE'
- * enum)
+ * with the convention employed by the input signals (see 'NORM_TYPE' enum)
  */
 void array2sh_setNormType(void* const hA2sh, int newType);
 
@@ -385,7 +381,7 @@ float array2sh_getProgressBar0_1(void* const hA2sh);
  * (Optional) Returns current intialisation/processing progress text
  *
  * @note "text" string should be (at least) of length:
- *       ARRAY2SH_PROGRESSBARTEXT_CHAR_LENGTH
+ *       PROGRESSBARTEXT_CHAR_LENGTH
  */
 void array2sh_getProgressBarText(void* const hA2sh, char* text);
 
@@ -395,15 +391,15 @@ void array2sh_getProgressBarText(void* const hA2sh, char* text);
  *
  * Developed in collaboration with Archontis Politis.
  *
- * @ note In general, theoretical encoding filters have a tendency to boost
- *        the aliased frequencies. Whereas, measurement-based filters (through a
- *        least-squares solution), tend to attenuate them. Neither of these
- *        are correct or incorrect, since, strictly (and spatially) speaking, we
- *        should be placing a low-pass filter at the spatial aliasing frequency.
- *        However, since we usually do not want to remove this high frequency
- *        energy from e.g. an Ambisonic reproduction, we would argue that
- *        equalising the aliased components so that they have a flat spectrum,
- *        is probably the way to go; and is exactly what this feature does.
+ * @note In general, theoretical encoding filters have a tendency to boost
+ *       the aliased frequencies. Whereas, measurement-based filters (through a
+ *       least-squares solution), tend to attenuate them. Neither of these
+ *       are correct or incorrect, since, strictly (spatially) speaking, we
+ *       should be placing a low-pass filter at the spatial aliasing frequency.
+ *       However, since we usually do not want to remove this high frequency
+ *       energy from e.g. an Ambisonic reproduction, we would argue that
+ *       equalising the aliased components so that they have a flat spectrum,
+ *       is probably the way to go; and is exactly what this feature does.
  */
 int array2sh_getDiffEQpastAliasing(void* const hA2sh);
 
@@ -414,7 +410,7 @@ int array2sh_getDiffEQpastAliasing(void* const hA2sh);
 int array2sh_getRequestEncoderEvalFLAG(void* const hA2sh);
     
 /**
- * Returns the current encoding order (see 'ARRAY2SH_ENCODING_ORDERS' enum)
+ * Returns the current encoding order (see 'SH_ORDERS' enum)
  */
 int array2sh_getEncodingOrder(void* const hA2sh);
     
@@ -499,14 +495,14 @@ float array2sh_getRegPar(void* const hA2sh);
 /*
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see 'ARRAY2SH_CH_ORDER' enum)
+ * (see 'CH_ORDER' enum)
  */
 int array2sh_getChOrder(void* const hA2sh);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals
- * (see 'ARRAY2SH_NORM_TYPE' enum)
+ * (see 'NORM_TYPE' enum)
  */
 int array2sh_getNormType(void* const hA2sh);
     
@@ -532,7 +528,7 @@ float* array2sh_getFreqVector(void* const hA2sh, int* nFreqPoints);
     
 /**
  * Returns the regularised inversion of the modal coefficients per frequency
- * (may be used for optional plotting purposes).
+ * (may be used for optional plotting purposes)
  *
  * @param[in]  hA2sh       array2sh handle
  * @param[out] nCurves     (&) number of equalisation curves (current_order+1)
@@ -544,7 +540,7 @@ float** array2sh_getbN_inv(void* const hA2sh, int* nCurves, int* nFreqPoints);
     
 /**
  * Returns the direct inversion of the modal coefficients per frequency
- * (may be used for optional plotting purposes).
+ * (may be used for optional plotting purposes)
  *
  * @param[in]  hA2sh       array2sh handle
  * @param[out] nCurves     (&) number of equalisation curves (current_order+1)

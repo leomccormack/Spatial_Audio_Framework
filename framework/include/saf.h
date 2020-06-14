@@ -19,8 +19,7 @@
  * @brief Main include header for the Spatial_Audio_Framework
  *
  * ## Core modules
- *   afSTFTlib, saf_cdf4sap, saf_hoa, saf_hrir, saf_sh, saf_utilities, saf_vbap,
- *   saf_reverb
+ *   saf_utilities, saf_cdf4sap, saf_hoa, saf_hrir, saf_sh, saf_vbap, saf_reverb
  *
  * ## Optional modules
  *   saf_sofa_reader
@@ -130,7 +129,7 @@
  * normalised VBAP gains.
  *
  * ## Dependencies
- *   saf_utilities, afSTFTlib
+ *   saf_utilities
  */
 #define SAF_MODULE_HRIR
 #include "saf_hrir.h"

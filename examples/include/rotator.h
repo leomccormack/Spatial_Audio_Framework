@@ -121,20 +121,18 @@ void rotator_setFlipRoll(void* const hRot, int newState);
 
 /**
  * Sets the Ambisonic channel ordering convention to decode with, in order to
- * match the convention employed by the input signals (see 'ROTATOR_CH_ORDER'
- * enum)
+ * match the convention employed by the input signals (see 'CH_ORDER' enum)
  */
 void rotator_setChOrder(void* const hRot, int newOrder);
 
 /**
  * Sets the Ambisonic normalisation convention to decode with, in order to match
- * with the convention employed by the input signals (see 'ROTATOR_NORM_TYPE'
- * enum)
+ * with the convention employed by the input signals (see 'NORM_TYPES' enum)
  */
 void rotator_setNormType(void* const hRot, int newType);
 
 /**
- * Sets the input/output order (see 'ROTATOR_INPUT_ORDERS' enum)
+ * Sets the input/output order (see 'SH_ORDERS' enum)
  */
 void rotator_setOrder(void* const hRot, int newOrder);
 
@@ -191,19 +189,19 @@ int rotator_getRPYflag(void* const hRot);
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see 'ROTATOR_CH_ORDER' enum)
+ * (see 'CH_ORDER' enum)
  */
 int rotator_getChOrder(void* const hRot);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals
- * (see 'ROTATOR_NORM_TYPE' enum)
+ * (see 'NORM_TYPES' enum)
  */
 int rotator_getNormType(void* const hRot);
 
 /**
- * Returns the input/output order (see 'ROTATOR_INPUT_ORDERS' enum)
+ * Returns the input/output order (see 'SH_ORDERS' enum)
  */
 int rotator_getOrder(void* const hRot);
 

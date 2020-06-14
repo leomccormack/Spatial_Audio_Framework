@@ -92,7 +92,7 @@ cmake -S . -B build -DSAF_ENABLE_SOFA_READER=1
 -DNETCDF_LIBRARY="/c/msys64/mingw64/lib/libnetcdf.dll.a"
 cd build
 make install
-test/test # Optional, to run unit tests
+test/saf_test # Optional, to run unit tests
 ```
 Note, however, that this is relatively new feature which has not been fully implemented and tested. Therefore, please let us know if you encounter any problems or are willing to contribute :- )
 

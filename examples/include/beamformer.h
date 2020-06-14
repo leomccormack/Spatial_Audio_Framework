@@ -17,7 +17,7 @@
 /**
  * @file beamformer.h
  * @brief Generates beamformers/virtual microphones in arbitrary directions
- *        with several different beam pattern to choose from
+ *        with several different beam patterns to choose from
  * 
  * @author Leo McCormack
  * @date 17.05.2019
@@ -88,7 +88,7 @@ void beamformer_process(void* const hBeam,
 void beamformer_refreshSettings(void* const hBeam);
     
 /**
- * Sets the beamforming order (see 'BEAMFORMER_BEAM_ORDERS' enum)
+ * Sets the beamforming order (see 'SH_ORDERS' enum)
  *
  * If the beamforming order is higher than the
  * input signal order, the extra required channels are filled with zeros. If the
@@ -114,20 +114,18 @@ void beamformer_setNumBeams(void* const hBeam, int new_nBeams);
 
 /**
  * Sets the Ambisonic channel ordering convention to decode with, in order to
- * match the convention employed by the input signals (see 'BEAMFORMER_CH_ORDER'
- * enum)
+ * match the convention employed by the input signals (see 'CH_ORDER' enum)
  */
 void beamformer_setChOrder(void* const hBeam, int newOrder);
 
 /**
  * Sets the Ambisonic normalisation convention to decode with, in order to match
- * with the convention employed by the input signals (see 'BEAMFORMER_NORM_TYPE'
- * enum)
+ * with the convention employed by the input signals (see 'NORM_TYPES' enum)
  */
 void beamformer_setNormType(void* const hBeam, int newType);
     
 /**
- * Sets the beamforming approach to employ (see 'BEAMFORMER_BEAM_TYPE' enum)
+ * Sets the beamforming approach to employ (see 'STATIC_BEAM_TYPES' enum)
  */
 void beamformer_setBeamType(void* const hBeam, int newID);
 
@@ -137,7 +135,7 @@ void beamformer_setBeamType(void* const hBeam, int newID);
 /* ========================================================================== */
 
 /**
- * Returns tje beamforming order (see 'BEAMFORMER_BEAM_ORDERS' enum)
+ * Returns tje beamforming order (see 'SH_ORDERS' enum)
  */
 int beamformer_getBeamOrder(void* const hBeam);
     
@@ -176,19 +174,19 @@ int  beamformer_getNSHrequired(void* const hBeam);
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see 'BEAMFORMER_CH_ORDER' enum)
+ * (see 'CH_ORDER' enum)
  */
 int beamformer_getChOrder(void* const hBeam);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals.
- * (see 'BEAMFORMER_NORM_TYPE' enum)
+ * (see 'NORM_TYPES' enum)
  */
 int beamformer_getNormType(void* const hBeam);
     
 /**
- * Returns the beamforming approach employed (see 'BEAMFORMER_BEAM_TYPE' enum)
+ * Returns the beamforming approach employed (see 'STATIC_BEAM_TYPES' enum)
  */
 int beamformer_getBeamType(void* const hBeam);
 

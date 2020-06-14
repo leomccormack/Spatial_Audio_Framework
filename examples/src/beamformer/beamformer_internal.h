@@ -17,7 +17,7 @@
 /**
  * @file beamformer_internal.h
  * @brief Generates beamformers/virtual microphones in arbitrary directions
- *        with several different beam pattern to choose from
+ *        with several different beam patterns to choose from
  *
  * @author Leo McCormack
  * @date 17.05.2019

@@ -186,7 +186,7 @@ float pitch_shifter_getProgressBar0_1(void* const hPS);
  * (Optional) Returns current intialisation/processing progress text
  *
  * @note "text" string should be (at least) of length:
- *       PITCH_SHIFTER_PROGRESSBARTEXT_CHAR_LENGTH
+ *       PROGRESSBARTEXT_CHAR_LENGTH
  */
 void pitch_shifter_getProgressBarText(void* const hPS, char* text);
 

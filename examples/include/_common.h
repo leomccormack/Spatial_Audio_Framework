@@ -53,35 +53,35 @@ typedef enum _SH_ORDERS{
 /**
  * Available Ambisonic channel ordering conventions
  *
- * @note CH_FUMA only supported for 1st order input.
+ * @warning CH_FUMA is only supported for first order input!
  */
 typedef enum _CH_ORDER {
     CH_ACN = 1, /**< Ambisonic Channel Numbering (ACN) */
-    CH_FUMA     /**< (Obsolete) Furse-Malham/B-format (WXYZ) */
+    CH_FUMA     /**< (Legacy) Furse-Malham/B-format (WXYZ) */
     
 } CH_ORDER;
     
-/** Number of channel ordering options */
+/** Number of channel ordering options available */
 #define NUM_CH_ORDERINGS ( 2 )
 
 /**
  * Available Ambisonic normalisation conventions
  *
- * @note NORM_FUMA only supported for 1st order input and does NOT have the
- *       1/sqrt(2) scaling on the omni.
+ * @warning NORM_FUMA is only supported for first order input! It also  has the
+ *          1/sqrt(2) scaling term applied to the omni.
  */
 typedef enum _NORM_TYPES {
     NORM_N3D = 1,   /**< orthonormalised (N3D) */
     NORM_SN3D,      /**< Schmidt semi-normalisation (SN3D) */
-    NORM_FUMA       /**< (Obsolete) Same as NORM_SN3D for 1st order */
+    NORM_FUMA       /**< (Legacy) Furse-Malham scaling */
     
 } NORM_TYPES;
  
-/** Number of normalisation options */
+/** Number of normalisation options available */
 #define NUM_NORM_TYPES ( 3 )
 
 /**
- * Available microphone array presets.
+ * Available microphone array presets
  *
  * These determine the frequency ranges where the microphone array provides
  * usable spherical harmonic components at each order.
@@ -169,7 +169,7 @@ typedef enum _STATIC_BEAM_TYPES {
 #define NUM_STATIC_BEAM_TYPES ( 3 )
 
 /**
- * Available horizontal feild-of-view (FOV) options
+ * Available horizontal field-of-view (FOV) options
  */
 typedef enum _HFOV_OPTIONS{
     HFOV_360 = 1, /**< 360 degrees */
@@ -190,7 +190,10 @@ typedef enum _ASPECT_RATIO_OPTIONS{
 }ASPECT_RATIO_OPTIONS;
     
 /**
- * Current status of the codec.
+ * Current status of the codec
+ *
+ * These can be used to find out whether the codec is initialised, currently
+ * in the process of intialising, or it is not yet initialised.
  */
 typedef enum _CODEC_STATUS {
     CODEC_STATUS_INITIALISED = 0, /**< Codec is initialised and ready to process
@@ -203,7 +206,12 @@ typedef enum _CODEC_STATUS {
 } CODEC_STATUS;
 
 /**
- * Current status of the processing loop.
+ * Current status of the processing loop
+ *
+ * These are used to keep things thread-safe. i.e., the codec will not be
+ * initialised if the currently configured codec is being used to process a
+ * block of audio. Likewise, if the codec is being initialised, then the
+ * "process" functions are bypassed.
  */
 typedef enum _PROC_STATUS{
     PROC_STATUS_ONGOING = 0, /**< Codec is processing input audio, and should

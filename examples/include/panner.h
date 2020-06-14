@@ -164,12 +164,13 @@ void panner_setLoudspeakerElev_deg(void* const hPan, int index, float newElev_de
 void panner_setNumLoudspeakers(void* const hPan, int new_nLoudspeakers);
 
 /**
- * Sets a preset for the output configuration (see PANNER_PRESET enum)
+ * Sets a preset for the output configuration (see LOUDSPEAKER_ARRAY_PRESETS
+ * enum)
  */
 void panner_setOutputConfigPreset(void* const hPan, int newPresetID);
 
 /**
- * Sets a preset for the input configuration (see PANNER_PRESET enum)
+ * Sets a preset for the input configuration (see SOURCE_CONFIG_PRESETS enum)
  */
 void panner_setInputConfigPreset(void* const hPan, int newPresetID);
 

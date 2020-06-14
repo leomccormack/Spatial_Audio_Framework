@@ -167,14 +167,14 @@ void ambi_drc_setRelease(void* const hAmbi, float newValue);
 /**
  * Sets the Ambisonic channel ordering convention to decode with, in order to
  * match the convention employed by the input signals (see
- * 'AMBI_DRC_CH_ORDER' enum)
+ * 'CH_ORDER' enum)
  */
 void ambi_drc_setChOrder(void* const hAmbi, int newOrder);
 
 /**
  * Sets the Ambisonic normalisation convention to decode with, in order to match
  * with the convention employed by the input signals (see
- * 'AMBI_DRC_NORM_TYPE' enum)
+ * 'NORM_TYPE' enum)
  */
 void ambi_drc_setNormType(void* const hAmbi, int newType);
     
@@ -184,7 +184,7 @@ void ambi_drc_setNormType(void* const hAmbi, int newType);
  * If input order is set higher than the input signal order, the extra required
  * channels are filled with zeros. If the input order is set lower than the
  * input signal order, the number input signals are truncated accordingly (see
- * 'AMBI_DRC_INPUT_ORDERS' enum)
+ * 'SH_ORDERS' enum)
  */
 void ambi_drc_setInputPreset(void* const hAmbi, SH_ORDERS newPreset);
 
@@ -241,19 +241,19 @@ float ambi_drc_getRelease(void* const hAmbi);
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see 'AMBI_DRC_CH_ORDER' enum)
+ * (see 'CH_ORDER' enum)
  */
 int ambi_drc_getChOrder(void* const hAmbi);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals
- * (see 'AMBI_DRC_NORM_TYPE' enum)
+ * (see 'NORM_TYPE' enum)
  */
 int ambi_drc_getNormType(void* const hAmbi);
     
 /**
- * Returns the current processing order (see 'AMBI_DRC_INPUT_ORDERS' enum)
+ * Returns the current processing order (see 'SH_ORDERS' enum)
  */
 SH_ORDERS ambi_drc_getInputPreset(void* const hAmbi);
     

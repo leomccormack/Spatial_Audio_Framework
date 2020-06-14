@@ -62,8 +62,10 @@ typedef enum _AMBI_DEC_DECODING_METHODS {
 /**
  * When using mixed order decoding (i.e. different decoding orders for
  * different frequencies), this equalisation helps maintain equal perceived
- * "loudness". At low frequencies, preserving amplitude is more favourable,
- * whereas for high frequencies, preserving energy is better.
+ * "loudness"
+ *
+ * At low frequencies, preserving amplitude is more favourable, whereas for high
+ * frequencies, preserving energy is better.
  */
 typedef enum _AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH {
     AMPLITUDE_PRESERVING=1, /**< preserve omni amplitude */
@@ -113,7 +115,7 @@ void ambi_dec_init(void* const hAmbi,
 void ambi_dec_initCodec(void* const hAmbi);
 
 /**
- * Decodes input spherical harmonic signals to the loudspeaker channels.
+ * Decodes input spherical harmonic signals to the loudspeaker channels
  *
  * @param[in] hAmbi    ambi_dec handle
  * @param[in] inputs   Input channel buffers; 2-D array: nInputs x nSamples
@@ -147,12 +149,12 @@ void ambi_dec_refreshSettings(void* const hAmbi);
  * If decoding order is higher than the input signal order, the extra required
  * channels are filled with zeros. If the decoding order is lower than the input
  * signal order, the number input signals is truncated accordingly. (see
- * 'AMBI_DEC_MASTER_ORDERS' enum)
+ * 'SH_ORDERS' enum)
  */
 void ambi_dec_setMasterDecOrder(void* const hAmbi,  int newValue);
     
 /**
- * Sets the decoding order for a given frequency band.
+ * Sets the decoding order for a given frequency band
  *
  * @note The maximum order is dictated by ambi_dec_setMasterDecOrder()
  *
@@ -239,7 +241,7 @@ void ambi_dec_setSofaFilePath(void* const hAmbi, const char* path);
  * arrays, the available order is frequency dependent, therefore, different
  * bands require different decoding orders.
  * For conveinience, presets for a handful of comerically available microphone
- * array are included (see "AMBI_DEC_MIC_PRESETS" enum).
+ * array are included (see "MIC_PRESETS" enum).
  */
 void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID);
 
@@ -247,7 +249,7 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID);
  * Sets the output loudspeaker preset.
  *
  * For conveinience, presets for several popular arrangements are included (see
- * AMBI_DEC_LOUDSPEAKER_ARRAY_PRESETS enum).
+ * LOUDSPEAKER_ARRAY_PRESETS enum).
  */
 void ambi_dec_setOutputConfigPreset(void* const hAmbi, int newPresetID);
 
@@ -314,7 +316,7 @@ void ambi_dec_setTransitionFreq(void* const hAmbi, float newValue);
 /* ========================================================================== */
 
 /**
- * Returns current codec status (see 'AMBI_DEC_CODEC_STATUS' enum)
+ * Returns current codec status (see 'CODEC_STATUS' enum)
  */
 CODEC_STATUS ambi_dec_getCodecStatus(void* const hAmbi);
 
@@ -334,7 +336,7 @@ float ambi_dec_getProgressBar0_1(void* const hAmbi);
 void ambi_dec_getProgressBarText(void* const hAmbi, char* text);
 
 /**
- * Returns the master/maximum decoding order (see 'INPUT_ORDERS' enum)
+ * Returns the master/maximum decoding order (see 'SH_ORDERS' enum)
  */
 int ambi_dec_getMasterDecOrder(void* const hAmbi);
     
@@ -345,7 +347,7 @@ int ambi_dec_getMasterDecOrder(void* const hAmbi);
 int ambi_dec_getDecOrder(void* const hAmbi, int bandIdx);
   
 /**
- * Returns the decoding order for the first band (see 'INPUT_ORDERS'
+ * Returns the decoding order for the first band (see 'SH_ORDERS'
  * enum)
  */
 int ambi_dec_getDecOrderAllBands(void* const hAmbi);
@@ -423,20 +425,20 @@ char* ambi_dec_getSofaFilePath(void* const hAmbi);
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see 'AMBI_DEC_CH_ORDER' enum)
+ * (see 'CH_ORDER' enum)
  */
 int ambi_dec_getChOrder(void* const hAmbi);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals (see
- * 'AMBI_DEC_NORM_TYPE' enum).
+ * 'NORM_TYPE' enum).
  */
 int ambi_dec_getNormType(void* const hAmbi);
 
 /**
  * Returns the currently selected decoding method (see
- * 'AMBI_DEC_DECODING_METHODS' enum)
+ * 'DECODING_METHODS' enum)
  */
 int ambi_dec_getDecMethod(void* const hAmbi, int index);
     
