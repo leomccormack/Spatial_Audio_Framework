@@ -45,14 +45,14 @@ extern "C" {
  *
  * @param [in]  in_vec      Vector to be sorted; len x 1
  * @param [out] out_vec     Output vector (set to NULL if you don't want it)
- * @param [out] new_idices  Indices used to sort 'in_vec' (set to NULL if you
+ * @param [out] new_indices Indices used to sort 'in_vec' (set to NULL if you
  *                          don't want them)
  * @param [in]  len         Number of elements in vectors
  * @param [in]  descendFLAG '0' ascending, '1' descending
  */
 void sorti(int* in_vec,
            int* out_vec,
-           int* new_idices,
+           int* new_indices,
            int len,
            int descendFLAG);
     
@@ -62,14 +62,14 @@ void sorti(int* in_vec,
  *
  * @param [in]  in_vec      Vector to be sorted; len x 1
  * @param [out] out_vec     Output vector (set to NULL if you don't want it)
- * @param [out] new_idices  Indices used to sort 'in_vec' (set to NULL if you
+ * @param [out] new_indices Indices used to sort 'in_vec' (set to NULL if you
  *                          don't want them)
  * @param [in]  len         Number of elements in vectors
  * @param [in]  descendFLAG '0' ascending, '1' descending
  */
 void sortf(float* in_vec,
            float* out_vec,
-           int* new_idices,
+           int* new_indices,
            int len,
            int descendFLAG);
 
@@ -79,14 +79,14 @@ void sortf(float* in_vec,
  *
  * @param [in]  in_vec      Vector to be sorted; len x 1
  * @param [out] out_vec     Output vector (set to NULL if you don't want it)
- * @param [out] new_idices  Indices used to sort 'in_vec' (set to NULL if you
+ * @param [out] new_indices Indices used to sort 'in_vec' (set to NULL if you
  *                          don't want them)
  * @param [in]  len         Number of elements in vectors
  * @param [in]  descendFLAG '0' ascending, '1' descending
  */
 void sortd(double* in_vec,
            double* out_vec,
-           int* new_idices,
+           int* new_indices,
            int len,
            int descendFLAG);
 
