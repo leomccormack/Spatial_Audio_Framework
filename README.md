@@ -31,8 +31,8 @@ The framework comprises the following core modules:
 * **saf_hoa** - a collection of higher-order Ambisonics binaural and loudspeaker decoders.
 * **saf_sh** - spherical harmonic and spherical array processing related functions.
 * **saf_vbap** - Vector-base Amplitude Panning (VBAP) functions.
-* **saf_cdf4sap** - an implementation of the Covarience Domain Framework for Spatial Audio Processing (CDF4SAP).
-* **saf_hrir** - HRIR/HRTF related functions (estimating ITDs, interpolation, diffuse-field equalisation etc.).
+* **saf_cdf4sap** - Covarience Domain Framework for Spatial Audio Processing (CDF4SAP).
+* **saf_hrir** - HRIR/HRTF related functions (estimating ITDs, interpolation, diffuse-field EQ etc.).
 * **saf_reverb** - a collection of reverbs and room simulation algorithms.
 * **saf_utilities** - a collection of useful utility functions and cross-platform wrappers.
 
@@ -45,7 +45,7 @@ To enable optional framework modules, simply add the relevant pre-processor defi
 ```
 SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader
 ```
-Note that the **saf_sofa_reader** module requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. Instructions on how to install/link this dependency, can be found [here](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md). 
+Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. Instructions on how to install/link this dependency can be found [here](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md). 
 
 
 ## Using the framework
@@ -70,10 +70,10 @@ add_subdirectory(Spatial_Audio_Framework)
 target_link_libraries(${PROJECT_NAME} PRIVATE saf)
 ```
 
-The available SAF-specific build options and their default values are:
+The available SAF-specific build options (and their default values) are:
 ```
 -DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL    # performance library to employ
--DSAF_ENABLE_SOFA_READER_MODULE=0          # enable/disable the optional saf_sofa_reader module 
+-DSAF_ENABLE_SOFA_READER_MODULE=0          # enable/disable the saf_sofa_reader module 
 -DSAF_BUILD_EXAMPLES=1                     # build saf examples
 -DSAF_BUILD_TESTS=1                        # build unit testing program
 ```
@@ -89,7 +89,7 @@ Note that if **SAF_ENABLE_SOFA_READER_MODULE** is set to **ON**: for MacOSX and 
 You may build the framework, the examples, and the unit testing program with:
 ```
 mkdir build 
-cmake -S . -B build -DSAF_BUILD_EXAMPLES=1 -DSAF_BUILD_TESTS=1 -DSAF_ENABLE_SOFA_READER_MODULE=1
+cmake -S . -B build 
 cd build
 make
 test/saf_test 
@@ -112,7 +112,7 @@ make
 
 Many examples have been included in the repository, which may serve as a starting point for learning how to use the framework:
 
-* **ambi_bin** - a binaural Ambisonic decoder with built-in rotator. It includes the following decoding approaches: least-squares (LS), spatial re-sampling (SPR), Time-alignment (TA) [1], Magnitude Least-Squares (MagLS) [2].
+* **ambi_bin** - a binaural Ambisonic decoder with built-in rotator. It includes the following decoding options: least-squares (LS), spatial re-sampling (SPR), Time-alignment (TA) [1], Magnitude Least-Squares (MagLS) [2].
 * **ambi_dec** - a frequency-dependent Ambisonic decoder. Including the following decoding approaches: sampling ambisonic decoder (SAD), AllRAD [3], Energy-Preserving decoder (EPAD) [4], Mode-Matching decoder (MMD).
 * **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for Ambisonic signals, based on the design proposed in [5].
 * **ambi_enc** - a simple Ambisonic encoder.
