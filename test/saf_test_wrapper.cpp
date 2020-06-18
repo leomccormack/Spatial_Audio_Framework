@@ -1,6 +1,5 @@
-extern "C" {
+
 #include "saf_test.h"
-}
 #include <iostream>
 
 int main(){

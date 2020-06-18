@@ -1,6 +1,6 @@
 # Spatial_Audio_Framework
 
-A cross-platform Spatial Audio Framework for developing spatial audio related applications in C/C++.
+A cross-platform spatial audio framework (SAF) for developing spatial audio related applications in C/C++.
 
 ![](saf.png)
 
@@ -13,62 +13,44 @@ The framework requires the following libraries:
 * Any Library/Libraries conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 * (Optional) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
 
-The rationale for the former requirement is that the framework employs the use of CBLAS/LAPACK routines for tackling all of the linear algebra operations, which are used quite prolifically throughout the code. Therefore, a performance library, which conforms to the CBLAS/LAPACK standards, is required by most of the framework modules. In principle, any such library (or combination of libraries) may be employed for this task, and if you've worked with such libraries before, then you probably already know what to do. However, using a [custom Intel MKL library](CUSTOM_INTEL_MKL_INTRUCTIONS.md) for this requirement is still generally recommended, as this is the approach used by the developers.
+The rationale for the former requirement is that the framework employs the use of CBLAS/LAPACK routines for tackling all of the linear algebra operations, which are used quite prolifically throughout the code. Therefore, a performance library, which conforms to the CBLAS/LAPACK standards, is required by most of the framework modules. 
 
-## Available CBLAS/LAPACK options
-
-Define one of the following preprocessor definitions, which will dictate which library/libraries you should link to your project:
-
+You must define one of the following preprocessor definitions, which will let SAF know which library/libraries you have linked to your project:
 ```
-SAF_USE_INTEL_MKL
+SAF_USE_INTEL_MKL                
 SAF_USE_OPEN_BLAS_AND_LAPACKE
+SAF_USE_APPLE_ACCELERATE
 SAF_USE_ATLAS
 ```
 
-* SAF_USE_INTEL_MKL - to use [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries), or a [**custom Intel MKL library**](CUSTOM_INTEL_MKL_INTRUCTIONS.md)  (recommended for x86_64/amd64).
-* SAF_USE_OPEN_BLAS_AND_LAPACKE - to use [OpenBLAS](https://github.com/xianyi/OpenBLAS) and the LAPACKE interface (recommended for ARM).
-* SAF_USE_ATLAS - to use [ALTAS](http://math-atlas.sourceforge.net/) which is not recommended, since some LAPACK functions are missing. However, if you don't mind loosing some framework functionality, then this may still be a good choice for your particular project.
+Note that detailed instructions on how to build and these performance libraries can be found [here](dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
 
-**MacOSX users only**: if you do not define one of the above flags, then SAF will use [Apple Accelerate](https://developer.apple.com/documentation/accelerate) for CBLAS/LAPACK and also vDSP for the FFT. However, note that Intel MKL is still the more recommended option, as it is generally faster than Accelerate.
+## Framework structure
 
-## Enable SOFA support (Optional)
+The framework comprises the following core modules:
+* **saf_hoa** - a collection of higher-order Ambisonics binaural and loudspeaker decoders.
+* **saf_sh** - spherical harmonic and spherical array processing related functions.
+* **saf_vbap** - Vector-base Amplitude Panning (VBAP) functions.
+* **saf_cdf4sap** - an implementation of the Covarience Domain Framework for Spatial Audio Processing (CDF4SAP).
+* **saf_hrir** - HRIR/HRTF related functions (estimating ITDs, interpolation, diffuse-field equalisation etc.).
+* **saf_reverb** - a collection of reverbs and room simulation algorithms.
+* **saf_utilities** - a collection of useful utility functions and cross-platform wrappers.
 
-In order to use the built-in [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reader module (framework/modules/saf_sofa_reader), your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). For those already familar with building and linking this particular library, you know what to do. However, for convenience, suggested platform specfic instructions have been provided below.
+The framework also includes the following optional modules:
+* **saf_sofa_reader** - a simple SOFA file reader.
 
-Note that the following preprocessor definition is also required:
+### Enabling optional modules
 
+To enable optional framework modules, simply add the relevant pre-processor definitions:
 ```
-SAF_ENABLE_SOFA_READER
+SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader
 ```
+Note that the **saf_sofa_reader** module requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. Instructions on how to install/link this dependency, can be found [here](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md). 
 
-**Windows MSVC (64-bit) and MacOSX users**: for convenience, the following statically built libraries are included in the "_ext_libs" folder; simply link your project against them:
-
-```
-libszip.lib; libzlib.lib; libhdf5.lib; libhdf5_hl.lib; netcdf.lib; # Win64
-netcdf; hdf5; hdf5_hl; z; # MacOSX
-```
-
-Make sure to also add the appropriate 'include' and 'lib' directories to your project's header and library search paths, respectively.
-
-**Linux (amd64) and Raspberry Pi (ARM) users**: for Ubuntu/Debian based distros, you may install [netCDF](https://www.unidata.ucar.edu/software/netcdf/) and its dependencies with the following command:
-
-```
-sudo apt-get install libhdf5-dev libnetcdf-dev libnetcdff-dev
-```
-
-Then add the directory of the "netcdf.h" file to your project's header search paths,  along with this linker flag:
-```
--L/lib/x86_64-linux-gnu -lnetcdf  # (or wherever it was installed) 
-```
-
-**Windows MSYS2 (64-bit) users**: may install the required libraries via:
-```
-pacman -S mingw-w64-x86_64-hdf5 mingw-w64-x86_64-netcdf
-```
 
 ## Using the framework
 
-Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to your project), you can now add the files found in the "framework" folder to your project and add the following directory to your header search paths:
+Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to your project), you can now add the files found in the **framework** folder to your project and add the following directory to your header search paths:
 
 ```
 Spatial_Audio_Framework/framework/include  
@@ -80,27 +62,44 @@ The framework's master include header is then:
 #include "saf.h"
 ```
 
-### Building with CMake 
+## Building with CMake 
 
-For those who would prefer to use the framework as a traditional library, then CMake is your friend:
+The framework may also be included within an existing CMake workflow with simply:
 ```
-mkdir build
-cmake -S . -B build -DSAF_ENABLE_SOFA_READER=1
-# Linux users must link with an installed shared netcdf library:
+add_subdirectory(Spatial_Audio_Framework)
+target_link_libraries(${PROJECT_NAME} PRIVATE saf)
+```
+
+The available SAF-specific build options and their default values are:
+```
+-DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL    # performance library to employ
+-DSAF_ENABLE_SOFA_READER_MODULE=0          # enable/disable the optional saf_sofa_reader module 
+-DSAF_BUILD_EXAMPLES=1                     # build saf examples
+-DSAF_BUILD_TESTS=1                        # build unit testing program
+```
+
+Note that if **SAF_ENABLE_SOFA_READER_MODULE** is set to **ON**: for MacOSX and MSVC users, CMake will use the statically built dependencies found in **dependencies** by default. Linux and MSYS2 users may instead install a shared [netcdf library](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
+```
+# e.g. Linux users:
 -DNETCDF_LIBRARY="/usr/lib/x86_64-linux-gnu/libnetcdf.so"
-# Same for MSYS2 users
+# e.g. MSYS2 users
 -DNETCDF_LIBRARY="/c/msys64/mingw64/lib/libnetcdf.dll.a"
-cd build
-make install
-test/saf_test # Optional, to run unit tests
 ```
-Note, however, that this is relatively new feature which has not been fully implemented and tested. Therefore, please let us know if you encounter any problems or are willing to contribute :- )
 
-### Documentation
+You may build the framework, the examples, and the unit testing program with:
+```
+mkdir build 
+cmake -S . -B build -DSAF_BUILD_EXAMPLES=1 -DSAF_BUILD_TESTS=1 -DSAF_ENABLE_SOFA_READER_MODULE=1
+cd build
+make
+test/saf_test 
+```
 
-Documentation generated using [Doxygen](http://www.doxygen.nl/index.html) may also be found [here](http://research.spa.aalto.fi/projects/spatial_audio_framework/index.html).
+## Documentation
 
-Alternatively, you may compile the most recent documentation (HTML) yourself using the following command:
+Documentation is periodically generated using [Doxygen](http://www.doxygen.nl/index.html) and hosted [here](http://research.spa.aalto.fi/projects/spatial_audio_framework/index.html).
+
+Alternatively, you may compile the most recent documentation (HTML) yourself with the following:
 ```
 cd doxygen
 doxygen doxygen_config
@@ -109,9 +108,9 @@ cd latex
 make
 ```
 
-### Examples
+## Examples
 
-Many examples have been included in the repository, which may also serve as a starting point for learning the framework:
+Many examples have been included in the repository, which may serve as a starting point for learning how to use the framework:
 
 * **ambi_bin** - a binaural Ambisonic decoder with built-in rotator. It includes the following decoding approaches: least-squares (LS), spatial re-sampling (SPR), Time-alignment (TA) [1], Magnitude Least-Squares (MagLS) [2].
 * **ambi_dec** - a frequency-dependent Ambisonic decoder. Including the following decoding approaches: sampling ambisonic decoder (SAD), AllRAD [3], Energy-Preserving decoder (EPAD) [4], Mode-Matching decoder (MMD).
@@ -134,7 +133,7 @@ Note that many of these examples have also been integrated into VST audio plug-i
 ## Contributing
 
 Suggestions and contributions to the code are both welcomed and encouraged. It should be highlighted that, in general, the framework has been designed to be highly modular with plenty of room for expansion. Therefore:
-* if you are researcher who has developed a new spatial-audio related method and want to integrate it into the framework... or
+* if you are researcher who has developed a spatial-audio related method and want it integrated into the framework... or
 * if you notice that an existing piece of code can be rewritten to make it clearer/faster, or to fix a bug...
 
 then please feel free to do so and submit a pull request. Note, however, that if the changes/additions are major, then maybe consider first discussing it via a github "issue" or by contacting the developers directly via email. We may also be able to help in the implementation if needed :- )
@@ -149,7 +148,9 @@ then please feel free to do so and submit a pull request. Note, however, that if
 
 ## License
 
-This framework is provided under the [ISC license](https://choosealicense.com/licenses/isc/). However, it also includes a modified version of the ['alias-free STFT'](https://github.com/jvilkamo/afSTFT) implementation by Juha Vilkamo (MIT license); [kissFFT](https://github.com/mborgerding/kissfft) (BSD 3-clause license) by Mark Borgerding; and the ['convhull_3d'](https://github.com/leomccormack/convhull_3d) 3-D Convex Hull implementation by Leo McCormack (MIT license). 
+This framework is provided permissively under the [ISC license](https://choosealicense.com/licenses/isc/). It also includes the following resources: a modified version of the [alias-free STFT](https://github.com/jvilkamo/afSTFT) implementation by Juha Vilkamo (MIT license); [kissFFT](https://github.com/mborgerding/kissfft) (BSD 3-clause license) by Mark Borgerding; and the ['convhull_3d'](https://github.com/leomccormack/convhull_3d) 3-D Convex Hull implementation by Leo McCormack (MIT license). 
+
+Please be aware and abide by the license conditions found at the top of the respective source files. Furthermore, while we do not impose any copyleft licensing philosophies, we would still appreciate improvements and bug fixes being merged into the public repository where possible.
 
 ## References
 

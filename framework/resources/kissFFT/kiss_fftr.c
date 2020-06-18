@@ -12,7 +12,7 @@
  * @author Mark Borgerding
  */
 
-#include <extern/kiss_fftr.h>
+#include "kiss_fftr.h"
 #include "_kiss_fft_guts.h"
 
 struct kiss_fftr_state{

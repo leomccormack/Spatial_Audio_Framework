@@ -47,85 +47,6 @@
 #endif /* ENABLE_SAF_EXAMPLES_TESTS */
 
 /* ========================================================================== */
-/*                    Prototypes for available unit tests                     */
-/* ========================================================================== */
-
-/**
- * Testing for perfect recontruction of the saf_stft (when configured for 50%
- * window overlap) */
-void test__saf_stft_50pc_overlap(void);
-/**
- * Testing for perfect recontruction of the saf_stft (when configured for linear
- * time-invariant (LTI) filtering applications) */
-void test__saf_stft_LTI(void);
-/**
- * Testing the ims shoebox simulator, when applying the echograms in the time-
- * domain */
-void test__ims_shoebox_TD(void);
-/**
- * Testing the ims shoebox simulator, when generating room impulse respones
- * (RIRs) from the computed echograms */
-void test__ims_shoebox_RIR(void);
-/**
- * Testing the forward and backward real-(half)complex FFT (saf_rfft) */
-void test__saf_rfft(void);
-/**
- * Testing the saf_matrixConv */
-void test__saf_matrixConv(void);
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
-/**
- * Testing the alias-free STFT filterbank reconstruction */
-void test__afSTFTMatrix(void);
-#endif
-/**
- * Testing the alias-free STFT filterbank reconstruction */
-void test__afSTFT(void);
-/**
- * Testing the smb_pitchShifter */
-void test__smb_pitchShifter(void);
-/**
- * Testing the sortf function (sorting real floating point numbers) */
-void test__sortf(void);
-/**
- * Testing the sortz function (sorting complex double-floating point numbers) */
-void test__sortz(void);
-/**
- * Testing the cmplxPairUp function (grouping up conjugate symmetric values) */
-void test__cmplxPairUp(void);
-/**
- * Testing the realloc2d_r function (reallocating 2-D array, while retaining the
- * previous data order; except truncated or extended) */
-void test__realloc2d_r(void);
-/**
- * Testing that the getSHreal_recur function is somewhat numerically simular
- * to the getSHreal function */
-void test__getSHreal_recur(void);
-/**
- * Testing that the coefficients computed with butterCoeffs are numerically
- * similar to the "butter" function in Matlab */
-void test__butterCoeffs(void);
-/**
- * Testing that the faf_IIRFilterbank can re-construct the original signal power
- */
-void test__faf_IIRFilterbank(void);
-
-#ifdef ENABLE_SAF_EXAMPLES_TESTS
-/**
- * Testing the SAF ambi_bin example (this may also serve as a tutorial on how
- * to use it) */
-void test__saf_example_ambi_bin(void);
-/**
- * Testing the SAF ambi_dec example (this may also serve as a tutorial on how
- * to use it) */
-void test__saf_example_ambi_dec(void);
-/**
- * Testing the SAF array2sh example (this may also serve as a tutorial on how
- * to use it) */
-void test__saf_example_array2sh(void);
-#endif /* ENABLE_SAF_EXAMPLES_TESTS */
-
-
-/* ========================================================================== */
 /*                                 Test Config                                */
 /* ========================================================================== */
 
@@ -147,10 +68,15 @@ if (TEST_PROTECT()) {  setUp();  testfunc();  } \
 if (TEST_PROTECT() && (!TEST_IS_IGNORED))  {tearDown(); } \
 UnityConcludeTest(); timerResult();
 
-/** Main test program */
+/* Main test program */
 int main_test(void) {
     printf("%s", SAF_VERSION_BANNER);
-    printf("Executing the Spatial_Audio_Framework unit testing program:\n\n");
+    printf("Executing the Spatial_Audio_Framework unit testing program");
+#ifdef NDEBUG
+    printf(" (Release):\n\n");
+#else
+    printf(" (Debug):\n\n");
+#endif
 
     /* initialise */
     timer_lib_initialize();
@@ -173,7 +99,15 @@ int main_test(void) {
     RUN_TEST(test__sortz);
     RUN_TEST(test__cmplxPairUp);
     RUN_TEST(test__realloc2d_r);
+    RUN_TEST(test__getLoudspeakerAmbiDecoderMtx);
+    RUN_TEST(test__getSHreal);
     RUN_TEST(test__getSHreal_recur);
+    RUN_TEST(test__getSHcomplex);
+    RUN_TEST(test__getSHrotMtxReal);
+    RUN_TEST(test__real2complexSHMtx);
+    RUN_TEST(test__complex2realSHMtx);
+    RUN_TEST(test__computeSectorCoeffsEP);
+    RUN_TEST(test__checkCondNumberSHTReal);
     RUN_TEST(test__butterCoeffs);
     RUN_TEST(test__faf_IIRFilterbank);
 #ifdef ENABLE_SAF_EXAMPLES_TESTS
@@ -885,6 +819,108 @@ void test__realloc2d_r(void){
     free(test);
 }
 
+void test__getLoudspeakerAmbiDecoderMtx(void){
+    int i, j, k, nLS, order, nSH;
+    float* ls_dirs_deg;
+    float** decMtx_SAD, **decMtx_MMD, **decMtx_EPAD, **decMtx_AllRAD;
+
+    /* Config */
+    const float acceptedTolerance = 0.00001f;
+    int nTestOrders = 10;
+    int testOrders[10] = {1,2,3,4,5,6,7,8,9,10};
+
+    /* Loop over orders */
+    for(i=0; i<nTestOrders; i++) {
+        order = testOrders[i];
+        nSH = ORDER2NSH(order);
+
+        /* Pull an appropriate t-design for this order */
+        ls_dirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[2 * order-1];
+        nLS = __Tdesign_nPoints_per_degree[2 * order-1];
+
+        /* Compute decoders */
+        decMtx_SAD = (float**)malloc2d(nLS, nSH, sizeof(float));
+        decMtx_MMD = (float**)malloc2d(nLS, nSH, sizeof(float));
+        decMtx_EPAD = (float**)malloc2d(nLS, nSH, sizeof(float));
+        decMtx_AllRAD = (float**)malloc2d(nLS, nSH, sizeof(float));
+        getLoudspeakerAmbiDecoderMtx(ls_dirs_deg, nLS, LOUDSPEAKER_DECODER_SAD, order, 0, FLATTEN2D(decMtx_SAD));
+        getLoudspeakerAmbiDecoderMtx(ls_dirs_deg, nLS, LOUDSPEAKER_DECODER_MMD, order, 0, FLATTEN2D(decMtx_MMD));
+        getLoudspeakerAmbiDecoderMtx(ls_dirs_deg, nLS, LOUDSPEAKER_DECODER_EPAD, order, 0, FLATTEN2D(decMtx_EPAD));
+        getLoudspeakerAmbiDecoderMtx(ls_dirs_deg, nLS, LOUDSPEAKER_DECODER_ALLRAD, order, 0, FLATTEN2D(decMtx_AllRAD));
+
+        /* SAD/MMD/EPAD should all be equivalent in this special/uniform case */
+        for(j=0; j<nLS; j++)
+            for(k=0; k<nSH; k++)
+                TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, decMtx_SAD[j][k], decMtx_MMD[j][k]);
+        for(j=0; j<nLS; j++)
+            for(k=0; k<nSH; k++)
+                TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, decMtx_SAD[j][k], decMtx_EPAD[j][k]);
+
+        /* Clean-up */
+        free(decMtx_SAD);
+        free(decMtx_MMD);
+        free(decMtx_EPAD);
+        free(decMtx_AllRAD);
+    }
+}
+
+void test__getSHreal(void){
+    int i, j, k, order, nDirs, nSH;
+    float scale;
+    float* t_dirs_deg;
+    float** t_dirs_rad, **Y, **YYT;
+
+    /* Config */
+    const float acceptedTolerance = 0.00001f;
+    int nTestOrders = 10;
+    int testOrders[10] = {1,2,3,4,5,6,7,8,9,10};
+
+    /* Loop over orders */
+    for(i=0; i<nTestOrders; i++){
+        order = testOrders[i];
+        nSH = ORDER2NSH(order);
+
+        /* Pull an appropriate t-design */
+        t_dirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[2*order];
+        nDirs = __Tdesign_nPoints_per_degree[2*order];
+        t_dirs_rad = (float**)malloc2d(nDirs, 2, sizeof(float));
+        for(j=0; j<nDirs; j++){
+            t_dirs_rad[j][0] = t_dirs_deg[j*2] * M_PI/180.0f;
+            t_dirs_rad[j][1] = M_PI/2.0f - t_dirs_deg[j*2+1] * M_PI/180.0f; /* elevation->inclination */
+        }
+
+        /* Compute spherical harmonic coefficients */
+        Y = (float**)malloc2d(nSH, nDirs, sizeof(float));
+        getSHreal(order, FLATTEN2D(t_dirs_rad), nDirs, FLATTEN2D(Y));
+        scale = SQRT4PI;
+        utility_svsmul(FLATTEN2D(Y), &scale, nSH*nDirs, FLATTEN2D(Y));
+
+        /* Check Y is orthogonal: */
+        YYT = (float**)malloc2d(nSH, nSH, sizeof(float));
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, nDirs, 1.0f,
+                    FLATTEN2D(Y), nDirs,
+                    FLATTEN2D(Y), nDirs, 0.0f,
+                    FLATTEN2D(YYT), nSH);
+
+        /* Should be Identity: */
+        scale = 1.0f/(float)nDirs;
+        utility_svsmul(FLATTEN2D(YYT), &scale, nSH*nSH, FLATTEN2D(YYT));
+        for(j=0; j<nSH; j++){
+            for(k=0; k<nSH; k++) {
+                if(j==k)
+                    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, 1.0f, YYT[j][k]);
+                else
+                    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, 0.0f, YYT[j][k]);
+            }
+        }
+
+        /* clean-up */
+        free(t_dirs_rad);
+        free(Y);
+        free(YYT);
+    }
+}
+
 void test__getSHreal_recur(void){
     int i, j;
 
@@ -909,6 +945,321 @@ void test__getSHreal_recur(void){
         getSHreal(order, (float*)dir, 1, (float*)Y);
         for(j=0; j<nSH; j++)
             TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, Yr[j], Y[j]);
+    }
+}
+
+void test__getSHcomplex(void){
+    int i, j, k, order, nDirs, nSH;
+    float_complex scale;
+    float* t_dirs_deg;
+    float** t_dirs_rad;
+    float_complex **Y, **YYH;
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+
+    /* Config */
+    const float acceptedTolerance = 0.00001f;
+    int nTestOrders = 10;
+    int testOrders[10] = {1,2,3,4,5,6,7,8,9,10};
+
+    /* Loop over orders */
+    for(i=0; i<nTestOrders; i++){
+        order = testOrders[i];
+        nSH = ORDER2NSH(order);
+
+        /* Pull an appropriate t-design */
+        t_dirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[2*order];
+        nDirs = __Tdesign_nPoints_per_degree[2*order];
+        t_dirs_rad = (float**)malloc2d(nDirs, 2, sizeof(float));
+        for(j=0; j<nDirs; j++){
+            t_dirs_rad[j][0] = t_dirs_deg[j*2] * M_PI/180.0f;
+            t_dirs_rad[j][1] = M_PI/2.0f - t_dirs_deg[j*2+1] * M_PI/180.0f; /* elevation->inclination */
+        }
+
+        /* Compute spherical harmonic coefficients */
+        Y = (float_complex**)malloc2d(nSH, nDirs, sizeof(float_complex));
+        getSHcomplex(order, FLATTEN2D(t_dirs_rad), nDirs, FLATTEN2D(Y));
+        scale = cmplxf(SQRT4PI, 0.0f);
+        utility_cvsmul(FLATTEN2D(Y), &scale, nSH*nDirs, FLATTEN2D(Y));
+
+        /* Check Y is orthogonal: */
+        YYH = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, nDirs, &calpha,
+                    FLATTEN2D(Y), nDirs,
+                    FLATTEN2D(Y), nDirs, &cbeta,
+                    FLATTEN2D(YYH), nSH);
+
+        /* Should be Identity: */
+        scale = cmplxf(1.0f/(float)nDirs, 0.0f);
+        utility_cvsmul(FLATTEN2D(YYH), &scale, nSH*nSH, FLATTEN2D(YYH));
+        for(j=0; j<nSH; j++){
+            for(k=0; k<nSH; k++) {
+                if(j==k)
+                    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, 1.0f, YYH[j][k]);
+                else
+                    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, 0.0f, YYH[j][k]);
+            }
+        }
+
+        /* clean-up */
+        free(t_dirs_rad);
+        free(Y);
+        free(YYH);
+    }
+}
+
+void test__getSHrotMtxReal(void){
+    int i,j,nSH;
+    float Rzyx[3][3];
+    float** Mrot;
+
+    /* Config */
+    const float acceptedTolerance = 0.00001f;
+    int order = 22;
+
+    /* Rotation matrix for 0,0,0 should be identity */
+    yawPitchRoll2Rzyx(0.0f, 0.0f, 0.0f, 0, Rzyx);
+    nSH = ORDER2NSH(order);
+    Mrot = (float**)malloc2d(nSH, nSH, sizeof(float));
+    getSHrotMtxReal(Rzyx, FLATTEN2D(Mrot), order);
+    for(i=0; i<nSH; i++){
+        for(j=0; j<nSH; j++) {
+            if(j==i)
+                TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, 1.0f, Mrot[i][j]);
+            else
+                TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, 0.0f, Mrot[i][j]);
+        }
+    }
+    free(Mrot);
+
+    /* Compare to the getSHrotMtx() Matlab function  */
+    order = 4;
+    nSH = ORDER2NSH(order);
+    Mrot = (float**)malloc2d(nSH, nSH, sizeof(float));
+    yawPitchRoll2Rzyx(0.04f, 0.54f,-0.4f, 0, Rzyx);
+    getSHrotMtxReal(Rzyx, FLATTEN2D(Mrot), order);
+    float Mrot_ref[25][25] = {
+            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},{0,0.912317819470322,-0.334007492880439,-0.236886451652771,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0.408043822669133,0.790002010621868,0.457599237319041,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0.0342991990938353,-0.514135991653113,0.857022605902780,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0.773751979486127,-0.480511616313319,0.297436898769771,-0.164460121209763,-0.234308814625387,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0.320815885111266,0.584443217512645,-0.457030341925157,-0.339982347095703,-0.480664710153360,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0.323409465640717,0.558336000748573,0.436154765179890,0.626143845136656,0.0371501522262563,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0.365398067572425,-0.182693579159072,-0.703504421517165,0.441781344152855,0.378177314513551,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0.245510920021695,0.287086534852415,0.132306868781138,-0.519748017168846,0.754759962358177,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0.642754542747763,-0.587652464622319,0.146359326676735,-0.179940097166632,0.249957116297551,-0.161211805496773,-0.315061710316419,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0.316547622267400,0.324276933833715,-0.489415761677808,0.525421745728824,-0.0811795764406443,-0.0642914639380568,-0.517998801533831,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,-0.0477608186606479,0.302122638638019,0.214473275742620,-0.433723919089070,-0.427443247772927,-0.611726955971008,-0.339717518973177,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0.148935636035543,0.571302238306694,0.529863460253249,0.0476038953094580,0.594213419796629,0.0656256769672685,-0.104948528910382,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0.311309233760352,0.304630835298635,-0.396153335826512,-0.667628966408715,-0.0103234397880398,0.454946318162605,0.0231945482299087,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0.514785682894208,0.113244732089517,0.407883773582348,0.233719845299723,-0.593950310633879,0.241281704427283,0.300305444687571,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0.316675769196523,0.161927142796105,-0.298312669792114,0.0285933354722383,0.205549150173188,-0.571110978701303,0.644414328446904,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.526471642263643,-0.616929911516989,0.267922897453092,0.0235630456100945,0.0776050535864247,-0.190481327947399,0.295565129451190,-0.0753134473777231,-0.366811472459093},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.234144273956354,0.0978665390875757,-0.545910447747527,0.175528558261790,-0.376101588123769,0.335795191612168,-0.141736252789070,-0.0455702308901721,-0.574798644029333},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-0.0718436126062899,0.305262278899232,-0.0197737560173443,-0.298299395229287,0.646776790379034,0.111401675977437,0.0997398996043224,-0.463839920427382,-0.395542458465569},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-0.155033529872408,-0.118946002867737,0.138228495430813,-0.0977208017941514,-0.285522105871139,-0.450196541284017,-0.600496309285322,-0.520682311298467,-0.131355606942160},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.0236933293789157,0.311297649179989,0.703254159219873,0.348811131545197,-0.261303521121084,0.391172954707122,0.0807830377413570,-0.219358047572331,-0.101769931423874},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.146767948839247,0.439950893376704,0.0598087344890290,-0.520771343866458,-0.439502688322895,-0.362741803354952,0.407296904607327,0.0826968395396408,-0.112466610956744},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.386795790652846,0.451176951621299,0.0223488932476933,0.463808781391941,0.287701399151563,-0.482347736946315,-0.226762742725175,0.241251512069808,-0.0784553883303562},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.576800968786616,0.0555128465726625,0.144555412279657,-0.473213285269062,0.0597643274078365,0.343735767588532,-0.480720100388111,0.108090832343090,0.234286982126144},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.366598721881537,0.0733558553140817,-0.301930038675134,0.195400170636906,-0.0699710544219968,-0.0214401526687090,0.258994980191915,-0.617374325026823,0.526589247038282}};
+    for(i=0; i<nSH; i++)
+        for(j=0; j<nSH; j++)
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, Mrot_ref[i][j], Mrot[i][j]);
+    free(Mrot);
+}
+
+void test__real2complexSHMtx(void){
+    int o, it, j, nSH, order;
+    float* Y_real_ref;
+    float_complex* Y_complex_ref, * tmp, *Y_complex_test;
+    float_complex** T_r2c;
+    float dir[2];
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+
+    /* Config */
+    const float acceptedTolerance = 0.0000001f;
+    int nTestOrders = 10;
+    int testOrders[10] = {1,2,3,4,5,6,7,8,9,10};
+    int nIter = 400;
+
+    /* Loop over orders */
+    for(o=0; o<nTestOrders; o++){
+        order = testOrders[o];
+        nSH = ORDER2NSH(order);
+        Y_real_ref = malloc1d(nSH * sizeof(float));
+        tmp = malloc1d(nSH * sizeof(float_complex));
+        Y_complex_ref = malloc1d(nSH * sizeof(float_complex));
+        Y_complex_test = malloc1d(nSH * sizeof(float_complex));
+        T_r2c = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
+
+        /* Loop over iterations */
+        for(it=0; it<nIter; it++) {
+            /* Random direction */
+            rand_m1_1(&dir[0] , 1);
+            rand_m1_1(&dir[1] , 1);
+            dir[0] *= M_PI;
+            dir[1] *= M_PI/2.0f;
+
+            /* Compute reference spherical harmonic weights */
+            getSHcomplex(order, (float*)dir, 1, Y_complex_ref);
+            getSHreal(order, (float*)dir, 1, Y_real_ref);
+
+            /* Convert to complex weights */
+            real2complexSHMtx(order, FLATTEN2D(T_r2c));
+            for(j=0; j<nSH; j++)
+                tmp[j] = cmplxf(Y_real_ref[j], 0.0f);
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, nSH, nSH, &calpha,
+                        tmp, nSH,
+                        FLATTEN2D(T_r2c), nSH, &cbeta, /* Had to transpose it! */
+                        Y_complex_test, nSH);
+
+            /* Should be equal to the reference */
+            for (j = 0; j < nSH; j++) {
+                TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, crealf(Y_complex_ref[j]), crealf(Y_complex_test[j]));
+                TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, cimagf(Y_complex_ref[j]), cimagf(Y_complex_test[j]));
+            }
+        }
+
+        /* Clean-up */
+        free(tmp);
+        free(Y_real_ref);
+        free(Y_complex_ref);
+        free(Y_complex_test);
+        free(T_r2c);
+    }
+}
+
+void test__complex2realSHMtx(void){
+    int o, it, j, nSH, order;
+    float* Y_real_ref;
+    float_complex* Y_complex_ref, *Y_real_test;
+    float_complex** T_c2r;
+    float dir[2];
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+
+    /* Config */
+    const float acceptedTolerance = 0.000001f;
+    int nTestOrders = 10;
+    int testOrders[10] = {1,2,3,4,5,6,7,8,9,10};
+    int nIter = 400;
+
+    /* Loop over orders */
+    for(o=0; o<nTestOrders; o++){
+        order = testOrders[o];
+        nSH = ORDER2NSH(order);
+        Y_real_ref = malloc1d(nSH * sizeof(float));
+        Y_complex_ref = malloc1d(nSH * sizeof(float_complex));
+        Y_real_test = malloc1d(nSH * sizeof(float_complex));
+        T_c2r = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
+
+        /* Loop over iterations */
+        for(it=0; it<nIter; it++) {
+            /* Random direction */
+            rand_m1_1(&dir[0] , 1);
+            rand_m1_1(&dir[1] , 1);
+            dir[0] *= M_PI;
+            dir[1] *= M_PI/2.0f;
+
+            /* Compute reference spherical harmonic weights */
+            getSHcomplex(order, (float*)dir, 1, Y_complex_ref);
+            getSHreal(order, (float*)dir, 1, Y_real_ref);
+
+            /* Convert to complex weights */
+            complex2realSHMtx(order, FLATTEN2D(T_c2r));
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, nSH, nSH, &calpha,
+                        Y_complex_ref, nSH,
+                        FLATTEN2D(T_c2r), nSH, &cbeta, /* Had to transpose it! */
+                        Y_real_test, nSH);
+
+            /* Should be equal to the reference */
+            for (j = 0; j < nSH; j++) {
+                TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, Y_real_ref[j], crealf(Y_real_test[j]));
+            }
+        }
+
+        /* Clean-up */
+        free(Y_real_ref);
+        free(Y_complex_ref);
+        free(Y_real_test);
+        free(T_c2r);
+    }
+}
+
+void test__computeSectorCoeffsEP(void){
+    int i, j, numSec, order_sec, nSH_sec, nSH;
+    float* sec_dirs_deg;
+    float** sectorCoeffs;
+    float_complex*** A_xyz;
+
+    /* Config */
+    const float acceptedTolerance = 0.000001f;
+    const int order = 2;
+
+    /* Sector design and compute coefficients */
+    order_sec = order-1;
+    numSec = __Tdesign_nPoints_per_degree[2*order_sec-1];
+    sec_dirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[2*order_sec-1];
+    nSH = ORDER2NSH(order);
+    nSH_sec = ORDER2NSH(order_sec);
+    A_xyz = (float_complex***)malloc3d(nSH, nSH_sec, 3, sizeof(float_complex));
+    computeVelCoeffsMtx(order_sec, FLATTEN3D(A_xyz));
+    sectorCoeffs = (float**)malloc2d((numSec*4),nSH,sizeof(float));
+    computeSectorCoeffsEP(order_sec, FLATTEN3D(A_xyz), SECTOR_PATTERN_PWD, sec_dirs_deg, numSec, FLATTEN2D(sectorCoeffs));
+
+    /* Check with Matlab reference */
+    float sectorCoeffs_ref[9][16]= {
+            {0.886226925452758,0.511663353973244,0.511663353973244,0.511663353973244,0.886226925452758,0.511663353973244,-0.511663353973244,-0.511663353973244,0.886226925452758,-0.511663353973244,0.511663353973244,-0.511663353973244,0.886226925452758,-0.511663353973244,-0.511663353973244,0.511663353973244},
+            {0.886226925452758,0,0.511663353973244,0,-0.886226925452758,0,0.511663353973244,0,0.886226925452758,0,0.511663353973244,0,-0.886226925452758,0,0.511663353973244,0},
+            {0.886226925452758,0,0,0.511663353973244,-0.886226925452758,0,0,0.511663353973244,-0.886226925452758,0,0,0.511663353973244,0.886226925452758,0,0,0.511663353973244},
+            {0.886226925452758,0.511663353973244,0,0,0.886226925452758,0.511663353973244,0,0,-0.886226925452758,0.511663353973244,0,0,-0.886226925452758,0.511663353973244,0,0},
+            {0,0.396332729760601,0.396332729760601,0,0,-0.396332729760601,0.396332729760601,0,0,0.396332729760601,-0.396332729760601,0,0,-0.396332729760601,-0.396332729760601,0},
+            {0,0,0.396332729760601,0.396332729760601,0,0,-0.396332729760601,-0.396332729760601,0,0,-0.396332729760601,0.396332729760601,0,0,0.396332729760601,-0.396332729760601},
+            {0,-0.228822808215942,-0.228822808215942,0.457645616431885,0,-0.228822808215942,0.228822808215942,-0.457645616431885,0,0.228822808215942,-0.228822808215942,-0.457645616431885,0,0.228822808215942,0.228822808215942,0.457645616431885},
+            {0,0.396332729760601,0,0.396332729760601,0,-0.396332729760601,0,0.396332729760601,0,-0.396332729760601,0,-0.396332729760601,0,0.396332729760601,0,-0.396332729760601},
+            {0,0.396332729760601,-0.396332729760601,0,0,0.396332729760601,0.396332729760601,0,0,-0.396332729760601,-0.396332729760601,0,0,-0.396332729760601,0.396332729760601,0}
+    };
+    for(i=0; i<9; i++)
+        for(j=0; j<16; j++)
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, sectorCoeffs_ref[i][j], sectorCoeffs[j][i]);
+
+    free(sectorCoeffs);
+    free(A_xyz);
+}
+
+void test__checkCondNumberSHTReal(void){
+    int i, j, nDirs, order, nSH;
+    float* t_dirs_deg, *cond_N;
+    float** t_dirs_rad;
+
+    /* Config */
+    const float acceptedTolerance = 0.00001f;
+    int nTestOrders = 10;
+    int testOrders[10] = {1,2,3,4,5,6,7,8,9,10};
+
+    /* Loop over orders */
+    for(i=0; i<nTestOrders; i++) {
+        order = testOrders[i];
+        nSH = ORDER2NSH(order);
+
+        /* Pull an appropriate t-design */
+        t_dirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[2 * order];
+        nDirs = __Tdesign_nPoints_per_degree[2 * order];
+        t_dirs_rad = (float **) malloc2d(nDirs, 2, sizeof(float));
+        for (j = 0; j < nDirs; j++) {
+            t_dirs_rad[j][0] = t_dirs_deg[j * 2] * M_PI / 180.0f;
+            t_dirs_rad[j][1] = M_PI / 2.0f - t_dirs_deg[j * 2 + 1] * M_PI /
+                                             180.0f; /* elevation->inclination */
+        }
+
+        /* Condition numbers for an appropriate t-design should be 1 */
+        cond_N = malloc1d((order+1)*sizeof(float));
+        checkCondNumberSHTReal(order, FLATTEN2D(t_dirs_rad), nDirs, NULL, cond_N);
+        for(j=0; j<order+1; j++)
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, 1.0f, cond_N[j]);
+
+        /* Clean-up */
+        free(t_dirs_rad);
+        free(cond_N);
     }
 }
 

@@ -34,9 +34,9 @@
 #include <math.h> 
 #include <string.h>
 #include "saf_hoa.h"
-#include "saf_sh.h"        /* for computing the legendre polynamials */
-#include "saf_vbap.h"      /* for VBAP gains utilised by AllRAD */
-#include "saf_utilities.h" /* for linear algebra speed-ups */
+#include "../saf_sh/saf_sh.h"        /* for computing the legendre polynamials */
+#include "../saf_vbap/saf_vbap.h"      /* for VBAP gains utilised by AllRAD */
+#include "../saf_utilities/saf_utilities.h" /* for linear algebra speed-ups */
 
 #ifdef __cplusplus
 extern "C" {

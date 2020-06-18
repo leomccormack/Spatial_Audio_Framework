@@ -17,13 +17,13 @@ set(example_list
     sldoa)
 
 # Append examples which use the saf_sofa_reader module, or print a warning
-if(SAF_ENABLE_SOFA_READER) 
+if(SAF_ENABLE_SOFA_READER_MODULE)
 set(example_list ${example_list}
     ambi_bin 
     ambi_dec
     binauraliser)
 else()
-    message(${STATUS_2} "Note: examples that depend on the saf_sofa_reader module have been disabled")
+    message(STATUS "  Note: examples that depend on the saf_sofa_reader module have been disabled")
 endif()
 
 # Find number of examples
@@ -36,7 +36,7 @@ foreach(current_example RANGE ${num_examples})
     list(GET example_list ${current_example} current_string)
 
     # Set-up project
-    message(${STATUS_2} "${current_string}") 
+    message(STATUS "  ${current_string}")
     project("${example_prefix}${current_string}" LANGUAGES C)
     add_library(${PROJECT_NAME} STATIC)
 

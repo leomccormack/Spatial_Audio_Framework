@@ -27,8 +27,8 @@
  * @date 19.03.2018
  */
  
-#include "saf_hoa.h"
-#include "saf_hoa_internal.h"
+#include "../saf_hoa/saf_hoa.h"
+#include "../saf_hoa/saf_hoa_internal.h"
 
 /* ========================================================================== */
 /*                       Loudspeaker Ambisonic Decoders                       */
@@ -43,14 +43,21 @@ void getEPAD
 )
 {
     int i, j, nSH;
+    float scale;
     float* Y_ls, *U, *V, *U_tr, *V_tr;
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
+    scale = 1.0f/SQRT4PI;
+
+    /* Prep */
     Y_ls = malloc1d(nSH*nLS*sizeof(float));
     U = malloc1d(nSH*nSH*sizeof(float));
     V = malloc1d(nLS*nLS*sizeof(float));
     getRSH(order, ls_dirs_deg, nLS, Y_ls);
+    utility_svsmul(Y_ls, &scale, nLS*nSH, Y_ls);
     utility_ssvd(Y_ls, nSH, nLS, U, NULL, V, NULL);
+
+    /* Apply truncation */
     if(nSH>nLS){
         /* truncate the U matrix */
         U_tr = malloc1d(nSH*nLS*sizeof(float));
@@ -75,9 +82,12 @@ void getEPAD
                     decMtx, nSH);
         free(V_tr);
     }
-    for(i=0; i<nLS*nSH; i++)
-        decMtx[i] /= (float)nLS;
-    
+
+    /* Apply normalisation, and scale by number of loudspeakers */
+    scale = sqrtf(4.0f*SAF_PI/(float)nLS);
+    utility_svsmul(decMtx, &scale, nLS*nSH, decMtx);
+
+    /* clean-up */
     free(U);
     free(V);
     free(Y_ls);
@@ -92,10 +102,13 @@ void getAllRAD
 )
 {
     int i, t, nDirs_td, N_gtable, nGroups, nSH;
+    float scale;
     float* Y_td, *G_td, *t_dirs;
     
-    nSH = (order+1)*(order+1);
-    
+    nSH = ORDER2NSH(order);
+    scale = 1.0f/SQRT4PI;
+
+#if 0
     /* define a sufficiently dense t-design for this decoding order, as to
      * conserve omni energy */
     t = 4*order;
@@ -115,11 +128,16 @@ void getAllRAD
         nDirs_td = 480; /* Minimum t-design of degree 30 has 480 points (sufficient for up to 7th order) */
         t_dirs = (float*)__Tdesign_degree_30_dirs_deg;
     }
+#else
+    nDirs_td = 5100; /* Minimum t-design of degree 100 has 5100 points */
+    t_dirs = (float*)__Tdesign_degree_100_dirs_deg;
+#endif
     
     /* calculate vbap gains and SH matrix for this t-design */ 
     generateVBAPgainTable3D_srcs(t_dirs, nDirs_td, ls_dirs_deg, nLS, 0, 0, 0.0f, &G_td, &N_gtable, &nGroups);
     Y_td = malloc1d(nSH*nDirs_td*sizeof(float));
     getRSH(order, t_dirs, nDirs_td, Y_td);
+    utility_svsmul(Y_td, &scale, nDirs_td*nSH, Y_td);
     
     /* AllRAD decoder is simply (G_td * T_td * 1/nDirs_td) */
     cblas_sgemm(CblasRowMajor, CblasTrans, CblasTrans, nLS, nSH, nDirs_td, 1.0f,
@@ -127,8 +145,8 @@ void getAllRAD
                 Y_td, nDirs_td, 0.0f,
                 decMtx, nSH);
     for(i=0; i<nLS*nSH; i++)
-        decMtx[i] /= (float)nDirs_td;
- 
+        decMtx[i] *= (4.0f*M_PI)/(float)nDirs_td;
+
     free(Y_td);
     free(G_td);
 }
@@ -154,7 +172,7 @@ void getBinDecoder_LS
     float_complex* W, *Y_na, *Yna_W, *Yna_W_Yna, *Yna_W_H, *B;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     
     /* SH */
     Y_tmp = malloc1d(nSH*N_dirs*sizeof(float));
@@ -224,7 +242,7 @@ void getBinDecoder_LSDIFFEQ
     float_complex C_ref[2][2], C_ls[2][2];
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     
     /* integration weights */
     W = calloc1d(N_dirs*N_dirs, sizeof(float_complex));
@@ -324,7 +342,7 @@ void getBinDecoder_SPR
     float_complex* Y_td_cmplx, *W_Ynh_Ytd, *hrtfs_td, *B;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     
     /* integration weights */
     W = calloc1d(N_dirs*N_dirs, sizeof(float));
@@ -427,7 +445,7 @@ void getBinDecoder_TA
     float_complex* W, *Y_na, *hrtfs_mod, *Yna_W, *Yna_W_Yna, *Yna_W_H, *B;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     
     /* integration weights */
     W = calloc1d(N_dirs*N_dirs, sizeof(float_complex));
@@ -519,8 +537,8 @@ void getBinDecoder_MAGLS
     float_complex* W, *Y_na, *hrtfs_ls, *Yna_W, *Yna_W_Yna, *Yna_W_H, *H_mod, *B_magls;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
-    nSH = (order+1)*(order+1);
-    
+    nSH = ORDER2NSH(order);
+
     /* integration weights */
     W = calloc1d(N_dirs*N_dirs, sizeof(float_complex));
     if(weights!=NULL)

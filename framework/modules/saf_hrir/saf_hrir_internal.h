@@ -33,10 +33,9 @@
 #include <stdio.h>
 #include <math.h> 
 #include <string.h>
-#include <extern/afSTFTlib.h>
 
 #include "saf_hrir.h"
-#include "saf_utilities.h"
+#include "../saf_utilities/saf_utilities.h"
 
 #ifdef __cplusplus
 extern "C" {

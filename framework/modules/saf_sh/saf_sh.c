@@ -471,7 +471,7 @@ void complex2realSHMtx
 {
     int n, m, q, p, idx, nSH;
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     memset(T_c2r, 0, nSH*nSH*sizeof(float_complex));
     T_c2r[0] = cmplxf(1.0f, 0.0f);
     if(order == 0)
@@ -503,7 +503,7 @@ void real2complexSHMtx
 {
     int n, m, q, p, idx, nSH;
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     memset(T_r2c, 0, nSH*nSH*sizeof(float_complex));
     T_r2c[0] = cmplxf(1.0f, 0.0f);
     if(order == 0)
@@ -539,7 +539,7 @@ void complex2realCoeffs
     float_complex* T_c2r, *R_N_c;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     T_c2r = malloc1d(nSH*nSH*sizeof(float_complex));
     R_N_c = malloc1d(nSH*K*sizeof(float_complex));
     complex2realSHMtx(order, T_c2r);
@@ -860,7 +860,7 @@ void beamWeightsVelocityPatternsReal
     int nSH;
     float_complex* velCoeffs_c;
     
-    nSH = (order+2)*(order+2);
+    nSH = ORDER2NSH(order+1);
     velCoeffs_c = malloc1d(nSH*3*sizeof(float_complex));
     beamWeightsVelocityPatternsComplex(order, b_n, azi_rad, elev_rad, A_xyz, velCoeffs_c);
     complex2realCoeffs(order+1, velCoeffs_c, 3, velCoeffs);
@@ -882,8 +882,8 @@ void beamWeightsVelocityPatternsComplex
     float_complex* c_nm, *A_1, *velCoeffs_T;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
-    nSH_l = (order+1)*(order+1);
-    nSH = (order+2)*(order+2);
+    nSH_l = ORDER2NSH(order);
+    nSH = ORDER2NSH(order+1);
     c_nm = malloc1d(nSH_l*sizeof(float_complex));
     A_1 = malloc1d(nSH*nSH_l*sizeof(float_complex));
     velCoeffs_T = malloc1d(3*nSH*sizeof(float_complex));
@@ -920,7 +920,7 @@ void rotateAxisCoeffsReal
     int nSH;
     float_complex* c_nm_c;
 
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     c_nm_c = malloc1d(nSH*sizeof(float_complex));
     rotateAxisCoeffsComplex(order, c_n, theta_0, phi_0, c_nm_c);
     complex2realCoeffs(order, c_nm_c, 1, c_nm);
@@ -943,7 +943,7 @@ void rotateAxisCoeffsComplex
     
     phi_theta[0] = phi_0;
     phi_theta[1] = theta_0;
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     Y_N = malloc1d(nSH*sizeof(float_complex));
     getSHcomplex(order, (float*)phi_theta, 1, Y_N);
     for(n=0, q = 0; n<=order; n++)
@@ -964,14 +964,15 @@ void checkCondNumberSHTReal
 {
     int n, i, j, nSH, nSH_n, ind;
     float minVal, maxVal;
-    float* Y_N, *Y_n, *YY_n, *W, *W_Yn, *s;
+    float *YY_n, *W, *W_Yn, *s;
+    float** Y_N, **Y_n;
     
     /* get SH */
-    nSH = (order+1)*(order+1);
-    Y_N = malloc1d(nSH * nDirs *sizeof(float));
-    Y_n = malloc1d(nDirs * nSH* sizeof(float));
+    nSH = ORDER2NSH(order);
+    Y_N = (float**)malloc2d(nSH, nDirs, sizeof(float));
+    Y_n = (float**)malloc2d(nDirs, nSH, sizeof(float));
     YY_n = malloc1d(nSH*nSH*sizeof(float));
-    getSHreal(order, dirs_rad, nDirs, Y_N);
+    getSHreal(order, dirs_rad, nDirs, FLATTEN2D(Y_N));
     
     /* diagonalise the integration weights, if available */
     if(w!=NULL){
@@ -991,20 +992,20 @@ void checkCondNumberSHTReal
         nSH_n = (n+1)*(n+1);
         for(i=0; i<nDirs; i++)
             for(j=0; j<nSH_n; j++)
-                Y_n[i*nSH_n+j] = Y_N[j*nDirs+i]; /* truncate to current order and transpose */
+                Y_n[i][j] = Y_N[j][i]; /* truncate to current order and transpose */
         if(w==NULL){
             cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nSH_n, nSH_n, nDirs, 1.0f,
-                        Y_n, nSH_n,
-                        Y_n, nSH_n, 0.0f,
+                        FLATTEN2D(Y_n), nSH,
+                        FLATTEN2D(Y_n), nSH, 0.0f,
                         YY_n, nSH_n);
         }
         else{
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nDirs, nSH_n, nDirs, 1.0f,
                         W, nDirs,
-                        Y_n, nSH_n, 0.0f,
+                        FLATTEN2D(Y_n), nSH, 0.0f,
                         W_Yn, nSH_n);
             cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nSH_n, nSH_n, nDirs, 1.0f,
-                        Y_n, nSH_n,
+                        FLATTEN2D(Y_n), nSH,
                         W_Yn, nSH_n, 0.0f,
                         YY_n, nSH_n);
         }
@@ -1044,7 +1045,7 @@ void generatePWDmap
     float_complex* Cx_Y, *Y_Cx_Y, *Cx_Y_s, *Y_grid_s;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     Cx_Y = malloc1d(nSH * nGrid_dirs * sizeof(float_complex));
     Y_Cx_Y = malloc1d(nGrid_dirs*sizeof(float_complex));
     Cx_Y_s = malloc1d(nSH*sizeof(float_complex));
@@ -1089,7 +1090,7 @@ void generateMVDRmap
     float_complex *Cx_d, *invCx_Ygrid, *w_MVDR, *invCx_Ygrid_s, *Y_grid_s;
     float_complex denum;
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     w_MVDR = malloc1d(nSH * nGrid_dirs*sizeof(float_complex));
     Cx_d = malloc1d(nSH*nSH*sizeof(float_complex));
     invCx_Ygrid = malloc1d(nSH*nGrid_dirs*sizeof(float_complex));
@@ -1161,7 +1162,7 @@ void generateCroPaCLCMVmap
     
     b[0] = cmplxf(1.0f, 0.0f);
     b[1] = cmplxf(0.0f, 0.0f);
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     Cx_Y = malloc1d(nSH * nGrid_dirs * sizeof(float_complex));
     Cx_d = malloc1d(nSH*nSH*sizeof(float_complex));
     A = malloc1d(nSH*2*sizeof(float_complex));
@@ -1259,7 +1260,7 @@ void generateMUSICmap
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float_complex tmp;
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     nSources = MIN(nSources, nSH/2);
     V = malloc1d(nSH*nSH*sizeof(float_complex));
     Vn = malloc1d(nSH*(nSH-nSources)*sizeof(float_complex));
@@ -1307,7 +1308,7 @@ void generateMinNormMap
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float_complex Vn1_Vn1H;
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     nSources = MIN(nSources, nSH/2);
     V = malloc1d(nSH*nSH*sizeof(float_complex));
     Vn = malloc1d(nSH*(nSH-nSources)*sizeof(float_complex));
@@ -1629,7 +1630,7 @@ void sphScattererDirModalCoeffs
                 b_N[i*(order+1)+n] = cmplx(4.0*M_PI, 0.0);
             else if(kr[i] <= 1e-20)
                 b_N[i*(order+1)+n] = cmplx(0.0, 0.0);
-            else{
+            else{ // Dear god, what happened here...
 //#if __STDC_VERSION__ >= 199901L
 //                b_N[i*(order+1)+n] = 4.0f*PI*cpowf(I,(float)n) * ( (dirCoeff*jn_kr[i*(order+1)+n] - I*(1.0f-dirCoeff)*jnprime_kr[i*(order+1)+n]) -
 //                                                                   (jnprime_kR[i*(order+1)+n]/hn2prime_kR[i*(order+1)+n]) * (dirCoeff*hn2_kr[i*(order+1)+n] -
@@ -1887,7 +1888,7 @@ void evaluateSHTfilters
     float_complex cSH_n, cSH_nm, yre_yre_dot, yre_yid_dot;
     float_complex *y_recon_kk, *y_recon_nm, *w_y_recon_nm, *y_ideal_nm, *MH_M, *EigV;
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     w_uni_grid = 1.0f/(float)nDirs;
     y_recon_kk = malloc1d(nSH*nDirs*sizeof(float_complex));
     y_recon_nm = malloc1d(nDirs*sizeof(float_complex));

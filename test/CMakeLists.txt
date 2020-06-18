@@ -22,7 +22,7 @@ PUBLIC
 target_link_libraries(${PROJECT_NAME} PRIVATE saf)
 
 # SAF examples tests
-if(SAF_ENABLE_SOFA_READER AND SAF_BUILD_EXAMPLES) 
+if(SAF_ENABLE_SOFA_READER_MODULE AND SAF_BUILD_EXAMPLES)
     target_compile_definitions(${PROJECT_NAME} PRIVATE ENABLE_SAF_EXAMPLES_TESTS=1) 
     target_link_libraries(${PROJECT_NAME} 
     PRIVATE 
@@ -43,6 +43,6 @@ if(SAF_ENABLE_SOFA_READER AND SAF_BUILD_EXAMPLES)
         "${example_prefix}sldoa"
     ) 
 else()
-    message(${STATUS_2} "Note: unit tests for the SAF examples have been disabled")
+    message(STATUS "  Note: unit tests for the SAF examples have been disabled")
 endif()
 

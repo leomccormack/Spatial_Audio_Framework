@@ -37,7 +37,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "saf_utility_complex.h"
+#include "../saf_utilities/saf_utility_complex.h"
 
 /**
  * Converts spherical harmonic order, to number of spherical harmonic components
@@ -283,6 +283,8 @@ void getSHcomplex(/* Input Arguments */
  * r_N = T_c2r * y_N, where r_N and y_N is are the real and complex SH vectors,
  * respectively.
  *
+ * @warning The T_r2c matrix is returned transposed! TODO: fix
+ *
  * @param[in]  order Order of spherical harmonic expansion
  * @param[out] T_c2r Transformation matrix for complex->real;
  *                   FLAT: (order+1)^2 x (order+1)^2
@@ -298,6 +300,8 @@ void complex2realSHMtx(/* Input Arguments */
  * Computes the unitary transformation matrix T_r2c the expresses the complex
  * spherical harmonics with respect to the real ones, so that y_N = T_r2c * r_N,
  * where r_N and y_N are the real and complex SH vectors, respectively.
+ *
+ * @warning The T_r2c matrix is returned transposed! TODO: fix
  *
  * @param[in]  order Order of spherical harmonic expansion
  * @param[out] T_r2c Transformation matrix for real->complex;

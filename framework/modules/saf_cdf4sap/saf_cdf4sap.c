@@ -35,7 +35,7 @@
  */
 
 #include "saf_cdf4sap.h"
-#include "saf_utilities.h"
+#include "../saf_utilities/saf_utilities.h"
 
 /**
  * Main data structure for the Covariance Domain Framework for Spatial Audio

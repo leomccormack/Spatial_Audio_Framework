@@ -147,12 +147,12 @@
 /* for error message handling */
 #include "saf_utility_error.h"
 /* for allocating multi-dimensional arrays */
-#include <extern/md_malloc.h>
+#include "../resources/md_malloc/md_malloc.h"
 /* default FFT implementation, if no optimised implementation is available */
-#include <extern/kiss_fftr.h>
-#include <extern/kiss_fft.h>
+#include "../resources/kissFFT//kiss_fftr.h"
+#include "../resources/kissFFT/kiss_fft.h"
 /* for generating 3-D convex hulls */
-#include <extern/convhull_3d.h>
+#include "../resources/convhull_3d/convhull_3d.h"
 /* for cross-platform complex numbers wrapper */
 #include "saf_utility_complex.h"
 /* for sorting vectors */
@@ -190,7 +190,7 @@
  *          time--frequency domain spatial audio. John Wiley & Sons,
  *          Incorporated.
  */
-#include <extern/afSTFTlib.h>
+#include "../resources/afSTFT/afSTFTlib.h"
 
 
 #endif /* __SAF_UTILITIES_H_INCLUDED__ */

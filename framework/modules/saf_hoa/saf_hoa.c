@@ -260,7 +260,7 @@ void getMaxREweights
     double* ppm;
     
     x = cosf(137.9f*(SAF_PI/180.0f)/((float)order+1.51f));
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     if(diagMtxFlag)
         memset(a_n, 0, nSH*nSH*sizeof(float));
     else
@@ -293,9 +293,11 @@ void getLoudspeakerAmbiDecoderMtx
 )
 {
     int i, j, nSH;
+    float scale;
     float* Y_ls, *a_n, *decMtx_maxrE;
-    
-    nSH = (order+1) * (order+1);
+
+    nSH = ORDER2NSH(order);
+    scale = 1.0f/SQRT4PI;
  
     switch(method){
         default:
@@ -306,9 +308,10 @@ void getLoudspeakerAmbiDecoderMtx
              */
             Y_ls = malloc1d(nSH*nLS*sizeof(float));
             getRSH(order, ls_dirs_deg, nLS, Y_ls);
+            utility_svsmul(Y_ls, &scale, nLS*nSH, Y_ls);
             for(i=0; i<nLS; i++)
                 for(j=0; j<nSH; j++)
-                    decMtx[i*nSH+j] = Y_ls[j*nLS + i]/(float)nLS;
+                    decMtx[i*nSH+j] = (4.0f*SAF_PI) * Y_ls[j*nLS + i]/(float)nLS;
             free(Y_ls);
             break;
            
@@ -317,6 +320,7 @@ void getLoudspeakerAmbiDecoderMtx
              * loudspeaker spherical harmonic matrix. */
             Y_ls = malloc1d(nSH*nLS*sizeof(float));
             getRSH(order, ls_dirs_deg, nLS, Y_ls);
+            utility_svsmul(Y_ls, &scale, nLS*nSH, Y_ls);
             utility_spinv(Y_ls, nSH, nLS, decMtx);
             free(Y_ls);
             break;
@@ -367,7 +371,7 @@ void getBinauralAmbiDecoderMtx
     float_complex* a_n, *decMtx_rE;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     
     switch(method){
         default:
@@ -445,7 +449,7 @@ void getBinauralAmbiDecoderFilters
     getUniformFreqVector(fftSize, fs, freqVector);
     
     /* compute decoding matrix per bin */
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     decMtx = malloc1d(nBins*NUM_EARS*nSH*sizeof(float_complex));
     getBinauralAmbiDecoderMtx(hrtfs, hrtf_dirs_deg, N_dirs, nBins, method,
                               order, freqVector, itd_s, weights, enableDiffCovMatching,
@@ -489,7 +493,7 @@ void applyDiffCovMatching
     float_complex VUX[NUM_EARS][NUM_EARS], M[NUM_EARS][NUM_EARS];
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     
-    nSH = (order+1)*(order+1);
+    nSH = ORDER2NSH(order);
     
     /* integration weights */
     W = calloc1d(N_dirs*N_dirs, sizeof(float_complex));

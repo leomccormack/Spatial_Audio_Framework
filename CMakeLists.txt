@@ -4,11 +4,11 @@ cmake_minimum_required(VERSION 3.15)
 project(saf_head)
 
 # Project options/defaults
-option(BUILD_SHARED_LIBS       "Build shared instead of static libraries."     OFF)
-option(SAF_BUILD_TESTS         "Build SAF unit tests."                         ON)
-option(SAF_BUILD_EXAMPLES      "Build SAF examples."                           ON)
-option(SAF_ENABLE_SOFA_READER  "Enable the SAF SOFA READER module"             OFF)
-set(SAF_PERF_LIB "SAF_USE_INTEL_MKL" CACHE STRING "Performance library for SAF to use.")
+option(BUILD_SHARED_LIBS             "Build shared instead of static libraries."  OFF)
+option(SAF_BUILD_TESTS               "Build SAF unit tests."                      ON)
+option(SAF_BUILD_EXAMPLES            "Build SAF examples."                        ON)
+option(SAF_ENABLE_SOFA_READER_MODULE "Enable the SAF SOFA READER module"          OFF)
+set(SAF_PERFORMANCE_LIB "SAF_USE_INTEL_MKL" CACHE STRING "Performance library for SAF to use.")
 if (NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 endif()
@@ -21,6 +21,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Platform specific flags and definitions
 if(MSVC)
@@ -34,9 +35,6 @@ elseif(UNIX AND NOT APPLE AND NOT ANDROID)
         -DLINUX=1   
     )
 endif()
-
-# Second level status message
-set(STATUS_2 " |- ")
 
 # add subdirectory for SAF
 add_subdirectory(framework)

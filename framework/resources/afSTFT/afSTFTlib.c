@@ -41,7 +41,7 @@
  * @date 08.04.2015
  */
 
-#include <extern/afSTFTlib.h>
+#include "afSTFTlib.h"
 #include "afSTFT_protoFilter.h"
 #ifdef AFSTFT_USE_SAF_UTILITIES 
 #else

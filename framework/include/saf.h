@@ -88,8 +88,8 @@
  * @note MacOSX users only: saf_utilities will employ Apple's Accelerate library
  *       by default, if none of the above FLAGS are defined.
  */
-#define SAF_MODULE_UTILITIES
-#include "saf_utilities.h"
+#define SAF_UTILITIES_MODULE
+#include "../modules/saf_utilities/saf_utilities.h"
 
 /**
  * SAF Module: CDF4SAP
@@ -104,8 +104,8 @@
  *          domain framework for time--frequency processing of spatial audio.
  *          Journal of the Audio Engineering Society, 61(6), 403-411.
  */
-#define SAF_MODULE_CDF4SAP
-#include "saf_cdf4sap.h"
+#define SAF_CDF4SAP_MODULE
+#include "../modules/saf_cdf4sap/saf_cdf4sap.h"
 
 /**
  * SAF Module: HOA
@@ -117,8 +117,8 @@
  * ## Dependencies
  *   saf_utilities, saf_vbap, saf_sh
  */
-#define SAF_MODULE_HOA
-#include "saf_hoa.h"
+#define SAF_HOA_MODULE
+#include "../modules/saf_hoa/saf_hoa.h"
 
 /**
  * SAF Module: HRIR
@@ -131,8 +131,8 @@
  * ## Dependencies
  *   saf_utilities
  */
-#define SAF_MODULE_HRIR
-#include "saf_hrir.h"
+#define SAF_HRIR_MODULE
+#include "../modules/saf_hrir/saf_hrir.h"
 
 /**
  * SAF Module: REVERB
@@ -142,8 +142,8 @@
  * ## Dependencies
  *   saf_utilities, saf_sh
  */
-#define SAF_MODULE_REVERB
-#include "saf_reverb.h"
+#define SAF_REVERB_MODULE
+#include "../modules/saf_reverb/saf_reverb.h"
 
 /**
  * SAF Module: SH
@@ -157,8 +157,8 @@
  * ## Dependencies
  *   saf_utilities
  */
-#define SAF_MODULE_SH
-#include "saf_sh.h"
+#define SAF_SH_MODULE
+#include "../modules/saf_sh/saf_sh.h"
 
 /**
  * SAF Module: VBAP
@@ -170,8 +170,8 @@
  * ## Dependencies
  *  saf_utilities
  */
-#define SAF_MODULE_VBAP
-#include "saf_vbap.h"
+#define SAF_VBAP_MODULE
+#include "../modules/saf_vbap/saf_vbap.h"
 
 
 /* ========================================================================== */
@@ -185,15 +185,16 @@
  * load HRIR data.
  *
  * ## Enable instructions
- *   Add this pre-processor definition to your project: SAF_ENABLE_SOFA_READER
+ *   Add this pre-processor definition to your project:
+ *       SAF_ENABLE_SOFA_READER_MODULE
  *   and ensure that netcdf is also linked to your project
  * ## Dependencies
  *   saf_utilities, saf_hrir, netcdf
  */
-#define SAF_MODULE_SOFA_READER
-#ifdef  SAF_ENABLE_SOFA_READER
-# include "saf_sofa_reader.h"
-#endif /* SAF_ENABLE_SOFA_READER */
+#define SAF_SOFA_READER_MODULE
+#ifdef  SAF_ENABLE_SOFA_READER_MODULE
+# include "../modules/saf_sofa_reader/saf_sofa_reader.h"
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */
 
 
 #endif /* SAF_H_INCLUDED */

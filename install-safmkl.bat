@@ -11,7 +11,7 @@ ECHO ***************************************************************************
 ECHO.
 ECHO This batch script will build the required saf_mkl_custom.lib and saf_mkl_custom.dll files
 ECHO and copy them into:
-ECHO   - "Spatial_Audio_Framework/_ext_libs/Win64/lib/saf_mkl_custom.lib" 
+ECHO   - "Spatial_Audio_Framework/dependencies/Win64/lib/saf_mkl_custom.lib" 
 ECHO   - "C:/Windows/System32/saf_mkl_custom.dll".  
 ECHO You may choose between sequential and threaded versions of the library. The latter option
 ECHO will also place libiomp5md.lib and libiomp5md.dll, in these same folders.
@@ -53,9 +53,9 @@ nmake intel64 interface=lp64 threading=parallel name=saf_mkl_custom export=saf_m
 ECHO.
 ECHO Copying files to correct folders...
 cd /d "%~dp0"
-xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom.lib" "_ext_libs\Win64\lib" 
+xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom.lib" "dependencies\Win64\lib" 
 xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom.dll" "C:\Windows\System32\"
-xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\compiler\lib\intel64\libiomp5md.lib" "_ext_libs\Win64\lib"
+xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\compiler\lib\intel64\libiomp5md.lib" "dependencies\Win64\lib"
 xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\redist\intel64\compiler\libiomp5md.dll" "C:\Windows\System32\"
 GOTO End
 
@@ -67,7 +67,7 @@ nmake intel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf
 ECHO.
 ECHO Copying files to correct folders...
 cd /d "%~dp0"
-xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom.lib" "_ext_libs\Win64\lib" 
+xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom.lib" "dependencies\Win64\lib" 
 xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom.dll" "C:\Windows\System32\"
 GOTO End
 
