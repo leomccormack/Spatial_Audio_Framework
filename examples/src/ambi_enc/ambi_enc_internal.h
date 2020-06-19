@@ -90,11 +90,11 @@ typedef struct _ambi_enc
  *
  * The function also returns the number of source in the configuration
  * Note: default uniformly distributed points are used to pad the
- * dirs_deg matrix up to the MAX_NUM_INPUTS, if nCH is less than this. This can
+ * dirs_deg matrix up to the #MAX_NUM_INPUTS, if nCH is less than this. This can
  * help avoid scenarios of many sources being panned in the same direction, or
  * triangulations errors.
  *
- * @param[in]  preset   See SOURCE_CONFIG_PRESETS enum
+ * @param[in]  preset   See #_SOURCE_CONFIG_PRESETS enum
  * @param[out] dirs_deg Source directions, [azimuth elevation] convention, in
  *                      DEGREES;
  * @param[out] nCH      (&) number of source directions in the configuration

@@ -16,7 +16,7 @@
 
 /**
  * @file saf_reverb_internal.h
- * @brief Internal part of the reverb processing module (saf_reverb)
+ * @brief Internal header for the reverb processing module (#SAF_REVERB_MODULE)
  *
  * A collection of reverb and room simulation algorithms.
  *
@@ -92,7 +92,7 @@ typedef struct _ims_src_obj{
  */
 typedef struct _ims_rec_obj{
     float** sigs;        /**< Receiver signal pointers (one per channel) */
-    RECEIVER_TYPES type; /**< Receiver type (see RECEIVER_TYPES enum) */
+    RECEIVER_TYPES type; /**< Receiver type (see #_RECEIVER_TYPES enum) */
     int nChannels;       /**< Number of channels for receiver */
     ims_pos_xyz pos;     /**< Source position */
     int ID;              /**< Unique Source ID */
@@ -180,15 +180,15 @@ typedef struct _ims_scene_data
     float* band_centerfreqs; /**< Octave band CENTRE frequencies; nBands x 1 */
     float* band_cutofffreqs; /**< Octave band CUTOFF frequencies;
                               *   (nBands-1) x 1 */
-    float** H_filt;          /**< nBands x (IMS_FIR_FILTERBANK_ORDER+1) */
+    float** H_filt;          /**< nBands x (#IMS_FIR_FILTERBANK_ORDER+1) */
     ims_rir** rirs;          /**< One per source/receiver combination */
 
-    /* Circular buffers (only used/allocated when "applyEchogramTD" function is
+    /* Circular buffers (only used/allocated when applyEchogramTD() function is
      * called for the first time) */
     unsigned int wIdx;
-    float*** circ_buffer;    /**< nChannels x nBands x IMS_CIRC_BUFFER_LENGTH */
+    float*** circ_buffer;    /**< nChannels x nBands x #IMS_CIRC_BUFFER_LENGTH*/
 
-    /* IIR filterbank (only used/allocated when "applyEchogramTD" function is
+    /* IIR filterbank (only used/allocated when applyEchogramTD() function is
      * called for the first time) */
     voidPtr* hFaFbank;       /**< One per source */
     float*** src_sigs_bands; /**< nSources x nBands x nSamples */
@@ -284,9 +284,9 @@ void ims_shoebox_coreInit(void* hWork,
 
 /**
  * Imposes spherical harmonic directivies onto the echogram computed with
- * ims_shoebox_coreInit, for a specific source/reciever combination
+ * ims_shoebox_coreInit() for a specific source/reciever combination
  *
- * @note Call ims_shoebox_coreInit before applying the directivities
+ * @note Call ims_shoebox_coreInit() before applying the directivities
  *
  * @param[in] hWork    workspace handle
  * @param[in] sh_order Spherical harmonic order
@@ -296,7 +296,7 @@ void ims_shoebox_coreRecModuleSH(void* hWork,
 
 /**
  * Applies boundary absoption per frequency band, onto the echogram computed
- * with ims_shoebox_coreRecModuleSH, for a specific source/reciever combination
+ * with ims_shoebox_coreRecModuleSH() for a specific source/reciever combination
  *
  * Absorption coefficients are given for each of the walls on the respective
  * planes [x+ y+ z+; x- y- z-].
@@ -312,7 +312,7 @@ void ims_shoebox_coreAbsorptionModule(void* hWork,
 /**
  * Renders a room impulse response for a specific source/reciever combination
  *
- * @note Call ims_shoebox_coreAbsorptionModule before rendering rir
+ * @note Call ims_shoebox_coreAbsorptionModule() before rendering rir
  *
  * @param[in]  hWork               workspace handle
  * @param[in]  fractionalDelayFLAG 0: disabled, 1: use Lagrange interpolation

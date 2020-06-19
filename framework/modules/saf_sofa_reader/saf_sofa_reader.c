@@ -16,7 +16,7 @@
 
 /**
  * @file saf_sofa_reader.c
- * @brief A basic sofa reader, which returns only the bare minimum
+ * @brief Public source for the sofa reader module (#SAF_SOFA_READER_MODULE)
  *
  * @warning This (optional) SOFA reader, requires netcdf to be linked to your
  *          project!

@@ -16,7 +16,7 @@
 
 /**
  * @file saf_utility_error.c
- * @brief Utility: A list of error and warning codes
+ * @brief A list of error and warning codes
  *
  * @author Leo McCormack
  * @date 05.08.2019

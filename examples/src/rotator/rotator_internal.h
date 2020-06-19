@@ -79,12 +79,12 @@ typedef struct _rotator
     int recalc_M_rotFLAG;
 
     /* user parameters */
-    float yaw, roll, pitch;               /**< rotation angles in degrees */
-    int bFlipYaw, bFlipPitch, bFlipRoll;  /**< flag to flip the sign of the individual rotation angles */
-    CH_ORDER chOrdering;          /**< only ACN is supported */
-    NORM_TYPES norm;              /**< N3D or SN3D */
-    SH_ORDERS inputOrder;      /**< current input/output order int order;*/
-    int useRollPitchYawFlag;              /**< rotation order flag, 1: r-p-y, 0: y-p-r */
+    float yaw, roll, pitch;              /**< rotation angles in degrees */
+    int bFlipYaw, bFlipPitch, bFlipRoll; /**< flag to flip the sign of the individual rotation angles */
+    CH_ORDER chOrdering;                 /**< only ACN is supported */
+    NORM_TYPES norm;                     /**< N3D or SN3D */
+    SH_ORDERS inputOrder;                /**< current input/output order int order;*/
+    int useRollPitchYawFlag;             /**< rotation order flag, 1: r-p-y, 0: y-p-r */
     
 } rotator_data;
     

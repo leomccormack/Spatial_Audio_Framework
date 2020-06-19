@@ -119,7 +119,7 @@ void sldoa_analysis(void* const hSld,
 /* ========================================================================== */
 
 /**
- * Sets the maximum input/analysis order (see 'SH_ORDERS' enum)
+ * Sets the maximum input/analysis order (see #_SH_ORDERS enum)
  */
 void sldoa_setMasterOrder(void* const hSld,  int newValue);
 
@@ -156,19 +156,19 @@ void sldoa_setAnaOrderAllBands(void* const hSld,  int newValue);
 
 /**
  * Sets the Ambisonic channel ordering convention to decode with, in order to
- * match the convention employed by the input signals (see 'CH_ORDER' enum)
+ * match the convention employed by the input signals (see #_CH_ORDER enum)
  */
 void sldoa_setChOrder(void* const hSld, int newOrder);
 
 /**
  * Sets the Ambisonic normalisation convention to decode with, in order to match
- * with the convention employed by the input signals (see 'NORM_TYPES' enum)
+ * with the convention employed by the input signals (see #_NORM_TYPES enum)
  */
 void sldoa_setNormType(void* const hSld, int newType);
 
 /**
  * Sets an input preset, the microphone/hyrophone array used to capture
- * the input signals (see 'MIC_PRESETS' enum)
+ * the input signals (see #_MIC_PRESETS enum)
  */
 void sldoa_setSourcePreset(void* const hSld, int newPresetID);
 
@@ -178,7 +178,7 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID);
 /* ========================================================================== */
 
 /**
- * Returns current codec status (see 'CODEC_STATUS' enum)
+ * Returns current codec status (see #_CODEC_STATUS enum)
  */
 CODEC_STATUS sldoa_getCodecStatus(void* const hSld);
 
@@ -191,13 +191,14 @@ float sldoa_getProgressBar0_1(void* const hSld);
 
 /**
  * (Optional) Returns current intialisation/processing progress text
+ *
  * @note "text" string should be (at least) of length:
- *       PROGRESSBARTEXT_CHAR_LENGTH
+ *       #PROGRESSBARTEXT_CHAR_LENGTH
  */
 void sldoa_getProgressBarText(void* const hSld, char* text);
 
 /**
- * Returns the current maximum analysis/input order (see 'SH_ORDERS' enum)
+ * Returns the current maximum analysis/input order (see #_SH_ORDERS enum)
  */
 int sldoa_getMasterOrder(void* const hSld);
 
@@ -289,14 +290,14 @@ void sldoa_getAnaOrderHandle(void* const hSld,
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see 'CH_ORDER' enum)
+ * (see #_CH_ORDER enum)
  */
 int sldoa_getChOrder(void* const hSld);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals.
- * (see 'NORM_TYPES' enum)
+ * (see #_NORM_TYPES enum)
  */
 int sldoa_getNormType(void* const hSld);
 

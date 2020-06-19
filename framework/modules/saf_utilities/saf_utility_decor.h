@@ -16,7 +16,7 @@
 
 /**
  * @file saf_utility_decor.h
- * @brief Utility: A collection of signal decorrelators
+ * @brief A collection of signal decorrelators
  *
  * @author Leo McCormack
  * @date 30.07.2018 

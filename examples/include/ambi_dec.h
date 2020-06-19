@@ -27,6 +27,8 @@
  * The algorithms utilised in this Ambisonic decoder were pieced together and
  * developed in collaboration with Archontis Politis.
  *
+ * Unit test(s): test__saf_example_ambi_dec()
+ *
  * @author Leo McCormack
  * @date 07.12.2017
  */
@@ -45,8 +47,8 @@ extern "C" {
 /* ========================================================================== */
 
 /**
- * Available decoding methods. See "saf_hoa_internal.h" for a more indepth
- * description of each approach.
+ * Available decoding methods. See saf_hoa_internal.h for a more indepth
+ * description of each decoding approach.
  */
 typedef enum _AMBI_DEC_DECODING_METHODS {
     DECODING_METHOD_SAD = 1, /**< Sampling Ambisonic Decoder (SAD) */
@@ -149,7 +151,7 @@ void ambi_dec_refreshSettings(void* const hAmbi);
  * If decoding order is higher than the input signal order, the extra required
  * channels are filled with zeros. If the decoding order is lower than the input
  * signal order, the number input signals is truncated accordingly. (see
- * 'SH_ORDERS' enum)
+ * #_SH_ORDERS enum)
  */
 void ambi_dec_setMasterDecOrder(void* const hAmbi,  int newValue);
     
@@ -181,7 +183,9 @@ void ambi_dec_setDecOrderAllBands(void* const hAmbi,  int newValue);
  * @param[in] index      Loudspeaker index
  * @param[in] newAzi_deg New azimuth in DEGREES
  */
-void ambi_dec_setLoudspeakerAzi_deg(void* const hAmbi, int index, float newAzi_deg);
+void ambi_dec_setLoudspeakerAzi_deg(void* const hAmbi,
+                                    int index,
+                                    float newAzi_deg);
 
 /**
  * Sets the elevation of a specific loudspeaker
@@ -190,7 +194,9 @@ void ambi_dec_setLoudspeakerAzi_deg(void* const hAmbi, int index, float newAzi_d
  * @param[in] index       Loudspeaker index
  * @param[in] newElev_deg New elevation in DEGREES
  */
-void ambi_dec_setLoudspeakerElev_deg(void* const hAmbi, int index, float newElev_deg);
+void ambi_dec_setLoudspeakerElev_deg(void* const hAmbi,
+                                     int index,
+                                     float newElev_deg);
 
 /**
  * Sets the number of loudspeakers to decode to
@@ -224,7 +230,7 @@ void ambi_dec_setBinauraliseLSflag(void* const hAmbi, int newState);
  * Sets the file path for a .sofa file, in order to employ a custom HRIR set for
  * the decoding.
  *
- * @note If the custom set failes to load correctly, hcompass will revert to the
+ * @note If the custom set failes to load correctly, ambi_dec will revert to the
  *       default set. Use ambi_dec_getUseDefaultHRIRsflag() to check if loading
  *       was successful.
  *
@@ -241,7 +247,7 @@ void ambi_dec_setSofaFilePath(void* const hAmbi, const char* path);
  * arrays, the available order is frequency dependent, therefore, different
  * bands require different decoding orders.
  * For conveinience, presets for a handful of comerically available microphone
- * array are included (see "MIC_PRESETS" enum).
+ * array are included (see #_MIC_PRESETS enum).
  */
 void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID);
 
@@ -249,19 +255,19 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID);
  * Sets the output loudspeaker preset.
  *
  * For conveinience, presets for several popular arrangements are included (see
- * LOUDSPEAKER_ARRAY_PRESETS enum).
+ * #_LOUDSPEAKER_ARRAY_PRESETS enum).
  */
 void ambi_dec_setOutputConfigPreset(void* const hAmbi, int newPresetID);
 
 /**
  * Sets the Ambisonic channel ordering convention to decode with, in order to
- * match the convention employed by the input signals (see 'CH_ORDER' enum)
+ * match the convention employed by the input signals (see #_CH_ORDER enum)
  */
 void ambi_dec_setChOrder(void* const hAmbi, int newOrder);
 
 /**
  * Sets the Ambisonic normalisation convention to decode with, in order to match
- * with the convention employed by the input signals (see 'NORM_TYPE' enum)
+ * with the convention employed by the input signals (see #_NORM_TYPE enum)
  */
 void ambi_dec_setNormType(void* const hAmbi, int newType);
 
@@ -272,7 +278,7 @@ void ambi_dec_setNormType(void* const hAmbi, int newType);
  *
  * @param[in] hAmbi ambi_dec handle
  * @param[in] index Index for low (0) or high (1) frequency decoder
- * @param[in] newID New decoding method (see 'AMBI_DEC_DECODING_METHODS' enum)
+ * @param[in] newID New decoding method (see #_AMBI_DEC_DECODING_METHODS enum)
  */
 void ambi_dec_setDecMethod(void* const hAmbi, int index, int newID);
 
@@ -297,7 +303,7 @@ void ambi_dec_setDecEnableMaxrE(void* const hAmbi, int index, int newID);
  *
  * @param[in] hAmbi ambi_dec handle
  * @param[in] index For low (0) or high (1) frequency decoder
- * @param[in] newID "DIFFUSE_FIELD_EQ_APPROACH" enum
+ * @param[in] newID see #_DIFFUSE_FIELD_EQ_APPROACH enum
  */
 void ambi_dec_setDecNormType(void* const hAmbi, int index, int newID);
 
@@ -316,7 +322,7 @@ void ambi_dec_setTransitionFreq(void* const hAmbi, float newValue);
 /* ========================================================================== */
 
 /**
- * Returns current codec status (see 'CODEC_STATUS' enum)
+ * Returns current codec status (see #_CODEC_STATUS enum)
  */
 CODEC_STATUS ambi_dec_getCodecStatus(void* const hAmbi);
 
@@ -331,24 +337,23 @@ float ambi_dec_getProgressBar0_1(void* const hAmbi);
  * (Optional) Returns current intialisation/processing progress text
  *
  * @note "text" string should be (at least) of length:
- *       PROGRESSBARTEXT_CHAR_LENGTH
+ *       #PROGRESSBARTEXT_CHAR_LENGTH
  */
 void ambi_dec_getProgressBarText(void* const hAmbi, char* text);
 
 /**
- * Returns the master/maximum decoding order (see 'SH_ORDERS' enum)
+ * Returns the master/maximum decoding order (see #_SH_ORDERS enum)
  */
 int ambi_dec_getMasterDecOrder(void* const hAmbi);
     
 /**
  * Returns the decoding order for a given frequency band index (see
- * 'AMBI_DEC_MASTER_ORDERS' enum)
+ * #_AMBI_DEC_MASTER_ORDERS enum)
  */
 int ambi_dec_getDecOrder(void* const hAmbi, int bandIdx);
   
 /**
- * Returns the decoding order for the first band (see 'SH_ORDERS'
- * enum)
+ * Returns the decoding order for the first band (see #_SH_ORDERS enum)
  */
 int ambi_dec_getDecOrderAllBands(void* const hAmbi);
 
@@ -425,20 +430,19 @@ char* ambi_dec_getSofaFilePath(void* const hAmbi);
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see 'CH_ORDER' enum)
+ * (see #_CH_ORDER enum)
  */
 int ambi_dec_getChOrder(void* const hAmbi);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals (see
- * 'NORM_TYPE' enum).
+ * #_NORM_TYPE enum).
  */
 int ambi_dec_getNormType(void* const hAmbi);
 
 /**
- * Returns the currently selected decoding method (see
- * 'DECODING_METHODS' enum)
+ * Returns the currently selected decoding method (see #_DECODING_METHODS enum)
  */
 int ambi_dec_getDecMethod(void* const hAmbi, int index);
     
@@ -454,14 +458,14 @@ int ambi_dec_getDecEnableMaxrE(void* const hAmbi, int index);
 
 /**
  * Returns the current equalisation approach for one of the decoders (see
- * DIFFUSE_FIELD_EQ_APPROACH enum)
+ * #_DIFFUSE_FIELD_EQ_APPROACH enum)
  *
  * @note It is suggested to preserve amplitude at low-frequencies and energy
  *       at high-frequencies
  *
  * @param[in] hAmbi ambi_dec handle
  * @param[in] index Index for low (0) or high (1) frequency decoder
- * @returns (see DIFFUSE_FIELD_EQ_APPROACH enum)
+ * @returns (see #_DIFFUSE_FIELD_EQ_APPROACH enum)
  */
 int ambi_dec_getDecNormType(void* const hAmbi, int index);
 

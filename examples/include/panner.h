@@ -170,7 +170,7 @@ void panner_setNumLoudspeakers(void* const hPan, int new_nLoudspeakers);
 void panner_setOutputConfigPreset(void* const hPan, int newPresetID);
 
 /**
- * Sets a preset for the input configuration (see SOURCE_CONFIG_PRESETS enum)
+ * Sets a preset for the input configuration (see #_SOURCE_CONFIG_PRESETS enum)
  */
 void panner_setInputConfigPreset(void* const hPan, int newPresetID);
 
@@ -229,7 +229,7 @@ void panner_setFlipRoll(void* const hPan, int newState);
 /* ========================================================================== */
 
 /**
- * Returns current codec status (see 'CODEC_STATUS' enum)
+ * Returns current codec status (see #_CODEC_STATUS enum)
  */
 CODEC_STATUS panner_getCodecStatus(void* const hPan);
 
@@ -242,8 +242,9 @@ float panner_getProgressBar0_1(void* const hPan);
 
 /**
  * (Optional) Returns current intialisation/processing progress text
- * Note: "text" string should be (at least) of length:
- *       PROGRESSBARTEXT_CHAR_LENGTH
+ *
+ * @note "text" string should be (at least) of length:
+ *       #PROGRESSBARTEXT_CHAR_LENGTH
  */
 void panner_getProgressBarText(void* const hPan, char* text);
     

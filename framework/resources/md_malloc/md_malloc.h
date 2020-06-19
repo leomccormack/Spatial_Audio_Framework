@@ -100,6 +100,8 @@ void** realloc2d(void** ptr, size_t dim1, size_t dim2, size_t data_size);
 
 /**
  * 2-D realloc which does retain previous data order
+ *
+ * Unit test(s): test__realloc2d_r()
  */
 void** realloc2d_r(void** ptr, size_t new_dim1, size_t new_dim2,
                    size_t prev_dim1, size_t prev_dim2, size_t data_size);

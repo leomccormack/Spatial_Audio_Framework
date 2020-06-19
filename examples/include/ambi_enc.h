@@ -17,6 +17,8 @@
 /**
  * @file ambi_enc.h
  * @brief A simple, but flexible, Ambisonic encoder.
+ *
+ * Unit test(s): test__saf_example_ambi_enc()
  * 
  * @author Leo McCormack
  * @date 07.10.2016
@@ -88,7 +90,7 @@ void ambi_enc_process(void* const hAmbi,
 void ambi_enc_refreshParams(void* const hAmbi);
     
 /**
- * Sets the encoding order (see 'SH_ORDERS' enum)
+ * Sets the encoding order (see #_SH_ORDERS enum)
  */
 void ambi_enc_setOutputOrder(void* const hAmbi, int newValue);
 
@@ -116,20 +118,19 @@ void ambi_enc_setSourceElev_deg(void* const hAmbi, int index, float newElev_deg)
 void ambi_enc_setNumSources(void* const hAmbi, int new_nSources);
 
 /**
- * Sets the input configuration preset (see 'SOURCE_CONFIG_PRESETS'
- * enum)
+ * Sets the input configuration preset (see #_SOURCE_CONFIG_PRESETS enum)
  */
 void ambi_enc_setInputConfigPreset(void* const hAmbi, int newPresetID);
 
 /**
- * Sets the Ambisonic channel ordering convention to encode with (see
- * 'CH_ORDER' enum)
+ * Sets the Ambisonic channel ordering convention to encode with (see #_CH_ORDER
+ * enum)
  */
 void ambi_enc_setChOrder(void* const hAmbi, int newOrder);
 
 /**
- * Sets the Ambisonic normalisation convention to encode with (see
- * 'NORM_TYPE' enum)
+ * Sets the Ambisonic normalisation convention to encode with (see #_NORM_TYPE
+ * enum)
  */
 void ambi_enc_setNormType(void* const hAmbi, int newType);
 
@@ -145,7 +146,7 @@ void ambi_enc_setEnablePostScaling(void* const hAmbi, int newStatus);
 /* ========================================================================== */
 
 /**
- * Returns the decoding order (see 'SH_ORDERS' enum)
+ * Returns the decoding order (see #_SH_ORDERS enum)
  *
  * If decoding order is higher than the input signal order, the extra required
  * channels are filled with zeros. If the decoding order is lower than the input
@@ -181,13 +182,13 @@ int ambi_enc_getNSHrequired(void* const hAmbi);
 
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
- * encode with (see 'CH_ORDER' enum)
+ * encode with (see #_CH_ORDER enum)
  */
 int ambi_enc_getChOrder(void* const hAmbi);
     
 /**
  * Returns the Ambisonic normalisation convention currently being used to encode
- * with (see 'NORM_TYPE' enum)
+ * with (see #_NORM_TYPE enum)
  */
 int ambi_enc_getNormType(void* const hAmbi);
 

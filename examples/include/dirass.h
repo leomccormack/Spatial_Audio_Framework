@@ -185,17 +185,17 @@ void dirass_refreshSettings(void* const hDir);
     
 /**
  * Sets the sector beamforming pattern to employ for the analysis (see
- * STATIC_BEAM_TYPES enum).
+ * #_STATIC_BEAM_TYPES enum).
  */
 void dirass_setBeamType(void* const hDir, int newType);
     
 /**
- * Sets the input/analysis order (see 'SH_ORDERS' enum)
+ * Sets the input/analysis order (see #_SH_ORDERS enum)
  */
 void dirass_setInputOrder(void* const hDir,  int newValue);
     
 /**
- * Sets a new display grid option (see DIRASS_GRID_OPTIONS enum)
+ * Sets a new display grid option (see #_DIRASS_GRID_OPTIONS enum)
  *
  * @note Not safe to call while simultaneously calling dirass_analysis()!
  */
@@ -209,13 +209,14 @@ void dirass_setDisplayGridOption(void* const hDir,  int newOption);
 void dirass_setDispWidth(void* const hDir,  int newValue);
     
 /**
- * Sets the upscale order, if DIRASS_REASS_MODE is set to REASS_UPSCALE,
- * (see UPSCALE_ORDER enum).
+ * Sets the upscale order, only if #_DIRASS_REASS_MODE is set to #REASS_UPSCALE,
+ * (see #_UPSCALE_ORDER enum).
  */
 void dirass_setUpscaleOrder(void* const hDir,  int newOrder);
     
 /**
- * Sets the analysis directional re-assignment mode (see DIRASS_REASS_MODE enum)
+ * Sets the analysis directional re-assignment mode (see #_DIRASS_REASS_MODE
+ * enum)
  */
 void dirass_setDiRAssMode(void* const hDir,  int newMode);
     
@@ -231,26 +232,25 @@ void dirass_setMaxFreq(void* const hDir,  float newValue);
 
 /**
  * Sets the Ambisonic channel ordering convention to decode with, in order to
- * match the convention employed by the input signals (see CH_ORDER enum)
+ * match the convention employed by the input signals (see #_CH_ORDER enum)
  */
 void dirass_setChOrder(void* const hDir, int newOrder);
 
 /**
  * Sets the Ambisonic normalisation convention to decode with, in order to match
- * with the convention employed by the input signals (see 'NORM_TYPES'
- * enum)
+ * with the convention employed by the input signals (see #_NORM_TYPES enum)
  */
 void dirass_setNormType(void* const hDir, int newType);
 
 /**
  * Sets the visualisation display window horizontal field-of-view (FOV)
- * (see 'HFOV_OPTIONS' enum)
+ * (see #_HFOV_OPTIONS enum)
  */
 void dirass_setDispFOV(void* const hDir, int newOption);
     
 /**
  * Sets the visualisation display window aspect-ratio (see
- * 'ASPECT_RATIO_OPTIONS' enum)
+ * #_ASPECT_RATIO_OPTIONS enum)
  */
 void dirass_setAspectRatio(void* const hDir, int newOption);
     
@@ -270,7 +270,7 @@ void dirass_requestPmapUpdate(void* const hDir);
 /* ========================================================================== */
 
 /**
- * Returns current codec status (see 'CODEC_STATUS' enum)
+ * Returns current codec status (see #_CODEC_STATUS enum)
  */
 CODEC_STATUS dirass_getCodecStatus(void* const hDir);
 
@@ -285,26 +285,26 @@ float dirass_getProgressBar0_1(void* const hDir);
  * (Optional) Returns current intialisation/processing progress text
  *
  * @note "text" string should be (at least) of length:
- *       PROGRESSBARTEXT_CHAR_LENGTH
+ *       #PROGRESSBARTEXT_CHAR_LENGTH
  *
  * @param[in]  hDir dirass handle
- * @param[out] text Process bar text; PROGRESSBARTEXT_CHAR_LENGTH x 1
+ * @param[out] text Process bar text; #PROGRESSBARTEXT_CHAR_LENGTH x 1
  */
 void dirass_getProgressBarText(void* const hDir, char* text);
 
 /**
- * Returns the current analysis/input order (see 'SH_ORDERS' enum)
+ * Returns the current analysis/input order (see #_SH_ORDERS enum)
  */
 int dirass_getInputOrder(void* const hDir);
     
 /**
  * Returns the sector beamforming pattern to employed for the analysis (see
- * STATIC_BEAM_TYPES enum)
+ * #_STATIC_BEAM_TYPES enum)
  */
 int dirass_getBeamType(void* const hDir);
 
 /**
- * Returns the current display grid option (see DIRASS_GRID_OPTIONS enum)
+ * Returns the current display grid option (see #_DIRASS_GRID_OPTIONS enum)
  */
 int dirass_getDisplayGridOption(void* const hDir);
 
@@ -314,13 +314,13 @@ int dirass_getDisplayGridOption(void* const hDir);
 int dirass_getDispWidth(void* const hDir);
 
 /**
- * Returns the current upscale order (see DIRASS_UPSCALE_ORDER enum).
+ * Returns the current upscale order (see #_DIRASS_UPSCALE_ORDER enum).
  */
 int dirass_getUpscaleOrder(void* const hDir);
 
 /**
  * Returns the current analysis directional re-assignment mode (see
- * DIRASS_REASS_MODE enum)
+ * #_DIRASS_REASS_MODE enum)
  */
 int dirass_getDiRAssMode(void* const hDir); 
 
@@ -348,20 +348,20 @@ int dirass_getNSHrequired(void* const hDir);
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see 'CH_ORDER' enum)
+ * (see #_CH_ORDER enum)
  */
 int dirass_getChOrder(void* const hDir);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals (see
- * 'NORM_TYPES' enum)
+ * #_NORM_TYPES enum)
  */
 int dirass_getNormType(void* const hDir);
 
 /**
  * Returns the current visualisation display window horizontal field-of-view
- * (FOV) (see 'HFOV_OPTIONS' enum)
+ * (FOV) (see #_HFOV_OPTIONS enum)
  */
 int dirass_getDispFOV(void* const hDir);
 
@@ -369,7 +369,7 @@ int dirass_getDispFOV(void* const hDir);
  * Function: dirass_getAspectRatio
  * -------------------------------
  * Returns the current visualisation display window aspect-ratio (see
- * 'ASPECT_RATIO_OPTIONS' enum)
+ * #_ASPECT_RATIO_OPTIONS enum)
  */
 int dirass_getAspectRatio(void* const hDir);
 

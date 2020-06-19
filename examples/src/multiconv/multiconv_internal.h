@@ -70,7 +70,7 @@ typedef struct _multiconv
     /* internal */
     void* hMultiConv;
     int hostBlockSize;
-    int hostBlockSize_clamped; /**< Clamped between MIN and MAX_FRAME_SIZE */
+    int hostBlockSize_clamped; /**< Clamped between MIN and #MAX_FRAME_SIZE */
     float* filters;   /**< FLAT: nfilters x filter_length */
     int nfilters;
     int filter_length;

@@ -16,7 +16,7 @@
 
 /**
  * @file saf_utility_matrixConv.c
- * @brief Utility: Matrix convolver functions
+ * @brief Matrix and multi-channel convolvers
  *
  * @author Leo McCormack
  * @date 06.04.2019

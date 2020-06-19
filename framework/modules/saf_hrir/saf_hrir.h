@@ -16,7 +16,7 @@
 
 /**
  * @file saf_hrir.h
- * @brief Main header for the HRIR/HRTF processing module (saf_hrir)
+ * @brief Main header for the HRIR/HRTF processing module (#SAF_HRIR_MODULE)
  *
  * A collection of head-related impulse-response (HRIR) functions. Including
  * estimation of the interaural time differences (ITDs), conversion of HRIRs to
@@ -57,7 +57,7 @@ extern const int __default_hrir_fs;                  /**< HRIR samplerate */
  * Estimates the interaural time-differences (ITDs) for each HRIR in a set via
  * the cross-correlation between the left and right IRs
  *
- * @param[in]  hrirs    HRIRs; FLAT: N_dirs x 2 x hrir_len
+ * @param[in]  hrirs    HRIRs; FLAT: N_dirs x #NUM_EARS x hrir_len
  * @param[in]  N_dirs   Number of HRIRs
  * @param[in]  hrir_len Length of the HRIRs in samples
  * @param[in]  fs       Sampling rate of the HRIRs
@@ -80,13 +80,14 @@ void estimateITDs(/* Input Arguments */
  * @warning This function is NOT suitable for binaural room impulse responses
  *          (BRIRs)!
  *
- * @param[in]  hrirs      HRIRs; FLAT: N_dirs x 2 x hrir_len
+ * @param[in]  hrirs      HRIRs; FLAT: N_dirs x #NUM_EARS x hrir_len
  * @param[in]  N_dirs     Number of HRIRs
  * @param[in]  hrir_len   Length of the HRIRs in samples
  * @param[in]  hopsize    Hop size in samples
  * @param[in]  hybridmode 0:disabled, 1:enabled
  * @param[out] hrtf_fb    HRTFs as filterbank coeffs;
- *                        FLAT: (hybrid ? hopsize+5 : hopsize+1) x 2 x N_dirs
+ *                        FLAT:
+ *                        (hybrid ? hopsize+5 : hopsize+1) x #NUM_EARS x N_dirs
  */
 void HRIRs2FilterbankHRTFs(/* Input Arguments */
                            float* hrirs,
@@ -103,11 +104,11 @@ void HRIRs2FilterbankHRTFs(/* Input Arguments */
  * @note If the HRIRs are shorter than the FFT size (hrir_len<fftSize), then the
  *       HRIRs are zero-padded. If they are longer, then they are truncated.
  *
- * @param[in]  hrirs    HRIRs; FLAT: N_dirs x 2 x hrir_len
+ * @param[in]  hrirs    HRIRs; FLAT: N_dirs x #NUM_EARS x hrir_len
  * @param[in]  N_dirs   Number of HRIRs
  * @param[in]  hrir_len Length of the HRIRs in samples
  * @param[in]  fftSize  FFT size
- * @param[out] hrtfs    HRTFs; FLAT: (fftSize/2+1) x 2 x N_dirs
+ * @param[out] hrtfs    HRTFs; FLAT: (fftSize/2+1) x #NUM_EARS x N_dirs
  */
 void HRIRs2HRTFs(/* Input Arguments */
                  float* hrirs,
@@ -127,7 +128,7 @@ void HRIRs2HRTFs(/* Input Arguments */
  * @param[in]     itds_s     HRIR ITDs; N_dirs x 1
  * @param[in]     centreFreq Frequency vector; N_bands x 1
  * @param[in]     N_bands    Number of frequency bands/bins
- * @param[in,out] hrtfs      The HRTFs; FLAT: N_bands x 2 x N_dirs
+ * @param[in,out] hrtfs      The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  */
 void diffuseFieldEqualiseHRTFs(/* Input Arguments */
                                int N_dirs,
@@ -152,7 +153,7 @@ void diffuseFieldEqualiseHRTFs(/* Input Arguments */
  *       interpolation table.
  *
  * @param[in]  hrtfs         HRTFs as filterbank coeffs;
- *                           FLAT: N_bands x 2 x N_hrtf_dirs
+ *                           FLAT: N_bands x #NUM_EARS x N_hrtf_dirs
  * @param[in]  itds          The inter-aural time difference (ITD) for each
  *                           HRIR; N_hrtf_dirs x 1
  * @param[in]  freqVector    Frequency vector; N_bands x 1
@@ -162,7 +163,7 @@ void diffuseFieldEqualiseHRTFs(/* Input Arguments */
  * @param[in]  N_bands       Number of frequency bands
  * @param[in]  N_interp_dirs Number of interpolated hrtf positions
  * @param[out] hrtf_interp   interpolated HRTFs;
- *                           FLAT: N_bands x 2 x N_interp_dirs
+ *                           FLAT: N_bands x #NUM_EARS x N_interp_dirs
  */
 void interpHRTFs(/* Input Arguments */
                  float_complex* hrtfs,
@@ -180,7 +181,7 @@ void interpHRTFs(/* Input Arguments */
  * as in [1]
  *
  * @param[in]  hrtfs       HRTFs as filterbank coeffs;
- *                         FLAT: N_bands x 2 x N_hrtf_dirs
+ *                         FLAT: N_bands x #NUM_EARS x N_hrtf_dirs
  * @param[in]  itds        The inter-aural time difference (ITD) for each HRIR;
  *                         N_hrtf_dirs x 1
  * @param[in]  freqVector  Frequency vector; N_bands x 1

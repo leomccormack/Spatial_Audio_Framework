@@ -16,7 +16,7 @@
 
 /**
  * @file saf_hoa.c
- * @brief Public part of the higher-order Ambisonics module (saf_hoa)
+ * @brief Public source for the higher-order Ambisonics module (#SAF_HOA_MODULE)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
  * the Matlab library by Archontis Politis [1].
@@ -282,7 +282,7 @@ void getMaxREweights
     free(ppm);
 }
 
-void getLoudspeakerAmbiDecoderMtx
+void getLoudspeakerDecoderMtx
 (
     float* ls_dirs_deg,
     int nLS,

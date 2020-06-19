@@ -16,8 +16,8 @@
 
 /**
  * @file saf_utility_loudspeaker_presets.h
- * @brief Utility: A collection of loudspeaker array directions and (nearly)
- *        uniform spherical grids
+ * @brief A collection of loudspeaker array directions and (nearly) uniform
+ *        spherical grids
  *
  * @author Leo McCormack
  * @date 11.07.2016

@@ -16,8 +16,8 @@
 
 /**
  * @file saf_utility_veclib.h
- * @brief Utility: Wrappers for optimised linear algebra routines, utilising
- *        CBLAS and LAPACK
+ * @brief Wrappers for optimised linear algebra routines, utilising CBLAS and
+ *        LAPACK
  *
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by
@@ -405,7 +405,7 @@ void utility_svvdot(/* Input Arguments */
  * @param[in]  a    Input vector a; len x 1
  * @param[in]  b    Input vector b; len x 1
  * @param[in]  flag '0' do not take the conjugate of 'b', '1', take the
- *                  conjugate of 'b'.
+ *                  conjugate of 'b'. (see #_CONJ_FLAG enum)
  * @param[in]  len  Vector length
  * @param[out] c    (&) output vector c; 1 x 1
  */
@@ -739,16 +739,16 @@ void utility_zeigmp(/* Input Arguments */
  * @note 'D' contains the eigen values along the diagonal, while 'eig' are the
  *       eigen values as a vector
  *
- * @param[in]  A           Input NON-SYMMETRIC square matrix; FLAT: dim x dim
- * @param[in]  dim         Dimensions for square matrix 'A'
- * @param[out] VL          Left Eigen vectors (set to NULL if not needed);
- *                         FLAT: dim x dim
- * @param[out] VR          Right Eigen vectors (set to NULL if not needed);
- *                         FLAT: dim x dim
- * @param[out] D           Eigen values along the diagonal (set to NULL if not
- *                         needed); FLAT: dim x dim
- * @param[out] eig         Eigen values not diagonalised (set to NULL if not
- *                         needed); dim x 1
+ * @param[in]  A   Input NON-SYMMETRIC square matrix; FLAT: dim x dim
+ * @param[in]  dim Dimensions for square matrix 'A'
+ * @param[out] VL  Left Eigen vectors (set to NULL if not needed);
+ *                 FLAT: dim x dim
+ * @param[out] VR  Right Eigen vectors (set to NULL if not needed);
+ *                 FLAT: dim x dim
+ * @param[out] D   Eigen values along the diagonal (set to NULL if not needed);
+ *                 FLAT: dim x dim
+ * @param[out] eig Eigen values not diagonalised (set to NULL if not needed);
+ *                 dim x 1
  */
 void utility_ceig(/* Input Arguments */
                   const float_complex* A,
@@ -769,16 +769,16 @@ void utility_ceig(/* Input Arguments */
  * @note 'D' contains the eigen values along the diagonal, while 'eig' are the
  *       eigen values as a vector
  *
- * @param[in]  A           Input NON-SYMMETRIC square matrix; FLAT: dim x dim
- * @param[in]  dim         Dimensions for square matrix 'A'
- * @param[out] VL          Left Eigen vectors (set to NULL if not needed);
- *                         FLAT: dim x dim
- * @param[out] VR          Right Eigen vectors (set to NULL if not needed);
- *                         FLAT: dim x dim
- * @param[out] D           Eigen values along the diagonal (set to NULL if not
- *                         needed); FLAT: dim x dim
- * @param[out] eig         Eigen values not diagonalised (set to NULL if not
- *                         needed); dim x 1
+ * @param[in]  A   Input NON-SYMMETRIC square matrix; FLAT: dim x dim
+ * @param[in]  dim Dimensions for square matrix 'A'
+ * @param[out] VL  Left Eigen vectors (set to NULL if not needed);
+ *                 FLAT: dim x dim
+ * @param[out] VR  Right Eigen vectors (set to NULL if not needed);
+ *                 FLAT: dim x dim
+ * @param[out] D   Eigen values along the diagonal (set to NULL if not needed);
+ *                 FLAT: dim x dim
+ * @param[out] eig Eigen values not diagonalised (set to NULL if not needed);
+ *                 dim x 1
  */
 void utility_zeig(/* Input Arguments */
                   const double_complex* A,

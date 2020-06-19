@@ -62,7 +62,6 @@ extern "C" {
 /* ========================================================================== */
 
 #define FRAME_SIZE ( 512 )
-#define ELEV2INCL(E) ( (M_PI/2 - E) )
 //#define ORDER2NUMSECTORS(L) ( 2*L )
 #define ORDER2NUMSECTORS(L) ( L*L )
 
@@ -138,7 +137,7 @@ typedef struct _sldoa
 /* ========================================================================== */
 
 /**
- * Sets codec status (see 'CODEC_STATUS' enum)
+ * Sets codec status (see #_CODEC_STATUS enum)
  */
 void sldoa_setCodecStatus(void* const hSld, CODEC_STATUS newStatus);
 

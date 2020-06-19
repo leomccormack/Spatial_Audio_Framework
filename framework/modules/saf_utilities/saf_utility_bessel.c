@@ -16,8 +16,8 @@
 
 /**
  * @file saf_utility_bessel.c
- * @brief Utility: A collection of routines for computing spherical and
- *        cylindrical Bessel and Hankel functions, including their derivatives
+ * @brief A collection of routines for computing spherical and cylindrical
+ *        Bessel and Hankel functions, including their derivatives
  * @author Leo McCormack
  * @date 26.05.2020
  */

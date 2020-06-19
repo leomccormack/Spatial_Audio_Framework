@@ -16,7 +16,7 @@
 
 /**
  * @file saf_sofa_reader.h 
- * @brief Main header for the sofa reader module (saf_sofa_reader)
+ * @brief Main header for the sofa reader module (#SAF_SOFA_READER_MODULE)
  *
  * @note This (optional) SOFA reader, which returns only the bare minimum,
  *       requires netcdf to be linked to the project.
@@ -60,7 +60,7 @@ extern "C" {
  *                           load. Optionally, you may set this as NULL, and the
  *                           function will return the default HRIR data.
  * @param[out] hrirs         (&) the HRIR data;
- *                           FLAT: N_hrir_dirs x 2 x hrir_len
+ *                           FLAT: N_hrir_dirs x #NUM_EARS x hrir_len
  * @param[out] hrir_dirs_deg (&) the HRIR positions; FLAT: N_hrir_dirs x 2
  * @param[out] N_hrir_dirs   (&) number of HRIR positions
  * @param[out] hrir_len      (&) length of the HRIRs, in samples

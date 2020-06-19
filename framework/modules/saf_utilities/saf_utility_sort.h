@@ -16,8 +16,7 @@
 
 /**
  * @file saf_utility_sort.h
- * @brief Utility: A collection of useful sorting functions
- *
+ * @brief A collection of useful sorting functions
  * @author Leo McCormack
  * @date 30.07.2018  
  */
@@ -59,6 +58,8 @@ void sorti(int* in_vec,
 /**
  * Sort a vector of floating-point values into ascending/decending order
  * (optionally returning the new indices as well)
+ *
+ * Unit test(s): test__sortf()
  *
  * @param [in]  in_vec      Vector to be sorted; len x 1
  * @param [out] out_vec     Output vector (set to NULL if you don't want it)
@@ -113,6 +114,8 @@ void sortc(float_complex* in_vec,
  * @note The values are first sorted based on their real parts. Values with
  *       identical real parts are then sorted based on their imaginary parts.
  *
+ * Unit test(s): test__sortz()
+ *
  * @param [in]  in_vec      Vector to be sorted; len x 1
  * @param [out] out_vec     Output vector
  * @param [in]  len         Number of elements in vectors
@@ -130,6 +133,8 @@ void sortz(double_complex* in_vec,
  * @note This function is the same as 'sortz' except that any values that are
  *       purely real, are pushed to the end of the output vector (and also in
  *       ascending order).
+ *
+ * Unit test(s): test__cmplxPairUp()
  *
  * @param [in]  in_vec      Vector to be sorted; len x 1
  * @param [out] out_vec     Output vector

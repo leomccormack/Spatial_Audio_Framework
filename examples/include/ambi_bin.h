@@ -23,6 +23,8 @@
  * approaches. It also supports sound-field rotation for head-tracking and may
  * also accomodate custom HRIR sets via the SOFA standard.
  *
+ * Unit test(s): test__saf_example_ambi_bin()
+ *
  * @author Leo McCormack
  * @date 14.04.2018
  */
@@ -148,7 +150,7 @@ void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState);
 void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path);
 
 /**
- * Sets the decoding order (see SH_ORDERS enum)
+ * Sets the decoding order (see #_SH_ORDERS enum)
  *
  * @note If decoding order is higher than the input signal order, the extra
  *       required channels are filled with zeros. If the decoding order is lower
@@ -159,7 +161,7 @@ void ambi_bin_setInputOrderPreset(void* const hAmbi,
                                   SH_ORDERS newPreset);
 
 /**
- * Sets the decoding method (see AMBI_BIN_DECODING_METHODS enum)
+ * Sets the decoding method (see #_AMBI_BIN_DECODING_METHODS enum)
  */
 void ambi_bin_setDecodingMethod(void* const hAmbi,
                                 AMBI_BIN_DECODING_METHODS newMethod);
@@ -238,7 +240,7 @@ void ambi_bin_setRPYflag(void* const hAmbi, int newState);
 /* ========================================================================== */
 
 /**
- * Returns current codec status
+ * Returns current codec status, see #_CODEC_STATUS enum
  */
 CODEC_STATUS ambi_bin_getCodecStatus(void* const hAmbi);
     
@@ -251,7 +253,7 @@ float ambi_bin_getProgressBar0_1(void* const hAmbi);
  * (Optional) Returns current intialisation/processing progress text
  *
  * @note "text" string should be (at least) of length:
- *       PROGRESSBARTEXT_CHAR_LENGTH
+ *       #PROGRESSBARTEXT_CHAR_LENGTH
  */
 void ambi_bin_getProgressBarText(void* const hAmbi, char* text);
     
@@ -276,7 +278,7 @@ int ambi_bin_getInputOrderPreset(void* const hAmbi);
 
 /**
  * Returns the currently selected decoding method (see
- * 'AMBI_BIN_DECODING_METHODS' enum)
+ * #_AMBI_BIN_DECODING_METHODS enum)
  */
 int ambi_bin_getDecodingMethod(void* const hAmbi);
 
@@ -293,14 +295,14 @@ char* ambi_bin_getSofaFilePath(void* const hAmbi);
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see CH_ORDER enum)
+ * (see #_CH_ORDER enum)
  */
 int ambi_bin_getChOrder(void* const hAmbi);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals (see
- * 'NORM_TYPE' enum).
+ * #_NORM_TYPE enum).
  */
 int ambi_bin_getNormType(void* const hAmbi); 
 

@@ -16,7 +16,7 @@
 
 /**
  * @file saf_reverb_internal.c
- * @brief Internal part of the reverb processing module (saf_reverb)
+ * @brief Internal source for the reverb processing module (#SAF_REVERB_MODULE)
  *
  * A collection of reverb and room simulation algorithms.
  *

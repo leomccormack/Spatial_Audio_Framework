@@ -16,7 +16,7 @@
 
 /**
  * @file: saf_utility_filters.h
- * @brief Utility: A collection of IIR/FIR filter design equations
+ * @brief A collection of IIR/FIR filter design equations
  *
  * @author Leo McCormack
  * @date 01.03.2019 
@@ -109,7 +109,7 @@ typedef enum _WINDOWING_FUNCTION_TYPES {
  * if odd:
  *  - index "(winlength-1)/2" = 1, and first value==last value
  *
- * @param[in]  type      See 'WINDOWING_FUNCTION_TYPES' enum
+ * @param[in]  type      See #_WINDOWING_FUNCTION_TYPES enum
  * @param[in]  winlength Window length in samples
  * @param[out] win       Windowing function; winlength x 1
  */
@@ -277,7 +277,9 @@ void applyIIR(/* Input arguments */
  *          cut-off frequencies can easily become unstable! Consider trying
  *          things out in Matlab before using this function.
  *
- * @param[in]  filterType  See 'BUTTER_FILTER_TYPES' enum
+ * Unit test(s): test__butterCoeffs()
+ *
+ * @param[in]  filterType  See #_BUTTER_FILTER_TYPES enum
  * @param[in]  order       Filter order (N)
  * @param[in]  cutoff1     Filter1 cutoff in Hz, for LPF/HPF, and lower cutoff
  *                         for BPF/BSF
@@ -314,13 +316,15 @@ void butterCoeffs(/* Input arguments */
  *       numerical limitations, only 1st and 3rd order options make sense, which
  *       is why this implementation will only accept order = 1 or 3
  *
+ * Unit test(s): test__faf_IIRFilterbank
+ *
  * @param[in] phFaF         (&) address of the faf_IIRFilterbank handle
  * @param[in] order         Filter order, 1st or 3rd
  * @param[in] fc            Vector of cutoff frequencies; nCutoffFreqs x 1
  * @param[in] nCutoffFreqs  Number of cutoff frequencies in vector 'fc'.
  * @param[in] sampleRate    Sampling rate in Hz
  * @param[in] maxNumSamples Maximum number of samples to expect when calling
- *                          faf_IIRFilterbank_apply
+ *                          faf_IIRFilterbank_apply()
  *
  * @see [1] Favrot, A. and Faller, C., 2010. Complementary N-band IIR filterbank
  *          based on 2-band complementary filters. Proc. Intl. Works. on Acoust.
@@ -347,7 +351,7 @@ void faf_IIRFilterbank_apply(void* hFaF,
                              int nSamples);
 
 /**
- * Zeros the delay lines used during faf_IIRFilterbank_apply
+ * Zeros the delay lines used during faf_IIRFilterbank_apply()
  *
  * @param[in] hFaF faf_IIRFilterbank handle
  */
@@ -388,14 +392,14 @@ void faf_IIRFilterbank_destroy(void** hFaF);
  *  - HPF @ 200Hz - N~450
  *  - HPF @ 4kHz  - N~60
  *
- * @param[in]  filterType  See 'FIR_FILTER_TYPES' enum
+ * @param[in]  filterType  See #_FIR_FILTER_TYPES enum
  * @param[in]  order       Filter order (N). Must be even.
  * @param[in]  cutoff1     Filter1 cutoff in Hz, for LPF/HPF, and lower cutoff
  *                         for BPF/BSF
  * @param[in]  cutoff2     Filter2 cutoff in Hz, not needed for LPF/HPF, this is
  *                         the upper cutoff for BPF/BSF
  * @param[in]  sampleRate  Sampling rate in Hz
- * @param[in]  windowType  See 'WINDOWING_FUNCTION_TYPES' enum
+ * @param[in]  windowType  See #_WINDOWING_FUNCTION_TYPES enum
  * @param[in]  scalingFLAG '0' none, '1' scaling applied to ensure passband is
  *                         at 0dB
  * @param[out] filter      Filter coefficients/weights/taps; (order+1) x 1
@@ -434,7 +438,7 @@ void FIRCoeffs(/* Input arguments */
  * @param[in]  fc           Vector of cutoff frequencies; nCutoffFreqs x 1
  * @param[in]  nCutoffFreqs Number of cutoff frequencies in vector 'fc'.
  * @param[in]  sampleRate   Sampling rate in Hz
- * @param[in]  windowType   See 'WINDOWING_FUNCTION_TYPES' enum
+ * @param[in]  windowType   See #_WINDOWING_FUNCTION_TYPES enum
  * @param[in]  scalingFLAG  '0' none, '1' scaling applied to ensure passbands
  *                          are at 0dB
  * @param[out] filterbank   Filter coefficients/weights/taps;

@@ -499,8 +499,8 @@
 			children = (
 				50E36007249BDDCB00B74C25 /* CMakeLists.txt */,
 				50E36008249BDDCB00B74C25 /* include */,
-				50E3600A249BDDCB00B74C25 /* resources */,
 				50E3601C249BDDCB00B74C25 /* modules */,
+				50E3600A249BDDCB00B74C25 /* resources */,
 			);
 			name = framework;
 			path = ../framework;
@@ -569,15 +569,15 @@
 		50E3601C249BDDCB00B74C25 /* modules */ = {
 			isa = PBXGroup;
 			children = (
+				50E36025249BDDCB00B74C25 /* CMakeLists.txt */,
 				50E3601D249BDDCB00B74C25 /* saf_cdf4sap */,
 				50E36020249BDDCB00B74C25 /* saf_hoa */,
-				50E36025249BDDCB00B74C25 /* CMakeLists.txt */,
-				50E36026249BDDCB00B74C25 /* saf_utilities */,
+				50E36056249BDDCC00B74C25 /* saf_hrir */,
 				50E36044249BDDCC00B74C25 /* saf_reverb */,
 				50E36049249BDDCC00B74C25 /* saf_sh */,
 				50E3604E249BDDCC00B74C25 /* saf_sofa_reader */,
+				50E36026249BDDCB00B74C25 /* saf_utilities */,
 				50E36051249BDDCC00B74C25 /* saf_vbap */,
-				50E36056249BDDCC00B74C25 /* saf_hrir */,
 			);
 			path = modules;
 			sourceTree = "<group>";
@@ -605,35 +605,35 @@
 		50E36026249BDDCB00B74C25 /* saf_utilities */ = {
 			isa = PBXGroup;
 			children = (
-				50E36027249BDDCB00B74C25 /* saf_utility_erb.h */,
-				50E36028249BDDCB00B74C25 /* saf_utility_sensorarray_presets.c */,
-				50E36029249BDDCB00B74C25 /* saf_utility_bessel.c */,
-				50E3602A249BDDCB00B74C25 /* saf_utility_complex.h */,
-				50E3602B249BDDCB00B74C25 /* saf_utility_loudspeaker_presets.h */,
-				50E3602C249BDDCB00B74C25 /* saf_utility_filters.h */,
-				50E3602D249BDDCB00B74C25 /* saf_utility_fft.c */,
-				50E3602E249BDDCB00B74C25 /* saf_utility_misc.c */,
-				50E3602F249BDDCC00B74C25 /* saf_utility_veclib.h */,
-				50E36030249BDDCC00B74C25 /* saf_utility_sort.h */,
-				50E36031249BDDCC00B74C25 /* saf_utility_error.c */,
-				50E36032249BDDCC00B74C25 /* saf_utility_pitch.c */,
 				50E36033249BDDCC00B74C25 /* saf_utilities.h */,
+				50E36029249BDDCB00B74C25 /* saf_utility_bessel.c */,
+				50E3603C249BDDCC00B74C25 /* saf_utility_bessel.h */,
+				50E3603A249BDDCC00B74C25 /* saf_utility_complex.c */,
+				50E3602A249BDDCB00B74C25 /* saf_utility_complex.h */,
+				50E36042249BDDCC00B74C25 /* saf_utility_decor.c */,
 				50E36034249BDDCC00B74C25 /* saf_utility_decor.h */,
-				50E36035249BDDCC00B74C25 /* saf_utility_matrixConv.h */,
-				50E36036249BDDCC00B74C25 /* saf_utility_sensorarray_presets.h */,
 				50E36037249BDDCC00B74C25 /* saf_utility_erb.c */,
+				50E36027249BDDCB00B74C25 /* saf_utility_erb.h */,
+				50E36031249BDDCC00B74C25 /* saf_utility_error.c */,
+				50E3603D249BDDCC00B74C25 /* saf_utility_error.h */,
+				50E3602D249BDDCB00B74C25 /* saf_utility_fft.c */,
 				50E36038249BDDCC00B74C25 /* saf_utility_fft.h */,
 				50E36039249BDDCC00B74C25 /* saf_utility_filters.c */,
-				50E3603A249BDDCC00B74C25 /* saf_utility_complex.c */,
+				50E3602C249BDDCB00B74C25 /* saf_utility_filters.h */,
 				50E3603B249BDDCC00B74C25 /* saf_utility_loudspeaker_presets.c */,
-				50E3603C249BDDCC00B74C25 /* saf_utility_bessel.h */,
-				50E3603D249BDDCC00B74C25 /* saf_utility_error.h */,
-				50E3603E249BDDCC00B74C25 /* saf_utility_veclib.c */,
-				50E3603F249BDDCC00B74C25 /* saf_utility_sort.c */,
-				50E36040249BDDCC00B74C25 /* saf_utility_misc.h */,
+				50E3602B249BDDCB00B74C25 /* saf_utility_loudspeaker_presets.h */,
 				50E36041249BDDCC00B74C25 /* saf_utility_matrixConv.c */,
-				50E36042249BDDCC00B74C25 /* saf_utility_decor.c */,
+				50E36035249BDDCC00B74C25 /* saf_utility_matrixConv.h */,
+				50E3602E249BDDCB00B74C25 /* saf_utility_misc.c */,
+				50E36040249BDDCC00B74C25 /* saf_utility_misc.h */,
+				50E36032249BDDCC00B74C25 /* saf_utility_pitch.c */,
 				50E36043249BDDCC00B74C25 /* saf_utility_pitch.h */,
+				50E36028249BDDCB00B74C25 /* saf_utility_sensorarray_presets.c */,
+				50E36036249BDDCC00B74C25 /* saf_utility_sensorarray_presets.h */,
+				50E3603F249BDDCC00B74C25 /* saf_utility_sort.c */,
+				50E36030249BDDCC00B74C25 /* saf_utility_sort.h */,
+				50E3603E249BDDCC00B74C25 /* saf_utility_veclib.c */,
+				50E3602F249BDDCC00B74C25 /* saf_utility_veclib.h */,
 			);
 			path = saf_utilities;
 			sourceTree = "<group>";

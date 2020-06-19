@@ -142,7 +142,7 @@ typedef struct _powermap
 /* ========================================================================== */
 
 /**
- * Sets codec status (see 'CODEC_STATUS' enum)
+ * Sets codec status (see #_CODEC_STATUS enum)
  */
 void powermap_setCodecStatus(void* const hPm, CODEC_STATUS newStatus);
 

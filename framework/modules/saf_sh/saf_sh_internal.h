@@ -16,8 +16,8 @@
 
 /**
  * @file saf_sh_internal.h
- * @brief Internal part of the Spherical Harmonic Transform and Spherical Array
- *        Processing module (saf_sh)
+ * @brief Internal header for the Spherical Harmonic Transform and Spherical
+ *        Array Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
  * derived from Matlab libraries by Archontis Politis [1-3].
@@ -97,27 +97,27 @@ void gaunt_mtx(/* Input arguments */
 /* ========================================================================== */
 
 /**
- * Helper function for getSHrotMtxReal
+ * Helper function for getSHrotMtxReal()
  */
 float getP(int i, int l, int a, int b, float** R_1, float** R_lm1);
 
 /**
- * Helper function for getSHrotMtxReal
+ * Helper function for getSHrotMtxReal()
  */
 float getU(int l, int m, int n, float** R_1, float** R_lm1);
 
 /**
- * Helper function for getSHrotMtxReal
+ * Helper function for getSHrotMtxReal()
  */
 float getV(int l, int m, int n, float** R_1, float** R_lm1);
 
 /**
- * Helper function for getSHrotMtxReal
+ * Helper function for getSHrotMtxReal()
  */
 float getW(int l, int m, int n, float** R_1, float** R_lm1);
 
 /**
- * Helper function for getSHrotMtxReal
+ * Helper function for getSHrotMtxReal()
  */
 float getW(int l, int m, int n, float** R_1, float** R_lm1);
 

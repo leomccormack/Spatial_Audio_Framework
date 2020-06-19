@@ -16,8 +16,8 @@
 
 /**
  * @file saf_utility_veclib.c
- * @brief Utility: Wrappers for optimised linear algebra routines, utilising
- *        CBLAS and LAPACK
+ * @brief Wrappers for optimised linear algebra routines, utilising CBLAS and
+ *        LAPACK
  *
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by

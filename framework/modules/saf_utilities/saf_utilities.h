@@ -16,7 +16,7 @@
 
 /**
  * @file saf_utilities.h  
- * @brief Main header for the utilities module (saf_utilities)
+ * @brief Main header for the utilities module (#SAF_UTILITIES_MODULE)
  *
  * Contains a collection of useful memory allocation functions, cross-platform
  * complex number wrappers, and optimised linear algebra routines utilising BLAS
@@ -54,7 +54,7 @@
 #if defined(SAF_USE_INTEL_MKL)
 /*
  * Using Intel's Math Kernal Library (MKL)
- * (Generally the fastest library for x86 based architectures)
+ * (Generally the fastest library for x86/amd64 based architectures)
  */
 # define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortan interface of LAPACK */
 # include "mkl.h"
@@ -137,6 +137,8 @@
 #endif
 /** sqrt(4pi) (single precision) */
 #define SQRT4PI ( 3.544907701811032f )
+/** Converts elevation to inclincation, (in radians) */
+#define ELEV2INCL(E) ( (M_PI/2 - E) )
 
 
 /* ========================================================================== */

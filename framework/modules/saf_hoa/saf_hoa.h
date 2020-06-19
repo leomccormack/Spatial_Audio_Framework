@@ -16,7 +16,7 @@
 
 /**
  * @file saf_hoa.h
- * @brief Main header for the higher-order Ambisonics module (saf_hoa)
+ * @brief Main header for the higher-order Ambisonics module (#SAF_HOA_MODULE)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
  * the Matlab library by Archontis Politis [1].
@@ -57,7 +57,7 @@ extern "C" {
  */
 typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
     /**
-     * The default decoder is "LOUDSPEAKER_DECODER_SAD"
+     * The default decoder is #LOUDSPEAKER_DECODER_SAD
      */
     LOUDSPEAKER_DECODER_DEFAULT,
     /**
@@ -113,7 +113,7 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
  */
 typedef enum _BINAURAL_AMBI_DECODER_METHODS {
     /**
-     * The default decoder is "BINAURAL_DECODER_LS"
+     * The default decoder is #BINAURAL_DECODER_LS
      */
     BINAURAL_DECODER_DEFAULT,
     /**
@@ -323,40 +323,42 @@ void getMaxREweights(/* Input Arguments */
 /**
  * Computes an ambisonic decoding matrix of a specific order, for a specific
  * loudspeaker layout
+
+ * Unit test(s): test__getLoudspeakerDecoderMtx()
  *
  * @param[in]  ls_dirs_deg Loudspeaker directions in DEGREES [azi elev];
  *                         FLAT: nLS x 2
  * @param[in]  nLS         Number of loudspeakers
  * @param[in]  method      Decoding method
- *                         (see "LOUDSPEAKER_AMBI_DECODER_METHODS" enum)
+ *                         (see #_LOUDSPEAKER_AMBI_DECODER_METHODS enum)
  * @param[in]  order       Decoding order
  * @param[in]  enableMaxrE Set to '0' to disable, '1' to enable
  * @param[out] decMtx      Decoding matrix; FLAT: nLS x (order+1)^2
  */
-void getLoudspeakerAmbiDecoderMtx(/* Input Arguments */
-                                  float* ls_dirs_deg,
-                                  int nLS,
-                                  LOUDSPEAKER_AMBI_DECODER_METHODS method,
-                                  int order,
-                                  int enableMaxrE,
-                                  /* Output Arguments */
-                                  float* decMtx);
+void getLoudspeakerDecoderMtx(/* Input Arguments */
+                              float* ls_dirs_deg,
+                              int nLS,
+                              LOUDSPEAKER_AMBI_DECODER_METHODS method,
+                              int order,
+                              int enableMaxrE,
+                              /* Output Arguments */
+                              float* decMtx);
 
 /**
  * Computes binaural ambisonic decoding matrices (one per frequency) at a
  * specific order, for a given HRTF set
  *
- * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
+ * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
  * @param[in]  N_dirs        Number of HRTF directions
  * @param[in]  N_bands       Number of frequency bands/bins
- * @param[in]  method        Decoding method (see BINAURAL_AMBI_DECODER_METHODS
+ * @param[in]  method        Decoder method (see #_BINAURAL_AMBI_DECODER_METHODS
  *                           enum)
  * @param[in]  order         Decoding order
- * @param[in]  freqVector    Only needed for BINAURAL_DECODER_TA or
- *                           BINAURAL_DECODER_MAGLS decoders (set to NULL if
+ * @param[in]  freqVector    Only needed for #BINAURAL_DECODER_TA or
+ *                           #BINAURAL_DECODER_MAGLS decoders (set to NULL if
  *                           using a different method); N_bands x 1
- * @param[in]  itd_s         Only needed for BINAURAL_DECODER_TA decoder (set
+ * @param[in]  itd_s         Only needed for #BINAURAL_DECODER_TA decoder (set
  *                           to NULL if using different method); N_dirs x 1
  * @param[in]  weights       Integration weights (set to NULL if not available);
  *                           N_dirs x 1
@@ -365,7 +367,7 @@ void getLoudspeakerAmbiDecoderMtx(/* Input Arguments */
  * @param[in]  enableMaxrE   Set to '0' to disable maxRE weighting, '1' to
  *                           enable
  * @param[out] decMtx        Decoding matrices (one per frequency);
- *                           FLAT: N_bands x NUM_EARS x (order+1)^2
+ *                           FLAT: N_bands x #NUM_EARS x (order+1)^2
  */
 void getBinauralAmbiDecoderMtx(/* Input Arguments */
                                float_complex* hrtfs,
@@ -385,15 +387,15 @@ void getBinauralAmbiDecoderMtx(/* Input Arguments */
 /**
  * Computes ambisonic decoding filters for a given HRTF set
  *
- * @param[in]  hrtfs         The HRTFs; FLAT: (fftSize/2+1) x NUM_EARS x N_dirs
+ * @param[in]  hrtfs         The HRTFs; FLAT: (fftSize/2+1) x #NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
  * @param[in]  N_dirs        Number of HRTF directions
  * @param[in]  fftSize       FFT size
  * @param[in]  fs            Sampling rate
- * @param[in]  method        Decoding method (see BINAURAL_AMBI_DECODER_METHODS
+ * @param[in]  method        Decoder method (see #_BINAURAL_AMBI_DECODER_METHODS
  *                           enum)
  * @param[in]  order         Decoding order
- * @param[in]  itd_s         Only needed for BINAURAL_DECODER_TA decoder (can
+ * @param[in]  itd_s         Only needed for #BINAURAL_DECODER_TA decoder (can
  *                           set to NULL if using different method); N_dirs x 1
  * @param[in]  weights       Integration weights (set to NULL if not available);
  *                           N_dirs x 1
@@ -402,7 +404,7 @@ void getBinauralAmbiDecoderMtx(/* Input Arguments */
  * @param[in]  enableMaxrE   Set to '0' to disable maxRE weighting, '1' to
  *                           enable
  * @param[out] decFilters    Decoding filters;
- *                           FLAT: NUM_EARS x (order+1)^2 x fftSize
+ *                           FLAT: #NUM_EARS x (order+1)^2 x fftSize
  */
 void getBinauralAmbiDecoderFilters(/* Input Arguments */
                                    float_complex* hrtfs,
@@ -425,7 +427,7 @@ void getBinauralAmbiDecoderFilters(/* Input Arguments */
  *
  * @note decMtx is altered in-place.
  *
- * @param[in]     hrtfs         The HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
+ * @param[in]     hrtfs         The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  * @param[in]     hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
  * @param[in]     N_dirs        Number of HRTF directions
  * @param[in]     N_bands       Number of frequency bands/bins
@@ -433,7 +435,7 @@ void getBinauralAmbiDecoderFilters(/* Input Arguments */
  * @param[in]     weights       Integration weights (set to NULL if not
  *                              available); N_dirs x 1
  * @param[in,out] decMtx        Decoding matrix;
- *                              FLAT: N_bands x NUM_EARS x (order+1)^2
+ *                              FLAT: N_bands x #NUM_EARS x (order+1)^2
  *
  * @see [1] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. Binaural rendering of
  *          Ambisonic signals by head-related impulse response time alignment

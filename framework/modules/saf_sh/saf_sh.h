@@ -17,7 +17,7 @@
 /**
  * @file saf_sh.h
  * @brief Main header for the Spherical Harmonic Transform and Spherical Array
- *        Processing module (saf_sh)
+ *        Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
  * derived from Matlab libraries by Archontis Politis [1-3].
@@ -206,6 +206,8 @@ void unnorm_legendreP_recur(/* Input Arguments */
  * employs unnorm_legendreP() and double precision, which is slower but more
  * precise.
  *
+ * Unit test(s): test__getSHreal()
+ *
  * @param[in]  order    Order of spherical harmonic expansion
  * @param[in]  dirs_rad Directions on the sphere [azi, INCLINATION] convention,
  *                      in RADIANS; FLAT: nDirs x 2
@@ -234,6 +236,8 @@ void getSHreal(/* Input Arguments */
  * The function also uses static memory buffers for single direction and up to
  * 7th order, which speeds things up considerably for such use cases.
  *
+ * Unit test(s): test__getSHreal_recur()
+ *
  * @param[in]  order    Order of spherical harmonic expansion
  * @param[in]  dirs_rad Directions on the sphere [azi, INCLINATION] convention,
  *                      in RADIANS; FLAT: nDirs x 2
@@ -257,6 +261,8 @@ void getSHreal_recur(/* Input Arguments */
  * The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term.
  * i.e. max(omni) = 1/sqrt(4*pi) + i0. This function employs unnorm_legendreP()
  * and double precision.
+ *
+ * Unit test(s): test__getSHcomplex()
  *
  * @param[in]  order    Order of spherical harmonic expansion
  * @param[in]  dirs_rad Directions on the sphere [azi, INCLINATION] convention,
@@ -285,6 +291,8 @@ void getSHcomplex(/* Input Arguments */
  *
  * @warning The T_r2c matrix is returned transposed! TODO: fix
  *
+ * Unit test(s): test__complex2realSHMtx()
+ *
  * @param[in]  order Order of spherical harmonic expansion
  * @param[out] T_c2r Transformation matrix for complex->real;
  *                   FLAT: (order+1)^2 x (order+1)^2
@@ -302,6 +310,8 @@ void complex2realSHMtx(/* Input Arguments */
  * where r_N and y_N are the real and complex SH vectors, respectively.
  *
  * @warning The T_r2c matrix is returned transposed! TODO: fix
+ *
+ * Unit test(s): test__real2complexSHMtx()
  *
  * @param[in]  order Order of spherical harmonic expansion
  * @param[out] T_r2c Transformation matrix for real->complex;
@@ -333,6 +343,8 @@ void complex2realCoeffs(/* Input Arguments */
  *
  * Note that the normalisation convention does not matter, as e.g. only dipoles
  * are used to rotated dipoles, quadrapoles to rotate quadrapoles etc.
+ *
+ * Unit test(s): test__complex2realSHMtx()
  *
  * @param[in]  R      zyx rotation matrix; 3 x 3
  * @param[in]  L      Order of spherical harmonic expansion
@@ -376,10 +388,12 @@ void computeVelCoeffsMtx(/* Input Arguments */
  * been used for parametric sound-field reproduction in [1] and visualisation in
  * [2,3].
  *
+ * Unit test(s): test__computeSectorCoeffsEP()
+ *
  * @param[in]  orderSec     Order of sector patterns
- * @param[in]  A_xyz        Velocity coefficients (see "computeVelCoeffsMtx");
+ * @param[in]  A_xyz        Velocity coefficients, see computeVelCoeffsMtx();
  *                          FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3
- * @param[in]  pattern      See "SECTOR_PATTERNS" enum for the options
+ * @param[in]  pattern      See #_SECTOR_PATTERNS enum for the options
  * @param[in]  sec_dirs_deg Sector directions [azi elev], in DEGREES;
  *                          FLAT: nSecDirs x 2
  * @param[in]  nSecDirs     Number of sectors
@@ -419,9 +433,9 @@ float computeSectorCoeffsEP(/* Input Arguments */
  * [2,3].
  *
  * @param[in]  orderSec     Order of sector patterns
- * @param[in]  A_xyz        Velocity coefficients (see "computeVelCoeffsMtx");
+ * @param[in]  A_xyz        Velocity coefficients, see computeVelCoeffsMtx();
  *                          FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3
- * @param[in]  pattern      See "SECTOR_PATTERNS" enum for the options
+ * @param[in]  pattern      See #_SECTOR_PATTERNS" enum for the options
  * @param[in]  sec_dirs_deg Sector directions [azi elev], in DEGREES;
  *                          FLAT: nSecDirs x 2
  * @param[in]  nSecDirs     Number of sectors
@@ -643,6 +657,8 @@ void rotateAxisCoeffsComplex(/* Input arguments */
 /**
  * Computes the condition numbers for a least-squares SHT
  *
+ * Unit test(s): test__checkCondNumberSHTReal()
+ *
  * @param[in]  order    Order of spherical harmonic expansion
  * @param[in]  dirs_rad Directions on the sphere [azi, INCLINATION] convention,
  *                      in RADIANS; FLAT: nDirs x 2
@@ -806,7 +822,7 @@ void generateMinNormMap(/* Input arguments */
  * @param[in]  order     Max order (highest is ~30 given numerical precision)
  * @param[in]  kr        wavenumber*radius; nBands x 1
  * @param[in]  nBands    Number of frequency bands/bins
- * @param[in]  arrayType See 'ARRAY_CONSTRUCTION_TYPES' enum
+ * @param[in]  arrayType See #_ARRAY_CONSTRUCTION_TYPES enum
  * @param[out] b_N       Modal coefficients per kr and 0:order;
  *                       FLAT: nBands x (order+1)
  */
@@ -847,7 +863,7 @@ float sphArrayAliasLim(/* Input arguments */
  * @param[in]  Nsensors  Number of sensors
  * @param[in]  r         Mic radius, meters
  * @param[in]  c         Speed of sound, m/s
- * @param[in]  arrayType See 'ARRAY_CONSTRUCTION_TYPES' enum
+ * @param[in]  arrayType See #_ARRAY_CONSTRUCTION_TYPES enum
  * @param[in]  dirCoeff  Only for directional (open) arrays, 1: omni, 0.5: card,
  *                       0:dipole
  * @param[in]  maxG_db   Max allowed amplification for the noise level,
@@ -876,7 +892,7 @@ void sphArrayNoiseThreshold(/* Input arguments */
  * @param[in]  order     Max order (highest is ~30 given numerical precision)
  * @param[in]  kr        wavenumber*radius; nBands x 1
  * @param[in]  nBands    Number of frequency bands/bins
- * @param[in]  arrayType See 'ARRAY_CONSTRUCTION_TYPES' enum
+ * @param[in]  arrayType See #_ARRAY_CONSTRUCTION_TYPES enum
  * @param[in]  dirCoeff  Only for directional (open) arrays, 1: omni, 0.5: card,
  *                       0:dipole
  * @param[out] b_N       Modal coefficients per kr and 0:order;
@@ -945,7 +961,7 @@ void sphScattererDirModalCoeffs(/* Input arguments */
  * @param[in]  sensor_dirs_rad Spherical coords of the sensors in RADIANS,
  *                             [azi ELEV]; FLAT: N_sensors x 2
  * @param[in]  N_sensors       Number of sensors
- * @param[in]  arrayType       See 'ARRAY_CONSTRUCTION_TYPES' enum
+ * @param[in]  arrayType       See #_ARRAY_CONSTRUCTION_TYPES enum
  * @param[in]  dirCoeff        Only for directional (open) arrays, 1: omni,
  *                             0.5: card, 0:dipole
  * @param[in]  kr              wavenumber*sensor_radius; nBands x 1
@@ -981,7 +997,7 @@ void sphDiffCohMtxTheory(/* Input arguments */
  * @param[in]  src_dirs_deg    Spherical coords of the plane waves in DEGREES,
  *                             [azi ELEV]; FLAT: N_srcs x 2
  * @param[in]  N_srcs          Number sources (DoAs of plane waves)
- * @param[in]  arrayType       See 'ARRAY_CONSTRUCTION_TYPES' enum
+ * @param[in]  arrayType       See #_ARRAY_CONSTRUCTION_TYPES enum
  * @param[out] H_array         Simulated array response for each plane wave;
  *                             FLAT: nBands x N_sensors x N_srcs
  */
@@ -1013,7 +1029,7 @@ void simulateCylArray(/* Input arguments */
  * @param[in]  src_dirs_deg    Spherical coords of the plane waves in DEGREES,
  *                             [azi ELEV]; FLAT: N_srcs x 2
  * @param[in]  N_srcs          Number sources (DoAs of plane waves)
- * @param[in]  arrayType       See 'ARRAY_CONSTRUCTION_TYPES' enum
+ * @param[in]  arrayType       See #_ARRAY_CONSTRUCTION_TYPES enum
  * @param[in]  dirCoeff        Only for directional (open) arrays, 1: omni,
  *                             0.5: card, 0:dipole
  * @param[out]  H_array        Simulated array response for each plane wave;

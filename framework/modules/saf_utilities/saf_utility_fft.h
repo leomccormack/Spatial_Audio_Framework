@@ -16,7 +16,7 @@
 
 /**
  * @file saf_utility_fft.h
- * @brief Utility: Wrappers for optimised fast Fourier transform (FFT) routines
+ * @brief Wrappers for optimised fast Fourier transform (FFT) routines
  *
  * @note If none of the supported optimised FFT implementations are linked, then
  *       saf_fft employs the highly respectable KissFFT from here (BSD 3-Clause
@@ -98,7 +98,7 @@ void fftconv(float* x,
  * FFT-based convolution for FIR filters
  *
  * Similar to fftconv, other than only the first x_len samples of y are
- * returned. It has parity with the 'fftfilt' function in Matlab, except it just
+ * returned. It has parity with the fftfilt function in Matlab, except it just
  * uses one big FFT (i.e. no overlap-add).
  *
  * @param[in]  x     Input(s); FLAT: nCH x x_len
@@ -141,13 +141,15 @@ void hilbert(float_complex* x,
 /**
  * Creates an instance of saf_stft
  *
+ * Unit test(s): test__saf_stft_50pc_overlap(), test__saf_stft_LTI()
+ *
  * @param[in] phSTFT   (&) address of saf_stft handle
  * @param[in] winsize  Window size
  * @param[in] hopsize  Hop size
  * @param[in] nCHin    Number of input channels
  * @param[in] nCHout   Number of ooutput channels
  * @param[in] FDformat Format for the frequency-domain data (see the
- *                     SAF_STFT_FDDATA_FORMAT enum)
+ *                     #_SAF_STFT_FDDATA_FORMAT enum)
  */
 void saf_stft_create(void ** const phSTFT,
                      int winsize,
@@ -170,9 +172,9 @@ void saf_stft_destroy(void ** const phSTFT);
  * @param[in]  dataTD    Time-domain input; nCHin x framesize
  * @param[in]  framesize Frame size of time-domain data
  * @param[out] dataFD    Frequency-domain output;
- *                       if FDformat == SAF_STFT_TIME_CH_BANDS:
+ *                       if FDformat == #SAF_STFT_TIME_CH_BANDS:
  *                           (framesize/hopsize) x nCHin x (fftsize/2+1)
- *                       if FDformat == SAF_STFT_BANDS_CH_TIME:
+ *                       if FDformat == #SAF_STFT_BANDS_CH_TIME:
  *                           (fftsize/2+1)  x nCHin x (framesize/hopsize)
  */
 void saf_stft_forward(void * const hSTFT,
@@ -185,9 +187,9 @@ void saf_stft_forward(void * const hSTFT,
  *
  * @param[in]  hSTFT     saf_stft handle
  * @param[in]  dataFD    Frequency-domain output;
- *                       if FDformat == SAF_STFT_TIME_CH_BANDS:
+ *                       if FDformat == #SAF_STFT_TIME_CH_BANDS:
  *                           (framesize/hopsize) x nCHout x (fftsize/2+1)
- *                       if FDformat == SAF_STFT_BANDS_CH_TIME:
+ *                       if FDformat == #SAF_STFT_BANDS_CH_TIME:
  *                           (fftsize/2+1)  x nCHout x (framesize/hopsize)
  * @param[in]  framesize Frame size of time-domain data
  * @param[out] dataTD    Time-domain output;  nCHout x framesize
@@ -241,6 +243,8 @@ void saf_stft_channelChange(void * const hSTFT,
  *   // 'x_in' should equal 'test' (given some numerical error)
  *   saf_rfft_destroy(&hFFT);              // destroys instance of safFFT
  * \endcode
+ *
+ * Unit test(s): test__saf_rfft()
  *
  * @param[in] phFFT (&) address of saf_rfft handle
  * @param[in] N     FFT size

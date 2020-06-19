@@ -16,7 +16,7 @@
 
 /**
  * @file saf_utility_fft.c
- * @brief Utility: Wrappers for optimised fast Fourier transform (FFT) routines
+ * @brief Wrappers for optimised fast Fourier transform (FFT) routines
  *
  * @note If none of the supported optimised FFT implementations are linked, then
  *       saf_fft employs the highly respectable KissFFT from here (BSD 3-Clause

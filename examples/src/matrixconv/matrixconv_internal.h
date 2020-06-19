@@ -65,7 +65,7 @@ typedef struct _matrixconv
     /* internal */
     void* hMatrixConv;     /**< saf_matrixConv handle */
     int hostBlockSize;     /**< current host block size */
-    int hostBlockSize_clamped; /**< Clamped between MIN and MAX_FRAME_SIZE */
+    int hostBlockSize_clamped; /**< Clamped between MIN and #MAX_FRAME_SIZE */
     float* filters;        /**< the matrix of filters; FLAT: nOutputChannels x nInputChannels x filter_length */
     int nfilters;          /**< the number of filters (nOutputChannels x nInputChannels) */
     int input_wav_length;  /**< length of the wav files loaded in samples (inputs are concatenated) */

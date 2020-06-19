@@ -16,7 +16,7 @@
 
 /**
  * @file saf_utility_matrixConv.h
- * @brief Utility: Matrix convolver functions
+ * @brief Matrix and multi-channel convolvers
  *
  * These have been mostly derived from some Matlab scripts by Archontis Politis
  *
@@ -60,6 +60,8 @@ extern "C" {
  * Creates an instance of matrixConv
  *
  * This is a matrix convolver intended for block-by-block processing.
+ *
+ * Unit test(s): test__saf_matrixConv()
  *
  * @param[in] phMC        (&) address of matrixConv handle
  * @param[in] hopSize     Hop size in samples.

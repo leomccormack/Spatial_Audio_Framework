@@ -158,7 +158,7 @@ typedef struct _array2sh
 /**
  * Initialise the filterbank used by array2sh.
  *
- * @note Call this function before array2sh_calculate_sht_matrix
+ * @note Call this function before array2sh_calculate_sht_matrix()
  */
 void array2sh_initTFT(void* const hA2sh);
 
@@ -212,7 +212,7 @@ void array2sh_destroyArray(void ** const hPars);
  *
  * @param[in] hPars         (&) array configuration handle
  * @param[in] preset        Array preset (see
- *                          "ARRAY2SH_MICROPHONE_ARRAY_PRESETS" enum)
+ *                          #_ARRAY2SH_MICROPHONE_ARRAY_PRESETS enum)
  * @param[in] arrayOrder    (&) maximum encoding order of the current preset
  * @param[in] firstInitFLAG '1' this is the first time function is being called
  */

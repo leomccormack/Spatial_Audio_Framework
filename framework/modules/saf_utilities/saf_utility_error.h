@@ -16,7 +16,7 @@
 
 /**
  * @file saf_utility_error.h
- * @brief Utility: A list of error and warning codes
+ * @brief A list of error and warning codes
  *
  * @author Leo McCormack
  * @date 05.08.2019 
@@ -113,15 +113,15 @@ typedef enum _SAF_ERRORS {
  * Checks current error/warning code, and prints out a message if needed (used
  * when in debug mode).
  *
- * If there is no error/warning (SAF_ERROR__NO_ERROR), then the function does
+ * If there is no error/warning (#SAF_ERROR__NO_ERROR), then the function does
  * nothing.
  * If there is a warning code, then an appropriate warning message is printed,
  * and err is reset upon return (if needed).
  * If there is an error code, then an appropriate error message is printed, and
  * the program is terminated.
  *
- * @param[in] err SAF error code (see "SAF_ERRORS" enum)
- * @returns SAF_ERROR__NO_ERROR
+ * @param[in] err SAF error code (see #_SAF_ERRORS enum)
+ * @returns #SAF_ERROR__NO_ERROR
  */
 #ifndef NDEBUG
 SAF_ERRORS saf_error_print(SAF_ERRORS err);

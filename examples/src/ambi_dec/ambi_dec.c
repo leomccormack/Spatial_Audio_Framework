@@ -265,16 +265,16 @@ void ambi_dec_initCodec
         M_dec_tmp = malloc1d(nLoudspeakers * max_nSH * sizeof(float));
         switch(pData->dec_method[d]){
             case DECODING_METHOD_SAD:
-                getLoudspeakerAmbiDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_SAD, masterOrder, 0, M_dec_tmp);
+                getLoudspeakerDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_SAD, masterOrder, 0, M_dec_tmp);
                 break;
             case DECODING_METHOD_MMD:
-                getLoudspeakerAmbiDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_MMD, masterOrder, 0, M_dec_tmp);
+                getLoudspeakerDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_MMD, masterOrder, 0, M_dec_tmp);
                 break;
             case DECODING_METHOD_EPAD:
-                getLoudspeakerAmbiDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_EPAD, masterOrder, 0, M_dec_tmp);
+                getLoudspeakerDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_EPAD, masterOrder, 0, M_dec_tmp);
                 break;
             case DECODING_METHOD_ALLRAD:
-                getLoudspeakerAmbiDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_ALLRAD, masterOrder, 0, M_dec_tmp);
+                getLoudspeakerDecoderMtx((float*)pData->loudpkrs_dirs_deg, nLoudspeakers, LOUDSPEAKER_DECODER_ALLRAD, masterOrder, 0, M_dec_tmp);
                 break;
         }
         

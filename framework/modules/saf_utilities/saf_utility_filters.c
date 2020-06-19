@@ -16,7 +16,7 @@
 
 /**
  * @file: saf_utility_filters.c
- * @brief Utility: A collection of IIR/FIR filter design equations
+ * @brief A collection of IIR/FIR filter design equations
  *
  * @author Leo McCormack
  * @date 01.03.2019

@@ -160,7 +160,7 @@ typedef struct _ambi_dec
 /* ========================================================================== */
 
 /**
- * Sets codec status (see 'CODEC_STATUS' enum)
+ * Sets codec status (see #_CODEC_STATUS enum)
  */
 void ambi_dec_setCodecStatus(void* const hCmp, CODEC_STATUS newStatus);
 
@@ -188,11 +188,11 @@ void ambi_dec_interpHRTFs(void* const hAmbi,
  * Note: 2-D setups which are not on the horizontal plane (i.e.
  * all elevations==0) will be registered as a 3-D setup.
  * Further Note: default uniformly distributed points are used to pad the
- * dirs_deg matrix up to the MAX_NUM_LOUDSPEAKERS, if nCH is less than
+ * dirs_deg matrix up to the #MAX_NUM_LOUDSPEAKERS, if nCH is less than
  * this. This can help avoid scenarios of many sources being panned in the same
  * direction, or triangulations errors.
  *
- * @param[in]  preset   See LOUDSPEAKER_ARRAY_PRESETS enum
+ * @param[in]  preset   See #_LOUDSPEAKER_ARRAY_PRESETS enum
  * @param[out] dirs_deg Loudspeaker directions, [azimuth elevation] convention, in
  *                      DEGREES;
  * @param[out] nCH      (&) number of loudspeaker directions in the array

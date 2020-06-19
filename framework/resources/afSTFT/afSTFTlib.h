@@ -82,6 +82,8 @@ typedef struct {
 /**
  * Initialises an instance of afSTFTlib [1]
  *
+ * Unit test(s): test__afSTFT()
+ *
  * @param[in] handle      (&) afSTFTlib handle
  * @param[in] hopSize     Hop size, in samples
  * @param[in] inChannels  Number of input channels

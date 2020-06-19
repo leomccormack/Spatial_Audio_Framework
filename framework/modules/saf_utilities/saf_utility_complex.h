@@ -16,7 +16,7 @@
 
 /**
  * @file saf_utility_complex.h
- * @brief Utility: Contains wrappers for handling complex numbers across both
+ * @brief Contains wrappers for handling complex numbers across both
  *        C99-compliant compilers and Microsoft Visual Compiler (MSVC)
  *
  * @author Leo McCormack

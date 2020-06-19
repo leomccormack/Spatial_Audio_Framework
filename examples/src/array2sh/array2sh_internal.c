@@ -614,7 +614,13 @@ void array2sh_destroyArray(void ** const hPars)
     }
 }
  
-void array2sh_initArray(void* const hPars, ARRAY2SH_MICROPHONE_ARRAY_PRESETS preset, int* arrayOrder, int firstInitFlag)
+void array2sh_initArray
+(
+    void* const hPars,
+    ARRAY2SH_MICROPHONE_ARRAY_PRESETS preset,
+    int* arrayOrder,
+    int firstInitFlag
+)
 {
     array2sh_arrayPars *pars = (array2sh_arrayPars*)(hPars);
     int ch, i, Q;
@@ -630,7 +636,7 @@ void array2sh_initArray(void* const hPars, ARRAY2SH_MICROPHONE_ARRAY_PRESETS pre
             pars->weightType = WEIGHT_RIGID_OMNI; /* open or rigid, and directivity of the sensors (only for open arrays) */
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
-                    pars->sensorCoords_rad[ch][i] = __default_coords_rad[ch][i]; /* spherical coordinates of the sensors, in radians */
+                    pars->sensorCoords_rad[ch][i] = __default_SENSORcoords64_rad[ch][i]; /* spherical coordinates of the sensors, in radians */
                     pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);
                 }
             }

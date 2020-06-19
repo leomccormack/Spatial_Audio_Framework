@@ -16,8 +16,8 @@
 
 /**
  * @file saf_sh.c
- * @brief Public part of the Spherical Harmonic Transform and Spherical Array
- *        Processing module (saf_sh)
+ * @brief Public source for the Spherical Harmonic Transform and Spherical Array
+ *        Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
  * derived from Matlab libraries by Archontis Politis [1-3].

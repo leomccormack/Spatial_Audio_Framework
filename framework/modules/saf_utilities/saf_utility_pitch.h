@@ -16,8 +16,7 @@
 
 /**
  * @file saf_utility_pitch.h
- * @brief Utility: A collection of pitch shifting algorithms
- *
+ * @brief A collection of pitch shifting algorithms
  * @author Leo McCormack
  * @date 04.05.2020
  */
@@ -44,6 +43,8 @@ extern "C" {
  * @note Higher FFT sizes will permit more drastic pitch shifts. Increasing the
  *       Oversampling factor will increase latency, but also improve signal
  *       fidelity.
+ *
+ * Unit test(s): test__smb_pitchShifter()
  *
  * @param[in] hSmb         (&) address of smb pitchShifter handle
  * @param[in] nCH          number of channels
@@ -73,7 +74,8 @@ void smb_pitchShift_destroy(/* Input Arguments */
  * This implementation was orginally written by Stephan M. Bernsee (c) 1999-2015
  * distributed under the WOL license. It has been modified to better work with
  * frame-by-frame processing. It also supports multiple input channels and
- * employs saf_fft and saf_veclib for additional run-time optimisations.
+ * employs saf_utility_fft.h and saf_utility_veclib.h for additional run-time
+ * optimisations.
  *
  * @param[in]  hSmb       (&) smb pitchShifter handle
  * @param[in]  pitchShift Pitch shift factor, 0.5: down 1 octave, 1: no shift,

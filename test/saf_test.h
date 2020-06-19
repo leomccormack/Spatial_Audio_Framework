@@ -1,6 +1,6 @@
 /**
  * @file saf_test.h
- * @brief testing program for the Spatial_Audio_Framework
+ * @brief Testing program for the Spatial_Audio_Framework
  *
  * @author Leo McCormack
  * @date 27.04.2020
@@ -69,7 +69,7 @@ void test__realloc2d_r(void);
 /**
  * Testing to assure that (given a uniform loudspeaker layout), the SAD, MMD and
  * EPAD decoders are all equivalent */
-void test__getLoudspeakerAmbiDecoderMtx(void);
+void test__getLoudspeakerDecoderMtx(void);
 /**
  * Testing the orthogonality of the getSHreal function */
 void test__getSHreal(void);

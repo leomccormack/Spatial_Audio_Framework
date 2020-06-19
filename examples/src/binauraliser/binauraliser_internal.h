@@ -142,7 +142,7 @@ typedef struct _binauraliser
 /* ========================================================================== */
 
 /**
- * Sets codec status (see 'CODEC_STATUS' enum)
+ * Sets codec status (see #_CODEC_STATUS enum)
  */
 void binauraliser_setCodecStatus(void* const hBin,
                                  CODEC_STATUS newStatus);
@@ -183,11 +183,11 @@ void binauraliser_initTFT(void* const hBin);
  *
  * The function also returns the number of source in the configuration
  * Note: default uniformly distributed points are used to pad the
- * dirs_deg matrix up to the MAX_NUM_INPUTS, if nCH is less than
+ * dirs_deg matrix up to the #MAX_NUM_INPUTS, if nCH is less than
  * this. This can help avoid scenarios of many sources being panned in the same
  * direction, or triangulations errors.
  *
- * @param[in]  preset   See "SOURCE_CONFIG_PRESETS" enum.
+ * @param[in]  preset   See #_SOURCE_CONFIG_PRESETS enum.
  * @param[out] dirs_deg Source directions, [azimuth elevation] convention, in
  *                      DEGREES;
  * @param[out] newNCH   (&) new number of channels

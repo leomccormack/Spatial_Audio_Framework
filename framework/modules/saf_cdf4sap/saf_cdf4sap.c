@@ -16,7 +16,8 @@
 
 /**
  * @file saf_cdf4sap.c
- * @brief Public part of the Covariance Domain Framework module (saf_cdf4sap)
+ * @brief Public source for the Covariance Domain Framework module
+ *        (#SAF_CDF4SAP_MODULE)
  *
  * Covariance Domain Framework for Spatial Audio Processing (CDF4SAP). This is a
  * direct C port of the Matlab function given in [1], which was originally

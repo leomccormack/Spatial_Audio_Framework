@@ -16,8 +16,7 @@
 
 /**
  * @file saf_utility_sensorarray_presets.h
- * @brief Utility: A collection of microphone array sensor directions
- *
+ * @brief A collection of microphone array sensor directions
  * @author Leo McCormack
  * @date 11.07.2016 
  */
@@ -28,11 +27,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-/* TODO: remove and check array2sh example is still OK */
-#ifndef UTIL_DEFAULT_SH_ORDER
-# define UTIL_DEFAULT_SH_ORDER ( 7 ) /**< No longer required */
-#endif
     
 /* ========================================================================== */
 /*                 Microphone/Hydrophone Array Configurations                 */
@@ -78,9 +72,6 @@ extern const float __Eigenmike32_coords_rad[32][2];
  * Sensor array coordinates for the custom 52-sensor array built at the
  * Technical University of Denmark (DTU) */
 extern const float __DTU_mic_coords_rad[52][2];
-/**
- * Default sensor array coordinates */
-extern const float __default_coords_rad[(UTIL_DEFAULT_SH_ORDER+1)*(UTIL_DEFAULT_SH_ORDER+1)][2];
 /**
  * Default sensor array coordinates */
 extern const float __default_SENSORcoords64_rad[64][2];

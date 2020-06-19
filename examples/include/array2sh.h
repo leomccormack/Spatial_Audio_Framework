@@ -35,6 +35,8 @@
  *          sub-band sound-field analysis," in Audio Engineering Society
  *          Convention 144, Audio Engineering Society, 2018.
  *
+ * Unit test(s): test__saf_example_array2sh()
+ *
  * @author Leo McCormack
  * @date 13.09.2017
  */
@@ -91,7 +93,7 @@ typedef enum _ARRAY2SH_FILTER_TYPES{
                           *   inversion of the modal responses [2] */
     FILTER_Z_STYLE,      /**< Encoding filters based on a linear-phase filter-
                           *   bank approach [3] */
-    FILTER_Z_STYLE_MAXRE /**< Same as 'FILTER_Z_STYLE', only it also has max_rE
+    FILTER_Z_STYLE_MAXRE /**< Same as #FILTER_Z_STYLE, only it also has max_rE
                           *   weights baked in */
     
 }ARRAY2SH_FILTER_TYPES;
@@ -221,7 +223,7 @@ void array2sh_process(void* const hA2sh,
 void array2sh_refreshSettings(void* const hA2sh);
  
 /**
- * Sets the encoding order (see 'SH_ORDERS' enum)
+ * Sets the encoding order (see #_SH_ORDERS enum)
  */
 void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
 
@@ -238,7 +240,7 @@ void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
 void array2sh_setRequestEncoderEvalFLAG(void* const hA2sh, int newState);
     
 /**
- * Sets current eval status (see 'ARRAY2SH_EVAL_STATUS' enum)
+ * Sets current eval status (see #_ARRAY2SH_EVAL_STATUS enum)
  */
 void array2sh_setEvalStatus(void* const hA2sh, ARRAY2SH_EVAL_STATUS evalStatus);
 
@@ -252,7 +254,7 @@ void array2sh_setDiffEQpastAliasing(void* const hA2sh, int newState);
 
 /**
  * Sets a pre-defined microphone/hydrophone array preset (See
- * ARRAY2SH_MICROPHONE_ARRAY_PRESETS enum) 
+ * #_ARRAY2SH_MICROPHONE_ARRAY_PRESETS enum)
  */
 void array2sh_setPreset(void* const hA2sh,
                         ARRAY2SH_MICROPHONE_ARRAY_PRESETS preset);
@@ -317,18 +319,18 @@ void array2sh_setr(void* const hA2sh, float newr);
 void array2sh_setR(void* const hA2sh, float newR);
     
 /**
- * Sets the type of array (see ARRAY2SH_ARRAY_TYPES enum)
+ * Sets the type of array (see #_ARRAY2SH_ARRAY_TYPES enum)
  */
 void array2sh_setArrayType(void* const hA2sh, int newType);
 
 /**
- * Sets the type of weights to use (see ARRAY2SH_WEIGHT_TYPES enum)
+ * Sets the type of weights to use (see #_ARRAY2SH_WEIGHT_TYPES enum)
  */
 void array2sh_setWeightType(void* const hA2sh, int newType);
     
 /**
  * Sets the type filter design to employ for computing the encoding matrices
- * (see ARRAY2SH_FILTER_TYPES enum)
+ * (see #_ARRAY2SH_FILTER_TYPES enum)
  */
 void array2sh_setFilterType(void* const hA2sh, int newType);
     
@@ -340,13 +342,13 @@ void array2sh_setRegPar(void* const hA2sh, float newVal);
     
 /**
  * Sets the Ambisonic channel ordering convention to encode with, in order to
- * match the convention employed by the input signals (see 'CH_ORDER' enum)
+ * match the convention employed by the input signals (see #_CH_ORDER enum)
  */
 void array2sh_setChOrder(void* const hA2sh, int newOrder);
     
 /**
  * Sets the Ambisonic normalisation convention to encode with, in order to match
- * with the convention employed by the input signals (see 'NORM_TYPE' enum)
+ * with the convention employed by the input signals (see #_NORM_TYPE enum)
  */
 void array2sh_setNormType(void* const hA2sh, int newType);
 
@@ -366,7 +368,7 @@ void array2sh_setGain(void* const hA2sh, float newGain);
 /* ========================================================================== */
 
 /**
- * Returns current eval status (see 'ARRAY2SH_EVAL_STATUS' enum)
+ * Returns current eval status (see #_ARRAY2SH_EVAL_STATUS enum)
  */
 ARRAY2SH_EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh);
 
@@ -381,7 +383,7 @@ float array2sh_getProgressBar0_1(void* const hA2sh);
  * (Optional) Returns current intialisation/processing progress text
  *
  * @note "text" string should be (at least) of length:
- *       PROGRESSBARTEXT_CHAR_LENGTH
+ *       #PROGRESSBARTEXT_CHAR_LENGTH
  */
 void array2sh_getProgressBarText(void* const hA2sh, char* text);
 
@@ -410,7 +412,7 @@ int array2sh_getDiffEQpastAliasing(void* const hA2sh);
 int array2sh_getRequestEncoderEvalFLAG(void* const hA2sh);
     
 /**
- * Returns the current encoding order (see 'SH_ORDERS' enum)
+ * Returns the current encoding order (see #_SH_ORDERS enum)
  */
 int array2sh_getEncodingOrder(void* const hA2sh);
     
@@ -471,18 +473,18 @@ float array2sh_getr(void* const hA2sh);
 float array2sh_getR(void* const hA2sh);
     
 /**
- * Returns the type of array. See ARRAY2SH_ARRAY_TYPES enum
+ * Returns the type of array. See #_ARRAY2SH_ARRAY_TYPES enum
  */
 int array2sh_getArrayType(void* const hA2sh);
 
 /**
- * Returns the type of weights to use see ARRAY2SH_WEIGHT_TYPES enum
+ * Returns the type of weights to use see #_ARRAY2SH_WEIGHT_TYPES enum
  */
 int array2sh_getWeightType(void* const hA2sh);
 
 /**
  * Returns the type filter design to employ for computing the encoding matrices
- * (see ARRAY2SH_FILTER_TYPES enum)
+ * (see #_ARRAY2SH_FILTER_TYPES enum)
  */
 int array2sh_getFilterType(void* const hA2sh);
 
@@ -495,14 +497,14 @@ float array2sh_getRegPar(void* const hA2sh);
 /*
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see 'CH_ORDER' enum)
+ * (see #_CH_ORDER enum)
  */
 int array2sh_getChOrder(void* const hA2sh);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals
- * (see 'NORM_TYPE' enum)
+ * (see #_NORM_TYPE enum)
  */
 int array2sh_getNormType(void* const hA2sh);
     
@@ -571,7 +573,9 @@ float** array2sh_getbN_modal(void* const hA2sh, int* nCurves, int* nFreqPoints);
  *          of spherical microphone. In Audio Engineering Society Convention
  *          120.
  */
-float* array2sh_getSpatialCorrelation_Handle(void* const hA2sh, int* nCurves, int* nFreqPoints);
+float* array2sh_getSpatialCorrelation_Handle(void* const hA2sh,
+                                             int* nCurves,
+                                             int* nFreqPoints);
 
 /**
  * Returns a pointer to the level-difference [1] data. This is given per

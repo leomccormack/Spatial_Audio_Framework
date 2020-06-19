@@ -16,7 +16,8 @@
 
 /**
  * @file saf_hoa_internal.h
- * @brief Internal part of the higher-order Ambisonics module (saf_hoa)
+ * @brief Internal header for the higher-order Ambisonics module
+ *        (#SAF_HOA_MODULE)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
  * the Matlab library by Archontis Politis [1].
@@ -47,7 +48,7 @@ extern "C" {
 /* ========================================================================== */
 
 /**
- * Computes the "Energy preserving Ambisonic decoder", as detailed in [1]
+ * Computes the Energy preserving Ambisonic decoder (EPAD) as detailed in [1]
  *
  * @note The function has been written to also work when the number of spherical
  *       harmonic components exceeds the number of loudspeakers. In which case,
@@ -71,7 +72,7 @@ void getEPAD(/* Input Arguments */
              float* decMtx);
 
 /**
- * Computes the "All-round Ambisonics decoder", as detailed in [1]
+ * Computes the All-round Ambisonics decoder (AllRAD) as detailed in [1]
  *
  * @param[in]  order       Decoding order
  * @param[in]  ls_dirs_deg Loudspeaker directions in DEGREES [azi elev];
@@ -109,7 +110,7 @@ void getAllRAD(/* Input Arguments */
  *       in the higher-order components. This actually gets worse the more HRTFs
  *       you have.
  *
- * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
+ * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
  * @param[in]  N_dirs        Number of HRTF directions in set
  * @param[in]  N_bands       Number of frequency bands/bins
@@ -117,7 +118,7 @@ void getAllRAD(/* Input Arguments */
  * @param[in]  weights       Integration weights (set to NULL if not available);
  *                           N_dirs x 1
  * @param[out] decMtx        Decoding matrix;
- *                           FLAT: N_bands x NUM_EARS x (order+1)^2
+ *                           FLAT: N_bands x #NUM_EARS x (order+1)^2
  */
 void getBinDecoder_LS(/* Input Arguments */
                       float_complex* hrtfs,
@@ -140,7 +141,7 @@ void getBinDecoder_LS(/* Input Arguments */
  * @note This equalisation mitagates some of the timbral colourations exhibited
  *       by standard LS decoding; especially at lower input orders.
  *
- * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
+ * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
  * @param[in]  N_dirs        Number of HRTF directions in set
  * @param[in]  N_bands       Number of frequency bands/bins
@@ -148,7 +149,7 @@ void getBinDecoder_LS(/* Input Arguments */
  * @param[in]  weights       Integration weights (set to NULL if not available);
  *                           N_dirs x 1
  * @param[out] decMtx        Decoding matrix;
- *                           FLAT: N_bands x NUM_EARS x (order+1)^2
+ *                           FLAT: N_bands x #NUM_EARS x (order+1)^2
  *
  * @see [1] Z. Ben-Hur, F. Brinkmann, J. Sheaffer, S. Weinzierl, and B. Rafaely,
  *          "Spectral equalization in binaural signals represented by order-
@@ -173,7 +174,7 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
  * ready to be applied to input SH signals in the time-frequency domain, or,
  * take the inverse-FFT and apply it via matrix convolution.
  *
- * @note Like "getBinDecoder_LSDIFFEQ" this method mitagates some of the timbral
+ * @note Like getBinDecoder_LSDIFFEQ() this method mitagates some of the timbral
  *       colourations exhibited by standard LS decoding at lower input orders.
  *       However, it operates without equalisation. Instead, the modal order of
  *       the HRTF grid is brought closer to the decoding order, by simply
@@ -183,7 +184,7 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
  *       discarding it due to order truncation, the energy is instead aliased
  *       back into the lower-order components and preserved.
  *
- * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
+ * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
  * @param[in]  N_dirs        Number of HRTF directions in set
  * @param[in]  N_bands       Number of frequency bands/bins
@@ -191,7 +192,7 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
  * @param[in]  weights       Integration weights (set to NULL if not available);
  *                           N_dirs x 1
  * @param[out] decMtx        Decoding matrix;
- *                           FLAT: N_bands x NUM_EARS x (order+1)^2
+ *                           FLAT: N_bands x #NUM_EARS x (order+1)^2
  *
  * @see [1] B. Bernschu"tz, A. V. Giner, C. Po"rschmann, and J. Arend, "Binaural
  *          reproduction of plane waves with reduced modal order" Acta Acustica
@@ -236,7 +237,7 @@ void getBinDecoder_SPR(/* Input Arguments */
  *       impose it on any binaural decoder using the applyDiffCovMatching()
  *       function.
  *
- * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
+ * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
  * @param[in]  N_dirs        Number of HRTF directions in set
  * @param[in]  N_bands       Number of frequency bands/bins
@@ -247,7 +248,7 @@ void getBinDecoder_SPR(/* Input Arguments */
  * @param[in]  weights       Integration weights (set to NULL if not available);
  *                           N_dirs x 1
  * @param[out] decMtx        Decoding matrix;
- *                           FLAT: N_bands x NUM_EARS x (order+1)^2
+ *                           FLAT: N_bands x #NUM_EARS x (order+1)^2
  *
  * @see [1] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. Binaural rendering of
  *          Ambisonic signals by head-related impulse response time alignment
@@ -278,7 +279,7 @@ void getBinDecoder_TA(/* Input Arguments */
  *       differing in the manner in which the phase is neglected at frequencies
  *       above 1.5kHz.
  *
- * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x NUM_EARS x N_dirs
+ * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
  * @param[in]  N_dirs        Number of HRTF directions in set
  * @param[in]  N_bands       Number of frequency bands/bins
@@ -287,7 +288,7 @@ void getBinDecoder_TA(/* Input Arguments */
  * @param[in]  weights       Integration weights (set to NULL if not available);
  *                           N_dirs x 1
  * @param[out] decMtx        Decoding matrix;
- *                           FLAT: N_bands x NUM_EARS x (order+1)^2
+ *                           FLAT: N_bands x #NUM_EARS x (order+1)^2
  *
  * @see [1] Scho"rkhuber C, Zaunschirm M, Ho"ldrich R. Binaural Rendering of
  *          Ambisonic Signals via Magnitude Least Squares. InProceedings of the

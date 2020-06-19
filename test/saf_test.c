@@ -16,7 +16,7 @@
 
 /**
  * @file saf_test.c
- * @brief testing program for the Spatial_Audio_Framework
+ * @brief Testing program for the Spatial_Audio_Framework
  *
  * @author Leo McCormack
  * @date 27.04.2020
@@ -100,7 +100,7 @@ int main_test(void) {
     RUN_TEST(test__sortz);
     RUN_TEST(test__cmplxPairUp);
     RUN_TEST(test__realloc2d_r);
-    RUN_TEST(test__getLoudspeakerAmbiDecoderMtx);
+    RUN_TEST(test__getLoudspeakerDecoderMtx);
     RUN_TEST(test__getSHreal);
     RUN_TEST(test__getSHreal_recur);
     RUN_TEST(test__getSHcomplex);
@@ -822,7 +822,7 @@ void test__realloc2d_r(void){
     free(test);
 }
 
-void test__getLoudspeakerAmbiDecoderMtx(void){
+void test__getLoudspeakerDecoderMtx(void){
     int i, j, k, nLS, order, nSH;
     float* ls_dirs_deg;
     float** decMtx_SAD, **decMtx_MMD, **decMtx_EPAD, **decMtx_AllRAD;
@@ -846,10 +846,10 @@ void test__getLoudspeakerAmbiDecoderMtx(void){
         decMtx_MMD = (float**)malloc2d(nLS, nSH, sizeof(float));
         decMtx_EPAD = (float**)malloc2d(nLS, nSH, sizeof(float));
         decMtx_AllRAD = (float**)malloc2d(nLS, nSH, sizeof(float));
-        getLoudspeakerAmbiDecoderMtx(ls_dirs_deg, nLS, LOUDSPEAKER_DECODER_SAD, order, 0, FLATTEN2D(decMtx_SAD));
-        getLoudspeakerAmbiDecoderMtx(ls_dirs_deg, nLS, LOUDSPEAKER_DECODER_MMD, order, 0, FLATTEN2D(decMtx_MMD));
-        getLoudspeakerAmbiDecoderMtx(ls_dirs_deg, nLS, LOUDSPEAKER_DECODER_EPAD, order, 0, FLATTEN2D(decMtx_EPAD));
-        getLoudspeakerAmbiDecoderMtx(ls_dirs_deg, nLS, LOUDSPEAKER_DECODER_ALLRAD, order, 0, FLATTEN2D(decMtx_AllRAD));
+        getLoudspeakerDecoderMtx(ls_dirs_deg, nLS, LOUDSPEAKER_DECODER_SAD, order, 0, FLATTEN2D(decMtx_SAD));
+        getLoudspeakerDecoderMtx(ls_dirs_deg, nLS, LOUDSPEAKER_DECODER_MMD, order, 0, FLATTEN2D(decMtx_MMD));
+        getLoudspeakerDecoderMtx(ls_dirs_deg, nLS, LOUDSPEAKER_DECODER_EPAD, order, 0, FLATTEN2D(decMtx_EPAD));
+        getLoudspeakerDecoderMtx(ls_dirs_deg, nLS, LOUDSPEAKER_DECODER_ALLRAD, order, 0, FLATTEN2D(decMtx_AllRAD));
 
         /* SAD/MMD/EPAD should all be equivalent in this special/uniform case */
         for(j=0; j<nLS; j++)
