@@ -107,7 +107,7 @@ void test__butterCoeffs(void);
  */
 void test__faf_IIRFilterbank(void);
 
-#ifdef ENABLE_SAF_EXAMPLES_TESTS
+#ifdef SAF_ENABLE_EXAMPLES_TESTS
 /**
  * Testing the SAF ambi_bin example (this may also serve as a tutorial on how
  * to use it) */
@@ -117,10 +117,18 @@ void test__saf_example_ambi_bin(void);
  * to use it) */
 void test__saf_example_ambi_dec(void);
 /**
+ * Testing the SAF ambi_enc example (this may also serve as a tutorial on how
+ * to use it) */
+void test__saf_example_ambi_enc(void);
+/**
  * Testing the SAF array2sh example (this may also serve as a tutorial on how
  * to use it) */
 void test__saf_example_array2sh(void);
-#endif /* ENABLE_SAF_EXAMPLES_TESTS */
+/**
+ * Testing the SAF rotator example (this may also serve as a tutorial on how
+ * to use it) */
+void test__saf_example_rotator(void);
+#endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -101,7 +101,7 @@ void getAllRAD
     float* decMtx
 )
 {
-    int i, t, nDirs_td, N_gtable, nGroups, nSH;
+    int i, nDirs_td, N_gtable, nGroups, nSH;
     float scale;
     float* Y_td, *G_td, *t_dirs;
     

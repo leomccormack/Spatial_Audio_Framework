@@ -43,6 +43,7 @@ void ambi_enc_create
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->order = SH_ORDER_FIRST;
+    pData->enablePostScaling = 1;
 
     /* set FIFO buffers */
     pData->FIFO_idx = 0;
@@ -172,8 +173,10 @@ void ambi_enc_process
             utility_svvcopy((const float*)pData->Y, MAX_NUM_INPUTS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_Y);
 
             /* scale by 1/sqrt(nSources) */
-            scale = 1.0f/sqrtf((float)nSources);
-            utility_svsmul((float*)pData->outputFrameTD, &scale, nSH*FRAME_SIZE, NULL);
+            if(pData->enablePostScaling){
+                scale = 1.0f/sqrtf((float)nSources);
+                utility_svsmul((float*)pData->outputFrameTD, &scale, nSH*FRAME_SIZE, (float*)pData->outputFrameTD);
+            }
 
             /* copy SH signals to output buffer */
             switch(chOrdering){
@@ -287,6 +290,12 @@ void ambi_enc_setNormType(void* const hAmbi, int newType)
         pData->norm = (NORM_TYPES)newType;
 }
 
+void ambi_enc_setEnablePostScaling(void* const hAmbi, int newStatus)
+{
+    ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
+    pData->enablePostScaling = newStatus;
+}
+
 
 /* Get Functions */
 
@@ -337,7 +346,13 @@ int ambi_enc_getNormType(void* const hAmbi)
     return (int)pData->norm;
 }
 
+int ambi_enc_getEnablePostScaling(void* const hAmbi)
+{
+    ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
+    return pData->enablePostScaling;
+}
+
 int ambi_enc_getProcessingDelay()
 {
-    return FRAME_SIZE;
+    return 2*FRAME_SIZE;
 }

@@ -15,7 +15,7 @@ The framework requires the following libraries:
 
 The rationale for the former requirement is that the framework employs the use of CBLAS/LAPACK routines for tackling all of the linear algebra operations, which are used quite prolifically throughout the code. Therefore, a performance library, which conforms to the CBLAS/LAPACK standards, is required by most of the framework modules. 
 
-You must define one of the following preprocessor definitions, which will let SAF know which library/libraries you have linked to your project:
+Define one of the following pre-processor definitions, which will let SAF know which library/libraries you have linked to your project:
 ```
 SAF_USE_INTEL_MKL                
 SAF_USE_OPEN_BLAS_AND_LAPACKE
@@ -23,7 +23,7 @@ SAF_USE_APPLE_ACCELERATE
 SAF_USE_ATLAS
 ```
 
-Note that detailed instructions on how to build and these performance libraries can be found [here](dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
+Note that detailed instructions on how to build/link these performance libraries can be found [here](dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
 
 ## Framework structure
 
@@ -31,7 +31,7 @@ The framework comprises the following core modules:
 * **saf_hoa** - a collection of higher-order Ambisonics binaural and loudspeaker decoders.
 * **saf_sh** - spherical harmonic and spherical array processing related functions.
 * **saf_vbap** - Vector-base Amplitude Panning (VBAP) functions.
-* **saf_cdf4sap** - Covarience Domain Framework for Spatial Audio Processing (CDF4SAP).
+* **saf_cdf4sap** - Covariance Domain Framework for Spatial Audio Processing (CDF4SAP).
 * **saf_hrir** - HRIR/HRTF related functions (estimating ITDs, interpolation, diffuse-field EQ etc.).
 * **saf_reverb** - a collection of reverbs and room simulation algorithms.
 * **saf_utilities** - a collection of useful utility functions and cross-platform wrappers.
@@ -78,7 +78,7 @@ The available SAF-specific build options (and their default values) are:
 -DSAF_BUILD_TESTS=1                        # build unit testing program
 ```
 
-Note that if **SAF_ENABLE_SOFA_READER_MODULE** is set to **ON**: for MacOSX and MSVC users, CMake will use the statically built dependencies found in **dependencies** by default. Linux and MSYS2 users may instead install a shared [netcdf library](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
+Note that if the saf_sofa_reader is enabled: for MacOSX and MSVC users, CMake will use the statically built dependencies found in **dependencies** by default. Linux and MSYS2 users may instead install a shared [netcdf library](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
 ```
 # e.g. Linux users:
 -DNETCDF_LIBRARY="/usr/lib/x86_64-linux-gnu/libnetcdf.so"
@@ -92,7 +92,7 @@ mkdir build
 cmake -S . -B build 
 cd build
 make
-test/saf_test 
+test/saf_test # To run the unit tests
 ```
 
 ## Documentation
@@ -103,7 +103,7 @@ Alternatively, you may compile the most recent documentation (HTML) yourself wit
 ```
 cd doxygen
 doxygen doxygen_config
-# optional, to also build the pdf version:
+# optionally... to also build the pdf version:
 cd latex
 make
 ```
@@ -112,31 +112,31 @@ make
 
 Many examples have been included in the repository, which may serve as a starting point for learning how to use the framework:
 
-* **ambi_bin** - a binaural Ambisonic decoder with built-in rotator. It includes the following decoding options: least-squares (LS), spatial re-sampling (SPR), Time-alignment (TA) [1], Magnitude Least-Squares (MagLS) [2].
-* **ambi_dec** - a frequency-dependent Ambisonic decoder. Including the following decoding approaches: sampling ambisonic decoder (SAD), AllRAD [3], Energy-Preserving decoder (EPAD) [4], Mode-Matching decoder (MMD).
+* **ambi_bin** - a binaural Ambisonic decoder with built-in rotator. It supports the following decoding options: least-squares (LS), spatial re-sampling (SPR), Time-alignment (TA) [1], Magnitude Least-Squares (MagLS) [2].
+* **ambi_dec** - a frequency-dependent Ambisonic decoder. It supports the following decoding options: sampling Ambisonic decoder (SAD), AllRAD [3], Energy-Preserving decoder (EPAD) [4], Mode-Matching decoder (MMD).
 * **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for Ambisonic signals, based on the design proposed in [5].
-* **ambi_enc** - a simple Ambisonic encoder.
+* **ambi_enc** - a basic Ambisonic encoder.
 * **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals), based on theoretical descriptions [6,7]; more details found in [8].
-* **beamformer** - a beamforming example with several different beamforming options.
+* **beamformer** - a beamformer example with several different beamforming options.
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file.
 * **dirass** - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction [9].
 * **matrixconv** - a basic matrix convolver with an optional partitioned convolution mode. 
 * **multiconv** - a basic multi-channel convolver with an optional partitioned convolution mode. 
 * **panner** - a frequency-dependent VBAP panner [10], which permits source loudness compensation as a function of the room [11].
-* **pitch_shifter** - a very basic multi-channel pitch shifter, based on the phase vocoder approach.
-* **powermap** - sound-field visualiser based on beamformer (PWD, MVDR) energy or sub-space methods (MUSIC).
+* **pitch_shifter** - a basic multi-channel pitch shifter, based on the phase vocoder approach.
+* **powermap** - sound-field visualiser based on beamformer (PWD, MVDR) energy or sub-space-based methods (MUSIC).
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles [12].
-* **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors; as proposed in [8]. 
+* **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors, at multiple frequencies; as proposed in [8]. 
 
 Note that many of these examples have also been integrated into VST audio plug-ins using the JUCE framework and can be found [here](https://github.com/leomccormack/SPARTA).
 
 ## Contributing
 
-Suggestions and contributions to the code are both welcomed and encouraged. It should be highlighted that, in general, the framework has been designed to be highly modular with plenty of room for expansion. Therefore:
+Suggestions and contributions to the code are both welcomed and encouraged. It should be highlighted that the framework has been designed to be highly modular with plenty of room for expansion. Therefore:
 * if you are researcher who has developed a spatial-audio related method and want it integrated into the framework... or
 * if you notice that an existing piece of code can be rewritten to make it clearer/faster, or to fix a bug...
 
-then please feel free to do so and submit a pull request. Note, however, that if the changes/additions are major, then maybe consider first discussing it via a github "issue" or by contacting the developers directly via email. We may also be able to help in the implementation if needed :- )
+then please feel free to do so and submit a pull request. Note, however, that if the changes/additions are major, then maybe consider first discussing it via a github "issue" or by contacting the developers directly via email. We may also be able to help with the implementation if needed :- )
 
 ## Contributors
 
@@ -148,9 +148,9 @@ then please feel free to do so and submit a pull request. Note, however, that if
 
 ## License
 
-This framework is provided permissively under the [ISC license](https://choosealicense.com/licenses/isc/). It also includes the following resources: a modified version of the [alias-free STFT](https://github.com/jvilkamo/afSTFT) implementation by Juha Vilkamo (MIT license); [kissFFT](https://github.com/mborgerding/kissfft) (BSD 3-clause license) by Mark Borgerding; and the ['convhull_3d'](https://github.com/leomccormack/convhull_3d) 3-D Convex Hull implementation by Leo McCormack (MIT license). 
+This framework is provided under the permissive [ISC license](https://choosealicense.com/licenses/isc/). It also includes the following resources: a modified version of the [alias-free STFT](https://github.com/jvilkamo/afSTFT) (MIT license); [kissFFT](https://github.com/mborgerding/kissfft) (BSD 3-clause license); [convhull_3d](https://github.com/leomccormack/convhull_3d) (MIT license); and [md_malloc](https://github.com/leomccormack/md_malloc) (MIT license).
 
-Please be aware and abide by the license conditions found at the top of the respective source files. Furthermore, while we do not impose any copyleft licensing philosophies, we would still appreciate improvements and bug fixes being merged into the public repository where possible.
+Please be aware and respect the license conditions found at the top of each file. Also, while we do not impose any copyleft licensing philosophies, we would still appreciate it if any improvements or bug fixes are also merged into this public repository where possible.
 
 ## References
 

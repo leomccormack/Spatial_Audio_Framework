@@ -1,9 +1,8 @@
-
 # Dependencies for the saf_sofa_reader module 
 
 In order to use the built-in [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reader module (**saf_sofa_reader**), your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). 
 
-Note that the following preprocessor definition is also required to enable this optional module:
+Note that the following pre-processor definition is also required to enable this optional module:
 
 ```
 SAF_ENABLE_SOFA_READER_MODULE

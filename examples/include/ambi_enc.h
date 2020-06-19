@@ -133,6 +133,12 @@ void ambi_enc_setChOrder(void* const hAmbi, int newOrder);
  */
 void ambi_enc_setNormType(void* const hAmbi, int newType);
 
+/**
+ * By default, ambi_enc will scale the output signals by the number of input
+ * signals.
+ */
+void ambi_enc_setEnablePostScaling(void* const hAmbi, int newStatus);
+
     
 /* ========================================================================== */
 /*                                Get Functions                               */
@@ -184,6 +190,11 @@ int ambi_enc_getChOrder(void* const hAmbi);
  * with (see 'NORM_TYPE' enum)
  */
 int ambi_enc_getNormType(void* const hAmbi);
+
+/**
+ * Returns 0: if post scaling is disabled, 1: if post scaling is enabled
+ */
+int ambi_enc_getEnablePostScaling(void* const hAmbi);
 
 /**
  * Returns the processing delay in samples (may be used for delay compensation

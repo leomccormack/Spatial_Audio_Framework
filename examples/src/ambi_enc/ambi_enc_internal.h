@@ -76,6 +76,7 @@ typedef struct _ambi_enc
     CH_ORDER chOrdering;
     NORM_TYPES norm;
     SH_ORDERS order;
+    int enablePostScaling;
     
 } ambi_enc_data;
     

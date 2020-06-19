@@ -182,4 +182,4 @@ Only for MacOSX. This is also the default performance library for Apple users if
 
 ## OPTION: SAF_USE_ATLAS
 
-Using [ALTAS](http://math-atlas.sourceforge.net/) is not recommended, since some LAPACK functions are missing. However, if you don't mind loosing some SAF functionality, then this may still be a good choice for your particular project.
+Using [ALTAS](http://math-atlas.sourceforge.net/) is not recommended, since some LAPACK functions are missing. However, if you don't mind losing some SAF functionality, then this may still be a good choice for your particular project.

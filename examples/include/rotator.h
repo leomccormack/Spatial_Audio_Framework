@@ -210,6 +210,12 @@ int rotator_getOrder(void* const hRot);
  * input/output order: (current_order+1)^2 
  */
 int rotator_getNSHrequired(void* const hRot);
+
+/**
+ * Returns the processing delay in samples (may be used for delay compensation
+ * features)
+ */
+int rotator_getProcessingDelay(void);
     
     
 #ifdef __cplusplus

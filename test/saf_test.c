@@ -27,7 +27,7 @@
 #include "timer.h"   /* for timing the individual tests */
 #include "saf.h"     /* master framework include header */
 
-#ifdef ENABLE_SAF_EXAMPLES_TESTS
+#ifdef SAF_ENABLE_EXAMPLES_TESTS
 /* SAF example headers: */
 # include "ambi_bin.h"
 # include "ambi_dec.h"
@@ -44,7 +44,8 @@
 # include "powermap.h"
 # include "rotator.h"
 # include "sldoa.h"
-#endif /* ENABLE_SAF_EXAMPLES_TESTS */
+#endif /* SAF_ENABLE_EXAMPLES_TESTS */
+
 
 /* ========================================================================== */
 /*                                 Test Config                                */
@@ -110,11 +111,13 @@ int main_test(void) {
     RUN_TEST(test__checkCondNumberSHTReal);
     RUN_TEST(test__butterCoeffs);
     RUN_TEST(test__faf_IIRFilterbank);
-#ifdef ENABLE_SAF_EXAMPLES_TESTS
+#ifdef SAF_ENABLE_EXAMPLES_TESTS
     RUN_TEST(test__saf_example_ambi_bin);
     RUN_TEST(test__saf_example_ambi_dec);
+    RUN_TEST(test__saf_example_ambi_enc);
     RUN_TEST(test__saf_example_array2sh);
-#endif /* ENABLE_SAF_EXAMPLES_TESTS */
+    RUN_TEST(test__saf_example_rotator);
+#endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
     /* close */
     timer_lib_shutdown();
@@ -1451,7 +1454,7 @@ void test__faf_IIRFilterbank(void){
     free(outsig_fft);
 }
 
-#ifdef ENABLE_SAF_EXAMPLES_TESTS
+#ifdef SAF_ENABLE_EXAMPLES_TESTS
 void test__saf_example_ambi_bin(void){
     int nSH, i;
     void* hAmbi;
@@ -1469,6 +1472,7 @@ void test__saf_example_ambi_bin(void){
     ambi_bin_init(hAmbi, fs); /* Cannot be called while "process" is on-going */
 
     /* Configure and initialise the ambi_bin codec */
+    ambi_bin_setNormType(hAmbi, NORM_N3D);
     ambi_bin_setInputOrderPreset(hAmbi, (SH_ORDERS)order);
     ambi_bin_initCodec(hAmbi); /* Can be called whenever (thread-safe) */
     /* "initCodec" should be called after calling any of the "set" functions.
@@ -1531,6 +1535,7 @@ void test__saf_example_ambi_dec(void){
     ambi_dec_init(hAmbi, fs); /* Cannot be called while "process" is on-going */
 
     /* Configure and initialise the ambi_dec codec */
+    ambi_dec_setNormType(hAmbi, NORM_N3D);
     ambi_dec_setMasterDecOrder(hAmbi, (SH_ORDERS)order);
     /* 22.x loudspeaker layout, SAD decoder */
     ambi_dec_setOutputConfigPreset(hAmbi, LOUDSPEAKER_ARRAY_PRESET_22PX);
@@ -1582,6 +1587,70 @@ void test__saf_example_ambi_dec(void){
     free(lsSig);
 }
 
+void test__saf_example_ambi_enc(void){
+    int nSH, i, j, delay;
+    void* hAmbi;
+    float direction_deg[2][2];
+    float** inSig, *y;
+    float** shSig, **shSig_ref;
+
+    /* Config */
+    const float acceptedTolerance = 0.000001f;
+    const int order = 4;
+    const int fs = 48e3;
+    const int signalLength = fs*2;
+    direction_deg[0][0] = 90.0f; /* encode to loudspeaker direction: index 8 */
+    direction_deg[0][1] = 0.0f;
+    direction_deg[1][0] = 20.0f; /* encode to loudspeaker direction: index 8 */
+    direction_deg[1][1] = -45.0f;
+    delay = ambi_enc_getProcessingDelay();
+
+    /* Create and initialise an instance of ambi_enc */
+    ambi_enc_create(&hAmbi);
+    ambi_enc_init(hAmbi, fs); /* Cannot be called while "process" is on-going */
+
+    /* Configure ambi_enc */
+    ambi_enc_setOutputOrder(hAmbi, (SH_ORDERS)order);
+    ambi_enc_setNormType(hAmbi, NORM_N3D); /* (The default for all SH-related examples is SN3D) */
+    ambi_enc_setEnablePostScaling(hAmbi, 0); /* Disable scaling output by number of input channels */
+    ambi_enc_setNumSources(hAmbi, 2);
+    ambi_enc_setSourceAzi_deg(hAmbi, 0, direction_deg[0][0]);
+    ambi_enc_setSourceElev_deg(hAmbi, 0, direction_deg[0][1]);
+    ambi_enc_setSourceAzi_deg(hAmbi, 1, direction_deg[1][0]);
+    ambi_enc_setSourceElev_deg(hAmbi, 1, direction_deg[1][1]);
+
+    /* Define input mono signal */
+    nSH = ORDER2NSH(order);
+    inSig = (float**)malloc2d(2,signalLength,sizeof(float));
+    shSig_ref = (float**)malloc2d(nSH,signalLength,sizeof(float));
+    rand_m1_1(FLATTEN2D(inSig), 2*signalLength); /* Mono white-noise signal */
+
+    /* Encode reference */
+    y = malloc1d(nSH*2*sizeof(float));
+    getRSH(order, (float*)direction_deg, 2, y); /* SH plane-wave weights */
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, signalLength, 2, 1.0f,
+                y, 2,
+                FLATTEN2D(inSig), signalLength, 0.0f,
+                FLATTEN2D(shSig_ref), signalLength);
+
+    /* Encode via ambi_enc */
+    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
+    ambi_enc_process(hAmbi, inSig, shSig, 2, nSH, signalLength);
+
+    /* ambi_enc should be equivalent to the reference, except delayed due to the
+     * temporal interpolation employed in ambi_enc */
+    for(i=0; i<nSH; i++)
+        for(j=0; j<signalLength-delay; j++)
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, shSig_ref[i][j], shSig[i][j+delay]);
+
+    /* Clean-up */
+    ambi_enc_destroy(&hAmbi);
+    free(inSig);
+    free(shSig);
+    free(shSig_ref);
+    free(y);
+}
+
 void test__saf_example_array2sh(void){
     int nSH, i, j;
     void* hA2sh, *safFFT, *hMC;
@@ -1603,6 +1672,7 @@ void test__saf_example_array2sh(void){
     array2sh_create(&hA2sh);
     array2sh_init(hA2sh, fs); /* Cannot be called while "process" is on-going */
     array2sh_setPreset(hA2sh, MICROPHONE_ARRAY_PRESET_EIGENMIKE32);
+    array2sh_setNormType(hA2sh, NORM_N3D);
 
     /* Define input mono signal */
     nSH = ORDER2NSH(order);
@@ -1640,9 +1710,8 @@ void test__saf_example_array2sh(void){
     for(i=0; i<32; i++) /* Replicate inSig for all 32 channels */
         memcpy(inSig_32[i], inSig, signalLength* sizeof(float));
     saf_multiConv_create(&hMC, 256, FLATTEN2D(h_array), nFFT, 32, 0);
-    for(i=0; i<(int)((float)signalLength/256.0f); i++){
+    for(i=0; i<(int)((float)signalLength/256.0f); i++)
         saf_multiConv_apply(hMC, FLATTEN2D(inSig_32), FLATTEN2D(micSig));
-    }
 
     /* Encode simulated Eigenmike signals into spherical harmonic signals */
     shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
@@ -1661,4 +1730,77 @@ void test__saf_example_array2sh(void){
     free(h_array);
     free(tmp_H);
 }
-#endif /* ENABLE_SAF_EXAMPLES_TESTS */
+
+void test__saf_example_rotator(void){
+    int nSH, i, j, delay;
+    void* hRot;
+    float direction_deg[2], ypr[3], Rzyx[3][3];
+    float** inSig, *y;
+    float** shSig, **shSig_rot, **shSig_rot_ref, **Mrot;
+
+    /* Config */
+    const float acceptedTolerance = 0.000001f;
+    const int order = 4;
+    const int fs = 48e3;
+    const int signalLength = fs*2;
+    direction_deg[0] = 90.0f; /* encode to loudspeaker direction: index 8 */
+    direction_deg[1] = 0.0f;
+    ypr[0] = -0.4f;
+    ypr[1] = -1.4f;
+    ypr[2] = 2.1f;
+    delay = rotator_getProcessingDelay();
+
+    /* Create and initialise an instance of rotator */
+    rotator_create(&hRot);
+    rotator_init(hRot, fs); /* Cannot be called while "process" is on-going */
+
+    /* Configure rotator codec */
+    rotator_setOrder(hRot, (SH_ORDERS)order);
+    rotator_setNormType(hRot, NORM_N3D);
+    rotator_setYaw(hRot, ypr[0]*180.0f/M_PI); /* rad->degrees */
+    rotator_setPitch(hRot, ypr[1]*180.0f/M_PI);
+    rotator_setRoll(hRot, ypr[2]*180.0f/M_PI);
+
+    /* Define input mono signal */
+    nSH = ORDER2NSH(order);
+    inSig = (float**)malloc2d(1,signalLength,sizeof(float));
+    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
+    rand_m1_1(FLATTEN2D(inSig), signalLength); /* Mono white-noise signal */
+
+    /* Encode */
+    y = malloc1d(nSH*sizeof(float));
+    getRSH(order, (float*)direction_deg, 1, y); /* SH plane-wave weights */
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, signalLength, 1, 1.0f,
+                y, 1,
+                FLATTEN2D(inSig), signalLength, 0.0f,
+                FLATTEN2D(shSig), signalLength);
+
+    /* Rotated version reference */
+    Mrot = (float**)malloc2d(nSH, nSH, sizeof(float));
+    yawPitchRoll2Rzyx(ypr[0], ypr[1], ypr[2], 0, Rzyx);
+    getSHrotMtxReal(Rzyx, FLATTEN2D(Mrot), order);
+    shSig_rot_ref = (float**)malloc2d(nSH,signalLength,sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, signalLength, nSH, 1.0f,
+                FLATTEN2D(Mrot), nSH,
+                FLATTEN2D(shSig), signalLength, 0.0f,
+                FLATTEN2D(shSig_rot_ref), signalLength);
+
+    /* Rotate with rotator */
+    shSig_rot = (float**)malloc2d(nSH,signalLength,sizeof(float));
+    rotator_process(hRot, shSig, shSig_rot, nSH, nSH, signalLength);
+
+    /* ambi_enc should be equivalent to the reference, except delayed due to the
+     * temporal interpolation employed in ambi_enc */
+    for(i=0; i<nSH; i++)
+        for(j=0; j<signalLength-delay; j++)
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, shSig_rot_ref[i][j], shSig_rot[i][j+delay]);
+
+    /* Clean-up */
+    rotator_destroy(&hRot);
+    free(inSig);
+    free(shSig);
+    free(shSig_rot_ref);
+    free(Mrot);
+    free(y);
+}
+#endif /* SAF_ENABLE_EXAMPLES_TESTS */
