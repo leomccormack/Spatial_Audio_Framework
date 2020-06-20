@@ -102,6 +102,16 @@ void rand_m1_1(float* vector,
                int length);
 
 /**
+ * Generates random numbers between -1 and 1 and stores them in the input vector
+ * for both the real and imaginary parts
+ *
+ * @param[in,out] vector Vector to populate with random numbers; length x 1
+ * @param[in]     length Length of the vector
+ */
+void rand_cmplx_m1_1(float_complex* vector,
+                     int length);
+
+/**
  * Generates random numbers between 0 and 1 and stores them in the input vector
  *
  * @param[in,out] vector Vector to populate with random numbers; length x 1

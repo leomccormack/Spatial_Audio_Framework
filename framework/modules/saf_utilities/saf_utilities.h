@@ -94,7 +94,7 @@
 /* ========================================================================== */
 
 #ifndef NUM_EARS
-/** True for most humans */
+/** 2 (true for most humans) */
 # define NUM_EARS 2
 #endif
 #ifndef MIN

@@ -130,7 +130,7 @@ void sortz(double_complex* in_vec,
  * Pairs up complex numbers and sorts them in ascending order based on their
  * real parts first, and then on their imaginary parts
  *
- * @note This function is the same as 'sortz' except that any values that are
+ * @note This function is the same as sortz() except that any values that are
  *       purely real, are pushed to the end of the output vector (and also in
  *       ascending order).
  *

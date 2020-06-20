@@ -367,6 +367,8 @@ void getSHrotMtxReal(float R[3][3],
  * It is used in beamWeightsVelocityPatterns(). For the derivation of the
  * matrices see [1].
  *
+ * Unit test(s): test__computeSectorCoeffsEP()
+ *
  * @param[in]  sectorOrder Order of patterns
  * @param[out] A_xyz       Velocity coefficients;
  *                         FLAT: (sectorOrder+2)^2  x (sectorOrder+1)^2 x 3
@@ -435,7 +437,7 @@ float computeSectorCoeffsEP(/* Input Arguments */
  * @param[in]  orderSec     Order of sector patterns
  * @param[in]  A_xyz        Velocity coefficients, see computeVelCoeffsMtx();
  *                          FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3
- * @param[in]  pattern      See #_SECTOR_PATTERNS" enum for the options
+ * @param[in]  pattern      See #_SECTOR_PATTERNS enum for the options
  * @param[in]  sec_dirs_deg Sector directions [azi elev], in DEGREES;
  *                          FLAT: nSecDirs x 2
  * @param[in]  nSecDirs     Number of sectors
@@ -489,7 +491,7 @@ void beamWeightsCardioid2Spherical(/* Input Arguments */
  * Because the pattern is axisymmetric only the N+1 coefficients of m=0 are
  * returned.
  *
- * @note NOT IMPLEMENTED YET
+ * @warning NOT IMPLEMENTED YET!
  *
  * @param[in]  N          Order of spherical harmonic expansion
  * @param[in]  paramType  '0' side-lobe level control, '1' mainlobe width

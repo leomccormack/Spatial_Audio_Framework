@@ -129,6 +129,9 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
  * @note For an example of how to use this function, one may refer to the
  *       implementation of the parametric binaural Ambisonic decoder (described
  *       in [3]) found here: https://github.com/leomccormack/CroPaC-Binaural
+ *       Or the relevant unit tests.
+ *
+ * Unit test(s): test__formulate_M_and_Cr()
  *
  * @param[in]  hCdf          Covariance Domain Framework handle
  * @param[in]  Cx            Covariance matrix of input 'x';
@@ -139,7 +142,8 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
  *                           instead of outputing 'Cr'. Set to '1' to output 'Cr'
  * @param[in]  reg           Regularisation term (suggested: 0.2f)
  * @param[out] M             Mixing matrix; FLAT: nYcols x nXcols
- * @param[out] Cr            Mixing matrix residual; FLAT: nYcols x nYcols
+ * @param[out] Cr            Mixing matrix residual, set to NULL if not needed;
+ *                           FLAT: nYcols x nYcols
  *
  * @see [1] Vilkamo, J., Ba"ckstro"m, T., & Kuntz, A. (2013). Optimized
  *          covariance domain framework for time--frequency processing of
@@ -181,6 +185,9 @@ void formulate_M_and_Cr(/* Input Arguments */
  * @note For an example of how to use this function, one may refer to the
  *       implementation of the parametric binaural Ambisonic decoder (described
  *       in [3]) found here: https://github.com/leomccormack/CroPaC-Binaural
+ *       Or the relevant unit tests.
+ *
+ * Unit test(s): test__formulate_M_and_Cr_cmplx()
  *
  * @param[in]  hCdf          Covariance Domain Framework handle
  * @param[in]  Cx            Covariance matrix of input 'x';
@@ -192,7 +199,8 @@ void formulate_M_and_Cr(/* Input Arguments */
  *                           'Cr'
  * @param[in]  reg           Regularisation term (suggested: 0.2f)
  * @param[out] M             Mixing matrix; FLAT: nYcols x nXcols
- * @param[out] Cr            Mixing matrix residual; FLAT: nYcols x nYcols
+ * @param[out] Cr            Mixing matrix residual, set to NULL if not needed;
+ *                           FLAT: nYcols x nYcols
  *
  * @see [1] Vilkamo, J., Ba"ckstro"m, T., & Kuntz, A. (2013). Optimized
  *          covariance domain framework for time--frequency processing of
@@ -215,7 +223,7 @@ void formulate_M_and_Cr_cmplx(/* Input Arguments */
                               float reg,
                               /* Output Arguments */
                               float_complex* M,
-                              float* Cr);
+                              float_complex* Cr);
 
 
 #ifdef __cplusplus

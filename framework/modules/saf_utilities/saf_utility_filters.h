@@ -173,7 +173,7 @@ void flattenMinphase(float* x,
 /**
  * Calculates 2nd order IIR filter coefficients [1]
  *
- * @param[in]  filterType See 'BIQUAD_FILTER_TYPES' enum
+ * @param[in]  filterType See #_BIQUAD_FILTER_TYPES enum
  * @param[in]  fc         Centre frequency, Hz
  * @param[in]  fs         Sampling frequency, Hz
  * @param[in]  Q          Q-factor
@@ -272,7 +272,7 @@ void applyIIR(/* Input arguments */
  * Matlab
  *
  * @warning The function still shares the same limitations of the Matlab
- *          'butter' function, which may also be emphasised by applying the
+ *          'butter' function, which may also be made worse by applying the
  *          filter to single precision input data. Higher orders and lower
  *          cut-off frequencies can easily become unstable! Consider trying
  *          things out in Matlab before using this function.

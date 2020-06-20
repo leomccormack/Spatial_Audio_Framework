@@ -367,8 +367,9 @@ void formulate_M_and_Cr
                 M, nXcols,
                 h->Cx_MH, nYcols, 0.0f,
                 h->Cy_tilde, nYcols);
-    for(i=0; i < nYcols*nYcols; i++)
-        Cr[i] = Cy[i] - h->Cy_tilde[i];
+    if(Cr != NULL)
+        for(i=0; i < nYcols*nYcols; i++)
+            Cr[i] = Cy[i] - h->Cy_tilde[i];
 
     /* Use energy compensation instead of residuals */
     if(useEnergyFLAG){
@@ -380,7 +381,8 @@ void formulate_M_and_Cr
                     M, nXcols, 0.0f,
                     h->G_M, nXcols);
         memcpy(M, h->G_M, nYcols*nXcols*sizeof(float));
-        memset(Cr, 0, nYcols*nYcols*sizeof(float));
+        if(Cr != NULL)
+            memset(Cr, 0, nYcols*nYcols*sizeof(float));
     }
 }
 
@@ -393,7 +395,7 @@ void formulate_M_and_Cr_cmplx
     int useEnergyFLAG,
     float reg,
     float_complex* M,
-    float* Cr
+    float_complex* Cr
 )
 {
     cdf4sap_cmplx_data *h = (cdf4sap_cmplx_data*)(hCdf);
@@ -459,7 +461,7 @@ void formulate_M_and_Cr_cmplx
     limit = maxVal * 0.001f + 2.23e-13f;
     for(i=0; i < nYcols; i++)
         for(j=0; j < nYcols; j++)
-            h->G_hat[i*nYcols+j] = i==j ? cmplxf(crealf(csqrtf( ccdivf(Cy[i*nYcols+j], cmplxf(MAX(cabsf(h->G_hat[i*nYcols+j]), limit), 0.0f)))), 0.0f) : cmplxf(0.0f, 0.0f);  // crealf->cabsf
+            h->G_hat[i*nYcols+j] = i==j ? cmplxf(crealf(csqrtf( ccdivf(Cy[i*nYcols+j], cmplxf(MAX(cabsf(h->G_hat[i*nYcols+j]), limit), 0.0f)))), 0.0f) : cmplxf(0.0f, 0.0f);  // changed crealf->cabsf
     
     /* Formulate optimal P */
     cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans, nYcols, nYcols, nYcols, &calpha,
@@ -503,11 +505,14 @@ void formulate_M_and_Cr_cmplx
                 M, nXcols,
                 h->Cx_MH, nYcols, &cbeta,
                 h->Cy_tilde, nYcols);
-    for(i=0; i < nYcols*nYcols; i++){
-        h->Cr_cmplx[i] = ccsubf(Cy[i], h->Cy_tilde[i]);
-        Cr[i] = crealf(h->Cr_cmplx[i]);
+    if(Cr != NULL){
+        for(i=0; i < nYcols*nYcols; i++){
+            h->Cr_cmplx[i] = ccsubf(Cy[i], h->Cy_tilde[i]);
+            Cr[i] = cmplxf(crealf(h->Cr_cmplx[i]), 0.0f);
+            //Cr[i] = h->Cr_cmplx[i];
+        }
     }
-  
+
     /* Use energy compensation instead of residuals */
     if(useEnergyFLAG){
         for(i=0; i < nYcols; i++)
@@ -523,7 +528,7 @@ void formulate_M_and_Cr_cmplx
                     M, nXcols, &cbeta,
                     h->G_M, nXcols);
         memcpy(M, h->G_M, nYcols*nXcols*sizeof(float_complex));
-        memset(Cr, 0, nYcols*nYcols*sizeof(float));
+        if(Cr != NULL)
+            memset(Cr, 0, nYcols*nYcols*sizeof(float_complex));
     } 
 }
-

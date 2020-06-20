@@ -541,7 +541,7 @@ void utility_svssub(/* Input Arguments */
 /* ========================================================================== */
     
 /**
- * Row-major, singular value decomposition: single precision, i.e.
+ * Singular value decomposition: single precision, i.e.
  * \code{.m}
  *     [U,S,V] = svd(A); such that A = U*S*V.' = U*diag(sing)*V.'
  * \endcode
@@ -572,7 +572,7 @@ void utility_ssvd(/* Input Arguments */
                   float* sing);
 
 /**
- * Row-major, singular value decomposition: single precision complex, i.e.
+ * Singular value decomposition: single precision complex, i.e.
  * \code{.m}
  *     [U,S,V] = svd(A); such that A = U*S*V' = U*diag(sing)*V'
  * \endcode
@@ -608,7 +608,7 @@ void utility_csvd(/* Input Arguments */
 /* ========================================================================== */
 
 /**
- * Row-major, eigenvalue decomposition of a SYMMETRIC matrix: single precision,
+ * Eigenvalue decomposition of a SYMMETRIC matrix: single precision,
  * i.e.
  * \code{.m}
  *     [V,D] = eig(A); where A*V = V*D, and  A*V = V*diag(eig)
@@ -638,7 +638,7 @@ void utility_sseig(/* Input Arguments */
                    float* eig);
 
 /**
- * Row-major, eigenvalue decomposition of a SYMMETRIC/HERMITION matrix: single
+ * Eigenvalue decomposition of a SYMMETRIC/HERMITION matrix: single
  * precision complex, i.e.
  * \code{.m}
  *     [V,D] = eig(A); where A*V = V*D, and  A*V = V*diag(eig)
@@ -673,8 +673,8 @@ void utility_cseig(/* Input Arguments */
 /* ========================================================================== */
 
 /**
- * Row-major, finds eigenvalues of a matrix pair using the QZ method, single
- * precision complex, i.e.
+ * Computes eigenvalues of a matrix pair using the QZ method, single precision
+ * complex, i.e.
  * \code{.m}
  *     [VL,VR,D] = eig(A,B,'qz'); where A*VL = B*VL*VR
  * \endcode
@@ -699,8 +699,8 @@ void utility_ceigmp(/* Input Arguments */
                     float_complex* D);
 
 /**
- * Row-major, finds eigenvalues of a matrix pair using the QZ method, double
- * precision complex, i.e.
+ * Computes eigenvalues of a matrix pair using the QZ method, double precision
+ * complex, i.e.
  * \code{.m}
  *     [VL,VR,D] = eig(A,B,'qz'); where A*VL = B*VL*VR
  * \endcode
@@ -730,8 +730,8 @@ void utility_zeigmp(/* Input Arguments */
 /* ========================================================================== */
 
 /**
- * Row-major, eigenvalue decomposition of a NON-SYMMETRIC matrix: single
- * precision complex, i.e.
+ * Eigenvalue decomposition of a NON-SYMMETRIC matrix: single precision complex,
+ * i.e.
  * \code{.m}
  *     [VL,VR,D] = eig(A); where A*VR = VR*D, and  A*VR = VR*diag(eig)
  * \endcode
@@ -760,14 +760,14 @@ void utility_ceig(/* Input Arguments */
                   float_complex* eig);
 
 /**
- * Row-major, eigenvalue decomposition of a NON-SYMMETRIC matrix: double
- * precision complex, i.e.
+ * Eigenvalue decomposition of a NON-SYMMETRIC matrix: double precision complex,
+ * i.e.
  * \code{.m}
  *     [VL,VR,D] = eig(A); where A*VR = VR*D, and  A*VR = VR*diag(eig)
  * \endcode
  *
  * @note 'D' contains the eigen values along the diagonal, while 'eig' are the
- *       eigen values as a vector
+ *       eigen values as a vector.
  *
  * @param[in]  A   Input NON-SYMMETRIC square matrix; FLAT: dim x dim
  * @param[in]  dim Dimensions for square matrix 'A'
@@ -795,7 +795,7 @@ void utility_zeig(/* Input Arguments */
 /* ========================================================================== */
 
 /**
- * Row-major, general linear solver: single precision, i.e.
+ * General linear solver: single precision, i.e.
  * \code{.m}
  *     X = linsolve(A,B) = A\B; where, AX = B
  * \endcode
@@ -815,7 +815,7 @@ void utility_sglslv(/* Input Arguments */
                     float* X);
 
 /**
- * Row-major, general linear solver: single precision complex, i.e.
+ * General linear solver: single precision complex, i.e.
  * \code{.m}
  *     X = linsolve(A,B) = A\B; where, AX = B
  * \endcode
@@ -835,7 +835,7 @@ void utility_cglslv(/* Input Arguments */
                     float_complex* X);
 
 /**
- * Row-major, general linear solver: double precision, i.e.
+ * General linear solver: double precision, i.e.
  * \code{.m}
  *     X = linsolve(A,B) = A\B; where, AX = B
  * \endcode
@@ -855,7 +855,7 @@ void utility_dglslv(/* Input Arguments */
                     double* X);
 
 /**
- * Row-major, general linear solver: double precision complex, i.e.
+ * General linear solver: double precision complex, i.e.
  * \code{.m}
  *     X = linsolve(A,B) = A\B; where, AX = B
  * \endcode
@@ -880,11 +880,10 @@ void utility_zglslv(/* Input Arguments */
 /* ========================================================================== */
 
 /**
- * Row-major, linear solver for SYMMETRIC positive-definate 'A': single
- * precision, i.e.
+ * Linear solver for SYMMETRIC positive-definate 'A': single precision, i.e.
  * \code{.m}
  *     opts.LT=true
- *     X = linsolve(A,B, opts); where, AX = B
+ *     X = linsolve(A,B, opts); where, AX = B, and 'A' is a symmetric matrix
  * \endcode
  *
  * @param[in]  A    Input square SYMMETRIC positive-definate matrix; FLAT: dim x dim
@@ -902,11 +901,11 @@ void utility_sslslv(/* Input Arguments */
                     float* X);
 
 /**
- * Row-major, linear solver for HERMITIAN positive-definate 'A': single
- * precision complex, i.e.
+ * Linear solver for HERMITIAN positive-definate 'A': single precision complex,
+ * i.e.
  * \code{.m}
  *     opts.LT=true
- *     X = linsolve(A,B, opts); where, AX = B
+ *     X = linsolve(A,B, opts); where, AX = B, and 'A' is a hermition matrix
  * \endcode
  *
  * @param[in]  A    Input square SYMMETRIC positive-definate matrix; FLAT: dim x dim
@@ -929,8 +928,7 @@ void utility_cslslv(/* Input Arguments */
 /* ========================================================================== */
 
 /**
- * Row-major, general matrix pseudo-inverse (the svd way): single precision,
- * i.e.
+ * General matrix pseudo-inverse (the svd way): single precision, i.e.
  * \code{.m}
  *     B = pinv(A)
  * \endcode
@@ -948,8 +946,7 @@ void utility_spinv(/* Input Arguments */
                    float* B);
 
 /**
- * Row-major, general matrix pseudo-inverse (the svd way): single precision
- * complex, i.e.
+ * General matrix pseudo-inverse (the svd way): single precision complex, i.e.
  * \code{.m}
  *     B = pinv(A)
  * \endcode
@@ -967,8 +964,7 @@ void utility_cpinv(/* Input Arguments */
                    float_complex* B);
 
 /**
- * Row-major, general matrix pseudo-inverse (the svd way): double precision,
- * i.e.
+ * General matrix pseudo-inverse (the svd way): double precision, i.e.
  * \code{.m}
  *     B = pinv(A)
  * \endcode
@@ -986,8 +982,7 @@ void utility_dpinv(/* Input Arguments */
                    double* B);
 
 /**
- * Row-major, general matrix pseudo-inverse (the svd way): double precision
- * complex, i.e.
+ * General matrix pseudo-inverse (the svd way): double precision complex, i.e.
  * \code{.m}
  *     B = pinv(A)
  * \endcode
@@ -1010,8 +1005,8 @@ void utility_zpinv(/* Input Arguments */
 /* ========================================================================== */
 
 /**
- * Row-major, Cholesky factorisation of a symmetric matrix positive-definate
- * matrix: single precision, i.e.
+ * Cholesky factorisation of a symmetric matrix positive-definate matrix: single
+ * precision, i.e.
  * \code{.m}
  *     X = chol(A); where A = X.'*X
  * \endcode
@@ -1028,8 +1023,8 @@ void utility_schol(/* Input Arguments */
                    float* X);
 
 /**
- * Row-major, Cholesky factorisation of a hermitian matrix positive-definate
- * matrix: single precision complex, i.e.
+ * Cholesky factorisation of a hermitian matrix positive-definate matrix: single
+ * precision complex, i.e.
  * \code{.m}
  *     X = chol(A); where A = X.'*X
  * \endcode
@@ -1051,7 +1046,7 @@ void utility_cchol(/* Input Arguments */
 /* ========================================================================== */
 
 /**
- * Row-major, matrix inversion: single precision, i.e.
+ * Matrix inversion: single precision, i.e.
  * \code{.m}
  *     B = inv(A);
  * \endcode
@@ -1065,7 +1060,7 @@ void utility_sinv(float* A,
                   const int dim);
 
 /**
- * Row-major, matrix inversion: double precision, i.e.
+ * Matrix inversion: double precision, i.e.
  * \code{.m}
  *     B = inv(A);
  * \endcode
@@ -1079,7 +1074,7 @@ void utility_dinv(double* A,
                   const int dim);
 
 /**
- * Row-major, matrix inversion: double precision complex, i.e.
+ * Matrix inversion: double precision complex, i.e.
  * \code{.m}
  *     B = inv(A);
  * \endcode

@@ -95,6 +95,17 @@ void rand_m1_1
         vector[i] = (2.0f*rand()/(float)RAND_MAX)-1.0f;
 }
 
+void rand_cmplx_m1_1
+(
+    float_complex* vector,
+    int length
+)
+{
+    int i;
+    for(i=0; i<length; i++)
+        vector[i] = cmplxf((2.0f*rand()/(float)RAND_MAX)-1.0f, (2.0f*rand()/(float)RAND_MAX)-1.0f);
+}
+
 void rand_0_1
 (
     float* vector,
