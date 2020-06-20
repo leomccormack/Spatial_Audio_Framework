@@ -2,6 +2,7 @@
 # Source
 target_sources(${PROJECT_NAME}
 PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_cdf4sap/saf_cdf4sap.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_hoa/saf_hoa_internal.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_hoa/saf_hoa_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_hoa/saf_hoa.c
