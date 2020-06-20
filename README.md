@@ -1,6 +1,6 @@
 # Spatial_Audio_Framework
 
-A cross-platform spatial audio framework (SAF) for developing spatial audio related applications in C/C++.
+A cross-platform framework for developing spatial audio related applications in C/C++.
 
 ![](saf.png)
 
@@ -15,7 +15,7 @@ The framework requires the following libraries:
 
 The rationale for the former requirement is that the framework employs the use of CBLAS/LAPACK routines for tackling all of the linear algebra operations, which are used quite prolifically throughout the code. Therefore, a performance library, which conforms to the CBLAS/LAPACK standards, is required by most of the framework modules. 
 
-Define one of the following pre-processor definitions, which will let SAF know which library/libraries you have linked to your project:
+Add one of the following pre-processor definitions, which will let SAF know which library/libraries you have linked to your project:
 ```
 SAF_USE_INTEL_MKL                
 SAF_USE_OPEN_BLAS_AND_LAPACKE
@@ -150,7 +150,7 @@ then please feel free to do so and submit a pull request. Note, however, that if
 
 This framework is provided under the permissive [ISC license](https://choosealicense.com/licenses/isc/). It also includes the following resources: a modified version of the [alias-free STFT](https://github.com/jvilkamo/afSTFT) (MIT license); [kissFFT](https://github.com/mborgerding/kissfft) (BSD 3-clause license); [convhull_3d](https://github.com/leomccormack/convhull_3d) (MIT license); and [md_malloc](https://github.com/leomccormack/md_malloc) (MIT license).
 
-Please be aware and respect the license conditions found at the top of each file. Also, while we do not impose any copyleft licensing philosophies, we would still appreciate it if any improvements or bug fixes are also merged into this public repository where possible.
+Please be aware of and respect the license conditions found at the top of each file. Also, while we do not impose any copyleft licensing philosophies, we would appreciate it if improvements and/or bug fixes are merged into this public repository where possible.
 
 ## References
 
