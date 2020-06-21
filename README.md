@@ -23,7 +23,7 @@ SAF_USE_APPLE_ACCELERATE
 SAF_USE_ATLAS
 ```
 
-Note that detailed instructions on how to build/link these performance libraries can be found [here](dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
+Note that detailed instructions regarding how to build/link these performance libraries can be found [here](dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
 
 ## Framework structure
 
@@ -38,8 +38,6 @@ The framework comprises the following core modules:
 
 The framework also includes the following optional modules:
 * **saf_sofa_reader** - a simple SOFA file reader.
-
-### Enabling optional modules
 
 To enable optional framework modules, simply add the relevant pre-processor definitions:
 ```
@@ -78,7 +76,7 @@ The available SAF-specific build options (and their default values) are:
 -DSAF_BUILD_TESTS=1                        # build unit testing program
 ```
 
-Note that if the saf_sofa_reader is enabled: for MacOSX and MSVC users, CMake will use the statically built dependencies found in **dependencies** by default. Linux and MSYS2 users may instead install a shared [netcdf library](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
+Note that if the **saf_sofa_reader** is enabled: for MacOSX and MSVC users, CMake will use the statically built dependencies found in **dependencies** by default. Linux and MSYS2 users may instead install a shared [netcdf library](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
 ```
 # e.g. Linux users:
 -DNETCDF_LIBRARY="/usr/lib/x86_64-linux-gnu/libnetcdf.so"
@@ -86,13 +84,13 @@ Note that if the saf_sofa_reader is enabled: for MacOSX and MSVC users, CMake wi
 -DNETCDF_LIBRARY="/c/msys64/mingw64/lib/libnetcdf.dll.a"
 ```
 
-You may build the framework, the examples, and the unit testing program with:
+You may also build the framework, the examples, and the unit testing program with:
 ```
 mkdir build 
 cmake -S . -B build 
 cd build
 make
-test/saf_test # To run the unit tests
+test/saf_test # To run the unit testing program
 ```
 
 ## Documentation
@@ -133,8 +131,8 @@ Note that many of these examples have also been integrated into VST audio plug-i
 ## Contributing
 
 Suggestions and contributions to the code are both welcomed and encouraged. It should be highlighted that the framework has been designed to be highly modular with plenty of room for expansion. Therefore:
-* if you are researcher who has developed a spatial-audio related method and want it integrated into the framework... or
-* if you notice that an existing piece of code can be rewritten to make it clearer/faster, or to fix a bug...
+* if you are researcher who has developed a spatial-audio related method and want it to be integrated into the framework... or
+* if you notice that an existing piece of code can be rewritten to make it clearer, faster, or to fix a bug...
 
 then please feel free to do so and submit a pull request. Note, however, that if the changes/additions are major, then maybe consider first discussing it via a github "issue" or by contacting the developers directly via email. We may also be able to help with the implementation if needed :- )
 
@@ -150,7 +148,7 @@ then please feel free to do so and submit a pull request. Note, however, that if
 
 This framework is provided under the permissive [ISC license](https://choosealicense.com/licenses/isc/). It also includes the following resources: a modified version of the [alias-free STFT](https://github.com/jvilkamo/afSTFT) (MIT license); [kissFFT](https://github.com/mborgerding/kissfft) (BSD 3-clause license); [convhull_3d](https://github.com/leomccormack/convhull_3d) (MIT license); and [md_malloc](https://github.com/leomccormack/md_malloc) (MIT license).
 
-Please be aware of and respect the license conditions found at the top of each file. Also, while we do not impose any copyleft licensing philosophies, we would appreciate it if improvements and/or bug fixes are merged into this public repository where possible.
+Please be aware of and respect the license conditions found at the top of each file. Furthermore, while we do not impose any copyleft licensing philosophies, we would still appreciate it if any improvements and/or bug fixes are also merged into this public repository where possible.
 
 ## References
 

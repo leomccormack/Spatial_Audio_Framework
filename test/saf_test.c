@@ -1318,9 +1318,9 @@ void test__getSHcomplex(void){
         for(j=0; j<nSH; j++){
             for(k=0; k<nSH; k++) {
                 if(j==k)
-                    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, 1.0f, YYH[j][k]);
+                    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, 1.0f, crealf(YYH[j][k]));
                 else
-                    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, 0.0f, YYH[j][k]);
+                    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, 0.0f, crealf(YYH[j][k]));
             }
         }
 
@@ -1361,7 +1361,7 @@ void test__getSHrotMtxReal(void){
     Mrot = (float**)malloc2d(nSH, nSH, sizeof(float));
     yawPitchRoll2Rzyx(0.04f, 0.54f,-0.4f, 0, Rzyx);
     getSHrotMtxReal(Rzyx, FLATTEN2D(Mrot), order);
-    float Mrot_ref[25][25] = {
+    double Mrot_ref[25][25] = {
             {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},{0,0.912317819470322,-0.334007492880439,-0.236886451652771,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
             {0,0.408043822669133,0.790002010621868,0.457599237319041,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
             {0,0.0342991990938353,-0.514135991653113,0.857022605902780,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -1388,7 +1388,7 @@ void test__getSHrotMtxReal(void){
             {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.366598721881537,0.0733558553140817,-0.301930038675134,0.195400170636906,-0.0699710544219968,-0.0214401526687090,0.258994980191915,-0.617374325026823,0.526589247038282}};
     for(i=0; i<nSH; i++)
         for(j=0; j<nSH; j++)
-            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, Mrot_ref[i][j], Mrot[i][j]);
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, (float)Mrot_ref[i][j], Mrot[i][j]);
     free(Mrot);
 }
 
@@ -1531,7 +1531,7 @@ void test__computeSectorCoeffsEP(void){
     computeSectorCoeffsEP(order_sec, FLATTEN3D(A_xyz), SECTOR_PATTERN_PWD, sec_dirs_deg, numSec, FLATTEN2D(sectorCoeffs));
 
     /* Check with Matlab reference */
-    float sectorCoeffs_ref[9][16]= {
+    double sectorCoeffs_ref[9][16]= {
             {0.886226925452758,0.511663353973244,0.511663353973244,0.511663353973244,0.886226925452758,0.511663353973244,-0.511663353973244,-0.511663353973244,0.886226925452758,-0.511663353973244,0.511663353973244,-0.511663353973244,0.886226925452758,-0.511663353973244,-0.511663353973244,0.511663353973244},
             {0.886226925452758,0,0.511663353973244,0,-0.886226925452758,0,0.511663353973244,0,0.886226925452758,0,0.511663353973244,0,-0.886226925452758,0,0.511663353973244,0},
             {0.886226925452758,0,0,0.511663353973244,-0.886226925452758,0,0,0.511663353973244,-0.886226925452758,0,0,0.511663353973244,0.886226925452758,0,0,0.511663353973244},
@@ -1544,7 +1544,7 @@ void test__computeSectorCoeffsEP(void){
     };
     for(i=0; i<9; i++)
         for(j=0; j<16; j++)
-            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, sectorCoeffs_ref[i][j], sectorCoeffs[j][i]);
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, (float)sectorCoeffs_ref[i][j], sectorCoeffs[j][i]);
 
     free(sectorCoeffs);
     free(A_xyz);
@@ -1785,7 +1785,7 @@ void test__saf_example_ambi_bin(void){
 
     /* Config */
     const int order = 4;
-    const int fs = 48e3;
+    const int fs = 48000;
     const int signalLength = fs*2;
 
     /* Create and initialise an instance of ambi_bin */
@@ -1848,7 +1848,7 @@ void test__saf_example_ambi_dec(void){
 
     /* Config */
     const int order = 4;
-    const int fs = 48e3;
+    const int fs = 48000;
     const int signalLength = fs*2;
 
     /* Create and initialise an instance of ambi_dec */
@@ -1918,7 +1918,7 @@ void test__saf_example_ambi_enc(void){
     /* Config */
     const float acceptedTolerance = 0.000001f;
     const int order = 4;
-    const int fs = 48e3;
+    const int fs = 48000;
     const int signalLength = fs*2;
     direction_deg[0][0] = 90.0f; /* encode to loudspeaker direction: index 8 */
     direction_deg[0][1] = 0.0f;
@@ -1984,7 +1984,7 @@ void test__saf_example_array2sh(void){
 
     /* Config */
     const int order = 4;
-    const int fs = 48e3;
+    const int fs = 48000;
     const int signalLength = fs*2;
     const int nFFT = 1024;
     const int nBins = nFFT/2+1;
@@ -2003,7 +2003,7 @@ void test__saf_example_array2sh(void){
     /* Simulate an Eigenmike in a free-field with a single plane-wave */
     f = malloc1d(nBins*sizeof(float));
     kr = malloc1d(nBins*sizeof(double));
-    getUniformFreqVector(nFFT, fs, f);
+    getUniformFreqVector(nFFT, (float)fs, f);
     f[0] = f[1]/4.0f; /* To avoid NaNs at DC */
     radius = 0.042f;
     for(i=0; i<nBins; i++)
@@ -2062,7 +2062,7 @@ void test__saf_example_rotator(void){
     /* Config */
     const float acceptedTolerance = 0.000001f;
     const int order = 4;
-    const int fs = 48e3;
+    const int fs = 48000;
     const int signalLength = fs*2;
     direction_deg[0] = 90.0f; /* encode to loudspeaker direction: index 8 */
     direction_deg[1] = 0.0f;

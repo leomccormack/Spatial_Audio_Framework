@@ -57,6 +57,8 @@ extern "C" {
  * @note Use this function for REAL-VALUED input/output matrices. For
  *       COMPLEX-VALUED input/output matrices use cdf4sap_cmplx_create().
  *
+ * Unit test(s): test__formulate_M_and_Cr()
+ *
  * @param[in] phCdf  The address (&) of the CDF4SAP handle
  * @param[in] nXcols Number of columns/rows in square input matrix 'Cx'
  * @param[in] nYcols Number of columns/rows in square input matrix 'Cy'
@@ -74,6 +76,8 @@ void cdf4sap_create(/* Input Arguments */
  *
  * @note Use this function for COMPLEX-VALUED input/output matrices. For
  *       REAL-VALUED input/output matrices use cdf4sap_create().
+ *
+ * Unit test(s): test__formulate_M_and_Cr_cmplx()
  *
  * @param[in] phCdf  The address (&) of the CDF4SAP handle
  * @param[in] nXcols Number of columns/rows in square input matrix 'Cx'
@@ -128,8 +132,8 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
  *
  * @note For an example of how to use this function, one may refer to the
  *       implementation of the parametric binaural Ambisonic decoder (described
- *       in [3]) found here: https://github.com/leomccormack/CroPaC-Binaural
- *       Or the relevant unit tests.
+ *       in [3]) found here: https://github.com/leomccormack/CroPaC-Binaural,
+ *       or the relevant unit tests.
  *
  * Unit test(s): test__formulate_M_and_Cr()
  *
@@ -184,8 +188,8 @@ void formulate_M_and_Cr(/* Input Arguments */
  *
  * @note For an example of how to use this function, one may refer to the
  *       implementation of the parametric binaural Ambisonic decoder (described
- *       in [3]) found here: https://github.com/leomccormack/CroPaC-Binaural
- *       Or the relevant unit tests.
+ *       in [3]) found here: https://github.com/leomccormack/CroPaC-Binaural,
+ *       or the relevant unit tests.
  *
  * Unit test(s): test__formulate_M_and_Cr_cmplx()
  *
