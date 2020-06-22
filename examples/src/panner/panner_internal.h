@@ -60,7 +60,9 @@ extern "C" {
 
 #define FORCE_3D_LAYOUT /* Even 2D loudspeaker setups will use 3D VBAP, with 2 virtual loudspeakers on the top/bottom */
 
-#define FRAME_SIZE ( 128 )
+#ifndef FRAME_SIZE
+# define FRAME_SIZE ( 128 ) 
+#endif
 #define HOP_SIZE ( 128 )                            /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )               /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )        /* 4/8/16 */

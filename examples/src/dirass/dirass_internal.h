@@ -53,7 +53,9 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define FRAME_SIZE ( 1024 )
+#ifndef FRAME_SIZE
+# define FRAME_SIZE ( 1024 ) 
+#endif
 #define MAX_INPUT_SH_ORDER ( MAX_SH_ORDER )
 #define MAX_DISPLAY_SH_ORDER ( 20 )
 #define MAX_NUM_INPUT_SH_SIGNALS ( (MAX_INPUT_SH_ORDER+1)*(MAX_INPUT_SH_ORDER+1) )

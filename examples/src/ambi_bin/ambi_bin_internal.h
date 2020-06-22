@@ -44,7 +44,9 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define FRAME_SIZE ( 128 )
+#ifndef FRAME_SIZE
+# define FRAME_SIZE ( 128 )
+#endif
 #define HOP_SIZE ( 128 ) /* STFT hop size */
 #define HYBRID_BANDS ( 133 )
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )  

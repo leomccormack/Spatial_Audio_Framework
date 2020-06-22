@@ -45,7 +45,9 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define FRAME_SIZE ( 64 )
+#ifndef FRAME_SIZE
+# define FRAME_SIZE ( 64 ) 
+#endif
 #ifndef DEG2RAD
 # define DEG2RAD(x) (x * SAF_PI / 180.0f)
 #endif

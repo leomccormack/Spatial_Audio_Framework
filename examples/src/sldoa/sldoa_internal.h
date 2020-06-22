@@ -61,7 +61,9 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define FRAME_SIZE ( 512 )
+#ifndef FRAME_SIZE
+# define FRAME_SIZE ( 512 )
+#endif
 //#define ORDER2NUMSECTORS(L) ( 2*L )
 #define ORDER2NUMSECTORS(L) ( L*L )
 

@@ -48,7 +48,9 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define FRAME_SIZE ( 128 )
+#ifndef FRAME_SIZE
+# define FRAME_SIZE ( 128 ) 
+#endif
 #define HOP_SIZE ( 128 )                      /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )         /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )  /* 4/8/16 */ 

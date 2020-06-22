@@ -53,7 +53,9 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define FRAME_SIZE ( 128 )
+#ifndef FRAME_SIZE
+# define FRAME_SIZE ( 128 ) 
+#endif
 #define HOP_SIZE ( 128 )  /* STFT hop size, can be flexible, but only 'hybrid' mode afSTFT is supported (i.e. non uniform) */
 #define TIME_SLOTS ( FRAME_SIZE/HOP_SIZE ) /* time-frequency domain frame size */
 #define HYBRID_BANDS ( HOP_SIZE + 5 ) /* hybrid mode incurs an additional 5 bands  */
