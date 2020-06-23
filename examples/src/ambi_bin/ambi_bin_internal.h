@@ -57,7 +57,7 @@ extern "C" {
 #ifndef RAD2DEG
 # define RAD2DEG(x) (x * 180.0f / M_PI)
 #endif
-    
+
     
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -91,13 +91,8 @@ typedef struct _ambi_bin_codecPars
  */
 typedef struct _ambi_bin
 {
-    /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float outFIFO[NUM_EARS][FRAME_SIZE];
-
     /* audio buffers + afSTFT time-frequency transform handle */
-    int fs;                         /**< host sampling rate */
+    int fs;                         /**< host sampling rate */ 
     float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
     float_complex SHframeTF_rot[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];

@@ -252,12 +252,15 @@ void powermap_analysis
             pData->procStatus = PROC_STATUS_ONGOING;
 
             /* Load time-domain data */
+            for(ch=0; ch<nSH; ch++)
+                memcpy(pData->SHframeTD[ch],pData->inFIFO[ch], FRAME_SIZE*sizeof(float));
+
+            /* account for input channel order */
             switch(chOrdering){
-                case CH_ACN:
-                    convertHOAChannelConvention((float*)pData->inFIFO, masterOrder, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_ACN, (float*)pData->SHframeTD);
+                case CH_ACN: /* already ACN */
                     break;
                 case CH_FUMA:
-                    convertHOAChannelConvention((float*)pData->inFIFO, masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN, (float*)pData->SHframeTD);
+                    convertHOAChannelConvention((float*)pData->SHframeTD, masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
                     break;
             }
 
@@ -606,6 +609,11 @@ void powermap_requestPmapUpdate(void* const hPm)
 }
 
 /* GETS */
+
+int powermap_getFrameSize(void)
+{
+    return FRAME_SIZE;
+}
 
 CODEC_STATUS powermap_getCodecStatus(void* const hPm)
 {

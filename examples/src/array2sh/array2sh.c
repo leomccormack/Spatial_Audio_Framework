@@ -92,11 +92,6 @@ void array2sh_create
     pData->bN_inv_dB = (float**)malloc2d(HYBRID_BANDS, MAX_SH_ORDER + 1, sizeof(float));
     pData->cSH = (float*)calloc1d((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
     pData->lSH = (float*)calloc1d((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
-
-    /* reset FIFO buffers */
-    pData->FIFO_idx = 0;
-    memset(pData->inFIFO, 0, MAX_NUM_SENSORS*FRAME_SIZE*sizeof(float));
-    memset(pData->outFIFO, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
 }
 
 void array2sh_destroy
@@ -195,8 +190,7 @@ void array2sh_process
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
-    int n, t, s, ch, i, band, Q, order, nSH;
-    int o[MAX_SH_ORDER+2];
+    int t, ch, i, band, Q, order, nSH; 
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
     CH_ORDER chOrdering;
     NORM_TYPES norm;
@@ -209,12 +203,6 @@ void array2sh_process
     if (pData->reinitSHTmatrixFLAG) {
         array2sh_calculate_sht_matrix(hA2sh); /* compute encoding matrix */
         array2sh_calculate_mag_curves(hA2sh); /* calculate magnitude response curves */
-
-        /* reset FIFO buffers */
-        pData->FIFO_idx = 0;
-        memset(pData->inFIFO, 0, MAX_NUM_SENSORS*FRAME_SIZE*sizeof(float));
-        memset(pData->outFIFO, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
-
         pData->reinitSHTmatrixFLAG = 0;
     }
 
@@ -226,111 +214,77 @@ void array2sh_process
     order = pData->order;
     nSH = (order+1)*(order+1);
 
-    /* Loop over all samples */
-    for(s=0; s<nSamples; s++){
-        /* Load input signals into inFIFO buffer */
-        for(ch=0; ch<MIN(nInputs,Q); ch++)
-            pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
-        for(; ch<Q; ch++) /* Zero any channels that were not given */
-            pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
+    /* processing loop */
+    if ((nSamples == FRAME_SIZE) && (pData->reinitSHTmatrixFLAG==0) ) {
+        pData->procStatus = PROC_STATUS_ONGOING;
 
-        /* Pull output signals from outFIFO buffer */
-        for(ch=0; ch<MIN(nOutputs, MAX_NUM_SH_SIGNALS); ch++)
-            outputs[ch][s] = pData->outFIFO[ch][pData->FIFO_idx];
-        for(; ch<nOutputs; ch++) /* Zero any extra channels */
-            outputs[ch][s] = 0.0f;
+        /* Load time-domain data */
+        for(i=0; i < nInputs; i++)
+            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
+        for(; i<Q; i++)
+            memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 
-        /* Increment buffer index */
-        pData->FIFO_idx++;
+        /* Apply time-frequency transform (TFT) */
+        for(t=0; t< TIME_SLOTS; t++) {
+            for(ch = 0; ch < Q; ch++)
+                utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD_in[ch]);
+            afSTFTforward(pData->hSTFT, pData->tempHopFrameTD_in, pData->STFTInputFrameTF);
+            for(band=0; band<HYBRID_BANDS; band++)
+                for(ch=0; ch < Q; ch++)
+                    pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
+        }
 
-        /* Process frame if inFIFO is full and codec is ready for it */
-        if (pData->FIFO_idx >= FRAME_SIZE && (pData->reinitSHTmatrixFLAG==0) ) {
-            pData->FIFO_idx = 0;
-            pData->procStatus = PROC_STATUS_ONGOING;
+        /* Apply spherical harmonic transform (SHT) */
+        for(band=0; band<HYBRID_BANDS; band++){
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, Q, &calpha,
+                        pData->W[band], MAX_NUM_SENSORS,
+                        pData->inputframeTF[band], TIME_SLOTS, &cbeta,
+                        pData->SHframeTF[band], TIME_SLOTS);
+        }
 
-            /* Load time-domain data */
-            for(i=0; i < nInputs; i++)
-                utility_svvcopy(pData->inFIFO[i], FRAME_SIZE, pData->inputFrameTD[i]);
-            for(; i<Q; i++)
-                memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
-
-            /* Apply time-frequency transform (TFT) */
-            for(t=0; t< TIME_SLOTS; t++) {
-                for(ch = 0; ch < Q; ch++)
-                    utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD_in[ch]);
-                afSTFTforward(pData->hSTFT, pData->tempHopFrameTD_in, pData->STFTInputFrameTF);
-                for(band=0; band<HYBRID_BANDS; band++)
-                    for(ch=0; ch < Q; ch++)
-                        pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
-            }
-
-            /* Apply spherical harmonic transform (SHT) */
-            for(band=0; band<HYBRID_BANDS; band++){
-                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, Q, &calpha,
-                            pData->W[band], MAX_NUM_SENSORS,
-                            pData->inputframeTF[band], TIME_SLOTS, &cbeta,
-                            pData->SHframeTF[band], TIME_SLOTS);
-            }
-
-            /* inverse-TFT */
-            for(t = 0; t < TIME_SLOTS; t++) {
-                for(band = 0; band < HYBRID_BANDS; band++) {
-                    for (ch = 0; ch < nSH; ch++) {
-                        pData->STFTOutputFrameTF[ch].re[band] = gain_lin*crealf(pData->SHframeTF[band][ch][t]);
-                        pData->STFTOutputFrameTF[ch].im[band] = gain_lin*cimagf(pData->SHframeTF[band][ch][t]);
-                    }
-                }
-                afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD_out);
-
-                /* copy SH signals to output buffer */
-                switch(chOrdering){
-                    case CH_ACN:  /* already ACN */
-                        for (ch = 0; ch < MIN(nSH, nOutputs); ch++)
-                            utility_svvcopy(pData->tempHopFrameTD_out[ch], HOP_SIZE, &(pData->outFIFO[ch][t* HOP_SIZE]));
-                        for (; ch < nOutputs; ch++)
-                            memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
-                        break;
-                    case CH_FUMA: /* convert to FuMa, only for first-order */
-                        if(nOutputs>=4){
-                            utility_svvcopy(pData->tempHopFrameTD_out[0], HOP_SIZE, &(pData->outFIFO[0][t* HOP_SIZE]));
-                            utility_svvcopy(pData->tempHopFrameTD_out[1], HOP_SIZE, &(pData->outFIFO[2][t* HOP_SIZE]));
-                            utility_svvcopy(pData->tempHopFrameTD_out[2], HOP_SIZE, &(pData->outFIFO[3][t* HOP_SIZE]));
-                            utility_svvcopy(pData->tempHopFrameTD_out[3], HOP_SIZE, &(pData->outFIFO[1][t* HOP_SIZE]));
-                        }
-                        break;
+        /* inverse-TFT */
+        for(t = 0; t < TIME_SLOTS; t++) {
+            for(band = 0; band < HYBRID_BANDS; band++) {
+                for (ch = 0; ch < nSH; ch++) {
+                    pData->STFTOutputFrameTF[ch].re[band] = gain_lin*crealf(pData->SHframeTF[band][ch][t]);
+                    pData->STFTOutputFrameTF[ch].im[band] = gain_lin*cimagf(pData->SHframeTF[band][ch][t]);
                 }
             }
+            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD_out);
+            for (ch = 0; ch < nSH; ch++)
+                utility_svvcopy(pData->tempHopFrameTD_out[ch], HOP_SIZE, &(pData->SHframeTD[ch][t* HOP_SIZE]));
+        }
 
-            /* apply normalisation scheme */
-            for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
-            switch(norm){
-                case NORM_N3D: /* already N3D */
-                    break;
-                case NORM_SN3D: /* convert to SN3D */
-                    for (n = 0; n<order+1; n++)
-                        for (ch = o[n]; ch < MIN(o[n+1],nOutputs); ch++)
-                            for(i = 0; i<FRAME_SIZE; i++)
-                                pData->outFIFO[ch][i] /= sqrtf(2.0f*(float)n+1.0f);
-                    break;
-                case NORM_FUMA: /* convert to FuMa, only for first-order */
-                    if(nOutputs>=4){
-                        for(i = 0; i<FRAME_SIZE; i++)
-                            pData->outFIFO[0][i] /= sqrtf(2.0f);
-                        for (ch = 1; ch<4; ch++)
-                            for(i = 0; i<FRAME_SIZE; i++)
-                                pData->outFIFO[ch][i] /= sqrtf(3.0f);
-                    }
-                    else
-                        for(i=0; i<nOutputs; i++)
-                            memset(pData->outFIFO[i], 0, FRAME_SIZE * sizeof(float));
-                    break;
-            }
+        /* account for output channel order */
+        switch(chOrdering){
+            case CH_ACN: /* already ACN */
+                break;
+            case CH_FUMA:
+                convertHOAChannelConvention((float*)pData->SHframeTD, order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA);
+                break;
         }
-        else if(pData->FIFO_idx >= FRAME_SIZE){
-            /* clear outFIFO if codec was not ready */
-            pData->FIFO_idx = 0;
-            memset(pData->outFIFO, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
+
+        /* account for normalisation scheme */
+        switch(norm){
+            case NORM_N3D: /* already N3D */
+                break;
+            case NORM_SN3D:
+                convertHOANormConvention((float*)pData->SHframeTD, order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D);
+                break;
+            case NORM_FUMA:
+                convertHOANormConvention((float*)pData->SHframeTD, order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA);
+                break;
         }
+
+        /* Copy to output */
+        for(i = 0; i < MIN(nSH,nOutputs); i++)
+            utility_svvcopy(pData->SHframeTD[i], FRAME_SIZE, outputs[i]);
+        for(; i < nOutputs; i++)
+            memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
+    }
+    else{
+        for (ch=0; ch < nOutputs; ch++)
+            memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
     }
 
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
@@ -577,6 +531,11 @@ void array2sh_setGain(void* const hA2sh, float newGain)
 
 /* Get Functions */
 
+int array2sh_getFrameSize(void)
+{
+    return FRAME_SIZE;
+}
+
 ARRAY2SH_EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
@@ -777,5 +736,5 @@ int array2sh_getSamplingRate(void* const hA2sh)
 
 int array2sh_getProcessingDelay()
 {
-    return FRAME_SIZE + 12*HOP_SIZE;
+    return 12*HOP_SIZE;
 }

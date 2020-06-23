@@ -135,6 +135,12 @@ void beamformer_setBeamType(void* const hBeam, int newID);
 /* ========================================================================== */
 
 /**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int beamformer_getFrameSize(void);
+
+/**
  * Returns tje beamforming order (see #_SH_ORDERS enum)
  */
 int beamformer_getBeamOrder(void* const hBeam);

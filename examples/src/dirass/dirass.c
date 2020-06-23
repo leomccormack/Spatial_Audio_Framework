@@ -241,12 +241,15 @@ void dirass_analysis
             pData->procStatus = PROC_STATUS_ONGOING;
 
             /* Load time-domain data */
+            for(ch=0; ch<nSH; ch++)
+                memcpy(pData->SHframeTD[ch],pData->inFIFO[ch], FRAME_SIZE*sizeof(float));
+
+            /* account for input channel order */
             switch(chOrdering){
-                case CH_ACN:
-                    convertHOAChannelConvention((float*)pData->inFIFO, inputOrder, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_ACN, (float*)pData->SHframeTD);
+                case CH_ACN: /* already ACN */
                     break;
                 case CH_FUMA:
-                    convertHOAChannelConvention((float*)pData->inFIFO, inputOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN, (float*)pData->SHframeTD);
+                    convertHOAChannelConvention((float*)pData->SHframeTD, inputOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
                     break;
             }
 
@@ -546,6 +549,11 @@ void dirass_requestPmapUpdate(void* const hDir)
 
 /* GETS */
 
+int dirass_getFrameSize(void)
+{
+    return FRAME_SIZE;
+}
+
 CODEC_STATUS dirass_getCodecStatus(void* const hDir)
 {
     dirass_data *pData = (dirass_data*)(hDir);
@@ -682,5 +690,5 @@ int dirass_getPmap(void* const hDir, float** grid_dirs, float** pmap, int* nDirs
 
 int dirass_getProcessingDelay()
 {
-    return FRAME_SIZE;
+    return 2*FRAME_SIZE;
 }

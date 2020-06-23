@@ -190,7 +190,13 @@ void ambi_drc_setInputPreset(void* const hAmbi, SH_ORDERS newPreset);
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
-    
+
+/**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int ambi_drc_getFrameSize(void);
+
 #ifdef ENABLE_TF_DISPLAY
 float** ambi_drc_getGainTF(void* const hAmbi);
 

@@ -212,6 +212,12 @@ void binauraliser_setInterpMode(void* const hBin, int newMode);
 /* ========================================================================== */
 
 /**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int binauraliser_getFrameSize(void);
+
+/**
  * Returns current codec status codec status (see #_CODEC_STATUS enum)
  */
 CODEC_STATUS binauraliser_getCodecStatus(void* const hBin);

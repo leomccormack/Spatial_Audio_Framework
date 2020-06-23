@@ -55,11 +55,6 @@ extern "C" {
  */
 typedef struct _ambi_enc
 {
-    /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_INPUTS][FRAME_SIZE];
-    float outFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-
     /* Internals */
     float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
     float prev_inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];

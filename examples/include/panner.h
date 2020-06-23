@@ -229,6 +229,12 @@ void panner_setFlipRoll(void* const hPan, int newState);
 /* ========================================================================== */
 
 /**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int panner_getFrameSize(void);
+
+/**
  * Returns current codec status (see #_CODEC_STATUS enum)
  */
 CODEC_STATUS panner_getCodecStatus(void* const hPan);

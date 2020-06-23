@@ -134,7 +134,13 @@ void matrixconv_setNumInputChannels(void* const hMCnv, int newValue);
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
- 
+
+/**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int matrixconv_getFrameSize(void);
+
 /**
  * Returns a flag indicating whether partitioned convolution is enabled (1) or
  * disabled (0)

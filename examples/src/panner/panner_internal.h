@@ -84,11 +84,6 @@ extern "C" {
  */
 typedef struct _panner
 {
-    /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_INPUTS][FRAME_SIZE];
-    float outFIFO[MAX_NUM_OUTPUTS][FRAME_SIZE];
-
     /* audio buffers */
     float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
     float_complex inputframeTF[HYBRID_BANDS][MAX_NUM_INPUTS][TIME_SLOTS];

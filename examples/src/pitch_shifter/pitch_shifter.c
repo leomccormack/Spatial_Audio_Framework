@@ -251,6 +251,11 @@ void pitch_shifter_setOSampOption
 
 /* gets */
 
+int pitch_shifter_getFrameSize(void)
+{
+    return FRAME_SIZE;
+}
+
 CODEC_STATUS pitch_shifter_getCodecStatus(void* const hBin)
 {
     pitch_shifter_data *pData = (pitch_shifter_data*)(hBin);

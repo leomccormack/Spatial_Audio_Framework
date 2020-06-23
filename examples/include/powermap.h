@@ -215,6 +215,12 @@ void powermap_requestPmapUpdate(void* const hPm);
 /* ========================================================================== */
 
 /**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int powermap_getFrameSize(void);
+
+/**
  * Returns current codec status (see #_CODEC_STATUS enum)
  */
 CODEC_STATUS powermap_getCodecStatus(void* const hPm);

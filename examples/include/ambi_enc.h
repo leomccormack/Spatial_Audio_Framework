@@ -146,6 +146,12 @@ void ambi_enc_setEnablePostScaling(void* const hAmbi, int newStatus);
 /* ========================================================================== */
 
 /**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int ambi_enc_getFrameSize(void);
+
+/**
  * Returns the decoding order (see #_SH_ORDERS enum)
  *
  * If decoding order is higher than the input signal order, the extra required

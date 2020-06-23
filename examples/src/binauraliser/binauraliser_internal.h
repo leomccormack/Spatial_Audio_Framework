@@ -71,11 +71,6 @@ extern "C" {
  */
 typedef struct _binauraliser
 {
-    /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_INPUTS][FRAME_SIZE];
-    float outFIFO[NUM_EARS][FRAME_SIZE];
-
     /* audio buffers */
     float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
     float outframeTD[NUM_EARS][FRAME_SIZE];

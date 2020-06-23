@@ -171,6 +171,12 @@ void pitch_shifter_setOSampOption(void* const hPS,
 /* ========================================================================== */
 
 /**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int pitch_shifter_getFrameSize(void);
+
+/**
  * Returns current codec status (see 'CODEC_STATUS' enum)
  */
 CODEC_STATUS pitch_shifter_getCodecStatus(void* const hPS);

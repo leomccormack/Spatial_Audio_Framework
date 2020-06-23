@@ -270,6 +270,12 @@ void dirass_requestPmapUpdate(void* const hDir);
 /* ========================================================================== */
 
 /**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int dirass_getFrameSize(void);
+
+/**
  * Returns current codec status (see #_CODEC_STATUS enum)
  */
 CODEC_STATUS dirass_getCodecStatus(void* const hDir);
@@ -366,8 +372,6 @@ int dirass_getNormType(void* const hDir);
 int dirass_getDispFOV(void* const hDir);
 
 /**
- * Function: dirass_getAspectRatio
- * -------------------------------
  * Returns the current visualisation display window aspect-ratio (see
  * #_ASPECT_RATIO_OPTIONS enum)
  */

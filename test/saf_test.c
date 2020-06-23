@@ -16,7 +16,7 @@
 
 /**
  * @file saf_test.c
- * @brief Testing program for the Spatial_Audio_Framework
+ * @brief Unit testing program for the Spatial_Audio_Framework
  *
  * @author Leo McCormack
  * @date 27.04.2020
@@ -1777,11 +1777,11 @@ void test__faf_IIRFilterbank(void){
 
 #ifdef SAF_ENABLE_EXAMPLES_TESTS
 void test__saf_example_ambi_bin(void){
-    int nSH, i;
+    int nSH, i, ch, framesize;
     void* hAmbi;
     float leftEarEnergy, rightEarEnergy, direction_deg[2];
     float* inSig, *y;
-    float** shSig, **binSig;
+    float** shSig, **binSig, **shSig_frame, **binSig_frame;
 
     /* Config */
     const int order = 4;
@@ -1820,8 +1820,18 @@ void test__saf_example_ambi_bin(void){
                 FLATTEN2D(shSig), signalLength);
 
     /* Decode to binaural */
-    binSig = (float**)malloc2d(NUM_EARS,signalLength,sizeof(float));
-    ambi_bin_process(hAmbi, shSig, binSig, nSH, NUM_EARS, signalLength);
+    framesize = ambi_bin_getFrameSize();
+    binSig = (float**)calloc2d(NUM_EARS,signalLength,sizeof(float));
+    shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
+    binSig_frame = (float**)malloc1d(NUM_EARS*sizeof(float*));
+    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
+        for(ch=0; ch<nSH; ch++)
+            shSig_frame[ch] = &shSig[ch][i*framesize];
+        for(ch=0; ch<NUM_EARS; ch++)
+            binSig_frame[ch] = &binSig[ch][i*framesize];
+
+        ambi_bin_process(hAmbi, shSig_frame, binSig_frame, nSH, NUM_EARS, framesize);
+    }
 
     /* Assert that left ear energy is higher than the right ear */
     leftEarEnergy = rightEarEnergy = 0.0f;
@@ -1837,14 +1847,16 @@ void test__saf_example_ambi_bin(void){
     free(shSig);
     free(y);
     free(binSig);
+    free(shSig_frame);
+    free(binSig_frame);
 }
 
 void test__saf_example_ambi_dec(void){
-    int nSH, i, j, max_ind;
+    int nSH, i, j, ch, max_ind, framesize;
     void* hAmbi;
     float loudspeakerEnergy[22], direction_deg[2];
     float* inSig, *y;
-    float** shSig, **lsSig;
+    float** shSig, **lsSig, **shSig_frame, **lsSig_frame;
 
     /* Config */
     const int order = 4;
@@ -1887,8 +1899,18 @@ void test__saf_example_ambi_dec(void){
                 FLATTEN2D(shSig), signalLength);
 
     /* Decode to loudspeakers */
-    lsSig = (float**)malloc2d(22,signalLength,sizeof(float));
-    ambi_dec_process(hAmbi, shSig, lsSig, nSH, 22, signalLength);
+    framesize = ambi_dec_getFrameSize();
+    lsSig = (float**)calloc2d(22,signalLength,sizeof(float));
+    shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
+    lsSig_frame = (float**)malloc1d(22*sizeof(float*));
+    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
+        for(ch=0; ch<nSH; ch++)
+            shSig_frame[ch] = &shSig[ch][i*framesize];
+        for(ch=0; ch<22; ch++)
+            lsSig_frame[ch] = &lsSig[ch][i*framesize];
+
+        ambi_dec_process(hAmbi, shSig_frame, lsSig_frame, nSH, 22, framesize);
+    }
 
     /* Assert that channel 8 (corresponding to the loudspeaker where the plane-
      * wave was encoded to) has the most energy */
@@ -1906,14 +1928,16 @@ void test__saf_example_ambi_dec(void){
     free(shSig);
     free(y);
     free(lsSig);
+    free(shSig_frame);
+    free(lsSig_frame);
 }
 
 void test__saf_example_ambi_enc(void){
-    int nSH, i, j, delay;
+    int nSH, i, ch, framesize, j, delay;
     void* hAmbi;
     float direction_deg[2][2];
     float** inSig, *y;
-    float** shSig, **shSig_ref;
+    float** shSig, **shSig_ref, **inSig_frame, **shSig_frame;
 
     /* Config */
     const float acceptedTolerance = 0.000001f;
@@ -1955,13 +1979,23 @@ void test__saf_example_ambi_enc(void){
                 FLATTEN2D(shSig_ref), signalLength);
 
     /* Encode via ambi_enc */
-    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
-    ambi_enc_process(hAmbi, inSig, shSig, 2, nSH, signalLength);
+    framesize = ambi_enc_getFrameSize();
+    shSig = (float**)calloc2d(nSH,signalLength,sizeof(float));
+    inSig_frame = (float**)malloc1d(2*sizeof(float*));
+    shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
+    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
+        for(ch=0; ch<2; ch++)
+            inSig_frame[ch] = &inSig[ch][i*framesize];
+        for(ch=0; ch<nSH; ch++)
+            shSig_frame[ch] = &shSig[ch][i*framesize];
+
+        ambi_enc_process(hAmbi, inSig_frame, shSig_frame, 2, nSH, framesize);
+    }
 
     /* ambi_enc should be equivalent to the reference, except delayed due to the
      * temporal interpolation employed in ambi_enc */
     for(i=0; i<nSH; i++)
-        for(j=0; j<signalLength-delay; j++)
+        for(j=0; j<signalLength-delay-framesize; j++)
             TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, shSig_ref[i][j], shSig[i][j+delay]);
 
     /* Clean-up */
@@ -1973,11 +2007,11 @@ void test__saf_example_ambi_enc(void){
 }
 
 void test__saf_example_array2sh(void){
-    int nSH, i, j;
+    int nSH, i, j, framesize, ch;
     void* hA2sh, *safFFT, *hMC;
     float direction_deg[2], radius;
     float* inSig, *f;
-    float** shSig, **inSig_32, **micSig, **h_array;
+    float** shSig, **inSig_32, **micSig, **h_array, **micSig_frame, **shSig_frame;
     double* kr;
     float_complex* tmp_H;
     float_complex*** H_array;
@@ -2035,8 +2069,18 @@ void test__saf_example_array2sh(void){
         saf_multiConv_apply(hMC, FLATTEN2D(inSig_32), FLATTEN2D(micSig));
 
     /* Encode simulated Eigenmike signals into spherical harmonic signals */
-    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
-    array2sh_process(hA2sh, micSig, shSig, 32, nSH, signalLength);
+    framesize = array2sh_getFrameSize();
+    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float)); 
+    micSig_frame = (float**)malloc1d(32*sizeof(float*));
+    shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
+    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
+        for(ch=0; ch<32; ch++)
+            micSig_frame[ch] = &micSig[ch][i*framesize];
+        for(ch=0; ch<nSH; ch++)
+            shSig_frame[ch] = &shSig[ch][i*framesize];
+
+        array2sh_process(hA2sh, micSig_frame, shSig_frame, 32, nSH, framesize);
+    }
 
     /* Clean-up */
     array2sh_destroy(&hA2sh);
@@ -2050,13 +2094,15 @@ void test__saf_example_array2sh(void){
     free(H_array);
     free(h_array);
     free(tmp_H);
+    free(micSig_frame);
+    free(shSig_frame);
 }
 
 void test__saf_example_rotator(void){
-    int nSH, i, j, delay;
+    int ch, nSH, i, j, delay, framesize;
     void* hRot;
     float direction_deg[2], ypr[3], Rzyx[3][3];
-    float** inSig, *y;
+    float** inSig, *y, **shSig_frame, **shSig_rot_frame;
     float** shSig, **shSig_rot, **shSig_rot_ref, **Mrot;
 
     /* Config */
@@ -2107,8 +2153,18 @@ void test__saf_example_rotator(void){
                 FLATTEN2D(shSig_rot_ref), signalLength);
 
     /* Rotate with rotator */
+    framesize = rotator_getFrameSize();
     shSig_rot = (float**)malloc2d(nSH,signalLength,sizeof(float));
-    rotator_process(hRot, shSig, shSig_rot, nSH, nSH, signalLength);
+    shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
+    shSig_rot_frame = (float**)malloc1d(nSH*sizeof(float*));
+    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
+        for(ch=0; ch<nSH; ch++)
+            shSig_frame[ch] = &shSig[ch][i*framesize];
+        for(ch=0; ch<nSH; ch++)
+            shSig_rot_frame[ch] = &shSig_rot[ch][i*framesize];
+
+        rotator_process(hRot, shSig_frame, shSig_rot_frame, nSH, nSH, framesize);
+    }
 
     /* ambi_enc should be equivalent to the reference, except delayed due to the
      * temporal interpolation employed in ambi_enc */
@@ -2123,5 +2179,7 @@ void test__saf_example_rotator(void){
     free(shSig_rot_ref);
     free(Mrot);
     free(y);
+    free(shSig_frame);
+    free(shSig_rot_frame);
 }
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */

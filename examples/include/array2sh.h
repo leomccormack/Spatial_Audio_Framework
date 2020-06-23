@@ -368,6 +368,12 @@ void array2sh_setGain(void* const hA2sh, float newGain);
 /* ========================================================================== */
 
 /**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int array2sh_getFrameSize(void);
+
+/**
  * Returns current eval status (see #_ARRAY2SH_EVAL_STATUS enum)
  */
 ARRAY2SH_EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh);

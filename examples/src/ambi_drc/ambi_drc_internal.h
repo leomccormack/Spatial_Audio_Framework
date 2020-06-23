@@ -70,12 +70,7 @@ extern "C" {
  * internal variables, user parameters
  */
 typedef struct _ambi_drc
-{
-    /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float outFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-
+{ 
     /* audio buffers and afSTFT handle */
     float inputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
     float_complex inputFrameTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];

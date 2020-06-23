@@ -1,6 +1,6 @@
 /**
  * @file saf_test.h
- * @brief Testing program for the Spatial_Audio_Framework
+ * @brief Unit testing program for the Spatial_Audio_Framework
  *
  * @author Leo McCormack
  * @date 27.04.2020

@@ -186,23 +186,21 @@ typedef enum _HOA_NORM{
  *       the first 4 channels are converted, and any remaining channels of
  *       'outsig' are set to zeros.
  *
+ * @note insig is converted "in-place".
+ *
  * @param[in]  insig         Input signal with the channel ordering convention
  *                           of: inConvention; FLAT: (order+1)^2 x signalLength
  * @param[in]  order         Ambisonic order
  * @param[in]  signalLength  Signal length in samples
  * @param[in]  inConvention  Channel order convention of input signals
  * @param[in]  outConvention Channel order convention of output signals
- * @param[in]  outsig        Output signal with the channel ordering convention
- *                           of: outConvention; FLAT: (order+1)^2 x signalLength
  */
 void convertHOAChannelConvention(/* Input Arguments */
                                  float* insig,
                                  int order,
                                  int signalLength,
                                  HOA_CH_ORDER inConvention,
-                                 HOA_CH_ORDER outConvention,
-                                 /* Output Arguments */
-                                 float* outsig);
+                                 HOA_CH_ORDER outConvention);
 
 /**
  * Converts an Ambisonic signal from one normalisation convention to another

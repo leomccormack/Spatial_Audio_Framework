@@ -59,11 +59,6 @@ extern "C" {
  */
 typedef struct _beamformer
 {
-    /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float outFIFO[MAX_NUM_BEAMS][FRAME_SIZE];
-
     /* audio buffers + afSTFT time-frequency transform handle */
     float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float prev_SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];

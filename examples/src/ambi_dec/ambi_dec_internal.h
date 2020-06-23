@@ -105,11 +105,6 @@ typedef struct _ambi_dec_codecPars
  */
 typedef struct _ambi_dec
 {
-    /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float outFIFO[MAX_NUM_LOUDSPEAKERS][FRAME_SIZE];
-
     /* audio buffers + afSTFT time-frequency transform handle */
     float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];

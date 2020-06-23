@@ -124,6 +124,12 @@ void multiconv_setNumChannels(void* const hMCnv, int newValue);
 /* ========================================================================== */
 
 /**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int multiconv_getFrameSize(void);
+
+/**
  * Returns a flag indicating whether partitioned convolution is enabled (1) or
  * disabled (0)
  */

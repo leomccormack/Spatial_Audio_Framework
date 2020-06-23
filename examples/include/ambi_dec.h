@@ -322,6 +322,12 @@ void ambi_dec_setTransitionFreq(void* const hAmbi, float newValue);
 /* ========================================================================== */
 
 /**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int ambi_dec_getFrameSize(void);
+
+/**
  * Returns current codec status (see #_CODEC_STATUS enum)
  */
 CODEC_STATUS ambi_dec_getCodecStatus(void* const hAmbi);

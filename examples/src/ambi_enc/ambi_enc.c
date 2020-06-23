@@ -44,11 +44,6 @@ void ambi_enc_create
     pData->norm = NORM_SN3D;
     pData->order = SH_ORDER_FIRST;
     pData->enablePostScaling = 1;
-
-    /* set FIFO buffers */
-    pData->FIFO_idx = 0;
-    memset(pData->inFIFO, 0, MAX_NUM_INPUTS*FRAME_SIZE*sizeof(float));
-    memset(pData->outFIFO, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
 }
 
 void ambi_enc_destroy
@@ -93,7 +88,7 @@ void ambi_enc_process
 )
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
-    int s, i, j, ch, nSources, nSH; 
+    int i, j, ch, nSources, nSH; 
     float src_dirs[MAX_NUM_INPUTS][2], azi_incl[2], scale;
     float* Y_src;
 
@@ -108,109 +103,102 @@ void ambi_enc_process
     order = MIN(pData->order, MAX_SH_ORDER);
     nSH = ORDER2NSH(order);
 
-    /* Loop over all samples */
-    for(s=0; s<nSamples; s++){
-        /* Load input signals into inFIFO buffer */
-        for(ch=0; ch<MIN(nInputs,nSH); ch++)
-            pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
-        for(; ch<nSH; ch++) /* Zero any channels that were not given */
-            pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
+    /* Process frame */
+    if (nSamples == FRAME_SIZE) {
 
-        /* Pull output signals from outFIFO buffer */
-        for(ch=0; ch<MIN(nOutputs, MAX_NUM_SH_SIGNALS); ch++)
-            outputs[ch][s] = pData->outFIFO[ch][pData->FIFO_idx];
-        for(; ch<nOutputs; ch++) /* Zero any extra channels */
-            outputs[ch][s] = 0.0f;
+        /* prep */
+        Y_src = malloc1d(nSH*sizeof(float));
 
-        /* Increment buffer index */
-        pData->FIFO_idx++;
+        /* Load time-domain data */
+        for(i=0; i < MIN(nSources,nInputs); i++)
+            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
+        for(; i<MAX_NUM_INPUTS; i++)
+            memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 
-        /* Process frame if inFIFO is full and codec is ready for it */
-        if (pData->FIFO_idx >= FRAME_SIZE) {
-            pData->FIFO_idx = 0;
-
-            /* prep */
-            Y_src = malloc1d(nSH*sizeof(float));
-
-            /* Load time-domain data */
-            for(i=0; i < MIN(nSources,nInputs); i++)
-                utility_svvcopy(pData->inFIFO[i], FRAME_SIZE, pData->inputFrameTD[i]);
-
-            /* recalulate SHs */
-            for(i=0; i<nSources; i++){
-                if(pData->recalc_SH_FLAG[i]){
-                    azi_incl[0] = pData->src_dirs_deg[i][0]*M_PI/180.0f;
-                    azi_incl[1] =  M_PI/2.0f - pData->src_dirs_deg[i][1]*M_PI/180.0f;
-                    getSHreal_recur(order, azi_incl, 1, Y_src);
-                    for(j=0; j<nSH; j++)
-                        pData->Y[j][i] = sqrtf(4.0f*M_PI)*Y_src[j];
-                    for(; j<MAX_NUM_SH_SIGNALS; j++)
-                        pData->Y[j][i] = 0.0f;
-                    pData->recalc_SH_FLAG[i] = 0;
-                }
-                else{
-                    for(j=0; j<MAX_NUM_SH_SIGNALS; j++)
-                        pData->Y[j][i] = pData->prev_Y[j][i];
-                }
+        /* recalulate SHs */
+        for(i=0; i<nSources; i++){
+            if(pData->recalc_SH_FLAG[i]){
+                azi_incl[0] = pData->src_dirs_deg[i][0]*M_PI/180.0f;
+                azi_incl[1] =  M_PI/2.0f - pData->src_dirs_deg[i][1]*M_PI/180.0f;
+                getSHreal_recur(order, azi_incl, 1, Y_src);
+                for(j=0; j<nSH; j++)
+                    pData->Y[j][i] = sqrtf(4.0f*M_PI)*Y_src[j];
+                for(; j<MAX_NUM_SH_SIGNALS; j++)
+                    pData->Y[j][i] = 0.0f;
+                pData->recalc_SH_FLAG[i] = 0;
             }
-
-            /* spatially encode the input signals into spherical harmonic signals */
-            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0f,
-                        (float*)pData->prev_Y, MAX_NUM_INPUTS,
-                        (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
-                        (float*)pData->tempFrame, FRAME_SIZE);
-            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0f,
-                        (float*)pData->Y, MAX_NUM_INPUTS,
-                        (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
-                        (float*)pData->outputFrameTD, FRAME_SIZE);
-
-            for (i=0; i < nSH; i++)
-                for(j=0; j<FRAME_SIZE; j++)
-                    pData->outputFrameTD[i][j] = pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
-
-            /* for next frame */
-            utility_svvcopy((const float*)pData->inputFrameTD, nSources*FRAME_SIZE, (float*)pData->prev_inputFrameTD);
-            utility_svvcopy((const float*)pData->Y, MAX_NUM_INPUTS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_Y);
-
-            /* scale by 1/sqrt(nSources) */
-            if(pData->enablePostScaling){
-                scale = 1.0f/sqrtf((float)nSources);
-                utility_svsmul((float*)pData->outputFrameTD, &scale, nSH*FRAME_SIZE, (float*)pData->outputFrameTD);
+            else{
+                for(j=0; j<MAX_NUM_SH_SIGNALS; j++)
+                    pData->Y[j][i] = pData->prev_Y[j][i];
             }
-
-            /* copy SH signals to output buffer */
-            switch(chOrdering){
-                case CH_ACN:
-                    convertHOAChannelConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_ACN, (float*)pData->outFIFO);
-                    break;
-                case CH_FUMA:
-                    convertHOAChannelConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA, (float*)pData->outFIFO);
-                    break;
-            }
-
-            /* norm scheme */
-            switch(norm){
-                case NORM_N3D: /* already N3D */
-                    break;
-                case NORM_SN3D:
-                    convertHOANormConvention((float*)pData->outFIFO, order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D);
-                    break;
-                case NORM_FUMA:
-                    convertHOANormConvention((float*)pData->outFIFO, order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA);
-                    break;
-            }
-
-            free(Y_src);
         }
-        else if (pData->FIFO_idx >= FRAME_SIZE){
-            /* clear outFIFO if codec was not ready */
-            pData->FIFO_idx = 0;
-            memset(pData->outFIFO, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
+
+        /* spatially encode the input signals into spherical harmonic signals */
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0f,
+                    (float*)pData->prev_Y, MAX_NUM_INPUTS,
+                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
+                    (float*)pData->tempFrame, FRAME_SIZE);
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0f,
+                    (float*)pData->Y, MAX_NUM_INPUTS,
+                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
+                    (float*)pData->outputFrameTD, FRAME_SIZE);
+
+        for (i=0; i < nSH; i++)
+            for(j=0; j<FRAME_SIZE; j++)
+                pData->outputFrameTD[i][j] = pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
+
+        /* for next frame */
+        utility_svvcopy((const float*)pData->inputFrameTD, nSources*FRAME_SIZE, (float*)pData->prev_inputFrameTD);
+        utility_svvcopy((const float*)pData->Y, MAX_NUM_INPUTS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_Y);
+
+        /* scale by 1/sqrt(nSources) */
+        if(pData->enablePostScaling){
+            scale = 1.0f/sqrtf((float)nSources);
+            utility_svsmul((float*)pData->outputFrameTD, &scale, nSH*FRAME_SIZE, (float*)pData->outputFrameTD);
         }
+
+        /* account for output channel order */
+        switch(chOrdering){
+            case CH_ACN: /* already ACN */
+                break;
+            case CH_FUMA:
+                convertHOAChannelConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA);
+                break;
+        }
+
+        /* account for normalisation scheme */
+        switch(norm){
+            case NORM_N3D: /* already N3D */
+                break;
+            case NORM_SN3D:
+                convertHOANormConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D);
+                break;
+            case NORM_FUMA:
+                convertHOANormConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA);
+                break;
+        }
+
+        /* Copy to output */
+        for(i = 0; i < MIN(nSH,nOutputs); i++)
+            utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
+        for(; i < nOutputs; i++)
+            memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
+
+        /* clean-up */
+        free(Y_src);
+    }
+    else{
+        for (ch=0; ch < nOutputs; ch++)
+            memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
     }
 }
 
 /* Set Functions */
+
+int ambi_enc_getFrameSize(void)
+{
+    return FRAME_SIZE;
+}
 
 void ambi_enc_refreshParams(void* const hAmbi)
 {
@@ -354,5 +342,5 @@ int ambi_enc_getEnablePostScaling(void* const hAmbi)
 
 int ambi_enc_getProcessingDelay()
 {
-    return 2*FRAME_SIZE;
+    return FRAME_SIZE;
 }

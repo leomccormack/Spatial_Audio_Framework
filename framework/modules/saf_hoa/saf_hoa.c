@@ -40,19 +40,17 @@ void convertHOAChannelConvention
     int order,
     int signalLength,
     HOA_CH_ORDER inConvention,
-    HOA_CH_ORDER outConvention,
-    float* outsig
+    HOA_CH_ORDER outConvention
 )
 {
     int i, nSH;
+    float** tmp;
 
     nSH = ORDER2NSH(order);
 
     /* bypass, if 0th order, or no conversion required */
-    if(order==0 || inConvention == outConvention){
-        memcpy(outsig, insig, nSH*signalLength*sizeof(float));
+    if(order==0 || inConvention == outConvention)
         return;
-    }
 #if 0 /* Now changed to just zeroing the remaining channels */
     /* Assert that FuMa is not being used for anything other than 1st order */
     if(order!=1){
@@ -61,24 +59,35 @@ void convertHOAChannelConvention
         assert(outConvention!=HOA_CH_ORDER_FUMA);
     }
 #endif
+    /* Temp frame */
+    tmp = (float**)malloc2d(3, signalLength, sizeof(float));
 
     /* Convert FUMA to ACN */
     if(inConvention==HOA_CH_ORDER_FUMA && outConvention==HOA_CH_ORDER_ACN){
-        memcpy(&outsig[0*signalLength], &insig[0*signalLength], signalLength*sizeof(float));
-        memcpy(&outsig[1*signalLength], &insig[3*signalLength], signalLength*sizeof(float));
-        memcpy(&outsig[2*signalLength], &insig[1*signalLength], signalLength*sizeof(float));
-        memcpy(&outsig[3*signalLength], &insig[2*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[0], &insig[3*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[1], &insig[1*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[2], &insig[2*signalLength], signalLength*sizeof(float));
+
+        memcpy(&insig[1*signalLength], tmp[0], signalLength*sizeof(float));
+        memcpy(&insig[2*signalLength], tmp[1], signalLength*sizeof(float));
+        memcpy(&insig[3*signalLength], tmp[2], signalLength*sizeof(float));
     }
     /* Convert ACN to FUMA */
     else if(inConvention==HOA_CH_ORDER_ACN && outConvention==HOA_CH_ORDER_FUMA){
-        memcpy(&outsig[0*signalLength], &insig[0*signalLength], signalLength*sizeof(float));
-        memcpy(&outsig[1*signalLength], &insig[2*signalLength], signalLength*sizeof(float));
-        memcpy(&outsig[2*signalLength], &insig[3*signalLength], signalLength*sizeof(float));
-        memcpy(&outsig[3*signalLength], &insig[1*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[0], &insig[2*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[1], &insig[3*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[2], &insig[1*signalLength], signalLength*sizeof(float));
+
+        memcpy(&insig[1*signalLength], tmp[0], signalLength*sizeof(float));
+        memcpy(&insig[2*signalLength], tmp[1], signalLength*sizeof(float));
+        memcpy(&insig[3*signalLength], tmp[2], signalLength*sizeof(float));
     }
     /* Fill any remaining channels with zeros */
     for(i=4; i<nSH; i++)
-        memset(&outsig[i*signalLength], 0, signalLength * sizeof(float));
+        memset(&insig[i*signalLength], 0, signalLength * sizeof(float));
+
+    /* clean-up */
+    free(tmp);
 }
 
 void convertHOANormConvention

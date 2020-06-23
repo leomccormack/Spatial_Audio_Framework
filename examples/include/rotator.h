@@ -89,6 +89,12 @@ void rotator_process(void* const hRot,
 /* ========================================================================== */
 
 /**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int rotator_getFrameSize(void);
+
+/**
  * Sets the 'yaw' rotation angle, in DEGREES
  */
 void rotator_setYaw(void* const hRot, float newYaw);

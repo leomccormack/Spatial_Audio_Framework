@@ -178,6 +178,12 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID);
 /* ========================================================================== */
 
 /**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int sldoa_getFrameSize(void);
+
+/**
  * Returns current codec status (see #_CODEC_STATUS enum)
  */
 CODEC_STATUS sldoa_getCodecStatus(void* const hSld);
