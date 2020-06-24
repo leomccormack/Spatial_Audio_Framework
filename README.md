@@ -76,7 +76,14 @@ The available SAF-specific build options (and their default values) are:
 -DSAF_BUILD_TESTS=1                        # build unit testing program
 ```
 
-Note that if the **saf_sofa_reader** is enabled: for MacOSX and MSVC users, CMake will use the statically built dependencies found in **dependencies** by default. Linux and MSYS2 users may instead install a shared [netcdf library](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
+If using **SAF_USE_INTEL_MKL** as the performance library, then the default header and library paths may be be overridden with:
+``` 
+-DINTEL_MKL_HEADER_PATH="path/to/mkl/headers"
+-DINTEL_MKL_LIB="path/to/mkl/libs/mkl_rt(.so/.dylib/.lib)"   # OR:
+-DINTEL_MKL_LIB="path/to/custom/mkl/lib/saf_mkl_custom(.so/.dylib/.lib)"
+```
+
+Note that if the **saf_sofa_reader** is enabled, CMake will use the statically built dependencies found in **dependencies** for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared [netcdf library](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
 ```
 # e.g. Linux users:
 -DNETCDF_LIBRARY="/usr/lib/x86_64-linux-gnu/libnetcdf.so"
