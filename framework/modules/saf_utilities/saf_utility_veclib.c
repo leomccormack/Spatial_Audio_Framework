@@ -250,9 +250,9 @@ void utility_svvadd
 #elif defined(INTEL_MKL_VERSION)
     vsAdd(len, a, b, c);
 #else
-	int i;
-	for (i = 0; i < len; i++)
-		c[i] = a[i] + b[i];
+	int j;
+	for (j = 0; j < len; j++)
+		c[j] = a[j] + b[j];
 #endif
 }
 
@@ -285,9 +285,9 @@ void utility_cvvadd
 #ifdef INTEL_MKL_VERSION
     vcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
 #else
-	int i;
-	for (i = 0; i < len; i++)
-		c[i] = ccaddf(a[i], b[i]);
+    int j;
+	for (j = 0; j < len; j++)
+		c[j] = ccaddf(a[j], b[j]);
 #endif
 }
 
@@ -327,9 +327,9 @@ void utility_svvsub
 #elif defined(INTEL_MKL_VERSION)
     vsSub(len, a, b, c);
 #else
-	int i;
-	for (i = 0; i < len; i++)
-		c[i] = a[i] - b[i];
+	int j;
+	for (j = 0; j < len; j++)
+		c[j] = a[j] - b[j];
 #endif
 }
 
@@ -362,9 +362,9 @@ void utility_cvvsub
 #ifdef INTEL_MKL_VERSION
     vcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
 #else
-	int i;
-    for (i = 0; i < len; i++)
-        c[i] = ccsubf(a[i], b[i]);
+	int j;
+    for (j = 0; j < len; j++)
+        c[j] = ccsubf(a[j], b[j]);
 #endif
 }
 
@@ -404,9 +404,9 @@ void utility_svvmul
 #elif defined(INTEL_MKL_VERSION)
     vsMul(len, a, b, c);
 #else
-    int i;
-    for (i = 0; i < len; i++)
-        c[i] = a[i] * b[i];
+    int j;
+    for (j = 0; j < len; j++)
+        c[j] = a[j] * b[j];
 #endif
 }
 
@@ -439,9 +439,9 @@ void utility_cvvmul
 #ifdef INTEL_MKL_VERSION
     vcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
 #else
-	int i;
-    for (i = 0; i < len; i++)
-        c[i] = ccmulf(a[i], b[i]);
+	int j;
+    for (j = 0; j < len; j++)
+        c[j] = ccmulf(a[j], b[j]);
 #endif
 }
 
