@@ -10,7 +10,7 @@ A cross-platform framework for developing spatial audio related applications in 
 ## Prerequisites
 
 The Spatial_Audio_Framework (SAF) requires the following libraries:
-* Any library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
+* A library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 * (Optional) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
 
 Add one of the following pre-processor definitions, which will let SAF know which of the supported CBLAS/LAPACK library/libraries you have linked to your project:
