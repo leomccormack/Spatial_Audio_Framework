@@ -16,7 +16,9 @@
 
 /**
  * @file saf_utility_sensorarray_presets.c
+ * @ingroup Utilities
  * @brief A collection of microphone array sensor directions
+ * 
  * @author Leo McCormack
  * @date 11.07.2016
  */

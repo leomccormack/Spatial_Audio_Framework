@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup Utilities
+ *@{
  * @file saf_utility_loudspeaker_presets.h
  * @brief A collection of loudspeaker array directions and (nearly) uniform
  *        spherical grids
@@ -103,7 +105,7 @@ extern const float __DTU_AVIL_dirs_deg[64][2];
 extern const float __Zylia_Lab_dirs_deg[22][2];
 /**
  * Default Loudspeaker directions [azimuth, Elevation] in degrees */
-extern const float default_LScoords64_rad[64][2];
+extern const float __default_LScoords64_rad[64][2];
     
     
 /* ========================================================================== */
@@ -582,3 +584,4 @@ extern const int __geosphere_oct_nPoints[17];
 
 #endif /* __SAF_LOUDSPEAKER_PRESETS_H_INCLUDED__ */
 
+/**@} */ /* doxygen addtogroup Utilities */

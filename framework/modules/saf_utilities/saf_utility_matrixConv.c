@@ -16,6 +16,7 @@
 
 /**
  * @file saf_utility_matrixConv.c
+ * @ingroup Utilities
  * @brief Matrix and multi-channel convolvers
  *
  * @author Leo McCormack

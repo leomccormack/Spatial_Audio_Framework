@@ -17,9 +17,7 @@
 /**
  * @file dirass_internal.h
  * @brief A sound-field visualiser based on the directional re-assignment of
- *        beamformer energy, utilising the DoA estimates extracted from
- *        spatially-localised active-intensity (SLAI) vectors; which are centred
- *        around each of the corresponding scanning grid directions [1,2].
+ *        beamformer energy based on local DoA estimates [1,2]
  *
  * @see [1] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of
  *          angular spectra based on a directional re-assignment approach for

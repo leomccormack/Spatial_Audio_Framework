@@ -72,6 +72,8 @@ void sldoa_destroy(void** const phSld);
 /**
  * Initialises an instance of sldoa with default settings
  *
+ * @warning This should not be called while _process() is on-going!
+ *
  * @param[in] hSld       sldoa handle
  * @param[in] samplerate Host samplerate.
  */
@@ -80,6 +82,16 @@ void sldoa_init(void* const hSld,
     
 /**
  * Intialises the codec variables, based on current global/user parameters
+ *
+ * @note This function is fully threadsafe. It can even be called periodically
+ *       via a timer on one thread, while calling _process() on another thread.
+ *       Since, if a set function is called (that warrants a re-init), then a
+ *       flag is triggered internally and the next time this function is called,
+ *       it will wait until the current process() function has completed before
+ *       reinitialising the relevant parameters. If the _initCodec() takes
+ *       longer than the time it takes for process() to be called again, then
+ *       process() is simply bypassed until the codec is ready.
+ * @note This function does nothing if no re-initialisations are required.
  *
  * @param[in] hSld - sldoa handle
  */
@@ -245,20 +257,23 @@ int sldoa_getNSHrequired(void* const hSld);
  * low frequencies), and alpha coefficients (more opaque: higher energy, more
  * transpararent: less energy).
  *
+ * @note nBands can be found by using sldoa_getNumberOfBands()
+ *
  * @param[in]  hSld             sldoa handle
  * @param[out] pAzi_deg         (&) azimuth of estimated DoAs;
- *                              FLAT: pNsectorsPerBand*sldoa_getNumberOfBands()
+ *                              FLAT: pNsectorsPerBand x nBands
  * @param[out] pElev_deg        (&) elevation of estimated DoAs;
- *                              FLAT: pNsectorsPerBand*sldoa_getNumberOfBands()
+ *                              FLAT: pNsectorsPerBand x nBands
  * @param[out] pColourScale     (&) colour scale, 0..1, 1:red, 0: blue
- *                              FLAT: pNsectorsPerBand*sldoa_getNumberOfBands()
- * @param[out] pAlphaScale      (&) alpha scale, 0..1, 1: opaque, 0: transparent;
- *                              FLAT: pNsectorsPerBand*sldoa_getNumberOfBands()
+ *                              FLAT: pNsectorsPerBand x nBands
+ * @param[out] pAlphaScale      (&) alpha scale, 0..1, 1: opaque, 0: transparent
+ *                              FLAT: pNsectorsPerBand x nBands
  * @param[out] pNsectorsPerBand (&) number of sectors per frequency;
  *                              pNsectorsPerBand x 1
  * @param[out] pMaxNumSectors   (&) maximum number of sectors
  * @param[out] pStartBand       (&) band index corresponding to lowest frequency
- * @param[out] pEndBand         (&) band index corresponding to highest frequency
+ * @param[out] pEndBand         (&) band index corresponding to highest
+ *                              frequency
  */
 void sldoa_getDisplayData(void *  const hSld,
                           float** pAzi_deg,

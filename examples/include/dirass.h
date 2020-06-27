@@ -17,9 +17,7 @@
 /**
  * @file dirass.h
  * @brief A sound-field visualiser based on the directional re-assignment of
- *        beamformer energy, utilising the DoA estimates extracted from
- *        spatially-localised active-intensity (SLAI) vectors; which are centred
- *        around each of the corresponding scanning grid directions [1,2].
+ *        beamformer energy based on local DoA estimates [1,2]
  *
  * @see [1] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of
  *          angular spectra based on a directional re-assignment approach for
@@ -136,6 +134,8 @@ void dirass_destroy(void** const phDir);
 /**
  * Initialises an instance of dirass with default settings
  *
+ * @warning This should not be called while _process() is on-going!
+ *
  * @param[in] hDir       dirass handle
  * @param[in] samplerate Host samplerate.
  */
@@ -145,13 +145,23 @@ void dirass_init(void* const hDir,
 /**
  * Intialises the codec variables, based on current global/user parameters
  *
+ * @note This function is fully threadsafe. It can even be called periodically
+ *       via a timer on one thread, while calling _process() on another thread.
+ *       Since, if a set function is called (that warrants a re-init), then a
+ *       flag is triggered internally and the next time this function is called,
+ *       it will wait until the current process() function has completed before
+ *       reinitialising the relevant parameters. If the _initCodec() takes
+ *       longer than the time it takes for process() to be called again, then
+ *       process() is simply bypassed until the codec is ready.
+ * @note This function does nothing if no re-initialisations are required.
+ *
  * @param[in] hDir dirass handle
  */
 void dirass_initCodec(void* const hDir);
 
 /**
  * Analyses the input spherical harmonic signals to generate an activity-map as
- * in [1]
+ * in [1,2]
  *
  * @param[in] hDir      dirass handle
  * @param[in] inputs    Input channel buffers; 2-D array: nInputs x nSamples
@@ -165,6 +175,11 @@ void dirass_initCodec(void* const hDir);
  *          angular spectra based on a directional re-assignment approach for
  *          ambisonic sound-field visualisation". IEEE International Conference
  *          on Acoustics, Speech and Signal Processing (ICASSP).
+ * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
+ *          Spatially Localized Active-Intensity Vectors for Sound-Field
+ *          Visualization. Journal of the Audio Engineering Society, 67(11),
+ *          pp.840-854.
  */
 void dirass_analysis(void* const hDir,
                      float** const inputs,
@@ -197,14 +212,14 @@ void dirass_setInputOrder(void* const hDir,  int newValue);
 /**
  * Sets a new display grid option (see #_DIRASS_GRID_OPTIONS enum)
  *
- * @note Not safe to call while simultaneously calling dirass_analysis()!
+ * @warning Not safe to call while simultaneously calling dirass_analysis()!
  */
 void dirass_setDisplayGridOption(void* const hDir,  int newOption);
    
 /**
  * Sets the output display width in pixels
  *
- * @note Not safe to call while simultaneously calling dirass_analysis()!
+ * @warning Not safe to call while simultaneously calling dirass_analysis()!
  */
 void dirass_setDispWidth(void* const hDir,  int newValue);
     

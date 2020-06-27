@@ -28,7 +28,25 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
- 
+
+/*  doxygen example definitions: */
+/** @example ambi_bin ambi_bin.h */
+/** @example ambi_dec ambi_dec.h */
+/** @example ambi_drc ambi_drc.h */
+/** @example ambi_enc ambi_enc.h */
+/** @example array2sh array2sh.h */
+/** @example beamformer beamformer.h */
+/** @example binauraliser binauraliser.h */
+/** @example dirass dirass.h */
+/** @example matrixconv matrixconv.h */
+/** @example multiconv multiconv.h */
+/** @example panner panner.h */
+/** @example pitch_shifter pitch_shifter.h */
+/** @example powermap powermap.h */
+/** @example rotator rotator.h*/
+/** @example sldoa sldoa.h*/
+
+
 /* ========================================================================== */
 /*                             Presets + Constants                            */
 /* ========================================================================== */
@@ -165,7 +183,7 @@ typedef enum _STATIC_BEAM_TYPES {
 
 } STATIC_BEAM_TYPES;
 
-/* Number of available static beamformer types */
+/** Number of available static beamformer types */
 #define NUM_STATIC_BEAM_TYPES ( 3 )
 
 /**

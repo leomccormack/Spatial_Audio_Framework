@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup CDF4SAP
+ *@{
  * @file saf_cdf4sap.h
  * @brief Main header for the Covariance Domain Framework module
  *        (#SAF_CDF4SAP_MODULE)
@@ -57,8 +59,6 @@ extern "C" {
  * @note Use this function for REAL-VALUED input/output matrices. For
  *       COMPLEX-VALUED input/output matrices use cdf4sap_cmplx_create().
  *
- * Unit test(s): test__formulate_M_and_Cr()
- *
  * @param[in] phCdf  The address (&) of the CDF4SAP handle
  * @param[in] nXcols Number of columns/rows in square input matrix 'Cx'
  * @param[in] nYcols Number of columns/rows in square input matrix 'Cy'
@@ -76,8 +76,6 @@ void cdf4sap_create(/* Input Arguments */
  *
  * @note Use this function for COMPLEX-VALUED input/output matrices. For
  *       REAL-VALUED input/output matrices use cdf4sap_create().
- *
- * Unit test(s): test__formulate_M_and_Cr_cmplx()
  *
  * @param[in] phCdf  The address (&) of the CDF4SAP handle
  * @param[in] nXcols Number of columns/rows in square input matrix 'Cx'
@@ -135,7 +133,7 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
  *       in [3]) found here: https://github.com/leomccormack/CroPaC-Binaural,
  *       or the relevant unit tests.
  *
- * Unit test(s): test__formulate_M_and_Cr()
+ * @test test__formulate_M_and_Cr()
  *
  * @param[in]  hCdf          Covariance Domain Framework handle
  * @param[in]  Cx            Covariance matrix of input 'x';
@@ -191,7 +189,7 @@ void formulate_M_and_Cr(/* Input Arguments */
  *       in [3]) found here: https://github.com/leomccormack/CroPaC-Binaural,
  *       or the relevant unit tests.
  *
- * Unit test(s): test__formulate_M_and_Cr_cmplx()
+ * @test test__formulate_M_and_Cr_cmplx()
  *
  * @param[in]  hCdf          Covariance Domain Framework handle
  * @param[in]  Cx            Covariance matrix of input 'x';
@@ -236,4 +234,4 @@ void formulate_M_and_Cr_cmplx(/* Input Arguments */
 
 #endif  /* __SAF_CDF4SAP_H_INCLUDED__ */
 
-
+/**@} */ /* doxygen addtogroup CDF4SAP */

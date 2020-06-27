@@ -16,6 +16,7 @@
 
 /**
  * @file saf_hrir.c
+ * @ingroup HRIR
  * @brief Public source for the HRIR/HRTF processing module (#SAF_HRIR_MODULE)
  *
  * A collection of head-related impulse-response (HRIR) functions. Including
@@ -302,4 +303,3 @@ void binauralDiffuseCoherence
     free(ipd);
     free(hrtf_ipd_lr);
 }
-

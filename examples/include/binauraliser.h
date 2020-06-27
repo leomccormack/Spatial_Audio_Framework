@@ -46,7 +46,7 @@ extern "C" {
  * Available interpolation modes
  */
 typedef enum _INTERP_MODES{
-    INTERP_TRI = 1  /* Triangular interpolation */
+    INTERP_TRI = 1  /**< Triangular interpolation */
 }INTERP_MODES;
 
 
@@ -71,6 +71,8 @@ void binauraliser_destroy(void** const phBin);
 /**
  * Initialises an instance of binauraliser with default settings
  *
+ * @warning This should not be called while _process() is on-going!
+ *
  * @param[in] hBin       binauraliser handle
  * @param[in] samplerate Host samplerate.
  */
@@ -79,6 +81,16 @@ void binauraliser_init(void* const hBin,
 
 /**
  * Intialises the codec variables, based on current global/user parameters
+ *
+ * @note This function is fully threadsafe. It can even be called periodically
+ *       via a timer on one thread, while calling _process() on another thread.
+ *       Since, if a set function is called (that warrants a re-init), then a
+ *       flag is triggered internally and the next time this function is called,
+ *       it will wait until the current process() function has completed before
+ *       reinitialising the relevant parameters. If the _initCodec() takes
+ *       longer than the time it takes for process() to be called again, then
+ *       process() is simply bypassed until the codec is ready.
+ * @note This function does nothing if no re-initialisations are required.
  *
  * @param[in] hBin binauraliser handle
  */

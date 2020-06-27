@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup SH
+ *@{
  * @file saf_sh.h
  * @brief Main header for the Spherical Harmonic Transform and Spherical Array
  *        Processing module (#SAF_SH_MODULE)
@@ -206,7 +208,7 @@ void unnorm_legendreP_recur(/* Input Arguments */
  * employs unnorm_legendreP() and double precision, which is slower but more
  * precise.
  *
- * Unit test(s): test__getSHreal()
+ * @test test__getSHreal()
  *
  * @param[in]  order    Order of spherical harmonic expansion
  * @param[in]  dirs_rad Directions on the sphere [azi, INCLINATION] convention,
@@ -236,7 +238,7 @@ void getSHreal(/* Input Arguments */
  * The function also uses static memory buffers for single direction and up to
  * 7th order, which speeds things up considerably for such use cases.
  *
- * Unit test(s): test__getSHreal_recur()
+ * @test test__getSHreal_recur()
  *
  * @param[in]  order    Order of spherical harmonic expansion
  * @param[in]  dirs_rad Directions on the sphere [azi, INCLINATION] convention,
@@ -262,7 +264,7 @@ void getSHreal_recur(/* Input Arguments */
  * i.e. max(omni) = 1/sqrt(4*pi) + i0. This function employs unnorm_legendreP()
  * and double precision.
  *
- * Unit test(s): test__getSHcomplex()
+ * @test test__getSHcomplex()
  *
  * @param[in]  order    Order of spherical harmonic expansion
  * @param[in]  dirs_rad Directions on the sphere [azi, INCLINATION] convention,
@@ -291,7 +293,7 @@ void getSHcomplex(/* Input Arguments */
  *
  * @warning The T_r2c matrix is returned transposed! TODO: fix
  *
- * Unit test(s): test__complex2realSHMtx()
+ * @test test__complex2realSHMtx()
  *
  * @param[in]  order Order of spherical harmonic expansion
  * @param[out] T_c2r Transformation matrix for complex->real;
@@ -311,7 +313,7 @@ void complex2realSHMtx(/* Input Arguments */
  *
  * @warning The T_r2c matrix is returned transposed! TODO: fix
  *
- * Unit test(s): test__real2complexSHMtx()
+ * @test test__real2complexSHMtx()
  *
  * @param[in]  order Order of spherical harmonic expansion
  * @param[out] T_r2c Transformation matrix for real->complex;
@@ -344,7 +346,7 @@ void complex2realCoeffs(/* Input Arguments */
  * Note that the normalisation convention does not matter, as e.g. only dipoles
  * are used to rotated dipoles, quadrapoles to rotate quadrapoles etc.
  *
- * Unit test(s): test__complex2realSHMtx()
+ * @test test__complex2realSHMtx()
  *
  * @param[in]  R      zyx rotation matrix; 3 x 3
  * @param[in]  L      Order of spherical harmonic expansion
@@ -367,7 +369,7 @@ void getSHrotMtxReal(float R[3][3],
  * It is used in beamWeightsVelocityPatterns(). For the derivation of the
  * matrices see [1].
  *
- * Unit test(s): test__computeSectorCoeffsEP()
+ * @test test__computeSectorCoeffsEP()
  *
  * @param[in]  sectorOrder Order of patterns
  * @param[out] A_xyz       Velocity coefficients;
@@ -390,7 +392,7 @@ void computeVelCoeffsMtx(/* Input Arguments */
  * been used for parametric sound-field reproduction in [1] and visualisation in
  * [2,3].
  *
- * Unit test(s): test__computeSectorCoeffsEP()
+ * @test test__computeSectorCoeffsEP()
  *
  * @param[in]  orderSec     Order of sector patterns
  * @param[in]  A_xyz        Velocity coefficients, see computeVelCoeffsMtx();
@@ -659,7 +661,7 @@ void rotateAxisCoeffsComplex(/* Input arguments */
 /**
  * Computes the condition numbers for a least-squares SHT
  *
- * Unit test(s): test__checkCondNumberSHTReal()
+ * @test test__checkCondNumberSHTReal()
  *
  * @param[in]  order    Order of spherical harmonic expansion
  * @param[in]  dirs_rad Directions on the sphere [azi, INCLINATION] convention,
@@ -1101,3 +1103,5 @@ void evaluateSHTfilters(/* Input arguments */
 #endif /* __cplusplus */
 
 #endif /* __SAF_SH_H_INCLUDED__ */
+
+/**@} */ /* doxygen addtogroup SH */

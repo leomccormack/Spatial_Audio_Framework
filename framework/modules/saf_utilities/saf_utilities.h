@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup Utilities
+ *@{
  * @file saf_utilities.h  
  * @brief Main header for the utilities module (#SAF_UTILITIES_MODULE)
  *
@@ -54,7 +56,7 @@
 #if defined(SAF_USE_INTEL_MKL)
 /*
  * Using Intel's Math Kernal Library (MKL)
- * (Generally the fastest library for x86/amd64 based architectures)
+ * (Generally the fastest library for x86 based architectures)
  */
 # define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortan interface of LAPACK */
 # include "mkl.h"
@@ -62,7 +64,7 @@
 #elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
 /*
  * Using OpenBLAS and the LAPACKE interface
- * (A good option for ARM based architectures)
+ * (A good option for both x86 and ARM based architectures)
  */
 # define VECLIB_USE_LAPACKE_INTERFACE /**< LAPACKE interface */
 # include "cblas.h"
@@ -80,7 +82,8 @@
 #elif defined(__APPLE__)
 /*
  * Using Apple's Accelerate library (vDSP)
- * (Solid choice, but only works under MacOSX)
+ * (Solid choice for both x86 and ARM, but only works under MacOSX and is not as
+ * fast as Intel MKL for x86 systems)
  */
 # define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortan interface of LAPACK */
 # include "Accelerate/Accelerate.h"
@@ -145,24 +148,24 @@
 /*                 External Resources and SAF Utility Headers                 */
 /* ========================================================================== */
 
-/* (In correct linker order) */
+/* (In suitable linker order) */
 /* for error message handling */
 #include "saf_utility_error.h"
-/* for allocating multi-dimensional arrays */
-#include "../resources/md_malloc/md_malloc.h"
+/* for allocating contiguous multi-dimensional arrays */
+#include "../../resources/md_malloc/md_malloc.h"
 /* default FFT implementation, if no optimised implementation is available */
-#include "../resources/kissFFT//kiss_fftr.h"
-#include "../resources/kissFFT/kiss_fft.h"
+#include "../../resources/kissFFT//kiss_fftr.h"
+#include "../../resources/kissFFT/kiss_fft.h"
 /* for generating 3-D convex hulls */
-#include "../resources/convhull_3d/convhull_3d.h"
+#include "../../resources/convhull_3d/convhull_3d.h"
 /* for cross-platform complex numbers wrapper */
 #include "saf_utility_complex.h"
 /* for sorting vectors */
 #include "saf_utility_sort.h"
 /* filter coefficients (IIR/FIR) */
 #include "saf_utility_filters.h"
-/* Many handy linear algebra functions based on CBLAS/LAPACK/IntelMKL/Accelerate
- */
+/* Many handy linear algebra functions based on CBLAS/LAPACK, and some based on
+ * proprietary Intel MKL and Apple Accelerate optimised vector functions */
 #include "saf_utility_veclib.h"
 /* For computing spherical/cylindrical Bessel and Hankel functions */
 #include "saf_utility_bessel.h"
@@ -192,7 +195,9 @@
  *          time--frequency domain spatial audio. John Wiley & Sons,
  *          Incorporated.
  */
-#include "../resources/afSTFT/afSTFTlib.h"
+#include "../../resources/afSTFT/afSTFTlib.h"
 
 
 #endif /* __SAF_UTILITIES_H_INCLUDED__ */
+
+/**@} */ /* doxygen addtogroup Utilities */

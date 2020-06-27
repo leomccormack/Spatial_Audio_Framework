@@ -16,6 +16,7 @@
 
 /**
  * @file saf_reverb_internal.h
+ * @ingroup Reverb
  * @brief Internal header for the reverb processing module (#SAF_REVERB_MODULE)
  *
  * A collection of reverb and room simulation algorithms.

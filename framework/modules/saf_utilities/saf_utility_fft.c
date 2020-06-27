@@ -16,6 +16,7 @@
 
 /**
  * @file saf_utility_fft.c
+ * @ingroup Utilities
  * @brief Wrappers for optimised fast Fourier transform (FFT) routines
  *
  * @note If none of the supported optimised FFT implementations are linked, then

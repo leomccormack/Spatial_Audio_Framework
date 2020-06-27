@@ -16,6 +16,7 @@
 
 /**
  * @file saf_hoa_internal.c
+ * @ingroup HOA
  * @brief Internal source for the higher-order Ambisonics module
  *        (#SAF_HOA_MODULE)
  *
@@ -618,4 +619,3 @@ void getBinDecoder_MAGLS
     free(hrtfs_ls);
     free(H_mod);
 }
-

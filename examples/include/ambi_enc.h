@@ -18,7 +18,7 @@
  * @file ambi_enc.h
  * @brief A simple, but flexible, Ambisonic encoder.
  *
- * Unit test(s): test__saf_example_ambi_enc()
+ * @test test__saf_example_ambi_enc()
  * 
  * @author Leo McCormack
  * @date 07.10.2016
@@ -129,7 +129,7 @@ void ambi_enc_setInputConfigPreset(void* const hAmbi, int newPresetID);
 void ambi_enc_setChOrder(void* const hAmbi, int newOrder);
 
 /**
- * Sets the Ambisonic normalisation convention to encode with (see #_NORM_TYPE
+ * Sets the Ambisonic normalisation convention to encode with (see #_NORM_TYPES
  * enum)
  */
 void ambi_enc_setNormType(void* const hAmbi, int newType);
@@ -194,7 +194,7 @@ int ambi_enc_getChOrder(void* const hAmbi);
     
 /**
  * Returns the Ambisonic normalisation convention currently being used to encode
- * with (see #_NORM_TYPE enum)
+ * with (see #_NORM_TYPES enum)
  */
 int ambi_enc_getNormType(void* const hAmbi);
 

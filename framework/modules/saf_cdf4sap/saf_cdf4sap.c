@@ -16,6 +16,7 @@
 
 /**
  * @file saf_cdf4sap.c
+ * @ingroup CDF4SAP
  * @brief Public source for the Covariance Domain Framework module
  *        (#SAF_CDF4SAP_MODULE)
  *

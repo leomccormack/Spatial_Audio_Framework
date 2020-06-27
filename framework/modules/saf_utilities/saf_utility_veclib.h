@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup Utilities
+ *@{
  * @file saf_utility_veclib.h
  * @brief Wrappers for optimised linear algebra routines, utilising CBLAS and
  *        LAPACK
@@ -1023,7 +1025,7 @@ void utility_schol(/* Input Arguments */
                    float* X);
 
 /**
- * Cholesky factorisation of a hermitian matrix positive-definate matrix: single
+ * Cholesky factorisation of a hermitian positive-definate matrix: single
  * precision complex, i.e.
  * \code{.m}
  *     X = chol(A); where A = X.'*X
@@ -1093,3 +1095,5 @@ void utility_cinv(float_complex* A,
 #endif  /* __cplusplus */
 
 #endif /* SAF_VECLIB_H_INCLUDED */
+
+/**@} */ /* doxygen addtogroup Utilities */

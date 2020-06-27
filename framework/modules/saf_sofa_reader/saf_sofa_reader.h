@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup SOFA_Reader
+ *@{
  * @file saf_sofa_reader.h 
  * @brief Main header for the sofa reader module (#SAF_SOFA_READER_MODULE)
  *
@@ -81,3 +83,5 @@ void loadSofaFile(/* Input Arguments */
 #endif /* __cplusplus */
 
 #endif /* __SAF_SOFA_READER_H_INCLUDED__ */
+
+/**@} */ /* doxygen addtogroup SOFA_Reader */

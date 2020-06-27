@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup HRIR
+ *@{
  * @file saf_hrir.h
  * @brief Main header for the HRIR/HRTF processing module (#SAF_HRIR_MODULE)
  *
@@ -207,3 +209,5 @@ void binauralDiffuseCoherence(/* Input Arguments */
 #endif  /* __cplusplus */
 
 #endif /* __SAF_HRIR_H_INCLUDED__ */
+
+/**@} */ /* doxygen addtogroup HRIR */

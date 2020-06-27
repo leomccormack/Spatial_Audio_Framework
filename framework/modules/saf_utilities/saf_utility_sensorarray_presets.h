@@ -15,8 +15,11 @@
  */
 
 /**
+ *@addtogroup Utilities
+ *@{
  * @file saf_utility_sensorarray_presets.h
  * @brief A collection of microphone array sensor directions
+ * 
  * @author Leo McCormack
  * @date 11.07.2016 
  */
@@ -133,3 +136,5 @@ extern const float __DTU_mic_freqRange[10];
 #endif /* __cplusplus */
 
 #endif /* __SAF_SENSORARRAY_PRESETS_INCLUDED__ */
+
+/**@} */ /* doxygen addtogroup Utilities */

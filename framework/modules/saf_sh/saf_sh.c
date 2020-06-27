@@ -16,6 +16,7 @@
 
 /**
  * @file saf_sh.c
+ * @ingroup SH
  * @brief Public source for the Spherical Harmonic Transform and Spherical Array
  *        Processing module (#SAF_SH_MODULE)
  *

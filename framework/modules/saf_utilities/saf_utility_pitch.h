@@ -15,8 +15,11 @@
  */
 
 /**
+ *@addtogroup Utilities
+ *@{
  * @file saf_utility_pitch.h
  * @brief A collection of pitch shifting algorithms
+ *
  * @author Leo McCormack
  * @date 04.05.2020
  */
@@ -44,7 +47,7 @@ extern "C" {
  *       Oversampling factor will increase latency, but also improve signal
  *       fidelity.
  *
- * Unit test(s): test__smb_pitchShifter()
+ * @test test__smb_pitchShifter()
  *
  * @param[in] hSmb         (&) address of smb pitchShifter handle
  * @param[in] nCH          number of channels
@@ -100,3 +103,5 @@ void smb_pitchShift_apply(/* Input Arguments */
 #endif /* __cplusplus */
 
 #endif /* SAF_PITCH_H_INCLUDED */
+
+/**@} */ /* doxygen addtogroup Utilities */

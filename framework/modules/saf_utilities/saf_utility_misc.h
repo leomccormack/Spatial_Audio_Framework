@@ -15,8 +15,11 @@
  */
 
 /**
+ *@addtogroup Utilities
+ *@{
  * @file saf_utility_misc.h
  * @brief A collection of miscellaneous functions
+ *
  * @author Leo McCormack
  * @date 29.01.2020 
  */
@@ -189,3 +192,5 @@ void polyd_m(double* X,
 #endif /* __cplusplus */
 
 #endif /* SAF_MISC_H_INCLUDED */
+
+/**@} */ /* doxygen addtogroup Utilities */

@@ -16,7 +16,9 @@
 
 /**
  * @file saf_utility_misc.c
+ * @ingroup Utilities
  * @brief A collection of miscellaneous functions
+ *
  * @author Leo McCormack
  * @date 29.01.2020
  */

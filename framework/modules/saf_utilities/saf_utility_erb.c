@@ -16,6 +16,7 @@
 
 /**
  * @file saf_utility_erb.c
+ * @ingroup Utilities
  * @brief Functions to determine frequencies that fall within critical bands
  *        [Equivalent-Rectangular Bandwidth (ERB)]
  *

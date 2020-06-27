@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup Utilities
+ *@{
  * @file saf_utility_error.h
  * @brief A list of error and warning codes
  *
@@ -133,3 +135,5 @@ SAF_ERRORS saf_error_print(SAF_ERRORS err);
 #endif /* __cplusplus */
 
 #endif /* __SAF_ERROR_H_INCLUDED__ */
+
+/**@} */ /* doxygen addtogroup Utilities */

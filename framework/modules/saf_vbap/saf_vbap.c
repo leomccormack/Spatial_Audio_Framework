@@ -16,6 +16,7 @@
 
 /**
  * @file saf_vbap.c
+ * @ingroup VBAP
  * @brief Public source for the VBAP/MDAP module (#SAF_VBAP_MODULE)
  *
  * VBAP functions largely derived from the MATLAB library by Archontis Politis,

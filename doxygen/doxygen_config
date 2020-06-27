@@ -342,7 +342,7 @@ MARKDOWN_SUPPORT       = YES
 # Minimum value: 0, maximum value: 99, default value: 5.
 # This tag requires that the tag MARKDOWN_SUPPORT is set to YES.
 
-TOC_INCLUDE_HEADINGS   = 5
+TOC_INCLUDE_HEADINGS   = 7
 
 # When enabled doxygen tries to link words that correspond to documented
 # classes, or namespaces to their corresponding documentation. Such a link can
@@ -897,7 +897,7 @@ EXCLUDE_PATTERNS      += */build/*
 EXCLUDE_PATTERNS      += */cmake-build-debug/*
 EXCLUDE_PATTERNS      += */cmake-build-release/*
 EXCLUDE_PATTERNS      += */licenses/* 
-EXCLUDE_PATTERNS      += */examples/*
+EXCLUDE_PATTERNS      += */examples/src/*
 EXCLUDE_PATTERNS      += */test/timer/*
 EXCLUDE_PATTERNS      += */test/unity/*
 
@@ -917,7 +917,7 @@ EXCLUDE_SYMBOLS        =
 # that contain example code fragments that are included (see the \include
 # command).
 
-EXAMPLE_PATH           =
+EXAMPLE_PATH           = examples
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp and

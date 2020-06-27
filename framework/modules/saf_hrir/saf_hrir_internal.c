@@ -16,6 +16,7 @@
 
 /**
  * @file saf_hrir_internal.c
+ * @ingroup HRIR
  * @brief Internal source for the HRIR/HRTF processing module (#SAF_HRIR_MODULE)
  *
  * A collection of head-related impulse-response (HRIR) functions. Including
@@ -191,4 +192,4 @@ void FIRtoFilterbankCoeffs
     free(centerImpulseFB);
     free(ir);
     free(irFB);
-} 
+}

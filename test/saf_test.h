@@ -4,7 +4,7 @@
  *
  * @author Leo McCormack
  * @date 27.04.2020
- */
+ */ 
 
 #ifndef __SAF_TEST_H_INCLUDED__
 #define __SAF_TEST_H_INCLUDED__
@@ -24,7 +24,7 @@ int main_test(void);
  * Testing for perfect reconstruction of the saf_stft (when configured for 50%
  * window overlap) */
 void test__saf_stft_50pc_overlap(void);
-/**
+/** 
  * Testing for perfect reconstruction of the saf_stft (when configured for
  * linear time-invariant (LTI) filtering applications) */
 void test__saf_stft_LTI(void);
@@ -118,8 +118,6 @@ void test__butterCoeffs(void);
  * Testing that the faf_IIRFilterbank can re-construct the original signal power
  */
 void test__faf_IIRFilterbank(void);
-
-#ifdef SAF_ENABLE_EXAMPLES_TESTS
 /**
  * Testing the SAF ambi_bin example (this may also serve as a tutorial on how
  * to use it) */
@@ -140,7 +138,7 @@ void test__saf_example_array2sh(void);
  * Testing the SAF rotator example (this may also serve as a tutorial on how
  * to use it) */
 void test__saf_example_rotator(void);
-#endif /* SAF_ENABLE_EXAMPLES_TESTS */
+
 
 #ifdef __cplusplus
 } /* extern "C" */

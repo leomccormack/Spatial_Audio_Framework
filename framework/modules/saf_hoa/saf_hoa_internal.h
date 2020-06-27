@@ -16,6 +16,7 @@
 
 /**
  * @file saf_hoa_internal.h
+ * @ingroup HOA
  * @brief Internal header for the higher-order Ambisonics module
  *        (#SAF_HOA_MODULE)
  *

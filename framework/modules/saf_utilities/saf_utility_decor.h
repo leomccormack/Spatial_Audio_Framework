@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup Utilities
+ *@{
  * @file saf_utility_decor.h
  * @brief A collection of signal decorrelators
  *
@@ -93,3 +95,5 @@ void synthesiseNoiseReverb(int nChannels,
 #endif /* __cplusplus */
 
 #endif /* SAF_DECOR_H_INCLUDED */
+
+/**@} */ /* doxygen addtogroup Utilities */

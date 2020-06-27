@@ -24,7 +24,7 @@
  *          Additions and Corrections. Journal of Physical Chemistry A, 102(45),
  *          9099?9100.
  *
- * Unit test(s): test__saf_example_rotator()
+ * @test test__saf_example_rotator()
  *
  * @author Leo McCormack
  * @date 02.11.2017
@@ -67,7 +67,7 @@ void rotator_init(void* const hRot,
                   int samplerate);
 
 /**
- * Rotates the input spherical harmonic signals.
+ * Rotates the input spherical harmonic signals
  *
  * @param[in] hRot     rotator handle
  * @param[in] inputs   Input channel buffers; 2-D array: nInputs x nSamples

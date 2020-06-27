@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup VBAP
+ *@{
  * @file saf_vbap.h
  * @brief Main header for the VBAP/MDAP module (#SAF_VBAP_MODULE)
  *
@@ -449,3 +451,5 @@ void vbap2D(/* Input Arguments */
 #endif /* __cplusplus */
 
 #endif /* __SAF_VBAP_H_INCLUDED__ */
+
+/**@} */ /* doxygen addtogroup VBAP */

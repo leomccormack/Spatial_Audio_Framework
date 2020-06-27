@@ -16,9 +16,10 @@
 
 /**
  * @file saf_utility_complex.c
+ * @ingroup Utilities
  * @brief Contains wrappers for handling complex numbers across both
  *        C99-compliant compilers and Microsoft Visual Compiler (MSVC)
- *
+ 
  * @author Leo McCormack
  * @date 11.07.2016
  */

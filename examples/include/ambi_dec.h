@@ -27,11 +27,12 @@
  * The algorithms utilised in this Ambisonic decoder were pieced together and
  * developed in collaboration with Archontis Politis.
  *
- * Unit test(s): test__saf_example_ambi_dec()
+ * @test test__saf_example_ambi_dec()
  *
  * @author Leo McCormack
  * @date 07.12.2017
  */
+
 
 #ifndef __AMBI_DEC_H_INCLUDED__
 #define __AMBI_DEC_H_INCLUDED__
@@ -103,6 +104,8 @@ void ambi_dec_destroy(void** const phAmbi);
 /**
  * Initialises an instance of ambi_dec with default settings
  *
+ * @warning This should not be called while _process() is on-going!
+ *
  * @param[in] hAmbi      ambi_dec handle
  * @param[in] samplerate Host samplerate.
  */
@@ -111,6 +114,16 @@ void ambi_dec_init(void* const hAmbi,
 
 /**
  * Intialises the codec variables, based on current global/user parameters
+ *
+ * @note This function is fully threadsafe. It can even be called periodically
+ *       via a timer on one thread, while calling _process() on another thread.
+ *       Since, if a set function is called (that warrants a re-init), then a
+ *       flag is triggered internally and the next time this function is called,
+ *       it will wait until the current process() function has completed before
+ *       reinitialising the relevant parameters. If the _initCodec() takes
+ *       longer than the time it takes for process() to be called again, then
+ *       process() is simply bypassed until the codec is ready.
+ * @note This function does nothing if no re-initialisations are required.
  *
  * @param[in] hAmbi      ambi_dec handle
  */
@@ -443,12 +456,13 @@ int ambi_dec_getChOrder(void* const hAmbi);
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals (see
- * #_NORM_TYPE enum).
+ * #_NORM_TYPES enum).
  */
 int ambi_dec_getNormType(void* const hAmbi);
 
 /**
- * Returns the currently selected decoding method (see #_DECODING_METHODS enum)
+ * Returns the currently selected decoding method (see
+ * #_AMBI_DEC_DECODING_METHODS enum)
  */
 int ambi_dec_getDecMethod(void* const hAmbi, int index);
     
@@ -464,14 +478,14 @@ int ambi_dec_getDecEnableMaxrE(void* const hAmbi, int index);
 
 /**
  * Returns the current equalisation approach for one of the decoders (see
- * #_DIFFUSE_FIELD_EQ_APPROACH enum)
+ * #_AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH enum)
  *
  * @note It is suggested to preserve amplitude at low-frequencies and energy
  *       at high-frequencies
  *
  * @param[in] hAmbi ambi_dec handle
  * @param[in] index Index for low (0) or high (1) frequency decoder
- * @returns (see #_DIFFUSE_FIELD_EQ_APPROACH enum)
+ * @returns (see #_AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH enum)
  */
 int ambi_dec_getDecNormType(void* const hAmbi, int index);
 

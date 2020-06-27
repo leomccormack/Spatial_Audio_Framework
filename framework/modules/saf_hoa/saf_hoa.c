@@ -16,6 +16,7 @@
 
 /**
  * @file saf_hoa.c
+ * @ingroup HOA
  * @brief Public source for the higher-order Ambisonics module (#SAF_HOA_MODULE)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
@@ -583,5 +584,4 @@ void applyDiffCovMatching
     free(H_W);
     free(H_ambi);
     free(decMtx_diffMatched);
-}
- 
+} 

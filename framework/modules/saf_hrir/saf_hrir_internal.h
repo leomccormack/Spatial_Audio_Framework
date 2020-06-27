@@ -16,6 +16,7 @@
 
 /**
  * @file saf_hrir_internal.h
+ * @ingroup HRIR
  * @brief Internal header for the HRIR/HRTF processing module (#SAF_HRIR_MODULE)
  *
  * A collection of head-related impulse-response (HRIR) functions. Including

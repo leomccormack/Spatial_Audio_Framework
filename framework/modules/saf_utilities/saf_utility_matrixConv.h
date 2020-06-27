@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup Utilities
+ *@{
  * @file saf_utility_matrixConv.h
  * @brief Matrix and multi-channel convolvers
  *
@@ -61,7 +63,7 @@ extern "C" {
  *
  * This is a matrix convolver intended for block-by-block processing.
  *
- * Unit test(s): test__saf_matrixConv()
+ * @test test__saf_matrixConv()
  *
  * @param[in] phMC        (&) address of matrixConv handle
  * @param[in] hopSize     Hop size in samples.
@@ -161,3 +163,5 @@ void saf_multiConv_apply(/* Input Arguments */
 #endif /* __cplusplus */
 
 #endif /* SAF_MATRIXCOLV_H_INCLUDED */
+
+/**@} */ /* doxygen addtogroup Utilities */

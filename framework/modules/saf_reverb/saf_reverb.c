@@ -16,6 +16,7 @@
 
 /**
  * @file saf_reverb.c
+ * @ingroup Reverb
  * @brief Public source for the reverb processing module (#SAF_REVERB_MODULE)
  *
  * A collection of reverb and room simulation algorithms.
@@ -618,4 +619,3 @@ void ims_shoebox_removeReceiver
     /* De-increment number of receivers */
     sc->nReceivers--;
 }
-

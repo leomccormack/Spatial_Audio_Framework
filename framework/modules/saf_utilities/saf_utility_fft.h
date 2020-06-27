@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup Utilities
+ *@{
  * @file saf_utility_fft.h
  * @brief Wrappers for optimised fast Fourier transform (FFT) routines
  *
@@ -141,7 +143,7 @@ void hilbert(float_complex* x,
 /**
  * Creates an instance of saf_stft
  *
- * Unit test(s): test__saf_stft_50pc_overlap(), test__saf_stft_LTI()
+ * @test  test__saf_stft_50pc_overlap(), test__saf_stft_LTI()
  *
  * @param[in] phSTFT   (&) address of saf_stft handle
  * @param[in] winsize  Window size
@@ -244,7 +246,7 @@ void saf_stft_channelChange(void * const hSTFT,
  *   saf_rfft_destroy(&hFFT);              // destroys instance of safFFT
  * \endcode
  *
- * Unit test(s): test__saf_rfft()
+ * @test test__saf_rfft()
  *
  * @param[in] phFFT (&) address of saf_rfft handle
  * @param[in] N     FFT size
@@ -340,3 +342,5 @@ void saf_fft_backward(void * const hFFT,
 #endif /* __cplusplus */
 
 #endif /* SAF_FFT_H_INCLUDED */
+
+/**@} */ /* doxygen addtogroup Utilities */

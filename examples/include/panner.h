@@ -53,7 +53,10 @@ extern "C" {
 /*                             Presets + Constants                            */
 /* ========================================================================== */
 
+/** Minimum supported spread angle, degrees */
 #define PANNER_SPREAD_MIN_VALUE ( 0.0f )
+
+/** Maximum supported spread angle, degrees */
 #define PANNER_SPREAD_MAX_VALUE ( 90.0f )
     
 
@@ -78,6 +81,8 @@ void panner_destroy(void** const phPan);
 /**
  * Initialises an instance of panner with default settings
  *
+ * @warning This should not be called while _process() is on-going!
+ *
  * @param[in] hPan       panner handle
  * @param[in] samplerate Host samplerate.
  */
@@ -86,6 +91,16 @@ void panner_init(void* const hPan,
     
 /**
  * Intialises the codec variables, based on current global/user parameters
+ *
+ * @note This function is fully threadsafe. It can even be called periodically
+ *       via a timer on one thread, while calling _process() on another thread.
+ *       Since, if a set function is called (that warrants a re-init), then a
+ *       flag is triggered internally and the next time this function is called,
+ *       it will wait until the current process() function has completed before
+ *       reinitialising the relevant parameters. If the _initCodec() takes
+ *       longer than the time it takes for process() to be called again, then
+ *       process() is simply bypassed until the codec is ready.
+ * @note This function does nothing if no re-initialisations are required.
  *
  * @param[in] hPan panner handle
  */
@@ -164,7 +179,7 @@ void panner_setLoudspeakerElev_deg(void* const hPan, int index, float newElev_de
 void panner_setNumLoudspeakers(void* const hPan, int new_nLoudspeakers);
 
 /**
- * Sets a preset for the output configuration (see LOUDSPEAKER_ARRAY_PRESETS
+ * Sets a preset for the output configuration (see #_LOUDSPEAKER_ARRAY_PRESETS
  * enum)
  */
 void panner_setOutputConfigPreset(void* const hPan, int newPresetID);

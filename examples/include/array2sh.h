@@ -35,7 +35,7 @@
  *          sub-band sound-field analysis," in Audio Engineering Society
  *          Convention 144, Audio Engineering Society, 2018.
  *
- * Unit test(s): test__saf_example_array2sh()
+ * @test test__saf_example_array2sh()
  *
  * @author Leo McCormack
  * @date 13.09.2017
@@ -146,16 +146,37 @@ typedef enum _ARRAY2SH_EVAL_STATUS{
     EVAL_STATUS_EVALUATING          /**< Encoder is being evaluated */
 }ARRAY2SH_EVAL_STATUS;
 
+/** Maximum number of sensors supported */
 #define ARRAY2SH_MAX_NUM_SENSORS ( 64 )
+
+/** Minimum gain value used for regularised inverse of modal coeffs, dB */
 #define ARRAY2SH_MAX_GAIN_MIN_VALUE ( 0.0f )
+
+/** Maximum gain value used for regularised inverse of modal coeffs, dB */
 #define ARRAY2SH_MAX_GAIN_MAX_VALUE ( 80.0f )
+
+/** Minimum post-gain, dB */
 #define ARRAY2SH_POST_GAIN_MIN_VALUE ( -60.0f )
+
+/** Maximum post-gain, dB */
 #define ARRAY2SH_POST_GAIN_MAX_VALUE ( 12.0f )
+
+/** Minimum speed of sound value, m/s */
 #define ARRAY2SH_SPEED_OF_SOUND_MIN_VALUE ( 200.0f )
+
+/** Maximum speed of sound value, m/s */
 #define ARRAY2SH_SPEED_OF_SOUND_MAX_VALUE ( 2000.0f )
+
+/** Minimum array radius supported, mm */
 #define ARRAY2SH_ARRAY_RADIUS_MIN_VALUE ( 1.0f )
+
+/** Maximum array radius supported, mm */
 #define ARRAY2SH_ARRAY_RADIUS_MAX_VALUE ( 400.0f )
+
+/** Minimum baffle radius supported, mm */
 #define ARRAY2SH_BAFFLE_RADIUS_MIN_VALUE ( 1.0f )
+
+/** Maximum baffle radius supported, mm */
 #define ARRAY2SH_BAFFLE_RADIUS_MAX_VALUE ( 400.0f ) 
 
 
@@ -348,7 +369,7 @@ void array2sh_setChOrder(void* const hA2sh, int newOrder);
     
 /**
  * Sets the Ambisonic normalisation convention to encode with, in order to match
- * with the convention employed by the input signals (see #_NORM_TYPE enum)
+ * with the convention employed by the input signals (see #_NORM_TYPES enum)
  */
 void array2sh_setNormType(void* const hA2sh, int newType);
 
@@ -500,7 +521,7 @@ int array2sh_getFilterType(void* const hA2sh);
  */
 float array2sh_getRegPar(void* const hA2sh);
     
-/*
+/**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
  * (see #_CH_ORDER enum)
@@ -510,7 +531,7 @@ int array2sh_getChOrder(void* const hA2sh);
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals
- * (see #_NORM_TYPE enum)
+ * (see #_NORM_TYPES enum)
  */
 int array2sh_getNormType(void* const hA2sh);
     

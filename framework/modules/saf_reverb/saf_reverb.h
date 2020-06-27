@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup Reverb
+ *@{
  * @file saf_reverb.h
  * @brief Main header for the reverb processing module (#SAF_REVERB_MODULE)
  *
@@ -87,7 +89,7 @@ typedef struct _ims_rir{
  * @warning There is currently no checking whether the source/receiver
  *          coordinates fall inside the boundaries of the room!
  *
- * Unit test(s): test__ims_shoebox_RIR(), test__ims_shoebox_TD()
+ * @test test__ims_shoebox_RIR(), test__ims_shoebox_TD()
  *
  * @param[in] phIms            (&) address of the ims_shoebox handle
  * @param[in] length           Length of the room in meters
@@ -247,3 +249,5 @@ void ims_shoebox_removeReceiver(void* hIms,
 #endif  /* __cplusplus */
 
 #endif /* __SAF_REVERB_H_INCLUDED__ */
+
+/**@} */ /* doxygen addtogroup Reverb */

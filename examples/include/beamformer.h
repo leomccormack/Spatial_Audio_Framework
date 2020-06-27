@@ -186,7 +186,7 @@ int beamformer_getChOrder(void* const hBeam);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
- * with, which should match the convention employed by the input signals.
+ * with, which should match the convention employed by the input signals
  * (see #_NORM_TYPES enum)
  */
 int beamformer_getNormType(void* const hBeam);

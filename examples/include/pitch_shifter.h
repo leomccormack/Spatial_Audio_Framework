@@ -67,12 +67,13 @@ typedef enum _PITCH_SHIFTER_OSAMP_OPTIONS{
 
 }PITCH_SHIFTER_OSAMP_OPTIONS;
 
-/**
- * Number of over-sampling options
- */
+/** Number of over-sampling options */
 #define PITCH_SHIFTER_NUM_OSAMP_OPTIONS ( 5 )
 
+/** Maximum pitch shifting factor */
 #define PITCH_SHIFTER_MAX_SHIFT_FACTOR ( 2.0f )
+
+/** Minimum pitch shifting factor */
 #define PITCH_SHIFTER_MIN_SHIFT_FACTOR ( 0.5f )
 
 
@@ -97,6 +98,8 @@ void pitch_shifter_destroy(void** const phPS);
 /**
  * Initialises an instance of pitch_shifter with default settings
  *
+ * @warning This should not be called while _process() is on-going!
+ *
  * @param[in] hPS       pitch_shifter handle
  * @param[in] samplerate Host samplerate.
  */
@@ -105,6 +108,16 @@ void pitch_shifter_init(void* const hPS,
 
 /**
  * Intialises the codec variables, based on current global/user parameters
+ *
+ * @note This function is fully threadsafe. It can even be called periodically
+ *       via a timer on one thread, while calling _process() on another thread.
+ *       Since, if a set function is called (that warrants a re-init), then a
+ *       flag is triggered internally and the next time this function is called,
+ *       it will wait until the current process() function has completed before
+ *       reinitialising the relevant parameters. If the _initCodec() takes
+ *       longer than the time it takes for process() to be called again, then
+ *       process() is simply bypassed until the codec is ready.
+ * @note This function does nothing if no re-initialisations are required.
  *
  * @param[in] hPS pitch_shifter handle
  */
@@ -152,7 +165,7 @@ void pitch_shifter_setPitchShiftFactor(void* const hPS, float newValue);
 void pitch_shifter_setNumChannels(void* const hPS, int newValue);
 
 /**
- * Sets the FFT size used by the algorithm (see PITCH_SHIFTER_FFTSIZE_OPTIONS
+ * Sets the FFT size used by the algorithm (see #_PITCH_SHIFTER_FFTSIZE_OPTIONS
  * enum)
  */
 void pitch_shifter_setFFTSizeOption(void* const hPS,
@@ -160,7 +173,7 @@ void pitch_shifter_setFFTSizeOption(void* const hPS,
 
 /**
  * Sets the oversampling factor used by the algorithm (see
- * PITCH_SHIFTER_OSAMP_OPTIONS enum)
+ * #_PITCH_SHIFTER_OSAMP_OPTIONS enum)
  */
 void pitch_shifter_setOSampOption(void* const hPS,
                                   PITCH_SHIFTER_OSAMP_OPTIONS newOption);
@@ -177,7 +190,7 @@ void pitch_shifter_setOSampOption(void* const hPS,
 int pitch_shifter_getFrameSize(void);
 
 /**
- * Returns current codec status (see 'CODEC_STATUS' enum)
+ * Returns current codec status (see #_CODEC_STATUS enum)
  */
 CODEC_STATUS pitch_shifter_getCodecStatus(void* const hPS);
 
@@ -192,7 +205,7 @@ float pitch_shifter_getProgressBar0_1(void* const hPS);
  * (Optional) Returns current intialisation/processing progress text
  *
  * @note "text" string should be (at least) of length:
- *       PROGRESSBARTEXT_CHAR_LENGTH
+ *       #PROGRESSBARTEXT_CHAR_LENGTH
  */
 void pitch_shifter_getProgressBarText(void* const hPS, char* text);
 
@@ -203,14 +216,14 @@ void pitch_shifter_getProgressBarText(void* const hPS, char* text);
 float pitch_shifter_getPitchShiftFactor(void* const hPS);
 
 /**
- * Returns the FFT size used by the algorithm (see PITCH_SHIFTER_FFTSIZE_OPTIONS
- * enum)
+ * Returns the FFT size used by the algorithm (see
+ * #_PITCH_SHIFTER_FFTSIZE_OPTIONS enum)
  */
 PITCH_SHIFTER_FFTSIZE_OPTIONS pitch_shifter_getFFTSizeOption(void* const hPS);
 
 /**
  * Returns the oversampling factor used by the algorithm (see
- * PITCH_SHIFTER_OSAMP_OPTIONS enum)
+ * #_PITCH_SHIFTER_OSAMP_OPTIONS enum)
  */
 PITCH_SHIFTER_OSAMP_OPTIONS pitch_shifter_getOSampOption(void* const hPS);
 

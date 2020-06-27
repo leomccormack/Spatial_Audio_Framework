@@ -16,6 +16,7 @@
 
 /**
  * @file saf_utility_loudspeaker_presets.c
+ * @ingroup Utilities
  * @brief A collection of loudspeaker array directions and (nearly) uniform
  *        spherical grids
  *
@@ -385,7 +386,7 @@ const float __Zylia_Lab_dirs_deg[22][2] =
   { -45.0f,    -25.0f}};
 
 /* 64 point sphere-covering (IN RADIANS!) */
-const float default_LScoords64_rad[64][2] =
+const float __default_LScoords64_rad[64][2] =
 { { 0.0f,     1.57079632679490f},
   { 2.39996322972865f,     1.31814860051033f},
   { -1.48325884772228f,     1.21253510828228f},

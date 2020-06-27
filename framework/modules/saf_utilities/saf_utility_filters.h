@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup Utilities
+ *@{
  * @file: saf_utility_filters.h
  * @brief A collection of IIR/FIR filter design equations
  *
@@ -277,7 +279,7 @@ void applyIIR(/* Input arguments */
  *          cut-off frequencies can easily become unstable! Consider trying
  *          things out in Matlab before using this function.
  *
- * Unit test(s): test__butterCoeffs()
+ * @test test__butterCoeffs()
  *
  * @param[in]  filterType  See #_BUTTER_FILTER_TYPES enum
  * @param[in]  order       Filter order (N)
@@ -316,7 +318,7 @@ void butterCoeffs(/* Input arguments */
  *       numerical limitations, only 1st and 3rd order options make sense, which
  *       is why this implementation will only accept order = 1 or 3
  *
- * Unit test(s): test__faf_IIRFilterbank
+ * @test test__faf_IIRFilterbank()
  *
  * @param[in] phFaF         (&) address of the faf_IIRFilterbank handle
  * @param[in] order         Filter order, 1st or 3rd
@@ -460,3 +462,5 @@ void FIRFilterbank(/* Input arguments */
 #endif /* __cplusplus */
 
 #endif /* SAF_FILTERS_H_INCLUDED */
+
+/**@} */ /* doxygen addtogroup Utilities */

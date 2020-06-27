@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup HOA
+ *@{
  * @file saf_hoa.h
  * @brief Main header for the higher-order Ambisonics module (#SAF_HOA_MODULE)
  *
@@ -321,8 +323,8 @@ void getMaxREweights(/* Input Arguments */
 /**
  * Computes an ambisonic decoding matrix of a specific order, for a specific
  * loudspeaker layout
-
- * Unit test(s): test__getLoudspeakerDecoderMtx()
+ *
+ * @test test__getLoudspeakerDecoderMtx()
  *
  * @param[in]  ls_dirs_deg Loudspeaker directions in DEGREES [azi elev];
  *                         FLAT: nLS x 2
@@ -456,3 +458,5 @@ void applyDiffCovMatching(/* Input Arguments */
 #endif /* __cplusplus */
 
 #endif /* __SAF_HOA_H_INCLUDED__ */
+
+/**@} */ /* doxygen addtogroup HOA */

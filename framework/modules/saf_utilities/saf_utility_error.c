@@ -16,6 +16,7 @@
 
 /**
  * @file saf_utility_error.c
+ * @ingroup Utilities
  * @brief A list of error and warning codes
  *
  * @author Leo McCormack

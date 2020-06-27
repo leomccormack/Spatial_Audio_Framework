@@ -31,10 +31,34 @@
 #ifndef SAF_H_INCLUDED
 #define SAF_H_INCLUDED
 
+/*  doxygen module definitions: */
+/** @defgroup Utilities
+ *  @brief    Utilities module */
+/** @defgroup CDF4SAP
+ *  @brief    Covariance domain framework processing module */
+/** @defgroup HOA
+ *  @brief    Higher-order Ambisonics module */
+/** @defgroup SH
+ *  @brief    Spherical harmonic domain processing module */
+/** @defgroup HRIR
+ *  @brief    HRIR/HRTF processing module */
+/** @defgroup Reverb
+ *  @brief    Reverb and room simulation module */
+/** @defgroup VBAP
+ *  @brief    Vector-base Amplitude Panning (VBAP) module */
+/** @defgroup SOFA_Reader
+ *  @brief    SOFA file reading module */
+
+
+/* ========================================================================== */
+/*                                SAF Version                                 */
+/* ========================================================================== */
+/* Note: version info is also scanned and employed by CMakeLists.txt */
+
 #define SAF_VERSION_MAJOR 1       /**< Major version */
 #define SAF_VERSION_MINOR 1       /**< Minor version */
 #define SAF_VERSION_PATCH 0       /**< Patch version */
-#define SAF_VERSION_SPECIAL ""    /**< Append text, "alpha", "beta", "" etc. */
+#define SAF_VERSION_SPECIAL ""    /**< Append text ("alpha", "beta", "" etc.) */
 #define MKSTRING_(s) #s           /**< Stringify */
 #define MKSTRING(s) MKSTRING_(s)  /**< Stringify */
 
@@ -66,9 +90,9 @@
 /**
  * SAF Module: Utilities
  *
- * Contains a collection of useful memory allocation functions and cross-
- * platform complex number wrappers. Optimised linear algebra routines utilising
- * BLAS and LAPACK are also included.
+ * A collection of useful memory allocation functions and cross-platform complex
+ * number wrappers. Optimised linear algebra routines utilising CBLAS and LAPACK
+ * are also included.
  *
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by
@@ -92,9 +116,9 @@
 #include "../modules/saf_utilities/saf_utilities.h"
 
 /**
- * SAF Module: CDF4SAP
+ * SAF Module: CDf4SAP
  *
- * Covarience Domain Framework for Spatial Audio Processing (CDF4SAP). A C
+ * Covarience Domain Framework for Spatial Audio Processing (CDF4SAP); a C
  * implementation of the framework described in [1].
  *
  * ## Dependencies
@@ -110,12 +134,13 @@
 /**
  * SAF Module: HOA
  *
- * A collection of higher-order Ambisonics related functions. Some of which are
- * derived from the Matlab library by Archontis Politis, found here:
- *  - https://github.com/polarch/Higher-Order-Ambisonics
+ * A collection of higher-order Ambisonics related functions; some of which are
+ * derived from the Matlab library found in [1].
  *
  * ## Dependencies
  *   saf_utilities, saf_vbap, saf_sh
+ *
+ * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
  */
 #define SAF_HOA_MODULE
 #include "../modules/saf_hoa/saf_hoa.h"
@@ -123,10 +148,9 @@
 /**
  * SAF Module: HRIR
  *
- * A collection of head-related impulse-response (HRIR) functions. Including
+ * A collection of head-related impulse-response (HRIR) functions; including:
  * estimation of the interaural time differences (ITDs), conversion of HRIRs to
- * HRTF filterbank coefficients, and HRTF interpolation utilising amplitude-
- * normalised VBAP gains.
+ * HRTF filterbank coefficients, and HRTF interpolation.
  *
  * ## Dependencies
  *   saf_utilities
@@ -135,7 +159,7 @@
 #include "../modules/saf_hrir/saf_hrir.h"
 
 /**
- * SAF Module: REVERB
+ * SAF Module: Reverb
  *
  * A collection of reverb and room simulation algorithms.
  *
@@ -148,14 +172,15 @@
 /**
  * SAF Module: SH
  *
- * A collection of spherical harmonic related functions. Many of which have been
- * derived from Matlab libraries by Archontis Politis, found here:
- *   - https://github.com/polarch/Spherical-Harmonic-Transform
- *   - https://github.com/polarch/Array-Response-Simulator
- *   - https://github.com/polarch/Spherical-Array-Processing
+ * A collection of spherical harmonic related functions; many of which have been
+ * derived from the Matlab libraries found in [1-3].
  *
  * ## Dependencies
  *   saf_utilities
+ *
+ * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
+ * @see [2] https://github.com/polarch/Array-Response-Simulator
+ * @see [3] https://github.com/polarch/Spherical-Array-Processing
  */
 #define SAF_SH_MODULE
 #include "../modules/saf_sh/saf_sh.h"
@@ -163,12 +188,12 @@
 /**
  * SAF Module: VBAP
  *
- * VBAP functions largely derived from the MATLAB library by Archontis Politis,
- * found here:
- *  - https://github.com/polarch/Vector-Base-Amplitude-Panning
+ * VBAP functions largely derived from the Matlab library found in [1].
  *
  * ## Dependencies
  *  saf_utilities
+ *
+ * @see [1] https://github.com/polarch/Vector-Base-Amplitude-Panning
  */
 #define SAF_VBAP_MODULE
 #include "../modules/saf_vbap/saf_vbap.h"
@@ -179,7 +204,7 @@
 /* ========================================================================== */
 
 /**
- * SAF Module: SOFA Reader
+ * SAF Module: SOFA_Reader
  *
  * A simple SOFA file reader that returns only the bare minimum needed to
  * load HRIR data.
@@ -195,6 +220,5 @@
 #ifdef  SAF_ENABLE_SOFA_READER_MODULE
 # include "../modules/saf_sofa_reader/saf_sofa_reader.h"
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */
-
 
 #endif /* SAF_H_INCLUDED */

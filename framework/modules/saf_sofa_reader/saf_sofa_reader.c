@@ -16,6 +16,7 @@
 
 /**
  * @file saf_sofa_reader.c
+ * @ingroup SOFA_Reader
  * @brief Public source for the sofa reader module (#SAF_SOFA_READER_MODULE)
  *
  * @warning This (optional) SOFA reader, requires netcdf to be linked to your

@@ -244,7 +244,7 @@ void loadLoudspeakerArrayPreset
     /* Fill remaining slots with default coords */
     for(; ch<MAX_NUM_LOUDSPEAKERS; ch++)
         for(i=0; i<2; i++)
-            dirs_deg[ch][i] = default_LScoords64_rad[ch][i]* (180.0f/M_PI);
+            dirs_deg[ch][i] = __default_LScoords64_rad[ch][i]* (180.0f/M_PI);
     
     /* specify new number of channels (for dynamically changing the number of TFT channels) */
     (*newNCH) = nCH;

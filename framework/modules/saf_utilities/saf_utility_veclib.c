@@ -16,6 +16,7 @@
 
 /**
  * @file saf_utility_veclib.c
+ * @ingroup Utilities
  * @brief Wrappers for optimised linear algebra routines, utilising CBLAS and
  *        LAPACK
  *

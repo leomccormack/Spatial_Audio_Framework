@@ -45,34 +45,39 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define ENABLE_TF_DISPLAY
+#define ENABLE_TF_DISPLAY /**< Enable TF data display related function */
 
 /* ========================================================================== */
 /*                             Presets + Constants                            */
 /* ========================================================================== */
  
 #ifdef ENABLE_TF_DISPLAY
-# define AMBI_DRC_NUM_DISPLAY_SECONDS ( 8 ) /* How many seconds the display will show historic TF data */
+/** How many seconds the display will show historic TF data */
+# define AMBI_DRC_NUM_DISPLAY_SECONDS ( 8 )
+/** Number of time slots of historic TF data */
 # define AMBI_DRC_NUM_DISPLAY_TIME_SLOTS ( (int)(AMBI_DRC_NUM_DISPLAY_SECONDS*48000.0f/(float)128) )
+/** Number of samples to offset when reading TF data */
 # define AMBI_DRC_READ_OFFSET ( 200 )
+/**< Number of frequency bands used during processing */
 # define AMBI_DRC_NUM_BANDS ( 133 )
 #endif
-#define AMBI_DRC_SPECTRAL_FLOOR (0.1585) /* -16dB, maximum gain reduction for a given frequency band */
+/**< -16dB, maximum gain reduction for a given frequency band */
+#define AMBI_DRC_SPECTRAL_FLOOR (0.1585)
 
-#define AMBI_DRC_IN_GAIN_MIN_VAL ( -40.0f )
-#define AMBI_DRC_IN_GAIN_MAX_VAL ( 20.0f )
-#define AMBI_DRC_THRESHOLD_MIN_VAL ( -60.0f )
-#define AMBI_DRC_THRESHOLD_MAX_VAL ( 0.0f )
-#define AMBI_DRC_RATIO_MIN_VAL ( 1.0f )
-#define AMBI_DRC_RATIO_MAX_VAL ( 30.0f )
-#define AMBI_DRC_KNEE_MIN_VAL ( 0.0f )
-#define AMBI_DRC_KNEE_MAX_VAL ( 10.0f )
-#define AMBI_DRC_ATTACK_MIN_VAL ( 10.0f )
-#define AMBI_DRC_ATTACK_MAX_VAL ( 200.0f )
-#define AMBI_DRC_RELEASE_MIN_VAL ( 50.0f )
-#define AMBI_DRC_RELEASE_MAX_VAL ( 1000.0f )
-#define AMBI_DRC_OUT_GAIN_MIN_VAL ( -20.0f )
-#define AMBI_DRC_OUT_GAIN_MAX_VAL ( 40.0f )
+#define AMBI_DRC_IN_GAIN_MIN_VAL ( -40.0f )   /**< Minimum input gain, dB */
+#define AMBI_DRC_IN_GAIN_MAX_VAL ( 20.0f )    /**< Maximum input gain, dB */
+#define AMBI_DRC_THRESHOLD_MIN_VAL ( -60.0f ) /**< Minimum threshold, dB */
+#define AMBI_DRC_THRESHOLD_MAX_VAL ( 0.0f )   /**< Maximum threshold, dB */
+#define AMBI_DRC_RATIO_MIN_VAL ( 1.0f )       /**< Minimum ratio, X:1 */
+#define AMBI_DRC_RATIO_MAX_VAL ( 30.0f )      /**< Maximum ratio, X:1 */
+#define AMBI_DRC_KNEE_MIN_VAL ( 0.0f )        /**< Minimum knee, dB */
+#define AMBI_DRC_KNEE_MAX_VAL ( 10.0f )       /**< Maximum knee, dB */
+#define AMBI_DRC_ATTACK_MIN_VAL ( 10.0f )     /**< Minimum attack time, ms */
+#define AMBI_DRC_ATTACK_MAX_VAL ( 200.0f )    /**< Maximum attack time, ms */
+#define AMBI_DRC_RELEASE_MIN_VAL ( 50.0f )    /**< Minimum release time, ms */
+#define AMBI_DRC_RELEASE_MAX_VAL ( 1000.0f )  /**< Maximum release time, ms */
+#define AMBI_DRC_OUT_GAIN_MIN_VAL ( -20.0f )  /**< Minimum output gain, dB */
+#define AMBI_DRC_OUT_GAIN_MAX_VAL ( 40.0f )   /**< Maximum output gain, dB */
 
 
 /* ========================================================================== */
@@ -172,7 +177,7 @@ void ambi_drc_setChOrder(void* const hAmbi, int newOrder);
 
 /**
  * Sets the Ambisonic normalisation convention to decode with, in order to match
- * with the convention employed by the input signals (see #_NORM_TYPE enum)
+ * with the convention employed by the input signals (see #_NORM_TYPES enum)
  */
 void ambi_drc_setNormType(void* const hAmbi, int newType);
     
@@ -197,15 +202,26 @@ void ambi_drc_setInputPreset(void* const hAmbi, SH_ORDERS newPreset);
  */
 int ambi_drc_getFrameSize(void);
 
-#ifdef ENABLE_TF_DISPLAY
+/**
+ * Returns pointers to historic time-frequency data, which may be used for
+ * plotting purposes
+ */
 float** ambi_drc_getGainTF(void* const hAmbi);
 
+/**
+ * Returns current TF gain data write index
+ */
 int ambi_drc_getGainTFwIdx(void* const hAmbi);
-    
+
+/**
+ * Returns current TF gain data read index
+ */
 int ambi_drc_getGainTFrIdx(void* const hAmbi);
-    
+
+/**
+ * Returns the frequency vector used by the processing
+ */
 float* ambi_drc_getFreqVector(void* const hAmbi, int* nFreqPoints);
-#endif
     
 /**
  * Returns the compressor threshold value, in DECIBELS
@@ -252,7 +268,7 @@ int ambi_drc_getChOrder(void* const hAmbi);
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals
- * (see #_NORM_TYPE enum)
+ * (see #_NORM_TYPES enum)
  */
 int ambi_drc_getNormType(void* const hAmbi);
     

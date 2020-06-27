@@ -15,6 +15,8 @@
  */
 
 /**
+ *@addtogroup Utilities
+ *@{
  * @file saf_utility_erb.h
  * @brief Functions to determine frequencies that fall within critical bands
  *        [Equivalent-Rectangular Bandwidth (ERB)]
@@ -68,3 +70,5 @@ void findERBpartitions(/* Input Arguments */
 #endif /* __cplusplus */
 
 #endif /* SAF_ERB_H_INCLUDED */
+
+/**@} */ /* doxygen addtogroup Utilities */

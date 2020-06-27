@@ -9,21 +9,18 @@ A cross-platform framework for developing spatial audio related applications in 
 
 ## Prerequisites
 
-The framework requires the following libraries:
-* Any Library/Libraries conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
+The Spatial_Audio_Framework (SAF) requires the following libraries:
+* Any library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 * (Optional) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
 
-The rationale for the former requirement is that the framework employs the use of CBLAS/LAPACK routines for tackling all of the linear algebra operations, which are used quite prolifically throughout the code. Therefore, a performance library, which conforms to the CBLAS/LAPACK standards, is required by most of the framework modules. 
-
-Add one of the following pre-processor definitions, which will let SAF know which library/libraries you have linked to your project:
+Add one of the following pre-processor definitions, which will let SAF know which of the supported CBLAS/LAPACK library/libraries you have linked to your project:
 ```
-SAF_USE_INTEL_MKL                
-SAF_USE_OPEN_BLAS_AND_LAPACKE
-SAF_USE_APPLE_ACCELERATE
-SAF_USE_ATLAS
-```
-
-Note that detailed instructions regarding how to build/link these performance libraries can be found [here](dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
+SAF_USE_INTEL_MKL             # great option, but only for x86 architectures    
+SAF_USE_OPEN_BLAS_AND_LAPACKE # good option, works on everything
+SAF_USE_APPLE_ACCELERATE      # solid option (x86 and ARM), but MacOS only and slower than MKL
+SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing
+``` 
+Detailed instructions regarding how to build/link these performance libraries can be found [here](dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
 
 ## Framework structure
 
@@ -32,7 +29,7 @@ The framework comprises the following core modules:
 * **saf_sh** - spherical harmonic and spherical array processing related functions.
 * **saf_vbap** - Vector-base Amplitude Panning (VBAP) functions.
 * **saf_cdf4sap** - Covariance Domain Framework for Spatial Audio Processing (CDF4SAP).
-* **saf_hrir** - HRIR/HRTF related functions (estimating ITDs, interpolation, diffuse-field EQ etc.).
+* **saf_hrir** - HRIR/HRTF related functions (estimating ITDs, HRTF interpolation, diffuse-field EQ etc.).
 * **saf_reverb** - a collection of reverbs and room simulation algorithms.
 * **saf_utilities** - a collection of useful utility functions and cross-platform wrappers.
 
@@ -48,13 +45,13 @@ Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unid
 
 ## Using the framework
 
-Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to your project), you can now add the files found in the **framework** folder to your project and add the following directory to your header search paths:
+Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to your project), add the files found in the **framework** folder to your project, and add the following directory to your project's header search paths:
 
 ```
 Spatial_Audio_Framework/framework/include  
 ```
 
-The framework's master include header is then:
+Then include the framework's master header and you're good to go:
 
 ```c
 #include "saf.h"
@@ -76,7 +73,7 @@ The available SAF-specific build options (and their default values) are:
 -DSAF_BUILD_TESTS=1                        # build unit testing program
 ```
 
-If using **SAF_USE_INTEL_MKL** as the performance library, then the default header and library paths may be be overridden with:
+If using **SAF_USE_INTEL_MKL** as the performance library, then the default header and library search paths may be overridden with:
 ``` 
 -DINTEL_MKL_HEADER_PATH="path/to/mkl/headers"
 -DINTEL_MKL_LIB="path/to/mkl/libs/mkl_rt(.so/.dylib/.lib)"   # OR:
@@ -138,7 +135,7 @@ Note that many of these examples have also been integrated into VST audio plug-i
 ## Contributing
 
 Suggestions and contributions to the code are both welcomed and encouraged. It should be highlighted that the framework has been designed to be highly modular with plenty of room for expansion. Therefore:
-* if you are researcher who has developed a spatial-audio related method and want it to be integrated into the framework... or
+* if you are researcher who has developed a spatial-audio related method and want to integrate it into the framework... or
 * if you notice that an existing piece of code can be rewritten to make it clearer, faster, or to fix a bug...
 
 then please feel free to do so and submit a pull request. Note, however, that if the changes/additions are major, then maybe consider first discussing it via a github "issue" or by contacting the developers directly via email. We may also be able to help with the implementation if needed :- )

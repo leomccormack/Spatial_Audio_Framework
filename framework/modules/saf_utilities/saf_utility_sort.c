@@ -16,7 +16,9 @@
 
 /**
  * @file saf_utility_sort.c
+ * @ingroup Utilities
  * @brief A collection of useful sorting functions
+ *
  * @author Leo McCormack
  * @date 30.07.2018
  */
