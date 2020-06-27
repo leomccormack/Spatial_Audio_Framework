@@ -190,12 +190,13 @@ typedef enum _HOA_NORM{
  *
  * @note insig is converted "in-place".
  *
- * @param[in]  insig         Input signal with the channel ordering convention
- *                           of: inConvention; FLAT: (order+1)^2 x signalLength
- * @param[in]  order         Ambisonic order
- * @param[in]  signalLength  Signal length in samples
- * @param[in]  inConvention  Channel order convention of input signals
- * @param[in]  outConvention Channel order convention of output signals
+ * @param[in,out] insig         Input signal with the channel ordering
+ *                              convention of: inConvention;
+ *                              FLAT: (order+1)^2 x signalLength
+ * @param[in]     order         Ambisonic order
+ * @param[in]     signalLength  Signal length in samples
+ * @param[in]     inConvention  Channel order convention of input signals
+ * @param[in]     outConvention Channel order convention of output signals
  */
 void convertHOAChannelConvention(/* Input Arguments */
                                  float* insig,
