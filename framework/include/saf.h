@@ -68,8 +68,8 @@
 
 /** The Spatial_Audio_Framework Version as a string */
 #define SAF_VERSION_STRING MKSTRING(SAF_VERSION_MAJOR) "." MKSTRING( \
-                           SAF_VERSION_MINOR) "." MKSTRING(SAF_VERSION_PATCH)""\
-                           SAF_VERSION_SPECIAL
+                           SAF_VERSION_MINOR) "." MKSTRING(SAF_VERSION_PATCH) \
+                           "" SAF_VERSION_SPECIAL
 
 /** The Spatial_Audio_Framework Version as a banner */
 #define SAF_VERSION_BANNER \
