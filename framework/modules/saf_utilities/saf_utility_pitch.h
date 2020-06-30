@@ -72,7 +72,7 @@ void smb_pitchShift_destroy(/* Input Arguments */
 
 /**
  * Performs pitch shifting of the input signals, while retaining the same time
- * duration as the original, using the algorithm detailed in [1]
+ * duration as the original using the algorithm detailed in [1]
  *
  * This implementation was orginally written by Stephan M. Bernsee (c) 1999-2015
  * distributed under the WOL license. It has been modified to better work with

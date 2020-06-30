@@ -74,7 +74,7 @@ float wigner_3j(/* Input arguments */
  *
  * Constructs the (N1+1)^2 x (N2+1)^2 x (N+1)^2 matrix of Gaunt coefficients
  * which represent the integral of three spherical harmonics, such as
- * G^q_{q',q''} = \int_\Omega Y_{q'}Y_{q''}Y^*_{q} \mathrm{d}\Omega.
+ * G^q_{q',q''} = int_Omega Y_{q'}Y_{q''}Y^*_{q} mathrm{d} Omega.
  *
  * With Gaunt coefficients, the spherical harmonic coefficients of the product
  * of two spherical functions can be given directly as a linear relationship

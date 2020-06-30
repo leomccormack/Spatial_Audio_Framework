@@ -40,7 +40,7 @@ extern "C" {
 /**
  * Error and warning codes. Error codes are considered fatal. Whereas warnings
  * are given if alternative measures have taken place (due to some kind of
- * strange behaviour), but the program may still continue.
+ * unexpected behaviour), but the program may still continue.
  */
 typedef enum _SAF_ERRORS {
     /* ---------------------------------------------------------------------- */

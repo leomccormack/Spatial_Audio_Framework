@@ -20,7 +20,7 @@
  * @file saf_vbap.h
  * @brief Main header for the VBAP/MDAP module (#SAF_VBAP_MODULE)
  *
- * VBAP functions largely derived from the MATLAB library by Archontis Politis,
+ * VBAP functions largely derived from the Matlab library by Archontis Politis,
  * found in [1].
  *
  * @see [1] https://github.com/polarch/Vector-Base-Amplitude-Panning
@@ -56,7 +56,7 @@ extern "C" {
  * @param[in]  enableDummies      '0' disabled, '1' enabled, and dummies are
  *                                placed at +/-90 elevation if required
  * @param[in]  spread             Spreading factor in DEGREES, 0: VBAP, >0: MDAP
- * @param[out] gtable             (&) The 3D VBAP gain table ENERGY NORMALISED;
+ * @param[out] gtable             (&) The 3D VBAP gain table ENERGY normalised;
  *                                FLAT: N_gtable x L
  * @param[out] N_gtable           (&) number of points in the gain table
  * @param[out] nTriangles         (&) number of loudspeaker triangles
@@ -112,7 +112,7 @@ void generateVBAPgainTable3D_srcs(/* Input arguments */
  * @param[in]  enableDummies      '0' disabled, '1' enabled. Dummies are placed
  *                                at +/-90 elevation if required
  * @param[in]  spread             Spreading factor in DEGREES, 0: VBAP, >0: MDAP
- * @param[out] gtable             (&) The 3D VBAP gain table ENERGY NORMALISED;
+ * @param[out] gtable             (&) The 3D VBAP gain table ENERGY normalised;
  *                                FLAT: N_gtable x L
  * @param[out] N_gtable           (&) number of points in the gain table
  * @param[out] nTriangles         (&) number of loudspeaker triangles
@@ -166,7 +166,7 @@ void generateVBAPgainTable3D(/* Input arguments */
  * @param[in]  nTable          number of points in the gain table
  * @param[in]  nDirs           number of loudspeakers
  * @param[out] vbap_gtableComp The compressed 3D VBAP gain table AMPLITUDE-
- *                             NORMALISED; FLAT: nTable x 3
+ *                             normalised; FLAT: nTable x 3
  * @param[out] vbap_gtableIdx  The indices for the compressed 3D VBAP gain
  *                             table; FLAT: nTable x 3
  */
@@ -206,7 +206,7 @@ void VBAPgainTable2InterpTable(float* vbap_gtable,
  * @param[in]  ls_dirs_deg  Loudspeaker directions in DEGREES (elev assumed to
  *                          be 0 for all); FLAT: L x 2
  * @param[in]  L            Number of loudspeakers
- * @param[out] gtable       (&) The 2D VBAP gain table ENERGY NORMALISED;
+ * @param[out] gtable       (&) The 2D VBAP gain table ENERGY normalised;
  *                          FLAT: S x L
  * @param[out] N_gtable     (&) number of points in the gain table, N_gtable=S
  * @param[out] nPairs       (&) number of loudspeaker pairs
@@ -242,7 +242,7 @@ void generateVBAPgainTable2D_srcs(/* Input arguments */
  *                         be 0 for all); FLAT: L x 2
  * @param[in]  L           Number of loudspeakers
  * @param[in]  az_res_deg  Azimuthal resolution in DEGREES
- * @param[out] gtable      (&) The 2D VBAP gain table ENERGY NORMALISED;
+ * @param[out] gtable      (&) The 2D VBAP gain table ENERGY normalised;
  *                         FLAT: S x L
  * @param[out] N_gtable    (&) number of points in the gain table, N_gtable=S
  * @param[out] nPairs      (&) number of loudspeaker pairs

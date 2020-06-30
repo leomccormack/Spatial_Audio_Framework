@@ -25,6 +25,7 @@
  4*4*4*2
  */
 
+/** Internal KissFFT structure */
 struct kiss_fft_state{
     int nfft;
     int inverse;

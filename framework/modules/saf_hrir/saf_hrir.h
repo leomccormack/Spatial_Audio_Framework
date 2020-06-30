@@ -56,8 +56,8 @@ extern const int __default_hrir_fs;                  /**< HRIR samplerate */
 /* ========================================================================== */
 
 /**
- * Estimates the interaural time-differences (ITDs) for each HRIR in a set via
- * the cross-correlation between the left and right IRs
+ * Estimates the interaural time-differences (ITDs) for each HRIR via the cross-
+ * correlation between the left and right channels
  *
  * @param[in]  hrirs    HRIRs; FLAT: N_dirs x #NUM_EARS x hrir_len
  * @param[in]  N_dirs   Number of HRIRs
@@ -101,7 +101,7 @@ void HRIRs2FilterbankHRTFs(/* Input Arguments */
                            float_complex* hrtf_fb);
 
 /**
- * Converts a HRIR set to HRTFs, with a given FFT size
+ * Converts HRIRs to HRTFs, with a given FFT size
  *
  * @note If the HRIRs are shorter than the FFT size (hrir_len<fftSize), then the
  *       HRIRs are zero-padded. If they are longer, then they are truncated.
@@ -141,18 +141,17 @@ void diffuseFieldEqualiseHRTFs(/* Input Arguments */
                                float_complex* hrtfs);
 
 /**
- * Interpolates a set of HRTFs for specified directions; defined by an amplitude
+ * Interpolates a set of HRTFs for specified directions, defined by an amplitude
  * normalised VBAP interpolation table (see saf_vbap.h)
  *
  * The interpolation is performed by applying interpolation gains to the HRTF
  * magnitudes and HRIR inter-aural time differences separately. The inter-aural
  * phase differences are then reintroduced for each frequency band.
- * Note that this essentially a C implementation of a MatLab function by
- * Archontis Politis.
  *
  * @note Use VBAPgainTable2InterpTable() to take a conventional energy-
  *       normalised VBAP gain table, and convert it to an amplitude-normalised
- *       interpolation table.
+ *       interpolation table. (Basically, amplitude-normalised VBAP gains are
+ *       equivalent to triangular interpolation weights).
  *
  * @param[in]  hrtfs         HRTFs as filterbank coeffs;
  *                           FLAT: N_bands x #NUM_EARS x N_hrtf_dirs
@@ -180,9 +179,9 @@ void interpHRTFs(/* Input Arguments */
 
 /**
  * Computes the binaural diffuse coherence per frequency for a given HRTF set,
- * as in [1]
+ * as described in [1]
  *
- * @param[in]  hrtfs       HRTFs as filterbank coeffs;
+ * @param[in]  hrtfs       HRTFs as filterbank coeffs
  *                         FLAT: N_bands x #NUM_EARS x N_hrtf_dirs
  * @param[in]  itds        The inter-aural time difference (ITD) for each HRIR;
  *                         N_hrtf_dirs x 1

@@ -150,8 +150,8 @@ void cmplxPairUp(double_complex* in_vec,
 /**
  * Finds indicies into "grid_dirs" that are the closest to "target dirs".
  *
- * - grid_dirs[idx_closest[0]] will be the closest direction in "grid_dirs"
- *   to target_dirs[0].
+ * e.g. grid_dirs[idx_closest[0]] will be the closest direction in "grid_dirs"
+ * to target_dirs[0].
  *
  * @param [in]  grid_dirs    Spherical coordinates of grid directions;
  *                           FLAT: nGrid x 2

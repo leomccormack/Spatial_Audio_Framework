@@ -19,7 +19,7 @@
  * @ingroup VBAP
  * @brief Internal header for the VBAP/MDAP module (#SAF_VBAP_MODULE)
  *
- * VBAP functions largely derived from the MATLAB library by Archontis Politis,
+ * VBAP functions largely derived from the Matlab library by Archontis Politis,
  * found in [1].
  *
  * @see [1] https://github.com/polarch/Vector-Base-Amplitude-Panning

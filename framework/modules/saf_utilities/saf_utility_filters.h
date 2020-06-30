@@ -314,19 +314,20 @@ void butterCoeffs(/* Input arguments */
  * filter for the first band, high-pass filter for the last band, and band-pass
  * filter for the inbetween bands (nCutoffFreqs must be 2 or more).
  *
- * @note Only odd number orders work with the design. However, due to practical
- *       numerical limitations, only 1st and 3rd order options make sense, which
- *       is why this implementation will only accept order = 1 or 3
+ * @warning Only odd valued orders work with this design! However, due to
+ *          practical numerical limitations, only 1st and 3rd order options are
+ *          numerically robust enough to make sense, which is why this
+ *          implementation will only accept order = 1 or 3.
  *
  * @test test__faf_IIRFilterbank()
  *
  * @param[in] phFaF         (&) address of the faf_IIRFilterbank handle
- * @param[in] order         Filter order, 1st or 3rd
+ * @param[in] order         Filter order, 1 or 3
  * @param[in] fc            Vector of cutoff frequencies; nCutoffFreqs x 1
  * @param[in] nCutoffFreqs  Number of cutoff frequencies in vector 'fc'.
  * @param[in] sampleRate    Sampling rate in Hz
- * @param[in] maxNumSamples Maximum number of samples to expect when calling
- *                          faf_IIRFilterbank_apply()
+ * @param[in] maxNumSamples Maximum number of samples to expect at a time when
+ *                          calling faf_IIRFilterbank_apply()
  *
  * @see [1] Favrot, A. and Faller, C., 2010. Complementary N-band IIR filterbank
  *          based on 2-band complementary filters. Proc. Intl. Works. on Acoust.
@@ -424,8 +425,8 @@ void FIRCoeffs(/* Input arguments */
  * Computes a bank of FIR filter coefficients required to divide a signal into
  * frequency bands
  *
- * Provided the order is sufficient, the sum of the bands
- * should recontruct the original (although, shifted in time due to group delay)
+ * Provided the order is sufficient, the sum of the bands should reconstruct the
+ * original (although, shifted in time due to group delay)
  * e.g fc[1] = { 1000 };
  *  - Band1, &filter[0*(order+1)] : LPF @ 1kHz
  *  - Band2, &filter[1*(order+1)] : HPF @ 1kHz

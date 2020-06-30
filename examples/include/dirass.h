@@ -225,7 +225,7 @@ void dirass_setDispWidth(void* const hDir,  int newValue);
     
 /**
  * Sets the upscale order, only if #_DIRASS_REASS_MODE is set to #REASS_UPSCALE,
- * (see #_UPSCALE_ORDER enum).
+ * (see #_DIRASS_UPSCALE_ORDERS enum).
  */
 void dirass_setUpscaleOrder(void* const hDir,  int newOrder);
     
@@ -335,7 +335,7 @@ int dirass_getDisplayGridOption(void* const hDir);
 int dirass_getDispWidth(void* const hDir);
 
 /**
- * Returns the current upscale order (see #_DIRASS_UPSCALE_ORDER enum).
+ * Returns the current upscale order (see #_DIRASS_UPSCALE_ORDERS enum).
  */
 int dirass_getUpscaleOrder(void* const hDir);
 

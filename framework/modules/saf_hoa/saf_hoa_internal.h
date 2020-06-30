@@ -36,9 +36,9 @@
 #include <math.h> 
 #include <string.h>
 #include "saf_hoa.h"
-#include "../saf_sh/saf_sh.h"        /* for computing the legendre polynamials */
-#include "../saf_vbap/saf_vbap.h"      /* for VBAP gains utilised by AllRAD */
-#include "../saf_utilities/saf_utilities.h" /* for linear algebra speed-ups */
+#include "../saf_sh/saf_sh.h"       /* for computing the legendre polynamials */
+#include "../saf_vbap/saf_vbap.h"        /* for VBAP gains utilised by AllRAD */
+#include "../saf_utilities/saf_utilities.h"   /* for linear algebra speed-ups */
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,12 +49,15 @@ extern "C" {
 /* ========================================================================== */
 
 /**
- * Computes the Energy preserving Ambisonic decoder (EPAD) as detailed in [1]
+ * Computes the Energy preserving Ambisonic decoder (EPAD), as detailed in [1]
  *
  * @note The function has been written to also work when the number of spherical
  *       harmonic components exceeds the number of loudspeakers. In which case,
  *       the 'U' matrix from the SVD is truncated instead. However, ideally,
  *       nLS > nSH, like in the paper (and in general).
+ * @note Additional normalisation is also applied so that when the loudspeakers
+ *       are uniformly arranged, the decoding matrix gains are equivalent to
+ *       those produced by SAD/MMD.
  *
  * @param[in]  order       Decoding order
  * @param[in]  ls_dirs_deg Loudspeaker directions in DEGREES [azi elev];
@@ -73,7 +76,9 @@ void getEPAD(/* Input Arguments */
              float* decMtx);
 
 /**
- * Computes the All-round Ambisonics decoder (AllRAD) as detailed in [1]
+ * Computes the All-round Ambisonics decoder (AllRAD), as detailed in [1], which
+ * is essentially a spherical harmonic approximation of VBAP patterns for the
+ * target loudspeaker setup.
  *
  * @param[in]  order       Decoding order
  * @param[in]  ls_dirs_deg Loudspeaker directions in DEGREES [azi elev];
@@ -108,8 +113,12 @@ void getAllRAD(/* Input Arguments */
  *       truncation, as the HRTF grid is typically of much higher modal order
  *       than that of the input. This colouration especially affects high-
  *       frequencies, since high-frequency energy is predominantly concentrated
- *       in the higher-order components. This actually gets worse the more HRTFs
- *       you have.
+ *       in the higher-order components, which is then lost by truncating the
+ *       input order. This phenomenon actually gets worse the more HRTFs there
+ *       are, and is why the "virtual loudspeaker" approach often sounds better;
+ *       subsequently bewildering many mathematicians, who often assume that
+ *       more points used for a least-squares approximation, can only improve
+ *       things.
  *
  * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
@@ -168,7 +177,7 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
                             float_complex* decMtx);
 
 /**
- * Computes a binaural ambisonic decoder based on spatial resampling (aka
+ * Computes a binaural ambisonic decoder based on spatial resampling (basically,
  * virtual loudspeaker decoding) [1]
  *
  * The binaural ambisonic decoder is computed for each frequency bin/band,
@@ -178,12 +187,12 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
  * @note Like getBinDecoder_LSDIFFEQ() this method mitagates some of the timbral
  *       colourations exhibited by standard LS decoding at lower input orders.
  *       However, it operates without equalisation. Instead, the modal order of
- *       the HRTF grid is brought closer to the decoding order, by simply
- *       reducing the number of HRTF points used, and calculating the LS decoder
- *       with this reduced number of HRTFs. Therefore, rather than assigning
- *       high-frequency energy to higher-order components and subsequently
- *       discarding it due to order truncation, the energy is instead aliased
- *       back into the lower-order components and preserved.
+ *       the HRTF grid is brought closer to the decoding order by simply
+ *       reducing the number of HRTF points. The LS decoder is then computed
+ *       using this reduced HRTF set. Essentially, rather than assigning high-
+ *       frequency energy to higher-order components and subsequently discarding
+ *       it due to order truncation, the energy is instead aliased back into the
+ *       lower-order components and preserved.
  *
  * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
@@ -227,16 +236,15 @@ void getBinDecoder_SPR(/* Input Arguments */
  *       the phase information of the HRTFs at frequencies above 1.5 kHz, the LS
  *       fitting instead prioritises the delivery of the correct magnitude
  *       responses; rather than the phase. Thus it ultimately yields improved
- *       ILD cues and diminished inter-aural time difference (ITD) cues; but in
+ *       ILD cues and diminished inter-aural time difference (ITD) cues, but in
  *       a frequency range where ILD cues are more important for localisation.
- *       This method, therefore, mitagates some of the localisation deficiencies
+ *       This method, therefore, mitagates many of the localisation deficiencies
  *       compared with the standard LS decoding at lower input orders.
- *
  * @note The paper [1] also detailed a diffuse-field covariance constraint,
- *       and the original name was TAC (C=contrained), however, in this
- *       framework, this constraint is a seperate independent operation. One may
- *       impose it on any binaural decoder using the applyDiffCovMatching()
- *       function.
+ *       and the original accronym was TAC (C=contrained), however, in SAF, this
+ *       constraint is implemented as an independent operation. One may impose
+ *       this constraint on any binaural decoder using the
+ *       applyDiffCovMatching() function.
  *
  * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
@@ -270,7 +278,7 @@ void getBinDecoder_TA(/* Input Arguments */
 
 /**
  * Computes a binaural ambisonic decoder based on the magnitude least-squares
- * (MagLS) method first described in [1], and with the algorithm given in [2]
+ * (MagLS) method, first described in [1], with the algorithm given in [2]
  *
  * The binaural ambisonic decoder is computed for each frequency bin/band,
  * ready to be applied to input SH signals in the time-frequency domain, or,

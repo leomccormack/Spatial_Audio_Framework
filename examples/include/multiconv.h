@@ -51,8 +51,9 @@ void multiconv_destroy(void** const phMCnv);
 /**
  * Initialises an instance of multiconv with default settings
  *
- * @param[in] hMCnv      multiconv handle
- * @param[in] samplerate Host samplerate.
+ * @param[in] hMCnv         multiconv handle
+ * @param[in] samplerate    Host samplerate
+ * @param[in] hostBlockSize Host frame/block size
  */
 void multiconv_init(void* const hMCnv,
                     int samplerate,

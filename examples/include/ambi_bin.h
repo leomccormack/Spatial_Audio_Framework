@@ -15,7 +15,7 @@
  */
 
 /**
- * @file ambi_bin.h
+ * @file ambi_bin.h 
  * @brief A binaural Ambisonic decoder for reproducing ambisonic signals over
  *        headphones
  *

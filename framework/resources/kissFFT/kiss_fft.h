@@ -74,6 +74,7 @@ extern "C" {
 # endif
 #endif
 
+/** Complex data type used by kissFFT */
 typedef struct {
     kiss_fft_scalar r;
     kiss_fft_scalar i;

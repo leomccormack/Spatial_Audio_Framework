@@ -16,7 +16,7 @@
 
 /**
  * @file saf.h
- * @brief Main include header for the Spatial_Audio_Framework
+ * @brief Main include header for the Spatial_Audio_Framework (SAF)
  *
  * ## Core modules
  *   saf_utilities, saf_cdf4sap, saf_hoa, saf_hrir, saf_sh, saf_vbap, saf_reverb
@@ -32,28 +32,28 @@
 #define SAF_H_INCLUDED
 
 /*  doxygen module definitions: */
-/** @defgroup Utilities
+/** @defgroup Utilities    saf_utilities
  *  @brief    Utilities module */
-/** @defgroup CDF4SAP
+/** @defgroup CDF4SAP      saf_cdf4sap
  *  @brief    Covariance domain framework processing module */
-/** @defgroup HOA
+/** @defgroup HOA          saf_hoa
  *  @brief    Higher-order Ambisonics module */
-/** @defgroup SH
+/** @defgroup SH           saf_sh
  *  @brief    Spherical harmonic domain processing module */
-/** @defgroup HRIR
+/** @defgroup HRIR         saf_hrir
  *  @brief    HRIR/HRTF processing module */
-/** @defgroup Reverb
+/** @defgroup Reverb       saf_reverb
  *  @brief    Reverb and room simulation module */
-/** @defgroup VBAP
+/** @defgroup VBAP         saf_vbap
  *  @brief    Vector-base Amplitude Panning (VBAP) module */
-/** @defgroup SOFA_Reader
+/** @defgroup SOFA_Reader  saf_sofa_reader
  *  @brief    SOFA file reading module */
 
 
 /* ========================================================================== */
 /*                                SAF Version                                 */
 /* ========================================================================== */
-/* Note: version info is also scanned and employed by CMakeLists.txt */
+/* Note that this version info is also scanned and employed by CMakeLists.txt */
 
 #define SAF_VERSION_MAJOR 1       /**< Major version */
 #define SAF_VERSION_MINOR 1       /**< Minor version */
@@ -67,8 +67,8 @@
                     SAF_VERSION_PATCH)
 
 /** The Spatial_Audio_Framework Version as a string */
-#define SAF_VERSION_STRING MKSTRING(SAF_VERSION_MAJOR)"."MKSTRING( \
-                           SAF_VERSION_MINOR)"."MKSTRING(SAF_VERSION_PATCH)""\
+#define SAF_VERSION_STRING MKSTRING(SAF_VERSION_MAJOR) "." MKSTRING( \
+                           SAF_VERSION_MINOR) "." MKSTRING(SAF_VERSION_PATCH)""\
                            SAF_VERSION_SPECIAL
 
 /** The Spatial_Audio_Framework Version as a banner */
@@ -80,7 +80,7 @@
     "    (_____  ) |  ___  | |  __)                                      \n" \
     "          ) | | (   ) | | (                                         \n" \
     "    /|____) | | |   | | | |                                         \n" \
-    "    (_______) |_|   |_| |_|        (Version "SAF_VERSION_STRING") \n\n"
+    "    (_______) |_|   |_| |_|        (Version " SAF_VERSION_STRING ") \n\n"
 
 
 /* ========================================================================== */
@@ -90,22 +90,27 @@
 /**
  * SAF Module: Utilities
  *
- * A collection of useful memory allocation functions and cross-platform complex
- * number wrappers. Optimised linear algebra routines utilising CBLAS and LAPACK
- * are also included.
+ * A collection of useful utility functions; including: cross-platform complex
+ * number wrappers; optimised linear algebra routines based on CBLAS and LAPACK;
+ * FFT wrappers and STFT implementation; IIR/FIR filter coefficients and filter
+ * bank designs; lists of common loudspeaker and microphone array coordinates;
+ * multi-channel and matrix convolvers; spherical Bessel/Hankel functions
+ * (including their derivatives) functions; etc.
  *
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by
- *   the module and, thus, also by the SAF framework as a whole. Add one of the
- *   following FLAGS to your project's preprocessor definitions list in order
- *   to enable one of these suitable performance libraries, which must also be
- *   linked correctly to your project.
+ *   the module and, thus, also by SAF as a whole. Add one of the following
+ *   FLAGS to your project's preprocessor definitions list in order to enable
+ *   one of these suitable performance libraries, which must also be correctly
+ *   linked to your project.
  *   - SAF_USE_INTEL_MKL:
- *       to enable Intel's Math Kernal Library with Fortran LAPACK interface
+ *       to enable Intel's Math Kernal Library with the Fortran LAPACK interface
+ *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
+ *       to enable OpenBLAS with the LAPACKE interface
+ *   - SAF_USE_APPLE_ACCELERATE:
+ *       to enable the Accelerate framework with the Fortran LAPACK interface
  *   - SAF_USE_ATLAS:
  *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
- *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
- *       to enable OpenBLAS with LAPACKE interface
  *
  * @see More information can be found here:
  *      https://github.com/leomccormack/Spatial_Audio_Framework
@@ -134,7 +139,7 @@
 /**
  * SAF Module: HOA
  *
- * A collection of higher-order Ambisonics related functions; some of which are
+ * A collection of higher-order Ambisonics related functions; many of which are
  * derived from the Matlab library found in [1].
  *
  * ## Dependencies
@@ -220,5 +225,6 @@
 #ifdef  SAF_ENABLE_SOFA_READER_MODULE
 # include "../modules/saf_sofa_reader/saf_sofa_reader.h"
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */
+
 
 #endif /* SAF_H_INCLUDED */

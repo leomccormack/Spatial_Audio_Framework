@@ -39,8 +39,7 @@ extern "C" {
  * the [azimuth, elevation] convention. [0 0] is looking directly in-front
  * (positive x-axis), with positive elevations looking upwards (positive z-axis)
  * and positive azimuth angles looking leftwards (postive y-axis).
- * In other words: the convention used by the Spatial_Audio_Framework follows
- * the "right-hand-rule".
+ * In other words: the convention used by SAF follows the "right-hand-rule".
  */
     
 /**
@@ -73,7 +72,11 @@ extern const float __Zylia1D_coords_rad[19][2];
 extern const float __Eigenmike32_coords_rad[32][2];
 /**
  * Sensor array coordinates for the custom 52-sensor array built at the
- * Technical University of Denmark (DTU) */
+ * Technical University of Denmark (DTU) [1]
+ *
+ * @see [1] Marschall, M., 2014. Capturing and reproducing realistic acoustic
+ *          scenes for hearing research (Doctoral dissertation, Technical
+ *          University of Denmark, Department of Electrical Engineering). */
 extern const float __DTU_mic_coords_rad[52][2];
 /**
  * Default sensor array coordinates */

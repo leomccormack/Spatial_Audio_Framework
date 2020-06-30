@@ -56,8 +56,8 @@ extern "C" {
  * Allocates memory for a Covariance Domain Framework for Spatial Audio
  * Processing (CDF4SAP) handle.
  *
- * @note Use this function for REAL-VALUED input/output matrices. For
- *       COMPLEX-VALUED input/output matrices use cdf4sap_cmplx_create().
+ * @note Use this function for real-valued input/output matrices. For
+ *       complex-valued input/output matrices use cdf4sap_cmplx_create().
  *
  * @param[in] phCdf  The address (&) of the CDF4SAP handle
  * @param[in] nXcols Number of columns/rows in square input matrix 'Cx'
@@ -74,8 +74,8 @@ void cdf4sap_create(/* Input Arguments */
  * Allocates memory for a Covariance Domain Framework for Spatial Audio
  * Processing (CDF4SAP) handle.
  *
- * @note Use this function for COMPLEX-VALUED input/output matrices. For
- *       REAL-VALUED input/output matrices use cdf4sap_create().
+ * @note Use this function for complex-valued input/output matrices. For
+ *       real-valued input/output matrices use cdf4sap_create().
  *
  * @param[in] phCdf  The address (&) of the CDF4SAP handle
  * @param[in] nXcols Number of columns/rows in square input matrix 'Cx'
@@ -92,8 +92,8 @@ void cdf4sap_cmplx_create(/* Input Arguments */
  * Frees memory for a Covariance Domain Framework for Spatial Audio
  * Processing (CDF4SAP) handle.
  *
- * @note Use this function for REAL-VALUED input/output matrices. For
- *       COMPLEX-VALUED input/output matrices use cdf4sap_cmplx_destroy().
+ * @note Use this function for real-valued input/output matrices. For
+ *       complex-valued input/output matrices use cdf4sap_cmplx_destroy().
  *
  * @param[in] phCdf The address (&) of the CDF4SAP handle
  */
@@ -106,8 +106,8 @@ void cdf4sap_destroy(/* Input Arguments */
  * Frees memory for a Covariance Domain Framework for Spatial Audio
  * Processing (CDF4SAP) handle.
  *
- * @note Use this function for COMPLEX-VALUED input/output matrices. For
- *       REAL-VALUED input/output matrices use cdf4sap_destroy().
+ * @note Use this function for complex-valued input/output matrices. For
+ *       real-valued input/output matrices use cdf4sap_destroy().
  *
  * @param[in] phCdf The address (&) of the CDF4SAP handle
  */
@@ -125,8 +125,8 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
  * For the derivation and a more detailed description, the reader is referred
  * to [1,2].
  *
- * @note Use this function for REAL-VALUED input/output matrices. For
- *       COMPLEX-VALUED input/output use formulate_M_and_Cr_cmplx().
+ * @note Use this function for real-valued input/output matrices. For
+ *       complex-valued input/output use formulate_M_and_Cr_cmplx().
  *
  * @note For an example of how to use this function, one may refer to the
  *       implementation of the parametric binaural Ambisonic decoder (described
@@ -181,8 +181,8 @@ void formulate_M_and_Cr(/* Input Arguments */
  * For the derivation and a more detailed description, the reader is referred
  * to [1,2].
  *
- * @note Use this function for COMPLEX-VALUED input/output matrices. For
- *       REAL-VALUED input/output use formulate_M_and_Cr().
+ * @note Use this function for complex-valued input/output matrices. For
+ *       real-valued input/output use formulate_M_and_Cr().
  *
  * @note For an example of how to use this function, one may refer to the
  *       implementation of the parametric binaural Ambisonic decoder (described

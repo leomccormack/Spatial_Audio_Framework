@@ -42,11 +42,11 @@ extern "C" {
 #include "../saf_utilities/saf_utility_complex.h"
 
 /**
- * Converts spherical harmonic order, to number of spherical harmonic components
+ * Converts spherical harmonic order to number of spherical harmonic components
  * i.e: (order+1)^2 */
 #define ORDER2NSH(order) ((order+1)*(order+1))
 /**
- * Converts number of spherical harmonic components, to spherical harmonic order
+ * Converts number of spherical harmonic components to spherical harmonic order
  * i.e: sqrt(nSH)-1 */
 #define NSH2ORDER(nSH) ( (int)(sqrt((double)nSH)-0.999) )
 
@@ -55,7 +55,7 @@ extern "C" {
 /* ========================================================================== */
 
 /**
- * Microphone/Hydrophone array contruction types
+ * Microphone/Hydrophone array construction types
  */
 typedef enum _ARRAY_CONSTRUCTION_TYPES {
     ARRAY_CONSTRUCTION_OPEN,             /**< Open array, omni-directional
@@ -68,7 +68,7 @@ typedef enum _ARRAY_CONSTRUCTION_TYPES {
 }ARRAY_CONSTRUCTION_TYPES;
 
 /**
- * Sector pattern designs for directionally-contraining sound-fields [1]
+ * Sector pattern designs for directionally-constraining sound-fields [1]
  *
  * @see [1] Politis, A., & Pulkki, V. (2016). Acoustic intensity, energy-density
  *          and diffuseness estimation in a directionally-constrained region.
@@ -108,7 +108,7 @@ void yawPitchRoll2Rzyx (/* Input Arguments */
                         float R[3][3]);
 
 /**
- * Converts spherical coordinates to cartesian coordinates of unit length
+ * Converts spherical coordinates to Cartesian coordinates of unit length
  *
  * @param[in]  azi_rad  Azimuth in radians
  * @param[in]  elev_rad Elevation in radians
@@ -121,7 +121,7 @@ void unitSph2Cart(/* Input Arguments */
                   float xyz[3]);
 
 /**
- * Converts cartesian coordinates of unit length to spherical coordinates
+ * Converts Cartesian coordinates of unit length to spherical coordinates
  *
  * @param[in]  xyz         Unit cartesian coords, xyz
  * @param[out] AziElev_rad Azimuth and elevation in radians
@@ -132,7 +132,7 @@ void unitCart2Sph(/* Input Arguments */
                   float AziElev_rad[2]);
 
 /**
- * Converts cartesian coordinates of unit length to spherical coordinates
+ * Converts Cartesian coordinates of unit length to spherical coordinates
  *
  * @param[in]  xyz      Unit cartesian coords, xyz
  * @param[out] azi_rad  (&) azimuth in radians
@@ -145,17 +145,17 @@ void unitCart2Sph_aziElev(/* Input Arguments */
                           float* elev_rad);
 
 /**
- * Calculates unnormalised legendre polynomials up to order N, for all values in
+ * Calculates unnormalised Legendre polynomials up to order N, for all values in
  * vector x [1]
  *
- * @note This INCLUDES the Condon-Shortley phase term. It is functionally
+ * @note This includes the Condon-Shortley phase term. It is functionally
  *       identical to Matlab's legendre function (with default settings
  *       ['unnorm']).
  *
- * @param[in]  n    Order of  legendre polynomial
+ * @param[in]  n    Order of Legendre polynomial
  * @param[in]  x    Vector of input values; lenX x 1
  * @param[in]  lenX Number of input values
- * @param[out] y    Resulting unnormalised legendre values for each x value;
+ * @param[out] y    Resulting unnormalised Legendre values for each x value;
  *                  FLAT: (n+1) x lenX
  *
  * @see [1] M, Abramowitz., I.A. Stegun. (1965). "Handbook of Mathematical
@@ -169,21 +169,21 @@ void unnorm_legendreP(/* Input Arguments */
                       double* y);
 
 /**
- * Calculates unnormalised legendre polynomials up to order N, for all values in
+ * Calculates unnormalised Legendre polynomials up to order N, for all values in
  * vector x
  *
  * It uses a recursive approach, which makes it more suitable for computing the
  * legendre values in a real-time loop.
  *
- * @note This does NOT INCLUDE the Condon-Shortley phase term.
+ * @note This does NOT include the Condon-Shortley phase term.
  *
- * @param[in]  n          Order of  legendre polynomial
+ * @param[in]  n          Order of Legendre polynomial
  * @param[in]  x          Vector of input values; lenX x 1
  * @param[in]  lenX       Number of input values
  * @param[in]  Pnm_minus1 Previous Pnm, (not used for n=1); FLAT: (n+1) x lenX
  * @param[in]  Pnm_minus2 Previous previous Pnm, (not used for n=0);
  *                        FLAT: (n+1) x lenX
- * @param[out] Pnm        Resulting unnormalised legendre values for each x
+ * @param[out] Pnm        Resulting unnormalised Legendre values for each x
  *                        value; FLAT: (n+1) x lenX
  */
 void unnorm_legendreP_recur(/* Input Arguments */
@@ -201,12 +201,16 @@ void unnorm_legendreP_recur(/* Input Arguments */
 /* ========================================================================== */
 
 /**
- * Computes REAL spherical harmonics [1] for each direction on the sphere
+ * Computes REAL spherical harmonics [1] for each given direction on the unit
+ * sphere
  *
  * The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term.
  * i.e. max(omni) = 1/sqrt(4*pi). Compared to getSHreal_recur(), this function
  * employs unnorm_legendreP() and double precision, which is slower but more
  * precise.
+ *
+ * @warning This function assumes [azi, inclination] convention! Note that one
+ *          may convert from elevation, with: [azi, pi/2-elev].
  *
  * @test test__getSHreal()
  *
@@ -228,7 +232,8 @@ void getSHreal(/* Input Arguments */
                float* Y);
 
 /**
- * Computes REAL spherical harmonics [1] for each direction on the sphere
+ * Computes REAL spherical harmonics [1] for each given direction on the unit
+ * sphere
  *
  * The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term.
  * i.e. max(omni) = 1/sqrt(4*pi). Compared to getSHreal(), this function employs
@@ -237,6 +242,9 @@ void getSHreal(/* Input Arguments */
  *
  * The function also uses static memory buffers for single direction and up to
  * 7th order, which speeds things up considerably for such use cases.
+ *
+ * @warning This function assumes [azi, inclination] convention! Note that one
+ *          may convert from elevation, with: [azi, pi/2-elev].
  *
  * @test test__getSHreal_recur()
  *
@@ -258,11 +266,15 @@ void getSHreal_recur(/* Input Arguments */
                      float* Y);
 
 /**
- * Computes COMPLEX spherical harmonics [1] for each direction on the sphere
+ * Computes COMPLEX spherical harmonics [1] for each given direction on the unit
+ * sphere
  *
  * The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term.
  * i.e. max(omni) = 1/sqrt(4*pi) + i0. This function employs unnorm_legendreP()
  * and double precision.
+ *
+ * @warning This function assumes [azi, inclination] convention! Note that one
+ *          may convert from elevation, with: [azi, pi/2-elev].
  *
  * @test test__getSHcomplex()
  *
@@ -287,7 +299,7 @@ void getSHcomplex(/* Input Arguments */
  * Computes a complex to real spherical harmonic transform matrix
  *
  * Computes the unitary transformation matrix T_c2r. It expresses the real
- * spherical harmonics with respect to the complex ones, so that
+ * spherical harmonics with respect to the complex harmonics, so that
  * r_N = T_c2r * y_N, where r_N and y_N is are the real and complex SH vectors,
  * respectively.
  *
@@ -308,8 +320,9 @@ void complex2realSHMtx(/* Input Arguments */
  * Computes a real to complex spherical harmonic transform matrix
  *
  * Computes the unitary transformation matrix T_r2c the expresses the complex
- * spherical harmonics with respect to the real ones, so that y_N = T_r2c * r_N,
- * where r_N and y_N are the real and complex SH vectors, respectively.
+ * spherical harmonics with respect to the real harmonics, so that
+ * y_N = T_r2c * r_N, where r_N and y_N are the real and complex SH vectors,
+ * respectively.
  *
  * @warning The T_r2c matrix is returned transposed! TODO: fix
  *
@@ -340,13 +353,20 @@ void complex2realCoeffs(/* Input Arguments */
                         float* R_N);
 
 /**
- * Generates a real-valued spherical harmonic rotation matrix [1] (assumes ACN
- * channel ordering convention)
+ * Generates a real-valued spherical harmonic rotation matrix [1]
  *
- * Note that the normalisation convention does not matter, as e.g. only dipoles
- * are used to rotated dipoles, quadrapoles to rotate quadrapoles etc.
+ * The rotation should then be applied as:
+ * \code{.m}
+ *     outSig = RotMtx * inSig; % where inSig/outSig are: (L+1)^2 x signalLength
+ * \endcode
  *
- * @test test__complex2realSHMtx()
+ * @note The normalisation convention does not matter, since only dipoles
+ *       are used to rotate dipoles, quadrapoles to rotate quadrapoles etc. So
+ *       any order-dependent scaling is irrelevant.
+ * @warning The resulting rotation matrix should be applied to signals which
+ *          follow the ACN channel ordering convention!
+ *
+ * @test test__getSHrotMtxReal()
  *
  * @param[in]  R      zyx rotation matrix; 3 x 3
  * @param[in]  L      Order of spherical harmonic expansion
@@ -362,7 +382,7 @@ void getSHrotMtxReal(float R[3][3],
                      int L);
 
 /**
- * Computes the matrices that generate the coefficients of the beampattern of
+ * Computes the matrices which generate the coefficients of a beampattern of
  * order (sectorOrder+1) that is essentially the product of a pattern of
  * order=sectorOrder and a dipole
  *
@@ -385,12 +405,17 @@ void computeVelCoeffsMtx(/* Input Arguments */
                          float_complex* A_xyz);
 
 /**
- * Computes the beamforming matrices of sector and velocity coefficients for
- * ENERGY-preserving (EP) sectors for real SH
+ * Computes beamforming matrices (sector coefficients) which, when applied to
+ * input SH signals, yield ENERGY-preserving (EP) sectors.
  *
  * This partitioning of the sound-field into spatially-localised sectors has
  * been used for parametric sound-field reproduction in [1] and visualisation in
  * [2,3].
+ *
+ * @note Each sector comprises 1x sector pattern of order "orderSec", and 3x
+ *       weighted dipoles which are essentially the product of the sector
+ *       pattern with (unweighted) dipoles, and have the directivity of one
+ *       higher order (orderSec+1).
  *
  * @test test__computeSectorCoeffsEP()
  *
@@ -429,12 +454,17 @@ float computeSectorCoeffsEP(/* Input Arguments */
                             float* sectorCoeffs);
 
 /**
- * Computes the beamforming matrices of sector and velocity coefficients for
- * AMPLITUDE-preserving (AP) sectors for real SH
+ * Computes beamforming matrices (sector coefficients) which, when applied to
+ * input SH signals, yield AMPLITUDE-preserving (EP) sectors.
  *
  * This partitioning of the sound-field into spatially-localised sectors has
- * been used for parametric sound-field reproduction in [1] and visualision in
+ * been used for parametric sound-field reproduction in [1] and visualisation in
  * [2,3].
+ *
+ * @note Each sector comprises 1x sector pattern of order "orderSec", and 3x
+ *       weighted dipoles which are essentially the product of the sector
+ *       pattern with (unweighted) dipoles, and have the directivity of one
+ *       higher order (orderSec+1).
  *
  * @param[in]  orderSec     Order of sector patterns
  * @param[in]  A_xyz        Velocity coefficients, see computeVelCoeffsMtx();
@@ -471,12 +501,12 @@ float computeSectorCoeffsAP(/* Input Arguments */
                             float* sectorCoeffs);
 
 /**
- * Generates spherical coefficients for cardioids
+ * Generates spherical coefficients for generating cardioid beampatterns
  *
  * For a specific order N of a higher order cardioid of the form
- * D(theta)=(1/2)^N * (1+cos(theta))^N, generate the beamweights for the same
- * pattern in the SHD. Because the pattern is axisymmetric only the N+1
- * coefficients of m=0 are returned.
+ * D(theta)=(1/2)^N * (1+cos(theta))^N, this funtion generates the beamweights
+ * for the same pattern, but in the SHD. Because the pattern is axisymmetric
+ * only the N+1 coefficients of m=0 are returned.
  *
  * @param[in]  N   Order of spherical harmonic expansion
  * @param[out] b_n Beamformer weights; (N+1) x 1
@@ -516,7 +546,7 @@ void beamWeightsDolphChebyshev2Spherical(/* Input Arguments */
  * Generates beamweights in the SHD for hypercardioid beampatterns
  *
  * The hypercardioid is the pattern that maximises the directivity-factor for a
- * certain SH order N. The hypercardioid is also the plane-wave decomposition
+ * certain SH order (N). The hypercardioid is also the plane-wave decomposition
  * beamformer in the SHD, also called 'regular' because the beamweights are just
  * the SH values on the beam-direction. Since the pattern is axisymmetric only
  * the N+1 coefficients of m=0 are returned.
@@ -533,14 +563,14 @@ void beamWeightsHypercardioid2Spherical(/* Input Arguments */
  * Generates beamweights in the SHD for maximum energy-vector beampatterns
  *
  * Generate the beamweights for the a maximum energy-vector beampattern in the
- * SHD. This pattern originates from ambisonic-related research and it maximises
+ * SHD. This pattern originates from Ambisonic-related research as it maximises
  * the ambisonic energy-vector, which is essentially the directional centroid of
- * the squared pattern. IT can also be seen as the pattern that maximizes the
+ * the squared pattern. It can also be seen as the pattern which maximizes the
  * acoustic intensity vector of a diffuse field weighted with this pattern.
- * In practice it is almost the same as a supercardioid that maximizes front-
+ * In practice it is almost the same as a supercardioid which maximizes front-
  * back power ratio for a certain order, and it can be used as such. Because
  * the pattern is axisymmetric only the N+1 coefficients of m=0 are returned.
- * Details for their theory can be found e.g. in [1].
+ * Details for their theory can be found, for example, in [1].
  *
  * @param[in]  N   Order of spherical harmonic expansion
  * @param[out] b_n Beamformer weights; (N+1) x 1
@@ -684,8 +714,8 @@ void checkCondNumberSHTReal(/* Input arguments */
 /* ========================================================================== */
 
 /**
- * Generates a powermap based on the energy of plane-wave decomposition (PWD)/
- * hyper-cardioid beamformers
+ * Generates a powermap based on the energy of plane-wave decomposition (PWD)
+ * (aka hyper-cardioid)  beamformers
  *
  * @param[in]  order      Analysis order
  * @param[in]  Cx         Correlation/covarience matrix;
@@ -704,8 +734,8 @@ void generatePWDmap(/* Input arguments */
                     float* pmap);
 
 /**
- * Generates a powermap based on the energy of adaptive minimum variance
- * distortion-less response (MVDR) beamformers
+ * Generates a powermap based on the energy of adaptive Minimum-Variance
+ * Distortion-less Response (MVDR) beamformers
  *
  * @param[in]  order      Analysis order
  * @param[in]  Cx         Correlation/covarience matrix;
@@ -1054,8 +1084,8 @@ void simulateSphArray(/* Input arguments */
                       float_complex* H_array);
 
 /**
- * Generates some objective measures, which evaluate the performance of the
- * spatial encoding filters
+ * Generates some objective measures, which evaluate the performance of spatial
+ * encoding filters
  *
  * This analysis is performed by comparing the spatial resolution of the
  * spherical harmonic components generated by the encoding filters, with the

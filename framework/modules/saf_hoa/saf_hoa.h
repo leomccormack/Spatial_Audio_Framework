@@ -46,10 +46,10 @@ extern "C" {
 /**
  * Ambisonic decoding options for loudspeaker playback
  *
- * Note that all of these decoding options revert to "SAD" if the loudspeakers
- * are uniformly distributed on the sphere. The benefits afforded by MMD,
- * AllRAD, etc. relate to their improved performance when using irregular
- * loudspeaker arrangements.
+ * Note that the MDD and EPAD decoding options revert back to "SAD" if the
+ * loudspeakers are uniformly distributed on the sphere. The benefits afforded
+ * by MMD, EPAD [1], and AllRAD [2] relate to their improved performance when
+ * using irregular loudspeaker arrangements.
  *
  * @see [1] Zotter F, Pomberger H, Noisternig M. Energy--preserving ambisonic
  *          decoding. Acta Acustica united with Acustica. 2012 Jan 1;
@@ -65,7 +65,7 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
     /**
      * Sampling Ambisonic Decoder (SAD): transpose of the loudspeaker spherical
      * harmonic matrix, scaled by the number of loudspeakers. This is the
-     * simplest decoding approach, as it simply relies on generating hyper-
+     * simplest decoding approach, as it essentially just generating hyper-
      * cardioid beamformers for each loudspeaker direction.
      */
     LOUDSPEAKER_DECODER_SAD,
@@ -75,7 +75,7 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
      * regions on the surface of the sphere that are more sparsely populated
      * with loudspeakers. Therefore, one must also be careful, as some
      * loudspeakers may be given a huge amount of signal energy and wake the
-     * dead.
+     * dead!
      */
     LOUDSPEAKER_DECODER_MMD,
     /**
@@ -86,7 +86,11 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
      * All-Round Ambisonic Decoder (AllRAD): SAD decoding to t-design, panned
      * for the target loudspeaker directions using VBAP [2]. Perhaps the
      * Ambisonic decoder we would most recommend for irregular loudspeaker
-     * layouts.
+     * layouts. Note, given a high (well, technically infinite) order, AllRAD
+     * will converge to VBAP. However, since lower-orders are employed in
+     * practice: AllRAD will not be as spatially "sharp" as VBAP, but it will
+     * yield more constistent source spreading when panning a source inbetween
+     * the loudspeakers.
      */
     LOUDSPEAKER_DECODER_ALLRAD
     
@@ -149,29 +153,41 @@ typedef enum _BINAURAL_AMBI_DECODER_METHODS {
 
 /**
  * Available Ambisonic channel ordering conventions
+ *
+ * @note ACN channel ordering with SN3D normalisation are often collectively
+ *       referred to as the 'AmbiX' format.
+ * @warning FuMa is a deprecated legacy format and is only supported for first-
+ *          order! The recommended Ambisonic conventions are ACN with N3D/SN3D
+ *          normalisation.
  */
 typedef enum _HOA_CH_ORDER{
-    HOA_CH_ORDER_ACN,  /**< Ambisonic Channel numbering (ACN) convention, as
-                        *   used by the AmbiX standard and the majority of the
-                        *   framework */
+    HOA_CH_ORDER_ACN,  /**< Ambisonic Channel numbering (ACN) convention, which
+                        *   is employed by all spherical harmonic related
+                        *   functions in SAF */
     HOA_CH_ORDER_FUMA  /**< Furse-Malham (FuMa) convention, often used by older
                         *   recordings. The convention follows the WXYZ ordering
                         *   of the omni and dipoles, and is suitable only for
-                        *   1st order */
+                        *   1st order. */
 
 }HOA_CH_ORDER;
 
 /**
  * Available Ambisonic normalisation conventions
+ *
+ * @note ACN channel ordering with SN3D normalisation are often collectively
+ *       referred to as the 'AmbiX' format.
+ * @warning FuMa is a deprecated legacy format and is only supported for first-
+ *          order! The recommended Ambisonic conventions are ACN with N3D/SN3D
+ *          normalisation.
  */
 typedef enum _HOA_NORM{
-    HOA_NORM_N3D,  /**< Orthonormalised (N3D) convention, which is used by the
-                    *   framework */
+    HOA_NORM_N3D,  /**< Orthonormalised (N3D) convention, which is the default
+                    *   convention used by SAF */
     HOA_NORM_SN3D, /**< Schmidt semi-normalisation (SN3D) convention, as used
                     *   by the AmbiX standard */
-    HOA_NORM_FUMA  /**< Furse-Malham (FuMa) convention. This is equivalent to
-                    *   SN3D, except theres an additional 1/sqrt(2) scaling on
-                    *   the omni, and it's 1st order only */
+    HOA_NORM_FUMA  /**< Furse-Malham (FuMa) convention. This is similar to SN3D
+                    *   (at first-order), except theres an additional 1/sqrt(2)
+                    *   scaling applied to the omni. */
 
 }HOA_NORM;
 
@@ -183,12 +199,11 @@ typedef enum _HOA_NORM{
 /**
  * Converts an Ambisonic signal from one channel ordering convention to another
  *
- * @note If inConvention == outConvention, then the 'insig' is simply copied to
- *       'outsig'. Also, if one of the in/out conventions is FuMa, then only
- *       the first 4 channels are converted, and any remaining channels of
- *       'outsig' are set to zeros.
- *
- * @note insig is converted "in-place".
+ * @warning If one of the in/out conventions is FuMa, then only the first 4
+ *          channels are converted, and any remaining channels of 'insig' are
+ *          set to zeros (i.e. FuMa is strictly first-order only in SAF).
+ * @note insig is converted "in-place". Also, if the in/out conventions are the
+ *       same, then the function is bypassed.
  *
  * @param[in,out] insig         Input signal with the channel ordering
  *                              convention of: inConvention;
@@ -208,7 +223,11 @@ void convertHOAChannelConvention(/* Input Arguments */
 /**
  * Converts an Ambisonic signal from one normalisation convention to another
  *
- * @note insig is converted "in-place".
+ * @warning If one of the in/out conventions is FuMa, then only the first 4
+ *          channels are converted, and any remaining channels of 'insig' are
+ *          set to zeros (i.e. FuMa is strictly first-order only in SAF).
+ * @note insig is converted "in-place". Also, if the in/out conventions are the
+ *       same, then the function is bypassed.
  *
  * @param[in,out] insig         Input signal with the channel ordering
  *                              convention of: inConvention, which should be
@@ -227,13 +246,14 @@ void convertHOANormConvention(/* Input Arguments */
                                  HOA_NORM outConvention);
 
 /**
- * Computes REAL spherical harmonics [1] for multiple directions on the sphere
+ * Computes REAL spherical harmonics [1] for each given direction on the unit
+ * sphere
  *
  * The real spherical harmonics are computed WITHOUT the 1/sqrt(4*pi) term.
  * i.e. max(omni) = 1. Also, compared to getRSH_recur(), this function uses
  * unnorm_legendreP() and double precision, so is more suitable for determining
  * 'Y' in an initialisation stage. This version is indeed slower, but more
- * precise; especially for high orders.
+ * precise (especially for high orders).
  *
  * @note This function is mainly intended for Ambisonics, due to the omission of
  *       the 1/sqrt(4*pi) scaling, and the directions are given in
@@ -258,13 +278,14 @@ void getRSH(/* Input Arguments */
             float* Y);
 
 /**
- * Computes REAL spherical harmonics [1] for multiple directions on the sphere
+ * Computes REAL spherical harmonics [1] for each given direction on the unit
+ * sphere
  *
  * The real spherical harmonics are computed WITHOUT the 1/sqrt(4*pi) term.
  * i.e. max(omni) = 1. Also, Compared to getRSH(), this function uses
  * unnorm_legendreP_recur() and single precision, so is more suitable for
  * determining 'Y' in a real-time loop. It sacrifices some precision, as
- * numerical error propogates through the recursion, but it is faster.
+ * numerical error propogates through the recursion, but it is much faster.
  *
  * @note This function is mainly intended for Ambisonics, due to the omission of
  *       the 1/sqrt(4*pi) scaling, and the directions are given in
@@ -322,7 +343,7 @@ void getMaxREweights(/* Input Arguments */
                      float* a_n);
 
 /**
- * Computes an ambisonic decoding matrix of a specific order, for a specific
+ * Computes an ambisonic decoding matrix of a specific order, for a given
  * loudspeaker layout
  *
  * @test test__getLoudspeakerDecoderMtx()
@@ -330,8 +351,8 @@ void getMaxREweights(/* Input Arguments */
  * @param[in]  ls_dirs_deg Loudspeaker directions in DEGREES [azi elev];
  *                         FLAT: nLS x 2
  * @param[in]  nLS         Number of loudspeakers
- * @param[in]  method      Decoding method
- *                         (see #_LOUDSPEAKER_AMBI_DECODER_METHODS enum)
+ * @param[in]  method      Decoding method (see
+ *                         #_LOUDSPEAKER_AMBI_DECODER_METHODS enum)
  * @param[in]  order       Decoding order
  * @param[in]  enableMaxrE Set to '0' to disable, '1' to enable
  * @param[out] decMtx      Decoding matrix; FLAT: nLS x (order+1)^2
@@ -386,7 +407,7 @@ void getBinauralAmbiDecoderMtx(/* Input Arguments */
                                float_complex* decMtx);
 
 /**
- * Computes ambisonic decoding filters for a given HRTF set
+ * Computes binaural ambisonic decoding filters for a given HRTF set
  *
  * @param[in]  hrtfs         The HRTFs; FLAT: (fftSize/2+1) x #NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
@@ -424,7 +445,7 @@ void getBinauralAmbiDecoderFilters(/* Input Arguments */
 
 /**
  * Imposes a diffuse-field covariance constraint on a given binaural decoding
- * matrix [1]
+ * matrix, as described in [1]
  *
  * @note decMtx is altered in-place.
  *

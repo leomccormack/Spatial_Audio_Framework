@@ -280,7 +280,7 @@ void ambi_dec_setChOrder(void* const hAmbi, int newOrder);
 
 /**
  * Sets the Ambisonic normalisation convention to decode with, in order to match
- * with the convention employed by the input signals (see #_NORM_TYPE enum)
+ * with the convention employed by the input signals (see #_NORM_TYPES enum)
  */
 void ambi_dec_setNormType(void* const hAmbi, int newType);
 
@@ -316,7 +316,7 @@ void ambi_dec_setDecEnableMaxrE(void* const hAmbi, int index, int newID);
  *
  * @param[in] hAmbi ambi_dec handle
  * @param[in] index For low (0) or high (1) frequency decoder
- * @param[in] newID see #_DIFFUSE_FIELD_EQ_APPROACH enum
+ * @param[in] newID see #_AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH enum
  */
 void ambi_dec_setDecNormType(void* const hAmbi, int index, int newID);
 
@@ -366,8 +366,8 @@ void ambi_dec_getProgressBarText(void* const hAmbi, char* text);
 int ambi_dec_getMasterDecOrder(void* const hAmbi);
     
 /**
- * Returns the decoding order for a given frequency band index (see
- * #_AMBI_DEC_MASTER_ORDERS enum)
+ * Returns the decoding order for a given frequency band index (see #_SH_ORDERS
+ * enum)
  */
 int ambi_dec_getDecOrder(void* const hAmbi, int bandIdx);
   

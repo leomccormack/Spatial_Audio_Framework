@@ -15,6 +15,7 @@
 #include "kiss_fftr.h"
 #include "_kiss_fft_guts.h"
 
+/** Internal KissFFT structure */
 struct kiss_fftr_state{
     kiss_fft_cfg substate;
     kiss_fft_cpx * tmpbuf;

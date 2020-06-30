@@ -22,16 +22,18 @@
  *
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by
- *   the module and, thus, also by the SAF framework as a whole. Add one of the
- *   following FLAGS to your project's preprocessor definitions list, in order
- *   to enable one of these suitable performance libraries, which must also be
- *   linked correctly to your project.
+ *   the module and, thus, also by SAF as a whole. Add one of the following
+ *   FLAGS to your project's preprocessor definitions list in order to enable
+ *   one of these suitable performance libraries, which must also be correctly
+ *   linked to your project.
  *   - SAF_USE_INTEL_MKL:
- *       to enable Intel's Math Kernal Library with Fortran LAPACK interface
+ *       to enable Intel's Math Kernal Library with the Fortran LAPACK interface
+ *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
+ *       to enable OpenBLAS with the LAPACKE interface
+ *   - SAF_USE_APPLE_ACCELERATE:
+ *       to enable the Accelerate framework with the Fortran LAPACK interface
  *   - SAF_USE_ATLAS:
  *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
- *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
- *       to enable OpenBLAS with LAPACKE interface
  *
  * @see More information can be found here:
  *      https://github.com/leomccormack/Spatial_Audio_Framework
@@ -45,21 +47,29 @@
 #include "saf_utilities.h"
 #include <float.h>
 
-/* just to remove compiler warnings: */
-#if defined(__APPLE__) && !defined(SAF_USE_INTEL_MKL)
+/* just to remove compiler warnings, and to be more explicit: */
+#if defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
   typedef __CLPK_integer       veclib_int;
   typedef __CLPK_real          veclib_float;
+  typedef __CLPK_doublereal    veclib_double;
   typedef __CLPK_complex       veclib_float_complex;
   typedef __CLPK_doublecomplex veclib_double_complex;
 #elif defined(SAF_USE_INTEL_MKL)
   typedef int                  veclib_int;
   typedef float                veclib_float;
+  typedef double               veclib_double;
   typedef MKL_Complex8         veclib_float_complex;
   typedef MKL_Complex16        veclib_double_complex;
 #else
+  /** integer datatype used by veclib */
   typedef int                  veclib_int;
+  /** single precision floating-point datatype used by veclib */
   typedef float                veclib_float;
+  /** single precision floating-point datatype used by veclib */
+  typedef double               veclib_double;
+  /** single precision complex floating-point datatype used by veclib */
   typedef float_complex        veclib_float_complex;
+  /** double precision floating-point datatype used by veclib */
   typedef double_complex       veclib_double_complex;
 #endif
 

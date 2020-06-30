@@ -228,6 +228,7 @@
 # error "SAF requires a compiler that supports the C99 standard, or MSVC version 1900 or newer"
 #endif
 
+
 #endif /* SAF_COMPLEX_H_INCLUDED */
 
 /**@} */ /* doxygen addtogroup Utilities */

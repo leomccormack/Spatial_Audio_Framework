@@ -19,9 +19,7 @@
  *@{
  * @file saf_utility_matrixConv.h
  * @brief Matrix and multi-channel convolvers
- *
- * These have been mostly derived from some Matlab scripts by Archontis Politis
- *
+ * 
  * @author Leo McCormack
  * @date 06.04.2019 
  */

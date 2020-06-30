@@ -48,7 +48,7 @@ typedef struct _faf_IIRFB_data{
 }faf_IIRFB_data;
 
 /**
- * Applies a windowing function (see WINDOWING_FUNCTION_TYPES enum) of length
+ * Applies a windowing function (see #_WINDOWING_FUNCTION_TYPES enum) of length
  * 'winlength', to vector 'x'.
  */
 static void applyWindowingFunction

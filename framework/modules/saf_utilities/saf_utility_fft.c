@@ -22,12 +22,11 @@
  * @note If none of the supported optimised FFT implementations are linked, then
  *       saf_fft employs the highly respectable KissFFT from here (BSD 3-Clause
  *       License): https://github.com/mborgerding/kissfft
- *
  * @note If linking Apple Accelerate: KissFFT is also used in cases where the
  *       FFT size is not 2^x.
  *
  * ## Dependencies
- *   Intel MKL, Apple Accelerate, or KissFFT (included in framework)
+ *   Intel MKL, Apple Accelerate, or KissFFT (included in the framework)
  *
  * @author Leo McCormack
  * @date 06.04.2019

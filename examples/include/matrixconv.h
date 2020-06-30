@@ -51,12 +51,13 @@ void matrixconv_destroy(void** const phMCnv);
 /**
  * Initialises an instance of matrixconv with default settings
  *
- * @param[in] hMCnv      matrixconv handle
- * @param[in] samplerate Host samplerate.
+ * @param[in] hMCnv         matrixconv handle
+ * @param[in] samplerate    Host samplerate.
+ * @param[in] hostBlockSize Host frame/block size
  */
 void matrixconv_init(void* const hMCnv,
-                    int samplerate,
-                    int hostBlockSize);
+                     int samplerate,
+                     int hostBlockSize);
 
 /**
  * Performs the matrix convolution processing
@@ -69,11 +70,11 @@ void matrixconv_init(void* const hMCnv,
  * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void matrixconv_process(void* const hMCnv,
-                       float** const inputs,
-                       float** const outputs,
-                       int nInputs,
-                       int nOutputs,
-                       int nSamples);
+                        float** const inputs,
+                        float** const outputs,
+                        int nInputs,
+                        int nOutputs,
+                        int nSamples);
 
 
 /* ========================================================================== */

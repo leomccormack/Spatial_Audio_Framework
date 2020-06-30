@@ -34,7 +34,7 @@ extern "C" {
 #include "saf_utilities.h"
 
 /* Cross-platform sleep macro (slightly modified) from:
- https://cboard.cprogramming.com/c-programming/170381-cross-platform-wait-sleep.html */
+ * https://cboard.cprogramming.com/c-programming/170381-cross-platform-wait-sleep.html */
 #ifdef _WIN32
     /* For Windows (32- and 64-bit) */
 # include <windows.h>
@@ -61,9 +61,9 @@ extern "C" {
 /**
  * Factorial, accurate up to n<=25
  *
- * @note The magnitude will still be correct >25, but the precision will be
+ * @note The magnitude will still be correct above 25, but the precision will be
  *       truncated. The function also returns pre-computed values up to n=15
- *       to make it faster.
+ *       to make it faster (e.g. for up to 7th order SH computations).
  *
  * @param[in] n Order
  * @returns factorial(n)
@@ -71,8 +71,8 @@ extern "C" {
 long double factorial(int n);
 
 /**
- * C fmodf function, which behaves like 'mod' in Matlab (i.e. with the wrap
- * around for negative 'x')
+ * C fmodf function, except it behaves like 'mod' in Matlab (i.e. with the wrap
+ * around for negative values of 'x')
  *
  * @param[in] x Value 'x'
  * @param[in] y Value 'y'

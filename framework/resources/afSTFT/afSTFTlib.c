@@ -70,18 +70,20 @@ const double __afCenterFreq44100[133] =
 /**
  * Creates and initialises an instance of the afHybrid filtering structure */
 void afHybridInit(void** handle, int hopSize, int inChannels, int outChannels);
+
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
-/**
- * Forward hybrid-filtering transform */
 void afHybridForward(void* handle, float_complex**);
 #else
+/**
+ * Forward hybrid-filtering transform */
 void afHybridForward(void* handle, complexVector* FD);
 #endif
+
 #ifdef AFSTFT_USE_FLOAT_COMPLEX
-/**
- * Inverse hybrid-filtering transform */
 void afHybridInverse(void* handle, float_complex**);
 #else
+/**
+ * Inverse hybrid-filtering transform */
 void afHybridInverse(void* handle, complexVector* FD);
 #endif
 /**

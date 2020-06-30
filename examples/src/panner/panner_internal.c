@@ -197,6 +197,11 @@ void panner_loadPreset
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __22pX_dirs_deg[ch][i];
             break;
+        case SOURCE_CONFIG_PRESET_22P2_9_10_3:
+            nCH = 24;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __9_10_3p2_dirs_deg[ch][i];
         case SOURCE_CONFIG_PRESET_AALTO_MCC:
             nCH = 45;
             for(ch=0; ch<nCH; ch++)
@@ -262,7 +267,37 @@ void panner_loadPreset
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __Tdesign_degree_10_dirs_deg[ch][i];
-            break; 
+            break;
+        case SOURCE_CONFIG_PRESET_SPH_COV_9:
+            nCH = 9;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __SphCovering_9_dirs_deg[ch][i];
+            break;
+        case SOURCE_CONFIG_PRESET_SPH_COV_16:
+            nCH = 16;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __SphCovering_16_dirs_deg[ch][i];
+            break;
+        case SOURCE_CONFIG_PRESET_SPH_COV_25:
+            nCH = 25;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __SphCovering_25_dirs_deg[ch][i];
+            break;
+        case SOURCE_CONFIG_PRESET_SPH_COV_49:
+            nCH = 49;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __SphCovering_49_dirs_deg[ch][i];
+            break;
+        case SOURCE_CONFIG_PRESET_SPH_COV_64:
+            nCH = 64;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __SphCovering_64_dirs_deg[ch][i];
+            break;
     }
     
     /* Fill remaining slots with default coords */

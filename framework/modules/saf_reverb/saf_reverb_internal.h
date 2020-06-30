@@ -171,8 +171,8 @@ typedef struct _ims_scene_data
     float** abs_wall;        /**< Wall aborption coeffs per wall; nBands x 6 */
 
     /* Source and receiver positions */
-    ims_src_obj srcs[IMS_MAX_NUM_SOURCES];   /**< Source positions*/
-    ims_rec_obj recs[IMS_MAX_NUM_RECEIVERS]; /**< Receiver positions*/
+    ims_src_obj srcs[IMS_MAX_NUM_SOURCES];   /**< Source positions */
+    ims_rec_obj recs[IMS_MAX_NUM_RECEIVERS]; /**< Receiver positions */
     long nSources;           /**< Current number of sources */
     long nReceivers;         /**< Current number of receivers */
 
@@ -186,7 +186,7 @@ typedef struct _ims_scene_data
 
     /* Circular buffers (only used/allocated when applyEchogramTD() function is
      * called for the first time) */
-    unsigned int wIdx;
+    unsigned int wIdx;       /**< current write index for circular buffers */
     float*** circ_buffer;    /**< nChannels x nBands x #IMS_CIRC_BUFFER_LENGTH*/
 
     /* IIR filterbank (only used/allocated when applyEchogramTD() function is

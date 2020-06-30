@@ -42,8 +42,7 @@ extern "C" {
  * the [azimuth, elevation] convention. [0 0] is looking directly in-front
  * (positive x-axis), with positive elevations looking upwards (positive z-axis)
  * and positive azimuth angles looking leftwards (postive y-axis).
- * In other words: the convention used by the Spatial_Audio_Framework follows
- * the "right-hand-rule".
+ * In other words: the convention used by SAF follows the "right-hand-rule".
  */
 
 /**
@@ -79,6 +78,10 @@ extern const float __13pX_dirs_deg[13][2];
 /**
  * Loudspeaker directions [azimuth, Elevation] in degrees, for a 22.x setup */
 extern const float __22pX_dirs_deg[22][2];
+/**
+ * Loudspeaker directions [azimuth, Elevation] in degrees, for a 9+10+3.2 setup
+ * BS 2051 recommedation: https://www.itu.int/rec/R-REC-BS.2051/en */
+extern const float __9_10_3p2_dirs_deg[24][2];
 /**
  * Loudspeaker directions [azimuth, Elevation] in degrees, for the multi-channel
  * anechoic chamber (MCC), at Aalto University. */

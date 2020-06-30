@@ -30,21 +30,21 @@ extern "C" {
 #endif /* __cplusplus */
 
 /*  doxygen example definitions: */
-/** @example ambi_bin ambi_bin.h */
-/** @example ambi_dec ambi_dec.h */
-/** @example ambi_drc ambi_drc.h */
-/** @example ambi_enc ambi_enc.h */
-/** @example array2sh array2sh.h */
-/** @example beamformer beamformer.h */
-/** @example binauraliser binauraliser.h */
-/** @example dirass dirass.h */
-/** @example matrixconv matrixconv.h */
-/** @example multiconv multiconv.h */
-/** @example panner panner.h */
-/** @example pitch_shifter pitch_shifter.h */
-/** @example powermap powermap.h */
-/** @example rotator rotator.h*/
-/** @example sldoa sldoa.h*/
+/** @example ambi_bin.h */
+/** @example ambi_dec.h */
+/** @example ambi_drc.h */
+/** @example ambi_enc.h */
+/** @example array2sh.h */
+/** @example beamformer.h */
+/** @example binauraliser.h */
+/** @example dirass.h */
+/** @example matrixconv.h */
+/** @example multiconv.h */
+/** @example panner.h */
+/** @example pitch_shifter.h */
+/** @example powermap.h */
+/** @example rotator.h*/
+/** @example sldoa.h*/
 
 
 /* ========================================================================== */
@@ -127,6 +127,7 @@ typedef enum _LOUDSPEAKER_ARRAY_PRESETS{
     LOUDSPEAKER_ARRAY_PRESET_11PX_7_4,
     LOUDSPEAKER_ARRAY_PRESET_13PX,
     LOUDSPEAKER_ARRAY_PRESET_22PX,
+    LOUDSPEAKER_ARRAY_PRESET_22P2_9_10_3,
     LOUDSPEAKER_ARRAY_PRESET_AALTO_MCC,
     LOUDSPEAKER_ARRAY_PRESET_AALTO_MCC_SUBSET,
     LOUDSPEAKER_ARRAY_PRESET_AALTO_APAJA,
@@ -138,7 +139,12 @@ typedef enum _LOUDSPEAKER_ARRAY_PRESETS{
     LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_24,
     LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_36,
     LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_48,
-    LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_60
+    LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_60,
+    LOUDSPEAKER_ARRAY_PRESET_SPH_COV_9,
+    LOUDSPEAKER_ARRAY_PRESET_SPH_COV_16,
+    LOUDSPEAKER_ARRAY_PRESET_SPH_COV_25,
+    LOUDSPEAKER_ARRAY_PRESET_SPH_COV_49,
+    LOUDSPEAKER_ARRAY_PRESET_SPH_COV_64
 
 }LOUDSPEAKER_ARRAY_PRESETS;
 
@@ -158,6 +164,7 @@ typedef enum _SOURCE_CONFIG_PRESETS{
     SOURCE_CONFIG_PRESET_11PX_7_4,
     SOURCE_CONFIG_PRESET_13PX,
     SOURCE_CONFIG_PRESET_22PX,
+    SOURCE_CONFIG_PRESET_22P2_9_10_3,
     SOURCE_CONFIG_PRESET_AALTO_MCC,
     SOURCE_CONFIG_PRESET_AALTO_MCC_SUBSET,
     SOURCE_CONFIG_PRESET_AALTO_APAJA,
@@ -169,7 +176,12 @@ typedef enum _SOURCE_CONFIG_PRESETS{
     SOURCE_CONFIG_PRESET_T_DESIGN_24,
     SOURCE_CONFIG_PRESET_T_DESIGN_36,
     SOURCE_CONFIG_PRESET_T_DESIGN_48,
-    SOURCE_CONFIG_PRESET_T_DESIGN_60
+    SOURCE_CONFIG_PRESET_T_DESIGN_60,
+    SOURCE_CONFIG_PRESET_SPH_COV_9,
+    SOURCE_CONFIG_PRESET_SPH_COV_16,
+    SOURCE_CONFIG_PRESET_SPH_COV_25,
+    SOURCE_CONFIG_PRESET_SPH_COV_49,
+    SOURCE_CONFIG_PRESET_SPH_COV_64
 
 }SOURCE_CONFIG_PRESETS;
 

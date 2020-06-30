@@ -49,7 +49,10 @@
 #include "convhull_3d.h"
 #include "../modules/saf_utilities/saf_utilities.h"
 
-#define CONVHULL_3D_USE_CBLAS
+/* Force using CBLAS: */
+#ifndef CONVHULL_3D_USE_CBLAS
+# define CONVHULL_3D_USE_CBLAS
+#endif
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
   #define CV_STRNCPY(a,b,c) strncpy_s(a,c+1,b,c);

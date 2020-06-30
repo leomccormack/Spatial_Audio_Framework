@@ -20,22 +20,27 @@
  * @file saf_utilities.h  
  * @brief Main header for the utilities module (#SAF_UTILITIES_MODULE)
  *
- * Contains a collection of useful memory allocation functions, cross-platform
- * complex number wrappers, and optimised linear algebra routines utilising BLAS
- * and LAPACK.
+ * A collection of useful utility functions; including: cross-platform complex
+ * number wrappers; optimised linear algebra routines based on CBLAS and LAPACK;
+ * FFT wrappers and STFT implementation; IIR/FIR filter coefficients and filter
+ * bank designs; lists of common loudspeaker and microphone array coordinates;
+ * multi-channel and matrix convolvers; spherical Bessel/Hankel functions
+ * (including their derivatives) functions; etc.
  *
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by
- *   the module and, thus, also by the SAF framework as a whole. Add one of the
- *   following FLAGS to your project's preprocessor definitions list, in order
- *   to enable one of these suitable performance libraries, which must also be
- *   linked correctly to your project.
+ *   the module and, thus, also by SAF as a whole. Add one of the following
+ *   FLAGS to your project's preprocessor definitions list in order to enable
+ *   one of these suitable performance libraries, which must also be correctly
+ *   linked to your project.
  *   - SAF_USE_INTEL_MKL:
- *       to enable Intel's Math Kernal Library with Fortran LAPACK interface
+ *       to enable Intel's Math Kernal Library with the Fortran LAPACK interface
+ *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
+ *       to enable OpenBLAS with the LAPACKE interface
+ *   - SAF_USE_APPLE_ACCELERATE:
+ *       to enable the Accelerate framework with the Fortran LAPACK interface
  *   - SAF_USE_ATLAS:
  *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
- *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
- *       to enable OpenBLAS with LAPACKE interface
  *
  * @see More information can be found here:
  *      https://github.com/leomccormack/Spatial_Audio_Framework
@@ -73,7 +78,7 @@
 #elif defined(SAF_USE_ATLAS)
 /*
  * Using the Automatically Tuned Linear Algebra Software (ATLAS) library
- * (Not recommended, since some saf_veclib functions do not support ATLAS)
+ * (Not recommended, since some saf_veclib functions do not work with ATLAS)
  */
 # define VECLIB_USE_CLAPACK_INTERFACE /**< CLAPACK interface */
 # include "cblas-atlas.h"
@@ -85,8 +90,12 @@
  * (Solid choice for both x86 and ARM, but only works under MacOSX and is not as
  * fast as Intel MKL for x86 systems)
  */
+#ifndef SAF_USE_APPLE_ACCELERATE
+# define SAF_USE_APPLE_ACCELERATE
+#endif
 # define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortan interface of LAPACK */
 # include "Accelerate/Accelerate.h"
+
 #else
 # error "SAF requires a library (or libraries) which supports CBLAS and LAPACK"
 #endif
@@ -148,48 +157,48 @@
 /*                 External Resources and SAF Utility Headers                 */
 /* ========================================================================== */
 
-/* (In suitable linker order) */
-/* for error message handling */
+/* For error message handling */
 #include "saf_utility_error.h"
-/* for allocating contiguous multi-dimensional arrays */
+/* For allocating contiguous multi-dimensional arrays */
 #include "../../resources/md_malloc/md_malloc.h"
-/* default FFT implementation, if no optimised implementation is available */
+/* The default FFT implementation, for when no optimised implementation is
+ * available */
 #include "../../resources/kissFFT//kiss_fftr.h"
 #include "../../resources/kissFFT/kiss_fft.h"
-/* for generating 3-D convex hulls */
+/* For generating 3-D convex hulls */
 #include "../../resources/convhull_3d/convhull_3d.h"
-/* for cross-platform complex numbers wrapper */
+/* For cross-platform complex numbers wrapper */
 #include "saf_utility_complex.h"
-/* for sorting vectors */
+/* For sorting vectors */
 #include "saf_utility_sort.h"
-/* filter coefficients (IIR/FIR) */
+/* Filter coefficients (IIR/FIR) */
 #include "saf_utility_filters.h"
 /* Many handy linear algebra functions based on CBLAS/LAPACK, and some based on
  * proprietary Intel MKL and Apple Accelerate optimised vector functions */
 #include "saf_utility_veclib.h"
 /* For computing spherical/cylindrical Bessel and Hankel functions */
 #include "saf_utility_bessel.h"
-/* optimised FFT routines */
+/* Optimised FFT routines */
 #include "saf_utility_fft.h"
-/* matrix convolver */
+/* Matrix convolver */
 #include "saf_utility_matrixConv.h"
-/* pitch shifting algorithms */
+/* Pitch shifting algorithms */
 #include "saf_utility_pitch.h"
-/* for decorrelators */
+/* For decorrelators */
 #include "saf_utility_decor.h"
-/* for determining ERBs */
+/* For determining ERBs */
 #include "saf_utility_erb.h"
-/* for misc. functions */
+/* For misc. functions */
 #include "saf_utility_misc.h"
-/* various presets for loudspeaker arrays and uniform distributions of points on
+/* Various presets for loudspeaker arrays and uniform distributions of points on
  * spheres. */
 #include "saf_utility_loudspeaker_presets.h"
-/* various presets for microphone and hydrophone arrays. */
+/* Various presets for microphone and hydrophone arrays. */
 #include "saf_utility_sensorarray_presets.h"
-/* modified version of the alias-free STFT implementation by Juha Vilkamo.
+/* A modified version of the alias-free STFT implementation by Juha Vilkamo.
  * The original source code can be found here:
  *   https://github.com/jvilkamo/afSTFT
- * and the design is also detailed in chapter 1 of [1]
+ * The design is also detailed in chapter 1 of [1]
  *
  * @see [1] Pulkki, V., Delikaris-Manias, S. and Politis, A. 2018. Parametric
  *          time--frequency domain spatial audio. John Wiley & Sons,
