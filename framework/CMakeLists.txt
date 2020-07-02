@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
+INCLUDE(CheckIncludeFiles)
 
 # Check required variables are defined
 if(NOT DEFINED SAF_PERFORMANCE_LIB AND NOT APPLE)
@@ -94,6 +95,12 @@ if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL" )
     # Add target header paths and libs
     target_include_directories(${PROJECT_NAME} PUBLIC ${INTEL_MKL_HEADER_PATH} )
     target_link_libraries(${PROJECT_NAME} PRIVATE ${INTEL_MKL_LIB} )
+
+    # Check that header can be included
+    check_include_files("${INTEL_MKL_HEADER_PATH}/mkl.h" HAVE_MKL_H)
+    if(NOT HAVE_MKL_H)
+	message(SEND_ERROR "mkl.h not found")
+    endif()
 
 elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
     message(STATUS "  Using openBLAS...")
