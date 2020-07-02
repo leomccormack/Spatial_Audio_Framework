@@ -87,6 +87,8 @@ void getEPAD
 
     /* Apply normalisation, and scale by number of loudspeakers */
     scale = sqrtf(4.0f*SAF_PI/(float)nLS);
+    /* Scale output max "energy" to unity after truncation */
+    scale *= sqrtf((float)nLS / (float)nSH);
     utility_svsmul(decMtx, &scale, nLS*nSH, decMtx);
 
     /* clean-up */
