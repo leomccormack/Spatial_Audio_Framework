@@ -219,6 +219,7 @@
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_error.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_fft.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_filters.h" />
+    <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_geometry.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_loudspeaker_presets.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_matrixConv.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_misc.h" />
@@ -290,6 +291,7 @@
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_error.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_fft.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_filters.c" />
+    <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_geometry.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_loudspeaker_presets.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_matrixConv.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_misc.c" />
