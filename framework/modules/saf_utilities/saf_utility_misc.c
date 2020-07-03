@@ -229,3 +229,106 @@ void polyd_m
     free(Xcmplx);
     free(e);
 }
+
+float sumf
+(
+    float* values,
+    int nValues
+)
+{
+    int i;
+    float sum;
+    sum = 0.0f;
+    for(i=0; i<nValues; i++)
+        sum += values[i];
+
+    return sum;
+}
+
+void unique_i
+(
+    int* input,
+    int nInputs,
+    int** uniqueVals,
+    int** uniqueInds,
+    int* nUnique
+)
+{
+    int i, j, k, nDups, foundDups, foundNewDup;
+    int* dups, *nDuplicates_perInput;
+
+    /* If only 1 input... */
+    if(nInputs == 1){
+        (*nUnique) = 1;
+        if(uniqueVals!=NULL){
+            (*uniqueVals) = malloc1d((*nUnique)*sizeof(int));
+            (*uniqueVals)[0] = input[0];
+        }
+        if(uniqueInds!=NULL){
+            (*uniqueInds) = malloc1d((*nUnique)*sizeof(int));
+            (*uniqueInds)[0] = 0;
+        }
+    }
+
+    /* prep */
+    dups = malloc1d(nInputs*sizeof(int));
+    nDuplicates_perInput = calloc1d(nInputs, sizeof(int));
+    (*nUnique) = nInputs;
+
+    /* Find duplicates */
+    nDups = 0;
+    for(i=0; i<nInputs; i++) {
+        foundDups = 0;
+        for(j=i+1; j<nInputs; j++) {
+            if(input[i] == input[j]) {
+                foundNewDup = 1;
+                for(k=0; k<nDups; k++)
+                    if(input[i]==dups[k])
+                        foundNewDup = 0;
+
+                /* input value is repeated: */
+                nDuplicates_perInput[i]++;
+                if(foundNewDup){
+                    (*nUnique)--;  /* one less unique value... */
+                    foundDups = 1;
+                }
+            }
+        }
+        /* Store repeated value, so "nUnique" is not decreased more than once for it */
+        if(foundDups){
+            dups[nDups] = input[i];
+            nDups++;
+        }
+    }
+    assert((*nUnique)>-1);
+    free(dups);
+
+    /* If no unique values were found */
+    if((*nUnique)==0){
+        (*uniqueVals) = NULL;
+        (*uniqueInds) = NULL;
+        (*nUnique) = 0;
+        free(nDuplicates_perInput);
+        return;
+    }
+
+    /* Save unique values and/or their indices */
+    j=0;
+    if(uniqueVals!=NULL)
+        (*uniqueVals) = malloc1d((*nUnique)*sizeof(int));
+    if(uniqueInds!=NULL)
+        (*uniqueInds) = malloc1d((*nUnique)*sizeof(int));
+    for(i=0; i<nInputs; i++) {
+        if(nDuplicates_perInput[i] == 0) {
+            /* If no duplicate exists, append... */
+            if(uniqueVals!=NULL)
+                (*uniqueVals)[j] = input[i];
+            if(uniqueInds!=NULL)
+                (*uniqueInds)[j] = i;
+            j++;
+        }
+    }
+
+    /* clean-up */
+    free(nDuplicates_perInput);
+}

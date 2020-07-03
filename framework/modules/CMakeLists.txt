@@ -24,6 +24,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_error.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_fft.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_filters.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_geometry.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_loudspeaker_presets.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_matrixConv.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_misc.c

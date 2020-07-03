@@ -186,6 +186,33 @@ void polyd_m(double* X,
              double_complex* poly,
              int size_x);
 
+/**
+ * Returns the sum of all values
+ */
+float sumf(float* values,
+           int nValues);
+
+/**
+ * Finds the unique values (and their indices) of the input vector
+ *
+ * @note this is equivalent to using "unique(vals, 'last')" in Matlab
+ * @test test__unique_i()
+ *
+ * @param[in]  input      Input vector; nInputs x 1
+ * @param[in]  nInputs    Number of elements in the input vector
+ * @param[out] uniqueVals (&) Unique values (set to NULL if not wanted);
+ *                        nUnique x 1
+ * @param[out] uniqueInds (&) Indices corresponding to Unique values (set to
+ *                        NULL if not wanted); nUnique x 1
+ * @param[out] nUnique    (&) Number of Unique values; 1 x 1
+ *
+ */
+void unique_i(int* input,
+              int nInputs,
+              int** uniqueVals,
+              int** uniqueInds,
+              int* nUnique);
+
 
 #ifdef __cplusplus
 }/* extern "C" */

@@ -74,6 +74,7 @@
 		50E36079249BDDCC00B74C25 /* saf_default_hrirs.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36057249BDDCC00B74C25 /* saf_default_hrirs.c */; };
 		50E3607A249BDDCC00B74C25 /* saf_hrir_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3605A249BDDCC00B74C25 /* saf_hrir_internal.c */; };
 		50E3607B249BDDCC00B74C25 /* saf_hrir.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3605B249BDDCC00B74C25 /* saf_hrir.c */; };
+		50E5CD1624AF3E5800019898 /* saf_utility_geometry.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -232,6 +233,8 @@
 		50E36059249BDDCC00B74C25 /* saf_hrir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hrir.h; sourceTree = "<group>"; };
 		50E3605A249BDDCC00B74C25 /* saf_hrir_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hrir_internal.c; sourceTree = "<group>"; };
 		50E3605B249BDDCC00B74C25 /* saf_hrir.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hrir.c; sourceTree = "<group>"; };
+		50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_geometry.c; sourceTree = "<group>"; };
+		50E5CD1524AF3E5800019898 /* saf_utility_geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_geometry.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -620,6 +623,8 @@
 				50E36038249BDDCC00B74C25 /* saf_utility_fft.h */,
 				50E36039249BDDCC00B74C25 /* saf_utility_filters.c */,
 				50E3602C249BDDCB00B74C25 /* saf_utility_filters.h */,
+				50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */,
+				50E5CD1524AF3E5800019898 /* saf_utility_geometry.h */,
 				50E3603B249BDDCC00B74C25 /* saf_utility_loudspeaker_presets.c */,
 				50E3602B249BDDCB00B74C25 /* saf_utility_loudspeaker_presets.h */,
 				50E36041249BDDCC00B74C25 /* saf_utility_matrixConv.c */,
@@ -800,6 +805,7 @@
 				50E35FB824926CF900B74C25 /* ambi_drc_internal.c in Sources */,
 				50E35FBA24926CF900B74C25 /* multiconv.c in Sources */,
 				50E36070249BDDCC00B74C25 /* saf_utility_matrixConv.c in Sources */,
+				50E5CD1624AF3E5800019898 /* saf_utility_geometry.c in Sources */,
 				50E3607A249BDDCC00B74C25 /* saf_hrir_internal.c in Sources */,
 				50E35FB724926CF900B74C25 /* ambi_drc.c in Sources */,
 				50E3606F249BDDCC00B74C25 /* saf_utility_sort.c in Sources */,

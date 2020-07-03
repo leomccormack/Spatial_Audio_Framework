@@ -50,8 +50,8 @@ extern "C" {
     
 /**
  * Use this macro when passing a 2-D dynamic multi-dimensional array to
- * memset, memcpy or any other function that expects a flat contiguous 1-D data
- * structure
+ * memset, memcpy or any other function that expects a flat contiguous 1-D block
+ * of data
  *
  * e.g.
  * \code{.c}
@@ -63,8 +63,8 @@ extern "C" {
 
 /**
  * Use this macro when passing a 3-D dynamic multi-dimensional array to
- * memset, memcpy or any other function that expects a flat contiguous 1-D data
- * structure
+ * memset, memcpy or any other function that expects a flat contiguous 1-D block
+ * of data
  */
 #define FLATTEN3D(A) (**A) /* || (&A[0][0][0]) */
     

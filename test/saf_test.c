@@ -46,7 +46,6 @@
 # include "sldoa.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
-
 /* ========================================================================== */
 /*                                 Test Config                                */
 /* ========================================================================== */
@@ -85,6 +84,7 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
+
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -99,6 +99,8 @@ int main_test(void) {
     RUN_TEST(test__sortf);
     RUN_TEST(test__sortz);
     RUN_TEST(test__cmplxPairUp);
+    RUN_TEST(test__getVoronoiWeights);
+    RUN_TEST(test__unique_i);
     RUN_TEST(test__realloc2d_r);
     RUN_TEST(test__formulate_M_and_Cr);
     RUN_TEST(test__formulate_M_and_Cr_cmplx);
@@ -762,6 +764,93 @@ void test__cmplxPairUp(void){
         if(fabs(creal(sorted_vals[i])-creal(sorted_vals[i+1])) < 0.00001 )
             if( !(fabs(cimag(sorted_vals[i])) < 0.0001) && !(fabs(cimag(sorted_vals[i+1])) < 0.0001) )
                 TEST_ASSERT_TRUE(cimag(sorted_vals[i])<=cimag(sorted_vals[i+1]));
+}
+
+void test__getVoronoiWeights(void){
+    int i, it, td, nDirs;
+    float* dirs_deg, *weights;
+    float sum, tmp, scale;
+
+    /* Config */
+    const float acceptedTolerance = 0.01f;
+    const int nIterations = 100;
+
+    /* Loop over T-designs */
+    for(td=2; td<21; td++){
+        dirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[td];
+        nDirs = __Tdesign_nPoints_per_degree[td];
+
+        /* Compute weights */
+        weights = malloc1d(nDirs*sizeof(float));
+        getVoronoiWeights(dirs_deg, nDirs, 0, weights);
+
+        /* Assert that they sum to 4PI */
+        sum = sumf(weights, nDirs);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, 4.0f*SAF_PI, sum);
+
+        /* Due to the uniform arrangement, all the weights should be the same */
+        for(i=1; i<nDirs; i++)
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, weights[0], weights[i]);
+
+        /* clean-up */
+        free(weights);
+    }
+
+    /* Loop over some random arrangement of points */
+    for(it=0; it<nIterations; it++){
+        rand_0_1(&tmp, 1);
+        nDirs = (int)(tmp*190.0f + 10.0f); /* random number between 10..200 */
+
+        /* Random dirs (-180..180 azi, -180..180 elev) */
+        dirs_deg = malloc1d(nDirs*2*sizeof(float));
+        rand_m1_1(dirs_deg, nDirs*2);
+        scale = 180.0f;
+        utility_svsmul(dirs_deg, &scale, nDirs*2, dirs_deg);
+
+        /* Compute weights */
+        weights = malloc1d(nDirs*sizeof(float));
+        getVoronoiWeights(dirs_deg, nDirs, 0, weights);
+
+        /* Assert that they sum to 4PI */
+        sum = sumf(weights, nDirs);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, 4.0f*SAF_PI, sum);
+
+        /* clean-up */
+        free(dirs_deg);
+        free(weights);
+    }
+}
+
+void test__unique_i(void){
+    int i, nUnique;
+    int* uniqueVals;
+    int* uniqueInds;
+
+    /* test1 */
+    int input[6] = {1, 2, 2, 10, 11, 12};
+    int uniqueVals_ref[5] = {1, 2, 10, 11, 12};
+    int uniqueInds_ref[5] = {0, 2, 3, 4, 5};
+    unique_i(input, 6, &uniqueVals, &uniqueInds, &nUnique);
+    TEST_ASSERT_EQUAL(5, nUnique);
+    for(i=0; i<nUnique; i++){
+        TEST_ASSERT_EQUAL(uniqueVals_ref[i], uniqueVals[i]);
+        TEST_ASSERT_EQUAL(uniqueInds_ref[i], uniqueInds[i]);
+    }
+    free(uniqueVals);
+    free(uniqueInds);
+
+    /* test2 */
+    int input2[12] = {1, 10, 1, 3, 1, 3, 4, 7, 8, 10, 10, 2};
+    int uniqueVals_ref2[7] = {1, 3, 4, 7, 8, 10, 2};
+    int uniqueInds_ref2[7] = {4, 5, 6, 7, 8, 10, 11};
+    unique_i(input2, 12, &uniqueVals, &uniqueInds, &nUnique);
+    TEST_ASSERT_EQUAL(7, nUnique);
+    for(i=0; i<nUnique; i++){
+        TEST_ASSERT_EQUAL(uniqueVals_ref2[i], uniqueVals[i]);
+        TEST_ASSERT_EQUAL(uniqueInds_ref2[i], uniqueInds[i]);
+    }
+    free(uniqueVals);
+    free(uniqueInds);
 }
 
 void test__realloc2d_r(void){

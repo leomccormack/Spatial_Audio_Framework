@@ -118,7 +118,7 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
  * Computes the optimal mixing matrices (REAL)
  *
  * This function solves the problem of determining the optimal mixing matrices
- * 'M' and 'Cr', such that the covariance matrix of the output:
+ * 'M' and 'Mr', such that the covariance matrix of the output:
  * y_out = M*x + Mr*decorrelated(x), is aligned with the target matrix 'Cy',
  * given the covariance matrix of input x, Cx=x*x^H, and a prototype decoding
  * matrix Q.
@@ -174,7 +174,7 @@ void formulate_M_and_Cr(/* Input Arguments */
  * Computes the optimal mixing matrices (COMPLEX)
  *
  * This function solves the problem of determining the optimal mixing matrices
- * 'M' and 'Cr', such that the covariance matrix of the output:
+ * 'M' and 'Mr', such that the covariance matrix of the output:
  * y_out = M*x + Mr*decorrelated(x), is aligned with the target matrix 'Cy',
  * given the covariance matrix of input x, Cx=x*x^H, and a prototype decoding
  * matrix Q.

@@ -62,11 +62,10 @@ Add the following header search path to your project:
 /opt/intel/compilers_and_libraries/mac/mkl/include
 ```
 
-Then add the following linker flags to your project (note that the second library is only needed if you built the threaded version):
+Then add the following linker flag to your project:
 
 ```
--L/usr/local/lib -lsaf_mkl_custom
--L/usr/local/lib -liomp5    
+-L/usr/local/lib -lsaf_mkl_custom 
 ```
 
 ### Linux users
@@ -77,7 +76,7 @@ Depending on the MKL version and how you configure the installer, the **mkl/tool
 ~/intel/compilers_and_libraries/linux/mkl/tools/builder
 # Or it can be here:
 /opt/intel/compilers_and_libraries/linux/mkl/tools/builder
-# note, that if it is located in '/opt/', you will need to run the remaining commands with 'sudo'
+# note, that if it is located in /opt/, then you will need to run the remaining commands with 'sudo'
 ```
 
 Copy the included **saf_mkl_list** file into the MKL **builder** folder:
@@ -109,11 +108,10 @@ Add the following header search path to your project:
 ~/intel/compilers_and_libraries/linux/mkl/include
 ```
 
-Then add the following linker flags to your project (note that the second library is only needed if you built the threaded version):
+Then add the following linker flag to your project:
 
 ```
 -L/usr/lib -lsaf_mkl_custom
--L/usr/lib -liomp5
 ```
 
 ### Windows (64-bit) users
@@ -160,6 +158,7 @@ git clone https://github.com/xianyi/OpenBLAS.git
 sudo apt-get install gfortran
 # build static libs
 mkdir build
+cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=0 -DBUILD_WITHOUT_LAPACK=0
 make 
 ```
@@ -177,7 +176,7 @@ OpenBLAS/lapack-netlib/LAPACKE/include
 
 ## OPTION: SAF_USE_APPLE_ACCELERATE
 
-Only for MacOSX. This is also the default performance library for Apple users if no performance library is specified. Simply add the **Accelerate** framework to your XCode project, and you're good to go.
+Only for MacOSX. This is also the default performance library for Apple users if no performance library is specified. Simply add the [**Accelerate**](https://developer.apple.com/documentation/accelerate) framework to your XCode project, and you're good to go.
 
 
 ## OPTION: SAF_USE_ATLAS

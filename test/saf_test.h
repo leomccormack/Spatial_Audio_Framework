@@ -65,6 +65,15 @@ void test__sortz(void);
  */
 void test__cmplxPairUp(void);
 /**
+ * Testing that the weights from the getVoronoiWeights() function sum to 4pi
+ * and that for a uniform arrangement of points, the weights are all identical
+ */
+void test__getVoronoiWeights(void);
+/**
+ * Testing that the unique_i() function operates correctly
+ */
+void test__unique_i(void);
+/**
  * Testing the realloc2d_r() function (reallocating 2-D array, while retaining
  * the previous data order; except truncated or extended) */
 void test__realloc2d_r(void);

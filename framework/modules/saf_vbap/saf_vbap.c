@@ -485,7 +485,6 @@ void getPvalues
     } 
 }
 
-
 void findLsTriplets
 (
     float* ls_dirs_deg,
@@ -511,10 +510,10 @@ void findLsTriplets
     (*numOutVertices)  = L;
     (*out_vertices) = (float*)malloc1d(L*3*sizeof(float));
     for ( i = 0; i < L; i++) {
-        (*out_vertices)[i*3+2] = (float)((CH_FLOAT)sin((double)ls_dirs_deg[i*2+1]* SAF_PI/180.0));
-        rcoselev = (CH_FLOAT)cos((double)ls_dirs_deg[i*2+1]*SAF_PI/180.0);
-        (*out_vertices)[i*3+0] = (float)(rcoselev * (CH_FLOAT)cos((double)ls_dirs_deg[i*2+0]*SAF_PI/180.0));
-        (*out_vertices)[i*3+1] = (float)(rcoselev * (CH_FLOAT)sin((double)ls_dirs_deg[i*2+0]*SAF_PI/180.0));
+        (*out_vertices)[i*3+2] = (float)((CH_FLOAT)sin((double)ls_dirs_deg[i*2+1]* SAF_PId/180.0));
+        rcoselev = (CH_FLOAT)cos((double)ls_dirs_deg[i*2+1]*SAF_PId/180.0);
+        (*out_vertices)[i*3+0] = (float)(rcoselev * (CH_FLOAT)cos((double)ls_dirs_deg[i*2+0]*SAF_PId/180.0));
+        (*out_vertices)[i*3+1] = (float)(rcoselev * (CH_FLOAT)sin((double)ls_dirs_deg[i*2+0]*SAF_PId/180.0));
         vertices[i].x = (*out_vertices)[i*3+0];
         vertices[i].y = (*out_vertices)[i*3+1];
         vertices[i].z = (*out_vertices)[i*3+2];

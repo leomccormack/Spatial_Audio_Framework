@@ -149,7 +149,7 @@ void generateVBAPgainTable3D(/* Input arguments */
  * \code{.c}
  *   N_azi = (int)(360.0f / aziRes + 0.5f) + 1;
  *   aziIndex = (int)(matlab_fmodf(AZI + 180.0f, 360.0f)/az_res_deg + 0.5f);
- *   elevIndex = (int)((ELEVATION + 90.0f) / el_res_deg + 0.5f);
+ *   elevIndex = (int)((ELEV + 90.0f) / el_res_deg + 0.5f);
  *   idx3d = elevIndex * N_azi + aziIndex;
  *   for (i = 0; i < 3; i++){
  *       gains[i] =  vbap_gtableComp[idx3d*3+i];
@@ -367,7 +367,7 @@ void getSpreadSrcDirs3D(/* Input Arguments */
  * Calculates 3D VBAP gains for pre-calculated loudspeaker triangles and
  * predefined source directions
  *
- * @param[in]  src_dirs     Source directions; FLAT: src_num x 2
+ * @param[in]  src_dirs     Source directions in DEGREES; FLAT: src_num x 2
  * @param[in]  src_num      Number of sources
  * @param[in]  ls_num       Number of loudspeakers
  * @param[in]  ls_groups    True loudspeaker triangle indices; FLAT: nFaces x 3
@@ -392,7 +392,7 @@ void vbap3D(/* Input Arguments */
 /**
  * Calculates loudspeaker pairs for a circular grid of loudspeaker directions
  *
- * @param[in]  ls_dirs_deg Loudspeaker/source directions; FLAT: L x 1
+ * @param[in]  ls_dirs_deg Loudspeaker directions in DEGREES; FLAT: L x 1
  * @param[in]  L           Number of loudspeakers
  * @param[out] out_pairs   (&) loudspeaker pair indices; FLAT: numOutPairs x 2
  * @param[out] numOutPairs (&) number of loudspeaker pairs
