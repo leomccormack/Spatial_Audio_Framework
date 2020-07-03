@@ -15,7 +15,7 @@
  */
 
 /**
- * @file saf_utility_geometry.h
+ * @file saf_utility_geometry.c
  * @ingroup Utilities
  * @brief A collection of computational geometry related functions
  *
