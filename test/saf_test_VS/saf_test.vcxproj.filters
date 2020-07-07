@@ -330,6 +330,9 @@
     <ClInclude Include="..\..\framework\resources\md_malloc\md_malloc.h">
       <Filter>framework\resources\md_malloc</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_geometry.h">
+      <Filter>framework\modules\saf_utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\timer\timer.c">
@@ -532,6 +535,9 @@
     </ClCompile>
     <ClCompile Include="..\..\framework\resources\md_malloc\md_malloc.c">
       <Filter>framework\resources\md_malloc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_geometry.c">
+      <Filter>framework\modules\saf_utilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
