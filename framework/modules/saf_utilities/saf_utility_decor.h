@@ -35,6 +35,7 @@ extern "C" {
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "saf_utility_complex.h"
 
 /**
  * Returns delay values for multiple channels per frequency, such that once
@@ -88,6 +89,49 @@ void synthesiseNoiseReverb(int nChannels,
                            int flattenFLAG,
                            float** rir_filt,
                            int* rir_len);
+
+/** Lattice all-pass filter coefficients for 256 channels, 20th order */
+extern const float __lattice_coeffs_o20[256][2][21];
+/** Lattice all-pass filter coefficients for 256 channels, 15th order */
+extern const float __lattice_coeffs_o15[256][2][16];
+/** Lattice all-pass filter coefficients for 256 channels, 6th order */
+extern const float __lattice_coeffs_o6[256][2][7];
+/** Lattice all-pass filter coefficients for 256 channels, 3rd order */
+extern const float __lattice_coeffs_o3[256][2][4];
+
+
+// fixedDelays length: nCutoffs+1
+
+/**
+ *
+ * @param[in]  phDecor     (&) address of lattice decorrelator handle
+ */
+void latticeDecorrelator_create(void** phDecor,
+                                int nCH,
+                                int* orders,
+                                float* freqCutoffs,
+                                int* fixedDelays,
+                                int nCutoffs,
+                                float* freqVector,
+                                int nBands);
+
+/**
+ *
+ * @param[in]  phDecor     (&) address of lattice decorrelator handle
+ */
+void latticeDecorrelator_destroy(void** phDecor);
+
+/**
+ *
+ * @param[in]  hDecor     lattice decorrelator handle
+ * @param[in]  inFrame    nBands x nCH x nTimeSlots
+ * @param[in]  nTimeSlots Number of time slots per frame
+ * @param[out] decorFrame nBands x nCH x nTimeSlots
+ */
+void latticeDecorrelator_apply(void* hDecor,
+                               float_complex*** inFrame,
+                               int nTimeSlots,
+                               float_complex*** decorFrame);
 
 
 #ifdef __cplusplus

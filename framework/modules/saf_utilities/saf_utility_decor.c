@@ -165,3 +165,202 @@ void synthesiseNoiseReverb
     free(rir_filt_tmp);
 }
 
+typedef struct _latticeAPF{
+    int order;
+    int filterLength;
+    float** coeffs;
+    float_complex* buffer;
+
+}latticeAPF;
+
+typedef struct _latticeDecor_data{
+    int nCH;
+    int nCutoffs;
+    int nBands;
+    int nXtimeslots;
+    int maxBufferLen;
+    int* orders;
+    int* TF_delays;
+    latticeAPF** lttc_apf;
+
+    /* run-time */
+    float_complex*** delayBuffers;
+    int* wIdx;
+    int* rIdx;
+
+}latticeDecor_data;
+
+
+void latticeDecorrelator_create
+(
+    void** phDecor,
+    int nCH,
+    int* orders,
+    float* freqCutoffs,
+    int* fixedDelays,
+    int nCutoffs,
+    float* freqVector,
+    int nBands
+)
+{
+    *phDecor = malloc1d(sizeof(latticeDecor_data));
+    latticeDecor_data *h = (latticeDecor_data*)(*phDecor);
+    int band, ch, o, filterIdx, maxDelay;
+
+    h->nCH = nCH;
+    h->nCutoffs = nCutoffs;
+    h->nBands = nBands;
+
+    /* alloc */
+    h->orders = malloc1d(nCutoffs*sizeof(int));
+    memcpy(h->orders, orders, nCutoffs*sizeof(int));
+    h->TF_delays = malloc1d(nBands * sizeof(int));
+    h->lttc_apf = (latticeAPF**)malloc2d(nBands, nCH, sizeof(latticeAPF));
+
+    /* set-up delays and allpass filters per band and channel */
+    maxDelay = 0;
+    for(band=0; band<nBands; band++){
+        filterIdx = -1;
+
+        /* Find filter index for this band: */
+        for(o=0; o<nCutoffs; o++){
+            if(freqVector[band]<freqCutoffs[o]){
+                filterIdx = o;
+                break;
+            }
+        }
+
+        /* Fixed frequency dependent delays */
+        if(filterIdx==-1)
+            h->TF_delays[band] = fixedDelays[nCutoffs];
+        else
+            h->TF_delays[band] = fixedDelays[filterIdx];
+
+        /* keep track of maximum delay */
+        if(h->TF_delays[band]>maxDelay)
+            maxDelay = h->TF_delays[band];
+
+        /* Pull lattice allpass filter coefficients from database */
+        for(ch=0; ch<nCH; ch++){
+            if(filterIdx == -1){
+                /* Not needed... */
+                h->lttc_apf[band][ch].order = -1;
+                h->lttc_apf[band][ch].filterLength = 0;
+                h->lttc_apf[band][ch].coeffs = NULL;
+                h->lttc_apf[band][ch].buffer = NULL;
+            }
+            else{
+                h->lttc_apf[band][ch].order = h->orders[filterIdx];
+                h->lttc_apf[band][ch].filterLength = h->orders[filterIdx]+1;
+                h->lttc_apf[band][ch].coeffs = (float**)malloc2d(2, h->orders[filterIdx]+1, sizeof(float));
+                h->lttc_apf[band][ch].buffer = calloc1d(h->orders[filterIdx]+1, sizeof(float_complex));
+                switch(orders[filterIdx]){
+                    case 20: memcpy(FLATTEN2D(h->lttc_apf[band][ch].coeffs), __lattice_coeffs_o20[ch], 2*(h->orders[filterIdx]+1)*sizeof(float)); break;
+                    case 15: memcpy(FLATTEN2D(h->lttc_apf[band][ch].coeffs), __lattice_coeffs_o15[ch], 2*(h->orders[filterIdx]+1)*sizeof(float)); break;
+                    case 6:  memcpy(FLATTEN2D(h->lttc_apf[band][ch].coeffs), __lattice_coeffs_o6[ch],  2*(h->orders[filterIdx]+1)*sizeof(float)); break;
+                    case 3:  memcpy(FLATTEN2D(h->lttc_apf[band][ch].coeffs), __lattice_coeffs_o3[ch],  2*(h->orders[filterIdx]+1)*sizeof(float)); break;
+                    default: assert(0); /* Unsupported filter order specified */
+                }
+            }
+        }
+    }
+
+    /* Run-time */
+    h->maxBufferLen = maxDelay;
+    h->delayBuffers = (float_complex***)calloc3d(nBands, nCH, h->maxBufferLen, sizeof(float_complex));
+    h->rIdx = malloc1d(nBands*sizeof(int));
+    for(band=0; band<nBands; band++)
+        h->rIdx[band] = h->TF_delays[band]-1;
+    h->wIdx = calloc1d(nBands,sizeof(int));
+}
+
+
+void latticeDecorrelator_destroy
+(
+    void** phDecor
+)
+{
+    latticeDecor_data *h = (latticeDecor_data*)(*phDecor);
+    int band, ch;
+
+    if(h!=NULL){
+        free(h->orders);
+        free(h->TF_delays);
+        for(band=0; band <h->nBands; band++){
+            for(ch=0; ch<h->nCH; ch++){
+                free(h->lttc_apf[band][ch].buffer);
+                free(h->lttc_apf[band][ch].coeffs);
+            }
+        }
+        free(h->lttc_apf);
+
+        free(h->delayBuffers);
+        free(h->wIdx);
+        free(h->rIdx);
+        free(h);
+        h=NULL;
+        *phDecor = NULL;
+    }
+}
+
+void latticeDecorrelator_apply
+(
+    void* hDecor,
+    float_complex*** inFrame,
+    int nTimeSlots,
+    float_complex*** decorFrame
+)
+{
+    latticeDecor_data *h = (latticeDecor_data*)(hDecor);
+    int band, ch, t, i, rIdx;
+    float_complex ytmp, xtmp;
+
+    /* Apply fixed delay */
+    for(t=0; t<nTimeSlots; t++){
+        for(band=0; band <h->nBands; band++){
+            for(ch=0; ch<h->nCH; ch++){
+
+                h->delayBuffers[band][ch][h->wIdx[band]] = inFrame[band][ch][t];
+                decorFrame[band][ch][t] = h->delayBuffers[band][ch][h->rIdx[band]];
+            }
+
+            /* increment and wrap-around as needed */
+            h->rIdx[band]++;
+            h->wIdx[band]++;
+            if( h->rIdx[band] >= h->TF_delays[band] )
+                h->rIdx[band] = 0;
+            if( h->wIdx[band] >= h->TF_delays[band] )
+                h->wIdx[band] = 0;
+        }
+
+
+        /* increment and wrap-around as needed */
+
+       // h->rIdx[band] = h->rIdx[band] & (h->TF_delays[band]-1);
+        //h->wIdx[band] = h->wIdx[band] & (h->TF_delays[band]-1);
+    }
+
+//    /* Apply lattice allpass filters */
+#if _MSC_VER >= 1900
+    assert(0);
+#else
+    for(band=0; band <h->nBands; band++){
+        for(ch=0; ch<h->nCH; ch++){
+            if(h->lttc_apf[band][ch].buffer!=NULL){ /* only if filter is defined... */
+                for(t=0; t<nTimeSlots; t++){
+                    xtmp = decorFrame[band][ch][t];
+                    ytmp = h->lttc_apf[band][ch].buffer[0] + xtmp * (h->lttc_apf[band][ch].coeffs[0][0]);
+                    decorFrame[band][ch][t] = ytmp;
+
+                    /* propagate through the rest of the lattice filter structure */
+                    for(i=0; i<h->lttc_apf[band][ch].order; i++){
+                        h->lttc_apf[band][ch].buffer[i] = h->lttc_apf[band][ch].buffer[i+1] +
+                                                          h->lttc_apf[band][ch].coeffs[0][i+1] * xtmp -
+                                                          h->lttc_apf[band][ch].coeffs[1][i+1] * ytmp;
+                    }
+                }
+            }
+        }
+    }
+#endif
+}

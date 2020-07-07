@@ -75,6 +75,9 @@
 		50E3607A249BDDCC00B74C25 /* saf_hrir_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3605A249BDDCC00B74C25 /* saf_hrir_internal.c */; };
 		50E3607B249BDDCC00B74C25 /* saf_hrir.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3605B249BDDCC00B74C25 /* saf_hrir.c */; };
 		50E5CD1624AF3E5800019898 /* saf_utility_geometry.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */; };
+		50E5CDAA24B4580900019898 /* saf_utility_latticeCoeffs.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */; };
+		50E5CDAF24B4A4B200019898 /* decorrelator.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CDAD24B4A4B200019898 /* decorrelator.c */; };
+		50E5CDB024B4A4B200019898 /* decorrelator_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CDAE24B4A4B200019898 /* decorrelator_internal.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -235,6 +238,11 @@
 		50E3605B249BDDCC00B74C25 /* saf_hrir.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hrir.c; sourceTree = "<group>"; };
 		50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_geometry.c; sourceTree = "<group>"; };
 		50E5CD1524AF3E5800019898 /* saf_utility_geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_geometry.h; sourceTree = "<group>"; };
+		50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_latticeCoeffs.c; sourceTree = "<group>"; };
+		50E5CDAC24B4A4B200019898 /* decorrelator_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decorrelator_internal.h; sourceTree = "<group>"; };
+		50E5CDAD24B4A4B200019898 /* decorrelator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = decorrelator.c; sourceTree = "<group>"; };
+		50E5CDAE24B4A4B200019898 /* decorrelator_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = decorrelator_internal.c; sourceTree = "<group>"; };
+		50E5CDB224B4A4E800019898 /* decorrelator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decorrelator.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -311,6 +319,7 @@
 				50E35F6724926CF900B74C25 /* array2sh.h */,
 				50E35F6224926CF900B74C25 /* beamformer.h */,
 				50E35F6824926CF900B74C25 /* binauraliser.h */,
+				50E5CDB224B4A4E800019898 /* decorrelator.h */,
 				50E35F6424926CF900B74C25 /* dirass.h */,
 				50E35F6524926CF900B74C25 /* matrixconv.h */,
 				50E35F6F24926CF900B74C25 /* multiconv.h */,
@@ -333,6 +342,7 @@
 				50E35F9E24926CF900B74C25 /* array2sh */,
 				50E35F8A24926CF900B74C25 /* beamformer */,
 				50E35F9624926CF900B74C25 /* binauraliser */,
+				50E5CDAB24B4A4B200019898 /* decorrelator */,
 				50E35FAE24926CF900B74C25 /* dirass */,
 				50E35F8E24926CF900B74C25 /* matrixconv */,
 				50E35F8224926CF900B74C25 /* multiconv */,
@@ -625,6 +635,7 @@
 				50E3602C249BDDCB00B74C25 /* saf_utility_filters.h */,
 				50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */,
 				50E5CD1524AF3E5800019898 /* saf_utility_geometry.h */,
+				50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */,
 				50E3603B249BDDCC00B74C25 /* saf_utility_loudspeaker_presets.c */,
 				50E3602B249BDDCB00B74C25 /* saf_utility_loudspeaker_presets.h */,
 				50E36041249BDDCC00B74C25 /* saf_utility_matrixConv.c */,
@@ -697,6 +708,16 @@
 			path = saf_hrir;
 			sourceTree = "<group>";
 		};
+		50E5CDAB24B4A4B200019898 /* decorrelator */ = {
+			isa = PBXGroup;
+			children = (
+				50E5CDAE24B4A4B200019898 /* decorrelator_internal.c */,
+				50E5CDAC24B4A4B200019898 /* decorrelator_internal.h */,
+				50E5CDAD24B4A4B200019898 /* decorrelator.c */,
+			);
+			path = decorrelator;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -755,11 +776,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				50E36076249BDDCC00B74C25 /* saf_sofa_reader.c in Sources */,
+				50E5CDAA24B4580900019898 /* saf_utility_latticeCoeffs.c in Sources */,
 				50E36063249BDDCC00B74C25 /* saf_hoa.c in Sources */,
 				50E35FC024926CF900B74C25 /* matrixconv.c in Sources */,
 				50E35FBC24926CF900B74C25 /* ambi_bin.c in Sources */,
 				50E35FCD24926CF900B74C25 /* ambi_dec_internal.c in Sources */,
 				50E36072249BDDCC00B74C25 /* saf_reverb.c in Sources */,
+				50E5CDAF24B4A4B200019898 /* decorrelator.c in Sources */,
 				50E35FC424926CF900B74C25 /* binauraliser.c in Sources */,
 				50E35FC124926CF900B74C25 /* pitch_shifter_internal.c in Sources */,
 				50E36077249BDDCC00B74C25 /* saf_vbap_internal.c in Sources */,
@@ -784,6 +807,7 @@
 				50E35FBF24926CF900B74C25 /* matrixconv_internal.c in Sources */,
 				50E36075249BDDCC00B74C25 /* saf_sh_internal.c in Sources */,
 				50E36078249BDDCC00B74C25 /* saf_vbap.c in Sources */,
+				50E5CDB024B4A4B200019898 /* decorrelator_internal.c in Sources */,
 				50E35FC224926CF900B74C25 /* pitch_shifter.c in Sources */,
 				50E3605F249BDDCC00B74C25 /* afSTFTlib.c in Sources */,
 				50E36061249BDDCC00B74C25 /* saf_cdf4sap.c in Sources */,
@@ -1008,21 +1032,6 @@
 					timer,
 					../dependencies/MacOSX/include,
 					/opt/intel/compilers_and_libraries/mac/mkl/include,
-					../examples/ambi_bin/include,
-					../examples/ambi_dec/include,
-					../examples/ambi_drc/include,
-					../examples/ambi_enc/include,
-					../examples/array2sh/include,
-					../examples/beamformer/include,
-					../examples/binauraliser/include,
-					../examples/dirass/include,
-					../examples/matrixconv/include,
-					../examples/multiconv/include,
-					../examples/panner/include,
-					../examples/powermap/include,
-					../examples/pitch_shifter/include,
-					../examples/rotator/include,
-					../examples/sldoa/include,
 				);
 				INSTALL_PATH = bin/;
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;
@@ -1064,21 +1073,6 @@
 					timer,
 					../dependencies/MacOSX/include,
 					/opt/intel/compilers_and_libraries/mac/mkl/include,
-					../examples/ambi_bin/include,
-					../examples/ambi_dec/include,
-					../examples/ambi_drc/include,
-					../examples/ambi_enc/include,
-					../examples/array2sh/include,
-					../examples/beamformer/include,
-					../examples/binauraliser/include,
-					../examples/dirass/include,
-					../examples/matrixconv/include,
-					../examples/multiconv/include,
-					../examples/panner/include,
-					../examples/powermap/include,
-					../examples/pitch_shifter/include,
-					../examples/rotator/include,
-					../examples/sldoa/include,
 				);
 				INSTALL_PATH = bin/;
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;

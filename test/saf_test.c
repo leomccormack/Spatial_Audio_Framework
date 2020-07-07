@@ -36,6 +36,7 @@
 # include "array2sh.h"
 # include "beamformer.h"
 # include "binauraliser.h"
+# include "decorrelator.h"
 # include "dirass.h"
 # include "matrixconv.h"
 # include "multiconv.h"
@@ -45,6 +46,9 @@
 # include "rotator.h"
 # include "sldoa.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
+
+
+void test__latticeDecorrelator(void);
 
 /* ========================================================================== */
 /*                                 Test Config                                */
@@ -84,7 +88,7 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
-
+    RUN_TEST(test__latticeDecorrelator);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -133,6 +137,109 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__latticeDecorrelator(void){
+    int c, band, nBands, idx, hopIdx;
+    void* hDecor, *hSTFT;
+    float icc, tmp, tmp2;
+    float* freqVector;
+    float** inputTimeDomainData, **outputTimeDomainData, **tempHop;
+    complexVector* frequencyDomainData;
+    float_complex*** inTFframe, ***outTFframe;
+
+    /* config */
+    const float acceptedICC = 0.01;
+    const int nCH = 100;
+    const int nTestHops = 2000;
+    const int hopSize = 128;
+    const int afSTFTdelay = hopSize*12;
+    const int lSig = nTestHops*hopSize+afSTFTdelay;
+    int orders[4] = {20, 15, 6, 3};
+    float freqCutoffs[4] = {700.0f, 2.8e3f, 4.5e3f, 12e3f};
+    int fixedDelays[5] = {9, 8, 3, 2, 3};
+    //int fixedDelays[5] = {8, 7, 2, 1, 2};
+    nBands = hopSize+5;
+
+    /* setup decorrelator */
+    freqVector = malloc1d(nBands*sizeof(float));
+    for(band=0; band<nBands; band++)
+        freqVector[band] = (float)__afCenterFreq48e3[band];
+    latticeDecorrelator_create(&hDecor, nCH, orders, freqCutoffs, fixedDelays, 4, freqVector, 133);
+
+    /* audio buffers */
+    inputTimeDomainData = (float**) malloc2d(1, lSig, sizeof(float));
+    outputTimeDomainData = (float**) malloc2d(nCH, lSig, sizeof(float));
+    tempHop = (float**) malloc2d(nCH, hopSize, sizeof(float));
+    frequencyDomainData = malloc1d(nCH * sizeof(complexVector));
+    for(c=0; c<nCH; c++){
+        frequencyDomainData[c].re = malloc1d(nBands*sizeof(float));
+        frequencyDomainData[c].im = malloc1d(nBands*sizeof(float));
+    }
+    inTFframe = (float_complex***)malloc3d(nBands, nCH, 1, sizeof(float_complex));
+    outTFframe = (float_complex***)malloc3d(nBands, nCH, 1, sizeof(float_complex));
+
+    /* Initialise afSTFT and input data */
+    afSTFTinit(&hSTFT, hopSize, 1, nCH, 0, 1);
+    rand_m1_1(FLATTEN2D(inputTimeDomainData), 1*lSig); /* populate with random numbers */
+
+    /* Pass input data through afSTFT */
+    idx = 0;
+    hopIdx = 0;
+    while(idx<lSig){
+        for(c=0; c<1; c++)
+            memcpy(tempHop[c], &(inputTimeDomainData[c][hopIdx*hopSize]), hopSize*sizeof(float));
+
+        /* forward TF transform, convert, and replicate to all channels */
+        afSTFTforward(hSTFT, tempHop, frequencyDomainData);
+        for(band=0; band<nBands; band++)
+            for(c=0; c<nCH; c++)
+                inTFframe[band][c][0] = cmplxf(frequencyDomainData[0].re[band], frequencyDomainData[0].im[band]);
+
+        /* decorrelate */
+        latticeDecorrelator_apply(hDecor, inTFframe, 1, outTFframe);
+
+        /* Convert, and backward TF transform */
+        for(band=0; band<nBands; band++){
+            for(c=0; c<nCH; c++){
+                frequencyDomainData[c].re[band] = crealf(outTFframe[band][c][0]);
+                frequencyDomainData[c].im[band] = cimagf(outTFframe[band][c][0]);
+            }
+        }
+        afSTFTinverse(hSTFT, frequencyDomainData, tempHop);
+
+        /* Copy frame to output TD buffer */
+        for(c=0; c<nCH; c++)
+            memcpy(&(outputTimeDomainData[c][hopIdx*hopSize]), tempHop[c], hopSize*sizeof(float));
+        idx+=hopSize;
+        hopIdx++;
+    }
+ 
+    /* Compensate for afSTFT delay, and check that the inter-channel correlation
+     * coefficient is below the accepted threshold (ideally 0, if fully
+     * decorrelated...) */
+    for(c=0; c<nCH; c++){
+        utility_svvdot(inputTimeDomainData[0], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &icc);
+        utility_svvdot(inputTimeDomainData[0], inputTimeDomainData[0], (lSig-afSTFTdelay), &tmp);
+        utility_svvdot(&outputTimeDomainData[c][afSTFTdelay], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &tmp2);
+
+        icc = icc/sqrtf(tmp*tmp2); /* normalise */
+        //TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
+        band = 0;
+    }
+
+    /* Clean-up */
+    latticeDecorrelator_destroy(&hDecor);
+    free(inTFframe);
+    free(outTFframe);
+    afSTFTfree(hSTFT);
+    free(inputTimeDomainData);
+    free(outputTimeDomainData);
+    for(c=0; c<nCH; c++){
+        free(frequencyDomainData[c].re);
+        free(frequencyDomainData[c].im);
+    }
+    free(frequencyDomainData);
+}
 
 void test__saf_stft_50pc_overlap(void){
     int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;
