@@ -1033,6 +1033,239 @@ void checkCondNumberSHTReal
 /*                     Localisation Functions in the  SHD                     */
 /* ========================================================================== */
 
+void sphESPRIT_create
+(
+    void ** const phESPRIT,
+    int order
+)
+{
+    *phESPRIT = malloc1d(sizeof(sphESPRIT_data));
+    sphESPRIT_data *h = (sphESPRIT_data*)(*phESPRIT);
+    int i, j;
+
+    h->N = order;
+    h->NN = order*order;
+    h->maxK = h->NN;
+
+    /* pre-compute indices and matrices */
+    for(i=0; i<6; i++){
+        h->rWVnimu[i] = malloc1d((order*order) * (order*order) * sizeof(double));
+        h->WVnimu[i]  = malloc1d((order*order) * (order*order) * sizeof(double_complex));
+    }
+    h->nIdx[0] = h->nIdx[1] = h->nIdx[4] = h->nIdx[5] = h->nIdx[10] = h->nIdx[11] = (order*order);
+    h->nIdx[2] = h->nIdx[3] = h->nIdx[6] = h->nIdx[7] = h->nIdx[8]  = h->nIdx[9]  = ((order-1)*(order-1));
+    for(i=0; i<12; i++){
+        if(h->nIdx[i] == 0)
+            h->idx_from_Ynm2Ynimu[i] = NULL;
+        else
+            h->idx_from_Ynm2Ynimu[i] = calloc1d(h->nIdx[i], sizeof(int));
+    }
+    getWnimu(order, 1, 1,-1, h->rWVnimu[0]);
+    getWnimu(order,-1, 0, 0, h->rWVnimu[1]);
+    getWnimu(order,-1, 1,-1, h->rWVnimu[2]);
+    getWnimu(order, 1, 0, 0, h->rWVnimu[3]);
+    getVnimu(order, 0, 0,    h->rWVnimu[4]);
+    getVnimu(order, 1, 0,    h->rWVnimu[5]);
+    for(i=0; i<6; i++){
+        for(j=0; j<(order*order) * (order*order); j++)
+            h->WVnimu[i][j] = cmplx(h->rWVnimu[i][j], 0.0);
+    }
+    muni2q(order, 1,-1, h->idx_from_Ynm2Ynimu[0],  h->idx_from_Ynm2Ynimu[1]);
+    muni2q(order,-1,-1, h->idx_from_Ynm2Ynimu[2],  h->idx_from_Ynm2Ynimu[3]);
+    muni2q(order, 1, 1, h->idx_from_Ynm2Ynimu[4],  h->idx_from_Ynm2Ynimu[5]);
+    muni2q(order,-1, 1, h->idx_from_Ynm2Ynimu[6],  h->idx_from_Ynm2Ynimu[7]);
+    muni2q(order,-1, 0, h->idx_from_Ynm2Ynimu[8],  h->idx_from_Ynm2Ynimu[9]);
+    muni2q(order, 1, 0, h->idx_from_Ynm2Ynimu[10], h->idx_from_Ynm2Ynimu[11]);
+
+    /* memory allocations for run-time matrices */
+    h->Us_1m1  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->Us_m1m1 = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->Us_11   = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->Us_m11  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->Us_m10  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->Us_10   = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->Us_00   = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->WVnimu0_Us1m1  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->WVnimu1_Usm1m1 = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->WVnimu2_Us11   = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->WVnimu3_Usm11  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->WVnimu4_Usm10  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->WVnimu5_Us10   = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->LambdaXYp      = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->LambdaXYm      = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->LambdaZ        = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->pinvUs = malloc1d((h->maxK) * (h->NN)   * sizeof(double_complex));
+    h->PsiXYp = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->PsiXYm = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->PsiZ   = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->tmp_KK = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->V      = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->PhiXYp = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->PhiXYm = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->PhiZ   = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+}
+
+void sphESPRIT_destroy
+(
+    void ** const phESPRIT
+)
+{
+    sphESPRIT_data *h = (sphESPRIT_data*)(*phESPRIT);
+    int i;
+
+    if (h != NULL) {
+        for(i=0; i<6; i++){
+            free(h->rWVnimu[i]);
+            free(h->WVnimu[i]);
+        }
+        for(i=0; i<12; i++)
+            free(h->idx_from_Ynm2Ynimu[i]);
+        free(h->Us_1m1);
+        free(h->Us_m1m1);
+        free(h->Us_11);
+        free(h->Us_m11);
+        free(h->Us_m10);
+        free(h->Us_10);
+        free(h->Us_00);
+        free(h->WVnimu0_Us1m1);
+        free(h->WVnimu1_Usm1m1);
+        free(h->WVnimu2_Us11);
+        free(h->WVnimu3_Usm11);
+        free(h->WVnimu4_Usm10);
+        free(h->WVnimu5_Us10);
+        free(h->LambdaXYp);
+        free(h->LambdaXYm);
+        free(h->LambdaZ);
+        free(h->pinvUs);
+        free(h->PsiXYp);
+        free(h->PsiXYm);
+        free(h->PsiZ);
+        free(h->tmp_KK);
+        free(h->V);
+        free(h->PhiXYp);
+        free(h->PhiXYm);
+        free(h->PhiZ);
+
+        free(h);
+        h = NULL;
+        *phESPRIT = NULL;
+    }
+}
+
+void sphESPRIT_estimateDirs
+(
+    void * const hESPRIT,
+    float_complex* Us, /* nSH * K */
+    int K,
+    float* src_dirs_rad[2] /* 2 x K */
+)
+{
+    sphESPRIT_data *h = (sphESPRIT_data*)(hESPRIT);
+    int i, j;
+    const double_complex i2_ = cmplx(0.0, 2.0);
+    const double_complex calpha = cmplx(1.0, 0.0); const double_complex cbeta = cmplx(0.0, 0.0); /* blas */
+    float phiX, phiY;
+
+    /* Fill matrices */
+    memset(h->Us_1m1, 0, (h->NN) * K * sizeof(double_complex));
+    memset(h->Us_m1m1, 0, (h->NN) * K * sizeof(double_complex));
+    memset(h->Us_11, 0, (h->NN) * K * sizeof(double_complex));
+    memset(h->Us_m11, 0, (h->NN) * K * sizeof(double_complex));
+    memset(h->Us_m10, 0, (h->NN) * K * sizeof(double_complex));
+    memset(h->Us_10, 0, (h->NN) * K * sizeof(double_complex));
+    memset(h->Us_00, 0, (h->NN) * K * sizeof(double_complex));
+    for (i = 0; i < K; i++) {
+        for (j = 0; j < h->nIdx[0]; j++)
+            h->Us_1m1[h->idx_from_Ynm2Ynimu[0][j] * K + i] = cmplx(crealf(Us[h->idx_from_Ynm2Ynimu[1][j] * K + i]), cimagf(Us[h->idx_from_Ynm2Ynimu[1][j] * K + i]));
+        for (j = 0; j < h->nIdx[2]; j++)
+            h->Us_m1m1[h->idx_from_Ynm2Ynimu[2][j] * K + i] = cmplx(crealf(Us[h->idx_from_Ynm2Ynimu[3][j] * K + i]), cimagf(Us[h->idx_from_Ynm2Ynimu[3][j] * K + i]));
+        for (j = 0; j < h->nIdx[4]; j++)
+            h->Us_11[h->idx_from_Ynm2Ynimu[4][j] * K + i] = cmplx(crealf(Us[h->idx_from_Ynm2Ynimu[5][j] * K + i]), cimagf(Us[h->idx_from_Ynm2Ynimu[5][j] * K + i]));
+        for (j = 0; j < h->nIdx[6]; j++)
+            h->Us_m11[h->idx_from_Ynm2Ynimu[6][j] * K + i] = cmplx(crealf(Us[h->idx_from_Ynm2Ynimu[7][j] * K + i]), cimagf(Us[h->idx_from_Ynm2Ynimu[7][j] * K + i]));
+        for (j = 0; j < h->nIdx[8]; j++)
+            h->Us_m10[h->idx_from_Ynm2Ynimu[8][j] * K + i] = cmplx(crealf(Us[h->idx_from_Ynm2Ynimu[9][j] * K + i]), cimagf(Us[h->idx_from_Ynm2Ynimu[9][j] * K + i]));
+        for (j = 0; j < h->nIdx[10]; j++)
+            h->Us_10[h->idx_from_Ynm2Ynimu[10][j] * K + i] = cmplx(crealf(Us[h->idx_from_Ynm2Ynimu[11][j] * K + i]), cimagf(Us[h->idx_from_Ynm2Ynimu[11][j] * K + i]));
+        for (j = 0; j < (h->NN); j++)
+            h->Us_00[j*K + i] = cmplx(crealf(Us[j*K + i]), cimagf(Us[j*K + i]));
+    }
+
+    /*  */
+    cblas_zgemm(CblasRowMajor, CblasTrans, CblasNoTrans, (h->NN), K, (h->NN), &calpha,
+                h->WVnimu[0], (h->NN),
+                h->Us_1m1, K, &cbeta,
+                h->WVnimu0_Us1m1, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, (h->NN), K, (h->NN), &calpha,
+                h->WVnimu[1], (h->NN),
+                h->Us_m1m1, K, &cbeta,
+                h->WVnimu1_Usm1m1, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, (h->NN), K, (h->NN), &calpha,
+                h->WVnimu[2], (h->NN),
+                h->Us_11, K, &cbeta,
+                h->WVnimu2_Us11, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, (h->NN), K, (h->NN), &calpha,
+                h->WVnimu[3], (h->NN),
+                h->Us_m11, K, &cbeta,
+                h->WVnimu3_Usm11, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, (h->NN), K, (h->NN), &calpha,
+                h->WVnimu[4], (h->NN),
+                h->Us_m10, K, &cbeta,
+                h->WVnimu4_Usm10, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, (h->NN), K, (h->NN), &calpha,
+                h->WVnimu[5], (h->NN),
+                h->Us_10, K, &cbeta,
+                h->WVnimu5_Us10, K);
+    for(i=0; i<h->NN; i++){
+        for(j=0; j<K; j++){
+            h->LambdaXYp[i*K+j] = ccsub(h->WVnimu0_Us1m1[i*K + j], h->WVnimu1_Usm1m1[i*K + j]);
+            h->LambdaXYm[i*K+j] = ccadd(crmul(h->WVnimu2_Us11[i*K+j], -1.0), h->WVnimu3_Usm11[i*K+j]);
+            h->LambdaZ[i*K+j]   = ccadd(h->WVnimu4_Usm10[i*K+j], h->WVnimu5_Us10[i*K+j]);
+        }
+    }
+
+    /*  */
+    utility_zpinv(h->Us_00, h->NN, K, h->pinvUs);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, (h->NN), &calpha,
+                h->pinvUs, (h->NN),
+                h->LambdaXYp, K, &cbeta,
+                h->PsiXYp, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, (h->NN), &calpha,
+                h->pinvUs, (h->NN),
+                h->LambdaXYm, K, &cbeta,
+                h->PsiXYm, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, (h->NN), &calpha,
+                h->pinvUs, (h->NN),
+                h->LambdaZ, K, &cbeta,
+                h->PsiZ, K);
+
+    /*  */
+    utility_zeigmp(h->PsiXYp, h->PsiZ, K,  NULL, h->V, NULL);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
+                h->PsiXYp, K,
+                h->V, K, &cbeta,
+                h->tmp_KK, K);
+    utility_zglslv(h->V, K, h->tmp_KK, K, h->PhiXYp);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
+                h->PsiXYm, K,
+                h->V, K, &cbeta,
+                h->tmp_KK, K);
+    utility_zglslv(h->V, K, h->tmp_KK, K, h->PhiXYm);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
+                h->PsiZ, K,
+                h->V, K, &cbeta,
+                h->tmp_KK, K);
+    utility_zglslv(h->V, K, h->tmp_KK, K, h->PhiZ);
+
+    /* extract DoAs */
+    for(i=0; i<K; i++){
+        phiX = (creal(h->PhiXYp[i*K+i])+creal(h->PhiXYm[i*K+i]))/2.0;
+        phiY = creal(ccdiv(ccsub(h->PhiXYp[i*K+i], h->PhiXYm[i*K+i]), i2_));
+        src_dirs_rad[0][i] = (float)atan2(phiY, phiX);
+        src_dirs_rad[1][i] = (float)MIN(atan2(creal(h->PhiZ[i*K+i]), sqrt(phiX*phiX+phiY*phiY)), M_PI/2.0f);
+    }
+}
+
 void generatePWDmap
 (
     int order,

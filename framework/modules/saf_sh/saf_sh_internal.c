@@ -251,3 +251,138 @@ float getW
     }
     return ret;
 }
+
+
+/* ========================================================================== */
+/*                        Internal functions for sphESPRIT                    */
+/* ========================================================================== */
+
+void getWnimu
+(
+    int order,
+    int mm,
+    int ni,
+    int mu,
+    double* Wnimu
+)
+{
+    int i, n, n2_1, ind, len;
+    double* nm, *nimu, *w_nimu;
+
+    len = order*order;
+    nm = malloc1d(len*2*sizeof(double));
+    nimu = malloc1d(len*2*sizeof(double));
+    w_nimu = malloc1d(len*sizeof(double));
+    ind = 0;
+    for(n=0; n<=order-1; n++){
+        n2_1 = 2*n+1;
+        for(i=0; i<n2_1; i++, ind++){
+            nm[ind*2] = (double)n;
+            nm[ind*2+1] = -(double)n+(double)i;
+        }
+    }
+    if(mm==1){
+        for(i=0; i<len; i++){
+            nimu[i*2] = nm[i*2]+(double)ni;
+            nimu[i*2+1] = nm[i*2+1]+(double)mu;
+        }
+    }
+    else /* mm==-1 */{
+        for(i=0; i<len; i++){
+            nimu[i*2] = nm[i*2]+(double)ni;
+            nimu[i*2+1] = -nm[i*2+1]+(double)mu;
+        }
+    }
+    for(i=0; i<len; i++)
+        w_nimu[i] = sqrt( (nimu[i*2]-nimu[i*2+1]-1.0)*(nimu[i*2]-nimu[i*2+1])/((2.0*nimu[i*2]-1.0)*(2.0*nimu[i*2]+1.0)) );
+    memset(Wnimu, 0, len*len*sizeof(double));
+    for(i=0; i<len; i++)
+        Wnimu[i*len+i] = w_nimu[i];
+
+    free(nm);
+    free(nimu);
+    free(w_nimu);
+}
+
+void getVnimu
+(
+    int order,
+    int ni,
+    int mu,
+    double* Vnimu
+)
+{
+    int i, n, n2_1, ind, len;
+    double* nm, *nimu, *v_nimu;
+
+    len = order*order;
+    nm = malloc1d(len*2*sizeof(double));
+    nimu = malloc1d(len*2*sizeof(double));
+    v_nimu = malloc1d(len*sizeof(double));
+    ind = 0;
+    for(n=0; n<=order-1; n++){
+        n2_1 = 2*n+1;
+        for(i=0; i<n2_1; i++, ind++){
+            nm[ind*2] = (double)n;
+            nm[ind*2+1] = -(double)n+(double)i;
+        }
+    }
+    for(i=0; i<len; i++){
+        nimu[i*2] = nm[i*2]+(double)ni;
+        nimu[i*2+1] = nm[i*2+1]+(double)mu;
+    }
+    for(i=0; i<len; i++)
+        v_nimu[i] = sqrt( (nimu[i*2]-nimu[i*2+1])*(nimu[i*2]+nimu[i*2+1])/((2.0*nimu[i*2]-1.0)*(2.0*nimu[i*2]+1.0)) );
+    memset(Vnimu, 0, len*len*sizeof(double));
+    for(i=0; i<len; i++)
+        Vnimu[i*len+i] = v_nimu[i];
+
+    free(nm);
+    free(nimu);
+    free(v_nimu);
+}
+
+void muni2q
+(
+    int order,
+    int ni,
+    int mu,
+    int* idx_nimu,
+    int* idx_nm
+)
+{
+    int i, n, n2_1, ind, len;
+    int* nm, *nimu, *qnm, *qnimu;
+
+    len = order*order;
+    nm = malloc1d(len*2*sizeof(int));
+    nimu = malloc1d(len*2*sizeof(int));
+    qnm = malloc1d(len*sizeof(int));
+    qnimu = malloc1d(len*sizeof(int));
+    ind = 0;
+    for(n=0; n<=order-1; n++){
+        n2_1 = 2*n+1;
+        for(i=0; i<n2_1; i++, ind++){
+            nm[ind*2] = n;
+            nm[ind*2+1] =-n+i;
+        }
+    }
+    for(i=0; i<len; i++){
+        nimu[i*2] = nm[i*2]+ni;
+        nimu[i*2+1] = nm[i*2+1]+mu;
+        qnm[i] = nm[i*2]*nm[i*2]+nm[i*2]+nm[i*2+1]; ///+1
+        qnimu[i] = nimu[i*2]*nimu[i*2]+nimu[i*2]+nimu[i*2+1]; ////+1;
+    }
+    for(i=0, ind=0; i<len; i++){
+        if(abs(nimu[i*2+1])<=nimu[i*2]){
+            idx_nm[ind] = qnimu[i];
+            idx_nimu[ind] = qnm[i];
+            ind++;
+        }
+    }
+
+    free(nm);
+    free(nimu);
+    free(qnm);
+    free(qnimu);
+}

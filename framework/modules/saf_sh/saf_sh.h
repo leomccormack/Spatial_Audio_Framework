@@ -710,8 +710,59 @@ void checkCondNumberSHTReal(/* Input arguments */
 
 
 /* ========================================================================== */
-/*                     Localisation Functions in the  SHD                     */
+/*                     Localisation Functions in the SHD                     */
 /* ========================================================================== */
+
+/**
+ * Creates an instance of the spherical harmonic domain ESPRIT-based direction
+ * of arrival estimator
+ *
+ * The ESPRIT method (in this case, using spherical harmonic input signals)
+ * returns the analysed DoAs directly; i.e. without any grid searching/
+ * scanning (like e.g. MUSIC requires...). The DoA estimates are therefore
+ * continuous, i.e. not bound to any grid.
+ *
+ * This particular implementation is is based on the "3-recurrence relationship"
+ * design, detailed in [1].
+ *
+ * @param[in] phESPRIT  (&) address of the ESPRIT DoA estimator handle
+ * @param[in] order     spherical harmonic input order
+ *
+ * @see [1] B. Jo and J.-W. Choi, "Parametric direction-of-arrival estimation
+ *          with three recurrence relations of spherical harmonics," J. Acoust.
+ *          Soc. Amer.,vol. 145, no. 1, pp. 480–488, Jan. 2019.
+ */
+void sphESPRIT_create(void ** const phESPRIT,
+                      int order);
+
+/**
+ * Destroys an instance of the spherical harmonic domain ESPRIT-based direction
+ * of arrival estimator
+ *
+ * @param[in] phESPRIT  (&) address of the ESPRIT DoA estimator handle
+ */
+void sphESPRIT_destroy(void ** const phESPRIT);
+
+/**
+ * Estimates the direction-of-arrival (DoA) based on the signal sub
+ *
+ * @note The "signal subspace" refers to the first K eigenvectors of the spatial
+ *       correlation matrix, after sorting them such that the eigenvalue are in
+ *       descending order.
+ *
+ * @warning The number of sources (K) cannot exceed: order^2!
+ *
+ * @param[in]  hESPRIT      The ESPRIT DoA estimator handle
+ * @param[in]  Us           Signal subspace; FLAT: (order+1)^2 x K
+ * @param[in]  K            Number of sources
+ * @param[out] src_dirs_rad Source directions, in radians; 2 x K
+ */
+void sphESPRIT_estimateDirs(/* Input arguments */
+                            void * const hESPRIT,
+                            float_complex* Us,
+                            int K,
+                            /* Output arguments */
+                            float* src_dirs_rad[2]);
 
 /**
  * Generates a powermap based on the energy of plane-wave decomposition (PWD)
