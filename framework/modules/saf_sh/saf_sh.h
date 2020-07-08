@@ -744,7 +744,8 @@ void sphESPRIT_create(void ** const phESPRIT,
 void sphESPRIT_destroy(void ** const phESPRIT);
 
 /**
- * Estimates the direction-of-arrival (DoA) based on the signal sub
+ * Estimates the direction-of-arrival (DoA) based on the ESPRIT-based estimator,
+ * in the spherical harmonic domain
  *
  * @note The "signal subspace" refers to the first K eigenvectors of the spatial
  *       correlation matrix, after sorting them such that the eigenvalue are in
