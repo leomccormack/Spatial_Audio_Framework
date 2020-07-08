@@ -189,8 +189,7 @@ typedef struct _latticeDecor_data{
     int* rIdx;
 
 }latticeDecor_data;
-
-
+ 
 void latticeDecorrelator_create
 (
     void** phDecor,
@@ -200,12 +199,13 @@ void latticeDecorrelator_create
     int* fixedDelays,
     int nCutoffs,
     float* freqVector,
+    int lookupOffset,
     int nBands
 )
 {
     *phDecor = malloc1d(sizeof(latticeDecor_data));
     latticeDecor_data *h = (latticeDecor_data*)(*phDecor);
-    int band, ch, o, filterIdx, maxDelay;
+    int i, band, ch, o, filterIdx, maxDelay;
 
     h->nCH = nCH;
     h->nCutoffs = nCutoffs;
@@ -232,9 +232,9 @@ void latticeDecorrelator_create
 
         /* Fixed frequency dependent delays */
         if(filterIdx==-1)
-            h->TF_delays[band] = fixedDelays[nCutoffs];
+            h->TF_delays[band] = fixedDelays[nCutoffs]+1;
         else
-            h->TF_delays[band] = fixedDelays[filterIdx];
+            h->TF_delays[band] = fixedDelays[filterIdx]+1;
 
         /* keep track of maximum delay */
         if(h->TF_delays[band]>maxDelay)
@@ -251,16 +251,29 @@ void latticeDecorrelator_create
             }
             else{
                 h->lttc_apf[band][ch].order = h->orders[filterIdx];
-                h->lttc_apf[band][ch].filterLength = h->orders[filterIdx]+1;
-                h->lttc_apf[band][ch].coeffs = (float**)malloc2d(2, h->orders[filterIdx]+1, sizeof(float));
-                h->lttc_apf[band][ch].buffer = calloc1d(h->orders[filterIdx]+1, sizeof(float_complex));
+                h->lttc_apf[band][ch].coeffs = (float**)malloc2d(2, h->orders[filterIdx], sizeof(float));
+                h->lttc_apf[band][ch].buffer = calloc1d(h->orders[filterIdx], sizeof(float_complex));
+
+                /* numerator coefficients */
                 switch(orders[filterIdx]){
-                    case 20: memcpy(FLATTEN2D(h->lttc_apf[band][ch].coeffs), __lattice_coeffs_o20[ch], 2*(h->orders[filterIdx]+1)*sizeof(float)); break;
-                    case 15: memcpy(FLATTEN2D(h->lttc_apf[band][ch].coeffs), __lattice_coeffs_o15[ch], 2*(h->orders[filterIdx]+1)*sizeof(float)); break;
-                    case 6:  memcpy(FLATTEN2D(h->lttc_apf[band][ch].coeffs), __lattice_coeffs_o6[ch],  2*(h->orders[filterIdx]+1)*sizeof(float)); break;
-                    case 3:  memcpy(FLATTEN2D(h->lttc_apf[band][ch].coeffs), __lattice_coeffs_o3[ch],  2*(h->orders[filterIdx]+1)*sizeof(float)); break;
+                    case 20: memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o20[ch+lookupOffset], (h->orders[filterIdx])*sizeof(float)); break;
+                    case 18: memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o18[ch+lookupOffset], (h->orders[filterIdx])*sizeof(float)); break;
+                    case 16: memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o16[ch+lookupOffset], (h->orders[filterIdx])*sizeof(float)); break;
+                    case 15: memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o15[ch+lookupOffset], (h->orders[filterIdx])*sizeof(float)); break;
+                    case 14: memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o14[ch+lookupOffset], (h->orders[filterIdx])*sizeof(float)); break;
+                    case 12: memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o12[ch+lookupOffset], (h->orders[filterIdx])*sizeof(float)); break;
+                    case 10: memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o10[ch+lookupOffset], (h->orders[filterIdx])*sizeof(float)); break;
+                    case 8:  memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o8[ch+lookupOffset],  (h->orders[filterIdx])*sizeof(float)); break;
+                    case 6:  memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o6[ch+lookupOffset],  (h->orders[filterIdx])*sizeof(float)); break;
+                    case 4:  memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o4[ch+lookupOffset],  (h->orders[filterIdx])*sizeof(float)); break;
+                    case 3:  memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o3[ch+lookupOffset],  (h->orders[filterIdx])*sizeof(float)); break;
+                    case 2:  memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o2[ch+lookupOffset],  (h->orders[filterIdx])*sizeof(float)); break;
                     default: assert(0); /* Unsupported filter order specified */
                 }
+
+                /* denominator coefficients */
+                for(i=0; i<orders[filterIdx]; i++)
+                    h->lttc_apf[band][ch].coeffs[1][i] = h->lttc_apf[band][ch].coeffs[0][orders[filterIdx]-i-1];
             }
         }
     }
@@ -312,14 +325,13 @@ void latticeDecorrelator_apply
 )
 {
     latticeDecor_data *h = (latticeDecor_data*)(hDecor);
-    int band, ch, t, i, rIdx;
+    int band, ch, t, i;
     float_complex ytmp, xtmp;
 
     /* Apply fixed delay */
     for(t=0; t<nTimeSlots; t++){
         for(band=0; band <h->nBands; band++){
             for(ch=0; ch<h->nCH; ch++){
-
                 h->delayBuffers[band][ch][h->wIdx[band]] = inFrame[band][ch][t];
                 decorFrame[band][ch][t] = h->delayBuffers[band][ch][h->rIdx[band]];
             }
@@ -332,15 +344,9 @@ void latticeDecorrelator_apply
             if( h->wIdx[band] >= h->TF_delays[band] )
                 h->wIdx[band] = 0;
         }
-
-
-        /* increment and wrap-around as needed */
-
-       // h->rIdx[band] = h->rIdx[band] & (h->TF_delays[band]-1);
-        //h->wIdx[band] = h->wIdx[band] & (h->TF_delays[band]-1);
     }
 
-//    /* Apply lattice allpass filters */
+    /* Apply lattice allpass filters */
 #if _MSC_VER >= 1900
     assert(0);
 #else
@@ -351,16 +357,16 @@ void latticeDecorrelator_apply
                     xtmp = decorFrame[band][ch][t];
                     ytmp = h->lttc_apf[band][ch].buffer[0] + xtmp * (h->lttc_apf[band][ch].coeffs[0][0]);
                     decorFrame[band][ch][t] = ytmp;
-
+                    
                     /* propagate through the rest of the lattice filter structure */
-                    for(i=0; i<h->lttc_apf[band][ch].order; i++){
+                    for(i=0; i<h->lttc_apf[band][ch].order-1; i++){
                         h->lttc_apf[band][ch].buffer[i] = h->lttc_apf[band][ch].buffer[i+1] +
-                                                          h->lttc_apf[band][ch].coeffs[0][i+1] * xtmp -
-                                                          h->lttc_apf[band][ch].coeffs[1][i+1] * ytmp;
+                                                          h->lttc_apf[band][ch].coeffs[0][i+1] * xtmp - /* numerator */
+                                                          h->lttc_apf[band][ch].coeffs[1][i+1] * ytmp;  /* denominator */
                     }
                 }
             }
-        }
+        } 
     }
 #endif
 }

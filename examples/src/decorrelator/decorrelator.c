@@ -54,6 +54,7 @@ void decorrelator_create
 
     /* codec data */
     pData->hDec = NULL;
+    pData->hDec2 = NULL;
     pData->new_nChannels = pData->nChannels;
     pData->progressBar0_1 = 0.0f;
     pData->progressBarText = malloc1d(PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
@@ -101,7 +102,9 @@ void decorrelator_destroy
 
         if(pData->hDec!=NULL)
             latticeDecorrelator_destroy(&(pData->hDec));
-        
+        if(pData->hDec2!=NULL)
+            latticeDecorrelator_destroy(&(pData->hDec2));
+
         free(pData);
         pData = NULL;
         *phDecor = NULL;
@@ -158,12 +161,19 @@ void decorrelator_initCodec
     }
     pData->nChannels = nChannels;
 
-    /* Init decorrelators */
-    //int orders[4] = {20, 15, 6, 3};
-    int orders[4] = {15, 6, 3, 3};
-    float freqCutoffs[4] = {700.0f, 2.8e3f, 4.5e3f, 12e3f};
-    int fixedDelays[5] = {9, 8, 3, 2, 3};
-    latticeDecorrelator_create(&(pData->hDec), nChannels, orders, freqCutoffs, fixedDelays, 4, pData->freqVector, HYBRID_BANDS);
+    /* Init decorrelator 1 */
+    /* (best to do this in 2 stages) */
+    int orders[5] = {6, 6, 6, 3, 2};
+    float freqCutoffs[5] = {700.0f, 2.4e3f, 4e3f, 12e3f, 20e3f};
+    //int fixedDelays[6] = {12, 9, 7, 2, 1, 2};
+    int fixedDelays[6] = {8, 8, 7, 2, 1, 2};
+    latticeDecorrelator_create(&(pData->hDec), nChannels, orders, freqCutoffs, fixedDelays, 5, pData->freqVector, 0, HYBRID_BANDS);
+
+    /* Init decorrelator 2 */
+    float freqCutoffs2[3] = {700.0f, 2.4e3f, 4e3f};
+    int orders2[3] = {3, 3, 2};
+    int fixedDelays2[4] = {2, 2, 1, 0};
+    latticeDecorrelator_create(&(pData->hDec2), nChannels, orders2, freqCutoffs2, fixedDelays2, 3, pData->freqVector, nChannels, HYBRID_BANDS);
 
     /* done! */
     strcpy(pData->progressBarText,"Done!");
@@ -209,20 +219,21 @@ void decorrelator_process
         }
 
         /* Main processing: */
-        latticeDecorrelator_apply(pData->hDec, pData->InputFrameTF, TIME_SLOTS, pData->OutputFrameTF);
+        latticeDecorrelator_apply(pData->hDec,  pData->InputFrameTF,  TIME_SLOTS, pData->OutputFrameTF);
+        latticeDecorrelator_apply(pData->hDec2, pData->OutputFrameTF, TIME_SLOTS, pData->OutputFrameTF);
 
         /* inverse-TFT */
         for(t = 0; t < TIME_SLOTS; t++) {
             for(band = 0; band < HYBRID_BANDS; band++) {
                 for(ch = 0; ch < nCH; ch++) {
-                    if(ch==0){
-                        pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->InputFrameTF[band][ch][t]);
-                        pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->InputFrameTF[band][ch][t]);
-                    }
-                    else{
+//                    if(ch==0){
+//                        pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->InputFrameTF[band][ch][t]);
+//                        pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->InputFrameTF[band][ch][t]);
+//                    }
+//                    else{
                         pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->OutputFrameTF[band][ch][t]);
                         pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->OutputFrameTF[band][ch][t]);
-                    }
+//                    }
                 }
             }
             afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
@@ -255,7 +266,6 @@ void decorrelator_setNumberOfChannels(void* const hDecor, int newValue )
         pData->new_nChannels = newValue;
             decorrelator_setCodecStatus(hDecor, CODEC_STATUS_NOT_INITIALISED);
     }
-
 }
  
 /* Get Functions */

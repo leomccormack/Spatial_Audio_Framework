@@ -90,15 +90,27 @@ void synthesiseNoiseReverb(int nChannels,
                            float** rir_filt,
                            int* rir_len);
 
-/** Lattice all-pass filter coefficients for 256 channels, 20th order */
-extern const float __lattice_coeffs_o20[256][2][21];
-/** Lattice all-pass filter coefficients for 256 channels, 15th order */
-extern const float __lattice_coeffs_o15[256][2][16];
-/** Lattice all-pass filter coefficients for 256 channels, 6th order */
-extern const float __lattice_coeffs_o6[256][2][7];
-/** Lattice all-pass filter coefficients for 256 channels, 3rd order */
-extern const float __lattice_coeffs_o3[256][2][4];
+///** Lattice all-pass filter coefficients for 256 channels, 20th order */
+//extern const float __lattice_coeffs_o20[256][2][20];
+///** Lattice all-pass filter coefficients for 256 channels, 15th order */
+//extern const float __lattice_coeffs_o15[256][2][15];
+///** Lattice all-pass filter coefficients for 256 channels, 6th order */
+//extern const float __lattice_coeffs_o6[256][2][6];
+///** Lattice all-pass filter coefficients for 256 channels, 3rd order */
+//extern const float __lattice_coeffs_o3[256][2][3];
 
+extern const float __lattice_coeffs_o20[256][20];
+extern const float __lattice_coeffs_o18[256][18];
+extern const float __lattice_coeffs_o16[256][16];
+extern const float __lattice_coeffs_o15[256][15];
+extern const float __lattice_coeffs_o14[256][14];
+extern const float __lattice_coeffs_o12[256][12];
+extern const float __lattice_coeffs_o10[256][10];
+extern const float __lattice_coeffs_o8[256][8];
+extern const float __lattice_coeffs_o6[256][6];
+extern const float __lattice_coeffs_o4[256][4];
+extern const float __lattice_coeffs_o3[256][3];
+extern const float __lattice_coeffs_o2[256][2];
 
 // fixedDelays length: nCutoffs+1
 
@@ -113,6 +125,7 @@ void latticeDecorrelator_create(void** phDecor,
                                 int* fixedDelays,
                                 int nCutoffs,
                                 float* freqVector,
+                                int lookupOffset,
                                 int nBands);
 
 /**

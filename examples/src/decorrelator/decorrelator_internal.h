@@ -72,6 +72,7 @@ typedef struct _decorrelator
      
     /* our codec configuration */
     void* hDec;
+    void* hDec2;
     CODEC_STATUS codecStatus;
     float progressBar0_1;
     char* progressBarText;
