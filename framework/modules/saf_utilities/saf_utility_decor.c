@@ -189,7 +189,7 @@ typedef struct _latticeDecor_data{
     int* rIdx;
 
 }latticeDecor_data;
- 
+
 void latticeDecorrelator_create
 (
     void** phDecor,
@@ -348,7 +348,24 @@ void latticeDecorrelator_apply
 
     /* Apply lattice allpass filters */
 #if _MSC_VER >= 1900
-    assert(0);
+    for(band=0; band <h->nBands; band++){
+        for(ch=0; ch<h->nCH; ch++){
+            if(h->lttc_apf[band][ch].buffer!=NULL){ /* only if filter is defined... */
+                for(t=0; t<nTimeSlots; t++){
+                    xtmp = decorFrame[band][ch][t];
+                    ytmp = ccaddf(h->lttc_apf[band][ch].buffer[0], crmulf(xtmp, (h->lttc_apf[band][ch].coeffs[0][0])));
+                    decorFrame[band][ch][t] = ytmp;
+
+                    /* propagate through the rest of the lattice filter structure */
+                    for(i=0; i<h->lttc_apf[band][ch].order-1; i++){
+                        h->lttc_apf[band][ch].buffer[i] = ccaddf(h->lttc_apf[band][ch].buffer[i+1],
+                                                                 ccsubf(crmulf(xtmp, h->lttc_apf[band][ch].coeffs[0][i+1]),   /* numerator */
+                                                                        crmulf(ytmp, h->lttc_apf[band][ch].coeffs[1][i+1])));  /* denominator */
+                    }
+                }
+            }
+        }
+    }
 #else
     for(band=0; band <h->nBands; band++){
         for(ch=0; ch<h->nCH; ch++){

@@ -37,6 +37,31 @@ extern "C" {
 #include <math.h>
 #include "saf_utility_complex.h"
 
+/** Lattice all-pass filter coeffs (numerator) for 256 channels, 20th order */
+extern const float __lattice_coeffs_o20[256][20];
+/** Lattice all-pass filter coeffs (numerator) for 256 channels, 18th order */
+extern const float __lattice_coeffs_o18[256][18];
+/** Lattice all-pass filter coeffs (numerator) for 256 channels, 16th order */
+extern const float __lattice_coeffs_o16[256][16];
+/** Lattice all-pass filter coeffs (numerator) for 256 channels, 15th order */
+extern const float __lattice_coeffs_o15[256][15];
+/** Lattice all-pass filter coeffs (numerator) for 256 channels, 14th order */
+extern const float __lattice_coeffs_o14[256][14];
+/** Lattice all-pass filter coeffs (numerator) for 256 channels, 12th order */
+extern const float __lattice_coeffs_o12[256][12];
+/** Lattice all-pass filter coeffs (numerator) for 256 channels, 10th order */
+extern const float __lattice_coeffs_o10[256][10];
+/** Lattice all-pass filter coeffs (numerator) for 256 channels, 8th order */
+extern const float __lattice_coeffs_o8[256][8];
+/** Lattice all-pass filter coeffs (numerator) for 256 channels, 6th order */
+extern const float __lattice_coeffs_o6[256][6];
+/** Lattice all-pass filter coeffs (numerator) for 256 channels, 4th order */
+extern const float __lattice_coeffs_o4[256][4];
+/** Lattice all-pass filter coeffs (numerator) for 256 channels, 3rd order */
+extern const float __lattice_coeffs_o3[256][3];
+/** Lattice all-pass filter coeffs (numerator) for 256 channels, 2nd order */
+extern const float __lattice_coeffs_o2[256][2];
+
 /**
  * Returns delay values for multiple channels per frequency, such that once
  * applied to an input signal (via simple frequency-dependent delay lines), the
@@ -90,33 +115,45 @@ void synthesiseNoiseReverb(int nChannels,
                            float** rir_filt,
                            int* rir_len);
 
-///** Lattice all-pass filter coefficients for 256 channels, 20th order */
-//extern const float __lattice_coeffs_o20[256][2][20];
-///** Lattice all-pass filter coefficients for 256 channels, 15th order */
-//extern const float __lattice_coeffs_o15[256][2][15];
-///** Lattice all-pass filter coefficients for 256 channels, 6th order */
-//extern const float __lattice_coeffs_o6[256][2][6];
-///** Lattice all-pass filter coefficients for 256 channels, 3rd order */
-//extern const float __lattice_coeffs_o3[256][2][3];
-
-extern const float __lattice_coeffs_o20[256][20];
-extern const float __lattice_coeffs_o18[256][18];
-extern const float __lattice_coeffs_o16[256][16];
-extern const float __lattice_coeffs_o15[256][15];
-extern const float __lattice_coeffs_o14[256][14];
-extern const float __lattice_coeffs_o12[256][12];
-extern const float __lattice_coeffs_o10[256][10];
-extern const float __lattice_coeffs_o8[256][8];
-extern const float __lattice_coeffs_o6[256][6];
-extern const float __lattice_coeffs_o4[256][4];
-extern const float __lattice_coeffs_o3[256][3];
-extern const float __lattice_coeffs_o2[256][2];
-
-// fixedDelays length: nCutoffs+1
-
 /**
+ * Creates an instance of the lattice all-pass-filter-based multi-channel
+ * signal decorrelator
  *
- * @param[in]  phDecor     (&) address of lattice decorrelator handle
+ * This decorrelator is intended for decorrelating signals in the time-frequency
+ * domain, and is therefore well-suited for audio coding [1] or Direction Audio
+ * Coding (DirAC) [2] purposes.
+ *
+ * @note Contrary to how the decorrelator is defined in the standard [3], it is
+ *       recommended to use lower orders. Although, one may cascade 2 instances
+ *       (each with lower orders), to attain the desired decorrelation without
+ *       introducing the instabilities which accompany the use of the really
+ *       high filter orders.
+ *
+ * @test test__latticeDecorrelator()
+ *
+ * @param[in] phDecor      (&) address of lattice decorrelator handle
+ * @param[in] nCH          Number of channels
+ * @param[in] orders       Lattice all-pass filter orders (2,3,4,6,8,10,12,14,
+ *                         15,16 18, or 20) per band grouping; nCutoffs x 1
+ * @param[in] freqCutoffs  Frequency cut-offs defining the band groupings;
+ *                         nCutoffs x 1
+ * @param[in] fixedDelays  Fixed time-frequency hop delays; (nCutoffs+1) x 1
+ * @param[in] nCutoffs     Number of cutoff frequencies
+ * @param[in] freqVector   Frequency vector; nBands x 1
+ * @param[in] lookupOffset Optional offset for look-up tables (set to 0 if
+ *                         using just one instance)
+ * @param[in] nBands       Number of bands
+ *
+ * @see [1] Herre, J., Kjo"rling, K., Breebaart, J., Faller, C., Disch, S.,
+ *          Purnhagen, H., Koppens, J., Hilpert, J., Ro"den, J., Oomen, W. and
+ *          Linzmeier, K., 2008. MPEG surround-the ISO/MPEG standard for
+ *          efficient and compatible multichannel audio coding. Journal of the
+ *          Audio Engineering Society, 56(11), pp.932--955
+ * @see [2] Pulkki, V., 2007. Spatial sound reproduction with directional audio
+ *          coding. Journal of the Audio Engineering Society, 55(6), pp.503-516
+ * @see [3] ISO/IEC FCD 23003-1, "MPEG-D (MPEG Audio Technologies)--Part 1: MPEG
+ *          Surround" International Standards Organization, Geneva, Switzerland
+ *          (2006)
  */
 void latticeDecorrelator_create(void** phDecor,
                                 int nCH,
@@ -129,12 +166,15 @@ void latticeDecorrelator_create(void** phDecor,
                                 int nBands);
 
 /**
+ * Destroys an instance of the lattice all-pass-filter-based multi-channel
+ * signal decorrelator
  *
- * @param[in]  phDecor     (&) address of lattice decorrelator handle
+ * @param[in] phDecor (&) address of lattice decorrelator handle
  */
 void latticeDecorrelator_destroy(void** phDecor);
 
 /**
+ * Applies the lattice all-pass-filter-based multi-channel signal decorrelator
  *
  * @param[in]  hDecor     lattice decorrelator handle
  * @param[in]  inFrame    nBands x nCH x nTimeSlots

@@ -20,7 +20,7 @@
  * @brief Lattice allpass coefficients which are useful for decorrelation
  *
  * The lattice allpass coefficients for the first 10 channels, for orders 20, 15
- * 6 and 3, were taken from the MPEG-Surround standard (ISO/IEC 23003-1) p133.
+ * 6 and 3, were taken from the MPEG-Surround standard: ISO/IEC 23003-1 p133 [1]
  * The remaining 246 sets of coefficients, and other orders, were then derived
  * via a brute-force optimisation routine, which asserted the following:
  * \code{.m}
@@ -30,7 +30,7 @@
  *     flag3 = all(abs(k)< 1);
  *     assert(flag1*flag2*flag3)
  * \endcode
- * (asserting that the coefficients are indeed allpass, meet basic stability
+ * (Asserting that the coefficients are indeed allpass, meet basic stability
  * requirements, and also meet the lattice allpass structure specific stability
  * requirements)
  *
@@ -44,6 +44,10 @@
  *
  * @note Due to symmetry of the coefficients, only the numerator coefficients
  *       are provided. The denominator coeffs are then flipud(numerator coeffs).
+ *
+ * @see [1] ISO/IEC FCD 23003-1, "MPEG-D (MPEG Audio Technologies)--Part 1: MPEG
+ *          Surround" International Standards Organization, Geneva, Switzerland
+ *          (2006)
  *
  * @author Leo McCormack
  * @date 07.07.2020

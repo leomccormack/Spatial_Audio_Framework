@@ -70,22 +70,23 @@ void test__cmplxPairUp(void);
  */
 void test__getVoronoiWeights(void);
 /**
- * Testing that the unique_i() function operates correctly
- */
+ * Testing that the unique_i() function operates correctly */
 void test__unique_i(void);
 /**
  * Testing the realloc2d_r() function (reallocating 2-D array, while retaining
  * the previous data order; except truncated or extended) */
 void test__realloc2d_r(void);
 /**
+ * Testing the performance of the latticeDecorrelator, verifying that the inter
+ * channel cross-correlation coefficients are near 0 */
+void test__latticeDecorrelator(void);
+/**
  * Testing the formulate_M_and_Cr() function, and verifying that the output
- * mixing matrices yield signals which have the target covariance
- */
+ * mixing matrices yield signals which have the target covariance */
 void test__formulate_M_and_Cr(void);
 /**
  * Testing the formulate_M_and_Cr_cmplx() function, and verifying that the
- * output mixing matrices yield signals which have the target covariance
- */
+ * output mixing matrices yield signals which have the target covariance */
 void test__formulate_M_and_Cr_cmplx(void);
 /**
  * Testing to assure that (given a uniform loudspeaker layout), the SAD, MMD and
