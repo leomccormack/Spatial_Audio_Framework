@@ -1033,6 +1033,137 @@ void checkCondNumberSHTReal
 /*                     Localisation Functions in the  SHD                     */
 /* ========================================================================== */
 
+void sphMUSIC_create
+(
+    void ** const phMUSIC,
+    int order,
+    float* grid_dirs_deg,
+    int nDirs
+)
+{
+    *phMUSIC = malloc1d(sizeof(sphMUSIC_data));
+    sphMUSIC_data *h = (sphMUSIC_data*)(*phMUSIC);
+    int i, j;
+    float** grid_dirs_rad, **grid_svecs_tmp;
+
+    h->order = order;
+    h->nSH = ORDER2NSH(h->order);
+    h->nDirs = nDirs;
+
+    /* steering vectors for each grid direction  */
+    h->grid_svecs = malloc1d(h->nSH * (h->nDirs) * sizeof(float_complex));
+    grid_dirs_rad  = (float**)malloc2d(h->nDirs, 2, sizeof(float));
+    grid_svecs_tmp = (float**)malloc2d(h->nSH, h->nDirs, sizeof(float));
+    for(i=0; i<h->nDirs; i++){
+        grid_dirs_rad[i][0] = grid_dirs_deg[i*2]*SAF_PI/180.0f;
+        grid_dirs_rad[i][1] = SAF_PI/2.0f - grid_dirs_deg[i*2+1]*SAF_PI/180.0f;
+    }
+    getSHreal(h->order, FLATTEN2D(grid_dirs_rad), h->nDirs, FLATTEN2D(grid_svecs_tmp));
+    for(i=0; i<h->nSH; i++)
+        for(j=0; j<h->nDirs; j++)
+            h->grid_svecs[i*(h->nDirs)+j] = cmplxf(grid_svecs_tmp[i][j], 0.0f);
+
+    /* store cartesian coords of scanning directions (for optional peak finding) */
+    h->grid_dirs_xyz = malloc1d(h->nDirs * 3 * sizeof(float));
+    unitSph2cart(grid_dirs_deg, h->nDirs, 1, h->grid_dirs_xyz);
+
+    /* for run-time */
+    h->VnA = malloc1d(h->nSH * (h->nDirs) * sizeof(float_complex));
+    h->abs_VnA = malloc1d(h->nSH * (h->nDirs) * sizeof(float));
+    h->pSpec = malloc1d(h->nDirs*sizeof(float));
+    h->P_minus_peak = malloc1d(h->nDirs*sizeof(float));
+    h->VM_mask = malloc1d(h->nDirs*sizeof(float));
+
+    /* clean-up */
+    free(grid_dirs_rad);
+    free(grid_svecs_tmp);
+}
+
+void sphMUSIC_destroy
+(
+    void ** const phMUSIC
+)
+{
+    sphMUSIC_data *h = (sphMUSIC_data*)(*phMUSIC);
+
+    if (h != NULL) {
+        free(h->grid_dirs_xyz);
+        free(h->grid_svecs);
+        free(h->VnA);
+        free(h->abs_VnA);
+        free(h->pSpec);
+        free(h->P_minus_peak);
+        free(h->VM_mask);
+        free(h);
+        h = NULL;
+        *phMUSIC = NULL;
+    }
+}
+
+void sphMUSIC_compute
+(
+    void* const hMUSIC,
+    float_complex *Vn, /* nSH x (nSH - nSrcs) */
+    int nSrcs,
+    float* P_music,
+    int* peak_inds
+)
+{
+    sphMUSIC_data *h = (sphMUSIC_data*)(hMUSIC);
+    int i, j, k, VnD2, peak_idx;
+    float tmp, kappa, scale;
+    float VM_mean[3];
+    const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f);
+
+    VnD2 = h->nSH - nSrcs; /* noise subspace second dimension length */
+
+    /* derive the pseudo-spectrum value for each grid direction */
+    cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, VnD2, h->nDirs, h->nSH, &calpha,
+                Vn, VnD2,
+                h->grid_svecs, h->nDirs, &cbeta,
+                h->VnA, h->nDirs);
+    utility_cvabs(h->VnA, VnD2*(h->nDirs), h->abs_VnA);
+    for (i = 0; i < (h->nDirs); i++) {
+        tmp = 0.0f;
+        for (j = 0; j < VnD2; j++)
+            tmp += powf(h->abs_VnA[j*(h->nDirs)+i], 2.0f);
+        h->pSpec[i] = 1.0f / (tmp + 2.23e-10f);
+    }
+
+    /* Output pseudo-spectrum */
+    if(P_music!=NULL)
+        memcpy(P_music, h->pSpec, h->nDirs*sizeof(float));
+
+    /* Peak-finding */
+    if(peak_inds!=NULL){
+        kappa = 50.0f;
+        scale = kappa/(2.0f*SAF_PI*expf(kappa)-expf(-kappa));
+        memcpy(h->P_minus_peak, h->pSpec, h->nDirs*sizeof(float));
+
+        /* Loop over the number of sources */
+        for(k=0; k<nSrcs; k++){
+            utility_simaxv(h->P_minus_peak, h->nDirs, &peak_idx);
+            peak_inds[k] = peak_idx;
+            if(k==nSrcs-1)
+                break;
+            VM_mean[0] = h->grid_dirs_xyz[peak_idx*3];
+            VM_mean[1] = h->grid_dirs_xyz[peak_idx*3+1];
+            VM_mean[2] = h->grid_dirs_xyz[peak_idx*3+2];
+
+            /* Apply mask for next iteration */
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, h->nDirs, 1, 3, 1.0f,
+                        h->grid_dirs_xyz, 3,
+                        (const float*)VM_mean, 3, 0.0f,
+                        h->VM_mask, 1);
+            for(i=0; i<h->nDirs; i++){
+                h->VM_mask[i] = scale * expf(kappa * (h->VM_mask[i])); /* VM distribution */
+                h->VM_mask[i] = 1.0f/(0.00001f+(h->VM_mask[i])); /*inverse VM distribution*/
+            }
+            utility_svvmul(h->P_minus_peak, h->VM_mask, h->nDirs, h->P_minus_peak);
+        }
+    }
+}
+
 void sphESPRIT_create
 (
     void ** const phESPRIT,

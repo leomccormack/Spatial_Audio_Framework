@@ -47,6 +47,21 @@ typedef struct _voronoi_data{
 }voronoi_data;
 
 /**
+ * Converts spherical coordinates of unit length to Cartesian coordinates
+ *
+ * @param[in]  dirs                Spherical coordinates; FLAT: nDirs x 2
+ * @param[in]  nDirs               Number of directions/coordinates
+ * @param[in]  anglesInDegreesFLAG 0: dirs given in radians, 1: degrees instead
+ * @param[out] dirs_xyz            Cartesian coordinates; FLAT: nDirs x 3
+ */
+void unitSph2cart(/* Input Arguments */
+                  float* dirs,
+                  int nDirs,
+                  int anglesInDegreesFLAG,
+                  /* Output Arguments */
+                  float* dirs_xyz);
+
+/**
  * L2 (Euclidean) norm of a 3-element vector
  */
 float L2_norm(float v[3]);

@@ -45,6 +45,19 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** Internal data structure for sphMUSIC */
+typedef struct _sphMUSIC_data {
+    int order, nSH, nDirs;
+    float_complex* grid_svecs;
+    float_complex* VnA;
+    float* grid_dirs_xyz;
+    float* abs_VnA;
+    float* pSpec;
+    float* P_minus_peak;
+    float* VM_mask;
+
+}sphMUSIC_data;
+
 /** Internal data structure for sphESPRIT */
 typedef struct _sphESPRIT_data {
     int N, NN, maxK;

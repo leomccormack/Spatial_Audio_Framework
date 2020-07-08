@@ -303,8 +303,6 @@ void getSHcomplex(/* Input Arguments */
  * r_N = T_c2r * y_N, where r_N and y_N is are the real and complex SH vectors,
  * respectively.
  *
- * @warning The T_r2c matrix is returned transposed! TODO: fix
- *
  * @test test__complex2realSHMtx()
  *
  * @param[in]  order Order of spherical harmonic expansion
@@ -323,8 +321,6 @@ void complex2realSHMtx(/* Input Arguments */
  * spherical harmonics with respect to the real harmonics, so that
  * y_N = T_r2c * r_N, where r_N and y_N are the real and complex SH vectors,
  * respectively.
- *
- * @warning The T_r2c matrix is returned transposed! TODO: fix
  *
  * @test test__real2complexSHMtx()
  *
@@ -714,6 +710,60 @@ void checkCondNumberSHTReal(/* Input arguments */
 /* ========================================================================== */
 
 /**
+ * Creates an instance of the spherical harmonic domain MUSIC implementation,
+ * which may be used for computing pseudo-spectrums for visualisation/DoA
+ * estimation
+ *
+ * @note Subspace approaches such as MUSIC can offer higher spatial resolution
+ *       than beamforming approaches, such as the steered-response power (PWD),
+ *       as long as the source signals are not correlated between them and are
+ *       presented in a reverberant/diffuse sound.
+ * @test test__sphMUSIC()
+ *
+ * @param[in] phMUSIC       (&) address of the sphMUSIC handle
+ * @param[in] order         Spherical harmonic input order
+ * @param[in] grid_dirs_deg Scanning grid directions; FLAT: nDirs x 2
+ * @param[in] nDirs         Number of scanning directions
+ */
+void sphMUSIC_create(void ** const phMUSIC,
+                     int order,
+                     float* grid_dirs_deg,
+                     int nDirs);
+
+/**
+ * Destroys an instance of the spherical harmonic domain MUSIC implementation,
+ * which may be used for computing pseudo-spectrums for visualisation/DoA
+ * estimation
+ *
+ * @param[in] phMUSIC    (&) address of the sphMUSIC handle
+ */
+void sphMUSIC_destroy(void ** const phMUSIC);
+
+/**
+ * Computes a pseudo-spectrum in the spherical harmonic domain, based on the
+ * MUSIC algorithm; optionally returning the grid indices corresponding to the
+ * N highest peaks (N=nSrcs)
+ *
+ * @warning The number of sources should not exceed: floor(nSH/2)!
+ *
+ * @param[in] hMUSIC    sphMUSIC handle
+ * @param[in] Vn        Noise subspace; FLAT: nSH x (nSH - nSrcs)
+ * @param[in] nSrcs     Number of sources (or an estimate of the number of
+ *                      sources)
+ * @param[in] P_music   Pseudo-spectrum (set to NULL if not wanted); nDirs x 1
+ * @param[in] peak_inds Indices corresponding to the "nSrcs" highest peaks in
+ *                      the pseudo-spectrum (set to NULL if not wanted);
+ *                      nSrcs x 1
+ */
+void sphMUSIC_compute(/* Input arguments */
+                      void* const hMUSIC,
+                      float_complex *Vn, 
+                      int nSrcs,
+                      /* Output arguments */
+                      float* P_music,
+                      int* peak_inds);
+
+/**
  * Creates an instance of the spherical harmonic domain ESPRIT-based direction
  * of arrival estimator
  *
@@ -726,7 +776,7 @@ void checkCondNumberSHTReal(/* Input arguments */
  * design, detailed in [1].
  *
  * @param[in] phESPRIT  (&) address of the ESPRIT DoA estimator handle
- * @param[in] order     spherical harmonic input order
+ * @param[in] order     Spherical harmonic input order
  *
  * @see [1] B. Jo and J.-W. Choi, "Parametric direction-of-arrival estimation
  *          with three recurrence relations of spherical harmonics," J. Acoust.
@@ -750,7 +800,6 @@ void sphESPRIT_destroy(void ** const phESPRIT);
  * @note The "signal subspace" refers to the first K eigenvectors of the spatial
  *       correlation matrix, after sorting them such that the eigenvalue are in
  *       descending order.
- *
  * @warning The number of sources (K) cannot exceed: order^2!
  *
  * @param[in]  hESPRIT      The ESPRIT DoA estimator handle

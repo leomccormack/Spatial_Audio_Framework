@@ -57,7 +57,7 @@
 
 #define SAF_VERSION_MAJOR 1       /**< Major version */
 #define SAF_VERSION_MINOR 1       /**< Minor version */
-#define SAF_VERSION_PATCH 0       /**< Patch version */
+#define SAF_VERSION_PATCH 1       /**< Patch version */
 #define SAF_VERSION_SPECIAL ""    /**< Append text ("alpha", "beta", "" etc.) */
 #define MKSTRING_(s) #s           /**< Stringify */
 #define MKSTRING(s) MKSTRING_(s)  /**< Stringify */

@@ -27,6 +27,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void unitSph2cart
+(
+    float* dirs,
+    int nDirs,
+    int anglesInDegreesFLAG,
+    float* dirs_xyz
+)
+{
+    int i;
+    float tmp_rad[2];
+
+    if(anglesInDegreesFLAG){
+        for(i=0; i<nDirs; i++){
+            tmp_rad[0] = dirs[i*2]   * SAF_PI/180.0f;
+            tmp_rad[1] = dirs[i*2+1] * SAF_PI/180.0f;
+            dirs_xyz[i*3]   = cosf(tmp_rad[1]) * cosf(tmp_rad[0]);
+            dirs_xyz[i*3+1] = cosf(tmp_rad[1]) * sinf(tmp_rad[0]);
+            dirs_xyz[i*3+2] = sinf(tmp_rad[1]);
+        }
+    }
+    else {
+        for(i=0; i<nDirs; i++){
+            dirs_xyz[i*3]   = cosf(dirs[i*2+1]) * cosf(dirs[i*2]);
+            dirs_xyz[i*3+1] = cosf(dirs[i*2+1]) * sinf(dirs[i*2]);
+            dirs_xyz[i*3+2] = sinf(dirs[i*2+1]);
+        }
+    } 
+}
 
 float L2_norm(float v[3])
 {
