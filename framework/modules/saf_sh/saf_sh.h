@@ -775,6 +775,8 @@ void sphMUSIC_compute(/* Input arguments */
  * This particular implementation is is based on the "3-recurrence relationship"
  * design, detailed in [1].
  *
+ * @test test__sphESPRIT()
+ *
  * @param[in] phESPRIT  (&) address of the ESPRIT DoA estimator handle
  * @param[in] order     Spherical harmonic input order
  *

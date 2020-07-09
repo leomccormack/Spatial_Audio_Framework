@@ -1126,7 +1126,7 @@ void sphMUSIC_compute
     for (i = 0; i < (h->nDirs); i++) {
         tmp = 0.0f;
         for (j = 0; j < VnD2; j++)
-            tmp += (h->abs_VnA[j*(h->nDirs)+i]*h->abs_VnA[j*(h->nDirs)+i]); //powf(h->abs_VnA[j*(h->nDirs)+i], 2.0f);
+            tmp += (h->abs_VnA[j*(h->nDirs)+i]*h->abs_VnA[j*(h->nDirs)+i]);
         h->pSpec[i] = 1.0f / (tmp + 2.23e-10f);
     }
 

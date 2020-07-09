@@ -156,11 +156,18 @@ float getW(int l, int m, int n, float** R_1, float** R_lm1);
 /*                        Internal functions for sphESPRIT                    */
 /* ========================================================================== */
 
+/**
+ * Helper function for sphESPRIT_create() */
 void getWnimu(int order, int mm, int ni, int mu, double* Wnimu);
 
+/**
+ * Helper function for sphESPRIT_create() */
 void getVnimu(int order, int ni, int mu, double* Vnimu);
 
+/**
+ * Helper function for sphESPRIT_create() */
 void muni2q(int order, int ni, int mu, int* idx_nimu, int* idx_nm);
+
 
 #ifdef __cplusplus
 } /* extern "C" */
