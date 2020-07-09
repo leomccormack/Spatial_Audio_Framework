@@ -42,11 +42,11 @@ PROPERTIES
 )
 
 # Display system and configuration info
-message(STATUS "  ${CMAKE_SYSTEM_INFO_FILE}, name: ${CMAKE_SYSTEM_NAME}, arch: ${CMAKE_SYSTEM_PROCESSOR}, sys: ${CMAKE_SYSTEM}")
+message(STATUS "${CMAKE_SYSTEM_INFO_FILE}, name: ${CMAKE_SYSTEM_NAME}, arch: ${CMAKE_SYSTEM_PROCESSOR}, sys: ${CMAKE_SYSTEM}")
 if(BUILD_SHARED_LIBS)
-    message(STATUS "  Configuring ${PROJECT_NAME} as a SHARED library...")
+    message(STATUS "Configuring ${PROJECT_NAME} as a SHARED library...")
 else()
-    message(STATUS "  Configuring ${PROJECT_NAME} as a STATIC library...")
+    message(STATUS "Configuring ${PROJECT_NAME} as a STATIC library...")
 endif()
 
 # Framework include paths
@@ -65,7 +65,7 @@ add_subdirectory(resources)
 ############################################################################
 # Performance library dependencies
 if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL" )
-    message(STATUS "  Using Intel MKL. Linking against saf_mkl_custom library...") 
+    message(STATUS "Using Intel MKL. Linking against saf_mkl_custom library...")
     target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_INTEL_MKL=1)
 
     # Default header path and libs, (which are platform dependent):
@@ -103,20 +103,20 @@ if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL" )
     endif()
 
 elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
-    message(STATUS "  Using openBLAS...")
+    message(STATUS "Using openBLAS...")
     message(SEND_ERROR "Not yet supported! Please contribute if you use this library.")
 
 elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_ATLAS")
-    message(STATUS "  Using ATLAS...")
+    message(STATUS "Using ATLAS...")
     message(SEND_ERROR "Not yet supported! Please contribute if you use this library.")
 
 elseif(APPLE AND ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_APPLE_ACCELERATE")
-    message(STATUS "  Using Apple Accelerate. Linking against the Accelerate framework...")
+    message(STATUS "Using Apple Accelerate. Linking against the Accelerate framework...")
     target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_APPLE_ACCELERATE=1) 
     target_link_libraries(${PROJECT_NAME} PUBLIC "-framework Accelerate") 
 
 else()
-    message(SEND_ERROR "  The specified SAF_PERFORMANCE_LIB is not supported")
+    message(SEND_ERROR "The specified SAF_PERFORMANCE_LIB is not supported")
 
 endif()
 
@@ -124,7 +124,7 @@ endif()
 ############################################################################
 # Sofa reader module dependencies
 if(SAF_ENABLE_SOFA_READER_MODULE)
-    message(STATUS "  saf_sofa_reader module enabled. Linking against netcdf...")
+    message(STATUS "saf_sofa_reader module enabled. Linking against netcdf...")
 
     # Indicate to saf that the saf_sofa_reader module should be enabled
     target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_ENABLE_SOFA_READER_MODULE=${SAF_ENABLE_SOFA_READER_MODULE})
@@ -169,7 +169,7 @@ if(SAF_ENABLE_SOFA_READER_MODULE)
     endif() 
 
 else()
-    message(STATUS "  saf_sofa_reader module disabled.")
+    message(STATUS "saf_sofa_reader module disabled.")
 endif()
     
 

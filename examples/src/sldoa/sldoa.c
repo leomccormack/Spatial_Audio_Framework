@@ -311,13 +311,11 @@ void sldoa_analysis
                     for(i=0; i<nSectors; i++){
                         for( t = 0; t<TIME_SLOTS; t++){
                             /* avg doa estimate */
-                            unitSph2Cart(new_doa[i][t][0], new_doa[i][t][1], new_doa_xyz);
-                            unitSph2Cart(pData->doa_rad[band][i][0],
-                                         pData->doa_rad[band][i][1],
-                                         doa_xyz);
+                            unitSph2cart((float*)new_doa[i][t], 1, 0, (float*)new_doa_xyz);
+                            unitSph2cart((float*)pData->doa_rad[band][i], 1, 0, (float*)doa_xyz);
                             for(j=0; j<3; j++)
-                                avg_xyz[j] = new_doa_xyz[j]*avgCoeff + doa_xyz[j] * (1.0f-avgCoeff);
-                            unitCart2Sph_aziElev(avg_xyz, &(pData->doa_rad[band][i][0]), &(pData->doa_rad[band][i][1]));
+                                avg_xyz[j] = new_doa_xyz[j]*avgCoeff + doa_xyz[j] * (1.0f-avgCoeff); 
+                            unitCart2sph((float*)avg_xyz, 1, 0, (float*)pData->doa_rad[band][i]);
 
                             /* avg energy */
                             pData->energy[band][i] = new_energy[i][t]*avgCoeff + pData->energy[band][i] * (1.0f-avgCoeff);

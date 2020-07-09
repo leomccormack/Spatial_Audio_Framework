@@ -7,6 +7,7 @@ set(example_list
     ambi_enc
     array2sh
     beamformer
+    decorrelator
     dirass
     matrixconv
     multiconv

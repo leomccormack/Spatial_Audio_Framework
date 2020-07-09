@@ -27,6 +27,62 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void yawPitchRoll2Rzyx
+(
+    float yaw,
+    float pitch,
+    float roll,
+    int rollPitchYawFLAG, /* use Rxyz, i.e. apply roll, pitch and then yaw */
+    float R[3][3]
+)
+{
+    int m,n,k;
+    float Rtmp[3][3] = {{0.0f}};
+    float Rx[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
+    float Ry[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
+    float Rz[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
+
+    /* var Rx, Ry, Rz; */
+    if (roll != 0) {
+        Rx[1][1] =  cosf(roll); Rx[1][2] = sinf(roll);
+        Rx[2][1] = -sinf(roll); Rx[2][2] = cosf(roll);
+    }
+    if (pitch != 0){
+        Ry[0][0] = cosf(pitch); Ry[0][2] = -sinf(pitch);
+        Ry[2][0] = sinf(pitch); Ry[2][2] =  cosf(pitch);
+    }
+    if (yaw != 0){
+        Rz[0][0] =  cosf(yaw); Rz[0][1] = sinf(yaw);
+        Rz[1][0] = -sinf(yaw); Rz[1][1] = cosf(yaw);
+    }
+    if(rollPitchYawFLAG){
+        /* rotation order: roll-pitch-yaw */
+        for (m=0;m<3; m++){
+            memset(R[m], 0, 3*sizeof(float));
+            for(n=0;n<3; n++)
+                for(k=0; k<3; k++)
+                    Rtmp[m][n] += Ry[m][k] * Rx[k][n];
+        }
+        for (m=0;m<3; m++)
+            for(n=0;n<3; n++)
+                for(k=0; k<3; k++)
+                    R[m][n] += Rz[m][k] * Rtmp[k][n];
+    }
+    else{
+        /* rotation order: yaw-pitch-roll */
+        for (m=0;m<3; m++){
+            memset(R[m], 0, 3*sizeof(float));
+            for(n=0;n<3; n++)
+                for(k=0; k<3; k++)
+                    Rtmp[m][n] += Ry[m][k] * Rz[k][n];
+        }
+        for (m=0;m<3; m++)
+            for(n=0;n<3; n++)
+                for(k=0; k<3; k++)
+                    R[m][n] += Rx[m][k] * Rtmp[k][n];
+    }
+}
+
 void unitSph2cart
 (
     float* dirs,
@@ -47,13 +103,36 @@ void unitSph2cart
             dirs_xyz[i*3+2] = sinf(tmp_rad[1]);
         }
     }
-    else {
+    else { /* Angles given in radians */
         for(i=0; i<nDirs; i++){
             dirs_xyz[i*3]   = cosf(dirs[i*2+1]) * cosf(dirs[i*2]);
             dirs_xyz[i*3+1] = cosf(dirs[i*2+1]) * sinf(dirs[i*2]);
             dirs_xyz[i*3+2] = sinf(dirs[i*2+1]);
         }
     } 
+}
+
+void unitCart2sph
+(
+    float* dirs_xyz,
+    int nDirs,
+    int anglesInDegreesFLAG,
+    float* dirs
+)
+{
+    int i;
+    float hypotxy;
+
+    for(i=0; i<nDirs; i++){
+        hypotxy = sqrtf(dirs_xyz[i*3]*dirs_xyz[i*3] + dirs_xyz[i*3+1]*dirs_xyz[i*3+1]);
+        dirs[i*2]   = atan2f(dirs_xyz[i*3+1], dirs_xyz[i*3]);
+        dirs[i*2+1] = atan2f(dirs_xyz[i*3+2], hypotxy);
+    }
+
+    /* Return in degrees instead... */
+    if(anglesInDegreesFLAG)
+        for(i=0; i<nDirs*2; i++)
+            dirs[i] *= (180.0f/SAF_PI);
 }
 
 float L2_norm(float v[3])
@@ -116,7 +195,8 @@ void sphDelaunay
         vertices_tmp[i*3+1] = rcoselev * sinf(dirs_deg[i*2+0]*SAF_PI/180.0f);
     }
 
-    /* Delaunay triangulation of a spherical */
+    /* Delaunay triangulation of a spherical grid is equivalent to the computing
+     * the 3d convex hull */
     convhull3d(vertices_tmp, nDirs, faces, nFaces);
 
     /* optionally, also output the vertices */
@@ -395,6 +475,7 @@ void getVoronoiWeights
 
     /* Store weights */
     if(diagFLAG){
+        /* along the diagonal... */
         memset(weights, 0, nDirs*nDirs*sizeof(float));
         for(i=0; i<nDirs; i++)
             weights[i*nDirs+i] = areas[i];

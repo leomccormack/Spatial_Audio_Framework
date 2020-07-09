@@ -47,7 +47,26 @@ typedef struct _voronoi_data{
 }voronoi_data;
 
 /**
- * Converts spherical coordinates of unit length to Cartesian coordinates
+ * Constructs a 3x3 rotation matrix from the Euler angles, using the
+ * yaw-pitch-roll (zyx) convention
+ *
+ * @param[in]  yaw              Yaw angle in radians
+ * @param[in]  pitch            Pitch angle in radians
+ * @param[in]  roll             Roll angle in radians
+ * @param[in]  rollPitchYawFLAG '1' to use Rxyz, i.e. apply roll, pitch and then
+ *                              yaw, '0' Rzyx / y-p-r
+ * @param[out] R                zyx rotation matrix; 3 x 3
+ */
+void yawPitchRoll2Rzyx (/* Input Arguments */
+                        float yaw,
+                        float pitch,
+                        float roll,
+                        int rollPitchYawFLAG,
+                        /* Output Arguments */
+                        float R[3][3]);
+
+/**
+ * Converts spherical coordinates to Cartesian coordinates of unit length
  *
  * @param[in]  dirs                Spherical coordinates; FLAT: nDirs x 2
  * @param[in]  nDirs               Number of directions/coordinates
@@ -60,6 +79,21 @@ void unitSph2cart(/* Input Arguments */
                   int anglesInDegreesFLAG,
                   /* Output Arguments */
                   float* dirs_xyz);
+
+/**
+ * Converts Cartesian coordinates of unit length to spherical coordinates
+ *
+ * @param[in]  dirs_xyz            Cartesian coordinates; FLAT: nDirs x 3
+ * @param[in]  nDirs               Number of directions/coordinates
+ * @param[in]  anglesInDegreesFLAG 0: dirs wanted in radians, 1: degrees instead
+ * @param[out] dirs                Spherical coordinates; FLAT: nDirs x 2
+ */
+void unitCart2sph(/* Input Arguments */
+                  float* dirs_xyz,
+                  int nDirs,
+                  int anglesInDegreesFLAG,
+                  /* Output Arguments */
+                  float* dirs);
 
 /**
  * L2 (Euclidean) norm of a 3-element vector

@@ -89,62 +89,6 @@ typedef enum _SECTOR_PATTERNS{
 /* ========================================================================== */
 
 /**
- * Constructs a 3x3 rotation matrix from the Euler angles, using the
- * yaw-pitch-roll (zyx) convention
- *
- * @param[in]  yaw              Yaw angle in radians
- * @param[in]  pitch            Pitch angle in radians
- * @param[in]  roll             Roll angle in radians
- * @param[in]  rollPitchYawFLAG '1' to use Rxyz, i.e. apply roll, pitch and then
- *                              yaw, '0' Rzyx / y-p-r
- * @param[out] R                zyx rotation matrix; 3 x 3
- */
-void yawPitchRoll2Rzyx (/* Input Arguments */
-                        float yaw,
-                        float pitch,
-                        float roll,
-                        int rollPitchYawFLAG,
-                        /* Output Arguments */
-                        float R[3][3]);
-
-/**
- * Converts spherical coordinates to Cartesian coordinates of unit length
- *
- * @param[in]  azi_rad  Azimuth in radians
- * @param[in]  elev_rad Elevation in radians
- * @param[out] xyz      Unit cartesian coords, xyz; 3 x 1
- */
-void unitSph2Cart(/* Input Arguments */
-                  float azi_rad,
-                  float elev_rad,
-                  /* Output Arguments */
-                  float xyz[3]);
-
-/**
- * Converts Cartesian coordinates of unit length to spherical coordinates
- *
- * @param[in]  xyz         Unit cartesian coords, xyz
- * @param[out] AziElev_rad Azimuth and elevation in radians
- */
-void unitCart2Sph(/* Input Arguments */
-                  float xyz[3],
-                  /* Output Arguments */
-                  float AziElev_rad[2]);
-
-/**
- * Converts Cartesian coordinates of unit length to spherical coordinates
- *
- * @param[in]  xyz      Unit cartesian coords, xyz
- * @param[out] azi_rad  (&) azimuth in radians
- * @param[out] elev_rad (&) elevation in radians
- */
-void unitCart2Sph_aziElev(/* Input Arguments */
-                          float xyz[3],
-                          /* Output Arguments */
-                          float* azi_rad,
-                          float* elev_rad);
-
-/**
  * Calculates unnormalised Legendre polynomials up to order N, for all values in
  * vector x [1]
  *

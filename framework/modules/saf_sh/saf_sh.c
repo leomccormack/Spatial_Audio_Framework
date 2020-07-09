@@ -48,97 +48,6 @@ const float wxyzCoeffs[4][4] = {
 /*                               Misc. Functions                              */
 /* ========================================================================== */
 
-void yawPitchRoll2Rzyx
-(
-    float yaw,
-    float pitch,
-    float roll,
-    int rollPitchYawFLAG, /* use Rxyz, i.e. apply roll, pitch and then yaw */
-    float R[3][3]
-)
-{
-    int m,n,k;
-    float Rtmp[3][3] = {{0.0f}};
-    float Rx[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
-    float Ry[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
-    float Rz[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
-    
-    /* var Rx, Ry, Rz; */
-    if (roll != 0) {
-        Rx[1][1] =  cosf(roll); Rx[1][2] = sinf(roll);
-        Rx[2][1] = -sinf(roll); Rx[2][2] = cosf(roll);
-    }
-    if (pitch != 0){
-        Ry[0][0] = cosf(pitch); Ry[0][2] = -sinf(pitch);
-        Ry[2][0] = sinf(pitch); Ry[2][2] =  cosf(pitch);
-    }
-    if (yaw != 0){
-        Rz[0][0] =  cosf(yaw); Rz[0][1] = sinf(yaw);
-        Rz[1][0] = -sinf(yaw); Rz[1][1] = cosf(yaw);
-    }
-    if(rollPitchYawFLAG){
-        /* rotation order: roll-pitch-yaw */
-        for (m=0;m<3; m++){
-            memset(R[m], 0, 3*sizeof(float));
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    Rtmp[m][n] += Ry[m][k] * Rx[k][n];
-        }
-        for (m=0;m<3; m++)
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    R[m][n] += Rz[m][k] * Rtmp[k][n];
-    }
-    else{
-        /* rotation order: yaw-pitch-roll */
-        for (m=0;m<3; m++){
-            memset(R[m], 0, 3*sizeof(float));
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    Rtmp[m][n] += Ry[m][k] * Rz[k][n];
-        }
-        for (m=0;m<3; m++)
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    R[m][n] += Rx[m][k] * Rtmp[k][n];
-    }
-}
-
-void unitSph2Cart
-(
-    float azi_rad,
-    float elev_rad,
-    float xyz[3]
-)
-{
-    xyz[0] = cosf(elev_rad) * cosf(azi_rad);
-    xyz[1] = cosf(elev_rad) * sinf(azi_rad);
-    xyz[2] = sinf(elev_rad);
-}
-
-void unitCart2Sph
-(
-    float xyz[3],
-    float AziElev_rad[2]
-)
-{
-    float hypotxy = sqrtf(powf(xyz[0], 2.0f) + powf(xyz[1], 2.0f));
-    AziElev_rad[0] = atan2f(xyz[1], xyz[0]);
-    AziElev_rad[1] = atan2f(xyz[2], hypotxy);
-}
-
-void unitCart2Sph_aziElev
-(
-    float xyz[3],
-    float* azi_rad,
-    float* elev_rad
-)
-{
-    float hypotxy = sqrtf(powf(xyz[0], 2.0f) + powf(xyz[1], 2.0f));
-    (*azi_rad) = atan2f(xyz[1], xyz[0]);
-    (*elev_rad) = atan2f(xyz[2], hypotxy);
-}
-
 void unnorm_legendreP
 (
     int n,
@@ -2193,10 +2102,8 @@ void simulateSphArray
     /* calculate (unit) cartesian coords for sensors and plane waves */
     U_sensors = malloc1d(N_sensors*3*sizeof(float));
     U_srcs = malloc1d(N_srcs*3*sizeof(float));
-    for(i=0; i<N_sensors; i++)
-        unitSph2Cart(sensor_dirs_rad[i*2], sensor_dirs_rad[i*2+1], (float*)&U_sensors[i*3]);
-    for(i=0; i<N_srcs; i++)
-        unitSph2Cart(src_dirs_deg[i*2]*M_PI/180.0f, src_dirs_deg[i*2+1]*M_PI/180.0f, (float*)&U_srcs[i*3]);
+    unitSph2cart(sensor_dirs_rad, N_sensors, 0, U_sensors);
+    unitSph2cart(src_dirs_deg, N_srcs, 1, U_srcs); 
     
     /* Compute angular-dependent part of the array responses */
     ppm = malloc1d((order+1)*sizeof(double));

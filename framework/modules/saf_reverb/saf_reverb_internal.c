@@ -337,7 +337,7 @@ void ims_shoebox_coreRecModuleSH
         sh_gains = malloc1d(nSH*sizeof(float));
         for(i=0; i<echogram_rec->numImageSources; i++){
             /* Cartesian coordinates to spherical coordinates */
-            unitCart2Sph(echogram_rec->coords[i].v, (float*)aziElev_rad);
+            unitCart2sph(echogram_rec->coords[i].v, 1, 0, (float*)aziElev_rad); 
             aziElev_rad[1] = SAF_PI/2.0f-aziElev_rad[1]; /* AziElev to AziInclination conversion */
 
             /* Apply spherical harmonic weights */

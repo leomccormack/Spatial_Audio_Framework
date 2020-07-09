@@ -33,6 +33,7 @@ if(SAF_ENABLE_SOFA_READER_MODULE AND SAF_BUILD_EXAMPLES)
         "${example_prefix}array2sh"
         "${example_prefix}beamformer"
         "${example_prefix}binauraliser"
+        "${example_prefix}decorrelator"
         "${example_prefix}dirass"
         "${example_prefix}matrixconv"
         "${example_prefix}multiconv"
