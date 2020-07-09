@@ -80,12 +80,14 @@ extern const float __lattice_coeffs_o2[256][2];
  * @param[out] delayTF    The resulting time delays per channel and frequency;
  *                        FLAT: nFreq x nChannels
  */
-void getDecorrelationDelays(int nChannels,
+void getDecorrelationDelays(/* Input Arguments */
+                            int nChannels,
                             float* freqs,
                             int nFreqs,
                             float fs,
                             int maxTFdelay,
                             int hopSize,
+                            /* Output Arguments */
                             int* delayTF);
 
 /**
@@ -106,12 +108,14 @@ void getDecorrelationDelays(int nChannels,
  *                         FLAT: nChannels x rir_len
  * @param[out] rir_len     (&) length of filters, in samples
  */
-void synthesiseNoiseReverb(int nChannels,
+void synthesiseNoiseReverb(/* Input Arguments */
+                           int nChannels,
                            float fs,
                            float* t60,
                            float* fcen_oct,
                            int nBands,
                            int flattenFLAG,
+                           /* Output Arguments */
                            float** rir_filt,
                            int* rir_len);
 
@@ -128,7 +132,6 @@ void synthesiseNoiseReverb(int nChannels,
  *       (each with lower orders), to attain the desired decorrelation without
  *       introducing the instabilities which accompany the use of the really
  *       high filter orders.
- *
  * @test test__latticeDecorrelator()
  *
  * @param[in] phDecor      (&) address of lattice decorrelator handle
@@ -140,8 +143,8 @@ void synthesiseNoiseReverb(int nChannels,
  * @param[in] fixedDelays  Fixed time-frequency hop delays; (nCutoffs+1) x 1
  * @param[in] nCutoffs     Number of cutoff frequencies
  * @param[in] freqVector   Frequency vector; nBands x 1
- * @param[in] lookupOffset Optional offset for look-up tables (set to 0 if
- *                         using just one instance)
+ * @param[in] lookupOffset Optional offset for look-up tables (set to 0 if using
+ *                         just one instance)
  * @param[in] nBands       Number of bands
  *
  * @see [1] Herre, J., Kjo"rling, K., Breebaart, J., Faller, C., Disch, S.,
@@ -155,7 +158,8 @@ void synthesiseNoiseReverb(int nChannels,
  *          Surround" International Standards Organization, Geneva, Switzerland
  *          (2006)
  */
-void latticeDecorrelator_create(void** phDecor,
+void latticeDecorrelator_create(/* Input Arguments */
+                                void** phDecor,
                                 int nCH,
                                 int* orders,
                                 float* freqCutoffs,
@@ -171,20 +175,58 @@ void latticeDecorrelator_create(void** phDecor,
  *
  * @param[in] phDecor (&) address of lattice decorrelator handle
  */
-void latticeDecorrelator_destroy(void** phDecor);
+void latticeDecorrelator_destroy(/* Input Arguments */
+                                 void** phDecor);
 
 /**
  * Applies the lattice all-pass-filter-based multi-channel signal decorrelator
  *
  * @param[in]  hDecor     lattice decorrelator handle
- * @param[in]  inFrame    nBands x nCH x nTimeSlots
+ * @param[in]  inFrame    input frame; nBands x nCH x nTimeSlots
  * @param[in]  nTimeSlots Number of time slots per frame
- * @param[out] decorFrame nBands x nCH x nTimeSlots
+ * @param[out] decorFrame decorrelated frame; nBands x nCH x nTimeSlots
  */
-void latticeDecorrelator_apply(void* hDecor,
+void latticeDecorrelator_apply(/* Input Arguments */
+                               void* hDecor,
                                float_complex*** inFrame,
                                int nTimeSlots,
+                               /* Output Arguments */
                                float_complex*** decorFrame);
+
+/**
+ * Creates an instance of the transient ducker
+ *
+ * @param[in] phDucker (&) address of ducker handle
+ * @param[in] nCH       Number of channels
+ * @param[in] nBands    Number of frequency bands
+ */
+void transientDucker_create(/* Input Arguments */
+                            void** phDucker,
+                            int nCH,
+                            int nBands);
+
+/**
+ * Destroys an instance of the transient ducker
+ *
+ * @param[in] phDucker (&) address of ducker handle
+ */
+void transientDucker_destroy(/* Input Arguments */
+                             void** phDucker);
+
+/**
+ * Applies the transient ducker
+ *
+ * @param[in]  hDucker    ducker handle
+ * @param[in]  inFrame    input frame; nBands x nCH x nTimeSlots
+ * @param[in]  nTimeSlots Number of time slots per frame
+ * @param[out] outFrame   ducked frame; nBands x nCH x nTimeSlots
+ */
+void transientDucker_apply(/* Input Arguments */
+                           void* hDucker,
+                           float_complex*** inFrame,
+                           int nTimeSlots,
+                           /* Output Arguments */
+                           float_complex*** outFrame);
 
 
 #ifdef __cplusplus

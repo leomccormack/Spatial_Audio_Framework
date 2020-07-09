@@ -26,21 +26,43 @@
 #include "saf_utilities.h"
 
 /**
- * Random permutation of a vector of integers
- */
-static void randperm(int len, int* randperm)
-{
-    int i, j, tmp;
-    
-    for (i = 0; i < len; i++)
-        randperm[i] = i;
-    for (i = 0; i < len; i++) {
-        j = rand() % (len-i) + i;
-        tmp = randperm[j];
-        randperm[j] = randperm[i];
-        randperm[i] = tmp;
-    }
-}
+ * Internal Lattice all-pass filter structure */
+typedef struct _latticeAPF{
+    int order;
+    int filterLength;
+    float** coeffs;
+    float_complex* buffer;
+
+}latticeAPF;
+
+/**
+ * Internal Lattice all-pass filter based decorrelator structure */
+typedef struct _latticeDecor_data{
+    int nCH;
+    int nCutoffs;
+    int nBands;
+    int nXtimeslots;
+    int maxBufferLen;
+    int* orders;
+    int* TF_delays;
+    latticeAPF** lttc_apf;
+
+    /* run-time */
+    float_complex*** delayBuffers;
+    int* wIdx;
+    int* rIdx;
+
+}latticeDecor_data;
+
+/**
+ * Internal structure used by the transient Ducker */
+typedef struct _transientDucker_data{
+    int nCH;
+    int nBands;
+    float** transientDetector1;
+    float** transientDetector2;
+
+}transientDucker_data;
 
 void getDecorrelationDelays
 (
@@ -81,7 +103,7 @@ void getDecorrelationDelays
     for(band=0; band<nFreqs; band++){
         for(ch=0; ch<nChannels; ch++){
             delays[band*nChannels+ch] = delays[band*nChannels+ch]*(delayRangeMax[band]-delayRangeMin[band])+delayRangeMin[band];
-            delayTF[band*nChannels+ch]  = MAX((int)(delays[band*nChannels+ch]/1000.0f*fs/(float)hopSize + 0.5f)-1,0); /* remove -1 for matlab version */
+            delayTF[band*nChannels+ch]  = MAX((int)(delays[band*nChannels+ch]/1000.0f*fs/(float)hopSize + 0.5f)-1,0);
         }
     }
     
@@ -164,31 +186,6 @@ void synthesiseNoiseReverb
     free(h_filt);
     free(rir_filt_tmp);
 }
-
-typedef struct _latticeAPF{
-    int order;
-    int filterLength;
-    float** coeffs;
-    float_complex* buffer;
-
-}latticeAPF;
-
-typedef struct _latticeDecor_data{
-    int nCH;
-    int nCutoffs;
-    int nBands;
-    int nXtimeslots;
-    int maxBufferLen;
-    int* orders;
-    int* TF_delays;
-    latticeAPF** lttc_apf;
-
-    /* run-time */
-    float_complex*** delayBuffers;
-    int* wIdx;
-    int* rIdx;
-
-}latticeDecor_data;
 
 void latticeDecorrelator_create
 (
@@ -286,7 +283,6 @@ void latticeDecorrelator_create
         h->rIdx[band] = h->TF_delays[band]-1;
     h->wIdx = calloc1d(nBands,sizeof(int));
 }
-
 
 void latticeDecorrelator_destroy
 (
@@ -386,4 +382,69 @@ void latticeDecorrelator_apply
         } 
     }
 #endif
+}
+
+void transientDucker_create
+(
+    void** phDucker,
+    int nCH,
+    int nBands
+)
+{
+    *phDucker = malloc1d(sizeof(transientDucker_data));
+    transientDucker_data *h = (transientDucker_data*)(*phDucker);
+
+    h->nCH = nCH;
+    h->nBands = nBands;
+    h->transientDetector1 = (float**)calloc2d(nBands, nCH, sizeof(float));
+    h->transientDetector2 = (float**)calloc2d(nBands, nCH, sizeof(float));
+}
+
+void transientDucker_destroy
+(
+    void** phDucker
+)
+{
+    transientDucker_data *h = (transientDucker_data*)(*phDucker);
+
+    if(h!=NULL){
+        free(h->transientDetector1);
+        free(h->transientDetector2);
+        free(h);
+        h=NULL;
+        *phDucker = NULL;
+    }
+}
+
+void transientDucker_apply
+(
+    void* hDucker,
+    float_complex*** inFrame,
+    int nTimeSlots,
+    float_complex*** outFrame
+)
+{
+    transientDucker_data *h = (transientDucker_data*)(hDucker);
+    int band, i, t;
+    float detectorEne, transientEQ;
+    //const float alpha = 0.95f;
+    //const float beta = 0.995f;
+    const float alpha = 0.93f;
+    const float beta = 0.992f;
+
+    for(band=0; band<h->nBands; band++){
+        for(i=0; i<h->nCH; i++){
+            for(t=0; t<nTimeSlots; t++){
+                detectorEne = powf(cabsf(inFrame[band][i][t]), 2.0f);
+                h->transientDetector1[band][i] *= alpha;
+                if(h->transientDetector1[band][i]<detectorEne)
+                    h->transientDetector1[band][i] = detectorEne;
+                h->transientDetector2[band][i] = h->transientDetector2[band][i]*beta + (1.0f-beta)*(h->transientDetector1[band][i]);
+                if(h->transientDetector2[band][i] > h->transientDetector1[band][i])
+                    h->transientDetector2[band][i] = h->transientDetector1[band][i];
+                transientEQ = MIN(1.0f, 4.0f * (h->transientDetector2[band][i])/(h->transientDetector1[band][i]+2.23e-9f));
+                outFrame[band][i][t] = crmulf(inFrame[band][i][t], transientEQ);
+            }
+        }
+    }
 }

@@ -29,8 +29,7 @@
 
 /**
  * Precomputed factorials for up to !15 (i.e. the "getSH" functions will employ
- * these up to 7th order)
- */
+ * these up to 7th order) */
 static const long double factorials_15[15] =
 {1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0, 39916800.0, 479001600.0, 6.2270208e9, 8.71782891e10};
 
@@ -86,6 +85,24 @@ void findERBpartitions
     /* subtract 1 from the indices (the above is a direct port from Matlab...) */
     for(i=0; i<(*nERBBands); i++)
         (*erb_idx)[i] = (*erb_idx)[i] - 1;
+}
+
+void randperm
+(
+    int len,
+    int* randperm
+)
+{
+    int i, j, tmp;
+
+    for (i = 0; i < len; i++)
+        randperm[i] = i;
+    for (i = 0; i < len; i++) {
+        j = rand() % (len-i) + i;
+        tmp = randperm[j];
+        randperm[j] = randperm[i];
+        randperm[i] = tmp;
+    }
 }
 
 long double factorial(int n)

@@ -83,11 +83,19 @@ void findERBpartitions(/* Input Arguments */
                        int* nERBBands);
 
 /**
+ * Returns the indices required to randomly permute a vector of length 'len'
+ */
+void randperm(/* Input Arguments */
+              int len,
+              /* Output Arguments */
+              int* randperm_inds);
+
+/**
  * Factorial, accurate up to n<=25
  *
  * @note The magnitude will still be correct above 25, but the precision will be
  *       truncated. The function also returns pre-computed values up to n=15
- *       to make it faster (e.g. for up to 7th order SH computations).
+ *       to make it faster (e.g. for up to 7th order SH computations...).
  *
  * @param[in] n Order
  * @returns factorial(n)
