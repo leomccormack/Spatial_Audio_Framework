@@ -59,6 +59,30 @@ extern "C" {
 #include <math.h>
 
 /**
+ * This function takes a frequency vector and groups its frequencies into
+ * critical bands [Equivalent-Rectangular Bandwidth (ERB)].
+ *
+ * e.g.
+ *   - centerFreq[erb_idx[0]] -> centerFreq[erb_idx[1]] is ERB band 1
+ *   - centerFreq[erb_idx[1]] -> centerFreq[erb_idx[2]] is ERB band 2
+ *
+ * @param[in]  centerFreq Frequency vector; nBands x 1
+ * @param[in]  nBands     Number of bins/bands in frequency vector
+ * @param[in]  maxFreqLim Past this frequency the bands are grouped into 1 band
+ * @param[out] erb_idx    (&) ERB indices; nERBBands x 1
+ * @param[out] erb_freqs  (&) ERB frequencies; nERBBands x 1
+ * @param[out] nERBBands  (&) Number of ERB bands; 1 x 1
+ */
+void findERBpartitions(/* Input Arguments */
+                       float* centerFreq,
+                       int nBands,
+                       float maxFreqLim,
+                       /* Output Arguments */
+                       int** erb_idx,
+                       float** erb_freqs,
+                       int* nERBBands);
+
+/**
  * Factorial, accurate up to n<=25
  *
  * @note The magnitude will still be correct above 25, but the precision will be

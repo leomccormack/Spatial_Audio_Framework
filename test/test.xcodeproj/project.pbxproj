@@ -56,7 +56,6 @@
 		50E36067249BDDCC00B74C25 /* saf_utility_misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3602E249BDDCB00B74C25 /* saf_utility_misc.c */; };
 		50E36068249BDDCC00B74C25 /* saf_utility_error.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36031249BDDCC00B74C25 /* saf_utility_error.c */; };
 		50E36069249BDDCC00B74C25 /* saf_utility_pitch.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36032249BDDCC00B74C25 /* saf_utility_pitch.c */; };
-		50E3606A249BDDCC00B74C25 /* saf_utility_erb.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36037249BDDCC00B74C25 /* saf_utility_erb.c */; };
 		50E3606B249BDDCC00B74C25 /* saf_utility_filters.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36039249BDDCC00B74C25 /* saf_utility_filters.c */; };
 		50E3606C249BDDCC00B74C25 /* saf_utility_complex.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3603A249BDDCC00B74C25 /* saf_utility_complex.c */; };
 		50E3606D249BDDCC00B74C25 /* saf_utility_loudspeaker_presets.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3603B249BDDCC00B74C25 /* saf_utility_loudspeaker_presets.c */; };
@@ -188,7 +187,6 @@
 		50E36023249BDDCB00B74C25 /* saf_hoa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hoa.c; sourceTree = "<group>"; };
 		50E36024249BDDCB00B74C25 /* saf_hoa_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hoa_internal.h; sourceTree = "<group>"; };
 		50E36025249BDDCB00B74C25 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		50E36027249BDDCB00B74C25 /* saf_utility_erb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_erb.h; sourceTree = "<group>"; };
 		50E36028249BDDCB00B74C25 /* saf_utility_sensorarray_presets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_sensorarray_presets.c; sourceTree = "<group>"; };
 		50E36029249BDDCB00B74C25 /* saf_utility_bessel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_bessel.c; sourceTree = "<group>"; };
 		50E3602A249BDDCB00B74C25 /* saf_utility_complex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_complex.h; sourceTree = "<group>"; };
@@ -204,7 +202,6 @@
 		50E36034249BDDCC00B74C25 /* saf_utility_decor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_decor.h; sourceTree = "<group>"; };
 		50E36035249BDDCC00B74C25 /* saf_utility_matrixConv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_matrixConv.h; sourceTree = "<group>"; };
 		50E36036249BDDCC00B74C25 /* saf_utility_sensorarray_presets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_sensorarray_presets.h; sourceTree = "<group>"; };
-		50E36037249BDDCC00B74C25 /* saf_utility_erb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_erb.c; sourceTree = "<group>"; };
 		50E36038249BDDCC00B74C25 /* saf_utility_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_fft.h; sourceTree = "<group>"; };
 		50E36039249BDDCC00B74C25 /* saf_utility_filters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_filters.c; sourceTree = "<group>"; };
 		50E3603A249BDDCC00B74C25 /* saf_utility_complex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_complex.c; sourceTree = "<group>"; };
@@ -625,8 +622,6 @@
 				50E3602A249BDDCB00B74C25 /* saf_utility_complex.h */,
 				50E36042249BDDCC00B74C25 /* saf_utility_decor.c */,
 				50E36034249BDDCC00B74C25 /* saf_utility_decor.h */,
-				50E36037249BDDCC00B74C25 /* saf_utility_erb.c */,
-				50E36027249BDDCB00B74C25 /* saf_utility_erb.h */,
 				50E36031249BDDCC00B74C25 /* saf_utility_error.c */,
 				50E3603D249BDDCC00B74C25 /* saf_utility_error.h */,
 				50E3602D249BDDCB00B74C25 /* saf_utility_fft.c */,
@@ -793,7 +788,6 @@
 				50E36073249BDDCC00B74C25 /* saf_reverb_internal.c in Sources */,
 				50E3606E249BDDCC00B74C25 /* saf_utility_veclib.c in Sources */,
 				50E35FC524926CF900B74C25 /* rotator_internal.c in Sources */,
-				50E3606A249BDDCC00B74C25 /* saf_utility_erb.c in Sources */,
 				50E35FC924926CF900B74C25 /* ambi_enc.c in Sources */,
 				50E35FCB24926CF900B74C25 /* panner_internal.c in Sources */,
 				50E35D1F2475AECA00B74C25 /* saf_test.c in Sources */,

@@ -47,8 +47,6 @@
 # include "sldoa.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
-void test__sphMUSIC(void);
-
 /* ========================================================================== */
 /*                                 Test Config                                */
 /* ========================================================================== */
@@ -87,7 +85,6 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
-    RUN_TEST(test__sphMUSIC);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -117,6 +114,8 @@ int main_test(void) {
     RUN_TEST(test__complex2realSHMtx);
     RUN_TEST(test__computeSectorCoeffsEP);
     RUN_TEST(test__checkCondNumberSHTReal);
+    RUN_TEST(test__sphMUSIC);
+    RUN_TEST(test__sphESPRIT);
     RUN_TEST(test__butterCoeffs);
     RUN_TEST(test__faf_IIRFilterbank);
 #ifdef SAF_ENABLE_EXAMPLES_TESTS
@@ -137,82 +136,6 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
-
-void test__sphMUSIC(void){
-    int i, j, k, nGrid, nSH, nSrcs, srcInd_1, srcInd_2;
-    float test_dirs_deg[2][2];
-    float* grid_dirs_deg;
-    float** Y_src, **src_sigs, **src_sigs_sh, **Cx, **V, **Vn;
-    float_complex** Vn_cmplx;
-    void* hMUSIC;
-
-    /* config */
-    const int order = 3;
-    const int lsig = 48000;
-
-    /* define scanning grid directions */
-    nGrid = 240;
-    grid_dirs_deg = (float*)__Tdesign_degree_21_dirs_deg;
-
-    /* test scenario and signals */
-    nSrcs = 2;
-    srcInd_1 = 139;
-    srcInd_2 = 204;
-    test_dirs_deg[0][0] = grid_dirs_deg[srcInd_1*2];
-    test_dirs_deg[0][1] = grid_dirs_deg[srcInd_1*2+1];
-    test_dirs_deg[1][0] = grid_dirs_deg[srcInd_2*2];
-    test_dirs_deg[1][1] = grid_dirs_deg[srcInd_2*2+1];
-    nSH = ORDER2NSH(order);
-    Y_src = (float**)malloc2d(nSH, nSrcs, sizeof(float));
-    getRSH(order, (float*)test_dirs_deg, nSrcs, FLATTEN2D(Y_src));
-    src_sigs = (float**)malloc2d(nSrcs, lsig, sizeof(float));
-    rand_m1_1(FLATTEN2D(src_sigs), nSrcs*lsig); /* uncorrelated noise sources */
-
-    /* encode to SH and compute spatial covariance matrix */
-    src_sigs_sh = (float**)malloc2d(nSH, lsig, sizeof(float));
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, lsig, nSrcs, 1.0f,
-                FLATTEN2D(Y_src), nSrcs,
-                FLATTEN2D(src_sigs), lsig, 0.0f,
-                FLATTEN2D(src_sigs_sh), lsig);
-    Cx = (float**)malloc2d(nSH, nSH, sizeof(float));
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, lsig, 1.0f,
-                FLATTEN2D(src_sigs_sh), lsig,
-                FLATTEN2D(src_sigs_sh), lsig, 0.0f,
-                FLATTEN2D(Cx), nSH);
-
-    /* Eigenvalue decomposition and truncation of eigen vectors to obtain
-     * noise subspace (based on source number) */
-    V = (float**)malloc2d(nSH, nSH, sizeof(float));
-    utility_sseig(FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
-    Vn = (float**)malloc2d(nSH, (nSH-nSrcs), sizeof(float)); /* noise subspace */
-    for(i=0; i<nSH; i++)
-        for(j=0, k=nSrcs; j<nSH-nSrcs; j++, k++)
-            Vn[i][j] = V[i][k];
-    Vn_cmplx = (float_complex**)malloc2d(nSH, (nSH-nSrcs), sizeof(float_complex)); /* noise subspace (complex) */
-    for(i=0; i<nSH; i++)
-        for(j=0; j<nSH-nSrcs; j++)
-            Vn_cmplx[i][j] = cmplxf(Vn[i][j], 0.0f);
-
-    /* compute sphMUSIC, returning "peak-find" indices */
-    int inds[2];
-    float pspecTEST[240];
-    sphMUSIC_create(&hMUSIC, order, grid_dirs_deg, nGrid);
-    sphMUSIC_compute(hMUSIC, FLATTEN2D(Vn_cmplx), nSrcs, pspecTEST, (int*)inds);
-
-    /* Assert that the true source indices were found (note that the order can flip) */
-    TEST_ASSERT_TRUE(inds[0] == srcInd_1 || inds[0] == srcInd_2);
-    TEST_ASSERT_TRUE(inds[1] == srcInd_1 || inds[1] == srcInd_2);
-
-    /* clean-up */
-    sphMUSIC_destroy(&hMUSIC);
-    free(Y_src);
-    free(src_sigs);
-    free(src_sigs_sh);
-    free(Cx);
-    free(V);
-    free(Vn);
-    free(Vn_cmplx); 
-}
 
 void test__saf_stft_50pc_overlap(void){
     int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;
@@ -1086,7 +1009,6 @@ void test__latticeDecorrelator(void){
         icc = icc/sqrtf(tmp*tmp2); /* normalise */
         TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
     }
-
 #if 0
     /* Check for mutually decorrelated channels... */
     int c2;
@@ -1878,6 +1800,180 @@ void test__checkCondNumberSHTReal(void){
         free(t_dirs_rad);
         free(cond_N);
     }
+}
+
+void test__sphMUSIC(void){
+    int i, j, k, nGrid, nSH, nSrcs, srcInd_1, srcInd_2;
+    float test_dirs_deg[2][2];
+    float* grid_dirs_deg;
+    float** Y_src, **src_sigs, **src_sigs_sh, **Cx, **V, **Vn;
+    float_complex** Vn_cmplx;
+    void* hMUSIC;
+
+    /* config */
+    const int order = 3;
+    const int lsig = 48000;
+
+    /* define scanning grid directions */
+    nGrid = 240;
+    grid_dirs_deg = (float*)__Tdesign_degree_21_dirs_deg;
+
+    /* test scenario and signals */
+    nSrcs = 2;
+    srcInd_1 = 139;
+    srcInd_2 = 204;
+    test_dirs_deg[0][0] = grid_dirs_deg[srcInd_1*2];
+    test_dirs_deg[0][1] = grid_dirs_deg[srcInd_1*2+1];
+    test_dirs_deg[1][0] = grid_dirs_deg[srcInd_2*2];
+    test_dirs_deg[1][1] = grid_dirs_deg[srcInd_2*2+1];
+    nSH = ORDER2NSH(order);
+    Y_src = (float**)malloc2d(nSH, nSrcs, sizeof(float));
+    getRSH(order, (float*)test_dirs_deg, nSrcs, FLATTEN2D(Y_src));
+    src_sigs = (float**)malloc2d(nSrcs, lsig, sizeof(float));
+    rand_m1_1(FLATTEN2D(src_sigs), nSrcs*lsig); /* uncorrelated noise sources */
+
+    /* encode to SH and compute spatial covariance matrix */
+    src_sigs_sh = (float**)malloc2d(nSH, lsig, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, lsig, nSrcs, 1.0f,
+                FLATTEN2D(Y_src), nSrcs,
+                FLATTEN2D(src_sigs), lsig, 0.0f,
+                FLATTEN2D(src_sigs_sh), lsig);
+    Cx = (float**)malloc2d(nSH, nSH, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, lsig, 1.0f,
+                FLATTEN2D(src_sigs_sh), lsig,
+                FLATTEN2D(src_sigs_sh), lsig, 0.0f,
+                FLATTEN2D(Cx), nSH);
+
+    /* Eigenvalue decomposition and truncation of eigen vectors to obtain
+     * noise subspace (based on source number) */
+    V = (float**)malloc2d(nSH, nSH, sizeof(float));
+    utility_sseig(FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
+    Vn = (float**)malloc2d(nSH, (nSH-nSrcs), sizeof(float)); /* noise subspace */
+    for(i=0; i<nSH; i++)
+        for(j=0, k=nSrcs; j<nSH-nSrcs; j++, k++)
+            Vn[i][j] = V[i][k];
+    Vn_cmplx = (float_complex**)malloc2d(nSH, (nSH-nSrcs), sizeof(float_complex)); /* noise subspace (complex) */
+    for(i=0; i<nSH; i++)
+        for(j=0; j<nSH-nSrcs; j++)
+            Vn_cmplx[i][j] = cmplxf(Vn[i][j], 0.0f);
+
+    /* compute sphMUSIC, returning "peak-find" indices */
+    int inds[2];
+    sphMUSIC_create(&hMUSIC, order, grid_dirs_deg, nGrid);
+    sphMUSIC_compute(hMUSIC, FLATTEN2D(Vn_cmplx), nSrcs, NULL, (int*)inds);
+
+    /* Assert that the true source indices were found (note that the order can flip) */
+    TEST_ASSERT_TRUE(inds[0] == srcInd_1 || inds[0] == srcInd_2);
+    TEST_ASSERT_TRUE(inds[1] == srcInd_1 || inds[1] == srcInd_2);
+
+    /* clean-up */
+    sphMUSIC_destroy(&hMUSIC);
+    free(Y_src);
+    free(src_sigs);
+    free(src_sigs_sh);
+    free(Cx);
+    free(V);
+    free(Vn);
+    free(Vn_cmplx);
+}
+
+void test__sphESPRIT(void){
+    int i,j,nSH, nSrcs;
+    void* hESPRIT;
+    float test_dirs_deg[2][2], estdirs_deg[2][2];
+    float** Y_src, **src_sigs, **src_sigs_sh, **tmpCx;
+    float_complex** Cx, **C_Cx, **T_r2c, **Cx_R, **U, **Us;
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+
+    /* config */
+    const float acceptedTolerance = 0.01; /* degrees */
+    const int order = 3;
+    const int lsig = 48000;
+
+    /* test scenario and signals */
+    nSrcs = 2;
+    test_dirs_deg[0][0] = -90.0f;
+    test_dirs_deg[0][1] = 10.0f;
+    test_dirs_deg[1][0] = 20.0f;
+    test_dirs_deg[1][1] = -40.0f;
+    nSH = ORDER2NSH(order);
+    Y_src = (float**)malloc2d(nSH, nSrcs, sizeof(float));
+    getRSH(order, (float*)test_dirs_deg, nSrcs, FLATTEN2D(Y_src));
+    src_sigs = (float**)malloc2d(nSrcs, lsig, sizeof(float));
+    rand_m1_1(FLATTEN2D(src_sigs), nSrcs*lsig); /* uncorrelated noise sources */
+
+    /* encode to SH and compute spatial covariance matrix */
+    src_sigs_sh = (float**)malloc2d(nSH, lsig, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, lsig, nSrcs, 1.0f,
+                FLATTEN2D(Y_src), nSrcs,
+                FLATTEN2D(src_sigs), lsig, 0.0f,
+                FLATTEN2D(src_sigs_sh), lsig);
+    tmpCx = (float**)malloc2d(nSH, nSH, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, lsig, 1.0f,
+                FLATTEN2D(src_sigs_sh), lsig,
+                FLATTEN2D(src_sigs_sh), lsig, 0.0f,
+                FLATTEN2D(tmpCx), nSH);
+    Cx = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
+    for(i=0; i<nSH; i++)
+        for(j=0; j<nSH; j++)
+            Cx[i][j] = cmplxf(tmpCx[i][j], 0.0f); /* real->complex data-type */
+
+    /* Convert to complex basis */
+    T_r2c = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
+    real2complexSHMtx(order, FLATTEN2D(T_r2c));
+    for(i=0; i<nSH; i++)
+        for(j=0; j<nSH; j++)
+            T_r2c[i][j] = conjf(T_r2c[i][j]);
+    Cx_R = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, nSH, &calpha,
+                FLATTEN2D(Cx), nSH,
+                FLATTEN2D(T_r2c), nSH, &cbeta,
+                FLATTEN2D(Cx_R), nSH);
+    C_Cx = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, nSH, nSH, &calpha,
+                FLATTEN2D(T_r2c), nSH,
+                FLATTEN2D(Cx_R), nSH, &cbeta,
+                FLATTEN2D(C_Cx), nSH);
+
+    /* Eigenvalue decomposition and truncation of eigen vectors to obtain
+     * signal subspace (based on source number) */
+    U = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
+    utility_cseig(FLATTEN2D(C_Cx), nSH, 1, FLATTEN2D(U), NULL, NULL);
+    Us = (float_complex**)malloc2d(nSH, nSrcs, sizeof(float_complex)); /* signal subspace */
+    for(i=0; i<nSH; i++)
+        for(j=0; j<nSrcs; j++)
+            Us[i][j] = U[i][j];
+
+    /* use sphESPRIT to estimate source directions... */
+    sphESPRIT_create(&hESPRIT, order);
+    sphESPRIT_estimateDirs(hESPRIT, FLATTEN2D(Us), nSrcs, (float*)estdirs_deg);
+    for(i=0; i<nSrcs; i++){
+        estdirs_deg[i][0]*=180.0f/M_PI; /* rad->deg */
+        estdirs_deg[i][1]*=180.0f/M_PI;
+    }
+
+    /* Assert that the true source directions were found (note that the order can flip) */
+    TEST_ASSERT_TRUE(fabsf(estdirs_deg[0][0]-test_dirs_deg[0][0])<acceptedTolerance ||
+                     fabsf(estdirs_deg[1][0]-test_dirs_deg[0][0])<acceptedTolerance);
+    TEST_ASSERT_TRUE(fabsf(estdirs_deg[0][1]-test_dirs_deg[0][1])<acceptedTolerance ||
+                     fabsf(estdirs_deg[1][1]-test_dirs_deg[0][1])<acceptedTolerance);
+    TEST_ASSERT_TRUE(fabsf(estdirs_deg[0][0]-test_dirs_deg[1][0])<acceptedTolerance ||
+                     fabsf(estdirs_deg[1][0]-test_dirs_deg[1][0])<acceptedTolerance);
+    TEST_ASSERT_TRUE(fabsf(estdirs_deg[0][1]-test_dirs_deg[1][1])<acceptedTolerance ||
+                     fabsf(estdirs_deg[1][1]-test_dirs_deg[1][1])<acceptedTolerance);
+
+    /* clean-up */
+    sphESPRIT_destroy(&hESPRIT);
+    free(Y_src);
+    free(src_sigs);
+    free(src_sigs_sh);
+    free(tmpCx);
+    free(Cx);
+    free(C_Cx);
+    free(T_r2c);
+    free(Cx_R);
+    free(U);
+    free(Us);
 }
 
 void test__butterCoeffs(void){

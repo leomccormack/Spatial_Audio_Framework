@@ -163,7 +163,7 @@
 #include "../../resources/md_malloc/md_malloc.h"
 /* The default FFT implementation, for when no optimised implementation is
  * available */
-#include "../../resources/kissFFT//kiss_fftr.h"
+#include "../../resources/kissFFT/kiss_fftr.h"
 #include "../../resources/kissFFT/kiss_fft.h"
 /* For generating 3-D convex hulls */
 #include "../../resources/convhull_3d/convhull_3d.h"
@@ -186,8 +186,6 @@
 #include "saf_utility_pitch.h"
 /* For decorrelators */
 #include "saf_utility_decor.h"
-/* For determining ERBs */
-#include "saf_utility_erb.h"
 /* For misc. functions */
 #include "saf_utility_misc.h"
 /* For computational geometry functions */

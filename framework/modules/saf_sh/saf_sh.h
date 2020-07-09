@@ -712,7 +712,7 @@ void checkCondNumberSHTReal(/* Input arguments */
 /**
  * Creates an instance of the spherical harmonic domain MUSIC implementation,
  * which may be used for computing pseudo-spectrums for visualisation/DoA
- * estimation
+ * estimation purposes
  *
  * @note Subspace approaches such as MUSIC can offer higher spatial resolution
  *       than beamforming approaches, such as the steered-response power (PWD),
@@ -733,15 +733,15 @@ void sphMUSIC_create(void ** const phMUSIC,
 /**
  * Destroys an instance of the spherical harmonic domain MUSIC implementation,
  * which may be used for computing pseudo-spectrums for visualisation/DoA
- * estimation
+ * estimation purposes
  *
  * @param[in] phMUSIC    (&) address of the sphMUSIC handle
  */
 void sphMUSIC_destroy(void ** const phMUSIC);
 
 /**
- * Computes a pseudo-spectrum in the spherical harmonic domain, based on the
- * MUSIC algorithm; optionally returning the grid indices corresponding to the
+ * Computes a pseudo-spectrum based on the MUSIC algorithm in the spherical
+ * harmonic domain; optionally returning the grid indices corresponding to the
  * N highest peaks (N=nSrcs)
  *
  * @warning The number of sources should not exceed: floor(nSH/2)!
@@ -805,14 +805,14 @@ void sphESPRIT_destroy(void ** const phESPRIT);
  * @param[in]  hESPRIT      The ESPRIT DoA estimator handle
  * @param[in]  Us           Signal subspace; FLAT: (order+1)^2 x K
  * @param[in]  K            Number of sources
- * @param[out] src_dirs_rad Source directions, in radians; 2 x K
+ * @param[out] src_dirs_rad Source directions, in radians; K x 2
  */
 void sphESPRIT_estimateDirs(/* Input arguments */
                             void * const hESPRIT,
                             float_complex* Us,
                             int K,
                             /* Output arguments */
-                            float* src_dirs_rad[2]);
+                            float* src_dirs_rad);
 
 /**
  * Generates a powermap based on the energy of plane-wave decomposition (PWD)

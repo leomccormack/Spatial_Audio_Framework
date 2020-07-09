@@ -34,6 +34,60 @@
 static const long double factorials_15[15] =
 {1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0, 39916800.0, 479001600.0, 6.2270208e9, 8.71782891e10};
 
+void findERBpartitions
+(
+    float* centerFreq,
+    int nBands,
+    float maxFreqLim,
+    int** erb_idx,
+    float** erb_freqs,
+    int* nERBBands
+)
+{
+    int i, band, counter, next_erb_idx;
+    float band_centreFreq, erb, erb_centre, tmp;
+
+    band_centreFreq = (powf(2.0f, 1.0f/3.0f)+1.0f)/2.0f;
+    free(*erb_idx);
+    free(*erb_freqs);
+    (*erb_idx) = malloc1d(sizeof(int));
+    (*erb_freqs) = malloc1d(sizeof(float));
+    (*erb_idx)[0] = 1;
+    (*erb_freqs)[0] = centerFreq[0];
+    counter = 0;
+    next_erb_idx = 0;
+    while((*erb_freqs)[counter]<maxFreqLim){
+        erb = 24.7f + 0.108f * (*erb_freqs)[counter] * band_centreFreq;
+        (*erb_idx) = realloc1d((*erb_idx), (counter+2)*sizeof(int));
+        (*erb_freqs) = realloc1d((*erb_freqs), (counter+2)*sizeof(float));
+        (*erb_freqs)[counter+1] = (*erb_freqs)[counter] + erb;
+        erb_centre = FLT_MAX;
+        /*  find closest band frequency as upper partition limit */
+        for(band=0; band<nBands; band++){
+            tmp =fabsf((*erb_freqs)[counter+1] - centerFreq[band]);
+            if(tmp <erb_centre){
+                erb_centre = tmp;
+                next_erb_idx = band;
+            }
+        }
+        (*erb_idx)[counter+1] = next_erb_idx + 1;
+        if((*erb_idx)[counter+1] == (*erb_idx)[counter])
+            (*erb_idx)[counter+1] = (*erb_idx)[counter+1]+1;
+        (*erb_freqs)[counter+1] = centerFreq[(*erb_idx)[counter+1]-1];
+        counter++;
+    }
+    /* last limit set at last band */
+    (*erb_idx) = realloc1d((*erb_idx), (counter + 2) * sizeof(int));
+    (*erb_freqs) = realloc1d((*erb_freqs), (counter + 2) * sizeof(float));
+    (*erb_idx)[counter+1] = nBands;
+    (*erb_freqs)[counter+1] = centerFreq[nBands-1];
+    (*nERBBands) = counter+2;
+
+    /* subtract 1 from the indices (the above is a direct port from Matlab...) */
+    for(i=0; i<(*nERBBands); i++)
+        (*erb_idx)[i] = (*erb_idx)[i] - 1;
+}
+
 long double factorial(int n)
 {
     int i;

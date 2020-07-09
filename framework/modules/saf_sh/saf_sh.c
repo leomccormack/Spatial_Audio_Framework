@@ -1126,7 +1126,7 @@ void sphMUSIC_compute
     for (i = 0; i < (h->nDirs); i++) {
         tmp = 0.0f;
         for (j = 0; j < VnD2; j++)
-            tmp += powf(h->abs_VnA[j*(h->nDirs)+i], 2.0f);
+            tmp += (h->abs_VnA[j*(h->nDirs)+i]*h->abs_VnA[j*(h->nDirs)+i]); //powf(h->abs_VnA[j*(h->nDirs)+i], 2.0f);
         h->pSpec[i] = 1.0f / (tmp + 2.23e-10f);
     }
 
@@ -1288,7 +1288,7 @@ void sphESPRIT_estimateDirs
     void * const hESPRIT,
     float_complex* Us, /* nSH * K */
     int K,
-    float* src_dirs_rad[2] /* 2 x K */
+    float* src_dirs_rad /*  K x 2 */
 )
 {
     sphESPRIT_data *h = (sphESPRIT_data*)(hESPRIT);
@@ -1392,8 +1392,8 @@ void sphESPRIT_estimateDirs
     for(i=0; i<K; i++){
         phiX = (creal(h->PhiXYp[i*K+i])+creal(h->PhiXYm[i*K+i]))/2.0;
         phiY = creal(ccdiv(ccsub(h->PhiXYp[i*K+i], h->PhiXYm[i*K+i]), i2_));
-        src_dirs_rad[0][i] = (float)atan2(phiY, phiX);
-        src_dirs_rad[1][i] = (float)MIN(atan2(creal(h->PhiZ[i*K+i]), sqrt(phiX*phiX+phiY*phiY)), M_PI/2.0f);
+        src_dirs_rad[i*2] = (float)atan2(phiY, phiX);
+        src_dirs_rad[i*2+1] = (float)MIN(atan2(creal(h->PhiZ[i*K+i]), sqrt(phiX*phiX+phiY*phiY)), M_PI/2.0f);
     }
 }
 

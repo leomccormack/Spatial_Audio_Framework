@@ -121,6 +121,12 @@ void test__computeSectorCoeffsEP(void);
  * Testing that for T-designs, the condition numbers are all equal to 1 */
 void test__checkCondNumberSHTReal(void);
 /**
+ * Testing the DoA estimation performance of sphMUSIC() */
+void test__sphMUSIC(void);
+/**
+ * Testing the DoA estimation performance of sphESPRIT() */
+void test__sphESPRIT(void);
+/**
  * Testing that the coefficients computed with butterCoeffs() are numerically
  * similar to the "butter" function in Matlab */
 void test__butterCoeffs(void);
