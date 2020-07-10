@@ -66,7 +66,6 @@ extern "C" {
 #endif
 //#define ORDER2NUMSECTORS(L) ( 2*L )
 #define ORDER2NUMSECTORS(L) ( L*L )
-
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* Processing relies on fdHop = 16 */
@@ -75,7 +74,9 @@ extern "C" {
 #ifndef M_PI
 # define M_PI ( 3.14159265359f )
 #endif
-    
+#if (FRAME_SIZE % HOP_SIZE != 0)
+# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#endif
     
 /* ========================================================================== */
 /*                                 Structures                                 */

@@ -72,7 +72,9 @@ extern "C" {
 #ifndef RAD2DEG
 # define RAD2DEG(x) (x * 180.0f / SAF_PI)
 #endif
-    
+#if (FRAME_SIZE % HOP_SIZE != 0)
+# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#endif
     
 /* ========================================================================== */
 /*                                 Structures                                 */

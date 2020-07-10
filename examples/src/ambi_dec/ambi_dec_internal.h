@@ -57,7 +57,9 @@ extern "C" {
 #define MAX_NUM_LOUDSPEAKERS ( MAX_NUM_OUTPUTS ) /* Maximum permitted channels for the VST standard */
 #define MIN_NUM_LOUDSPEAKERS ( 4 )            /* To help avoid traingulation errors when using AllRAD */ 
 #define NUM_DECODERS ( 2 )                    /* one for low-frequencies and another for high-frequencies */
-
+#if (FRAME_SIZE % HOP_SIZE != 0)
+# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#endif
 
 /* ========================================================================== */
 /*                                 Structures                                 */

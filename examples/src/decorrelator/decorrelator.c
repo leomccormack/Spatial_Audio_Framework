@@ -35,7 +35,7 @@ void decorrelator_create
 
     /* default user parameters */
     pData->nChannels = 1;
-    pData->enableTransientDucker = 1;
+    pData->enableTransientDucker = 0;
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
@@ -102,9 +102,10 @@ void decorrelator_destroy
         free(pData->OutputFrameTF);
         free(pData->progressBarText);
 
+        transientDucker_destroy(&(pData->hDucker));
         latticeDecorrelator_destroy(&(pData->hDec));
         latticeDecorrelator_destroy(&(pData->hDec2));
-        transientDucker_destroy(&(pData->hDucker));
+
 
         free(pData);
         pData = NULL;
@@ -162,6 +163,10 @@ void decorrelator_initCodec
     }
     pData->nChannels = nChannels;
 
+    /* Init transient ducker */
+    transientDucker_destroy(&(pData->hDucker));
+    transientDucker_create(&(pData->hDucker), nChannels, HYBRID_BANDS);
+
     /* Init decorrelator 1 (best to apply these decorrelators in 2 stages) */
     int orders[5] = {6, 6, 6, 3, 2};
     float freqCutoffs[5] = {700.0f, 2.4e3f, 4e3f, 12e3f, 20e3f};
@@ -175,10 +180,6 @@ void decorrelator_initCodec
     int fixedDelays2[4] = {2, 2, 1, 0};
     latticeDecorrelator_destroy(&(pData->hDec2));
     latticeDecorrelator_create(&(pData->hDec2), nChannels, orders2, freqCutoffs2, fixedDelays2, 3, pData->freqVector, nChannels, HYBRID_BANDS);
-
-    /* Init transient ducker */
-    transientDucker_destroy(&(pData->hDucker));
-    transientDucker_create(&(pData->hDucker), nChannels, HYBRID_BANDS);
 
     /* done! */
     strcpy(pData->progressBarText,"Done!");
@@ -224,11 +225,13 @@ void decorrelator_process
         }
 
         /* Main processing: */
-        latticeDecorrelator_apply(pData->hDec,  pData->InputFrameTF,  TIME_SLOTS, pData->OutputFrameTF);
+        if(pData->enableTransientDucker){
+            transientDucker_apply(pData->hDucker, pData->InputFrameTF, TIME_SLOTS, pData->OutputFrameTF);
+            latticeDecorrelator_apply(pData->hDec,  pData->OutputFrameTF,  TIME_SLOTS, pData->OutputFrameTF);
+        }
+        else
+            latticeDecorrelator_apply(pData->hDec,  pData->InputFrameTF,  TIME_SLOTS, pData->OutputFrameTF);
         latticeDecorrelator_apply(pData->hDec2, pData->OutputFrameTF, TIME_SLOTS, pData->OutputFrameTF);
-
-        if(pData->enableTransientDucker)
-            transientDucker_apply(pData->hDucker, pData->OutputFrameTF, TIME_SLOTS, pData->OutputFrameTF);
 
         /* inverse-TFT */
         for(t = 0; t < TIME_SLOTS; t++) {

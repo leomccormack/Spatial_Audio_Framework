@@ -59,6 +59,9 @@ extern "C" {
 #ifndef M_PI
 # define M_PI ( 3.14159265359f )
 #endif
+#if (FRAME_SIZE % HOP_SIZE != 0)
+# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#endif
     
     
 /* ========================================================================== */

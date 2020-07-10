@@ -46,7 +46,9 @@ extern "C" {
 #define HOP_SIZE ( 128 ) /* STFT hop size */
 #define HYBRID_BANDS ( 133 )
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )  
-
+#if (FRAME_SIZE % HOP_SIZE != 0)
+# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#endif
     
 /* ========================================================================== */
 /*                                 Structures                                 */
