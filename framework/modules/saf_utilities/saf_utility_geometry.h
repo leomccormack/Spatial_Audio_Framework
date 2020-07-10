@@ -113,7 +113,7 @@ void crossProduct(/* Input Arguments */
  * Builds the 3-D convex hull given a list of vertices
  *
  * @warning Currently, this does not check if there are duplicate vertices or
- *          whether any of them are co-linear.
+ *          whether any of them are co-linear!
  *
  * @param[in]  vertices The vertices; FLAT: nDirs x 3
  * @param[in]  nDirs    Number of vertices

@@ -631,7 +631,7 @@ void saf_fft_create
     h->N = N;
     h->Scale = 1.0f/(float)N; /* output scaling after ifft */
     assert(N>=2); /* only even (non zero) FFT sizes allowed */
-#if defined(__ACCELERATE__)
+#if defined(__ACCELERATE__) && 0 /* NOT IMPLEMENTED YET */
     if(ceilf(log2f(N)) == floorf(log2f(N))) /* true if N is 2 to the power of some integer number */
         h->useKissFFT_flag = 0;
     else
@@ -670,7 +670,7 @@ void saf_fft_destroy
     saf_fft_data *h = (saf_fft_data*)(*phFFT);
     
     if(h!=NULL){
-#if defined(__ACCELERATE__)
+#if defined(__ACCELERATE__) && 0 /* NOT IMPLEMENTED YET */
         if(!h->useKissFFT_flag){
             vDSP_destroy_fftsetup(h->FFT);
             free(h->VDSP_split.realp);
@@ -697,23 +697,8 @@ void saf_fft_forward
 {
     saf_fft_data *h = (saf_fft_data*)(hFFT);
     
-#if defined(__ACCELERATE__)
-    assert(0); // NOT IMPLEMENTED YET
-    int i;
-    if(!h->useKissFFT_flag){
-        vDSP_ctoz((DSPComplex*)inputTD, 2, &(h->VDSP_split), 1, (h->N)/2);
-        vDSP_fft_zrip((FFTSetup)(h->FFT),&(h->VDSP_split), 1, h->log2n, FFT_FORWARD);
-        /* DC */
-        outputFD[0] = cmplxf(h->VDSP_split.realp[0]/2.0f, 0.0f);
-        /* Note: the output is scaled by 2, because vDSP_fft automatically compensates for the loss of energy
-         * when removing the symmetric/conjugate (N/2+2:N) bins. However, this is dumb... so the 2x scaling
-         * is removed here; so it has parity with the other FFT implementations supported by SAF. */
-        for(i=1; i<h->N/2; i++)
-            outputFD[i] = cmplxf(h->VDSP_split.realp[i]/2.0f, h->VDSP_split.imagp[i]/2.0f);
-        /* the real part of the Nyquist value is the imaginary part of DC. */
-        outputFD[h->N/2] = cmplxf(h->VDSP_split.imagp[0]/2.0f, 0.0f);
-        /* https://stackoverflow.com/questions/43289265/implementing-an-fft-using-vdsp */
-    }
+#if defined(__ACCELERATE__) && 0 /* NOT IMPLEMENTED YET */
+
 #elif defined(INTEL_MKL_VERSION)
     h->Status = DftiComputeForward(h->MKL_FFT_Handle, inputTD, outputFD);
 #endif
@@ -730,19 +715,8 @@ void saf_fft_backward
 {
     saf_fft_data *h = (saf_fft_data*)(hFFT);
     int i;
-#if defined(__ACCELERATE__)
-    assert(0); // NOT IMPLEMENTED YET
-    if(!h->useKissFFT_flag){
-        h->VDSP_split.realp[0] = crealf(inputFD[0]);
-        h->VDSP_split.imagp[0] = crealf(inputFD[h->N/2]);
-        for(i=1; i<h->N/2; i++){
-            h->VDSP_split.realp[i] = crealf(inputFD[i]);
-            h->VDSP_split.imagp[i] = cimagf(inputFD[i]);
-        }
-        vDSP_fft_zrip(h->FFT, &(h->VDSP_split), 1, h->log2n, FFT_INVERSE);
-        vDSP_ztoc(&(h->VDSP_split), 1, (DSPComplex*)outputTD, 2, (h->N)/2);
-        vDSP_vsmul(outputTD, 1, &(h->Scale), outputTD, 1, h->N);
-    }
+#if defined(__ACCELERATE__) && 0 /* NOT IMPLEMENTED YET */
+ 
 #elif defined(INTEL_MKL_VERSION)
     h->Status = DftiComputeBackward(h->MKL_FFT_Handle, inputFD, outputTD);
 #endif

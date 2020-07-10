@@ -69,7 +69,8 @@ extern const float __lattice_coeffs_o2[256][2];
  *
  * @note This is a very basic algorithm and sounds particulary bad for transient
  *       signals. Consider using a transient detector to "duck" the decorrelated
- *       signal during such transients, to improve signal fidelity.
+ *       signal during such transients, to improve signal fidelity. See e.g.
+ *       transientDucker_create()
  *
  * @param[in]  nChannels  Number of channels
  * @param[in]  freqs      Centre frequencies; nFreqs x 1

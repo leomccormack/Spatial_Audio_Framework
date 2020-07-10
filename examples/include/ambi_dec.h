@@ -33,7 +33,6 @@
  * @date 07.12.2017
  */
 
-
 #ifndef __AMBI_DEC_H_INCLUDED__
 #define __AMBI_DEC_H_INCLUDED__
 
