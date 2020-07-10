@@ -116,11 +116,11 @@ elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
     target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENBLAS_LIBRARY} ${LAPACKE_LIBRARY})
 
     # Add header search paths if they are defined
-    if(DEFINED OPENBLAS_LIBRARY_HEADER_PATH)
-        target_include_directories(${PROJECT_NAME} PUBLIC ${OPENBLAS_LIBRARY_HEADER_PATH})
+    if(DEFINED OPENBLAS_HEADER_PATH)
+        target_include_directories(${PROJECT_NAME} PUBLIC ${OPENBLAS_HEADER_PATH})
     endif()
-    if(DEFINED LAPACKE_LIBRARY_HEADER_PATH)
-        target_include_directories(${PROJECT_NAME} PUBLIC ${LAPACKE_LIBRARY_HEADER_PATH})
+    if(DEFINED LAPACKE_HEADER_PATH)
+        target_include_directories(${PROJECT_NAME} PUBLIC ${LAPACKE_HEADER_PATH})
     endif()
 
 elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_ATLAS")
