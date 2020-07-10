@@ -99,12 +99,29 @@ if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL" )
     # Check that header can be included
     check_include_files("${INTEL_MKL_HEADER_PATH}/mkl.h" HAVE_MKL_H)
     if(NOT HAVE_MKL_H)
-	message(SEND_ERROR "mkl.h not found")
+	    message(SEND_ERROR "mkl.h not found")
     endif()
 
 elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
     message(STATUS "Using openBLAS...")
-    message(SEND_ERROR "Not yet supported! Please contribute if you use this library.")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_OPEN_BLAS_AND_LAPACKE=1)
+
+    # find and link libraries
+    if (NOT DEFINED OPENBLAS_LIBRARY)
+        find_library(OPENBLAS_LIBRARY openblas)
+    endif()
+    if (NOT DEFINED LAPACKE_LIBRARY)
+        find_library(LAPACKE_LIBRARY lapacke)
+    endif()
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENBLAS_LIBRARY} ${LAPACKE_LIBRARY})
+
+    # Add header search paths if they are defined
+    if(DEFINED OPENBLAS_LIBRARY_HEADER_PATH)
+        target_include_directories(${PROJECT_NAME} PUBLIC ${OPENBLAS_LIBRARY_HEADER_PATH})
+    endif()
+    if(DEFINED LAPACKE_LIBRARY_HEADER_PATH)
+        target_include_directories(${PROJECT_NAME} PUBLIC ${LAPACKE_LIBRARY_HEADER_PATH})
+    endif()
 
 elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_ATLAS")
     message(STATUS "Using ATLAS...")
