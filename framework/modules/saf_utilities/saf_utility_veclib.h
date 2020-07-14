@@ -58,22 +58,7 @@ extern "C" {
 #include <string.h>
 #include "saf_utility_complex.h"
 #include "saf_utility_error.h"
-#include <immintrin.h>
-#ifdef __SSE__
-# include <xmmintrin.h>
-#endif
-#ifdef __SSE2__
-# include <emmintrin.h>
-#endif
-#ifdef __SSE3__
-# include <pmmintrin.h>
-#endif
-#ifdef __SSSE3__
-# include <tmmintrin.h>
-#endif
-#ifdef __SSE4_1__
-# include <smmintrin.h>
-#endif
+
 #ifdef CBLAS_H
 # define NO_TRANSPOSE (CblasNoTrans)
 # define TRANSPOSE (CblasTrans)
