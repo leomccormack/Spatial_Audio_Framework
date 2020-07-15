@@ -190,6 +190,8 @@
 #include "saf_utility_misc.h"
 /* For computational geometry functions */
 #include "saf_utility_geometry.h"
+/* For the complex quadrature mirror filterbank */
+#include "saf_utility_qmf.h"
 /* Various presets for loudspeaker arrays and uniform distributions of points on
  * spheres. */
 #include "saf_utility_loudspeaker_presets.h"

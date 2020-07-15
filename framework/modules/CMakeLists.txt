@@ -29,6 +29,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_matrixConv.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_misc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_pitch.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_qmf.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_sensorarray_presets.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_sort.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_veclib.c

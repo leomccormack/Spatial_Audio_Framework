@@ -65,7 +65,7 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
     /**
      * Sampling Ambisonic Decoder (SAD): transpose of the loudspeaker spherical
      * harmonic matrix, scaled by the number of loudspeakers. This is the
-     * simplest decoding approach, as it essentially just generating hyper-
+     * simplest decoding approach, as it essentially just generates hyper-
      * cardioid beamformers for each loudspeaker direction.
      */
     LOUDSPEAKER_DECODER_SAD,
@@ -73,13 +73,17 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
      * Mode-Matching Decoder (MMD): pseudo-inverse of the loudspeaker spherical
      * harmonic matrix. Due to the pseudo-inverse, more signal energy is lent to
      * regions on the surface of the sphere that are more sparsely populated
-     * with loudspeakers. Therefore, one must also be careful, as some
-     * loudspeakers may be given a huge amount of signal energy and wake the
-     * dead!
+     * with loudspeakers. This can help balance out directional loudness
+     * differences when using irregular setups. However, one must also be
+     * careful! Since loudspeakers that are far way from all the other
+     * loudspeakers (e.g. voice-of-god) may be given a lot more signal energy
+     * than expected.
      */
     LOUDSPEAKER_DECODER_MMD,
     /**
-     * Energy-Preserving Ambisonic Decoder (EPAD) [1].
+     * Energy-Preserving Ambisonic Decoder (EPAD) [1]. This decoder aims to
+     * preserve the energy of a source, as it panned around to directions of the
+     * sphere.
      */
     LOUDSPEAKER_DECODER_EPAD,
     /**
@@ -88,9 +92,9 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
      * Ambisonic decoder we would most recommend for irregular loudspeaker
      * layouts. Note, given a high (well, technically infinite) order, AllRAD
      * will converge to VBAP. However, since lower-orders are employed in
-     * practice: AllRAD will not be as spatially "sharp" as VBAP, but it will
-     * yield more constistent source spreading when panning a source inbetween
-     * the loudspeakers.
+     * practice... AllRAD will not be as spatially "sharp" as VBAP, but it will
+     * yield more consistent source spread when panning a source inbetween the
+     * loudspeakers.
      */
     LOUDSPEAKER_DECODER_ALLRAD
     

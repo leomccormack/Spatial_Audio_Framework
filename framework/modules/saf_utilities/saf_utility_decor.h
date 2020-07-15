@@ -129,10 +129,12 @@ void synthesiseNoiseReverb(/* Input Arguments */
  * Coding (DirAC) [2] purposes.
  *
  * @note Contrary to how the decorrelator is defined in the standard [3], it is
- *       recommended to use lower orders. Although, one may cascade 2 instances
+ *       recommended to use lower orders. Note that one may cascade 2 instances
  *       (each with lower orders), to attain the desired decorrelation without
- *       introducing the instabilities which accompany the use of the really
- *       high filter orders.
+ *       introducing instabilities, which accompanies the use of the much higher
+ *       filter orders. Furthermore, the coefficients found in
+ *       saf_utility_latticeCoeffs.h differ from those found inthe standard [3],
+ *       so the output will also be numerically different.
  * @test test__latticeDecorrelator()
  *
  * @param[in] phDecor      (&) address of lattice decorrelator handle

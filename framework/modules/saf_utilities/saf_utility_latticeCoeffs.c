@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Leo McCormack
+ * Copyright 2020 Leo McCormack
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,10 +19,8 @@
  * @ingroup Utilities
  * @brief Lattice allpass coefficients which are useful for decorrelation
  *
- * The lattice allpass coefficients for the first 10 channels, for orders 20, 15
- * 6 and 3, were taken from the MPEG-Surround standard: ISO/IEC 23003-1 p133 [1]
- * The remaining 246 sets of coefficients, and other orders, were then derived
- * via a brute-force optimisation routine, which asserted the following:
+ * The coefficients were derived via a brute-force optimisation routine, which
+ * asserted the following:
  * \code{.m}
  *     flag1 = isallpass(b,a);
  *     flag2 = isstable(b,a);
@@ -34,7 +32,7 @@
  * requirements, and also meet the lattice allpass structure specific stability
  * requirements)
  *
- * The sets of coefficients were then selected based on decorrelating a mono
+ * These sets of coefficients were then selected based on decorrelating a mono
  * whitenoise signal, and picking the sets which meet the near 0 interchannel
  * cross correlation coefficient per band and channel, when using: 20th order
  * filters up to 700Hz, 15th order up to 2.8kHz, 6th up to 4.5kHz, and 3rd
@@ -43,11 +41,7 @@
  * filterbank.
  *
  * @note Due to symmetry of the coefficients, only the numerator coefficients
- *       are provided. The denominator coeffs are then flipud(numerator coeffs).
- *
- * @see [1] ISO/IEC FCD 23003-1, "MPEG-D (MPEG Audio Technologies)--Part 1: MPEG
- *          Surround" International Standards Organization, Geneva, Switzerland
- *          (2006)
+ *       are provided. The denominator coeffs are then simply flipud(num coeffs)
  *
  * @author Leo McCormack
  * @date 07.07.2020

@@ -85,6 +85,7 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
+    RUN_TEST(test__qmf);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -136,6 +137,71 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__qmf(void){
+    int frame, hopsize, nFrames, ch, i, nBands, procDelay, band;
+    void* hQMF;
+    float* freqVector;
+    float** insig, **outsig, **inframe, **outframe;
+    float_complex*** inspec, ***outspec;
+
+    /* prep */
+    const float acceptedTolerance = 0.01f;
+    const int fs = 48000;
+    const int signalLength = 64*fs;
+    const int framesize = 128;
+    const int nCHin = 1;
+    const int hybridMode = 1;
+    const int nCHout = 1;
+    insig = (float**)malloc2d(nCHin,signalLength,sizeof(float)); /* One second long */
+    outsig = (float**)malloc2d(nCHout,signalLength,sizeof(float));
+    inframe = (float**)malloc2d(nCHin,framesize,sizeof(float));
+    outframe = (float**)malloc2d(nCHout,framesize,sizeof(float));
+    rand_m1_1(FLATTEN2D(insig), nCHin*signalLength); /* populate with random numbers */
+
+    /* Set-up */
+    hopsize = framesize;
+    nBands = hybridMode ? hopsize+7 : hopsize;
+    inspec = (float_complex***)malloc3d(nBands, nCHin, 1, sizeof(float_complex));
+    outspec = (float_complex***)malloc3d(nBands, nCHout, 1, sizeof(float_complex));
+    qmf_create(&hQMF, nCHin, nCHout, hopsize, hybridMode);
+    procDelay = qmf_getProcDelay(hQMF);
+    freqVector = malloc1d(nBands*sizeof(float));
+    qmf_getCentreFreqs(hQMF, (float)fs, nBands, freqVector);
+
+    /* Pass insig through STFT, block-wise processing */
+    nFrames = (int)((float)signalLength/(float)framesize);
+    for(frame = 0; frame<nFrames; frame++){
+        /* Forward */
+        for(ch=0; ch<nCHin; ch++)
+            memcpy(inframe[ch], &insig[ch][frame*framesize], framesize*sizeof(float));
+        qmf_analysis(hQMF, inframe, framesize, inspec);
+
+        /* Copy first channel of inspec to all outspec channels */
+        for(band=0; band<nBands; band++)
+            for(ch=0; ch<nCHout; ch++)
+                memcpy(outspec[band][ch], inspec[band][0], 1*sizeof(float_complex));
+
+        /* Backward */
+        qmf_synthesis(hQMF, outspec, framesize, outframe);
+        for(ch=0; ch<nCHout; ch++)
+            memcpy(&outsig[ch][frame*framesize], outframe[ch], framesize*sizeof(float));
+    }
+
+    /* Check that input==output (given some numerical precision) */
+    for(i=0; i<signalLength-procDelay; i++)
+        TEST_ASSERT_TRUE( fabsf(insig[0][i] - outsig[0][i+procDelay]) <= acceptedTolerance );
+
+    /* Clean-up */
+    qmf_destroy(&hQMF);
+    free(insig);
+    free(outsig);
+    free(inframe);
+    free(outframe);
+    free(inspec);
+    free(outspec);
+    free(freqVector);
+}
 
 void test__saf_stft_50pc_overlap(void){
     int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;

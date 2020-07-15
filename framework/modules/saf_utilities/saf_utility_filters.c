@@ -751,7 +751,7 @@ void faf_IIRFilterbank_create
     fb->filtOrder = order;
     fb->filtLen = filtLen;
 
-    /* Number of filters returned is always one more than the number of cut-off
+    /* Number of bands is always one more than the number of cut-off
      * frequencies */
     fb->nFilters = nCutoffFreq;
     fb->nBands = nCutoffFreq + 1;
