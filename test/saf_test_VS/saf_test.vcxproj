@@ -215,7 +215,6 @@
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_bessel.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_complex.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_decor.h" />
-    <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_erb.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_error.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_fft.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_filters.h" />
@@ -224,6 +223,7 @@
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_matrixConv.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_misc.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_pitch.h" />
+    <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_qmf.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_sensorarray_presets.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_sort.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_veclib.h" />
@@ -287,15 +287,16 @@
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_bessel.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_complex.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_decor.c" />
-    <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_erb.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_error.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_fft.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_filters.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_geometry.c" />
+    <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_latticeCoeffs.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_loudspeaker_presets.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_matrixConv.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_misc.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_pitch.c" />
+    <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_qmf.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_sensorarray_presets.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_sort.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_veclib.c" />

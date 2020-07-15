@@ -246,9 +246,6 @@
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_decor.h">
       <Filter>framework\modules\saf_utilities</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_erb.h">
-      <Filter>framework\modules\saf_utilities</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_error.h">
       <Filter>framework\modules\saf_utilities</Filter>
     </ClInclude>
@@ -331,6 +328,9 @@
       <Filter>framework\resources\md_malloc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_geometry.h">
+      <Filter>framework\modules\saf_utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_qmf.h">
       <Filter>framework\modules\saf_utilities</Filter>
     </ClInclude>
   </ItemGroup>
@@ -455,9 +455,6 @@
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_decor.c">
       <Filter>framework\modules\saf_utilities</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_erb.c">
-      <Filter>framework\modules\saf_utilities</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_error.c">
       <Filter>framework\modules\saf_utilities</Filter>
     </ClCompile>
@@ -537,6 +534,12 @@
       <Filter>framework\resources\md_malloc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_geometry.c">
+      <Filter>framework\modules\saf_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_qmf.c">
+      <Filter>framework\modules\saf_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_latticeCoeffs.c">
       <Filter>framework\modules\saf_utilities</Filter>
     </ClCompile>
   </ItemGroup>

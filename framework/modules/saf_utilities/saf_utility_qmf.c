@@ -314,8 +314,13 @@ void qmf_analysis
         h->hybQmfTF_frame[1] = subBands8[7];
         h->hybQmfTF_frame[2] = subBands8[0];
         h->hybQmfTF_frame[3] = subBands8[1];
+#if _MSC_VER >= 1900
+		h->hybQmfTF_frame[4] = ccaddf(subBands8[2], subBands8[5]);
+		h->hybQmfTF_frame[5] = ccaddf(subBands8[3], subBands8[4]);
+#else
         h->hybQmfTF_frame[4] = subBands8[2] + subBands8[5];
         h->hybQmfTF_frame[5] = subBands8[3] + subBands8[4];
+#endif
 
         /* Subdivide second QMF band to get hybrid bands 7 and 8 */
         cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 2, 1, QMF_HYBRID_FILTER_LENGTH, &calpha,
@@ -324,7 +329,7 @@ void qmf_analysis
                     subBands2, 1);
         h->hybQmfTF_frame[6] = subBands2[1];
         h->hybQmfTF_frame[7] = subBands2[0];
-
+		
         /* Subdivide third QMF band to get hybrid bands 9 and 10 */
         cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 2, 1, QMF_HYBRID_FILTER_LENGTH, &calpha,
                     h->fb4bandCoeffs, QMF_HYBRID_FILTER_LENGTH,
@@ -367,8 +372,8 @@ void qmf_synthesis
                             h->hybQmfTF_frame[3]+h->hybQmfTF_frame[4]+h->hybQmfTF_frame[5];
         h->qmfTF_frame[1] = h->hybQmfTF_frame[6]+h->hybQmfTF_frame[7];
         h->qmfTF_frame[2] = h->hybQmfTF_frame[8]+h->hybQmfTF_frame[9];
-        memcpy(&(h->qmfTF_frame[3]), &(h->hybQmfTF_frame[10]), (h->hopsize - QMF_NBANDS_2_SUBDIVIDE)*sizeof(float_complex));
 #endif
+        memcpy(&(h->qmfTF_frame[3]), &(h->hybQmfTF_frame[10]), (h->hopsize - QMF_NBANDS_2_SUBDIVIDE)*sizeof(float_complex));
     }
 
     /* Shift samples to the right by 2*hopsize */

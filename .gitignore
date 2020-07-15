@@ -8,3 +8,4 @@ x64/
 *idea/
 cmake-build-debug/
 cmake-build-release/
+*.db
