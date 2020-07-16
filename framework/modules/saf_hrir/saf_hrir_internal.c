@@ -46,69 +46,69 @@ static void afAnalyse
     float_complex* outTF /* out_nBands x nTimeslots x nCH */
 )
 {
-    int t, ch, sample, band;
-    void* hSTFT;
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
-    float_complex*** FrameTF;
-#else
-    complexVector** FrameTF;
-#endif
-    float** tempHopFrameTD;
-    int nTimeSlots, nBands;
-
-    nBands = hopSize + (hybridmode ? 5 : 1);
-    nTimeSlots = nSamplesTD/hopSize;
-    
-    /* allocate memory */
-    afSTFTinit(&(hSTFT), hopSize, nCH, 1, 0, hybridmode);
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
-    FrameTF = (float_complex***) malloc3d(nTimeSlots, nCH, nBands, sizeof(float_complex));
-#else
-    FrameTF = (complexVector**)malloc2d(nTimeSlots, nCH, sizeof(complexVector));
-    for(t=0; t<nTimeSlots; t++) {
-        for(ch=0; ch< nCH; ch++) {
-            FrameTF[t][ch].re = (float*)calloc1d(nBands, sizeof(float));
-            FrameTF[t][ch].im = (float*)calloc1d(nBands, sizeof(float));
-        }
-    }
-#endif
-    tempHopFrameTD = (float**)malloc2d(nCH, hopSize, sizeof(float));
-    
-    /* perform TF transform */
-    for ( t=0; t< nTimeSlots; t++) {
-        for( ch=0; ch < nCH; ch++)
-            for ( sample=0; sample < hopSize; sample++)
-                tempHopFrameTD[ch][sample] = inTD[(sample + t*hopSize)*nCH + ch];
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
-        afSTFTforward(hSTFT, tempHopFrameTD, FrameTF[t]);
-#else
-        afSTFTforward(hSTFT, (float**)tempHopFrameTD, (complexVector*)FrameTF[t]);
-#endif
-    }
-    
-    /* save result to output */
-    for (band = 0; band < nBands; band++)
-        for (t = 0; t < nTimeSlots; t++)
-            for (ch = 0; ch < nCH; ch++)
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
-                outTF[band * nTimeSlots * nCH + t * nCH + ch] = FrameTF[t][ch][band];
-#else
-                outTF[band*nTimeSlots*nCH + t*nCH + ch] = cmplxf(FrameTF[t][ch].re[band], FrameTF[t][ch].im[band]);
-#endif
-
-    /* clean-up */
-    afSTFTfree(hSTFT);
-#ifndef AFSTFT_USE_FLOAT_COMPLEX
-    for (t = 0; t<nTimeSlots; t++) {
-        for(ch=0; ch< nCH; ch++) {
-            free(FrameTF[t][ch].re);
-            free(FrameTF[t][ch].im);
-        }
-    }
-#endif
-    free(FrameTF);
-    free(tempHopFrameTD);
-    
+//    int t, ch, sample, band;
+//    void* hSTFT;
+//#ifdef AFSTFT_USE_FLOAT_COMPLEX
+//    float_complex*** FrameTF;
+//#else
+//    complexVector** FrameTF;
+//#endif
+//    float** tempHopFrameTD;
+//    int nTimeSlots, nBands;
+//
+//    nBands = hopSize + (hybridmode ? 5 : 1);
+//    nTimeSlots = nSamplesTD/hopSize;
+//    
+//    /* allocate memory */
+//    afSTFTinit(&(hSTFT), hopSize, nCH, 1, 0, hybridmode);
+//#ifdef AFSTFT_USE_FLOAT_COMPLEX
+//    FrameTF = (float_complex***) malloc3d(nTimeSlots, nCH, nBands, sizeof(float_complex));
+//#else
+//    FrameTF = (complexVector**)malloc2d(nTimeSlots, nCH, sizeof(complexVector));
+//    for(t=0; t<nTimeSlots; t++) {
+//        for(ch=0; ch< nCH; ch++) {
+//            FrameTF[t][ch].re = (float*)calloc1d(nBands, sizeof(float));
+//            FrameTF[t][ch].im = (float*)calloc1d(nBands, sizeof(float));
+//        }
+//    }
+//#endif
+//    tempHopFrameTD = (float**)malloc2d(nCH, hopSize, sizeof(float));
+//    
+//    /* perform TF transform */
+//    for ( t=0; t< nTimeSlots; t++) {
+//        for( ch=0; ch < nCH; ch++)
+//            for ( sample=0; sample < hopSize; sample++)
+//                tempHopFrameTD[ch][sample] = inTD[(sample + t*hopSize)*nCH + ch];
+//#ifdef AFSTFT_USE_FLOAT_COMPLEX
+//        afSTFTforward(hSTFT, tempHopFrameTD, FrameTF[t]);
+//#else
+//        afSTFTforward(hSTFT, (float**)tempHopFrameTD, (complexVector*)FrameTF[t]);
+//#endif
+//    }
+//    
+//    /* save result to output */
+//    for (band = 0; band < nBands; band++)
+//        for (t = 0; t < nTimeSlots; t++)
+//            for (ch = 0; ch < nCH; ch++)
+//#ifdef AFSTFT_USE_FLOAT_COMPLEX
+//                outTF[band * nTimeSlots * nCH + t * nCH + ch] = FrameTF[t][ch][band];
+//#else
+//                outTF[band*nTimeSlots*nCH + t*nCH + ch] = cmplxf(FrameTF[t][ch].re[band], FrameTF[t][ch].im[band]);
+//#endif
+//
+//    /* clean-up */
+//    afSTFTfree(hSTFT);
+//#ifndef AFSTFT_USE_FLOAT_COMPLEX
+//    for (t = 0; t<nTimeSlots; t++) {
+//        for(ch=0; ch< nCH; ch++) {
+//            free(FrameTF[t][ch].re);
+//            free(FrameTF[t][ch].im);
+//        }
+//    }
+//#endif
+//    free(FrameTF);
+//    free(tempHopFrameTD);
+//    
 }
 
 void FIRtoFilterbankCoeffs

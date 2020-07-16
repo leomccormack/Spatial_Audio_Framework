@@ -41,8 +41,8 @@
  * @date 08.04.2015
  */
 
-#ifndef __afSTFTlib_tester__afSTFTlib__
-#define __afSTFTlib_tester__afSTFTlib__
+#ifndef __afSTFTlib_INCLUDED__
+#define __afSTFTlib_INCLUDED__
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,7 +55,6 @@ extern "C" {
  *     https://github.com/jvilkamo/afSTFT
  */
 #define AFSTFT_USE_SAF_UTILITIES
-
 #ifdef AFSTFT_USE_SAF_UTILITIES
 # include "../../modules/saf_utilities/saf_utilities.h"
 #endif
@@ -63,6 +62,14 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/**
+ * Options for how the frequency domain data is permuted when using afSTFT */
+typedef enum _AFSTFT_FDDATA_FORMAT{
+    AFSTFT_BANDS_CH_TIME, /**< nBands x nChannels x nTimeHops */
+    AFSTFT_TIME_CH_BANDS  /**< nTimeHops x nChannels x nBands */
+
+}AFSTFT_FDDATA_FORMAT;
     
 /**
  * afSTFT centre frequencies for 128 hop size and hybrid-mode enabled (48kHz) */
@@ -71,117 +78,34 @@ extern const double __afCenterFreq48e3[133];
  * afSTFT centre frequencies for 128 hop size and hybrid-mode enabled (44.1kHz)
  */
 extern const double __afCenterFreq44100[133];
-/**
- * Complex data type used by afSTFTlib
- */
-typedef struct {
-    float *re;
-    float *im;
-} complexVector;
 
-/**
- * Initialises an instance of afSTFTlib [1]
- *
- * Unit test(s): test__afSTFT()
- *
- * @param[in] handle      (&) afSTFTlib handle
- * @param[in] hopSize     Hop size, in samples
- * @param[in] inChannels  Number of input channels
- * @param[in] outChannels Number of output channels
- * @param[in] LDmode      '0' disable low-delay mode, '1' enable
- * @param[in] hybridMode  '0' disable hybrid-mode, '1' enable
- *
- * @see [1] Vilkamo, J., & Backstrom, T. (2018). Time--Frequency Processing:
- *          Methods and Tools. In Parametric Time-Frequency Domain Spatial
- *          Audio. John Wiley & Sons.
- */
-void afSTFTinit(void** handle,
-                int hopSize,
-                int inChannels,
-                int outChannels,
-                int LDmode,
-                int hybridMode);
+// * @test test__afSTFT()
 
-/**
- * Re-allocates memory to support a change in the number of input/output
- * channels
- *
- * @note Not thread safe. So do not call in the middle of a real-time loop.
- *
- * @param[in] handle          afSTFTlib handle
- * @param[in] new_inChannels  New number of input channels
- * @param[in] new_outChannels New number of output channels
- */
-void afSTFTchannelChange(void* handle, int new_inChannels, int new_outChannels);
+void afSTFT_create(void ** const phSTFT,
+                   int nCHin,
+                   int nCHout,
+                   int hopsize,
+                   int lowDelayMode,
+                   int hybridmode,
+                   AFSTFT_FDDATA_FORMAT format);
 
-/**
- * Flushes time-domain buffers with zeros.
- *
- * @param[in] handle afSTFTlib handle
- */
-void afSTFTclearBuffers(void* handle);
+void afSTFT_destroy(void ** const phSTFT);
 
-/**
- * Applies the forward afSTFT transform.
- *
- * @param[in] handle afSTFTlib handle
- * @param[in] inTD   input time-domain signals; inChannels x hopSize
- * @param[in] outFD  input time-frequency domain signals; inChannels x nBands
- */
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
-void afSTFTforward(void* handle, float** inTD, float_complex** outFD);
-#else
-void afSTFTforward(void* handle, float** inTD, complexVector* outFD);
-#endif
+void afSTFT_forward(void * const hSTFT,
+                    float** dataTD,
+                    int framesize,
+                    float_complex*** dataFD);
 
-/**
- * Applies the backward afSTFT transform.
- *
- * @param[in] handle afSTFTlib handle
- * @param[in] inFD   output time-domain signals; outChannels x hopSize
- * @param[in] outTD  output time-frequency domain signals; outChannels x nBands
- */
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
-void afSTFTinverse(void* handle, float_complex** inFD, float** outTD);
-#else
-void afSTFTinverse(void* handle, complexVector* inFD, float** outTD);
-#endif
+void afSTFT_backward(void * const hSTFT,
+                     float_complex*** dataFD,
+                     int framesize,
+                     float** dataTD);
 
-/**
- * Destroys an instance of afSTFTlib
- *
- * @param[in] handle (&) afSTFTlib handle
- */
-void afSTFTfree(void* handle);
+int afSTFT_getProcDelay(void * const hSTFT);
 
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
-void afSTFTMatrixInit(void** handle,
-                      const int hopSize,
-                      const int inChannels,
-                      const int outChannels,
-                      const int LDmode,
-                      const int hybridMode,
-                      const int nSamples);
-
-void afSTFTMatrixFree(void *handle);
-
-void afSTFTMatrixChannelChange(void* handle, int new_inChannels, int new_outChannels);
-
-/**
- * A wrapper for different-shaped matrix of float_complex. Hopsize from afSTFT struct is used.
- * If the nSamples isn't divisible with hopSize, will do nothing.
- *
- * @param[in] handle afSTFTlib handle
- * @param[in] inTD input time-domain signals; inChannels x hopSize
- * @param[out] outFD output time-frequency domain signals; nBands x inChannels x nHops
- */
-void afSTFTMatrixForward(void* handle, float** inTD, float_complex*** outFD);
-
-void afSTFTMatrixInverse(void* handle, float_complex*** inFD, float** outTD);
-#endif
 
 #ifdef __cplusplus
 }/* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* __afSTFTlib_tester__afSTFTlib__ */ 
+#endif /* __afSTFTlib_INCLUDED__ */

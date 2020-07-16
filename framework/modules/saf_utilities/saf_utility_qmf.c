@@ -254,8 +254,7 @@ void qmf_analysis
     void * const hQMF,
     float** dataTD,
     int framesize,
-    float_complex*** dataFD
-
+    float_complex*** dataFD 
 )
 {
     qmf_data *h = (qmf_data*)(hQMF);

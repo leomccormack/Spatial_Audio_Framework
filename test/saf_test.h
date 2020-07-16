@@ -42,16 +42,11 @@ void test__saf_rfft(void);
 /**
  * Testing the saf_matrixConv */
 void test__saf_matrixConv(void);
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
 /**
- * Testing the alias-free STFT filterbank reconstruction */
-void test__afSTFTMatrix(void);
-#endif
-/**
- * Testing the alias-free STFT filterbank reconstruction */
+ * Testing the alias-free STFT filterbank reconstruction performance */
 void test__afSTFT(void);
 /**
- * Testing the reconstruction of the QMF filterbank */
+ * Testing the reconstruction performance of the QMF filterbank */
 void test__qmf(void);
 /**
  * Testing the smb_pitchShifter */
@@ -134,7 +129,7 @@ void test__sphESPRIT(void);
  * similar to the "butter" function in Matlab */
 void test__butterCoeffs(void);
 /**
- * Testing that the faf_IIRFilterbank can re-construct the original signal power
+ * Testing that the faf_IIRFilterbank can reconstruct the original signal power
  */
 void test__faf_IIRFilterbank(void);
 /**
