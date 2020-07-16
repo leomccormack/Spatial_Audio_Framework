@@ -17,7 +17,7 @@
 /**
  * @file saf_utility_qmf.c
  * @ingroup Utilities
- * @brief An attempt to implement the complex Quadrature Mirror Filterbank (QMF)
+ * @brief An implementation of the complex Quadrature Mirror Filterbank (QMF)
  *        described in [1].
  *
  * @see [1] Herre, J., Purnhagen, H., Breebaart, J., Faller, C., Disch, S.,
@@ -46,8 +46,7 @@ const double __qmf_fb4bandCoeffs[13] =
 
 /**
  * Matrix for converting the centre frequencies of the first 3 QMF bands into
- * the centre frequencies for the 10 hybrid bands.
- */
+ * the centre frequencies for the 10 hybrid bands. */
 static const float qmf2hybCentreFreq[10][QMF_NBANDS_2_SUBDIVIDE] =
 { { 0.1013f, 0.0f,    0.0f},
   { 0.2027f, 0.0f,    0.0f},
@@ -60,11 +59,10 @@ static const float qmf2hybCentreFreq[10][QMF_NBANDS_2_SUBDIVIDE] =
   { 0.0f,    0.0f,    0.9424f},
   { 0.0f,    0.0f,    1.0672f} };
 
-/**
- * Data structure for short-time Fourier transform
- */
+/** Data structure for the QMF filterbank */
 typedef struct _qmf_data {
     int hopsize, hybridmode, nCHin, nCHout, nBands, procDelay;
+    QMF_FDDATA_FORMAT format;
 
     /* QMF Analysis and Synthesis filters */
     float_complex** h_a;
@@ -72,17 +70,16 @@ typedef struct _qmf_data {
     float** h_s_imag;
 
     /* Prototype window */
-    float_complex* h_p;
-    float* h_p_real;
+    float* h_p;
 
     /* For run-time */
-    float_complex* buffer_ana;
+    float* buffer_ana;
     float* buffer_syn;
-    float_complex* buffer_win;
-    float* buffer_win_real;
-    float_complex* win_sum;
+    float* buffer_win;
+    float* win_sum;
+    float* win_sum_cmplx_dummy; /* treated as complex data type (interleaved with zeros for imag parts) */
     float_complex* qmfTF_frame;
-    float* qmfTF_frame_tmp;
+    float* qmfTF_frame_tmp; /* used when taking the real/imag parts */
     float* tmp_real_frame;
     float* tmp_imag_frame;
 
@@ -101,7 +98,8 @@ void qmf_create
     int nCHin,
     int nCHout,
     int hopsize,
-    int hybridmode
+    int hybridmode,
+    QMF_FDDATA_FORMAT format
 )
 {
     *phQMF = malloc1d(sizeof(qmf_data));
@@ -119,7 +117,8 @@ void qmf_create
     h->hopsize = hopsize;
     h->hybridmode = hybridmode;
     h->nBands = hybridmode ? hopsize+7 : hopsize; /* hybrid mode incurs an additional 7 bands */
-
+    h->format = format;
+    
     K = hopsize;
     N = 2*hopsize;
     k_tmp = malloc1d(K*sizeof(float));
@@ -150,19 +149,16 @@ void qmf_create
     }
 
     /* Prototype filter */
-    h->h_p = malloc1d(10*hopsize*sizeof(float_complex));
-    h->h_p_real = malloc1d(10*hopsize*sizeof(float));
-    for(i=0,j=0; i<10*QMF_MAX_HOP_SIZE; i+=QMF_MAX_HOP_SIZE/hopsize, j++){
-        h->h_p[j] = cmplxf((float)__qmf_protofilter[i], 0.0f);
-        h->h_p_real[j] = (float)__qmf_protofilter[i];
-    }
+    h->h_p = malloc1d(10*hopsize*sizeof(float));
+    for(i=0,j=0; i<10*QMF_MAX_HOP_SIZE; i+=QMF_MAX_HOP_SIZE/hopsize, j++)
+        h->h_p[j] = (float)__qmf_protofilter[i];
 
     /* Run-time buffers */
-    h->buffer_ana = calloc1d(hopsize * 10, sizeof(float_complex)); /* ca */
+    h->buffer_ana = calloc1d(hopsize * 10, sizeof(float));         /* ca */
     h->buffer_syn = calloc1d(hopsize * 20, sizeof(float));         /* ca */
-    h->buffer_win = malloc1d(hopsize * 10 * sizeof(float_complex));
-    h->buffer_win_real = malloc1d(hopsize * 10 * sizeof(float));
-    h->win_sum = malloc1d(hopsize * 2 * sizeof(float_complex));
+    h->buffer_win = malloc1d(hopsize * 10 * sizeof(float));
+    h->win_sum = malloc1d(hopsize * 2 * sizeof(float));
+    h->win_sum_cmplx_dummy = calloc1d(hopsize * 4, sizeof(float)); /* ca */
     h->qmfTF_frame = malloc1d(hopsize * sizeof(float_complex));
     h->qmfTF_frame_tmp = malloc1d(hopsize * sizeof(float));
     h->tmp_real_frame = malloc1d(hopsize * 2 * sizeof(float));
@@ -224,14 +220,13 @@ void qmf_destroy
 
         /* Prototype window */
         free(h->h_p);
-        free(h->h_p_real);
 
         /* For run-time */
         free(h->buffer_ana);
         free(h->buffer_syn);
         free(h->buffer_win);
-        free(h->buffer_win_real);
         free(h->win_sum);
+        free(h->win_sum_cmplx_dummy);
         free(h->qmfTF_frame);
         free(h->qmfTF_frame_tmp);
         free(h->tmp_real_frame);
@@ -267,23 +262,23 @@ void qmf_analysis
 
     /* Shift samples to the right by one hopsize, and copy the current frame
        to the beginning */
-    memmove(&(h->buffer_ana[h->hopsize]), h->buffer_ana, h->hopsize * 9 * sizeof(float_complex));
-    for(i=0; i<h->hopsize; i++)
-        h->buffer_ana[i] = cmplxf(dataTD[0][h->hopsize-i-1], 0.0f);
+    memmove(&(h->buffer_ana[h->hopsize]), h->buffer_ana, h->hopsize * 9 * sizeof(float));
+    cblas_scopy(h->hopsize, dataTD[0], -1, h->buffer_ana, 1);
 
     /* Apply prototype filter/window */
-    utility_cvvmul(h->buffer_ana, h->h_p, h->hopsize*10, h->buffer_win);
+    utility_svvmul(h->buffer_ana, h->h_p, h->hopsize*10, h->buffer_win);
 
     /* Sum all 5 consecutive 1:2*hopsize */
-    utility_cvvadd(h->buffer_win, &(h->buffer_win[h->hopsize*2]), h->hopsize*2, h->win_sum);
-    utility_cvvadd(h->win_sum,    &(h->buffer_win[h->hopsize*4]), h->hopsize*2, h->win_sum);
-    utility_cvvadd(h->win_sum,    &(h->buffer_win[h->hopsize*6]), h->hopsize*2, h->win_sum);
-    utility_cvvadd(h->win_sum,    &(h->buffer_win[h->hopsize*8]), h->hopsize*2, h->win_sum);
+    utility_svvadd(h->buffer_win, &(h->buffer_win[h->hopsize*2]), h->hopsize*2, h->win_sum);
+    utility_svvadd(h->win_sum, &(h->buffer_win[h->hopsize*4]), h->hopsize*2, h->win_sum);
+    utility_svvadd(h->win_sum, &(h->buffer_win[h->hopsize*6]), h->hopsize*2, h->win_sum);
+    utility_svvadd(h->win_sum, &(h->buffer_win[h->hopsize*8]), h->hopsize*2, h->win_sum);
+    cblas_scopy(h->hopsize*2, h->win_sum, 1, h->win_sum_cmplx_dummy, 2);
 
     /* Apply complex-QMF analysis modulators  */
     cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, h->hopsize, 1, h->hopsize*2, &calpha,
                 FLATTEN2D(h->h_a), h->hopsize*2,
-                h->win_sum, 1, &cbeta,
+                (float_complex*)h->win_sum_cmplx_dummy, 1, &cbeta,
                 h->qmfTF_frame, 1);
 
     /* Subdivide the lower bands */
@@ -339,8 +334,8 @@ void qmf_analysis
         h->hybQmfTF_frame[9] = subBands2[1];
 
         /* The remaining bands are then just the delayed qmf bands, 4:end */
-        for(i=0; i<(h->hopsize - QMF_NBANDS_2_SUBDIVIDE); i++)
-            h->hybQmfTF_frame[10+i] = h->qmfDelayBuffer[i][0];
+        cblas_ccopy(h->hopsize - QMF_NBANDS_2_SUBDIVIDE, FLATTEN2D(h->qmfDelayBuffer),
+                    (QMF_HYBRID_FILTER_LENGTH-1)/2 + 1, &(h->hybQmfTF_frame[10]), 1);
     }
 }
 
@@ -353,7 +348,6 @@ void qmf_synthesis
 )
 {
     qmf_data *h = (qmf_data*)(hQMF);
-    int i;
 
     assert(framesize==h->hopsize); /* other frame sizes not yet supported */
 
@@ -380,14 +374,12 @@ void qmf_synthesis
     memmove(&(h->buffer_syn[h->hopsize*2]), h->buffer_syn, h->hopsize * 18 * sizeof(float));
 
     /* Apply complex-QMF synthesis modulators and copy to beginning of buffer */
-    for(i=0; i<h->hopsize; i++)
-        h->qmfTF_frame_tmp[i] = crealf(h->qmfTF_frame[i]);
+    cblas_scopy(h->hopsize, (float*)h->qmfTF_frame, 2, h->qmfTF_frame_tmp, 1); /* creal(h->qmfTF_frame) */
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, h->hopsize*2, 1, h->hopsize, 1.0f,
                 FLATTEN2D(h->h_s_real), h->hopsize,
                 h->qmfTF_frame_tmp, 1, 0.0f,
                 h->tmp_real_frame, 1);
-    for(i=0; i<h->hopsize; i++)
-        h->qmfTF_frame_tmp[i] = cimagf(h->qmfTF_frame[i]);
+    cblas_scopy(h->hopsize, &((float*)h->qmfTF_frame)[1], 2, h->qmfTF_frame_tmp, 1); /* cimag(h->qmfTF_frame) */
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, h->hopsize*2, 1, h->hopsize, 1.0f,
                 FLATTEN2D(h->h_s_imag), h->hopsize,
                 h->qmfTF_frame_tmp, 1, 0.0f,
@@ -397,27 +389,27 @@ void qmf_synthesis
     utility_svvsub(h->tmp_real_frame, h->tmp_imag_frame, h->hopsize*2, h->buffer_syn);
 
     /* Apply prototype filter/window */
-    utility_svvmul(h->buffer_syn, h->h_p_real, h->hopsize, h->buffer_win_real);
-    utility_svvmul(&(h->buffer_syn[h->hopsize*3]),  &(h->h_p_real[h->hopsize]),   h->hopsize, &(h->buffer_win_real[h->hopsize]));
-    utility_svvmul(&(h->buffer_syn[h->hopsize*4]),  &(h->h_p_real[h->hopsize*2]), h->hopsize, &(h->buffer_win_real[h->hopsize*2]));
-    utility_svvmul(&(h->buffer_syn[h->hopsize*7]),  &(h->h_p_real[h->hopsize*3]), h->hopsize, &(h->buffer_win_real[h->hopsize*3]));
-    utility_svvmul(&(h->buffer_syn[h->hopsize*8]),  &(h->h_p_real[h->hopsize*4]), h->hopsize, &(h->buffer_win_real[h->hopsize*4]));
-    utility_svvmul(&(h->buffer_syn[h->hopsize*11]), &(h->h_p_real[h->hopsize*5]), h->hopsize, &(h->buffer_win_real[h->hopsize*5]));
-    utility_svvmul(&(h->buffer_syn[h->hopsize*12]), &(h->h_p_real[h->hopsize*6]), h->hopsize, &(h->buffer_win_real[h->hopsize*6]));
-    utility_svvmul(&(h->buffer_syn[h->hopsize*15]), &(h->h_p_real[h->hopsize*7]), h->hopsize, &(h->buffer_win_real[h->hopsize*7]));
-    utility_svvmul(&(h->buffer_syn[h->hopsize*16]), &(h->h_p_real[h->hopsize*8]), h->hopsize, &(h->buffer_win_real[h->hopsize*8]));
-    utility_svvmul(&(h->buffer_syn[h->hopsize*19]), &(h->h_p_real[h->hopsize*9]), h->hopsize, &(h->buffer_win_real[h->hopsize*9]));
+    utility_svvmul(h->buffer_syn, h->h_p, h->hopsize, h->buffer_win);
+    utility_svvmul(&(h->buffer_syn[h->hopsize*3]),  &(h->h_p[h->hopsize]),   h->hopsize, &(h->buffer_win[h->hopsize]));
+    utility_svvmul(&(h->buffer_syn[h->hopsize*4]),  &(h->h_p[h->hopsize*2]), h->hopsize, &(h->buffer_win[h->hopsize*2]));
+    utility_svvmul(&(h->buffer_syn[h->hopsize*7]),  &(h->h_p[h->hopsize*3]), h->hopsize, &(h->buffer_win[h->hopsize*3]));
+    utility_svvmul(&(h->buffer_syn[h->hopsize*8]),  &(h->h_p[h->hopsize*4]), h->hopsize, &(h->buffer_win[h->hopsize*4]));
+    utility_svvmul(&(h->buffer_syn[h->hopsize*11]), &(h->h_p[h->hopsize*5]), h->hopsize, &(h->buffer_win[h->hopsize*5]));
+    utility_svvmul(&(h->buffer_syn[h->hopsize*12]), &(h->h_p[h->hopsize*6]), h->hopsize, &(h->buffer_win[h->hopsize*6]));
+    utility_svvmul(&(h->buffer_syn[h->hopsize*15]), &(h->h_p[h->hopsize*7]), h->hopsize, &(h->buffer_win[h->hopsize*7]));
+    utility_svvmul(&(h->buffer_syn[h->hopsize*16]), &(h->h_p[h->hopsize*8]), h->hopsize, &(h->buffer_win[h->hopsize*8]));
+    utility_svvmul(&(h->buffer_syn[h->hopsize*19]), &(h->h_p[h->hopsize*9]), h->hopsize, &(h->buffer_win[h->hopsize*9]));
 
     /* Sum all 1:hopsizes to get output frame */
-    utility_svvadd(h->buffer_win_real, &(h->buffer_win_real[h->hopsize]),   h->hopsize, dataTD[0]);
-    utility_svvadd(dataTD[0],          &(h->buffer_win_real[h->hopsize*2]), h->hopsize, dataTD[0]);
-    utility_svvadd(dataTD[0],          &(h->buffer_win_real[h->hopsize*3]), h->hopsize, dataTD[0]);
-    utility_svvadd(dataTD[0],          &(h->buffer_win_real[h->hopsize*4]), h->hopsize, dataTD[0]);
-    utility_svvadd(dataTD[0],          &(h->buffer_win_real[h->hopsize*5]), h->hopsize, dataTD[0]);
-    utility_svvadd(dataTD[0],          &(h->buffer_win_real[h->hopsize*6]), h->hopsize, dataTD[0]);
-    utility_svvadd(dataTD[0],          &(h->buffer_win_real[h->hopsize*7]), h->hopsize, dataTD[0]);
-    utility_svvadd(dataTD[0],          &(h->buffer_win_real[h->hopsize*8]), h->hopsize, dataTD[0]);
-    utility_svvadd(dataTD[0],          &(h->buffer_win_real[h->hopsize*9]), h->hopsize, dataTD[0]);
+    utility_svvadd(h->buffer_win, &(h->buffer_win[h->hopsize]),   h->hopsize, dataTD[0]);
+    utility_svvadd(dataTD[0],     &(h->buffer_win[h->hopsize*2]), h->hopsize, dataTD[0]);
+    utility_svvadd(dataTD[0],     &(h->buffer_win[h->hopsize*3]), h->hopsize, dataTD[0]);
+    utility_svvadd(dataTD[0],     &(h->buffer_win[h->hopsize*4]), h->hopsize, dataTD[0]);
+    utility_svvadd(dataTD[0],     &(h->buffer_win[h->hopsize*5]), h->hopsize, dataTD[0]);
+    utility_svvadd(dataTD[0],     &(h->buffer_win[h->hopsize*6]), h->hopsize, dataTD[0]);
+    utility_svvadd(dataTD[0],     &(h->buffer_win[h->hopsize*7]), h->hopsize, dataTD[0]);
+    utility_svvadd(dataTD[0],     &(h->buffer_win[h->hopsize*8]), h->hopsize, dataTD[0]);
+    utility_svvadd(dataTD[0],     &(h->buffer_win[h->hopsize*9]), h->hopsize, dataTD[0]);
 }
 
 int qmf_getProcDelay
@@ -427,6 +419,15 @@ int qmf_getProcDelay
 {
     qmf_data *h = (qmf_data*)(hQMF);
     return h->procDelay;
+}
+
+int qmf_getNBands
+(
+    void * const hQMF
+)
+{
+    qmf_data *h = (qmf_data*)(hQMF);
+    return h->nBands;
 }
 
 void qmf_getCentreFreqs

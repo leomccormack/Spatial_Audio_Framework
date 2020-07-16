@@ -148,7 +148,7 @@ void test__qmf(void){
     /* prep */
     const float acceptedTolerance = 0.01f;
     const int fs = 48000;
-    const int signalLength = 64*fs;
+    const int signalLength = 2*640*fs;
     const int framesize = 128;
     const int nCHin = 1;
     const int hybridMode = 1;
@@ -164,7 +164,7 @@ void test__qmf(void){
     nBands = hybridMode ? hopsize+7 : hopsize;
     inspec = (float_complex***)malloc3d(nBands, nCHin, 1, sizeof(float_complex));
     outspec = (float_complex***)malloc3d(nBands, nCHout, 1, sizeof(float_complex));
-    qmf_create(&hQMF, nCHin, nCHout, hopsize, hybridMode);
+    qmf_create(&hQMF, nCHin, nCHout, hopsize, hybridMode, QMF_BANDS_CH_TIME);
     procDelay = qmf_getProcDelay(hQMF);
     freqVector = malloc1d(nBands*sizeof(float));
     qmf_getCentreFreqs(hQMF, (float)fs, nBands, freqVector);

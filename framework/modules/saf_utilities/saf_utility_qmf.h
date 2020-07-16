@@ -18,7 +18,7 @@
  *@addtogroup Utilities
  *@{
  * @file saf_utility_qmf.h
- * @brief An attempt to implement the complex Quadrature Mirror Filterbank (QMF)
+ * @brief An implementation of the complex Quadrature Mirror Filterbank (QMF)
  *        described in [1].
  *
  * @see [1] Herre, J., Purnhagen, H., Breebaart, J., Faller, C., Disch, S.,
@@ -39,10 +39,17 @@ extern "C" {
 #include "saf_utility_complex.h"
 
 /**
- * Prototype low-pass filter */
+ * Options for how the frequency domain data is permuted when using qmf */
+typedef enum _QMF_FDDATA_FORMAT{
+    QMF_BANDS_CH_TIME, /**< nBands x nChannels x nTimeHops */
+    QMF_TIME_CH_BANDS  /**< nTimeHops x nChannels x nBands */
+
+}QMF_FDDATA_FORMAT;
+
+/** Prototype filter/window */
 extern const double __qmf_protofilter[1280];
 /** Coefficients to subdivide the lowest QMF band into 8 subbands:
- *    0.125*kaiser(13, 4.6) */
+ *  ~  0.125*kaiser(13, 4.6) */
 extern const double __qmf_fb8bandCoeffs[13];
 /** Coefficients to subdivide the 2nd & 3rd lowest QMF bands into 4 subbands */
 extern const double __qmf_fb4bandCoeffs[13];
@@ -58,12 +65,16 @@ extern const double __qmf_fb4bandCoeffs[13];
  * @param[in] nCHout     Number of output channels
  * @param[in] hopsize    Hop size, in samples
  * @param[in] hybridmode 0: disabled, 1: hybrid-filtering enabled
+ * @param[in] format     frequency-domain frame format, see #_QMF_FDDATA_FORMAT
+ *                       enum
  */
-void qmf_create(void ** const phQMF,
+void qmf_create(/* Input Arguments */
+                void ** const phQMF,
                 int nCHin,
                 int nCHout,
                 int hopsize,
-                int hybridmode);
+                int hybridmode,
+                QMF_FDDATA_FORMAT format);
 
 /**
  * Destroys an instance of the qmf filterbank
@@ -78,24 +89,28 @@ void qmf_destroy(void ** const phQMF);
  * @param[in]  hQMF      qmf handle
  * @param[in]  dataTD    Time-domain input; nCHin x framesize
  * @param[in]  framesize Frame size of time-domain data
- * @param[out] dataFD    Frequency-domain output
+ * @param[out] dataFD    Frequency-domain output; see #_QMF_FDDATA_FORMAT enum
  */
-void qmf_analysis(void * const hQMF,
+void qmf_analysis(/* Input Arguments */
+                  void * const hQMF,
                   float** dataTD,
                   int framesize,
+                  /* Output Arguments */
                   float_complex*** dataFD);
 
 /**
  * Performs QMF synthesis of the input frequency-domain signals
  *
- * @param[in]  hQMF      x handle
- * @param[in]  dataFD    Frequency-domain output;
+ * @param[in]  hQMF      qmf handle
+ * @param[in]  dataFD    Frequency-domain input; see #_QMF_FDDATA_FORMAT enum
  * @param[in]  framesize Frame size of time-domain data
  * @param[out] dataTD    Time-domain output;  nCHout x framesize
  */
-void qmf_synthesis(void * const hQMF,
+void qmf_synthesis(/* Input Arguments */
+                   void * const hQMF,
                    float_complex*** dataFD,
                    int framesize,
+                   /* Output Arguments */
                    float** dataTD);
 
 /**
@@ -104,11 +119,25 @@ void qmf_synthesis(void * const hQMF,
 int qmf_getProcDelay(void * const hQMF);
 
 /**
- * Computes the QMF/hybrid-QMF centre frequencies
+ * Returns the number of frequency bands
  */
-void qmf_getCentreFreqs(void * const hQMF,
+int qmf_getNBands(void * const hQMF);
+
+/**
+ * Computes the QMF/hybrid-QMF centre frequencies
+ *
+ * @note 'nBands' can be found with qmf_getNBands()
+ *
+ * @param[in]  hQMF       qmf handle
+ * @param[in]  fs         Sampling rate in Hz
+ * @param[in]  nBands     Length of 'centreFreq'
+ * @param[out] centreFreq The frequency vector: centreFreq x 1
+ */
+void qmf_getCentreFreqs(/* Input Arguments */
+                        void * const hQMF,
                         float fs,
                         int nBands,
+                        /* Output Arguments */
                         float* centreFreq);
 
 
