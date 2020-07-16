@@ -21,9 +21,6 @@ int main_test(void);
 /* ========================================================================== */
 
 /**
- * Testing the reconstruction of the QMF filterbank */
-void test__qmf(void);
-/**
  * Testing for perfect reconstruction of the saf_stft (when configured for 50%
  * window overlap) */
 void test__saf_stft_50pc_overlap(void);
@@ -53,6 +50,9 @@ void test__afSTFTMatrix(void);
 /**
  * Testing the alias-free STFT filterbank reconstruction */
 void test__afSTFT(void);
+/**
+ * Testing the reconstruction of the QMF filterbank */
+void test__qmf(void);
 /**
  * Testing the smb_pitchShifter */
 void test__smb_pitchShifter(void);

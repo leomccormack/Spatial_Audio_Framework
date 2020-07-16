@@ -56,8 +56,7 @@ extern const double __qmf_fb4bandCoeffs[13];
 
 /**
  * Creates an instance of the qmf filterbank
- *
- * @warning INCOMPLETE!
+ * 
  * @test test__qmf()
  *
  * @param[in] phQMF      (&) address of qmf handle
