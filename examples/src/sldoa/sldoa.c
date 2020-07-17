@@ -53,7 +53,7 @@ void sldoa_create
 {
     sldoa_data* pData = (sldoa_data*)malloc1d(sizeof(sldoa_data));
     *phSld = (void*)pData;
-    int i, j, ch, band;
+    int i, j, band;
 
     /* Default user parameters */
     pData->new_masterOrder = pData->masterOrder = 1;
@@ -68,14 +68,10 @@ void sldoa_create
     pData->norm = NORM_SN3D;
 
     /* TFT */
-    afSTFTinit(&(pData->hSTFT), HOP_SIZE, MAX_NUM_SH_SIGNALS, 0, 0, 1);
-    pData->STFTInputFrameTF = malloc1d(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
-    for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
-    pData->tempHopFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, HOP_SIZE, sizeof(float));
-    
+    afSTFT_create(&(pData->hSTFT), MAX_NUM_SH_SIGNALS, 0, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
+    pData->SHframeTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
+    pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
+
     /* internal */
     pData->progressBar0_1 = 0.0f;
     pData->progressBarText = malloc1d(PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
@@ -113,7 +109,7 @@ void sldoa_destroy
 )
 {
     sldoa_data *pData = (sldoa_data*)(*phSld);
-    int i, ch;
+    int i;
 
     if (pData != NULL) {
         /* not safe to free memory during intialisation/processing loop */
@@ -123,13 +119,10 @@ void sldoa_destroy
         }
         
         /* free afSTFT and buffers */
-        afSTFTfree(pData->hSTFT);
-        for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-            free(pData->STFTInputFrameTF[ch].re);
-            free(pData->STFTInputFrameTF[ch].im);
-        }
-        free(pData->STFTInputFrameTF);
-        free(pData->tempHopFrameTD);
+        afSTFT_destroy(&(pData->hSTFT));
+        free(pData->SHframeTD);
+        free(pData->SHframeTF);
+
         for(i=0; i<NUM_DISP_SLOTS; i++){
             free(pData->azi_deg[i]);
             free(pData->elev_deg[i]);
@@ -149,23 +142,13 @@ void sldoa_init
 )
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    int i, band;
+    int i;
     
     pData->fs = sampleRate;
     
     /* specify frequency vector and determine the number of bands */
-    switch ((int)(sampleRate+0.5f)){
-        case 44100:
-            for(band=0; band<HYBRID_BANDS; band++)
-                pData->freqVector[band] = (float)__afCenterFreq44100[band];
-            break;
-        default:
-        case 48000:
-            for(band=0; band<HYBRID_BANDS; band++)
-                pData->freqVector[band] = (float)__afCenterFreq48e3[band];
-            break;
-    }
-    
+    afSTFT_getCentreFreqs(pData->hSTFT, sampleRate, HYBRID_BANDS, pData->freqVector);
+
     /* intialise display parameters */
     pData->current_disp_idx = 0;
     memset(pData->doa_rad, 0, HYBRID_BANDS*MAX_NUM_SECTORS*2* sizeof(float));
@@ -265,7 +248,7 @@ void sldoa_analysis
                 case CH_ACN: /* already ACN */
                     break;
                 case CH_FUMA:
-                    convertHOAChannelConvention((float*)pData->SHframeTD, masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
+                    convertHOAChannelConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
                     break;
             }
 
@@ -274,22 +257,15 @@ void sldoa_analysis
                 case NORM_N3D:  /* already in N3D, do nothing */
                     break;
                 case NORM_SN3D: /* convert to N3D */
-                    convertHOANormConvention((float*)pData->SHframeTD, masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
+                    convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
                     break;
                 case NORM_FUMA: /* only for first-order, convert to N3D */
-                    convertHOANormConvention((float*)pData->SHframeTD, masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
+                    convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
                     break;
             }
         
             /* apply the time-frequency transform */
-            for(t = 0; t < TIME_SLOTS; t++) {
-                for(ch = 0; ch < nSH; ch++)
-                    utility_svvcopy(&(pData->SHframeTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
-                afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
-                for(band = 0; band < HYBRID_BANDS; band++)
-                    for(ch = 0; ch < nSH; ch++)
-                        pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
-            }
+            afSTFT_forward(pData->hSTFT, pData->SHframeTD, FRAME_SIZE, pData->SHframeTF);
 
             /* apply sector-based, frequency-dependent DOA analysis */
             numAnalysisBands = 0;

@@ -92,11 +92,9 @@ typedef struct _sldoa
     float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
 
     /* TFT */
-    float SHframeTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    void* hSTFT;
-    complexVector* STFTInputFrameTF;
-    float** tempHopFrameTD;
+    float** SHframeTD;
+    float_complex*** SHframeTF;
+    void* hSTFT; 
     float freqVector[HYBRID_BANDS];
     float fs;
       
@@ -179,7 +177,7 @@ void sldoa_initTFT(void* const hSld);
  * @note If anaOrder is 1, then the algorithm reverts to the standard active-
  *       intensity based DoA estimation.
  *
- * @param[in]  SHframeTF Input SH frame
+ * @param[in]  SHframeTF Input SH frame; MAX_NUM_SH_SIGNALS x TIME_SLOTS
  * @param[in]  anaOrder  Analysis order (1:AI, 2+: SLAI)
  * @param[in]  secCoeffs Sector coefficients for this order
  * @param[out] doa       Resulting DoA estimates per timeslot and sector
@@ -196,7 +194,7 @@ void sldoa_initTFT(void* const hSld);
  *          Visualization. Journal of the Audio Engineering Society, 67(11),
  *          pp.840-854.
  */
-void sldoa_estimateDoA(float_complex SHframeTF[MAX_NUM_SH_SIGNALS][TIME_SLOTS],
+void sldoa_estimateDoA(float_complex** SHframeTF,
                        int anaOrder,
                        float_complex* secCoeffs,
                        float doa[MAX_NUM_SECTORS][TIME_SLOTS][2],

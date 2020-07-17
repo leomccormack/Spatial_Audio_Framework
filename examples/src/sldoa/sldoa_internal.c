@@ -131,17 +131,16 @@ void sldoa_initTFT
     nSH = (pData->masterOrder+1)*(pData->masterOrder+1);
     new_nSH = (pData->new_masterOrder+1)*(pData->new_masterOrder+1);
     if(pData->hSTFT==NULL)
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, new_nSH, 0, 0, 1);
+        afSTFT_create(&(pData->hSTFT), new_nSH, 0, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
     else if(nSH!=new_nSH){
-        afSTFTchannelChange(pData->hSTFT, new_nSH, 0);
-        afSTFTclearBuffers(pData->hSTFT);
+        afSTFT_channelChange(pData->hSTFT, new_nSH, 0);
+        afSTFT_clearBuffers(pData->hSTFT);
     }
 }
 
-
 void sldoa_estimateDoA
 (
-    float_complex SHframeTF[MAX_NUM_SH_SIGNALS][TIME_SLOTS],
+    float_complex** SHframeTF,
     int anaOrder,
     float_complex* secCoeffs,
     float doa[MAX_NUM_SECTORS][TIME_SLOTS][2],
@@ -175,7 +174,7 @@ void sldoa_estimateDoA
                     sec_c[i*nSH+j] = secCoeffs[i*(nSectors*nSH)+n*nSH+j];
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 4, TIME_SLOTS, nSH, &calpha,
                         sec_c, nSH,
-                        SHframeTF, TIME_SLOTS, &cbeta,
+                        FLATTEN2D(SHframeTF), TIME_SLOTS, &cbeta,
                         secSig, TIME_SLOTS);
         }
         

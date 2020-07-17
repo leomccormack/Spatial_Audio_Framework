@@ -91,7 +91,6 @@ void panner_destroy
 )
 {
     panner_data *pData = (panner_data*)(*phPan);
-    int ch;
 
     if (pData != NULL) {
         /* not safe to free memory during intialisation/processing loop */
@@ -122,16 +121,10 @@ void panner_init
 )
 {
     panner_data *pData = (panner_data*)(hPan);
-    int band;
     
     /* define frequency vector */
     pData->fs = sampleRate;
-    for(band=0; band <HYBRID_BANDS; band++){
-        if(sampleRate == 44100)
-            pData->freqVector[band] =  (float)__afCenterFreq44100[band];
-        else
-            pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
-    }
+    afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
     
     /* calculate pValue per frequency */
     getPvalues(pData->DTT, pData->freqVector, HYBRID_BANDS, pData->pValue);
@@ -210,18 +203,10 @@ void panner_process
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform (TFT) */
-        for(t=0; t< TIME_SLOTS; t++) {
-            for(ch = 0; ch < nSources; ch++)
-                utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
-            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
-            for(band=0; band<HYBRID_BANDS; band++)
-                for(ch=0; ch < nSources; ch++)
-                    pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
-        }
-        memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
+        afSTFT_forward(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, pData->inputframeTF);
+        memset(FLATTEN3D(pData->outputframeTF), 0, HYBRID_BANDS*MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
         memset(outputTemp, 0, MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
 
-        /* Main processing: */
         /* Rotate source directions */
         if(pData->recalc_M_rotFLAG){
             yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, 0, Rxyz);
@@ -280,7 +265,7 @@ void panner_process
             for (band = 0; band < HYBRID_BANDS; band++) {
                 cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nLoudspeakers, TIME_SLOTS, nSources, &calpha,
                     pData->G_src[band], MAX_NUM_OUTPUTS,
-                    pData->inputframeTF[band], TIME_SLOTS, &cbeta,
+                    FLATTEN2D(pData->inputframeTF[band]), TIME_SLOTS, &cbeta,
                     outputTemp, TIME_SLOTS);
                 for (i = 0; i < nLoudspeakers; i++)
                     for (t = 0; t < TIME_SLOTS; t++)
@@ -321,6 +306,7 @@ void panner_process
                 }
             }
         }
+
         /* scale by sqrt(number of sources) */
         for (band = 0; band < HYBRID_BANDS; band++)
             for (ls = 0; ls < nLoudspeakers; ls++)
@@ -328,19 +314,12 @@ void panner_process
                     pData->outputframeTF[band][ls][t] = crmulf(pData->outputframeTF[band][ls][t], 1.0f/sqrtf((float)nSources));
 
         /* inverse-TFT and copy to output */
-        for(t = 0; t < TIME_SLOTS; t++) {
-            for(band = 0; band < HYBRID_BANDS; band++) {
-                for(ch = 0; ch < nLoudspeakers; ch++) {
-                    pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->outputframeTF[band][ch][t]);
-                    pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->outputframeTF[band][ch][t]);
-                }
-            }
-            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
-            for (ch = 0; ch < MIN(nLoudspeakers, nOutputs); ch++)
-                utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
-            for (; ch < nOutputs; ch++)
-                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
-        }
+        afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outputFrameTD);
+        for (ch = 0; ch < MIN(nLoudspeakers, nOutputs); ch++)
+            utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
+        for (; ch < nOutputs; ch++)
+            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+
     }
     else
         for (ch=0; ch < nOutputs; ch++)

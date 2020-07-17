@@ -96,11 +96,9 @@ typedef struct _powermap
     float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
 
     /* TFT */
-    float SHframeTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];        
+    float** SHframeTD;
+    float_complex*** SHframeTF;
     void* hSTFT;
-    complexVector* STFTInputFrameTF;
-    float** tempHopFrameTD;
     float freqVector[HYBRID_BANDS];
     float fs;
     

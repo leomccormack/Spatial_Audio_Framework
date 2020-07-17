@@ -103,10 +103,10 @@ void panner_initTFT
     panner_data *pData = (panner_data*)(hPan);
     
     if(pData->hSTFT==NULL)
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSources, pData->new_nLoudpkrs, 0, 1);
+        afSTFT_create(&(pData->hSTFT), pData->new_nSources, pData->new_nLoudpkrs, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
     else if (pData->new_nSources!=pData->nSources || pData->new_nLoudpkrs!=pData->nLoudpkrs){
-        afSTFTchannelChange(pData->hSTFT, pData->new_nSources, pData->new_nLoudpkrs);
-        afSTFTclearBuffers(pData->hSTFT); 
+        afSTFT_channelChange(pData->hSTFT, pData->new_nSources, pData->new_nLoudpkrs);
+        afSTFT_clearBuffers(pData->hSTFT); 
     }
     pData->nSources = pData->new_nSources;
     pData->nLoudpkrs = pData->new_nLoudpkrs;

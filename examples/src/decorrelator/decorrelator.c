@@ -170,7 +170,7 @@ void decorrelator_process
 )
 {
     decorrelator_data *pData = (decorrelator_data*)(hDecor);
-    int t, ch, i, band;
+    int ch, i;
     
     /* local copies of user parameters */
     int nCH;
