@@ -618,7 +618,7 @@ void findLsTriplets
     }
     free(validFacesID);
 
-    /* Omit Triangules that have an aperture larger than APERTURE_LIMIT_DEG */
+    /* Omit Trianges that have an aperture larger than APERTURE_LIMIT_DEG */
     valid_faces2 = NULL;
     if(omitLargeTriangles) {
         aperture_lim = APERTURE_LIMIT_DEG * SAF_PI/180.0f;

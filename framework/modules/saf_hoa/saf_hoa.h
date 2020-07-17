@@ -66,24 +66,30 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
      * Sampling Ambisonic Decoder (SAD): transpose of the loudspeaker spherical
      * harmonic matrix, scaled by the number of loudspeakers. This is the
      * simplest decoding approach, as it essentially just generates hyper-
-     * cardioid beamformers for each loudspeaker direction.
+     * cardioid beamformers (aka virtual microphones) for each loudspeaker
+     * direction. This approach is numerically robust to irregular loudspeaker
+     * arrangements, but it does not preserve the energy of a source or
+     * localisation cues for all directions.
      */
     LOUDSPEAKER_DECODER_SAD,
     /**
      * Mode-Matching Decoder (MMD): pseudo-inverse of the loudspeaker spherical
      * harmonic matrix. Due to the pseudo-inverse, more signal energy is lent to
      * regions on the surface of the sphere that are more sparsely populated
-     * with loudspeakers. This can help balance out directional loudness
-     * differences when using irregular setups. However, one must also be
-     * careful! Since loudspeakers that are far way from all the other
-     * loudspeakers (e.g. voice-of-god) may be given a lot more signal energy
-     * than expected.
+     * with loudspeakers, since this is essentially a least-squares solution.
+     * Therefore, this approach can help balance out directional loudness
+     * differences when using slightly irregular setups. However, one must also
+     * be careful, since loudspeakers which are far way from all the other
+     * loudspeakers (e.g. voice-of-god) may be given significantly more signal
+     * energy than expected, and thus, for highly irregular loudspeaker
+     * arrangements this approach is very much not recommended.
      */
     LOUDSPEAKER_DECODER_MMD,
     /**
      * Energy-Preserving Ambisonic Decoder (EPAD) [1]. This decoder aims to
      * preserve the energy of a source, as it panned around to directions of the
-     * sphere.
+     * sphere; essentially, addressing the energy-preserving issues of the
+     * SAD and MMD decoding approaches, especially for irregular layouts.
      */
     LOUDSPEAKER_DECODER_EPAD,
     /**
@@ -95,6 +101,8 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
      * practice... AllRAD will not be as spatially "sharp" as VBAP, but it will
      * yield more consistent source spread when panning a source inbetween the
      * loudspeakers.
+     * The approach is highly robust to irregular loudspeaker setups, and
+     * exhibits low directional error and good energy-preserving properties.
      */
     LOUDSPEAKER_DECODER_ALLRAD
     

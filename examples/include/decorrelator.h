@@ -78,7 +78,7 @@ void decorrelator_init(void* const hDecor,
 void decorrelator_initCodec(void* const hDecor);
 
 /**
- * Decodes input spherical harmonic signals to the binaural channels.
+ * Decorrelates the input signals
  *
  * @param[in] hDecor   decorrelator handle
  * @param[in] inputs   Input channel buffers; 2-D array: nInputs x nSamples
@@ -106,7 +106,7 @@ void decorrelator_process(void* const hDecor,
 void decorrelator_refreshParams(void* const hDecor);
 
 /**
- *
+ * Sets the number of input/output channels
  */
 void decorrelator_setNumberOfChannels(void* const hDecor,
                                       int newValue);
@@ -141,7 +141,7 @@ float decorrelator_getProgressBar0_1(void* const hDecor);
 void decorrelator_getProgressBarText(void* const hDecor, char* text);
 
 /**
- *
+ * Returns the number of input/output channels
  */
 int decorrelator_getNumberOfChannels(void* const hDecor);
 

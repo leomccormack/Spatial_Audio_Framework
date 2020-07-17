@@ -85,13 +85,13 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
-    RUN_TEST(test__afSTFT);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
     RUN_TEST(test__ims_shoebox_TD);
     RUN_TEST(test__saf_rfft);
     RUN_TEST(test__saf_matrixConv);
+    RUN_TEST(test__afSTFT);
     RUN_TEST(test__qmf);
     RUN_TEST(test__smb_pitchShifter);
     RUN_TEST(test__sortf);
@@ -101,6 +101,8 @@ int main_test(void) {
     RUN_TEST(test__unique_i);
     RUN_TEST(test__realloc2d_r);
     RUN_TEST(test__latticeDecorrelator);
+    RUN_TEST(test__butterCoeffs);
+    RUN_TEST(test__faf_IIRFilterbank);
     RUN_TEST(test__formulate_M_and_Cr);
     RUN_TEST(test__formulate_M_and_Cr_cmplx);
     RUN_TEST(test__getLoudspeakerDecoderMtx);
@@ -114,8 +116,6 @@ int main_test(void) {
     RUN_TEST(test__checkCondNumberSHTReal);
     RUN_TEST(test__sphMUSIC);
     RUN_TEST(test__sphESPRIT);
-    RUN_TEST(test__butterCoeffs);
-    RUN_TEST(test__faf_IIRFilterbank);
 #ifdef SAF_ENABLE_EXAMPLES_TESTS
     RUN_TEST(test__saf_example_ambi_bin);
     RUN_TEST(test__saf_example_ambi_dec);
@@ -134,79 +134,6 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
-
-void test__afSTFT(void){
-    int frame, nFrames, ch, i, nBands, procDelay, band, nHops;
-    void* hSTFT;
-    float* freqVector;
-    float** insig, **outsig, **inframe, **outframe;
-    float_complex*** inspec, ***outspec;
-
-    /* prep */
-    const float acceptedTolerance = 0.01f;
-    const int fs = 48000;
-    const int signalLength = 1*fs;
-    const int framesize = 512;
-    const int hopsize = 128;
-    const int nCHin = 60;
-    const int hybridMode = 1;
-    const int nCHout = 64;
-    insig = (float**)malloc2d(nCHin,signalLength,sizeof(float)); /* One second long */
-    outsig = (float**)malloc2d(nCHout,signalLength,sizeof(float));
-    inframe = (float**)malloc2d(nCHin,framesize,sizeof(float));
-    outframe = (float**)malloc2d(nCHout,framesize,sizeof(float));
-    rand_m1_1(FLATTEN2D(insig), nCHin*signalLength); /* populate with random numbers */
-
-    /* Set-up */
-    nHops = framesize/hopsize;
-    afSTFT_create(&hSTFT, nCHin, nCHout, hopsize, 0, hybridMode, AFSTFT_BANDS_CH_TIME);
-    procDelay = afSTFT_getProcDelay(hSTFT);
-    nBands = afSTFT_getNBands(hSTFT);
-    freqVector = malloc1d(nBands*sizeof(float));
-    afSTFT_getCentreFreqs(hSTFT, (float)fs, nBands, freqVector);
-    inspec = (float_complex***)malloc3d(nBands, nCHin, nHops, sizeof(float_complex));
-    outspec = (float_complex***)malloc3d(nBands, nCHout, nHops, sizeof(float_complex));
-
-    /* just some messing around... */
-    afSTFT_channelChange(hSTFT, 100, 5);
-    afSTFT_clearBuffers(hSTFT);
-    afSTFT_channelChange(hSTFT, 39, 81);
-    afSTFT_channelChange(hSTFT, nCHin, nCHout); /* back to original config */
-    afSTFT_clearBuffers(hSTFT);
-
-    /* Pass insig through the QMF filterbank, block-wise processing */
-    nFrames = (int)((float)signalLength/(float)framesize);
-    for(frame = 0; frame<nFrames; frame++){
-        /* Forward transform */
-        for(ch=0; ch<nCHin; ch++)
-            memcpy(inframe[ch], &insig[ch][frame*framesize], framesize*sizeof(float));
-        afSTFT_forward(hSTFT, inframe, framesize, inspec);
-
-        /* Copy first channel of inspec to all outspec channels */
-        for(band=0; band<nBands; band++)
-            for(ch=0; ch<nCHout; ch++)
-                memcpy(outspec[band][ch], inspec[band][0], nHops*sizeof(float_complex));
-
-        /* Backwards transform */
-        afSTFT_backward(hSTFT, outspec, framesize, outframe);
-        for(ch=0; ch<nCHout; ch++)
-            memcpy(&outsig[ch][frame*framesize], outframe[ch], framesize*sizeof(float));
-    }
-
-    /* Check that input==output (given some numerical precision) - channel 0 */
-    for(i=0; i<signalLength-procDelay-framesize; i++)
-        TEST_ASSERT_TRUE( fabsf(insig[0][i] - outsig[0][i+procDelay]) <= acceptedTolerance );
-
-    /* Clean-up */
-    afSTFT_destroy(&hSTFT);
-    free(insig);
-    free(outsig);
-    free(inframe);
-    free(outframe);
-    free(inspec);
-    free(outspec);
-    free(freqVector);
-}
 
 void test__saf_stft_50pc_overlap(void){
     int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;
@@ -537,6 +464,79 @@ void test__saf_rfft(void){
         free(x_td);
         free(test);
     }
+}
+
+void test__afSTFT(void){
+    int frame, nFrames, ch, i, nBands, procDelay, band, nHops;
+    void* hSTFT;
+    float* freqVector;
+    float** insig, **outsig, **inframe, **outframe;
+    float_complex*** inspec, ***outspec;
+
+    /* prep */
+    const float acceptedTolerance = 0.01f;
+    const int fs = 48000;
+    const int signalLength = 1*fs;
+    const int framesize = 512;
+    const int hopsize = 128;
+    const int nCHin = 60;
+    const int hybridMode = 1;
+    const int nCHout = 64;
+    insig = (float**)malloc2d(nCHin,signalLength,sizeof(float)); /* One second long */
+    outsig = (float**)malloc2d(nCHout,signalLength,sizeof(float));
+    inframe = (float**)malloc2d(nCHin,framesize,sizeof(float));
+    outframe = (float**)malloc2d(nCHout,framesize,sizeof(float));
+    rand_m1_1(FLATTEN2D(insig), nCHin*signalLength); /* populate with random numbers */
+
+    /* Set-up */
+    nHops = framesize/hopsize;
+    afSTFT_create(&hSTFT, nCHin, nCHout, hopsize, 0, hybridMode, AFSTFT_BANDS_CH_TIME);
+    procDelay = afSTFT_getProcDelay(hSTFT);
+    nBands = afSTFT_getNBands(hSTFT);
+    freqVector = malloc1d(nBands*sizeof(float));
+    afSTFT_getCentreFreqs(hSTFT, (float)fs, nBands, freqVector);
+    inspec = (float_complex***)malloc3d(nBands, nCHin, nHops, sizeof(float_complex));
+    outspec = (float_complex***)malloc3d(nBands, nCHout, nHops, sizeof(float_complex));
+
+    /* just some messing around... */
+    afSTFT_channelChange(hSTFT, 100, 5);
+    afSTFT_clearBuffers(hSTFT);
+    afSTFT_channelChange(hSTFT, 39, 81);
+    afSTFT_channelChange(hSTFT, nCHin, nCHout); /* back to original config */
+    afSTFT_clearBuffers(hSTFT);
+
+    /* Pass insig through the QMF filterbank, block-wise processing */
+    nFrames = (int)((float)signalLength/(float)framesize);
+    for(frame = 0; frame<nFrames; frame++){
+        /* Forward transform */
+        for(ch=0; ch<nCHin; ch++)
+            memcpy(inframe[ch], &insig[ch][frame*framesize], framesize*sizeof(float));
+        afSTFT_forward(hSTFT, inframe, framesize, inspec);
+
+        /* Copy first channel of inspec to all outspec channels */
+        for(band=0; band<nBands; band++)
+            for(ch=0; ch<nCHout; ch++)
+                memcpy(outspec[band][ch], inspec[band][0], nHops*sizeof(float_complex));
+
+        /* Backwards transform */
+        afSTFT_backward(hSTFT, outspec, framesize, outframe);
+        for(ch=0; ch<nCHout; ch++)
+            memcpy(&outsig[ch][frame*framesize], outframe[ch], framesize*sizeof(float));
+    }
+
+    /* Check that input==output (given some numerical precision) - channel 0 */
+    for(i=0; i<signalLength-procDelay-framesize; i++)
+        TEST_ASSERT_TRUE( fabsf(insig[0][i] - outsig[0][i+procDelay]) <= acceptedTolerance );
+
+    /* Clean-up */
+    afSTFT_destroy(&hSTFT);
+    free(insig);
+    free(outsig);
+    free(inframe);
+    free(outframe);
+    free(inspec);
+    free(outspec);
+    free(freqVector);
 }
 
 void test__qmf(void){
@@ -1018,6 +1018,194 @@ void test__latticeDecorrelator(void){
     afSTFT_destroy(&hSTFT);
     free(inputTimeDomainData);
     free(outputTimeDomainData);
+}
+
+void test__butterCoeffs(void){
+    int i;
+    float fs, cutoff_freq, cutoff_freq2;
+    int order;
+
+    /* Config */
+    const double acceptedTolerance = 0.00001f;
+
+    /* 1st order Low-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 3000.0f;
+    order = 1;
+    double a_test1[2], b_test1[2];
+    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test1, (double*)a_test1);
+    const double a_ref1[2] = {1,-0.668178637919299};
+    const double b_ref1[2] = {0.165910681040351,0.165910681040351};
+    for(i=0; i<2; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test1[i], a_ref1[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test1[i], b_ref1[i]);
+    }
+
+    /* 2nd order Low-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 12000.0f;
+    order = 2;
+    double a_test2[3], b_test2[3];
+    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test2, (double*)a_test2);
+    const double a_ref2[3] = {1.0,-2.22044604925031e-16,0.171572875253810};
+    const double b_ref2[3] = {0.292893218813452,0.585786437626905,0.292893218813452};
+    for(i=0; i<3; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test2[i], a_ref2[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test2[i], b_ref2[i]);
+    }
+
+    /* 3rd order Low-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 200.0f;
+    order = 3;
+    double a_test3[4], b_test3[4];
+    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test3, (double*)a_test3);
+    const double a_ref3[4] = {1.0,-2.94764161678340,2.89664496645376,-0.948985866903327};
+    const double b_ref3[4] = {2.18534587909103e-06,6.55603763727308e-06,6.55603763727308e-06,2.18534587909103e-06};
+    for(i=0; i<4; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test3[i], a_ref3[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test3[i], b_ref3[i]);
+    }
+
+    /* 6th order Low-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 1e3f;
+    order = 6;
+    double a_test4[7], b_test4[7];
+    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test4, (double*)a_test4);
+    const double a_ref4[7] = {1,-5.49431292177096,12.5978414666894,-15.4285267903275,10.6436770055305,-3.92144696766748,0.602772146971300};
+    const double b_ref4[7] = {6.15535184628202e-08,3.69321110776921e-07,9.23302776942303e-07,1.23107036925640e-06,9.23302776942303e-07,3.69321110776921e-07,6.15535184628202e-08};
+    for(i=0; i<7; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test4[i], a_ref4[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test4[i], b_ref4[i]);
+    }
+
+    /* 3rd order High-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 3000.0f;
+    order = 3;
+    double a_test5[4], b_test5[4];
+    butterCoeffs(BUTTER_FILTER_HPF, order, cutoff_freq, 0.0f, fs, (double*)b_test5, (double*)a_test5);
+    const double a_ref5[4] = {1,-2.21916861831167,1.71511783003340,-0.453545933365530};
+    const double b_ref5[4] = {0.673479047713825,-2.02043714314147,2.02043714314147,-0.673479047713825};
+    for(i=0; i<4; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test5[i], a_ref5[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test5[i], b_ref5[i]);
+    }
+
+    /* 4th order High-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 100.0;
+    order = 4;
+    double a_test6[5], b_test6[5];
+    butterCoeffs(BUTTER_FILTER_HPF, order, cutoff_freq, 0.0f, fs, (double*)b_test6, (double*)a_test6);
+    const double a_ref6[5] = {1.0,-3.96579438007005,5.89796693861409,-3.89854491737242,0.966372387692057};
+    const double b_ref6[5] = {0.983042413984288,-3.93216965593715,5.89825448390573,-3.93216965593715,0.983042413984288};
+    for(i=0; i<5; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test6[i], a_ref6[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test6[i], b_ref6[i]);
+    }
+
+    /* 2nd order Band-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 100.0;
+    cutoff_freq2 = 400.0;
+    order = 2;
+    double a_test7[5], b_test7[5];
+    butterCoeffs(BUTTER_FILTER_BPF, order, cutoff_freq, cutoff_freq2, fs, (double*)b_test7, (double*)a_test7);
+    const double a_ref7[5] = {1.0,-3.94312581006024,5.83226704209421,-3.83511871130750,0.945977936232284};
+    const double b_ref7[5] = {0.000375069616051004,0.0,-0.000750139232102008,0.0,0.000375069616051004};
+    for(i=0; i<5; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test7[i], a_ref7[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test7[i], b_ref7[i]);
+    }
+
+    /* 3rd order Band-stop filter */
+    fs = 48e3f;
+    cutoff_freq = 240.0;
+    cutoff_freq2 = 1600.0;
+    order = 3;
+    double a_test9[7], b_test9[7];
+    butterCoeffs(BUTTER_FILTER_BSF, order, cutoff_freq, cutoff_freq2, fs, (double*)b_test9, (double*)a_test9);
+    const double a_ref9[7] = {1,-5.62580309774365,13.2124846784594,-16.5822627287366,11.7304049556188,-4.43493124452282,0.700107676775329};
+    const double b_ref9[7] = {0.836724592951539,-5.00379660039217,12.4847741945760,-16.6354041344203,12.4847741945760,-5.00379660039217,0.836724592951539};
+    for(i=0; i<7; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test9[i], a_ref9[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test9[i], b_ref9[i]);
+    }
+}
+
+void test__faf_IIRFilterbank(void){
+    void* hFaF;
+    int i, band;
+    float* inSig, *outSig;
+    float** outFrame, **outSig_bands;
+    void* hFFT;
+    float_complex* insig_fft, *outsig_fft;
+
+    /* Config */
+    const float acceptedTolerance_dB = 0.5f;
+    const int signalLength = 256;
+    const int frameSize = 16;
+    float fs = 48e3;
+    int order = 3;
+    float fc[6] = {176.776695296637f, 353.553390593274f, 707.106781186547f, 1414.21356237309f, 2828.42712474619f, 5656.85424949238f};
+    inSig = malloc1d(signalLength * sizeof(float));
+    outSig_bands = (float**)malloc2d(7, signalLength, sizeof(float));
+    outSig = calloc1d(signalLength, sizeof(float));
+
+    insig_fft = malloc1d((signalLength / 2 + 1) * sizeof(float_complex));
+    outsig_fft = malloc1d((signalLength / 2 + 1) * sizeof(float_complex));
+
+    /* Impulse */
+    memset(inSig, 0, signalLength*sizeof(float));
+    inSig[0] = 1.0f;
+
+    /* Pass impulse through filterbank */
+    outFrame = (float**)malloc2d(7, frameSize, sizeof(float));
+    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
+    for(i=0; i< signalLength/frameSize; i++){
+        faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
+        for(band=0; band<7; band++)
+            memcpy(&outSig_bands[band][i*frameSize], outFrame[band], frameSize*sizeof(float));
+    }
+    faf_IIRFilterbank_destroy(&hFaF);
+
+    /* Sum the individual bands */
+    for(band=0; band<7; band++)
+        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
+
+    /* Check that the magnitude difference between input and output is below 0.5dB */
+    saf_rfft_create(&hFFT, signalLength);
+    saf_rfft_forward(hFFT, inSig, insig_fft);
+    saf_rfft_forward(hFFT, outSig, outsig_fft);
+    for(i=0; i<signalLength/2+1; i++)
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance_dB, 0.0f, 20.0f * log10f(cabsf( ccdivf(outsig_fft[i],insig_fft[i]) )));
+
+    /* Now the same thing, but for 1st order */
+    order = 1;
+    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
+    for(i=0; i< signalLength/frameSize; i++){
+        faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
+        for(band=0; band<7; band++)
+            memcpy(&outSig_bands[band][i*frameSize], outFrame[band], frameSize*sizeof(float));
+    }
+    faf_IIRFilterbank_destroy(&hFaF);
+    memset(outSig, 0, signalLength*sizeof(float));
+    for(band=0; band<7; band++)
+        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
+    saf_rfft_forward(hFFT, outSig, outsig_fft);
+    for(i=0; i<signalLength/2+1; i++)
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance_dB, 0.0f, 20.0f * log10f(cabsf(ccdivf(outsig_fft[i], insig_fft[i]))));
+
+    /* clean-up */
+    saf_rfft_destroy(&hFFT);
+    free(outFrame);
+    free(inSig);
+    free(outSig_bands);
+    free(outSig);
+    free(insig_fft);
+    free(outsig_fft);
 }
 
 void test__formulate_M_and_Cr(void){
@@ -1955,194 +2143,6 @@ void test__sphESPRIT(void){
     free(Cx_R);
     free(U);
     free(Us);
-}
-
-void test__butterCoeffs(void){
-    int i;
-    float fs, cutoff_freq, cutoff_freq2;
-    int order;
-
-    /* Config */
-    const double acceptedTolerance = 0.00001f;
-
-    /* 1st order Low-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 3000.0f;
-    order = 1;
-    double a_test1[2], b_test1[2];
-    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test1, (double*)a_test1);
-    const double a_ref1[2] = {1,-0.668178637919299};
-    const double b_ref1[2] = {0.165910681040351,0.165910681040351};
-    for(i=0; i<2; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test1[i], a_ref1[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test1[i], b_ref1[i]);
-    }
-
-    /* 2nd order Low-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 12000.0f;
-    order = 2;
-    double a_test2[3], b_test2[3];
-    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test2, (double*)a_test2);
-    const double a_ref2[3] = {1.0,-2.22044604925031e-16,0.171572875253810};
-    const double b_ref2[3] = {0.292893218813452,0.585786437626905,0.292893218813452};
-    for(i=0; i<3; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test2[i], a_ref2[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test2[i], b_ref2[i]);
-    }
-
-    /* 3rd order Low-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 200.0f;
-    order = 3;
-    double a_test3[4], b_test3[4];
-    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test3, (double*)a_test3);
-    const double a_ref3[4] = {1.0,-2.94764161678340,2.89664496645376,-0.948985866903327};
-    const double b_ref3[4] = {2.18534587909103e-06,6.55603763727308e-06,6.55603763727308e-06,2.18534587909103e-06};
-    for(i=0; i<4; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test3[i], a_ref3[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test3[i], b_ref3[i]);
-    }
-
-    /* 6th order Low-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 1e3f;
-    order = 6;
-    double a_test4[7], b_test4[7];
-    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test4, (double*)a_test4);
-    const double a_ref4[7] = {1,-5.49431292177096,12.5978414666894,-15.4285267903275,10.6436770055305,-3.92144696766748,0.602772146971300};
-    const double b_ref4[7] = {6.15535184628202e-08,3.69321110776921e-07,9.23302776942303e-07,1.23107036925640e-06,9.23302776942303e-07,3.69321110776921e-07,6.15535184628202e-08};
-    for(i=0; i<7; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test4[i], a_ref4[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test4[i], b_ref4[i]);
-    }
-
-    /* 3rd order High-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 3000.0f;
-    order = 3;
-    double a_test5[4], b_test5[4];
-    butterCoeffs(BUTTER_FILTER_HPF, order, cutoff_freq, 0.0f, fs, (double*)b_test5, (double*)a_test5);
-    const double a_ref5[4] = {1,-2.21916861831167,1.71511783003340,-0.453545933365530};
-    const double b_ref5[4] = {0.673479047713825,-2.02043714314147,2.02043714314147,-0.673479047713825};
-    for(i=0; i<4; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test5[i], a_ref5[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test5[i], b_ref5[i]);
-    }
-
-    /* 4th order High-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 100.0;
-    order = 4;
-    double a_test6[5], b_test6[5];
-    butterCoeffs(BUTTER_FILTER_HPF, order, cutoff_freq, 0.0f, fs, (double*)b_test6, (double*)a_test6);
-    const double a_ref6[5] = {1.0,-3.96579438007005,5.89796693861409,-3.89854491737242,0.966372387692057};
-    const double b_ref6[5] = {0.983042413984288,-3.93216965593715,5.89825448390573,-3.93216965593715,0.983042413984288};
-    for(i=0; i<5; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test6[i], a_ref6[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test6[i], b_ref6[i]);
-    }
-
-    /* 2nd order Band-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 100.0;
-    cutoff_freq2 = 400.0;
-    order = 2;
-    double a_test7[5], b_test7[5];
-    butterCoeffs(BUTTER_FILTER_BPF, order, cutoff_freq, cutoff_freq2, fs, (double*)b_test7, (double*)a_test7);
-    const double a_ref7[5] = {1.0,-3.94312581006024,5.83226704209421,-3.83511871130750,0.945977936232284};
-    const double b_ref7[5] = {0.000375069616051004,0.0,-0.000750139232102008,0.0,0.000375069616051004};
-    for(i=0; i<5; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test7[i], a_ref7[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test7[i], b_ref7[i]);
-    }
-
-    /* 3rd order Band-stop filter */
-    fs = 48e3f;
-    cutoff_freq = 240.0;
-    cutoff_freq2 = 1600.0;
-    order = 3;
-    double a_test9[7], b_test9[7];
-    butterCoeffs(BUTTER_FILTER_BSF, order, cutoff_freq, cutoff_freq2, fs, (double*)b_test9, (double*)a_test9);
-    const double a_ref9[7] = {1,-5.62580309774365,13.2124846784594,-16.5822627287366,11.7304049556188,-4.43493124452282,0.700107676775329};
-    const double b_ref9[7] = {0.836724592951539,-5.00379660039217,12.4847741945760,-16.6354041344203,12.4847741945760,-5.00379660039217,0.836724592951539};
-    for(i=0; i<7; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test9[i], a_ref9[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test9[i], b_ref9[i]);
-    }
-}
-
-void test__faf_IIRFilterbank(void){
-    void* hFaF;
-    int i, band;
-    float* inSig, *outSig;
-    float** outFrame, **outSig_bands;
-    void* hFFT;
-    float_complex* insig_fft, *outsig_fft;
-
-    /* Config */
-    const float acceptedTolerance_dB = 0.5f;
-    const int signalLength = 256;
-    const int frameSize = 16;
-    float fs = 48e3;
-    int order = 3;
-    float fc[6] = {176.776695296637f, 353.553390593274f, 707.106781186547f, 1414.21356237309f, 2828.42712474619f, 5656.85424949238f};
-    inSig = malloc1d(signalLength * sizeof(float));
-    outSig_bands = (float**)malloc2d(7, signalLength, sizeof(float));
-    outSig = calloc1d(signalLength, sizeof(float));
-
-    insig_fft = malloc1d((signalLength / 2 + 1) * sizeof(float_complex));
-    outsig_fft = malloc1d((signalLength / 2 + 1) * sizeof(float_complex));
-
-    /* Impulse */
-    memset(inSig, 0, signalLength*sizeof(float));
-    inSig[0] = 1.0f;
-
-    /* Pass impulse through filterbank */
-    outFrame = (float**)malloc2d(7, frameSize, sizeof(float));
-    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
-    for(i=0; i< signalLength/frameSize; i++){
-        faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
-        for(band=0; band<7; band++)
-            memcpy(&outSig_bands[band][i*frameSize], outFrame[band], frameSize*sizeof(float));
-    }
-    faf_IIRFilterbank_destroy(&hFaF);
-
-    /* Sum the individual bands */
-    for(band=0; band<7; band++)
-        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
-
-    /* Check that the magnitude difference between input and output is below 0.5dB */
-    saf_rfft_create(&hFFT, signalLength);
-    saf_rfft_forward(hFFT, inSig, insig_fft);
-    saf_rfft_forward(hFFT, outSig, outsig_fft);
-    for(i=0; i<signalLength/2+1; i++)
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance_dB, 0.0f, 20.0f * log10f(cabsf( ccdivf(outsig_fft[i],insig_fft[i]) )));
-
-    /* Now the same thing, but for 1st order */
-    order = 1;
-    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
-    for(i=0; i< signalLength/frameSize; i++){
-        faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
-        for(band=0; band<7; band++)
-            memcpy(&outSig_bands[band][i*frameSize], outFrame[band], frameSize*sizeof(float));
-    }
-    faf_IIRFilterbank_destroy(&hFaF);
-    memset(outSig, 0, signalLength*sizeof(float));
-    for(band=0; band<7; band++)
-        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
-    saf_rfft_forward(hFFT, outSig, outsig_fft);
-    for(i=0; i<signalLength/2+1; i++)
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance_dB, 0.0f, 20.0f * log10f(cabsf(ccdivf(outsig_fft[i], insig_fft[i]))));
-
-    /* clean-up */
-    saf_rfft_destroy(&hFFT);
-    free(outFrame);
-    free(inSig);
-    free(outSig_bands);
-    free(outSig);
-    free(insig_fft);
-    free(outsig_fft);
 }
 
 #ifdef SAF_ENABLE_EXAMPLES_TESTS

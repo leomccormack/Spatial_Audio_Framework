@@ -112,12 +112,19 @@ void qmf_synthesis(/* Input Arguments */
                    /* Output Arguments */
                    float** dataTD);
 
+/**
+ * Changes the number input and/or output channels
+ *
+ * @param[in] hQMF       qmf handle
+ * @param[in] new_nCHin  New number of input channels
+ * @param[in] new_nCHout New number of output channels
+ */
 void qmf_channelChange(void * const hQMF,
                        int new_nCHin,
                        int new_nCHout);
 
 /**
- * Flushes time-domain buffers with zeros. */
+ * Flushes the analysis and synthesis buffers with zeros. */
 void qmf_clearBuffers(void * const hQMF);
 
 /**
