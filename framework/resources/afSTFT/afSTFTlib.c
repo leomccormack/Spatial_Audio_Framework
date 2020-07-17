@@ -24,14 +24,19 @@
  * @file afSTFTlib.c
  * @brief Slightly modified version of afSTFTlib
  *
- * The original afSTFT code, written by Juha Vilkamo, can be found here:
+ * The original afSTFT code written by Juha Vilkamo can be found here:
  * https://github.com/jvilkamo/afSTFT
- * This version is slightly modified. It adds a function to change the number of
- * channels on the fly and includes vectors for the hybrid mode centre
- * frequencies @44.1kHz/48kHz with 128 hop size for convenience.
- * It also supports the use of SAF utilities (for the vectorisation and FFT).
+ * This version is slightly modified to be more in-line with how the rest of SAF
+ * is structured.
+ * The files afSTFTlib.h/.c act as the interface to afSTFT, which is then
+ * implemented in afSTFT_internal.h/.c.
  *
- * Note that the design is also detailed in chapter 1 of [1]
+ * This version also adds functionality to change the number of channels on the
+ * fly, flush the run-time buffers with zeros, return the current frequency
+ * vector and the current processing delay.
+ * It also incorporates SAF utilities (for the vectorisation and FFT).
+ *
+ * Note that the afSTFT design is layed out in detail in chapter 1 of [1]
  *
  * @see [1] Pulkki, V., Delikaris-Manias, S. and Politis, A. 2018. Parametric
  *          time--frequency domain spatial audio. John Wiley & Sons,

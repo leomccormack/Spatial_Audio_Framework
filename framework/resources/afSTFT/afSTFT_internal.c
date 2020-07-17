@@ -24,14 +24,19 @@
  * @file afSTFT_internal.c
  * @brief Slightly modified version of afSTFTlib
  *
- * The original afSTFT code, written by Juha Vilkamo, can be found here:
+ * The original afSTFT code written by Juha Vilkamo can be found here:
  * https://github.com/jvilkamo/afSTFT
- * This version is slightly modified. It adds a function to change the number of
- * channels on the fly and includes vectors for the hybrid mode centre
- * frequencies @44.1kHz/48kHz with 128 hop size for convenience.
- * It also supports the use of SAF utilities (for the vectorisation and FFT).
+ * This version is slightly modified to be more in-line with how the rest of SAF
+ * is structured.
+ * The files afSTFTlib.h/.c act as the interface to afSTFT, which is then
+ * implemented in afSTFT_internal.h/.c.
  *
- * Note that the design is also detailed in chapter 1 of [1]
+ * This version also adds functionality to change the number of channels on the
+ * fly, flush the run-time buffers with zeros, return the current frequency
+ * vector and the current processing delay.
+ * It also incorporates SAF utilities (for the vectorisation and FFT).
+ *
+ * Note that the afSTFT design is layed out in detail in chapter 1 of [1]
  *
  * @see [1] Pulkki, V., Delikaris-Manias, S. and Politis, A. 2018. Parametric
  *          time--frequency domain spatial audio. John Wiley & Sons,
@@ -69,7 +74,7 @@ void afSTFTlib_init
     h->inChannels = inChannels;
     h->outChannels = outChannels;
     h->hopSize = hopSize;
-    dsFactor=1024/hopSize;
+    dsFactor = 1024/hopSize;
     h->hLen = 10240/dsFactor;
     h->totalHops=10;
     h->hopIndexIn=0;
@@ -302,10 +307,12 @@ void afSTFTlib_forward
         /* Apply FFT and copy the data to the output vector */
 #ifdef AFSTFT_USE_SAF_UTILITIES
         saf_rfft_forward(h->hSafFFT, h->fftProcessFrameTD, h->fftProcessFrameFD);
-        for(k = 0; k<h->hopSize+1; k++){
-            outFD[ch].re[k] = crealf(h->fftProcessFrameFD[k]);
-            outFD[ch].im[k] = cimagf(h->fftProcessFrameFD[k]);
-        }
+//        for(k = 0; k<h->hopSize+1; k++){
+//            outFD[ch].re[k] = crealf(h->fftProcessFrameFD[k]);
+//            outFD[ch].im[k] = cimagf(h->fftProcessFrameFD[k]);
+//        }
+        cblas_scopy(h->hopSize+1, (float*)h->fftProcessFrameFD, 2, outFD[ch].re, 1);
+        cblas_scopy(h->hopSize+1, &((float*)h->fftProcessFrameFD)[1], 2, outFD[ch].im, 1);
 #else
         vtRunFFT(h->vtFFT,1);
         outFD[ch].re[0]=h->fftProcessFrameFD[0];

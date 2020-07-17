@@ -59,19 +59,13 @@ void ambi_bin_create
     pData->order = pData->new_order = 1;
     pData->nSH =  (pData->order+1)*(pData->order+1);
     
-    /* afSTFT stuff */
+    /* afSTFT and audio buffers */
     pData->hSTFT = NULL;
-    pData->STFTOutputFrameTF = malloc1d(NUM_EARS * sizeof(complexVector));
-    for(ch=0; ch< NUM_EARS; ch++) {
-        pData->STFTOutputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTOutputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
-    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, NUM_EARS), HOP_SIZE, sizeof(float));
-    pData->STFTInputFrameTF = malloc1d(MAX_NUM_SH_SIGNALS * sizeof(complexVector));
-    for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
+    pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
+    pData->binFrameTD = (float**)malloc2d(NUM_EARS, FRAME_SIZE, sizeof(float));
+    pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
+    pData->SHframeTF_rot= (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
+    pData->binframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
 
     /* codec data */
     pData->progressBar0_1 = 0.0f;
@@ -99,7 +93,6 @@ void ambi_bin_destroy
 {
     ambi_bin_data *pData = (ambi_bin_data*)(*phAmbi);
     ambi_bin_codecPars *pars;
-    int ch;
     
     if (pData != NULL) {
         /* not safe to free memory during intialisation/processing loop */
@@ -108,22 +101,13 @@ void ambi_bin_destroy
             SAF_SLEEP(10);
         }
         
-        /* free afSTFT and buffers */ 
-        if(pData->hSTFT!=NULL)
-            afSTFTfree(pData->hSTFT);
-        if(pData->STFTInputFrameTF!=NULL){
-            for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-                free(pData->STFTInputFrameTF[ch].re);
-                free(pData->STFTInputFrameTF[ch].im);
-            }
-        }
-        for (ch = 0; ch< NUM_EARS; ch++) {
-            free(pData->STFTOutputFrameTF[ch].re);
-            free(pData->STFTOutputFrameTF[ch].im);
-        }
-        free(pData->STFTInputFrameTF);
-        free(pData->STFTOutputFrameTF);
-        free(pData->tempHopFrameTD);
+        /* free afSTFT and buffers */
+        afSTFT_destroy(&(pData->hSTFT));
+        free(pData->SHFrameTD);
+        free(pData->binFrameTD);
+        free(pData->SHframeTF);
+        free(pData->SHframeTF_rot);
+        free(pData->binframeTF);
 
         pars = pData->pars;
         free(pars->hrtf_fb);
@@ -146,16 +130,11 @@ void ambi_bin_init
 )
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    int band;
     
     /* define frequency vector */
     pData->fs = sampleRate;
-    for(band=0; band <HYBRID_BANDS; band++){
-        if(sampleRate == 44100)
-            pData->freqVector[band] =  (float)__afCenterFreq44100[band];
-        else /* Assume 48kHz */
-            pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
-    }
+    if(pData->hSTFT!=NULL)
+        afSTFT_getCentreFreqs(pData->hSTFT, pData->fs, HYBRID_BANDS, (float*)pData->freqVector);
 
     /* default starting values */
     pData->recalc_M_rotFLAG = 1;
@@ -187,10 +166,10 @@ void ambi_bin_initCodec
     order = pData->new_order;
     nSH = (order+1)*(order+1);
     if(pData->hSTFT==NULL)
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, nSH, NUM_EARS, 0, 1);
+        afSTFT_create(&(pData->hSTFT), nSH, NUM_EARS, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
     else if(pData->nSH != nSH) {/* Or change the number of channels */
-        afSTFTchannelChange(pData->hSTFT, nSH, NUM_EARS);
-        afSTFTclearBuffers(pData->hSTFT);
+        afSTFT_channelChange(pData->hSTFT, nSH, NUM_EARS);
+        afSTFT_clearBuffers(pData->hSTFT);
     }
     pData->nSH = nSH;
     
@@ -295,7 +274,7 @@ void ambi_bin_process
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     ambi_bin_codecPars* pars = pData->pars;
-    int t, ch, i, j, band;
+    int ch, i, j, band;
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float Rxyz[3][3];
     float* M_rot_tmp;
@@ -323,10 +302,10 @@ void ambi_bin_process
         /* account for channel order convention */
         switch(chOrdering){
             case CH_ACN:
-                convertHOAChannelConvention((float*)pData->SHFrameTD, order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_ACN);
+                convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_ACN);
                 break;
             case CH_FUMA:
-                convertHOAChannelConvention((float*)pData->SHFrameTD, order, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
+                convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
                 break;
         }
 
@@ -335,22 +314,15 @@ void ambi_bin_process
             case NORM_N3D:  /* already in N3D, do nothing */
                 break;
             case NORM_SN3D: /* convert to N3D */
-                convertHOANormConvention((float*)pData->SHFrameTD, order, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
+                convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
                 break;
             case NORM_FUMA: /* only for first-order, convert to N3D */
-                convertHOANormConvention((float*)pData->SHFrameTD, order, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
+                convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
                 break;
         }
 
         /* Apply time-frequency transform (TFT) */
-        for(t=0; t< TIME_SLOTS; t++) {
-            for(ch = 0; ch < nSH; ch++)
-                utility_svvcopy(&(pData->SHFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
-            afSTFTforward(pData->hSTFT, pData->tempHopFrameTD, pData->STFTInputFrameTF);
-            for(band=0; band<HYBRID_BANDS; band++)
-                for(ch=0; ch < nSH; ch++)
-                    pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
-        }
+        afSTFT_forward(pData->hSTFT, pData->SHFrameTD, FRAME_SIZE, pData->SHframeTF);
 
         /* Main processing: */
         if(order > 0 && enableRot) {
@@ -369,36 +341,29 @@ void ambi_bin_process
             for(band = 0; band < HYBRID_BANDS; band++) {
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, nSH, &calpha,
                             pData->M_rot, MAX_NUM_SH_SIGNALS,
-                            pData->SHframeTF[band], TIME_SLOTS, &cbeta,
-                            pData->SHframeTF_rot[band], TIME_SLOTS);
+                            FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS, &cbeta,
+                            FLATTEN2D(pData->SHframeTF_rot[band]), TIME_SLOTS);
             }
         }
         else
-            memcpy(pData->SHframeTF_rot, pData->SHframeTF, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
+            memcpy(FLATTEN3D(pData->SHframeTF_rot), FLATTEN3D(pData->SHframeTF), HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
 
         /* mix to headphones */
         for(band = 0; band < HYBRID_BANDS; band++) {
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
                         pars->M_dec[band], MAX_NUM_SH_SIGNALS,
-                        pData->SHframeTF_rot[band], TIME_SLOTS, &cbeta,
-                        pData->binframeTF[band], TIME_SLOTS);
+                        FLATTEN2D(pData->SHframeTF_rot[band]), TIME_SLOTS, &cbeta,
+                        FLATTEN2D(pData->binframeTF[band]), TIME_SLOTS);
         }
 
         /* inverse-TFT */
-        //postGain = powf(10.0f, POST_GAIN/20.0f);
-        for(t = 0; t < TIME_SLOTS; t++) {
-            for(band = 0; band < HYBRID_BANDS; band++) {
-                for(ch = 0; ch < NUM_EARS; ch++) {
-                    pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->binframeTF[band][ch][t]);
-                    pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->binframeTF[band][ch][t]);
-                }
-            }
-            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
-            for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
-                utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
-            for (; ch < nOutputs; ch++)
-                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
-        }
+        afSTFT_backward(pData->hSTFT, pData->binframeTF, FRAME_SIZE, pData->binFrameTD);
+
+        /* Copy to output */
+        for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
+            utility_svvcopy(pData->binFrameTD[ch], FRAME_SIZE, outputs[ch]);
+        for (; ch < nOutputs; ch++)
+            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
     }
     else
         for (ch=0; ch < nOutputs; ch++)

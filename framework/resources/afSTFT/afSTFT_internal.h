@@ -24,14 +24,19 @@
  * @file afSTFT_internal.h
  * @brief Slightly modified version of afSTFTlib
  *
- * The original afSTFT code, written by Juha Vilkamo, can be found here:
+ * The original afSTFT code written by Juha Vilkamo can be found here:
  * https://github.com/jvilkamo/afSTFT
- * This version is slightly modified. It adds a function to change the number of
- * channels on the fly and includes vectors for the hybrid mode centre
- * frequencies @44.1kHz/48kHz with 128 hop size for convenience.
- * It also supports the use of SAF utilities (for the vectorisation and FFT).
+ * This version is slightly modified to be more in-line with how the rest of SAF
+ * is structured.
+ * The files afSTFTlib.h/.c act as the interface to afSTFT, which is then
+ * implemented in afSTFT_internal.h/.c.
  *
- * Note that the design is also detailed in chapter 1 of [1]
+ * This version also adds functionality to change the number of channels on the
+ * fly, flush the run-time buffers with zeros, return the current frequency
+ * vector and the current processing delay.
+ * It also incorporates SAF utilities (for the vectorisation and FFT).
+ *
+ * Note that the afSTFT design is layed out in detail in chapter 1 of [1]
  *
  * @see [1] Pulkki, V., Delikaris-Manias, S. and Politis, A. 2018. Parametric
  *          time--frequency domain spatial audio. John Wiley & Sons,
@@ -158,7 +163,9 @@ void afSTFTlib_init(void** handle,
 /**
  * Re-allocates memory to support a change in the number of input/output
  * channels */
-void afSTFTlib_channelChange(void* handle, int new_inChannels, int new_outChannels);
+void afSTFTlib_channelChange(void* handle,
+                             int new_inChannels,
+                             int new_outChannels);
 
 /**
  * Flushes time-domain buffers with zeros. */
@@ -166,11 +173,15 @@ void afSTFTlib_clearBuffers(void* handle);
 
 /**
  * Applies the forward afSTFT transform. */
-void afSTFTlib_forward(void* handle, float** inTD, complexVector* outFD);
+void afSTFTlib_forward(void* handle,
+                       float** inTD,
+                       complexVector* outFD);
 
 /**
  * Applies the backward afSTFT transform. */
-void afSTFTlib_inverse(void* handle, complexVector* inFD, float** outTD);
+void afSTFTlib_inverse(void* handle,
+                       complexVector* inFD,
+                       float** outTD);
 
 /**
  * Destroys an instance of afSTFTlib */
@@ -178,15 +189,20 @@ void afSTFTlib_free(void* handle);
 
 /**
  * Creates and initialises an instance of the afHybrid filtering structure */
-void afHybridInit(void** handle, int hopSize, int inChannels, int outChannels);
+void afHybridInit(void** handle,
+                  int hopSize,
+                  int inChannels,
+                  int outChannels);
 
 /**
  * Forward hybrid-filtering transform */
-void afHybridForward(void* handle, complexVector* FD);
+void afHybridForward(void* handle,
+                     complexVector* FD);
 
 /**
  * Inverse hybrid-filtering transform */
-void afHybridInverse(void* handle, complexVector* FD);
+void afHybridInverse(void* handle,
+                     complexVector* FD);
 
 /**
  * Frees an instnce of the afHybrid filtering structure */

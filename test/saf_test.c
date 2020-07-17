@@ -85,6 +85,10 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
+    //RUN_TEST(test__saf_example_ambi_bin);
+    RUN_TEST(test__saf_example_ambi_dec);
+    
+
     RUN_TEST(test__afSTFT);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
@@ -100,7 +104,7 @@ int main_test(void) {
     RUN_TEST(test__getVoronoiWeights);
     RUN_TEST(test__unique_i);
     RUN_TEST(test__realloc2d_r);
-    ////////RUN_TEST(test__latticeDecorrelator);
+    RUN_TEST(test__latticeDecorrelator);
     RUN_TEST(test__formulate_M_and_Cr);
     RUN_TEST(test__formulate_M_and_Cr_cmplx);
     RUN_TEST(test__getLoudspeakerDecoderMtx);
@@ -117,11 +121,11 @@ int main_test(void) {
     RUN_TEST(test__butterCoeffs);
     RUN_TEST(test__faf_IIRFilterbank);
 #ifdef SAF_ENABLE_EXAMPLES_TESTS
-    RUN_TEST(test__saf_example_ambi_bin);
-    RUN_TEST(test__saf_example_ambi_dec);
-    RUN_TEST(test__saf_example_ambi_enc);
-    RUN_TEST(test__saf_example_array2sh);
-    RUN_TEST(test__saf_example_rotator);
+
+
+//    RUN_TEST(test__saf_example_ambi_enc);
+//    RUN_TEST(test__saf_example_array2sh);
+//    RUN_TEST(test__saf_example_rotator);
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
     /* close */
@@ -167,7 +171,7 @@ void test__afSTFT(void){
     inspec = (float_complex***)malloc3d(nBands, nCHin, nHops, sizeof(float_complex));
     outspec = (float_complex***)malloc3d(nBands, nCHout, nHops, sizeof(float_complex));
 
-    /* just messing around... */
+    /* just some messing around... */
     afSTFT_channelChange(hSTFT, 100, 5);
     afSTFT_clearBuffers(hSTFT);
     afSTFT_channelChange(hSTFT, 39, 81);
@@ -207,85 +211,6 @@ void test__afSTFT(void){
     free(outspec);
     free(freqVector);
 }
-
-//
-//void test__afSTFTOLD(void){
-//    int idx,hopIdx,c,t;
-//    int numChannels;
-//    float** inputTimeDomainData, **outputTimeDomainData, **tempHop;
-//#ifdef AFSTFT_USE_FLOAT_COMPLEX
-//    float_complex** frequencyDomainData;
-//#else
-//    complexVector* frequencyDomainData;
-//#endif
-//
-//    /* Config */
-//    const float acceptedTolerance_dB = -50.0f;
-//    const int nTestHops = 375;
-//    const int hopSize = 128;
-//    numChannels = 64;
-//    const int hybridMode = 1;
-//
-//    /* prep */
-//    const int nBands = hopSize + (hybridMode ? 5 : 1);
-//    const int afSTFTdelay = hopSize * (hybridMode ? 12 : 9);
-//    const int lSig = nTestHops*hopSize+afSTFTdelay;
-//    void* hSTFT;
-//    inputTimeDomainData = (float**) malloc2d(numChannels, lSig, sizeof(float));
-//    outputTimeDomainData = (float**) malloc2d(numChannels, lSig, sizeof(float));
-//    tempHop = (float**) malloc2d(numChannels, hopSize, sizeof(float));
-//#ifdef AFSTFT_USE_FLOAT_COMPLEX
-//    frequencyDomainData = (float_complex**) malloc2d(numChannels, nBands, sizeof(float_complex));
-//#else
-//    frequencyDomainData = malloc1d(numChannels * sizeof(complexVector));
-//    for(c=0; c<numChannels; c++){
-//        frequencyDomainData[c].re = malloc1d(nBands*sizeof(float));
-//        frequencyDomainData[c].im = malloc1d(nBands*sizeof(float));
-//    }
-//#endif
-//
-//    /* Initialise afSTFT and input data */
-//    afSTFTinit(&hSTFT, hopSize, numChannels, numChannels, 0, hybridMode);
-//    rand_m1_1(FLATTEN2D(inputTimeDomainData), numChannels*lSig); /* populate with random numbers */
-//
-//    /* Pass input data through afSTFT */
-//    idx = 0;
-//    hopIdx = 0;
-//    while(idx<lSig){
-//        for(c=0; c<numChannels; c++)
-//            memcpy(tempHop[c], &(inputTimeDomainData[c][hopIdx*hopSize]), hopSize*sizeof(float));
-//
-//        /* forward and inverse */
-//        afSTFTforward(hSTFT, tempHop, frequencyDomainData);
-//        afSTFTinverse(hSTFT, frequencyDomainData, tempHop);
-//
-//        for(c=0; c<numChannels; c++)
-//            memcpy(&(outputTimeDomainData[c][hopIdx*hopSize]), tempHop[c], hopSize*sizeof(float));
-//        idx+=hopSize;
-//        hopIdx++;
-//    }
-//
-//    /* Compensate for afSTFT delay, and check that input==output, given some numerical precision */
-//    for(c=0; c<numChannels; c++){
-//        memcpy(outputTimeDomainData[c], &(outputTimeDomainData[c][afSTFTdelay]), (lSig-afSTFTdelay) *sizeof(float));
-//        for(t=0; t<(lSig-afSTFTdelay); t++)
-//            TEST_ASSERT_TRUE( 20.0f*log10f(fabsf(inputTimeDomainData[c][t]-outputTimeDomainData[c][t]))<= acceptedTolerance_dB );
-//    }
-//
-//    /* tidy-up */
-//    afSTFTfree(hSTFT);
-//    free(inputTimeDomainData);
-//    free(outputTimeDomainData);
-//#ifdef AFSTFT_USE_FLOAT_COMPLEX
-//    free(frequencyDomainData);
-//#else
-//    for(c=0; c<numChannels; c++){
-//        free(frequencyDomainData[c].re);
-//        free(frequencyDomainData[c].im);
-//    }
-//    free(frequencyDomainData);
-//#endif
-//}
 
 void test__saf_stft_50pc_overlap(void){
     int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;
@@ -992,128 +917,112 @@ void test__realloc2d_r(void){
     free(test);
 }
 
-//void test__latticeDecorrelator(void){
-//    int c, band, nBands, idx, hopIdx;
-//    void* hDecor, *hDecor2, *hSTFT;
-//    float icc, tmp, tmp2;
-//    float* freqVector;
-//    float** inputTimeDomainData, **outputTimeDomainData, **tempHop;
-//    complexVector* frequencyDomainData;
-//    float_complex*** inTFframe, ***outTFframe;
-//
-//    /* config */
-//    const float acceptedICC = 0.01;
-//    const int nCH = 24;
-//    const int nTestHops = 2000;
-//    const int hopSize = 128;
-//    const int afSTFTdelay = hopSize*12;
-//    const int lSig = nTestHops*hopSize+afSTFTdelay;
-//    nBands = hopSize+5;
-//    freqVector = malloc1d(nBands*sizeof(float));
-//    for(band=0; band<nBands; band++)
-//        freqVector[band] = (float)__afCenterFreq48e3[band];
-//
-//    /* setup decorrelator 1 */
-//    int orders[5] = {6, 6, 6, 3, 2};
-//    float freqCutoffs[5] = {700.0f, 2.4e3f, 4e3f, 12e3f, 20e3f};
-//    int fixedDelays[6] = {8, 8, 7, 2, 1, 2};
-//    latticeDecorrelator_create(&hDecor, nCH, orders, freqCutoffs, fixedDelays, 5, freqVector, 0, 133);
-//
-//    /* setup decorrelator 2 */
-//    float freqCutoffs2[3] = {700.0f, 2.4e3f, 4e3f};
-//    int orders2[3] = {2, 3, 2};
-//    int fixedDelays2[4] = {2, 2, 1, 0};
-//    latticeDecorrelator_create(&hDecor2, nCH, orders2, freqCutoffs2, fixedDelays2, 3, freqVector, nCH, 133);
-//
-//    /* audio buffers */
-//    inputTimeDomainData = (float**) malloc2d(1, lSig, sizeof(float));
-//    outputTimeDomainData = (float**) malloc2d(nCH, lSig, sizeof(float));
-//    tempHop = (float**) malloc2d(nCH, hopSize, sizeof(float));
-//    frequencyDomainData = malloc1d(nCH * sizeof(complexVector));
-//    for(c=0; c<nCH; c++){
-//        frequencyDomainData[c].re = malloc1d(nBands*sizeof(float));
-//        frequencyDomainData[c].im = malloc1d(nBands*sizeof(float));
-//    }
-//    inTFframe = (float_complex***)malloc3d(nBands, nCH, 1, sizeof(float_complex));
-//    outTFframe = (float_complex***)malloc3d(nBands, nCH, 1, sizeof(float_complex));
-//
-//    /* Initialise afSTFT and input data */
-//    afSTFTinit(&hSTFT, hopSize, 1, nCH, 0, 1);
-//    rand_m1_1(FLATTEN2D(inputTimeDomainData), 1*lSig); /* populate with random numbers */
-//
-//    /* Pass input data through afSTFT */
-//    idx = 0;
-//    hopIdx = 0;
-//    while(idx<lSig){
-//        for(c=0; c<1; c++)
-//            memcpy(tempHop[c], &(inputTimeDomainData[c][hopIdx*hopSize]), hopSize*sizeof(float));
-//
-//        /* forward TF transform, convert, and replicate to all channels */
-//        afSTFTforward(hSTFT, tempHop, frequencyDomainData);
-//        for(band=0; band<nBands; band++)
-//            for(c=0; c<nCH; c++)
-//                inTFframe[band][c][0] = cmplxf(frequencyDomainData[0].re[band], frequencyDomainData[0].im[band]);
-//
-//        /* decorrelate */
-//        latticeDecorrelator_apply(hDecor, inTFframe, 1, outTFframe);
-//        latticeDecorrelator_apply(hDecor2, outTFframe, 1, outTFframe);
-//
-//        /* Convert, and backward TF transform */
-//        for(band=0; band<nBands; band++){
-//            for(c=0; c<nCH; c++){
-//                frequencyDomainData[c].re[band] = crealf(outTFframe[band][c][0]);
-//                frequencyDomainData[c].im[band] = cimagf(outTFframe[band][c][0]);
-//            }
-//        }
-//        afSTFTinverse(hSTFT, frequencyDomainData, tempHop);
-//
-//        /* Copy frame to output TD buffer */
-//        for(c=0; c<nCH; c++)
-//            memcpy(&(outputTimeDomainData[c][hopIdx*hopSize]), tempHop[c], hopSize*sizeof(float));
-//        idx+=hopSize;
-//        hopIdx++;
-//    }
-//
-//    /* Compensate for afSTFT delay, and check that the inter-channel correlation
-//     * coefficient is below the accepted threshold (ideally 0, if fully
-//     * decorrelated...) */
-//    for(c=0; c<nCH; c++){
-//        utility_svvdot(inputTimeDomainData[0], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &icc);
-//        utility_svvdot(inputTimeDomainData[0], inputTimeDomainData[0], (lSig-afSTFTdelay), &tmp);
-//        utility_svvdot(&outputTimeDomainData[c][afSTFTdelay], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &tmp2);
-//
-//        icc = icc/sqrtf(tmp*tmp2); /* normalise */
-//        TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
-//    }
-//#if 0
-//    /* Check for mutually decorrelated channels... */
-//    int c2;
-//    for(c=0; c<nCH; c++){
-//        for(c2=0; c2<nCH; c2++){
-//            utility_svvdot(&outputTimeDomainData[c][afSTFTdelay], &outputTimeDomainData[c2][afSTFTdelay], (lSig-afSTFTdelay), &icc);
-//            utility_svvdot(&outputTimeDomainData[c2][afSTFTdelay], &outputTimeDomainData[c2][afSTFTdelay], (lSig-afSTFTdelay), &tmp);
-//            utility_svvdot(&outputTimeDomainData[c][afSTFTdelay], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &tmp2);
-//
-//            icc = icc/sqrtf(tmp*tmp2); /* normalise */
-//           // TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
-//        }
-//    }
-//#endif
-//
-//    /* Clean-up */
-//    latticeDecorrelator_destroy(&hDecor);
-//    latticeDecorrelator_destroy(&hDecor2);
-//    free(inTFframe);
-//    free(outTFframe);
-//    afSTFTfree(hSTFT);
-//    free(inputTimeDomainData);
-//    free(outputTimeDomainData);
-//    for(c=0; c<nCH; c++){
-//        free(frequencyDomainData[c].re);
-//        free(frequencyDomainData[c].im);
-//    }
-//    free(frequencyDomainData);
-//}
+void test__latticeDecorrelator(void){
+    int c, band, nBands, idx, hopIdx, i;
+    void* hDecor, *hDecor2, *hSTFT;
+    float icc, tmp, tmp2;
+    float* freqVector;
+    float** inputTimeDomainData, **outputTimeDomainData, **tempHop;
+    float_complex*** inTFframe, ***outTFframe;
+
+    /* config */
+    const float acceptedICC = 0.01;
+    const int nCH = 24;
+    const int nTestHops = 2000;
+    const int hopSize = 128;
+    const int afSTFTdelay = hopSize*12;
+    const int lSig = nTestHops*hopSize+afSTFTdelay;
+    nBands = hopSize+5;
+    freqVector = malloc1d(nBands*sizeof(float));
+    for(band=0; band<nBands; band++)
+        freqVector[band] = (float)__afCenterFreq48e3[band];
+
+    /* setup decorrelator 1 */
+    int orders[5] = {6, 6, 6, 3, 2};
+    float freqCutoffs[5] = {700.0f, 2.4e3f, 4e3f, 12e3f, 20e3f};
+    int fixedDelays[6] = {8, 8, 7, 2, 1, 2};
+    latticeDecorrelator_create(&hDecor, nCH, orders, freqCutoffs, fixedDelays, 5, freqVector, 0, 133);
+
+    /* setup decorrelator 2 */
+    float freqCutoffs2[3] = {700.0f, 2.4e3f, 4e3f};
+    int orders2[3] = {2, 3, 2};
+    int fixedDelays2[4] = {2, 2, 1, 0};
+    latticeDecorrelator_create(&hDecor2, nCH, orders2, freqCutoffs2, fixedDelays2, 3, freqVector, nCH, 133);
+
+    /* audio buffers */
+    inputTimeDomainData = (float**) malloc2d(1, lSig, sizeof(float));
+    outputTimeDomainData = (float**) malloc2d(nCH, lSig, sizeof(float));
+    inTFframe = (float_complex***)malloc3d(nBands, nCH, 1, sizeof(float_complex));
+    outTFframe = (float_complex***)malloc3d(nBands, nCH, 1, sizeof(float_complex));
+    tempHop = (float**) malloc2d(nCH, hopSize, sizeof(float));
+
+    /* Initialise afSTFT and input data */
+    afSTFT_create(&hSTFT, 1, nCH, hopSize, 0, 1, AFSTFT_BANDS_CH_TIME);
+    rand_m1_1(FLATTEN2D(inputTimeDomainData), 1*lSig); /* populate with random numbers */
+
+    /* Pass input data through afSTFT */
+    idx = 0;
+    hopIdx = 0;
+    while(idx<lSig){
+        for(c=0; c<1; c++)
+            memcpy(tempHop[c], &(inputTimeDomainData[c][hopIdx*hopSize]), hopSize*sizeof(float));
+
+        /* forward TF transform, and replicate to all channels */
+        afSTFT_forward(hSTFT, tempHop, hopSize, inTFframe);
+        for(band=0; band<nBands; band++)
+            for(i=1; i<nCH;i++)
+                inTFframe[band][i][0] = inTFframe[band][0][0];
+
+        /* decorrelate */
+        latticeDecorrelator_apply(hDecor, inTFframe, 1, outTFframe);
+        latticeDecorrelator_apply(hDecor2, outTFframe, 1, outTFframe);
+
+        /*  backward TF transform */
+        afSTFT_backward(hSTFT, outTFframe, hopSize, tempHop);
+
+        /* Copy frame to output TD buffer */
+        for(c=0; c<nCH; c++)
+            memcpy(&(outputTimeDomainData[c][hopIdx*hopSize]), tempHop[c], hopSize*sizeof(float));
+        idx+=hopSize;
+        hopIdx++;
+    }
+
+    /* Compensate for afSTFT delay, and check that the inter-channel correlation
+     * coefficient is below the accepted threshold (ideally 0, if fully
+     * decorrelated...) */
+    for(c=0; c<nCH; c++){
+        utility_svvdot(inputTimeDomainData[0], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &icc);
+        utility_svvdot(inputTimeDomainData[0], inputTimeDomainData[0], (lSig-afSTFTdelay), &tmp);
+        utility_svvdot(&outputTimeDomainData[c][afSTFTdelay], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &tmp2);
+
+        icc = icc/sqrtf(tmp*tmp2); /* normalise */
+        TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
+    }
+#if 0
+    /* Check for mutually decorrelated channels... */
+    int c2;
+    for(c=0; c<nCH; c++){
+        for(c2=0; c2<nCH; c2++){
+            utility_svvdot(&outputTimeDomainData[c][afSTFTdelay], &outputTimeDomainData[c2][afSTFTdelay], (lSig-afSTFTdelay), &icc);
+            utility_svvdot(&outputTimeDomainData[c2][afSTFTdelay], &outputTimeDomainData[c2][afSTFTdelay], (lSig-afSTFTdelay), &tmp);
+            utility_svvdot(&outputTimeDomainData[c][afSTFTdelay], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &tmp2);
+
+            icc = icc/sqrtf(tmp*tmp2); /* normalise */
+           // TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
+        }
+    }
+#endif
+
+    /* Clean-up */
+    latticeDecorrelator_destroy(&hDecor);
+    latticeDecorrelator_destroy(&hDecor2);
+    free(inTFframe);
+    free(outTFframe);
+    free(tempHop);
+    afSTFT_destroy(&hSTFT);
+    free(inputTimeDomainData);
+    free(outputTimeDomainData);
+}
 
 void test__formulate_M_and_Cr(void){
     int i, j, it, nCHin, nCHout, lenSig;
@@ -2316,335 +2225,335 @@ void test__saf_example_ambi_bin(void){
     free(binSig_frame);
 }
 
-void test__saf_example_ambi_dec(void){
-    int nSH, i, j, ch, max_ind, framesize;
-    void* hAmbi;
-    float loudspeakerEnergy[22], direction_deg[2];
-    float* inSig, *y;
-    float** shSig, **lsSig, **shSig_frame, **lsSig_frame;
+//void test__saf_example_ambi_dec(void){
+//    int nSH, i, j, ch, max_ind, framesize;
+//    void* hAmbi;
+//    float loudspeakerEnergy[22], direction_deg[2];
+//    float* inSig, *y;
+//    float** shSig, **lsSig, **shSig_frame, **lsSig_frame;
+//
+//    /* Config */
+//    const int order = 4;
+//    const int fs = 48000;
+//    const int signalLength = fs*2;
+//
+//    /* Create and initialise an instance of ambi_dec */
+//    ambi_dec_create(&hAmbi);
+//    ambi_dec_init(hAmbi, fs); /* Cannot be called while "process" is on-going */
+//
+//    /* Configure and initialise the ambi_dec codec */
+//    ambi_dec_setNormType(hAmbi, NORM_N3D);
+//    ambi_dec_setMasterDecOrder(hAmbi, (SH_ORDERS)order);
+//    /* 22.x loudspeaker layout, SAD decoder */
+//    ambi_dec_setOutputConfigPreset(hAmbi, LOUDSPEAKER_ARRAY_PRESET_22PX);
+//    ambi_dec_setDecMethod(hAmbi, DECODING_METHOD_SAD, 0/* low-freq decoder */);
+//    ambi_dec_setDecMethod(hAmbi, DECODING_METHOD_SAD, 1/* high-freq decoder */);
+//    ambi_dec_initCodec(hAmbi); /* Can be called whenever (thread-safe) */
+//    /* "initCodec" should be called after calling any of the "set" functions.
+//     * It should be noted that intialisations are only conducted if they are
+//     * needed, so calling this function periodically with a timer on a separate
+//     * thread is perfectly safe and viable. Also, if the intialisations take
+//     * longer than it takes to "process" the current block of samples, then the
+//     * output is simply muted/zeroed during this time. */
+//
+//    /* Define input mono signal */
+//    nSH = ORDER2NSH(order);
+//    inSig = malloc1d(signalLength*sizeof(float));
+//    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
+//    rand_m1_1(inSig, signalLength); /* Mono white-noise signal */
+//
+//    /* Encode to get input spherical harmonic (Ambisonic) signal */
+//    direction_deg[0] = 90.0f; /* encode to loudspeaker direction: index 8 */
+//    direction_deg[1] = 0.0f;
+//    y = malloc1d(nSH*sizeof(float));
+//    getRSH(order, (float*)direction_deg, 1, y); /* SH plane-wave weights */
+//    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, signalLength, 1, 1.0f,
+//                y, 1,
+//                inSig, signalLength, 0.0f,
+//                FLATTEN2D(shSig), signalLength);
+//
+//    /* Decode to loudspeakers */
+//    framesize = ambi_dec_getFrameSize();
+//    lsSig = (float**)calloc2d(22,signalLength,sizeof(float));
+//    shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
+//    lsSig_frame = (float**)malloc1d(22*sizeof(float*));
+//    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
+//        for(ch=0; ch<nSH; ch++)
+//            shSig_frame[ch] = &shSig[ch][i*framesize];
+//        for(ch=0; ch<22; ch++)
+//            lsSig_frame[ch] = &lsSig[ch][i*framesize];
+//
+//        ambi_dec_process(hAmbi, shSig_frame, lsSig_frame, nSH, 22, framesize);
+//    }
+//
+//    /* Assert that channel 8 (corresponding to the loudspeaker where the plane-
+//     * wave was encoded to) has the most energy */
+//    memset(loudspeakerEnergy, 0, 22*sizeof(float));
+//    for(i=0; i<signalLength; i++){
+//        for(j=0; j<22; j++)
+//            loudspeakerEnergy[j]  += powf(fabsf(lsSig[j][i]), 2.0f);
+//    }
+//    utility_simaxv(loudspeakerEnergy, 22, &max_ind);
+//    TEST_ASSERT_TRUE(max_ind==7);
+//
+//    /* Clean-up */
+//    ambi_dec_destroy(&hAmbi);
+//    free(inSig);
+//    free(shSig);
+//    free(y);
+//    free(lsSig);
+//    free(shSig_frame);
+//    free(lsSig_frame);
+//}
 
-    /* Config */
-    const int order = 4;
-    const int fs = 48000;
-    const int signalLength = fs*2;
-
-    /* Create and initialise an instance of ambi_dec */
-    ambi_dec_create(&hAmbi);
-    ambi_dec_init(hAmbi, fs); /* Cannot be called while "process" is on-going */
-
-    /* Configure and initialise the ambi_dec codec */
-    ambi_dec_setNormType(hAmbi, NORM_N3D);
-    ambi_dec_setMasterDecOrder(hAmbi, (SH_ORDERS)order);
-    /* 22.x loudspeaker layout, SAD decoder */
-    ambi_dec_setOutputConfigPreset(hAmbi, LOUDSPEAKER_ARRAY_PRESET_22PX);
-    ambi_dec_setDecMethod(hAmbi, DECODING_METHOD_SAD, 0/* low-freq decoder */);
-    ambi_dec_setDecMethod(hAmbi, DECODING_METHOD_SAD, 1/* high-freq decoder */);
-    ambi_dec_initCodec(hAmbi); /* Can be called whenever (thread-safe) */
-    /* "initCodec" should be called after calling any of the "set" functions.
-     * It should be noted that intialisations are only conducted if they are
-     * needed, so calling this function periodically with a timer on a separate
-     * thread is perfectly safe and viable. Also, if the intialisations take
-     * longer than it takes to "process" the current block of samples, then the
-     * output is simply muted/zeroed during this time. */
-
-    /* Define input mono signal */
-    nSH = ORDER2NSH(order);
-    inSig = malloc1d(signalLength*sizeof(float));
-    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
-    rand_m1_1(inSig, signalLength); /* Mono white-noise signal */
-
-    /* Encode to get input spherical harmonic (Ambisonic) signal */
-    direction_deg[0] = 90.0f; /* encode to loudspeaker direction: index 8 */
-    direction_deg[1] = 0.0f;
-    y = malloc1d(nSH*sizeof(float));
-    getRSH(order, (float*)direction_deg, 1, y); /* SH plane-wave weights */
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, signalLength, 1, 1.0f,
-                y, 1,
-                inSig, signalLength, 0.0f,
-                FLATTEN2D(shSig), signalLength);
-
-    /* Decode to loudspeakers */
-    framesize = ambi_dec_getFrameSize();
-    lsSig = (float**)calloc2d(22,signalLength,sizeof(float));
-    shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
-    lsSig_frame = (float**)malloc1d(22*sizeof(float*));
-    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
-        for(ch=0; ch<nSH; ch++)
-            shSig_frame[ch] = &shSig[ch][i*framesize];
-        for(ch=0; ch<22; ch++)
-            lsSig_frame[ch] = &lsSig[ch][i*framesize];
-
-        ambi_dec_process(hAmbi, shSig_frame, lsSig_frame, nSH, 22, framesize);
-    }
-
-    /* Assert that channel 8 (corresponding to the loudspeaker where the plane-
-     * wave was encoded to) has the most energy */
-    memset(loudspeakerEnergy, 0, 22*sizeof(float));
-    for(i=0; i<signalLength; i++){
-        for(j=0; j<22; j++)
-            loudspeakerEnergy[j]  += powf(fabsf(lsSig[j][i]), 2.0f);
-    }
-    utility_simaxv(loudspeakerEnergy, 22, &max_ind);
-    TEST_ASSERT_TRUE(max_ind==7);
-
-    /* Clean-up */
-    ambi_dec_destroy(&hAmbi);
-    free(inSig);
-    free(shSig);
-    free(y);
-    free(lsSig);
-    free(shSig_frame);
-    free(lsSig_frame);
-}
-
-void test__saf_example_ambi_enc(void){
-    int nSH, i, ch, framesize, j, delay;
-    void* hAmbi;
-    float direction_deg[2][2];
-    float** inSig, *y;
-    float** shSig, **shSig_ref, **inSig_frame, **shSig_frame;
-
-    /* Config */
-    const float acceptedTolerance = 0.000001f;
-    const int order = 4;
-    const int fs = 48000;
-    const int signalLength = fs*2;
-    direction_deg[0][0] = 90.0f; /* encode to loudspeaker direction: index 8 */
-    direction_deg[0][1] = 0.0f;
-    direction_deg[1][0] = 20.0f; /* encode to loudspeaker direction: index 8 */
-    direction_deg[1][1] = -45.0f;
-    delay = ambi_enc_getProcessingDelay();
-
-    /* Create and initialise an instance of ambi_enc */
-    ambi_enc_create(&hAmbi);
-    ambi_enc_init(hAmbi, fs); /* Cannot be called while "process" is on-going */
-
-    /* Configure ambi_enc */
-    ambi_enc_setOutputOrder(hAmbi, (SH_ORDERS)order);
-    ambi_enc_setNormType(hAmbi, NORM_N3D); /* (The default for all SH-related examples is SN3D) */
-    ambi_enc_setEnablePostScaling(hAmbi, 0); /* Disable scaling output by number of input channels */
-    ambi_enc_setNumSources(hAmbi, 2);
-    ambi_enc_setSourceAzi_deg(hAmbi, 0, direction_deg[0][0]);
-    ambi_enc_setSourceElev_deg(hAmbi, 0, direction_deg[0][1]);
-    ambi_enc_setSourceAzi_deg(hAmbi, 1, direction_deg[1][0]);
-    ambi_enc_setSourceElev_deg(hAmbi, 1, direction_deg[1][1]);
-
-    /* Define input mono signal */
-    nSH = ORDER2NSH(order);
-    inSig = (float**)malloc2d(2,signalLength,sizeof(float));
-    shSig_ref = (float**)malloc2d(nSH,signalLength,sizeof(float));
-    rand_m1_1(FLATTEN2D(inSig), 2*signalLength); /* Mono white-noise signal */
-
-    /* Encode reference */
-    y = malloc1d(nSH*2*sizeof(float));
-    getRSH(order, (float*)direction_deg, 2, y); /* SH plane-wave weights */
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, signalLength, 2, 1.0f,
-                y, 2,
-                FLATTEN2D(inSig), signalLength, 0.0f,
-                FLATTEN2D(shSig_ref), signalLength);
-
-    /* Encode via ambi_enc */
-    framesize = ambi_enc_getFrameSize();
-    shSig = (float**)calloc2d(nSH,signalLength,sizeof(float));
-    inSig_frame = (float**)malloc1d(2*sizeof(float*));
-    shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
-    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
-        for(ch=0; ch<2; ch++)
-            inSig_frame[ch] = &inSig[ch][i*framesize];
-        for(ch=0; ch<nSH; ch++)
-            shSig_frame[ch] = &shSig[ch][i*framesize];
-
-        ambi_enc_process(hAmbi, inSig_frame, shSig_frame, 2, nSH, framesize);
-    }
-
-    /* ambi_enc should be equivalent to the reference, except delayed due to the
-     * temporal interpolation employed in ambi_enc */
-    for(i=0; i<nSH; i++)
-        for(j=0; j<signalLength-delay-framesize; j++)
-            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, shSig_ref[i][j], shSig[i][j+delay]);
-
-    /* Clean-up */
-    ambi_enc_destroy(&hAmbi);
-    free(inSig);
-    free(shSig);
-    free(shSig_ref);
-    free(y);
-}
-
-void test__saf_example_array2sh(void){
-    int nSH, i, j, framesize, ch;
-    void* hA2sh, *safFFT, *hMC;
-    float direction_deg[2], radius;
-    float* inSig, *f;
-    float** shSig, **inSig_32, **micSig, **h_array, **micSig_frame, **shSig_frame;
-    double* kr;
-    float_complex* tmp_H;
-    float_complex*** H_array;
-
-    /* Config */
-    const int order = 4;
-    const int fs = 48000;
-    const int signalLength = fs*2;
-    const int nFFT = 1024;
-    const int nBins = nFFT/2+1;
-
-    /* Create and initialise an instance of array2sh for the Eigenmike32 */
-    array2sh_create(&hA2sh);
-    array2sh_init(hA2sh, fs); /* Cannot be called while "process" is on-going */
-    array2sh_setPreset(hA2sh, MICROPHONE_ARRAY_PRESET_EIGENMIKE32);
-    array2sh_setNormType(hA2sh, NORM_N3D);
-
-    /* Define input mono signal */
-    nSH = ORDER2NSH(order);
-    inSig = malloc1d(signalLength*sizeof(float));
-    rand_m1_1(inSig, signalLength); /* Mono white-noise signal */
-
-    /* Simulate an Eigenmike in a free-field with a single plane-wave */
-    f = malloc1d(nBins*sizeof(float));
-    kr = malloc1d(nBins*sizeof(double));
-    getUniformFreqVector(nFFT, (float)fs, f);
-    f[0] = f[1]/4.0f; /* To avoid NaNs at DC */
-    radius = 0.042f;
-    for(i=0; i<nBins; i++)
-        kr[i] = 2.0*SAF_PId*(f[i])*(radius)/343.0f;
-    direction_deg[0] = 90.0f;
-    direction_deg[1] = 0.0f;
-    H_array = (float_complex***)malloc3d(nBins, 32, 1, sizeof(float_complex));
-    simulateSphArray(order, kr, kr, nBins, (float*)__Eigenmike32_coords_rad, 32,
-                     (float*)direction_deg, 1, ARRAY_CONSTRUCTION_RIGID, 1.0f, FLATTEN3D(H_array));
-
-    /* Inverse FFT to get the time-domain filters */
-    tmp_H = malloc1d(nBins*sizeof(float_complex));
-    h_array = (float**)malloc2d(32, nFFT, sizeof(float));
-    saf_rfft_create(&safFFT, nFFT);
-    for(i=0; i<32; i++){
-        for(j=0; j<nBins; j++)
-            tmp_H[j] = H_array[j][i][0];
-        saf_rfft_backward(safFFT, tmp_H, h_array[i]);
-    }
-
-    /* Simulate the Eigenmike time-domain signals by convolving the mono signal
-     * with each sensor transfer function */
-    micSig = (float**)calloc2d(32, signalLength, sizeof(float));
-    inSig_32 = (float**)malloc2d(32, signalLength, sizeof(float));
-    for(i=0; i<32; i++) /* Replicate inSig for all 32 channels */
-        memcpy(inSig_32[i], inSig, signalLength* sizeof(float));
-    saf_multiConv_create(&hMC, 256, FLATTEN2D(h_array), nFFT, 32, 0);
-    for(i=0; i<(int)((float)signalLength/256.0f); i++)
-        saf_multiConv_apply(hMC, FLATTEN2D(inSig_32), FLATTEN2D(micSig));
-
-    /* Encode simulated Eigenmike signals into spherical harmonic signals */
-    framesize = array2sh_getFrameSize();
-    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float)); 
-    micSig_frame = (float**)malloc1d(32*sizeof(float*));
-    shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
-    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
-        for(ch=0; ch<32; ch++)
-            micSig_frame[ch] = &micSig[ch][i*framesize];
-        for(ch=0; ch<nSH; ch++)
-            shSig_frame[ch] = &shSig[ch][i*framesize];
-
-        array2sh_process(hA2sh, micSig_frame, shSig_frame, 32, nSH, framesize);
-    }
-
-    /* Clean-up */
-    array2sh_destroy(&hA2sh);
-    saf_rfft_destroy(&safFFT);
-    saf_multiConv_destroy(&hMC);
-    free(inSig);
-    free(shSig);
-    free(inSig_32);
-    free(f);
-    free(kr);
-    free(H_array);
-    free(h_array);
-    free(tmp_H);
-    free(micSig_frame);
-    free(shSig_frame);
-}
-
-void test__saf_example_rotator(void){
-    int ch, nSH, i, j, delay, framesize;
-    void* hRot;
-    float direction_deg[2], ypr[3], Rzyx[3][3];
-    float** inSig, *y, **shSig_frame, **shSig_rot_frame;
-    float** shSig, **shSig_rot, **shSig_rot_ref, **Mrot;
-
-    /* Config */
-    const float acceptedTolerance = 0.000001f;
-    const int order = 4;
-    const int fs = 48000;
-    const int signalLength = fs*2;
-    direction_deg[0] = 90.0f; /* encode to loudspeaker direction: index 8 */
-    direction_deg[1] = 0.0f;
-    ypr[0] = -0.4f;
-    ypr[1] = -1.4f;
-    ypr[2] = 2.1f;
-    delay = rotator_getProcessingDelay();
-
-    /* Create and initialise an instance of rotator */
-    rotator_create(&hRot);
-    rotator_init(hRot, fs); /* Cannot be called while "process" is on-going */
-
-    /* Configure rotator codec */
-    rotator_setOrder(hRot, (SH_ORDERS)order);
-    rotator_setNormType(hRot, NORM_N3D);
-    rotator_setYaw(hRot, ypr[0]*180.0f/M_PI); /* rad->degrees */
-    rotator_setPitch(hRot, ypr[1]*180.0f/M_PI);
-    rotator_setRoll(hRot, ypr[2]*180.0f/M_PI);
-
-    /* Define input mono signal */
-    nSH = ORDER2NSH(order);
-    inSig = (float**)malloc2d(1,signalLength,sizeof(float));
-    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
-    rand_m1_1(FLATTEN2D(inSig), signalLength); /* Mono white-noise signal */
-
-    /* Encode */
-    y = malloc1d(nSH*sizeof(float));
-    getRSH(order, (float*)direction_deg, 1, y); /* SH plane-wave weights */
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, signalLength, 1, 1.0f,
-                y, 1,
-                FLATTEN2D(inSig), signalLength, 0.0f,
-                FLATTEN2D(shSig), signalLength);
-
-    /* Rotated version reference */
-    Mrot = (float**)malloc2d(nSH, nSH, sizeof(float));
-    yawPitchRoll2Rzyx(ypr[0], ypr[1], ypr[2], 0, Rzyx);
-    getSHrotMtxReal(Rzyx, FLATTEN2D(Mrot), order);
-    shSig_rot_ref = (float**)malloc2d(nSH,signalLength,sizeof(float));
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, signalLength, nSH, 1.0f,
-                FLATTEN2D(Mrot), nSH,
-                FLATTEN2D(shSig), signalLength, 0.0f,
-                FLATTEN2D(shSig_rot_ref), signalLength);
-
-    /* Rotate with rotator */
-    framesize = rotator_getFrameSize();
-    shSig_rot = (float**)malloc2d(nSH,signalLength,sizeof(float));
-    shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
-    shSig_rot_frame = (float**)malloc1d(nSH*sizeof(float*));
-    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
-        for(ch=0; ch<nSH; ch++)
-            shSig_frame[ch] = &shSig[ch][i*framesize];
-        for(ch=0; ch<nSH; ch++)
-            shSig_rot_frame[ch] = &shSig_rot[ch][i*framesize];
-
-        rotator_process(hRot, shSig_frame, shSig_rot_frame, nSH, nSH, framesize);
-    }
-
-    /* ambi_enc should be equivalent to the reference, except delayed due to the
-     * temporal interpolation employed in ambi_enc */
-    for(i=0; i<nSH; i++)
-        for(j=0; j<signalLength-delay; j++)
-            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, shSig_rot_ref[i][j], shSig_rot[i][j+delay]);
-
-    /* Clean-up */
-    rotator_destroy(&hRot);
-    free(inSig);
-    free(shSig);
-    free(shSig_rot_ref);
-    free(Mrot);
-    free(y);
-    free(shSig_frame);
-    free(shSig_rot_frame);
-}
+//void test__saf_example_ambi_enc(void){
+//    int nSH, i, ch, framesize, j, delay;
+//    void* hAmbi;
+//    float direction_deg[2][2];
+//    float** inSig, *y;
+//    float** shSig, **shSig_ref, **inSig_frame, **shSig_frame;
+//
+//    /* Config */
+//    const float acceptedTolerance = 0.000001f;
+//    const int order = 4;
+//    const int fs = 48000;
+//    const int signalLength = fs*2;
+//    direction_deg[0][0] = 90.0f; /* encode to loudspeaker direction: index 8 */
+//    direction_deg[0][1] = 0.0f;
+//    direction_deg[1][0] = 20.0f; /* encode to loudspeaker direction: index 8 */
+//    direction_deg[1][1] = -45.0f;
+//    delay = ambi_enc_getProcessingDelay();
+//
+//    /* Create and initialise an instance of ambi_enc */
+//    ambi_enc_create(&hAmbi);
+//    ambi_enc_init(hAmbi, fs); /* Cannot be called while "process" is on-going */
+//
+//    /* Configure ambi_enc */
+//    ambi_enc_setOutputOrder(hAmbi, (SH_ORDERS)order);
+//    ambi_enc_setNormType(hAmbi, NORM_N3D); /* (The default for all SH-related examples is SN3D) */
+//    ambi_enc_setEnablePostScaling(hAmbi, 0); /* Disable scaling output by number of input channels */
+//    ambi_enc_setNumSources(hAmbi, 2);
+//    ambi_enc_setSourceAzi_deg(hAmbi, 0, direction_deg[0][0]);
+//    ambi_enc_setSourceElev_deg(hAmbi, 0, direction_deg[0][1]);
+//    ambi_enc_setSourceAzi_deg(hAmbi, 1, direction_deg[1][0]);
+//    ambi_enc_setSourceElev_deg(hAmbi, 1, direction_deg[1][1]);
+//
+//    /* Define input mono signal */
+//    nSH = ORDER2NSH(order);
+//    inSig = (float**)malloc2d(2,signalLength,sizeof(float));
+//    shSig_ref = (float**)malloc2d(nSH,signalLength,sizeof(float));
+//    rand_m1_1(FLATTEN2D(inSig), 2*signalLength); /* Mono white-noise signal */
+//
+//    /* Encode reference */
+//    y = malloc1d(nSH*2*sizeof(float));
+//    getRSH(order, (float*)direction_deg, 2, y); /* SH plane-wave weights */
+//    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, signalLength, 2, 1.0f,
+//                y, 2,
+//                FLATTEN2D(inSig), signalLength, 0.0f,
+//                FLATTEN2D(shSig_ref), signalLength);
+//
+//    /* Encode via ambi_enc */
+//    framesize = ambi_enc_getFrameSize();
+//    shSig = (float**)calloc2d(nSH,signalLength,sizeof(float));
+//    inSig_frame = (float**)malloc1d(2*sizeof(float*));
+//    shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
+//    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
+//        for(ch=0; ch<2; ch++)
+//            inSig_frame[ch] = &inSig[ch][i*framesize];
+//        for(ch=0; ch<nSH; ch++)
+//            shSig_frame[ch] = &shSig[ch][i*framesize];
+//
+//        ambi_enc_process(hAmbi, inSig_frame, shSig_frame, 2, nSH, framesize);
+//    }
+//
+//    /* ambi_enc should be equivalent to the reference, except delayed due to the
+//     * temporal interpolation employed in ambi_enc */
+//    for(i=0; i<nSH; i++)
+//        for(j=0; j<signalLength-delay-framesize; j++)
+//            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, shSig_ref[i][j], shSig[i][j+delay]);
+//
+//    /* Clean-up */
+//    ambi_enc_destroy(&hAmbi);
+//    free(inSig);
+//    free(shSig);
+//    free(shSig_ref);
+//    free(y);
+//}
+//
+//void test__saf_example_array2sh(void){
+//    int nSH, i, j, framesize, ch;
+//    void* hA2sh, *safFFT, *hMC;
+//    float direction_deg[2], radius;
+//    float* inSig, *f;
+//    float** shSig, **inSig_32, **micSig, **h_array, **micSig_frame, **shSig_frame;
+//    double* kr;
+//    float_complex* tmp_H;
+//    float_complex*** H_array;
+//
+//    /* Config */
+//    const int order = 4;
+//    const int fs = 48000;
+//    const int signalLength = fs*2;
+//    const int nFFT = 1024;
+//    const int nBins = nFFT/2+1;
+//
+//    /* Create and initialise an instance of array2sh for the Eigenmike32 */
+//    array2sh_create(&hA2sh);
+//    array2sh_init(hA2sh, fs); /* Cannot be called while "process" is on-going */
+//    array2sh_setPreset(hA2sh, MICROPHONE_ARRAY_PRESET_EIGENMIKE32);
+//    array2sh_setNormType(hA2sh, NORM_N3D);
+//
+//    /* Define input mono signal */
+//    nSH = ORDER2NSH(order);
+//    inSig = malloc1d(signalLength*sizeof(float));
+//    rand_m1_1(inSig, signalLength); /* Mono white-noise signal */
+//
+//    /* Simulate an Eigenmike in a free-field with a single plane-wave */
+//    f = malloc1d(nBins*sizeof(float));
+//    kr = malloc1d(nBins*sizeof(double));
+//    getUniformFreqVector(nFFT, (float)fs, f);
+//    f[0] = f[1]/4.0f; /* To avoid NaNs at DC */
+//    radius = 0.042f;
+//    for(i=0; i<nBins; i++)
+//        kr[i] = 2.0*SAF_PId*(f[i])*(radius)/343.0f;
+//    direction_deg[0] = 90.0f;
+//    direction_deg[1] = 0.0f;
+//    H_array = (float_complex***)malloc3d(nBins, 32, 1, sizeof(float_complex));
+//    simulateSphArray(order, kr, kr, nBins, (float*)__Eigenmike32_coords_rad, 32,
+//                     (float*)direction_deg, 1, ARRAY_CONSTRUCTION_RIGID, 1.0f, FLATTEN3D(H_array));
+//
+//    /* Inverse FFT to get the time-domain filters */
+//    tmp_H = malloc1d(nBins*sizeof(float_complex));
+//    h_array = (float**)malloc2d(32, nFFT, sizeof(float));
+//    saf_rfft_create(&safFFT, nFFT);
+//    for(i=0; i<32; i++){
+//        for(j=0; j<nBins; j++)
+//            tmp_H[j] = H_array[j][i][0];
+//        saf_rfft_backward(safFFT, tmp_H, h_array[i]);
+//    }
+//
+//    /* Simulate the Eigenmike time-domain signals by convolving the mono signal
+//     * with each sensor transfer function */
+//    micSig = (float**)calloc2d(32, signalLength, sizeof(float));
+//    inSig_32 = (float**)malloc2d(32, signalLength, sizeof(float));
+//    for(i=0; i<32; i++) /* Replicate inSig for all 32 channels */
+//        memcpy(inSig_32[i], inSig, signalLength* sizeof(float));
+//    saf_multiConv_create(&hMC, 256, FLATTEN2D(h_array), nFFT, 32, 0);
+//    for(i=0; i<(int)((float)signalLength/256.0f); i++)
+//        saf_multiConv_apply(hMC, FLATTEN2D(inSig_32), FLATTEN2D(micSig));
+//
+//    /* Encode simulated Eigenmike signals into spherical harmonic signals */
+//    framesize = array2sh_getFrameSize();
+//    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
+//    micSig_frame = (float**)malloc1d(32*sizeof(float*));
+//    shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
+//    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
+//        for(ch=0; ch<32; ch++)
+//            micSig_frame[ch] = &micSig[ch][i*framesize];
+//        for(ch=0; ch<nSH; ch++)
+//            shSig_frame[ch] = &shSig[ch][i*framesize];
+//
+//        array2sh_process(hA2sh, micSig_frame, shSig_frame, 32, nSH, framesize);
+//    }
+//
+//    /* Clean-up */
+//    array2sh_destroy(&hA2sh);
+//    saf_rfft_destroy(&safFFT);
+//    saf_multiConv_destroy(&hMC);
+//    free(inSig);
+//    free(shSig);
+//    free(inSig_32);
+//    free(f);
+//    free(kr);
+//    free(H_array);
+//    free(h_array);
+//    free(tmp_H);
+//    free(micSig_frame);
+//    free(shSig_frame);
+//}
+//
+//void test__saf_example_rotator(void){
+//    int ch, nSH, i, j, delay, framesize;
+//    void* hRot;
+//    float direction_deg[2], ypr[3], Rzyx[3][3];
+//    float** inSig, *y, **shSig_frame, **shSig_rot_frame;
+//    float** shSig, **shSig_rot, **shSig_rot_ref, **Mrot;
+//
+//    /* Config */
+//    const float acceptedTolerance = 0.000001f;
+//    const int order = 4;
+//    const int fs = 48000;
+//    const int signalLength = fs*2;
+//    direction_deg[0] = 90.0f; /* encode to loudspeaker direction: index 8 */
+//    direction_deg[1] = 0.0f;
+//    ypr[0] = -0.4f;
+//    ypr[1] = -1.4f;
+//    ypr[2] = 2.1f;
+//    delay = rotator_getProcessingDelay();
+//
+//    /* Create and initialise an instance of rotator */
+//    rotator_create(&hRot);
+//    rotator_init(hRot, fs); /* Cannot be called while "process" is on-going */
+//
+//    /* Configure rotator codec */
+//    rotator_setOrder(hRot, (SH_ORDERS)order);
+//    rotator_setNormType(hRot, NORM_N3D);
+//    rotator_setYaw(hRot, ypr[0]*180.0f/M_PI); /* rad->degrees */
+//    rotator_setPitch(hRot, ypr[1]*180.0f/M_PI);
+//    rotator_setRoll(hRot, ypr[2]*180.0f/M_PI);
+//
+//    /* Define input mono signal */
+//    nSH = ORDER2NSH(order);
+//    inSig = (float**)malloc2d(1,signalLength,sizeof(float));
+//    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
+//    rand_m1_1(FLATTEN2D(inSig), signalLength); /* Mono white-noise signal */
+//
+//    /* Encode */
+//    y = malloc1d(nSH*sizeof(float));
+//    getRSH(order, (float*)direction_deg, 1, y); /* SH plane-wave weights */
+//    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, signalLength, 1, 1.0f,
+//                y, 1,
+//                FLATTEN2D(inSig), signalLength, 0.0f,
+//                FLATTEN2D(shSig), signalLength);
+//
+//    /* Rotated version reference */
+//    Mrot = (float**)malloc2d(nSH, nSH, sizeof(float));
+//    yawPitchRoll2Rzyx(ypr[0], ypr[1], ypr[2], 0, Rzyx);
+//    getSHrotMtxReal(Rzyx, FLATTEN2D(Mrot), order);
+//    shSig_rot_ref = (float**)malloc2d(nSH,signalLength,sizeof(float));
+//    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, signalLength, nSH, 1.0f,
+//                FLATTEN2D(Mrot), nSH,
+//                FLATTEN2D(shSig), signalLength, 0.0f,
+//                FLATTEN2D(shSig_rot_ref), signalLength);
+//
+//    /* Rotate with rotator */
+//    framesize = rotator_getFrameSize();
+//    shSig_rot = (float**)malloc2d(nSH,signalLength,sizeof(float));
+//    shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
+//    shSig_rot_frame = (float**)malloc1d(nSH*sizeof(float*));
+//    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
+//        for(ch=0; ch<nSH; ch++)
+//            shSig_frame[ch] = &shSig[ch][i*framesize];
+//        for(ch=0; ch<nSH; ch++)
+//            shSig_rot_frame[ch] = &shSig_rot[ch][i*framesize];
+//
+//        rotator_process(hRot, shSig_frame, shSig_rot_frame, nSH, nSH, framesize);
+//    }
+//
+//    /* ambi_enc should be equivalent to the reference, except delayed due to the
+//     * temporal interpolation employed in ambi_enc */
+//    for(i=0; i<nSH; i++)
+//        for(j=0; j<signalLength-delay; j++)
+//            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, shSig_rot_ref[i][j], shSig_rot[i][j+delay]);
+//
+//    /* Clean-up */
+//    rotator_destroy(&hRot);
+//    free(inSig);
+//    free(shSig);
+//    free(shSig_rot_ref);
+//    free(Mrot);
+//    free(y);
+//    free(shSig_frame);
+//    free(shSig_rot_frame);
+//}
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
