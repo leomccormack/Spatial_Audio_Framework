@@ -56,7 +56,7 @@ extern const double __qmf_fb4bandCoeffs[13];
 
 /**
  * Creates an instance of the qmf filterbank
- * 
+ *
  * @test test__qmf()
  *
  * @param[in] phQMF      (&) address of qmf handle
@@ -111,6 +111,14 @@ void qmf_synthesis(/* Input Arguments */
                    int framesize,
                    /* Output Arguments */
                    float** dataTD);
+
+void qmf_channelChange(void * const hQMF,
+                       int new_nCHin,
+                       int new_nCHout);
+
+/**
+ * Flushes time-domain buffers with zeros. */
+void qmf_clearBuffers(void * const hQMF);
 
 /**
  * Returns the processing delay in samples

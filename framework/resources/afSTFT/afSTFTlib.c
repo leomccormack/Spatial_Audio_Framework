@@ -50,6 +50,20 @@ const double __afCenterFreq48e3[133] =
 const double __afCenterFreq44100[133] =
 {    0.000000000, 129.216965656, 215.314095512, 301.482605287, 387.579738729, 473.748225285, 559.845379541, 646.013853751, 732.111030944, 861.328154418, 1033.593765929, 1205.859407569, 1378.125069596, 1550.390654200, 1722.656272269, 1894.921852124, 2067.187549340, 2239.453165674, 2411.718752127, 2583.984393174, 2756.250038304, 2928.515610236, 3100.781245532, 3273.046869646, 3445.312517049, 3617.578144885, 3789.843759058, 3962.109385592, 4134.375009576, 4306.640638272, 4478.906262484, 4651.171887467, 4823.437506959, 4995.703134452, 5167.968753839, 5340.234378143, 5512.500004739, 5684.765628127, 5857.031253205, 6029.296881607, 6201.562505487, 6373.828132809, 6546.093756373, 6718.359382855, 6890.625004623, 7062.890629479, 7235.156254481, 7407.421881970, 7579.687505713, 7751.953124821, 7924.218750103, 8096.484373148, 8268.750008140, 8441.015629043, 8613.281251405, 8785.546881031, 8957.812505821, 9130.078124593, 9302.343752690, 9474.609377190, 9646.875004048, 9819.140627591, 9991.406251289, 10163.671877038, 10335.937501008, 10508.203126187, 10680.468750748, 10852.734375129, 11025.000000000, 11197.265624618, 11369.531249516, 11541.796874351, 11714.062498897, 11886.328122716, 12058.593748662, 12230.859372797, 12403.124996237, 12575.390622207, 12747.656246830, 12919.921875455, 13092.187494451, 13264.453118973, 13436.718748035, 13608.984370830, 13781.249991857, 13953.515626614, 14125.781249475, 14298.046875918, 14470.312494312, 14642.578118001, 14814.843746034, 14987.109370627, 15159.374994823, 15331.640617057, 15503.906242865, 15676.171867063, 15848.437494762, 16020.703118027, 16192.968746288, 16365.234371274, 16537.499995256, 16709.765622164, 16882.031246440, 17054.296865897, 17226.562492526, 17398.828113024, 17571.093736919, 17743.359361459, 17915.624990597, 18087.890614243, 18260.156240676, 18432.421855285, 18604.687483097, 18776.953130401, 18949.218754459, 19121.484389530, 19293.749961692, 19466.015606863, 19638.281247918, 19810.546834386, 19982.812450661, 20155.078147972, 20327.343727455, 20499.609346121, 20671.874930324, 20844.140592387, 21016.406233899, 21188.671845644, 21360.937478510, 21533.203108994, 21705.468678356, 21877.734276834, 22050.000000000    };
 
+/**
+ * Matrix for converting the centre frequencies of the first 5 stft bins into
+ * the centre frequencies for the 9 hybrid bands. */
+static const float __stft2hybCentreFreq[9][5] =
+{ { 1.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+  { 0.0f, 0.7501f, 0.0f, 0.0f, 0.0f },
+  { 0.0f, 1.2499f, 0.0f, 0.0f, 0.0f },
+  { 0.0f, 0.0f, 0.8751f, 0.0f, 0.0f },
+  { 0.0f, 0.0f, 1.1249f, 0.0f, 0.0f },
+  { 0.0f, 0.0f, 0.0f, 0.9167f, 0.0f },
+  { 0.0f, 0.0f, 0.0f, 1.0833f, 0.0f },
+  { 0.0f, 0.0f, 0.0f, 0.0f, 0.9375f },
+  { 0.0f, 0.0f, 0.0f, 0.0f, 1.0625f } };
+
 /** Data structure for the complex-QMF filterbank */
 typedef struct _afSTFT_data {
     int hopsize, hybridmode, nCHin, nCHout, nBands, procDelay;
@@ -92,20 +106,20 @@ void afSTFT_create
     h->nCHout = nCHout;
     h->hopsize = hopsize;
     h->hybridmode = hybridmode;
-    h->nBands = hybridmode ? hopsize+7 : hopsize; /* hybrid mode incurs an additional 7 bands */
+    h->nBands = hybridmode ? hopsize+5 : hopsize+1; /* hybrid mode incurs an additional 4 bands */
+    h->afSTFTdelay = hybridmode ? 12*hopsize : 9*hopsize; /* hybrid mode incurs 3 additional hops of latency */
     h->format = format;
-
 
     afSTFTlib_init(&(h->hInt), hopsize, nCHin, nCHout, lowDelayMode, hybridmode);
 
     h->STFTOutputFrameTF = malloc1d(nCHout * sizeof(complexVector));
-    for(ch=0; ch< nCHout; ch++) {
+    for(ch=0; ch < nCHout; ch++) {
         h->STFTOutputFrameTF[ch].re = (float*)calloc1d(h->nBands, sizeof(float));
         h->STFTOutputFrameTF[ch].im = (float*)calloc1d(h->nBands, sizeof(float));
     }
     h->tempHopFrameTD = (float**)malloc2d( MAX(nCHin, nCHout), hopsize, sizeof(float));
     h->STFTInputFrameTF = malloc1d(nCHin * sizeof(complexVector));
-    for(ch=0; ch< nCHin; ch++) {
+    for(ch=0; ch < nCHin; ch++) {
         h->STFTInputFrameTF[ch].re = (float*)calloc1d(h->nBands, sizeof(float));
         h->STFTInputFrameTF[ch].im = (float*)calloc1d(h->nBands, sizeof(float));
     }
@@ -122,7 +136,7 @@ void afSTFT_destroy
 
     if(h!=NULL){
         /* For run-time */
-        afSTFTlib_free(&(h->hInt));
+        afSTFTlib_free(h->hInt);
         if(h->STFTInputFrameTF!=NULL){
             for (ch = 0; ch< h->nCHin; ch++) {
                 free(h->STFTInputFrameTF[ch].re);
@@ -158,7 +172,7 @@ void afSTFT_forward
     nHops = framesize/h->hopsize;
 
     /* Loop over hops */
-    for(t=0; t< nHops; t++) {
+    for(t=0; t < nHops; t++) {
         /* forward transform */
         for(ch = 0; ch < h->nCHin; ch++)
             utility_svvcopy(&(dataTD[ch][t*(h->hopsize)]), (h->hopsize), h->tempHopFrameTD[ch]);
@@ -223,11 +237,75 @@ void afSTFT_backward
     }
 }
 
+void afSTFT_channelChange
+(
+    void * const hSTFT,
+    int new_nCHin,
+    int new_nCHout
+)
+{
+    afSTFT_data *h = (afSTFT_data*)(hSTFT);
+    afSTFTlib_channelChange(h->hInt, new_nCHin, new_nCHout);
+}
+
+void afSTFT_clearBuffers
+(
+    void * const hSTFT
+)
+{
+    afSTFT_data *h = (afSTFT_data*)(hSTFT);
+    afSTFTlib_clearBuffers(h->hInt);
+}
+
+int afSTFT_getNBands
+(
+    void * const hSTFT
+)
+{
+    afSTFT_data *h = (afSTFT_data*)(hSTFT);
+    return h->nBands;
+}
+
 int afSTFT_getProcDelay
 (
     void * const hSTFT
 )
 {
     afSTFT_data *h = (afSTFT_data*)(hSTFT);
-    return 0;//h->procDelay;
+    return h->afSTFTdelay;
+}
+
+void afSTFT_getCentreFreqs
+(
+    void * const hSTFT,
+    float fs,
+    int nBands,
+    float* freqVector
+)
+{
+    afSTFT_data *h = (afSTFT_data*)(hSTFT);
+    float* centreFreq_tmp;
+    int i, j;
+
+    assert(nBands>=h->nBands); /* just to check that "centreFreq" is of sufficient length */
+
+    if(h->hybridmode){
+        /* uniform frequency vector: */
+        centreFreq_tmp = malloc1d((h->hopsize+1)*sizeof(float));
+        getUniformFreqVector(h->hopsize*2, fs, centreFreq_tmp);
+
+        /* convert first 5 to hybrid centre frequencies */
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 9, 1, 5, 1.0f,
+                   (const float*)__stft2hybCentreFreq, 5,
+                   centreFreq_tmp, 1, 0.0f,
+                   freqVector, 1);
+
+        /* Remaining centre frequencies are then the uniform  centre frequencies 6:end  */
+        for(i=9, j=5; i<h->nBands; i++, j++)
+            freqVector[i] = centreFreq_tmp[j];
+
+        free(centreFreq_tmp);
+    }
+    else
+        getUniformFreqVector(h->hopsize*2, fs, freqVector);
 }

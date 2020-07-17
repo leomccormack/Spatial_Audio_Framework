@@ -458,6 +458,41 @@ void utility_cvvmul
 
 
 /* ========================================================================== */
+/*            Vector-Vector Multiplication and Addition (?vvmuladd)           */
+/* ========================================================================== */
+
+void utility_svvmuladd
+(
+    float* a,
+    const float* b,
+    const int len,
+    float* c
+)
+{
+#if NDEBUG
+    int i;
+    if (len<10e4 && len > 3){
+        for(i=0; i<len-4; i+=4){
+            c[i] += a[i] * b[i];
+            c[i+1] += a[i+1] * b[i+1];
+            c[i+2] += a[i+2] * b[i+2];
+            c[i+3] += a[i+3] * b[i+3];
+        }
+        for(; i<len; i++)
+            c[i] += a[i] * b[i];
+        return;
+    }
+#endif
+#ifdef __ACCELERATE__
+    vtVma(a, b, c, len);
+#else
+    int j;
+    for (j = 0; j < len; j++)
+        c[j] += a[j] * b[j];
+#endif
+}
+
+/* ========================================================================== */
 /*                     Vector-Vector Dot Product (?vvdot)                     */
 /* ========================================================================== */
 

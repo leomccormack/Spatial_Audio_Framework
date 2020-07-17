@@ -21,7 +21,7 @@
  */
 
 /**
- * @file afSTFTlib.c
+ * @file afSTFT_internal.c
  * @brief Slightly modified version of afSTFTlib
  *
  * The original afSTFT code, written by Juha Vilkamo, can be found here:
@@ -150,7 +150,7 @@ void afSTFTlib_init
         afHybridInit(&(h->h_afHybrid), h->hopSize, h->inChannels,h->outChannels);
 }
 
-void afSTFTchannelChange
+void afSTFTlib_channelChange
 (
     void* handle,
     int new_inChannels,
@@ -205,7 +205,7 @@ void afSTFTchannelChange
     }
 }
 
-void afSTFTclearBuffers
+void afSTFTlib_clearBuffers
 (
     void* handle
 )
@@ -229,7 +229,7 @@ void afSTFTclearBuffers
     }
 }
 
-void afSTFTforward
+void afSTFTlib_forward
 (
     void* handle,
     float** inTD,
@@ -281,11 +281,14 @@ void afSTFTforward
                 p3=&(h->fftProcessFrameTD[0]);
                 lr=1;
             }
-#ifdef AFSTFT_USE_SAF_UTILITIES
-//            utility_svvmul(p1, p2, h->hopSize, h->tempHopBuffer);
-//            utility_svvadd(p3, h->tempHopBuffer, h->hopSize, p3);
-            for (j=0;j<h->hopSize;j++)
+#ifdef AFSTFT_USE_SAF_UTILITIES 
+            //utility_svvmuladd(p1, p2, h->hopSize, p3); /* somehow slower... */
+            for (j=0;j<h->hopSize;j+=4){
                 p3[j] += (p1[j])*(p2[j]);
+                p3[j+1] += (p1[j+1])*(p2[j+1]);
+                p3[j+2] += (p1[j+2])*(p2[j+2]);
+                p3[j+3] += (p1[j+3])*(p2[j+3]);
+            }
 #else
             vtVma(p1, p2, p3, h->hopSize);  /* Vector multiply-add */
 #endif
@@ -330,7 +333,7 @@ void afSTFTforward
     }
 }
 
-void afSTFTinverse
+void afSTFTlib_inverse
 (
     void* handle,
     complexVector* inFD,
@@ -358,9 +361,11 @@ void afSTFTinverse
         
         /* Inverse FFT */
 #ifdef AFSTFT_USE_SAF_UTILITIES
-        for(k = 0; k<h->hopSize+1; k++)
-            h->fftProcessFrameFD[k] = cmplxf(inFD[ch].re[k], inFD[ch].im[k]);
-        
+        //for(k = 0; k<h->hopSize+1; k++)
+        //    h->fftProcessFrameFD[k] = cmplxf(inFD[ch].re[k], inFD[ch].im[k]);
+        cblas_scopy(h->hopSize+1, inFD[ch].re, 1, (float*)h->fftProcessFrameFD, 2);
+        cblas_scopy(h->hopSize+1, inFD[ch].im, 1, &((float*)h->fftProcessFrameFD)[1], 2);
+
         /* The low delay mode requires this procedure corresponding to the circular shift of the data in the time domain */
         if (h->LDmode == 1)
             for (k=1; k<h->hopSize; k+=2)
@@ -423,11 +428,13 @@ void afSTFTinverse
             }
  
             /* Overlap-add to the existing data in the memory buffer (from previous frames). */
-#ifdef AFSTFT_USE_SAF_UTILITIES
-//            utility_svvmul(p2, p3, h->hopSize, h->tempHopBuffer);
-//            utility_svvadd(p1, h->tempHopBuffer, h->hopSize, p1);
-            for (j=0;j<h->hopSize;j++)
-                p1[j] += (p2[j])*(p3[j]); 
+#ifdef AFSTFT_USE_SAF_UTILITIES 
+            for (j=0;j<h->hopSize;j+=4){
+                p1[j] += (p2[j])*(p3[j]);
+                p1[j+1] += (p2[j+1])*(p3[j+1]);
+                p1[j+2] += (p2[j+2])*(p3[j+2]);
+                p1[j+3] += (p2[j+3])*(p3[j+3]);
+            }
 #else
             vtVma(p2, p3, p1, h->hopSize); /* Vector multiply-add */
 #endif

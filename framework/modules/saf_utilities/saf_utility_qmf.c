@@ -46,7 +46,7 @@ const double __qmf_fb4bandCoeffs[13] =
 /**
  * Matrix for converting the centre frequencies of the first 3 QMF bands into
  * the centre frequencies for the 10 hybrid bands. */
-static const float qmf2hybCentreFreq[10][QMF_NBANDS_2_SUBDIVIDE] =
+static const float __qmf2hybCentreFreq[10][QMF_NBANDS_2_SUBDIVIDE] =
 { { 0.1013f, 0.0f,    0.0f},
   { 0.2027f, 0.0f,    0.0f},
   { 0.4054f, 0.0f,    0.0f},
@@ -329,7 +329,7 @@ void qmf_analysis
                             h->fb4bandCoeffs, QMF_HYBRID_FILTER_LENGTH,
                             h->hybBuffer[ch][1], 1, &cbeta,
                             subBands2, 1);
-                h->hybQmfTF_frame[6] = subBands2[1];
+                h->hybQmfTF_frame[6] = subBands2[1]; /* Flipped! */
                 h->hybQmfTF_frame[7] = subBands2[0];
 
                 /* Subdivide third QMF band to get hybrid bands 9 and 10 */
@@ -432,7 +432,7 @@ void qmf_synthesis
             /* Shift samples to the right by 2*hopsize */
             memmove(&(h->buffer_syn[ch][h->hopsize*2]), h->buffer_syn[ch], h->hopsize * 18 * sizeof(float));
 
-            /* Apply complex-QMF synthesis modulators and copy to beginning of buffer */
+            /* Apply complex-QMF synthesis modulators */
             cblas_scopy(h->hopsize, (float*)h->qmfTF_frame, 2, h->qmfTF_frame_tmp, 1); /* creal(h->qmfTF_frame) */
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, h->hopsize*2, 1, h->hopsize, 1.0f,
                         FLATTEN2D(h->h_s_real), h->hopsize,
@@ -471,6 +471,76 @@ void qmf_synthesis
             utility_svvadd(&dataTD[ch][t*(h->hopsize)], &(h->buffer_win[h->hopsize*9]), h->hopsize, &dataTD[ch][t*(h->hopsize)]);
         }
     }
+}
+
+void qmf_channelChange
+(
+    void * const hQMF,
+    int new_nCHin,
+    int new_nCHout
+)
+{
+    qmf_data *h = (qmf_data*)(hQMF);
+    int i;
+
+    if(h->nCHin!=new_nCHin){
+        /* resize hybrid analysis buffers */
+        if(h->hybridmode){
+            h->qmfDelayBuffer = (float_complex***)realloc3d_r((void***)h->qmfDelayBuffer, new_nCHin, h->hopsize-QMF_NBANDS_2_SUBDIVIDE,
+                                                              (QMF_HYBRID_FILTER_LENGTH-1)/2 + 1, h->nCHin, h->hopsize-QMF_NBANDS_2_SUBDIVIDE,
+                                                              (QMF_HYBRID_FILTER_LENGTH-1)/2 + 1, sizeof(float_complex));
+            h->hybBuffer = (float_complex***)realloc3d_r((void***)h->hybBuffer, new_nCHin, QMF_NBANDS_2_SUBDIVIDE,
+                                                         QMF_HYBRID_FILTER_LENGTH, h->nCHin, QMF_NBANDS_2_SUBDIVIDE,
+                                                         QMF_HYBRID_FILTER_LENGTH, sizeof(float_complex));
+
+            /* zero any new channels */
+            for(i=h->nCHin; i<new_nCHin; i++){
+                memset(FLATTEN2D(h->qmfDelayBuffer[i]), 0, (h->hopsize-QMF_NBANDS_2_SUBDIVIDE) * ((QMF_HYBRID_FILTER_LENGTH-1)/2 + 1) * sizeof(float_complex));
+                memset(FLATTEN2D(h->hybBuffer[i]), 0, QMF_NBANDS_2_SUBDIVIDE * QMF_HYBRID_FILTER_LENGTH * sizeof(float_complex));
+            }
+        }
+
+        /* resize analysis buffers */
+        for(i=new_nCHin; i<h->nCHin; i++)
+            free(h->buffer_ana[i]);
+        h->buffer_ana = (float**)realloc1d(h->buffer_ana, sizeof(float*)*new_nCHin);
+        for(i=h->nCHin; i<new_nCHin; i++)
+            h->buffer_ana[i] = (float*)calloc1d(h->hopsize * 10,sizeof(float));
+
+        h->nCHin = new_nCHin;
+    }
+
+    if(h->nCHout!=new_nCHout){
+        /* resize synthesis buffers */
+        for(i=new_nCHout; i<h->nCHout; i++)
+            free(h->buffer_syn[i]);
+        h->buffer_syn = (float**)realloc1d(h->buffer_syn, sizeof(float*)*new_nCHout);
+        for(i=h->nCHout; i<new_nCHout; i++)
+            h->buffer_syn[i] = (float*)calloc1d(h->hopsize * 20, sizeof(float));
+
+        h->nCHout = new_nCHout;
+    }
+}
+
+void qmf_clearBuffers
+(
+    void * const hQMF
+)
+{
+    qmf_data *h = (qmf_data*)(hQMF);
+    int i;
+
+    /* flush analysis buffers */
+    for(i=0; i<h->nCHin; i++)
+        memset(h->buffer_ana[i], 0, h->hopsize * 10 * sizeof(float));
+    if(h->hybridmode){
+        memset(FLATTEN3D(h->qmfDelayBuffer), 0, h->nCHin*(h->hopsize-QMF_NBANDS_2_SUBDIVIDE)* ((QMF_HYBRID_FILTER_LENGTH-1)/2 + 1)*sizeof(float_complex));
+        memset(FLATTEN3D(h->hybBuffer), 0, h->nCHin*QMF_NBANDS_2_SUBDIVIDE*QMF_HYBRID_FILTER_LENGTH*sizeof(float_complex));
+    }
+
+    /* flush synthesis buffers */
+    for(i=0; i<h->nCHout; i++)
+        memset(h->buffer_syn[i], 0, h->hopsize * 20 * sizeof(float));
 }
 
 int qmf_getProcDelay
@@ -517,16 +587,16 @@ void qmf_getCentreFreqs
         for(i=0; i<QMF_NBANDS_2_SUBDIVIDE; i++)
             centreFreqs_qmf[i] = cutoffs[i+1] - (cutoffs[i+1]-cutoffs[i])/2.0f;
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 10, 1, QMF_NBANDS_2_SUBDIVIDE, 1.0f,
-                    (const float*)qmf2hybCentreFreq, QMF_NBANDS_2_SUBDIVIDE,
+                    (const float*)__qmf2hybCentreFreq, QMF_NBANDS_2_SUBDIVIDE,
                     centreFreqs_qmf, 1, 0.0f,
                     centreFreq, 1);
 
-        /* Remaining centre frequencies are the  */
+        /* Remaining centre frequencies are then QMF centre frequencies 4:end  */
         for(i=10, j=QMF_NBANDS_2_SUBDIVIDE; i<h->nBands; i++, j++)
             centreFreq[i] = cutoffs[j+1] - (cutoffs[j+1]-cutoffs[j])/2.0f;
     }
     else{
-        /* Centre frequencies defined as directly inbetween the cutoff frequencies */
+        /* Centre frequencies are defined as directly inbetween the cutoff frequencies */
         for(i=0; i<hopsize; i++)
             centreFreq[i] = cutoffs[i+1] - (cutoffs[i+1]-cutoffs[i])/2.0f;
     }

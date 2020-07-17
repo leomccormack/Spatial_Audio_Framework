@@ -145,7 +145,7 @@ void test__afSTFT(void){
     /* prep */
     const float acceptedTolerance = 0.01f;
     const int fs = 48000;
-    const int signalLength = 1*fs;
+    const int signalLength = 100*fs;
     const int framesize = 512;
     const int hopsize = 128;
     const int nCHin = 60;
@@ -160,13 +160,19 @@ void test__afSTFT(void){
     /* Set-up */
     nHops = framesize/hopsize;
     afSTFT_create(&hSTFT, nCHin, nCHout, hopsize, 0, hybridMode, AFSTFT_BANDS_CH_TIME);
-    nBands = 133;
     procDelay = afSTFT_getProcDelay(hSTFT);
-    //nBands = afSTFT_getNBands(hSTFT);
+    nBands = afSTFT_getNBands(hSTFT);
     freqVector = malloc1d(nBands*sizeof(float));
-    //afSTFT_getCentreFreqs(hSTFT, (float)fs, nBands, freqVector);
+    afSTFT_getCentreFreqs(hSTFT, (float)fs, nBands, freqVector);
     inspec = (float_complex***)malloc3d(nBands, nCHin, nHops, sizeof(float_complex));
     outspec = (float_complex***)malloc3d(nBands, nCHout, nHops, sizeof(float_complex));
+
+    /* just messing around... */
+    afSTFT_channelChange(hSTFT, 100, 5);
+    afSTFT_clearBuffers(hSTFT);
+    afSTFT_channelChange(hSTFT, 39, 81);
+    afSTFT_channelChange(hSTFT, nCHin, nCHout); /* back to original config */
+    afSTFT_clearBuffers(hSTFT);
 
     /* Pass insig through the QMF filterbank, block-wise processing */
     nFrames = (int)((float)signalLength/(float)framesize);

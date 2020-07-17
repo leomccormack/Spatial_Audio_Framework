@@ -79,8 +79,20 @@ extern const double __afCenterFreq48e3[133];
  */
 extern const double __afCenterFreq44100[133];
 
+/**
+ * Creates an instance of the qmf filterbank
+ *
+ * @test test__afSTFT()
+ *
+ * @param[in] phQMF      (&) address of qmf handle
+ * @param[in] nCHin      Number of input channels
+ * @param[in] nCHout     Number of output channels
+ * @param[in] hopsize    Hop size, in samples
+ * @param[in] hybridmode 0: disabled, 1: hybrid-filtering enabled
+ * @param[in] format     frequency-domain frame format, see #_QMF_FDDATA_FORMAT
+ *                       enum
+ */
 // * @test test__afSTFT()
-
 void afSTFT_create(void ** const phSTFT,
                    int nCHin,
                    int nCHout,
@@ -101,7 +113,25 @@ void afSTFT_backward(void * const hSTFT,
                      int framesize,
                      float** dataTD);
 
+
+/**
+ * Re-allocates memory to support a change in the number of input/output
+ * channels */
+void afSTFT_channelChange(void * const hSTFT, int new_nCHin, int new_nCHout);
+
+/**
+ * Flushes time-domain buffers with zeros. */
+void afSTFT_clearBuffers(void * const hSTFT);
+
+int afSTFT_getNBands(void * const hSTFT);
+
 int afSTFT_getProcDelay(void * const hSTFT);
+
+
+void afSTFT_getCentreFreqs(void * const hSTFT,
+                           float fs,
+                           int nBands,
+                           float* freqVector);
 
 
 #ifdef __cplusplus
