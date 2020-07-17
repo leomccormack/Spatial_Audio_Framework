@@ -78,15 +78,6 @@ typedef enum _AFSTFT_FDDATA_FORMAT{
 }AFSTFT_FDDATA_FORMAT;
     
 /**
- * afSTFT centre frequencies for 128 hop size and hybrid-mode enabled (48kHz)
- */
-extern const double __afCenterFreq48e3[133];
-/**
- * afSTFT centre frequencies for 128 hop size and hybrid-mode enabled (44.1kHz)
- */
-extern const double __afCenterFreq44100[133];
-
-/**
  * Creates an instance of afSTFT
  *
  * @test test__afSTFT()

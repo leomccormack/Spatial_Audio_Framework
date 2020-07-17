@@ -55,17 +55,10 @@ void binauraliser_create
 
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->STFTInputFrameTF = malloc1d(MAX_NUM_INPUTS * sizeof(complexVector));
-    for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
-    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_INPUTS, NUM_EARS), HOP_SIZE, sizeof(float));
-    pData->STFTOutputFrameTF = malloc1d(NUM_EARS*sizeof(complexVector));
-    for(ch=0; ch< NUM_EARS; ch++) {
-        pData->STFTOutputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTOutputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
+    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, FRAME_SIZE, sizeof(float));
+    pData->outframeTD = (float**)malloc2d(NUM_EARS, FRAME_SIZE, sizeof(float));
+    pData->inputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
+    pData->outputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
     
     /* hrir data */
     pData->useDefaultHRIRsFLAG=1;
@@ -101,7 +94,6 @@ void binauraliser_destroy
 )
 {
     binauraliser_data *pData = (binauraliser_data*)(*phBin);
-    int ch;
 
     if (pData != NULL) {
         /* not safe to free memory during intialisation/processing loop */
@@ -112,18 +104,11 @@ void binauraliser_destroy
         
         /* free afSTFT and buffers */
         if(pData->hSTFT !=NULL)
-            afSTFTfree(pData->hSTFT);
-        for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
-            free(pData->STFTInputFrameTF[ch].re);
-            free(pData->STFTInputFrameTF[ch].im);
-        }
-        for (ch = 0; ch< NUM_EARS; ch++) {
-            free(pData->STFTOutputFrameTF[ch].re);
-            free(pData->STFTOutputFrameTF[ch].im);
-        }
-        free(pData->STFTInputFrameTF);
-        free(pData->STFTOutputFrameTF);
-        free(pData->tempHopFrameTD);
+            afSTFT_destroy(&(pData->hSTFT));
+        free(pData->inputFrameTD);
+        free(pData->outframeTD);
+        free(pData->inputframeTF);
+        free(pData->outputframeTF);
         free(pData->hrtf_vbap_gtableComp);
         free(pData->hrtf_vbap_gtableIdx);
         free(pData->hrtf_fb);
@@ -145,16 +130,11 @@ void binauraliser_init
 )
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    int band;
     
     /* define frequency vector */
     pData->fs = sampleRate;
-    for(band=0; band <HYBRID_BANDS; band++){
-        if(sampleRate == 44100)
-            pData->freqVector[band] =  (float)__afCenterFreq44100[band];
-        else
-            pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
-    }
+    afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
+
     /* defaults */
     pData->recalc_M_rotFLAG = 1;
 }
@@ -225,16 +205,8 @@ void binauraliser_process
         for(; i<nSources; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 
-
         /* Apply time-frequency transform (TFT) */
-        for(t=0; t< TIME_SLOTS; t++) {
-            for(ch = 0; ch < nSources; ch++)
-                utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
-            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
-            for(band=0; band<HYBRID_BANDS; band++)
-                for(ch=0; ch < nSources; ch++)
-                    pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
-        }
+        afSTFT_forward(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, pData->inputframeTF);
 
         /* Main processing: */
         /* Rotate source directions */
@@ -281,19 +253,13 @@ void binauraliser_process
                     pData->outputframeTF[band][ear][t] = crmulf(pData->outputframeTF[band][ear][t], 1.0f/sqrtf((float)nSources));
 
         /* inverse-TFT */
-        for (t = 0; t < TIME_SLOTS; t++) {
-            for (band = 0; band < HYBRID_BANDS; band++) {
-                for (ch = 0; ch < NUM_EARS; ch++) {
-                    pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->outputframeTF[band][ch][t]);
-                    pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->outputframeTF[band][ch][t]);
-                }
-            }
-            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
-            for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
-                utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
-            for (; ch < nOutputs; ch++)
-                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
-        }
+        afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outframeTD);
+
+        /* Copy to output buffer */
+        for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
+            utility_svvcopy(pData->outframeTD[ch], FRAME_SIZE, outputs[ch]);
+        for (; ch < nOutputs; ch++)
+            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
     }
     else{
         for (ch=0; ch < nOutputs; ch++)

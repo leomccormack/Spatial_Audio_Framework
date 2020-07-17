@@ -71,10 +71,10 @@ void array2sh_initTFT
     new_nSH = (pData->new_order+1)*(pData->new_order+1);
     nSH = (pData->order+1)*(pData->order+1);
     if(pData->hSTFT==NULL)
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, arraySpecs->newQ, new_nSH, 0, 1);
+        afSTFT_create(&(pData->hSTFT), arraySpecs->newQ, new_nSH, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
     else if(arraySpecs->newQ != arraySpecs->Q || nSH != new_nSH){
-        afSTFTchannelChange(pData->hSTFT, arraySpecs->newQ, new_nSH);
-        afSTFTclearBuffers(pData->hSTFT); 
+        afSTFT_channelChange(pData->hSTFT, arraySpecs->newQ, new_nSH);
+        afSTFT_clearBuffers(pData->hSTFT); 
         pData->reinitSHTmatrixFLAG = 1; /* filters will need to be updated too */
     }
     arraySpecs->Q = arraySpecs->newQ;

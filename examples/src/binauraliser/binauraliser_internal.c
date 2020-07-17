@@ -170,10 +170,10 @@ void binauraliser_initTFT
     binauraliser_data *pData = (binauraliser_data*)(hBin);
  
     if(pData->hSTFT==NULL)
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSources, NUM_EARS, 0, 1);
+        afSTFT_create(&(pData->hSTFT), pData->new_nSources, NUM_EARS, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
     else if(pData->new_nSources!=pData->nSources){
-        afSTFTchannelChange(pData->hSTFT, pData->new_nSources, NUM_EARS);
-        afSTFTclearBuffers(pData->hSTFT);
+        afSTFT_channelChange(pData->hSTFT, pData->new_nSources, NUM_EARS);
+        afSTFT_clearBuffers(pData->hSTFT);
     }
     pData->nSources = pData->new_nSources;
 }

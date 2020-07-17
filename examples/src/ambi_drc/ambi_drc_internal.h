@@ -74,13 +74,10 @@ extern "C" {
 typedef struct _ambi_drc
 { 
     /* audio buffers and afSTFT handle */
-    float inputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
-    float_complex inputFrameTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    float_complex outputFrameTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    void* hSTFT; 
-    complexVector* STFTInputFrameTF;
-    complexVector* STFTOutputFrameTF;    
-    float** tempHopFrameTD;
+    float** frameTD;
+    float_complex*** inputFrameTF;
+    float_complex*** outputFrameTF;
+    void* hSTFT;
     float freqVector[HYBRID_BANDS];
 
     /* internal */

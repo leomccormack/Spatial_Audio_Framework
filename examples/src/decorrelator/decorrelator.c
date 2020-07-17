@@ -31,7 +31,6 @@ void decorrelator_create
 {
     decorrelator_data* pData = (decorrelator_data*)malloc1d(sizeof(decorrelator_data));
     *phDecor = (void*)pData;
-    int ch;
 
     /* default user parameters */
     pData->nChannels = 1;
@@ -39,17 +38,8 @@ void decorrelator_create
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
-    pData->STFTOutputFrameTF = malloc1d(MAX_NUM_OUTPUTS * sizeof(complexVector));
-    for(ch=0; ch< MAX_NUM_OUTPUTS; ch++) {
-        pData->STFTOutputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTOutputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
-    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_INPUTS, MAX_NUM_OUTPUTS), HOP_SIZE, sizeof(float));
-    pData->STFTInputFrameTF = malloc1d(MAX_NUM_INPUTS * sizeof(complexVector));
-    for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
+    pData->InputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, FRAME_SIZE, sizeof(float));
+    pData->OutputFrameTD = (float**)malloc2d(MAX_NUM_OUTPUTS, FRAME_SIZE, sizeof(float));
     pData->InputFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
     pData->OutputFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
 
@@ -73,7 +63,6 @@ void decorrelator_destroy
 )
 {
     decorrelator_data *pData = (decorrelator_data*)(*phDecor);
-    int ch;
     
     if (pData != NULL) {
         /* not safe to free memory during intialisation/processing loop */
@@ -84,20 +73,9 @@ void decorrelator_destroy
         
         /* free afSTFT and buffers */ 
         if(pData->hSTFT!=NULL)
-            afSTFTfree(pData->hSTFT);
-        if(pData->STFTInputFrameTF!=NULL){
-            for (ch = 0; ch< MAX_NUM_INPUTS; ch++) {
-                free(pData->STFTInputFrameTF[ch].re);
-                free(pData->STFTInputFrameTF[ch].im);
-            }
-        }
-        for (ch = 0; ch< MAX_NUM_OUTPUTS; ch++) {
-            free(pData->STFTOutputFrameTF[ch].re);
-            free(pData->STFTOutputFrameTF[ch].im);
-        }
-        free(pData->STFTInputFrameTF);
-        free(pData->STFTOutputFrameTF);
-        free(pData->tempHopFrameTD);
+            afSTFT_destroy(&(pData->hSTFT));
+        free(pData->InputFrameTD);
+        free(pData->OutputFrameTD);
         free(pData->InputFrameTF);
         free(pData->OutputFrameTF);
         free(pData->progressBarText);
@@ -120,16 +98,10 @@ void decorrelator_init
 )
 {
     decorrelator_data *pData = (decorrelator_data*)(hDecor);
-    int band;
     
     /* define frequency vector */
     pData->fs = sampleRate;
-    for(band=0; band <HYBRID_BANDS; band++){
-        if(sampleRate == 44100)
-            pData->freqVector[band] =  (float)__afCenterFreq44100[band];
-        else /* Assume 48kHz */
-            pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
-    }
+    afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
 }
 
 void decorrelator_initCodec
@@ -156,10 +128,10 @@ void decorrelator_initCodec
     /* (Re)Initialise afSTFT */
     nChannels = pData->new_nChannels; 
     if(pData->hSTFT==NULL)
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, nChannels, nChannels, 0, 1);
+        afSTFT_create(&(pData->hSTFT), nChannels, nChannels, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
     else if(pData->nChannels != nChannels) {/* Or change the number of channels */
-        afSTFTchannelChange(pData->hSTFT, nChannels, nChannels);
-        afSTFTclearBuffers(pData->hSTFT);
+        afSTFT_channelChange(pData->hSTFT, nChannels, nChannels);
+        afSTFT_clearBuffers(pData->hSTFT);
     }
     pData->nChannels = nChannels;
 
@@ -215,14 +187,7 @@ void decorrelator_process
             memset(pData->InputFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
 
         /* Apply time-frequency transform (TFT) */
-        for(t=0; t< TIME_SLOTS; t++) {
-            for(ch = 0; ch < nCH; ch++)
-                utility_svvcopy(&(pData->InputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
-            afSTFTforward(pData->hSTFT, pData->tempHopFrameTD, pData->STFTInputFrameTF);
-            for(band=0; band<HYBRID_BANDS; band++)
-                for(ch=0; ch < nCH; ch++)
-                    pData->InputFrameTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
-        }
+        afSTFT_forward(pData->hSTFT, pData->InputFrameTD, FRAME_SIZE, pData->InputFrameTF);
 
         /* Main processing: */
         if(pData->enableTransientDucker){
@@ -234,27 +199,13 @@ void decorrelator_process
         latticeDecorrelator_apply(pData->hDec2, pData->OutputFrameTF, TIME_SLOTS, pData->OutputFrameTF);
 
         /* inverse-TFT */
-        for(t = 0; t < TIME_SLOTS; t++) {
-            for(band = 0; band < HYBRID_BANDS; band++) {
-                for(ch = 0; ch < nCH; ch++) {
-#if 0 /* Used during debugging */
-                    if(ch==0){
-                        pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->InputFrameTF[band][ch][t]);
-                        pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->InputFrameTF[band][ch][t]);
-                    }
-                    else{ ...
-#endif
-                    pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->OutputFrameTF[band][ch][t]);
-                    pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->OutputFrameTF[band][ch][t]);
+        afSTFT_backward(pData->hSTFT, pData->OutputFrameTF, FRAME_SIZE, pData->OutputFrameTD);
 
-                }
-            }
-            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
-            for (ch = 0; ch < MIN(nCH, nOutputs); ch++)
-                utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
-            for (; ch < nOutputs; ch++)
-                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
-        }
+        /* Copy to output buffer */
+        for (ch = 0; ch < MIN(nCH, nOutputs); ch++)
+            utility_svvcopy(pData->OutputFrameTD[ch], FRAME_SIZE, outputs[ch]);
+        for (; ch < nOutputs; ch++)
+            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
     }
     else
         for (ch=0; ch < nOutputs; ch++)

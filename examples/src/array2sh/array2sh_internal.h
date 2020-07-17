@@ -96,14 +96,10 @@ typedef struct _array2sh_arrayPars {
 typedef struct _array2sh
 {
     /* audio buffers */
-    float inputFrameTD[MAX_NUM_SENSORS][FRAME_SIZE];
-    float SHframeTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float_complex inputframeTF[HYBRID_BANDS][MAX_NUM_SENSORS][TIME_SLOTS];
-    float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    complexVector* STFTInputFrameTF;
-    complexVector* STFTOutputFrameTF;
-    float** tempHopFrameTD_in;
-    float** tempHopFrameTD_out;
+    float** inputFrameTD;
+    float** SHframeTD;
+    float_complex*** inputframeTF;
+    float_complex*** SHframeTF;
     
     /* intermediates */
     double_complex bN_modal[HYBRID_BANDS][MAX_SH_ORDER + 1];

@@ -62,14 +62,12 @@ typedef struct _decorrelator
 {
     /* audio buffers + afSTFT time-frequency transform handle */
     int fs;                         /**< host sampling rate */ 
-    float InputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float** InputFrameTD;
+    float** OutputFrameTD;
     float_complex*** InputFrameTF;
     float_complex*** OutputFrameTF;
-    complexVector* STFTInputFrameTF;
-    complexVector* STFTOutputFrameTF;
     void* hSTFT;                    /**< afSTFT handle */
-    int afSTFTdelay;                /**< for host delay compensation */
-    float** tempHopFrameTD;         /**< temporary multi-channel time-domain buffer of size "HOP_SIZE". */
+    int afSTFTdelay;                /**< for host delay compensation */ 
     float freqVector[HYBRID_BANDS]; /**< frequency vector for time-frequency transform, in Hz */
      
     /* our codec configuration */

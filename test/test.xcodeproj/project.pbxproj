@@ -48,6 +48,35 @@
 		50E3DE9624C1B81300589B17 /* ambi_bin.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DE5F24C1B81200589B17 /* ambi_bin.c */; };
 		50E3DEB124C1BC1B00589B17 /* ambi_dec_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEAE24C1BC1B00589B17 /* ambi_dec_internal.c */; };
 		50E3DEB224C1BC1B00589B17 /* ambi_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEAF24C1BC1B00589B17 /* ambi_dec.c */; };
+		50E3DEB724C1C36E00589B17 /* ambi_drc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEB424C1C36D00589B17 /* ambi_drc.c */; };
+		50E3DEB824C1C36E00589B17 /* ambi_drc_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEB624C1C36D00589B17 /* ambi_drc_internal.c */; };
+		50E3DEBD24C1C56800589B17 /* ambi_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEBA24C1C56800589B17 /* ambi_enc.c */; };
+		50E3DEBE24C1C56800589B17 /* ambi_enc_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEBC24C1C56800589B17 /* ambi_enc_internal.c */; };
+		50E3DEC324C1C5AB00589B17 /* array2sh_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEC024C1C5AB00589B17 /* array2sh_internal.c */; };
+		50E3DEC424C1C5AB00589B17 /* array2sh.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEC124C1C5AB00589B17 /* array2sh.c */; };
+		50E3DEDD24C1C80C00589B17 /* dirass_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEC624C1C80B00589B17 /* dirass_internal.c */; };
+		50E3DEDE24C1C80C00589B17 /* dirass.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEC724C1C80B00589B17 /* dirass.c */; };
+		50E3DEDF24C1C80C00589B17 /* pitch_shifter_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DECA24C1C80B00589B17 /* pitch_shifter_internal.c */; };
+		50E3DEE024C1C80C00589B17 /* pitch_shifter.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DECB24C1C80B00589B17 /* pitch_shifter.c */; };
+		50E3DEE124C1C80C00589B17 /* rotator_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DECE24C1C80B00589B17 /* rotator_internal.c */; };
+		50E3DEE224C1C80C00589B17 /* rotator.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DECF24C1C80B00589B17 /* rotator.c */; };
+		50E3DEE324C1C80C00589B17 /* beamformer.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DED324C1C80B00589B17 /* beamformer.c */; };
+		50E3DEE424C1C80C00589B17 /* beamformer_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DED424C1C80B00589B17 /* beamformer_internal.c */; };
+		50E3DEE524C1C80C00589B17 /* multiconv_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DED624C1C80B00589B17 /* multiconv_internal.c */; };
+		50E3DEE624C1C80C00589B17 /* multiconv.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DED724C1C80B00589B17 /* multiconv.c */; };
+		50E3DEE724C1C80C00589B17 /* matrixconv_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEDB24C1C80C00589B17 /* matrixconv_internal.c */; };
+		50E3DEE824C1C80C00589B17 /* matrixconv.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEDC24C1C80C00589B17 /* matrixconv.c */; };
+		50E3DEED24C1D16400589B17 /* binauraliser_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEEA24C1D16400589B17 /* binauraliser_internal.c */; };
+		50E3DEEE24C1D16400589B17 /* binauraliser.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEEB24C1D16400589B17 /* binauraliser.c */; };
+		50E3DEF324C1D3A900589B17 /* decorrelator.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEF124C1D3A900589B17 /* decorrelator.c */; };
+		50E3DEF424C1D3A900589B17 /* decorrelator_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEF224C1D3A900589B17 /* decorrelator_internal.c */; };
+		50E3DF0324C1D4EA00589B17 /* panner_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEF624C1D4EA00589B17 /* panner_internal.c */; };
+		50E3DF0424C1D4EA00589B17 /* panner.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEF724C1D4EA00589B17 /* panner.c */; };
+		50E3DF0524C1D4EA00589B17 /* sldoa_database.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEFB24C1D4EA00589B17 /* sldoa_database.c */; };
+		50E3DF0624C1D4EA00589B17 /* sldoa.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEFC24C1D4EA00589B17 /* sldoa.c */; };
+		50E3DF0724C1D4EA00589B17 /* sldoa_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEFD24C1D4EA00589B17 /* sldoa_internal.c */; };
+		50E3DF0824C1D4EA00589B17 /* powermap.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DF0124C1D4EA00589B17 /* powermap.c */; };
+		50E3DF0924C1D4EA00589B17 /* powermap_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DF0224C1D4EA00589B17 /* powermap_internal.c */; };
 		50E5CD1624AF3E5800019898 /* saf_utility_geometry.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */; };
 		50E5CDAA24B4580900019898 /* saf_utility_latticeCoeffs.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */; };
 /* End PBXBuildFile section */
@@ -170,6 +199,50 @@
 		50E3DEAE24C1BC1B00589B17 /* ambi_dec_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ambi_dec_internal.c; sourceTree = "<group>"; };
 		50E3DEAF24C1BC1B00589B17 /* ambi_dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ambi_dec.c; sourceTree = "<group>"; };
 		50E3DEB024C1BC1B00589B17 /* ambi_dec_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ambi_dec_internal.h; sourceTree = "<group>"; };
+		50E3DEB424C1C36D00589B17 /* ambi_drc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ambi_drc.c; sourceTree = "<group>"; };
+		50E3DEB524C1C36D00589B17 /* ambi_drc_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ambi_drc_internal.h; sourceTree = "<group>"; };
+		50E3DEB624C1C36D00589B17 /* ambi_drc_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ambi_drc_internal.c; sourceTree = "<group>"; };
+		50E3DEBA24C1C56800589B17 /* ambi_enc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ambi_enc.c; sourceTree = "<group>"; };
+		50E3DEBB24C1C56800589B17 /* ambi_enc_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ambi_enc_internal.h; sourceTree = "<group>"; };
+		50E3DEBC24C1C56800589B17 /* ambi_enc_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ambi_enc_internal.c; sourceTree = "<group>"; };
+		50E3DEC024C1C5AB00589B17 /* array2sh_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = array2sh_internal.c; sourceTree = "<group>"; };
+		50E3DEC124C1C5AB00589B17 /* array2sh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = array2sh.c; sourceTree = "<group>"; };
+		50E3DEC224C1C5AB00589B17 /* array2sh_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = array2sh_internal.h; sourceTree = "<group>"; };
+		50E3DEC624C1C80B00589B17 /* dirass_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dirass_internal.c; sourceTree = "<group>"; };
+		50E3DEC724C1C80B00589B17 /* dirass.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dirass.c; sourceTree = "<group>"; };
+		50E3DEC824C1C80B00589B17 /* dirass_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dirass_internal.h; sourceTree = "<group>"; };
+		50E3DECA24C1C80B00589B17 /* pitch_shifter_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pitch_shifter_internal.c; sourceTree = "<group>"; };
+		50E3DECB24C1C80B00589B17 /* pitch_shifter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pitch_shifter.c; sourceTree = "<group>"; };
+		50E3DECC24C1C80B00589B17 /* pitch_shifter_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pitch_shifter_internal.h; sourceTree = "<group>"; };
+		50E3DECE24C1C80B00589B17 /* rotator_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rotator_internal.c; sourceTree = "<group>"; };
+		50E3DECF24C1C80B00589B17 /* rotator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rotator.c; sourceTree = "<group>"; };
+		50E3DED024C1C80B00589B17 /* rotator_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rotator_internal.h; sourceTree = "<group>"; };
+		50E3DED224C1C80B00589B17 /* beamformer_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = beamformer_internal.h; sourceTree = "<group>"; };
+		50E3DED324C1C80B00589B17 /* beamformer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = beamformer.c; sourceTree = "<group>"; };
+		50E3DED424C1C80B00589B17 /* beamformer_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = beamformer_internal.c; sourceTree = "<group>"; };
+		50E3DED624C1C80B00589B17 /* multiconv_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = multiconv_internal.c; sourceTree = "<group>"; };
+		50E3DED724C1C80B00589B17 /* multiconv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = multiconv.c; sourceTree = "<group>"; };
+		50E3DED824C1C80B00589B17 /* multiconv_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = multiconv_internal.h; sourceTree = "<group>"; };
+		50E3DEDA24C1C80C00589B17 /* matrixconv_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = matrixconv_internal.h; sourceTree = "<group>"; };
+		50E3DEDB24C1C80C00589B17 /* matrixconv_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = matrixconv_internal.c; sourceTree = "<group>"; };
+		50E3DEDC24C1C80C00589B17 /* matrixconv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = matrixconv.c; sourceTree = "<group>"; };
+		50E3DEEA24C1D16400589B17 /* binauraliser_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = binauraliser_internal.c; sourceTree = "<group>"; };
+		50E3DEEB24C1D16400589B17 /* binauraliser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = binauraliser.c; sourceTree = "<group>"; };
+		50E3DEEC24C1D16400589B17 /* binauraliser_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = binauraliser_internal.h; sourceTree = "<group>"; };
+		50E3DEF024C1D3A900589B17 /* decorrelator_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decorrelator_internal.h; sourceTree = "<group>"; };
+		50E3DEF124C1D3A900589B17 /* decorrelator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = decorrelator.c; sourceTree = "<group>"; };
+		50E3DEF224C1D3A900589B17 /* decorrelator_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = decorrelator_internal.c; sourceTree = "<group>"; };
+		50E3DEF624C1D4EA00589B17 /* panner_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = panner_internal.c; sourceTree = "<group>"; };
+		50E3DEF724C1D4EA00589B17 /* panner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = panner.c; sourceTree = "<group>"; };
+		50E3DEF824C1D4EA00589B17 /* panner_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = panner_internal.h; sourceTree = "<group>"; };
+		50E3DEFA24C1D4EA00589B17 /* sldoa_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sldoa_internal.h; sourceTree = "<group>"; };
+		50E3DEFB24C1D4EA00589B17 /* sldoa_database.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sldoa_database.c; sourceTree = "<group>"; };
+		50E3DEFC24C1D4EA00589B17 /* sldoa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sldoa.c; sourceTree = "<group>"; };
+		50E3DEFD24C1D4EA00589B17 /* sldoa_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sldoa_internal.c; sourceTree = "<group>"; };
+		50E3DEFE24C1D4EA00589B17 /* sldoa_database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sldoa_database.h; sourceTree = "<group>"; };
+		50E3DF0024C1D4EA00589B17 /* powermap_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = powermap_internal.h; sourceTree = "<group>"; };
+		50E3DF0124C1D4EA00589B17 /* powermap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = powermap.c; sourceTree = "<group>"; };
+		50E3DF0224C1D4EA00589B17 /* powermap_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = powermap_internal.c; sourceTree = "<group>"; };
 		50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_geometry.c; sourceTree = "<group>"; };
 		50E5CD1524AF3E5800019898 /* saf_utility_geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_geometry.h; sourceTree = "<group>"; };
 		50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_latticeCoeffs.c; sourceTree = "<group>"; };
@@ -470,6 +543,20 @@
 			children = (
 				50E3DE5C24C1B81200589B17 /* ambi_bin */,
 				50E3DEAD24C1BC1B00589B17 /* ambi_dec */,
+				50E3DEB324C1C36D00589B17 /* ambi_drc */,
+				50E3DEB924C1C56800589B17 /* ambi_enc */,
+				50E3DEBF24C1C5AB00589B17 /* array2sh */,
+				50E3DED124C1C80B00589B17 /* beamformer */,
+				50E3DEE924C1D16400589B17 /* binauraliser */,
+				50E3DEEF24C1D3A900589B17 /* decorrelator */,
+				50E3DEC524C1C80B00589B17 /* dirass */,
+				50E3DED924C1C80C00589B17 /* matrixconv */,
+				50E3DED524C1C80B00589B17 /* multiconv */,
+				50E3DEF524C1D4EA00589B17 /* panner */,
+				50E3DEC924C1C80B00589B17 /* pitch_shifter */,
+				50E3DEFF24C1D4EA00589B17 /* powermap */,
+				50E3DECD24C1C80B00589B17 /* rotator */,
+				50E3DEF924C1D4EA00589B17 /* sldoa */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -492,6 +579,148 @@
 				50E3DEB024C1BC1B00589B17 /* ambi_dec_internal.h */,
 			);
 			path = ambi_dec;
+			sourceTree = "<group>";
+		};
+		50E3DEB324C1C36D00589B17 /* ambi_drc */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DEB424C1C36D00589B17 /* ambi_drc.c */,
+				50E3DEB524C1C36D00589B17 /* ambi_drc_internal.h */,
+				50E3DEB624C1C36D00589B17 /* ambi_drc_internal.c */,
+			);
+			path = ambi_drc;
+			sourceTree = "<group>";
+		};
+		50E3DEB924C1C56800589B17 /* ambi_enc */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DEBA24C1C56800589B17 /* ambi_enc.c */,
+				50E3DEBB24C1C56800589B17 /* ambi_enc_internal.h */,
+				50E3DEBC24C1C56800589B17 /* ambi_enc_internal.c */,
+			);
+			path = ambi_enc;
+			sourceTree = "<group>";
+		};
+		50E3DEBF24C1C5AB00589B17 /* array2sh */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DEC024C1C5AB00589B17 /* array2sh_internal.c */,
+				50E3DEC124C1C5AB00589B17 /* array2sh.c */,
+				50E3DEC224C1C5AB00589B17 /* array2sh_internal.h */,
+			);
+			path = array2sh;
+			sourceTree = "<group>";
+		};
+		50E3DEC524C1C80B00589B17 /* dirass */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DEC624C1C80B00589B17 /* dirass_internal.c */,
+				50E3DEC724C1C80B00589B17 /* dirass.c */,
+				50E3DEC824C1C80B00589B17 /* dirass_internal.h */,
+			);
+			path = dirass;
+			sourceTree = "<group>";
+		};
+		50E3DEC924C1C80B00589B17 /* pitch_shifter */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DECA24C1C80B00589B17 /* pitch_shifter_internal.c */,
+				50E3DECB24C1C80B00589B17 /* pitch_shifter.c */,
+				50E3DECC24C1C80B00589B17 /* pitch_shifter_internal.h */,
+			);
+			path = pitch_shifter;
+			sourceTree = "<group>";
+		};
+		50E3DECD24C1C80B00589B17 /* rotator */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DECE24C1C80B00589B17 /* rotator_internal.c */,
+				50E3DECF24C1C80B00589B17 /* rotator.c */,
+				50E3DED024C1C80B00589B17 /* rotator_internal.h */,
+			);
+			path = rotator;
+			sourceTree = "<group>";
+		};
+		50E3DED124C1C80B00589B17 /* beamformer */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DED224C1C80B00589B17 /* beamformer_internal.h */,
+				50E3DED324C1C80B00589B17 /* beamformer.c */,
+				50E3DED424C1C80B00589B17 /* beamformer_internal.c */,
+			);
+			path = beamformer;
+			sourceTree = "<group>";
+		};
+		50E3DED524C1C80B00589B17 /* multiconv */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DED624C1C80B00589B17 /* multiconv_internal.c */,
+				50E3DED724C1C80B00589B17 /* multiconv.c */,
+				50E3DED824C1C80B00589B17 /* multiconv_internal.h */,
+			);
+			path = multiconv;
+			sourceTree = "<group>";
+		};
+		50E3DED924C1C80C00589B17 /* matrixconv */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DEDA24C1C80C00589B17 /* matrixconv_internal.h */,
+				50E3DEDB24C1C80C00589B17 /* matrixconv_internal.c */,
+				50E3DEDC24C1C80C00589B17 /* matrixconv.c */,
+			);
+			path = matrixconv;
+			sourceTree = "<group>";
+		};
+		50E3DEE924C1D16400589B17 /* binauraliser */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DEEA24C1D16400589B17 /* binauraliser_internal.c */,
+				50E3DEEB24C1D16400589B17 /* binauraliser.c */,
+				50E3DEEC24C1D16400589B17 /* binauraliser_internal.h */,
+			);
+			path = binauraliser;
+			sourceTree = "<group>";
+		};
+		50E3DEEF24C1D3A900589B17 /* decorrelator */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DEF024C1D3A900589B17 /* decorrelator_internal.h */,
+				50E3DEF124C1D3A900589B17 /* decorrelator.c */,
+				50E3DEF224C1D3A900589B17 /* decorrelator_internal.c */,
+			);
+			path = decorrelator;
+			sourceTree = "<group>";
+		};
+		50E3DEF524C1D4EA00589B17 /* panner */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DEF624C1D4EA00589B17 /* panner_internal.c */,
+				50E3DEF724C1D4EA00589B17 /* panner.c */,
+				50E3DEF824C1D4EA00589B17 /* panner_internal.h */,
+			);
+			path = panner;
+			sourceTree = "<group>";
+		};
+		50E3DEF924C1D4EA00589B17 /* sldoa */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DEFA24C1D4EA00589B17 /* sldoa_internal.h */,
+				50E3DEFB24C1D4EA00589B17 /* sldoa_database.c */,
+				50E3DEFC24C1D4EA00589B17 /* sldoa.c */,
+				50E3DEFD24C1D4EA00589B17 /* sldoa_internal.c */,
+				50E3DEFE24C1D4EA00589B17 /* sldoa_database.h */,
+			);
+			path = sldoa;
+			sourceTree = "<group>";
+		};
+		50E3DEFF24C1D4EA00589B17 /* powermap */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DF0024C1D4EA00589B17 /* powermap_internal.h */,
+				50E3DF0124C1D4EA00589B17 /* powermap.c */,
+				50E3DF0224C1D4EA00589B17 /* powermap_internal.c */,
+			);
+			path = powermap;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -551,15 +780,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50E3DF0824C1D4EA00589B17 /* powermap.c in Sources */,
 				50E36076249BDDCC00B74C25 /* saf_sofa_reader.c in Sources */,
 				50E5CDAA24B4580900019898 /* saf_utility_latticeCoeffs.c in Sources */,
 				50E3DEB224C1BC1B00589B17 /* ambi_dec.c in Sources */,
 				50E36063249BDDCC00B74C25 /* saf_hoa.c in Sources */,
 				50E3DE3124BE00F400589B17 /* saf_utility_qmf.c in Sources */,
+				50E3DEE724C1C80C00589B17 /* matrixconv_internal.c in Sources */,
+				50E3DEDF24C1C80C00589B17 /* pitch_shifter_internal.c in Sources */,
 				50E36072249BDDCC00B74C25 /* saf_reverb.c in Sources */,
 				50E36077249BDDCC00B74C25 /* saf_vbap_internal.c in Sources */,
 				50E36066249BDDCC00B74C25 /* saf_utility_fft.c in Sources */,
+				50E3DEC424C1C5AB00589B17 /* array2sh.c in Sources */,
 				50E36064249BDDCC00B74C25 /* saf_utility_sensorarray_presets.c in Sources */,
+				50E3DEEE24C1D16400589B17 /* binauraliser.c in Sources */,
 				50E3DEB124C1BC1B00589B17 /* ambi_dec_internal.c in Sources */,
 				50E36073249BDDCC00B74C25 /* saf_reverb_internal.c in Sources */,
 				50E3606E249BDDCC00B74C25 /* saf_utility_veclib.c in Sources */,
@@ -567,33 +801,57 @@
 				50E3605D249BDDCC00B74C25 /* kiss_fft.c in Sources */,
 				50E3606B249BDDCC00B74C25 /* saf_utility_filters.c in Sources */,
 				50E36065249BDDCC00B74C25 /* saf_utility_bessel.c in Sources */,
+				50E3DEE024C1C80C00589B17 /* pitch_shifter.c in Sources */,
+				50E3DEF424C1D3A900589B17 /* decorrelator_internal.c in Sources */,
 				50E36075249BDDCC00B74C25 /* saf_sh_internal.c in Sources */,
+				50E3DEE124C1C80C00589B17 /* rotator_internal.c in Sources */,
 				50E36078249BDDCC00B74C25 /* saf_vbap.c in Sources */,
 				50E3605F249BDDCC00B74C25 /* afSTFTlib.c in Sources */,
+				50E3DF0724C1D4EA00589B17 /* sldoa_internal.c in Sources */,
 				50E36061249BDDCC00B74C25 /* saf_cdf4sap.c in Sources */,
+				50E3DF0424C1D4EA00589B17 /* panner.c in Sources */,
 				50E36069249BDDCC00B74C25 /* saf_utility_pitch.c in Sources */,
 				50E3605E249BDDCC00B74C25 /* kiss_fftr.c in Sources */,
+				50E3DEE524C1C80C00589B17 /* multiconv_internal.c in Sources */,
 				50E36071249BDDCC00B74C25 /* saf_utility_decor.c in Sources */,
 				508FBDA52456D3300076C205 /* timer.c in Sources */,
+				50E3DF0924C1D4EA00589B17 /* powermap_internal.c in Sources */,
+				50E3DEB724C1C36E00589B17 /* ambi_drc.c in Sources */,
+				50E3DEE324C1C80C00589B17 /* beamformer.c in Sources */,
+				50E3DEBD24C1C56800589B17 /* ambi_enc.c in Sources */,
 				50E36074249BDDCC00B74C25 /* saf_sh.c in Sources */,
+				50E3DEB824C1C36E00589B17 /* ambi_drc_internal.c in Sources */,
 				50E3607B249BDDCC00B74C25 /* saf_hrir.c in Sources */,
+				50E3DEF324C1D3A900589B17 /* decorrelator.c in Sources */,
 				50E36079249BDDCC00B74C25 /* saf_default_hrirs.c in Sources */,
 				50E3605C249BDDCC00B74C25 /* md_malloc.c in Sources */,
 				508FBDA12456D31F0076C205 /* unity.c in Sources */,
 				50E36070249BDDCC00B74C25 /* saf_utility_matrixConv.c in Sources */,
+				50E3DEE824C1C80C00589B17 /* matrixconv.c in Sources */,
 				50E3DE3424C087B300589B17 /* afSTFT_internal.c in Sources */,
+				50E3DEE224C1C80C00589B17 /* rotator.c in Sources */,
+				50E3DEE624C1C80C00589B17 /* multiconv.c in Sources */,
 				50E5CD1624AF3E5800019898 /* saf_utility_geometry.c in Sources */,
+				50E3DF0324C1D4EA00589B17 /* panner_internal.c in Sources */,
 				50E3607A249BDDCC00B74C25 /* saf_hrir_internal.c in Sources */,
 				50E3DE9624C1B81300589B17 /* ambi_bin.c in Sources */,
 				50E3606F249BDDCC00B74C25 /* saf_utility_sort.c in Sources */,
+				50E3DEBE24C1C56800589B17 /* ambi_enc_internal.c in Sources */,
+				50E3DF0624C1D4EA00589B17 /* sldoa.c in Sources */,
 				50E36068249BDDCC00B74C25 /* saf_utility_error.c in Sources */,
 				50E36067249BDDCC00B74C25 /* saf_utility_misc.c in Sources */,
+				50E3DF0524C1D4EA00589B17 /* sldoa_database.c in Sources */,
+				50E3DEDD24C1C80C00589B17 /* dirass_internal.c in Sources */,
 				50E35E732481353300B74C25 /* saf_test_wrapper.cpp in Sources */,
 				50E36062249BDDCC00B74C25 /* saf_hoa_internal.c in Sources */,
 				50E3606C249BDDCC00B74C25 /* saf_utility_complex.c in Sources */,
+				50E3DEC324C1C5AB00589B17 /* array2sh_internal.c in Sources */,
 				50E36060249BDDCC00B74C25 /* convhull_3d.c in Sources */,
+				50E3DEED24C1D16400589B17 /* binauraliser_internal.c in Sources */,
 				50E3606D249BDDCC00B74C25 /* saf_utility_loudspeaker_presets.c in Sources */,
 				50E3DE9524C1B81300589B17 /* ambi_bin_internal.c in Sources */,
+				50E3DEDE24C1C80C00589B17 /* dirass.c in Sources */,
+				50E3DEE424C1C80C00589B17 /* beamformer_internal.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

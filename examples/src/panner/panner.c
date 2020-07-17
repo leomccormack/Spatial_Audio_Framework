@@ -67,18 +67,11 @@ void panner_create
     
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->STFTInputFrameTF = malloc1d(MAX_NUM_INPUTS*sizeof(complexVector));
-    pData->STFTOutputFrameTF = malloc1d(MAX_NUM_OUTPUTS*sizeof(complexVector));
-    for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
-    for(ch=0; ch< MAX_NUM_OUTPUTS; ch++) {
-        pData->STFTOutputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTOutputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
-    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_INPUTS, MAX_NUM_OUTPUTS), HOP_SIZE, sizeof(float));
-    
+    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, FRAME_SIZE, sizeof(float));
+    pData->outputFrameTD = (float**)malloc2d(MAX_NUM_OUTPUTS, FRAME_SIZE, sizeof(float));
+    pData->inputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
+    pData->outputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
+
     /* flags and gain table */
     pData->progressBar0_1 = 0.0f;
     pData->progressBarText = malloc1d(PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
@@ -109,19 +102,11 @@ void panner_destroy
         
         /* free afSTFT and buffers */
         if(pData->hSTFT !=NULL)
-            afSTFTfree(pData->hSTFT);
-        for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
-            free(pData->STFTInputFrameTF[ch].re);
-            free(pData->STFTInputFrameTF[ch].im);
-        }
-    
-        for (ch = 0; ch< MAX_NUM_OUTPUTS; ch++) {
-            free(pData->STFTOutputFrameTF[ch].re);
-            free(pData->STFTOutputFrameTF[ch].im);
-        }
-        free(pData->STFTInputFrameTF);
-        free(pData->STFTOutputFrameTF);
-        free(pData->tempHopFrameTD);
+            afSTFT_destroy(&(pData->hSTFT));
+        free(pData->inputFrameTD);
+        free(pData->outputFrameTD);
+        free(pData->inputframeTF);
+        free(pData->outputframeTF);
         free(pData->vbap_gtable);
         free(pData->progressBarText);
         

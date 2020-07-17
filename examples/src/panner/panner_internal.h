@@ -87,12 +87,10 @@ extern "C" {
 typedef struct _panner
 {
     /* audio buffers */
-    float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
-    float_complex inputframeTF[HYBRID_BANDS][MAX_NUM_INPUTS][TIME_SLOTS];
-    float_complex outputframeTF[HYBRID_BANDS][MAX_NUM_OUTPUTS][TIME_SLOTS];
-    complexVector* STFTInputFrameTF;
-    complexVector* STFTOutputFrameTF;
-    float** tempHopFrameTD;
+    float** inputFrameTD; 
+    float** outputFrameTD;
+    float_complex*** inputframeTF;
+    float_complex*** outputframeTF;
     int fs;
     
     /* time-frequency transform */

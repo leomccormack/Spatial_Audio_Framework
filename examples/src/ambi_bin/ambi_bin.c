@@ -36,7 +36,7 @@ void ambi_bin_create
 {
     ambi_bin_data* pData = (ambi_bin_data*)malloc1d(sizeof(ambi_bin_data));
     *phAmbi = (void*)pData;
-    int ch, band;
+    int band;
 
     /* default user parameters */
     for (band = 0; band<HYBRID_BANDS; band++)
@@ -133,8 +133,7 @@ void ambi_bin_init
     
     /* define frequency vector */
     pData->fs = sampleRate;
-    if(pData->hSTFT!=NULL)
-        afSTFT_getCentreFreqs(pData->hSTFT, pData->fs, HYBRID_BANDS, (float*)pData->freqVector);
+    afSTFT_getCentreFreqs(pData->hSTFT, pData->fs, HYBRID_BANDS, (float*)pData->freqVector);
 
     /* default starting values */
     pData->recalc_M_rotFLAG = 1;
