@@ -21,7 +21,7 @@
  * @brief Main header for the higher-order Ambisonics module (#SAF_HOA_MODULE)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
- * the Matlab library by Archontis Politis [1].
+ * the Matlab library by Archontis Politis [1] (BSD-3-Clause License).
  *
  * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
  *
@@ -66,10 +66,10 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
      * Sampling Ambisonic Decoder (SAD): transpose of the loudspeaker spherical
      * harmonic matrix, scaled by the number of loudspeakers. This is the
      * simplest decoding approach, as it essentially just generates hyper-
-     * cardioid beamformers (aka virtual microphones) for each loudspeaker
+     * cardioid beamformers (aka virtual microphones) towards each loudspeaker
      * direction. This approach is numerically robust to irregular loudspeaker
-     * arrangements, but it does not preserve the energy of a source or
-     * localisation cues for all directions.
+     * arrangements. However, it does not preserve the energy of a source (or
+     * localisation cues) as it is panned around in different directions.
      */
     LOUDSPEAKER_DECODER_SAD,
     /**
@@ -79,10 +79,10 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
      * with loudspeakers, since this is essentially a least-squares solution.
      * Therefore, this approach can help balance out directional loudness
      * differences when using slightly irregular setups. However, one must also
-     * be careful, since loudspeakers which are far way from all the other
+     * be careful since loudspeakers that are far way from all the other
      * loudspeakers (e.g. voice-of-god) may be given significantly more signal
-     * energy than expected, and thus, for highly irregular loudspeaker
-     * arrangements this approach is very much not recommended.
+     * energy than expected. Therefore, this approach is not recommended for
+     * highly irregular loudspeaker arrangements
      */
     LOUDSPEAKER_DECODER_MMD,
     /**
@@ -96,10 +96,10 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
      * All-Round Ambisonic Decoder (AllRAD): SAD decoding to t-design, panned
      * for the target loudspeaker directions using VBAP [2]. Perhaps the
      * Ambisonic decoder we would most recommend for irregular loudspeaker
-     * layouts. Note, given a high (well, technically infinite) order, AllRAD
+     * layouts. Note, given a high (well... technically infinite) order, AllRAD
      * will converge to VBAP. However, since lower-orders are employed in
-     * practice... AllRAD will not be as spatially "sharp" as VBAP, but it will
-     * yield more consistent source spread when panning a source inbetween the
+     * practice, AllRAD is not as spatially "sharp" as VBAP, but it will yield
+     * more consistent source spread when panning a source inbetween the
      * loudspeakers.
      * The approach is highly robust to irregular loudspeaker setups, and
      * exhibits low directional error and good energy-preserving properties.
@@ -166,7 +166,7 @@ typedef enum _BINAURAL_AMBI_DECODER_METHODS {
 /**
  * Available Ambisonic channel ordering conventions
  *
- * @note ACN channel ordering with SN3D normalisation are often collectively
+ * @note ACN channel ordering with SN3D normalisation is often collectively
  *       referred to as the 'AmbiX' format.
  * @warning FuMa is a deprecated legacy format and is only supported for first-
  *          order! The recommended Ambisonic conventions are ACN with N3D/SN3D
@@ -186,7 +186,7 @@ typedef enum _HOA_CH_ORDER{
 /**
  * Available Ambisonic normalisation conventions
  *
- * @note ACN channel ordering with SN3D normalisation are often collectively
+ * @note ACN channel ordering with SN3D normalisation is often collectively
  *       referred to as the 'AmbiX' format.
  * @warning FuMa is a deprecated legacy format and is only supported for first-
  *          order! The recommended Ambisonic conventions are ACN with N3D/SN3D

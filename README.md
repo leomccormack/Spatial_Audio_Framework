@@ -45,13 +45,13 @@ Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unid
 
 ## Using the framework
 
-Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to your project), add the files found in the **framework** folder to your project, and add the following directory to your project's header search paths:
+Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to your project), add the files found in the **framework** folder to your project and add the following directory to your project's header search paths:
 
 ```
 Spatial_Audio_Framework/framework/include  
 ```
 
-Then include the framework's master header and you're good to go:
+The framework's master include header is:
 
 ```c
 #include "saf.h"
@@ -59,7 +59,7 @@ Then include the framework's master header and you're good to go:
 
 ## Building with CMake 
 
-The framework may also be included within an existing CMake workflow with simply:
+The framework may be included within an existing CMake workflow with simply:
 ```
 add_subdirectory(Spatial_Audio_Framework)
 target_link_libraries(${PROJECT_NAME} PRIVATE saf)
@@ -73,14 +73,14 @@ The available SAF-specific build options (and their default values) are:
 -DSAF_BUILD_TESTS=1                        # build unit testing program
 ```
 
-If using **SAF_USE_INTEL_MKL** as the performance library, then the default header and library search paths may be overridden with:
+If using **SAF_USE_INTEL_MKL** as the performance library, note that the default header and library search paths may be overridden with:
 ``` 
 -DINTEL_MKL_HEADER_PATH="path/to/mkl/headers"
 -DINTEL_MKL_LIB="path/to/mkl/libs/mkl_rt(.so/.dylib/.lib)"   # OR:
 -DINTEL_MKL_LIB="path/to/custom/mkl/lib/saf_mkl_custom(.so/.dylib/.lib)"
 ```
 
-Note that if the **saf_sofa_reader** is enabled, CMake will use the statically built dependencies found in **dependencies** for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared [netcdf library](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
+If the **saf_sofa_reader** is enabled, CMake will use the statically built dependencies found in **dependencies** for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared [netcdf library](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
 ```
 # e.g. Linux users:
 -DNETCDF_LIBRARY="/usr/lib/x86_64-linux-gnu/libnetcdf.so"
@@ -88,7 +88,7 @@ Note that if the **saf_sofa_reader** is enabled, CMake will use the statically b
 -DNETCDF_LIBRARY="/c/msys64/mingw64/lib/libnetcdf.dll.a"
 ```
 
-You may also build the framework, the examples, and the unit testing program with:
+To build the framework, the examples, and the unit testing program via the command line:
 ```
 mkdir build 
 cmake -S . -B build 
@@ -101,18 +101,18 @@ test/saf_test # To run the unit testing program
 
 Documentation is periodically generated using [Doxygen](http://www.doxygen.nl/index.html) and hosted [here](http://research.spa.aalto.fi/projects/spatial_audio_framework/index.html).
 
-Alternatively, you may compile the most recent documentation (HTML) yourself with the following:
+Alternatively, you may compile the most recent documentation (HTML) yourself with the following commands:
 ```
 cd doxygen
 doxygen doxygen_config
-# optionally... to also build the pdf version:
+# (optional) to also build the pdf version:
 cd latex
 make
 ```
 
 ## Examples
 
-Many examples have been included in the repository, which may serve as a starting point for learning how to use the framework:
+Several examples have also been included in the repository, which may serve as a starting point for learning how to use the framework:
 
 * **ambi_bin** - a binaural Ambisonic decoder with built-in rotator. It supports the following decoding options: least-squares (LS), spatial re-sampling (SPR), Time-alignment (TA) [1], Magnitude Least-Squares (MagLS) [2].
 * **ambi_dec** - a frequency-dependent Ambisonic decoder. It supports the following decoding options: sampling Ambisonic decoder (SAD), AllRAD [3], Energy-Preserving decoder (EPAD) [4], Mode-Matching decoder (MMD).
@@ -121,6 +121,7 @@ Many examples have been included in the repository, which may serve as a startin
 * **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals), based on theoretical descriptions [6,7]; more details found in [8].
 * **beamformer** - a beamformer example with several different beamforming options.
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file.
+* **decorrelator** - a basic multi-channel signal decorrelator.
 * **dirass** - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction [9].
 * **matrixconv** - a basic matrix convolver with an optional partitioned convolution mode. 
 * **multiconv** - a basic multi-channel convolver with an optional partitioned convolution mode. 
@@ -130,7 +131,8 @@ Many examples have been included in the repository, which may serve as a startin
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles [12].
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors, at multiple frequencies; as proposed in [8]. 
 
-Note that many of these examples have also been integrated into VST audio plug-ins using the JUCE framework and can be found [here](https://github.com/leomccormack/SPARTA).
+Many of these examples have also been implemented as VST2 audio plug-ins using [JUCE](https://github.com/WeAreROLI/JUCE/); going under the name of "[SPARTA](https://github.com/leomccormack/SPARTA)".
+The following open-source projects also employ the framework: [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
 
 ## Contributing
 

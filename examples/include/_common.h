@@ -37,6 +37,7 @@ extern "C" {
 /** @example array2sh.h */
 /** @example beamformer.h */
 /** @example binauraliser.h */
+/** @example decorrelator.h */
 /** @example dirass.h */
 /** @example matrixconv.h */
 /** @example multiconv.h */

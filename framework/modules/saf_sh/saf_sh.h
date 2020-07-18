@@ -22,7 +22,8 @@
  *        Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
- * derived from Matlab libraries by Archontis Politis [1-3].
+ * derived from Matlab libraries by Archontis Politis [1-3] (BSD-3-Clause
+ * License).
  *
  * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
  * @see [2] https://github.com/polarch/Array-Response-Simulator

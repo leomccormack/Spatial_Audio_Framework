@@ -517,23 +517,23 @@
 		50E3DE3724C1B81200589B17 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				50E3DE4824C1B81200589B17 /* _common.h */,
 				50E3DE3824C1B81200589B17 /* ambi_bin.h */,
+				50E3DE4524C1B81200589B17 /* ambi_dec.h */,
+				50E3DE4424C1B81200589B17 /* ambi_drc.h */,
+				50E3DE4324C1B81200589B17 /* ambi_enc.h */,
+				50E3DE3F24C1B81200589B17 /* array2sh.h */,
 				50E3DE3924C1B81200589B17 /* beamformer.h */,
-				50E3DE3A24C1B81200589B17 /* rotator.h */,
+				50E3DE4024C1B81200589B17 /* binauraliser.h */,
 				50E3DE3B24C1B81200589B17 /* decorrelator.h */,
 				50E3DE3C24C1B81200589B17 /* dirass.h */,
 				50E3DE3D24C1B81200589B17 /* matrixconv.h */,
-				50E3DE3E24C1B81200589B17 /* panner.h */,
-				50E3DE3F24C1B81200589B17 /* array2sh.h */,
-				50E3DE4024C1B81200589B17 /* binauraliser.h */,
-				50E3DE4124C1B81200589B17 /* sldoa.h */,
-				50E3DE4224C1B81200589B17 /* pitch_shifter.h */,
-				50E3DE4324C1B81200589B17 /* ambi_enc.h */,
-				50E3DE4424C1B81200589B17 /* ambi_drc.h */,
-				50E3DE4524C1B81200589B17 /* ambi_dec.h */,
-				50E3DE4624C1B81200589B17 /* powermap.h */,
 				50E3DE4724C1B81200589B17 /* multiconv.h */,
-				50E3DE4824C1B81200589B17 /* _common.h */,
+				50E3DE3E24C1B81200589B17 /* panner.h */,
+				50E3DE4224C1B81200589B17 /* pitch_shifter.h */,
+				50E3DE4624C1B81200589B17 /* powermap.h */,
+				50E3DE3A24C1B81200589B17 /* rotator.h */,
+				50E3DE4124C1B81200589B17 /* sldoa.h */,
 			);
 			path = include;
 			sourceTree = "<group>";

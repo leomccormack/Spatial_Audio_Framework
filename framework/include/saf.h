@@ -123,7 +123,7 @@
 /**
  * SAF Module: CDf4SAP
  *
- * Covarience Domain Framework for Spatial Audio Processing (CDF4SAP); a C
+ * Covarience Domain Framework for Spatial Audio Processing (CDF4SAP). A C
  * implementation of the framework described in [1].
  *
  * ## Dependencies
