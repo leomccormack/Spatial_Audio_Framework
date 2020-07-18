@@ -140,7 +140,7 @@
  * SAF Module: HOA
  *
  * A collection of higher-order Ambisonics related functions; many of which are
- * derived from the Matlab library found in [1].
+ * derived from the Matlab library found in [1] (BSD-3-Clause License).
  *
  * ## Dependencies
  *   saf_utilities, saf_vbap, saf_sh
@@ -178,7 +178,7 @@
  * SAF Module: SH
  *
  * A collection of spherical harmonic related functions; many of which have been
- * derived from the Matlab libraries found in [1-3].
+ * derived from the Matlab libraries found in [1-3] (BSD-3-Clause License).
  *
  * ## Dependencies
  *   saf_utilities
@@ -193,7 +193,8 @@
 /**
  * SAF Module: VBAP
  *
- * VBAP functions largely derived from the Matlab library found in [1].
+ * VBAP functions largely derived from the Matlab library found in [1]
+ * (BSD-3-Clause License).
  *
  * ## Dependencies
  *  saf_utilities
