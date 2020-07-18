@@ -13,7 +13,7 @@ The Spatial_Audio_Framework (SAF) requires the following libraries:
 * A library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 * (Optional) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
 
-Add one of the following pre-processor definitions, which will let SAF know which of the supported CBLAS/LAPACK library/libraries you have linked to your project:
+Add one of the following pre-processor definitions to inform SAF as to which performance library/libraries you have linked to your project:
 ```
 SAF_USE_INTEL_MKL             # great option, but only for x86 architectures    
 SAF_USE_OPEN_BLAS_AND_LAPACKE # good option, works on everything
@@ -65,7 +65,7 @@ add_subdirectory(Spatial_Audio_Framework)
 target_link_libraries(${PROJECT_NAME} PRIVATE saf)
 ```
 
-The available SAF-specific build options (and their default values) are:
+The available SAF-related build options (and their default values) are:
 ```
 -DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL    # performance library to employ
 -DSAF_ENABLE_SOFA_READER_MODULE=0          # enable/disable the saf_sofa_reader module 
@@ -88,7 +88,7 @@ If the **saf_sofa_reader** is enabled, CMake will use the statically built depen
 -DNETCDF_LIBRARY="/c/msys64/mingw64/lib/libnetcdf.dll.a"
 ```
 
-To build the framework, the examples, and the unit testing program via the command line:
+The framework, examples, and unit testing program may be built with:
 ```
 mkdir build 
 cmake -S . -B build 
@@ -112,7 +112,7 @@ make
 
 ## Examples
 
-Several examples have also been included in the repository, which may serve as a starting point for learning how to use the framework:
+Several examples have also been included in the repository, which may serve as a starting point for learning the framework:
 
 * **ambi_bin** - a binaural Ambisonic decoder with built-in rotator. It supports the following decoding options: least-squares (LS), spatial re-sampling (SPR), Time-alignment (TA) [1], Magnitude Least-Squares (MagLS) [2].
 * **ambi_dec** - a frequency-dependent Ambisonic decoder. It supports the following decoding options: sampling Ambisonic decoder (SAD), AllRAD [3], Energy-Preserving decoder (EPAD) [4], Mode-Matching decoder (MMD).
@@ -131,7 +131,8 @@ Several examples have also been included in the repository, which may serve as a
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles [12].
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors, at multiple frequencies; as proposed in [8]. 
 
-Many of these examples have also been implemented as VST2 audio plug-ins using [JUCE](https://github.com/WeAreROLI/JUCE/); going under the name of "[SPARTA](https://github.com/leomccormack/SPARTA)".
+Many of these examples have also been implemented as VST audio plug-ins using [JUCE](https://github.com/WeAreROLI/JUCE/); under the name of [SPARTA](https://github.com/leomccormack/SPARTA).
+
 The following open-source projects also employ the framework: [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
 
 ## Contributing
