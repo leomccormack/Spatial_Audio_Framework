@@ -134,7 +134,6 @@ void afSTFT_create
         h->STFTInputFrameTF[ch].re = (float*)calloc1d(h->nBands, sizeof(float));
         h->STFTInputFrameTF[ch].im = (float*)calloc1d(h->nBands, sizeof(float));
     }
-
 }
 
 void afSTFT_destroy
@@ -196,7 +195,7 @@ void afSTFT_forward
                     for(ch=0; ch < h->nCHin; ch++)
                         dataFD[band][ch][t] = cmplxf(h->STFTInputFrameTF[ch].re[band], h->STFTInputFrameTF[ch].im[band]);
                 break;
-            case AFSTFT_TIME_CH_BANDS:
+            case AFSTFT_TIME_CH_BANDS: 
                 for(band=0; band<h->nBands; band++)
                     for(ch=0; ch < h->nCHin; ch++)
                         dataFD[t][ch][band] = cmplxf(h->STFTInputFrameTF[ch].re[band], h->STFTInputFrameTF[ch].im[band]);
@@ -256,7 +255,38 @@ void afSTFT_channelChange
 )
 {
     afSTFT_data *h = (afSTFT_data*)(hSTFT);
+    int i;
+
     afSTFTlib_channelChange(h->hInt, new_nCHin, new_nCHout);
+
+    /* resize buffers */
+    if(h->nCHin!=new_nCHin){
+        for(i=new_nCHin; i<h->nCHin; i++){
+            free(h->STFTInputFrameTF[i].re);
+            free(h->STFTInputFrameTF[i].im);
+        }
+        h->STFTInputFrameTF = realloc1d(h->STFTInputFrameTF, sizeof(complexVector)*new_nCHin);
+        for(i=h->nCHin; i<new_nCHin; i++){
+            h->STFTInputFrameTF[i].re = (float*)calloc1d(h->nBands, sizeof(float));
+            h->STFTInputFrameTF[i].im = (float*)calloc1d(h->nBands, sizeof(float));
+        }
+    }
+    if(h->nCHout!=new_nCHout){
+        for(i=new_nCHout; i<h->nCHout; i++){
+            free(h->STFTOutputFrameTF[i].re);
+            free(h->STFTOutputFrameTF[i].im);
+        }
+        h->STFTOutputFrameTF = realloc1d(h->STFTOutputFrameTF, sizeof(complexVector)*new_nCHout);
+        for(i=h->nCHout; i<new_nCHout; i++){
+            h->STFTOutputFrameTF[i].re = (float*)calloc1d(h->nBands, sizeof(float));
+            h->STFTOutputFrameTF[i].im = (float*)calloc1d(h->nBands, sizeof(float));
+        }
+    }
+    if( MAX(h->nCHin, h->nCHout) != MAX(new_nCHin, new_nCHout))
+        h->tempHopFrameTD = (float**)realloc2d((void**)h->tempHopFrameTD, MAX(new_nCHin, new_nCHout), h->hopsize, sizeof(float));
+
+    h->nCHin = new_nCHin;
+    h->nCHout = new_nCHout;
 }
 
 void afSTFT_clearBuffers
