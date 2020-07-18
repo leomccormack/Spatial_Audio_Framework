@@ -131,7 +131,7 @@ Several examples have also been included in the repository, which may serve as a
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles [12].
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors, at multiple frequencies; as proposed in [8]. 
 
-Many of these examples have also been implemented as VST audio plug-ins using [JUCE](https://github.com/WeAreROLI/JUCE/); under the name of [SPARTA](https://github.com/leomccormack/SPARTA).
+Many of these examples have also been released as VST audio plug-ins under the [SPARTA](https://github.com/leomccormack/SPARTA) banner.
 
 The following open-source projects also employ the framework: [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
 
