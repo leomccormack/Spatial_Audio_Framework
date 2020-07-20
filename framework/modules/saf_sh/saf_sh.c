@@ -1766,7 +1766,7 @@ void sphModalCoeffs
             jn = malloc1d(nBands*(order+1)*sizeof(double));
             jnprime = malloc1d(nBands*(order+1)*sizeof(double));
             bessel_jn(order, kr, nBands, &maxN, jn, jnprime);
-            
+
             /* modal coefficients for open spherical array (directional sensors): 4*pi*1i^n * (dirCoeff*jn - 1i*(1-dirCoeff)*jnprime); */
             for(n=0; n<maxN+1; n++)
                 for(i=0; i<nBands; i++)

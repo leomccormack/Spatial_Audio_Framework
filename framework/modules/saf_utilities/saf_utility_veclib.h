@@ -239,6 +239,38 @@ void utility_cvvcopy(/* Input Arguments */
                      /* Output Arguments */
                      float_complex* c);
 
+/**
+ * double-precision, vector-vector copy, i.e.
+ * \code{.m}
+ *     c = a
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_dvvcopy(/* Input Arguments */
+                     const double* a,
+                     const int len,
+                     /* Output Arguments */
+                     double* c);
+
+/**
+ * double-precision, complex, vector-vector copy, i.e.
+ * \code{.m}
+ *     c = a
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_zvvcopy(/* Input Arguments */
+                     const double_complex* a,
+                     const int len,
+                     /* Output Arguments */
+                     double_complex* c);
+
 
 /* ========================================================================== */
 /*                       Vector-Vector Addition (?vvadd)                      */
@@ -473,6 +505,45 @@ void utility_cvsmul(/* Input Arguments */
                     const int len,
                     /* Output Arguments */
                     float_complex* c);
+
+/**
+ * Double-precision, multiplies each element in vector 'a' with a scalar 's',
+ * i.e.
+ * \code{.m}
+ *     c = a.*s, OR: a = a.*s (if c==NULL)
+ * \endcode
+ *
+ * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  s   (&) input scalar s; 1 x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
+ *                 len x 1
+ */
+void utility_dvsmul(/* Input Arguments */
+                    double* a,
+                    const double* s,
+                    const int len,
+                    /* Output Arguments */
+                    double* c);
+
+/**
+ * Double-precision, complex, multiplies each element in vector 'a' with a
+ * scalar 's', i.e.
+ * \code{.m}
+ *     c = a.*s, OR: a = a.*s (if c==NULL)
+ * \endcode
+ *
+ * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  s   (&) input scalar s; 1 x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
+ */
+void utility_zvsmul(/* Input Arguments */
+                    double_complex* a,
+                    const double_complex* s,
+                    const int len,
+                    /* Output Arguments */
+                    double_complex* c);
 
 
 /* ========================================================================== */

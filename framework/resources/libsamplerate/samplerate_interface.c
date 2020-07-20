@@ -15,10 +15,7 @@
  */
 
 #include "samplerate_interface.h"
-#include "samplerate.h"
-
-# include "../../modules/saf_utilities/saf_utilities.h"
-
+#include "samplerate.h" 
 #include <assert.h>
 #include <string.h>
 
@@ -37,13 +34,17 @@ void sampleratelib_resample
     SRC_DATA data;
     int i, err;
 
+    /* set to zeros */
+    memset(outsig, 0, nChannels*length_outsig*sizeof(float));
+
+    /* simply copy input to output if no resampling is required */
     if(input_fs==output_fs){
-        memset(outsig, 0, nChannels*length_outsig*sizeof(float));
         for(i = 0; i<nChannels; i++)
-            memcpy(&outsig[i*length_outsig], &insig[i*length_insig], MIN(length_insig, length_outsig)*sizeof(float));
+            memcpy(&outsig[i*length_outsig], &insig[i*length_insig], (length_insig > length_outsig ? length_outsig : length_insig) * sizeof(float));
         return;
     }
 
+    /* resample */
     data.data_in = insig;
     data.data_out = outsig;
     data.input_frames = length_insig; /* frames refers to number of samples */
@@ -51,5 +52,6 @@ void sampleratelib_resample
     data.src_ratio = (double)output_fs/(double)input_fs;
     err = src_simple(&data, (int)quality, nChannels);
 
+    /* We do not accept failure */
     assert(err==0);
 }

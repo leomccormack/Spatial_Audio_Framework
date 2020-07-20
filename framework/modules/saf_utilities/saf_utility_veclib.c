@@ -225,6 +225,26 @@ void utility_cvvcopy
     cblas_ccopy(len, a, 1, c, 1);
 }
 
+void utility_dvvcopy
+(
+    const double* a,
+    const int len,
+    double* c
+)
+{
+    cblas_dcopy(len, a, 1, c, 1);
+}
+
+void utility_zvvcopy
+(
+    const double_complex* a,
+    const int len,
+    double_complex* c
+)
+{
+    cblas_zcopy(len, a, 1, c, 1);
+}
+
 
 /* ========================================================================== */
 /*                       Vector-Vector Addition (?vvadd)                      */
@@ -569,6 +589,46 @@ void utility_cvsmul
         int i;
         for (i = 0; i<len; i++)
             c[i] = ccmulf(a[i], s[0]);
+    }
+}
+
+void utility_dvsmul
+(
+    double* a,
+    const double* s,
+    const int len,
+    double* c
+)
+{
+#ifdef __ACCELERATE__
+    if(c==NULL)
+        cblas_dscal(len, s[0], a, 1);
+    else
+        vDSP_vsmulD(a, 1, s, c, 1, len);
+#else
+    if (c == NULL)
+        cblas_dscal(len, s[0], a, 1);
+    else {
+        utility_dvvcopy(a, len, c);
+        cblas_dscal(len, s[0], c, 1);
+    }
+#endif
+}
+
+void utility_zvsmul
+(
+    double_complex* a,
+    const double_complex* s,
+    const int len,
+    double_complex* c
+)
+{
+    if (c == NULL)
+        cblas_zscal(len, s, a, 1);
+    else {
+        int i;
+        for (i = 0; i<len; i++)
+            c[i] = ccmul(a[i], s[0]);
     }
 }
 

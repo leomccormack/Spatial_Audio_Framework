@@ -136,6 +136,9 @@ void test__sphMUSIC(void);
  * Testing the DoA estimation performance of sphESPRIT() */
 void test__sphESPRIT(void);
 /**
+ * Testing the sphModalCoeffs() function */
+void test__sphModalCoeffs(void);
+/**
  * Testing the SAF ambi_bin example (this may also serve as a tutorial on how
  * to use it) */
 void test__saf_example_ambi_bin(void);

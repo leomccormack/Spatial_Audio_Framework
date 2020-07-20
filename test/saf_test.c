@@ -84,7 +84,7 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
 
-    /* run each unit test */
+    /* run each unit test */ 
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -117,6 +117,7 @@ int main_test(void) {
     RUN_TEST(test__checkCondNumberSHTReal);
     RUN_TEST(test__sphMUSIC);
     RUN_TEST(test__sphESPRIT);
+    RUN_TEST(test__sphModalCoeffs);
 #ifdef SAF_ENABLE_EXAMPLES_TESTS
     RUN_TEST(test__saf_example_ambi_bin);
     RUN_TEST(test__saf_example_ambi_dec);
@@ -2243,6 +2244,52 @@ void test__sphESPRIT(void){
     free(Cx_R);
     free(U);
     free(Us);
+}
+
+void test__sphModalCoeffs(void){
+    int i, j;
+    float* freqVector;
+    double* kr;
+    double_complex** b_N_dipole, **b_N_card, **b_N_omni, **b_N_omni_test;
+
+    /* Config */
+    const double acceptedTolerance = 0.000001f;
+    const int order = 4;
+    const int N = 16;
+    const float fs = 48000;
+    const double radius = 0.04;
+    const double c = 343.0;
+
+    /* prep */
+    freqVector = malloc1d((N/2-1)*sizeof(float));
+    getUniformFreqVector(N, fs, freqVector);
+    kr = malloc1d((N/2-1)*sizeof(double));
+    for(i=0; i<N/2+1; i++)
+        kr[i] = 2.0*SAF_PId* (double)freqVector[i] * radius/c;
+    b_N_dipole = (double_complex**)malloc2d((N/2+1), (order+1), sizeof(double_complex));
+    b_N_card = (double_complex**)malloc2d((N/2+1), (order+1), sizeof(double_complex));
+    b_N_omni = (double_complex**)malloc2d((N/2+1), (order+1), sizeof(double_complex));
+    b_N_omni_test = (double_complex**)malloc2d((N/2+1), (order+1), sizeof(double_complex));
+
+    /* Compute modal coefficients */
+    sphModalCoeffs(order, kr, (N/2+1), ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.0, FLATTEN2D(b_N_dipole));
+    sphModalCoeffs(order, kr, (N/2+1), ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.5, FLATTEN2D(b_N_card));
+    sphModalCoeffs(order, kr, (N/2+1), ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 1.0, FLATTEN2D(b_N_omni));
+    sphModalCoeffs(order, kr, (N/2+1), ARRAY_CONSTRUCTION_OPEN, 666.0 /* not used */, FLATTEN2D(b_N_omni_test));
+
+    /* Check that "open directional", with "dirCoeff=1" is identical to just "open" */
+    for(i=0; i<N/2+1; i++){
+        for(j=0; j< order+1; j++){
+            TEST_ASSERT_TRUE( fabs(creal(b_N_omni[i][j]) - creal(b_N_omni_test[i][j])) <= acceptedTolerance );
+            TEST_ASSERT_TRUE( fabs(cimag(b_N_omni[i][j]) - cimag(b_N_omni_test[i][j])) <= acceptedTolerance );
+        }
+    }
+
+    /* clean-up */
+    free(b_N_dipole);
+    free(b_N_card);
+    free(b_N_omni);
+    free(b_N_omni_test);
 }
 
 #ifdef SAF_ENABLE_EXAMPLES_TESTS

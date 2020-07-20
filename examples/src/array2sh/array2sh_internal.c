@@ -123,11 +123,11 @@ void array2sh_calculate_sht_matrix
             case ARRAY_CYLINDRICAL:
                 switch (arraySpecs->weightType){
                     case WEIGHT_RIGID_OMNI:   cylModalCoeffs(order, kr, HYBRID_BANDS, ARRAY_CONSTRUCTION_RIGID, pData->bN); break;
-                    case WEIGHT_RIGID_CARD:   /* not supported */ break;
+                    case WEIGHT_RIGID_CARD:   assert(0); /* not supported */ break;
                     case WEIGHT_RIGID_DIPOLE: /* not supported */ break;
                     case WEIGHT_OPEN_OMNI:    cylModalCoeffs(order, kr, HYBRID_BANDS, ARRAY_CONSTRUCTION_OPEN, pData->bN);  break;
-                    case WEIGHT_OPEN_CARD:    /* not supported */ break;
-                    case WEIGHT_OPEN_DIPOLE:  /* not supported */ break;
+                    case WEIGHT_OPEN_CARD:    assert(0); /* not supported */ break;
+                    case WEIGHT_OPEN_DIPOLE:  assert(0); /* not supported */ break;
                 }
                 break;
             case ARRAY_SPHERICAL:
