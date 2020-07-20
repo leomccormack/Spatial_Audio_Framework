@@ -357,6 +357,9 @@
     <ClInclude Include="..\..\framework\resources\afSTFT\afSTFT_internal.h">
       <Filter>framework\resources\afSTFT</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\framework\resources\libsamplerate\samplerate_interface.h">
+      <Filter>framework\resources\libsamplerate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\timer\timer.c">
@@ -580,6 +583,9 @@
     </ClCompile>
     <ClCompile Include="..\..\framework\resources\afSTFT\afSTFT_internal.c">
       <Filter>framework\resources\afSTFT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\libsamplerate\samplerate_interface.c">
+      <Filter>framework\resources\libsamplerate</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
