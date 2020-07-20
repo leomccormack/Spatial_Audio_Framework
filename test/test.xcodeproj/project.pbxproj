@@ -81,6 +81,7 @@
 		50E3DF3D24C57A9C00589B17 /* src_sinc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DF3324C57A9C00589B17 /* src_sinc.c */; };
 		50E3DF3E24C57A9C00589B17 /* src_zoh.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DF3424C57A9C00589B17 /* src_zoh.c */; };
 		50E3DF3F24C57A9C00589B17 /* src_linear.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DF3624C57A9C00589B17 /* src_linear.c */; };
+		50E3DF4324C5A87600589B17 /* samplerate_interface.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DF4224C5A87600589B17 /* samplerate_interface.c */; };
 		50E5CD1624AF3E5800019898 /* saf_utility_geometry.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */; };
 		50E5CDAA24B4580900019898 /* saf_utility_latticeCoeffs.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */; };
 /* End PBXBuildFile section */
@@ -257,6 +258,8 @@
 		50E3DF3924C57A9C00589B17 /* fastest_coeffs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastest_coeffs.h; sourceTree = "<group>"; };
 		50E3DF3A24C57A9C00589B17 /* mid_qual_coeffs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mid_qual_coeffs.h; sourceTree = "<group>"; };
 		50E3DF3B24C57A9C00589B17 /* high_qual_coeffs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = high_qual_coeffs.h; sourceTree = "<group>"; };
+		50E3DF4124C5A7DD00589B17 /* samplerate_interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = samplerate_interface.h; sourceTree = "<group>"; };
+		50E3DF4224C5A87600589B17 /* samplerate_interface.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = samplerate_interface.c; sourceTree = "<group>"; };
 		50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_geometry.c; sourceTree = "<group>"; };
 		50E5CD1524AF3E5800019898 /* saf_utility_geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_geometry.h; sourceTree = "<group>"; };
 		50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_latticeCoeffs.c; sourceTree = "<group>"; };
@@ -745,6 +748,8 @@
 				50E3DF3924C57A9C00589B17 /* fastest_coeffs.h */,
 				50E3DF3B24C57A9C00589B17 /* high_qual_coeffs.h */,
 				50E3DF3A24C57A9C00589B17 /* mid_qual_coeffs.h */,
+				50E3DF4124C5A7DD00589B17 /* samplerate_interface.h */,
+				50E3DF4224C5A87600589B17 /* samplerate_interface.c */,
 				50E3DF3224C57A9C00589B17 /* samplerate.c */,
 				50E3DF3724C57A9C00589B17 /* samplerate.h */,
 				50E3DF3524C57A9C00589B17 /* src_config.h */,
@@ -861,6 +866,7 @@
 				50E3DEF324C1D3A900589B17 /* decorrelator.c in Sources */,
 				50E36079249BDDCC00B74C25 /* saf_default_hrirs.c in Sources */,
 				50E3605C249BDDCC00B74C25 /* md_malloc.c in Sources */,
+				50E3DF4324C5A87600589B17 /* samplerate_interface.c in Sources */,
 				508FBDA12456D31F0076C205 /* unity.c in Sources */,
 				50E36070249BDDCC00B74C25 /* saf_utility_matrixConv.c in Sources */,
 				50E3DEE824C1C80C00589B17 /* matrixconv.c in Sources */,

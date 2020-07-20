@@ -14,6 +14,13 @@
 #include "src_config.h"
 #include "common.h"
 
+
+#define SRL_ENABLE_SAF_UTILITIES
+
+#ifdef SRL_ENABLE_SAF_UTILITIES
+# include "../../modules/saf_utilities/saf_utilities.h"
+#endif
+
 #define	SINC_MAGIC_MARKER	MAKE_MAGIC (' ', 's', 'i', 'n', 'c', ' ')
 
 /*========================================================================================
@@ -50,9 +57,13 @@ typedef struct
 
 	int		b_current, b_end, b_real_end, b_len ;
 
-	/* Sure hope noone does more than 128 channels at once. */
+	/* Sure hope noone does more than 128 channels at once. */ // I did : (
     //double left_calc [128], right_calc [128] ;
+#ifdef SRL_ENABLE_SAF_UTILITIES
+    float left_calc [8192], right_calc [8192] ;
+#else
     double left_calc [8192], right_calc [8192] ;
+#endif
 
 	/* C99 struct flexible array. */
 	float	buffer [] ;
@@ -896,7 +907,13 @@ static inline void
 calc_output_multi (SINC_FILTER *filter, increment_t increment, increment_t start_filter_index, int channels, double scale, float * output)
 {	double		fraction, icoeff ;
 	/* The following line is 1999 ISO Standard C. If your compiler complains, get a better compiler. */
+#ifdef SRL_ENABLE_SAF_UTILITIES
+    float        *left, *right ; // I see very little difference in output precision between float and double here...
+    float icoeff_single, scale_single;
+#else
 	double		*left, *right ;
+#endif
+
 	increment_t	filter_index, max_filter_index ;
 	int			data_index, coeff_count, indx, ch ;
 
@@ -926,6 +943,11 @@ calc_output_multi (SINC_FILTER *filter, increment_t increment, increment_t start
 			**	See : http://en.wikipedia.org/wiki/Duff's_device
 			*/
 			ch = channels ;
+            
+#ifdef SRL_ENABLE_SAF_UTILITIES
+            icoeff_single = (float)icoeff;
+            cblas_saxpy(channels, icoeff_single, &(filter->buffer[data_index]), 1, left, 1);
+#else
 			do
 			{	switch (ch % 8)
 				{	default :
@@ -959,10 +981,12 @@ calc_output_multi (SINC_FILTER *filter, increment_t increment, increment_t start
 					case 1 :
 						ch -- ;
 						left [ch] += icoeff * filter->buffer [data_index + ch] ;
-					} ;
-				}
+                } ;
+            }
 			while (ch > 0) ;
-			} ;
+#endif
+        } ;
+
 
 		filter_index -= increment ;
 		data_index = data_index + channels ;
@@ -983,6 +1007,11 @@ calc_output_multi (SINC_FILTER *filter, increment_t increment, increment_t start
 		icoeff = filter->coeffs [indx] + fraction * (filter->coeffs [indx + 1] - filter->coeffs [indx]) ;
 
 		ch = channels ;
+
+#ifdef SRL_ENABLE_SAF_UTILITIES
+        icoeff_single = (float)icoeff;
+        cblas_saxpy(channels, icoeff_single, &(filter->buffer[data_index]), 1, right, 1);
+#else
 		do
 		{
 			switch (ch % 8)
@@ -1017,16 +1046,21 @@ calc_output_multi (SINC_FILTER *filter, increment_t increment, increment_t start
 				case 1 :
 					ch -- ;
 					right [ch] += icoeff * filter->buffer [data_index + ch] ;
-				} ;
-			}
-		while (ch > 0) ;
+            } ;
+        } while (ch > 0) ;
+#endif
 
 		filter_index -= increment ;
 		data_index = data_index - channels ;
-		}
-	while (filter_index > MAKE_INCREMENT_T (0)) ;
+    } while (filter_index > MAKE_INCREMENT_T (0)) ;
 
 	ch = channels ;
+
+#ifdef SRL_ENABLE_SAF_UTILITIES
+    utility_svvadd(left, right, channels, output);
+    scale_single = (float) scale;
+    utility_svsmul(output, &scale_single, channels, NULL);
+#else
 	do
 	{
 		switch (ch % 8)
@@ -1061,9 +1095,9 @@ calc_output_multi (SINC_FILTER *filter, increment_t increment, increment_t start
 			case 1 :
 				ch -- ;
 				output [ch] = scale * (left [ch] + right [ch]) ;
-			} ;
-		}
-	while (ch > 0) ;
+        } ;
+    } while (ch > 0) ;
+#endif
 
 	return ;
 } /* calc_output_multi */

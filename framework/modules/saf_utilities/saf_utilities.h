@@ -220,7 +220,7 @@
 #include "../../resources/afSTFT/afSTFTlib.h"
 
 
-#include "../../resources/libsamplerate/samplerate.h"
+#include "../../resources/libsamplerate/samplerate_interface.h"
 
 
 #endif /* __SAF_UTILITIES_H_INCLUDED__ */

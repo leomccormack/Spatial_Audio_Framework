@@ -157,16 +157,16 @@ src_process (SRC_STATE *state, SRC_DATA *data)
 
 	if (data->data_in < data->data_out)
 	{	if (data->data_in + data->input_frames * psrc->channels > data->data_out)
-		{	/*-printf ("\n\ndata_in: %p    data_out: %p\n",
-				(void*) (data->data_in + data->input_frames * psrc->channels), (void*) data->data_out) ;-*/
+		{	printf ("\n\ndata_in: %p    data_out: %p\n",
+				(void*) (data->data_in + data->input_frames * psrc->channels), (void*) data->data_out) ;
 			return SRC_ERR_DATA_OVERLAP ;
 			} ;
 		}
 	else if (data->data_out + data->output_frames * psrc->channels > data->data_in)
-	{	/*-printf ("\n\ndata_in : %p   ouput frames: %ld    data_out: %p\n", (void*) data->data_in, data->output_frames, (void*) data->data_out) ;
+	{	printf ("\n\ndata_in : %p   ouput frames: %ld    data_out: %p\n", (void*) data->data_in, data->output_frames, (void*) data->data_out) ;
 
 		printf ("data_out: %p (%p)    data_in: %p\n", (void*) data->data_out,
-			(void*) (data->data_out + data->input_frames * psrc->channels), (void*) data->data_in) ;-*/
+			(void*) (data->data_out + data->input_frames * psrc->channels), (void*) data->data_in) ;
 		return SRC_ERR_DATA_OVERLAP ;
 		} ;
 

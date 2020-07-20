@@ -18,7 +18,6 @@
 extern "C" {
 #endif	/* __cplusplus */
 
-
 /* Opaque data type SRC_STATE. */
 typedef struct SRC_STATE_tag SRC_STATE ;
 

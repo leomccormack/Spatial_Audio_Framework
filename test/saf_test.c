@@ -140,86 +140,102 @@ int main_test(void) {
 /* ========================================================================== */
 
 void test__samplerateConversion(void){
-    int i, ch, err;
-    SRC_DATA data;
+    int i, j, ch, k, nCH, lengthSig;
     float mean_error;
     float** inputSig, **outputSig, **testSig;
     int fs_in, fs_out;
 
     /* prep */
-    const float acceptedTolerance48_44 = 0.2f;
-    const float acceptedTolerance48_96 = 0.1f;
-    const int nCH = 800;
+    const float acceptedTolerance48_44_noise = 0.2f; /* noise is difficult. This is actually quite low... */
+    const float acceptedTolerance48_96_noise = 0.4f; /* noise is difficult. This is actually quite low... */
+    const float acceptedTolerance48_44_hrirs = 0.01f; /* much lower */
 
     /* Convert from 48k to 44.1k */
+    nCH = 200;
+    lengthSig = 8192;
     fs_in = 48000;
     fs_out = 44100;
-    inputSig = (float**)malloc2d(nCH, fs_in/10, sizeof(float));
-    rand_m1_1(FLATTEN2D(inputSig), nCH*fs_in/10); /* 1 second of noise @48kHz */
-    outputSig = (float**)malloc2d(nCH, fs_out/10, sizeof(float));
-    data.data_in = FLATTEN2D(inputSig);
-    data.data_out = FLATTEN2D(outputSig);
-    data.input_frames = fs_in/10; /* frames refers to number of samples */
-    data.output_frames = fs_out/10;
-    data.src_ratio = (double)fs_out/fs_in;
-    err = src_simple(&data, SRC_SINC_BEST_QUALITY, nCH); /* SRC_SINC_MEDIUM_QUALITY */
+    inputSig = (float**)malloc2d(nCH, lengthSig, sizeof(float));
+    rand_m1_1(FLATTEN2D(inputSig), nCH*lengthSig); /* lengthSig of noise @48kHz */
+    outputSig = (float**)malloc2d(nCH, lengthSig, sizeof(float));
+    sampleratelib_resample(FLATTEN2D(inputSig), lengthSig, lengthSig, fs_in, fs_out, nCH, RESAMPLE_BEST_QUALITY, FLATTEN2D(outputSig));
 
     /* And now back to 48k */
-    testSig = (float**)malloc2d(nCH, fs_in/10, sizeof(float));
-    data.data_in = FLATTEN2D(outputSig);
-    data.data_out = FLATTEN2D(testSig);
-    data.input_frames = fs_out/10; /* frames refers to number of samples */
-    data.output_frames = fs_in/10;
-    data.src_ratio = (double)fs_in/fs_out;
-    err = src_simple(&data, SRC_SINC_BEST_QUALITY, nCH);
+    testSig = (float**)malloc2d(nCH, lengthSig, sizeof(float));
+    sampleratelib_resample(FLATTEN2D(outputSig), lengthSig, lengthSig, fs_out, fs_in, nCH, RESAMPLE_BEST_QUALITY, FLATTEN2D(testSig));
 
     /* Assert error is below accepted tolerance */
     mean_error = 0.0f; /* accross all channels and samples */
     for(ch=0; ch<nCH; ch++)
-        for(i=0; i<fs_in/10; i++)
+        for(i=0; i<lengthSig; i++)
             mean_error+=fabsf(inputSig[ch][i] - testSig[ch][i]);
-    mean_error /= ((float)fs_in/10*(float)nCH);
-    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance48_44, 0, mean_error);
+    mean_error /= ((float)lengthSig*(float)nCH);
+    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance48_44_noise, 0, mean_error);
 
     /* clean-up */
     free(inputSig);
     free(outputSig);
     free(testSig);
 
-//    /* Convert from 48k to 96k */
-//    fs_in = 48000;
-//    fs_out = 96000;
-//    inputSig = (float**)malloc2d(nCH, fs_in/10, sizeof(float));
-//    rand_m1_1(FLATTEN2D(inputSig), nCH*fs_in/10); /* 1 second of noise @48kHz */
-//    outputSig = (float**)malloc2d(nCH, fs_out/10, sizeof(float));
-//    data.data_in = FLATTEN2D(inputSig);
-//    data.data_out = FLATTEN2D(outputSig);
-//    data.input_frames = fs_in/10; /* frames refers to number of samples */
-//    data.output_frames = fs_out/10;
-//    data.src_ratio = (double)fs_out/fs_in;
-//    err = src_simple(&data, SRC_SINC_BEST_QUALITY, nCH); /* SRC_SINC_MEDIUM_QUALITY */
-//
-//    /* And now back to 48k */
-//    testSig = (float**)malloc2d(nCH, fs_in/10, sizeof(float));
-//    data.data_in = FLATTEN2D(outputSig);
-//    data.data_out = FLATTEN2D(testSig);
-//    data.input_frames = fs_out/10; /* frames refers to number of samples */
-//    data.output_frames = fs_in/10;
-//    data.src_ratio = (double)fs_in/fs_out;
-//    err = src_simple(&data, SRC_SINC_BEST_QUALITY, nCH);
-//
-//    /* Assert error is below accepted tolerance */
-//    mean_error = 0.0f; /* accross all channels and samples */
-//    for(ch=0; ch<nCH; ch++)
-//        for(i=0; i<fs_in/10; i++)
-//            mean_error+=fabsf(inputSig[ch][i] - testSig[ch][i]);
-//    mean_error /= ((float)fs_in/10*(float)nCH);
-//    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance48_96, 0, mean_error);
-//
-//    /* clean-up */
-//    free(inputSig);
-//    free(outputSig);
-//    free(testSig);
+    /* Convert from 48k to 96k */
+    nCH = 200;
+    lengthSig = 2048;
+    fs_in = 48000;
+    fs_out = 96000;
+    inputSig = (float**)malloc2d(nCH, lengthSig, sizeof(float));
+    rand_m1_1(FLATTEN2D(inputSig), nCH*lengthSig); /* lengthSig of noise @48kHz */
+    outputSig = (float**)malloc2d(nCH, lengthSig, sizeof(float));
+    sampleratelib_resample(FLATTEN2D(inputSig), lengthSig, lengthSig, fs_in, fs_out, nCH, RESAMPLE_BEST_QUALITY, FLATTEN2D(outputSig));
+
+    /* And now back to 48k */
+    testSig = (float**)malloc2d(nCH, lengthSig, sizeof(float));
+    sampleratelib_resample(FLATTEN2D(outputSig), lengthSig, lengthSig, fs_out, fs_in, nCH, RESAMPLE_BEST_QUALITY, FLATTEN2D(testSig));
+
+    /* Assert error is below accepted tolerance */
+    mean_error = 0.0f; /* accross all channels and samples */
+    for(ch=0; ch<nCH; ch++)
+        for(i=0; i<lengthSig; i++)
+            mean_error+=fabsf(inputSig[ch][i] - testSig[ch][i]);
+    mean_error /= ((float)lengthSig*(float)nCH);
+    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance48_96_noise, 0, mean_error);
+
+    /* clean-up */
+    free(inputSig);
+    free(outputSig);
+    free(testSig);
+
+    /* Convert default HRIRs from 48k to 44.1k */
+    nCH = __default_N_hrir_dirs * NUM_EARS;
+    fs_in = __default_hrir_fs;
+    fs_out = 44100;
+    lengthSig = __default_hrir_len;
+    inputSig = (float**)malloc2d(nCH, lengthSig, sizeof(float));
+
+    /* Convert 3D double array to 2D float array */
+    for(i=0, ch=0; i<__default_N_hrir_dirs; i++)
+        for(j=0; j<NUM_EARS; j++, ch++)
+            for(k=0; k<lengthSig; k++)
+                inputSig[ch][k] = (float)__default_hrirs[i][j][k];
+
+    outputSig = (float**)malloc2d(nCH, lengthSig, sizeof(float));
+    sampleratelib_resample(FLATTEN2D(inputSig), lengthSig, lengthSig, fs_in, fs_out, nCH, RESAMPLE_BEST_QUALITY, FLATTEN2D(outputSig));
+
+    /* And now back to 48k */
+    testSig = (float**)malloc2d(nCH, lengthSig, sizeof(float));
+    sampleratelib_resample(FLATTEN2D(outputSig), lengthSig, lengthSig, fs_out, fs_in, nCH, RESAMPLE_BEST_QUALITY, FLATTEN2D(testSig));
+
+    /* Assert error is below accepted tolerance */
+    mean_error = 0.0f; /* accross all channels and samples */
+    for(ch=0; ch<nCH; ch++)
+        for(i=0; i<lengthSig; i++)
+            mean_error+=fabsf(inputSig[ch][i] - testSig[ch][i]);
+    mean_error /= ((float)lengthSig*(float)nCH);
+    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance48_44_hrirs, 0, mean_error);
+
+    /* clean-up */
+    free(inputSig);
+    free(outputSig);
+    free(testSig); 
 }
 
 
