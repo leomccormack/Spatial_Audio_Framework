@@ -17,7 +17,7 @@
 /**
  * @file: saf_utility_filters.c
  * @ingroup Utilities
- * @brief A collection of IIR/FIR filter design equations
+ * @brief A collection of IIR/FIR filter and filterbank designs
  *
  * @author Leo McCormack
  * @date 01.03.2019
@@ -25,27 +25,6 @@
 
 #include "saf_utility_filters.h"
 #include "saf_utilities.h"
-
-/** Main structure for the Favrot&Faller filterbank */
-typedef struct _faf_IIRFB_data{
-    int nBands;       /**< Number of bands in the filterbank */
-    int nFilters;     /**< Number of filters used by the filterbank */
-    int filtLen;      /**< Filter length */
-    int filtOrder;    /**< Filter order (must be 1 or 3) */
-    int maxNSamplesToExpect; /**< Maximum number of samples to expect to process
-                              *   at a time */
-    float** b_lpf;    /**< Numerator filter coeffs for low-pass filters */
-    float** a_lpf;    /**< Denominator filter coeffs for low-pass filters */
-    float** b_hpf;    /**< Numerator filter coeffs for high-pass filters */
-    float** a_hpf;    /**< Denominator filter coeffs for high-pass filters */
-    float*** wz_lpf;  /**< Delay buffers for low-pass filters */
-    float*** wz_hpf;  /**< Delay buffers for high-pass filters */
-    float*** wz_apf1; /**< Delay buffers for all-pass filter part 1 */
-    float*** wz_apf2; /**< Delay buffers for all-pass filter part 2 */
-    float* tmp;       /**< Temporary buffer; maxNSamplesToExpect x 1 */
-    float* tmp2;      /**< Temporary buffer; maxNSamplesToExpect x 1 */
-
-}faf_IIRFB_data;
 
 /**
  * Applies a windowing function (see #_WINDOWING_FUNCTION_TYPES enum) of length
@@ -726,6 +705,27 @@ void butterCoeffs
     free(b_coeffs_real);
     free(kern);
 }
+
+/** Main structure for the Favrot&Faller filterbank */
+typedef struct _faf_IIRFB_data{
+    int nBands;       /**< Number of bands in the filterbank */
+    int nFilters;     /**< Number of filters used by the filterbank */
+    int filtLen;      /**< Filter length */
+    int filtOrder;    /**< Filter order (must be 1 or 3) */
+    int maxNSamplesToExpect; /**< Maximum number of samples to expect to process
+                              *   at a time */
+    float** b_lpf;    /**< Numerator filter coeffs for low-pass filters */
+    float** a_lpf;    /**< Denominator filter coeffs for low-pass filters */
+    float** b_hpf;    /**< Numerator filter coeffs for high-pass filters */
+    float** a_hpf;    /**< Denominator filter coeffs for high-pass filters */
+    float*** wz_lpf;  /**< Delay buffers for low-pass filters */
+    float*** wz_hpf;  /**< Delay buffers for high-pass filters */
+    float*** wz_apf1; /**< Delay buffers for all-pass filter part 1 */
+    float*** wz_apf2; /**< Delay buffers for all-pass filter part 2 */
+    float* tmp;       /**< Temporary buffer; maxNSamplesToExpect x 1 */
+    float* tmp2;      /**< Temporary buffer; maxNSamplesToExpect x 1 */
+
+}faf_IIRFB_data;
 
 void faf_IIRFilterbank_create
 (

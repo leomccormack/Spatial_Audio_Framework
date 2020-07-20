@@ -77,6 +77,10 @@
 		50E3DF0724C1D4EA00589B17 /* sldoa_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DEFD24C1D4EA00589B17 /* sldoa_internal.c */; };
 		50E3DF0824C1D4EA00589B17 /* powermap.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DF0124C1D4EA00589B17 /* powermap.c */; };
 		50E3DF0924C1D4EA00589B17 /* powermap_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DF0224C1D4EA00589B17 /* powermap_internal.c */; };
+		50E3DF3C24C57A9C00589B17 /* samplerate.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DF3224C57A9C00589B17 /* samplerate.c */; };
+		50E3DF3D24C57A9C00589B17 /* src_sinc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DF3324C57A9C00589B17 /* src_sinc.c */; };
+		50E3DF3E24C57A9C00589B17 /* src_zoh.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DF3424C57A9C00589B17 /* src_zoh.c */; };
+		50E3DF3F24C57A9C00589B17 /* src_linear.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DF3624C57A9C00589B17 /* src_linear.c */; };
 		50E5CD1624AF3E5800019898 /* saf_utility_geometry.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */; };
 		50E5CDAA24B4580900019898 /* saf_utility_latticeCoeffs.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */; };
 /* End PBXBuildFile section */
@@ -243,6 +247,16 @@
 		50E3DF0024C1D4EA00589B17 /* powermap_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = powermap_internal.h; sourceTree = "<group>"; };
 		50E3DF0124C1D4EA00589B17 /* powermap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = powermap.c; sourceTree = "<group>"; };
 		50E3DF0224C1D4EA00589B17 /* powermap_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = powermap_internal.c; sourceTree = "<group>"; };
+		50E3DF3224C57A9C00589B17 /* samplerate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = samplerate.c; sourceTree = "<group>"; };
+		50E3DF3324C57A9C00589B17 /* src_sinc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = src_sinc.c; sourceTree = "<group>"; };
+		50E3DF3424C57A9C00589B17 /* src_zoh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = src_zoh.c; sourceTree = "<group>"; };
+		50E3DF3524C57A9C00589B17 /* src_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = src_config.h; sourceTree = "<group>"; };
+		50E3DF3624C57A9C00589B17 /* src_linear.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = src_linear.c; sourceTree = "<group>"; };
+		50E3DF3724C57A9C00589B17 /* samplerate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = samplerate.h; sourceTree = "<group>"; };
+		50E3DF3824C57A9C00589B17 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		50E3DF3924C57A9C00589B17 /* fastest_coeffs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastest_coeffs.h; sourceTree = "<group>"; };
+		50E3DF3A24C57A9C00589B17 /* mid_qual_coeffs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mid_qual_coeffs.h; sourceTree = "<group>"; };
+		50E3DF3B24C57A9C00589B17 /* high_qual_coeffs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = high_qual_coeffs.h; sourceTree = "<group>"; };
 		50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_geometry.c; sourceTree = "<group>"; };
 		50E5CD1524AF3E5800019898 /* saf_utility_geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_geometry.h; sourceTree = "<group>"; };
 		50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_latticeCoeffs.c; sourceTree = "<group>"; };
@@ -324,10 +338,11 @@
 			isa = PBXGroup;
 			children = (
 				50E3600B249BDDCB00B74C25 /* CMakeLists.txt */,
-				50E3600C249BDDCB00B74C25 /* md_malloc */,
-				50E3600F249BDDCB00B74C25 /* kissFFT */,
 				50E36015249BDDCB00B74C25 /* afSTFT */,
 				50E36019249BDDCB00B74C25 /* convhull_3d */,
+				50E3600F249BDDCB00B74C25 /* kissFFT */,
+				50E3DF3124C57A9C00589B17 /* libsamplerate */,
+				50E3600C249BDDCB00B74C25 /* md_malloc */,
 			);
 			path = resources;
 			sourceTree = "<group>";
@@ -723,6 +738,23 @@
 			path = powermap;
 			sourceTree = "<group>";
 		};
+		50E3DF3124C57A9C00589B17 /* libsamplerate */ = {
+			isa = PBXGroup;
+			children = (
+				50E3DF3824C57A9C00589B17 /* common.h */,
+				50E3DF3924C57A9C00589B17 /* fastest_coeffs.h */,
+				50E3DF3B24C57A9C00589B17 /* high_qual_coeffs.h */,
+				50E3DF3A24C57A9C00589B17 /* mid_qual_coeffs.h */,
+				50E3DF3224C57A9C00589B17 /* samplerate.c */,
+				50E3DF3724C57A9C00589B17 /* samplerate.h */,
+				50E3DF3524C57A9C00589B17 /* src_config.h */,
+				50E3DF3624C57A9C00589B17 /* src_linear.c */,
+				50E3DF3324C57A9C00589B17 /* src_sinc.c */,
+				50E3DF3424C57A9C00589B17 /* src_zoh.c */,
+			);
+			path = libsamplerate;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -799,9 +831,11 @@
 				50E3606E249BDDCC00B74C25 /* saf_utility_veclib.c in Sources */,
 				50E35D1F2475AECA00B74C25 /* saf_test.c in Sources */,
 				50E3605D249BDDCC00B74C25 /* kiss_fft.c in Sources */,
+				50E3DF3D24C57A9C00589B17 /* src_sinc.c in Sources */,
 				50E3606B249BDDCC00B74C25 /* saf_utility_filters.c in Sources */,
 				50E36065249BDDCC00B74C25 /* saf_utility_bessel.c in Sources */,
 				50E3DEE024C1C80C00589B17 /* pitch_shifter.c in Sources */,
+				50E3DF3C24C57A9C00589B17 /* samplerate.c in Sources */,
 				50E3DEF424C1D3A900589B17 /* decorrelator_internal.c in Sources */,
 				50E36075249BDDCC00B74C25 /* saf_sh_internal.c in Sources */,
 				50E3DEE124C1C80C00589B17 /* rotator_internal.c in Sources */,
@@ -817,10 +851,12 @@
 				508FBDA52456D3300076C205 /* timer.c in Sources */,
 				50E3DF0924C1D4EA00589B17 /* powermap_internal.c in Sources */,
 				50E3DEB724C1C36E00589B17 /* ambi_drc.c in Sources */,
+				50E3DF3F24C57A9C00589B17 /* src_linear.c in Sources */,
 				50E3DEE324C1C80C00589B17 /* beamformer.c in Sources */,
 				50E3DEBD24C1C56800589B17 /* ambi_enc.c in Sources */,
 				50E36074249BDDCC00B74C25 /* saf_sh.c in Sources */,
 				50E3DEB824C1C36E00589B17 /* ambi_drc_internal.c in Sources */,
+				50E3DF3E24C57A9C00589B17 /* src_zoh.c in Sources */,
 				50E3607B249BDDCC00B74C25 /* saf_hrir.c in Sources */,
 				50E3DEF324C1D3A900589B17 /* decorrelator.c in Sources */,
 				50E36079249BDDCC00B74C25 /* saf_default_hrirs.c in Sources */,

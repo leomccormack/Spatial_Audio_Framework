@@ -371,7 +371,7 @@ void utility_cvvmul(/* Input Arguments */
  * Single-precision, element-wise vector-vector multiplication and addition,
  * i.e.
  * \code{.m}
- *     c = c+ a.*b
+ *     c = c + a.*b
  * \endcode
  *
  * @param[in]     a   Input vector a; len x 1

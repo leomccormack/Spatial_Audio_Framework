@@ -95,7 +95,7 @@
  * FFT wrappers and STFT implementation; IIR/FIR filter coefficients and filter
  * bank designs; lists of common loudspeaker and microphone array coordinates;
  * multi-channel and matrix convolvers; spherical Bessel/Hankel functions
- * (including their derivatives) functions; etc.
+ * (including their derivatives); etc.
  *
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by

@@ -133,7 +133,7 @@ void synthesiseNoiseReverb(/* Input Arguments */
  *       (each with lower orders), to attain the desired decorrelation without
  *       introducing instabilities, which accompanies the use of the much higher
  *       filter orders. Furthermore, the coefficients found in
- *       saf_utility_latticeCoeffs.h differ from those found inthe standard [3],
+ *       saf_utility_latticeCoeffs.h differ from those found in the standard [3]
  *       so the output will also be numerically different.
  * @test test__latticeDecorrelator()
  *

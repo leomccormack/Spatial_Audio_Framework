@@ -38,7 +38,7 @@ extern "C" {
  * NOTE: All microphone array sensor directions are given in radians, and in
  * the [azimuth, elevation] convention. [0 0] is looking directly in-front
  * (positive x-axis), with positive elevations looking upwards (positive z-axis)
- * and positive azimuth angles looking leftwards (postive y-axis).
+ * and positive azimuth angles looking leftwards (positive y-axis).
  * In other words: the convention used by SAF follows the "right-hand-rule".
  */
     

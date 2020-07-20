@@ -47,6 +47,9 @@
 # include "sldoa.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
+
+void test__samplerateConversion(void);
+
 /* ========================================================================== */
 /*                                 Test Config                                */
 /* ========================================================================== */
@@ -85,6 +88,7 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
+    RUN_TEST(test__samplerateConversion);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -134,6 +138,90 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__samplerateConversion(void){
+    int i, ch, err;
+    SRC_DATA data;
+    float mean_error;
+    float** inputSig, **outputSig, **testSig;
+    int fs_in, fs_out;
+
+    /* prep */
+    const float acceptedTolerance48_44 = 0.2f;
+    const float acceptedTolerance48_96 = 0.1f;
+    const int nCH = 800;
+
+    /* Convert from 48k to 44.1k */
+    fs_in = 48000;
+    fs_out = 44100;
+    inputSig = (float**)malloc2d(nCH, fs_in/10, sizeof(float));
+    rand_m1_1(FLATTEN2D(inputSig), nCH*fs_in/10); /* 1 second of noise @48kHz */
+    outputSig = (float**)malloc2d(nCH, fs_out/10, sizeof(float));
+    data.data_in = FLATTEN2D(inputSig);
+    data.data_out = FLATTEN2D(outputSig);
+    data.input_frames = fs_in/10; /* frames refers to number of samples */
+    data.output_frames = fs_out/10;
+    data.src_ratio = (double)fs_out/fs_in;
+    err = src_simple(&data, SRC_SINC_BEST_QUALITY, nCH); /* SRC_SINC_MEDIUM_QUALITY */
+
+    /* And now back to 48k */
+    testSig = (float**)malloc2d(nCH, fs_in/10, sizeof(float));
+    data.data_in = FLATTEN2D(outputSig);
+    data.data_out = FLATTEN2D(testSig);
+    data.input_frames = fs_out/10; /* frames refers to number of samples */
+    data.output_frames = fs_in/10;
+    data.src_ratio = (double)fs_in/fs_out;
+    err = src_simple(&data, SRC_SINC_BEST_QUALITY, nCH);
+
+    /* Assert error is below accepted tolerance */
+    mean_error = 0.0f; /* accross all channels and samples */
+    for(ch=0; ch<nCH; ch++)
+        for(i=0; i<fs_in/10; i++)
+            mean_error+=fabsf(inputSig[ch][i] - testSig[ch][i]);
+    mean_error /= ((float)fs_in/10*(float)nCH);
+    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance48_44, 0, mean_error);
+
+    /* clean-up */
+    free(inputSig);
+    free(outputSig);
+    free(testSig);
+
+//    /* Convert from 48k to 96k */
+//    fs_in = 48000;
+//    fs_out = 96000;
+//    inputSig = (float**)malloc2d(nCH, fs_in/10, sizeof(float));
+//    rand_m1_1(FLATTEN2D(inputSig), nCH*fs_in/10); /* 1 second of noise @48kHz */
+//    outputSig = (float**)malloc2d(nCH, fs_out/10, sizeof(float));
+//    data.data_in = FLATTEN2D(inputSig);
+//    data.data_out = FLATTEN2D(outputSig);
+//    data.input_frames = fs_in/10; /* frames refers to number of samples */
+//    data.output_frames = fs_out/10;
+//    data.src_ratio = (double)fs_out/fs_in;
+//    err = src_simple(&data, SRC_SINC_BEST_QUALITY, nCH); /* SRC_SINC_MEDIUM_QUALITY */
+//
+//    /* And now back to 48k */
+//    testSig = (float**)malloc2d(nCH, fs_in/10, sizeof(float));
+//    data.data_in = FLATTEN2D(outputSig);
+//    data.data_out = FLATTEN2D(testSig);
+//    data.input_frames = fs_out/10; /* frames refers to number of samples */
+//    data.output_frames = fs_in/10;
+//    data.src_ratio = (double)fs_in/fs_out;
+//    err = src_simple(&data, SRC_SINC_BEST_QUALITY, nCH);
+//
+//    /* Assert error is below accepted tolerance */
+//    mean_error = 0.0f; /* accross all channels and samples */
+//    for(ch=0; ch<nCH; ch++)
+//        for(i=0; i<fs_in/10; i++)
+//            mean_error+=fabsf(inputSig[ch][i] - testSig[ch][i]);
+//    mean_error /= ((float)fs_in/10*(float)nCH);
+//    TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance48_96, 0, mean_error);
+//
+//    /* clean-up */
+//    free(inputSig);
+//    free(outputSig);
+//    free(testSig);
+}
+
 
 void test__saf_stft_50pc_overlap(void){
     int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;

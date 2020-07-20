@@ -25,7 +25,7 @@
  * FFT wrappers and STFT implementation; IIR/FIR filter coefficients and filter
  * bank designs; lists of common loudspeaker and microphone array coordinates;
  * multi-channel and matrix convolvers; spherical Bessel/Hankel functions
- * (including their derivatives) functions; etc.
+ * (including their derivatives); etc.
  *
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by
@@ -82,7 +82,7 @@
  */
 # define VECLIB_USE_CLAPACK_INTERFACE /**< CLAPACK interface */
 # include "cblas-atlas.h"
-# include "clapack.h" /* NOTE: CLAPACK does not include all LAPACK functions! */
+# include "clapack.h" /* NOTE: CLAPACK does not include all LAPACK routines! */
 
 #elif defined(__APPLE__)
 /*
@@ -149,8 +149,10 @@
 #endif
 /** sqrt(4pi) (single precision) */
 #define SQRT4PI ( 3.544907701811032f )
+/* 4pi (single precision) */
+#define FOURPI ( 12.566370614359172f )
 /** Converts elevation to inclincation, (in radians) */
-#define ELEV2INCL(E) ( (M_PI/2 - E) )
+#define ELEV2INCL(E) ( (SAF_PI/2 - E) )
 
 
 /* ========================================================================== */
@@ -159,38 +161,47 @@
 
 /* For error message handling */
 #include "saf_utility_error.h"
-/* For allocating contiguous multi-dimensional arrays */
+/* For allocating contiguous multi-dimensional arrays.
+ * The original source code can be found here (MIT license):
+ *   https://github.com/leomccormack/md_malloc
+ */
 #include "../../resources/md_malloc/md_malloc.h"
 /* The default FFT implementation, for when no optimised implementation is
- * available */
+ * available.
+ * The original source code can be found here (BSD-3-Clause license):
+ *   https://github.com/mborgerding/kissfft
+ */
 #include "../../resources/kissFFT/kiss_fftr.h"
 #include "../../resources/kissFFT/kiss_fft.h"
-/* For generating 3-D convex hulls */
+/* For Computing 3-D convex hulls.
+ * The original source code can be found here (MIT license):
+ *   https://github.com/leomccormack/convhull_3d */
 #include "../../resources/convhull_3d/convhull_3d.h"
-/* For cross-platform complex numbers wrapper */
+/* For cross-platform complex number support */
 #include "saf_utility_complex.h"
 /* For sorting vectors */
 #include "saf_utility_sort.h"
-/* Filter coefficients (IIR/FIR) */
+/* Filter coefficients and filterbanks (IIR/FIR) */
 #include "saf_utility_filters.h"
 /* Many handy linear algebra functions based on CBLAS/LAPACK, and some based on
- * proprietary Intel MKL and Apple Accelerate optimised vector functions */
+ * optimised proprietary Intel MKL and Apple Accelerate routines */
 #include "saf_utility_veclib.h"
-/* For computing spherical/cylindrical Bessel and Hankel functions */
+/* For computing spherical/cylindrical Bessel and Hankel functions and their
+ * derivatives */
 #include "saf_utility_bessel.h"
-/* Optimised FFT routines */
+/* Wrappers for different FFT implementations */
 #include "saf_utility_fft.h"
-/* Matrix convolver */
+/* Matrix and multi-channel convolvers */
 #include "saf_utility_matrixConv.h"
 /* Pitch shifting algorithms */
 #include "saf_utility_pitch.h"
-/* For decorrelators */
+/* A collection of signal decorrelators */
 #include "saf_utility_decor.h"
 /* For misc. functions */
 #include "saf_utility_misc.h"
 /* For computational geometry functions */
 #include "saf_utility_geometry.h"
-/* For the complex quadrature mirror filterbank */
+/* For an implementation of the hybrid complex quadrature mirror filterbank */
 #include "saf_utility_qmf.h"
 /* Various presets for loudspeaker arrays and uniform distributions of points on
  * spheres. */
@@ -198,7 +209,7 @@
 /* Various presets for microphone and hydrophone arrays. */
 #include "saf_utility_sensorarray_presets.h"
 /* A modified version of the alias-free STFT implementation by Juha Vilkamo.
- * The original source code can be found here:
+ * The original source code can be found here (MIT license):
  *   https://github.com/jvilkamo/afSTFT
  * The design is also detailed in chapter 1 of [1]
  *
@@ -207,6 +218,9 @@
  *          Incorporated.
  */
 #include "../../resources/afSTFT/afSTFTlib.h"
+
+
+#include "../../resources/libsamplerate/samplerate.h"
 
 
 #endif /* __SAF_UTILITIES_H_INCLUDED__ */

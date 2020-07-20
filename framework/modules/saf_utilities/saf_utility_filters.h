@@ -18,7 +18,7 @@
  *@addtogroup Utilities
  *@{
  * @file: saf_utility_filters.h
- * @brief A collection of IIR/FIR filter design equations
+ * @brief A collection of IIR/FIR filter and filterbank designs
  *
  * @author Leo McCormack
  * @date 01.03.2019 

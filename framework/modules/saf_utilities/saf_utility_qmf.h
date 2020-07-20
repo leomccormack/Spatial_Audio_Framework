@@ -46,14 +46,6 @@ typedef enum _QMF_FDDATA_FORMAT{
 
 }QMF_FDDATA_FORMAT;
 
-/** Prototype filter/window */
-extern const double __qmf_protofilter[1280];
-/** Coefficients to subdivide the lowest QMF band into 8 subbands:
- *  ~  0.125*kaiser(13, 4.6) */
-extern const double __qmf_fb8bandCoeffs[13];
-/** Coefficients to subdivide the 2nd & 3rd lowest QMF bands into 4 subbands */
-extern const double __qmf_fb4bandCoeffs[13];
-
 /**
  * Creates an instance of the qmf filterbank
  *
