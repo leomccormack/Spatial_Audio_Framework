@@ -79,6 +79,17 @@ void test__realloc2d_r(void);
  * channel cross-correlation coefficients are near 0 */
 void test__latticeDecorrelator(void);
 /**
+ * Testing that the coefficients computed with butterCoeffs() are numerically
+ * similar to the "butter" function in Matlab */
+void test__butterCoeffs(void);
+/**
+ * Testing that the faf_IIRFilterbank can reconstruct the original signal power
+ */
+void test__faf_IIRFilterbank(void);
+/**
+ * Testing the accuracy of libsamplerate */
+void test__samplerateConversion(void);
+/**
  * Testing the formulate_M_and_Cr() function, and verifying that the output
  * mixing matrices yield signals which have the target covariance */
 void test__formulate_M_and_Cr(void);
@@ -124,14 +135,6 @@ void test__sphMUSIC(void);
 /**
  * Testing the DoA estimation performance of sphESPRIT() */
 void test__sphESPRIT(void);
-/**
- * Testing that the coefficients computed with butterCoeffs() are numerically
- * similar to the "butter" function in Matlab */
-void test__butterCoeffs(void);
-/**
- * Testing that the faf_IIRFilterbank can reconstruct the original signal power
- */
-void test__faf_IIRFilterbank(void);
 /**
  * Testing the SAF ambi_bin example (this may also serve as a tutorial on how
  * to use it) */

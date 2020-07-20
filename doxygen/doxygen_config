@@ -902,6 +902,7 @@ EXCLUDE_PATTERNS      += */test/timer/*
 EXCLUDE_PATTERNS      += */test/unity/*
 EXCLUDE_PATTERNS      += */test/saf_test_VS/*
 EXCLUDE_PATTERNS      += */test/test.xcodeproj/*
+EXCLUDE_PATTERNS      += *framework/resources/libsamplerate*
 
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names

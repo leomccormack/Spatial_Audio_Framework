@@ -9,5 +9,16 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/kissFFT/_kiss_fft_guts.h
     ${CMAKE_CURRENT_SOURCE_DIR}/kissFFT/kiss_fft.c
     ${CMAKE_CURRENT_SOURCE_DIR}/kissFFT/kiss_fftr.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libsamplerate/common.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/libsamplerate/fastest_coeffs.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/libsamplerate/high_qual_coeffs.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/libsamplerate/mid_qual_coeffs.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/libsamplerate/samplerate_interface.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libsamplerate/samplerate.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/libsamplerate/samplerate.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libsamplerate/src_config.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/libsamplerate/src_linear.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libsamplerate/src_sinc.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libsamplerate/src_zoh.c
     ${CMAKE_CURRENT_SOURCE_DIR}/md_malloc/md_malloc.c
 )

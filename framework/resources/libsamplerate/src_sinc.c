@@ -60,9 +60,9 @@ typedef struct
 	/* Sure hope noone does more than 128 channels at once. */ // I did : (
     //double left_calc [128], right_calc [128] ;
 #ifdef SRL_ENABLE_SAF_UTILITIES
-    float left_calc [8192], right_calc [8192] ;
+    float left_calc [65536], right_calc [65536] ;
 #else
-    double left_calc [8192], right_calc [8192] ;
+    double left_calc [65536], right_calc [65536] ;
 #endif
 
 	/* C99 struct flexible array. */

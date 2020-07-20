@@ -153,7 +153,7 @@ then please feel free to do so and submit a pull request. Note, however, that if
 
 ## License
 
-This framework is provided under the permissive [ISC license](https://choosealicense.com/licenses/isc/). It also includes the following resources: a modified version of the [alias-free STFT](https://github.com/jvilkamo/afSTFT) (MIT license); [kissFFT](https://github.com/mborgerding/kissfft) (BSD 3-clause license); [convhull_3d](https://github.com/leomccormack/convhull_3d) (MIT license); and [md_malloc](https://github.com/leomccormack/md_malloc) (MIT license).
+This framework is provided under the permissive [ISC license](https://choosealicense.com/licenses/isc/). It also includes the following resources: a modified version of the [alias-free STFT](https://github.com/jvilkamo/afSTFT) (MIT license); [kissFFT](https://github.com/mborgerding/kissfft) (BSD 3-clause license); [convhull_3d](https://github.com/leomccormack/convhull_3d) (MIT license); [md_malloc](https://github.com/leomccormack/md_malloc) (MIT license); and [libsamplerate](https://github.com/erikd/libsamplerate) (BSD 2-clause license).
 
 Please be aware of and respect the license conditions found at the top of each file. Furthermore, while we do not impose any copyleft licensing philosophies, we would still appreciate it if any improvements and/or bug fixes are also merged into this public repository where possible.
 
