@@ -1010,7 +1010,7 @@ void test__latticeDecorrelator(void){
     float_complex*** inTFframe, ***outTFframe;
 
     /* config */
-    const float acceptedICC = 0.01;
+    const float acceptedICC = 0.02;
     const int nCH = 24;
     const int nTestHops = 2000;
     const int hopSize = 128;

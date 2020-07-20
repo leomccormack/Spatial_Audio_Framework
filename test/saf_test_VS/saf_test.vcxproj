@@ -23,7 +23,7 @@
     <ProjectGuid>{F72378EE-1300-44EB-8472-3E0AE3AF43E8}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ConsoleApplication1</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <ProjectName>saf_test</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -230,11 +230,18 @@
     <ClInclude Include="..\..\framework\modules\saf_vbap\saf_vbap.h" />
     <ClInclude Include="..\..\framework\modules\saf_vbap\saf_vbap_internal.h" />
     <ClInclude Include="..\..\framework\resources\afSTFT\afSTFTlib.h" />
+    <ClInclude Include="..\..\framework\resources\afSTFT\afSTFT_internal.h" />
     <ClInclude Include="..\..\framework\resources\afSTFT\afSTFT_protoFilter.h" />
     <ClInclude Include="..\..\framework\resources\convhull_3d\convhull_3d.h" />
     <ClInclude Include="..\..\framework\resources\kissFFT\kiss_fft.h" />
     <ClInclude Include="..\..\framework\resources\kissFFT\kiss_fftr.h" />
     <ClInclude Include="..\..\framework\resources\kissFFT\_kiss_fft_guts.h" />
+    <ClInclude Include="..\..\framework\resources\libsamplerate\common.h" />
+    <ClInclude Include="..\..\framework\resources\libsamplerate\fastest_coeffs.h" />
+    <ClInclude Include="..\..\framework\resources\libsamplerate\high_qual_coeffs.h" />
+    <ClInclude Include="..\..\framework\resources\libsamplerate\mid_qual_coeffs.h" />
+    <ClInclude Include="..\..\framework\resources\libsamplerate\samplerate.h" />
+    <ClInclude Include="..\..\framework\resources\libsamplerate\src_config.h" />
     <ClInclude Include="..\..\framework\resources\md_malloc\md_malloc.h" />
     <ClInclude Include="..\saf_test.h" />
     <ClInclude Include="..\timer\timer.h" />
@@ -303,9 +310,14 @@
     <ClCompile Include="..\..\framework\modules\saf_vbap\saf_vbap.c" />
     <ClCompile Include="..\..\framework\modules\saf_vbap\saf_vbap_internal.c" />
     <ClCompile Include="..\..\framework\resources\afSTFT\afSTFTlib.c" />
+    <ClCompile Include="..\..\framework\resources\afSTFT\afSTFT_internal.c" />
     <ClCompile Include="..\..\framework\resources\convhull_3d\convhull_3d.c" />
     <ClCompile Include="..\..\framework\resources\kissFFT\kiss_fft.c" />
     <ClCompile Include="..\..\framework\resources\kissFFT\kiss_fftr.c" />
+    <ClCompile Include="..\..\framework\resources\libsamplerate\samplerate.c" />
+    <ClCompile Include="..\..\framework\resources\libsamplerate\src_linear.c" />
+    <ClCompile Include="..\..\framework\resources\libsamplerate\src_sinc.c" />
+    <ClCompile Include="..\..\framework\resources\libsamplerate\src_zoh.c" />
     <ClCompile Include="..\..\framework\resources\md_malloc\md_malloc.c" />
     <ClCompile Include="..\saf_test.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

@@ -115,6 +115,9 @@
     <Filter Include="framework\resources\md_malloc">
       <UniqueIdentifier>{187a3709-b161-4af5-a79a-a933c3520c21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="framework\resources\libsamplerate">
+      <UniqueIdentifier>{2e9724fc-3949-48ad-97a6-b257c587e1e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\timer\timer.h">
@@ -333,6 +336,27 @@
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_qmf.h">
       <Filter>framework\modules\saf_utilities</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\framework\resources\libsamplerate\common.h">
+      <Filter>framework\resources\libsamplerate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\libsamplerate\fastest_coeffs.h">
+      <Filter>framework\resources\libsamplerate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\libsamplerate\high_qual_coeffs.h">
+      <Filter>framework\resources\libsamplerate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\libsamplerate\mid_qual_coeffs.h">
+      <Filter>framework\resources\libsamplerate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\libsamplerate\samplerate.h">
+      <Filter>framework\resources\libsamplerate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\libsamplerate\src_config.h">
+      <Filter>framework\resources\libsamplerate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\afSTFT\afSTFT_internal.h">
+      <Filter>framework\resources\afSTFT</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\timer\timer.c">
@@ -541,6 +565,21 @@
     </ClCompile>
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_latticeCoeffs.c">
       <Filter>framework\modules\saf_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\libsamplerate\samplerate.c">
+      <Filter>framework\resources\libsamplerate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\libsamplerate\src_linear.c">
+      <Filter>framework\resources\libsamplerate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\libsamplerate\src_sinc.c">
+      <Filter>framework\resources\libsamplerate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\libsamplerate\src_zoh.c">
+      <Filter>framework\resources\libsamplerate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\afSTFT\afSTFT_internal.c">
+      <Filter>framework\resources\afSTFT</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
