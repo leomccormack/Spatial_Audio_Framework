@@ -129,6 +129,7 @@ typedef struct _binauraliser
     float yaw, roll, pitch;                  /**< rotation angles in degrees */
     int bFlipYaw, bFlipPitch, bFlipRoll;     /**< flag to flip the sign of the individual rotation angles */
     int useRollPitchYawFlag;                 /**< rotation order flag, 1: r-p-y, 0: y-p-r */
+    int enableDiffEQ; /**< flag to apply diffuse-field EQ to the currently loaded HRTFs */
     
 } binauraliser_data;
 

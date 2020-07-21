@@ -235,6 +235,9 @@ void array2sh_process
                 break;
         }
 
+        /* Apply post-gain */
+        utility_svsmul(FLATTEN2D(pData->SHframeTD), &gain_lin, nSH*FRAME_SIZE, NULL);
+
         /* Copy to output */
         for(i = 0; i < MIN(nSH,nOutputs); i++)
             utility_svvcopy(pData->SHframeTD[i], FRAME_SIZE, outputs[i]);

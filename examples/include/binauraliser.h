@@ -218,6 +218,11 @@ void binauraliser_setRPYflag(void* const hBin, int newState);
 /** NOT IMPLEMENTED YET */
 void binauraliser_setInterpMode(void* const hBin, int newMode);
 
+/**
+ * Enable (1) or disable (0) the diffuse-field EQ applied to the HRTFs
+ */
+void binauraliser_setEnableHRTFDiffuseEQ(void* const hBin, int newState);
+
 
 /* ========================================================================== */
 /*                                Get Functions                               */
@@ -385,6 +390,12 @@ int binauraliser_getInterpMode(void* const hBin);
  * purposes)
  */
 int binauraliser_getProcessingDelay(void);
+
+/**
+ * Returns the flag indicating whether the diffuse-field EQ applied to the HRTFs
+ * is enabled (1) or disabled (0)
+ */
+int binauraliser_getEnableHRTFDiffuseEQ(void* const hBin);
 
 
 #ifdef __cplusplus

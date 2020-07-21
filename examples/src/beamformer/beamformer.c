@@ -185,10 +185,10 @@ void beamformer_process
         utility_svvcopy((const float*)pData->beamWeights, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_beamWeights);
 
         /* copy to output buffer */
-            for(ch = 0; ch < MIN(nBeams, nOutputs); ch++)
-                utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
-            for (; ch < nOutputs; ch++)
-                memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+        for(ch = 0; ch < MIN(nBeams, nOutputs); ch++)
+            utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
+        for (; ch < nOutputs; ch++)
+            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
     }
     else
         for (ch=0; ch < nOutputs; ch++)

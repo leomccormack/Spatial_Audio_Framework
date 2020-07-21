@@ -2261,9 +2261,9 @@ void test__sphModalCoeffs(void){
     const double c = 343.0;
 
     /* prep */
-    freqVector = malloc1d((N/2-1)*sizeof(float));
+    freqVector = malloc1d((N/2+1)*sizeof(float));
     getUniformFreqVector(N, fs, freqVector);
-    kr = malloc1d((N/2-1)*sizeof(double));
+    kr = malloc1d((N/2+1)*sizeof(double));
     for(i=0; i<N/2+1; i++)
         kr[i] = 2.0*SAF_PId* (double)freqVector[i] * radius/c;
     b_N_dipole = (double_complex**)malloc2d((N/2+1), (order+1), sizeof(double_complex));

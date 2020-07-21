@@ -52,6 +52,7 @@ void binauraliser_create
     pData->bFlipRoll = 0;
     pData->useRollPitchYawFlag = 0;
     pData->enableRotation = 0;
+    pData->enableDiffEQ = 1;
 
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
@@ -86,7 +87,6 @@ void binauraliser_create
         pData->recalc_hrtf_interpFLAG[ch] = 1;
     pData->recalc_M_rotFLAG = 1; 
 }
-
 
 void binauraliser_destroy
 (
@@ -231,7 +231,7 @@ void binauraliser_process
         }
 
         /* interpolate hrtfs and apply to each source */
-        memset(pData->outputframeTF, 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
+        memset(FLATTEN3D(pData->outputframeTF), 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
         for (ch = 0; ch < nSources; ch++) {
             if(pData->recalc_hrtf_interpFLAG[ch]){
                 if(enableRotation)
@@ -419,6 +419,16 @@ void binauraliser_setInterpMode(void* const hBin, int newMode)
     pData->interpMode = newMode;
 }
 
+void binauraliser_setEnableHRTFDiffuseEQ(void* const hBin, int newState)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    if(newState!=pData->enableDiffEQ){
+        pData->enableDiffEQ = newState;
+        pData->reInitHRTFsAndGainTables = 1;
+        binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
+    }
+}
+
 
 /* Get Functions */
 
@@ -594,6 +604,9 @@ int binauraliser_getProcessingDelay()
 {
     return 12*HOP_SIZE;
 }
- 
-    
-    
+
+int binauraliser_getEnableHRTFDiffuseEQ(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->enableDiffEQ;
+}
