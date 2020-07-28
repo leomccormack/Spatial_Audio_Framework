@@ -60,7 +60,7 @@ void dirass_initAna(void* const hDir)
     order_up = pData->new_upscaleOrder;
     nSH_order = (order+1)*(order+1);
     nSH_up = (order_up+1)*(order_up+1);
-    
+
     strcpy(pData->progressBarText,"Preparing scanning grid");
     pData->progressBar0_1 = 0.4f;
     
@@ -150,8 +150,8 @@ void dirass_initAna(void* const hDir)
         grid_x_axis[i] = fi;
     for(fi = -vfov/2.0f,  i = 0; i<N_ele; fi+=vfov/N_ele, i++)
         grid_y_axis[i] = fi;
-    pars->interp_dirs_deg = realloc(pars->interp_dirs_deg, N_azi*N_ele*2*sizeof(float));
-    pars->interp_dirs_rad = realloc(pars->interp_dirs_rad, N_azi*N_ele*2*sizeof(float));
+    pars->interp_dirs_deg = realloc1d(pars->interp_dirs_deg, N_azi*N_ele*2*sizeof(float));
+    pars->interp_dirs_rad = realloc1d(pars->interp_dirs_rad, N_azi*N_ele*2*sizeof(float));
     for(i = 0; i<N_ele; i++){
         for(j=0; j<N_azi; j++){
             pars->interp_dirs_deg[(i*N_azi + j)*2]   = grid_x_axis[j];
@@ -218,7 +218,7 @@ void dirass_initAna(void* const hDir)
     free(c_n);
  
     /* reallocate memory */
-    pars->Y_up = realloc1d(pars->Y_up, nSH_up* (pars->grid_nDirs)*sizeof(float));
+    pars->Y_up = realloc1d(pars->Y_up, nSH_up * (pars->grid_nDirs)*sizeof(float));
     pars->est_dirs = realloc1d(pars->est_dirs, pars->grid_nDirs * 2 * sizeof(float));
     pars->ss = realloc1d(pars->ss, pars->grid_nDirs * FRAME_SIZE * sizeof(float));
     pars->ssxyz = realloc1d(pars->ssxyz, 3 * FRAME_SIZE * sizeof(float));
@@ -239,12 +239,3 @@ void dirass_initAna(void* const hDir)
     free(grid_x_axis);
     free(grid_y_axis);
 }
- 
-
-
-
-
-
-
-
-

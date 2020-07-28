@@ -118,8 +118,9 @@ void dirass_destroy
         for(i=0; i<NUM_DISP_SLOTS; i++)
             free(pData->pmap_grid[i]);
 
-        pars = pData->pars; 
+        pars = pData->pars;
         free(pars->interp_dirs_deg);
+        free(pars->interp_dirs_rad);
         free(pars->Y_up);
         free(pars->interp_table);
         free(pars->ss);
@@ -129,6 +130,7 @@ void dirass_destroy
         free(pars->Cw);
         free(pars->Uw);
         free(pars->est_dirs);
+        free(pars->est_dirs_idx);
         free(pars->prev_intensity);
         free(pars->prev_energy);
         
@@ -189,7 +191,6 @@ void dirass_initCodec
     pData->codecStatus = CODEC_STATUS_INITIALISED;
 }
 
-
 void dirass_analysis
 (
     void  *  const hDir,
@@ -234,7 +235,7 @@ void dirass_analysis
         pData->FIFO_idx++;
 
         /* Process frame if inFIFO is full and codec is ready for it */
-        if (pData->FIFO_idx >= FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying ) {
+        if (pData->FIFO_idx >= FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying) {
             pData->FIFO_idx = 0;
             pData->procStatus = PROC_STATUS_ONGOING;
 
@@ -409,10 +410,10 @@ void dirass_analysis
                     pData->dispSlotIdx = 0;
                 pData->pmapReady = 1;
             }
-            else if(pData->FIFO_idx >= FRAME_SIZE){
-                /* reset FIFO_idx index if codec was not ready */
-                pData->FIFO_idx = 0;
-            }
+        }
+        else if(pData->FIFO_idx >= FRAME_SIZE){
+            /* reset FIFO_idx index if codec was not ready */
+            pData->FIFO_idx = 0;
         }
     }
     
