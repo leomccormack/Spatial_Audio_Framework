@@ -16,8 +16,8 @@
 
 /**
  * @file ambi_bin_internal.c
- * @brief A binaural Ambisonic decoder for reproducing ambisonic signals over
- *        headphones
+ * @brief A binaural Ambisonic decoder for reproducing sound-fields (described
+ *        via ambisonic signals) over headphones
  *
  * The decoder includes many historic and current state-of-the-art decoding
  * approaches. It also supports sound-field rotation for head-tracking and may

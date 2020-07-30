@@ -16,8 +16,8 @@
 
 /**
  * @file ambi_bin_internal.h
- * @brief A binaural Ambisonic decoder for reproducing ambisonic signals over
- *        headphones
+ * @brief A binaural Ambisonic decoder for reproducing sound-fields (described
+ *        via ambisonic signals) over headphones
  *
  * The decoder includes many historic and current state-of-the-art decoding
  * approaches. It also supports sound-field rotation for head-tracking and may
@@ -43,6 +43,7 @@ extern "C" {
 /* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
+
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 128 )
 #endif
@@ -95,11 +96,11 @@ typedef struct _ambi_bin
 {
     /* audio buffers + afSTFT time-frequency transform handle */
     int fs;                         /**< host sampling rate */ 
-    float** SHFrameTD;//[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float** binFrameTD;//[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float_complex*** SHframeTF;//[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    float_complex*** SHframeTF_rot;//[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    float_complex*** binframeTF;//[HYBRID_BANDS][NUM_EARS][TIME_SLOTS];
+    float** SHFrameTD;
+    float** binFrameTD;
+    float_complex*** SHframeTF;
+    float_complex*** SHframeTF_rot;
+    float_complex*** binframeTF;
     void* hSTFT;                    /**< afSTFT handle */
     int afSTFTdelay;                /**< for host delay compensation */
     float freqVector[HYBRID_BANDS]; /**< frequency vector for time-frequency transform, in Hz */
