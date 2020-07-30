@@ -373,9 +373,9 @@ void test__ims_shoebox_RIR(void){
     sourceID_4 = ims_shoebox_addSource(hIms, (float*)src4_pos, NULL);
 
     /* Continue rendering */
-    for(i=0; i<100; i++){
-        mov_src_pos[1] = 2.0f + (float)i/1000.0f;
-        mov_rec_pos[0] = 3.0f + (float)i/1000.0f;
+    for(i=0; i<10; i++){
+        mov_src_pos[1] = 2.0f + (float)i/10.0f;
+        mov_rec_pos[0] = 3.0f + (float)i/10.0f;
         ims_shoebox_updateSource(hIms, sourceID_4, mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
         ims_shoebox_computeEchograms(hIms, maxTime_s);
@@ -393,11 +393,11 @@ void test__saf_matrixConv(void){
     void* hMatrixConv;
 
     /* config */
-    const int signalLength = 48000;
-    const int hostBlockSize = 1024;
-    const int filterLength = 512;
-    const int nInputs = 64;
-    const int nOutputs = 64;
+    const int signalLength = 24000;
+    const int hostBlockSize = 8192;
+    const int filterLength = 256;
+    const int nInputs = 32;
+    const int nOutputs = 40;
 
     /* prep */
     inputTD = (float**)malloc2d(nInputs, signalLength, sizeof(float));

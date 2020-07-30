@@ -471,8 +471,13 @@ void utility_cvvmul
     vcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
 #else
 	int j;
+# if __STDC_VERSION__ >= 199901L
+    for (j = 0; j < len; j++)
+        c[j] = a[j] * b[j];
+# else
     for (j = 0; j < len; j++)
         c[j] = ccmulf(a[j], b[j]);
+# endif
 #endif
 }
 
