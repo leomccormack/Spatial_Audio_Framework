@@ -99,14 +99,12 @@ void beamformer_process
 )
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    int n, ch, i, j, bi, nSH;
-    int o[MAX_SH_ORDER+2];
+    int ch, i, j, bi, nSH;
 
     /* local copies of user parameters */
     int nBeams, beamOrder;
     NORM_TYPES norm;
     CH_ORDER chOrdering;
-    for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
     beamOrder = pData->beamOrder;
     nSH = ORDER2NSH(beamOrder);
     nBeams = pData->nBeams;
@@ -200,6 +198,10 @@ void beamformer_process
 
 void beamformer_refreshSettings(void* const hBeam)
 {
+    beamformer_data *pData = (beamformer_data*)(hBeam);
+    int ch;
+    for(ch=0; ch<MAX_NUM_BEAMS; ch++)
+        pData->recalc_beamWeights[ch] = 1;
 }
 
 void beamformer_setBeamOrder(void  * const hBeam, int newValue)

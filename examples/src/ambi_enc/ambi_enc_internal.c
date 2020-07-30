@@ -33,10 +33,13 @@ void loadSourceConfigPreset
 )
 { 
     int ch, i, nCH;
-    
+
+    nCH = ch = 0;
     switch(preset){
         default:
+            /* fall through */
         case SOURCE_CONFIG_PRESET_DEFAULT:
+            /* fall through */
         case SOURCE_CONFIG_PRESET_MONO:
             nCH = 1;
             for(ch=0; ch<nCH; ch++)
@@ -209,6 +212,7 @@ void loadSourceConfigPreset
                     dirs_deg[ch][i] = __SphCovering_64_dirs_deg[ch][i];
             break;
     }
+    assert(nCH>0);
     
     /* Fill remaining slots with default coords */
     for(; ch<MAX_NUM_INPUTS; ch++)

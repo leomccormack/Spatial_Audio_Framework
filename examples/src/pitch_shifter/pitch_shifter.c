@@ -122,6 +122,8 @@ void pitch_shifter_initCodec
 
     /* Config */
     switch(pData->osamp_option){
+        default:
+            /* fall through */
         case PITCH_SHIFTER_OSAMP_2:  osamp = 2; break;
         case PITCH_SHIFTER_OSAMP_4:  osamp = 4; break;
         case PITCH_SHIFTER_OSAMP_8:  osamp = 8; break;
@@ -129,6 +131,8 @@ void pitch_shifter_initCodec
         case PITCH_SHIFTER_OSAMP_32: osamp = 32; break;
     }
     switch(pData->fftsize_option){
+        default:
+            /* fall through */
         case PITCH_SHIFTER_FFTSIZE_512:   fftSize = 512; break;
         case PITCH_SHIFTER_FFTSIZE_1024:  fftSize = 1024; break;
         case PITCH_SHIFTER_FFTSIZE_2048:  fftSize = 2048; break;

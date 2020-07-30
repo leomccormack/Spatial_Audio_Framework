@@ -43,9 +43,9 @@ void loadSofaFile
 {
     int i, j, k, retval,dimid[6], *dimids, ndimsp,ncid, varid, is0_360;
     size_t dimlength[6], IR_dims[3], SourcePosition_dims[2];
-    size_t hrir_dims[3], hrir_pos_dims[2];
+    size_t hrir_dims[3];
     char dimname[6];
-    const char* errorMessage;
+    //const char* errorMessage;
     double* IR, *SourcePosition, IR_fs;
     
     /* free any existing memory */
@@ -60,7 +60,7 @@ void loadSofaFile
     ncid = -1;
     if(sofa_filepath!=NULL){
         if ((retval = nc_open(sofa_filepath, NC_NOWRITE, &ncid)))
-            errorMessage = nc_strerror(retval);
+            nc_strerror(retval);
     }
     else
         retval = NC_FATAL;
@@ -103,48 +103,48 @@ void loadSofaFile
     /* Note: there are 6 possible dimension lengths in the sofa standard */
     for (i=0; i<6; i++){
         retval = nc_inq_dim(ncid, i, &dimname[i], &dimlength[i]);
-        errorMessage = nc_strerror(retval);
+        nc_strerror(retval);
         retval = nc_inq_dimid(ncid, &dimname[i], &dimid[i]);
-        errorMessage = nc_strerror(retval);
+        nc_strerror(retval);
     }
     
     /* Extract IR data */
     if ((retval = nc_inq_varid(ncid, "Data.IR", &varid)))
-        errorMessage = nc_strerror(retval);
+        nc_strerror(retval);
     if ((retval =  nc_inq_varndims (ncid, varid, &ndimsp)))
-        errorMessage = nc_strerror(retval);
+        nc_strerror(retval);
     dimids = malloc1d(ndimsp*sizeof(int));
     if ((retval = nc_inq_vardimid(ncid, varid, dimids)))
-        errorMessage = nc_strerror(retval);
+        nc_strerror(retval);
     for(i=0; i<3; i++)
         IR_dims[i] = dimlength[dimid[dimids[i]]];
     free(dimids);
     IR = malloc1d(IR_dims[0]*IR_dims[1]*IR_dims[2]*sizeof(double));
     if ((retval = nc_get_var(ncid, varid, IR)))
-        errorMessage = nc_strerror(retval);
+        nc_strerror(retval);
     if ((retval = nc_inq_varid(ncid, "Data.SamplingRate", &varid)))
-        errorMessage = nc_strerror(retval);
+        nc_strerror(retval);
     if ((retval = nc_get_var(ncid, varid, &IR_fs)))
-        errorMessage = nc_strerror(retval);
+        nc_strerror(retval);
     
     /* Extract positional data */
     if ((retval = nc_inq_varid(ncid, "SourcePosition", &varid)))
-        errorMessage = nc_strerror(retval);
+        nc_strerror(retval);
     if ((retval =  nc_inq_varndims (ncid, varid, &ndimsp)))
-        errorMessage = nc_strerror(retval);
+        nc_strerror(retval);
     dimids = malloc1d(ndimsp*sizeof(int));
     if ((retval = nc_inq_vardimid(ncid, varid, dimids)))
-        errorMessage = nc_strerror(retval);
+        nc_strerror(retval);
     for(i=0; i<2; i++)
         SourcePosition_dims[i] = dimlength[dimid[dimids[i]]];
     free(dimids);
     SourcePosition = malloc1d(SourcePosition_dims[0]*SourcePosition_dims[1]*sizeof(double));
     if ((retval = nc_get_var(ncid, varid, SourcePosition)))
-        errorMessage = nc_strerror(retval);
+        nc_strerror(retval);
     
     /* Close the file, freeing all resources. */
     if ((retval = nc_close(ncid)))
-        errorMessage = nc_strerror(retval);
+        nc_strerror(retval);
     
     /* Allocate memory */
     (*hrir_len) = (int)IR_dims[2]; 
@@ -157,11 +157,9 @@ void loadSofaFile
     hrir_dims[1] = IR_dims[1];
     hrir_dims[2] = (size_t)(*hrir_len);
     (*N_hrir_dirs) = (int)hrir_dims[0];
-    for(i=0; i<2; i++)
-        hrir_pos_dims[i] = SourcePosition_dims[i];
-    for(i=0; i<hrir_dims[0]; i++){
-        for(j=0; j<hrir_dims[1]; j++){
-            for(k=0; k<hrir_dims[2]; k++){
+    for(i=0; i<(int)hrir_dims[0]; i++){
+        for(j=0; j<(int)hrir_dims[1]; j++){
+            for(k=0; k<(int)hrir_dims[2]; k++){
                 /* trunctate IRs and store in floating point precision */
                 (*hrirs)[i*hrir_dims[1]*hrir_dims[2] + j*hrir_dims[2] + k] = (float)IR[i*IR_dims[1]*IR_dims[2] + j*IR_dims[2] + k];
             }
@@ -170,7 +168,7 @@ void loadSofaFile
     
     /* store in floating point precision */
     is0_360 = 0;
-    for(i=0; i<SourcePosition_dims[0]; i++){
+    for(i=0; i<(int)SourcePosition_dims[0]; i++){
         (*hrir_dirs_deg)[2*i+0] = (float)SourcePosition[i*SourcePosition_dims[1]+0];
         (*hrir_dirs_deg)[2*i+1] = (float)SourcePosition[i*SourcePosition_dims[1]+1];
         if((*hrir_dirs_deg)[2*i+0]>=181.0f)
@@ -179,7 +177,7 @@ void loadSofaFile
     
     /* convert to -180..180, if azi is 0..360 */
     if(is0_360)
-        for(i=0; i<SourcePosition_dims[0]; i++)
+        for(i=0; i<(int)SourcePosition_dims[0]; i++)
             (*hrir_dirs_deg)[2*i+0] = (*hrir_dirs_deg)[2*i+0]>180.0f ? (*hrir_dirs_deg)[2*i+0] -360.0f : (*hrir_dirs_deg)[2*i+0];
             
     free(IR);

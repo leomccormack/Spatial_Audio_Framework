@@ -112,10 +112,13 @@ void loadLoudspeakerArrayPreset
 {
     float sum_elev;
     int ch, i, nCH;
-    
+
+    nCH = ch = 0;
     switch(preset){
         default:
+            /* fall through */
         case LOUDSPEAKER_ARRAY_PRESET_DEFAULT:
+            /* fall through */
         case LOUDSPEAKER_ARRAY_PRESET_5PX:
             nCH = 5;
             for(ch=0; ch<nCH; ch++)
@@ -276,6 +279,7 @@ void loadLoudspeakerArrayPreset
                     dirs_deg[ch][i] = __SphCovering_64_dirs_deg[ch][i];
             break;
     }
+    assert(nCH>0);
     
     /* Fill remaining slots with default coords */
     for(; ch<MAX_NUM_LOUDSPEAKERS; ch++)

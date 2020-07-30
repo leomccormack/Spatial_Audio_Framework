@@ -481,15 +481,15 @@ void applyIIR
 
         /* shuffle delays */
         switch(nCoeffs-1){
-            case 10: wz[9] = wz[8];
-            case 9:  wz[8] = wz[7];
-            case 8:  wz[7] = wz[6];
-            case 7:  wz[6] = wz[5];
-            case 6:  wz[5] = wz[4];
-            case 5:  wz[4] = wz[3];
-            case 4:  wz[3] = wz[2];
-            case 3:  wz[2] = wz[1];
-            case 2:  wz[1] = wz[0];
+            case 10: wz[9] = wz[8]; /* fall through */
+            case 9:  wz[8] = wz[7]; /* fall through */
+            case 8:  wz[7] = wz[6]; /* fall through */
+            case 7:  wz[6] = wz[5]; /* fall through */
+            case 6:  wz[5] = wz[4]; /* fall through */
+            case 5:  wz[4] = wz[3]; /* fall through */
+            case 4:  wz[3] = wz[2]; /* fall through */
+            case 3:  wz[2] = wz[1]; /* fall through */
+            case 2:  wz[1] = wz[0]; /* fall through */
             case 1:  wz[0] = wn; break;
             default: assert(0); /* A 5th order BPF/BSF or 10th order LPF/HPF?
                                  * Sorry, I gotta put a stop to that... */
@@ -593,6 +593,7 @@ void butterCoeffs
     switch(filterType){
         case BUTTER_FILTER_HPF:
             utility_dinv(FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
+            /* fall through */
         case BUTTER_FILTER_LPF:
             bf_ss = (double**)malloc2d(numStates,numStates,sizeof(double));
             for(i=0; i<numStates; i++)
@@ -601,6 +602,7 @@ void butterCoeffs
             break;
         case BUTTER_FILTER_BSF:
             utility_dinv(FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
+            /* fall through */
         case BUTTER_FILTER_BPF:
             numStates = numStates*2;
             w1 = 4.0*tan(SAF_PI*whi/2.0);
@@ -640,6 +642,8 @@ void butterCoeffs
     rcmplx = NULL;
     r = NULL;
     switch(filterType){
+        default:
+            /* fall through */
         case BUTTER_FILTER_LPF:
             r = malloc1d(numStates*sizeof(double));
             for(i=0; i<numStates; i++)

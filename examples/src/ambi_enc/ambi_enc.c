@@ -212,8 +212,8 @@ void ambi_enc_setOutputOrder(void* const hAmbi, int newOrder)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
     int i;
-    if(newOrder != pData->order){
-        pData->order = newOrder; 
+    if((SH_ORDERS)newOrder != pData->order){
+        pData->order = (SH_ORDERS)newOrder;
         for(i=0; i<MAX_NUM_INPUTS; i++)
             pData->recalc_SH_FLAG[i] = 1;
         /* FUMA only supports 1st order */

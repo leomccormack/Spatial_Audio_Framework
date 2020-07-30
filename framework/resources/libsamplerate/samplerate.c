@@ -523,12 +523,13 @@ src_int_to_float_array (const int *in, float *out, int len)
 
 void
 src_float_to_int_array (const float *in, int *out, int len)
-{	//double scaled_value ;
+{
+    double scaled_value ;
     assert(0);
-//	while (len)
-//	{	len -- ;
-//
-//		scaled_value = in [len] * (8.0 * 0x10000000) ;
+	while (len)
+	{	len -- ;
+
+		scaled_value = in [len] * (8.0 * 0x10000000) ;
 //		if (CPU_CLIPS_POSITIVE == 0 && scaled_value >= (1.0 * 0x7FFFFFFF))
 //		{	out [len] = 0x7fffffff ;
 //			continue ;
@@ -537,9 +538,9 @@ src_float_to_int_array (const float *in, int *out, int len)
 //		{	out [len] = -1 - 0x7fffffff ;
 //			continue ;
 //			} ;
-//
-//		out [len] = (int) lrint (scaled_value) ;
-//		} ;
+
+		out [len] = (int) lrint (scaled_value) ;
+		} ;
 
 } /* src_float_to_int_array */
 

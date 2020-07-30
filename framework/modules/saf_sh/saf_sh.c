@@ -1939,7 +1939,6 @@ void sphDiffCohMtxTheory
     ARRAY_CONSTRUCTION_TYPES arrayType,
     double dirCoeff,
     double* kr,
-    double* kR,
     int nBands,
     double* M_diffcoh
 )

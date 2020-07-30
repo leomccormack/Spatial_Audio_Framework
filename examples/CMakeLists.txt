@@ -65,6 +65,11 @@ foreach(current_example RANGE ${num_examples})
         )
     endif()
 
+    # enable compiler warnings
+    if(UNIX)
+        target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
+    endif()
+
     # Include directory
     target_include_directories(${PROJECT_NAME}
     PUBLIC

@@ -141,7 +141,7 @@ void ambi_drc_process
 )                                         
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    int i, t, ch, band, nSH; 
+    int i, t, ch, band;
     float xG, yG, xL, yL, cdB, alpha_a, alpha_r;
     float makeup, boost, theshold, ratio, knee;
     
@@ -160,7 +160,6 @@ void ambi_drc_process
     theshold = pData->theshold;
     ratio = pData->ratio;
     knee = pData->knee;
-    nSH = pData->nSH;
 
     /* Main processing loop */
     if (nSamples == FRAME_SIZE && pData->reInitTFT == 0) {

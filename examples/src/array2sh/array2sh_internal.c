@@ -374,7 +374,7 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
     float f_max, kR_max, f_alias, f_f_alias;
     double_complex* dM_diffcoh_s;
     const double_complex calpha = cmplx(1.0, 0.0); const double_complex cbeta  = cmplx(0.0, 0.0);
-    double kr[HYBRID_BANDS], kR[HYBRID_BANDS];
+    double kr[HYBRID_BANDS];
     double_complex L_diff_fal[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     double_complex L_diff[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     double_complex E_diff[MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
@@ -392,10 +392,8 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
     f_max = 20e3f;
     kR_max = 2.0f*M_PI*f_max*(arraySpecs->r)/pData->c;
     array_order = MIN((int)(ceilf(2.0f*kR_max)+0.01f), 28); /* Cap at around 28, as Bessels at 30+ can be numerically unstable */
-    for(band=0; band<HYBRID_BANDS; band++){
+    for(band=0; band<HYBRID_BANDS; band++)
         kr[band] = 2.0*M_PI*(pData->freqVector[band])*(arraySpecs->r)/pData->c;
-        kR[band] = 2.0*M_PI*(pData->freqVector[band])*(arraySpecs->R)/pData->c;
-    }
     
     /* Get theoretical diffuse coherence matrix */
     switch(arraySpecs->arrayType){
@@ -404,23 +402,23 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
             break;
         case ARRAY_SPHERICAL:
             switch (arraySpecs->weightType){
-                case WEIGHT_RIGID_OMNI:
-                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_RIGID, 1.0, kr, kR, HYBRID_BANDS, dM_diffcoh);
+                case WEIGHT_RIGID_OMNI: /* Does not handle the case where kr != kR ! */
+                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_RIGID, 1.0, kr, HYBRID_BANDS, dM_diffcoh);
                     break;
                 case WEIGHT_RIGID_CARD:
-                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL, 0.5, kr, kR, HYBRID_BANDS, dM_diffcoh);
+                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL, 0.5, kr, HYBRID_BANDS, dM_diffcoh);
                     break;
                 case WEIGHT_RIGID_DIPOLE:
-                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL, 0.0, kr, kR, HYBRID_BANDS, dM_diffcoh);
+                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL, 0.0, kr, HYBRID_BANDS, dM_diffcoh);
                     break;
                 case WEIGHT_OPEN_OMNI:
-                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_OPEN, 1.0, kr, NULL, HYBRID_BANDS, dM_diffcoh);
+                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_OPEN, 1.0, kr, HYBRID_BANDS, dM_diffcoh);
                     break;
                 case WEIGHT_OPEN_CARD:
-                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.5, kr, NULL, HYBRID_BANDS, dM_diffcoh);
+                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.5, kr, HYBRID_BANDS, dM_diffcoh);
                     break;
                 case WEIGHT_OPEN_DIPOLE:
-                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.0, kr, NULL, HYBRID_BANDS, dM_diffcoh);
+                    sphDiffCohMtxTheory(array_order, (float*)arraySpecs->sensorCoords_rad, arraySpecs->Q, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.0, kr, HYBRID_BANDS, dM_diffcoh);
                     break;
             }
             break;

@@ -188,6 +188,12 @@ if(SAF_ENABLE_SOFA_READER_MODULE)
 else()
     message(STATUS "saf_sofa_reader module disabled.")
 endif()
+
+
+############################################################################
+if(UNIX)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
+endif()
     
 
 ############################################################################

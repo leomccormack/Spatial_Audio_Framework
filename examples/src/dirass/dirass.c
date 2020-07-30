@@ -453,8 +453,8 @@ void dirass_setInputOrder(void* const hDir,  int newValue)
 void dirass_setDisplayGridOption(void* const hDir,  int newState)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    if(pData->gridOption != newState){
-        pData->gridOption = newState;
+    if(pData->gridOption != (DIRASS_GRID_OPTIONS)newState){
+        pData->gridOption = (DIRASS_GRID_OPTIONS)newState;
         dirass_setCodecStatus(hDir, CODEC_STATUS_NOT_INITIALISED);
     }
 }
@@ -481,8 +481,8 @@ void dirass_setDiRAssMode(void* const hDir,  int newMode)
 {
     dirass_data *pData = (dirass_data*)(hDir);
     dirass_codecPars* pars = pData->pars;
-    if(pData->DirAssMode!=newMode){
-        pData->DirAssMode = newMode;
+    if(pData->DirAssMode!=(DIRASS_REASS_MODES)newMode){
+        pData->DirAssMode = (DIRASS_REASS_MODES)newMode;
         if(pars->prev_intensity!=NULL)
             memset(pars->prev_intensity, 0, pars->grid_nDirs*3*sizeof(float));
         memset(pars->prev_energy, 0, pars->grid_nDirs*sizeof(float));

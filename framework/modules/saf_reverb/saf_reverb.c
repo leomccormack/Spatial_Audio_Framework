@@ -241,7 +241,7 @@ void ims_shoebox_applyEchogramTD
     void* hIms, 
     long receiverID,
     int nSamples,
-    int fractionalDelaysFLAG // NOT IMPLEMENTED YET
+    int fractionalDelaysFLAG
 )
 {
     ims_scene_data *sc = (ims_scene_data*)(hIms);
@@ -252,7 +252,8 @@ void ims_shoebox_applyEchogramTD
     unsigned int rIdx;
 
     assert(nSamples <= IMS_MAX_NSAMPLES_PER_FRAME);
-
+    if(fractionalDelaysFLAG)
+        assert(0); /* NOT IMPLEMENTED YET */
 
     /* Allocate circular buffers and filterbank handles (if this is the first
      * time this function is being called) */
@@ -329,16 +330,19 @@ void ims_shoebox_applyEchogramTD
                                         sc->recs[rec_idx].sigs[11][n] += echogram_abs->value[im][11] * cb_val;
                                         sc->recs[rec_idx].sigs[10][n] += echogram_abs->value[im][10] * cb_val;
                                         sc->recs[rec_idx].sigs[9][n] += echogram_abs->value[im][9] * cb_val;
+                                        /* fall through */
                                     case 9:
                                         sc->recs[rec_idx].sigs[8][n] += echogram_abs->value[im][8] * cb_val;
                                         sc->recs[rec_idx].sigs[7][n] += echogram_abs->value[im][7] * cb_val;
                                         sc->recs[rec_idx].sigs[6][n] += echogram_abs->value[im][6] * cb_val;
                                         sc->recs[rec_idx].sigs[5][n] += echogram_abs->value[im][5] * cb_val;
                                         sc->recs[rec_idx].sigs[4][n] += echogram_abs->value[im][4] * cb_val;
+                                        /* fall through */
                                     case 4:
                                         sc->recs[rec_idx].sigs[3][n] += echogram_abs->value[im][3] * cb_val;
                                         sc->recs[rec_idx].sigs[2][n] += echogram_abs->value[im][2] * cb_val;
                                         sc->recs[rec_idx].sigs[1][n] += echogram_abs->value[im][1] * cb_val;
+                                        /* fall through */
                                     case 1:
                                         sc->recs[rec_idx].sigs[0][n] += echogram_abs->value[im][0] * cb_val;
                                 }

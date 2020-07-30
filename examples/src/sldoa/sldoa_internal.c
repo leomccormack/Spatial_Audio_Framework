@@ -152,8 +152,6 @@ void sldoa_estimateDoA
     float_complex* sec_c;
     float secEnergy[TIME_SLOTS], secIntensity[3][TIME_SLOTS], secAzi[TIME_SLOTS], secElev[TIME_SLOTS];
     const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f);
-    int o[MAX_SH_ORDER+2];
-    for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
     
     /* prep */
     memset(doa,0,MAX_NUM_SECTORS*TIME_SLOTS*2*sizeof(float));

@@ -42,7 +42,7 @@
 #ifndef CONVHULL_3D_INCLUDED
 #define CONVHULL_3D_INCLUDED
 
-#ifndef __cplusplus
+#if !defined(__cplusplus) && defined(_MSC_VER)
 # pragma warning(disable : 4201)
 #endif
 

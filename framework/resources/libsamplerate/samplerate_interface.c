@@ -53,5 +53,6 @@ void sampleratelib_resample
     err = src_simple(&data, (int)quality, nChannels);
 
     /* We do not accept failure */
-    assert(err==0);
+    if(err!=0)
+        assert(0);
 }

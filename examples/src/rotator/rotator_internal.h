@@ -74,6 +74,7 @@ typedef struct _rotator
     float M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     float prev_M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     int recalc_M_rotFLAG;
+    int fs;
 
     /* user parameters */
     float yaw, roll, pitch;              /**< rotation angles in degrees */

@@ -811,12 +811,13 @@ void utility_csvd
 {
     int i, j, m, n, lda, ldu, ldvt, info;
     m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
-    float_complex* a, *u, *vt, *work;
+    float_complex* a, *u, *vt;
     float* s;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     int lwork;
     float_complex wkopt;
     float* rwork;
+    float_complex* *work;
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
     float* superb;
 #endif
@@ -911,9 +912,13 @@ void utility_sseig
     float* eig
 )
 {
-    int i, j, n, lda, info, lwork;
+    int i, j, n, lda, info;
+#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    int lwork;
     float wkopt;
-    float* work, *w, *a;
+    float* work;
+#endif
+    float* w, *a;
 
     n = dim;
     lda = dim;
@@ -990,12 +995,12 @@ void utility_cseig
 )
 {
     int i, j, n, lda, info;
-    float_complex wkopt;
     float *w;
     float_complex* a;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     int lwork;
     float *rwork;
+    float_complex wkopt;
     float_complex *work;
 #endif
 
@@ -2136,7 +2141,7 @@ void utility_schol
 #endif
     
     /* A is not positive definate, solution not possible */
-    if(info>0){
+    if(info!=0){
         memset(X, 0, dim*dim*sizeof(float));
 #ifndef NDEBUG
         saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_CHOL);
@@ -2181,7 +2186,7 @@ void utility_cchol
 #endif
     
     /* A is not positive definate, solution not possible */
-    if(info>0){
+    if(info!=0){
         memset(X, 0, dim*dim*sizeof(float_complex));
 #ifndef NDEBUG
         saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_CHOL);
@@ -2234,10 +2239,18 @@ void utility_sinv
     INFO = LAPACKE_sgetri(CblasColMajor, N, tmp, N, IPIV);
 #endif
 
-    /* Output in row major order */
-    for(i=0; i<N; i++)
-        for(j=0; j<N; j++)
-            B[j*N+i] = tmp[i*N+j];
+    if(INFO!=0) {
+        memset(B, 0, N*N*sizeof(float));
+#ifndef NDEBUG
+        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+#endif
+    }
+    else {
+        /* Output in row major order */
+        for(i=0; i<N; i++)
+            for(j=0; j<N; j++)
+                B[j*N+i] = tmp[i*N+j];
+    }
     
     free(IPIV);
     free(WORK);
@@ -2271,15 +2284,25 @@ void utility_dinv
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)
     INFO = clapack_dgetrf(CblasColMajor, N, N, tmp, N, IPIV);
     INFO = clapack_dgetri(CblasColMajor, N, tmp, N, IPIV);
+    assert(INFO==0);
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
     INFO = LAPACKE_dgetrf(CblasColMajor, N, N, tmp, N, IPIV);
     INFO = LAPACKE_dgetri(CblasColMajor, N, tmp, N, IPIV);
+    assert(INFO==0);
 #endif
 
-    /* Output in row major order */
-    for(i=0; i<N; i++)
-        for(j=0; j<N; j++)
-            B[j*N+i] = tmp[i*N+j];
+    if(INFO!=0) {
+        memset(B, 0, N*N*sizeof(double));
+#ifndef NDEBUG
+        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+#endif
+    }
+    else {
+        /* Output in row major order */
+        for(i=0; i<N; i++)
+            for(j=0; j<N; j++)
+                B[j*N+i] = tmp[i*N+j];
+    }
     
     free(IPIV);
     free(WORK);
@@ -2313,15 +2336,25 @@ void utility_cinv
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)
     INFO = clapack_cgetrf(CblasColMajor, N, N, (veclib_float_complex*)tmp, N, IPIV);
     INFO = clapack_cgetri(CblasColMajor, N, (veclib_float_complex*)tmp, N, IPIV);
+    assert(INFO==0);
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
     INFO = LAPACKE_cgetrf(CblasColMajor, N, N, (veclib_float_complex*)tmp, N, IPIV);
     INFO = LAPACKE_cgetri(CblasColMajor, N, (veclib_float_complex*)tmp, N, IPIV);
+    assert(INFO==0);
 #endif
 
-    /* Output in row major order */
-    for(i=0; i<N; i++)
-        for(j=0; j<N; j++)
-            B[j*N+i] = tmp[i*N+j];
+    if(INFO!=0) {
+        memset(B, 0, N*N*sizeof(float_complex));
+#ifndef NDEBUG
+        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+#endif
+    }
+    else {
+        /* Output in row major order */
+        for(i=0; i<N; i++)
+            for(j=0; j<N; j++)
+                B[j*N+i] = tmp[i*N+j];
+    }
 
     free(IPIV);
     free(WORK);

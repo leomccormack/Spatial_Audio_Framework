@@ -133,10 +133,9 @@ void cxcorr
     size_t lb
 )
 {
-    int m, n, negFLAG, arg;
-    size_t len, lim;
+    int m, n, negFLAG, arg, len, lim;
     
-    len = la + lb - 1;
+    len = (int)(la + lb) - 1;
     memset(x_ab, 0, len*sizeof(float));
     for(m=1; m<=len; m++){
         arg = m-(int)la;

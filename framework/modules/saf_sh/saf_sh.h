@@ -1047,8 +1047,6 @@ void sphScattererDirModalCoeffs(/* Input arguments */
  * @param[in]  dirCoeff        Only for directional (open) arrays, 1: omni,
  *                             0.5: card, 0:dipole
  * @param[in]  kr              wavenumber*sensor_radius; nBands x 1
- * @param[in]  kR              wavenumber*scatterer_radius, set to NULL if not
- *                             applicable; nBands x 1
  * @param[in]  nBands          Number of frequency bands/bins
  * @param[out] M_diffcoh       Theoretical diffuse coherence matrix per
  *                             frequency; FLAT: N_sensors x N_sensors x nBands
@@ -1060,7 +1058,6 @@ void sphDiffCohMtxTheory(/* Input arguments */
                          ARRAY_CONSTRUCTION_TYPES arrayType,
                          double dirCoeff,
                          double* kr,
-                         double* kR,
                          int nBands,
                          /* Output arguments */
                          double* M_diffcoh);

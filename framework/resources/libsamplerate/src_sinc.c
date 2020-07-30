@@ -912,10 +912,11 @@ calc_output_multi (SINC_FILTER *filter, increment_t increment, increment_t start
     float icoeff_single, scale_single;
 #else
 	double		*left, *right ;
+	int ch;
 #endif
 
 	increment_t	filter_index, max_filter_index ;
-	int			data_index, coeff_count, indx, ch ;
+	int	 data_index, coeff_count, indx;
 
 	left = filter->left_calc ;
 	right = filter->right_calc ;
@@ -942,12 +943,13 @@ calc_output_multi (SINC_FILTER *filter, increment_t increment, increment_t start
 			**	Duff's Device.
 			**	See : http://en.wikipedia.org/wiki/Duff's_device
 			*/
-			ch = channels ;
+
             
 #ifdef SRL_ENABLE_SAF_UTILITIES
             icoeff_single = (float)icoeff;
             cblas_saxpy(channels, icoeff_single, &(filter->buffer[data_index]), 1, left, 1);
 #else
+			ch = channels ;
 			do
 			{	switch (ch % 8)
 				{	default :
@@ -1006,12 +1008,11 @@ calc_output_multi (SINC_FILTER *filter, increment_t increment, increment_t start
 
 		icoeff = filter->coeffs [indx] + fraction * (filter->coeffs [indx + 1] - filter->coeffs [indx]) ;
 
-		ch = channels ;
-
 #ifdef SRL_ENABLE_SAF_UTILITIES
         icoeff_single = (float)icoeff;
         cblas_saxpy(channels, icoeff_single, &(filter->buffer[data_index]), 1, right, 1);
 #else
+        ch = channels ;
 		do
 		{
 			switch (ch % 8)
@@ -1054,13 +1055,12 @@ calc_output_multi (SINC_FILTER *filter, increment_t increment, increment_t start
 		data_index = data_index - channels ;
     } while (filter_index > MAKE_INCREMENT_T (0)) ;
 
-	ch = channels ;
-
 #ifdef SRL_ENABLE_SAF_UTILITIES
     utility_svvadd(left, right, channels, output);
     scale_single = (float) scale;
     utility_svsmul(output, &scale_single, channels, NULL);
 #else
+    ch = channels ;
 	do
 	{
 		switch (ch % 8)

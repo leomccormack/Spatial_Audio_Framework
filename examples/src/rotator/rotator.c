@@ -75,6 +75,8 @@ void rotator_init
 {
     rotator_data *pData = (rotator_data*)(hRot);
     int i;
+
+    pData->fs = sampleRate;
     
     /* starting values */
     for(i=1; i<=FRAME_SIZE; i++)

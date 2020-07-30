@@ -202,6 +202,7 @@ void panner_loadPreset
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __9_10_3p2_dirs_deg[ch][i];
+            break;
         case SOURCE_CONFIG_PRESET_AALTO_MCC:
             nCH = 45;
             for(ch=0; ch<nCH; ch++)

@@ -579,7 +579,7 @@ void qmf_getCentreFreqs
     float* cutoffs;
     float centreFreqs_qmf[QMF_NBANDS_2_SUBDIVIDE];
 
-    assert(nBands>=h->nBands); /* just to check that "centreFreq" is of sufficient length */
+    assert(nBands==h->nBands); /* just to check that "centreFreq" is of correct length */
 
     /* QMF cutoff frequencies */
     hopsize = h->hopsize;
@@ -597,7 +597,7 @@ void qmf_getCentreFreqs
                     centreFreq, 1);
 
         /* Remaining centre frequencies are then QMF centre frequencies 4:end  */
-        for(i=10, j=QMF_NBANDS_2_SUBDIVIDE; i<h->nBands; i++, j++)
+        for(i=10, j=QMF_NBANDS_2_SUBDIVIDE; i<nBands; i++, j++)
             centreFreq[i] = cutoffs[j+1] - (cutoffs[j+1]-cutoffs[j])/2.0f;
     }
     else{
