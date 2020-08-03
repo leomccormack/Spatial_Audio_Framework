@@ -79,8 +79,8 @@ void array2sh_create
     pData->bN = NULL;
     
     /* display related stuff */
-    pData->bN_modal_dB = (float**)malloc2d(HYBRID_BANDS, MAX_SH_ORDER + 1, sizeof(float));
-    pData->bN_inv_dB = (float**)malloc2d(HYBRID_BANDS, MAX_SH_ORDER + 1, sizeof(float));
+    pData->bN_modal_dB = (float**)calloc2d(HYBRID_BANDS, MAX_SH_ORDER + 1, sizeof(float));
+    pData->bN_inv_dB = (float**)calloc2d(HYBRID_BANDS, MAX_SH_ORDER + 1, sizeof(float));
     pData->cSH = (float*)calloc1d((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
     pData->lSH = (float*)calloc1d((HYBRID_BANDS)*(MAX_SH_ORDER + 1),sizeof(float));
 }
@@ -107,8 +107,8 @@ void array2sh_destroy
         array2sh_destroyArray(&(pData->arraySpecs));
         
         /* Display stuff */
-        free((void**)pData->bN_modal_dB);
-        free((void**)pData->bN_inv_dB);
+        free(pData->bN_modal_dB);
+        free(pData->bN_inv_dB);
         
         free(pData->progressBarText);
         

@@ -218,13 +218,6 @@
  *          Incorporated.
  */
 #include "../../resources/afSTFT/afSTFTlib.h"
-/* An optimised version of libsamplerate for converting the sample rates of
- * multi-channel signals.
- * The original source code can be found here (BSD-2-Clause license):
- *   https://github.com/erikd/libsamplerate
- */
-#include "../../resources/libsamplerate/samplerate_interface.h"
-
 
 #endif /* __SAF_UTILITIES_H_INCLUDED__ */
 

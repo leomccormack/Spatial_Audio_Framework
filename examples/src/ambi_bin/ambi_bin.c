@@ -132,7 +132,11 @@ void ambi_bin_init
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     
     /* define frequency vector */
-    pData->fs = sampleRate;
+    if(pData->fs != sampleRate){
+        pData->fs = sampleRate;
+        pData->reinit_hrtfsFLAG = 1;
+        ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
+    }
     afSTFT_getCentreFreqs(pData->hSTFT, pData->fs, HYBRID_BANDS, (float*)pData->freqVector);
 
     /* default starting values */
@@ -197,7 +201,7 @@ void ambi_bin_initCodec
         pData->progressBar0_1 = 0.3f;
         pars->itds_s = realloc1d(pars->itds_s, pars->N_hrir_dirs*sizeof(float));
         estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pars->itds_s);
-        
+ 
         /* convert hrirs to filterbank coefficients */
         pData->progressBar0_1 = 0.9f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));

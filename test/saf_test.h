@@ -87,9 +87,6 @@ void test__butterCoeffs(void);
  */
 void test__faf_IIRFilterbank(void);
 /**
- * Testing the accuracy of libsamplerate */
-void test__samplerateConversion(void);
-/**
  * Testing the formulate_M_and_Cr() function, and verifying that the output
  * mixing matrices yield signals which have the target covariance */
 void test__formulate_M_and_Cr(void);

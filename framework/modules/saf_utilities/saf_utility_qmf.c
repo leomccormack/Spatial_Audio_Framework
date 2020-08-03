@@ -183,15 +183,15 @@ void qmf_create
                 h->fb8bandCoeffs[i][j] = crmulf(cexpf(cmplxf(0.0f, -1.0f*SAF_PI*((float)j-((float)QMF_HYBRID_FILTER_LENGTH-1.0f)/2.0f)/8.0f*(1.0f+2.0f*(float)i))),
                                                 (float)__qmf_fb8bandCoeffs[j]);
 
-         /* Coefficients to subdivide the 2nd and 3rd lowest QMF bands into 4
-          * subbands each. The 1st and 4th subdivided bands, and 2nd and 3rd
-          * subdivided bands are then summed to obtain the 2 hybrid bands for
-          * each QMF band . Therefore, this raises the total number of bands by
-          * 2 */
-         for(i=0; i<2; i++)
-             for(j=0; j<QMF_HYBRID_FILTER_LENGTH; j++)
-                 h->fb4bandCoeffs[i][j] = cmplxf((float)__qmf_fb4bandCoeffs[j] *
-                                                 cosf(2.0f*SAF_PI*(float)i*((float)j-(((float)QMF_HYBRID_FILTER_LENGTH-1.0f)/2.0f))/2.0f), 0.0f);
+        /* Coefficients to subdivide the 2nd and 3rd lowest QMF bands into 4
+         * subbands each. The 1st and 4th subdivided bands, and 2nd and 3rd
+         * subdivided bands are then summed to obtain the 2 hybrid bands for
+         * each QMF band . Therefore, this raises the total number of bands by
+         * 2 */
+        for(i=0; i<2; i++)
+            for(j=0; j<QMF_HYBRID_FILTER_LENGTH; j++)
+                h->fb4bandCoeffs[i][j] = cmplxf((float)__qmf_fb4bandCoeffs[j] *
+                                                cosf(2.0f*SAF_PI*(float)i*((float)j-(((float)QMF_HYBRID_FILTER_LENGTH-1.0f)/2.0f))/2.0f), 0.0f);
 
         /* For run-time */
         h->qmfDelayBuffer = (float_complex***)calloc3d(nCHin, hopsize-QMF_NBANDS_2_SUBDIVIDE, (QMF_HYBRID_FILTER_LENGTH-1)/2 + 1, sizeof(float_complex)); /* ca */

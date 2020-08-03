@@ -141,11 +141,11 @@ void cxcorr
         arg = m-(int)la;
         if(arg<0){
             negFLAG = 1;
-            lim = la + arg;
+            lim = (int)la + arg;
         }
         else{
             negFLAG = 0;
-            lim = la - arg;
+            lim = (int)la - arg;
         }
         for(n=1; n<=lim; n++){
             if(negFLAG == 0)
