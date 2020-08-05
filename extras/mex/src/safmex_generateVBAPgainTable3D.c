@@ -21,7 +21,7 @@
 /* ===================================================================== */
 
 #define NUM_INPUT_ARGS  ( 6 )
-#define NUM_OUTPUT_ARGS ( 1 )
+#define NUM_OUTPUT_ARGS ( 0 )
 const MEX_DATA_TYPES inputDataTypes[NUM_INPUT_ARGS] = {
     DOUBLE_REAL_2D,
     INT32,
@@ -30,9 +30,9 @@ const MEX_DATA_TYPES inputDataTypes[NUM_INPUT_ARGS] = {
     INT32,
     DOUBLE_REAL
 };
-const MEX_DATA_TYPES outputDataTypes[NUM_OUTPUT_ARGS] = { 
-    DOUBLE_REAL_2D
-};
+// const MEX_DATA_TYPES outputDataTypes[NUM_OUTPUT_ARGS] = { 
+//     DOUBLE_REAL_2D
+// };
 
 
 /* ===================================================================== */
@@ -53,7 +53,7 @@ void mexFunction
       
     /* mex variables */
     int nDims;
-    int *pDims;
+    int *pDims = NULL;
 
     /* saf variables */
     float* ls_dirs_deg, *gtable;  
@@ -61,7 +61,8 @@ void mexFunction
     int N_gtable, nTriangles;
     float spread;
     
-    /* prep */  
+    /* prep */
+    ls_dirs_deg = NULL;
     MEXdouble2SAFsingle(prhs[0], &ls_dirs_deg, &nDims, &pDims);
     L = pDims[0];
     az_res_deg = (int)mxGetScalar(prhs[1]);
@@ -76,21 +77,27 @@ void mexFunction
         mexErrMsgIdAndTxt("MyToolbox:inputError","the second dimension of the first argument should be of size: 2");
     
     /* call SAF function */
-    generateVBAPgainTable3D(ls_dirs_deg, L, az_res_deg, el_res_deg, omitLargeTriangles,
-                            enableDummies, spread, &gtable, &N_gtable, &nTriangles);
-    
-    /* output */
-    nDims = 2;
-    pDims = realloc1d(pDims, 2*sizeof(int));
-    pDims[0] = N_gtable;
-    pDims[1] = L;
-    SAFsingle2MEXdouble(gtable, nDims, pDims, &plhs[0]);
-            
-    /* clean-up */
-    free(pDims);
-    free(ls_dirs_deg); 
-    free(gtable); 
-    
-    /* check output argument datatypes */
-    checkArgDataTypes((mxArray**)plhs, (MEX_DATA_TYPES*)outputDataTypes, NUM_OUTPUT_ARGS); 
+//     snprintf(message, MSG_STR_LENGTH, "L = %d,\n", L); mexPrintf(message);
+//     snprintf(message, MSG_STR_LENGTH, "az_res_deg = %d,\n", az_res_deg); mexPrintf(message);
+//     snprintf(message, MSG_STR_LENGTH, "el_res_deg = %d,\n", el_res_deg); mexPrintf(message);
+//     snprintf(message, MSG_STR_LENGTH, "omitLargeTriangles = %d,\n", omitLargeTriangles); mexPrintf(message);
+//     snprintf(message, MSG_STR_LENGTH, "enableDummies = %d,\n", enableDummies); mexPrintf(message);
+//     snprintf(message, MSG_STR_LENGTH, "spread = %.5f,\n", spread); mexPrintf(message);
+     generateVBAPgainTable3D(ls_dirs_deg, L, az_res_deg, el_res_deg, omitLargeTriangles,
+                             enableDummies, spread, &gtable, &N_gtable, &nTriangles);
+//     
+//     /* output */
+//     nDims = 2;
+//     pDims = realloc1d(pDims, nDims*sizeof(int));
+//     pDims[0] = N_gtable;
+//     pDims[1] = L;
+    //SAFsingle2MEXdouble(gtable, nDims, pDims, &plhs[0]);
+//             
+//     /* clean-up */
+//     free(pDims);
+//     free(ls_dirs_deg); 
+//     free(gtable); 
+//     
+//     /* check output argument datatypes */
+//     checkArgDataTypes((mxArray**)plhs, (MEX_DATA_TYPES*)outputDataTypes, NUM_OUTPUT_ARGS); 
 }

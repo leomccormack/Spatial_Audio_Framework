@@ -133,7 +133,7 @@ void generateVBAPgainTable3D_srcs
         if(needDummy[0] || needDummy[1]){
             /* remove the gains for the dummy loudspeakers, they have served their purpose and can now be laid to rest */
             for(i=0; i<N_points; i++)
-                memcpy(&(*gtable)[i*L], &(*gtable)[i*numOutVertices], L*sizeof(float));
+                memmove(&(*gtable)[i*L], &(*gtable)[i*numOutVertices], L*sizeof(float));
             (*gtable) = realloc((*gtable), N_points*L*sizeof(float));
         }
     }
@@ -184,7 +184,7 @@ void generateVBAPgainTable3D
     int L_d;
     int needDummy[2] = {1, 1};
     float* ls_dirs_d_deg;
-    
+
     /* compute source directions for the grid */
     N_azi = (int)((360.0f/(float)az_res_deg) + 1.5f);
     N_ele = (int)((180.0f/(float)el_res_deg) + 1.5f);
@@ -201,7 +201,7 @@ void generateVBAPgainTable3D
             src_dirs[(i*N_azi + j)*2+1] = ele[i];
         }
     }
-    
+
     /* find loudspeaker triangles */
     out_vertices = NULL;
     out_faces = NULL;
@@ -258,11 +258,11 @@ void generateVBAPgainTable3D
     fprintf(objfile, "];\n\n\n");
     fclose(objfile);
 #endif
-    
+
     /* Invert matrix */
     layoutInvMtx = NULL;
     invertLsMtx3D(out_vertices, out_faces, numOutFaces, &layoutInvMtx);
-    
+
     /* Calculate VBAP gains for each source position */
     N_points = N_azi*N_ele;
     vbap3D(src_dirs, N_points, numOutVertices, out_faces, numOutFaces, spread, layoutInvMtx,  gtable);
@@ -271,7 +271,7 @@ void generateVBAPgainTable3D
     if(enableDummies){
         if(needDummy[0] || needDummy[1]){
             for(i=0; i<N_points; i++)
-                memcpy(&(*gtable)[i*L], &(*gtable)[i*numOutVertices], L*sizeof(float));
+                memmove(&(*gtable)[i*L], &(*gtable)[i*numOutVertices], L*sizeof(float));
             (*gtable) = realloc((*gtable), N_points*L*sizeof(float));
         }
     }
@@ -700,10 +700,10 @@ void invertLsMtx3D
 
         /* get inverse of current group */
         utility_sinv(tempGroup,tempGroup,3);
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 3, 3, 3, 1.0,
-                    eye3, 3,
-                    tempGroup, 3, 0.0,
-                    tempInv, 3);
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 3, 3, 3, 1.0f,
+                    (float*)eye3, 3,
+                    tempGroup, 3, 0.0f,
+                    (float*)tempInv, 3);
 
         /* store the vectorized inverse as a row the output */
         for(i=0; i<3; i++)

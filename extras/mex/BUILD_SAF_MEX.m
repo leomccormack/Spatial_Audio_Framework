@@ -74,12 +74,30 @@ if ismac
             libs{end+1} = 'saf_mkl_custom';
             saf_mkl = [lib_paths{end} '/lib' libs{end} '.dylib' ];
             if ~exist(saf_mkl, 'file'), error([ saf_mkl ' is missing']), end
+        otherwise
+            assert(0); % currently unsupported, please contribute!
     end 
     
 elseif isunix
-    assert(0); %currently unsupported 
+    libs{end+1} = 'saf';
+    
+    % Error checking
+    if ~exist([cmake_build_folder 'framework/libsaf.a'], 'file'), error('libsaf.a is missing, run CMake and build saf first'), end
+    
+    % extra header+lib paths
+    switch saf_perf_lib
+        case 'SAF_USE_INTEL_MKL'
+            %header_paths{end+1} = '/opt/intel/compilers_and_libraries/linux/mkl/include';
+            header_paths{end+1} = '~/intel/compilers_and_libraries/linux/mkl/include';
+            lib_paths{end+1} = '/usr/lib';
+            libs{end+1} = 'saf_mkl_custom';
+            saf_mkl = [lib_paths{end} '/lib' libs{end} '.so' ];
+            if ~exist(saf_mkl, 'file'), error([ saf_mkl ' is missing']), end
+        otherwise
+            assert(0); % currently unsupported, please contribute!
+    end 
 elseif ispc
-    assert(0); %currently unsupported 
+    assert(0); % currently unsupported, please contribute!
 end
 
 % prepends and stack
@@ -95,10 +113,10 @@ if ~exist(outputFolder, 'dir'), mkdir(outputFolder); end
 
 %% Build MEX
 mex('-v', compilerFlags{:}, './src/safmex_afSTFT.c', '-outdir', outputFolder);
-%mex('-v', compilerFlags{:}, './src/safmex_qmf.c', '-outdir', outputFolder);
-%mex('-v', compilerFlags{:}, './src/safmex_generateVBAPgainTable3D.c', '-outdir', outputFolder);
-%mex('-v', compilerFlags{:}, './src/safmex_getSHreal.c', '-outdir', outputFolder);
-%mex('-v', compilerFlags{:}, './src/safmex_getSHcomplex.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './src/safmex_qmf.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './src/safmex_generateVBAPgainTable3D.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './src/safmex_getSHreal.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './src/safmex_getSHcomplex.c', '-outdir', outputFolder);
 
 
 %% TESTS
@@ -107,46 +125,46 @@ addpath(outputFolder)
 nTests = 0; nPass = 0; nFail = 0;
 tol = 1e-5; % FLT_EPSILON
 
-% safmex_afSTFT
-nCHin = 6;
-nCHout = 13;
-hopsize = 128;
-blocksize = 2048*24;
-[freqVector, procDelay] = safmex_afSTFT(nCHin, nCHout, hopsize, blocksize, 1, 1, 48e3); 
-dataTD_ref = randn(blocksize, nCHin); 
-dataFD = safmex_afSTFT(dataTD_ref.');
-dataFD = repmat(dataFD(:,1,:), [1 nCHout 1]); % copy 1st input channel to all output channels
-dataTD = safmex_afSTFT(dataFD);
-dataTD_ref = dataTD_ref(1:end-procDelay,1);
-dataTD = dataTD(1,procDelay+1:end).';
-nTests = nTests+1;
-if max(abs(dataTD(:,1)-dataTD_ref(:,1)))<0.01, nPass=nPass+1; else, nFail=nFail+1; end 
-safmex_afSTFT();
-
+% % safmex_afSTFT
+% nCHin = 6;
+% nCHout = 13;
+% hopsize = 128;
+% blocksize = 2048*24;
+% [freqVector, procDelay] = safmex_afSTFT(nCHin, nCHout, hopsize, blocksize, 1, 1, 48e3); 
+% dataTD_ref = randn(blocksize, nCHin); 
+% dataFD = safmex_afSTFT(dataTD_ref.');
+% dataFD = repmat(dataFD(:,1,:), [1 nCHout 1]); % copy 1st input channel to all output channels
+% dataTD = safmex_afSTFT(dataFD);
+% dataTD_ref = dataTD_ref(1:end-procDelay,1);
+% dataTD = dataTD(1,procDelay+1:end).';
+% nTests = nTests+1;
+% if max(abs(dataTD(:,1)-dataTD_ref(:,1)))<0.01, nPass=nPass+1; else, nFail=nFail+1; end 
+% safmex_afSTFT();
+% 
 % safmex_qmf
-nCHin = 10;
-nCHout = 4;
-hopsize = 128;
-blocksize = 2048*20;
-[freqVector2, procDelay] = safmex_qmf(nCHin, nCHout, hopsize, blocksize, 1, 0, 48e3); 
-dataTD_ref = randn(blocksize, nCHin); 
-dataFD = safmex_qmf(dataTD_ref.');
-dataFD = repmat(dataFD(:,1,:), [1 nCHout 1]); % copy 1st input channel to all output channels
-dataTD = safmex_qmf(dataFD);
-dataTD_ref = dataTD_ref(1:end-procDelay,1);
-dataTD = dataTD(1,procDelay+1:end).';
-nTests = nTests+1;
-if max(abs(dataTD(:,1)-dataTD_ref(:,1)))<0.01, nPass=nPass+1; else, nFail=nFail+1; end 
-safmex_qmf();
+% nCHin = 10;
+% nCHout = 4;
+% hopsize = 128;
+% blocksize = 2048*20;
+% [freqVector2, procDelay] = safmex_qmf(nCHin, nCHout, hopsize, blocksize, 1, 0, 48e3); 
+% dataTD_ref = randn(blocksize, nCHin); 
+% dataFD = safmex_qmf(dataTD_ref.');
+% dataFD = repmat(dataFD(:,1,:), [1 nCHout 1]); % copy 1st input channel to all output channels
+% dataTD = safmex_qmf(dataFD);
+% dataTD_ref = dataTD_ref(1:end-procDelay,1);
+% dataTD = dataTD(1,procDelay+1:end).';
+% nTests = nTests+1;
+% if max(abs(dataTD(:,1)-dataTD_ref(:,1)))<0.01, nPass=nPass+1; else, nFail=nFail+1; end 
+% safmex_qmf();
 
 % safmex_generateVBAPgainTable3D
-[~,ls_dirs] = getTdesign(10);
-ls_dirs = ls_dirs*180/pi;
-aziElevRes = [5 5];
-gtable = safmex_generateVBAPgainTable3D(ls_dirs, aziElevRes(1), aziElevRes(2), 1, 0, 0);
-gtable_ref = getGainTable(ls_dirs,aziElevRes,0,'vbap');
-nTests = nTests+1;
-if max(abs(gtable_ref(:)-gtable(:)))<tol, nPass=nPass+1; else, nFail=nFail+1; end 
+% [~,ls_dirs] = getTdesign(10);
+% ls_dirs = ls_dirs*180/pi;
+% aziElevRes = [5 5];
+% safmex_generateVBAPgainTable3D(ls_dirs, aziElevRes(1), aziElevRes(2), 1, 0, 0);
+% gtable_ref = getGainTable(ls_dirs,aziElevRes,0,'vbap');
+% nTests = nTests+1;
+%if max(abs(gtable_ref(:)-gtable(:)))<tol, nPass=nPass+1; else, nFail=nFail+1; end 
 
 % safmex_getSHreal
 order = 5;

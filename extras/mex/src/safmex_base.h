@@ -150,7 +150,7 @@ void MEXdouble2SAFsingle(const mxArray* in, float** out, int* nDims, int** pDims
     
     /* convert mwSize->int */
     (*nDims) = (int)nDims_mx;
-    (*pDims) = malloc1d(*nDims*sizeof(int));
+    (*pDims) = malloc1d((*nDims)*sizeof(int));
     for(i=0; i<(*nDims); i++)
         (*pDims)[i] = (int)pDims_mx[i];
     
