@@ -508,14 +508,11 @@ void utility_svvmuladd
         return;
     }
 #endif
-#ifdef __ACCELERATE__
-    vtVma(a, b, c, len);
-#else
     int j;
     for (j = 0; j < len; j++)
         c[j] += a[j] * b[j];
-#endif
 }
+
 
 /* ========================================================================== */
 /*                     Vector-Vector Dot Product (?vvdot)                     */

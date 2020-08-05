@@ -16,7 +16,7 @@
 %   Y = SAFMEX_QMF(X) performs the forward transform (QMF analysis) if X is
 %   is real-valued time-domain (2D) input - resulting in complex-valued 
 %   time-frequency (3D) output Y. If Y is complex-valued time-frequency
-%   (3D) input, then the backward transform (QMF synthesis) is performed
+%   (3D) input, then the backward transform (QMF synthesis) is performed -
 %   resulting in real-valued time-domain (2D) output Y.
 %
 % INPUT ARGUMENTS 

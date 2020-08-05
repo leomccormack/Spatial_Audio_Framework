@@ -62,8 +62,8 @@ int formatFlag;     /* 0: nBands x nCH x time, 1: time x nCH x nBands */
 float fs;           /* sampling rate */
 
 /* internal parameters */
-void* hQMF = NULL;               /* qmf handle */
-QMF_FDDATA_FORMAT format;        /* enum cast of "formatFlag" */
+void* hSTFT = NULL;               /* afSTFT handle */
+AFSTFT_FDDATA_FORMAT format;      /* enum cast of "formatFlag" */
 float* freqVector = NULL;
 int nBands;
 int procDelay;
@@ -92,24 +92,24 @@ void mexFunction
      
     /* DESTROY */
     if(nrhs == 0){
-        if(hQMF!=NULL){
-            mexPrintf("Destroying QMF instance.\n");
-            qmf_destroy(&hQMF);
+        if(hSTFT!=NULL){
+            mexPrintf("Destroying afSTFT instance.\n");
+            afSTFT_destroy(&hSTFT);
             free(freqVector);
             free(dataTD_in);
             free(dataFD_in);
             free(dataTD_out);
             free(dataFD_out);
-            hQMF = NULL;
+            hSTFT = NULL;
         } 
         else
-            mexPrintf("QMF instance already dead.\n"); 
+            mexPrintf("afSTFT instance already dead.\n"); 
     }
     
     /* CREATE */
     else if(nrhs==NUM_INPUT_ARGS_CREATE && (nlhs==0 || nlhs==1 || nlhs==2)){
-        if(hQMF!=NULL)
-            mexErrMsgIdAndTxt("MyToolbox:inputError","safmex_qmf is already initialised! First destroy it if you want to change its configuration.");
+        if(hSTFT!=NULL)
+            mexErrMsgIdAndTxt("MyToolbox:inputError","safmex_afSTFT is already initialised! First destroy it if you want to change its configuration.");
         
         /* Check input argument datatypes are as expected */ 
         checkArgDataTypes((mxArray**)prhs, (MEX_DATA_TYPES*)inputDataTypes_create, NUM_INPUT_ARGS_CREATE); 
@@ -123,8 +123,8 @@ void mexFunction
         formatFlag = (int)mxGetScalar(prhs[5]); 
         fs = (float)mxGetScalar(prhs[6]); 
         switch(formatFlag){
-            case 0: format = QMF_BANDS_CH_TIME; break;
-            case 1: format = QMF_TIME_CH_BANDS; break;
+            case 0: format = AFSTFT_BANDS_CH_TIME; break;
+            case 1: format = AFSTFT_TIME_CH_BANDS; break;
             default:
                 mexErrMsgIdAndTxt("MyToolbox:inputError","the value of the fifth argument should be 0 or 1");
         }
@@ -139,13 +139,13 @@ void mexFunction
         if( blocksize % hopsize != 0)
             mexErrMsgIdAndTxt("MyToolbox:inputError","'blocksize' must be a multiple of 'hopsize'");
                  
-        /* Create an instance of the qmf filterbank */
+        /* Create an instance of the afSTFT filterbank */
         timeSlots = blocksize/hopsize;
-        qmf_create(&hQMF, nCHin, nCHout, hopsize, hybridmode, format);
-        nBands = qmf_getNBands(hQMF);
-        procDelay = qmf_getProcDelay(hQMF);
+        afSTFT_create(&hSTFT, nCHin, nCHout, hopsize, 0, hybridmode, format);
+        nBands = afSTFT_getNBands(hSTFT);
+        procDelay = afSTFT_getProcDelay(hSTFT);
         freqVector = malloc1d(nBands*sizeof(float));
-        qmf_getCentreFreqs(hQMF, fs, nBands, freqVector);
+        afSTFT_getCentreFreqs(hSTFT, fs, nBands, freqVector);
         
         /* Allocate buffers */
         dataTD_in = (float**)malloc2d(nCHin, blocksize, sizeof(float)); 
@@ -174,7 +174,7 @@ void mexFunction
         } 
          
         /* Mainly just for debugging... */
-        mexPrintf("Creating QMF instance:");
+        mexPrintf("Creating afSTFT instance:");
         snprintf(message, MSG_STR_LENGTH, " %d input channels,", nCHin); mexPrintf(message);
         snprintf(message, MSG_STR_LENGTH, " %d output channels,", nCHout); mexPrintf(message);
         snprintf(message, MSG_STR_LENGTH, " %d hopsize,", hopsize); mexPrintf(message);
@@ -191,8 +191,8 @@ void mexFunction
     
     /* TRANSFORM */
     else if(nrhs == 1 && nlhs == 1){
-        if(hQMF==NULL)
-            mexErrMsgIdAndTxt("MyToolbox:inputError","safmex_qmf is uninitialised!");
+        if(hSTFT==NULL)
+            mexErrMsgIdAndTxt("MyToolbox:inputError","safmex_afSTFT is uninitialised!");
           
         /* Find dimensionality of input */
         mwSize nDims_mx;
@@ -215,9 +215,9 @@ void mexFunction
                 mexErrMsgIdAndTxt("MyToolbox:inputError", message);
             } 
             
-            /* QMF analysis */
+            /* afSTFT forward */
             MEXdouble2SAFsingle(prhs[0], &FLATTEN2D(dataTD_in), &nDims, &pDims);  
-            qmf_analysis(hQMF, dataTD_in, blocksize, dataFD_in);
+            afSTFT_forward(hSTFT, dataTD_in, blocksize, dataFD_in);
             
             /* output */
             nDims = 3;
@@ -259,9 +259,9 @@ void mexFunction
                 mexErrMsgIdAndTxt("MyToolbox:inputError", message);
             } 
             
-            /* QMF synthesis */
+            /* afSTFT inverse */
             MEXdouble2SAFsingle_complex(prhs[0], &FLATTEN3D(dataFD_out), &nDims, &pDims); 
-            qmf_synthesis(hQMF, dataFD_out, blocksize, dataTD_out);
+            afSTFT_backward(hSTFT, dataFD_out, blocksize, dataTD_out);
              
             /* output */
             nDims = 2;
