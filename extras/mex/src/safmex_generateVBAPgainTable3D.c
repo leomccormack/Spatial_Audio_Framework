@@ -21,7 +21,7 @@
 /* ===================================================================== */
 
 #define NUM_INPUT_ARGS  ( 6 )
-#define NUM_OUTPUT_ARGS ( 0 )
+#define NUM_OUTPUT_ARGS ( 1 )
 const MEX_DATA_TYPES inputDataTypes[NUM_INPUT_ARGS] = {
     DOUBLE_REAL_2D,
     INT32,
@@ -30,9 +30,9 @@ const MEX_DATA_TYPES inputDataTypes[NUM_INPUT_ARGS] = {
     INT32,
     DOUBLE_REAL
 };
-// const MEX_DATA_TYPES outputDataTypes[NUM_OUTPUT_ARGS] = { 
-//     DOUBLE_REAL_2D
-// };
+const MEX_DATA_TYPES outputDataTypes[NUM_OUTPUT_ARGS] = { 
+    DOUBLE_REAL_2D
+};
 
 
 /* ===================================================================== */
@@ -85,19 +85,19 @@ void mexFunction
 //     snprintf(message, MSG_STR_LENGTH, "spread = %.5f,\n", spread); mexPrintf(message);
      generateVBAPgainTable3D(ls_dirs_deg, L, az_res_deg, el_res_deg, omitLargeTriangles,
                              enableDummies, spread, &gtable, &N_gtable, &nTriangles);
-//     
-//     /* output */
-//     nDims = 2;
-//     pDims = realloc1d(pDims, nDims*sizeof(int));
-//     pDims[0] = N_gtable;
-//     pDims[1] = L;
-    //SAFsingle2MEXdouble(gtable, nDims, pDims, &plhs[0]);
-//             
-//     /* clean-up */
-//     free(pDims);
-//     free(ls_dirs_deg); 
-//     free(gtable); 
-//     
-//     /* check output argument datatypes */
-//     checkArgDataTypes((mxArray**)plhs, (MEX_DATA_TYPES*)outputDataTypes, NUM_OUTPUT_ARGS); 
+    
+    /* output */
+    nDims = 2;
+    pDims = realloc1d(pDims, nDims*sizeof(int));
+    pDims[0] = N_gtable;
+    pDims[1] = L;
+    SAFsingle2MEXdouble(gtable, nDims, pDims, &plhs[0]);
+            
+    /* clean-up */
+    free(pDims);
+    free(ls_dirs_deg); 
+    free(gtable); 
+    
+    /* check output argument datatypes */
+    checkArgDataTypes((mxArray**)plhs, (MEX_DATA_TYPES*)outputDataTypes, NUM_OUTPUT_ARGS); 
 }
