@@ -18,7 +18,13 @@ SAF_USE_ATLAS
 
 Intel MKL is perhaps the fastest library for **x86/amd64** platforms. It also has an optimised FFT implementation which SAF is able to use too. 
 
-Note Intel MKL can be freely downloaded (royalty-free) [from here](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries). 
+Note Intel MKL can be freely downloaded (royalty-free) [from here](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries).
+
+It also ships with recent [Anaconda](https://anaconda.org) distributions. The easiest way to install with conda is:
+```
+conda install mkl mkl-include
+```
+Please refer to the documentation about where conda installs packages on your platform.
 
 Unfortunately, while you can indeed link directly to the Intel MKL static/shared libraries... these files are rather large. Therefore, you may prefer to use the MKL builder to build a custom MKL library, which contains only the routines that SAF uses.
 
