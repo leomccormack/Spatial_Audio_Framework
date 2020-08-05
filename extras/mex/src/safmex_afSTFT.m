@@ -1,22 +1,22 @@
-%SAFMEX_QMF Quadrature-Mirror Filterbank (QMF)
-%   [FREQ_VECTOR, PROC_DELAY] = SAFMEX_QMF(NCH_IN, NCH_OUT, HOPSIZE, 
-%   BLOCKSIZE, HYBRIDMODE, FORMAT, FS) creates an instance of the QMF 
+%SAFMEX_AFSTFT Alias-Free STFT filterbank
+%   [FREQ_VECTOR, PROC_DELAY] = SAFMEX_AFSTFT(NCH_IN, NCH_OUT, HOPSIZE, 
+%   BLOCKSIZE, HYBRIDMODE, FORMAT, FS) creates an instance of the afSTFT 
 %   filterbank, given NCH_IN and NCH_OUT number of input and output 
 %   channels, respectively.
 %
 %   The filterbank employs a hopsize of HOPSIZE, and will process BLOCKSIZE
 %   number of samples at a time. The flag HYBRIDMODE dictates whether the
-%   optional hybrid-filtering is enabled, which sub-divides the lowest 3 
-%   QMF bands into 10 hybrid-QMF bands. The FORMAT flag dictates whether  
-%   the time-frequency data is given in nBands x nCH x time, or time x nCH  
+%   optional hybrid-filtering is enabled, which sub-divides the lowest 4 
+%   bins into 8 hybrid-bins. The FORMAT flag dictates whether the 
+%   time-frequency data is given in nBands x nCH x time, or time x nCH  
 %   x nBands.
 %
-%   SAFMEX_QMF() destroys an instance of the QMF filterbank.
+%   SAFMEX_AFSTFT() destroys an instance of the afSTFT filterbank.
 %
-%   Y = SAFMEX_QMF(X) performs the forward transform (QMF analysis) if X is
+%   Y = SAFMEX_QMF(X) performs the forward afSTFT transform if X is
 %   a real-valued time-domain (2D) input - resulting in complex-valued 
 %   time-frequency (3D) output Y. If Y is complex-valued time-frequency
-%   (3D) input, then the backward transform (QMF synthesis) is performed -
+%   (3D) input, then the backward/inverse afSTFT transform is performed -
 %   resulting in real-valued time-domain (2D) output Y.
 %
 % INPUT ARGUMENTS 
@@ -43,17 +43,17 @@
 %   fs = 48e3f;
 %
 %   % Create
-%   [freqVector, procDelay] = safmex_qmf(nCHin, nCHout, hopsize, blocksize, hybridmode, 0, fs); 
+%   [freqVector, procDelay] = safmex_afSTFT(nCHin, nCHout, hopsize, blocksize, hybridmode, 0, fs); 
 %
 %   % Forward
 %   dataTD_ref = randn(blocksize, nCHin); 
-%   dataFD = safmex_qmf(dataTD_ref.'); 
+%   dataFD = safmex_afSTFT(dataTD_ref.'); 
 %
 %   % Backward
-%   dataTD = safmex_qmf(dataFD);
+%   dataTD = safmex_afSTFT(dataFD);
 %
 %   % Destroy
-%   safmex_qmf()
+%   safmex_afSTFT()
 %
 %   % dataTD_ref will approx. (-50dB) equal dataTD, shifted by procDelay
 %   % samples
