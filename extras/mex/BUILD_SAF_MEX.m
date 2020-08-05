@@ -36,13 +36,16 @@ if isempty(saf_perf_lib)
 
     idx =[];
     if isempty(idx)
-        idx = find(strcmp( cac, 'SAF_PERFORMANCE_LIB:UNINITIALIZED=SAF_USE_INTEL_MKL' ));
+        idx = find(strcmp( cac, 'SAF_PERFORMANCE_LIB:STRING=SAF_USE_INTEL_MKL' ));
+        if isempty(idx), idx = find(strcmp( cac, 'SAF_PERFORMANCE_LIB:UNINITIALIZED=SAF_USE_INTEL_MKL' )); end
         if ~isempty(idx), saf_perf_lib = 'SAF_USE_INTEL_MKL'; end 
     elseif isempty(idx)
-        idx = find(strcmp( cac, 'SAF_PERFORMANCE_LIB:UNINITIALIZED=SAF_USE_APPLE_ACCELERATE' ));
+        idx = find(strcmp( cac, 'SAF_PERFORMANCE_LIB:STRING=SAF_USE_APPLE_ACCELERATE' ));
+        if isempty(idx), idx = find(strcmp( cac, 'SAF_PERFORMANCE_LIB:UNINITIALIZED=SAF_USE_APPLE_ACCELERATE' )); end
         if ~isempty(idx), saf_perf_lib = 'SAF_USE_APPLE_ACCELERATE'; end 
     elseif isempty(idx)
-        idx = find(strcmp( cac, 'SAF_PERFORMANCE_LIB:UNINITIALIZED=SAF_USE_OPEN_BLAS_AND_LAPACKE' ));
+        idx = find(strcmp( cac, 'SAF_PERFORMANCE_LIB:STRING=SAF_USE_OPEN_BLAS_AND_LAPACKE' ));
+        if isempty(idx), idx = find(strcmp( cac, 'SAF_PERFORMANCE_LIB:UNINITIALIZED=SAF_USE_OPEN_BLAS_AND_LAPACKE' )); end
         if ~isempty(idx), saf_perf_lib = 'SAF_USE_OPEN_BLAS_AND_LAPACKE'; end 
     end  
 end
@@ -104,19 +107,19 @@ nTests = 0; nPass = 0; nFail = 0;
 tol = 1e-5; % FLT_EPSILON
 
 % safmex_qmf
-nCHin = 4;
-nCHout = 2;
+nCHin = 10;
+nCHout = 4;
 hopsize = 128;
-blocksize = 2048;
+blocksize = 2048*20;
 [freqVector, procDelay] = safmex_qmf(nCHin, nCHout, hopsize, blocksize, 1, 0, 48e3); 
-
-
-dataTD_ref = randn(blocksize, nCHin);
+dataTD_ref = randn(blocksize, nCHin); 
 dataFD = safmex_qmf(dataTD_ref.');
-%dataTD = safmex_qmf(dataFD);
-
+dataFD = repmat(dataFD(:,1,:), [1 nCHout 1]); % copy 1st input channel to all output channels
+dataTD = safmex_qmf(dataFD);
+dataTD_ref = dataTD_ref(1:end-procDelay,1);
+dataTD = dataTD(1,procDelay+1:end).';
+if max(abs(dataTD(:,1)-dataTD_ref(:,1)))<0.01, nPass=nPass+1; else, nFail=nFail+1; end 
 safmex_qmf();
-
 
 % safmex_generateVBAPgainTable3D
 [~,ls_dirs] = getTdesign(10);

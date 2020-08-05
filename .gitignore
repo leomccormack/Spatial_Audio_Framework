@@ -14,5 +14,6 @@ dependencies/Win64/lib/libiomp5md.lib
 *.mexmaci64
 *.c~
 *.m~
+*.h~
 *.zip
 *.mexmaci64

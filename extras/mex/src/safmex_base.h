@@ -122,13 +122,13 @@ void checkArgDataTypes(mxArray** hData, MEX_DATA_TYPES* dataTypes, int nArgs)
                 }
                 break;
             case DOUBLE_REAL_3D:
-                if( !mxIsDouble(hData[i]) || mxIsComplex(hData[i]) || true_nDims!=3) {
+                if( !mxIsDouble(hData[i]) || mxIsComplex(hData[i]) || nDims!=3) {
                     snprintf(message, MSG_STR_LENGTH, "The following input argument must be a real-valued double-precision 3-D matrix: %d", i+1);
                     mexErrMsgIdAndTxt("MyToolbox:inputError", message); 
                 }
                 break;
             case DOUBLE_COMPLEX_3D:
-                if( !mxIsDouble(hData[i]) || !mxIsComplex(hData[i]) || true_nDims!=3) {
+                if( !mxIsDouble(hData[i]) || !mxIsComplex(hData[i]) || nDims!=3) {
                     snprintf(message, MSG_STR_LENGTH, "The following input argument must be a complex-valued double-precision 3-D matrix: %d", i+1);
                     mexErrMsgIdAndTxt("MyToolbox:inputError", message); 
                 }
@@ -164,7 +164,8 @@ void MEXdouble2SAFsingle(const mxArray* in, float** out, int* nDims, int** pDims
     assert(0); /* need to implement switch case for number of dims, and interleave the reading of inMatrix somehow... */
 #endif
     inMatrix = mxGetData(in);
-    (*out) = malloc1d(numElements*sizeof(float)); 
+    if((*out)==NULL)
+        (*out) = malloc1d(numElements*sizeof(float)); 
     
     /* column-major -> row-major */
     switch(*nDims){
@@ -215,7 +216,6 @@ void MEXdouble2SAFsingle_complex(const mxArray* in, float_complex** out, int* nD
     if((*out)==NULL)
         (*out) = malloc1d(numElements*sizeof(float_complex)); 
     
-    return;
     /* column-major -> row-major */
     switch(*nDims){
         case 0: /* scalar */ break;
@@ -226,7 +226,6 @@ void MEXdouble2SAFsingle_complex(const mxArray* in, float_complex** out, int* nD
             for(i=0; i<(*pDims)[0]; i++)
                 for(j=0; j<(*pDims)[1]; j++)
                     (*out)[i*(*pDims)[1]+j] = cmplxf((float)inMatrix_r[j*(*pDims)[0]+i], (float)inMatrix_i[j*(*pDims)[0]+i]);
-
 #endif 
             break;
         case 3:
@@ -275,7 +274,7 @@ void SAFsingle2MEXdouble(float* in, int nDims, int* dims, mxArray** out)
 
 void SAFsingle2MEXdouble_complex(float_complex* in, int nDims, int* dims, mxArray** out)
 {
-    int i,j;
+    int i,j,k;
 #if MX_HAS_INTERLEAVED_COMPLEX 
     mxComplexDouble* pData;
 #else
@@ -313,6 +312,21 @@ void SAFsingle2MEXdouble_complex(float_complex* in, int nDims, int* dims, mxArra
                     pData_r[j*dims[0]+i] = (double)crealf(in[i*dims[1]+j]);
                     pData_i[j*dims[0]+i] = (double)cimagf(in[i*dims[1]+j]);
 #endif
+                }
+            } 
+        case 3: 
+            for(i=0; i<dims[0]; i++){
+                for(j=0; j<dims[1]; j++){
+                    for(k=0; k<dims[2]; k++){
+#if MX_HAS_INTERLEAVED_COMPLEX 
+                        assert(0);
+                        pData[k*dims[1]*dims[0]+j*dims[0]+i].real = (double)crealf(in[i*dims[1]*dims[2]+j*dims[2]+k]);
+                        pData[k*dims[1]*dims[0]+j*dims[0]+i].imag = (double)cimagf(in[i*dims[1]*dims[2]+j*dims[2]+k]);
+#else 
+                        pData_r[k*dims[1]*dims[0]+j*dims[0]+i] = (double)crealf(in[i*dims[1]*dims[2]+j*dims[2]+k]);
+                        pData_i[k*dims[1]*dims[0]+j*dims[0]+i] = (double)cimagf(in[i*dims[1]*dims[2]+j*dims[2]+k]); 
+#endif
+                    }
                 }
             }
             break;
