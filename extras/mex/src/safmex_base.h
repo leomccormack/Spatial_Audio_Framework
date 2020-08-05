@@ -33,7 +33,9 @@ typedef enum _MEX_DATA_TYPES{
     DOUBLE_REAL_1D_OR_2D, 
     DOUBLE_COMPLEX_1D_OR_2D,
     DOUBLE_REAL_2D, 
-    DOUBLE_COMPLEX_2D
+    DOUBLE_COMPLEX_2D,
+    DOUBLE_REAL_3D, 
+    DOUBLE_COMPLEX_3D
             
 }MEX_DATA_TYPES;
 
@@ -119,6 +121,18 @@ void checkArgDataTypes(mxArray** hData, MEX_DATA_TYPES* dataTypes, int nArgs)
                     mexErrMsgIdAndTxt("MyToolbox:inputError", message); 
                 }
                 break;
+            case DOUBLE_REAL_3D:
+                if( !mxIsDouble(hData[i]) || mxIsComplex(hData[i]) || true_nDims!=3) {
+                    snprintf(message, MSG_STR_LENGTH, "The following input argument must be a real-valued double-precision 3-D matrix: %d", i+1);
+                    mexErrMsgIdAndTxt("MyToolbox:inputError", message); 
+                }
+                break;
+            case DOUBLE_COMPLEX_3D:
+                if( !mxIsDouble(hData[i]) || !mxIsComplex(hData[i]) || true_nDims!=3) {
+                    snprintf(message, MSG_STR_LENGTH, "The following input argument must be a complex-valued double-precision 3-D matrix: %d", i+1);
+                    mexErrMsgIdAndTxt("MyToolbox:inputError", message); 
+                }
+                break;
         }
     } 
 }
@@ -160,6 +174,69 @@ void MEXdouble2SAFsingle(const mxArray* in, float** out, int* nDims, int** pDims
             for(i=0; i<(*pDims)[0]; i++)
                 for(j=0; j<(*pDims)[1]; j++)
                     (*out)[i*(*pDims)[1]+j] = (float)inMatrix[j*(*pDims)[0]+i];
+            break;
+    }
+}
+
+void MEXdouble2SAFsingle_complex(const mxArray* in, float_complex** out, int* nDims, int** pDims)
+{ 
+    int i, j, k, numElements;
+ #if MX_HAS_INTERLEAVED_COMPLEX 
+    mxComplexDouble* inMatrix;
+#else
+    double *inMatrix_r;
+    double *inMatrix_i;
+#endif
+    mwSize nDims_mx;
+    const mwSize *pDims_mx;
+    
+    /* Find dimensionality of input */
+    nDims_mx = mxGetNumberOfDimensions(in);
+    pDims_mx = mxGetDimensions(in);
+    
+    /* convert mwSize->int */
+    (*nDims) = (int)nDims_mx;
+    (*pDims) = malloc1d(*nDims*sizeof(int));
+    for(i=0; i<(*nDims); i++)
+        (*pDims)[i] = (int)pDims_mx[i];
+    
+    /* Find number of elements */
+    numElements = 1;
+    for(i=0; i<(*nDims); i++)
+        numElements *= (*pDims)[i];
+     
+    /* Convert input mex array to saf array */
+#if MX_HAS_INTERLEAVED_COMPLEX 
+    inMatrix = mxGetData(in);
+#else 
+    inMatrix_r = mxGetPr(in);
+    inMatrix_i = mxGetPi(in);
+#endif 
+    if((*out)==NULL)
+        (*out) = malloc1d(numElements*sizeof(float_complex)); 
+    
+    return;
+    /* column-major -> row-major */
+    switch(*nDims){
+        case 0: /* scalar */ break;
+        case 1: assert(0); break;
+        case 2: 
+#if MX_HAS_INTERLEAVED_COMPLEX 
+#else 
+            for(i=0; i<(*pDims)[0]; i++)
+                for(j=0; j<(*pDims)[1]; j++)
+                    (*out)[i*(*pDims)[1]+j] = cmplxf((float)inMatrix_r[j*(*pDims)[0]+i], (float)inMatrix_i[j*(*pDims)[0]+i]);
+
+#endif 
+            break;
+        case 3:
+#if MX_HAS_INTERLEAVED_COMPLEX 
+#else 
+            for(i=0; i<(*pDims)[0]; i++)
+                for(j=0; j<(*pDims)[1]; j++)
+                    for(k=0; k<(*pDims)[2]; k++)
+                        (*out)[i*(*pDims)[1]*(*pDims)[2]+j*(*pDims)[2]+k] = cmplxf((float)inMatrix_r[k*(*pDims)[1]*(*pDims)[0]+ j*(*pDims)[0]+i], (float)inMatrix_i[k*(*pDims)[1]*(*pDims)[0]+ j*(*pDims)[0]+i]);
+#endif 
             break;
     }
 }

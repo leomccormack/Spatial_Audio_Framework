@@ -25,7 +25,7 @@ clear all %#ok
 saf_perf_lib = []; % leave empty to scan cache, 'SAF_USE_INTEL_MKL', 'SAF_USE_APPLE_ACCELERATE', 'SAF_USE_OPEN_BLAS_AND_LAPACKE'
 run_tests = 1;     % 0: disabled, 1: enabled
 cmake_build_folder = '../../build/'; % path to CMake build folder
-outputFolder = 'mex_output/';
+outputFolder = 'safmex/';
 
 
 %% Pull settings from CMakeCache.txt if not defined in user options 
@@ -91,30 +91,57 @@ if ~exist(outputFolder, 'dir'), mkdir(outputFolder); end
 
 
 %% Build MEX
-mex('-v', compilerFlags{:}, './src/saf_getSHreal.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './src/saf_getSHcomplex.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './src/safmex_qmf.c', '-outdir', outputFolder);
+%mex('-v', compilerFlags{:}, './src/safmex_generateVBAPgainTable3D.c', '-outdir', outputFolder);
+%mex('-v', compilerFlags{:}, './src/safmex_getSHreal.c', '-outdir', outputFolder);
+%mex('-v', compilerFlags{:}, './src/safmex_getSHcomplex.c', '-outdir', outputFolder);
 
 
 %% TESTS
 if ~run_tests, return; end
 addpath(outputFolder)
 nTests = 0; nPass = 0; nFail = 0;
+tol = 1e-5; % FLT_EPSILON
 
-% saf_getSHreal
+% safmex_qmf
+nCHin = 4;
+nCHout = 2;
+hopsize = 128;
+blocksize = 2048;
+[freqVector, procDelay] = safmex_qmf(nCHin, nCHout, hopsize, blocksize, 1, 0, 48e3); 
+
+
+dataTD_ref = randn(blocksize, nCHin);
+dataFD = safmex_qmf(dataTD_ref.');
+%dataTD = safmex_qmf(dataFD);
+
+safmex_qmf();
+
+
+% safmex_generateVBAPgainTable3D
+[~,ls_dirs] = getTdesign(10);
+ls_dirs = ls_dirs*180/pi;
+aziElevRes = [5 5];
+gtable = safmex_generateVBAPgainTable3D(ls_dirs, aziElevRes(1), aziElevRes(2), 1, 0, 0);
+gtable_ref = getGainTable(ls_dirs,aziElevRes,0,'vbap');
+nTests = nTests+1;
+if max(abs(gtable_ref(:)-gtable(:)))<tol, nPass=nPass+1; else, nFail=nFail+1; end 
+
+% safmex_getSHreal
 order = 5;
 dirs = randn(1000,2); 
-Y = saf_getSHreal(order,dirs); 
+Y = safmex_getSHreal(order,dirs); 
 Y_ref = getSH(order, dirs, 'real').'; 
 nTests = nTests+1;
-if max(abs(Y(:)-Y_ref(:)))<1e-6, nPass=nPass+1; else, nFail=nFail+1; end 
+if max(abs(Y(:)-Y_ref(:)))<tol, nPass=nPass+1; else, nFail=nFail+1; end 
 
-% saf_getSHcomplex
+% safmex_getSHcomplex
 order = 4;
 dirs = randn(400,2); 
-Y = saf_getSHcomplex(order,dirs);
+Y = safmex_getSHcomplex(order,dirs);
 Y_ref = getSH(order, dirs, 'complex').';
 nTests = nTests+1;
-if max(abs(Y(:)-Y_ref(:)))<1e-6, nPass=nPass+1; else, nFail=nFail+1; end 
+if max(abs(Y(:)-Y_ref(:)))<tol, nPass=nPass+1; else, nFail=nFail+1; end 
 
 % Output
 display(['Number of tests: ' num2str(nTests)]);

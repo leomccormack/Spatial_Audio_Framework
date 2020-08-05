@@ -44,6 +44,7 @@ if(SAF_ENABLE_SOFA_READER_MODULE AND SAF_BUILD_EXAMPLES)
         "${example_prefix}sldoa"
     ) 
 else()
+    target_compile_definitions(${PROJECT_NAME} PRIVATE SAF_ENABLE_EXAMPLES_TESTS=0) 
     message(STATUS "  Note: unit tests for the SAF examples have been disabled")
 endif()
 

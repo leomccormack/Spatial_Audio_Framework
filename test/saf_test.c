@@ -27,7 +27,7 @@
 #include "timer.h"   /* for timing the individual tests */
 #include "saf.h"     /* master framework include header */
 
-#ifdef SAF_ENABLE_EXAMPLES_TESTS
+#if SAF_ENABLE_EXAMPLES_TESTS == 1
 /* SAF example headers: */
 # include "ambi_bin.h"
 # include "ambi_dec.h"
@@ -85,7 +85,6 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
-    RUN_TEST(test__saf_example_ambi_bin);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -118,7 +117,7 @@ int main_test(void) {
     RUN_TEST(test__sphMUSIC);
     RUN_TEST(test__sphESPRIT);
     RUN_TEST(test__sphModalCoeffs);
-#ifdef SAF_ENABLE_EXAMPLES_TESTS
+#if SAF_ENABLE_EXAMPLES_TESTS == 1
     RUN_TEST(test__saf_example_ambi_bin);
     RUN_TEST(test__saf_example_ambi_dec);
     RUN_TEST(test__saf_example_ambi_enc);
@@ -2193,7 +2192,7 @@ void test__sphModalCoeffs(void){
     free(b_N_omni_test);
 }
 
-#ifdef SAF_ENABLE_EXAMPLES_TESTS
+#if SAF_ENABLE_EXAMPLES_TESTS == 1
 void test__saf_example_ambi_bin(void){
     int nSH, i, ch, framesize;
     void* hAmbi;
