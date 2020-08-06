@@ -233,8 +233,8 @@ void afSTFT_backward
             case AFSTFT_TIME_CH_BANDS:
                 for(band = 0; band < h->nBands; band++) {
                     for(ch = 0; ch < h->nCHout; ch++) {
-                        h->STFTOutputFrameTF[ch].re[band] = crealf(dataFD[band][ch][t]);
-                        h->STFTOutputFrameTF[ch].im[band] = cimagf(dataFD[band][ch][t]);
+                        h->STFTOutputFrameTF[ch].re[band] = crealf(dataFD[t][ch][band]);
+                        h->STFTOutputFrameTF[ch].im[band] = cimagf(dataFD[t][ch][band]);
                     }
                 }
                 break;
