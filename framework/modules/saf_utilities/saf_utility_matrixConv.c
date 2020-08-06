@@ -24,8 +24,6 @@
  */
 
 #include "saf_utilities.h"
-#include "saf_utility_matrixConv.h"
-
 
 /* ========================================================================== */
 /*                              Matrix Convolver                              */
