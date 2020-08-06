@@ -94,7 +94,7 @@ if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL" )
 
     # Add target header paths and libs
     target_include_directories(${PROJECT_NAME} PUBLIC ${INTEL_MKL_HEADER_PATH} )
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${INTEL_MKL_LIB} )
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${INTEL_MKL_LIB} )
 
     # Check that header can be included
     #check_include_files("${INTEL_MKL_HEADER_PATH}/mkl.h" HAVE_MKL_H)
@@ -113,7 +113,7 @@ elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
     if (NOT DEFINED LAPACKE_LIBRARY)
         find_library(LAPACKE_LIBRARY lapacke)
     endif()
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENBLAS_LIBRARY} ${LAPACKE_LIBRARY})
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${OPENBLAS_LIBRARY} ${LAPACKE_LIBRARY})
 
     # Add header search paths if they are defined
     if(DEFINED OPENBLAS_HEADER_PATH)
@@ -198,12 +198,4 @@ endif()
 
 ############################################################################
 # set RPATHs
-if(UNIX AND NOT APPLE)
-    set (CMAKE_SHARED_LINKER_FLAGS -rpath,/usr/lib)
-elseif(APPLE)
-    set (CMAKE_SHARED_LINKER_FLAGS -rpath,/usr/local/lib)
-elseif(MSYS)
-    set (CMAKE_SHARED_LINKER_FLAGS -rpath,/c/msys64/mingw64/lib)
-elseif(MSVC) 
-    set (CMAKE_SHARED_LINKER_FLAGS -rpath,C:/Windows/System32)
-endif()
+set(CMAKE_INSTALL_RPATH $ORIGIN)
