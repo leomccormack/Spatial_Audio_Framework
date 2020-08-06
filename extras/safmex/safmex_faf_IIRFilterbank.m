@@ -33,7 +33,8 @@
 %   Impulse = zeros(lSig, 1);  Impulse(1,1) = 1;
 %   IRs = safmex_faf_IIRFilterbank(Impulse).';
 %
-%   % The magnitude responses of IRs, should sum to ~0 dB
+%   % The magnitude responses of IRs, should sum to ~<0.1 dB at all
+%   % frequencies
 %
 
 %

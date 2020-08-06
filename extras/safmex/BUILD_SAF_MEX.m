@@ -13,7 +13,7 @@
 % OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 % PERFORMANCE OF THIS SOFTWARE.
 %
-clear all %#ok
+clear all, close all %#ok
 
 % 1. compile SAF via CMake prior to running this script
 % 2. configure user options below as needed
@@ -169,7 +169,7 @@ semilogx(f, vAbsTfSum, 'k'), hold on
 xlabel('Frequency [Hz]'), ylabel('Magnitude [dB re. FS]')
 ylim([-60 10]), xlim([20 20e3]), grid on, hold off
 nTests = nTests+1;
-if max(abs(vAbsTfSum(:)))<0.001, nPass=nPass+1; else, nFail=nFail+1; end 
+if max(abs(vAbsTfSum(:)))<0.1, nPass=nPass+1; else, nFail=nFail+1; end 
 safmex_faf_IIRFilterbank();
 
 % safmex_afSTFT
