@@ -25,16 +25,16 @@ typedef enum _MEX_DATA_TYPES{
     INT32 = 0, 
     
     /* Double-precision */
-    DOUBLE_REAL, 
-    DOUBLE_COMPLEX, 
-    DOUBLE_REAL_1D, 
-    DOUBLE_COMPLEX_1D, 
-    DOUBLE_REAL_1D_OR_2D, 
-    DOUBLE_COMPLEX_1D_OR_2D,
-    DOUBLE_REAL_2D, 
-    DOUBLE_COMPLEX_2D,
-    DOUBLE_REAL_3D, 
-    DOUBLE_COMPLEX_3D
+    SM_DOUBLE_REAL, 
+    SM_DOUBLE_COMPLEX, 
+    SM_DOUBLE_REAL_1D, 
+    SM_DOUBLE_COMPLEX_1D, 
+    SM_DOUBLE_REAL_1D_OR_2D, 
+    SM_DOUBLE_COMPLEX_1D_OR_2D,
+    SM_DOUBLE_REAL_2D, 
+    SM_DOUBLE_COMPLEX_2D,
+    SM_DOUBLE_REAL_3D, 
+    SM_DOUBLE_COMPLEX_3D
             
 }MEX_DATA_TYPES;
 
@@ -72,61 +72,61 @@ void checkArgDataTypes(mxArray** hData, MEX_DATA_TYPES* dataTypes, int nArgs)
                     mexErrMsgIdAndTxt("MyToolbox:arrayProduct:notScalar", message);
                 }
                 break;
-            case DOUBLE_REAL: 
+            case SM_DOUBLE_REAL: 
                 if (!mxIsDouble(hData[i]) || mxIsComplex(hData[i]) || true_nDims!=0){
                     snprintf(message, MSG_STR_LENGTH, "The following input argument must be a real-valued double-precision scalar: %d", i+1);
                     mexErrMsgIdAndTxt("MyToolbox:arrayProduct:notScalar", message);
                 }
                 break;
-            case DOUBLE_COMPLEX:
+            case SM_DOUBLE_COMPLEX:
                 if (!mxIsDouble(hData[i]) || !mxIsComplex(hData[i]) || true_nDims!=0){
                     snprintf(message, MSG_STR_LENGTH, "The following input argument must be a complex-valued double-precision scalar: %d", i+1);
                     mexErrMsgIdAndTxt("MyToolbox:arrayProduct:notScalar", message);
                 }
                 break;
-            case DOUBLE_REAL_1D: 
+            case SM_DOUBLE_REAL_1D: 
                 if (!mxIsDouble(hData[i]) || mxIsComplex(hData[i]) || true_nDims!=1){
                     snprintf(message, MSG_STR_LENGTH, "The following input argument must be a real-valued double-precision 1-D vector: %d", i+1);
                     mexErrMsgIdAndTxt("MyToolbox:inputError", message);
                 }
                 break;
-            case DOUBLE_COMPLEX_1D:
+            case SM_DOUBLE_COMPLEX_1D:
                 if (!mxIsDouble(hData[i]) || !mxIsComplex(hData[i]) || true_nDims!=1){
                     snprintf(message, MSG_STR_LENGTH, "The following input argument must be a complex-valued double-precision 1-D vector: %d", i+1);
                     mexErrMsgIdAndTxt("MyToolbox:inputError", message);
                 }
                 break;
-            case DOUBLE_REAL_1D_OR_2D: 
+            case SM_DOUBLE_REAL_1D_OR_2D: 
                 if (!mxIsDouble(hData[i]) || mxIsComplex(hData[i]) || true_nDims==0 || true_nDims>2){
                     snprintf(message, MSG_STR_LENGTH, "The following input argument must be a real-valued double-precision 1-D vector or 2-D matrix: %d", i+1);
                     mexErrMsgIdAndTxt("MyToolbox:inputError", message);
                 }
                 break;
-            case DOUBLE_COMPLEX_1D_OR_2D:
+            case SM_DOUBLE_COMPLEX_1D_OR_2D:
                 if (!mxIsDouble(hData[i]) || !mxIsComplex(hData[i]) || true_nDims==0 || true_nDims>2){
                     snprintf(message, MSG_STR_LENGTH, "The following input argument must be a complex-valued double-precision 1-D vector or 2-D matrix: %d", i+1);
                     mexErrMsgIdAndTxt("MyToolbox:inputError", message);
                 }
                 break;
-            case DOUBLE_REAL_2D:
+            case SM_DOUBLE_REAL_2D:
                 if( !mxIsDouble(hData[i]) || mxIsComplex(hData[i]) || true_nDims!=2) {
                     snprintf(message, MSG_STR_LENGTH, "The following input argument must be a real-valued double-precision 2-D matrix: %d", i+1);
                     mexErrMsgIdAndTxt("MyToolbox:inputError", message); 
                 }
                 break;
-            case DOUBLE_COMPLEX_2D:
+            case SM_DOUBLE_COMPLEX_2D:
                 if( !mxIsDouble(hData[i]) || !mxIsComplex(hData[i]) || true_nDims!=2) {
                     snprintf(message, MSG_STR_LENGTH, "The following input argument must be a complex-valued double-precision 2-D matrix: %d", i+1);
                     mexErrMsgIdAndTxt("MyToolbox:inputError", message); 
                 }
                 break;
-            case DOUBLE_REAL_3D:
+            case SM_DOUBLE_REAL_3D:
                 if( !mxIsDouble(hData[i]) || mxIsComplex(hData[i]) || nDims!=3) {
                     snprintf(message, MSG_STR_LENGTH, "The following input argument must be a real-valued double-precision 3-D matrix: %d", i+1);
                     mexErrMsgIdAndTxt("MyToolbox:inputError", message); 
                 }
                 break;
-            case DOUBLE_COMPLEX_3D:
+            case SM_DOUBLE_COMPLEX_3D:
                 if( !mxIsDouble(hData[i]) || !mxIsComplex(hData[i]) || nDims!=3) {
                     snprintf(message, MSG_STR_LENGTH, "The following input argument must be a complex-valued double-precision 3-D matrix: %d", i+1);
                     mexErrMsgIdAndTxt("MyToolbox:inputError", message); 

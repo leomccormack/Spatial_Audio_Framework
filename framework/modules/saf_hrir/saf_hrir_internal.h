@@ -37,6 +37,7 @@
 
 #include "saf_hrir.h"
 #include "../saf_utilities/saf_utilities.h"
+#include "saf_externals.h" 
 
 #ifdef __cplusplus
 extern "C" {

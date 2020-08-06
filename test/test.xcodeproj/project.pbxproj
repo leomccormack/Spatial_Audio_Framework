@@ -243,6 +243,7 @@
 		50E3DF0024C1D4EA00589B17 /* powermap_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = powermap_internal.h; sourceTree = "<group>"; };
 		50E3DF0124C1D4EA00589B17 /* powermap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = powermap.c; sourceTree = "<group>"; };
 		50E3DF0224C1D4EA00589B17 /* powermap_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = powermap_internal.c; sourceTree = "<group>"; };
+		50E3DFA224DC3FAA00589B17 /* saf_externals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_externals.h; sourceTree = "<group>"; };
 		50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_geometry.c; sourceTree = "<group>"; };
 		50E5CD1524AF3E5800019898 /* saf_utility_geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_geometry.h; sourceTree = "<group>"; };
 		50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_latticeCoeffs.c; sourceTree = "<group>"; };
@@ -315,6 +316,7 @@
 		50E36008249BDDCB00B74C25 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				50E3DFA224DC3FAA00589B17 /* saf_externals.h */,
 				50E36009249BDDCB00B74C25 /* saf.h */,
 			);
 			path = include;

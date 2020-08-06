@@ -53,53 +53,6 @@
 
 #ifndef __SAF_UTILITIES_H_INCLUDED__
 #define __SAF_UTILITIES_H_INCLUDED__
-    
-/* ========================================================================== */
-/*                        Performance Library to Employ                       */
-/* ========================================================================== */
-
-#if defined(SAF_USE_INTEL_MKL)
-/*
- * Using Intel's Math Kernal Library (MKL)
- * (Generally the fastest library for x86 based architectures)
- */
-# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortan interface of LAPACK */
-# include "mkl.h"
-
-#elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
-/*
- * Using OpenBLAS and the LAPACKE interface
- * (A good option for both x86 and ARM based architectures)
- */
-# define VECLIB_USE_LAPACKE_INTERFACE /**< LAPACKE interface */
-# include "cblas.h"
-# include "lapacke.h"
-
-#elif defined(SAF_USE_ATLAS)
-/*
- * Using the Automatically Tuned Linear Algebra Software (ATLAS) library
- * (Not recommended, since some saf_veclib functions do not work with ATLAS)
- */
-# define VECLIB_USE_CLAPACK_INTERFACE /**< CLAPACK interface */
-# include "cblas-atlas.h"
-# include "clapack.h" /* NOTE: CLAPACK does not include all LAPACK routines! */
-
-#elif defined(__APPLE__)
-/*
- * Using Apple's Accelerate library (vDSP)
- * (Solid choice for both x86 and ARM, but only works under MacOSX and is not as
- * fast as Intel MKL for x86 systems)
- */
-#ifndef SAF_USE_APPLE_ACCELERATE
-# define SAF_USE_APPLE_ACCELERATE
-#endif
-# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortan interface of LAPACK */
-# include "Accelerate/Accelerate.h"
-
-#else
-# error "SAF requires a library (or libraries) which supports CBLAS and LAPACK"
-#endif
-
 
 /* ========================================================================== */
 /*                        Macros and Global Constants                         */

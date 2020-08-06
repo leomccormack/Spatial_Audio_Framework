@@ -45,6 +45,7 @@
  */
 
 #include "saf_utilities.h"
+#include "saf_externals.h"
 #include <float.h>
 
 /* just to remove compiler warnings, and to be more explicit: */

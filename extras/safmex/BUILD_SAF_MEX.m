@@ -62,7 +62,7 @@ end
 header_paths = {'../../framework/include'};
 lib_paths = {[ cmake_build_folder 'framework' ]};
 libs = {};
-defines = {saf_perf_lib};
+defines = {};%{saf_perf_lib};
 
 % Platform specific configurations
 if ismac 
@@ -121,6 +121,8 @@ elseif ispc
     assert(0); % currently unsupported, please contribute!
 end
 
+%lib_paths{end+1} = '/usr/local/lib';
+
 % prepends and stack
 header_paths = cellfun(@(c)['-I' c],header_paths,'uni',false);
 lib_paths = cellfun(@(c)['-L' c],lib_paths,'uni',false);
@@ -128,17 +130,20 @@ libs = cellfun(@(c)['-l' c],libs,'uni',false);
 defines = cellfun(@(c)['-D' c],defines,'uni',false);
 compilerFlags = {header_paths{:} lib_paths{:} libs{:} defines{:}}; %#ok
 
+
+%compilerFlags{end+1} = '-lapacke';
+
 % output folder
 if ~exist(outputFolder, 'dir'), mkdir(outputFolder); end
 
 
 %% Build MEX
 mex('-v', compilerFlags{:}, './safmex_faf_IIRFilterbank.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './safmex_afSTFT.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './safmex_qmf.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './safmex_generateVBAPgainTable3D.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './safmex_getSHreal.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './safmex_getSHcomplex.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_afSTFT.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_qmf.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_generateVBAPgainTable3D.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_getSHreal.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_getSHcomplex.c', '-outdir', outputFolder);
 
 
 %% TESTS

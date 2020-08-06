@@ -29,6 +29,7 @@
  */
 
 #include "saf_utilities.h"
+#include "saf_externals.h" 
 
 #define QMF_MAX_HOP_SIZE ( 128 )        /**< Maximum hop size supported */
 #define QMF_HYBRID_FILTER_LENGTH ( 13 ) /**< Hybrid-filter length */
