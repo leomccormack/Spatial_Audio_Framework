@@ -21,26 +21,6 @@
  * @brief Wrappers for optimised linear algebra routines, utilising CBLAS and
  *        LAPACK
  *
- * ## Dependencies
- *   A performance library comprising CBLAS and LAPACK routines is required by
- *   the module and, thus, also by SAF as a whole. Add one of the following
- *   FLAGS to your project's preprocessor definitions list in order to enable
- *   one of these suitable performance libraries, which must also be correctly
- *   linked to your project.
- *   - SAF_USE_INTEL_MKL:
- *       to enable Intel's Math Kernal Library with the Fortran LAPACK interface
- *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
- *       to enable OpenBLAS with the LAPACKE interface
- *   - SAF_USE_APPLE_ACCELERATE:
- *       to enable the Accelerate framework with the Fortran LAPACK interface
- *   - SAF_USE_ATLAS:
- *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
- * 
- * @see More information can be found here:
- *      https://github.com/leomccormack/Spatial_Audio_Framework
- * @note MacOSX users only: saf_utilities will employ Apple's Accelerate library
- *       by default, if none of the above FLAGS are defined.
- *
  * @author Leo McCormack
  * @date 11.07.2016
  */
@@ -59,24 +39,8 @@ extern "C" {
 #include "saf_utility_complex.h"
 #include "saf_utility_error.h"
 
-#ifdef CBLAS_H
-# define NO_TRANSPOSE (CblasNoTrans)
-# define TRANSPOSE (CblasTrans)
-# define CONJ_TRANSPOSE (CblasConjTrans)
-  typedef enum CBLAS_TRANSPOSE TRANS_FLAG;
-#else
- /**
-  * Matrix transpose options
-  */
-  typedef enum _TRANS_FLAG{
-    NO_TRANSPOSE = 1,   /**< Do not transpose */
-    TRANSPOSE = 2,      /**< Transpose */
-    CONJ_TRANSPOSE = 3  /**< Conjugate transpose / Hermition */
-  }TRANS_FLAG;
-#endif
 /**
- * Whether a vector should be conjugated or not (e.g. prior to dot product)
- */
+ * Whether a vector should be conjugated or not (e.g. prior to dot product) */
 typedef enum _CONJ_FLAG{
   NO_CONJ = 1,  /**< Do not take the conjugate */
   CONJ = 2      /**< Take the conjugate */

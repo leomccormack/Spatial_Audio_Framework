@@ -16,7 +16,12 @@
 
 /**
  * @file saf_externals.h
- * @brief Configuration header for SAF.
+ * @brief Configuration header for handling the SAF externals.
+ *
+ * @note You may also optionally include this header in your project, along with
+ *       saf.h, if you wish to have access to these external libraries as well.
+ *       (i.e. not including this header means that these libraries are only
+ *       internally used by SAF and will not be accessible in your project).
  *
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by
@@ -39,8 +44,8 @@
  * @date 06.08.2020
  */
 
-#ifndef __SAF_CONFIG_H_INCLUDED__
-#define __SAF_CONFIG_H_INCLUDED__
+#ifndef __SAF_EXTERNALS_H_INCLUDED__
+#define __SAF_EXTERNALS_H_INCLUDED__
     
 /* ========================================================================== */
 /*                        Performance Library to Employ                       */
@@ -72,7 +77,7 @@
 # include "cblas-atlas.h"
 # include "clapack.h" /* NOTE: CLAPACK does not include all LAPACK routines! */
 
-#elif defined(__APPLE__) && SAF_USE_APPLE_ACCELERATE
+#elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
 /*
  * Using Apple's Accelerate library (vDSP)
  * (Solid choice for both x86 and ARM, but only works under MacOSX and is not as
@@ -86,4 +91,17 @@
 #endif
 
 
-#endif /* __SAF_CONFIG_H_INCLUDED__ */
+/* ========================================================================== */
+/*          External Libraries Required by the saf_sofa_reader Module         */
+/* ========================================================================== */
+
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
+/* If your compiler stopped at this point, then please add the path to the
+ * netcdf include file to your project's include header paths.
+ * Instructions for linking the required "netcdf" library may also be found
+ * here: https://github.com/leomccormack/Spatial_Audio_Framework */
+# include <netcdf.h>
+#endif
+
+
+#endif /* __SAF_EXTERNALS_H_INCLUDED__ */
