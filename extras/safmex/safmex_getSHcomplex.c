@@ -14,7 +14,7 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
  
-#include "safmex_base.h" 
+#include "safmex.h" 
 
 /* ===================================================================== */
 /*                                Config                                 */
@@ -49,17 +49,16 @@ void mexFunction
       
     /* mex variables */
     int nDims;
-    int *pDims;
+    int *pDims = NULL;
 
     /* saf variables */
-    float* dirs_rad;
-    float_complex* Y;  
+    float* dirs_rad = NULL;
+    float_complex* Y = NULL;  
     int order, nSH, nDirs;
     
     /* prep */
     order = (int)mxGetScalar(prhs[0]);
-    nSH = ORDER2NSH(order);
-    dirs_rad = NULL;
+    nSH = ORDER2NSH(order); 
     MEXdouble2SAFsingle(prhs[1], &dirs_rad, &nDims, &pDims);
     nDirs = pDims[0];
     Y = malloc1d(nSH*nDirs*sizeof(float_complex));

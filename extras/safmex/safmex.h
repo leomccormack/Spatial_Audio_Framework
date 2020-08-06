@@ -19,8 +19,7 @@
 
 #define MSG_STR_LENGTH ( 256 )
 char message[MSG_STR_LENGTH];
-/* snprintf(message, MSG_STR_LENGTH, "mem required: %d", numElements);
-   mexPrintf(message); */
+/* snprintf(message, MSG_STR_LENGTH, "mem required: %d", numElements); mexPrintf(message); */
 
 typedef enum _MEX_DATA_TYPES{
     INT32 = 0, 
@@ -176,6 +175,8 @@ void MEXdouble2SAFsingle(const mxArray* in, float** out, int* nDims, int** pDims
                 for(j=0; j<(*pDims)[1]; j++)
                     (*out)[i*(*pDims)[1]+j] = (float)inMatrix[j*(*pDims)[0]+i];
             break;
+            
+        default: assert(0); break;// incomplete 
     }
 }
 
@@ -222,6 +223,7 @@ void MEXdouble2SAFsingle_complex(const mxArray* in, float_complex** out, int* nD
         case 1: assert(0); break;
         case 2: 
 #if MX_HAS_INTERLEAVED_COMPLEX 
+            assert(0); // incomplete
 #else 
             for(i=0; i<(*pDims)[0]; i++)
                 for(j=0; j<(*pDims)[1]; j++)
@@ -230,6 +232,7 @@ void MEXdouble2SAFsingle_complex(const mxArray* in, float_complex** out, int* nD
             break;
         case 3:
 #if MX_HAS_INTERLEAVED_COMPLEX 
+            assert(0); // incomplete
 #else 
             for(i=0; i<(*pDims)[0]; i++)
                 for(j=0; j<(*pDims)[1]; j++)
@@ -237,6 +240,7 @@ void MEXdouble2SAFsingle_complex(const mxArray* in, float_complex** out, int* nD
                         (*out)[i*(*pDims)[1]*(*pDims)[2]+j*(*pDims)[2]+k] = cmplxf((float)inMatrix_r[k*(*pDims)[1]*(*pDims)[0]+ j*(*pDims)[0]+i], (float)inMatrix_i[k*(*pDims)[1]*(*pDims)[0]+ j*(*pDims)[0]+i]);
 #endif 
             break;
+        default: assert(0); break;// incomplete 
     }
 }
 
@@ -266,6 +270,7 @@ void SAFsingle2MEXdouble(float* in, int nDims, int* dims, mxArray** out)
                 for(j=0; j<dims[1]; j++)
                     pData[j*dims[0]+i] = (double)in[i*dims[1]+j];
             break;
+        default: assert(0); break;// incomplete 
     }
     
     /* clean-up */
@@ -314,6 +319,7 @@ void SAFsingle2MEXdouble_complex(float_complex* in, int nDims, int* dims, mxArra
 #endif
                 }
             } 
+            break;
         case 3: 
             for(i=0; i<dims[0]; i++){
                 for(j=0; j<dims[1]; j++){
@@ -330,6 +336,7 @@ void SAFsingle2MEXdouble_complex(float_complex* in, int nDims, int* dims, mxArra
                 }
             }
             break;
+         default: assert(0); break;// incomplete 
     }
      
     /* clean-up */

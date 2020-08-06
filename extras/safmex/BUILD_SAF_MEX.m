@@ -30,7 +30,7 @@ clear all %#ok
 saf_perf_lib = []; % leave empty to scan cache, 'SAF_USE_INTEL_MKL', 'SAF_USE_APPLE_ACCELERATE', 'SAF_USE_OPEN_BLAS_AND_LAPACKE'
 run_tests = 1;     % 0: disabled, 1: enabled
 cmake_build_folder = '../../build/'; % path to CMake build folder
-outputFolder = 'safmex/';
+outputFolder = './';
 
 
 %% Pull settings from CMakeCache.txt if not defined in user options 
@@ -133,11 +133,12 @@ if ~exist(outputFolder, 'dir'), mkdir(outputFolder); end
 
 
 %% Build MEX
-mex('-v', compilerFlags{:}, './src/safmex_afSTFT.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './src/safmex_qmf.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './src/safmex_generateVBAPgainTable3D.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './src/safmex_getSHreal.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './src/safmex_getSHcomplex.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './safmex_faf_IIRFilterbank.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_afSTFT.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_qmf.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_generateVBAPgainTable3D.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_getSHreal.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_getSHcomplex.c', '-outdir', outputFolder);
 
 
 %% TESTS
@@ -198,7 +199,7 @@ if max(abs(Y(:)-Y_ref(:)))<tol, nPass=nPass+1; else, nFail=nFail+1; end
 % safmex_getSHcomplex
 order = 4;
 dirs = randn(400,2); 
-Y = safmex_getSHcomplex(order,dirs);
+Y = safmex_getSHcomplex(order,dirs); %Y = 
 Y_ref = getSH(order, dirs, 'complex').';
 nTests = nTests+1;
 if max(abs(Y(:)-Y_ref(:)))<tol, nPass=nPass+1; else, nFail=nFail+1; end 
