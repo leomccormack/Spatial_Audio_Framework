@@ -26,6 +26,7 @@
 #include "unity.h"   /* unit testing suite */
 #include "timer.h"   /* for timing the individual tests */
 #include "saf.h"     /* master framework include header */
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #if SAF_ENABLE_EXAMPLES_TESTS == 1
 /* SAF example headers: */

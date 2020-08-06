@@ -194,7 +194,7 @@ endif()
 if(UNIX)
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
 endif()
-    
+
 
 ############################################################################
 # set RPATHs

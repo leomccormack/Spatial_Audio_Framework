@@ -23,17 +23,17 @@
 #define NUM_INPUT_ARGS_CREATE  ( 4 )
 const MEX_DATA_TYPES inputDataTypes_create[NUM_INPUT_ARGS_CREATE] = {
     INT32,                 
-    DOUBLE_REAL_1D,  
+    SM_DOUBLE_REAL_1D,  
     INT32,
-    DOUBLE_REAL
+    SM_DOUBLE_REAL
 }; 
 #define NUM_INPUT_ARGS_APPLY ( 1 )
 #define NUM_OUTPUT_ARGS_APPLY ( 1 ) 
 const MEX_DATA_TYPES inputDataTypes_apply[NUM_INPUT_ARGS_APPLY] = {
-    DOUBLE_REAL_1D      
+    SM_DOUBLE_REAL_1D      
 };   
 const MEX_DATA_TYPES outputDataTypes_apply[NUM_OUTPUT_ARGS_APPLY] = {
-    DOUBLE_REAL_2D 
+    SM_DOUBLE_REAL_2D 
 }; 
 
 

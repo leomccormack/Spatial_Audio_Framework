@@ -31,6 +31,7 @@
 #include <string.h>
 #include "decorrelator.h"
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {

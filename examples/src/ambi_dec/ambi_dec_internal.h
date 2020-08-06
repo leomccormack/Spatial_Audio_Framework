@@ -39,6 +39,7 @@
 #include <string.h>
 #include "ambi_dec.h" 
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {

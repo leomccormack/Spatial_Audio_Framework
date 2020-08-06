@@ -48,6 +48,7 @@
 #include <string.h>
 #include "convhull_3d.h"
 #include "../modules/saf_utilities/saf_utilities.h"
+#include "saf_externals.h" 
 
 /* Force using CBLAS: */
 #ifndef CONVHULL_3D_USE_CBLAS

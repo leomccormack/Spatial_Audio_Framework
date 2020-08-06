@@ -62,6 +62,7 @@ extern "C" {
 #define AFSTFT_USE_SAF_UTILITIES
 #ifdef AFSTFT_USE_SAF_UTILITIES
 # include "../../modules/saf_utilities/saf_utilities.h"
+#include "saf_externals.h" 
 #endif
     
 #include <stdio.h>

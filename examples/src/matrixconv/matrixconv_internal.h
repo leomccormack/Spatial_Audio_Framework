@@ -30,6 +30,7 @@
 #include <assert.h>
 #include "matrixconv.h"
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
