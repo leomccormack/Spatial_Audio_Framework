@@ -24,10 +24,10 @@
 #define NUM_OUTPUT_ARGS ( 1 )
 const MEX_DATA_TYPES inputDataTypes[NUM_INPUT_ARGS] = {
     INT32,                 
-    DOUBLE_REAL_1D_OR_2D
+    SM_DOUBLE_REAL_1D_OR_2D
 };
 const MEX_DATA_TYPES outputDataTypes[NUM_OUTPUT_ARGS] = { 
-    DOUBLE_REAL_1D_OR_2D
+    SM_DOUBLE_REAL_1D_OR_2D
 };
 
 

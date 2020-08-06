@@ -62,14 +62,16 @@ end
 header_paths = {'../../framework/include'};
 lib_paths = {[ cmake_build_folder 'framework' ]};
 libs = {};
-defines = {};%{saf_perf_lib};
+defines = {saf_perf_lib};
 
 % Platform specific configurations
 if ismac 
     libs{end+1} = 'saf';
     
     % Error checking
-    if ~exist([cmake_build_folder 'framework/libsaf.a'], 'file'), error('libsaf.a is missing, run CMake and build saf first'), end
+    if ~exist([cmake_build_folder 'framework/libsaf.a'], 'file')
+        if ~exist([cmake_build_folder 'framework/libsaf.dylib'], 'file'), error('libsaf.a/dylib is missing, run CMake and build saf first'), end
+    end
     
     % extra header+lib paths
     switch saf_perf_lib
@@ -89,7 +91,9 @@ elseif isunix
     libs{end+1} = 'saf';
     
     % Error checking
-    if ~exist([cmake_build_folder 'framework/libsaf.a'], 'file'), error('libsaf.a is missing, run CMake and build saf first'), end
+    if ~exist([cmake_build_folder 'framework/libsaf.a'], 'file')
+        if ~exist([cmake_build_folder 'framework/libsaf.so'], 'file'), error('libsaf.a/so is missing, run CMake and build saf first'), end
+    end
     
     % extra header+lib paths
     switch saf_perf_lib
@@ -119,9 +123,7 @@ elseif isunix
     end 
 elseif ispc
     assert(0); % currently unsupported, please contribute!
-end
-
-%lib_paths{end+1} = '/usr/local/lib';
+end 
 
 % prepends and stack
 header_paths = cellfun(@(c)['-I' c],header_paths,'uni',false);
@@ -129,21 +131,18 @@ lib_paths = cellfun(@(c)['-L' c],lib_paths,'uni',false);
 libs = cellfun(@(c)['-l' c],libs,'uni',false);
 defines = cellfun(@(c)['-D' c],defines,'uni',false);
 compilerFlags = {header_paths{:} lib_paths{:} libs{:} defines{:}}; %#ok
-
-
-%compilerFlags{end+1} = '-lapacke';
-
+ 
 % output folder
 if ~exist(outputFolder, 'dir'), mkdir(outputFolder); end
 
 
 %% Build MEX
 mex('-v', compilerFlags{:}, './safmex_faf_IIRFilterbank.c', '-outdir', outputFolder);
-% mex('-v', compilerFlags{:}, './safmex_afSTFT.c', '-outdir', outputFolder);
-% mex('-v', compilerFlags{:}, './safmex_qmf.c', '-outdir', outputFolder);
-% mex('-v', compilerFlags{:}, './safmex_generateVBAPgainTable3D.c', '-outdir', outputFolder);
-% mex('-v', compilerFlags{:}, './safmex_getSHreal.c', '-outdir', outputFolder);
-% mex('-v', compilerFlags{:}, './safmex_getSHcomplex.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './safmex_afSTFT.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './safmex_qmf.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './safmex_generateVBAPgainTable3D.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './safmex_getSHreal.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './safmex_getSHcomplex.c', '-outdir', outputFolder);
 
 
 %% TESTS
@@ -171,7 +170,7 @@ vYsum = sum(data_bands, 2);
 vTfSum = fft(vYsum) ./ fft(data_ref);
 vAbsTfSum = 20 * log10(abs(vTfSum(1:end / 2 + 1)));
 semilogx(f, vAbsTfSum, 'k'), hold on
-xlabel('Frequency [Hz]'), ylabel('Magnitude [dB re. FS]')
+xlabel('Frequency [Hz]'), ylabel('Magnitude [dB]'), title('sum(abs) should be ~0dB')
 ylim([-60 10]), xlim([20 20e3]), grid on, hold off
 nTests = nTests+1;
 if max(abs(vAbsTfSum(:)))<0.1, nPass=nPass+1; else, nFail=nFail+1; end 

@@ -150,7 +150,7 @@ if(SAF_ENABLE_SOFA_READER_MODULE)
     if(MSVC) 
         target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include)
         target_link_libraries(${PROJECT_NAME} 
-        INTERFACE
+        PRIVATE
             ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/netcdf.lib
             ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5.lib
             ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libzlib.lib
@@ -171,7 +171,7 @@ if(SAF_ENABLE_SOFA_READER_MODULE)
     elseif(APPLE)
         target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/include)
         target_link_libraries(${PROJECT_NAME} 
-        INTERFACE
+        PRIVATE
             ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libnetcdf.a
             ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5.a
             ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libz.a 

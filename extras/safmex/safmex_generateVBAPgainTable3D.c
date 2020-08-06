@@ -23,15 +23,15 @@
 #define NUM_INPUT_ARGS  ( 6 )
 #define NUM_OUTPUT_ARGS ( 1 )
 const MEX_DATA_TYPES inputDataTypes[NUM_INPUT_ARGS] = {
-    DOUBLE_REAL_2D,
+    SM_DOUBLE_REAL_2D,
     INT32,
     INT32,
     INT32,
     INT32,
-    DOUBLE_REAL
+    SM_DOUBLE_REAL
 };
 const MEX_DATA_TYPES outputDataTypes[NUM_OUTPUT_ARGS] = { 
-    DOUBLE_REAL_2D
+    SM_DOUBLE_REAL_2D
 };
 
 

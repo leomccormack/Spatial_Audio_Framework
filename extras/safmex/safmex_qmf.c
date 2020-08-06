@@ -28,23 +28,23 @@ const MEX_DATA_TYPES inputDataTypes_create[NUM_INPUT_ARGS_CREATE] = {
     INT32,  
     INT32,
     INT32,
-    DOUBLE_REAL
+    SM_DOUBLE_REAL
 }; 
 #define NUM_INPUT_ARGS_FWD ( 1 )
 #define NUM_OUTPUT_ARGS_FWD ( 1 )
 #define NUM_INPUT_ARGS_BKWD ( 1 )
 #define NUM_OUTPUT_ARGS_BKWD ( 1 )
 const MEX_DATA_TYPES inputDataTypes_fwd[NUM_INPUT_ARGS_FWD] = {
-    DOUBLE_REAL_1D_OR_2D      
+    SM_DOUBLE_REAL_1D_OR_2D      
 }; 
 const MEX_DATA_TYPES inputDataTypes_bkwd[NUM_INPUT_ARGS_BKWD] = {
-    DOUBLE_COMPLEX_3D      
+    SM_DOUBLE_COMPLEX_3D      
 }; 
 const MEX_DATA_TYPES outputDataTypes_fwd[NUM_OUTPUT_ARGS_FWD] = {
-    DOUBLE_COMPLEX_3D 
+    SM_DOUBLE_COMPLEX_3D 
 }; 
 const MEX_DATA_TYPES outputDataTypes_bkwd[NUM_OUTPUT_ARGS_BKWD] = {
-    DOUBLE_REAL_1D_OR_2D      
+    SM_DOUBLE_REAL_1D_OR_2D      
 }; 
 
 
