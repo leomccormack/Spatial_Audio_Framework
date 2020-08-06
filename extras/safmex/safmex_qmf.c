@@ -93,7 +93,7 @@ void mexFunction
     /* DESTROY */
     if(nrhs == 0){
         if(hQMF!=NULL){
-            mexPrintf("Destroying QMF instance.\n");
+            mexPrintf("Destroying QMF filterbank.\n");
             qmf_destroy(&hQMF);
             free(freqVector);
             free(dataTD_in);
@@ -103,7 +103,7 @@ void mexFunction
             hQMF = NULL;
         } 
         else
-            mexPrintf("QMF instance already dead.\n"); 
+            mexPrintf("QMF filterbank is already dead!\n"); 
     }
     
     /* CREATE */
@@ -174,7 +174,7 @@ void mexFunction
         } 
          
         /* Mainly just for debugging... */
-        mexPrintf("Creating QMF instance:");
+        mexPrintf("Creating QMF filterbank:");
         snprintf(message, MSG_STR_LENGTH, " %d input channels,", nCHin); mexPrintf(message);
         snprintf(message, MSG_STR_LENGTH, " %d output channels,", nCHout); mexPrintf(message);
         snprintf(message, MSG_STR_LENGTH, " %d hopsize,", hopsize); mexPrintf(message);

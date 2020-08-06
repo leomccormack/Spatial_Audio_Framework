@@ -1,8 +1,7 @@
 %SAFMEX_QMF Quadrature-Mirror Filterbank (QMF)
 %   [FREQ_VECTOR, PROC_DELAY] = SAFMEX_QMF(NCH_IN, NCH_OUT, HOPSIZE, 
-%   BLOCKSIZE, HYBRIDMODE, FORMAT, FS) creates an instance of the QMF 
-%   filterbank, given NCH_IN and NCH_OUT number of input and output 
-%   channels, respectively.
+%   BLOCKSIZE, HYBRIDMODE, FORMAT, FS) creates an the QMF filterbank, with
+%   NCH_IN and NCH_OUT number of input and output channels, respectively.
 %
 %   The filterbank employs a hopsize of HOPSIZE, and will process BLOCKSIZE
 %   number of samples at a time. The flag HYBRIDMODE dictates whether the
@@ -11,7 +10,7 @@
 %   the time-frequency data is given in nBands x nCH x time, or time x nCH  
 %   x nBands.
 %
-%   SAFMEX_QMF() destroys an instance of the QMF filterbank.
+%   SAFMEX_QMF() destroys the QMF filterbank.
 %
 %   Y = SAFMEX_QMF(X) performs the forward transform (QMF analysis) if X is
 %   a real-valued time-domain (2D) input - resulting in complex-valued 

@@ -134,11 +134,11 @@ if ~exist(outputFolder, 'dir'), mkdir(outputFolder); end
 
 %% Build MEX
 mex('-v', compilerFlags{:}, './safmex_faf_IIRFilterbank.c', '-outdir', outputFolder);
-% mex('-v', compilerFlags{:}, './safmex_afSTFT.c', '-outdir', outputFolder);
-% mex('-v', compilerFlags{:}, './safmex_qmf.c', '-outdir', outputFolder);
-% mex('-v', compilerFlags{:}, './safmex_generateVBAPgainTable3D.c', '-outdir', outputFolder);
-% mex('-v', compilerFlags{:}, './safmex_getSHreal.c', '-outdir', outputFolder);
-% mex('-v', compilerFlags{:}, './safmex_getSHcomplex.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './safmex_afSTFT.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './safmex_qmf.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './safmex_generateVBAPgainTable3D.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './safmex_getSHreal.c', '-outdir', outputFolder);
+mex('-v', compilerFlags{:}, './safmex_getSHcomplex.c', '-outdir', outputFolder);
 
 
 %% TESTS
@@ -146,6 +146,31 @@ if ~run_tests, return; end
 addpath(outputFolder)
 nTests = 0; nPass = 0; nFail = 0;
 tol = 1e-5; % FLT_EPSILON
+
+% safmex_faf_IIRFilterbank 
+order = 3;
+lSig = 2048*10;
+fs = 48e3;
+cutoffFreqs = [125 250 500 1000 2000 4000]*2/sqrt(2);
+safmex_faf_IIRFilterbank(order, cutoffFreqs.', lSig, fs); 
+data_ref = zeros(lSig, 1);  data_ref(1,1) = 1;
+data_bands = safmex_faf_IIRFilterbank(data_ref).';
+figure;  
+f = linspace(1, fs / 2, lSig / 2 + 1 );
+for idx = 1:size(data_bands, 2)
+    vTf = fft(data_bands(:, idx)) ./ fft(data_ref);
+    vAbsTf = 20 * log10(abs(vTf(1:end / 2 + 1)));
+    semilogx(f, vAbsTf), hold on
+end
+vYsum = sum(data_bands, 2);
+vTfSum = fft(vYsum) ./ fft(data_ref);
+vAbsTfSum = 20 * log10(abs(vTfSum(1:end / 2 + 1)));
+semilogx(f, vAbsTfSum, 'k'), hold on
+xlabel('Frequency [Hz]'), ylabel('Magnitude [dB re. FS]')
+ylim([-60 10]), xlim([20 20e3]), grid on, hold off
+nTests = nTests+1;
+if max(abs(vAbsTfSum(:)))<0.001, nPass=nPass+1; else, nFail=nFail+1; end 
+safmex_faf_IIRFilterbank();
 
 % safmex_afSTFT
 nCHin = 6;

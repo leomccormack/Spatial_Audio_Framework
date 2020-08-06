@@ -1,8 +1,7 @@
 %SAFMEX_AFSTFT Alias-Free STFT filterbank
 %   [FREQ_VECTOR, PROC_DELAY] = SAFMEX_AFSTFT(NCH_IN, NCH_OUT, HOPSIZE, 
-%   BLOCKSIZE, HYBRIDMODE, FORMAT, FS) creates an instance of the afSTFT 
-%   filterbank, given NCH_IN and NCH_OUT number of input and output 
-%   channels, respectively.
+%   BLOCKSIZE, HYBRIDMODE, FORMAT, FS) creates the afSTFT filterbank, with
+%   NCH_IN and NCH_OUT number of input and output channels, respectively.
 %
 %   The filterbank employs a hopsize of HOPSIZE, and will process BLOCKSIZE
 %   number of samples at a time. The flag HYBRIDMODE dictates whether the
@@ -11,9 +10,9 @@
 %   time-frequency data is given in nBands x nCH x time, or time x nCH  
 %   x nBands.
 %
-%   SAFMEX_AFSTFT() destroys an instance of the afSTFT filterbank.
+%   SAFMEX_AFSTFT() destroys the afSTFT filterbank.
 %
-%   Y = SAFMEX_QMF(X) performs the forward afSTFT transform if X is
+%   Y = SAFMEX_AFSTFT(X) performs the forward afSTFT transform if X is
 %   a real-valued time-domain (2D) input - resulting in complex-valued 
 %   time-frequency (3D) output Y. If Y is complex-valued time-frequency
 %   (3D) input, then the backward/inverse afSTFT transform is performed -

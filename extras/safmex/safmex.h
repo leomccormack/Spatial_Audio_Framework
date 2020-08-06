@@ -169,7 +169,10 @@ void MEXdouble2SAFsingle(const mxArray* in, float** out, int* nDims, int** pDims
     /* column-major -> row-major */
     switch(*nDims){
         case 0: /* scalar */ break;
-        case 1: assert(0); break;
+        case 1: 
+            for(i=0; i<(*pDims)[0]; i++)
+                (*out)[i] = (float)inMatrix[i]; 
+            break;
         case 2: 
             for(i=0; i<(*pDims)[0]; i++)
                 for(j=0; j<(*pDims)[1]; j++)

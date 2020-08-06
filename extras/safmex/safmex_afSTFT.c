@@ -93,7 +93,7 @@ void mexFunction
     /* DESTROY */
     if(nrhs == 0){
         if(hSTFT!=NULL){
-            mexPrintf("Destroying afSTFT instance.\n");
+            mexPrintf("Destroying afSTFT filterbank.\n");
             afSTFT_destroy(&hSTFT);
             free(freqVector);
             free(dataTD_in);
@@ -103,7 +103,7 @@ void mexFunction
             hSTFT = NULL;
         } 
         else
-            mexPrintf("afSTFT instance already dead.\n"); 
+            mexPrintf("afSTFT filterbank is already dead!\n"); 
     }
     
     /* CREATE */
@@ -174,7 +174,7 @@ void mexFunction
         } 
          
         /* Mainly just for debugging... */
-        mexPrintf("Creating afSTFT instance:");
+        mexPrintf("Creating afSTFT filterbank:");
         snprintf(message, MSG_STR_LENGTH, " %d input channels,", nCHin); mexPrintf(message);
         snprintf(message, MSG_STR_LENGTH, " %d output channels,", nCHout); mexPrintf(message);
         snprintf(message, MSG_STR_LENGTH, " %d hopsize,", hopsize); mexPrintf(message);
