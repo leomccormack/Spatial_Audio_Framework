@@ -170,7 +170,7 @@ vYsum = sum(data_bands, 2);
 vTfSum = fft(vYsum) ./ fft(data_ref);
 vAbsTfSum = 20 * log10(abs(vTfSum(1:end / 2 + 1)));
 semilogx(f, vAbsTfSum, 'k'), hold on
-xlabel('Frequency [Hz]'), ylabel('Magnitude [dB]'), title('sum(abs) should be ~0dB')
+xlabel('Frequency [Hz]'), ylabel('Magnitude [dB]'), title('sum(bands) should be ~0dB')
 ylim([-60 10]), xlim([20 20e3]), grid on, hold off
 nTests = nTests+1;
 if max(abs(vAbsTfSum(:)))<0.1, nPass=nPass+1; else, nFail=nFail+1; end 
