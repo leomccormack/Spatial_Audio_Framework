@@ -123,6 +123,11 @@ elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
         target_include_directories(${PROJECT_NAME} PUBLIC ${LAPACKE_HEADER_PATH})
     endif()
 
+    # Disable this particular warning...
+    if(UNIX)
+        target_compile_options(${PROJECT_NAME} PRIVATE -Wno-incompatible-pointer-types)
+    endif()
+
 elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_ATLAS")
     message(STATUS "Using ATLAS...")
     message(SEND_ERROR "Not yet supported! Please contribute if you use this library.")
