@@ -22,7 +22,7 @@ char message[MSG_STR_LENGTH];
 /* snprintf(message, MSG_STR_LENGTH, "mem required: %d", numElements); mexPrintf(message); */
 
 typedef enum _MEX_DATA_TYPES{
-    INT32 = 0, 
+    SM_INT32 = 0, 
     
     /* Double-precision floating-point types */
     SM_DOUBLE_REAL, 
@@ -66,7 +66,7 @@ void checkArgDataTypes(mxArray** hData, MEX_DATA_TYPES* dataTypes, int nArgs)
          
         /* Check data types */
         switch(dataTypes[i]){
-            case INT32:
+            case SM_INT32:
                 if (mxIsComplex(hData[i]) || mxGetNumberOfElements(hData[i])!=1){
                     snprintf(message, MSG_STR_LENGTH, "The following input argument must be an integer scalar: %d", i+1);
                     mexErrMsgIdAndTxt("MyToolbox:arrayProduct:notScalar", message);

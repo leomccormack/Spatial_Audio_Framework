@@ -60,12 +60,13 @@ end
 
 %% Configure
 header_paths = {'../../framework/include'};
-lib_paths = {[ cmake_build_folder 'framework' ]};
+
 libs = {};
 defines = {saf_perf_lib};
 
 % Platform specific configurations
 if ismac 
+    lib_paths = {[ cmake_build_folder 'framework' ]};
     libs{end+1} = 'saf';
     
     % Error checking
@@ -88,6 +89,7 @@ if ismac
     end 
     
 elseif isunix
+    lib_paths = {[ cmake_build_folder 'framework' ]};
     libs{end+1} = 'saf';
     
     % Error checking
@@ -122,7 +124,19 @@ elseif isunix
             assert(0); % currently unsupported, please contribute!
     end 
 elseif ispc
-    assert(0); % currently unsupported, please contribute!
+    lib_paths = {[ cmake_build_folder 'framework/Release' ]};
+    libs{end+1} = 'saf';
+    
+    switch saf_perf_lib
+        case 'SAF_USE_INTEL_MKL'
+            header_paths{end+1} = 'C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include';
+            lib_paths{end+1} = '../../dependencies/Win64/lib';
+            libs{end+1} = 'saf_mkl_custom';
+            saf_mkl = [lib_paths{end} '/' libs{end} '.lib' ];
+            if ~exist(saf_mkl, 'file'), error([ saf_mkl ' is missing']), end
+        otherwise
+            assert(0); % currently unsupported, please contribute!
+    end
 end 
 
 % prepends and stack

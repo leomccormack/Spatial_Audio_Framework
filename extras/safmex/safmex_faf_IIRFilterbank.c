@@ -22,9 +22,9 @@
 
 #define NUM_INPUT_ARGS_CREATE  ( 4 )
 const MEX_DATA_TYPES inputDataTypes_create[NUM_INPUT_ARGS_CREATE] = {
-    INT32,                 
+    SM_INT32,                 
     SM_DOUBLE_REAL_1D,  
-    INT32,
+    SM_INT32,
     SM_DOUBLE_REAL
 }; 
 #define NUM_INPUT_ARGS_APPLY ( 1 )
