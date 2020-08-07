@@ -19,12 +19,12 @@
  * @brief Include header for SAF externals
  *
  * @note Including this header is optional and only needed if you wish to have
- *       access to these external libraries. (i.e. not including this header,
+ *       access to these external libraries. (i.e. not including this header
  *       will mean that these libraries are only used internally by SAF and will
- *       not be accessible in your project [cblas/lapack/netcdf etc.]).
+ *       not be accessible in your project).
  *
  * @warning Using ATLAS (SAF_USE_ATLAS) as the performance library is not
- *          recommended, since some LAPACK routines are not included by the
+ *          recommended, since some LAPACK routines are not implemented by the
  *          library! However, if you don't mind losing some SAF functionality
  *          (namely: certain veclib utility functions), then it may still be a
  *          good choice for your particular project.
