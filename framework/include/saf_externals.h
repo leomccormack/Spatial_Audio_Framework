@@ -16,18 +16,18 @@
 
 /**
  * @file saf_externals.h
- * @brief Configuration header for handling the SAF externals.
+ * @brief Include header for SAF externals.
  *
- * @note You may also optionally include this header in your project, along with
- *       saf.h, if you wish to have access to these external libraries as well.
- *       (i.e. not including this header means that these libraries are only
- *       internally used by SAF and will not be accessible in your project).
+ * @note Including this header is optional and only needed if you wish to have
+ *       access to these external libraries. (i.e. not including this header,
+ *       will mean that these libraries are used only internally by SAF and will
+ *       not be accessible in your project - cblas/lapack/netcdf etc.).
  *
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by
  *   SAF. Add one of the following FLAGS to your project's preprocessor
- *   definitions list in order to enable one of these suitable performance
- *   libraries, which must also be correctly linked when building SAF:
+ *   definitions in order to enable one of these suitable performance libraries,
+ *   (which must be correctly linked when building SAF):
  *   - SAF_USE_INTEL_MKL:
  *       to enable Intel's Math Kernal Library with the Fortran LAPACK interface
  *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
@@ -36,6 +36,10 @@
  *       to enable the Accelerate framework with the Fortran LAPACK interface
  *   - SAF_USE_ATLAS:
  *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
+ *
+ * ## Optional dependencies
+ *   netcdf is required by the saf_sofa_reader module, which is enabled with the
+ *   following pre-processor flag: SAF_ENABLE_SOFA_READER_MODULE
  *
  * @see More information can be found here:
  *      https://github.com/leomccormack/Spatial_Audio_Framework
@@ -46,7 +50,7 @@
 
 #ifndef __SAF_EXTERNALS_H_INCLUDED__
 #define __SAF_EXTERNALS_H_INCLUDED__
-    
+
 /* ========================================================================== */
 /*                        Performance Library to Employ                       */
 /* ========================================================================== */
@@ -56,7 +60,7 @@
  * Using Intel's Math Kernal Library (MKL)
  * (Generally the fastest library for x86 based architectures)
  */
-# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortran interface of LAPACK */
+# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortran LAPACK interface */
 # include "mkl.h"
 
 #elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
@@ -76,6 +80,7 @@
 # define VECLIB_USE_CLAPACK_INTERFACE /**< CLAPACK interface */
 # include "cblas-atlas.h"
 # include "clapack.h" /* NOTE: CLAPACK does not include all LAPACK routines! */
+# warning Note: CLAPACK does not include all LAPACK routines!
 
 #elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
 /*
@@ -83,11 +88,11 @@
  * (Solid choice for both x86 and ARM, but only works under MacOSX and is not as
  * fast as Intel MKL for x86 systems)
  */
-# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortran interface of LAPACK */
+# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortran LAPACK interface */
 # include "Accelerate/Accelerate.h"
 
 #else
-# error "SAF requires a library (or libraries) which supports CBLAS and LAPACK"
+# error SAF requires a library (or libraries) which supports CBLAS and LAPACK
 #endif
 
 
