@@ -24,7 +24,7 @@ char message[MSG_STR_LENGTH];
 typedef enum _MEX_DATA_TYPES{
     INT32 = 0, 
     
-    /* Double-precision */
+    /* Double-precision floating-point types */
     SM_DOUBLE_REAL, 
     SM_DOUBLE_COMPLEX, 
     SM_DOUBLE_REAL_1D, 
@@ -243,6 +243,50 @@ void MEXdouble2SAFsingle_complex(const mxArray* in, float_complex** out, int* nD
                         (*out)[i*(*pDims)[1]*(*pDims)[2]+j*(*pDims)[2]+k] = cmplxf((float)inMatrix_r[k*(*pDims)[1]*(*pDims)[0]+ j*(*pDims)[0]+i], (float)inMatrix_i[k*(*pDims)[1]*(*pDims)[0]+ j*(*pDims)[0]+i]);
 #endif 
             break;
+        default: assert(0); break;// incomplete 
+    }
+}
+
+void MEXdouble2SAFsingle_int(const mxArray* in, int** out, int* nDims, int** pDims)
+{ 
+    int i, j, numElements;
+    double *inMatrix;
+    mwSize nDims_mx;
+    const mwSize *pDims_mx;
+    
+    /* Find dimensionality of input */
+    nDims_mx = mxGetNumberOfDimensions(in);
+    pDims_mx = mxGetDimensions(in);
+    
+    /* convert mwSize->int */
+    (*nDims) = (int)nDims_mx;
+    (*pDims) = malloc1d((*nDims)*sizeof(int));
+    for(i=0; i<(*nDims); i++)
+        (*pDims)[i] = (int)pDims_mx[i];
+    
+    /* Find number of elements */
+    numElements = 1;
+    for(i=0; i<(*nDims); i++)
+        numElements *= (*pDims)[i];
+     
+    /* Convert input mex array to saf array */
+    inMatrix = mxGetData(in);
+    if((*out)==NULL)
+        (*out) = malloc1d(numElements*sizeof(int)); 
+    
+    /* column-major -> row-major */
+    switch(*nDims){
+        case 0: /* scalar */ break;
+        case 1: 
+            for(i=0; i<(*pDims)[0]; i++)
+                (*out)[i] = (int)inMatrix[i]; 
+            break;
+        case 2: 
+            for(i=0; i<(*pDims)[0]; i++)
+                for(j=0; j<(*pDims)[1]; j++)
+                    (*out)[i*(*pDims)[1]+j] = (int)inMatrix[j*(*pDims)[0]+i];
+            break;
+            
         default: assert(0); break;// incomplete 
     }
 }

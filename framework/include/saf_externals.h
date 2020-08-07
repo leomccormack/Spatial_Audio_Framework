@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Leo McCormack
+ * Copyright 2020 Leo McCormack
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,12 +16,18 @@
 
 /**
  * @file saf_externals.h
- * @brief Include header for SAF externals.
+ * @brief Include header for SAF externals
  *
  * @note Including this header is optional and only needed if you wish to have
  *       access to these external libraries. (i.e. not including this header,
- *       will mean that these libraries are used only internally by SAF and will
- *       not be accessible in your project - cblas/lapack/netcdf etc.).
+ *       will mean that these libraries are only used internally by SAF and will
+ *       not be accessible in your project [cblas/lapack/netcdf etc.]).
+ *
+ * @warning Using ATLAS (SAF_USE_ATLAS) as the performance library is not
+ *          recommended, since some LAPACK routines are not included by the
+ *          library! However, if you don't mind losing some SAF functionality
+ *          (namely: certain veclib utility functions), then it may still be a
+ *          good choice for your particular project.
  *
  * ## Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by

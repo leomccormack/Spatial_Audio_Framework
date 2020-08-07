@@ -136,7 +136,8 @@ compilerFlags = {header_paths{:} lib_paths{:} libs{:} defines{:}}; %#ok
 if ~exist(outputFolder, 'dir'), mkdir(outputFolder); end
 
 
-%% Build MEX
+%% Build MEX 
+mex('-v', compilerFlags{:}, './safmex_latticeDecorrelator.c', '-outdir', outputFolder);
 mex('-v', compilerFlags{:}, './safmex_faf_IIRFilterbank.c', '-outdir', outputFolder);
 mex('-v', compilerFlags{:}, './safmex_afSTFT.c', '-outdir', outputFolder);
 mex('-v', compilerFlags{:}, './safmex_qmf.c', '-outdir', outputFolder);
@@ -150,6 +151,28 @@ if ~run_tests, return; end
 addpath(outputFolder)
 nTests = 0; nPass = 0; nFail = 0;
 tol = 1e-5; % FLT_EPSILON
+
+% safmex_latticeDecorrelator
+nCH = 6; 
+hopsize = 128;
+blocksize = 2048*24;
+[freqVector, procDelay] = safmex_afSTFT(nCH, nCH, hopsize, blocksize, 1, 0, 48e3); 
+orders = [6 6 4 3 2].';
+fixedDelays = [ 8 6 4 2 2].';
+freqCutoffs = [ 300 800 2e3, 4e3].';
+timeslots = blocksize/hopsize;
+safmex_latticeDecorrelator(nCH, orders, freqCutoffs, fixedDelays, freqVector, timeslots);
+dataTD_ref = randn(blocksize, nCH); 
+dataFD = safmex_afSTFT(dataTD_ref.');
+dataFD = safmex_latticeDecorrelator(dataFD);
+dataTD = safmex_afSTFT(dataFD);
+dataTD_ref = dataTD_ref(1:end-procDelay,1);
+dataTD = dataTD(1,procDelay+1:end).';
+icc = (dataTD_ref.' * dataTD) / sqrt((dataTD_ref.' * dataTD_ref) * (dataTD.' * dataTD));
+nTests = nTests+1;
+if icc<0.05, nPass=nPass+1; else, nFail=nFail+1; end 
+safmex_afSTFT();
+safmex_latticeDecorrelator();
 
 % safmex_faf_IIRFilterbank 
 order = 3;
