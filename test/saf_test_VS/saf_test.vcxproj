@@ -236,13 +236,6 @@
     <ClInclude Include="..\..\framework\resources\kissFFT\kiss_fft.h" />
     <ClInclude Include="..\..\framework\resources\kissFFT\kiss_fftr.h" />
     <ClInclude Include="..\..\framework\resources\kissFFT\_kiss_fft_guts.h" />
-    <ClInclude Include="..\..\framework\resources\libsamplerate\common.h" />
-    <ClInclude Include="..\..\framework\resources\libsamplerate\fastest_coeffs.h" />
-    <ClInclude Include="..\..\framework\resources\libsamplerate\high_qual_coeffs.h" />
-    <ClInclude Include="..\..\framework\resources\libsamplerate\mid_qual_coeffs.h" />
-    <ClInclude Include="..\..\framework\resources\libsamplerate\samplerate.h" />
-    <ClInclude Include="..\..\framework\resources\libsamplerate\samplerate_interface.h" />
-    <ClInclude Include="..\..\framework\resources\libsamplerate\src_config.h" />
     <ClInclude Include="..\..\framework\resources\md_malloc\md_malloc.h" />
     <ClInclude Include="..\saf_test.h" />
     <ClInclude Include="..\timer\timer.h" />
@@ -315,11 +308,6 @@
     <ClCompile Include="..\..\framework\resources\convhull_3d\convhull_3d.c" />
     <ClCompile Include="..\..\framework\resources\kissFFT\kiss_fft.c" />
     <ClCompile Include="..\..\framework\resources\kissFFT\kiss_fftr.c" />
-    <ClCompile Include="..\..\framework\resources\libsamplerate\samplerate.c" />
-    <ClCompile Include="..\..\framework\resources\libsamplerate\samplerate_interface.c" />
-    <ClCompile Include="..\..\framework\resources\libsamplerate\src_linear.c" />
-    <ClCompile Include="..\..\framework\resources\libsamplerate\src_sinc.c" />
-    <ClCompile Include="..\..\framework\resources\libsamplerate\src_zoh.c" />
     <ClCompile Include="..\..\framework\resources\md_malloc\md_malloc.c" />
     <ClCompile Include="..\saf_test.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

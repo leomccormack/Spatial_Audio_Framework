@@ -76,8 +76,8 @@ void ims_shoebox_echogramResize
         ec->sortedIdx = realloc1d(ec->sortedIdx, numImageSources*sizeof(int));
 
         /* Helper variables */
-        ec->time_fs = realloc1d(ec->time, numImageSources*sizeof(float));
-        ec->rIdx = realloc1d(ec->time, numImageSources*sizeof(int));
+        ec->time_fs = realloc1d(ec->time_fs, numImageSources*sizeof(float));
+        ec->rIdx = realloc1d(ec->rIdx, numImageSources*sizeof(int));
         ec->cb_vals = (float**)realloc2d((void**)ec->cb_vals, nChannels, numImageSources, sizeof(float));
         ec->contrib = (float**)realloc2d((void**)ec->contrib, nChannels, numImageSources, sizeof(float));
     }
@@ -99,10 +99,10 @@ void ims_shoebox_echogramDestroy
         free(ec->sortedIdx);
 
         /* Helper variables */
-        ec->time_fs = NULL;
-        ec->rIdx = NULL;
-        ec->cb_vals = NULL;
-        ec->contrib = NULL;
+		free(ec->time_fs);
+		free(ec->rIdx);
+		free(ec->cb_vals);
+		free(ec->contrib);
 
         free(ec);
         ec=NULL;
