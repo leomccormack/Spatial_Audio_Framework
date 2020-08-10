@@ -286,8 +286,9 @@ void ims_shoebox_applyEchogramTD
     }
     assert(rec_idx != -1);
 
-    /* Initialise buffer for receiver with zeros */
-    memset(FLATTEN2D(sc->recs[rec_idx].sigs), sc->recs[rec_idx].nChannels * nSamples, sizeof(float));
+    /* Initialise all receiver channels with zeros */
+    for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
+        memset(sc->recs[rec_idx].sigs[ch], 0, nSamples * sizeof(float));
  
     /* Process all active sources (for this specific receiver) directly in the
      * time-domain */
@@ -464,7 +465,7 @@ long ims_shoebox_addSource
     sc->srcs[obj_idx].pos.x = src_xyz[0];
     sc->srcs[obj_idx].pos.y = src_xyz[1];
     sc->srcs[obj_idx].pos.z = src_xyz[2]; 
-    sc->srcs[obj_idx].sig = pSrc_sig == NULL ? NULL : *pSrc_sig;
+    sc->srcs[obj_idx].sig = pSrc_sig == NULL ? NULL : *pSrc_sig; 
 
     /* Create workspace for all receiver/source combinations, for this new source object */
     for(rec=0; rec<IMS_MAX_NUM_RECEIVERS; rec++)
