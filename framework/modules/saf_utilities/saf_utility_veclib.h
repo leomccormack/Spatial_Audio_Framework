@@ -518,14 +518,13 @@ void utility_zvsmul(/* Input Arguments */
  * Single-precision, divides each element in vector 'a' with a scalar 's',
  * i.e.
  * \code{.m}
- *     c = a./s, OR: a = a./s (if c==NULL)
+ *     c = a./s 
  * \endcode
  *
- * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  a   Input vector a; len x 1
  * @param[in]  s   (&) input scalar s; 1 x 1
  * @param[in]  len Vector length
- * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
- *                 len x 1
+ * @param[out] c   Output vector c; len x 1
  */
 void utility_svsdiv(/* Input Arguments */
                     float* a,
@@ -542,14 +541,13 @@ void utility_svsdiv(/* Input Arguments */
 /**
  * Single-precision, adds each element in vector 'a' with a scalar 's', i.e.
  * \code{.m}
- *     c = a+s, OR: a = a+s (if c==NULL)
+ *     c = a+s
  * \endcode
  *
- * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  a   Input vector a; len x 1
  * @param[in]  s   (&) input scalar s; 1 x 1
  * @param[in]  len Vector length
- * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
- *                 len x 1
+ * @param[out] c   Output vector c; len x 1
  */
 void utility_svsadd(/* Input Arguments */
                     float* a,
@@ -567,14 +565,13 @@ void utility_svsadd(/* Input Arguments */
  * Single-precision, subtracts each element in vector 'a' with a scalar 's',
  * i.e.
  * \code{.m}
- *     c = a-s, OR: a = a-s (if c==NULL)
+ *     c = a-s,
  * \endcode
  *
- * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  a   Input vector a; len x 1
  * @param[in]  s   (&) input scalar s; 1 x 1
  * @param[in]  len Vector length
- * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
- *                 len x 1
+ * @param[out] c   Output vector c; len x 1
  */
 void utility_svssub(/* Input Arguments */
                     float* a,
@@ -582,6 +579,32 @@ void utility_svssub(/* Input Arguments */
                     const int len,
                     /* Output Arguments */
                     float* c);
+
+
+/* ========================================================================== */
+/*      Sparse-Vector to Compressed-Vector (Known Indices) (?sv2cv_inds)      */
+/* ========================================================================== */
+
+/**
+ * Single-precision, sparse-vector to compressed vector given known indices
+ * i.e.
+ * \code{.m}
+ *     cv = sv(inds)
+ * \endcode
+ *
+ * @warning 'sv' must be of at least max(inds) in length!
+ *
+ * @param[in]  sv   Input sparse-vector; ? x 1
+ * @param[in]  inds Indices; len x 1
+ * @param[in]  len  Compressed-vector length/number of indices
+ * @param[out] cv   Output compressed-vector; len x 1
+ */
+void utility_ssv2cv_inds(/* Input Arguments */
+                         const float* sv,
+                         const int* inds,
+                         const int len,
+                         /* Output Arguments */
+                         float* cv);
 
 
 /* ========================================================================== */

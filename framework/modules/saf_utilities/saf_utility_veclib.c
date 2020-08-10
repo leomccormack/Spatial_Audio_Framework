@@ -703,6 +703,28 @@ void utility_svssub
 
 
 /* ========================================================================== */
+/*      Sparse-Vector to Compressed-Vector (Known Indices) (?sv2cv_inds)      */
+/* ========================================================================== */
+
+void utility_ssv2cv_inds
+(
+    const float* sv,
+    const int* inds,
+    const int len,
+    float* cv
+)
+{
+#ifdef INTEL_MKL_VERSION
+    cblas_sgthr(len, sv, cv, inds);
+#else
+    int i;
+    for(i=0; i<len; i++)
+        cv[i] = sv[inds[i]];
+#endif
+}
+
+
+/* ========================================================================== */
 /*                     Singular-Value Decomposition (?svd)                    */
 /* ========================================================================== */
 

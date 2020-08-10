@@ -313,19 +313,19 @@ void ims_shoebox_applyEchogramTD
                     /* Echogram for this source/receiver at this band */
                     echogram_abs = (echogram_data*)wrk->hEchogram_abs[band];
 
-                    /* Convert to "real-time" */
+                    /* Convert time from seconds to samples */
                     memset(echogram_abs->time_fs, 0, echogram_abs->numImageSources*sizeof(float));
                     cblas_saxpy(echogram_abs->numImageSources, (sc->fs), echogram_abs->time, 1, echogram_abs->time_fs, 1);
 
                     /* Loop over all image sources, and determine the circular buffer read indices */
                     for(im=0; im <echogram_abs->numImageSources; im++){
-                        time_samples = (int)(echogram_abs->time_fs[im] + 0.5f);                /* Round to nearest sample */
-                        rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx;   /* read index for this image source */
-                        echogram_abs->rIdx[im] = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK;      /* wrap-around if needed */
+                        time_samples = (int)(echogram_abs->time_fs[im] + 0.5f);      /* Round to nearest sample */
+                        rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx;       /* read index for this image source */
+                        echogram_abs->rIdx[im] = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK; /* wrap-around if needed */
                     }
 
-                    /* Pull values from the circular buffer corresponding to these read indices, and store this "sparse-vector" in "compressed-form" */
-                    cblas_sgthr(echogram_abs->numImageSources, sc->circ_buffer[src_idx][band], echogram_abs->cb_vals[0], echogram_abs->rIdx);
+                    /* Pull values from the circular buffer corresponding to these read indices, and store this sparse vector as a "compressed" vector */
+                    utility_ssv2cv_inds(sc->circ_buffer[src_idx][band], echogram_abs->rIdx, echogram_abs->numImageSources, echogram_abs->cb_vals[0]);
 
                     /* Replicate these values for all output channels */
                     for(ch=1; ch<sc->recs[rec_idx].nChannels; ch++)
