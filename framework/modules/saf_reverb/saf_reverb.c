@@ -293,10 +293,10 @@ void ims_shoebox_applyEchogramTD
      * time-domain */
     for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
         if( (sc->srcs[src_idx].ID!=-1) && (sc->recs[rec_idx].ID!=-1) ){
-            /* Pass source signal through the Favrot & Faller IIR filterbank */
+            /* Broad-band operation */
             if(sc->nBands==1)
                 memcpy(sc->src_sigs_bands[src_idx][0], sc->srcs[src_idx].sig, nSamples*sizeof(float));
-            else
+            else /* OR: Pass source signal through the Favrot & Faller (power-complementary) IIR filterbank */
                 faf_IIRFilterbank_apply(sc->hFaFbank[src_idx], sc->srcs[src_idx].sig, sc->src_sigs_bands[src_idx], nSamples);
 
             /* Workspace handle for this source/receiver combination */

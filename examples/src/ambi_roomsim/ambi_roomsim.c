@@ -35,8 +35,7 @@ void ambi_roomsim_create
     int i;
     pData->order = 1;
     
-    /* default user parameters */
-    loadSourceConfigPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources));
+    /* default user parameters */ 
     pData->nSources = pData->new_nSources;
     for(i=0; i<MAX_NUM_INPUTS; i++)
         pData->recalc_SH_FLAG[i] = 1;
@@ -44,6 +43,30 @@ void ambi_roomsim_create
     pData->norm = NORM_SN3D;
     pData->order = SH_ORDER_FIRST;
     pData->enablePostScaling = 1;
+
+    /* sf */
+    pData->hIms = NULL;
+    pData->signalLength = 10000;
+    pData->sh_order = 3;
+    pData->nBands = 5;
+    float abs_wall[5][6] = /* Absorption Coefficients per Octave band, and per wall */
+      { {0.180791250f, 0.207307300f, 0.134990800f, 0.229002250f, 0.212128400f, 0.241055000f},
+        {0.225971250f, 0.259113700f, 0.168725200f, 0.286230250f, 0.265139600f, 0.301295000f},
+        {0.258251250f, 0.296128100f, 0.192827600f, 0.327118250f, 0.303014800f, 0.344335000f},
+        {0.301331250f, 0.345526500f, 0.224994001f, 0.381686250f, 0.353562000f, 0.401775000f},
+        {0.361571250f, 0.414601700f, 0.269973200f, 0.457990250f, 0.424243600f, 0.482095000f} };
+    memcpy(pData->abs_wall,abs_wall, 5*6*sizeof(float));
+    float src_pos[3]  = {5.1f, 6.0f, 1.1f};
+    memcpy(pData->src_pos, src_pos, 3*sizeof(float));
+    float src2_pos[3] = {2.1f, 1.0f, 1.3f};
+    memcpy(pData->src2_pos, src2_pos, 3*sizeof(float));
+    float src3_pos[3] = {3.1f, 5.0f, 2.3f};
+    memcpy(pData->src3_pos, src3_pos, 3*sizeof(float));
+    float src4_pos[3] = {7.1f, 2.0f, 1.4f};
+    memcpy(pData->src4_pos, src4_pos, 3*sizeof(float));
+    float rec_pos[3]  = {8.8f, 5.5f, 0.9f};
+    memcpy(pData->rec_pos, rec_pos, 3*sizeof(float));
+
 }
 
 void ambi_roomsim_destroy
@@ -75,6 +98,16 @@ void ambi_roomsim_init
     memset(pData->prev_inputFrameTD, 0, MAX_NUM_INPUTS*FRAME_SIZE*sizeof(float));
     for(i=0; i<MAX_NUM_INPUTS; i++)
         pData->recalc_SH_FLAG[i] = 1;
+
+
+    /* sf */
+    ims_shoebox_create(&(pData->hIms), 10, 7, 3, (float*)pData->abs_wall, 250.0f, pData->nBands, 343.0f, 48e3f);
+    sourceIDs[0] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos, &src_sigs[0]);
+    sourceIDs[1] = ims_shoebox_addSource(pData->hIms, (float*)pData->src2_pos, &src_sigs[1]);
+    sourceIDs[2] = ims_shoebox_addSource(pData->hIms, (float*)pData->src3_pos, &src_sigs[2]);
+    sourceIDs[3] = ims_shoebox_addSource(pData->hIms, (float*)pData->src4_pos, &src_sigs[3]);
+    receiverIDs[0] = ims_shoebox_addReceiverSH(pData->hIms, pData->sh_order, (float*)pData->rec_pos, &rec_sh_outsigs[0]);
+
 }
 
 void ambi_roomsim_process
@@ -257,8 +290,7 @@ void ambi_roomsim_setNumSources(void* const hAmbi, int new_nSources)
 void ambi_roomsim_setInputConfigPreset(void* const hAmbi, int newPresetID)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    int ch;
-    loadSourceConfigPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources));
+    int ch; 
     pData->nSources = pData->new_nSources;
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_SH_FLAG[ch] = 1;

@@ -66,6 +66,21 @@ typedef struct _ambi_roomsim
     float Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
     float prev_Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
     float interpolator[FRAME_SIZE];
+
+    /* sd */
+    void* hIms;
+    int signalLength;
+    int sh_order;
+    int nBands;
+    float abs_wall[5][6];
+    float src_pos[3];
+    float src2_pos[3];
+    float src3_pos[3];
+    float src4_pos[3];
+    float rec_pos[3];
+
+    long sourceIDs[4], receiverIDs[1];
+    float** src_sigs, ***rec_sh_outsigs;
     
     /* user parameters */
     int nSources;
