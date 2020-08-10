@@ -7,7 +7,7 @@
 %   divisions, and applies a fixed delay to each grouping defined by vector
 %   FIXEDDELAYS and lattice all-pass filters of order ORDERS.
 %
-%   SAFMEX_LATTICEDECORRELATOR() destroys the afSTFT filterbank.
+%   SAFMEX_LATTICEDECORRELATOR() destroys the latticeDecorrelator.
 %
 %   Y = SAFMEX_LATTICEDECORRELATOR(X) performs the decorrelation on the
 %   complex-valued time-frequency (3D) input X. Resulting in the
