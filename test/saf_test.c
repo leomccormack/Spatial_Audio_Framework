@@ -34,6 +34,7 @@
 # include "ambi_dec.h"
 # include "ambi_drc.h"
 # include "ambi_enc.h"
+# include "ambi_roomsim.h"
 # include "array2sh.h"
 # include "beamformer.h"
 # include "binauraliser.h"
