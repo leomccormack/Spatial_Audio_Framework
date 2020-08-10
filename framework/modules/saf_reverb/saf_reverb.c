@@ -49,8 +49,6 @@ void ims_shoebox_create
     ims_scene_data *sc = (ims_scene_data*)(*phIms);
     int i,j,band,wall;
 
-    assert(nOctBands>1);
-
     /* Shoebox dimensions */
     sc->room_dimensions[0] = length;
     sc->room_dimensions[1] = width;
@@ -58,18 +56,27 @@ void ims_shoebox_create
     sc->c_ms = c_ms;
 
     /* Octave band centre frequencies */
-    sc->nBands = nOctBands;
-    sc->band_centerfreqs = malloc1d(nOctBands*sizeof(float));
-    sc->band_centerfreqs[0] = lowestOctaveBand;
-    for(band=1; band<nOctBands; band++)
-        sc->band_centerfreqs[band] = sc->band_centerfreqs[band-1]*2.0f;
-    sc->band_cutofffreqs = malloc1d((sc->nBands-1)*sizeof(float));
-    getOctaveBandCutoffFreqs(sc->band_centerfreqs, sc->nBands, sc->band_cutofffreqs);
+    if(nOctBands>1){
+        sc->nBands = nOctBands;
+        sc->band_centerfreqs = malloc1d(nOctBands*sizeof(float));
+        sc->band_centerfreqs[0] = lowestOctaveBand;
+        for(band=1; band<nOctBands; band++)
+            sc->band_centerfreqs[band] = sc->band_centerfreqs[band-1]*2.0f;
+        sc->band_cutofffreqs = malloc1d((sc->nBands-1)*sizeof(float));
+        getOctaveBandCutoffFreqs(sc->band_centerfreqs, sc->nBands, sc->band_cutofffreqs);
+    }
+    else { /* Broad-band operation */
+        sc->nBands = 1;
+        sc->band_centerfreqs = NULL;
+        sc->band_cutofffreqs  = NULL;
+    }
+
+    /* Samplerate */
     sc->fs = fs;
 
     /* Absorption coeffients per wall and octave band */
-    sc->abs_wall = (float**)malloc2d(nOctBands, IMS_NUM_WALLS_SHOEBOX, sizeof(float));
-    for(band=0; band<nOctBands; band++)
+    sc->abs_wall = (float**)malloc2d(sc->nBands, IMS_NUM_WALLS_SHOEBOX, sizeof(float));
+    for(band=0; band<sc->nBands; band++)
         for(wall=0; wall<IMS_NUM_WALLS_SHOEBOX; wall++)
             sc->abs_wall[band][wall] = abs_wall[band*IMS_NUM_WALLS_SHOEBOX+wall];
 
@@ -248,7 +255,6 @@ void ims_shoebox_applyEchogramTD
     ims_core_workspace* wrk;
     echogram_data *echogram_abs;
     int i, n, im, band, ch, rec_idx, src_idx, time_samples, wIdx_n;
-    float cb_val;
     unsigned int rIdx;
 
     assert(nSamples <= IMS_MAX_NSAMPLES_PER_FRAME);
@@ -260,10 +266,12 @@ void ims_shoebox_applyEchogramTD
     if(sc->circ_buffer==NULL)
         sc->circ_buffer = (float***)calloc3d(IMS_MAX_NUM_SOURCES, sc->nBands, IMS_CIRC_BUFFER_LENGTH, sizeof(float));
     for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
-        /* Also, only allocate if source is active: */
-        if( (sc->srcs[src_idx].ID != -1) && (sc->hFaFbank[src_idx] == NULL) ){
-            faf_IIRFilterbank_create(&(sc->hFaFbank[src_idx]), IMS_IIR_FILTERBANK_ORDER, sc->band_cutofffreqs,
-                                     sc->nBands-1, sc->fs, IMS_MAX_NSAMPLES_PER_FRAME);
+        /* only allocate if source is active... */
+        if( (sc->srcs[src_idx].ID != -1) && (sc->src_sigs_bands[src_idx] == NULL) ){
+            if(sc->nBands>1){ /* ... and only create the filterbank if there is more than one band: */
+                faf_IIRFilterbank_create(&(sc->hFaFbank[src_idx]), IMS_IIR_FILTERBANK_ORDER, sc->band_cutofffreqs,
+                                         sc->nBands-1, sc->fs, IMS_MAX_NSAMPLES_PER_FRAME);
+            }
             sc->src_sigs_bands[src_idx] = (float**)malloc2d(sc->nBands, IMS_MAX_NSAMPLES_PER_FRAME, sizeof(float));
         }
     }
@@ -286,10 +294,60 @@ void ims_shoebox_applyEchogramTD
     for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
         if( (sc->srcs[src_idx].ID!=-1) && (sc->recs[rec_idx].ID!=-1) ){
             /* Pass source signal through the Favrot & Faller IIR filterbank */
-            faf_IIRFilterbank_apply(sc->hFaFbank[src_idx], sc->srcs[src_idx].sig, sc->src_sigs_bands[src_idx], nSamples);
+            if(sc->nBands==1)
+                memcpy(sc->src_sigs_bands[src_idx][0], sc->srcs[src_idx].sig, nSamples*sizeof(float));
+            else
+                faf_IIRFilterbank_apply(sc->hFaFbank[src_idx], sc->srcs[src_idx].sig, sc->src_sigs_bands[src_idx], nSamples);
 
             /* Workspace handle for this source/receiver combination */
             wrk = sc->hCoreWrkSpc[rec_idx][src_idx];
+
+#if 1 /* NEW CODE */
+            /* Loop over samples */
+            for(n=0; n<nSamples; n++){
+                /* Determine write index */
+                wIdx_n = sc->wIdx & IMS_CIRC_BUFFER_LENGTH_MASK;
+
+                /* Loop over octave bands */
+                for(band=0; band < sc->nBands; band++){
+                    /* Echogram for this source/receiver at this band */
+                    echogram_abs = (echogram_data*)wrk->hEchogram_abs[band];
+
+                    /* Convert to "real-time" */
+                    memset(echogram_abs->time_fs, 0, echogram_abs->numImageSources*sizeof(float));
+                    cblas_saxpy(echogram_abs->numImageSources, (sc->fs), echogram_abs->time, 1, echogram_abs->time_fs, 1);
+
+                    /* Loop over all image sources, and determine the circular buffer read indices */
+                    for(im=0; im <echogram_abs->numImageSources; im++){
+                        time_samples = (int)(echogram_abs->time_fs[im] + 0.5f);                /* Round to nearest sample */
+                        rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx;   /* read index for this image source */
+                        echogram_abs->rIdx[im] = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK;      /* wrap-around if needed */
+                    }
+
+                    /* Pull values from the circular buffer corresponding to these read indices, and store this "sparse-vector" in "compressed-form" */
+                    cblas_sgthr(echogram_abs->numImageSources, sc->circ_buffer[src_idx][band], echogram_abs->cb_vals[0], echogram_abs->rIdx);
+
+                    /* Replicate these values for all output channels */
+                    for(ch=1; ch<sc->recs[rec_idx].nChannels; ch++)
+                        cblas_scopy(echogram_abs->numImageSources, echogram_abs->cb_vals[0], 1, echogram_abs->cb_vals[ch], 1);
+
+                    /* Apply the echogram scalings to each image source - for all channels */
+                    utility_svvmul(FLATTEN2D(echogram_abs->value), FLATTEN2D(echogram_abs->cb_vals),
+                                   (sc->recs[rec_idx].nChannels)*echogram_abs->numImageSources, FLATTEN2D(echogram_abs->contrib));
+
+                    /* Sum all scaled image source values per channel */
+                    for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
+                        sc->recs[rec_idx].sigs[ch][n] = cblas_sasum (echogram_abs->numImageSources, echogram_abs->contrib[ch], 1);
+ 
+                    /* Store current sample into the circular buffer */
+                    sc->circ_buffer[src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
+                }
+
+                /* Increment write index */
+                sc->wIdx++;
+            }
+#else /* OLD CODE */
+            float cb_val;
 
             /* Loop over samples */
             for(n=0; n<nSamples; n++){
@@ -318,33 +376,33 @@ void ims_shoebox_applyEchogramTD
                         /* For compiler optimisations up to 3rd order SH receiver*/
                         switch(sc->recs[rec_idx].type){
                             case RECEIVER_SH:
-                                for(ch=16; ch<sc->recs[rec_idx].nChannels; ch++)  
-                                    sc->recs[rec_idx].sigs[ch][n] += echogram_abs->value[im][ch] * cb_val;
+                                for(ch=16; ch<sc->recs[rec_idx].nChannels; ch++)
+                                    sc->recs[rec_idx].sigs[ch][n] += echogram_abs->value[ch][im] * cb_val;
 
                                 switch(sc->recs[rec_idx].nChannels){
                                     case 64: case 49: case 36: case 25: case 16:
-                                        sc->recs[rec_idx].sigs[15][n] += echogram_abs->value[im][15] * cb_val;
-                                        sc->recs[rec_idx].sigs[14][n] += echogram_abs->value[im][14] * cb_val;
-                                        sc->recs[rec_idx].sigs[13][n] += echogram_abs->value[im][13] * cb_val;
-                                        sc->recs[rec_idx].sigs[12][n] += echogram_abs->value[im][12] * cb_val;
-                                        sc->recs[rec_idx].sigs[11][n] += echogram_abs->value[im][11] * cb_val;
-                                        sc->recs[rec_idx].sigs[10][n] += echogram_abs->value[im][10] * cb_val;
-                                        sc->recs[rec_idx].sigs[9][n] += echogram_abs->value[im][9] * cb_val;
+                                        sc->recs[rec_idx].sigs[15][n] += echogram_abs->value[15][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[14][n] += echogram_abs->value[14][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[13][n] += echogram_abs->value[13][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[12][n] += echogram_abs->value[12][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[11][n] += echogram_abs->value[11][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[10][n] += echogram_abs->value[10][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[9][n] += echogram_abs->value[9][im] * cb_val;
                                         /* fall through */
                                     case 9:
-                                        sc->recs[rec_idx].sigs[8][n] += echogram_abs->value[im][8] * cb_val;
-                                        sc->recs[rec_idx].sigs[7][n] += echogram_abs->value[im][7] * cb_val;
-                                        sc->recs[rec_idx].sigs[6][n] += echogram_abs->value[im][6] * cb_val;
-                                        sc->recs[rec_idx].sigs[5][n] += echogram_abs->value[im][5] * cb_val;
-                                        sc->recs[rec_idx].sigs[4][n] += echogram_abs->value[im][4] * cb_val;
+                                        sc->recs[rec_idx].sigs[8][n] += echogram_abs->value[8][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[7][n] += echogram_abs->value[7][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[6][n] += echogram_abs->value[6][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[5][n] += echogram_abs->value[5][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[4][n] += echogram_abs->value[4][im] * cb_val;
                                         /* fall through */
                                     case 4:
-                                        sc->recs[rec_idx].sigs[3][n] += echogram_abs->value[im][3] * cb_val;
-                                        sc->recs[rec_idx].sigs[2][n] += echogram_abs->value[im][2] * cb_val;
-                                        sc->recs[rec_idx].sigs[1][n] += echogram_abs->value[im][1] * cb_val;
+                                        sc->recs[rec_idx].sigs[3][n] += echogram_abs->value[3][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[2][n] += echogram_abs->value[2][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[1][n] += echogram_abs->value[1][im] * cb_val;
                                         /* fall through */
                                     case 1:
-                                        sc->recs[rec_idx].sigs[0][n] += echogram_abs->value[im][0] * cb_val;
+                                        sc->recs[rec_idx].sigs[0][n] += echogram_abs->value[0][im] * cb_val;
                                 }
                                 break;
                         }
@@ -357,6 +415,7 @@ void ims_shoebox_applyEchogramTD
                 /* Increment write index */
                 sc->wIdx++;
             }
+#endif
         }
     }
 }

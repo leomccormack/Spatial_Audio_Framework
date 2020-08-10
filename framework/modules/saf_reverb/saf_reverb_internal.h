@@ -33,6 +33,7 @@
 #include <string.h>
 #include <assert.h>
 #include "saf_reverb.h"
+#include "saf_externals.h"
 #include "../saf_utilities/saf_utilities.h"
 #include "../saf_sh/saf_sh.h"
 
@@ -57,14 +58,10 @@ extern "C" {
 /** Maximum number of samples that ims should expect to process at a time */
 #define IMS_MAX_NSAMPLES_PER_FRAME ( 20000 )
 
-/**
- * Void pointer (improves readability when working with arrays of handles)
- */
+/** Void pointer (improves readability when working with arrays of handles) */
 typedef void* voidPtr;
 
-/**
- * Union struct for Cartesian coordinates (access as .x,.y,.z, or .v[3])
- */
+/** Union struct for Cartesian coordinates (access as .x,.y,.z, or .v[3]) */
 typedef struct _ims_pos_xyz {
     union {
         struct { float x, y, z; };
@@ -72,25 +69,19 @@ typedef struct _ims_pos_xyz {
     };
 } ims_pos_xyz;
 
-/**
- * Supported receiver types
- */
+/** Supported receiver types */
 typedef enum _RECEIVER_TYPES{
     RECEIVER_SH   /**< Spherical harmonic receiver */
 }RECEIVER_TYPES;
 
-/**
- * Source object
- */
+/** Source object */
 typedef struct _ims_src_obj{
     float* sig;      /**< Source signal pointer */
     ims_pos_xyz pos; /**< Source position */
     int ID;          /**< Unique Source ID */
 } ims_src_obj;
 
-/**
- * Receiver object
- */
+/** Receiver object */
 typedef struct _ims_rec_obj{
     float** sigs;        /**< Receiver signal pointers (one per channel) */
     RECEIVER_TYPES type; /**< Receiver type (see #_RECEIVER_TYPES enum) */
@@ -99,15 +90,14 @@ typedef struct _ims_rec_obj{
     int ID;              /**< Unique Source ID */
 } ims_rec_obj;
 
-/**
- * Echogram structure
- */
+/** Echogram structure */
 typedef struct _echogram_data
 {
+    /* The actual echogram data: */
     int numImageSources;  /**< Number of image sources in echogram */
     int nChannels;        /**< Number of channels */
     float** value;        /**< Echogram magnitudes per image source and channel;
-                           *   numImageSources x nChannels */
+                           *   nChannels x numImageSources */
     float* time;          /**< Propagation time (in seconds) for each image
                            *   source; numImageSources x 1 */
     int** order;          /**< Reflection order for each image and dimension;
@@ -117,6 +107,16 @@ typedef struct _echogram_data
     int* sortedIdx;       /**< Indices that sort the echogram based on
                            *   propagation time, in accending order;
                            *   numImageSources x 1 */
+
+    /* Run-time helper variables */
+    float* time_fs;       /**< Propagation time (in samples) for each image
+                           *   source; numImageSources x 1 */
+    int* rIdx;            /**< Current circular buffer read indices;
+                           *   numImageSources x 1 */
+    float** cb_vals;      /**< Current circular buffer values (per channel and
+                           *   image source); nChannels x numImageSources */
+    float** contrib;      /**< Total contribution (basically: cb_vals .* value);
+                           *   nChannels x numImageSources */
 
 } echogram_data;
 

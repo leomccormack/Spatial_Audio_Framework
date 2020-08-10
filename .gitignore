@@ -11,7 +11,6 @@ cmake-build-release/
 *.db
 dependencies/Win64/lib/saf_mkl_custom.lib
 dependencies/Win64/lib/libiomp5md.lib
-*.mexmaci64
 *.c~
 *.m~
 *.h~
