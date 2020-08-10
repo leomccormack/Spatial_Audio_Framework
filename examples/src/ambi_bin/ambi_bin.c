@@ -137,7 +137,7 @@ void ambi_bin_init
         pData->reinit_hrtfsFLAG = 1;
         ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     }
-    afSTFT_getCentreFreqs(pData->hSTFT, pData->fs, HYBRID_BANDS, (float*)pData->freqVector);
+    afSTFT_getCentreFreqs(pData->hSTFT, (float)pData->fs, HYBRID_BANDS, (float*)pData->freqVector);
 
     /* default starting values */
     pData->recalc_M_rotFLAG = 1;

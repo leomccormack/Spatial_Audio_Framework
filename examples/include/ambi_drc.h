@@ -62,7 +62,7 @@ extern "C" {
 # define AMBI_DRC_NUM_BANDS ( 133 )
 #endif
 /**< -16dB, maximum gain reduction for a given frequency band */
-#define AMBI_DRC_SPECTRAL_FLOOR (0.1585)
+#define AMBI_DRC_SPECTRAL_FLOOR (0.1585f)
 
 #define AMBI_DRC_IN_GAIN_MIN_VAL ( -40.0f )   /**< Minimum input gain, dB */
 #define AMBI_DRC_IN_GAIN_MAX_VAL ( 20.0f )    /**< Maximum input gain, dB */

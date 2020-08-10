@@ -87,8 +87,8 @@ void pitch_shifter_init
 {
     pitch_shifter_data *pData = (pitch_shifter_data*)(hPS);
 
-    if(pData->sampleRate != sampleRate){
-        pData->sampleRate = sampleRate;
+    if(pData->sampleRate != (float)sampleRate){
+        pData->sampleRate = (float)sampleRate;
         pitch_shifter_setCodecStatus(hPS, CODEC_STATUS_NOT_INITIALISED);
     } 
 }

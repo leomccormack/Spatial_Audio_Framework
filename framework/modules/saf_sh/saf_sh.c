@@ -1205,7 +1205,7 @@ void sphESPRIT_estimateDirs
     int i, j;
     const double_complex i2_ = cmplx(0.0, 2.0);
     const double_complex calpha = cmplx(1.0, 0.0); const double_complex cbeta = cmplx(0.0, 0.0); /* blas */
-    float phiX, phiY;
+    double phiX, phiY;
 
     /* Fill matrices */
     memset(h->Us_1m1, 0, (h->NN) * K * sizeof(double_complex));

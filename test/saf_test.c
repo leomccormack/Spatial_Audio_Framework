@@ -924,7 +924,7 @@ void test__latticeDecorrelator(void){
     float_complex*** inTFframe, ***outTFframe;
 
     /* config */
-    const float acceptedICC = 0.02;
+    const float acceptedICC = 0.02f;
     const int nCH = 24;
     const int nTestHops = 2000;
     const int hopSize = 128;
@@ -2057,7 +2057,7 @@ void test__sphESPRIT(void){
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
     /* config */
-    const float acceptedTolerance = 0.01; /* degrees */
+    const float acceptedTolerance = 0.01f; /* degrees */
     const int order = 3;
     const int lsig = 48000;
 
