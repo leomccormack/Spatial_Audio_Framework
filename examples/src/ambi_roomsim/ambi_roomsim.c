@@ -68,8 +68,8 @@ void ambi_roomsim_create
     memcpy(pData->rec_pos, rec_pos, 3*sizeof(float));
 
 
-    pData->src_sigs = (float**)malloc1d(64*sizeof(float*));
-    pData->rec_sh_outsigs = (float**)malloc1d(64*sizeof(float*));
+    pData->src_sigs = (float**)malloc2d(64, FRAME_SIZE, sizeof(float));
+    pData->rec_sh_outsigs = (float**)malloc2d(64, FRAME_SIZE, sizeof(float));
 
 
 }
@@ -106,6 +106,7 @@ void ambi_roomsim_init
 
 
     /* sf */
+    ims_shoebox_destroy(&(pData->hIms));
     ims_shoebox_create(&(pData->hIms), 10, 7, 3, (float*)pData->abs_wall, 250.0f, pData->nBands, 343.0f, 48e3f);
     pData->sourceIDs[0] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos, &pData->src_sigs[0]);
 //    sourceIDs[1] = ims_shoebox_addSource(pData->hIms, (float*)pData->src2_pos, &src_sigs[1]);
@@ -150,13 +151,12 @@ void ambi_roomsim_process
         nSources = 1;
 
         /* Load time-domain data */
-        //for(i=0; i < MIN(nSources,nInputs); i++)
-        //    utility_svvcopy(inputs[i], FRAME_SIZE, pData->src_sigs[0]);
-        pData->src_sigs[0] = inputs[0];
-        for(i=0; i<nOutputs; i++)
-            pData->rec_sh_outsigs[i] = outputs[i];
+        for(i=0; i < MIN(1,nInputs); i++)
+            memcpy(pData->src_sigs[i], inputs[i], FRAME_SIZE * sizeof(float));
+        for(; i < nInputs; i++)
+            memset(pData->src_sigs[i], 0, FRAME_SIZE * sizeof(float));
 
-        maxTime_s = 0.025f; /* 50ms */
+        maxTime_s = 0.05f; /* 50ms */
 
         //ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[0], pData->mov_src_pos);
         //ims_shoebox_updateReceiver(pData->hIms, pData->receiverIDs[0], pData->mov_rec_pos);
@@ -164,6 +164,10 @@ void ambi_roomsim_process
         ims_shoebox_applyEchogramTD(pData->hIms, pData->receiverIDs[0], nSamples, 0);
 
 
+        for(i=0; i<MIN(nOutputs, 16); i++)
+            memcpy(outputs[i], pData->rec_sh_outsigs[i], FRAME_SIZE * sizeof(float));
+        for(; i < nOutputs; i++)
+            memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
 //
 //        /* account for output channel order */
 //        switch(chOrdering){
