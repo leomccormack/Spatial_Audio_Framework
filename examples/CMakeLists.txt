@@ -7,6 +7,7 @@ if(NOT DEFINED saf_example_list)
     set(saf_example_list
         ambi_drc
         ambi_enc
+        ambi_roomsim
         array2sh
         beamformer
         decorrelator

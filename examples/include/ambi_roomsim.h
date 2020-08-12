@@ -92,27 +92,37 @@ void ambi_roomsim_refreshParams(void* const hAmbi);
 void ambi_roomsim_setOutputOrder(void* const hAmbi, int newValue);
 
 /**
- * Sets the azimuth for a specific source index
- *
- * @param[in] hAmbi      ambi_roomsim handle
- * @param[in] index      Source index
- * @param[in] newAzi_deg New azimuth, in DEGREES
- */
-void ambi_roomsim_setSourceAzi_deg(void* const hAmbi, int index, float newAzi_deg);
-
-/**
- * Sets the elevation for a specific source index
- *
- * @param[in] hAmbi       ambi_roomsim handle
- * @param[in] index       Source index
- * @param[in] newElev_deg New elevation, in DEGREES
- */
-void ambi_roomsim_setSourceElev_deg(void* const hAmbi, int index, float newElev_deg);
-
-/**
  * Sets the number of input signals/sources to encode.
  */
 void ambi_roomsim_setNumSources(void* const hAmbi, int new_nSources);
+
+/**
+ * Sets the 'x' coordinate for a specific source index
+ *
+ * @param[in] hAmbi      ambi_roomsim handle
+ * @param[in] index      Source index
+ * @param[in] newX       New 'x' coordinate, in metres
+ */
+void ambi_roomsim_setSourceX(void* const hAmbi, int index, float newValue);
+
+/**
+ * Sets the 'y' coordinate for a specific source index
+ *
+ * @param[in] hAmbi      ambi_roomsim handle
+ * @param[in] index      Source index
+ * @param[in] newX       New 'y' coordinate, in metres
+ */
+void ambi_roomsim_setSourceY(void* const hAmbi, int index, float newValue);
+
+/**
+ * Sets the 'z' coordinate for a specific source index
+ *
+ * @param[in] hAmbi      ambi_roomsim handle
+ * @param[in] index      Source index
+ * @param[in] newX       New 'z' coordinate, in metres
+ */
+void ambi_roomsim_setSourceZ(void* const hAmbi, int index, float newValue);
+
 
 /**
  * Sets the input configuration preset (see #_SOURCE_CONFIG_PRESETS enum)

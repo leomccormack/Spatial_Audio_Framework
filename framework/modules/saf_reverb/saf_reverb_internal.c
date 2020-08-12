@@ -67,7 +67,7 @@ void ims_shoebox_echogramResize
     echogram_data *ec = (echogram_data*)(hEcho);
     int i;
 
-    if(ec->nChannels != nChannels ||  ec->numImageSources != numImageSources){
+    if(ec->nChannels != nChannels || ec->numImageSources != numImageSources){
         /* Echogram data */
         ec->nChannels = nChannels;
         ec->numImageSources = numImageSources;

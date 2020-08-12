@@ -43,6 +43,7 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 128 ) 
 #endif
+#define ROOM_SIM_MAX_NUM_SOURCES ( 8 )
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1) ) /* (L+1)^2 */
 
 
@@ -87,7 +88,7 @@ typedef struct _ambi_roomsim
     /* user parameters */
     int nSources;
     int new_nSources;
-    float src_dirs_deg[MAX_NUM_INPUTS][2];
+    float src_positions[ROOM_SIM_MAX_NUM_SOURCES][3];
     CH_ORDER chOrdering;
     NORM_TYPES norm;
     SH_ORDERS order;

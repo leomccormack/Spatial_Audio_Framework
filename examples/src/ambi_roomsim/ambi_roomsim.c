@@ -140,7 +140,6 @@ void ambi_roomsim_process
     chOrdering = pData->chOrdering;
     norm = pData->norm;
     nSources = pData->nSources;
-    memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
     order = MIN(pData->order, MAX_SH_ORDER);
     nSH = ORDER2NSH(order);
 
@@ -236,26 +235,6 @@ void ambi_roomsim_setOutputOrder(void* const hAmbi, int newOrder)
     }
 }
 
-void ambi_roomsim_setSourceAzi_deg(void* const hAmbi, int index, float newAzi_deg)
-{
-    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    if(newAzi_deg>180.0f)
-        newAzi_deg = -360.0f + newAzi_deg;
-    newAzi_deg = MAX(newAzi_deg, -180.0f);
-    newAzi_deg = MIN(newAzi_deg, 180.0f);
-    pData->recalc_SH_FLAG[index] = 1;
-    pData->src_dirs_deg[index][0] = newAzi_deg;
-}
-
-void ambi_roomsim_setSourceElev_deg(void* const hAmbi, int index, float newElev_deg)
-{
-    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);
-    pData->recalc_SH_FLAG[index] = 1;
-    pData->src_dirs_deg[index][1] = newElev_deg;
-}
-
 void ambi_roomsim_setNumSources(void* const hAmbi, int new_nSources)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
@@ -264,6 +243,33 @@ void ambi_roomsim_setNumSources(void* const hAmbi, int new_nSources)
     pData->nSources = pData->new_nSources;
     for(i=0; i<MAX_NUM_INPUTS; i++)
         pData->recalc_SH_FLAG[i] = 1;
+}
+
+void ambi_roomsim_setSourceX(void* const hAmbi, int index, float newValue)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
+    pData->src_positions[index][0] = newValue;
+    if(pData->hIms!=NULL)
+        ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[index], pData->src_positions[index]);
+}
+
+void ambi_roomsim_setSourceY(void* const hAmbi, int index, float newValue)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
+    pData->src_positions[index][1] = newValue;
+    if(pData->hIms!=NULL)
+        ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[index], pData->src_positions[index]);
+}
+
+void ambi_roomsim_setSourceZ(void* const hAmbi, int index, float newValue)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
+    pData->src_positions[index][2] = newValue;
+    if(pData->hIms!=NULL)
+        ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[index], pData->src_positions[index]);
 }
 
 void ambi_roomsim_setInputConfigPreset(void* const hAmbi, int newPresetID)
@@ -307,13 +313,13 @@ int ambi_roomsim_getOutputOrder(void* const hAmbi)
 float ambi_roomsim_getSourceAzi_deg(void* const hAmbi, int index)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    return pData->src_dirs_deg[index][0];
+    return 0.0f;// pData->src_dirs_deg[index][0];
 }
 
 float ambi_roomsim_getSourceElev_deg(void* const hAmbi, int index)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    return pData->src_dirs_deg[index][1];
+    return 0.0f;// pData->src_dirs_deg[index][1];
 }
 
 int ambi_roomsim_getNumSources(void* const hAmbi)
