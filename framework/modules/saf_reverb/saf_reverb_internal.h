@@ -58,7 +58,8 @@ extern "C" {
 /** Maximum number of samples that ims should expect to process at a time */
 #define IMS_MAX_NSAMPLES_PER_FRAME ( 20000 )
 
-/** Void pointer (improves readability when working with arrays of handles) */
+/** Void pointer (just to improve code readability when working with arrays of
+ * handles) */
 typedef void* voidPtr;
 
 /** Union struct for Cartesian coordinates (access as .x,.y,.z, or .v[3]) */
@@ -108,7 +109,7 @@ typedef struct _echogram_data
                            *   propagation time, in accending order;
                            *   numImageSources x 1 */
 
-    /* Run-time helper variables */
+    /* Helper variables for run-time speed-ups */
     float* time_fs;       /**< Propagation time (in samples) for each image
                            *   source; numImageSources x 1 */
     int* rIdx;            /**< Current circular buffer read indices;

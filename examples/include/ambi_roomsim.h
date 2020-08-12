@@ -59,8 +59,7 @@ void ambi_roomsim_init(void* const hAmbi,
                      int samplerate);
 
 /**
- * Encodes input signals into spherical harmonic signals, at the specified
- * encoding directions.
+ * 
  *
  * @param[in] hAmbi    ambi_roomsim handle
  * @param[in] inputs   Input channel buffers; 2-D array: nInputs x nSamples
@@ -70,11 +69,11 @@ void ambi_roomsim_init(void* const hAmbi,
  * @param[in] nSamples Number of samples in 'inputs'/'output' matrices
  */
 void ambi_roomsim_process(void* const hAmbi,
-                      float** const inputs,
-                      float** const outputs,
-                      int nInputs,
-                      int nOutputs,
-                      int nSamples);
+                          float** const inputs,
+                          float** const outputs,
+                          int nInputs,
+                          int nOutputs,
+                          int nSamples);
 
     
 /* ========================================================================== */

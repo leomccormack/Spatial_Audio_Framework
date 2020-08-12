@@ -147,7 +147,7 @@ void ims_shoebox_renderRIRs(void* hIms,
 
 /**
  * Applies the currently computed echograms in the time-domain, for all
- * sources and one specified receiver
+ * sources, for one specified receiver
  *
  * Note the following:
  *  - The signal pointers must be valid, and have allocated enough memory for

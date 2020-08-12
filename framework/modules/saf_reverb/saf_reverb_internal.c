@@ -77,7 +77,7 @@ void ims_shoebox_echogramResize
         ec->coords = realloc1d(ec->coords, numImageSources * sizeof(ims_pos_xyz));
         ec->sortedIdx = realloc1d(ec->sortedIdx, numImageSources*sizeof(int));
 
-        /* Helper variables */
+        /* Helper variables for run-time speed-ups */
         ec->time_fs = realloc1d(ec->time_fs, numImageSources*sizeof(float));
         ec->rIdx = realloc1d(ec->rIdx, numImageSources*sizeof(int));
         ec->cb_vals = (float**)realloc2d((void**)ec->cb_vals, nChannels, numImageSources, sizeof(float));
@@ -474,6 +474,7 @@ void ims_shoebox_renderRIR
         /* Render rir */
         if(fractionalDelayFLAG){
             // TODO: implement
+            assert(0);
         }
         else{
             /* Resize RIR vector */

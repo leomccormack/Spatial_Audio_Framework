@@ -377,8 +377,34 @@ void ims_shoebox_applyEchogramTD
                         /* For compiler optimisations up to 3rd order SH receiver*/
                         switch(sc->recs[rec_idx].type){
                             case RECEIVER_SH:
-                                for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
+                                for(ch=16; ch<sc->recs[rec_idx].nChannels; ch++)
                                     sc->recs[rec_idx].sigs[ch][n] += echogram_abs->value[ch][im] * cb_val;
+                                
+                                switch(sc->recs[rec_idx].nChannels){
+                                    case 64: case 49: case 36: case 25: case 16:
+                                        sc->recs[rec_idx].sigs[15][n] += echogram_abs->value[15][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[14][n] += echogram_abs->value[14][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[13][n] += echogram_abs->value[13][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[12][n] += echogram_abs->value[12][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[11][n] += echogram_abs->value[11][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[10][n] += echogram_abs->value[10][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[9][n] += echogram_abs->value[9][im] * cb_val;
+                                        /* fall through */
+                                    case 9:
+                                        sc->recs[rec_idx].sigs[8][n] += echogram_abs->value[8][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[7][n] += echogram_abs->value[7][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[6][n] += echogram_abs->value[6][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[5][n] += echogram_abs->value[5][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[4][n] += echogram_abs->value[4][im] * cb_val;
+                                        /* fall through */
+                                    case 4:
+                                        sc->recs[rec_idx].sigs[3][n] += echogram_abs->value[3][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[2][n] += echogram_abs->value[2][im] * cb_val;
+                                        sc->recs[rec_idx].sigs[1][n] += echogram_abs->value[1][im] * cb_val;
+                                        /* fall through */
+                                    case 1:
+                                        sc->recs[rec_idx].sigs[0][n] += echogram_abs->value[0][im] * cb_val;
+                                }
                                 break;
                         }
 
