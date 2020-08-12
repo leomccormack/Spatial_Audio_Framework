@@ -81,6 +81,8 @@ typedef struct _ambi_roomsim
 
     long sourceIDs[4], receiverIDs[1];
     float** src_sigs, **rec_sh_outsigs;
+
+    int reinit_room;
     
     /* user parameters */
     int nSources;

@@ -46,9 +46,8 @@ void ambi_roomsim_create
 
     /* sf */
     pData->hIms = NULL;
-    pData->signalLength = 10000;
     pData->sh_order = 3;
-    pData->nBands = 5;
+    pData->nBands = 1;
     float abs_wall[5][6] = /* Absorption Coefficients per Octave band, and per wall */
       { {0.180791250f, 0.207307300f, 0.134990800f, 0.229002250f, 0.212128400f, 0.241055000f},
         {0.225971250f, 0.259113700f, 0.168725200f, 0.286230250f, 0.265139600f, 0.301295000f},
@@ -56,7 +55,7 @@ void ambi_roomsim_create
         {0.301331250f, 0.345526500f, 0.224994001f, 0.381686250f, 0.353562000f, 0.401775000f},
         {0.361571250f, 0.414601700f, 0.269973200f, 0.457990250f, 0.424243600f, 0.482095000f} };
     memcpy(pData->abs_wall,abs_wall, 5*6*sizeof(float));
-    float src_pos[3]  = {5.1f, 6.0f, 1.1f};
+    float src_pos[3]  = {5.2f, 1.5f, 1.4f};
     memcpy(pData->src_pos, src_pos, 3*sizeof(float));
     float src2_pos[3] = {2.1f, 1.0f, 1.3f};
     memcpy(pData->src2_pos, src2_pos, 3*sizeof(float));
@@ -64,7 +63,7 @@ void ambi_roomsim_create
     memcpy(pData->src3_pos, src3_pos, 3*sizeof(float));
     float src4_pos[3] = {7.1f, 2.0f, 1.4f};
     memcpy(pData->src4_pos, src4_pos, 3*sizeof(float));
-    float rec_pos[3]  = {8.8f, 5.5f, 0.9f};
+    float rec_pos[3]  = {5.2f, 3.5f, 1.4f};
     memcpy(pData->rec_pos, rec_pos, 3*sizeof(float));
 
 
@@ -72,6 +71,7 @@ void ambi_roomsim_create
     pData->rec_sh_outsigs = (float**)malloc2d(64, FRAME_SIZE, sizeof(float));
 
 
+    pData->reinit_room = 1;
 }
 
 void ambi_roomsim_destroy
@@ -105,15 +105,17 @@ void ambi_roomsim_init
         pData->recalc_SH_FLAG[i] = 1;
 
 
-    /* sf */
-    ims_shoebox_destroy(&(pData->hIms));
-    ims_shoebox_create(&(pData->hIms), 10, 7, 3, (float*)pData->abs_wall, 250.0f, pData->nBands, 343.0f, 48e3f);
-    pData->sourceIDs[0] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos, &pData->src_sigs[0]);
-//    sourceIDs[1] = ims_shoebox_addSource(pData->hIms, (float*)pData->src2_pos, &src_sigs[1]);
-//    sourceIDs[2] = ims_shoebox_addSource(pData->hIms, (float*)pData->src3_pos, &src_sigs[2]);
-//    sourceIDs[3] = ims_shoebox_addSource(pData->hIms, (float*)pData->src4_pos, &src_sigs[3]);
-    pData->receiverIDs[0] = ims_shoebox_addReceiverSH(pData->hIms, pData->sh_order, (float*)pData->rec_pos, &(pData->rec_sh_outsigs));
-
+    /*  */
+    if(pData->reinit_room){
+        ims_shoebox_destroy(&(pData->hIms));
+        ims_shoebox_create(&(pData->hIms), 10, 7, 3, (float*)pData->abs_wall, 250.0f, pData->nBands, 343.0f, 48e3f);
+        pData->sourceIDs[0] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos, &pData->src_sigs[0]);
+    //    sourceIDs[1] = ims_shoebox_addSource(pData->hIms, (float*)pData->src2_pos, &src_sigs[1]);
+    //    sourceIDs[2] = ims_shoebox_addSource(pData->hIms, (float*)pData->src3_pos, &src_sigs[2]);
+    //    sourceIDs[3] = ims_shoebox_addSource(pData->hIms, (float*)pData->src4_pos, &src_sigs[3]);
+        pData->receiverIDs[0] = ims_shoebox_addReceiverSH(pData->hIms, pData->sh_order, (float*)pData->rec_pos, &(pData->rec_sh_outsigs));
+        pData->reinit_room = 0;
+    }
 }
 
 void ambi_roomsim_process

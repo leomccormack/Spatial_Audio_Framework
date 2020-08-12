@@ -117,6 +117,8 @@ typedef struct _echogram_data
                            *   image source); nChannels x numImageSources */
     float** contrib;      /**< Total contribution (basically: cb_vals .* value);
                            *   nChannels x numImageSources */
+    float* ones_dummy;    /**< Just a vector of ones, for cblas_sdot;
+                           *   numImageSources x 1 */
 
 } echogram_data;
 

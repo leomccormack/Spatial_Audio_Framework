@@ -54,6 +54,7 @@ void ims_shoebox_echogramCreate
     ec->rIdx = NULL;
     ec->cb_vals = NULL;
     ec->contrib = NULL;
+    ec->ones_dummy = NULL;
 }
 
 void ims_shoebox_echogramResize
@@ -64,6 +65,7 @@ void ims_shoebox_echogramResize
 )
 {
     echogram_data *ec = (echogram_data*)(hEcho);
+    int i;
 
     if(ec->nChannels != nChannels ||  ec->numImageSources != numImageSources){
         /* Echogram data */
@@ -80,6 +82,9 @@ void ims_shoebox_echogramResize
         ec->rIdx = realloc1d(ec->rIdx, numImageSources*sizeof(int));
         ec->cb_vals = (float**)realloc2d((void**)ec->cb_vals, nChannels, numImageSources, sizeof(float));
         ec->contrib = (float**)realloc2d((void**)ec->contrib, nChannels, numImageSources, sizeof(float));
+        ec->ones_dummy = realloc1d(ec->ones_dummy, numImageSources*sizeof(float));
+        for(i=0; i<numImageSources; i++)
+            ec->ones_dummy[i] = 1.0f;
     }
 }
 
@@ -103,6 +108,7 @@ void ims_shoebox_echogramDestroy
 		free(ec->rIdx);
 		free(ec->cb_vals);
 		free(ec->contrib);
+        free(ec->ones_dummy);
 
         free(ec);
         ec=NULL;
