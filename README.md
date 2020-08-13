@@ -70,6 +70,7 @@ The available SAF-related build options (and their default values) are:
 -DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL    # performance library to employ
 -DSAF_ENABLE_SOFA_READER_MODULE=0          # enable/disable the saf_sofa_reader module 
 -DSAF_BUILD_EXAMPLES=1                     # build saf examples
+-DSAF_BUILD_EXTRAS=0                       # build safmex etc.
 -DSAF_BUILD_TESTS=1                        # build unit testing program
 ```
 
@@ -88,13 +89,21 @@ If the **saf_sofa_reader** is enabled, CMake will use the statically built depen
 -DNETCDF_LIBRARY="/c/msys64/mingw64/lib/libnetcdf.dll.a"
 ```
 
-The framework, examples, and unit testing program may be built with:
+For Unix users, the framework, examples, and unit testing program may be built with:
 ```
 mkdir build 
 cmake -S . -B build 
 cd build
 make
 test/saf_test # To run the unit testing program
+```
+
+Or for Visual Studio users (using x64 Native Tools Command Prompt):
+```
+cmake -S . -B build -G "Visual Studio 15 Win64"   
+cd build
+msbuild ALL_BUILD.vcxproj /p:Configuration=Release /m
+test/Release/saf_test.exe  # To run the unit testing program
 ```
 
 ## Documentation
@@ -134,6 +143,12 @@ Several examples have also been included in the repository, which may serve as a
 Many of these examples have also been released as VST audio plug-ins under the [SPARTA](https://github.com/leomccormack/SPARTA) banner.
 
 The following open-source projects also employ the framework: [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
+
+## Extras
+
+The repository also includes the following "extras":
+
+* **safmex** - a bunch of Matlab MEX wrappers, which allow certain SAF functions to be used within Matlab.
 
 ## Contributing
 
