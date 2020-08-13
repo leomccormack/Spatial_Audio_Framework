@@ -75,6 +75,7 @@ typedef struct _ims_pos_xyz {
 /** Supported receiver types */
 typedef enum _RECEIVER_TYPES{
     RECEIVER_SH   /**< Spherical harmonic receiver */
+    /* RECEIVER_ARRAY */ /**< Microphone array/HRIR measurement-based receiver */
 }RECEIVER_TYPES;
 
 /** Source object */
@@ -96,7 +97,7 @@ typedef struct _ims_rec_obj{
 /** Echogram structure */
 typedef struct _echogram_data
 {
-    /* The actual echogram data: */
+    /* The echogram data: */
     int numImageSources;     /**< Number of image sources in current echogram */
     int nChannels;           /**< Number of channels */
     float** value;           /**< Echogram magnitudes per image source and
@@ -108,25 +109,27 @@ typedef struct _echogram_data
     ims_pos_xyz* coords;     /**< Reflection coordinates (Cartesian);
                               *   numImageSources x 3 */
     int* sortedIdx;          /**< Indices that sort the echogram based on
-                              *   propagation time, in accending order;
+                              *   propagation time in ascending order;
                               *   numImageSources x 1 */
 
-    /* Optional helper variables for run-time speed-ups */
     int include_rt_vars;     /**< 0: the below vars are disabled, 1: enabled */
-    float* tmp;              /**< temporary vector; numImageSources x 1 */
+
+    /* Optional helper variables for run-time speed-ups */
+    float* tmp1;             /**< 1st temporary vector; numImageSources x 1 */
+    float* tmp2;             /**< 2nd temporary vector; numImageSources x 1 */
     int* rIdx;               /**< Current circular buffer read indices;
                               *   numImageSources x 1 */
-    int* rIdx_frac[IMS_LAGRANGE_ORDER];  /**< Current circular buffer read
-                                          *   indices for fractional buffers;
-                                          *   ORDER x numImageSources */
+    int* rIdx_frac[IMS_LAGRANGE_ORDER]; /**< Current circular buffer read
+                                         *   indices for fractional buffers;
+                                         *   IMS_LAGRANGE_ORDER x numImageSources */
     float** h_frac;          /**< Current fractional delay coeffs;
-                              *   (ORDER+1) x numImageSources x */
+                              *   (IMS_LAGRANGE_ORDER+1) x numImageSources x */
     float** cb_vals;         /**< Current circular buffer values (per channel &
                               *   image source); nChannels x numImageSources */
     float** contrib;         /**< Total contribution (i.e. cb_vals .* value);
                               *   nChannels x numImageSources */
-    float* ones_dummy;       /**< Just a vector of ones, for the cblas_sdot for
-                              *   sum hack; numImageSources x 1 */
+    float* ones_dummy;       /**< Just a vector of ones, for the cblas_sdot
+                              *   sum hack, and fmodf; numImageSources x 1 */
 
 } echogram_data;
 

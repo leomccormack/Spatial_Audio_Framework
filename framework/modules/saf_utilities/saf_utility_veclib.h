@@ -168,6 +168,29 @@ void utility_cvabs(/* Input Arguments */
 
 
 /* ========================================================================== */
+/*                            Vector-Modulus (?vmod)                          */
+/* ========================================================================== */
+
+/**
+ * Single-precision, modulus of vector elements, i.e.
+ * \code{.m}
+ *     c = mod(a,b)
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  b   Input vector b; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_svmod(/* Input Arguments */
+                   const float* a,
+                   const float* b,
+                   const int len,
+                   /* Output Arguments */
+                   float* c);
+
+
+/* ========================================================================== */
 /*                        Vector-Vector Copy (?vvcopy)                        */
 /* ========================================================================== */
 

@@ -55,7 +55,8 @@ void ims_shoebox_echogramCreate
 
     /* Optional helper variables */
     ec->include_rt_vars = include_rt_vars;
-    ec->tmp = NULL;
+    ec->tmp1 = NULL;
+    ec->tmp2 = NULL;
     ec->rIdx = NULL;
     for(i=0; i<IMS_LAGRANGE_ORDER; i++)
         ec->rIdx_frac[i] = NULL;
@@ -87,7 +88,8 @@ void ims_shoebox_echogramResize
 
         /* Resize the optional helper variables (used for run-time speed-ups) */
         if(ec->include_rt_vars){
-            ec->tmp = realloc1d(ec->tmp, numImageSources*sizeof(float));
+            ec->tmp1 = realloc1d(ec->tmp1, numImageSources*sizeof(float));
+            ec->tmp2 = realloc1d(ec->tmp2, numImageSources*sizeof(float));
             ec->rIdx = realloc1d(ec->rIdx, numImageSources*sizeof(int));
             for(i=0; i<IMS_LAGRANGE_ORDER; i++)
                 ec->rIdx_frac[i] = realloc1d(ec->rIdx_frac[i], numImageSources*sizeof(int));
@@ -150,7 +152,8 @@ void ims_shoebox_echogramDestroy
 
         /* Free the optional helper variables */
         if(ec->include_rt_vars){
-            free(ec->tmp);
+            free(ec->tmp1);
+            free(ec->tmp2);
             free(ec->rIdx);
             for(i=0; i<IMS_LAGRANGE_ORDER; i++)
                 free(ec->rIdx_frac[i]);

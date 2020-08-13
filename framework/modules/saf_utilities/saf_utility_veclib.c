@@ -201,6 +201,27 @@ void utility_cvabs
 #endif
 }
 
+/* ========================================================================== */
+/*                            Vector-Modulus (?vmod)                          */
+/* ========================================================================== */
+
+void utility_svmod
+(
+    const float* a,
+    const float* b,
+    const int len,
+    float* c
+)
+{
+#ifdef INTEL_MKL_VERSION
+    vsFmod(len, a, b, c);
+#else
+    int i;
+    for(i=0; i<len; i++)
+        c[i] = fmodf(a[i], b[i]);
+#endif
+}
+
 
 /* ========================================================================== */
 /*                        Vector-Vector Copy (?vvcopy)                        */
