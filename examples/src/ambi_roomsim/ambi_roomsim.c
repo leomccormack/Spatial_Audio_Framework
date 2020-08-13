@@ -107,7 +107,7 @@ void ambi_roomsim_init
     /*  */
     if(pData->reinit_room){
         ims_shoebox_destroy(&(pData->hIms));
-        ims_shoebox_create(&(pData->hIms), 10, 7, 3, (float*)pData->abs_wall, 250.0f, pData->nBands, 343.0f, 48e3f);
+        ims_shoebox_create(&(pData->hIms), 10.5f, 7.0f, 3.0f, (float*)pData->abs_wall, 250.0f, pData->nBands, 343.0f, 48e3f);
         pData->sourceIDs[0] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos, &pData->src_sigs[0]);
     //    sourceIDs[1] = ims_shoebox_addSource(pData->hIms, (float*)pData->src2_pos, &src_sigs[1]);
     //    sourceIDs[2] = ims_shoebox_addSource(pData->hIms, (float*)pData->src3_pos, &src_sigs[2]);
@@ -128,9 +128,7 @@ void ambi_roomsim_process
 )
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    int i, j, ch, nSources, nSH; 
-    float src_dirs[MAX_NUM_INPUTS][2], azi_incl[2], scale;
-    float* Y_src;
+    int i, ch, nSources, nSH;
 
     /* local copies of user parameters */
     CH_ORDER chOrdering;
@@ -161,7 +159,7 @@ void ambi_roomsim_process
         //ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[0], pData->mov_src_pos);
         //ims_shoebox_updateReceiver(pData->hIms, pData->receiverIDs[0], pData->mov_rec_pos);
         ims_shoebox_computeEchograms(pData->hIms, maxTime_s);
-        ims_shoebox_applyEchogramTD(pData->hIms, pData->receiverIDs[0], nSamples, 1);
+        ims_shoebox_applyEchogramTD(pData->hIms, pData->receiverIDs[0], nSamples, 0);
 
 
         for(i=0; i<MIN(nOutputs, 16); i++)

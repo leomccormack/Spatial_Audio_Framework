@@ -141,7 +141,7 @@ typedef struct _echogram_data
 typedef struct _ims_core_workspace
 {
     /* Locals */
-    int room[3];          /**< Room dimensions, in meters */
+    float room[3];        /**< Room dimensions, in meters */
     float d_max;          /**< Maximum distance, in meters */
     ims_pos_xyz src;      /**< Source position */
     ims_pos_xyz rec;      /**< Receiver position */
@@ -177,7 +177,7 @@ typedef struct _ims_core_workspace
 typedef struct _ims_scene_data
 {
     /* Locals */
-    int room_dimensions[3];  /**< Room dimensions, in meters */
+    float room_dims[3];      /**< Room dimensions, in meters */
     float c_ms;              /**< Speed of sound, in ms^1 */
     float fs;                /**< Sampling rate */
     int nBands;              /**< Number of frequency bands */
@@ -305,7 +305,7 @@ void ims_shoebox_echogramDestroy(void** phEcho);
  * @param[in] c_ms    Speed of source, in meters per second
  */
 void ims_shoebox_coreInit(void* hWork,
-                          int room[3],
+                          float room[3],
                           ims_pos_xyz src,
                           ims_pos_xyz rec,
                           float maxTime,

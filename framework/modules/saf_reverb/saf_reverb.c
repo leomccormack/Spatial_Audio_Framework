@@ -35,9 +35,9 @@
 void ims_shoebox_create
 (
     void** phIms,
-    int length,
-    int width,
-    int height,
+    float length,
+    float width,
+    float height,
     float* abs_wall,
     float lowestOctaveBand,
     int nOctBands,
@@ -50,9 +50,9 @@ void ims_shoebox_create
     int i,j,band,wall;
 
     /* Shoebox dimensions */
-    sc->room_dimensions[0] = length;
-    sc->room_dimensions[1] = width;
-    sc->room_dimensions[2] = height;
+    sc->room_dims[0] = length;
+    sc->room_dims[1] = width;
+    sc->room_dims[2] = height;
     sc->c_ms = c_ms;
 
     /* Octave band centre frequencies */
@@ -162,7 +162,7 @@ void ims_shoebox_computeEchograms
     ims_scene_data *sc = (ims_scene_data*)(hIms);
     ims_core_workspace* workspace;
     ims_pos_xyz src2, rec2;
-    int src_idx, rec_idx, band;
+    int src_idx, rec_idx;
 
     /* Compute echograms for active source/receiver combinations */
     for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++){
@@ -171,10 +171,10 @@ void ims_shoebox_computeEchograms
                 /* Change y coord for Receiver and Source to match convention
                  * used inside the coreInit function */
                 rec2.x = sc->recs[rec_idx].pos.x;
-                rec2.y = (float)sc->room_dimensions[1] - sc->recs[rec_idx].pos.y;
+                rec2.y = sc->room_dims[1] - sc->recs[rec_idx].pos.y;
                 rec2.z = sc->recs[rec_idx].pos.z;
                 src2.x = sc->srcs[src_idx].pos.x;
-                src2.y = (float)sc->room_dimensions[1] - sc->srcs[src_idx].pos.y;
+                src2.y = sc->room_dims[1] - sc->srcs[src_idx].pos.y;
                 src2.z = sc->srcs[src_idx].pos.z;
 
                 /* Workspace handle for this source/receiver combination */
@@ -183,7 +183,7 @@ void ims_shoebox_computeEchograms
                 /* Only update if it is required */
                 if(workspace->refreshEchogramFLAG){
                     /* Compute echogram due to pure propagation (frequency-independent, omni-directional) */
-                    ims_shoebox_coreInit(workspace, sc->room_dimensions, src2, rec2, maxTime_ms, sc->c_ms);
+                    ims_shoebox_coreInit(workspace, sc->room_dims, src2, rec2, maxTime_ms, sc->c_ms);
 
                     /* Apply receiver directivities */
                     switch(sc->recs[rec_idx].type){
@@ -285,7 +285,7 @@ void ims_shoebox_applyEchogramTD
 
     /* Initialise all receiver channels with zeros */
     for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
-        memset(sc->recs[rec_idx].sigs[ch], 0, nSamples * sizeof(float));
+        memset(sc->recs[rec_idx].sigs[ch], 0, nSamples * sizeof(float)); /* (since. not guaranteed to be contiguous) */
  
     /* Process all active sources (for this specific receiver) directly in the
      * time-domain */
@@ -331,6 +331,7 @@ void ims_shoebox_applyEchogramTD
 
                     /* Find read-indices for interpolator */
                     for(im=0; im <echogram_abs_0->numImageSources; im++){
+                        /* To correctly centre the filter... */
                         echogram_abs_0->tmp2[im] += (float)(IMS_LAGRANGE_ORDER/2);
 
                         /* Read-indices for lagrange interpolation */
@@ -342,7 +343,7 @@ void ims_shoebox_applyEchogramTD
                         }
                     }
 
-                    /* Interpolation weights */
+                    /* Compute interpolation weights */ // TODO: This bit is around 50% CPU usage of the whole function, a look-up table would be faster...
                     lagrangeWeights(IMS_LAGRANGE_ORDER, echogram_abs_0->tmp2, echogram_abs_0->numImageSources, FLATTEN2D(echogram_abs_0->h_frac));
                 }
                 else{
@@ -384,7 +385,7 @@ void ims_shoebox_applyEchogramTD
                         cblas_scopy(echogram_abs->numImageSources, echogram_abs->tmp1, 1, echogram_abs->cb_vals[0], 1);
                     }
 
-                    /* Replicate these values for all output channels */
+                    /* Replicate these circular buffer values for all output channels */
                     for(ch=1; ch<sc->recs[rec_idx].nChannels; ch++)
                         cblas_scopy(echogram_abs->numImageSources, echogram_abs->cb_vals[0], 1, echogram_abs->cb_vals[ch], 1);
 

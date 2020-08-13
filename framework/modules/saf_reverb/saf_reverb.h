@@ -109,9 +109,9 @@ typedef struct _ims_rir{
  * @param[in] fs               SampleRate, Hz
  */
 void ims_shoebox_create(void** phIms,
-                        int length,
-                        int width,
-                        int height,
+                        float length,
+                        float width,
+                        float height,
                         float* abs_wall,
                         float lowestOctaveBand,
                         int nOctBands,

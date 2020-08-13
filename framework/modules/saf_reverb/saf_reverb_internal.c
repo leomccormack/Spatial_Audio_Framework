@@ -255,7 +255,7 @@ void ims_shoebox_coreWorkspaceDestroy
 void ims_shoebox_coreInit
 (
     void* hWork,
-    int room[3],
+    float room[3],
     ims_pos_xyz src,
     ims_pos_xyz rec,
     float maxTime_s,
@@ -272,19 +272,19 @@ void ims_shoebox_coreInit
     d_max = maxTime_s*c_ms;
 
     /* move origin to the centre of the room */
-    src_orig.x = src.x - (float)room[0]/2.0f;
-    src_orig.y = (float)room[1]/2.0f - src.y;
-    src_orig.z = src.z - (float)room[2]/2.0f;
-    rec_orig.x = rec.x - (float)room[0]/2.0f;
-    rec_orig.y = (float)room[1]/2.0f - rec.y;
-    rec_orig.z = rec.z - (float)room[2]/2.0f;
+    src_orig.x = src.x - room[0]/2.0f;
+    src_orig.y = room[1]/2.0f - src.y;
+    src_orig.z = src.z - room[2]/2.0f;
+    rec_orig.x = rec.x - room[0]/2.0f;
+    rec_orig.y = room[1]/2.0f - rec.y;
+    rec_orig.z = rec.z - room[2]/2.0f;
 
     /* Update indices only if the maximum permitted delay or room dimensions have changed */
     if( (wrk->d_max != d_max) ||
         (wrk->room[0] != room[0]) || (wrk->room[1] != room[1]) || (wrk->room[2] != room[2]) )
     {
         wrk->d_max = d_max;
-        memcpy(wrk->room, room, 3*sizeof(int));
+        memcpy(wrk->room, room, 3*sizeof(float));
         wrk->Nx = (int)(d_max/(float)room[0] + 1.0f); /* ceil */
         wrk->Ny = (int)(d_max/(float)room[1] + 1.0f); /* ceil */
         wrk->Nz = (int)(d_max/(float)room[2] + 1.0f); /* ceil */
