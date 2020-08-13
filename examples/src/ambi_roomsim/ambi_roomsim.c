@@ -70,7 +70,6 @@ void ambi_roomsim_create
     pData->src_sigs = (float**)malloc2d(64, FRAME_SIZE, sizeof(float));
     pData->rec_sh_outsigs = (float**)malloc2d(64, FRAME_SIZE, sizeof(float));
 
-
     pData->reinit_room = 1;
 }
 
@@ -162,7 +161,7 @@ void ambi_roomsim_process
         //ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[0], pData->mov_src_pos);
         //ims_shoebox_updateReceiver(pData->hIms, pData->receiverIDs[0], pData->mov_rec_pos);
         ims_shoebox_computeEchograms(pData->hIms, maxTime_s);
-        ims_shoebox_applyEchogramTD(pData->hIms, pData->receiverIDs[0], nSamples, 0);
+        ims_shoebox_applyEchogramTD(pData->hIms, pData->receiverIDs[0], nSamples, 1);
 
 
         for(i=0; i<MIN(nOutputs, 16); i++)

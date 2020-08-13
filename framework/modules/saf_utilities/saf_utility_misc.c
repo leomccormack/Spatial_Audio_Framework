@@ -33,6 +33,27 @@
 static const long double factorials_15[15] =
 {1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0, 39916800.0, 479001600.0, 6.2270208e9, 8.71782891e10};
 
+void lagrangeWeights
+(
+    int N,
+    float* x,
+    int len_x,
+    float* weights
+)
+{
+    int k, i, l;
+
+    for(l=0; l<len_x; l++){
+        for (k=0; k<=N; k++)
+            weights[k*len_x+l] = 1.0f;
+        for (k=0; k<=N; k++){
+            for(i=0; i<=N; i++)
+                if(k!=i)
+                    weights[i*len_x+l] *= ((x[l]-(float)k) / (float)(i-k));
+        }
+    }
+}
+
 void findERBpartitions
 (
     float* centerFreq,

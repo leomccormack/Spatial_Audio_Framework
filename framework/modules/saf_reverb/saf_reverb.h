@@ -42,6 +42,11 @@ extern "C" {
  */
 
 /**
+ * TODO: Arbitrary array receiver option; Directional source option; finish
+ * ims_shoebox_renderRIRs() function;
+ */
+
+/**
  * Maximum number of sources supported by IMS Shoebox
  */
 #define IMS_MAX_NUM_SOURCES 100

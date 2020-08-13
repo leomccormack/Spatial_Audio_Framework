@@ -57,6 +57,8 @@ extern "C" {
 #define IMS_CIRC_BUFFER_LENGTH_MASK ( IMS_CIRC_BUFFER_LENGTH - 1U )
 /** Maximum number of samples that ims should expect to process at a time */
 #define IMS_MAX_NSAMPLES_PER_FRAME ( 20000 )
+/** Order of lagrange interpolation filters */
+#define IMS_LAGRANGE_ORDER ( 4 )
 
 /** Void pointer (just to improve code readability when working with arrays of
  * handles) */
@@ -84,7 +86,7 @@ typedef struct _ims_src_obj{
 
 /** Receiver object */
 typedef struct _ims_rec_obj{
-    float** sigs;        /**< Receiver signal pointers (one per channel) */
+    float** sigs;        /**< Receiver signal pointers (one per channel) */ 
     RECEIVER_TYPES type; /**< Receiver type (see #_RECEIVER_TYPES enum) */
     int nChannels;       /**< Number of channels for receiver */
     ims_pos_xyz pos;     /**< Source position */
@@ -95,31 +97,36 @@ typedef struct _ims_rec_obj{
 typedef struct _echogram_data
 {
     /* The actual echogram data: */
-    int numImageSources;  /**< Number of image sources in echogram */
-    int nChannels;        /**< Number of channels */
-    float** value;        /**< Echogram magnitudes per image source and channel;
-                           *   nChannels x numImageSources */
-    float* time;          /**< Propagation time (in seconds) for each image
-                           *   source; numImageSources x 1 */
-    int** order;          /**< Reflection order for each image and dimension;
-                           *   numImageSources x 3 */
-    ims_pos_xyz* coords;  /**< Reflection coordinates (Cartesian);
-                           *   numImageSources x 3 */
-    int* sortedIdx;       /**< Indices that sort the echogram based on
-                           *   propagation time, in accending order;
-                           *   numImageSources x 1 */
+    int numImageSources;     /**< Number of image sources in current echogram */
+    int nChannels;           /**< Number of channels */
+    float** value;           /**< Echogram magnitudes per image source and
+                              *   channel; nChannels x numImageSources */
+    float* time;             /**< Propagation time (in seconds) for each image
+                              *   source; numImageSources x 1 */
+    int** order;             /**< Reflection order for each image and dimension;
+                              *   numImageSources x 3 */
+    ims_pos_xyz* coords;     /**< Reflection coordinates (Cartesian);
+                              *   numImageSources x 3 */
+    int* sortedIdx;          /**< Indices that sort the echogram based on
+                              *   propagation time, in accending order;
+                              *   numImageSources x 1 */
 
-    /* Helper variables for run-time speed-ups */
-    float* time_fs;       /**< Propagation time (in samples) for each image
-                           *   source; numImageSources x 1 */
-    int* rIdx;            /**< Current circular buffer read indices;
-                           *   numImageSources x 1 */
-    float** cb_vals;      /**< Current circular buffer values (per channel and
-                           *   image source); nChannels x numImageSources */
-    float** contrib;      /**< Total contribution (basically: cb_vals .* value);
-                           *   nChannels x numImageSources */
-    float* ones_dummy;    /**< Just a vector of ones, for cblas_sdot;
-                           *   numImageSources x 1 */
+    /* Optional helper variables for run-time speed-ups */
+    int include_rt_vars;     /**< 0: the below vars are disabled, 1: enabled */
+    float* tmp;              /**< temporary vector; numImageSources x 1 */
+    int* rIdx;               /**< Current circular buffer read indices;
+                              *   numImageSources x 1 */
+    int* rIdx_frac[IMS_LAGRANGE_ORDER];  /**< Current circular buffer read
+                                          *   indices for fractional buffers;
+                                          *   ORDER x numImageSources */
+    float** h_frac;          /**< Current fractional delay coeffs;
+                              *   (ORDER+1) x numImageSources x */
+    float** cb_vals;         /**< Current circular buffer values (per channel &
+                              *   image source); nChannels x numImageSources */
+    float** contrib;         /**< Total contribution (i.e. cb_vals .* value);
+                              *   nChannels x numImageSources */
+    float* ones_dummy;       /**< Just a vector of ones, for the cblas_sdot for
+                              *   sum hack; numImageSources x 1 */
 
 } echogram_data;
 
@@ -148,7 +155,7 @@ typedef struct _ims_core_workspace
     int refreshEchogramFLAG;
     void* hEchogram;
     void* hEchogram_rec;
-    voidPtr* hEchogram_abs;
+    voidPtr* hEchogram_abs; 
 
     /* Room impulse responses (only used/allocated when a render function is
      * called) */
@@ -224,9 +231,12 @@ void ims_shoebox_coreWorkspaceDestroy(void** phWork);
 /**
  * Creates an instance of an echogram container
  *
- * @param[in] phEcho (&) address of the echogram container
+ * @param[in] phEcho          (&) address of the echogram container
+ * @param[in] include_rt_vars 1: optional run-time helper functions enabled,
+ *                            0: disabled
  */
-void ims_shoebox_echogramCreate(void** phEcho);
+void ims_shoebox_echogramCreate(void** phEcho,
+                                int include_rt_vars);
 
 /**
  * Resizes an echogram container
@@ -241,6 +251,18 @@ void ims_shoebox_echogramCreate(void** phEcho);
 void ims_shoebox_echogramResize(void* hEcho,
                                 int numImageSources,
                                 int nChannels);
+
+/**
+ * Copies echogram data from container 'X' into container 'Y' (also resizing 'Y'
+ * as needed)
+ *
+ * @warning Helper variables are resized (if needed), but do not copy values!
+ *
+ * @param[in] hEchoX  echogram container X
+ * @param[in] hEchoY  echogram container Y
+ */
+void ims_shoebox_echogramCopy(void* hEchoX,
+                              void* hEchoY);
 
 /**
  * Destroys an instance of an echogram container

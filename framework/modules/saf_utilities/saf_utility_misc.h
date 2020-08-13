@@ -59,6 +59,19 @@ extern "C" {
 #include <math.h>
 
 /**
+ * Computes Lagrange interpolation weights of order 'N' for value 'x'
+ *
+ * @param[in]  N
+ * @param[in]  x
+ * len_x
+ * weights
+ */
+void lagrangeWeights(int N,
+                     float* x,
+                     int len_x,
+                     float* weights);
+
+/**
  * This function takes a frequency vector and groups its frequencies into
  * critical bands [Equivalent-Rectangular Bandwidth (ERB)].
  *

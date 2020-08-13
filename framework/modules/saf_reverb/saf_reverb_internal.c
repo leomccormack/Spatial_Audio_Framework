@@ -34,11 +34,15 @@
 
 void ims_shoebox_echogramCreate
 (
-    void** phEcho
+    void** phEcho,
+    int include_rt_vars
 )
 {
     *phEcho = malloc1d(sizeof(echogram_data));
     echogram_data *ec = (echogram_data*)(*phEcho);
+    int i;
+
+    assert(include_rt_vars==0 || include_rt_vars==1);
 
     /* Echogram data */
     ec->numImageSources = 0;
@@ -49,12 +53,16 @@ void ims_shoebox_echogramCreate
     ec->coords = NULL;
     ec->sortedIdx = NULL;
 
-    /* Helper variables */
-    ec->time_fs = NULL;
+    /* Optional helper variables */
+    ec->include_rt_vars = include_rt_vars;
+    ec->tmp = NULL;
     ec->rIdx = NULL;
+    for(i=0; i<IMS_LAGRANGE_ORDER; i++)
+        ec->rIdx_frac[i] = NULL;
+    ec->h_frac = NULL;
     ec->cb_vals = NULL;
     ec->contrib = NULL;
-    ec->ones_dummy = NULL;
+    ec->ones_dummy = NULL; 
 }
 
 void ims_shoebox_echogramResize
@@ -68,7 +76,7 @@ void ims_shoebox_echogramResize
     int i;
 
     if(ec->nChannels != nChannels || ec->numImageSources != numImageSources){
-        /* Echogram data */
+        /* Resize echogram data */
         ec->nChannels = nChannels;
         ec->numImageSources = numImageSources;
         ec->value = (float**)realloc2d((void**)ec->value, nChannels, numImageSources, sizeof(float));
@@ -77,15 +85,51 @@ void ims_shoebox_echogramResize
         ec->coords = realloc1d(ec->coords, numImageSources * sizeof(ims_pos_xyz));
         ec->sortedIdx = realloc1d(ec->sortedIdx, numImageSources*sizeof(int));
 
-        /* Helper variables for run-time speed-ups */
-        ec->time_fs = realloc1d(ec->time_fs, numImageSources*sizeof(float));
-        ec->rIdx = realloc1d(ec->rIdx, numImageSources*sizeof(int));
-        ec->cb_vals = (float**)realloc2d((void**)ec->cb_vals, nChannels, numImageSources, sizeof(float));
-        ec->contrib = (float**)realloc2d((void**)ec->contrib, nChannels, numImageSources, sizeof(float));
-        ec->ones_dummy = realloc1d(ec->ones_dummy, numImageSources*sizeof(float));
-        for(i=0; i<numImageSources; i++)
-            ec->ones_dummy[i] = 1.0f;
+        /* Resize the optional helper variables (used for run-time speed-ups) */
+        if(ec->include_rt_vars){
+            ec->tmp = realloc1d(ec->tmp, numImageSources*sizeof(float));
+            ec->rIdx = realloc1d(ec->rIdx, numImageSources*sizeof(int));
+            for(i=0; i<IMS_LAGRANGE_ORDER; i++)
+                ec->rIdx_frac[i] = realloc1d(ec->rIdx_frac[i], numImageSources*sizeof(int));
+            ec->h_frac = (float**)realloc2d((void**)ec->h_frac, IMS_LAGRANGE_ORDER+1, numImageSources, sizeof(float));
+            ec->cb_vals = (float**)realloc2d((void**)ec->cb_vals, nChannels, numImageSources, sizeof(float));
+            ec->contrib = (float**)realloc2d((void**)ec->contrib, nChannels, numImageSources, sizeof(float));
+            ec->ones_dummy = realloc1d(ec->ones_dummy, numImageSources*sizeof(float));
+            for(i=0; i<numImageSources; i++)
+                ec->ones_dummy[i] = 1.0f; 
+        }
     }
+}
+
+void ims_shoebox_echogramCopy
+(
+    void* hEchoX,
+    void* hEchoY
+)
+{
+    echogram_data *ecX = (echogram_data*)(hEchoX);
+    echogram_data *ecY = (echogram_data*)(hEchoY);
+    int nChannels, numImageSources;
+
+    assert(hEchoX!=NULL && hEchoY!=NULL);
+    if(hEchoX==hEchoY)
+        return; /* no copying required... */
+
+    if(ecX->nChannels==0 || ecX->numImageSources==0)
+        return;
+
+    /* Resize container 'Y' to be the same as container 'X' (if needed) */
+    nChannels = ecX->nChannels;
+    numImageSources = ecX->numImageSources;
+    if(ecY->nChannels != nChannels || ecY->numImageSources != numImageSources)
+        ims_shoebox_echogramResize(hEchoY, numImageSources, nChannels);
+
+    /* Copy echogram data from X to Y */
+    cblas_scopy(nChannels*numImageSources, FLATTEN2D(ecX->value), 1, FLATTEN2D(ecY->value), 1);
+    cblas_scopy(numImageSources, ecX->time, 1, ecY->time, 1);
+    memcpy(FLATTEN2D(ecY->order), FLATTEN2D(ecX->order), numImageSources*3*sizeof(int));
+    memcpy(ecY->coords, ecX->coords, numImageSources*sizeof(ims_pos_xyz));
+    memcpy(ecY->sortedIdx, ecX->sortedIdx, numImageSources*sizeof(int));
 }
 
 void ims_shoebox_echogramDestroy
@@ -94,21 +138,27 @@ void ims_shoebox_echogramDestroy
 )
 {
     echogram_data *ec = (echogram_data*)(*phEcho);
+    int i;
 
     if(ec!=NULL){
-        /* Echogram data */
+        /* Free echogram data */
         free(ec->value);
         free(ec->time);
         free(ec->order);
         free(ec->coords);
         free(ec->sortedIdx);
 
-        /* Helper variables */
-		free(ec->time_fs);
-		free(ec->rIdx);
-		free(ec->cb_vals);
-		free(ec->contrib);
-        free(ec->ones_dummy);
+        /* Free the optional helper variables */
+        if(ec->include_rt_vars){
+            free(ec->tmp);
+            free(ec->rIdx);
+            for(i=0; i<IMS_LAGRANGE_ORDER; i++)
+                free(ec->rIdx_frac[i]);
+            free(ec->h_frac);
+            free(ec->cb_vals);
+            free(ec->contrib);
+            free(ec->ones_dummy);
+        }
 
         free(ec);
         ec=NULL;
@@ -144,13 +194,13 @@ void ims_shoebox_coreWorkspaceCreate
     wrk->s_x = wrk->s_y   = wrk->s_z = wrk->s_d = NULL;
     wrk->s_t = wrk->s_att = NULL;
 
-    /* Echograms */
+    /* Echogram containers */
     wrk->refreshEchogramFLAG = 1;
-    ims_shoebox_echogramCreate( &(wrk->hEchogram) );
-    ims_shoebox_echogramCreate( &(wrk->hEchogram_rec) );
+    ims_shoebox_echogramCreate(&(wrk->hEchogram), 0);
+    ims_shoebox_echogramCreate(&(wrk->hEchogram_rec), 0);
     wrk->hEchogram_abs = malloc1d(nBands*sizeof(voidPtr));
-    for(band=0; band< nBands; band++)
-        ims_shoebox_echogramCreate( &(wrk->hEchogram_abs[band]) );
+    for(band=0; band<nBands; band++)
+        ims_shoebox_echogramCreate(&(wrk->hEchogram_abs[band]), 1);
 
     /* Room impulse responses */
     wrk->refreshRIRFLAG = 1;
@@ -186,7 +236,7 @@ void ims_shoebox_coreWorkspaceDestroy
         ims_shoebox_echogramDestroy( &(wrk->hEchogram) );
         ims_shoebox_echogramDestroy( &(wrk->hEchogram_rec) );
         for(band=0; band< wrk->nBands; band++)
-            ims_shoebox_echogramDestroy( &(wrk->hEchogram_abs[band]) );
+            ims_shoebox_echogramDestroy( &(wrk->hEchogram_abs[band]) ); 
         free(wrk->hEchogram_abs);
 
         /* free rirs */
@@ -275,7 +325,9 @@ void ims_shoebox_coreInit
         (wrk->src.x != src_orig.x) || (wrk->src.y != src_orig.y) || (wrk->src.z != src_orig.z) ||
         (wrk->room[0] != room[0]) || (wrk->room[1] != room[1]) || (wrk->room[2] != room[2]))
     {
-        memcpy(wrk->room, room, 3*sizeof(int));
+        wrk->room[0] = room[0];
+        wrk->room[1] = room[1];
+        wrk->room[2] = room[2];
         memcpy(&(wrk->rec), &rec_orig, sizeof(ims_pos_xyz));
         memcpy(&(wrk->src), &src_orig, sizeof(ims_pos_xyz));
 
@@ -348,11 +400,14 @@ void ims_shoebox_coreRecModuleSH
     /* Copy 'time', 'coord', 'order', except in accending order w.r.t propogation time  */
     for(i=0; i<echogram_rec->numImageSources; i++){
         echogram_rec->time[i] = echogram->time[echogram->sortedIdx[i]];
-        for(j=0; j<3; j++){
-            echogram_rec->order[i][j] = echogram->order[echogram->sortedIdx[i]][j];
-            echogram_rec->coords[i].v[j] = echogram->coords[echogram->sortedIdx[i]].v[j];
-        }
-        echogram_rec->sortedIdx[i] = i;
+        echogram_rec->order[i][0] = echogram->order[echogram->sortedIdx[i]][0];
+        echogram_rec->order[i][1] = echogram->order[echogram->sortedIdx[i]][1];
+        echogram_rec->order[i][2] = echogram->order[echogram->sortedIdx[i]][2];
+        echogram_rec->coords[i].v[0] = echogram->coords[echogram->sortedIdx[i]].v[0];
+        echogram_rec->coords[i].v[1] = echogram->coords[echogram->sortedIdx[i]].v[1];
+        echogram_rec->coords[i].v[2] = echogram->coords[echogram->sortedIdx[i]].v[2];
+
+        echogram_rec->sortedIdx[i] = i; /* Should already sorted in ims_shoebox_coreInit() */
     }
 
     /* Copy 'value' (the core omni-pressure), except also in accending order w.r.t propogation time */
@@ -384,7 +439,6 @@ void ims_shoebox_coreAbsorptionModule
 )
 {
     ims_core_workspace *wrk = (ims_core_workspace*)(hWork);
-    echogram_data *echogram_rec = (echogram_data*)(wrk->hEchogram_rec);
     echogram_data *echogram_abs;
     int i,band,ch;
     float r_x[2], r_y[2], r_z[2];
@@ -393,15 +447,10 @@ void ims_shoebox_coreAbsorptionModule
     for(band=0; band < wrk->nBands; band++){
         echogram_abs = (echogram_data*)wrk->hEchogram_abs[band];
 
-        /* Resize container (only done if needed) */
-        ims_shoebox_echogramResize(wrk->hEchogram_abs[band], echogram_rec->numImageSources, echogram_rec->nChannels);
+        /* Copy "receiver" echogram data into "absorption" echogram container */
+        ims_shoebox_echogramCopy(wrk->hEchogram_rec, wrk->hEchogram_abs[band]);
 
-        /* Copy data */
-        memcpy(FLATTEN2D(echogram_abs->value), FLATTEN2D(echogram_rec->value), (echogram_abs->nChannels)*(echogram_abs->numImageSources)*sizeof(float));
-        memcpy(echogram_abs->time, echogram_rec->time, (echogram_abs->numImageSources)*sizeof(float));
-        memcpy(FLATTEN2D(echogram_abs->order), FLATTEN2D(echogram_rec->order), (echogram_abs->numImageSources)*3*sizeof(int));
-        memcpy(echogram_abs->coords, echogram_rec->coords, (echogram_abs->numImageSources)*sizeof(ims_pos_xyz));
-        memcpy(echogram_abs->sortedIdx, echogram_rec->sortedIdx, (echogram_abs->numImageSources)*sizeof(int));
+        /* Then apply wall absorption for this band... */
 
         /* Reflection coefficients given the absorption coefficients for x, y, z
          * walls per frequency */
@@ -439,7 +488,7 @@ void ims_shoebox_coreAbsorptionModule
             else /* ISODD AND NEGATIVE */
                 abs_z = powf(r_z[0], floorf((float)abs(echogram_abs->order[i][2])/2.0f)) * powf(r_z[1], ceilf((float)abs(echogram_abs->order[i][2])/2.0f));
 
-            /* Apply Absorption */
+            /* Apply total absorption */
             s_abs_tot = abs_x * abs_y * abs_z; 
             for(ch=0; ch<echogram_abs->nChannels; ch++)
                 echogram_abs->value[ch][i] *= s_abs_tot;
