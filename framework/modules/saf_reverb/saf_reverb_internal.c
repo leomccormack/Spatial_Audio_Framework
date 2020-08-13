@@ -285,9 +285,9 @@ void ims_shoebox_coreInit
     {
         wrk->d_max = d_max;
         memcpy(wrk->room, room, 3*sizeof(float));
-        wrk->Nx = (int)(d_max/(float)room[0] + 1.0f); /* ceil */
-        wrk->Ny = (int)(d_max/(float)room[1] + 1.0f); /* ceil */
-        wrk->Nz = (int)(d_max/(float)room[2] + 1.0f); /* ceil */
+        wrk->Nx = (int)(d_max/room[0] + 1.0f); /* ceil */
+        wrk->Ny = (int)(d_max/room[1] + 1.0f); /* ceil */
+        wrk->Nz = (int)(d_max/room[2] + 1.0f); /* ceil */
         wrk->lengthVec = (2*(wrk->Nx)+1) * (2*(wrk->Ny)+1) * (2*(wrk->Nz)+1);
 
         /* i,j,k indices for calculation in x,y,z respectively */
@@ -336,9 +336,9 @@ void ims_shoebox_coreInit
 
         /* image source coordinates with respect to receiver, and distance */
         for(imsrc = 0; imsrc<wrk->lengthVec; imsrc++){
-            wrk->s_x[imsrc] = wrk->II[imsrc]*(float)room[0] + powf(-1.0f, wrk->II[imsrc])*src_orig.x - rec_orig.x;
-            wrk->s_y[imsrc] = wrk->JJ[imsrc]*(float)room[1] + powf(-1.0f, wrk->JJ[imsrc])*src_orig.y - rec_orig.y;
-            wrk->s_z[imsrc] = wrk->KK[imsrc]*(float)room[2] + powf(-1.0f, wrk->KK[imsrc])*src_orig.z - rec_orig.z;
+            wrk->s_x[imsrc] = wrk->II[imsrc]*room[0] + powf(-1.0f, wrk->II[imsrc])*src_orig.x - rec_orig.x;
+            wrk->s_y[imsrc] = wrk->JJ[imsrc]*room[1] + powf(-1.0f, wrk->JJ[imsrc])*src_orig.y - rec_orig.y;
+            wrk->s_z[imsrc] = wrk->KK[imsrc]*room[2] + powf(-1.0f, wrk->KK[imsrc])*src_orig.z - rec_orig.z;
             wrk->s_d[imsrc] = sqrtf(powf(wrk->s_x[imsrc], 2.0f) + powf(wrk->s_y[imsrc], 2.0f) + powf(wrk->s_z[imsrc], 2.0f));
         }
 
@@ -453,7 +453,7 @@ void ims_shoebox_coreAbsorptionModule
         /* Copy "receiver" echogram data into "absorption" echogram container */
         ims_shoebox_echogramCopy(wrk->hEchogram_rec, wrk->hEchogram_abs[band]);
 
-        /* Then apply wall absorption for this band... */
+        /* Then apply the wall absorption onto it, for this band... */
 
         /* Reflection coefficients given the absorption coefficients for x, y, z
          * walls per frequency */

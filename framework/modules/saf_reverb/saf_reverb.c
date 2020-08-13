@@ -287,7 +287,7 @@ void ims_shoebox_applyEchogramTD
     for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
         memset(sc->recs[rec_idx].sigs[ch], 0, nSamples * sizeof(float)); /* (since. not guaranteed to be contiguous) */
  
-    /* Process all active sources (for this specific receiver) directly in the
+    /* Process all active sources for this specific receiver, directly in the
      * time-domain */
     for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
         if( (sc->srcs[src_idx].ID!=-1) && (sc->recs[rec_idx].ID!=-1) ){
@@ -302,18 +302,20 @@ void ims_shoebox_applyEchogramTD
 
 #if 1 /* NEW_CODE */
             /* Loop over samples */
-            for(n=0; n<nSamples; n++){
+            for(n=0; n<nSamples; n++){ 
+
                 /* Determine write index */
                 wIdx_n = sc->wIdx & IMS_CIRC_BUFFER_LENGTH_MASK;
 
                 /* Since the time vector is the same across bands, it makes sense to determine the read-indices only once... */
                 echogram_abs_0 = (echogram_data*)wrk->hEchogram_abs[0];
+                assert(echogram_abs_0->numImageSources>0);
 
                 /* Convert time from seconds to samples */
                 memset(echogram_abs_0->tmp1, 0, echogram_abs_0->numImageSources*sizeof(float));
                 cblas_saxpy(echogram_abs_0->numImageSources, (sc->fs), echogram_abs_0->time, 1, echogram_abs_0->tmp1, 1);
 
-                /* Determine read-indices */
+                /* Determine read-indices and (optionally) also the interpolation weights */
                 if(fractionalDelaysFLAG){
                     /* Loop over all image sources, and determine the circular buffer read indices */
                     for(im=0; im <echogram_abs_0->numImageSources; im++){
@@ -322,16 +324,14 @@ void ims_shoebox_applyEchogramTD
                         rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx          /* read index for this image source */
                                + (IMS_LAGRANGE_ORDER/2);                               /* in order to correctly centre the filter */
                         echogram_abs_0->rIdx[im] = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK; /* wrap-around if needed */
-
                     }
 
                     /* Find fractional parts */
-                    //echogram_abs_0->tmp1[im] = fmodf(echogram_abs_0->tmp1[im], 1.0f);
                     utility_svmod(echogram_abs_0->tmp1, echogram_abs_0->ones_dummy, echogram_abs_0->numImageSources, echogram_abs_0->tmp2);
 
                     /* Find read-indices for interpolator */
                     for(im=0; im <echogram_abs_0->numImageSources; im++){
-                        /* To correctly centre the filter... */
+                        /* Centre the filter */
                         echogram_abs_0->tmp2[im] += (float)(IMS_LAGRANGE_ORDER/2);
 
                         /* Read-indices for lagrange interpolation */
@@ -416,12 +416,12 @@ void ims_shoebox_applyEchogramTD
                     echogram_abs = (echogram_data*)wrk->hEchogram_abs[band];
 
                     /* Convert time from seconds to samples */
-                    memset(echogram_abs->tmp, 0, echogram_abs->numImageSources*sizeof(float));
-                    cblas_saxpy(echogram_abs->numImageSources, (sc->fs), echogram_abs->time, 1, echogram_abs->tmp, 1);
+                    memset(echogram_abs->tmp1, 0, echogram_abs->numImageSources*sizeof(float));
+                    cblas_saxpy(echogram_abs->numImageSources, (sc->fs), echogram_abs->time, 1, echogram_abs->tmp1, 1);
 
                     /* Loop over all image sources, and determine the circular buffer read indices */
                     for(im=0; im <echogram_abs->numImageSources; im++){
-                        time_samples = (int)(echogram_abs->tmp[im] + 0.5f);      /* Round to nearest sample */
+                        time_samples = (int)(echogram_abs->tmp1[im] + 0.5f);      /* Round to nearest sample */
                         rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx;       /* read index for this image source */
                         echogram_abs->rIdx[im] = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK; /* wrap-around if needed */
                     }

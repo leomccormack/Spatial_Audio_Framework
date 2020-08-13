@@ -52,7 +52,7 @@ extern "C" {
 /** IIR filter order (1st or 3rd) */
 #define IMS_IIR_FILTERBANK_ORDER ( 3 )
 /** Circular buffer length */
-#define IMS_CIRC_BUFFER_LENGTH ( 2*8192U )
+#define IMS_CIRC_BUFFER_LENGTH ( 4*8192U )
 /** Circular buffer length, minus 1 */
 #define IMS_CIRC_BUFFER_LENGTH_MASK ( IMS_CIRC_BUFFER_LENGTH - 1U )
 /** Maximum number of samples that ims should expect to process at a time */
