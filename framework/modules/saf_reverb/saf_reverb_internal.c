@@ -186,7 +186,7 @@ void ims_shoebox_coreWorkspaceCreate
     wrk->numImageSources = 0;
     memset(wrk->room, 0, 3*sizeof(int));
     for(i=0; i<3; i++){
-        wrk->src.v[i] = -1; /* outside the room (forces reinit) */
+        wrk->src.v[i] = -1;
         wrk->rec.v[i] = -1;
     }
     wrk->nBands = nBands;
@@ -202,8 +202,11 @@ void ims_shoebox_coreWorkspaceCreate
     ims_shoebox_echogramCreate(&(wrk->hEchogram), 0);
     ims_shoebox_echogramCreate(&(wrk->hEchogram_rec), 0);
     wrk->hEchogram_abs = malloc1d(nBands*sizeof(voidPtr));
-    for(band=0; band<nBands; band++)
+    wrk->hPrevEchogram_abs = malloc1d(nBands*sizeof(voidPtr));
+    for(band=0; band<nBands; band++){
         ims_shoebox_echogramCreate(&(wrk->hEchogram_abs[band]), 1);
+        ims_shoebox_echogramCreate(&(wrk->hPrevEchogram_abs[band]), 1);
+    }
 
     /* Room impulse responses */
     wrk->refreshRIRFLAG = 1;
@@ -238,9 +241,12 @@ void ims_shoebox_coreWorkspaceDestroy
         /* Destroy echogram containers */
         ims_shoebox_echogramDestroy( &(wrk->hEchogram) );
         ims_shoebox_echogramDestroy( &(wrk->hEchogram_rec) );
-        for(band=0; band< wrk->nBands; band++)
-            ims_shoebox_echogramDestroy( &(wrk->hEchogram_abs[band]) ); 
+        for(band=0; band< wrk->nBands; band++){
+            ims_shoebox_echogramDestroy( &(wrk->hEchogram_abs[band]) );
+            ims_shoebox_echogramDestroy( &(wrk->hPrevEchogram_abs[band]) );
+        }
         free(wrk->hEchogram_abs);
+        free(wrk->hPrevEchogram_abs);
 
         /* free rirs */
         for(band=0; band < wrk->nBands; band++)
@@ -400,7 +406,7 @@ void ims_shoebox_coreRecModuleSH
     /* Resize container (only done if needed) */
     ims_shoebox_echogramResize(wrk->hEchogram_rec, echogram->numImageSources, nSH);
 
-    /* Copy 'time', 'coord', 'order', except in accending order w.r.t propogation time  */
+    /* Copy 'time', 'coord', 'order', except in ascending order w.r.t propogation time  */
     for(i=0; i<echogram_rec->numImageSources; i++){
         echogram_rec->time[i] = echogram->time[echogram->sortedIdx[i]];
         echogram_rec->order[i][0] = echogram->order[echogram->sortedIdx[i]][0];
@@ -413,12 +419,12 @@ void ims_shoebox_coreRecModuleSH
         echogram_rec->sortedIdx[i] = i; /* Should already sorted in ims_shoebox_coreInit() */
     }
 
-    /* Copy 'value' (the core omni-pressure), except also in accending order w.r.t propogation time */
+    /* Copy 'value' (the core omni-pressure), except also in ascending order w.r.t propogation time */
     if(sh_order==0){
         for(i=0; i<echogram_rec->numImageSources; i++)
             echogram_rec->value[0][i] = echogram->value[0][echogram->sortedIdx[i]];
     }
-    /* Impose spherical harmonic directivities onto 'value', and store in accending order w.r.t propogation time */
+    /* Impose spherical harmonic directivities onto 'value', and store in ascending order w.r.t propogation time */
     else{
         sh_gains = malloc1d(nSH*sizeof(float));
         for(i=0; i<echogram_rec->numImageSources; i++){

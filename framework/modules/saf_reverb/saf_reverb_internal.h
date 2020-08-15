@@ -155,10 +155,16 @@ typedef struct _ims_core_workspace
     float* s_x, *s_y, *s_z, *s_d, *s_t, *s_att;
 
     /* Echograms */
-    int refreshEchogramFLAG;
-    void* hEchogram;
-    void* hEchogram_rec;
-    voidPtr* hEchogram_abs; 
+    int refreshEchogramFLAG;    /**< 1: Refresh needed, 0: refresh not needed */
+    void* hEchogram;            /**< Base/Pressure echogram (single-channel) */
+    void* hEchogram_rec;        /**< Echogram with the receiver directivities
+                                 *   applied (single/multi-channel) */
+    voidPtr* hEchogram_abs;     /**< Echograms with the receiver directivities
+                                 *   and also wall absorption applied (single
+                                 *   /multi-channel); one echogram per band */ 
+    voidPtr* hPrevEchogram_abs; /**< Previous echograms (hEchogram_abs), one
+                                 *   per band, which can be used for cross-
+                                 *   fading. */
 
     /* Room impulse responses (only used/allocated when a render function is
      * called) */
@@ -199,8 +205,8 @@ typedef struct _ims_scene_data
 
     /* Circular buffers (only used/allocated when applyEchogramTD() function is
      * called for the first time) */
-    unsigned int wIdx;        /**< current write index for circular buffers */
-    float*** circ_buffer;     /**< nChannels x nBands x #IMS_CIRC_BUFFER_LENGTH*/
+    unsigned int wIdx[2];     /**< current write indices for circular buffers */
+    float*** circ_buffer[2];  /**< [2] x (nChannels x nBands x #IMS_CIRC_BUFFER_LENGTH) */
 
     /* IIR filterbank (only used/allocated when applyEchogramTD() function is
      * called for the first time) */

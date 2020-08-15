@@ -106,9 +106,11 @@ void ims_shoebox_create
         }
     }
 
-    /* Circular buffer */
-    sc->wIdx = 0;
-    sc->circ_buffer = NULL;
+    /* Circular buffers */
+    sc->wIdx[0] = 0;
+    sc->wIdx[1] = 0;
+    sc->circ_buffer[0] = NULL;
+    sc->circ_buffer[1] = NULL;
 
     /* IIR Filterbank per source */
     sc->hFaFbank = malloc1d(IMS_MAX_NUM_SOURCES*sizeof(voidPtr));
@@ -148,7 +150,8 @@ void ims_shoebox_destroy
             for(j=0; j<IMS_MAX_NUM_SOURCES; j++)
                 free(sc->rirs[i][j].data);
         free(sc->rirs);
-        free(sc->circ_buffer);
+        free(sc->circ_buffer[0]);
+        free(sc->circ_buffer[1]);
         for(j=0; j<IMS_MAX_NUM_SOURCES; j++){
             faf_IIRFilterbank_destroy(&(sc->hFaFbank[j]));
             free(sc->src_sigs_bands[j]);
@@ -175,7 +178,7 @@ void ims_shoebox_computeEchograms
     ims_scene_data *sc = (ims_scene_data*)(hIms);
     ims_core_workspace* workspace;
     ims_pos_xyz src2, rec2;
-    int src_idx, rec_idx;
+    int src_idx, rec_idx, band;
 
     /* Compute echograms for active source/receiver combinations */
     for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++){
@@ -192,6 +195,10 @@ void ims_shoebox_computeEchograms
 
                 /* Workspace handle for this source/receiver combination */
                 workspace = sc->hCoreWrkSpc[rec_idx][src_idx];
+
+                /* Copy previous echograms */
+                for(band=0; band<workspace->nBands; band++)
+                    ims_shoebox_echogramCopy(workspace->hEchogram_abs[band], workspace->hPrevEchogram_abs[band]);
 
                 /* Only update if it is required */
                 if(workspace->refreshEchogramFLAG){
@@ -266,14 +273,18 @@ void ims_shoebox_applyEchogramTD
     ims_scene_data *sc = (ims_scene_data*)(hIms);
     ims_core_workspace* wrk;
     echogram_data *echogram_abs, *echogram_abs_0;
-    int i, n, im, band, ch, rec_idx, src_idx, time_samples, wIdx_n;
+    int k, i, n, im, band, ch, rec_idx, src_idx, time_samples, wIdx_n;
     unsigned int rIdx;
+
+    int applyCrossFadeFLAG = 1; // TODO: add to struct. No need to do cross-fading all the time... only need to when source/receiver is moving.
 
     assert(nSamples <= IMS_MAX_NSAMPLES_PER_FRAME);
 
     /* Allocate circular buffers (if this is the first time this function is being called) */
-    if(sc->circ_buffer == NULL)
-        sc->circ_buffer = (float***)calloc3d(IMS_MAX_NUM_SOURCES, sc->nBands, IMS_CIRC_BUFFER_LENGTH, sizeof(float));
+    if(sc->circ_buffer[0] == NULL)
+        sc->circ_buffer[0] = (float***)calloc3d(IMS_MAX_NUM_SOURCES, sc->nBands, IMS_CIRC_BUFFER_LENGTH, sizeof(float));
+    if(sc->circ_buffer[1] == NULL)
+        sc->circ_buffer[1] = (float***)calloc3d(IMS_MAX_NUM_SOURCES, sc->nBands, IMS_CIRC_BUFFER_LENGTH, sizeof(float));
 
     /* Also allocate signal buffers and filterbank handles (if this is the first time this function is being called) */
     for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
@@ -314,8 +325,7 @@ void ims_shoebox_applyEchogramTD
     for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++) /* (for loop, since this not guaranteed to be contiguous) */
         memset(sc->recs[rec_idx].sigs[ch], 0, nSamples * sizeof(float));
  
-    /* Process all active sources for this specific receiver, directly in the
-     * time-domain */
+    /* Process all active sources for this specific receiver, directly in the time-domain */
     for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
         if( (sc->srcs[src_idx].ID!=-1) && (sc->recs[rec_idx].ID!=-1) ){
             /* Broad-band operation */
@@ -327,109 +337,161 @@ void ims_shoebox_applyEchogramTD
             /* Workspace handle for this source/receiver combination */
             wrk = sc->hCoreWrkSpc[rec_idx][src_idx];
 
-            /* Loop over samples */
-            for(n=0; n<nSamples; n++){ 
+            /* k=0 is for the current echogram,
+             * k=1 (when applyCrossFadeFLAG is enabled) is for the previous echogram */
+            for(k=applyCrossFadeFLAG; k>=0; k--){
 
-                /* Determine write index */
-                wIdx_n = sc->wIdx & IMS_CIRC_BUFFER_LENGTH_MASK;
+                /* Loop over samples */
+                for(n=0; n<nSamples; n++){
 
-                /* Since the time vector is the same across bands, it makes sense to determine the read-indices only once... */
-                echogram_abs_0 = (echogram_data*)wrk->hEchogram_abs[0];
-                assert(echogram_abs_0->numImageSources>0);
+                    /* Determine write index */
+                    wIdx_n = sc->wIdx[k] & IMS_CIRC_BUFFER_LENGTH_MASK;
 
-                /* Convert time from seconds to samples */
-                memset(echogram_abs_0->tmp1, 0, echogram_abs_0->numImageSources*sizeof(float));
-                cblas_saxpy(echogram_abs_0->numImageSources, (sc->fs), echogram_abs_0->time, 1, echogram_abs_0->tmp1, 1);
+                    /* Since the time vector is the same across bands, it makes sense to determine the read-indices only once... */
+                    if(k==1)
+                        echogram_abs_0 = (echogram_data*)wrk->hPrevEchogram_abs[0];
+                    else
+                        echogram_abs_0 = (echogram_data*)wrk->hEchogram_abs[0];
 
-                /* Determine read-indices and (optionally) also the interpolation weights */
-                if(fractionalDelaysFLAG){
-                    /* Loop over all image sources, and determine the circular buffer read indices */
-                    for(im=0; im <echogram_abs_0->numImageSources; im++){
-                        /* Base read-index */
-                        time_samples = (int)(echogram_abs_0->tmp1[im]);                /* FLOOR */
-                        rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx          /* read index for this image source */
-                               + (IMS_LAGRANGE_ORDER/2);                               /* in order to correctly centre the filter */
-                        echogram_abs_0->rIdx[im] = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK; /* wrap-around if needed */
+                    /* Handle the special case of an empty echogram */
+                    if(echogram_abs_0->numImageSources==0){
+                        /* Just set output to 0... */
+                        if(k==1)
+                            for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
+                                sc->rec_sig_tmp[rec_idx][ch][n] = 0.0f;
+                        else
+                            for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
+                                sc->recs[rec_idx].sigs[ch][n] = 0.0f;
+
+                        /* Store current sample (per band) into the circular buffer */
+                        for(band=0; band < sc->nBands; band++)
+                            sc->circ_buffer[k][src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
+
+                        /* Increment write index */
+                        sc->wIdx[k]++;
+                        continue; /* to next sample... */
                     }
 
-                    /* Find fractional parts */
-                    utility_svmod(echogram_abs_0->tmp1, echogram_abs_0->ones_dummy, echogram_abs_0->numImageSources, echogram_abs_0->tmp2);
+                    /* Convert time from seconds to number of samples */
+                    memset(echogram_abs_0->tmp1, 0, echogram_abs_0->numImageSources*sizeof(float));
+                    cblas_saxpy(echogram_abs_0->numImageSources, (sc->fs), echogram_abs_0->time, 1, echogram_abs_0->tmp1, 1);
 
-                    /* Find read-indices for interpolator */
-                    for(im=0; im <echogram_abs_0->numImageSources; im++){
-                        /* Centre the filter */
-                        echogram_abs_0->tmp2[im] += (float)(IMS_LAGRANGE_ORDER/2);
-
-                        /* Read-indices for lagrange interpolation */
-                        for(i=1; i<IMS_LAGRANGE_ORDER; i++){
-                            echogram_abs_0->rIdx_frac[i-1][im] = echogram_abs_0->rIdx[im] - i;
-                            /* Wrap around if needed */
-                            if(echogram_abs_0->rIdx_frac[i-1][im]<0)
-                                echogram_abs_0->rIdx_frac[i-1][im] += IMS_CIRC_BUFFER_LENGTH;
-                        }
-                    }
-
-                    /* Compute interpolation weights */ // TODO: This line is around 50% CPU usage of the whole function, a look-up table would be faster...
-                    lagrangeWeights(IMS_LAGRANGE_ORDER, echogram_abs_0->tmp2, echogram_abs_0->numImageSources, FLATTEN2D(echogram_abs_0->h_frac));
-                }
-                else{
-                    /* Loop over all image sources, and determine the circular buffer read indices based on the nearest sample */
-                    for(im=0; im <echogram_abs_0->numImageSources; im++){
-                        time_samples = (int)(echogram_abs_0->tmp1[im] + 0.5f);         /* ROUND to nearest sample */
-                        rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx;         /* read index for this image source */
-                        echogram_abs_0->rIdx[im] = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK; /* wrap-around if needed */
-                    }
-                }
-
-                /* Loop over octave bands */
-                for(band=0; band < sc->nBands; band++){
-                    /* Echogram for this source/receiver at this band */
-                    echogram_abs = (echogram_data*)wrk->hEchogram_abs[band];
-                    assert(echogram_abs_0->numImageSources == echogram_abs->numImageSources);
-
-                    /* Pull values from the circular buffer corresponding to these read indices, and store this sparse vector as a "compressed" vector */
-                    utility_ssv2cv_inds(sc->circ_buffer[src_idx][band], echogram_abs_0->rIdx, echogram_abs->numImageSources, echogram_abs->cb_vals[0]);
-
-                    /* Apply interpolation if enabled */
+                    /* Determine read-indices and (optionally) also the interpolation weights */
                     if(fractionalDelaysFLAG){
-                        /* Apply the weights corresponding  */
-                        utility_svvmul(echogram_abs->cb_vals[0], echogram_abs_0->h_frac[0], echogram_abs->numImageSources, echogram_abs->tmp1);
-
-                        /* Step through the rest of the filter */
-                        for(i=1; i<IMS_LAGRANGE_ORDER; i++){
-                            /* Read-indices for the next tap in the filter */
-                            utility_ssv2cv_inds(sc->circ_buffer[src_idx][band], echogram_abs_0->rIdx_frac[i-1], echogram_abs->numImageSources, echogram_abs->cb_vals[0]);
-
-                            /* Apply weights */
-                            utility_svvmul(echogram_abs->cb_vals[0], echogram_abs_0->h_frac[i], echogram_abs->numImageSources, echogram_abs->cb_vals[0]);
-
-                            /* Sum */
-                            utility_svvadd(echogram_abs->tmp1, echogram_abs->cb_vals[0], echogram_abs->numImageSources, echogram_abs->tmp1);
+                        /* Loop over all image sources, and determine the circular buffer read indices */
+                        for(im=0; im <echogram_abs_0->numImageSources; im++){
+                            /* Base read-index */
+                            time_samples = (int)(echogram_abs_0->tmp1[im]);                /* FLOOR */
+                            rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx[k]       /* read index for this image source */
+                                   + (IMS_LAGRANGE_ORDER/2);                               /* in order to correctly centre the filter */
+                            echogram_abs_0->rIdx[im] = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK; /* wrap-around if needed */
                         }
 
-                        /* Copy result */
-                        cblas_scopy(echogram_abs->numImageSources, echogram_abs->tmp1, 1, echogram_abs->cb_vals[0], 1);
+                        /* Find fractional parts */
+                        utility_svmod(echogram_abs_0->tmp1, echogram_abs_0->ones_dummy, echogram_abs_0->numImageSources, echogram_abs_0->tmp2);
+
+                        /* Find read-indices for interpolator */
+                        for(im=0; im <echogram_abs_0->numImageSources; im++){
+                            /* Centre the filter */
+                            echogram_abs_0->tmp2[im] += (float)(IMS_LAGRANGE_ORDER/2);
+
+                            /* Read-indices for lagrange interpolation */
+                            for(i=1; i<IMS_LAGRANGE_ORDER; i++){
+                                echogram_abs_0->rIdx_frac[i-1][im] = echogram_abs_0->rIdx[im] - i;
+                                /* Wrap around if needed */
+                                if(echogram_abs_0->rIdx_frac[i-1][im]<0)
+                                    echogram_abs_0->rIdx_frac[i-1][im] += IMS_CIRC_BUFFER_LENGTH;
+                            }
+                        }
+
+                        /* Compute interpolation weights */ // TODO: This line is around 50% CPU usage of the whole function, a look-up table would be faster...
+                        lagrangeWeights(IMS_LAGRANGE_ORDER, echogram_abs_0->tmp2, echogram_abs_0->numImageSources, FLATTEN2D(echogram_abs_0->h_frac));
+                    }
+                    else{
+                        /* Loop over all image sources, and determine the circular buffer read indices based on the nearest sample */
+                        for(im=0; im <echogram_abs_0->numImageSources; im++){
+                            time_samples = (int)(echogram_abs_0->tmp1[im] + 0.5f);         /* ROUND to nearest sample */
+                            rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx[k];      /* read index for this image source */
+                            echogram_abs_0->rIdx[im] = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK; /* wrap-around if needed */
+                        }
                     }
 
-                    /* Replicate these circular buffer values for all output channels */
-                    for(ch=1; ch<sc->recs[rec_idx].nChannels; ch++)
-                        cblas_scopy(echogram_abs->numImageSources, echogram_abs->cb_vals[0], 1, echogram_abs->cb_vals[ch], 1);
+                    /* Loop over octave bands */
+                    for(band=0; band < sc->nBands; band++){
+                        /* Echogram for this source/receiver at this band */
+                        if(k==1)
+                            echogram_abs = (echogram_data*)wrk->hPrevEchogram_abs[band];
+                        else
+                            echogram_abs = (echogram_data*)wrk->hEchogram_abs[band];
+                        assert(echogram_abs_0->numImageSources == echogram_abs->numImageSources);
 
-                    /* Apply the echogram scalings to each image source - for all channels */
-                    utility_svvmul(FLATTEN2D(echogram_abs->value), FLATTEN2D(echogram_abs->cb_vals),
-                                   (sc->recs[rec_idx].nChannels)*echogram_abs->numImageSources, FLATTEN2D(echogram_abs->contrib));
+                        /* Pull values from the circular buffer corresponding to these read indices, and store this sparse vector as a "compressed" vector */
+                        utility_ssv2cv_inds(sc->circ_buffer[k][src_idx][band], echogram_abs_0->rIdx, echogram_abs->numImageSources, echogram_abs->cb_vals[0]);
 
-                    /* Sum all scaled image source values per channel */
-                    for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
-                        sc->recs[rec_idx].sigs[ch][n] = cblas_sdot(echogram_abs->numImageSources, echogram_abs->ones_dummy, 1, echogram_abs->contrib[ch], 1);
+                        /* Apply interpolation if enabled */
+                        if(fractionalDelaysFLAG){
+                            /* Apply the weights corresponding  */
+                            utility_svvmul(echogram_abs->cb_vals[0], echogram_abs_0->h_frac[0], echogram_abs->numImageSources, echogram_abs->tmp1);
 
-                    /* Store current sample into the circular buffer */
-                    sc->circ_buffer[src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
+                            /* Step through the rest of the filter */
+                            for(i=1; i<IMS_LAGRANGE_ORDER; i++){
+                                /* Read-indices for the next tap in the filter */
+                                utility_ssv2cv_inds(sc->circ_buffer[k][src_idx][band], echogram_abs_0->rIdx_frac[i-1], echogram_abs->numImageSources, echogram_abs->cb_vals[0]);
+
+                                /* Apply weights */
+                                utility_svvmul(echogram_abs->cb_vals[0], echogram_abs_0->h_frac[i], echogram_abs->numImageSources, echogram_abs->cb_vals[0]);
+
+                                /* Sum */
+                                utility_svvadd(echogram_abs->tmp1, echogram_abs->cb_vals[0], echogram_abs->numImageSources, echogram_abs->tmp1);
+                            }
+
+                            /* Copy result */
+                            cblas_scopy(echogram_abs->numImageSources, echogram_abs->tmp1, 1, echogram_abs->cb_vals[0], 1);
+                        }
+
+                        /* Replicate these circular buffer values for all output channels */
+                        for(ch=1; ch<sc->recs[rec_idx].nChannels; ch++)
+                            cblas_scopy(echogram_abs->numImageSources, echogram_abs->cb_vals[0], 1, echogram_abs->cb_vals[ch], 1);
+
+                        /* Apply the echogram scalings to each image source - for all channels */
+                        utility_svvmul(FLATTEN2D(echogram_abs->value), FLATTEN2D(echogram_abs->cb_vals),
+                                       (sc->recs[rec_idx].nChannels)*echogram_abs->numImageSources, FLATTEN2D(echogram_abs->contrib));
+
+                        /* EITHER: We are rendering the current frame based on the previous echogram... In which case, we store it in the tmp buffer */
+                        if(k==1){
+                            for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
+                                sc->rec_sig_tmp[rec_idx][ch][n] = cblas_sdot(echogram_abs->numImageSources, echogram_abs->ones_dummy,
+                                                                             1, echogram_abs->contrib[ch], 1);
+                        }
+                        /* OR: We are rendering the current frame based on the current echogram... In which case, we store it in the current rec buffer */
+                        else{
+                            /* Sum all scaled image source values per channel */
+                            for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
+                                sc->recs[rec_idx].sigs[ch][n] = cblas_sdot(echogram_abs->numImageSources, echogram_abs->ones_dummy,
+                                                                           1, echogram_abs->contrib[ch], 1);
+                        }
+
+                        /* Store current sample into the circular buffer */
+                        sc->circ_buffer[k][src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
+
+                    }
+
+                    /* Increment write index */
+                    sc->wIdx[k]++;
+                } /* Loop over samples */
+            } /* Loop over slots */
+
+            if(applyCrossFadeFLAG){
+                for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++){
+                    /* Apply linear interpolator to fade in with the new echogram and fade out with the previous echogram */
+                    utility_svvmul(sc->recs[rec_idx].sigs[ch], sc->interpolator_fIn, nSamples, sc->recs[rec_idx].sigs[ch]);
+                    utility_svvmul(sc->rec_sig_tmp[rec_idx][ch], sc->interpolator_fOut, nSamples, sc->rec_sig_tmp[rec_idx][ch]);
+
+                    /* Sum the result */
+                    utility_svvadd(sc->recs[rec_idx].sigs[ch], sc->rec_sig_tmp[rec_idx][ch], nSamples, sc->recs[rec_idx].sigs[ch]);
                 }
-
-                /* Increment write index */
-                sc->wIdx++;
             }
+
         }
     }
 }
