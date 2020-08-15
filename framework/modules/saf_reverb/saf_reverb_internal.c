@@ -63,7 +63,7 @@ void ims_shoebox_echogramCreate
     ec->h_frac = NULL;
     ec->cb_vals = NULL;
     ec->contrib = NULL;
-    ec->ones_dummy = NULL; 
+    ec->ones_dummy = NULL;
 }
 
 void ims_shoebox_echogramResize
@@ -98,7 +98,7 @@ void ims_shoebox_echogramResize
             ec->contrib = (float**)realloc2d((void**)ec->contrib, nChannels, numImageSources, sizeof(float));
             ec->ones_dummy = realloc1d(ec->ones_dummy, numImageSources*sizeof(float));
             for(i=0; i<numImageSources; i++)
-                ec->ones_dummy[i] = 1.0f; 
+                ec->ones_dummy[i] = 1.0f;
         }
     }
 }
@@ -239,15 +239,15 @@ void ims_shoebox_coreWorkspaceDestroy
         free(wrk->s_att);
 
         /* Destroy echogram containers */
-        ims_shoebox_echogramDestroy( &(wrk->hEchogram) );
-        ims_shoebox_echogramDestroy( &(wrk->hEchogram_rec) );
+        ims_shoebox_echogramDestroy(&(wrk->hEchogram));
+        ims_shoebox_echogramDestroy(&(wrk->hEchogram_rec));
         for(band=0; band< wrk->nBands; band++){
-            ims_shoebox_echogramDestroy( &(wrk->hEchogram_abs[band]) );
-            ims_shoebox_echogramDestroy( &(wrk->hPrevEchogram_abs[band]) );
+            ims_shoebox_echogramDestroy(&(wrk->hEchogram_abs[band]));
+            ims_shoebox_echogramDestroy(&(wrk->hPrevEchogram_abs[band]));
         }
         free(wrk->hEchogram_abs);
         free(wrk->hPrevEchogram_abs);
-
+ 
         /* free rirs */
         for(band=0; band < wrk->nBands; band++)
             free(wrk->rir_bands[band]);

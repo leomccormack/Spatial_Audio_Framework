@@ -46,19 +46,13 @@ extern "C" {
  * ims_shoebox_renderRIRs() function;
  */
 
-/**
- * Maximum number of sources supported by IMS Shoebox
- */
+/** Maximum number of sources supported by IMS Shoebox */
 #define IMS_MAX_NUM_SOURCES 100
 
-/**
- * Maximum number of receivers supported by IMS Shoebox
- */
+/** Maximum number of receivers supported by IMS Shoebox */
 #define IMS_MAX_NUM_RECEIVERS 10
 
-/**
- * Output format of the rendered room impulse responses (RIR)
- */
+/** Output format of the rendered room impulse responses (RIR) */
 typedef struct _ims_rir{
     float* data;
     int length, nChannels;

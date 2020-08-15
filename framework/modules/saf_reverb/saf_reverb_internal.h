@@ -73,25 +73,30 @@ typedef struct _ims_pos_xyz {
 } ims_pos_xyz;
 
 /** Supported receiver types */
-typedef enum _RECEIVER_TYPES{
+typedef enum _RECEIVER_TYPES {
     RECEIVER_SH   /**< Spherical harmonic receiver */
-    /* RECEIVER_ARRAY */ /**< Microphone array/HRIR measurement-based receiver */
-}RECEIVER_TYPES;
+    /* RECEIVER_ARRAY */ /**< Microphone array/HRIR measurements-based receiver */
+
+} RECEIVER_TYPES;
 
 /** Source object */
-typedef struct _ims_src_obj{
+typedef struct _ims_src_obj
+{
     float* sig;      /**< Source signal pointer */
     ims_pos_xyz pos; /**< Source position */
     int ID;          /**< Unique source ID */
+
 } ims_src_obj;
 
 /** Receiver object */
-typedef struct _ims_rec_obj{
+typedef struct _ims_rec_obj
+{
     float** sigs;        /**< Receiver signal pointers (one per channel) */ 
     RECEIVER_TYPES type; /**< Receiver type (see #_RECEIVER_TYPES enum) */
     int nChannels;       /**< Number of channels for receiver */
     ims_pos_xyz pos;     /**< Receiver position */
     int ID;              /**< Unique receiver ID */
+
 } ims_rec_obj;
 
 /** Echogram structure */
@@ -112,16 +117,15 @@ typedef struct _echogram_data
                               *   propagation time in ascending order;
                               *   numImageSources x 1 */
 
+    /* Optional helper variables for run-time speed-ups */
     int include_rt_vars;     /**< 0: the below vars are disabled, 1: enabled */
-
-    /* Optional helper variables for run-time speed-ups */ // TODO: move to its own helper struct...
     float* tmp1;             /**< 1st temporary vector; numImageSources x 1 */
     float* tmp2;             /**< 2nd temporary vector; numImageSources x 1 */
     int* rIdx;               /**< Current circular buffer read indices;
                               *   numImageSources x 1 */
     int* rIdx_frac[IMS_LAGRANGE_ORDER]; /**< Current circular buffer read
-                                         *   indices for fractional buffers;
-                                         *   IMS_LAGRANGE_ORDER x numImageSources */
+                              *   indices for fractional buffers;
+                              *   IMS_LAGRANGE_ORDER x numImageSources */
     float** h_frac;          /**< Current fractional delay coeffs;
                               *   (IMS_LAGRANGE_ORDER+1) x numImageSources x */
     float** cb_vals;         /**< Current circular buffer values (per channel &
@@ -156,12 +160,12 @@ typedef struct _ims_core_workspace
 
     /* Echograms */
     int refreshEchogramFLAG;    /**< 1: Refresh needed, 0: refresh not needed */
-    void* hEchogram;            /**< Base/Pressure echogram (single-channel) */
+    void* hEchogram;            /**< Pressure echogram (single-channel) */
     void* hEchogram_rec;        /**< Echogram with the receiver directivities
-                                 *   applied (single/multi-channel) */
+                                 *   applied (multi-channel) */
     voidPtr* hEchogram_abs;     /**< Echograms with the receiver directivities
-                                 *   and also wall absorption applied (single
-                                 *   /multi-channel); one echogram per band */ 
+                                 *   and also wall absorption applied (multi-
+                                 *   channel); one echogram per band */
     voidPtr* hPrevEchogram_abs; /**< Previous echograms (hEchogram_abs), one
                                  *   per band, which can be used for cross-
                                  *   fading. */
@@ -173,7 +177,7 @@ typedef struct _ims_core_workspace
     float rir_len_seconds;
     float*** rir_bands; /* nBands x nChannels x rir_len_samples */
  
-}ims_core_workspace;
+} ims_core_workspace;
 
 /**
  * Main structure for IMS. It comprises variables describing the room, and the
@@ -214,7 +218,7 @@ typedef struct _ims_scene_data
     float*** src_sigs_bands;  /**< nSources x nBands x nSamples */
 
     /* Temporary receiver frame used for cross-fading (only used/allocated when
-     * applyEchogramTD() function is alled for the first time) */
+     * applyEchogramTD() function is called for the first time) */
     float*** rec_sig_tmp;     /**< nReceivers x nChannels x nSamples */
     float* interpolator_fIn;  /**< framesize x 1 */
     float* interpolator_fOut; /**< framesize x 1 */
