@@ -82,7 +82,7 @@ typedef enum _RECEIVER_TYPES{
 typedef struct _ims_src_obj{
     float* sig;      /**< Source signal pointer */
     ims_pos_xyz pos; /**< Source position */
-    int ID;          /**< Unique Source ID */
+    int ID;          /**< Unique source ID */
 } ims_src_obj;
 
 /** Receiver object */
@@ -90,8 +90,8 @@ typedef struct _ims_rec_obj{
     float** sigs;        /**< Receiver signal pointers (one per channel) */ 
     RECEIVER_TYPES type; /**< Receiver type (see #_RECEIVER_TYPES enum) */
     int nChannels;       /**< Number of channels for receiver */
-    ims_pos_xyz pos;     /**< Source position */
-    int ID;              /**< Unique Source ID */
+    ims_pos_xyz pos;     /**< Receiver position */
+    int ID;              /**< Unique receiver ID */
 } ims_rec_obj;
 
 /** Echogram structure */
@@ -114,7 +114,7 @@ typedef struct _echogram_data
 
     int include_rt_vars;     /**< 0: the below vars are disabled, 1: enabled */
 
-    /* Optional helper variables for run-time speed-ups */
+    /* Optional helper variables for run-time speed-ups */ // TODO: move to its own helper struct...
     float* tmp1;             /**< 1st temporary vector; numImageSources x 1 */
     float* tmp2;             /**< 2nd temporary vector; numImageSources x 1 */
     int* rIdx;               /**< Current circular buffer read indices;
@@ -177,35 +177,42 @@ typedef struct _ims_core_workspace
 typedef struct _ims_scene_data
 {
     /* Locals */
-    float room_dims[3];      /**< Room dimensions, in meters */
-    float c_ms;              /**< Speed of sound, in ms^1 */
-    float fs;                /**< Sampling rate */
-    int nBands;              /**< Number of frequency bands */
-    float** abs_wall;        /**< Wall aborption coeffs per wall; nBands x 6 */
+    float room_dims[3];       /**< Room dimensions, in meters */
+    float c_ms;               /**< Speed of sound, in ms^1 */
+    float fs;                 /**< Sampling rate */
+    int nBands;               /**< Number of frequency bands */
+    float** abs_wall;         /**< Wall aborption coeffs per wall; nBands x 6 */
 
     /* Source and receiver positions */
     ims_src_obj srcs[IMS_MAX_NUM_SOURCES];   /**< Source positions */
     ims_rec_obj recs[IMS_MAX_NUM_RECEIVERS]; /**< Receiver positions */
-    long nSources;           /**< Current number of sources */
-    long nReceivers;         /**< Current number of receivers */
+    long nSources;            /**< Current number of sources */
+    long nReceivers;          /**< Current number of receivers */
 
     /* Internal */
-    voidPtr** hCoreWrkSpc;   /**< One per source/receiver combination */
-    float* band_centerfreqs; /**< Octave band CENTRE frequencies; nBands x 1 */
-    float* band_cutofffreqs; /**< Octave band CUTOFF frequencies;
-                              *   (nBands-1) x 1 */
-    float** H_filt;          /**< nBands x (#IMS_FIR_FILTERBANK_ORDER+1) */
-    ims_rir** rirs;          /**< One per source/receiver combination */
+    voidPtr** hCoreWrkSpc;    /**< One per source/receiver combination */
+    float* band_centerfreqs;  /**< Octave band CENTRE frequencies; nBands x 1 */
+    float* band_cutofffreqs;  /**< Octave band CUTOFF frequencies;
+                               *   (nBands-1) x 1 */
+    float** H_filt;           /**< nBands x (#IMS_FIR_FILTERBANK_ORDER+1) */
+    ims_rir** rirs;           /**< One per source/receiver combination */
 
     /* Circular buffers (only used/allocated when applyEchogramTD() function is
      * called for the first time) */
-    unsigned int wIdx;       /**< current write index for circular buffers */
-    float*** circ_buffer;    /**< nChannels x nBands x #IMS_CIRC_BUFFER_LENGTH*/
+    unsigned int wIdx;        /**< current write index for circular buffers */
+    float*** circ_buffer;     /**< nChannels x nBands x #IMS_CIRC_BUFFER_LENGTH*/
 
     /* IIR filterbank (only used/allocated when applyEchogramTD() function is
      * called for the first time) */
-    voidPtr* hFaFbank;       /**< One per source */
-    float*** src_sigs_bands; /**< nSources x nBands x nSamples */
+    voidPtr* hFaFbank;        /**< One per source */
+    float*** src_sigs_bands;  /**< nSources x nBands x nSamples */
+
+    /* Temporary receiver frame used for cross-fading (only used/allocated when
+     * applyEchogramTD() function is alled for the first time) */
+    float*** rec_sig_tmp;     /**< nReceivers x nChannels x nSamples */
+    float* interpolator_fIn;  /**< framesize x 1 */
+    float* interpolator_fOut; /**< framesize x 1 */
+    int framesize;
 
 } ims_scene_data;
 
