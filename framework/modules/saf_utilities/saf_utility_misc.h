@@ -61,10 +61,10 @@ extern "C" {
 /**
  * Computes Lagrange interpolation weights of order 'N' for value 'x'
  *
- * @param[in]  N
- * @param[in]  x
- * len_x
- * weights
+ * @param[in]  N        Order
+ * @param[in]  x        Values; len_x x 1
+ * @param[in]  len_x    Number of values
+ * @param[out] weights  Weights; (ORDER+1) x len_x
  */
 void lagrangeWeights(int N,
                      float* x,

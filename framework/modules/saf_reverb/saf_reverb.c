@@ -124,9 +124,15 @@ void ims_shoebox_create
     sc->rec_sig_tmp = malloc1d(IMS_MAX_NUM_RECEIVERS*sizeof(float**));
     for(j=0; j<IMS_MAX_NUM_RECEIVERS; j++)
         sc->rec_sig_tmp[j] = NULL;
+    memset(sc->applyCrossFadeFLAG, 0, IMS_MAX_NUM_RECEIVERS*IMS_MAX_NUM_SOURCES*sizeof(int));
     sc->interpolator_fIn = NULL;
     sc->interpolator_fOut = NULL;
     sc->framesize = -1;
+
+    /* Lagrange interpolator look-up table */
+    for(i=0; i<IMS_LAGRANGE_LOOKUP_TABLE_SIZE; i++)
+        sc->lookup_fractions[i] = 1.0f/IMS_LAGRANGE_LOOKUP_TABLE_SIZE * (float)i;
+    lagrangeWeights(IMS_LAGRANGE_ORDER, sc->lookup_fractions, IMS_LAGRANGE_LOOKUP_TABLE_SIZE, (float*)sc->lookup_H_frac);
 }
 
 void ims_shoebox_destroy
@@ -215,9 +221,12 @@ void ims_shoebox_computeEchograms
                     /* Apply boundary absorption per frequency band */
                     ims_shoebox_coreAbsorptionModule(workspace, sc->abs_wall);
 
-                    /* Indicate that the echogram is now up to date, and that the RIR should be updated (if wanted) */
+                    /* Indicate that the echogram is now up to date, and that the RIR should be updated */
                     workspace->refreshEchogramFLAG = 0;
                     workspace->refreshRIRFLAG = 1;
+
+                    /* Also indicate that applyTD() should cross-fade the next frame to void clicks */
+                    sc->applyCrossFadeFLAG[src_idx][rec_idx] = 1;
                 }
             }
         }
@@ -274,9 +283,7 @@ void ims_shoebox_applyEchogramTD
     ims_core_workspace* wrk;
     echogram_data *echogram_abs, *echogram_abs_0;
     int k, i, n, im, band, ch, rec_idx, src_idx, time_samples, wIdx_n;
-    unsigned int rIdx;
-
-    int applyCrossFadeFLAG = 1; // TODO: add to struct. No need to do cross-fading all the time... only need to when source/receiver is moving.
+    unsigned long rIdx;
 
     assert(nSamples <= IMS_MAX_NSAMPLES_PER_FRAME);
 
@@ -328,6 +335,7 @@ void ims_shoebox_applyEchogramTD
     /* Process all active sources for this specific receiver, directly in the time-domain */
     for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
         if( (sc->srcs[src_idx].ID!=-1) && (sc->recs[rec_idx].ID!=-1) ){
+
             /* Broad-band operation */
             if(sc->nBands==1)
                 memcpy(sc->src_sigs_bands[src_idx][0], sc->srcs[src_idx].sig, nSamples*sizeof(float));
@@ -339,7 +347,7 @@ void ims_shoebox_applyEchogramTD
 
             /* k=0 is for the current echogram,
              * k=1 (when applyCrossFadeFLAG is enabled) is for the previous echogram */
-            for(k=applyCrossFadeFLAG; k>=0; k--){
+            for(k=sc->applyCrossFadeFLAG[src_idx][rec_idx]; k>=0; k--){
 
                 /* Loop over samples */
                 for(n=0; n<nSamples; n++){
@@ -355,7 +363,7 @@ void ims_shoebox_applyEchogramTD
 
                     /* Handle the special case of an empty echogram */
                     if(echogram_abs_0->numImageSources==0){
-                        /* Just set output to 0... */
+                        /* Set output to 0... */
                         if(k==1)
                             for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
                                 sc->rec_sig_tmp[rec_idx][ch][n] = 0.0f;
@@ -364,11 +372,17 @@ void ims_shoebox_applyEchogramTD
                                 sc->recs[rec_idx].sigs[ch][n] = 0.0f;
 
                         /* Store current sample (per band) into the circular buffer */
-                        for(band=0; band < sc->nBands; band++)
+                        for(band=0; band < sc->nBands; band++){
                             sc->circ_buffer[k][src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
+                            if(sc->applyCrossFadeFLAG[src_idx][rec_idx]==0)
+                                sc->circ_buffer[1][src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
+                        }
 
                         /* Increment write index */
                         sc->wIdx[k]++;
+                        if(sc->applyCrossFadeFLAG[src_idx][rec_idx]==0)
+                            sc->wIdx[1]++;
+
                         continue; /* to next sample... */
                     }
 
@@ -430,15 +444,15 @@ void ims_shoebox_applyEchogramTD
 
                         /* Apply interpolation if enabled */
                         if(fractionalDelaysFLAG){
-                            /* Apply the weights corresponding  */
+                            /* Apply the weights corresponding to the first tap in the filter */
                             utility_svvmul(echogram_abs->cb_vals[0], echogram_abs_0->h_frac[0], echogram_abs->numImageSources, echogram_abs->tmp1);
 
                             /* Step through the rest of the filter */
                             for(i=1; i<IMS_LAGRANGE_ORDER; i++){
-                                /* Read-indices for the next tap in the filter */
+                                /* Pull values from the circular buffer corresponding to the read-indices for the current tap in the filter */
                                 utility_ssv2cv_inds(sc->circ_buffer[k][src_idx][band], echogram_abs_0->rIdx_frac[i-1], echogram_abs->numImageSources, echogram_abs->cb_vals[0]);
 
-                                /* Apply weights */
+                                /* Apply interpolation weights */
                                 utility_svvmul(echogram_abs->cb_vals[0], echogram_abs_0->h_frac[i], echogram_abs->numImageSources, echogram_abs->cb_vals[0]);
 
                                 /* Sum */
@@ -473,15 +487,20 @@ void ims_shoebox_applyEchogramTD
 
                         /* Store current sample into the circular buffer */
                         sc->circ_buffer[k][src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
+                        if(sc->applyCrossFadeFLAG[src_idx][rec_idx]==0)
+                            sc->circ_buffer[1][src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
                     }
 
                     /* Increment write index */
                     sc->wIdx[k]++;
+                    if(sc->applyCrossFadeFLAG[src_idx][rec_idx]==0)
+                        sc->wIdx[1]++;
+
                 } /* Loop over samples */
             } /* Loop over slots */
 
             /* Cross-fade between the buffers rendered using the previous and current echograms */
-            if(applyCrossFadeFLAG){
+            if(sc->applyCrossFadeFLAG[src_idx][rec_idx]){
                 for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++){
                     /* Apply linear interpolator to fade in with the new echogram and fade out with the previous echogram */
                     utility_svvmul(sc->recs[rec_idx].sigs[ch], sc->interpolator_fIn, nSamples, sc->recs[rec_idx].sigs[ch]);
@@ -490,6 +509,9 @@ void ims_shoebox_applyEchogramTD
                     /* Sum the result */
                     utility_svvadd(sc->recs[rec_idx].sigs[ch], sc->rec_sig_tmp[rec_idx][ch], nSamples, sc->recs[rec_idx].sigs[ch]);
                 }
+
+                /* No longer need to cross-fade for future frames (unless the echograms change again that is...) */
+                sc->applyCrossFadeFLAG[src_idx][rec_idx] = 0;
             }
 
         } /* If source active */

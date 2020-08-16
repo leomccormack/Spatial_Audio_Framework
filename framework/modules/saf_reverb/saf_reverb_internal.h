@@ -58,7 +58,9 @@ extern "C" {
 /** Maximum number of samples that ims should expect to process at a time */
 #define IMS_MAX_NSAMPLES_PER_FRAME ( 20000 )
 /** Order of lagrange interpolation filters */
-#define IMS_LAGRANGE_ORDER ( 4 )
+#define IMS_LAGRANGE_ORDER ( 2 )
+/** Lagrange interpolator look-up table size */
+#define IMS_LAGRANGE_LOOKUP_TABLE_SIZE ( 100 )
 
 /** Void pointer (just to improve code readability when working with arrays of
  * handles) */
@@ -209,7 +211,7 @@ typedef struct _ims_scene_data
 
     /* Circular buffers (only used/allocated when applyEchogramTD() function is
      * called for the first time) */
-    unsigned int wIdx[2];     /**< current write indices for circular buffers */
+    unsigned long wIdx[2];    /**< current write indices for circular buffers */
     float*** circ_buffer[2];  /**< [2] x (nChannels x nBands x #IMS_CIRC_BUFFER_LENGTH) */
 
     /* IIR filterbank (only used/allocated when applyEchogramTD() function is
@@ -222,7 +224,12 @@ typedef struct _ims_scene_data
     float*** rec_sig_tmp;     /**< nReceivers x nChannels x nSamples */
     float* interpolator_fIn;  /**< framesize x 1 */
     float* interpolator_fOut; /**< framesize x 1 */
-    int framesize;
+    int applyCrossFadeFLAG[IMS_MAX_NUM_RECEIVERS][IMS_MAX_NUM_SOURCES];
+    int framesize;            /**< Curent framesize in samples */
+
+    /* Lagrange interpolator look-up table */
+    float lookup_fractions[IMS_LAGRANGE_LOOKUP_TABLE_SIZE];
+    float lookup_H_frac[IMS_LAGRANGE_ORDER+1][IMS_LAGRANGE_LOOKUP_TABLE_SIZE];
 
 } ims_scene_data;
 
