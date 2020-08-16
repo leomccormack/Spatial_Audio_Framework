@@ -1,22 +1,22 @@
 /*
  * Copyright 2018-2020 Leo McCormack
  *
- * This software is provided under two licenses:
+ * This software can be used under the terms of one of these two licenses:
  *
  * ISC License
  *
  * By default, this software is provided permissively under the terms of the ISC
- * license (since all of the core modules are licensed as such). Also, note that
- * all third-party code that has been adapted or adopted by this software, is
- * also licensed under similar permissive licenses (MIT, BSD, etc.). For more
- * information, refer to the license terms found at the top of each source file,
- * and also in the code comments.
+ * license (since all of the core modules are licensed as such). Also note that
+ * all third-party code which has been adapted or adopted by this software is
+ * also provided under similar permissive licensing terms (MIT, BSD, etc.). For
+ * more information, refer to the license terms found at the top of each source
+ * file, and also in the code comments.
  *
  * GNU GPL License
  *
  * Enabling and including certain optional modules, which are instead provided
  * under the copy-left GNU GPL license, will mean that the use of this software
- * is instead governed under the GNU GPL licencing terms.
+ * is instead governed by the GNU GPL licencing terms.
  */
 
 /**
@@ -28,14 +28,14 @@
  *
  * @note All core modules are provided permissively under the terms of the ISC
  *       license. Therefore, by default, the use of this framework is governed
- *       under the GNU GPL licencing terms.
+ *       by the ISC licencing terms.
  *
  * ## Optional modules
  *   saf_sofa_reader (ISC License),  example (GPLv2 License)
  *
  * @note Some optional modules are provided under the copy-left GNU GPL license.
  *       Therefore, enabling these specific optional modules will mean that the
- *       use of this framework is instead governed under the GNU GPL licencing
+ *       use of this framework is instead governed by the GNU GPL licencing
  *       terms.
  *
  * @author Leo McCormack
@@ -236,6 +236,24 @@
 #ifdef  SAF_ENABLE_SOFA_READER_MODULE
 # include "../modules/saf_sofa_reader/saf_sofa_reader.h"
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */
+
+/**
+* SAF Module: EXAMPLE
+*
+* Description
+*
+* ## Enable instructions
+*   Add this pre-processor definition to your project:
+*       SAF_ENABLE_X
+* ## Dependencies
+*   saf_utilities ...
+*
+* License: GNU GPLv2
+*/
+#define SAF_X_MODULE
+#ifdef  SAF_ENABLE_X_MODULE
+# include "../modules/saf_X/saf_X.h"
+#endif /* SAF_ENABLE_X_MODULE */
 
 
 #endif /* SAF_H_INCLUDED */
