@@ -1,17 +1,22 @@
 /*
  * Copyright 2018-2020 Leo McCormack
  *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
+ * This software is provided under two licenses:
  *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
- * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
- * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
- * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
- * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * ISC License
+ *
+ * By default, this software is provided permissively under the terms of the ISC
+ * license (since all of the core modules are licensed as such). Also, note that
+ * all third-party code that has been adapted or adopted by this software, is
+ * also licensed under similar permissive licenses (MIT, BSD, etc.). For more
+ * information, refer to the license terms found at the top of each source file,
+ * and also in the code comments.
+ *
+ * GNU GPL License
+ *
+ * Enabling and including certain optional modules, which are instead provided
+ * under the copy-left GNU GPL license, will mean that the use of this software
+ * is instead governed under the GNU GPL licencing terms.
  */
 
 /**
@@ -21,8 +26,17 @@
  * ## Core modules
  *   saf_utilities, saf_cdf4sap, saf_hoa, saf_hrir, saf_sh, saf_vbap, saf_reverb
  *
+ * @note All core modules are provided permissively under the terms of the ISC
+ *       license. Therefore, by default, the use of this framework is governed
+ *       under the GNU GPL licencing terms.
+ *
  * ## Optional modules
- *   saf_sofa_reader
+ *   saf_sofa_reader (ISC License),  example (GPLv2 License)
+ *
+ * @note Some optional modules are provided under the copy-left GNU GPL license.
+ *       Therefore, enabling these specific optional modules will mean that the
+ *       use of this framework is instead governed under the GNU GPL licencing
+ *       terms.
  *
  * @author Leo McCormack
  * @date 06.04.2018
@@ -96,6 +110,8 @@
  * bank designs; lists of common loudspeaker and microphone array coordinates;
  * multi-channel and matrix convolvers; spherical Bessel/Hankel functions
  * (including their derivatives); etc.
+ *
+ * License: ISC
  */
 #define SAF_UTILITIES_MODULE
 #include "../modules/saf_utilities/saf_utilities.h"
@@ -112,6 +128,8 @@
  * @see [1] Vilkamo, J., Backstrom, T., & Kuntz, A. (2013). Optimized covariance
  *          domain framework for time--frequency processing of spatial audio.
  *          Journal of the Audio Engineering Society, 61(6), 403-411.
+ *
+ * License: ISC
  */
 #define SAF_CDF4SAP_MODULE
 #include "../modules/saf_cdf4sap/saf_cdf4sap.h"
@@ -126,6 +144,8 @@
  *   saf_utilities, saf_vbap, saf_sh
  *
  * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
+ *
+ * License: ISC
  */
 #define SAF_HOA_MODULE
 #include "../modules/saf_hoa/saf_hoa.h"
@@ -139,6 +159,8 @@
  *
  * ## Dependencies
  *   saf_utilities
+ *
+ * License: ISC
  */
 #define SAF_HRIR_MODULE
 #include "../modules/saf_hrir/saf_hrir.h"
@@ -150,6 +172,8 @@
  *
  * ## Dependencies
  *   saf_utilities, saf_sh
+ *
+ * License: ISC
  */
 #define SAF_REVERB_MODULE
 #include "../modules/saf_reverb/saf_reverb.h"
@@ -166,6 +190,8 @@
  * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
  * @see [2] https://github.com/polarch/Array-Response-Simulator
  * @see [3] https://github.com/polarch/Spherical-Array-Processing
+ *
+ * License: ISC
  */
 #define SAF_SH_MODULE
 #include "../modules/saf_sh/saf_sh.h"
@@ -180,6 +206,8 @@
  *  saf_utilities
  *
  * @see [1] https://github.com/polarch/Vector-Base-Amplitude-Panning
+ *
+ * License: ISC
  */
 #define SAF_VBAP_MODULE
 #include "../modules/saf_vbap/saf_vbap.h"
@@ -201,6 +229,8 @@
  *   and ensure that the netcdf library is also linked to your project
  * ## Dependencies
  *   saf_utilities, saf_hrir, netcdf
+ *
+ * License: ISC
  */
 #define SAF_SOFA_READER_MODULE
 #ifdef  SAF_ENABLE_SOFA_READER_MODULE
