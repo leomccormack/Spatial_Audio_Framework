@@ -179,10 +179,7 @@ void saf_matrixConv_apply
         for(no=0; no<h->nCHout; no++){
             /* Apply filter and perform ifft, and sum over input channels */
             memset(h->z_n, 0, (h->fftSize) * sizeof(float));
-            for(ni=0; ni<h->nCHin; ni++){
-
-
-
+            for(ni=0; ni<h->nCHin; ni++){ 
                 /* This is the bulk of the CPU work (90.3%): */
                 utility_cvvmul(&(h->H_f[no*(h->nCHin)*(h->nBins)+ni*(h->nBins)]), &(h->X_n[ni*(h->nBins)]), h->nBins, h->HX_n);
                 saf_rfft_backward(h->hFFT, h->HX_n, h->hx_n);

@@ -159,7 +159,7 @@ void ims_shoebox_destroy
         free(sc->hFaFbank);
         free(sc->src_sigs_bands);
         for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++)
-            free(sc->rec_sig_tmp[j]);
+            free(sc->rec_sig_tmp[i]);
         free(sc->rec_sig_tmp);
         free(sc->interpolator_fIn);
         free(sc->interpolator_fOut);

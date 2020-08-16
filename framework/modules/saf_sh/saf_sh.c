@@ -1905,7 +1905,7 @@ void sphScattererDirModalCoeffs
                 b_N[i*(order+1)+n] = cmplx(4.0*M_PI, 0.0);
             else if(kr[i] <= 1e-20)
                 b_N[i*(order+1)+n] = cmplx(0.0, 0.0);
-            else{ // Dear god, what happened here...
+            else{ // Dear god, what happened here?!...
 //#if __STDC_VERSION__ >= 199901L
 //                b_N[i*(order+1)+n] = 4.0f*PI*cpowf(I,(float)n) * ( (dirCoeff*jn_kr[i*(order+1)+n] - I*(1.0f-dirCoeff)*jnprime_kr[i*(order+1)+n]) -
 //                                                                   (jnprime_kR[i*(order+1)+n]/hn2prime_kR[i*(order+1)+n]) * (dirCoeff*hn2_kr[i*(order+1)+n] -
