@@ -172,7 +172,7 @@ This software is dual-licensed. By default, this software is provided permissive
 
 For full terms see [LICENSE.md](LICENSE.md).
 
-Furthermore, it is noted that while we do not impose any copyleft licensing philosophies for the ISC licensed modules, we would still appreciate it if any improvements and/or bug fixes are also merged into this public repository where possible.
+Furthermore, note that while we do not impose any copyleft licensing philosophies for the ISC licensed modules, we would still appreciate it if any improvements and/or bug fixes are also merged into this public repository where possible.
 
 ## References
 
