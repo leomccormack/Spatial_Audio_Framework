@@ -168,7 +168,7 @@ then please feel free to do so and submit a pull request. Note, however, that if
 
 ## License
 
-This software is dual-licensed. By default, this software is provided permissively under the terms of the [ISC License](https://choosealicense.com/licenses/isc/); since all of the core (non-optional) modules are licensed as such. However, including and enabling certain optional modules, which are instead provided under the copy-left [GNU GPLv3 License](https://choosealicense.com/licenses/gpl-3.0/), will mean that the use of this software is instead governed by the GNU GPLv3 licencing terms.
+This software is dual-licensed. By default, this software is provided permissively under the terms of the [ISC License](https://choosealicense.com/licenses/isc/); since all of the core (non-optional) modules are licensed as such. However, including and enabling certain optional modules, which are instead provided under the copy-left [GNU GPLv2 License](https://choosealicense.com/licenses/gpl-2.0/), will mean that the use of this software is instead governed by the GNU GPLv2 licencing terms.
 
 For full terms see [LICENSE.md](LICENSE.md).
 

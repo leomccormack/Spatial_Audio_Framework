@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		508CC48024EAA0A4006DF0C7 /* saf_tracker_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 508CC47C24EAA0A4006DF0C7 /* saf_tracker_internal.c */; };
+		508CC48124EAA0A4006DF0C7 /* saf_tracker.c in Sources */ = {isa = PBXBuildFile; fileRef = 508CC47E24EAA0A4006DF0C7 /* saf_tracker.c */; };
 		508FBDA12456D31F0076C205 /* unity.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBD9E2456D31F0076C205 /* unity.c */; };
 		508FBDA52456D3300076C205 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBDA32456D3300076C205 /* timer.c */; };
 		50E35D1F2475AECA00B74C25 /* saf_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35D1E2475AECA00B74C25 /* saf_test.c */; };
@@ -97,6 +99,10 @@
 
 /* Begin PBXFileReference section */
 		506254B92456BCCB00C304A7 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
+		508CC47C24EAA0A4006DF0C7 /* saf_tracker_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_tracker_internal.c; sourceTree = "<group>"; };
+		508CC47D24EAA0A4006DF0C7 /* saf_tracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_tracker.h; sourceTree = "<group>"; };
+		508CC47E24EAA0A4006DF0C7 /* saf_tracker.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_tracker.c; sourceTree = "<group>"; };
+		508CC47F24EAA0A4006DF0C7 /* saf_tracker_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_tracker_internal.h; sourceTree = "<group>"; };
 		508FBD9E2456D31F0076C205 /* unity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unity.c; sourceTree = "<group>"; };
 		508FBD9F2456D31F0076C205 /* unity_internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unity_internals.h; sourceTree = "<group>"; };
 		508FBDA02456D31F0076C205 /* unity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unity.h; sourceTree = "<group>"; };
@@ -288,6 +294,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		508CC47B24EAA0A4006DF0C7 /* saf_tracker */ = {
+			isa = PBXGroup;
+			children = (
+				508CC47C24EAA0A4006DF0C7 /* saf_tracker_internal.c */,
+				508CC47F24EAA0A4006DF0C7 /* saf_tracker_internal.h */,
+				508CC47E24EAA0A4006DF0C7 /* saf_tracker.c */,
+				508CC47D24EAA0A4006DF0C7 /* saf_tracker.h */,
+			);
+			path = saf_tracker;
+			sourceTree = "<group>";
+		};
 		508FBD9D2456D31F0076C205 /* unity */ = {
 			isa = PBXGroup;
 			children = (
@@ -392,6 +409,7 @@
 				50E36044249BDDCC00B74C25 /* saf_reverb */,
 				50E36049249BDDCC00B74C25 /* saf_sh */,
 				50E3604E249BDDCC00B74C25 /* saf_sofa_reader */,
+				508CC47B24EAA0A4006DF0C7 /* saf_tracker */,
 				50E36026249BDDCB00B74C25 /* saf_utilities */,
 				50E36051249BDDCC00B74C25 /* saf_vbap */,
 			);
@@ -839,10 +857,12 @@
 				50E3DF0924C1D4EA00589B17 /* powermap_internal.c in Sources */,
 				50E3DEB724C1C36E00589B17 /* ambi_drc.c in Sources */,
 				50E3DEE324C1C80C00589B17 /* beamformer.c in Sources */,
+				508CC48124EAA0A4006DF0C7 /* saf_tracker.c in Sources */,
 				50E3DEBD24C1C56800589B17 /* ambi_enc.c in Sources */,
 				50E36074249BDDCC00B74C25 /* saf_sh.c in Sources */,
 				50E3DEB824C1C36E00589B17 /* ambi_drc_internal.c in Sources */,
 				50E3607B249BDDCC00B74C25 /* saf_hrir.c in Sources */,
+				508CC48024EAA0A4006DF0C7 /* saf_tracker_internal.c in Sources */,
 				50E3DEF324C1D3A900589B17 /* decorrelator.c in Sources */,
 				50E36079249BDDCC00B74C25 /* saf_default_hrirs.c in Sources */,
 				50E3605C249BDDCC00B74C25 /* md_malloc.c in Sources */,

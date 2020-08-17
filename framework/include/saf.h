@@ -11,10 +11,10 @@
  *   licensing terms (MIT, BSD, WOL, etc.). The license employed by third-party
  *   code is stated clearly in the code comments at the point of inclusion.
  *
- * GNU GPLv3 License ( https://choosealicense.com/licenses/gpl-3.0/ ):
+ * GNU GPLv2 License ( https://choosealicense.com/licenses/gpl-2.0/ ):
  *   Including and enabling certain optional modules, which are instead provided
- *   under the copy-left GNU GPLv3 license, will mean that the use of this
- *   software is instead governed by the GNU GPLv3 licencing terms.
+ *   under the copy-left GNU GPLv2 license, will mean that the use of this
+ *   software is instead governed by the GNU GPLv2 licencing terms.
  *
  * Note that the license employed by each module is stated clearly below. For
  * more information, refer to the license terms found at the top of each source
@@ -41,11 +41,11 @@
  *       by the ISC licencing terms.
  *
  * ## Optional modules
- *   saf_sofa_reader (ISC License), example (GPLv3 License)
+ *   saf_sofa_reader (ISC License), saf_tracker (GPLv2 License)
  *
- * @note Some optional modules are provided under the copy-left GPLv3 license.
+ * @note Some optional modules are provided under the copy-left GPLv2 license.
  *       Therefore, including and enabling these specific optional modules will
- *       mean that the use of this framework is instead governed by the GPLv3
+ *       mean that the use of this framework is instead governed by the GPLv2
  *       licencing terms.
  *
  * @author Leo McCormack
@@ -248,22 +248,22 @@
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */
 
 /**
-* SAF Module: EXAMPLE
-*
-* Description of module
-*
-* ## Enable instructions
-*   Add this pre-processor definition to your project:
-*       SAF_ENABLE_X
-* ## Dependencies
-*   saf_utilities ...
-*
-* License: GNU GPLv3
-*/
-#define SAF_X_MODULE
-#ifdef  SAF_ENABLE_X_MODULE
-# include "../modules/saf_X/saf_X.h"
-#endif /* SAF_ENABLE_X_MODULE */
-
+ * SAF Module: Tracker
+ *
+ * Description of module
+ *
+ * ## Enable instructions
+ *   Add this pre-processor definition to your project:
+ *       SAF_ENABLE_TRACKER_MODULE
+ * ## Dependencies
+ *   saf_utilities ...
+ *
+ * License: GNU GPLv2
+ */
+//#define SAF_TRACKER_MODULE
+//#ifdef  SAF_ENABLE_TRACKER_MODULE
+//# include "../modules/saf_tracker/saf_tracker.h"
+//#endif /* SAF_ENABLE_TRACKER_MODULE */
+//
 
 #endif /* SAF_H_INCLUDED */
