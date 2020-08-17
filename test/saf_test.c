@@ -1,19 +1,3 @@
-/*
- * Copyright 2020 Leo McCormack
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
- * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
- * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
- * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
- * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
- */
-
 /**
  * @file saf_test.c
  * @brief Unit testing program for the Spatial_Audio_Framework
@@ -48,6 +32,8 @@
 # include "rotator.h"
 # include "sldoa.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
+
+void test__tracker3d(void);
 
 /* ========================================================================== */
 /*                                 Test Config                                */
@@ -87,6 +73,7 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
+    RUN_TEST(test__tracker3d);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -137,6 +124,126 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__tracker3d(void){
+    int hop, i, j, nSH, nGrid;
+    int inds[2];
+    void* hT3d, *hMUSIC;
+    float* grid_dirs_deg;
+    float** insigs, **inputSH, **inputSH_hop, **Y, **Cx, **V, **Vn;
+    float_complex** Vn_cmplx;
+
+    /* Test configuration */
+    const int order = 2;
+    const float fs = 48e3;
+    const int hopsize = 256;
+    const float sigLen = fs*10;
+    const int nSources = 2;
+    const float src_dirs_deg[2][2] = { {-40.0f, 0.0f}, {120.0f, 10.0f} };
+
+    /* Configure the tracker */
+    tracker3d_config tpars;
+    /* Number of Monte Carlo samples/particles. The more complex the
+     * distribution is, the more particles required (but also, the more
+     * computationally expensive the tracker becomes). Also, adding too many can
+     * fuck things up too... */
+    tpars.Np = 20;
+    tpars.maxNactiveTargets = 4; /**< about 2 higher than expected is good */
+    /* Target velocity - e.g. to assume that a target can move 20 degrees in
+     * two seconds along the horizontal, set V_azi = 20/2 */
+    tpars.Vazi_deg = 3.0f; /* Velocity of target on azimuthal plane */
+    tpars.Vele_deg = 3.0f; /* Velocity of target on median plane */
+    /* Likelihood of an estimate being noise/clutter */
+    tpars.noiseLikelihood = 0.2f; /* between [0..1] */
+    /* Measurement noise - e.g. to assume that estimates within the range +/-20
+     * degrees belong to the same target, set SDmnoise_deg = 20 */
+    tpars.measNoiseSD_deg = 20.0f; /* Measurement noise standard deviation */
+    /* Noise spectral density - not fully understood. But it influences the
+     * smoothness of the target tracks */
+    tpars.noiseSpecDen_deg = 0.0f;  /* Noise spectral density */
+    /* FLAG - whether to allow for multiple target deaths in the same tracker
+     * prediction step */
+    tpars.ALLOW_MULTI_DEATH = 1;
+    /* Probability of birth and death */
+    tpars.init_birth = 0.05f; /* value between [0 1] - Prior probability of birth */
+    tpars.alpha_death = 1.0f; /* always >= 1; 1 is good */
+    tpars.beta_death = 20.0f; /* always >= 1; 1 is good */
+    /* Elapsed time (in seconds) between observations */
+    tpars.dt = 1.0f/(fs/(float)hopsize); /* Hop length of frames */
+    /* Whether or not to allow multiple active sources for each update */
+    tpars.MULTI_ACTIVE = 1;
+    /* Real-time tracking is based on the particle with highest weight. A
+     * one-pole averaging filter is used to smooth the weights over time. */
+    tpars.W_avg_coeff = 0.0;
+    /* Force kill targets that are close to another target. In these cases, the
+     * target that has been 'alive' for the least amount of time, is killed */
+    tpars.FORCE_KILL_TARGETS = 1;
+    tpars.forceKillAngle_deg = 10.0f;
+
+    /* Create tracker */
+    tracker3dlib_create(&hT3d, tpars);
+
+    /* Create spherical harmonic input signals */
+    insigs = (float**)malloc2d(nSources, sigLen, sizeof(float));
+    rand_m1_1(FLATTEN2D(insigs), nSources*sigLen);
+    nSH = ORDER2NSH(order);
+    Y = (float**)malloc2d(nSH, nSources, sizeof(float));
+    getRSH(order, (float*)src_dirs_deg, nSources, FLATTEN2D(Y));
+    inputSH = (float**)malloc2d(nSH, sigLen, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, sigLen, 2, 1.0f,
+                FLATTEN2D(Y), nSources,
+                FLATTEN2D(insigs), sigLen, 0.0f,
+                FLATTEN2D(inputSH), sigLen);
+
+    /* Create DoA estimator */
+    nGrid = 240; /* number of points in a t-design of degree 21: */
+    grid_dirs_deg = (float*)__Tdesign_degree_21_dirs_deg;
+    sphMUSIC_create(&hMUSIC, order, grid_dirs_deg, nGrid);
+
+    /* Memory allocations */
+    inputSH_hop = (float**)malloc2d(nSH, hopsize, sizeof(float));
+    Cx = (float**)malloc2d(nSH, nSH, sizeof(float));
+    V = (float**)malloc2d(nSH, nSH, sizeof(float));
+    Vn = (float**)malloc2d(nSH, (nSH-nSources), sizeof(float)); /* noise subspace */
+    Vn_cmplx = (float_complex**)malloc2d(nSH, (nSH-nSources), sizeof(float_complex));
+
+    /* Loop over hops */
+    for(hop=0; hop<(int)((float)sigLen/(float)hopsize); hop++){
+        /* Grab current hop */
+        for(i=0; i<nSH; i++)
+            memcpy(inputSH_hop[i], &inputSH[i][hop*hopsize], hopsize*sizeof(float));
+
+        /* Eigenvalue decomposition and truncation of eigen vectors to obtain
+         * noise subspace (based on source number) */
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, hopsize, 1.0f,
+                    FLATTEN2D(inputSH_hop), hopsize,
+                    FLATTEN2D(inputSH_hop), hopsize, 0.0f,
+                    FLATTEN2D(Cx), nSH);
+        utility_sseig(FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
+        for(i=0; i<nSH; i++)
+            for(j=0; j<nSH-nSources; j++)
+                Vn_cmplx[i][j] = cmplxf(Vn[i][j], 0.0f);
+
+        /* DoA estimation */
+        sphMUSIC_compute(hMUSIC, FLATTEN2D(Vn_cmplx), nSources, NULL, (int*)inds);
+
+        /* Feed tracker */
+
+    }
+
+
+    /* Clean-up */
+    tracker3dlib_destroy(&hT3d);
+    sphMUSIC_destroy(&hMUSIC);
+    free(insigs);
+    free(inputSH);
+    free(inputSH_hop);
+    free(Y);
+    free(Cx);
+    free(V);
+    free(Vn);
+    free(Vn_cmplx);
+}
 
 void test__saf_stft_50pc_overlap(void){
     int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;

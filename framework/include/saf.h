@@ -4,12 +4,14 @@
  * This software is dual-licensed.
  *
  * ISC License ( https://choosealicense.com/licenses/isc/ ):
- *   By default, this software is provided permissively under the terms of the
+ *   By default, this software is governed permissively under the terms of the
  *   ISC license; since all of the core (non-optional) modules are licensed as
  *   such. Also note that all third-party code, which has been adapted or
- *   adopted by these core modules, is also provided under similar permissive
- *   licensing terms (MIT, BSD, WOL, etc.). The license employed by third-party
- *   code is stated clearly in the code comments at the point of inclusion.
+ *   adopted by the core modules, is also provided under similar permissive
+ *   licensing terms (MIT, BSD, WOL, etc.). The specific license employed by
+ *   each third-party code is stated clearly in the code comments at the point
+ *   of its inclusion, and also in the "dependencies/third-party-licenses"
+ *   folder.
  *
  * GNU GPLv2 License ( https://choosealicense.com/licenses/gpl-2.0/ ):
  *   Including and enabling certain optional modules, which are instead provided
@@ -110,6 +112,7 @@
 /* ========================================================================== */
 /*                                Core Modules                                */
 /* ========================================================================== */
+/* Note that all core modules are provided under the terms of the ISC license */
 
 /**
  * SAF Module: Utilities
@@ -226,6 +229,7 @@
 /* ========================================================================== */
 /*                              Optional Modules                              */
 /* ========================================================================== */
+/* Note that some optional modules are instead governed by the GPLv2 license! */
 
 /**
  * SAF Module: SOFA_Reader
@@ -250,20 +254,20 @@
 /**
  * SAF Module: Tracker
  *
- * Description of module
+ * Particle filtering based tracker.
  *
  * ## Enable instructions
  *   Add this pre-processor definition to your project:
  *       SAF_ENABLE_TRACKER_MODULE
  * ## Dependencies
- *   saf_utilities ...
+ *   saf_utilities
  *
  * License: GNU GPLv2
  */
-//#define SAF_TRACKER_MODULE
-//#ifdef  SAF_ENABLE_TRACKER_MODULE
-//# include "../modules/saf_tracker/saf_tracker.h"
-//#endif /* SAF_ENABLE_TRACKER_MODULE */
-//
+#define SAF_TRACKER_MODULE
+#ifdef  SAF_ENABLE_TRACKER_MODULE
+# include "../modules/saf_tracker/saf_tracker.h"
+#endif /* SAF_ENABLE_TRACKER_MODULE */
+
 
 #endif /* SAF_H_INCLUDED */

@@ -24,7 +24,7 @@ Detailed instructions regarding how to build and link these performance librarie
 
 ## Framework structure
 
-The framework comprises the following core modules:
+The framework comprises the following core modules (**ISC**):
 * **saf_hoa** - a collection of higher-order Ambisonics binaural and loudspeaker decoders.
 * **saf_sh** - spherical harmonic and spherical array processing related functions.
 * **saf_vbap** - Vector-base Amplitude Panning (VBAP) functions.
@@ -34,11 +34,13 @@ The framework comprises the following core modules:
 * **saf_utilities** - a collection of useful utility functions and cross-platform wrappers.
 
 The framework also includes the following optional modules:
-* **saf_sofa_reader** - a simple SOFA file reader.
+* **saf_sofa_reader** - a simple SOFA file reader (**ISC**).
+* **saf_tracker** - a partical-filtering based tracker (**GPLv2**).
 
 To enable optional framework modules, simply add the relevant pre-processor definitions:
 ```
 SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader
+SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker, which also converts SAF to the GPLv2 license
 ```
 Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. Instructions on how to install/link this dependency can be found [here](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md). 
 
@@ -69,6 +71,7 @@ The available SAF-related build options (and their default values) are:
 ```
 -DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL    # performance library to employ
 -DSAF_ENABLE_SOFA_READER_MODULE=0          # enable/disable the saf_sofa_reader module 
+-DSAF_ENABLE_TRACKER_MODULE=0              # enable/disable the saf_tracker module 
 -DSAF_BUILD_EXAMPLES=1                     # build saf examples
 -DSAF_BUILD_EXTRAS=0                       # build safmex etc.
 -DSAF_BUILD_TESTS=1                        # build unit testing program
@@ -121,7 +124,7 @@ make
 
 ## Examples
 
-Several examples have also been included in the repository, which may serve as a starting point for learning the framework:
+Several examples have also been included in the repository, which may serve as a starting point for learning how to use the framework:
 
 * **ambi_bin** - a binaural Ambisonic decoder with built-in rotator. It supports the following decoding options: least-squares (LS), spatial re-sampling (SPR), Time-alignment (TA) [1], Magnitude Least-Squares (MagLS) [2].
 * **ambi_dec** - a frequency-dependent Ambisonic decoder. It supports the following decoding options: sampling Ambisonic decoder (SAD), AllRAD [3], Energy-Preserving decoder (EPAD) [4], Mode-Matching decoder (MMD).
