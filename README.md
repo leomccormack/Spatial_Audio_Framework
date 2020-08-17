@@ -35,7 +35,7 @@ The framework comprises the following core modules (**ISC**):
 
 The framework also includes the following optional modules:
 * **saf_sofa_reader** - a simple SOFA file reader (**ISC**).
-* **saf_tracker** - a partical-filtering based tracker (**GPLv2**).
+* **saf_tracker** - a particle-filtering based tracker (**GPLv2**).
 
 To enable optional framework modules, simply add the relevant pre-processor definitions:
 ```
@@ -173,9 +173,9 @@ then please feel free to do so and submit a pull request. Note, however, that if
 
 This software is dual-licensed. By default, this software is provided permissively under the terms of the [ISC License](https://choosealicense.com/licenses/isc/); since all of the core (non-optional) modules are licensed as such. However, including and enabling certain optional modules, which are instead provided under the copy-left [GNU GPLv2 License](https://choosealicense.com/licenses/gpl-2.0/), will mean that the use of this software is instead governed by the GNU GPLv2 licencing terms.
 
-For full terms see [LICENSE.md](LICENSE.md).
+For full licensing terms see [LICENSE.md](LICENSE.md).
 
-Furthermore, note that while we do not impose any copyleft licensing philosophies for the ISC licensed modules, we would still appreciate it if any improvements and/or bug fixes are also merged into this public repository where possible.
+Furthermore, while we do not impose any copyleft licensing philosophies for the ISC licensed modules, we would still appreciate it if any improvements and/or bug fixes are also merged into this public repository where possible :- )
 
 ## References
 
