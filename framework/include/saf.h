@@ -1,22 +1,32 @@
 /*
  * Copyright 2018-2020 Leo McCormack
  *
- * This software can be used under the terms of one of these two licenses:
+ * This software can be used under the terms of one of the following licenses:
  *
- * ISC License
+ * ISC License:
+ *   By default, this software is provided permissively under the terms of the
+ *   ISC license; since all of the core (non-optional) modules are licensed as
+ *   such. Also note that all third-party code, which has been adapted or
+ *   adopted by these core modules, is also provided under similar permissive
+ *   licensing terms (MIT, BSD, WOL, etc.). The license employed by third-party
+ *   code is stated clearly in the code comments, at the point of inclusion.
  *
- * By default, this software is provided permissively under the terms of the ISC
- * license (since all of the core modules are licensed as such). Also note that
- * all third-party code which has been adapted or adopted by this software is
- * also provided under similar permissive licensing terms (MIT, BSD, etc.). For
+ * GNU GPLv3 License:
+ *   Including and enabling certain optional modules, which are instead provided
+ *   under the copy-left GNU GPLv3 license, will mean that the use of this
+ *   software is instead governed by the GNU GPLv3 licencing terms.
+ *
+ * Note that the license employed by each module is stated clearly below. For
  * more information, refer to the license terms found at the top of each source
- * file, and also in the code comments.
+ * and header file.
  *
- * GNU GPL License
- *
- * Enabling and including certain optional modules, which are instead provided
- * under the copy-left GNU GPL license, will mean that the use of this software
- * is instead governed by the GNU GPL licencing terms.
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
  */
 
 /**
@@ -31,12 +41,12 @@
  *       by the ISC licencing terms.
  *
  * ## Optional modules
- *   saf_sofa_reader (ISC License),  example (GPLv2 License)
+ *   saf_sofa_reader (ISC License), example (GPLv3 License)
  *
- * @note Some optional modules are provided under the copy-left GNU GPL license.
- *       Therefore, enabling these specific optional modules will mean that the
- *       use of this framework is instead governed by the GNU GPL licencing
- *       terms.
+ * @note Some optional modules are provided under the copy-left GPLv3 license.
+ *       Therefore, including and enabling these specific optional modules will
+ *       mean that the use of this framework is instead governed by the GPLv3
+ *       licencing terms.
  *
  * @author Leo McCormack
  * @date 06.04.2018
@@ -240,7 +250,7 @@
 /**
 * SAF Module: EXAMPLE
 *
-* Description
+* Description of module
 *
 * ## Enable instructions
 *   Add this pre-processor definition to your project:
@@ -248,7 +258,7 @@
 * ## Dependencies
 *   saf_utilities ...
 *
-* License: GNU GPLv2
+* License: GNU GPLv3
 */
 #define SAF_X_MODULE
 #ifdef  SAF_ENABLE_X_MODULE

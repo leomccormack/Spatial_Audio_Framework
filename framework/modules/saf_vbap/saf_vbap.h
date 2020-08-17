@@ -299,6 +299,11 @@ void getPvalues(/* Input arguments */
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
+/*
+ * Note that the main functions are largely based on the VBAP Matlab library
+ * (BSD-3-Clause License) found here:
+ * https://github.com/polarch/Vector-Base-Amplitude-Panning
+ */
 
 /**
  * Computes the 3D convex-hull of a spherical grid of loudspeaker directions
