@@ -424,12 +424,10 @@ void unique_i
     /* clean-up */
     free(nDuplicates_perInput);
 }
-
-
-
-
-// Generalized Matrix Exponential (BSD-3-clause license), based on the matlab script ported from here:
-// https://se.mathworks.com/matlabcentral/fileexchange/50413-generalized-matrix-exponential
+ 
+/* Based heavily on the Matlab script found here:
+ * https://se.mathworks.com/matlabcentral/fileexchange/50413-generalized-matrix-exponential
+ * Copyright (c) 2015, Kenneth Johnson (BSD-3-clause license) */
 void gexpm
 (
     float* D,
@@ -438,9 +436,9 @@ void gexpm
     float* Y
 )
 {
-    int i, j;
+    int i, j, k;
     float tol, s, h2, h, hh, hhh, two;
-    float** D_2, **D_3, **D_4, **D_5, **Dh, **Ym1, **Ym2, **Ym3;
+    float** D_2, **D_3, **D_4, **D_5, **Dh, **Ym1, **Ym2;
 
     tol = FLT_EPSILON;
 
@@ -497,10 +495,17 @@ void gexpm
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, sizeD, sizeD, sizeD, 1.0f,
                 FLATTEN2D(D_4), sizeD,
                 D, sizeD, 0.0f,
-                FLATTEN2D(D_5), sizeD);
+                FLATTEN2D(D_5), sizeD); 
     s = ceilf(log2f(Frob_norm(FLATTEN2D(D_5), sizeD, sizeD)/
                     (1575.0f*tol*MIN(1.0f,Frob_norm(D, sizeD, sizeD))))/6.0f-1.0f);
     s = MAX(s, 0.0f);
+
+    /* Get Pade approximation for expm(D*h2) = Y =
+     *   (I-Dh+(2/5)*Dh^2-(1/15)*Dh^3)\(I+Dh+(2/5)*Dh^2+(1/15)*Dh^3)
+     * Ym1 = Y-I =
+     *   (I-Dh+(2/5)*Dh^2-(1/15)*Dh^3)\(2*(Dh+(1/15)*Dh^3))
+     * (Calculate Ym1, not Y, to avoid precision loss from dominant I
+     * terms when Dh is small.) */
     h2 = powf(2.0f,-s);
     h = h2/2.0f;
     hh = h*h;
@@ -510,11 +515,10 @@ void gexpm
     utility_svsmul(FLATTEN2D(Dh), &h, sizeD*sizeD, NULL);
     utility_svsmul(FLATTEN2D(D_2), &hh, sizeD*sizeD, NULL);
     utility_svsmul(FLATTEN2D(D_3), &hhh, sizeD*sizeD, NULL);
-    //I = eye(size(D));
     Ym1 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
     for(i=0; i<sizeD; i++)
         for(j=0; j<sizeD; j++)
-            Ym1[i][j] = D[i*sizeD+j] * (1.0f/15.0f)*D_3[i][j];
+            Ym1[i][j] = Dh[i][j] + (1.0f/15.0f)*D_3[i][j];
     Ym2 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
     for(i=0; i<sizeD; i++){
         for(j=0; j<sizeD; j++){
@@ -529,7 +533,7 @@ void gexpm
 
     /* Y = Ym1+I = expm(D)
      * Square Y (i.e., Y <-- Y*Y) s times to get Y = expm(D*2^s). */
-    for (j = 0; j<(int)s; j++){
+    for (k = 0; k<(int)s; k++){
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, sizeD, sizeD, sizeD, 1.0f,
                     FLATTEN2D(Ym1), sizeD,
                     FLATTEN2D(Ym1), sizeD, 0.0f,
@@ -537,7 +541,7 @@ void gexpm
         for(i=0; i<sizeD; i++)
             for(j=0; j<sizeD; j++)
                 Ym1[i][j] = Ym2[i][j] + 2.0f*Ym1[i][j]; /* (Ym1+I) <-- (Ym1+I)*(Ym1+I) */
-    } 
+    }
     memcpy(Y, FLATTEN2D(Ym1), sizeD*sizeD*sizeof(float));
     if (m1){}
     else{
@@ -554,4 +558,5 @@ void gexpm
     free(D_5);
     free(Dh);
     free(Ym1);
+    free(Ym2);
 }

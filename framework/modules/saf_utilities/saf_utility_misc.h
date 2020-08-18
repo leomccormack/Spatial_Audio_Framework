@@ -259,6 +259,41 @@ void unique_i(int* input,
               int* nUnique);
 
 
+/**
+ * Numerically solves first-order, linear, homogeneous differential equation
+ * systems, with non-constant coefficients, by generalization of the Pade-
+ * approximant method for exponential matrices.
+ *
+ * The equations are described in matrix form as
+ *     Y'(t) = D(t)*Y(t)
+ * where D and Y are square-matrix functions of scalar t. The initial condition
+ * is Y(0) = I (the identity matrix), and the result is Y(1). For the special
+ * case of a constant coefficient matrix D, gexpm is equivalent to the standard
+ * matrix exponential (expm).
+ *
+ * m1: true or false, optional, default should be false.
+ *     "minus 1" flag: if m1 = false the generalized exponential is Y; if
+ *     true it is Y+I. gexpm is analogous to the expm1 function
+ *     ("exponential-minus-1") when m1 is true.
+ *
+ * @note For both cases of constant and non-constant D, the solution is
+ *       determined from a Pade approximation of order 6, using scale-and-square
+ *       for constant D and multi-step integration for non-constant D. The form
+ *       of the Pade approximant is outlined in the associated document
+ *       KJohnson_2015_04_01.pdf. Notes on error control are in the code
+ *       comments.
+ *
+ * This function is based on the Matlab script found (BSD-3-clause license):
+ * mathworks.com/matlabcentral/fileexchange/50413-generalized-matrix-exponential
+ *
+ * Copyright (c) 2015, Kenneth Johnson
+ */
+void gexpm(float* D,
+           int sizeD,
+           int m1,
+           float* Y);
+
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif /* __cplusplus */

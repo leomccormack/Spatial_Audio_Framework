@@ -90,6 +90,7 @@ typedef struct _tracker3dlib
     float R[3][3];  /**< Diagonal matrix, measurement noise PRIORs along the
                      *   x,y,z axes */
     float A[6][6];  /**< Transition matrix */
+    float Q[6][6];  /**< Discrete Process Covariance */
     float H[3][6];  /**< Measurement matrix */
 
     
@@ -100,6 +101,48 @@ typedef struct _tracker3dlib
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
+//%LTI_DISC  Discretize LTI ODE with Gaussian Noise
+//%
+//% Syntax:
+//%   [A,Q] = lti_disc(F,L,Qc,dt)
+//%
+//% In:
+//%   F  - NxN Feedback matrix
+//%   L  - NxL Noise effect matrix        (optional, default identity)
+//%   Qc - LxL Diagonal Spectral Density  (optional, default zeros)
+//%   dt - Time Step                      (optional, default 1)
+//%
+//% Out:
+//%   A - Transition matrix
+//%   Q - Discrete Process Covariance
+//%
+//% Description:
+//%   Discretize LTI ODE with Gaussian Noise. The original
+//%   ODE model is in form
+//%
+//%     dx/dt = F x + L w,  w ~ N(0,Qc)
+//%
+//%   Result of discretization is the model
+//%
+//%     x[k] = A x[k-1] + q, q ~ N(0,Q)
+//%
+//%   Which can be used for integrating the model
+//%   exactly over time steps, which are multiples
+//%   of dt.
+
+/* Copyright (C) 2002, 2003 Simo Särkkä (GPLv2) */
+
+void lti_disc
+(
+    float* F,
+    int len_N,
+    int len_L,
+    float* opt_L,
+    float* opt_Qc,
+    float dt,
+    float* A,
+    float* Q
+ );
 
 
 #ifdef __cplusplus

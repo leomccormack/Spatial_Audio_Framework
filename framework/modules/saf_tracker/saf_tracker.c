@@ -45,6 +45,7 @@ void tracker3dlib_create
     *phT3d = (void*)pData;
     int i;
     float sd_xyz, q_xyz;
+    float Qc[6][6];
 
     /* Store user configuration */
     pData->tpars = tpars;
@@ -61,22 +62,22 @@ void tracker3dlib_create
     q_xyz = 1.0f-cosf(tpars.noiseSpecDen_deg*SAF_PI/180.0f);
 
     /* Dynamic and measurement models */
-
-    float F[6][6] =
+    const float F[6][6] =
      {  {0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
         {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}  };
-    
+    memset(Qc, 0, 6*6*sizeof(float));
+    Qc[3][3] = q_xyz;
+    Qc[4][4] = q_xyz;
+    Qc[5][5] = q_xyz;
+    lti_disc((float*)F, 6, 6, NULL, (float*)Qc, tpars.dt, (float*)pData->A, (float*)pData->Q);
 
-//    memset(pData->A, 0, 6*6*sizeof(float));
-//    memset(pData->H, 0, 3*6*sizeof(float));
 
 
-
-
+memset(pData->H, 0, 3*6*sizeof(float));
    // tpars.H = [1 0 0 0 0 0; 0 1 0 0 0 0; 0 0 1 0 0 0];
 
 

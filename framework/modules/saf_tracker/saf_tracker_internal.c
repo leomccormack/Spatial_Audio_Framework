@@ -81,6 +81,7 @@ void lti_disc
 {
     int i;
     float* L, *Qc;
+    float* Fdt;
 
     /* Defaults: */
     if(opt_L==NULL){ /* Identity */
@@ -94,7 +95,15 @@ void lti_disc
         Qc = calloc1d(len_N*len_N, sizeof(float));
     else
         Qc = opt_Qc;
+    Fdt = malloc1d(len_N*len_N*sizeof(float));
 
+    for(i=0; i<len_N*len_N; i++)
+        Fdt[i] = F[i]*dt;
+
+    float AA[6][6];
+    float Fdt_test[6][6];
+    memcpy(Fdt_test, Fdt, 36*sizeof(float));
+    gexpm(Fdt, len_N, 0, AA);
     
 
 //  %
