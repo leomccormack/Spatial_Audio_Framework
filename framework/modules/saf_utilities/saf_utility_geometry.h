@@ -98,16 +98,26 @@ void unitCart2sph(/* Input Arguments */
 /**
  * L2 (Euclidean) norm of a 3-element vector
  */
-float L2_norm(float v[3]);
+float L2_norm3(float v[3]);
+
+/**
+ * L2 (Euclidean) norm of an arbitrary length vector
+ */
+float L2_norm(float* v, int lenV);
+
+/**
+ * Frobenius Norm of a matrix M, of dimensions: lenX x lenY
+ */
+float Frob_norm(float* M, int lenX, int lenY);
 
 /**
  * Cross product between two 3-element floating point vectors (c = a x b)
  */
-void crossProduct(/* Input Arguments */
-                  float a[3],
-                  float b[3],
-                  /* Output Arguments */
-                  float c[3]);
+void crossProduct3(/* Input Arguments */
+                   float a[3],
+                   float b[3],
+                   /* Output Arguments */
+                   float c[3]);
 
 /**
  * Builds the 3-D convex hull given a list of vertices

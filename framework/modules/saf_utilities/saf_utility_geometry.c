@@ -24,6 +24,7 @@
  */
 
 #include "saf_utilities.h"
+#include "saf_externals.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -135,12 +136,39 @@ void unitCart2sph
             dirs[i] *= (180.0f/SAF_PI);
 }
 
-float L2_norm(float v[3])
+float L2_norm3(float v[3])
 {
     return sqrtf(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
 }
 
-void crossProduct(float a[3], float b[3], float c[3]){
+float L2_norm(float* v, int lenV)
+{
+    int i;
+    float res;
+    res = 0.0f;
+    for(i=0; i<lenV; i++)
+        res += (v[i]*v[i]);
+    return sqrtf(res);
+}
+
+float Frob_norm(float* M, int lenX, int lenY)
+{
+    int i;
+    float res;
+    float* MMT;
+    MMT = malloc1d(lenX*lenX*sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, lenX, lenX, lenY, 1.0f,
+                M, lenY,
+                M, lenY, 0.0f,
+                MMT, lenX);
+    res = 0.0f;
+    for(i=0; i<lenX; i++)
+        res += MMT[i*lenX+i];
+    free(MMT); 
+    return sqrtf(res);
+}
+
+void crossProduct3(float a[3], float b[3], float c[3]){
     c[0] = a[1]*b[2]-a[2]*b[1];
     c[1] = a[2]*b[0]-a[0]*b[2];
     c[2] = a[0]*b[1]-a[1]*b[0];
@@ -237,9 +265,9 @@ void sphVoronoi
         r_13[0] = vertices[faces[n*3+2]*3]   - vertices[faces[n*3]*3];
         r_13[1] = vertices[faces[n*3+2]*3+1] - vertices[faces[n*3]*3+1];
         r_13[2] = vertices[faces[n*3+2]*3+2] - vertices[faces[n*3]*3+2];
-        crossProduct(r_12, r_13, r_normal);
+        crossProduct3(r_12, r_13, r_normal);
 
-        norm = 1.0f/L2_norm(r_normal);
+        norm = 1.0f/L2_norm3(r_normal);
         utility_svsmul(r_normal, &norm, 3, r_normal);
         memcpy(voronoi->vert[n], r_normal, 3*sizeof(float));
     }
@@ -409,24 +437,24 @@ void sphVoronoiAreas
             memcpy(r_02, voronoi->vert[face[1]], 3*sizeof(float));
 
             /* find normal vector to the great circle of 1 & 2 */
-            crossProduct(r_02, r_01, r_2x1);
+            crossProduct3(r_02, r_01, r_2x1);
 
             /* find tangent vector to great circle at 2 */
-            crossProduct(r_2x1, r_02, r_21);
+            crossProduct3(r_2x1, r_02, r_21);
 
             /* find vector between vertex origin and vertex 3 */
             memcpy(r_03, voronoi->vert[face[2]], 3*sizeof(float));
 
             /* find normal vector to the great circle of 2 & 3 */
-            crossProduct(r_02, r_03, r_2x3);
+            crossProduct3(r_02, r_03, r_2x3);
 
             /* find tangent vector to great circle at 2 */
-            crossProduct(r_2x3, r_02, r_23);
+            crossProduct3(r_2x3, r_02, r_23);
 
             /* normalise tangent vectors */
-            r_21_norm = 1.0f/L2_norm(r_21);
+            r_21_norm = 1.0f/L2_norm3(r_21);
             utility_svsmul(r_21, &r_21_norm, 3, r_21);
-            r_23_norm = 1.0f/L2_norm(r_23);
+            r_23_norm = 1.0f/L2_norm3(r_23);
             utility_svsmul(r_23, &r_23_norm, 3, r_23);
 
             /* get angle between the normals */

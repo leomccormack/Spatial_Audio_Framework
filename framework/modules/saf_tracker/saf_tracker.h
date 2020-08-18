@@ -39,12 +39,19 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/**< User parameters struct */
+/* ========================================================================== */
+/*                               Public Structs                               */
+/* ========================================================================== */
+
+/** User parameters for tracker3d */
 typedef struct _tracker3d_config{
+    /* Number of Monte Carlo samples/particles. The more complex the
+     * distribution is, the more particles required (but also, the more
+     * computationally expensive the tracker becomes). */
     int Np;                   /**< Number of Monte Carlo samples/particles. */
     int maxNactiveTargets;    /**< Max numer of simultaneous targets */
-    float Vazi_deg;           /**< Velocity of target on azimuthal plane */
-    float Vele_deg;           /**< Velocity of target on median plane */
+    /* Target velocity - e.g. to assume that a target can move 20 degrees in two
+     * seconds along the horizontal, set V_azi = 20/2 */
     float noiseLikelihood;    /**< Likelihood of an estimate being noise/clutter
                                *   between [0..1] */
     float measNoiseSD_deg;    /**< Measurement noise standard deviation
@@ -57,18 +64,26 @@ typedef struct _tracker3d_config{
     float init_birth;         /**< Prior probability of birth [0 1] */
     float alpha_death;        /**< Prior probability of death; always >= 1 */
     float beta_death;         /**< Prior probability of death; always >= 1 */
-    float dt;                 /**< Hop length of frames in seconds */
+    float dt;                 /**< Elapsed time (in seconds) between
+                               *   observations/measurements */
     int MULTI_ACTIVE;         /**< FLAG whether or not to allow multiple active
                                *   sources for each update */
     float W_avg_coeff;        /**< Real-time tracking is based on the particle
                                *   with highest weight. A one-pole averaging
                                *   filter is used to smooth these weights over
-                               *   time */
+                               *   time [0..0.999] */
     int FORCE_KILL_TARGETS;   /**< FLAG force kill targets that are close to
                                *   another target. In these cases, the target
                                *   that has been 'alive' for the least amount
                                *   of time, is killed */
     float forceKillAngle_deg; /**< Angle at which to kill targets, in degrees */
+    float M0[6];              /**< 0,1,2: Position of sound source PRIORs
+                               *   (x,y,z), 3,4,5: Mean velocity PRIORs (x,y,z) */
+    float P0[6][6];           /**< Diagonal matrix, 0,1,2: Variance PRIORs of
+                               *   estimates along the x,y,z axes; 3,4,5
+                               *   Velocity PRIORs of stimates along the x,y,z
+                               *   axes */
+    float cd;                 /**< PRIOR probability of noise. */
     
 }tracker3d_config;
 
@@ -91,15 +106,6 @@ void tracker3dlib_create(void** const phT3d,
  * @param[in] phT3d (&) address of tracker3dlib handle
  */
 void tracker3dlib_destroy(void** const phT3d);
-
-/**
- * Initialises an instance of tracker3dlib with default settings
- *
- * @param[in] hT3d       tracker3dlib handle
- * @param[in] samplerate Host samplerate.
- */
-void tracker3d_init(void* const hT3d,
-                    int samplerate);
     
 /** 
  */

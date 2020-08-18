@@ -126,33 +126,32 @@ int main_test(void) {
 /* ========================================================================== */
 
 void test__tracker3d(void){
-    int hop, i, j, nSH, nGrid;
+    int hop, i, j, k, nSH, nGrid;
     int inds[2];
     void* hT3d, *hMUSIC;
+    float scale;
+    float est_dirs_deg[2][2];
     float* grid_dirs_deg;
-    float** insigs, **inputSH, **inputSH_hop, **Y, **Cx, **V, **Vn;
+    float** insigs, **inputSH, **inputSH_noise, **inputSH_hop, **Y, **Cx, **V, **Vn;
     float_complex** Vn_cmplx;
 
     /* Test configuration */
     const int order = 2;
     const float fs = 48e3;
-    const int hopsize = 256;
+    const int hopsize = 1024;
     const float sigLen = fs*10;
-    const int nSources = 2;
-    const float src_dirs_deg[2][2] = { {-40.0f, 0.0f}, {120.0f, 10.0f} };
+    const int nSources = 2; /* cannot be changed */
+    const float src_dirs_deg[2][2] = { {-35.0f, 30.0f}, {120.0f, 0.0f} };
 
     /* Configure the tracker */
     tracker3d_config tpars;
     /* Number of Monte Carlo samples/particles. The more complex the
      * distribution is, the more particles required (but also, the more
-     * computationally expensive the tracker becomes). Also, adding too many can
-     * fuck things up too... */
+     * computationally expensive the tracker becomes). */
     tpars.Np = 20;
-    tpars.maxNactiveTargets = 4; /**< about 2 higher than expected is good */
+    tpars.maxNactiveTargets = 4; /* about 2 higher than expected is good */
     /* Target velocity - e.g. to assume that a target can move 20 degrees in
      * two seconds along the horizontal, set V_azi = 20/2 */
-    tpars.Vazi_deg = 3.0f; /* Velocity of target on azimuthal plane */
-    tpars.Vele_deg = 3.0f; /* Velocity of target on median plane */
     /* Likelihood of an estimate being noise/clutter */
     tpars.noiseLikelihood = 0.2f; /* between [0..1] */
     /* Measurement noise - e.g. to assume that estimates within the range +/-20
@@ -160,7 +159,7 @@ void test__tracker3d(void){
     tpars.measNoiseSD_deg = 20.0f; /* Measurement noise standard deviation */
     /* Noise spectral density - not fully understood. But it influences the
      * smoothness of the target tracks */
-    tpars.noiseSpecDen_deg = 0.0f;  /* Noise spectral density */
+    tpars.noiseSpecDen_deg = 1.0f;  /* Noise spectral density */
     /* FLAG - whether to allow for multiple target deaths in the same tracker
      * prediction step */
     tpars.ALLOW_MULTI_DEATH = 1;
@@ -179,6 +178,24 @@ void test__tracker3d(void){
      * target that has been 'alive' for the least amount of time, is killed */
     tpars.FORCE_KILL_TARGETS = 1;
     tpars.forceKillAngle_deg = 10.0f;
+    /* Mean position priors x,y,z (assuming directly in-front) */
+    tpars.M0[0] = 1.0f; tpars.M0[1] = 0.0f; tpars.M0[2] = 0.0f;
+    /* Mean Velocity priors x,y,z (assuming stationary) */
+    tpars.M0[3] = 0.0f; tpars.M0[4] = 0.0f; tpars.M0[5] = 0.0f;
+    const float Vazi_deg = 3.0f;  /* Velocity of target on azimuthal plane */
+    const float Vele_deg = 3.0f;  /* Velocity of target on median plane */
+    memset(tpars.P0, 0, 6*6*sizeof(float));
+    /* Variance PRIORs of estimates along the x,y,z axes, respectively. Assuming
+     * coordinates will lay on the unit sphere +/- x,y,z, so a range of 2, and
+     * hence a variance of 2^2: */
+    tpars.P0[0][0] = 4.0f; tpars.P0[1][1] = 4.0f; tpars.P0[2][2] = 4.0f;
+    /* Velocity PRIORs of estimates the x,y,z axes */
+    tpars.P0[3][3] = 1.0f-cosf(Vazi_deg*SAF_PI/180.0f); /* x */
+    tpars.P0[4][4] = tpars.P0[3][3];                    /* y */
+    tpars.P0[5][5] = 1.0f-cosf(Vele_deg*SAF_PI/180.0f); /* z */
+    /* PRIOR probabilities of noise. (Assuming the noise is uniformly
+     * distributed in the entire spatial grid). */
+    tpars.cd = 1.0f/(4.0f*SAF_PI);
 
     /* Create tracker */
     tracker3dlib_create(&hT3d, tpars);
@@ -189,14 +206,23 @@ void test__tracker3d(void){
     nSH = ORDER2NSH(order);
     Y = (float**)malloc2d(nSH, nSources, sizeof(float));
     getRSH(order, (float*)src_dirs_deg, nSources, FLATTEN2D(Y));
+    scale = 1.0f/(float)nSources;
+    utility_svsmul(FLATTEN2D(Y), &scale, nSH*nSources, NULL);
     inputSH = (float**)malloc2d(nSH, sigLen, sizeof(float));
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, sigLen, 2, 1.0f,
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, sigLen, nSources, 1.0f,
                 FLATTEN2D(Y), nSources,
                 FLATTEN2D(insigs), sigLen, 0.0f,
                 FLATTEN2D(inputSH), sigLen);
 
+    /* Add some noise */
+    inputSH_noise = (float**)malloc2d(nSH, sigLen, sizeof(float));
+    rand_m1_1(FLATTEN2D(inputSH_noise), nSH*sigLen);
+    scale = 0.05f;
+    utility_svsmul(FLATTEN2D(inputSH_noise), &scale, nSH*sigLen, NULL);
+    utility_svvadd(FLATTEN2D(inputSH), FLATTEN2D(inputSH_noise), nSH*sigLen, FLATTEN2D(inputSH));
+
     /* Create DoA estimator */
-    nGrid = 240; /* number of points in a t-design of degree 21: */
+    nGrid = 240; /* number of points in a t-design of degree 21 */
     grid_dirs_deg = (float*)__Tdesign_degree_21_dirs_deg;
     sphMUSIC_create(&hMUSIC, order, grid_dirs_deg, nGrid);
 
@@ -221,11 +247,18 @@ void test__tracker3d(void){
                     FLATTEN2D(Cx), nSH);
         utility_sseig(FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
         for(i=0; i<nSH; i++)
+            for(j=0, k=nSources; j<nSH-nSources; j++, k++)
+                Vn[i][j] = V[i][k];
+        for(i=0; i<nSH; i++)
             for(j=0; j<nSH-nSources; j++)
                 Vn_cmplx[i][j] = cmplxf(Vn[i][j], 0.0f);
 
         /* DoA estimation */
         sphMUSIC_compute(hMUSIC, FLATTEN2D(Vn_cmplx), nSources, NULL, (int*)inds);
+        est_dirs_deg[0][0] = grid_dirs_deg[inds[0]*2+0];
+        est_dirs_deg[0][1] = grid_dirs_deg[inds[0]*2+1];
+        est_dirs_deg[1][0] = grid_dirs_deg[inds[1]*2+0];
+        est_dirs_deg[1][1] = grid_dirs_deg[inds[1]*2+1];
 
         /* Feed tracker */
 
@@ -237,6 +270,7 @@ void test__tracker3d(void){
     sphMUSIC_destroy(&hMUSIC);
     free(insigs);
     free(inputSH);
+    free(inputSH_noise);
     free(inputSH_hop);
     free(Y);
     free(Cx);

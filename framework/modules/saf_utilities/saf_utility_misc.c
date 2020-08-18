@@ -24,6 +24,7 @@
  */
 
 #include "saf_utility_misc.h"
+#include "saf_externals.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -422,4 +423,135 @@ void unique_i
 
     /* clean-up */
     free(nDuplicates_perInput);
+}
+
+
+
+
+// Generalized Matrix Exponential (BSD-3-clause license), based on the matlab script ported from here:
+// https://se.mathworks.com/matlabcentral/fileexchange/50413-generalized-matrix-exponential
+void gexpm
+(
+    float* D,
+    int sizeD,
+    int m1,
+    float* Y
+)
+{
+    int i, j;
+    float tol, s, h2, h, hh, hhh, two;
+    float** D_2, **D_3, **D_4, **D_5, **Dh, **Ym1, **Ym2, **Ym3;
+
+    tol = FLT_EPSILON;
+
+    /* Calculate Y = expm(D), Ym1 = Y-I.
+     *
+     * Scale and square: Y = expm(D/n)^n; n = 2^s (non-negative integer s)
+     *
+     * Pade approximation: expm(D/n) = R
+     *   = (I-Dh+(2/5)*Dh^2-(1/15)*Dh^3)\(I+Dh+(2/5)*Dh^2+(1/15)*Dh^3)
+     * where Dh = D*h; h = 1/(2*n) (h = integration half-step)
+     *
+     * Pade approximation error: R-expm(D/n) = (-2/1575)*(Dh)^7
+     *
+     * Set Y = R^n. Approximate absolute error:
+     *   Y-expm(D) = R^n-expm(D/n)^n = n*R^(n-1)*(R-expm(D/n))
+     *     = n*Y*R^(-1)*(-2/1575)*(Dh)^7
+     * R^(-1) is close to I, so
+     *   Y-expm(D) = n*Y*(-2/1575)*(Dh)^7 (approx)
+     *
+     * Large D (|D|>=1): Bound the relative error magnitude by tol,
+     *   n*(2/1575)*|(Dh)^7| <= tol
+     *
+     * Small D (|D|<1): |Y-I| is of order 1 or less; the absolute error
+     * Y-expm(D) is of order n*(-2/1575)*(Dh)^7. Bound the error magnitude
+     * by tol*|D| to preserve relative accuracy of Ym1:
+     *   n*(2/1575)*|(Dh)^7| <= tol*|D|
+     *
+     * Combine large/small Dh conditions conjunctively:
+     *   n*(2/1575)*|(Dh)^7| <= tol*min(1,|D|)
+     *
+     * Substitute h = 1/(2*n):
+     *   (2*n)^6 >= |D^7|/(1575*tol*min(1,|D|))
+     * Substitute n = 2^s:
+     *   s >= log2(|D^7|/(1575*tol*min(1,|D|)))/6-1
+     * (Use the Frobenius norm for |...| to preserve symmetry of expm under
+     * matrix transposition.)
+     */
+    D_2 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, sizeD, sizeD, sizeD, 1.0f,
+                D, sizeD,
+                D, sizeD, 0.0f,
+                FLATTEN2D(D_2), sizeD);
+    D_3 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, sizeD, sizeD, sizeD, 1.0f,
+                FLATTEN2D(D_2), sizeD,
+                D, sizeD, 0.0f,
+                FLATTEN2D(D_3), sizeD);
+    D_4 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, sizeD, sizeD, sizeD, 1.0f,
+                FLATTEN2D(D_3), sizeD,
+                FLATTEN2D(D_3), sizeD, 0.0f,
+                FLATTEN2D(D_4), sizeD);
+    D_5 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, sizeD, sizeD, sizeD, 1.0f,
+                FLATTEN2D(D_4), sizeD,
+                D, sizeD, 0.0f,
+                FLATTEN2D(D_5), sizeD);
+    s = ceilf(log2f(Frob_norm(FLATTEN2D(D_5), sizeD, sizeD)/
+                    (1575.0f*tol*MIN(1.0f,Frob_norm(D, sizeD, sizeD))))/6.0f-1.0f);
+    s = MAX(s, 0.0f);
+    h2 = powf(2.0f,-s);
+    h = h2/2.0f;
+    hh = h*h;
+    hhh = hh*h;
+    Dh = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    memcpy(FLATTEN2D(Dh), D, sizeD*sizeD*sizeof(float));
+    utility_svsmul(FLATTEN2D(Dh), &h, sizeD*sizeD, NULL);
+    utility_svsmul(FLATTEN2D(D_2), &hh, sizeD*sizeD, NULL);
+    utility_svsmul(FLATTEN2D(D_3), &hhh, sizeD*sizeD, NULL);
+    //I = eye(size(D));
+    Ym1 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    for(i=0; i<sizeD; i++)
+        for(j=0; j<sizeD; j++)
+            Ym1[i][j] = D[i*sizeD+j] * (1.0f/15.0f)*D_3[i][j];
+    Ym2 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    for(i=0; i<sizeD; i++){
+        for(j=0; j<sizeD; j++){
+            Ym2[i][j] = (2.0f/5.0f)*D_2[i][j]-Ym1[i][j];
+            if(i==j)
+                Ym2[i][j] += 1.0f;
+        }
+    }
+    two = 2.0f;
+    utility_svsmul(FLATTEN2D(Ym1), &two, sizeD*sizeD, NULL);
+    utility_sglslv(FLATTEN2D(Ym2), sizeD, FLATTEN2D(Ym1), sizeD, FLATTEN2D(Ym1));
+
+    /* Y = Ym1+I = expm(D)
+     * Square Y (i.e., Y <-- Y*Y) s times to get Y = expm(D*2^s). */
+    for (j = 0; j<(int)s; j++){
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, sizeD, sizeD, sizeD, 1.0f,
+                    FLATTEN2D(Ym1), sizeD,
+                    FLATTEN2D(Ym1), sizeD, 0.0f,
+                    FLATTEN2D(Ym2), sizeD);
+        for(i=0; i<sizeD; i++)
+            for(j=0; j<sizeD; j++)
+                Ym1[i][j] = Ym2[i][j] + 2.0f*Ym1[i][j]; /* (Ym1+I) <-- (Ym1+I)*(Ym1+I) */
+    } 
+    memcpy(Y, FLATTEN2D(Ym1), sizeD*sizeD*sizeof(float));
+    if (m1){}
+    else{
+        for(i=0; i<sizeD; i++)
+           for(j=0; j<sizeD; j++)
+               if(i==j)
+                   Y[i*sizeD+j] += 1.0f;
+    }
+
+    /* clean-up */
+    free(D_2);
+    free(D_3);
+    free(D_4);
+    free(D_5);
+    free(Dh);
+    free(Ym1);
 }

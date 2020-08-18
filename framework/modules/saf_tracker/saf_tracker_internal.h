@@ -55,12 +55,43 @@ extern "C" {
 /*                            Internal Structures                             */
 /* ========================================================================== */
 
-/**
- * Main structure for tracker3d
- */
+/** Monte Carlo Sample (particle) structure */
+typedef struct _MCS{
+    float W;        /**< Importance weight */
+    int nTargets;   /**< Number of targets being tracked */
+    int nActive;    /**< Number of active targets */
+    int B;          /**< Birth indicator (non-zero indicates new birth with
+                     *   index of the value of 'B') */
+    int D;          /**< Death indicator (non-zero indicates new death with
+                     *   index of the value of 'D') */
+    float dt;       /**< Elapsed time inbetween each observation/measurment */
+    float* M[6];    /**< Current target means; nTargets x ([6]) */
+    float* P[6][6]; /**< Current target variances; nTargets x ([6][6]) */
+    float M0[6];    /**< 0,1,2: Position of sound source PRIORs (x,y,z), 3,4,5:
+                     *   Mean velocity PRIORs (x,y,z) */
+    float P0[6][6]; /**< Diagonal matrix, 0,1,2: Variance PRIORs of estimates
+                     *   along the x,y,z axes; 3,4,5 Velocity PRIORs of
+                     *   estimates along the x,y,z axes */
+    int* targetIDs; /**< Unique ID assigned to each target; nTargets x 1 */
+    int* activeIDs; /**< IDs of targets currently active; nActive x 1 */
+    int* Tcount;    /**< Time elapsed since birth of target: Tcount * dt;
+                     *   nTargets x 1 */
+
+} MCS_data;
+
+/** Main structure for tracker3d */
 typedef struct _tracker3dlib
 {
+    /** User parameters struct */
     tracker3d_config tpars;
+
+    /* Internal */
+    MCS_data* S;    /**< The particles; tpars.Np x 1 */ 
+    float R[3][3];  /**< Diagonal matrix, measurement noise PRIORs along the
+                     *   x,y,z axes */
+    float A[6][6];  /**< Transition matrix */
+    float H[3][6];  /**< Measurement matrix */
+
     
 } tracker3dlib_data;
      

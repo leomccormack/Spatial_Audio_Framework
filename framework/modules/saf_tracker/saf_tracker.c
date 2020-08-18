@@ -38,13 +38,48 @@
 void tracker3dlib_create
 (
     void ** const phT3d,
-    tracker3d_config tpars
+    tracker3d_config tpars 
 )
 {
     tracker3dlib_data* pData = (tracker3dlib_data*)malloc1d(sizeof(tracker3dlib_data));
     *phT3d = (void*)pData;
+    int i;
+    float sd_xyz, q_xyz;
 
+    /* Store user configuration */
     pData->tpars = tpars;
+
+    /* Measurement noise PRIORs along the x,y,z axis, respectively  */
+    sd_xyz = 1.0f-cosf(tpars.measNoiseSD_deg*SAF_PI/180.0f);
+    memset(pData->R, 0, 3*3*sizeof(float));
+    pData->R[0][0] = powf(sd_xyz,2.0f);
+    pData->R[1][1] = powf(sd_xyz,2.0f);
+    pData->R[2][2] = powf(sd_xyz,2.0f);
+
+    /* Noise spectral density along x, y, z axis qx,y,z in combination with
+     * sd_xyz decides how smooth the target tracks are. */
+    q_xyz = 1.0f-cosf(tpars.noiseSpecDen_deg*SAF_PI/180.0f);
+
+    /* Dynamic and measurement models */
+
+    float F[6][6] =
+     {  {0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f},
+        {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+        {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}  };
+    
+
+//    memset(pData->A, 0, 6*6*sizeof(float));
+//    memset(pData->H, 0, 3*6*sizeof(float));
+
+
+
+
+   // tpars.H = [1 0 0 0 0 0; 0 1 0 0 0 0; 0 0 1 0 0 0];
+
+
 }
 
 void tracker3dlib_destroy
@@ -60,17 +95,7 @@ void tracker3dlib_destroy
         pData = NULL;
     }
 }
- 
-void tracker3dlib_init
-(
-    void * const hT3d,
-    int          sampleRate
-)
-{
-    tracker3dlib_data *pData = (tracker3dlib_data*)(hT3d);
-
-}
-
+  
 void tracker3dlib_predict
 (
     void  *  const hT3d,
