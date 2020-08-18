@@ -75,6 +75,8 @@ void tracker3dlib_create
     Qc[5][5] = q_xyz;
     lti_disc((float*)F, 6, 6, NULL, (float*)Qc, tpars.dt, (float*)pData->A, (float*)pData->Q);
 
+    
+
 
 
 memset(pData->H, 0, 3*6*sizeof(float));

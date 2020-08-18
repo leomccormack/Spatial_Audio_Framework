@@ -40,6 +40,7 @@
 #include <string.h>
 #include "saf_tracker.h"
 #include "saf.h"
+#include "saf_externals.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,7 +57,7 @@ extern "C" {
 /* ========================================================================== */
 
 /** Monte Carlo Sample (particle) structure */
-typedef struct _MCS{
+typedef struct _MCS {
     float W;        /**< Importance weight */
     int nTargets;   /**< Number of targets being tracked */
     int nActive;    /**< Number of active targets */

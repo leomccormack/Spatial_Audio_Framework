@@ -66,58 +66,101 @@
 //%   of dt.
 
 /* Copyright (C) 2002, 2003 Simo Särkkä (GPLv2) */
-
 void lti_disc
 (
-    float* F,
+    float* F,      // NxN
     int len_N,
     int len_L,
-    float* opt_L,
-    float* opt_Qc,
+    float* opt_L,  // NxL
+    float* opt_Qc, // LxL
     float dt,
     float* A,
     float* Q
 )
 {
-    int i;
+    int i, j;
     float* L, *Qc;
     float* Fdt;
+    float** L_Qc, **L_Qc_LT, **Phi, **ZE, **B, **AB, **AB1_T, **AB2_T, **Q_T;
 
     /* Defaults: */
     if(opt_L==NULL){ /* Identity */
-        L = calloc1d(len_N*len_N, sizeof(float));
-        for(i=0; i<len_N; i++)
-            L[i] = 1.0f;
+        L = calloc1d(len_N*len_L, sizeof(float));
+        for(i=0; i<MIN(len_N, len_L); i++)
+            L[i*len_L+i] = 1.0f;
     }
     else
         L = opt_L;
     if(opt_Qc==NULL) /* zeros */
-        Qc = calloc1d(len_N*len_N, sizeof(float));
+        Qc = calloc1d(len_L*len_L, sizeof(float));
     else
         Qc = opt_Qc;
     Fdt = malloc1d(len_N*len_N*sizeof(float));
 
+    /* Closed form integration of transition matrix */
     for(i=0; i<len_N*len_N; i++)
         Fdt[i] = F[i]*dt;
+    gexpm(Fdt, len_N, 0, A);
 
-    float AA[6][6];
-    float Fdt_test[6][6];
-    memcpy(Fdt_test, Fdt, 36*sizeof(float));
-    gexpm(Fdt, len_N, 0, AA);
-    
+    /* Closed form integration of covariance by matrix fraction decomposition */
+    L_Qc = (float**)malloc2d(len_N, len_L, sizeof(float));
+    L_Qc_LT = (float**)malloc2d(len_N, len_N, sizeof(float));
+    Phi = (float**)calloc2d(len_N*2, len_N*2, sizeof(float)); // ca
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, len_N, len_L, len_L, 1.0f,
+                L, len_L,
+                Qc, len_L, 0.0f,
+                FLATTEN2D(L_Qc), len_L);
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, len_N, len_N, len_L, 1.0f,
+                FLATTEN2D(L_Qc), len_L,
+                L, len_L, 0.0f,
+                FLATTEN2D(L_Qc_LT), len_N);
+    for(i=0; i<len_N; i++){
+        for(j=0; j<len_N; j++){
+            Phi[i][j] = F[i*len_N+j];
+            Phi[i][j+len_N] = L_Qc_LT[i][j];
+            Phi[i+len_N][j+len_N] = -F[j*len_N+i];
+        }
+    }
+    utility_svsmul(FLATTEN2D(Phi), &dt, (len_N*2)*(len_N*2), NULL);
+    ZE = (float**)calloc2d(len_N*2, len_N, sizeof(float));
+    for(i=0; i<len_N; i++)
+        ZE[i+len_N][i] = 1.0f;
+    B = (float**)malloc2d(len_N*2, len_N*2, sizeof(float));
+    AB = (float**)malloc2d(len_N*2, len_N, sizeof(float));
+    gexpm(FLATTEN2D(Phi), len_N*2, 0, FLATTEN2D(B)); 
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, len_N*2, len_N, len_N*2, 1.0f,
+                FLATTEN2D(B), len_N*2,
+                FLATTEN2D(ZE), len_N, 0.0f,
+                FLATTEN2D(AB), len_N);
+    AB1_T = (float**)malloc2d(len_N, len_N, sizeof(float));
+    AB2_T = (float**)malloc2d(len_N, len_N, sizeof(float));
+    Q_T = (float**)malloc2d(len_N, len_N, sizeof(float));
+    for(i=0; i<len_N; i++){
+        for(j=0; j<len_N; j++){
+            AB1_T[j][i] = AB[i][j];
+            AB2_T[j][i] = AB[i+len_N][j];
+        }
+    }
+    utility_sglslv(FLATTEN2D(AB2_T), len_N, FLATTEN2D(AB1_T), len_N, FLATTEN2D(Q_T));
 
-//  %
-//  % Closed form integration of transition matrix
-//  %
-//  A = expm(F*dt);
-//
-//  %
-//  % Closed form integration of covariance
-//  % by matrix fraction decomposition
-//  %
-//  n   = size(F,1);
-//  Phi = [F L*Qc*L'; zeros(n,n) -F'];
-//  AB  = expm(Phi*dt)*[zeros(n,n);eye(n)];
-//  Q   = AB(1:n,:)/AB((n+1):(2*n),:);
-
+    /* transpose back */
+    for(i=0; i<len_N; i++)
+        for(j=0; j<len_N; j++)
+            Q[i*len_N+j] = Q_T[j][i];
+ 
+    /* clean-up */
+    if(opt_L==NULL)
+        free(L);
+    if(opt_Qc==NULL)
+        free(Qc);
+    free(Fdt);
+    free(L_Qc);
+    free(L_Qc_LT);
+    free(Phi);
+    free(ZE);
+    free(B);
+    free(AB);
+    free(AB1_T);
+    free(AB2_T);
+    free(Q_T);
 }
