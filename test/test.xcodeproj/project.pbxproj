@@ -478,9 +478,9 @@
 		50E36044249BDDCC00B74C25 /* saf_reverb */ = {
 			isa = PBXGroup;
 			children = (
+				50E36047249BDDCC00B74C25 /* saf_reverb_internal.c */,
 				50E36045249BDDCC00B74C25 /* saf_reverb_internal.h */,
 				50E36046249BDDCC00B74C25 /* saf_reverb.c */,
-				50E36047249BDDCC00B74C25 /* saf_reverb_internal.c */,
 				50E36048249BDDCC00B74C25 /* saf_reverb.h */,
 			);
 			path = saf_reverb;

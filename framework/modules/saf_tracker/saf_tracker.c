@@ -35,16 +35,16 @@
 #include "saf_tracker_internal.h"
 #include "saf_tracker.h"
 
-void tracker3dlib_create
+void tracker3d_create
 (
     void ** const phT3d,
     tracker3d_config tpars 
 )
 {
-    tracker3dlib_data* pData = (tracker3dlib_data*)malloc1d(sizeof(tracker3dlib_data));
+    tracker3d_data* pData = (tracker3d_data*)malloc1d(sizeof(tracker3d_data));
     *phT3d = (void*)pData;
     int i;
-    float sd_xyz, q_xyz;
+    float sd_xyz, q_xyz, W0;
     float Qc[6][6];
 
     /* Store user configuration */
@@ -74,23 +74,29 @@ void tracker3dlib_create
     Qc[4][4] = q_xyz;
     Qc[5][5] = q_xyz;
     lti_disc((float*)F, 6, 6, NULL, (float*)Qc, tpars.dt, (float*)pData->A, (float*)pData->Q);
+    memset(pData->H, 0, 3*6*sizeof(float));
+    pData->H[0][0] = 1.0f;
+    pData->H[1][1] = 1.0f;
+    pData->H[2][2] = 1.0f;
 
-    
+    /* Create particles */
+    pData->S = malloc1d(tpars.Np * sizeof(voidPtr));
+    W0 = 1.0f/(float)tpars.Np;
+    for(i=0; i<tpars.Np; i++)
+        tracker3d_particleCreate(&(pData->S[i]), W0, tpars.M0, tpars.P0, tpars.dt);
 
-
-
-memset(pData->H, 0, 3*6*sizeof(float));
-   // tpars.H = [1 0 0 0 0 0; 0 1 0 0 0 0; 0 0 1 0 0 0];
-
-
+    /* Possible combinations of active sources */
+    if(tpars.MULTI_ACTIVE){
+        assert(0); // not implemented yet!
+    } 
 }
 
-void tracker3dlib_destroy
+void tracker3d_destroy
 (
     void ** const phT3d
 )
 {
-    tracker3dlib_data *pData = (tracker3dlib_data*)(*phT3d); 
+    tracker3d_data *pData = (tracker3d_data*)(*phT3d);
 
     if (pData != NULL) {
 
@@ -99,16 +105,19 @@ void tracker3dlib_destroy
     }
 }
   
-void tracker3dlib_predict
+void tracker3d_step
 (
-    void  *  const hT3d,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void* const hT3d,
+    float* newObs_xyz,
+    int nObs,
+    float** target_xyz,
+    int* nTargets
 )
 {
-    tracker3dlib_data *pData = (tracker3dlib_data*)(hT3d);
+    tracker3d_data *pData = (tracker3d_data*)(hT3d);
+
+    
+
+
 }
 

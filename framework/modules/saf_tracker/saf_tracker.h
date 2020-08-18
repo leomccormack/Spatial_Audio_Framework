@@ -93,28 +93,28 @@ typedef struct _tracker3d_config{
 /* ========================================================================== */
 
 /**
- * Creates an instance of the mighty tracker3dlib
+ * Creates an instance of the mighty tracker3d
  *
- * @param[in] phT3d (&) address of tracker3dlib handle
+ * @param[in] phT3d (&) address of tracker3d handle
  */
-void tracker3dlib_create(void** const phT3d,
+void tracker3d_create(void** const phT3d,
                          tracker3d_config tpars);
 
 /**
- * Destroys an instance of the mighty tracker3dlib
+ * Destroys an instance of the mighty tracker3d
  *
- * @param[in] phT3d (&) address of tracker3dlib handle
+ * @param[in] phT3d (&) address of tracker3d handle
  */
-void tracker3dlib_destroy(void** const phT3d);
+void tracker3d_destroy(void** const phT3d);
     
-/** 
+/**
+ * Assumed this will be called every step in time
  */
-void tracker3dlib_predict(void* const hT3d,
-                          float** const inputs,
-                          float** const outputs,
-                          int nInputs,
-                          int nOutputs,
-                          int nSamples);
+void tracker3d_step(void* const hT3d,
+                    float* newObs_xyz,
+                    int nObs,
+                    float** target_xyz,
+                    int* nTargets);
 
 
 #ifdef __cplusplus

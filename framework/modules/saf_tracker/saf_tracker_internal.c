@@ -34,45 +34,64 @@
 
 #include "saf_tracker.h"
 #include "saf_tracker_internal.h"
- 
 
-//%LTI_DISC  Discretize LTI ODE with Gaussian Noise
-//%
-//% Syntax:
-//%   [A,Q] = lti_disc(F,L,Qc,dt)
-//%
-//% In:
-//%   F  - NxN Feedback matrix
-//%   L  - NxL Noise effect matrix        (optional, default identity)
-//%   Qc - LxL Diagonal Spectral Density  (optional, default zeros)
-//%   dt - Time Step                      (optional, default 1)
-//%
-//% Out:
-//%   A - Transition matrix
-//%   Q - Discrete Process Covariance
-//%
-//% Description:
-//%   Discretize LTI ODE with Gaussian Noise. The original
-//%   ODE model is in form
-//%
-//%     dx/dt = F x + L w,  w ~ N(0,Qc)
-//%
-//%   Result of discretization is the model
-//%
-//%     x[k] = A x[k-1] + q, q ~ N(0,Q)
-//%
-//%   Which can be used for integrating the model
-//%   exactly over time steps, which are multiples
-//%   of dt.
+
+
+void tracker3d_particleCreate
+(
+     void** phPart,
+     float W0,
+     float M0[6],
+     float P0[6][6],
+     float dt
+)
+{
+    *phPart = malloc1d(sizeof(MCS_data));
+    MCS_data *p = (MCS_data*)(*phPart);
+
+    p->W = W0;
+    p->W_prev = W0;
+    p->W0 = W0;
+    p->nTargets = 0;
+    p->nActive = 0;
+    p->B = 0;
+    p->D = 0;
+    p->dt = dt;
+    p->M = NULL;
+    p->P = NULL;
+    memcpy(p->M0.M, M0, 6*sizeof(float));
+    memcpy(p->P0.P, P0, 6*6*sizeof(float));
+    p->targetIDs = NULL;
+    p->activeIDs = NULL;
+    p->Tcount = NULL;
+}
+
+void tracker3d_particleDestroy
+(
+     void** phPart
+)
+{
+    MCS_data *p = (MCS_data*)(*phPart); 
+
+    if(p!=NULL){
+        free(p->M);
+        free(p->P);
+        free(p->targetIDs);
+        free(p->activeIDs);
+        free(p->Tcount);
+        p=NULL;
+        *phPart = NULL;
+    }
+}
 
 /* Copyright (C) 2002, 2003 Simo Särkkä (GPLv2) */
 void lti_disc
 (
-    float* F,      // NxN
+    float* F,
     int len_N,
     int len_L,
-    float* opt_L,  // NxL
-    float* opt_Qc, // LxL
+    float* opt_L,
+    float* opt_Qc,
     float dt,
     float* A,
     float* Q

@@ -142,7 +142,7 @@ void test__tracker3d(void){
     const float fs = 48e3;
     const int hopsize = 128;
     const float sigLen = fs*10;
-    const int nSources = 2; /* cannot be changed */
+    const int nSources = 2; /* cannot be changed, hard-coded for 2 */
     const float src_dirs_deg[2][2] = { {-35.0f, 30.0f}, {120.0f, 0.0f} };
 
     /* Configure the tracker */
@@ -172,7 +172,7 @@ void test__tracker3d(void){
     /* Elapsed time (in seconds) between observations */
     tpars.dt = 1.0f/(fs/(float)hopsize); /* Hop length of frames */
     /* Whether or not to allow multiple active sources for each update */
-    tpars.MULTI_ACTIVE = 1;
+    tpars.MULTI_ACTIVE = 0; //////////////////////////////////////////////////////////////////////////////
     /* Real-time tracking is based on the particle with highest weight. A
      * one-pole averaging filter is used to smooth the weights over time. */
     tpars.W_avg_coeff = 0.0;
@@ -200,7 +200,7 @@ void test__tracker3d(void){
     tpars.cd = 1.0f/(4.0f*SAF_PI);
 
     /* Create tracker */
-    tracker3dlib_create(&hT3d, tpars);
+    tracker3d_create(&hT3d, tpars);
 
     /* Create spherical harmonic input signals */
     insigs = (float**)malloc2d(nSources, sigLen, sizeof(float));
@@ -264,10 +264,10 @@ void test__tracker3d(void){
 
         /* Feed tracker */
 
-    } 
+    }
 
     /* Clean-up */
-    tracker3dlib_destroy(&hT3d);
+    tracker3d_destroy(&hT3d);
     sphMUSIC_destroy(&hMUSIC);
     free(insigs);
     free(inputSH);

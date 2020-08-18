@@ -56,9 +56,41 @@ extern "C" {
 /*                            Internal Structures                             */
 /* ========================================================================== */
 
+/** Void pointer (just to improve code readability when working with arrays of
+ * handles) */
+typedef void* voidPtr;
+
+typedef struct _M6 {
+    union {
+        struct { float m0, m1, m2, m3, m4, m5; };
+        float M[6];
+    };
+} M6;
+
+typedef struct _P66 {
+    union {
+        struct {
+            float p00, p01, p02, p03, p04, p05,
+                  p10, p11, p12, p13, p14, p15,
+                  p20, p21, p22, p23, p24, p25,
+                  p30, p31, p32, p33, p34, p35,
+                  p40, p41, p42, p43, p44, p45,
+                  p50, p51, p52, p53, p54, p55;
+        };
+        float P[6][6];
+    };
+} P66;
+
 /** Monte Carlo Sample (particle) structure */
 typedef struct _MCS {
     float W;        /**< Importance weight */
+    float W_prev;   /**< Previous important weight */
+    float W0;       /**< PRIOR importance weight */
+    M6 M0;          /**< 0,1,2: Position of sound source PRIORs (x,y,z), 3,4,5:
+                     *   Mean velocity PRIORs (x,y,z) */
+    P66 P0;         /**< Diagonal matrix, 0,1,2: Variance PRIORs of estimates
+                     *   along the x,y,z axes; 3,4,5 Velocity PRIORs of
+                     *   estimates along the x,y,z axes */
     int nTargets;   /**< Number of targets being tracked */
     int nActive;    /**< Number of active targets */
     int B;          /**< Birth indicator (non-zero indicates new birth with
@@ -66,13 +98,8 @@ typedef struct _MCS {
     int D;          /**< Death indicator (non-zero indicates new death with
                      *   index of the value of 'D') */
     float dt;       /**< Elapsed time inbetween each observation/measurment */
-    float* M[6];    /**< Current target means; nTargets x ([6]) */
-    float* P[6][6]; /**< Current target variances; nTargets x ([6][6]) */
-    float M0[6];    /**< 0,1,2: Position of sound source PRIORs (x,y,z), 3,4,5:
-                     *   Mean velocity PRIORs (x,y,z) */
-    float P0[6][6]; /**< Diagonal matrix, 0,1,2: Variance PRIORs of estimates
-                     *   along the x,y,z axes; 3,4,5 Velocity PRIORs of
-                     *   estimates along the x,y,z axes */
+    M6* M;          /**< Current target means; nTargets x ([6]) */
+    P66* P;         /**< Current target variances; nTargets x ([6][6]) */
     int* targetIDs; /**< Unique ID assigned to each target; nTargets x 1 */
     int* activeIDs; /**< IDs of targets currently active; nActive x 1 */
     int* Tcount;    /**< Time elapsed since birth of target: Tcount * dt;
@@ -81,13 +108,13 @@ typedef struct _MCS {
 } MCS_data;
 
 /** Main structure for tracker3d */
-typedef struct _tracker3dlib
+typedef struct _tracker3d
 {
     /** User parameters struct */
     tracker3d_config tpars;
 
     /* Internal */
-    MCS_data* S;    /**< The particles; tpars.Np x 1 */ 
+    voidPtr* S;     /**< The particles; tpars.Np x 1 */
     float R[3][3];  /**< Diagonal matrix, measurement noise PRIORs along the
                      *   x,y,z axes */
     float A[6][6];  /**< Transition matrix */
@@ -95,12 +122,19 @@ typedef struct _tracker3dlib
     float H[3][6];  /**< Measurement matrix */
 
     
-} tracker3dlib_data;
+} tracker3d_data;
      
 
 /* ========================================================================== */
 /*                             Internal Functions                             */
 /* ========================================================================== */
+
+
+void tracker3d_particleCreate(void** phPart,
+                              float W0,
+                              float M0[6],
+                              float P0[6][6],
+                              float dt);
 
 //%LTI_DISC  Discretize LTI ODE with Gaussian Noise
 //%
