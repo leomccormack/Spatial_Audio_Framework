@@ -80,15 +80,20 @@ void tracker3d_create
     pData->H[2][2] = 1.0f;
 
     /* Create particles */
-    pData->S = malloc1d(tpars.Np * sizeof(voidPtr));
+    pData->SS = malloc1d(tpars.Np * sizeof(voidPtr));
     W0 = 1.0f/(float)tpars.Np;
     for(i=0; i<tpars.Np; i++)
-        tracker3d_particleCreate(&(pData->S[i]), W0, tpars.M0, tpars.P0, tpars.dt);
+        tracker3d_particleCreate(&(pData->SS[i]), W0, tpars.M0, tpars.P0, tpars.dt);
 
     /* Possible combinations of active sources */
     if(tpars.MULTI_ACTIVE){
         assert(0); // not implemented yet!
-    } 
+    }
+
+    float x = 0.002666666666667;
+    float beta = 20.0f;
+
+    pData->incrementTime = 0;
 }
 
 void tracker3d_destroy
@@ -115,8 +120,13 @@ void tracker3d_step
 )
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
+    int ob;
 
-    
+    pData->incrementTime++;
+
+    for(ob=0; ob<nObs; ob++){
+
+    }
 
 
 }

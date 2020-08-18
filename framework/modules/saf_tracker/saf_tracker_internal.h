@@ -114,12 +114,13 @@ typedef struct _tracker3d
     tracker3d_config tpars;
 
     /* Internal */
-    voidPtr* S;     /**< The particles; tpars.Np x 1 */
+    voidPtr* SS;    /**< The particles; tpars.Np x 1 */
     float R[3][3];  /**< Diagonal matrix, measurement noise PRIORs along the
                      *   x,y,z axes */
     float A[6][6];  /**< Transition matrix */
     float Q[6][6];  /**< Discrete Process Covariance */
     float H[3][6];  /**< Measurement matrix */
+    int incrementTime;
 
     
 } tracker3d_data;
@@ -129,6 +130,10 @@ typedef struct _tracker3d
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
+
+void tracker3d_predict(voidPtr* S,
+                       tracker3d_config* tpars,
+                       int Tinc);
 
 void tracker3d_particleCreate(void** phPart,
                               float W0,
@@ -165,19 +170,17 @@ void tracker3d_particleCreate(void** phPart,
 //%   exactly over time steps, which are multiples
 //%   of dt.
 
-/* Copyright (C) 2002, 2003 Simo Särkkä (GPLv2) */
-
-void lti_disc
-(
-    float* F,
-    int len_N,
-    int len_L,
-    float* opt_L,
-    float* opt_Qc,
-    float dt,
-    float* A,
-    float* Q
- );
+/* Copyright (C) 2002, 2003 Simo Särkkä (GPLv2) */ 
+void lti_disc(/* Input Arguments */
+              float* F,
+              int len_N,
+              int len_L,
+              float* opt_L,
+              float* opt_Qc,
+              float dt,
+              /* Output Arguments */
+              float* A,
+              float* Q);
 
 
 #ifdef __cplusplus

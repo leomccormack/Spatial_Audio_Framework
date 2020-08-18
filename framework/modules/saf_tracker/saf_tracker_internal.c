@@ -35,6 +35,123 @@
 #include "saf_tracker.h"
 #include "saf_tracker_internal.h"
 
+/* https://stackoverflow.com/questions/24460776/fast-incomplete-gamma-function */
+float poisson_z(float x, float mu){
+    static const float twoThirds = 2.0f/3.0f;
+    float w = sqrt((x+0.5f)/mu) - 1.0f;
+    float coeff = w>=0.0f ? 0.085f : 0.15f;
+    return (x-mu+twoThirds)/sqrtf(mu*(1.0f+w*(0.68f+w*coeff)));
+}
+
+float gamma_cdf(float x, float gam, float beta)
+{
+    /* Convert to standard form */
+    x = (x)/beta;
+
+    /* Compute the probability using the imcomplete gamma function */
+    return poisson_z(x,gam);
+}
+
+void tracker3d_predict
+(
+    voidPtr* SS,
+    tracker3d_config* tpars,
+    int Tinc
+)
+{
+    int i, j, nDead;
+    int* dead;
+    float dt0, dt1, p_death;
+    MCS_data* S;
+
+    nDead = 0;
+    dead = NULL;
+
+    for (i=0; i<tpars->Np; i++){
+       // dead=[];
+        S = (MCS_data*)SS[i];
+
+        /* Loop over targets */
+        for (j=0; j<S->nTargets; j++){
+
+            /* No target has died yet or multiple targets are allowed to die in
+             * one prediction step */
+            if (nDead==0 || tpars->ALLOW_MULTI_DEATH){
+                /* Probability of death */
+                dt0 = (float)S->Tcount[j] * S->dt;
+                dt1 = dt0 + S->dt * (float)Tinc;
+                if (dt0 == 0)
+                    p_death = gamma_cdf(dt1, tpars->alpha_death, tpars->beta_death);
+                else
+                    p_death = 1 - (1-gamma_cdf(dt1, tpars->alpha_death,tpars->beta_death)) /
+                        (1-gamma_cdf(dt0,tpars->alpha_death,tpars->beta_death));
+
+
+                /* Force probability of death to 1, if this target is too close
+                   another target that has been alive longer. */
+//                if tpars.FORCE_KILL_TARGETS
+//                    for k=1:S{i}.nTargets
+//                        if k~=j
+//                            %dist = sqrt(sum((S{i}.M{j}(1:3,1)-S{i}.M{k}(1:3,1)).^2));
+//                            %angle_diff = acos( dot(S{i}.M{j}(1:3,1), S{i}.M{k}(1:3,1))./(norm(S{i}.M{j}(1:3,1))*norm(S{i}.M{k}(1:3,1) )));
+//                            angle_diff = atan2(norm(cross(S{i}.M{j}(1:3,1),S{i}.M{k}(1:3,1))),dot(S{i}.M{j}(1:3,1),S{i}.M{k}(1:3,1)));
+//                            if angle_diff < tpars.forceKillAngle_rad && S{i}.Tcount(j) <= S{i}.Tcount(k)
+//                                p_death = 1;
+//                            end
+//                        end
+//                    end
+//                end
+
+//                if (rand < p_death)
+//                    /* Target dies */
+//                    dead = [dead j];
+//                end
+            }
+
+//            if tpars.ALLOW_MULTI_DEATH
+//                if all(j ~= dead)
+//                    % Kalman Filter prediction for the target if alive
+//                    [S{i}.M{j},S{i}.P{j}] = kf_predict(S{i}.M{j},S{i}.P{j},tpars.A,tpars.Q,B,u);
+//                end
+//            else
+//                if  (isempty(dead)) || (j ~= dead)
+//                    % Kalman Filter prediction for the target if alive
+//                    [S{i}.M{j},S{i}.P{j}] = kf_predict(S{i}.M{j},S{i}.P{j},tpars.A,tpars.Q,B,u);
+//                end
+//            end
+
+        }
+//        % Remove the dead target
+//        if tpars.ALLOW_MULTI_DEATH
+//            if ~isempty(dead), S{i}.D = S{i}.targetIDs(dead,1); else, S{i}.D = []; end
+//            for j=1:length(dead)
+//                ind = find((1:S{i}.nTargets)~=dead(j)); % Remove index
+//                ev_strs{i} = sprintf('Target %d died ',dead(j));
+//                S{i}.nTargets = S{i}.nTargets-1;
+//                S{i}.M = S{i}.M(ind);
+//                S{i}.P = S{i}.P(ind);
+//                S{i}.Tcount = S{i}.Tcount(ind);
+//                S{i}.targetIDs = S{i}.targetIDs(ind,1);
+//                S{i}.B = 0;
+//            end
+//        else
+//            if ~isempty(dead)
+//                ind = find((1:S{i}.nTargets)~=dead); % Remove index
+//                ev_strs{i} = sprintf('Target %d died ',dead);
+//                S{i}.nTargets = S{i}.nTargets-1;
+//                S{i}.D = S{i}.targetIDs(dead,1);
+//                S{i}.M = S{i}.M(ind);
+//                S{i}.P = S{i}.P(ind);
+//                S{i}.Tcount = S{i}.Tcount(ind);
+//                S{i}.targetIDs = S{i}.targetIDs(ind,1);
+//                S{i}.B = 0;
+//            else
+//                S{i}.D = 0;
+//            end
+//        end
+
+    }
+}
 
 
 void tracker3d_particleCreate
