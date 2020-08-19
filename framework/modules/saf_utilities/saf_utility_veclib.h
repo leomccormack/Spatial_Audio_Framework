@@ -970,6 +970,31 @@ void utility_zglslv(/* Input Arguments */
 
 
 /* ========================================================================== */
+/*                      General Linear Solver (?glslvt)                       */
+/* ========================================================================== */
+
+/**
+ * General linear solver (the other way): single precision, i.e.
+ * \code{.m}
+ *     X = linsolve(B.',A.').' = A/B;
+ * \endcode
+ *
+ * @param[in]  A    Input square matrix; FLAT: dim x dim
+ * @param[in]  dim  Dimensions for square matrix 'A'
+ * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
+ * @param[in]  nCol Number of columns in right hand side matrix
+ * @param[out] X    The solution; FLAT: dim x nCol
+ */
+void utility_sglslvt(/* Input Arguments */
+                     const float* A,
+                     const int dim,
+                     float* B,
+                     int nCol,
+                     /* Output Arguments */
+                     float* X);
+
+
+/* ========================================================================== */
 /*                      Symmetric Linear Solver (?slslv)                      */
 /* ========================================================================== */
 

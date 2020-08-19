@@ -503,7 +503,7 @@ void kf_update6
     float* LH
 )
 {
-    float IM[3], IS[3][3], HP[3][6], HPHT[3][3];
+    float IM[3], IS[3][3], IS_T[3][3], HP[3][6], HPHT[3][3], PHT[6][3], PHTT[3][6], K[6][3];
 
     /* update step */
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 1, 6, 1.0f,
@@ -520,10 +520,28 @@ void kf_update6
                 (float*)HPHT, 3);
     utility_svvadd((float*)HPHT, (float*)R, 9, (float*)IS);
 
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 6, 3, 6, 1.0f,
+                (float*)P, 6,
+                (float*)H, 6, 0.0f,
+                (float*)PHT, 3);
 
-//    K = P*H'/IS;
-//    K2 = IS.'\(P*H')';
-//    K2 = K2.';
+    float IS_test[3][3] = {{4.05473520259551,    0,    0},
+        {0 ,   4.05473520259551,    0},
+        {0   , 0   , 4.05473520259551}};
+
+    float PHTEST[6][3] = {{0.0539963276126856   , 0 ,   0},
+   { 0 ,   0.0539963276126856 ,   0},
+   { 0 ,   0  ,  0.0539963276126856},
+   { 0 ,   0  ,  0},
+   { 0 ,   0  ,  0},
+    {0 ,   0  ,  0}};
+
+
+    utility_sglslvt((float*)PHTEST, 6, IS_test, 3, K);
+   // utility_sglslvt((float*)PHT, 6, IS, 3, K);
+
+//    K = IS.'\(P*H')';
+//    K = K.';
 //    X = X + K * (y-IM);
 //    P = P - K*IS*K';
     if (LH!=NULL)
