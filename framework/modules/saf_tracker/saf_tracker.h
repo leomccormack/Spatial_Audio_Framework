@@ -29,7 +29,7 @@
  *     https://github.com/sharathadavanne/multiple-target-tracking
  *
  * @author Leo McCormack
- * @date 04.07.2020
+ * @date 12.08.2020
  */
 
 #ifndef __SAF_TRACKER_H_INCLUDED__
@@ -76,7 +76,7 @@ typedef struct _tracker3d_config{
                                *   another target. In these cases, the target
                                *   that has been 'alive' for the least amount
                                *   of time, is killed */
-    float forceKillAngle_deg; /**< Angle at which to kill targets, in degrees */
+    float forceKillAngle_rad; /**< Angle at which to kill targets, in radians */
     float M0[6];              /**< 0,1,2: Position of sound source PRIORs
                                *   (x,y,z), 3,4,5: Mean velocity PRIORs (x,y,z) */
     float P0[6][6];           /**< Diagonal matrix, 0,1,2: Variance PRIORs of
@@ -98,7 +98,7 @@ typedef struct _tracker3d_config{
  * @param[in] phT3d (&) address of tracker3d handle
  */
 void tracker3d_create(void** const phT3d,
-                         tracker3d_config tpars);
+                      tracker3d_config tpars);
 
 /**
  * Destroys an instance of the mighty tracker3d

@@ -29,7 +29,7 @@
  *     https://github.com/sharathadavanne/multiple-target-tracking
  *     
  * @author Leo McCormack
- * @date 04.07.2020
+ * @date 12.08.2020
  */
 
 #include "saf_tracker_internal.h"
@@ -90,9 +90,6 @@ void tracker3d_create
         assert(0); // not implemented yet!
     }
 
-    float x = 0.002666666666667;
-    float beta = 20.0f;
-
     pData->incrementTime = 0;
 }
 
@@ -122,7 +119,19 @@ void tracker3d_step
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
     int ob;
 
+    pData->incrementTime = 0;
     pData->incrementTime++;
+
+#ifdef TRACKER_VERBOSE
+    printf("%s\n", "Prediction step");
+#endif
+    tracker3d_predict(hT3d, pData->incrementTime);
+    pData->incrementTime = 0;
+
+#ifdef TRACKER_VERBOSE
+    printf("%s\n", "Update step");
+#endif
+    tracker3d_update(hT3d, newObs_xyz[0], pData->incrementTime);
 
     for(ob=0; ob<nObs; ob++){
 

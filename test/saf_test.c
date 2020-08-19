@@ -132,10 +132,13 @@ void test__tracker3d(void){
     int inds[2];
     void* hT3d, *hMUSIC;
     float scale;
-    float est_dirs_deg[2][2];
+    float est_dirs_deg[2][2], est_dirs_xyz[2][3];
     float* grid_dirs_deg;
     float** insigs, **inputSH, **inputSH_noise, **inputSH_hop, **Y, **Cx, **V, **Vn;
     float_complex** Vn_cmplx;
+
+    int nTargets;
+    float *target_dirs_xyz;
 
     /* Test configuration */
     const int order = 2;
@@ -179,7 +182,7 @@ void test__tracker3d(void){
     /* Force kill targets that are close to another target. In these cases, the
      * target that has been 'alive' for the least amount of time, is killed */
     tpars.FORCE_KILL_TARGETS = 1;
-    tpars.forceKillAngle_deg = 10.0f;
+    tpars.forceKillAngle_rad = 10.0f*SAF_PI/180.0f;
     /* Mean position priors x,y,z (assuming directly in-front) */
     tpars.M0[0] = 1.0f; tpars.M0[1] = 0.0f; tpars.M0[2] = 0.0f;
     /* Mean Velocity priors x,y,z (assuming stationary) */
@@ -261,8 +264,10 @@ void test__tracker3d(void){
         est_dirs_deg[0][1] = grid_dirs_deg[inds[0]*2+1];
         est_dirs_deg[1][0] = grid_dirs_deg[inds[1]*2+0];
         est_dirs_deg[1][1] = grid_dirs_deg[inds[1]*2+1];
+        unitSph2cart((float*)est_dirs_deg, nSources, 1, (float*)est_dirs_xyz);
 
         /* Feed tracker */
+        tracker3d_step(hT3d, (float*)est_dirs_xyz, nSources, &target_dirs_xyz, &nTargets);
 
     }
 
