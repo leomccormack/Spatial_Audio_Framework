@@ -461,7 +461,13 @@ void tracker3d_particleDestroy
 /* ========================================================================== */
 
 /* hard-coded for length(M)=6 ... */
-void kf_predict6(float M[6], float P[6][6], float A[6][6], float Q[6][6])
+void kf_predict6
+(
+    float M[6],
+    float P[6][6],
+    float A[6][6],
+    float Q[6][6]
+)
 {
     float AM[6], AP[6][6], APAT[6][6];
 
@@ -485,7 +491,17 @@ void kf_predict6(float M[6], float P[6][6], float A[6][6], float Q[6][6])
 }
 
 /* hard-coded for length(M)=6 ... */
-void kf_update6(float X[6], float P[6][6], float y[3], float H[3][6], float R[3][3], float X_out[6], float P_out[6][6], float* LH)
+void kf_update6
+(
+    float X[6],
+    float P[6][6],
+    float y[3],
+    float H[3][6],
+    float R[3][3],
+    float X_out[6],
+    float P_out[6][6],
+    float* LH
+)
 {
     float IM[3], IS[3][3], HP[3][6], HPHT[3][3];
 
@@ -505,15 +521,23 @@ void kf_update6(float X[6], float P[6][6], float y[3], float H[3][6], float R[3]
     utility_svvadd((float*)HPHT, (float*)R, 9, (float*)IS);
 
 
-    K = P*H'/IS;
-    X = X + K * (y-IM);
-    P = P - K*IS*K';
+//    K = P*H'/IS;
+//    K2 = IS.'\(P*H')';
+//    K2 = K2.';
+//    X = X + K * (y-IM);
+//    P = P - K*IS*K';
     if (LH!=NULL)
-      *LH = gauss_pdf(y,IM,IS);
+      *LH = gauss_pdf3(y,IM,IS);
 
 }
 
-float gamma_cdf(float x, float gam, float beta, float mu)
+float gamma_cdf
+(
+    float x,
+    float gam,
+    float beta,
+    float mu
+)
 {
     /* Convert to standard form */
     x = (x-mu)/beta;
@@ -622,7 +646,12 @@ void lti_disc
 }
 
 /* hard-coded for length(M)=3 ... */
-float gauss_pdf3(float X[3], float M[3], float S[3][3])
+float gauss_pdf3
+(
+    float X[3],
+    float M[3],
+    float S[3][3]
+)
 {
     float E;
     float DX[3], S_DX[3];
@@ -645,7 +674,11 @@ float gauss_pdf3(float X[3], float M[3], float S[3][3])
 /*                              Static Functions                              */
 /* ========================================================================== */
 
-static double lngamma(double x, double* sgngam)
+static double lngamma
+(
+    double x,
+    double* sgngam
+)
 {
     double a, b, c, p, q, u, w, z, logpi, ls2pi, tmp, result;
     int i;
@@ -735,7 +768,11 @@ static double lngamma(double x, double* sgngam)
     return result;
 }
 
-static double incompletegammac(double a, double x)
+static double incompletegammac
+(
+    double a,
+    double x
+)
 {
     double igammaepsilon, igammabignumber, igammabignumberinv, result;
     double ans, ax, c, yc, r, t, y, z, pk, pkm1, pkm2, qk, qkm1, qkm2, tmp;
@@ -795,7 +832,11 @@ static double incompletegammac(double a, double x)
     return result;
 }
 
-static double incompletegamma(double a, double x)
+static double incompletegamma
+(
+    double a,
+    double x
+)
 {
     double igammaepsilon, ans, ax, c, r, tmp, result;
 

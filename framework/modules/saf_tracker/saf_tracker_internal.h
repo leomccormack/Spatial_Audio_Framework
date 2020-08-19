@@ -54,7 +54,7 @@ extern "C" {
 /* ========================================================================== */
 
 /** Void pointer (just to improve code readability when working with arrays of
- * handles) */
+ *  handles) */
 typedef void* voidPtr;
 
 /** Mean union struct for 3-D */
