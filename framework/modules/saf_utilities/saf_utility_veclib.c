@@ -1709,7 +1709,7 @@ void utility_sglslvt
     float* X
 )
 {
-    int i, j, n = nCol, nrhs = dim, lda = nCol, ldb = nCol, info;
+    int n = nCol, nrhs = dim, lda = nCol, ldb = nCol, info;
     int* IPIV;
     float* a, *b;
 
@@ -1717,15 +1717,9 @@ void utility_sglslvt
     a = malloc1d(dim*dim*sizeof(float));
     b = malloc1d(dim*nrhs*sizeof(float));
 
-    /* store in column major order */
+    /* store locally */
     cblas_scopy(dim*dim, A, 1, a, 1);
-//    for(i=0; i<dim; i++)
-//        for(j=0; j<dim; j++)
-//            a[j*dim+i] = A[j*dim+i];
     cblas_scopy(dim*nCol, B, 1, b, 1);
-//    for(i=0; i<dim; i++)
-//        for(j=0; j<nCol; j++)
-//            b[j*dim+i] = B[j*dim+i];
 
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
 #ifdef VECLIB_USE_CLAPACK_INTERFACE
@@ -1743,13 +1737,8 @@ void utility_sglslvt
         saf_error_print(SAF_WARNING__FAILED_TO_SOLVE_LINEAR_EQUATION);
 #endif
     }
-    else{
-        /* store solution in row-major order */
+    else
         cblas_scopy(dim*nCol, a, 1, X, 1);
-//        for(i=0; i<dim; i++)
-//            for(j=0; j<nCol; j++)
-//                X[i*nCol+j] = a[i*nCol+j];
-    }
 
     free(IPIV);
     free(a);

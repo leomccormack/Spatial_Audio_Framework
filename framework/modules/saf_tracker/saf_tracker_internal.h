@@ -49,6 +49,8 @@ extern "C" {
 
 #define TRACKER_VERBOSE
 
+#define TRACKER3D_MAX_NUM_EVENTS ( 24 )
+
 /* ========================================================================== */
 /*                            Internal Structures                             */
 /* ========================================================================== */
@@ -84,12 +86,7 @@ typedef struct _P66 {
 typedef struct _MCS {
     float W;         /**< Importance weight */
     float W_prev;    /**< Previous important weight */
-    float W0;        /**< PRIOR importance weight */
-    M6 M0;           /**< 0,1,2: Position of sound source PRIORs (x,y,z), 3,4,5:
-                      *   Mean velocity PRIORs (x,y,z) */
-    P66 P0;          /**< Diagonal matrix, 0,1,2: Variance PRIORs of estimates
-                      *   along the x,y,z axes; 3,4,5 Velocity PRIORs of
-                      *   estimates along the x,y,z axes */
+    float W0;        /**< PRIOR importance weight */ 
     int nTargets;    /**< Number of targets being tracked */
     int nActive;     /**< Number of active targets */
     float dt;        /**< Elapsed time inbetween each observation/measurment */
@@ -119,6 +116,14 @@ typedef struct _tracker3d
     float Q[6][6];  /**< Discrete Process Covariance */
     float H[3][6];  /**< Measurement matrix */
     int incrementTime;
+    float W0;       /**< PRIOR importance weight */
+
+    /* Events */
+    char evt[TRACKER3D_MAX_NUM_EVENTS][256]; /**< Event descriptions */
+    int* evta[TRACKER3D_MAX_NUM_EVENTS];     /**< Event targets */
+    float evp[TRACKER3D_MAX_NUM_EVENTS];     /**< Event priors */
+    float evl[TRACKER3D_MAX_NUM_EVENTS];     /**< Event likelhoods*/
+    voidPtr str[TRACKER3D_MAX_NUM_EVENTS];   /**< Structure after each event */
 
     
 } tracker3d_data;
@@ -132,16 +137,26 @@ typedef struct _tracker3d
  *
  */
 void tracker3d_particleCreate(void** phPart,
-                              float W0,
-                              float M0[6],
-                              float P0[6][6],
+                              float W0, 
                               float dt);
+
+/**
+ *
+ */
+void tracker3d_particleDestroy(void** phPart);
 
 /**
  * Prediction step
  */
 void tracker3d_predict(void* const hT3d, 
                        int Tinc);
+
+/**
+ * Prediction update 
+ */
+void tracker3d_update(void* const hT3d,
+                      float* Y,
+                      int Tinc);
 
 
 /* ========================================================================== */
@@ -300,6 +315,17 @@ float gauss_pdf3(/* Input Arguments */
                  float X[3],
                  float M[3],
                  float S[3][3]);
+
+/**
+ * Draws samples from a given one dimensional discrete distribution
+ *
+ * @param[in] P     Discrete distribution; len_P x 1
+ * @param[in] len_P length of P
+ *
+ * Original Copyright (C) 2002 Simo Särkkä, 2008 Jouni Hartikainen (GPLv2)
+ */
+int categ_rnd(float* P,
+              int len_P);
 
 
 #ifdef __cplusplus

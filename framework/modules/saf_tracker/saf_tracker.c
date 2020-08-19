@@ -81,13 +81,19 @@ void tracker3d_create
 
     /* Create particles */
     pData->SS = malloc1d(tpars.Np * sizeof(voidPtr));
-    W0 = 1.0f/(float)tpars.Np;
+    pData->W0 = 1.0f/(float)tpars.Np;
     for(i=0; i<tpars.Np; i++)
-        tracker3d_particleCreate(&(pData->SS[i]), W0, tpars.M0, tpars.P0, tpars.dt);
+        tracker3d_particleCreate(&(pData->SS[i]), pData->W0, tpars.dt);
 
     /* Possible combinations of active sources */
     if(tpars.MULTI_ACTIVE){
         assert(0); // not implemented yet!
+    }
+
+    /* Starting values */
+    for(i=0; i<TRACKER3D_MAX_NUM_EVENTS; i++){
+        pData->evta[i] = NULL;
+        pData->str[i] = NULL;
     }
 
     pData->incrementTime = 0;
@@ -131,7 +137,7 @@ void tracker3d_step
 #ifdef TRACKER_VERBOSE
     printf("%s\n", "Update step");
 #endif
-  //  tracker3d_update(hT3d, newObs_xyz[0], pData->incrementTime);
+    tracker3d_update(hT3d, newObs_xyz[0], pData->incrementTime);
 
     for(ob=0; ob<nObs; ob++){
 

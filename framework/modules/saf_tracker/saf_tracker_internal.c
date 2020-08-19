@@ -105,6 +105,74 @@ static double incompletegammac(double a, double x);
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
+void tracker3d_particleCreate
+(
+     void** phPart,
+     float W0,
+     float dt
+)
+{
+    *phPart = malloc1d(sizeof(MCS_data));
+    MCS_data *p = (MCS_data*)(*phPart);
+
+    p->W = W0;
+    p->W_prev = W0;
+    p->W0 = W0;
+    p->nTargets = 0;
+    p->nActive = 0;
+    p->dt = dt;
+    p->M = NULL;
+    p->P = NULL;
+    p->targetIDs = NULL;
+    p->activeIDs = NULL;
+    p->Tcount = NULL;
+}
+
+void tracker3d_particleCopy
+(
+     void* hPart1,
+     void* hPart2
+)
+{
+    MCS_data *p1 = (MCS_data*)(hPart1);
+    MCS_data *p2 = (MCS_data*)(hPart2);
+
+    p2->W = p1->W;
+    p2->W_prev = p1->W_prev;
+    p2->W0 = p1->W0;
+    p2->nTargets = p1->nTargets;
+    p2->nActive = p1->nActive;
+    p2->dt = p1->dt;
+    p2->M = realloc1d(p2->M, p1->nTargets*sizeof(M6));
+    p2->P = realloc1d(p2->P, p1->nTargets*sizeof(P66));
+    memcpy(p2->M, p1->M, p1->nTargets*sizeof(M6));
+    memcpy(p2->P, p1->P, p1->nTargets*sizeof(P66));
+    p2->targetIDs = realloc1d(p2->targetIDs, p1->nTargets*sizeof(int));
+    p2->activeIDs = realloc1d(p2->activeIDs, p1->nActive*sizeof(int));
+    p2->Tcount = realloc1d(p2->Tcount, p1->nTargets*sizeof(int));
+    memcpy(p2->targetIDs, p1->targetIDs, p1->nTargets*sizeof(int));
+    memcpy(p2->activeIDs, p1->activeIDs, p1->nActive*sizeof(int));
+    memcpy(p2->Tcount, p1->Tcount, p1->nTargets*sizeof(int));
+}
+
+void tracker3d_particleDestroy
+(
+     void** phPart
+)
+{
+    MCS_data *p = (MCS_data*)(*phPart);
+
+    if(p!=NULL){
+        free(p->M);
+        free(p->P);
+        free(p->targetIDs);
+        free(p->activeIDs);
+        free(p->Tcount);
+        p=NULL;
+        *phPart = NULL;
+    }
+}
+
 void tracker3d_predict
 (
     void* const hT3d,
@@ -257,9 +325,7 @@ void tracker3d_predict
     }
 }
 
-#define TRACKER3D_MAX_NUM_EVENTS ( 24 )
-
-#if 0
+#if 1
 void tracker3d_update
 (
     void* const hT3d,
@@ -268,10 +334,12 @@ void tracker3d_update
 )
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
-    int i, n_events, count;
-    float TP0;
-    MCS_data* S;
+    int i, j, k, ss, n_events, count, cidx, foundSlot, j_new;
+    float TP0, LH, norm;
+    float M[6], P[6][6];
+    MCS_data* S, *S_event;
     tracker3d_config* tpars = &(pData->tpars);
+    float imp[TRACKER3D_MAX_NUM_EVENTS];
 
     /* Loop over particles */
 //    ev_strs = cell(size(S));
@@ -291,49 +359,51 @@ void tracker3d_update
 //            end
         }
         else{
-            /* clutter or 1 of the targets is active */
+            /* clutter (+1), birth (+1), or 1 of the targets is active: */
             n_events = S->nTargets + 2;
         }
         if( S->nTargets < tpars->maxNactiveTargets)
             n_events++; /* chance of a new target */
 
+        /* Prep */
         assert(n_events<=TRACKER3D_MAX_NUM_EVENTS);
-
-        evt = cell(1,n_events);   % Event descriptions
-        evta = cell(1,n_events);  % Event descriptions
-        evp = zeros(1,n_events);  % Event priors
-        evl = zeros(1,n_events);  % Event likelhoods
-        str = cell(1,n_events);   % Structure after each event
+        memset(pData->evt, 0, n_events*256*sizeof(char)); /* Event descriptions */
+        for(k=0; k<n_events; k++){
+            tracker3d_particleDestroy(&pData->str[k]);
+            tracker3d_particleCreate(&pData->str[k], pData->W0, tpars->dt);
+        }
         count = 0; /* Event counter */
+        cidx = 0;  /* current index */
 
         /* Association to clutter */
-        count = count+1;
-        evt{count} = 'Clutter';
-        evta{count} = [];
-        evp(count) = (1-tpars.init_birth)*tpars.noiseLikelihood;
-        evl(count) = tpars.cd;
-        str{count} = S{i};
-        str{count}.B = 0;
-        str{count}.D = 0;
+        count++;
+        strcpy(pData->evt[cidx], "Clutter");
+        free(pData->evta[cidx]);
+        pData->evta[cidx] = NULL;
+        pData->evp[cidx] = (1.0f-tpars->init_birth)*tpars->noiseLikelihood;
+        pData->evl[cidx] = tpars->cd;
+        tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
+        cidx++;
 
         /* Loop over associations to targets */
         for (j=0; j<S->nTargets; j++){
             /* Compute update result and likelihood for association to signal j */
-            [M,P,~,~,~,lhood] = kf_update(S{i}.M{j},S{i}.P{j},Y,tpars.H,tpars.R);
+            kf_update6(S->M[j].M, S->P[j].P, Y, pData->H, pData->R, M, P, &LH);
 
             /* Assocation to target j */
-            count = count+1;
-            evt{count} = sprintf('Target %d',S{i}.targetIDs(j));
-            evta{count} = S{i}.targetIDs(j);
-            evp(count) = (1-tpars.init_birth)*TP0;
-            evl(count) = lhood;
-            str{count} = S{i};
-            str{count}.M{j} = M;
-            str{count}.P{j} = P;
-            %str{count}.Tcount(j) = S{i}.Tcount(j) + Tinc;
-            str{count}.Tcount = S{i}.Tcount + Tinc;
-            str{count}.B = 0;
-            str{count}.D = 0;
+            count++;
+            sprintf(pData->evt[cidx], "Target %d ", S->targetIDs[j]);
+            pData->evta[cidx] = realloc1d(pData->evta[cidx], sizeof(int));
+            pData->evta[cidx][0] = S->targetIDs[j];
+            pData->evp[cidx] = (1.0f-tpars->init_birth)*TP0;
+            pData->evl[cidx] = LH;
+            tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
+            S_event = (MCS_data*)pData->str[cidx];
+            memcpy(S_event->M[j].M, M, sizeof(M6));
+            memcpy(S_event->P[j].P, P, sizeof(P66));
+            for(k=0; k<S->nTargets; k++)
+                S_event->Tcount[k] += Tinc;
+            cidx++;
 
             /*  Handles for MULTI_ACTIVE */
 //            if tpars.MULTI_ACTIVE
@@ -344,7 +414,7 @@ void tracker3d_update
         }
 
         /* Loop over associations to multiple active target combinations */
-        if (tpars->MULTI_ACTIVE == 1) && (nTargets > 0){
+        if ((tpars->MULTI_ACTIVE == 1) && (S->nTargets > 0)){
 //            for nA=1:tpars.ATinds{nTargets}.nCombinationsAbove2
 //                count = count+1;
 //                inds = tpars.ATinds{nTargets}.indsAbove2{nA};
@@ -368,35 +438,46 @@ void tracker3d_update
         /* Association to new target */
         if (S->nTargets < tpars->maxNactiveTargets){
             /* Initialization of new target */
-            [M,P,~,~,~,lhood] =  kf_update(S{i}.M0,S{i}.P0,Y,tpars.H,tpars.R);
+            kf_update6(tpars->M0, tpars->P0, Y, pData->H, pData->R, M, P, &LH);
 
             /* find a free ID */
-            for ss = 1:tpars.maxNactiveTargets
-                if all(ss~=S{i}.targetIDs)% && all(ss~=S{i}.D)
-                    j_new = ss;
-                    break;
-                end
-            end
-            count = count+1;
-            j = S{i}.nTargets+1;
-            evt{count} = sprintf('New target %d',j);
-            evta{count} = j;
-            evp(count) = tpars.init_birth;
-            evl(count) = lhood;
-            str{count} = S{i};
-            str{count}.nTargets = j;
-            str{count}.M{j} = M;
-            str{count}.P{j} = P;
-            str{count}.Tcount(j) = 0;
-            str{count}.targetIDs(j,1) = j_new;
-            str{count}.B = j_new;
-            str{count}.D = 0;
+            for (ss = 0; ss<tpars->maxNactiveTargets; ss++){
+                j=0;
+                foundSlot = 0;
+                while(!foundSlot){
+                    if(ss != S->targetIDs[j]){
+                        j_new = ss;
+                        foundSlot = 1;
+                    }
+                    j++;
+                };
+            }
+            count++;
+            j = S->nTargets;
+            sprintf(pData->evt[cidx], "New Target %d ", j);
+            pData->evta[cidx] = realloc1d(pData->evta[cidx], sizeof(int));
+            pData->evta[cidx][0] = j;
+            pData->evp[cidx] = tpars->init_birth;
+            pData->evl[cidx] = LH;
+            tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
+            S_event = (MCS_data*)pData->str[cidx];
+            S_event->nTargets = j+1;
+            memcpy(S_event->M[j].M, M, sizeof(M6));
+            memcpy(S_event->P[j].P, P, sizeof(P66));
+            S_event->Tcount = realloc1d(S_event->Tcount, S_event->nTargets*sizeof(int));
+            S_event->Tcount[j] = 0;
+            S_event->targetIDs = realloc1d(S_event->targetIDs, S_event->nTargets*sizeof(int));
+            S_event->targetIDs[j] = j_new;
+            cidx++;
         }
 
         /* Draw sample from importance distribution */
-        evp = evp./(sum(evp));
-        imp = evp.*evl;
-        imp = imp./(sum(imp));
+        norm = 1.0f/sumf(pData->evp, count);
+        cblas_sscal(count, norm, pData->evp, 1);
+        utility_svvmul(pData->evp, pData->evl, count, imp);
+        norm = 1.0f/sumf(imp, count);
+        cblas_sscal(count, norm, imp, 1);
+
         ev = categ_rnd(imp);  /* Event index */
 
         /* Update particle */
@@ -409,51 +490,6 @@ void tracker3d_update
     }
 }
 #endif
-
-void tracker3d_particleCreate
-(
-     void** phPart,
-     float W0,
-     float M0[6],
-     float P0[6][6],
-     float dt
-)
-{
-    *phPart = malloc1d(sizeof(MCS_data));
-    MCS_data *p = (MCS_data*)(*phPart);
-
-    p->W = W0;
-    p->W_prev = W0;
-    p->W0 = W0;
-    p->nTargets = 0;
-    p->nActive = 0;
-    p->dt = dt;
-    p->M = NULL;
-    p->P = NULL;
-    memcpy(p->M0.M, M0, 6*sizeof(float));
-    memcpy(p->P0.P, P0, 6*6*sizeof(float));
-    p->targetIDs = NULL;
-    p->activeIDs = NULL;
-    p->Tcount = NULL;
-}
-
-void tracker3d_particleDestroy
-(
-     void** phPart
-)
-{
-    MCS_data *p = (MCS_data*)(*phPart); 
-
-    if(p!=NULL){
-        free(p->M);
-        free(p->P);
-        free(p->targetIDs);
-        free(p->activeIDs);
-        free(p->Tcount);
-        p=NULL;
-        *phPart = NULL;
-    }
-}
 
 
 /* ========================================================================== */
@@ -490,7 +526,7 @@ void kf_predict6
     utility_svvadd((float*)APAT, (float*)Q, 36, (float*)P);
 }
 
-/* hard-coded for length(M)=6 ... */
+/* hard-coded for length(X)=6 ... */
 void kf_update6
 (
     float X[6],
@@ -503,7 +539,8 @@ void kf_update6
     float* LH
 )
 {
-    float IM[3], IS[3][3], IS_T[3][3], HP[3][6], HPHT[3][3], PHT[6][3], PHTT[3][6], K[6][3];
+    int i;
+    float yIM[3], IM[3], IS[3][3], HP[3][6], HPHT[3][3], PHT[6][3], K[6][3], K_yIM[6], KIS[6][3];
 
     /* update step */
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 1, 6, 1.0f,
@@ -519,34 +556,42 @@ void kf_update6
                 (float*)H, 6, 0.0f,
                 (float*)HPHT, 3);
     utility_svvadd((float*)HPHT, (float*)R, 9, (float*)IS);
-
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 6, 3, 6, 1.0f,
                 (float*)P, 6,
                 (float*)H, 6, 0.0f,
                 (float*)PHT, 3);
-
-    float IS_test[3][3] = {{4.05473520259551,    0,    0},
-        {0 ,   4.05473520259551,    0},
-        {0   , 0   , 4.05473520259551}};
-
-    float PHTEST[6][3] = {{0.0539963276126856   , 0 ,   0},
-   { 0 ,   0.0539963276126856 ,   0},
-   { 0 ,   0  ,  0.0539963276126856},
-   { 0 ,   0  ,  0},
-   { 0 ,   0  ,  0},
-    {0 ,   0  ,  0}};
-
-
-    utility_sglslvt((float*)PHTEST, 6, IS_test, 3, K);
-   // utility_sglslvt((float*)PHT, 6, IS, 3, K);
-
-//    K = IS.'\(P*H')';
-//    K = K.';
-//    X = X + K * (y-IM);
-//    P = P - K*IS*K';
+    utility_sglslvt((float*)PHT, 6, (float*)IS, 3, (float*)K);
+    yIM[0] = y[0]-IM[0];
+    yIM[1] = y[1]-IM[1];
+    yIM[2] = y[2]-IM[2];
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 6, 1, 3, 1.0f,
+                (float*)K, 3,
+                (float*)yIM, 1, 0.0f,
+                (float*)K_yIM, 1);
+    X_out[0] = X[0] + K_yIM[0];
+    X_out[1] = X[1] + K_yIM[1];
+    X_out[2] = X[2] + K_yIM[2];
+    X_out[3] = X[3] + K_yIM[3];
+    X_out[4] = X[4] + K_yIM[4];
+    X_out[5] = X[5] + K_yIM[5];
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 6, 3, 3, 1.0f,
+                (float*)K, 3,
+                (float*)IS, 3, 0.0f,
+                (float*)KIS, 3);
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 6, 6, 3, 1.0f,
+                (float*)KIS, 3,
+                (float*)K, 6, 0.0f,
+                (float*)P_out, 6);
+    for(i=0; i<6; i++){
+        P_out[i][0] = P[i][0] - P_out[i][0];
+        P_out[i][1] = P[i][1] - P_out[i][1];
+        P_out[i][2] = P[i][2] - P_out[i][2];
+        P_out[i][3] = P[i][3] - P_out[i][3];
+        P_out[i][4] = P[i][4] - P_out[i][4];
+        P_out[i][5] = P[i][5] - P_out[i][5];
+    }
     if (LH!=NULL)
       *LH = gauss_pdf3(y,IM,IS);
-
 }
 
 float gamma_cdf
@@ -685,6 +730,25 @@ float gauss_pdf3
     E = E + 1.5f * logf(2.0f*SAF_PI) + 0.5f * logf(utility_sdet((float*)S, 3));
 
     return expf(-E);
+}
+
+int categ_rnd
+(
+    float* P,
+    int len_P
+)
+{
+    int C;
+
+    /* Draw the categories */
+
+    P = P(:) ./ sum(P(:)+eps); % Added +eps
+    P = cumsum(P);
+
+    C = min(find(P > rand));
+
+    
+
 }
 
 
