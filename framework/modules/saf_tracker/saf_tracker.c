@@ -131,7 +131,7 @@ void tracker3d_step
 #ifdef TRACKER_VERBOSE
     printf("%s\n", "Update step");
 #endif
-    tracker3d_update(hT3d, newObs_xyz[0], pData->incrementTime);
+  //  tracker3d_update(hT3d, newObs_xyz[0], pData->incrementTime);
 
     for(ob=0; ob<nObs; ob++){
 

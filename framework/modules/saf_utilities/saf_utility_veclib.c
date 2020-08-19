@@ -2248,6 +2248,59 @@ void utility_cchol
     free(a);
 }
 
+/* ========================================================================== */
+/*                        Determinant of a Matrix (?det)                      */
+/* ========================================================================== */
+
+float utility_sdet
+(
+    float* A,
+    int N
+)
+{
+    int i,j;
+    int *IPIV;
+    IPIV = malloc1d(N * sizeof(int));
+    int LWORK = N*N;
+    float *WORK, *tmp;
+    WORK = (float*)malloc1d(LWORK * sizeof(float));
+    tmp = malloc1d(N*N*sizeof(float));
+    int INFO;
+    float det;
+
+    /* Store in column major order */
+    for(i=0; i<N; i++)
+        for(j=0; j<N; j++)
+            tmp[j*N+i] = A[i*N+j];
+
+#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    sgetrf_((veclib_int*)&N, (veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, &INFO);
+#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+    INFO = clapack_sgetrf(CblasColMajor, N, N, tmp, N, IPIV);
+#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+    INFO = LAPACKE_sgetrf(CblasColMajor, N, N, tmp, N, IPIV);
+#endif
+
+    if(INFO!=0) {
+        det=0.0;
+    #ifndef NDEBUG
+        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+    #endif
+    }
+    else {
+        det = 1.0;
+        for( i = 0; i < N; i++ ) {
+            det*=tmp[i*N+i];
+            if(IPIV[i] != i)
+                det *= -1;
+        }
+    }
+    free(IPIV);
+    free(WORK);
+    free(tmp);
+    return det;
+}
+
 
 /* ========================================================================== */
 /*                           Matrix Inversion (?inv)                          */

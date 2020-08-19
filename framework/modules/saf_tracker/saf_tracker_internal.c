@@ -259,6 +259,7 @@ void tracker3d_predict
 
 #define TRACKER3D_MAX_NUM_EVENTS ( 24 )
 
+#if 0
 void tracker3d_update
 (
     void* const hT3d,
@@ -407,6 +408,7 @@ void tracker3d_update
         ev_IDs{i} = evta{ev};
     }
 }
+#endif
 
 void tracker3d_particleCreate
 (
@@ -480,6 +482,35 @@ void kf_predict6(float M[6], float P[6][6], float A[6][6], float Q[6][6])
     /* Override M and P, with new M and P */
     memcpy(M, AM, 6*sizeof(float));
     utility_svvadd((float*)APAT, (float*)Q, 36, (float*)P);
+}
+
+/* hard-coded for length(M)=6 ... */
+void kf_update6(float X[6], float P[6][6], float y[3], float H[3][6], float R[3][3], float X_out[6], float P_out[6][6], float* LH)
+{
+    float IM[3], IS[3][3], HP[3][6], HPHT[3][3];
+
+    /* update step */
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 1, 6, 1.0f,
+                (float*)H, 6,
+                (float*)X, 1, 0.0f,
+                (float*)IM, 1);
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 6, 6, 1.0f,
+                (float*)H, 6,
+                (float*)P, 6, 0.0f,
+                (float*)HP, 6);
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 3, 3, 6, 1.0f,
+                (float*)HP, 6,
+                (float*)H, 6, 0.0f,
+                (float*)HPHT, 3);
+    utility_svvadd((float*)HPHT, (float*)R, 9, (float*)IS);
+
+
+    K = P*H'/IS;
+    X = X + K * (y-IM);
+    P = P - K*IS*K';
+    if (LH!=NULL)
+      *LH = gauss_pdf(y,IM,IS);
+
 }
 
 float gamma_cdf(float x, float gam, float beta, float mu)
@@ -590,60 +621,23 @@ void lti_disc
     free(Q_T);
 }
 
-/** GAUSS_PDF  Multivariate Gaussian PDF
-%
-% Syntax:
-%   P = GAUSS_PDF(X,M,S)
-%
-% Author:
-%   Simo Särkkä, 2002
-%
-% In:
-%   X - Dx1 value or N values as DxN matrix
-%   M - Dx1 mean of distibution or N values as DxN matrix.
-%   S - DxD covariance matrix
-%
-% Out:
-%   P - Probability of X.
-%
-% Description:
-%   Calculate values of PDF (Probability Density
-%   Function) of multivariate Gaussian distribution
-%
-%    N(X | M, S)
-%
-%   Function returns probability of X in PDF. If multiple
-%   X's or M's are given (as multiple columns), function
-%   returns probabilities for each of them. X's and M's are
-%   repeated to match each other, S must be the same for all.
-%
-% See also:
-%   GAUSS_RND
-
-% History:
-%   14.05.2003  Returns also the energy
-%   20.11.2002  The first official version.
-%
-% Copyright (C) 2002 Simo Särkkä
-%
-% $Id: gauss_pdf.m,v 1.1.1.1 2003/09/15 10:54:34 ssarkka Exp $
-%
-% This software is distributed under the GNU General Public
-% Licence (version 2 or later); please refer to the file
-% Licence.txt, included with the software, for details.
- */
 /* hard-coded for length(M)=3 ... */
 float gauss_pdf3(float X[3], float M[3], float S[3][3])
 {
     float E;
-    float DX
+    float DX[3], S_DX[3];
 
+    DX[0] = X[0]-M[0];
+    DX[1] = X[1]-M[1];
+    DX[2] = X[2]-M[2];
+    utility_sglslv((float*)S, 3, (float*)DX, 1, (float*)S_DX);
+    E = DX[0] * S_DX[0];
+    E += DX[1] * S_DX[1];
+    E += DX[2] * S_DX[2];
+    E *= 0.5f;
+    E = E + 1.5f * logf(2.0f*SAF_PI) + 0.5f * logf(utility_sdet((float*)S, 3));
 
-    DX = X-repmat(M,1,size(X,2));
-    E = 0.5*sum(DX.*(S\DX),1);
-    d = size(M,1);
-    E = E + 0.5 * d * log(2*pi) + 0.5 * log(det(S));
-    P = exp(-E);
+    return expf(-E);
 }
 
 

@@ -108,7 +108,8 @@ void tracker3d_create(void** const phT3d,
 void tracker3d_destroy(void** const phT3d);
     
 /**
- * Assumed this will be called every step in time
+ * Assumed this will be called every step in time. If there are no new observations
+ * then set newObs_xyz=NULL and/or, nObs=0.
  */
 void tracker3d_step(void* const hT3d,
                     float* newObs_xyz,

@@ -177,6 +177,57 @@ void kf_predict6(float M[6],
                  float Q[6][6]);
 
 /**
+ * Kalman Filter update step
+ *
+ * Kalman Filter model is:
+ *    x[k] = A*x[k-1] + B*u[k-1] + q,  q ~ N(0,Q)
+ *    y[k] = H*x[k]   + r,             r ~ N(0,R)
+ *
+ * Prediction step of Kalman filter computes predicted mean m-[k] and covariance
+ * P-[k] of state:
+ *    p(x[k] | y[1:k-1]) = N(x[k] | m-[k], P-[k])
+ *
+ * See for instance kf_predict6() how m-[k] and P-[k] are calculated.
+ *
+ * Update step computes the posterior mean m[k] and covariance P[k]  of state
+ * given new measurement:
+ *    p(x[k] | y[1:k]) = N(x[k] | m[k], P[k])
+ *
+ * Innovation distribution is defined as:
+ *    p(y[k] | y[1:k-1]) = N(y[k] | IM[k], IS[k])
+ *
+ * Updated mean x[k] and covarience P[k] are given by the following equations
+ * (not the only possible ones):
+ *    v[k] = y[k] - H[k]*m-[k]
+ *    S[k] = H[k]*P-[k]*H[k]' + R[k]
+ *    K[k] = P-[k]*H[k]'*[S[k]]^(-1)
+ *    m[k] = m-[k] + K[k]*v[k]
+ *    P[k] = P-[k] - K[k]*S[k]*K[k]'
+ *
+ * @note This has been hard-coded for N=6 and without 'K', 'IM' and 'IS', but a
+ *       general version should be quite straight-forward (just not needed yet).
+ *
+ * @param[in]  X     Nx1 mean state estimate after prediction step
+ * @param[in]  P     NxN state covariance after prediction step
+ * @param[in]  y     Dx1 measurement vector.
+ * @param[in]  H     Measurement matrix.
+ * @param[in]  R     Measurement noise covariance.
+ * @param[out] X_out Updated state mean
+ * @param[out] P_out Updated state covariance
+ * @param[out] LH    (&) Predictive probability (likelihood) of measurement.
+ *
+ * Original Copyright (C) 2002, 2003 Simo Särkkä, 2007 Jouni Hartikainen (GPLv2)
+ */
+void kf_update6(float X[6],
+                float P[6][6],
+                float y[3],
+                float H[3][6],
+                float R[3][3],
+                float X_out[6],
+                float P_out[6][6],
+                float* LH);
+
+/**
  * Cumulative density function of a Gamma distribution
  *
  * @param[in] x    Locations where to evaluate the CDF
@@ -228,7 +279,6 @@ void lti_disc(/* Input Arguments */
               float* A,
               float* Q);
 
-
 /**
  * Multivariate Gaussian PDF
  *
@@ -244,9 +294,12 @@ void lti_disc(/* Input Arguments */
  * @param[in] S 3x3 covariance matrix
  * @returns Probability of X.
  *
- * Copyright (C) 2002 Simo Särkkä (GPLv2)
+ * Original Copyright (C) 2002 Simo Särkkä (GPLv2)
  */
-float gauss_pdf3(float X[3], float M[3], float S[3][3])
+float gauss_pdf3(/* Input Arguments */
+                 float X[3],
+                 float M[3],
+                 float S[3][3]);
 
 
 #ifdef __cplusplus

@@ -103,6 +103,10 @@ ssyev_
 cheev_
 dsyev_
 zheev_
+sspsv_
+cspsv_
+dspsv_
+zspsv_
 vsAdd
 vcAdd
 vdAdd

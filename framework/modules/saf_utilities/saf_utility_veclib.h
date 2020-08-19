@@ -1134,6 +1134,24 @@ void utility_cchol(/* Input Arguments */
                    /* Output Arguments */
                    float_complex* X);
 
+
+/* ========================================================================== */
+/*                        Determinant of a Matrix (?det)                      */
+/* ========================================================================== */
+
+/**
+ * Determinant of a Matrix, single precision, i,e.
+ * \code{.m}
+ *     d = det(A);
+ * \endcode
+ *
+ * @param[in]  A Input square matrix; FLAT: N x N
+ * @param[in]  N size of matrix
+ * @returns determinant
+ */
+float utility_sdet(float* A,
+                   int N);
+
     
 /* ========================================================================== */
 /*                           Matrix Inversion (?inv)                          */
