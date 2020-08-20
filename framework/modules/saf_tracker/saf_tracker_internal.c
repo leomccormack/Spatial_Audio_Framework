@@ -581,7 +581,7 @@ void kf_predict6
     /* Perform prediction */
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 6, 1, 6, 1.0f,
                 (float*)A, 6,
-                (float*)M, 6, 0.0f,
+                (float*)M, 1, 0.0f,
                 (float*)AM, 1);
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 6, 6, 6, 1.0f,
                 (float*)A, 6,
