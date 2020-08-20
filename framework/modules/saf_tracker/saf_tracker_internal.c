@@ -237,7 +237,7 @@ void tracker3d_predict
 
                 /* Decide whether target should die */
                 rand_0_1(&rand01, 1);
-                rand01 = 0.5f; //////////////////////////////////////////////////////////////////
+                //rand01 = 0.5f; //////////////////////////////////////////////////////////////////
                 if (rand01 < p_death){
                     nDead++; /* Target dies */
                     dead = realloc1d(dead, nDead*sizeof(float));
@@ -481,6 +481,8 @@ void tracker3d_update
                     }
                     j++;
                 };
+                if(foundSlot)
+                    break;
             } 
 
             count++;
@@ -514,6 +516,10 @@ void tracker3d_update
         cblas_sscal(count, norm, pData->imp, 1);
         ev = categ_rnd(pData->imp, count);  /* Event index */
         assert(ev!=-1);
+
+        if(ev==cidx-1){
+            int sdsdsdsds = 0;
+        }
 
         /* Update particle */
         tracker3d_particleCopy(pData->str[ev], pData->SS[i]);
@@ -839,7 +845,7 @@ int categ_rnd
     for(i=1; i<len_P; i++)
         Ptmp[i] += Ptmp[i-1];
     rand_0_1(&rand01, 1);
-    rand01 = 0.9f; ///////////////////////////////////////////////////////
+    //rand01 = 0.9f; ///////////////////////////////////////////////////////
     for(i=0; i<len_P; i++){
         if(Ptmp[i]>rand01){
             free(Ptmp);
