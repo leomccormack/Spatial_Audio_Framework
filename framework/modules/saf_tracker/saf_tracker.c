@@ -92,6 +92,7 @@ void tracker3d_create
 
     /* Starting values */
     for(i=0; i<TRACKER3D_MAX_NUM_EVENTS; i++){
+
         pData->evta[i] = NULL;
         pData->str[i] = NULL;
     }
@@ -137,7 +138,7 @@ void tracker3d_step
 #ifdef TRACKER_VERBOSE
     printf("%s\n", "Update step");
 #endif
-    tracker3d_update(hT3d, newObs_xyz[0], pData->incrementTime);
+    tracker3d_update(hT3d, &newObs_xyz[0*3], pData->incrementTime);
 
     for(ob=0; ob<nObs; ob++){
 

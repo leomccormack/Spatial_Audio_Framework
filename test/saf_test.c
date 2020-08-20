@@ -155,8 +155,6 @@ void test__tracker3d(void){
      * computationally expensive the tracker becomes). */
     tpars.Np = 20;
     tpars.maxNactiveTargets = 4; /* about 2 higher than expected is good */
-    /* Target velocity - e.g. to assume that a target can move 20 degrees in
-     * two seconds along the horizontal, set V_azi = 20/2 */
     /* Likelihood of an estimate being noise/clutter */
     tpars.noiseLikelihood = 0.2f; /* between [0..1] */
     /* Measurement noise - e.g. to assume that estimates within the range +/-20
@@ -178,7 +176,7 @@ void test__tracker3d(void){
     tpars.MULTI_ACTIVE = 0; //////////////////////////////////////////////////////////////////////////////
     /* Real-time tracking is based on the particle with highest weight. A
      * one-pole averaging filter is used to smooth the weights over time. */
-    tpars.W_avg_coeff = 0.0;
+    tpars.W_avg_coeff = 0.0f;
     /* Force kill targets that are close to another target. In these cases, the
      * target that has been 'alive' for the least amount of time, is killed */
     tpars.FORCE_KILL_TARGETS = 1;
@@ -187,6 +185,8 @@ void test__tracker3d(void){
     tpars.M0[0] = 1.0f; tpars.M0[1] = 0.0f; tpars.M0[2] = 0.0f;
     /* Mean Velocity priors x,y,z (assuming stationary) */
     tpars.M0[3] = 0.0f; tpars.M0[4] = 0.0f; tpars.M0[5] = 0.0f;
+    /* Target velocity - e.g. to assume that a target can move 20 degrees in
+    * two seconds along the horizontal, set V_azi = 20/2 */
     const float Vazi_deg = 3.0f;  /* Velocity of target on azimuthal plane */
     const float Vele_deg = 3.0f;  /* Velocity of target on median plane */
     memset(tpars.P0, 0, 6*6*sizeof(float));

@@ -2341,7 +2341,7 @@ float utility_sdet
         det = 1.0;
         for( i = 0; i < N; i++ ) {
             det*=tmp[i*N+i];
-            if(IPIV[i] != i)
+            if(IPIV[i] != i+1)
                 det *= -1;
         }
     }

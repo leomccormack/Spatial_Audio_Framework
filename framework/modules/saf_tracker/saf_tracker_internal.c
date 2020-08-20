@@ -190,8 +190,6 @@ void tracker3d_predict
     char event[256];
 #endif
 
-    /* prep */
-    nDead = 0;
     dead = NULL;
 
     /* Loop over particles */
@@ -200,6 +198,11 @@ void tracker3d_predict
 #ifdef TRACKER_VERBOSE
         sprintf(S->evstr, "Particle: %d ", i);
 #endif
+        /* prep */
+        nDead = 0;
+        free(dead);
+        dead = NULL;
+
         /* Loop over targets */
         for (j=0; j<S->nTargets; j++){
 
@@ -283,9 +286,13 @@ void tracker3d_predict
                 S->Tcount = realloc1d(S->Tcount, S->nTargets*sizeof(int));
                 S->targetIDs = realloc1d(S->targetIDs, S->nTargets*sizeof(int));
 
+                /* Remove dead index for next iteration */
+                for(k=0; k<nDead; k++)
+                    dead[k]--;
+
 #ifdef TRACKER_VERBOSE
                 sprintf(event, ", Target %d died ", ind);
-                strcpy(S->evstr, event);
+                strcat(S->evstr, event);
 #endif
             }
         }
@@ -334,7 +341,7 @@ void tracker3d_update
 )
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
-    int i, j, k, ss, n_events, count, cidx, foundSlot, j_new;
+    int i, j, k, ss, n_events, count, cidx, foundSlot, j_new, ev;
     float TP0, LH, norm;
     float M[6], P[6][6];
     MCS_data* S, *S_event;
@@ -369,8 +376,8 @@ void tracker3d_update
         assert(n_events<=TRACKER3D_MAX_NUM_EVENTS);
         memset(pData->evt, 0, n_events*256*sizeof(char)); /* Event descriptions */
         for(k=0; k<n_events; k++){
-            tracker3d_particleDestroy(&pData->str[k]);
-            tracker3d_particleCreate(&pData->str[k], pData->W0, tpars->dt);
+            tracker3d_particleDestroy(&(pData->str[k]));
+            tracker3d_particleCreate(&(pData->str[k]), pData->W0, tpars->dt);
         }
         count = 0; /* Event counter */
         cidx = 0;  /* current index */
@@ -404,6 +411,10 @@ void tracker3d_update
             for(k=0; k<S->nTargets; k++)
                 S_event->Tcount[k] += Tinc;
             cidx++;
+
+            if(isnan(LH)){
+                int issss = 0;
+            }
 
             /*  Handles for MULTI_ACTIVE */
 //            if tpars.MULTI_ACTIVE
@@ -441,17 +452,19 @@ void tracker3d_update
             kf_update6(tpars->M0, tpars->P0, Y, pData->H, pData->R, M, P, &LH);
 
             /* find a free ID */
+            j_new = 0;
             for (ss = 0; ss<tpars->maxNactiveTargets; ss++){
-                j=0;
+                j = 0;
                 foundSlot = 0;
-                while(!foundSlot){
+                while(!foundSlot && j<S->nTargets){
                     if(ss != S->targetIDs[j]){
                         j_new = ss;
                         foundSlot = 1;
                     }
                     j++;
                 };
-            }
+            } 
+
             count++;
             j = S->nTargets;
             sprintf(pData->evt[cidx], "New Target %d ", j);
@@ -462,6 +475,8 @@ void tracker3d_update
             tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
             S_event = (MCS_data*)pData->str[cidx];
             S_event->nTargets = j+1;
+            S_event->M = realloc1d(S_event->M, S_event->nTargets*sizeof(M6));
+            S_event->P = realloc1d(S_event->P, S_event->nTargets*sizeof(P66));
             memcpy(S_event->M[j].M, M, sizeof(M6));
             memcpy(S_event->P[j].P, P, sizeof(P66));
             S_event->Tcount = realloc1d(S_event->Tcount, S_event->nTargets*sizeof(int));
@@ -477,16 +492,18 @@ void tracker3d_update
         utility_svvmul(pData->evp, pData->evl, count, imp);
         norm = 1.0f/sumf(imp, count);
         cblas_sscal(count, norm, imp, 1);
-
-        ev = categ_rnd(imp);  /* Event index */
+        ev = categ_rnd(imp, count);  /* Event index */
+        assert(ev!=-1);
 
         /* Update particle */
-        S{i} = str{ev};       % Copy the updated structure
-        ev_comment = evt{ev}; % Event description string
+        tracker3d_particleCopy(pData->str[ev], pData->SS[i]);
+//        S{i} = str{ev};       % Copy the updated structure
+//        ev_comment = evt{ev}; % Event description string
 
-        S{i}.W = S{i}.W*evl(ev)*evp(ev)/imp(ev);
-        ev_strs{i} = ev_comment;
-        ev_IDs{i} = evta{ev};
+        S->W *= (pData->evl[ev] * pData->evl[ev]/ imp[ev]);
+       // S{i}.W = S{i}.W*evl(ev)*evp(ev)/imp(ev);
+//        ev_strs{i} = ev_comment;
+//        ev_IDs{i} = evta{ev};
     }
 }
 #endif
@@ -541,7 +558,7 @@ void kf_update6
 {
     int i;
     float yIM[3], IM[3], IS[3][3], HP[3][6], HPHT[3][3], PHT[6][3], K[6][3], K_yIM[6], KIS[6][3];
-
+ 
     /* update step */
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 1, 6, 1.0f,
                 (float*)H, 6,
@@ -729,6 +746,23 @@ float gauss_pdf3
     E *= 0.5f;
     E = E + 1.5f * logf(2.0f*SAF_PI) + 0.5f * logf(utility_sdet((float*)S, 3));
 
+
+    float ttttet[3][3];
+    memcpy(ttttet, S, 9*sizeof(float));
+
+    float teststs = utility_sdet((float*)S, 3);
+
+    float ssssssdsds = logf(utility_sdet((float*)S, 3));
+
+    if(isnan(E)){
+        int issss = 0;
+    }
+
+    if(isnan(expf(-E))){
+        int isssds = 0;
+    }
+
+
     return expf(-E);
 }
 
@@ -738,17 +772,28 @@ int categ_rnd
     int len_P
 )
 {
-    int C;
+    int i;
+    float rand01, norm;
+    float* Ptmp;
+
+    Ptmp = malloc1d(len_P*sizeof(float));
+    cblas_scopy(len_P, P, 1, Ptmp, 1);
 
     /* Draw the categories */
+    norm = 1.0f/(sumf(Ptmp, len_P) + 2.23e-10f);
+    cblas_sscal(len_P, norm, Ptmp, 1);
+    for(i=1; i<len_P; i++)
+        Ptmp[i] += Ptmp[i-1];
+    rand_0_1(&rand01, 1);
+    for(i=0; i<len_P; i++){
+        if(Ptmp[i]>rand01){
+            free(Ptmp);
+            return i;
+        }
+    }
 
-    P = P(:) ./ sum(P(:)+eps); % Added +eps
-    P = cumsum(P);
-
-    C = min(find(P > rand));
-
-    
-
+    free(Ptmp);
+    return -1; /* indicates error */
 }
 
 
