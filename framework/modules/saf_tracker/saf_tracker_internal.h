@@ -119,10 +119,13 @@ typedef struct _tracker3d
     float W0;       /**< PRIOR importance weight */
 
     /* Events */
+#ifdef TRACKER_VERBOSE
     char evt[TRACKER3D_MAX_NUM_EVENTS][256]; /**< Event descriptions */
+#endif
     int* evta[TRACKER3D_MAX_NUM_EVENTS];     /**< Event targets */
     float evp[TRACKER3D_MAX_NUM_EVENTS];     /**< Event priors */
     float evl[TRACKER3D_MAX_NUM_EVENTS];     /**< Event likelhoods*/
+    float imp[TRACKER3D_MAX_NUM_EVENTS];     /**< Event distributions */
     voidPtr str[TRACKER3D_MAX_NUM_EVENTS];   /**< Structure after each event */
 
     
@@ -162,6 +165,17 @@ void tracker3d_update(void* const hT3d,
 /* ========================================================================== */
 /*                              RBMCDA Functions                              */
 /* ========================================================================== */
+
+/**
+ * Normalizes the weights of the given particles
+ *
+ * @param[in,out] SS Array of particle structures; NP x 1
+ * @param[in]     NP Number of particle structures
+ *
+ * Original Copyright (C) 2008 Jouni Hartikainen (GPLv2)
+ */
+void normalise_weights(voidPtr* SS,
+                       int NP);
 
 /**
  * Perform Kalman Filter prediction step

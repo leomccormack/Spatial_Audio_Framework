@@ -167,7 +167,7 @@ void test__tracker3d(void){
      * prediction step */
     tpars.ALLOW_MULTI_DEATH = 1;
     /* Probability of birth and death */
-    tpars.init_birth = 0.05f; /* value between [0 1] - Prior probability of birth */
+    tpars.init_birth = 0.5f; /* value between [0 1] - Prior probability of birth */
     tpars.alpha_death = 1.0f; /* always >= 1; 1 is good */
     tpars.beta_death = 20.0f; /* always >= 1; 1 is good */
     /* Elapsed time (in seconds) between observations */

@@ -133,12 +133,13 @@ void tracker3d_step
     printf("%s\n", "Prediction step");
 #endif
     tracker3d_predict(hT3d, pData->incrementTime);
-    pData->incrementTime = 0;
-
+ 
 #ifdef TRACKER_VERBOSE
     printf("%s\n", "Update step");
 #endif
     tracker3d_update(hT3d, &newObs_xyz[0*3], pData->incrementTime);
+
+    pData->incrementTime = 0;
 
     for(ob=0; ob<nObs; ob++){
 

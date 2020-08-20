@@ -187,7 +187,7 @@ void tracker3d_predict
     MCS_data* S;
     tracker3d_config* tpars = &(pData->tpars);
 #ifdef TRACKER_VERBOSE
-    char event[256];
+    char c_event[256], tmp[256];
 #endif
 
     dead = NULL;
@@ -195,13 +195,14 @@ void tracker3d_predict
     /* Loop over particles */
     for (i=0; i<tpars->Np; i++){
         S = (MCS_data*)pData->SS[i];
-#ifdef TRACKER_VERBOSE
-        sprintf(S->evstr, "Particle: %d ", i);
-#endif
+
         /* prep */
         nDead = 0;
         free(dead);
         dead = NULL;
+#ifdef TRACKER_VERBOSE
+        memset(c_event, 0, 256*sizeof(char));
+#endif
 
         /* Loop over targets */
         for (j=0; j<S->nTargets; j++){
@@ -236,6 +237,7 @@ void tracker3d_predict
 
                 /* Decide whether target should die */
                 rand_0_1(&rand01, 1);
+                rand01 = 0.5f; //////////////////////////////////////////////////////////////////
                 if (rand01 < p_death){
                     nDead++; /* Target dies */
                     dead = realloc1d(dead, nDead*sizeof(float));
@@ -291,8 +293,8 @@ void tracker3d_predict
                     dead[k]--;
 
 #ifdef TRACKER_VERBOSE
-                sprintf(event, ", Target %d died ", ind);
-                strcat(S->evstr, event);
+                sprintf(tmp, " Target %d died ", ind);
+                strcat(c_event, tmp);
 #endif
             }
         }
@@ -320,13 +322,21 @@ void tracker3d_predict
                 S->targetIDs = realloc1d(S->targetIDs, S->nTargets*sizeof(int));
 
 #ifdef TRACKER_VERBOSE
-                sprintf(event, ", Target %d died ", ind);
-                strcpy(S->evstr, event);
+                sprintf(tmp, ", Target %d died ", ind);
+                strcpy(c_event, tmp);
 #endif
             }
         }
 
+        /* Print particle state */
 #ifdef TRACKER_VERBOSE
+        sprintf(S->evstr, "MCS: %d, W: %.7f, IDs: [", i, S->W);
+        for (j=0; j<S->nTargets; j++){
+            sprintf(tmp, "%d ", S->targetIDs[j]);
+            strcat(S->evstr, tmp);
+        }
+        strcat(S->evstr, "] ");
+        strcat(S->evstr, c_event);
         printf("%s\n", S->evstr);
 #endif
     }
@@ -346,7 +356,9 @@ void tracker3d_update
     float M[6], P[6][6];
     MCS_data* S, *S_event;
     tracker3d_config* tpars = &(pData->tpars);
-    float imp[TRACKER3D_MAX_NUM_EVENTS];
+#ifdef TRACKER_VERBOSE
+    char tmp[256];
+#endif
 
     /* Loop over particles */
 //    ev_strs = cell(size(S));
@@ -357,7 +369,7 @@ void tracker3d_update
         /* Association priors to targets */
         TP0 = (1.0f-tpars->noiseLikelihood)/(S->nTargets+2.23e-10f);
 
-        /* Possible events: */
+        /* Number of possible events: */
         if (tpars->MULTI_ACTIVE){
 //            n_events = 1; % clutter
 //            nTargets = min(S{i}.nTargets,tpars.maxNactiveTargets);
@@ -366,15 +378,17 @@ void tracker3d_update
 //            end
         }
         else{
-            /* clutter (+1), birth (+1), or 1 of the targets is active: */
-            n_events = S->nTargets + 2;
+            /* clutter (+1) or 1 of the targets is active: */
+            n_events = S->nTargets + 1;
         }
         if( S->nTargets < tpars->maxNactiveTargets)
-            n_events++; /* chance of a new target */
+            n_events++; /* Also a chance of a new target */
+        assert(n_events<=TRACKER3D_MAX_NUM_EVENTS);
 
         /* Prep */
-        assert(n_events<=TRACKER3D_MAX_NUM_EVENTS);
+#ifdef TRACKER_VERBOSE
         memset(pData->evt, 0, n_events*256*sizeof(char)); /* Event descriptions */
+#endif
         for(k=0; k<n_events; k++){
             tracker3d_particleDestroy(&(pData->str[k]));
             tracker3d_particleCreate(&(pData->str[k]), pData->W0, tpars->dt);
@@ -384,7 +398,9 @@ void tracker3d_update
 
         /* Association to clutter */
         count++;
+#ifdef TRACKER_VERBOSE
         strcpy(pData->evt[cidx], "Clutter");
+#endif
         free(pData->evta[cidx]);
         pData->evta[cidx] = NULL;
         pData->evp[cidx] = (1.0f-tpars->init_birth)*tpars->noiseLikelihood;
@@ -399,7 +415,9 @@ void tracker3d_update
 
             /* Assocation to target j */
             count++;
+#ifdef TRACKER_VERBOSE
             sprintf(pData->evt[cidx], "Target %d ", S->targetIDs[j]);
+#endif
             pData->evta[cidx] = realloc1d(pData->evta[cidx], sizeof(int));
             pData->evta[cidx][0] = S->targetIDs[j];
             pData->evp[cidx] = (1.0f-tpars->init_birth)*TP0;
@@ -467,7 +485,9 @@ void tracker3d_update
 
             count++;
             j = S->nTargets;
+#ifdef TRACKER_VERBOSE
             sprintf(pData->evt[cidx], "New Target %d ", j);
+#endif
             pData->evta[cidx] = realloc1d(pData->evta[cidx], sizeof(int));
             pData->evta[cidx][0] = j;
             pData->evp[cidx] = tpars->init_birth;
@@ -489,10 +509,10 @@ void tracker3d_update
         /* Draw sample from importance distribution */
         norm = 1.0f/sumf(pData->evp, count);
         cblas_sscal(count, norm, pData->evp, 1);
-        utility_svvmul(pData->evp, pData->evl, count, imp);
-        norm = 1.0f/sumf(imp, count);
-        cblas_sscal(count, norm, imp, 1);
-        ev = categ_rnd(imp, count);  /* Event index */
+        utility_svvmul(pData->evp, pData->evl, count, pData->imp);
+        norm = 1.0f/sumf(pData->imp, count);
+        cblas_sscal(count, norm, pData->imp, 1);
+        ev = categ_rnd(pData->imp, count);  /* Event index */
         assert(ev!=-1);
 
         /* Update particle */
@@ -500,11 +520,28 @@ void tracker3d_update
 //        S{i} = str{ev};       % Copy the updated structure
 //        ev_comment = evt{ev}; % Event description string
 
-        S->W *= (pData->evl[ev] * pData->evl[ev]/ imp[ev]);
+        S->W *= (pData->evl[ev] * pData->evp[ev]/ pData->imp[ev]);
        // S{i}.W = S{i}.W*evl(ev)*evp(ev)/imp(ev);
 //        ev_strs{i} = ev_comment;
 //        ev_IDs{i} = evta{ev};
+
+
+/* Print particle state */
+#ifdef TRACKER_VERBOSE
+        sprintf(S->evstr, "MCS: %d, W: %.7f, IDs: [", i, S->W);
+        for (j=0; j<S->nTargets; j++){
+            sprintf(tmp, "%d ", S->targetIDs[j]);
+            strcat(S->evstr, tmp);
+        }
+        strcat(S->evstr, "] ");
+        strcat(S->evstr, pData->evt[ev]);
+        printf("%s\n", S->evstr);
+#endif
     }
+
+    normalise_weights(pData->SS, tpars->Np);
+
+
 }
 #endif
 
@@ -512,6 +549,23 @@ void tracker3d_update
 /* ========================================================================== */
 /*                              RBMCDA Functions                              */
 /* ========================================================================== */
+
+void normalise_weights(voidPtr* SS, int NP)
+{
+    int i;
+    float W_sum;
+    MCS_data* S;
+
+    W_sum = 0.0f;
+    for (i=0; i<NP; i++){
+        S = (MCS_data*)SS[i];
+        W_sum += S->W;
+    }
+    for (i=0; i<NP; i++){
+        S = (MCS_data*)SS[i];
+        S->W /= W_sum;
+    }
+}
 
 /* hard-coded for length(M)=6 ... */
 void kf_predict6
@@ -558,7 +612,7 @@ void kf_update6
 {
     int i;
     float yIM[3], IM[3], IS[3][3], HP[3][6], HPHT[3][3], PHT[6][3], K[6][3], K_yIM[6], KIS[6][3];
- 
+
     /* update step */
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 1, 6, 1.0f,
                 (float*)H, 6,
@@ -597,7 +651,7 @@ void kf_update6
                 (float*)KIS, 3);
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 6, 6, 3, 1.0f,
                 (float*)KIS, 3,
-                (float*)K, 6, 0.0f,
+                (float*)K, 3, 0.0f,
                 (float*)P_out, 6);
     for(i=0; i<6; i++){
         P_out[i][0] = P[i][0] - P_out[i][0];
@@ -785,6 +839,7 @@ int categ_rnd
     for(i=1; i<len_P; i++)
         Ptmp[i] += Ptmp[i-1];
     rand_0_1(&rand01, 1);
+    rand01 = 0.9f; ///////////////////////////////////////////////////////
     for(i=0; i<len_P; i++){
         if(Ptmp[i]>rand01){
             free(Ptmp);
