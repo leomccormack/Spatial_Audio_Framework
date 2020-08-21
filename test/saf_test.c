@@ -33,9 +33,6 @@
 # include "sldoa.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
-void test__tracker3d(void);
-void test__gexpm(void);
-
 /* ========================================================================== */
 /*                                 Test Config                                */
 /* ========================================================================== */
@@ -74,7 +71,7 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
-    RUN_TEST(test__tracker3d);
+    RUN_TEST(test__tracker3d); //TODO: fix the massive memory leaks; sometimes there are 3 sources, where two share the same ID?! wtf?
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -142,10 +139,11 @@ void test__tracker3d(void){
     float *target_dirs_xyz;
 
     /* Test configuration */
+    const float acceptedTolerance = 0.001f;
     const int order = 2;
     const float fs = 48e3;
     const int hopsize = 128;
-    const float sigLen = fs*10;
+    const float sigLen = fs*100;
     const int nSources = 2; /* cannot be changed, hard-coded for 2 */
     const float src_dirs_deg[2][2] = { {-35.0f, 30.0f}, {120.0f, 0.0f} };
 
@@ -272,11 +270,30 @@ void test__tracker3d(void){
         /* Feed tracker */
         tracker3d_step(hT3d, (float*)est_dirs_xyz, nSources, &target_dirs_xyz, &target_IDs, &nTargets);
 
+        /* Give the tracker a couple of steps, and then assert that it is keeping track of these two targets */
+        if(hop>2){
+            TEST_ASSERT_TRUE( nTargets == nSources );
+            TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[0][0] - target_dirs_xyz[0*3+0]) <= acceptedTolerance ||
+                              fabsf(est_dirs_xyz[0][0] - target_dirs_xyz[1*3+0]) <= acceptedTolerance);
+            TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[0][1] - target_dirs_xyz[0*3+1]) <= acceptedTolerance ||
+                              fabsf(est_dirs_xyz[0][1] - target_dirs_xyz[1*3+1]) <= acceptedTolerance);
+            TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[0][2] - target_dirs_xyz[0*3+2]) <= acceptedTolerance ||
+                              fabsf(est_dirs_xyz[0][2] - target_dirs_xyz[1*3+2]) <= acceptedTolerance);
+            TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[1][0] - target_dirs_xyz[0*3+0]) <= acceptedTolerance ||
+                              fabsf(est_dirs_xyz[1][0] - target_dirs_xyz[1*3+0]) <= acceptedTolerance);
+            TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[1][1] - target_dirs_xyz[0*3+1]) <= acceptedTolerance ||
+                              fabsf(est_dirs_xyz[1][1] - target_dirs_xyz[1*3+1]) <= acceptedTolerance);
+            TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[1][2] - target_dirs_xyz[0*3+2]) <= acceptedTolerance ||
+                              fabsf(est_dirs_xyz[1][2] - target_dirs_xyz[1*3+2]) <= acceptedTolerance);
+        }
+
     }
 
     /* Clean-up */
     tracker3d_destroy(&hT3d);
     sphMUSIC_destroy(&hMUSIC);
+    free(target_dirs_xyz);
+    free(target_IDs);
     free(insigs);
     free(inputSH);
     free(inputSH_noise);

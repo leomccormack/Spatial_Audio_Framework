@@ -283,10 +283,10 @@ void unique_i(int* input,
  *       KJohnson_2015_04_01.pdf. Notes on error control are in the code
  *       comments.
  *
- * This function is based on the Matlab script found (BSD-3-clause license):
+ * This function is based on the Matlab script found:
  * mathworks.com/matlabcentral/fileexchange/50413-generalized-matrix-exponential
  *
- * Copyright (c) 2015, Kenneth Johnson
+ * Copyright (c) 2015, Kenneth Johnson (BSD-3-clause license)
  */
 void gexpm(float* D,
            int sizeD,

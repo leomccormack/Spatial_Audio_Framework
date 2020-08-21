@@ -87,6 +87,12 @@ void test__butterCoeffs(void);
  */
 void test__faf_IIRFilterbank(void);
 /**
+ * Testing computing the matrix exponential */
+void test__gexpm(void);
+/**
+ * Testing the particle-filtering based tracker */
+void test__tracker3d(void);
+/**
  * Testing the formulate_M_and_Cr() function, and verifying that the output
  * mixing matrices yield signals which have the target covariance */
 void test__formulate_M_and_Cr(void);

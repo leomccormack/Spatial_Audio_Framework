@@ -374,6 +374,8 @@ void tracker3d_update
 //            if nTargets > 0
 //                n_events = n_events + tpars.ATinds{nTargets}.nCombinations;   % combinations of active targets
 //            end
+
+            n_events = S->nTargets + 1;
         }
         else{
             /* clutter (+1) or 1 of the targets is active: */
@@ -427,11 +429,7 @@ void tracker3d_update
             for(k=0; k<S->nTargets; k++)
                 S_event->Tcount[k] += Tinc;
             cidx++;
-
-            if(isnan(LH)){
-                int issss = 0;
-            }
-
+ 
             /*  Handles for MULTI_ACTIVE */
 //            if tpars.MULTI_ACTIVE
 //                strTARGETS{j} = str{count}; %#ok
@@ -514,10 +512,6 @@ void tracker3d_update
         cblas_sscal(count, norm, pData->imp, 1);
         ev = categ_rnd(pData->imp, count);  /* Event index */
         assert(ev!=-1);
-
-        if(ev==cidx-1){
-            int sdsdsdsds = 0;
-        }
 
         /* Update particle */
         tracker3d_particleCopy(pData->str[ev], pData->SS[i]);
@@ -860,23 +854,6 @@ float gauss_pdf3
     E += DX[2] * S_DX[2];
     E *= 0.5f;
     E = E + 1.5f * logf(2.0f*SAF_PI) + 0.5f * logf(utility_sdet((float*)S, 3));
-
-
-    float ttttet[3][3];
-    memcpy(ttttet, S, 9*sizeof(float));
-
-    float teststs = utility_sdet((float*)S, 3);
-
-    float ssssssdsds = logf(utility_sdet((float*)S, 3));
-
-    if(isnan(E)){
-        int issss = 0;
-    }
-
-    if(isnan(expf(-E))){
-        int isssds = 0;
-    }
-
 
     return expf(-E);
 }
