@@ -49,7 +49,10 @@ extern "C" {
 
 #define TRACKER_VERBOSE
 
+/**< Maximum number of possible events during update */
 #define TRACKER3D_MAX_NUM_EVENTS ( 24 )
+/**< Maximum number of particles */
+#define TRACKER3D_MAX_NUM_PARTICLES ( 100 )
 
 /* ========================================================================== */
 /*                            Internal Structures                             */
@@ -109,14 +112,15 @@ typedef struct _tracker3d
     tracker3d_config tpars;
 
     /* Internal */
-    voidPtr* SS;    /**< The particles; tpars.Np x 1 */
-    float R[3][3];  /**< Diagonal matrix, measurement noise PRIORs along the
-                     *   x,y,z axes */
-    float A[6][6];  /**< Transition matrix */
-    float Q[6][6];  /**< Discrete Process Covariance */
-    float H[3][6];  /**< Measurement matrix */
-    int incrementTime;
-    float W0;       /**< PRIOR importance weight */
+    voidPtr* SS;        /**< The particles; tpars.Np x 1 */
+    voidPtr* SS_resamp; /**< Resampled particles; tpars.Np x 1 */
+    float R[3][3];      /**< Diagonal matrix, measurement noise PRIORs along the
+                         *   x,y,z axes */
+    float A[6][6];      /**< Transition matrix */
+    float Q[6][6];      /**< Discrete Process Covariance */
+    float H[3][6];      /**< Measurement matrix */
+    int incrementTime;  /**< Number steps of "tpars.dt" to increment time by */
+    float W0;           /**< PRIOR importance weight */
 
     /* Events */
 #ifdef TRACKER_VERBOSE
@@ -137,25 +141,47 @@ typedef struct _tracker3d
 /* ========================================================================== */
 
 /**
+ * Creates a particle / Monte-Carlo Sample
  *
+ * @param[in] phPart (&) address of particle structure
+ * @param[in] W0     Importance weight PRIOR
+ * @param[in] dt     Time step
  */
 void tracker3d_particleCreate(void** phPart,
                               float W0, 
                               float dt);
 
 /**
+ * Copy particle structure "hPart1" into structure "hPart2"
  *
+ * @param[in] hPart1 Particle structure 1
+ * @param[in] hPart2 Particle structure 2
+ */
+void tracker3d_particleCopy(void* hPart1,
+                            void* hPart2);
+
+/**
+ * Destroys a particle / Monte-Carlo Sample
+ *
+ * @param[in] phPart (&) address of particle structure
  */
 void tracker3d_particleDestroy(void** phPart);
 
 /**
  * Prediction step
+ *
+ * @param[in] hT3d tracker3d handle
+ * @param[in] Tinc Number of time steps to increment by
  */
 void tracker3d_predict(void* const hT3d, 
                        int Tinc);
 
 /**
- * Prediction update 
+ * Prediction update
+ *
+ * @param[in] hT3d tracker3d handle
+ * @param[in] Y    New observation; 3 x 1
+ * @param[in] Tinc Number of time steps to increment by
  */
 void tracker3d_update(void* const hT3d,
                       float* Y,
@@ -167,7 +193,50 @@ void tracker3d_update(void* const hT3d,
 /* ========================================================================== */
 
 /**
- * Normalizes the weights of the given particles
+ * Stratified resampling - returns a new set of indices according to
+ * the probabilities P
+ *
+ * Sorted re-sampling is slower but has slightly smaller variance. Stratified
+ * resampling is unbiased, almost as fast as deterministic resampling, and has
+ * only slightly larger variance.
+ *
+ * In stratified resampling indices are sampled using random numbers [1]
+ *    u_j~U[(j-1)/n,j/n],
+ * where n is length of P. Compare this to simple random resampling where
+ *    u_j~U[0,1].
+ *
+ * @warning This function assumes that the weights are normalised!
+ *
+ * @param[in]  SS Array of particle structures; NP x 1
+ * @param[in]  NP Number of particle structures
+ * @param[out] s  Resampled indices; NP x 1
+ *
+ * @see [1] Kitagawa, G., Monte Carlo Filter and Smoother for Non-Gaussian
+ *          Nonlinear State Space Models, Journal of Computational and Graphical
+ *          Statistics, 5(1):1-25, 1996.
+ *
+ * Original Copyright (c) 2003-2004 Aki Vehtari (GPLv2)
+ */
+void resampstr(voidPtr* SS,
+               int NP,
+               int* s);
+
+/**
+ * Estimate the number of effective particles
+ *
+ * @warning This function assumes that the weights are normalised!
+ *
+ * @param[in] SS Array of particle structures; NP x 1
+ * @param[in] NP Number of particle structures
+ * @returns Number of effective particles
+ *
+ * Original Copyright (C) 2003 Simo Särkkä, 2008 Jouni Hartikainen (GPLv2)
+ */
+float eff_particles(voidPtr* SS,
+                    int NP);
+
+/**
+ * Normalises the weights of the given particles
  *
  * @param[in,out] SS Array of particle structures; NP x 1
  * @param[in]     NP Number of particle structures

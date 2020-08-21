@@ -47,6 +47,8 @@ void tracker3d_create
     float sd_xyz, q_xyz, W0;
     float Qc[6][6];
 
+    assert(tpars.Np<=TRACKER3D_MAX_NUM_PARTICLES);
+
     /* Store user configuration */
     pData->tpars = tpars;
 
@@ -81,9 +83,12 @@ void tracker3d_create
 
     /* Create particles */
     pData->SS = malloc1d(tpars.Np * sizeof(voidPtr));
+    pData->SS_resamp = malloc1d(tpars.Np * sizeof(voidPtr));
     pData->W0 = 1.0f/(float)tpars.Np;
-    for(i=0; i<tpars.Np; i++)
+    for(i=0; i<tpars.Np; i++){
         tracker3d_particleCreate(&(pData->SS[i]), pData->W0, tpars.dt);
+        tracker3d_particleCreate(&(pData->SS_resamp[i]), pData->W0, tpars.dt);
+    }
 
     /* Possible combinations of active sources */
     if(tpars.MULTI_ACTIVE){
@@ -106,8 +111,22 @@ void tracker3d_destroy
 )
 {
     tracker3d_data *pData = (tracker3d_data*)(*phT3d);
+    int i;
 
     if (pData != NULL) {
+
+        for(i=0; i<pData->tpars.Np; i++){
+            tracker3d_particleDestroy(&pData->SS[i]);
+            tracker3d_particleDestroy(&pData->SS_resamp[i]);
+        }
+        free(pData->SS);
+        free(pData->SS_resamp);
+
+        for(i=0; i<TRACKER3D_MAX_NUM_EVENTS; i++){
+
+            free(pData->evta[i]);
+            tracker3d_particleDestroy(&pData->str[i]);
+        }
 
         free(pData);
         pData = NULL;
@@ -124,7 +143,9 @@ void tracker3d_step
 )
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
-    int ob;
+    int i, ob;
+    float Neff;
+    int s[TRACKER3D_MAX_NUM_PARTICLES];
 
     pData->incrementTime = 0;
     pData->incrementTime++;
@@ -133,13 +154,29 @@ void tracker3d_step
     printf("%s\n", "Prediction step");
 #endif
     tracker3d_predict(hT3d, pData->incrementTime);
- 
+
 #ifdef TRACKER_VERBOSE
     printf("%s\n", "Update step");
 #endif
     tracker3d_update(hT3d, &newObs_xyz[0*3], pData->incrementTime);
 
     pData->incrementTime = 0;
+
+    /* Resample if needed */
+    Neff = eff_particles(pData->SS, pData->tpars.Np);
+    if (Neff < (float)pData->tpars.Np/4.0f){
+        printf("%s\n", "Resampling");
+        resampstr(pData->SS, pData->tpars.Np, s);
+        for(i=0; i<pData->tpars.Np; i++)
+            tracker3d_particleCopy(pData->SS[s[i]], pData->SS_resamp[i]);
+        for(i=0; i<pData->tpars.Np; i++){
+            tracker3d_particleCopy(pData->SS_resamp[i], pData->SS[i]);
+            ((MCS_data*)pData->SS[i])->W = ((MCS_data*)pData->SS[i])->W0;
+        } 
+    }
+
+
+
 
     for(ob=0; ob<nObs; ob++){
 

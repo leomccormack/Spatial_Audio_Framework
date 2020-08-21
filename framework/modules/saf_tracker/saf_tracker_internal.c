@@ -556,7 +556,64 @@ void tracker3d_update
 /*                              RBMCDA Functions                              */
 /* ========================================================================== */
 
-void normalise_weights(voidPtr* SS, int NP)
+void resampstr
+(
+    voidPtr* SS,
+    int NP,
+    int* s
+)
+{
+    int i, j, k, a;
+    float c;
+    float pn[TRACKER3D_MAX_NUM_PARTICLES], r[TRACKER3D_MAX_NUM_PARTICLES];
+
+    for (i=0; i<NP; i++)
+        pn[i] = ((MCS_data*)SS[i])->W*(float)NP;
+    memset(s, 0, NP*sizeof(int));
+    rand_0_1(r, NP);
+    k=0;
+    c=0.0f;
+    for (i=0; i<NP; i++){
+        c+=pn[i];
+        if (c>=1.0f) {
+            a = floorf(c);
+            c = c-a;
+            for(j=0; j<a; j++)
+                s[k+j]=i;
+            k=k+a;
+        }
+        if (k<NP && c>=r[k]){
+            c=c-1.0f;
+            s[k]=i;
+            k++;
+        }
+    }
+}
+
+float eff_particles
+(
+    voidPtr* SS,
+    int NP
+)
+{
+    int i;
+    MCS_data* S;
+    float sumW2;
+
+    /* Number of effective particles */
+    sumW2 = 0.0f;
+    for(i=0; i<NP; i++){
+        S = (MCS_data*)SS[i];
+        sumW2 += (S->W * S->W);
+    }
+    return 1.0f/sumW2;
+}
+
+void normalise_weights
+(
+    voidPtr* SS,
+    int NP
+)
 {
     int i;
     float W_sum;

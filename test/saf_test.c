@@ -169,7 +169,7 @@ void test__tracker3d(void){
     /* Probability of birth and death */
     tpars.init_birth = 0.5f; /* value between [0 1] - Prior probability of birth */
     tpars.alpha_death = 1.0f; /* always >= 1; 1 is good */
-    tpars.beta_death = 20.0f; /* always >= 1; 1 is good */
+    tpars.beta_death = 2.0f; /* always >= 1; 1 is good */
     /* Elapsed time (in seconds) between observations */
     tpars.dt = 1.0f/(fs/(float)hopsize); /* Hop length of frames */
     /* Whether or not to allow multiple active sources for each update */
