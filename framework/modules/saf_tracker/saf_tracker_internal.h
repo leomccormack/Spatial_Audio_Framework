@@ -39,15 +39,20 @@
 #include <math.h>
 #include <string.h>
 #include "saf_tracker.h"
-#include "saf.h"
+#include "../../modules/saf_utilities/saf_utilities.h"
 #include "saf_externals.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-
+/**< Spits out tracker status info to the terminal */
 #define TRACKER_VERBOSE
+#ifdef TRACKER_VERBOSE
+/**< Spits out even more tracker information */
+//# define TRACKER_VERY_VERBOSE
+#endif
+
 
 /**< Maximum number of possible events during update */
 #define TRACKER3D_MAX_NUM_EVENTS ( 24 )
@@ -132,7 +137,6 @@ typedef struct _tracker3d
     float imp[TRACKER3D_MAX_NUM_EVENTS];     /**< Event distributions */
     voidPtr str[TRACKER3D_MAX_NUM_EVENTS];   /**< Structure after each event */
 
-    
 } tracker3d_data;
      
 

@@ -130,6 +130,7 @@ int main_test(void) {
 void test__tracker3d(void){
     int hop, i, j, k, nSH, nGrid;
     int inds[2];
+    int* target_IDs;
     void* hT3d, *hMUSIC;
     float scale;
     float est_dirs_deg[2][2], est_dirs_xyz[2][3];
@@ -237,6 +238,8 @@ void test__tracker3d(void){
     V = (float**)malloc2d(nSH, nSH, sizeof(float));
     Vn = (float**)malloc2d(nSH, (nSH-nSources), sizeof(float)); /* noise subspace */
     Vn_cmplx = (float_complex**)malloc2d(nSH, (nSH-nSources), sizeof(float_complex));
+    target_dirs_xyz = NULL;
+    target_IDs = NULL;
 
     /* Loop over hops */
     for(hop=0; hop<(int)((float)sigLen/(float)hopsize); hop++){
@@ -267,7 +270,7 @@ void test__tracker3d(void){
         unitSph2cart((float*)est_dirs_deg, nSources, 1, (float*)est_dirs_xyz);
 
         /* Feed tracker */
-        tracker3d_step(hT3d, (float*)est_dirs_xyz, nSources, &target_dirs_xyz, &nTargets);
+        tracker3d_step(hT3d, (float*)est_dirs_xyz, nSources, &target_dirs_xyz, &target_IDs, &nTargets);
 
     }
 

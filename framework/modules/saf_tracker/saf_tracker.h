@@ -117,6 +117,7 @@ void tracker3d_step(void* const hT3d,
                     float* newObs_xyz,
                     int nObs,
                     float** target_xyz,
+                    int** target_IDs,
                     int* nTargets);
 
 

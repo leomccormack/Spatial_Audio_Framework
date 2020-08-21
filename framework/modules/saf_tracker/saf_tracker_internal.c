@@ -186,7 +186,7 @@ void tracker3d_predict
     float cross_Mjk[3];
     MCS_data* S;
     tracker3d_config* tpars = &(pData->tpars);
-#ifdef TRACKER_VERBOSE
+#ifdef TRACKER_VERY_VERBOSE
     char c_event[256], tmp[256];
 #endif
 
@@ -200,7 +200,7 @@ void tracker3d_predict
         nDead = 0;
         free(dead);
         dead = NULL;
-#ifdef TRACKER_VERBOSE
+#ifdef TRACKER_VERY_VERBOSE
         memset(c_event, 0, 256*sizeof(char));
 #endif
 
@@ -292,7 +292,7 @@ void tracker3d_predict
                 for(k=0; k<nDead; k++)
                     dead[k]--;
 
-#ifdef TRACKER_VERBOSE
+#ifdef TRACKER_VERY_VERBOSE
                 sprintf(tmp, " Target %d died ", ind);
                 strcat(c_event, tmp);
 #endif
@@ -321,7 +321,7 @@ void tracker3d_predict
                 S->Tcount = realloc1d(S->Tcount, S->nTargets*sizeof(int));
                 S->targetIDs = realloc1d(S->targetIDs, S->nTargets*sizeof(int));
 
-#ifdef TRACKER_VERBOSE
+#ifdef TRACKER_VERY_VERBOSE
                 sprintf(tmp, ", Target %d died ", ind);
                 strcpy(c_event, tmp);
 #endif
@@ -329,7 +329,7 @@ void tracker3d_predict
         }
 
         /* Print particle state */
-#ifdef TRACKER_VERBOSE
+#ifdef TRACKER_VERY_VERBOSE
         sprintf(S->evstr, "MCS: %d, W: %.7f, IDs: [", i, S->W);
         for (j=0; j<S->nTargets; j++){
             sprintf(tmp, "%d ", S->targetIDs[j]);
@@ -356,13 +356,11 @@ void tracker3d_update
     float M[6], P[6][6];
     MCS_data* S, *S_event;
     tracker3d_config* tpars = &(pData->tpars);
-#ifdef TRACKER_VERBOSE
+#ifdef TRACKER_VERY_VERBOSE
     char tmp[256];
 #endif
 
-    /* Loop over particles */
-//    ev_strs = cell(size(S));
-//    ev_IDs = cell(size(S));
+    /* Loop over particles */ 
     for (i=0; i<tpars->Np; i++){
         S = (MCS_data*)pData->SS[i];
 
@@ -533,7 +531,7 @@ void tracker3d_update
 
 
 /* Print particle state */
-#ifdef TRACKER_VERBOSE
+#ifdef TRACKER_VERY_VERBOSE
         sprintf(S->evstr, "MCS: %d, W: %.7f, IDs: [", i, S->W);
         for (j=0; j<S->nTargets; j++){
             sprintf(tmp, "%d ", S->targetIDs[j]);
