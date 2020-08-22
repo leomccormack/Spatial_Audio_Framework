@@ -19,6 +19,13 @@ string(REGEX MATCH "SAF_VERSION_PATCH ([0-9]*)" _ ${ver})
 set(ver_patch ${CMAKE_MATCH_1})
 set(SAF_VERSION "${ver_major}.${ver_minor}.${ver_patch}")
 
+# Display License
+if(SAF_ENABLE_TRACKER_MODULE)
+    set(SAF_LICENSE "GNU GPLv2")
+else()
+    set(SAF_LICENSE "ISC")
+endif()
+
 # SAF Banner:
 message("
       _____     _____     ______
@@ -28,7 +35,7 @@ message("
     (_____  ) |  ___  | |  __)
           ) | | (   ) | | (
     /|____) | | |   | | | |
-    (_______) |_|   |_| |_|        (Version ${SAF_VERSION})
+    (_______) |_|   |_| |_|        (Version: ${SAF_VERSION}, License: ${SAF_LICENSE})
 ")
 
 # Configure SAF
@@ -192,6 +199,19 @@ if(SAF_ENABLE_SOFA_READER_MODULE)
 
 else()
     message(STATUS "saf_sofa_reader module disabled.")
+endif()
+
+
+############################################################################
+# Enable/Disable tracker module
+if(SAF_ENABLE_TRACKER_MODULE)
+    message(STATUS "saf_tracker module enabled. ")
+
+    # Indicate to saf that the saf_sofa_reader module should be enabled
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_ENABLE_TRACKER_MODULE=${SAF_ENABLE_TRACKER_MODULE})
+
+else()
+    message(STATUS "saf_tracker module disabled.")
 endif()
 
 

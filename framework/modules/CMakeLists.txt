@@ -17,6 +17,9 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_sh/saf_sh_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_sh/saf_sh.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_sofa_reader/saf_sofa_reader.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker_internal.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker_internal.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_bessel.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_complex.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_decor.c
