@@ -94,7 +94,6 @@ If the **saf_sofa_reader** is enabled, CMake will use the statically built depen
 
 For Unix users, the framework, examples, and unit testing program may be built with:
 ```
-mkdir build 
 cmake -S . -B build 
 cd build
 make
@@ -106,7 +105,8 @@ Or for Visual Studio users (using x64 Native Tools Command Prompt):
 cmake -S . -B build -G "Visual Studio 15 Win64"   
 cd build
 msbuild ALL_BUILD.vcxproj /p:Configuration=Release /m
-test/Release/saf_test.exe  # To run the unit testing program
+cd test/Release
+saf_test.exe  # To run the unit testing program
 ```
 
 ## Documentation
