@@ -96,12 +96,10 @@ typedef struct _MCS {
     float W_prev;    /**< Previous important weight */
     float W0;        /**< PRIOR importance weight */ 
     int nTargets;    /**< Number of targets being tracked */
-    int nActive;     /**< Number of active targets */
     float dt;        /**< Elapsed time inbetween each observation/measurment */
     M6* M;           /**< Current target means; nTargets x ([6]) */
     P66* P;          /**< Current target variances; nTargets x ([6][6]) */
     int* targetIDs;  /**< Unique ID assigned to each target; nTargets x 1 */
-    int* activeIDs;  /**< IDs of targets currently active; nActive x 1 */
     int* Tcount;     /**< Time elapsed since birth of target: Tcount * dt;
                       *   nTargets x 1 */
 #ifdef TRACKER_VERBOSE

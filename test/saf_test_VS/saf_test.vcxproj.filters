@@ -115,6 +115,9 @@
     <Filter Include="framework\resources\md_malloc">
       <UniqueIdentifier>{187a3709-b161-4af5-a79a-a933c3520c21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="framework\modules\saf_tracker">
+      <UniqueIdentifier>{ed0c58b0-07a9-40f7-a4ed-a9dc1f46c8fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\timer\timer.h">
@@ -336,6 +339,12 @@
     <ClInclude Include="..\..\framework\resources\afSTFT\afSTFT_internal.h">
       <Filter>framework\resources\afSTFT</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_tracker\saf_tracker.h">
+      <Filter>framework\modules\saf_tracker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_tracker\saf_tracker_internal.h">
+      <Filter>framework\modules\saf_tracker</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\timer\timer.c">
@@ -547,6 +556,12 @@
     </ClCompile>
     <ClCompile Include="..\..\framework\resources\afSTFT\afSTFT_internal.c">
       <Filter>framework\resources\afSTFT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_tracker\saf_tracker.c">
+      <Filter>framework\modules\saf_tracker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_tracker\saf_tracker_internal.c">
+      <Filter>framework\modules\saf_tracker</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

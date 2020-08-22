@@ -119,12 +119,10 @@ void tracker3d_particleCreate
     p->W_prev = W0;
     p->W0 = W0;
     p->nTargets = 0;
-    p->nActive = 0;
     p->dt = dt;
     p->M = NULL;
     p->P = NULL;
     p->targetIDs = NULL;
-    p->activeIDs = NULL;
     p->Tcount = NULL;
 }
 
@@ -141,17 +139,14 @@ void tracker3d_particleCopy
     p2->W_prev = p1->W_prev;
     p2->W0 = p1->W0;
     p2->nTargets = p1->nTargets;
-    p2->nActive = p1->nActive;
     p2->dt = p1->dt;
     p2->M = realloc1d(p2->M, p1->nTargets*sizeof(M6));
     p2->P = realloc1d(p2->P, p1->nTargets*sizeof(P66));
     memcpy(p2->M, p1->M, p1->nTargets*sizeof(M6));
     memcpy(p2->P, p1->P, p1->nTargets*sizeof(P66));
     p2->targetIDs = realloc1d(p2->targetIDs, p1->nTargets*sizeof(int));
-    p2->activeIDs = realloc1d(p2->activeIDs, p1->nActive*sizeof(int));
     p2->Tcount = realloc1d(p2->Tcount, p1->nTargets*sizeof(int));
     memcpy(p2->targetIDs, p1->targetIDs, p1->nTargets*sizeof(int));
-    memcpy(p2->activeIDs, p1->activeIDs, p1->nActive*sizeof(int));
     memcpy(p2->Tcount, p1->Tcount, p1->nTargets*sizeof(int));
 }
 
@@ -166,7 +161,6 @@ void tracker3d_particleDestroy
         free(p->M);
         free(p->P);
         free(p->targetIDs);
-        free(p->activeIDs);
         free(p->Tcount);
         p=NULL;
         *phPart = NULL;
@@ -316,10 +310,10 @@ void tracker3d_predict
                 }
 
                 /* resize */
-                S->M = realloc1d(S->M, S->nTargets*sizeof(M6));
-                S->P = realloc1d(S->P, S->nTargets*sizeof(P66));
-                S->Tcount = realloc1d(S->Tcount, S->nTargets*sizeof(int));
-                S->targetIDs = realloc1d(S->targetIDs, S->nTargets*sizeof(int));
+				S->M = realloc1d(S->M, S->nTargets * sizeof(M6));
+				S->P = realloc1d(S->P, S->nTargets * sizeof(P66));
+				S->Tcount = realloc1d(S->Tcount, S->nTargets * sizeof(int));
+				S->targetIDs = realloc1d(S->targetIDs, S->nTargets * sizeof(int));
 
 #ifdef TRACKER_VERY_VERBOSE
                 sprintf(tmp, ", Target %d died ", ind);
@@ -506,6 +500,9 @@ void tracker3d_update
         norm = 1.0f/sumf(pData->imp, count);
         cblas_sscal(count, norm, pData->imp, 1);
         ev = categ_rnd(pData->imp, count);  /* Event index */
+		if (ev == -1) {
+			int asdasd = 0;
+		}
         assert(ev!=-1);
 
         /* Update particle */
@@ -851,9 +848,8 @@ int categ_rnd
 {
     int i;
     float rand01, norm;
-    float* Ptmp;
-
-    Ptmp = malloc1d(len_P*sizeof(float));
+	float Ptmp[TRACKER3D_MAX_NUM_EVENTS];   
+	 
     cblas_scopy(len_P, P, 1, Ptmp, 1);
 
     /* Draw the categories */
@@ -862,15 +858,12 @@ int categ_rnd
     for(i=1; i<len_P; i++)
         Ptmp[i] += Ptmp[i-1];
     rand_0_1(&rand01, 1);
+	rand01 = MIN(rand01, 0.9999f);
     //rand01 = 0.9f; ///////////////////////////////////////////////////////
-    for(i=0; i<len_P; i++){
-        if(Ptmp[i]>rand01){
-            free(Ptmp);
+    for(i=0; i<len_P; i++)
+        if(Ptmp[i]>rand01)
             return i;
-        }
-    }
-
-    free(Ptmp);
+	 
     return -1; /* indicates error */
 }
 

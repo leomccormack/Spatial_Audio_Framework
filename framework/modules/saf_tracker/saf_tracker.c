@@ -154,17 +154,16 @@ void tracker3d_step
 
     /* Loop over measurements */
     for(ob=0; ob<nObs; ob++){
-
 #ifdef TRACKER_VERY_VERBOSE
         printf("%s\n", "Update step");
 #endif
         tracker3d_update(hT3d, &newObs_xyz[ob*3], pData->incrementTime);
 
-        #ifdef TRACKER_VERY_VERBOSE
-        printf("%s\n", "Prediction step");
-        #endif
-        for(kt=0; kt<pData->incrementTime; kt++)
-            tracker3d_predict(hT3d, 1);
+#ifdef TRACKER_VERY_VERBOSE
+		printf("%s\n", "Prediction step");
+#endif
+		for (kt = 0; kt < pData->incrementTime; kt++)
+			tracker3d_predict(hT3d, 1);
 
         pData->incrementTime = 0;
 

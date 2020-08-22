@@ -91,7 +91,7 @@ int main_test(void) {
     RUN_TEST(test__faf_IIRFilterbank);
     RUN_TEST(test__gexpm);
 #ifdef SAF_ENABLE_TRACKER_MODULE
-    RUN_TEST(test__tracker3d);
+	RUN_TEST(test__tracker3d);
 #endif
     RUN_TEST(test__formulate_M_and_Cr);
     RUN_TEST(test__formulate_M_and_Cr_cmplx);
@@ -1201,11 +1201,11 @@ void test__faf_IIRFilterbank(void){
 
 void test__gexpm(void){
     int i, j;
-    float OUT[6][6];
+    float outM[6][6];
 
     /* prep */
     const float acceptedTolerance = 0.000001f;
-    const float IN[6][6] = {
+    const float inM[6][6] = {
         {-0.376858200853762,0.656790634216694,0.124479178614046,-0.334752428307223,1.50745241578235,0.0290651989052969},
         {0.608382058262806,0.581930485432986,3.23135406998058,-0.712003744668929,-1.33872571354702,-0.334742482743222},
         {-0.795741418256672,0.690709474622409,0.620971281129248,1.38749471231620,0.897245329198841,-0.0693670166113321},
@@ -1213,7 +1213,7 @@ void test__gexpm(void){
         {-0.277441781278754,-0.0732116130293688,-0.572551795688137,1.02024767389969,0.167385894565923,1.45210312619277},
         {-0.205305770089918,-1.59783032780633,1.08539265129120,0.460057585947626,-1.02420974042838,1.04117461500218}
     };
-    const float OUT_ref[6][6] = {
+    const float outM_ref[6][6] = {
         {0.385163650730121,0.0865151585709784,0.898406722231524,0.877640791713973,0.435244824708340,0.888866982998854},
         {-0.664938511314777,5.02943129352875,8.24444951891833,2.23840978101979,-0.942669833528886,-2.38535530623266},
         {-0.388189314743059,0.429308537172675,1.13870842882926,1.60875776611798,-1.44249911796405,-1.51822150286392},
@@ -1223,12 +1223,12 @@ void test__gexpm(void){
     };
 
     /* Compute matrix exponential */
-    gexpm((float*)IN, 6, 0, (float*)OUT);
+    gexpm((float*)inM, 6, 0, (float*)outM);
 
     /* Check that output of SAF's gexpm, is similar to Matlab's expm: */
     for(i=0; i<6; i++)
         for(j=0; j<6; j++)
-            TEST_ASSERT_TRUE( fabsf(OUT[i][j] - OUT_ref[i][j]) <= acceptedTolerance );
+            TEST_ASSERT_TRUE( fabsf(outM[i][j] - outM_ref[i][j]) <= acceptedTolerance );
 }
 
 #ifdef SAF_ENABLE_TRACKER_MODULE
@@ -1401,7 +1401,7 @@ void test__tracker3d(void){
                                   fabsf(est_dirs_xyz[1][2] - target_dirs_xyz[1*3+2]) <= acceptedTolerance);
             }
             else
-                dropouts++; /* Should be very unlikely, as the probably of death is so low, but it can happen due to the randomness... */
+                dropouts++; /* Should be very unlikely, (as the probably of death set to be so low), but it can still happen... */
         }
     }
     TEST_ASSERT_TRUE(dropouts<5);
