@@ -98,7 +98,8 @@ void tracker3d_create
     /* Starting values */
     for(i=0; i<TRACKER3D_MAX_NUM_EVENTS; i++){
         pData->evta[i] = NULL;
-        pData->str[i] = NULL;
+        tracker3d_particleCreate(&(pData->str[i]), pData->W0, tpars.dt);
+        //pData->str[i] = NULL;
     }
     pData->incrementTime = 0;
 }
@@ -153,16 +154,17 @@ void tracker3d_step
 
     /* Loop over measurements */
     for(ob=0; ob<nObs; ob++){
-#ifdef TRACKER_VERY_VERBOSE
-        printf("%s\n", "Prediction step");
-#endif
-        for(kt=0; kt<pData->incrementTime; kt++)
-            tracker3d_predict(hT3d, pData->incrementTime);
 
 #ifdef TRACKER_VERY_VERBOSE
         printf("%s\n", "Update step");
 #endif
         tracker3d_update(hT3d, &newObs_xyz[ob*3], pData->incrementTime);
+
+        #ifdef TRACKER_VERY_VERBOSE
+        printf("%s\n", "Prediction step");
+        #endif
+        for(kt=0; kt<pData->incrementTime; kt++)
+            tracker3d_predict(hT3d, 1);
 
         pData->incrementTime = 0;
 
@@ -193,7 +195,7 @@ void tracker3d_step
     }
     assert(maxIdx!=-1);
     S_max = (MCS_data*)pData->SS[maxIdx];
-
+ 
     /* Output */
     if(S_max->nTargets==0){
         (*target_xyz) = NULL;

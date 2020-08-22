@@ -342,7 +342,6 @@ void tracker3d_predict
     }
 }
 
-#if 1
 void tracker3d_update
 (
     void* const hT3d,
@@ -351,7 +350,7 @@ void tracker3d_update
 )
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
-    int i, j, k, ss, n_events, count, cidx, foundSlot, j_new, ev;
+    int i, j, k, ss, n_events, count, cidx, unique, j_new, ev;
     float TP0, LH, norm;
     float M[6], P[6][6];
     MCS_data* S, *S_event;
@@ -389,10 +388,6 @@ void tracker3d_update
 #ifdef TRACKER_VERBOSE
         memset(pData->evt, 0, n_events*256*sizeof(char)); /* Event descriptions */
 #endif
-        for(k=0; k<n_events; k++){
-            tracker3d_particleDestroy(&(pData->str[k]));
-            tracker3d_particleCreate(&(pData->str[k]), pData->W0, tpars->dt);
-        }
         count = 0; /* Event counter */
         cidx = 0;  /* current index */
 
@@ -465,20 +460,20 @@ void tracker3d_update
             /* Initialization of new target */
             kf_update6(tpars->M0, tpars->P0, Y, pData->H, pData->R, M, P, &LH);
 
-            /* find a free ID */
+            /* find an untaken ID */
             j_new = 0;
             for (ss = 0; ss<tpars->maxNactiveTargets; ss++){
                 j = 0;
-                foundSlot = 0;
-                while(!foundSlot && j<S->nTargets){
-                    if(ss != S->targetIDs[j]){
-                        j_new = ss;
-                        foundSlot = 1;
+                unique = 1;
+                for(j=0; j<S->nTargets; j++){
+                    if(ss == S->targetIDs[j]){
+                        unique = 0;
                     }
-                    j++;
                 };
-                if(foundSlot)
+                if(unique){
+                    j_new = ss;
                     break;
+                }
             } 
 
             count++;
@@ -515,16 +510,9 @@ void tracker3d_update
 
         /* Update particle */
         tracker3d_particleCopy(pData->str[ev], pData->SS[i]);
-//        S{i} = str{ev};       % Copy the updated structure
-//        ev_comment = evt{ev}; % Event description string
-
         S->W *= (pData->evl[ev] * pData->evp[ev]/ pData->imp[ev]);
-       // S{i}.W = S{i}.W*evl(ev)*evp(ev)/imp(ev);
-//        ev_strs{i} = ev_comment;
-//        ev_IDs{i} = evta{ev};
 
-
-/* Print particle state */
+        /* Print particle state */
 #ifdef TRACKER_VERY_VERBOSE
         sprintf(S->evstr, "MCS: %d, W: %.7f, IDs: [", i, S->W);
         for (j=0; j<S->nTargets; j++){
@@ -538,10 +526,7 @@ void tracker3d_update
     }
 
     normalise_weights(pData->SS, tpars->Np);
-
-
 }
-#endif
 
 
 /* ========================================================================== */

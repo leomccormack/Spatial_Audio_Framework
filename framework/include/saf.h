@@ -75,6 +75,15 @@
 /** @defgroup SOFA_Reader  saf_sofa_reader
  *  @brief    SOFA file reading module */
 
+/* The license governing SAF is configuration dependent */
+#ifdef SAF_ENABLE_TRACKER_MODULE
+/** The Spatial_Audio_Framework is governed by the GNU GPLv2 License */
+# define SAF_LICENSE_STRING "GNU GPLv2"
+#else
+/** The Spatial_Audio_Framework is governed by the ISC License */
+# define SAF_LICENSE_STRING "ISC"
+#endif
+
 
 /* ========================================================================== */
 /*                                SAF Version                                 */
@@ -97,7 +106,7 @@
                            SAF_VERSION_MINOR) "." MKSTRING(SAF_VERSION_PATCH) \
                            "" SAF_VERSION_SPECIAL
 
-/** The Spatial_Audio_Framework Version as a banner */
+/** The Spatial_Audio_Framework Version and License as a banner */
 #define SAF_VERSION_BANNER \
     "      _____     _____     ______                                    \n" \
     "    (  ____ ) (  ___  ) (  ____  )                                  \n" \
@@ -106,7 +115,8 @@
     "    (_____  ) |  ___  | |  __)                                      \n" \
     "          ) | | (   ) | | (                                         \n" \
     "    /|____) | | |   | | | |                                         \n" \
-    "    (_______) |_|   |_| |_|        (Version " SAF_VERSION_STRING ") \n\n"
+    "    (_______) |_|   |_| |_|        (Version: " SAF_VERSION_STRING ","   \
+    " License: " SAF_LICENSE_STRING ")                                   \n\n"
 
 
 /* ========================================================================== */

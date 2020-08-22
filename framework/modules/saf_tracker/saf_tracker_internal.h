@@ -47,7 +47,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**< Spits out tracker status info to the terminal */
-#define TRACKER_VERBOSE
+//#define TRACKER_VERBOSE
 #ifdef TRACKER_VERBOSE
 /**< Spits out even more tracker information */
 //# define TRACKER_VERY_VERBOSE
