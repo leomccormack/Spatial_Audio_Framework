@@ -61,4 +61,6 @@ tpars.cd = 1.0/(4.0*pi);
 %%
 safmex_tracker3d(tpars);
 
+safmex_tracker3d();
+
 
