@@ -108,15 +108,15 @@
 
 /** The Spatial_Audio_Framework Version and License as a banner */
 #define SAF_VERSION_BANNER \
-    "      _____     _____     ______                                    \n" \
-    "    (  ____ ) (  ___  ) (  ____  )                                  \n" \
-    "    | (    |/ | (   ) | | (    |/                                   \n" \
-    "    | (_____  | (___) | | (__                                       \n" \
-    "    (_____  ) |  ___  | |  __)                                      \n" \
-    "          ) | | (   ) | | (                                         \n" \
-    "    /|____) | | |   | | | |                                         \n" \
-    "    (_______) |_|   |_| |_|        (Version: " SAF_VERSION_STRING ","   \
-    " License: " SAF_LICENSE_STRING ")                                   \n\n"
+  "     _____     _____     ______                                        \n" \
+  "   (  ____ ) (  ___  ) (  ____  )                                      \n" \
+  "   | (    |/ | (   ) | | (    |/                                       \n" \
+  "   | (_____  | (___) | | (__                                           \n" \
+  "   (_____  ) |  ___  | |  __)                                          \n" \
+  "         ) | | (   ) | | (                                             \n" \
+  "   /|____) | | |   | | | |                                             \n" \
+  "   (_______) |_|   |_| |_|   (Version: " SAF_VERSION_STRING ", License:"   \
+  " " SAF_LICENSE_STRING ")                                              \n\n"
 
 
 /* ========================================================================== */
@@ -142,7 +142,7 @@
 /**
  * SAF Module: CDf4SAP
  *
- * Covarience Domain Framework for Spatial Audio Processing (CDF4SAP). A C
+ * Covariance Domain Framework for Spatial Audio Processing (CDF4SAP). A C
  * implementation of the framework described in [1].
  *
  * ## Dependencies

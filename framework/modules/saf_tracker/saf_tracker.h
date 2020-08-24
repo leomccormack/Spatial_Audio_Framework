@@ -20,13 +20,18 @@
  * @file saf_tracker.h
  * @brief Particle filtering based tracker
  *
- * Based on the RBMCDA Matlab toolbox (GPLv2 license) by Simo Särkkä and Jouni
- * Hartikainen (Copyright (C) 2003-2008):
+ * Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Särkkä and
+ * Jouni Hartikainen (Copyright (C) 2003-2008):
  *     https://users.aalto.fi/~ssarkka/#softaudio
  *
  * And also inspired by the work of Sharath Adavanne, Archontis Politis, Joonas
  * Nikunen, and Tuomas Virtanen (GPLv2 license):
  *     https://github.com/sharathadavanne/multiple-target-tracking
+ *
+ * @see [1] Särkkä, S., Vehtari, A. and Lampinen, J., 2004, June. Rao-
+ *          Blackwellized Monte Carlo data association for multiple target
+ *          tracking. In Proceedings of the seventh international conference on
+ *          information fusion (Vol. 1, pp. 583-590). I.
  *
  * @author Leo McCormack
  * @date 12.08.2020
@@ -45,19 +50,17 @@ extern "C" {
 
 /** User parameters for tracker3d */
 typedef struct _tracker3d_config{
-    /* Number of Monte Carlo samples/particles. The more complex the
-     * distribution is, the more particles required (but also, the more
-     * computationally expensive the tracker becomes). */
-    int Np;                   /**< Number of Monte Carlo samples/particles. */
-    int maxNactiveTargets;    /**< Max numer of simultaneous targets */
-    /* Target velocity - e.g. to assume that a target can move 20 degrees in two
-     * seconds along the horizontal, set V_azi = 20/2 */
+    /** Number of Monte Carlo samples/particles. The more complex the
+     *  distribution is, the more particles required (but also the more
+     *  computationally expensive the tracker becomes). */
+    int Np;
+    int maxNactiveTargets;    /**< Maximum number of simultaneous targets */
     float noiseLikelihood;    /**< Likelihood of an estimate being noise/clutter
                                *   between [0..1] */
-    float measNoiseSD_deg;    /**< Measurement noise standard deviation
-                               *   estimates within the range +/-20 degrees
-                               *   belong to the same target */
-    float noiseSpecDen_deg;   /**< Noise spectral density; influences the
+    float measNoiseSD;        /**< Measurement noise standard deviation.
+                               *   Estimates within this standard deviation
+                               *   range belong to the same target */
+    float noiseSpecDen;       /**< Noise spectral density; influences the
                                *   smoothness of the traget tracks */
     int ALLOW_MULTI_DEATH;    /**< FLAG whether to allow for multiple target
                                *   deaths in the same tracker prediction step */
@@ -65,18 +68,18 @@ typedef struct _tracker3d_config{
     float alpha_death;        /**< Prior probability of death; always >= 1 */
     float beta_death;         /**< Prior probability of death; always >= 1 */
     float dt;                 /**< Elapsed time (in seconds) between
-                               *   observations/measurements */
-    int MULTI_ACTIVE;         /**< FLAG whether or not to allow multiple active
-                               *   sources for each update */
+                               *   observations/measurements */ 
     float W_avg_coeff;        /**< Real-time tracking is based on the particle
                                *   with highest weight. A one-pole averaging
                                *   filter is used to smooth these weights over
                                *   time [0..0.999] */
-    int FORCE_KILL_TARGETS;   /**< FLAG force kill targets that are close to
-                               *   another target. In these cases, the target
-                               *   that has been 'alive' for the least amount
-                               *   of time, is killed */
-    float forceKillAngle_rad; /**< Angle at which to kill targets, in radians */
+    int FORCE_KILL_TARGETS;   /**< FLAG force kill targets that are too close to
+                               *   one another. In these cases, the target which
+                               *   has been 'alive' for the least amount of
+                               *   of time is killed */
+    float forceKillDistance;  /**< Euclidian distance at which to start killing
+                               *   targets which come too close to other (older)
+                               *   targets (<=). */
     float M0[6];              /**< 0,1,2: Position of sound source PRIORs
                                *   (x,y,z), 3,4,5: Mean velocity PRIORs (x,y,z) */
     float P0[6][6];           /**< Diagonal matrix, 0,1,2: Variance PRIORs of
@@ -96,6 +99,7 @@ typedef struct _tracker3d_config{
  * Creates an instance of the mighty tracker3d
  *
  * @param[in] phT3d (&) address of tracker3d handle
+ * @param[in] tpars Tracker configuration/user parameter struct
  */
 void tracker3d_create(void** const phT3d,
                       tracker3d_config tpars);
@@ -108,10 +112,19 @@ void tracker3d_create(void** const phT3d,
 void tracker3d_destroy(void** const phT3d);
     
 /**
- * Assumed this will be called every step in time. If there are no new observations
- * then set newObs_xyz=NULL and/or, nObs=0.
+ * Tracker time step to update/predict current target locations and to parse
+ * new measurements/observations
  *
- * @param[in] hT3d tracker3d handle
+ * @note It is assumed that this will be called every step in time (tpars.dt).
+ *       If there are no new observations/measurements then still call this
+ *       function, but set newObs_xyz=NULL and/or, nObs=0.
+ *
+ * @param[in]  hT3d       tracker3d handle
+ * @param[in]  newObs_xyz New observations/measurements; nObs x 3
+ * @param[in]  nObs       Number of new observations/measurements
+ * @param[out] target_xyz (&) Current target locations; *nTargets x 3
+ * @param[out] target_IDs (&) (Unique) target IDs; *nTargets x 1
+ * @param[out] nTargets   (&) Current number of targets being tracked
  */
 void tracker3d_step(void* const hT3d,
                     float* newObs_xyz,

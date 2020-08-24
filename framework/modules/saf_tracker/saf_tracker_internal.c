@@ -20,13 +20,18 @@
  * @file saf_tracker_internal.c
  * @brief Particle filtering based tracker
  *
- * Based on the RBMCDA Matlab toolbox (GPLv2 license) by Simo Särkkä and Jouni
- * Hartikainen (Copyright (C) 2003-2008):
+ * Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Särkkä and
+ * Jouni Hartikainen (Copyright (C) 2003-2008):
  *     https://users.aalto.fi/~ssarkka/#softaudio
  *
  * And also inspired by the work of Sharath Adavanne, Archontis Politis, Joonas
  * Nikunen, and Tuomas Virtanen (GPLv2 license):
  *     https://github.com/sharathadavanne/multiple-target-tracking
+ *
+ * @see [1] Särkkä, S., Vehtari, A. and Lampinen, J., 2004, June. Rao-
+ *          Blackwellized Monte Carlo data association for multiple target
+ *          tracking. In Proceedings of the seventh international conference on
+ *          information fusion (Vol. 1, pp. 583-590). I.
  *
  * @author Leo McCormack
  * @date 12.08.2020
@@ -176,8 +181,7 @@ void tracker3d_predict
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
     int i, j, k, n, nDead, isDead, ind;
     int* dead;
-    float dt0, dt1, p_death, angle_diff, norm, dot, rand01;
-    float cross_Mjk[3];
+    float dt0, dt1, p_death, rand01, distance_diff;
     MCS_data* S;
     tracker3d_config* tpars = &(pData->tpars);
 #ifdef TRACKER_VERY_VERBOSE
@@ -218,20 +222,18 @@ void tracker3d_predict
                 if (tpars->FORCE_KILL_TARGETS){
                     for(k=0; k<S->nTargets; k++){
                         if (k!=j){
-                            crossProduct3(S->M[j].M, S->M[k].M, cross_Mjk);
-                            norm = L2_norm3(cross_Mjk);
-                            utility_svvdot(S->M[j].M, S->M[k].M, 3, &dot);
-                            angle_diff = atan2f(norm, dot);
-
-                            if (angle_diff < tpars->forceKillAngle_rad && S->Tcount[j] <= S->Tcount[k])
-                                p_death = 1;
+                            distance_diff = (S->M[j].m0 - S->M[k].m0) * (S->M[j].m0 - S->M[k].m0) +
+                                            (S->M[j].m1 - S->M[k].m1) * (S->M[j].m1 - S->M[k].m1) +
+                                            (S->M[j].m2 - S->M[k].m2) * (S->M[j].m2 - S->M[k].m2);
+                            distance_diff = sqrtf(distance_diff);
+                            if (distance_diff < tpars->forceKillDistance && S->Tcount[j] <= S->Tcount[k])
+                                p_death = 1.0f;
                         }
                     }
                 }
 
                 /* Decide whether target should die */
                 rand_0_1(&rand01, 1);
-                //rand01 = 0.5f; //////////////////////////////////////////////////////////////////
                 if (rand01 < p_death){
                     nDead++; /* Target dies */
                     dead = realloc1d(dead, nDead*sizeof(float));
@@ -361,19 +363,7 @@ void tracker3d_update
         TP0 = (1.0f-tpars->noiseLikelihood)/(S->nTargets+2.23e-10f);
 
         /* Number of possible events: */
-        if (tpars->MULTI_ACTIVE){
-//            n_events = 1; % clutter
-//            nTargets = min(S{i}.nTargets,tpars.maxNactiveTargets);
-//            if nTargets > 0
-//                n_events = n_events + tpars.ATinds{nTargets}.nCombinations;   % combinations of active targets
-//            end
-
-            n_events = S->nTargets + 1;
-        }
-        else{
-            /* clutter (+1) or 1 of the targets is active: */
-            n_events = S->nTargets + 1;
-        }
+        n_events = S->nTargets + 1; /* clutter (+1) or 1 of the targets is active */
         if( S->nTargets < tpars->maxNactiveTargets)
             n_events++; /* Also a chance of a new target */
         assert(n_events<=TRACKER3D_MAX_NUM_EVENTS);
@@ -418,35 +408,6 @@ void tracker3d_update
             for(k=0; k<S->nTargets; k++)
                 S_event->Tcount[k] += Tinc;
             cidx++;
- 
-            /*  Handles for MULTI_ACTIVE */
-//            if tpars.MULTI_ACTIVE
-//                strTARGETS{j} = str{count}; %#ok
-//                evpTARGETS(j) = evp(count); %#ok
-//                evlTARGETS(j) = evl(count); %#ok
-//            end
-        }
-
-        /* Loop over associations to multiple active target combinations */
-        if ((tpars->MULTI_ACTIVE == 1) && (S->nTargets > 0)){
-//            for nA=1:tpars.ATinds{nTargets}.nCombinationsAbove2
-//                count = count+1;
-//                inds = tpars.ATinds{nTargets}.indsAbove2{nA};
-//                evt{count} = sprintf(['MultiTargets' strcat(int2str(inds))]);
-//                evp(count) = prod(evpTARGETS(inds)); % assuming targets are independent of one another
-//                evl(count) = prod(evlTARGETS(inds)); % assuming targets are independent of one another
-//                evta{count} = [];
-//
-//                % copy already computed track info
-//                str{count} = S{i};
-//                for j=inds
-//                    evta{count} = [evta{count} S{i}.targetIDs(j)];
-//
-//                    str{count}.M{j} = strTARGETS{j}.M{j};
-//                    str{count}.P{j} = strTARGETS{j}.P{j};
-//                    str{count}.Tcount(j) = strTARGETS{j}.Tcount(j);
-//                end
-//            end
         }
 
         /* Association to new target */
@@ -500,9 +461,6 @@ void tracker3d_update
         norm = 1.0f/sumf(pData->imp, count);
         cblas_sscal(count, norm, pData->imp, 1);
         ev = categ_rnd(pData->imp, count);  /* Event index */
-		if (ev == -1) {
-			int asdasd = 0;
-		}
         assert(ev!=-1);
 
         /* Update particle */
@@ -859,7 +817,6 @@ int categ_rnd
         Ptmp[i] += Ptmp[i-1];
     rand_0_1(&rand01, 1);
 	rand01 = MIN(rand01, 0.9999f);
-    //rand01 = 0.9f; ///////////////////////////////////////////////////////
     for(i=0; i<len_P; i++)
         if(Ptmp[i]>rand01)
             return i;

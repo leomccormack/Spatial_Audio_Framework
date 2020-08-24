@@ -20,14 +20,19 @@
  * @file saf_tracker.c
  * @brief Particle filtering based tracker
  *
- * Based on the RBMCDA Matlab toolbox (GPLv2 license) by Simo Särkkä and Jouni
- * Hartikainen (Copyright (C) 2003-2008):
+ * Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Särkkä and
+ * Jouni Hartikainen (Copyright (C) 2003-2008):
  *     https://users.aalto.fi/~ssarkka/#softaudio
  *
  * And also inspired by the work of Sharath Adavanne, Archontis Politis, Joonas
  * Nikunen, and Tuomas Virtanen (GPLv2 license):
  *     https://github.com/sharathadavanne/multiple-target-tracking
- *     
+ *
+ * @see [1] Särkkä, S., Vehtari, A. and Lampinen, J., 2004, June. Rao-
+ *          Blackwellized Monte Carlo data association for multiple target
+ *          tracking. In Proceedings of the seventh international conference on
+ *          information fusion (Vol. 1, pp. 583-590). I.
+ *
  * @author Leo McCormack
  * @date 12.08.2020
  */
@@ -53,15 +58,15 @@ void tracker3d_create
     pData->tpars = tpars;
 
     /* Measurement noise PRIORs along the x,y,z axis, respectively  */
-    sd_xyz = 1.0f-cosf(tpars.measNoiseSD_deg*SAF_PI/180.0f);
+    sd_xyz = tpars.measNoiseSD;
     memset(pData->R, 0, 3*3*sizeof(float));
     pData->R[0][0] = powf(sd_xyz,2.0f);
     pData->R[1][1] = powf(sd_xyz,2.0f);
     pData->R[2][2] = powf(sd_xyz,2.0f);
 
-    /* Noise spectral density along x, y, z axis qx,y,z in combination with
-     * sd_xyz decides how smooth the target tracks are. */
-    q_xyz = 1.0f-cosf(tpars.noiseSpecDen_deg*SAF_PI/180.0f);
+    /* Noise spectral density along x, y, z axis qx,y,z which, (in combination
+     * with sd_xyz), dictates how smooth the target tracks are. */
+    q_xyz = tpars.noiseSpecDen;
 
     /* Dynamic and measurement models */
     const float F[6][6] =
@@ -89,17 +94,11 @@ void tracker3d_create
         tracker3d_particleCreate(&(pData->SS[i]), pData->W0, tpars.dt);
         tracker3d_particleCreate(&(pData->SS_resamp[i]), pData->W0, tpars.dt);
     }
-
-    /* Possible combinations of active sources */
-    if(tpars.MULTI_ACTIVE){
-        assert(0); // not implemented yet!
-    }
-
-    /* Starting values */
+    
+    /* Event starting values */
     for(i=0; i<TRACKER3D_MAX_NUM_EVENTS; i++){
         pData->evta[i] = NULL;
         tracker3d_particleCreate(&(pData->str[i]), pData->W0, tpars.dt);
-        //pData->str[i] = NULL;
     }
     pData->incrementTime = 0;
 }
@@ -143,14 +142,14 @@ void tracker3d_step
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
     int i, kt, ob, maxIdx, nt;
-    float Neff, maxVal;
+    float Neff, maxVal, tmpW;
     int s[TRACKER3D_MAX_NUM_PARTICLES];
     MCS_data* S_max;
 #ifdef TRACKER_VERBOSE
     char c_str[256], tmp[256];
 #endif
 
-    pData->incrementTime++; /* TODO: This time incrementing needs some double checking... */
+    pData->incrementTime++; 
 
     /* Loop over measurements */
     for(ob=0; ob<nObs; ob++){
@@ -179,6 +178,16 @@ void tracker3d_step
             for(i=0; i<pData->tpars.Np; i++){
                 tracker3d_particleCopy(pData->SS_resamp[i], pData->SS[i]);
                 ((MCS_data*)pData->SS[i])->W = ((MCS_data*)pData->SS[i])->W0;
+            }
+        }
+
+        /* Apply (optional) temporal smoothing of the particle importance weights */
+        if(pData->tpars.W_avg_coeff>0.0f){
+            for(i=0; i<pData->tpars.Np; i++){
+                ((MCS_data*)pData->SS[i])->W = ((MCS_data*)pData->SS[i])->W * (1.0f-pData->tpars.W_avg_coeff) +
+                       ((MCS_data*)pData->SS[i])->W_prev * pData->tpars.W_avg_coeff;
+                ((MCS_data*)pData->SS[i])->W_prev = ((MCS_data*)pData->SS[i])->W;
+               // ((MCS_data*)pData->SS[i])->W = tmpW;
             }
         }
     }

@@ -20,13 +20,18 @@
  * @file saf_tracker_internal.h
  * @brief Particle filtering based tracker
  *
- * Based on the RBMCDA Matlab toolbox (GPLv2 license) by Simo Särkkä and Jouni
- * Hartikainen (Copyright (C) 2003-2008):
+ * Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Särkkä and
+ * Jouni Hartikainen (Copyright (C) 2003-2008):
  *     https://users.aalto.fi/~ssarkka/#softaudio
  *
  * And also inspired by the work of Sharath Adavanne, Archontis Politis, Joonas
  * Nikunen, and Tuomas Virtanen (GPLv2 license):
  *     https://github.com/sharathadavanne/multiple-target-tracking
+ *
+ * @see [1] Särkkä, S., Vehtari, A. and Lampinen, J., 2004, June. Rao-
+ *          Blackwellized Monte Carlo data association for multiple target
+ *          tracking. In Proceedings of the seventh international conference on
+ *          information fusion (Vol. 1, pp. 583-590). I.
  *
  * @author Leo McCormack
  * @date 12.08.2020
@@ -52,7 +57,6 @@ extern "C" {
 /**< Spits out even more tracker information */
 //# define TRACKER_VERY_VERBOSE
 #endif
-
 
 /**< Maximum number of possible events during update */
 #define TRACKER3D_MAX_NUM_EVENTS ( 24 )
@@ -93,7 +97,7 @@ typedef struct _P66 {
 /** Monte-Carlo Sample (particle) structure */
 typedef struct _MCS {
     float W;         /**< Importance weight */
-    float W_prev;    /**< Previous important weight */
+    float W_prev;    /**< Previous importance weight */
     float W0;        /**< PRIOR importance weight */ 
     int nTargets;    /**< Number of targets being tracked */
     float dt;        /**< Elapsed time inbetween each observation/measurment */
@@ -129,11 +133,11 @@ typedef struct _tracker3d
 #ifdef TRACKER_VERBOSE
     char evt[TRACKER3D_MAX_NUM_EVENTS][256]; /**< Event descriptions */
 #endif
-    int* evta[TRACKER3D_MAX_NUM_EVENTS];     /**< Event targets */
-    float evp[TRACKER3D_MAX_NUM_EVENTS];     /**< Event priors */
-    float evl[TRACKER3D_MAX_NUM_EVENTS];     /**< Event likelhoods*/
-    float imp[TRACKER3D_MAX_NUM_EVENTS];     /**< Event distributions */
-    voidPtr str[TRACKER3D_MAX_NUM_EVENTS];   /**< Structure after each event */
+    int* evta[TRACKER3D_MAX_NUM_EVENTS];   /**< Event targets */
+    float evp[TRACKER3D_MAX_NUM_EVENTS];   /**< Event priors */
+    float evl[TRACKER3D_MAX_NUM_EVENTS];   /**< Event likelhoods*/
+    float imp[TRACKER3D_MAX_NUM_EVENTS];   /**< Event distributions */
+    voidPtr str[TRACKER3D_MAX_NUM_EVENTS]; /**< Structure after each event */
 
 } tracker3d_data;
      
@@ -182,7 +186,7 @@ void tracker3d_predict(void* const hT3d,
  * Prediction update
  *
  * @param[in] hT3d tracker3d handle
- * @param[in] Y    New observation; 3 x 1
+ * @param[in] Y    New observation/measurement; 3 x 1
  * @param[in] Tinc Number of time steps to increment by
  */
 void tracker3d_update(void* const hT3d,
@@ -207,7 +211,7 @@ void tracker3d_update(void* const hT3d,
  * where n is length of P. Compare this to simple random resampling where
  *    u_j~U[0,1].
  *
- * @warning This function assumes that the weights are normalised!
+ * @warning This function assumes that the weights have been normalised!
  *
  * @param[in]  SS Array of particle structures; NP x 1
  * @param[in]  NP Number of particle structures
@@ -226,7 +230,7 @@ void resampstr(voidPtr* SS,
 /**
  * Estimate the number of effective particles
  *
- * @warning This function assumes that the weights are normalised!
+ * @warning This function assumes that the weights have been normalised!
  *
  * @param[in] SS Array of particle structures; NP x 1
  * @param[in] NP Number of particle structures
@@ -289,7 +293,7 @@ void kf_predict6(float M[6],
  *
  * See for instance kf_predict6() how m-[k] and P-[k] are calculated.
  *
- * Update step computes the posterior mean m[k] and covariance P[k]  of state
+ * Update step computes the posterior mean m[k] and covariance P[k] of state
  * given new measurement:
  *    p(x[k] | y[1:k]) = N(x[k] | m[k], P[k])
  *

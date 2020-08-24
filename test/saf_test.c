@@ -91,7 +91,7 @@ int main_test(void) {
     RUN_TEST(test__faf_IIRFilterbank);
     RUN_TEST(test__gexpm);
 #ifdef SAF_ENABLE_TRACKER_MODULE
-	RUN_TEST(test__tracker3d);
+    RUN_TEST(test__tracker3d);
 #endif
     RUN_TEST(test__formulate_M_and_Cr);
     RUN_TEST(test__formulate_M_and_Cr_cmplx);
@@ -1237,12 +1237,11 @@ void test__tracker3d(void){
     int inds[2];
     int* target_IDs;
     void* hT3d, *hMUSIC;
-    float scale, rand01;
+    float measNoiseSD_deg, noiseSpecDen_deg, scale, rand01;
     float est_dirs_deg[2][2], est_dirs_xyz[2][3];
     float* grid_dirs_deg;
     float** insigs, **inputSH, **inputSH_noise, **inputSH_hop, **Y, **Cx, **V, **Vn;
     float_complex** Vn_cmplx;
-
     int nTargets;
     float *target_dirs_xyz;
 
@@ -1251,7 +1250,7 @@ void test__tracker3d(void){
     const int order = 2;
     const float fs = 48e3;
     const int hopsize = 128;
-    const float sigLen = fs*10;
+    const float sigLen = fs*5;
     const int nSources = 2; /* cannot be changed, hard-coded for 2 */
     const float src_dirs_deg[2][2] = { {-35.0f, 30.0f}, {120.0f, 0.0f} };
 
@@ -1266,10 +1265,12 @@ void test__tracker3d(void){
     tpars.noiseLikelihood = 0.2f; /* between [0..1] */
     /* Measurement noise - e.g. to assume that estimates within the range +/-20
      * degrees belong to the same target, set SDmnoise_deg = 20 */
-    tpars.measNoiseSD_deg = 20.0f; /* Measurement noise standard deviation */
+    measNoiseSD_deg = 20.0f;
+    tpars.measNoiseSD = 1.0f-cosf(measNoiseSD_deg*SAF_PI/180.0f); /* Measurement noise standard deviation */
     /* Noise spectral density - not fully understood. But it influences the
      * smoothness of the target tracks */
-    tpars.noiseSpecDen_deg = 1.0f;  /* Noise spectral density */
+    noiseSpecDen_deg = 1.0f;
+    tpars.noiseSpecDen = 1.0f-cosf(noiseSpecDen_deg*SAF_PI/180.0f);  /* Noise spectral density */
     /* FLAG - whether to allow for multiple target deaths in the same tracker
      * prediction step */
     tpars.ALLOW_MULTI_DEATH = 1;
@@ -1280,14 +1281,13 @@ void test__tracker3d(void){
     /* Elapsed time (in seconds) between observations */
     tpars.dt = 1.0f/(fs/(float)hopsize); /* Hop length of frames */
     /* Whether or not to allow multiple active sources for each update */
-    tpars.MULTI_ACTIVE = 0; //////////////////////////////////////////////////////////////////////////////
     /* Real-time tracking is based on the particle with highest weight. A
      * one-pole averaging filter is used to smooth the weights over time. */
-    tpars.W_avg_coeff = 0.0f;
+    tpars.W_avg_coeff = 0.5f;
     /* Force kill targets that are close to another target. In these cases, the
      * target that has been 'alive' for the least amount of time, is killed */
     tpars.FORCE_KILL_TARGETS = 1;
-    tpars.forceKillAngle_rad = 10.0f*SAF_PI/180.0f;
+    tpars.forceKillDistance = 0.2f;
     /* Mean position priors x,y,z (assuming directly in-front) */
     tpars.M0[0] = 1.0f; tpars.M0[1] = 0.0f; tpars.M0[2] = 0.0f;
     /* Mean Velocity priors x,y,z (assuming stationary) */
