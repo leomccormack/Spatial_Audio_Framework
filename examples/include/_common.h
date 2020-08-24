@@ -34,6 +34,7 @@ extern "C" {
 /** @example ambi_dec.h */
 /** @example ambi_drc.h */
 /** @example ambi_enc.h */
+/** @example ambi_roomsim.h */
 /** @example array2sh.h */
 /** @example beamformer.h */
 /** @example binauraliser.h */

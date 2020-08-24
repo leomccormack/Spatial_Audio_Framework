@@ -136,6 +136,10 @@
  * multi-channel and matrix convolvers; spherical Bessel/Hankel functions
  * (including their derivatives); etc.
  *
+ * ## Dependencies
+ *   The following resources: afSTFTlib.h, convhull_3d.h, kiss_fft.h,
+ *   md_malloc.h
+ *
  * License: ISC
  */
 #define SAF_UTILITIES_MODULE
@@ -148,7 +152,7 @@
  * implementation of the framework described in [1].
  *
  * ## Dependencies
- *   saf_utilities
+ *   saf_utilities.h
  *
  * @see [1] Vilkamo, J., Backstrom, T., & Kuntz, A. (2013). Optimized covariance
  *          domain framework for time--frequency processing of spatial audio.
@@ -166,7 +170,7 @@
  * derived from the Matlab library found in [1] (BSD-3-Clause License).
  *
  * ## Dependencies
- *   saf_utilities, saf_vbap, saf_sh
+ *   saf_utilities.h, saf_vbap.h, saf_sh.h
  *
  * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
  *
@@ -183,7 +187,7 @@
  * HRTF filterbank coefficients, and HRTF interpolation.
  *
  * ## Dependencies
- *   saf_utilities
+ *   saf_utilities.h
  *
  * License: ISC
  */
@@ -196,7 +200,7 @@
  * A collection of reverb and room simulation algorithms.
  *
  * ## Dependencies
- *   saf_utilities, saf_sh
+ *   saf_utilities.h, saf_sh.h
  *
  * License: ISC
  */
@@ -210,7 +214,7 @@
  * derived from the Matlab libraries found in [1-3] (BSD-3-Clause License).
  *
  * ## Dependencies
- *   saf_utilities
+ *   saf_utilities.h
  *
  * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
  * @see [2] https://github.com/polarch/Array-Response-Simulator
@@ -228,7 +232,7 @@
  * (BSD-3-Clause License).
  *
  * ## Dependencies
- *  saf_utilities
+ *   saf_utilities.h
  *
  * @see [1] https://github.com/polarch/Vector-Base-Amplitude-Panning
  *
@@ -254,7 +258,7 @@
  *       SAF_ENABLE_SOFA_READER_MODULE
  *   and ensure that the netcdf library is also linked to your project
  * ## Dependencies
- *   saf_utilities, saf_hrir, netcdf
+ *   saf_utilities.h, saf_hrir.h, netcdf
  *
  * License: ISC
  */
@@ -272,7 +276,7 @@
  *   Add this pre-processor definition to your project:
  *       SAF_ENABLE_TRACKER_MODULE
  * ## Dependencies
- *   saf_utilities
+ *   saf_utilities.h
  *
  * License: GNU GPLv2
  */

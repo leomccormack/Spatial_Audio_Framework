@@ -43,13 +43,16 @@ void test__saf_rfft(void);
  * Testing the saf_matrixConv */
 void test__saf_matrixConv(void);
 /**
- * Testing the alias-free STFT filterbank reconstruction performance */
+ * Testing the alias-free STFT filterbank (near)-perfect reconstruction
+ * performance */
 void test__afSTFT(void);
 /**
- * Testing the reconstruction performance of the QMF filterbank */
+ * Testing the (near)-perfect reconstruction performance of the QMF filterbank
+ */
 void test__qmf(void);
 /**
- * Testing the smb_pitchShifter */
+ * Testing that the smb_pitchShifter can shift the energy of input spectra by
+ * one octave down */
 void test__smb_pitchShifter(void);
 /**
  * Testing the sortf() function (sorting real floating point numbers) */
@@ -64,7 +67,7 @@ void test__sortz(void);
 void test__cmplxPairUp(void);
 /**
  * Testing that the weights from the getVoronoiWeights() function sum to 4pi
- * and that for a uniform arrangement of points, the weights are all identical
+ * and that the weights are all identical for a uniform arrangement of points
  */
 void test__getVoronoiWeights(void);
 /**
@@ -75,7 +78,7 @@ void test__unique_i(void);
  * the previous data order; except truncated or extended) */
 void test__realloc2d_r(void);
 /**
- * Testing the performance of the latticeDecorrelator, verifying that the inter
+ * Testing the performance of the latticeDecorrelator, verifying that the inter-
  * channel cross-correlation coefficients are near 0 */
 void test__latticeDecorrelator(void);
 /**
@@ -87,18 +90,20 @@ void test__butterCoeffs(void);
  */
 void test__faf_IIRFilterbank(void);
 /**
- * Testing computing the matrix exponential */
+ * Testing computing the matrix exponential - comparing the output to that of
+ * the "expm" function in Matlab */
 void test__gexpm(void);
 /**
- * Testing the particle-filtering based tracker */
+ * Testing that the particle-filtering based tracker is able to correctly track
+ * two simultaneous targets */
 void test__tracker3d(void);
 /**
  * Testing the formulate_M_and_Cr() function, and verifying that the output
- * mixing matrices yield signals which have the target covariance */
+ * mixing matrices yield signals that have the target covariance */
 void test__formulate_M_and_Cr(void);
 /**
  * Testing the formulate_M_and_Cr_cmplx() function, and verifying that the
- * output mixing matrices yield signals which have the target covariance */
+ * output mixing matrices yield signals that have the target covariance */
 void test__formulate_M_and_Cr_cmplx(void);
 /**
  * Testing to assure that (given a uniform loudspeaker layout), the SAD, MMD and
@@ -108,8 +113,8 @@ void test__getLoudspeakerDecoderMtx(void);
  * Testing the orthogonality of the getSHreal() function */
 void test__getSHreal(void);
 /**
- * Testing that the getSHreal_recur() function is somewhat numerically similar
- * to the getSHreal function */
+ * Testing that the getSHreal_recur() function is somewhat numerically identical
+ * to the full-fat getSHreal() function */
 void test__getSHreal_recur(void);
 /**
  * Testing the orthogonality of the getSHcomplex() function */
@@ -127,7 +132,7 @@ void test__real2complexSHMtx(void);
 void test__complex2realSHMtx(void);
 /**
  * Testing the computeSectorCoeffsEP() and computeVelCoeffsMtx() functions and
- * comparing their output to that of a reference matlab function */
+ * comparing their output to that of a reference Matlab function */
 void test__computeSectorCoeffsEP(void);
 /**
  * Testing that for T-designs, the condition numbers are all equal to 1 */

@@ -101,7 +101,7 @@ void ambi_roomsim_setNumSources(void* const hAmbi, int new_nSources);
  *
  * @param[in] hAmbi      ambi_roomsim handle
  * @param[in] index      Source index
- * @param[in] newX       New 'x' coordinate, in metres
+ * @param[in] newValue   New 'x' coordinate, in metres
  */
 void ambi_roomsim_setSourceX(void* const hAmbi, int index, float newValue);
 
@@ -110,7 +110,7 @@ void ambi_roomsim_setSourceX(void* const hAmbi, int index, float newValue);
  *
  * @param[in] hAmbi      ambi_roomsim handle
  * @param[in] index      Source index
- * @param[in] newX       New 'y' coordinate, in metres
+ * @param[in] newValue   New 'y' coordinate, in metres
  */
 void ambi_roomsim_setSourceY(void* const hAmbi, int index, float newValue);
 
@@ -119,7 +119,7 @@ void ambi_roomsim_setSourceY(void* const hAmbi, int index, float newValue);
  *
  * @param[in] hAmbi      ambi_roomsim handle
  * @param[in] index      Source index
- * @param[in] newX       New 'z' coordinate, in metres
+ * @param[in] newValue   New 'z' coordinate, in metres
  */
 void ambi_roomsim_setSourceZ(void* const hAmbi, int index, float newValue);
 

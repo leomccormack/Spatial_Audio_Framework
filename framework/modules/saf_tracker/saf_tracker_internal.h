@@ -19,7 +19,7 @@
 /**
  * @file saf_tracker_internal.h
  * @ingroup Tracker
- * @brief Particle filtering based tracker
+ * @brief Particle filtering based tracker (#SAF_TRACKER_MODULE)
  *
  * Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Särkkä and
  * Jouni Hartikainen (Copyright (C) 2003-2008):
@@ -148,7 +148,7 @@ typedef struct _tracker3d
 /* ========================================================================== */
 
 /**
- * Creates a particle / Monte-Carlo Sample
+ * Creates an instance of a particle / Monte-Carlo Sample
  *
  * @param[in] phPart (&) address of particle structure
  * @param[in] W0     Importance weight PRIOR
@@ -159,7 +159,7 @@ void tracker3d_particleCreate(void** phPart,
                               float dt);
 
 /**
- * Copy particle structure "hPart1" into structure "hPart2"
+ * Copies particle structure "hPart1" into structure "hPart2"
  *
  * @param[in] hPart1 Particle structure 1
  * @param[in] hPart2 Particle structure 2
@@ -168,7 +168,7 @@ void tracker3d_particleCopy(void* hPart1,
                             void* hPart2);
 
 /**
- * Destroys a particle / Monte-Carlo Sample
+ * Destroys an instance of a particle / Monte-Carlo Sample
  *
  * @param[in] phPart (&) address of particle structure
  */

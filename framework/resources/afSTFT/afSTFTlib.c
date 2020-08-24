@@ -109,7 +109,8 @@ void afSTFT_create
     int ch;
 
     if(hybridmode)
-        assert(hopsize==64 || hopsize==128  || hopsize==256);
+        assert(hopsize==64 || hopsize==128);
+    assert(1024 % hopsize == 0 );
 
     h->nCHin = nCHin;
     h->nCHout = nCHout;

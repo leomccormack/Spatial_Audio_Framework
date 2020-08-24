@@ -20,7 +20,7 @@
  *@addtogroup Tracker
  *@{
  * @file saf_tracker.h
- * @brief Particle filtering based tracker
+ * @brief Particle filtering based tracker (#SAF_TRACKER_MODULE)
  *
  * Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Särkkä and
  * Jouni Hartikainen (Copyright (C) 2003-2008):
@@ -102,6 +102,8 @@ typedef struct _tracker3d_config{
 
 /**
  * Creates an instance of the mighty tracker3d
+ *
+ * @test test__tracker3d()
  *
  * @param[in] phT3d (&) address of tracker3d handle
  * @param[in] tpars Tracker configuration/user parameter struct

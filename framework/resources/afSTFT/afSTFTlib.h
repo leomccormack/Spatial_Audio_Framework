@@ -157,6 +157,10 @@ int afSTFT_getNBands(void * const hSTFT);
 
 /**
  * Returns current processing delay, in samples
+ *
+ * @note The base delay is 9*hopsize, which is increased to 12*hopsize when the
+ *       hybrid filtering mode is enabled.
+ * @warning Currently only correct when low delay mode is disabled!
  */
 int afSTFT_getProcDelay(void * const hSTFT);
 
