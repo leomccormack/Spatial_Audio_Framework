@@ -74,6 +74,8 @@
  *  @brief    Vector-base Amplitude Panning (VBAP) module */
 /** @defgroup SOFA_Reader  saf_sofa_reader
  *  @brief    SOFA file reading module */
+/** @defgroup Tracker      saf_tracker
+ *  @brief    Particle-filtering-based tracker */
 
 /* The license governing SAF is configuration dependent */
 #ifdef SAF_ENABLE_TRACKER_MODULE

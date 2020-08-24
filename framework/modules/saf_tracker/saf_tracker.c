@@ -18,6 +18,7 @@
 
 /**
  * @file saf_tracker.c
+ * @ingroup Tracker
  * @brief Particle filtering based tracker
  *
  * Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Särkkä and
@@ -142,7 +143,7 @@ void tracker3d_step
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
     int i, kt, ob, maxIdx, nt;
-    float Neff, maxVal, tmpW;
+    float Neff, maxVal;
     int s[TRACKER3D_MAX_NUM_PARTICLES];
     MCS_data* S_max;
 #ifdef TRACKER_VERBOSE
@@ -152,42 +153,43 @@ void tracker3d_step
     pData->incrementTime++; 
 
     /* Loop over measurements */
-    for(ob=0; ob<nObs; ob++){
+    if(newObs_xyz!=NULL){
+        for(ob=0; ob<nObs; ob++){
 #ifdef TRACKER_VERY_VERBOSE
-        printf("%s\n", "Update step");
+            printf("%s\n", "Update step");
 #endif
-        tracker3d_update(hT3d, &newObs_xyz[ob*3], pData->incrementTime);
+            tracker3d_update(hT3d, &newObs_xyz[ob*3], pData->incrementTime);
 
 #ifdef TRACKER_VERY_VERBOSE
-		printf("%s\n", "Prediction step");
+            printf("%s\n", "Prediction step");
 #endif
-		for (kt = 0; kt < pData->incrementTime; kt++)
-			tracker3d_predict(hT3d, 1);
+            for (kt = 0; kt < pData->incrementTime; kt++)
+                tracker3d_predict(hT3d, 1);
 
-        pData->incrementTime = 0;
+            pData->incrementTime = 0;
 
-        /* Resample if needed */
-        Neff = eff_particles(pData->SS, pData->tpars.Np);
-        if (Neff < (float)pData->tpars.Np/4.0f){
+            /* Resample if needed */
+            Neff = eff_particles(pData->SS, pData->tpars.Np);
+            if (Neff < (float)pData->tpars.Np/4.0f){
 #ifdef TRACKER_VERBOSE
-            printf("%s\n", "Resampling");
+                printf("%s\n", "Resampling");
 #endif
-            resampstr(pData->SS, pData->tpars.Np, s);
-            for(i=0; i<pData->tpars.Np; i++)
-                tracker3d_particleCopy(pData->SS[s[i]], pData->SS_resamp[i]);
-            for(i=0; i<pData->tpars.Np; i++){
-                tracker3d_particleCopy(pData->SS_resamp[i], pData->SS[i]);
-                ((MCS_data*)pData->SS[i])->W = ((MCS_data*)pData->SS[i])->W0;
+                resampstr(pData->SS, pData->tpars.Np, s);
+                for(i=0; i<pData->tpars.Np; i++)
+                    tracker3d_particleCopy(pData->SS[s[i]], pData->SS_resamp[i]);
+                for(i=0; i<pData->tpars.Np; i++){
+                    tracker3d_particleCopy(pData->SS_resamp[i], pData->SS[i]);
+                    ((MCS_data*)pData->SS[i])->W = ((MCS_data*)pData->SS[i])->W0;
+                }
             }
-        }
 
-        /* Apply (optional) temporal smoothing of the particle importance weights */
-        if(pData->tpars.W_avg_coeff>0.0f){
-            for(i=0; i<pData->tpars.Np; i++){
-                ((MCS_data*)pData->SS[i])->W = ((MCS_data*)pData->SS[i])->W * (1.0f-pData->tpars.W_avg_coeff) +
-                       ((MCS_data*)pData->SS[i])->W_prev * pData->tpars.W_avg_coeff;
-                ((MCS_data*)pData->SS[i])->W_prev = ((MCS_data*)pData->SS[i])->W;
-               // ((MCS_data*)pData->SS[i])->W = tmpW;
+            /* Apply (optional) temporal smoothing of the particle importance weights */
+            if(pData->tpars.W_avg_coeff>0.0001f){
+                for(i=0; i<pData->tpars.Np; i++){
+                    ((MCS_data*)pData->SS[i])->W = ((MCS_data*)pData->SS[i])->W * (1.0f-pData->tpars.W_avg_coeff) +
+                           ((MCS_data*)pData->SS[i])->W_prev * pData->tpars.W_avg_coeff;
+                    ((MCS_data*)pData->SS[i])->W_prev = ((MCS_data*)pData->SS[i])->W;
+                }
             }
         }
     }

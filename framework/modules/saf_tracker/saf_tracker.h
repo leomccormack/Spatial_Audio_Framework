@@ -17,6 +17,8 @@
  */
 
 /**
+ *@addtogroup Tracker
+ *@{
  * @file saf_tracker.h
  * @brief Particle filtering based tracker
  *
@@ -50,10 +52,11 @@ extern "C" {
 
 /** User parameters for tracker3d */
 typedef struct _tracker3d_config{
-    /** Number of Monte Carlo samples/particles. The more complex the
-     *  distribution is, the more particles required (but also the more
-     *  computationally expensive the tracker becomes). */
-    int Np;
+    int Np;                   /**< Number of Monte Carlo samples/particles. The
+                               *   more complex the distribution is, the more
+                               *   particles required (but also the more
+                               *   computationally expensive the tracker
+                               *   becomes). */
     int maxNactiveTargets;    /**< Maximum number of simultaneous targets */
     float noiseLikelihood;    /**< Likelihood of an estimate being noise/clutter
                                *   between [0..1] */
@@ -63,7 +66,8 @@ typedef struct _tracker3d_config{
     float noiseSpecDen;       /**< Noise spectral density; influences the
                                *   smoothness of the traget tracks */
     int ALLOW_MULTI_DEATH;    /**< FLAG whether to allow for multiple target
-                               *   deaths in the same tracker prediction step */
+                               *   deaths in the same tracker prediction step.
+                               *   1: enabled, 0: disabled */
     float init_birth;         /**< Prior probability of birth [0 1] */
     float alpha_death;        /**< Prior probability of death; always >= 1 */
     float beta_death;         /**< Prior probability of death; always >= 1 */
@@ -76,15 +80,16 @@ typedef struct _tracker3d_config{
     int FORCE_KILL_TARGETS;   /**< FLAG force kill targets that are too close to
                                *   one another. In these cases, the target which
                                *   has been 'alive' for the least amount of
-                               *   of time is killed */
-    float forceKillDistance;  /**< Euclidian distance at which to start killing
-                               *   targets which come too close to other (older)
-                               *   targets (<=). */
-    float M0[6];              /**< 0,1,2: Position of sound source PRIORs
-                               *   (x,y,z), 3,4,5: Mean velocity PRIORs (x,y,z) */
-    float P0[6][6];           /**< Diagonal matrix, 0,1,2: Variance PRIORs of
-                               *   estimates along the x,y,z axes; 3,4,5
-                               *   Velocity PRIORs of stimates along the x,y,z
+                               *   of time is killed; 1: enabled, 0: disabled */
+    float forceKillDistance;  /**< Euclidian distance at which to kill targets
+                               *   which come too close to other (older) targets
+                               *   (<=). */
+    float M0[6];              /**< [0,1,2] Position of sound source PRIORs
+                               *   (x,y,z), [3,4,5] Mean velocity PRIORs (x,y,z)
+                               */
+    float P0[6][6];           /**< Diagonal matrix, [0,1,2] Variance PRIORs of
+                               *   estimates along the x,y,z axes; [3,4,5]
+                               *   Velocity PRIORs of estimates along the x,y,z
                                *   axes */
     float cd;                 /**< PRIOR probability of noise. */
     
@@ -112,7 +117,7 @@ void tracker3d_create(void** const phT3d,
 void tracker3d_destroy(void** const phT3d);
     
 /**
- * Tracker time step to update/predict current target locations and to parse
+ * Tracker time step to update & predict current target locations and to parse
  * new measurements/observations
  *
  * @note It is assumed that this will be called every step in time (tpars.dt).
@@ -139,3 +144,5 @@ void tracker3d_step(void* const hT3d,
 #endif /* __cplusplus */
 
 #endif /* __SAF_TRACKER_H_INCLUDED__ */
+
+/**@} */ /* doxygen addtogroup Tracker */

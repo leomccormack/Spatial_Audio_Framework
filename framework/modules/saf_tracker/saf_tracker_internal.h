@@ -18,6 +18,7 @@
 
 /**
  * @file saf_tracker_internal.h
+ * @ingroup Tracker
  * @brief Particle filtering based tracker
  *
  * Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Särkkä and
