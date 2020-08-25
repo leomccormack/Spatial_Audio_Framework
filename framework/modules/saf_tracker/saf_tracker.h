@@ -52,48 +52,48 @@ extern "C" {
 
 /** User parameters for tracker3d */
 typedef struct _tracker3d_config{
-    int Np;                   /**< Number of Monte Carlo samples/particles. The
-                               *   more complex the distribution is, the more
-                               *   particles required (but also the more
-                               *   computationally expensive the tracker
-                               *   becomes). */
-    int maxNactiveTargets;    /**< Maximum number of simultaneous targets */
-    float noiseLikelihood;    /**< Likelihood of an estimate being noise/clutter
-                               *   between [0..1] */
-    float measNoiseSD;        /**< Measurement noise standard deviation.
-                               *   Estimates within this standard deviation
-                               *   range belong to the same target */
-    float noiseSpecDen;       /**< Noise spectral density; influences the
-                               *   smoothness of the traget tracks */
-    int ALLOW_MULTI_DEATH;    /**< FLAG whether to allow for multiple target
-                               *   deaths in the same tracker prediction step.
-                               *   1: enabled, 0: disabled */
-    float init_birth;         /**< Prior probability of birth [0 1] */
-    float alpha_death;        /**< Prior probability of death; always >= 1 */
-    float beta_death;         /**< Prior probability of death; always >= 1 */
-    float dt;                 /**< Elapsed time (in seconds) between
-                               *   observations/measurements */ 
-    float W_avg_coeff;        /**< Real-time tracking is based on the particle
-                               *   with highest weight. A one-pole averaging
-                               *   filter is used to smooth these weights over
-                               *   time [0..0.999] */
-    int FORCE_KILL_TARGETS;   /**< FLAG force kill targets that are too close to
-                               *   one another. In these cases, the target which
-                               *   has been 'alive' for the least amount of
-                               *   of time is killed; 1: enabled, 0: disabled */
-    float forceKillDistance;  /**< Euclidian distance at which to kill targets
-                               *   which come too close to other (older) targets
-                               *   (<=). */
-    float M0[6];              /**< [0,1,2] Position of sound source PRIORs
-                               *   (x,y,z), [3,4,5] Mean velocity PRIORs (x,y,z)
-                               *   Note: If there is no reasonable prior
-                               *   position, then you can set higher variances.
-                               */
-    float P0[6][6];           /**< Diagonal matrix, [0,1,2] Variance PRIORs of
-                               *   estimates along the x,y,z axes; [3,4,5]
-                               *   Velocity PRIORs of estimates along the x,y,z
-                               *   axes */
-    float cd;                 /**< PRIOR probability of noise. */
+    int Np;                  /**< Number of Monte Carlo samples/particles. The
+                              *   more complex the distribution is, the more
+                              *   particles required (but also the more
+                              *   computationally expensive the tracker
+                              *   becomes). */
+    int maxNactiveTargets;   /**< Maximum number of simultaneous targets */
+    float noiseLikelihood;   /**< Likelihood of an estimate being noise/clutter
+                              *   between [0..1] */
+    float measNoiseSD;       /**< Measurement noise standard deviation.
+                              *   Estimates within this standard deviation
+                              *   range belong to the same target */
+    float noiseSpecDen;      /**< Noise spectral density; influences the
+                              *   smoothness of the traget tracks */
+    int ALLOW_MULTI_DEATH;   /**< FLAG whether to allow for multiple target
+                              *   deaths in the same tracker prediction step.
+                              *   1: enabled, 0: disabled */
+    float init_birth;        /**< PRIOR probability of birth [0 1] */
+    float alpha_death;       /**< PRIOR probability of death; always >= 1 */
+    float beta_death;        /**< PRIOR probability of death; always >= 1 */
+    float dt;                /**< Elapsed time (in seconds) between
+                              *   observations/measurements */
+    float W_avg_coeff;       /**< Real-time tracking is based on the particle
+                              *   with highest weight. A one-pole averaging
+                              *   filter is used to smooth these weights over
+                              *   time [0..0.999] */
+    int FORCE_KILL_TARGETS;  /**< FLAG force kill targets that are too close to
+                              *   one another. In these cases, the target which
+                              *   has been 'alive' for the least amount of
+                              *   of time is killed; 1: enabled, 0: disabled */
+    float forceKillDistance; /**< Euclidian distance at which to kill targets
+                              *   which come too close to other (older) targets
+                              *   (<=). */
+    float M0[6];             /**< [0,1,2] Position of sound source PRIORs
+                              *   (x,y,z), [3,4,5] Mean velocity PRIORs (x,y,z)
+                              *   Note: If there is no reasonable prior
+                              *   position, then you can set higher variances.
+                              */
+    float P0[6][6];          /**< Diagonal matrix, [0,1,2] Variance PRIORs of
+                              *   estimates along the x,y,z axes; [3,4,5]
+                              *   Velocity PRIORs of estimates along the x,y,z
+                              *   axes */
+    float cd;                /**< PRIOR probability of noise. */
     
 }tracker3d_config;
 
