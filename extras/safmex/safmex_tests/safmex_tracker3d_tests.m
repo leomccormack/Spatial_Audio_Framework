@@ -7,7 +7,7 @@ hopsize = 128;
 % distribution is, the more particles required (but also, the more
 % computationally expensive the tracker becomes). 
 tpars.Np = 20;
-tpars.maxNactiveTargets = 40; % about 2 higher than expected is good 
+tpars.maxNactiveTargets = 4; % about 2 higher than expected is good 
 % Likelihood of an estimate being noise/clutter 
 tpars.noiseLikelihood = 0.2; % between [0..1] 
 % Measurement noise - e.g. to assume that estimates within the range +/-20
@@ -30,7 +30,7 @@ tpars.dt = 1/(fs/hopsize); % Hop length of frames
 % Whether or not to allow multiple active sources for each update  
 % Real-time tracking is based on the particle with highest weight. A
 % one-pole averaging filter is used to smooth the weights over time. 
-tpars.W_avg_coeff = 0.5;
+tpars.W_avg_coeff = 0.0;
 % Force kill targets that are close to another target. In these cases, the
 % target that has been 'alive' for the least amount of time, is killed 
 tpars.FORCE_KILL_TARGETS = 1;

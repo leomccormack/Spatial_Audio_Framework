@@ -86,6 +86,8 @@ typedef struct _tracker3d_config{
                                *   (<=). */
     float M0[6];              /**< [0,1,2] Position of sound source PRIORs
                                *   (x,y,z), [3,4,5] Mean velocity PRIORs (x,y,z)
+                               *   Note: If there is no reasonable prior
+                               *   position, then you can set higher variances.
                                */
     float P0[6][6];           /**< Diagonal matrix, [0,1,2] Variance PRIORs of
                                *   estimates along the x,y,z axes; [3,4,5]

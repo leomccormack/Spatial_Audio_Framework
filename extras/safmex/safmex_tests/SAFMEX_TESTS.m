@@ -6,7 +6,10 @@ tol = 1e-5; % FLT_EPSILON
 %% TESTS
 % safmex_tracker3d 
 nTests = nTests+1;
+for i=1:100
 safmex_tracker3d_tests 
+close all
+end
 
 % safmex_latticeDecorrelator
 nCH = 6; 

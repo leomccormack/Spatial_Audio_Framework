@@ -148,13 +148,13 @@ if ~exist(outputFolder, 'dir'), mkdir(outputFolder); end
 
 %% Build MEX 
 mex('-v', compilerFlags{:}, './safmex_tracker3d.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './safmex_latticeDecorrelator.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './safmex_faf_IIRFilterbank.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './safmex_afSTFT.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './safmex_qmf.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './safmex_generateVBAPgainTable3D.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './safmex_getSHreal.c', '-outdir', outputFolder);
-mex('-v', compilerFlags{:}, './safmex_getSHcomplex.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_latticeDecorrelator.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_faf_IIRFilterbank.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_afSTFT.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_qmf.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_generateVBAPgainTable3D.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_getSHreal.c', '-outdir', outputFolder);
+% mex('-v', compilerFlags{:}, './safmex_getSHcomplex.c', '-outdir', outputFolder);
 
 
 %% TESTS

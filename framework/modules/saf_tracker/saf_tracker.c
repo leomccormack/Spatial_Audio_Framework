@@ -174,7 +174,22 @@ void tracker3d_step
 #ifdef TRACKER_VERBOSE
                 printf("%s\n", "Resampling");
 #endif
+#if 1
+                /* Find most significant particle.. */
+                maxVal = FLT_MIN;
+                maxIdx = -1;
+                for(i=0; i<pData->tpars.Np; i++){
+                    if(maxVal<((MCS_data*)pData->SS[i])->W){
+                        maxVal = ((MCS_data*)pData->SS[i])->W;
+                        maxIdx = i;
+                    }
+                }
+                assert(maxIdx!=-1);
+                for(i=0; i<pData->tpars.Np; i++)
+                    s[i] = maxIdx;
+#else
                 resampstr(pData->SS, pData->tpars.Np, s);
+#endif
                 for(i=0; i<pData->tpars.Np; i++)
                     tracker3d_particleCopy(pData->SS[s[i]], pData->SS_resamp[i]);
                 for(i=0; i<pData->tpars.Np; i++){
