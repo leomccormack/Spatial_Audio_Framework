@@ -10,16 +10,16 @@ A cross-platform framework for developing spatial audio related applications in 
 ## Prerequisites
 
 The Spatial_Audio_Framework (SAF) requires the following libraries:
-* A library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
+* Any library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 * (Optional) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
 
-Add one of the following pre-processor definitions to inform SAF as to which performance library/libraries you have linked to your project:
+To inform SAF which performance library/libraries you have linked to your project, define one of the following pre-processor definitions:
 ```
 SAF_USE_INTEL_MKL             # great option, but only for x86 architectures    
 SAF_USE_OPEN_BLAS_AND_LAPACKE # good option, works on everything
 SAF_USE_APPLE_ACCELERATE      # solid option (x86 and ARM), but MacOS only and slower than MKL
 SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing
-``` 
+```
 Detailed instructions regarding how to build and link these performance libraries can be found [here](dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
 
 ## Framework structure
@@ -37,10 +37,10 @@ The framework also includes the following optional modules:
 * **saf_sofa_reader** - a simple SOFA file reader (**ISC**).
 * **saf_tracker** - a particle-filtering based tracker (**GPLv2**).
 
-To enable optional framework modules, simply add the relevant pre-processor definitions:
+To enable optional framework modules, simply add the relevant pre-processor definition:
 ```
 SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader
-SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker, which also converts SAF to the GPLv2 license
+SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker
 ```
 Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. Instructions on how to install/link this dependency can be found [here](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md). 
 
@@ -53,15 +53,16 @@ Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to you
 Spatial_Audio_Framework/framework/include  
 ```
 
-The framework's master include header is:
+The framework's master include header is then:
 
 ```c
 #include "saf.h"
+#include "saf_externals"  /* To also carry over CBLAS/LAPACK routines etc. (Optional) */
 ```
 
 ## Building with CMake 
 
-The framework may be included within an existing CMake workflow with simply:
+The framework may also be included within an existing CMake workflow with simply:
 ```
 add_subdirectory(Spatial_Audio_Framework)
 target_link_libraries(${PROJECT_NAME} PRIVATE saf)
@@ -84,7 +85,7 @@ If using **SAF_USE_INTEL_MKL** as the performance library, note that the default
 -DINTEL_MKL_LIB="path/to/custom/mkl/lib/saf_mkl_custom(.so/.dylib/.lib)"
 ```
 
-If the **saf_sofa_reader** is enabled, CMake will use the statically built dependencies found in **dependencies** for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared [netcdf library](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
+If the **saf_sofa_reader** module is enabled, CMake will use the statically built dependencies found in the **dependencies** folder for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared [netcdf library](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
 ```
 # e.g. Linux users:
 -DNETCDF_LIBRARY="/usr/lib/x86_64-linux-gnu/libnetcdf.so"
@@ -92,7 +93,7 @@ If the **saf_sofa_reader** is enabled, CMake will use the statically built depen
 -DNETCDF_LIBRARY="/c/msys64/mingw64/lib/libnetcdf.dll.a"
 ```
 
-For Unix users, the framework, examples, and unit testing program may be built with:
+For Unix users: the framework, examples, and unit testing program may be built as follows:
 ```
 cmake -S . -B build 
 cd build
@@ -100,7 +101,7 @@ make
 test/saf_test # To run the unit testing program
 ```
 
-Or for Visual Studio users (using x64 Native Tools Command Prompt):
+Or for Visual Studio (e.g. 2017) users (using x64 Native Tools Command Prompt):
 ```
 cmake -S . -B build -G "Visual Studio 15 Win64"   
 cd build
@@ -159,7 +160,7 @@ Suggestions and contributions to the code are both welcomed and encouraged. It s
 * if you are researcher who has developed a spatial-audio related method and want to integrate it into the framework... or
 * if you notice that an existing piece of code can be rewritten to make it clearer, faster, or to fix a bug...
 
-then please feel free to do so and submit a pull request. Note, however, that if the changes/additions are major, then maybe consider first discussing it via a github "issue" or by contacting the developers directly via email. We may also be able to help with the implementation if needed :- )
+then please feel free to do so and submit a pull request. Note, however, that if the changes/additions are major, then perhaps consider first discussing it via a github "issue" or by contacting the developers directly via email. We may also be able to help with the implementation if needed :- )
 
 ## Contributors
 

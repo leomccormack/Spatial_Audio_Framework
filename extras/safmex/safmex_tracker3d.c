@@ -210,7 +210,7 @@ void mexFunction
         if(mxTmp==NULL)
             mexErrMsgIdAndTxt("MyToolbox:inputError","'P0' is not defined"); 
         if (mxIsComplex(mxTmp) || mxGetNumberOfElements(mxTmp)!=36)
-            mexErrMsgIdAndTxt("MyToolbox:inputError","'P0' must be a 6-by-6 matrix (or stacked 36-element vector)");
+            mexErrMsgIdAndTxt("MyToolbox:inputError","'P0' must be a 6-by-6 matrix (or a stacked 36-element vector)");
         tmp = mxGetData(mxTmp);
         for(int jj = 0; jj<6; jj++)
             for(int kk=0; kk<6; kk++)
