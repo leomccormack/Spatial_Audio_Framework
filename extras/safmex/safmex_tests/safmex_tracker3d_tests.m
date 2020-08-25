@@ -16,13 +16,13 @@ measNoiseSD_deg = 30;
 tpars.measNoiseSD = 1-cos(measNoiseSD_deg*pi/180);
 % Noise spectral density - not fully understood. But it influences the
 % smoothness of the target tracks 
-noiseSpecDen_deg = 1;
+noiseSpecDen_deg = 0.1;
 tpars.noiseSpecDen = 1-cos(noiseSpecDen_deg*pi/180);
 % FLAG - whether to allow for multiple target deaths in the same tracker
 % prediction step 
 tpars.ALLOW_MULTI_DEATH = 1;
 % Probability of birth and death 
-tpars.init_birth = 0.3; % value between [0 1] - Prior probability of birth 
+tpars.init_birth = 0.2; % value between [0 1] - Prior probability of birth 
 tpars.alpha_death = 1; % always >= 1; 1 is good 
 tpars.beta_death = 1; % always >= 1; 1 is good 
 % Elapsed time (in seconds) between observations 
