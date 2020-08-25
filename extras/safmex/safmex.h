@@ -389,3 +389,36 @@ void SAFsingle2MEXdouble_complex(float_complex* in, int nDims, int* dims, mxArra
     /* clean-up */
     free(pDims_mx);
 }
+
+void SAFsingle2MEXdouble_int(int* in, int nDims, int* dims, mxArray** out)
+{
+    int i,j;
+    double* pData;
+    mwSize nDims_mx;
+    mwSize* pDims_mx;
+    nDims_mx = (mwSize)nDims;
+    
+    /* Define dimensionality of output and convert to mwSize */
+    pDims_mx = malloc1d(nDims*sizeof(mwSize));
+    for(i=0; i<nDims; i++)
+        pDims_mx[i] = (mwSize)dims[i];
+     
+    /* create and copy data to output */ 
+    *out = mxCreateNumericArray(nDims_mx, pDims_mx, mxDOUBLE_CLASS, mxREAL);
+    pData = mxGetData(*out); 
+    
+    /* row-major -> column-major */
+    switch(nDims){
+        case 0: /* scalar */ break;
+        case 1: assert(0); break;
+        case 2: 
+            for(i=0; i<dims[0]; i++)
+                for(j=0; j<dims[1]; j++)
+                    pData[j*dims[0]+i] = (double)in[i*dims[1]+j];
+            break;
+        default: assert(0); break;// incomplete 
+    }
+    
+    /* clean-up */
+    free(pDims_mx);
+}

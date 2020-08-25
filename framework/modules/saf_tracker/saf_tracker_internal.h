@@ -72,7 +72,7 @@ extern "C" {
  *  handles) */
 typedef void* voidPtr;
 
-/** Mean union struct for 3-D */
+/** Union struct for 3-D mean values */
 typedef struct _M6 {
     union {
         struct { float m0, m1, m2, m3, m4, m5; };
@@ -80,7 +80,7 @@ typedef struct _M6 {
     };
 } M6;
 
-/** Variance union struct for 3-D */
+/** Union struct for 3-D variance values */
 typedef struct _P66 {
     union {
         struct {
@@ -101,11 +101,11 @@ typedef struct _MCS {
     float W_prev;    /**< Previous importance weight */
     float W0;        /**< PRIOR importance weight */ 
     int nTargets;    /**< Number of targets being tracked */
-    float dt;        /**< Elapsed time inbetween each observation/measurment */
+    float dt;        /**< Elapsed time between each observation/measurement */
     M6* M;           /**< Current target means; nTargets x ([6]) */
     P66* P;          /**< Current target variances; nTargets x ([6][6]) */
     int* targetIDs;  /**< Unique ID assigned to each target; nTargets x 1 */
-    int* Tcount;     /**< Time elapsed since birth of target: Tcount * dt;
+    int* Tcount;     /**< Time elapsed since birth of target (Tcount * dt);
                       *   nTargets x 1 */
 #ifdef TRACKER_VERBOSE
     char evstr[256]; /** Event string */
@@ -200,8 +200,8 @@ void tracker3d_update(void* const hT3d,
 /* ========================================================================== */
 
 /**
- * Stratified resampling - returns a new set of indices according to
- * the probabilities P
+ * Stratified resampling - returns a new set of indices according to the
+ * probabilities P
  *
  * Sorted re-sampling is slower but has slightly smaller variance. Stratified
  * resampling is unbiased, almost as fast as deterministic resampling, and has

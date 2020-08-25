@@ -202,12 +202,14 @@ void tracker3d_step
             maxVal = ((MCS_data*)pData->SS[i])->W;
             maxIdx = i;
         }
-    }
+    } 
     assert(maxIdx!=-1);
     S_max = (MCS_data*)pData->SS[maxIdx];
  
     /* Output */
     if(S_max->nTargets==0){
+        free((*target_xyz));
+        free((*target_IDs));
         (*target_xyz) = NULL;
         (*target_IDs) = NULL;
         (*nTargets) = 0;
@@ -221,13 +223,13 @@ void tracker3d_step
         (*nTargets) = S_max->nTargets;
 
 #ifdef TRACKER_VERBOSE
-        memset(c_str, 0, 256*sizeof(char)); 
+        memset(c_str, 0, 256*sizeof(char));
 #endif
         for(nt=0; nt<S_max->nTargets; nt++){
 #ifdef TRACKER_VERBOSE
             sprintf(tmp, "ID_%d: [%.5f,%.5f,%.5f] ", S_max->targetIDs[nt], S_max->M[nt].m0, S_max->M[nt].m1, S_max->M[nt].m2);
             strcat(c_str, tmp);
-#endif 
+#endif
             (*target_IDs)[nt] = S_max->targetIDs[nt];
             memcpy(&(*target_xyz)[nt*3], S_max->M[nt].M, 3*sizeof(float));
         }

@@ -80,10 +80,10 @@ float_complex*** dataFD_out = NULL;
 
 void mexFunction
 (
-    int nlhs,             /* Number of input argments */
-    mxArray *plhs[],      /* Pointers for input arguments */
-    int nrhs,             /* Number of output argments */
-    const mxArray *prhs[] /* Pointers for output arguments */
+    int nlhs,             /* Number of output argments */
+    mxArray *plhs[],      /* Pointers for output arguments */
+    int nrhs,             /* Number of input argments */
+    const mxArray *prhs[] /* Pointers for input arguments */
 )
 {  
     /* mex variables */
@@ -95,12 +95,12 @@ void mexFunction
         if(hSTFT!=NULL){
             mexPrintf("Destroying afSTFT filterbank.\n");
             afSTFT_destroy(&hSTFT);
-            free(freqVector);
-            free(dataTD_in);
-            free(dataFD_in);
-            free(dataTD_out);
-            free(dataFD_out);
-            hSTFT = NULL;
+            free(freqVector); freqVector = NULL;
+            free(dataTD_in);  dataTD_in = NULL;
+            free(dataFD_in);  dataFD_in = NULL;
+            free(dataTD_out); dataTD_out = NULL;
+            free(dataFD_out); dataFD_out = NULL;
+            hSTFT = NULL; 
         } 
         else
             mexPrintf("afSTFT filterbank is already dead!\n"); 

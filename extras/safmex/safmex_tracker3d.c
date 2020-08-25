@@ -19,28 +19,6 @@
 #include "safmex.h"
 
 /* ===================================================================== */
-/*                                Config                                 */
-/* ===================================================================== */
-
-#define NUM_INPUT_ARGS_FWD ( 1 )
-#define NUM_OUTPUT_ARGS_FWD ( 1 )
-#define NUM_INPUT_ARGS_BKWD ( 1 )
-#define NUM_OUTPUT_ARGS_BKWD ( 1 )
-const MEX_DATA_TYPES inputDataTypes_fwd[NUM_INPUT_ARGS_FWD] = {
-    SM_DOUBLE_REAL_1D_OR_2D      
-}; 
-const MEX_DATA_TYPES inputDataTypes_bkwd[NUM_INPUT_ARGS_BKWD] = {
-    SM_DOUBLE_COMPLEX_3D      
-}; 
-const MEX_DATA_TYPES outputDataTypes_fwd[NUM_OUTPUT_ARGS_FWD] = {
-    SM_DOUBLE_COMPLEX_3D 
-}; 
-const MEX_DATA_TYPES outputDataTypes_bkwd[NUM_OUTPUT_ARGS_BKWD] = {
-    SM_DOUBLE_REAL_1D_OR_2D      
-}; 
-
-
-/* ===================================================================== */
 /*                                 Vars                                  */
 /* ===================================================================== */
 
@@ -49,7 +27,10 @@ tracker3d_config tpars;
 
 /* internal parameters */
 void* hT3d = NULL;                /* tracker3d handle */ 
-int ifield, nfields;
+float* target_xyz = NULL;
+int* target_IDs = NULL;
+int nTargets;
+
  
 /* ===================================================================== */
 /*                              MEX Wrapper                              */
@@ -57,10 +38,10 @@ int ifield, nfields;
 
 void mexFunction
 (
-    int nlhs,             /* Number of input argments */
-    mxArray *plhs[],      /* Pointers for input arguments */
-    int nrhs,             /* Number of output argments */
-    const mxArray *prhs[] /* Pointers for output arguments */
+    int nlhs,             /* Number of output argments */
+    mxArray *plhs[],      /* Pointers for output arguments */
+    int nrhs,             /* Number of input argments */
+    const mxArray *prhs[] /* Pointers for input arguments */
 )
 {  
     /* mex variables */
@@ -68,10 +49,12 @@ void mexFunction
     int *pDims = NULL;
      
     /* DESTROY */
-    if(nrhs == 0){
+    if(nrhs == 0 && nlhs == 0){
         if(hT3d!=NULL){
             mexPrintf("Destroying tracker3d.\n");
             tracker3d_destroy(&hT3d); 
+            free(target_xyz); target_xyz = NULL;
+            free(target_IDs); target_IDs = NULL;
             hT3d = NULL;
         } 
         else
@@ -79,7 +62,7 @@ void mexFunction
     }
     
     /* CREATE */
-    else if(nrhs==1){
+    else if(nrhs == 1 && nlhs == 0){
         if(hT3d!=NULL)
             mexErrMsgIdAndTxt("MyToolbox:inputError","tracker3d is already initialised! First destroy it if you want to change its configuration.");
 
@@ -238,8 +221,39 @@ void mexFunction
         mwSize nDims_mx;
         const mwSize *pDims_mx;
         nDims_mx = mxGetNumberOfDimensions(prhs[0]);
-        pDims_mx = mxGetDimensions(prhs[0]); 
+        pDims_mx = mxGetDimensions(prhs[0]);  
+        if (nDims_mx!=2)
+            mexErrMsgIdAndTxt("MyToolbox:inputError","Observations must be N x 3 (x,y,z)");
+        if (pDims_mx[1]!=3)
+            mexErrMsgIdAndTxt("MyToolbox:inputError","Observations must be N x 3 (x,y,z)");
+        
+        /* New measurements */
+        float* newObs_xyz = NULL;
+        int nObs;
+        MEXdouble2SAFsingle(prhs[0], &newObs_xyz, &nDims, &pDims);
+        nObs = pDims[0];
+        
+        /* Pass to tracker */
+        tracker3d_step(hT3d, newObs_xyz, nObs, &target_xyz, &target_IDs, &nTargets);
          
+        /* output */
+        if(nTargets==0){
+            plhs[0] = mxCreateDoubleMatrix( 0, 0, mxREAL );
+            plhs[1] = mxCreateDoubleMatrix( 0, 0, mxREAL );
+        }
+        else{
+            nDims = 2;
+            pDims = realloc1d(pDims, nDims*sizeof(int));
+            pDims[0] = nTargets;
+            pDims[1] = 3;
+            SAFsingle2MEXdouble(target_xyz, nDims, pDims, &plhs[0]);
+            pDims[0] = nTargets;
+            pDims[1] = 1;
+            SAFsingle2MEXdouble_int(target_IDs, nDims, pDims, &plhs[1]);
+        }
+        
+        /* Clean-up */
+        free(newObs_xyz); 
         
     }
     

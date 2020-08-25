@@ -60,10 +60,10 @@ int nCutoffFreqs;
 
 void mexFunction
 (
-    int nlhs,             /* Number of input argments */
-    mxArray *plhs[],      /* Pointers for input arguments */
-    int nrhs,             /* Number of output argments */
-    const mxArray *prhs[] /* Pointers for output arguments */
+    int nlhs,             /* Number of output argments */
+    mxArray *plhs[],      /* Pointers for output arguments */
+    int nrhs,             /* Number of input argments */
+    const mxArray *prhs[] /* Pointers for input arguments */
 )
 {  
     /* mex variables */
@@ -75,9 +75,9 @@ void mexFunction
         if(hFaF!=NULL){
             mexPrintf("Destroying FaF filterbank.\n");
             faf_IIRFilterbank_destroy(&hFaF);
-            free(fc);
-            free(data_in);
-            free(data_out); 
+            free(fc);       fc = NULL;
+            free(data_in);  data_in = NULL;
+            free(data_out); data_out = NULL;
             hFaF = NULL;
         } 
         else

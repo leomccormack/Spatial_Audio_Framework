@@ -13,7 +13,7 @@ The Spatial_Audio_Framework (SAF) requires the following libraries:
 * Any library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 * (Optional) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
 
-To inform SAF which performance library/libraries you have linked to your project, define one of the following pre-processor definitions:
+To inform SAF which performance library/libraries you have linked to your project, add one of the following pre-processor definitions:
 ```
 SAF_USE_INTEL_MKL             # great option, but only for x86 architectures    
 SAF_USE_OPEN_BLAS_AND_LAPACKE # good option, works on everything
@@ -150,7 +150,7 @@ The following open-source projects also employ the framework: [HO-SIRR-GUI](http
 
 ## Extras
 
-The repository also includes the following "extras":
+The repository also includes the following **extras**:
 
 * **safmex** - a bunch of Matlab MEX wrappers, which allow certain SAF functions to be used within Matlab.
 

@@ -69,10 +69,10 @@ const int supportedOrders[12] = {2,3,4,6,8,10,12,14,15,16,18,20};
 
 void mexFunction
 (
-    int nlhs,             /* Number of input argments */
-    mxArray *plhs[],      /* Pointers for input arguments */
-    int nrhs,             /* Number of output argments */
-    const mxArray *prhs[] /* Pointers for output arguments */
+    int nlhs,             /* Number of output argments */
+    mxArray *plhs[],      /* Pointers for output arguments */
+    int nrhs,             /* Number of input argments */
+    const mxArray *prhs[] /* Pointers for input arguments */
 )
 {  
     /* mex variables */
@@ -84,12 +84,12 @@ void mexFunction
         if(hDecor!=NULL){
             mexPrintf("Destroying latticeDecorrelator.\n");
             latticeDecorrelator_destroy(&hDecor);
-            free(orders);
-            free(freqCutoffs);
-            free(freqVector);  
-            free(fixedDelays);
-            free(dataFD_in); 
-            free(dataFD_out);
+            free(orders);      orders = NULL;
+            free(freqCutoffs); freqCutoffs = NULL;
+            free(freqVector);  freqVector = NULL;
+            free(fixedDelays); fixedDelays = NULL;
+            free(dataFD_in);   dataFD_in = NULL;
+            free(dataFD_out);  dataFD_out = NULL;
             hDecor = NULL;
         } 
         else

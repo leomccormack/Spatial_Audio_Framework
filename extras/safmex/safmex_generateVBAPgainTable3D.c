@@ -41,10 +41,10 @@ const MEX_DATA_TYPES outputDataTypes[NUM_OUTPUT_ARGS] = {
 
 void mexFunction
 (
-    int nlhs,             /* Number of input argments */
-    mxArray *plhs[],      /* Pointers for input arguments */
-    int nrhs,             /* Number of output argments */
-    const mxArray *prhs[] /* Pointers for output arguments */
+    int nlhs,             /* Number of output argments */
+    mxArray *plhs[],      /* Pointers for output arguments */
+    int nrhs,             /* Number of input argments */
+    const mxArray *prhs[] /* Pointers for input arguments */
 )
 { 
     /* check for proper number of arguments and input argument datatypes */
