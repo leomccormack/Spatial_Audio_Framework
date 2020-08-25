@@ -205,6 +205,43 @@ void afSTFT_forward
     }
 }
 
+void afSTFT_forward_flat
+(
+    void * const hSTFT,
+    float* dataTD,
+    int framesize,
+    float_complex* dataFD
+)
+{
+    afSTFT_data *h = (afSTFT_data*)(hSTFT);
+    int ch, t, nHops, band;
+
+    assert(framesize % h->hopsize == 0); /* framesize must be multiple of hopsize */
+    nHops = framesize/h->hopsize;
+
+    /* Loop over hops */
+    for(t=0; t < nHops; t++) {
+        /* forward transform */
+        for(ch = 0; ch < h->nCHin; ch++)
+            utility_svvcopy(&(dataTD[ch * framesize + t*(h->hopsize)]), (h->hopsize), h->tempHopFrameTD[ch]);
+        afSTFTlib_forward(h->hInt, h->tempHopFrameTD, h->STFTInputFrameTF);
+
+        /* store */
+        switch(h->format){
+            case AFSTFT_BANDS_CH_TIME:
+                for(band=0; band<h->nBands; band++)
+                    for(ch=0; ch < h->nCHin; ch++)
+                        dataFD[band * (h->nCHin) * nHops + ch * nHops + t] = cmplxf(h->STFTInputFrameTF[ch].re[band], h->STFTInputFrameTF[ch].im[band]);
+                break;
+            case AFSTFT_TIME_CH_BANDS:
+                for(band=0; band<h->nBands; band++)
+                    for(ch=0; ch < h->nCHin; ch++)
+                        dataFD[t * (h->nCHin) * (band<h->nBands) + ch * (band<h->nBands) + band] = cmplxf(h->STFTInputFrameTF[ch].re[band], h->STFTInputFrameTF[ch].im[band]);
+                break;
+        }
+    }
+}
+
 void afSTFT_backward
 (
     void * const hSTFT,
@@ -245,6 +282,49 @@ void afSTFT_backward
         /* store */
         for (ch = 0; ch <  h->nCHout; ch++)
             memcpy(&(dataTD[ch][t*(h->hopsize)]), h->tempHopFrameTD[ch], h->hopsize*sizeof(float));
+    }
+}
+
+void afSTFT_backward_flat
+(
+    void * const hSTFT,
+    float_complex* dataFD,
+    int framesize,
+    float* dataTD
+)
+{
+    afSTFT_data *h = (afSTFT_data*)(hSTFT);
+    int ch, t, nHops, band;
+
+    assert(framesize % h->hopsize == 0); /* framesize must be multiple of hopsize */
+    nHops = framesize/h->hopsize;
+
+    /* Loop over hops */
+    for(t = 0; t < nHops; t++) {
+        /* backward transform */
+        switch(h->format){
+            case AFSTFT_BANDS_CH_TIME:
+                for(band = 0; band < h->nBands; band++) {
+                    for(ch = 0; ch < h->nCHout; ch++) {
+                        h->STFTOutputFrameTF[ch].re[band] = crealf(dataFD[band * (h->nCHout) * nHops + ch * nHops + t]);
+                        h->STFTOutputFrameTF[ch].im[band] = cimagf(dataFD[band * (h->nCHout) * nHops + ch * nHops + t]);
+                    }
+                }
+                break;
+            case AFSTFT_TIME_CH_BANDS:
+                for(band = 0; band < h->nBands; band++) {
+                    for(ch = 0; ch < h->nCHout; ch++) {
+                        h->STFTOutputFrameTF[ch].re[band] = crealf(dataFD[t * (h->nCHout) * (h->nBands) + ch * (h->nBands) + band]);
+                        h->STFTOutputFrameTF[ch].im[band] = cimagf(dataFD[t * (h->nCHout) * (h->nBands) + ch * (h->nBands) + band]);
+                    }
+                }
+                break;
+        }
+        afSTFTlib_inverse(h->hInt, h->STFTOutputFrameTF, h->tempHopFrameTD);
+
+        /* store */
+        for (ch = 0; ch <  h->nCHout; ch++)
+            memcpy(&(dataTD[ch * framesize + t*(h->hopsize)]), h->tempHopFrameTD[ch], h->hopsize*sizeof(float));
     }
 }
 

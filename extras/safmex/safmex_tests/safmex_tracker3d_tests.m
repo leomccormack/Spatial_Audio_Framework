@@ -1,8 +1,11 @@
 
 fs = 48e3;
 hopsize = 128;
-  
-%% Configure the tracker 
+colours='bkymcbkymcbkymcbkymcbkymcbkymcbkymcbkymcbkymc';
+characters='******oooooo......******oooooo......******oooooo......';
+
+
+%% Configure the tracker - STATIC CASE
 % Number of Monte Carlo samples/particles. The more complex the
 % distribution is, the more particles required (but also, the more
 % computationally expensive the tracker becomes). 
@@ -12,7 +15,7 @@ tpars.maxNactiveTargets = 4; % about 2 higher than expected is good
 tpars.noiseLikelihood = 0.2; % between [0..1] 
 % Measurement noise - e.g. to assume that estimates within the range +/-20
 % degrees belong to the same target, set SDmnoise_deg = 20 
-measNoiseSD_deg = 30;
+measNoiseSD_deg = 40;
 tpars.measNoiseSD = 1-cos(measNoiseSD_deg*pi/180);
 % Noise spectral density - not fully understood. But it influences the
 % smoothness of the target tracks 
@@ -22,7 +25,7 @@ tpars.noiseSpecDen = 1-cos(noiseSpecDen_deg*pi/180);
 % prediction step 
 tpars.ALLOW_MULTI_DEATH = 1;
 % Probability of birth and death 
-tpars.init_birth = 0.2; % value between [0 1] - Prior probability of birth 
+tpars.init_birth = 0.1; % value between [0 1] - Prior probability of birth 
 tpars.alpha_death = 1; % always >= 1; 1 is good 
 tpars.beta_death = 1; % always >= 1; 1 is good 
 % Elapsed time (in seconds) between observations 
@@ -60,16 +63,20 @@ tpars.cd = 1/(4*pi);
 %% Define scene - STATIC CASE
 dirs_deg = [20 0; -60 40; 120 -20;]; % source directions
 estimation_noise = 4;  
-clutter_rate = 0.2; % [0..1]
+clutter_lhood = 0.1; % [0..1]
 T_length = 100; 
 measurement_deg = zeros(T_length,2);
 measurement_xyz = zeros(T_length,3); 
 for i=1:T_length 
-    idx = ceil(rand*size(dirs_deg,1));  % Select direction at random
-    if i>T_length/5 && i<3*T_length/5 && idx==2
-        idx = 1;
+    idx = ceil(rand*size(dirs_deg,1));  % Select source at random
+    if i>T_length/5 && i<3*T_length/5 && idx==2 % Have this second source active only outside this time range
+        idx = 1;  
     end
-    measurement_deg(i,:) = randn * estimation_noise + dirs_deg(idx,:);
+    if rand<clutter_lhood % random direction
+        measurement_deg(i,:) = rand(1,2).*[360 180] - [180 90];
+    else % noisy measurement
+        measurement_deg(i,:) = randn * estimation_noise + dirs_deg(idx,:);
+    end
     measurement_xyz(i,:) = unitSph2cart(measurement_deg(i,:)*pi/180); 
 end
 figure 
@@ -78,11 +85,9 @@ hold on, grid on, xlabel('Time -->'), ylabel('Azimuth -->'), zlabel('Elevation -
 title('Tracker, static case'), ylim([-180 180]), zlim([-90 90]), xlim([0 T_length])
 %viewangs = [-20 30]; view(viewangs) 
 view(2)  
-colours='bkymcbkymcbkymcbkymcbkymcbkymcbkymcbkymcbkymc';
-characters='******oooooo......******oooooo......******oooooo......';
 
-
-%% Apply tracker
+ 
+%% Apply tracker - STATIC CASE
 safmex_tracker3d(tpars);
 for i=1:T_length
     % Track
@@ -98,5 +103,34 @@ for i=1:T_length
     drawnow; 
 end 
 safmex_tracker3d();
+
+
+%% Configure the tracker - MOVING CASE
+
+
+
+%% Define scene - MOVING CASE
+dirs_deg = [20 0; -60 40; 120 -20;]; % starting source directions
+shifts_in_azi = [40 -50 70];
+shifts_in_ele = [20 40 -10];
+estimation_noise = 4;  
+clutter_lhood = 0.2; % [0..1]
+T_length = 300; 
+measurement_deg = zeros(T_length,2);
+measurement_xyz = zeros(T_length,3); 
+for i=1:T_length 
+    idx = ceil(rand*size(dirs_deg,1));  % Select source at random
+    if i>T_length/5 && i<3*T_length/5 && idx==2 % Have this second source active only outside this time range
+        idx = 1;  
+    end
+    measurement_deg(i,:) = randn * estimation_noise + dirs_deg(idx,:);
+    measurement_xyz(i,:) = unitSph2cart(measurement_deg(i,:)*pi/180); 
+end
+figure 
+hold on, plot3(1:T_length, measurement_deg(:,1),measurement_deg(:,2),'r.','linewidth',1);
+hold on, grid on, xlabel('Time'), ylabel('Azimuth (degrees)'), zlabel('Elevation (degrees)');
+title('Tracker - moving case'), ylim([-180 180]), zlim([-90 90]), xlim([0 T_length])
+%viewangs = [-20 30]; view(viewangs) 
+view(2)  
 
 

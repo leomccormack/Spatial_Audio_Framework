@@ -112,8 +112,7 @@ void afSTFT_destroy(void ** const phSTFT);
  * @param[in]  hSTFT     afSTFT handle
  * @param[in]  dataTD    Time-domain input; nCHin x framesize
  * @param[in]  framesize Frame size of time-domain data
- * @param[out] dataFD    Frequency-domain output; see #_AFSTFT_FDDATA_FORMAT
- *                       enum
+ * @param[out] dataFD    Frequency-domain output; #_AFSTFT_FDDATA_FORMAT
  */
 void afSTFT_forward(void * const hSTFT,
                     float** dataTD,
@@ -121,10 +120,23 @@ void afSTFT_forward(void * const hSTFT,
                     float_complex*** dataFD);
 
 /**
+ * Performs forward afSTFT transform (flattened arrays)
+ *
+ * @param[in]  hSTFT     afSTFT handle
+ * @param[in]  dataTD    Time-domain input; FLAT: nCHin x framesize
+ * @param[in]  framesize Frame size of time-domain data
+ * @param[out] dataFD    Frequency-domain output; FLAT: #_AFSTFT_FDDATA_FORMAT
+ */
+void afSTFT_forward_flat(void * const hSTFT,
+                         float* dataTD,
+                         int framesize,
+                         float_complex* dataFD);
+
+/**
  * Performs backward afSTFT transform
  *
  * @param[in]  hSTFT     afSTFT handle
- * @param[in]  dataFD    Frequency-domain input; see #_AFSTFT_FDDATA_FORMAT enum
+ * @param[in]  dataFD    Frequency-domain input; #_AFSTFT_FDDATA_FORMAT
  * @param[in]  framesize Frame size of time-domain data
  * @param[out] dataTD    Time-domain output;  nCHout x framesize
  */
@@ -132,6 +144,19 @@ void afSTFT_backward(void * const hSTFT,
                      float_complex*** dataFD,
                      int framesize,
                      float** dataTD);
+
+/**
+ * Performs backward afSTFT transform (flattened arrays)
+ *
+ * @param[in]  hSTFT     afSTFT handle
+ * @param[in]  dataFD    Frequency-domain input; FLAT: #_AFSTFT_FDDATA_FORMAT
+ * @param[in]  framesize Frame size of time-domain data
+ * @param[out] dataTD    Time-domain output; FLAT: nCHout x framesize
+ */
+void afSTFT_backward_flat(void * const hSTFT,
+                          float_complex* dataFD,
+                          int framesize,
+                          float* dataTD);
 
 /**
  * Re-allocates memory to support a change in the number of input/output
