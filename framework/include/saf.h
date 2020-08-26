@@ -38,17 +38,8 @@
  * ## Core modules
  *   saf_utilities, saf_cdf4sap, saf_hoa, saf_hrir, saf_sh, saf_vbap, saf_reverb
  *
- * @note All core modules are provided permissively under the terms of the ISC
- *       license. Therefore, by default, the use of this framework is governed
- *       by the ISC licencing terms.
- *
  * ## Optional modules
  *   saf_sofa_reader (ISC License), saf_tracker (GPLv2 License)
- *
- * @note Some optional modules are provided under the copy-left GPLv2 license.
- *       Therefore, including and enabling these specific optional modules will
- *       mean that the use of this framework is instead governed by the GPLv2
- *       licencing terms.
  *
  * @author Leo McCormack
  * @date 06.04.2018
@@ -87,7 +78,7 @@
 /** The Spatial_Audio_Framework is governed by the GNU GPLv2 License */
 # define SAF_LICENSE_STRING "GNU GPLv2"
 #else
-/** The Spatial_Audio_Framework is governed by the ISC License */
+/** The Spatial_Audio_Framework is governed by the ISC License by default */
 # define SAF_LICENSE_STRING "ISC"
 #endif
 

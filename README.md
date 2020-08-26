@@ -57,7 +57,7 @@ The framework's master include header is then:
 
 ```c
 #include "saf.h"
-#include "saf_externals"  /* To also carry over CBLAS/LAPACK routines etc. (Optional) */
+#include "saf_externals.h"  /* To also carry over CBLAS/LAPACK routines etc. (Optional) */
 ```
 
 ## Building with CMake 

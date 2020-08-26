@@ -22,7 +22,7 @@
  * @file saf_tracker.h
  * @brief Particle filtering based tracker (#SAF_TRACKER_MODULE)
  *
- * Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Särkkä and
+ * Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Sa"rkka" and
  * Jouni Hartikainen (Copyright (C) 2003-2008):
  *     https://users.aalto.fi/~ssarkka/#softaudio
  *
@@ -30,7 +30,7 @@
  * Nikunen, and Tuomas Virtanen (GPLv2 license):
  *     https://github.com/sharathadavanne/multiple-target-tracking
  *
- * @see [1] Särkkä, S., Vehtari, A. and Lampinen, J., 2004, June. Rao-
+ * @see [1] Sa"rkka", S., Vehtari, A. and Lampinen, J., 2004, June. Rao-
  *          Blackwellized Monte Carlo data association for multiple target
  *          tracking. In Proceedings of the seventh international conference on
  *          information fusion (Vol. 1, pp. 583-590). I.

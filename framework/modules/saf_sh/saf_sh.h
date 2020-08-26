@@ -727,7 +727,7 @@ void sphMUSIC_compute(/* Input arguments */
  *
  * @see [1] B. Jo and J.-W. Choi, "Parametric direction-of-arrival estimation
  *          with three recurrence relations of spherical harmonics," J. Acoust.
- *          Soc. Amer.,vol. 145, no. 1, pp. 480–488, Jan. 2019.
+ *          Soc. Amer.,vol. 145, no. 1, pp. 480--488, Jan. 2019.
  */
 void sphESPRIT_create(void ** const phESPRIT,
                       int order);
