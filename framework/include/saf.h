@@ -77,6 +77,11 @@
 /** @defgroup Tracker      saf_tracker
  *  @brief    Particle-filtering-based tracker */
 
+
+/* ========================================================================== */
+/*                                SAF License                                 */
+/* ========================================================================== */
+
 /* The license governing SAF is configuration dependent */
 #ifdef SAF_ENABLE_TRACKER_MODULE
 /** The Spatial_Audio_Framework is governed by the GNU GPLv2 License */
@@ -92,12 +97,12 @@
 /* ========================================================================== */
 /* Note that this version info is also scanned and employed by CMakeLists.txt */
 
-#define SAF_VERSION_MAJOR 1       /**< Major version */
-#define SAF_VERSION_MINOR 1       /**< Minor version */
-#define SAF_VERSION_PATCH 3       /**< Patch version */
-#define SAF_VERSION_SPECIAL ""    /**< Append text ("alpha", "beta", "" etc.) */
-#define MKSTRING_(s) #s           /**< Stringify */
-#define MKSTRING(s) MKSTRING_(s)  /**< Stringify */
+#define SAF_VERSION_MAJOR 1        /**< Major version */
+#define SAF_VERSION_MINOR 1        /**< Minor version */
+#define SAF_VERSION_PATCH 3        /**< Patch version */
+#define SAF_VERSION_SPECIAL "beta" /**< Append text ("alpha", "beta", "") */
+#define MKSTRING_(s) #s            /**< Stringify */
+#define MKSTRING(s) MKSTRING_(s)   /**< Stringify */
 
 /** The Spatial_Audio_Framework Version as a number */
 #define SAF_VERSION ((SAF_VERSION_MAJOR << 16) + (SAF_VERSION_MINOR << 8) + \
@@ -124,12 +129,11 @@
 /* ========================================================================== */
 /*                                Core Modules                                */
 /* ========================================================================== */
-/* Note that all core modules are provided under the terms of the ISC license */
 
 /**
  * SAF Module: Utilities
  *
- * A collection of useful utility functions; including: cross-platform complex
+ * A collection of useful utility functions, including: cross-platform complex
  * number wrappers; optimised linear algebra routines based on CBLAS and LAPACK;
  * FFT wrappers and STFT implementation; IIR/FIR filter coefficients and filter
  * bank designs; lists of common loudspeaker and microphone array coordinates;
@@ -245,7 +249,6 @@
 /* ========================================================================== */
 /*                              Optional Modules                              */
 /* ========================================================================== */
-/* Note that some optional modules are instead governed by the GPLv2 license! */
 
 /**
  * SAF Module: SOFA_Reader

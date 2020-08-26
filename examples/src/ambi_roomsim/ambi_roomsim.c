@@ -42,7 +42,6 @@ void ambi_roomsim_create
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->order = SH_ORDER_FIRST;
-    pData->enablePostScaling = 1;
 
     /* sf */
     pData->hIms = NULL;
@@ -290,13 +289,7 @@ void ambi_roomsim_setNormType(void* const hAmbi, int newType)
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     if((NORM_TYPES)newType != NORM_FUMA || pData->order==SH_ORDER_FIRST)/* FUMA only supports 1st order */
         pData->norm = (NORM_TYPES)newType;
-}
-
-void ambi_roomsim_setEnablePostScaling(void* const hAmbi, int newStatus)
-{
-    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    pData->enablePostScaling = newStatus;
-}
+} 
 
 
 /* Get Functions */
@@ -346,12 +339,6 @@ int ambi_roomsim_getNormType(void* const hAmbi)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     return (int)pData->norm;
-}
-
-int ambi_roomsim_getEnablePostScaling(void* const hAmbi)
-{
-    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    return pData->enablePostScaling;
 }
 
 int ambi_roomsim_getProcessingDelay()

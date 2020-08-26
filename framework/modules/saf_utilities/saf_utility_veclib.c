@@ -2342,7 +2342,7 @@ float utility_sdet
         for( i = 0; i < N; i++ ) {
             det*=tmp[i*N+i];
             if(IPIV[i] != i+1)
-                det *= -1;
+                det *= -1.0f;
         }
     }
     free(IPIV);

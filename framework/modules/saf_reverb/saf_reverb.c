@@ -285,6 +285,7 @@ void ims_shoebox_applyEchogramTD
     int k, i, n, im, band, ch, rec_idx, src_idx, time_samples, wIdx_n;
     unsigned long rIdx;
 
+    assert(fractionalDelaysFLAG==0); /* Not tested yet... */
     assert(nSamples <= IMS_MAX_NSAMPLES_PER_FRAME);
 
     /* Allocate circular buffers (if this is the first time this function is being called) */

@@ -89,10 +89,10 @@ typedef struct _ambi_roomsim
     int nSources;
     int new_nSources;
     float src_positions[ROOM_SIM_MAX_NUM_SOURCES][3];
+    float rec_position[3];
     CH_ORDER chOrdering;
     NORM_TYPES norm;
     SH_ORDERS order;
-    int enablePostScaling;
     
 } ambi_roomsim_data;
     
