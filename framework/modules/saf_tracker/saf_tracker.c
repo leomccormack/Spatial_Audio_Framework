@@ -143,11 +143,12 @@ void tracker3d_step
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
     int i, kt, ob, maxIdx, nt;
-    float Neff, maxVal;
+    float Neff;
     int s[TRACKER3D_MAX_NUM_PARTICLES];
     MCS_data* S_max;
 #ifdef TRACKER_VERBOSE
     char c_str[256], tmp[256];
+    memset(c_str, 0, 256*sizeof(char));
 #endif
 
     pData->incrementTime++; 
@@ -155,14 +156,8 @@ void tracker3d_step
     /* Loop over measurements */
     if(newObs_xyz!=NULL){
         for(ob=0; ob<nObs; ob++){
-#ifdef TRACKER_VERY_VERBOSE
-            printf("%s\n", "Update step");
-#endif
+            /* Predict and update steps */
             tracker3d_update(hT3d, &newObs_xyz[ob*3], pData->incrementTime);
-
-#ifdef TRACKER_VERY_VERBOSE
-            printf("%s\n", "Prediction step");
-#endif
             for (kt = 0; kt < pData->incrementTime; kt++)
                 tracker3d_predict(hT3d, 1);
 
@@ -174,22 +169,11 @@ void tracker3d_step
 #ifdef TRACKER_VERBOSE
                 printf("%s\n", "Resampling");
 #endif
-#if 1
-                /* Find most significant particle.. */
-                maxVal = FLT_MIN;
-                maxIdx = -1;
-                for(i=0; i<pData->tpars.Np; i++){
-                    if(maxVal<((MCS_data*)pData->SS[i])->W){
-                        maxVal = ((MCS_data*)pData->SS[i])->W;
-                        maxIdx = i;
-                    }
-                }
-                assert(maxIdx!=-1);
+                maxIdx = tracker3d_getMaxParticleIdx(hT3d);
                 for(i=0; i<pData->tpars.Np; i++)
                     s[i] = maxIdx;
-#else
-                resampstr(pData->SS, pData->tpars.Np, s);
-#endif
+                //resampstr(pData->SS, pData->tpars.Np, s);
+
                 for(i=0; i<pData->tpars.Np; i++)
                     tracker3d_particleCopy(pData->SS[s[i]], pData->SS_resamp[i]);
                 for(i=0; i<pData->tpars.Np; i++){
@@ -210,15 +194,7 @@ void tracker3d_step
     }
 
     /* Find most significant particle.. */
-    maxVal = FLT_MIN;
-    maxIdx = -1;
-    for(i=0; i<pData->tpars.Np; i++){
-        if(maxVal<((MCS_data*)pData->SS[i])->W){
-            maxVal = ((MCS_data*)pData->SS[i])->W;
-            maxIdx = i;
-        }
-    } 
-    assert(maxIdx!=-1);
+    maxIdx = tracker3d_getMaxParticleIdx(hT3d);
     S_max = (MCS_data*)pData->SS[maxIdx];
  
     /* Output */
@@ -237,9 +213,6 @@ void tracker3d_step
         (*target_IDs) = realloc1d((*target_IDs), S_max->nTargets*sizeof(int));
         (*nTargets) = S_max->nTargets;
 
-#ifdef TRACKER_VERBOSE
-        memset(c_str, 0, 256*sizeof(char));
-#endif
         for(nt=0; nt<S_max->nTargets; nt++){
 #ifdef TRACKER_VERBOSE
             sprintf(tmp, "ID_%d: [%.5f,%.5f,%.5f] ", S_max->targetIDs[nt], S_max->M[nt].m0, S_max->M[nt].m1, S_max->M[nt].m2);

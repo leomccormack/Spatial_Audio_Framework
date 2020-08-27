@@ -194,6 +194,14 @@ void tracker3d_update(void* const hT3d,
                       float* Y,
                       int Tinc);
 
+/**
+ * Returns the index of the most important particle
+ *
+ * @param[in] hT3d tracker3d handle
+ * @returns index of the most important particle
+ */
+int tracker3d_getMaxParticleIdx(void* const hT3d);
+
 
 /* ========================================================================== */
 /*                              RBMCDA Functions                              */

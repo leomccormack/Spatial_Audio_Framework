@@ -70,7 +70,7 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
 
-    /* run each unit test */
+    /* run each unit test */ 
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -366,7 +366,7 @@ void test__ims_shoebox_TD(void){
         ims_shoebox_updateSource(hIms, sourceIDs[0], mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverIDs[0], mov_rec_pos);
         ims_shoebox_computeEchograms(hIms, maxTime_s);
-        ims_shoebox_applyEchogramTD(hIms, receiverIDs[0], signalLength, 1);
+        ims_shoebox_applyEchogramTD(hIms, receiverIDs[0], signalLength, 0);
     }
 
     /* clean-up */

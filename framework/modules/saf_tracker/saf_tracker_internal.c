@@ -187,6 +187,7 @@ void tracker3d_predict
     tracker3d_config* tpars = &(pData->tpars);
 #ifdef TRACKER_VERY_VERBOSE
     char c_event[256], tmp[256];
+    printf("%s\n", "Prediction step");
 #endif
 
     dead = NULL;
@@ -354,6 +355,7 @@ void tracker3d_update
     tracker3d_config* tpars = &(pData->tpars);
 #ifdef TRACKER_VERY_VERBOSE
     char tmp[256];
+    printf("%s\n", "Update step"); 
 #endif
 
     /* Loop over particles */ 
@@ -482,6 +484,28 @@ void tracker3d_update
     }
 
     normalise_weights(pData->SS, tpars->Np);
+}
+
+int tracker3d_getMaxParticleIdx
+(
+    void* const hT3d
+)
+{
+    tracker3d_data *pData = (tracker3d_data*)(hT3d);
+    int i, maxIdx;
+    float maxVal;
+
+    /* Find most significant particle.. */
+    maxVal = FLT_MIN;
+    maxIdx = -1;
+    for(i=0; i<pData->tpars.Np; i++){
+        if(maxVal<((MCS_data*)pData->SS[i])->W){
+            maxVal = ((MCS_data*)pData->SS[i])->W;
+            maxIdx = i;
+        }
+    }
+    assert(maxIdx!=-1);
+    return maxIdx;
 }
 
 
