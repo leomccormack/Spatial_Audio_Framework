@@ -1,11 +1,10 @@
-# SAF
 
 <img src="saf.svg"> 
 
 * git: [https://github.com/leomccormack/Spatial_Audio_Framework](https://github.com/leomccormack/Spatial_Audio_Framework)
 * doxygen: [http://research.spa.aalto.fi/projects/spatial_audio_framework](http://research.spa.aalto.fi/projects/spatial_audio_framework)
 
-## Prerequisites
+# Prerequisites
 
 The Spatial_Audio_Framework (SAF) requires the following libraries:
 * Any library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
@@ -21,7 +20,7 @@ SAF_USE...                    # we're also open to adding more alternatives; ple
 ```
 Detailed instructions regarding how to build and link these performance libraries can be found [here](dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
 
-## Framework structure
+# Framework structure
 
 The framework comprises the following core modules (**ISC**):
 * **saf_hoa** - a collection of higher-order Ambisonics binaural and loudspeaker decoders.
