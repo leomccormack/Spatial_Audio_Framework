@@ -1,8 +1,10 @@
 # Spatial_Audio_Framework
+ 
+ <img src="test.svg">
 
 A cross-platform framework for developing spatial audio related applications in C/C++.
-
-![](saf.png)
+ 
+<img src="saf_structure.png">
 
 * git: [https://github.com/leomccormack/Spatial_Audio_Framework](https://github.com/leomccormack/Spatial_Audio_Framework)
 * doxygen: [http://research.spa.aalto.fi/projects/spatial_audio_framework](http://research.spa.aalto.fi/projects/spatial_audio_framework)
