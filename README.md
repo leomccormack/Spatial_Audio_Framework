@@ -1,4 +1,3 @@
-
 <img src="saf.svg"> 
 
 * git: [https://github.com/leomccormack/Spatial_Audio_Framework](https://github.com/leomccormack/Spatial_Audio_Framework)
@@ -20,7 +19,7 @@ SAF_USE...                    # we're also open to adding more alternatives; ple
 ```
 Detailed instructions regarding how to build and link these performance libraries can be found [here](dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
 
-# Framework structure
+## Framework structure
 
 The framework comprises the following core modules (**ISC**):
 * **saf_hoa** - a collection of higher-order Ambisonics binaural and loudspeaker decoders.
@@ -43,7 +42,7 @@ SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker
 Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. Instructions on how to install/link this dependency can be found [here](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md). 
 
 
-## Using the framework
+# Using the framework
 
 Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to your project), add the files found in the **framework** folder to your project and add the following directory to your project's header search paths:
 
@@ -168,14 +167,6 @@ then please feel free to do so and submit a pull request. Note, however, that if
 * **Ville Pulkki** - algorithm design
 * **Juhani Paasonen** - C programmer
 
-## License
-
-This software is dual-licensed. By default, this software is provided permissively under the terms of the [ISC License](https://choosealicense.com/licenses/isc/); since all of the core (non-optional) modules are licensed as such. However, including and enabling certain optional modules, which are instead provided under the copy-left [GNU GPLv2 License](https://choosealicense.com/licenses/gpl-2.0/), will mean that the use of this software is instead governed by the GNU GPLv2 licencing terms.
-
-For full licensing terms see [LICENSE.md](LICENSE.md).
-
-Furthermore, while we do not impose any copyleft licensing philosophies for the ISC licensed modules, we would still appreciate it if any improvements and/or bug fixes are also merged into this public repository where possible :- )
-
 ## References
 
 [1] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. **Binaural rendering of Ambisonic signals by head-related impulse response time alignment and a diffuseness constraint**.
@@ -213,3 +204,11 @@ In Audio Engineering Society Conference: 55th International Conference: Spatial 
 
 [12] Ivanic J, Ruedenberg K. **Rotation Matrices for Real Spherical Harmonics. Direct Determination by Recursion**.
 The Journal of Physical Chemistry A. 1998 Nov 5;102(45):9099-100.
+
+# License
+
+This software is dual-licensed. By default, this software is provided permissively under the terms of the [ISC License](https://choosealicense.com/licenses/isc/); since all of the core (non-optional) modules are licensed as such. However, including and enabling certain optional modules, which are instead provided under the copy-left [GNU GPLv2 License](https://choosealicense.com/licenses/gpl-2.0/), will mean that the use of this software is instead governed by the GNU GPLv2 licencing terms.
+
+For full licensing terms see [LICENSE.md](LICENSE.md).
+
+Furthermore, while we do not impose any copyleft licensing philosophies for the ISC licensed modules, we would still appreciate it if any improvements and/or bug fixes are also merged into this public repository where possible :- )
