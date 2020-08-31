@@ -1,4 +1,4 @@
-# Performance libraries supported by SAF
+# Performance Libraries Supported by SAF
 
 The Spatial_Audio_Framework (SAF) requires any library (or combination of libraries) which supports the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 

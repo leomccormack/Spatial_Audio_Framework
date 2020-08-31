@@ -16,8 +16,8 @@
 
 /**
  * @file safmex_getSHcomplex.c
- * @brief MEX wrapper for safmex_getSHcomplex (see the .m file of the same name
- *        for documentation)
+ * @brief MEX wrapper for getSHcomplex (see the .m file of the same name for
+ *        documentation)
  * @author Leo McCormack
  * @date 06.08.2020
  */

@@ -1,6 +1,8 @@
+# Framework Structure
+
 <img src="framework.svg"> 
 
-# Modules
+## Modules
 
 The framework comprises the following core modules (**ISC**):
 * **saf_hoa** - a collection of higher-order Ambisonics binaural and loudspeaker decoders.
@@ -28,7 +30,7 @@ The framework's master include header is:
 #include "saf_externals.h"  /* To also carry over CBLAS/LAPACK routines etc. (Optional) */
 ```
 
-# Resources
+## Resources
 
 The **saf_utilities** module also inherits and offers use of the following third-party **resources**:
 * [**afSTFT**](https://github.com/jvilkamo/afSTFT) - a slightly modified version of the alias-free Short-Time Fourier Transform (afSTFT) filterbank (**MIT**).
@@ -36,7 +38,7 @@ The **saf_utilities** module also inherits and offers use of the following third
 * [**convhull_3d**](https://github.com/leomccormack/convhull_3d) - for building 3-D convex hulls (**MIT**).
 * [**kissFFT**](https://github.com/mborgerding/kissfft) - the default FFT implementation for when no optimised alternative is linked (**BSD-3-Clause**).
 
-# Dependencies
+## Dependencies
 
 The only hard dependency for SAF is a library (or a combination of libraries) which supports the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards. 
 
@@ -46,7 +48,7 @@ In order to use the optional built-in [SOFA](https://www.sofaconventions.org/med
 
 For more details, refer to: [**SOFA_READER_MODULE_DEPENDENCIES.md**](../dependencies/SOFA_READER_MODULE_DEPENDENCIES.md)
 
-# Contributing
+## Contributing
 
 Contributions are very much welcomed and encouraged. Please feel free to make suggestions, pull-requests, or get in touch (via leo.mccormack(at)aalto.fi or github "issues") if you would like to discuss additions to the framework. These additions can come in many forms; including:
 * bug fixes or optimisations to existing code
