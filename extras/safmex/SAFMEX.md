@@ -1,6 +1,6 @@
 # safmex
 
-**saf_mex** is a collection of MEX wrappers which allow SAF functions to be called within Matlab. 
+**safmex** is a collection of MEX wrappers which allow SAF functions to be called within Matlab. 
 
 Even for functions that have already been implemented in Matlab, swapping them out for these wrappers has proved beneficial simply for the faster computations afforded by them. These wrappers also serve to bring SAF functionality to Matlab, which is not already found in existing Matlab libraries. 
 
@@ -25,7 +25,7 @@ Alternatively, the **BUILD_SAFMEX.m** script may be used to build the wrappers. 
 
 ## Folder structure
 
-**extras/saf_mex/** comprises the following:
+**extras/safmex/** comprises the following:
 * A script, **BUILD_SAFMEX.m**, to build all of the safmex wrappers via Matlab.
 * **CMakeLists.txt** for building the safmex wrappers via CMake.
 * A folder, **safmex_tests**, containing unit tests for the safmex wrappers. 
