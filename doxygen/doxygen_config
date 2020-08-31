@@ -22,7 +22,7 @@
 # text before the first occurrence of this tag. Doxygen uses libiconv (or the
 # iconv built into libc) for the transcoding. See
 # https://www.gnu.org/software/libiconv/ for the list of possible encodings.
-# The default value is: UTF-8.
+# The default value is: UTF-8.Fe
 
 DOXYFILE_ENCODING      = UTF-8
 
@@ -902,7 +902,6 @@ EXCLUDE_PATTERNS      += */test/timer/*
 EXCLUDE_PATTERNS      += */test/unity/*
 EXCLUDE_PATTERNS      += */test/saf_test_VS/*
 EXCLUDE_PATTERNS      += */test/test.xcodeproj/*
-EXCLUDE_PATTERNS      += */extras/safmex/*
 EXCLUDE_PATTERNS      += */dependencies/third-party-licenses/*
 
 

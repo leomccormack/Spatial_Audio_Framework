@@ -41,6 +41,7 @@ SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker
 ```
 Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. Instructions on how to install/link this dependency can be found [here](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md). 
 
+More detailed information of the framework structure can also be found [here](framework/FRAMEWORK_STUCTURE.md). 
 
 # Using the framework
 

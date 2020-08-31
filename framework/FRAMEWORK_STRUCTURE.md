@@ -40,19 +40,19 @@ The **saf_utilities** module also inherits and offers use of the following third
 
 The only hard dependency for SAF is a library (or a combination of libraries) which supports the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards. 
 
-For more details, refer to: [**../dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md**](../dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md)
+For more details, refer to: [**PERFORMANCE_LIBRARY_INSTRUCTIONS.md**](../dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md)
 
 In order to use the optional built-in [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reader module (**saf_sofa_reader**), your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). 
 
-For more details, refer to: [**../dependencies/SOFA_READER_MODULE_DEPENDENCIES.md**](../dependencies/SOFA_READER_MODULE_DEPENDENCIES.md)
+For more details, refer to: [**SOFA_READER_MODULE_DEPENDENCIES.md**](../dependencies/SOFA_READER_MODULE_DEPENDENCIES.md)
 
 # Contributing
 
-Contributions are very much welcomed and encouraged. Please feel free to make suggestions, pull-requests, or get in touch (via leo.mccormack(at)aalto.fi or github "issues") to discuss additions to the framework. These additions can come in many forms; including:
+Contributions are very much welcomed and encouraged. Please feel free to make suggestions, pull-requests, or get in touch (via leo.mccormack(at)aalto.fi or github "issues") if you would like to discuss additions to the framework. These additions can come in many forms; including:
 * bug fixes, or optimisations for existing code
 * adding new functionality (which falls under the scope of an existing module) to an existing module
 * adding an intirely new module (see below)
-* using the framework to create new **examples**, **extras**, or unit tests.
+* using the framework to create new **examples**, **extras**, or unit tests
 * documentation improvements
 
 ## Module structure
@@ -73,9 +73,11 @@ saf_new_module.c           # Source code for the functions declared in the main 
 saf_new_module_internal.c  # Source code for the functions declared in the internal header
 ```
 
-All modules are included by the **framework/include/saf.h** master include header, and must be prefaced with a definition of the same name (except in upper case). Doxygen documentation should then be added for this definition, which: describes the module, its license, and any dependencies. For example:
+### Adding a module to the framework
+
+All core modules are included by the **framework/include/saf.h** master include header using its relative path, and prefaced with a definition of the same name (except upper case). Doxygen documentation should then be added for this definition, which: describes the module, its license, and any dependencies. For example:
 ```c
-/**
+/* *  
  * SAF Module: HOA
  *
  * A collection of higher-order Ambisonics related functions; many of which are
@@ -92,11 +94,36 @@ All modules are included by the **framework/include/saf.h** master include heade
 #include "../modules/saf_hoa/saf_hoa.h"
 ```
 
+Optional modules are also included by **framework/include/saf.h** in a similar manner as with the core modules, except they should be guarded by a **SAF_ENABLE_X_MODULE** definition and instructions should be provided regarding how to enable it, along with a link to the instructions on how to build/link any dependencies. For example:
+```c
+/* *
+ * SAF Module: SOFA_Reader
+ *
+ * A simple SOFA file reader that returns only the bare minimum needed to
+ * load HRIR data.
+ *
+ * ## Enable instructions
+ *   Add this pre-processor definition to your project:
+ *       SAF_ENABLE_SOFA_READER_MODULE
+ *   and ensure that the netcdf library is also linked to your project. More
+ *   information can be found in:
+ *       dependencies/SOFA_READER_MODULE_DEPENDENCIES.md
+ * ## Dependencies
+ *   saf_utilities.h, saf_hrir.h, netcdf
+ *
+ * License: ISC
+ */
+#define SAF_SOFA_READER_MODULE
+#ifdef  SAF_ENABLE_SOFA_READER_MODULE
+# include "../modules/saf_sofa_reader/saf_sofa_reader.h"
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */
+```
+
 ### Coding style
 
 All code should be written in C and compile under C99 compliant compilers and the ancient MSVC compiler. Note that complex number wrappers (**saf_utilities/saf_utility_complex.h**) have been provided to make this latter requirement a bit easier, but we can also help port C99-only code to be MSVC compliant if needed. 
 
-As for coding-style, there are no strict requirements, only suggestions. In general, taking an existing SAF module and using it as a basis for developing your own module is probably the easiest way to go. However, suggested coding styles are also listed below:
+As for coding-style, there are no strict requirements, only suggestions. In general, taking an existing SAF module and using it as a basis for developing a new module is probably the easiest way to go. However, suggested coding styles are also listed below:
 * Indentations should be 4 spaces in length - no tabs please!
 * Comments are preferred with the /* comment */ syntax, rather than //
 * Comments and function declarations in header files should respect an 80 character margin

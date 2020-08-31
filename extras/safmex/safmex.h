@@ -13,6 +13,13 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+
+/**
+ * @file safmex.h
+ * @brief Main include header for safmex
+ * @author Leo McCormack
+ * @date 06.08.2020
+ */
   
 #include "mex.h"
 #include "saf.h" 

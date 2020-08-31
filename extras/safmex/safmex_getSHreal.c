@@ -13,7 +13,15 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
- 
+
+/**
+ * @file safmex_getSHreal.c
+ * @brief MEX wrapper for safmex_getSHreal (see the .m file of the same name for
+ *        documentation)
+ * @author Leo McCormack
+ * @date 06.08.2020
+ */
+
 #include "safmex.h"
 
 /* ===================================================================== */

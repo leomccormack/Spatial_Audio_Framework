@@ -15,9 +15,17 @@
  * See <http://www.gnu.org/licenses/> for a copy of the GNU General Public
  * License.
  */
- 
-#include "safmex.h"
 
+/**
+ * @file safmex_tracker3d.c
+ * @brief MEX wrapper for tracker3d (see the .m file of the same name for
+ *        documentation)
+ * @author Leo McCormack
+ * @date 28.08.2020
+ */
+
+#include "safmex.h"
+ 
 /* ===================================================================== */
 /*                                 Vars                                  */
 /* ===================================================================== */
