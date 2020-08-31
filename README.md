@@ -21,7 +21,7 @@ Detailed instructions regarding how to build and link these performance librarie
 
 ## Framework structure
 
-The framework comprises the following core modules (**ISC**):
+The [**framework**](framework/FRAMEWORK_STRUCTURE.md) comprises the following core modules (**ISC**):
 * **saf_hoa** - a collection of higher-order Ambisonics binaural and loudspeaker decoders.
 * **saf_sh** - spherical harmonic and spherical array processing related functions.
 * **saf_vbap** - Vector-base Amplitude Panning (VBAP) functions.
@@ -40,8 +40,6 @@ SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader
 SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker
 ```
 Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. Instructions on how to install/link this dependency can be found [here](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md). 
-
-More detailed information of the framework structure can also be found [here](framework/FRAMEWORK_STRUCTURE.md). 
 
 # Using the framework
 
@@ -123,7 +121,7 @@ make
 
 ## Examples
 
-Several examples have also been included in the repository, which may serve as a starting point for learning how to use the framework:
+Several **examples** have also been included in the repository, which may serve as a starting point for learning how to use the framework:
 
 * **ambi_bin** - a binaural Ambisonic decoder with built-in rotator. It supports the following decoding options: least-squares (LS), spatial re-sampling (SPR), Time-alignment (TA) [1], Magnitude Least-Squares (MagLS) [2].
 * **ambi_dec** - a frequency-dependent Ambisonic decoder. It supports the following decoding options: sampling Ambisonic decoder (SAD), AllRAD [3], Energy-Preserving decoder (EPAD) [4], Mode-Matching decoder (MMD).
@@ -150,7 +148,7 @@ The following open-source projects also employ the framework: [HO-SIRR-GUI](http
 
 The repository also includes the following **extras**:
 
-* **safmex** - a bunch of Matlab MEX wrappers, which allow certain SAF functions to be used within Matlab.
+* [**safmex**](extras/safmex/SAFMEX.md) - a bunch of Matlab MEX wrappers, which allow certain SAF functions to be used within Matlab.
 
 ## Contributing
 

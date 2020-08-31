@@ -49,9 +49,9 @@ For more details, refer to: [**SOFA_READER_MODULE_DEPENDENCIES.md**](../dependen
 # Contributing
 
 Contributions are very much welcomed and encouraged. Please feel free to make suggestions, pull-requests, or get in touch (via leo.mccormack(at)aalto.fi or github "issues") if you would like to discuss additions to the framework. These additions can come in many forms; including:
-* bug fixes, or optimisations for existing code
+* bug fixes or optimisations to existing code
 * adding new functionality (which falls under the scope of an existing module) to an existing module
-* adding an intirely new module (see below)
+* adding a new utility to the **saf_utilities** module or an entirely new module (see below)
 * using the framework to create new **examples**, **extras**, or unit tests
 * documentation improvements
 
