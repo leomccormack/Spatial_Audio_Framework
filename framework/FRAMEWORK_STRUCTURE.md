@@ -30,7 +30,7 @@ The framework's master include header is:
 
 # Resources
 
-The **saf_utilities** module also inherits and offers use of the following third-party **framework/resources**:
+The **saf_utilities** module also inherits and offers use of the following third-party **resources**:
 * [**afSTFT**](https://github.com/jvilkamo/afSTFT) - a slightly modified version of the alias-free Short-Time Fourier Transform (afSTFT) filterbank (**MIT**).
 * [**md_malloc**](https://github.com/leomccormack/md_malloc) - a utility for allocating contiguous multi-dimensional arrays (**MIT**).
 * [**convhull_3d**](https://github.com/leomccormack/convhull_3d) - for building 3-D convex hulls (**MIT**).
@@ -73,6 +73,24 @@ saf_new_module.c           # Source code for the functions declared in the main 
 saf_new_module_internal.c  # Source code for the functions declared in the internal header
 ```
 
+All modules are included by the **framework/include/saf.h** master include header, and must be prefaced with a definition of the same name (except in upper case). Doxygen documentation should then be added for this definition, which: describes the module, its license, and any dependencies. For example:
+```c
+/**
+ * SAF Module: HOA
+ *
+ * A collection of higher-order Ambisonics related functions; many of which are
+ * derived from the Matlab library found in [1] (BSD-3-Clause License).
+ *
+ * ## Dependencies
+ *   saf_utilities.h, saf_vbap.h, saf_sh.h
+ *
+ * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
+ *
+ * License: ISC
+ */
+#define SAF_HOA_MODULE
+#include "../modules/saf_hoa/saf_hoa.h"
+```
 
 ### Coding style
 
@@ -87,11 +105,11 @@ As for coding-style, there are no strict requirements, only suggestions. In gene
 * Using Doxygen syntax to also document internal functions is preferred, but we'll take any documentation over no documentation.
 * Breaking up source code to describe what is going on with comments will make it easier to find and fix bugs in the future.
 * Open curly brackets should come after "for" loops and "if" statements on the same line.
-* Open curly brackets should be ommited for "for" loops and "if" statements that comprise only one line of execution.
+* Open curly brackets should be omitted for "for" loops and "if" statements that comprise only one line of execution.
 * Structure handles are preferred to be of type "void*" if the structure is only visible internally to the module (i.e., defined in the module's internal header).
 * Structure handles should be of their declaration type if the structure is visible to the user (i.e., defined in the main module header).
 * Using the SAF-native "float_complex" and "double_complex" structures for handling complex numbers is favoured for all user interface functions. 
-* Also writing appropriate unit tests (which also demonstrate the functionality of your added code) to accompany your module is highly recommended. See the **test** folder for more details.
+* Writing appropriate unit tests (which also demonstrate the functionality of your added code) to accompany your module is highly recommended. See the **test** folder for more details.
 
 ### Dependencies
 
@@ -106,5 +124,4 @@ Note: your module can only be added as a **core** module if it is free from larg
 
 All core modules must be released under the [ISC License](https://choosealicense.com/licenses/isc/) and only use third-party code that is provided under similar permissive licensing terms (ISC, MIT, BSD etc.). 
 
-Optional modules may be released under alternative licenses. If you would prefer (or are requried) to release your module under a copyleft license, then you may do so. For example, the **saf_tracker** module is provided under the terms of the copyleft [GNU GPLv2 License](https://choosealicense.com/licenses/gpl-2.0/).
- 
+Optional modules may be released under alternative licenses. If you would prefer (or are required) to release your module under a copyleft license, then you may do so. For example, the **saf_tracker** module is provided under the terms of the copyleft [GNU GPLv2 License](https://choosealicense.com/licenses/gpl-2.0/). However, please discuss with us if you wish to use a license other than ISC or GPLv2.
