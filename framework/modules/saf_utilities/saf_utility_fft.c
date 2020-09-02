@@ -85,8 +85,13 @@ typedef struct _saf_fft_data {
     int N;
     float  Scale;
 #if defined(SAF_USE_INTEL_IPP)
-    int log2n;
-
+    int useIPPfft_FLAG;
+    int specSize, specBufferSize, bufferSize, log2n;
+    IppsDFTSpec_C_32fc* hDFTspec;
+    IppsFFTSpec_C_32fc* hFFTspec;
+    Ipp8u* memSpec;
+    Ipp8u* buffer;
+    Ipp8u* memInit;
 #elif defined(__ACCELERATE__)
     int log2n;
     FFTSetup FFT;
@@ -516,8 +521,6 @@ void saf_rfft_create
         h->buffer  = (Ipp8u*) ippMalloc(h->bufferSize);
         h->memInit = (Ipp8u*) ippMalloc(h->specBufferSize);
         ippsFFTInit_R_32f(&(h->hFFTspec), h->log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h->memSpec, h->memInit);
-        if (h->memSpec)
-            ippFree(h->memSpec);
     }
     else{
         h->useIPPfft_FLAG = 0;
@@ -529,7 +532,6 @@ void saf_rfft_create
     }
     if (h->memInit)
         ippFree(h->memInit);
-
 #elif defined(__ACCELERATE__)
     if(ceilf(log2f(N)) == floorf(log2f(N))) /* true if N is 2 to the power of some integer number */
         h->useKissFFT_flag = 0;
@@ -573,8 +575,8 @@ void saf_rfft_destroy
     if(h!=NULL){
 #if defined(SAF_USE_INTEL_IPP)
         if(h->useIPPfft_FLAG){
-            //if((h->hFFTspec))
-            //    free(h->hFFTspec); Cannot be freed?
+            if(h->memSpec)
+                ippFree(h->memSpec);
         }
         else {
             if(h->hDFTspec)
@@ -692,7 +694,28 @@ void saf_fft_create
     h->Scale = 1.0f/(float)N; /* output scaling after ifft */
     assert(N>=2); /* only even (non zero) FFT sizes allowed */
 #if defined(SAF_USE_INTEL_IPP)
-
+    h->useKissFFT_flag = 0;
+    /* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */
+    if(ceilf(log2f(N)) == floorf(log2f(N))){
+        h->useIPPfft_FLAG = 1;
+        h->log2n = (int)(log2f((float)N)+0.1f);
+        ippsFFTGetSize_C_32f(h->log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &(h->specSize), &(h->specBufferSize), &(h->bufferSize));
+        h->hFFTspec = NULL;
+        h->memSpec = (Ipp8u*) ippsMalloc_8u(h->specSize);
+        h->buffer  = (Ipp8u*) ippsMalloc_8u(h->bufferSize);
+        h->memInit = (Ipp8u*) ippsMalloc_8u(h->specBufferSize);
+        ippsFFTInit_C_32fc(&(h->hFFTspec), h->log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h->memSpec, h->memInit);
+    }
+    else{
+        h->useIPPfft_FLAG = 0;
+        ippsDFTGetSize_C_32f(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &(h->specSize), &(h->specBufferSize), &(h->bufferSize));
+        h->hDFTspec = (IppsDFTSpec_C_32fc*) ippsMalloc_8u(h->specSize);
+        h->buffer  = (Ipp8u*) ippsMalloc_8u(h->bufferSize);
+        h->memInit = (Ipp8u*) ippsMalloc_8u(h->specBufferSize);
+        ippsDFTInit_C_32fc(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h->hDFTspec, h->memInit);
+    }
+    if (h->memInit)
+        ippFree(h->memInit);
 #elif defined(__ACCELERATE__) && 0 /* NOT IMPLEMENTED YET */
     if(ceilf(log2f(N)) == floorf(log2f(N))) /* true if N is 2 to the power of some integer number */
         h->useKissFFT_flag = 0;
@@ -733,7 +756,16 @@ void saf_fft_destroy
     
     if(h!=NULL){
 #if defined(SAF_USE_INTEL_IPP)
-
+        if(h->useIPPfft_FLAG){
+            if(h->memSpec)
+                ippFree(h->memSpec);
+        }
+        else {
+            if(h->hDFTspec)
+                ippFree(h->hDFTspec);
+        }
+        if(h->buffer)
+            ippFree(h->buffer);
 #elif defined(__ACCELERATE__) && 0 /* NOT IMPLEMENTED YET */
         if(!h->useKissFFT_flag){
             vDSP_destroy_fftsetup(h->FFT);
@@ -762,7 +794,10 @@ void saf_fft_forward
     saf_fft_data *h = (saf_fft_data*)(hFFT);
     
 #if defined(SAF_USE_INTEL_IPP)
-
+    if(h->useIPPfft_FLAG)
+        ippsFFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h->hFFTspec, h->buffer);
+    else
+        ippsDFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h->hDFTspec, h->buffer);
 #elif defined(__ACCELERATE__) && 0 /* NOT IMPLEMENTED YET */
 
 #elif defined(INTEL_MKL_VERSION)
@@ -782,7 +817,10 @@ void saf_fft_backward
     saf_fft_data *h = (saf_fft_data*)(hFFT);
     int i;
 #if defined(SAF_USE_INTEL_IPP)
-
+    if(h->useIPPfft_FLAG)
+        ippsFFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h->hFFTspec, h->buffer);
+    else
+        ippsDFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h->hDFTspec, h->buffer);
 #elif defined(__ACCELERATE__) && 0 /* NOT IMPLEMENTED YET */
  
 #elif defined(INTEL_MKL_VERSION)
