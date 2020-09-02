@@ -153,7 +153,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     strcpy(pData->progressBarText,"Applying HRIR diffuse-field EQ");
     pData->progressBar0_1 = 0.8f;
     pData->hrtf_fb = realloc1d(pData->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pData->N_hrir_dirs)*sizeof(float_complex));
-    HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, HOP_SIZE, 1, pData->hrtf_fb);
+    HRIRs2HRTFs_afSTFT(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, HOP_SIZE, 1, pData->hrtf_fb);
     if(pData->enableDiffEQ)
         diffuseFieldEqualiseHRTFs(pData->N_hrir_dirs, pData->itds_s, pData->freqVector, HYBRID_BANDS, pData->hrtf_fb);
     
