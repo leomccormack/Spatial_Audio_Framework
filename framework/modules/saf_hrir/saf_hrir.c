@@ -105,7 +105,7 @@ void estimateITDs
     free(hrir_lpf);
 }
 
-void HRIRs2FilterbankHRTFs
+void HRIRs2HRTFs_afSTFT
 (
     float* hrirs, /* N_dirs x NUM_EARS x hrir_len */
     int N_dirs,
@@ -116,7 +116,21 @@ void HRIRs2FilterbankHRTFs
 )
 {
     /* convert the HRIRs to filterbank coefficients */
-    FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, hopsize, hybridmode, hrtf_fb);
+    FIRtoFilterbankCoeffs_afSTFT(hrirs, N_dirs, NUM_EARS, hrir_len, hopsize, hybridmode, hrtf_fb);
+}
+
+void HRIRs2HRTFs_qmf
+(
+    float* hrirs, /* N_dirs x NUM_EARS x hrir_len */
+    int N_dirs,
+    int hrir_len,
+    int hopsize,
+    int hybridmode,
+    float_complex* hrtf_fb /* nBands x NUM_EARS x N_dirs */
+)
+{
+    /* convert the HRIRs to filterbank coefficients */
+    FIRtoFilterbankCoeffs_qmf(hrirs, N_dirs, NUM_EARS, hrir_len, hopsize, hybridmode, hrtf_fb);
 }
 
 void HRIRs2HRTFs

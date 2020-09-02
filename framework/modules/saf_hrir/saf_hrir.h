@@ -91,17 +91,44 @@ void estimateITDs(/* Input Arguments */
  *                        FLAT:
  *                        (hybrid ? hopsize+5 : hopsize+1) x #NUM_EARS x N_dirs
  */
-void HRIRs2FilterbankHRTFs(/* Input Arguments */
-                           float* hrirs,
-                           int N_dirs,
-                           int hrir_len,
-                           int hopsize,
-                           int hybridmode,
-                           /* Output Arguments */
-                           float_complex* hrtf_fb);
+void HRIRs2HRTFs_afSTFT(/* Input Arguments */
+                        float* hrirs,
+                        int N_dirs,
+                        int hrir_len,
+                        int hopsize,
+                        int hybridmode,
+                        /* Output Arguments */
+                        float_complex* hrtf_fb);
 
 /**
- * Converts HRIRs to HRTFs, with a given FFT size
+ * Passes zero padded HRIRs through the qmf filterbank
+ *
+ * The filterbank coefficients are then normalised with the energy of an
+ * impulse, which is centered at approximately the beginning of the HRIR peak.
+ *
+ * @warning This function is NOT suitable for binaural room impulse responses
+ *          (BRIRs)!
+ *
+ * @param[in]  hrirs      HRIRs; FLAT: N_dirs x #NUM_EARS x hrir_len
+ * @param[in]  N_dirs     Number of HRIRs
+ * @param[in]  hrir_len   Length of the HRIRs in samples
+ * @param[in]  hopsize    Hop size in samples
+ * @param[in]  hybridmode 0:disabled, 1:enabled
+ * @param[out] hrtf_fb    HRTFs as filterbank coeffs;
+ *                        FLAT:
+ *                        (hybrid ? hopsize+7 : hopsize) x #NUM_EARS x N_dirs
+ */
+void HRIRs2HRTFs_qmf(/* Input Arguments */
+                     float* hrirs,
+                     int N_dirs,
+                     int hrir_len,
+                     int hopsize,
+                     int hybridmode,
+                     /* Output Arguments */
+                     float_complex* hrtf_fb);
+
+/**
+ * Converts HRIRs to HRTFs using a given FFT size
  *
  * @note If the HRIRs are shorter than the FFT size (hrir_len<fftSize), then the
  *       HRIRs are zero-padded. If they are longer, then they are truncated.
@@ -152,6 +179,8 @@ void diffuseFieldEqualiseHRTFs(/* Input Arguments */
  *       normalised VBAP gain table, and convert it to an amplitude-normalised
  *       interpolation table. (Basically, amplitude-normalised VBAP gains are
  *       equivalent to triangular interpolation weights).
+ * @warning This function is NOT suitable for binaural room impulse responses
+ *          (BRIRs)!
  *
  * @param[in]  hrtfs         HRTFs as filterbank coeffs;
  *                           FLAT: N_bands x #NUM_EARS x N_hrtf_dirs

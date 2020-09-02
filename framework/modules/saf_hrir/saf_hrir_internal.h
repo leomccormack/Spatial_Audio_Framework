@@ -49,7 +49,7 @@ extern "C" {
 
 /**
  * Converts FIR filters into Filterbank Coefficients by passing them through
- * afSTFT
+ * the afSTFT filterbank
  *
  * @param[in]  hIR        Time-domain FIR; FLAT: N_dirs x nCH x ir_len
  * @param[in]  N_dirs     Number of FIR sets
@@ -60,15 +60,38 @@ extern "C" {
  * @param[out] hFB        The FIRs as Filterbank coefficients;
  *                        FLAT: N_bands x nCH x N_dirs
  */
-void FIRtoFilterbankCoeffs(/* Input Arguments */
-                           float* hIR,
-                           int N_dirs,
-                           int nCH,
-                           int ir_len,
-                           int hopSize,
-                           int hybridmode,
-                           /* Output Arguments */
-                           float_complex* hFB);
+void FIRtoFilterbankCoeffs_afSTFT(/* Input Arguments */
+                                  float* hIR,
+                                  int N_dirs,
+                                  int nCH,
+                                  int ir_len,
+                                  int hopSize,
+                                  int hybridmode,
+                                  /* Output Arguments */
+                                  float_complex* hFB);
+
+/**
+ * Converts FIR filters into Filterbank Coefficients by passing them through
+ * the QMF filterbank
+ *
+ * @param[in]  hIR        Time-domain FIR; FLAT: N_dirs x nCH x ir_len
+ * @param[in]  N_dirs     Number of FIR sets
+ * @param[in]  nCH        Number of channels per FIR set
+ * @param[in]  ir_len     Length of the FIR
+ * @param[in]  hopSize    Hop size
+ * @param[in]  hybridmode 0: disabled, 1:enabled
+ * @param[out] hFB        The FIRs as Filterbank coefficients;
+ *                        FLAT: N_bands x nCH x N_dirs
+ */
+void FIRtoFilterbankCoeffs_qmf(/* Input Arguments */
+                               float* hIR,
+                               int N_dirs,
+                               int nCH,
+                               int ir_len,
+                               int hopSize,
+                               int hybridmode,
+                               /* Output Arguments */
+                               float_complex* hFB);
 
 
 #ifdef __cplusplus
