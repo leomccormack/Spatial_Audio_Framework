@@ -70,12 +70,16 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
 
-    /* run each unit test */ 
+    /* run each unit test */
+//    for(int i=0; i<100; i++){
+//        RUN_TEST(test__smb_pitchShifter);
+//    }
+    RUN_TEST(test__saf_rfft);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
     RUN_TEST(test__ims_shoebox_TD);
-    RUN_TEST(test__saf_rfft);
+
     RUN_TEST(test__saf_matrixConv);
     RUN_TEST(test__afSTFT);
     RUN_TEST(test__qmf);
@@ -605,7 +609,7 @@ void test__smb_pitchShifter(void){
     /* Config */
     const int sampleRate = 48000;
     const int FFTsize = 8192;
-    const int osfactor = 16;
+    const int osfactor = 4;
     const int nSamples = 8*FFTsize;
 
     /* prep */

@@ -2,6 +2,15 @@
 
 <img src="framework.svg"> 
 
+## Include
+
+The framework's master include header is:
+
+```c
+#include "saf.h"
+#include "saf_externals.h"  /* To also carry over CBLAS/LAPACK routines etc. (Optional) */
+```
+
 ## Modules
 
 The framework comprises the following core modules (**ISC**):
@@ -21,13 +30,6 @@ To enable optional framework modules, simply add the relevant pre-processor defi
 ```
 SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader
 SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker
-```
-
-The framework's master include header is:
-
-```c
-#include "saf.h"
-#include "saf_externals.h"  /* To also carry over CBLAS/LAPACK routines etc. (Optional) */
 ```
 
 ## Resources

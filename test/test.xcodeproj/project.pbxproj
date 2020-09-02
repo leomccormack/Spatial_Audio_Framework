@@ -1073,6 +1073,7 @@
 					SAF_ENABLE_SOFA_READER_MODULE,
 					SAF_ENABLE_EXAMPLES_TESTS,
 					SAF_ENABLE_TRACKER_MODULE,
+					SAF_USE_INTEL_IPP,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -1081,6 +1082,7 @@
 					timer,
 					../dependencies/MacOSX/include,
 					/opt/intel/compilers_and_libraries/mac/mkl/include,
+					/opt/intel/compilers_and_libraries/mac/ipp/include,
 				);
 				INSTALL_PATH = bin/;
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;
@@ -1098,6 +1100,13 @@
 					"-lhdf5",
 					"-lhdf5_hl",
 					"-lz",
+					"-Wl,-rpath,/opt/intel/compilers_and_libraries/mac/ipp/lib",
+					"-L/opt/intel/compilers_and_libraries/mac/ipp/lib",
+					"-lippcore",
+					"-lippvm",
+					"-lipps",
+					"-lippvm",
+					"-lipps",
 				);
 				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1119,6 +1128,7 @@
 					SAF_ENABLE_SOFA_READER_MODULE,
 					SAF_ENABLE_EXAMPLES_TESTS,
 					SAF_ENABLE_TRACKER_MODULE,
+					SAF_USE_INTEL_IPP,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -1127,6 +1137,7 @@
 					timer,
 					../dependencies/MacOSX/include,
 					/opt/intel/compilers_and_libraries/mac/mkl/include,
+					/opt/intel/compilers_and_libraries/mac/ipp/include,
 				);
 				INSTALL_PATH = bin/;
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;
@@ -1144,6 +1155,13 @@
 					"-lhdf5",
 					"-lhdf5_hl",
 					"-lz",
+					"-Wl,-rpath,/opt/intel/compilers_and_libraries/mac/ipp/lib",
+					"-L/opt/intel/compilers_and_libraries/mac/ipp/lib",
+					"-lippcore",
+					"-lippvm",
+					"-lipps",
+					"-lippvm",
+					"-lipps",
 				);
 				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include;
 				PRODUCT_NAME = "$(TARGET_NAME)";

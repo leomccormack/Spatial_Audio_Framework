@@ -103,6 +103,20 @@
 
 
 /* ========================================================================== */
+/*                         Optional External Libraries                        */
+/* ========================================================================== */
+
+#if defined(SAF_USE_INTEL_IPP)
+/*
+ * The use of Intel's Integrated Performance Primitives (IPP) is optional, but
+ * does lead to some minor performance improvements for saf_fft (compared with
+ * Intel MKL).
+ */
+# include "ipp.h"
+#endif
+
+
+/* ========================================================================== */
 /*          External Libraries Required by the saf_sofa_reader Module         */
 /* ========================================================================== */
 
