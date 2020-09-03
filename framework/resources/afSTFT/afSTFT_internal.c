@@ -312,7 +312,7 @@ void afSTFTlib_forward
 //            outFD[ch].im[k] = cimagf(h->fftProcessFrameFD[k]);
 //        }
         cblas_scopy(h->hopSize+1, (float*)h->fftProcessFrameFD, 2, outFD[ch].re, 1);
-        cblas_scopy(h->hopSize+1, &((float*)h->fftProcessFrameFD)[1], 2, outFD[ch].im, 1);
+        cblas_scopy(h->hopSize+1, (float*)h->fftProcessFrameFD + 1, 2, outFD[ch].im, 1);
 #else
         vtRunFFT(h->vtFFT,1);
         outFD[ch].re[0]=h->fftProcessFrameFD[0];
@@ -371,7 +371,7 @@ void afSTFTlib_inverse
         //for(k = 0; k<h->hopSize+1; k++)
         //    h->fftProcessFrameFD[k] = cmplxf(inFD[ch].re[k], inFD[ch].im[k]);
         cblas_scopy(h->hopSize+1, inFD[ch].re, 1, (float*)h->fftProcessFrameFD, 2);
-        cblas_scopy(h->hopSize+1, inFD[ch].im, 1, &((float*)h->fftProcessFrameFD)[1], 2);
+        cblas_scopy(h->hopSize+1, inFD[ch].im, 1, (float*)h->fftProcessFrameFD + 1, 2);
 
         /* The low delay mode requires this procedure corresponding to the circular shift of the data in the time domain */
         if (h->LDmode == 1)
