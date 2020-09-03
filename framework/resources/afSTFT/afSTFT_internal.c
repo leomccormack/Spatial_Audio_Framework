@@ -129,21 +129,19 @@ void afSTFTlib_init
             h->protoFilter[h->hLen-k-1] = protoFilter1024[k*dsFactor]*eq;
             h->protoFilterI[h->hLen-k-1] = protoFilter1024[k*dsFactor]*eq;
         }
-    }
+    } 
     else
-        assert(0);
-//    else
-//    {
-//#ifdef AFSTFT_USE_SAF_UTILITIES
-//        eq = 2.0f/sqrtf(4.544559956f);
-//#else
-//        eq = 1.0f/sqrtf((float)h->hopSize*4.544559956f);
-//#endif
-//        for (k=0; k<h->hLen; k++) {
-//            h->protoFilter[h->hLen-k-1] = protoFilter1024LD[k*dsFactor]*eq;
-//            h->protoFilterI[k]=protoFilter1024LD[k*dsFactor]*eq;
-//        }
-//    }
+    {
+#ifdef AFSTFT_USE_SAF_UTILITIES
+        eq = 2.0f/sqrtf(4.544559956f);
+#else
+        eq = 1.0f/sqrtf((float)h->hopSize*4.544559956f);
+#endif
+        for (k=0; k<h->hLen; k++) {
+            h->protoFilter[h->hLen-k-1] = protoFilter1024LD[k*dsFactor]*eq;
+            h->protoFilterI[k]=protoFilter1024LD[k*dsFactor]*eq;
+        }
+    }
     for(ch=0;ch<h->inChannels;ch++)
         h->inBuffer[ch] = (float*)calloc(h->hLen,sizeof(float));
     
@@ -308,12 +306,12 @@ void afSTFTlib_forward
         /* Apply FFT and copy the data to the output vector */
 #ifdef AFSTFT_USE_SAF_UTILITIES
         saf_rfft_forward(h->hSafFFT, h->fftProcessFrameTD, h->fftProcessFrameFD);
-        for(k = 0; k<h->hopSize+1; k++){
-            outFD[ch].re[k] = crealf(h->fftProcessFrameFD[k]);
-            outFD[ch].im[k] = cimagf(h->fftProcessFrameFD[k]);
-        }
-        //cblas_scopy(h->hopSize+1, (float*)h->fftProcessFrameFD, 2, outFD[ch].re, 1);
-        //cblas_scopy(h->hopSize+1, (float*)h->fftProcessFrameFD + 1, 2, outFD[ch].im, 1);
+//        for(k = 0; k<h->hopSize+1; k++){
+//            outFD[ch].re[k] = crealf(h->fftProcessFrameFD[k]);
+//            outFD[ch].im[k] = cimagf(h->fftProcessFrameFD[k]);
+//        }
+        cblas_scopy(h->hopSize+1, (float*)h->fftProcessFrameFD, 2, outFD[ch].re, 1);
+        cblas_scopy(h->hopSize+1, (float*)h->fftProcessFrameFD + 1, 2, outFD[ch].im, 1);
 #else
         vtRunFFT(h->vtFFT,1);
         outFD[ch].re[0]=h->fftProcessFrameFD[0];
@@ -369,10 +367,10 @@ void afSTFTlib_inverse
         
         /* Inverse FFT */
 #ifdef AFSTFT_USE_SAF_UTILITIES
-        for(k = 0; k<h->hopSize+1; k++)
-            h->fftProcessFrameFD[k] = cmplxf(inFD[ch].re[k], inFD[ch].im[k]);
-        //cblas_scopy(h->hopSize+1, inFD[ch].re, 1, (float*)h->fftProcessFrameFD, 2);
-        //cblas_scopy(h->hopSize+1, inFD[ch].im, 1, (float*)h->fftProcessFrameFD + 1, 2);
+        //for(k = 0; k<h->hopSize+1; k++)
+        //    h->fftProcessFrameFD[k] = cmplxf(inFD[ch].re[k], inFD[ch].im[k]);
+        cblas_scopy(h->hopSize+1, inFD[ch].re, 1, (float*)h->fftProcessFrameFD, 2);
+        cblas_scopy(h->hopSize+1, inFD[ch].im, 1, (float*)h->fftProcessFrameFD + 1, 2);
 
         /* The low delay mode requires this procedure corresponding to the circular shift of the data in the time domain */
         if (h->LDmode == 1)

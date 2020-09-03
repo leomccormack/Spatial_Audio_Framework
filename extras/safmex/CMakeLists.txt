@@ -13,7 +13,14 @@ set(safmex_list
     safmex_getSHcomplex
     safmex_getSHreal
     safmex_latticeDecorrelator
-    safmex_qmf)
+    safmex_qmf) 
+
+if(SAF_ENABLE_TRACKER_MODULE)
+    set(safmex_list ${safmex_list}
+        safmex_tracker3d)
+else()
+    message(STATUS "  (Disabling safmex wrappers related to the saf_tracker module)")
+endif()
 
 # Find number of wrappers
 list(LENGTH safmex_list num_wrappers)
