@@ -29,7 +29,7 @@
  *          (namely: certain veclib utility functions), then it may still be a
  *          good choice for your particular project.
  *
- * ## Dependencies
+ * ## Required Dependencies
  *   A performance library comprising CBLAS and LAPACK routines is required by
  *   SAF. Add one of the following FLAGS to your project's preprocessor
  *   definitions in order to enable one of these suitable performance libraries,
@@ -44,8 +44,10 @@
  *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
  *
  * ## Optional dependencies
- *   netcdf is required by the saf_sofa_reader module, which is enabled with the
- *   following pre-processor flag: SAF_ENABLE_SOFA_READER_MODULE
+ *   netcdf is required by the optional saf_sofa_reader module, which is enabled
+ *   with the following pre-processor flag: SAF_ENABLE_SOFA_READER_MODULE
+ *
+ *   Intel IPP may be optionally used with the flag: SAF_USE_INTEL_IPP
  *
  * @see More information can be found here:
  *      https://github.com/leomccormack/Spatial_Audio_Framework
@@ -85,7 +87,7 @@
  */ 
 # define VECLIB_USE_CLAPACK_INTERFACE /**< CLAPACK interface */
 # include "cblas-atlas.h"
-# include "clapack.h" /* NOTE: CLAPACK does not include all LAPACK routines! */
+# include "clapack.h"
 # warning Note: CLAPACK does not include all LAPACK routines!
 
 #elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
@@ -103,7 +105,7 @@
 
 
 /* ========================================================================== */
-/*                         Optional External Libraries                        */
+/*                        Optional External Libraries                         */
 /* ========================================================================== */
 
 #if defined(SAF_USE_INTEL_IPP)
@@ -117,7 +119,7 @@
 
 
 /* ========================================================================== */
-/*          External Libraries Required by the saf_sofa_reader Module         */
+/*     External Libraries Required by the Optional saf_sofa_reader Module     */
 /* ========================================================================== */
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE

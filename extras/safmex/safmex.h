@@ -24,7 +24,7 @@
 #include "mex.h"
 #include "saf.h" 
 
-#define MSG_STR_LENGTH ( 256 )
+#define MSG_STR_LENGTH ( 2048 )
 char message[MSG_STR_LENGTH];
 /* snprintf(message, MSG_STR_LENGTH, "mem required: %d", numElements); mexPrintf(message); */
 
