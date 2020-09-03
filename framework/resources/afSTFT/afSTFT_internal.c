@@ -125,24 +125,25 @@ void afSTFTlib_init
 #else
         eq = 1.0f/sqrtf((float)h->hopSize*5.487604141f);
 #endif
-        
         for (k=0; k<h->hLen; k++) {
             h->protoFilter[h->hLen-k-1] = protoFilter1024[k*dsFactor]*eq;
             h->protoFilterI[h->hLen-k-1] = protoFilter1024[k*dsFactor]*eq;
         }
     }
     else
-    {
-#ifdef AFSTFT_USE_SAF_UTILITIES
-        eq = 2.0f/sqrtf(4.544559956f);
-#else
-        eq = 1.0f/sqrtf((float)h->hopSize*4.544559956f);
-#endif
-        for (k=0; k<h->hLen; k++) {
-            h->protoFilter[h->hLen-k-1] = protoFilter1024LD[k*dsFactor]*eq;
-            h->protoFilterI[k]=protoFilter1024LD[k*dsFactor]*eq; 
-        }
-    }
+        assert(0);
+//    else
+//    {
+//#ifdef AFSTFT_USE_SAF_UTILITIES
+//        eq = 2.0f/sqrtf(4.544559956f);
+//#else
+//        eq = 1.0f/sqrtf((float)h->hopSize*4.544559956f);
+//#endif
+//        for (k=0; k<h->hLen; k++) {
+//            h->protoFilter[h->hLen-k-1] = protoFilter1024LD[k*dsFactor]*eq;
+//            h->protoFilterI[k]=protoFilter1024LD[k*dsFactor]*eq;
+//        }
+//    }
     for(ch=0;ch<h->inChannels;ch++)
         h->inBuffer[ch] = (float*)calloc(h->hLen,sizeof(float));
     
