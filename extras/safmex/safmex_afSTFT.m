@@ -39,7 +39,7 @@
 %   blocksize = 2048*10;
 %   hybridmode = 1;
 %   format = 0;
-%   fs = 48e3f;
+%   fs = 48e3;
 %
 %   % Create
 %   [freqVector, procDelay] = safmex_afSTFT(nCHin, nCHout, hopsize, blocksize, hybridmode, 0, fs); 

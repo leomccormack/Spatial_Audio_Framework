@@ -9,7 +9,7 @@ SAF_USE_INTEL_MKL             # great option, but only for x86 architectures
 SAF_USE_OPEN_BLAS_AND_LAPACKE # good option, works on everything
 SAF_USE_APPLE_ACCELERATE      # good option (x86 and ARM), faster than OpenBLAS, but MacOSX only & slower than MKL
 SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing
-SAF_USE...                    # we're also open to adding more alternatives; please get in touch if you have one! :-)
+SAF_USE...                    # please get in touch if you use something else! :-)
 ```
 
 ## SAF_USE_INTEL_MKL

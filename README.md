@@ -5,19 +5,20 @@
 
 # Prerequisites
 
-The Spatial_Audio_Framework (SAF) requires the following libraries:
+The Spatial_Audio_Framework (SAF) utilises the following external libraries:
 * Any library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
-* (Optional) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
+* (**Optional**) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
+* (**Optional**) Intel's [Integrated Performance Primitives (IPP)](https://software.intel.com/content/www/us/en/develop/tools/integrated-performance-primitives.html) for the FFT.
 
-To inform SAF which performance library/libraries you have linked to your project, add one of the following pre-processor definitions:
+In order to inform SAF which CBLAS/LAPACK supporting library/libraries you have linked to your project, simply add **one** of the following pre-processor definitions:
 ```
 SAF_USE_INTEL_MKL             # great option, but only for x86 architectures    
 SAF_USE_OPEN_BLAS_AND_LAPACKE # good option, works on everything
 SAF_USE_APPLE_ACCELERATE      # good option (x86 and ARM), faster than OpenBLAS, but MacOSX only & slower than MKL
 SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing
-SAF_USE...                    # we're also open to adding more alternatives; please get in touch if you have one! :-)
+SAF_USE...                    # please get in touch if you use something else! :-)
 ```
-Detailed instructions regarding how to build and link these performance libraries can be found [here](dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
+Detailed instructions regarding how to build and link these libraries can be found [here](dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
 
 ## Framework structure
 
@@ -41,6 +42,13 @@ SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker
 ```
 Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. Instructions on how to install/link this dependency can be found [here](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md). 
 
+### Additional options
+
+The framework can be configured further, with the following options:
+```
+SAF_USE_INTEL_IPP              # To use Intel IPP for the saf_utility_fft wrapper
+```
+
 # Using the framework
 
 Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to your project), add the files found in the **framework** folder to your project and add the following directory to your project's header search paths:
@@ -53,7 +61,7 @@ The framework's master include header is then:
 
 ```c
 #include "saf.h"
-#include "saf_externals.h"  /* To also carry over CBLAS/LAPACK routines etc. (Optional) */
+#include "saf_externals.h"  /* (Optional) To also carry over CBLAS/LAPACK routines and other external functions. */
 ```
 
 ## Building with CMake 

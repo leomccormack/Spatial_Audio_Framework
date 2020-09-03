@@ -8,7 +8,11 @@ The framework's master include header is:
 
 ```c
 #include "saf.h"
-#include "saf_externals.h"  /* To also carry over CBLAS/LAPACK routines etc. (Optional) */
+```
+
+Optionally, if you would like to carry over the CBLAS/LAPACK routines (and the functions of any other SAF external library) to use in your own project, then also include the following header:
+```c
+#include "saf_externals.h"  
 ```
 
 ## Modules
@@ -46,9 +50,16 @@ The only hard dependency for SAF is a library (or a combination of libraries) wh
 
 For more details, refer to: [**PERFORMANCE_LIBRARY_INSTRUCTIONS.md**](../dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md)
 
+### Optional externals
+
 In order to use the optional built-in [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reader module (**saf_sofa_reader**), your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). 
 
 For more details, refer to: [**SOFA_READER_MODULE_DEPENDENCIES.md**](../dependencies/SOFA_READER_MODULE_DEPENDENCIES.md)
+
+Optionally, Intel's [Integrated Performance Primitives (IPP)](https://software.intel.com/content/www/us/en/develop/tools/integrated-performance-primitives.html) may be employed for the FFT with the following definition:
+```
+SAF_USE_INTEL_IPP            
+```
 
 ## Contributing
 
@@ -98,7 +109,7 @@ All core modules are included by the **framework/include/saf.h** master include 
 #include "../modules/saf_hoa/saf_hoa.h"
 ```
 
-Optional modules are also included by **framework/include/saf.h** in a similar manner as with the core modules, except they should be guarded by a **SAF_ENABLE_X_MODULE** definition and instructions should be provided regarding how to enable it, along with a link to the instructions on how to build/link any dependencies. For example:
+Optional modules are also included by **framework/include/saf.h** in a similar manner as with the core modules, except they should be guarded by a **SAF_ENABLE_X_MODULE** definition and instructions should be provided regarding how to enable it, along with a link to instructions on how to build/link any dependencies. For example:
 ```c
 /* *
  * SAF Module: SOFA_Reader
