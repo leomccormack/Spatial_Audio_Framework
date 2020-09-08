@@ -191,7 +191,7 @@ void decorrelator_process
 
         /* Main processing: */
         if(pData->enableTransientDucker){
-            transientDucker_apply(pData->hDucker, pData->InputFrameTF, TIME_SLOTS, pData->OutputFrameTF);
+            transientDucker_apply(pData->hDucker, pData->InputFrameTF, TIME_SLOTS, 0.95f, 0.995f, pData->OutputFrameTF);
             latticeDecorrelator_apply(pData->hDec,  pData->OutputFrameTF,  TIME_SLOTS, pData->OutputFrameTF);
         }
         else

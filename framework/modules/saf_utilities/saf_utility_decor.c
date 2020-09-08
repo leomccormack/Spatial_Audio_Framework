@@ -420,6 +420,8 @@ void transientDucker_apply
     void* hDucker,
     float_complex*** inFrame,
     int nTimeSlots,
+    float alpha,
+    float beta,
     float_complex*** outFrame
 )
 {
@@ -428,8 +430,6 @@ void transientDucker_apply
     float detectorEne, transientEQ;
     //const float alpha = 0.95f;
     //const float beta = 0.995f;
-    const float alpha = 0.93f;
-    const float beta = 0.992f;
 
     for(band=0; band<h->nBands; band++){
         for(i=0; i<h->nCH; i++){

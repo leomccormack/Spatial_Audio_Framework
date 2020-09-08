@@ -222,12 +222,16 @@ void transientDucker_destroy(/* Input Arguments */
  * @param[in]  hDucker    ducker handle
  * @param[in]  inFrame    input frame; nBands x nCH x nTimeSlots
  * @param[in]  nTimeSlots Number of time slots per frame
+ * @param[in]  alpha      alpha value [0,1];
+ * @param[in]  beta       beta value [0,1];
  * @param[out] outFrame   ducked frame; nBands x nCH x nTimeSlots
  */
 void transientDucker_apply(/* Input Arguments */
                            void* hDucker,
                            float_complex*** inFrame,
                            int nTimeSlots,
+                           float alpha,
+                           float beta,
                            /* Output Arguments */
                            float_complex*** outFrame);
 
