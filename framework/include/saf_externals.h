@@ -59,6 +59,14 @@
 #ifndef __SAF_EXTERNALS_H_INCLUDED__
 #define __SAF_EXTERNALS_H_INCLUDED__
 
+/* Assert that only one CBLAS/LAPACK performance library has been specified */
+#if (defined(SAF_USE_INTEL_MKL) + \
+     defined(SAF_USE_OPEN_BLAS_AND_LAPACKE) + \
+     defined(SAF_USE_ATLAS) + \
+     defined(SAF_USE_APPLE_ACCELERATE)) > 1
+# error Only one performance library flag can be defined!
+#endif
+
 /* ========================================================================== */
 /*                        Performance Library to Employ                       */
 /* ========================================================================== */
@@ -100,6 +108,10 @@
 # include "Accelerate/Accelerate.h"
 
 #else
+/*
+ * Note that if you would like to use some other CBLAS/LAPACK supporting library
+ * then please get in touch! :-)
+ */
 # error SAF requires a library (or libraries) which supports CBLAS and LAPACK
 #endif
 

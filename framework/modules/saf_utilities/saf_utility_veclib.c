@@ -280,7 +280,7 @@ void utility_svvadd
     float* c
 )
 {
-#if NDEBUG
+#if NDEBUG && 0
     int i;
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
