@@ -72,7 +72,6 @@ add_subdirectory(resources)
 ############################################################################
 # Performance library dependencies
 if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL" )
-    message(STATUS "Using Intel MKL. Linking against saf_mkl_custom library...")
     target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_INTEL_MKL=1)
 
     # Default header path and libs, (which are platform dependent):
@@ -98,6 +97,7 @@ if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL" )
             set(INTEL_MKL_LIB "/usr/lib/libsaf_mkl_custom.so") 
         endif()
     endif()
+    message(STATUS "Using Intel MKL. Linking against: ${INTEL_MKL_LIB}")
 
     # Add target header paths and libs
     target_include_directories(${PROJECT_NAME} PUBLIC ${INTEL_MKL_HEADER_PATH} )

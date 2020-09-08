@@ -41,9 +41,9 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo "Error: Intel MKL not installed"
         exit 1
     fi
-    iomp5_dir="~/intel/compilers_and_libraries/linux/lib"
+    iomp5_dir="~/intel/compilers_and_libraries/linux/lib/intel64"
     if ! [ -d ${iomp5_dir} ]; then
-        iomp5_dir="/opt/intel/compilers_and_libraries/linux/lib"
+        iomp5_dir="/opt/intel/compilers_and_libraries/linux/lib/intel64"
     fi
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
@@ -95,5 +95,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         (cd ${iomp5_dir} && cp libiomp5.dylib ${output_dir})
     fi
 fi
+
+echo "Installed libsaf_mkl_custom into ${output_dir}"
 
 set +e
