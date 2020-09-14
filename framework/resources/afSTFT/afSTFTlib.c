@@ -124,17 +124,26 @@ void afSTFT_create
     afSTFTlib_init(&(h->hInt), hopsize, nCHin, nCHout, lowDelayMode, hybridmode);
 
     /* temp buffers */
-    h->STFTOutputFrameTF = malloc1d(nCHout * sizeof(complexVector));
-    for(ch=0; ch < nCHout; ch++) {
-        h->STFTOutputFrameTF[ch].re = (float*)calloc1d(h->nBands, sizeof(float));
-        h->STFTOutputFrameTF[ch].im = (float*)calloc1d(h->nBands, sizeof(float));
+    if(nCHout>0){
+        h->STFTOutputFrameTF = malloc1d(nCHout * sizeof(complexVector));
+        for(ch=0; ch < nCHout; ch++) {
+            h->STFTOutputFrameTF[ch].re = (float*)calloc1d(h->nBands, sizeof(float));
+            h->STFTOutputFrameTF[ch].im = (float*)calloc1d(h->nBands, sizeof(float));
+        }
     }
-    h->tempHopFrameTD = (float**)malloc2d( MAX(nCHin, nCHout), hopsize, sizeof(float));
-    h->STFTInputFrameTF = malloc1d(nCHin * sizeof(complexVector));
-    for(ch=0; ch < nCHin; ch++) {
-        h->STFTInputFrameTF[ch].re = (float*)calloc1d(h->nBands, sizeof(float));
-        h->STFTInputFrameTF[ch].im = (float*)calloc1d(h->nBands, sizeof(float));
+    else
+        h->STFTOutputFrameTF = NULL;
+    if(nCHout > 0 || nCHin > 0)
+        h->tempHopFrameTD = (float**)malloc2d( MAX(nCHin, nCHout), hopsize, sizeof(float));
+    if(nCHin>0){
+        h->STFTInputFrameTF = malloc1d(nCHin * sizeof(complexVector));
+        for(ch=0; ch < nCHin; ch++) {
+            h->STFTInputFrameTF[ch].re = (float*)calloc1d(h->nBands, sizeof(float));
+            h->STFTInputFrameTF[ch].im = (float*)calloc1d(h->nBands, sizeof(float));
+        }
     }
+    else
+        h->STFTInputFrameTF = NULL;
 }
 
 void afSTFT_destroy

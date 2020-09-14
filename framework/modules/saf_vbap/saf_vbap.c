@@ -68,7 +68,7 @@ void generateVBAPgainTable3D_srcs
     int i, L_d;
     int needDummy[2] = {1, 1};
     float* ls_dirs_d_deg;
-    
+
     /* find loudspeaker triangles */
     out_vertices = NULL;
     out_faces = NULL;

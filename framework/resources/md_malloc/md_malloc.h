@@ -67,6 +67,13 @@ extern "C" {
  * of data
  */
 #define FLATTEN3D(A) (**A) /* || (&A[0][0][0]) */
+
+/**
+ * Use this macro when passing a 4-D dynamic multi-dimensional array to
+ * memset, memcpy or any other function that expects a flat contiguous 1-D block
+ * of data
+ */
+#define FLATTEN4D(A) (***A) /* || (&A[0][0][0][0]) */
     
 /**
  * 1-D malloc (same as malloc, but with error checking)
@@ -128,6 +135,12 @@ void*** realloc3d(void*** ptr, size_t dim1, size_t dim2, size_t dim3,
 void*** realloc3d_r(void*** ptr, size_t new_dim1, size_t new_dim2,
                     size_t new_dim3, size_t prev_dim1, size_t prev_dim2,
                     size_t prev_dim3, size_t data_size);
+
+/** //UNTESTED! 
+ * 4-D malloc (contiguously allocated, so use free() as usual to deallocate)
+ */
+void**** malloc4d(size_t dim1, size_t dim2, size_t dim3, size_t dim4,
+                  size_t data_size);
 
 
 #ifdef __cplusplus

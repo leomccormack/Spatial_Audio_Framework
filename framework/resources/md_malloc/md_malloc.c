@@ -274,3 +274,33 @@ void*** realloc3d_r(void*** ptr, size_t new_dim1, size_t new_dim2, size_t new_di
     return ptr;
 }
 
+void**** malloc4d(size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t data_size)
+{
+    size_t i, j, k, stride1, stride2, stride3;
+    void**** ptr;
+    void*** p2;
+    void** p3;
+    unsigned char* p4;
+    stride1 = dim2*dim3*dim4*data_size;
+    stride2 = dim3*dim4*data_size;
+    stride3 = dim4*data_size;
+    ptr = malloc(dim1*sizeof(void***) + dim1*dim2*sizeof(void**) + dim1*dim2*dim3*sizeof(void*) + dim1*stride1);
+#if !defined(NDEBUG) && !defined(_MSC_VER)
+    if(ptr==NULL)
+        fprintf(stderr, "Error: 'malloc4d' failed to allocate %zu bytes.\n", dim1*sizeof(void***) + dim1*dim2*sizeof(void**) + dim1*dim2*dim3*sizeof(void*) + dim1*stride1);
+#endif
+    assert(ptr!=NULL); 
+    p2 = (void***)(ptr + dim1);
+    p3 = (void**)(p2 + dim1*dim2);
+    p4 = (unsigned char*)(p3 + dim1*dim2*dim3);
+    for(i=0;i<dim1;i++)
+        ptr[i] = &p2[i*dim2];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            p2[i*dim2+j] = &p3[i*stride1 + j*stride2];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                p3[i*dim2*dim3+j*dim3+k] = &p4[i*stride1 + j*stride2 + k*stride3];
+    return ptr;
+}
