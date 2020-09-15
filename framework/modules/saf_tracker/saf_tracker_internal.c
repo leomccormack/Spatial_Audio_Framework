@@ -41,6 +41,8 @@
 #include "saf_tracker.h"
 #include "saf_tracker_internal.h"
 
+#ifdef  SAF_ENABLE_TRACKER_MODULE
+
 /* ========================================================================== */
 /*                             Static Prototypes                              */
 /* ========================================================================== */
@@ -1047,3 +1049,5 @@ static double incompletegamma
     result = ans*ax/a;
     return result;
 }
+
+#endif /* SAF_ENABLE_TRACKER_MODULE */

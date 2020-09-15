@@ -41,6 +41,8 @@
 #include "saf_tracker_internal.h"
 #include "saf_tracker.h"
 
+#ifdef  SAF_ENABLE_TRACKER_MODULE
+
 void tracker3d_create
 (
     void ** const phT3d,
@@ -227,3 +229,4 @@ void tracker3d_step
     }
 }
 
+#endif /* SAF_ENABLE_TRACKER_MODULE */
