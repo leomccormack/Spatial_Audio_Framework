@@ -434,7 +434,8 @@ void transientDucker_apply
     for(band=0; band<h->nBands; band++){
         for(i=0; i<h->nCH; i++){
             for(t=0; t<nTimeSlots; t++){
-                detectorEne = powf(cabsf(inFrame[band][i][t]), 2.0f);
+                detectorEne = cabsf(inFrame[band][i][t]);
+                detectorEne = detectorEne*detectorEne;
                 h->transientDetector1[band][i] *= alpha;
                 if(h->transientDetector1[band][i]<detectorEne)
                     h->transientDetector1[band][i] = detectorEne;
@@ -442,7 +443,11 @@ void transientDucker_apply
                 if(h->transientDetector2[band][i] > h->transientDetector1[band][i])
                     h->transientDetector2[band][i] = h->transientDetector1[band][i];
                 transientEQ = MIN(1.0f, 4.0f * (h->transientDetector2[band][i])/(h->transientDetector1[band][i]+2.23e-9f));
+#ifdef _MSC_VER
                 outFrame[band][i][t] = crmulf(inFrame[band][i][t], transientEQ);
+#else
+                outFrame[band][i][t] = inFrame[band][i][t] * transientEQ;
+#endif
             }
         }
     }
