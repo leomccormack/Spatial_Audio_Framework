@@ -74,14 +74,10 @@ void loadSofaFile
         (*hrir_len) = __default_hrir_len;
         (*hrir_fs) = __default_hrir_fs;
         (*hrirs) = malloc1d((*N_hrir_dirs) * 2 * (*hrir_len)*sizeof(float));
-        for(i=0; i<(*N_hrir_dirs); i++)
-            for(j=0; j<2; j++)
-                for(k=0; k< (*hrir_len); k++)
-                    (*hrirs)[i*2*(*hrir_len) + j*(*hrir_len) + k] = (float)__default_hrirs[i][j][k];
+        memcpy((*hrirs), (float*)__default_hrirs, (*N_hrir_dirs) * 2 * (*hrir_len)*sizeof(float));
         (*hrir_dirs_deg) = malloc1d((*N_hrir_dirs) * 2 * sizeof(float));
-        for(i=0; i<(*N_hrir_dirs); i++){
-            for(j=0; j<2; j++)
-                (*hrir_dirs_deg)[i*2+j] = (float)__default_hrir_dirs_deg[i][j];
+        memcpy((*hrir_dirs_deg), (float*)__default_hrir_dirs_deg, (*N_hrir_dirs) * 2 * sizeof(float));
+        for(i=0; i<(*N_hrir_dirs); i++){ 
             if((*hrir_dirs_deg)[2*i+0]>=181.0f)
                 is0_360 = 1;
         }
