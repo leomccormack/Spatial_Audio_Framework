@@ -101,7 +101,7 @@ static void qmfAnalyse
     nTimeSlots = nSamplesTD/hopSize;
 
     /* allocate memory */
-    qmf_create(&(hQMF), nCH, 1, hopSize, hybridmode, QMF_BANDS_CH_TIME);
+    qmf_create(&(hQMF), nCH, 1, hopSize, hybridmode, QMF_TIME_CH_BANDS);
     FrameTF = (float_complex***)malloc3d(nTimeSlots, nCH, nBands, sizeof(float_complex));
     tempFrameTD = (float**)malloc2d(nCH, nSamplesTD, sizeof(float));
 
