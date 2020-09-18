@@ -422,8 +422,7 @@ void tracker3d_update
 
             /* find an untaken ID */
             j_new = 0;
-            for (ss = 0; ss<tpars->maxNactiveTargets; ss++){
-                j = 0;
+            for (ss = 0; ss<tpars->maxNactiveTargets; ss++){  
                 unique = 1;
                 for(j=0; j<S->nTargets; j++){
                     if(ss == S->targetIDs[j]){

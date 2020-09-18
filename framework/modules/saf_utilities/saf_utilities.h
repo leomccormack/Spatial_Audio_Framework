@@ -86,6 +86,14 @@
 #define FOURPI ( 12.566370614359172f )
 /** Converts elevation to inclincation, (in radians) */
 #define ELEV2INCL(E) ( (SAF_PI/2.0f - E) )
+#ifndef DEG2RAD
+/** Converts degrees to radians */
+# define DEG2RAD(x) (x * SAF_PI / 180.0f)
+#endif
+#ifndef RAD2DEG
+/** Converts radians to degrees  */
+# define RAD2DEG(x) (x * 180.0f / SAF_PI)
+#endif
 
 
 /* ========================================================================== */

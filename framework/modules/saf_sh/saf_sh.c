@@ -1020,7 +1020,7 @@ void sphMUSIC_compute
 )
 {
     sphMUSIC_data *h = (sphMUSIC_data*)(hMUSIC);
-    int i, j, k, VnD2, peak_idx;
+    int i, k, VnD2, peak_idx;
     float tmp, kappa, scale;
     float VM_mean[3];
     const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f);
@@ -1028,27 +1028,25 @@ void sphMUSIC_compute
     VnD2 = h->nSH - nSrcs; /* noise subspace second dimension length */
 
     /* derive the pseudo-spectrum value for each grid direction */
-    cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, VnD2, h->nDirs, h->nSH, &calpha,
-                Vn, VnD2,
-                h->grid_svecs, h->nDirs, &cbeta,
-                h->VnA, h->nDirs);
-    utility_cvabs(h->VnA, VnD2*(h->nDirs), h->abs_VnA);
-    for (i = 0; i < (h->nDirs); i++) {
-        tmp = 0.0f;
-        for (j = 0; j < VnD2; j++)
-            tmp += (h->abs_VnA[j*(h->nDirs)+i]*h->abs_VnA[j*(h->nDirs)+i]);
+    cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, h->nDirs, VnD2, h->nSH, &calpha,
+                h->grid_svecs, h->nDirs,
+                Vn, VnD2, &cbeta,
+                h->VnA, VnD2);
+    utility_cvabs(h->VnA, (h->nDirs)*VnD2, h->abs_VnA);
+    for (i = 0; i < (h->nDirs); i++) { 
+        tmp = cblas_sdot(VnD2, &(h->abs_VnA[i*VnD2]), 1, &(h->abs_VnA[i*VnD2]), 1);
         h->pSpec[i] = 1.0f / (tmp + 2.23e-10f);
     }
 
     /* Output pseudo-spectrum */
     if(P_music!=NULL)
-        memcpy(P_music, h->pSpec, h->nDirs*sizeof(float));
+        cblas_scopy(h->nDirs, h->pSpec, 1, P_music, 1);
 
     /* Peak-finding */
     if(peak_inds!=NULL){
         kappa = 50.0f;
         scale = kappa/(2.0f*SAF_PI*expf(kappa)-expf(-kappa));
-        memcpy(h->P_minus_peak, h->pSpec, h->nDirs*sizeof(float));
+        cblas_scopy(h->nDirs, h->pSpec, 1, h->P_minus_peak, 1);
 
         /* Loop over the number of sources */
         for(k=0; k<nSrcs; k++){
@@ -1065,10 +1063,12 @@ void sphMUSIC_compute
                         h->grid_dirs_xyz, 3,
                         (const float*)VM_mean, 3, 0.0f,
                         h->VM_mask, 1);
-            for(i=0; i<h->nDirs; i++){
-                h->VM_mask[i] = scale * expf(kappa * (h->VM_mask[i])); /* VM distribution */
-                h->VM_mask[i] = 1.0f/(0.00001f+(h->VM_mask[i])); /*inverse VM distribution*/
-            }
+            cblas_sscal(h->nDirs, kappa, h->VM_mask, 1);
+            for(i=0; i<h->nDirs; i++)
+                h->VM_mask[i] = expf(h->VM_mask[i]);             /* VM distribution */
+            cblas_sscal(h->nDirs, scale, h->VM_mask, 1);
+            for(i=0; i<h->nDirs; i++)
+                h->VM_mask[i] = 1.0f/(0.00001f+(h->VM_mask[i])); /* inverse VM distribution */
             utility_svvmul(h->P_minus_peak, h->VM_mask, h->nDirs, h->P_minus_peak);
         }
     }
