@@ -73,7 +73,10 @@ extern const float __lattice_coeffs_o2[256][2];
  *       transientDucker_create()
  *
  * @param[in]  nChannels  Number of channels
- * @param[in]  freqs      Centre frequencies; nFreqs x 1
+ * @param[in]  freqs      A vector with the centre frequency for each band in
+ *                        the filterbank or bin in the STFT. Use e.g.
+ *                        afSTFT_getCentreFreqs() or getUniformFreqVector() to
+ *                        obtain it; nFreqs x 1
  * @param[in]  nFreqs     Number of elements in frequency vector
  * @param[in]  fs         Sampling rate
  * @param[in]  maxTFdelay Max number of time-slots to delay
@@ -128,13 +131,10 @@ void synthesiseNoiseReverb(/* Input Arguments */
  * domain, and is therefore well-suited for audio coding [1] or Direction Audio
  * Coding (DirAC) [2] purposes.
  *
- * @note Contrary to how the decorrelator is defined in the standard [3], it is
- *       recommended to use lower orders. Note that one may cascade 2 instances
+ * @note It is recommended to use lower orders. You may also cascade 2 instances
  *       (each with lower orders), to attain the desired decorrelation without
  *       introducing instabilities, which accompanies the use of the much higher
- *       filter orders. Furthermore, the coefficients found in
- *       saf_utility_latticeCoeffs.h differ from those found in the standard [3]
- *       so the output will also be numerically different.
+ *       filter orders.
  * @test test__latticeDecorrelator()
  *
  * @param[in] phDecor      (&) address of lattice decorrelator handle
@@ -145,8 +145,10 @@ void synthesiseNoiseReverb(/* Input Arguments */
  *                         nCutoffs x 1
  * @param[in] fixedDelays  Fixed time-frequency hop delays; (nCutoffs+1) x 1
  * @param[in] nCutoffs     Number of cutoff frequencies
- * @param[in] freqVector   A vector with the centre frequency for each frequency bin in the STFT.
- *                         Use e.g. afSTFT_getCentreFreqs() or getUniformFreqVector() to create one; nBands x 1
+ * @param[in] freqVector   A vector with the centre frequency for each band in
+ *                         the filterbank or bin in the STFT. Use e.g.
+ *                         afSTFT_getCentreFreqs() or getUniformFreqVector() to
+ *                         obtain it; nBands x 1
  * @param[in] lookupOffset Optional offset for look-up tables (set to 0 if using
  *                         just one instance)
  * @param[in] nBands       Number of bands
@@ -158,9 +160,6 @@ void synthesiseNoiseReverb(/* Input Arguments */
  *          Audio Engineering Society, 56(11), pp.932--955
  * @see [2] Pulkki, V., 2007. Spatial sound reproduction with directional audio
  *          coding. Journal of the Audio Engineering Society, 55(6), pp.503-516
- * @see [3] ISO/IEC FCD 23003-1, "MPEG-D (MPEG Audio Technologies)--Part 1: MPEG
- *          Surround" International Standards Organization, Geneva, Switzerland
- *          (2006)
  */
 void latticeDecorrelator_create(/* Input Arguments */
                                 void** phDecor,

@@ -27,6 +27,7 @@ Instructions regarding how to build a custom MKL library for Windows, MacOSX, an
 Run the following bash script (**sudo** privileges required):
 
 ```
+cd scripts
 sudo ./install-safmkl.sh [threaded|sequential]
 ```
 
@@ -49,6 +50,7 @@ Then add the following linker flag to your project:
 Run the following batch script using **x64 Developer Command Prompt for VS.exe** (open as **administrator**):
 
 ```
+cd scripts
 install-safmkl.bat
 ```
 
