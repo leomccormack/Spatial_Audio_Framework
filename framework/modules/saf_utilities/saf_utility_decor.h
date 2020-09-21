@@ -145,7 +145,8 @@ void synthesiseNoiseReverb(/* Input Arguments */
  *                         nCutoffs x 1
  * @param[in] fixedDelays  Fixed time-frequency hop delays; (nCutoffs+1) x 1
  * @param[in] nCutoffs     Number of cutoff frequencies
- * @param[in] freqVector   Frequency vector; nBands x 1
+ * @param[in] freqVector   A vector with the centre frequency for each frequency bin in the STFT.
+ *                         Use e.g. afSTFT_getCentreFreqs() or getUniformFreqVector() to create one; nBands x 1
  * @param[in] lookupOffset Optional offset for look-up tables (set to 0 if using
  *                         just one instance)
  * @param[in] nBands       Number of bands
