@@ -31,6 +31,15 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** Available euler2rotationMatrix() conventions */
+typedef enum _EULER_ROTATION_CONVENTIONS{
+    EULER_ROTATION_Y_CONVENTION,   /**< y-convention, 'zyz' */
+    EULER_ROTATION_X_CONVENTION,   /**< x-convention, 'zxz' */
+    EULER_ROTATION_YAW_PITCH_ROLL, /**< yaw-pitch-roll, 'zyx' */
+    EULER_ROTATION_ROLL_PITCH_YAW  /**< roll-pitch-yaw, 'xyz' */
+
+}EULER_ROTATION_CONVENTIONS;
+
 /**
  * Data structure for Voronoi diagrams
  *
@@ -47,8 +56,29 @@ typedef struct _voronoi_data{
 }voronoi_data;
 
 /**
+ * Constructs a 3x3 rotation matrix from the Euler angles
+ *
+ * @param[in]  alpha       first rotation angle
+ * @param[in]  beta        first rotation angle
+ * @param[in]  gamma       first rotation angle
+ * @param[in]  degreesFlag 1: angles are in degrees, 0: angles are in radians
+ * @param[in]  convention  see #_EULER_ROTATION_CONVENTIONS enum
+ * @param[out] R           resulting 3x3 rotation matrix
+ */
+void euler2rotationMatrix(/* Input Arguments */
+                          float alpha,
+                          float beta,
+                          float gamma,
+                          int degreesFlag,
+                          EULER_ROTATION_CONVENTIONS convention,
+                          /* Output Arguments */
+                          float R[3][3]);
+
+/**
  * Constructs a 3x3 rotation matrix from the Euler angles, using the
  * yaw-pitch-roll (zyx) convention
+ *
+ * @note This function now just calls: euler2rotationMatrix()
  *
  * @param[in]  yaw              Yaw angle in radians
  * @param[in]  pitch            Pitch angle in radians
@@ -62,7 +92,6 @@ void yawPitchRoll2Rzyx (/* Input Arguments */
                         float pitch,
                         float roll,
                         int rollPitchYawFLAG,
-                        /* Output Arguments */
                         float R[3][3]);
 
 /**

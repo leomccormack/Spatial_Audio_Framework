@@ -337,6 +337,20 @@ float sumf
     return sum;
 }
 
+int anyLessThanf
+(
+    float* values,
+    int nValues,
+    float threshold
+)
+{
+    int i;
+    for(i=0; i<nValues; i++)
+        if(values[i]<threshold)
+            return 1;
+    return 0;
+}
+
 void unique_i
 (
     int* input,

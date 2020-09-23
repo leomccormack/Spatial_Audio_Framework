@@ -238,6 +238,14 @@ float sumf(float* values,
            int nValues);
 
 /**
+ * Returns 1, if any value in 'values' (nValues x 1) is less than 'threshold',
+ * otherwise, it returns 0
+ */
+int anyLessThanf(float* values,
+                 int nValues,
+                 float threshold);
+
+/**
  * Finds the unique values (and their indices) of the input vector
  *
  * @note this is equivalent to using "unique(vals, 'last')" in Matlab

@@ -28,60 +28,117 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/**< Helper function for euler2rotationMatrix() */
+static void getRx
+(
+    float theta_rad,
+    float Rx[3][3]
+)
+{
+    Rx[0][0] = 1.0f;
+    Rx[0][1] = 0.0f;
+    Rx[0][2] = 0.0f;
+    Rx[1][0] = 0.0f;
+    Rx[1][1] = cosf(theta_rad);
+    Rx[1][2] = sinf(theta_rad);
+    Rx[2][0] = 0.0f;
+    Rx[2][1] = -sinf(theta_rad);
+    Rx[2][2] = cosf(theta_rad);
+}
+
+/**< Helper function for euler2rotationMatrix() */
+static void getRy
+(
+    float theta_rad,
+    float Ry[3][3]
+)
+{
+    Ry[0][0] = cosf(theta_rad);
+    Ry[0][1] = 0.0f;
+    Ry[0][2] = -sinf(theta_rad);
+    Ry[1][0] = 0.0f;
+    Ry[1][1] = 1.0f;
+    Ry[1][2] = 0.0f;
+    Ry[2][0] = sinf(theta_rad);
+    Ry[2][1] = 0.0f;
+    Ry[2][2] = cosf(theta_rad);
+}
+
+/**< Helper function for euler2rotationMatrix() */
+static void getRz
+(
+    float theta_rad,
+    float Rz[3][3]
+)
+{
+    Rz[0][0] = cosf(theta_rad);
+    Rz[0][1] = sinf(theta_rad);
+    Rz[0][2] = 0.0f;
+    Rz[1][0] = -sinf(theta_rad);
+    Rz[1][1] = cosf(theta_rad);
+    Rz[1][2] = 0.0f;
+    Rz[2][0] = 0.0f;
+    Rz[2][1] = 0.0f;
+    Rz[2][2] = 1.0f;
+} 
+
+void euler2rotationMatrix
+(
+    float alpha,
+    float beta,
+    float gamma,
+    int degreesFlag,
+    EULER_ROTATION_CONVENTIONS convention,
+    float R[3][3]
+)
+{
+    float R1[3][3], R2[3][3], R3[3][3], Rtmp[3][3];
+
+    switch(convention){
+        case EULER_ROTATION_Y_CONVENTION:
+            getRz(degreesFlag ? alpha*SAF_PI/180.0f : alpha, R1);
+            getRy(degreesFlag ? beta*SAF_PI/180.0f  : beta,  R2);
+            getRz(degreesFlag ? gamma*SAF_PI/180.0f : gamma, R3);
+            break;
+        case EULER_ROTATION_X_CONVENTION:
+            getRz(degreesFlag ? alpha*SAF_PI/180.0f : alpha, R1);
+            getRx(degreesFlag ? beta*SAF_PI/180.0f  : beta,  R2);
+            getRz(degreesFlag ? gamma*SAF_PI/180.0f : gamma, R3);
+            break;
+        case EULER_ROTATION_YAW_PITCH_ROLL:
+            getRz(degreesFlag ? alpha*SAF_PI/180.0f : alpha, R1);
+            getRy(degreesFlag ? beta*SAF_PI/180.0f  : beta,  R2);
+            getRx(degreesFlag ? gamma*SAF_PI/180.0f : gamma, R3);
+            break;
+        case EULER_ROTATION_ROLL_PITCH_YAW:
+            getRx(degreesFlag ? alpha*SAF_PI/180.0f : alpha, R1);
+            getRy(degreesFlag ? beta*SAF_PI/180.0f  : beta,  R2);
+            getRz(degreesFlag ? gamma*SAF_PI/180.0f : gamma, R3);
+            break;
+    }
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 3, 3, 1.0f,
+                (float*)R2, 3,
+                (float*)R1, 3, 0.0f,
+                (float*)Rtmp, 3);
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 3, 3, 1.0f,
+                (float*)R3, 3,
+                (float*)Rtmp, 3, 0.0f,
+                (float*)R, 3);
+}
+
 void yawPitchRoll2Rzyx
 (
     float yaw,
     float pitch,
     float roll,
-    int rollPitchYawFLAG, /* use Rxyz, i.e. apply roll, pitch and then yaw */
+    int rollPitchYawFLAG,
     float R[3][3]
 )
 {
-    int m,n,k;
-    float Rtmp[3][3] = {{0.0f}};
-    float Rx[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
-    float Ry[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
-    float Rz[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
-
-    /* var Rx, Ry, Rz; */
-    if (roll != 0) {
-        Rx[1][1] =  cosf(roll); Rx[1][2] = sinf(roll);
-        Rx[2][1] = -sinf(roll); Rx[2][2] = cosf(roll);
-    }
-    if (pitch != 0){
-        Ry[0][0] = cosf(pitch); Ry[0][2] = -sinf(pitch);
-        Ry[2][0] = sinf(pitch); Ry[2][2] =  cosf(pitch);
-    }
-    if (yaw != 0){
-        Rz[0][0] =  cosf(yaw); Rz[0][1] = sinf(yaw);
-        Rz[1][0] = -sinf(yaw); Rz[1][1] = cosf(yaw);
-    }
-    if(rollPitchYawFLAG){
-        /* rotation order: roll-pitch-yaw */
-        for (m=0;m<3; m++){
-            memset(R[m], 0, 3*sizeof(float));
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    Rtmp[m][n] += Ry[m][k] * Rx[k][n];
-        }
-        for (m=0;m<3; m++)
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    R[m][n] += Rz[m][k] * Rtmp[k][n];
-    }
-    else{
-        /* rotation order: yaw-pitch-roll */
-        for (m=0;m<3; m++){
-            memset(R[m], 0, 3*sizeof(float));
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    Rtmp[m][n] += Ry[m][k] * Rz[k][n];
-        }
-        for (m=0;m<3; m++)
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    R[m][n] += Rx[m][k] * Rtmp[k][n];
-    }
+    if(rollPitchYawFLAG)
+        euler2rotationMatrix(yaw, pitch, roll, 0, EULER_ROTATION_ROLL_PITCH_YAW, R);
+    else
+        euler2rotationMatrix(yaw, pitch, roll, 0, EULER_ROTATION_YAW_PITCH_ROLL, R);
 }
 
 void unitSph2cart
@@ -136,12 +193,19 @@ void unitCart2sph
             dirs[i] *= (180.0f/SAF_PI);
 }
 
-float L2_norm3(float v[3])
+float L2_norm3
+(
+    float v[3]
+)
 {
     return sqrtf(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
 }
 
-float L2_norm(float* v, int lenV)
+float L2_norm
+(
+    float* v,
+    int lenV
+)
 {
     int i;
     float res;
@@ -151,7 +215,12 @@ float L2_norm(float* v, int lenV)
     return sqrtf(res);
 }
 
-float Frob_norm(float* M, int lenX, int lenY)
+float Frob_norm
+(
+    float* M,
+    int lenX,
+    int lenY
+)
 {
     int i;
     float res;
@@ -168,7 +237,13 @@ float Frob_norm(float* M, int lenX, int lenY)
     return sqrtf(res);
 }
 
-void crossProduct3(float a[3], float b[3], float c[3]){
+void crossProduct3
+(
+    float a[3],
+    float b[3],
+    float c[3]
+)
+{
     c[0] = a[1]*b[2]-a[2]*b[1];
     c[1] = a[2]*b[0]-a[0]*b[2];
     c[2] = a[0]*b[1]-a[1]*b[0];
