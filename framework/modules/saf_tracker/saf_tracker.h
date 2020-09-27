@@ -119,6 +119,13 @@ void tracker3d_create(void** const phT3d,
  * @param[in] phT3d (&) address of tracker3d handle
  */
 void tracker3d_destroy(void** const phT3d);
+
+/**
+ * Resets an instance of the mighty tracker3d
+ *
+ * @param[in] hT3d tracker3d handle
+ */
+void tracker3d_reset(void* const hT3d);
     
 /**
  * Tracker time step to update & predict current target locations and to parse

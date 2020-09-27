@@ -134,6 +134,26 @@ void tracker3d_particleCreate
     p->Tcount = NULL;
 }
 
+void tracker3d_particleReset
+(
+    void* hPart
+)
+{
+    MCS_data *p = (MCS_data*)(hPart);
+
+    p->W = p->W0;
+    p->W_prev = p->W0;
+    p->nTargets = 0;
+    free(p->M);
+    free(p->P);
+    free(p->targetIDs);
+    free(p->Tcount);
+    p->M = NULL;
+    p->P = NULL;
+    p->targetIDs = NULL;
+    p->Tcount = NULL;
+}
+
 void tracker3d_particleCopy
 (
      void* hPart1,

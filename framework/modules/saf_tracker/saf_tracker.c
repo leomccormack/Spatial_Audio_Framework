@@ -132,6 +132,19 @@ void tracker3d_destroy
         pData = NULL;
     }
 }
+
+void tracker3d_reset
+(
+    void* const hT3d
+)
+{
+    tracker3d_data *pData = (tracker3d_data*)(hT3d);
+    int i;
+ 
+    pData->incrementTime = 0;
+    for(i=0; i<pData->tpars.Np; i++)
+        tracker3d_particleReset(pData->SS[i]);
+}
   
 void tracker3d_step
 (

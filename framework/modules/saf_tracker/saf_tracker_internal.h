@@ -159,6 +159,13 @@ void tracker3d_particleCreate(void** phPart,
                               float dt);
 
 /**
+ * Resets a particle structure to defaults
+ *
+ * @param[in] hPart Particle structure
+ */
+void tracker3d_particleReset(void* hPart);
+
+/**
  * Copies particle structure "hPart1" into structure "hPart2"
  *
  * @param[in] hPart1 Particle structure 1
