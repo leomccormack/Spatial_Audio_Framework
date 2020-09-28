@@ -35,7 +35,7 @@
  * @file saf.h
  * @brief Main include header for the Spatial_Audio_Framework (SAF)
  *
- * ## Core modules
+ * ## Core modules (ISC License)
  *   saf_utilities, saf_cdf4sap, saf_hoa, saf_hrir, saf_sh, saf_vbap, saf_reverb
  *
  * ## Optional modules
@@ -74,7 +74,7 @@
 /* ========================================================================== */
 
 /* The license governing SAF is configuration dependent */
-#ifdef SAF_ENABLE_TRACKER_MODULE
+#if defined(SAF_ENABLE_TRACKER_MODULE) 
 /** The Spatial_Audio_Framework is governed by the GNU GPLv2 License */
 # define SAF_LICENSE_STRING "GNU GPLv2"
 #else
