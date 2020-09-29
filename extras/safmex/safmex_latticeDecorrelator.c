@@ -70,7 +70,8 @@ float_complex*** dataFD_out = NULL;
 
 const int nSupportedOrders = 12;
 const int supportedOrders[12] = {2,3,4,6,8,10,12,14,15,16,18,20};
-        
+
+
 /* ===================================================================== */
 /*                              MEX Wrapper                              */
 /* ===================================================================== */
@@ -116,10 +117,10 @@ void mexFunction
         nCH = (int)mxGetScalar(prhs[0]); 
         MEXdouble2SAFsingle_int(prhs[1], &orders, &nDims, &pDims);
          
-        nCutoffs = pDims[0]-1; 
+        nCutoffs = pDims[0];
         if( nCutoffs<=1 )
             mexErrMsgIdAndTxt("MyToolbox:inputError","freqCutoffs vector must be longer than 1 element."); 
-        for(i=0; i<nCutoffs+1; i++){
+        for(i=0; i<nCutoffs; i++){
             int supportedOrder = 0;
             for(j=0; j<nSupportedOrders; j++)
                 if(orders[i] == supportedOrders[j])
@@ -131,11 +132,11 @@ void mexFunction
         
         MEXdouble2SAFsingle(prhs[2], &freqCutoffs, &nDims, &pDims);
         if(pDims[0] != nCutoffs )
-            mexErrMsgIdAndTxt("MyToolbox:inputError","freqCutoffs vector must be 1 element smaller than vectors: 'orders' and 'fixedDelays'."); 
+            mexErrMsgIdAndTxt("MyToolbox:inputError","freqCutoffs vector must be the same length as orders vector.");
                 
         MEXdouble2SAFsingle_int(prhs[3], &fixedDelays, &nDims, &pDims); 
         if(pDims[0] != nCutoffs+1 )
-            mexErrMsgIdAndTxt("MyToolbox:inputError","fixedDelays vector must be the same length as vector: 'orders'."); 
+            mexErrMsgIdAndTxt("MyToolbox:inputError","fixedDelays vector must be one element bigger than: 'orders' and 'freqCutoffs'.");
                
         MEXdouble2SAFsingle(prhs[4], &freqVector, &nDims, &pDims);
         nBands = pDims[0];  
@@ -152,7 +153,7 @@ void mexFunction
         mexPrintf("Creating latticeDecorrelator:");
         snprintf(message, MSG_STR_LENGTH, " %d channels,", nCH); mexPrintf(message);
         mexPrintf(" filter orders = ["); 
-        for(i=0; i<nCutoffs+1; i++){
+        for(i=0; i<nCutoffs; i++){
             snprintf(message, MSG_STR_LENGTH, " %d ", orders[i]); 
             mexPrintf(message);
         }  

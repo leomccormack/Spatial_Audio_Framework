@@ -18,7 +18,7 @@
 % INPUT ARGUMENTS 
 %   NCH:         Number of channels
 %   ORDERS       Lattice all-pass filter orders (2,3,4,6,8,10,12,14,15,16,18
-%                , or 20) per band grouping; (nCutoffs+1) x 1 
+%                , or 20) per band grouping; nCutoffs x 1
 %   FREQCUTOFFS  Frequency cut-offs defining the band groupings; 
 %                nCutoffs x 1
 %   FIXEDDELAYS  Fixed time-frequency hop delays; (nCutoffs+1) x 1 
@@ -31,7 +31,7 @@
 %   nCH = 6; 
 %   hopsize = 128;
 %   blocksize = 2048*24; 
-%   orders = [6 6 4 3 2].';
+%   orders = [6 6 4 3].';
 %   fixedDelays = [ 8 6 4 2 2].';
 %   freqCutoffs = [ 300 800 2e3, 4e3].';
 %   timeslots = blocksize/hopsize;
