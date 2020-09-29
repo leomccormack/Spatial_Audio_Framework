@@ -140,7 +140,8 @@ void synthesiseNoiseReverb(/* Input Arguments */
  * @param[in] phDecor      (&) address of lattice decorrelator handle
  * @param[in] nCH          Number of channels
  * @param[in] orders       Lattice all-pass filter orders (2,3,4,6,8,10,12,14,
- *                         15,16 18, or 20) per band grouping; (nCutoffs+1) x 1
+ *                         15,16 18, or 20) per band grouping (except the last
+ *                         one); nCutoffs x 1
  * @param[in] freqCutoffs  Frequency cut-offs defining the band groupings;
  *                         nCutoffs x 1
  * @param[in] fixedDelays  Fixed time-frequency hop delays; (nCutoffs+1) x 1
