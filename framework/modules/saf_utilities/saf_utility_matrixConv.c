@@ -70,6 +70,7 @@ void  saf_matrixConv_create
     if(!h->usePartFLAG){
         /* intialise non-partitioned convolution mode */
         h->numOvrlpAddBlocks = (int)(ceilf((float)(hopSize+length_h-1)/(float)hopSize)+0.1f);
+        //h->numOvrlpAddBlocks = nextpow2((int)(ceilf((float)(hopSize+length_h-1)/(float)hopSize)+0.1f));
         h->fftSize = (h->numOvrlpAddBlocks)*hopSize;
         h->nBins = h->fftSize/2 + 1;
         
@@ -94,6 +95,7 @@ void  saf_matrixConv_create
     }
     else{
         /* intialise partitioned convolution mode */
+        h->length_h = length_h;
         h->fftSize = 2*(h->hopSize);
         h->nBins = hopSize+1;
         h->numFilterBlocks = (int)ceilf((float)length_h/(float)hopSize); /* number of partitions */

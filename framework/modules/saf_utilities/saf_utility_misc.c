@@ -34,6 +34,23 @@
 static const long double factorials_15[15] =
 {1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0, 39916800.0, 479001600.0, 6.2270208e9, 8.71782891e10};
 
+int nextpow2
+(
+    int numsamp
+)
+{
+    int npts_max;
+
+    if (numsamp > INT_MAX)
+        return 0;
+    npts_max = 1;
+    while( 1 ){
+        npts_max *= 2;
+        if (npts_max >= numsamp)
+            return npts_max;
+    }
+}
+
 void lagrangeWeights
 (
     int N,

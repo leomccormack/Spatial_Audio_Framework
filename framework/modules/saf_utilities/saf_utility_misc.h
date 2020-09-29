@@ -90,6 +90,15 @@ extern "C" {
 #define _impl_CASSERT_LINE(predicate, line, file) \
  typedef char _impl_PASTE(assertion_failed_##file##_,line)[2*!!(predicate)-1];
 
+
+/**
+ * A simple function which returns the next power of 2.
+ *
+ * Taken from (no license):
+ * https://github.com/amaggi/legacy-code
+ */
+int nextpow2(int numsamp);
+
 /**
  * Computes Lagrange interpolation weights of order 'N' for value 'x'
  *

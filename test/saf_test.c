@@ -70,13 +70,13 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
 
-    /* run each unit test */ 
+    /* run each unit test */
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
     RUN_TEST(test__ims_shoebox_TD);
-    RUN_TEST(test__saf_rfft);
     RUN_TEST(test__saf_matrixConv);
+    RUN_TEST(test__saf_rfft); 
     RUN_TEST(test__afSTFT);
     RUN_TEST(test__qmf);
     RUN_TEST(test__smb_pitchShifter);
@@ -383,8 +383,8 @@ void test__saf_matrixConv(void){
 
     /* config */
     const int signalLength = 48000;
-    const int hostBlockSize = 512;
-    const int filterLength = 256;
+    const int hostBlockSize = 2048;
+    const int filterLength = 512;
     const int nInputs = 32;
     const int nOutputs = 40;
 

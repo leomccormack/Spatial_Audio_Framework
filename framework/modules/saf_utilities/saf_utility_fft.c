@@ -106,24 +106,6 @@ typedef struct _saf_fft_data {
     
 }saf_fft_data;
 
-/**
- * A simple function which returns the next power of 2, taken from:
- * https://github.com/amaggi/legacy-code
- */
-static int nextpow2(int numsamp)
-{
-    int npts_max;
-    
-    if (numsamp > INT_MAX)
-        return 0;
-    npts_max = 1;
-    while( 1 ){
-        npts_max *= 2;
-        if (npts_max >= numsamp)
-            return npts_max;
-    }
-}
-
 
 /* ========================================================================== */
 /*                               Misc. Functions                              */
