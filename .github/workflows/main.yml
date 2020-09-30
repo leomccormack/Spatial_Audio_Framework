@@ -28,7 +28,7 @@ jobs:
         # Path to Doxyfile
         doxyfile-path: "./docs/doxygen/doxygen_config"
         # Working directory
-        working-directory: "." # default is .
+        working-directory: "./docs/doxygen/" # default is .
     
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
