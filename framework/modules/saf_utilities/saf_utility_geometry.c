@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/**< Helper function for euler2rotationMatrix() */
+/** Helper function for euler2rotationMatrix() */
 static void getRx
 (
     float theta_rad,
@@ -46,7 +46,7 @@ static void getRx
     Rx[2][2] = cosf(theta_rad);
 }
 
-/**< Helper function for euler2rotationMatrix() */
+/** Helper function for euler2rotationMatrix() */
 static void getRy
 (
     float theta_rad,
@@ -64,7 +64,7 @@ static void getRy
     Ry[2][2] = cosf(theta_rad);
 }
 
-/**< Helper function for euler2rotationMatrix() */
+/** Helper function for euler2rotationMatrix() */
 static void getRz
 (
     float theta_rad,

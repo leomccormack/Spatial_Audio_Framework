@@ -52,16 +52,16 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/**< Spits out tracker status info to the terminal */
+/** Spits out tracker status info to the terminal */
 //#define TRACKER_VERBOSE
 #ifdef TRACKER_VERBOSE
-/**< Spits out even more tracker information */
+/** Spits out even more tracker information */
 //# define TRACKER_VERY_VERBOSE
 #endif
 
-/**< Maximum number of possible events during update */
+/** Maximum number of possible events during update */
 #define TRACKER3D_MAX_NUM_EVENTS ( 24 )
-/**< Maximum number of particles */
+/** Maximum number of particles */
 #define TRACKER3D_MAX_NUM_PARTICLES ( 100 )
 
 /* ========================================================================== */

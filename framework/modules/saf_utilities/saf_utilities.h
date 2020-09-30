@@ -82,7 +82,7 @@
 #endif
 /** sqrt(4pi) (single precision) */
 #define SQRT4PI ( 3.544907701811032f )
-/* 4pi (single precision) */
+/** 4pi (single precision) */
 #define FOURPI ( 12.566370614359172f )
 /** Converts elevation to inclincation, (in radians) */
 #define ELEV2INCL(E) ( (SAF_PI/2.0f - E) )

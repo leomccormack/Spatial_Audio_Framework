@@ -1,5 +1,5 @@
-doxygen/html
-doxygen/latex
+docs/doxygen/html
+docs/doxygen/latex
 xcuserdata/
 build/
 x64/

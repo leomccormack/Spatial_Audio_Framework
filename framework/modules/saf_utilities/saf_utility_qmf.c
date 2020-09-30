@@ -65,8 +65,13 @@ static const float __qmf2hybCentreFreq[10][QMF_NBANDS_2_SUBDIVIDE] =
 
 /** Data structure for the complex-QMF filterbank */
 typedef struct _qmf_data {
-    int hopsize, hybridmode, nCHin, nCHout, nBands, procDelay;
-    QMF_FDDATA_FORMAT format;
+    int hopsize;                      /**< Hop size in samples */
+    int hybridmode;                   /**< 1: hybrid filtering enabled; 0: disabled */
+    int nCHin;                        /**< Number of input channels */
+    int nCHout;                       /**< Number of output channels*/
+    int nBands;                       /**< Number of frequency bands */
+    int procDelay;                    /**< Processing delay in samples */
+    QMF_FDDATA_FORMAT format;         /**< see #_QMF_FDDATA_FORMAT */ 
 
     /* QMF Analysis and Synthesis filters */
     float_complex** h_a;

@@ -78,13 +78,18 @@ static const float __stft2hybCentreFreq[9][5] =
 
 /** Data structure for the afSTFT filterbank */
 typedef struct _afSTFT_data {
-    int hopsize, hybridmode, nCHin, nCHout, nBands, procDelay;
-    AFSTFT_FDDATA_FORMAT format;
-    void* hInt;
-    complexVector* STFTInputFrameTF;
-    complexVector* STFTOutputFrameTF;
-    int afSTFTdelay;                /**< for host delay compensation */
-    float** tempHopFrameTD;         /**< temporary multi-channel time-domain buffer of size "HOP_SIZE". */
+    int hopsize;                      /**< Hop size in samples */
+    int hybridmode;                   /**< 1: hybrid filtering enabled; 0: disabled */
+    int nCHin;                        /**< Number of input channels */
+    int nCHout;                       /**< Number of output channels*/
+    int nBands;                       /**< Number of frequency bands */
+    int procDelay;                    /**< Processing delay in samples */
+    AFSTFT_FDDATA_FORMAT format;      /**< see #_AFSTFT_FDDATA_FORMAT */
+    void* hInt;                       /**< Internal handle for afSTFT */
+    complexVector* STFTInputFrameTF;  /**< Interal input complex buffer */
+    complexVector* STFTOutputFrameTF; /**< Interal output complex buffer */
+    int afSTFTdelay;                  /**< for host delay compensation */
+    float** tempHopFrameTD;           /**< temporary multi-channel time-domain buffer of size "HOP_SIZE". */
 
 }afSTFT_data;
 

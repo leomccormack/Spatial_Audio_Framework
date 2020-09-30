@@ -58,10 +58,10 @@ extern "C" {
 # define AMBI_DRC_NUM_DISPLAY_TIME_SLOTS ( (int)(AMBI_DRC_NUM_DISPLAY_SECONDS*48000.0f/(float)128) )
 /** Number of samples to offset when reading TF data */
 # define AMBI_DRC_READ_OFFSET ( 200 )
-/**< Number of frequency bands used during processing */
+/** Number of frequency bands used during processing */
 # define AMBI_DRC_NUM_BANDS ( 133 )
 #endif
-/**< -16dB, maximum gain reduction for a given frequency band */
+/** -16dB, maximum gain reduction for a given frequency band */
 #define AMBI_DRC_SPECTRAL_FLOOR (0.1585f)
 
 #define AMBI_DRC_IN_GAIN_MIN_VAL ( -40.0f )   /**< Minimum input gain, dB */

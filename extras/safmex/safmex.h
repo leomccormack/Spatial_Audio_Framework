@@ -24,27 +24,30 @@
 #include "mex.h"
 #include "saf.h" 
 
+/** Warning/error message character length */
 #define MSG_STR_LENGTH ( 2048 )
-char message[MSG_STR_LENGTH];
+char message[MSG_STR_LENGTH]; /**< Current warning/error message */
 /* snprintf(message, MSG_STR_LENGTH, "mem required: %d", numElements); mexPrintf(message); */
 
+/** Supported SAF/MEX data conversions */
 typedef enum _MEX_DATA_TYPES{
-    SM_INT32 = 0, 
+    SM_INT32 = 0,                /**< Integer; 1 x 1 */
     
     /* Double-precision floating-point types */
-    SM_DOUBLE_REAL, 
-    SM_DOUBLE_COMPLEX, 
-    SM_DOUBLE_REAL_1D, 
-    SM_DOUBLE_COMPLEX_1D, 
-    SM_DOUBLE_REAL_1D_OR_2D, 
-    SM_DOUBLE_COMPLEX_1D_OR_2D,
-    SM_DOUBLE_REAL_2D, 
-    SM_DOUBLE_COMPLEX_2D,
-    SM_DOUBLE_REAL_3D, 
-    SM_DOUBLE_COMPLEX_3D
+    SM_DOUBLE_REAL,              /**< Scalar, real valued; 1 x 1 */
+    SM_DOUBLE_COMPLEX,           /**< Scalar, complex valued; 1 x 1 */
+    SM_DOUBLE_REAL_1D,           /**< Real 1-D vector; N x 1 */
+    SM_DOUBLE_COMPLEX_1D,        /**< Complex 1-D vector; N x 1 */
+    SM_DOUBLE_REAL_1D_OR_2D,     /**< Real 2-D matrix or 1-D vector; N x M | N x 1 */
+    SM_DOUBLE_COMPLEX_1D_OR_2D,  /**< Complex 2-D matrix or 1-D vector; N x M | N x 1 */
+    SM_DOUBLE_REAL_2D,           /**< Real 2-D matrix; N x M */
+    SM_DOUBLE_COMPLEX_2D,        /**< Complex 2-D matrix; N x M */
+    SM_DOUBLE_REAL_3D,           /**< Real 3-D matrix; N x M x K */
+    SM_DOUBLE_COMPLEX_3D         /**< Complex 3-D matrix; N x M x K */
             
 }MEX_DATA_TYPES;
 
+/** Helper function to check number of inputs/outputs arguments are as expected */
 void checkNumInOutArgs(int nInputs, int nOutputs, int nInputs_expected, int nOutputs_expected)
 { 
     if(nInputs != nInputs_expected){
@@ -57,6 +60,7 @@ void checkNumInOutArgs(int nInputs, int nOutputs, int nInputs_expected, int nOut
     }
 }
 
+/** Helper function to check the format of the input/output arguments are as expected */
 void checkArgDataTypes(mxArray** hData, MEX_DATA_TYPES* dataTypes, int nArgs)
 {
     int i,j;
@@ -143,6 +147,7 @@ void checkArgDataTypes(mxArray** hData, MEX_DATA_TYPES* dataTypes, int nArgs)
     } 
 }
 
+/** Convert a mex double-precision array into single precision array for SAF */
 void MEXdouble2SAFsingle(const mxArray* in, float** out, int* nDims, int** pDims)
 { 
     int i, j, numElements;
@@ -190,6 +195,7 @@ void MEXdouble2SAFsingle(const mxArray* in, float** out, int* nDims, int** pDims
     }
 }
 
+/** Convert a mex double-precision array into single precision array for SAF (complex-valued) */
 void MEXdouble2SAFsingle_complex(const mxArray* in, float_complex** out, int* nDims, int** pDims)
 { 
     int i, j, k, numElements;
@@ -254,6 +260,7 @@ void MEXdouble2SAFsingle_complex(const mxArray* in, float_complex** out, int* nD
     }
 }
 
+/** Convert a mex double-precision array into single precision array for SAF (integers) */
 void MEXdouble2SAFsingle_int(const mxArray* in, int** out, int* nDims, int** pDims)
 { 
     int i, j, numElements;
@@ -298,6 +305,7 @@ void MEXdouble2SAFsingle_int(const mxArray* in, int** out, int* nDims, int** pDi
     }
 }
 
+/** Convert a single precision array used by SAF to mex double-precision array */
 void SAFsingle2MEXdouble(float* in, int nDims, int* dims, mxArray** out)
 {
     int i,j;
@@ -331,6 +339,7 @@ void SAFsingle2MEXdouble(float* in, int nDims, int* dims, mxArray** out)
     free(pDims_mx);
 }
 
+/** Convert a single precision array used by SAF to mex double-precision array (complex valued) */
 void SAFsingle2MEXdouble_complex(float_complex* in, int nDims, int* dims, mxArray** out)
 {
     int i,j,k;
@@ -397,6 +406,7 @@ void SAFsingle2MEXdouble_complex(float_complex* in, int nDims, int* dims, mxArra
     free(pDims_mx);
 }
 
+/** Convert a single precision array used by SAF to mex double-precision array (integers) */
 void SAFsingle2MEXdouble_int(int* in, int nDims, int* dims, mxArray** out)
 {
     int i,j;
