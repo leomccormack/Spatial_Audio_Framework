@@ -61,7 +61,7 @@ extern "C" {
  * Available decoding methods for the ambi_bin example. See saf_hoa_internal.h
  * for a more indepth descriptions of the approaches.
  */
-typedef enum _AMBI_BIN_DECODING_METHODS{
+typedef enum {
     DECODING_METHOD_LS = 1,   /**< Least-squares (LS) decoder */
     DECODING_METHOD_LSDIFFEQ, /**< Least-squares (LS) decoder with diffuse-field
                                *   spectral equalisation */
@@ -177,7 +177,7 @@ void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState);
 void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path);
 
 /**
- * Sets the decoding order (see #_SH_ORDERS enum)
+ * Sets the decoding order (see #SH_ORDERS enum)
  *
  * @note If decoding order is higher than the input signal order, the extra
  *       required channels are filled with zeros. If the decoding order is lower
@@ -188,7 +188,7 @@ void ambi_bin_setInputOrderPreset(void* const hAmbi,
                                   SH_ORDERS newPreset);
 
 /**
- * Sets the decoding method (see #_AMBI_BIN_DECODING_METHODS enum)
+ * Sets the decoding method (see #AMBI_BIN_DECODING_METHODS enum)
  */
 void ambi_bin_setDecodingMethod(void* const hAmbi,
                                 AMBI_BIN_DECODING_METHODS newMethod);
@@ -311,7 +311,7 @@ int ambi_bin_getInputOrderPreset(void* const hAmbi);
 
 /**
  * Returns the currently selected decoding method (see
- * #_AMBI_BIN_DECODING_METHODS enum)
+ * #AMBI_BIN_DECODING_METHODS enum)
  */
 int ambi_bin_getDecodingMethod(void* const hAmbi);
 
@@ -328,14 +328,14 @@ char* ambi_bin_getSofaFilePath(void* const hAmbi);
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see #_CH_ORDER enum)
+ * (see #CH_ORDER enum)
  */
 int ambi_bin_getChOrder(void* const hAmbi);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals (see
- * #_NORM_TYPES enum).
+ * #NORM_TYPES enum).
  */
 int ambi_bin_getNormType(void* const hAmbi); 
 

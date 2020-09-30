@@ -169,7 +169,7 @@ typedef struct _ambi_dec
 /* ========================================================================== */
 
 /**
- * Sets codec status (see #_CODEC_STATUS enum)
+ * Sets codec status (see #CODEC_STATUS enum)
  */
 void ambi_dec_setCodecStatus(void* const hCmp, CODEC_STATUS newStatus);
 
@@ -201,7 +201,7 @@ void ambi_dec_interpHRTFs(void* const hAmbi,
  * this. This can help avoid scenarios of many sources being panned in the same
  * direction, or triangulations errors.
  *
- * @param[in]  preset   See #_LOUDSPEAKER_ARRAY_PRESETS enum
+ * @param[in]  preset   See #LOUDSPEAKER_ARRAY_PRESETS enum
  * @param[out] dirs_deg Loudspeaker directions, [azimuth elevation] convention, in
  *                      DEGREES;
  * @param[out] nCH      (&) number of loudspeaker directions in the array

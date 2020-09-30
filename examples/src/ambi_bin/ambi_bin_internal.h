@@ -110,7 +110,7 @@ typedef struct _ambi_bin_codecPars
  * Main structure for ambi_bin. Contains variables for audio buffers, afSTFT,
  * rotation matrices, internal variables, flags, user parameters
  */
-typedef struct _ambi_bin
+typedef struct ambi_bin_data
 {
     /* audio buffers + afSTFT time-frequency transform handle */
     int fs;                         /**< host sampling rate */ 

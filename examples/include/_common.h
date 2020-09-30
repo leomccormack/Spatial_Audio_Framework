@@ -56,7 +56,7 @@ extern "C" {
 /**
  * Available spherical harmonic (SH) input/output order options
  */
-typedef enum _SH_ORDERS{
+typedef enum {
     SH_ORDER_FIRST = 1, /**< First-order (4 channels) */
     SH_ORDER_SECOND,    /**< Second-order (9 channels) */
     SH_ORDER_THIRD,     /**< Third-order (16 channels) */
@@ -75,7 +75,7 @@ typedef enum _SH_ORDERS{
  *
  * @warning CH_FUMA is only supported for first order input!
  */
-typedef enum _CH_ORDER {
+typedef enum {
     CH_ACN = 1, /**< Ambisonic Channel Numbering (ACN) */
     CH_FUMA     /**< (Legacy) Furse-Malham/B-format (WXYZ) */
     
@@ -90,7 +90,7 @@ typedef enum _CH_ORDER {
  * @warning NORM_FUMA is only supported for first order input! It also  has the
  *          1/sqrt(2) scaling term applied to the omni.
  */
-typedef enum _NORM_TYPES {
+typedef enum {
     NORM_N3D = 1,   /**< orthonormalised (N3D) */
     NORM_SN3D,      /**< Schmidt semi-normalisation (SN3D) */
     NORM_FUMA       /**< (Legacy) Furse-Malham scaling */
@@ -106,7 +106,7 @@ typedef enum _NORM_TYPES {
  * These determine the frequency ranges where the microphone array provides
  * usable spherical harmonic components at each order.
  */
-typedef enum _MIC_PRESETS{
+typedef enum {
     MIC_PRESET_IDEAL = 1,
     MIC_PRESET_ZYLIA,
     MIC_PRESET_EIGENMIKE32,
@@ -117,7 +117,7 @@ typedef enum _MIC_PRESETS{
 /**
  * Available loudspeaker array presets
  */
-typedef enum _LOUDSPEAKER_ARRAY_PRESETS{
+typedef enum {
     LOUDSPEAKER_ARRAY_PRESET_DEFAULT = 1,
     LOUDSPEAKER_ARRAY_PRESET_STEREO,
     LOUDSPEAKER_ARRAY_PRESET_5PX,
@@ -153,7 +153,7 @@ typedef enum _LOUDSPEAKER_ARRAY_PRESETS{
 /**
  * Available source configurations presets to use for encoding/panning
  */
-typedef enum _SOURCE_CONFIG_PRESETS{
+typedef enum {
     SOURCE_CONFIG_PRESET_DEFAULT = 1,
     SOURCE_CONFIG_PRESET_MONO,
     SOURCE_CONFIG_PRESET_STEREO,
@@ -190,7 +190,7 @@ typedef enum _SOURCE_CONFIG_PRESETS{
 /**
  * Available static beamforming approaches
  */
-typedef enum _STATIC_BEAM_TYPES {
+typedef enum {
     STATIC_BEAM_TYPE_CARDIOID = 1,  /**< cardioid */
     STATIC_BEAM_TYPE_HYPERCARDIOID, /**< hyper-cardioid */
     STATIC_BEAM_TYPE_MAX_EV         /**< hyper-cardioid with max_rE weighting */
@@ -203,7 +203,7 @@ typedef enum _STATIC_BEAM_TYPES {
 /**
  * Available horizontal field-of-view (FOV) options
  */
-typedef enum _HFOV_OPTIONS{
+typedef enum {
     HFOV_360 = 1, /**< 360 degrees */
     HFOV_180,     /**< 180 degrees */
     HFOV_90,      /**< 90 degrees */
@@ -214,7 +214,7 @@ typedef enum _HFOV_OPTIONS{
 /**
  * Available aspect ratios
  */
-typedef enum _ASPECT_RATIO_OPTIONS{
+typedef enum {
     ASPECT_RATIO_2_1 = 1, /**< ASPECT_RATIO_2_1  - 2:1 */
     ASPECT_RATIO_16_9,    /**< ASPECT_RATIO_16_9 - 16:9 */
     ASPECT_RATIO_4_3      /**< ASPECT_RATIO_4_3  - 4:3 */
@@ -235,7 +235,7 @@ typedef enum {
                                    *   Input audio should not be processed. */
     CODEC_STATUS_INITIALISING     /**< Codec is currently being initialised,
                                    *   input audio should not be processed. */
-} CODEC_STATUS;
+}CODEC_STATUS;
 
 /**
  * Current status of the processing loop
@@ -245,7 +245,7 @@ typedef enum {
  * block of audio. Likewise, if the codec is being initialised, then the
  * "process" functions are bypassed.
  */
-typedef enum _PROC_STATUS{
+typedef enum {
     PROC_STATUS_ONGOING = 0, /**< Codec is processing input audio, and should
                               *   not be reinitialised at this time. */
     PROC_STATUS_NOT_ONGOING  /**< Codec is not processing input audio, and may

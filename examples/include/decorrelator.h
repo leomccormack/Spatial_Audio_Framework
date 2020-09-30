@@ -123,7 +123,7 @@ void decorrelator_setNumberOfChannels(void* const hDecor,
 int decorrelator_getFrameSize(void);
 
 /**
- * Returns current codec status, see #_CODEC_STATUS enum
+ * Returns current codec status, see #CODEC_STATUS enum
  */
 CODEC_STATUS decorrelator_getCodecStatus(void* const hDecor);
     

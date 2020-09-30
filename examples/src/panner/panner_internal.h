@@ -140,7 +140,7 @@ typedef struct _panner
 /* ========================================================================== */
 
 /**
- * Sets codec status (see #_CODEC_STATUS enum)
+ * Sets codec status (see #CODEC_STATUS enum)
  */
 void panner_setCodecStatus(void* const hPan, CODEC_STATUS newStatus);
     
@@ -161,7 +161,7 @@ void panner_initTFT(void* const hPan);
 /**
  * Loads source/loudspeaker directions from preset
  *
- * @param[in]  preset   See #_SOURCE_CONFIG_PRESETS enum
+ * @param[in]  preset   See #SOURCE_CONFIG_PRESETS enum
  * @param[out] dirs_deg Source/loudspeaker directions
  * @param[out] newNCH   (&) new number of channels
  * @param[out] nDims    (&) estimate of the number of dimensions (2 or 3)

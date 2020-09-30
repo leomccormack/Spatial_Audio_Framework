@@ -39,7 +39,7 @@ extern "C" {
  * Available FFT size options. The higher it is, the more drastic the pitch
  * shifting factor can be, at the cost of increased latency and cpu requirements
  */
-typedef enum _PITCH_SHIFTER_FFTSIZE_OPTIONS{
+typedef enum {
     PITCH_SHIFTER_FFTSIZE_512 = 1,
     PITCH_SHIFTER_FFTSIZE_1024,
     PITCH_SHIFTER_FFTSIZE_2048,
@@ -58,7 +58,7 @@ typedef enum _PITCH_SHIFTER_FFTSIZE_OPTIONS{
  * Available oversampling options. The higher it is, the better the signal
  * fidelity, but at the cost of increased latency and cpu requirements
  */
-typedef enum _PITCH_SHIFTER_OSAMP_OPTIONS{
+typedef enum {
     PITCH_SHIFTER_OSAMP_2 = 1,
     PITCH_SHIFTER_OSAMP_4,
     PITCH_SHIFTER_OSAMP_8,
@@ -165,7 +165,7 @@ void pitch_shifter_setPitchShiftFactor(void* const hPS, float newValue);
 void pitch_shifter_setNumChannels(void* const hPS, int newValue);
 
 /**
- * Sets the FFT size used by the algorithm (see #_PITCH_SHIFTER_FFTSIZE_OPTIONS
+ * Sets the FFT size used by the algorithm (see #PITCH_SHIFTER_FFTSIZE_OPTIONS
  * enum)
  */
 void pitch_shifter_setFFTSizeOption(void* const hPS,
@@ -173,7 +173,7 @@ void pitch_shifter_setFFTSizeOption(void* const hPS,
 
 /**
  * Sets the oversampling factor used by the algorithm (see
- * #_PITCH_SHIFTER_OSAMP_OPTIONS enum)
+ * #PITCH_SHIFTER_OSAMP_OPTIONS enum)
  */
 void pitch_shifter_setOSampOption(void* const hPS,
                                   PITCH_SHIFTER_OSAMP_OPTIONS newOption);
@@ -190,7 +190,7 @@ void pitch_shifter_setOSampOption(void* const hPS,
 int pitch_shifter_getFrameSize(void);
 
 /**
- * Returns current codec status (see #_CODEC_STATUS enum)
+ * Returns current codec status (see #CODEC_STATUS enum)
  */
 CODEC_STATUS pitch_shifter_getCodecStatus(void* const hPS);
 
@@ -217,13 +217,13 @@ float pitch_shifter_getPitchShiftFactor(void* const hPS);
 
 /**
  * Returns the FFT size used by the algorithm (see
- * #_PITCH_SHIFTER_FFTSIZE_OPTIONS enum)
+ * #PITCH_SHIFTER_FFTSIZE_OPTIONS enum)
  */
 PITCH_SHIFTER_FFTSIZE_OPTIONS pitch_shifter_getFFTSizeOption(void* const hPS);
 
 /**
  * Returns the oversampling factor used by the algorithm (see
- * #_PITCH_SHIFTER_OSAMP_OPTIONS enum)
+ * #PITCH_SHIFTER_OSAMP_OPTIONS enum)
  */
 PITCH_SHIFTER_OSAMP_OPTIONS pitch_shifter_getOSampOption(void* const hPS);
 
@@ -237,8 +237,8 @@ int pitch_shifter_getNCHrequired(void* const hPS);
  * features)
  */
 int pitch_shifter_getProcessingDelay(void* const hPS);
-    
-    
+
+
 #ifdef __cplusplus
 } /* extern "C" { */
 #endif /* __cplusplus */

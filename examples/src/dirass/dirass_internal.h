@@ -139,7 +139,7 @@ typedef struct _dirass
     /* User parameters */
     int new_inputOrder, inputOrder;         /**< input/analysis order */
     STATIC_BEAM_TYPES beamType;             /**< beamformer type mode */
-    DIRASS_REASS_MODES DirAssMode;          /**< see #_DIRASS_REASS_MODES enum */
+    DIRASS_REASS_MODES DirAssMode;          /**< see #DIRASS_REASS_MODES enum */
     int new_upscaleOrder, upscaleOrder;     /**< target upscale order */
     DIRASS_GRID_OPTIONS gridOption;         /**< grid option */
     float pmapAvgCoeff;                     /**< averaging coefficient for the intensity vector per grid direction */
@@ -158,7 +158,7 @@ typedef struct _dirass
 /* ========================================================================== */
 
 /**
- * Sets codec status (see #_CODEC_STATUS enum)
+ * Sets codec status (see #CODEC_STATUS enum)
  */
 void dirass_setCodecStatus(void* const hDir, CODEC_STATUS newStatus);
 

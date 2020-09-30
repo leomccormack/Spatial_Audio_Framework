@@ -62,7 +62,7 @@ extern "C" {
 /**
  * Available microphone array presets
  */
-typedef enum _ARRAY2SH_MICROPHONE_ARRAY_PRESETS{
+typedef enum {
     MICROPHONE_ARRAY_PRESET_DEFAULT = 1,
     MICROPHONE_ARRAY_PRESET_AALTO_HYDROPHONE,
     MICROPHONE_ARRAY_PRESET_SENNHEISER_AMBEO,
@@ -90,7 +90,7 @@ typedef enum _ARRAY2SH_MICROPHONE_ARRAY_PRESETS{
  * @see [3] Zotter, F. A Linear-Phase Filter-Bank Approach to Process Rigid
  *          Spherical  Microphone Array Recordings.
  */
-typedef enum _ARRAY2SH_FILTER_TYPES{
+typedef enum {
     FILTER_SOFT_LIM = 1, /**< Encoding filters based on a 'soft-limiting'
                           *   regularised inversion of the modal responses [1]
                           */
@@ -112,7 +112,7 @@ typedef enum _ARRAY2SH_FILTER_TYPES{
  * @note Although supported, cylindrical arrays have not really been tested as
  *       we don't own one. Just to keep in mind.
  */
-typedef enum _ARRAY2SH_ARRAY_TYPES{
+typedef enum {
     ARRAY_SPHERICAL = 1, /**< Spherical arrangement of sensors (open/rigid) */
     ARRAY_CYLINDRICAL    /**< Cylindrial arrangement of sensors (open/rigid) */
     
@@ -124,7 +124,7 @@ typedef enum _ARRAY2SH_ARRAY_TYPES{
 /**
  * List of supported sensor directivities and array construction types.
  */
-typedef enum _ARRAY2SH_WEIGHT_TYPES{
+typedef enum {
     WEIGHT_RIGID_OMNI = 1, /**< Rigid baffle construction with omni sensors */
     WEIGHT_RIGID_CARD,     /**< Rigid baffle construction with cardioid sensors
                             */
@@ -144,11 +144,12 @@ typedef enum _ARRAY2SH_WEIGHT_TYPES{
  * These are some objective metrics which you can use to ascertain the
  * performance of the microphone array and the encoding.
  */
-typedef enum _ARRAY2SH_EVAL_STATUS{
+typedef enum {
     EVAL_STATUS_EVALUATED = 0,      /**< Encoder has been evaluated */
     EVAL_STATUS_RECENTLY_EVALUATED, /**< Encoder has recently been evaluated */
     EVAL_STATUS_NOT_EVALUATED,      /**< Encoder has not been evaluated */
     EVAL_STATUS_EVALUATING          /**< Encoder is being evaluated */
+
 }ARRAY2SH_EVAL_STATUS;
 
 /** Maximum number of sensors supported */
@@ -249,7 +250,7 @@ void array2sh_process(void* const hA2sh,
 void array2sh_refreshSettings(void* const hA2sh);
  
 /**
- * Sets the encoding order (see #_SH_ORDERS enum)
+ * Sets the encoding order (see #SH_ORDERS enum)
  */
 void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
 
@@ -266,7 +267,7 @@ void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
 void array2sh_setRequestEncoderEvalFLAG(void* const hA2sh, int newState);
     
 /**
- * Sets current eval status (see #_ARRAY2SH_EVAL_STATUS enum)
+ * Sets current eval status (see #ARRAY2SH_EVAL_STATUS enum)
  */
 void array2sh_setEvalStatus(void* const hA2sh, ARRAY2SH_EVAL_STATUS evalStatus);
 
@@ -280,7 +281,7 @@ void array2sh_setDiffEQpastAliasing(void* const hA2sh, int newState);
 
 /**
  * Sets a pre-defined microphone/hydrophone array preset (See
- * #_ARRAY2SH_MICROPHONE_ARRAY_PRESETS enum)
+ * #ARRAY2SH_MICROPHONE_ARRAY_PRESETS enum)
  */
 void array2sh_setPreset(void* const hA2sh,
                         ARRAY2SH_MICROPHONE_ARRAY_PRESETS preset);
@@ -345,18 +346,18 @@ void array2sh_setr(void* const hA2sh, float newr);
 void array2sh_setR(void* const hA2sh, float newR);
     
 /**
- * Sets the type of array (see #_ARRAY2SH_ARRAY_TYPES enum)
+ * Sets the type of array (see #ARRAY2SH_ARRAY_TYPES enum)
  */
 void array2sh_setArrayType(void* const hA2sh, int newType);
 
 /**
- * Sets the type of weights to use (see #_ARRAY2SH_WEIGHT_TYPES enum)
+ * Sets the type of weights to use (see #ARRAY2SH_WEIGHT_TYPES enum)
  */
 void array2sh_setWeightType(void* const hA2sh, int newType);
     
 /**
  * Sets the type filter design to employ for computing the encoding matrices
- * (see #_ARRAY2SH_FILTER_TYPES enum)
+ * (see #ARRAY2SH_FILTER_TYPES enum)
  */
 void array2sh_setFilterType(void* const hA2sh, int newType);
     
@@ -368,13 +369,13 @@ void array2sh_setRegPar(void* const hA2sh, float newVal);
     
 /**
  * Sets the Ambisonic channel ordering convention to encode with, in order to
- * match the convention employed by the input signals (see #_CH_ORDER enum)
+ * match the convention employed by the input signals (see #CH_ORDER enum)
  */
 void array2sh_setChOrder(void* const hA2sh, int newOrder);
     
 /**
  * Sets the Ambisonic normalisation convention to encode with, in order to match
- * with the convention employed by the input signals (see #_NORM_TYPES enum)
+ * with the convention employed by the input signals (see #NORM_TYPES enum)
  */
 void array2sh_setNormType(void* const hA2sh, int newType);
 
@@ -400,7 +401,7 @@ void array2sh_setGain(void* const hA2sh, float newGain);
 int array2sh_getFrameSize(void);
 
 /**
- * Returns current eval status (see #_ARRAY2SH_EVAL_STATUS enum)
+ * Returns current eval status (see #ARRAY2SH_EVAL_STATUS enum)
  */
 ARRAY2SH_EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh);
 
@@ -449,7 +450,7 @@ int array2sh_getDiffEQpastAliasing(void* const hA2sh);
 int array2sh_getRequestEncoderEvalFLAG(void* const hA2sh);
     
 /**
- * Returns the current encoding order (see #_SH_ORDERS enum)
+ * Returns the current encoding order (see #SH_ORDERS enum)
  */
 int array2sh_getEncodingOrder(void* const hA2sh);
     
@@ -510,18 +511,18 @@ float array2sh_getr(void* const hA2sh);
 float array2sh_getR(void* const hA2sh);
     
 /**
- * Returns the type of array. See #_ARRAY2SH_ARRAY_TYPES enum
+ * Returns the type of array. See #ARRAY2SH_ARRAY_TYPES enum
  */
 int array2sh_getArrayType(void* const hA2sh);
 
 /**
- * Returns the type of weights to use see #_ARRAY2SH_WEIGHT_TYPES enum
+ * Returns the type of weights to use see #ARRAY2SH_WEIGHT_TYPES enum
  */
 int array2sh_getWeightType(void* const hA2sh);
 
 /**
  * Returns the type filter design to employ for computing the encoding matrices
- * (see #_ARRAY2SH_FILTER_TYPES enum)
+ * (see #ARRAY2SH_FILTER_TYPES enum)
  */
 int array2sh_getFilterType(void* const hA2sh);
 
@@ -534,14 +535,14 @@ float array2sh_getRegPar(void* const hA2sh);
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see #_CH_ORDER enum)
+ * (see #CH_ORDER enum)
  */
 int array2sh_getChOrder(void* const hA2sh);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals
- * (see #_NORM_TYPES enum)
+ * (see #NORM_TYPES enum)
  */
 int array2sh_getNormType(void* const hA2sh);
     

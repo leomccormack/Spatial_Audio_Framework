@@ -139,7 +139,7 @@ typedef struct _sldoa
 /* ========================================================================== */
 
 /**
- * Sets codec status (see #_CODEC_STATUS enum)
+ * Sets codec status (see #CODEC_STATUS enum)
  */
 void sldoa_setCodecStatus(void* const hSld, CODEC_STATUS newStatus);
 

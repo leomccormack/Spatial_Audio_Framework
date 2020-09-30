@@ -215,7 +215,7 @@ void array2sh_destroyArray(void ** const hPars);
  *
  * @param[in] hPars         (&) array configuration handle
  * @param[in] preset        Array preset (see
- *                          #_ARRAY2SH_MICROPHONE_ARRAY_PRESETS enum)
+ *                          #ARRAY2SH_MICROPHONE_ARRAY_PRESETS enum)
  * @param[in] arrayOrder    (&) maximum encoding order of the current preset
  * @param[in] firstInitFLAG '1' this is the first time function is being called
  */
