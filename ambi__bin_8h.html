@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.20"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Spatial_Audio_Framework: github/workspace/examples/include/ambi_bin.h File Reference</title>
+<title>Spatial_Audio_Framework: examples/include/ambi_bin.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -17,6 +17,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="CustomDoxygen.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -355,6 +356,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi_
 <tr><td class="fieldname"><a id="a4cf0b805b8dc84c14b27d26a68fd82a8aee3b399f5c95db20cd2acda4c86db54f"></a>DECODING_METHOD_MAGLS&#160;</td><td class="fielddoc"><p>Magnitude least-squares decoder (MagLS) </p>
 </td></tr>
 </table>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a5">ambi_bin.h</a>.</dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="ambi__bin_8h_source.html#l00064">64</a> of file <a class="el" href="ambi__bin_8h_source.html">ambi_bin.h</a>.</p>
 
@@ -384,6 +387,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi_
   </table>
   </dd>
 </dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a6">ambi_bin.h</a>.</dd>
+</dl>
 
 </div>
 </div>
@@ -410,6 +415,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi_
   </table>
   </dd>
 </dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a7">ambi_bin.h</a>.</dd>
+</dl>
 
 </div>
 </div>
@@ -431,6 +438,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi_
 
 <p>Returns the decoding order. </p>
 <p>If decoding order is higher than the input signal order, the extra required channels are filled with zeros. If the decoding order is lower than the input signal order, the number input signals is truncated accordingly. </p>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a34">ambi_bin.h</a>.</dd>
+</dl>
 
 </div>
 </div>
@@ -462,6 +471,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi_
 
 <p>(Optional) Returns current intialisation/processing progress text </p>
 <dl class="section note"><dt>Note</dt><dd>"text" string should be (at least) of length: <a class="el" href="__common_8h.html#a72a166eb078e82f81bd29753838c5080" title="Length of progress bar string.">PROGRESSBARTEXT_CHAR_LENGTH</a> </dd></dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a32">ambi_bin.h</a>.</dd>
+</dl>
 
 </div>
 </div>
@@ -483,6 +494,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi_
 
 <p>Returns the file path for a .sofa file. </p>
 <dl class="section note"><dt>Note</dt><dd>If the custom set fails to load correctly, ambi_bin will revert to the default set. Use <a class="el" href="ambi__bin_8h.html#ae0ba54110a677150115a986abe1a0a41" title="Returns the value of a flag used to dictate whether the default HRIRs in the Spatial_Audio_Framework ...">ambi_bin_getUseDefaultHRIRsflag()</a> to check if loading was successful. Also, note the .sofa file extension is included in the returned string. </dd></dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a36">ambi_bin.h</a>.</dd>
+</dl>
 
 </div>
 </div>
@@ -504,6 +517,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi_
 
 <p>Returns the value of a flag used to dictate whether the default HRIRs in the Spatial_Audio_Framework should be used (1), or a custom HRIR set loaded via a SOFA file (0). </p>
 <dl class="section note"><dt>Note</dt><dd>If the custom set fails to load correctly, ambi_bin will revert to the default set and this function will return '1'. </dd></dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a33">ambi_bin.h</a>.</dd>
+</dl>
 
 </div>
 </div>
@@ -542,6 +557,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi_
   </table>
   </dd>
 </dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a8">ambi_bin.h</a>.</dd>
+</dl>
 
 </div>
 </div>
@@ -570,6 +587,8 @@ This function does nothing if no re-initialisations are required.</dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">hAmbi</td><td>ambi_bin handle </td></tr>
   </table>
   </dd>
+</dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a9">ambi_bin.h</a>.</dd>
 </dl>
 
 </div>
@@ -636,6 +655,8 @@ This function does nothing if no re-initialisations are required.</dd></dl>
   </table>
   </dd>
 </dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a10">ambi_bin.h</a>.</dd>
+</dl>
 
 </div>
 </div>
@@ -667,6 +688,8 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 
 <p>Sets the decoding order (see #_SH_ORDERS enum) </p>
 <dl class="section note"><dt>Note</dt><dd>If decoding order is higher than the input signal order, the extra required channels are filled with zeros. If the decoding order is lower than the input signal order, the number input signals is truncated accordingly. </dd></dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a14">ambi_bin.h</a>.</dd>
+</dl>
 
 </div>
 </div>
@@ -704,6 +727,8 @@ This function does nothing if no re-initialisations are required.</dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>File path to .sofa file (WITH file extension) </td></tr>
   </table>
   </dd>
+</dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a13">ambi_bin.h</a>.</dd>
 </dl>
 
 </div>
@@ -743,6 +768,8 @@ This function does nothing if no re-initialisations are required.</dd></dl>
   </table>
   </dd>
 </dl>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a12">ambi_bin.h</a>.</dd>
+</dl>
 
 </div>
 </div>
@@ -751,8 +778,8 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_aa394cd1d9abb8ffe941d9aaafca8d03.html">github</a></li><li class="navelem"><a class="el" href="dir_c52569aa89a7adbb6029022c2fa60a11.html">workspace</a></li><li class="navelem"><a class="el" href="dir_5631f2bf67d4f7fbf86ccbf65a745de3.html">examples</a></li><li class="navelem"><a class="el" href="dir_81bf79af04a9278778ef39d37d376783.html">include</a></li><li class="navelem"><a class="el" href="ambi__bin_8h.html">ambi_bin.h</a></li>
-    <li class="footer">Generated on Wed Sep 30 2020 12:43:32 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_7ea9cec8c8a74419de82b1d94b0f1364.html">include</a></li><li class="navelem"><a class="el" href="ambi__bin_8h.html">ambi_bin.h</a></li>
+    <li class="footer">Generated on Wed Sep 30 2020 12:53:49 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

@@ -73,5 +73,5 @@ var searchData=
   ['dirass_5fsetupscaleorder_790',['dirass_setUpscaleOrder',['../dirass_8h.html#ad49b3cdf6b2ffcb67c505eca4b34521f',1,'dirass.h']]],
   ['dirass_5fupscale_5forders_791',['DIRASS_UPSCALE_ORDERS',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fe',1,'dirass.h']]],
   ['dt_792',['dt',['../structtracker3d__config.html#a0504fc3d19d3fba10514c8cdd71b6f4d',1,'tracker3d_config::dt()'],['../struct_m_c_s__data.html#a303bbdc77de3cc21b1fcd49f365a672b',1,'MCS_data::dt()']]],
-  ['dependencies_20for_20the_20saf_5fsofa_5freader_20module_793',['Dependencies for the saf_sofa_reader Module',['../md_github_workspace_dependencies__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html',1,'']]]
+  ['dependencies_20for_20the_20saf_5fsofa_5freader_20module_793',['Dependencies for the saf_sofa_reader Module',['../md_dependencies__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html',1,'']]]
 ];

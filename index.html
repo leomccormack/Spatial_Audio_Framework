@@ -17,6 +17,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="CustomDoxygen.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -85,7 +86,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <div class="title">Spatial_Audio_Framework Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_github_workspace_README"></a><img src="saf.svg" alt="" style="pointer-events: none;" class="inline"/></p>
+<div class="textblock"><p><a class="anchor" id="md_README"></a><img src="saf.svg" alt="" style="pointer-events: none;" class="inline"/></p>
 <ul>
 <li>git: <a href="https://github.com/leomccormack/Spatial_Audio_Framework">https://github.com/leomccormack/Spatial_Audio_Framework</a></li>
 <li>doxygen: <a href="http://research.spa.aalto.fi/projects/spatial_audio_framework">http://research.spa.aalto.fi/projects/spatial_audio_framework</a></li>
@@ -102,10 +103,10 @@ Prerequisites</h1>
 <div class="line">SAF_USE_APPLE_ACCELERATE      # good option (x86 and ARM), faster than OpenBLAS, but MacOSX only &amp; slower than MKL</div>
 <div class="line">SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing</div>
 <div class="line">SAF_USE...                    # please get in touch if you use something else! :-)</div>
-</div><!-- fragment --><p>Detailed instructions regarding how to build and link these libraries can be found <a class="el" href="md_github_workspace_dependencies__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html">here</a>.</p>
+</div><!-- fragment --><p>Detailed instructions regarding how to build and link these libraries can be found <a class="el" href="md_dependencies__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html">here</a>.</p>
 <h2><a class="anchor" id="autotoc_md57"></a>
 Framework structure</h2>
-<p>The <a class="el" href="md_github_workspace_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html">**framework**</a> comprises the following core modules (<b>ISC</b>):</p><ul>
+<p>The <a class="el" href="md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html">**framework**</a> comprises the following core modules (<b>ISC</b>):</p><ul>
 <li><b>saf_hoa</b> - a collection of higher-order Ambisonics binaural and loudspeaker decoders.</li>
 <li><b>saf_sh</b> - spherical harmonic and spherical array processing related functions.</li>
 <li><b>saf_vbap</b> - Vector-base Amplitude Panning (VBAP) functions.</li>
@@ -120,7 +121,7 @@ Framework structure</h2>
 </ul>
 <p>To enable optional framework modules, simply add the relevant pre-processor definition: </p><div class="fragment"><div class="line">SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader</div>
 <div class="line">SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker</div>
-</div><!-- fragment --><p>Note that the <b>saf_sofa_reader</b> module also requires <a href="https://www.unidata.ucar.edu/software/netcdf/">netCDF</a> to be linked to your project. Instructions on how to install/link this dependency can be found <a class="el" href="md_github_workspace_dependencies__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html">here</a>.</p>
+</div><!-- fragment --><p>Note that the <b>saf_sofa_reader</b> module also requires <a href="https://www.unidata.ucar.edu/software/netcdf/">netCDF</a> to be linked to your project. Instructions on how to install/link this dependency can be found <a class="el" href="md_dependencies__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html">here</a>.</p>
 <h3><a class="anchor" id="autotoc_md58"></a>
 Additional options</h3>
 <p>The framework can be configured further, with the following options: </p><div class="fragment"><div class="line">SAF_USE_INTEL_IPP              # To use Intel IPP for the saf_utility_fft wrapper</div>
@@ -144,7 +145,7 @@ Building with CMake</h2>
 </div><!-- fragment --><p>If using <b>SAF_USE_INTEL_MKL</b> as the performance library, note that the default header and library search paths may be overridden with: </p><div class="fragment"><div class="line">-DINTEL_MKL_HEADER_PATH=&quot;path/to/mkl/headers&quot;</div>
 <div class="line">-DINTEL_MKL_LIB=&quot;path/to/mkl/libs/mkl_rt(.so/.dylib/.lib)&quot;   # OR:</div>
 <div class="line">-DINTEL_MKL_LIB=&quot;path/to/custom/mkl/lib/saf_mkl_custom(.so/.dylib/.lib)&quot;</div>
-</div><!-- fragment --><p>If the <b>saf_sofa_reader</b> module is enabled, CMake will use the statically built dependencies found in the <b>dependencies</b> folder for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared <a class="el" href="md_github_workspace_dependencies__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html">netcdf library</a> and inform CMake of its location via: </p><div class="fragment"><div class="line"># e.g. Linux users:</div>
+</div><!-- fragment --><p>If the <b>saf_sofa_reader</b> module is enabled, CMake will use the statically built dependencies found in the <b>dependencies</b> folder for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared <a class="el" href="md_dependencies__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html">netcdf library</a> and inform CMake of its location via: </p><div class="fragment"><div class="line"># e.g. Linux users:</div>
 <div class="line">-DNETCDF_LIBRARY=&quot;/usr/lib/x86_64-linux-gnu/libnetcdf.so&quot;</div>
 <div class="line"># e.g. MSYS2 users</div>
 <div class="line">-DNETCDF_LIBRARY=&quot;/c/msys64/mingw64/lib/libnetcdf.dll.a&quot;</div>
@@ -192,9 +193,9 @@ Examples</h2>
 Extras</h2>
 <p>The repository also includes the following <b>extras</b>:</p>
 <ul>
-<li><a class="el" href="md_github_workspace_extras_safmex__s_a_f_m_e_x.html">**safmex**</a> - a bunch of Matlab MEX wrappers, which allow certain SAF functions to be used within Matlab.</li>
-<li><a class="el" href="md_github_workspace_extras_safpy__s_a_f_p_y.html">**safpy**</a> - a work-in-progress initiative to bring SAF functionality to Python.</li>
-<li><a class="el" href="md_github_workspace_extras_safwwise__s_a_f_w_w_i_s_e.html">**safwwise**</a> - a proof of concept regarding how one might integrate SAF into Wwise.</li>
+<li><a class="el" href="md_extras_safmex__s_a_f_m_e_x.html">**safmex**</a> - a bunch of Matlab MEX wrappers, which allow certain SAF functions to be used within Matlab.</li>
+<li><a class="el" href="md_extras_safpy__s_a_f_p_y.html">**safpy**</a> - a work-in-progress initiative to bring SAF functionality to Python.</li>
+<li><a class="el" href="md_extras_safwwise__s_a_f_w_w_i_s_e.html">**safwwise**</a> - a proof of concept regarding how one might integrate SAF into Wwise.</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md64"></a>
 Contributing</h2>
@@ -225,7 +226,7 @@ License</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Sep 30 2020 12:43:32 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Wed Sep 30 2020 12:53:50 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

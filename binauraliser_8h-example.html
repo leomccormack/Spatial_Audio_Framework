@@ -17,6 +17,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="CustomDoxygen.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -85,12 +86,233 @@ $(document).ready(function(){initNavTree('binauraliser_8h-example.html',''); ini
 <div class="title">binauraliser.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"></div><!-- fragment --> </div><!-- contents -->
+<div class="fragment"><div class="line"><span class="comment">/*</span></div>
+<div class="line"><span class="comment"> * Copyright 2017-2018 Leo McCormack</span></div>
+<div class="line"><span class="comment"> *</span></div>
+<div class="line"><span class="comment"> * Permission to use, copy, modify, and/or distribute this software for any</span></div>
+<div class="line"><span class="comment"> * purpose with or without fee is hereby granted, provided that the above</span></div>
+<div class="line"><span class="comment"> * copyright notice and this permission notice appear in all copies.</span></div>
+<div class="line"><span class="comment"> *</span></div>
+<div class="line"><span class="comment"> * THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH</span></div>
+<div class="line"><span class="comment"> * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY</span></div>
+<div class="line"><span class="comment"> * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,</span></div>
+<div class="line"><span class="comment"> * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM</span></div>
+<div class="line"><span class="comment"> * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR</span></div>
+<div class="line"><span class="comment"> * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR</span></div>
+<div class="line"><span class="comment"> * PERFORMANCE OF THIS SOFTWARE.</span></div>
+<div class="line"><span class="comment"> */</span></div>
+<div class="line"> </div>
+<div class="line"><span class="preprocessor">#ifndef __BINAURALISER_H_INCLUDED__</span></div>
+<div class="line"><span class="preprocessor">#define __BINAURALISER_H_INCLUDED__</span></div>
+<div class="line"> </div>
+<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="__common_8h.html">_common.h</a>&quot;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><span class="comment">/*                             Presets + Constants                            */</span></div>
+<div class="line"><span class="comment">/* ========================================================================== */</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">typedef</span> <span class="keyword">enum</span> _INTERP_MODES{</div>
+<div class="line">    <a name="a0"></a><a class="code" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8a543b349158a350ea95cbf4f29b78c504">INTERP_TRI</a> = 1  </div>
+<div class="line">}<a name="a1"></a><a class="code" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8">INTERP_MODES</a>;</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line"><span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><span class="comment">/*                               Main Functions                               */</span></div>
+<div class="line"><span class="comment">/* ========================================================================== */</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a2"></a><a class="code" href="binauraliser_8h.html#a6473297408bb09628b8bd26db1992e18">binauraliser_create</a>(<span class="keywordtype">void</span>** <span class="keyword">const</span> phBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a3"></a><a class="code" href="binauraliser_8h.html#a1dabd5a3c51745400f12b23d99982654">binauraliser_destroy</a>(<span class="keywordtype">void</span>** <span class="keyword">const</span> phBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a4"></a><a class="code" href="binauraliser_8h.html#a4eb1dc0407020c4198ef1b915b928e68">binauraliser_init</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin,</div>
+<div class="line">                       <span class="keywordtype">int</span> samplerate);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a5"></a><a class="code" href="binauraliser_8h.html#a296b20a81475b7bb8598170d85466b1f">binauraliser_initCodec</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a6"></a><a class="code" href="binauraliser_8h.html#a0050e98b6955a323475eff6891cbb1a8">binauraliser_process</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin,</div>
+<div class="line">                          <span class="keywordtype">float</span>** <span class="keyword">const</span> inputs,</div>
+<div class="line">                          <span class="keywordtype">float</span>** <span class="keyword">const</span> outputs,</div>
+<div class="line">                          <span class="keywordtype">int</span> nInputs,</div>
+<div class="line">                          <span class="keywordtype">int</span> nOutputs,</div>
+<div class="line">                          <span class="keywordtype">int</span> nSamples);</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line"><span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><span class="comment">/*                                Set Functions                               */</span></div>
+<div class="line"><span class="comment">/* ========================================================================== */</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a7"></a><a class="code" href="binauraliser_8h.html#a07287820c8dfc646d99333c97d868407">binauraliser_refreshSettings</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line">    </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a8"></a><a class="code" href="binauraliser_8h.html#a390fead8e869e5c1adace25785ad2be5">binauraliser_setSourceAzi_deg</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin,</div>
+<div class="line">                                   <span class="keywordtype">int</span> index,</div>
+<div class="line">                                   <span class="keywordtype">float</span> newAzi_deg);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a9"></a><a class="code" href="binauraliser_8h.html#a470d8621c364c01822fc1c4be7ae3291">binauraliser_setSourceElev_deg</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin,</div>
+<div class="line">                                    <span class="keywordtype">int</span> index,</div>
+<div class="line">                                    <span class="keywordtype">float</span> newElev_deg);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a10"></a><a class="code" href="binauraliser_8h.html#aeeb4e173e534b1782296455596acffe4">binauraliser_setNumSources</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> new_nSources);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a11"></a><a class="code" href="binauraliser_8h.html#ab84d5d108bb01078ac6308914893dda9">binauraliser_setUseDefaultHRIRsflag</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> newState);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a12"></a><a class="code" href="binauraliser_8h.html#a0628549e0203c0f65bb8737526e88be6">binauraliser_setSofaFilePath</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keyword">const</span> <span class="keywordtype">char</span>* path);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a13"></a><a class="code" href="binauraliser_8h.html#ab0b45c5419c26dd9760b715c7940353e">binauraliser_setInputConfigPreset</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> newPresetID);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a14"></a><a class="code" href="binauraliser_8h.html#aa883cc599585fba9c2e90b7f4f04df49">binauraliser_setEnableRotation</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> newState);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a15"></a><a class="code" href="binauraliser_8h.html#aaae50d24fe39de90e3fb0fe9fe0d9d48">binauraliser_setYaw</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">float</span> newYaw);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a16"></a><a class="code" href="binauraliser_8h.html#a396054f0b5d5a3aae85e7475dc08dfe6">binauraliser_setPitch</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">float</span> newPitch);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a17"></a><a class="code" href="binauraliser_8h.html#a294146a7e90af33ff414a29f974bcac0">binauraliser_setRoll</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">float</span> newRoll);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a18"></a><a class="code" href="binauraliser_8h.html#aa8cc1894890d5c29bcb9c0440fa4c576">binauraliser_setFlipYaw</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> newState);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a19"></a><a class="code" href="binauraliser_8h.html#aa4a61e22775458ea4c4dfa63a173e7ea">binauraliser_setFlipPitch</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> newState);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a20"></a><a class="code" href="binauraliser_8h.html#ace89b40dd28201cb817256dd4d3aa88a">binauraliser_setFlipRoll</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> newState);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a21"></a><a class="code" href="binauraliser_8h.html#a791111074c384ee15e74abb8796f99f8">binauraliser_setRPYflag</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> newState);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a22"></a><a class="code" href="binauraliser_8h.html#ab32dced53fc561b902890660367a63f1">binauraliser_setInterpMode</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> newMode);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a23"></a><a class="code" href="binauraliser_8h.html#a805636d98b01358d39cd970b831631b5">binauraliser_setEnableHRTFDiffuseEQ</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> newState);</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line"><span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><span class="comment">/*                                Get Functions                               */</span></div>
+<div class="line"><span class="comment">/* ========================================================================== */</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a24"></a><a class="code" href="binauraliser_8h.html#a75c1299119792b422831ea5cb1c9ba24">binauraliser_getFrameSize</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"> </div>
+<div class="line"><a class="code" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9">CODEC_STATUS</a> <a name="a25"></a><a class="code" href="binauraliser_8h.html#a5f2e92ede7ff228dbb11fd28cb764036">binauraliser_getCodecStatus</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">float</span> <a name="a26"></a><a class="code" href="binauraliser_8h.html#a50efbe8ffb2e93eed0264db4d5af64ba">binauraliser_getProgressBar0_1</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> <a name="a27"></a><a class="code" href="binauraliser_8h.html#a7a18aa1cd9adf953ceb009d87c8f1307">binauraliser_getProgressBarText</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">char</span>* text);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">float</span> <a name="a28"></a><a class="code" href="binauraliser_8h.html#ac3c286f7e0708bca584b3b5510812f09">binauraliser_getSourceAzi_deg</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> index);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">float</span> <a name="a29"></a><a class="code" href="binauraliser_8h.html#aa39ba3761c2c575d6828757c274177d7">binauraliser_getSourceElev_deg</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> index);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a30"></a><a class="code" href="binauraliser_8h.html#afe781cc381ba0aefaaacd2709e77c39f">binauraliser_getNumSources</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a31"></a><a class="code" href="binauraliser_8h.html#a608e3d4c18ddd40b529c70929e0d578b">binauraliser_getMaxNumSources</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a32"></a><a class="code" href="binauraliser_8h.html#a79aaca4600b5f11be0d11466d84ee468">binauraliser_getNumEars</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a33"></a><a class="code" href="binauraliser_8h.html#a0a2a00ded7bc0cdc4c755863441cd063">binauraliser_getNDirs</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a34"></a><a class="code" href="binauraliser_8h.html#a020fbb57c8274c603556153ddac0a640">binauraliser_getNTriangles</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">float</span> <a name="a35"></a><a class="code" href="binauraliser_8h.html#adac5b991f0af7297e8c0b213cb2d135a">binauraliser_getHRIRAzi_deg</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> index);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">float</span> <a name="a36"></a><a class="code" href="binauraliser_8h.html#ac1f6af8d829d77cac33100e9cc847c9d">binauraliser_getHRIRElev_deg</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin, <span class="keywordtype">int</span> index);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a37"></a><a class="code" href="binauraliser_8h.html#ad861f2bd62ff3191e14591b9be6d9a0c">binauraliser_getHRIRlength</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a38"></a><a class="code" href="binauraliser_8h.html#a90caec2b048c2c472bd3b19001bd640c">binauraliser_getHRIRsamplerate</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a39"></a><a class="code" href="binauraliser_8h.html#a21ca6250fe63d4b0353ea59d581eccf5">binauraliser_getUseDefaultHRIRsflag</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">char</span>* <a name="a40"></a><a class="code" href="binauraliser_8h.html#a62330358d5d762f4ba9f8ec07855f4bf">binauraliser_getSofaFilePath</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a41"></a><a class="code" href="binauraliser_8h.html#a8fd18f2d20e08c1ba8a5d174dbc3678e">binauraliser_getDAWsamplerate</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a42"></a><a class="code" href="binauraliser_8h.html#a7794b570c54bd09a2222437ccf69c039">binauraliser_getEnableRotation</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">float</span> <a name="a43"></a><a class="code" href="binauraliser_8h.html#a9f3bf18771284bc2cc7bb9f5c3553ce2">binauraliser_getYaw</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">float</span> <a name="a44"></a><a class="code" href="binauraliser_8h.html#a72d4a261cbaa2519f7557db0bca6ab42">binauraliser_getPitch</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">float</span> <a name="a45"></a><a class="code" href="binauraliser_8h.html#ac6e663295862748d006aef9661bcc002">binauraliser_getRoll</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a46"></a><a class="code" href="binauraliser_8h.html#ad05bf1fdca41573dc0f1de0aea861dc1">binauraliser_getFlipYaw</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a47"></a><a class="code" href="binauraliser_8h.html#a09cb4ddfd211b4e35b8b07bbd6669b03">binauraliser_getFlipPitch</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a48"></a><a class="code" href="binauraliser_8h.html#a34c4cd90caeb3411ee79ddaa0ba186f3">binauraliser_getFlipRoll</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a49"></a><a class="code" href="binauraliser_8h.html#a707e489fa1f9350543f25caf0d79b8a8">binauraliser_getRPYflag</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a50"></a><a class="code" href="binauraliser_8h.html#ad319eebd68a2b439abd830aaba8acd61">binauraliser_getInterpMode</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a51"></a><a class="code" href="binauraliser_8h.html#a802b9234ca7135a4e0644b17ce967a7a">binauraliser_getProcessingDelay</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a name="a52"></a><a class="code" href="binauraliser_8h.html#acd363953c84e0dbb62b78747556c6550">binauraliser_getEnableHRTFDiffuseEQ</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hBin);</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line"><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line">} <span class="comment">/* extern &quot;C&quot; { */</span></div>
+<div class="line"><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"> </div>
+<div class="line"><span class="preprocessor">#endif </span><span class="comment">/* __BINAURALISER_H_INCLUDED__ */</span><span class="preprocessor"></span></div>
+</div><!-- fragment --> </div><!-- contents -->
 </div><!-- doc-content -->
+<div class="ttc" id="abinauraliser_8h_html_a0050e98b6955a323475eff6891cbb1a8"><div class="ttname"><a href="binauraliser_8h.html#a0050e98b6955a323475eff6891cbb1a8">binauraliser_process</a></div><div class="ttdeci">void binauraliser_process(void *const hBin, float **const inputs, float **const outputs, int nInputs, int nOutputs, int nSamples)</div><div class="ttdoc">Binauralises the input signals at the user specified directions.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a50efbe8ffb2e93eed0264db4d5af64ba"><div class="ttname"><a href="binauraliser_8h.html#a50efbe8ffb2e93eed0264db4d5af64ba">binauraliser_getProgressBar0_1</a></div><div class="ttdeci">float binauraliser_getProgressBar0_1(void *const hBin)</div><div class="ttdoc">(Optional) Returns current intialisation/processing progress, between 0..1</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a79aaca4600b5f11be0d11466d84ee468"><div class="ttname"><a href="binauraliser_8h.html#a79aaca4600b5f11be0d11466d84ee468">binauraliser_getNumEars</a></div><div class="ttdeci">int binauraliser_getNumEars(void)</div><div class="ttdoc">Returns the number of ears possessed by the average homo sapien.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a5421d617c5a14c37e48ec2a679436ec8"><div class="ttname"><a href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8">INTERP_MODES</a></div><div class="ttdeci">INTERP_MODES</div><div class="ttdoc">Available interpolation modes.</div><div class="ttdef"><b>Definition:</b> <a href="binauraliser_8h_source.html#l00048">binauraliser.h:48</a></div></div>
+<div class="ttc" id="abinauraliser_8h_html_a296b20a81475b7bb8598170d85466b1f"><div class="ttname"><a href="binauraliser_8h.html#a296b20a81475b7bb8598170d85466b1f">binauraliser_initCodec</a></div><div class="ttdeci">void binauraliser_initCodec(void *const hBin)</div><div class="ttdoc">Intialises the codec variables, based on current global/user parameters.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_ace89b40dd28201cb817256dd4d3aa88a"><div class="ttname"><a href="binauraliser_8h.html#ace89b40dd28201cb817256dd4d3aa88a">binauraliser_setFlipRoll</a></div><div class="ttdeci">void binauraliser_setFlipRoll(void *const hBin, int newState)</div><div class="ttdoc">Sets a flag as to whether to &quot;flip&quot; the sign of the current 'roll' angle (0: do not flip sign,...</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a9f3bf18771284bc2cc7bb9f5c3553ce2"><div class="ttname"><a href="binauraliser_8h.html#a9f3bf18771284bc2cc7bb9f5c3553ce2">binauraliser_getYaw</a></div><div class="ttdeci">float binauraliser_getYaw(void *const hBin)</div><div class="ttdoc">Returns the 'yaw' rotation angle, in DEGREES.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a0a2a00ded7bc0cdc4c755863441cd063"><div class="ttname"><a href="binauraliser_8h.html#a0a2a00ded7bc0cdc4c755863441cd063">binauraliser_getNDirs</a></div><div class="ttdeci">int binauraliser_getNDirs(void *const hBin)</div><div class="ttdoc">Returns the number of directions in the currently used HRIR set.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a707e489fa1f9350543f25caf0d79b8a8"><div class="ttname"><a href="binauraliser_8h.html#a707e489fa1f9350543f25caf0d79b8a8">binauraliser_getRPYflag</a></div><div class="ttdeci">int binauraliser_getRPYflag(void *const hBin)</div><div class="ttdoc">Returns a flag as to whether to use &quot;yaw-pitch-roll&quot; (0) or &quot;roll-pitch-yaw&quot; (1) rotation order.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_aa4a61e22775458ea4c4dfa63a173e7ea"><div class="ttname"><a href="binauraliser_8h.html#aa4a61e22775458ea4c4dfa63a173e7ea">binauraliser_setFlipPitch</a></div><div class="ttdeci">void binauraliser_setFlipPitch(void *const hBin, int newState)</div><div class="ttdoc">Sets a flag as to whether to &quot;flip&quot; the sign of the current 'pitch' angle (0: do not flip sign,...</div></div>
+<div class="ttc" id="abinauraliser_8h_html_ab84d5d108bb01078ac6308914893dda9"><div class="ttname"><a href="binauraliser_8h.html#ab84d5d108bb01078ac6308914893dda9">binauraliser_setUseDefaultHRIRsflag</a></div><div class="ttdeci">void binauraliser_setUseDefaultHRIRsflag(void *const hBin, int newState)</div><div class="ttdoc">Sets flag to dictate whether the default HRIRs in the Spatial_Audio_Framework should be used (1),...</div></div>
+<div class="ttc" id="abinauraliser_8h_html_aeeb4e173e534b1782296455596acffe4"><div class="ttname"><a href="binauraliser_8h.html#aeeb4e173e534b1782296455596acffe4">binauraliser_setNumSources</a></div><div class="ttdeci">void binauraliser_setNumSources(void *const hBin, int new_nSources)</div><div class="ttdoc">Sets the number of input channels/sources to binauralise.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a7794b570c54bd09a2222437ccf69c039"><div class="ttname"><a href="binauraliser_8h.html#a7794b570c54bd09a2222437ccf69c039">binauraliser_getEnableRotation</a></div><div class="ttdeci">int binauraliser_getEnableRotation(void *const hBin)</div><div class="ttdoc">Returns the flag value which dictates whether to enable/disable sound-field rotation (0: disabled,...</div></div>
+<div class="ttc" id="abinauraliser_8h_html_ac1f6af8d829d77cac33100e9cc847c9d"><div class="ttname"><a href="binauraliser_8h.html#ac1f6af8d829d77cac33100e9cc847c9d">binauraliser_getHRIRElev_deg</a></div><div class="ttdeci">float binauraliser_getHRIRElev_deg(void *const hBin, int index)</div><div class="ttdoc">Returns the HRIR/HRTF elevation for a given index, in DEGREES.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a0628549e0203c0f65bb8737526e88be6"><div class="ttname"><a href="binauraliser_8h.html#a0628549e0203c0f65bb8737526e88be6">binauraliser_setSofaFilePath</a></div><div class="ttdeci">void binauraliser_setSofaFilePath(void *const hBin, const char *path)</div><div class="ttdoc">Sets the file path for a .sofa file, in order to employ a custom HRIR set for the decoding.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_ad861f2bd62ff3191e14591b9be6d9a0c"><div class="ttname"><a href="binauraliser_8h.html#ad861f2bd62ff3191e14591b9be6d9a0c">binauraliser_getHRIRlength</a></div><div class="ttdeci">int binauraliser_getHRIRlength(void *const hBin)</div><div class="ttdoc">Returns the length of HRIRs in time-domain samples.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_ac6e663295862748d006aef9661bcc002"><div class="ttname"><a href="binauraliser_8h.html#ac6e663295862748d006aef9661bcc002">binauraliser_getRoll</a></div><div class="ttdeci">float binauraliser_getRoll(void *const hBin)</div><div class="ttdoc">Returns the 'roll' rotation angle, in DEGREES.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a34c4cd90caeb3411ee79ddaa0ba186f3"><div class="ttname"><a href="binauraliser_8h.html#a34c4cd90caeb3411ee79ddaa0ba186f3">binauraliser_getFlipRoll</a></div><div class="ttdeci">int binauraliser_getFlipRoll(void *const hBin)</div><div class="ttdoc">Returns a flag as to whether to &quot;flip&quot; the sign of the current 'roll' angle (0: do not flip sign,...</div></div>
+<div class="ttc" id="abinauraliser_8h_html_aaae50d24fe39de90e3fb0fe9fe0d9d48"><div class="ttname"><a href="binauraliser_8h.html#aaae50d24fe39de90e3fb0fe9fe0d9d48">binauraliser_setYaw</a></div><div class="ttdeci">void binauraliser_setYaw(void *const hBin, float newYaw)</div><div class="ttdoc">Sets the 'yaw' rotation angle, in DEGREES.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_adac5b991f0af7297e8c0b213cb2d135a"><div class="ttname"><a href="binauraliser_8h.html#adac5b991f0af7297e8c0b213cb2d135a">binauraliser_getHRIRAzi_deg</a></div><div class="ttdeci">float binauraliser_getHRIRAzi_deg(void *const hBin, int index)</div><div class="ttdoc">Returns the HRIR/HRTF azimuth for a given index, in DEGREES.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_ab0b45c5419c26dd9760b715c7940353e"><div class="ttname"><a href="binauraliser_8h.html#ab0b45c5419c26dd9760b715c7940353e">binauraliser_setInputConfigPreset</a></div><div class="ttdeci">void binauraliser_setInputConfigPreset(void *const hBin, int newPresetID)</div><div class="ttdoc">Loads an input preset (see #_SOURCE_CONFIG_PRESETS enum)</div></div>
+<div class="ttc" id="abinauraliser_8h_html_ad05bf1fdca41573dc0f1de0aea861dc1"><div class="ttname"><a href="binauraliser_8h.html#ad05bf1fdca41573dc0f1de0aea861dc1">binauraliser_getFlipYaw</a></div><div class="ttdeci">int binauraliser_getFlipYaw(void *const hBin)</div><div class="ttdoc">Returns a flag as to whether to &quot;flip&quot; the sign of the current 'yaw' angle (0: do not flip sign,...</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a90caec2b048c2c472bd3b19001bd640c"><div class="ttname"><a href="binauraliser_8h.html#a90caec2b048c2c472bd3b19001bd640c">binauraliser_getHRIRsamplerate</a></div><div class="ttdeci">int binauraliser_getHRIRsamplerate(void *const hBin)</div><div class="ttdoc">Returns the HRIR sample rate.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a5f2e92ede7ff228dbb11fd28cb764036"><div class="ttname"><a href="binauraliser_8h.html#a5f2e92ede7ff228dbb11fd28cb764036">binauraliser_getCodecStatus</a></div><div class="ttdeci">CODEC_STATUS binauraliser_getCodecStatus(void *const hBin)</div><div class="ttdoc">Returns current codec status codec status (see #_CODEC_STATUS enum)</div></div>
+<div class="ttc" id="abinauraliser_8h_html_acd363953c84e0dbb62b78747556c6550"><div class="ttname"><a href="binauraliser_8h.html#acd363953c84e0dbb62b78747556c6550">binauraliser_getEnableHRTFDiffuseEQ</a></div><div class="ttdeci">int binauraliser_getEnableHRTFDiffuseEQ(void *const hBin)</div><div class="ttdoc">Returns the flag indicating whether the diffuse-field EQ applied to the HRTFs is enabled (1) or disab...</div></div>
+<div class="ttc" id="abinauraliser_8h_html_aa883cc599585fba9c2e90b7f4f04df49"><div class="ttname"><a href="binauraliser_8h.html#aa883cc599585fba9c2e90b7f4f04df49">binauraliser_setEnableRotation</a></div><div class="ttdeci">void binauraliser_setEnableRotation(void *const hBin, int newState)</div><div class="ttdoc">Sets the flag to enable/disable (1 or 0) rotation.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_afe781cc381ba0aefaaacd2709e77c39f"><div class="ttname"><a href="binauraliser_8h.html#afe781cc381ba0aefaaacd2709e77c39f">binauraliser_getNumSources</a></div><div class="ttdeci">int binauraliser_getNumSources(void *const hBin)</div><div class="ttdoc">Returns the number of inputs/sources in the current layout.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a802b9234ca7135a4e0644b17ce967a7a"><div class="ttname"><a href="binauraliser_8h.html#a802b9234ca7135a4e0644b17ce967a7a">binauraliser_getProcessingDelay</a></div><div class="ttdeci">int binauraliser_getProcessingDelay(void)</div><div class="ttdoc">Returns the processing delay in samples (may be used for delay compensation purposes)</div></div>
+<div class="ttc" id="abinauraliser_8h_html_ab32dced53fc561b902890660367a63f1"><div class="ttname"><a href="binauraliser_8h.html#ab32dced53fc561b902890660367a63f1">binauraliser_setInterpMode</a></div><div class="ttdeci">void binauraliser_setInterpMode(void *const hBin, int newMode)</div><div class="ttdoc">NOT IMPLEMENTED YET.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a5421d617c5a14c37e48ec2a679436ec8a543b349158a350ea95cbf4f29b78c504"><div class="ttname"><a href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8a543b349158a350ea95cbf4f29b78c504">INTERP_TRI</a></div><div class="ttdeci">@ INTERP_TRI</div><div class="ttdoc">Triangular interpolation.</div><div class="ttdef"><b>Definition:</b> <a href="binauraliser_8h_source.html#l00050">binauraliser.h:49</a></div></div>
+<div class="ttc" id="abinauraliser_8h_html_a791111074c384ee15e74abb8796f99f8"><div class="ttname"><a href="binauraliser_8h.html#a791111074c384ee15e74abb8796f99f8">binauraliser_setRPYflag</a></div><div class="ttdeci">void binauraliser_setRPYflag(void *const hBin, int newState)</div><div class="ttdoc">Sets a flag as to whether to use &quot;yaw-pitch-roll&quot; (0) or &quot;roll-pitch-yaw&quot; (1) rotation order.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_ad319eebd68a2b439abd830aaba8acd61"><div class="ttname"><a href="binauraliser_8h.html#ad319eebd68a2b439abd830aaba8acd61">binauraliser_getInterpMode</a></div><div class="ttdeci">int binauraliser_getInterpMode(void *const hBin)</div><div class="ttdoc">NOT IMPLEMENTED YET.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a4eb1dc0407020c4198ef1b915b928e68"><div class="ttname"><a href="binauraliser_8h.html#a4eb1dc0407020c4198ef1b915b928e68">binauraliser_init</a></div><div class="ttdeci">void binauraliser_init(void *const hBin, int samplerate)</div><div class="ttdoc">Initialises an instance of binauraliser with default settings.</div></div>
+<div class="ttc" id="a__common_8h_html_af0ded734eade63c6af9f797988fffcd9"><div class="ttname"><a href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9">CODEC_STATUS</a></div><div class="ttdeci">CODEC_STATUS</div><div class="ttdoc">Current status of the codec.</div><div class="ttdef"><b>Definition:</b> <a href="__common_8h_source.html#l00230">_common.h:230</a></div></div>
+<div class="ttc" id="abinauraliser_8h_html_aa39ba3761c2c575d6828757c274177d7"><div class="ttname"><a href="binauraliser_8h.html#aa39ba3761c2c575d6828757c274177d7">binauraliser_getSourceElev_deg</a></div><div class="ttdeci">float binauraliser_getSourceElev_deg(void *const hBin, int index)</div><div class="ttdoc">Returns the source elevation for a given index, in DEGREES.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a21ca6250fe63d4b0353ea59d581eccf5"><div class="ttname"><a href="binauraliser_8h.html#a21ca6250fe63d4b0353ea59d581eccf5">binauraliser_getUseDefaultHRIRsflag</a></div><div class="ttdeci">int binauraliser_getUseDefaultHRIRsflag(void *const hBin)</div><div class="ttdoc">Returns the value of a flag used to dictate whether the default HRIRs in the Spatial_Audio_Framework ...</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a09cb4ddfd211b4e35b8b07bbd6669b03"><div class="ttname"><a href="binauraliser_8h.html#a09cb4ddfd211b4e35b8b07bbd6669b03">binauraliser_getFlipPitch</a></div><div class="ttdeci">int binauraliser_getFlipPitch(void *const hBin)</div><div class="ttdoc">Returns a flag as to whether to &quot;flip&quot; the sign of the current 'pitch' angle (0: do not flip sign,...</div></div>
+<div class="ttc" id="abinauraliser_8h_html_aa8cc1894890d5c29bcb9c0440fa4c576"><div class="ttname"><a href="binauraliser_8h.html#aa8cc1894890d5c29bcb9c0440fa4c576">binauraliser_setFlipYaw</a></div><div class="ttdeci">void binauraliser_setFlipYaw(void *const hBin, int newState)</div><div class="ttdoc">Sets a flag as to whether to &quot;flip&quot; the sign of the current 'yaw' angle (0: do not flip sign,...</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a805636d98b01358d39cd970b831631b5"><div class="ttname"><a href="binauraliser_8h.html#a805636d98b01358d39cd970b831631b5">binauraliser_setEnableHRTFDiffuseEQ</a></div><div class="ttdeci">void binauraliser_setEnableHRTFDiffuseEQ(void *const hBin, int newState)</div><div class="ttdoc">Enable (1) or disable (0) the diffuse-field EQ applied to the HRTFs.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a1dabd5a3c51745400f12b23d99982654"><div class="ttname"><a href="binauraliser_8h.html#a1dabd5a3c51745400f12b23d99982654">binauraliser_destroy</a></div><div class="ttdeci">void binauraliser_destroy(void **const phBin)</div><div class="ttdoc">Destroys an instance of the binauraliser.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a8fd18f2d20e08c1ba8a5d174dbc3678e"><div class="ttname"><a href="binauraliser_8h.html#a8fd18f2d20e08c1ba8a5d174dbc3678e">binauraliser_getDAWsamplerate</a></div><div class="ttdeci">int binauraliser_getDAWsamplerate(void *const hBin)</div><div class="ttdoc">Returns the DAW/Host sample rate.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a396054f0b5d5a3aae85e7475dc08dfe6"><div class="ttname"><a href="binauraliser_8h.html#a396054f0b5d5a3aae85e7475dc08dfe6">binauraliser_setPitch</a></div><div class="ttdeci">void binauraliser_setPitch(void *const hBin, float newPitch)</div><div class="ttdoc">Sets the 'pitch' rotation angle, in DEGREES.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a75c1299119792b422831ea5cb1c9ba24"><div class="ttname"><a href="binauraliser_8h.html#a75c1299119792b422831ea5cb1c9ba24">binauraliser_getFrameSize</a></div><div class="ttdeci">int binauraliser_getFrameSize(void)</div><div class="ttdoc">Returns the processing framesize (i.e., number of samples processed with every _process() call )</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a294146a7e90af33ff414a29f974bcac0"><div class="ttname"><a href="binauraliser_8h.html#a294146a7e90af33ff414a29f974bcac0">binauraliser_setRoll</a></div><div class="ttdeci">void binauraliser_setRoll(void *const hBin, float newRoll)</div><div class="ttdoc">Sets the 'roll' rotation angle, in DEGREES.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_ac3c286f7e0708bca584b3b5510812f09"><div class="ttname"><a href="binauraliser_8h.html#ac3c286f7e0708bca584b3b5510812f09">binauraliser_getSourceAzi_deg</a></div><div class="ttdeci">float binauraliser_getSourceAzi_deg(void *const hBin, int index)</div><div class="ttdoc">Returns the source azimuth for a given index, in DEGREES.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a608e3d4c18ddd40b529c70929e0d578b"><div class="ttname"><a href="binauraliser_8h.html#a608e3d4c18ddd40b529c70929e0d578b">binauraliser_getMaxNumSources</a></div><div class="ttdeci">int binauraliser_getMaxNumSources(void)</div><div class="ttdoc">Returns the maximum number of input sources supported by binauraliser.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a390fead8e869e5c1adace25785ad2be5"><div class="ttname"><a href="binauraliser_8h.html#a390fead8e869e5c1adace25785ad2be5">binauraliser_setSourceAzi_deg</a></div><div class="ttdeci">void binauraliser_setSourceAzi_deg(void *const hBin, int index, float newAzi_deg)</div><div class="ttdoc">Sets the panning azimuth for a specific channel index, in DEGREES.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a72d4a261cbaa2519f7557db0bca6ab42"><div class="ttname"><a href="binauraliser_8h.html#a72d4a261cbaa2519f7557db0bca6ab42">binauraliser_getPitch</a></div><div class="ttdeci">float binauraliser_getPitch(void *const hBin)</div><div class="ttdoc">Returns the 'pitch' rotation angle, in DEGREES.</div></div>
+<div class="ttc" id="a__common_8h_html"><div class="ttname"><a href="__common_8h.html">_common.h</a></div><div class="ttdoc">A bunch of things that are common to many of the saf examples.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a6473297408bb09628b8bd26db1992e18"><div class="ttname"><a href="binauraliser_8h.html#a6473297408bb09628b8bd26db1992e18">binauraliser_create</a></div><div class="ttdeci">void binauraliser_create(void **const phBin)</div><div class="ttdoc">Creates an instance of the binauraliser.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a470d8621c364c01822fc1c4be7ae3291"><div class="ttname"><a href="binauraliser_8h.html#a470d8621c364c01822fc1c4be7ae3291">binauraliser_setSourceElev_deg</a></div><div class="ttdeci">void binauraliser_setSourceElev_deg(void *const hBin, int index, float newElev_deg)</div><div class="ttdoc">Sets the panning elevation for a specific channel index, in DEGREES.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a7a18aa1cd9adf953ceb009d87c8f1307"><div class="ttname"><a href="binauraliser_8h.html#a7a18aa1cd9adf953ceb009d87c8f1307">binauraliser_getProgressBarText</a></div><div class="ttdeci">void binauraliser_getProgressBarText(void *const hBin, char *text)</div><div class="ttdoc">(Optional) Returns current intialisation/processing progress text</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a07287820c8dfc646d99333c97d868407"><div class="ttname"><a href="binauraliser_8h.html#a07287820c8dfc646d99333c97d868407">binauraliser_refreshSettings</a></div><div class="ttdeci">void binauraliser_refreshSettings(void *const hBin)</div><div class="ttdoc">Sets all intialisation flags to 1; re-initialising all settings/variables as binauraliser is currentl...</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a62330358d5d762f4ba9f8ec07855f4bf"><div class="ttname"><a href="binauraliser_8h.html#a62330358d5d762f4ba9f8ec07855f4bf">binauraliser_getSofaFilePath</a></div><div class="ttdeci">char * binauraliser_getSofaFilePath(void *const hBin)</div><div class="ttdoc">Returns the file path for a .sofa file.</div></div>
+<div class="ttc" id="abinauraliser_8h_html_a020fbb57c8274c603556153ddac0a640"><div class="ttname"><a href="binauraliser_8h.html#a020fbb57c8274c603556153ddac0a640">binauraliser_getNTriangles</a></div><div class="ttdeci">int binauraliser_getNTriangles(void *const hBin)</div><div class="ttdoc">Returns the number of triangular groupings (faces) returned by the Convex Hull.</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Sep 30 2020 12:43:30 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Wed Sep 30 2020 12:53:48 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>
