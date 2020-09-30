@@ -504,6 +504,12 @@ ARRAY2SH_EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh)
     return pData->evalStatus;
 }
 
+int array2sh_getReinitSHTmatrixFLAG(void* const hA2sh)
+{
+    array2sh_data *pData = (array2sh_data*)(hA2sh);
+    return pData->reinitSHTmatrixFLAG;
+}
+
 float array2sh_getProgressBar0_1(void* const hA2sh)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);

@@ -55,7 +55,7 @@ void ambi_dec_create
     pData->dec_method[1] = DECODING_METHOD_ALLRAD;
     pData->rE_WEIGHT[0] = 1;
     pData->rE_WEIGHT[1] = 1;
-    pData->diffEQmode[0] = AMPLITUDE_PRESERVING;
+    pData->diffEQmode[0] = ENERGY_PRESERVING;
     pData->diffEQmode[1] = ENERGY_PRESERVING;
     pData->transitionFreq = 800.0f;
     

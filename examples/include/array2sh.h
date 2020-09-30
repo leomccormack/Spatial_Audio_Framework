@@ -400,6 +400,11 @@ int array2sh_getFrameSize(void);
 ARRAY2SH_EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh);
 
 /**
+ * Returns 0 if SHT is not be reinitialised, 1: if it is
+ */
+int array2sh_getReinitSHTmatrixFLAG(void* const hA2sh);
+
+/**
  * (Optional) Returns current intialisation/processing progress, between 0..1
  *  - 0: intialisation/processing has started
  *  - 1: intialisation/processing has ended
