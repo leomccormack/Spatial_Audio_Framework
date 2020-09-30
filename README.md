@@ -1,7 +1,7 @@
 <img src="saf.svg"> 
 
 * git: [https://github.com/leomccormack/Spatial_Audio_Framework](https://github.com/leomccormack/Spatial_Audio_Framework)
-* doxygen: [http://research.spa.aalto.fi/projects/spatial_audio_framework](http://research.spa.aalto.fi/projects/spatial_audio_framework)
+* doxygen: [https://leomccormack.github.io/Spatial_Audio_Framework/](https://leomccormack.github.io/Spatial_Audio_Framework/)
 
 # Prerequisites
 
