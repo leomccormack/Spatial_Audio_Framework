@@ -227,7 +227,7 @@ typedef enum _ASPECT_RATIO_OPTIONS{
  * These can be used to find out whether the codec is initialised, currently
  * in the process of intialising, or it is not yet initialised.
  */
-typedef enum _CODEC_STATUS {
+typedef enum {
     CODEC_STATUS_INITIALISED = 0, /**< Codec is initialised and ready to process
                                    *   input audio. */
     CODEC_STATUS_NOT_INITIALISED, /**< Codec has not yet been initialised, or

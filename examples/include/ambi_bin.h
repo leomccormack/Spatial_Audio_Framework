@@ -273,7 +273,7 @@ void ambi_bin_setRPYflag(void* const hAmbi, int newState);
 int ambi_bin_getFrameSize(void);
 
 /**
- * Returns current codec status, see #_CODEC_STATUS enum
+ * Returns current codec status, see #CODEC_STATUS enum
  */
 CODEC_STATUS ambi_bin_getCodecStatus(void* const hAmbi);
     
