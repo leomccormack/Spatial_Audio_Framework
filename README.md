@@ -131,22 +131,22 @@ make
 
 Several **examples** have also been included in the repository, which may serve as a starting point for learning how to use the framework:
 
-* **ambi_bin** - a binaural Ambisonic decoder with built-in rotator. It supports the following decoding options: least-squares (LS), spatial re-sampling (SPR), Time-alignment (TA) [1], Magnitude Least-Squares (MagLS) [2].
-* **ambi_dec** - a frequency-dependent Ambisonic decoder. It supports the following decoding options: sampling Ambisonic decoder (SAD), AllRAD [3], Energy-Preserving decoder (EPAD) [4], Mode-Matching decoder (MMD).
-* **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for Ambisonic signals, based on the design proposed in [5].
+* **ambi_bin** - a binaural Ambisonic decoder with built-in rotator. It supports the following decoding options: least-squares (LS), spatial re-sampling (SPR), Time-alignment (TA), Magnitude Least-Squares (MagLS).
+* **ambi_dec** - a frequency-dependent Ambisonic decoder. It supports the following decoding options: sampling Ambisonic decoder (SAD), AllRAD, Energy-Preserving decoder (EPAD), Mode-Matching decoder (MMD).
+* **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for Ambisonic signals.
 * **ambi_enc** - a basic Ambisonic encoder.
-* **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals), based on theoretical descriptions [6,7]; more details found in [8].
-* **beamformer** - a beamformer example with several different beamforming options.
+* **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals), based on theoretical descriptions of the array configuration and construction.
+* **beamformer** - a beamformer/virtual microphone generator for Ambisonic signals, with several different beam pattern options.
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file.
 * **decorrelator** - a basic multi-channel signal decorrelator.
-* **dirass** - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction [9].
+* **dirass** - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction.
 * **matrixconv** - a basic matrix convolver with an optional partitioned convolution mode. 
 * **multiconv** - a basic multi-channel convolver with an optional partitioned convolution mode. 
-* **panner** - a frequency-dependent VBAP panner [10], which permits source loudness compensation as a function of the room [11].
+* **panner** - a frequency-dependent VBAP panner, which accomodates a source loudness compensation (as a function of the room) option.
 * **pitch_shifter** - a basic multi-channel pitch shifter, based on the phase vocoder approach.
 * **powermap** - sound-field visualiser based on beamformer (PWD, MVDR) energy or sub-space-based methods (MUSIC).
-* **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll angles [12].
-* **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors, at multiple frequencies; as proposed in [8]. 
+* **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll Euler rotation angles.
+* **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors, at multiple frequencies. 
 
 Many of these examples have also been released as VST audio plug-ins under the [SPARTA](https://github.com/leomccormack/SPARTA) banner.
 
@@ -157,6 +157,8 @@ The following open-source projects also employ the framework: [HO-SIRR-GUI](http
 The repository also includes the following **extras**:
 
 * [**safmex**](extras/safmex/SAFMEX.md) - a bunch of Matlab MEX wrappers, which allow certain SAF functions to be used within Matlab.
+* [**safpy**](extras/safpy/SAFPY.md) - a work-in-progress initiative to bring SAF functionality to Python.
+* [**safwwise**](extras/safwwise/SAFWWISE.md) - a proof of concept regarding how one might integrate SAF into Wwise.
 
 ## Contributing
 
@@ -164,7 +166,7 @@ Suggestions and contributions to the code are both welcomed and encouraged. It s
 * if you are researcher who has developed a spatial-audio related method and want to integrate it into the framework... or
 * if you notice that an existing piece of code can be rewritten to make it clearer, faster, or to fix a bug...
 
-then please feel free to do so and submit a pull request. Note, however, that if the changes/additions are major, then perhaps consider first discussing it via a github "issue" or by contacting the developers directly via email. We may also be able to help with the implementation if needed :- )
+then please feel free to do so and submit a pull request. We may also be able to help with the implementation if needed :- )
 
 ## Contributors
 
@@ -173,44 +175,6 @@ then please feel free to do so and submit a pull request. Note, however, that if
 * **Archontis Politis** - algorithm design
 * **Ville Pulkki** - algorithm design
 * **Juhani Paasonen** - C programmer
-
-## References
-
-[1] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. **Binaural rendering of Ambisonic signals by head-related impulse response time alignment and a diffuseness constraint**.
-The Journal of the Acoustical Society of America. 2018 Jun 19;143(6):3616-27.
-
-[2] Scho"rkhuber C, Zaunschirm M, Ho"ldrich R. **Binaural Rendering of Ambisonic Signals via Magnitude Least Squares**.
-InProceedings of the DAGA 2018 (Vol. 44, pp. 339-342).
-
-[3] Zotter F, Frank M. **All-round ambisonic panning and decoding**.
-Journal of the audio engineering society. 2012 Nov 26;60(10):807-20.
-
-[4] Zotter F, Pomberger H, Noisternig M. **Energy-preserving ambisonic decoding**.
-Acta Acustica united with Acustica. 2012 Jan 1;98(1):37-47.
-
-[5] McCormack L, Va"lima"ki V. **FFT-based Dynamic Range Compression**.
-In Proceedings of the 14th Sound and Music Computing Conference, July 5--8, Espoo, Finland, At Espoo, Finland 2017
-
-[6] Williams EG. **Fourier acoustics: sound radiation and nearfield acoustical holography**.
-Elsevier; 1999 Jun 10.
-
-[7] Rafaely B. **Fundamentals of spherical array processing**.
-Berlin: Springer; 2015 Feb 18.
-
-[8] McCormack L, Delikaris-Manias S, Farina A, Pinardi D, Pulkki V. **Real-Time Conversion of Sensor Array Signals into Spherical Harmonic Signals with Applications to Spatially Localized Sub-Band Sound-Field Analysis**.
-In Audio Engineering Society Convention 144 2018 May 14. Audio Engineering Society.
-
-[9] McCormack L, Politis A, Pulkki V. **Sharpening of Angular Spectra Based on a Directional Re-assignment Approach for Ambisonic Sound-field Visualisation**.
-In ICASSP 2019-2019 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) 2019 Apr 17 (pp. 576-580). IEEE.
-
-[10] Pulkki V. **Virtual sound source positioning using vector base amplitude panning**.
-Journal of the audio engineering society. 1997 Jun 1;45(6):456-66.
-
-[11] Laitinen MV, Vilkamo J, Jussila K, Politis A, Pulkki V. **Gain normalization in amplitude panning as a function of frequency and room reverberance**.
-In Audio Engineering Society Conference: 55th International Conference: Spatial Audio 2014 Aug 26. Audio Engineering Society.
-
-[12] Ivanic J, Ruedenberg K. **Rotation Matrices for Real Spherical Harmonics. Direct Determination by Recursion**.
-The Journal of Physical Chemistry A. 1998 Nov 5;102(45):9099-100.
 
 # License
 

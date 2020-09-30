@@ -19,15 +19,15 @@
  * @brief A sound-field visualiser based on the directional re-assignment of
  *        beamformer energy based on local DoA estimates [1,2]
  *
- * @see [1] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of
- *          angular spectra based on a directional re-assignment approach for
- *          ambisonic sound-field visualisation". IEEE International Conference
- *          on Acoustics, Speech and Signal Processing (ICASSP).
- * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ * @see [1] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
  *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
  *          Spatially Localized Active-Intensity Vectors for Sound-Field
  *          Visualization. Journal of the Audio Engineering Society, 67(11),
  *          pp.840-854.
+ * @see [2] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of
+ *          angular spectra based on a directional re-assignment approach for
+ *          ambisonic sound-field visualisation". IEEE International Conference
+ *          on Acoustics, Speech and Signal Processing (ICASSP).
  *
  * @author Leo McCormack
  * @date 21.02.2019

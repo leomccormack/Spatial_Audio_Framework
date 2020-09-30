@@ -16,7 +16,7 @@
 
 /**
  * @file ambi_enc_internal.c
- * @brief A simple, but flexible, Ambisonic encoder.
+ * @brief A basic Ambisonic encoder
  *
  * @author Leo McCormack
  * @date 07.10.2016

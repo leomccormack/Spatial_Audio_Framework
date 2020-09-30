@@ -16,8 +16,9 @@
 
 /**
  * @file array2sh_internal.c
- * @brief Spatially encodes spherical or cylindrical sensor array signals into
- *        spherical harmonic signals utilising theoretical encoding filters.
+ * @brief Spatially encodes spherical microphone array signals into spherical
+ *        harmonic signals (aka: Ambisonic signals) utilising theoretical
+ *        encoding filters.
  *
  * The algorithms within array2sh were pieced together and developed in
  * collaboration with Symeon Delikaris-Manias and Angelo Farina.
@@ -28,12 +29,18 @@
  * @note Since the algorithms are based on theory, only array designs where
  *       there are analytical solutions available are supported. i.e. only
  *       spherical or cylindrical arrays, which have phase-matched sensors.
+ *       For more information, the reader is referred to [2,3].
+ * @test test__saf_example_array2sh()
  *
  * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
  *          Pulkki, V., "Real-time conversion of sensor array signals into
  *          spherical harmonic signals with applications to spatially localised
  *          sub-band sound-field analysis," in Audio Engineering Society
  *          Convention 144, Audio Engineering Society, 2018.
+ * @see [2] Williams EG. Fourier acoustics: sound radiation and nearfield
+ *          acoustical holography. Elsevier; 1999 Jun 10.
+ * @see [3] Rafaely B. Fundamentals of spherical array processing. Berlin:
+ *          Springer; 2015 Feb 18.
  *
  * @author Leo McCormack
  * @date 13.09.2017

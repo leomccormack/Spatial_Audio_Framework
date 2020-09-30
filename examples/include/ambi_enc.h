@@ -16,7 +16,7 @@
 
 /**
  * @file ambi_enc.h
- * @brief A simple, but flexible, Ambisonic encoder.
+ * @brief A basic Ambisonic encoder
  *
  * @test test__saf_example_ambi_enc()
  * 

@@ -16,8 +16,10 @@
 
 /**
  * @file rotator_internal.h
- * @brief  A simple spherical harmonic domain rotator, based on the recursive
- *         approach detailed in [1].
+ * @brief A basic spherical harmonic/ Ambisonic signals rotator, based on the
+ *        recursive approach detailed in [1]
+ *
+ * @test test__saf_example_rotator()
  *
  * @see [1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real
  *          Spherical Harmonics. Direct Determination by Recursion Page:

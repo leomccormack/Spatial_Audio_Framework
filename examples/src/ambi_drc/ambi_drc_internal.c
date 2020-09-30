@@ -16,24 +16,24 @@
 
 /**
  * @file ambi_drc_internal.c
- * @brief A frequency-dependent spherical harmonic domain dynamic range
- *        compressor (DRC).
+ * @brief A frequency-dependent Ambisonic sound scene dynamic range compressor
+ *        (DRC)
  *
  * The implementation can also keep track of the frequency-dependent gain
- * factors for the omnidirectional component over time, for optional plotting.
+ * factors for the omnidirectional component over time (for optional plotting).
  * The design is based on the algorithm presented in [1].
  *
- * The DRC gain factors are determined based on analysing the omnidirectional
- * component. These gain factors are then applied to the higher-order
- * components, in a such a manner as to retain the spatial information within
- * them.
- *
- * @author Leo McCormack
- * @date 07.01.2017
+ * The DRC gain factors per band are determined based on the omnidirectional
+ * component, which are then applied to all of the higher-order components;
+ * thus, the spatial information of the Ambisonic sound scene is retained
+ * (although, your perception of them may change due to the DRC).
  *
  * @see [1] McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range
  *          Compression". in Proceedings of the 14th Sound and Music Computing
  *          Conference, July 5-8, Espoo, Finland.
+ *
+ * @author Leo McCormack
+ * @date 07.01.2017
  */
 
 #include "ambi_drc.h"

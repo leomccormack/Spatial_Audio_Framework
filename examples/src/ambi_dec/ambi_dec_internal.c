@@ -16,16 +16,27 @@
 
 /**
  * @file ambi_dec_internal.c
- * @brief A frequency-dependent Ambisonic decoder for loudspeakers.
+ * @brief A frequency-dependent Ambisonic decoder for reproducing Ambisonic
+ *        sound scenes over loudspeakers
  *
  * Different decoder settings can be specified for the low and high frequencies.
- * When utilising spherical harmonic signals derived from real microphone
- * arrays, this implementation also allows the decoding order per frequency band
- * to be specified; of course, this may also be used creatively. Optionally, a
- * SOFA file may be loaded for personalised headphone listening.
+ * A number of decoding options are also offered, including [1,2]. When
+ * utilising spherical harmonic signals derived from real microphone arrays,
+ * this implementation also allows the decoding order to be specified per
+ * frequency band; of course, this may also be used creatively. An optional,
+ * loudspeaker channel binauraliser is included, along with with SOFA file
+ * loading, for headphone listening.
  *
  * The algorithms utilised in this Ambisonic decoder were pieced together and
  * developed in collaboration with Archontis Politis.
+ *
+ * @test test__saf_example_ambi_dec()
+ *
+ * @see [1] Zotter F, Pomberger H, Noisternig M. Energy--preserving ambisonic
+ *          decoding. Acta Acustica united with Acustica. 2012 Jan 1;
+ *          98(1):37-47.
+ * @see [2] Zotter F, Frank M. All-round ambisonic panning and decoding. Journal
+ *          of the audio engineering society. 2012 Nov 26; 60(10):807-20.
  *
  * @author Leo McCormack
  * @date 07.12.2017

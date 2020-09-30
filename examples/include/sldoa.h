@@ -16,8 +16,8 @@
 
 /**
  * @file sldoa.h
- * @brief A spatially-localised active-intensity based direction-of-arrival
- *        estimator (SLDoA).
+ * @brief A spatially-localised active-intensity (SLAI) based direction-of-
+ *        arrival estimator (SLDoA)
  *
  * VBAP gain patterns are imposed on the spherical harmonic signals, such that
  * the DoA can be estimated in a spatially-constrained region; thus mitigating
@@ -27,16 +27,16 @@
  * The algorithms within sldoa were developed in collaboration with Symeon
  * Delikaris-Manias and Angelo Farina, and are explained in more detail in [1,2]
  *
- * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
- *          Pulkki, V., "Real-time conversion of sensor array signals into
- *          spherical harmonic signals with applications to spatially localised
- *          sub-band sound-field analysis," in Audio Engineering Society
- *          Convention 144, Audio Engineering Society, 2018.
- * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ * @see [1] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
  *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
  *          Spatially Localized Active-Intensity Vectors for Sound-Field
  *          Visualization. Journal of the Audio Engineering Society, 67(11),
  *          pp.840-854.
+ * @see [2] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
+ *          Pulkki, V., "Real-time conversion of sensor array signals into
+ *          spherical harmonic signals with applications to spatially localised
+ *          sub-band sound-field analysis," in Audio Engineering Society
+ *          Convention 144, Audio Engineering Society, 2018.
  *
  * @author Leo McCormack
  * @date 18.10.2017
