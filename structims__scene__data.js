@@ -1,0 +1,28 @@
+var structims__scene__data =
+[
+    [ "abs_wall", "structims__scene__data.html#a65e7259b74b4f75ef786e24521a34f20", null ],
+    [ "applyCrossFadeFLAG", "structims__scene__data.html#a18cf32cf51833580b0d5a759c203815e", null ],
+    [ "band_centerfreqs", "structims__scene__data.html#a7df90c67e4f3823b0bed6a4bb482b474", null ],
+    [ "band_cutofffreqs", "structims__scene__data.html#a0cc63f2c0d47bd86a1760a346646402c", null ],
+    [ "c_ms", "structims__scene__data.html#a52674f0bdfc7c8174554ec81adcb3cbe", null ],
+    [ "circ_buffer", "structims__scene__data.html#a1336584c62fbf72f70929612761778b5", null ],
+    [ "framesize", "structims__scene__data.html#a8d984e8c2093c27a106620c70a2f5c64", null ],
+    [ "fs", "structims__scene__data.html#af0a8f5d20359aaf55adaa0fc303ba317", null ],
+    [ "H_filt", "structims__scene__data.html#ac7d1bb7d6d13cf3b939d55c412fe068d", null ],
+    [ "hCoreWrkSpc", "structims__scene__data.html#a9fb5cdf534279ebf0c70f1987feec8eb", null ],
+    [ "hFaFbank", "structims__scene__data.html#af4325be2dccb18b5fb1d91674c0cf935", null ],
+    [ "interpolator_fIn", "structims__scene__data.html#a5bfd7c6b3b058392b03fb2a0ff8a9437", null ],
+    [ "interpolator_fOut", "structims__scene__data.html#aea63b8b221b0845af244d6b4d782be50", null ],
+    [ "lookup_fractions", "structims__scene__data.html#a96bc2433f0977df9210197510abd38fe", null ],
+    [ "lookup_H_frac", "structims__scene__data.html#a8da8e5a57d7f3a6b1109a6e98a9fa7ad", null ],
+    [ "nBands", "structims__scene__data.html#a5c89eed63acbd4316ee92599816b2a9b", null ],
+    [ "nReceivers", "structims__scene__data.html#a955a21013a45b95d64799217b35c3712", null ],
+    [ "nSources", "structims__scene__data.html#a1d3504213c398687cda898bdc18a5532", null ],
+    [ "rec_sig_tmp", "structims__scene__data.html#a863793ddc79ade65a5adbf47ab8314c3", null ],
+    [ "recs", "structims__scene__data.html#a962e6f00ed1f1676226385725062d5f0", null ],
+    [ "rirs", "structims__scene__data.html#ac0a10ed70135d9c05587911da6493faf", null ],
+    [ "room_dims", "structims__scene__data.html#a6f40f17955010f2f1123d5defd08082e", null ],
+    [ "src_sigs_bands", "structims__scene__data.html#a6c85109a187c9430ad2dbf852f9c9500", null ],
+    [ "srcs", "structims__scene__data.html#aa535ea315425398b5b906763e6acce1c", null ],
+    [ "wIdx", "structims__scene__data.html#a159cf671689c458fe954edbfc4ebe54c", null ]
+];

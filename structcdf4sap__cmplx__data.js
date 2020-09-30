@@ -1,0 +1,28 @@
+var structcdf4sap__cmplx__data =
+[
+    [ "Cr_cmplx", "structcdf4sap__cmplx__data.html#a6ac689b6d52ef7c36221d73d5bd35bc4", null ],
+    [ "Cx_MH", "structcdf4sap__cmplx__data.html#a428c9b172ca485faf5133985186612ef", null ],
+    [ "Cx_QH", "structcdf4sap__cmplx__data.html#ab6a8bec3ea25a5cf8ae3f2c9c852a711", null ],
+    [ "Cy_tilde", "structcdf4sap__cmplx__data.html#afc1f0407e077ff1450258ca77d002d02", null ],
+    [ "G_hat", "structcdf4sap__cmplx__data.html#a3da4810680c6faa254a51de49cccbf05", null ],
+    [ "G_M", "structcdf4sap__cmplx__data.html#a8b205aa757c6d041838c330f954c5cc3", null ],
+    [ "GhatH_Ky", "structcdf4sap__cmplx__data.html#adfd635d62883ff6ff3348d4027a2d0ac", null ],
+    [ "Kx", "structcdf4sap__cmplx__data.html#ad65885f1eab92a054b3df9d316e7d6fa", null ],
+    [ "Kx_reg_inverse", "structcdf4sap__cmplx__data.html#a5c0ca7762dd2bbd4842f682626831e31", null ],
+    [ "KxH_QH_GhatH_Ky", "structcdf4sap__cmplx__data.html#a54d77ff889d668ae5ae2df069d4ccdbd", null ],
+    [ "Ky", "structcdf4sap__cmplx__data.html#a0d6088e97ca596ff5bc4562a0b6f8667", null ],
+    [ "lambda", "structcdf4sap__cmplx__data.html#a52dfa65b90871a0d518d9458e99390b1", null ],
+    [ "lambda_UH", "structcdf4sap__cmplx__data.html#afd1d635bfc23b7e2010b82b384b8a880", null ],
+    [ "nXcols", "structcdf4sap__cmplx__data.html#abdb260c5b3f19aecbda844907ecee025", null ],
+    [ "nYcols", "structcdf4sap__cmplx__data.html#ab3504bae14ed39d0a44092bf4111386b", null ],
+    [ "P", "structcdf4sap__cmplx__data.html#a62a6b838eaecf627f8ecee46cc1d1220", null ],
+    [ "P_Kxreginverse", "structcdf4sap__cmplx__data.html#a27808566db156ddc7db928bcb54741cd", null ],
+    [ "QH_GhatH_Ky", "structcdf4sap__cmplx__data.html#a7e5ff79d7c974a2d20f137466c590e79", null ],
+    [ "S_Cx", "structcdf4sap__cmplx__data.html#ab847c059696b9bc4eb0f73c69c8bae36", null ],
+    [ "s_Cx", "structcdf4sap__cmplx__data.html#a4fbf105c061e348ea8fc76aa73ccc8ce", null ],
+    [ "S_Cy", "structcdf4sap__cmplx__data.html#a60d7ca275666f8cc0f64a78f1ef261fe", null ],
+    [ "U", "structcdf4sap__cmplx__data.html#a5f888767e0dbc2af6f80f72737a4ecfa", null ],
+    [ "U_Cx", "structcdf4sap__cmplx__data.html#aa66d42ddf03b6aa3822b648ca6dc0881", null ],
+    [ "U_Cy", "structcdf4sap__cmplx__data.html#a484d145607c2f4d730335f0d3219e100", null ],
+    [ "V", "structcdf4sap__cmplx__data.html#a23d527ba5eb34a730a8dbc04a217aa56", null ]
+];

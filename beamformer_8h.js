@@ -1,0 +1,27 @@
+var beamformer_8h =
+[
+    [ "beamformer_create", "beamformer_8h.html#a3afcac87c31d60d150ac6728b4f22702", null ],
+    [ "beamformer_destroy", "beamformer_8h.html#a831892832e6805742a844eed37cee29b", null ],
+    [ "beamformer_getBeamAzi_deg", "beamformer_8h.html#a09041a0339788f8353f8b0c52a6dcb77", null ],
+    [ "beamformer_getBeamElev_deg", "beamformer_8h.html#a0b34bc4699185073a4e9e70bf4435961", null ],
+    [ "beamformer_getBeamOrder", "beamformer_8h.html#aab79c0072c979f9e6685736a7aa95213", null ],
+    [ "beamformer_getBeamType", "beamformer_8h.html#a5a698fd832f58636848608203f627a11", null ],
+    [ "beamformer_getChOrder", "beamformer_8h.html#a125f97fd9a202f6455da1c4c08ed9a9c", null ],
+    [ "beamformer_getFrameSize", "beamformer_8h.html#a7f3256bbf8c9e54067d0d3e89c8aa714", null ],
+    [ "beamformer_getMaxNumBeams", "beamformer_8h.html#a9b3a6794c4165a3e8f22ff1cf8a3b925", null ],
+    [ "beamformer_getNormType", "beamformer_8h.html#affe0b1571af0915548300b666575606c", null ],
+    [ "beamformer_getNSHrequired", "beamformer_8h.html#a6beebb6e4300033f25a07070c323ce6b", null ],
+    [ "beamformer_getNumBeams", "beamformer_8h.html#a37f6e24062aa34a213cee08a7ef4ffa2", null ],
+    [ "beamformer_getNumberOfBands", "beamformer_8h.html#a85ff6f3da083d34cba352d13a3c5e713", null ],
+    [ "beamformer_getProcessingDelay", "beamformer_8h.html#a2518e0bd354d5d49c82ef4857f724763", null ],
+    [ "beamformer_init", "beamformer_8h.html#a6979b023ef547f9a03b75879c0948d38", null ],
+    [ "beamformer_process", "beamformer_8h.html#ad3b0a54f808785f148674530cc5cdae7", null ],
+    [ "beamformer_refreshSettings", "beamformer_8h.html#ada4f400901972da1ae49848856bebfdc", null ],
+    [ "beamformer_setBeamAzi_deg", "beamformer_8h.html#ab6c19076251aa6e416b9586b847eaff4", null ],
+    [ "beamformer_setBeamElev_deg", "beamformer_8h.html#aae8efc150223a1896e5eacdaad6e3753", null ],
+    [ "beamformer_setBeamOrder", "beamformer_8h.html#a3f03bea85d0633766674868332496e12", null ],
+    [ "beamformer_setBeamType", "beamformer_8h.html#a0cc0e3a71490a941f7b1874fb144726a", null ],
+    [ "beamformer_setChOrder", "beamformer_8h.html#a558e55b75b83c7cb27d86b69c8d9ebb2", null ],
+    [ "beamformer_setNormType", "beamformer_8h.html#afda03f25bfdf1fdf3086a82575a41d9a", null ],
+    [ "beamformer_setNumBeams", "beamformer_8h.html#a65a7df1619af654943f2e4147dbc096e", null ]
+];

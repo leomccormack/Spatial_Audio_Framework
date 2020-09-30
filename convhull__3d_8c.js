@@ -1,0 +1,28 @@
+var convhull__3d_8c =
+[
+    [ "float_w_idx", "structfloat__w__idx.html", "structfloat__w__idx" ],
+    [ "int_w_idx", "structint__w__idx.html", "structint__w__idx" ],
+    [ "CH_FLT_MAX", "convhull__3d_8c.html#a2e9d99f65a1995182e510c44acb97c76", null ],
+    [ "CH_FLT_MIN", "convhull__3d_8c.html#af37fb9cc35d08fc500723a3f11821c16", null ],
+    [ "CH_MAX_NUM_FACES", "convhull__3d_8c.html#aee149952808ac8546af61902e18749c9", null ],
+    [ "CH_NOISE_VAL", "convhull__3d_8c.html#a7ccd1db9ea97be88b2978c7ec0d2e341", null ],
+    [ "CONVHULL_3D_USE_CBLAS", "convhull__3d_8c.html#a6a6c3207d81d9daa24f6710861fb2c18", null ],
+    [ "CV_STRCAT", "convhull__3d_8c.html#a98b0d0081d3874182a94f713439a7256", null ],
+    [ "CV_STRNCPY", "convhull__3d_8c.html#ab921f1d7f0658a1a5978e6735b1ded74", null ],
+    [ "MAX", "convhull__3d_8c.html#afa99ec4acc4ecb2dc3c2d05da15d0e3f", null ],
+    [ "MIN", "convhull__3d_8c.html#a3acffbd305ee72dcd4593c0d8af64a4f", null ],
+    [ "cmp_asc_float", "convhull__3d_8c.html#ad2d0ff171a8ca5a58d7a1c651b8b36d2", null ],
+    [ "cmp_asc_int", "convhull__3d_8c.html#af5953deb9995809617040cf7d827561e", null ],
+    [ "cmp_desc_float", "convhull__3d_8c.html#adba59c8b8a2248436b81a199df4a86bd", null ],
+    [ "cmp_desc_int", "convhull__3d_8c.html#a36772b69ea2806ae3b2ae606ceeb3bec", null ],
+    [ "convhull_3d_build", "convhull__3d_8c.html#a5603f178dbc7737a91eb50edfef8084d", null ],
+    [ "convhull_3d_export_m", "convhull__3d_8c.html#a88a71980cb3cd2086b9445905fb8f0c0", null ],
+    [ "convhull_3d_export_obj", "convhull__3d_8c.html#ac6aaf09ca437fdc7ea936e589baedba0", null ],
+    [ "cross", "convhull__3d_8c.html#a1fc4d294b199a28796294b1269b3a086", null ],
+    [ "det_4x4", "convhull__3d_8c.html#a30fa783039bf03004fb908f7c9fbc0a9", null ],
+    [ "extractVerticesFromObjFile", "convhull__3d_8c.html#ac01a7e59609267790aadf112cdb09644", null ],
+    [ "ismember", "convhull__3d_8c.html#ae24d3993a17236a21070e8bbb4cab1b3", null ],
+    [ "plane_3d", "convhull__3d_8c.html#a876c0306ef1b55e438e357b0df575d36", null ],
+    [ "sort_float", "convhull__3d_8c.html#ad1a0fa74854d16b394e3d805da239231", null ],
+    [ "sort_int", "convhull__3d_8c.html#aa97662cb9b80fdb94dff8d70063ce5ed", null ]
+];

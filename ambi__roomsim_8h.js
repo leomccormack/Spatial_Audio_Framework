@@ -1,0 +1,28 @@
+var ambi__roomsim_8h =
+[
+    [ "ambi_roomsim_create", "ambi__roomsim_8h.html#a367732f6c370379a2b522ff5b4eae4cf", null ],
+    [ "ambi_roomsim_destroy", "ambi__roomsim_8h.html#a50989a39b60267b879af1793fb60a0d3", null ],
+    [ "ambi_roomsim_getChOrder", "ambi__roomsim_8h.html#aa0e0b7be4a7a00acdc32a4894ba0df0a", null ],
+    [ "ambi_roomsim_getEnablePostScaling", "ambi__roomsim_8h.html#a6275921776aa574a0aa04a42d647102c", null ],
+    [ "ambi_roomsim_getFrameSize", "ambi__roomsim_8h.html#acbf92834b61fc025499bf27267e1931c", null ],
+    [ "ambi_roomsim_getMaxNumSources", "ambi__roomsim_8h.html#ae798e994dabb581700f220d3d299aca3", null ],
+    [ "ambi_roomsim_getNormType", "ambi__roomsim_8h.html#af5248c6e4c0101543ffe9ed62b527f8f", null ],
+    [ "ambi_roomsim_getNSHrequired", "ambi__roomsim_8h.html#a188c8f5d14a552a19cf3a1dadf740507", null ],
+    [ "ambi_roomsim_getNumSources", "ambi__roomsim_8h.html#a62a9726706f9d29f282dfc0e4fcd0c45", null ],
+    [ "ambi_roomsim_getOutputOrder", "ambi__roomsim_8h.html#a9a75c14e03f04428c02fa68adcc754ec", null ],
+    [ "ambi_roomsim_getProcessingDelay", "ambi__roomsim_8h.html#a8b4b3e41e4115eeee2d662d7916bf329", null ],
+    [ "ambi_roomsim_getSourceAzi_deg", "ambi__roomsim_8h.html#a9da948af9248d9cea2a45771348d16f7", null ],
+    [ "ambi_roomsim_getSourceElev_deg", "ambi__roomsim_8h.html#a8693f86348c66d3057e07ed59da0ef88", null ],
+    [ "ambi_roomsim_init", "ambi__roomsim_8h.html#aa4136b37bf8e91f709e5e3837865f448", null ],
+    [ "ambi_roomsim_process", "ambi__roomsim_8h.html#a321f3d1888850781f6896734830a5248", null ],
+    [ "ambi_roomsim_refreshParams", "ambi__roomsim_8h.html#a7befccb2ce578d081c19a8a7632baca8", null ],
+    [ "ambi_roomsim_setChOrder", "ambi__roomsim_8h.html#a691b52b9a5d8d02afbfb73e6e4c4ce05", null ],
+    [ "ambi_roomsim_setEnablePostScaling", "ambi__roomsim_8h.html#a9a7b544f9831d054d3d0fd5d3db25db9", null ],
+    [ "ambi_roomsim_setInputConfigPreset", "ambi__roomsim_8h.html#a7cfa5f007c1f81c7d7ca85c3c395f0ab", null ],
+    [ "ambi_roomsim_setNormType", "ambi__roomsim_8h.html#a4c4cb66f50c7fd5b4953b80601ab44d6", null ],
+    [ "ambi_roomsim_setNumSources", "ambi__roomsim_8h.html#a1ca075562a83b00c58975c53a5e4a6e0", null ],
+    [ "ambi_roomsim_setOutputOrder", "ambi__roomsim_8h.html#a2710221010b42766bb3b32d89676a143", null ],
+    [ "ambi_roomsim_setSourceX", "ambi__roomsim_8h.html#a5433bb51e762d664cc47c535da810753", null ],
+    [ "ambi_roomsim_setSourceY", "ambi__roomsim_8h.html#ad9990d1852de47d8bb03dcc50e5b4363", null ],
+    [ "ambi_roomsim_setSourceZ", "ambi__roomsim_8h.html#a7feeec85926a48b42552f7b2f1576789", null ]
+];

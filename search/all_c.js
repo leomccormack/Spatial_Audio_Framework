@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['l2_5fnorm_1011',['L2_norm',['../group___utilities.html#gae037c518bdc960a4313a980840caf405',1,'L2_norm(float *v, int lenV):&#160;saf_utility_geometry.c'],['../group___utilities.html#gae037c518bdc960a4313a980840caf405',1,'L2_norm(float *v, int lenV):&#160;saf_utility_geometry.c']]],
+  ['l2_5fnorm3_1012',['L2_norm3',['../group___utilities.html#gaeb5052aa193c9dbbbfe5081a2fbb61c5',1,'L2_norm3(float v[3]):&#160;saf_utility_geometry.c'],['../group___utilities.html#gaeb5052aa193c9dbbbfe5081a2fbb61c5',1,'L2_norm3(float v[3]):&#160;saf_utility_geometry.c']]],
+  ['lagrangeweights_1013',['lagrangeWeights',['../group___utilities.html#gae3216f9f562a0bf51a327adff0b40744',1,'lagrangeWeights(int N, float *x, int len_x, float *weights):&#160;saf_utility_misc.c'],['../group___utilities.html#gae3216f9f562a0bf51a327adff0b40744',1,'lagrangeWeights(int N, float *x, int len_x, float *weights):&#160;saf_utility_misc.c']]],
+  ['latticeapf_1014',['latticeAPF',['../structlattice_a_p_f.html',1,'']]],
+  ['latticedecor_5fdata_1015',['latticeDecor_data',['../structlattice_decor__data.html',1,'']]],
+  ['latticedecorrelator_5fapply_1016',['latticeDecorrelator_apply',['../group___utilities.html#ga88cb15c08fbf7cf58a4512b0bdd256a0',1,'latticeDecorrelator_apply(void *hDecor, float_complex ***inFrame, int nTimeSlots, float_complex ***decorFrame):&#160;saf_utility_decor.c'],['../group___utilities.html#ga88cb15c08fbf7cf58a4512b0bdd256a0',1,'latticeDecorrelator_apply(void *hDecor, float_complex ***inFrame, int nTimeSlots, float_complex ***decorFrame):&#160;saf_utility_decor.c']]],
+  ['latticedecorrelator_5fcreate_1017',['latticeDecorrelator_create',['../group___utilities.html#ga3b21bc26536e1e3819bde56b16717a45',1,'latticeDecorrelator_create(void **phDecor, int nCH, int *orders, float *freqCutoffs, int *fixedDelays, int nCutoffs, float *freqVector, int lookupOffset, int nBands):&#160;saf_utility_decor.c'],['../group___utilities.html#ga3b21bc26536e1e3819bde56b16717a45',1,'latticeDecorrelator_create(void **phDecor, int nCH, int *orders, float *freqCutoffs, int *fixedDelays, int nCutoffs, float *freqVector, int lookupOffset, int nBands):&#160;saf_utility_decor.c']]],
+  ['latticedecorrelator_5fdestroy_1018',['latticeDecorrelator_destroy',['../group___utilities.html#gad77e5c2c2273383cb44ef8fda671fe92',1,'latticeDecorrelator_destroy(void **phDecor):&#160;saf_utility_decor.c'],['../group___utilities.html#gad77e5c2c2273383cb44ef8fda671fe92',1,'latticeDecorrelator_destroy(void **phDecor):&#160;saf_utility_decor.c']]],
+  ['loadsofafile_1019',['loadSofaFile',['../group___s_o_f_a___reader.html#ga8783d4f04ef4b082de7aa414e294ff52',1,'saf_sofa_reader.h']]],
+  ['loudspeaker_5fambi_5fdecoder_5fmethods_1020',['LOUDSPEAKER_AMBI_DECODER_METHODS',['../group___h_o_a.html#gaa9bfe259decc1175b881c63f05edfae2',1,'saf_hoa.h']]],
+  ['loudspeaker_5farray_5fpresets_1021',['LOUDSPEAKER_ARRAY_PRESETS',['../__common_8h.html#a12a56921e43594c15c86a9fa62b023f7',1,'_common.h']]],
+  ['loudspeaker_5fdecoder_5fallrad_1022',['LOUDSPEAKER_DECODER_ALLRAD',['../group___h_o_a.html#ggaa9bfe259decc1175b881c63f05edfae2a30fc2a59a858885b6651fd5a1fd34145',1,'saf_hoa.h']]],
+  ['loudspeaker_5fdecoder_5fdefault_1023',['LOUDSPEAKER_DECODER_DEFAULT',['../group___h_o_a.html#ggaa9bfe259decc1175b881c63f05edfae2aa1dad6c278efa25907a0b64fb2942e26',1,'saf_hoa.h']]],
+  ['loudspeaker_5fdecoder_5fepad_1024',['LOUDSPEAKER_DECODER_EPAD',['../group___h_o_a.html#ggaa9bfe259decc1175b881c63f05edfae2aa1e10487b21890502a1c72b34d2b7add',1,'saf_hoa.h']]],
+  ['loudspeaker_5fdecoder_5fmmd_1025',['LOUDSPEAKER_DECODER_MMD',['../group___h_o_a.html#ggaa9bfe259decc1175b881c63f05edfae2ae1f628a0188a79ae586ae270a0a8b508',1,'saf_hoa.h']]],
+  ['loudspeaker_5fdecoder_5fsad_1026',['LOUDSPEAKER_DECODER_SAD',['../group___h_o_a.html#ggaa9bfe259decc1175b881c63f05edfae2a743482262e1deb4c4511d2a9cbaddff6',1,'saf_hoa.h']]],
+  ['lti_5fdisc_1027',['lti_disc',['../saf__tracker__internal_8h.html#a6cb945f00b454e590bf47c7a9272e2bb',1,'saf_tracker_internal.h']]]
+];

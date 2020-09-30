@@ -1,0 +1,28 @@
+var structqmf__data =
+[
+    [ "buffer_ana", "structqmf__data.html#a4cba0e186930831a68b2983882f2b912", null ],
+    [ "buffer_syn", "structqmf__data.html#a16bb5c869044fa2be4f9a46b557eaf91", null ],
+    [ "buffer_win", "structqmf__data.html#a6023f011908f717eeb734ea5a8a4328b", null ],
+    [ "fb4bandCoeffs", "structqmf__data.html#aa3be89d2159edee3ebd1a65405219918", null ],
+    [ "fb8bandCoeffs", "structqmf__data.html#ae20cf6bab9c03f18e06e10b496aef9f2", null ],
+    [ "format", "structqmf__data.html#abf03ee78b36355d7ce8d28d783c3b6e5", null ],
+    [ "h_a", "structqmf__data.html#a366b66afd035a36890e80a9152621a2c", null ],
+    [ "h_p", "structqmf__data.html#ad0674812930386cfc6d052c655004bb8", null ],
+    [ "h_s_imag", "structqmf__data.html#a9349ae62ebc5fdafb37b289847981eae", null ],
+    [ "h_s_real", "structqmf__data.html#afc02a4aca0927ad7f60f19f3f63329f5", null ],
+    [ "hopsize", "structqmf__data.html#ab5dc307a125369f0fc7922b7a1ec29d4", null ],
+    [ "hybBuffer", "structqmf__data.html#afc28a002215dd35e3368540b95468adc", null ],
+    [ "hybQmfTF_frame", "structqmf__data.html#a1a0e606f856f8896e5e2581d1517691c", null ],
+    [ "hybridmode", "structqmf__data.html#a47543cfc4425c7106317036dd244d6e9", null ],
+    [ "nBands", "structqmf__data.html#a9c8c7ebb336752589716135ac9c2c183", null ],
+    [ "nCHin", "structqmf__data.html#ac9536a6734fea5aa833b968c6a6763ac", null ],
+    [ "nCHout", "structqmf__data.html#a7987888cfab02c3388a19c60e2efc101", null ],
+    [ "procDelay", "structqmf__data.html#a92c21d362183940f43df218c9df4dea5", null ],
+    [ "qmfDelayBuffer", "structqmf__data.html#a893d7d1cca1fb66a439f13b0647be54f", null ],
+    [ "qmfTF_frame", "structqmf__data.html#a7fd032d86afacbec62a4283f5798e8c7", null ],
+    [ "qmfTF_frame_tmp", "structqmf__data.html#a2a8beba5bba2ac3d7c5116cc958ee0ab", null ],
+    [ "tmp_imag_frame", "structqmf__data.html#a5af942c3ee69a055272321e8eede3f4d", null ],
+    [ "tmp_real_frame", "structqmf__data.html#aedbe0bf57041e4f3105b66023da08086", null ],
+    [ "win_sum", "structqmf__data.html#ab89e6e21b33f0c701e905ea081f817c2", null ],
+    [ "win_sum_cmplx_dummy", "structqmf__data.html#a94e97cd739769da80ba00dc9afcd0d0a", null ]
+];
