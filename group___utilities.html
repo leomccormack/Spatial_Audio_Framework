@@ -2467,7 +2467,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>Calculates 2nd order IIR filter coefficients [1]. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filterType</td><td>See #_BIQUAD_FILTER_TYPES enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filterType</td><td>See <a class="el" href="group___utilities.html#ga45a9a071190527868f18d35a8f54362f" title="Bi-quadratic (second-order) IIR filter design options.">BIQUAD_FILTER_TYPES</a> enum </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">fc</td><td>Centre frequency, Hz </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">fs</td><td>Sampling frequency, Hz </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Q</td><td>Q-factor </td></tr>
@@ -2545,7 +2545,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <dl class="test"><dt><b><a class="el" href="test.html#_test000025">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a394db4aaade6966e740d8ca24a04dc7b" title="Testing that the coefficients computed with butterCoeffs() are numerically similar to the &quot;butter&quot; fu...">test__butterCoeffs()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filterType</td><td>See #_BUTTER_FILTER_TYPES enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filterType</td><td>See <a class="el" href="group___utilities.html#ga186326f0d162300d949c2dc95c412465" title="Butterworth Infinite Impulse Response (IIR) filter design options.">BUTTER_FILTER_TYPES</a> enum </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Filter order (N) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">cutoff1</td><td>Filter1 cutoff in Hz, for LPF/HPF, and lower cutoff for BPF/BSF </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">cutoff2</td><td>Filter2 cutoff in Hz, not needed for LPF/HPF, this is the upper cutoff for BPF/BSF </td></tr>
@@ -2900,7 +2900,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
     <tr><td class="paramdir">[in]</td><td class="paramname">beta</td><td>first rotation angle </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">gamma</td><td>first rotation angle </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">degreesFlag</td><td>1: angles are in degrees, 0: angles are in radians </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">convention</td><td>see #_EULER_ROTATION_CONVENTIONS enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">convention</td><td>see <a class="el" href="group___utilities.html#ga3093dd635473d82de533d0ec310c45c3" title="Available euler2rotationMatrix() conventions.">EULER_ROTATION_CONVENTIONS</a> enum </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">R</td><td>resulting 3x3 rotation matrix </td></tr>
   </table>
   </dd>
@@ -3562,12 +3562,12 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filterType</td><td>See #_FIR_FILTER_TYPES enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filterType</td><td>See <a class="el" href="group___utilities.html#ga2857ab29a6bb725942759947350f5e49" title="Finite Impulse Response (FIR) filter design options.">FIR_FILTER_TYPES</a> enum </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Filter order (N). Must be even. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">cutoff1</td><td>Filter1 cutoff in Hz, for LPF/HPF, and lower cutoff for BPF/BSF </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">cutoff2</td><td>Filter2 cutoff in Hz, not needed for LPF/HPF, this is the upper cutoff for BPF/BSF </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">sampleRate</td><td>Sampling rate in Hz </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">windowType</td><td>See #_WINDOWING_FUNCTION_TYPES enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">windowType</td><td>See <a class="el" href="group___utilities.html#ga11cf92ddf3389349c5dd4d7ccab6c619" title="Windowing function types.">WINDOWING_FUNCTION_TYPES</a> enum </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">scalingFLAG</td><td>'0' none, '1' scaling applied to ensure passband is at 0dB </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">filter</td><td>Filter coefficients/weights/taps; (order+1) x 1</td></tr>
   </table>
@@ -3652,7 +3652,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
     <tr><td class="paramdir">[in]</td><td class="paramname">fc</td><td>Vector of cutoff frequencies; nCutoffFreqs x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nCutoffFreqs</td><td>Number of cutoff frequencies in vector 'fc'. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">sampleRate</td><td>Sampling rate in Hz </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">windowType</td><td>See #_WINDOWING_FUNCTION_TYPES enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">windowType</td><td>See <a class="el" href="group___utilities.html#ga11cf92ddf3389349c5dd4d7ccab6c619" title="Windowing function types.">WINDOWING_FUNCTION_TYPES</a> enum </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">scalingFLAG</td><td>'0' none, '1' scaling applied to ensure passbands are at 0dB </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">filterbank</td><td>Filter coefficients/weights/taps; FLAT: (nCutoffFreqs+1) x (order+1) </td></tr>
   </table>
@@ -3982,7 +3982,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>See #_WINDOWING_FUNCTION_TYPES enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>See <a class="el" href="group___utilities.html#ga11cf92ddf3389349c5dd4d7ccab6c619" title="Windowing function types.">WINDOWING_FUNCTION_TYPES</a> enum </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">winlength</td><td>Window length in samples </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">win</td><td>Windowing function; winlength x 1 </td></tr>
   </table>
@@ -4825,7 +4825,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
     <tr><td class="paramdir">[in]</td><td class="paramname">hQMF</td><td>qmf handle </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dataTD</td><td>Time-domain input; nCHin x framesize </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">framesize</td><td>Frame size of time-domain data </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">dataFD</td><td>Frequency-domain output; see #_QMF_FDDATA_FORMAT enum </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dataFD</td><td>Frequency-domain output; see <a class="el" href="group___utilities.html#ga4701e2c3dbbf3c03c1de47f5b6ce213f" title="Options for how the frequency domain data is permuted when using qmf.">QMF_FDDATA_FORMAT</a> enum </td></tr>
   </table>
   </dd>
 </dl>
@@ -4939,7 +4939,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
     <tr><td class="paramdir">[in]</td><td class="paramname">nCHout</td><td>Number of output channels </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">hopsize</td><td>Hop size, in samples </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">hybridmode</td><td>0: disabled, 1: hybrid-filtering enabled </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format</td><td>frequency-domain frame format, see #_QMF_FDDATA_FORMAT enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format</td><td>frequency-domain frame format, see <a class="el" href="group___utilities.html#ga4701e2c3dbbf3c03c1de47f5b6ce213f" title="Options for how the frequency domain data is permuted when using qmf.">QMF_FDDATA_FORMAT</a> enum </td></tr>
   </table>
   </dd>
 </dl>
@@ -5072,7 +5072,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">hQMF</td><td>qmf handle </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dataFD</td><td>Frequency-domain input; see #_QMF_FDDATA_FORMAT enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dataFD</td><td>Frequency-domain input; see <a class="el" href="group___utilities.html#ga4701e2c3dbbf3c03c1de47f5b6ce213f" title="Options for how the frequency domain data is permuted when using qmf.">QMF_FDDATA_FORMAT</a> enum </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">framesize</td><td>Frame size of time-domain data </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">dataTD</td><td>Time-domain output; nCHout x framesize </td></tr>
   </table>
@@ -5220,7 +5220,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>If there is no error/warning (<a class="el" href="group___utilities.html#ggabb0b6cf15d8ed9c7065cf24b1cea2ae6ad079a4a28160f5584ddfc17ff081caca" title="No error was encountered.">SAF_ERROR__NO_ERROR</a>), then the function does nothing. If there is a warning code, then an appropriate warning message is printed, and err is reset upon return (if needed). If there is an error code, then an appropriate error message is printed, and the program is terminated.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">err</td><td>SAF error code (see #_SAF_ERRORS enum) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">err</td><td>SAF error code (see <a class="el" href="group___utilities.html#gabb0b6cf15d8ed9c7065cf24b1cea2ae6" title="Error and warning codes.">SAF_ERRORS</a> enum) </td></tr>
   </table>
   </dd>
 </dl>
@@ -5903,7 +5903,7 @@ Example Usage</h2>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">hSTFT</td><td>saf_stft handle </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dataFD</td><td>Frequency-domain output; see #_SAF_STFT_FDDATA_FORMAT </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dataFD</td><td>Frequency-domain output; see <a class="el" href="group___utilities.html#ga3b7b87de5c1612d3318f014fe787fa7d" title="Options for how the frequency domain data is permuted when using saf_stft.">SAF_STFT_FDDATA_FORMAT</a> </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">framesize</td><td>Frame size of time-domain data </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">dataTD</td><td>Time-domain output; nCHout x framesize </td></tr>
   </table>
@@ -6019,7 +6019,7 @@ Example Usage</h2>
     <tr><td class="paramdir">[in]</td><td class="paramname">hopsize</td><td>Hop size </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nCHin</td><td>Number of input channels </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nCHout</td><td>Number of ooutput channels </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">FDformat</td><td>Format for the frequency-domain data (see the #_SAF_STFT_FDDATA_FORMAT enum) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">FDformat</td><td>Format for the frequency-domain data (see the <a class="el" href="group___utilities.html#ga3b7b87de5c1612d3318f014fe787fa7d" title="Options for how the frequency domain data is permuted when using saf_stft.">SAF_STFT_FDDATA_FORMAT</a> enum) </td></tr>
   </table>
   </dd>
 </dl>
@@ -6128,7 +6128,7 @@ Example Usage</h2>
     <tr><td class="paramdir">[in]</td><td class="paramname">hSTFT</td><td>saf_stft handle </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dataTD</td><td>Time-domain input; nCHin x framesize </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">framesize</td><td>Frame size of time-domain data </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">dataFD</td><td>Frequency-domain output; see #_SAF_STFT_FDDATA_FORMAT </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dataFD</td><td>Frequency-domain output; see <a class="el" href="group___utilities.html#ga3b7b87de5c1612d3318f014fe787fa7d" title="Options for how the frequency domain data is permuted when using saf_stft.">SAF_STFT_FDDATA_FORMAT</a> </td></tr>
   </table>
   </dd>
 </dl>
@@ -8028,7 +8028,7 @@ Example Usage</h2>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">a</td><td>Input vector a; len x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td>Input vector b; len x 1 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">flag</td><td>'0' do not take the conjugate of 'b', '1', take the conjugate of 'b'. (see #_CONJ_FLAG enum) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flag</td><td>'0' do not take the conjugate of 'b', '1', take the conjugate of 'b'. (see <a class="el" href="group___utilities.html#ga64250558cc5507fb5ec6515ab4d337ce" title="Whether a vector should be conjugated or not (e.g.">CONJ_FLAG</a> enum) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>Vector length </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">c</td><td>(&amp;) output vector c; 1 x 1 </td></tr>
   </table>
@@ -10562,7 +10562,7 @@ Example Usage</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Sep 30 2020 13:49:22 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Wed Sep 30 2020 14:14:49 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

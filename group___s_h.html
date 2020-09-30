@@ -850,7 +850,7 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">orderSec</td><td>Order of sector patterns </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">A_xyz</td><td>Velocity coefficients, see <a class="el" href="group___s_h.html#gacb1a65a8f85a1505d0a96212775b4ae0" title="Computes the matrices which generate the coefficients of a beampattern of order (sectorOrder+1) that ...">computeVelCoeffsMtx()</a>; FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pattern</td><td>See #_SECTOR_PATTERNS enum for the options </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pattern</td><td>See <a class="el" href="group___s_h.html#gab457e2a01928e0357f12b00cdb6035c2" title="Sector pattern designs for directionally-constraining sound-fields [1].">SECTOR_PATTERNS</a> enum for the options </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">sec_dirs_deg</td><td>Sector directions [azi elev], in DEGREES; FLAT: nSecDirs x 2 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nSecDirs</td><td>Number of sectors </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">sectorCoeffs</td><td>The sector coefficients; FLAT: (nSecDirs*4) x (orderSec+2)^2 </td></tr>
@@ -926,7 +926,7 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">orderSec</td><td>Order of sector patterns </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">A_xyz</td><td>Velocity coefficients, see <a class="el" href="group___s_h.html#gacb1a65a8f85a1505d0a96212775b4ae0" title="Computes the matrices which generate the coefficients of a beampattern of order (sectorOrder+1) that ...">computeVelCoeffsMtx()</a>; FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pattern</td><td>See #_SECTOR_PATTERNS enum for the options </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pattern</td><td>See <a class="el" href="group___s_h.html#gab457e2a01928e0357f12b00cdb6035c2" title="Sector pattern designs for directionally-constraining sound-fields [1].">SECTOR_PATTERNS</a> enum for the options </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">sec_dirs_deg</td><td>Sector directions [azi elev], in DEGREES; FLAT: nSecDirs x 2 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nSecDirs</td><td>Number of sectors </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">sectorCoeffs</td><td>The sector coefficients; FLAT: (nSecDirs*4) x (orderSec+2)^2 </td></tr>
@@ -1036,7 +1036,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Max order (highest is ~30 given numerical precision) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">kr</td><td>wavenumber*radius; nBands x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nBands</td><td>Number of frequency bands/bins </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">arrayType</td><td>See #_ARRAY_CONSTRUCTION_TYPES enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">arrayType</td><td>See <a class="el" href="group___s_h.html#gaa2eb5bb4fefe6565eddd3f6ca862ba6b" title="Microphone/Hydrophone array construction types.">ARRAY_CONSTRUCTION_TYPES</a> enum </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">b_N</td><td>Modal coefficients per kr and 0:order; FLAT: nBands x (order+1) </td></tr>
   </table>
   </dd>
@@ -1958,7 +1958,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">N_sensors</td><td>Number of sensors </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">src_dirs_deg</td><td>Spherical coords of the plane waves in DEGREES, [azi ELEV]; FLAT: N_srcs x 2 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">N_srcs</td><td>Number sources (DoAs of plane waves) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">arrayType</td><td>See #_ARRAY_CONSTRUCTION_TYPES enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">arrayType</td><td>See <a class="el" href="group___s_h.html#gaa2eb5bb4fefe6565eddd3f6ca862ba6b" title="Microphone/Hydrophone array construction types.">ARRAY_CONSTRUCTION_TYPES</a> enum </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">H_array</td><td>Simulated array response for each plane wave; FLAT: nBands x N_sensors x N_srcs </td></tr>
   </table>
   </dd>
@@ -2059,7 +2059,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">N_sensors</td><td>Number of sensors </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">src_dirs_deg</td><td>Spherical coords of the plane waves in DEGREES, [azi ELEV]; FLAT: N_srcs x 2 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">N_srcs</td><td>Number sources (DoAs of plane waves) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">arrayType</td><td>See #_ARRAY_CONSTRUCTION_TYPES enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">arrayType</td><td>See <a class="el" href="group___s_h.html#gaa2eb5bb4fefe6565eddd3f6ca862ba6b" title="Microphone/Hydrophone array construction types.">ARRAY_CONSTRUCTION_TYPES</a> enum </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dirCoeff</td><td>Only for directional (open) arrays, 1: omni, 0.5: card, 0:dipole </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">H_array</td><td>Simulated array response for each plane wave; FLAT: nBands x N_sensors x N_srcs </td></tr>
   </table>
@@ -2187,7 +2187,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Nsensors</td><td>Number of sensors </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">r</td><td>Mic radius, meters </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>Speed of sound, m/s </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">arrayType</td><td>See #_ARRAY_CONSTRUCTION_TYPES enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">arrayType</td><td>See <a class="el" href="group___s_h.html#gaa2eb5bb4fefe6565eddd3f6ca862ba6b" title="Microphone/Hydrophone array construction types.">ARRAY_CONSTRUCTION_TYPES</a> enum </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dirCoeff</td><td>Only for directional (open) arrays, 1: omni, 0.5: card, 0:dipole </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">maxG_db</td><td>Max allowed amplification for the noise level, maxG_db = 20*log10(maxG) </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">f_lim</td><td>Noise limit estimate; (maxN+1) x 1</td></tr>
@@ -2268,7 +2268,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Max order (highest is ~30 given numerical precision) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">sensor_dirs_rad</td><td>Spherical coords of the sensors in RADIANS, [azi ELEV]; FLAT: N_sensors x 2 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">N_sensors</td><td>Number of sensors </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">arrayType</td><td>See #_ARRAY_CONSTRUCTION_TYPES enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">arrayType</td><td>See <a class="el" href="group___s_h.html#gaa2eb5bb4fefe6565eddd3f6ca862ba6b" title="Microphone/Hydrophone array construction types.">ARRAY_CONSTRUCTION_TYPES</a> enum </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dirCoeff</td><td>Only for directional (open) arrays, 1: omni, 0.5: card, 0:dipole </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">kr</td><td>wavenumber*sensor_radius; nBands x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nBands</td><td>Number of frequency bands/bins </td></tr>
@@ -2464,7 +2464,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Max order (highest is ~30 given numerical precision) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">kr</td><td>wavenumber*radius; nBands x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nBands</td><td>Number of frequency bands/bins </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">arrayType</td><td>See #_ARRAY_CONSTRUCTION_TYPES enum </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">arrayType</td><td>See <a class="el" href="group___s_h.html#gaa2eb5bb4fefe6565eddd3f6ca862ba6b" title="Microphone/Hydrophone array construction types.">ARRAY_CONSTRUCTION_TYPES</a> enum </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dirCoeff</td><td>Only for directional (open) arrays, 1: omni, 0.5: card, 0:dipole </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">b_N</td><td>Modal coefficients per kr and 0:order; FLAT: nBands x (order+1) </td></tr>
   </table>
@@ -2878,7 +2878,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Sep 30 2020 13:49:22 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Wed Sep 30 2020 14:14:49 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>
