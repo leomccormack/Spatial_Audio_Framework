@@ -71,7 +71,7 @@ typedef struct _qmf_data {
     int nCHout;                       /**< Number of output channels*/
     int nBands;                       /**< Number of frequency bands */
     int procDelay;                    /**< Processing delay in samples */
-    QMF_FDDATA_FORMAT format;         /**< see #_QMF_FDDATA_FORMAT */ 
+    QMF_FDDATA_FORMAT format;         /**< see #QMF_FDDATA_FORMAT */ 
 
     /* QMF Analysis and Synthesis filters */
     float_complex** h_a;

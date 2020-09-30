@@ -42,7 +42,7 @@ extern "C" {
  * are given if alternative measures have taken place (due to some kind of
  * unexpected behaviour), but the program may still continue.
  */
-typedef enum _SAF_ERRORS {
+typedef enum {
     /* ---------------------------------------------------------------------- */
     /**
      * No error was encountered.
@@ -122,7 +122,7 @@ typedef enum _SAF_ERRORS {
  * If there is an error code, then an appropriate error message is printed, and
  * the program is terminated.
  *
- * @param[in] err SAF error code (see #_SAF_ERRORS enum)
+ * @param[in] err SAF error code (see #SAF_ERRORS enum)
  * @returns #SAF_ERROR__NO_ERROR
  */
 #ifndef NDEBUG

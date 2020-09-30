@@ -84,7 +84,7 @@ typedef struct _afSTFT_data {
     int nCHout;                       /**< Number of output channels*/
     int nBands;                       /**< Number of frequency bands */
     int procDelay;                    /**< Processing delay in samples */
-    AFSTFT_FDDATA_FORMAT format;      /**< see #_AFSTFT_FDDATA_FORMAT */
+    AFSTFT_FDDATA_FORMAT format;      /**< see #AFSTFT_FDDATA_FORMAT */
     void* hInt;                       /**< Internal handle for afSTFT */
     complexVector* STFTInputFrameTF;  /**< Interal input complex buffer */
     complexVector* STFTOutputFrameTF; /**< Interal output complex buffer */

@@ -57,7 +57,7 @@ extern "C" {
  * @see [2] Zotter F, Frank M. All-round ambisonic panning and decoding. Journal
  *          of the audio engineering society. 2012 Nov 26; 60(10):807-20.
  */
-typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
+typedef enum {
     /**
      * The default decoder is #LOUDSPEAKER_DECODER_SAD
      */
@@ -129,7 +129,7 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
  *          Ambisonic Signals via Magnitude Least Squares. InProceedings of the
  *          DAGA 2018 (Vol. 44, pp. 339-342).
  */
-typedef enum _BINAURAL_AMBI_DECODER_METHODS {
+typedef enum {
     /**
      * The default decoder is #BINAURAL_DECODER_LS
      */
@@ -172,7 +172,7 @@ typedef enum _BINAURAL_AMBI_DECODER_METHODS {
  *          order! The recommended Ambisonic conventions are ACN with N3D/SN3D
  *          normalisation.
  */
-typedef enum _HOA_CH_ORDER{
+typedef enum {
     HOA_CH_ORDER_ACN,  /**< Ambisonic Channel numbering (ACN) convention, which
                         *   is employed by all spherical harmonic related
                         *   functions in SAF */
@@ -192,7 +192,7 @@ typedef enum _HOA_CH_ORDER{
  *          order! The recommended Ambisonic conventions are ACN with N3D/SN3D
  *          normalisation.
  */
-typedef enum _HOA_NORM{
+typedef enum {
     HOA_NORM_N3D,  /**< Orthonormalised (N3D) convention, which is the default
                     *   convention used by SAF */
     HOA_NORM_SN3D, /**< Schmidt semi-normalisation (SN3D) convention, as used
@@ -364,7 +364,7 @@ void getMaxREweights(/* Input Arguments */
  *                         FLAT: nLS x 2
  * @param[in]  nLS         Number of loudspeakers
  * @param[in]  method      Decoding method (see
- *                         #_LOUDSPEAKER_AMBI_DECODER_METHODS enum)
+ *                         #LOUDSPEAKER_AMBI_DECODER_METHODS enum)
  * @param[in]  order       Decoding order
  * @param[in]  enableMaxrE Set to '0' to disable, '1' to enable
  * @param[out] decMtx      Decoding matrix; FLAT: nLS x (order+1)^2
@@ -386,7 +386,7 @@ void getLoudspeakerDecoderMtx(/* Input Arguments */
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
  * @param[in]  N_dirs        Number of HRTF directions
  * @param[in]  N_bands       Number of frequency bands/bins
- * @param[in]  method        Decoder method (see #_BINAURAL_AMBI_DECODER_METHODS
+ * @param[in]  method        Decoder method (see #BINAURAL_AMBI_DECODER_METHODS
  *                           enum)
  * @param[in]  order         Decoding order
  * @param[in]  freqVector    Only needed for #BINAURAL_DECODER_TA or
@@ -426,7 +426,7 @@ void getBinauralAmbiDecoderMtx(/* Input Arguments */
  * @param[in]  N_dirs        Number of HRTF directions
  * @param[in]  fftSize       FFT size
  * @param[in]  fs            Sampling rate
- * @param[in]  method        Decoder method (see #_BINAURAL_AMBI_DECODER_METHODS
+ * @param[in]  method        Decoder method (see #BINAURAL_AMBI_DECODER_METHODS
  *                           enum)
  * @param[in]  order         Decoding order
  * @param[in]  itd_s         Only needed for #BINAURAL_DECODER_TA decoder (can

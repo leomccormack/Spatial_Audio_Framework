@@ -40,7 +40,7 @@ extern "C" {
 
 /**
  * Options for how the frequency domain data is permuted when using qmf */
-typedef enum _QMF_FDDATA_FORMAT{
+typedef enum {
     QMF_BANDS_CH_TIME, /**< nBands x nChannels x nTimeHops */
     QMF_TIME_CH_BANDS  /**< nTimeHops x nChannels x nBands */
 
@@ -56,7 +56,7 @@ typedef enum _QMF_FDDATA_FORMAT{
  * @param[in] nCHout     Number of output channels
  * @param[in] hopsize    Hop size, in samples
  * @param[in] hybridmode 0: disabled, 1: hybrid-filtering enabled
- * @param[in] format     frequency-domain frame format, see #_QMF_FDDATA_FORMAT
+ * @param[in] format     frequency-domain frame format, see #QMF_FDDATA_FORMAT
  *                       enum
  */
 void qmf_create(/* Input Arguments */
@@ -80,7 +80,7 @@ void qmf_destroy(void ** const phQMF);
  * @param[in]  hQMF      qmf handle
  * @param[in]  dataTD    Time-domain input; nCHin x framesize
  * @param[in]  framesize Frame size of time-domain data
- * @param[out] dataFD    Frequency-domain output; see #_QMF_FDDATA_FORMAT enum
+ * @param[out] dataFD    Frequency-domain output; see #QMF_FDDATA_FORMAT enum
  */
 void qmf_analysis(/* Input Arguments */
                   void * const hQMF,
@@ -93,7 +93,7 @@ void qmf_analysis(/* Input Arguments */
  * Performs QMF synthesis of the input frequency-domain signals
  *
  * @param[in]  hQMF      qmf handle
- * @param[in]  dataFD    Frequency-domain input; see #_QMF_FDDATA_FORMAT enum
+ * @param[in]  dataFD    Frequency-domain input; see #QMF_FDDATA_FORMAT enum
  * @param[in]  framesize Frame size of time-domain data
  * @param[out] dataTD    Time-domain output;  nCHout x framesize
  */

@@ -71,7 +71,7 @@ extern "C" {
 /**
  * Options for how the frequency domain data is permuted when using afSTFT
  */
-typedef enum _AFSTFT_FDDATA_FORMAT{
+typedef enum {
     AFSTFT_BANDS_CH_TIME, /**< nBands x nChannels x nTimeHops */
     AFSTFT_TIME_CH_BANDS  /**< nTimeHops x nChannels x nBands */
 
@@ -89,7 +89,7 @@ typedef enum _AFSTFT_FDDATA_FORMAT{
  * @param[in] lowDelayMode 0: disabled, 1: low-delay mode enabled
  * @param[in] hybridmode   0: disabled, 1: hybrid-filtering enabled
  * @param[in] format       Frequency-domain frame format, see
- *                         #_AFSTFT_FDDATA_FORMAT enum
+ *                         #AFSTFT_FDDATA_FORMAT enum
  */
 void afSTFT_create(void ** const phSTFT,
                    int nCHin,
@@ -112,7 +112,7 @@ void afSTFT_destroy(void ** const phSTFT);
  * @param[in]  hSTFT     afSTFT handle
  * @param[in]  dataTD    Time-domain input; nCHin x framesize
  * @param[in]  framesize Frame size of time-domain data
- * @param[out] dataFD    Frequency-domain output; #_AFSTFT_FDDATA_FORMAT
+ * @param[out] dataFD    Frequency-domain output; #AFSTFT_FDDATA_FORMAT
  */
 void afSTFT_forward(void * const hSTFT,
                     float** dataTD,
@@ -125,7 +125,7 @@ void afSTFT_forward(void * const hSTFT,
  * @param[in]  hSTFT     afSTFT handle
  * @param[in]  dataTD    Time-domain input; FLAT: nCHin x framesize
  * @param[in]  framesize Frame size of time-domain data
- * @param[out] dataFD    Frequency-domain output; FLAT: #_AFSTFT_FDDATA_FORMAT
+ * @param[out] dataFD    Frequency-domain output; FLAT: #AFSTFT_FDDATA_FORMAT
  */
 void afSTFT_forward_flat(void * const hSTFT,
                          float* dataTD,
@@ -136,7 +136,7 @@ void afSTFT_forward_flat(void * const hSTFT,
  * Performs backward afSTFT transform
  *
  * @param[in]  hSTFT     afSTFT handle
- * @param[in]  dataFD    Frequency-domain input; #_AFSTFT_FDDATA_FORMAT
+ * @param[in]  dataFD    Frequency-domain input; #AFSTFT_FDDATA_FORMAT
  * @param[in]  framesize Frame size of time-domain data
  * @param[out] dataTD    Time-domain output;  nCHout x framesize
  */
@@ -149,7 +149,7 @@ void afSTFT_backward(void * const hSTFT,
  * Performs backward afSTFT transform (flattened arrays)
  *
  * @param[in]  hSTFT     afSTFT handle
- * @param[in]  dataFD    Frequency-domain input; FLAT: #_AFSTFT_FDDATA_FORMAT
+ * @param[in]  dataFD    Frequency-domain input; FLAT: #AFSTFT_FDDATA_FORMAT
  * @param[in]  framesize Frame size of time-domain data
  * @param[out] dataTD    Time-domain output; FLAT: nCHout x framesize
  */

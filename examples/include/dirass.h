@@ -224,13 +224,13 @@ void dirass_setDisplayGridOption(void* const hDir,  int newOption);
 void dirass_setDispWidth(void* const hDir,  int newValue);
     
 /**
- * Sets the upscale order, only if #DIRASS_REASS_MODE is set to #REASS_UPSCALE,
+ * Sets the upscale order, only if #DIRASS_REASS_MODES is set to #REASS_UPSCALE,
  * (see #DIRASS_UPSCALE_ORDERS enum).
  */
 void dirass_setUpscaleOrder(void* const hDir,  int newOrder);
     
 /**
- * Sets the analysis directional re-assignment mode (see #DIRASS_REASS_MODE
+ * Sets the analysis directional re-assignment mode (see #DIRASS_REASS_MODES
  * enum)
  */
 void dirass_setDiRAssMode(void* const hDir,  int newMode);

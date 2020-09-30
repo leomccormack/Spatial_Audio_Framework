@@ -41,7 +41,7 @@ extern "C" {
 
 /**
  * Whether a vector should be conjugated or not (e.g. prior to dot product) */
-typedef enum _CONJ_FLAG{
+typedef enum {
   NO_CONJ = 1,  /**< Do not take the conjugate */
   CONJ = 2      /**< Take the conjugate */
 }CONJ_FLAG;
@@ -437,7 +437,7 @@ void utility_svvdot(/* Input Arguments */
  * @param[in]  a    Input vector a; len x 1
  * @param[in]  b    Input vector b; len x 1
  * @param[in]  flag '0' do not take the conjugate of 'b', '1', take the
- *                  conjugate of 'b'. (see #_CONJ_FLAG enum)
+ *                  conjugate of 'b'. (see #CONJ_FLAG enum)
  * @param[in]  len  Vector length
  * @param[out] c    (&) output vector c; 1 x 1
  */

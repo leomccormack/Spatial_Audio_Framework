@@ -44,7 +44,7 @@ extern "C" {
 /**
  * Bi-quadratic (second-order) IIR filter design options
  */
-typedef enum _BIQUAD_FILTER_TYPES {
+typedef enum {
     BIQUAD_FILTER_LPF,       /**< low-pass filter */
     BIQUAD_FILTER_HPF,       /**< high-pass filter */
     BIQUAD_FILTER_PEAK,      /**< peaking filter */
@@ -56,7 +56,7 @@ typedef enum _BIQUAD_FILTER_TYPES {
 /**
  * Butterworth Infinite Impulse Response (IIR) filter design options
  */
-typedef enum _BUTTER_FILTER_TYPES {
+typedef enum {
     BUTTER_FILTER_LPF, /**< low-pass filter */
     BUTTER_FILTER_HPF, /**< high-pass filter */
     BUTTER_FILTER_BPF, /**< band-pass filter */
@@ -67,7 +67,7 @@ typedef enum _BUTTER_FILTER_TYPES {
 /**
  * Finite Impulse Response (FIR) filter design options
  */
-typedef enum _FIR_FILTER_TYPES {
+typedef enum {
     FIR_FILTER_LPF, /**< low-pass filter */
     FIR_FILTER_HPF, /**< high-pass filter */
     FIR_FILTER_BPF, /**< band-pass filter */
@@ -82,7 +82,7 @@ typedef enum _FIR_FILTER_TYPES {
  * are evaluated: 0 <= n < winlength. Largely taken from:
  * https://en.wikipedia.org/wiki/Window_function
  */
-typedef enum _WINDOWING_FUNCTION_TYPES {
+typedef enum {
     WINDOWING_FUNCTION_RECTANGULAR,      /**< Rectangular */
     WINDOWING_FUNCTION_HAMMING,          /**< Hamming */
     WINDOWING_FUNCTION_HANN,             /**< Hann */
@@ -111,7 +111,7 @@ typedef enum _WINDOWING_FUNCTION_TYPES {
  * if odd:
  *  - index "(winlength-1)/2" = 1, and first value==last value
  *
- * @param[in]  type      See #_WINDOWING_FUNCTION_TYPES enum
+ * @param[in]  type      See #WINDOWING_FUNCTION_TYPES enum
  * @param[in]  winlength Window length in samples
  * @param[out] win       Windowing function; winlength x 1
  */
@@ -175,7 +175,7 @@ void flattenMinphase(float* x,
 /**
  * Calculates 2nd order IIR filter coefficients [1]
  *
- * @param[in]  filterType See #_BIQUAD_FILTER_TYPES enum
+ * @param[in]  filterType See #BIQUAD_FILTER_TYPES enum
  * @param[in]  fc         Centre frequency, Hz
  * @param[in]  fs         Sampling frequency, Hz
  * @param[in]  Q          Q-factor
@@ -281,7 +281,7 @@ void applyIIR(/* Input arguments */
  *
  * @test test__butterCoeffs()
  *
- * @param[in]  filterType  See #_BUTTER_FILTER_TYPES enum
+ * @param[in]  filterType  See #BUTTER_FILTER_TYPES enum
  * @param[in]  order       Filter order (N)
  * @param[in]  cutoff1     Filter1 cutoff in Hz, for LPF/HPF, and lower cutoff
  *                         for BPF/BSF
@@ -395,14 +395,14 @@ void faf_IIRFilterbank_destroy(void** hFaF);
  *  - HPF @ 200Hz - N~450
  *  - HPF @ 4kHz  - N~60
  *
- * @param[in]  filterType  See #_FIR_FILTER_TYPES enum
+ * @param[in]  filterType  See #FIR_FILTER_TYPES enum
  * @param[in]  order       Filter order (N). Must be even.
  * @param[in]  cutoff1     Filter1 cutoff in Hz, for LPF/HPF, and lower cutoff
  *                         for BPF/BSF
  * @param[in]  cutoff2     Filter2 cutoff in Hz, not needed for LPF/HPF, this is
  *                         the upper cutoff for BPF/BSF
  * @param[in]  sampleRate  Sampling rate in Hz
- * @param[in]  windowType  See #_WINDOWING_FUNCTION_TYPES enum
+ * @param[in]  windowType  See #WINDOWING_FUNCTION_TYPES enum
  * @param[in]  scalingFLAG '0' none, '1' scaling applied to ensure passband is
  *                         at 0dB
  * @param[out] filter      Filter coefficients/weights/taps; (order+1) x 1
@@ -441,7 +441,7 @@ void FIRCoeffs(/* Input arguments */
  * @param[in]  fc           Vector of cutoff frequencies; nCutoffFreqs x 1
  * @param[in]  nCutoffFreqs Number of cutoff frequencies in vector 'fc'.
  * @param[in]  sampleRate   Sampling rate in Hz
- * @param[in]  windowType   See #_WINDOWING_FUNCTION_TYPES enum
+ * @param[in]  windowType   See #WINDOWING_FUNCTION_TYPES enum
  * @param[in]  scalingFLAG  '0' none, '1' scaling applied to ensure passbands
  *                          are at 0dB
  * @param[out] filterbank   Filter coefficients/weights/taps;

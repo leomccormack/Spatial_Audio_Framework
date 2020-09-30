@@ -63,7 +63,7 @@ extern "C" {
 #define IMS_LAGRANGE_LOOKUP_TABLE_SIZE ( 100 )
 
 /** Void pointer (just to improve code readability when working with arrays of
- * handles) */
+ *  handles) */
 typedef void* voidPtr;
 
 /** Union struct for Cartesian coordinates (access as .x,.y,.z, or .v[3]) */
@@ -75,7 +75,7 @@ typedef struct _ims_pos_xyz {
 } ims_pos_xyz;
 
 /** Supported receiver types */
-typedef enum _RECEIVER_TYPES {
+typedef enum {
     RECEIVER_SH   /**< Spherical harmonic receiver */
     /* RECEIVER_ARRAY */ /**< Microphone array/HRIR measurements-based receiver */
 
@@ -94,7 +94,7 @@ typedef struct _ims_src_obj
 typedef struct _ims_rec_obj
 {
     float** sigs;        /**< Receiver signal pointers (one per channel) */ 
-    RECEIVER_TYPES type; /**< Receiver type (see #_RECEIVER_TYPES enum) */
+    RECEIVER_TYPES type; /**< Receiver type (see #RECEIVER_TYPES enum) */
     int nChannels;       /**< Number of channels for receiver */
     ims_pos_xyz pos;     /**< Receiver position */
     int ID;              /**< Unique receiver ID */

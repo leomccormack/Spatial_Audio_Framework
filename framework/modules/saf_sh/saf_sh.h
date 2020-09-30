@@ -58,7 +58,7 @@ extern "C" {
 /**
  * Microphone/Hydrophone array construction types
  */
-typedef enum _ARRAY_CONSTRUCTION_TYPES {
+typedef enum {
     ARRAY_CONSTRUCTION_OPEN,             /**< Open array, omni-directional
                                           *   sensors */
     ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, /**< Open array, directional sensors */
@@ -75,7 +75,7 @@ typedef enum _ARRAY_CONSTRUCTION_TYPES {
  *          and diffuseness estimation in a directionally-constrained region.
  *          arXiv preprint arXiv:1609.03409
  */
-typedef enum _SECTOR_PATTERNS{
+typedef enum {
     SECTOR_PATTERN_PWD,     /**< Plane-wave decomposition/Hyper-cardioid */
     SECTOR_PATTERN_MAXRE,   /**< Spatially tapered hyper-cardioid, such that it
                              *   has maximum energy concentrated in the look-
@@ -363,7 +363,7 @@ void computeVelCoeffsMtx(/* Input Arguments */
  * @param[in]  orderSec     Order of sector patterns
  * @param[in]  A_xyz        Velocity coefficients, see computeVelCoeffsMtx();
  *                          FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3
- * @param[in]  pattern      See #_SECTOR_PATTERNS enum for the options
+ * @param[in]  pattern      See #SECTOR_PATTERNS enum for the options
  * @param[in]  sec_dirs_deg Sector directions [azi elev], in DEGREES;
  *                          FLAT: nSecDirs x 2
  * @param[in]  nSecDirs     Number of sectors
@@ -410,7 +410,7 @@ float computeSectorCoeffsEP(/* Input Arguments */
  * @param[in]  orderSec     Order of sector patterns
  * @param[in]  A_xyz        Velocity coefficients, see computeVelCoeffsMtx();
  *                          FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3
- * @param[in]  pattern      See #_SECTOR_PATTERNS enum for the options
+ * @param[in]  pattern      See #SECTOR_PATTERNS enum for the options
  * @param[in]  sec_dirs_deg Sector directions [azi elev], in DEGREES;
  *                          FLAT: nSecDirs x 2
  * @param[in]  nSecDirs     Number of sectors
@@ -904,7 +904,7 @@ void generateMinNormMap(/* Input arguments */
  * @param[in]  order     Max order (highest is ~30 given numerical precision)
  * @param[in]  kr        wavenumber*radius; nBands x 1
  * @param[in]  nBands    Number of frequency bands/bins
- * @param[in]  arrayType See #_ARRAY_CONSTRUCTION_TYPES enum
+ * @param[in]  arrayType See #ARRAY_CONSTRUCTION_TYPES enum
  * @param[out] b_N       Modal coefficients per kr and 0:order;
  *                       FLAT: nBands x (order+1)
  */
@@ -945,7 +945,7 @@ float sphArrayAliasLim(/* Input arguments */
  * @param[in]  Nsensors  Number of sensors
  * @param[in]  r         Mic radius, meters
  * @param[in]  c         Speed of sound, m/s
- * @param[in]  arrayType See #_ARRAY_CONSTRUCTION_TYPES enum
+ * @param[in]  arrayType See #ARRAY_CONSTRUCTION_TYPES enum
  * @param[in]  dirCoeff  Only for directional (open) arrays, 1: omni, 0.5: card,
  *                       0:dipole
  * @param[in]  maxG_db   Max allowed amplification for the noise level,
@@ -974,7 +974,7 @@ void sphArrayNoiseThreshold(/* Input arguments */
  * @param[in]  order     Max order (highest is ~30 given numerical precision)
  * @param[in]  kr        wavenumber*radius; nBands x 1
  * @param[in]  nBands    Number of frequency bands/bins
- * @param[in]  arrayType See #_ARRAY_CONSTRUCTION_TYPES enum
+ * @param[in]  arrayType See #ARRAY_CONSTRUCTION_TYPES enum
  * @param[in]  dirCoeff  Only for directional (open) arrays, 1: omni, 0.5: card,
  *                       0:dipole
  * @param[out] b_N       Modal coefficients per kr and 0:order;
@@ -1043,7 +1043,7 @@ void sphScattererDirModalCoeffs(/* Input arguments */
  * @param[in]  sensor_dirs_rad Spherical coords of the sensors in RADIANS,
  *                             [azi ELEV]; FLAT: N_sensors x 2
  * @param[in]  N_sensors       Number of sensors
- * @param[in]  arrayType       See #_ARRAY_CONSTRUCTION_TYPES enum
+ * @param[in]  arrayType       See #ARRAY_CONSTRUCTION_TYPES enum
  * @param[in]  dirCoeff        Only for directional (open) arrays, 1: omni,
  *                             0.5: card, 0:dipole
  * @param[in]  kr              wavenumber*sensor_radius; nBands x 1
@@ -1076,7 +1076,7 @@ void sphDiffCohMtxTheory(/* Input arguments */
  * @param[in]  src_dirs_deg    Spherical coords of the plane waves in DEGREES,
  *                             [azi ELEV]; FLAT: N_srcs x 2
  * @param[in]  N_srcs          Number sources (DoAs of plane waves)
- * @param[in]  arrayType       See #_ARRAY_CONSTRUCTION_TYPES enum
+ * @param[in]  arrayType       See #ARRAY_CONSTRUCTION_TYPES enum
  * @param[out] H_array         Simulated array response for each plane wave;
  *                             FLAT: nBands x N_sensors x N_srcs
  */
@@ -1108,7 +1108,7 @@ void simulateCylArray(/* Input arguments */
  * @param[in]  src_dirs_deg    Spherical coords of the plane waves in DEGREES,
  *                             [azi ELEV]; FLAT: N_srcs x 2
  * @param[in]  N_srcs          Number sources (DoAs of plane waves)
- * @param[in]  arrayType       See #_ARRAY_CONSTRUCTION_TYPES enum
+ * @param[in]  arrayType       See #ARRAY_CONSTRUCTION_TYPES enum
  * @param[in]  dirCoeff        Only for directional (open) arrays, 1: omni,
  *                             0.5: card, 0:dipole
  * @param[out]  H_array        Simulated array response for each plane wave;
