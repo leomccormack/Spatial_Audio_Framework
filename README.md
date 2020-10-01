@@ -1,4 +1,4 @@
-<img src="saf.svg"> 
+<img src="docs/saf.svg"> 
 
 * git: [https://github.com/leomccormack/Spatial_Audio_Framework](https://github.com/leomccormack/Spatial_Audio_Framework)
 * doxygen: [https://leomccormack.github.io/Spatial_Audio_Framework/](https://leomccormack.github.io/Spatial_Audio_Framework/)
@@ -18,11 +18,11 @@ SAF_USE_APPLE_ACCELERATE      # good option (x86 and ARM), faster than OpenBLAS,
 SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing
 SAF_USE...                    # please get in touch if you use something else! :-)
 ```
-Detailed instructions regarding how to build and link these libraries can be found [here](dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
+Detailed instructions regarding how to build and link these libraries can be found [here](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
 
 ## Framework structure
 
-The [**framework**](framework/FRAMEWORK_STRUCTURE.md) comprises the following core modules (**ISC**):
+The [**framework**](docs/FRAMEWORK_STRUCTURE.md) comprises the following core modules (**ISC**):
 * **saf_hoa** - a collection of higher-order Ambisonics binaural and loudspeaker decoders.
 * **saf_sh** - spherical harmonic and spherical array processing related functions.
 * **saf_vbap** - Vector-base Amplitude Panning (VBAP) functions.
@@ -40,7 +40,7 @@ To enable optional framework modules, simply add the relevant pre-processor defi
 SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader
 SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker
 ```
-Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. Instructions on how to install/link this dependency can be found [here](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md). 
+Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. Instructions on how to install/link this dependency can be found [here](docs/SOFA_READER_MODULE_DEPENDENCIES.md). 
 
 ### Additional options
 
@@ -89,7 +89,7 @@ If using **SAF_USE_INTEL_MKL** as the performance library, note that the default
 -DINTEL_MKL_LIB="path/to/custom/mkl/lib/saf_mkl_custom(.so/.dylib/.lib)"
 ```
 
-If the **saf_sofa_reader** module is enabled, CMake will use the statically built dependencies found in the **dependencies** folder for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared [netcdf library](dependencies/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
+If the **saf_sofa_reader** module is enabled, CMake will use the statically built dependencies found in the **dependencies** folder for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared [netcdf library](docs/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
 ```
 # e.g. Linux users:
 -DNETCDF_LIBRARY="/usr/lib/x86_64-linux-gnu/libnetcdf.so"
@@ -116,9 +116,9 @@ saf_test.exe  # To run the unit testing program
 
 ## Documentation
 
-Documentation is periodically generated using [Doxygen](http://www.doxygen.nl/index.html) and hosted [here](http://research.spa.aalto.fi/projects/spatial_audio_framework/index.html).
+[Doxygen](http://www.doxygen.nl/index.html)-based documentation is generated via a GitHub Action everytime a commit is merged with the master branch. The documentation is hosted [here](https://leomccormack.github.io/Spatial_Audio_Framework/).
 
-Alternatively, you may compile the most recent documentation (HTML) yourself with the following commands:
+Alternatively, you may generate the documentation yourself (e.g. for the other branches) with the following commands:
 ```
 cd doxygen
 doxygen doxygen_config

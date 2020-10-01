@@ -48,13 +48,13 @@ The **saf_utilities** module also inherits and offers use of the following third
 
 The only hard dependency for SAF is a library (or a combination of libraries) which supports the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards. 
 
-For more details, refer to: [**PERFORMANCE_LIBRARY_INSTRUCTIONS.md**](../dependencies/PERFORMANCE_LIBRARY_INSTRUCTIONS.md)
+For more details, refer to: [**PERFORMANCE_LIBRARY_INSTRUCTIONS.md**](PERFORMANCE_LIBRARY_INSTRUCTIONS.md)
 
 ### Optional externals
 
 In order to use the optional built-in [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reader module (**saf_sofa_reader**), your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). 
 
-For more details, refer to: [**SOFA_READER_MODULE_DEPENDENCIES.md**](../dependencies/SOFA_READER_MODULE_DEPENDENCIES.md)
+For more details, refer to: [**SOFA_READER_MODULE_DEPENDENCIES.md**](SOFA_READER_MODULE_DEPENDENCIES.md)
 
 Optionally, Intel's [Integrated Performance Primitives (IPP)](https://software.intel.com/content/www/us/en/develop/tools/integrated-performance-primitives.html) may be employed for the FFT with the following definition:
 ```
