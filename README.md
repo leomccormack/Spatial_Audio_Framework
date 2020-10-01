@@ -1,4 +1,4 @@
-<img src="docs/saf.svg"> 
+<img src="saf.svg"> 
 
 * git: [https://github.com/leomccormack/Spatial_Audio_Framework](https://github.com/leomccormack/Spatial_Audio_Framework)
 * doxygen: [https://leomccormack.github.io/Spatial_Audio_Framework/](https://leomccormack.github.io/Spatial_Audio_Framework/)
@@ -116,7 +116,7 @@ saf_test.exe  # To run the unit testing program
 
 ## Documentation
 
-[Doxygen](http://www.doxygen.nl/index.html)-based documentation is generated via a GitHub Action everytime a commit is merged with the master branch. The documentation is hosted [here](https://leomccormack.github.io/Spatial_Audio_Framework/).
+[Doxygen](http://www.doxygen.nl/index.html)-based documentation is generated via a GitHub Action everytime a commit is pushed to the master branch. The documentation is hosted [here](https://leomccormack.github.io/Spatial_Audio_Framework/).
 
 Alternatively, you may generate the documentation yourself (e.g. for the other branches) with the following commands:
 ```
@@ -148,9 +148,7 @@ Several **examples** have also been included in the repository, which may serve 
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll Euler rotation angles.
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors, at multiple frequencies. 
 
-Many of these examples have also been released as VST audio plug-ins under the [SPARTA](https://github.com/leomccormack/SPARTA) banner.
-
-The following open-source projects also employ the framework: [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
+Many of these examples have also been released as VST audio plug-ins under the [SPARTA](https://github.com/leomccormack/SPARTA) banner. The following open-source projects also employ the framework: [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
 
 ## Extras
 
