@@ -21,6 +21,11 @@ cd build
 msbuild ALL_BUILD.vcxproj /p:Configuration=Release /m
 ```
 
+You can install/copy the mex files into this folder with
+```
+make install
+```
+
 Alternatively, the **BUILD_SAFMEX.m** script may be used to build the wrappers. However, note that since the SAF framework must be built via CMake anyway (in order to run this script), you might as well just use CMake...
 
 ## Folder structure
