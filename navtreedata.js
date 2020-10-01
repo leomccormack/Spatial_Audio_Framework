@@ -39,49 +39,49 @@ var NAVTREE =
       [ "Contributors", "index.html#autotoc_md65", null ]
     ] ],
     [ "License", "index.html#autotoc_md66", null ],
-    [ "Performance Libraries Supported by SAF", "md_dependencies__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html", [
-      [ "SAF_USE_INTEL_MKL", "md_dependencies__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md1", [
-        [ "Linux/MacOSX users", "md_dependencies__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md2", null ],
-        [ "Windows users", "md_dependencies__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md3", null ],
-        [ "Other options", "md_dependencies__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md4", null ]
+    [ "Framework Structure", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html", [
+      [ "Include", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md1", null ],
+      [ "Modules", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md2", null ],
+      [ "Resources", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md3", null ],
+      [ "Dependencies", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md4", [
+        [ "Optional externals", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md5", null ]
       ] ],
-      [ "SAF_USE_OPEN_BLAS_AND_LAPACKE", "md_dependencies__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md5", null ],
-      [ "SAF_USE_APPLE_ACCELERATE", "md_dependencies__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md6", null ],
-      [ "SAF_USE_ATLAS", "md_dependencies__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md7", null ]
+      [ "Contributing", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md6", null ],
+      [ "Module structure", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md7", [
+        [ "Adding a module to the framework", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md8", null ],
+        [ "Coding style", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md9", null ],
+        [ "Dependencies", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md10", null ],
+        [ "Licensing", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md11", null ]
+      ] ]
     ] ],
-    [ "Dependencies for the saf_sofa_reader Module", "md_dependencies__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html", [
-      [ "Windows MSVC (64-bit) and MacOSX users", "md_dependencies__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html#autotoc_md9", null ],
-      [ "Linux (amd64) and Raspberry Pi (ARM) users", "md_dependencies__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html#autotoc_md10", null ],
-      [ "Windows MSYS2 (64-bit) users", "md_dependencies__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html#autotoc_md11", null ]
+    [ "Performance Libraries Supported by SAF", "md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html", [
+      [ "SAF_USE_INTEL_MKL", "md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md13", [
+        [ "Linux/MacOSX users", "md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md14", null ],
+        [ "Windows users", "md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md15", null ],
+        [ "Other options", "md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md16", null ]
+      ] ],
+      [ "SAF_USE_OPEN_BLAS_AND_LAPACKE", "md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md17", null ],
+      [ "SAF_USE_APPLE_ACCELERATE", "md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md18", null ],
+      [ "SAF_USE_ATLAS", "md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md19", null ]
+    ] ],
+    [ "Dependencies for the saf_sofa_reader Module", "md_docs__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html", [
+      [ "Windows MSVC (64-bit) and MacOSX users", "md_docs__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html#autotoc_md21", null ],
+      [ "Linux (amd64) and Raspberry Pi (ARM) users", "md_docs__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html#autotoc_md22", null ],
+      [ "Windows MSYS2 (64-bit) users", "md_docs__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html#autotoc_md23", null ]
     ] ],
     [ "safmex", "md_extras_safmex__s_a_f_m_e_x.html", [
-      [ "Getting started", "md_extras_safmex__s_a_f_m_e_x.html#autotoc_md13", null ],
-      [ "Folder structure", "md_extras_safmex__s_a_f_m_e_x.html#autotoc_md14", null ],
-      [ "Dependencies", "md_extras_safmex__s_a_f_m_e_x.html#autotoc_md15", null ],
-      [ "Contributing", "md_extras_safmex__s_a_f_m_e_x.html#autotoc_md16", null ]
+      [ "Getting started", "md_extras_safmex__s_a_f_m_e_x.html#autotoc_md25", null ],
+      [ "Folder structure", "md_extras_safmex__s_a_f_m_e_x.html#autotoc_md26", null ],
+      [ "Dependencies", "md_extras_safmex__s_a_f_m_e_x.html#autotoc_md27", null ],
+      [ "Contributing", "md_extras_safmex__s_a_f_m_e_x.html#autotoc_md28", null ]
     ] ],
     [ "safpy", "md_extras_safpy__s_a_f_p_y.html", [
-      [ "Contributing", "md_extras_safpy__s_a_f_p_y.html#autotoc_md18", null ]
+      [ "Contributing", "md_extras_safpy__s_a_f_p_y.html#autotoc_md30", null ]
     ] ],
     [ "safwwise", "md_extras_safwwise__s_a_f_w_w_i_s_e.html", [
-      [ "plugin_template", "md_extras_safwwise__s_a_f_w_w_i_s_e.html#autotoc_md20", null ],
-      [ "ambiBIN_generic", "md_extras_safwwise__s_a_f_w_w_i_s_e.html#autotoc_md21", null ],
-      [ "Contributing", "md_extras_safwwise__s_a_f_w_w_i_s_e.html#autotoc_md22", null ]
-    ] ],
-    [ "Framework Structure", "md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html", [
-      [ "Include", "md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md24", null ],
-      [ "Modules", "md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md25", null ],
-      [ "Resources", "md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md26", null ],
-      [ "Dependencies", "md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md27", [
-        [ "Optional externals", "md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md28", null ]
-      ] ],
-      [ "Contributing", "md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md29", null ],
-      [ "Module structure", "md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md30", [
-        [ "Adding a module to the framework", "md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md31", null ],
-        [ "Coding style", "md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md32", null ],
-        [ "Dependencies", "md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md33", null ],
-        [ "Licensing", "md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md34", null ]
-      ] ]
+      [ "plugin_template", "md_extras_safwwise__s_a_f_w_w_i_s_e.html#autotoc_md32", null ],
+      [ "ambiBIN_generic", "md_extras_safwwise__s_a_f_w_w_i_s_e.html#autotoc_md33", null ],
+      [ "Contributing", "md_extras_safwwise__s_a_f_w_w_i_s_e.html#autotoc_md34", null ]
     ] ],
     [ "Test List", "test.html", null ],
     [ "Modules", "modules.html", "modules" ],

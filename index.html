@@ -86,10 +86,10 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <div class="title">Spatial_Audio_Framework Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_README"></a><img src="saf.svg" alt="" style="pointer-events: none;" class="inline"/></p>
+<div class="textblock"><p><a class="anchor" id="md_README"></a><img src="docs/saf.svg" alt="" style="pointer-events: none;" class="inline"/></p>
 <ul>
 <li>git: <a href="https://github.com/leomccormack/Spatial_Audio_Framework">https://github.com/leomccormack/Spatial_Audio_Framework</a></li>
-<li>doxygen: <a href="http://research.spa.aalto.fi/projects/spatial_audio_framework">http://research.spa.aalto.fi/projects/spatial_audio_framework</a></li>
+<li>doxygen: <a href="https://leomccormack.github.io/Spatial_Audio_Framework/">https://leomccormack.github.io/Spatial_Audio_Framework/</a></li>
 </ul>
 <h1><a class="anchor" id="autotoc_md56"></a>
 Prerequisites</h1>
@@ -103,10 +103,10 @@ Prerequisites</h1>
 <div class="line">SAF_USE_APPLE_ACCELERATE      # good option (x86 and ARM), faster than OpenBLAS, but MacOSX only &amp; slower than MKL</div>
 <div class="line">SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing</div>
 <div class="line">SAF_USE...                    # please get in touch if you use something else! :-)</div>
-</div><!-- fragment --><p>Detailed instructions regarding how to build and link these libraries can be found <a class="el" href="md_dependencies__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html">here</a>.</p>
+</div><!-- fragment --><p>Detailed instructions regarding how to build and link these libraries can be found <a class="el" href="md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html">here</a>.</p>
 <h2><a class="anchor" id="autotoc_md57"></a>
 Framework structure</h2>
-<p>The <a class="el" href="md_framework__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html">**framework**</a> comprises the following core modules (<b>ISC</b>):</p><ul>
+<p>The <a class="el" href="md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html">**framework**</a> comprises the following core modules (<b>ISC</b>):</p><ul>
 <li><b>saf_hoa</b> - a collection of higher-order Ambisonics binaural and loudspeaker decoders.</li>
 <li><b>saf_sh</b> - spherical harmonic and spherical array processing related functions.</li>
 <li><b>saf_vbap</b> - Vector-base Amplitude Panning (VBAP) functions.</li>
@@ -121,7 +121,7 @@ Framework structure</h2>
 </ul>
 <p>To enable optional framework modules, simply add the relevant pre-processor definition: </p><div class="fragment"><div class="line">SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader</div>
 <div class="line">SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker</div>
-</div><!-- fragment --><p>Note that the <b>saf_sofa_reader</b> module also requires <a href="https://www.unidata.ucar.edu/software/netcdf/">netCDF</a> to be linked to your project. Instructions on how to install/link this dependency can be found <a class="el" href="md_dependencies__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html">here</a>.</p>
+</div><!-- fragment --><p>Note that the <b>saf_sofa_reader</b> module also requires <a href="https://www.unidata.ucar.edu/software/netcdf/">netCDF</a> to be linked to your project. Instructions on how to install/link this dependency can be found <a class="el" href="md_docs__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html">here</a>.</p>
 <h3><a class="anchor" id="autotoc_md58"></a>
 Additional options</h3>
 <p>The framework can be configured further, with the following options: </p><div class="fragment"><div class="line">SAF_USE_INTEL_IPP              # To use Intel IPP for the saf_utility_fft wrapper</div>
@@ -145,7 +145,7 @@ Building with CMake</h2>
 </div><!-- fragment --><p>If using <b>SAF_USE_INTEL_MKL</b> as the performance library, note that the default header and library search paths may be overridden with: </p><div class="fragment"><div class="line">-DINTEL_MKL_HEADER_PATH=&quot;path/to/mkl/headers&quot;</div>
 <div class="line">-DINTEL_MKL_LIB=&quot;path/to/mkl/libs/mkl_rt(.so/.dylib/.lib)&quot;   # OR:</div>
 <div class="line">-DINTEL_MKL_LIB=&quot;path/to/custom/mkl/lib/saf_mkl_custom(.so/.dylib/.lib)&quot;</div>
-</div><!-- fragment --><p>If the <b>saf_sofa_reader</b> module is enabled, CMake will use the statically built dependencies found in the <b>dependencies</b> folder for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared <a class="el" href="md_dependencies__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html">netcdf library</a> and inform CMake of its location via: </p><div class="fragment"><div class="line"># e.g. Linux users:</div>
+</div><!-- fragment --><p>If the <b>saf_sofa_reader</b> module is enabled, CMake will use the statically built dependencies found in the <b>dependencies</b> folder for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared <a class="el" href="md_docs__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html">netcdf library</a> and inform CMake of its location via: </p><div class="fragment"><div class="line"># e.g. Linux users:</div>
 <div class="line">-DNETCDF_LIBRARY=&quot;/usr/lib/x86_64-linux-gnu/libnetcdf.so&quot;</div>
 <div class="line"># e.g. MSYS2 users</div>
 <div class="line">-DNETCDF_LIBRARY=&quot;/c/msys64/mingw64/lib/libnetcdf.dll.a&quot;</div>
@@ -160,8 +160,8 @@ Building with CMake</h2>
 <div class="line">saf_test.exe  # To run the unit testing program</div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md61"></a>
 Documentation</h2>
-<p>Documentation is periodically generated using <a href="http://www.doxygen.nl/index.html">Doxygen</a> and hosted <a href="http://research.spa.aalto.fi/projects/spatial_audio_framework/index.html">here</a>.</p>
-<p>Alternatively, you may compile the most recent documentation (HTML) yourself with the following commands: </p><div class="fragment"><div class="line">cd doxygen</div>
+<p><a href="http://www.doxygen.nl/index.html">Doxygen</a>-based documentation is generated via a GitHub Action everytime a commit is merged with the master branch. The documentation is hosted <a href="https://leomccormack.github.io/Spatial_Audio_Framework/">here</a>.</p>
+<p>Alternatively, you may generate the documentation yourself (e.g. for the other branches) with the following commands: </p><div class="fragment"><div class="line">cd doxygen</div>
 <div class="line">doxygen doxygen_config</div>
 <div class="line"># (optional) to also build the pdf version:</div>
 <div class="line">cd latex</div>
@@ -226,7 +226,7 @@ License</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Sep 30 2020 14:14:49 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Thu Oct 1 2020 12:31:16 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

@@ -63,7 +63,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('md_dependencies__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -93,13 +93,13 @@ $(document).ready(function(){initNavTree('md_dependencies__p_e_r_f_o_r_m_a_n_c_e
 <div class="line">SAF_USE_APPLE_ACCELERATE      # good option (x86 and ARM), faster than OpenBLAS, but MacOSX only &amp; slower than MKL</div>
 <div class="line">SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing</div>
 <div class="line">SAF_USE...                    # please get in touch if you use something else! :-)</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md1"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md13"></a>
 SAF_USE_INTEL_MKL</h1>
 <p>Intel MKL is perhaps the fastest library for <b>x86</b> platforms. It also includes an optimised FFT implementation and a number of additional vectorised utility functions which SAF is also able to make use of.</p>
 <p><b>Intel MKL can be downloaded (royalty-free) <a href="https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries">from here</a></b>.</p>
 <p>Unfortunately, while you can indeed link directly to the Intel MKL static/shared libraries... these files are rather large. Therefore, you may prefer to use the MKL builder to build a custom MKL library, which contains only the routines that SAF actually needs.</p>
 <p>Instructions regarding how to build a custom MKL library for Windows, MacOSX, and Linux users, can be found below.</p>
-<h2><a class="anchor" id="autotoc_md2"></a>
+<h2><a class="anchor" id="autotoc_md14"></a>
 Linux/MacOSX users</h2>
 <p>Run the following bash script (<b>sudo</b> privileges required):</p>
 <div class="fragment"><div class="line">cd scripts</div>
@@ -110,7 +110,7 @@ Linux/MacOSX users</h2>
 </div><!-- fragment --><p>Then add the following linker flag to your project:</p>
 <div class="fragment"><div class="line">-L/usr/lib -lsaf_mkl_custom        # Linux users</div>
 <div class="line">-L/usr/local/lib -lsaf_mkl_custom  # MacOSX users</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md3"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md15"></a>
 Windows users</h2>
 <p>Run the following batch script using <b>x64 Developer Command Prompt for VS.exe</b> (open as <b>administrator</b>):</p>
 <div class="fragment"><div class="line">cd scripts</div>
@@ -120,7 +120,7 @@ Windows users</h2>
 </div><!-- fragment --><p>Add the following library search path to your project:</p>
 <div class="fragment"><div class="line">C:/Users/[YOUR WORKING DIRECTORY]/SDKs/Spatial_Audio_Framework/dependencies/Win64/lib</div>
 </div><!-- fragment --><p>link your project against the following library: </p><div class="fragment"><div class="line">saf_mkl_custom.lib </div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md4"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md16"></a>
 Other options</h2>
 <p>This custom MKL library is also installed alongside the <a href="http://research.spa.aalto.fi/projects/sparta_vsts/">SPARTA</a> VST plug-in suite. Athough, it will be noted that this may not be the most up-to-date version of the library.</p>
 <p>You may of course also elect to not build this custom library and link directly with: </p><div class="fragment"><div class="line">[/opt|~]/intel/compilers_and_libraries/linux/mkl/lib/mkl_rt.so                              # Linux users</div>
@@ -128,7 +128,7 @@ Other options</h2>
 <div class="line">C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/lib/libmkl_rt.lib   # Windows users</div>
 </div><!-- fragment --><p>Intel MKL also ships with recent <a href="https://anaconda.org">Anaconda</a> distributions. The easiest way to install with conda is: </p><div class="fragment"><div class="line">conda install mkl mkl-include</div>
 </div><!-- fragment --><p>Please refer to the documentation to find out where conda installs packages on your platform.</p>
-<h1><a class="anchor" id="autotoc_md5"></a>
+<h1><a class="anchor" id="autotoc_md17"></a>
 SAF_USE_OPEN_BLAS_AND_LAPACKE</h1>
 <p>For those who would like to use the framework with <a href="https://github.com/xianyi/OpenBLAS">OpenBLAS</a>, note that for Debian/Ubuntu based Linux distributions, the libraries may be installed via:</p>
 <div class="fragment"><div class="line">sudo apt-get install liblapack3 liblapack-dev libopenblas-base libopenblas-dev liblapacke-dev</div>
@@ -144,11 +144,11 @@ SAF_USE_OPEN_BLAS_AND_LAPACKE</h1>
 </div><!-- fragment --><p>The static openblas library can then be found in: </p><div class="fragment"><div class="line">OpenBLAS/build/lib/libopenblas.a</div>
 </div><!-- fragment --><p>The required include files are then found in: </p><div class="fragment"><div class="line">OpenBLAS/lapack-netlib/CBLAS/include</div>
 <div class="line">OpenBLAS/lapack-netlib/LAPACKE/include</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md6"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md18"></a>
 SAF_USE_APPLE_ACCELERATE</h1>
 <p>Only for MacOSX users. Simply add the <a href="https://developer.apple.com/documentation/accelerate"><b>Accelerate</b></a> framework to your XCode project, and you're good to go.</p>
 <p>Note that Accelerate also includes an optimised FFT implementation and a number of additional vectorised utility functions which SAF is also able to make use of.</p>
-<h1><a class="anchor" id="autotoc_md7"></a>
+<h1><a class="anchor" id="autotoc_md19"></a>
 SAF_USE_ATLAS</h1>
 <p>Using <a href="http://math-atlas.sourceforge.net/">ATLAS</a> is not recommended, since some LAPACK functions are missing. However, if you don't mind losing some SAF functionality, then this may still be a good choice for your particular project. </p>
 </div></div><!-- contents -->
@@ -157,7 +157,7 @@ SAF_USE_ATLAS</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Sep 30 2020 14:14:49 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Thu Oct 1 2020 12:31:16 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>
