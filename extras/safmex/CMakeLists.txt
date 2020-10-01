@@ -36,4 +36,8 @@ foreach(current_wrapper RANGE ${num_wrappers})
 
 endforeach()
 
- 
+
+# make install safmex
+install(TARGETS ${safmex_list} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/
+        COMPONENT safmex)
+message(STATUS "Install safmex into ${CMAKE_CURRENT_SOURCE_DIR}/ ")
