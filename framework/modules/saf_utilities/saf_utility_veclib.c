@@ -56,7 +56,11 @@
   typedef __CLPK_complex       veclib_float_complex;
   typedef __CLPK_doublecomplex veclib_double_complex;
 #elif defined(SAF_USE_INTEL_MKL)
-  typedef int                  veclib_int;
+# ifdef MKL_ILP64
+   typedef long long int       veclib_int;
+# elif defined(MKL_LP64) || 1 /* also default */
+   typedef int                 veclib_int;
+# endif
   typedef float                veclib_float;
   typedef double               veclib_double;
   typedef MKL_Complex8         veclib_float_complex;
@@ -760,11 +764,11 @@ void utility_ssvd
     float* sing
 )
 {
-    int i, j, m, n, lda, ldu, ldvt, info;
+    veclib_int i, j, m, n, lda, ldu, ldvt, info;
     m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
     float* a, *s, *u, *vt;
 #ifdef VECLIB_USE_LAPACK_FORTRAN_INTERFACE
-    int lwork;
+    veclib_int lwork;
     float wkopt;
     float *work;
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
@@ -855,12 +859,12 @@ void utility_csvd
     float* sing
 )
 {
-    int i, j, m, n, lda, ldu, ldvt, info;
+    veclib_int i, j, m, n, lda, ldu, ldvt, info;
     m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
     float_complex* a, *u, *vt;
     float* s;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    int lwork;
+    veclib_int lwork;
     float_complex wkopt;
     float* rwork;
     float_complex* *work;
@@ -958,9 +962,9 @@ void utility_sseig
     float* eig
 )
 {
-    int i, j, n, lda, info;
+    veclib_int i, j, n, lda, info;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    int lwork;
+    veclib_int lwork;
     float wkopt;
     float* work;
 #endif
@@ -1040,11 +1044,11 @@ void utility_cseig
     float* eig
 )
 {
-    int i, j, n, lda, info;
+    veclib_int i, j, n, lda, info;
     float *w;
     float_complex* a;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    int lwork;
+    veclib_int lwork;
     float *rwork;
     float_complex wkopt;
     float_complex *work;
@@ -1133,11 +1137,11 @@ void utility_ceigmp
     float_complex* D
 )
 {
-    int i, j;
-    int n, lda, ldb, ldvl, ldvr, info;
+    veclib_int i, j;
+    veclib_int n, lda, ldb, ldvl, ldvr, info;
     float_complex* a, *b, *vl, *vr, *alpha, *beta;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    int lwork;
+    veclib_int lwork;
     float* rwork;
     float_complex* work;
 #endif
@@ -1221,11 +1225,11 @@ void utility_zeigmp
     double_complex* D
 )
 {
-    int i, j;
-    int n, lda, ldb, ldvl, ldvr, info;
+    veclib_int i, j;
+    veclib_int n, lda, ldb, ldvl, ldvr, info;
     double_complex* a, *b, *vl, *vr, *alpha, *beta;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    int lwork;
+    veclib_int lwork;
     double* rwork;
     double_complex* work;
 #endif
@@ -1314,10 +1318,10 @@ void utility_ceig
     float_complex* eig
 )
 {
-    int i, j, n, lda, ldvl, ldvr, info;
+    veclib_int i, j, n, lda, ldvl, ldvr, info;
     float_complex *w, *vl, *vr, *a;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    int lwork;
+    veclib_int lwork;
     float* rwork;
     float_complex wkopt;
     float_complex* work;
@@ -1401,10 +1405,10 @@ void utility_zeig
     double_complex* eig
 )
 {
-    int i, j, n, lda, ldvl, ldvr, info;
+    veclib_int i, j, n, lda, ldvl, ldvr, info;
     double_complex *w, *vl, *vr, *a;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    int lwork;
+    veclib_int lwork;
     double* rwork;
     double_complex wkopt;
     double_complex* work;
@@ -1492,11 +1496,11 @@ void utility_sglslv
     float* X
 )
 {
-    int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
-    int* IPIV;
+    veclib_int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
+    veclib_int* IPIV;
     float* a, *b;
 
-    IPIV = malloc1d(dim*sizeof(int));
+    IPIV = malloc1d(dim*sizeof(veclib_int));
     a = malloc1d(dim*dim*sizeof(float));
     b = malloc1d(dim*nrhs*sizeof(float));
     
@@ -1545,9 +1549,9 @@ void utility_cglslv
     float_complex* X
 )
 {
-    int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
-    int* IPIV;
-    IPIV = malloc1d(dim*sizeof(int));
+    veclib_int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
+    veclib_int* IPIV;
+    IPIV = malloc1d(dim*sizeof(veclib_int));
     float_complex* a, *b;
 
     a = malloc1d(dim*dim*sizeof(float_complex));
@@ -1598,11 +1602,11 @@ void utility_dglslv
     double* X
 )
 {
-    int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
-    int* IPIV;
+    veclib_int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
+    veclib_int* IPIV;
     double* a, *b;
  
-    IPIV = malloc1d(dim*sizeof(int));
+    IPIV = malloc1d(dim*sizeof(veclib_int));
     a = malloc1d(dim*dim*sizeof(double));
     b = malloc1d(dim*nrhs*sizeof(double));
     
@@ -1651,11 +1655,11 @@ void utility_zglslv
     double_complex* X
 )
 {
-    int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
-    int* IPIV;
+    veclib_int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
+    veclib_int* IPIV;
     double_complex* a, *b;
  
-    IPIV = malloc1d(dim*sizeof(int));
+    IPIV = malloc1d(dim*sizeof(veclib_int));
     a = malloc1d(dim*dim*sizeof(double_complex));
     b = malloc1d(dim*nrhs*sizeof(double_complex));
     
@@ -1709,11 +1713,11 @@ void utility_sglslvt
     float* X
 )
 {
-    int n = nCol, nrhs = dim, lda = nCol, ldb = nCol, info;
-    int* IPIV;
+    veclib_int n = nCol, nrhs = dim, lda = nCol, ldb = nCol, info;
+    veclib_int* IPIV;
     float* a, *b;
 
-    IPIV = malloc1d(dim*sizeof(int));
+    IPIV = malloc1d(dim*sizeof(veclib_int));
     a = malloc1d(dim*dim*sizeof(float));
     b = malloc1d(dim*nrhs*sizeof(float));
 
@@ -1759,7 +1763,7 @@ void utility_sslslv
     float* X
 )
 {
-    int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
+    veclib_int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
     float* a, *b;
  
     a = malloc1d(dim*dim*sizeof(float));
@@ -1809,7 +1813,7 @@ void utility_cslslv
     float_complex* X
 )
 {
-    int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
+    veclib_int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
     float_complex* a, *b;
  
     a = malloc1d(dim*dim*sizeof(float_complex));
@@ -1864,11 +1868,11 @@ void utility_spinv
 )
 {
     
-    int i, j, m, n, k, lda, ldu, ldvt, info;
+    veclib_int i, j, m, n, k, lda, ldu, ldvt, info;
     float* a, *s, *u, *vt, *inva;
     float ss;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    int lwork;
+    veclib_int lwork;
     float wkopt;
     float* work;
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
@@ -1878,7 +1882,7 @@ void utility_spinv
     m = lda = ldu = dim1;
     n = dim2;
     k = ldvt = m < n ? m : n;
-    a = malloc1d(m*n*sizeof(float) );
+    a = malloc1d(m*n*sizeof(float));
     s = (float*)malloc1d(k*sizeof(float));
     u = (float*)malloc1d(ldu*k*sizeof(float));
     vt = (float*)malloc1d(ldvt*n*sizeof(float));
@@ -1919,7 +1923,7 @@ void utility_spinv
         cblas_sscal(m, ss, &u[i*m], incx);
     }
     inva = (float*)malloc1d(n*m*sizeof(float));
-    int ld_inva=n;
+    veclib_int ld_inva=n;
     cblas_sgemm(CblasColMajor, CblasTrans, CblasTrans, n, m, k, 1.0f,
                 vt, ldvt,
                 u, ldu, 0.0f,
@@ -1946,14 +1950,14 @@ void utility_cpinv
     float_complex* outM
 )
 {
-    int i, j, m, n, k, lda, ldu, ldvt, info;
+    veclib_int i, j, m, n, k, lda, ldu, ldvt, info;
     float_complex* a,  *u, *vt, *inva;
     float_complex  ss_cmplx;
     const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f); /* blas */
     float *s;
     float ss;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    int lwork;
+    veclib_int lwork;
     float* rwork;
     float_complex wkopt;
     float_complex* work;
@@ -2011,7 +2015,7 @@ void utility_cpinv
         cblas_cscal(m, &ss_cmplx, &u[i*m], incx);
     }
     inva = malloc1d(n*m*sizeof(float_complex));
-    int ld_inva=n;
+    veclib_int ld_inva=n;
     cblas_cgemm(CblasColMajor, CblasConjTrans, CblasConjTrans, n, m, k, &calpha,
                 vt, ldvt,
                 u, ldu, &cbeta,
@@ -2038,11 +2042,11 @@ void utility_dpinv
     double* outM
 )
 {
-    int i, j, m, n, k, lda, ldu, ldvt, info;
+    veclib_int i, j, m, n, k, lda, ldu, ldvt, info;
     double* a, *s, *u, *vt, *inva;
     double ss;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    int lwork;
+    veclib_int lwork;
     double wkopt;
     double* work;
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
@@ -2093,7 +2097,7 @@ void utility_dpinv
         cblas_dscal(m, ss, &u[i*m], incx);
     }
     inva = (double*)malloc1d(n*m*sizeof(double));
-    int ld_inva=n;
+    veclib_int ld_inva=n;
     cblas_dgemm( CblasColMajor, CblasTrans, CblasTrans, n, m, k, 1.0,
                 vt, ldvt,
                 u, ldu, 0.0,
@@ -2120,14 +2124,14 @@ void utility_zpinv
     double_complex* outM
 )
 {
-    int i, j, m, n, k, lda, ldu, ldvt, info;
+    veclib_int i, j, m, n, k, lda, ldu, ldvt, info;
     double_complex* a, *u, *vt, *inva;
     double_complex ss_cmplx;
     const double_complex calpha = cmplx(1.0, 0.0); const double_complex cbeta = cmplx(0.0, 0.0); /* blas */
     double* s;
     double ss;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    int lwork;
+    veclib_int lwork;
     double* rwork;
     double_complex wkopt;
     double_complex* work;
@@ -2185,7 +2189,7 @@ void utility_zpinv
         cblas_zscal(m, &ss_cmplx, &u[i*m], incx);
     }
     inva = malloc1d(n*m*sizeof(double_complex));
-    int ld_inva=n;
+    veclib_int ld_inva=n;
     cblas_zgemm(CblasColMajor, CblasConjTrans, CblasConjTrans, n, m, k, &calpha,
                 vt, ldvt,
                 u, ldu, &cbeta,
@@ -2216,7 +2220,7 @@ void utility_schol
     float* X
 )
 {
-    int i, j, info, n, lda;
+    veclib_int i, j, info, n, lda;
     float* a;
  
     n = lda = dim;
@@ -2261,7 +2265,7 @@ void utility_cchol
     float_complex* X
 )
 {
-    int i, j, info, n, lda;
+    veclib_int i, j, info, n, lda;
     float_complex* a;
     
     n = lda = dim;
@@ -2308,14 +2312,14 @@ float utility_sdet
     int N
 )
 {
-    int i,j;
-    int *IPIV;
-    IPIV = malloc1d(N * sizeof(int));
+    veclib_int i,j;
+    veclib_int *IPIV;
+    IPIV = malloc1d(N * sizeof(veclib_int));
     int LWORK = N*N;
     float *WORK, *tmp;
     WORK = (float*)malloc1d(LWORK * sizeof(float));
     tmp = malloc1d(N*N*sizeof(float));
-    int INFO;
+    veclib_int INFO;
     float det;
 
     /* Store in column major order */
@@ -2363,14 +2367,15 @@ void utility_sinv
     const int N
 )
 {
-    int i,j;
-    int *IPIV;
-    IPIV = malloc1d(N * sizeof(int));
-    int LWORK = N*N;
+    veclib_int i, j, N_;
+    veclib_int *IPIV;
+    IPIV = malloc1d(N * sizeof(veclib_int));
+    veclib_int LWORK = N*N;
     float *WORK, *tmp;
     WORK = (float*)malloc1d(LWORK * sizeof(float));
     tmp = malloc1d(N*N*sizeof(float));
-    int INFO;
+    veclib_int INFO;
+    N_ = (veclib_int)N;
 
     /* Store in column major order */
     for(i=0; i<N; i++)
@@ -2378,14 +2383,14 @@ void utility_sinv
             tmp[j*N+i] = A[i*N+j];
 
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    sgetrf_((veclib_int*)&N, (veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, &INFO);
-    sgetri_((veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, WORK, &LWORK, &INFO);
+    sgetrf_((veclib_int*)&N_, (veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, &INFO);
+    sgetri_((veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, WORK, &LWORK, &INFO);
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    INFO = clapack_sgetrf(CblasColMajor, N, N, tmp, N, IPIV);
-    INFO = clapack_sgetri(CblasColMajor, N, tmp, N, IPIV);
+    INFO = clapack_sgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
+    INFO = clapack_sgetri(CblasColMajor, N_, tmp, N_, IPIV);
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    INFO = LAPACKE_sgetrf(CblasColMajor, N, N, tmp, N, IPIV);
-    INFO = LAPACKE_sgetri(CblasColMajor, N, tmp, N, IPIV);
+    INFO = LAPACKE_sgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
+    INFO = LAPACKE_sgetri(CblasColMajor, N_, tmp, N_, IPIV);
 #endif
 
     if(INFO!=0) {
@@ -2413,14 +2418,15 @@ void utility_dinv
     const int N
 )
 {
-    int i, j;
-    int *IPIV;
-    IPIV = malloc1d( (N+1)*sizeof(int));
-    int LWORK = N*N;
+    veclib_int i, j, N_;
+    veclib_int *IPIV;
+    IPIV = malloc1d( (N+1)*sizeof(veclib_int));
+    veclib_int LWORK = N*N;
     double *WORK, *tmp;
     WORK = malloc1d( LWORK*sizeof(double));
     tmp = malloc1d(N*N*sizeof(double));
-    int INFO;
+    veclib_int INFO;
+    N_ = (veclib_int)N;
 
     /* Store in column major order */
     for(i=0; i<N; i++)
@@ -2428,15 +2434,15 @@ void utility_dinv
             tmp[j*N+i] = A[i*N+j];
 
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    dgetrf_((veclib_int*)&N, (veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, &INFO);
-    dgetri_((veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, WORK, &LWORK, &INFO);
+    dgetrf_((veclib_int*)&N_, (veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, &INFO);
+    dgetri_((veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, WORK, &LWORK, &INFO);
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    INFO = clapack_dgetrf(CblasColMajor, N, N, tmp, N, IPIV);
-    INFO = clapack_dgetri(CblasColMajor, N, tmp, N, IPIV);
+    INFO = clapack_dgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
+    INFO = clapack_dgetri(CblasColMajor, N_, tmp, N_, IPIV);
     assert(INFO==0);
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    INFO = LAPACKE_dgetrf(CblasColMajor, N, N, tmp, N, IPIV);
-    INFO = LAPACKE_dgetri(CblasColMajor, N, tmp, N, IPIV);
+    INFO = LAPACKE_dgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
+    INFO = LAPACKE_dgetri(CblasColMajor, N_, tmp, N_, IPIV);
     assert(INFO==0);
 #endif
 
@@ -2465,14 +2471,15 @@ void utility_cinv
     const int N
 )
 {
-    int i, j;
-    int *IPIV;
+    veclib_int i, j, N_;
+    veclib_int *IPIV;
     IPIV = malloc1d(N * sizeof(int));
-    int LWORK = N*N;
+    veclib_int LWORK = N*N;
     float_complex *WORK, *tmp;
     WORK = (float_complex*)malloc1d(LWORK * sizeof(float_complex));
     tmp = malloc1d(N*N*sizeof(float_complex));
-    int INFO;
+    veclib_int INFO;
+    N_ = (veclib_int)N;
 
     /* Store in column major order */
     for(i=0; i<N; i++)
@@ -2480,15 +2487,15 @@ void utility_cinv
             tmp[j*N+i] = A[i*N+j];
     
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    cgetrf_((veclib_int*)&N, (veclib_int*)&N, (veclib_float_complex*)tmp, (veclib_int*)&N, IPIV, &INFO);
-    cgetri_((veclib_int*)&N, (veclib_float_complex*)tmp, (veclib_int*)&N, IPIV, (veclib_float_complex*)WORK, &LWORK, &INFO);
+    cgetrf_((veclib_int*)&N_, (veclib_int*)&N_, (veclib_float_complex*)tmp, (veclib_int*)&N_, IPIV, &INFO);
+    cgetri_((veclib_int*)&N_, (veclib_float_complex*)tmp, (veclib_int*)&N_, IPIV, (veclib_float_complex*)WORK, &LWORK, &INFO);
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    INFO = clapack_cgetrf(CblasColMajor, N, N, (veclib_float_complex*)tmp, N, IPIV);
-    INFO = clapack_cgetri(CblasColMajor, N, (veclib_float_complex*)tmp, N, IPIV);
+    INFO = clapack_cgetrf(CblasColMajor, N_, N_, (veclib_float_complex*)tmp, N_, IPIV);
+    INFO = clapack_cgetri(CblasColMajor, N_, (veclib_float_complex*)tmp, N_, IPIV);
     assert(INFO==0);
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    INFO = LAPACKE_cgetrf(CblasColMajor, N, N, (veclib_float_complex*)tmp, N, IPIV);
-    INFO = LAPACKE_cgetri(CblasColMajor, N, (veclib_float_complex*)tmp, N, IPIV);
+    INFO = LAPACKE_cgetrf(CblasColMajor, N_, N_, (veclib_float_complex*)tmp, N_, IPIV);
+    INFO = LAPACKE_cgetri(CblasColMajor, N_, (veclib_float_complex*)tmp, N_, IPIV);
     assert(INFO==0);
 #endif
 
