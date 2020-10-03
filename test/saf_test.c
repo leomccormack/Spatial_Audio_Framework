@@ -131,14 +131,15 @@ int main_test(void) {
 
 void test__loadSOFA(void){
     SAF_SOFA_ERROR_CODES error;
-    saf_sofa_container sofa;
+    saf_sofa_container* sofa;
 
-    error = saf_openSOFAfile(&sofa, "/Users/mccorml1/Documents/HRIRs_SOFA/Leo_McCormack.sofa", 1);
-//    "/Users/mccorml1/Documents/FABIAN_HRTF_DATABASE_V1/1 HRIRs/SOFA/FABIAN_HRIR_measured_HATO_20.sofa" 
+    saf_SOFAcontainer_create(&sofa);
+    error = saf_SOFAcontainer_load(sofa, "/Users/mccorml1/Documents/HRIRs_SOFA/Leo_McCormack.sofa", 1);
+//    "/Users/mccorml1/Documents/FABIAN_HRTF_DATABASE_V1/1 HRIRs/SOFA/FABIAN_HRIR_measured_HATO_20.sofa"
 //    "/Users/mccorml1/Documents/HRIRs_SOFA/D1_48K_24bit_256tap_FIR_SOFA_KU100.sofa"
 //    "path = /Users/mccorml1/Documents/HRIRs_SOFA/648ears_o70240.sofa"
 
-    
+    saf_SOFAcontainer_destroy(&sofa);
 }
 
 void test__saf_stft_50pc_overlap(void){

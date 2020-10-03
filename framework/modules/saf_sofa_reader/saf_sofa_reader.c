@@ -32,63 +32,37 @@
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
 
-typedef struct _saf_sofa_container2{
-    /* Main data: */
-    int nSources;                 /**< Number of measurement positions */
-    int nReceivers;               /**< Number of ears/number of mics etc. */
-    int DataLengthIR;             /**< Length of IR in samples */
-    float DataSamplingRate;       /**< Sampling rate used to measure IRs */
-    float* DataIR;                /**< IRs; FLAT: nSources x nReceivers x DataLengthIR */
-    int* DataDelay;               /**< Delay in samples; nReceivers x 1 */
-    float* SourcePosition;        /**< */
-    float* ReceiverPosition;      /**< */
+void saf_SOFAcontainer_create
+(
+    saf_sofa_container** phCon
+)
+{
+    saf_sofa_container* c = (saf_sofa_container*)malloc1d(sizeof(saf_sofa_container));
+    *phCon = (void*)c;
 
-    /* Also parsing this */
-    int numListenerPosition;      /**< */
-    int numListenerUp;            /**< */
-    int numListenerView;          /**< */
-    int numEmitterPosition;       /**< */
-    float* ListenerPosition;      /**< Listener position [azi,elev,radius] (degrees) */
-    float* ListenerUp;            /**< Vector pointing upwards from the listener position */
-    float* ListenerView;          /**< Vector pointing forwards from the listner position */
-    float* EmitterPosition;       /**< No idea what this could be */
+    /* Default Variable values */
+    c->nSources = c->nReceivers = c->DataLengthIR = -1;
+    c->DataSamplingRate = 0.0f;
+    c->DataIR = c->SourcePosition = c->ReceiverPosition = NULL;
+    c->DataDelay = NULL;
 
-    /* The verbose stuff (used only if "pullAttributesFLAG" is set to 1) */
-    char* Conventions;            /**< (default=NULL) */
-    char* Version;                /**< (default=NULL) */
-    char* SOFAConventions;        /**< (default=NULL) */
-    char* SOFAConventionsVersion; /**< (default=NULL) */
-    char* APIName;                /**< (default=NULL) */
-    char* APIVersion;             /**< (default=NULL) */
-    char* ApplicationName;        /**< (default=NULL) */
-    char* ApplicationVersion;     /**< (default=NULL) */
-    char* AuthorContact;          /**< (default=NULL) */
-    char* Comment;                /**< (default=NULL) */
-    char* DataType;               /**< (default=NULL) */
-    char* History;                /**< (default=NULL) */
-    char* License;                /**< (default=NULL) */
-    char* Organization;           /**< (default=NULL) */
-    char* References;             /**< (default=NULL) */
-    char* RoomType;               /**< (default=NULL) */
-    char* Origin;                 /**< (default=NULL) */
-    char* DateCreated;            /**< (default=NULL) */
-    char* DateModified;           /**< (default=NULL) */
-    char* Title;                  /**< (default=NULL) */
-    char* DatabaseName;           /**< (default=NULL) */
-    char* ListenerShortName;      /**< (default=NULL) */
+    /* Default Attributes */
+    c->Conventions = c->Version = c->SOFAConventions = c->SOFAConventionsVersion
+    = c->APIName = c->APIVersion = c->ApplicationName = c->ApplicationVersion
+    = c->AuthorContact = c->Comment = c->DataType = c->History = c->License
+    = c->Organization = c->References = c->RoomType = c->Origin = c->DateCreated
+    = c->DateModified = c->Title = c->DatabaseName = c->ListenerShortName = NULL;
+}
 
-}saf_sofa_container2;
-
-
-SAF_SOFA_ERROR_CODES saf_openSOFAfile
+SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
 (
     saf_sofa_container* h,
     char* sofa_filepath,
     int pullAttributesFLAG
 )
 {
-    int varid, i, j, ncid, retval, ndimsp, nvarsp, nattsp, unlimdimidp;
-    char varname[NC_MAX_NAME+1];
+    int varid, attnum, i, j, ncid, retval, ndimsp, nvarsp, nattsp, unlimdimidp;
+    char varname[NC_MAX_NAME+1], attname[NC_MAX_NAME+1];
     char* dimname;
     double* tmp_data;
     int* dimids, *dimid;
@@ -112,12 +86,6 @@ SAF_SOFA_ERROR_CODES saf_openSOFAfile
         retval = nc_inq_dimid(ncid, &dimname[i*(NC_MAX_NAME+1)], &dimid[i]);
         nc_strerror(retval);
     }
-
-    /* Default Variable values */
-    h->nSources = h->nReceivers = h->DataLengthIR = -1;
-    h->DataSamplingRate = 0.0f;
-    h->DataIR = h->SourcePosition = h->ReceiverPosition = NULL;
-    h->DataDelay = NULL;
 
     /* Loop over the variables and pull the data accordingly */
     dimids = NULL;
@@ -263,21 +231,145 @@ SAF_SOFA_ERROR_CODES saf_openSOFAfile
         }
     }
 
-    /* */
-
+    /* Loop over the attributes and pull the info accordingly */
+    size_t lenp;
     if(pullAttributesFLAG){
+        for(attnum=0; attnum<nattsp; attnum++){
+            nc_inq_attname(ncid, -1, attnum, attname);
+            nc_inq_attlen(ncid, -1, attname, &lenp);
 
+            if (!strcmp((char*)attname,"DataType")){
+                h->DataType = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->DataType);
+            }
+            else if (!strcmp((char*)attname,"Version")){
+                h->Version = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->Version);
+            }
+            else if (!strcmp((char*)attname,"SOFAConventions")){
+                h->SOFAConventions = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->SOFAConventions);
+            }
+            else if (!strcmp((char*)attname,"SOFAConventionsVersion")){
+                h->SOFAConventionsVersion = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->SOFAConventionsVersion);
+            }
+            else if (!strcmp((char*)attname,"APIName")){
+                h->APIName = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->APIName);
+            }
+            else if (!strcmp((char*)attname,"APIVersion")){
+                h->APIVersion = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->APIVersion);
+            }
+            else if (!strcmp((char*)attname,"ApplicationName")){
+                h->ApplicationName = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->ApplicationName);
+            }
+            else if (!strcmp((char*)attname,"ApplicationVersion")){
+                h->ApplicationVersion = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->ApplicationVersion);
+            }
+            else if (!strcmp((char*)attname,"AuthorContact")){
+                h->AuthorContact = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->AuthorContact);
+            }
+            else if (!strcmp((char*)attname,"Comment")){
+                h->Comment = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->Comment);
+            }
+            else if (!strcmp((char*)attname,"History")){
+                h->History = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->History);
+            }
+            else if (!strcmp((char*)attname,"License")){
+                h->License = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->License);
+            }
+            else if (!strcmp((char*)attname,"Organization")){
+                h->Organization = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->Organization);
+            }
+            else if (!strcmp((char*)attname,"References")){
+                h->References = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->References);
+            }
+            else if (!strcmp((char*)attname,"RoomType")){
+                h->RoomType = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->RoomType);
+            }
+            else if (!strcmp((char*)attname,"Origin")){
+                h->Origin = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->Origin);
+            }
+            else if (!strcmp((char*)attname,"DateCreated")){
+                h->DateCreated = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->DateCreated);
+            }
+            else if (!strcmp((char*)attname,"DateModified")){
+                h->DateModified = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->DateModified);
+            }
+            else if (!strcmp((char*)attname,"Title")){
+                h->Title = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->Title);
+            }
+            else if (!strcmp((char*)attname,"DatabaseName")){
+                h->DatabaseName = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->DatabaseName);
+            }
+            else if (!strcmp((char*)attname,"ListenerShortName")){
+                h->ListenerShortName = calloc1d((NC_MAX_NAME+1),sizeof(char));
+                nc_get_att(ncid, -1, attname, h->ListenerShortName);
+            }
+        }
     }
-
-
-
 
     return SAF_SOFA_OK;
 }
 
 
-void saf_sofa_container_destroy(saf_sofa_container** phCon);
+void saf_SOFAcontainer_destroy
+(
+    saf_sofa_container** phCon
+)
+{
+    saf_sofa_container *c = (saf_sofa_container*)(*phCon);
 
+    if (c != NULL) {
+        free(c->DataIR);
+        free(c->SourcePosition);
+        free(c->ReceiverPosition);
+        free(c->DataDelay);
+
+        free(c->Conventions);
+        free(c->Version);
+        free(c->SOFAConventions);
+        free(c->SOFAConventionsVersion);
+        free(c->APIName);
+        free(c->APIVersion);
+        free(c->ApplicationName);
+        free(c->ApplicationVersion);
+        free(c->AuthorContact);
+        free(c->Comment);
+        free(c->DataType);
+        free(c->History);
+        free(c->License);
+        free(c->Organization);
+        free(c->References);
+        free(c->RoomType);
+        free(c->Origin);
+        free(c->DateCreated);
+        free(c->DateModified);
+        free(c->Title);
+        free(c->DatabaseName);
+        free(c->ListenerShortName);
+
+        free(c);
+        c = NULL;
+        (*phCon) = NULL;
+    }
+}
 
 
 void loadSofaFile

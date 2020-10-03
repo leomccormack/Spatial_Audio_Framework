@@ -95,11 +95,13 @@ typedef enum{
 } SAF_SOFA_ERROR_CODES;
 
 
-SAF_SOFA_ERROR_CODES saf_openSOFAfile(saf_sofa_container* hCon,
-                                      char* sofa_filepath,
-                                      int pullAttributesFLAG);
+void saf_SOFAcontainer_create(saf_sofa_container** phCon);
 
-void saf_sofa_container_destroy(saf_sofa_container** phCon);
+SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load(saf_sofa_container* hCon,
+                                            char* sofa_filepath,
+                                            int pullAttributesFLAG);
+
+void saf_SOFAcontainer_destroy(saf_sofa_container** phCon);
 
 /* ========================================================================== */
 /*                               Main Functions                               */
