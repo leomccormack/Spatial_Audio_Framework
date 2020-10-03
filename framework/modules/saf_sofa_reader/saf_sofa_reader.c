@@ -32,6 +32,254 @@
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
 
+typedef struct _saf_sofa_container2{
+    /* Main data: */
+    int nSources;                 /**< Number of measurement positions */
+    int nReceivers;               /**< Number of ears/number of mics etc. */
+    int DataLengthIR;             /**< Length of IR in samples */
+    float DataSamplingRate;       /**< Sampling rate used to measure IRs */
+    float* DataIR;                /**< IRs; FLAT: nSources x nReceivers x DataLengthIR */
+    int* DataDelay;               /**< Delay in samples; nReceivers x 1 */
+    float* SourcePosition;        /**< */
+    float* ReceiverPosition;      /**< */
+
+    /* Also parsing this */
+    int numListenerPosition;      /**< */
+    int numListenerUp;            /**< */
+    int numListenerView;          /**< */
+    int numEmitterPosition;       /**< */
+    float* ListenerPosition;      /**< Listener position [azi,elev,radius] (degrees) */
+    float* ListenerUp;            /**< Vector pointing upwards from the listener position */
+    float* ListenerView;          /**< Vector pointing forwards from the listner position */
+    float* EmitterPosition;       /**< No idea what this could be */
+
+    /* The verbose stuff (used only if "pullAttributesFLAG" is set to 1) */
+    char* Conventions;            /**< (default=NULL) */
+    char* Version;                /**< (default=NULL) */
+    char* SOFAConventions;        /**< (default=NULL) */
+    char* SOFAConventionsVersion; /**< (default=NULL) */
+    char* APIName;                /**< (default=NULL) */
+    char* APIVersion;             /**< (default=NULL) */
+    char* ApplicationName;        /**< (default=NULL) */
+    char* ApplicationVersion;     /**< (default=NULL) */
+    char* AuthorContact;          /**< (default=NULL) */
+    char* Comment;                /**< (default=NULL) */
+    char* DataType;               /**< (default=NULL) */
+    char* History;                /**< (default=NULL) */
+    char* License;                /**< (default=NULL) */
+    char* Organization;           /**< (default=NULL) */
+    char* References;             /**< (default=NULL) */
+    char* RoomType;               /**< (default=NULL) */
+    char* Origin;                 /**< (default=NULL) */
+    char* DateCreated;            /**< (default=NULL) */
+    char* DateModified;           /**< (default=NULL) */
+    char* Title;                  /**< (default=NULL) */
+    char* DatabaseName;           /**< (default=NULL) */
+    char* ListenerShortName;      /**< (default=NULL) */
+
+}saf_sofa_container2;
+
+
+SAF_SOFA_ERROR_CODES saf_openSOFAfile
+(
+    saf_sofa_container* h,
+    char* sofa_filepath,
+    int pullAttributesFLAG
+)
+{
+    int varid, i, j, ncid, retval, ndimsp, nvarsp, nattsp, unlimdimidp;
+    char varname[NC_MAX_NAME+1];
+    char* dimname;
+    double* tmp_data;
+    int* dimids, *dimid;
+    nc_type typep;
+    size_t* dimlength;
+
+    /* Open NetCDF file */
+    if ((retval = nc_open(sofa_filepath, NC_NOWRITE, &ncid)))
+        nc_strerror(retval);
+    if(retval!=NC_NOERR)/* if error: */
+        return SAF_SOFA_ERROR_INVALID_FILE_OR_FILE_PATH;
+    retval = nc_inq(ncid, &ndimsp, &nvarsp, &nattsp, &unlimdimidp); /* find number of possible dimensions, variables, and attributes */
+
+    /* Find dimension IDs and lengths */
+    dimid = malloc1d(ndimsp*sizeof(int));
+    dimlength = malloc1d(ndimsp*sizeof(size_t));
+    dimname = malloc1d(ndimsp*(NC_MAX_NAME+1)*sizeof(size_t)); /* +1 as NC_MAX_NAME does not include null-termination */
+    for (i=0; i<ndimsp; i++){
+        retval = nc_inq_dim(ncid, i, &dimname[i*(NC_MAX_NAME+1)], &dimlength[i]);
+        nc_strerror(retval);
+        retval = nc_inq_dimid(ncid, &dimname[i*(NC_MAX_NAME+1)], &dimid[i]);
+        nc_strerror(retval);
+    }
+
+    /* Default Variable values */
+    h->nSources = h->nReceivers = h->DataLengthIR = -1;
+    h->DataSamplingRate = 0.0f;
+    h->DataIR = h->SourcePosition = h->ReceiverPosition = NULL;
+    h->DataDelay = NULL;
+
+    /* Loop over the variables and pull the data accordingly */
+    dimids = NULL;
+    tmp_data = NULL;
+    for(varid=0; varid<nvarsp; varid++){
+        nc_inq_var(ncid, varid, (char*)varname, NULL, NULL, NULL, NULL); /* Variable name */
+        nc_inq_varndims(ncid, varid, &ndimsp);                           /* Variable dimensionality */
+        dimids = realloc1d(dimids, ndimsp*sizeof(int));
+        nc_inq_vardimid(ncid, varid, dimids);                            /* Variable dimension IDs */
+        nc_inq_vartype(ncid, varid, &typep);                             /* Variable data type */
+
+        if (!strcmp((char*)varname,"Data.IR")){
+            /* Checks */
+            if(ndimsp!=3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(h->nReceivers!=-1 && (int)dimlength[dimid[dimids[1]]] != h->nReceivers) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+
+            /* Pull data */
+            h->nSources =     (int)dimlength[dimid[dimids[0]]];
+            h->nReceivers =   (int)dimlength[dimid[dimids[1]]];
+            h->DataLengthIR = (int)dimlength[dimid[dimids[2]]]; 
+            tmp_data = realloc1d(tmp_data, h->DataLengthIR*h->nReceivers*h->nSources*sizeof(double));
+            nc_get_var(ncid, varid, tmp_data);
+            h->DataIR = malloc1d(h->DataLengthIR*h->nReceivers*h->nSources*sizeof(float));
+            for(i=0; i<h->DataLengthIR*h->nReceivers*h->nSources; i++)
+                h->DataIR[i] = (float)tmp_data[i];
+        }
+        else if(!strcmp((char*)varname,"Data.SamplingRate")){
+            /* Checks */
+            if(!(ndimsp==1 && dimlength[dimid[dimids[0]]] == 1)) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+
+            /* Pull data */
+            tmp_data = realloc1d(tmp_data, 1*sizeof(double));
+            nc_get_var(ncid, varid, tmp_data);
+            h->DataSamplingRate = (float)tmp_data[0];
+        }
+        else if (!strcmp((char*)varname,"Data.Delay")){
+            /* Checks */
+            if(h->nReceivers!=-1 && (int)dimlength[dimid[dimids[1]]] != h->nReceivers) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[0]]] != 1 || (int)dimlength[dimid[dimids[2]]] != 1) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+
+            /* Pull data */
+            h->nReceivers = (int)dimlength[dimid[dimids[1]]];
+            tmp_data = realloc1d(tmp_data, h->nReceivers*sizeof(double));
+            nc_get_var(ncid, varid, tmp_data);
+            h->DataDelay = malloc1d(h->nReceivers*sizeof(float));
+            for(i=0; i<h->nReceivers; i++)
+                h->DataDelay[i] = (float)tmp_data[i];
+        }
+        else if (!strcmp((char*)varname,"SourcePosition")){
+            /* Checks */
+            if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(h->nSources!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nSources) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[1]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+
+            /* Pull data */
+            h->nSources = (int)dimlength[dimid[dimids[0]]];
+            tmp_data = realloc1d(tmp_data, h->nSources*3*sizeof(double));
+            nc_get_var(ncid, varid, tmp_data);
+            h->SourcePosition = malloc1d(h->nSources*3*sizeof(float));
+            for(i=0; i<h->nSources; i++)
+                for(j=0; j<3; j++)
+                    h->SourcePosition[i*3+j] = (float)tmp_data[j*h->nSources+i]; /* ^T */
+        }
+        else if (!strcmp((char*)varname,"ReceiverPosition")){
+            /* Checks */
+            if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(h->nReceivers!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nReceivers) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[1]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+
+            /* Pull data */
+            h->nReceivers = (int)dimlength[dimid[dimids[0]]];
+            tmp_data = realloc1d(tmp_data, h->nReceivers*3*sizeof(double));
+            nc_get_var(ncid, varid, tmp_data);
+            h->ReceiverPosition = malloc1d(h->nReceivers*3*sizeof(float));
+            for(i=0; i<h->nReceivers; i++)
+                for(j=0; j<3; j++)
+                    h->ReceiverPosition[i*3+j] = (float)tmp_data[j*h->nReceivers+i]; /* ^T */
+        }
+        else if (!strcmp((char*)varname,"ListenerPosition")){
+            /* Checks */
+            if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+
+            /* Pull data */
+            h->numListenerPosition = (int)dimlength[dimid[dimids[0]]];
+            tmp_data = realloc1d(tmp_data, h->numListenerPosition*sizeof(double));
+            nc_get_var(ncid, varid, tmp_data);
+            h->ListenerPosition = malloc1d(h->numListenerPosition*3*sizeof(float));
+            for(i=0; i<h->numListenerPosition; i++)
+                for(j=0; j<3; j++)
+                    h->ListenerPosition[i*3+j] = (float)tmp_data[j*h->numListenerPosition+i]; /* ^T */
+        }
+        else if (!strcmp((char*)varname,"ListenerUp")){
+            /* Checks */
+            if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+
+            /* Pull data */
+            h->numListenerUp = (int)dimlength[dimid[dimids[0]]];
+            tmp_data = realloc1d(tmp_data, h->numListenerUp*sizeof(double));
+            nc_get_var(ncid, varid, tmp_data);
+            h->ListenerUp = malloc1d(h->numListenerUp*3*sizeof(float));
+            for(i=0; i<h->numListenerUp; i++)
+                for(j=0; j<3; j++)
+                    h->ListenerUp[i*3+j] = (float)tmp_data[j*h->numListenerUp+i]; /* ^T */
+        }
+        else if (!strcmp((char*)varname,"ListenerView")){
+            /* Checks */
+            if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+
+            /* Pull data */
+            h->numListenerView = (int)dimlength[dimid[dimids[0]]];
+            tmp_data = realloc1d(tmp_data, h->numListenerView*sizeof(double));
+            nc_get_var(ncid, varid, tmp_data);
+            h->ListenerView = malloc1d(h->numListenerView*3*sizeof(float));
+            for(i=0; i<h->numListenerView; i++)
+                for(j=0; j<3; j++)
+                    h->ListenerView[i*3+j] = (float)tmp_data[j*h->numListenerView+i]; /* ^T */
+        }
+        else if (!strcmp((char*)varname,"EmitterPosition")){
+            /* Checks */
+            if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+
+            /* Pull data */
+            h->numEmitterPosition = (int)dimlength[dimid[dimids[0]]];
+            tmp_data = realloc1d(tmp_data, h->numEmitterPosition*sizeof(double));
+            nc_get_var(ncid, varid, tmp_data);
+            h->EmitterPosition = malloc1d(h->numEmitterPosition*3*sizeof(float));
+            for(i=0; i<h->numEmitterPosition; i++)
+                for(j=0; j<3; j++)
+                    h->EmitterPosition[i*3+j] = (float)tmp_data[j*h->numEmitterPosition+i]; /* ^T */
+        }
+    }
+
+    /* */
+
+    if(pullAttributesFLAG){
+
+    }
+
+
+
+
+    return SAF_SOFA_OK;
+}
+
+
+void saf_sofa_container_destroy(saf_sofa_container** phCon);
+
+
+
 void loadSofaFile
 (
     char* sofa_filepath,

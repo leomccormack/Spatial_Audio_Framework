@@ -39,6 +39,68 @@
 extern "C" {
 #endif /* __cplusplus */
 
+
+typedef struct _saf_sofa_container{
+    /* Main data: */
+    int nSources;                 /**< Number of measurement positions */
+    int nReceivers;               /**< Number of ears/number of mics etc. */
+    int DataLengthIR;             /**< Length of IR in samples */
+    float* DataIR;                /**< IRs; FLAT: nSources x nReceivers x DataLengthIR */
+    float DataSamplingRate;       /**< Sampling rate used to measure IRs */
+    float* DataDelay;             /**< Delay in seconds; nReceivers x 1 */
+    float* SourcePosition;        /**< */
+    float* ReceiverPosition;      /**< */
+
+    /* Also parsing this */ 
+    int numListenerPosition;      /**< */
+    int numListenerUp;            /**< */
+    int numListenerView;          /**< */
+    int numEmitterPosition;       /**< */
+    float* ListenerPosition;      /**< Listener position [azi,elev,radius] (degrees) */
+    float* ListenerUp;            /**< Vector pointing upwards from the listener position */
+    float* ListenerView;          /**< Vector pointing forwards from the listner position */
+    float* EmitterPosition;       /**< No idea what this could be */
+
+    /* SOFA file Attributes (only if "pullAttributesFLAG" is set to 1) */
+    char* Conventions;            /**< (default=NULL) */
+    char* Version;                /**< (default=NULL) */
+    char* SOFAConventions;        /**< (default=NULL) */
+    char* SOFAConventionsVersion; /**< (default=NULL) */
+    char* APIName;                /**< (default=NULL) */
+    char* APIVersion;             /**< (default=NULL) */
+    char* ApplicationName;        /**< (default=NULL) */
+    char* ApplicationVersion;     /**< (default=NULL) */
+    char* AuthorContact;          /**< (default=NULL) */
+    char* Comment;                /**< (default=NULL) */
+    char* DataType;               /**< (default=NULL) */
+    char* History;                /**< (default=NULL) */
+    char* License;                /**< (default=NULL) */
+    char* Organization;           /**< (default=NULL) */
+    char* References;             /**< (default=NULL) */
+    char* RoomType;               /**< (default=NULL) */
+    char* Origin;                 /**< (default=NULL) */
+    char* DateCreated;            /**< (default=NULL) */
+    char* DateModified;           /**< (default=NULL) */
+    char* Title;                  /**< (default=NULL) */
+    char* DatabaseName;           /**< (default=NULL) */
+    char* ListenerShortName;      /**< (default=NULL) */
+
+}saf_sofa_container;
+
+typedef enum{
+    SAF_SOFA_OK,
+    SAF_SOFA_ERROR_INVALID_FILE_OR_FILE_PATH,
+    SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED,
+    SAF_SOFA_ERROR_FORMAT_UNEXPECTED
+} SAF_SOFA_ERROR_CODES;
+
+
+SAF_SOFA_ERROR_CODES saf_openSOFAfile(saf_sofa_container* hCon,
+                                      char* sofa_filepath,
+                                      int pullAttributesFLAG);
+
+void saf_sofa_container_destroy(saf_sofa_container** phCon);
+
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
@@ -49,6 +111,7 @@ extern "C" {
  * Allocates memory and copies the values of the essential data contained in a
  * SOFA file to the output arguments.
  *
+ * @warning This function assumes the SOFA file comprises HRIR data!
  * @note The hrirs are returned as NULL if the file does not exist.
  *
  * @param[in]  sofa_filepath Directory/file_name of the SOFA file you wish to

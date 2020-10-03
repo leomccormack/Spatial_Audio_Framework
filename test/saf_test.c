@@ -33,6 +33,8 @@
 # include "sldoa.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
+void test__loadSOFA(void);
+
 /* ========================================================================== */
 /*                                 Test Config                                */
 /* ========================================================================== */
@@ -71,6 +73,7 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
+    RUN_TEST(test__loadSOFA); // SHOULD BE IFDEF GUARDED
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -125,6 +128,18 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__loadSOFA(void){
+    SAF_SOFA_ERROR_CODES error;
+    saf_sofa_container sofa;
+
+    error = saf_openSOFAfile(&sofa, "/Users/mccorml1/Documents/HRIRs_SOFA/Leo_McCormack.sofa", 1);
+//    "/Users/mccorml1/Documents/FABIAN_HRTF_DATABASE_V1/1 HRIRs/SOFA/FABIAN_HRIR_measured_HATO_20.sofa" 
+//    "/Users/mccorml1/Documents/HRIRs_SOFA/D1_48K_24bit_256tap_FIR_SOFA_KU100.sofa"
+//    "path = /Users/mccorml1/Documents/HRIRs_SOFA/648ears_o70240.sofa"
+
+    
+}
 
 void test__saf_stft_50pc_overlap(void){
     int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;
