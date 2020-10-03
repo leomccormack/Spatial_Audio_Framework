@@ -55,10 +55,14 @@
 # define MAX(a,b) (( (a) > (b) ) ? (a) : (b))
 #endif
 
+#ifdef __APPLE__
+# define MD_MALLOC_ENABLE_ERROR_MESSAGES
+#endif
+
 void* malloc1d(size_t dim1_data_size)
 {
     void *ptr = malloc(dim1_data_size);
-#if !defined(NDEBUG) && !defined(_MSC_VER) 
+#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
     if (ptr == NULL)
         fprintf(stderr, "Error: 'malloc1d' failed to allocate %zu bytes.\n", dim1_data_size);
 #endif
@@ -68,7 +72,7 @@ void* malloc1d(size_t dim1_data_size)
 void* calloc1d(size_t dim1, size_t data_size)
 {
     void *ptr = calloc(dim1, data_size);
-#if !defined(NDEBUG) && !defined(_MSC_VER) 
+#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
     if (ptr == NULL)
         fprintf(stderr, "Error: 'calloc1d' failed to allocate %zu bytes.\n", dim1*data_size);
 #endif
@@ -78,7 +82,7 @@ void* calloc1d(size_t dim1, size_t data_size)
 void* realloc1d(void* ptr, size_t dim1_data_size)
 {
     ptr = realloc(ptr, dim1_data_size);
-#if !defined(NDEBUG) && !defined(_MSC_VER) 
+#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
     if (ptr == NULL)
         fprintf(stderr, "Error: 'realloc1d' failed to allocate %zu bytes.\n", dim1_data_size);
 #endif
@@ -92,7 +96,7 @@ void** malloc2d(size_t dim1, size_t dim2, size_t data_size)
     unsigned char* p2;
     stride = dim2*data_size;
     ptr = malloc(dim1*sizeof(void*) + dim1*stride);
-#if !defined(NDEBUG) && !defined(_MSC_VER) 
+#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
     if(ptr==NULL)
         fprintf(stderr, "Error: 'malloc2d' failed to allocate %zu bytes.\n", dim1*sizeof(void*) + dim1*stride);
 #endif
@@ -110,7 +114,7 @@ void** calloc2d(size_t dim1, size_t dim2, size_t data_size)
     unsigned char* p2;
     stride = dim2*data_size;
     ptr = calloc(dim1, sizeof(void*) + stride);
-#if !defined(NDEBUG) && !defined(_MSC_VER) 
+#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
     if(ptr==NULL)
         fprintf(stderr, "Error: 'calloc2d' failed to allocate %zu bytes.\n", dim1*sizeof(void*) + dim1*stride);
 #endif
@@ -127,7 +131,7 @@ void** realloc2d(void** ptr, size_t dim1, size_t dim2, size_t data_size)
     unsigned char* p2;
     stride = dim2*data_size;
     ptr = realloc(ptr, dim1*sizeof(void*) + dim1*stride);
-#if !defined(NDEBUG) && !defined(_MSC_VER) 
+#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
     if(ptr==NULL)
         fprintf(stderr, "Error: 'realloc2d' failed to allocate %zu bytes.\n", dim1*sizeof(void*) + dim1*stride);
 #endif
@@ -151,7 +155,7 @@ void** realloc2d_r(void** ptr, size_t new_dim1, size_t new_dim2, size_t prev_dim
     unsigned char* p2;
     stride = new_dim2*data_size;
     ptr = realloc(ptr, new_dim1*sizeof(void*) + new_dim1*stride);
-#if !defined(NDEBUG) && !defined(_MSC_VER) 
+#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
     if(ptr==NULL)
         fprintf(stderr, "Error: 'realloc2d' failed to allocate %zu bytes.\n", new_dim1*sizeof(void*) + new_dim1*stride);
 #endif
@@ -176,7 +180,7 @@ void*** malloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size)
     stride1 = dim2*dim3*data_size;
     stride2 = dim3*data_size;
     ptr = malloc(dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
-#if !defined(NDEBUG) && !defined(_MSC_VER) 
+#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
     if(ptr==NULL)
         fprintf(stderr, "Error: 'malloc3d' failed to allocate %zu bytes.\n", dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
 #endif
@@ -200,7 +204,7 @@ void*** calloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size)
     stride1 = dim2*dim3*data_size;
     stride2 = dim3*data_size;
     ptr = calloc(dim1, sizeof(void**) + dim2*sizeof(void*) + stride1);
-#if !defined(NDEBUG) && !defined(_MSC_VER) 
+#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
     if(ptr==NULL)
         fprintf(stderr, "Error: 'calloc3d' failed to allocate %zu bytes.\n", dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
 #endif
@@ -223,7 +227,7 @@ void*** realloc3d(void*** ptr, size_t new_dim1, size_t new_dim2, size_t new_dim3
     stride1 = new_dim2*new_dim3*data_size;
     stride2 = new_dim3*data_size;
     ptr = realloc(ptr, new_dim1*sizeof(void**) + new_dim1*new_dim2*sizeof(void*) + new_dim1*stride1);
-#if !defined(NDEBUG) && !defined(_MSC_VER) 
+#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
     if(ptr==NULL)
         fprintf(stderr, "Error: 'realloc3d' failed to allocate %zu bytes.\n", new_dim1*sizeof(void**) + new_dim1*new_dim2*sizeof(void*) + new_dim1*stride1);
 #endif
@@ -253,7 +257,7 @@ void*** realloc3d_r(void*** ptr, size_t new_dim1, size_t new_dim2, size_t new_di
     stride1 = new_dim2*new_dim3*data_size;
     stride2 = new_dim3*data_size;
     ptr = realloc(ptr, new_dim1*sizeof(void**) + new_dim1*new_dim2*sizeof(void*) + new_dim1*stride1);
-#if !defined(NDEBUG) && !defined(_MSC_VER) 
+#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
     if(ptr==NULL)
         fprintf(stderr, "Error: 'realloc3d' failed to allocate %zu bytes.\n", new_dim1*sizeof(void**) + new_dim1*new_dim2*sizeof(void*) + new_dim1*stride1);
 #endif
@@ -285,7 +289,7 @@ void**** malloc4d(size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dat
     stride2 = dim3*dim4*data_size;
     stride3 = dim4*data_size;
     ptr = malloc(dim1*sizeof(void***) + dim1*dim2*sizeof(void**) + dim1*dim2*dim3*sizeof(void*) + dim1*stride1);
-#if !defined(NDEBUG) && !defined(_MSC_VER)
+#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
     if(ptr==NULL)
         fprintf(stderr, "Error: 'malloc4d' failed to allocate %zu bytes.\n", dim1*sizeof(void***) + dim1*dim2*sizeof(void**) + dim1*dim2*dim3*sizeof(void*) + dim1*stride1);
 #endif
