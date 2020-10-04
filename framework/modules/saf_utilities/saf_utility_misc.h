@@ -92,6 +92,12 @@ extern "C" {
 
 
 /**
+ * Wraps around any angles exeeding 180 degrees (e.g., 200-> -160)
+ */
+void convert_0_360To_m180_180(float* dirs_deg,
+                              int nDirs);
+
+/**
  * A simple function which returns the next power of 2.
  *
  * Taken from (no license):

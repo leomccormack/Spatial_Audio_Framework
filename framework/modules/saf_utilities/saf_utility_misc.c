@@ -34,6 +34,19 @@
 static const long double factorials_15[15] =
 {1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0, 39916800.0, 479001600.0, 6.2270208e9, 8.71782891e10};
 
+void convert_0_360To_m180_180
+(
+    float* dirs_deg,
+    int nDirs
+)
+{
+    int i;
+    for(i=0; i<nDirs; i++){
+        if(dirs_deg[i*2]>180.0f)
+            dirs_deg[i*2] = -360.0f + dirs_deg[i*2];
+    }
+}
+
 int nextpow2
 (
     int numsamp
