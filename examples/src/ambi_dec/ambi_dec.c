@@ -360,9 +360,8 @@ void ambi_dec_initCodec
                 pars->hrirs = realloc1d(pars->hrirs, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
                 memcpy(pars->hrirs, sofa.DataIR, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
                 pars->hrir_dirs_deg = realloc1d(pars->hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
-                for(j=0; j<pars->N_hrir_dirs; j++)
-                    for(k=0; k<2; k++)
-                        pars->hrir_dirs_deg[j*2+k] = sofa.SourcePosition[j*3+k];
+                cblas_scopy(pars->N_hrir_dirs, sofa.SourcePosition, 3, pars->hrir_dirs_deg, 2); /* azi */
+                cblas_scopy(pars->N_hrir_dirs, &sofa.SourcePosition[1], 3, &pars->hrir_dirs_deg[1], 2); /* elev */
             }
 
             /* Clean-up */

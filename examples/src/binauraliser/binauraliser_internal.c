@@ -126,9 +126,8 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
             pData->hrirs = realloc1d(pData->hrirs, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
             memcpy(pData->hrirs, sofa.DataIR, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
             pData->hrir_dirs_deg = realloc1d(pData->hrir_dirs_deg, pData->N_hrir_dirs*2*sizeof(float));
-            for(j=0; j<pData->N_hrir_dirs; j++)
-                for(k=0; k<2; k++)
-                    pData->hrir_dirs_deg[j*2+k] = sofa.SourcePosition[j*3+k];
+            cblas_scopy(pData->N_hrir_dirs, sofa.SourcePosition, 3, pData->hrir_dirs_deg, 2); /* azi */
+            cblas_scopy(pData->N_hrir_dirs, &sofa.SourcePosition[1], 3, &pData->hrir_dirs_deg[1], 2); /* elev */ 
         }
 
         /* Clean-up */
