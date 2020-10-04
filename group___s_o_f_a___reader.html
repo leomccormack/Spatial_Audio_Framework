@@ -107,7 +107,7 @@ Files</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">SOFA reader container struct.  <a href="structsaf__sofa__container.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">SOFA container struct.  <a href="structsaf__sofa__container.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
@@ -122,15 +122,12 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga83d536e1a4b8e62e32dc51b8c584201f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_o_f_a___reader.html#ga83d536e1a4b8e62e32dc51b8c584201f">saf_SOFAcontainer_create</a> (<a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> **phCon)</td></tr>
-<tr class="memdesc:ga83d536e1a4b8e62e32dc51b8c584201f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the sofa_container; call this once, and use the container as many times as you wish when calling <a class="el" href="group___s_o_f_a___reader.html#gaecef6acd57f5a5913c1c61d37a257348" title="Fills the sofa_container with the SOFA file data.">saf_SOFAcontainer_load()</a>  <a href="group___s_o_f_a___reader.html#ga83d536e1a4b8e62e32dc51b8c584201f">More...</a><br /></td></tr>
-<tr class="separator:ga83d536e1a4b8e62e32dc51b8c584201f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaecef6acd57f5a5913c1c61d37a257348"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group___s_o_f_a___reader.html#gaba919e3e9e5eee49b3344eeda301fa3b">SAF_SOFA_ERROR_CODES</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_o_f_a___reader.html#gaecef6acd57f5a5913c1c61d37a257348">saf_SOFAcontainer_load</a> (<a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> *hCon, char *sofa_filepath, int pullAttributesFLAG)</td></tr>
-<tr class="memdesc:gaecef6acd57f5a5913c1c61d37a257348"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills the sofa_container with the SOFA file data.  <a href="group___s_o_f_a___reader.html#gaecef6acd57f5a5913c1c61d37a257348">More...</a><br /></td></tr>
-<tr class="separator:gaecef6acd57f5a5913c1c61d37a257348"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0c5893a47031f271a88530ef5fe0256c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_o_f_a___reader.html#ga0c5893a47031f271a88530ef5fe0256c">saf_SOFAcontainer_destroy</a> (<a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> **phCon)</td></tr>
-<tr class="memdesc:ga0c5893a47031f271a88530ef5fe0256c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys a container, freeing all the SOFA data.  <a href="group___s_o_f_a___reader.html#ga0c5893a47031f271a88530ef5fe0256c">More...</a><br /></td></tr>
-<tr class="separator:ga0c5893a47031f271a88530ef5fe0256c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacb990a1f90b118dc5f9de132ddf0bf5c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group___s_o_f_a___reader.html#gaba919e3e9e5eee49b3344eeda301fa3b">SAF_SOFA_ERROR_CODES</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_o_f_a___reader.html#gacb990a1f90b118dc5f9de132ddf0bf5c">saf_sofa_open</a> (<a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> *hSOFA, char *sofa_filepath, int pullAttributesFLAG)</td></tr>
+<tr class="memdesc:gacb990a1f90b118dc5f9de132ddf0bf5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills a sofa_container with SOFA file data.  <a href="group___s_o_f_a___reader.html#gacb990a1f90b118dc5f9de132ddf0bf5c">More...</a><br /></td></tr>
+<tr class="separator:gacb990a1f90b118dc5f9de132ddf0bf5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga020cf8511ced05e971592454b2f909a0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_o_f_a___reader.html#ga020cf8511ced05e971592454b2f909a0">saf_sofa_close</a> (<a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> *hSOFA)</td></tr>
+<tr class="memdesc:ga020cf8511ced05e971592454b2f909a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys a container, freeing all the SOFA data.  <a href="group___s_o_f_a___reader.html#ga020cf8511ced05e971592454b2f909a0">More...</a><br /></td></tr>
+<tr class="separator:ga020cf8511ced05e971592454b2f909a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8783d4f04ef4b082de7aa414e294ff52"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_o_f_a___reader.html#ga8783d4f04ef4b082de7aa414e294ff52">loadSofaFile</a> (char *sofa_filepath, float **hrirs, float **hrir_dirs_deg, int *N_hrir_dirs, int *hrir_len, int *hrir_fs)</td></tr>
 <tr class="memdesc:ga8783d4f04ef4b082de7aa414e294ff52"><td class="mdescLeft">&#160;</td><td class="mdescRight">A bare-bones SOFA file reader.  <a href="group___s_o_f_a___reader.html#ga8783d4f04ef4b082de7aa414e294ff52">More...</a><br /></td></tr>
 <tr class="separator:ga8783d4f04ef4b082de7aa414e294ff52"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -219,7 +216,7 @@ Functions</h2></td></tr>
 
 <p>A bare-bones SOFA file reader. </p>
 <p>Allocates memory and copies the values of the essential data contained in a SOFA file to the output arguments.</p>
-<dl class="section warning"><dt>Warning</dt><dd>This function is deprecated, use <a class="el" href="group___s_o_f_a___reader.html#gaecef6acd57f5a5913c1c61d37a257348" title="Fills the sofa_container with the SOFA file data.">saf_SOFAcontainer_load()</a>. </dd>
+<dl class="section warning"><dt>Warning</dt><dd>This function is deprecated, use saf_SOFAcontainer_load(). </dd>
 <dd>
 This function assumes the SOFA file comprises HRIR data! (i.e. not general IR measurement data). </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>The hrirs are returned as NULL if the file does not exist.</dd></dl>
@@ -237,45 +234,17 @@ This function assumes the SOFA file comprises HRIR data! (i.e. not general IR me
 
 </div>
 </div>
-<a id="ga83d536e1a4b8e62e32dc51b8c584201f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga83d536e1a4b8e62e32dc51b8c584201f">&#9670;&nbsp;</a></span>saf_SOFAcontainer_create()</h2>
+<a id="ga020cf8511ced05e971592454b2f909a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga020cf8511ced05e971592454b2f909a0">&#9670;&nbsp;</a></span>saf_sofa_close()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void saf_SOFAcontainer_create </td>
+          <td class="memname">void saf_sofa_close </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> **&#160;</td>
-          <td class="paramname"><em>phCon</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Creates an instance of the sofa_container; call this once, and use the container as many times as you wish when calling <a class="el" href="group___s_o_f_a___reader.html#gaecef6acd57f5a5913c1c61d37a257348" title="Fills the sofa_container with the SOFA file data.">saf_SOFAcontainer_load()</a> </p>
-<dl class="section warning"><dt>Warning</dt><dd>Not all SOFA files conform to the proposed standard [1]! Certain accomodatations for off-standard SOFA files (the ones that are wide-spread) have been built into this SOFA loader. However, if you encounter a SOFA file that this SOFA loader cannot load, then please send it to the developers :-)</dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">phCon</td><td>(&amp;) Address of the sofa_container</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section see"><dt>See also</dt><dd>[1] Majdak, P., Iwaya, Y., Carpentier, T., Nicol, R., Parmentier, M., Roginska, A., Suzuki, Y., Watanabe, K., Wierstorf, H., Ziegelwanger, H. and Noisternig, M., 2013, May. Spatially oriented format for acoustics: A data exchange format representing head-related transfer functions. In Audio Engineering Society Convention 134. Audio Engineering Society. </dd></dl>
-
-</div>
-</div>
-<a id="ga0c5893a47031f271a88530ef5fe0256c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0c5893a47031f271a88530ef5fe0256c">&#9670;&nbsp;</a></span>saf_SOFAcontainer_destroy()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void saf_SOFAcontainer_destroy </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> **&#160;</td>
-          <td class="paramname"><em>phCon</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> *&#160;</td>
+          <td class="paramname"><em>hSOFA</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -284,24 +253,24 @@ This function assumes the SOFA file comprises HRIR data! (i.e. not general IR me
 <p>Destroys a container, freeing all the SOFA data. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">phCon</td><td>(&amp;) address of the sofa_container </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hSOFA</td><td>The sofa_container </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="gaecef6acd57f5a5913c1c61d37a257348"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaecef6acd57f5a5913c1c61d37a257348">&#9670;&nbsp;</a></span>saf_SOFAcontainer_load()</h2>
+<a id="gacb990a1f90b118dc5f9de132ddf0bf5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacb990a1f90b118dc5f9de132ddf0bf5c">&#9670;&nbsp;</a></span>saf_sofa_open()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="group___s_o_f_a___reader.html#gaba919e3e9e5eee49b3344eeda301fa3b">SAF_SOFA_ERROR_CODES</a> saf_SOFAcontainer_load </td>
+          <td class="memname"><a class="el" href="group___s_o_f_a___reader.html#gaba919e3e9e5eee49b3344eeda301fa3b">SAF_SOFA_ERROR_CODES</a> saf_sofa_open </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> *&#160;</td>
-          <td class="paramname"><em>hCon</em>, </td>
+          <td class="paramname"><em>hSOFA</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -323,17 +292,19 @@ This function assumes the SOFA file comprises HRIR data! (i.e. not general IR me
       </table>
 </div><div class="memdoc">
 
-<p>Fills the sofa_container with the SOFA file data. </p>
-<dl class="section note"><dt>Note</dt><dd>If the container has been used to load a previous SOFA file, then it is simply resized and filled with the new SOFA data. i.e., call this as many times as you wish, without having to <a class="el" href="group___s_o_f_a___reader.html#ga83d536e1a4b8e62e32dc51b8c584201f" title="Creates an instance of the sofa_container; call this once, and use the container as many times as you...">saf_SOFAcontainer_create()</a> and <a class="el" href="group___s_o_f_a___reader.html#ga0c5893a47031f271a88530ef5fe0256c" title="Destroys a container, freeing all the SOFA data.">saf_SOFAcontainer_destroy()</a> the previous container.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>The SOFA 1.0 standard supports both Cartesian (x,y,z) and spherical (azi, elev, distance) coordinate systems. However, there appears to be no way to find out which! WTF! So be careful...</dd></dl>
+<p>Fills a sofa_container with SOFA file data. </p>
+<dl class="section warning"><dt>Warning</dt><dd>Not all SOFA files conform to the proposed standard [1]! Certain accomodatations for off-standard SOFA files (the ones that are wide-spread) have been built into this SOFA loader. However, if you encounter a SOFA file that this SOFA loader cannot load, then please send it to the developers :-) </dd>
+<dd>
+The SOFA 1.0 standard supports both Cartesian (x,y,z) and spherical (azi, elev, distance) coordinate systems. However, there appears to be no way to find out which! WTF! So be careful...</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">hCon</td><td>The sofa_container </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">sofa_filepath</td><td>File path (including .sofa extension) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pullAttributesFLAG</td><td>1: attributes are extracted, 0: attributes are ignored </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hSOFA</td><td>The sofa_container </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sofa_filepath</td><td>SOFA file path (including .sofa extension) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pullAttributesFLAG</td><td>1: attributes are extracted, 0: attributes are ignored</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section see"><dt>See also</dt><dd>[1] Majdak, P., Iwaya, Y., Carpentier, T., Nicol, R., Parmentier, M., Roginska, A., Suzuki, Y., Watanabe, K., Wierstorf, H., Ziegelwanger, H. and Noisternig, M., 2013, May. Spatially oriented format for acoustics: A data exchange format representing head-related transfer functions. In Audio Engineering Society Convention 134. Audio Engineering Society. </dd></dl>
 
 </div>
 </div>
@@ -342,7 +313,7 @@ This function assumes the SOFA file comprises HRIR data! (i.e. not general IR me
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Oct 4 2020 16:15:37 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Sun Oct 4 2020 18:29:21 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

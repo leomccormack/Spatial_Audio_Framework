@@ -47,7 +47,6 @@ var group___s_o_f_a___reader =
       [ "SAF_SOFA_ERROR_FORMAT_UNEXPECTED", "group___s_o_f_a___reader.html#ggaba919e3e9e5eee49b3344eeda301fa3baaaf17b97230cb34bdaa225d59fe78677", null ]
     ] ],
     [ "loadSofaFile", "group___s_o_f_a___reader.html#ga8783d4f04ef4b082de7aa414e294ff52", null ],
-    [ "saf_SOFAcontainer_create", "group___s_o_f_a___reader.html#ga83d536e1a4b8e62e32dc51b8c584201f", null ],
-    [ "saf_SOFAcontainer_destroy", "group___s_o_f_a___reader.html#ga0c5893a47031f271a88530ef5fe0256c", null ],
-    [ "saf_SOFAcontainer_load", "group___s_o_f_a___reader.html#gaecef6acd57f5a5913c1c61d37a257348", null ]
+    [ "saf_sofa_close", "group___s_o_f_a___reader.html#ga020cf8511ced05e971592454b2f909a0", null ],
+    [ "saf_sofa_open", "group___s_o_f_a___reader.html#gacb990a1f90b118dc5f9de132ddf0bf5c", null ]
 ];
