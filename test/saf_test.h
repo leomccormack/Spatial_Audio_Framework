@@ -94,6 +94,9 @@ void test__faf_IIRFilterbank(void);
  * the "expm" function in Matlab */
 void test__gexpm(void);
 /**
+ * Testing the SOFA reader */
+void test__saf_SOFAcontainer_load(void);
+/**
  * Testing that the particle-filtering based tracker is able to correctly track
  * two simultaneous targets */
 void test__tracker3d(void);

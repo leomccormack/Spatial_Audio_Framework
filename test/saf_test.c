@@ -33,8 +33,6 @@
 # include "sldoa.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
-void test__loadSOFA(void);
-
 /* ========================================================================== */
 /*                                 Test Config                                */
 /* ========================================================================== */
@@ -73,7 +71,6 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
-    RUN_TEST(test__loadSOFA); // SHOULD BE IFDEF GUARDED
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -93,6 +90,9 @@ int main_test(void) {
     RUN_TEST(test__butterCoeffs);
     RUN_TEST(test__faf_IIRFilterbank);
     RUN_TEST(test__gexpm);
+#if defined(SAF_ENABLE_SOFA_READER_MODULE) && 0 /* Unless we add test sofa files to the repo... */
+    RUN_TEST(test__saf_SOFAcontainer_load);
+#endif
 #ifdef SAF_ENABLE_TRACKER_MODULE
     RUN_TEST(test__tracker3d);
 #endif
@@ -128,19 +128,6 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
-
-void test__loadSOFA(void){
-    SAF_SOFA_ERROR_CODES error;
-    saf_sofa_container* sofa;
-
-    saf_SOFAcontainer_create(&sofa);
-    error = saf_SOFAcontainer_load(sofa, "/Users/mccorml1/Documents/HRIRs_SOFA/Leo_McCormack.sofa", 1);
-//    "/Users/mccorml1/Documents/FABIAN_HRTF_DATABASE_V1/1 HRIRs/SOFA/FABIAN_HRIR_measured_HATO_20.sofa"
-//    "/Users/mccorml1/Documents/HRIRs_SOFA/D1_48K_24bit_256tap_FIR_SOFA_KU100.sofa"
-//    "path = /Users/mccorml1/Documents/HRIRs_SOFA/648ears_o70240.sofa"
-
-    saf_SOFAcontainer_destroy(&sofa);
-}
 
 void test__saf_stft_50pc_overlap(void){
     int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;
@@ -1246,6 +1233,16 @@ void test__gexpm(void){
         for(j=0; j<6; j++)
             TEST_ASSERT_TRUE( fabsf(outM[i][j] - outM_ref[i][j]) <= acceptedTolerance );
 }
+
+#if defined(SAF_ENABLE_SOFA_READER_MODULE) && 0
+void test__saf_SOFAcontainer_load(void){
+    SAF_SOFA_ERROR_CODES error;
+    saf_sofa_container* sofa;
+    saf_SOFAcontainer_create(&sofa);
+    error = saf_SOFAcontainer_load(sofa, "/Users/mccorml1/Documents/FABIAN_HRTF_DATABASE_V1/1 HRIRs/SOFA/FABIAN_HRIR_measured_HATO_20.sofa", 1);
+    saf_SOFAcontainer_destroy(&sofa);
+}
+#endif
 
 #ifdef SAF_ENABLE_TRACKER_MODULE
 void test__tracker3d(void){
