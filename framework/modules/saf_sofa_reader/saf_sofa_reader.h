@@ -125,7 +125,7 @@ typedef enum{
  * container as many times as you wish when calling saf_SOFAcontainer_load()
  *
  * @warning Not all SOFA files conform to the proposed standard [1]! Certain
- *          accomodatations for off-standard SOFA files (i.e. the ones that are
+ *          accomodatations for off-standard SOFA files (the ones that are
  *          wide-spread) have been built into this SOFA loader. However, if you
  *          encounter a SOFA file that this SOFA loader cannot load, then please
  *          send it to the developers :-)
@@ -142,7 +142,7 @@ typedef enum{
 void saf_SOFAcontainer_create(saf_sofa_container** phCon);
 
 /**
- * Fills the sofa_container with the specified SOFA file data
+ * Fills the sofa_container with the SOFA file data
  *
  * @note If the container has been used to load a previous SOFA file, then it
  *       is simply resized and filled with the new SOFA data. i.e., call this
