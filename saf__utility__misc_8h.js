@@ -5,6 +5,7 @@ var saf__utility__misc_8h =
     [ "SAF_CASSERT", "group___utilities.html#ga74f8bcd39c712a7fd5099353a84f780b", null ],
     [ "anyLessThanf", "group___utilities.html#gae6a18584c72d6f66b84ac4c4b900a001", null ],
     [ "convd", "group___utilities.html#gab6cd4596eec8746244d1566eb2adad85", null ],
+    [ "convert_0_360To_m180_180", "group___utilities.html#ga37c35ff6667014c738a9d4713b9728a5", null ],
     [ "convz", "group___utilities.html#gaec989e56048e1f146084901654e99eaf", null ],
     [ "cxcorr", "group___utilities.html#ga58f5d8c2b3c44c035aadc4493a790842", null ],
     [ "factorial", "group___utilities.html#ga9e753ee3390aba5fed74f311a3540a67", null ],

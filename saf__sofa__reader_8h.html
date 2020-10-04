@@ -83,6 +83,8 @@ $(document).ready(function(){initNavTree('saf__sofa__reader_8h.html',''); initRe
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">saf_sofa_reader.h File Reference<div class="ingroups"><a class="el" href="group___s_o_f_a___reader.html">saf_sofa_reader</a></div></div>  </div>
@@ -98,15 +100,40 @@ $(document).ready(function(){initNavTree('saf__sofa__reader_8h.html',''); initRe
 </div>
 <p><a href="saf__sofa__reader_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">SOFA reader container struct.  <a href="structsaf__sofa__container.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:gaba919e3e9e5eee49b3344eeda301fa3b"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_o_f_a___reader.html#gaba919e3e9e5eee49b3344eeda301fa3b">SAF_SOFA_ERROR_CODES</a> { <a class="el" href="group___s_o_f_a___reader.html#ggaba919e3e9e5eee49b3344eeda301fa3ba521263498ea8e2acc6f74c929fc7ad9c">SAF_SOFA_OK</a>, 
+<a class="el" href="group___s_o_f_a___reader.html#ggaba919e3e9e5eee49b3344eeda301fa3ba07ac078f8e95e00fe2d15b8589113121">SAF_SOFA_ERROR_INVALID_FILE_OR_FILE_PATH</a>, 
+<a class="el" href="group___s_o_f_a___reader.html#ggaba919e3e9e5eee49b3344eeda301fa3bac97dac08e6620c4088fa663d00f97972">SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED</a>, 
+<a class="el" href="group___s_o_f_a___reader.html#ggaba919e3e9e5eee49b3344eeda301fa3baaaf17b97230cb34bdaa225d59fe78677">SAF_SOFA_ERROR_FORMAT_UNEXPECTED</a>
+ }</td></tr>
+<tr class="memdesc:gaba919e3e9e5eee49b3344eeda301fa3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">SOFA loader error codes.  <a href="group___s_o_f_a___reader.html#gaba919e3e9e5eee49b3344eeda301fa3b">More...</a><br /></td></tr>
+<tr class="separator:gaba919e3e9e5eee49b3344eeda301fa3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ga83d536e1a4b8e62e32dc51b8c584201f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_o_f_a___reader.html#ga83d536e1a4b8e62e32dc51b8c584201f">saf_SOFAcontainer_create</a> (<a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> **phCon)</td></tr>
+<tr class="memdesc:ga83d536e1a4b8e62e32dc51b8c584201f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the sofa_container; call this once, and use the container as many times as you wish when calling <a class="el" href="group___s_o_f_a___reader.html#gaecef6acd57f5a5913c1c61d37a257348" title="Fills the sofa_container with the SOFA file data.">saf_SOFAcontainer_load()</a>  <a href="group___s_o_f_a___reader.html#ga83d536e1a4b8e62e32dc51b8c584201f">More...</a><br /></td></tr>
+<tr class="separator:ga83d536e1a4b8e62e32dc51b8c584201f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaecef6acd57f5a5913c1c61d37a257348"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group___s_o_f_a___reader.html#gaba919e3e9e5eee49b3344eeda301fa3b">SAF_SOFA_ERROR_CODES</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_o_f_a___reader.html#gaecef6acd57f5a5913c1c61d37a257348">saf_SOFAcontainer_load</a> (<a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> *hCon, char *sofa_filepath, int pullAttributesFLAG)</td></tr>
+<tr class="memdesc:gaecef6acd57f5a5913c1c61d37a257348"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills the sofa_container with the SOFA file data.  <a href="group___s_o_f_a___reader.html#gaecef6acd57f5a5913c1c61d37a257348">More...</a><br /></td></tr>
+<tr class="separator:gaecef6acd57f5a5913c1c61d37a257348"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0c5893a47031f271a88530ef5fe0256c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_o_f_a___reader.html#ga0c5893a47031f271a88530ef5fe0256c">saf_SOFAcontainer_destroy</a> (<a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> **phCon)</td></tr>
+<tr class="memdesc:ga0c5893a47031f271a88530ef5fe0256c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys a container, freeing all the SOFA data.  <a href="group___s_o_f_a___reader.html#ga0c5893a47031f271a88530ef5fe0256c">More...</a><br /></td></tr>
+<tr class="separator:ga0c5893a47031f271a88530ef5fe0256c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8783d4f04ef4b082de7aa414e294ff52"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_o_f_a___reader.html#ga8783d4f04ef4b082de7aa414e294ff52">loadSofaFile</a> (char *sofa_filepath, float **hrirs, float **hrir_dirs_deg, int *N_hrir_dirs, int *hrir_len, int *hrir_fs)</td></tr>
 <tr class="memdesc:ga8783d4f04ef4b082de7aa414e294ff52"><td class="mdescLeft">&#160;</td><td class="mdescRight">A bare-bones SOFA file reader.  <a href="group___s_o_f_a___reader.html#ga8783d4f04ef4b082de7aa414e294ff52">More...</a><br /></td></tr>
 <tr class="separator:ga8783d4f04ef4b082de7aa414e294ff52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Main header for the sofa reader module (<a class="el" href="saf_8h.html#a98df8902e6c5a7fba09c35d489505f77" title="SAF Module: SOFA_Reader.">SAF_SOFA_READER_MODULE</a>) </p>
-<dl class="section note"><dt>Note</dt><dd>This (optional) SOFA reader, which returns only the bare minimum, requires netcdf to be linked to the project.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This (optional) SOFA reader, requires netcdf to be linked to your project!</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Leo McCormack </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>21.11.2017 </dd></dl>
 
@@ -117,7 +144,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_c7bd8de2e6db9c863eb7d841f7baefd0.html">saf_sofa_reader</a></li><li class="navelem"><a class="el" href="saf__sofa__reader_8h.html">saf_sofa_reader.h</a></li>
-    <li class="footer">Generated on Thu Oct 1 2020 15:34:25 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Sun Oct 4 2020 16:15:36 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

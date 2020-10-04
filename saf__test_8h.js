@@ -30,6 +30,7 @@ var saf__test_8h =
     [ "test__saf_example_rotator", "saf__test_8h.html#a616c7f0183703515b843a14202e629ad", null ],
     [ "test__saf_matrixConv", "saf__test_8h.html#ad992431654877a596b057b67120c3cac", null ],
     [ "test__saf_rfft", "saf__test_8h.html#a61e4197e4ad12c1669f952118a37c17b", null ],
+    [ "test__saf_SOFAcontainer_load", "saf__test_8h.html#a9d72d6d639fff3978250bd44b0d357f4", null ],
     [ "test__saf_stft_50pc_overlap", "saf__test_8h.html#a3230cfab4bc9fa9f07d578e2c0c631b9", null ],
     [ "test__saf_stft_LTI", "saf__test_8h.html#af677fd8422840a0356616d0b16f9a175", null ],
     [ "test__smb_pitchShifter", "saf__test_8h.html#a4dba8bcbcecd18f38a70aec40c136555", null ],

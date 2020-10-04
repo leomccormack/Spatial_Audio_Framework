@@ -28,6 +28,7 @@ var annotated_dup =
     [ "qmf_data", "structqmf__data.html", "structqmf__data" ],
     [ "saf_fft_data", "structsaf__fft__data.html", "structsaf__fft__data" ],
     [ "saf_rfft_data", "structsaf__rfft__data.html", "structsaf__rfft__data" ],
+    [ "saf_sofa_container", "structsaf__sofa__container.html", "structsaf__sofa__container" ],
     [ "saf_sort_double", "structsaf__sort__double.html", "structsaf__sort__double" ],
     [ "saf_sort_float", "structsaf__sort__float.html", "structsaf__sort__float" ],
     [ "saf_sort_int", "structsaf__sort__int.html", "structsaf__sort__int" ],

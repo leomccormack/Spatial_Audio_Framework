@@ -130,6 +130,7 @@ var group___utilities =
     [ "butterCoeffs", "group___utilities.html#gaafbb552f618e0672c0acfc4d171da212", null ],
     [ "cmplxPairUp", "group___utilities.html#ga4be4a4a82a31cde4fde08490baedbed0", null ],
     [ "convd", "group___utilities.html#gab6cd4596eec8746244d1566eb2adad85", null ],
+    [ "convert_0_360To_m180_180", "group___utilities.html#ga37c35ff6667014c738a9d4713b9728a5", null ],
     [ "convhull3d", "group___utilities.html#gaf9c0fe2057ad3b9e68c821de0080af4f", null ],
     [ "convz", "group___utilities.html#gaec989e56048e1f146084901654e99eaf", null ],
     [ "crossProduct3", "group___utilities.html#ga6184d4e03844102c7e7921c7081b7fd7", null ],
