@@ -167,7 +167,7 @@ void ambi_bin_initCodec
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     ambi_bin_codecPars* pars = pData->pars;
-    int i, j, k, nSH, order, band;
+    int i, j, nSH, order, band;
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
     
@@ -202,7 +202,7 @@ void ambi_bin_initCodec
         /* load sofa file or load default hrir data */
         if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
             /* Load SOFA file */
-            error = saf_sofa_open(&sofa, pars->sofa_filepath, 1);
+            error = saf_sofa_open(&sofa, pars->sofa_filepath);
 
             /* Load defaults instead */
             if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS)

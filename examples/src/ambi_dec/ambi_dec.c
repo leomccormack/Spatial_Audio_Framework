@@ -180,7 +180,7 @@ void ambi_dec_initCodec
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     ambi_dec_codecPars* pars = pData->pars;
-    int i, k, ch, d, j, n, ng, nGrid_dirs, masterOrder, nSH_order, max_nSH, nLoudspeakers;
+    int i, ch, d, j, n, ng, nGrid_dirs, masterOrder, nSH_order, max_nSH, nLoudspeakers;
     float* grid_dirs_deg, *Y, *M_dec_tmp, *g, *a, *e, *a_n, *hrtf_vbap_gtable;;
     float a_avg[MAX_SH_ORDER], e_avg[MAX_SH_ORDER], azi_incl[2], sum_elev;
     SAF_SOFA_ERROR_CODES error;
@@ -347,7 +347,7 @@ void ambi_dec_initCodec
         /* load sofa file or load default hrir data */
         if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
             /* Load SOFA file */ 
-            error = saf_sofa_open(&sofa, pars->sofa_filepath, 1);
+            error = saf_sofa_open(&sofa, pars->sofa_filepath);
 
             /* Load defaults instead */
             if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS)

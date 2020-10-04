@@ -133,9 +133,7 @@ typedef enum{
  *          be no way to find out which! WTF! So be careful...
  *
  * @param[in] hSOFA                The sofa_container
- * @param[in] sofa_filepath        SOFA file path (including .sofa extension)
- * @param[in] pullAttributesFLAG   1: attributes are extracted, 0: attributes
- *                                 are ignored
+ * @param[in] sofa_filepath        SOFA file path (including .sofa extension) 
  *
  * @see [1] Majdak, P., Iwaya, Y., Carpentier, T., Nicol, R., Parmentier, M.,
  *          Roginska, A., Suzuki, Y., Watanabe, K., Wierstorf, H., Ziegelwanger,
@@ -145,8 +143,7 @@ typedef enum{
  *          Engineering Society.
  */
 SAF_SOFA_ERROR_CODES saf_sofa_open(saf_sofa_container* hSOFA,
-                                   char* sofa_filepath,
-                                   int pullAttributesFLAG);
+                                   char* sofa_filepath);
 
 /**
  * Destroys a container, freeing all the SOFA data
@@ -166,7 +163,7 @@ void saf_sofa_close(saf_sofa_container* hSOFA);
  * Allocates memory and copies the values of the essential data contained in a
  * SOFA file to the output arguments.
  *
- * @warning This function is deprecated, use saf_SOFAcontainer_load().
+ * @warning This function is deprecated, use saf_sofa_open().
  * @warning This function assumes the SOFA file comprises HRIR data! (i.e.
  *          not general IR measurement data).
  * @note The hrirs are returned as NULL if the file does not exist.

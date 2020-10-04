@@ -39,8 +39,7 @@
 SAF_SOFA_ERROR_CODES saf_sofa_open
 (
     saf_sofa_container* h,
-    char* sofa_filepath,
-    int pullAttributesFLAG
+    char* sofa_filepath
 )
 {
     int varid, attnum, i, j, ncid, retval, ndimsp, nvarsp, nattsp, unlimdimidp;
@@ -51,6 +50,21 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
     int* dimids, *dimid;
     nc_type typep;
     size_t* dimlength;
+
+    /* Default variable data */
+    h->nSources = h->nReceivers = h->DataLengthIR = -1;
+    h->DataSamplingRate = 0.0f;
+    h->nEmitters = h->nListeners = -1;
+    h->DataIR = h->SourcePosition = h->ReceiverPosition = h->ListenerPosition =
+    h->ListenerUp = h->ListenerView = h->EmitterPosition = NULL;
+    h->DataDelay = NULL;
+    
+    /* Default attributes */
+    h->Conventions = h->Version = h->SOFAConventions = h->SOFAConventionsVersion
+    = h->APIName = h->APIVersion = h->ApplicationName = h->ApplicationVersion
+    = h->AuthorContact = h->Comment = h->DataType = h->History = h->License
+    = h->Organisation = h->References = h->RoomType = h->Origin = h->DateCreated
+    = h->DateModified = h->Title = h->DatabaseName = h->ListenerShortName = NULL;
 
     /* Open NetCDF file */
     if ((retval = nc_open(sofa_filepath, NC_NOWRITE, &ncid)))
@@ -67,15 +81,6 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         nc_inq_dim(ncid, i, &dimname[i*(NC_MAX_NAME+1)], &dimlength[i]);
         nc_inq_dimid(ncid, &dimname[i*(NC_MAX_NAME+1)], &dimid[i]);
     }
-
-    /* Default variable data */
-    h->nSources = h->nReceivers = h->DataLengthIR = -1;
-    h->DataSamplingRate = 0.0f;
-    h->nEmitters = h->nListeners = -1;
-    h->DataIR = h->SourcePosition = h->ReceiverPosition = h->ListenerPosition =
-    h->ListenerUp = h->ListenerView = h->EmitterPosition = NULL;
-    h->DataDelay = NULL;
-
     /* Loop over the variables and pull the data accordingly */
     dimids = NULL;
     tmp_data = NULL;
@@ -243,107 +248,97 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
     }
 
     /* Loop over the attributes and pull the info accordingly */
-    if(pullAttributesFLAG){
-        /* Default attributes */
-        h->Conventions = h->Version = h->SOFAConventions = h->SOFAConventionsVersion
-        = h->APIName = h->APIVersion = h->ApplicationName = h->ApplicationVersion
-        = h->AuthorContact = h->Comment = h->DataType = h->History = h->License
-        = h->Organisation = h->References = h->RoomType = h->Origin = h->DateCreated
-        = h->DateModified = h->Title = h->DatabaseName = h->ListenerShortName = NULL;
+    for(attnum=0; attnum<nattsp; attnum++){
+        nc_inq_attname(ncid, -1, attnum, attname);
+        nc_inq_attlen(ncid, -1, attname, &lenp);
 
-        /* Loop */
-        for(attnum=0; attnum<nattsp; attnum++){
-            nc_inq_attname(ncid, -1, attnum, attname);
-            nc_inq_attlen(ncid, -1, attname, &lenp);
-
-            if (!strcmp((char*)attname,"DataType")){
-                h->DataType = realloc1d(h->DataType, lenp*sizeof(char));
-                nc_get_att(ncid, -1, attname, h->DataType);
-            }
-            else if (!strcmp((char*)attname,"Conventions")){
-                h->Conventions = realloc1d(h->Conventions, lenp*sizeof(char));
-                nc_get_att(ncid, -1, attname, h->Conventions);
-            }
-            else if (!strcmp((char*)attname,"Version")){
-                h->Version = realloc1d(h->Version, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->Version);
-            }
-            else if (!strcmp((char*)attname,"SOFAConventions")){
-                h->SOFAConventions = realloc1d(h->SOFAConventions, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->SOFAConventions);
-            }
-            else if (!strcmp((char*)attname,"SOFAConventionsVersion")){
-                h->SOFAConventionsVersion = realloc1d(h->SOFAConventionsVersion, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->SOFAConventionsVersion);
-            }
-            else if (!strcmp((char*)attname,"APIName")){
-                h->APIName = realloc1d(h->APIName, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->APIName);
-            }
-            else if (!strcmp((char*)attname,"APIVersion")){
-                h->APIVersion = realloc1d(h->APIVersion, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->APIVersion);
-            }
-            else if (!strcmp((char*)attname,"ApplicationName")){
-                h->ApplicationName = realloc1d(h->ApplicationName, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->ApplicationName);
-            }
-            else if (!strcmp((char*)attname,"ApplicationVersion")){
-                h->ApplicationVersion = realloc1d(h->ApplicationVersion, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->ApplicationVersion);
-            }
-            else if (!strcmp((char*)attname,"AuthorContact")){
-                h->AuthorContact = realloc1d(h->AuthorContact, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->AuthorContact);
-            }
-            else if (!strcmp((char*)attname,"Comment")){
-                h->Comment = realloc1d(h->Comment, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->Comment);
-            }
-            else if (!strcmp((char*)attname,"History")){
-                h->History = realloc1d(h->History, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->History);
-            }
-            else if (!strcmp((char*)attname,"License")){
-                h->License = realloc1d(h->License, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->License);
-            }
-            else if (!strcmp((char*)attname,"Organization")||!strcmp((char*)attname,"Organisation")){
-                h->Organisation = realloc1d(h->Organisation, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->Organisation);
-            }
-            else if (!strcmp((char*)attname,"References")){
-                h->References = realloc1d(h->References, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->References);
-            }
-            else if (!strcmp((char*)attname,"RoomType")){
-                h->RoomType = realloc1d(h->RoomType, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->RoomType);
-            }
-            else if (!strcmp((char*)attname,"Origin")){
-                h->Origin = realloc1d(h->Origin, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->Origin);
-            }
-            else if (!strcmp((char*)attname,"DateCreated")){
-                h->DateCreated = realloc1d(h->DateCreated, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->DateCreated);
-            }
-            else if (!strcmp((char*)attname,"DateModified")){
-                h->DateModified = realloc1d(h->DateModified, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->DateModified);
-            }
-            else if (!strcmp((char*)attname,"Title")){
-                h->Title = realloc1d(h->Title, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->Title);
-            }
-            else if (!strcmp((char*)attname,"DatabaseName")){
-                h->DatabaseName = realloc1d(h->DatabaseName, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->DatabaseName);
-            }
-            else if (!strcmp((char*)attname,"ListenerShortName")){
-                h->ListenerShortName = realloc1d(h->ListenerShortName, lenp*sizeof(char));
-                nc_get_att(ncid, NC_GLOBAL, attname, h->ListenerShortName);
-            }
+        if (!strcmp((char*)attname,"DataType")){
+            h->DataType = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, -1, attname, h->DataType);
+        }
+        else if (!strcmp((char*)attname,"Conventions")){
+            h->Conventions = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, -1, attname, h->Conventions);
+        }
+        else if (!strcmp((char*)attname,"Version")){
+            h->Version = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->Version);
+        }
+        else if (!strcmp((char*)attname,"SOFAConventions")){
+            h->SOFAConventions = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->SOFAConventions);
+        }
+        else if (!strcmp((char*)attname,"SOFAConventionsVersion")){
+            h->SOFAConventionsVersion = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->SOFAConventionsVersion);
+        }
+        else if (!strcmp((char*)attname,"APIName")){
+            h->APIName = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->APIName);
+        }
+        else if (!strcmp((char*)attname,"APIVersion")){
+            h->APIVersion = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->APIVersion);
+        }
+        else if (!strcmp((char*)attname,"ApplicationName")){
+            h->ApplicationName = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->ApplicationName);
+        }
+        else if (!strcmp((char*)attname,"ApplicationVersion")){
+            h->ApplicationVersion = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->ApplicationVersion);
+        }
+        else if (!strcmp((char*)attname,"AuthorContact")){
+            h->AuthorContact = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->AuthorContact);
+        }
+        else if (!strcmp((char*)attname,"Comment")){
+            h->Comment = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->Comment);
+        }
+        else if (!strcmp((char*)attname,"History")){
+            h->History = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->History);
+        }
+        else if (!strcmp((char*)attname,"License")){
+            h->License = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->License);
+        }
+        else if (!strcmp((char*)attname,"Organization")||!strcmp((char*)attname,"Organisation")){
+            h->Organisation = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->Organisation);
+        }
+        else if (!strcmp((char*)attname,"References")){
+            h->References = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->References);
+        }
+        else if (!strcmp((char*)attname,"RoomType")){
+            h->RoomType = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->RoomType);
+        }
+        else if (!strcmp((char*)attname,"Origin")){
+            h->Origin = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->Origin);
+        }
+        else if (!strcmp((char*)attname,"DateCreated")){
+            h->DateCreated = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->DateCreated);
+        }
+        else if (!strcmp((char*)attname,"DateModified")){
+            h->DateModified = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->DateModified);
+        }
+        else if (!strcmp((char*)attname,"Title")){
+            h->Title = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->Title);
+        }
+        else if (!strcmp((char*)attname,"DatabaseName")){
+            h->DatabaseName = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->DatabaseName);
+        }
+        else if (!strcmp((char*)attname,"ListenerShortName")){
+            h->ListenerShortName = calloc1d((NC_MAX_NAME+1), sizeof(char));
+            nc_get_att(ncid, NC_GLOBAL, attname, h->ListenerShortName);
         }
     }
 

@@ -90,7 +90,7 @@ int main_test(void) {
     RUN_TEST(test__butterCoeffs);
     RUN_TEST(test__faf_IIRFilterbank);
     RUN_TEST(test__gexpm);
-#if defined(SAF_ENABLE_SOFA_READER_MODULE) && 0 /* Unless we add test sofa files to the repo... */
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
     RUN_TEST(test__saf_sofa_open);
 #endif
 #ifdef SAF_ENABLE_TRACKER_MODULE
@@ -1234,11 +1234,11 @@ void test__gexpm(void){
             TEST_ASSERT_TRUE( fabsf(outM[i][j] - outM_ref[i][j]) <= acceptedTolerance );
 }
 
-#if defined(SAF_ENABLE_SOFA_READER_MODULE) && 0
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
 void test__saf_sofa_open(void){
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
-    error = saf_sofa_open(&sofa, "/Users/mccorml1/Documents/FABIAN_HRTF_DATABASE_V1/1 HRIRs/SOFA/FABIAN_HRIR_measured_HATO_20.sofa", 1);
+    error = saf_sofa_open(&sofa, "/Users/mccorml1/Documents/FABIAN_HRTF_DATABASE_V1/1 HRIRs/SOFA/FABIAN_HRIR_measured_HATO_20.sofa");
     saf_sofa_close(&sofa);
 }
 #endif
