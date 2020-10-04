@@ -91,7 +91,7 @@ int main_test(void) {
     RUN_TEST(test__faf_IIRFilterbank);
     RUN_TEST(test__gexpm);
 #if defined(SAF_ENABLE_SOFA_READER_MODULE) && 0 /* Unless we add test sofa files to the repo... */
-    RUN_TEST(test__saf_SOFAcontainer_load);
+    RUN_TEST(test__saf_sofa_open);
 #endif
 #ifdef SAF_ENABLE_TRACKER_MODULE
     RUN_TEST(test__tracker3d);
@@ -1235,12 +1235,11 @@ void test__gexpm(void){
 }
 
 #if defined(SAF_ENABLE_SOFA_READER_MODULE) && 0
-void test__saf_SOFAcontainer_load(void){
+void test__saf_sofa_open(void){
     SAF_SOFA_ERROR_CODES error;
-    saf_sofa_container* sofa;
-    saf_SOFAcontainer_create(&sofa);
-    error = saf_SOFAcontainer_load(sofa, "/Users/mccorml1/Documents/FABIAN_HRTF_DATABASE_V1/1 HRIRs/SOFA/FABIAN_HRIR_measured_HATO_20.sofa", 1);
-    saf_SOFAcontainer_destroy(&sofa);
+    saf_sofa_container sofa;
+    error = saf_sofa_open(&sofa, "/Users/mccorml1/Documents/FABIAN_HRTF_DATABASE_V1/1 HRIRs/SOFA/FABIAN_HRIR_measured_HATO_20.sofa", 1);
+    saf_sofa_close(&sofa);
 }
 #endif
 

@@ -105,7 +105,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     int i, j, k;
     float* hrtf_vbap_gtable;
     SAF_SOFA_ERROR_CODES error;
-    saf_sofa_container* sofa;
+    saf_sofa_container sofa;
     
     strcpy(pData->progressBarText,"Loading HRIRs");
     pData->progressBar0_1 = 0.2f;
@@ -113,27 +113,26 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     /* load sofa file or load default hrir data */
     if(!pData->useDefaultHRIRsFLAG && pData->sofa_filepath!=NULL){
         /* Load SOFA file */
-        saf_SOFAcontainer_create(&sofa);
-        error = saf_SOFAcontainer_load(sofa, pData->sofa_filepath, 1);
+        error = saf_sofa_open(&sofa, pData->sofa_filepath, 1);
 
         /* Load defaults instead */
-        if(error!=SAF_SOFA_OK || sofa->nReceivers!=NUM_EARS)
+        if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS)
             pData->useDefaultHRIRsFLAG = 1;
         else{
             /* Copy SOFA data */
-            pData->hrir_fs = (int)sofa->DataSamplingRate;
-            pData->hrir_len = sofa->DataLengthIR;
-            pData->N_hrir_dirs = sofa->nSources;
+            pData->hrir_fs = (int)sofa.DataSamplingRate;
+            pData->hrir_len = sofa.DataLengthIR;
+            pData->N_hrir_dirs = sofa.nSources;
             pData->hrirs = realloc1d(pData->hrirs, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
-            memcpy(pData->hrirs, sofa->DataIR, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
+            memcpy(pData->hrirs, sofa.DataIR, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
             pData->hrir_dirs_deg = realloc1d(pData->hrir_dirs_deg, pData->N_hrir_dirs*2*sizeof(float));
             for(j=0; j<pData->N_hrir_dirs; j++)
                 for(k=0; k<2; k++)
-                    pData->hrir_dirs_deg[j*2+k] = sofa->SourcePosition[j*3+k];
+                    pData->hrir_dirs_deg[j*2+k] = sofa.SourcePosition[j*3+k];
         }
 
         /* Clean-up */
-        saf_SOFAcontainer_destroy(&sofa);
+        saf_sofa_close(&sofa);
     }
     if(pData->useDefaultHRIRsFLAG){
         /* Copy default HRIR data */

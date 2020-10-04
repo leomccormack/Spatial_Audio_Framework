@@ -95,7 +95,7 @@ void test__faf_IIRFilterbank(void);
 void test__gexpm(void);
 /**
  * Testing the SOFA reader */
-void test__saf_SOFAcontainer_load(void);
+void test__saf_sofa_open(void);
 /**
  * Testing that the particle-filtering based tracker is able to correctly track
  * two simultaneous targets */

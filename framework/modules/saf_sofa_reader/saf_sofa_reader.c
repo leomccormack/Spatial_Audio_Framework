@@ -36,28 +36,7 @@
 /*                              Main Functions                                */
 /* ========================================================================== */
 
-void saf_SOFAcontainer_create
-(
-    saf_sofa_container** phCon
-)
-{
-    saf_sofa_container* c = (saf_sofa_container*)malloc1d(sizeof(saf_sofa_container));
-    *phCon = (void*)c;
-
-    /* Default Variable values */
-    c->DataIR = c->SourcePosition = c->ReceiverPosition = NULL;
-    c->DataDelay = NULL;
-    c->ListenerPosition = c->ListenerUp = c->ListenerView = c->EmitterPosition = NULL;
-
-    /* Default Attributes */
-    c->Conventions = c->Version = c->SOFAConventions = c->SOFAConventionsVersion
-    = c->APIName = c->APIVersion = c->ApplicationName = c->ApplicationVersion
-    = c->AuthorContact = c->Comment = c->DataType = c->History = c->License
-    = c->Organisation = c->References = c->RoomType = c->Origin = c->DateCreated
-    = c->DateModified = c->Title = c->DatabaseName = c->ListenerShortName = NULL;
-}
-
-SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
+SAF_SOFA_ERROR_CODES saf_sofa_open
 (
     saf_sofa_container* h,
     char* sofa_filepath,
@@ -65,7 +44,7 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
 )
 {
     int varid, attnum, i, j, ncid, retval, ndimsp, nvarsp, nattsp, unlimdimidp;
-    size_t tmp_size;
+    size_t tmp_size, lenp;
     char varname[NC_MAX_NAME+1], attname[NC_MAX_NAME+1];
     char* dimname;
     double* tmp_data;
@@ -93,14 +72,9 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
     h->nSources = h->nReceivers = h->DataLengthIR = -1;
     h->DataSamplingRate = 0.0f;
     h->nEmitters = h->nListeners = -1;
-    free(h->DataIR);           h->DataIR = NULL;
-    free(h->SourcePosition);   h->SourcePosition = NULL;
-    free(h->ReceiverPosition); h->ReceiverPosition = NULL;
-    free(h->DataDelay);        h->DataDelay = NULL;
-    free(h->ListenerPosition); h->ListenerPosition = NULL;
-    free(h->ListenerUp);       h->ListenerUp = NULL;
-    free(h->ListenerView);     h->ListenerView = NULL;
-    free(h->EmitterPosition);  h->EmitterPosition = NULL;
+    h->DataIR = h->SourcePosition = h->ReceiverPosition = h->ListenerPosition =
+    h->ListenerUp = h->ListenerView = h->EmitterPosition = NULL;
+    h->DataDelay = NULL;
 
     /* Loop over the variables and pull the data accordingly */
     dimids = NULL;
@@ -125,7 +99,7 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
             tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]] * dimlength[dimid[dimids[2]]];
             tmp_data = realloc1d(tmp_data, tmp_size*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
-            h->DataIR = realloc1d(h->DataIR, tmp_size*sizeof(float));
+            h->DataIR = malloc1d(tmp_size*sizeof(float));
             for(i=0; i<(int)tmp_size; i++)
                 h->DataIR[i] = (float)tmp_data[i];
         }
@@ -150,7 +124,7 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
             tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]];
             tmp_data = realloc1d(tmp_data, tmp_size*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
-            h->DataDelay = realloc1d(h->DataDelay, tmp_size*sizeof(int));
+            h->DataDelay = malloc1d(tmp_size*sizeof(int));
             for(i=0; i<(int)tmp_size; i++)
                 h->DataDelay[i] = (int)tmp_data[i];
         }
@@ -166,7 +140,7 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
             h->nSources = (int)dimlength[dimid[dimids[0]]];
             tmp_data = realloc1d(tmp_data, tmp_size*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
-            h->SourcePosition = realloc1d(h->SourcePosition, tmp_size*sizeof(float));
+            h->SourcePosition = malloc1d(tmp_size*sizeof(float));
             for(i=0; i<(int)tmp_size; i++)
                 h->SourcePosition[i] = (float)tmp_data[i];
         }
@@ -182,7 +156,7 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
                     h->nReceivers = (int)dimlength[dimid[dimids[0]]];
                     tmp_data = realloc1d(tmp_data, h->nReceivers*3*sizeof(double));
                     nc_get_var(ncid, varid, tmp_data);
-                    h->ReceiverPosition = realloc1d(h->ReceiverPosition, h->nReceivers*3*sizeof(float));
+                    h->ReceiverPosition = malloc1d(h->nReceivers*3*sizeof(float));
                     for(i=0; i<h->nReceivers*3; i++)
                             h->ReceiverPosition[i] = (float)tmp_data[i];
                     break;
@@ -197,7 +171,7 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
                     h->nReceivers = (int)dimlength[dimid[dimids[0]]];
                     tmp_data = realloc1d(tmp_data, h->nReceivers*3*sizeof(double));
                     nc_get_var(ncid, varid, tmp_data);
-                    h->ReceiverPosition = realloc1d(h->ReceiverPosition, h->nReceivers*3*sizeof(float));
+                    h->ReceiverPosition = malloc1d(h->nReceivers*3*sizeof(float));
                     for(i=0; i<h->nReceivers*3; i++)
                         h->ReceiverPosition[i] = (float)tmp_data[i];
                     break;
@@ -216,7 +190,7 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
             h->nListeners = 1;
             tmp_data = realloc1d(tmp_data, 3*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
-            h->ListenerPosition = realloc1d(h->ListenerPosition, 3*sizeof(float));
+            h->ListenerPosition = malloc1d(3*sizeof(float));
             for(j=0; j<3; j++)
                 h->ListenerPosition[j] = (float)tmp_data[j];
         }
@@ -231,7 +205,7 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
             h->nListeners = 1;
             tmp_data = realloc1d(tmp_data, 3*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
-            h->ListenerUp = realloc1d(h->ListenerUp, 3*sizeof(float));
+            h->ListenerUp = malloc1d(3*sizeof(float));
             for(j=0; j<3; j++)
                 h->ListenerUp[j] = (float)tmp_data[j];
         }
@@ -246,7 +220,7 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
             h->nListeners = 1;
             tmp_data = realloc1d(tmp_data, 3*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
-            h->ListenerView = realloc1d(h->ListenerView, 3*sizeof(float));
+            h->ListenerView = malloc1d(3*sizeof(float));
             for(j=0; j<3; j++)
                 h->ListenerView[j] = (float)tmp_data[j];
         }
@@ -262,24 +236,15 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
             h->nEmitters = dimlength[dimid[dimids[1]]] == 3 ? (int)dimlength[dimid[dimids[0]]] : (int)dimlength[dimid[dimids[1]]];
             tmp_data = realloc1d(tmp_data, tmp_size*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
-            h->EmitterPosition = realloc1d(h->EmitterPosition, tmp_size*sizeof(float));
-            for(i=0; i<tmp_size; i++)
+            h->EmitterPosition = malloc1d(tmp_size*sizeof(float));
+            for(i=0; i<(int)tmp_size; i++)
                 h->EmitterPosition[i] = (float)tmp_data[i];
         }
     }
 
     /* Loop over the attributes and pull the info accordingly */
-    size_t lenp;
     if(pullAttributesFLAG){
         /* Default attributes */
-        free(h->Conventions); free(h->Version); free(h->SOFAConventions);
-        free(h->SOFAConventionsVersion); free(h->APIName); free(h->APIVersion);
-        free(h->ApplicationName); free(h->ApplicationVersion);
-        free(h->AuthorContact); free(h->Comment); free(h->DataType);
-        free(h->History); free(h->License); free(h->Organisation);
-        free(h->References); free(h->RoomType); free(h->Origin);
-        free(h->DateCreated); free(h->DateModified); free(h->Title);
-        free(h->DatabaseName); free(h->ListenerShortName);
         h->Conventions = h->Version = h->SOFAConventions = h->SOFAConventionsVersion
         = h->APIName = h->APIVersion = h->ApplicationName = h->ApplicationVersion
         = h->AuthorContact = h->Comment = h->DataType = h->History = h->License
@@ -394,52 +359,44 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
 }
 
 
-void saf_SOFAcontainer_destroy
+void saf_sofa_close
 (
-    saf_sofa_container** phCon
+    saf_sofa_container* c
 )
 {
-    saf_sofa_container *c = (saf_sofa_container*)(*phCon);
+    /* Vars */
+    free(c->DataIR);
+    free(c->SourcePosition);
+    free(c->ReceiverPosition);
+    free(c->DataDelay);
+    free(c->ListenerPosition);
+    free(c->ListenerView);
+    free(c->ListenerUp);
+    free(c->EmitterPosition);
 
-    if (c != NULL) {
-        /* Vars */
-        free(c->DataIR);
-        free(c->SourcePosition);
-        free(c->ReceiverPosition);
-        free(c->DataDelay);
-        free(c->ListenerPosition);
-        free(c->ListenerView);
-        free(c->ListenerUp);
-        free(c->EmitterPosition);
-
-        /* Atts */
-        free(c->Conventions);
-        free(c->Version);
-        free(c->SOFAConventions);
-        free(c->SOFAConventionsVersion);
-        free(c->APIName);
-        free(c->APIVersion);
-        free(c->ApplicationName);
-        free(c->ApplicationVersion);
-        free(c->AuthorContact);
-        free(c->Comment);
-        free(c->DataType);
-        free(c->History);
-        free(c->License);
-        free(c->Organisation);
-        free(c->References);
-        free(c->RoomType);
-        free(c->Origin);
-        free(c->DateCreated);
-        free(c->DateModified);
-        free(c->Title);
-        free(c->DatabaseName);
-        free(c->ListenerShortName);
-
-        free(c);
-        c = NULL;
-        (*phCon) = NULL;
-    }
+    /* Atts */
+    free(c->Conventions);
+    free(c->Version);
+    free(c->SOFAConventions);
+    free(c->SOFAConventionsVersion);
+    free(c->APIName);
+    free(c->APIVersion);
+    free(c->ApplicationName);
+    free(c->ApplicationVersion);
+    free(c->AuthorContact);
+    free(c->Comment);
+    free(c->DataType);
+    free(c->History);
+    free(c->License);
+    free(c->Organisation);
+    free(c->References);
+    free(c->RoomType);
+    free(c->Origin);
+    free(c->DateCreated);
+    free(c->DateModified);
+    free(c->Title);
+    free(c->DatabaseName);
+    free(c->ListenerShortName);
 }
 
 

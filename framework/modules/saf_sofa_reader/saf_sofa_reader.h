@@ -43,7 +43,7 @@ extern "C" {
 /*                           Public Structures/Enums                          */
 /* ========================================================================== */
 
-/** SOFA reader container struct */
+/** SOFA container struct */
 typedef struct _saf_sofa_container{
     /* Main data: */
     int nSources;                 /**< Number of source/measurement positions */
@@ -121,16 +121,21 @@ typedef enum{
 /* ========================================================================== */
 
 /**
- * Creates an instance of the sofa_container; call this once, and use the
- * container as many times as you wish when calling saf_SOFAcontainer_load()
+ * Fills a sofa_container with SOFA file data
  *
  * @warning Not all SOFA files conform to the proposed standard [1]! Certain
  *          accomodatations for off-standard SOFA files (the ones that are
  *          wide-spread) have been built into this SOFA loader. However, if you
  *          encounter a SOFA file that this SOFA loader cannot load, then please
  *          send it to the developers :-)
+ * @warning The SOFA 1.0 standard supports both Cartesian (x,y,z) and spherical
+ *          (azi, elev, distance) coordinate systems. However, there appears to
+ *          be no way to find out which! WTF! So be careful...
  *
- * @param[in] phCon (&) Address of the sofa_container
+ * @param[in] hSOFA                The sofa_container
+ * @param[in] sofa_filepath        SOFA file path (including .sofa extension)
+ * @param[in] pullAttributesFLAG   1: attributes are extracted, 0: attributes
+ *                                 are ignored
  *
  * @see [1] Majdak, P., Iwaya, Y., Carpentier, T., Nicol, R., Parmentier, M.,
  *          Roginska, A., Suzuki, Y., Watanabe, K., Wierstorf, H., Ziegelwanger,
@@ -139,35 +144,16 @@ typedef enum{
  *          functions. In Audio Engineering Society Convention 134. Audio
  *          Engineering Society.
  */
-void saf_SOFAcontainer_create(saf_sofa_container** phCon);
-
-/**
- * Fills the sofa_container with the SOFA file data
- *
- * @note If the container has been used to load a previous SOFA file, then it
- *       is simply resized and filled with the new SOFA data. i.e., call this
- *       as many times as you wish, without having to saf_SOFAcontainer_create()
- *       and saf_SOFAcontainer_destroy() the previous container.
- *
- * @warning The SOFA 1.0 standard supports both Cartesian (x,y,z) and spherical
- *          (azi, elev, distance) coordinate systems. However, there appears to
- *          be no way to find out which! WTF! So be careful...
- *
- * @param[in] hCon                 The sofa_container
- * @param[in] sofa_filepath        File path (including .sofa extension)
- * @param[in] pullAttributesFLAG   1: attributes are extracted, 0: attributes
- *                                 are ignored
- */
-SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load(saf_sofa_container* hCon,
-                                            char* sofa_filepath,
-                                            int pullAttributesFLAG);
+SAF_SOFA_ERROR_CODES saf_sofa_open(saf_sofa_container* hSOFA,
+                                   char* sofa_filepath,
+                                   int pullAttributesFLAG);
 
 /**
  * Destroys a container, freeing all the SOFA data
  *
- * @param[in] phCon (&) address of the sofa_container
+ * @param[in] hSOFA The sofa_container
  */
-void saf_SOFAcontainer_destroy(saf_sofa_container** phCon);
+void saf_sofa_close(saf_sofa_container* hSOFA);
 
 
 /* ========================================================================== */

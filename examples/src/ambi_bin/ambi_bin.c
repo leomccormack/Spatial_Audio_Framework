@@ -169,7 +169,7 @@ void ambi_bin_initCodec
     ambi_bin_codecPars* pars = pData->pars;
     int i, j, k, nSH, order, band;
     SAF_SOFA_ERROR_CODES error;
-    saf_sofa_container* sofa;
+    saf_sofa_container sofa;
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
         return; /* re-init not required, or already happening */
@@ -202,27 +202,26 @@ void ambi_bin_initCodec
         /* load sofa file or load default hrir data */
         if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
             /* Load SOFA file */
-            saf_SOFAcontainer_create(&sofa);
-            error = saf_SOFAcontainer_load(sofa, pars->sofa_filepath, 1);
+            error = saf_sofa_open(&sofa, pars->sofa_filepath, 1);
 
             /* Load defaults instead */
-            if(error!=SAF_SOFA_OK || sofa->nReceivers!=NUM_EARS)
+            if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS)
                 pData->useDefaultHRIRsFLAG = 1;
             else{
                 /* Copy SOFA data */
-                pars->hrir_fs = (int)sofa->DataSamplingRate;
-                pars->hrir_len = sofa->DataLengthIR;
-                pars->N_hrir_dirs = sofa->nSources;
+                pars->hrir_fs = (int)sofa.DataSamplingRate;
+                pars->hrir_len = sofa.DataLengthIR;
+                pars->N_hrir_dirs = sofa.nSources;
                 pars->hrirs = realloc1d(pars->hrirs, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
-                memcpy(pars->hrirs, sofa->DataIR, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
+                memcpy(pars->hrirs, sofa.DataIR, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
                 pars->hrir_dirs_deg = realloc1d(pars->hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
                 for(j=0; j<pars->N_hrir_dirs; j++)
                     for(k=0; k<2; k++)
-                        pars->hrir_dirs_deg[j*2+k] = sofa->SourcePosition[j*3+k];
+                        pars->hrir_dirs_deg[j*2+k] = sofa.SourcePosition[j*3+k];
             }
 
             /* Clean-up */
-            saf_SOFAcontainer_destroy(&sofa);
+            saf_sofa_close(&sofa);
         }
         if(pData->useDefaultHRIRsFLAG){
             /* Copy default HRIR data */
