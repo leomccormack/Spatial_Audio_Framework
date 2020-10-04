@@ -228,6 +228,7 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
             if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /* Pull data */
+            h->nListeners = 1;
             tmp_data = realloc1d(tmp_data, 3*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
             h->ListenerUp = realloc1d(h->ListenerUp, 3*sizeof(float));
@@ -242,6 +243,7 @@ SAF_SOFA_ERROR_CODES saf_SOFAcontainer_load
             if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /* Pull data */
+            h->nListeners = 1;
             tmp_data = realloc1d(tmp_data, 3*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
             h->ListenerView = realloc1d(h->ListenerView, 3*sizeof(float));

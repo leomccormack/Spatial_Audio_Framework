@@ -180,9 +180,11 @@ void ambi_dec_initCodec
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     ambi_dec_codecPars* pars = pData->pars;
-    int i, ch, d, j, n, ng, nGrid_dirs, masterOrder, nSH_order, max_nSH, nLoudspeakers;
+    int i, k, ch, d, j, n, ng, nGrid_dirs, masterOrder, nSH_order, max_nSH, nLoudspeakers;
     float* grid_dirs_deg, *Y, *M_dec_tmp, *g, *a, *e, *a_n, *hrtf_vbap_gtable;;
     float a_avg[MAX_SH_ORDER], e_avg[MAX_SH_ORDER], azi_incl[2], sum_elev;
+    SAF_SOFA_ERROR_CODES error;
+    saf_sofa_container* sofa;
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
         return; /* re-init not required, or already happening */
@@ -344,20 +346,38 @@ void ambi_dec_initCodec
         
         /* load sofa file or load default hrir data */
         if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
-            loadSofaFile(pars->sofa_filepath,
-                         &(pars->hrirs),
-                         &(pars->hrir_dirs_deg),
-                         &(pars->N_hrir_dirs),
-                         &(pars->hrir_len),
-                         &(pars->hrir_fs));
+            /* Load SOFA file */
+            saf_SOFAcontainer_create(&sofa);
+            error = saf_SOFAcontainer_load(sofa, pars->sofa_filepath, 1);
+
+            /* Load defaults instead */
+            if(error!=SAF_SOFA_OK || sofa->nReceivers!=NUM_EARS)
+                pData->useDefaultHRIRsFLAG = 1;
+            else{
+                /* Copy SOFA data */
+                pars->hrir_fs = (int)sofa->DataSamplingRate;
+                pars->hrir_len = sofa->DataLengthIR;
+                pars->N_hrir_dirs = sofa->nSources;
+                pars->hrirs = realloc1d(pars->hrirs, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
+                memcpy(pars->hrirs, sofa->DataIR, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
+                pars->hrir_dirs_deg = realloc1d(pars->hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
+                for(j=0; j<pars->N_hrir_dirs; j++)
+                    for(k=0; k<2; k++)
+                        pars->hrir_dirs_deg[j*2+k] = sofa->SourcePosition[j*3+k];
+            }
+
+            /* Clean-up */
+            saf_SOFAcontainer_destroy(&sofa);
         }
-        else{
-            loadSofaFile(NULL, /* setting path to NULL loads default HRIR data */
-                         &(pars->hrirs),
-                         &(pars->hrir_dirs_deg),
-                         &(pars->N_hrir_dirs),
-                         &(pars->hrir_len),
-                         &(pars->hrir_fs));
+        if(pData->useDefaultHRIRsFLAG){
+            /* Copy default HRIR data */
+            pars->hrir_fs = __default_hrir_fs;
+            pars->hrir_len = __default_hrir_len;
+            pars->N_hrir_dirs = __default_N_hrir_dirs;
+            pars->hrirs = realloc1d(pars->hrirs, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
+            memcpy(pars->hrirs, (float*)__default_hrirs, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
+            pars->hrir_dirs_deg = realloc1d(pars->hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
+            memcpy(pars->hrir_dirs_deg, (float*)__default_hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
         }
         
         /* estimate the ITDs for each HRIR */
