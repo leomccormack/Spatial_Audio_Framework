@@ -1,8 +1,8 @@
 # safmex
 
-**safmex** is a collection of MEX wrappers which allow SAF functions to be called within Matlab. 
+**safmex** is a collection of MEX wrappers which allow SAF functions to be called within MATLAB. 
 
-Even for functions that have already been implemented in Matlab, swapping them out for these wrappers has proved beneficial simply for the faster computations afforded by them. These wrappers also serve to bring SAF functionality to Matlab, which is not already found in existing Matlab libraries. 
+Even for functions that have already been implemented in MATLAB, swapping them out for these wrappers has proved beneficial simply for the faster computations afforded by them. These wrappers also serve to bring SAF functionality to MATLAB, which is not already found in existing MATLAB libraries. 
 
 ## Getting started
 
@@ -31,18 +31,18 @@ Alternatively, the **BUILD_SAFMEX.m** script may be used to build the wrappers. 
 ## Folder structure
 
 **extras/safmex/** comprises the following:
-* A script, **BUILD_SAFMEX.m**, to build all of the safmex wrappers via Matlab.
+* A script, **BUILD_SAFMEX.m**, to build all of the safmex wrappers via MATLAB.
 * **CMakeLists.txt** for building the safmex wrappers via CMake.
 * A folder, **safmex_tests**, containing unit tests for the safmex wrappers. 
 * '.c' files which are the actual MEX wrappers written in C.
-* '.m' files (with the same name as their '.c' counterparts) which serve as documentation for the wrappers. In the Matlab command window, simply call: "help safmex_xxx" to view its help information.
+* '.m' files (with the same name as their '.c' counterparts) which serve as documentation for the wrappers. In the MATLAB command window, simply call: "help safmex_xxx" to view its help information.
 
 
 ## Dependencies
 
-You will need Matlab version 2017b or higher installed on your system. The remaining dependencies are then the same as the requirements when building the SAF framework.
+You will need MATLAB version 2017b or higher installed on your system. The remaining dependencies are then the same as the requirements when building the SAF framework.
 
-Note that a few of the unit tests involve comparing the output of the safmex wrapper with that of an existing Matlab implementation of the same function. Therefore, the following Matlab libraries are required for running these unit tests:
+Note that a few of the unit tests involve comparing the output of the safmex wrapper with that of an existing MATLAB implementation of the same function. Therefore, the following MATLAB libraries are required for running these unit tests:
 * [Spherical-Harmonic-Transform](https://github.com/polarch/Spherical-Harmonic-Transform)
 * [Higher-Order-Ambisonics](https://github.com/polarch/Higher-Order-Ambisonics)
 * [Vector-Base-Amplitude-Panning](https://github.com/polarch/Vector-Base-Amplitude-Panning)

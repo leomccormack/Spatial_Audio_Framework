@@ -154,7 +154,7 @@ Many of these examples have also been released as VST audio plug-ins under the [
 
 The repository also includes the following **extras**:
 
-* [**matlab**](extras/matlab) - MATLAB scripts/functions to accompany the framework's C code (a script to generate saf_default_hrirs.c, MATLAB versions of certain SAF functions, etc.).
+* [**matlab**](extras/matlab/SAF_MATLAB_CODE.md) - a bunch of MATLAB scripts/functions to accompany the framework (a script to generate saf_default_hrirs.c, MATLAB versions of certain SAF functions, etc.).
 * [**safmex**](extras/safmex/SAFMEX.md) - a bunch of MATLAB MEX wrappers, which allow certain SAF functions to be used within MATLAB.
 * [**safpy**](extras/safpy/SAFPY.md) - a work-in-progress initiative to bring SAF functionality to Python.
 * [**safwwise**](extras/safwwise/SAFWWISE.md) - a proof of concept regarding how one might integrate SAF into Wwise.
