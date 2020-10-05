@@ -1,6 +1,6 @@
 # safmex
 
-**safmex** is a collection of MEX wrappers which allow SAF functions to be called within MATLAB. 
+**extras/safmex** is a collection of MEX wrappers which allow SAF functions to be called within MATLAB. 
 
 Even for functions that have already been implemented in MATLAB, swapping them out for these wrappers has proved beneficial simply for the faster computations afforded by them. These wrappers also serve to bring SAF functionality to MATLAB, which is not already found in existing MATLAB libraries. 
 

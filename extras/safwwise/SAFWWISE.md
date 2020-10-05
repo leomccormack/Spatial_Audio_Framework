@@ -1,6 +1,6 @@
 # safwwise
 
-**safwwise** is an initiative tasked with demonstrating how SAF may be integrated into [Wwise](https://www.audiokinetic.com/products/wwise/) plug-ins. The work should be viewed very much as a "proof-of-concept", and it is far from a finished product. However, it has been released as an open-source project, in the hope that it may prove useful for those interested in bringing SAF functionality to Wwise. 
+**extras/safwwise** is an initiative tasked with demonstrating how SAF may be integrated into [Wwise](https://www.audiokinetic.com/products/wwise/) plug-ins. The work should be viewed very much as a "proof-of-concept", and it is far from a finished product. However, it has been released as an open-source project, in the hope that it may prove useful for those interested in bringing SAF functionality to Wwise. 
 
 ## plugin_template
 
