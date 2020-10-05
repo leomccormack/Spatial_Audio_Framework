@@ -103,7 +103,7 @@ $(document).ready(function(){initNavTree('saf__sofa__reader_8h.html',''); initRe
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">SOFA container struct, as laid down in the SOFA 1.0 FIR standard: <a href="https://www.sofaconventions.org/mediawiki/index.php/GeneralFIR">https://www.sofaconventions.org/mediawiki/index.php/GeneralFIR</a>.  <a href="structsaf__sofa__container.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">SOFA container struct comprising all possible data that can be extracted from SOFA 1.0 files; as laid down in the GeneralFIR and SimpleFreeFieldHRIR specifications: <a href="https://www.sofaconventions.org/mediawiki/index.php/GeneralFIR">https://www.sofaconventions.org/mediawiki/index.php/GeneralFIR</a> <a href="https://www.sofaconventions.org/mediawiki/index.php/SimpleFreeFieldHRIR">https://www.sofaconventions.org/mediawiki/index.php/SimpleFreeFieldHRIR</a>.  <a href="structsaf__sofa__container.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
@@ -119,7 +119,7 @@ Enumerations</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ga020371f61a2d01025872c6954764dcfe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group___s_o_f_a___reader.html#gaba919e3e9e5eee49b3344eeda301fa3b">SAF_SOFA_ERROR_CODES</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_o_f_a___reader.html#ga020371f61a2d01025872c6954764dcfe">saf_sofa_open</a> (<a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> *hSOFA, char *sofa_filepath)</td></tr>
-<tr class="memdesc:ga020371f61a2d01025872c6954764dcfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills a sofa_container with the specified SOFA file data.  <a href="group___s_o_f_a___reader.html#ga020371f61a2d01025872c6954764dcfe">More...</a><br /></td></tr>
+<tr class="memdesc:ga020371f61a2d01025872c6954764dcfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills a 'sofa_container' with data found in a SOFA file (GeneralFIR or SimpleFreeFieldHRIR), as detailed in the SOFA 1.0 standard [1,2,3].  <a href="group___s_o_f_a___reader.html#ga020371f61a2d01025872c6954764dcfe">More...</a><br /></td></tr>
 <tr class="separator:ga020371f61a2d01025872c6954764dcfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga020cf8511ced05e971592454b2f909a0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_o_f_a___reader.html#ga020cf8511ced05e971592454b2f909a0">saf_sofa_close</a> (<a class="el" href="structsaf__sofa__container.html">saf_sofa_container</a> *hSOFA)</td></tr>
 <tr class="memdesc:ga020cf8511ced05e971592454b2f909a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frees all SOFA data in a sofa_container.  <a href="group___s_o_f_a___reader.html#ga020cf8511ced05e971592454b2f909a0">More...</a><br /></td></tr>
@@ -130,7 +130,7 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Main header for the sofa reader module (<a class="el" href="saf_8h.html#a98df8902e6c5a7fba09c35d489505f77" title="SAF Module: SOFA_Reader.">SAF_SOFA_READER_MODULE</a>) </p>
-<dl class="section warning"><dt>Warning</dt><dd>This (optional) SOFA reader, requires netcdf to be linked to your project!</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This (optional) SOFA reader, requires netcdf to be linked to your project! Refer to docs/SOFA_READER_MODULE_DEPENDENCIES.md for more information.</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Leo McCormack </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>21.11.2017 </dd></dl>
 
@@ -141,7 +141,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_c7bd8de2e6db9c863eb7d841f7baefd0.html">saf_sofa_reader</a></li><li class="navelem"><a class="el" href="saf__sofa__reader_8h.html">saf_sofa_reader.h</a></li>
-    <li class="footer">Generated on Mon Oct 5 2020 10:16:20 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Mon Oct 5 2020 13:41:25 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

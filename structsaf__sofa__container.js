@@ -27,6 +27,8 @@ var structsaf__sofa__container =
     [ "ListenerShortName", "structsaf__sofa__container.html#accdf5193db678bd1defbee3ef35eff19", null ],
     [ "ListenerUp", "structsaf__sofa__container.html#ae160eec77d296e01401e1c3de4540801", null ],
     [ "ListenerView", "structsaf__sofa__container.html#a8bc89a51423b71ed6cbe496323b1acf8", null ],
+    [ "ListenerViewType", "structsaf__sofa__container.html#ae0cd3f54c2b0cc940a32034c297fe6a7", null ],
+    [ "ListenerViewUnits", "structsaf__sofa__container.html#ab9504d4e960d5524f1bf790a7e7f40ae", null ],
     [ "nEmitters", "structsaf__sofa__container.html#aaf9e6b25b848fae120e465279c93b734", null ],
     [ "nListeners", "structsaf__sofa__container.html#a351b717cf6ab9a8522039e272c4ee786", null ],
     [ "nReceivers", "structsaf__sofa__container.html#add23cec9f0705ce89fa0ca0f6ae83a6d", null ],
