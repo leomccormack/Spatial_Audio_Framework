@@ -88,6 +88,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         nc_inq_dim(ncid, i, &dimname[i*(NC_MAX_NAME+1)], &dimlength[i]);
         nc_inq_dimid(ncid, &dimname[i*(NC_MAX_NAME+1)], &dimid[i]);
     }
+
     /* Loop over the variables and pull the data accordingly */
     dimids = NULL;
     tmp_data = NULL;
@@ -200,7 +201,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
                     break;
 
                 /* Some SOFA files have the "ReceiverPosition" variable with the following dimensions: 1 x nReceivers x 3
-                 * This the reason for the switch case found here {2,3}, as it is not fully understood if this '1' is
+                 * This is the reason for the switch case found here {2,3}, as it is not fully understood if this '1' is
                  * for the number of emmiters or listeners? - Until this is made clear, the
                  * following code will just pull the first one (i.e. nReceivers x 3). Therefore, if you have an example
                  * of a file that has "ReceiverPosition" with the dimensions: N x nReceivers x 3  (where N>1)
@@ -311,20 +312,48 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             }
         }
         else if (!strcmp((char*)varname,"EmitterPosition")){
-            /* Checks */
-            if(!(ndimsp==2 || ndimsp==3)) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+            switch(ndimsp){
+                /* Many SOFA files have the "EmitterPosition" variable with the following dimensions: nEmitters x 3  */
+                case 2:
+                    /* Checks */
+                    if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+                    if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
-            /* Pull data */
-            tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]];
-            tmp_size *= ndimsp==3 ? dimlength[dimid[dimids[2]]] : 1;
-            h->nEmitters = dimlength[dimid[dimids[1]]] == 3 ? (int)dimlength[dimid[dimids[0]]] : (int)dimlength[dimid[dimids[1]]];
-            tmp_data = realloc1d(tmp_data, tmp_size*sizeof(double));
-            nc_get_var(ncid, varid, tmp_data);
-            h->EmitterPosition = malloc1d(tmp_size*sizeof(float));
-            for(i=0; i<(int)tmp_size; i++)
-                h->EmitterPosition[i] = (float)tmp_data[i];
+                    /* Pull data */
+                    tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]];
+                    tmp_size *= ndimsp==3 ? dimlength[dimid[dimids[2]]] : 1;
+                    h->nEmitters = dimlength[dimid[dimids[1]]] == 3 ? (int)dimlength[dimid[dimids[0]]] : (int)dimlength[dimid[dimids[1]]];
+                    tmp_data = realloc1d(tmp_data, tmp_size*sizeof(double));
+                    nc_get_var(ncid, varid, tmp_data);
+                    h->EmitterPosition = malloc1d(tmp_size*sizeof(float));
+                    for(i=0; i<(int)tmp_size; i++)
+                        h->EmitterPosition[i] = (float)tmp_data[i];
+                    break;
+
+                /* Some SOFA files have the "EmitterPosition" variable with the following dimensions: 1 x nEmitters x 3
+                 * This is the reason for the switch case found here {2,3}, as it is not fully understood if this '1' is
+                 * for the number of listeners? - Until this is made clear, the
+                 * following code will just pull the first one (i.e. nEmitters x 3). Therefore, if you have an example
+                 * of a file that has "EmitterPosition" with the dimensions: N x nEmitters x 3  (where N>1)
+                 * then please send it to the developers :-) */
+                case 3:
+                    /* Checks */
+                    if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+                    if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+
+                    /* Pull data */
+                    tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]];
+                    tmp_size *= ndimsp==3 ? dimlength[dimid[dimids[2]]] : 1;
+                    h->nEmitters = dimlength[dimid[dimids[1]]] == 3 ? (int)dimlength[dimid[dimids[0]]] : (int)dimlength[dimid[dimids[1]]];
+                    tmp_data = realloc1d(tmp_data, tmp_size*sizeof(double));
+                    nc_get_var(ncid, varid, tmp_data);
+                    h->EmitterPosition = malloc1d(tmp_size*sizeof(float));
+                    for(i=0; i<(int)tmp_size; i++)
+                        h->EmitterPosition[i] = (float)tmp_data[i];
+                    break;
+                default:
+                    return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED;
+            }
 
             /* Pull associated attributes */
             for(attnum=0; attnum<varnattsp; attnum++){
@@ -437,7 +466,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         }
     }
 
-    /* Close the file, free resources. */
+    /* Close the file and clean-up */
     nc_close(ncid);
     free(dimid);
     free(dimlength);
