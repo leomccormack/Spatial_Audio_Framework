@@ -43,9 +43,10 @@ extern "C" {
 /*                           Public Structures/Enums                          */
 /* ========================================================================== */
 
-/** SOFA container struct */
+/** SOFA container struct, as laid down in the SOFA 1.0 FIR standard:
+ *  https://www.sofaconventions.org/mediawiki/index.php/GeneralFIR */
 typedef struct _saf_sofa_container{
-    /* Main data: */
+    /* SOFA/NetCDF variables */
     int nSources;                 /**< Number of source/measurement positions */
     int nReceivers;               /**< Number of ears/number of mics etc. */
     int DataLengthIR;             /**< Length of the IRs, in samples */
@@ -76,7 +77,18 @@ typedef struct _saf_sofa_container{
                                    *   the measurement; numEmitterPosition x 3
                                    */
 
-    /* SOFA file Attributes (only if "pullAttributesFLAG" is set to 1) */
+    /* SOFA/NetCDF Attributes */
+    char* ListenerPositionType;   /**< (default=NULL) */
+    char* ListenerPositionUnits;  /**< (default=NULL) */
+    char* ReceiverPositionType;   /**< (default=NULL) */
+    char* ReceiverPositionUnits;  /**< (default=NULL) */
+    char* SourcePositionType;     /**< (default=NULL) */
+    char* SourcePositionUnits;    /**< (default=NULL) */
+    char* EmitterPositionType;    /**< (default=NULL) */
+    char* EmitterPositionUnits;   /**< (default=NULL) */
+    char* DataSamplingRateUnits;  /**< (default=NULL) */
+
+    /* SOFA/NetCDF global Attributes */
     char* Conventions;            /**< (default=NULL) */
     char* Version;                /**< (default=NULL) */
     char* SOFAConventions;        /**< (default=NULL) */
@@ -121,16 +133,14 @@ typedef enum{
 /* ========================================================================== */
 
 /**
- * Fills a sofa_container with SOFA file data
+ * Fills a sofa_container with the specified SOFA file data
  *
- * @warning Not all SOFA files conform to the proposed standard [1]! Certain
+ * @warning Not all SOFA files conform to the proposed standard [1,2]! Certain
  *          accomodatations for off-standard SOFA files (the ones that are
  *          wide-spread) have been built into this SOFA loader. However, if you
- *          encounter a SOFA file that this SOFA loader cannot load, then please
- *          send it to the developers :-)
- * @warning The SOFA 1.0 standard supports both Cartesian (x,y,z) and spherical
- *          (azi, elev, distance) coordinate systems. However, there appears to
- *          be no way to find out which! WTF! So be careful...
+ *          encounter a SOFA file that this SOFA loader cannot load, (or it
+ *          misses some informtion) then please send it to the developers :-)
+ * @warning This loader currently supports only FIR data (not TF data)!
  *
  * @param[in] hSOFA                The sofa_container
  * @param[in] sofa_filepath        SOFA file path (including .sofa extension) 
@@ -141,12 +151,13 @@ typedef enum{
  *          acoustics: A data exchange format representing head-related transfer
  *          functions. In Audio Engineering Society Convention 134. Audio
  *          Engineering Society.
+ * @see [2] https://www.sofaconventions.org/mediawiki/index.php/GeneralFIR
  */
 SAF_SOFA_ERROR_CODES saf_sofa_open(saf_sofa_container* hSOFA,
                                    char* sofa_filepath);
 
 /**
- * Destroys a container, freeing all the SOFA data
+ * Frees all SOFA data in a sofa_container
  *
  * @param[in] hSOFA The sofa_container
  */
