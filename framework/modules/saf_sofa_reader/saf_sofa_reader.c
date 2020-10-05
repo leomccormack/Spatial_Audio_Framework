@@ -76,7 +76,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         nc_strerror(retval);
     if(retval!=NC_NOERR)/* if error: */
         return SAF_SOFA_ERROR_INVALID_FILE_OR_FILE_PATH;
-    retval = nc_inq(ncid, &ndimsp, &nvarsp, &nattsp, &unlimdimidp); /* find number of possible dimensions, variables, and attributes */
+    nc_inq(ncid, &ndimsp, &nvarsp, &nattsp, &unlimdimidp); /* find number of possible dimensions, variables, and attributes */
 
     /* Find dimension IDs and lengths */
     dimid = malloc1d(ndimsp*sizeof(int));

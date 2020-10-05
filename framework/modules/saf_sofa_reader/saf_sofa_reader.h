@@ -44,9 +44,9 @@ extern "C" {
 /* ========================================================================== */
 
 /** SOFA container struct, as laid down in the SOFA 1.0 FIR standard:
- *  https://www.sofaconventions.org/mediawiki/index.php/GeneralFIR */
+ *      https://www.sofaconventions.org/mediawiki/index.php/GeneralFIR */
 typedef struct _saf_sofa_container{
-    /* SOFA/NetCDF variables */
+    /* Possible SOFA/NetCDF variables */
     int nSources;                 /**< Number of source/measurement positions */
     int nReceivers;               /**< Number of ears/number of mics etc. */
     int DataLengthIR;             /**< Length of the IRs, in samples */
@@ -61,8 +61,6 @@ typedef struct _saf_sofa_container{
     float* ReceiverPosition;      /**< Receiver positions [azi,elev,radius]
                                    *   (degrees), or [x,y,z] (meters);
                                    *   FLAT: nReceivers x 3 */
-
-    /* Also parsing this weird stuff */
     int nListeners;               /**< Number of listener positions (Always 1)*/
     int nEmitters;                /**< Number of emitter positions */
     float* ListenerPosition;      /**< Listener position (The object
@@ -77,7 +75,7 @@ typedef struct _saf_sofa_container{
                                    *   the measurement; numEmitterPosition x 3
                                    */
 
-    /* SOFA/NetCDF Attributes */
+    /* Possible SOFA/NetCDF Attributes */
     char* ListenerPositionType;   /**< (default=NULL) */
     char* ListenerPositionUnits;  /**< (default=NULL) */
     char* ReceiverPositionType;   /**< (default=NULL) */
@@ -88,7 +86,7 @@ typedef struct _saf_sofa_container{
     char* EmitterPositionUnits;   /**< (default=NULL) */
     char* DataSamplingRateUnits;  /**< (default=NULL) */
 
-    /* SOFA/NetCDF global Attributes */
+    /* Possible SOFA/NetCDF global Attributes */
     char* Conventions;            /**< (default=NULL) */
     char* Version;                /**< (default=NULL) */
     char* SOFAConventions;        /**< (default=NULL) */
@@ -142,8 +140,8 @@ typedef enum{
  *          misses some informtion) then please send it to the developers :-)
  * @warning This loader currently supports only FIR data (not TF data)!
  *
- * @param[in] hSOFA                The sofa_container
- * @param[in] sofa_filepath        SOFA file path (including .sofa extension) 
+ * @param[in] hSOFA         The sofa_container
+ * @param[in] sofa_filepath SOFA file path (including .sofa extension)
  *
  * @see [1] Majdak, P., Iwaya, Y., Carpentier, T., Nicol, R., Parmentier, M.,
  *          Roginska, A., Suzuki, Y., Watanabe, K., Wierstorf, H., Ziegelwanger,
