@@ -86,8 +86,8 @@ $(document).ready(function(){initNavTree('md_extras_safmex__s_a_f_m_e_x.html',''
 <div class="title">safmex </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><b>safmex</b> is a collection of MEX wrappers which allow SAF functions to be called within Matlab.</p>
-<p>Even for functions that have already been implemented in Matlab, swapping them out for these wrappers has proved beneficial simply for the faster computations afforded by them. These wrappers also serve to bring SAF functionality to Matlab, which is not already found in existing Matlab libraries.</p>
+<div class="textblock"><p><b>safmex</b> is a collection of MEX wrappers which allow SAF functions to be called within MATLAB.</p>
+<p>Even for functions that have already been implemented in MATLAB, swapping them out for these wrappers has proved beneficial simply for the faster computations afforded by them. These wrappers also serve to bring SAF functionality to MATLAB, which is not already found in existing MATLAB libraries.</p>
 <h1><a class="anchor" id="autotoc_md25"></a>
 Getting started</h1>
 <p>The easiest way to build the MEX wrappers is by enabling the <b>SAF_BUILD_EXTRAS</b> flag and building them via CMake.</p>
@@ -101,16 +101,16 @@ Getting started</h1>
 <h1><a class="anchor" id="autotoc_md26"></a>
 Folder structure</h1>
 <p><b>extras/safmex/</b> comprises the following:</p><ul>
-<li>A script, <b>BUILD_SAFMEX.m</b>, to build all of the safmex wrappers via Matlab.</li>
+<li>A script, <b>BUILD_SAFMEX.m</b>, to build all of the safmex wrappers via MATLAB.</li>
 <li><b>CMakeLists.txt</b> for building the safmex wrappers via CMake.</li>
 <li>A folder, <b>safmex_tests</b>, containing unit tests for the safmex wrappers.</li>
 <li>'.c' files which are the actual MEX wrappers written in C.</li>
-<li>'.m' files (with the same name as their '.c' counterparts) which serve as documentation for the wrappers. In the Matlab command window, simply call: "help safmex_xxx" to view its help information.</li>
+<li>'.m' files (with the same name as their '.c' counterparts) which serve as documentation for the wrappers. In the MATLAB command window, simply call: "help safmex_xxx" to view its help information.</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md27"></a>
 Dependencies</h1>
-<p>You will need Matlab version 2017b or higher installed on your system. The remaining dependencies are then the same as the requirements when building the SAF framework.</p>
-<p>Note that a few of the unit tests involve comparing the output of the safmex wrapper with that of an existing Matlab implementation of the same function. Therefore, the following Matlab libraries are required for running these unit tests:</p><ul>
+<p>You will need MATLAB version 2017b or higher installed on your system. The remaining dependencies are then the same as the requirements when building the SAF framework.</p>
+<p>Note that a few of the unit tests involve comparing the output of the safmex wrapper with that of an existing MATLAB implementation of the same function. Therefore, the following MATLAB libraries are required for running these unit tests:</p><ul>
 <li><a href="https://github.com/polarch/Spherical-Harmonic-Transform">Spherical-Harmonic-Transform</a></li>
 <li><a href="https://github.com/polarch/Higher-Order-Ambisonics">Higher-Order-Ambisonics</a></li>
 <li><a href="https://github.com/polarch/Vector-Base-Amplitude-Panning">Vector-Base-Amplitude-Panning</a></li>
@@ -124,7 +124,7 @@ Contributing</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Oct 5 2020 13:54:21 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Mon Oct 5 2020 14:38:29 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>
