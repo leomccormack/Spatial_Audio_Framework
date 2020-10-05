@@ -20,7 +20,8 @@
  * @brief Public source for the sofa reader module (#SAF_SOFA_READER_MODULE)
  *
  * @warning This (optional) SOFA reader, requires netcdf to be linked to your
- *          project!
+ *          project! Refer to docs/SOFA_READER_MODULE_DEPENDENCIES.md for
+ *          more information.
  *
  * @author Leo McCormack
  * @date 21.11.2017
@@ -59,10 +60,11 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
     h->ListenerUp = h->ListenerView = h->EmitterPosition = NULL;
     h->DataDelay = NULL;
 
-    /* Default attributes */
+    /* Default variable attributes */
     h->ListenerPositionType = h->ListenerPositionUnits = h->ReceiverPositionType
     = h->ReceiverPositionUnits = h->SourcePositionType = h->SourcePositionUnits
-    = h->EmitterPositionType = h->EmitterPositionUnits = h->DataSamplingRateUnits = NULL;
+    = h->EmitterPositionType = h->EmitterPositionUnits = h->DataSamplingRateUnits
+    = h->ListenerViewType = h->ListenerViewUnits = NULL;
 
     /* Default global attributes */
     h->Conventions = h->Version = h->SOFAConventions = h->SOFAConventionsVersion
@@ -181,6 +183,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         }
         else if (!strcmp((char*)varname,"ReceiverPosition")){
             switch(ndimsp){
+                /* Many SOFA files have the "ReceiverPosition" variable with the following dimensions: nReceivers x 3  */
                 case 2:
                     /* Checks */
                     if(h->nReceivers!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nReceivers) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
@@ -196,6 +199,12 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
                             h->ReceiverPosition[i] = (float)tmp_data[i];
                     break;
 
+                /* Some SOFA files have the "ReceiverPosition" variable with the following dimensions: 1 x nReceivers x 3
+                 * This the reason for the switch case found here {2,3}, as it is not fully understood if this '1' is
+                 * for the number of emmiters or listeners? - Until this is made clear, the
+                 * following code will just pull the first one (i.e. nReceivers x 3). Therefore, if you have an example
+                 * of a file that has "ReceiverPosition" with the dimensions: N x nReceivers x 3  (where N>1)
+                 * then please send it to the developers :-) */
                 case 3:
                     /* Checks */
                     if(h->nReceivers!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nReceivers) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
@@ -286,6 +295,20 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             h->ListenerView = malloc1d(3*sizeof(float));
             for(j=0; j<3; j++)
                 h->ListenerView[j] = (float)tmp_data[j];
+
+            /* Pull associated attributes */
+            for(attnum=0; attnum<varnattsp; attnum++){
+                nc_inq_attname(ncid, varid, attnum, attname);
+                nc_inq_attlen(ncid, varid, attname, &lenp);
+                if (!strcmp((char*)attname,"Type")){
+                    h->ListenerViewType = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+                    nc_get_att(ncid, varid, attname, h->ListenerViewType);
+                }
+                else if (!strcmp((char*)attname,"Units")){
+                    h->ListenerViewUnits = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+                    nc_get_att(ncid, varid, attname, h->ListenerViewUnits);
+                }
+            }
         }
         else if (!strcmp((char*)varname,"EmitterPosition")){
             /* Checks */
@@ -441,7 +464,20 @@ void saf_sofa_close
     free(c->ListenerUp);
     free(c->EmitterPosition);
 
-    /* Atts */
+    /* Var Atts */
+    free(c->ListenerPositionType);
+    free(c->ListenerPositionUnits);
+    free(c->ListenerViewType);
+    free(c->ListenerViewUnits);
+    free(c->ReceiverPositionType);
+    free(c->ReceiverPositionUnits);
+    free(c->SourcePositionType);
+    free(c->SourcePositionUnits);
+    free(c->EmitterPositionType);
+    free(c->EmitterPositionUnits);
+    free(c->DataSamplingRateUnits);
+
+    /* Global Atts */
     free(c->Conventions);
     free(c->Version);
     free(c->SOFAConventions);

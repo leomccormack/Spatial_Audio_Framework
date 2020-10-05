@@ -21,7 +21,8 @@
  * @brief Main header for the sofa reader module (#SAF_SOFA_READER_MODULE)
  *
  * @warning This (optional) SOFA reader, requires netcdf to be linked to your
- *          project!
+ *          project! Refer to docs/SOFA_READER_MODULE_DEPENDENCIES.md for
+ *          more information.
  *
  * @author Leo McCormack
  * @date 21.11.2017
@@ -40,75 +41,89 @@ extern "C" {
 #endif /* __cplusplus */
 
 /* ========================================================================== */
-/*                           Public Structures/Enums                          */
+/*                          Public Structures/Enums                           */
 /* ========================================================================== */
 
-/** SOFA container struct, as laid down in the SOFA 1.0 FIR standard:
- *      https://www.sofaconventions.org/mediawiki/index.php/GeneralFIR */
+/**
+ * SOFA container struct comprising all possible data that can be extracted
+ * from SOFA 1.0 files; as laid down in the GeneralFIR and SimpleFreeFieldHRIR
+ * specifications:
+ *    https://www.sofaconventions.org/mediawiki/index.php/GeneralFIR
+ *    https://www.sofaconventions.org/mediawiki/index.php/SimpleFreeFieldHRIR
+ */
 typedef struct _saf_sofa_container{
-    /* Possible SOFA/NetCDF variables */
+    /* All possible SOFA variables (defaults={-1|NULL}) */
     int nSources;                 /**< Number of source/measurement positions */
     int nReceivers;               /**< Number of ears/number of mics etc. */
     int DataLengthIR;             /**< Length of the IRs, in samples */
     float* DataIR;                /**< The impulse response (IR) Data;
-                                   *   FLAT:nSources x nReceivers x DataLengthIR
-                                   */
+                                   * FLAT:nSources x nReceivers x DataLengthIR*/
     float DataSamplingRate;       /**< Sampling rate used to measure the IRs */
     int* DataDelay;               /**< Delay in samples; nReceivers x 1 */
-    float* SourcePosition;        /**< Source positions [azi,elev,radius]
-                                   *   (degrees), or [x,y,z] (meters);
+    float* SourcePosition;        /**< Source positions (refer to
+                                   *   SourcePositionType & SourcePositionUnits
+                                   *   for the convention and units);
                                    *   FLAT: nSources x 3 */
-    float* ReceiverPosition;      /**< Receiver positions [azi,elev,radius]
-                                   *   (degrees), or [x,y,z] (meters);
+    float* ReceiverPosition;      /**< Receiver positions (refer to
+                                   *   ReceiverPositionType &
+                                   *   ReceiverPositionUnits for the convention
+                                   *   and units);
                                    *   FLAT: nReceivers x 3 */
-    int nListeners;               /**< Number of listener positions (Always 1)*/
+    int nListeners;               /**< Number of listener positions (cannot be
+                                   *   more than 1) */
     int nEmitters;                /**< Number of emitter positions */
     float* ListenerPosition;      /**< Listener position (The object
-                                   *   incorporating all the receivers),
-                                   *   [azi,elev,radius] (degrees), or [x,y,z]
-                                   *   (meters); 3 x 1  */
+                                   *   incorporating all receivers; refer to
+                                   *   ListenerPositionType &
+                                   *   ListenerPositionUnits for the convention
+                                   *   and units); FLAT: nListeners x 3  */
     float* ListenerUp;            /**< Vector pointing upwards from the listener
-                                   *   position; 3 x 1  */
-    float* ListenerView;          /**< Vector pointing forwards from the listner
-                                   *   position; 3 x 1 */
+                                   *   position (Cartesian); 3 x 1  */
+    float* ListenerView;          /**< Vector pointing forwards from the
+                                   *   listener position (Cartesian); 3 x 1 */
     float* EmitterPosition;       /**< Positions of acoustic excitation used for
-                                   *   the measurement; numEmitterPosition x 3
-                                   */
+                                   *   the measurement (refer to
+                                   *   EmitterPositionType &
+                                   *   EmitterPositionUnits for the convention
+                                   *   and units); FLAT: nEmitters x 3 */
 
-    /* Possible SOFA/NetCDF Attributes */
-    char* ListenerPositionType;   /**< (default=NULL) */
-    char* ListenerPositionUnits;  /**< (default=NULL) */
-    char* ReceiverPositionType;   /**< (default=NULL) */
-    char* ReceiverPositionUnits;  /**< (default=NULL) */
-    char* SourcePositionType;     /**< (default=NULL) */
-    char* SourcePositionUnits;    /**< (default=NULL) */
-    char* EmitterPositionType;    /**< (default=NULL) */
-    char* EmitterPositionUnits;   /**< (default=NULL) */
-    char* DataSamplingRateUnits;  /**< (default=NULL) */
+    /* All possible SOFA variable attributes (defaults=NULL) */
+    char* ListenerPositionType;   /**< {'cartesian'|'spherical'} */
+    char* ListenerPositionUnits;  /**< {'degree, degree, metre'|'metre'} */
+    char* ListenerViewType;       /**< {'cartesian'|'spherical'} */
+    char* ListenerViewUnits;      /**< {'degree, degree, metre'|'metre'} */
+    char* ReceiverPositionType;   /**< {'cartesian'|'spherical'} */
+    char* ReceiverPositionUnits;  /**< {'degree, degree, metre'|'metre'} */
+    char* SourcePositionType;     /**< {'cartesian'|'spherical'} */
+    char* SourcePositionUnits;    /**< {'degree, degree, metre'|'metre'} */
+    char* EmitterPositionType;    /**< {'cartesian'|'spherical'} */
+    char* EmitterPositionUnits;   /**< {'degree, degree, metre'|'metre'} */
+    char* DataSamplingRateUnits;  /**< {'hertz'} */
 
-    /* Possible SOFA/NetCDF global Attributes */
-    char* Conventions;            /**< (default=NULL) */
-    char* Version;                /**< (default=NULL) */
-    char* SOFAConventions;        /**< (default=NULL) */
-    char* SOFAConventionsVersion; /**< (default=NULL) */
-    char* APIName;                /**< (default=NULL) */
-    char* APIVersion;             /**< (default=NULL) */
-    char* ApplicationName;        /**< (default=NULL) */
-    char* ApplicationVersion;     /**< (default=NULL) */
-    char* AuthorContact;          /**< (default=NULL) */
-    char* Comment;                /**< (default=NULL) */
-    char* DataType;               /**< (default=NULL) */
-    char* History;                /**< (default=NULL) */
-    char* License;                /**< (default=NULL) */
-    char* Organisation;           /**< (default=NULL) */
-    char* References;             /**< (default=NULL) */
-    char* RoomType;               /**< (default=NULL) */
-    char* Origin;                 /**< (default=NULL) */
-    char* DateCreated;            /**< (default=NULL) */
-    char* DateModified;           /**< (default=NULL) */
-    char* Title;                  /**< (default=NULL) */
-    char* DatabaseName;           /**< (default=NULL) */
-    char* ListenerShortName;      /**< (default=NULL) */
+    /* All possible SOFA global attributes (defaults=NULL) */
+    char* Conventions;            /**< {'SOFA'} */
+    char* Version;                /**< Version number */
+    char* SOFAConventions;        /**< {'GeneralFIR'|'GeneralTF'|
+                                   *   'SimpleFreeFieldHRIR'} */
+    char* SOFAConventionsVersion; /**< SOFA convention number */
+    char* APIName;                /**< API name */
+    char* APIVersion;             /**< API version */
+    char* ApplicationName;        /**< Name of Application that created file */
+    char* ApplicationVersion;     /**< Ver. of Application that created file */
+    char* AuthorContact;          /**< Contact information */
+    char* Comment;                /**< File comments */
+    char* DataType;               /**< {'FIR'|'TF'} */
+    char* History;                /**< History information */
+    char* License;                /**< License under which file is provided */
+    char* Organisation;           /**< Organisation reponsible for the file */
+    char* References;             /**< References */
+    char* RoomType;               /**< Room type (free field etc.) */
+    char* Origin;                 /**< Where this file came from */
+    char* DateCreated;            /**< Date file was created */
+    char* DateModified;           /**< Date file was modified */
+    char* Title;                  /**< Title of file */
+    char* DatabaseName;           /**< Name of database this file belongs to */
+    char* ListenerShortName;      /**< Name of the listener/dummyhead/mic etc.*/
 
 }saf_sofa_container;
 
@@ -131,14 +146,21 @@ typedef enum{
 /* ========================================================================== */
 
 /**
- * Fills a sofa_container with the specified SOFA file data
+ * Fills a 'sofa_container' with data found in a SOFA file (GeneralFIR or
+ * SimpleFreeFieldHRIR), as detailed in the SOFA 1.0 standard [1,2,3]
  *
- * @warning Not all SOFA files conform to the proposed standard [1,2]! Certain
- *          accomodatations for off-standard SOFA files (the ones that are
+ * @warning Not all SOFA files conform to the proposed standard [1,2,3]! Certain
+ *          accomodatations for off-standard SOFA files (i.e. the ones that are
  *          wide-spread) have been built into this SOFA loader. However, if you
- *          encounter a SOFA file that this SOFA loader cannot load, (or it
- *          misses some informtion) then please send it to the developers :-)
- * @warning This loader currently supports only FIR data (not TF data)!
+ *          happen to encounter a SOFA file that this SOFA loader cannot load,
+ *          (or it misses some of the information) then please send it to the
+ *          developers :-)
+ * @warning This loader currently does not support TF SOFA files!
+ * @note Adding support for TF, SOS,.etc SOFA files should be quite trivial.
+ *       However, we (the developers) do not have access to examples of these
+ *       more specialised files to use for testing. Therefore, if you have files
+ *       that use these other SOFA formats, and are willing to share them, then
+ *       please send them to the developers and we'll make them work :-)
  *
  * @param[in] hSOFA         The sofa_container
  * @param[in] sofa_filepath SOFA file path (including .sofa extension)
@@ -150,6 +172,7 @@ typedef enum{
  *          functions. In Audio Engineering Society Convention 134. Audio
  *          Engineering Society.
  * @see [2] https://www.sofaconventions.org/mediawiki/index.php/GeneralFIR
+ * @see [3] https://www.sofaconventions.org/mediawiki/index.php/SimpleFreeFieldHRIR
  */
 SAF_SOFA_ERROR_CODES saf_sofa_open(saf_sofa_container* hSOFA,
                                    char* sofa_filepath);
