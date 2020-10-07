@@ -52,11 +52,11 @@ void panner_create
     int ch, dummy;
 
     /* default user parameters */
-    panner_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
+    panner_loadSourcePreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
     pData->nSources = pData->new_nSources;
     pData->DTT = 0.5f;
     pData->spread_deg = 0.0f;
-    panner_loadPreset(SOURCE_CONFIG_PRESET_5PX, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->output_nDims)); /*check setStateInformation if you change default preset*/
+    panner_loadLoudspeakerPreset(LOUDSPEAKER_ARRAY_PRESET_STEREO, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->output_nDims)); /*check setStateInformation if you change default preset*/
     pData->nLoudpkrs = pData->new_nLoudpkrs;
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
@@ -437,7 +437,7 @@ void panner_setOutputConfigPreset(void* const hPan, int newPresetID)
 {
     panner_data *pData = (panner_data*)(hPan);
     int ch, dummy;
-    panner_loadPreset(newPresetID, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &dummy);
+    panner_loadLoudspeakerPreset(newPresetID, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &dummy);
     pData->reInitGainTables=1;
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
@@ -449,7 +449,7 @@ void panner_setInputConfigPreset(void* const hPan, int newPresetID)
 {
     panner_data *pData = (panner_data*)(hPan);
     int ch, dummy;
-    panner_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &dummy);
+    panner_loadSourcePreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &dummy);
     for(ch=0; ch<pData->new_nSources; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
     pData->recalc_M_rotFLAG = 1;

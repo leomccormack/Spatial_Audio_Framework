@@ -159,17 +159,30 @@ void panner_initGainTables(void* const hPan);
 void panner_initTFT(void* const hPan);
     
 /**
- * Loads source/loudspeaker directions from preset
+ * Loads source directions from preset
  *
  * @param[in]  preset   See #SOURCE_CONFIG_PRESETS enum
  * @param[out] dirs_deg Source/loudspeaker directions
  * @param[out] newNCH   (&) new number of channels
  * @param[out] nDims    (&) estimate of the number of dimensions (2 or 3)
  */
-void panner_loadPreset(SOURCE_CONFIG_PRESETS preset,
-                       float dirs_deg[MAX_NUM_INPUTS][2],
-                       int* newNCH,
-                       int* nDims);
+void panner_loadSourcePreset(SOURCE_CONFIG_PRESETS preset,
+                             float dirs_deg[MAX_NUM_INPUTS][2],
+                             int* newNCH,
+                             int* nDims);
+
+/**
+ * Loads source/loudspeaker directions from preset
+ *
+ * @param[in]  preset   See #LOUDSPEAKER_ARRAY_PRESETS enum
+ * @param[out] dirs_deg Source/loudspeaker directions
+ * @param[out] newNCH   (&) new number of channels
+ * @param[out] nDims    (&) estimate of the number of dimensions (2 or 3)
+ */
+void panner_loadLoudspeakerPreset(LOUDSPEAKER_ARRAY_PRESETS preset,
+                                  float dirs_deg[MAX_NUM_INPUTS][2],
+                                  int* newNCH,
+                                  int* nDims);
 
 
 #ifdef __cplusplus
