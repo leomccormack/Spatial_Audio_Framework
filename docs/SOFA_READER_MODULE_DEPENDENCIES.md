@@ -31,6 +31,12 @@ For Ubuntu/Debian based distros, you may install netCDF and its dependencies wit
 sudo apt-get install libhdf5-dev libnetcdf-dev libnetcdff-dev
 ```
 
+For Arch based distros, the dependencies can be installed like this:
+
+```
+sudo pacman -S hdf5 netcdf netcdf-fortran
+```
+
 Add the directory of the **netcdf.h** file to your project's header search paths, and then add this linker flag:
 ```
 -L/lib/x86_64-linux-gnu -lnetcdf  # (or wherever it was installed) 
