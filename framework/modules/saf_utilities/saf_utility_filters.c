@@ -419,7 +419,8 @@ void evalBiQuadTransferFunction
     float* freqs,
     int nFreqs,
     float fs,
-    float* magnitude_dB,
+    int mag2dB,
+    float* magnitude,
     float* phase_rad
 )
 {
@@ -435,9 +436,10 @@ void evalBiQuadTransferFunction
         num_real = b[0] + b[1]*cosf(w) + b[2]*cosf(2.0f*w);
         num_imag = b[1]*sinf(w) + b[2]*sinf(2.0f*w);
         
-        if(magnitude_dB!=NULL){
-            magnitude_dB[ff] = sqrtf( (powf(num_real, 2.0f) + powf(num_imag, 2.0f)) / (powf(denom_real, 2.0f) + powf(denom_imag, 2.0f)) );
-            magnitude_dB[ff] = 20.0f*log10f(magnitude_dB[ff]);
+        if(magnitude!=NULL){
+            magnitude[ff] = sqrtf( (powf(num_real, 2.0f) + powf(num_imag, 2.0f)) / (powf(denom_real, 2.0f) + powf(denom_imag, 2.0f) + 2.23e-7f) ); 
+            if(mag2dB)
+                magnitude[ff] = 20.0f*log10f(magnitude[ff]);
         }
         if(phase_rad!=NULL)
             phase_rad[ff] = atan2f(num_imag,num_real) - atan2f(denom_imag, denom_real);

@@ -224,7 +224,8 @@ void applyBiQuadFilter(/* Input arguments */
  * @param[in]  freqs        Frequencies at which to evaluate, Hz; nFreqs x 1
  * @param[in]  nFreqs       Number of frequencies at which to avaluate
  * @param[in]  fs           Sampling frequency, Hz
- * @param[out] magnitude_dB Magnitude, dB, at each frequency (set to NULL of not
+ * @param[in]  mag2dB       0: 'magnitude' returned in linear scale, 1: dB scale
+ * @param[out] magnitude    Magnitude, at each frequency (set to NULL of not
  *                          wanted); nFreqs x 1
  * @param[out] phase_rad    Phase, radians, at each frequency (set to NULL of
  *                          not wanted); nFreqs x 1
@@ -235,8 +236,9 @@ void evalBiQuadTransferFunction(/* Input arguments */
                                 float* freqs,
                                 int nFreqs,
                                 float fs,
+                                int mag2dB,
                                 /* Output arguments */
-                                float* magnitude_dB,
+                                float* magnitude,
                                 float* phase_rad);
 
 /**

@@ -50,7 +50,7 @@
  *   Intel IPP may be optionally used with the flag: SAF_USE_INTEL_IPP
  *
  * @see More information can be found here:
- *      https://github.com/leomccormack/Spatial_Audio_Framework
+ *          docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md
  *
  * @author Leo McCormack
  * @date 06.08.2020
@@ -135,10 +135,12 @@
 /* ========================================================================== */
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
-/* If your compiler stopped at this point, then please add the path to the
+/*
+ * If your compiler stopped at this point, then please add the path to the
  * netcdf include file to your project's include header paths.
  * Instructions for linking the required "netcdf" library may also be found
- * here: https://github.com/leomccormack/Spatial_Audio_Framework */
+ * here: docs/SOFA_READER_MODULE_DEPENDENCIES.md
+ */
 # include <netcdf.h>
 #endif
 
