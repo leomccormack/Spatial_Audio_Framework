@@ -55,10 +55,20 @@ void tracker3d_create
     float sd_xyz, q_xyz;
     float Qc[6][6];
 
-    assert(tpars.Np<=TRACKER3D_MAX_NUM_PARTICLES);
-
     /* Store user configuration */
     pData->tpars = tpars;
+
+    /* Parameter checking */
+    pData->tpars.Np = CLAMP(pData->tpars.Np, 1, TRACKER3D_MAX_NUM_PARTICLES);
+    pData->tpars.init_birth = CLAMP(pData->tpars.init_birth, 0.0f, 0.99f);
+    pData->tpars.alpha_death = CLAMP(pData->tpars.alpha_death, 1.0f, 20.0f);
+    pData->tpars.beta_death = CLAMP(pData->tpars.beta_death, 1.0f, 20.0f);
+    pData->tpars.dt = MAX(pData->tpars.dt, 0.00001f);
+    pData->tpars.cd = MAX(pData->tpars.cd, 0.00001f);
+    pData->tpars.W_avg_coeff = CLAMP(pData->tpars.W_avg_coeff, 0.0f, 0.99f);
+    pData->tpars.noiseSpecDen = MAX(pData->tpars.noiseSpecDen, 0.00001f);
+    pData->tpars.noiseLikelihood = CLAMP(pData->tpars.noiseLikelihood, 0.0f, 0.99f);
+    pData->tpars.measNoiseSD = MAX(pData->tpars.measNoiseSD, 0.00001f);
 
     /* Measurement noise PRIORs along the x,y,z axis, respectively  */
     sd_xyz = tpars.measNoiseSD;
