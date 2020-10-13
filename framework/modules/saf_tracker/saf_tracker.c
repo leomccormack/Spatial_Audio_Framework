@@ -176,16 +176,15 @@ void tracker3d_step
     memset(c_str, 0, 256*sizeof(char));
 #endif
 
-    pData->incrementTime++; 
-
+    pData->incrementTime++;
+ 
     /* Loop over measurements */
     if(newObs_xyz!=NULL){
         for(ob=0; ob<nObs; ob++){
             /* Predict and update steps */
-            tracker3d_update(hT3d, &newObs_xyz[ob*3], pData->incrementTime);
             for (kt = 0; kt < pData->incrementTime; kt++)
                 tracker3d_predict(hT3d, 1);
-
+            tracker3d_update(hT3d, &newObs_xyz[ob*3], pData->incrementTime);
             pData->incrementTime = 0;
 
             /* Resample if needed */
