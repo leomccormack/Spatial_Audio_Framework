@@ -55,10 +55,20 @@ void tracker3d_create
     float sd_xyz, q_xyz;
     float Qc[6][6];
 
-    assert(tpars.Np<=TRACKER3D_MAX_NUM_PARTICLES);
-
     /* Store user configuration */
     pData->tpars = tpars;
+
+    /* Parameter checking */
+    pData->tpars.Np = CLAMP(pData->tpars.Np, 1, TRACKER3D_MAX_NUM_PARTICLES);
+    pData->tpars.init_birth = CLAMP(pData->tpars.init_birth, 0.0f, 0.99f);
+    pData->tpars.alpha_death = CLAMP(pData->tpars.alpha_death, 1.0f, 20.0f);
+    pData->tpars.beta_death = CLAMP(pData->tpars.beta_death, 1.0f, 20.0f);
+    pData->tpars.dt = MAX(pData->tpars.dt, 0.00001f);
+    pData->tpars.cd = MAX(pData->tpars.cd, 0.00001f);
+    pData->tpars.W_avg_coeff = CLAMP(pData->tpars.W_avg_coeff, 0.0f, 0.99f);
+    pData->tpars.noiseSpecDen = MAX(pData->tpars.noiseSpecDen, 0.00001f);
+    pData->tpars.noiseLikelihood = CLAMP(pData->tpars.noiseLikelihood, 0.0f, 0.99f);
+    pData->tpars.measNoiseSD = MAX(pData->tpars.measNoiseSD, 0.00001f);
 
     /* Measurement noise PRIORs along the x,y,z axis, respectively  */
     sd_xyz = tpars.measNoiseSD;
@@ -166,16 +176,15 @@ void tracker3d_step
     memset(c_str, 0, 256*sizeof(char));
 #endif
 
-    pData->incrementTime++; 
-
+    pData->incrementTime++;
+ 
     /* Loop over measurements */
     if(newObs_xyz!=NULL){
         for(ob=0; ob<nObs; ob++){
             /* Predict and update steps */
-            tracker3d_update(hT3d, &newObs_xyz[ob*3], pData->incrementTime);
             for (kt = 0; kt < pData->incrementTime; kt++)
                 tracker3d_predict(hT3d, 1);
-
+            tracker3d_update(hT3d, &newObs_xyz[ob*3], pData->incrementTime);
             pData->incrementTime = 0;
 
             /* Resample if needed */

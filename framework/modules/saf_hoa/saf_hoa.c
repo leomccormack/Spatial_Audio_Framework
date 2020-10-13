@@ -65,9 +65,9 @@ void convertHOAChannelConvention
 
     /* Convert FUMA to ACN */
     if(inConvention==HOA_CH_ORDER_FUMA && outConvention==HOA_CH_ORDER_ACN){
-        memcpy(tmp[0], &insig[3*signalLength], signalLength*sizeof(float));
-        memcpy(tmp[1], &insig[1*signalLength], signalLength*sizeof(float));
-        memcpy(tmp[2], &insig[2*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[0], &insig[2*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[1], &insig[3*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[2], &insig[1*signalLength], signalLength*sizeof(float));
 
         memcpy(&insig[1*signalLength], tmp[0], signalLength*sizeof(float));
         memcpy(&insig[2*signalLength], tmp[1], signalLength*sizeof(float));
@@ -75,9 +75,9 @@ void convertHOAChannelConvention
     }
     /* Convert ACN to FUMA */
     else if(inConvention==HOA_CH_ORDER_ACN && outConvention==HOA_CH_ORDER_FUMA){
-        memcpy(tmp[0], &insig[2*signalLength], signalLength*sizeof(float));
-        memcpy(tmp[1], &insig[3*signalLength], signalLength*sizeof(float));
-        memcpy(tmp[2], &insig[1*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[0], &insig[3*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[1], &insig[1*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[2], &insig[2*signalLength], signalLength*sizeof(float));
 
         memcpy(&insig[1*signalLength], tmp[0], signalLength*sizeof(float));
         memcpy(&insig[2*signalLength], tmp[1], signalLength*sizeof(float));

@@ -57,7 +57,8 @@ typedef struct _tracker3d_config{
                               *   particles required (but also the more
                               *   computationally expensive the tracker
                               *   becomes). */
-    int maxNactiveTargets;   /**< Maximum number of simultaneous targets */
+    int maxNactiveTargets;   /**< Maximum number of simultaneous targets
+                              *   permitted */
     float noiseLikelihood;   /**< Likelihood of an estimate being noise/clutter
                               *   between [0..1] */
     float measNoiseSD;       /**< Measurement noise standard deviation.
@@ -69,8 +70,10 @@ typedef struct _tracker3d_config{
                               *   deaths in the same tracker prediction step.
                               *   1: enabled, 0: disabled */
     float init_birth;        /**< PRIOR probability of birth [0 1] */
-    float alpha_death;       /**< PRIOR probability of death; always >= 1 */
-    float beta_death;        /**< PRIOR probability of death; always >= 1 */
+    float alpha_death;       /**< Coefficient influencing the likelihood that
+                              *   a target will die; always >= 1 */
+    float beta_death;        /**< Coefficient influencing the likelihood that
+                              *   a target will die; always >= 1 */
     float dt;                /**< Elapsed time (in seconds) between
                               *   observations/measurements */
     float W_avg_coeff;       /**< Real-time tracking is based on the particle
@@ -82,7 +85,7 @@ typedef struct _tracker3d_config{
                               *   has been 'alive' for the least amount of
                               *   of time is killed; 1: enabled, 0: disabled */
     float forceKillDistance; /**< Euclidian distance at which to kill targets
-                              *   which come too close to other (older) targets
+                              *   that come too close to other (older) targets
                               *   (<=). */
     float M0[6];             /**< [0,1,2] Position of sound source PRIORs
                               *   (x,y,z), [3,4,5] Mean velocity PRIORs (x,y,z)
