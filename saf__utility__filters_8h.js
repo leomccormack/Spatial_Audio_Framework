@@ -33,7 +33,7 @@ var saf__utility__filters_8h =
     [ "applyIIR", "group___utilities.html#ga5c96001ab50d85797358b3d17a8bd05c", null ],
     [ "biQuadCoeffs", "group___utilities.html#ga9762067e0e9b078a83b0edb7fd349169", null ],
     [ "butterCoeffs", "group___utilities.html#gaafbb552f618e0672c0acfc4d171da212", null ],
-    [ "evalBiQuadTransferFunction", "group___utilities.html#ga0b9002a2b6b1a3cb1c121f690d4e1ec3", null ],
+    [ "evalBiQuadTransferFunction", "group___utilities.html#gab1719c6d26a5814d90b85e97ca5d2795", null ],
     [ "faf_IIRFilterbank_apply", "group___utilities.html#gafa740d1a0519f90812b163acef93a7c6", null ],
     [ "faf_IIRFilterbank_create", "group___utilities.html#ga5a253ff21a7e40ccd012b101cb745c96", null ],
     [ "faf_IIRFilterbank_destroy", "group___utilities.html#ga00f5c126694c84c301e6dff7716b6bc2", null ],

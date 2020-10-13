@@ -136,7 +136,7 @@ var group___utilities =
     [ "crossProduct3", "group___utilities.html#ga6184d4e03844102c7e7921c7081b7fd7", null ],
     [ "cxcorr", "group___utilities.html#ga58f5d8c2b3c44c035aadc4493a790842", null ],
     [ "euler2rotationMatrix", "group___utilities.html#ga19a8e982f11eb0deaade1383781e179b", null ],
-    [ "evalBiQuadTransferFunction", "group___utilities.html#ga0b9002a2b6b1a3cb1c121f690d4e1ec3", null ],
+    [ "evalBiQuadTransferFunction", "group___utilities.html#gab1719c6d26a5814d90b85e97ca5d2795", null ],
     [ "factorial", "group___utilities.html#ga9e753ee3390aba5fed74f311a3540a67", null ],
     [ "faf_IIRFilterbank_apply", "group___utilities.html#gafa740d1a0519f90812b163acef93a7c6", null ],
     [ "faf_IIRFilterbank_create", "group___utilities.html#ga5a253ff21a7e40ccd012b101cb745c96", null ],

@@ -491,9 +491,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga9290c7f68051107c7b115100c0acd950"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga9290c7f68051107c7b115100c0acd950">applyBiQuadFilter</a> (float b[3], float a[3], float w_z_12[2], float *signal, int nSamples)</td></tr>
 <tr class="memdesc:ga9290c7f68051107c7b115100c0acd950"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies biQuad filter to an input signal using the direct form II difference equation: <a href="https://en.wikipedia.org/wiki/Digital_biquad_filter">https://en.wikipedia.org/wiki/Digital_biquad_filter</a>.  <a href="group___utilities.html#ga9290c7f68051107c7b115100c0acd950">More...</a><br /></td></tr>
 <tr class="separator:ga9290c7f68051107c7b115100c0acd950"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0b9002a2b6b1a3cb1c121f690d4e1ec3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga0b9002a2b6b1a3cb1c121f690d4e1ec3">evalBiQuadTransferFunction</a> (float b[3], float a[3], float *freqs, int nFreqs, float fs, float *magnitude_dB, float *phase_rad)</td></tr>
-<tr class="memdesc:ga0b9002a2b6b1a3cb1c121f690d4e1ec3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates the 2nd order IIR transfer function at one or more frequencies, returning its magnitude and/or phase response.  <a href="group___utilities.html#ga0b9002a2b6b1a3cb1c121f690d4e1ec3">More...</a><br /></td></tr>
-<tr class="separator:ga0b9002a2b6b1a3cb1c121f690d4e1ec3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab1719c6d26a5814d90b85e97ca5d2795"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gab1719c6d26a5814d90b85e97ca5d2795">evalBiQuadTransferFunction</a> (float b[3], float a[3], float *freqs, int nFreqs, float fs, int mag2dB, float *magnitude, float *phase_rad)</td></tr>
+<tr class="memdesc:gab1719c6d26a5814d90b85e97ca5d2795"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates the 2nd order IIR transfer function at one or more frequencies, returning its magnitude and/or phase response.  <a href="group___utilities.html#gab1719c6d26a5814d90b85e97ca5d2795">More...</a><br /></td></tr>
+<tr class="separator:gab1719c6d26a5814d90b85e97ca5d2795"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5c96001ab50d85797358b3d17a8bd05c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga5c96001ab50d85797358b3d17a8bd05c">applyIIR</a> (float *in_signal, int nSamples, int nCoeffs, float *b, float *a, float *wz, float *out_signal)</td></tr>
 <tr class="memdesc:ga5c96001ab50d85797358b3d17a8bd05c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies an IIR filter to a time-domain signal (using the direct form II difference equation)  <a href="group___utilities.html#ga5c96001ab50d85797358b3d17a8bd05c">More...</a><br /></td></tr>
 <tr class="separator:ga5c96001ab50d85797358b3d17a8bd05c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -2010,7 +2010,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00447">447</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00449">449</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
 
 </div>
 </div>
@@ -2561,7 +2561,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] T. W. Parks and C. S. Burrus, Digital Filter Design, John Wiley &amp; Sons, 1987, chapter 7, section 7.3.3. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00499">499</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00501">501</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
 
 </div>
 </div>
@@ -2914,8 +2914,8 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 </div>
 </div>
-<a id="ga0b9002a2b6b1a3cb1c121f690d4e1ec3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0b9002a2b6b1a3cb1c121f690d4e1ec3">&#9670;&nbsp;</a></span>evalBiQuadTransferFunction()</h2>
+<a id="gab1719c6d26a5814d90b85e97ca5d2795"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab1719c6d26a5814d90b85e97ca5d2795">&#9670;&nbsp;</a></span>evalBiQuadTransferFunction()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2953,8 +2953,14 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>mag2dB</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">float *&#160;</td>
-          <td class="paramname"><em>magnitude_dB</em>, </td>
+          <td class="paramname"><em>magnitude</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -2978,7 +2984,8 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
     <tr><td class="paramdir">[in]</td><td class="paramname">freqs</td><td>Frequencies at which to evaluate, Hz; nFreqs x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nFreqs</td><td>Number of frequencies at which to avaluate </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">fs</td><td>Sampling frequency, Hz </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">magnitude_dB</td><td>Magnitude, dB, at each frequency (set to NULL of not wanted); nFreqs x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mag2dB</td><td>0: 'magnitude' returned in linear scale, 1: dB scale </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">magnitude</td><td>Magnitude, at each frequency (set to NULL of not wanted); nFreqs x 1 </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">phase_rad</td><td>Phase, radians, at each frequency (set to NULL of not wanted); nFreqs x 1 </td></tr>
   </table>
   </dd>
@@ -3067,7 +3074,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00862">862</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00864">864</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
 
 </div>
 </div>
@@ -3138,7 +3145,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Favrot, A. and Faller, C., 2010. Complementary N-band IIR filterbank based on 2-band complementary filters. Proc. Intl. Works. on Acoust. Echo and Noise Control (IWAENC). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00733">733</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00735">735</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
 
 </div>
 </div>
@@ -3166,7 +3173,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00928">928</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00930">930</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
 
 </div>
 </div>
@@ -3194,7 +3201,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00915">915</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00917">917</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
 
 </div>
 </div>
@@ -3579,7 +3586,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] "Programs for Digital Signal Processing", IEEE Press John Wiley &amp; Sons, 1979, pg. 5.2-1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00956">956</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00958">958</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
 
 </div>
 </div>
@@ -3663,7 +3670,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l01050">1050</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l01052">1052</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
 
 </div>
 </div>
@@ -10566,7 +10573,7 @@ Example Usage</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sat Oct 10 2020 06:56:43 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Tue Oct 13 2020 15:05:43 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

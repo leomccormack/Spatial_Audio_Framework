@@ -139,9 +139,9 @@ $(document).ready(function(){initNavTree('saf__hoa_8c_source.html',''); initResi
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="comment">/* Convert FUMA to ACN */</span></div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordflow">if</span>(inConvention==<a class="code" href="group___h_o_a.html#gga736d1bf23b9d8a0b2018888b96295591a2c3c6a04f29de60a9cb2e98853bb0e6e">HOA_CH_ORDER_FUMA</a> &amp;&amp; outConvention==<a class="code" href="group___h_o_a.html#gga736d1bf23b9d8a0b2018888b96295591a59dc12dec2431faddbf49fa9af554dd7">HOA_CH_ORDER_ACN</a>){</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        memcpy(tmp[0], &amp;insig[3*signalLength], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        memcpy(tmp[1], &amp;insig[1*signalLength], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        memcpy(tmp[2], &amp;insig[2*signalLength], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        memcpy(tmp[0], &amp;insig[2*signalLength], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        memcpy(tmp[1], &amp;insig[3*signalLength], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        memcpy(tmp[2], &amp;insig[1*signalLength], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        memcpy(&amp;insig[1*signalLength], tmp[0], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        memcpy(&amp;insig[2*signalLength], tmp[1], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
@@ -149,9 +149,9 @@ $(document).ready(function(){initNavTree('saf__hoa_8c_source.html',''); initResi
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="comment">/* Convert ACN to FUMA */</span></div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(inConvention==<a class="code" href="group___h_o_a.html#gga736d1bf23b9d8a0b2018888b96295591a59dc12dec2431faddbf49fa9af554dd7">HOA_CH_ORDER_ACN</a> &amp;&amp; outConvention==<a class="code" href="group___h_o_a.html#gga736d1bf23b9d8a0b2018888b96295591a2c3c6a04f29de60a9cb2e98853bb0e6e">HOA_CH_ORDER_FUMA</a>){</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        memcpy(tmp[0], &amp;insig[2*signalLength], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        memcpy(tmp[1], &amp;insig[3*signalLength], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        memcpy(tmp[2], &amp;insig[1*signalLength], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        memcpy(tmp[0], &amp;insig[3*signalLength], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        memcpy(tmp[1], &amp;insig[1*signalLength], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        memcpy(tmp[2], &amp;insig[2*signalLength], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        memcpy(&amp;insig[1*signalLength], tmp[0], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        memcpy(&amp;insig[2*signalLength], tmp[1], signalLength*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
@@ -724,7 +724,7 @@ $(document).ready(function(){initNavTree('saf__hoa_8c_source.html',''); initResi
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_99016b584a5af87cdf49f1484dd80da6.html">saf_hoa</a></li><li class="navelem"><a class="el" href="saf__hoa_8c.html">saf_hoa.c</a></li>
-    <li class="footer">Generated on Sat Oct 10 2020 06:56:41 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Tue Oct 13 2020 15:05:41 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>
