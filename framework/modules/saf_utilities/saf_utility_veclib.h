@@ -993,6 +993,28 @@ void utility_sglslvt(/* Input Arguments */
                      /* Output Arguments */
                      float* X);
 
+/**
+ * General linear solver (the other way): single precision complex, i.e.
+ * \code{.m}
+ *     X = linsolve(B',A')' = A/B;
+ * \endcode
+ *
+ * @warning UNSURE IF THIS IS CORRECT!
+ *
+ * @param[in]  A    Input square matrix; FLAT: dim x dim
+ * @param[in]  dim  Dimensions for square matrix 'A'
+ * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
+ * @param[in]  nCol Number of columns in right hand side matrix
+ * @param[out] X    The solution; FLAT: dim x nCol
+ */
+void utility_cglslvt(/* Input Arguments */
+                     const float_complex* A,
+                     const int dim,
+                     float_complex* B,
+                     int nCol,
+                     /* Output Arguments */
+                     float_complex* X);
+
 
 /* ========================================================================== */
 /*                      Symmetric Linear Solver (?slslv)                      */
