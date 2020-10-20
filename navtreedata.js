@@ -25,20 +25,21 @@
 var NAVTREE =
 [
   [ "Spatial_Audio_Framework", "index.html", [
-    [ "Prerequisites", "index.html#autotoc_md57", [
-      [ "Framework structure", "index.html#autotoc_md58", [
-        [ "Additional options", "index.html#autotoc_md59", null ]
+    [ "About", "index.html#autotoc_md57", null ],
+    [ "Prerequisites", "index.html#autotoc_md58", [
+      [ "Framework structure", "index.html#autotoc_md59", [
+        [ "Additional options", "index.html#autotoc_md60", null ]
       ] ]
     ] ],
-    [ "Using the framework", "index.html#autotoc_md60", [
-      [ "Building with CMake", "index.html#autotoc_md61", null ],
-      [ "Documentation", "index.html#autotoc_md62", null ],
-      [ "Examples", "index.html#autotoc_md63", null ],
-      [ "Extras", "index.html#autotoc_md64", null ],
-      [ "Contributing", "index.html#autotoc_md65", null ],
-      [ "Contributors", "index.html#autotoc_md66", null ]
+    [ "Using the framework", "index.html#autotoc_md61", [
+      [ "Building with CMake", "index.html#autotoc_md62", null ],
+      [ "Documentation", "index.html#autotoc_md63", null ],
+      [ "Examples", "index.html#autotoc_md64", null ],
+      [ "Extras", "index.html#autotoc_md65", null ],
+      [ "Contributing", "index.html#autotoc_md66", null ],
+      [ "Contributors", "index.html#autotoc_md67", null ]
     ] ],
-    [ "License", "index.html#autotoc_md67", null ],
+    [ "License", "index.html#autotoc_md68", null ],
     [ "Framework Structure", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html", [
       [ "Include", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md1", null ],
       [ "Modules", "md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md2", null ],
@@ -119,14 +120,14 @@ var NAVTREEINDEX =
 "group___utilities.html#ga17069fa770f13431c9cfab601e523dba",
 "group___utilities.html#ga516c920b2e335cb295f8293a7f90c868",
 "group___utilities.html#ga899c905a7bb278bc0e81b12d544b6b64",
-"group___utilities.html#gac445a7805d89dfab5047c0cbe445fefc",
-"group___utilities.html#gga11cf92ddf3389349c5dd4d7ccab6c619a1b887d46d91b1e9b70abd3fab25f4a94",
-"md_docs__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html#autotoc_md21",
-"saf__hoa__internal_8c.html#a5bbdd392aae72987779019353f429643",
-"saf__utility__geometry_8c.html#a119467db7040e6fcb71f7abaf179a6a3",
-"sldoa_8h.html#ac65192679b18c2aae2b127984fbc064c",
-"structims__scene__data.html#a1d3504213c398687cda898bdc18a5532",
-"structsph_e_s_p_r_i_t__data.html#a6cbb2ec9239b3678910fe66e92468841"
+"group___utilities.html#gac335cac027bcb24d435f9a525587d9d4",
+"group___utilities.html#gaffb907cad281bbfae4258f615431d8e1",
+"md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md17",
+"saf__hoa__internal_8c.html",
+"saf__utility__filters_8c_source.html",
+"sldoa_8h.html#aacad0da9078f1b9b0d66b139e1f9cf0d",
+"structims__scene__data.html",
+"structsph_e_s_p_r_i_t__data.html#a4880c69d68f2eb1bf7eb80945c263764"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

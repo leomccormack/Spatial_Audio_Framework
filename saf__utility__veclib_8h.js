@@ -8,6 +8,7 @@ var saf__utility__veclib_8h =
     [ "utility_ceig", "group___utilities.html#ga7d96ccf63505fa4ceed799df52ce77bd", null ],
     [ "utility_ceigmp", "group___utilities.html#gac0eb807aa2c6063482ad285f5e93d078", null ],
     [ "utility_cglslv", "group___utilities.html#ga1b4f131d17c9a2706cdffc244aa23966", null ],
+    [ "utility_cglslvt", "group___utilities.html#ga8eef44815f5a59de02698ef3939a8028", null ],
     [ "utility_cimaxv", "group___utilities.html#ga6600bec30da8cb52c95697fc81ded614", null ],
     [ "utility_ciminv", "group___utilities.html#ga47f536159d4f1c1ecd05a8f13f10a2d5", null ],
     [ "utility_cinv", "group___utilities.html#ga267d30c1ab10f30bc4518a295d2bdcca", null ],

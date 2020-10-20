@@ -14,6 +14,7 @@ var saf_8h =
     [ "SAF_VBAP_MODULE", "saf_8h.html#a7c135beedf7ba9f63cf2f71ca6fad5c6", null ],
     [ "SAF_VERSION", "saf_8h.html#abbf3fe7133bf46170feba0f74b0864b1", null ],
     [ "SAF_VERSION_BANNER", "saf_8h.html#ac1064f9d8d9266ca30e2a4dc51b86fa5", null ],
+    [ "SAF_VERSION_LICENSE_STRING", "saf_8h.html#a7eab29efd1939350256ae87c53bf1527", null ],
     [ "SAF_VERSION_MAJOR", "saf_8h.html#a17fa806b86d154dc8aa9d2a9af564c80", null ],
     [ "SAF_VERSION_MINOR", "saf_8h.html#a1337d3709a9b985f662907c06a9946f2", null ],
     [ "SAF_VERSION_PATCH", "saf_8h.html#ad68b93b1b4f2184fc61a8a2b74faa363", null ],

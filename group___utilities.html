@@ -826,6 +826,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group
 <tr class="memitem:ga1ad353a918217309c95804e38a68460f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga1ad353a918217309c95804e38a68460f">utility_sglslvt</a> (const float *A, const int dim, float *B, int nCol, float *X)</td></tr>
 <tr class="memdesc:ga1ad353a918217309c95804e38a68460f"><td class="mdescLeft">&#160;</td><td class="mdescRight">General linear solver (the other way): single precision, i.e.  <a href="group___utilities.html#ga1ad353a918217309c95804e38a68460f">More...</a><br /></td></tr>
 <tr class="separator:ga1ad353a918217309c95804e38a68460f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8eef44815f5a59de02698ef3939a8028"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga8eef44815f5a59de02698ef3939a8028">utility_cglslvt</a> (const float_complex *A, const int dim, float_complex *B, int nCol, float_complex *X)</td></tr>
+<tr class="memdesc:ga8eef44815f5a59de02698ef3939a8028"><td class="mdescLeft">&#160;</td><td class="mdescRight">General linear solver (the other way): single precision complex, i.e.  <a href="group___utilities.html#ga8eef44815f5a59de02698ef3939a8028">More...</a><br /></td></tr>
+<tr class="separator:ga8eef44815f5a59de02698ef3939a8028"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga79e970ff977245de479e5d35985571e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga79e970ff977245de479e5d35985571e9">utility_sslslv</a> (const float *A, const int dim, float *B, int nCol, float *X)</td></tr>
 <tr class="memdesc:ga79e970ff977245de479e5d35985571e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Linear solver for SYMMETRIC positive-definate 'A': single precision, i.e.  <a href="group___utilities.html#ga79e970ff977245de479e5d35985571e9">More...</a><br /></td></tr>
 <tr class="separator:ga79e970ff977245de479e5d35985571e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -5037,7 +5040,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__qmf_8c_source.html#l00575">575</a> of file <a class="el" href="saf__utility__qmf_8c_source.html">saf_utility_qmf.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__qmf_8c_source.html#l00576">576</a> of file <a class="el" href="saf__utility__qmf_8c_source.html">saf_utility_qmf.c</a>.</p>
 
 </div>
 </div>
@@ -7183,7 +7186,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02261">2261</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02316">2316</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -7385,6 +7388,68 @@ Example Usage</h2>
 
 </div>
 </div>
+<a id="ga8eef44815f5a59de02698ef3939a8028"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8eef44815f5a59de02698ef3939a8028">&#9670;&nbsp;</a></span>utility_cglslvt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void utility_cglslvt </td>
+          <td>(</td>
+          <td class="paramtype">const float_complex *&#160;</td>
+          <td class="paramname"><em>A</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>B</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nCol</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>X</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>General linear solver (the other way): single precision complex, i.e. </p>
+<div class="fragment"><div class="line">X = linsolve(B<span class="stringliteral">&#39;,A&#39;</span>)<span class="stringliteral">&#39; = A/B;</span></div>
+</div><!-- fragment --><dl class="section warning"><dt>Warning</dt><dd>UNSURE IF THIS IS CORRECT!</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">A</td><td>Input square matrix; FLAT: dim x dim </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dim</td><td>Dimensions for square matrix 'A' </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">B</td><td>Right hand side matrix; FLAT: dim x nCol </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nCol</td><td>Number of columns in right hand side matrix </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">X</td><td>The solution; FLAT: dim x nCol </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01752">1752</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+
+</div>
+</div>
 <a id="ga6600bec30da8cb52c95697fc81ded614"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga6600bec30da8cb52c95697fc81ded614">&#9670;&nbsp;</a></span>utility_cimaxv()</h2>
 
@@ -7522,7 +7587,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02467">2467</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02522">2522</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -7576,7 +7641,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01945">1945</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02000">2000</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -7707,7 +7772,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01807">1807</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01862">1862</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8262,7 +8327,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02414">2414</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02469">2469</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8316,7 +8381,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02037">2037</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02092">2092</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8464,7 +8529,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02216">2216</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02271">2271</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8505,7 +8570,7 @@ Example Usage</h2>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>determinant </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02309">2309</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02364">2364</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8768,7 +8833,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02363">2363</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02418">2418</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8822,7 +8887,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01862">1862</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01917">1917</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8953,7 +9018,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01757">1757</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01812">1812</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9970,7 +10035,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02119">2119</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02174">2174</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10573,7 +10638,7 @@ Example Usage</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Oct 13 2020 15:05:43 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Tue Oct 20 2020 11:00:19 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>
