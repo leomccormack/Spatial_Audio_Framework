@@ -93,8 +93,8 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 </ul>
 <h1><a class="anchor" id="autotoc_md57"></a>
 About</h1>
-<p>The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related applications in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a comparatively large and comprehensively documented code-base comprising a number of distinct <b>modules</b>; with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). Several <b>examples</b> have also been included in the repository, which serve to demonstrate the functionality of the framework.</p>
-<p>Owing to its modular design, expanding the framework is also relatively straightforward; with contributions from researchers and developers of spatial audio technologies being actively encouraged! :-)</p>
+<p>The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related applications in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a large and comprehensively-documented codebase comprising a number of distinct <b>modules</b>; with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). Several <b>examples</b> are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects.</p>
+<p>Owing to its modular design, expanding the framework is also relatively straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged! :-)</p>
 <h1><a class="anchor" id="autotoc_md58"></a>
 Prerequisites</h1>
 <p>The framework utilises the following external libraries:</p><ul>
@@ -128,7 +128,7 @@ Framework structure</h2>
 </div><!-- fragment --><p>Note that the <b>saf_sofa_reader</b> module also requires <a href="https://www.unidata.ucar.edu/software/netcdf/">netCDF</a> to be linked to your project. Instructions on how to install/link this dependency can be found <a class="el" href="md_docs__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html">here</a>.</p>
 <h3><a class="anchor" id="autotoc_md60"></a>
 Additional options</h3>
-<p>The framework can be configured further, with the following options: </p><div class="fragment"><div class="line">SAF_USE_INTEL_IPP              # To use Intel IPP for the saf_utility_fft wrapper</div>
+<p>The framework can be configured further, with the following options: </p><div class="fragment"><div class="line">SAF_USE_INTEL_IPP  # To use Intel IPP for the saf_utility_fft wrapper</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md61"></a>
 Using the framework</h1>
 <p>Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to your project), add the files found in the <b>framework</b> folder to your project and add the following directory to your project's header search paths:</p>
@@ -165,7 +165,7 @@ Building with CMake</h2>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md63"></a>
 Documentation</h2>
 <p><a href="http://www.doxygen.nl/index.html">Doxygen</a>-based documentation is generated via a GitHub Action everytime a commit is pushed to the master branch. The documentation is hosted <a href="https://leomccormack.github.io/Spatial_Audio_Framework/">here</a>.</p>
-<p>Alternatively, you may generate the documentation yourself (e.g. for the other branches) with the following commands: </p><div class="fragment"><div class="line">cd doxygen</div>
+<p>Alternatively, you may generate the documentation yourself (e.g. for the other branches) with the following commands: </p><div class="fragment"><div class="line">cd docs/doxygen</div>
 <div class="line">doxygen doxygen_config</div>
 <div class="line"># (optional) to also build the pdf version:</div>
 <div class="line">cd latex</div>
@@ -230,7 +230,7 @@ License</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Oct 20 2020 11:07:27 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Tue Oct 20 2020 14:51:14 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

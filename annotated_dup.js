@@ -22,9 +22,6 @@ var annotated_dup =
     [ "kiss_fftr_cfg", "structkiss__fftr__state.html", "structkiss__fftr__state" ],
     [ "latticeAPF", "structlattice_a_p_f.html", "structlattice_a_p_f" ],
     [ "latticeDecor_data", "structlattice_decor__data.html", "structlattice_decor__data" ],
-    [ "M6", "struct_m6.html", "struct_m6" ],
-    [ "MCS_data", "struct_m_c_s__data.html", "struct_m_c_s__data" ],
-    [ "P66", "struct_p66.html", "struct_p66" ],
     [ "qmf_data", "structqmf__data.html", "structqmf__data" ],
     [ "saf_fft_data", "structsaf__fft__data.html", "structsaf__fft__data" ],
     [ "saf_rfft_data", "structsaf__rfft__data.html", "structsaf__rfft__data" ],
@@ -38,8 +35,6 @@ var annotated_dup =
     [ "smb_pitchShift_data", "structsmb__pitch_shift__data.html", "structsmb__pitch_shift__data" ],
     [ "sphESPRIT_data", "structsph_e_s_p_r_i_t__data.html", "structsph_e_s_p_r_i_t__data" ],
     [ "sphMUSIC_data", "structsph_m_u_s_i_c__data.html", "structsph_m_u_s_i_c__data" ],
-    [ "tracker3d_config", "structtracker3d__config.html", "structtracker3d__config" ],
-    [ "tracker3d_data", "structtracker3d__data.html", "structtracker3d__data" ],
     [ "transientDucker_data", "structtransient_ducker__data.html", "structtransient_ducker__data" ],
     [ "voronoi_data", "structvoronoi__data.html", "structvoronoi__data" ]
 ];

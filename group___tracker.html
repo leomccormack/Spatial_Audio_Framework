@@ -83,9 +83,7 @@ $(document).ready(function(){initNavTree('group___tracker.html',''); initResizab
 
 <div class="header">
   <div class="summary">
-<a href="#files">Files</a> &#124;
-<a href="#nested-classes">Data Structures</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#files">Files</a>  </div>
   <div class="headertitle">
 <div class="title">saf_tracker</div>  </div>
 </div><!--header-->
@@ -108,193 +106,15 @@ Files</h2></td></tr>
 <tr class="memitem:saf__tracker__internal_8h"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__tracker__internal_8h.html">saf_tracker_internal.h</a></td></tr>
 <tr class="memdesc:saf__tracker__internal_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Particle filtering based tracker (<a class="el" href="saf_8h.html#a9160681450d951e3e3b0492a7db4da08" title="SAF Module: Tracker.">SAF_TRACKER_MODULE</a>) <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Data Structures</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtracker3d__config.html">tracker3d_config</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">User parameters for tracker3d.  <a href="structtracker3d__config.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:gaf55e4f5dfcc90657444cc92059674970"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___tracker.html#gaf55e4f5dfcc90657444cc92059674970">tracker3d_create</a> (void **const phT3d, <a class="el" href="structtracker3d__config.html">tracker3d_config</a> tpars)</td></tr>
-<tr class="memdesc:gaf55e4f5dfcc90657444cc92059674970"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the mighty tracker3d.  <a href="group___tracker.html#gaf55e4f5dfcc90657444cc92059674970">More...</a><br /></td></tr>
-<tr class="separator:gaf55e4f5dfcc90657444cc92059674970"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae5896d9356c382e6e7c1d339c378d3ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___tracker.html#gae5896d9356c382e6e7c1d339c378d3ea">tracker3d_destroy</a> (void **const phT3d)</td></tr>
-<tr class="memdesc:gae5896d9356c382e6e7c1d339c378d3ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys an instance of the mighty tracker3d.  <a href="group___tracker.html#gae5896d9356c382e6e7c1d339c378d3ea">More...</a><br /></td></tr>
-<tr class="separator:gae5896d9356c382e6e7c1d339c378d3ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8b986b61b557a94d7097cfb6752da1dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___tracker.html#ga8b986b61b557a94d7097cfb6752da1dd">tracker3d_reset</a> (void *const hT3d)</td></tr>
-<tr class="memdesc:ga8b986b61b557a94d7097cfb6752da1dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets an instance of the mighty tracker3d.  <a href="group___tracker.html#ga8b986b61b557a94d7097cfb6752da1dd">More...</a><br /></td></tr>
-<tr class="separator:ga8b986b61b557a94d7097cfb6752da1dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga237407dc76fdd49c236ff34bc00b3d55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___tracker.html#ga237407dc76fdd49c236ff34bc00b3d55">tracker3d_step</a> (void *const hT3d, float *newObs_xyz, int nObs, float **target_xyz, int **target_IDs, int *nTargets)</td></tr>
-<tr class="memdesc:ga237407dc76fdd49c236ff34bc00b3d55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tracker time step to update &amp; predict current target locations and to parse new measurements/observations.  <a href="group___tracker.html#ga237407dc76fdd49c236ff34bc00b3d55">More...</a><br /></td></tr>
-<tr class="separator:ga237407dc76fdd49c236ff34bc00b3d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Particle-filtering-based tracker. </p>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="gaf55e4f5dfcc90657444cc92059674970"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf55e4f5dfcc90657444cc92059674970">&#9670;&nbsp;</a></span>tracker3d_create()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void tracker3d_create </td>
-          <td>(</td>
-          <td class="paramtype">void **const&#160;</td>
-          <td class="paramname"><em>phT3d</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structtracker3d__config.html">tracker3d_config</a>&#160;</td>
-          <td class="paramname"><em>tpars</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Creates an instance of the mighty tracker3d. </p>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000021">Test:</a></b></dt><dd><a class="el" href="saf__test_8h.html#ac4ed53fa08ff598c41985d827df25536" title="Testing that the particle-filtering based tracker is able to correctly track two simultaneous targets...">test__tracker3d()</a></dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">phT3d</td><td>(&amp;) address of tracker3d handle </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tpars</td><td>Tracker configuration/user parameter struct </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="gae5896d9356c382e6e7c1d339c378d3ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae5896d9356c382e6e7c1d339c378d3ea">&#9670;&nbsp;</a></span>tracker3d_destroy()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void tracker3d_destroy </td>
-          <td>(</td>
-          <td class="paramtype">void **const&#160;</td>
-          <td class="paramname"><em>phT3d</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Destroys an instance of the mighty tracker3d. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">phT3d</td><td>(&amp;) address of tracker3d handle </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ga8b986b61b557a94d7097cfb6752da1dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga8b986b61b557a94d7097cfb6752da1dd">&#9670;&nbsp;</a></span>tracker3d_reset()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void tracker3d_reset </td>
-          <td>(</td>
-          <td class="paramtype">void *const&#160;</td>
-          <td class="paramname"><em>hT3d</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Resets an instance of the mighty tracker3d. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">hT3d</td><td>tracker3d handle </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ga237407dc76fdd49c236ff34bc00b3d55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga237407dc76fdd49c236ff34bc00b3d55">&#9670;&nbsp;</a></span>tracker3d_step()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void tracker3d_step </td>
-          <td>(</td>
-          <td class="paramtype">void *const&#160;</td>
-          <td class="paramname"><em>hT3d</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float *&#160;</td>
-          <td class="paramname"><em>newObs_xyz</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>nObs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float **&#160;</td>
-          <td class="paramname"><em>target_xyz</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int **&#160;</td>
-          <td class="paramname"><em>target_IDs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>nTargets</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Tracker time step to update &amp; predict current target locations and to parse new measurements/observations. </p>
-<dl class="section note"><dt>Note</dt><dd>It is assumed that this will be called every step in time (tpars.dt). If there are no new observations/measurements then still call this function, but set newObs_xyz=NULL and/or, nObs=0.</dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">hT3d</td><td>tracker3d handle </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">newObs_xyz</td><td>New observations/measurements; nObs x 3 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">nObs</td><td>Number of new observations/measurements </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">target_xyz</td><td>(&amp;) Current target locations; *nTargets x 3 </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">target_IDs</td><td>(&amp;) (Unique) target IDs; *nTargets x 1 </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">nTargets</td><td>(&amp;) Current number of targets being tracked </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Oct 20 2020 11:07:27 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Tue Oct 20 2020 14:51:14 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

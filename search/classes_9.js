@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['qmf_5fdata_1895',['qmf_data',['../structqmf__data.html',1,'']]]
+  ['transientducker_5fdata_1841',['transientDucker_data',['../structtransient_ducker__data.html',1,'']]]
 ];

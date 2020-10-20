@@ -117,17 +117,16 @@ var NAVTREEINDEX =
 "array2sh_8h.html#a91d397e115f56c5076573aceaed3ba92",
 "dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fea0b5166ca0ab0967f672d0cc99faa1150",
 "group___reverb.html#gafe27b3d4c424f1c1e51540a2887230b9",
-"group___utilities.html#ga17069fa770f13431c9cfab601e523dba",
-"group___utilities.html#ga516c920b2e335cb295f8293a7f90c868",
-"group___utilities.html#ga899c905a7bb278bc0e81b12d544b6b64",
-"group___utilities.html#gac335cac027bcb24d435f9a525587d9d4",
-"group___utilities.html#gaffb907cad281bbfae4258f615431d8e1",
-"md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md17",
-"saf__hoa__internal_8c.html",
-"saf__utility__filters_8c_source.html",
-"sldoa_8h.html#aacad0da9078f1b9b0d66b139e1f9cf0d",
-"structims__scene__data.html",
-"structsph_e_s_p_r_i_t__data.html#a4880c69d68f2eb1bf7eb80945c263764"
+"group___utilities.html#ga17ffde4c55850ad527548942758ceea7",
+"group___utilities.html#ga53abea091b23be8c8d441fc9d2280b19",
+"group___utilities.html#ga8b6a869eb72797a5c90164bc027bb04d",
+"group___utilities.html#gac51b27d14ac4f1d5d714ef854b2d0a88",
+"group___utilities.html#gga11cf92ddf3389349c5dd4d7ccab6c619a652e7e5cc836b353e4c1ab1d09ce570f",
+"md_extras_safmex__s_a_f_m_e_x.html",
+"saf__hoa__internal_8c_source.html",
+"saf__utility__pitch_8c_source.html",
+"structaf_s_t_f_t__data.html#a8a77b95e972cafd001eda86eedaecbcc",
+"structqmf__data.html#ad0674812930386cfc6d052c655004bb8"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
