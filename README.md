@@ -5,9 +5,9 @@
 
 # About
 
-The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related applications in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a comparatively large and comprehensively documented code-base comprising a number of distinct **modules**; with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). Several **examples** have also been included in the repository, which serve to demonstrate the functionality of the framework.
+The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related applications in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a large and comprehensively-documented codebase comprising a number of distinct **modules**; with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). Several **examples** are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects.
 
-Owing to its modular design, expanding the framework is also relatively straightforward; with contributions from researchers and developers of spatial audio technologies being actively encouraged! :-)
+Owing to its modular design, expanding the framework is also relatively straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged! :-)
 
 # Prerequisites
 
@@ -52,7 +52,7 @@ Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unid
 
 The framework can be configured further, with the following options:
 ```
-SAF_USE_INTEL_IPP              # To use Intel IPP for the saf_utility_fft wrapper
+SAF_USE_INTEL_IPP  # To use Intel IPP for the saf_utility_fft wrapper
 ```
 
 # Using the framework
@@ -126,7 +126,7 @@ saf_test.exe  # To run the unit testing program
 
 Alternatively, you may generate the documentation yourself (e.g. for the other branches) with the following commands:
 ```
-cd doxygen
+cd docs/doxygen
 doxygen doxygen_config
 # (optional) to also build the pdf version:
 cd latex

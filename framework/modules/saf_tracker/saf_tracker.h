@@ -46,6 +46,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#ifdef  SAF_ENABLE_TRACKER_MODULE
+
 /* ========================================================================== */
 /*                               Public Structs                               */
 /* ========================================================================== */
@@ -151,6 +153,8 @@ void tracker3d_step(void* const hT3d,
                     float** target_xyz,
                     int** target_IDs,
                     int* nTargets);
+
+#endif /* SAF_ENABLE_TRACKER_MODULE */
 
 
 #ifdef __cplusplus

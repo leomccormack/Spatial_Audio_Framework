@@ -52,6 +52,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#ifdef  SAF_ENABLE_TRACKER_MODULE
+
 /** Spits out tracker status info to the terminal */
 //#define TRACKER_VERBOSE
 #ifdef TRACKER_VERBOSE
@@ -431,6 +433,8 @@ float gauss_pdf3(/* Input Arguments */
  */
 int categ_rnd(float* P,
               int len_P);
+
+#endif /* SAF_ENABLE_TRACKER_MODULE */
 
 
 #ifdef __cplusplus
