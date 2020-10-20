@@ -63,15 +63,15 @@ void tracker3d_create
     pData->tpars.init_birth = CLAMP(pData->tpars.init_birth, 0.0f, 0.99f);
     pData->tpars.alpha_death = CLAMP(pData->tpars.alpha_death, 1.0f, 20.0f);
     pData->tpars.beta_death = CLAMP(pData->tpars.beta_death, 1.0f, 20.0f);
-    pData->tpars.dt = MAX(pData->tpars.dt, 0.00001f);
-    pData->tpars.cd = MAX(pData->tpars.cd, 0.00001f);
+    pData->tpars.dt = MAX(pData->tpars.dt, 0.0001f);
+    pData->tpars.cd = MAX(pData->tpars.cd, 0.0001f);
     pData->tpars.W_avg_coeff = CLAMP(pData->tpars.W_avg_coeff, 0.0f, 0.99f);
-    pData->tpars.noiseSpecDen = MAX(pData->tpars.noiseSpecDen, 0.00001f);
+    pData->tpars.noiseSpecDen = MAX(pData->tpars.noiseSpecDen, 0.0001f);
     pData->tpars.noiseLikelihood = CLAMP(pData->tpars.noiseLikelihood, 0.0f, 0.99f);
-    pData->tpars.measNoiseSD = MAX(pData->tpars.measNoiseSD, 0.00001f);
+    pData->tpars.measNoiseSD = MAX(pData->tpars.measNoiseSD, 0.001f);
 
     /* Measurement noise PRIORs along the x,y,z axis, respectively  */
-    sd_xyz = tpars.measNoiseSD;
+    sd_xyz = pData->tpars.measNoiseSD;
     memset(pData->R, 0, 3*3*sizeof(float));
     pData->R[0][0] = powf(sd_xyz,2.0f);
     pData->R[1][1] = powf(sd_xyz,2.0f);
@@ -79,7 +79,7 @@ void tracker3d_create
 
     /* Noise spectral density along x, y, z axis qx,y,z which, (in combination
      * with sd_xyz), dictates how smooth the target tracks are. */
-    q_xyz = tpars.noiseSpecDen;
+    q_xyz = pData->tpars.noiseSpecDen;
 
     /* Dynamic and measurement models */
     const float F[6][6] =
@@ -93,25 +93,25 @@ void tracker3d_create
     Qc[3][3] = q_xyz;
     Qc[4][4] = q_xyz;
     Qc[5][5] = q_xyz;
-    lti_disc((float*)F, 6, 6, NULL, (float*)Qc, tpars.dt, (float*)pData->A, (float*)pData->Q);
+    lti_disc((float*)F, 6, 6, NULL, (float*)Qc, pData->tpars.dt, (float*)pData->A, (float*)pData->Q);
     memset(pData->H, 0, 3*6*sizeof(float));
     pData->H[0][0] = 1.0f;
     pData->H[1][1] = 1.0f;
     pData->H[2][2] = 1.0f;
 
     /* Create particles */
-    pData->SS = malloc1d(tpars.Np * sizeof(voidPtr));
-    pData->SS_resamp = malloc1d(tpars.Np * sizeof(voidPtr));
-    pData->W0 = 1.0f/(float)tpars.Np;
-    for(i=0; i<tpars.Np; i++){
-        tracker3d_particleCreate(&(pData->SS[i]), pData->W0, tpars.dt);
-        tracker3d_particleCreate(&(pData->SS_resamp[i]), pData->W0, tpars.dt);
+    pData->SS = malloc1d(pData->tpars.Np * sizeof(voidPtr));
+    pData->SS_resamp = malloc1d(pData->tpars.Np * sizeof(voidPtr));
+    pData->W0 = 1.0f/(float)pData->tpars.Np;
+    for(i=0; i<pData->tpars.Np; i++){
+        tracker3d_particleCreate(&(pData->SS[i]), pData->W0, pData->tpars.dt);
+        tracker3d_particleCreate(&(pData->SS_resamp[i]), pData->W0, pData->tpars.dt);
     }
     
     /* Event starting values */
     for(i=0; i<TRACKER3D_MAX_NUM_EVENTS; i++){
         pData->evta[i] = NULL;
-        tracker3d_particleCreate(&(pData->str[i]), pData->W0, tpars.dt);
+        tracker3d_particleCreate(&(pData->str[i]), pData->W0, pData->tpars.dt);
     }
     pData->incrementTime = 0;
 }

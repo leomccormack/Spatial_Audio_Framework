@@ -32,6 +32,8 @@ void decorrelator_create
     decorrelator_data* pData = (decorrelator_data*)malloc1d(sizeof(decorrelator_data));
     *phDecor = (void*)pData;
 
+    printf(SAF_VERSION_LICENSE_STRING);
+
     /* default user parameters */
     pData->nChannels = 1;
     pData->enableTransientDucker = 0;

@@ -90,7 +90,7 @@
 
 #define SAF_VERSION_MAJOR 1        /**< Major version */
 #define SAF_VERSION_MINOR 1        /**< Minor version */
-#define SAF_VERSION_PATCH 4        /**< Patch version */
+#define SAF_VERSION_PATCH 5        /**< Patch version */
 #define SAF_VERSION_SPECIAL ""     /**< Append text ("alpha", "beta", "") */
 #define MKSTRING_(s) #s            /**< Stringify */
 #define MKSTRING(s) MKSTRING_(s)   /**< Stringify */
@@ -103,6 +103,11 @@
 #define SAF_VERSION_STRING MKSTRING(SAF_VERSION_MAJOR) "." MKSTRING( \
                            SAF_VERSION_MINOR) "." MKSTRING(SAF_VERSION_PATCH) \
                            "" SAF_VERSION_SPECIAL
+
+
+/** The Spatial_Audio_Framework Version and License as a string */
+#define SAF_VERSION_LICENSE_STRING "SAF Version: " SAF_VERSION_STRING \
+                                   ", License: "   SAF_LICENSE_STRING "\n"
 
 /** The Spatial_Audio_Framework Version and License as a banner */
 #define SAF_VERSION_BANNER \

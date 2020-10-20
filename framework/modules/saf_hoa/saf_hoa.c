@@ -158,6 +158,9 @@ void getRSH
     int i, nSH;
     float scale;
     float* dirs_rad;
+
+    if(nDirs<1)
+        return;
     
     nSH = (N+1)*(N+1);
     scale = sqrtf(4.0f*SAF_PI);
@@ -190,6 +193,9 @@ void getRSH_recur
     float Nn0, Nnm;
     float sleg_n[8], sleg_n_1[8], sleg_n_2[8], ssin_el, sfactorials_n[15];
     float* leg_n, *leg_n_1, *leg_n_2, *sin_el, *factorials_n;
+
+    if(nDirs<1)
+        return;
 
     if(N<=7 && nDirs == 1){
         /* Single direction optimisation for up to 7th order */

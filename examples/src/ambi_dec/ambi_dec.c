@@ -53,6 +53,8 @@ void ambi_dec_create
     *phAmbi = (void*)pData;
     int i, j, ch, band;
 
+    printf(SAF_VERSION_LICENSE_STRING);
+
     /* default user parameters */
     pData->masterOrder = pData->new_masterOrder = 1;
     for (band = 0; band<HYBRID_BANDS; band++)

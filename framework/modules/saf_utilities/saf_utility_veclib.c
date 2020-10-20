@@ -1749,6 +1749,61 @@ void utility_sglslvt
     free(b);
 }
 
+void utility_cglslvt
+(
+    const float_complex* A,
+    const int dim,
+    float_complex* B,
+    int nCol,
+    float_complex* X
+)
+{
+    veclib_int i;
+    veclib_int n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
+    veclib_int* IPIV;
+    float_complex* a, *b;
+
+    assert(0); /* This function needs checking */
+
+    IPIV = malloc1d(dim*sizeof(veclib_int));
+    a = malloc1d(dim*dim*sizeof(float_complex));
+    b = malloc1d(dim*nrhs*sizeof(float_complex));
+
+    /* store locally - Hermitian */
+    cblas_ccopy(dim*dim, A, 1, a, 1);
+    for(i=0; i<dim*dim; i++)
+        a[i] = conj(a[i]);
+    cblas_ccopy(dim*nCol, B, 1, b, 1);
+    for(i=0; i<dim*nCol; i++)
+        b[i] = conj(b[i]);
+
+    /* solve Ax = b for each column in b (b is replaced by the solution: x) */
+#ifdef VECLIB_USE_CLAPACK_INTERFACE
+    info = clapack_cgesv(CblasColMajor, n, nrhs, a, ldb, IPIV, b, lda);
+#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_cgesv(CblasColMajor, n, nrhs, a, ldb, IPIV, b, lda );
+#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    cgesv_( &n, &nrhs, (veclib_float_complex*)a, &ldb, IPIV, (veclib_float_complex*)b, &lda, &info );
+#endif
+
+    if(info!=0){
+        /* A is singular, solution not possible */
+        memset(X, 0, dim*nCol*sizeof(float_complex));
+#ifndef NDEBUG
+        saf_error_print(SAF_WARNING__FAILED_TO_SOLVE_LINEAR_EQUATION);
+#endif
+    }
+    else{
+        cblas_ccopy(dim*nCol, b, 1, X, 1);
+        for(i=0; i<dim*nCol; i++)
+            X[i] = conj(b[i]);
+    }
+
+    free(IPIV);
+    free(a);
+    free(b);
+}
+
 
 /* ========================================================================== */
 /*                      Symmetric Linear Solver (?slslv)                      */
