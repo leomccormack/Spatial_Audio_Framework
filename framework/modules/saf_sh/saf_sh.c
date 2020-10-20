@@ -198,6 +198,9 @@ void getSHreal
     double* Lnm, *CosSin;
     double *p_nm, *cos_incl;
     double *norm_real;
+
+    if(nDirs<1)
+        return;
     
     Lnm = malloc1d((2*order+1)*nDirs*sizeof(double));
     norm_real = malloc1d((2*order+1)*sizeof(double));
@@ -260,6 +263,9 @@ void getSHreal_recur
     float Nn0, Nnm;
     float sleg_n[8], sleg_n_1[8], sleg_n_2[8], scos_incl, sfactorials_n[15];
     float* leg_n, *leg_n_1, *leg_n_2, *cos_incl, *factorials_n;
+
+    if(nDirs<1)
+        return;
 
     if(N<=7 && nDirs == 1){
         /* Single direction optimisation for up to 7th order */

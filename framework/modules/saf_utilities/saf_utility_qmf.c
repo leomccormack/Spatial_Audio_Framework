@@ -542,11 +542,12 @@ void qmf_clearBuffers
     int i;
 
     /* flush analysis buffers */
-    for(i=0; i<h->nCHin; i++)
+    for(i=0; i<h->nCHin; i++){
         memset(h->buffer_ana[i], 0, h->hopsize * 10 * sizeof(float));
-    if(h->hybridmode){
-        memset(FLATTEN3D(h->qmfDelayBuffer), 0, h->nCHin*(h->hopsize-QMF_NBANDS_2_SUBDIVIDE)* ((QMF_HYBRID_FILTER_LENGTH-1)/2 + 1)*sizeof(float_complex));
-        memset(FLATTEN3D(h->hybBuffer), 0, h->nCHin*QMF_NBANDS_2_SUBDIVIDE*QMF_HYBRID_FILTER_LENGTH*sizeof(float_complex));
+        if(h->hybridmode){
+            memset(FLATTEN3D(h->qmfDelayBuffer), 0, h->nCHin*(h->hopsize-QMF_NBANDS_2_SUBDIVIDE)* ((QMF_HYBRID_FILTER_LENGTH-1)/2 + 1)*sizeof(float_complex));
+            memset(FLATTEN3D(h->hybBuffer), 0, h->nCHin*QMF_NBANDS_2_SUBDIVIDE*QMF_HYBRID_FILTER_LENGTH*sizeof(float_complex));
+        }
     }
 
     /* flush synthesis buffers */

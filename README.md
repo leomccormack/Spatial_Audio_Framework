@@ -3,9 +3,15 @@
 * git: [https://github.com/leomccormack/Spatial_Audio_Framework](https://github.com/leomccormack/Spatial_Audio_Framework)
 * doxygen: [https://leomccormack.github.io/Spatial_Audio_Framework/](https://leomccormack.github.io/Spatial_Audio_Framework/)
 
+# About
+
+The Spatial_Audio_Framework (SAF) is a cross-platform framework for developing spatial audio related applications in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a comparatively large and comprehensively documented code-base comprising a number of distinct **modules**; with each module targeting a specific spatial audio sub-field (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). 
+
+Several **examples** have also been included in the repository, which demonstrate the functionality of the framework. Furthermore, owing to its modular design, expanding the framework is relatively straightforward; with contributions from researchers and developers of spatial audio technologies being actively encouraged! :-)
+
 # Prerequisites
 
-The Spatial_Audio_Framework (SAF) utilises the following external libraries:
+The framework utilises the following external libraries:
 * Any library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 * (**Optional**) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
 * (**Optional**) Intel's [Integrated Performance Primitives (IPP)](https://software.intel.com/content/www/us/en/develop/tools/integrated-performance-primitives.html) for the FFT.

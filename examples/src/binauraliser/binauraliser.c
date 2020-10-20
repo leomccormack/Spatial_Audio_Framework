@@ -40,6 +40,8 @@ void binauraliser_create
     *phBin = (void*)pData;
     int ch;
 
+    printf(SAF_VERSION_LICENSE_STRING);
+
     /* user parameters */
     binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
     pData->nSources = pData->new_nSources;

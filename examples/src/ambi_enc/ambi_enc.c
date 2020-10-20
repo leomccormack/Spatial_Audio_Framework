@@ -33,6 +33,9 @@ void ambi_enc_create
     ambi_enc_data* pData = (ambi_enc_data*)malloc1d(sizeof(ambi_enc_data));
     *phAmbi = (void*)pData;
     int i;
+
+    printf(SAF_VERSION_LICENSE_STRING);
+
     pData->order = 1;
     
     /* default user parameters */

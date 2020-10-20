@@ -40,6 +40,8 @@ void rotator_create
 {
     rotator_data* pData = (rotator_data*)malloc1d(sizeof(rotator_data));
     *phRot = (void*)pData;
+
+    printf(SAF_VERSION_LICENSE_STRING);
     
     pData->recalc_M_rotFLAG = 1;
   

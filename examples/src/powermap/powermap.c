@@ -40,6 +40,8 @@ void powermap_create
     *phPm = (void*)pData;
     int n, i, band;
 
+    printf(SAF_VERSION_LICENSE_STRING);
+    
     /* Default user parameters */
     pData->masterOrder = pData->new_masterOrder = SH_ORDER_FIRST;
     for(band=0; band<HYBRID_BANDS; band++){
