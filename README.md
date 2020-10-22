@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/128790913.svg)](https://zenodo.org/badge/latestdoi/128790913)
+
 <img src="saf.svg"> 
 
 * git: [https://github.com/leomccormack/Spatial_Audio_Framework](https://github.com/leomccormack/Spatial_Audio_Framework)
