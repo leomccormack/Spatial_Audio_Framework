@@ -2549,7 +2549,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>Computes Butterworth IIR filter coefficients [1]. </p>
 <p>The function is numerically identical to the default 'butter' function in Matlab</p>
 <dl class="section warning"><dt>Warning</dt><dd>The function still shares the same limitations of the Matlab 'butter' function, which may also be made worse by applying the filter to single precision input data. Higher orders and lower cut-off frequencies can easily become unstable! Consider trying things out in Matlab before using this function.</dd></dl>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000024">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a394db4aaade6966e740d8ca24a04dc7b" title="Testing that the coefficients computed with butterCoeffs() are numerically similar to the &quot;butter&quot; fu...">test__butterCoeffs()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000025">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a394db4aaade6966e740d8ca24a04dc7b" title="Testing that the coefficients computed with butterCoeffs() are numerically similar to the &quot;butter&quot; fu...">test__butterCoeffs()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">filterType</td><td>See <a class="el" href="group___utilities.html#ga186326f0d162300d949c2dc95c412465" title="Butterworth Infinite Impulse Response (IIR) filter design options.">BUTTER_FILTER_TYPES</a> enum </td></tr>
@@ -2602,7 +2602,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Pairs up complex numbers and sorts them in ascending order based on their real parts first, and then on their imaginary parts. </p>
 <dl class="section note"><dt>Note</dt><dd>This function is the same as <a class="el" href="group___utilities.html#gab0931ca50923ff84c52d328c93bd96e8" title="Sort a vector of complex double floating-point values into ascending/ decending order.">sortz()</a> except that any values that are purely real, are pushed to the end of the output vector (and also in ascending order).</dd></dl>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000033">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a48643f2e901629d2d1fea9474932ba14" title="Testing the cmplxPairUp() function (grouping up conjugate symmetric values)">test__cmplxPairUp()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000034">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a48643f2e901629d2d1fea9474932ba14" title="Testing the cmplxPairUp() function (grouping up conjugate symmetric values)">test__cmplxPairUp()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">in_vec</td><td>Vector to be sorted; len x 1 </td></tr>
@@ -3134,7 +3134,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>Computes a bank of IIR filter coefficients required to divide a signal into frequency bands, based on the design by Favrot &amp; Faller [1]. </p>
 <p>The function employs the 'butterCoeffs' function to compute a low-pass filter for the first band, high-pass filter for the last band, and band-pass filter for the inbetween bands (nCutoffFreqs must be 2 or more).</p>
 <dl class="section warning"><dt>Warning</dt><dd>Only odd valued orders work with this design! However, due to practical numerical limitations, only 1st and 3rd order options are numerically robust enough to make sense, which is why this implementation will only accept order = 1 or 3.</dd></dl>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000025">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aa4cef2722415c8366710c1425a917a06" title="Testing that the faf_IIRFilterbank can reconstruct the original signal power.">test__faf_IIRFilterbank()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000026">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aa4cef2722415c8366710c1425a917a06" title="Testing that the faf_IIRFilterbank can reconstruct the original signal power.">test__faf_IIRFilterbank()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">phFaF</td><td>(&amp;) address of the faf_IIRFilterbank handle </td></tr>
@@ -3939,7 +3939,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div><div class="memdoc">
 
 <p>Computes the integration weights, based on the areas of each face of the corresponding Voronoi diagram [sum(weights)=4pi]. </p>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000026">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a195368bc46775c4a9370249c54b0bc35" title="Testing that the weights from the getVoronoiWeights() function sum to 4pi and that the weights are al...">test__getVoronoiWeights()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000027">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a195368bc46775c4a9370249c54b0bc35" title="Testing that the weights from the getVoronoiWeights() function sum to 4pi and that the weights are al...">test__getVoronoiWeights()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">dirs_deg</td><td>Coordinates for spherically arranged points, in degrees; FLAT: nDirs x 2 </td></tr>
@@ -4541,7 +4541,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>Creates an instance of the lattice all-pass-filter-based multi-channel signal decorrelator. </p>
 <p>This decorrelator is intended for decorrelating signals in the time-frequency domain, and is therefore well-suited for audio coding [1] or Direction Audio Coding (DirAC) [2] purposes.</p>
 <dl class="section note"><dt>Note</dt><dd>It is recommended to use lower orders. You may also cascade 2 instances (each with lower orders), to attain the desired decorrelation without introducing instabilities, which accompanies the use of the much higher filter orders. </dd></dl>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000021">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aeb7e6c04ac91cc3d90025bcac95e8549" title="Testing the performance of the latticeDecorrelator, verifying that the inter- channel cross-correlati...">test__latticeDecorrelator()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000022">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aeb7e6c04ac91cc3d90025bcac95e8549" title="Testing the performance of the latticeDecorrelator, verifying that the inter- channel cross-correlati...">test__latticeDecorrelator()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">phDecor</td><td>(&amp;) address of lattice decorrelator handle </td></tr>
@@ -4945,7 +4945,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div><div class="memdoc">
 
 <p>Creates an instance of the qmf filterbank. </p>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000030">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aac1d57603ebc37f0088e3fc83c804402" title="Testing the (near)-perfect reconstruction performance of the QMF filterbank.">test__qmf()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000031">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aac1d57603ebc37f0088e3fc83c804402" title="Testing the (near)-perfect reconstruction performance of the QMF filterbank.">test__qmf()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">phQMF</td><td>(&amp;) address of qmf handle </td></tr>
@@ -5509,7 +5509,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Creates an instance of matrixConv. </p>
 <p>This is a matrix convolver intended for block-by-block processing.</p>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000027">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#ad992431654877a596b057b67120c3cac" title="Testing the saf_matrixConv.">test__saf_matrixConv()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000028">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#ad992431654877a596b057b67120c3cac" title="Testing the saf_matrixConv.">test__saf_matrixConv()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">phMC</td><td>(&amp;) address of matrixConv handle </td></tr>
@@ -5787,7 +5787,7 @@ Example Usage</h2>
 <div class="line"><a class="code" href="group___utilities.html#gaa2cba44909322a8b0d3a3f94c7b1e062">saf_rfft_backward</a>(hFFT, x_out, test); <span class="comment">// perform backwards transform</span></div>
 <div class="line"><span class="comment">// &#39;x_in&#39; should equal &#39;test&#39; (given some numerical error)</span></div>
 <div class="line"><a class="code" href="group___utilities.html#gaa36181d15c604825034d54843b884616">saf_rfft_destroy</a>(&amp;hFFT);              <span class="comment">// destroys instance of safFFT</span></div>
-</div><!-- fragment --><dl class="test"><dt><b><a class="el" href="test.html#_test000023">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a61e4197e4ad12c1669f952118a37c17b" title="Testing the forward and backward real-(half)complex FFT (saf_rfft)">test__saf_rfft()</a></dd></dl>
+</div><!-- fragment --><dl class="test"><dt><b><a class="el" href="test.html#_test000024">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a61e4197e4ad12c1669f952118a37c17b" title="Testing the forward and backward real-(half)complex FFT (saf_rfft)">test__saf_rfft()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">phFFT</td><td>(&amp;) address of saf_rfft handle </td></tr>
@@ -6025,7 +6025,7 @@ Example Usage</h2>
 </div><div class="memdoc">
 
 <p>Creates an instance of saf_stft. </p>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000022">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a3230cfab4bc9fa9f07d578e2c0c631b9" title="Testing for perfect reconstruction of the saf_stft (when configured for 50% window overlap)">test__saf_stft_50pc_overlap()</a>, <a class="el" href="saf__test_8c.html#af677fd8422840a0356616d0b16f9a175" title="Testing for perfect reconstruction of the saf_stft (when configured for linear time-invariant (LTI) f...">test__saf_stft_LTI()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000023">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a3230cfab4bc9fa9f07d578e2c0c631b9" title="Testing for perfect reconstruction of the saf_stft (when configured for 50% window overlap)">test__saf_stft_50pc_overlap()</a>, <a class="el" href="saf__test_8c.html#af677fd8422840a0356616d0b16f9a175" title="Testing for perfect reconstruction of the saf_stft (when configured for linear time-invariant (LTI) f...">test__saf_stft_LTI()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">phSTFT</td><td>(&amp;) address of saf_stft handle </td></tr>
@@ -6259,7 +6259,7 @@ Example Usage</h2>
 
 <p>Creates an instance of SMB PitchShifter. </p>
 <dl class="section note"><dt>Note</dt><dd>Higher FFT sizes will permit more drastic pitch shifts. Increasing the Oversampling factor will increase latency, but also improve signal fidelity.</dd></dl>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000029">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a4dba8bcbcecd18f38a70aec40c136555" title="Testing that the smb_pitchShifter can shift the energy of input spectra by one octave down.">test__smb_pitchShifter()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000030">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a4dba8bcbcecd18f38a70aec40c136555" title="Testing that the smb_pitchShifter can shift the energy of input spectra by one octave down.">test__smb_pitchShifter()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">hSmb</td><td>(&amp;) address of smb pitchShifter handle </td></tr>
@@ -6462,7 +6462,7 @@ Example Usage</h2>
 </div><div class="memdoc">
 
 <p>Sort a vector of floating-point values into ascending/decending order (optionally returning the new indices as well) </p>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000031">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a43e61c5bffaddd04ae853ef6e544bbc6" title="Testing the sortf() function (sorting real floating point numbers)">test__sortf()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000032">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a43e61c5bffaddd04ae853ef6e544bbc6" title="Testing the sortf() function (sorting real floating point numbers)">test__sortf()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">in_vec</td><td>Vector to be sorted; len x 1 </td></tr>
@@ -6578,7 +6578,7 @@ Example Usage</h2>
 
 <p>Sort a vector of complex double floating-point values into ascending/ decending order. </p>
 <dl class="section note"><dt>Note</dt><dd>The values are first sorted based on their real parts. Values with identical real parts are then sorted based on their imaginary parts.</dd></dl>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000032">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#abda4080d0c2b7ee0496c7725f65fbebe" title="Testing the sortz() function (sorting complex double-floating point numbers)">test__sortz()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000033">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#abda4080d0c2b7ee0496c7725f65fbebe" title="Testing the sortz() function (sorting complex double-floating point numbers)">test__sortz()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">in_vec</td><td>Vector to be sorted; len x 1 </td></tr>
@@ -7021,7 +7021,7 @@ Example Usage</h2>
 
 <p>Finds the unique values (and their indices) of the input vector. </p>
 <dl class="section note"><dt>Note</dt><dd>this is equivalent to using "unique(vals, 'last')" in Matlab </dd></dl>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000028">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a596d9bd6c2a96c64f6600b1afc4c6fca" title="Testing that the unique_i() function operates correctly.">test__unique_i()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000029">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a596d9bd6c2a96c64f6600b1afc4c6fca" title="Testing that the unique_i() function operates correctly.">test__unique_i()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">input</td><td>Input vector; nInputs x 1 </td></tr>
@@ -10638,7 +10638,7 @@ Example Usage</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Oct 20 2020 14:51:14 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Thu Oct 22 2020 14:53:32 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

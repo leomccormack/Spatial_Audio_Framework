@@ -82,6 +82,9 @@ $(document).ready(function(){initNavTree('saf__tracker_8h.html',''); initResizab
 </div>
 
 <div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">saf_tracker.h File Reference<div class="ingroups"><a class="el" href="group___tracker.html">saf_tracker</a></div></div>  </div>
 </div><!--header-->
@@ -91,6 +94,28 @@ $(document).ready(function(){initNavTree('saf__tracker_8h.html',''); initResizab
 <a href="#details">More...</a></p>
 
 <p><a href="saf__tracker_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtracker3d__config.html">tracker3d_config</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">User parameters for tracker3d.  <a href="structtracker3d__config.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:gaf55e4f5dfcc90657444cc92059674970"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___tracker.html#gaf55e4f5dfcc90657444cc92059674970">tracker3d_create</a> (void **const phT3d, <a class="el" href="structtracker3d__config.html">tracker3d_config</a> tpars)</td></tr>
+<tr class="memdesc:gaf55e4f5dfcc90657444cc92059674970"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the mighty tracker3d.  <a href="group___tracker.html#gaf55e4f5dfcc90657444cc92059674970">More...</a><br /></td></tr>
+<tr class="separator:gaf55e4f5dfcc90657444cc92059674970"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae5896d9356c382e6e7c1d339c378d3ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___tracker.html#gae5896d9356c382e6e7c1d339c378d3ea">tracker3d_destroy</a> (void **const phT3d)</td></tr>
+<tr class="memdesc:gae5896d9356c382e6e7c1d339c378d3ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys an instance of the mighty tracker3d.  <a href="group___tracker.html#gae5896d9356c382e6e7c1d339c378d3ea">More...</a><br /></td></tr>
+<tr class="separator:gae5896d9356c382e6e7c1d339c378d3ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8b986b61b557a94d7097cfb6752da1dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___tracker.html#ga8b986b61b557a94d7097cfb6752da1dd">tracker3d_reset</a> (void *const hT3d)</td></tr>
+<tr class="memdesc:ga8b986b61b557a94d7097cfb6752da1dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets an instance of the mighty tracker3d.  <a href="group___tracker.html#ga8b986b61b557a94d7097cfb6752da1dd">More...</a><br /></td></tr>
+<tr class="separator:ga8b986b61b557a94d7097cfb6752da1dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga237407dc76fdd49c236ff34bc00b3d55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___tracker.html#ga237407dc76fdd49c236ff34bc00b3d55">tracker3d_step</a> (void *const hT3d, float *newObs_xyz, int nObs, float **target_xyz, int **target_IDs, int *nTargets)</td></tr>
+<tr class="memdesc:ga237407dc76fdd49c236ff34bc00b3d55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tracker time step to update &amp; predict current target locations and to parse new measurements/observations.  <a href="group___tracker.html#ga237407dc76fdd49c236ff34bc00b3d55">More...</a><br /></td></tr>
+<tr class="separator:ga237407dc76fdd49c236ff34bc00b3d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Particle filtering based tracker (<a class="el" href="saf_8h.html#a9160681450d951e3e3b0492a7db4da08" title="SAF Module: Tracker.">SAF_TRACKER_MODULE</a>) </p>
 <p>Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Sa"rkka" and Jouni Hartikainen (Copyright (C) 2003-2008): <a href="https://users.aalto.fi/~ssarkka/#softaudio">https://users.aalto.fi/~ssarkka/#softaudio</a></p>
@@ -106,7 +131,7 @@ $(document).ready(function(){initNavTree('saf__tracker_8h.html',''); initResizab
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_94f812345eda9da4101fb25ab77a5824.html">saf_tracker</a></li><li class="navelem"><a class="el" href="saf__tracker_8h.html">saf_tracker.h</a></li>
-    <li class="footer">Generated on Tue Oct 20 2020 14:51:14 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Thu Oct 22 2020 14:53:32 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>
