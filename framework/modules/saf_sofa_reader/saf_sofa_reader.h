@@ -40,6 +40,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
+
 /* ========================================================================== */
 /*                          Public Structures/Enums                           */
 /* ========================================================================== */
@@ -218,6 +220,8 @@ void loadSofaFile(/* Input Arguments */
                   int* N_hrir_dirs,
                   int* hrir_len,
                   int* hrir_fs );
+
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */
 
 
 #ifdef __cplusplus
