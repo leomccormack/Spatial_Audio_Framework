@@ -59,6 +59,8 @@ typedef struct _tracker3d_config{
                               *   particles required (but also the more
                               *   computationally expensive the tracker
                               *   becomes). */
+    int ARE_UNIT_VECTORS;    /**< 1: if the Cartesian coordinates are given
+                              *   as unit vectors, 0: if not */
     int maxNactiveTargets;   /**< Maximum number of simultaneous targets
                               *   permitted */
     float noiseLikelihood;   /**< Likelihood of an estimate being noise/clutter

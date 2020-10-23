@@ -416,6 +416,8 @@ void tracker3d_update
         for (j=0; j<S->nTargets; j++){
             /* Compute update result and likelihood for association to signal j */
             kf_update6(S->M[j].M, S->P[j].P, Y, pData->H, pData->R, M, P, &LH);
+            if(pData->tpars.ARE_UNIT_VECTORS)
+                cblas_sscal(3, 1.0f/L2_norm3(M), M, 1);
 
             /* Assocation to target j */
             count++;
@@ -439,6 +441,8 @@ void tracker3d_update
         if (S->nTargets < tpars->maxNactiveTargets){
             /* Initialization of new target */
             kf_update6(tpars->M0, tpars->P0, Y, pData->H, pData->R, M, P, &LH);
+            if(pData->tpars.ARE_UNIT_VECTORS)
+                cblas_sscal(3, 1.0f/L2_norm3(M), M, 1);
 
             /* find an untaken ID */
             j_new = 0;

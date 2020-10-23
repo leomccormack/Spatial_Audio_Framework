@@ -1272,6 +1272,7 @@ void test__tracker3d(void){
      * distribution is, the more particles required (but also, the more
      * computationally expensive the tracker becomes). */
     tpars.Np = 20;
+    tpars.ARE_UNIT_VECTORS = 1;
     tpars.maxNactiveTargets = 4; /* about 2 higher than expected is good */
     /* Likelihood of an estimate being noise/clutter */
     tpars.noiseLikelihood = 0.2f; /* between [0..1] */
