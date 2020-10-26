@@ -47,6 +47,18 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** Internal data structure for sphPWD */
+typedef struct _sphPWD_data {
+    int order, nSH, nDirs;
+    float_complex* grid_svecs;
+    float_complex* A_Cx; 
+    float* grid_dirs_xyz; 
+    float* pSpec;
+    float* P_minus_peak;
+    float* VM_mask;
+
+}sphPWD_data;
+
 /** Internal data structure for sphMUSIC */
 typedef struct _sphMUSIC_data {
     int order, nSH, nDirs;

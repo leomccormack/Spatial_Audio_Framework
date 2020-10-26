@@ -169,8 +169,9 @@ void tracker3d_step
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
     int i, kt, ob, maxIdx, nt;
-    float Neff;
+    float Neff, clutterP;
     int s[TRACKER3D_MAX_NUM_PARTICLES];
+    float clutter_xyz[3];
     MCS_data* S_max;
 #ifdef TRACKER_VERBOSE
     char c_str[256], tmp[256];
@@ -180,7 +181,7 @@ void tracker3d_step
     pData->incrementTime++;
  
     /* Loop over measurements */
-    if(newObs_xyz!=NULL){
+    if(nObs>0 && newObs_xyz!=NULL){
         for(ob=0; ob<nObs; ob++){
             /* Predict and update steps */
             for (kt = 0; kt < pData->incrementTime; kt++)
@@ -216,7 +217,7 @@ void tracker3d_step
                 }
             }
         }
-    }
+    } 
 
     /* Find most significant particle.. */
     maxIdx = tracker3d_getMaxParticleIdx(hT3d);

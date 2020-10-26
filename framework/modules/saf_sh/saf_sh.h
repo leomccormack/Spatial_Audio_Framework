@@ -655,6 +655,50 @@ void checkCondNumberSHTReal(/* Input arguments */
 /* ========================================================================== */
 
 /**
+ * Creates an instance of the spherical harmonic domain PWD implementation,
+ * which may be used for computing power-maps for visualisation/DoA estimation
+ * purposes
+ *
+ * @param[in] phPWD         (&) address of the sphPWD handle
+ * @param[in] order         Spherical harmonic input order
+ * @param[in] grid_dirs_deg Scanning grid directions; FLAT: nDirs x 2
+ * @param[in] nDirs         Number of scanning directions
+ */
+void sphPWD_create(void ** const phPWD,
+                   int order,
+                   float* grid_dirs_deg,
+                   int nDirs);
+
+/**
+ * Destroys an instance of the spherical harmonic domain PWD implementation
+ *
+ * @param[in] phPWD (&) address of the sphPWD handle
+ */
+void sphPWD_destroy(void ** const phPWD);
+
+/**
+ * Computes a power-map based on determining the energy of hyper-cardioid
+ * beamformers; optionally, also returning the grid indices corresponding to the
+ * N highest peaks (N=nSrcs)
+ *
+ * @param[in] hPWD      sphPWD handle
+ * @param[in] Cx        Signal covariance matrix; FLAT: nSH x nSH
+ * @param[in] nSrcs     Number of sources (or an estimate of the number of
+ *                      sources), for the optional peak finding (peak_inds)
+ * @param[in] P_map     Power-map (set to NULL if not wanted); nDirs x 1
+ * @param[in] peak_inds Indices corresponding to the "nSrcs" highest peaks in
+ *                      the power-map (set to NULL if not wanted);
+ *                      nSrcs x 1
+ */
+void sphPWD_compute(/* Input arguments */
+                    void* const hPWD,
+                    float_complex *Cx,
+                    int nSrcs,
+                    /* Output arguments */
+                    float* P_map,
+                    int* peak_inds);
+
+/**
  * Creates an instance of the spherical harmonic domain MUSIC implementation,
  * which may be used for computing pseudo-spectrums for visualisation/DoA
  * estimation purposes

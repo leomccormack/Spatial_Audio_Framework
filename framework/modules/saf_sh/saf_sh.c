@@ -949,6 +949,136 @@ void checkCondNumberSHTReal
 /*                     Localisation Functions in the  SHD                     */
 /* ========================================================================== */
 
+void sphPWD_create
+(
+    void ** const phPWD,
+    int order,
+    float* grid_dirs_deg,
+    int nDirs
+)
+{
+    *phPWD = malloc1d(sizeof(sphPWD_data));
+    sphPWD_data *h = (sphPWD_data*)(*phPWD);
+    int i, j;
+    float** grid_dirs_rad, **grid_svecs_tmp;
+
+    h->order = order;
+    h->nSH = ORDER2NSH(h->order);
+    h->nDirs = nDirs;
+
+    /* steering vectors for each grid direction  */
+    h->grid_svecs = malloc1d(h->nSH * (h->nDirs) * sizeof(float_complex));
+    grid_dirs_rad  = (float**)malloc2d(h->nDirs, 2, sizeof(float));
+    grid_svecs_tmp = (float**)malloc2d(h->nSH, h->nDirs, sizeof(float));
+    for(i=0; i<h->nDirs; i++){
+        grid_dirs_rad[i][0] = grid_dirs_deg[i*2]*SAF_PI/180.0f;
+        grid_dirs_rad[i][1] = SAF_PI/2.0f - grid_dirs_deg[i*2+1]*SAF_PI/180.0f;
+    }
+    getSHreal(h->order, FLATTEN2D(grid_dirs_rad), h->nDirs, FLATTEN2D(grid_svecs_tmp));
+    for(i=0; i<h->nSH; i++)
+        for(j=0; j<h->nDirs; j++)
+            h->grid_svecs[j*(h->nSH)+i] = cmplxf(grid_svecs_tmp[i][j], 0.0f);
+
+    /* store cartesian coords of scanning directions (for optional peak finding) */
+    h->grid_dirs_xyz = malloc1d(h->nDirs * 3 * sizeof(float));
+    unitSph2cart(grid_dirs_deg, h->nDirs, 1, h->grid_dirs_xyz);
+
+    /* for run-time */
+    h->A_Cx = malloc1d((h->nSH) * sizeof(float_complex));
+    h->pSpec = malloc1d(h->nDirs*sizeof(float));
+    h->P_minus_peak = malloc1d(h->nDirs*sizeof(float));
+    h->VM_mask = malloc1d(h->nDirs*sizeof(float));
+
+    /* clean-up */
+    free(grid_dirs_rad);
+    free(grid_svecs_tmp);
+}
+
+void sphPWD_destroy
+(
+    void ** const phPWD
+)
+{
+    sphPWD_data *h = (sphPWD_data*)(*phPWD);
+
+    if (h != NULL) {
+        free(h->grid_dirs_xyz);
+        free(h->grid_svecs);
+        free(h->A_Cx);
+        free(h->pSpec);
+        free(h->P_minus_peak);
+        free(h->VM_mask);
+        free(h);
+        h = NULL;
+        *phPWD = NULL;
+    }
+}
+
+void sphPWD_compute
+(
+    void* const hPWD,
+    float_complex* Cx,
+    int nSrcs,
+    float* P_map,
+    int* peak_inds
+)
+{
+    sphPWD_data *h = (sphPWD_data*)(hPWD);
+    int i, k, peak_idx;
+    float kappa, scale;
+    float VM_mean[3];
+    float_complex A_Cx_A;
+    const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f);
+
+    /* derive the power-map value for each grid direction */ 
+    for (i = 0; i < (h->nDirs); i++){
+        cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, 1, h->nSH, h->nSH, &calpha,
+                    &(h->grid_svecs[i*(h->nSH)]), 1,
+                    Cx, h->nSH, &cbeta,
+                    h->A_Cx, h->nSH);
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 1, 1, h->nSH, &calpha,
+                    h->A_Cx, h->nSH,
+                    &(h->grid_svecs[i*(h->nSH)]), 1, &cbeta,
+                    &A_Cx_A, 1);
+        h->pSpec[i] = crealf(A_Cx_A);
+    }
+
+    /* Output power-map */
+    if(P_map!=NULL)
+        cblas_scopy(h->nDirs, h->pSpec, 1, P_map, 1);
+
+    /* Peak-finding */
+    if(peak_inds!=NULL){
+        kappa = 50.0f;
+        scale = kappa/(2.0f*SAF_PI*expf(kappa)-expf(-kappa));
+        cblas_scopy(h->nDirs, h->pSpec, 1, h->P_minus_peak, 1);
+
+        /* Loop over the number of sources */
+        for(k=0; k<nSrcs; k++){
+            utility_simaxv(h->P_minus_peak, h->nDirs, &peak_idx);
+            peak_inds[k] = peak_idx;
+            if(k==nSrcs-1)
+                break;
+            VM_mean[0] = h->grid_dirs_xyz[peak_idx*3];
+            VM_mean[1] = h->grid_dirs_xyz[peak_idx*3+1];
+            VM_mean[2] = h->grid_dirs_xyz[peak_idx*3+2];
+
+            /* Apply mask for next iteration */
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, h->nDirs, 1, 3, 1.0f,
+                        h->grid_dirs_xyz, 3,
+                        (const float*)VM_mean, 3, 0.0f,
+                        h->VM_mask, 1);
+            cblas_sscal(h->nDirs, kappa, h->VM_mask, 1);
+            for(i=0; i<h->nDirs; i++)
+                h->VM_mask[i] = expf(h->VM_mask[i]);             /* VM distribution */
+            cblas_sscal(h->nDirs, scale, h->VM_mask, 1);
+            for(i=0; i<h->nDirs; i++)
+                h->VM_mask[i] = 1.0f/(0.00001f+(h->VM_mask[i])); /* inverse VM distribution */
+            utility_svvmul(h->P_minus_peak, h->VM_mask, h->nDirs, h->P_minus_peak);
+        }
+    }
+}
+
 void sphMUSIC_create
 (
     void ** const phMUSIC,
