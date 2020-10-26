@@ -1772,10 +1772,10 @@ void utility_cglslvt
     /* store locally - Hermitian */
     cblas_ccopy(dim*dim, A, 1, a, 1);
     for(i=0; i<dim*dim; i++)
-        a[i] = conj(a[i]);
+        a[i] = conjf(a[i]);
     cblas_ccopy(dim*nCol, B, 1, b, 1);
     for(i=0; i<dim*nCol; i++)
-        b[i] = conj(b[i]);
+        b[i] = conjf(b[i]);
 
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
 #ifdef VECLIB_USE_CLAPACK_INTERFACE
@@ -1796,7 +1796,7 @@ void utility_cglslvt
     else{
         cblas_ccopy(dim*nCol, b, 1, X, 1);
         for(i=0; i<dim*nCol; i++)
-            X[i] = conj(b[i]);
+            X[i] = conjf(b[i]);
     }
 
     free(IPIV);
