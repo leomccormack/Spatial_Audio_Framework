@@ -122,7 +122,7 @@ Optional modules are also included by **framework/include/saf.h** in a similar m
  *       SAF_ENABLE_SOFA_READER_MODULE
  *   and ensure that the netcdf library is also linked to your project. More
  *   information can be found in:
- *       dependencies/SOFA_READER_MODULE_DEPENDENCIES.md
+ *       docs/SOFA_READER_MODULE_DEPENDENCIES.md
  * ## Dependencies
  *   saf_utilities.h, saf_hrir.h, netcdf
  *
@@ -156,9 +156,9 @@ As for coding-style, there are no strict requirements, only suggestions. In gene
 ### Dependencies
 
 If the new module requires third-party dependencies, (which are not already included in the framework), then there are a few options to add them:
-* If the dependency is permissively licensed and is a relatively small library (comprising 1-3 source files), then these may be added to the module itself or, (if the dependency may be useful to other modules), it can be added to the **framework/resources** folder and inherited by the **saf_utilities** module.  
+* If the dependency is permissively licensed and is a relatively small library (comprising 1-3 source files), then these may be added to the module itself or, if the dependency may be useful to other modules, it can be added to the **framework/resources** folder and inherited by the **saf_utilities** module.  
 * If the dependency is **not** permissively licensed and is a relatively small library (comprising 1-3 source files), then these may be added to the module itself and included only internally by the module.
-* If the dependency is large, then it should be included via the **framework/include/saf_externals.h** header, and detailed instructions regarding how to build/link these libraries should be added to the **dependencies** folder. 
+* If the dependency is large, then it should be included via the **framework/include/saf_externals.h** header, and detailed instructions regarding how to build/link these libraries should be added to the **docs** folder. 
 
 Note: your module can only be added as a **core** module if it is free from large dependencies and comprises only permissively licensed code (see below).
 

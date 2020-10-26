@@ -104,7 +104,6 @@
                            SAF_VERSION_MINOR) "." MKSTRING(SAF_VERSION_PATCH) \
                            "" SAF_VERSION_SPECIAL
 
-
 /** The Spatial_Audio_Framework Version and License as a string */
 #define SAF_VERSION_LICENSE_STRING "SAF Version: " SAF_VERSION_STRING \
                                    ", License: "   SAF_LICENSE_STRING "\n"
