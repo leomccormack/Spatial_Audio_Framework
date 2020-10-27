@@ -38,6 +38,7 @@ var annotated_dup =
     [ "smb_pitchShift_data", "structsmb__pitch_shift__data.html", "structsmb__pitch_shift__data" ],
     [ "sphESPRIT_data", "structsph_e_s_p_r_i_t__data.html", "structsph_e_s_p_r_i_t__data" ],
     [ "sphMUSIC_data", "structsph_m_u_s_i_c__data.html", "structsph_m_u_s_i_c__data" ],
+    [ "sphPWD_data", "structsph_p_w_d__data.html", "structsph_p_w_d__data" ],
     [ "tracker3d_config", "structtracker3d__config.html", "structtracker3d__config" ],
     [ "tracker3d_data", "structtracker3d__data.html", "structtracker3d__data" ],
     [ "transientDucker_data", "structtransient_ducker__data.html", "structtransient_ducker__data" ],

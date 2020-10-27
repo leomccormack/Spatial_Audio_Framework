@@ -7,6 +7,7 @@ var group___tracker =
     [ "tracker3d_config", "structtracker3d__config.html", [
       [ "ALLOW_MULTI_DEATH", "structtracker3d__config.html#a52fe80014905bf4c316b6fc3e0f85154", null ],
       [ "alpha_death", "structtracker3d__config.html#aca5276e1336f121953d26145cabac963", null ],
+      [ "ARE_UNIT_VECTORS", "structtracker3d__config.html#ab9c6164485bd05c7c14d24834f50ac94", null ],
       [ "beta_death", "structtracker3d__config.html#abc49014c91368ac2e9162321131c6e13", null ],
       [ "cd", "structtracker3d__config.html#a204c55c44a76fb63a9e0ff246ec2e637", null ],
       [ "dt", "structtracker3d__config.html#a0504fc3d19d3fba10514c8cdd71b6f4d", null ],

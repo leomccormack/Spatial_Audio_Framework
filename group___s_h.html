@@ -202,6 +202,15 @@ Functions</h2></td></tr>
 <tr class="memitem:gadd7fa820cb691a376c70ca33e1c77743"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#gadd7fa820cb691a376c70ca33e1c77743">checkCondNumberSHTReal</a> (int order, float *dirs_rad, int nDirs, float *w, float *cond_N)</td></tr>
 <tr class="memdesc:gadd7fa820cb691a376c70ca33e1c77743"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the condition numbers for a least-squares SHT.  <a href="group___s_h.html#gadd7fa820cb691a376c70ca33e1c77743">More...</a><br /></td></tr>
 <tr class="separator:gadd7fa820cb691a376c70ca33e1c77743"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2bf0a400072210fcc5613918008c03ce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga2bf0a400072210fcc5613918008c03ce">sphPWD_create</a> (void **const phPWD, int order, float *grid_dirs_deg, int nDirs)</td></tr>
+<tr class="memdesc:ga2bf0a400072210fcc5613918008c03ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the spherical harmonic domain PWD implementation, which may be used for computing power-maps for visualisation/DoA estimation purposes.  <a href="group___s_h.html#ga2bf0a400072210fcc5613918008c03ce">More...</a><br /></td></tr>
+<tr class="separator:ga2bf0a400072210fcc5613918008c03ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga804a98cd6ebe9775cfe1447c9d2f24e8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga804a98cd6ebe9775cfe1447c9d2f24e8">sphPWD_destroy</a> (void **const phPWD)</td></tr>
+<tr class="memdesc:ga804a98cd6ebe9775cfe1447c9d2f24e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys an instance of the spherical harmonic domain PWD implementation.  <a href="group___s_h.html#ga804a98cd6ebe9775cfe1447c9d2f24e8">More...</a><br /></td></tr>
+<tr class="separator:ga804a98cd6ebe9775cfe1447c9d2f24e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8ff25c089ba08c1fa24588ac2c3847d6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga8ff25c089ba08c1fa24588ac2c3847d6">sphPWD_compute</a> (void *const hPWD, float_complex *Cx, int nSrcs, float *P_map, int *peak_inds)</td></tr>
+<tr class="memdesc:ga8ff25c089ba08c1fa24588ac2c3847d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a power-map based on determining the energy of hyper-cardioid beamformers; optionally, also returning the grid indices corresponding to the N highest peaks (N=nSrcs)  <a href="group___s_h.html#ga8ff25c089ba08c1fa24588ac2c3847d6">More...</a><br /></td></tr>
+<tr class="separator:ga8ff25c089ba08c1fa24588ac2c3847d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5795da6a1c9ddc4e8da449c3dfc5da7d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga5795da6a1c9ddc4e8da449c3dfc5da7d">sphMUSIC_create</a> (void **const phMUSIC, int order, float *grid_dirs_deg, int nDirs)</td></tr>
 <tr class="memdesc:ga5795da6a1c9ddc4e8da449c3dfc5da7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the spherical harmonic domain MUSIC implementation, which may be used for computing pseudo-spectrums for visualisation/DoA estimation purposes.  <a href="group___s_h.html#ga5795da6a1c9ddc4e8da449c3dfc5da7d">More...</a><br /></td></tr>
 <tr class="separator:ga5795da6a1c9ddc4e8da449c3dfc5da7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1042,7 +1051,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01637">1637</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01767">1767</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1134,7 +1143,7 @@ Functions</h2></td></tr>
 <dd>
 [2] Politis, A., Gamper, H. (2017). "Comparing Modelled And Measurement- Based Spherical Harmonic Encoding Filters For Spherical Microphone Arrays. In IEEE Workshop on Applications of Signal Processing to Audio and Acoustics (WASPAA). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02147">2147</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02277">2277</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1210,7 +1219,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Delikaris-Manias, S., Vilkamo, J., &amp; Pulkki, V. (2016). Signal- dependent spatial filtering based on weighted-orthogonal beamformers in the spherical harmonic domain. IEEE/ACM Transactions on Audio, Speech and Language Processing (TASLP), 24(9), 1507-1519. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01424">1424</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01554">1554</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1284,7 +1293,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01576">1576</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01706">1706</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1358,7 +1367,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01528">1528</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01658">1658</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1432,7 +1441,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01358">1358</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01488">1488</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1492,7 +1501,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01316">1316</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01446">1446</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1964,7 +1973,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02017">2017</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02147">2147</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2066,7 +2075,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02069">2069</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02199">2199</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2113,7 +2122,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Spatial aliasing limit estimate, in Hz </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01702">1702</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01832">1832</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2196,7 +2205,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Politis, A., Vilkamo, J., &amp; Pulkki, V. (2015). Sector-based parametric sound field reproduction in the spherical harmonic domain. IEEE Journal of Selected Topics in Signal Processing, 9(5), 852-866. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01712">1712</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01842">1842</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2277,7 +2286,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01940">1940</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02070">2070</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2321,7 +2330,7 @@ Functions</h2></td></tr>
 <dl class="section see"><dt>See also</dt><dd>[1] B. Jo and J.-W. Choi, "Parametric direction-of-arrival estimation
          with three recurrence relations of spherical harmonics," J. Acoust. Soc. Amer.,vol. 145, no. 1, pp. 480&ndash;488, Jan. 2019. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01083">1083</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01213">1213</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2349,7 +2358,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01155">1155</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01285">1285</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2404,7 +2413,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01202">1202</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01332">1332</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2471,7 +2480,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01740">1740</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01870">1870</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2532,7 +2541,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01019">1019</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01149">1149</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2587,7 +2596,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00952">952</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01082">1082</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2615,7 +2624,148 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00998">998</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01128">1128</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+
+</div>
+</div>
+<a id="ga8ff25c089ba08c1fa24588ac2c3847d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8ff25c089ba08c1fa24588ac2c3847d6">&#9670;&nbsp;</a></span>sphPWD_compute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sphPWD_compute </td>
+          <td>(</td>
+          <td class="paramtype">void *const&#160;</td>
+          <td class="paramname"><em>hPWD</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>Cx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nSrcs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>P_map</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>peak_inds</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes a power-map based on determining the energy of hyper-cardioid beamformers; optionally, also returning the grid indices corresponding to the N highest peaks (N=nSrcs) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hPWD</td><td>sphPWD handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Cx</td><td>Signal covariance matrix; FLAT: nSH x nSH </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nSrcs</td><td>Number of sources (or an estimate of the number of sources), for the optional peak finding (peak_inds) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">P_map</td><td>Power-map (set to NULL if not wanted); nDirs x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">peak_inds</td><td>Indices corresponding to the "nSrcs" highest peaks in the power-map (set to NULL if not wanted); nSrcs x 1 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01017">1017</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+
+</div>
+</div>
+<a id="ga2bf0a400072210fcc5613918008c03ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2bf0a400072210fcc5613918008c03ce">&#9670;&nbsp;</a></span>sphPWD_create()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sphPWD_create </td>
+          <td>(</td>
+          <td class="paramtype">void **const&#160;</td>
+          <td class="paramname"><em>phPWD</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>order</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>grid_dirs_deg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nDirs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates an instance of the spherical harmonic domain PWD implementation, which may be used for computing power-maps for visualisation/DoA estimation purposes. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">phPWD</td><td>(&amp;) address of the sphPWD handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Spherical harmonic input order </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">grid_dirs_deg</td><td>Scanning grid directions; FLAT: nDirs x 2 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nDirs</td><td>Number of scanning directions </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00952">952</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+
+</div>
+</div>
+<a id="ga804a98cd6ebe9775cfe1447c9d2f24e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga804a98cd6ebe9775cfe1447c9d2f24e8">&#9670;&nbsp;</a></span>sphPWD_destroy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sphPWD_destroy </td>
+          <td>(</td>
+          <td class="paramtype">void **const&#160;</td>
+          <td class="paramname"><em>phPWD</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Destroys an instance of the spherical harmonic domain PWD implementation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">phPWD</td><td>(&amp;) address of the sphPWD handle </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00997">997</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2683,7 +2833,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01873">1873</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02003">2003</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2744,7 +2894,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01824">1824</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01954">1954</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2878,7 +3028,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Oct 26 2020 18:11:44 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Tue Oct 27 2020 07:19:13 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

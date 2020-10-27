@@ -173,7 +173,7 @@ Adding a module to the framework</h2>
 <div class="line"><span class="comment"> *       SAF_ENABLE_SOFA_READER_MODULE</span></div>
 <div class="line"><span class="comment"> *   and ensure that the netcdf library is also linked to your project. More</span></div>
 <div class="line"><span class="comment"> *   information can be found in:</span></div>
-<div class="line"><span class="comment"> *       dependencies/SOFA_READER_MODULE_DEPENDENCIES.md</span></div>
+<div class="line"><span class="comment"> *       docs/SOFA_READER_MODULE_DEPENDENCIES.md</span></div>
 <div class="line"><span class="comment"> * ## Dependencies</span></div>
 <div class="line"><span class="comment"> *   saf_utilities.h, saf_hrir.h, netcdf</span></div>
 <div class="line"><span class="comment"> *</span></div>
@@ -204,10 +204,10 @@ Coding style</h2>
 <h2><a class="anchor" id="autotoc_md10"></a>
 Dependencies</h2>
 <p>If the new module requires third-party dependencies, (which are not already included in the framework), then there are a few options to add them:</p><ul>
-<li>If the dependency is permissively licensed and is a relatively small library (comprising 1-3 source files), then these may be added to the module itself or, (if the dependency may be useful to other modules), it can be added to the <b>framework/resources</b> folder and inherited by the <b>saf_utilities</b> module. <br  />
+<li>If the dependency is permissively licensed and is a relatively small library (comprising 1-3 source files), then these may be added to the module itself or, if the dependency may be useful to other modules, it can be added to the <b>framework/resources</b> folder and inherited by the <b>saf_utilities</b> module. <br  />
 </li>
 <li>If the dependency is <b>not</b> permissively licensed and is a relatively small library (comprising 1-3 source files), then these may be added to the module itself and included only internally by the module.</li>
-<li>If the dependency is large, then it should be included via the <b><a class="el" href="saf__externals_8h.html" title="Include header for SAF externals.">framework/include/saf_externals.h</a></b> header, and detailed instructions regarding how to build/link these libraries should be added to the <b>dependencies</b> folder.</li>
+<li>If the dependency is large, then it should be included via the <b><a class="el" href="saf__externals_8h.html" title="Include header for SAF externals.">framework/include/saf_externals.h</a></b> header, and detailed instructions regarding how to build/link these libraries should be added to the <b>docs</b> folder.</li>
 </ul>
 <p>Note: your module can only be added as a <b>core</b> module if it is free from large dependencies and comprises only permissively licensed code (see below).</p>
 <h2><a class="anchor" id="autotoc_md11"></a>
@@ -222,7 +222,7 @@ Licensing</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Oct 26 2020 18:11:44 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Tue Oct 27 2020 07:19:12 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

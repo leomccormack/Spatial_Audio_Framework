@@ -159,6 +159,15 @@ Functions</h2></td></tr>
 <tr class="memitem:gadd7fa820cb691a376c70ca33e1c77743"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#gadd7fa820cb691a376c70ca33e1c77743">checkCondNumberSHTReal</a> (int order, float *dirs_rad, int nDirs, float *w, float *cond_N)</td></tr>
 <tr class="memdesc:gadd7fa820cb691a376c70ca33e1c77743"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the condition numbers for a least-squares SHT.  <a href="group___s_h.html#gadd7fa820cb691a376c70ca33e1c77743">More...</a><br /></td></tr>
 <tr class="separator:gadd7fa820cb691a376c70ca33e1c77743"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2bf0a400072210fcc5613918008c03ce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga2bf0a400072210fcc5613918008c03ce">sphPWD_create</a> (void **const phPWD, int order, float *grid_dirs_deg, int nDirs)</td></tr>
+<tr class="memdesc:ga2bf0a400072210fcc5613918008c03ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the spherical harmonic domain PWD implementation, which may be used for computing power-maps for visualisation/DoA estimation purposes.  <a href="group___s_h.html#ga2bf0a400072210fcc5613918008c03ce">More...</a><br /></td></tr>
+<tr class="separator:ga2bf0a400072210fcc5613918008c03ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga804a98cd6ebe9775cfe1447c9d2f24e8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga804a98cd6ebe9775cfe1447c9d2f24e8">sphPWD_destroy</a> (void **const phPWD)</td></tr>
+<tr class="memdesc:ga804a98cd6ebe9775cfe1447c9d2f24e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys an instance of the spherical harmonic domain PWD implementation.  <a href="group___s_h.html#ga804a98cd6ebe9775cfe1447c9d2f24e8">More...</a><br /></td></tr>
+<tr class="separator:ga804a98cd6ebe9775cfe1447c9d2f24e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8ff25c089ba08c1fa24588ac2c3847d6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga8ff25c089ba08c1fa24588ac2c3847d6">sphPWD_compute</a> (void *const hPWD, float_complex *Cx, int nSrcs, float *P_map, int *peak_inds)</td></tr>
+<tr class="memdesc:ga8ff25c089ba08c1fa24588ac2c3847d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a power-map based on determining the energy of hyper-cardioid beamformers; optionally, also returning the grid indices corresponding to the N highest peaks (N=nSrcs)  <a href="group___s_h.html#ga8ff25c089ba08c1fa24588ac2c3847d6">More...</a><br /></td></tr>
+<tr class="separator:ga8ff25c089ba08c1fa24588ac2c3847d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5795da6a1c9ddc4e8da449c3dfc5da7d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga5795da6a1c9ddc4e8da449c3dfc5da7d">sphMUSIC_create</a> (void **const phMUSIC, int order, float *grid_dirs_deg, int nDirs)</td></tr>
 <tr class="memdesc:ga5795da6a1c9ddc4e8da449c3dfc5da7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the spherical harmonic domain MUSIC implementation, which may be used for computing pseudo-spectrums for visualisation/DoA estimation purposes.  <a href="group___s_h.html#ga5795da6a1c9ddc4e8da449c3dfc5da7d">More...</a><br /></td></tr>
 <tr class="separator:ga5795da6a1c9ddc4e8da449c3dfc5da7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -271,7 +280,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_a3800911dd78ba56a8d7acc21219fcab.html">saf_sh</a></li><li class="navelem"><a class="el" href="saf__sh_8c.html">saf_sh.c</a></li>
-    <li class="footer">Generated on Mon Oct 26 2020 18:11:43 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Tue Oct 27 2020 07:19:12 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

@@ -1826,10 +1826,10 @@ $(document).ready(function(){initNavTree('saf__utility__veclib_8c_source.html','
 <div class="line"><a name="l01772"></a><span class="lineno"> 1772</span>&#160;    <span class="comment">/* store locally - Hermitian */</span></div>
 <div class="line"><a name="l01773"></a><span class="lineno"> 1773</span>&#160;    cblas_ccopy(dim*dim, A, 1, a, 1);</div>
 <div class="line"><a name="l01774"></a><span class="lineno"> 1774</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;dim*dim; i++)</div>
-<div class="line"><a name="l01775"></a><span class="lineno"> 1775</span>&#160;        a[i] = conj(a[i]);</div>
+<div class="line"><a name="l01775"></a><span class="lineno"> 1775</span>&#160;        a[i] = conjf(a[i]);</div>
 <div class="line"><a name="l01776"></a><span class="lineno"> 1776</span>&#160;    cblas_ccopy(dim*nCol, B, 1, b, 1);</div>
 <div class="line"><a name="l01777"></a><span class="lineno"> 1777</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;dim*nCol; i++)</div>
-<div class="line"><a name="l01778"></a><span class="lineno"> 1778</span>&#160;        b[i] = conj(b[i]);</div>
+<div class="line"><a name="l01778"></a><span class="lineno"> 1778</span>&#160;        b[i] = conjf(b[i]);</div>
 <div class="line"><a name="l01779"></a><span class="lineno"> 1779</span>&#160; </div>
 <div class="line"><a name="l01780"></a><span class="lineno"> 1780</span>&#160;    <span class="comment">/* solve Ax = b for each column in b (b is replaced by the solution: x) */</span></div>
 <div class="line"><a name="l01781"></a><span class="lineno"> 1781</span>&#160;<span class="preprocessor">#ifdef VECLIB_USE_CLAPACK_INTERFACE</span></div>
@@ -1850,7 +1850,7 @@ $(document).ready(function(){initNavTree('saf__utility__veclib_8c_source.html','
 <div class="line"><a name="l01796"></a><span class="lineno"> 1796</span>&#160;    <span class="keywordflow">else</span>{</div>
 <div class="line"><a name="l01797"></a><span class="lineno"> 1797</span>&#160;        cblas_ccopy(dim*nCol, b, 1, X, 1);</div>
 <div class="line"><a name="l01798"></a><span class="lineno"> 1798</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;dim*nCol; i++)</div>
-<div class="line"><a name="l01799"></a><span class="lineno"> 1799</span>&#160;            X[i] = conj(b[i]);</div>
+<div class="line"><a name="l01799"></a><span class="lineno"> 1799</span>&#160;            X[i] = conjf(b[i]);</div>
 <div class="line"><a name="l01800"></a><span class="lineno"> 1800</span>&#160;    }</div>
 <div class="line"><a name="l01801"></a><span class="lineno"> 1801</span>&#160; </div>
 <div class="line"><a name="l01802"></a><span class="lineno"> 1802</span>&#160;    free(IPIV);</div>
@@ -2703,7 +2703,7 @@ $(document).ready(function(){initNavTree('saf__utility__veclib_8c_source.html','
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__veclib_8c.html">saf_utility_veclib.c</a></li>
-    <li class="footer">Generated on Mon Oct 26 2020 18:11:43 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Tue Oct 27 2020 07:19:12 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>
