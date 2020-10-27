@@ -169,9 +169,8 @@ void tracker3d_step
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
     int i, kt, ob, maxIdx, nt;
-    float Neff, clutterP;
+    float Neff;
     int s[TRACKER3D_MAX_NUM_PARTICLES];
-    float clutter_xyz[3];
     MCS_data* S_max;
 #ifdef TRACKER_VERBOSE
     char c_str[256], tmp[256];
