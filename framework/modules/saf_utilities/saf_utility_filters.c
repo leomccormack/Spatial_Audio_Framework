@@ -269,6 +269,49 @@ void flattenMinphase
     free(dt_min_f);
 }
 
+void interpolateFiltersH
+(
+    int inFFTsize,
+    int outFFTsize,
+    int nFilters,
+    float_complex* filters_in,
+    float_complex* filters_out
+)
+{
+    int i, j, nBins_in, nBins_out;
+    float* M_ifft, *M_ifft_fl;
+    float_complex* tmp;
+    void* hFFT_in, *hFFT_out;
+
+    nBins_in = inFFTsize/2 + 1;
+    nBins_out = outFFTsize/2 + 1;
+    saf_rfft_create(&hFFT_in, inFFTsize);
+    saf_rfft_create(&hFFT_out, outFFTsize);
+    M_ifft    = calloc1d(MAX(inFFTsize, outFFTsize), sizeof(float));
+    M_ifft_fl = calloc1d(MAX(inFFTsize, outFFTsize), sizeof(float));
+    tmp = malloc1d(MAX(nBins_in, nBins_out) * sizeof(float_complex));
+
+    for(i=0; i<nFilters; i++){
+        for(j=0; j<nBins_in; j++)
+            tmp[j] = filters_in[j*nFilters+i];
+        saf_rfft_backward(hFFT_in, tmp, M_ifft);
+
+        /* flip */
+        for(j=0; j<outFFTsize/2; j++){
+            M_ifft_fl[j] = M_ifft[inFFTsize/2+j];
+            M_ifft_fl[inFFTsize/2+j] = M_ifft[j];
+        }
+        saf_rfft_forward(hFFT_out, M_ifft_fl, tmp);
+        for(j=0; j<nBins_out; j++)
+            filters_out[j*nFilters+i] = tmp[j];
+    }
+
+    saf_rfft_destroy(&hFFT_in);
+    saf_rfft_destroy(&hFFT_out);
+    free(M_ifft);
+    free(M_ifft_fl);
+    free(tmp);
+}
 
 /* ========================================================================== */
 /*                             IIR Filter Functions                           */

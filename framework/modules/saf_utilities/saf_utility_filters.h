@@ -167,6 +167,23 @@ void getOctaveBandCutoffFreqs(float* centreFreqs,
 void flattenMinphase(float* x,
                      int len);
 
+/**
+ * Interpolate filters (w.r.t. frequency) in the frequency-domain
+ *
+ * @param[in]  inFFTsize   Input FFT size
+ * @param[in]  outFFTsize  Output FFT size
+ * @param[in]  nFilters    Number of filters to interpolate
+ * @param[in]  filters_in  Input filters; FLAT: inFFTsize x nFilters
+ * @param[out] filters_out Output filters; FLAT: outFFTsize x nFilters
+ */
+void interpolateFiltersH(/* Input arguments */
+                         int inFFTsize,
+                         int outFFTsize,
+                         int nFilters,
+                         float_complex* filters_in,
+                         /* Output arguments */
+                         float_complex* filters_out);
+
 
 /* ========================================================================== */
 /*                             IIR Filter Functions                           */
