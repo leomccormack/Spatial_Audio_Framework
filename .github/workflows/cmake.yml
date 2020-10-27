@@ -33,7 +33,7 @@ jobs:
       # We'll use this as our working directory for all subsequent commands
       run: cmake -E make_directory ${{runner.workspace}}/build
 
-    - name: Configure CMake
+    - name: Configure CMake (Linux)
       # Use a bash shell so we can use the same syntax for environment variable
       # access regardless of the host operating system
       shell: bash
@@ -45,6 +45,9 @@ jobs:
       run: |
         cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSAF_PERFORMANCE_LIB=SAF_USE_OPEN_BLAS_AND_LAPACKE -DSAF_ENABLE_TRACKER_MODULE=1 -DSAF_ENABLE_SOFA_READER_MODULE=1
 
+    - name: Configure CMake (macOS)
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
       if: ${{ contains( runner.os, 'macOS' ) }}
       run: |
         cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSAF_PERFORMANCE_LIB=SAF_USE_APPLE_ACCELERATE -DSAF_ENABLE_TRACKER_MODULE=1 -DSAF_ENABLE_SOFA_READER_MODULE=1
