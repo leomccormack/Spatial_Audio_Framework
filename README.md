@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4118286.svg)](https://doi.org/10.5281/zenodo.4118286) ![CMake Build](https://github.com/leomccormack/Spatial_Audio_Framework/workflows/CMake%20Build/badge.svg?branch=master) ![Doxygen Generate](https://github.com/leomccormack/Spatial_Audio_Framework/workflows/Doxygen%20Generate/badge.svg?branch=master)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4118286.svg)](https://doi.org/10.5281/zenodo.4118286)
 
 <img src="saf.svg"> 
 
@@ -74,6 +74,8 @@ The framework's master include header is then:
 
 ## Building with CMake 
 
+![CMake Build](https://github.com/leomccormack/Spatial_Audio_Framework/workflows/CMake%20Build/badge.svg?branch=master)
+
 The framework may also be included within an existing CMake workflow with simply:
 ```
 add_subdirectory(Spatial_Audio_Framework)
@@ -123,6 +125,8 @@ saf_test.exe  # To run the unit testing program
 ```
 
 ## Documentation
+
+![Doxygen Generate](https://github.com/leomccormack/Spatial_Audio_Framework/workflows/Doxygen%20Generate/badge.svg?branch=master)
 
 [Doxygen](http://www.doxygen.nl/index.html)-based documentation is generated via a GitHub Action everytime a commit is pushed to the master branch. The documentation is hosted [here](https://leomccormack.github.io/Spatial_Audio_Framework/).
 
