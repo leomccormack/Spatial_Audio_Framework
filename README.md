@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4118286.svg)](https://doi.org/10.5281/zenodo.4118286)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4118286.svg)](https://doi.org/10.5281/zenodo.4118286) ![CMake Build](https://github.com/leomccormack/Spatial_Audio_Framework/workflows/CMake%20Build/badge.svg?branch=master) ![Doxygen Generate](https://github.com/leomccormack/Spatial_Audio_Framework/workflows/Doxygen%20Generate/badge.svg?branch=master)
 
 <img src="saf.svg"> 
 
