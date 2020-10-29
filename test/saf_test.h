@@ -169,7 +169,9 @@ void test__saf_example_array2sh(void);
  * Testing the SAF rotator example (this may also serve as a tutorial on how
  * to use it) */
 void test__saf_example_rotator(void);
-
+/**
+ * Testing the truncation EQ */
+void test__truncationEQ(void);
 
 #ifdef __cplusplus
 } /* extern "C" */

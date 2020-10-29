@@ -1928,7 +1928,7 @@ void sphModalCoeffs
             maxN = MIN(maxN_tmp, maxN);
             hankel_hn2(order, kr, nBands, &maxN_tmp, hn2, hn2prime);
             maxN = MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
-            
+
             /* modal coefficients for rigid spherical array: 4*pi*1i^n * (jn-(jnprime./hn2prime).*hn2); */
             for(i=0; i<nBands; i++){
                 for(n=0; n<maxN+1; n++){

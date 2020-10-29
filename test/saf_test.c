@@ -110,6 +110,7 @@ int main_test(void) {
     RUN_TEST(test__sphMUSIC);
     RUN_TEST(test__sphESPRIT);
     RUN_TEST(test__sphModalCoeffs);
+    RUN_TEST(test__truncationEQ);
 #if SAF_ENABLE_EXAMPLES_TESTS == 1
     RUN_TEST(test__saf_example_ambi_bin);
     RUN_TEST(test__saf_example_ambi_dec);
@@ -2417,6 +2418,52 @@ void test__sphModalCoeffs(void){
     free(b_N_card);
     free(b_N_omni);
     free(b_N_omni_test);
+}
+
+void test__truncationEQ(void)
+{
+    double* kr, *w_n, *gain, *gainDB;
+
+    /* Config */
+    const int order_truncated = 5;
+    const int order_target = 42;
+    const double soft_threshold = 12.0;
+    const double fs = 48000;
+    const int nBands = 128;
+    kr = malloc1d(nBands * sizeof(double));
+    const double r = 0.085;
+    const double c = 343.;
+    w_n = malloc1d(order_truncated * sizeof(double));
+
+    /* Prep */
+    double* freqVector = malloc1d(nBands*sizeof(double));
+    for (int k=0; k<nBands; k++)
+    {
+        freqVector[k] = (double)k * fs/(2.0*((double)nBands-1));
+        kr[k] = (double) (2*SAF_PI / c * freqVector[k] * r);
+    }
+    // just truncation, no tapering
+    for (int i=0; i<order_truncated; i++)
+        w_n[i] = 1.0;
+
+
+    gain = malloc1d(nBands * sizeof(double));
+    truncation_EQ(w_n, order_truncated, order_target, kr, nBands, soft_threshold, gain);
+
+    /* Asserting that gain within 0 and 12 (+6db soft clip) */
+    gainDB = malloc1d(nBands * sizeof(double));
+    for (int idxBand=0; idxBand<nBands; idxBand++){
+        gainDB[idxBand] = 20.0*log10(gain[idxBand]);
+        TEST_ASSERT_TRUE(gainDB[idxBand] > 0-2.0e-6);
+        TEST_ASSERT_TRUE(gainDB[idxBand] < soft_threshold + 6.0 + 0-2.0e-6);
+    }
+
+    /* clean-up */
+    free(kr);
+    free(w_n);
+    free(freqVector);
+    free(gain);
+    free(gainDB);
 }
 
 #if SAF_ENABLE_EXAMPLES_TESTS == 1
