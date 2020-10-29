@@ -96,6 +96,8 @@ int main_test(void) {
 #ifdef SAF_ENABLE_TRACKER_MODULE
     RUN_TEST(test__tracker3d);
 #endif
+    RUN_TEST(test__truncationEQ);
+
     RUN_TEST(test__formulate_M_and_Cr);
     RUN_TEST(test__formulate_M_and_Cr_cmplx);
     RUN_TEST(test__getLoudspeakerDecoderMtx);
@@ -2417,6 +2419,36 @@ void test__sphModalCoeffs(void){
     free(b_N_card);
     free(b_N_omni);
     free(b_N_omni_test);
+}
+
+void test__truncationEQ(void)
+{   
+    int order_truncated = 5;
+    int order_target = 25;
+    int fs = 48000;
+    int nBands = 133;
+    double* kr = malloc(nBands * sizeof(double));
+    double r = 0.0085;
+    double c = 343.;
+    double* w_n = malloc1d(order_truncated * sizeof(double));
+
+    float* freqVector = malloc1d(nBands*sizeof(float));
+    for (int k=0; k<nBands; k++)
+    {
+        freqVector[k] = (float) (k * fs/(2*(nBands-1)));
+        //printf("f: %4.2f", freqVector[k]);
+        kr[k] = (double) (2*SAF_PI / c * freqVector[k] * r);
+    }
+
+
+    memset(w_n, 1., order_truncated * sizeof(double));
+    double* gain = malloc1d(nBands * sizeof(double));
+        
+    printf("Yaaaaasss1\n");
+
+    truncation_EQ(w_n, order_truncated, order_target, kr, nBands, 0., gain);
+
+    // free TODO
 }
 
 #if SAF_ENABLE_EXAMPLES_TESTS == 1

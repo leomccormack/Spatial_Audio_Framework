@@ -1217,6 +1217,16 @@ void evaluateSHTfilters(/* Input arguments */
                         float* lSH);
 
 
+void truncation_EQ(/* Input arguments */
+                   double* w_n,
+                   int order_truncated,
+                   int order_target,
+                   double* kr,
+                   int nBands,
+                   float soft_threshold,
+                   /* Output arguments */
+                   double* gain);
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */

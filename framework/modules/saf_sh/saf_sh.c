@@ -2351,3 +2351,56 @@ void evaluateSHTfilters
     free(EigV);
 }
 
+
+void truncation_EQ(/* Input arguments */
+                   double* w_n,
+                   int order_truncated,
+                   int order_target,
+                   double* kr,
+                   int nBands,
+                   float soft_threshold,
+                   /* Output arguments */
+                   double* gain)
+{
+
+    double_complex* b_n_target = malloc1d(nBands*(order_target+1) * sizeof(double));
+    double_complex* b_n_truncated = malloc1d(nBands*(order_truncated+1) * sizeof(double));
+    double* p_target = calloc1d(nBands, sizeof(double));
+    double* p_truncated = calloc1d(nBands, sizeof(double));
+    // double* gain = malloc1d(nBands * sizeof(double));
+
+    ARRAY_CONSTRUCTION_TYPES SCATTERER = ARRAY_CONSTRUCTION_RIGID;
+    
+
+    sphModalCoeffs(order_target, kr, nBands, SCATTERER, 0., b_n_target);
+    sphModalCoeffs(order_truncated, kr, nBands, SCATTERER, 0., b_n_truncated);
+    //printf("Yaaaaasss\n");
+
+    for (int itOrder=0; itOrder<=order_target; itOrder++)
+    {
+        for (int itBand=0; itBand<nBands; itBand++)
+        {
+            p_target[itBand] += (2*itOrder + 1) * 
+                                 pow(cabs(b_n_target[itOrder*nBands + itBand]), 2);
+        }
+    }
+    for (int itOrder=0; itOrder<=order_truncated; itOrder++)
+    {
+        for (int itBand=0; itBand<nBands; itBand++)
+        {
+            p_truncated[itBand] += w_n[itOrder] * 
+                                     (2*itOrder + 1) * 
+                                      pow(cabs(b_n_truncated[itOrder*nBands + itBand]), 2);
+        }
+    }
+
+    for (int itBand=0; itBand < nBands; itBand++)
+    {
+        p_target[itBand] = 1/(4*SAF_PI) * sqrt(p_target[itBand]);
+        p_truncated[itBand] = 1/(4*SAF_PI) * sqrt(p_truncated[itBand]);
+        gain[itBand] = p_target[itBand] / p_truncated[itBand];
+    }
+
+    // free TODO
+}
+
