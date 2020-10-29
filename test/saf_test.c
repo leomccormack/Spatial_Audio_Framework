@@ -2423,9 +2423,12 @@ void test__sphModalCoeffs(void){
 }
 
 void test__truncationEQ(void)
-{   
-    int order_truncated = 5;
-    int order_target = 42;
+{
+    double* gain, *gainDB;
+
+    /* Config */
+    const int order_truncated = 5;
+    const int order_target = 42;
     double soft_threshold = 12.0;
     double fs = 48000;
     int nBands = 128;
@@ -2434,6 +2437,7 @@ void test__truncationEQ(void)
     double c = 343.;
     double* w_n = malloc1d(order_truncated * sizeof(double));
 
+    /* Prep */
     double* freqVector = malloc1d(nBands*sizeof(double));
     for (int k=0; k<nBands; k++)
     {
@@ -2444,10 +2448,12 @@ void test__truncationEQ(void)
     for (int i=0; i<order_truncated; i++)
         w_n[i] = 1.0;
 
-    double* gain = malloc1d(nBands * sizeof(double));
+
+    gain = malloc1d(nBands * sizeof(double));
     truncation_EQ(w_n, order_truncated, order_target, kr, nBands, soft_threshold, gain);
 
-    double* gainDB = malloc1d(nBands * sizeof(double));
+    /* Asserting that... */
+    gainDB = malloc1d(nBands * sizeof(double));
     for (int idxBand=0; idxBand<nBands; idxBand++){
         gainDB[idxBand] = 20.0*log10(gain[idxBand]);
         TEST_ASSERT_TRUE(gainDB[idxBand] > 0-2.0e-6);

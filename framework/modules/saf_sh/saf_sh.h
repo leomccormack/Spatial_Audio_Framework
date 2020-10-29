@@ -1216,7 +1216,14 @@ void evaluateSHTfilters(/* Input arguments */
                         float* cSH,
                         float* lSH);
 
-
+/**
+ *
+ * blah, like in [1]
+ *
+ * @param[in] w_n sdfdasfudaio
+ *
+ * @see [1] Hold, C., Gamper, H., Pulkki, V., Raghuvanshi, N., & Tashev, I. J. (2019). Improving Binaural Ambisonics Decoding by Spherical Harmonics Domain Tapering and Coloration Compensation. ICASSP, IEEE International Conference on Acoustics, Speech and Signal Processing - Proceedings.
+ */
 void truncation_EQ(/* Input arguments */
                    double* w_n,
                    int order_truncated,

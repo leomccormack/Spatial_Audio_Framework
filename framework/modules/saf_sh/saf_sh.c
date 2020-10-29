@@ -2352,15 +2352,16 @@ void evaluateSHTfilters
 }
 
 
-void truncation_EQ(/* Input arguments */
-                   double* w_n,
-                   int order_truncated,
-                   int order_target,
-                   double* kr,
-                   int nBands,
-                   float soft_threshold,
-                   /* Output arguments */
-                   double* gain)
+void truncation_EQ
+(
+    double* w_n,
+    int order_truncated,
+    int order_target,
+    double* kr,
+    int nBands,
+    float soft_threshold,
+    double* gain
+)
 {
     // Details: Hold, C., Gamper, H., Pulkki, V., Raghuvanshi, N., & Tashev, I. J. (2019). Improving Binaural Ambisonics Decoding by Spherical Harmonics Domain Tapering and Coloration Compensation. ICASSP, IEEE International Conference on Acoustics, Speech and Signal Processing - Proceedings.
     double_complex* b_n_target = calloc1d(nBands*(order_target+1), sizeof(double_complex));
