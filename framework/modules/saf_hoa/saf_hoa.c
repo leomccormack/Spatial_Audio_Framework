@@ -298,6 +298,59 @@ void getMaxREweights
     free(ppm);
 }
 
+void truncation_EQ
+(
+    double* w_n,
+    int order_truncated,
+    int order_target,
+    double* kr,
+    int nBands,
+    float soft_threshold,
+    double* gain
+)
+{
+    // Details: Hold, C., Gamper, H., Pulkki, V., Raghuvanshi, N., & Tashev, I. J. (2019). Improving Binaural Ambisonics Decoding by Spherical Harmonics Domain Tapering and Coloration Compensation. ICASSP, IEEE International Conference on Acoustics, Speech and Signal Processing - Proceedings.
+    double_complex* b_n_target = calloc1d(nBands*(order_target+1), sizeof(double_complex));
+    double_complex* b_n_truncated = calloc1d(nBands*(order_truncated+1), sizeof(double_complex));
+    double* p_target = calloc1d(nBands, sizeof(double));
+    double* p_truncated = calloc1d(nBands, sizeof(double));
+
+    sphModalCoeffs(order_target, kr, nBands, ARRAY_CONSTRUCTION_RIGID, 0., b_n_target);
+    sphModalCoeffs(order_truncated, kr, nBands, ARRAY_CONSTRUCTION_RIGID, 0., b_n_truncated);
+
+    // p_full
+    for (int idxBand=0; idxBand<nBands; idxBand++)
+        for (int idxOrder=0; idxOrder<=order_target; idxOrder++)
+            p_target[idxBand] += (2.0*idxOrder + 1.0) * pow(cabs(b_n_target[idxBand*(order_target+1) + idxOrder]), 2.0);
+    // p_truncated from (tapered) modal weighting
+    for (int idxBand=0; idxBand<nBands; idxBand++)
+        for (int idxOrder=0; idxOrder<=order_truncated; idxOrder++)
+            p_truncated[idxBand] += w_n[idxOrder] * (2.0*idxOrder + 1.0) * pow(cabs(b_n_truncated[idxBand*(order_truncated+1) + idxOrder]), 2.0);
+
+    // inverse ratio is filter gain
+    for (int idxBand=0; idxBand < nBands; idxBand++) {
+        p_target[idxBand] = 1.0/(4.0*SAF_PI) * sqrt(p_target[idxBand]);
+        p_truncated[idxBand] = 1.0/(4.0*SAF_PI) * sqrt(p_truncated[idxBand]);
+        gain[idxBand] = p_target[idxBand] / (p_truncated[idxBand]+2.23e-13);
+    }
+
+
+    // soft clip to limit maximum gain
+    double clip_factor = pow(10.0, soft_threshold/20.0);
+    for (int idxBand=0; idxBand<nBands; idxBand++){
+        gain[idxBand] = gain[idxBand]/clip_factor;  // norm by threshold
+        if (gain[idxBand] > 1.0)
+            gain[idxBand] = 1.0 + tanh(gain[idxBand] - 1.0);  // soft clip to 2
+        gain[idxBand] = gain[idxBand] * clip_factor;  // de-norm
+    }
+
+    /* clean-up */
+    free(b_n_target);
+    free(b_n_truncated);
+    free(p_target);
+    free(p_truncated);
+}
+
 void getLoudspeakerDecoderMtx
 (
     float* ls_dirs_deg,
