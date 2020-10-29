@@ -71,6 +71,7 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
+    RUN_TEST(test__truncationEQ);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -96,7 +97,7 @@ int main_test(void) {
 #ifdef SAF_ENABLE_TRACKER_MODULE
     RUN_TEST(test__tracker3d);
 #endif
-    RUN_TEST(test__truncationEQ);
+
 
     RUN_TEST(test__formulate_M_and_Cr);
     RUN_TEST(test__formulate_M_and_Cr_cmplx);
@@ -2426,8 +2427,8 @@ void test__truncationEQ(void)
     int order_truncated = 5;
     int order_target = 25;
     int fs = 48000;
-    int nBands = 133;
-    double* kr = malloc(nBands * sizeof(double));
+    int nBands = 128;
+    double* kr = malloc1d(nBands * sizeof(double));
     double r = 0.0085;
     double c = 343.;
     double* w_n = malloc1d(order_truncated * sizeof(double));
@@ -2438,10 +2439,13 @@ void test__truncationEQ(void)
         freqVector[k] = (float) (k * fs/(2*(nBands-1)));
         //printf("f: %4.2f", freqVector[k]);
         kr[k] = (double) (2*SAF_PI / c * freqVector[k] * r);
+        //printf("f: %4.2f", kr[k]);
     }
 
+    //memset(w_n, 0, order_truncated * sizeof(double));
+    for(int i=0; i<order_truncated; i++)
+        w_n[i] = 1.0;
 
-    memset(w_n, 1., order_truncated * sizeof(double));
     double* gain = malloc1d(nBands * sizeof(double));
         
     printf("Yaaaaasss1\n");
