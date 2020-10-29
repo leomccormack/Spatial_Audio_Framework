@@ -2424,18 +2424,18 @@ void test__sphModalCoeffs(void){
 
 void test__truncationEQ(void)
 {
-    double* gain, *gainDB;
+    double* kr, *w_n, *gain, *gainDB;
 
     /* Config */
     const int order_truncated = 5;
     const int order_target = 42;
-    double soft_threshold = 12.0;
-    double fs = 48000;
-    int nBands = 128;
-    double* kr = malloc1d(nBands * sizeof(double));
-    double r = 0.085;
-    double c = 343.;
-    double* w_n = malloc1d(order_truncated * sizeof(double));
+    const double soft_threshold = 12.0;
+    const double fs = 48000;
+    const int nBands = 128;
+    kr = malloc1d(nBands * sizeof(double));
+    const double r = 0.085;
+    const double c = 343.;
+    w_n = malloc1d(order_truncated * sizeof(double));
 
     /* Prep */
     double* freqVector = malloc1d(nBands*sizeof(double));
@@ -2444,7 +2444,7 @@ void test__truncationEQ(void)
         freqVector[k] = (double)k * fs/(2.0*((double)nBands-1));
         kr[k] = (double) (2*SAF_PI / c * freqVector[k] * r);
     }
-
+    // just truncation, no tapering
     for (int i=0; i<order_truncated; i++)
         w_n[i] = 1.0;
 
@@ -2452,7 +2452,7 @@ void test__truncationEQ(void)
     gain = malloc1d(nBands * sizeof(double));
     truncation_EQ(w_n, order_truncated, order_target, kr, nBands, soft_threshold, gain);
 
-    /* Asserting that... */
+    /* Asserting that gain within 0 and 12 (+6db soft clip) */
     gainDB = malloc1d(nBands * sizeof(double));
     for (int idxBand=0; idxBand<nBands; idxBand++){
         gainDB[idxBand] = 20.0*log10(gain[idxBand]);

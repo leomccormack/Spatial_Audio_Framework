@@ -1217,12 +1217,24 @@ void evaluateSHTfilters(/* Input arguments */
                         float* lSH);
 
 /**
+ * Filter that equalizes the high frequency roll-off due to SH truncation and
+ * tapering. Details can be found in [1].
  *
- * blah, like in [1]
+ * @param[in]  w_n              (order_truncated + 1) Tapering weights;
+ *                              Pass all ones for truncation only (rect. window)
+ * @param[in]  order_truncated  Input SH order
+ * @param[in]  order_target     Target SH order, e.g. 38
+ * @param[in]  kr               (nBands) kr vector, r e.g. 0.085 m
+ * @param[in]  nBands           Number of frequency bins
+ * @param[in]  soft_threshold   Threshold in dB, soft limiting above to +6dB
  *
- * @param[in] w_n sdfdasfudaio
+ * @param[out] gain             (nBands) Gain factor for compensation filter
  *
- * @see [1] Hold, C., Gamper, H., Pulkki, V., Raghuvanshi, N., & Tashev, I. J. (2019). Improving Binaural Ambisonics Decoding by Spherical Harmonics Domain Tapering and Coloration Compensation. ICASSP, IEEE International Conference on Acoustics, Speech and Signal Processing - Proceedings.
+ * @see [1] Hold, C., Gamper, H., Pulkki, V., Raghuvanshi, N., & Tashev, I. J. 
+ *          (2019). Improving Binaural Ambisonics Decoding by Spherical 
+ *          Harmonics Domain Tapering and Coloration Compensation. ICASSP, 
+ *          IEEE International Conference on Acoustics, Speech and Signal 
+ *          Processing - Proceedings.
  */
 void truncation_EQ(/* Input arguments */
                    double* w_n,
