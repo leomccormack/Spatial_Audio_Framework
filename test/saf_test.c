@@ -2425,34 +2425,41 @@ void test__sphModalCoeffs(void){
 void test__truncationEQ(void)
 {   
     int order_truncated = 5;
-    int order_target = 25;
-    int fs = 48000;
+    int order_target = 42;
+    double soft_threshold = 12.0;
+    double fs = 48000;
     int nBands = 128;
     double* kr = malloc1d(nBands * sizeof(double));
-    double r = 0.0085;
+    double r = 0.085;
     double c = 343.;
     double* w_n = malloc1d(order_truncated * sizeof(double));
 
-    float* freqVector = malloc1d(nBands*sizeof(float));
+    double* freqVector = malloc1d(nBands*sizeof(double));
     for (int k=0; k<nBands; k++)
     {
-        freqVector[k] = (float) (k * fs/(2*(nBands-1)));
-        //printf("f: %4.2f", freqVector[k]);
+        freqVector[k] = (double)k * fs/(2.0*((double)nBands-1));
         kr[k] = (double) (2*SAF_PI / c * freqVector[k] * r);
-        //printf("f: %4.2f", kr[k]);
     }
 
-    //memset(w_n, 0, order_truncated * sizeof(double));
-    for(int i=0; i<order_truncated; i++)
+    for (int i=0; i<order_truncated; i++)
         w_n[i] = 1.0;
 
     double* gain = malloc1d(nBands * sizeof(double));
-        
-    printf("Yaaaaasss1\n");
+    truncation_EQ(w_n, order_truncated, order_target, kr, nBands, soft_threshold, gain);
 
-    truncation_EQ(w_n, order_truncated, order_target, kr, nBands, 0., gain);
+    double* gainDB = malloc1d(nBands * sizeof(double));
+    for (int idxBand=0; idxBand<nBands; idxBand++){
+        gainDB[idxBand] = 20.0*log10(gain[idxBand]);
+        TEST_ASSERT_TRUE(gainDB[idxBand] > 0-2.0e-6);
+        TEST_ASSERT_TRUE(gainDB[idxBand] < soft_threshold + 6.0 + 0-2.0e-6);
+    }
 
-    // free TODO
+    /* clean-up */
+    free(kr);
+    free(w_n);
+    free(freqVector);
+    free(gain);
+    free(gainDB);
 }
 
 #if SAF_ENABLE_EXAMPLES_TESTS == 1
