@@ -120,6 +120,10 @@ void array2sh_destroy
         free(pData->bN_inv_dB);
         
         free(pData->progressBarText);
+
+        free(pData->bN);
+        free(pData->cSH);
+        free(pData->lSH);
         
         free(pData);
         pData = NULL;

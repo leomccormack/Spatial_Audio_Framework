@@ -613,6 +613,7 @@ void getBinDecoder_MAGLS
     
     free(W);
     free(Y_na);
+    free(Yna_W);
     free(Yna_W_Yna);
     free(Yna_W_H);
     free(B_magls);
