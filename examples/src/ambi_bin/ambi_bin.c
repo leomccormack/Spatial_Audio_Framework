@@ -295,6 +295,49 @@ void ambi_bin_initCodec
     /* Apply Phase Warping */
     if(pData->enablePhaseWarping){
         // COMING SOON
+        // Actually not, replacing it for now with truncation EQ, WIP!
+        double *kr, *w_n, *tap_eq_gain;
+        int order_truncated = pData->order;
+        const int order_target = 42;
+        const double soft_threshold = 12.0;
+        const int numBands = HYBRID_BANDS;
+        const double r = 0.085;
+        const double c = 343.;
+        
+        kr = malloc1d(numBands * sizeof(double));
+        w_n = calloc1d((order_truncated+1), sizeof(double));
+        tap_eq_gain = calloc1d(numBands, sizeof(double));
+
+        /* Prep */
+        for (int k=0; k<numBands; k++)
+        {
+            kr[k] = (double) (2*SAF_PI / c * (double)pData->freqVector[k] * r);
+        }
+        
+        if (pData->enableMaxRE) {
+            float *maxRECoeffs = malloc1d((order_truncated+1) * sizeof(float));
+            beamWeightsMaxEV(order_truncated, maxRECoeffs);
+            for (int idx_n=0; idx_n<order_truncated+1; idx_n++) {
+                w_n[idx_n] = (double)maxRECoeffs[idx_n];
+            }
+        }
+        else {
+            // just truncation, no tapering
+            for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
+                w_n[idx_n] = 1.0;
+        }
+
+        truncation_EQ(w_n, order_truncated, order_target, kr, numBands, soft_threshold, tap_eq_gain);
+
+        // apply to decoding matrix
+        for (int idxBand=0; idxBand<numBands; idxBand++){
+            for (int idxSH=0; idxSH<pData->nSH; idxSH++){
+                // left ear
+                decMtx[idxBand*NUM_EARS*nSH+0*nSH+idxSH] *= tap_eq_gain[idxBand];
+                // right ear
+                decMtx[idxBand*NUM_EARS*nSH+1*nSH+idxSH] *= tap_eq_gain[idxBand];
+            }
+        }
     }
     
     /* replace current decoder */
