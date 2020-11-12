@@ -2433,7 +2433,7 @@ void test__truncationEQ(void)
     kr = malloc1d(nBands * sizeof(double));
     const double r = 0.085;
     const double c = 343.;
-    w_n = malloc1d(order_truncated * sizeof(double));
+    w_n = calloc1d((order_truncated+1), sizeof(double));
 
     /* Prep */
     double* freqVector = malloc1d(nBands*sizeof(double));
