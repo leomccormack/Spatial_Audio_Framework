@@ -1798,10 +1798,6 @@ void test__getLoudspeakerDecoderMtx(void){
         for(j=0; j<nLS; j++)
             for(k=0; k<nSH; k++)
                 TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, decMtx_SAD[j][k], decMtx_EPAD[j][k]);
-        
-        /* Scale to unit energy instead of amplitude */
-        //scale = sqrtf((float)nLS / (float)nSH);
-        //utility_svsmul(FLATTEN2D(decMtx_EPAD), &scale, nLS*nSH, FLATTEN2D(decMtx_AllRAD));
 
         /* Compute output for PWs in direction of Loudspeakers: */
         Ysrc = (float**)malloc2d(nSH, nLS, sizeof(float));
