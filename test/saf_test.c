@@ -1758,8 +1758,9 @@ void test__formulate_M_and_Cr_cmplx(void){
 
 void test__getLoudspeakerDecoderMtx(void){
     int i, j, k, nLS, order, nSH;
-    float* ls_dirs_deg;
-    float** decMtx_SAD, **decMtx_MMD, **decMtx_EPAD, **decMtx_AllRAD;
+    float scale;
+    float* ls_dirs_deg, *amp, *en;
+    float** ls_dirs_rad, **decMtx_SAD, **decMtx_MMD, **decMtx_EPAD, **decMtx_AllRAD, **Ysrc, **LSout;
 
     /* Config */
     const float acceptedTolerance = 0.00001f;
@@ -1774,6 +1775,11 @@ void test__getLoudspeakerDecoderMtx(void){
         /* Pull an appropriate t-design for this order */
         ls_dirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[2 * order-1];
         nLS = __Tdesign_nPoints_per_degree[2 * order-1];
+        ls_dirs_rad = (float**)malloc2d(nLS, 2, sizeof(float));
+        for(j=0; j<nLS; j++){
+            ls_dirs_rad[j][0] = ls_dirs_deg[j*2] * M_PI/180.0f;
+            ls_dirs_rad[j][1] = M_PI/2.0f - ls_dirs_deg[j*2+1] * M_PI/180.0f; /* elevation->inclination */
+        }
 
         /* Compute decoders */
         decMtx_SAD = (float**)malloc2d(nLS, nSH, sizeof(float));
@@ -1792,12 +1798,48 @@ void test__getLoudspeakerDecoderMtx(void){
         for(j=0; j<nLS; j++)
             for(k=0; k<nSH; k++)
                 TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, decMtx_SAD[j][k], decMtx_EPAD[j][k]);
+        
+        /* Scale to unit energy instead of amplitude */
+        //scale = sqrtf((float)nLS / (float)nSH);
+        //utility_svsmul(FLATTEN2D(decMtx_EPAD), &scale, nLS*nSH, FLATTEN2D(decMtx_AllRAD));
+
+        /* Compute output for PWs in direction of Loudspeakers: */
+        Ysrc = (float**)malloc2d(nSH, nLS, sizeof(float));
+        getSHreal(order, FLATTEN2D(ls_dirs_rad), nLS, FLATTEN2D(Ysrc));
+        LSout = (float**)malloc2d(nLS, nLS, sizeof(float));
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLS, nLS, nSH, 1.0f,
+                    FLATTEN2D(decMtx_EPAD), nSH,
+                    FLATTEN2D(Ysrc), nLS, 0.0f,
+                    FLATTEN2D(LSout), nLS);
+        
+        /* Compute amplitude and energy for each source */
+        amp = (float*)calloc1d(nLS, sizeof(float));
+        en = (float*)calloc1d(nLS, sizeof(float));
+        for (int idxSrc=0; idxSrc<nLS; idxSrc++)
+        {
+            for (int idxLS=0; idxLS<nLS; idxLS++)
+            {
+                amp[idxSrc] += LSout[idxLS][idxSrc];
+                en[idxSrc] += LSout[idxLS][idxSrc] * LSout[idxLS][idxSrc];
+            }
+        }
+        /* Check output amplitude and Energy */
+        for (int idxSrc=0; idxSrc<nLS; idxSrc++)
+        {
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, amp[idxSrc], 1.0);
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, en[idxSrc], (float)nSH / (float)nLS);
+        }
 
         /* Clean-up */
         free(decMtx_SAD);
         free(decMtx_MMD);
         free(decMtx_EPAD);
         free(decMtx_AllRAD);
+        free(ls_dirs_rad);
+        free(amp);
+        free(en);
+        free(Ysrc);
+        free(LSout);
     }
 }
 
