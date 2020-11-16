@@ -216,9 +216,9 @@ void ambi_bin_setEnableMaxRE(void* const hAmbi, int newState);
 void ambi_bin_setEnableDiffuseMatching(void* const hAmbi, int newState);
 
 /**
- * Not implemented yet! Sets a flag to enable/disable (1 or 0) phase warping
+ * Sets a flag to enable/disable (1 or 0) truncation EQ
  */
-void ambi_bin_setEnablePhaseWarping(void* const hAmbi, int newState);
+void ambi_bin_setEnableTruncationEQ(void* const hAmbi, int newState);
 
 /**
  * Sets the flag to enable/disable (1 or 0) sound-field rotation
@@ -363,10 +363,10 @@ int ambi_bin_getEnableMaxRE(void* const hAmbi);
 int ambi_bin_getEnableDiffuseMatching(void* const hAmbi);
 
 /**
- * Returns the flag value which dictates whether the phase warping is currently
+ * Returns the flag value which dictates whether the truncation EQ is currently
  * enabled ('0' disabled, '1' enabled).
  */
-int ambi_bin_getEnablePhaseWarping(void* const hAmbi);
+int ambi_bin_getEnableTruncationEQ(void* const hAmbi);
 
 /**
  * Returns the flag value which dictates whether to enable/disable sound-field
