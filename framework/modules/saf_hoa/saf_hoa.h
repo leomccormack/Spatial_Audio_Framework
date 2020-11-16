@@ -364,7 +364,7 @@ void getMaxREweights(/* Input Arguments */
  * @param[in]  order_target     Target SH order, e.g. 38
  * @param[in]  kr               (nBands) kr vector, r e.g. 0.085 m
  * @param[in]  nBands           Number of frequency bins
- * @param[in]  soft_threshold   Threshold in dB, soft limiting above to +6dB
+ * @param[in]  softThreshold   Threshold in dB, soft limiting above to +6dB
  *
  * @param[out] gain             (nBands) Gain factor for compensation filter
  *
@@ -374,13 +374,13 @@ void getMaxREweights(/* Input Arguments */
  *          IEEE International Conference on Acoustics, Speech and Signal 
  *          Processing - Proceedings.
  */
-void truncation_EQ(/* Input arguments */
+void truncationEQ(/* Input arguments */
                    double* w_n,
                    int order_truncated,
                    int order_target,
                    double* kr,
                    int nBands,
-                   float soft_threshold,
+                   float softThreshold,
                    /* Output arguments */
                    double* gain);
 

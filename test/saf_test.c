@@ -2486,7 +2486,7 @@ void test__truncationEQ(void)
 
 
     gain = malloc1d(nBands * sizeof(double));
-    truncation_EQ(w_n, order_truncated, order_target, kr, nBands, soft_threshold, gain);
+    truncationEQ(w_n, order_truncated, order_target, kr, nBands, softThreshold, gain);
 
     /* Asserting that gain within 0 and 12 (+6db soft clip) */
     gainDB = malloc1d(nBands * sizeof(double));

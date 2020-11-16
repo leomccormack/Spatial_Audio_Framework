@@ -295,17 +295,17 @@ void ambi_bin_initCodec
     /* Apply Truncation EQ */
     if(pData->enableTruncationEQ){
         // Equalizing diffuse field to 42nd order equivalent.
-        double *kr, *w_n, *tap_eq_gain;
+        double *kr, *w_n, *eqGain;
         int order_truncated = pData->order;
         const int order_target = 42;
-        const double soft_threshold = 12.0;  // results in +18 dB max
+        const double softThreshold = 12.0;  // results in +18 dB max
         const double r = 0.085;  // spherical scatterer radius
         const int numBands = HYBRID_BANDS;
         const double c = 343.;
         
         kr = malloc1d(numBands * sizeof(double));
         w_n = calloc1d((order_truncated+1), sizeof(double));
-        tap_eq_gain = calloc1d(numBands, sizeof(double));
+        eqGain = calloc1d(numBands, sizeof(double));
 
         /* Prep */
         for (int k=0; k<numBands; k++)
@@ -319,6 +319,7 @@ void ambi_bin_initCodec
             for (int idx_n=0; idx_n<order_truncated+1; idx_n++) {
                 w_n[idx_n] = (double)maxRECoeffs[idx_n];
             }
+            free(maxRECoeffs);
         }
         else {
             // just truncation, no tapering
@@ -326,20 +327,20 @@ void ambi_bin_initCodec
                 w_n[idx_n] = 1.0;
         }
 
-        truncation_EQ(w_n, order_truncated, order_target, kr, numBands, soft_threshold, tap_eq_gain);
+        truncationEQ(w_n, order_truncated, order_target, kr, numBands, softThreshold, eqGain);
 
         // apply to decoding matrix
         for (int idxBand=0; idxBand<numBands; idxBand++){
             for (int idxSH=0; idxSH<pData->nSH; idxSH++){
                 // left ear
-                decMtx[idxBand*NUM_EARS*nSH+0*nSH+idxSH] *= tap_eq_gain[idxBand];
+                decMtx[idxBand*NUM_EARS*nSH+0*nSH+idxSH] *= eqGain[idxBand];
                 // right ear
-                decMtx[idxBand*NUM_EARS*nSH+1*nSH+idxSH] *= tap_eq_gain[idxBand];
+                decMtx[idxBand*NUM_EARS*nSH+1*nSH+idxSH] *= eqGain[idxBand];
             }
         }
         free(kr);
         free(w_n);
-        free(tap_eq_gain);
+        free(eqGain);
     }
     
     /* replace current decoder */

@@ -298,14 +298,14 @@ void getMaxREweights
     free(ppm);
 }
 
-void truncation_EQ
+void truncationEQ
 (
     double* w_n,
     int order_truncated,
     int order_target,
     double* kr,
     int nBands,
-    float soft_threshold,
+    float softThreshold,
     double* gain
 )
 {
@@ -336,12 +336,12 @@ void truncation_EQ
 
 
     // soft clip to limit maximum gain
-    double clip_factor = pow(10.0, soft_threshold/20.0);
+    double clipFactor = pow(10.0, softThreshold/20.0);
     for (int idxBand=0; idxBand<nBands; idxBand++){
-        gain[idxBand] = gain[idxBand]/clip_factor;  // norm by threshold
+        gain[idxBand] = gain[idxBand]/clipFactor;  // norm by threshold
         if (gain[idxBand] > 1.0)
             gain[idxBand] = 1.0 + tanh(gain[idxBand] - 1.0);  // soft clip to 2
-        gain[idxBand] = gain[idxBand] * clip_factor;  // de-norm
+        gain[idxBand] = gain[idxBand] * clipFactor;  // de-norm
     }
 
     /* clean-up */
