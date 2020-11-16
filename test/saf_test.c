@@ -2463,9 +2463,10 @@ void test__truncationEQ(void)
     double* kr, *w_n, *gain, *gainDB;
 
     /* Config */
-    const int order_truncated = 5;
+    const int order_truncated = 4;
     const int order_target = 42;
-    const double soft_threshold = 12.0;
+    const double softThreshold = 12.0;
+    const int enableMaxRE = 1;
     const double fs = 48000;
     const int nBands = 128;
     kr = malloc1d(nBands * sizeof(double));
@@ -2480,20 +2481,37 @@ void test__truncationEQ(void)
         freqVector[k] = (double)k * fs/(2.0*((double)nBands-1));
         kr[k] = (double) (2*SAF_PI / c * freqVector[k] * r);
     }
-    // just truncation, no tapering
-    for (int i=0; i<order_truncated; i++)
-        w_n[i] = 1.0;
-
+    if (enableMaxRE) {
+        // maxRE as order weighting
+        float *maxRECoeffs = malloc1d((order_truncated+1) * sizeof(float));
+        beamWeightsMaxEV(order_truncated, maxRECoeffs);
+        for (int idx_n=0; idx_n<order_truncated+1; idx_n++) {
+            w_n[idx_n] = (double)maxRECoeffs[idx_n];
+            w_n[idx_n] /= sqrt((double)(2*idx_n+1) / (4.0*SAF_PId));
+        }
+        double w_0 = w_n[0];
+        for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
+            w_n[idx_n] /= w_0;
+        free(maxRECoeffs);
+    }
+    else {
+        // just truncation, no tapering
+        for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
+            w_n[idx_n] = 1.0;
+    }
 
     gain = malloc1d(nBands * sizeof(double));
     truncationEQ(w_n, order_truncated, order_target, kr, nBands, softThreshold, gain);
+
+    /* Asserting gain offset */
+    TEST_ASSERT_TRUE(gain[0]-1.0 < 2.0e-6);
 
     /* Asserting that gain within 0 and 12 (+6db soft clip) */
     gainDB = malloc1d(nBands * sizeof(double));
     for (int idxBand=0; idxBand<nBands; idxBand++){
         gainDB[idxBand] = 20.0*log10(gain[idxBand]);
         TEST_ASSERT_TRUE(gainDB[idxBand] > 0-2.0e-6);
-        TEST_ASSERT_TRUE(gainDB[idxBand] < soft_threshold + 6.0 + 0-2.0e-6);
+        TEST_ASSERT_TRUE(gainDB[idxBand] < softThreshold + 6.0 + 0-2.0e-6);
     }
 
     /* clean-up */
