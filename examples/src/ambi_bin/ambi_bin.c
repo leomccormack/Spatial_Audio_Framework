@@ -65,7 +65,7 @@ void ambi_bin_create
     pData->norm = NORM_SN3D;
     pData->enableMaxRE = 1;
     pData->enableDiffuseMatching = 0;
-    pData->enablePhaseWarping = 0;
+    pData->enableTruncationEQ = 0;
     pData->enableRotation = 0;
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
@@ -292,16 +292,15 @@ void ambi_bin_initCodec
     }
     free(weights);
     
-    /* Apply Phase Warping */
-    if(pData->enablePhaseWarping){
-        // COMING SOON
-        // Actually not, replacing it for now with truncation EQ, WIP!
+    /* Apply Truncation EQ */
+    if(pData->enableTruncationEQ){
+        // Equalizing diffuse field to 42nd order equivalent.
         double *kr, *w_n, *tap_eq_gain;
         int order_truncated = pData->order;
         const int order_target = 42;
-        const double soft_threshold = 12.0;
+        const double soft_threshold = 12.0;  // results in +18 dB max
+        const double r = 0.085;  // spherical scatterer radius
         const int numBands = HYBRID_BANDS;
-        const double r = 0.085;
         const double c = 343.;
         
         kr = malloc1d(numBands * sizeof(double));
@@ -338,6 +337,9 @@ void ambi_bin_initCodec
                 decMtx[idxBand*NUM_EARS*nSH+1*nSH+idxSH] *= tap_eq_gain[idxBand];
             }
         }
+        free(kr);
+        free(w_n);
+        free(tap_eq_gain);
     }
     
     /* replace current decoder */
@@ -552,11 +554,11 @@ void ambi_bin_setEnableDiffuseMatching(void* const hAmbi, int newState)
     }
 }
 
-void ambi_bin_setEnablePhaseWarping(void* const hAmbi, int newState)
+void ambi_bin_setEnableTruncationEQ(void* const hAmbi, int newState)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    if(pData->enablePhaseWarping != newState){
-        pData->enablePhaseWarping = newState;
+    if(pData->enableTruncationEQ != newState){
+        pData->enableTruncationEQ = newState;
         ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     }
 }
@@ -699,10 +701,10 @@ int ambi_bin_getEnableDiffuseMatching(void* const hAmbi)
     return pData->enableDiffuseMatching;
 }
 
-int ambi_bin_getEnablePhaseWarping(void* const hAmbi)
+int ambi_bin_getEnableTruncationEQ(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    return pData->enablePhaseWarping;
+    return pData->enableTruncationEQ;
 }
 
 int ambi_bin_getNumEars()
