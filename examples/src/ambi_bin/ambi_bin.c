@@ -314,11 +314,16 @@ void ambi_bin_initCodec
         }
         
         if (pData->enableMaxRE) {
+            // maxRE as order weighting
             float *maxRECoeffs = malloc1d((order_truncated+1) * sizeof(float));
             beamWeightsMaxEV(order_truncated, maxRECoeffs);
             for (int idx_n=0; idx_n<order_truncated+1; idx_n++) {
                 w_n[idx_n] = (double)maxRECoeffs[idx_n];
+                w_n[idx_n] /= sqrt((double)(2*idx_n+1) / (4.0*SAF_PId));
             }
+            double w_0 = w_n[0];
+            for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
+                w_n[idx_n] /= w_0;
             free(maxRECoeffs);
         }
         else {
