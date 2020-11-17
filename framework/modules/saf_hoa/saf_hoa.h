@@ -375,14 +375,14 @@ void getMaxREweights(/* Input Arguments */
  *          Processing - Proceedings.
  */
 void truncationEQ(/* Input arguments */
-                   double* w_n,
+                   float* w_n,
                    int order_truncated,
                    int order_target,
                    double* kr,
                    int nBands,
                    float softThreshold,
                    /* Output arguments */
-                   double* gain);
+                   float* gain);
 
 /**
  * Computes an ambisonic decoding matrix of a specific order, for a given

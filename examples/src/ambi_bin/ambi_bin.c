@@ -297,22 +297,23 @@ void ambi_bin_initCodec
     /* Apply Truncation EQ */
     if(pData->enableTruncationEQ){
         // Equalizing diffuse field to 42nd order equivalent.
-        double *kr, *w_n, *eqGain;
+        double *kr;
+        float *w_n, *eqGain;
         const int order_truncated = order;
         const int order_target = 42;
-        const double softThreshold = 12.0;  // results in +18 dB max
+        const float softThreshold = 12.0;  // results in +18 dB max
         const double r = 0.085;  // spherical scatterer radius
         const int numBands = HYBRID_BANDS;
         const double c = 343.;
         
         kr = malloc1d(numBands * sizeof(double));
-        w_n = calloc1d((order_truncated+1), sizeof(double));
-        eqGain = calloc1d(numBands, sizeof(double));
+        w_n = calloc1d((order_truncated+1), sizeof(float));
+        eqGain = calloc1d(numBands, sizeof(float));
 
         /* Prep */
         for (int k=0; k<numBands; k++)
         {
-            kr[k] = (double) (2*SAF_PI / c * (double)pData->freqVector[k] * r);
+            kr[k] = 2.0*SAF_PId / c * (double)pData->freqVector[k] * r;
         }
         
         if (pData->enableMaxRE) {
@@ -320,10 +321,10 @@ void ambi_bin_initCodec
             float *maxRECoeffs = malloc1d((order_truncated+1) * sizeof(float));
             beamWeightsMaxEV(order_truncated, maxRECoeffs);
             for (int idx_n=0; idx_n<order_truncated+1; idx_n++) {
-                w_n[idx_n] = (double)maxRECoeffs[idx_n];
-                w_n[idx_n] /= sqrt((double)(2*idx_n+1) / (4.0*SAF_PId));
+                w_n[idx_n] = maxRECoeffs[idx_n];
+                w_n[idx_n] /= sqrtf((float)(2*idx_n+1) / (4.0*SAF_PI));
             }
-            double w_0 = w_n[0];
+            float w_0 = w_n[0];
             for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
                 w_n[idx_n] /= w_0;
             free(maxRECoeffs);
@@ -331,7 +332,7 @@ void ambi_bin_initCodec
         else {
             // just truncation, no tapering
             for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
-                w_n[idx_n] = 1.0;
+                w_n[idx_n] = 1.0f;
         }
 
         truncationEQ(w_n, order_truncated, order_target, kr, numBands, softThreshold, eqGain);
@@ -340,9 +341,9 @@ void ambi_bin_initCodec
         for (int idxBand=0; idxBand<numBands; idxBand++){
             for (int idxSH=0; idxSH<pData->nSH; idxSH++){
                 // left ear
-                decMtx[idxBand*NUM_EARS*nSH+0*nSH+idxSH] *= eqGain[idxBand];
+                decMtx[idxBand*NUM_EARS*nSH+0*nSH+idxSH] *= (float_complex)eqGain[idxBand];
                 // right ear
-                decMtx[idxBand*NUM_EARS*nSH+1*nSH+idxSH] *= eqGain[idxBand];
+                decMtx[idxBand*NUM_EARS*nSH+1*nSH+idxSH] *= (float_complex)eqGain[idxBand];
             }
         }
         free(kr);

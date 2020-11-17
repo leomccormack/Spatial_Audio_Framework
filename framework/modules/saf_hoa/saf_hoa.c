@@ -300,13 +300,13 @@ void getMaxREweights
 
 void truncationEQ
 (
-    double* w_n,
+    float* w_n,
     int order_truncated,
     int order_target,
     double* kr,
     int nBands,
     float softThreshold,
-    double* gain
+    float* gain
 )
 {
     // Details: Hold, C., Gamper, H., Pulkki, V., Raghuvanshi, N., & Tashev, I. J. (2019). Improving Binaural Ambisonics Decoding by Spherical Harmonics Domain Tapering and Coloration Compensation. ICASSP, IEEE International Conference on Acoustics, Speech and Signal Processing - Proceedings.
@@ -331,16 +331,16 @@ void truncationEQ
     for (int idxBand=0; idxBand < nBands; idxBand++) {
         p_target[idxBand] = 1.0/(4.0*SAF_PI) * sqrt(p_target[idxBand]);
         p_truncated[idxBand] = 1.0/(4.0*SAF_PI) * sqrt(p_truncated[idxBand]);
-        gain[idxBand] = p_target[idxBand] / (p_truncated[idxBand]+2.23e-13);
+        gain[idxBand] = (float)(p_target[idxBand] / (p_truncated[idxBand]+2.23e-13));
     }
 
 
     // soft clip to limit maximum gain
-    double clipFactor = pow(10.0, softThreshold/20.0);
+    float clipFactor = powf(10.0f, softThreshold/20.0f);
     for (int idxBand=0; idxBand<nBands; idxBand++){
         gain[idxBand] = gain[idxBand]/clipFactor;  // norm by threshold
-        if (gain[idxBand] > 1.0)
-            gain[idxBand] = 1.0 + tanh(gain[idxBand] - 1.0);  // soft clip to 2
+        if (gain[idxBand] > 1.0f)
+            gain[idxBand] = 1.0f + tanhf(gain[idxBand] - 1.0f);  // soft clip to 2
         gain[idxBand] = gain[idxBand] * clipFactor;  // de-norm
     }
 

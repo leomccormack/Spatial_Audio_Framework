@@ -2460,36 +2460,38 @@ void test__sphModalCoeffs(void){
 
 void test__truncationEQ(void)
 {
-    double* kr, *w_n, *gain, *gainDB;
+    double *kr;
+    float *w_n, *gain, *gainDB;
 
     /* Config */
     const int order_truncated = 4;
     const int order_target = 42;
-    const double softThreshold = 12.0;
+    const float softThreshold = 12.0f;
     const int enableMaxRE = 1;
     const double fs = 48000;
     const int nBands = 128;
     kr = malloc1d(nBands * sizeof(double));
     const double r = 0.085;
     const double c = 343.;
-    w_n = calloc1d((order_truncated+1), sizeof(double));
+    w_n = calloc1d((order_truncated+1), sizeof(float));
+    gain = malloc1d(nBands * sizeof(float));
 
     /* Prep */
     double* freqVector = malloc1d(nBands*sizeof(double));
     for (int k=0; k<nBands; k++)
     {
         freqVector[k] = (double)k * fs/(2.0*((double)nBands-1));
-        kr[k] = (double) (2*SAF_PI / c * freqVector[k] * r);
+        kr[k] = 2.0*SAF_PId / c * freqVector[k] * r;
     }
     if (enableMaxRE) {
         // maxRE as order weighting
         float *maxRECoeffs = malloc1d((order_truncated+1) * sizeof(float));
         beamWeightsMaxEV(order_truncated, maxRECoeffs);
         for (int idx_n=0; idx_n<order_truncated+1; idx_n++) {
-            w_n[idx_n] = (double)maxRECoeffs[idx_n];
-            w_n[idx_n] /= sqrt((double)(2*idx_n+1) / (4.0*SAF_PId));
+            w_n[idx_n] = maxRECoeffs[idx_n];
+            w_n[idx_n] /= sqrtf((float)(2*idx_n+1) / (4.0*SAF_PI));
         }
-        double w_0 = w_n[0];
+        float w_0 = w_n[0];
         for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
             w_n[idx_n] /= w_0;
         free(maxRECoeffs);
@@ -2497,10 +2499,9 @@ void test__truncationEQ(void)
     else {
         // just truncation, no tapering
         for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
-            w_n[idx_n] = 1.0;
+            w_n[idx_n] = 1.0f;
     }
 
-    gain = malloc1d(nBands * sizeof(double));
     truncationEQ(w_n, order_truncated, order_target, kr, nBands, softThreshold, gain);
 
     /* Asserting gain offset */
