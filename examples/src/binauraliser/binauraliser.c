@@ -533,9 +533,9 @@ int binauraliser_getUseDefaultHRIRsflag(void* const hBin)
     return pData->useDefaultHRIRsFLAG;
 }
 
-char* binauraliser_getSofaFilePath(void* const hCmp)
+char* binauraliser_getSofaFilePath(void* const hBin)
 {
-    binauraliser_data *pData = (binauraliser_data*)(hCmp);
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
     if(pData->sofa_filepath!=NULL)
         return pData->sofa_filepath;
     else
