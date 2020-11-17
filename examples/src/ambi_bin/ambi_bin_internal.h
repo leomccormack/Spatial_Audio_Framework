@@ -103,6 +103,9 @@ typedef struct _ambi_bin_codecPars
     /* hrtf filterbank coefficients */
     float* itds_s;          /**< interaural-time differences for each HRIR (in seconds); N_hrirs x 1 */
     float_complex* hrtf_fb; /**< HRTF filterbank coeffs; FLAT: nBands x nCH x N_hrirs */
+
+    /* integration weights */
+    float* weights;         /**< grid integration weights of hrirs; N_hrirs x 1 */
     
 }ambi_bin_codecPars;
     

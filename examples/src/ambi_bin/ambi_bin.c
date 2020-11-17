@@ -98,6 +98,7 @@ void ambi_bin_create
     pars->hrir_dirs_deg = NULL;
     pars->itds_s = NULL;
     pars->hrtf_fb = NULL;
+    pars->weights = NULL;
     
     /* flags */
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
@@ -130,6 +131,7 @@ void ambi_bin_destroy
         free(pData->binframeTF);
 
         pars = pData->pars;
+        free(pars->weights);
         free(pars->hrtf_fb);
         free(pars->itds_s);
         free(pars->hrirs);
@@ -242,22 +244,23 @@ void ambi_bin_initCodec
         estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pars->itds_s);
  
         /* convert hrirs to filterbank coefficients */
-        pData->progressBar0_1 = 0.9f;
+        pData->progressBar0_1 = 0.6f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
         HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 1, pars->hrtf_fb);
         if(pData->enableDiffEQ)
             diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
+        
+        /* get integration weights */
+        pData->progressBar0_1 = 0.9f;
+        if(pars->N_hrir_dirs<=3600){
+            pars->weights = realloc1d(pars->weights, pars->N_hrir_dirs*sizeof(float));
+            getVoronoiWeights(pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, pars->weights);
+        }
+        else
+            pars->weights = NULL;
+
         pData->reinit_hrtfsFLAG = 0;
     }
-
-    /* get integration weights */
-    float* weights;
-    if(pars->N_hrir_dirs<1800){
-        weights = malloc1d(pars->N_hrir_dirs*sizeof(float));
-        getVoronoiWeights(pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, weights);
-    }
-    else
-        weights = NULL;
     
     /* get new decoder */
     strcpy(pData->progressBarText,"Computing Decoder");
@@ -268,31 +271,30 @@ void ambi_bin_initCodec
         default:
         case DECODING_METHOD_LS:
             getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
-                                      BINAURAL_DECODER_LS, order, pData->freqVector, pars->itds_s, weights,
+                                      BINAURAL_DECODER_LS, order, pData->freqVector, pars->itds_s, pars->weights,
                                       pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
             break;
         case DECODING_METHOD_LSDIFFEQ:
             getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
-                                      BINAURAL_DECODER_LSDIFFEQ, order, pData->freqVector, pars->itds_s, weights,
+                                      BINAURAL_DECODER_LSDIFFEQ, order, pData->freqVector, pars->itds_s, pars->weights,
                                       pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
             break;
         case DECODING_METHOD_SPR:
             getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
-                                      BINAURAL_DECODER_SPR, order, pData->freqVector, pars->itds_s, weights,
+                                      BINAURAL_DECODER_SPR, order, pData->freqVector, pars->itds_s, pars->weights,
                                       pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
             break;
         case DECODING_METHOD_TA:
             getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
-                                      BINAURAL_DECODER_TA, order, pData->freqVector, pars->itds_s, weights,
+                                      BINAURAL_DECODER_TA, order, pData->freqVector, pars->itds_s, pars->weights,
                                       pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
             break;
         case DECODING_METHOD_MAGLS:
             getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
-                                      BINAURAL_DECODER_MAGLS, order, pData->freqVector, pars->itds_s, weights,
+                                      BINAURAL_DECODER_MAGLS, order, pData->freqVector, pars->itds_s, pars->weights,
                                       pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
             break;
     }
-    free(weights);
     
     /* Apply Truncation EQ */
     if(pData->enableTruncationEQ){
