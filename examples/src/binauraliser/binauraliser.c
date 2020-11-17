@@ -322,8 +322,7 @@ void binauraliser_setUseDefaultHRIRsflag(void* const hBin, int newState)
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     if((!pData->useDefaultHRIRsFLAG) && (newState)){
         pData->useDefaultHRIRsFLAG = newState;
-        pData->reInitHRTFsAndGainTables = 1;
-        binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
+        binauraliser_refreshSettings(hBin);  // re-init and re-calc
     }
 }
 
@@ -334,8 +333,7 @@ void binauraliser_setSofaFilePath(void* const hBin, const char* path)
     pData->sofa_filepath = malloc1d(strlen(path) + 1);
     strcpy(pData->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
-    pData->reInitHRTFsAndGainTables = 1;
-    binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
+    binauraliser_refreshSettings(hBin);  // re-init and re-calc
 }
 
 void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID)
@@ -426,8 +424,7 @@ void binauraliser_setEnableHRTFDiffuseEQ(void* const hBin, int newState)
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     if(newState!=pData->enableDiffEQ){
         pData->enableDiffEQ = newState;
-        pData->reInitHRTFsAndGainTables = 1;
-        binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
+        binauraliser_refreshSettings(hBin);  // re-init and re-calc
     }
 }
 

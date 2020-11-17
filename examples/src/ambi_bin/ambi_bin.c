@@ -495,8 +495,7 @@ void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState)
     
     if((!pData->useDefaultHRIRsFLAG) && (newState)){
         pData->useDefaultHRIRsFLAG = newState;
-        pData->reinit_hrtfsFLAG = 1;
-        ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
+        ambi_bin_refreshParams(hAmbi);  // re-init and re-calc
     }
 }
 
@@ -508,8 +507,8 @@ void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path)
     pars->sofa_filepath = malloc1d(strlen(path) + 1);
     strcpy(pars->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
-    pData->reinit_hrtfsFLAG = 1;
-    ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
+    ambi_bin_refreshParams(hAmbi);  // re-init and re-calc
+
 }
 
 void ambi_bin_setInputOrderPreset(void* const hAmbi, SH_ORDERS newOrder)
