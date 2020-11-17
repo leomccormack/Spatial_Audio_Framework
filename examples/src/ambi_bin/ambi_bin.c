@@ -298,7 +298,7 @@ void ambi_bin_initCodec
     if(pData->enableTruncationEQ){
         // Equalizing diffuse field to 42nd order equivalent.
         double *kr, *w_n, *eqGain;
-        int order_truncated = pData->order;
+        const int order_truncated = order;
         const int order_target = 42;
         const double softThreshold = 12.0;  // results in +18 dB max
         const double r = 0.085;  // spherical scatterer radius
