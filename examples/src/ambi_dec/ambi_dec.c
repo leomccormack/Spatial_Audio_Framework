@@ -56,11 +56,12 @@ void ambi_dec_create
     printf(SAF_VERSION_LICENSE_STRING);
 
     /* default user parameters */
+    loadLoudspeakerArrayPreset(LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_24, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
     pData->masterOrder = pData->new_masterOrder = 1;
     for (band = 0; band<HYBRID_BANDS; band++)
         pData->orderPerBand[band] = 1;
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
-    loadLoudspeakerArrayPreset(LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_24, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
+    pData->enableDiffEQ = 1;
     pData->nLoudpkrs = pData->new_nLoudpkrs;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
@@ -406,7 +407,8 @@ void ambi_dec_initCodec
         pData->progressBar0_1 = 0.85f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
         HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 1, pars->hrtf_fb);
-        diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
+        if(pData->enableDiffEQ)
+            diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
         
         /* calculate magnitude responses */
         pars->hrtf_fb_mag = realloc1d(pars->hrtf_fb_mag, HYBRID_BANDS*NUM_EARS*(pars->N_hrir_dirs)*sizeof(float));

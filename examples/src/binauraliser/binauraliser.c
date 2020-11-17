@@ -44,6 +44,8 @@ void binauraliser_create
 
     /* user parameters */
     binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
+    pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
+    pData->enableDiffEQ = 1;
     pData->nSources = pData->new_nSources;
     pData->interpMode = INTERP_TRI;
     pData->yaw = 0.0f;
@@ -54,7 +56,6 @@ void binauraliser_create
     pData->bFlipRoll = 0;
     pData->useRollPitchYawFlag = 0;
     pData->enableRotation = 0;
-    pData->enableDiffEQ = 1;
 
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
@@ -64,7 +65,6 @@ void binauraliser_create
     pData->outputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
     
     /* hrir data */
-    pData->useDefaultHRIRsFLAG=1;
     pData->hrirs = NULL;
     pData->hrir_dirs_deg = NULL;
     pData->sofa_filepath = NULL;

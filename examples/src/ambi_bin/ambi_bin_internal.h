@@ -147,6 +147,7 @@ typedef struct ambi_bin
     AMBI_BIN_DECODING_METHODS method; /* current decoding method */
     float EQ[HYBRID_BANDS];         /**< EQ curve */
     int useDefaultHRIRsFLAG;        /**< 1: use default HRIRs in database, 0: use those from SOFA file */
+    int enableDiffEQ;               /**< flag to apply diffuse-field EQ to the currently loaded HRTFs */
     CH_ORDER chOrdering;
     NORM_TYPES norm;
     int enableRotation;

@@ -61,6 +61,7 @@ void ambi_bin_create
     for (band = 0; band<HYBRID_BANDS; band++)
         pData->EQ[band] = 1.0f;
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
+    pData->enableDiffEQ = 1;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->enableMaxRE = 1;
@@ -244,7 +245,8 @@ void ambi_bin_initCodec
         pData->progressBar0_1 = 0.9f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
         HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 1, pars->hrtf_fb);
-        diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
+        if(pData->enableDiffEQ)
+            diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
         pData->reinit_hrtfsFLAG = 0;
     }
 
