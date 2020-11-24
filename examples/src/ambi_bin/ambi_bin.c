@@ -61,7 +61,7 @@ void ambi_bin_create
     for (band = 0; band<HYBRID_BANDS; band++)
         pData->EQ[band] = 1.0f;
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
-    pData->enableDiffEQ = 1;
+    pData->preProc = PREPROC_ALL;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->enableMaxRE = 1;
@@ -247,9 +247,14 @@ void ambi_bin_initCodec
         pData->progressBar0_1 = 0.6f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
         HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 1, pars->hrtf_fb);
-        if(pData->enableDiffEQ)
-            diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
-        
+        if(pData->preProc != PREPROC_OFF){
+            if(pData->preProc == PREPROC_EQ)
+                diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, 1, 0, pars->hrtf_fb);
+            if(pData->preProc == PREPROC_PHASE)
+                diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, 0, 1, pars->hrtf_fb);
+            if(pData->preProc == PREPROC_ALL)
+                diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, 1, 1, pars->hrtf_fb);
+        }
         /* get integration weights */
         pData->progressBar0_1 = 0.9f;
         if(pars->N_hrir_dirs<=3600){
@@ -573,6 +578,24 @@ void ambi_bin_setEnableTruncationEQ(void* const hAmbi, int newState)
     }
 }
 
+void ambi_bin_setEnableDiffEQ(void* const hAmbi, int newState)
+{
+/*     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    if(pData->enablePreProcEQ != newState){
+        pData->enablePreProcEQ = newState;
+        ambi_bin_refreshParams(hAmbi);  // re-init and re-calc
+    } */
+}
+
+void ambi_bin_setHrirPreProc(void* const hAmbi, AMBI_BIN_PREPROC newType)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    if(pData->preProc != newType){
+        pData->preProc = newType;
+        ambi_bin_refreshParams(hAmbi);
+    }
+}
+
 void ambi_bin_setEnableRotation(void* const hAmbi, int newState)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
@@ -663,6 +686,18 @@ int ambi_bin_getUseDefaultHRIRsflag(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     return pData->useDefaultHRIRsFLAG;
+}
+
+int ambi_bin_getEnableDiffEQ(void* const hAmbi)
+{
+/*     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    return pData->enablePreProcEQ; */
+}
+
+int ambi_bin_getHrirPreProc(void* const hAmbi)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    return pData->preProc;
 }
 
 int ambi_bin_getInputOrderPreset(void* const hAmbi)

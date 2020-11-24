@@ -75,6 +75,14 @@ typedef enum {
 /** Number of decoding method options */
 #define AMBI_BIN_NUM_DECODING_METHODS ( 5 )
 
+typedef enum {
+    PREPROC_OFF = 1,
+    PREPROC_EQ,
+    PREPROC_PHASE,
+    PREPROC_ALL,
+
+}AMBI_BIN_PREPROC;
+
 
 /* ========================================================================== */
 /*                               Main Functions                               */
@@ -219,6 +227,13 @@ void ambi_bin_setEnableDiffuseMatching(void* const hAmbi, int newState);
  * Sets a flag to enable/disable (1 or 0) truncation EQ
  */
 void ambi_bin_setEnableTruncationEQ(void* const hAmbi, int newState);
+
+/**
+ * Sets a flag to enable/disable (1 or 0) diffuse EQ
+ */
+void ambi_bin_setEnableDiffEQ(void* const hAmbi, int newState);
+
+void ambi_bin_setHrirPreProc(void* const hAmbi, AMBI_BIN_PREPROC newType);
 
 /**
  * Sets the flag to enable/disable (1 or 0) sound-field rotation
@@ -367,6 +382,14 @@ int ambi_bin_getEnableDiffuseMatching(void* const hAmbi);
  * enabled ('0' disabled, '1' enabled).
  */
 int ambi_bin_getEnableTruncationEQ(void* const hAmbi);
+
+/**
+ * Returns the flag value which dictates whether the diffuse EQ is currently
+ * enabled ('0' disabled, '1' enabled).
+ */
+int ambi_bin_getEnableDiffEQ(void* const hAmbi);
+
+int ambi_bin_getHrirPreProc(void* const hAmbi);
 
 /**
  * Returns the flag value which dictates whether to enable/disable sound-field
