@@ -111,6 +111,9 @@ typedef struct _ambi_dec_codecPars
     float* hrtf_fb_mag;                         /**< magnitudes of the HRTF filterbank coefficients; nBands x nCH x N_hrirs */
     float_complex hrtf_interp[MAX_NUM_LOUDSPEAKERS][HYBRID_BANDS][NUM_EARS]; /* interpolated HRTFs */
     
+    /* integration weights */
+    float* weights;         /**< grid integration weights of hrirs; N_hrirs x 1 */
+
 }ambi_dec_codecPars;
 
 /**
