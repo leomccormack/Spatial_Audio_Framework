@@ -338,7 +338,7 @@ void binauraliser_setSofaFilePath(void* const hBin, const char* path)
     binauraliser_refreshSettings(hBin);  // re-init and re-calc
 }
 
-void binauraliser_setEnableHRTFsPreProc(void* const hBin, int newState)
+void binauraliser_setEnableHRIRsPreProc(void* const hBin, int newState)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     if(newState!=pData->enableHRIRsPreProc){
