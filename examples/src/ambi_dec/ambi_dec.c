@@ -61,7 +61,7 @@ void ambi_dec_create
     for (band = 0; band<HYBRID_BANDS; band++)
         pData->orderPerBand[band] = 1;
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
-    pData->enableDiffEQ = 1;
+    pData->enableHRIRsPreProc = 1;
     pData->nLoudpkrs = pData->new_nLoudpkrs;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
@@ -104,6 +104,7 @@ void ambi_dec_create
     pars->itds_s = NULL;
     pars->hrtf_fb = NULL;
     pars->hrtf_fb_mag = NULL;
+    pars->weights = NULL;
     
     /* internal parameters */ 
     pData->binauraliseLS = pData->new_binauraliseLS = 0;
@@ -149,6 +150,7 @@ void ambi_dec_destroy
         free(pars->itds_s);
         free(pars->hrirs);
         free(pars->hrir_dirs_deg);
+        free(pars->weights);
         for (i=0; i<NUM_DECODERS; i++){
             for(j=0; j<MAX_SH_ORDER; j++){
                 free(pars->M_dec[i][j]);
@@ -407,8 +409,22 @@ void ambi_dec_initCodec
         pData->progressBar0_1 = 0.85f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
         HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 1, pars->hrtf_fb);
-        if(pData->enableDiffEQ)
-            diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
+        /* HRIR pre-processing */
+        if(pData->enableHRIRsPreProc){
+            /* get integration weights */
+            strcpy(pData->progressBarText,"Applying HRIR Pre-Processing");
+            pData->progressBar0_1 = 0.95f;
+            if(pars->N_hrir_dirs<=3600){
+                pars->weights = realloc1d(pars->weights, pars->N_hrir_dirs*sizeof(float));
+                getVoronoiWeights(pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, pars->weights);
+            }
+            else{
+                pars->weights = malloc1d(pars->N_hrir_dirs*sizeof(float));
+                for(int idx=0; idx < pars->N_hrir_dirs; idx++)
+                    pars->weights[idx] = 4.f*SAF_PI / (float)pars->N_hrir_dirs;
+            }
+            diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->weights, 1, 0, pars->hrtf_fb);
+        }
         
         /* calculate magnitude responses */
         pars->hrtf_fb_mag = realloc1d(pars->hrtf_fb_mag, HYBRID_BANDS*NUM_EARS*(pars->N_hrir_dirs)*sizeof(float));
@@ -676,6 +692,15 @@ void ambi_dec_setSofaFilePath(void* const hAmbi, const char* path)
     ambi_dec_refreshSettings(hAmbi);  // re-init and re-calc
 }
 
+void ambi_dec_setEnableHRIRsPreProc(void* const hAmbi, int newState)
+{
+    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    if(newState!=pData->enableHRIRsPreProc){
+        pData->enableHRIRsPreProc = newState;
+        ambi_dec_refreshSettings(hAmbi);  // re-init and re-calc
+    }
+}
+
 void ambi_dec_setOutputConfigPreset(void* const hAmbi, int newPresetID)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
@@ -904,6 +929,12 @@ char* ambi_dec_getSofaFilePath(void* const hAmbi)
         return pars->sofa_filepath;
     else
         return "no_file";
+}
+
+int ambi_dec_getEnableHRIRsPreProc(void* const hAmbi)
+{
+    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    return pData->enableHRIRsPreProc;
 }
 
 int ambi_dec_getChOrder(void* const hAmbi)

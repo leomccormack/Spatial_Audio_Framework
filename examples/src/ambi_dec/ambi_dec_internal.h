@@ -111,6 +111,9 @@ typedef struct _ambi_dec_codecPars
     float* hrtf_fb_mag;                         /**< magnitudes of the HRTF filterbank coefficients; nBands x nCH x N_hrirs */
     float_complex hrtf_interp[MAX_NUM_LOUDSPEAKERS][HYBRID_BANDS][NUM_EARS]; /* interpolated HRTFs */
     
+    /* integration weights */
+    float* weights;         /**< grid integration weights of hrirs; N_hrirs x 1 */
+
 }ambi_dec_codecPars;
 
 /**
@@ -157,7 +160,7 @@ typedef struct _ambi_dec
     int nLoudpkrs;                       /**< number of loudspeakers/virtual loudspeakers */
     float loudpkrs_dirs_deg[MAX_NUM_LOUDSPEAKERS][NUM_DECODERS]; /* loudspeaker directions in degrees [azi, elev] */
     int useDefaultHRIRsFLAG;             /**< 1: use default HRIRs in database, 0: use those from SOFA file */
-    int enableDiffEQ;                    /**< flag to apply diffuse-field EQ to the currently loaded HRTFs */
+    int enableHRIRsPreProc;              /**< flag to apply pre-processing to the currently loaded HRTFs */
     int binauraliseLS;                   /**< 1: convolve loudspeaker signals with HRTFs, 0: output loudspeaker signals */
     CH_ORDER chOrdering;                 /**< only ACN is supported */
     NORM_TYPES norm;                     /**< N3D or SN3D */

@@ -225,6 +225,16 @@ void ambi_dec_setLoudspeakerElev_deg(void* const hAmbi,
 void ambi_dec_setNumLoudspeakers(void* const hAmbi, int new_nLoudspeakers);
 
 /**
+ * Sets flag to dictate whether the output loudspeaker signals should be
+ * binauralised
+ *
+ * @param[in] hAmbi    ambi_dec handle
+ * @param[in] newState '0' output loudspeaker signals, '1' output binaural
+ *                     signals
+ */
+void ambi_dec_setBinauraliseLSflag(void* const hAmbi, int newState);
+
+/**
  * Sets flag to dictate whether the default HRIRs in the Spatial_Audio_Framework
  * should be used (1), or a custom HRIR set loaded via a SOFA file (0).
  *
@@ -238,16 +248,6 @@ void ambi_dec_setNumLoudspeakers(void* const hAmbi, int new_nLoudspeakers);
 void ambi_dec_setUseDefaultHRIRsflag(void* const hAmbi, int newState);
 
 /**
- * Sets flag to dictate whether the output loudspeaker signals should be
- * binauralised
- *
- * @param[in] hAmbi    ambi_dec handle
- * @param[in] newState '0' output loudspeaker signals, '1' output binaural
- *                     signals
- */
-void ambi_dec_setBinauraliseLSflag(void* const hAmbi, int newState);
-
-/**
  * Sets the file path for a .sofa file, in order to employ a custom HRIR set for
  * the decoding.
  *
@@ -259,6 +259,11 @@ void ambi_dec_setBinauraliseLSflag(void* const hAmbi, int newState);
  * @param[in] path  File path to .sofa file (WITH file extension)
  */
 void ambi_dec_setSofaFilePath(void* const hAmbi, const char* path);
+
+/**
+ * Enable (1) or disable (0) the pre-processing applied to the HRTFs.
+ */
+void ambi_dec_setEnableHRIRsPreProc(void* const hAmbi, int newState);
 
 /**
  * Sets the source preset (ideal SH or SH signals derived from mic arrays)
@@ -429,6 +434,13 @@ int ambi_dec_getMaxNumLoudspeakers(void);
 int  ambi_dec_getNSHrequired(void* const hAmbi); 
 
 /**
+ * Returns the value of a flag used to dictate whether the loudspeaker signals
+ * should be binauralised (0: output loudspeaker signals, 1: output binaural
+ * signals).
+ */
+int ambi_dec_getBinauraliseLSflag(void* const hAmbi);
+
+/**
  * Returns the value of a flag used to dictate whether the default HRIRs in the
  * Spatial_Audio_Framework should be used (1), or a custom HRIR set loaded via a
  * SOFA file (0).
@@ -439,13 +451,6 @@ int  ambi_dec_getNSHrequired(void* const hAmbi);
 int ambi_dec_getUseDefaultHRIRsflag(void* const hAmbi);
 
 /**
- * Returns the value of a flag used to dictate whether the loudspeaker signals
- * should be binauralised (0: output loudspeaker signals, 1: output binaural
- * signals).
- */
-int ambi_dec_getBinauraliseLSflag(void* const hAmbi);
-
-/**
  * Returns the file path for a .sofa file (WITH file extension)
  *
  * @note If the custom set failes to load correctly, ambi_dec will revert to the
@@ -453,6 +458,12 @@ int ambi_dec_getBinauraliseLSflag(void* const hAmbi);
  *       was successful.
  */
 char* ambi_dec_getSofaFilePath(void* const hAmbi);
+
+/**
+ * Returns the flag indicating whether the pre-processing applied to the HRTFs
+ * is enabled (1) or disabled (0)
+ */
+int ambi_dec_getEnableHRIRsPreProc(void* const hAmbi);
 
 /**
  * Returns the Ambisonic channel ordering convention currently being used to

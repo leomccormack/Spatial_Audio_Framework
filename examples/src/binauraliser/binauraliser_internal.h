@@ -90,6 +90,7 @@ typedef struct _binauraliser
     int N_hrir_dirs;
     int hrir_len;
     int hrir_fs;
+    float* weights;
     
     /* vbap gain table */
     int hrtf_vbapTableRes[2];
@@ -126,7 +127,7 @@ typedef struct _binauraliser
     float src_dirs_deg[MAX_NUM_INPUTS][2];
     INTERP_MODES interpMode;
     int useDefaultHRIRsFLAG;                 /**< 1: use default HRIRs in database, 0: use those from SOFA file */
-    int enableDiffEQ;                        /**< flag to apply diffuse-field EQ to the currently loaded HRTFs */
+    int enableHRIRsPreProc;                  /**< flag to apply pre-processing to the currently loaded HRTFs */
     int enableRotation;
     float yaw, roll, pitch;                  /**< rotation angles in degrees */
     int bFlipYaw, bFlipPitch, bFlipRoll;     /**< flag to flip the sign of the individual rotation angles */

@@ -75,6 +75,14 @@ typedef enum {
 /** Number of decoding method options */
 #define AMBI_BIN_NUM_DECODING_METHODS ( 5 )
 
+typedef enum {
+    PREPROC_OFF = 1,        /**< No pre-processing active */
+    PREPROC_EQ,             /**< Diffuse EQ (compensates CTF) */
+    PREPROC_PHASE,          /**< Phase simplification based on ITD */
+    PREPROC_ALL,            /**< All of the above */
+
+}AMBI_BIN_PREPROC;
+
 
 /* ========================================================================== */
 /*                               Main Functions                               */
@@ -219,6 +227,17 @@ void ambi_bin_setEnableDiffuseMatching(void* const hAmbi, int newState);
  * Sets a flag to enable/disable (1 or 0) truncation EQ
  */
 void ambi_bin_setEnableTruncationEQ(void* const hAmbi, int newState);
+
+/**
+ * Sets a flag to enable/disable (1 or 0) diffuse EQ
+ */
+//void ambi_bin_setEnableDiffEQ(void* const hAmbi, int newState);
+
+/**
+ * Sets HRIR pre-processing strategy.
+ * (see #AMBI_BIN_PREPROC enum)
+ */
+void ambi_bin_setHRIRsPreProc(void* const hAmbi, AMBI_BIN_PREPROC newType);
 
 /**
  * Sets the flag to enable/disable (1 or 0) sound-field rotation
@@ -367,6 +386,18 @@ int ambi_bin_getEnableDiffuseMatching(void* const hAmbi);
  * enabled ('0' disabled, '1' enabled).
  */
 int ambi_bin_getEnableTruncationEQ(void* const hAmbi);
+
+/**
+ * Returns the flag value which dictates whether the diffuse EQ is currently
+ * enabled ('0' disabled, '1' enabled).
+ */
+// int ambi_bin_getEnableDiffEQ(void* const hAmbi);
+
+/**
+ * Returns HRIR pre-processing strategy.  
+ * (see #AMBI_BIN_PREPROC enum)
+ */
+int ambi_bin_getHRIRsPreProc(void* const hAmbi);
 
 /**
  * Returns the flag value which dictates whether to enable/disable sound-field
