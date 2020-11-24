@@ -68,6 +68,7 @@ void binauraliser_create
     pData->hrirs = NULL;
     pData->hrir_dirs_deg = NULL;
     pData->sofa_filepath = NULL;
+    pData->weights = NULL;
     
     /* vbap (amplitude normalised) */
     pData->hrtf_vbap_gtableIdx = NULL;
@@ -118,6 +119,7 @@ void binauraliser_destroy
         free(pData->itds_s);
         free(pData->hrirs);
         free(pData->hrir_dirs_deg);
+        free(pData->weights);
         free(pData->progressBarText);
          
         free(pData);
