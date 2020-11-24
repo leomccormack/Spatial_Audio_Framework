@@ -167,7 +167,7 @@ void binauraliser_setUseDefaultHRIRsflag(void* const hBin, int newState);
 void binauraliser_setSofaFilePath(void* const hBin, const char* path);
 
 /**
- * Enable (1) or disable (0) the pre-processing applied to the HRTFs
+ * Enable (1) or disable (0) the pre-processing applied to the HRTFs.
  */
 void binauraliser_setEnableHRIRsPreProc(void* const hBin, int newState);
 
@@ -335,7 +335,7 @@ char* binauraliser_getSofaFilePath(void* const hBin);
 
 /**
  * Returns the flag indicating whether the pre-processing applied to the HRTFs
- * is enabled (1) or disabled (0)
+ * is enabled (1) or disabled (0).
  */
 int binauraliser_getEnableHRIRsPreProc(void* const hBin);
 

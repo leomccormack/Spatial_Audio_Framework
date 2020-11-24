@@ -548,7 +548,6 @@ int binauraliser_getEnableHRIRsPreProc(void* const hBin)
     return pData->enableHRIRsPreProc;
 }
 
-
 int binauraliser_getDAWsamplerate(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);

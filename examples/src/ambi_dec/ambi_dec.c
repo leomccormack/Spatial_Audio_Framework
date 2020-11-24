@@ -692,6 +692,15 @@ void ambi_dec_setSofaFilePath(void* const hAmbi, const char* path)
     ambi_dec_refreshSettings(hAmbi);  // re-init and re-calc
 }
 
+void ambi_dec_setEnableHRIRsPreProc(void* const hAmbi, int newState)
+{
+    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    if(newState!=pData->enableHRIRsPreProc){
+        pData->enableHRIRsPreProc = newState;
+        ambi_dec_refreshSettings(hAmbi);  // re-init and re-calc
+    }
+}
+
 void ambi_dec_setOutputConfigPreset(void* const hAmbi, int newPresetID)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
@@ -920,6 +929,12 @@ char* ambi_dec_getSofaFilePath(void* const hAmbi)
         return pars->sofa_filepath;
     else
         return "no_file";
+}
+
+int ambi_dec_getEnableHRIRsPreProc(void* const hAmbi)
+{
+    ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
+    return pData->enableHRIRsPreProc;
 }
 
 int ambi_dec_getChOrder(void* const hAmbi)
