@@ -150,7 +150,7 @@ typedef struct ambi_bin
     AMBI_BIN_DECODING_METHODS method; /* current decoding method */
     float EQ[HYBRID_BANDS];         /**< EQ curve */
     int useDefaultHRIRsFLAG;        /**< 1: use default HRIRs in database, 0: use those from SOFA file */
-    AMBI_BIN_PREPROC preProc;
+    AMBI_BIN_PREPROC preProc;       /**< HRIR pre-processing strategy */
     CH_ORDER chOrdering;
     NORM_TYPES norm;
     int enableRotation;

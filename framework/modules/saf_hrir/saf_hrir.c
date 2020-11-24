@@ -189,7 +189,7 @@ void diffuseFieldEqualiseHRTFs
         if(applyEQ){
             hrtf_diff = calloc1d(N_bands*NUM_EARS, sizeof(float));
             if(weights == NULL)
-                assert(0);
+                assert(0);  // Not good, could be cought
             for(band=0; band<N_bands; band++)
                 for(i=0; i<NUM_EARS; i++)
                     for(j=0; j<N_dirs; j++)

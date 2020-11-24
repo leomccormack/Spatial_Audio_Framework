@@ -61,7 +61,7 @@ void ambi_dec_create
     for (band = 0; band<HYBRID_BANDS; band++)
         pData->orderPerBand[band] = 1;
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
-    pData->enableDiffEQ = 1;
+    pData->enableHRIRsPreProc = 1;
     pData->nLoudpkrs = pData->new_nLoudpkrs;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
@@ -410,7 +410,7 @@ void ambi_dec_initCodec
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
         HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 1, pars->hrtf_fb);
         /* HRIR pre-processing */
-        if(pData->enableDiffEQ){
+        if(pData->enableHRIRsPreProc){
             /* get integration weights */
             strcpy(pData->progressBarText,"Applying HRIR Pre-Processing");
             pData->progressBar0_1 = 0.95f;

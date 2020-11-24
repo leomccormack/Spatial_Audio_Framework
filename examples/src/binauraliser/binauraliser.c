@@ -45,7 +45,7 @@ void binauraliser_create
     /* user parameters */
     binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
-    pData->enableDiffEQ = 1;
+    pData->enableHRIRsPreProc = 1;
     pData->nSources = pData->new_nSources;
     pData->interpMode = INTERP_TRI;
     pData->yaw = 0.0f;
@@ -338,6 +338,15 @@ void binauraliser_setSofaFilePath(void* const hBin, const char* path)
     binauraliser_refreshSettings(hBin);  // re-init and re-calc
 }
 
+void binauraliser_setEnableHRTFsPreProc(void* const hBin, int newState)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    if(newState!=pData->enableHRIRsPreProc){
+        pData->enableHRIRsPreProc = newState;
+        binauraliser_refreshSettings(hBin);  // re-init and re-calc
+    }
+}
+
 void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
@@ -421,14 +430,6 @@ void binauraliser_setInterpMode(void* const hBin, int newMode)
     pData->interpMode = newMode;
 }
 
-void binauraliser_setEnableHRTFDiffuseEQ(void* const hBin, int newState)
-{
-    binauraliser_data *pData = (binauraliser_data*)(hBin);
-    if(newState!=pData->enableDiffEQ){
-        pData->enableDiffEQ = newState;
-        binauraliser_refreshSettings(hBin);  // re-init and re-calc
-    }
-}
 
 
 /* Get Functions */
@@ -541,6 +542,13 @@ char* binauraliser_getSofaFilePath(void* const hBin)
         return "no_file";
 }
 
+int binauraliser_getEnableHRIRsPreProc(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->enableHRIRsPreProc;
+}
+
+
 int binauraliser_getDAWsamplerate(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
@@ -604,10 +612,4 @@ int binauraliser_getInterpMode(void* const hBin)
 int binauraliser_getProcessingDelay()
 {
     return 12*HOP_SIZE;
-}
-
-int binauraliser_getEnableHRTFDiffuseEQ(void* const hBin)
-{
-    binauraliser_data *pData = (binauraliser_data*)(hBin);
-    return pData->enableDiffEQ;
 }
