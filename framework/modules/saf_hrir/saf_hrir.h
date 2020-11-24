@@ -164,6 +164,7 @@ void diffuseFieldEqualiseHRTFs(/* Input Arguments */
                                float* itds_s,
                                float* centreFreq,
                                int N_bands,
+                               float* weights,
                                int applyEQ,
                                int applyPhase,
                                /* Input/Output Arguments */

@@ -173,6 +173,7 @@ void diffuseFieldEqualiseHRTFs
     float* itds_s,
     float* centreFreq,
     int N_bands,
+    float* weights,
     int applyEQ,
     int applyPhase,
     float_complex* hrtfs   /* N_bands x 2 x N_dirs */
@@ -187,13 +188,15 @@ void diffuseFieldEqualiseHRTFs
         /* diffuse-field equalise */
         if(applyEQ){
             hrtf_diff = calloc1d(N_bands*NUM_EARS, sizeof(float));
+            if(weights == NULL)
+                assert(0);
             for(band=0; band<N_bands; band++)
                 for(i=0; i<NUM_EARS; i++)
                     for(j=0; j<N_dirs; j++)
-                        hrtf_diff[band*NUM_EARS + i] += powf(cabsf(hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + j]), 2.0f);
+                        hrtf_diff[band*NUM_EARS + i] += weights[j]/(4.f*SAF_PI) * powf(cabsf(hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + j]), 2.0f);
             for(band=0; band<N_bands; band++)
                 for(i=0; i<NUM_EARS; i++)
-                    hrtf_diff[band*NUM_EARS + i] = sqrtf(hrtf_diff[band*NUM_EARS + i]/(float)N_dirs);
+                    hrtf_diff[band*NUM_EARS + i] = sqrtf(hrtf_diff[band*NUM_EARS + i]);
             for(band=0; band<N_bands; band++)
                 for(i=0; i<NUM_EARS; i++)
                     for(nd=0; nd<N_dirs; nd++)

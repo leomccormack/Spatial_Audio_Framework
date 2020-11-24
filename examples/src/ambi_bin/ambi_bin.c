@@ -244,25 +244,30 @@ void ambi_bin_initCodec
         estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pars->itds_s);
  
         /* convert hrirs to filterbank coefficients */
-        pData->progressBar0_1 = 0.6f;
+        pData->progressBar0_1 = 0.4f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
         HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 1, pars->hrtf_fb);
-        if(pData->preProc != PREPROC_OFF){
-            if(pData->preProc == PREPROC_EQ)
-                diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, 1, 0, pars->hrtf_fb);
-            if(pData->preProc == PREPROC_PHASE)
-                diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, 0, 1, pars->hrtf_fb);
-            if(pData->preProc == PREPROC_ALL)
-                diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, 1, 1, pars->hrtf_fb);
-        }
         /* get integration weights */
-        pData->progressBar0_1 = 0.9f;
+        pData->progressBar0_1 = 0.6f;
         if(pars->N_hrir_dirs<=3600){
             pars->weights = realloc1d(pars->weights, pars->N_hrir_dirs*sizeof(float));
             getVoronoiWeights(pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, pars->weights);
         }
         else
-            pars->weights = NULL;
+            pars->weights = malloc1d(pars->N_hrir_dirs*sizeof(float));
+            for(int idx=0; idx < pars->N_hrir_dirs; idx++)
+                pars->weights[idx] = 4.f*SAF_PI / (float)pars->N_hrir_dirs;
+
+        /* HRIR pre-processing */
+        pData->progressBar0_1 = 0.75f;
+        if(pData->preProc != PREPROC_OFF){
+            if(pData->preProc == PREPROC_EQ)
+                diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->weights, 1, 0, pars->hrtf_fb);
+            if(pData->preProc == PREPROC_PHASE)
+                diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->weights, 0, 1, pars->hrtf_fb);
+            if(pData->preProc == PREPROC_ALL)
+                diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->weights, 1, 1, pars->hrtf_fb);
+        }
 
         pData->reinit_hrtfsFLAG = 0;
     }
