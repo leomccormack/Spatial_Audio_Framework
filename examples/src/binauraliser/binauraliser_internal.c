@@ -173,13 +173,25 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     compressVBAPgainTable3D(hrtf_vbap_gtable, pData->N_hrtf_vbap_gtable, pData->N_hrir_dirs, pData->hrtf_vbap_gtableComp, pData->hrtf_vbap_gtableIdx);
     
     /* convert hrirs to filterbank coefficients */
-    strcpy(pData->progressBarText,"Applying HRIR diffuse-field EQ");
-    pData->progressBar0_1 = 0.8f;
+    pData->progressBar0_1 = 0.6f;
     pData->hrtf_fb = realloc1d(pData->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pData->N_hrir_dirs)*sizeof(float_complex));
     HRIRs2HRTFs_afSTFT(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, HOP_SIZE, 1, pData->hrtf_fb);
-    if(pData->enableDiffEQ)
-        diffuseFieldEqualiseHRTFs(pData->N_hrir_dirs, pData->itds_s, pData->freqVector, HYBRID_BANDS, pData->hrtf_fb);
-    
+    /* HRIR pre-processing */
+    if(pData->enableDiffEQ){
+        /* get integration weights */
+        strcpy(pData->progressBarText,"Applying HRIR Pre-Processing");
+        pData->progressBar0_1 = 0.9f;
+        if(pData->N_hrir_dirs<=3600){
+            pData->weights = realloc1d(pData->weights, pData->N_hrir_dirs*sizeof(float));
+            getVoronoiWeights(pData->hrir_dirs_deg, pData->N_hrir_dirs, 0, pData->weights);
+        }
+        else{
+            pData->weights = malloc1d(pData->N_hrir_dirs*sizeof(float));
+            for(int idx=0; idx < pData->N_hrir_dirs; idx++)
+                pData->weights[idx] = 4.f*SAF_PI / (float)pData->N_hrir_dirs;
+        }
+        diffuseFieldEqualiseHRTFs(pData->N_hrir_dirs, pData->itds_s, pData->freqVector, HYBRID_BANDS, pData->weights, 1, 0, pData->hrtf_fb);
+    }
     /* calculate magnitude responses */
     pData->hrtf_fb_mag = realloc1d(pData->hrtf_fb_mag, HYBRID_BANDS*NUM_EARS*(pData->N_hrir_dirs)*sizeof(float)); 
     for(i=0; i<HYBRID_BANDS*NUM_EARS* (pData->N_hrir_dirs); i++)

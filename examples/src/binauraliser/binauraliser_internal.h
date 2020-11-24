@@ -90,6 +90,7 @@ typedef struct _binauraliser
     int N_hrir_dirs;
     int hrir_len;
     int hrir_fs;
+    float* weights;
     
     /* vbap gain table */
     int hrtf_vbapTableRes[2];
