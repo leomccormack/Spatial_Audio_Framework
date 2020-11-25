@@ -142,6 +142,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bina
 <tr class="memitem:a0628549e0203c0f65bb8737526e88be6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a0628549e0203c0f65bb8737526e88be6">binauraliser_setSofaFilePath</a> (void *const hBin, const char *path)</td></tr>
 <tr class="memdesc:a0628549e0203c0f65bb8737526e88be6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the file path for a .sofa file, in order to employ a custom HRIR set for the decoding.  <a href="binauraliser_8h.html#a0628549e0203c0f65bb8737526e88be6">More...</a><br /></td></tr>
 <tr class="separator:a0628549e0203c0f65bb8737526e88be6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab50d04362a8852270936a8c85a3e8247"><td class="memItemLeft" align="right" valign="top"><a id="ab50d04362a8852270936a8c85a3e8247"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#ab50d04362a8852270936a8c85a3e8247">binauraliser_setEnableHRIRsPreProc</a> (void *const hBin, int newState)</td></tr>
+<tr class="memdesc:ab50d04362a8852270936a8c85a3e8247"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable (1) or disable (0) the pre-processing applied to the HRTFs. <br /></td></tr>
+<tr class="separator:ab50d04362a8852270936a8c85a3e8247"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0b45c5419c26dd9760b715c7940353e"><td class="memItemLeft" align="right" valign="top"><a id="ab0b45c5419c26dd9760b715c7940353e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#ab0b45c5419c26dd9760b715c7940353e">binauraliser_setInputConfigPreset</a> (void *const hBin, int newPresetID)</td></tr>
 <tr class="memdesc:ab0b45c5419c26dd9760b715c7940353e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads an input preset (see <a class="el" href="__common_8h.html#a7ea45ad31bea000c76c733ace2441204" title="Available source configurations presets to use for encoding/panning.">SOURCE_CONFIG_PRESETS</a> enum) <br /></td></tr>
@@ -182,10 +186,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bina
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#ab32dced53fc561b902890660367a63f1">binauraliser_setInterpMode</a> (void *const hBin, int newMode)</td></tr>
 <tr class="memdesc:ab32dced53fc561b902890660367a63f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">NOT IMPLEMENTED YET. <br /></td></tr>
 <tr class="separator:ab32dced53fc561b902890660367a63f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a805636d98b01358d39cd970b831631b5"><td class="memItemLeft" align="right" valign="top"><a id="a805636d98b01358d39cd970b831631b5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a805636d98b01358d39cd970b831631b5">binauraliser_setEnableHRTFDiffuseEQ</a> (void *const hBin, int newState)</td></tr>
-<tr class="memdesc:a805636d98b01358d39cd970b831631b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable (1) or disable (0) the diffuse-field EQ applied to the HRTFs. <br /></td></tr>
-<tr class="separator:a805636d98b01358d39cd970b831631b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75c1299119792b422831ea5cb1c9ba24"><td class="memItemLeft" align="right" valign="top"><a id="a75c1299119792b422831ea5cb1c9ba24"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a75c1299119792b422831ea5cb1c9ba24">binauraliser_getFrameSize</a> (void)</td></tr>
 <tr class="memdesc:a75c1299119792b422831ea5cb1c9ba24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the processing framesize (i.e., number of samples processed with every _process() call ) <br /></td></tr>
@@ -250,6 +250,10 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
 <tr class="memitem:a62330358d5d762f4ba9f8ec07855f4bf"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a62330358d5d762f4ba9f8ec07855f4bf">binauraliser_getSofaFilePath</a> (void *const hBin)</td></tr>
 <tr class="memdesc:a62330358d5d762f4ba9f8ec07855f4bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the file path for a .sofa file.  <a href="binauraliser_8h.html#a62330358d5d762f4ba9f8ec07855f4bf">More...</a><br /></td></tr>
 <tr class="separator:a62330358d5d762f4ba9f8ec07855f4bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a091346da0120773d0d9a6ccbc3d55570"><td class="memItemLeft" align="right" valign="top"><a id="a091346da0120773d0d9a6ccbc3d55570"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a091346da0120773d0d9a6ccbc3d55570">binauraliser_getEnableHRIRsPreProc</a> (void *const hBin)</td></tr>
+<tr class="memdesc:a091346da0120773d0d9a6ccbc3d55570"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the flag indicating whether the pre-processing applied to the HRTFs is enabled (1) or disabled (0). <br /></td></tr>
+<tr class="separator:a091346da0120773d0d9a6ccbc3d55570"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fd18f2d20e08c1ba8a5d174dbc3678e"><td class="memItemLeft" align="right" valign="top"><a id="a8fd18f2d20e08c1ba8a5d174dbc3678e"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a8fd18f2d20e08c1ba8a5d174dbc3678e">binauraliser_getDAWsamplerate</a> (void *const hBin)</td></tr>
 <tr class="memdesc:a8fd18f2d20e08c1ba8a5d174dbc3678e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the DAW/Host sample rate. <br /></td></tr>
@@ -294,10 +298,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a802b9234ca7135a4e0644b17ce967a7a">binauraliser_getProcessingDelay</a> (void)</td></tr>
 <tr class="memdesc:a802b9234ca7135a4e0644b17ce967a7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the processing delay in samples (may be used for delay compensation purposes) <br /></td></tr>
 <tr class="separator:a802b9234ca7135a4e0644b17ce967a7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd363953c84e0dbb62b78747556c6550"><td class="memItemLeft" align="right" valign="top"><a id="acd363953c84e0dbb62b78747556c6550"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#acd363953c84e0dbb62b78747556c6550">binauraliser_getEnableHRTFDiffuseEQ</a> (void *const hBin)</td></tr>
-<tr class="memdesc:acd363953c84e0dbb62b78747556c6550"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the flag indicating whether the diffuse-field EQ applied to the HRTFs is enabled (1) or disabled (0) <br /></td></tr>
-<tr class="separator:acd363953c84e0dbb62b78747556c6550"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Convolves input audio (up to 64 channels) with interpolated HRTFs in the time-frequency domain. </p>
@@ -717,7 +717,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_7ea9cec8c8a74419de82b1d94b0f1364.html">include</a></li><li class="navelem"><a class="el" href="binauraliser_8h.html">binauraliser.h</a></li>
-    <li class="footer">Generated on Wed Nov 4 2020 15:48:14 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Wed Nov 25 2020 11:09:31 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

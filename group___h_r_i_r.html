@@ -126,9 +126,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga95e3ef60ada22e4bea2c40dcd38b4573">HRIRs2HRTFs</a> (float *hrirs, int N_dirs, int hrir_len, int fftSize, float_complex *hrtfs)</td></tr>
 <tr class="memdesc:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts HRIRs to HRTFs using a given FFT size.  <a href="group___h_r_i_r.html#ga95e3ef60ada22e4bea2c40dcd38b4573">More...</a><br /></td></tr>
 <tr class="separator:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2596c1908c6fe634690b8d9b9dc27bd0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga2596c1908c6fe634690b8d9b9dc27bd0">diffuseFieldEqualiseHRTFs</a> (int N_dirs, float *itds_s, float *centreFreq, int N_bands, float_complex *hrtfs)</td></tr>
-<tr class="memdesc:ga2596c1908c6fe634690b8d9b9dc27bd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies diffuse-field equalisation to a set of HRTFs.  <a href="group___h_r_i_r.html#ga2596c1908c6fe634690b8d9b9dc27bd0">More...</a><br /></td></tr>
-<tr class="separator:ga2596c1908c6fe634690b8d9b9dc27bd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaced04b646c57d04a25e26b469e18588c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">diffuseFieldEqualiseHRTFs</a> (int N_dirs, float *itds_s, float *centreFreq, int N_bands, float *weights, int applyEQ, int applyPhase, float_complex *hrtfs)</td></tr>
+<tr class="memdesc:gaced04b646c57d04a25e26b469e18588c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies pre-processing to a set of HRTFs.  <a href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">More...</a><br /></td></tr>
+<tr class="separator:gaced04b646c57d04a25e26b469e18588c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga23e9a79557d045fcc850a5253733aed7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7">interpHRTFs</a> (float_complex *hrtfs, float *itds, float *freqVector, float *vbap_gtable, int N_hrtf_dirs, int N_bands, int N_interp_dirs, float_complex *hrtf_interp)</td></tr>
 <tr class="memdesc:ga23e9a79557d045fcc850a5253733aed7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interpolates a set of HRTFs for specified directions, defined by an amplitude normalised VBAP interpolation table (see <a class="el" href="saf__vbap_8h.html" title="Main header for the VBAP/MDAP module (SAF_VBAP_MODULE)">saf_vbap.h</a>)  <a href="group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7">More...</a><br /></td></tr>
 <tr class="separator:ga23e9a79557d045fcc850a5253733aed7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -227,12 +227,12 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <dl class="section see"><dt>See also</dt><dd>[1] A. Politis, "Diffuse-field coherence of sensors with arbitrary
          directional responses," arXiv preprint arXiv:1608.07713,2016. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00278">278</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00291">291</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
-<a id="ga2596c1908c6fe634690b8d9b9dc27bd0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2596c1908c6fe634690b8d9b9dc27bd0">&#9670;&nbsp;</a></span>diffuseFieldEqualiseHRTFs()</h2>
+<a id="gaced04b646c57d04a25e26b469e18588c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaced04b646c57d04a25e26b469e18588c">&#9670;&nbsp;</a></span>diffuseFieldEqualiseHRTFs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -264,6 +264,24 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>weights</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>applyEQ</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>applyPhase</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">float_complex *&#160;</td>
           <td class="paramname"><em>hrtfs</em>&#160;</td>
         </tr>
@@ -275,7 +293,8 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
 </div><div class="memdoc">
 
-<p>Applies diffuse-field equalisation to a set of HRTFs. </p>
+<p>Applies pre-processing to a set of HRTFs. </p>
+<p>Can be diffuse field EQ of a weighted (weights should sum to 4pi) average of all HRTFs (CTF). Also provides phase simplification based on ITDs.</p>
 <dl class="section warning"><dt>Warning</dt><dd>This function is NOT suitable for binaural room impulse responses (BRIRs)!</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -283,6 +302,9 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
     <tr><td class="paramdir">[in]</td><td class="paramname">itds_s</td><td>HRIR ITDs; N_dirs x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">centreFreq</td><td>Frequency vector; N_bands x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">N_bands</td><td>Number of frequency bands/bins </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">weights</td><td>Grid weights (sum to 4pi); N_dirs x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">applyEQ</td><td>EQ diffuse field / CTF; 0:disabled, 1:enabled </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">applyPhase</td><td>Phase simplification; 0:disabled, 1:enabled </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">hrtfs</td><td>The HRTFs; FLAT: N_bands x <a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84" title="2 (true for most humans)">NUM_EARS</a> x N_dirs </td></tr>
   </table>
   </dd>
@@ -631,7 +653,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00219">219</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00232">232</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -640,7 +662,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Nov 4 2020 15:48:15 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Wed Nov 25 2020 11:09:32 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

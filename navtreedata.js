@@ -113,21 +113,22 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "__common_8h.html",
-"ambi__bin_8h.html#aed47ec0f7af7b7db879b4a063df441d3",
-"array2sh_8h.html#a91d397e115f56c5076573aceaed3ba92",
-"dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fea0b5166ca0ab0967f672d0cc99faa1150",
-"group___reverb.html#gafe27b3d4c424f1c1e51540a2887230b9",
-"group___utilities.html#ga10bd65d1a35e4d1d64d3a5fadbd85a79",
-"group___utilities.html#ga4bef4da3846174757bdba1d5e8df347f",
-"group___utilities.html#ga85181e7ad3dac1665a786566dfc74d0a",
-"group___utilities.html#gabe4d225cb0b7c5d36742236d1bbcb043",
-"group___utilities.html#gafa11d88719ce26bd51f184c31e820990",
-"md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html#autotoc_md1",
-"saf_8h.html#ad68b93b1b4f2184fc61a8a2b74faa363",
-"saf__tracker__internal_8h_source.html",
-"safmex__qmf_8c.html#ad5b8f7b3e0acdfc8a86dd470e378825a",
-"structims__core__workspace.html#a35090562382457a2e385e367797667ab",
-"structsaf_mul_conv__data.html#ac9b487c24e77694f025ecc8b51711f4c"
+"ambi__bin_8h.html#ac9600bd850784886a5e2ea4734548570",
+"array2sh_8h.html#a8603b68eaa432f98f556a3592b8b15ffab8ed5201830bed9725e2fdc5c83ede56",
+"dirass_8h.html#ad75eaf1ab73abf6305e73ce7c6009936a85e460db40014dbea66260484cf38d63",
+"group___reverb.html#gab454a1a24911b3911d6d8638e3ac3c1a",
+"group___utilities.html#ga0cd43009e3663f71077e327ef8b1c3f5",
+"group___utilities.html#ga432ae2348583b72586c303a8ef36658d",
+"group___utilities.html#ga710d294b3ceccf38a1f6af21cd5bc62d",
+"group___utilities.html#gaa64dcc084518e58198fd2c5d1ff7d51e",
+"group___utilities.html#gadef605f1a05c2b2772e4a045cf6b00dc",
+"group___utilities.html#ggabb0b6cf15d8ed9c7065cf24b1cea2ae6ac58c5d5714bbe294fe5310f72d5bb300",
+"panner_8h.html#abc24592c12c3512fc39ee3ab17ccd551",
+"saf__sh__internal_8c.html",
+"saf__utility__sort_8h.html",
+"struct_p66.html#a721c40133ddfa71b4d3ec404b3c53b23",
+"structlattice_decor__data.html#a32910f45b8af7559b6b612600cffe3b9",
+"structtracker3d__config.html#ab9c6164485bd05c7c14d24834f50ac94"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

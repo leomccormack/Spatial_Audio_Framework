@@ -110,9 +110,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga95e3ef60ada22e4bea2c40dcd38b4573">HRIRs2HRTFs</a> (float *hrirs, int N_dirs, int hrir_len, int fftSize, float_complex *hrtfs)</td></tr>
 <tr class="memdesc:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts HRIRs to HRTFs using a given FFT size.  <a href="group___h_r_i_r.html#ga95e3ef60ada22e4bea2c40dcd38b4573">More...</a><br /></td></tr>
 <tr class="separator:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2596c1908c6fe634690b8d9b9dc27bd0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga2596c1908c6fe634690b8d9b9dc27bd0">diffuseFieldEqualiseHRTFs</a> (int N_dirs, float *itds_s, float *centreFreq, int N_bands, float_complex *hrtfs)</td></tr>
-<tr class="memdesc:ga2596c1908c6fe634690b8d9b9dc27bd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies diffuse-field equalisation to a set of HRTFs.  <a href="group___h_r_i_r.html#ga2596c1908c6fe634690b8d9b9dc27bd0">More...</a><br /></td></tr>
-<tr class="separator:ga2596c1908c6fe634690b8d9b9dc27bd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaced04b646c57d04a25e26b469e18588c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">diffuseFieldEqualiseHRTFs</a> (int N_dirs, float *itds_s, float *centreFreq, int N_bands, float *weights, int applyEQ, int applyPhase, float_complex *hrtfs)</td></tr>
+<tr class="memdesc:gaced04b646c57d04a25e26b469e18588c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies pre-processing to a set of HRTFs.  <a href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">More...</a><br /></td></tr>
+<tr class="separator:gaced04b646c57d04a25e26b469e18588c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga23e9a79557d045fcc850a5253733aed7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7">interpHRTFs</a> (float_complex *hrtfs, float *itds, float *freqVector, float *vbap_gtable, int N_hrtf_dirs, int N_bands, int N_interp_dirs, float_complex *hrtfs_interp)</td></tr>
 <tr class="memdesc:ga23e9a79557d045fcc850a5253733aed7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interpolates a set of HRTFs for specified directions, defined by an amplitude normalised VBAP interpolation table (see <a class="el" href="saf__vbap_8h.html" title="Main header for the VBAP/MDAP module (SAF_VBAP_MODULE)">saf_vbap.h</a>)  <a href="group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7">More...</a><br /></td></tr>
 <tr class="separator:ga23e9a79557d045fcc850a5253733aed7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -133,7 +133,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_7537ddf6938b30af6f0305d5e585e1f2.html">saf_hrir</a></li><li class="navelem"><a class="el" href="saf__hrir_8c.html">saf_hrir.c</a></li>
-    <li class="footer">Generated on Wed Nov 4 2020 15:48:14 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Wed Nov 25 2020 11:09:31 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

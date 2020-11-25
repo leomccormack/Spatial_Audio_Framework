@@ -163,6 +163,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gaf2dc357da0a7df362e1d53a91936955c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_o_a.html#gaf2dc357da0a7df362e1d53a91936955c">getMaxREweights</a> (int order, int diagMtxFlag, float *a_n)</td></tr>
 <tr class="memdesc:gaf2dc357da0a7df362e1d53a91936955c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the weights required to manipulate a hyper-cardioid beam-pattern, such that it has maximum energy in the given look-direction.  <a href="group___h_o_a.html#gaf2dc357da0a7df362e1d53a91936955c">More...</a><br /></td></tr>
 <tr class="separator:gaf2dc357da0a7df362e1d53a91936955c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf7fa5744bdd8395ab6d34e238f757599"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_o_a.html#gaf7fa5744bdd8395ab6d34e238f757599">truncationEQ</a> (float *w_n, int order_truncated, int order_target, double *kr, int nBands, float softThreshold, float *gain)</td></tr>
+<tr class="memdesc:gaf7fa5744bdd8395ab6d34e238f757599"><td class="mdescLeft">&#160;</td><td class="mdescRight">Filter that equalizes the high frequency roll-off due to SH truncation and tapering.  <a href="group___h_o_a.html#gaf7fa5744bdd8395ab6d34e238f757599">More...</a><br /></td></tr>
+<tr class="separator:gaf7fa5744bdd8395ab6d34e238f757599"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7c5ef22cd1066f447256dcb0ba7f76a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_o_a.html#ga7c5ef22cd1066f447256dcb0ba7f76a2">getLoudspeakerDecoderMtx</a> (float *ls_dirs_deg, int nLS, <a class="el" href="group___h_o_a.html#gaa9bfe259decc1175b881c63f05edfae2">LOUDSPEAKER_AMBI_DECODER_METHODS</a> method, int order, int enableMaxrE, float *decMtx)</td></tr>
 <tr class="memdesc:ga7c5ef22cd1066f447256dcb0ba7f76a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes an ambisonic decoding matrix of a specific order, for a given loudspeaker layout.  <a href="group___h_o_a.html#ga7c5ef22cd1066f447256dcb0ba7f76a2">More...</a><br /></td></tr>
 <tr class="separator:ga7c5ef22cd1066f447256dcb0ba7f76a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -390,7 +393,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. Binaural rendering of Ambisonic signals by head-related impulse response time alignment and a diffuseness constraint. The Journal of the Acoustical Society of America. 2018 Jun 19;143(6):3616-27 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hoa_8c_source.html#l00491">491</a> of file <a class="el" href="saf__hoa_8c_source.html">saf_hoa.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hoa_8c_source.html#l00544">544</a> of file <a class="el" href="saf__hoa_8c_source.html">saf_hoa.c</a>.</p>
 
 </div>
 </div>
@@ -623,7 +626,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hoa_8c_source.html#l00441">441</a> of file <a class="el" href="saf__hoa_8c_source.html">saf_hoa.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hoa_8c_source.html#l00494">494</a> of file <a class="el" href="saf__hoa_8c_source.html">saf_hoa.c</a>.</p>
 
 </div>
 </div>
@@ -732,7 +735,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hoa_8c_source.html#l00369">369</a> of file <a class="el" href="saf__hoa_8c_source.html">saf_hoa.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hoa_8c_source.html#l00422">422</a> of file <a class="el" href="saf__hoa_8c_source.html">saf_hoa.c</a>.</p>
 
 </div>
 </div>
@@ -800,7 +803,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hoa_8c_source.html#l00301">301</a> of file <a class="el" href="saf__hoa_8c_source.html">saf_hoa.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hoa_8c_source.html#l00354">354</a> of file <a class="el" href="saf__hoa_8c_source.html">saf_hoa.c</a>.</p>
 
 </div>
 </div>
@@ -964,12 +967,88 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="gaf7fa5744bdd8395ab6d34e238f757599"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf7fa5744bdd8395ab6d34e238f757599">&#9670;&nbsp;</a></span>truncationEQ()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void truncationEQ </td>
+          <td>(</td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>w_n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>order_truncated</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>order_target</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>kr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nBands</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>softThreshold</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>gain</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Filter that equalizes the high frequency roll-off due to SH truncation and tapering. </p>
+<p>Details can be found in [1].</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">w_n</td><td>(order_truncated + 1) Tapering weights; E.g. maxRE, or all ones for truncation only </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">order_truncated</td><td>Input SH order </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">order_target</td><td>Target SH order, e.g. 38 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">kr</td><td>(nBands) kr vector, r e.g. 0.085 m </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nBands</td><td>Number of frequency bins </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">softThreshold</td><td>Threshold in dB, soft limiting above to +6dB</td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">gain</td><td>(nBands) Gain factor for compensation filter</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd>[1] Hold, C., Gamper, H., Pulkki, V., Raghuvanshi, N., &amp; Tashev, I. J. (2019). Improving Binaural Ambisonics Decoding by Spherical Harmonics Domain Tapering and Coloration Compensation. ICASSP, IEEE International Conference on Acoustics, Speech and Signal Processing - Proceedings. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hoa_8c_source.html#l00301">301</a> of file <a class="el" href="saf__hoa_8c_source.html">saf_hoa.c</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Nov 4 2020 15:48:15 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Wed Nov 25 2020 11:09:32 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

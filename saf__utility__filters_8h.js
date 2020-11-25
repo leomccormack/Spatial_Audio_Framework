@@ -42,5 +42,6 @@ var saf__utility__filters_8h =
     [ "FIRFilterbank", "group___utilities.html#ga4b4239a4d41623a11e37cd134bc02bcf", null ],
     [ "flattenMinphase", "group___utilities.html#ga67a64a4d4e99b534b13d74b718be7d31", null ],
     [ "getOctaveBandCutoffFreqs", "group___utilities.html#gaf66abf636f17745f6e148ce701367669", null ],
-    [ "getWindowingFunction", "group___utilities.html#ga6766a85de86080960730929366b69c05", null ]
+    [ "getWindowingFunction", "group___utilities.html#ga6766a85de86080960730929366b69c05", null ],
+    [ "interpolateFiltersH", "group___utilities.html#gad8825631f7625f36893f03903f4cbb56", null ]
 ];

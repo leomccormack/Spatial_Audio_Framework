@@ -36,5 +36,6 @@ var group___h_o_a =
     [ "getLoudspeakerDecoderMtx", "group___h_o_a.html#ga7c5ef22cd1066f447256dcb0ba7f76a2", null ],
     [ "getMaxREweights", "group___h_o_a.html#gaf2dc357da0a7df362e1d53a91936955c", null ],
     [ "getRSH", "group___h_o_a.html#gac2804e1b897727e3ed1cd0d6dc74d179", null ],
-    [ "getRSH_recur", "group___h_o_a.html#gaf095b87aecb2c38ce5014669c70d4f6f", null ]
+    [ "getRSH_recur", "group___h_o_a.html#gaf095b87aecb2c38ce5014669c70d4f6f", null ],
+    [ "truncationEQ", "group___h_o_a.html#gaf7fa5744bdd8395ab6d34e238f757599", null ]
 ];

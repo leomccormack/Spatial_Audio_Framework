@@ -38,6 +38,7 @@ var saf__test_8c =
     [ "test__sphModalCoeffs", "saf__test_8c.html#a8f427996abe95165a8fc9e0a03d51ec9", null ],
     [ "test__sphMUSIC", "saf__test_8c.html#ada1afadc3ce01509670706830fec494e", null ],
     [ "test__tracker3d", "saf__test_8c.html#ac4ed53fa08ff598c41985d827df25536", null ],
+    [ "test__truncationEQ", "saf__test_8c.html#a1a014cc394faa77a9675cdb74873210b", null ],
     [ "test__unique_i", "saf__test_8c.html#a596d9bd6c2a96c64f6600b1afc4c6fca", null ],
     [ "timerResult", "saf__test_8c.html#a975de70d2853bea8712bdcee8fe2ecf3", null ],
     [ "start", "saf__test_8c.html#a6aec73a6feb926e21556a2adeae8fecf", null ],
