@@ -30,6 +30,8 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        # Default Doxyfile build documentation to html directory. 
-        # Change the directory if changes in Doxyfile
+        # Run post-script
+        ./doxygen_postscript.sh
+
+        # Doxyfile build documentation to html directory.
         publish_dir: ./docs/doxygen/html
