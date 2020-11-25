@@ -25,13 +25,16 @@ jobs:
         doxyfile-path: "./doxygen_config"
         # Working directory
         working-directory: "./docs/doxygen/"
+
+    - name: Post Script
+      # Run post-script
+      ./docs/doxygen/doxygen_postscript.sh
     
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        # Run post-script
-        ./doxygen_postscript.sh
-
         # Doxyfile build documentation to html directory.
         publish_dir: ./docs/doxygen/html
+
+
