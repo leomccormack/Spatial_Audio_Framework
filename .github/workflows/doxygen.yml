@@ -26,9 +26,11 @@ jobs:
         # Working directory
         working-directory: "./docs/doxygen/"
 
-    #- name: Post Script
+    - name: Post Script
       # Run post-script
-     # ./docs/doxygen/doxygen_postscript.sh
+      shell: bash
+      working-directory: "./docs/doxygen/"
+      run: ./doxygen_postscript.sh
     
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
