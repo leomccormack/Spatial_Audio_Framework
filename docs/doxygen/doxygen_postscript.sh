@@ -6,6 +6,7 @@ set -e
 echo "Running doxygen post-script"
 
 # Make the default detail level=4 for the "files" tab
+sudo chmod +rwx html
 sed -i.bak 's/(document).ready(function() { init_search(); });/(document).ready(function() { init_search(); toggleLevel(4); });/' html/files.html && rm html/files.html.bak
 
 #sed -i '' 's+(document).ready(function() { init_search(); });+(document).ready(function() { init_search(); toggleLevel(4); });+' html/files.html
