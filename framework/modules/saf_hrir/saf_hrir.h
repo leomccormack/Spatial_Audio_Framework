@@ -159,7 +159,7 @@ void HRIRs2HRTFs(/* Input Arguments */
  * @param[in]     itds_s     HRIR ITDs; N_dirs x 1
  * @param[in]     centreFreq Frequency vector; N_bands x 1
  * @param[in]     N_bands    Number of frequency bands/bins
- * @param[in]     weights    Grid weights (sum to 4pi); N_dirs x 1
+ * @param[in]     weights    Grid weights; N_dirs x 1, or NULL to bypass
  * @param[in]     applyEQ    EQ diffuse field / CTF; 0:disabled, 1:enabled
  * @param[in]     applyPhase Phase simplification; 0:disabled, 1:enabled
  * @param[in,out] hrtfs      The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs

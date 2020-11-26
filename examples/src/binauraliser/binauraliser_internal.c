@@ -186,7 +186,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
             getVoronoiWeights(pData->hrir_dirs_deg, pData->N_hrir_dirs, 0, pData->weights);
         }
         else{
-            pData->weights = malloc1d(pData->N_hrir_dirs*sizeof(float));
+            pData->weights = realloc1d(pData->weights, pData->N_hrir_dirs*sizeof(float));
             for(int idx=0; idx < pData->N_hrir_dirs; idx++)
                 pData->weights[idx] = 4.f*SAF_PI / (float)pData->N_hrir_dirs;
         }

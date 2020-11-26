@@ -254,7 +254,7 @@ void ambi_bin_initCodec
             getVoronoiWeights(pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, pars->weights);
         }
         else{
-            pars->weights = malloc1d(pars->N_hrir_dirs*sizeof(float));
+            pars->weights = realloc1d(pars->weights, pars->N_hrir_dirs*sizeof(float));
             for(int idx=0; idx < pars->N_hrir_dirs; idx++)
                 pars->weights[idx] = 4.f*SAF_PI / (float)pars->N_hrir_dirs;
         }

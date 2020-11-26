@@ -183,17 +183,22 @@ void diffuseFieldEqualiseHRTFs
     if(applyEQ + applyPhase)
     {
         int i, j, nd, band;
-        float* ipd, *hrtf_diff;
+        float* ipd, *hrtf_diff, *_weights;
       
         /* diffuse-field equalise */
         if(applyEQ){
             hrtf_diff = calloc1d(N_bands*NUM_EARS, sizeof(float));
-            if(weights == NULL)
-                assert(0);  // Not good, could be cought
+            if(weights == NULL){
+                _weights = malloc1d(N_dirs*sizeof(float));
+                for(int idx=0; idx < N_dirs; idx++)
+                    _weights[idx] = 4.f*SAF_PI / (float)N_dirs;
+            }
+            else
+                _weights = weights;
             for(band=0; band<N_bands; band++)
                 for(i=0; i<NUM_EARS; i++)
                     for(j=0; j<N_dirs; j++)
-                        hrtf_diff[band*NUM_EARS + i] += weights[j]/(4.f*SAF_PI) * powf(cabsf(hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + j]), 2.0f);
+                        hrtf_diff[band*NUM_EARS + i] += _weights[j]/(4.f*SAF_PI) * powf(cabsf(hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + j]), 2.0f);
             for(band=0; band<N_bands; band++)
                 for(i=0; i<NUM_EARS; i++)
                     hrtf_diff[band*NUM_EARS + i] = sqrtf(hrtf_diff[band*NUM_EARS + i]);
@@ -202,6 +207,8 @@ void diffuseFieldEqualiseHRTFs
                     for(nd=0; nd<N_dirs; nd++)
                         hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + nd] = ccdivf(hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + nd], cmplxf(hrtf_diff[band*NUM_EARS + i] + 2.23e-8f, 0.0f));
             free(hrtf_diff);
+            if(weights==NULL)
+                free(_weights);
         }
         
         /* create complex HRTFs by introducing the interaural phase differences
