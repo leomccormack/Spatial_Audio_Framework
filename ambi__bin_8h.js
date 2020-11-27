@@ -1,6 +1,7 @@
 var ambi__bin_8h =
 [
     [ "AMBI_BIN_NUM_DECODING_METHODS", "ambi__bin_8h.html#a40674ec8821cf76208e7cf49919abc10", null ],
+    [ "AMBI_BIN_NUM_HRIR_PREPROC_OPTIONS", "ambi__bin_8h.html#ac803728f6f4517a17cd1d8aabc3a3073", null ],
     [ "AMBI_BIN_DECODING_METHODS", "ambi__bin_8h.html#a4cf0b805b8dc84c14b27d26a68fd82a8", [
       [ "DECODING_METHOD_LS", "ambi__bin_8h.html#a4cf0b805b8dc84c14b27d26a68fd82a8a4f51d7de9977d0290c6547b07ee9412b", null ],
       [ "DECODING_METHOD_LSDIFFEQ", "ambi__bin_8h.html#a4cf0b805b8dc84c14b27d26a68fd82a8a45b8a17dd788bf9e49751d6810525520", null ],
@@ -9,17 +10,17 @@ var ambi__bin_8h =
       [ "DECODING_METHOD_MAGLS", "ambi__bin_8h.html#a4cf0b805b8dc84c14b27d26a68fd82a8aee3b399f5c95db20cd2acda4c86db54f", null ]
     ] ],
     [ "AMBI_BIN_PREPROC", "ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20b", [
-      [ "PREPROC_OFF", "ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba1b009267d8a340bfe8b1a1ab60f94214", null ],
-      [ "PREPROC_EQ", "ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20baf6751658299f6f70631b80e94315c909", null ],
-      [ "PREPROC_PHASE", "ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba6329477d95174411a9d1e53b26845b3b", null ],
-      [ "PREPROC_ALL", "ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba41fb5ccff6d93f716144755c512ad273", null ]
+      [ "HRIR_PREPROC_OFF", "ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba69f7c0dfd2baadfb1d7d3fae6b9ff79f", null ],
+      [ "HRIR_PREPROC_EQ", "ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba427785335e2006e12117edc28ed3bf51", null ],
+      [ "HRIR_PREPROC_PHASE", "ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba13d3b159deeff57a97a9038a295f79b7", null ],
+      [ "HRIR_PREPROC_ALL", "ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20bafe7cc21607ef34366f7866f95b738987", null ]
     ] ],
     [ "ambi_bin_create", "ambi__bin_8h.html#a436e73be1f53528b8b2aa40c84c8a9f1", null ],
     [ "ambi_bin_destroy", "ambi__bin_8h.html#a96434ef17a8305400570bf7d95b62cd6", null ],
     [ "ambi_bin_getChOrder", "ambi__bin_8h.html#a594f16356ebf8bd2657a4b054e18b818", null ],
     [ "ambi_bin_getCodecStatus", "ambi__bin_8h.html#adffe12b436f675752d05c0b99a441919", null ],
     [ "ambi_bin_getDAWsamplerate", "ambi__bin_8h.html#a40a8923b845f58fc6a7971f17f7b5e0f", null ],
-    [ "ambi_bin_getDecodingMethod", "ambi__bin_8h.html#a0dbe72a916003b2a141ae65e81e15470", null ],
+    [ "ambi_bin_getDecodingMethod", "ambi__bin_8h.html#a3fdaf5b581b5734b6f9ed069ebf961e7", null ],
     [ "ambi_bin_getEnableDiffuseMatching", "ambi__bin_8h.html#a3324f0b44dd869d3c0b3c313f242dd2d", null ],
     [ "ambi_bin_getEnableMaxRE", "ambi__bin_8h.html#a11e3e1a08ba3a65a269e13fc117d8f40", null ],
     [ "ambi_bin_getEnableRotation", "ambi__bin_8h.html#a57b8872aafea780018612b45c5ec7d03", null ],
@@ -30,7 +31,7 @@ var ambi__bin_8h =
     [ "ambi_bin_getFrameSize", "ambi__bin_8h.html#a903b32f698a9a5b1bc26e774a14e9f43", null ],
     [ "ambi_bin_getHRIRlength", "ambi__bin_8h.html#a672c378195425fd543c6b01cc10e911a", null ],
     [ "ambi_bin_getHRIRsamplerate", "ambi__bin_8h.html#a142e9ac12a55e02f10ef2a4f152c4512", null ],
-    [ "ambi_bin_getHRIRsPreProc", "ambi__bin_8h.html#af2a7467236583ce8a154f26cff958db8", null ],
+    [ "ambi_bin_getHRIRsPreProc", "ambi__bin_8h.html#a34157020b7cf2eb24dfb144d1348d4a7", null ],
     [ "ambi_bin_getInputOrderPreset", "ambi__bin_8h.html#ac8e79cb94c8abec1f5c138439efc90c6", null ],
     [ "ambi_bin_getNDirs", "ambi__bin_8h.html#ae5febbedcf8cf3e56ca09c01895cad46", null ],
     [ "ambi_bin_getNormType", "ambi__bin_8h.html#a16c68b45708c3cfbff09a094725863a7", null ],

@@ -103,6 +103,10 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#a40674ec8821cf76208e7cf49919abc10">AMBI_BIN_NUM_DECODING_METHODS</a>&#160;&#160;&#160;( 5 )</td></tr>
 <tr class="memdesc:a40674ec8821cf76208e7cf49919abc10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of decoding method options. <br /></td></tr>
 <tr class="separator:a40674ec8821cf76208e7cf49919abc10"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac803728f6f4517a17cd1d8aabc3a3073"><td class="memItemLeft" align="right" valign="top"><a id="ac803728f6f4517a17cd1d8aabc3a3073"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#ac803728f6f4517a17cd1d8aabc3a3073">AMBI_BIN_NUM_HRIR_PREPROC_OPTIONS</a>&#160;&#160;&#160;( 4 )</td></tr>
+<tr class="memdesc:ac803728f6f4517a17cd1d8aabc3a3073"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of HRIR pre-preprocessing options. <br /></td></tr>
+<tr class="separator:ac803728f6f4517a17cd1d8aabc3a3073"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -117,11 +121,12 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:a4cf0b805b8dc84c14b27d26a68fd82a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available decoding methods for the ambi_bin example.  <a href="ambi__bin_8h.html#a4cf0b805b8dc84c14b27d26a68fd82a8">More...</a><br /></td></tr>
 <tr class="separator:a4cf0b805b8dc84c14b27d26a68fd82a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2b2ed703143d42a1b727cb56836e20b"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20b">AMBI_BIN_PREPROC</a> { <a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba1b009267d8a340bfe8b1a1ab60f94214">PREPROC_OFF</a> = 1, 
-<a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20baf6751658299f6f70631b80e94315c909">PREPROC_EQ</a>, 
-<a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba6329477d95174411a9d1e53b26845b3b">PREPROC_PHASE</a>, 
-<a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba41fb5ccff6d93f716144755c512ad273">PREPROC_ALL</a>
+<tr class="memitem:aa2b2ed703143d42a1b727cb56836e20b"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20b">AMBI_BIN_PREPROC</a> { <a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba69f7c0dfd2baadfb1d7d3fae6b9ff79f">HRIR_PREPROC_OFF</a> = 1, 
+<a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba427785335e2006e12117edc28ed3bf51">HRIR_PREPROC_EQ</a>, 
+<a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba13d3b159deeff57a97a9038a295f79b7">HRIR_PREPROC_PHASE</a>, 
+<a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20bafe7cc21607ef34366f7866f95b738987">HRIR_PREPROC_ALL</a>
  }</td></tr>
+<tr class="memdesc:aa2b2ed703143d42a1b727cb56836e20b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available HRIR pre-preprocessing options.  <a href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20b">More...</a><br /></td></tr>
 <tr class="separator:aa2b2ed703143d42a1b727cb56836e20b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
@@ -234,10 +239,10 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="amb
 <tr class="memitem:ac8e79cb94c8abec1f5c138439efc90c6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#ac8e79cb94c8abec1f5c138439efc90c6">ambi_bin_getInputOrderPreset</a> (void *const hAmbi)</td></tr>
 <tr class="memdesc:ac8e79cb94c8abec1f5c138439efc90c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the decoding order.  <a href="ambi__bin_8h.html#ac8e79cb94c8abec1f5c138439efc90c6">More...</a><br /></td></tr>
 <tr class="separator:ac8e79cb94c8abec1f5c138439efc90c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0dbe72a916003b2a141ae65e81e15470"><td class="memItemLeft" align="right" valign="top"><a id="a0dbe72a916003b2a141ae65e81e15470"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#a0dbe72a916003b2a141ae65e81e15470">ambi_bin_getDecodingMethod</a> (void *const hAmbi)</td></tr>
-<tr class="memdesc:a0dbe72a916003b2a141ae65e81e15470"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the currently selected decoding method (see <a class="el" href="ambi__bin_8h.html#a4cf0b805b8dc84c14b27d26a68fd82a8" title="Available decoding methods for the ambi_bin example.">AMBI_BIN_DECODING_METHODS</a> enum) <br /></td></tr>
-<tr class="separator:a0dbe72a916003b2a141ae65e81e15470"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fdaf5b581b5734b6f9ed069ebf961e7"><td class="memItemLeft" align="right" valign="top"><a id="a3fdaf5b581b5734b6f9ed069ebf961e7"></a>
+<a class="el" href="ambi__bin_8h.html#a4cf0b805b8dc84c14b27d26a68fd82a8">AMBI_BIN_DECODING_METHODS</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#a3fdaf5b581b5734b6f9ed069ebf961e7">ambi_bin_getDecodingMethod</a> (void *const hAmbi)</td></tr>
+<tr class="memdesc:a3fdaf5b581b5734b6f9ed069ebf961e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the currently selected decoding method (see <a class="el" href="ambi__bin_8h.html#a4cf0b805b8dc84c14b27d26a68fd82a8" title="Available decoding methods for the ambi_bin example.">AMBI_BIN_DECODING_METHODS</a> enum) <br /></td></tr>
+<tr class="separator:a3fdaf5b581b5734b6f9ed069ebf961e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf2c09e264e7f19558bb1215741e1533"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#adf2c09e264e7f19558bb1215741e1533">ambi_bin_getSofaFilePath</a> (void *const hAmbi)</td></tr>
 <tr class="memdesc:adf2c09e264e7f19558bb1215741e1533"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the file path for a .sofa file.  <a href="ambi__bin_8h.html#adf2c09e264e7f19558bb1215741e1533">More...</a><br /></td></tr>
 <tr class="separator:adf2c09e264e7f19558bb1215741e1533"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -269,9 +274,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi_
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#a23f74c1143d09f404c492e5e51446d83">ambi_bin_getEnableTruncationEQ</a> (void *const hAmbi)</td></tr>
 <tr class="memdesc:a23f74c1143d09f404c492e5e51446d83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the flag value which dictates whether the truncation EQ is currently enabled ('0' disabled, '1' enabled). <br /></td></tr>
 <tr class="separator:a23f74c1143d09f404c492e5e51446d83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2a7467236583ce8a154f26cff958db8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#af2a7467236583ce8a154f26cff958db8">ambi_bin_getHRIRsPreProc</a> (void *const hAmbi)</td></tr>
-<tr class="memdesc:af2a7467236583ce8a154f26cff958db8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the flag value which dictates whether the diffuse EQ is currently enabled ('0' disabled, '1' enabled).  <a href="ambi__bin_8h.html#af2a7467236583ce8a154f26cff958db8">More...</a><br /></td></tr>
-<tr class="separator:af2a7467236583ce8a154f26cff958db8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34157020b7cf2eb24dfb144d1348d4a7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20b">AMBI_BIN_PREPROC</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#a34157020b7cf2eb24dfb144d1348d4a7">ambi_bin_getHRIRsPreProc</a> (void *const hAmbi)</td></tr>
+<tr class="memdesc:a34157020b7cf2eb24dfb144d1348d4a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the flag value which dictates whether the diffuse EQ is currently enabled ('0' disabled, '1' enabled).  <a href="ambi__bin_8h.html#a34157020b7cf2eb24dfb144d1348d4a7">More...</a><br /></td></tr>
+<tr class="separator:a34157020b7cf2eb24dfb144d1348d4a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57b8872aafea780018612b45c5ec7d03"><td class="memItemLeft" align="right" valign="top"><a id="a57b8872aafea780018612b45c5ec7d03"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#a57b8872aafea780018612b45c5ec7d03">ambi_bin_getEnableRotation</a> (void *const hAmbi)</td></tr>
 <tr class="memdesc:a57b8872aafea780018612b45c5ec7d03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the flag value which dictates whether to enable/disable sound-field rotation ('0' disabled, '1' enabled). <br /></td></tr>
@@ -386,20 +391,22 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi_
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Available HRIR pre-preprocessing options. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa2b2ed703143d42a1b727cb56836e20ba1b009267d8a340bfe8b1a1ab60f94214"></a>PREPROC_OFF&#160;</td><td class="fielddoc"><p>No pre-processing active. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa2b2ed703143d42a1b727cb56836e20ba69f7c0dfd2baadfb1d7d3fae6b9ff79f"></a>HRIR_PREPROC_OFF&#160;</td><td class="fielddoc"><p>No pre-processing active. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="aa2b2ed703143d42a1b727cb56836e20baf6751658299f6f70631b80e94315c909"></a>PREPROC_EQ&#160;</td><td class="fielddoc"><p>Diffuse EQ (compensates CTF) </p>
+<tr><td class="fieldname"><a id="aa2b2ed703143d42a1b727cb56836e20ba427785335e2006e12117edc28ed3bf51"></a>HRIR_PREPROC_EQ&#160;</td><td class="fielddoc"><p>Diffuse-field EQ (compensates CTF) </p>
 </td></tr>
-<tr><td class="fieldname"><a id="aa2b2ed703143d42a1b727cb56836e20ba6329477d95174411a9d1e53b26845b3b"></a>PREPROC_PHASE&#160;</td><td class="fielddoc"><p>Phase simplification based on ITD. </p>
+<tr><td class="fieldname"><a id="aa2b2ed703143d42a1b727cb56836e20ba13d3b159deeff57a97a9038a295f79b7"></a>HRIR_PREPROC_PHASE&#160;</td><td class="fielddoc"><p>Phase simplification based on ITD. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="aa2b2ed703143d42a1b727cb56836e20ba41fb5ccff6d93f716144755c512ad273"></a>PREPROC_ALL&#160;</td><td class="fielddoc"><p>All of the above. </p>
+<tr><td class="fieldname"><a id="aa2b2ed703143d42a1b727cb56836e20bafe7cc21607ef34366f7866f95b738987"></a>HRIR_PREPROC_ALL&#160;</td><td class="fielddoc"><p>Diffuse-field EQ AND phase-simplification. </p>
 </td></tr>
 </table>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a10">ambi_bin.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin_8h_source.html#l00078">78</a> of file <a class="el" href="ambi__bin_8h_source.html">ambi_bin.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin_8h_source.html#l00079">79</a> of file <a class="el" href="ambi__bin_8h_source.html">ambi_bin.h</a>.</p>
 
 </div>
 </div>
@@ -460,14 +467,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi_
 
 </div>
 </div>
-<a id="af2a7467236583ce8a154f26cff958db8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af2a7467236583ce8a154f26cff958db8">&#9670;&nbsp;</a></span>ambi_bin_getHRIRsPreProc()</h2>
+<a id="a34157020b7cf2eb24dfb144d1348d4a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34157020b7cf2eb24dfb144d1348d4a7">&#9670;&nbsp;</a></span>ambi_bin_getHRIRsPreProc()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int ambi_bin_getHRIRsPreProc </td>
+          <td class="memname"><a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20b">AMBI_BIN_PREPROC</a> ambi_bin_getHRIRsPreProc </td>
           <td>(</td>
           <td class="paramtype">void *const&#160;</td>
           <td class="paramname"><em>hAmbi</em></td><td>)</td>
@@ -478,7 +485,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi_
 
 <p>Returns the flag value which dictates whether the diffuse EQ is currently enabled ('0' disabled, '1' enabled). </p>
 <p>Returns HRIR pre-processing strategy. <br  />
- (see <a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20b">AMBI_BIN_PREPROC</a> enum) </p>
+ (see <a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20b" title="Available HRIR pre-preprocessing options.">AMBI_BIN_PREPROC</a> enum) </p>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a50">ambi_bin.h</a>.</dd>
 </dl>
 
@@ -751,7 +758,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 </div><div class="memdoc">
 
 <p>Sets a flag to enable/disable (1 or 0) diffuse EQ. </p>
-<p>Sets HRIR pre-processing strategy. (see <a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20b">AMBI_BIN_PREPROC</a> enum) </p>
+<p>Sets HRIR pre-processing strategy. (see <a class="el" href="ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20b" title="Available HRIR pre-preprocessing options.">AMBI_BIN_PREPROC</a> enum) </p>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="ambi_bin_8h-example.html#a26">ambi_bin.h</a>.</dd>
 </dl>
 
@@ -876,7 +883,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_7ea9cec8c8a74419de82b1d94b0f1364.html">include</a></li><li class="navelem"><a class="el" href="ambi__bin_8h.html">ambi_bin.h</a></li>
-    <li class="footer">Generated on Wed Nov 25 2020 11:19:08 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Fri Nov 27 2020 15:19:19 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

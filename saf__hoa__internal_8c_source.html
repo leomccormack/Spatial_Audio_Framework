@@ -567,9 +567,9 @@ $(document).ready(function(){initNavTree('saf__hoa__internal_8c_source.html','')
 <div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;        <span class="comment">/* Remove itd from high frequency HRTFs */</span></div>
 <div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;        <span class="keywordflow">if</span>(band&gt;=band_cutoff){</div>
 <div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;N_dirs; j++){</div>
-<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;                hrtfs_mod[0*N_dirs+j] = ccmulf(hrtfs[band*2*N_dirs + 0*N_dirs + j],</div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;                hrtfs_mod[0*N_dirs+j] = ccmulf(hrtfs[band_cutoff*2*N_dirs + 0*N_dirs + j],</div>
 <div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;                                               cexpf( crmulf(cmplxf(0.0f, 0.0f), (itd_s[j]/2.0f))));</div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;                hrtfs_mod[1*N_dirs+j] = ccmulf(hrtfs[band*2*N_dirs + 1*N_dirs + j],</div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;                hrtfs_mod[1*N_dirs+j] = ccmulf(hrtfs[band_cutoff*2*N_dirs + 1*N_dirs + j],</div>
 <div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;                                               cexpf( crmulf(cmplxf(0.0f, 0.0f), (-itd_s[j]/2.0f))));</div>
 <div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;            }</div>
 <div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;        }</div>
@@ -721,7 +721,7 @@ $(document).ready(function(){initNavTree('saf__hoa__internal_8c_source.html','')
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_99016b584a5af87cdf49f1484dd80da6.html">saf_hoa</a></li><li class="navelem"><a class="el" href="saf__hoa__internal_8c.html">saf_hoa_internal.c</a></li>
-    <li class="footer">Generated on Wed Nov 25 2020 11:19:06 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
+    <li class="footer">Generated on Fri Nov 27 2020 15:19:18 for Spatial_Audio_Framework by <a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
 </div>
 </body>

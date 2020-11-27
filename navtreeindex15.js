@@ -1,5 +1,6 @@
 var NAVTREEINDEX15 =
 {
+"structlattice_decor__data.html#a29436147e0965d592d0fea89698ebaf9":[13,0,21,9],
 "structlattice_decor__data.html#a32910f45b8af7559b6b612600cffe3b9":[13,0,21,4],
 "structlattice_decor__data.html#a525fc7cd37e1b8105cfa2f5f45cf3106":[13,0,21,6],
 "structlattice_decor__data.html#a76e7c1ba8cefb6b728837b4832c6bc0a":[13,0,21,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX15 =
 "structtracker3d__config.html#a52fe80014905bf4c316b6fc3e0f85154":[12,8,4,0],
 "structtracker3d__config.html#a5f536204e5bbb34d1fd53e085b4fe386":[12,8,4,6],
 "structtracker3d__config.html#a6cb9e476d1258d9a1b4bd5c2bb658f29":[12,8,4,15],
-"structtracker3d__config.html#a866c575c878bd7fc1b00ed7d345725fa":[12,8,4,10],
-"structtracker3d__config.html#aa486b29c2795356bc2e53d6af2c38548":[12,8,4,7]
+"structtracker3d__config.html#a866c575c878bd7fc1b00ed7d345725fa":[12,8,4,10]
 };
