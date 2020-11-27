@@ -17,7 +17,7 @@
 /**
  *@addtogroup Utilities
  *@{
- * @file saf_utilities.h  
+ * @file saf_utilities.h
  * @brief Main header for the utilities module (#SAF_UTILITIES_MODULE)
  *
  * A collection of useful utility functions; including: cross-platform complex
