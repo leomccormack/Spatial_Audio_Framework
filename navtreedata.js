@@ -32,8 +32,8 @@ var NAVTREE =
       ] ]
     ] ],
     [ "Using the framework", "index.html#autotoc_md61", [
-      [ "Building with CMake <img src=\"https://github.com/leomccormack/Spatial_Audio_Framework/workflows/CMake%20Build/badge.svg?branch=master\" alt=\"CMake Build\"/>", "index.html#autotoc_md62", null ],
-      [ "Documentation <img src=\"https://github.com/leomccormack/Spatial_Audio_Framework/workflows/Doxygen%20Generate/badge.svg?branch=master\" alt=\"Doxygen Generate\"/>", "index.html#autotoc_md63", null ],
+      [ "Building with CMake", "index.html#autotoc_md62", null ],
+      [ "Documentation", "index.html#autotoc_md63", null ],
       [ "Examples", "index.html#autotoc_md64", null ],
       [ "Extras", "index.html#autotoc_md65", null ],
       [ "Contributing", "index.html#autotoc_md66", null ],
