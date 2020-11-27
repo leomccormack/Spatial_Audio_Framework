@@ -83,6 +83,9 @@ typedef enum {
     HRIR_PREPROC_ALL,         /**< Diffuse-field EQ AND phase-simplification */
 }AMBI_BIN_PREPROC;
 
+/** Number of HRIR pre-preprocessing options */
+#define AMBI_BIN_NUM_HRIR_PREPROC_OPTIONS ( 4 )
+
 
 /* ========================================================================== */
 /*                               Main Functions                               */
@@ -332,7 +335,7 @@ int ambi_bin_getInputOrderPreset(void* const hAmbi);
  * Returns the currently selected decoding method (see
  * #AMBI_BIN_DECODING_METHODS enum)
  */
-int ambi_bin_getDecodingMethod(void* const hAmbi);
+AMBI_BIN_DECODING_METHODS ambi_bin_getDecodingMethod(void* const hAmbi);
 
 /**
  * Returns the file path for a .sofa file
@@ -397,7 +400,7 @@ int ambi_bin_getEnableTruncationEQ(void* const hAmbi);
  * Returns HRIR pre-processing strategy.  
  * (see #AMBI_BIN_PREPROC enum)
  */
-int ambi_bin_getHRIRsPreProc(void* const hAmbi);
+AMBI_BIN_PREPROC ambi_bin_getHRIRsPreProc(void* const hAmbi);
 
 /**
  * Returns the flag value which dictates whether to enable/disable sound-field

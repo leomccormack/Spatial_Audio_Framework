@@ -693,7 +693,7 @@ int ambi_bin_getUseDefaultHRIRsflag(void* const hAmbi)
     return pData->enablePreProcEQ;
 } */
 
-int ambi_bin_getHRIRsPreProc(void* const hAmbi)
+AMBI_BIN_PREPROC ambi_bin_getHRIRsPreProc(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     return pData->preProc;
@@ -705,7 +705,7 @@ int ambi_bin_getInputOrderPreset(void* const hAmbi)
     return pData->new_order;
 }
 
-int ambi_bin_getDecodingMethod(void* const hAmbi)
+AMBI_BIN_DECODING_METHODS ambi_bin_getDecodingMethod(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     return pData->method;
