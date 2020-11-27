@@ -61,12 +61,12 @@ void ambi_bin_create
     for (band = 0; band<HYBRID_BANDS; band++)
         pData->EQ[band] = 1.0f;
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
-    pData->preProc = PREPROC_ALL;
+    pData->preProc = HRIR_PREPROC_ALL;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->enableMaxRE = 1;
     pData->enableDiffuseMatching = 0;
-    pData->enableTruncationEQ = 0;
+    pData->enableTruncationEQ = 1;
     pData->enableRotation = 0;
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
@@ -254,21 +254,16 @@ void ambi_bin_initCodec
             getVoronoiWeights(pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, pars->weights);
         }
         else{
-            pars->weights = realloc1d(pars->weights, pars->N_hrir_dirs*sizeof(float));
-            for(int idx=0; idx < pars->N_hrir_dirs; idx++)
-                pars->weights[idx] = 4.f*SAF_PI / (float)pars->N_hrir_dirs;
-        }
-        /* HRIR pre-processing */
-        pData->progressBar0_1 = 0.75f;
-        if(pData->preProc != PREPROC_OFF){
-            if(pData->preProc == PREPROC_EQ)
-                diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->weights, 1, 0, pars->hrtf_fb);
-            if(pData->preProc == PREPROC_PHASE)
-                diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->weights, 0, 1, pars->hrtf_fb);
-            if(pData->preProc == PREPROC_ALL)
-                diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->weights, 1, 1, pars->hrtf_fb);
+            free(pars->weights);
+            pars->weights = NULL;
         }
 
+        /* HRIR pre-processing */
+        pData->progressBar0_1 = 0.75f;
+        diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->weights,
+                                  pData->preProc == HRIR_PREPROC_EQ    || pData->preProc == HRIR_PREPROC_ALL ? 1 : 0, /* Apply Diffuse-field EQ? */
+                                  pData->preProc == HRIR_PREPROC_PHASE || pData->preProc == HRIR_PREPROC_ALL ? 1 : 0, /* Apply phase simplification EQ? */
+                                  pars->hrtf_fb);
         pData->reinit_hrtfsFLAG = 0;
     }
     
@@ -307,29 +302,29 @@ void ambi_bin_initCodec
     }
     
     /* Apply Truncation EQ */
-    if(pData->enableTruncationEQ){
-        // Equalizing diffuse field to 42nd order equivalent.
+    if(pData->enableTruncationEQ &&
+       pData->method==DECODING_METHOD_LS &&
+       pData->preProc!=HRIR_PREPROC_PHASE &&
+       pData->preProc!=HRIR_PREPROC_ALL)
+    {
         double *kr;
         float *w_n, *eqGain;
         const int order_truncated = order;
-        const int order_target = 42;
-        const float softThreshold = 12.0;  // results in +18 dB max
-        const double r = 0.085;  // spherical scatterer radius
+        const int order_target = 42;       /* Equalizing diffuse field to 42nd order equivalent. */
+        const float softThreshold = 9.0;  /* results in +9 dB max */
+        const double r = 0.085;            /* spherical scatterer radius (approx. size of human head) */
         const int numBands = HYBRID_BANDS;
         const double c = 343.;
-        
+
+        /* Prep */
         kr = malloc1d(numBands * sizeof(double));
         w_n = calloc1d((order_truncated+1), sizeof(float));
         eqGain = calloc1d(numBands, sizeof(float));
-
-        /* Prep */
         for (int k=0; k<numBands; k++)
-        {
             kr[k] = 2.0*SAF_PId / c * (double)pData->freqVector[k] * r;
-        }
         
         if (pData->enableMaxRE) {
-            // maxRE as order weighting
+            /* maxRE as order weighting */
             float *maxRECoeffs = malloc1d((order_truncated+1) * sizeof(float));
             beamWeightsMaxEV(order_truncated, maxRECoeffs);
             for (int idx_n=0; idx_n<order_truncated+1; idx_n++) {
@@ -342,22 +337,21 @@ void ambi_bin_initCodec
             free(maxRECoeffs);
         }
         else {
-            // just truncation, no tapering
+            /* just truncation, no tapering */
             for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
                 w_n[idx_n] = 1.0f;
         }
-
         truncationEQ(w_n, order_truncated, order_target, kr, numBands, softThreshold, eqGain);
 
-        // apply to decoding matrix
+        /* apply to decoding matrix */
         for (int idxBand=0; idxBand<numBands; idxBand++){
             for (int idxSH=0; idxSH<pData->nSH; idxSH++){
-                // left ear
-                decMtx[idxBand*NUM_EARS*nSH+0*nSH+idxSH] *= (float_complex)eqGain[idxBand];
-                // right ear
-                decMtx[idxBand*NUM_EARS*nSH+1*nSH+idxSH] *= (float_complex)eqGain[idxBand];
+                decMtx[idxBand*NUM_EARS*nSH+0*nSH+idxSH] = crmulf(decMtx[idxBand*NUM_EARS*nSH+0*nSH+idxSH], eqGain[idxBand]); /* left ear */
+                decMtx[idxBand*NUM_EARS*nSH+1*nSH+idxSH] = crmulf(decMtx[idxBand*NUM_EARS*nSH+1*nSH+idxSH], eqGain[idxBand]); /* right ear */
             }
         }
+
+        /* clean-up */
         free(kr);
         free(w_n);
         free(eqGain);

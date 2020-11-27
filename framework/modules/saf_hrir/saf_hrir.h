@@ -148,19 +148,22 @@ void HRIRs2HRTFs(/* Input Arguments */
                  float_complex* hrtfs);
 
 /**
- * Applies pre-processing to a set of HRTFs. Can be diffuse field EQ of a 
- * weighted (weights should sum to 4pi) average of all HRTFs (CTF).
- * Also provides phase simplification based on ITDs.
+ * Applies pre-processing to a set of HRTFs, which can either be diffuse-field
+ * EQ of an (optionally weighted) average of all HRTFs (CTF), phase s
+ * implification based on ITDs, or both.
  *
+ * @note 'weights' (if used) should sum to 4pi, and 'itds_s' is only required
+ *       if applyPhase=1.
  * @warning This function is NOT suitable for binaural room impulse responses
  *          (BRIRs)!
  *
  * @param[in]     N_dirs     Number of HRTFs
- * @param[in]     itds_s     HRIR ITDs; N_dirs x 1
+ * @param[in]     itds_s     HRIR ITDs (set to NULL if not needed); N_dirs x 1
  * @param[in]     centreFreq Frequency vector; N_bands x 1
  * @param[in]     N_bands    Number of frequency bands/bins
- * @param[in]     weights    Grid weights; N_dirs x 1, or NULL to bypass
- * @param[in]     applyEQ    EQ diffuse field / CTF; 0:disabled, 1:enabled
+ * @param[in]     weights    Grid weights (set to NULL if not available);
+ *                           N_dirs x 1
+ * @param[in]     applyEQ    Diffuse-field EQ / CTF; 0:disabled, 1:enabled
  * @param[in]     applyPhase Phase simplification; 0:disabled, 1:enabled
  * @param[in,out] hrtfs      The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  */

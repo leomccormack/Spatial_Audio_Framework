@@ -176,7 +176,7 @@ void diffuseFieldEqualiseHRTFs
     float* weights,
     int applyEQ,
     int applyPhase,
-    float_complex* hrtfs   /* N_bands x 2 x N_dirs */
+    float_complex* hrtfs   /* N_bands x #NUM_EARS x N_dirs */
 )
 {
     /* Anything to do at all? */
@@ -211,8 +211,8 @@ void diffuseFieldEqualiseHRTFs
                 free(_weights);
         }
         
-        /* create complex HRTFs by introducing the interaural phase differences
-        * (IPDs) to the HRTF magnitude responses */
+        /* Create complex HRTFs by introducing the interaural phase differences
+         * (IPDs) to the HRTF magnitude responses */
         if(applyPhase){
             /* convert ITDs to phase differences -pi..pi */
             ipd = malloc1d(N_bands*N_dirs*sizeof(float));

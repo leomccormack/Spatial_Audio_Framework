@@ -46,7 +46,7 @@ extern "C" {
 /**
  * Ambisonic decoding options for loudspeaker playback
  *
- * Note that the MDD and EPAD decoding options revert back to "SAD" if the
+ * Note that the MMD and EPAD decoding options revert back to "SAD" if the
  * loudspeakers are uniformly distributed on the sphere. The benefits afforded
  * by MMD, EPAD [1], and AllRAD [2] relate to their improved performance when
  * using irregular loudspeaker arrangements.
@@ -69,20 +69,21 @@ typedef enum {
      * cardioid beamformers (aka virtual microphones) towards each loudspeaker
      * direction. This approach is numerically robust to irregular loudspeaker
      * arrangements. However, it does not preserve the energy of a source (or
-     * localisation cues) as it is panned around in different directions.
+     * localisation cues) as it is panned around in different directions over
+     * irregular setups.
      */
     LOUDSPEAKER_DECODER_SAD,
     /**
      * Mode-Matching Decoder (MMD): pseudo-inverse of the loudspeaker spherical
      * harmonic matrix. Due to the pseudo-inverse, more signal energy is lent to
      * regions on the surface of the sphere that are more sparsely populated
-     * with loudspeakers, since this is essentially a least-squares solution.
+     * with loudspeakers; (this is essentially a least-squares solution).
      * Therefore, this approach can help balance out directional loudness
      * differences when using slightly irregular setups. However, one must also
-     * be careful since loudspeakers that are far way from all the other
+     * be careful since loudspeakers that are very far way from all the other
      * loudspeakers (e.g. voice-of-god) may be given significantly more signal
      * energy than expected. Therefore, this approach is not recommended for
-     * highly irregular loudspeaker arrangements
+     * highly irregular loudspeaker arrangements!
      */
     LOUDSPEAKER_DECODER_MMD,
     /**
@@ -139,12 +140,16 @@ typedef enum {
      */
     BINAURAL_DECODER_LS,
     /**
-     * Least-squares (LS) decoder with diffuse-field spectral equalisation [1]
+     * Least-squares (LS) decoder with diffuse-field spectral equalisation [1].
+     * Note that the diffuse-field EQ is applied in the spherical harmonic
+     * domain (to account for the truncation error/loss of high frequencies), so
+     * this is not the same as applying diffuseFieldEqualiseHRTFs() on the HRTFs
+     * followed by BINAURAL_DECODER_LS.
      */
     BINAURAL_DECODER_LSDIFFEQ,
     /**
      * Spatial resampling decoder (on the same lines as the virtual loudspeaker
-     * approach) [2]
+     * approach) [2].
      */
     BINAURAL_DECODER_SPR,
     /**
@@ -358,15 +363,14 @@ void getMaxREweights(/* Input Arguments */
  * Filter that equalizes the high frequency roll-off due to SH truncation and
  * tapering. Details can be found in [1].
  *
- * @param[in]  w_n              (order_truncated + 1) Tapering weights;
- *                              E.g. maxRE, or all ones for truncation only
- * @param[in]  order_truncated  Input SH order
- * @param[in]  order_target     Target SH order, e.g. 38
- * @param[in]  kr               (nBands) kr vector, r e.g. 0.085 m
- * @param[in]  nBands           Number of frequency bins
+ * @param[in]  w_n             Tapering weights; (order_truncated + 1) x 1
+ *                             E.g. maxRE, or all ones for truncation only
+ * @param[in]  order_truncated Input SH order
+ * @param[in]  order_target    Target SH order, (should be higher, e.g. 38)
+ * @param[in]  kr              kr vector, r e.g. 0.085 m; nBands x 1
+ * @param[in]  nBands          Number of frequency bins
  * @param[in]  softThreshold   Threshold in dB, soft limiting above to +6dB
- *
- * @param[out] gain             (nBands) Gain factor for compensation filter
+ * @param[out] gain            Gain factor for compensation filter; nBands x 1
  *
  * @see [1] Hold, C., Gamper, H., Pulkki, V., Raghuvanshi, N., & Tashev, I. J. 
  *          (2019). Improving Binaural Ambisonics Decoding by Spherical 

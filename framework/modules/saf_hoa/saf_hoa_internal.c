@@ -494,9 +494,9 @@ void getBinDecoder_TA
         /* Remove itd from high frequency HRTFs */
         if(band>=band_cutoff){
             for(j=0; j<N_dirs; j++){
-                hrtfs_mod[0*N_dirs+j] = ccmulf(hrtfs[band*2*N_dirs + 0*N_dirs + j],
+                hrtfs_mod[0*N_dirs+j] = ccmulf(hrtfs[band_cutoff*2*N_dirs + 0*N_dirs + j],
                                                cexpf( crmulf(cmplxf(0.0f, 0.0f), (itd_s[j]/2.0f))));
-                hrtfs_mod[1*N_dirs+j] = ccmulf(hrtfs[band*2*N_dirs + 1*N_dirs + j],
+                hrtfs_mod[1*N_dirs+j] = ccmulf(hrtfs[band_cutoff*2*N_dirs + 1*N_dirs + j],
                                                cexpf( crmulf(cmplxf(0.0f, 0.0f), (-itd_s[j]/2.0f))));
             }
         }

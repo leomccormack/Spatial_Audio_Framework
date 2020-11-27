@@ -75,12 +75,12 @@ typedef enum {
 /** Number of decoding method options */
 #define AMBI_BIN_NUM_DECODING_METHODS ( 5 )
 
+/** Available HRIR pre-preprocessing options */
 typedef enum {
-    PREPROC_OFF = 1,        /**< No pre-processing active */
-    PREPROC_EQ,             /**< Diffuse EQ (compensates CTF) */
-    PREPROC_PHASE,          /**< Phase simplification based on ITD */
-    PREPROC_ALL,            /**< All of the above */
-
+    HRIR_PREPROC_OFF = 1,     /**< No pre-processing active */
+    HRIR_PREPROC_EQ,          /**< Diffuse-field EQ (compensates CTF) */
+    HRIR_PREPROC_PHASE,       /**< Phase simplification based on ITD */
+    HRIR_PREPROC_ALL,         /**< Diffuse-field EQ AND phase-simplification */
 }AMBI_BIN_PREPROC;
 
 
