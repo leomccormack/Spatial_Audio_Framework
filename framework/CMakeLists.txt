@@ -165,26 +165,26 @@ if(SAF_ENABLE_SOFA_READER_MODULE)
     # Header path and libs are platform dependent
     if(MSVC) 
         if(SAF_HDF5_INCLUDE_DIR AND SAF_HDF5_LIB_DIR)
-+            target_include_directories(${PROJECT_NAME} PUBLIC ${SAF_HDF5_INCLUDE_DIR})
-+            set(SAF_HDF5_LIBS
-+                ${SAF_HDF5_LIB_DIR}/libhdf5.lib
-+                ${SAF_HDF5_LIB_DIR}/libzlib.lib
-+                ${SAF_HDF5_LIB_DIR}/libszip.lib
-+                ${SAF_HDF5_LIB_DIR}/libhdf5_hl.lib
-+            )
-+        else()
-+            target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include)
-+            set(SAF_HDF5_LIBS
-+                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5.lib
-+                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libzlib.lib
-+                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libszip.lib
-+                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5_hl.lib
-+            )
-+        endif()
-+        target_link_libraries(${PROJECT_NAME} PRIVATE ${SAF_HDF5_LIBS})
-+        message(STATUS "Linking HDF5: ${SAF_HDF5_LIBS}")
-+        target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/netcdf.lib)
-+        target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include/netcdf)
+            target_include_directories(${PROJECT_NAME} PUBLIC ${SAF_HDF5_INCLUDE_DIR})
+            set(SAF_HDF5_LIBS
+                ${SAF_HDF5_LIB_DIR}/libhdf5.lib
+                ${SAF_HDF5_LIB_DIR}/libzlib.lib
+                ${SAF_HDF5_LIB_DIR}/libszip.lib
+                ${SAF_HDF5_LIB_DIR}/libhdf5_hl.lib
+            )
+        else()
+            target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include)
+            set(SAF_HDF5_LIBS
+                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libzlib.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libszip.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5_hl.lib
+            )
+        endif()
+        target_link_libraries(${PROJECT_NAME} PRIVATE ${SAF_HDF5_LIBS})
+        message(STATUS "Linking HDF5: ${SAF_HDF5_LIBS}")
+        target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/netcdf.lib)
+        target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include/netcdf)
     elseif(MSYS OR MINGW)
         message(SEND_ERROR "Unsupported on MSYS because I can't get the damn thing to link no matter what I do..") 
         target_include_directories(${PROJECT_NAME} PUBLIC 
