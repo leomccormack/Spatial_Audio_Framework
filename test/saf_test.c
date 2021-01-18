@@ -31,6 +31,7 @@
 # include "powermap.h"
 # include "rotator.h"
 # include "sldoa.h"
+# include "tvconv.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
 /* ========================================================================== */
@@ -117,6 +118,7 @@ int main_test(void) {
     RUN_TEST(test__saf_example_ambi_enc);
     RUN_TEST(test__saf_example_array2sh); 
     RUN_TEST(test__saf_example_rotator);
+    RUN_TEST(test__tvconv);
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
     /* close */
@@ -2934,5 +2936,10 @@ void test__saf_example_rotator(void){
     free(y);
     free(shSig_frame);
     free(shSig_rot_frame);
+}
+void test__tvconv(void){
+    void* hTVCnv;
+    tvconv_create(&hTVCnv);
+    tvconv_test(hTVCnv);
 }
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */

@@ -172,6 +172,9 @@ void test__saf_example_rotator(void);
 /**
  * Testing the truncation EQ */
 void test__truncationEQ(void);
+/**
+ * Testing the tvconv */
+void test__tvconv(void);
 
 #ifdef __cplusplus
 } /* extern "C" */

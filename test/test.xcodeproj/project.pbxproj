@@ -83,6 +83,8 @@
 		50E3DFBA24E1B64800589B17 /* ambi_roomsim.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DFB824E1B64800589B17 /* ambi_roomsim.c */; };
 		50E5CD1624AF3E5800019898 /* saf_utility_geometry.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */; };
 		50E5CDAA24B4580900019898 /* saf_utility_latticeCoeffs.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */; };
+		56D2862125655DBD0072380A /* tvconv_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 56D2862025655DBD0072380A /* tvconv_internal.c */; };
+		56D2862525655E470072380A /* tvconv.c in Sources */ = {isa = PBXBuildFile; fileRef = 56D2862425655E470072380A /* tvconv.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -259,6 +261,10 @@
 		50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_geometry.c; sourceTree = "<group>"; };
 		50E5CD1524AF3E5800019898 /* saf_utility_geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_geometry.h; sourceTree = "<group>"; };
 		50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_latticeCoeffs.c; sourceTree = "<group>"; };
+		56D2861F25655DBD0072380A /* tvconv_internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tvconv_internal.h; sourceTree = "<group>"; };
+		56D2862025655DBD0072380A /* tvconv_internal.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tvconv_internal.c; sourceTree = "<group>"; };
+		56D2862325655E470072380A /* tvconv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tvconv.h; sourceTree = "<group>"; };
+		56D2862425655E470072380A /* tvconv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tvconv.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -561,6 +567,7 @@
 				50E3DE4624C1B81200589B17 /* powermap.h */,
 				50E3DE3A24C1B81200589B17 /* rotator.h */,
 				50E3DE4124C1B81200589B17 /* sldoa.h */,
+				56D2862325655E470072380A /* tvconv.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -585,6 +592,7 @@
 				50E3DEFF24C1D4EA00589B17 /* powermap */,
 				50E3DECD24C1C80B00589B17 /* rotator */,
 				50E3DEF924C1D4EA00589B17 /* sldoa */,
+				56D2861E25655D210072380A /* tvconv */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -761,6 +769,16 @@
 			path = ambi_roomsim;
 			sourceTree = "<group>";
 		};
+		56D2861E25655D210072380A /* tvconv */ = {
+			isa = PBXGroup;
+			children = (
+				56D2861F25655DBD0072380A /* tvconv_internal.h */,
+				56D2862025655DBD0072380A /* tvconv_internal.c */,
+				56D2862425655E470072380A /* tvconv.c */,
+			);
+			path = tvconv;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -827,6 +845,7 @@
 				50E3DEE724C1C80C00589B17 /* matrixconv_internal.c in Sources */,
 				50E3DEDF24C1C80C00589B17 /* pitch_shifter_internal.c in Sources */,
 				50E36072249BDDCC00B74C25 /* saf_reverb.c in Sources */,
+				56D2862525655E470072380A /* tvconv.c in Sources */,
 				50E36077249BDDCC00B74C25 /* saf_vbap_internal.c in Sources */,
 				50E36066249BDDCC00B74C25 /* saf_utility_fft.c in Sources */,
 				50E3DEC424C1C5AB00589B17 /* array2sh.c in Sources */,
@@ -855,6 +874,7 @@
 				50E36071249BDDCC00B74C25 /* saf_utility_decor.c in Sources */,
 				508FBDA52456D3300076C205 /* timer.c in Sources */,
 				50E3DF0924C1D4EA00589B17 /* powermap_internal.c in Sources */,
+				56D2862125655DBD0072380A /* tvconv_internal.c in Sources */,
 				50E3DEB724C1C36E00589B17 /* ambi_drc.c in Sources */,
 				50E3DEE324C1C80C00589B17 /* beamformer.c in Sources */,
 				508CC48124EAA0A4006DF0C7 /* saf_tracker.c in Sources */,
