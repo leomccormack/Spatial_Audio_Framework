@@ -2941,5 +2941,12 @@ void test__tvconv(void){
     void* hTVCnv;
     tvconv_create(&hTVCnv);
     tvconv_test(hTVCnv);
+    SAF_SOFA_ERROR_CODES error;
+    saf_sofa_container sofa;
+    //char filepath[] = "/Users/dauginr1/Documents/Special_Assignment/rir-interpolation-vst/rirs_unprocessed_3D_rndLP.sofa";
+    char filepath[] = "/Users/dauginr1/Documents/Special_Assignment/FABIAN_HRIR_measured_HATO_0.sofa";
+    error = saf_sofa_open(&sofa, filepath);
+    printf("SAF_SOFA_ERROR_CODES: %d\n", (int)error);
+    saf_sofa_close(&sofa);
 }
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
