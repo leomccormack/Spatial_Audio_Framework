@@ -206,15 +206,21 @@ if(SAF_ENABLE_SOFA_READER_MODULE)
         endif()
         target_link_libraries(${PROJECT_NAME} INTERFACE ${NETCDF_LIBRARY})
          
-    elseif(APPLE)
-        target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/include)
-        target_link_libraries(${PROJECT_NAME} 
-        PRIVATE
-            ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libnetcdf.a
-            ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5.a
-            ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libz.a 
-            ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5_hl.a
-        )  
+    elseif(APPLE) 
+        if (SAF_NETCDF_INCLUDE_DIR AND SAF_NETCDF_LIBRARIES)
+             message(STATUS "Using NetCDF include dir ${SAF_NETCDF_INCLUDE_DIR} and libraries ${SAF_NETCDF_LIBRARIES}")
+             target_include_directories(${PROJECT_NAME} PUBLIC ${SAF_NETCDF_INCLUDE_DIR})
+             target_link_libraries(${PROJECT_NAME} PRIVATE ${SAF_NETCDF_LIBRARIES})
+         else()
+             target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/include)
+             target_link_libraries(${PROJECT_NAME}
+             PRIVATE
+                 ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libnetcdf.a
+                 ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5.a
+                 ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libz.a
+                 ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5_hl.a
+             )
+         endif()
     elseif(UNIX AND NOT APPLE) 
         find_library(NETCDF_LIBRARY netcdf HINTS /usr/lib/x86_64-linux-gnu)
         if (NOT NETCDF_LIBRARY)
