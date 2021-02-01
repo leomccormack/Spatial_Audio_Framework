@@ -170,14 +170,10 @@ void afSTFT_channelChange(void * const hSTFT,
                           int new_nCHin,
                           int new_nCHout);
 
-/**
- * Flushes time-domain buffers with zeros.
- */
+/** Flushes time-domain buffers with zeros */
 void afSTFT_clearBuffers(void * const hSTFT);
 
-/**
- * Returns number of frequency bands
- */
+/** Returns number of frequency bands */
 int afSTFT_getNBands(void * const hSTFT);
 
 /**
@@ -189,13 +185,34 @@ int afSTFT_getNBands(void * const hSTFT);
  */
 int afSTFT_getProcDelay(void * const hSTFT);
 
-/**
- * Returns current frequency vector
- */
+/** Returns current frequency vector */
 void afSTFT_getCentreFreqs(void * const hSTFT,
                            float fs,
                            int nBands,
                            float* freqVector);
+
+/**
+ * Converts FIR filters into Filterbank Coefficients by passing them through
+ * the afSTFT filterbank
+ *
+ * @param[in]  hIR        Time-domain FIR; FLAT: N_dirs x nCH x ir_len
+ * @param[in]  N_dirs     Number of FIR sets
+ * @param[in]  nCH        Number of channels per FIR set
+ * @param[in]  ir_len     Length of the FIR
+ * @param[in]  hopSize    Hop size
+ * @param[in]  hybridmode 0: disabled, 1:enabled
+ * @param[out] hFB        The FIRs as Filterbank coefficients;
+ *                        FLAT: N_bands x nCH x N_dirs
+ */
+void afSTFT_FIRtoFilterbankCoeffs(/* Input Arguments */
+                                  float* hIR,
+                                  int N_dirs,
+                                  int nCH,
+                                  int ir_len,
+                                  int hopSize,
+                                  int hybridmode,
+                                  /* Output Arguments */
+                                  float_complex* hFB);
 
 
 #ifdef __cplusplus
