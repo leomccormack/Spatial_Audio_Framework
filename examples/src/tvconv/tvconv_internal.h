@@ -28,6 +28,7 @@
 #include <math.h>
 #include <string.h>
 #include <assert.h>
+#include "matrixconv.h"
 #include "tvconv.h"
 #include "saf.h"
 #include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
@@ -52,49 +53,52 @@ extern "C" {
  * Structure for a vector
  */
 typedef float vectorND[NUM_DIMENSIONS];
+
 /**
  * Main structure for tvconv.
  */
 typedef struct _tvconv
 {
     /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
-    float outFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
+//    int FIFO_idx;
+//    float inFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
+//    float outFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
 
     /* Internal buffers */
-    float** inputFrameTD;
-    float** outputFrameTD;
+//    float** inputFrameTD;
+//    float** outputFrameTD;
     float** overlapTD;
     float** overlapTD_Last;
     float* fadeIn;
     float* fadeOut;
     
     /* internal */
-    void* hMultiConv;
-    int hostBlockSize;
-    int hostBlockSize_clamped; /**< Clamped between MIN and #MAX_FRAME_SIZE */
-    float** filters;   /**< npositionsx x (FLAT: nfilters x filter_length) */
-    int nfilters; /** < number of filters per position */
-    int filter_length;
-    int filter_fs;
-    int host_fs;
-    int reInitFilters;
+//    void* hMultiConv;
+//    int hostBlockSize;
+//    int hostBlockSize_clamped; /**< Clamped between MIN and #MAX_FRAME_SIZE */
+//    float** filters;   /**< npositionsx x (FLAT: nfilters x filter_length) */
+//    int host_fs;
+//    int reInitFilters;
+    void* hMatrixconv_data;
+    int ir_fs;
+    float** irs;   /**< npositionsx x (FLAT: nfilters x filter_length) */
+    int nIrChannels; /** < number of filters per position */
+    int ir_length;
     vectorND* positions; /** < npositions x 3 */
     vectorND* positions_Last;
-    unsigned int npositions;
+    int nPositions;
     float minDimensions[NUM_DIMENSIONS];
     float maxDimensions[NUM_DIMENSIONS];
-    unsigned int position_idx;
-    unsigned int position_idx_Last;
-    unsigned int position_idx_Last2;
+    int position_idx;
+    int position_idx_Last;
+    int position_idx_Last2;
     
     
     /* user parameters */
-    int nChannels;
-    int enablePartitionedConv;
-    vectorND position;
-    
+//    int nChannels;
+//    int enablePartitionedConv;
+    vectorND position;    
+    char* sofa_filepath;
 
 } tvconv_data;
 
@@ -106,6 +110,11 @@ typedef struct _tvconv
  * FInds the index holding the nearest neigbour to the selected position
  */
 void tvconv_findNearestNeigbour(void* const hTVCnv);
+
+/**
+ * Sets the smallest and the highest position of each dimension from the list of positions
+ */
+void tvconv_setMinMaxDimensions(void* const hTVCnv);
 
 
 #ifdef __cplusplus

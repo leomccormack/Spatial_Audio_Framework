@@ -41,6 +41,46 @@ extern "C" {
  */
 void tvconv_create(void** const phTVCnv);
 
+/**
+ * Destroys an instance of tvconv
+ *
+ * @param[in] phTVCnv (&) address of tvconv handle
+ */
+void tvconv_destroy(void** const phTVCnv);
+
+/**
+ * Initialises an instance of tvconv with default settings
+ *
+ * @param[in] hTVCnv         matrixconv handle
+ * @param[in] samplerate    Host samplerate.
+ * @param[in] hostBlockSize Host frame/block size
+ */
+void tvconv_init(void* const hTVCnv,
+                 int samplerate,
+                 int hostBlockSize);
+
+/**
+ * Performs the matrix convolution processing
+ *
+ * @param[in] hTVCnv    tvconv handle
+ * @param[in] inputs    Input channel buffers; 2-D array: nInputs x nSamples
+ * @param[in] outputs   Output channel buffers; 2-D array: nOutputs x nSamples
+ * @param[in] nInputs   Number of input channels
+ * @param[in] nOutputs  Number of output channels
+ * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
+ */
+void tvconv_process(void* const hTVCnv,
+                    float** const inputs,
+                    float** const outputs,
+                    int nInputs,
+                    int nOutputs,
+                    int nSamples);
+
+
+void tvconv_setFiltersAndPositions(void* const hTVCnv);
+
+void tvconv_setSofaFilePath(void* const hTVCnv, const char* path);
+
 void tvconv_test(void* const hTVCnv);
 
 #ifdef __cplusplus
