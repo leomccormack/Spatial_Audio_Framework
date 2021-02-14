@@ -205,7 +205,6 @@
     <ClInclude Include="..\..\framework\modules\saf_hoa\saf_hoa.h" />
     <ClInclude Include="..\..\framework\modules\saf_hoa\saf_hoa_internal.h" />
     <ClInclude Include="..\..\framework\modules\saf_hrir\saf_hrir.h" />
-    <ClInclude Include="..\..\framework\modules\saf_hrir\saf_hrir_internal.h" />
     <ClInclude Include="..\..\framework\modules\saf_reverb\saf_reverb.h" />
     <ClInclude Include="..\..\framework\modules\saf_reverb\saf_reverb_internal.h" />
     <ClInclude Include="..\..\framework\modules\saf_sh\saf_sh.h" />
@@ -281,7 +280,6 @@
     <ClCompile Include="..\..\framework\modules\saf_hoa\saf_hoa_internal.c" />
     <ClCompile Include="..\..\framework\modules\saf_hrir\saf_default_hrirs.c" />
     <ClCompile Include="..\..\framework\modules\saf_hrir\saf_hrir.c" />
-    <ClCompile Include="..\..\framework\modules\saf_hrir\saf_hrir_internal.c" />
     <ClCompile Include="..\..\framework\modules\saf_reverb\saf_reverb.c" />
     <ClCompile Include="..\..\framework\modules\saf_reverb\saf_reverb_internal.c" />
     <ClCompile Include="..\..\framework\modules\saf_sh\saf_sh.c" />
