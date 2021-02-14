@@ -71,6 +71,7 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
+    RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -129,6 +130,36 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__quaternion(void){
+    int i, j;
+    float norm;
+    float rot[3][3], rot2[3][3], residual[9];
+    quaternion_data Q, Q1;
+
+    for(i=0; i<1000; i++){
+        /* Randomise the quaternion values */
+        rand_m1_1(Q.Q, 4);
+
+        /* Normalise to make it valid */
+        norm = L2_norm(Q.Q, 4);
+        Q.w /= norm;
+        Q.x /= norm;
+        Q.y /= norm;
+        Q.z /= norm;
+        /* Q.w = 0; Q.x = 0.0000563298236; Q.y = 0.947490811; Q.z = -0.319783032; // Problem case! */
+
+        /* Convert to rotation matrix, then back, then to rotation matrix again */
+        quaternion2rotationMatrix(&Q, rot);
+        rotationMatrix2quaternion(rot, &Q1);
+        quaternion2rotationMatrix(&Q1, rot2);
+
+        /* Ensure that the difference between them is 0 */
+        utility_svvsub((float*)rot, (float*)rot2, 9, residual);
+        for(j=0; j<9; j++)
+            TEST_ASSERT_TRUE(fabsf(residual[j])<1e-3f); 
+    }
+}
 
 void test__saf_stft_50pc_overlap(void){
     int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;
