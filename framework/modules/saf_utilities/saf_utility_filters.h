@@ -43,13 +43,25 @@ extern "C" {
 
 /**
  * Bi-quadratic (second-order) IIR filter design options
+ *
+ * @note By default, the filter designs have been taken from [1]. While those
+ *       with the "_EQCB" suffix have instead been taken from [2].
+ *
+ * @see [1] Zo"lzer, U., 2012. Digital audio effects (2nd edition). New York:
+ *          Wiley.
+ * @see [2] https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
  */
 typedef enum {
-    BIQUAD_FILTER_LPF,       /**< low-pass filter */
-    BIQUAD_FILTER_HPF,       /**< high-pass filter */
-    BIQUAD_FILTER_PEAK,      /**< peaking filter */
-    BIQUAD_FILTER_LOW_SHELF, /**< low-shelving filter */
-    BIQUAD_FILTER_HI_SHELF   /**< high-shelving filter */
+    BIQUAD_FILTER_LPF,            /**< low-pass filter (DAFx-Zolzer) */
+    BIQUAD_FILTER_LPF_EQCB,       /**< low-pass filter (EQ-cookbook) */
+    BIQUAD_FILTER_HPF,            /**< high-pass filter (DAFx-Zolzer) */
+    BIQUAD_FILTER_HPF_EQCB,       /**< high-pass filter (EQ-cookbook) */
+    BIQUAD_FILTER_PEAK,           /**< peaking filter (DAFx-Zolzer) */
+    BIQUAD_FILTER_PEAK_EQCB,      /**< peaking filter (EQ-cookbook) */
+    BIQUAD_FILTER_LOW_SHELF,      /**< low-shelving filter (DAFx-Zolzer) */
+    BIQUAD_FILTER_LOW_SHELF_EQCB, /**< low-shelving filter (EQ-cookbook) */
+    BIQUAD_FILTER_HI_SHELF,       /**< high-shelving filter (DAFx-Zolzer) */
+    BIQUAD_FILTER_HI_SHELF_EQCB,  /**< high-shelving filter (EQ-cookbook) */
     
 }BIQUAD_FILTER_TYPES;
 
@@ -184,6 +196,12 @@ void interpolateFiltersH(/* Input arguments */
                          /* Output arguments */
                          float_complex* filters_out);
 
+/** Converts filter octave band-width to Q-factor */
+float convertBW2Q(float BW);
+
+/** Converts filter Q-factor to octave band-width */
+float convertQ2BW(float Q);
+
 
 /* ========================================================================== */
 /*                             IIR Filter Functions                           */
@@ -218,6 +236,8 @@ void biQuadCoeffs(/* input arguments */
  * equation: https://en.wikipedia.org/wiki/Digital_biquad_filter
  *
  * @note input 'signal' is filtered in place (i.e. it becomes the output signal)
+ * @warning It is assumed that a[0] = 1.0f! Scale all coefficients by a[0] if
+ *          this is not the case, prior to calling this function.
  *
  * @param[in]      b        b filter coefficients; 3 x 1
  * @param[in]      a        a filter coefficients; 3 x 1
@@ -263,8 +283,10 @@ void evalBiQuadTransferFunction(/* Input arguments */
  * difference equation)
  *
  * @note The function assumes the numerator coefficents are the same length
- *       as the denominator, i.e. a[0] is assumed to be 1 and ignored. The
- *       output signal and input signal can also be the same.
+ *       as the denominator. The output signal and input signal can also be the
+ *       same.
+ * @warning It is assumed that a[0] = 1.0f! Scale all coefficients by a[0] if
+ *          this is not the case, prior to calling this function.
  *
  * @param[in]     in_signal  Input signal; nSamples x 1
  * @param[in]     nSamples   Number of samples to process
