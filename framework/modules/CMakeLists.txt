@@ -32,6 +32,7 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_sensorarray_presets.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_sort.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_veclib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_dvf.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap_internal.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap.c
