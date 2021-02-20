@@ -236,6 +236,9 @@
  */
 #include "../../resources/afSTFT/afSTFTlib.h"
 
+/* Distance variation function filter coefficient functions. */
+#include "saf_utility_dvf.h"
+
 
 #endif /* __SAF_UTILITIES_H_INCLUDED__ */
 

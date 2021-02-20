@@ -172,6 +172,11 @@ int main_test(void) {
     RUN_TEST(test__saf_example_spreader);
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
+    /* SAF DVF module unit tests */
+    RUN_TEST(test__dvf_calcHighShelfParams);
+    RUN_TEST(test__dvf_interpHighShelfParams);
+    RUN_TEST(test__dvf_calcIIRCoeffs);
+
     /* close */
     timer_lib_shutdown();
     printf("\nTotal time elapsed: %lfs", (double)timer_elapsed(start));

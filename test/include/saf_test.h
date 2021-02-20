@@ -65,6 +65,7 @@
 # include "array2sh.h"
 # include "beamformer.h"
 # include "binauraliser.h"
+# include "binauraliser_nf.h"
 # include "decorrelator.h"
 # include "dirass.h"
 # include "matrixconv.h"
@@ -364,6 +365,21 @@ void test__saf_example_rotator(void);
 void test__saf_example_spreader(void);
 
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
+
+
+/* ========================================================================== */
+/*                           SAF DVF module unit tests                          */
+/* ========================================================================== */
+
+/**
+ * Calculate high shelf parameters, g0, gInf, fc, from the lookup table coefficients (10 degree steps). */
+void test__dvf_calcHighShelfParams(void);
+/**
+ * Test the interpolation of high shelf parameters based on distance and incidence angle parameters */
+void test__dvf_interpHighShelfParams(void);
+/**
+ * Test thegeneration of high shelf coeffs based on shelf gains and fc parameters */
+void test__dvf_calcIIRCoeffs(void);
 
 
 #ifdef __cplusplus
