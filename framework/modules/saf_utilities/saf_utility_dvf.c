@@ -99,8 +99,8 @@ static void calcIIRCoeffs
     float va_c;
     
     v0     = db2mag(gInf);             /* Eq. (12), (10), and (11) */
-    g0_mag = db2mag(g0);
-    tanF   = tanf((headDim / fs) * fc);   // TODO: this /fs calc can be optimized out with precomputed head dimension
+    g0_mag = db2mag(g0);                    // TODO: revisit - why is g0,gInf in dB?
+    tanF   = tanf((headDim / fs) * fc);     // TODO: this /fs calc can be optimized out with precomputed head dimension
     v0tanF = v0 * tanF;
     a_c    = (v0tanF - 1.f) / (v0tanF + 1.f);
     

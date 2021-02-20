@@ -24,6 +24,9 @@ extern "C" {
 
 #endif /* saf_utility_dvf_h */
 
+/*
+* Linear interpolation between two values.
+*/
 static float interpolate_lin
 (
  float a,
@@ -34,10 +37,13 @@ static float interpolate_lin
     return a + (b-a) * ifac;
 }
 
+/*
+ * Covert decibels to a magnitude.
+ */
 static float db2mag
 (
- float db
+ float dB
 )
 {
-    return powf(10.f, db / 20.f);
+    return powf(10.f, dB / 20.f);
 }
