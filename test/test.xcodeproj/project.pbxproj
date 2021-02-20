@@ -628,6 +628,8 @@
 				50E36030249BDDCC00B74C25 /* saf_utility_sort.h */,
 				50E3603E249BDDCC00B74C25 /* saf_utility_veclib.c */,
 				50E3602F249BDDCC00B74C25 /* saf_utility_veclib.h */,
+				57D5BC3625E1472700FF989F /* saf_utility_dvf.h */,
+				57D5BC3725E1472700FF989F /* saf_utility_dvf.c */,
 			);
 			path = saf_utilities;
 			sourceTree = "<group>";
@@ -1059,6 +1061,7 @@
 				508CC48124EAA0A4006DF0C7 /* saf_tracker.c in Sources */,
 				50E3DEBD24C1C56800589B17 /* ambi_enc.c in Sources */,
 				50E36074249BDDCC00B74C25 /* saf_sh.c in Sources */,
+				57D5BC3825E1472700FF989F /* saf_utility_dvf.c in Sources */,
 				50E3DEB824C1C36E00589B17 /* ambi_drc_internal.c in Sources */,
 				50E3607B249BDDCC00B74C25 /* saf_hrir.c in Sources */,
 				50C18ED7261E3FCC008A17B1 /* spreader_internal.c in Sources */,
