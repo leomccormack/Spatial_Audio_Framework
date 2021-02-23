@@ -53,6 +53,30 @@ const float a_head = 0.0875;
 const float headDim = M_PI * (a_0 / a_head); // TODO: use saf_PI
 const float sosDiv2PiA = 343 / (M_PI_2 * a_head);   // TODO: use saf_PI
 
+/*
+* Linear interpolation between two values.
+*/
+static float interpolate_lin
+(
+ float a,
+ float b,
+ float ifac
+)
+{
+    return a + (b-a) * ifac;
+}
+
+/*
+ * Covert decibels to a magnitude.
+ */
+static float db2mag
+(
+ float dB
+)
+{
+    return powf(10.f, dB / 20.f);
+}
+
 
 /**
 * Calculate high-shelf parameters from the lookup table coefficients (10 degree steps).
@@ -162,7 +186,7 @@ static void calcHighShelfCoeffs
 }
 
 
-static void applyDVF
+void applyDVF
 (
     float theta,   /* ipsilateral azimuth, on the inter-aural axis [0, 180] (deg) */
     float rho,     /* distance, normalized to head radius, >= 1 */
@@ -178,4 +202,12 @@ static void applyDVF
     
     calcHighShelfCoeffs(theta, rho, fs, &b[0], &b[1], &a[1]);       // TODO: wacky pointer syntax
     applyIIR(in_signal, nSamples, 2, &b[0], &a[0], wz, out_signal); // TODO: wacky pointer syntax
+}
+
+int levelUp
+(
+ int a
+ )
+{
+    return a + 1;
 }

@@ -24,26 +24,31 @@ extern "C" {
 
 #endif /* saf_utility_dvf_h */
 
-/*
-* Linear interpolation between two values.
-*/
-static float interpolate_lin
-(
- float a,
- float b,
- float ifac
-)
-{
-    return a + (b-a) * ifac;
-}
-
-/*
- * Covert decibels to a magnitude.
+/**
+ * Apply the Distance Variation function to the input signal.
+ *
+ * @param[in]   theta Ipsilateral azimuth, on the inter-aural axis [0, 180] (deg)
+ * @param[in]   rho Source distance, normalized to head radius, >= 1
+ * @param[in]   in_signal (&) Input signal pointer.
+ * @param[in]   nSamples Number of samples to process
+ * @param[in]   fs  Sample rate
+ * @param[out]  wz  (&) Filter coefficients to be passed to the next block
+ * @param[out]  out_signal  (&) Output signal pointer
  */
-static float db2mag
-(
- float dB
-)
-{
-    return powf(10.f, dB / 20.f);
-}
+void applyDVF(/* Input Arguments */
+              float theta,   /* ipsilateral azimuth, on the inter-aural axis [0, 180] (deg) */
+              float rho,     /* distance, normalized to head radius, >= 1 */
+              float* in_signal,
+              int nSamples,
+              float fs,
+              /* Output Arguments */
+              float* wz,
+              float* out_signal);
+
+int levelUp(
+             int a
+            );
+
+#ifdef __cplusplus
+}/* extern "C" */
+#endif /* __cplusplus */

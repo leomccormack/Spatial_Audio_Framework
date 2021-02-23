@@ -32,6 +32,13 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#include "saf_utilities.h" // MTM added... why wasn't this here?
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <float.h>
+#include <math.h>
+
 /* ========================================================================== */
 /*                                    Enums                                   */
 /* ========================================================================== */
@@ -57,7 +64,7 @@ typedef enum {
     BIQUAD_FILTER_LOW_SHELF_EQCB, /**< low-shelving filter (EQ-cookbook) */
     BIQUAD_FILTER_HI_SHELF,       /**< high-shelving filter (DAFx-Zolzer) */
     BIQUAD_FILTER_HI_SHELF_EQCB,  /**< high-shelving filter (EQ-cookbook) */
-    
+
 }BIQUAD_FILTER_TYPES;
 
 /** Butterworth Infinite Impulse Response (IIR) filter design options */
@@ -75,7 +82,7 @@ typedef enum {
     FIR_FILTER_HPF, /**< high-pass filter */
     FIR_FILTER_BPF, /**< band-pass filter */
     FIR_FILTER_BSF  /**< band-stop filter */
-    
+
 }FIR_FILTER_TYPES;
 
 /**
@@ -94,7 +101,7 @@ typedef enum {
     WINDOWING_FUNCTION_NUTTALL,          /**< Nuttall */
     WINDOWING_FUNCTION_BLACKMAN_NUTTALL, /**< Blackman-Nuttall */
     WINDOWING_FUNCTION_BLACKMAN_HARRIS   /**< Blackman-Harris */
-    
+
 }WINDOWING_FUNCTION_TYPES;
 
 
