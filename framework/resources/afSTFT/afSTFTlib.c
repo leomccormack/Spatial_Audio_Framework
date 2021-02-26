@@ -130,8 +130,8 @@ typedef struct _afSTFT_data {
     int procDelay;                    /**< Processing delay in samples */
     AFSTFT_FDDATA_FORMAT format;      /**< see #AFSTFT_FDDATA_FORMAT */
     void* hInt;                       /**< Internal handle for afSTFT */
-    complexVector* STFTInputFrameTF;  /**< Interal input complex buffer */
-    complexVector* STFTOutputFrameTF; /**< Interal output complex buffer */
+    complexVector* STFTInputFrameTF;  /**< Internal input complex buffer */
+    complexVector* STFTOutputFrameTF; /**< Internal output complex buffer */
     int afSTFTdelay;                  /**< for host delay compensation */
     float** tempHopFrameTD;           /**< temporary multi-channel time-domain buffer of size "HOP_SIZE". */
 
