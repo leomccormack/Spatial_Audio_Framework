@@ -53,8 +53,14 @@ const float a_head = 0.0875;
 const float headDim = M_PI * (a_0 / a_head); // TODO: use saf_PI
 const float sosDiv2PiA = 343 / (M_PI_2 * a_head);   // TODO: use saf_PI
 
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Static Functions */
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
 /*
 * Linear interpolation between two values.
+* TODO: find in already-existing library?
 */
 static float interpolate_lin
 (
@@ -68,6 +74,7 @@ static float interpolate_lin
 
 /*
  * Covert decibels to a magnitude.
+ * TODO: find in already-existing library?
  */
 static float db2mag
 (
@@ -77,11 +84,10 @@ static float db2mag
     return powf(10.f, dB / 20.f);
 }
 
-
 /**
 * Calculate high-shelf parameters from the lookup table coefficients (10 degree steps).
 * Called twice per update as the returned values are subsequently interpolated to exact azimuth. */
-static void calcHighShelfParams
+void calcHighShelfParams
 (
     int i,          /* index into the coefficient table, dictated by azimuth */
     float rho,      /* normalized source distance */
@@ -103,7 +109,7 @@ static void calcHighShelfParams
     *fc = fc_tmp * sosDiv2PiA;
 }
 
-static void calcIIRCoeffs
+void calcIIRCoeffs
 (
  float g0,      /* high shelf dc gain */
  float gInf,    /* high shelf high gain */
@@ -123,8 +129,8 @@ static void calcIIRCoeffs
     float va_c;
     
     v0     = db2mag(gInf);             /* Eq. (12), (10), and (11) */
-    g0_mag = db2mag(g0);                    // TODO: revisit - why is g0,gInf in dB?
-    tanF   = tanf((headDim / fs) * fc);     // TODO: this /fs calc can be optimized out with precomputed head dimension
+    g0_mag = db2mag(g0);               // TODO: revisit - why is g0,gInf in dB?
+    tanF   = tanf((headDim / fs) * fc);// TODO: this /fs calc can be optimized out with precomputed head dimension
     v0tanF = v0 * tanF;
     a_c    = (v0tanF - 1.f) / (v0tanF + 1.f);
     
@@ -139,7 +145,7 @@ static void calcIIRCoeffs
 /*
  *
  */
-static void calcHighShelfCoeffs
+void calcHighShelfCoeffs
 (
  float theta,   /* ipsilateral azimuth, on the inter-aural axis [0, 180] (deg) */
  float rho,     /* distance, normalized to head radius, >= 1 */
@@ -193,15 +199,34 @@ void applyDVF
     float* in_signal,
     int nSamples,
     float fs,
-    float* wz,
+    float* wz,      // TODO: comment to describe this
     float* out_signal
 )
 {
-    float b[2] = {0.f, 0.f};
-    float a[2] = {1.f, 0.f};
+    float b[2] = {0.f, 0.f}; // TODO: this should be passed in by reference, or otherwise deleted once used.
+    float a[2] = {1.f, 0.f}; // TODO: this should be passed in by reference, or otherwise deleted once used.
     
     calcHighShelfCoeffs(theta, rho, fs, &b[0], &b[1], &a[1]);       // TODO: wacky pointer syntax
     applyIIR(in_signal, nSamples, 2, &b[0], &a[0], wz, out_signal); // TODO: wacky pointer syntax
+}
+
+void convertFrontalDoAToIpsilateral
+(
+    float thetaFront, /* DOA wrt 0˚ forward-facing  [deg, (-180, 180)] */
+    float* ipsiDoaLR  /* pointer to 2-element array of left and right ear DoAs wrt interaural axis */
+)
+{
+    float thetaL;
+    
+    // TODO: clamp thetaFront (-180, 180)
+    thetaL = fabsf(90.f - thetaFront);
+    if (thetaL > 180.f) {
+        thetaL = 360.f - thetaL;
+    }
+    
+    // TODO: is this a valid way to set an array passed by pointer?
+    ipsiDoaLR[0] = thetaL;
+    ipsiDoaLR[1] = 180.f - thetaL; // thetaR
 }
 
 int levelUp

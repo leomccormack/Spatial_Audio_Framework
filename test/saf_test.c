@@ -162,6 +162,7 @@ void test__quaternion(void){
     }
 }
 
+/* DVF tests **/
 void test__dvf_dummyFunc(void){
     int a, b;
     a = 2;
