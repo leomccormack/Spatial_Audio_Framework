@@ -61,6 +61,12 @@ extern "C" {
 #define IMS_LAGRANGE_ORDER ( 2 )
 /** Lagrange interpolator look-up table size */
 #define IMS_LAGRANGE_LOOKUP_TABLE_SIZE ( 100 )
+/** Index for the current echogram slot */
+#define IMS_EG_CURRENT ( 0 )
+/** Index for the previous echogram slot */
+#define IMS_EG_PREV ( 1 )
+/** Number of echogram slots */
+#define IMS_EG_NUM_SLOTS ( 2 )
 
 /** Void pointer (just to improve code readability when working with arrays of
  *  handles) */
@@ -211,17 +217,17 @@ typedef struct _ims_scene_data
 
     /* Circular buffers (only used/allocated when applyEchogramTD() function is
      * called for the first time) */
-    unsigned long wIdx[IMS_MAX_NUM_RECEIVERS][IMS_MAX_NUM_SOURCES][2];    /**< current write indices for circular buffers */
-    float*** circ_buffer[2];  /**< [2] x (nChannels x nBands x #IMS_CIRC_BUFFER_LENGTH) */
+    unsigned long wIdx[IMS_EG_NUM_SLOTS][IMS_MAX_NUM_RECEIVERS][IMS_MAX_NUM_SOURCES];  /**< current write indices for circular buffers */
+    float*** circ_buffer[IMS_EG_NUM_SLOTS];  /**< [IMS_EG_NUM_SLOTS] x (nChannels x nBands x #IMS_CIRC_BUFFER_LENGTH) */
 
     /* IIR filterbank (only used/allocated when applyEchogramTD() function is
      * called for the first time) */
-    voidPtr* hFaFbank;        /**< One per source */
-    float*** src_sigs_bands;  /**< nSources x nBands x nSamples */
+    voidPtr* hFaFbank;          /**< One per source */
+    float*** src_sigs_bands;    /**< nSources x nBands x nSamples */
 
     /* Temporary receiver frame used for cross-fading (only used/allocated when
      * applyEchogramTD() function is called for the first time) */
-    float*** rec_sig_tmp;     /**< nReceivers x nChannels x nSamples */
+    float*** rec_sig_tmp[IMS_EG_NUM_SLOTS]; /**< [IMS_EG_NUM_SLOTS] x (nReceivers x nChannels x nSamples) */
     float* interpolator_fIn;  /**< framesize x 1 */
     float* interpolator_fOut; /**< framesize x 1 */
     int applyCrossFadeFLAG[IMS_MAX_NUM_RECEIVERS][IMS_MAX_NUM_SOURCES];
