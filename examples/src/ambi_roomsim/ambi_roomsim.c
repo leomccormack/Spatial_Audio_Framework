@@ -68,8 +68,10 @@ void ambi_roomsim_create
     float rec_pos[3]  = {5.2f, 3.5f, 1.4f};
     memcpy(pData->rec_pos, rec_pos, 3*sizeof(float));
 
-
-    pData->src_sigs = (float**)malloc2d(64, FRAME_SIZE, sizeof(float));
+    pData->src_sigs = malloc1d(64*sizeof(float*));
+    for(i=0; i<64; i++)
+        pData->src_sigs[i] = malloc1d(FRAME_SIZE*sizeof(float));
+    //pData->src_sigs = (float**)malloc2d(64, FRAME_SIZE, sizeof(float));
     pData->rec_sh_outsigs = (float**)malloc2d(64, FRAME_SIZE, sizeof(float));
 
     pData->reinit_room = 1;
@@ -110,7 +112,10 @@ void ambi_roomsim_init
     if(pData->reinit_room){
         ims_shoebox_destroy(&(pData->hIms));
         ims_shoebox_create(&(pData->hIms), 10.5f, 7.0f, 3.0f, (float*)pData->abs_wall, 250.0f, pData->nBands, 343.0f, 48e3f);
-        pData->sourceIDs[0] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos, &pData->src_sigs[0]);
+        pData->sourceIDs[0] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos,  &(pData->src_sigs[0]));
+        pData->sourceIDs[1] = ims_shoebox_addSource(pData->hIms, (float*)pData->src2_pos, &(pData->src_sigs[1]));
+//        pData->sourceIDs[2] = ims_shoebox_addSource(pData->hIms, (float*)pData->src3_pos, &pData->src_sigs[2]);
+//        pData->sourceIDs[3] = ims_shoebox_addSource(pData->hIms, (float*)pData->src4_pos, &pData->src_sigs[3]);
     //    sourceIDs[1] = ims_shoebox_addSource(pData->hIms, (float*)pData->src2_pos, &src_sigs[1]);
     //    sourceIDs[2] = ims_shoebox_addSource(pData->hIms, (float*)pData->src3_pos, &src_sigs[2]);
     //    sourceIDs[3] = ims_shoebox_addSource(pData->hIms, (float*)pData->src4_pos, &src_sigs[3]);
@@ -148,10 +153,10 @@ void ambi_roomsim_process
     /* Process frame */
     if (nSamples == FRAME_SIZE) {
 
-        nSources = 1;
+        nSources = 2;
 
         /* Load time-domain data */
-        for(i=0; i < MIN(1,nInputs); i++)
+        for(i=0; i < MIN(nSources,nInputs); i++)
             memcpy(pData->src_sigs[i], inputs[i], FRAME_SIZE * sizeof(float));
         for(; i < nInputs; i++)
             memset(pData->src_sigs[i], 0, FRAME_SIZE * sizeof(float));

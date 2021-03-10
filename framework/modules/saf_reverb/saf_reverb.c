@@ -80,7 +80,7 @@ void ims_shoebox_create
         for(wall=0; wall<IMS_NUM_WALLS_SHOEBOX; wall++)
             sc->abs_wall[band][wall] = abs_wall[band*IMS_NUM_WALLS_SHOEBOX+wall];
 
-    /* Default is no sources or receivers in the room */
+    /* Default are no sources or receivers in the room */
     for(i=0; i<IMS_MAX_NUM_SOURCES; i++)
         sc->srcs[i].ID = -1; /* -1 indicates not in use */
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++)
@@ -107,8 +107,10 @@ void ims_shoebox_create
     }
 
     /* Circular buffers (only used/allocated when applyEchogramTD() function is called for the first time) */
-    sc->wIdx[0] = 0;
-    sc->wIdx[1] = 0;
+    for(j=0; j<IMS_MAX_NUM_SOURCES; j++){
+        sc->wIdx[j][0] = 0;
+        sc->wIdx[j][1] = 0;
+    }
     sc->circ_buffer[0] = NULL;
     sc->circ_buffer[1] = NULL;
 
@@ -354,7 +356,7 @@ void ims_shoebox_applyEchogramTD
                 for(n=0; n<nSamples; n++){
 
                     /* Determine write index */
-                    wIdx_n = sc->wIdx[k] & IMS_CIRC_BUFFER_LENGTH_MASK;
+                    wIdx_n = sc->wIdx[src_idx][k] & IMS_CIRC_BUFFER_LENGTH_MASK;
 
                     /* Since the time vector is the same across bands, it makes sense to determine the read-indices only once... */
                     if(k==1)
@@ -368,9 +370,9 @@ void ims_shoebox_applyEchogramTD
                         if(k==1)
                             for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
                                 sc->rec_sig_tmp[rec_idx][ch][n] = 0.0f;
-                        else
-                            for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
-                                sc->recs[rec_idx].sigs[ch][n] = 0.0f;
+//                        else
+//                            for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
+//                                sc->recs[rec_idx].sigs[ch][n] = 0.0f;
 
                         /* Store current sample (per band) into the circular buffer */
                         for(band=0; band < sc->nBands; band++){
@@ -380,9 +382,9 @@ void ims_shoebox_applyEchogramTD
                         }
 
                         /* Increment write index */
-                        sc->wIdx[k]++;
+                        sc->wIdx[src_idx][k]++;
                         if(sc->applyCrossFadeFLAG[src_idx][rec_idx]==0)
-                            sc->wIdx[1]++;
+                            sc->wIdx[src_idx][1]++;
 
                         continue; /* to next sample... */
                     }
@@ -397,7 +399,7 @@ void ims_shoebox_applyEchogramTD
                         for(im=0; im <echogram_abs_0->numImageSources; im++){
                             /* Base read-index */
                             time_samples = (int)(echogram_abs_0->tmp1[im]);                /* FLOOR */
-                            rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx[k]       /* read index for this image source */
+                            rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx[src_idx][k]       /* read index for this image source */
                                    + (IMS_LAGRANGE_ORDER/2);                               /* in order to correctly centre the filter */
                             echogram_abs_0->rIdx[im] = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK; /* wrap-around if needed */
                         }
@@ -426,7 +428,7 @@ void ims_shoebox_applyEchogramTD
                         /* Loop over all image sources, and determine the circular buffer read indices based on the nearest sample */
                         for(im=0; im <echogram_abs_0->numImageSources; im++){
                             time_samples = (int)(echogram_abs_0->tmp1[im] + 0.5f);         /* ROUND to nearest sample */
-                            rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx[k];      /* read index for this image source */
+                            rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx[src_idx][k];      /* read index for this image source */
                             echogram_abs_0->rIdx[im] = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK; /* wrap-around if needed */
                         }
                     }
@@ -482,7 +484,7 @@ void ims_shoebox_applyEchogramTD
                         else{
                             /* Sum all scaled image source values per channel */
                             for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
-                                sc->recs[rec_idx].sigs[ch][n] = cblas_sdot(echogram_abs->numImageSources, echogram_abs->ones_dummy,
+                                sc->recs[rec_idx].sigs[ch][n] += cblas_sdot(echogram_abs->numImageSources, echogram_abs->ones_dummy,
                                                                            1, echogram_abs->contrib[ch], 1);
                         }
 
@@ -493,9 +495,9 @@ void ims_shoebox_applyEchogramTD
                     }
 
                     /* Increment write index */
-                    sc->wIdx[k]++;
+                    sc->wIdx[src_idx][k]++;
                     if(sc->applyCrossFadeFLAG[src_idx][rec_idx]==0)
-                        sc->wIdx[1]++;
+                        sc->wIdx[src_idx][1]++;
 
                 } /* Loop over samples */
             } /* Loop over slots */
@@ -516,6 +518,7 @@ void ims_shoebox_applyEchogramTD
             }
 
         } /* If source active */
+
     } /* Loop over sources */
 }
 
@@ -563,7 +566,7 @@ long ims_shoebox_addSource
     sc->srcs[obj_idx].pos.x = src_xyz[0];
     sc->srcs[obj_idx].pos.y = src_xyz[1];
     sc->srcs[obj_idx].pos.z = src_xyz[2]; 
-    sc->srcs[obj_idx].sig = pSrc_sig == NULL ? NULL : *pSrc_sig; 
+    sc->srcs[obj_idx].sig = pSrc_sig == NULL ? NULL : *pSrc_sig;
 
     /* Create workspace for all receiver/source combinations, for this new source object */
     for(rec=0; rec<IMS_MAX_NUM_RECEIVERS; rec++)
