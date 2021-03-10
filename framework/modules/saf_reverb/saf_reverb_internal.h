@@ -211,7 +211,7 @@ typedef struct _ims_scene_data
 
     /* Circular buffers (only used/allocated when applyEchogramTD() function is
      * called for the first time) */
-    unsigned long wIdx[IMS_MAX_NUM_SOURCES][2];    /**< current write indices for circular buffers */
+    unsigned long wIdx[IMS_MAX_NUM_RECEIVERS][IMS_MAX_NUM_SOURCES][2];    /**< current write indices for circular buffers */
     float*** circ_buffer[2];  /**< [2] x (nChannels x nBands x #IMS_CIRC_BUFFER_LENGTH) */
 
     /* IIR filterbank (only used/allocated when applyEchogramTD() function is
