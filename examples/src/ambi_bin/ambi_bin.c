@@ -249,7 +249,7 @@ void ambi_bin_initCodec
         HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 1, pars->hrtf_fb);
         /* get integration weights */
         pData->progressBar0_1 = 0.6f;
-        if(pars->N_hrir_dirs<=3600){
+        if(pars->N_hrir_dirs<=1000){
             pars->weights = realloc1d(pars->weights, pars->N_hrir_dirs*sizeof(float));
             getVoronoiWeights(pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, pars->weights);
         }
@@ -257,7 +257,6 @@ void ambi_bin_initCodec
             free(pars->weights);
             pars->weights = NULL;
         }
-
         /* HRIR pre-processing */
         pData->progressBar0_1 = 0.75f;
         diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->weights,
