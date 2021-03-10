@@ -123,11 +123,37 @@ void ambi_roomsim_setSourceY(void* const hAmbi, int index, float newValue);
  */
 void ambi_roomsim_setSourceZ(void* const hAmbi, int index, float newValue);
 
+/**
+ * Sets the number of input SH receivers
+ */
+void ambi_roomsim_setNumReceivers(void* const hAmbi, int new_nReceievers);
 
 /**
- * Sets the input configuration preset (see #SOURCE_CONFIG_PRESETS enum)
+ * Sets the 'x' coordinate for a specific receiver index
+ *
+ * @param[in] hAmbi      ambi_roomsim handle
+ * @param[in] index      Receiver index
+ * @param[in] newValue   New 'x' coordinate, in metres
  */
-void ambi_roomsim_setInputConfigPreset(void* const hAmbi, int newPresetID);
+void ambi_roomsim_setReceiversX(void* const hAmbi, int index, float newValue);
+
+/**
+ * Sets the 'y' coordinate for a specific receiver index
+ *
+ * @param[in] hAmbi      ambi_roomsim handle
+ * @param[in] index      Receiver index
+ * @param[in] newValue   New 'y' coordinate, in metres
+ */
+void ambi_roomsim_setReceiversY(void* const hAmbi, int index, float newValue);
+
+/**
+ * Sets the 'z' coordinate for a specific receiver index
+ *
+ * @param[in] hAmbi      ambi_roomsim handle
+ * @param[in] index      Receiver index
+ * @param[in] newValue   New 'z' coordinate, in metres
+ */
+void ambi_roomsim_setReceiversZ(void* const hAmbi, int index, float newValue);
 
 /**
  * Sets the Ambisonic channel ordering convention to encode with (see #CH_ORDER

@@ -63,8 +63,7 @@ typedef struct _ambi_roomsim
     float prev_inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
     float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float fs;
-    int recalc_SH_FLAG[MAX_NUM_INPUTS];
+    float fs; 
     float Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
     float prev_Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
     float interpolator[FRAME_SIZE];
@@ -77,10 +76,12 @@ typedef struct _ambi_roomsim
     int receiverIDs[ROOM_SIM_MAX_NUM_RECEIVERS];
     float** src_sigs, ***rec_sh_outsigs; 
     int reinit_room;
+    int new_nSources;
+    int new_nReceivers;
     
     /* user parameters */
     int nSources;
-    int new_nSources;
+    int nReceivers;
     float src_pos[ROOM_SIM_MAX_NUM_SOURCES][3];
     float rec_pos[ROOM_SIM_MAX_NUM_RECEIVERS][3];
     CH_ORDER chOrdering;
