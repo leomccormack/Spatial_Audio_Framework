@@ -72,13 +72,10 @@ typedef struct _ambi_roomsim
     /* Internal */
     void* hIms;
     int signalLength;
-    int sh_order;
-    int nBands;
-    float abs_wall[5][6];
+    float abs_wall[6]; /**< Absorption coefficients per wall, +x -x +y -y +z -z */
     int sourceIDs[ROOM_SIM_MAX_NUM_SOURCES];
     int receiverIDs[ROOM_SIM_MAX_NUM_RECEIVERS];
-    float** src_sigs, **rec_sh_outsigs;
-
+    float** src_sigs, ***rec_sh_outsigs; 
     int reinit_room;
     
     /* user parameters */
