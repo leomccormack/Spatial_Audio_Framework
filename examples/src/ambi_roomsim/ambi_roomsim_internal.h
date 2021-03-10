@@ -43,7 +43,8 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 512 )
 #endif
-#define ROOM_SIM_MAX_NUM_SOURCES ( 8 )
+#define ROOM_SIM_MAX_NUM_RECEIVERS ( 16 )
+#define ROOM_SIM_MAX_NUM_SOURCES ( 16 )
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1) ) /* (L+1)^2 */
 
 
@@ -68,19 +69,14 @@ typedef struct _ambi_roomsim
     float prev_Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
     float interpolator[FRAME_SIZE];
 
-    /* sd */
+    /* Internal */
     void* hIms;
     int signalLength;
     int sh_order;
     int nBands;
     float abs_wall[5][6];
-    float src_pos[3];
-    float src2_pos[3];
-    float src3_pos[3];
-    float src4_pos[3];
-    float rec_pos[3];
-
-    long sourceIDs[4], receiverIDs[1];
+    int sourceIDs[ROOM_SIM_MAX_NUM_SOURCES];
+    int receiverIDs[ROOM_SIM_MAX_NUM_RECEIVERS];
     float** src_sigs, **rec_sh_outsigs;
 
     int reinit_room;
@@ -88,8 +84,8 @@ typedef struct _ambi_roomsim
     /* user parameters */
     int nSources;
     int new_nSources;
-    float src_positions[ROOM_SIM_MAX_NUM_SOURCES][3];
-    float rec_position[3];
+    float src_pos[ROOM_SIM_MAX_NUM_SOURCES][3];
+    float rec_pos[ROOM_SIM_MAX_NUM_RECEIVERS][3];
     CH_ORDER chOrdering;
     NORM_TYPES norm;
     SH_ORDERS order;

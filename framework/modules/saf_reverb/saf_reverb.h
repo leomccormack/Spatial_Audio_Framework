@@ -125,14 +125,18 @@ void ims_shoebox_destroy(void** phIms);
  * The sources are omnidirectional point sources, whereas the receiver will
  * have the directivity of whatever they are configured to have
  *
+ * @note Set either the maximum order (maxN) or the maximum IR length in seconds
+ *       (maxTime_s). The option you don't want to use set to <0.
  * @note The echograms are only updated if needed, so it is "OK" to call this
  *       function as many times as you wish, since there will be virtually no
  *       CPU overhead incurred if no update is required.
  *
  * @param[in] hIms      ims_shoebox handle
+ * @param[in] maxN      Maximum reflection order
  * @param[in] maxTime_s Maximum length of time to compute the echograms, seconds
  */
 void ims_shoebox_computeEchograms(void* hIms,
+                                  int maxN,
                                   float maxTime_s);
 
 /**
@@ -185,9 +189,9 @@ void ims_shoebox_applyEchogramTD(/* Input Arguments */
  *
  * @returns A unique ID corresponding to this source object
  */
-long ims_shoebox_addSource(void* hIms,
-                           float position_xyz[3],
-                           float** pSrc_sig);
+int ims_shoebox_addSource(void* hIms,
+                          float position_xyz[3],
+                          float** pSrc_sig);
 
 /**
  * Adds a spherical harmonic (SH) receiver object to the simulator of a given
@@ -207,23 +211,23 @@ long ims_shoebox_addSource(void* hIms,
  *
  * @returns A unique ID corresponding to this receiver object
  */
-long ims_shoebox_addReceiverSH(void* hIms,
-                               int sh_order,
-                               float position_xyz[3],
-                               float*** pSH_sigs);
+int ims_shoebox_addReceiverSH(void* hIms,
+                              int sh_order,
+                              float position_xyz[3],
+                              float*** pSH_sigs);
 
 /**
  * Updates the position of a specific source in the simulation
  */
 void ims_shoebox_updateSource(void* hIms,
-                              long sourceID,
+                              int sourceID,
                               float position_xyz[3]);
 
 /**
  * Updates the position of a specific receiver in the simulation
  */
 void ims_shoebox_updateReceiver(void* hIms,
-                                long receiverID,
+                                int receiverID,
                                 float position_xyz[3]);
 
 /**
@@ -232,7 +236,7 @@ void ims_shoebox_updateReceiver(void* hIms,
  * @note This does NOT free the source signal 'pSrc_sig'.
  */
 void ims_shoebox_removeSource(void* hIms,
-                              long sourceID);
+                              int sourceID);
 
 /**
  * Removes a specific receiver from the simulation
@@ -240,7 +244,7 @@ void ims_shoebox_removeSource(void* hIms,
  * @note This does NOT free the receiver signals 'pSH_sigs'.
  */
 void ims_shoebox_removeReceiver(void* hIms,
-                                long receiverID);
+                                int receiverID);
 
 
 #ifdef __cplusplus

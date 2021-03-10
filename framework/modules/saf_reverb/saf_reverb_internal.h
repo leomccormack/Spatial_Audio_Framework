@@ -67,6 +67,8 @@ extern "C" {
 #define IMS_EG_PREV ( 1 )
 /** Number of echogram slots */
 #define IMS_EG_NUM_SLOTS ( 2 )
+/** If a source or receiver ID is yet to be active, it is "IMS_UNASSIGNED" */
+#define IMS_UNASSIGNED ( -1 )
 
 /** Void pointer (just to improve code readability when working with arrays of
  *  handles) */
@@ -155,6 +157,7 @@ typedef struct _ims_core_workspace
     /* Locals */
     float room[3];        /**< Room dimensions, in meters */
     float d_max;          /**< Maximum distance, in meters */
+    int N_max;            /**< Maximum reflection order */
     ims_pos_xyz src;      /**< Source position */
     ims_pos_xyz rec;      /**< Receiver position */
     int nBands;           /**< Number of bands */
@@ -163,7 +166,9 @@ typedef struct _ims_core_workspace
     int Nx, Ny, Nz;
     int lengthVec, numImageSources;
     int* validIDs;
+    int* s_ord;
     float* II, *JJ, *KK;
+    int* iII, *iJJ, *iKK;
     float* s_x, *s_y, *s_z, *s_d, *s_t, *s_att;
 
     /* Echograms */
@@ -306,7 +311,7 @@ void ims_shoebox_echogramDestroy(void** phEcho);
 
 /**
  * Calculates an echogram of a rectangular space using the image source method,
- * for a specific source/reciever combination
+ * for a specific source/reciever combination up to a maximum propagation time
  *
  * Note the coordinates of source/receiver are specified from the left ground
  * corner of the room:
@@ -334,12 +339,30 @@ void ims_shoebox_echogramDestroy(void** phEcho);
  * @param[in] maxTime Maximum propagation time to compute the echogram, seconds
  * @param[in] c_ms    Speed of source, in meters per second
  */
-void ims_shoebox_coreInit(void* hWork,
-                          float room[3],
-                          ims_pos_xyz src,
-                          ims_pos_xyz rec,
-                          float maxTime,
-                          float c_ms);
+void ims_shoebox_coreInitT(void* hWork,
+                           float room[3],
+                           ims_pos_xyz src,
+                           ims_pos_xyz rec,
+                           float maxTime,
+                           float c_ms);
+
+/**
+ * Calculates an echogram of a rectangular space using the image source method,
+ * for a specific source/reciever combination up to a maximum reflection order
+ *
+ * @param[in] hWork workspace handle
+ * @param[in] room  Room dimensions, in meters
+ * @param[in] src   Source position, in meters
+ * @param[in] rec   Receiver position, in meters
+ * @param[in] maxN  Maximum propagation time to compute the echogram, seconds
+ * @param[in] c_ms  Speed of source, in meters per second
+ */
+void ims_shoebox_coreInitN(void* hWork,
+                           float room[3],
+                           ims_pos_xyz src,
+                           ims_pos_xyz rec,
+                           int maxN,
+                           float c_ms);
 
 /**
  * Imposes spherical harmonic directivies onto the echogram computed with

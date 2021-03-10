@@ -58,21 +58,18 @@ void ambi_roomsim_create
         {0.361571250f, 0.414601700f, 0.269973200f, 0.457990250f, 0.424243600f, 0.482095000f} };
     memcpy(pData->abs_wall,abs_wall, 5*6*sizeof(float));
     float src_pos[3]  = {5.2f, 1.5f, 1.4f};
-    memcpy(pData->src_pos, src_pos, 3*sizeof(float));
+    memcpy(pData->src_pos[0], src_pos, 3*sizeof(float));
     float src2_pos[3] = {2.1f, 1.0f, 1.3f};
-    memcpy(pData->src2_pos, src2_pos, 3*sizeof(float));
+    memcpy(pData->src_pos[1], src2_pos, 3*sizeof(float));
     float src3_pos[3] = {3.1f, 5.0f, 2.3f};
-    memcpy(pData->src3_pos, src3_pos, 3*sizeof(float));
+    memcpy(pData->src_pos[2], src3_pos, 3*sizeof(float));
     float src4_pos[3] = {7.1f, 2.0f, 1.4f};
-    memcpy(pData->src4_pos, src4_pos, 3*sizeof(float));
+    memcpy(pData->src_pos[3], src4_pos, 3*sizeof(float));
     float rec_pos[3]  = {5.2f, 3.5f, 1.4f};
-    memcpy(pData->rec_pos, rec_pos, 3*sizeof(float));
+    memcpy(pData->rec_pos[0], rec_pos, 3*sizeof(float));
 
-    pData->src_sigs = malloc1d(64*sizeof(float*));
-    for(i=0; i<64; i++)
-        pData->src_sigs[i] = malloc1d(FRAME_SIZE*sizeof(float));
-    //pData->src_sigs = (float**)malloc2d(64, FRAME_SIZE, sizeof(float));
-    pData->rec_sh_outsigs = (float**)malloc2d(64, FRAME_SIZE, sizeof(float));
+    pData->src_sigs = (float**)malloc2d(MAX_NUM_CHANNELS, FRAME_SIZE, sizeof(float));
+    pData->rec_sh_outsigs = (float**)malloc2d(MAX_NUM_CHANNELS, FRAME_SIZE, sizeof(float));
 
     pData->reinit_room = 1;
 }
@@ -112,10 +109,10 @@ void ambi_roomsim_init
     if(pData->reinit_room){
         ims_shoebox_destroy(&(pData->hIms));
         ims_shoebox_create(&(pData->hIms), 10.5f, 7.0f, 3.0f, (float*)pData->abs_wall, 250.0f, pData->nBands, 343.0f, 48e3f);
-        pData->sourceIDs[0] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos,  &(pData->src_sigs[0]));
-        pData->sourceIDs[1] = ims_shoebox_addSource(pData->hIms, (float*)pData->src2_pos, &(pData->src_sigs[1]));
-//        pData->sourceIDs[2] = ims_shoebox_addSource(pData->hIms, (float*)pData->src3_pos, &pData->src_sigs[2]);
-//        pData->sourceIDs[3] = ims_shoebox_addSource(pData->hIms, (float*)pData->src4_pos, &pData->src_sigs[3]);
+        pData->sourceIDs[0] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos[0], &(pData->src_sigs[0]));
+        pData->sourceIDs[1] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos[1], &(pData->src_sigs[1]));
+        pData->sourceIDs[2] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos[2], &pData->src_sigs[2]);
+        pData->sourceIDs[3] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos[3], &pData->src_sigs[3]);
     //    sourceIDs[1] = ims_shoebox_addSource(pData->hIms, (float*)pData->src2_pos, &src_sigs[1]);
     //    sourceIDs[2] = ims_shoebox_addSource(pData->hIms, (float*)pData->src3_pos, &src_sigs[2]);
     //    sourceIDs[3] = ims_shoebox_addSource(pData->hIms, (float*)pData->src4_pos, &src_sigs[3]);
@@ -153,7 +150,7 @@ void ambi_roomsim_process
     /* Process frame */
     if (nSamples == FRAME_SIZE) {
 
-        nSources = 2;
+        nSources = 4;
 
         /* Load time-domain data */
         for(i=0; i < MIN(nSources,nInputs); i++)
@@ -161,11 +158,11 @@ void ambi_roomsim_process
         for(; i < nInputs; i++)
             memset(pData->src_sigs[i], 0, FRAME_SIZE * sizeof(float));
 
-        maxTime_s = 0.05f; /* 50ms */
+        maxTime_s = -0.05f; /* 50ms */
 
         //ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[0], pData->mov_src_pos);
         //ims_shoebox_updateReceiver(pData->hIms, pData->receiverIDs[0], pData->mov_rec_pos);
-        ims_shoebox_computeEchograms(pData->hIms, maxTime_s);
+        ims_shoebox_computeEchograms(pData->hIms, 6, maxTime_s);
         ims_shoebox_applyEchogramTD(pData->hIms, pData->receiverIDs[0], nSamples, 0);
 
 
@@ -253,27 +250,27 @@ void ambi_roomsim_setSourceX(void* const hAmbi, int index, float newValue)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
-    pData->src_positions[index][0] = newValue;
+    pData->src_pos[index][0] = newValue;
     if(pData->hIms!=NULL)
-        ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[index], pData->src_positions[index]);
+        ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[index], pData->src_pos[index]);
 }
 
 void ambi_roomsim_setSourceY(void* const hAmbi, int index, float newValue)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
-    pData->src_positions[index][1] = newValue;
+    pData->src_pos[index][1] = newValue;
     if(pData->hIms!=NULL)
-        ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[index], pData->src_positions[index]);
+        ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[index], pData->src_pos[index]);
 }
 
 void ambi_roomsim_setSourceZ(void* const hAmbi, int index, float newValue)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
-    pData->src_positions[index][2] = newValue;
+    pData->src_pos[index][2] = newValue;
     if(pData->hIms!=NULL)
-        ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[index], pData->src_positions[index]);
+        ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[index], pData->src_pos[index]);
 }
 
 void ambi_roomsim_setInputConfigPreset(void* const hAmbi, int newPresetID)
