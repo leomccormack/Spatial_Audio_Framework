@@ -51,7 +51,7 @@ const float a_0 = 0.0875;
 /* this head size, TODO: make this a parameter */
 const float a_head = 0.0875;
 const float headDim = M_PI * (a_0 / a_head); // TODO: use saf_PI
-const float sosDiv2PiA = 343 / (M_PI_2 * a_head);   // TODO: use saf_PI
+const float sosDiv2PiA = 343 / (2 * M_PI * a_head);   // TODO: use saf_PI
 
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
