@@ -288,7 +288,7 @@ void test__ims_shoebox_RIR(void){
     void* hIms;
     float maxTime_s;
     float mov_src_pos[3], mov_rec_pos[3];
-    long sourceID_1, sourceID_2, sourceID_3, sourceID_4, sourceID_5, receiverID;
+    int sourceID_1, sourceID_2, sourceID_3, sourceID_4, sourceID_5, receiverID;
     int i;
 
     /* Config */
@@ -308,9 +308,10 @@ void test__ims_shoebox_RIR(void){
     const float src4_pos[3] = {6.4f, 4.0f, 1.3f};
     const float src5_pos[3] = {8.5f, 5.0f, 1.8f};
     const float rec_pos[3] = {8.8f, 5.5f, 0.9f};
+    const float roomdims[3] = {10.0f, 7.0f, 3.0f};
 
     /* Set-up the shoebox room simulator, with two sources and one spherical harmonic receiver */
-    ims_shoebox_create(&hIms, 10, 7, 3, (float*)abs_wall, 125.0f, nBands, 343.0f, 48e3f);
+    ims_shoebox_create(&hIms, (float*)roomdims, (float*)abs_wall, 125.0f, nBands, 343.0f, 48e3f);
     sourceID_1 = ims_shoebox_addSource(hIms, (float*)src_pos, NULL);
     sourceID_2 = ims_shoebox_addSource(hIms, (float*)src2_pos, NULL);
     receiverID = ims_shoebox_addReceiverSH(hIms, sh_order, (float*)rec_pos, NULL);
@@ -324,7 +325,7 @@ void test__ims_shoebox_RIR(void){
         mov_rec_pos[0] = 3.0f + (float)i/100.0f;
         ims_shoebox_updateSource(hIms, sourceID_1, mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
-        ims_shoebox_computeEchograms(hIms, maxTime_s);
+        ims_shoebox_computeEchograms(hIms, -1, maxTime_s);
         ims_shoebox_renderRIRs(hIms, 0);
     }
 
@@ -346,7 +347,7 @@ void test__ims_shoebox_RIR(void){
         mov_rec_pos[0] = 3.0f + (float)i/10.0f;
         ims_shoebox_updateSource(hIms, sourceID_4, mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
-        ims_shoebox_computeEchograms(hIms, maxTime_s);
+        ims_shoebox_computeEchograms(hIms, -1, maxTime_s);
         ims_shoebox_renderRIRs(hIms, 0);
     }
 
@@ -359,7 +360,7 @@ void test__ims_shoebox_TD(void){
     float maxTime_s;
     float mov_src_pos[3], mov_rec_pos[3];
     float** src_sigs, ***rec_sh_outsigs;
-    long sourceIDs[4], receiverIDs[1];
+    int sourceIDs[4], receiverIDs[1];
     int i;
 
     /* Config */
@@ -377,6 +378,7 @@ void test__ims_shoebox_TD(void){
     const float src3_pos[3] = {3.1f, 5.0f, 2.3f};
     const float src4_pos[3] = {7.1f, 2.0f, 1.4f};
     const float rec_pos[3]  = {8.8f, 5.5f, 0.9f};
+    const float roomdims[3] = {10.0f, 7.0f, 3.0f};
 
     /* Allocate memory for 4 sources and 1 spherical harmonic receiver */
     rec_sh_outsigs = (float***)malloc3d(1, ORDER2NSH(sh_order), signalLength, sizeof(float));
@@ -384,7 +386,7 @@ void test__ims_shoebox_TD(void){
     rand_m1_1(FLATTEN2D(src_sigs), 4*signalLength);
 
     /* Set-up the shoebox room simulator for these four sources and SH receiver */
-    ims_shoebox_create(&hIms, 10, 7, 3, (float*)abs_wall, 250.0f, nBands, 343.0f, 48e3f);
+    ims_shoebox_create(&hIms, (float*)roomdims, (float*)abs_wall, 250.0f, nBands, 343.0f, 48e3f);
     sourceIDs[0] = ims_shoebox_addSource(hIms, (float*)src_pos, &src_sigs[0]);
     sourceIDs[1] = ims_shoebox_addSource(hIms, (float*)src2_pos, &src_sigs[1]);
     sourceIDs[2] = ims_shoebox_addSource(hIms, (float*)src3_pos, &src_sigs[2]);
@@ -400,7 +402,7 @@ void test__ims_shoebox_TD(void){
         mov_rec_pos[0] = 3.0f + (float)i/100.0f;
         ims_shoebox_updateSource(hIms, sourceIDs[0], mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverIDs[0], mov_rec_pos);
-        ims_shoebox_computeEchograms(hIms, maxTime_s);
+        ims_shoebox_computeEchograms(hIms, -1, maxTime_s);
         ims_shoebox_applyEchogramTD(hIms, receiverIDs[0], signalLength, 0);
     }
 
