@@ -212,6 +212,16 @@ void ims_shoebox_computeEchograms
                 for(band=0; band<workspace->nBands; band++)
                     ims_shoebox_echogramCopy(workspace->hEchogram_abs[band], workspace->hPrevEchogram_abs[band]);
 
+                /* Force refresh if target RIR length or max reflection order has changed */
+                if(maxTime_ms>0.0f){
+                    if(workspace->d_max != maxTime_ms)
+                        workspace->refreshEchogramFLAG = 1;
+                }
+                else{
+                    if(workspace->N_max != maxN)
+                        workspace->refreshEchogramFLAG = 1;
+                }
+
                 /* Only update if it is required */
                 if(workspace->refreshEchogramFLAG){
                     /* Compute echogram due to pure propagation (frequency-independent, omni-directional) */

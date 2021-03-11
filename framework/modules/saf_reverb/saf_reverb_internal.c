@@ -296,8 +296,6 @@ void ims_shoebox_coreInitT
     if( (wrk->d_max != d_max) ||
         (wrk->room[0] != room[0]) || (wrk->room[1] != room[1]) || (wrk->room[2] != room[2]) )
     {
-        wrk->d_max = d_max;
-        memcpy(wrk->room, room, 3*sizeof(float));
         wrk->Nx = (int)(d_max/room[0] + 1.0f); /* ceil */
         wrk->Ny = (int)(d_max/room[1] + 1.0f); /* ceil */
         wrk->Nz = (int)(d_max/room[2] + 1.0f); /* ceil */
@@ -337,10 +335,12 @@ void ims_shoebox_coreInitT
     }
 
     /* Update echogram only if the source/receiver positions or room dimensions have changed */
-    if( (wrk->rec.x != rec_orig.x) || (wrk->rec.y != rec_orig.y) || (wrk->rec.z != rec_orig.z) ||
+    if( (wrk->d_max != d_max) ||
+        (wrk->rec.x != rec_orig.x) || (wrk->rec.y != rec_orig.y) || (wrk->rec.z != rec_orig.z) ||
         (wrk->src.x != src_orig.x) || (wrk->src.y != src_orig.y) || (wrk->src.z != src_orig.z) ||
         (wrk->room[0] != room[0]) || (wrk->room[1] != room[1]) || (wrk->room[2] != room[2]))
     {
+        wrk->d_max = d_max;
         wrk->room[0] = room[0];
         wrk->room[1] = room[1];
         wrk->room[2] = room[2];
@@ -419,12 +419,9 @@ void ims_shoebox_coreInitN
     rec_orig.y = room[1]/2.0f - rec.y;
     rec_orig.z = rec.z - room[2]/2.0f;
 
-    /* Update indices only if the maximum permitted delay or room dimensions have changed */
-    if( (wrk->N_max != maxN) ||
-        (wrk->room[0] != room[0]) || (wrk->room[1] != room[1]) || (wrk->room[2] != room[2]) )
+    /* Update indices only if the maximum reflection order has changed */
+    if( (wrk->N_max != maxN) )
     {
-        wrk->N_max = maxN;
-        memcpy(wrk->room, room, 3*sizeof(float));
         wrk->lengthVec = (2*(maxN)+1) * (2*(maxN)+1) * (2*(maxN)+1);
 
         /* i,j,k indices for calculation in x,y,z respectively */
@@ -457,7 +454,7 @@ void ims_shoebox_coreInitN
         wrk->JJ = realloc1d(wrk->JJ, wrk->lengthVec*sizeof(float));
         wrk->KK = realloc1d(wrk->KK, wrk->lengthVec*sizeof(float));
         for(imsrc = 0, wrk->numImageSources = 0; imsrc<wrk->lengthVec; imsrc++){
-            if(wrk->s_ord[imsrc]<maxN){
+            if(wrk->s_ord[imsrc]<=maxN){
                 wrk->II[wrk->numImageSources] = (float)wrk->iII[imsrc];
                 wrk->JJ[wrk->numImageSources] = (float)wrk->iJJ[imsrc];
                 wrk->KK[wrk->numImageSources] = (float)wrk->iKK[imsrc];
@@ -474,11 +471,13 @@ void ims_shoebox_coreInitN
         wrk->s_att = realloc1d(wrk->s_att, wrk->numImageSources*sizeof(float));
     }
 
-    /* Update echogram only if the source/receiver positions or room dimensions have changed */
-    if( (wrk->rec.x != rec_orig.x) || (wrk->rec.y != rec_orig.y) || (wrk->rec.z != rec_orig.z) ||
+    /* Update echogram only if the maximum reflection order, source/receiver positions or room dimensions have changed */
+    if( (wrk->N_max != maxN) ||
+        (wrk->rec.x != rec_orig.x) || (wrk->rec.y != rec_orig.y) || (wrk->rec.z != rec_orig.z) ||
         (wrk->src.x != src_orig.x) || (wrk->src.y != src_orig.y) || (wrk->src.z != src_orig.z) ||
         (wrk->room[0] != room[0]) || (wrk->room[1] != room[1]) || (wrk->room[2] != room[2]))
     {
+        wrk->N_max = maxN;
         wrk->room[0] = room[0];
         wrk->room[1] = room[1];
         wrk->room[2] = room[2];
@@ -538,7 +537,7 @@ void ims_shoebox_coreRecModuleSH
     /* Resize container (only done if needed) */
     ims_shoebox_echogramResize(wrk->hEchogram_rec, echogram->numImageSources, nSH);
 
-    /* Copy 'time', 'coord', 'order', except in ascending order w.r.t propogation time  */
+    /* Copy 'time', 'coord', 'order', except in ascending order w.r.t propagation time  */
     for(i=0; i<echogram_rec->numImageSources; i++){
         echogram_rec->time[i] = echogram->time[echogram->sortedIdx[i]];
         echogram_rec->order[i][0] = echogram->order[echogram->sortedIdx[i]][0];
@@ -551,12 +550,12 @@ void ims_shoebox_coreRecModuleSH
         echogram_rec->sortedIdx[i] = i; /* Should already sorted in ims_shoebox_coreInit() */
     }
 
-    /* Copy 'value' (the core omni-pressure), except also in ascending order w.r.t propogation time */
+    /* Copy 'value' (the core omni-pressure), except also in ascending order w.r.t propagation time */
     if(sh_order==0){
         for(i=0; i<echogram_rec->numImageSources; i++)
             echogram_rec->value[0][i] = echogram->value[0][echogram->sortedIdx[i]];
     }
-    /* Impose spherical harmonic directivities onto 'value', and store in ascending order w.r.t propogation time */
+    /* Impose spherical harmonic directivities onto 'value', and store in ascending order w.r.t propagation time */
     else{
         sh_gains = malloc1d(nSH*sizeof(float));
         for(i=0; i<echogram_rec->numImageSources; i++){
