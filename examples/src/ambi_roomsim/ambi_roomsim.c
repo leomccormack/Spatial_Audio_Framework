@@ -43,7 +43,7 @@ void ambi_roomsim_create
     /* default user parameters */
     pData->enableReflections = 1;
     pData->sh_order = 3;
-    pData->refl_order = 4;
+    pData->refl_order = 3;
     pData->nSources = 1;
     pData->nReceivers = 1;
     memcpy(pData->abs_wall, default_abs_wall, 6*sizeof(float));
@@ -177,7 +177,7 @@ void ambi_roomsim_process
             ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[i], pData->src_pos[i]);
         for(i=0; i<nReceivers; i++)
             ims_shoebox_updateReceiver(pData->hIms, pData->receiverIDs[i], pData->rec_pos[i]);
-        ims_shoebox_computeEchograms(pData->hIms, pData->enableReflections ? pData->refl_order : 0, maxTime_s); 
+        ims_shoebox_computeEchograms(pData->hIms, pData->enableReflections ? pData->refl_order : 0, maxTime_s);
 
         /* Render audio for each receiver */
         for(i=0; i<nReceivers; i++)
@@ -207,7 +207,7 @@ void ambi_roomsim_process
     }
     else{
         for (ch=0; ch < nOutputs; ch++)
-            memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch],0, nSamples*sizeof(float));
     }
 }
 
