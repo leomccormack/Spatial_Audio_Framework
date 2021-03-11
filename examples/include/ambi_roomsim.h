@@ -169,6 +169,9 @@ void ambi_roomsim_setRoomDimY(void* const hAmbi, float newValue);
 /** Sets the room length along the z dimension */
 void ambi_roomsim_setRoomDimZ(void* const hAmbi, float newValue);
 
+/** Sets wall absorption coefficients */
+void ambi_roomsim_setWallAbsCoeff(void* const hAmbi, int xyz_idx, int posNeg_idx, float new_value);
+
 /**
  * Sets the Ambisonic channel ordering convention to encode with (see #CH_ORDER
  * enum)
@@ -251,6 +254,9 @@ float ambi_roomsim_getRoomDimY(void* const hAmbi);
 
 /** Returns the room length along the z dimension */
 float ambi_roomsim_getRoomDimZ(void* const hAmbi);
+
+/** Returns wall absorption coefficients */
+float ambi_roomsim_getWallAbsCoeff(void* const hAmbi, int xyz_idx, int posNeg_idx);
 
 /**
  * Returns the Ambisonic channel ordering convention currently being used to

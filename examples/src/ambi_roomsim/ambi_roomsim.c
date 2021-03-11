@@ -28,7 +28,7 @@
 /** Default absorption coefficients per wall */
 const float default_abs_wall[6] = { 0.341055000f, 0.431295000f, 0.351295000f, 0.344335000f, 0.401775000f, 0.482095000f};
 /** Default room dimensions */
-const float default_room_dims[3] = { 10.5f, 7.0f, 3.0f };
+const float default_room_dims[3] = { 9.1f, 8.0f, 3.0f };
 
 void ambi_roomsim_create
 (
@@ -327,6 +327,17 @@ void ambi_roomsim_setRoomDimZ(void* const hAmbi, float newValue)
     }
 }
 
+void ambi_roomsim_setWallAbsCoeff(void* const hAmbi, int xyz_idx, int posNeg_idx, float new_value)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    assert(xyz_idx<4);
+    assert(xyz_idx==0 || xyz_idx==1);
+    if(new_value!=pData->abs_wall[2*xyz_idx+posNeg_idx]){
+        pData->abs_wall[2*xyz_idx+posNeg_idx] = new_value;
+        pData->reinit_room = 1;
+    }
+}
+
 void ambi_roomsim_setChOrder(void* const hAmbi, int newOrder)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
@@ -453,6 +464,12 @@ float ambi_roomsim_getRoomDimZ(void* const hAmbi)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     return pData->room_dims[2];
+}
+
+float ambi_roomsim_getWallAbsCoeff(void* const hAmbi, int xyz_idx, int posNeg_idx)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    return pData->abs_wall[2*xyz_idx+posNeg_idx];
 }
 
 int ambi_roomsim_getChOrder(void* const hAmbi)
