@@ -157,7 +157,6 @@ void ambi_roomsim_process
     /* local copies of user parameters */
     chOrdering = pData->chOrdering;
     norm = pData->norm;
-    nSources = pData->nSources;
     order = MIN(pData->sh_order, MAX_SH_ORDER);
     nSH = ORDER2NSH(order);
     nSources = pData->nSources;
@@ -172,7 +171,7 @@ void ambi_roomsim_process
         for(; i < nInputs; i++)
             memset(pData->src_sigs[i], 0, FRAME_SIZE * sizeof(float));
 
-        /* Update source/receiver positions and re-compute echgrams (note, if nothing moved since last frame then these calls will be bypassed) */
+        /* Update source/receiver positions and re-compute echgrams (note, if nothing has moved since last frame then these calls will be bypassed) */
         for(i=0; i<nSources; i++)
             ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[i], pData->src_pos[i]);
         for(i=0; i<nReceivers; i++)
@@ -324,7 +323,7 @@ int ambi_roomsim_getNumSources(void* const hAmbi)
 
 int ambi_roomsim_getMaxNumSources()
 {
-    return MAX_NUM_INPUTS;
+    return ROOM_SIM_MAX_NUM_SOURCES;
 }
 
 int ambi_roomsim_getNSHrequired(void* const hAmbi)
@@ -358,6 +357,11 @@ int ambi_roomsim_getNumReceivers(void* const hAmbi)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     return pData->new_nReceivers;
+}
+
+int ambi_roomsim_getMaxNumReceivers()
+{
+    return ROOM_SIM_MAX_NUM_RECEIVERS;
 }
 
 float ambi_roomsim_getReceiverX(void* const hAmbi, int index)

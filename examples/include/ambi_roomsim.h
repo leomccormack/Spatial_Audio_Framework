@@ -140,7 +140,7 @@ void ambi_roomsim_setNumReceivers(void* const hAmbi, int new_nReceievers);
  * @param[in] index      Receiver index
  * @param[in] newValue   New 'x' coordinate, in metres
  */
-void ambi_roomsim_setReceiversX(void* const hAmbi, int index, float newValue);
+void ambi_roomsim_setReceiverX(void* const hAmbi, int index, float newValue);
 
 /**
  * Sets the 'y' coordinate for a specific receiver index
@@ -149,7 +149,7 @@ void ambi_roomsim_setReceiversX(void* const hAmbi, int index, float newValue);
  * @param[in] index      Receiver index
  * @param[in] newValue   New 'y' coordinate, in metres
  */
-void ambi_roomsim_setReceiversY(void* const hAmbi, int index, float newValue);
+void ambi_roomsim_setReceiverY(void* const hAmbi, int index, float newValue);
 
 /**
  * Sets the 'z' coordinate for a specific receiver index
@@ -158,7 +158,7 @@ void ambi_roomsim_setReceiversY(void* const hAmbi, int index, float newValue);
  * @param[in] index      Receiver index
  * @param[in] newValue   New 'z' coordinate, in metres
  */
-void ambi_roomsim_setReceiversZ(void* const hAmbi, int index, float newValue);
+void ambi_roomsim_setReceiverZ(void* const hAmbi, int index, float newValue);
 
 /**
  * Sets the Ambisonic channel ordering convention to encode with (see #CH_ORDER
@@ -219,17 +219,20 @@ float ambi_roomsim_getSourceY(void* const hAmbi, int index);
 /** Returns the 'z' coordinate for a specific source index */
 float ambi_roomsim_getSourceZ(void* const hAmbi, int index);
 
-/** Returns the number of input SH receivers */
+/** Returns the number of SH receivers */
 int ambi_roomsim_getNumReceivers(void* const hAmbi);
 
+/** Returns the maximum number of receivers */
+int ambi_roomsim_getMaxNumReceivers(void);
+
 /** Returns the 'x' coordinate for a specific receiver index */
-float ambi_roomsim_getReceiversX(void* const hAmbi, int index);
+float ambi_roomsim_getReceiverX(void* const hAmbi, int index);
 
 /** Returns the 'y' coordinate for a specific receiver index */
-float ambi_roomsim_getReceiversY(void* const hAmbi, int index);
+float ambi_roomsim_getReceiverY(void* const hAmbi, int index);
 
 /** Returns the 'z' coordinate for a specific receiver index */
-float ambi_roomsim_getReceiversZ(void* const hAmbi, int index);
+float ambi_roomsim_getReceiverZ(void* const hAmbi, int index);
 
 /** Returns the room length along the x dimension */
 float ambi_roomsim_getRoomDimX(void* const hAmbi);

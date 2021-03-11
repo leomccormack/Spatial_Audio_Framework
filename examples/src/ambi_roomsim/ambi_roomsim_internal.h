@@ -41,7 +41,7 @@ extern "C" {
 /* ========================================================================== */
 
 #ifndef FRAME_SIZE
-# define FRAME_SIZE ( 512 )
+# define FRAME_SIZE ( 128 )
 #endif
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1) ) /* (L+1)^2 */
 
@@ -68,7 +68,7 @@ typedef struct _ambi_roomsim
     int sourceIDs[ROOM_SIM_MAX_NUM_SOURCES];     /**< Unique IDs per source in the simulation */
     int receiverIDs[ROOM_SIM_MAX_NUM_RECEIVERS]; /**< Unique IDs per receiver in the simulation */
     float** src_sigs;         /**< Source signal buffers; ROOM_SIM_MAX_NUM_SOURCES x FRAME_SIZE */
-    float ***rec_sh_outsigs;  /**< Receiver signal buffers; ROOM_SIM_MAX_NUM_RECEIVERS x MAX_NUM_SH_SIGNALS x FRAME_SIZE */
+    float*** rec_sh_outsigs;  /**< Receiver signal buffers; ROOM_SIM_MAX_NUM_RECEIVERS x MAX_NUM_SH_SIGNALS x FRAME_SIZE */
     int reinit_room;          /**< Flag, 1: re-init required, 0: not required*/
     int new_sh_order;         /**< New receiver SH order */
     int new_nSources;         /**< New number of sources */
