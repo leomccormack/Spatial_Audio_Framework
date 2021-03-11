@@ -25,6 +25,11 @@
 #include "ambi_roomsim.h"
 #include "ambi_roomsim_internal.h"
 
+/** Default absorption coefficients per wall */
+const float default_abs_wall[6] = { 0.341055000f, 0.431295000f, 0.351295000f, 0.344335000f, 0.401775000f, 0.482095000f};
+/** Default room dimensions */
+const float default_room_dims[3] = { 10.5f, 7.0f, 3.0f };
+
 void ambi_roomsim_create
 (
     void ** const phAmbi
@@ -36,20 +41,17 @@ void ambi_roomsim_create
     printf(SAF_VERSION_LICENSE_STRING);
 
     /* default user parameters */
-    pData->order = 3;
-    float abs_wall[6] = /* Absorption Coefficients per wall */
-      { 0.241055000f, 0.301295000f, 0.301295000f, 0.344335000f, 0.401775000f, 0.482095000f};
-
+    pData->sh_order = 3;
+    pData->refl_order = 5;
     pData->nSources = 1;
     pData->nReceivers = 1;
+    memcpy(pData->abs_wall, default_abs_wall, 6*sizeof(float));
+    memcpy(pData->room_dims, default_room_dims, 3*sizeof(float));
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
-    pData->order = SH_ORDER_FIRST;
 
     /* Internal */
     pData->hIms = NULL;
-    //{ 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    memcpy(pData->abs_wall,abs_wall, 6*sizeof(float));
     float src_pos[3]  = {5.2f, 1.5f, 1.4f};
     memcpy(pData->src_pos[0], src_pos, 3*sizeof(float));
     float src2_pos[3] = {2.1f, 1.0f, 1.3f};
@@ -62,11 +64,12 @@ void ambi_roomsim_create
     memcpy(pData->rec_pos[0], rec_pos, 3*sizeof(float));
     memcpy(pData->rec_pos[1], rec_pos, 3*sizeof(float));
 
+    pData->new_sh_order = pData->sh_order;
     pData->new_nSources = pData->nSources;
     pData->new_nReceivers = pData->nReceivers;
 
     pData->src_sigs = (float**)malloc2d(MAX_NUM_CHANNELS, FRAME_SIZE, sizeof(float));
-    pData->rec_sh_outsigs = (float***)malloc3d(IMS_MAX_NUM_RECEIVERS, MAX_NUM_CHANNELS, FRAME_SIZE, sizeof(float));
+    pData->rec_sh_outsigs = (float***)malloc3d(IMS_MAX_NUM_RECEIVERS, MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
 
     pData->reinit_room = 1;
 }
@@ -94,26 +97,6 @@ void ambi_roomsim_init
     int i;
     
     pData->fs = (float)sampleRate;
-    for(i=1; i<=FRAME_SIZE; i++)
-        pData->interpolator[i-1] = (float)i*1.0f/(float)FRAME_SIZE;
-    memset(pData->prev_Y, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
-    memset(pData->prev_inputFrameTD, 0, MAX_NUM_INPUTS*FRAME_SIZE*sizeof(float));
-
-    /*  */
-    if(pData->reinit_room){
-        ims_shoebox_destroy(&(pData->hIms));
-        ims_shoebox_create(&(pData->hIms), 10.5f, 7.0f, 3.0f, (float*)pData->abs_wall, 250.0f, 1, 343.0f, 48e3f);
-        pData->sourceIDs[0] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos[0], &(pData->src_sigs[0]));
-        pData->sourceIDs[1] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos[1], &(pData->src_sigs[1]));
-        pData->sourceIDs[2] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos[2], &pData->src_sigs[2]);
-        pData->sourceIDs[3] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos[3], &pData->src_sigs[3]);
-    //    sourceIDs[1] = ims_shoebox_addSource(pData->hIms, (float*)pData->src2_pos, &src_sigs[1]);
-    //    sourceIDs[2] = ims_shoebox_addSource(pData->hIms, (float*)pData->src3_pos, &src_sigs[2]);
-    //    sourceIDs[3] = ims_shoebox_addSource(pData->hIms, (float*)pData->src4_pos, &src_sigs[3]);
-        pData->receiverIDs[0] = ims_shoebox_addReceiverSH(pData->hIms, pData->order, (float*)pData->rec_pos[0], &(pData->rec_sh_outsigs[0]));
-        pData->receiverIDs[1] = ims_shoebox_addReceiverSH(pData->hIms, pData->order, (float*)pData->rec_pos[1], &(pData->rec_sh_outsigs[1]));
-        pData->reinit_room = 0;
-    }
 }
 
 void ambi_roomsim_process
@@ -127,75 +110,99 @@ void ambi_roomsim_process
 )
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    int i, j, rec, ch, nSources, nReceivers, nSH;
-
-    /* local copies of user parameters */
+    int i, j, rec, ch, nSources, nReceivers, nSH, order;
+    float maxTime_s;
     CH_ORDER chOrdering;
     NORM_TYPES norm;
-    int order;
+
+    /* (ims_shoebox is actually much more flexible than this... Consider this a minimal example and this also makes things easier when designing a GUI) */
+
+    /* Reinitialise room if needed */
+    if(pData->reinit_room){
+        ims_shoebox_destroy(&(pData->hIms));
+        ims_shoebox_create(&(pData->hIms), pData->room_dims, (float*)pData->abs_wall, 250.0f, 1, 343.0f, pData->fs);
+        for(i=0; i<pData->new_nSources; i++) /* re-add source objects... */
+            pData->sourceIDs[i] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos[i], &(pData->src_sigs[i]));
+        for(i=0; i<pData->new_nReceivers; i++) /* re-add receiver objects... */
+            pData->receiverIDs[i] = ims_shoebox_addReceiverSH(pData->hIms, pData->new_sh_order, (float*)pData->rec_pos[i], &(pData->rec_sh_outsigs[i]));
+        pData->nSources = pData->new_nSources;
+        pData->nReceivers = pData->new_nReceivers;
+        pData->sh_order = pData->new_sh_order;
+        pData->reinit_room = 0;
+    }
+
+    /* Add/remove source objects */
+    if(pData->new_nSources!=pData->nSources){
+        if(pData->new_nSources>pData->nSources)
+            for(i=pData->nSources; i<pData->new_nSources; i++)
+                pData->sourceIDs[i] = ims_shoebox_addSource(pData->hIms, (float*)pData->src_pos[i], &(pData->src_sigs[i]));
+        else
+            for(i=pData->new_nSources; i<pData->nSources; i++)
+                ims_shoebox_removeSource(pData->hIms, pData->sourceIDs[i]);
+        pData->nSources = pData->new_nSources;
+    }
+
+    /* Add/remove receiver objects */
+    if(pData->new_nReceivers!=pData->nReceivers){
+        if(pData->new_nReceivers>pData->nReceivers)
+            for(i=pData->nReceivers; i<pData->new_nReceivers; i++)
+                pData->receiverIDs[i] = ims_shoebox_addReceiverSH(pData->hIms, pData->sh_order, (float*)pData->rec_pos[i], &(pData->rec_sh_outsigs[i]));
+        else
+            for(i=pData->new_nReceivers; i<pData->nReceivers; i++)
+                ims_shoebox_removeReceiver(pData->hIms, pData->receiverIDs[i]);
+        pData->nReceivers = pData->new_nReceivers;
+    }
+
+    /* local copies of user parameters */
     chOrdering = pData->chOrdering;
     norm = pData->norm;
     nSources = pData->nSources;
-    order = MIN(pData->order, MAX_SH_ORDER);
+    order = MIN(pData->sh_order, MAX_SH_ORDER);
     nSH = ORDER2NSH(order);
-
-
-    float maxTime_s;
+    nSources = pData->nSources;
+    nReceivers = pData->nReceivers;
+    maxTime_s = -0.05f; /* 50ms */
 
     /* Process frame */
     if (nSamples == FRAME_SIZE) {
-
-        nSources = 4;
-        nReceivers = 2;
-
         /* Load time-domain data */
         for(i=0; i < MIN(nSources,nInputs); i++)
             memcpy(pData->src_sigs[i], inputs[i], FRAME_SIZE * sizeof(float));
         for(; i < nInputs; i++)
             memset(pData->src_sigs[i], 0, FRAME_SIZE * sizeof(float));
 
-        maxTime_s = -0.05f; /* 50ms */
-
-        //ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[0], pData->mov_src_pos);
-        //ims_shoebox_updateReceiver(pData->hIms, pData->receiverIDs[0], pData->mov_rec_pos);
+        /* Update source/receiver positions and re-compute echgrams (note, if nothing moved since last frame then these calls will be bypassed) */
+        for(i=0; i<nSources; i++)
+            ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[i], pData->src_pos[i]);
+        for(i=0; i<nReceivers; i++)
+            ims_shoebox_updateReceiver(pData->hIms, pData->receiverIDs[i], pData->rec_pos[i]);
         ims_shoebox_computeEchograms(pData->hIms, 5, maxTime_s);
-        ims_shoebox_applyEchogramTD(pData->hIms, pData->receiverIDs[0], nSamples, 0);
-        ims_shoebox_applyEchogramTD(pData->hIms, pData->receiverIDs[1], nSamples, 0);
 
+        /* Render audio for each receiver */
+        for(i=0; i<nReceivers; i++)
+            ims_shoebox_applyEchogramTD(pData->hIms, pData->receiverIDs[i], nSamples, 0);
+
+        /* Handle output */
         for(rec=0, i=0; rec<nReceivers; rec++){
+            /* account for output channel order */
+            switch(chOrdering){
+                case CH_ACN: break;
+                case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->rec_sh_outsigs[rec]), order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA); break;
+            }
+
+            /* account for normalisation scheme */
+            switch(norm){
+                case NORM_N3D: break;
+                case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->rec_sh_outsigs[rec]), order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D); break;
+                case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->rec_sh_outsigs[rec]), order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA); break;
+            }
+
+            /* Append this receiver's output channels to the master output buffer */
             for(j=0; (j<MIN(nSH, MAX_NUM_SH_SIGNALS) && i<MIN(nOutputs, MAX_NUM_CHANNELS)); j++, i++)
                 memcpy(outputs[i], pData->rec_sh_outsigs[rec][j], FRAME_SIZE * sizeof(float));
         }
         for(; i < nOutputs; i++)
             memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
-//
-//        /* account for output channel order */
-//        switch(chOrdering){
-//            case CH_ACN: /* already ACN */
-//                break;
-//            case CH_FUMA:
-//                convertHOAChannelConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA);
-//                break;
-//        }
-//
-//        /* account for normalisation scheme */
-//        switch(norm){
-//            case NORM_N3D: /* already N3D */
-//                break;
-//            case NORM_SN3D:
-//                convertHOANormConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D);
-//                break;
-//            case NORM_FUMA:
-//                convertHOANormConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA);
-//                break;
-//        }
-//
-//        /* Copy to output */
-//        for(i = 0; i < MIN(nSH,nOutputs); i++)
-//            utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
-//        for(; i < nOutputs; i++)
-//            memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
-
     }
     else{
         for (ch=0; ch < nOutputs; ch++)
@@ -213,26 +220,28 @@ int ambi_roomsim_getFrameSize(void)
 void ambi_roomsim_refreshParams(void* const hAmbi)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    pData->reinit_room = 1;
 }
 
 void ambi_roomsim_setOutputOrder(void* const hAmbi, int newOrder)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    if((SH_ORDERS)newOrder != pData->order){
-        pData->order = (SH_ORDERS)newOrder;
+    if(newOrder != pData->new_sh_order){
+        pData->new_sh_order = newOrder;
         /* FUMA only supports 1st order */
-        if(pData->order!=SH_ORDER_FIRST && pData->chOrdering == CH_FUMA)
+        if(pData->new_sh_order!=SH_ORDER_FIRST && pData->chOrdering == CH_FUMA)
             pData->chOrdering = CH_ACN;
-        if(pData->order!=SH_ORDER_FIRST && pData->norm == NORM_FUMA)
+        if(pData->new_sh_order!=SH_ORDER_FIRST && pData->norm == NORM_FUMA)
             pData->norm = NORM_SN3D;
+
+        pData->reinit_room = 1;
     }
 }
 
 void ambi_roomsim_setNumSources(void* const hAmbi, int new_nSources)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    pData->new_nSources = CLAMP(new_nSources, 1, ROOM_SIM_MAX_NUM_SOURCES);
-    pData->nSources = pData->new_nSources;
+    pData->new_nSources = CLAMP(new_nSources, 1, ROOM_SIM_MAX_NUM_SOURCES); 
 }
 
 void ambi_roomsim_setSourceX(void* const hAmbi, int index, float newValue)
@@ -240,8 +249,6 @@ void ambi_roomsim_setSourceX(void* const hAmbi, int index, float newValue)
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
     pData->src_pos[index][0] = newValue;
-    if(pData->hIms!=NULL)
-        ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[index], pData->src_pos[index]);
 }
 
 void ambi_roomsim_setSourceY(void* const hAmbi, int index, float newValue)
@@ -249,8 +256,6 @@ void ambi_roomsim_setSourceY(void* const hAmbi, int index, float newValue)
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
     pData->src_pos[index][1] = newValue;
-    if(pData->hIms!=NULL)
-        ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[index], pData->src_pos[index]);
 }
 
 void ambi_roomsim_setSourceZ(void* const hAmbi, int index, float newValue)
@@ -258,16 +263,12 @@ void ambi_roomsim_setSourceZ(void* const hAmbi, int index, float newValue)
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
     pData->src_pos[index][2] = newValue;
-    if(pData->hIms!=NULL)
-        ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[index], pData->src_pos[index]);
 }
 
 void ambi_roomsim_setNumReceivers(void* const hAmbi, int new_nReceivers)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    int i;
-    pData->new_nReceivers = CLAMP(new_nReceivers, 1, MAX_NUM_INPUTS);
-    pData->nSources = pData->new_nReceivers;
+    pData->new_nReceivers = CLAMP(new_nReceivers, 1, ROOM_SIM_MAX_NUM_RECEIVERS);
 }
 
 void ambi_roomsim_setReceiverX(void* const hAmbi, int index, float newValue)
@@ -275,8 +276,6 @@ void ambi_roomsim_setReceiverX(void* const hAmbi, int index, float newValue)
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS);
     pData->rec_pos[index][0] = newValue;
-    if(pData->hIms!=NULL)
-        ims_shoebox_updateReceiver(pData->hIms, pData->receiverIDs[index], pData->rec_pos[index]);
 }
 
 void ambi_roomsim_setReceiverY(void* const hAmbi, int index, float newValue)
@@ -284,8 +283,6 @@ void ambi_roomsim_setReceiverY(void* const hAmbi, int index, float newValue)
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS);
     pData->rec_pos[index][1] = newValue;
-    if(pData->hIms!=NULL)
-        ims_shoebox_updateReceiver(pData->hIms, pData->receiverIDs[index], pData->rec_pos[index]);
 }
 
 void ambi_roomsim_setReceiverZ(void* const hAmbi, int index, float newValue)
@@ -293,21 +290,19 @@ void ambi_roomsim_setReceiverZ(void* const hAmbi, int index, float newValue)
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS);
     pData->rec_pos[index][2] = newValue;
-    if(pData->hIms!=NULL)
-        ims_shoebox_updateReceiver(pData->hIms, pData->receiverIDs[index], pData->rec_pos[index]);
 }
 
 void ambi_roomsim_setChOrder(void* const hAmbi, int newOrder)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    if((CH_ORDER)newOrder != CH_FUMA || pData->order==SH_ORDER_FIRST)/* FUMA only supports 1st order */
+    if((CH_ORDER)newOrder != CH_FUMA || pData->new_sh_order==SH_ORDER_FIRST)/* FUMA only supports 1st order */
         pData->chOrdering = (CH_ORDER)newOrder;
 }
 
 void ambi_roomsim_setNormType(void* const hAmbi, int newType)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    if((NORM_TYPES)newType != NORM_FUMA || pData->order==SH_ORDER_FIRST)/* FUMA only supports 1st order */
+    if((NORM_TYPES)newType != NORM_FUMA || pData->new_sh_order==SH_ORDER_FIRST)/* FUMA only supports 1st order */
         pData->norm = (NORM_TYPES)newType;
 } 
 
@@ -317,7 +312,7 @@ void ambi_roomsim_setNormType(void* const hAmbi, int newType)
 int ambi_roomsim_getOutputOrder(void* const hAmbi)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    return (int)pData->order;
+    return pData->new_sh_order;
 }
 
 float ambi_roomsim_getSourceAzi_deg(void* const hAmbi, int index)
@@ -346,7 +341,7 @@ int ambi_roomsim_getMaxNumSources()
 int ambi_roomsim_getNSHrequired(void* const hAmbi)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    return (pData->order+1)*(pData->order+1);
+    return (pData->new_sh_order+1)*(pData->new_sh_order+1);
 }
 
 int ambi_roomsim_getChOrder(void* const hAmbi)

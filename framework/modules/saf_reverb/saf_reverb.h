@@ -91,9 +91,7 @@ typedef struct _ims_rir{
  * @test test__ims_shoebox_RIR(), test__ims_shoebox_TD()
  *
  * @param[in] phIms            (&) address of the ims_shoebox handle
- * @param[in] length           Length of the room in meters
- * @param[in] width            Width of the room in meters
- * @param[in] height           Height of the room in meters
+ * @param[in] roomDimensions   Room Length x Width x Height, in meters; 3 x 1
  * @param[in] abs_wall         Absorption coefficents per octave band and wall;
  *                             FLAT: nOctBands x 6
  * @param[in] lowestOctaveBand lowest octave band centre freq, in Hz (e.g. 125)
@@ -103,9 +101,7 @@ typedef struct _ims_rir{
  * @param[in] fs               SampleRate, Hz
  */
 void ims_shoebox_create(void** phIms,
-                        float length,
-                        float width,
-                        float height,
+                        float roomDimensions[3],
                         float* abs_wall,
                         float lowestOctaveBand,
                         int nOctBands,

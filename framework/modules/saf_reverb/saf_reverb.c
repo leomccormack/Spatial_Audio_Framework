@@ -35,9 +35,7 @@
 void ims_shoebox_create
 (
     void** phIms,
-    float length,
-    float width,
-    float height,
+    float roomDimensions[3],
     float* abs_wall,
     float lowestOctaveBand,
     int nOctBands,
@@ -50,9 +48,9 @@ void ims_shoebox_create
     int i,j,band,wall;
 
     /* Shoebox dimensions */
-    sc->room_dims[0] = length;
-    sc->room_dims[1] = width;
-    sc->room_dims[2] = height;
+    sc->room_dims[0] = roomDimensions[0];
+    sc->room_dims[1] = roomDimensions[1];
+    sc->room_dims[2] = roomDimensions[2];
     sc->c_ms = c_ms;
 
     /* Octave band centre frequencies */

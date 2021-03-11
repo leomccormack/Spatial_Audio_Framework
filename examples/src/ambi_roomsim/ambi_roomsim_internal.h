@@ -63,30 +63,30 @@ typedef struct _ambi_roomsim
     float prev_inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
     float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float fs; 
-    float Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
-    float prev_Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
-    float interpolator[FRAME_SIZE];
+    float fs;
 
     /* Internal */
-    void* hIms;
-    int signalLength;
-    float abs_wall[6]; /**< Absorption coefficients per wall, +x -x +y -y +z -z */
-    int sourceIDs[ROOM_SIM_MAX_NUM_SOURCES];
-    int receiverIDs[ROOM_SIM_MAX_NUM_RECEIVERS];
-    float** src_sigs, ***rec_sh_outsigs; 
-    int reinit_room;
-    int new_nSources;
-    int new_nReceivers;
+    void* hIms;               /**< Image source implementation handle */
+    int sourceIDs[ROOM_SIM_MAX_NUM_SOURCES];     /**< Unique IDs per source in the simulation */
+    int receiverIDs[ROOM_SIM_MAX_NUM_RECEIVERS]; /**< Unique IDs per receiver in the simulation */
+    float** src_sigs;         /**< Source signal buffers; ROOM_SIM_MAX_NUM_SOURCES x FRAME_SIZE */
+    float ***rec_sh_outsigs;  /**< Receiver signal buffers; ROOM_SIM_MAX_NUM_RECEIVERS x MAX_NUM_SH_SIGNALS x FRAME_SIZE */
+    int reinit_room;          /**< Flag, 1: re-init required, 0: not required*/
+    int new_sh_order;         /**< New receiver SH order */
+    int new_nSources;         /**< New number of sources */
+    int new_nReceivers;       /**< New number of receivers */
     
     /* user parameters */
-    int nSources;
-    int nReceivers;
+    int sh_order;             /**< Current SH order of receivers */
+    int refl_order;           /**< Current maximum image source reflection order */
+    int nSources;             /**< Current number of sources */
+    int nReceivers;           /**< Current number of receivers */
+    float room_dims[3];       /**< Room dimensions along the x,y,z axes in meters */
+    float abs_wall[6];        /**< Absorption coefficients per wall, in the order in which the axis intersect walls: +x -x +y -y +z -z */
     float src_pos[ROOM_SIM_MAX_NUM_SOURCES][3];
     float rec_pos[ROOM_SIM_MAX_NUM_RECEIVERS][3];
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
-    SH_ORDERS order;
+    CH_ORDER chOrdering;      /**< see #CH_ORDER */
+    NORM_TYPES norm;          /**< see #NORM_TYPES */
     
 } ambi_roomsim_data;
     
