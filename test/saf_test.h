@@ -25,8 +25,14 @@ int main_test(void);
  * are reversible */
 void test__quaternion(void);
 /**
-* Testing that I can run a test function at all! */
+ * Testing that I can run a test function at all! */
 void test__dvf_dummyFunc(void);
+/**
+ * Calculate high-shelf parameters, g0, gInf, fc, from the lookup table coefficients (10 degree steps). */
+void test__dvf_calcHighShelfParams(void);
+/**
+ * Test the calculation of IIR coeffs based on distance and incidence angle parameters */
+void test__dvf_calcHighShelfCoeffs(void);
 /**
  * Testing for perfect reconstruction of the saf_stft (when configured for 50%
  * window overlap) */
