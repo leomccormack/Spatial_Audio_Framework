@@ -85,7 +85,7 @@ static float db2mag
 }
 
 /**
-* Calculate high-shelf parameters from the lookup table coefficients (10 degree steps).
+* Calculate high-shelf parameters, g0, gInf, fc, from the lookup table coefficients (10 degree steps).
 * Called twice per update as the returned values are subsequently interpolated to exact azimuth. */
 void calcHighShelfParams
 (
@@ -111,10 +111,12 @@ void calcHighShelfParams
 
 void calcIIRCoeffs
 (
+ /* Input */
  float g0,      /* high shelf dc gain */
  float gInf,    /* high shelf high gain */
  float fc,      /* high shelf center freq */
  float fs,      /* sample rate */
+ /* Output */
  float* b0,     /* IIR coeffs */
  float* b1,
  float* a1
@@ -162,12 +164,9 @@ void calcHighShelfCoeffs
     float gInf;
     float fc;
     // TODO: check pointer instantiation logic
-    float* g0_1   = NULL; /* high shelf gain at DC */
-    float* g0_2   = NULL;
-    float* gInf_1 = NULL; /* high shelf gain at inf */
-    float* gInf_2 = NULL;
-    float* fc_1   = NULL; /* high shelf cutoff frequency */
-    float* fc_2   = NULL;
+    float g0_1, g0_2;       /* high shelf gain at DC */
+    float gInf_1, gInf_2;   /* high shelf gain at inf */
+    float fc_1, fc_2;       /* high shelf cutoff frequency */
     
     // TODO: range checking - clip theta and rho to valid range
     /* linearly interpolate DC gain, HF gain, center freq at theta */
@@ -180,13 +179,13 @@ void calcHighShelfCoeffs
         theta_idx_lower = theta_idx_lower - 1;
     }
     
-    calcHighShelfParams(theta_idx_lower, rho, g0_1, gInf_1, fc_1);
-    calcHighShelfParams(theta_idx_upper, rho, g0_2, gInf_2, fc_2);
+    calcHighShelfParams(theta_idx_lower, rho, &g0_1, &gInf_1, &fc_1);
+    calcHighShelfParams(theta_idx_upper, rho, &g0_2, &gInf_2, &fc_2);
 
     ifac = 1.f - thetaDiv10;                /* interpolation factor between table steps */
-    g0   = interpolate_lin(*g0_1,   *g0_2,   ifac);
-    gInf = interpolate_lin(*gInf_1, *gInf_2, ifac);
-    fc   = interpolate_lin(*fc_1,   *fc_2,   ifac);
+    g0   = interpolate_lin(g0_1,   g0_2,   ifac);
+    gInf = interpolate_lin(gInf_1, gInf_2, ifac);
+    fc   = interpolate_lin(fc_1,   fc_2,   ifac);
     
     calcIIRCoeffs(g0, gInf, fc, fs, b0, b1, a1);
 }
