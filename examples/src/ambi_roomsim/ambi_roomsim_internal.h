@@ -76,6 +76,7 @@ typedef struct _ambi_roomsim
     
     /* user parameters */
     int sh_order;             /**< Current SH order of receivers */
+    int enableReflections;    /**< 0: disabled, 1: enabled */
     int refl_order;           /**< Current maximum image source reflection order */
     int nSources;             /**< Current number of sources */
     int nReceivers;           /**< Current number of receivers */

@@ -41,6 +41,7 @@ void ambi_roomsim_create
     printf(SAF_VERSION_LICENSE_STRING);
 
     /* default user parameters */
+    pData->enableReflections = 1;
     pData->sh_order = 3;
     pData->refl_order = 5;
     pData->nSources = 1;
@@ -176,7 +177,7 @@ void ambi_roomsim_process
             ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[i], pData->src_pos[i]);
         for(i=0; i<nReceivers; i++)
             ims_shoebox_updateReceiver(pData->hIms, pData->receiverIDs[i], pData->rec_pos[i]);
-        ims_shoebox_computeEchograms(pData->hIms, 5, maxTime_s);
+        ims_shoebox_computeEchograms(pData->hIms, pData->enableReflections ? pData->refl_order : 0, maxTime_s);
 
         /* Render audio for each receiver */
         for(i=0; i<nReceivers; i++)
@@ -212,15 +213,22 @@ void ambi_roomsim_process
 
 /* Set Functions */
 
-int ambi_roomsim_getFrameSize(void)
-{
-    return FRAME_SIZE;
-}
-
 void ambi_roomsim_refreshParams(void* const hAmbi)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     pData->reinit_room = 1;
+}
+
+void ambi_roomsim_setEnableIMSflag(void* const hAmbi, int newValue)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    pData->enableReflections = newValue;
+}
+
+void ambi_roomsim_setMaxReflectionOrder(void* const hAmbi, int newValue)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    pData->refl_order = newValue;
 }
 
 void ambi_roomsim_setOutputOrder(void* const hAmbi, int newOrder)
@@ -292,6 +300,33 @@ void ambi_roomsim_setReceiverZ(void* const hAmbi, int index, float newValue)
     pData->rec_pos[index][2] = newValue;
 }
 
+void ambi_roomsim_setRoomDimX(void* const hAmbi, float newValue)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    if(newValue!=pData->room_dims[0]){
+        pData->room_dims[0] = newValue;
+        pData->reinit_room = 1;
+    }
+}
+
+void ambi_roomsim_setRoomDimY(void* const hAmbi, float newValue)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    if(newValue!=pData->room_dims[1]){
+        pData->room_dims[1] = newValue;
+        pData->reinit_room = 1;
+    }
+}
+
+void ambi_roomsim_setRoomDimZ(void* const hAmbi, float newValue)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    if(newValue!=pData->room_dims[2]){
+        pData->room_dims[2] = newValue;
+        pData->reinit_room = 1;
+    }
+}
+
 void ambi_roomsim_setChOrder(void* const hAmbi, int newOrder)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
@@ -308,6 +343,23 @@ void ambi_roomsim_setNormType(void* const hAmbi, int newType)
 
 
 /* Get Functions */
+
+int ambi_roomsim_getFrameSize(void)
+{
+    return FRAME_SIZE;
+}
+
+int ambi_roomsim_getEnableIMSflag(void* const hAmbi)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    return pData->enableReflections;
+}
+
+int ambi_roomsim_getMaxReflectionOrder(void* const hAmbi)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    return pData->refl_order;
+}
 
 int ambi_roomsim_getOutputOrder(void* const hAmbi)
 {

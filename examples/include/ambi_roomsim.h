@@ -90,15 +90,17 @@ void ambi_roomsim_process(void* const hAmbi,
  * as ambi_roomsim is currently configured, at next available opportunity.
  */
 void ambi_roomsim_refreshParams(void* const hAmbi);
+
+/** Sets whether to include image sources (1) or not (0) */
+void ambi_roomsim_setEnableIMSflag(void* const hAmbi, int newValue);
+
+/** Sets the maximum reflection order */
+void ambi_roomsim_setMaxReflectionOrder(void* const hAmbi, int newValue);
     
-/**
- * Sets the encoding order (see #SH_ORDERS enum)
- */
+/** Sets the encoding order (see #SH_ORDERS enum) */
 void ambi_roomsim_setOutputOrder(void* const hAmbi, int newValue);
 
-/**
- * Sets the number of input signals/sources to encode.
- */
+/** Sets the number of input signals/sources to encode */
 void ambi_roomsim_setNumSources(void* const hAmbi, int new_nSources);
 
 /**
@@ -160,6 +162,15 @@ void ambi_roomsim_setReceiverY(void* const hAmbi, int index, float newValue);
  */
 void ambi_roomsim_setReceiverZ(void* const hAmbi, int index, float newValue);
 
+/** Sets the room length along the x dimension */
+void ambi_roomsim_setRoomDimX(void* const hAmbi, float newValue);
+
+/** Sets the room length along the y dimension */
+void ambi_roomsim_setRoomDimY(void* const hAmbi, float newValue);
+
+/** Sets the room length along the z dimension */
+void ambi_roomsim_setRoomDimZ(void* const hAmbi, float newValue);
+
 /**
  * Sets the Ambisonic channel ordering convention to encode with (see #CH_ORDER
  * enum)
@@ -172,12 +183,6 @@ void ambi_roomsim_setChOrder(void* const hAmbi, int newOrder);
  */
 void ambi_roomsim_setNormType(void* const hAmbi, int newType);
 
-/**
- * By default, ambi_roomsim will scale the output signals by the number of input
- * signals.
- */
-void ambi_roomsim_setEnablePostScaling(void* const hAmbi, int newStatus);
-
     
 /* ========================================================================== */
 /*                                Get Functions                               */
@@ -188,6 +193,12 @@ void ambi_roomsim_setEnablePostScaling(void* const hAmbi, int newStatus);
  * every _process() call )
  */
 int ambi_roomsim_getFrameSize(void);
+
+/** Returns whether to include image sources (1) or not (0) */
+int ambi_roomsim_getEnableIMSflag(void* const hAmbi);
+
+/** Returns the maximum reflection order */
+int ambi_roomsim_getMaxReflectionOrder(void* const hAmbi);
 
 /**
  * Returns the decoding order (see #SH_ORDERS enum)
@@ -254,12 +265,7 @@ int ambi_roomsim_getChOrder(void* const hAmbi);
  * with (see #NORM_TYPES enum)
  */
 int ambi_roomsim_getNormType(void* const hAmbi);
-
-/**
- * Returns 0: if post scaling is disabled, 1: if post scaling is enabled
- */
-int ambi_roomsim_getEnablePostScaling(void* const hAmbi);
-
+ 
 /**
  * Returns the processing delay in samples (may be used for delay compensation
  * features)
