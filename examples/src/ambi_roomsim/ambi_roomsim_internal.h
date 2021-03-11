@@ -82,8 +82,8 @@ typedef struct _ambi_roomsim
     int nReceivers;           /**< Current number of receivers */
     float room_dims[3];       /**< Room dimensions along the x,y,z axes in meters */
     float abs_wall[6];        /**< Absorption coefficients per wall, in the order in which the axis intersect walls: +x -x +y -y +z -z */
-    float src_pos[ROOM_SIM_MAX_NUM_SOURCES][3];
-    float rec_pos[ROOM_SIM_MAX_NUM_RECEIVERS][3];
+    float src_pos[ROOM_SIM_MAX_NUM_SOURCES][3];   /**< Current source Cartesian coordinates, meters */
+    float rec_pos[ROOM_SIM_MAX_NUM_RECEIVERS][3]; /**< Current receiver Cartesian coordinates, meters */
     CH_ORDER chOrdering;      /**< see #CH_ORDER */
     NORM_TYPES norm;          /**< see #NORM_TYPES */
     

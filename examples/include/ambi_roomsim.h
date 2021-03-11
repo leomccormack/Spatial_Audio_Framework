@@ -130,9 +130,7 @@ void ambi_roomsim_setSourceY(void* const hAmbi, int index, float newValue);
  */
 void ambi_roomsim_setSourceZ(void* const hAmbi, int index, float newValue);
 
-/**
- * Sets the number of input SH receivers
- */
+/** Sets the number of input SH receivers */
 void ambi_roomsim_setNumReceivers(void* const hAmbi, int new_nReceievers);
 
 /**
