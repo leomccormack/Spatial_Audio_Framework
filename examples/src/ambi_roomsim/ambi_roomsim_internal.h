@@ -43,8 +43,6 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 512 )
 #endif
-#define ROOM_SIM_MAX_NUM_RECEIVERS ( 16 )
-#define ROOM_SIM_MAX_NUM_SOURCES ( 16 )
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1) ) /* (L+1)^2 */
 
 

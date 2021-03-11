@@ -82,6 +82,9 @@ void ambi_roomsim_destroy
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(*phAmbi);
     
     if (pData != NULL) {
+        ims_shoebox_destroy(&(pData->hIms));
+        free(pData->src_sigs);
+        free(pData->rec_sh_outsigs);
         free(pData);
         pData = NULL;
     }
@@ -94,8 +97,6 @@ void ambi_roomsim_init
 )
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    int i;
-    
     pData->fs = (float)sampleRate;
 }
 
@@ -115,7 +116,7 @@ void ambi_roomsim_process
     CH_ORDER chOrdering;
     NORM_TYPES norm;
 
-    /* (ims_shoebox is actually much more flexible than this... Consider this a minimal example and this also makes things easier when designing a GUI) */
+    /* (ims_shoebox is actually much more flexible than this. So consider this as a minimal example, which will also make things easier when designing a GUI) */
 
     /* Reinitialise room if needed */
     if(pData->reinit_room){
@@ -315,18 +316,6 @@ int ambi_roomsim_getOutputOrder(void* const hAmbi)
     return pData->new_sh_order;
 }
 
-float ambi_roomsim_getSourceAzi_deg(void* const hAmbi, int index)
-{
-    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    return 0.0f;// pData->src_dirs_deg[index][0];
-}
-
-float ambi_roomsim_getSourceElev_deg(void* const hAmbi, int index)
-{
-    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    return 0.0f;// pData->src_dirs_deg[index][1];
-}
-
 int ambi_roomsim_getNumSources(void* const hAmbi)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
@@ -342,6 +331,72 @@ int ambi_roomsim_getNSHrequired(void* const hAmbi)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     return (pData->new_sh_order+1)*(pData->new_sh_order+1);
+}
+
+float ambi_roomsim_getSourceX(void* const hAmbi, int index)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
+    return pData->src_pos[index][0];
+}
+
+float ambi_roomsim_getSourceY(void* const hAmbi, int index)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
+    return pData->src_pos[index][1];
+}
+
+float ambi_roomsim_getSourceZ(void* const hAmbi, int index)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
+    return pData->src_pos[index][2];
+}
+
+int ambi_roomsim_getNumReceivers(void* const hAmbi)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    return pData->new_nReceivers;
+}
+
+float ambi_roomsim_getReceiverX(void* const hAmbi, int index)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS);
+    return pData->rec_pos[index][0];
+}
+
+float ambi_roomsim_getReceiverY(void* const hAmbi, int index)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS);
+    return pData->rec_pos[index][1];
+}
+
+float ambi_roomsim_getReceiverZ(void* const hAmbi, int index)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS);
+    return pData->rec_pos[index][2];
+}
+
+float ambi_roomsim_getRoomDimX(void* const hAmbi)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    return pData->room_dims[0];
+}
+
+float ambi_roomsim_getRoomDimY(void* const hAmbi)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    return pData->room_dims[1];
+}
+
+float ambi_roomsim_getRoomDimZ(void* const hAmbi)
+{
+    ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
+    return pData->room_dims[2];
 }
 
 int ambi_roomsim_getChOrder(void* const hAmbi)

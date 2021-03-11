@@ -31,6 +31,11 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** Maximum supported number of receivers for the room sim example */
+#define ROOM_SIM_MAX_NUM_RECEIVERS ( 16 )
+/** Maximum supported number of sources for the room sim example */
+#define ROOM_SIM_MAX_NUM_SOURCES ( 16 )
+
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
@@ -59,7 +64,7 @@ void ambi_roomsim_init(void* const hAmbi,
                      int samplerate);
 
 /**
- * 
+ * Processes audio
  *
  * @param[in] hAmbi    ambi_roomsim handle
  * @param[in] inputs   Input channel buffers; 2-D array: nInputs x nSamples
@@ -193,24 +198,10 @@ int ambi_roomsim_getFrameSize(void);
  */
 int ambi_roomsim_getOutputOrder(void* const hAmbi);
 
-/**
- * Returns the azimuth for a specific source, in DEGREES
- */
-float ambi_roomsim_getSourceAzi_deg(void* const hAmbi, int index);
-
-/**
- * Returns the elevation for a specific source, in DEGREES
- */
-float ambi_roomsim_getSourceElev_deg(void* const hAmbi, int index);
-
-/**
- * Returns the number of input signals/sources to encode.
- */
+/** Returns the number of input signals/sources to encode. */
 int ambi_roomsim_getNumSources(void* const hAmbi);
 
-/**
- * Returns the maximum number of input signals/sources that can be encoded.
- */
+/** Returns the maximum number of input signals/sources that can be encoded. */
 int ambi_roomsim_getMaxNumSources(void);
 
 /**
@@ -218,6 +209,36 @@ int ambi_roomsim_getMaxNumSources(void);
  * decoding order: (current_order+1)^2
  */
 int ambi_roomsim_getNSHrequired(void* const hAmbi);
+
+/** Returns the 'x' coordinate for a specific source index */
+float ambi_roomsim_getSourceX(void* const hAmbi, int index);
+
+/** Returns the 'y' coordinate for a specific source index */
+float ambi_roomsim_getSourceY(void* const hAmbi, int index);
+
+/** Returns the 'z' coordinate for a specific source index */
+float ambi_roomsim_getSourceZ(void* const hAmbi, int index);
+
+/** Returns the number of input SH receivers */
+int ambi_roomsim_getNumReceivers(void* const hAmbi);
+
+/** Returns the 'x' coordinate for a specific receiver index */
+float ambi_roomsim_getReceiversX(void* const hAmbi, int index);
+
+/** Returns the 'y' coordinate for a specific receiver index */
+float ambi_roomsim_getReceiversY(void* const hAmbi, int index);
+
+/** Returns the 'z' coordinate for a specific receiver index */
+float ambi_roomsim_getReceiversZ(void* const hAmbi, int index);
+
+/** Returns the room length along the x dimension */
+float ambi_roomsim_getRoomDimX(void* const hAmbi);
+
+/** Returns the room length along the y dimension */
+float ambi_roomsim_getRoomDimY(void* const hAmbi);
+
+/** Returns the room length along the z dimension */
+float ambi_roomsim_getRoomDimZ(void* const hAmbi);
 
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
