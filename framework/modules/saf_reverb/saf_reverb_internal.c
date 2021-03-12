@@ -627,7 +627,7 @@ void ims_shoebox_coreAbsorptionModule
                 abs_z = powf(r_z[0], ceilf((float)echogram_abs->order[i][2]/2.0f)) * powf(r_z[1], floorf((float)echogram_abs->order[i][2]/2.0f));
             else /* ISODD AND NEGATIVE */
                 abs_z = powf(r_z[0], floorf((float)abs(echogram_abs->order[i][2])/2.0f)) * powf(r_z[1], ceilf((float)abs(echogram_abs->order[i][2])/2.0f));
- 
+
             /* Apply total absorption */
             s_abs_tot = abs_x * abs_y * abs_z; 
             for(ch=0; ch<echogram_abs->nChannels; ch++)
