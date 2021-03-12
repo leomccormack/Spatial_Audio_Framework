@@ -20,3 +20,4 @@ dependencies/Win64/lib/libiomp5md.lib
 *.mexmaci64
 *.mexa64
 *.mexw64
+saf_doxygen.tag

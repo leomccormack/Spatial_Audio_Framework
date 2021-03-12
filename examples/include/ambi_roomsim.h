@@ -31,6 +31,11 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** Maximum supported number of receivers for the room sim example */
+#define ROOM_SIM_MAX_NUM_RECEIVERS ( 16 )
+/** Maximum supported number of sources for the room sim example */
+#define ROOM_SIM_MAX_NUM_SOURCES ( 16 )
+
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
@@ -59,7 +64,7 @@ void ambi_roomsim_init(void* const hAmbi,
                      int samplerate);
 
 /**
- * 
+ * Processes audio
  *
  * @param[in] hAmbi    ambi_roomsim handle
  * @param[in] inputs   Input channel buffers; 2-D array: nInputs x nSamples
@@ -85,15 +90,17 @@ void ambi_roomsim_process(void* const hAmbi,
  * as ambi_roomsim is currently configured, at next available opportunity.
  */
 void ambi_roomsim_refreshParams(void* const hAmbi);
+
+/** Sets whether to include image sources (1) or not (0) */
+void ambi_roomsim_setEnableIMSflag(void* const hAmbi, int newValue);
+
+/** Sets the maximum reflection order */
+void ambi_roomsim_setMaxReflectionOrder(void* const hAmbi, int newValue);
     
-/**
- * Sets the encoding order (see #SH_ORDERS enum)
- */
+/** Sets the encoding order (see #SH_ORDERS enum) */
 void ambi_roomsim_setOutputOrder(void* const hAmbi, int newValue);
 
-/**
- * Sets the number of input signals/sources to encode.
- */
+/** Sets the number of input signals/sources to encode */
 void ambi_roomsim_setNumSources(void* const hAmbi, int new_nSources);
 
 /**
@@ -123,11 +130,47 @@ void ambi_roomsim_setSourceY(void* const hAmbi, int index, float newValue);
  */
 void ambi_roomsim_setSourceZ(void* const hAmbi, int index, float newValue);
 
+/** Sets the number of input SH receivers */
+void ambi_roomsim_setNumReceivers(void* const hAmbi, int new_nReceievers);
 
 /**
- * Sets the input configuration preset (see #SOURCE_CONFIG_PRESETS enum)
+ * Sets the 'x' coordinate for a specific receiver index
+ *
+ * @param[in] hAmbi      ambi_roomsim handle
+ * @param[in] index      Receiver index
+ * @param[in] newValue   New 'x' coordinate, in metres
  */
-void ambi_roomsim_setInputConfigPreset(void* const hAmbi, int newPresetID);
+void ambi_roomsim_setReceiverX(void* const hAmbi, int index, float newValue);
+
+/**
+ * Sets the 'y' coordinate for a specific receiver index
+ *
+ * @param[in] hAmbi      ambi_roomsim handle
+ * @param[in] index      Receiver index
+ * @param[in] newValue   New 'y' coordinate, in metres
+ */
+void ambi_roomsim_setReceiverY(void* const hAmbi, int index, float newValue);
+
+/**
+ * Sets the 'z' coordinate for a specific receiver index
+ *
+ * @param[in] hAmbi      ambi_roomsim handle
+ * @param[in] index      Receiver index
+ * @param[in] newValue   New 'z' coordinate, in metres
+ */
+void ambi_roomsim_setReceiverZ(void* const hAmbi, int index, float newValue);
+
+/** Sets the room length along the x dimension */
+void ambi_roomsim_setRoomDimX(void* const hAmbi, float newValue);
+
+/** Sets the room length along the y dimension */
+void ambi_roomsim_setRoomDimY(void* const hAmbi, float newValue);
+
+/** Sets the room length along the z dimension */
+void ambi_roomsim_setRoomDimZ(void* const hAmbi, float newValue);
+
+/** Sets wall absorption coefficients */
+void ambi_roomsim_setWallAbsCoeff(void* const hAmbi, int xyz_idx, int posNeg_idx, float new_value);
 
 /**
  * Sets the Ambisonic channel ordering convention to encode with (see #CH_ORDER
@@ -141,12 +184,6 @@ void ambi_roomsim_setChOrder(void* const hAmbi, int newOrder);
  */
 void ambi_roomsim_setNormType(void* const hAmbi, int newType);
 
-/**
- * By default, ambi_roomsim will scale the output signals by the number of input
- * signals.
- */
-void ambi_roomsim_setEnablePostScaling(void* const hAmbi, int newStatus);
-
     
 /* ========================================================================== */
 /*                                Get Functions                               */
@@ -158,6 +195,12 @@ void ambi_roomsim_setEnablePostScaling(void* const hAmbi, int newStatus);
  */
 int ambi_roomsim_getFrameSize(void);
 
+/** Returns whether to include image sources (1) or not (0) */
+int ambi_roomsim_getEnableIMSflag(void* const hAmbi);
+
+/** Returns the maximum reflection order */
+int ambi_roomsim_getMaxReflectionOrder(void* const hAmbi);
+
 /**
  * Returns the decoding order (see #SH_ORDERS enum)
  *
@@ -167,24 +210,10 @@ int ambi_roomsim_getFrameSize(void);
  */
 int ambi_roomsim_getOutputOrder(void* const hAmbi);
 
-/**
- * Returns the azimuth for a specific source, in DEGREES
- */
-float ambi_roomsim_getSourceAzi_deg(void* const hAmbi, int index);
-
-/**
- * Returns the elevation for a specific source, in DEGREES
- */
-float ambi_roomsim_getSourceElev_deg(void* const hAmbi, int index);
-
-/**
- * Returns the number of input signals/sources to encode.
- */
+/** Returns the number of input signals/sources to encode. */
 int ambi_roomsim_getNumSources(void* const hAmbi);
 
-/**
- * Returns the maximum number of input signals/sources that can be encoded.
- */
+/** Returns the maximum number of input signals/sources that can be encoded. */
 int ambi_roomsim_getMaxNumSources(void);
 
 /**
@@ -192,6 +221,42 @@ int ambi_roomsim_getMaxNumSources(void);
  * decoding order: (current_order+1)^2
  */
 int ambi_roomsim_getNSHrequired(void* const hAmbi);
+
+/** Returns the 'x' coordinate for a specific source index */
+float ambi_roomsim_getSourceX(void* const hAmbi, int index);
+
+/** Returns the 'y' coordinate for a specific source index */
+float ambi_roomsim_getSourceY(void* const hAmbi, int index);
+
+/** Returns the 'z' coordinate for a specific source index */
+float ambi_roomsim_getSourceZ(void* const hAmbi, int index);
+
+/** Returns the number of SH receivers */
+int ambi_roomsim_getNumReceivers(void* const hAmbi);
+
+/** Returns the maximum number of receivers */
+int ambi_roomsim_getMaxNumReceivers(void);
+
+/** Returns the 'x' coordinate for a specific receiver index */
+float ambi_roomsim_getReceiverX(void* const hAmbi, int index);
+
+/** Returns the 'y' coordinate for a specific receiver index */
+float ambi_roomsim_getReceiverY(void* const hAmbi, int index);
+
+/** Returns the 'z' coordinate for a specific receiver index */
+float ambi_roomsim_getReceiverZ(void* const hAmbi, int index);
+
+/** Returns the room length along the x dimension */
+float ambi_roomsim_getRoomDimX(void* const hAmbi);
+
+/** Returns the room length along the y dimension */
+float ambi_roomsim_getRoomDimY(void* const hAmbi);
+
+/** Returns the room length along the z dimension */
+float ambi_roomsim_getRoomDimZ(void* const hAmbi);
+
+/** Returns wall absorption coefficients */
+float ambi_roomsim_getWallAbsCoeff(void* const hAmbi, int xyz_idx, int posNeg_idx);
 
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
@@ -204,12 +269,7 @@ int ambi_roomsim_getChOrder(void* const hAmbi);
  * with (see #NORM_TYPES enum)
  */
 int ambi_roomsim_getNormType(void* const hAmbi);
-
-/**
- * Returns 0: if post scaling is disabled, 1: if post scaling is enabled
- */
-int ambi_roomsim_getEnablePostScaling(void* const hAmbi);
-
+ 
 /**
  * Returns the processing delay in samples (may be used for delay compensation
  * features)

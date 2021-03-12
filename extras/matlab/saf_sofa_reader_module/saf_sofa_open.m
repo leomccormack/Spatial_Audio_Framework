@@ -12,7 +12,7 @@ function s_sofa = saf_sofa_open(sofa_filepath)
 % License: ISC
 
 %% Info on sofa file
-%ncdisp(hrtf_sofa_path)
+ncdisp(sofa_filepath)
 
 %% Open sofa file and determine dimension IDs and lengths
 ncid = netcdf.open(sofa_filepath, 'NOWRITE'); % read-only access

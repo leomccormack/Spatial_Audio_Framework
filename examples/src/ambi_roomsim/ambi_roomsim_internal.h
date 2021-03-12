@@ -41,9 +41,8 @@ extern "C" {
 /* ========================================================================== */
 
 #ifndef FRAME_SIZE
-# define FRAME_SIZE ( 512 )
+# define FRAME_SIZE ( 128 )
 #endif
-#define ROOM_SIM_MAX_NUM_SOURCES ( 8 )
 #define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1) ) /* (L+1)^2 */
 
 
@@ -63,36 +62,30 @@ typedef struct _ambi_roomsim
     float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float fs;
-    int recalc_SH_FLAG[MAX_NUM_INPUTS];
-    float Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
-    float prev_Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
-    float interpolator[FRAME_SIZE];
 
-    /* sd */
-    void* hIms;
-    int signalLength;
-    int sh_order;
-    int nBands;
-    float abs_wall[5][6];
-    float src_pos[3];
-    float src2_pos[3];
-    float src3_pos[3];
-    float src4_pos[3];
-    float rec_pos[3];
-
-    long sourceIDs[4], receiverIDs[1];
-    float** src_sigs, **rec_sh_outsigs;
-
-    int reinit_room;
+    /* Internal */
+    void* hIms;               /**< Image source implementation handle */
+    int sourceIDs[ROOM_SIM_MAX_NUM_SOURCES];     /**< Unique IDs per source in the simulation */
+    int receiverIDs[ROOM_SIM_MAX_NUM_RECEIVERS]; /**< Unique IDs per receiver in the simulation */
+    float** src_sigs;         /**< Source signal buffers; ROOM_SIM_MAX_NUM_SOURCES x FRAME_SIZE */
+    float*** rec_sh_outsigs;  /**< Receiver signal buffers; ROOM_SIM_MAX_NUM_RECEIVERS x MAX_NUM_SH_SIGNALS x FRAME_SIZE */
+    int reinit_room;          /**< Flag, 1: re-init required, 0: not required*/
+    int new_sh_order;         /**< New receiver SH order */
+    int new_nSources;         /**< New number of sources */
+    int new_nReceivers;       /**< New number of receivers */
     
     /* user parameters */
-    int nSources;
-    int new_nSources;
-    float src_positions[ROOM_SIM_MAX_NUM_SOURCES][3];
-    float rec_position[3];
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
-    SH_ORDERS order;
+    int sh_order;             /**< Current SH order of receivers */
+    int enableReflections;    /**< 0: disabled, 1: enabled */
+    int refl_order;           /**< Current maximum image source reflection order */
+    int nSources;             /**< Current number of sources */
+    int nReceivers;           /**< Current number of receivers */
+    float room_dims[3];       /**< Room dimensions along the x,y,z axes in meters */
+    float abs_wall[6];        /**< Absorption coefficients per wall, in the order in which the axis intersect walls: +x -x +y -y +z -z */
+    float src_pos[ROOM_SIM_MAX_NUM_SOURCES][3];   /**< Current source Cartesian coordinates, meters */
+    float rec_pos[ROOM_SIM_MAX_NUM_RECEIVERS][3]; /**< Current receiver Cartesian coordinates, meters */
+    CH_ORDER chOrdering;      /**< see #CH_ORDER */
+    NORM_TYPES norm;          /**< see #NORM_TYPES */
     
 } ambi_roomsim_data;
     

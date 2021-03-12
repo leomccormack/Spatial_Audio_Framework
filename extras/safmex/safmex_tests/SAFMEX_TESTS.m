@@ -56,10 +56,11 @@ if max(abs(vAbsTfSum(:)))<0.1, nPass=nPass+1; else, nFail=nFail+1; end
 safmex_faf_IIRFilterbank();
 
 % safmex_afSTFT
+tic
 nCHin = 6;
 nCHout = 13;
 hopsize = 128;
-blocksize = 2048*24;
+blocksize = 2048*46;
 [freqVector, procDelay] = safmex_afSTFT(nCHin, nCHout, hopsize, blocksize, 1, 1, 48e3); 
 dataTD_ref = randn(blocksize, nCHin); 
 dataFD = safmex_afSTFT(dataTD_ref.');
@@ -70,6 +71,7 @@ dataTD = dataTD(1,procDelay+1:end).';
 nTests = nTests+1;
 if max(abs(dataTD(:,1)-dataTD_ref(:,1)))<0.01, nPass=nPass+1; else, nFail=nFail+1; end 
 safmex_afSTFT();
+toc
 
 % safmex_qmf
 nCHin = 10;

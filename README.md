@@ -7,13 +7,13 @@
 
 # About
 
-The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related applications in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a large and comprehensively-documented codebase comprising a number of distinct **modules**; with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). Several **examples** are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects.
+The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related applications in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a rather large codebase comprising a number of distinct **modules**; with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). Several **examples** are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects.
 
-Owing to its modular design, expanding the framework is also relatively straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged! :-)
+Owing to its modular design, expanding the framework is quite straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged :-)
 
 # Prerequisites
 
-The framework utilises the following external libraries:
+The framework requires the following external libraries:
 * Any library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 * (**Optional**) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
 * (**Optional**) Intel's [Integrated Performance Primitives (IPP)](https://software.intel.com/content/www/us/en/develop/tools/integrated-performance-primitives.html) for the FFT.
@@ -26,11 +26,11 @@ SAF_USE_APPLE_ACCELERATE      # good option (x86 and ARM), faster than OpenBLAS,
 SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing
 SAF_USE...                    # please get in touch if you use something else! :-)
 ```
-Detailed instructions regarding how to build and link these libraries can be found [here](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
+[Detailed instructions regarding how to build and link these libraries can be found here](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
 
 ## Framework structure
 
-The [**framework**](docs/FRAMEWORK_STRUCTURE.md) comprises the following core modules (**ISC**):
+The [**framework**](docs/FRAMEWORK_STRUCTURE.md) comprises the following core modules (**ISC** License):
 * **saf_hoa** - a collection of higher-order Ambisonics binaural and loudspeaker decoders.
 * **saf_sh** - spherical harmonic and spherical array processing related functions.
 * **saf_vbap** - Vector-base Amplitude Panning (VBAP) functions.
@@ -40,15 +40,15 @@ The [**framework**](docs/FRAMEWORK_STRUCTURE.md) comprises the following core mo
 * **saf_utilities** - a collection of useful utility functions and cross-platform wrappers.
 
 The framework also includes the following optional modules:
-* **saf_sofa_reader** - a simple SOFA file reader (**ISC**).
-* **saf_tracker** - a particle-filtering based tracker (**GPLv2**).
+* **saf_sofa_reader** - a simple SOFA file reader (**ISC** License).
+* **saf_tracker** - a particle-filtering based tracker (**GPLv2** License).
 
 To enable optional framework modules, simply add the relevant pre-processor definition:
 ```
 SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader
 SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker
 ```
-Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. Instructions on how to install/link this dependency can be found [here](docs/SOFA_READER_MODULE_DEPENDENCIES.md). 
+Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. [Instructions on how to install/link this dependency can be found here](docs/SOFA_READER_MODULE_DEPENDENCIES.md). 
 
 ### Additional options
 
@@ -73,6 +73,7 @@ The framework's master include header is then:
 ```
 
 ## Building with CMake 
+
 ![CMake Build](https://github.com/leomccormack/Spatial_Audio_Framework/workflows/CMake%20Build/badge.svg?branch=master)
 
 The framework may also be included within an existing CMake workflow with simply:
@@ -124,6 +125,7 @@ saf_test.exe  # To run the unit testing program
 ```
 
 ## Documentation 
+
 ![Doxygen Generate](https://github.com/leomccormack/Spatial_Audio_Framework/workflows/Doxygen%20Generate/badge.svg?branch=master)
 
 [Doxygen](http://www.doxygen.nl/index.html)-based documentation is generated via a GitHub Action everytime a commit is pushed to the master branch. The documentation is hosted [here](https://leomccormack.github.io/Spatial_Audio_Framework/).
@@ -145,6 +147,7 @@ Several **examples** have also been included in the repository, which may serve 
 * **ambi_dec** - a frequency-dependent Ambisonic decoder. It supports the following decoding options: sampling Ambisonic decoder (SAD), AllRAD, Energy-Preserving decoder (EPAD), Mode-Matching decoder (MMD).
 * **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for Ambisonic signals.
 * **ambi_enc** - a basic Ambisonic encoder.
+* **ambi_roomsim** - an Ambisonic encoder that also includes reflections and source distance based on an image-source model of a shoebox room. Multiple sources and Ambisonic receivers are supported.
 * **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals), based on theoretical descriptions of the array configuration and construction.
 * **beamformer** - a beamformer/virtual microphone generator for Ambisonic signals, with several different beam pattern options.
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file.
@@ -154,9 +157,10 @@ Several **examples** have also been included in the repository, which may serve 
 * **multiconv** - a basic multi-channel convolver with an optional partitioned convolution mode. 
 * **panner** - a frequency-dependent VBAP panner, which accomodates a source loudness compensation (as a function of the room) option.
 * **pitch_shifter** - a basic multi-channel pitch shifter, based on the phase vocoder approach.
-* **powermap** - sound-field visualiser based on beamformer (PWD, MVDR) energy or sub-space-based methods (MUSIC).
+* **powermap** - sound-field visualiser based on beamformer (PWD, MVDR) energy or subspace methods (MUSIC).
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll Euler rotation angles.
-* **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors, at multiple frequencies. 
+* **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors for multiple frequencies. 
+
 
 Many of these examples have also been released as VST audio plug-ins under the [SPARTA](https://github.com/leomccormack/SPARTA) banner. The following open-source projects also employ the framework: [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
 
@@ -175,15 +179,16 @@ Suggestions and contributions to the code are both welcomed and encouraged. It s
 * if you are researcher who has developed a spatial-audio related method and want to integrate it into the framework... or
 * if you notice that an existing piece of code can be rewritten to make it clearer, faster, or to fix a bug...
 
-then please feel free to do so and submit a pull request. We may also be able to help with the implementation if needed :- )
+then please feel free to do so and submit a pull request. We may also be able to help with the implementation if needed, just get in touch :- )
 
 ## Contributors
 
-* **Leo McCormack** - C programmer and algorithm design (contact: leo.mccormack(at)aalto.fi)
+* **Leo McCormack** - C programming and algorithm design (contact: leo.mccormack(at)aalto.fi)
 * **Symeon Delikaris-Manias** - algorithm design
 * **Archontis Politis** - algorithm design
 * **Ville Pulkki** - algorithm design
-* **Juhani Paasonen** - C programmer
+* **Juhani Paasonen** - C programming
+* **Chris Hold** - C programming and algorithm design 
 
 # License
 

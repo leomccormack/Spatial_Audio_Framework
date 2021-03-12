@@ -614,9 +614,11 @@ void utility_cvsmul
     if (c == NULL)
         cblas_cscal(len, s, a, 1);
     else {
-        int i;
-        for (i = 0; i<len; i++)
-            c[i] = ccmulf(a[i], s[0]);
+        cblas_ccopy(len, a, 1, c, 1);
+        cblas_cscal(len, s, c, 1);
+//        int i;
+//        for (i = 0; i<len; i++)
+//            c[i] = ccmulf(a[i], s[0]);
     }
 }
 
@@ -654,9 +656,11 @@ void utility_zvsmul
     if (c == NULL)
         cblas_zscal(len, s, a, 1);
     else {
-        int i;
-        for (i = 0; i<len; i++)
-            c[i] = ccmul(a[i], s[0]);
+        cblas_zcopy(len, a, 1, c, 1);
+        cblas_zscal(len, s, c, 1);
+//        int i;
+//        for (i = 0; i<len; i++)
+//            c[i] = ccmul(a[i], s[0]);
     }
 }
 

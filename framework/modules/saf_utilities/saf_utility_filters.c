@@ -313,6 +313,23 @@ void interpolateFiltersH
     free(tmp);
 }
 
+float convertBW2Q
+(
+    float BW
+)
+{
+    return sqrtf(powf(2.0f, BW))/(powf(2.0f, BW)-1.0f);
+}
+
+float convertQ2BW
+(
+    float Q
+)
+{
+    return logf(  (2.0f*Q*Q+1.0f)/(2.0f*Q*Q) + sqrtf( powf((2.0f*Q*Q+1.0f)/(Q*Q+2.23e-13f), 2.0f)/4.0f - 1.0f )) /logf(2.0f);
+}
+
+
 /* ========================================================================== */
 /*                             IIR Filter Functions                           */
 /* ========================================================================== */
@@ -328,7 +345,7 @@ void biQuadCoeffs
     float a[3] 
 )
 {
-    float K, KK, D, V0;
+    float K, KK, D, V0, A, w0, alpha, a0;
     
     a[0] = 1.0f;
     
@@ -345,6 +362,25 @@ void biQuadCoeffs
             a[1] = (2.0f * Q * (KK - 1.0f))/D;
             a[2] = (KK * Q - K + Q)/D;
             break;
+
+        case BIQUAD_FILTER_LPF_EQCB:
+            /* Filter design equations - https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html */
+            w0 = 2.0f*SAF_PI*fc/fs;
+            alpha = sinf(w0)/(2.0f*Q);
+            b[0] = (1.0f - cosf(w0))/2.0f;
+            b[1] = 1.0f - cosf(w0);
+            b[2] = b[0];
+            a0   = 1.0f + alpha;
+            a[1] = -2.0f*cosf(w0);
+            a[2] = 1.0f - alpha;
+
+            /* Scale by a0, since applyBiQuadFilter() and applyIIR() assume a0 = 1.0 */
+            b[0] /= a0;
+            b[1] /= a0;
+            b[2] /= a0;
+            a[1] /= a0;
+            a[2] /= a0;
+            break;
             
         case BIQUAD_FILTER_HPF:
             /* Filter design equations - DAFX (2nd ed) p50 */
@@ -356,6 +392,25 @@ void biQuadCoeffs
             b[2] = b[0];
             a[1] = (2.0f * Q * (KK - 1.0f))/D;
             a[2] = (KK * Q - K + Q)/D;
+            break;
+
+        case BIQUAD_FILTER_HPF_EQCB:
+            /* Filter design equations - https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html */
+            w0 = 2.0f*SAF_PI*fc/fs;
+            alpha = sinf(w0)/(2.0f*Q);
+            b[0] = (1.0f + cosf(w0))/2.0f;
+            b[1] = -(1.0f + cosf(w0));
+            b[2] = b[0];
+            a0   = 1.0f + alpha;
+            a[1] = -2.0f*cosf(w0);
+            a[2] = 1.0f - alpha;
+
+            /* Scale by a0, since applyBiQuadFilter() and applyIIR() assume a0 = 1.0 */
+            b[0] /= a0;
+            b[1] /= a0;
+            b[2] /= a0;
+            a[1] /= a0;
+            a[2] /= a0;
             break;
             
         case BIQUAD_FILTER_LOW_SHELF:
@@ -382,6 +437,26 @@ void biQuadCoeffs
                 a[2] = (V0 - sqrtf(2.0f*V0)*K + KK)/D;
             }
             break;
+
+        case BIQUAD_FILTER_LOW_SHELF_EQCB:
+            /* Filter design equations - https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html */
+            A = powf(10.0f, gain_dB/40.0f);
+            w0 = 2.0f*SAF_PI*fc/fs;
+            alpha = sinf(w0)/(2.0f*Q);
+            b[0] = A*( (A+1.0f) - (A-1.0f) * cosf(w0) + 2.0f*sqrtf(A)*alpha );
+            b[1] = 2.0f*A*( (A-1.0f) - (A+1.0f) * cosf(w0) );
+            b[2] = A*( (A+1.0f) - (A-1.0f) * cosf(w0) - 2.0f*sqrtf(A)*alpha );
+            a0   = (A+1.0f) + (A-1.0f) * cosf(w0) + 2.0f*sqrtf(A)*alpha;
+            a[1] = -2.0f*( (A-1.0f) + (A+1.0f) * cosf(w0) );
+            a[2] = (A+1.0f) + (A-1.0f) * cosf(w0) - 2.0f*sqrtf(A)*alpha;
+
+            /* Scale by a0, since applyBiQuadFilter() and applyIIR() assume a0 = 1.0 */
+            b[0] /= a0;
+            b[1] /= a0;
+            b[2] /= a0;
+            a[1] /= a0;
+            a[2] /= a0;
+            break;
             
         case BIQUAD_FILTER_HI_SHELF:
             /* Filter design equations - DAFX (2nd ed) p64 */
@@ -407,6 +482,26 @@ void biQuadCoeffs
                 a[2] = (1.0f - sqrtf(2.0f*V0)*K + V0*KK)/D;
             }
             break;
+
+        case BIQUAD_FILTER_HI_SHELF_EQCB:
+            /* Filter design equations - https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html */
+            A = powf(10.0f, gain_dB/40.0f);
+            w0 = 2.0f*SAF_PI*fc/fs;
+            alpha = sinf(w0)/(2.0f*Q);
+            b[0] = A*( (A+1.0f) + (A-1.0f) * cosf(w0) + 2.0f*sqrtf(A)*alpha );
+            b[1] = -2.0f*A*( (A-1.0f) + (A+1.0f) * cosf(w0) );
+            b[2] = A*( (A+1.0f) + (A-1.0f) * cosf(w0) - 2.0f*sqrtf(A)*alpha );
+            a0   = (A+1.0f) - (A-1.0f) * cosf(w0) + 2.0f*sqrtf(A)*alpha;
+            a[1] = 2.0f*( (A-1.0f) - (A+1.0f) * cosf(w0) );
+            a[2] = (A+1.0f) - (A-1.0f) * cosf(w0) - 2.0f*sqrtf(A)*alpha;
+
+            /* Scale by a0, since applyBiQuadFilter() and applyIIR() assume a0 = 1.0 */
+            b[0] /= a0;
+            b[1] /= a0;
+            b[2] /= a0;
+            a[1] /= a0;
+            a[2] /= a0;
+            break;
             
         case BIQUAD_FILTER_PEAK:
             /* Filter design equations - DAFX (2nd ed) p66 */
@@ -429,6 +524,26 @@ void biQuadCoeffs
                 a[1] = b[1];
                 a[2] = (1.0f - (K/(V0*Q)) + KK)/D;
             }
+            break;
+
+        case BIQUAD_FILTER_PEAK_EQCB:
+            /* Filter design equations - https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html */
+            A = powf(10.0f, gain_dB/40.0f);
+            w0 = 2.0f*SAF_PI*fc/fs;
+            alpha = sinf(w0)/(2.0f*Q);
+            b[0] = 1.0f + alpha*A;
+            b[1] = -2.0f*cosf(w0);
+            b[2] = 1.0f - alpha*A;
+            a0   = 1.0f + alpha/A;
+            a[1] = b[1];
+            a[2] = 1.0f - alpha/A;
+
+            /* Scale by a0, since applyBiQuadFilter() and applyIIR() assume a0 = 1.0 */
+            b[0] /= a0;
+            b[1] /= a0;
+            b[2] /= a0;
+            a[1] /= a0;
+            a[2] /= a0;
             break;
     }
 }

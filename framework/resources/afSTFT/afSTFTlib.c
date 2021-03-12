@@ -76,6 +76,50 @@ static const float __stft2hybCentreFreq[9][5] =
   { 0.0f, 0.0f, 0.0f, 0.0f, 0.9375f },
   { 0.0f, 0.0f, 0.0f, 0.0f, 1.0625f } };
 
+/** Passes input time-domain data through the afSTFT filterbank.
+ *  Copyright (c) 2015 Juha Vilkamo, MIT license */
+static void afAnalyse
+(
+    float* inTD/* nSamplesTD x nCH */,
+    int nSamplesTD,
+    int nCH,
+    int hopSize,
+    int hybridmode,
+    float_complex* outTF /* out_nBands x nTimeslots x nCH */
+)
+{
+    int t, ch, sample, band;
+    void* hSTFT;
+    float_complex*** FrameTF;
+    float** tempFrameTD;
+    int nTimeSlots, nBands;
+
+    nBands = hopSize + (hybridmode ? 5 : 1);
+    nTimeSlots = nSamplesTD/hopSize;
+
+    /* allocate memory */
+    afSTFT_create(&(hSTFT), nCH, 1, hopSize, 0, hybridmode, AFSTFT_TIME_CH_BANDS);
+    FrameTF = (float_complex***)malloc3d(nTimeSlots, nCH, nBands, sizeof(float_complex));
+    tempFrameTD = (float**)calloc2d(nCH, nTimeSlots*hopSize, sizeof(float));
+
+    /* perform TF transform */
+    for(ch=0; ch<nCH; ch++)
+        for(sample=0; sample<nSamplesTD; sample++)
+            tempFrameTD[ch][sample] = inTD[sample* nCH + ch];
+    afSTFT_forward(hSTFT, tempFrameTD, nTimeSlots*hopSize, FrameTF);
+
+    /* save result to output */
+    for (band = 0; band < nBands; band++)
+        for (t = 0; t < nTimeSlots; t++)
+            for (ch = 0; ch < nCH; ch++)
+                outTF[band * nTimeSlots * nCH + t * nCH + ch] = FrameTF[t][ch][band];
+
+    /* clean-up */
+    afSTFT_destroy(&hSTFT);
+    free(FrameTF);
+    free(tempFrameTD);
+}
+
 /** Data structure for the afSTFT filterbank */
 typedef struct _afSTFT_data {
     int hopsize;                      /**< Hop size in samples */
@@ -86,8 +130,8 @@ typedef struct _afSTFT_data {
     int procDelay;                    /**< Processing delay in samples */
     AFSTFT_FDDATA_FORMAT format;      /**< see #AFSTFT_FDDATA_FORMAT */
     void* hInt;                       /**< Internal handle for afSTFT */
-    complexVector* STFTInputFrameTF;  /**< Interal input complex buffer */
-    complexVector* STFTOutputFrameTF; /**< Interal output complex buffer */
+    complexVector* STFTInputFrameTF;  /**< Internal input complex buffer */
+    complexVector* STFTOutputFrameTF; /**< Internal output complex buffer */
     int afSTFTdelay;                  /**< for host delay compensation */
     float** tempHopFrameTD;           /**< temporary multi-channel time-domain buffer of size "HOP_SIZE". */
 
@@ -114,7 +158,7 @@ void afSTFT_create
     int ch;
 
     if(hybridmode)
-        assert(hopsize==64 || hopsize==128);
+        assert(hopsize==64 || hopsize==128 || hopsize==256);
     assert(1024 % hopsize == 0 );
 
     h->nCHin = nCHin;
@@ -457,3 +501,87 @@ void afSTFT_getCentreFreqs
     else
         getUniformFreqVector(h->hopsize*2, fs, freqVector);
 }
+
+void afSTFT_FIRtoFilterbankCoeffs
+(
+    float* hIR /*N_dirs x nCH x ir_len*/,
+    int N_dirs,
+    int nCH,
+    int ir_len,
+    int hopSize,
+    int hybridmode,
+    float_complex* hFB /* nBands x nCH x N_dirs */
+)
+{
+    int i, j, t, nd, nm, nTimeSlots, ir_pad, nBands;
+    int* maxIdx;
+    float maxVal, idxDel, irFB_energy, irFB_gain, phase;
+    float* centerImpulse, *centerImpulseFB_energy, *ir;
+    float_complex cross;
+    float_complex* centerImpulseFB, *irFB;
+
+    nBands = hopSize + (hybridmode ? 5 : 1);
+    ir_pad = 1024;//+512;
+    nTimeSlots = (MAX(ir_len,hopSize)+ir_pad)/hopSize;
+    maxIdx = calloc1d(nCH,sizeof(int));
+    centerImpulse = calloc1d(MAX(ir_len,hopSize)+ir_pad, sizeof(float));
+
+    /* pick a direction to estimate the center of FIR delays */
+    for(j=0; j<nCH; j++){
+        maxVal = 2.23e-13f;
+        for(i=0; i<ir_len; i++){
+            if(hIR[j*ir_len + i] > maxVal){
+                maxVal = hIR[j*ir_len + i];
+                maxIdx[j] = i;
+            }
+        }
+    }
+    idxDel = 0.0f;
+    for(j=0; j<nCH; j++)
+        idxDel += (float)maxIdx[j];
+    idxDel /= (float)nCH;
+    idxDel = (idxDel + 1.5f);
+
+    /* ideal impulse at mean delay */
+    centerImpulse[(int)idxDel] = 1.0f;
+
+    /* analyse impulse with the filterbank */
+    centerImpulseFB = malloc1d(nBands*nTimeSlots*nCH*sizeof(float_complex));
+    afAnalyse(centerImpulse, MAX(ir_len,hopSize)+ir_pad, 1, hopSize, hybridmode, centerImpulseFB);
+    centerImpulseFB_energy = calloc1d(nBands, sizeof(float));
+    for(i=0; i<nBands; i++)
+        for(t=0; t<nTimeSlots; t++)
+            centerImpulseFB_energy[i] += powf(cabsf(centerImpulseFB[i*nTimeSlots + t]), 2.0f);
+
+    /* initialise FB coefficients */
+    ir = calloc1d( (MAX(ir_len,hopSize)+ir_pad) * nCH, sizeof(float));
+    irFB = malloc1d(nBands*nCH*nTimeSlots*sizeof(float_complex));
+    for(nd=0; nd<N_dirs; nd++){
+        for(j=0; j<ir_len; j++)
+            for(i=0; i<nCH; i++)
+                ir[j*nCH+i] = hIR[nd*nCH*ir_len + i*ir_len + j];
+        afAnalyse(ir, MAX(ir_len,hopSize)+ir_pad, nCH, hopSize, hybridmode, irFB);
+        for(nm=0; nm<nCH; nm++){
+            for(i=0; i<nBands; i++){
+                irFB_energy = 0;
+                for(t=0; t<nTimeSlots; t++)
+                    irFB_energy += powf(cabsf(irFB[i*nTimeSlots*nCH + t*nCH + nm]), 2.0f); /* out_nBands x nTimeslots x nCH */
+                irFB_gain = sqrtf(irFB_energy/MAX(centerImpulseFB_energy[i], 2.23e-8f));
+                cross = cmplxf(0.0f,0.0f);
+                for(t=0; t<nTimeSlots; t++)
+                    cross = ccaddf(cross, ccmulf(irFB[i*nTimeSlots*nCH + t*nCH + nm], conjf(centerImpulseFB[i*nTimeSlots + t])));
+                phase = atan2f(cimagf(cross), crealf(cross));
+                hFB[i*nCH*N_dirs + nm*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f, phase)), irFB_gain);
+            }
+        }
+    }
+
+    /* clean-up */
+    free(maxIdx);
+    free(centerImpulse);
+    free(centerImpulseFB_energy);
+    free(centerImpulseFB);
+    free(ir);
+    free(irFB);
+}
+

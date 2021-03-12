@@ -80,7 +80,40 @@ static void getRz
     Rz[2][0] = 0.0f;
     Rz[2][1] = 0.0f;
     Rz[2][2] = 1.0f;
-} 
+}
+
+void quaternion2rotationMatrix
+(
+    quaternion_data* Q,
+    float R[3][3]
+)
+{
+    R[0][0] = 2.0f * (Q->w * Q->w + Q->x * Q->x) - 1.0f;
+    R[0][1] = 2.0f * (Q->x * Q->y - Q->w * Q->z);
+    R[0][2] = 2.0f * (Q->x * Q->z + Q->w * Q->y);
+    R[1][0] = 2.0f * (Q->x * Q->y + Q->w * Q->z);
+    R[1][1] = 2.0f * (Q->w * Q->w + Q->y * Q->y) - 1.0f;
+    R[1][2] = 2.0f * (Q->y * Q->z - Q->w * Q->x);
+    R[2][0] = 2.0f * (Q->x * Q->z - Q->w * Q->y);
+    R[2][1] = 2.0f * (Q->y * Q->z + Q->w * Q->x);
+    R[2][2] = 2.0f * (Q->w * Q->w + Q->z * Q->z) - 1.0f;
+}
+
+/* Adapted from: https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/forum.htm */
+void rotationMatrix2quaternion
+(
+    float R[3][3],
+    quaternion_data* Q
+)
+{
+    Q->w = sqrtf( MAX( 0.0f, 1.0f + R[0][0] + R[1][1] + R[2][2] ) ) / 2.0f;
+    Q->x = sqrtf( MAX( 0.0f, 1.0f + R[0][0] - R[1][1] - R[2][2] ) ) / 2.0f;
+    Q->y = sqrtf( MAX( 0.0f, 1.0f - R[0][0] + R[1][1] - R[2][2] ) ) / 2.0f;
+    Q->z = sqrtf( MAX( 0.0f, 1.0f - R[0][0] - R[1][1] + R[2][2] ) ) / 2.0f;
+    Q->x = copysign( Q->x, R[2][1] - R[1][2] );
+    Q->y = copysign( Q->y, R[0][2] - R[2][0] );
+    Q->z = copysign( Q->z, R[1][0] - R[0][1] );
+}
 
 void euler2rotationMatrix
 (

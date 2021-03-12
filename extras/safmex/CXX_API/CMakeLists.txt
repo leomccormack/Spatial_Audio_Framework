@@ -8,13 +8,13 @@ find_package(Matlab)
 
 # List of available safmex wrappers
 set(safmex_list
-    safmex_afSTFT)
-#    safmex_faf_IIRFilterbank
-#    safmex_generateVBAPgainTable3D
-#    safmex_getSHcomplex
-#    safmex_getSHreal
-#    safmex_latticeDecorrelator
-#    safmex_qmf) 
+    saf_afSTFT)
+#    saf_faf_IIRFilterbank
+#    saf_generateVBAPgainTable3D
+#    saf_getSHcomplex
+#    saf_getSHreal
+#    saf_latticeDecorrelator
+#    saf_qmf) 
 
 #if(SAF_ENABLE_TRACKER_MODULE)
 #    set(safmex_list ${safmex_list}
