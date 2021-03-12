@@ -147,7 +147,7 @@ Several **examples** have also been included in the repository, which may serve 
 * **ambi_dec** - a frequency-dependent Ambisonic decoder. It supports the following decoding options: sampling Ambisonic decoder (SAD), AllRAD, Energy-Preserving decoder (EPAD), Mode-Matching decoder (MMD).
 * **ambi_drc** - a frequency-dependent dynamic range compressor (DRC) for Ambisonic signals.
 * **ambi_enc** - a basic Ambisonic encoder.
-* **ambi_roomsim** - an Ambisonic encoder that also includes reflections and source distance, based on a shoebox room model and the image-source method. Multiple sources and Ambisonic receivers are supported.
+* **ambi_roomsim** - an Ambisonic encoder that also includes reflections and source distance based on an image-source model of a shoebox room. Multiple sources and Ambisonic receivers are supported.
 * **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals), based on theoretical descriptions of the array configuration and construction.
 * **beamformer** - a beamformer/virtual microphone generator for Ambisonic signals, with several different beam pattern options.
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file.
