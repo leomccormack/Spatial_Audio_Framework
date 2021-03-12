@@ -378,9 +378,9 @@ void ims_shoebox_coreInitT
                 echogram->value[0][vIdx]   = wrk->s_d[imsrc]<=1 ? 1.0f : 1.0f / wrk->s_d[imsrc];
 
                 /* Order */
-                echogram->order[vIdx][0] = (int)(wrk->II[imsrc] + 0.5f); /* round */
-                echogram->order[vIdx][1] = (int)(wrk->JJ[imsrc] + 0.5f);
-                echogram->order[vIdx][2] = (int)(wrk->KK[imsrc] + 0.5f);
+                echogram->order[vIdx][0] = (int)(wrk->II[imsrc] + (wrk->II[imsrc]>0 ? 0.1f : -0.1f)); /* round */
+                echogram->order[vIdx][1] = (int)(wrk->JJ[imsrc] + (wrk->JJ[imsrc]>0 ? 0.1f : -0.1f));
+                echogram->order[vIdx][2] = (int)(wrk->KK[imsrc] + (wrk->KK[imsrc]>0 ? 0.1f : -0.1f));
 
                 /* Coordinates */
                 echogram->coords[vIdx].x = wrk->s_x[imsrc];
@@ -504,9 +504,9 @@ void ims_shoebox_coreInitN
             echogram->value[0][imsrc] = wrk->s_d[imsrc]<=1 ? 1.0f : 1.0f / wrk->s_d[imsrc];
 
             /* Order */
-            echogram->order[imsrc][0] = (int)(wrk->II[imsrc] + 0.5f); /* round */
-            echogram->order[imsrc][1] = (int)(wrk->JJ[imsrc] + 0.5f);
-            echogram->order[imsrc][2] = (int)(wrk->KK[imsrc] + 0.5f);
+            echogram->order[imsrc][0] = (int)(wrk->II[imsrc] + (wrk->II[imsrc]>0 ? 0.1f : -0.1f)); /* round */
+            echogram->order[imsrc][1] = (int)(wrk->JJ[imsrc] + (wrk->JJ[imsrc]>0 ? 0.1f : -0.1f));
+            echogram->order[imsrc][2] = (int)(wrk->KK[imsrc] + (wrk->KK[imsrc]>0 ? 0.1f : -0.1f));
 
             /* Coordinates */
             echogram->coords[imsrc].x = wrk->s_x[imsrc];
@@ -605,29 +605,29 @@ void ims_shoebox_coreAbsorptionModule
          * every surface, based on the order per dimension */
         for(i=0; i<echogram_abs->numImageSources; i++){
             /* Surfaces intersecting the x-axis */
-            if((echogram_abs->order[i][0]%2)==0) //ISEVEN(echogram_abs->order[i][0]))
+            if((echogram_abs->order[i][0]%2)==0) /* ISEVEN */
                 abs_x = powf(r_x[0], (float)abs(echogram_abs->order[i][0])/2.0f) * powf(r_x[1], (float)abs(echogram_abs->order[i][0])/2.0f);
-            else if (/* ISODD AND */echogram_abs->order[i][0]>0)
+            else if (echogram_abs->order[i][0]>0) /* ISODD AND POSITIVE */
                 abs_x = powf(r_x[0], ceilf((float)echogram_abs->order[i][0]/2.0f)) * powf(r_x[1], floorf((float)echogram_abs->order[i][0]/2.0f));
             else /* ISODD AND NEGATIVE */
                 abs_x = powf(r_x[0], floorf((float)abs(echogram_abs->order[i][0])/2.0f)) * powf(r_x[1], ceilf((float)abs(echogram_abs->order[i][0])/2.0f));
 
             /* Surfaces intersecting the y-axis */
-            if((echogram_abs->order[i][1]%2)==0) //ISEVEN(echogram_abs->order[i][1]))
+            if((echogram_abs->order[i][1]%2)==0) /* ISEVEN */
                 abs_y = powf(r_y[0], (float)abs(echogram_abs->order[i][1])/2.0f) * powf(r_y[1], (float)abs(echogram_abs->order[i][1])/2.0f);
-            else if (/* ISODD AND */echogram_abs->order[i][1]>0)
+            else if (echogram_abs->order[i][1]>0) /* ISODD AND POSITIVE */
                 abs_y = powf(r_y[0], ceilf((float)echogram_abs->order[i][1]/2.0f)) * powf(r_y[1], floorf((float)echogram_abs->order[i][1]/2.0f));
             else /* ISODD AND NEGATIVE */
                 abs_y = powf(r_y[0], floorf((float)abs(echogram_abs->order[i][1])/2.0f)) * powf(r_y[1], ceilf((float)abs(echogram_abs->order[i][1])/2.0f));
 
             /* Surfaces intersecting the y-axis */
-            if((echogram_abs->order[i][2]%2)==0) //ISEVEN(echogram_abs->order[i][2]))
+            if((echogram_abs->order[i][2]%2)==0) /* ISEVEN */
                 abs_z = powf(r_z[0], (float)abs(echogram_abs->order[i][2])/2.0f) * powf(r_z[1], (float)abs(echogram_abs->order[i][2])/2.0f);
-            else if (/* ISODD AND */echogram_abs->order[i][2]>0)
+            else if (echogram_abs->order[i][2]>0) /* ISODD AND POSITIVE */
                 abs_z = powf(r_z[0], ceilf((float)echogram_abs->order[i][2]/2.0f)) * powf(r_z[1], floorf((float)echogram_abs->order[i][2]/2.0f));
             else /* ISODD AND NEGATIVE */
                 abs_z = powf(r_z[0], floorf((float)abs(echogram_abs->order[i][2])/2.0f)) * powf(r_z[1], ceilf((float)abs(echogram_abs->order[i][2])/2.0f));
-
+ 
             /* Apply total absorption */
             s_abs_tot = abs_x * abs_y * abs_z; 
             for(ch=0; ch<echogram_abs->nChannels; ch++)
