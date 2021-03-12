@@ -172,11 +172,14 @@ void ambi_roomsim_process
         for(; i < nInputs; i++)
             memset(pData->src_sigs[i], 0, FRAME_SIZE * sizeof(float));
 
-        /* Update source/receiver positions and re-compute echgrams (note, if nothing has moved since last frame then these calls will be bypassed) */
+        /* Update source/receiver positions, room dims/coeffs and re-compute echgrams
+         * (note, if nothing has changed since last frame then these calls will be bypassed internally) */
         for(i=0; i<nSources; i++)
             ims_shoebox_updateSource(pData->hIms, pData->sourceIDs[i], pData->src_pos[i]);
         for(i=0; i<nReceivers; i++)
             ims_shoebox_updateReceiver(pData->hIms, pData->receiverIDs[i], pData->rec_pos[i]);
+        ims_shoebox_setRoomDimensions(pData->hIms, pData->room_dims);
+        ims_shoebox_setWallAbsCoeffs(pData->hIms, (float*)pData->abs_wall);
         ims_shoebox_computeEchograms(pData->hIms, pData->enableReflections ? pData->refl_order : 0, maxTime_s);
 
         /* Render audio for each receiver */
@@ -305,7 +308,6 @@ void ambi_roomsim_setRoomDimX(void* const hAmbi, float newValue)
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     if(newValue!=pData->room_dims[0]){
         pData->room_dims[0] = newValue;
-        pData->reinit_room = 1;
     }
 }
 
@@ -314,7 +316,6 @@ void ambi_roomsim_setRoomDimY(void* const hAmbi, float newValue)
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     if(newValue!=pData->room_dims[1]){
         pData->room_dims[1] = newValue;
-        pData->reinit_room = 1;
     }
 }
 
@@ -323,7 +324,6 @@ void ambi_roomsim_setRoomDimZ(void* const hAmbi, float newValue)
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     if(newValue!=pData->room_dims[2]){
         pData->room_dims[2] = newValue;
-        pData->reinit_room = 1;
     }
 }
 
@@ -331,10 +331,9 @@ void ambi_roomsim_setWallAbsCoeff(void* const hAmbi, int xyz_idx, int posNeg_idx
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
     assert(xyz_idx<4);
-    assert(xyz_idx==0 || xyz_idx==1);
+    assert(posNeg_idx==0 || posNeg_idx==1);
     if(new_value!=pData->abs_wall[2*xyz_idx+posNeg_idx]){
         pData->abs_wall[2*xyz_idx+posNeg_idx] = new_value;
-        pData->reinit_room = 1;
     }
 }
 

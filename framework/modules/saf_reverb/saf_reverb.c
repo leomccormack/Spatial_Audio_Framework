@@ -533,6 +533,63 @@ void ims_shoebox_applyEchogramTD
 }
 
 
+/* set/get functions: */
+
+void ims_shoebox_setRoomDimensions
+(
+    void* hIms,
+    float new_roomDimensions[3]
+)
+{
+    ims_scene_data *sc = (ims_scene_data*)(hIms);
+    int rec_idx, src_idx;
+
+    /* Only update if room dimensions are different */
+    if( (sc->room_dims[0]!=new_roomDimensions[0]) ||
+        (sc->room_dims[1]!=new_roomDimensions[1]) ||
+        (sc->room_dims[2]!=new_roomDimensions[2]) )
+    {
+        sc->room_dims[0] = new_roomDimensions[0];
+        sc->room_dims[1] = new_roomDimensions[1];
+        sc->room_dims[2] = new_roomDimensions[2];
+
+        /* Echograms must be re-initialised */
+        for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++)
+            for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++)
+                if( (sc->srcs[src_idx].ID != IMS_UNASSIGNED) && (sc->recs[rec_idx].ID != IMS_UNASSIGNED) )
+                    ((ims_core_workspace*)(sc->hCoreWrkSpc[rec_idx][src_idx]))->refreshEchogramFLAG = 1;
+    }
+}
+
+void ims_shoebox_setWallAbsCoeffs
+(
+    void* hIms,
+    float* abs_wall
+)
+{
+    ims_scene_data *sc = (ims_scene_data*)(hIms);
+    int band, i, updateRequired, rec_idx, src_idx;
+    updateRequired = 0;
+
+    /* Only update if wall absorption coefficients are different */
+    for(band=0; band<sc->nBands; band++){
+        for(i=0; i<6; i++){
+            if(sc->abs_wall[band][i] != abs_wall[band*6 + i]){
+                sc->abs_wall[band][i] = abs_wall[band*6 + i];
+                updateRequired = 1;
+            }
+        }
+    }
+    if(updateRequired){
+        /* Echograms must be re-initialised */
+        for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++)
+            for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++)
+                if( (sc->srcs[src_idx].ID != IMS_UNASSIGNED) && (sc->recs[rec_idx].ID != IMS_UNASSIGNED) )
+                    ((ims_core_workspace*)(sc->hCoreWrkSpc[rec_idx][src_idx]))->refreshEchogramFLAG = 1;
+    }
+}
+
+
 /* add/remove/update functions: */
 
 int ims_shoebox_addSource

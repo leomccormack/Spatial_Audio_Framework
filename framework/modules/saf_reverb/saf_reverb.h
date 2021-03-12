@@ -166,7 +166,18 @@ void ims_shoebox_applyEchogramTD(/* Input Arguments */
                                  int fractionalDelaysFLAG);
 
 
-/* ====================== Add/Remove/Update functions ======================= */
+/* =========================== Set/Get functions ============================ */
+
+/** Sets the room dimensions */
+void ims_shoebox_setRoomDimensions(void* hIms,
+                                   float new_roomDimensions[3]);
+
+/** Sets the wall absorption coefficients per wall and per band */
+void ims_shoebox_setWallAbsCoeffs(void* hIms,
+                                  float* abs_wall);
+
+
+/* ================== Add/Remove/Update Objects functions ==================== */
 
 /**
  * Adds a source object to the simulator, and returns a unique ID corresponding
