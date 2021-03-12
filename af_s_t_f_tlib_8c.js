@@ -1,12 +1,14 @@
 var af_s_t_f_tlib_8c =
 [
     [ "afSTFT_data", "structaf_s_t_f_t__data.html", "structaf_s_t_f_t__data" ],
+    [ "afAnalyse", "af_s_t_f_tlib_8c.html#abb25e1b7e39568ea5c0808e654955ab1", null ],
     [ "afSTFT_backward", "af_s_t_f_tlib_8c.html#af0acd3e0495bbe8f3241592aa5b0b744", null ],
     [ "afSTFT_backward_flat", "af_s_t_f_tlib_8c.html#a142ac81c06277d7b2cc63434cbfb7389", null ],
     [ "afSTFT_channelChange", "af_s_t_f_tlib_8c.html#aeb049bf1a61b685e03daf02aa48cc586", null ],
     [ "afSTFT_clearBuffers", "af_s_t_f_tlib_8c.html#a7235a5d8de85b71263fb30a358abbbb9", null ],
     [ "afSTFT_create", "af_s_t_f_tlib_8c.html#a7558bd35af17d396da920a6305d58af9", null ],
     [ "afSTFT_destroy", "af_s_t_f_tlib_8c.html#ad66f150d60ffcb3a4d46283b568e60f9", null ],
+    [ "afSTFT_FIRtoFilterbankCoeffs", "af_s_t_f_tlib_8c.html#a96f8e1a67a42d1839371a412fbfa9cc6", null ],
     [ "afSTFT_forward", "af_s_t_f_tlib_8c.html#aa45604a8611ac750f0fe0d60ca44f9ff", null ],
     [ "afSTFT_forward_flat", "af_s_t_f_tlib_8c.html#a5a7b8ec77ca85e17a6640e32077e4c85", null ],
     [ "afSTFT_getCentreFreqs", "af_s_t_f_tlib_8c.html#aaf529d28c5dca94aacd10883055a8d10", null ],

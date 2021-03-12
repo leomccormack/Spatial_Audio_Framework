@@ -11,6 +11,7 @@ var af_s_t_f_tlib_8h =
     [ "afSTFT_clearBuffers", "af_s_t_f_tlib_8h.html#a7235a5d8de85b71263fb30a358abbbb9", null ],
     [ "afSTFT_create", "af_s_t_f_tlib_8h.html#a7558bd35af17d396da920a6305d58af9", null ],
     [ "afSTFT_destroy", "af_s_t_f_tlib_8h.html#ad66f150d60ffcb3a4d46283b568e60f9", null ],
+    [ "afSTFT_FIRtoFilterbankCoeffs", "af_s_t_f_tlib_8h.html#a96f8e1a67a42d1839371a412fbfa9cc6", null ],
     [ "afSTFT_forward", "af_s_t_f_tlib_8h.html#aa45604a8611ac750f0fe0d60ca44f9ff", null ],
     [ "afSTFT_forward_flat", "af_s_t_f_tlib_8h.html#a5a7b8ec77ca85e17a6640e32077e4c85", null ],
     [ "afSTFT_getCentreFreqs", "af_s_t_f_tlib_8h.html#aaf529d28c5dca94aacd10883055a8d10", null ],

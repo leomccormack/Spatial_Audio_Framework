@@ -3,8 +3,6 @@ var group___h_r_i_r =
     [ "saf_default_hrirs.c", "saf__default__hrirs_8c.html", null ],
     [ "saf_hrir.c", "saf__hrir_8c.html", null ],
     [ "saf_hrir.h", "saf__hrir_8h.html", null ],
-    [ "saf_hrir_internal.c", "saf__hrir__internal_8c.html", null ],
-    [ "saf_hrir_internal.h", "saf__hrir__internal_8h.html", null ],
     [ "binauralDiffuseCoherence", "group___h_r_i_r.html#gadbd157cc21c2840342448509f1bec412", null ],
     [ "diffuseFieldEqualiseHRTFs", "group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c", null ],
     [ "estimateITDs", "group___h_r_i_r.html#gaf4e65a8546982cb60e4553dedca1f4a2", null ],

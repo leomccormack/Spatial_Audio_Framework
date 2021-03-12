@@ -2,10 +2,15 @@ var saf__utility__filters_8h =
 [
     [ "BIQUAD_FILTER_TYPES", "group___utilities.html#ga45a9a071190527868f18d35a8f54362f", [
       [ "BIQUAD_FILTER_LPF", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fa1d4fc0ac684f1e2267c32cb6389addb5", null ],
+      [ "BIQUAD_FILTER_LPF_EQCB", "group___utilities.html#gga45a9a071190527868f18d35a8f54362faf11c237d7e216117e1af1c999bed0fd1", null ],
       [ "BIQUAD_FILTER_HPF", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fafeb5977dffa5364bc2c60b1f0c795edd", null ],
+      [ "BIQUAD_FILTER_HPF_EQCB", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fa790c886a8bf1c27bc35b10664045c981", null ],
       [ "BIQUAD_FILTER_PEAK", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fa5b7219720397e8e2482a483ab6748e04", null ],
+      [ "BIQUAD_FILTER_PEAK_EQCB", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fa8dbbd0ba521df169c9dc71e535e0a35a", null ],
       [ "BIQUAD_FILTER_LOW_SHELF", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fa95811cb885d4ef040e422d4011cfd2ba", null ],
-      [ "BIQUAD_FILTER_HI_SHELF", "group___utilities.html#gga45a9a071190527868f18d35a8f54362faf344b1e5cdbae06206820ab524add14c", null ]
+      [ "BIQUAD_FILTER_LOW_SHELF_EQCB", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fa3b2641a195e35b16977010a0e99700bd", null ],
+      [ "BIQUAD_FILTER_HI_SHELF", "group___utilities.html#gga45a9a071190527868f18d35a8f54362faf344b1e5cdbae06206820ab524add14c", null ],
+      [ "BIQUAD_FILTER_HI_SHELF_EQCB", "group___utilities.html#gga45a9a071190527868f18d35a8f54362faf2614cc22c9c146debd5581ebea7d047", null ]
     ] ],
     [ "BUTTER_FILTER_TYPES", "group___utilities.html#ga186326f0d162300d949c2dc95c412465", [
       [ "BUTTER_FILTER_LPF", "group___utilities.html#gga186326f0d162300d949c2dc95c412465a40bcdf48dfc647c2645f059410f804d6", null ],
@@ -33,6 +38,8 @@ var saf__utility__filters_8h =
     [ "applyIIR", "group___utilities.html#ga5c96001ab50d85797358b3d17a8bd05c", null ],
     [ "biQuadCoeffs", "group___utilities.html#ga9762067e0e9b078a83b0edb7fd349169", null ],
     [ "butterCoeffs", "group___utilities.html#gaafbb552f618e0672c0acfc4d171da212", null ],
+    [ "convertBW2Q", "group___utilities.html#gad5bf8140a1b8d72f8b5af72a7b9ee753", null ],
+    [ "convertQ2BW", "group___utilities.html#ga88473e6168d6e6c92719bd41f15cb417", null ],
     [ "evalBiQuadTransferFunction", "group___utilities.html#gab1719c6d26a5814d90b85e97ca5d2795", null ],
     [ "faf_IIRFilterbank_apply", "group___utilities.html#gafa740d1a0519f90812b163acef93a7c6", null ],
     [ "faf_IIRFilterbank_create", "group___utilities.html#ga5a253ff21a7e40ccd012b101cb745c96", null ],

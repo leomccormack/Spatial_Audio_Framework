@@ -26,6 +26,7 @@ var annotated_dup =
     [ "MCS_data", "struct_m_c_s__data.html", "struct_m_c_s__data" ],
     [ "P66", "struct_p66.html", "struct_p66" ],
     [ "qmf_data", "structqmf__data.html", "structqmf__data" ],
+    [ "quaternion_data", "structquaternion__data.html", "structquaternion__data" ],
     [ "saf_fft_data", "structsaf__fft__data.html", "structsaf__fft__data" ],
     [ "saf_rfft_data", "structsaf__rfft__data.html", "structsaf__rfft__data" ],
     [ "saf_sofa_container", "structsaf__sofa__container.html", "structsaf__sofa__container" ],

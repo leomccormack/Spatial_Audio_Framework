@@ -24,6 +24,7 @@ var saf__test_8c =
     [ "test__ims_shoebox_TD", "saf__test_8c.html#ae49109411cfcb133adfe23ee2c655218", null ],
     [ "test__latticeDecorrelator", "saf__test_8c.html#aeb7e6c04ac91cc3d90025bcac95e8549", null ],
     [ "test__qmf", "saf__test_8c.html#aac1d57603ebc37f0088e3fc83c804402", null ],
+    [ "test__quaternion", "saf__test_8c.html#affac516deac2b319765430a4088f8a07", null ],
     [ "test__real2complexSHMtx", "saf__test_8c.html#a073d3c584fce77cc00fd2d11237436d9", null ],
     [ "test__realloc2d_r", "saf__test_8c.html#a172905f574f05bb5b156ca40d617ab62", null ],
     [ "test__saf_matrixConv", "saf__test_8c.html#ad992431654877a596b057b67120c3cac", null ],

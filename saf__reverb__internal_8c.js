@@ -1,7 +1,8 @@
 var saf__reverb__internal_8c =
 [
     [ "ims_shoebox_coreAbsorptionModule", "saf__reverb__internal_8c.html#a904e25af9a8cc9e95d458083ebe0dfcc", null ],
-    [ "ims_shoebox_coreInit", "saf__reverb__internal_8c.html#a6ab6b058feab926a431590925cf835b2", null ],
+    [ "ims_shoebox_coreInitN", "saf__reverb__internal_8c.html#aae8d6a66bac70fde40972406e1cc9059", null ],
+    [ "ims_shoebox_coreInitT", "saf__reverb__internal_8c.html#a32a1a6c9ebc539d5ab9751869db39d65", null ],
     [ "ims_shoebox_coreRecModuleSH", "saf__reverb__internal_8c.html#a69d55f46390738f95236801e47fa505b", null ],
     [ "ims_shoebox_coreWorkspaceCreate", "saf__reverb__internal_8c.html#a05066b01d8ca06010da00676a37fa9be", null ],
     [ "ims_shoebox_coreWorkspaceDestroy", "saf__reverb__internal_8c.html#a379294488ad83a6eb9ee281f1d615803", null ],

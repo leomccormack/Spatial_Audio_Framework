@@ -1,14 +1,16 @@
 var saf__reverb_8c =
 [
-    [ "ims_shoebox_addReceiverSH", "group___reverb.html#ga92f69183c8f066b43e80a0fc1a42db19", null ],
-    [ "ims_shoebox_addSource", "group___reverb.html#gab62990f4c516bc37cf296d2c71956908", null ],
+    [ "ims_shoebox_addReceiverSH", "group___reverb.html#ga59f53cd055df23a1aec877407f883ca9", null ],
+    [ "ims_shoebox_addSource", "group___reverb.html#ga59f818fd730d0510affdefef5573e0ab", null ],
     [ "ims_shoebox_applyEchogramTD", "group___reverb.html#ga6d063c79c4718703ea53adbd206f8329", null ],
-    [ "ims_shoebox_computeEchograms", "group___reverb.html#ga0dcf80e9e9c5215e0a519e3df6043074", null ],
-    [ "ims_shoebox_create", "group___reverb.html#gafe27b3d4c424f1c1e51540a2887230b9", null ],
+    [ "ims_shoebox_computeEchograms", "group___reverb.html#ga98f2f41b6b11adc3f76c9574584ca7e4", null ],
+    [ "ims_shoebox_create", "group___reverb.html#gac0c2934d49567126400205c3619597cb", null ],
     [ "ims_shoebox_destroy", "group___reverb.html#gaabfce02f423a55cc60919cedd152805a", null ],
-    [ "ims_shoebox_removeReceiver", "group___reverb.html#ga89fb602d7e73fbf6310b6f931bcd6b41", null ],
-    [ "ims_shoebox_removeSource", "group___reverb.html#ga02a611d85ec10e621b71acfcf3d2ddef", null ],
+    [ "ims_shoebox_removeReceiver", "group___reverb.html#gab98cb870c1cd865adc6306a16fbbc63c", null ],
+    [ "ims_shoebox_removeSource", "group___reverb.html#ga45b72cf3e6e5400973ea5403e9c60f03", null ],
     [ "ims_shoebox_renderRIRs", "group___reverb.html#gab454a1a24911b3911d6d8638e3ac3c1a", null ],
-    [ "ims_shoebox_updateReceiver", "group___reverb.html#ga7deaaf4ae598e498f414acc22a64fcd7", null ],
-    [ "ims_shoebox_updateSource", "group___reverb.html#gad6c77b57f9f3e822f486b34dde13695d", null ]
+    [ "ims_shoebox_setRoomDimensions", "group___reverb.html#ga0d98415908e422f55d7dd178b7070712", null ],
+    [ "ims_shoebox_setWallAbsCoeffs", "group___reverb.html#gaf2f60c1f14656e38eb62cfa6a293af2a", null ],
+    [ "ims_shoebox_updateReceiver", "group___reverb.html#ga99199a545b7b4293d991756d91b0c082", null ],
+    [ "ims_shoebox_updateSource", "group___reverb.html#ga7ddefce78e70aedafb37278084aef38a", null ]
 ];

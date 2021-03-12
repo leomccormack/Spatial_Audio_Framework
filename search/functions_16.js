@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['yawpitchroll2rzyx_3048',['yawPitchRoll2Rzyx',['../group___utilities.html#gac71d1d0c99dbe0cc27bd25790e04d779',1,'yawPitchRoll2Rzyx(float yaw, float pitch, float roll, int rollPitchYawFLAG, float R[3][3]):&#160;saf_utility_geometry.c'],['../group___utilities.html#gac71d1d0c99dbe0cc27bd25790e04d779',1,'yawPitchRoll2Rzyx(float yaw, float pitch, float roll, int rollPitchYawFLAG, float R[3][3]):&#160;saf_utility_geometry.c']]],
-  ['yn_3049',['Yn',['../saf__utility__bessel_8c.html#ae112c8fb957c10a37a3e9c188ea0f15d',1,'saf_utility_bessel.c']]]
+  ['wigner_5f3j_3128',['wigner_3j',['../saf__sh__internal_8c.html#afd8fe2b873871c49985b5924804bbc31',1,'wigner_3j(int j1, int j2, int j3, int m1, int m2, int m3):&#160;saf_sh_internal.c'],['../saf__sh__internal_8h.html#afd8fe2b873871c49985b5924804bbc31',1,'wigner_3j(int j1, int j2, int j3, int m1, int m2, int m3):&#160;saf_sh_internal.c']]]
 ];

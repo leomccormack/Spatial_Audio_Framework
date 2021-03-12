@@ -10,6 +10,8 @@ var saf__utility__geometry_8c =
     [ "getVoronoiWeights", "group___utilities.html#ga4357fa77f8fea3ee1bccacdceb984013", null ],
     [ "L2_norm", "group___utilities.html#gae037c518bdc960a4313a980840caf405", null ],
     [ "L2_norm3", "group___utilities.html#gaeb5052aa193c9dbbbfe5081a2fbb61c5", null ],
+    [ "quaternion2rotationMatrix", "group___utilities.html#ga2e80b68f78c7c6317073e603b6ed0b78", null ],
+    [ "rotationMatrix2quaternion", "group___utilities.html#ga7a6535d2ee4b9f1147d3394b2d186a1a", null ],
     [ "sphDelaunay", "group___utilities.html#gab81aab7da3deb5671c4cde3448855543", null ],
     [ "sphVoronoi", "group___utilities.html#ga9eaf842897a359954c56aa53b151fc81", null ],
     [ "sphVoronoiAreas", "group___utilities.html#ga3fa1da3ec65285471c82ce5ac8cee740", null ],

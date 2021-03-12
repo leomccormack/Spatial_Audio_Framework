@@ -32,6 +32,13 @@ var group___utilities =
     [ "saf_utility_sort.h", "saf__utility__sort_8h.html", null ],
     [ "saf_utility_veclib.c", "saf__utility__veclib_8c.html", null ],
     [ "saf_utility_veclib.h", "saf__utility__veclib_8h.html", null ],
+    [ "quaternion_data", "structquaternion__data.html", [
+      [ "Q", "structquaternion__data.html#a09165a780c141af04de3ff5946839e68", null ],
+      [ "w", "structquaternion__data.html#af1832fdcc56fb0092abc715d7c670153", null ],
+      [ "x", "structquaternion__data.html#ac37b24ef97b8afb805157c26261d7ed3", null ],
+      [ "y", "structquaternion__data.html#aec412f5f83809222a8a6ba17974ebe1c", null ],
+      [ "z", "structquaternion__data.html#ac3b39de0ba9f49c25253e30c1ed7d296", null ]
+    ] ],
     [ "voronoi_data", "structvoronoi__data.html", [
       [ "faces", "structvoronoi__data.html#a895d5272485efe4854f3ca1908494af4", null ],
       [ "nFaces", "structvoronoi__data.html#abbb3175863e5ab01707b047bb373f626", null ],
@@ -60,10 +67,15 @@ var group___utilities =
     [ "SQRT4PI", "group___utilities.html#gae1b62759b810eae84b243da1ded29871", null ],
     [ "BIQUAD_FILTER_TYPES", "group___utilities.html#ga45a9a071190527868f18d35a8f54362f", [
       [ "BIQUAD_FILTER_LPF", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fa1d4fc0ac684f1e2267c32cb6389addb5", null ],
+      [ "BIQUAD_FILTER_LPF_EQCB", "group___utilities.html#gga45a9a071190527868f18d35a8f54362faf11c237d7e216117e1af1c999bed0fd1", null ],
       [ "BIQUAD_FILTER_HPF", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fafeb5977dffa5364bc2c60b1f0c795edd", null ],
+      [ "BIQUAD_FILTER_HPF_EQCB", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fa790c886a8bf1c27bc35b10664045c981", null ],
       [ "BIQUAD_FILTER_PEAK", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fa5b7219720397e8e2482a483ab6748e04", null ],
+      [ "BIQUAD_FILTER_PEAK_EQCB", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fa8dbbd0ba521df169c9dc71e535e0a35a", null ],
       [ "BIQUAD_FILTER_LOW_SHELF", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fa95811cb885d4ef040e422d4011cfd2ba", null ],
-      [ "BIQUAD_FILTER_HI_SHELF", "group___utilities.html#gga45a9a071190527868f18d35a8f54362faf344b1e5cdbae06206820ab524add14c", null ]
+      [ "BIQUAD_FILTER_LOW_SHELF_EQCB", "group___utilities.html#gga45a9a071190527868f18d35a8f54362fa3b2641a195e35b16977010a0e99700bd", null ],
+      [ "BIQUAD_FILTER_HI_SHELF", "group___utilities.html#gga45a9a071190527868f18d35a8f54362faf344b1e5cdbae06206820ab524add14c", null ],
+      [ "BIQUAD_FILTER_HI_SHELF_EQCB", "group___utilities.html#gga45a9a071190527868f18d35a8f54362faf2614cc22c9c146debd5581ebea7d047", null ]
     ] ],
     [ "BUTTER_FILTER_TYPES", "group___utilities.html#ga186326f0d162300d949c2dc95c412465", [
       [ "BUTTER_FILTER_LPF", "group___utilities.html#gga186326f0d162300d949c2dc95c412465a40bcdf48dfc647c2645f059410f804d6", null ],
@@ -131,6 +143,8 @@ var group___utilities =
     [ "cmplxPairUp", "group___utilities.html#ga4be4a4a82a31cde4fde08490baedbed0", null ],
     [ "convd", "group___utilities.html#gab6cd4596eec8746244d1566eb2adad85", null ],
     [ "convert_0_360To_m180_180", "group___utilities.html#ga37c35ff6667014c738a9d4713b9728a5", null ],
+    [ "convertBW2Q", "group___utilities.html#gad5bf8140a1b8d72f8b5af72a7b9ee753", null ],
+    [ "convertQ2BW", "group___utilities.html#ga88473e6168d6e6c92719bd41f15cb417", null ],
     [ "convhull3d", "group___utilities.html#gaf9c0fe2057ad3b9e68c821de0080af4f", null ],
     [ "convz", "group___utilities.html#gaec989e56048e1f146084901654e99eaf", null ],
     [ "crossProduct3", "group___utilities.html#ga6184d4e03844102c7e7921c7081b7fd7", null ],
@@ -178,14 +192,17 @@ var group___utilities =
     [ "qmf_clearBuffers", "group___utilities.html#gabfd7d4d84c966f4baa9bd07dd369cdf4", null ],
     [ "qmf_create", "group___utilities.html#gad0b4063c18046e0f89af3e9b1b0c2073", null ],
     [ "qmf_destroy", "group___utilities.html#ga8148ce914c94d1e57fc54e2830cdd8de", null ],
+    [ "qmf_FIRtoFilterbankCoeffs", "group___utilities.html#ga1c1c180952e189572dfe20c89f9dd2f6", null ],
     [ "qmf_getCentreFreqs", "group___utilities.html#ga3b57b260e7fa63be61cb969f6720eb4f", null ],
     [ "qmf_getNBands", "group___utilities.html#gaa3c65a787abbcf8dbd3030a4d8210acd", null ],
     [ "qmf_getProcDelay", "group___utilities.html#ga5110774f970006110f1b255a3b354421", null ],
     [ "qmf_synthesis", "group___utilities.html#ga56b5d4631cd795c81eec46d566f3bcbe", null ],
+    [ "quaternion2rotationMatrix", "group___utilities.html#ga2e80b68f78c7c6317073e603b6ed0b78", null ],
     [ "rand_0_1", "group___utilities.html#ga6124c7cc2d620ff3c9a832b9437dccc7", null ],
     [ "rand_cmplx_m1_1", "group___utilities.html#ga71609f8a78ff8b2ea98e81f44bc79fd5", null ],
     [ "rand_m1_1", "group___utilities.html#gaed4eef5b5f7a6f7a15eeb08c45127738", null ],
     [ "randperm", "group___utilities.html#ga67b59e17207ee35a30f8b252db525559", null ],
+    [ "rotationMatrix2quaternion", "group___utilities.html#ga7a6535d2ee4b9f1147d3394b2d186a1a", null ],
     [ "saf_error_print", "group___utilities.html#ga83bd2822f664c81298307f468cf8c350", null ],
     [ "saf_fft_backward", "group___utilities.html#ga40834d6833d2268419969c881b08d147", null ],
     [ "saf_fft_create", "group___utilities.html#ga4f859fb116fa81157cc86c83360d8db1", null ],
