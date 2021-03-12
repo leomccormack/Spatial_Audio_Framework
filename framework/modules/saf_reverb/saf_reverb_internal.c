@@ -605,7 +605,7 @@ void ims_shoebox_coreAbsorptionModule
          * every surface, based on the order per dimension */
         for(i=0; i<echogram_abs->numImageSources; i++){
             /* Surfaces intersecting the x-axis */
-            if(!(echogram_abs->order[i][0]%2)) //ISEVEN(echogram_abs->order[i][0]))
+            if((echogram_abs->order[i][0]%2)==0) //ISEVEN(echogram_abs->order[i][0]))
                 abs_x = powf(r_x[0], (float)abs(echogram_abs->order[i][0])/2.0f) * powf(r_x[1], (float)abs(echogram_abs->order[i][0])/2.0f);
             else if (/* ISODD AND */echogram_abs->order[i][0]>0)
                 abs_x = powf(r_x[0], ceilf((float)echogram_abs->order[i][0]/2.0f)) * powf(r_x[1], floorf((float)echogram_abs->order[i][0]/2.0f));
@@ -613,7 +613,7 @@ void ims_shoebox_coreAbsorptionModule
                 abs_x = powf(r_x[0], floorf((float)abs(echogram_abs->order[i][0])/2.0f)) * powf(r_x[1], ceilf((float)abs(echogram_abs->order[i][0])/2.0f));
 
             /* Surfaces intersecting the y-axis */
-            if(!(echogram_abs->order[i][1]%2)) //ISEVEN(echogram_abs->order[i][1]))
+            if((echogram_abs->order[i][1]%2)==0) //ISEVEN(echogram_abs->order[i][1]))
                 abs_y = powf(r_y[0], (float)abs(echogram_abs->order[i][1])/2.0f) * powf(r_y[1], (float)abs(echogram_abs->order[i][1])/2.0f);
             else if (/* ISODD AND */echogram_abs->order[i][1]>0)
                 abs_y = powf(r_y[0], ceilf((float)echogram_abs->order[i][1]/2.0f)) * powf(r_y[1], floorf((float)echogram_abs->order[i][1]/2.0f));
@@ -621,7 +621,7 @@ void ims_shoebox_coreAbsorptionModule
                 abs_y = powf(r_y[0], floorf((float)abs(echogram_abs->order[i][1])/2.0f)) * powf(r_y[1], ceilf((float)abs(echogram_abs->order[i][1])/2.0f));
 
             /* Surfaces intersecting the y-axis */
-            if(!(echogram_abs->order[i][2]%2)) //ISEVEN(echogram_abs->order[i][2]))
+            if((echogram_abs->order[i][2]%2)==0) //ISEVEN(echogram_abs->order[i][2]))
                 abs_z = powf(r_z[0], (float)abs(echogram_abs->order[i][2])/2.0f) * powf(r_z[1], (float)abs(echogram_abs->order[i][2])/2.0f);
             else if (/* ISODD AND */echogram_abs->order[i][2]>0)
                 abs_z = powf(r_z[0], ceilf((float)echogram_abs->order[i][2]/2.0f)) * powf(r_z[1], floorf((float)echogram_abs->order[i][2]/2.0f));
