@@ -154,8 +154,8 @@ void euler2Quaternion
     float cy, sy, cr, sr, cp, sp;
 #if !(SAF_USE_INVERSE_QUATERNION_AS_DEFAULT)
     switch(convention){
-        case EULER_ROTATION_Y_CONVENTION: assert(0) /* Not supported */; break;
-        case EULER_ROTATION_X_CONVENTION: assert(0) /* Not supported */; break;
+        case EULER_ROTATION_Y_CONVENTION: assert(0); return; /* Not supported */; break;
+        case EULER_ROTATION_X_CONVENTION: assert(0); return; /* Not supported */; break;
         case EULER_ROTATION_YAW_PITCH_ROLL:
             cy = cosf((degreesFlag ? gamma*SAF_PI/180.0f : gamma)  * 0.5f); /* x */
             sy = sinf((degreesFlag ? gamma*SAF_PI/180.0f : gamma)  * 0.5f); /* x */
@@ -221,8 +221,8 @@ void quaternion2euler
     cosy_cosp = 1.0f - 2.0f * (Q->y * Q->y + Q->z * Q->z);
 #if 1
     switch(convention){
-        case EULER_ROTATION_Y_CONVENTION: assert(0) /* Not supported */; break;
-        case EULER_ROTATION_X_CONVENTION: assert(0) /* Not supported */; break;
+        case EULER_ROTATION_Y_CONVENTION: assert(0); return; /* Not supported */; break;
+        case EULER_ROTATION_X_CONVENTION: assert(0); return; /* Not supported */; break;
         case EULER_ROTATION_YAW_PITCH_ROLL:
             /* Roll (x-axis rotation) */
             (*alpha) = atan2f(sinr_cosp, cosr_cosp);
