@@ -134,8 +134,8 @@ int main_test(void) {
 void test__quaternion(void){
     int i, j;
     float norm;
-    float rot[3][3], rot2[3][3], residual[9];
-    quaternion_data Q, Q1;
+    float rot[3][3], rot2[3][3], residual[9], ypr[3], test_ypr[3];
+    quaternion_data Q, Q1, Q2;
 
     for(i=0; i<1000; i++){
         /* Randomise the quaternion values */
@@ -157,7 +157,14 @@ void test__quaternion(void){
         /* Ensure that the difference between them is 0 */
         utility_svvsub((float*)rot, (float*)rot2, 9, residual);
         for(j=0; j<9; j++)
-            TEST_ASSERT_TRUE(fabsf(residual[j])<1e-3f); 
+            TEST_ASSERT_TRUE(fabsf(residual[j])<1e-3f);
+
+        /* Testing that quaternion2euler() and euler2Quaternion() are invertable */
+        quaternion2euler(&Q1, 1, EULER_ROTATION_YAW_PITCH_ROLL, &ypr[0], &ypr[1], &ypr[2]);
+        euler2Quaternion(ypr[0], ypr[1], ypr[2], 1, EULER_ROTATION_YAW_PITCH_ROLL, &Q2);
+        quaternion2euler(&Q2, 1, EULER_ROTATION_YAW_PITCH_ROLL, &test_ypr[0], &test_ypr[1], &test_ypr[2]);
+        for(j=0; j<3; j++)
+            TEST_ASSERT_TRUE(fabsf(test_ypr[j]-ypr[j])<1e-3f);
     }
 }
 
@@ -1791,7 +1798,6 @@ void test__formulate_M_and_Cr_cmplx(void){
 
 void test__getLoudspeakerDecoderMtx(void){
     int i, j, k, nLS, order, nSH;
-    float scale;
     float* ls_dirs_deg, *amp, *en;
     float** ls_dirs_rad, **decMtx_SAD, **decMtx_MMD, **decMtx_EPAD, **decMtx_AllRAD, **Ysrc, **LSout;
 
@@ -1844,17 +1850,14 @@ void test__getLoudspeakerDecoderMtx(void){
         /* Compute amplitude and energy for each source */
         amp = (float*)calloc1d(nLS, sizeof(float));
         en = (float*)calloc1d(nLS, sizeof(float));
-        for (int idxSrc=0; idxSrc<nLS; idxSrc++)
-        {
-            for (int idxLS=0; idxLS<nLS; idxLS++)
-            {
+        for (int idxSrc=0; idxSrc<nLS; idxSrc++) {
+            for (int idxLS=0; idxLS<nLS; idxLS++) {
                 amp[idxSrc] += LSout[idxLS][idxSrc];
                 en[idxSrc] += LSout[idxLS][idxSrc] * LSout[idxLS][idxSrc];
             }
         }
         /* Check output amplitude and Energy */
-        for (int idxSrc=0; idxSrc<nLS; idxSrc++)
-        {
+        for (int idxSrc=0; idxSrc<nLS; idxSrc++) {
             TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, amp[idxSrc], 1.0);
             TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, en[idxSrc], (float)nSH / (float)nLS);
         }

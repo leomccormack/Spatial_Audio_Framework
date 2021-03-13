@@ -75,6 +75,26 @@ void rotationMatrix2quaternion(/* Input Arguments */
                                /* Output Arguments */
                                quaternion_data* Q);
 
+/** Converts Euler angles to Quaternion */
+void euler2Quaternion(/* Input Arguments */
+                      float alpha,
+                      float beta,
+                      float gamma,
+                      int degreesFlag,
+                      EULER_ROTATION_CONVENTIONS convention,
+                      /* Output Arguments */
+                      quaternion_data* Q);
+
+/** Converts Quaternion to Euler angles */
+void quaternion2euler(/* Input Arguments */
+                      quaternion_data* Q,
+                      int degreesFlag,
+                      EULER_ROTATION_CONVENTIONS convention,
+                      /* Output Arguments */
+                      float* alpha,
+                      float* beta,
+                      float* gamma);
+
 /**
  * Constructs a 3x3 rotation matrix from the Euler angles
  *
