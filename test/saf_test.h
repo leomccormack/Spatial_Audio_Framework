@@ -21,6 +21,10 @@ int main_test(void);
 /* ========================================================================== */
 
 /**
+ * Testing that quaternion2rotationMatrix() and rotationMatrix2quaternion()
+ * are reversible */
+void test__quaternion(void);
+/**
  * Testing for perfect reconstruction of the saf_stft (when configured for 50%
  * window overlap) */
 void test__saf_stft_50pc_overlap(void);

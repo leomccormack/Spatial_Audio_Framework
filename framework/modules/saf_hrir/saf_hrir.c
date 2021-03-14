@@ -29,7 +29,7 @@
  */
  
 #include "saf_hrir.h"
-#include "saf_hrir_internal.h"
+#include "saf_externals.h"
 
 /* ========================================================================== */
 /*                               Main Functions                               */
@@ -116,7 +116,7 @@ void HRIRs2HRTFs_afSTFT
 )
 {
     /* convert the HRIRs to filterbank coefficients */
-    FIRtoFilterbankCoeffs_afSTFT(hrirs, N_dirs, NUM_EARS, hrir_len, hopsize, hybridmode, hrtf_fb);
+    afSTFT_FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, hopsize, hybridmode, hrtf_fb);
 }
 
 void HRIRs2HRTFs_qmf
@@ -130,7 +130,7 @@ void HRIRs2HRTFs_qmf
 )
 {
     /* convert the HRIRs to filterbank coefficients */
-    FIRtoFilterbankCoeffs_qmf(hrirs, N_dirs, NUM_EARS, hrir_len, hopsize, hybridmode, hrtf_fb);
+    qmf_FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, hopsize, hybridmode, hrtf_fb);
 }
 
 void HRIRs2HRTFs

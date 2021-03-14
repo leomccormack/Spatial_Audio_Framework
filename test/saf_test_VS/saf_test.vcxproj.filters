@@ -297,9 +297,6 @@
     <ClInclude Include="..\..\framework\modules\saf_hrir\saf_hrir.h">
       <Filter>framework\modules\saf_hrir</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\saf_hrir\saf_hrir_internal.h">
-      <Filter>framework\modules\saf_hrir</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\framework\modules\saf_hoa\saf_hoa.h">
       <Filter>framework\modules\saf_hoa</Filter>
     </ClInclude>
@@ -516,9 +513,6 @@
       <Filter>framework\modules\saf_hrir</Filter>
     </ClCompile>
     <ClCompile Include="..\..\framework\modules\saf_hrir\saf_hrir.c">
-      <Filter>framework\modules\saf_hrir</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_hrir\saf_hrir_internal.c">
       <Filter>framework\modules\saf_hrir</Filter>
     </ClCompile>
     <ClCompile Include="..\..\framework\modules\saf_hoa\saf_hoa.c">

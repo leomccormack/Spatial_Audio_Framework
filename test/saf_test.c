@@ -71,7 +71,8 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
 
-    /* run each unit test */
+    /* run each unit test */ 
+    RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
@@ -131,6 +132,43 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__quaternion(void){
+    int i, j;
+    float norm;
+    float rot[3][3], rot2[3][3], residual[9], ypr[3], test_ypr[3];
+    quaternion_data Q, Q1, Q2;
+
+    for(i=0; i<1000; i++){
+        /* Randomise the quaternion values */
+        rand_m1_1(Q.Q, 4);
+
+        /* Normalise to make it valid */
+        norm = L2_norm(Q.Q, 4);
+        Q.w /= norm;
+        Q.x /= norm;
+        Q.y /= norm;
+        Q.z /= norm;
+        /* Q.w = 0; Q.x = 0.0000563298236; Q.y = 0.947490811; Q.z = -0.319783032; // Problem case! */
+
+        /* Convert to rotation matrix, then back, then to rotation matrix again */
+        quaternion2rotationMatrix(&Q, rot);
+        rotationMatrix2quaternion(rot, &Q1);
+        quaternion2rotationMatrix(&Q1, rot2);
+
+        /* Ensure that the difference between them is 0 */
+        utility_svvsub((float*)rot, (float*)rot2, 9, residual);
+        for(j=0; j<9; j++)
+            TEST_ASSERT_TRUE(fabsf(residual[j])<1e-3f);
+
+        /* Testing that quaternion2euler() and euler2Quaternion() are invertable */
+        quaternion2euler(&Q1, 1, EULER_ROTATION_YAW_PITCH_ROLL, &ypr[0], &ypr[1], &ypr[2]);
+        euler2Quaternion(ypr[0], ypr[1], ypr[2], 1, EULER_ROTATION_YAW_PITCH_ROLL, &Q2);
+        quaternion2euler(&Q2, 1, EULER_ROTATION_YAW_PITCH_ROLL, &test_ypr[0], &test_ypr[1], &test_ypr[2]);
+        for(j=0; j<3; j++)
+            TEST_ASSERT_TRUE(fabsf(test_ypr[j]-ypr[j])<1e-3f);
+    }
+}
 
 void test__saf_stft_50pc_overlap(void){
     int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;
@@ -259,7 +297,7 @@ void test__ims_shoebox_RIR(void){
     void* hIms;
     float maxTime_s;
     float mov_src_pos[3], mov_rec_pos[3];
-    long sourceID_1, sourceID_2, sourceID_3, sourceID_4, sourceID_5, receiverID;
+    int sourceID_1, sourceID_2, sourceID_3, sourceID_4, sourceID_5, receiverID;
     int i;
 
     /* Config */
@@ -279,9 +317,10 @@ void test__ims_shoebox_RIR(void){
     const float src4_pos[3] = {6.4f, 4.0f, 1.3f};
     const float src5_pos[3] = {8.5f, 5.0f, 1.8f};
     const float rec_pos[3] = {8.8f, 5.5f, 0.9f};
+    const float roomdims[3] = {10.0f, 7.0f, 3.0f};
 
     /* Set-up the shoebox room simulator, with two sources and one spherical harmonic receiver */
-    ims_shoebox_create(&hIms, 10, 7, 3, (float*)abs_wall, 125.0f, nBands, 343.0f, 48e3f);
+    ims_shoebox_create(&hIms, (float*)roomdims, (float*)abs_wall, 125.0f, nBands, 343.0f, 48e3f);
     sourceID_1 = ims_shoebox_addSource(hIms, (float*)src_pos, NULL);
     sourceID_2 = ims_shoebox_addSource(hIms, (float*)src2_pos, NULL);
     receiverID = ims_shoebox_addReceiverSH(hIms, sh_order, (float*)rec_pos, NULL);
@@ -295,7 +334,7 @@ void test__ims_shoebox_RIR(void){
         mov_rec_pos[0] = 3.0f + (float)i/100.0f;
         ims_shoebox_updateSource(hIms, sourceID_1, mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
-        ims_shoebox_computeEchograms(hIms, maxTime_s);
+        ims_shoebox_computeEchograms(hIms, -1, maxTime_s);
         ims_shoebox_renderRIRs(hIms, 0);
     }
 
@@ -317,7 +356,7 @@ void test__ims_shoebox_RIR(void){
         mov_rec_pos[0] = 3.0f + (float)i/10.0f;
         ims_shoebox_updateSource(hIms, sourceID_4, mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
-        ims_shoebox_computeEchograms(hIms, maxTime_s);
+        ims_shoebox_computeEchograms(hIms, -1, maxTime_s);
         ims_shoebox_renderRIRs(hIms, 0);
     }
 
@@ -330,7 +369,7 @@ void test__ims_shoebox_TD(void){
     float maxTime_s;
     float mov_src_pos[3], mov_rec_pos[3];
     float** src_sigs, ***rec_sh_outsigs;
-    long sourceIDs[4], receiverIDs[1];
+    int sourceIDs[4], receiverIDs[1];
     int i;
 
     /* Config */
@@ -348,6 +387,7 @@ void test__ims_shoebox_TD(void){
     const float src3_pos[3] = {3.1f, 5.0f, 2.3f};
     const float src4_pos[3] = {7.1f, 2.0f, 1.4f};
     const float rec_pos[3]  = {8.8f, 5.5f, 0.9f};
+    const float roomdims[3] = {10.0f, 7.0f, 3.0f};
 
     /* Allocate memory for 4 sources and 1 spherical harmonic receiver */
     rec_sh_outsigs = (float***)malloc3d(1, ORDER2NSH(sh_order), signalLength, sizeof(float));
@@ -355,7 +395,7 @@ void test__ims_shoebox_TD(void){
     rand_m1_1(FLATTEN2D(src_sigs), 4*signalLength);
 
     /* Set-up the shoebox room simulator for these four sources and SH receiver */
-    ims_shoebox_create(&hIms, 10, 7, 3, (float*)abs_wall, 250.0f, nBands, 343.0f, 48e3f);
+    ims_shoebox_create(&hIms, (float*)roomdims, (float*)abs_wall, 250.0f, nBands, 343.0f, 48e3f);
     sourceIDs[0] = ims_shoebox_addSource(hIms, (float*)src_pos, &src_sigs[0]);
     sourceIDs[1] = ims_shoebox_addSource(hIms, (float*)src2_pos, &src_sigs[1]);
     sourceIDs[2] = ims_shoebox_addSource(hIms, (float*)src3_pos, &src_sigs[2]);
@@ -371,7 +411,7 @@ void test__ims_shoebox_TD(void){
         mov_rec_pos[0] = 3.0f + (float)i/100.0f;
         ims_shoebox_updateSource(hIms, sourceIDs[0], mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverIDs[0], mov_rec_pos);
-        ims_shoebox_computeEchograms(hIms, maxTime_s);
+        ims_shoebox_computeEchograms(hIms, -1, maxTime_s);
         ims_shoebox_applyEchogramTD(hIms, receiverIDs[0], signalLength, 0);
     }
 
@@ -1760,7 +1800,6 @@ void test__formulate_M_and_Cr_cmplx(void){
 
 void test__getLoudspeakerDecoderMtx(void){
     int i, j, k, nLS, order, nSH;
-    float scale;
     float* ls_dirs_deg, *amp, *en;
     float** ls_dirs_rad, **decMtx_SAD, **decMtx_MMD, **decMtx_EPAD, **decMtx_AllRAD, **Ysrc, **LSout;
 
@@ -1813,17 +1852,14 @@ void test__getLoudspeakerDecoderMtx(void){
         /* Compute amplitude and energy for each source */
         amp = (float*)calloc1d(nLS, sizeof(float));
         en = (float*)calloc1d(nLS, sizeof(float));
-        for (int idxSrc=0; idxSrc<nLS; idxSrc++)
-        {
-            for (int idxLS=0; idxLS<nLS; idxLS++)
-            {
+        for (int idxSrc=0; idxSrc<nLS; idxSrc++) {
+            for (int idxLS=0; idxLS<nLS; idxLS++) {
                 amp[idxSrc] += LSout[idxLS][idxSrc];
                 en[idxSrc] += LSout[idxLS][idxSrc] * LSout[idxLS][idxSrc];
             }
         }
         /* Check output amplitude and Energy */
-        for (int idxSrc=0; idxSrc<nLS; idxSrc++)
-        {
+        for (int idxSrc=0; idxSrc<nLS; idxSrc++) {
             TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, amp[idxSrc], 1.0);
             TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, en[idxSrc], (float)nSH / (float)nLS);
         }

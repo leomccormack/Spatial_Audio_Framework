@@ -35,9 +35,7 @@
 void ims_shoebox_create
 (
     void** phIms,
-    float length,
-    float width,
-    float height,
+    float roomDimensions[3],
     float* abs_wall,
     float lowestOctaveBand,
     int nOctBands,
@@ -50,9 +48,9 @@ void ims_shoebox_create
     int i,j,band,wall;
 
     /* Shoebox dimensions */
-    sc->room_dims[0] = length;
-    sc->room_dims[1] = width;
-    sc->room_dims[2] = height;
+    sc->room_dims[0] = roomDimensions[0];
+    sc->room_dims[1] = roomDimensions[1];
+    sc->room_dims[2] = roomDimensions[2];
     sc->c_ms = c_ms;
 
     /* Octave band centre frequencies */
@@ -80,11 +78,11 @@ void ims_shoebox_create
         for(wall=0; wall<IMS_NUM_WALLS_SHOEBOX; wall++)
             sc->abs_wall[band][wall] = abs_wall[band*IMS_NUM_WALLS_SHOEBOX+wall];
 
-    /* Default is no sources or receivers in the room */
+    /* Default are no sources or receivers in the room */
     for(i=0; i<IMS_MAX_NUM_SOURCES; i++)
-        sc->srcs[i].ID = -1; /* -1 indicates not in use */
+        sc->srcs[i].ID = IMS_UNASSIGNED; /* -1 indicates not in use */
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++)
-        sc->recs[i].ID = -1;
+        sc->recs[i].ID = IMS_UNASSIGNED;
     sc->nSources = 0;
     sc->nReceivers = 0;
 
@@ -107,8 +105,7 @@ void ims_shoebox_create
     }
 
     /* Circular buffers (only used/allocated when applyEchogramTD() function is called for the first time) */
-    sc->wIdx[0] = 0;
-    sc->wIdx[1] = 0;
+    memset(sc->wIdx, 0, IMS_MAX_NUM_RECEIVERS*IMS_MAX_NUM_SOURCES*2*sizeof(unsigned long));
     sc->circ_buffer[0] = NULL;
     sc->circ_buffer[1] = NULL;
 
@@ -121,9 +118,12 @@ void ims_shoebox_create
     }
 
     /* Temp buffers for cross-fading (only used/allocated when applyEchogramTD() function is called for the first time) */
-    sc->rec_sig_tmp = malloc1d(IMS_MAX_NUM_RECEIVERS*sizeof(float**));
-    for(j=0; j<IMS_MAX_NUM_RECEIVERS; j++)
-        sc->rec_sig_tmp[j] = NULL;
+    sc->rec_sig_tmp[IMS_EG_CURRENT] = malloc1d(IMS_MAX_NUM_RECEIVERS*sizeof(float**));
+    sc->rec_sig_tmp[IMS_EG_PREV] = malloc1d(IMS_MAX_NUM_RECEIVERS*sizeof(float**));
+    for(j=0; j<IMS_MAX_NUM_RECEIVERS; j++){
+        sc->rec_sig_tmp[IMS_EG_CURRENT][j] = NULL;
+        sc->rec_sig_tmp[IMS_EG_PREV][j] = NULL;
+    }
     memset(sc->applyCrossFadeFLAG, 0, IMS_MAX_NUM_RECEIVERS*IMS_MAX_NUM_SOURCES*sizeof(int));
     sc->interpolator_fIn = NULL;
     sc->interpolator_fOut = NULL;
@@ -156,17 +156,20 @@ void ims_shoebox_destroy
             for(j=0; j<IMS_MAX_NUM_SOURCES; j++)
                 free(sc->rirs[i][j].data);
         free(sc->rirs);
-        free(sc->circ_buffer[0]);
-        free(sc->circ_buffer[1]);
+        free(sc->circ_buffer[IMS_EG_CURRENT]);
+        free(sc->circ_buffer[IMS_EG_PREV]);
         for(j=0; j<IMS_MAX_NUM_SOURCES; j++){
             faf_IIRFilterbank_destroy(&(sc->hFaFbank[j]));
             free(sc->src_sigs_bands[j]);
         }
         free(sc->hFaFbank);
         free(sc->src_sigs_bands);
-        for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++)
-            free(sc->rec_sig_tmp[i]);
-        free(sc->rec_sig_tmp);
+        for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++){
+            free(sc->rec_sig_tmp[IMS_EG_CURRENT][i]);
+            free(sc->rec_sig_tmp[IMS_EG_PREV][i]);
+        }
+        free(sc->rec_sig_tmp[IMS_EG_CURRENT]);
+        free(sc->rec_sig_tmp[IMS_EG_PREV]);
         free(sc->interpolator_fIn);
         free(sc->interpolator_fOut);
         free(sc);
@@ -178,6 +181,7 @@ void ims_shoebox_destroy
 void ims_shoebox_computeEchograms
 (
     void* hIms,
+    int maxN,
     float maxTime_ms
 )
 {
@@ -186,10 +190,12 @@ void ims_shoebox_computeEchograms
     ims_pos_xyz src2, rec2;
     int src_idx, rec_idx, band;
 
+    assert(maxN<0 || maxTime_ms<0.0f); /* one must be more than 0, and one less */
+
     /* Compute echograms for active source/receiver combinations */
     for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++){
         for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
-            if( (sc->srcs[src_idx].ID != -1) && (sc->recs[rec_idx].ID != -1) ){
+            if( (sc->srcs[src_idx].ID != IMS_UNASSIGNED) && (sc->recs[rec_idx].ID != IMS_UNASSIGNED) ){
                 /* Change y coord for Receiver and Source to match convention
                  * used inside the coreInit function */
                 rec2.x = sc->recs[rec_idx].pos.x;
@@ -206,10 +212,23 @@ void ims_shoebox_computeEchograms
                 for(band=0; band<workspace->nBands; band++)
                     ims_shoebox_echogramCopy(workspace->hEchogram_abs[band], workspace->hPrevEchogram_abs[band]);
 
+                /* Force refresh if target RIR length or max reflection order has changed */
+                if(maxTime_ms>0.0f){
+                    if(workspace->d_max != maxTime_ms)
+                        workspace->refreshEchogramFLAG = 1;
+                }
+                else{
+                    if(workspace->N_max != maxN)
+                        workspace->refreshEchogramFLAG = 1;
+                }
+
                 /* Only update if it is required */
                 if(workspace->refreshEchogramFLAG){
                     /* Compute echogram due to pure propagation (frequency-independent, omni-directional) */
-                    ims_shoebox_coreInit(workspace, sc->room_dims, src2, rec2, maxTime_ms, sc->c_ms);
+                    if(maxTime_ms>0.0f)
+                        ims_shoebox_coreInitT(workspace, sc->room_dims, src2, rec2, maxTime_ms, sc->c_ms);
+                    else
+                        ims_shoebox_coreInitN(workspace, sc->room_dims, src2, rec2, maxN, sc->c_ms);
 
                     /* Apply receiver directivities */
                     switch(sc->recs[rec_idx].type){
@@ -226,7 +245,7 @@ void ims_shoebox_computeEchograms
                     workspace->refreshRIRFLAG = 1;
 
                     /* Also indicate that applyTD() should cross-fade the next frame to void clicks */
-                    sc->applyCrossFadeFLAG[src_idx][rec_idx] = 1;
+                    sc->applyCrossFadeFLAG[rec_idx][src_idx] = 1;
                 }
             }
         }
@@ -254,7 +273,7 @@ void ims_shoebox_renderRIRs
     /* Render RIRs for all active source/receiver combinations */
     for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++){
         for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
-            if( (sc->srcs[src_idx].ID!=-1) && (sc->recs[rec_idx].ID!=-1) ){
+            if( (sc->srcs[src_idx].ID!=IMS_UNASSIGNED) && (sc->recs[rec_idx].ID!=IMS_UNASSIGNED) ){
 
                 /* Workspace handle for this source/receiver combination */
                 wrk = sc->hCoreWrkSpc[rec_idx][src_idx];
@@ -297,28 +316,30 @@ void ims_shoebox_applyEchogramTD
     /* Also allocate signal buffers and filterbank handles (if this is the first time this function is being called) */
     for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
         /* only allocate if source is active... */
-        if( (sc->srcs[src_idx].ID != -1) && (sc->src_sigs_bands[src_idx] == NULL) ){
+        if( (sc->srcs[src_idx].ID != IMS_UNASSIGNED) && (sc->src_sigs_bands[src_idx] == NULL) ){
             if(sc->nBands>1){ /* ... and only create the filterbank if there is more than one band: */
                 faf_IIRFilterbank_create(&(sc->hFaFbank[src_idx]), IMS_IIR_FILTERBANK_ORDER, sc->band_cutofffreqs,
                                          sc->nBands-1, sc->fs, IMS_MAX_NSAMPLES_PER_FRAME);
             }
-            sc->src_sigs_bands[src_idx] = (float**)malloc2d(sc->nBands, IMS_MAX_NSAMPLES_PER_FRAME, sizeof(float));
+            sc->src_sigs_bands[src_idx] = (float**)malloc2d(sc->nBands, IMS_MAX_NSAMPLES_PER_FRAME, sizeof(float)); 
         }
     }
 
     /* Find index corresponding to this receiver ID */
-    rec_idx = -1;
+    rec_idx = IMS_UNASSIGNED;
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++){
         if(sc->recs[i].ID == receiverID){
             rec_idx = i;
             break;
         }
     }
-    assert(rec_idx != -1);
+    assert(rec_idx != IMS_UNASSIGNED);
 
     /* Allocate temporary buffer (if this is the first time this function is being called)  */
-    if( (sc->recs[rec_idx].ID != -1) && (sc->rec_sig_tmp[rec_idx] == NULL) )
-        sc->rec_sig_tmp[rec_idx] = (float**)malloc2d(sc->recs[rec_idx].nChannels, IMS_MAX_NSAMPLES_PER_FRAME, sizeof(float));
+    if( (sc->recs[rec_idx].ID != IMS_UNASSIGNED) && (sc->rec_sig_tmp[IMS_EG_CURRENT][rec_idx] == NULL) ){
+        sc->rec_sig_tmp[IMS_EG_CURRENT][rec_idx] = (float**)malloc2d(sc->recs[rec_idx].nChannels, IMS_MAX_NSAMPLES_PER_FRAME, sizeof(float));
+        sc->rec_sig_tmp[IMS_EG_PREV][rec_idx] = (float**)malloc2d(sc->recs[rec_idx].nChannels, IMS_MAX_NSAMPLES_PER_FRAME, sizeof(float));
+    }
     if(sc->framesize!=nSamples){
         sc->framesize = nSamples;
         sc->interpolator_fIn = realloc1d(sc->interpolator_fIn, nSamples*sizeof(float));
@@ -335,7 +356,7 @@ void ims_shoebox_applyEchogramTD
  
     /* Process all active sources for this specific receiver, directly in the time-domain */
     for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++){
-        if( (sc->srcs[src_idx].ID!=-1) && (sc->recs[rec_idx].ID!=-1) ){
+        if( (sc->srcs[src_idx].ID!=IMS_UNASSIGNED) && (sc->recs[rec_idx].ID!=IMS_UNASSIGNED) ){
 
             /* Broad-band operation */
             if(sc->nBands==1)
@@ -348,13 +369,13 @@ void ims_shoebox_applyEchogramTD
 
             /* k=0 is for the current echogram,
              * k=1 (when applyCrossFadeFLAG is enabled) is for the previous echogram */
-            for(k=sc->applyCrossFadeFLAG[src_idx][rec_idx]; k>=0; k--){
+            for(k=sc->applyCrossFadeFLAG[rec_idx][src_idx]; k>=0; k--){
 
                 /* Loop over samples */
                 for(n=0; n<nSamples; n++){
 
                     /* Determine write index */
-                    wIdx_n = sc->wIdx[k] & IMS_CIRC_BUFFER_LENGTH_MASK;
+                    wIdx_n = sc->wIdx[k][rec_idx][src_idx] & IMS_CIRC_BUFFER_LENGTH_MASK;
 
                     /* Since the time vector is the same across bands, it makes sense to determine the read-indices only once... */
                     if(k==1)
@@ -365,24 +386,20 @@ void ims_shoebox_applyEchogramTD
                     /* Handle the special case of an empty echogram */
                     if(echogram_abs_0->numImageSources==0){
                         /* Set output to 0... */
-                        if(k==1)
-                            for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
-                                sc->rec_sig_tmp[rec_idx][ch][n] = 0.0f;
-                        else
-                            for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
-                                sc->recs[rec_idx].sigs[ch][n] = 0.0f;
+                        for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
+                            sc->rec_sig_tmp[k][rec_idx][ch][n] = 0.0f;
 
                         /* Store current sample (per band) into the circular buffer */
                         for(band=0; band < sc->nBands; band++){
                             sc->circ_buffer[k][src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
-                            if(sc->applyCrossFadeFLAG[src_idx][rec_idx]==0)
-                                sc->circ_buffer[1][src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
+                            if(sc->applyCrossFadeFLAG[rec_idx][src_idx]==0)
+                                sc->circ_buffer[IMS_EG_PREV][src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
                         }
 
                         /* Increment write index */
-                        sc->wIdx[k]++;
-                        if(sc->applyCrossFadeFLAG[src_idx][rec_idx]==0)
-                            sc->wIdx[1]++;
+                        sc->wIdx[k][rec_idx][src_idx]++;
+                        if(sc->applyCrossFadeFLAG[rec_idx][src_idx]==0)
+                            sc->wIdx[IMS_EG_PREV][rec_idx][src_idx]++;
 
                         continue; /* to next sample... */
                     }
@@ -397,7 +414,7 @@ void ims_shoebox_applyEchogramTD
                         for(im=0; im <echogram_abs_0->numImageSources; im++){
                             /* Base read-index */
                             time_samples = (int)(echogram_abs_0->tmp1[im]);                /* FLOOR */
-                            rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx[k]       /* read index for this image source */
+                            rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx[k][rec_idx][src_idx] /* read index for this image source */
                                    + (IMS_LAGRANGE_ORDER/2);                               /* in order to correctly centre the filter */
                             echogram_abs_0->rIdx[im] = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK; /* wrap-around if needed */
                         }
@@ -426,7 +443,7 @@ void ims_shoebox_applyEchogramTD
                         /* Loop over all image sources, and determine the circular buffer read indices based on the nearest sample */
                         for(im=0; im <echogram_abs_0->numImageSources; im++){
                             time_samples = (int)(echogram_abs_0->tmp1[im] + 0.5f);         /* ROUND to nearest sample */
-                            rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx[k];      /* read index for this image source */
+                            rIdx = IMS_CIRC_BUFFER_LENGTH-time_samples + sc->wIdx[k][rec_idx][src_idx]; /* read index for this image source */
                             echogram_abs_0->rIdx[im] = rIdx & IMS_CIRC_BUFFER_LENGTH_MASK; /* wrap-around if needed */
                         }
                     }
@@ -472,57 +489,110 @@ void ims_shoebox_applyEchogramTD
                         utility_svvmul(FLATTEN2D(echogram_abs->value), FLATTEN2D(echogram_abs->cb_vals),
                                        (sc->recs[rec_idx].nChannels)*echogram_abs->numImageSources, FLATTEN2D(echogram_abs->contrib));
 
-                        /* EITHER: We are rendering the current frame based on the previous echogram... In which case, we store it in the tmp buffer */
-                        if(k==1){
-                            for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
-                                sc->rec_sig_tmp[rec_idx][ch][n] = cblas_sdot(echogram_abs->numImageSources, echogram_abs->ones_dummy,
-                                                                             1, echogram_abs->contrib[ch], 1);
-                        }
-                        /* OR: We are rendering the current frame based on the current echogram... In which case, we store it in the current rec buffer */
-                        else{
-                            /* Sum all scaled image source values per channel */
-                            for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
-                                sc->recs[rec_idx].sigs[ch][n] = cblas_sdot(echogram_abs->numImageSources, echogram_abs->ones_dummy,
-                                                                           1, echogram_abs->contrib[ch], 1);
-                        }
+                        /* Render frame */
+                        for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
+                            sc->rec_sig_tmp[k][rec_idx][ch][n] = cblas_sdot(echogram_abs->numImageSources, echogram_abs->ones_dummy,
+                                                                         1, echogram_abs->contrib[ch], 1);
 
                         /* Store current sample into the circular buffer */
                         sc->circ_buffer[k][src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
-                        if(sc->applyCrossFadeFLAG[src_idx][rec_idx]==0)
-                            sc->circ_buffer[1][src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
+                        if(sc->applyCrossFadeFLAG[rec_idx][src_idx]==0)
+                            sc->circ_buffer[IMS_EG_PREV][src_idx][band][wIdx_n] = sc->src_sigs_bands[src_idx][band][n];
                     }
 
                     /* Increment write index */
-                    sc->wIdx[k]++;
-                    if(sc->applyCrossFadeFLAG[src_idx][rec_idx]==0)
-                        sc->wIdx[1]++;
+                    sc->wIdx[k][rec_idx][src_idx]++;
+                    if(sc->applyCrossFadeFLAG[rec_idx][src_idx]==0)
+                        sc->wIdx[IMS_EG_PREV][rec_idx][src_idx]++;
 
                 } /* Loop over samples */
             } /* Loop over slots */
 
             /* Cross-fade between the buffers rendered using the previous and current echograms */
-            if(sc->applyCrossFadeFLAG[src_idx][rec_idx]){
+            if(sc->applyCrossFadeFLAG[rec_idx][src_idx]){
                 for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++){
                     /* Apply linear interpolator to fade in with the new echogram and fade out with the previous echogram */
-                    utility_svvmul(sc->recs[rec_idx].sigs[ch], sc->interpolator_fIn, nSamples, sc->recs[rec_idx].sigs[ch]);
-                    utility_svvmul(sc->rec_sig_tmp[rec_idx][ch], sc->interpolator_fOut, nSamples, sc->rec_sig_tmp[rec_idx][ch]);
+                    utility_svvmul(sc->rec_sig_tmp[IMS_EG_CURRENT][rec_idx][ch], sc->interpolator_fIn,  nSamples, sc->rec_sig_tmp[IMS_EG_CURRENT][rec_idx][ch]);
+                    utility_svvmul(sc->rec_sig_tmp[IMS_EG_PREV][rec_idx][ch],    sc->interpolator_fOut, nSamples, sc->rec_sig_tmp[IMS_EG_PREV][rec_idx][ch]);
 
                     /* Sum the result */
-                    utility_svvadd(sc->recs[rec_idx].sigs[ch], sc->rec_sig_tmp[rec_idx][ch], nSamples, sc->recs[rec_idx].sigs[ch]);
+                    cblas_saxpy(nSamples, 1.0f, sc->rec_sig_tmp[IMS_EG_CURRENT][rec_idx][ch], 1, sc->recs[rec_idx].sigs[ch], 1);
+                    cblas_saxpy(nSamples, 1.0f, sc->rec_sig_tmp[IMS_EG_PREV][rec_idx][ch],    1, sc->recs[rec_idx].sigs[ch], 1);
                 }
 
                 /* No longer need to cross-fade for future frames (unless the echograms change again that is...) */
-                sc->applyCrossFadeFLAG[src_idx][rec_idx] = 0;
+                sc->applyCrossFadeFLAG[rec_idx][src_idx] = 0;
             }
+            else
+                for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++)
+                    cblas_saxpy(nSamples, 1.0f, sc->rec_sig_tmp[IMS_EG_CURRENT][rec_idx][ch], 1, sc->recs[rec_idx].sigs[ch], 1);
 
         } /* If source active */
+
     } /* Loop over sources */
+}
+
+
+/* set/get functions: */
+
+void ims_shoebox_setRoomDimensions
+(
+    void* hIms,
+    float new_roomDimensions[3]
+)
+{
+    ims_scene_data *sc = (ims_scene_data*)(hIms);
+    int rec_idx, src_idx;
+
+    /* Only update if room dimensions are different */
+    if( (sc->room_dims[0]!=new_roomDimensions[0]) ||
+        (sc->room_dims[1]!=new_roomDimensions[1]) ||
+        (sc->room_dims[2]!=new_roomDimensions[2]) )
+    {
+        sc->room_dims[0] = new_roomDimensions[0];
+        sc->room_dims[1] = new_roomDimensions[1];
+        sc->room_dims[2] = new_roomDimensions[2];
+
+        /* Echograms must be re-initialised */
+        for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++)
+            for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++)
+                if( (sc->srcs[src_idx].ID != IMS_UNASSIGNED) && (sc->recs[rec_idx].ID != IMS_UNASSIGNED) )
+                    ((ims_core_workspace*)(sc->hCoreWrkSpc[rec_idx][src_idx]))->refreshEchogramFLAG = 1;
+    }
+}
+
+void ims_shoebox_setWallAbsCoeffs
+(
+    void* hIms,
+    float* abs_wall
+)
+{
+    ims_scene_data *sc = (ims_scene_data*)(hIms);
+    int band, i, updateRequired, rec_idx, src_idx;
+    updateRequired = 0;
+
+    /* Only update if wall absorption coefficients are different */
+    for(band=0; band<sc->nBands; band++){
+        for(i=0; i<6; i++){
+            if(sc->abs_wall[band][i] != abs_wall[band*6 + i]){
+                sc->abs_wall[band][i] = abs_wall[band*6 + i];
+                updateRequired = 1;
+            }
+        }
+    }
+    if(updateRequired){
+        /* Echograms must be re-initialised */
+        for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++)
+            for(src_idx = 0; src_idx < IMS_MAX_NUM_SOURCES; src_idx++)
+                if( (sc->srcs[src_idx].ID != IMS_UNASSIGNED) && (sc->recs[rec_idx].ID != IMS_UNASSIGNED) )
+                    ((ims_core_workspace*)(sc->hCoreWrkSpc[rec_idx][src_idx]))->refreshEchogramFLAG = 1;
+    }
 }
 
 
 /* add/remove/update functions: */
 
-long ims_shoebox_addSource
+int ims_shoebox_addSource
 (
     void* hIms,
     float src_xyz[3],
@@ -537,15 +607,15 @@ long ims_shoebox_addSource
     assert(sc->nSources <= IMS_MAX_NUM_SOURCES);
 
     /* Find an unoccupied object */
-    obj_idx = -1;
+    obj_idx = IMS_UNASSIGNED;
     for(i=0; i<IMS_MAX_NUM_SOURCES; i++){
         /* an ID of '-1' indicates that it is free to use */
-        if(sc->srcs[i].ID == -1){
+        if(sc->srcs[i].ID == IMS_UNASSIGNED){
             obj_idx = i;
             break;
         }
     }
-    assert(obj_idx != -1);
+    assert(obj_idx != IMS_UNASSIGNED);
 
     /* Assign unique ID */
     sc->srcs[obj_idx].ID = 0;
@@ -563,17 +633,17 @@ long ims_shoebox_addSource
     sc->srcs[obj_idx].pos.x = src_xyz[0];
     sc->srcs[obj_idx].pos.y = src_xyz[1];
     sc->srcs[obj_idx].pos.z = src_xyz[2]; 
-    sc->srcs[obj_idx].sig = pSrc_sig == NULL ? NULL : *pSrc_sig; 
+    sc->srcs[obj_idx].sig = pSrc_sig == NULL ? NULL : *pSrc_sig;
 
     /* Create workspace for all receiver/source combinations, for this new source object */
     for(rec=0; rec<IMS_MAX_NUM_RECEIVERS; rec++)
-        if(sc->recs[rec].ID!=-1)
+        if(sc->recs[rec].ID!=IMS_UNASSIGNED)
             ims_shoebox_coreWorkspaceCreate(&(sc->hCoreWrkSpc[rec][obj_idx]), sc->nBands);
 
     return sc->srcs[obj_idx].ID;
 }
 
-long ims_shoebox_addReceiverSH
+int ims_shoebox_addReceiverSH
 (
     void* hIms,
     int sh_order,
@@ -589,15 +659,15 @@ long ims_shoebox_addReceiverSH
     assert(sc->nReceivers <= IMS_MAX_NUM_RECEIVERS);
 
     /* Find an unoccupied object */
-    obj_idx = -1;
+    obj_idx = IMS_UNASSIGNED;
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++){
         /* an ID of '-1' indicates that it is free to use */
-        if(sc->recs[i].ID == -1){
+        if(sc->recs[i].ID == IMS_UNASSIGNED){
             obj_idx = i;
             break;
         }
     }
-    assert(obj_idx != -1);
+    assert(obj_idx != IMS_UNASSIGNED);
 
     /* Assign unique ID */
     sc->recs[obj_idx].ID = 0;
@@ -622,7 +692,7 @@ long ims_shoebox_addReceiverSH
 
     /* Create workspace for all receiver/source combinations, for this new receiver object */
     for(src=0; src<IMS_MAX_NUM_SOURCES; src++)
-        if(sc->srcs[src].ID!=-1)
+        if(sc->srcs[src].ID!=IMS_UNASSIGNED)
             ims_shoebox_coreWorkspaceCreate(&(sc->hCoreWrkSpc[obj_idx][src]), sc->nBands);
 
     return sc->recs[obj_idx].ID;
@@ -631,7 +701,7 @@ long ims_shoebox_addReceiverSH
 void ims_shoebox_updateSource
 (
     void* hIms,
-    long sourceID,
+    int sourceID,
     float new_position_xyz[3]
 )
 {
@@ -642,14 +712,14 @@ void ims_shoebox_updateSource
     assert(sourceID >= 0);
 
     /* Find index corresponding to this source ID */
-    src_idx = -1;
+    src_idx = IMS_UNASSIGNED;
     for(i=0; i<IMS_MAX_NUM_SOURCES; i++){
         if(sc->srcs[i].ID == sourceID){
             src_idx = i;
             break;
         }
     }
-    assert(src_idx != -1);
+    assert(src_idx != IMS_UNASSIGNED);
 
     /* Check if source has actually moved */
     if( (new_position_xyz[0] != sc->srcs[src_idx].pos.x) ||
@@ -664,7 +734,7 @@ void ims_shoebox_updateSource
         /* All source/receiver combinations for this source index will need to
          * be refreshed */
         for(rec=0; rec<IMS_MAX_NUM_RECEIVERS; rec++){
-            if(sc->recs[rec].ID!=-1){
+            if(sc->recs[rec].ID!=IMS_UNASSIGNED){
                 work = (ims_core_workspace*)(sc->hCoreWrkSpc[rec][src_idx]);
                 work->refreshEchogramFLAG = 1;
             }
@@ -675,7 +745,7 @@ void ims_shoebox_updateSource
 void ims_shoebox_updateReceiver
 (
     void* hIms,
-    long receiverID,
+    int receiverID,
     float new_position_xyz[3]
 )
 {
@@ -686,14 +756,14 @@ void ims_shoebox_updateReceiver
     assert(receiverID >= 0);
 
     /* Find index corresponding to this receiver ID */
-    rec_idx = -1;
+    rec_idx = IMS_UNASSIGNED;
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++){
         if(sc->recs[i].ID == receiverID){
             rec_idx = i;
             break;
         }
     }
-    assert(rec_idx != -1);
+    assert(rec_idx != IMS_UNASSIGNED);
 
     /* Check if Receiver has actually moved */
     if( (new_position_xyz[0] != sc->recs[rec_idx].pos.x) ||
@@ -708,7 +778,7 @@ void ims_shoebox_updateReceiver
         /* All source/receiver combinations for this receiver index will need to
          * be refreshed */
         for(src=0; src<IMS_MAX_NUM_SOURCES; src++){
-            if(sc->srcs[src].ID != -1){
+            if(sc->srcs[src].ID != IMS_UNASSIGNED){
                 work = (ims_core_workspace*)(sc->hCoreWrkSpc[rec_idx][src]);
                 work->refreshEchogramFLAG = 1;
             }
@@ -719,7 +789,7 @@ void ims_shoebox_updateReceiver
 void ims_shoebox_removeSource
 (
     void* hIms,
-    long sourceID
+    int sourceID
 )
 {
     ims_scene_data *sc = (ims_scene_data*)(hIms);
@@ -728,21 +798,21 @@ void ims_shoebox_removeSource
     assert(sourceID >= 0);
 
     /* Find index corresponding to this source ID */
-    obj_idx = -1;
+    obj_idx = IMS_UNASSIGNED;
     for(i=0; i<IMS_MAX_NUM_SOURCES; i++){
         if(sc->srcs[i].ID == sourceID){
             obj_idx = i;
             break;
         }
     }
-    assert(obj_idx != -1);
+    assert(obj_idx != IMS_UNASSIGNED);
 
     /* Set ID to -1 (invalid, so no longer rendered) */
-    sc->srcs[obj_idx].ID = -1;
+    sc->srcs[obj_idx].ID = IMS_UNASSIGNED;
 
     /* Destroy workspace for all receiver/source combinations, for this dead source */
     for(rec=0; rec<IMS_MAX_NUM_RECEIVERS; rec++)
-        if(sc->recs[rec].ID != -1)
+        if(sc->recs[rec].ID != IMS_UNASSIGNED)
             ims_shoebox_coreWorkspaceDestroy(&(sc->hCoreWrkSpc[rec][obj_idx]));
 
     /* De-increment number of sources */
@@ -752,7 +822,7 @@ void ims_shoebox_removeSource
 void ims_shoebox_removeReceiver
 (
     void* hIms,
-    long receiverID
+    int receiverID
 )
 {
     ims_scene_data *sc = (ims_scene_data*)(hIms);
@@ -761,21 +831,21 @@ void ims_shoebox_removeReceiver
     assert(receiverID >= 0);
 
     /* Find index corresponding to this source ID */
-    obj_idx = -1;
+    obj_idx = IMS_UNASSIGNED;
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++){
         if(sc->recs[i].ID == receiverID){
             obj_idx = i;
             break;
         }
     }
-    assert(obj_idx != -1);
+    assert(obj_idx != IMS_UNASSIGNED);
 
     /* Set ID to -1 (invalid, so no longer active) */
-    sc->recs[obj_idx].ID = -1;
+    sc->recs[obj_idx].ID = IMS_UNASSIGNED;
 
     /* Destroy workspace for all receiver/source combinations, for this dead receiver */
     for(src=0; src<IMS_MAX_NUM_SOURCES; src++)
-        if(sc->srcs[src].ID != -1)
+        if(sc->srcs[src].ID != IMS_UNASSIGNED)
             ims_shoebox_coreWorkspaceDestroy(&(sc->hCoreWrkSpc[obj_idx][src]));
 
     /* De-increment number of receivers */

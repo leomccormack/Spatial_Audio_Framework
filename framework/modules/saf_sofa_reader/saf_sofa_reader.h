@@ -34,7 +34,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h> 
+#include <string.h>
+#include <pthread.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -138,7 +139,9 @@ typedef enum{
     /** Dimensions of the SOFA data were not as expected */
     SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED,
     /** The data-type of the SOFA data was not as expected */
-    SAF_SOFA_ERROR_FORMAT_UNEXPECTED
+    SAF_SOFA_ERROR_FORMAT_UNEXPECTED,
+    /** NetCDF is not thread safe! */
+    SAF_SOFA_ERROR_NETCDF_IN_USE
 
 } SAF_SOFA_ERROR_CODES;
 
@@ -151,21 +154,13 @@ typedef enum{
  * Fills a 'sofa_container' with data found in a SOFA file (GeneralFIR or
  * SimpleFreeFieldHRIR), as detailed in the SOFA 1.0 standard [1,2,3]
  *
- * @warning Not all SOFA files conform to the proposed standard [1,2,3]! Certain
- *          accomodatations for off-standard SOFA files (i.e. the ones that are
- *          wide-spread) have been built into this SOFA loader. However, if you
- *          happen to encounter a SOFA file that this SOFA loader cannot load,
- *          (or it misses some of the information) then please send it to the
- *          developers :-)
  * @warning This loader currently does not support TF SOFA files!
- * @note Adding support for TF, SOS,.etc SOFA files should be quite trivial.
- *       However, we (the developers) do not have access to examples of these
- *       more specialised files to use for testing. Therefore, if you have files
- *       that use these other SOFA formats, and are willing to share them, then
- *       please send them to the developers and we'll make them work :-)
+ * @note If you encounter a SOFA file that this SOFA loader cannot load, (or it
+ *       misses some of the data) then please send it to the developers :-)
  *
  * @param[in] hSOFA         The sofa_container
  * @param[in] sofa_filepath SOFA file path (including .sofa extension)
+ * @returns An error code (see #SAF_SOFA_ERROR_CODES)
  *
  * @see [1] Majdak, P., Iwaya, Y., Carpentier, T., Nicol, R., Parmentier, M.,
  *          Roginska, A., Suzuki, Y., Watanabe, K., Wierstorf, H., Ziegelwanger,

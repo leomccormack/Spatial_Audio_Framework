@@ -31,6 +31,14 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** Quaternion data struct */
+typedef struct _quaternion_data {
+    union {
+        struct { float w, x, y, z; };
+        float Q[4]; /** WXYZ values [-1..1] */
+    };
+} quaternion_data;
+
 /** Available euler2rotationMatrix() conventions */
 typedef enum {
     EULER_ROTATION_Y_CONVENTION,   /**< y-convention, 'zyz' */
@@ -54,6 +62,38 @@ typedef struct _voronoi_data{
     int* nPointsPerFace; /**< Number of points for each face; nFaces x 1 */
 
 }voronoi_data;
+
+/** Constructs a 3x3 rotation matrix based on Quaternions */
+void quaternion2rotationMatrix(/* Input Arguments */
+                               quaternion_data* Q,
+                               /* Output Arguments */
+                               float R[3][3]);
+
+/** Calculates Quaternions from a 3x3 rotation matrix */
+void rotationMatrix2quaternion(/* Input Arguments */
+                               float R[3][3],
+                               /* Output Arguments */
+                               quaternion_data* Q);
+
+/** Converts Euler angles to Quaternion */
+void euler2Quaternion(/* Input Arguments */
+                      float alpha,
+                      float beta,
+                      float gamma,
+                      int degreesFlag,
+                      EULER_ROTATION_CONVENTIONS convention,
+                      /* Output Arguments */
+                      quaternion_data* Q);
+
+/** Converts Quaternion to Euler angles */
+void quaternion2euler(/* Input Arguments */
+                      quaternion_data* Q,
+                      int degreesFlag,
+                      EULER_ROTATION_CONVENTIONS convention,
+                      /* Output Arguments */
+                      float* alpha,
+                      float* beta,
+                      float* gamma);
 
 /**
  * Constructs a 3x3 rotation matrix from the Euler angles

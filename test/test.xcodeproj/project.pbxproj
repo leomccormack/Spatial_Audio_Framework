@@ -42,7 +42,6 @@
 		50E36077249BDDCC00B74C25 /* saf_vbap_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36053249BDDCC00B74C25 /* saf_vbap_internal.c */; };
 		50E36078249BDDCC00B74C25 /* saf_vbap.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36054249BDDCC00B74C25 /* saf_vbap.c */; };
 		50E36079249BDDCC00B74C25 /* saf_default_hrirs.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36057249BDDCC00B74C25 /* saf_default_hrirs.c */; };
-		50E3607A249BDDCC00B74C25 /* saf_hrir_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3605A249BDDCC00B74C25 /* saf_hrir_internal.c */; };
 		50E3607B249BDDCC00B74C25 /* saf_hrir.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3605B249BDDCC00B74C25 /* saf_hrir.c */; };
 		50E3DE3124BE00F400589B17 /* saf_utility_qmf.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DE2F24BE00F400589B17 /* saf_utility_qmf.c */; };
 		50E3DE3424C087B300589B17 /* afSTFT_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DE3324C087B300589B17 /* afSTFT_internal.c */; };
@@ -177,9 +176,7 @@
 		50E36054249BDDCC00B74C25 /* saf_vbap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_vbap.c; sourceTree = "<group>"; };
 		50E36055249BDDCC00B74C25 /* saf_vbap_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_vbap_internal.h; sourceTree = "<group>"; };
 		50E36057249BDDCC00B74C25 /* saf_default_hrirs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_default_hrirs.c; sourceTree = "<group>"; };
-		50E36058249BDDCC00B74C25 /* saf_hrir_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hrir_internal.h; sourceTree = "<group>"; };
 		50E36059249BDDCC00B74C25 /* saf_hrir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hrir.h; sourceTree = "<group>"; };
-		50E3605A249BDDCC00B74C25 /* saf_hrir_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hrir_internal.c; sourceTree = "<group>"; };
 		50E3605B249BDDCC00B74C25 /* saf_hrir.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hrir.c; sourceTree = "<group>"; };
 		50E3DE2F24BE00F400589B17 /* saf_utility_qmf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_qmf.c; sourceTree = "<group>"; };
 		50E3DE3024BE00F400589B17 /* saf_utility_qmf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_qmf.h; sourceTree = "<group>"; };
@@ -527,9 +524,7 @@
 			isa = PBXGroup;
 			children = (
 				50E36057249BDDCC00B74C25 /* saf_default_hrirs.c */,
-				50E36058249BDDCC00B74C25 /* saf_hrir_internal.h */,
 				50E36059249BDDCC00B74C25 /* saf_hrir.h */,
-				50E3605A249BDDCC00B74C25 /* saf_hrir_internal.c */,
 				50E3605B249BDDCC00B74C25 /* saf_hrir.c */,
 			);
 			path = saf_hrir;
@@ -894,7 +889,6 @@
 				50E3DEE624C1C80C00589B17 /* multiconv.c in Sources */,
 				50E5CD1624AF3E5800019898 /* saf_utility_geometry.c in Sources */,
 				50E3DF0324C1D4EA00589B17 /* panner_internal.c in Sources */,
-				50E3607A249BDDCC00B74C25 /* saf_hrir_internal.c in Sources */,
 				50E3DE9624C1B81300589B17 /* ambi_bin.c in Sources */,
 				50E3606F249BDDCC00B74C25 /* saf_utility_sort.c in Sources */,
 				50E3DEBE24C1C56800589B17 /* ambi_enc_internal.c in Sources */,

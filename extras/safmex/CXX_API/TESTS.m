@@ -2,7 +2,7 @@ clear all, dbstop if error, close all %#ok
 
 % afSTFT
 
-
+ % 0.070644 seconds. to do this with the C interface
 nCHin = 6;
 nCHout = 13;
 hopsize = 128;
@@ -10,30 +10,30 @@ blocksize = 2048;
 
 
 mh = mexhost;
-[freqVector, procDelay] = feval(mh,'safmex_afSTFT', nCHin, nCHout, hopsize, 1, 0, 48e3);
+[freqVector, procDelay] = feval(mh,'saf_afSTFT', nCHin, nCHout, hopsize, 1, 0, 48e3);
 tic
 for i=1:round(48000/blocksize * 2)
     insig = randn(blocksize, nCHin);  
-    outsig = feval(mh,'safmex_afSTFT', insig);  
-%     outsig = repmat(outsig(:,1,:), [1 nCHout 1 ]);
-%     testsig = feval(mh,'safmex_afSTFT', outsig);  
+    outsig = feval(mh,'saf_afSTFT', insig);  
+     outsig = repmat(outsig(:,1,:), [1 nCHout 1 ]);
+     testsig = feval(mh,'saf_afSTFT', outsig);  
 end
 toc
-feval(mh,'safmex_afSTFT')
+feval(mh,'saf_afSTFT')
 
-%  
-% [freqVector, procDelay] = safmex_afSTFT(nCHin, nCHout, hopsize, 1, 0, 48e3);
-% tic
-% for i=1:round(48000/blocksize * 2)
-%     insig = randn(blocksize, nCHin);  
-%     outsig = safmex_afSTFT(insig);  
-%     outsig = repmat(outsig(:,1,:), [1 nCHout 1 ]);
-%     testsig = safmex_afSTFT(outsig);  
-% end
-% toc
-% safmex_afSTFT();
-%  
-%  
+ 
+[freqVector, procDelay] = saf_afSTFT(nCHin, nCHout, hopsize, 1, 0, 48e3);
+tic
+for i=1:round(48000/blocksize * 2)
+    insig = randn(blocksize, nCHin);  
+    outsig = saf_afSTFT(insig);  
+    outsig = repmat(outsig(:,1,:), [1 nCHout 1 ]);
+    testsig = saf_afSTFT(outsig);  
+end
+toc
+saf_afSTFT();
+ 
+ 
 
 % [freqVector, procDelay] = safmex_afSTFT(nCHin, nCHout, hopsize, blocksize, 1, 1, 48e3); 
 % dataTD_ref = randn(blocksize, nCHin); 
