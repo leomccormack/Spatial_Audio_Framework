@@ -119,16 +119,16 @@ var NAVTREEINDEX =
 "group___h_r_i_r.html#gaf4e65a8546982cb60e4553dedca1f4a2",
 "group___utilities.html#ga022fafed1306c162b56f41db34a048b8",
 "group___utilities.html#ga3d27a820ced6fc7e2658499cccec6901",
-"group___utilities.html#ga67b59e17207ee35a30f8b252db525559",
-"group___utilities.html#ga9f12c4b0ad923027fb01e5abc3d6300a",
-"group___utilities.html#gad59d63d7563ff0c5a81a5b9f0a12ab49",
-"group___utilities.html#gga2857ab29a6bb725942759947350f5e49a5f31f31c063d78aa077b2c45d5719e04",
-"md_extras_safwwise__s_a_f_w_w_i_s_e.html#autotoc_md34",
-"saf__hoa__internal_8h_source.html",
-"saf__utility__fft_8h_source.html",
-"sldoa_8h.html#a5a7f714ff47467ddb37e912bfba06cc1",
-"structims__pos__xyz.html#ac533c7e3ac7128f429e5fad2975e3ba2",
-"structsmb__pitch_shift__data.html#a98aeafa0484cc3bb1c13c85556a71d2d"
+"group___utilities.html#ga6766a85de86080960730929366b69c05",
+"group___utilities.html#ga9eaf842897a359954c56aa53b151fc81",
+"group___utilities.html#gad4e405a3cf6f3ec52d065e1b4bdb575c",
+"group___utilities.html#gga186326f0d162300d949c2dc95c412465a40bcdf48dfc647c2645f059410f804d6",
+"md_extras_safmex__s_a_f_m_e_x.html#autotoc_md28",
+"saf__hoa__internal_8c.html#a138f39eb021a09200594f8759932b9af",
+"saf__utility__bessel_8h_source.html",
+"safmex__tracker3d_8c.html#acb93ec4aba9e054d852d72749f866d42",
+"structims__core__workspace.html#aa48d25953559de60dbb180b66c25a710",
+"structsmb__pitch_shift__data.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

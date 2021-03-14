@@ -545,6 +545,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="grou
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga7a6535d2ee4b9f1147d3394b2d186a1a">rotationMatrix2quaternion</a> (float R[3][3], <a class="el" href="structquaternion__data.html">quaternion_data</a> *Q)</td></tr>
 <tr class="memdesc:ga7a6535d2ee4b9f1147d3394b2d186a1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates Quaternions from a 3x3 rotation matrix. <br /></td></tr>
 <tr class="separator:ga7a6535d2ee4b9f1147d3394b2d186a1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga40bf87e6403c71d773a504fe1351bb8e"><td class="memItemLeft" align="right" valign="top"><a id="ga40bf87e6403c71d773a504fe1351bb8e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga40bf87e6403c71d773a504fe1351bb8e">euler2Quaternion</a> (float alpha, float beta, float gamma, int degreesFlag, <a class="el" href="group___utilities.html#ga3093dd635473d82de533d0ec310c45c3">EULER_ROTATION_CONVENTIONS</a> convention, <a class="el" href="structquaternion__data.html">quaternion_data</a> *Q)</td></tr>
+<tr class="memdesc:ga40bf87e6403c71d773a504fe1351bb8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts Euler angles to Quaternion. <br /></td></tr>
+<tr class="separator:ga40bf87e6403c71d773a504fe1351bb8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga59948f366d271d97c1b12a0d829e1109"><td class="memItemLeft" align="right" valign="top"><a id="ga59948f366d271d97c1b12a0d829e1109"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga59948f366d271d97c1b12a0d829e1109">quaternion2euler</a> (<a class="el" href="structquaternion__data.html">quaternion_data</a> *Q, int degreesFlag, <a class="el" href="group___utilities.html#ga3093dd635473d82de533d0ec310c45c3">EULER_ROTATION_CONVENTIONS</a> convention, float *alpha, float *beta, float *gamma)</td></tr>
+<tr class="memdesc:ga59948f366d271d97c1b12a0d829e1109"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts Quaternion to Euler angles. <br /></td></tr>
+<tr class="separator:ga59948f366d271d97c1b12a0d829e1109"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga19a8e982f11eb0deaade1383781e179b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga19a8e982f11eb0deaade1383781e179b">euler2rotationMatrix</a> (float alpha, float beta, float gamma, int degreesFlag, <a class="el" href="group___utilities.html#ga3093dd635473d82de533d0ec310c45c3">EULER_ROTATION_CONVENTIONS</a> convention, float R[3][3])</td></tr>
 <tr class="memdesc:ga19a8e982f11eb0deaade1383781e179b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a 3x3 rotation matrix from the Euler angles.  <a href="group___utilities.html#ga19a8e982f11eb0deaade1383781e179b">More...</a><br /></td></tr>
 <tr class="separator:ga19a8e982f11eb0deaade1383781e179b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -2984,7 +2992,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00285">285</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00375">375</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -3171,7 +3179,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00118">118</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00208">208</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -4208,7 +4216,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00587">587</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00677">677</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -7046,7 +7054,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00312">312</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00402">402</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -7106,7 +7114,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00346">346</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00436">436</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -7145,7 +7153,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00522">522</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00612">612</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -7483,7 +7491,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00206">206</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00296">296</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -7536,7 +7544,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00177">177</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00267">267</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -10594,7 +10602,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00162">162</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00252">252</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -11031,7 +11039,7 @@ Example Usage</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Mar 12 2021 15:20:13 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Mar 14 2021 12:55:11 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
