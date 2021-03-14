@@ -28,9 +28,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/** Not sure which to use... */
-#define SAF_USE_INVERSE_QUATERNION_AS_DEFAULT ( 0 )
-
 /** Helper function for euler2rotationMatrix() */
 static void getRx
 (
@@ -91,17 +88,6 @@ void quaternion2rotationMatrix
     float R[3][3]
 )
 {
-#if !(SAF_USE_INVERSE_QUATERNION_AS_DEFAULT)
-    R[0][0] = 2.0f * (Q->w * Q->w + Q->x * Q->x) - 1.0f;
-    R[0][1] = 2.0f * (Q->x * Q->y - Q->w * Q->z);
-    R[0][2] = 2.0f * (Q->x * Q->z + Q->w * Q->y);
-    R[1][0] = 2.0f * (Q->x * Q->y + Q->w * Q->z);
-    R[1][1] = 2.0f * (Q->w * Q->w + Q->y * Q->y) - 1.0f;
-    R[1][2] = 2.0f * (Q->y * Q->z - Q->w * Q->x);
-    R[2][0] = 2.0f * (Q->x * Q->z - Q->w * Q->y);
-    R[2][1] = 2.0f * (Q->y * Q->z + Q->w * Q->x);
-    R[2][2] = 2.0f * (Q->w * Q->w + Q->z * Q->z) - 1.0f;
-#else /* This is for the inverse quaternion */
     R[0][0] = 2.0f * (Q->w * Q->w + Q->z * Q->z) - 1.0f;
     R[0][1] = 2.0f * (Q->z * Q->y - Q->w * Q->x);
     R[0][2] = 2.0f * (Q->z * Q->x + Q->w * Q->y);
@@ -110,8 +96,7 @@ void quaternion2rotationMatrix
     R[1][2] = 2.0f * (Q->y * Q->x - Q->w * Q->z);
     R[2][0] = 2.0f * (Q->z * Q->x - Q->w * Q->y);
     R[2][1] = 2.0f * (Q->y * Q->x + Q->w * Q->z);
-    R[2][2] = 2.0f * (Q->w * Q->w + Q->x * Q->x) - 1.0f;
-#endif
+    R[2][2] = 2.0f * (Q->w * Q->w + Q->x * Q->x) - 1.0f; 
 }
 
 /* Adapted from: https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/forum.htm */
@@ -121,15 +106,6 @@ void rotationMatrix2quaternion
     quaternion_data* Q
 )
 {
-#if !(SAF_USE_INVERSE_QUATERNION_AS_DEFAULT)
-    Q->w = sqrtf( MAX( 0.0f, 1.0f + R[0][0] + R[1][1] + R[2][2] ) ) / 2.0f;
-    Q->x = sqrtf( MAX( 0.0f, 1.0f + R[0][0] - R[1][1] - R[2][2] ) ) / 2.0f;
-    Q->y = sqrtf( MAX( 0.0f, 1.0f - R[0][0] + R[1][1] - R[2][2] ) ) / 2.0f;
-    Q->z = sqrtf( MAX( 0.0f, 1.0f - R[0][0] - R[1][1] + R[2][2] ) ) / 2.0f;
-    Q->x = copysignf( Q->x, R[2][1] - R[1][2] );
-    Q->y = copysignf( Q->y, R[0][2] - R[2][0] );
-    Q->z = copysignf( Q->z, R[1][0] - R[0][1] );
-#else /* This is for the inverse quaternion */
     Q->w = sqrtf( MAX( 0.0f, 1.0f + R[0][0] + R[1][1] + R[2][2] ) ) / 2.0f;
     Q->z = sqrtf( MAX( 0.0f, 1.0f + R[0][0] - R[1][1] - R[2][2] ) ) / 2.0f;
     Q->y = sqrtf( MAX( 0.0f, 1.0f - R[0][0] + R[1][1] - R[2][2] ) ) / 2.0f;
@@ -137,7 +113,6 @@ void rotationMatrix2quaternion
     Q->z = copysignf( Q->z, R[2][1] - R[1][2] );
     Q->y = copysignf( Q->y, R[0][2] - R[2][0] );
     Q->x = copysignf( Q->x, R[1][0] - R[0][1] );
-#endif
 }
 
 /* Adapted from (ISC License): https://github.com/MartinWeigel/Quaternion  */
@@ -152,28 +127,7 @@ void euler2Quaternion
 )
 {
     float cy, sy, cr, sr, cp, sp;
-#if !(SAF_USE_INVERSE_QUATERNION_AS_DEFAULT)
-    switch(convention){
-        case EULER_ROTATION_Y_CONVENTION: assert(0); return; /* Not supported */; break;
-        case EULER_ROTATION_X_CONVENTION: assert(0); return; /* Not supported */; break;
-        case EULER_ROTATION_YAW_PITCH_ROLL:
-            cy = cosf((degreesFlag ? gamma*SAF_PI/180.0f : gamma)  * 0.5f); /* x */
-            sy = sinf((degreesFlag ? gamma*SAF_PI/180.0f : gamma)  * 0.5f); /* x */
-            cp = cosf((degreesFlag ? beta*SAF_PI/180.0f : beta) * 0.5f);    /* y */
-            sp = sinf((degreesFlag ? beta*SAF_PI/180.0f : beta) * 0.5f);    /* y */
-            cr = cosf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* z */
-            sr = sinf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* z */
-            break;
-        case EULER_ROTATION_ROLL_PITCH_YAW:
-            cy = cosf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* x */
-            sy = sinf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* x */
-            cp = cosf((degreesFlag ? beta*SAF_PI/180.0f : beta) * 0.5f);    /* y */
-            sp = sinf((degreesFlag ? beta*SAF_PI/180.0f : beta) * 0.5f);    /* y */
-            cr = cosf((degreesFlag ? gamma*SAF_PI/180.0f : gamma)  * 0.5f); /* z */
-            sr = sinf((degreesFlag ? gamma*SAF_PI/180.0f : gamma)  * 0.5f); /* z */
-            break;
-    }
-#else /* This is the inverse quaternion */
+
     switch(convention){
         case EULER_ROTATION_Y_CONVENTION: assert(0) /* Not supported */; break;
         case EULER_ROTATION_X_CONVENTION: assert(0) /* Not supported */; break;
@@ -194,7 +148,6 @@ void euler2Quaternion
             sr = sinf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* z */
             break;
     }
-#endif
     Q->w = cy * cr * cp + sy * sr * sp;
     Q->x = cy * sr * cp - sy * cr * sp;
     Q->y = cy * cr * sp + sy * sr * cp;
@@ -219,34 +172,6 @@ void quaternion2euler
     sinp = 2.0f * (Q->w * Q->y - Q->z * Q->x);
     siny_cosp = 2.0f * (Q->w * Q->z + Q->x * Q->y);
     cosy_cosp = 1.0f - 2.0f * (Q->y * Q->y + Q->z * Q->z);
-#if 1
-    switch(convention){
-        case EULER_ROTATION_Y_CONVENTION: assert(0); return; /* Not supported */; break;
-        case EULER_ROTATION_X_CONVENTION: assert(0); return; /* Not supported */; break;
-        case EULER_ROTATION_YAW_PITCH_ROLL:
-            /* Roll (x-axis rotation) */
-            (*alpha) = atan2f(sinr_cosp, cosr_cosp);
-            /* Pitch (y-axis rotation) */
-            if (fabs(sinp) >= 1.0f)
-                (*beta) = copysignf(SAF_PI / 2.0f, sinp); /* use 90 degrees if out of range */
-            else
-                (*beta) = asinf(sinp);
-            /* Yaw (z-axis rotation) */
-            (*gamma) = atan2f(siny_cosp, cosy_cosp);
-            break;
-        case EULER_ROTATION_ROLL_PITCH_YAW:
-            /* Yaw (z-axis rotation) */
-            (*gamma) = atan2f(sinr_cosp, cosr_cosp);
-            /* Pitch (y-axis rotation) */
-            if (fabsf(sinp) >= 1.0f)
-                (*beta) = copysignf(SAF_PI / 2.0f, sinp); /* use 90 degrees if out of range */
-            else
-                (*beta) = asinf(sinp);
-            /* Roll (x-axis rotation) */
-           (*alpha) = atan2f(siny_cosp, cosy_cosp);
-            break;
-    }
-#else /* This is the inverse quaternion */
     switch(convention){
         case EULER_ROTATION_Y_CONVENTION: assert(0) /* Not supported */; break;
         case EULER_ROTATION_X_CONVENTION: assert(0) /* Not supported */; break;
@@ -273,7 +198,6 @@ void quaternion2euler
             (*gamma) = atan2f(siny_cosp, cosy_cosp); 
             break;
     }
-#endif
     if(degreesFlag){
         (*alpha) *= 180.0f/SAF_PI;
         (*beta)  *= 180.0f/SAF_PI;
