@@ -50,20 +50,18 @@ void applyDVF(/* Input Arguments */
  *
  * @param[in]   theta Ipsilateral azimuth, on the inter-aural axis [0, 180] (deg)
  * @param[in]   rho Source distance, normalized to head radius, >= 1
- * @param[in]   fs Sample rate
- * @param[out]  b0  (&) IIR numerator coefficient 1
- * @param[out]  b1  (&) IIR numerator coefficient 2
- * @param[out]  a1  (&) IIR denominator coefficient 2
+ * @param[out]  iG0  (&) interpolated DC gain
+ * @param[out]  iGInf  (&) interpolated high shelf gain
+ * @param[out]  iFc  (&) interpolated high shelf cutoff frequency
  */
-void calcHighShelfCoeffs(
+void interpHighShelfParams(
                          /* Input Arguments */
                          float theta,
                          float rho,
-                         float fs,
                          /* Output Arguments */
-                         float* b0,
-                         float* b1,
-                         float* a1);
+                         float* iG0,
+                         float* iGInf,
+                         float* iFc);
 
 /**
  * Apply the Distance Variation function to the input signal.
