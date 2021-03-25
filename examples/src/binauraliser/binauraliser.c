@@ -42,7 +42,11 @@ void binauraliser_create
     int ch, dummy;
 
     /* user parameters */
-    binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
+    // TODO: to be addressed post rebase
+    // binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
+    // TODO: why isn't the pointer to pData->src_dirs_deg sent in here... it doens't appear to be initialized?
+    // The issue comes up because src_dists should prob be set the same way... mtm
+    binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
     pData->enableHRIRsDiffuseEQ = 1;
     pData->nSources = pData->new_nSources;
@@ -55,6 +59,10 @@ void binauraliser_create
     pData->bFlipRoll = 0;
     pData->useRollPitchYawFlag = 0;
     pData->enableRotation = 0;
+
+    /* DVF params */
+    pData->head_radius_recip = 1.f / 0.0875; // TODO: make variable
+    memset(pData->src_dists, 3.0f, MAX_NUM_INPUTS * sizeof(float)); // TODO: proper way to set? default distance 3 m, change?
 
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
@@ -214,6 +222,7 @@ void binauraliser_process
         /* get last frame's final sample for DVF IIR filter */
         float wzL = pData->outframeTD[0][FRAME_SIZE-1]; // TODO: confirm indexing, should be pointer?
         float wzR = pData->outframeTD[1][FRAME_SIZE-1];
+        float fs =(float)pData->fs; // TODO: why is pData->fs an int?
 
         /* Load time-domain data */
         for(i=0; i < SAF_MIN(nSources,nInputs); i++)

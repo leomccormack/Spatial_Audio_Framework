@@ -79,7 +79,7 @@ typedef struct _binauraliser
     int fs;                          /**< Host sampling rate, in Hz */
     float freqVector[HYBRID_BANDS];  /**< Frequency vector (filterbank centre frequencies) */
     void* hSTFT;                     /**< afSTFT handle */
-    
+
     /* sofa file info */
     char* sofa_filepath;             /**< absolute/relevative file path for a sofa file */
     float* hrirs;                    /**< time domain HRIRs; FLAT: N_hrir_dirs x #NUM_EARS x hrir_len */
@@ -90,19 +90,19 @@ typedef struct _binauraliser
     int hrir_loaded_fs;              /**< sampling rate of the loaded HRIRs  */
     int hrir_runtime_fs;             /**< sampling rate of the HRIRs being used for processing (after any resampling) */
     float* weights;                  /**< Integration weights for the HRIR measurement grid */
-    
+
     /* vbap gain table */
     int hrtf_vbapTableRes[2];        /**< [0] azimuth, and [1] elevation grid resolution, in degrees */
     int N_hrtf_vbap_gtable;          /**< Number of interpolation weights/directions */
     int* hrtf_vbap_gtableIdx;        /**< N_hrtf_vbap_gtable x 3 */
     float* hrtf_vbap_gtableComp;     /**< N_hrtf_vbap_gtable x 3 */
-    
+
     /* hrir filterbank coefficients */
     float* itds_s;                   /**< interaural-time differences for each HRIR (in seconds); nBands x 1 */
     float_complex* hrtf_fb;          /**< hrtf filterbank coefficients; nBands x nCH x N_hrirs */
     float* hrtf_fb_mag;              /**< magnitudes of the hrtf filterbank coefficients; nBands x nCH x N_hrirs */
     float_complex hrtf_interp[MAX_NUM_INPUTS][HYBRID_BANDS][NUM_EARS]; /**< Interpolated HRTFs */
-    
+
     /* flags/status */
     CODEC_STATUS codecStatus;        /**< see #CODEC_STATUS */
     float progressBar0_1;            /**< Current (re)initialisation progress, between [0..1] */
@@ -111,7 +111,7 @@ typedef struct _binauraliser
     int recalc_hrtf_interpFLAG[MAX_NUM_INPUTS]; /**< 1: re-calculate/interpolate the HRTF, 0: do not */
     int reInitHRTFsAndGainTables;    /**< 1: reinitialise the HRTFs and interpolation tables, 0: do not */
     int recalc_M_rotFLAG;            /**< 1: re-calculate the rotation matrix, 0: do not */
-    
+
     /* misc. */
     float src_dirs_rot_deg[MAX_NUM_INPUTS][2]; /**< Intermediate rotated source directions, in degrees */
     float src_dirs_rot_xyz[MAX_NUM_INPUTS][3]; /**< Intermediate rotated source directions, as unit-length Cartesian coordinates */
@@ -122,7 +122,9 @@ typedef struct _binauraliser
     /* user parameters */
     int nSources;                            /**< Current number of input/source signals */
     float src_dirs_deg[MAX_NUM_INPUTS][2];   /**< Current source/panning directions, in degrees */
+    float src_dists[MAX_NUM_INPUTS];         /**< Current source/panning distances, in meters */
     INTERP_MODES interpMode;                 /**< see #INTERP_MODES */
+    float head_radius_recip;                 /**< Reciprocal of head radius */
     int useDefaultHRIRsFLAG;                 /**< 1: use default HRIRs in database, 0: use those from SOFA file */
     int enableHRIRsDiffuseEQ;                /**< flag to diffuse-field equalisation to the currently loaded HRTFs */
     int enableRotation;                      /**< 1: enable rotation, 0: disable */
@@ -153,7 +155,7 @@ void binauraliser_setCodecStatus(void* const hBin,
  * re-introducing the phase.
  *
  * @param[in]  hBin          binauraliser handle
- * @param[in]  mode          see #INTERP_MODES 
+ * @param[in]  mode          see #INTERP_MODES
  * @param[in]  azimuth_deg   Source azimuth in DEGREES
  * @param[in]  elevation_deg Source elevation in DEGREES
  * @param[out] h_intrp       Interpolated HRTF
