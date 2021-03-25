@@ -129,8 +129,8 @@ void euler2Quaternion
     float cy, sy, cr, sr, cp, sp;
 
     switch(convention){
-        case EULER_ROTATION_Y_CONVENTION: assert(0) /* Not supported */; break;
-        case EULER_ROTATION_X_CONVENTION: assert(0) /* Not supported */; break;
+        case EULER_ROTATION_Y_CONVENTION: assert(0); return; /* Not supported */; break;
+        case EULER_ROTATION_X_CONVENTION: assert(0); return; /* Not supported */; break;
         case EULER_ROTATION_YAW_PITCH_ROLL:
             cy = cosf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* x */
             sy = sinf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* x */
