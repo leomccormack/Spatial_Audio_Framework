@@ -28,7 +28,6 @@
 #include <math.h>
 #include <string.h>
 #include <assert.h>
-#include "matrixconv.h"
 #include "tvconv.h"
 #include "saf.h"
 #include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
@@ -60,30 +59,40 @@ typedef float vectorND[NUM_DIMENSIONS];
 typedef struct _tvconv
 {
     /* FIFO buffers */
-//    int FIFO_idx;
-//    float inFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
-//    float outFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
+    int FIFO_idx;
+    float inFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
+    float outFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
 
     /* Internal buffers */
-//    float** inputFrameTD;
-//    float** outputFrameTD;
+    float** inputFrameTD;
+    float** outputFrameTD;
+    
+    /* overlap buffers */
     float** overlapTD;
     float** overlapTD_Last;
     float* fadeIn;
     float* fadeOut;
     
     /* internal */
-//    void* hMultiConv;
-//    int hostBlockSize;
-//    int hostBlockSize_clamped; /**< Clamped between MIN and #MAX_FRAME_SIZE */
-//    float** filters;   /**< npositionsx x (FLAT: nfilters x filter_length) */
-//    int host_fs;
-//    int reInitFilters;
-    void* hMatrixconv_data;
+    void* hMatrixConv;     /**< saf_matrixConv handle */
+    int hostBlockSize;     /**< current host block size */
+    int hostBlockSize_clamped; /**< Clamped between MIN and #MAX_FRAME_SIZE */
+    //float* filters;        /**< the matrix of filters; FLAT: nOutputChannels x nInputChannels x filter_length */
+    //int nfilters;          /**< the number of filters (nOutputChannels x nInputChannels) */
+    //int input_wav_length;  /**< length of the wav files loaded in samples (inputs are concatenated) */
+    //int filter_length;     /**< length of the filters (i.e. input_wav_length/nInputChannels) */
+    //int filter_fs;         /**< current samplerate of the filters */
+    int host_fs;           /**< current samplerate of the host */
+    int reInitFilters;     /**< FLAG: 0: do not reinit, 1: reinit, 2: reinit in progress */
+    int nOutputChannels;   /**< number of output channels (same as the number of channels in the loaded wav) */
+    
+    
+    //void* hMatrixconv_data;
     int ir_fs;
     float** irs;   /**< npositionsx x (FLAT: nfilters x filter_length) */
     int nIrChannels; /** < number of filters per position */
     int ir_length;
+    /* positions */
     vectorND* positions; /** < npositions x 3 */
     vectorND* positions_Last;
     int nPositions;
@@ -95,8 +104,8 @@ typedef struct _tvconv
     
     
     /* user parameters */
-//    int nChannels;
-//    int enablePartitionedConv;
+    int nInputChannels;        /**< number of input channels */
+    int enablePartitionedConv; /**< 0: disabled, 1: enabled */
     vectorND position;    
     char* sofa_filepath;
 

@@ -51,7 +51,7 @@ void tvconv_destroy(void** const phTVCnv);
 /**
  * Initialises an instance of tvconv with default settings
  *
- * @param[in] hTVCnv         matrixconv handle
+ * @param[in] hTVCnv         tvconv handle
  * @param[in] samplerate    Host samplerate.
  * @param[in] hostBlockSize Host frame/block size
  */
@@ -76,10 +76,99 @@ void tvconv_process(void* const hTVCnv,
                     int nOutputs,
                     int nSamples);
 
+/* ========================================================================== */
+/*                                Set Functions                               */
+/* ========================================================================== */
+    
+/**
+ * Sets all intialisation flags to 1. Re-initialising all settings/variables,
+ * as tvconv is currently configured, at next available opportunity.
+ */
+void tvconv_refreshParams(void* const hTVCnv);
+
+/**
+ * Checks whether things have to be reinitialised, and does so if it is needed
+ */
+void tvconv_checkReInit(void* const hTVCnv);
+
 
 void tvconv_setFiltersAndPositions(void* const hTVCnv);
 
+/**
+ * Enable (1), disable (0), partitioned convolution
+ */
+void tvconv_setEnablePart(void* const hTVCnv, int newState);
+
+/**
+ * Sets the number of input channels.
+ *
+ * @note The loaded wav data channels are divided by the number of channels
+ *       (into equal lengths). These are interpreted by tvconv as the
+ *       filters to apply to each input channel to acquire the corresponding
+ *       output channel
+ */
+void tvconv_setNumInputChannels(void* const hTVCnv, int newValue);
+
 void tvconv_setSofaFilePath(void* const hTVCnv, const char* path);
+
+/* ========================================================================== */
+/*                                Get Functions                               */
+/* ========================================================================== */
+
+/**
+ * Returns the processing framesize (i.e., number of samples processed with
+ * every _process() call )
+ */
+int tvconv_getFrameSize(void);
+
+/**
+ * Returns a flag indicating whether partitioned convolution is enabled (1) or
+ * disabled (0)
+ */
+int tvconv_getEnablePart(void* const hTVCnv);
+    
+/**
+ * Returns the number input channels
+ */
+int tvconv_getNumInputChannels(void* const hTVCnv);
+
+/**
+ * Returns the number of output channels (the same as the number of channels in
+ * the loaded sofa file)
+ */
+int tvconv_getNumOutputChannels(void* const hTVCnv);
+
+/**
+ * Returns the currect host block size
+ */
+int tvconv_getHostBlockSize(void* const hTVCnv);
+
+/**
+ * Returns the number of filters in the loaded wav file (number of outputs
+ * multiplied by the number of inputs)
+ */
+int tvconv_getNIRs(void* const hTVCnv);
+
+/**
+ * Returns the current filter length, in samples
+ */
+int tvconv_getIRLength(void* const hTVCnv);
+
+/**
+ * Returns the samplerate of the loaded filters
+ */
+int tvconv_getIRFs(void* const hTVCnv);
+
+/**
+ * Returns the samperate of the host
+ */
+int tvconv_getHostFs(void* const hTVCnv);
+
+/**
+ * Returns the processing delay in samples (may be used for delay compensation
+ * features)
+ */
+int tvconv_getProcessingDelay(void* const hTVCnv);
 
 void tvconv_test(void* const hTVCnv);
 
