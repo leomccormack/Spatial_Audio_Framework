@@ -46,8 +46,7 @@ void decorrelator_create
     pData->OutputFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
 
     /* codec data */
-    pData->hDec = NULL;
-    pData->hDec2 = NULL;
+    pData->hDecor = NULL;
     pData->hDucker = NULL;
     pData->new_nChannels = pData->nChannels;
     pData->progressBar0_1 = 0.0f;
@@ -83,9 +82,7 @@ void decorrelator_destroy
         free(pData->progressBarText);
 
         transientDucker_destroy(&(pData->hDucker));
-        latticeDecorrelator_destroy(&(pData->hDec));
-        latticeDecorrelator_destroy(&(pData->hDec2));
-
+        latticeDecorrelator_destroy(&(pData->hDecor));
 
         free(pData);
         pData = NULL;
@@ -104,6 +101,8 @@ void decorrelator_init
     /* define frequency vector */
     pData->fs = sampleRate;
     afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
+    if(pData->hDecor!=NULL)
+        latticeDecorrelator_reset(pData->hDecor);
 }
 
 void decorrelator_initCodec
@@ -141,20 +140,13 @@ void decorrelator_initCodec
     transientDucker_destroy(&(pData->hDucker));
     transientDucker_create(&(pData->hDucker), nChannels, HYBRID_BANDS);
 
-    /* Init decorrelator 1 (best to apply these decorrelators in 2 stages) */
-    int orders[5] = {6, 6, 6, 3, 2};
-    float freqCutoffs[5] = {700.0f, 2.4e3f, 4e3f, 12e3f, 20e3f};
-    int fixedDelays[6] = {8, 8, 7, 2, 1, 2};
-    latticeDecorrelator_destroy(&(pData->hDec));
-    //latticeDecorrelator_create(&(pData->hDec), nChannels, orders, freqCutoffs, fixedDelays, 5, pData->freqVector, 0, HYBRID_BANDS);
-
-    /* Init decorrelator 2 */
-    float freqCutoffs2[3] = {700.0f, 2.4e3f, 4e3f};
-    int orders2[3] = {3, 3, 2};
-    int fixedDelays2[4] = {2, 2, 1, 0};
-    latticeDecorrelator_destroy(&(pData->hDec2));
-    assert(0); // INCOMPLETE!
-    //latticeDecorrelator_create(&(pData->hDec2), nChannels, orders2, freqCutoffs2, fixedDelays2, 3, pData->freqVector, nChannels, HYBRID_BANDS);
+    /* Init decorrelator  */
+    const int orders[4] = {20, 15, 6, 3}; /* 20th order up to 700Hz, 15th->2.4kHz, 6th->4kHz, 3rd->12kHz, NONE(only delays)->Nyquist */
+    //const float freqCutoffs[4] = {600.0f, 2.4e3f, 4.0e3f, 12e3f};
+    const float freqCutoffs[4] = {900.0f, 6.8e3f, 12e3f, 16e3f};
+    const int maxDelay = 12;
+    latticeDecorrelator_destroy(&(pData->hDecor));
+    latticeDecorrelator_create(&(pData->hDecor), pData->fs, HOP_SIZE, pData->freqVector, HYBRID_BANDS, pData->nChannels, (int*)orders, (float*)freqCutoffs, 4, maxDelay, 0, -36.0f);
 
     /* done! */
     strcpy(pData->progressBarText,"Done!");
@@ -195,11 +187,10 @@ void decorrelator_process
         /* Main processing: */
         if(pData->enableTransientDucker){
             transientDucker_apply(pData->hDucker, pData->InputFrameTF, TIME_SLOTS, 0.95f, 0.995f, pData->OutputFrameTF);
-            latticeDecorrelator_apply(pData->hDec,  pData->OutputFrameTF,  TIME_SLOTS, pData->OutputFrameTF);
+            latticeDecorrelator_apply(pData->hDecor,  pData->OutputFrameTF,  TIME_SLOTS, pData->OutputFrameTF);
         }
         else
-            latticeDecorrelator_apply(pData->hDec,  pData->InputFrameTF,  TIME_SLOTS, pData->OutputFrameTF);
-        latticeDecorrelator_apply(pData->hDec2, pData->OutputFrameTF, TIME_SLOTS, pData->OutputFrameTF);
+            latticeDecorrelator_apply(pData->hDecor,  pData->InputFrameTF,  TIME_SLOTS, pData->OutputFrameTF);
 
         /* inverse-TFT */
         afSTFT_backward(pData->hSTFT, pData->OutputFrameTF, FRAME_SIZE, pData->OutputFrameTD);

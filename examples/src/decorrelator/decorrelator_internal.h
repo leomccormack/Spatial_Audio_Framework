@@ -72,8 +72,7 @@ typedef struct _decorrelator
     float freqVector[HYBRID_BANDS]; /**< frequency vector for time-frequency transform, in Hz */
      
     /* our codec configuration */
-    void* hDec;
-    void* hDec2;
+    void* hDecor; 
     void* hDucker;
     CODEC_STATUS codecStatus;
     float progressBar0_1;
