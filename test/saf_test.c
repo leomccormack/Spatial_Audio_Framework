@@ -70,7 +70,7 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
 
-    /* run each unit test */ 
+    /* run each unit test */
     RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
@@ -950,19 +950,19 @@ void test__realloc2d_r(void){
 
 void test__latticeDecorrelator(void){
     int c, band, nBands, idx, hopIdx, i;
-    void* hDecor, *hDecor2, *hSTFT;
+    void* hDecor, *hSTFT;
     float icc, tmp, tmp2;
     float* freqVector;
     float** inputTimeDomainData, **outputTimeDomainData, **tempHop;
     float_complex*** inTFframe, ***outTFframe;
 
     /* config */
-    const float acceptedICC = 0.02f;
+    const float acceptedICC = 0.05f;
     const int nCH = 24;
     const int nTestHops = 2000;
     const int hopSize = 128;
-    const int afSTFTdelay = hopSize*12;
-    const int lSig = nTestHops*hopSize+afSTFTdelay;
+    const int procDelay = hopSize*12 + 10;
+    const int lSig = nTestHops*hopSize+procDelay;
     const float fs = 48e3f;
     nBands = hopSize+5;
 
@@ -979,19 +979,14 @@ void test__latticeDecorrelator(void){
     freqVector = malloc1d(nBands*sizeof(float));
     afSTFT_getCentreFreqs(hSTFT, fs, nBands, freqVector);
 
-    /* setup decorrelator 1 */
-    int orders[5] = {6, 6, 6, 3, 2};
-    float freqCutoffs[5] = {700.0f, 2.4e3f, 4e3f, 12e3f, 20e3f};
-    int fixedDelays[6] = {8, 8, 7, 2, 1, 2};
-    latticeDecorrelator_create(&hDecor, nCH, orders, freqCutoffs, fixedDelays, 5, freqVector, 0, 133);
+    /* setup decorrelator */
+    int orders[4] = {20, 15, 6, 3}; /* 20th order up to 700Hz, 15th->2.4kHz, 6th->4kHz, 3rd->12kHz, NONE(only delays)->Nyquist */
+    //float freqCutoffs[4] = {600.0f, 2.6e3f, 4.5e3f, 12e3f};
+    float freqCutoffs[4] = {900.0f, 6.8e3f, 12e3f, 24e3f};
+    const int maxDelay = 12;
+    latticeDecorrelator_create(&hDecor, fs, hopSize, freqVector, nBands, nCH, orders, freqCutoffs, 4, maxDelay, 0, -60.0f);
 
-    /* setup decorrelator 2 */
-    float freqCutoffs2[3] = {700.0f, 2.4e3f, 4e3f};
-    int orders2[3] = {2, 3, 2};
-    int fixedDelays2[4] = {2, 2, 1, 0};
-    latticeDecorrelator_create(&hDecor2, nCH, orders2, freqCutoffs2, fixedDelays2, 3, freqVector, nCH, 133);
-
-    /* Pass input data through afSTFT */
+    /* Processing loop */
     idx = 0;
     hopIdx = 0;
     while(idx<lSig){
@@ -1006,7 +1001,6 @@ void test__latticeDecorrelator(void){
 
         /* decorrelate */
         latticeDecorrelator_apply(hDecor, inTFframe, 1, outTFframe);
-        latticeDecorrelator_apply(hDecor2, outTFframe, 1, outTFframe);
 
         /*  backward TF transform */
         afSTFT_backward(hSTFT, outTFframe, hopSize, tempHop);
@@ -1018,13 +1012,13 @@ void test__latticeDecorrelator(void){
         hopIdx++;
     }
 
-    /* Compensate for afSTFT delay, and check that the inter-channel correlation
+    /* Compensate for processing delay, and check that the inter-channel correlation
      * coefficient is below the accepted threshold (ideally 0, if fully
      * decorrelated...) */
     for(c=0; c<nCH; c++){
-        utility_svvdot(inputTimeDomainData[0], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &icc);
-        utility_svvdot(inputTimeDomainData[0], inputTimeDomainData[0], (lSig-afSTFTdelay), &tmp);
-        utility_svvdot(&outputTimeDomainData[c][afSTFTdelay], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &tmp2);
+        utility_svvdot(inputTimeDomainData[0], &outputTimeDomainData[c][procDelay], (lSig-procDelay), &icc);
+        utility_svvdot(inputTimeDomainData[0], inputTimeDomainData[0], (lSig-procDelay), &tmp);
+        utility_svvdot(&outputTimeDomainData[c][procDelay], &outputTimeDomainData[c][procDelay], (lSig-procDelay), &tmp2);
 
         icc = icc/sqrtf(tmp*tmp2); /* normalise */
         TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
@@ -1034,9 +1028,9 @@ void test__latticeDecorrelator(void){
     int c2;
     for(c=0; c<nCH; c++){
         for(c2=0; c2<nCH; c2++){
-            utility_svvdot(&outputTimeDomainData[c][afSTFTdelay], &outputTimeDomainData[c2][afSTFTdelay], (lSig-afSTFTdelay), &icc);
-            utility_svvdot(&outputTimeDomainData[c2][afSTFTdelay], &outputTimeDomainData[c2][afSTFTdelay], (lSig-afSTFTdelay), &tmp);
-            utility_svvdot(&outputTimeDomainData[c][afSTFTdelay], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &tmp2);
+            utility_svvdot(&outputTimeDomainData[c][procDelay], &outputTimeDomainData[c2][procDelay], (lSig-procDelay), &icc);
+            utility_svvdot(&outputTimeDomainData[c2][procDelay], &outputTimeDomainData[c2][procDelay], (lSig-procDelay), &tmp);
+            utility_svvdot(&outputTimeDomainData[c][procDelay], &outputTimeDomainData[c][procDelay], (lSig-procDelay), &tmp2);
 
             icc = icc/sqrtf(tmp*tmp2); /* normalise */
            // TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
@@ -1046,7 +1040,6 @@ void test__latticeDecorrelator(void){
 
     /* Clean-up */
     latticeDecorrelator_destroy(&hDecor);
-    latticeDecorrelator_destroy(&hDecor2);
     free(inTFframe);
     free(outTFframe);
     free(tempHop);

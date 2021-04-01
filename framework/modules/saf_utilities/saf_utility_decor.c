@@ -23,6 +23,7 @@
  */
  
 #include "saf_utilities.h"
+#include "saf_externals.h"
 
 /**
  * Internal Lattice all-pass filter structure */
@@ -40,11 +41,12 @@ typedef struct _latticeDecor_data{
     int nCH;
     int nCutoffs;
     int nBands;
-    int nXtimeslots;
     int maxBufferLen;
     int* orders;
     int* TF_delays;
     latticeAPF** lttc_apf;
+    float en_avg_coeff;
+    float gateThresh_dB;
 
     /* run-time */
     float_complex*** delayBuffers;
@@ -189,19 +191,22 @@ void synthesiseNoiseReverb
 void latticeDecorrelator_create
 (
     void** phDecor,
+    float fs,
+    int hopsize,
+    float* freqVector,
+    int nBands,
     int nCH,
     int* orders,
     float* freqCutoffs,
-    int* fixedDelays,
     int nCutoffs,
-    float* freqVector,
+    int maxDelay,
     int lookupOffset,
-    int nBands
+    float gateThresh_dB
 )
 {
     *phDecor = malloc1d(sizeof(latticeDecor_data));
     latticeDecor_data *h = (latticeDecor_data*)(*phDecor);
-    int i, band, ch, o, filterIdx, maxDelay;
+    int i, band, ch, o, filterIdx;
 
     h->nCH = nCH;
     h->nCutoffs = nCutoffs;
@@ -210,11 +215,14 @@ void latticeDecorrelator_create
     /* alloc */
     h->orders = malloc1d(nCutoffs*sizeof(int));
     memcpy(h->orders, orders, nCutoffs*sizeof(int));
-    h->TF_delays = malloc1d(nBands * sizeof(int));
+    h->TF_delays = malloc1d(nBands * nCH * sizeof(int));
     h->lttc_apf = (latticeAPF**)malloc2d(nBands, nCH, sizeof(latticeAPF));
+    h->gateThresh_dB = gateThresh_dB;
 
-    /* set-up delays and allpass filters per band and channel */
-    maxDelay = 0;
+    /* Static delays */
+    getDecorrelationDelays(h->nCH, freqVector, h->nBands, fs, maxDelay, hopsize, h->TF_delays);
+
+    /* set-up allpass filters per band and channel */
     for(band=0; band<nBands; band++){
         filterIdx = -1;
 
@@ -225,16 +233,6 @@ void latticeDecorrelator_create
                 break;
             }
         }
-
-        /* Fixed frequency dependent delays */
-        if(filterIdx==-1)
-            h->TF_delays[band] = fixedDelays[nCutoffs]+1;
-        else
-            h->TF_delays[band] = fixedDelays[filterIdx]+1;
-
-        /* keep track of maximum delay */
-        if(h->TF_delays[band]>maxDelay)
-            maxDelay = h->TF_delays[band];
 
         /* Pull lattice allpass filter coefficients from database */
         for(ch=0; ch<nCH; ch++){
@@ -248,7 +246,7 @@ void latticeDecorrelator_create
             else{
                 h->lttc_apf[band][ch].order = h->orders[filterIdx];
                 h->lttc_apf[band][ch].coeffs = (float**)malloc2d(2, h->orders[filterIdx], sizeof(float));
-                h->lttc_apf[band][ch].buffer = calloc1d(h->orders[filterIdx], sizeof(float_complex));
+                h->lttc_apf[band][ch].buffer = calloc1d(h->lttc_apf[band][ch].order, sizeof(float_complex));
 
                 /* numerator coefficients */
                 switch(orders[filterIdx]){
@@ -275,12 +273,13 @@ void latticeDecorrelator_create
     }
 
     /* Run-time */
-    h->maxBufferLen = maxDelay;
+    h->maxBufferLen = maxDelay+1;
     h->delayBuffers = (float_complex***)calloc3d(nBands, nCH, h->maxBufferLen, sizeof(float_complex));
-    h->rIdx = malloc1d(nBands*sizeof(int));
+    h->rIdx = malloc1d(nBands*nCH*sizeof(int));
     for(band=0; band<nBands; band++)
-        h->rIdx[band] = h->TF_delays[band]-1;
-    h->wIdx = calloc1d(nBands,sizeof(int));
+        for(ch=0; ch<nCH; ch++)
+            h->rIdx[band*nCH+ch] = h->TF_delays[band*nCH+ch];
+    h->wIdx = calloc1d(nBands*nCH,sizeof(int));
 }
 
 void latticeDecorrelator_destroy
@@ -311,6 +310,21 @@ void latticeDecorrelator_destroy
     }
 }
 
+void latticeDecorrelator_reset
+(
+    void* hDecor
+)
+{
+    latticeDecor_data *h = (latticeDecor_data*)(hDecor);
+    int band, ch;
+
+    memset(FLATTEN3D(h->delayBuffers), 0, h->nBands * h->nCH * h->maxBufferLen * sizeof(float_complex));
+    for(band=0; band<h->nBands; band++)
+        for(ch=0; ch<h->nCH; ch++)
+            if(h->lttc_apf[band][ch].buffer!=NULL)
+                memset(h->lttc_apf[band][ch].buffer, 0, h->lttc_apf[band][ch].order * sizeof(float_complex));
+}
+
 void latticeDecorrelator_apply
 (
     void* hDecor,
@@ -323,21 +337,21 @@ void latticeDecorrelator_apply
     int band, ch, t, i;
     float_complex ytmp, xtmp;
 
-    /* Apply fixed delay */
     for(t=0; t<nTimeSlots; t++){
         for(band=0; band <h->nBands; band++){
             for(ch=0; ch<h->nCH; ch++){
-                h->delayBuffers[band][ch][h->wIdx[band]] = inFrame[band][ch][t];
-                decorFrame[band][ch][t] = h->delayBuffers[band][ch][h->rIdx[band]];
-            }
+                /* Apply fixed delay */
+                h->delayBuffers[band][ch][h->wIdx[band*(h->nCH) + ch]] = inFrame[band][ch][t];
+                decorFrame[band][ch][t] = h->delayBuffers[band][ch][h->rIdx[band*(h->nCH) + ch]];
 
-            /* increment and wrap-around as needed */
-            h->rIdx[band]++;
-            h->wIdx[band]++;
-            if( h->rIdx[band] >= h->TF_delays[band] )
-                h->rIdx[band] = 0;
-            if( h->wIdx[band] >= h->TF_delays[band] )
-                h->wIdx[band] = 0;
+                /* increment and wrap-around as needed */
+                h->rIdx[band*(h->nCH) + ch]++;
+                h->wIdx[band*(h->nCH) + ch]++;
+                if( h->rIdx[band*(h->nCH) + ch] >= h->TF_delays[band*(h->nCH) + ch] )
+                    h->rIdx[band*(h->nCH) + ch] = 0;
+                if( h->wIdx[band*(h->nCH) + ch] >= h->TF_delays[band*(h->nCH) + ch] )
+                    h->wIdx[band*(h->nCH) + ch] = 0;
+            }
         }
     }
 
@@ -364,7 +378,7 @@ void latticeDecorrelator_apply
 #else
     for(band=0; band <h->nBands; band++){
         for(ch=0; ch<h->nCH; ch++){
-            if(h->lttc_apf[band][ch].buffer!=NULL){ /* only if filter is defined... */
+            if(h->lttc_apf[band][ch].buffer!=NULL){ /* only if filter is defined */
                 for(t=0; t<nTimeSlots; t++){
                     xtmp = decorFrame[band][ch][t];
                     ytmp = h->lttc_apf[band][ch].buffer[0] + xtmp * (h->lttc_apf[band][ch].coeffs[0][0]);
@@ -381,7 +395,12 @@ void latticeDecorrelator_apply
         } 
     }
 #endif
+
+    /* The worst gate ever... (can, and should, be done better...) */
+    if(10.0f*log10f(cblas_scasum(h->nBands*(h->nCH)*nTimeSlots, FLATTEN3D(inFrame), 1)/((float)(h->nBands*(h->nCH)*nTimeSlots))) < h->gateThresh_dB)
+        memset(FLATTEN3D(decorFrame), 0, h->nBands*(h->nCH)*nTimeSlots*sizeof(float_complex));
 }
+
 
 void transientDucker_create
 (

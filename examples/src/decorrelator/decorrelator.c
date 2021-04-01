@@ -146,14 +146,15 @@ void decorrelator_initCodec
     float freqCutoffs[5] = {700.0f, 2.4e3f, 4e3f, 12e3f, 20e3f};
     int fixedDelays[6] = {8, 8, 7, 2, 1, 2};
     latticeDecorrelator_destroy(&(pData->hDec));
-    latticeDecorrelator_create(&(pData->hDec), nChannels, orders, freqCutoffs, fixedDelays, 5, pData->freqVector, 0, HYBRID_BANDS);
+    //latticeDecorrelator_create(&(pData->hDec), nChannels, orders, freqCutoffs, fixedDelays, 5, pData->freqVector, 0, HYBRID_BANDS);
 
     /* Init decorrelator 2 */
     float freqCutoffs2[3] = {700.0f, 2.4e3f, 4e3f};
     int orders2[3] = {3, 3, 2};
     int fixedDelays2[4] = {2, 2, 1, 0};
     latticeDecorrelator_destroy(&(pData->hDec2));
-    latticeDecorrelator_create(&(pData->hDec2), nChannels, orders2, freqCutoffs2, fixedDelays2, 3, pData->freqVector, nChannels, HYBRID_BANDS);
+    assert(0); // INCOMPLETE!
+    //latticeDecorrelator_create(&(pData->hDec2), nChannels, orders2, freqCutoffs2, fixedDelays2, 3, pData->freqVector, nChannels, HYBRID_BANDS);
 
     /* done! */
     strcpy(pData->progressBarText,"Done!");
