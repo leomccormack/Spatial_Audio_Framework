@@ -93,6 +93,7 @@ $(document).ready(function(){initNavTree('saf__utility__decor_8c.html',''); init
 <p>A collection of signal decorrelators.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="saf__utilities_8h_source.html">saf_utilities.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="saf__externals_8h_source.html">saf_externals.h</a>&quot;</code><br />
 </div>
 <p><a href="saf__utility__decor_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -116,12 +117,16 @@ Functions</h2></td></tr>
 <tr class="memitem:gae3bd87091077de3a46c8360536632ef4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gae3bd87091077de3a46c8360536632ef4">synthesiseNoiseReverb</a> (int nCH, float fs, float *t60, float *fcen_oct, int nBands, int flattenFLAG, float **rir_filt, int *rir_len)</td></tr>
 <tr class="memdesc:gae3bd87091077de3a46c8360536632ef4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns quick and dirty exponentially decaying noise bursts.  <a href="group___utilities.html#gae3bd87091077de3a46c8360536632ef4">More...</a><br /></td></tr>
 <tr class="separator:gae3bd87091077de3a46c8360536632ef4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3b21bc26536e1e3819bde56b16717a45"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga3b21bc26536e1e3819bde56b16717a45">latticeDecorrelator_create</a> (void **phDecor, int nCH, int *orders, float *freqCutoffs, int *fixedDelays, int nCutoffs, float *freqVector, int lookupOffset, int nBands)</td></tr>
-<tr class="memdesc:ga3b21bc26536e1e3819bde56b16717a45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the lattice all-pass-filter-based multi-channel signal decorrelator.  <a href="group___utilities.html#ga3b21bc26536e1e3819bde56b16717a45">More...</a><br /></td></tr>
-<tr class="separator:ga3b21bc26536e1e3819bde56b16717a45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga24116cbeeaa29945bc95f06c9ac88554"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga24116cbeeaa29945bc95f06c9ac88554">latticeDecorrelator_create</a> (void **phDecor, float fs, int hopsize, float *freqVector, int nBands, int nCH, int *orders, float *freqCutoffs, int nCutoffs, int maxDelay, int lookupOffset, float gateThresh_dB)</td></tr>
+<tr class="memdesc:ga24116cbeeaa29945bc95f06c9ac88554"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the lattice all-pass-filter-based multi-channel signal decorrelator.  <a href="group___utilities.html#ga24116cbeeaa29945bc95f06c9ac88554">More...</a><br /></td></tr>
+<tr class="separator:ga24116cbeeaa29945bc95f06c9ac88554"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad77e5c2c2273383cb44ef8fda671fe92"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gad77e5c2c2273383cb44ef8fda671fe92">latticeDecorrelator_destroy</a> (void **phDecor)</td></tr>
 <tr class="memdesc:gad77e5c2c2273383cb44ef8fda671fe92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys an instance of the lattice all-pass-filter-based multi-channel signal decorrelator.  <a href="group___utilities.html#gad77e5c2c2273383cb44ef8fda671fe92">More...</a><br /></td></tr>
 <tr class="separator:gad77e5c2c2273383cb44ef8fda671fe92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga870b79ef933c671c8b85e96bc8da09c4"><td class="memItemLeft" align="right" valign="top">
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga870b79ef933c671c8b85e96bc8da09c4">latticeDecorrelator_reset</a> (void *hDecor)</td></tr>
+<tr class="memdesc:ga870b79ef933c671c8b85e96bc8da09c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the internal buffers to zero. <br /></td></tr>
+<tr class="separator:ga870b79ef933c671c8b85e96bc8da09c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga88cb15c08fbf7cf58a4512b0bdd256a0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga88cb15c08fbf7cf58a4512b0bdd256a0">latticeDecorrelator_apply</a> (void *hDecor, float_complex ***inFrame, int nTimeSlots, float_complex ***decorFrame)</td></tr>
 <tr class="memdesc:ga88cb15c08fbf7cf58a4512b0bdd256a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the lattice all-pass-filter-based multi-channel signal decorrelator.  <a href="group___utilities.html#ga88cb15c08fbf7cf58a4512b0bdd256a0">More...</a><br /></td></tr>
 <tr class="separator:ga88cb15c08fbf7cf58a4512b0bdd256a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -147,7 +152,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__decor_8c.html">saf_utility_decor.c</a></li>
-    <li class="footer">Generated on Sat Mar 20 2021 21:06:57 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Fri Apr 2 2021 15:09:57 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

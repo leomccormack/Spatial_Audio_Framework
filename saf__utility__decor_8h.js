@@ -2,8 +2,9 @@ var saf__utility__decor_8h =
 [
     [ "getDecorrelationDelays", "group___utilities.html#gaf46a6e146753e79dbe3d19ccf3bf902f", null ],
     [ "latticeDecorrelator_apply", "group___utilities.html#ga88cb15c08fbf7cf58a4512b0bdd256a0", null ],
-    [ "latticeDecorrelator_create", "group___utilities.html#ga3b21bc26536e1e3819bde56b16717a45", null ],
+    [ "latticeDecorrelator_create", "group___utilities.html#ga24116cbeeaa29945bc95f06c9ac88554", null ],
     [ "latticeDecorrelator_destroy", "group___utilities.html#gad77e5c2c2273383cb44ef8fda671fe92", null ],
+    [ "latticeDecorrelator_reset", "group___utilities.html#ga870b79ef933c671c8b85e96bc8da09c4", null ],
     [ "synthesiseNoiseReverb", "group___utilities.html#gae3bd87091077de3a46c8360536632ef4", null ],
     [ "transientDucker_apply", "group___utilities.html#gaf528170e0dcc2eedfaa881a5afde245b", null ],
     [ "transientDucker_create", "group___utilities.html#gaeffce1bb1ac679faa7ba7a2dea162d8e", null ],

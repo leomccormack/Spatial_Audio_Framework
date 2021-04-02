@@ -409,12 +409,16 @@ Functions</h2></td></tr>
 <tr class="memitem:gae3bd87091077de3a46c8360536632ef4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gae3bd87091077de3a46c8360536632ef4">synthesiseNoiseReverb</a> (int nChannels, float fs, float *t60, float *fcen_oct, int nBands, int flattenFLAG, float **rir_filt, int *rir_len)</td></tr>
 <tr class="memdesc:gae3bd87091077de3a46c8360536632ef4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns quick and dirty exponentially decaying noise bursts.  <a href="group___utilities.html#gae3bd87091077de3a46c8360536632ef4">More...</a><br /></td></tr>
 <tr class="separator:gae3bd87091077de3a46c8360536632ef4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3b21bc26536e1e3819bde56b16717a45"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga3b21bc26536e1e3819bde56b16717a45">latticeDecorrelator_create</a> (void **phDecor, int nCH, int *orders, float *freqCutoffs, int *fixedDelays, int nCutoffs, float *freqVector, int lookupOffset, int nBands)</td></tr>
-<tr class="memdesc:ga3b21bc26536e1e3819bde56b16717a45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the lattice all-pass-filter-based multi-channel signal decorrelator.  <a href="group___utilities.html#ga3b21bc26536e1e3819bde56b16717a45">More...</a><br /></td></tr>
-<tr class="separator:ga3b21bc26536e1e3819bde56b16717a45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga24116cbeeaa29945bc95f06c9ac88554"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga24116cbeeaa29945bc95f06c9ac88554">latticeDecorrelator_create</a> (void **phDecor, float fs, int hopsize, float *freqVector, int nBands, int nCH, int *orders, float *freqCutoffs, int nCutoffs, int maxDelay, int lookupOffset, float gateThresh_dB)</td></tr>
+<tr class="memdesc:ga24116cbeeaa29945bc95f06c9ac88554"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the lattice all-pass-filter-based multi-channel signal decorrelator.  <a href="group___utilities.html#ga24116cbeeaa29945bc95f06c9ac88554">More...</a><br /></td></tr>
+<tr class="separator:ga24116cbeeaa29945bc95f06c9ac88554"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad77e5c2c2273383cb44ef8fda671fe92"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gad77e5c2c2273383cb44ef8fda671fe92">latticeDecorrelator_destroy</a> (void **phDecor)</td></tr>
 <tr class="memdesc:gad77e5c2c2273383cb44ef8fda671fe92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys an instance of the lattice all-pass-filter-based multi-channel signal decorrelator.  <a href="group___utilities.html#gad77e5c2c2273383cb44ef8fda671fe92">More...</a><br /></td></tr>
 <tr class="separator:gad77e5c2c2273383cb44ef8fda671fe92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga870b79ef933c671c8b85e96bc8da09c4"><td class="memItemLeft" align="right" valign="top"><a id="ga870b79ef933c671c8b85e96bc8da09c4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga870b79ef933c671c8b85e96bc8da09c4">latticeDecorrelator_reset</a> (void *hDecor)</td></tr>
+<tr class="memdesc:ga870b79ef933c671c8b85e96bc8da09c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the internal buffers to zero. <br /></td></tr>
+<tr class="separator:ga870b79ef933c671c8b85e96bc8da09c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga88cb15c08fbf7cf58a4512b0bdd256a0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga88cb15c08fbf7cf58a4512b0bdd256a0">latticeDecorrelator_apply</a> (void *hDecor, float_complex ***inFrame, int nTimeSlots, float_complex ***decorFrame)</td></tr>
 <tr class="memdesc:ga88cb15c08fbf7cf58a4512b0bdd256a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the lattice all-pass-filter-based multi-channel signal decorrelator.  <a href="group___utilities.html#ga88cb15c08fbf7cf58a4512b0bdd256a0">More...</a><br /></td></tr>
 <tr class="separator:ga88cb15c08fbf7cf58a4512b0bdd256a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -4054,7 +4058,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00066">66</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00068">68</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
 
 </div>
 </div>
@@ -4793,12 +4797,12 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00314">314</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00328">328</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
 
 </div>
 </div>
-<a id="ga3b21bc26536e1e3819bde56b16717a45"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3b21bc26536e1e3819bde56b16717a45">&#9670;&nbsp;</a></span>latticeDecorrelator_create()</h2>
+<a id="ga24116cbeeaa29945bc95f06c9ac88554"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga24116cbeeaa29945bc95f06c9ac88554">&#9670;&nbsp;</a></span>latticeDecorrelator_create()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -4808,6 +4812,30 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
           <td>(</td>
           <td class="paramtype">void **&#160;</td>
           <td class="paramname"><em>phDecor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>fs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>hopsize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>freqVector</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nBands</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -4830,20 +4858,14 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>fixedDelays</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>nCutoffs</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float *&#160;</td>
-          <td class="paramname"><em>freqVector</em>, </td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>maxDelay</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -4854,8 +4876,8 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>nBands</em>&#160;</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>gateThresh_dB</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -4867,19 +4889,22 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <p>Creates an instance of the lattice all-pass-filter-based multi-channel signal decorrelator. </p>
 <p>This decorrelator is intended for decorrelating signals in the time-frequency domain, and is therefore well-suited for audio coding [1] or Direction Audio Coding (DirAC) [2] purposes.</p>
-<dl class="section note"><dt>Note</dt><dd>It is recommended to use lower orders. You may also cascade 2 instances (each with lower orders), to attain the desired decorrelation without introducing instabilities, which accompanies the use of the much higher filter orders. </dd></dl>
+<p>TODO: The gate is very ad-hoc and terrible... can be done better.</p>
 <dl class="test"><dt><b><a class="el" href="test.html#_test000022">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aeb7e6c04ac91cc3d90025bcac95e8549" title="Testing the performance of the latticeDecorrelator, verifying that the inter- channel cross-correlati...">test__latticeDecorrelator()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">phDecor</td><td>(&amp;) address of lattice decorrelator handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">fs</td><td>Sampling rate </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hopsize</td><td>Hopsize in samples </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">freqVector</td><td>A vector with the centre frequency for each band in the filterbank or bin in the STFT. Use e.g. <a class="el" href="af_s_t_f_tlib_8c.html#aaf529d28c5dca94aacd10883055a8d10" title="Returns current frequency vector.">afSTFT_getCentreFreqs()</a> or <a class="el" href="group___utilities.html#ga9a0085bad83e7f4c66d2dd8c05e081b4" title="Calculates the frequencies (in Hz) of uniformly spaced bins, for a given FFT size and sampling rate.">getUniformFreqVector()</a> to obtain it; nBands x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nBands</td><td>Number of bands </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nCH</td><td>Number of channels </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">orders</td><td>Lattice all-pass filter orders (2,3,4,6,8,10,12,14, 15,16 18, or 20) per band grouping (except the last one); nCutoffs x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">freqCutoffs</td><td>Frequency cut-offs defining the band groupings; nCutoffs x 1 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">fixedDelays</td><td>Fixed time-frequency hop delays; (nCutoffs+1) x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nCutoffs</td><td>Number of cutoff frequencies </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">freqVector</td><td>A vector with the centre frequency for each band in the filterbank or bin in the STFT. Use e.g. <a class="el" href="af_s_t_f_tlib_8c.html#aaf529d28c5dca94aacd10883055a8d10" title="Returns current frequency vector.">afSTFT_getCentreFreqs()</a> or <a class="el" href="group___utilities.html#ga9a0085bad83e7f4c66d2dd8c05e081b4" title="Calculates the frequencies (in Hz) of uniformly spaced bins, for a given FFT size and sampling rate.">getUniformFreqVector()</a> to obtain it; nBands x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">maxDelay</td><td>Maximum static delay (hops, i.e. maxDelay*hopsize) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">lookupOffset</td><td>Optional offset for look-up tables (set to 0 if using just one instance) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">nBands</td><td>Number of bands</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">gateThresh_dB</td><td>Threshold, in dB, for when the gate should kick in</td></tr>
   </table>
   </dd>
 </dl>
@@ -4888,7 +4913,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <dd>
 [2] Pulkki, V., 2007. Spatial sound reproduction with directional audio coding. Journal of the Audio Engineering Society, 55(6), pp.503-516 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00189">189</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00191">191</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
 
 </div>
 </div>
@@ -4916,7 +4941,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00286">286</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00285">285</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
 
 </div>
 </div>
@@ -7235,7 +7260,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00116">116</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00118">118</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
 
 </div>
 </div>
@@ -7302,7 +7327,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00418">418</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00437">437</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
 
 </div>
 </div>
@@ -7348,7 +7373,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00386">386</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00405">405</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
 
 </div>
 </div>
@@ -7376,7 +7401,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00402">402</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00421">421</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
 
 </div>
 </div>
@@ -11039,7 +11064,7 @@ Example Usage</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sat Mar 20 2021 21:06:57 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Fri Apr 2 2021 15:09:57 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

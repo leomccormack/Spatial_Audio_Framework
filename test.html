@@ -129,7 +129,7 @@ $(document).ready(function(){initNavTree('test.html',''); initResizable(); });
 <dd><a class="anchor" id="_test000027"></a><a class="el" href="saf__test_8c.html#a195368bc46775c4a9370249c54b0bc35" title="Testing that the weights from the getVoronoiWeights() function sum to 4pi and that the weights are al...">test__getVoronoiWeights()</a> </dd>
 <dt>Global <a class="el" href="group___reverb.html#gac0c2934d49567126400205c3619597cb">ims_shoebox_create</a>  (void **phIms, float roomDimensions[3], float *abs_wall, float lowestOctaveBand, int nOctBands, float c_ms, float fs)</dt>
 <dd><a class="anchor" id="_test000009"></a><a class="el" href="saf__test_8c.html#a2221c87f296b695d87464eaa331d5cda" title="Testing the ims shoebox simulator, when generating room impulse respones (RIRs) from the computed ech...">test__ims_shoebox_RIR()</a>, <a class="el" href="saf__test_8c.html#ae49109411cfcb133adfe23ee2c655218" title="Testing the ims shoebox simulator, when applying the echograms in the time- domain.">test__ims_shoebox_TD()</a> </dd>
-<dt>Global <a class="el" href="group___utilities.html#ga3b21bc26536e1e3819bde56b16717a45">latticeDecorrelator_create</a>  (void **phDecor, int nCH, int *orders, float *freqCutoffs, int *fixedDelays, int nCutoffs, float *freqVector, int lookupOffset, int nBands)</dt>
+<dt>Global <a class="el" href="group___utilities.html#ga24116cbeeaa29945bc95f06c9ac88554">latticeDecorrelator_create</a>  (void **phDecor, float fs, int hopsize, float *freqVector, int nBands, int nCH, int *orders, float *freqCutoffs, int nCutoffs, int maxDelay, int lookupOffset, float gateThresh_dB)</dt>
 <dd><a class="anchor" id="_test000022"></a><a class="el" href="saf__test_8c.html#aeb7e6c04ac91cc3d90025bcac95e8549" title="Testing the performance of the latticeDecorrelator, verifying that the inter- channel cross-correlati...">test__latticeDecorrelator()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#gad0b4063c18046e0f89af3e9b1b0c2073">qmf_create</a>  (void **const phQMF, int nCHin, int nCHout, int hopsize, int hybridmode, QMF_FDDATA_FORMAT format)</dt>
 <dd><a class="anchor" id="_test000031"></a><a class="el" href="saf__test_8c.html#aac1d57603ebc37f0088e3fc83c804402" title="Testing the (near)-perfect reconstruction performance of the QMF filterbank.">test__qmf()</a> </dd>
@@ -166,7 +166,7 @@ $(document).ready(function(){initNavTree('test.html',''); initResizable(); });
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sat Mar 20 2021 21:06:57 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Fri Apr 2 2021 15:09:57 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

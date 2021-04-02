@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['coeff1_3806',['COEFF1',['../af_s_t_f_t__internal_8h.html#ab32b845aeac4309a22d2ad696aeb0af8',1,'afSTFT_internal.h']]],
-  ['coeff2_3807',['COEFF2',['../af_s_t_f_t__internal_8h.html#a4d22d8ee6f014146072b4a1a8d3d02a1',1,'afSTFT_internal.h']]],
-  ['coeff3_3808',['COEFF3',['../af_s_t_f_t__internal_8h.html#a86de42edb715a543dd54d7c23e96a47f',1,'afSTFT_internal.h']]]
+  ['coeff1_3808',['COEFF1',['../af_s_t_f_t__internal_8h.html#ab32b845aeac4309a22d2ad696aeb0af8',1,'afSTFT_internal.h']]],
+  ['coeff2_3809',['COEFF2',['../af_s_t_f_t__internal_8h.html#a4d22d8ee6f014146072b4a1a8d3d02a1',1,'afSTFT_internal.h']]],
+  ['coeff3_3810',['COEFF3',['../af_s_t_f_t__internal_8h.html#a86de42edb715a543dd54d7c23e96a47f',1,'afSTFT_internal.h']]]
 ];
