@@ -383,7 +383,7 @@ void latticeDecorrelator_apply
                     xtmp = decorFrame[band][ch][t];
                     ytmp = h->lttc_apf[band][ch].buffer[0] + xtmp * (h->lttc_apf[band][ch].coeffs[0][0]);
                     decorFrame[band][ch][t] = ytmp;
-                    
+
                     /* propagate through the rest of the lattice filter structure */
                     for(i=0; i<h->lttc_apf[band][ch].order-1; i++){
                         h->lttc_apf[band][ch].buffer[i] = h->lttc_apf[band][ch].buffer[i+1] +
@@ -396,7 +396,7 @@ void latticeDecorrelator_apply
     }
 #endif
 
-    /* The worst gate ever... (can, and should, be done better...) */
+    /* The worst noise gate ever... (can, and should, be done better...) */
     if(10.0f*log10f(cblas_scasum(h->nBands*(h->nCH)*nTimeSlots, FLATTEN3D(inFrame), 1)/((float)(h->nBands*(h->nCH)*nTimeSlots))) < h->gateThresh_dB)
         memset(FLATTEN3D(decorFrame), 0, h->nBands*(h->nCH)*nTimeSlots*sizeof(float_complex));
 }
