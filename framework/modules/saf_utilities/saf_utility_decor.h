@@ -205,7 +205,7 @@ void latticeDecorrelator_apply(/* Input Arguments */
                                float_complex*** decorFrame);
 
 /**
- * Creates an instance of the transient ducker
+ * Creates an instance of the transient ducker/extractor
  *
  * @param[in] phDucker (&) address of ducker handle
  * @param[in] nCH       Number of channels
@@ -225,14 +225,18 @@ void transientDucker_destroy(/* Input Arguments */
                              void** phDucker);
 
 /**
- * Applies the transient ducker
+ * Applies the transient ducker, returning either the "ducked" input frame,
+ * or the transient part of the input frame, or both
  *
- * @param[in]  hDucker    ducker handle
- * @param[in]  inFrame    input frame; nBands x nCH x nTimeSlots
- * @param[in]  nTimeSlots Number of time slots per frame
- * @param[in]  alpha      alpha value [0,1];
- * @param[in]  beta       beta value [0,1];
- * @param[out] outFrame   ducked frame; nBands x nCH x nTimeSlots
+ * @param[in]  hDucker        ducker handle
+ * @param[in]  inFrame        input frame; nBands x nCH x nTimeSlots
+ * @param[in]  nTimeSlots     Number of time slots per frame
+ * @param[in]  alpha          alpha value [0,1]; (e.g. alpha = 0.95f)
+ * @param[in]  beta           beta value [0,1];  (e.g. beta = 0.995f)
+ * @param[out] residualFrame  Residual part (set to NULL if not wanted);
+ *                            nBands x nCH x nTimeSlots
+ * @param[out] transientFrame Transient part (set to NULL if not wanted);
+ *                            nBands x nCH x nTimeSlots
  */
 void transientDucker_apply(/* Input Arguments */
                            void* hDucker,
@@ -241,7 +245,8 @@ void transientDucker_apply(/* Input Arguments */
                            float alpha,
                            float beta,
                            /* Output Arguments */
-                           float_complex*** outFrame);
+                           float_complex*** residualFrame,
+                           float_complex*** transientFrame);
 
 
 #ifdef __cplusplus

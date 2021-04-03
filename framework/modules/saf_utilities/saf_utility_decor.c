@@ -441,7 +441,8 @@ void transientDucker_apply
     int nTimeSlots,
     float alpha,
     float beta,
-    float_complex*** outFrame
+    float_complex*** residualFrame,
+    float_complex*** transientFrame
 )
 {
     transientDucker_data *h = (transientDucker_data*)(hDucker);
@@ -463,9 +464,15 @@ void transientDucker_apply
                     h->transientDetector2[band][i] = h->transientDetector1[band][i];
                 transientEQ = MIN(1.0f, 4.0f * (h->transientDetector2[band][i])/(h->transientDetector1[band][i]+2.23e-9f));
 #ifdef _MSC_VER
-                outFrame[band][i][t] = crmulf(inFrame[band][i][t], transientEQ);
+                if(residualFrame!=NULL)
+                    residualFrame[band][i][t] = crmulf(inFrame[band][i][t], transientEQ);
+                if(transientFrame!=NULL)
+                    transientFrame[band][i][t] = crmulf(inFrame[band][i][t], 1.0f-transientEQ);
 #else
-                outFrame[band][i][t] = inFrame[band][i][t] * transientEQ;
+                if(residualFrame!=NULL)
+                    residualFrame[band][i][t] = inFrame[band][i][t] * transientEQ;
+                if(transientFrame!=NULL)
+                    transientFrame[band][i][t] = inFrame[band][i][t] * (1.0f-transientEQ);
 #endif
             }
         }

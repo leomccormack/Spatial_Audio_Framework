@@ -37,6 +37,8 @@ void decorrelator_create
     /* default user parameters */
     pData->nChannels = 1;
     pData->enableTransientDucker = 0;
+    pData->decorAmount = 1.0f;
+    pData->compensateLevel = 1;
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
@@ -44,6 +46,7 @@ void decorrelator_create
     pData->OutputFrameTD = (float**)malloc2d(MAX_NUM_OUTPUTS, FRAME_SIZE, sizeof(float));
     pData->InputFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
     pData->OutputFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
+    pData->transientFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
 
     /* codec data */
     pData->hDecor = NULL;
@@ -79,6 +82,7 @@ void decorrelator_destroy
         free(pData->OutputFrameTD);
         free(pData->InputFrameTF);
         free(pData->OutputFrameTF);
+        free(pData->transientFrameTF);
         free(pData->progressBarText);
 
         transientDucker_destroy(&(pData->hDucker));
@@ -144,9 +148,9 @@ void decorrelator_initCodec
     const int orders[4] = {20, 15, 6, 3}; /* 20th order up to 700Hz, 15th->2.4kHz, 6th->4kHz, 3rd->12kHz, NONE(only delays)->Nyquist */
     //const float freqCutoffs[4] = {600.0f, 2.4e3f, 4.0e3f, 12e3f};
     const float freqCutoffs[4] = {900.0f, 6.8e3f, 12e3f, 16e3f};
-    const int maxDelay = 12;
+    const int maxDelay = 14;
     latticeDecorrelator_destroy(&(pData->hDecor));
-    latticeDecorrelator_create(&(pData->hDecor), pData->fs, HOP_SIZE, pData->freqVector, HYBRID_BANDS, pData->nChannels, (int*)orders, (float*)freqCutoffs, 4, maxDelay, 0, -36.0f);
+    latticeDecorrelator_create(&(pData->hDecor), pData->fs, HOP_SIZE, pData->freqVector, HYBRID_BANDS, pData->nChannels, (int*)orders, (float*)freqCutoffs, 4, maxDelay, 0, -30.0f);
 
     /* done! */
     strcpy(pData->progressBarText,"Done!");
@@ -165,11 +169,16 @@ void decorrelator_process
 )
 {
     decorrelator_data *pData = (decorrelator_data*)(hDecor);
-    int ch, i;
+    int ch, i, band, enableTransientDucker, compensateLevel;
+    float decorAmount;
+    float_complex scalec, scalec2;
     
     /* local copies of user parameters */
     int nCH;
     nCH = pData->nChannels;
+    decorAmount = pData->decorAmount;
+    enableTransientDucker = pData->enableTransientDucker;
+    compensateLevel = pData->compensateLevel;
 
     /* Process frame */
     if (nSamples == FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) ) {
@@ -184,13 +193,37 @@ void decorrelator_process
         /* Apply time-frequency transform (TFT) */
         afSTFT_forward(pData->hSTFT, pData->InputFrameTD, FRAME_SIZE, pData->InputFrameTF);
 
-        /* Main processing: */
-        if(pData->enableTransientDucker){
-            transientDucker_apply(pData->hDucker, pData->InputFrameTF, TIME_SLOTS, 0.95f, 0.995f, pData->OutputFrameTF);
+        /* Apply decorrelation */
+        if(enableTransientDucker){
+            /* remove transients */
+            transientDucker_apply(pData->hDucker, pData->InputFrameTF, TIME_SLOTS, 0.95f, 0.995f, pData->OutputFrameTF, pData->transientFrameTF);
+            /* decorrelate only the residual */
             latticeDecorrelator_apply(pData->hDecor,  pData->OutputFrameTF,  TIME_SLOTS, pData->OutputFrameTF);
         }
         else
             latticeDecorrelator_apply(pData->hDecor,  pData->InputFrameTF,  TIME_SLOTS, pData->OutputFrameTF);
+
+        /* Optionally compensate for the level (as they channels wll no longer sum coherently) */
+        if(compensateLevel){
+            scalec = cmplxf(0.75f*(float)nCH/(sqrtf((float)nCH)), 0.0f);
+            for(band=0; band<HYBRID_BANDS; band++)
+                cblas_cscal(nCH*TIME_SLOTS, &scalec, FLATTEN2D(pData->OutputFrameTF[band]), 1);
+        }
+
+        /* re-introduce the transient part */
+        if(enableTransientDucker){
+            scalec = !compensateLevel ? cmplxf(1.25f*(sqrtf((float)nCH)/(float)nCH), 0.0f) : cmplxf(1.0f, 0.0f);
+            for(band=0; band<HYBRID_BANDS; band++)
+                cblas_caxpy(nCH*TIME_SLOTS, &scalec, FLATTEN2D(pData->transientFrameTF[band]), 1, FLATTEN2D(pData->OutputFrameTF[band]), 1);
+        }
+
+        /* Mix  thedecorrelated audio with the input non-decorrelated audio */
+        scalec = cmplxf(decorAmount, 0.0f);
+        scalec2 = cmplxf(1.0f-decorAmount, 0.0f);
+        for(band=0; band<HYBRID_BANDS; band++){
+            cblas_cscal(nCH*TIME_SLOTS, &scalec, FLATTEN2D(pData->OutputFrameTF[band]), 1);
+            cblas_caxpy(nCH*TIME_SLOTS, &scalec2, FLATTEN2D(pData->InputFrameTF[band]), 1, FLATTEN2D(pData->OutputFrameTF[band]), 1);
+        }
 
         /* inverse-TFT */
         afSTFT_backward(pData->hSTFT, pData->OutputFrameTF, FRAME_SIZE, pData->OutputFrameTD);
@@ -225,6 +258,26 @@ void decorrelator_setNumberOfChannels(void* const hDecor, int newValue )
             decorrelator_setCodecStatus(hDecor, CODEC_STATUS_NOT_INITIALISED);
     }
 }
+
+void decorrelator_setDecorrelationAmount(void* const hDecor, float newValue)
+{
+    decorrelator_data *pData = (decorrelator_data*)(hDecor);
+    pData->decorAmount = CLAMP(newValue, 0.0f, 1.0f);
+}
+
+void decorrelator_setLevelCompensationFlag(void* const hDecor, int newValue)
+{
+    decorrelator_data *pData = (decorrelator_data*)(hDecor);
+    assert(newValue==0 || newValue==1);
+    pData->compensateLevel = newValue;
+}
+
+void decorrelator_setTransientBypassFlag(void* const hDecor, int newValue)
+{
+    decorrelator_data *pData = (decorrelator_data*)(hDecor);
+    assert(newValue==0 || newValue==1);
+    pData->enableTransientDucker = newValue;
+}
  
 /* Get Functions */
 
@@ -255,6 +308,24 @@ int decorrelator_getNumberOfChannels(void* const hDecor)
 {
     decorrelator_data *pData = (decorrelator_data*)(hDecor);
     return pData->new_nChannels;
+}
+
+float decorrelator_getDecorrelationAmount(void* const hDecor)
+{
+    decorrelator_data *pData = (decorrelator_data*)(hDecor);
+    return pData->decorAmount;
+}
+
+int decorrelator_getLevelCompensationFlag(void* const hDecor)
+{
+    decorrelator_data *pData = (decorrelator_data*)(hDecor);
+    return pData->compensateLevel;
+}
+
+int decorrelator_getTransientBypassFlag(void* const hDecor)
+{
+    decorrelator_data *pData = (decorrelator_data*)(hDecor);
+    return pData->enableTransientDucker;
 }
 
 int decorrelator_getDAWsamplerate(void* const hDecor)

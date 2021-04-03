@@ -66,6 +66,7 @@ typedef struct _decorrelator
     float** InputFrameTD;
     float** OutputFrameTD;
     float_complex*** InputFrameTF;
+    float_complex*** transientFrameTF;
     float_complex*** OutputFrameTF;
     void* hSTFT;                    /**< afSTFT handle */
     int afSTFTdelay;                /**< for host delay compensation */ 
@@ -85,6 +86,8 @@ typedef struct _decorrelator
     /* user parameters */
     int nChannels;
     int enableTransientDucker;
+    float decorAmount;
+    int compensateLevel;
     
 } decorrelator_data;
 

@@ -105,11 +105,21 @@ void decorrelator_process(void* const hDecor,
  */
 void decorrelator_refreshParams(void* const hDecor);
 
-/**
- * Sets the number of input/output channels
- */
+/** Sets the number of input/output channels */
 void decorrelator_setNumberOfChannels(void* const hDecor,
                                       int newValue);
+
+/** Sets the decorrelation amount [0..1] */
+void decorrelator_setDecorrelationAmount(void* const hDecor,
+                                         float newValue);
+
+/** Sets whether to apply level compensation (0 or 1) */
+void decorrelator_setLevelCompensationFlag(void* const hDecor,
+                                           int newValue);
+
+/** Sets whether to bypass decorrelating the transients (0 or 1) */
+void decorrelator_setTransientBypassFlag(void* const hDecor,
+                                         int newValue);
 
 
 /* ========================================================================== */
@@ -140,14 +150,20 @@ float decorrelator_getProgressBar0_1(void* const hDecor);
  */
 void decorrelator_getProgressBarText(void* const hDecor, char* text);
 
-/**
- * Returns the number of input/output channels
- */
+/** Returns the number of input/output channels */
 int decorrelator_getNumberOfChannels(void* const hDecor);
 
-/**
- * Returns the DAW/Host sample rate
- */
+
+/** Returns the decorrelation amount [0..1] */
+float decorrelator_getDecorrelationAmount(void* const hDecor);
+
+/** Returns whether to apply level compensation (0 or 1) */
+int decorrelator_getLevelCompensationFlag(void* const hDecor);
+
+/** Returns whether to bypass decorrelating the transients (0 or 1) */
+int decorrelator_getTransientBypassFlag(void* const hDecor);
+
+/** Returns the DAW/Host sample rate */
 int decorrelator_getDAWsamplerate(void* const hDecor);
 
 /**
