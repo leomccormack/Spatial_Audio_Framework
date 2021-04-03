@@ -131,14 +131,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="grou
 <tr class="memdesc:ga88cb15c08fbf7cf58a4512b0bdd256a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the lattice all-pass-filter-based multi-channel signal decorrelator.  <a href="group___utilities.html#ga88cb15c08fbf7cf58a4512b0bdd256a0">More...</a><br /></td></tr>
 <tr class="separator:ga88cb15c08fbf7cf58a4512b0bdd256a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaeffce1bb1ac679faa7ba7a2dea162d8e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaeffce1bb1ac679faa7ba7a2dea162d8e">transientDucker_create</a> (void **phDucker, int nCH, int nBands)</td></tr>
-<tr class="memdesc:gaeffce1bb1ac679faa7ba7a2dea162d8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the transient ducker.  <a href="group___utilities.html#gaeffce1bb1ac679faa7ba7a2dea162d8e">More...</a><br /></td></tr>
+<tr class="memdesc:gaeffce1bb1ac679faa7ba7a2dea162d8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the transient ducker/extractor.  <a href="group___utilities.html#gaeffce1bb1ac679faa7ba7a2dea162d8e">More...</a><br /></td></tr>
 <tr class="separator:gaeffce1bb1ac679faa7ba7a2dea162d8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga1b24572a6422a4806775a55ec4c11058"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga1b24572a6422a4806775a55ec4c11058">transientDucker_destroy</a> (void **phDucker)</td></tr>
 <tr class="memdesc:ga1b24572a6422a4806775a55ec4c11058"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys an instance of the transient ducker.  <a href="group___utilities.html#ga1b24572a6422a4806775a55ec4c11058">More...</a><br /></td></tr>
 <tr class="separator:ga1b24572a6422a4806775a55ec4c11058"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf528170e0dcc2eedfaa881a5afde245b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaf528170e0dcc2eedfaa881a5afde245b">transientDucker_apply</a> (void *hDucker, float_complex ***inFrame, int nTimeSlots, float alpha, float beta, float_complex ***outFrame)</td></tr>
-<tr class="memdesc:gaf528170e0dcc2eedfaa881a5afde245b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the transient ducker.  <a href="group___utilities.html#gaf528170e0dcc2eedfaa881a5afde245b">More...</a><br /></td></tr>
-<tr class="separator:gaf528170e0dcc2eedfaa881a5afde245b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga388555df985fe1346133456218584fc7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga388555df985fe1346133456218584fc7">transientDucker_apply</a> (void *hDucker, float_complex ***inFrame, int nTimeSlots, float alpha, float beta, float_complex ***residualFrame, float_complex ***transientFrame)</td></tr>
+<tr class="memdesc:ga388555df985fe1346133456218584fc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the transient ducker, returning either the "ducked" input frame, or the transient part of the input frame, or both.  <a href="group___utilities.html#ga388555df985fe1346133456218584fc7">More...</a><br /></td></tr>
+<tr class="separator:ga388555df985fe1346133456218584fc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A collection of signal decorrelators. </p>
@@ -152,7 +152,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="grou
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__decor_8c.html">saf_utility_decor.c</a></li>
-    <li class="footer">Generated on Fri Apr 2 2021 15:09:57 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sat Apr 3 2021 11:59:27 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

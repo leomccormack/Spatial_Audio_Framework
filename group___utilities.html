@@ -423,14 +423,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="grou
 <tr class="memdesc:ga88cb15c08fbf7cf58a4512b0bdd256a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the lattice all-pass-filter-based multi-channel signal decorrelator.  <a href="group___utilities.html#ga88cb15c08fbf7cf58a4512b0bdd256a0">More...</a><br /></td></tr>
 <tr class="separator:ga88cb15c08fbf7cf58a4512b0bdd256a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaeffce1bb1ac679faa7ba7a2dea162d8e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaeffce1bb1ac679faa7ba7a2dea162d8e">transientDucker_create</a> (void **phDucker, int nCH, int nBands)</td></tr>
-<tr class="memdesc:gaeffce1bb1ac679faa7ba7a2dea162d8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the transient ducker.  <a href="group___utilities.html#gaeffce1bb1ac679faa7ba7a2dea162d8e">More...</a><br /></td></tr>
+<tr class="memdesc:gaeffce1bb1ac679faa7ba7a2dea162d8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the transient ducker/extractor.  <a href="group___utilities.html#gaeffce1bb1ac679faa7ba7a2dea162d8e">More...</a><br /></td></tr>
 <tr class="separator:gaeffce1bb1ac679faa7ba7a2dea162d8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga1b24572a6422a4806775a55ec4c11058"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga1b24572a6422a4806775a55ec4c11058">transientDucker_destroy</a> (void **phDucker)</td></tr>
 <tr class="memdesc:ga1b24572a6422a4806775a55ec4c11058"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys an instance of the transient ducker.  <a href="group___utilities.html#ga1b24572a6422a4806775a55ec4c11058">More...</a><br /></td></tr>
 <tr class="separator:ga1b24572a6422a4806775a55ec4c11058"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf528170e0dcc2eedfaa881a5afde245b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaf528170e0dcc2eedfaa881a5afde245b">transientDucker_apply</a> (void *hDucker, float_complex ***inFrame, int nTimeSlots, float alpha, float beta, float_complex ***outFrame)</td></tr>
-<tr class="memdesc:gaf528170e0dcc2eedfaa881a5afde245b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the transient ducker.  <a href="group___utilities.html#gaf528170e0dcc2eedfaa881a5afde245b">More...</a><br /></td></tr>
-<tr class="separator:gaf528170e0dcc2eedfaa881a5afde245b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga388555df985fe1346133456218584fc7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga388555df985fe1346133456218584fc7">transientDucker_apply</a> (void *hDucker, float_complex ***inFrame, int nTimeSlots, float alpha, float beta, float_complex ***residualFrame, float_complex ***transientFrame)</td></tr>
+<tr class="memdesc:ga388555df985fe1346133456218584fc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the transient ducker, returning either the "ducked" input frame, or the transient part of the input frame, or both.  <a href="group___utilities.html#ga388555df985fe1346133456218584fc7">More...</a><br /></td></tr>
+<tr class="separator:ga388555df985fe1346133456218584fc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga83bd2822f664c81298307f468cf8c350"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group___utilities.html#gabb0b6cf15d8ed9c7065cf24b1cea2ae6">SAF_ERRORS</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga83bd2822f664c81298307f468cf8c350">saf_error_print</a> (<a class="el" href="group___utilities.html#gabb0b6cf15d8ed9c7065cf24b1cea2ae6">SAF_ERRORS</a> err)</td></tr>
 <tr class="memdesc:ga83bd2822f664c81298307f468cf8c350"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks current error/warning code, and prints out a message if needed (used when in debug mode).  <a href="group___utilities.html#ga83bd2822f664c81298307f468cf8c350">More...</a><br /></td></tr>
 <tr class="separator:ga83bd2822f664c81298307f468cf8c350"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -4044,7 +4044,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div><div class="memdoc">
 
 <p>Returns delay values for multiple channels per frequency, such that once applied to an input signal (via simple frequency-dependent delay lines), the resulting signal is decorrelated w.r.t the original. </p>
-<dl class="section note"><dt>Note</dt><dd>This is a very basic algorithm and sounds particulary bad for transient signals. Consider using a transient detector to "duck" the decorrelated signal during such transients, to improve signal fidelity. See e.g. <a class="el" href="group___utilities.html#gaeffce1bb1ac679faa7ba7a2dea162d8e" title="Creates an instance of the transient ducker.">transientDucker_create()</a></dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a very basic algorithm and sounds particulary bad for transient signals. Consider using a transient detector to "duck" the decorrelated signal during such transients, to improve signal fidelity. See e.g. <a class="el" href="group___utilities.html#gaeffce1bb1ac679faa7ba7a2dea162d8e" title="Creates an instance of the transient ducker/extractor.">transientDucker_create()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">nChannels</td><td>Number of channels </td></tr>
@@ -7264,8 +7264,8 @@ Example Usage</h2>
 
 </div>
 </div>
-<a id="gaf528170e0dcc2eedfaa881a5afde245b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf528170e0dcc2eedfaa881a5afde245b">&#9670;&nbsp;</a></span>transientDucker_apply()</h2>
+<a id="ga388555df985fe1346133456218584fc7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga388555df985fe1346133456218584fc7">&#9670;&nbsp;</a></span>transientDucker_apply()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -7304,7 +7304,13 @@ Example Usage</h2>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float_complex ***&#160;</td>
-          <td class="paramname"><em>outFrame</em>&#160;</td>
+          <td class="paramname"><em>residualFrame</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex ***&#160;</td>
+          <td class="paramname"><em>transientFrame</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -7314,15 +7320,16 @@ Example Usage</h2>
       </table>
 </div><div class="memdoc">
 
-<p>Applies the transient ducker. </p>
+<p>Applies the transient ducker, returning either the "ducked" input frame, or the transient part of the input frame, or both. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">hDucker</td><td>ducker handle </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">inFrame</td><td>input frame; nBands x nCH x nTimeSlots </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nTimeSlots</td><td>Number of time slots per frame </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alpha</td><td>alpha value [0,1]; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">beta</td><td>beta value [0,1]; </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">outFrame</td><td>ducked frame; nBands x nCH x nTimeSlots </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alpha</td><td>alpha value [0,1]; (e.g. alpha = 0.95f) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">beta</td><td>beta value [0,1]; (e.g. beta = 0.995f) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">residualFrame</td><td>Residual part (set to NULL if not wanted); nBands x nCH x nTimeSlots </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">transientFrame</td><td>Transient part (set to NULL if not wanted); nBands x nCH x nTimeSlots </td></tr>
   </table>
   </dd>
 </dl>
@@ -7363,7 +7370,7 @@ Example Usage</h2>
       </table>
 </div><div class="memdoc">
 
-<p>Creates an instance of the transient ducker. </p>
+<p>Creates an instance of the transient ducker/extractor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">phDucker</td><td>(&amp;) address of ducker handle </td></tr>
@@ -11064,7 +11071,7 @@ Example Usage</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Apr 2 2021 15:09:57 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sat Apr 3 2021 11:59:27 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

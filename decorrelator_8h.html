@@ -120,6 +120,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="deco
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="decorrelator_8h.html#ac1301f7d5fe8eaa65fbf87294b8f69a1">decorrelator_setNumberOfChannels</a> (void *const hDecor, int newValue)</td></tr>
 <tr class="memdesc:ac1301f7d5fe8eaa65fbf87294b8f69a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the number of input/output channels. <br /></td></tr>
 <tr class="separator:ac1301f7d5fe8eaa65fbf87294b8f69a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2902edec636e52eae241157542d52439"><td class="memItemLeft" align="right" valign="top"><a id="a2902edec636e52eae241157542d52439"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="decorrelator_8h.html#a2902edec636e52eae241157542d52439">decorrelator_setDecorrelationAmount</a> (void *const hDecor, float newValue)</td></tr>
+<tr class="memdesc:a2902edec636e52eae241157542d52439"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the decorrelation amount [0..1]. <br /></td></tr>
+<tr class="separator:a2902edec636e52eae241157542d52439"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ab7d31622e6171c0f914877125e0deb"><td class="memItemLeft" align="right" valign="top"><a id="a6ab7d31622e6171c0f914877125e0deb"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="decorrelator_8h.html#a6ab7d31622e6171c0f914877125e0deb">decorrelator_setLevelCompensationFlag</a> (void *const hDecor, int newValue)</td></tr>
+<tr class="memdesc:a6ab7d31622e6171c0f914877125e0deb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets whether to apply level compensation (0 or 1) <br /></td></tr>
+<tr class="separator:a6ab7d31622e6171c0f914877125e0deb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa82350b01711a976fe135d333f6bf1a4"><td class="memItemLeft" align="right" valign="top"><a id="aa82350b01711a976fe135d333f6bf1a4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="decorrelator_8h.html#aa82350b01711a976fe135d333f6bf1a4">decorrelator_setTransientBypassFlag</a> (void *const hDecor, int newValue)</td></tr>
+<tr class="memdesc:aa82350b01711a976fe135d333f6bf1a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets whether to bypass decorrelating the transients (0 or 1) <br /></td></tr>
+<tr class="separator:aa82350b01711a976fe135d333f6bf1a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4daa531efd0b146f2e5d33a9cca8d698"><td class="memItemLeft" align="right" valign="top"><a id="a4daa531efd0b146f2e5d33a9cca8d698"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="decorrelator_8h.html#a4daa531efd0b146f2e5d33a9cca8d698">decorrelator_getFrameSize</a> (void)</td></tr>
 <tr class="memdesc:a4daa531efd0b146f2e5d33a9cca8d698"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the processing framesize (i.e., number of samples processed with every _process() call ) <br /></td></tr>
@@ -139,6 +151,18 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dec
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="decorrelator_8h.html#ad07d15e64889124b5e2f765694e35917">decorrelator_getNumberOfChannels</a> (void *const hDecor)</td></tr>
 <tr class="memdesc:ad07d15e64889124b5e2f765694e35917"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of input/output channels. <br /></td></tr>
 <tr class="separator:ad07d15e64889124b5e2f765694e35917"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad65bf81cd1470d403f9c495cecea5282"><td class="memItemLeft" align="right" valign="top"><a id="ad65bf81cd1470d403f9c495cecea5282"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="decorrelator_8h.html#ad65bf81cd1470d403f9c495cecea5282">decorrelator_getDecorrelationAmount</a> (void *const hDecor)</td></tr>
+<tr class="memdesc:ad65bf81cd1470d403f9c495cecea5282"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the decorrelation amount [0..1]. <br /></td></tr>
+<tr class="separator:ad65bf81cd1470d403f9c495cecea5282"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18dcee0a2a3df6897afb39a3e0bd3e78"><td class="memItemLeft" align="right" valign="top"><a id="a18dcee0a2a3df6897afb39a3e0bd3e78"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="decorrelator_8h.html#a18dcee0a2a3df6897afb39a3e0bd3e78">decorrelator_getLevelCompensationFlag</a> (void *const hDecor)</td></tr>
+<tr class="memdesc:a18dcee0a2a3df6897afb39a3e0bd3e78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether to apply level compensation (0 or 1) <br /></td></tr>
+<tr class="separator:a18dcee0a2a3df6897afb39a3e0bd3e78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64c35ad69067eceeac1fff92114d3524"><td class="memItemLeft" align="right" valign="top"><a id="a64c35ad69067eceeac1fff92114d3524"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="decorrelator_8h.html#a64c35ad69067eceeac1fff92114d3524">decorrelator_getTransientBypassFlag</a> (void *const hDecor)</td></tr>
+<tr class="memdesc:a64c35ad69067eceeac1fff92114d3524"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether to bypass decorrelating the transients (0 or 1) <br /></td></tr>
+<tr class="separator:a64c35ad69067eceeac1fff92114d3524"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63ccd0799af856c0ced86636133f74dc"><td class="memItemLeft" align="right" valign="top"><a id="a63ccd0799af856c0ced86636133f74dc"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="decorrelator_8h.html#a63ccd0799af856c0ced86636133f74dc">decorrelator_getDAWsamplerate</a> (void *const hDecor)</td></tr>
 <tr class="memdesc:a63ccd0799af856c0ced86636133f74dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the DAW/Host sample rate. <br /></td></tr>
@@ -239,7 +263,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="decor
 
 <p>(Optional) Returns current intialisation/processing progress text </p>
 <dl class="section note"><dt>Note</dt><dd>"text" string should be (at least) of length: <a class="el" href="__common_8h.html#a72a166eb078e82f81bd29753838c5080" title="Length of progress bar string.">PROGRESSBARTEXT_CHAR_LENGTH</a> </dd></dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="decorrelator_8h-example.html#a10">decorrelator.h</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="decorrelator_8h-example.html#a13">decorrelator.h</a>.</dd>
 </dl>
 
 </div>
@@ -388,7 +412,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_7ea9cec8c8a74419de82b1d94b0f1364.html">include</a></li><li class="navelem"><a class="el" href="decorrelator_8h.html">decorrelator.h</a></li>
-    <li class="footer">Generated on Fri Apr 2 2021 15:09:56 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sat Apr 3 2021 11:59:27 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

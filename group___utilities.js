@@ -240,7 +240,7 @@ var group___utilities =
     [ "sphVoronoiAreas", "group___utilities.html#ga3fa1da3ec65285471c82ce5ac8cee740", null ],
     [ "sumf", "group___utilities.html#gaa2dbc701d05112cccb1a2d7fdc998598", null ],
     [ "synthesiseNoiseReverb", "group___utilities.html#gae3bd87091077de3a46c8360536632ef4", null ],
-    [ "transientDucker_apply", "group___utilities.html#gaf528170e0dcc2eedfaa881a5afde245b", null ],
+    [ "transientDucker_apply", "group___utilities.html#ga388555df985fe1346133456218584fc7", null ],
     [ "transientDucker_create", "group___utilities.html#gaeffce1bb1ac679faa7ba7a2dea162d8e", null ],
     [ "transientDucker_destroy", "group___utilities.html#ga1b24572a6422a4806775a55ec4c11058", null ],
     [ "unique_i", "group___utilities.html#ga426cf3884b949ed5d8debc6a941b814a", null ],

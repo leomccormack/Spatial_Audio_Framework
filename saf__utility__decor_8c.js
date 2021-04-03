@@ -9,7 +9,7 @@ var saf__utility__decor_8c =
     [ "latticeDecorrelator_destroy", "group___utilities.html#gad77e5c2c2273383cb44ef8fda671fe92", null ],
     [ "latticeDecorrelator_reset", "group___utilities.html#ga870b79ef933c671c8b85e96bc8da09c4", null ],
     [ "synthesiseNoiseReverb", "group___utilities.html#gae3bd87091077de3a46c8360536632ef4", null ],
-    [ "transientDucker_apply", "group___utilities.html#gaf528170e0dcc2eedfaa881a5afde245b", null ],
+    [ "transientDucker_apply", "group___utilities.html#ga388555df985fe1346133456218584fc7", null ],
     [ "transientDucker_create", "group___utilities.html#gaeffce1bb1ac679faa7ba7a2dea162d8e", null ],
     [ "transientDucker_destroy", "group___utilities.html#ga1b24572a6422a4806775a55ec4c11058", null ]
 ];
