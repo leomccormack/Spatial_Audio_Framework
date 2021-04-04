@@ -45,10 +45,11 @@ typedef struct _latticeDecor_data{
     int* orders;
     int* TF_delays;
     latticeAPF** lttc_apf;
-    float en_avg_coeff;
-    float gateThresh_dB;
+    float enComp_coeff;
 
     /* run-time */
+    float** in_energy;
+    float** decor_energy;
     float_complex*** delayBuffers;
     int* wIdx;
     int* rIdx;
@@ -201,7 +202,7 @@ void latticeDecorrelator_create
     int nCutoffs,
     int maxDelay,
     int lookupOffset,
-    float gateThresh_dB
+    float enComp_coeff
 )
 {
     *phDecor = malloc1d(sizeof(latticeDecor_data));
@@ -217,7 +218,9 @@ void latticeDecorrelator_create
     memcpy(h->orders, orders, nCutoffs*sizeof(int));
     h->TF_delays = malloc1d(nBands * nCH * sizeof(int));
     h->lttc_apf = (latticeAPF**)malloc2d(nBands, nCH, sizeof(latticeAPF));
-    h->gateThresh_dB = gateThresh_dB;
+    h->enComp_coeff = enComp_coeff;
+    h->in_energy = (float**)calloc2d(nBands, nCH, sizeof(float));
+    h->decor_energy = (float**)calloc2d(nBands, nCH, sizeof(float));
 
     /* Static delays */
     getDecorrelationDelays(h->nCH, freqVector, h->nBands, fs, maxDelay, hopsize, h->TF_delays);
@@ -323,6 +326,8 @@ void latticeDecorrelator_reset
         for(ch=0; ch<h->nCH; ch++)
             if(h->lttc_apf[band][ch].buffer!=NULL)
                 memset(h->lttc_apf[band][ch].buffer, 0, h->lttc_apf[band][ch].order * sizeof(float_complex));
+    memset(FLATTEN2D(h->in_energy), 0, h->nBands*h->nCH*sizeof(float));
+    memset(FLATTEN2D(h->decor_energy), 0, h->nBands*h->nCH*sizeof(float));
 }
 
 void latticeDecorrelator_apply
@@ -361,9 +366,17 @@ void latticeDecorrelator_apply
         for(ch=0; ch<h->nCH; ch++){
             if(h->lttc_apf[band][ch].buffer!=NULL){ /* only if filter is defined... */
                 for(t=0; t<nTimeSlots; t++){
+                    /* Compute energy of the input */
+                    h->in_energy[band][ch] = (1.0f-h->enComp_coeff)*powf(cabsf(inFrame[band][ch][t]),2.0f) + (h->enComp_coeff)*h->in_energy[band][ch];
+
+                    /* First tap in filter */
                     xtmp = decorFrame[band][ch][t];
                     ytmp = ccaddf(h->lttc_apf[band][ch].buffer[0], crmulf(xtmp, (h->lttc_apf[band][ch].coeffs[0][0])));
                     decorFrame[band][ch][t] = ytmp;
+
+                    /* Energy compensation */
+                    h->decor_energy[band][ch] = (1.0f-h->enComp_coeff)*powf(cabsf(decorFrame[band][ch][t]),2.0f) + (h->enComp_coeff)*h->decor_energy[band][ch];
+                    decorFrame[band][ch][t] = crmulf(decorFrame[band][ch][t], MIN(sqrtf(h->in_energy[band][ch]/(h->decor_energy[band][ch]+2.23e-9f)), 1.0f));
 
                     /* propagate through the rest of the lattice filter structure */
                     for(i=0; i<h->lttc_apf[band][ch].order-1; i++){
@@ -380,9 +393,17 @@ void latticeDecorrelator_apply
         for(ch=0; ch<h->nCH; ch++){
             if(h->lttc_apf[band][ch].buffer!=NULL){ /* only if filter is defined */
                 for(t=0; t<nTimeSlots; t++){
+                    /* Compute energy of the input */
+                    h->in_energy[band][ch] = (1.0f-h->enComp_coeff)*powf(cabsf(inFrame[band][ch][t]),2.0f) + (h->enComp_coeff)*h->in_energy[band][ch];
+
+                    /* First tap in filter */
                     xtmp = decorFrame[band][ch][t];
                     ytmp = h->lttc_apf[band][ch].buffer[0] + xtmp * (h->lttc_apf[band][ch].coeffs[0][0]);
                     decorFrame[band][ch][t] = ytmp;
+
+                    /* Energy compensation */
+                    h->decor_energy[band][ch] = (1.0f-h->enComp_coeff)*powf(cabsf(decorFrame[band][ch][t]), 2.0f) + (h->enComp_coeff)*(h->decor_energy[band][ch]);
+                    decorFrame[band][ch][t] *= MIN(sqrtf(h->in_energy[band][ch]/(h->decor_energy[band][ch]+2.23e-9f)), 1.0f);
 
                     /* propagate through the rest of the lattice filter structure */
                     for(i=0; i<h->lttc_apf[band][ch].order-1; i++){
@@ -392,13 +413,9 @@ void latticeDecorrelator_apply
                     }
                 }
             }
-        } 
+        }
     }
 #endif
-
-    /* The worst noise gate ever... (can, and should, be done better...) */
-    if(10.0f*log10f(cblas_scasum(h->nBands*(h->nCH)*nTimeSlots, FLATTEN3D(inFrame), 1)/((float)(h->nBands*(h->nCH)*nTimeSlots))) < h->gateThresh_dB)
-        memset(FLATTEN3D(decorFrame), 0, h->nBands*(h->nCH)*nTimeSlots*sizeof(float_complex));
 }
 
 

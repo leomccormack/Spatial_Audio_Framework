@@ -38,7 +38,7 @@ void decorrelator_create
     pData->nChannels = 1;
     pData->enableTransientDucker = 0;
     pData->decorAmount = 1.0f;
-    pData->compensateLevel = 1;
+    pData->compensateLevel = 0;
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
@@ -148,9 +148,9 @@ void decorrelator_initCodec
     const int orders[4] = {20, 15, 6, 3}; /* 20th order up to 700Hz, 15th->2.4kHz, 6th->4kHz, 3rd->12kHz, NONE(only delays)->Nyquist */
     //const float freqCutoffs[4] = {600.0f, 2.4e3f, 4.0e3f, 12e3f};
     const float freqCutoffs[4] = {900.0f, 6.8e3f, 12e3f, 16e3f};
-    const int maxDelay = 14;
+    const int maxDelay = 12;
     latticeDecorrelator_destroy(&(pData->hDecor));
-    latticeDecorrelator_create(&(pData->hDecor), pData->fs, HOP_SIZE, pData->freqVector, HYBRID_BANDS, pData->nChannels, (int*)orders, (float*)freqCutoffs, 4, maxDelay, 0, -30.0f);
+    latticeDecorrelator_create(&(pData->hDecor), pData->fs, HOP_SIZE, pData->freqVector, HYBRID_BANDS, pData->nChannels, (int*)orders, (float*)freqCutoffs, 4, maxDelay, 0, 0.75f);
 
     /* done! */
     strcpy(pData->progressBarText,"Done!");
@@ -198,10 +198,10 @@ void decorrelator_process
             /* remove transients */
             transientDucker_apply(pData->hDucker, pData->InputFrameTF, TIME_SLOTS, 0.95f, 0.995f, pData->OutputFrameTF, pData->transientFrameTF);
             /* decorrelate only the residual */
-            latticeDecorrelator_apply(pData->hDecor,  pData->OutputFrameTF,  TIME_SLOTS, pData->OutputFrameTF);
+            latticeDecorrelator_apply(pData->hDecor,  pData->OutputFrameTF, TIME_SLOTS, pData->OutputFrameTF);
         }
         else
-            latticeDecorrelator_apply(pData->hDecor,  pData->InputFrameTF,  TIME_SLOTS, pData->OutputFrameTF);
+            latticeDecorrelator_apply(pData->hDecor,  pData->InputFrameTF, TIME_SLOTS, pData->OutputFrameTF);
 
         /* Optionally compensate for the level (as they channels wll no longer sum coherently) */
         if(compensateLevel){
@@ -212,7 +212,7 @@ void decorrelator_process
 
         /* re-introduce the transient part */
         if(enableTransientDucker){
-            scalec = !compensateLevel ? cmplxf(1.25f*(sqrtf((float)nCH)/(float)nCH), 0.0f) : cmplxf(1.0f, 0.0f);
+            scalec = cmplxf(1.0f, 0.0f);//!compensateLevel ? cmplxf(1.25f*(sqrtf((float)nCH)/(float)nCH), 0.0f) : cmplxf(1.0f, 0.0f);
             for(band=0; band<HYBRID_BANDS; band++)
                 cblas_caxpy(nCH*TIME_SLOTS, &scalec, FLATTEN2D(pData->transientFrameTF[band]), 1, FLATTEN2D(pData->OutputFrameTF[band]), 1);
         }

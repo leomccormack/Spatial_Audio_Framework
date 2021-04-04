@@ -131,8 +131,6 @@ void synthesiseNoiseReverb(/* Input Arguments */
  * domain, and is therefore well-suited for audio coding [1] or Direction Audio
  * Coding (DirAC) [2] purposes.
  *
- * TODO: The gate is very ad-hoc and terrible... can be done better.
- *
  * @test test__latticeDecorrelator()
  *
  * @param[in] phDecor       (&) address of lattice decorrelator handle
@@ -153,7 +151,7 @@ void synthesiseNoiseReverb(/* Input Arguments */
  * @param[in] maxDelay      Maximum static delay (hops, i.e. maxDelay*hopsize)
  * @param[in] lookupOffset  Optional offset for look-up tables (set to 0 if
  *                          using just one instance)
- * @param[in] gateThresh_dB Threshold, in dB, for when the gate should kick in
+ * @param[in] enComp_coeff  Energy compensation coefficient, [0..1]
  *
  * @see [1] Herre, J., Kjo"rling, K., Breebaart, J., Faller, C., Disch, S.,
  *          Purnhagen, H., Koppens, J., Hilpert, J., Ro"den, J., Oomen, W. and
@@ -175,7 +173,7 @@ void latticeDecorrelator_create(/* Input Arguments */
                                 int nCutoffs,
                                 int maxDelay,
                                 int lookupOffset, 
-                                float gateThresh_dB);
+                                float enComp_coeff);
 
 /**
  * Destroys an instance of the lattice all-pass-filter-based multi-channel

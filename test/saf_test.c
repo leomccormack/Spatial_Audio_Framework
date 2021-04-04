@@ -70,7 +70,7 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
 
-    /* run each unit test */
+    /* run each unit test */ 
     RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
@@ -961,7 +961,7 @@ void test__latticeDecorrelator(void){
     const int nCH = 24;
     const int nTestHops = 2000;
     const int hopSize = 128;
-    const int procDelay = hopSize*12 + 10;
+    const int procDelay = hopSize*12 + 12;
     const int lSig = nTestHops*hopSize+procDelay;
     const float fs = 48e3f;
     nBands = hopSize+5;
@@ -980,11 +980,11 @@ void test__latticeDecorrelator(void){
     afSTFT_getCentreFreqs(hSTFT, fs, nBands, freqVector);
 
     /* setup decorrelator */
-    int orders[4] = {20, 15, 6, 3}; /* 20th order up to 700Hz, 15th->2.4kHz, 6th->4kHz, 3rd->12kHz, NONE(only delays)->Nyquist */
+    int orders[4] = {20, 15, 6, 6}; /* 20th order up to 700Hz, 15th->2.4kHz, 6th->4kHz, 3rd->12kHz, NONE(only delays)->Nyquist */
     //float freqCutoffs[4] = {600.0f, 2.6e3f, 4.5e3f, 12e3f};
     float freqCutoffs[4] = {900.0f, 6.8e3f, 12e3f, 24e3f};
     const int maxDelay = 12;
-    latticeDecorrelator_create(&hDecor, fs, hopSize, freqVector, nBands, nCH, orders, freqCutoffs, 4, maxDelay, 0, -60.0f);
+    latticeDecorrelator_create(&hDecor, fs, hopSize, freqVector, nBands, nCH, orders, freqCutoffs, 4, maxDelay, 0, 0.75f);
 
     /* Processing loop */
     idx = 0;
@@ -1032,8 +1032,10 @@ void test__latticeDecorrelator(void){
             utility_svvdot(&outputTimeDomainData[c2][procDelay], &outputTimeDomainData[c2][procDelay], (lSig-procDelay), &tmp);
             utility_svvdot(&outputTimeDomainData[c][procDelay], &outputTimeDomainData[c][procDelay], (lSig-procDelay), &tmp2);
 
-            icc = icc/sqrtf(tmp*tmp2); /* normalise */
-           // TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
+            if (c!=c2){
+                icc = icc/sqrtf(tmp*tmp2); /* normalise */
+                TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
+            }
         }
     }
 #endif
