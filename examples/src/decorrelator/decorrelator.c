@@ -212,7 +212,7 @@ void decorrelator_process
 
         /* re-introduce the transient part */
         if(enableTransientDucker){
-            scalec = cmplxf(1.0f, 0.0f);//!compensateLevel ? cmplxf(1.25f*(sqrtf((float)nCH)/(float)nCH), 0.0f) : cmplxf(1.0f, 0.0f);
+            scalec =  cmplxf(1.0f, 0.0f);//!compensateLevel ? cmplxf(1.25f*(sqrtf((float)nCH)/(float)nCH), 0.0f) : cmplxf(1.0f, 0.0f);
             for(band=0; band<HYBRID_BANDS; band++)
                 cblas_caxpy(nCH*TIME_SLOTS, &scalec, FLATTEN2D(pData->transientFrameTF[band]), 1, FLATTEN2D(pData->OutputFrameTF[band]), 1);
         }
