@@ -200,6 +200,7 @@ void afSTFT_getCentreFreqs(void * const hSTFT,
  * @param[in]  nCH        Number of channels per FIR set
  * @param[in]  ir_len     Length of the FIR
  * @param[in]  hopSize    Hop size
+ * @param[in]  LDmode     0: disabled, 1:enabled
  * @param[in]  hybridmode 0: disabled, 1:enabled
  * @param[out] hFB        The FIRs as Filterbank coefficients;
  *                        FLAT: N_bands x nCH x N_dirs
@@ -210,6 +211,7 @@ void afSTFT_FIRtoFilterbankCoeffs(/* Input Arguments */
                                   int nCH,
                                   int ir_len,
                                   int hopSize,
+                                  int LDmode,
                                   int hybridmode,
                                   /* Output Arguments */
                                   float_complex* hFB);

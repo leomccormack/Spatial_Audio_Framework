@@ -84,7 +84,8 @@ static void afAnalyse
     int nSamplesTD,
     int nCH,
     int hopSize,
-    int hybridmode,
+    int LDmode,
+    int hybridmode, 
     float_complex* outTF /* out_nBands x nTimeslots x nCH */
 )
 {
@@ -98,7 +99,7 @@ static void afAnalyse
     nTimeSlots = nSamplesTD/hopSize;
 
     /* allocate memory */
-    afSTFT_create(&(hSTFT), nCH, 1, hopSize, 0, hybridmode, AFSTFT_TIME_CH_BANDS);
+    afSTFT_create(&(hSTFT), nCH, 1, hopSize, LDmode, hybridmode, AFSTFT_TIME_CH_BANDS);
     FrameTF = (float_complex***)malloc3d(nTimeSlots, nCH, nBands, sizeof(float_complex));
     tempFrameTD = (float**)calloc2d(nCH, nTimeSlots*hopSize, sizeof(float));
 
@@ -512,6 +513,7 @@ void afSTFT_FIRtoFilterbankCoeffs
     int nCH,
     int ir_len,
     int hopSize,
+    int LDmode,
     int hybridmode,
     float_complex* hFB /* nBands x nCH x N_dirs */
 )
@@ -550,7 +552,7 @@ void afSTFT_FIRtoFilterbankCoeffs
 
     /* analyse impulse with the filterbank */
     centerImpulseFB = malloc1d(nBands*nTimeSlots*nCH*sizeof(float_complex));
-    afAnalyse(centerImpulse, MAX(ir_len,hopSize)+ir_pad, 1, hopSize, hybridmode, centerImpulseFB);
+    afAnalyse(centerImpulse, MAX(ir_len,hopSize)+ir_pad, 1, hopSize, LDmode, hybridmode, centerImpulseFB);
     centerImpulseFB_energy = calloc1d(nBands, sizeof(float));
     for(i=0; i<nBands; i++)
         for(t=0; t<nTimeSlots; t++)
@@ -563,7 +565,7 @@ void afSTFT_FIRtoFilterbankCoeffs
         for(j=0; j<ir_len; j++)
             for(i=0; i<nCH; i++)
                 ir[j*nCH+i] = hIR[nd*nCH*ir_len + i*ir_len + j];
-        afAnalyse(ir, MAX(ir_len,hopSize)+ir_pad, nCH, hopSize, hybridmode, irFB);
+        afAnalyse(ir, MAX(ir_len,hopSize)+ir_pad, nCH, hopSize, LDmode, hybridmode, irFB);
         for(nm=0; nm<nCH; nm++){
             for(i=0; i<nBands; i++){
                 irFB_energy = 0;
