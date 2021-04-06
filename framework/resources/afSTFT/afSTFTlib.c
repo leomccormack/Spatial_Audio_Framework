@@ -166,7 +166,10 @@ void afSTFT_create
     h->hopsize = hopsize;
     h->hybridmode = hybridmode;
     h->nBands = hybridmode ? hopsize+5 : hopsize+1; /* hybrid mode incurs an additional 4 bands */
-    h->afSTFTdelay = hybridmode ? 12*hopsize : 9*hopsize; /* hybrid mode incurs 3 additional hops of latency */
+    if(lowDelayMode)
+        h->afSTFTdelay = hybridmode ? 7*hopsize  : 4*hopsize; /* hybrid mode incurs 3 additional hops of latency */
+    else
+        h->afSTFTdelay = hybridmode ? 12*hopsize : 9*hopsize; /* hybrid mode incurs 3 additional hops of latency */
     h->format = format;
 
     /* init afSTFT core */
