@@ -246,7 +246,7 @@ void ambi_bin_initCodec
         /* convert hrirs to filterbank coefficients */
         pData->progressBar0_1 = 0.4f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
-        HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 1, pars->hrtf_fb);
+        HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 0, 1, pars->hrtf_fb);
         /* get integration weights */
         pData->progressBar0_1 = 0.6f;
         if(pars->N_hrir_dirs<=1000){
