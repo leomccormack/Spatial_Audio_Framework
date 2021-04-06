@@ -181,7 +181,7 @@ var group___utilities =
     [ "L2_norm3", "group___utilities.html#gaeb5052aa193c9dbbbfe5081a2fbb61c5", null ],
     [ "lagrangeWeights", "group___utilities.html#gae3216f9f562a0bf51a327adff0b40744", null ],
     [ "latticeDecorrelator_apply", "group___utilities.html#ga88cb15c08fbf7cf58a4512b0bdd256a0", null ],
-    [ "latticeDecorrelator_create", "group___utilities.html#ga24116cbeeaa29945bc95f06c9ac88554", null ],
+    [ "latticeDecorrelator_create", "group___utilities.html#gaa4881d27f54bbe5db5fc027a9e421f08", null ],
     [ "latticeDecorrelator_destroy", "group___utilities.html#gad77e5c2c2273383cb44ef8fda671fe92", null ],
     [ "latticeDecorrelator_reset", "group___utilities.html#ga870b79ef933c671c8b85e96bc8da09c4", null ],
     [ "matlab_fmodf", "group___utilities.html#ga3b9806b290b960cd718bac53080235ae", null ],

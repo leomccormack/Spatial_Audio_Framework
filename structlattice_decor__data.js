@@ -1,8 +1,9 @@
 var structlattice_decor__data =
 [
+    [ "decor_energy", "structlattice_decor__data.html#a03621b321175d5ff3fd0ba5972620599", null ],
     [ "delayBuffers", "structlattice_decor__data.html#a76e7c1ba8cefb6b728837b4832c6bc0a", null ],
-    [ "en_avg_coeff", "structlattice_decor__data.html#afdc6adc76946c20daa4cf778d4f95833", null ],
-    [ "gateThresh_dB", "structlattice_decor__data.html#a4c4147623c9e84f5ca84ea4d62ec8878", null ],
+    [ "enComp_coeff", "structlattice_decor__data.html#a4a8d92ad15d0cdf6c90912c876753e2e", null ],
+    [ "in_energy", "structlattice_decor__data.html#a94c064e9164d78b765382ec22bdf35db", null ],
     [ "lttc_apf", "structlattice_decor__data.html#aeab380a232dfc40724497cef2a11b86f", null ],
     [ "maxBufferLen", "structlattice_decor__data.html#a29397ee714e98a068febc3296c6571de", null ],
     [ "nBands", "structlattice_decor__data.html#a9f4e6605f5542b0dd5cec2d4c8e751bd", null ],

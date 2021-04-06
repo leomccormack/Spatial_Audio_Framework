@@ -111,9 +111,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gaf4e65a8546982cb60e4553dedca1f4a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gaf4e65a8546982cb60e4553dedca1f4a2">estimateITDs</a> (float *hrirs, int N_dirs, int hrir_len, int fs, float *itds_s)</td></tr>
 <tr class="memdesc:gaf4e65a8546982cb60e4553dedca1f4a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimates the interaural time-differences (ITDs) for each HRIR via the cross- correlation between the left and right channels.  <a href="group___h_r_i_r.html#gaf4e65a8546982cb60e4553dedca1f4a2">More...</a><br /></td></tr>
 <tr class="separator:gaf4e65a8546982cb60e4553dedca1f4a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga431d86a2a8be93341a68dd0bd9cfd835"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga431d86a2a8be93341a68dd0bd9cfd835">HRIRs2HRTFs_afSTFT</a> (float *hrirs, int N_dirs, int hrir_len, int hopsize, int hybridmode, float_complex *hrtf_fb)</td></tr>
-<tr class="memdesc:ga431d86a2a8be93341a68dd0bd9cfd835"><td class="mdescLeft">&#160;</td><td class="mdescRight">Passes zero padded HRIRs through the afSTFT filterbank.  <a href="group___h_r_i_r.html#ga431d86a2a8be93341a68dd0bd9cfd835">More...</a><br /></td></tr>
-<tr class="separator:ga431d86a2a8be93341a68dd0bd9cfd835"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf7213481e6b8afa3b25fbf4343c1ca50"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gaf7213481e6b8afa3b25fbf4343c1ca50">HRIRs2HRTFs_afSTFT</a> (float *hrirs, int N_dirs, int hrir_len, int hopsize, int LDmode, int hybridmode, float_complex *hrtf_fb)</td></tr>
+<tr class="memdesc:gaf7213481e6b8afa3b25fbf4343c1ca50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Passes zero padded HRIRs through the afSTFT filterbank.  <a href="group___h_r_i_r.html#gaf7213481e6b8afa3b25fbf4343c1ca50">More...</a><br /></td></tr>
+<tr class="separator:gaf7213481e6b8afa3b25fbf4343c1ca50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gadfaf82c46f2d7033e5182b9fc945ba93"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gadfaf82c46f2d7033e5182b9fc945ba93">HRIRs2HRTFs_qmf</a> (float *hrirs, int N_dirs, int hrir_len, int hopsize, int hybridmode, float_complex *hrtf_fb)</td></tr>
 <tr class="memdesc:gadfaf82c46f2d7033e5182b9fc945ba93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Passes zero padded HRIRs through the qmf filterbank.  <a href="group___h_r_i_r.html#gadfaf82c46f2d7033e5182b9fc945ba93">More...</a><br /></td></tr>
 <tr class="separator:gadfaf82c46f2d7033e5182b9fc945ba93"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -221,7 +221,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <dl class="section see"><dt>See also</dt><dd>[1] A. Politis, "Diffuse-field coherence of sensors with arbitrary
          directional responses," arXiv preprint arXiv:1608.07713,2016. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00298">298</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00299">299</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -304,7 +304,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00170">170</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00171">171</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -425,12 +425,12 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00136">136</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00137">137</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
-<a id="ga431d86a2a8be93341a68dd0bd9cfd835"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga431d86a2a8be93341a68dd0bd9cfd835">&#9670;&nbsp;</a></span>HRIRs2HRTFs_afSTFT()</h2>
+<a id="gaf7213481e6b8afa3b25fbf4343c1ca50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf7213481e6b8afa3b25fbf4343c1ca50">&#9670;&nbsp;</a></span>HRIRs2HRTFs_afSTFT()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -463,6 +463,12 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>LDmode</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>hybridmode</em>, </td>
         </tr>
         <tr>
@@ -488,7 +494,8 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
     <tr><td class="paramdir">[in]</td><td class="paramname">N_dirs</td><td>Number of HRIRs </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">hrir_len</td><td>Length of the HRIRs in samples </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">hopsize</td><td>Hop size in samples </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">hybridmode</td><td>0:disabled, 1:enabled </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">LDmode</td><td>Low-Delay mode, 0:disabled, 1:enabled </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hybridmode</td><td>Hybrid-filtering, 0:disabled, 1:enabled </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">hrtf_fb</td><td>HRTFs as filterbank coeffs; FLAT: (hybrid ? hopsize+5 : hopsize+1) x <a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84" title="2 (true for most humans)">NUM_EARS</a> x N_dirs </td></tr>
   </table>
   </dd>
@@ -563,7 +570,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00122">122</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00123">123</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -647,7 +654,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00239">239</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00240">240</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -656,7 +663,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sat Apr 3 2021 11:59:27 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Apr 6 2021 09:54:01 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

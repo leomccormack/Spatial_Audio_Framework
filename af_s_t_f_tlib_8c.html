@@ -106,9 +106,9 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:abb25e1b7e39568ea5c0808e654955ab1"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_tlib_8c.html#abb25e1b7e39568ea5c0808e654955ab1">afAnalyse</a> (float *inTD, int nSamplesTD, int nCH, int hopSize, int hybridmode, float_complex *outTF)</td></tr>
-<tr class="memdesc:abb25e1b7e39568ea5c0808e654955ab1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Passes input time-domain data through the afSTFT filterbank.  <a href="af_s_t_f_tlib_8c.html#abb25e1b7e39568ea5c0808e654955ab1">More...</a><br /></td></tr>
-<tr class="separator:abb25e1b7e39568ea5c0808e654955ab1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac050d7bf5bbaaf5d930b01691a689e5b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_tlib_8c.html#ac050d7bf5bbaaf5d930b01691a689e5b">afAnalyse</a> (float *inTD, int nSamplesTD, int nCH, int hopSize, int LDmode, int hybridmode, float_complex *outTF)</td></tr>
+<tr class="memdesc:ac050d7bf5bbaaf5d930b01691a689e5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Passes input time-domain data through the afSTFT filterbank.  <a href="af_s_t_f_tlib_8c.html#ac050d7bf5bbaaf5d930b01691a689e5b">More...</a><br /></td></tr>
+<tr class="separator:ac050d7bf5bbaaf5d930b01691a689e5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7558bd35af17d396da920a6305d58af9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_tlib_8c.html#a7558bd35af17d396da920a6305d58af9">afSTFT_create</a> (void **const phSTFT, int nCHin, int nCHout, int hopsize, int lowDelayMode, int hybridmode, <a class="el" href="af_s_t_f_tlib_8h.html#a98dcaa8ebad6ce38baff3e1671f5cec4">AFSTFT_FDDATA_FORMAT</a> format)</td></tr>
 <tr class="memdesc:a7558bd35af17d396da920a6305d58af9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of afSTFT.  <a href="af_s_t_f_tlib_8c.html#a7558bd35af17d396da920a6305d58af9">More...</a><br /></td></tr>
 <tr class="separator:a7558bd35af17d396da920a6305d58af9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -145,9 +145,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_tlib_8c.html#aaf529d28c5dca94aacd10883055a8d10">afSTFT_getCentreFreqs</a> (void *const hSTFT, float fs, int nBands, float *freqVector)</td></tr>
 <tr class="memdesc:aaf529d28c5dca94aacd10883055a8d10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns current frequency vector. <br /></td></tr>
 <tr class="separator:aaf529d28c5dca94aacd10883055a8d10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96f8e1a67a42d1839371a412fbfa9cc6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_tlib_8c.html#a96f8e1a67a42d1839371a412fbfa9cc6">afSTFT_FIRtoFilterbankCoeffs</a> (float *hIR, int N_dirs, int nCH, int ir_len, int hopSize, int hybridmode, float_complex *hFB)</td></tr>
-<tr class="memdesc:a96f8e1a67a42d1839371a412fbfa9cc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts FIR filters into Filterbank Coefficients by passing them through the afSTFT filterbank.  <a href="af_s_t_f_tlib_8c.html#a96f8e1a67a42d1839371a412fbfa9cc6">More...</a><br /></td></tr>
-<tr class="separator:a96f8e1a67a42d1839371a412fbfa9cc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55dc2784fe833793e8a988c72b131ba2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_tlib_8c.html#a55dc2784fe833793e8a988c72b131ba2">afSTFT_FIRtoFilterbankCoeffs</a> (float *hIR, int N_dirs, int nCH, int ir_len, int hopSize, int LDmode, int hybridmode, float_complex *hFB)</td></tr>
+<tr class="memdesc:a55dc2784fe833793e8a988c72b131ba2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts FIR filters into Filterbank Coefficients by passing them through the afSTFT filterbank.  <a href="af_s_t_f_tlib_8c.html#a55dc2784fe833793e8a988c72b131ba2">More...</a><br /></td></tr>
+<tr class="separator:a55dc2784fe833793e8a988c72b131ba2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -172,8 +172,8 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition in file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="abb25e1b7e39568ea5c0808e654955ab1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb25e1b7e39568ea5c0808e654955ab1">&#9670;&nbsp;</a></span>afAnalyse()</h2>
+<a id="ac050d7bf5bbaaf5d930b01691a689e5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac050d7bf5bbaaf5d930b01691a689e5b">&#9670;&nbsp;</a></span>afAnalyse()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -204,6 +204,12 @@ Variables</h2></td></tr>
           <td></td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>hopSize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>LDmode</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -286,7 +292,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00303">303</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00307">307</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -339,7 +345,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00346">346</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00350">350</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -385,7 +391,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00389">389</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00393">393</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -460,7 +466,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00145">145</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00146">146</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -488,12 +494,12 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00198">198</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00202">202</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
-<a id="a96f8e1a67a42d1839371a412fbfa9cc6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96f8e1a67a42d1839371a412fbfa9cc6">&#9670;&nbsp;</a></span>afSTFT_FIRtoFilterbankCoeffs()</h2>
+<a id="a55dc2784fe833793e8a988c72b131ba2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55dc2784fe833793e8a988c72b131ba2">&#9670;&nbsp;</a></span>afSTFT_FIRtoFilterbankCoeffs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -532,6 +538,12 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>LDmode</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>hybridmode</em>, </td>
         </tr>
         <tr>
@@ -556,13 +568,14 @@ Variables</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nCH</td><td>Number of channels per FIR set </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">ir_len</td><td>Length of the FIR </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">hopSize</td><td>Hop size </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">LDmode</td><td>0: disabled, 1:enabled </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">hybridmode</td><td>0: disabled, 1:enabled </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">hFB</td><td>The FIRs as Filterbank coefficients; FLAT: N_bands x nCH x N_dirs </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00505">505</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00509">509</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -615,7 +628,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00229">229</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00233">233</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -668,7 +681,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00266">266</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00270">270</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -692,7 +705,7 @@ Variables</h2></td></tr>
 <dl class="section note"><dt>Note</dt><dd>The base delay is 9*hopsize, which is increased to 12*hopsize when the hybrid filtering mode is enabled. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Currently only correct when low delay mode is disabled! </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00449">449</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00453">453</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -795,7 +808,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_c95fe3454413c7e9946bfee944a4e42b.html">resources</a></li><li class="navelem"><a class="el" href="dir_45a37e71ed05dd7d57de17724fd5b226.html">afSTFT</a></li><li class="navelem"><a class="el" href="af_s_t_f_tlib_8c.html">afSTFTlib.c</a></li>
-    <li class="footer">Generated on Sat Apr 3 2021 11:59:27 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Apr 6 2021 09:54:01 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
