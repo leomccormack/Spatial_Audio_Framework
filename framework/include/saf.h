@@ -110,12 +110,10 @@
 
 /** The Spatial_Audio_Framework Version and License as a banner */
 #define SAF_VERSION_BANNER \
-  "     _____     _____     ______                                        \n" \
-  "   (  ____ ) (  ___  ) (  ____  )                                      \n" \
-  "   | (    |/ | (   ) | | (    |/                                       \n" \
-  "   | (_____  | (___) | | (__                                           \n" \
+  "     _____     _____     _____                                         \n" \
+  "   (  ____ ) (  ___  ) (  ____ )                                       \n" \
+  "   | ( __ |/ | ( _ ) | | ( _  |/                                       \n" \
   "   (_____  ) |  ___  | |  __)                                          \n" \
-  "         ) | | (   ) | | (                                             \n" \
   "   /|____) | | |   | | | |                                             \n" \
   "   (_______) |_|   |_| |_|   (Version: " SAF_VERSION_STRING ", License:"   \
   " " SAF_LICENSE_STRING ")                                              \n\n"

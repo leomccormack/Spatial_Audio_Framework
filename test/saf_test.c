@@ -31,6 +31,7 @@
 # include "powermap.h"
 # include "rotator.h"
 # include "sldoa.h"
+# include "spreader.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
 /* ========================================================================== */
@@ -71,6 +72,9 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
+#if SAF_ENABLE_EXAMPLES_TESTS == 1
+    RUN_TEST(test__saf_example_spreader);
+#endif /* SAF_ENABLE_EXAMPLES_TESTS */
     RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
@@ -130,6 +134,56 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+#if SAF_ENABLE_EXAMPLES_TESTS == 1
+void test__saf_example_spreader(void){
+    int Q, i, ch, framesize, nOutputs;
+    void* hSpr;
+    float** inSigs, **outSigs;
+    float** inSig_frame, **outSig_frame;
+
+    /* Config */
+    const int fs = 48000;
+    const int nInputs = 1;
+    const int signalLength = fs*2;
+
+    /* Create and initialise an instance of spreader */
+    spreader_create(&hSpr);
+
+    /* Configure and initialise the spreader codec */
+    spreader_setUseDefaultHRIRsflag(hSpr, 1);
+    nOutputs = NUM_EARS; /* the default is binaural operation */
+    spreader_setNumSources(hSpr, nInputs);
+    spreader_init(hSpr, fs); /* Should be called before calling "process"
+                               * Cannot be called while "process" is on-going */
+    spreader_initCodec(hSpr); /* Can be called whenever (thread-safe) */
+
+    /* Define input mono signal */
+    inSigs = (float**)malloc2d(nInputs,signalLength,sizeof(float));
+    outSigs = (float**)malloc2d(nOutputs,signalLength,sizeof(float));
+    rand_m1_1(FLATTEN2D(inSigs), nInputs*signalLength); /* white-noise signals */
+
+    /* Apply spreader */
+    framesize = spreader_getFrameSize();
+    inSig_frame = (float**)malloc1d(nInputs*sizeof(float*));
+    outSig_frame = (float**)malloc1d(nOutputs*sizeof(float*));
+    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
+        for(ch=0; ch<nInputs; ch++)
+            inSig_frame[ch] = &inSigs[ch][i*framesize];
+        for(ch=0; ch<nOutputs; ch++)
+            outSig_frame[ch] = &outSigs[ch][i*framesize];
+
+        spreader_process(hSpr, inSig_frame, outSig_frame, nInputs, nOutputs, framesize);
+    }
+
+    /* Clean-up */
+    spreader_destroy(&hSpr);
+    free(inSigs);
+    free(outSigs);
+    free(inSig_frame);
+    free(outSig_frame);
+}
+#endif
 
 void test__quaternion(void){
     int i, j;

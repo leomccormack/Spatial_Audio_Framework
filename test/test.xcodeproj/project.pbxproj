@@ -11,6 +11,8 @@
 		508CC48124EAA0A4006DF0C7 /* saf_tracker.c in Sources */ = {isa = PBXBuildFile; fileRef = 508CC47E24EAA0A4006DF0C7 /* saf_tracker.c */; };
 		508FBDA12456D31F0076C205 /* unity.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBD9E2456D31F0076C205 /* unity.c */; };
 		508FBDA52456D3300076C205 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBDA32456D3300076C205 /* timer.c */; };
+		50C18ED6261E3FCC008A17B1 /* spreader.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C18ED3261E3FCC008A17B1 /* spreader.c */; };
+		50C18ED7261E3FCC008A17B1 /* spreader_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C18ED5261E3FCC008A17B1 /* spreader_internal.c */; };
 		50E35D1F2475AECA00B74C25 /* saf_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35D1E2475AECA00B74C25 /* saf_test.c */; };
 		50E35E732481353300B74C25 /* saf_test_wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E712481353300B74C25 /* saf_test_wrapper.cpp */; };
 		50E3605C249BDDCC00B74C25 /* md_malloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3600D249BDDCB00B74C25 /* md_malloc.c */; };
@@ -107,6 +109,10 @@
 		508FBDA02456D31F0076C205 /* unity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unity.h; sourceTree = "<group>"; };
 		508FBDA32456D3300076C205 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timer.c; sourceTree = "<group>"; };
 		508FBDA42456D3300076C205 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
+		50C18ED1261E3FBB008A17B1 /* spreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spreader.h; sourceTree = "<group>"; };
+		50C18ED3261E3FCC008A17B1 /* spreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spreader.c; sourceTree = "<group>"; };
+		50C18ED4261E3FCC008A17B1 /* spreader_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spreader_internal.h; sourceTree = "<group>"; };
+		50C18ED5261E3FCC008A17B1 /* spreader_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spreader_internal.c; sourceTree = "<group>"; };
 		50E35D1E2475AECA00B74C25 /* saf_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_test.c; sourceTree = "<group>"; };
 		50E35E712481353300B74C25 /* saf_test_wrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = saf_test_wrapper.cpp; sourceTree = "<group>"; };
 		50E35E722481353300B74C25 /* saf_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_test.h; sourceTree = "<group>"; };
@@ -319,6 +325,16 @@
 				508FBDA42456D3300076C205 /* timer.h */,
 			);
 			path = timer;
+			sourceTree = "<group>";
+		};
+		50C18ED2261E3FCC008A17B1 /* spreader */ = {
+			isa = PBXGroup;
+			children = (
+				50C18ED3261E3FCC008A17B1 /* spreader.c */,
+				50C18ED4261E3FCC008A17B1 /* spreader_internal.h */,
+				50C18ED5261E3FCC008A17B1 /* spreader_internal.c */,
+			);
+			path = spreader;
 			sourceTree = "<group>";
 		};
 		50E36006249BDDCB00B74C25 /* framework */ = {
@@ -556,6 +572,7 @@
 				50E3DE4624C1B81200589B17 /* powermap.h */,
 				50E3DE3A24C1B81200589B17 /* rotator.h */,
 				50E3DE4124C1B81200589B17 /* sldoa.h */,
+				50C18ED1261E3FBB008A17B1 /* spreader.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -580,6 +597,7 @@
 				50E3DEFF24C1D4EA00589B17 /* powermap */,
 				50E3DECD24C1C80B00589B17 /* rotator */,
 				50E3DEF924C1D4EA00589B17 /* sldoa */,
+				50C18ED2261E3FCC008A17B1 /* spreader */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -857,6 +875,7 @@
 				50E36074249BDDCC00B74C25 /* saf_sh.c in Sources */,
 				50E3DEB824C1C36E00589B17 /* ambi_drc_internal.c in Sources */,
 				50E3607B249BDDCC00B74C25 /* saf_hrir.c in Sources */,
+				50C18ED7261E3FCC008A17B1 /* spreader_internal.c in Sources */,
 				508CC48024EAA0A4006DF0C7 /* saf_tracker_internal.c in Sources */,
 				50E3DEF324C1D3A900589B17 /* decorrelator.c in Sources */,
 				50E36079249BDDCC00B74C25 /* saf_default_hrirs.c in Sources */,
@@ -882,6 +901,7 @@
 				50E3606C249BDDCC00B74C25 /* saf_utility_complex.c in Sources */,
 				50E3DFB924E1B64800589B17 /* ambi_roomsim_internal.c in Sources */,
 				50E3DEC324C1C5AB00589B17 /* array2sh_internal.c in Sources */,
+				50C18ED6261E3FCC008A17B1 /* spreader.c in Sources */,
 				50E36060249BDDCC00B74C25 /* convhull_3d.c in Sources */,
 				50E3DEED24C1D16400589B17 /* binauraliser_internal.c in Sources */,
 				50E3606D249BDDCC00B74C25 /* saf_utility_loudspeaker_presets.c in Sources */,

@@ -47,7 +47,7 @@ extern "C" {
 /** @example powermap.h */
 /** @example rotator.h*/
 /** @example sldoa.h*/
-
+/** @example spreader.h*/
 
 /* ========================================================================== */
 /*                             Presets + Constants                            */
