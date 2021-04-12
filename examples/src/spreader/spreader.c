@@ -582,7 +582,7 @@ void spreader_setSourceElev_deg(void* const hSpr, int index, float newElev_deg)
 void spreader_setNumSources(void* const hSpr, int new_nSources)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    pData->new_nSources = CLAMP(new_nSources, 1, MAX_NUM_INPUTS);
+    pData->new_nSources = CLAMP(new_nSources, 1, SPREADER_MAX_NUM_SOURCES);
     spreader_setCodecStatus(hSpr, CODEC_STATUS_NOT_INITIALISED);
 }
 
