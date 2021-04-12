@@ -35,6 +35,7 @@ void spreader_create
     printf(SAF_VERSION_LICENSE_STRING);
 
     /* user parameters */
+    pData->sofa_filepath = NULL;
     pData->nSources = 1;
     pData->procMode = SPREADER_MODE_NAIVE;
     pData->useDefaultHRIRsFLAG = 1;
@@ -316,7 +317,7 @@ void spreader_process
     spreader_data *pData = (spreader_data*)(hSpr);
     int q, src, ng, ch, i, j, band, t, nSources, Q, centre_ind;
     float trace;
-    float src_dir_xyz[3], CprotoDiag[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS];
+    float src_dirs_deg[SPREADER_MAX_NUM_SOURCES][2], src_dir_xyz[3], CprotoDiag[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS];
     float_complex scaleC, tmp;
     float_complex tmpFrame[MAX_NUM_CHANNELS][TIME_SLOTS], H_tmp[MAX_NUM_CHANNELS], Cy_new[MAX_NUM_CHANNELS*MAX_NUM_CHANNELS];
     float_complex E_dir[MAX_NUM_CHANNELS*MAX_NUM_CHANNELS], V[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS], D[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS];
@@ -328,6 +329,7 @@ void spreader_process
     procMode = pData->procMode;
     nSources = pData->nSources;
     Q = pData->Q;
+    memcpy((float*)src_dirs_deg, pData->src_dirs_deg, nSources*2*sizeof(float));
 
     /* apply binaural panner */
     if ((nSamples == FRAME_SIZE) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ){
@@ -350,7 +352,7 @@ void spreader_process
         assert(nSources==1); // need to add support for multi-source
         for(src=0; src<nSources; src++){
             /* Find the "spread" indices */
-            unitSph2cart(pData->src_dirs_deg[src], 1, 1, src_dir_xyz);
+            unitSph2cart(src_dirs_deg[src], 1, 1, src_dir_xyz);
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pData->nGrid, 1, 3, 1.0f,
                         pData->grid_dirs_xyz, 3,
                         src_dir_xyz, 1, 0.0f,
@@ -654,7 +656,7 @@ int spreader_getNumSources(void* const hSpr)
 
 int spreader_getMaxNumSources()
 {
-    return MAX_NUM_INPUTS;
+    return SPREADER_MAX_NUM_SOURCES;
 }
 
 int spreader_getNumOutputs(void* const hSpr)

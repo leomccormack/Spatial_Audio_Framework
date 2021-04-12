@@ -42,6 +42,7 @@ if(SAF_ENABLE_SOFA_READER_MODULE AND SAF_BUILD_EXAMPLES)
         "${example_prefix}powermap"
         "${example_prefix}rotator"
         "${example_prefix}sldoa"
+        "${example_prefix}spreader"
     ) 
 else()
     target_compile_definitions(${PROJECT_NAME} PRIVATE SAF_ENABLE_EXAMPLES_TESTS=0) 
