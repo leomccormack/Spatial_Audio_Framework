@@ -211,6 +211,7 @@ void spreader_initCodec
         memcpy(pData->grid_dirs_deg, (float*)__default_hrir_dirs_deg, pData->nGrid * 2 * sizeof(float));
     }
     else{
+        /* Use sofa loader */
         saf_sofa_container sofa;
         error = saf_sofa_open(&sofa, pData->sofa_filepath);
         if(error!=SAF_SOFA_OK){
@@ -228,6 +229,9 @@ void spreader_initCodec
         cblas_scopy(pData->nGrid, &sofa.SourcePosition[1], 3, &pData->grid_dirs_deg[1], 2); /* elev */
         saf_sofa_close(&sofa);
     }
+
+    /* Convert from the 0..360 convention, to -180..180, and pre-compute unit Cartesian vectors */
+    convert_0_360To_m180_180(pData->grid_dirs_deg, pData->nGrid);
     pData->grid_dirs_xyz = realloc1d(pData->grid_dirs_xyz, pData->nGrid*3*sizeof(float));
     unitSph2cart(pData->grid_dirs_deg, pData->nGrid, 1, pData->grid_dirs_xyz);
 
@@ -358,17 +362,17 @@ void spreader_process
                         src_dir_xyz, 1, 0.0f,
                         pData->angles, 1);
             for(i=0; i<pData->nGrid; i++)
-                pData->angles[i] = acosf(MIN(pData->angles[i], 0.999999f));
+                pData->angles[i] = acosf(MIN(pData->angles[i], 0.9999999f))*180.0f/SAF_PI;
             utility_siminv(pData->angles, pData->nGrid, &centre_ind);
 
             /* Define Prototype signals */
-            switch(procMode){
+             switch(procMode){
                 case SPREADER_MODE_NAIVE:/* fall through */
                 case SPREADER_MODE_OM:
                     for(band=0; band<HYBRID_BANDS; band++){
                         memset(FLATTEN2D(pData->protoframeTF[band]), 0, Q*TIME_SLOTS*sizeof(float_complex));
                         for(ng=0,j=0; ng<pData->nGrid; ng++){
-                            if(pData->angles[ng] <= pData->src_spread[ng]/2.0f*SAF_PI/180.0f){
+                            if(pData->angles[ng] <= (pData->src_spread[src]/2.0f)){
                                 for(q=0; q<Q; q++)
                                     H_tmp[q] = pData->H_grid[band*Q*pData->nGrid + q*pData->nGrid + ng];
                                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, Q, TIME_SLOTS, 1, &calpha,
@@ -412,7 +416,7 @@ void spreader_process
                     /* Sum the H_array outer product matrices for the whole spreading area */
                     memset(Cy_new, 0, Q*Q*sizeof(float_complex));
                     for(ng=0, j=0; ng<pData->nGrid; ng++){
-                        if(pData->angles[ng] <= pData->src_spread[src]/2.0f*SAF_PI/180.0f){
+                        if(pData->angles[ng] <= (pData->src_spread[src]/2.0f)){
                             cblas_caxpy(Q*Q, &calpha, pData->HHH[band][ng], 1, Cy_new, 1);
                             j++;
                         }
@@ -565,23 +569,23 @@ void spreader_refreshSettings(void* const hSpr)
 void spreader_setSourceAzi_deg(void* const hSpr, int index, float newAzi_deg)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
+    assert(index<SPREADER_MAX_NUM_SOURCES);
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
     newAzi_deg = MAX(newAzi_deg, -180.0f);
     newAzi_deg = MIN(newAzi_deg, 180.0f);
-    if(pData->src_dirs_deg[index][0]!=newAzi_deg){
+    if(pData->src_dirs_deg[index][0]!=newAzi_deg)
         pData->src_dirs_deg[index][0] = newAzi_deg;
-    }
 }
 
 void spreader_setSourceElev_deg(void* const hSpr, int index, float newElev_deg)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
+    assert(index<SPREADER_MAX_NUM_SOURCES);
     newElev_deg = MAX(newElev_deg, -90.0f);
     newElev_deg = MIN(newElev_deg, 90.0f);
-    if(pData->src_dirs_deg[index][1] != newElev_deg){
+    if(pData->src_dirs_deg[index][1] != newElev_deg)
         pData->src_dirs_deg[index][1] = newElev_deg;
-    }
 }
 
 void spreader_setNumSources(void* const hSpr, int new_nSources)
@@ -639,12 +643,14 @@ void spreader_getProgressBarText(void* const hSpr, char* text)
 float spreader_getSourceAzi_deg(void* const hSpr, int index)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
+    assert(index<SPREADER_MAX_NUM_SOURCES);
     return pData->src_dirs_deg[index][0];
 }
 
 float spreader_getSourceElev_deg(void* const hSpr, int index)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
+    assert(index<SPREADER_MAX_NUM_SOURCES);
     return pData->src_dirs_deg[index][1];
 }
 
