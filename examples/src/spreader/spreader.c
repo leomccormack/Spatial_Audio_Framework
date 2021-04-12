@@ -63,6 +63,7 @@ void spreader_create
     pData->grid_dirs_xyz = NULL;
     pData->weights = NULL;
     pData->hDecor = NULL;
+    pData->angles = NULL;
     pData->Cy = NULL;
     pData->Cproto = NULL;
     pData->new_M = NULL;
@@ -128,7 +129,7 @@ void spreader_destroy
         free(pData->grid_dirs_deg);
         free(pData->grid_dirs_xyz);
         free(pData->weights);
-        free(pData->hDecor);
+        latticeDecorrelator_destroy(&(pData->hDecor));
         free(pData->angles);
         free(pData->Cy);
         free(pData->Cproto);
@@ -226,6 +227,8 @@ void spreader_initCodec
         cblas_scopy(pData->nGrid, &sofa.SourcePosition[1], 3, &pData->grid_dirs_deg[1], 2); /* elev */
         saf_sofa_close(&sofa);
     }
+    pData->grid_dirs_xyz = realloc1d(pData->grid_dirs_xyz, pData->nGrid*3*sizeof(float));
+    unitSph2cart(pData->grid_dirs_deg, pData->nGrid, 1, pData->grid_dirs_xyz);
 
     /* Initialise time-frequency transform and decorrelators */
     afSTFT_destroy(&(pData->hSTFT));
@@ -348,9 +351,9 @@ void spreader_process
         for(src=0; src<nSources; src++){
             /* Find the "spread" indices */
             unitSph2cart(pData->src_dirs_deg[src], 1, 1, src_dir_xyz);
-            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, pData->nGrid, 3, 1.0f,
-                        src_dir_xyz, 3,
-                        pData->grid_dirs_xyz, 3, 0.0f,
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pData->nGrid, 1, 3, 1.0f,
+                        pData->grid_dirs_xyz, 3,
+                        src_dir_xyz, 1, 0.0f,
                         pData->angles, 1);
             for(i=0; i<pData->nGrid; i++)
                 pData->angles[i] = acosf(MIN(pData->angles[i], 0.999999f));
