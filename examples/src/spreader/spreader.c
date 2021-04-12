@@ -89,6 +89,7 @@ void spreader_create
     pData->Cr_cmplx = NULL;
 
     /* flags/status */
+    pData->new_procMode = pData->procMode;
     pData->new_nSources = pData->nSources;
     pData->progressBar0_1 = 0.0f;
     pData->progressBarText = malloc1d(PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
@@ -180,6 +181,7 @@ void spreader_initCodec
     int q, band, ng, nSources;
     float_complex scaleC;
     SAF_SOFA_ERROR_CODES error;
+    SPREADER_PROC_MODES procMode;
     float_complex H_tmp[MAX_NUM_CHANNELS];
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
@@ -192,6 +194,7 @@ void spreader_initCodec
     }
 
     nSources = pData->new_nSources;
+    procMode = pData->new_procMode;
     
     /* for progress bar */
     pData->codecStatus = CODEC_STATUS_INITIALISING;
@@ -301,6 +304,7 @@ void spreader_initCodec
 
     /* New config */
     pData->nSources = pData->new_nSources;
+    pData->procMode = pData->new_procMode;
 
     /* done! */
     strcpy(pData->progressBarText,"Done!");
@@ -566,6 +570,19 @@ void spreader_refreshSettings(void* const hSpr)
     spreader_setCodecStatus(hSpr, CODEC_STATUS_NOT_INITIALISED);
 }
 
+void spreader_setSpreadingMode(void* const hSpr, int newMode)
+{
+    spreader_data *pData = (spreader_data*)(hSpr);
+    pData->new_procMode = newMode;
+    spreader_setCodecStatus(hSpr, CODEC_STATUS_NOT_INITIALISED); 
+}
+
+void spreader_setAveragingCoeff(void* const hSpr, float newValue)
+{
+    spreader_data *pData = (spreader_data*)(hSpr);
+    pData->covAvgCoeff = newValue;
+}
+
 void spreader_setSourceAzi_deg(void* const hSpr, int index, float newAzi_deg)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
@@ -648,6 +665,18 @@ void spreader_getProgressBarText(void* const hSpr, char* text)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
     memcpy(text, pData->progressBarText, PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+}
+
+int spreader_getSpreadingMode(void* const hSpr)
+{
+    spreader_data *pData = (spreader_data*)(hSpr);
+    return pData->new_procMode;
+}
+
+float spreader_getAveragingCoeff(void* const hSpr)
+{
+    spreader_data *pData = (spreader_data*)(hSpr);
+    return pData->covAvgCoeff;
 }
 
 float spreader_getSourceAzi_deg(void* const hSpr, int index)

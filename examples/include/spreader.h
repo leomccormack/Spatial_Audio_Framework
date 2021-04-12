@@ -35,11 +35,11 @@ extern "C" {
 
 /** Available processing modes */
 typedef enum {
-    SPREADER_MODE_NAIVE, /**< Simple coherent copies of the input signal(s) are
-                          *   assigned to the spreading areas */
-    SPREADER_MODE_OM,    /**< Optimal mixing solution */
-    SPREADER_MODE_EVD    /**< Basic solution based on an Eigenvalue
-                          *   decomposition */
+    SPREADER_MODE_NAIVE = 1, /**< Simple coherent copies of the input signal(s)
+                              *   areassigned to the spreading areas */
+    SPREADER_MODE_OM,        /**< Optimal mixing solution */
+    SPREADER_MODE_EVD        /**< Basic solution based on an Eigenvalue
+                              *   decomposition */
 } SPREADER_PROC_MODES;
 
 /* ========================================================================== */
@@ -115,6 +115,12 @@ void spreader_process(void* const hSpr,
  * as spreader is currently configured, at next available opportunity.
  */
 void spreader_refreshSettings(void* const hSpr);
+
+/** Sets the spreading mode (see #SPREADER_PROC_MODES) */
+void spreader_setSpreadingMode(void* const hSpr, int newMode);
+
+/** Sets the averaging coefficient [0..1] */
+void spreader_setAveragingCoeff(void* const hSpr, float newValue);
     
 /** Sets the panning azimuth for a specific channel index, in DEGREES */
 void spreader_setSourceAzi_deg(void* const hSpr,
@@ -185,6 +191,12 @@ float spreader_getProgressBar0_1(void* const hSpr);
  *       #PROGRESSBARTEXT_CHAR_LENGTH
  */
 void spreader_getProgressBarText(void* const hSpr, char* text);
+
+/** Returns the spreading mode (see #SPREADER_PROC_MODES) */
+int spreader_getSpreadingMode(void* const hSpr);
+
+/** Returns the averaging coefficient [0..1] */
+float spreader_getAveragingCoeff(void* const hSpr);
 
 /** Returns the source azimuth for a given index, in DEGREES */
 float spreader_getSourceAzi_deg(void* const hSpr, int index);

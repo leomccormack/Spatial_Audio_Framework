@@ -118,6 +118,7 @@ typedef struct _spreader
     char* progressBarText;
     PROC_STATUS procStatus;
     int new_nSources;
+    SPREADER_PROC_MODES new_procMode;
 
     /* user parameters */
     SPREADER_PROC_MODES procMode;     /**< See #SPREADER_PROC_MODES */
