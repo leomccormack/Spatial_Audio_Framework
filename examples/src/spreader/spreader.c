@@ -588,6 +588,16 @@ void spreader_setSourceElev_deg(void* const hSpr, int index, float newElev_deg)
         pData->src_dirs_deg[index][1] = newElev_deg;
 }
 
+void spreader_setSourceSpread_deg(void* const hSpr, int index, float newSpread_deg)
+{
+    spreader_data *pData = (spreader_data*)(hSpr);
+    assert(index<SPREADER_MAX_NUM_SOURCES);
+    newSpread_deg = MAX(newSpread_deg, 0.0f);
+    newSpread_deg = MIN(newSpread_deg, 180.0f);
+    if(pData->src_spread[index] != newSpread_deg)
+        pData->src_spread[index] = newSpread_deg;
+}
+
 void spreader_setNumSources(void* const hSpr, int new_nSources)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
@@ -652,6 +662,13 @@ float spreader_getSourceElev_deg(void* const hSpr, int index)
     spreader_data *pData = (spreader_data*)(hSpr);
     assert(index<SPREADER_MAX_NUM_SOURCES);
     return pData->src_dirs_deg[index][1];
+}
+
+float spreader_getSourceSpread_deg(void* const hSpr, int index)
+{
+    spreader_data *pData = (spreader_data*)(hSpr);
+    assert(index<SPREADER_MAX_NUM_SOURCES);
+    return pData->src_spread[index];
 }
 
 int spreader_getNumSources(void* const hSpr)

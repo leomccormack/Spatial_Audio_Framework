@@ -89,7 +89,7 @@ void spreader_init(void* const hSpr,
 void spreader_initCodec(void* const hSpr);
 
 /**
- * Binauralises the input signals at the user specified directions
+ * Spatialises and spreads the input signals in the user specified directions
  *
  * @param[in] hSpr      spreader handle
  * @param[in] inputs    Input channel buffers; 2-D array: nInputs x nSamples
@@ -125,6 +125,11 @@ void spreader_setSourceAzi_deg(void* const hSpr,
 void spreader_setSourceElev_deg(void* const hSpr,
                                 int index,
                                 float newElev_deg);
+
+/** Sets the source spread for a specific channel index, in DEGREES */
+void spreader_setSourceSpread_deg(void* const hSpr,
+                                  int index,
+                                  float newSpread_deg);
 
 /** Sets the number of input channels/sources to binauralise. */
 void spreader_setNumSources(void* const hSpr, int new_nSources);
@@ -186,6 +191,9 @@ float spreader_getSourceAzi_deg(void* const hSpr, int index);
 
 /** Returns the source elevation for a given index, in DEGREES */
 float spreader_getSourceElev_deg(void* const hSpr, int index);
+
+/** Returns the source spread for a given index, in DEGREES */
+float spreader_getSourceSpread_deg(void* const hSpr, int index);
 
 /** Returns the number of inputs/sources in the current layout */
 int spreader_getNumSources(void* const hSpr);
