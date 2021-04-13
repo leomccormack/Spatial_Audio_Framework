@@ -37,7 +37,7 @@ void spreader_create
     /* user parameters */
     pData->sofa_filepath = NULL;
     pData->nSources = 1;
-    pData->procMode = SPREADER_MODE_NAIVE;
+    pData->procMode = SPREADER_MODE_OM;
     pData->useDefaultHRIRsFLAG = 1;
     pData->covAvgCoeff = 0.85f;
     memset(pData->src_spread, 0, SPREADER_MAX_NUM_SOURCES*sizeof(float));
