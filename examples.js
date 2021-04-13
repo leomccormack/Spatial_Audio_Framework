@@ -16,5 +16,6 @@ var examples =
     [ "pitch_shifter.h", "pitch_shifter_8h-example.html", null ],
     [ "powermap.h", "powermap_8h-example.html", null ],
     [ "rotator.h", "rotator_8h-example.html", null ],
-    [ "sldoa.h", "sldoa_8h-example.html", null ]
+    [ "sldoa.h", "sldoa_8h-example.html", null ],
+    [ "spreader.h", "spreader_8h-example.html", null ]
 ];

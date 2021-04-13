@@ -29,6 +29,7 @@ var saf__test_8h =
     [ "test__saf_example_ambi_enc", "saf__test_8h.html#a91ddc76de989bca60ca1baf119332152", null ],
     [ "test__saf_example_array2sh", "saf__test_8h.html#a6115d88bde38a657d83ce065007e93a0", null ],
     [ "test__saf_example_rotator", "saf__test_8h.html#a616c7f0183703515b843a14202e629ad", null ],
+    [ "test__saf_example_spreader", "saf__test_8h.html#ad052f88569abba36f933b2de353494fe", null ],
     [ "test__saf_matrixConv", "saf__test_8h.html#ad992431654877a596b057b67120c3cac", null ],
     [ "test__saf_rfft", "saf__test_8h.html#a61e4197e4ad12c1669f952118a37c17b", null ],
     [ "test__saf_sofa_open", "saf__test_8h.html#ae3776b7859f86e4f8d699ec6968d1500", null ],

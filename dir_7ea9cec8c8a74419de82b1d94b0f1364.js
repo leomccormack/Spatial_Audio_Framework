@@ -17,5 +17,6 @@ var dir_7ea9cec8c8a74419de82b1d94b0f1364 =
     [ "pitch_shifter.h", "pitch__shifter_8h.html", "pitch__shifter_8h" ],
     [ "powermap.h", "powermap_8h.html", "powermap_8h" ],
     [ "rotator.h", "rotator_8h.html", "rotator_8h" ],
-    [ "sldoa.h", "sldoa_8h.html", "sldoa_8h" ]
+    [ "sldoa.h", "sldoa_8h.html", "sldoa_8h" ],
+    [ "spreader.h", "spreader_8h.html", "spreader_8h" ]
 ];

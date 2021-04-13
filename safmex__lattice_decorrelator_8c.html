@@ -100,7 +100,7 @@ $(document).ready(function(){initNavTree('safmex__lattice_decorrelator_8c.html',
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:af0cdb4382b49e9d97fb1edef8e0f9efc"><td class="memItemLeft" align="right" valign="top"><a id="af0cdb4382b49e9d97fb1edef8e0f9efc"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>NUM_INPUT_ARGS_CREATE</b>&#160;&#160;&#160;( 6 )</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>NUM_INPUT_ARGS_CREATE</b>&#160;&#160;&#160;( 8 )</td></tr>
 <tr class="separator:af0cdb4382b49e9d97fb1edef8e0f9efc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab8d482a948de63cb1ba71eed1639be26"><td class="memItemLeft" align="right" valign="top"><a id="ab8d482a948de63cb1ba71eed1639be26"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>NUM_INPUT_ARGS_APPLY</b>&#160;&#160;&#160;( 1 )</td></tr>
@@ -123,6 +123,12 @@ Variables</h2></td></tr>
 <tr class="separator:a993d8f15628dae509d1d02c21de11517"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3365e443203d8888a9fc083d0cef658"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80">MEX_DATA_TYPES</a>&#160;</td><td class="memItemRight" valign="bottom"><b>outputDataTypes_apply</b> [NUM_OUTPUT_ARGS_APPLY]</td></tr>
 <tr class="separator:aa3365e443203d8888a9fc083d0cef658"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abda5a6ad49c233891cb4b563a37ab105"><td class="memItemLeft" align="right" valign="top"><a id="abda5a6ad49c233891cb4b563a37ab105"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>fs</b></td></tr>
+<tr class="separator:abda5a6ad49c233891cb4b563a37ab105"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab198787e7d75b2dc09375da14cd9240"><td class="memItemLeft" align="right" valign="top"><a id="aab198787e7d75b2dc09375da14cd9240"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>hopsize</b></td></tr>
+<tr class="separator:aab198787e7d75b2dc09375da14cd9240"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada11614c8ac77331054ee96bd365ce51"><td class="memItemLeft" align="right" valign="top"><a id="ada11614c8ac77331054ee96bd365ce51"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>nCH</b></td></tr>
 <tr class="separator:ada11614c8ac77331054ee96bd365ce51"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,9 +138,9 @@ int *&#160;</td><td class="memItemRight" valign="bottom"><b>orders</b> = NULL</t
 <tr class="memitem:a99f28a771358440bc079286cda234df6"><td class="memItemLeft" align="right" valign="top"><a id="a99f28a771358440bc079286cda234df6"></a>
 float *&#160;</td><td class="memItemRight" valign="bottom"><b>freqCutoffs</b> = NULL</td></tr>
 <tr class="separator:a99f28a771358440bc079286cda234df6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a44c5f33e92a8be47f621d947ccf2f9a7"><td class="memItemLeft" align="right" valign="top"><a id="a44c5f33e92a8be47f621d947ccf2f9a7"></a>
-int *&#160;</td><td class="memItemRight" valign="bottom"><b>fixedDelays</b> = NULL</td></tr>
-<tr class="separator:a44c5f33e92a8be47f621d947ccf2f9a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab195a68ff0c52296e95f288976b34250"><td class="memItemLeft" align="right" valign="top"><a id="ab195a68ff0c52296e95f288976b34250"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>maxDelay</b></td></tr>
+<tr class="separator:ab195a68ff0c52296e95f288976b34250"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a478822845f16539a169cfef0e0633210"><td class="memItemLeft" align="right" valign="top"><a id="a478822845f16539a169cfef0e0633210"></a>
 float *&#160;</td><td class="memItemRight" valign="bottom"><b>freqVector</b> = NULL</td></tr>
 <tr class="separator:a478822845f16539a169cfef0e0633210"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -186,7 +192,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>supportedOrders<
 <div class="line">}</div>
 <div class="ttc" id="asafmex_8h_html_a561cb76408888a74b7ae193c3f49be80ae5915810cdc6a9040441eb606184f8cf"><div class="ttname"><a href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80ae5915810cdc6a9040441eb606184f8cf">SM_DOUBLE_COMPLEX_3D</a></div><div class="ttdeci">@ SM_DOUBLE_COMPLEX_3D</div><div class="ttdoc">Complex 3-D matrix; N x M x K.</div><div class="ttdef"><b>Definition:</b> <a href="safmex_8h_source.html#l00048">safmex.h:46</a></div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="safmex__lattice_decorrelator_8c_source.html#l00042">42</a> of file <a class="el" href="safmex__lattice_decorrelator_8c_source.html">safmex_latticeDecorrelator.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="safmex__lattice_decorrelator_8c_source.html#l00044">44</a> of file <a class="el" href="safmex__lattice_decorrelator_8c_source.html">safmex_latticeDecorrelator.c</a>.</p>
 
 </div>
 </div>
@@ -201,14 +207,17 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>supportedOrders<
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">    <a class="code" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80ac1b86c68564edd7e6580cf2b6c101de2">SM_INT32</a>,                 </div>
+<b>Initial value:</b><div class="fragment"><div class="line">= { </div>
+<div class="line">    <a class="code" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80a6d6fae08d9238a5941fd102403e2da26">SM_DOUBLE_REAL</a>,</div>
+<div class="line">    <a class="code" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80ac1b86c68564edd7e6580cf2b6c101de2">SM_INT32</a>,  </div>
+<div class="line">    <a class="code" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80ac1b86c68564edd7e6580cf2b6c101de2">SM_INT32</a>,</div>
 <div class="line">    <a class="code" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80afada85e002a51ad9c7db5262b571c601">SM_DOUBLE_REAL_1D</a>,  </div>
 <div class="line">    <a class="code" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80afada85e002a51ad9c7db5262b571c601">SM_DOUBLE_REAL_1D</a>,  </div>
-<div class="line">    <a class="code" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80afada85e002a51ad9c7db5262b571c601">SM_DOUBLE_REAL_1D</a>,  </div>
-<div class="line">    <a class="code" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80afada85e002a51ad9c7db5262b571c601">SM_DOUBLE_REAL_1D</a>,</div>
-<div class="line">    <a class="code" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80ac1b86c68564edd7e6580cf2b6c101de2">SM_INT32</a></div>
+<div class="line">    <a class="code" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80ac1b86c68564edd7e6580cf2b6c101de2">SM_INT32</a>,</div>
+<div class="line">    <a class="code" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80afada85e002a51ad9c7db5262b571c601">SM_DOUBLE_REAL_1D</a>, </div>
+<div class="line">    <a class="code" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80ac1b86c68564edd7e6580cf2b6c101de2">SM_INT32</a> </div>
 <div class="line">}</div>
+<div class="ttc" id="asafmex_8h_html_a561cb76408888a74b7ae193c3f49be80a6d6fae08d9238a5941fd102403e2da26"><div class="ttname"><a href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80a6d6fae08d9238a5941fd102403e2da26">SM_DOUBLE_REAL</a></div><div class="ttdeci">@ SM_DOUBLE_REAL</div><div class="ttdoc">Scalar, real valued; 1 x 1.</div><div class="ttdef"><b>Definition:</b> <a href="safmex_8h_source.html#l00037">safmex.h:37</a></div></div>
 <div class="ttc" id="asafmex_8h_html_a561cb76408888a74b7ae193c3f49be80ac1b86c68564edd7e6580cf2b6c101de2"><div class="ttname"><a href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80ac1b86c68564edd7e6580cf2b6c101de2">SM_INT32</a></div><div class="ttdeci">@ SM_INT32</div><div class="ttdoc">Integer; 1 x 1.</div><div class="ttdef"><b>Definition:</b> <a href="safmex_8h_source.html#l00034">safmex.h:34</a></div></div>
 <div class="ttc" id="asafmex_8h_html_a561cb76408888a74b7ae193c3f49be80afada85e002a51ad9c7db5262b571c601"><div class="ttname"><a href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80afada85e002a51ad9c7db5262b571c601">SM_DOUBLE_REAL_1D</a></div><div class="ttdeci">@ SM_DOUBLE_REAL_1D</div><div class="ttdoc">Real 1-D vector; N x 1.</div><div class="ttdef"><b>Definition:</b> <a href="safmex_8h_source.html#l00039">safmex.h:39</a></div></div>
 </div><!-- fragment -->
@@ -231,7 +240,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>supportedOrders<
 <div class="line">    <a class="code" href="safmex_8h.html#a561cb76408888a74b7ae193c3f49be80ae5915810cdc6a9040441eb606184f8cf">SM_DOUBLE_COMPLEX_3D</a> </div>
 <div class="line">}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="safmex__lattice_decorrelator_8c_source.html#l00045">45</a> of file <a class="el" href="safmex__lattice_decorrelator_8c_source.html">safmex_latticeDecorrelator.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="safmex__lattice_decorrelator_8c_source.html#l00047">47</a> of file <a class="el" href="safmex__lattice_decorrelator_8c_source.html">safmex_latticeDecorrelator.c</a>.</p>
 
 </div>
 </div>
@@ -241,7 +250,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>supportedOrders<
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_1510bd745cd29c20d24c27171ebe5ba5.html">extras</a></li><li class="navelem"><a class="el" href="dir_ceb95d790a4cfeea9a2b697328335b4f.html">safmex</a></li><li class="navelem"><a class="el" href="safmex__lattice_decorrelator_8c.html">safmex_latticeDecorrelator.c</a></li>
-    <li class="footer">Generated on Tue Apr 6 2021 10:39:24 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Apr 13 2021 15:02:00 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
