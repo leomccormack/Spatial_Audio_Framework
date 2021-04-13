@@ -1,7 +1,7 @@
 %SAFMEX_LATTICEDECORRELATOR Lattice all-pass filter based decorrelator
-%   SAFMEX_LATTICEDECORRELATOR(NCH, ORDERS, FREQCUTOFFS, FIXEDDELAYS, 
-%   FREQVECTOR, TIMESLOTS) creates the latticeDecorrelator for NCH number
-%   of channels.
+%   SAFMEX_LATTICEDECORRELATOR(FS, HOPSIZE, NCH, ORDERS, FREQCUTOFFS, 
+%   MAXDELAY, FREQVECTOR, TIMESLOTS) creates the latticeDecorrelator for 
+%   NCH number of channels. 
 %
 %   The decorrelator groups the input signals based on the FREQCUTOFFS
 %   divisions, and applies a fixed delay to each grouping defined by vector
@@ -16,29 +16,31 @@
 %   is length(FREQVECTOR).
 %
 % INPUT ARGUMENTS 
+%   FS:          Sampling rate
+%   HOPSIZE:     Hop size in samples
 %   NCH:         Number of channels
 %   ORDERS       Lattice all-pass filter orders (2,3,4,6,8,10,12,14,15,16,18
 %                , or 20) per band grouping; nCutoffs x 1
 %   FREQCUTOFFS  Frequency cut-offs defining the band groupings; 
 %                nCutoffs x 1
-%   FIXEDDELAYS  Fixed time-frequency hop delays; (nCutoffs+1) x 1 
+%   MAXDELAY:    Maximum delay in hops (TIMESLOTS)
 %   FREQVECTOR   Frequency vector; nBands x 1 */ 
 %   TIMESLOTS    Number of TF frames to process at a time  
 %
 % EXAMPLE
 %
 %   % User params
+%   fs = 48e3;
 %   nCH = 6; 
 %   hopsize = 128;
 %   blocksize = 2048*24; 
-%   orders = [6 6 4 3].';
-%   fixedDelays = [ 8 6 4 2 2].';
-%   freqCutoffs = [ 300 800 2e3, 4e3].';
+%   orders = [20 15 6 3].'; 
+%   freqCutoffs = [ 900 2.4e3 8e3, 16e3].';
 %   timeslots = blocksize/hopsize;
 %
 %   % Create
 %   [freqVector, procDelay] = safmex_afSTFT(nCH, nCH, hopsize, blocksize, 1, 0, 48e3); 
-%   safmex_latticeDecorrelator(nCH, orders, freqCutoffs, fixedDelays, freqVector, timeslots);
+%   safmex_latticeDecorrelator(fs, hopsize, nCH, orders, freqCutoffs, maxDelay, freqVector, timeslots);
 %
 %   % Forward TF transform
 %   dataTD_ref = randn(blocksize, nCH); 
