@@ -90,20 +90,23 @@ typedef struct _spreader
     float* grid_dirs_deg;              /**< Grid directions, in degrees; FLAT: nGrid x 2 */
     float* grid_dirs_xyz;              /**< Grid directions as unit-length Cartesian coordinates; FLAT: nGrid x 3 */
     float* weights;                    /**< Integration weights; nGrid x 1 */
-    void* hDecor;                      /**< handle for decorrelator */
+    void* hDecor[SPREADER_MAX_NUM_SOURCES]; /**< handles for decorrelators */
     float* angles;                     /**< angles; nGrid x 1 */
-    float_complex** Cproto;            /**< Current prototype covariance matrices; HYBRID_BANDS x FLAT:(Q x Q) */
-    float_complex** Cy;                /**< Target covariance matrices; HYBRID_BANDS x FLAT:(Q x Q) */
+    float_complex** Cproto[SPREADER_MAX_NUM_SOURCES]; /**< Current prototype covariance matrices; HYBRID_BANDS x FLAT:(Q x Q) */
+    float_complex** Cy[SPREADER_MAX_NUM_SOURCES];     /**< Target covariance matrices; HYBRID_BANDS x FLAT:(Q x Q) */
+    float_complex** prev_M[SPREADER_MAX_NUM_SOURCES]; /**< previous mixing matrices; HYBRID_BANDS x FLAT:(Q x Q) */
+    float** prev_Mr[SPREADER_MAX_NUM_SOURCES];        /**< previous residual mixing matrices; HYBRID_BANDS x FLAT:(Q x Q) */
     float_complex** new_M;             /**< mixing matrices; HYBRID_BANDS x FLAT:(Q x Q) */
-    float_complex** prev_M;            /**< previous mixing matrices; HYBRID_BANDS x FLAT:(Q x Q) */
     float** new_Mr;                    /**< residual mixing matrices; HYBRID_BANDS x FLAT:(Q x Q) */
-    float** prev_Mr;                   /**< previous residual mixing matrices; HYBRID_BANDS x FLAT:(Q x Q) */
     float_complex* interp_M;           /**< Interpolated mixing matrix; FLAT:(Q x Q) */
     float* interp_Mr;                  /**< Interpolated residual mixing matrix; FLAT:(Q x Q) */
     float_complex* interp_Mr_cmplx;    /**< Complex variant of interp_Mr */
     float_complex* inFrame_t;          /**< Temporary input frame; Q x 1 */
     float interpolatorFadeIn[TIME_SLOTS];  /**< Interpolator */
     float interpolatorFadeOut[TIME_SLOTS]; /**< Interpolator */
+
+    /* For visualisation */
+    int* dirActive[SPREADER_MAX_NUM_SOURCES]; /**< 1: IR direction currently used for spreading, 0: not */
 
     /* Optimal mixing solution */
     void* hCdf;                        /**< covariance domain framework handle */

@@ -192,22 +192,28 @@ float spreader_getProgressBar0_1(void* const hSpr);
  */
 void spreader_getProgressBarText(void* const hSpr, char* text);
 
+/**
+ * Returns the pointer to a vector describing which directions are currently
+ * being used for the spreading, for a given source index
+ */
+int* spreader_getDirectionActivePtr(void* const hSpr, int index);
+
 /** Returns the spreading mode (see #SPREADER_PROC_MODES) */
 int spreader_getSpreadingMode(void* const hSpr);
 
 /** Returns the averaging coefficient [0..1] */
 float spreader_getAveragingCoeff(void* const hSpr);
 
-/** Returns the source azimuth for a given index, in DEGREES */
+/** Returns the source azimuth for a given source index, in DEGREES */
 float spreader_getSourceAzi_deg(void* const hSpr, int index);
 
-/** Returns the source elevation for a given index, in DEGREES */
+/** Returns the source elevation for a given source index, in DEGREES */
 float spreader_getSourceElev_deg(void* const hSpr, int index);
 
-/** Returns the source spread for a given index, in DEGREES */
+/** Returns the source spread for a given source index, in DEGREES */
 float spreader_getSourceSpread_deg(void* const hSpr, int index);
 
-/** Returns the number of inputs/sources in the current layout */
+/** Returns the number of inputs/sources in the current config */
 int spreader_getNumSources(void* const hSpr);
 
 /** Returns the maximum number of input sources supported by spreader */

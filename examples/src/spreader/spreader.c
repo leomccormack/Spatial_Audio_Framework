@@ -30,7 +30,7 @@ void spreader_create
 {
     spreader_data* pData = (spreader_data*)malloc1d(sizeof(spreader_data));
     *phSpr = (void*)pData;
-    int band, t;
+    int band, t, src;
 
     printf(SAF_VERSION_LICENSE_STRING);
 
@@ -63,14 +63,17 @@ void spreader_create
     pData->grid_dirs_deg = NULL;
     pData->grid_dirs_xyz = NULL;
     pData->weights = NULL;
-    pData->hDecor = NULL;
     pData->angles = NULL;
-    pData->Cy = NULL;
-    pData->Cproto = NULL;
+    for(src=0; src<SPREADER_MAX_NUM_SOURCES; src++){
+        pData->hDecor[src] = NULL;
+        pData->Cy[src] = NULL;
+        pData->Cproto[src] = NULL;
+        pData->prev_M[src] = NULL;
+        pData->prev_Mr[src] = NULL;
+        pData->dirActive[src] = NULL;
+    }
     pData->new_M = NULL;
-    pData->prev_M = NULL;
     pData->new_Mr = NULL;
-    pData->prev_Mr = NULL;
     pData->interp_M = NULL;
     pData->interp_Mr = NULL;
     pData->interp_Mr_cmplx = NULL;
@@ -104,7 +107,7 @@ void spreader_destroy
 )
 {
     spreader_data *pData = (spreader_data*)(*phSpr);
-    int band;
+    int band, src;
 
     if (pData != NULL) {
         /* not safe to free memory during intialisation/processing loop */
@@ -131,14 +134,17 @@ void spreader_destroy
         free(pData->grid_dirs_deg);
         free(pData->grid_dirs_xyz);
         free(pData->weights);
-        latticeDecorrelator_destroy(&(pData->hDecor));
         free(pData->angles);
-        free(pData->Cy);
-        free(pData->Cproto);
+        for(src=0; src<SPREADER_MAX_NUM_SOURCES; src++){
+            latticeDecorrelator_destroy(&(pData->hDecor[src]));
+            free(pData->Cy[src]);
+            free(pData->Cproto[src]);
+            free(pData->prev_M[src]);
+            free(pData->prev_Mr[src]);
+            free(pData->dirActive[src]);
+        }
         free(pData->new_M);
-        free(pData->prev_M);
         free(pData->new_Mr);
-        free(pData->prev_Mr);
         free(pData->interp_M);
         free(pData->interp_Mr);
         free(pData->interp_Mr_cmplx);
@@ -178,7 +184,7 @@ void spreader_initCodec
 )
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    int q, band, ng, nSources;
+    int q, band, ng, nSources, src;
     float_complex scaleC;
     SAF_SOFA_ERROR_CODES error;
     SPREADER_PROC_MODES procMode;
@@ -245,8 +251,10 @@ void spreader_initCodec
     //float freqCutoffs[4] = {600.0f, 2.6e3f, 4.5e3f, 12e3f};
     float freqCutoffs[4] = {900.0f, 6.8e3f, 12e3f, 24e3f};
     const int maxDelay = 12;
-    latticeDecorrelator_destroy(&(pData->hDecor));
-    latticeDecorrelator_create(&(pData->hDecor), pData->fs, HOP_SIZE, pData->freqVector, HYBRID_BANDS, pData->Q, orders, freqCutoffs, 4, maxDelay, 0, 0.75f);
+    for(src=0; src<SPREADER_MAX_NUM_SOURCES; src++){
+        latticeDecorrelator_destroy(&(pData->hDecor[src]));
+        latticeDecorrelator_create(&(pData->hDecor[src]), pData->fs, HOP_SIZE, pData->freqVector, HYBRID_BANDS, pData->Q, orders, freqCutoffs, 4, maxDelay, 0, 0.75f);
+    }
 
     /* Convert to filterbank coefficients and pre-compute outer products */
     pData->H_grid = realloc1d(pData->H_grid, HYBRID_BANDS*(pData->Q)*pData->nGrid*sizeof(float_complex));
@@ -286,16 +294,20 @@ void spreader_initCodec
     pData->Cr_cmplx = realloc1d(pData->Cr_cmplx, pData->Q*(pData->Q)*sizeof(float_complex));
 
     /* mixing matrices and buffers */
-    pData->Cy = (float_complex**)realloc2d((void**)pData->Cy, HYBRID_BANDS, (pData->Q)*(pData->Q), sizeof(float_complex));
-    memset(FLATTEN2D(pData->Cy), 0, HYBRID_BANDS * (pData->Q)*(pData->Q) * sizeof(float_complex));
-    pData->Cproto = (float_complex**)realloc2d((void**)pData->Cproto, HYBRID_BANDS, (pData->Q)*(pData->Q), sizeof(float_complex));
-    memset(FLATTEN2D(pData->Cproto), 0, HYBRID_BANDS * (pData->Q)*(pData->Q) * sizeof(float_complex));
+    for(src=0; src<SPREADER_MAX_NUM_SOURCES; src++){
+        pData->Cy[src] = (float_complex**)realloc2d((void**)pData->Cy[src], HYBRID_BANDS, (pData->Q)*(pData->Q), sizeof(float_complex));
+        memset(FLATTEN2D(pData->Cy[src]), 0, HYBRID_BANDS * (pData->Q)*(pData->Q) * sizeof(float_complex));
+        pData->Cproto[src] = (float_complex**)realloc2d((void**)pData->Cproto[src], HYBRID_BANDS, (pData->Q)*(pData->Q), sizeof(float_complex));
+        memset(FLATTEN2D(pData->Cproto[src]), 0, HYBRID_BANDS * (pData->Q)*(pData->Q) * sizeof(float_complex));
+        pData->prev_M[src] = (float_complex**)realloc2d((void**)pData->prev_M[src], HYBRID_BANDS, (pData->Q)*(pData->Q), sizeof(float_complex));
+        memset(FLATTEN2D(pData->prev_M[src]), 0, HYBRID_BANDS * (pData->Q)*(pData->Q) * sizeof(float_complex));
+        pData->prev_Mr[src] = (float**)realloc2d((void**)pData->prev_Mr[src], HYBRID_BANDS, (pData->Q)*(pData->Q), sizeof(float));
+        memset(FLATTEN2D(pData->prev_Mr[src]), 0, HYBRID_BANDS * (pData->Q)*(pData->Q) * sizeof(float));
+        pData->dirActive[src] = realloc1d(pData->dirActive[src], pData->nGrid * sizeof(int));
+        memset(pData->dirActive[src], 0, pData->nGrid*sizeof(int));
+    }
     pData->new_M = (float_complex**)realloc2d((void**)pData->new_M, HYBRID_BANDS, (pData->Q)*(pData->Q), sizeof(float_complex));
-    pData->prev_M = (float_complex**)realloc2d((void**)pData->prev_M, HYBRID_BANDS, (pData->Q)*(pData->Q), sizeof(float_complex));
-    memset(FLATTEN2D(pData->prev_M), 0, HYBRID_BANDS * (pData->Q)*(pData->Q) * sizeof(float_complex));
     pData->new_Mr = (float**)realloc2d((void**)pData->new_Mr, HYBRID_BANDS, (pData->Q)*(pData->Q), sizeof(float));
-    pData->prev_Mr = (float**)realloc2d((void**)pData->prev_Mr, HYBRID_BANDS, (pData->Q)*(pData->Q), sizeof(float));
-    memset(FLATTEN2D(pData->prev_Mr), 0, HYBRID_BANDS * (pData->Q)*(pData->Q) * sizeof(float));
     pData->interp_M = realloc1d(pData->interp_M, (pData->Q)*(pData->Q) * sizeof(float_complex));
     pData->interp_Mr = realloc1d(pData->interp_Mr, (pData->Q)*(pData->Q) * sizeof(float));
     pData->interp_Mr_cmplx = realloc1d(pData->interp_Mr_cmplx, (pData->Q)*(pData->Q) * sizeof(float_complex));
@@ -358,7 +370,6 @@ void spreader_process
             memset(FLATTEN2D(pData->outputframeTF[band]), 0, Q*TIME_SLOTS*sizeof(float_complex));
 
         /* Loop over sources */
-        assert(nSources==1); // need to add support for multi-source
         for(src=0; src<nSources; src++){
             /* Find the "spread" indices */
             unitSph2cart(src_dirs_deg[src], 1, 1, src_dir_xyz);
@@ -383,7 +394,10 @@ void spreader_process
                                     for(q=0; q<Q; q++)
                                         H_tmp[q] = ccaddf(H_tmp[q], pData->H_grid[band*Q*pData->nGrid + q*pData->nGrid + ng]);
                                     nSpread++;
+                                    pData->dirActive[src][ng] = 1;
                                 }
+                                else
+                                    pData->dirActive[src][ng] = 0;
                             }
                         }
                         else
@@ -423,7 +437,7 @@ void spreader_process
             }
             else{
                 /* Apply decorrelation of prototype signals */
-                latticeDecorrelator_apply(pData->hDecor, pData->protoframeTF, TIME_SLOTS, pData->decorframeTF);
+                latticeDecorrelator_apply(pData->hDecor[src], pData->protoframeTF, TIME_SLOTS, pData->decorframeTF);
 
                 /* Compute prototype covariance matrix and average over time */
                 for(band=0; band<HYBRID_BANDS; band++){
@@ -432,9 +446,9 @@ void spreader_process
                                 FLATTEN2D(pData->protoframeTF[band]), TIME_SLOTS, &cbeta,
                                 Cproto, Q);
                     scaleC = cmplxf(pData->covAvgCoeff, 0.0f);
-                    cblas_cscal(Q*Q, &scaleC, pData->Cproto[band], 1);
+                    cblas_cscal(Q*Q, &scaleC, pData->Cproto[src][band], 1);
                     scaleC = cmplxf(1.0f-pData->covAvgCoeff, 0.0f);
-                    cblas_caxpy(Q*Q, &scaleC, Cproto, 1, pData->Cproto[band], 1);
+                    cblas_caxpy(Q*Q, &scaleC, Cproto, 1, pData->Cproto[src][band], 1);
                 }
 
                 /* Define target covariance matrices */
@@ -446,7 +460,10 @@ void spreader_process
                             if(pData->angles[ng] <= (src_spread[src]/2.0f)){
                                 cblas_caxpy(Q*Q, &calpha, pData->HHH[band][ng], 1, Cy, 1);
                                 nSpread++;
+                                pData->dirActive[src][ng] = 1;
                             }
+                            else
+                                pData->dirActive[src][ng] = 0;
                         }
                     }
                     else
@@ -489,9 +506,9 @@ void spreader_process
 
                     /* Average over time */
                     scaleC = cmplxf(pData->covAvgCoeff, 0.0f);
-                    cblas_cscal(Q*Q, &scaleC, pData->Cy[band], 1);
+                    cblas_cscal(Q*Q, &scaleC, pData->Cy[src][band], 1);
                     scaleC = cmplxf(1.0f-pData->covAvgCoeff, 0.0f);
-                    cblas_caxpy(Q*Q, &scaleC, Cy, 1, pData->Cy[band], 1);
+                    cblas_caxpy(Q*Q, &scaleC, Cy, 1, pData->Cy[src][band], 1);
                 }
 
                 /* Formulate mixing matrices */
@@ -502,8 +519,8 @@ void spreader_process
                         Ey = Eproto = 0.0f;
                         for(band=0; band<HYBRID_BANDS; band++){
                             for(i=0; i<Q; i++){
-                                Ey += crealf(pData->Cy[band][i*Q+i]);
-                                Eproto += crealf(pData->Cproto[band][i*Q+i])+0.000001f;
+                                Ey += crealf(pData->Cy[src][band][i*Q+i]);
+                                Eproto += crealf(pData->Cproto[src][band][i*Q+i])+0.000001f;
                             }
                         }
                         Gcomp = sqrtf(Eproto/(Ey+2.23e-9f));
@@ -511,7 +528,7 @@ void spreader_process
 
                         /* Compute mixing matrix per band */
                         for(band=0; band<HYBRID_BANDS; band++){
-                            memcpy(Cy, pData->Cy[band], Q*Q*sizeof(float_complex));
+                            memcpy(Cy, pData->Cy[src][band], Q*Q*sizeof(float_complex));
                             cblas_cscal(Q*Q, &scaleC, Cy, 1);
                             utility_cseig(Cy, Q, 1, V, D, NULL);
                             for(i=0; i<Q; i++)
@@ -527,7 +544,7 @@ void spreader_process
                         for(band=0; band<HYBRID_BANDS; band++){
                             if(pData->freqVector[band]<MAX_SPREAD_FREQ){
                                 /* Diagonalise and diagonally load the Cproto matrices */
-                                cblas_ccopy(Q*Q, pData->Cproto[band], 1, Cproto, 1);
+                                cblas_ccopy(Q*Q, pData->Cproto[src][band], 1, Cproto, 1);
                                 for(i=0; i<Q; i++){
                                     for(j=0; j<Q; j++){
                                         if(i==j)
@@ -537,7 +554,7 @@ void spreader_process
                                 }
 
                                 /* Compute mixing matrices */
-                                formulate_M_and_Cr_cmplx(pData->hCdf, Cproto, pData->Cy[band], pData->Qmix_cmplx, 0, 0.2f, pData->new_M[band], pData->Cr_cmplx);
+                                formulate_M_and_Cr_cmplx(pData->hCdf, Cproto, pData->Cy[src][band], pData->Qmix_cmplx, 0, 0.2f, pData->new_M[band], pData->Cr_cmplx);
                                 for(i=0; i<Q*Q; i++)
                                     pData->Cr[i] = crealf(pData->Cr_cmplx[i]);
                                 formulate_M_and_Cr(pData->hCdf_res, CprotoDiag, pData->Cr, pData->Qmix, 0, 0.2f, pData->new_Mr[band], NULL);
@@ -556,7 +573,7 @@ void spreader_process
                         scaleC = cmplxf(pData->interpolatorFadeIn[t], 0.0f);
                         utility_cvsmul(pData->new_M[band], &scaleC, Q*Q, pData->interp_M);
                         scaleC = cmplxf(pData->interpolatorFadeOut[t], 0.0f);
-                        cblas_caxpy(Q*Q, &scaleC, pData->prev_M[band], 1, pData->interp_M, 1);
+                        cblas_caxpy(Q*Q, &scaleC, pData->prev_M[src][band], 1, pData->interp_M, 1);
                         for(j=0; j<Q; j++)
                             pData->inFrame_t[j] = procMode == SPREADER_MODE_EVD ? pData->decorframeTF[band][j][t] : pData->protoframeTF[band][j][t];
                         for(i=0; i<Q; i++)
@@ -568,7 +585,7 @@ void spreader_process
                         if(pData->freqVector[band]<MAX_SPREAD_FREQ){
                             for(t=0; t<TIME_SLOTS; t++){
                                 utility_svsmul(pData->new_Mr[band], &(pData->interpolatorFadeIn[t]), Q*Q, pData->interp_Mr);
-                                cblas_saxpy(Q*Q, pData->interpolatorFadeOut[t], pData->prev_Mr[band], 1, pData->interp_Mr, 1);
+                                cblas_saxpy(Q*Q, pData->interpolatorFadeOut[t], pData->prev_Mr[src][band], 1, pData->interp_Mr, 1);
                                 for(j=0; j<Q; j++)
                                     pData->inFrame_t[j] = pData->decorframeTF[band][j][t];
                                 cblas_scopy(Q*Q, pData->interp_Mr, 1, (float*)pData->interp_Mr_cmplx, 2);
@@ -587,8 +604,8 @@ void spreader_process
                cblas_caxpy(Q*TIME_SLOTS, &calpha, FLATTEN2D(pData->spreadframeTF[band]), 1, FLATTEN2D(pData->outputframeTF[band]), 1);
 
             /* For next frame */
-            cblas_ccopy(HYBRID_BANDS*Q*Q, FLATTEN2D(pData->new_M), 1, FLATTEN2D(pData->prev_M), 1);
-            cblas_scopy(HYBRID_BANDS*Q*Q, FLATTEN2D(pData->new_Mr), 1, FLATTEN2D(pData->prev_Mr), 1);
+            cblas_ccopy(HYBRID_BANDS*Q*Q, FLATTEN2D(pData->new_M), 1, FLATTEN2D(pData->prev_M[src]), 1);
+            cblas_scopy(HYBRID_BANDS*Q*Q, FLATTEN2D(pData->new_Mr), 1, FLATTEN2D(pData->prev_Mr[src]), 1);
         }
 
         /* inverse-TFT */
@@ -710,6 +727,12 @@ void spreader_getProgressBarText(void* const hSpr, char* text)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
     memcpy(text, pData->progressBarText, PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+}
+
+int* spreader_getDirectionActivePtr(void* const hSpr, int index)
+{
+    spreader_data *pData = (spreader_data*)(hSpr);
+    return pData->dirActive[index];
 }
 
 int spreader_getSpreadingMode(void* const hSpr)
