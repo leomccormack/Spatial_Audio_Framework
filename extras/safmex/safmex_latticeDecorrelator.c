@@ -28,14 +28,16 @@
 /*                                Config                                 */
 /* ===================================================================== */
 
-#define NUM_INPUT_ARGS_CREATE  ( 6 )
-const MEX_DATA_TYPES inputDataTypes_create[NUM_INPUT_ARGS_CREATE] = {
-    SM_INT32,                 
+#define NUM_INPUT_ARGS_CREATE  ( 8 )
+const MEX_DATA_TYPES inputDataTypes_create[NUM_INPUT_ARGS_CREATE] = { 
+    SM_DOUBLE_REAL,
+    SM_INT32,  
+    SM_INT32,
     SM_DOUBLE_REAL_1D,  
     SM_DOUBLE_REAL_1D,  
-    SM_DOUBLE_REAL_1D,  
-    SM_DOUBLE_REAL_1D,
-    SM_INT32
+    SM_INT32,
+    SM_DOUBLE_REAL_1D, 
+    SM_INT32 
 }; 
 #define NUM_INPUT_ARGS_APPLY ( 1 )
 #define NUM_OUTPUT_ARGS_APPLY ( 1 ) 
@@ -52,12 +54,14 @@ const MEX_DATA_TYPES outputDataTypes_apply[NUM_OUTPUT_ARGS_APPLY] = {
 /* ===================================================================== */
 
 /* user arguments */
+float fs;
+int hopsize;
 int nCH;                   /* Number of channels */
 int* orders = NULL;        /* Lattice all-pass filter orders (2,3,4,6,8,10,12,14,
                               15,16 18, or 20) per band grouping; nCutoffs x 1 */
 float* freqCutoffs = NULL; /* Frequency cut-offs defining the band groupings;
                               nCutoffs x 1 */
-int* fixedDelays = NULL;   /* Fixed time-frequency hop delays; (nCutoffs+1) x 1 */
+int maxDelay;              /* Maximum delay */
 float* freqVector = NULL;  /* Frequency vector; nBands x 1 */ 
 int nTimeSlots;            /* Number of TF frames to process at a time */
 
@@ -96,7 +100,6 @@ void mexFunction
             free(orders);      orders = NULL;
             free(freqCutoffs); freqCutoffs = NULL;
             free(freqVector);  freqVector = NULL;
-            free(fixedDelays); fixedDelays = NULL;
             free(dataFD_in);   dataFD_in = NULL;
             free(dataFD_out);  dataFD_out = NULL;
             hDecor = NULL;
@@ -113,9 +116,11 @@ void mexFunction
         /* Check input argument datatypes are as expected */ 
         checkArgDataTypes((mxArray**)prhs, (MEX_DATA_TYPES*)inputDataTypes_create, NUM_INPUT_ARGS_CREATE); 
         
-        /* Copy user arguments */
-        nCH = (int)mxGetScalar(prhs[0]); 
-        MEXdouble2SAFsingle_int(prhs[1], &orders, &nDims, &pDims);
+        /* Copy user arguments */  
+        fs = (float)mxGetScalar(prhs[0]); 
+        hopsize = (int)mxGetScalar(prhs[1]); 
+        nCH = (int)mxGetScalar(prhs[2]); 
+        MEXdouble2SAFsingle_int(prhs[3], &orders, &nDims, &pDims);
          
         nCutoffs = pDims[0];
         if( nCutoffs<=1 )
@@ -130,21 +135,19 @@ void mexFunction
                 mexErrMsgIdAndTxt("MyToolbox:inputError","Supported 'orders' are: 2,3,4,6,8,10,12,14,15,16,18,20."); 
         }    
         
-        MEXdouble2SAFsingle(prhs[2], &freqCutoffs, &nDims, &pDims);
+        MEXdouble2SAFsingle(prhs[4], &freqCutoffs, &nDims, &pDims);
         if(pDims[0] != nCutoffs )
             mexErrMsgIdAndTxt("MyToolbox:inputError","freqCutoffs vector must be the same length as orders vector.");
                 
-        MEXdouble2SAFsingle_int(prhs[3], &fixedDelays, &nDims, &pDims); 
-        if(pDims[0] != nCutoffs+1 )
-            mexErrMsgIdAndTxt("MyToolbox:inputError","fixedDelays vector must be one element bigger than: 'orders' and 'freqCutoffs'.");
-               
-        MEXdouble2SAFsingle(prhs[4], &freqVector, &nDims, &pDims);
+        maxDelay = (int)mxGetScalar(prhs[5]);
+
+        MEXdouble2SAFsingle(prhs[6], &freqVector, &nDims, &pDims);
         nBands = pDims[0];  
-        nTimeSlots = (int)mxGetScalar(prhs[5]);  
+        nTimeSlots = (int)mxGetScalar(prhs[7]);  
    
         /* Create an instance of latticeDecorrelator */ 
-        latticeDecorrelator_create(&hDecor, nCH, orders, freqCutoffs, fixedDelays, nCutoffs, freqVector, 0, nBands);
-        
+        latticeDecorrelator_create(&hDecor, fs, hopsize, freqVector, nBands, nCH, orders, freqCutoffs, nCutoffs, maxDelay, 0, 0.75f);
+
         /* Allocate buffers */ 
         dataFD_in = (float_complex***)malloc3d(nBands, nCH, nTimeSlots, sizeof(float_complex));
         dataFD_out = (float_complex***)malloc3d(nBands, nCH, nTimeSlots, sizeof(float_complex)); 
@@ -163,13 +166,7 @@ void mexFunction
             snprintf(message, MSG_STR_LENGTH, " %.2f ", freqCutoffs[i]); 
             mexPrintf(message);
         }  
-        mexPrintf("], ");
-        mexPrintf(" delays = ["); 
-        for(i=0; i<nCutoffs+1; i++){
-            snprintf(message, MSG_STR_LENGTH, " %d ", fixedDelays[i]); 
-            mexPrintf(message);
-        }  
-        mexPrintf("], ");
+        mexPrintf("], "); 
         snprintf(message, MSG_STR_LENGTH, " %d nBands,", nBands); mexPrintf(message);
         snprintf(message, MSG_STR_LENGTH, " %d timeslots\n", nTimeSlots); mexPrintf(message);
     }

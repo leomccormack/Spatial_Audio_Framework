@@ -5,19 +5,20 @@ tol = 1e-5; % FLT_EPSILON
  
 %% TESTS
 % safmex_tracker3d 
-nTests = nTests+1; 
-safmex_tracker3d_tests  
+%nTests = nTests+1; 
+%safmex_tracker3d_tests  
 
 % safmex_latticeDecorrelator
 nCH = 6; 
 hopsize = 128;
 blocksize = 2048*24;
+fs = 48e3;
+maxDelay = 10;
 [freqVector, procDelay] = safmex_afSTFT(nCH, nCH, hopsize, blocksize, 1, 0, 48e3); 
-orders = [6 6 4 2].';
-fixedDelays = [ 8 6 4 2 2].';
-freqCutoffs = [ 300 800 2e3, 4e3].';
+orders = [20 15 6 3].'; 
+freqCutoffs = [ 900 2.4e3 8e3, 24e3].';
 timeslots = blocksize/hopsize;
-safmex_latticeDecorrelator(nCH, orders, freqCutoffs, fixedDelays, freqVector, timeslots);
+safmex_latticeDecorrelator(fs, hopsize, nCH, orders, freqCutoffs, maxDelay, freqVector, timeslots);
 dataTD_ref = randn(blocksize, nCH); 
 dataFD = safmex_afSTFT(dataTD_ref.');
 dataFD = safmex_latticeDecorrelator(dataFD);
