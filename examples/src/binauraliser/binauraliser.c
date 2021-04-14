@@ -60,9 +60,12 @@ void binauraliser_create
     pData->useRollPitchYawFlag = 0;
     pData->enableRotation = 0;
 
-    /* DVF params */
+    /* Near field DVF variables*/
     pData->head_radius_recip = 1.f / 0.0875; // TODO: make variable
-    memset(pData->src_dists, 3.0f, MAX_NUM_INPUTS * sizeof(float)); // TODO: proper way to set? default distance 3 m, change?
+    /* NOTE: this default distance values is also hardcoded in
+       PluginProcessor::loadConfiguration & PluginProcessor::setStateInformation */
+    // TODO: proper way to set? default distance 3 m, change?
+    memset(pData->src_dists_m, 3.0f, MAX_NUM_INPUTS * sizeof(float));
 
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
@@ -286,19 +289,20 @@ void binauraliser_process
         afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outframeTD);
 
 
-        /* apply DVF */
-        // TODO: what is the consideration for `MIN(NUM_EARS, nOutputs)`?
-        float azim = src_dirs[0][0]; // azimuth of (first) source
-        float thetaLR[2] = {0.0, 0.0}; // init, to be set by convertFrontalDoAToIpsilateral, TODO: need to cleanup? store globally like src_dirs
-        float rho = 1.5;
-        convertFrontalDoAToIpsilateral(azim, &thetaLR[0]);
-        applyDVF(thetaLR[0], rho, pData->outframeTD[0], FRAME_SIZE, pData->fs,
-                 &wzL, // TODO: ensure proper *wz, needs to be retained from previous pass
-                 pData->outframeTD[0]);
-        applyDVF(thetaLR[1], rho, pData->outframeTD[1], FRAME_SIZE, pData->fs,
-                 &wzR, // TODO: ensure proper *wz, needs to be retained from previous pass
-                 pData->outframeTD[1]);
-
+        /* apply DVF for near field proximity*/
+        // TODO: Temporarily assuming one source
+        float rho = pData->src_dists_m[0] * pData->head_radius_recip;
+        if (rho < 25.f) { // Distance threshold: 2.1875 m distance, given head radius of 0.0875 m
+            // TODO: what is the consideration for `MIN(NUM_EARS, nOutputs)` below?
+            float azim = src_dirs[0][0];                    // azimuth of (first) source TODO: only update on change
+            float thetaLR[2] = {0.0, 0.0};                  // TODO: need to cleanup? store globally like src_dirs?
+            convertFrontalDoAToIpsilateral(azim, &thetaLR[0]);
+            applyDVF(thetaLR[0], rho, pData->outframeTD[0], // TODO: confirm channel indexing
+                     FRAME_SIZE, fs,
+                     &wzL,                                  // TODO: confirm wz, needs to be from previous pass output
+                     pData->outframeTD[0]);
+            applyDVF(thetaLR[1], rho, pData->outframeTD[1], FRAME_SIZE, fs, &wzR, pData->outframeTD[1]);
+        }
 
         /* Copy to output buffer */
         for (ch = 0; ch < SAF_MIN(NUM_EARS, nOutputs); ch++)
@@ -349,6 +353,16 @@ void binauraliser_setSourceElev_deg(void* const hBin, int index, float newElev_d
         pData->src_dirs_deg[index][1] = newElev_deg;
         pData->recalc_hrtf_interpFLAG[index] = 1;
         pData->recalc_M_rotFLAG = 1;
+    }
+}
+
+void binauraliser_setSourceDist_m(void* const hBin, int index, float newDist_m)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    newDist_m = MAX(newDist_m, 0.15f);                      // TODO: is this clamped elsewhere?
+    if(pData->src_dists_m[index] != newDist_m){
+        pData->src_dists_m[index] = newDist_m;
+//        pData->recalc_hrtf_interpFLAG[index] = 1;         // TODO: need similar recalc flag for distance?
     }
 }
 
@@ -535,6 +549,12 @@ float binauraliser_getSourceElev_deg(void* const hBin, int index)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     return pData->src_dirs_deg[index][1];
+}
+
+float binauraliser_getSourceDist_m(void* const hBin, int index)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->src_dists_m[index];
 }
 
 int binauraliser_getNumSources(void* const hBin)

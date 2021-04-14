@@ -120,11 +120,11 @@ typedef struct _binauraliser
     int new_nSources;                          /**< New number of input/source signals (current value will be replaced by this after next re-init) */
 
     /* user parameters */
-    int nSources;                            /**< Current number of input/source signals */
-    float src_dirs_deg[MAX_NUM_INPUTS][2];   /**< Current source/panning directions, in degrees */
-    float src_dists[MAX_NUM_INPUTS];         /**< Current source/panning distances, in meters */
-    INTERP_MODES interpMode;                 /**< see #INTERP_MODES */
-    float head_radius_recip;                 /**< Reciprocal of head radius */
+    int nSources;
+    float src_dirs_deg[MAX_NUM_INPUTS][2];
+    float src_dists_m[MAX_NUM_INPUTS];       /**< source distance,  meters */
+    float head_radius_recip;
+    INTERP_MODES interpMode;
     int useDefaultHRIRsFLAG;                 /**< 1: use default HRIRs in database, 0: use those from SOFA file */
     int enableHRIRsDiffuseEQ;                /**< flag to diffuse-field equalisation to the currently loaded HRTFs */
     int enableRotation;                      /**< 1: enable rotation, 0: disable */

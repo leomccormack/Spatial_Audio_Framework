@@ -475,7 +475,7 @@ void binauraliser_loadPreset
     /* For dynamically changing the number of TFT channels */
     (*newNCH) = nCH;
     
-    /* estimate number of dimensions. (Obviously fails if using 2D setups thare are on an angle.
+    /* estimate number of dimensions. (Obviously fails if using 2D setups that are on an angle.
        However, in these cases, triangulation should fail and revert to 2D anyway) */
     sum_elev = 0.0f;
     for(i=0; i<nCH; i++){
