@@ -315,8 +315,8 @@ void spreader_initCodec
     pData->inFrame_t = realloc1d(pData->inFrame_t, (pData->Q) * sizeof(float_complex));
 
     /* New config */
-    pData->nSources = pData->new_nSources;
-    pData->procMode = pData->new_procMode;
+    pData->nSources = nSources;
+    pData->procMode = procMode;
 
     /* done! */
     strcpy(pData->progressBarText,"Done!");

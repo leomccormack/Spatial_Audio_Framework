@@ -111,11 +111,9 @@ void rotator_process
     float Rxyz[3][3];
     float* M_rot_tmp;
     CH_ORDER chOrdering;
-    NORM_TYPES norm;
 
     /* locals */
     chOrdering = pData->chOrdering;
-    norm = pData->norm;
     order = (int)pData->inputOrder;
     nSH = ORDER2NSH(order);
 
