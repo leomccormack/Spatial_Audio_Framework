@@ -2,8 +2,8 @@
  * @file afSTFT_protoFilter.h
  * @brief Prototype filter used by afSTFTlib
  *
- * The code to compute the prototype filter is taken from [1] (Chapter 1)
- * \code{.c}
+ * The MATLAB code to compute the prototype filter is taken from [1]
+ * \code{.m}
  *    f = 5.845594e-04; % computed using the method detailed in [2]
  *    K = 1024;
  *    C = 5;
@@ -12,18 +12,18 @@
  *    prototypeFilter = prototypeFilter./max(prototypeFilter);
  * \endcode
  *
- * @see [1] Pulkki, V., Delikaris-Manias, S. and Politis, A. 2018. Parametric
- *          time--frequency domain spatial audio. John Wiley & Sons,
- *          Incorporated.
+ * @see [1] Vilkamo, J., & Ba"ckstro"m, T. (2018). Time--Frequency Processing:
+ *          Methods and Tools. In Parametric Time--Frequency Domain Spatial
+ *          Audio. John Wiley & Sons.
  * @see [2] Creusere, C.D. and Mitra, S.K., 1995. A simple method for designing
  *          high-quality prototype filters for M-band pseudo QMF banks. IEEE
  *          Transactions on signal processing, 43(4), pp.1005-1007.
  */
 
-/**
- * Prototype filter used by afSTFTlib
- */
-const float protoFilter1024[10240] = {
+#include "afSTFTlib.h"
+
+/** Prototype filter used by afSTFTlib */
+const float __afSTFT_protoFilter1024[10240] = {
 -1.990581e-23f, -1.926720e-05f, -4.541477e-05f, -7.849927e-05f, -1.181909e-04f, -1.637716e-04f, -2.141617e-04f, 
 -2.679742e-04f, -3.235936e-04f, -3.789680e-04f, -4.325932e-04f, -4.828658e-04f, -5.284030e-04f, -5.681260e-04f, 
 -6.013174e-04f, -6.276504e-04f, -6.471872e-04f, -6.600376e-04f, -6.671900e-04f, -6.696627e-04f, -6.686302e-04f, 
@@ -1488,10 +1488,8 @@ const float protoFilter1024[10240] = {
 -5.681260e-04f, -5.284030e-04f, -4.828658e-04f, -4.325932e-04f, -3.789680e-04f, -3.235936e-04f, -2.679742e-04f, 
 -2.141617e-04f, -1.637716e-04f, -1.181909e-04f, -7.849927e-05f, -4.541477e-05f, -1.926720e-05f};
 
-/**
- * Prototype filter used by afSTFTlib (low-delay mode)
- */
-const float protoFilter1024LD[10240] = {
+/** Prototype filter used by afSTFTlib (low-delay mode) */
+const float __afSTFT_protoFilter1024LD[10240] = {
 -8.461953e-04f, -8.961021e-04f, -9.427824e-04f, -9.860740e-04f, -1.025910e-03f, -1.062315e-03f, -1.095404e-03f, 
 -1.125372e-03f, -1.152484e-03f, -1.177065e-03f, -1.199485e-03f, -1.220148e-03f, -1.239471e-03f, -1.257877e-03f, 
 -1.275775e-03f, -1.293546e-03f, -1.311538e-03f, -1.328422e-03f, -1.345867e-03f, -1.364125e-03f, -1.383400e-03f, 

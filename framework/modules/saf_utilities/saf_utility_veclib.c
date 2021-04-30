@@ -37,8 +37,6 @@
  *
  * @see More information can be found here:
  *      https://github.com/leomccormack/Spatial_Audio_Framework
- * @note MacOSX users only: saf_utilities will employ Apple's Accelerate library
- *       by default, if none of the above FLAGS are defined.
  *
  * @author Leo McCormack
  * @date 11.07.2016
@@ -48,7 +46,7 @@
 #include "saf_externals.h"
 #include <float.h>
 
-/* just to remove compiler warnings, and to be more explicit: */
+/* just to remove compiler warnings: */
 #if defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
   typedef __CLPK_integer       veclib_int;
   typedef __CLPK_real          veclib_float;
@@ -58,7 +56,7 @@
 #elif defined(SAF_USE_INTEL_MKL)
 # ifdef MKL_ILP64
    typedef long long int       veclib_int;
-# elif defined(MKL_LP64) || 1 /* also default */
+# elif defined(MKL_LP64) || 1 /* (this is the default MKL config) */
    typedef int                 veclib_int;
 # endif
   typedef float                veclib_float;

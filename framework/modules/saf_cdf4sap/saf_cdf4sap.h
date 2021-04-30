@@ -22,8 +22,8 @@
  *        (#SAF_CDF4SAP_MODULE)
  *
  * Covariance Domain Framework for Spatial Audio Processing (CDF4SAP). This is a
- * direct C port of the Matlab function given in [1], which was originally
- * written by Juha Vilkamo. The algorithm is explained in further detail in [2].
+ * direct C port of the MATLAB function given in [1], which was originally
+ * written by Juha Vilkamo. It is explained in further detail in [1,2].
  *
  * @see [1] Vilkamo, J., Ba"ckstro"m, T., & Kuntz, A. (2013). Optimized
  *          covariance domain framework for time--frequency processing of
@@ -51,10 +51,7 @@ extern "C" {
 /* ========================================================================== */
 
 /**
- * Creates an instance of the Covariance Domain Framework (REAL)
- *
- * Allocates memory for a Covariance Domain Framework for Spatial Audio
- * Processing (CDF4SAP) handle.
+ * Creates an instance of the Covariance Domain Framework (real-valued matrices)
  *
  * @note Use this function for real-valued input/output matrices. For
  *       complex-valued input/output matrices use cdf4sap_cmplx_create().
@@ -71,9 +68,6 @@ void cdf4sap_create(/* Input Arguments */
 /**
  * Creates an instance of the Covariance Domain Framework (COMPLEX)
  *
- * Allocates memory for a Covariance Domain Framework for Spatial Audio
- * Processing (CDF4SAP) handle.
- *
  * @note Use this function for complex-valued input/output matrices. For
  *       real-valued input/output matrices use cdf4sap_create().
  *
@@ -87,10 +81,8 @@ void cdf4sap_cmplx_create(/* Input Arguments */
                           int nYcols);
 
 /**
- * Destroys an instance of the Covariance Domain Framework (REAL)
- *
- * Frees memory for a Covariance Domain Framework for Spatial Audio
- * Processing (CDF4SAP) handle.
+ * Destroys an instance of the Covariance Domain Framework (real-valued
+ * matrices)
  *
  * @note Use this function for real-valued input/output matrices. For
  *       complex-valued input/output matrices use cdf4sap_cmplx_destroy().

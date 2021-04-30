@@ -157,8 +157,8 @@ void qmf_create
 {
     *phQMF = malloc1d(sizeof(qmf_data));
     qmf_data *h = (qmf_data*)(*phQMF);
-    int i,j,K,N;
-    float scale;
+    int i,j,K,N,dsFactor;
+    float scale, eq;
     float* k_tmp, *n_tmp;
 
     assert(hopsize==4 || hopsize==8 || hopsize==16 || hopsize==32 || hopsize==64 || hopsize==128);
@@ -201,8 +201,15 @@ void qmf_create
 
     /* Prototype filter */
     h->h_p = malloc1d(10*hopsize*sizeof(float));
-    for(i=0,j=0; i<10*QMF_MAX_HOP_SIZE; i+=QMF_MAX_HOP_SIZE/hopsize, j++)
-        h->h_p[j] = (float)__qmf_protofilter[i];
+    if(hopsize<=QMF_MAX_HOP_SIZE)
+        for(i=0,j=0; i<10*QMF_MAX_HOP_SIZE; i+=QMF_MAX_HOP_SIZE/hopsize, j++)
+            h->h_p[j] = (float)__qmf_protofilter[i];
+    else{ /* Borrow the one from afSTFT: */
+        eq = 2.0f/sqrtf(5.487604141f);
+        dsFactor = 1024/hopsize;
+        for(i=0; i<10*hopsize; i++)
+            h->h_p[i] = __afSTFT_protoFilter1024[i*dsFactor]*eq;
+    }
 
     /* Run-time buffers */
     h->buffer_ana = (float**)malloc1d(nCHin*sizeof(float*)); /* actually faster to go with non-contiguous allocated memory here due to memmove... */

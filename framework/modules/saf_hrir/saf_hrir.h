@@ -42,7 +42,7 @@ extern "C" {
 /*                               Default HRIRs                                */
 /* ========================================================================== */
 
-/* Default HRIRs: Genelec Aural ID of a KEMAR Dummy Head. (@48kHz)
+/* Default HRIRs: Genelec Aural ID of a KEMAR Dummy Head (@48kHz)
  * Kindly provided by Aki Mäkivirta and Jaan Johansson */
 extern const float __default_hrirs[836][2][256];     /**< Default HRIR data */
 extern const float __default_hrir_dirs_deg[836][2];  /**< HRIR directions */
