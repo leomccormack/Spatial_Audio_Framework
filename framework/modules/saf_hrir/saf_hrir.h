@@ -20,10 +20,10 @@
  * @file saf_hrir.h
  * @brief Main header for the HRIR/HRTF processing module (#SAF_HRIR_MODULE)
  *
- * A collection of head-related impulse-response (HRIR) functions. Including
- * estimation of the interaural time differences (ITDs), conversion of HRIRs to
- * HRTF filterbank coefficients, and HRTF interpolation utilising amplitude-
- * normalised VBAP gains.
+ * A collection functions for processing head-related impulse-response (HRIR).
+ * Including: estimation of the interaural time differences (ITDs), conversion
+ * of HRIRs to HRTFs or filterbank coefficients; diffuse-field equalisation and
+ * phase simplication; and HRTF interpolation.
  *
  * @author Leo McCormack
  * @date 12.12.2016
@@ -41,14 +41,23 @@ extern "C" {
 /* ========================================================================== */
 /*                               Default HRIRs                                */
 /* ========================================================================== */
-
-/* Default HRIRs: Genelec Aural ID of a KEMAR Dummy Head (@48kHz)
+/* The default HRIR dataset is a Genelec Aural ID of a KEMAR Dummy Head (@48kHz)
  * Kindly provided by Aki Mäkivirta and Jaan Johansson */
-extern const float __default_hrirs[836][2][256];     /**< Default HRIR data */
-extern const float __default_hrir_dirs_deg[836][2];  /**< HRIR directions */
-extern const int __default_N_hrir_dirs;              /**< Number of HRIRs */
-extern const int __default_hrir_len;                 /**< HRIR length */
-extern const int __default_hrir_fs;                  /**< HRIR samplerate */
+
+/** The default HRIR data for SAF */
+extern const float __default_hrirs[836][2][256];
+
+/** The measurement directions used for the default HRIR dataset */
+extern const float __default_hrir_dirs_deg[836][2];
+
+/** The number of directions/measurements in the default HRIR dataset */
+extern const int __default_N_hrir_dirs;
+
+/** The length of the filters, in samples, for the default HRIR dataset */
+extern const int __default_hrir_len;
+
+/** The samplerate used to measure the default HRIR filters  */
+extern const int __default_hrir_fs;
 
 
 /* ========================================================================== */
@@ -56,8 +65,9 @@ extern const int __default_hrir_fs;                  /**< HRIR samplerate */
 /* ========================================================================== */
 
 /**
- * Estimates the interaural time-differences (ITDs) for each HRIR via the cross-
- * correlation between the left and right channels
+ * Estimates the interaural time-differences (ITDs) for each HRIR based on the
+ * cross-correlation between the left and right channels, which are first
+ * low-pass filtered at 750Hz
  *
  * @param[in]  hrirs    HRIRs; FLAT: N_dirs x #NUM_EARS x hrir_len
  * @param[in]  N_dirs   Number of HRIRs
@@ -77,7 +87,8 @@ void estimateITDs(/* Input Arguments */
  * Passes zero padded HRIRs through the afSTFT filterbank
  *
  * The filterbank coefficients are then normalised with the energy of an
- * impulse, which is centered at approximately the beginning of the HRIR peak.
+ * impulse, which is centered at approximately the beginning of the median HRIR
+ * peak.
  *
  * @warning This function is NOT suitable for binaural room impulse responses
  *          (BRIRs)!
@@ -105,7 +116,8 @@ void HRIRs2HRTFs_afSTFT(/* Input Arguments */
  * Passes zero padded HRIRs through the qmf filterbank
  *
  * The filterbank coefficients are then normalised with the energy of an
- * impulse, which is centered at approximately the beginning of the HRIR peak.
+ * impulse, which is centered at approximately the beginning of the median HRIR
+ * peak.
  *
  * @warning This function is NOT suitable for binaural room impulse responses
  *          (BRIRs)!
@@ -129,7 +141,7 @@ void HRIRs2HRTFs_qmf(/* Input Arguments */
                      float_complex* hrtf_fb);
 
 /**
- * Converts HRIRs to HRTFs using a given FFT size
+ * Converts HRIRs to HRTFs for a given FFT size
  *
  * @note If the HRIRs are shorter than the FFT size (hrir_len<fftSize), then the
  *       HRIRs are zero-padded. If they are longer, then they are truncated.
@@ -150,8 +162,8 @@ void HRIRs2HRTFs(/* Input Arguments */
 
 /**
  * Applies pre-processing to a set of HRTFs, which can either be diffuse-field
- * EQ of an (optionally weighted) average of all HRTFs (CTF), phase s
- * implification based on ITDs, or both.
+ * EQ of an (optionally weighted) average of all HRTFs (CTF), phase
+ * simplification based on ITDs, or both.
  *
  * @note 'weights' (if used) should sum to 4pi, and 'itds_s' is only required
  *       if applyPhase=1.

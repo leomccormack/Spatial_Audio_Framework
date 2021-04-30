@@ -51,7 +51,7 @@ extern "C" {
 /* ========================================================================== */
 
 /**
- * Creates an instance of the Covariance Domain Framework (real-valued matrices)
+ * Creates an instance of the Covariance Domain Framework
  *
  * @note Use this function for real-valued input/output matrices. For
  *       complex-valued input/output matrices use cdf4sap_cmplx_create().
@@ -66,7 +66,7 @@ void cdf4sap_create(/* Input Arguments */
                     int nYcols);
 
 /**
- * Creates an instance of the Covariance Domain Framework (COMPLEX)
+ * Creates an instance of the Covariance Domain Framework
  *
  * @note Use this function for complex-valued input/output matrices. For
  *       real-valued input/output matrices use cdf4sap_create().
@@ -81,8 +81,7 @@ void cdf4sap_cmplx_create(/* Input Arguments */
                           int nYcols);
 
 /**
- * Destroys an instance of the Covariance Domain Framework (real-valued
- * matrices)
+ * Destroys an instance of the Covariance Domain Framework
  *
  * @note Use this function for real-valued input/output matrices. For
  *       complex-valued input/output matrices use cdf4sap_cmplx_destroy().
@@ -93,10 +92,7 @@ void cdf4sap_destroy(/* Input Arguments */
                      void ** const phCdf);
 
 /**
- * Destroys an instance of the Covariance Domain Framework (COMPLEX)
- *
- * Frees memory for a Covariance Domain Framework for Spatial Audio
- * Processing (CDF4SAP) handle.
+ * Destroys an instance of the Covariance Domain Framework
  *
  * @note Use this function for complex-valued input/output matrices. For
  *       real-valued input/output matrices use cdf4sap_destroy().
@@ -107,12 +103,12 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
                            void ** const phCdf);
 
 /**
- * Computes the optimal mixing matrices (REAL)
+ * Computes the optimal mixing matrices
  *
  * This function solves the problem of determining the optimal mixing matrices
  * 'M' and 'Mr', such that the covariance matrix of the output:
  * y_out = M*x + Mr*decorrelated(x), is aligned with the target matrix 'Cy',
- * given the covariance matrix of input x, Cx=x*x^H, and a prototype decoding
+ * given the covariance matrix of input x, Cx=x*x^H, and a prototype mixing
  * matrix Q.
  * For the derivation and a more detailed description, the reader is referred
  * to [1,2].
@@ -163,12 +159,12 @@ void formulate_M_and_Cr(/* Input Arguments */
                         float* Cr);
 
 /**
- * Computes the optimal mixing matrices (COMPLEX)
+ * Computes the optimal mixing matrices
  *
  * This function solves the problem of determining the optimal mixing matrices
  * 'M' and 'Mr', such that the covariance matrix of the output:
  * y_out = M*x + Mr*decorrelated(x), is aligned with the target matrix 'Cy',
- * given the covariance matrix of input x, Cx=x*x^H, and a prototype decoding
+ * given the covariance matrix of input x, Cx=x*x^H, and a prototype mixing
  * matrix Q.
  * For the derivation and a more detailed description, the reader is referred
  * to [1,2].

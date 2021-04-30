@@ -21,7 +21,7 @@
  *        (#SAF_HOA_MODULE)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
- * the Matlab library by Archontis Politis [1] (BSD-3-Clause License).
+ * the MATLAB library by Archontis Politis in [1] (BSD-3-Clause License).
  *
  * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
  *

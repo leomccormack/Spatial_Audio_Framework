@@ -19,10 +19,10 @@
  * @ingroup HRIR
  * @brief Public source for the HRIR/HRTF processing module (#SAF_HRIR_MODULE)
  *
- * A collection of head-related impulse-response (HRIR) functions. Including
- * estimation of the interaural time differences (ITDs), conversion of HRIRs to
- * HRTF filterbank coefficients, and HRTF interpolation utilising amplitude-
- * normalised VBAP gains.
+ * A collection functions for processing head-related impulse-response (HRIR).
+ * Including: estimation of the interaural time differences (ITDs), conversion
+ * of HRIRs to HRTFs or filterbank coefficients; diffuse-field equalisation and
+ * phase simplication; and HRTF interpolation.
  *
  * @author Leo McCormack
  * @date 12.12.2016

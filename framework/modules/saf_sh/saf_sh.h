@@ -146,13 +146,14 @@ void unnorm_legendreP_recur(/* Input Arguments */
 /* ========================================================================== */
 
 /**
- * Computes REAL spherical harmonics [1] for each given direction on the unit
- * sphere
+ * Computes real-valued spherical harmonics [1] for each given direction on the
+ * unit sphere
  *
- * The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term.
- * i.e. max(omni) = 1/sqrt(4*pi). Compared to getSHreal_recur(), this function
- * employs unnorm_legendreP() and double precision, which is slower but more
- * precise.
+ * The spherical harmonic values are computed WITH the 1/sqrt(4*pi) term.
+ * Compared to getSHreal_recur(), this function uses unnorm_legendreP() and
+ * double precision, so is more suitable for being computed in an initialisation
+ * stage. This version is indeed slower, but more precise (especially for high
+ * orders).
  *
  * @warning This function assumes [azi, inclination] convention! Note that one
  *          may convert from elevation, with: [azi, pi/2-elev].
@@ -177,13 +178,14 @@ void getSHreal(/* Input Arguments */
                float* Y);
 
 /**
- * Computes REAL spherical harmonics [1] for each given direction on the unit
- * sphere
+ * Computes real-valued spherical harmonics [1] for each given direction on the
+ * unit sphere
  *
  * The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term.
- * i.e. max(omni) = 1/sqrt(4*pi). Compared to getSHreal(), this function employs
- * unnorm_legendreP_recur() and single precision, which is faster but less
- * precise.
+ * Compared to getSHreal(), this function uses unnorm_legendreP_recur() and
+ * single precision, so is more suitable for being computed in a real-time loop.
+ * It sacrifices some precision, and numerical error propogates through the
+ * recursion, but it is much faster.
  *
  * The function also uses static memory buffers for single direction and up to
  * 7th order, which speeds things up considerably for such use cases.
@@ -211,12 +213,11 @@ void getSHreal_recur(/* Input Arguments */
                      float* Y);
 
 /**
- * Computes COMPLEX spherical harmonics [1] for each given direction on the unit
- * sphere
+ * Computes complex-valued spherical harmonics [1] for each given direction on
+ * the unit sphere
  *
  * The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term.
- * i.e. max(omni) = 1/sqrt(4*pi) + i0. This function employs unnorm_legendreP()
- * and double precision.
+ * This function employs unnorm_legendreP() and double precision.
  *
  * @warning This function assumes [azi, inclination] convention! Note that one
  *          may convert from elevation, with: [azi, pi/2-elev].
