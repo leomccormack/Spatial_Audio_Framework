@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4118286.svg)](https://doi.org/10.5281/zenodo.4118286)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4707945.svg)](https://doi.org/10.5281/zenodo.4707945)
 
 <img src="saf.svg"> 
 
@@ -9,7 +9,7 @@
 
 The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related applications in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a rather large codebase comprising a number of distinct **modules**; with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). Several **examples** are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects.
 
-Owing to its modular design, expanding the framework is quite straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged :-)
+Owing to its modular design, expanding the framework is straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged! 
 
 # Prerequisites
 
@@ -107,7 +107,7 @@ If the **saf_sofa_reader** module is enabled, CMake will use the statically buil
 -DNETCDF_LIBRARY="/c/msys64/mingw64/lib/libnetcdf.dll.a"
 ```
 
-For Unix users: the framework, examples, and unit testing program may be built as follows:
+For Linux/MacOS users: the framework, examples, and unit testing program may be built as follows:
 ```
 cmake -S . -B build 
 cd build
@@ -115,7 +115,7 @@ make
 test/saf_test # To run the unit testing program
 ```
 
-Or for Visual Studio (e.g. 2017) users (using x64 Native Tools Command Prompt):
+Or for Visual Studio (e.g. 2017) users (using e.g. x64 Native Tools Command Prompt):
 ```
 cmake -S . -B build -G "Visual Studio 15 Win64"   
 cd build
