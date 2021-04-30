@@ -31,11 +31,15 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/** Quaternion data struct */
+/** Quaternion data structure */
 typedef struct _quaternion_data {
     union {
-        struct { float w, x, y, z; };
-        float Q[4]; /** WXYZ values [-1..1] */
+        struct { float w; /**< W value of the quaternion [-1..1] */
+                 float x; /**< X value of the quaternion [-1..1] */
+                 float y; /**< Y value of the quaternion [-1..1] */
+                 float z; /**< Z value of the quaternion [-1..1] */
+        };
+        float Q[4]; /**< WXYZ values of the quaternion [-1..1] */
     };
 } quaternion_data;
 
@@ -52,7 +56,7 @@ typedef enum {
  * Data structure for Voronoi diagrams
  *
  * @warning 'faces' is NOT contiguously allocated! [i.e., you cannot do
- *          free(faces), you must loop over nFaces: free(faces[i]) ]
+ *          free(faces), you must loop over the i=0:nFaces-1: free(faces[i]) ]
  */
 typedef struct _voronoi_data{
     int nVert;           /**< Number of vertices */
@@ -63,19 +67,19 @@ typedef struct _voronoi_data{
 
 }voronoi_data;
 
-/** Constructs a 3x3 rotation matrix based on Quaternions */
+/** Constructs a 3x3 rotation matrix based on a quaternion */
 void quaternion2rotationMatrix(/* Input Arguments */
                                quaternion_data* Q,
                                /* Output Arguments */
                                float R[3][3]);
 
-/** Calculates Quaternions from a 3x3 rotation matrix */
+/** Calculates the quaternion corresponding to a 3x3 rotation matrix */
 void rotationMatrix2quaternion(/* Input Arguments */
                                float R[3][3],
                                /* Output Arguments */
                                quaternion_data* Q);
 
-/** Converts Euler angles to Quaternion */
+/** Converts Euler angles to a quaternion */
 void euler2Quaternion(/* Input Arguments */
                       float alpha,
                       float beta,
@@ -85,7 +89,7 @@ void euler2Quaternion(/* Input Arguments */
                       /* Output Arguments */
                       quaternion_data* Q);
 
-/** Converts Quaternion to Euler angles */
+/** Converts a quaternion to Euler angles */
 void quaternion2euler(/* Input Arguments */
                       quaternion_data* Q,
                       int degreesFlag,
@@ -118,7 +122,7 @@ void euler2rotationMatrix(/* Input Arguments */
  * Constructs a 3x3 rotation matrix from the Euler angles, using the
  * yaw-pitch-roll (zyx) convention
  *
- * @note This function now just calls: euler2rotationMatrix()
+ * @note DEPRICATED. This function now just calls: euler2rotationMatrix()
  *
  * @param[in]  yaw              Yaw angle in radians
  * @param[in]  pitch            Pitch angle in radians
@@ -164,24 +168,16 @@ void unitCart2sph(/* Input Arguments */
                   /* Output Arguments */
                   float* dirs);
 
-/**
- * L2 (Euclidean) norm of a 3-element vector
- */
+/** L2 (Euclidean) norm of a 3-element vector */
 float L2_norm3(float v[3]);
 
-/**
- * L2 (Euclidean) norm of an arbitrary length vector
- */
+/** L2 (Euclidean) norm of an arbitrary length vector */
 float L2_norm(float* v, int lenV);
 
-/**
- * Frobenius Norm of a matrix M, of dimensions: lenX x lenY
- */
+/** Frobenius Norm of a matrix M, of dimensions: lenX x lenY */
 float Frob_norm(float* M, int lenX, int lenY);
 
-/**
- * Cross product between two 3-element floating point vectors (c = a x b)
- */
+/** Cross product between two 3-element floating point vectors (c = a x b) */
 void crossProduct3(/* Input Arguments */
                    float a[3],
                    float b[3],

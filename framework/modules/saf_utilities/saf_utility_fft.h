@@ -25,9 +25,14 @@
  *       License): https://github.com/mborgerding/kissfft
  * @note If linking Apple Accelerate: KissFFT is also used in cases where the
  *       FFT size is not 2^x.
+ * @note The developers are aware of the existance of FFTW. However, due to how
+ *       cumbersome it is to install for multiple platforms, and since it is not
+ *       as fast as Intel IPP/MKL in our experience, we haven't yet included it
+ *       in this wrapper. However, if you wish to add support for it, then we
+ *       are happy to accept pull requests.
  *
  * ## Dependencies
- *   Intel MKL, Apple Accelerate, or KissFFT (included in the framework)
+ *   Intel MKL, Intel IPP, Apple Accelerate, or KissFFT (included in SAF)
  *
  * @author Leo McCormack
  * @date 06.04.2019

@@ -21,7 +21,7 @@
  *        Array Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
- * derived from Matlab libraries by Archontis Politis [1-3] (BSD-3-Clause
+ * derived from MATLAB libraries by Archontis Politis [1-3] (BSD-3-Clause
  * License).
  *
  * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform

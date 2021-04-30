@@ -21,7 +21,7 @@
  *        Array Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
- * derived from Matlab libraries by Archontis Politis [1-3] (BSD-3-Clause
+ * derived from MATLAB libraries by Archontis Politis [1-3] (BSD-3-Clause
  * License).
  *
  * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
@@ -145,24 +145,19 @@ void gaunt_mtx(/* Input arguments */
 /*             Internal functions for spherical harmonic rotations            */
 /* ========================================================================== */
 
-/**
- * Helper function for getSHrotMtxReal() */
+/** Helper function for getSHrotMtxReal() */
 float getP(int i, int l, int a, int b, float** R_1, float** R_lm1);
 
-/**
- * Helper function for getSHrotMtxReal() */
+/** Helper function for getSHrotMtxReal() */
 float getU(int l, int m, int n, float** R_1, float** R_lm1);
 
-/**
- * Helper function for getSHrotMtxReal() */
+/** Helper function for getSHrotMtxReal() */
 float getV(int l, int m, int n, float** R_1, float** R_lm1);
 
-/**
- * Helper function for getSHrotMtxReal() */
+/** Helper function for getSHrotMtxReal() */
 float getW(int l, int m, int n, float** R_1, float** R_lm1);
 
-/**
- * Helper function for getSHrotMtxReal() */
+/** Helper function for getSHrotMtxReal() */
 float getW(int l, int m, int n, float** R_1, float** R_lm1);
 
 
@@ -170,16 +165,13 @@ float getW(int l, int m, int n, float** R_1, float** R_lm1);
 /*                        Internal functions for sphESPRIT                    */
 /* ========================================================================== */
 
-/**
- * Helper function for sphESPRIT_create() */
+/** Helper function for sphESPRIT_create() */
 void getWnimu(int order, int mm, int ni, int mu, double* Wnimu);
 
-/**
- * Helper function for sphESPRIT_create() */
+/** Helper function for sphESPRIT_create() */
 void getVnimu(int order, int ni, int mu, double* Vnimu);
 
-/**
- * Helper function for sphESPRIT_create() */
+/** Helper function for sphESPRIT_create() */
 void muni2q(int order, int ni, int mu, int* idx_nimu, int* idx_nm);
 
 

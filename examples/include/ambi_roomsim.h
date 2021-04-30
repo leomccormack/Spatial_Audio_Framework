@@ -256,7 +256,9 @@ float ambi_roomsim_getRoomDimY(void* const hAmbi);
 float ambi_roomsim_getRoomDimZ(void* const hAmbi);
 
 /** Returns wall absorption coefficients */
-float ambi_roomsim_getWallAbsCoeff(void* const hAmbi, int xyz_idx, int posNeg_idx);
+float ambi_roomsim_getWallAbsCoeff(void* const hAmbi,
+                                   int xyz_idx,
+                                   int posNeg_idx);
 
 /**
  * Returns the Ambisonic channel ordering convention currently being used to

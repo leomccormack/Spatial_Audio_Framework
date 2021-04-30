@@ -65,9 +65,7 @@ typedef enum {
     
 }BIQUAD_FILTER_TYPES;
 
-/**
- * Butterworth Infinite Impulse Response (IIR) filter design options
- */
+/** Butterworth Infinite Impulse Response (IIR) filter design options */
 typedef enum {
     BUTTER_FILTER_LPF, /**< low-pass filter */
     BUTTER_FILTER_HPF, /**< high-pass filter */
@@ -76,9 +74,7 @@ typedef enum {
 
 }BUTTER_FILTER_TYPES;
 
-/**
- * Finite Impulse Response (FIR) filter design options
- */
+/** Finite Impulse Response (FIR) filter design options */
 typedef enum {
     FIR_FILTER_LPF, /**< low-pass filter */
     FIR_FILTER_HPF, /**< high-pass filter */

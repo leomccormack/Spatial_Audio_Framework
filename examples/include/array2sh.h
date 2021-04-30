@@ -59,9 +59,7 @@ extern "C" {
 /*                             Presets + Constants                            */
 /* ========================================================================== */
 
-/**
- * Available microphone array presets
- */
+/** Available microphone array presets */
 typedef enum {
     MICROPHONE_ARRAY_PRESET_DEFAULT = 1,
     MICROPHONE_ARRAY_PRESET_AALTO_HYDROPHONE,
@@ -121,9 +119,7 @@ typedef enum {
 /** Number of supported array types */
 #define ARRAY2SH_NUM_ARRAY_TYPES ( 2 )
 
-/**
- * List of supported sensor directivities and array construction types.
- */
+/** List of supported sensor directivities and array construction types */
 typedef enum {
     WEIGHT_RIGID_OMNI = 1, /**< Rigid baffle construction with omni sensors */
     WEIGHT_RIGID_CARD,     /**< Rigid baffle construction with cardioid sensors
@@ -249,9 +245,7 @@ void array2sh_process(void* const hA2sh,
  */
 void array2sh_refreshSettings(void* const hA2sh);
  
-/**
- * Sets the encoding order (see #SH_ORDERS enum)
- */
+/** Sets the encoding order (see #SH_ORDERS enum) */
 void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
 
 /**
@@ -266,9 +260,7 @@ void array2sh_setEncodingOrder(void* const hA2sh, int newOrder);
  */
 void array2sh_setRequestEncoderEvalFLAG(void* const hA2sh, int newState);
     
-/**
- * Sets current eval status (see #ARRAY2SH_EVAL_STATUS enum)
- */
+/** Sets current eval status (see #ARRAY2SH_EVAL_STATUS enum) */
 void array2sh_setEvalStatus(void* const hA2sh, ARRAY2SH_EVAL_STATUS evalStatus);
 
 /**
@@ -327,14 +319,10 @@ void array2sh_setSensorAzi_deg(void* const hA2sh, int index, float newAzi_deg);
  */
 void array2sh_setSensorElev_deg(void* const hA2sh, int index, float newElev_deg);
     
-/**
- * Sets the number of sensors in the array.
- */
+/** Sets the number of sensors in the array. */
 void array2sh_setNumSensors(void* const hA2sh, int newQ);
     
-/**
- * Sets the radius of the array
- */
+/** Sets the radius of the array */
 void array2sh_setr(void* const hA2sh, float newr);
     
 /**
@@ -345,14 +333,10 @@ void array2sh_setr(void* const hA2sh, float newr);
  */
 void array2sh_setR(void* const hA2sh, float newR);
     
-/**
- * Sets the type of array (see #ARRAY2SH_ARRAY_TYPES enum)
- */
+/** Sets the type of array (see #ARRAY2SH_ARRAY_TYPES enum) */
 void array2sh_setArrayType(void* const hA2sh, int newType);
 
-/**
- * Sets the type of weights to use (see #ARRAY2SH_WEIGHT_TYPES enum)
- */
+/** Sets the type of weights to use (see #ARRAY2SH_WEIGHT_TYPES enum) */
 void array2sh_setWeightType(void* const hA2sh, int newType);
     
 /**
@@ -384,9 +368,7 @@ void array2sh_setNormType(void* const hA2sh, int newType);
  */
 void array2sh_setc(void* const hA2sh, float newc);
     
-/**
- * Sets the amount of post gain to apply after the encoding, in DECIBELS
- */
+/** Sets the amount of post gain to apply after the encoding, in DECIBELS */
 void array2sh_setGain(void* const hA2sh, float newGain);
 
 
@@ -400,9 +382,7 @@ void array2sh_setGain(void* const hA2sh, float newGain);
  */
 int array2sh_getFrameSize(void);
 
-/**
- * Returns current eval status (see #ARRAY2SH_EVAL_STATUS enum)
- */
+/** Returns current eval status (see #ARRAY2SH_EVAL_STATUS enum) */
 ARRAY2SH_EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh);
 
 /**
@@ -449,9 +429,7 @@ int array2sh_getDiffEQpastAliasing(void* const hA2sh);
  */
 int array2sh_getRequestEncoderEvalFLAG(void* const hA2sh);
     
-/**
- * Returns the current encoding order (see #SH_ORDERS enum)
- */
+/** Returns the current encoding order (see #SH_ORDERS enum) */
 int array2sh_getEncodingOrder(void* const hA2sh);
     
 /**
@@ -478,14 +456,10 @@ float array2sh_getSensorAzi_deg(void* const hA2sh, int index);
  */
 float array2sh_getSensorElev_deg(void* const hA2sh, int index);
 
-/**
- * Returns the number of sensors in the array.
- */
+/** Returns the number of sensors in the array */
 int array2sh_getNumSensors(void* const hA2sh);
     
-/**
- * Returns the maximum supported number of sensors which can be in the array.
- */
+/** Returns the maximum supported number of sensors which can be in the array */
 int array2sh_getMaxNumSensors(void);
     
 /**
@@ -500,24 +474,16 @@ int array2sh_getMinNumSensors(void* const hA2sh);
  */
 int array2sh_getNSHrequired(void* const hA2sh);
     
-/**
- * Returns the radius of the array, in meters
- */
+/** Returns the radius of the array, in meters */
 float array2sh_getr(void* const hA2sh);
     
-/**
- * Returns the radius of the scatterer, in meters
- */
+/** Returns the radius of the scatterer, in meters */
 float array2sh_getR(void* const hA2sh);
     
-/**
- * Returns the type of array. See #ARRAY2SH_ARRAY_TYPES enum
- */
+/** Returns the type of array. See #ARRAY2SH_ARRAY_TYPES enum */
 int array2sh_getArrayType(void* const hA2sh);
 
-/**
- * Returns the type of weights to use see #ARRAY2SH_WEIGHT_TYPES enum
- */
+/** Returns the type of weights to use see #ARRAY2SH_WEIGHT_TYPES enum */
 int array2sh_getWeightType(void* const hA2sh);
 
 /**
@@ -552,9 +518,7 @@ int array2sh_getNormType(void* const hA2sh);
  */
 float array2sh_getc(void* const hA2sh);
 
-/**
- * Returns the amount of post gain to apply after the encoding, in DECIBELS
- */
+/** Returns the amount of post gain to apply after the encoding, in DECIBELS */
 float array2sh_getGain(void* const hA2sh);
 
 /**
@@ -638,9 +602,7 @@ float* array2sh_getSpatialCorrelation_Handle(void* const hA2sh,
  */
 float* array2sh_getLevelDifference_Handle(void* const hA2sh, int* nCurves, int* nFreqPoints);
     
-/**
- * Returns the DAW/Host sample rate
- */
+/** Returns the DAW/Host sample rate */
 int array2sh_getSamplingRate(void* const hA2sh);
     
 /**

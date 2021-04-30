@@ -112,14 +112,10 @@ void ambi_enc_setSourceAzi_deg(void* const hAmbi, int index, float newAzi_deg);
  */
 void ambi_enc_setSourceElev_deg(void* const hAmbi, int index, float newElev_deg);
 
-/**
- * Sets the number of input signals/sources to encode.
- */
+/** Sets the number of input signals/sources to encode */
 void ambi_enc_setNumSources(void* const hAmbi, int new_nSources);
 
-/**
- * Sets the input configuration preset (see #SOURCE_CONFIG_PRESETS enum)
- */
+/** Sets the input configuration preset (see #SOURCE_CONFIG_PRESETS enum) */
 void ambi_enc_setInputConfigPreset(void* const hAmbi, int newPresetID);
 
 /**
@@ -160,24 +156,16 @@ int ambi_enc_getFrameSize(void);
  */
 int ambi_enc_getOutputOrder(void* const hAmbi);
 
-/**
- * Returns the azimuth for a specific source, in DEGREES
- */
+/** Returns the azimuth for a specific source, in DEGREES */
 float ambi_enc_getSourceAzi_deg(void* const hAmbi, int index);
 
-/**
- * Returns the elevation for a specific source, in DEGREES
- */
+/** Returns the elevation for a specific source, in DEGREES */
 float ambi_enc_getSourceElev_deg(void* const hAmbi, int index);
 
-/**
- * Returns the number of input signals/sources to encode.
- */
+/** Returns the number of input signals/sources to encode */
 int ambi_enc_getNumSources(void* const hAmbi);
 
-/**
- * Returns the maximum number of input signals/sources that can be encoded.
- */
+/** Returns the maximum number of input signals/sources that can be encoded */
 int ambi_enc_getMaxNumSources(void);
 
 /**
@@ -198,9 +186,7 @@ int ambi_enc_getChOrder(void* const hAmbi);
  */
 int ambi_enc_getNormType(void* const hAmbi);
 
-/**
- * Returns 0: if post scaling is disabled, 1: if post scaling is enabled
- */
+/** Returns 0: if post scaling is disabled, 1: if post scaling is enabled */
 int ambi_enc_getEnablePostScaling(void* const hAmbi);
 
 /**

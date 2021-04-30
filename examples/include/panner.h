@@ -148,34 +148,22 @@ void panner_process(void* const hPan,
  */
 void panner_refreshSettings(void* const hPan);
 
-/**
- * Sets the azimuth of a specific input/source index, in DEGREES
- */
+/** Sets the azimuth of a specific input/source index, in DEGREES */
 void panner_setSourceAzi_deg(void* const hPan, int index, float newAzi_deg);
 
-/**
- * Sets the elevation of a specific input/source index, in DEGREES
- */
+/** Sets the elevation of a specific input/source index, in DEGREES */
 void panner_setSourceElev_deg(void* const hPan, int index, float newElev_deg);
 
-/**
- * Sets the number of inputs/sources to pan.
- */
+/** Sets the number of inputs/sources to pan */
 void panner_setNumSources(void* const hPan, int new_nSources);
 
-/**
- * Sets the azimuth of a specific loudspeaker index, in DEGREES
- */
+/** Sets the azimuth of a specific loudspeaker index, in DEGREES */
 void panner_setLoudspeakerAzi_deg(void* const hPan, int index, float newAzi_deg);
 
-/**
- * Sets the elevation of a specific loudspeaker index, in DEGREES
- */
+/** Sets the elevation of a specific loudspeaker index, in DEGREES */
 void panner_setLoudspeakerElev_deg(void* const hPan, int index, float newElev_deg);
 
-/**
- * Sets the number of loudspeakers to pan to.
- */
+/** Sets the number of loudspeakers to pan to */
 void panner_setNumLoudspeakers(void* const hPan, int new_nLoudspeakers);
 
 /**
@@ -200,24 +188,16 @@ void panner_setInputConfigPreset(void* const hPan, int newPresetID);
  */
 void panner_setDTT(void* const hPan, float newValue);
     
-/**
- * Sets the degree of spread, in DEGREES
- */
+/** Sets the degree of spread, in DEGREES */
 void panner_setSpread(void* const hPan, float newValue);
 
-/**
- * Sets the 'yaw' rotation angle, in DEGREES
- */
+/** Sets the 'yaw' rotation angle, in DEGREES */
 void panner_setYaw(void* const hPan, float newYaw);
 
-/**
- * Sets the 'pitch' rotation angle, in DEGREES
- */
+/** Sets the 'pitch' rotation angle, in DEGREES */
 void panner_setPitch(void* const hPan, float newPitch);
 
-/**
- * Sets the 'roll' rotation angle, in DEGREES
- */
+/** Sets the 'roll' rotation angle, in DEGREES */
 void panner_setRoll(void* const hPan, float newRoll);
 
 /**
@@ -249,9 +229,7 @@ void panner_setFlipRoll(void* const hPan, int newState);
  */
 int panner_getFrameSize(void);
 
-/**
- * Returns current codec status (see #CODEC_STATUS enum)
- */
+/** Returns current codec status (see #CODEC_STATUS enum) */
 CODEC_STATUS panner_getCodecStatus(void* const hPan);
 
 /**
@@ -269,74 +247,46 @@ float panner_getProgressBar0_1(void* const hPan);
  */
 void panner_getProgressBarText(void* const hPan, char* text);
     
-/**
- * Returns the input/source azimuth for a given index, in DEGREES
- */
+/** Returns the input/source azimuth for a given index, in DEGREES */
 float panner_getSourceAzi_deg(void* const hPan, int index);
 
-/**
- * Returns the input/source elevation for a given index, in DEGREES
- */
+/** Returns the input/source elevation for a given index, in DEGREES */
 float panner_getSourceElev_deg(void* const hPan, int index);
 
-/**
- * Returns the number of inputs/sources in the current layout
- */
+/** Returns the number of inputs/sources in the current layout */
 int panner_getNumSources(void* const hPan);
 
-/**
- * Returns the maximum number of inputs/sources permitted by panner
- */
+/** Returns the maximum number of inputs/sources permitted by panner */
 int panner_getMaxNumSources(void);
 
-/**
- * Returns the loudspeaker azimuth for a given index, in DEGREES
- */
+/** Returns the loudspeaker azimuth for a given index, in DEGREES */
 float panner_getLoudspeakerAzi_deg(void* const hPan, int index);
 
-/**
- * Returns the loudspeaker elevation for a given index, in DEGREES
- */
+/** Returns the loudspeaker elevation for a given index, in DEGREES */
 float panner_getLoudspeakerElev_deg(void* const hPan, int index);
 
-/**
- * Returns the number of loudspeakers in the current layout
- */
+/** Returns the number of loudspeakers in the current layout */
 int panner_getNumLoudspeakers(void* const hPan);
 
-/**
- * Returns the maximum number of loudspeakers permitted
- */
+/** Returns the maximum number of loudspeakers permitted */
 int panner_getMaxNumLoudspeakers(void);
 
-/**
- * Returns the DAW/Host sample rate
- */
+/** Returns the DAW/Host sample rate */
 int panner_getDAWsamplerate(void* const hPan);
 
-/**
- * Returns the room coefficient value 0..1
- */
+/** Returns the room coefficient value 0..1 */
 float panner_getDTT(void* const hPan);
 
-/**
- * Returns the spread value, in DEGREES
- */
+/** Returns the spread value, in DEGREES */
 float panner_getSpread(void* const hPan);
 
-/**
- * Returns the 'yaw' rotation angle, in DEGREES
- */
+/** Returns the 'yaw' rotation angle, in DEGREES */
 float panner_getYaw(void* const hPan);
 
-/**
- * Returns the 'pitch' rotation angle, in DEGREES
- */
+/** Returns the 'pitch' rotation angle, in DEGREES */
 float panner_getPitch(void* const hPan);
 
-/**
- * Returns the 'roll' rotation angle, in DEGREES
- */
+/** Returns the 'roll' rotation angle, in DEGREES */
 float panner_getRoll(void* const hPan);
 
 /**

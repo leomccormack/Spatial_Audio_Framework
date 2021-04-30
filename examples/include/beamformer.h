@@ -97,19 +97,13 @@ void beamformer_refreshSettings(void* const hBeam);
  */
 void beamformer_setBeamOrder(void* const hBeam,  int newValue);
 
-/**
- * Sets a beamformer azimuth direction of a given index, in DEGREES
- */
+/** Sets a beamformer azimuth direction of a given index, in DEGREES */
 void beamformer_setBeamAzi_deg(void* const hBeam, int index, float newAzi_deg);
 
-/**
- * Sets a beamformer elevation direction for a given index, in DEGREES
- */
+/** Sets a beamformer elevation direction for a given index, in DEGREES */
 void beamformer_setBeamElev_deg(void* const hBeam, int index, float newElev_deg);
 
-/**
- * Sets the number of beamformers to generate
- */
+/** Sets the number of beamformers to generate */
 void beamformer_setNumBeams(void* const hBeam, int new_nBeams);
 
 /**
@@ -124,9 +118,7 @@ void beamformer_setChOrder(void* const hBeam, int newOrder);
  */
 void beamformer_setNormType(void* const hBeam, int newType);
     
-/**
- * Sets the beamforming approach to employ (see #STATIC_BEAM_TYPES enum)
- */
+/** Sets the beamforming approach to employ (see #STATIC_BEAM_TYPES enum) */
 void beamformer_setBeamType(void* const hBeam, int newID);
 
     
@@ -140,9 +132,7 @@ void beamformer_setBeamType(void* const hBeam, int newID);
  */
 int beamformer_getFrameSize(void);
 
-/**
- * Returns tje beamforming order (see #SH_ORDERS enum)
- */
+/** Returns the beamforming order (see #SH_ORDERS enum) */
 int beamformer_getBeamOrder(void* const hBeam);
     
 /**
@@ -151,24 +141,16 @@ int beamformer_getBeamOrder(void* const hBeam);
  */
 int beamformer_getNumberOfBands(void);
 
-/**
- * Returns the beamformer azimuth direction of a given index h, in DEGREES
- */
+/** Returns the beamformer azimuth direction of a given index h, in DEGREES */
 float beamformer_getBeamAzi_deg(void* const hBeam, int index);
 
-/**
- * Returns the beamformer elevation direction of a given index, in DEGREES
- */
+/** Returns the beamformer elevation direction of a given index, in DEGREES */
 float beamformer_getBeamElev_deg(void* const hBeam, int index);
 
-/**
- * Returns the number of beamformers being generated
- */
+/** Returns the number of beamformers being generated */
 int beamformer_getNumBeams(void* const hBeam);
     
-/**
- * Returns the maximum number of beamformers permitted
- */
+/** Returns the maximum number of beamformers permitted */
 int beamformer_getMaxNumBeams(void);
     
 /**
@@ -191,9 +173,7 @@ int beamformer_getChOrder(void* const hBeam);
  */
 int beamformer_getNormType(void* const hBeam);
     
-/**
- * Returns the beamforming approach employed (see #STATIC_BEAM_TYPES enum)
- */
+/** Returns the beamforming approach employed (see #STATIC_BEAM_TYPES enum) */
 int beamformer_getBeamType(void* const hBeam);
 
 /**

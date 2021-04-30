@@ -67,7 +67,7 @@ extern "C" {
 #define IMS_EG_PREV ( 1 )
 /** Number of echogram slots */
 #define IMS_EG_NUM_SLOTS ( 2 )
-/** If a source or receiver ID is yet to be active, it is "IMS_UNASSIGNED" */
+/** While a source or receiver ID is yet to be active, it is "IMS_UNASSIGNED" */
 #define IMS_UNASSIGNED ( -1 )
 
 /** Void pointer (just to improve code readability when working with arrays of
@@ -77,15 +77,18 @@ typedef void* voidPtr;
 /** Union struct for Cartesian coordinates (access as .x,.y,.z, or .v[3]) */
 typedef struct _ims_pos_xyz {
     union {
-        struct { float x, y, z; };
-        float v[3];
+        struct { float x; /**< x Cartesian coordinate, in metres */
+                 float y; /**< y Cartesian coordinate, in metres */
+                 float z; /**< z Cartesian coordinate, in metres */
+        };
+        float v[3]; /**< x,y,z Cartesian coordinates, in metres */
     };
 } ims_pos_xyz;
 
 /** Supported receiver types */
 typedef enum {
     RECEIVER_SH   /**< Spherical harmonic receiver */
-    /* RECEIVER_ARRAY */ /**< Microphone array/HRIR measurements-based receiver */
+    // RECEIVER_ARRAY /**< Microphone array/HRIR measurements-based receiver */
 
 } RECEIVER_TYPES;
 

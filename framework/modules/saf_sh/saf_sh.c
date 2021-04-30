@@ -21,7 +21,7 @@
  *        Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
- * derived from Matlab libraries by Archontis Politis [1-3] (BSD-3-Clause
+ * derived from MATLAB libraries by Archontis Politis [1-3] (BSD-3-Clause
  * License).
  *
  * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
@@ -35,9 +35,7 @@
 #include "saf_sh.h"
 #include "saf_sh_internal.h"
 
-/**
- * First-order ACN/N3D to FuMa [without sqrt(4pi) term] conversion matrix
- */
+/** First-order ACN/N3D to FuMa [without sqrt(4pi) term] conversion matrix */
 const float wxyzCoeffs[4][4] = {
     {3.544907701811032f, 0.0f, 0.0f, 0.0f},
     {0.0f, 0.0f, 0.0f, 2.046653415892977f},

@@ -130,9 +130,7 @@ void sldoa_analysis(void* const hSld,
 /*                                Set Functions                               */
 /* ========================================================================== */
 
-/**
- * Sets the maximum input/analysis order (see #SH_ORDERS enum)
- */
+/** Sets the maximum input/analysis order (see #SH_ORDERS enum) */
 void sldoa_setMasterOrder(void* const hSld,  int newValue);
 
 /**
@@ -141,29 +139,19 @@ void sldoa_setMasterOrder(void* const hSld,  int newValue);
  */
 void sldoa_refreshSettings(void* const hSld);
    
-/**
- * Sets the maximum analysis frequency, in Hz
- */
+/** Sets the maximum analysis frequency, in Hz */
 void sldoa_setMaxFreq(void* const hSld, float newFreq);
 
-/**
- * Sets the minimum analysis frequency, in Hz
- */
+/** Sets the minimum analysis frequency, in Hz */
 void sldoa_setMinFreq(void* const hSld, float newFreq);
     
-/**
- * Sets the DoA averaging coefficient, 0..1
- */
+/** Sets the DoA averaging coefficient, 0..1 */
 void sldoa_setAvg(void* const hSld, float newAvg);
 
-/**
- * Sets the input/analysis order for one specific frequency band.
- */
+/** Sets the input/analysis order for one specific frequency band */
 void sldoa_setAnaOrder(void* const hSld, int newValue, int bandIdx);
 
-/**
- * Sets the input/analysis order for all frequency bands.
- */
+/** Sets the input/analysis order for all frequency bands */
 void sldoa_setAnaOrderAllBands(void* const hSld,  int newValue);
 
 /**
@@ -195,9 +183,7 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID);
  */
 int sldoa_getFrameSize(void);
 
-/**
- * Returns current codec status (see #CODEC_STATUS enum)
- */
+/** Returns current codec status (see #CODEC_STATUS enum) */
 CODEC_STATUS sldoa_getCodecStatus(void* const hSld);
 
 /**
@@ -215,34 +201,22 @@ float sldoa_getProgressBar0_1(void* const hSld);
  */
 void sldoa_getProgressBarText(void* const hSld, char* text);
 
-/**
- * Returns the current maximum analysis/input order (see #SH_ORDERS enum)
- */
+/** Returns the current maximum analysis/input order (see #SH_ORDERS enum) */
 int sldoa_getMasterOrder(void* const hSld);
 
-/**
- * Returns the current sampling rate, in Hz
- */
+/** Returns the current sampling rate, in Hz */
 int sldoa_getSamplingRate(void* const hSld);
 
-/**
- * Returns the maximum analysis frequency, in Hz
- */
+/** Returns the maximum analysis frequency, in Hz */
 float sldoa_getMaxFreq(void* const hSld);
 
-/**
- * Returns the minimum analysis frequency, in Hz
- */
+/** Returns the minimum analysis frequency, in Hz */
 float sldoa_getMinFreq(void* const hSld);
 
-/**
- * Returns the current DoA averaging coefficient value, 0..1
- */
+/** Returns the current DoA averaging coefficient value, 0..1 */
 float sldoa_getAvg(void* const hSld);
 
-/**
- * Returns the number frequency bands employed by sldoa
- */
+/** Returns the number frequency bands employed by sldoa */
 int sldoa_getNumberOfBands(void);
 
 /**
@@ -285,14 +259,10 @@ void sldoa_getDisplayData(void *  const hSld,
                           int* pStartBand,
                           int* pEndBand);
     
-/**
- * Returns the input/analysis order for one specific frequency band.
- */
+/** Returns the input/analysis order for one specific frequency band */
 int sldoa_getAnaOrder(void* const hSld, int bandIdx);
 
-/**
- * Returns the input/analysis order for the first frequency band
- */
+/** Returns the input/analysis order for the first frequency band */
 int sldoa_getAnaOrderAllBands(void* const hSld);
 
 /**

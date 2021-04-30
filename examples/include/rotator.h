@@ -230,9 +230,7 @@ int rotator_getChOrder(void* const hRot);
  */
 int rotator_getNormType(void* const hRot);
 
-/**
- * Returns the input/output order (see #SH_ORDERS enum)
- */
+/** Returns the input/output order (see #SH_ORDERS enum) */
 int rotator_getOrder(void* const hRot);
 
 /**

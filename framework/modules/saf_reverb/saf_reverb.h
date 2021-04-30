@@ -46,15 +46,15 @@ extern "C" {
  * ims_shoebox_renderRIRs() function;
  */
 
-/** Maximum number of sources supported by IMS Shoebox */
+/** Maximum number of sources supported by an instance of the IMS simulator */
 #define IMS_MAX_NUM_SOURCES 128
 
-/** Maximum number of receivers supported by IMS Shoebox */
+/** Maximum number of receivers supported by an instance of the IMS simulator */
 #define IMS_MAX_NUM_RECEIVERS 16
 
 /** Output format of the rendered room impulse responses (RIR) */
 typedef struct _ims_rir{
-    float* data;
+    float* data;        
     int length, nChannels;
 } ims_rir;
 
@@ -121,9 +121,9 @@ void ims_shoebox_destroy(void** phIms);
  * The sources are omnidirectional point sources, whereas the receiver will
  * have the directivity of whatever they are configured to have
  *
- * @note Set either the maximum order (maxN) or the maximum IR length in seconds
- *       (maxTime_s). The option you don't want to use set to <0.
- * @note The echograms are only updated if needed, so it is "OK" to call this
+ * @note Set either the maximum reflection order (maxN) or the maximum IR length
+ *       in seconds (maxTime_s). The option you don't want to use: set to <0.
+ * @note The echograms are only updated if needed, so it is OK to call this
  *       function as many times as you wish, since there will be virtually no
  *       CPU overhead incurred if no update is required.
  *
@@ -149,8 +149,9 @@ void ims_shoebox_renderRIRs(void* hIms,
  * sources, for one specified receiver
  *
  * Note the following:
- *  - The signal pointers must be valid, and have allocated enough memory for
- *    the number of channels and be of (at least) nSamples in length.
+ *  - The signal pointers for all the sources and the specified receiver must be
+ *    valid, and have allocated enough memory for the number of channels and be
+ *    of (at least) nSamples in length.
  *  - The given receiverID must exist in the simulation. If it does not, then an
  *    assertion error is triggered.
  *
@@ -168,11 +169,11 @@ void ims_shoebox_applyEchogramTD(/* Input Arguments */
 
 /* =========================== Set/Get functions ============================ */
 
-/** Sets the room dimensions */
+/** Sets new room dimensions */
 void ims_shoebox_setRoomDimensions(void* hIms,
                                    float new_roomDimensions[3]);
 
-/** Sets the wall absorption coefficients per wall and per band */
+/** Sets new wall absorption coefficients per wall and per band */
 void ims_shoebox_setWallAbsCoeffs(void* hIms,
                                   float* abs_wall);
 
@@ -223,16 +224,12 @@ int ims_shoebox_addReceiverSH(void* hIms,
                               float position_xyz[3],
                               float*** pSH_sigs);
 
-/**
- * Updates the position of a specific source in the simulation
- */
+/** Updates the position of a specific source in the simulation */
 void ims_shoebox_updateSource(void* hIms,
                               int sourceID,
                               float position_xyz[3]);
 
-/**
- * Updates the position of a specific receiver in the simulation
- */
+/** Updates the position of a specific receiver in the simulation */
 void ims_shoebox_updateReceiver(void* hIms,
                                 int receiverID,
                                 float position_xyz[3]);
@@ -240,7 +237,7 @@ void ims_shoebox_updateReceiver(void* hIms,
 /**
  * Removes a specific source from the simulation
  *
- * @note This does NOT free the source signal 'pSrc_sig'.
+ * @note This does NOT free the source signal pointer 'pSrc_sig'.
  */
 void ims_shoebox_removeSource(void* hIms,
                               int sourceID);
@@ -248,7 +245,7 @@ void ims_shoebox_removeSource(void* hIms,
 /**
  * Removes a specific receiver from the simulation
  *
- * @note This does NOT free the receiver signals 'pSH_sigs'.
+ * @note This does NOT free the receiver signals pointer 'pSH_sigs'.
  */
 void ims_shoebox_removeReceiver(void* hIms,
                                 int receiverID);

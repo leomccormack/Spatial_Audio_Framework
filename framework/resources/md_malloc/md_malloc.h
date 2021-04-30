@@ -75,34 +75,22 @@ extern "C" {
  */
 #define FLATTEN4D(A) (***A) /* || (&A[0][0][0][0]) */
     
-/**
- * 1-D malloc (same as malloc, but with error checking)
- */
+/** 1-D malloc (same as malloc, but with error checking) */
 void* malloc1d(size_t dim1_data_size);
 
-/**
- * 1-D calloc (same as calloc, but with error checking)
- */
+/** 1-D calloc (same as calloc, but with error checking) */
 void* calloc1d(size_t dim1, size_t data_size);
 
-/**
- * 1-D realloc (same as realloc, but with error checking)
- */
+/** 1-D realloc (same as realloc, but with error checking) */
 void* realloc1d(void* ptr, size_t dim1_data_size);
 
-/**
- * 2-D malloc (contiguously allocated, so use free() as usual to deallocate)
- */
+/** 2-D malloc (contiguously allocated, so use free() as usual to deallocate) */
 void** malloc2d(size_t dim1, size_t dim2, size_t data_size);
 
-/**
- * 2-D calloc (contiguously allocated, so use free() as usual to deallocate)
- */
+/** 2-D calloc (contiguously allocated, so use free() as usual to deallocate) */
 void** calloc2d(size_t dim1, size_t dim2, size_t data_size);
 
-/**
- * 2-D realloc which does NOT retain previous data order
- */
+/** 2-D realloc which does NOT retain previous data order */
 void** realloc2d(void** ptr, size_t dim1, size_t dim2, size_t data_size);
 
 /**
@@ -113,32 +101,23 @@ void** realloc2d(void** ptr, size_t dim1, size_t dim2, size_t data_size);
 void** realloc2d_r(void** ptr, size_t new_dim1, size_t new_dim2,
                    size_t prev_dim1, size_t prev_dim2, size_t data_size);
  
-/**
- * 3-D malloc (contiguously allocated, so use free() as usual to deallocate)
- */
+/** 3-D malloc (contiguously allocated, so use free() as usual to deallocate) */
 void*** malloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size);
 
-/**
- * 3-D calloc (contiguously allocated, so use free() as usual to deallocate)
- */
+/** 3-D calloc (contiguously allocated, so use free() as usual to deallocate) */
 void*** calloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size);
 
-/**
- * 3-D realloc which does NOT retain previous data order
- */
+/** 3-D realloc which does NOT retain previous data order */
 void*** realloc3d(void*** ptr, size_t dim1, size_t dim2, size_t dim3,
                   size_t data_size);
 
-/**
- * 3-D realloc which does retain previous data order
- */
+/** 3-D realloc which does retain previous data order */
 void*** realloc3d_r(void*** ptr, size_t new_dim1, size_t new_dim2,
                     size_t new_dim3, size_t prev_dim1, size_t prev_dim2,
                     size_t prev_dim3, size_t data_size);
 
-/** //UNTESTED! 
- * 4-D malloc (contiguously allocated, so use free() as usual to deallocate)
- */
+//UNTESTED!
+/** 4-D malloc (contiguously allocated, so use free() as usual to deallocate) */
 void**** malloc4d(size_t dim1, size_t dim2, size_t dim3, size_t dim4,
                   size_t data_size);
 

@@ -134,39 +134,25 @@ void ambi_drc_process(void* const hAmbi,
  */
 void ambi_drc_refreshSettings(void* const hAmbi);
 
-/**
- * Sets the compressor threshold value in DECIBELS
- */
+/** Sets the compressor threshold value in DECIBELS */
 void ambi_drc_setThreshold(void* const hAmbi, float newValue);
 
-/**
- * Sets the compression ratio
- */
+/** Sets the compression ratio */
 void ambi_drc_setRatio(void* const hAmbi, float newValue);
 
-/**
- * Sets the compressor knee value; 0: hard knee, >0: soft knee, in DECIBELS
- */
+/** Sets the compressor knee value; 0: hard knee, >0: soft knee, in DECIBELS */
 void ambi_drc_setKnee(void* const hAmbi, float newValue);
 
-/**
- * Sets the compressor input gain value, in DECIBELS
- */
+/** Sets the compressor input gain value, in DECIBELS */
 void ambi_drc_setInGain(void* const hAmbi, float newValue);
     
-/**
- * Sets the compressor output gain value, in DECIBELS
- */
+/** Sets the compressor output gain value, in DECIBELS */
 void ambi_drc_setOutGain(void* const hAmbi, float newValue);
     
-/**
- * Sets the compressor envelope attack time, in miliseconds
- */
+/** Sets the compressor envelope attack time, in miliseconds */
 void ambi_drc_setAttack(void* const hAmbi, float newValue);
 
-/**
- * Sets the compressor envelope release time, in miliseconds
- */
+/** Sets the compressor envelope release time, in miliseconds */
 void ambi_drc_setRelease(void* const hAmbi, float newValue);
     
 /**
@@ -208,54 +194,34 @@ int ambi_drc_getFrameSize(void);
  */
 float** ambi_drc_getGainTF(void* const hAmbi);
 
-/**
- * Returns current TF gain data write index
- */
+/** Returns current TF gain data write index */
 int ambi_drc_getGainTFwIdx(void* const hAmbi);
 
-/**
- * Returns current TF gain data read index
- */
+/** Returns current TF gain data read index */
 int ambi_drc_getGainTFrIdx(void* const hAmbi);
 
-/**
- * Returns the frequency vector used by the processing
- */
+/** Returns the frequency vector used by the processing */
 float* ambi_drc_getFreqVector(void* const hAmbi, int* nFreqPoints);
     
-/**
- * Returns the compressor threshold value, in DECIBELS
- */
+/** Returns the compressor threshold value, in DECIBELS */
 float ambi_drc_getThreshold(void* const hAmbi);
 
-/**
- * Returns the compression ratio
- */
+/** Returns the compression ratio */
 float ambi_drc_getRatio(void* const hAmbi);
 
-/**
- * Returns the compressor knee value 0: hard knee, >0: soft knee, in DECIBELS
- */
+/** Returns the compressor knee value 0: hard knee, >0: soft knee, in DECIBELS*/
 float ambi_drc_getKnee(void* const hAmbi);
 
-/**
- * Returns the compressor input gain value, in DECIBELS
- */
+/** Returns the compressor input gain value, in DECIBELS */
 float ambi_drc_getInGain(void* const hAmbi);
 
-/**
- * Returns the compressor output gain value, in DECIBELS
- */
+/** Returns the compressor output gain value, in DECIBELS */
 float ambi_drc_getOutGain(void* const hAmbi);
 
-/**
- * Returns the compressor envelope attack time, in miliseconds
- */
+/** Returns the compressor envelope attack time, in miliseconds */
 float ambi_drc_getAttack(void* const hAmbi);
 
-/**
- * Returns the compressor envelope release time, in miliseconds
- */
+/** Returns the compressor envelope release time, in miliseconds */
 float ambi_drc_getRelease(void* const hAmbi);
 
 /**
@@ -272,9 +238,7 @@ int ambi_drc_getChOrder(void* const hAmbi);
  */
 int ambi_drc_getNormType(void* const hAmbi);
     
-/**
- * Returns the current processing order (see #SH_ORDERS enum)
- */
+/** Returns the current processing order (see #SH_ORDERS enum) */
 SH_ORDERS ambi_drc_getInputPreset(void* const hAmbi);
     
 /**
@@ -283,9 +247,7 @@ SH_ORDERS ambi_drc_getInputPreset(void* const hAmbi);
  */
 int ambi_drc_getNSHrequired(void* const hAmbi);
     
-/**
- * Returns the DAW/Host sample rate
- */
+/** Returns the DAW/Host sample rate */
 int ambi_drc_getSamplerate(void* const hAmbi);
     
 /**

@@ -109,14 +109,10 @@ void multiconv_setFilters(void* const hMCnv,
                           int numSamples,
                           int sampleRate);
     
-/**
- * Enable (1), disable (0), partitioned convolution
- */
+/** Enable (1), disable (0), partitioned convolution */
 void multiconv_setEnablePart(void* const hMCnv, int newState);
     
-/**
- * Sets the number of input/output channels.
- */
+/** Sets the number of input/output channels */
 void multiconv_setNumChannels(void* const hMCnv, int newValue);
     
 
@@ -136,34 +132,22 @@ int multiconv_getFrameSize(void);
  */
 int multiconv_getEnablePart(void* const hMCnv);
 
-/**
- * Returns the number input/output channels
- */
+/** Returns the number input/output channels */
 int multiconv_getNumChannels(void* const hMCnv);
 
-/**
- * Returns the currect host block size
- */
+/** Returns the currect host block size */
 int multiconv_getHostBlockSize(void* const hMCnv);
 
-/**
- * Returns the number of filters in the loaded wav file
- */
+/** Returns the number of filters in the loaded wav file */
 int multiconv_getNfilters(void* const hMCnv);
 
-/**
- * Returns the current filter length, in samples
- */
+/** Returns the current filter length, in samples */
 int multiconv_getFilterLength(void* const hMCnv);
 
-/**
- * Returns the samplerate of the loaded filters
- */
+/** Returns the samplerate of the loaded filters */
 int multiconv_getFilterFs(void* const hMCnv);
 
-/**
- * Returns the samperate of the host
- */
+/** Returns the samperate of the host */
 int multiconv_getHostFs(void* const hMCnv);
 
 /**

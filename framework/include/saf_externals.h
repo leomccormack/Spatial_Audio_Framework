@@ -19,10 +19,7 @@
  * @brief Include header for SAF externals
  *
  * @note Including this header is optional and only needed if you wish to have
- *       access to these external libraries. (i.e. not including this header
- *       will mean that these libraries are only used internally by SAF and will
- *       not be accessible in your project).
- *
+ *       access to these external libraries in your own project.
  * @warning Using ATLAS (SAF_USE_ATLAS) as the performance library is not
  *          recommended, since some LAPACK routines are not implemented by the
  *          library! However, if you don't mind losing some SAF functionality
@@ -49,8 +46,7 @@
  *
  *   Intel IPP may be optionally used with the flag: SAF_USE_INTEL_IPP
  *
- * @see More information can be found here:
- *          docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md
+ * @see More information can be found in the docs folder regarding dependencies
  *
  * @author Leo McCormack
  * @date 06.08.2020
