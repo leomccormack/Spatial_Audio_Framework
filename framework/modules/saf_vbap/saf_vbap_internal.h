@@ -31,10 +31,6 @@
 #ifndef __SAF_VBAP_INTERNAL_H_INCLUDED__
 #define __SAF_VBAP_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <complex.h>
-#include <string.h>
 #include "saf_vbap.h"
 #include "../saf_utilities/saf_utilities.h"
 #include "saf_externals.h" 

@@ -228,7 +228,7 @@ void spreader_initCodec
             pData->useDefaultHRIRsFLAG = 1;
             spreader_initCodec(hSpr);
         }
-        pData->h_fs = (int)sofa.DataSamplingRate;
+        pData->h_fs = sofa.DataSamplingRate;
         pData->h_len = sofa.DataLengthIR;
         pData->nGrid = sofa.nSources;
         pData->h_grid = realloc1d(pData->h_grid, pData->nGrid*(pData->Q)*(pData->h_len)*sizeof(float));
@@ -253,7 +253,7 @@ void spreader_initCodec
     const int maxDelay = 12;
     for(src=0; src<SPREADER_MAX_NUM_SOURCES; src++){
         latticeDecorrelator_destroy(&(pData->hDecor[src]));
-        latticeDecorrelator_create(&(pData->hDecor[src]), pData->fs, HOP_SIZE, pData->freqVector, HYBRID_BANDS, pData->Q, orders, freqCutoffs, 4, maxDelay, 0, 0.75f);
+        latticeDecorrelator_create(&(pData->hDecor[src]), (float)pData->fs, HOP_SIZE, pData->freqVector, HYBRID_BANDS, pData->Q, orders, freqCutoffs, 4, maxDelay, 0, 0.75f);
     }
 
     /* Convert to filterbank coefficients and pre-compute outer products */
@@ -818,7 +818,7 @@ int spreader_getIRlength(void* const hSpr)
 int spreader_getIRsamplerate(void* const hSpr)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    return pData->h_fs;
+    return (int)pData->h_fs;
 }
 
 int spreader_getUseDefaultHRIRsflag(void* const hSpr)

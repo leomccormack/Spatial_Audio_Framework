@@ -558,7 +558,7 @@ void resampstr
     for (i=0; i<NP; i++){
         c+=pn[i];
         if (c>=1.0f) {
-            a = floorf(c);
+            a = (int)floorf(c);
             c = c-a;
             for(j=0; j<a; j++)
                 s[k+j]=i;
@@ -722,7 +722,7 @@ float gamma_cdf
     x = (x-mu)/beta;
 
     /* Compute the probability using the imcomplete gamma function */
-    return (float)incompletegamma((double)gam, (double)x)/tgamma(x);
+    return (float)(incompletegamma((double)gam, (double)x)/tgamma((double)x));
 }
 
 void lti_disc
@@ -896,7 +896,7 @@ static double lngamma
         q = -x;
         w = lngamma(q, &tmp);
         p = floor(q);
-        i = floor(p+0.5);
+        i = (int)floor(p+0.5);
         if( i%2==0 )
             *sgngam = (double)(-1);
         else

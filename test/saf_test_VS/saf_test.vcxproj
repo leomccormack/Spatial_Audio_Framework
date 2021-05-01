@@ -183,6 +183,7 @@
     <ClInclude Include="..\..\examples\include\powermap.h" />
     <ClInclude Include="..\..\examples\include\rotator.h" />
     <ClInclude Include="..\..\examples\include\sldoa.h" />
+    <ClInclude Include="..\..\examples\include\spreader.h" />
     <ClInclude Include="..\..\examples\include\_common.h" />
     <ClInclude Include="..\..\examples\src\ambi_bin\ambi_bin_internal.h" />
     <ClInclude Include="..\..\examples\src\ambi_dec\ambi_dec_internal.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="..\..\examples\src\rotator\rotator_internal.h" />
     <ClInclude Include="..\..\examples\src\sldoa\sldoa_database.h" />
     <ClInclude Include="..\..\examples\src\sldoa\sldoa_internal.h" />
+    <ClInclude Include="..\..\examples\src\spreader\spreader_internal.h" />
     <ClInclude Include="..\..\framework\include\saf.h" />
     <ClInclude Include="..\..\framework\modules\saf_cdf4sap\saf_cdf4sap.h" />
     <ClInclude Include="..\..\framework\modules\saf_hoa\saf_hoa.h" />
@@ -275,6 +277,8 @@
     <ClCompile Include="..\..\examples\src\sldoa\sldoa.c" />
     <ClCompile Include="..\..\examples\src\sldoa\sldoa_database.c" />
     <ClCompile Include="..\..\examples\src\sldoa\sldoa_internal.c" />
+    <ClCompile Include="..\..\examples\src\spreader\spreader.c" />
+    <ClCompile Include="..\..\examples\src\spreader\spreader_internal.c" />
     <ClCompile Include="..\..\framework\modules\saf_cdf4sap\saf_cdf4sap.c" />
     <ClCompile Include="..\..\framework\modules\saf_hoa\saf_hoa.c" />
     <ClCompile Include="..\..\framework\modules\saf_hoa\saf_hoa_internal.c" />

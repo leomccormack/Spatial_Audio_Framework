@@ -328,7 +328,7 @@ void ambi_bin_initCodec
             beamWeightsMaxEV(order_truncated, maxRECoeffs);
             for (int idx_n=0; idx_n<order_truncated+1; idx_n++) {
                 w_n[idx_n] = maxRECoeffs[idx_n];
-                w_n[idx_n] /= sqrtf((float)(2*idx_n+1) / (4.0*SAF_PI));
+                w_n[idx_n] /= sqrtf((float)(2*idx_n+1) / (4.0f*SAF_PI));
             }
             float w_0 = w_n[0];
             for (int idx_n=0; idx_n<order_truncated+1; idx_n++)

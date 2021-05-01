@@ -34,6 +34,15 @@
 #ifndef __SAF_UTILITIES_H_INCLUDED__
 #define __SAF_UTILITIES_H_INCLUDED__
 
+/* The usual suspects: */
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <float.h>
+#include <assert.h>
+#include <limits.h>
+
 /* ========================================================================== */
 /*                        Macros and Global Constants                         */
 /* ========================================================================== */

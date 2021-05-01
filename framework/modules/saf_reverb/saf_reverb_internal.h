@@ -28,10 +28,6 @@
 #ifndef __REVERB_INTERNAL_H_INCLUDED__
 #define __REVERB_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h> 
-#include <string.h>
-#include <assert.h>
 #include "saf_reverb.h"
 #include "saf_externals.h"
 #include "../saf_utilities/saf_utilities.h"

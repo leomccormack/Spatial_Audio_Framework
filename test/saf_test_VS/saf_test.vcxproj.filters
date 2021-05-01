@@ -118,6 +118,9 @@
     <Filter Include="framework\modules\saf_tracker">
       <UniqueIdentifier>{ed0c58b0-07a9-40f7-a4ed-a9dc1f46c8fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="examples\src\spreader">
+      <UniqueIdentifier>{ccf5bf3c-6813-4f3a-ae39-cb1bfa556211}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\timer\timer.h">
@@ -342,6 +345,12 @@
     <ClInclude Include="..\..\framework\modules\saf_tracker\saf_tracker_internal.h">
       <Filter>framework\modules\saf_tracker</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\examples\include\spreader.h">
+      <Filter>examples\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\examples\src\spreader\spreader_internal.h">
+      <Filter>examples\src\spreader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\timer\timer.c">
@@ -556,6 +565,12 @@
     </ClCompile>
     <ClCompile Include="..\..\framework\modules\saf_tracker\saf_tracker_internal.c">
       <Filter>framework\modules\saf_tracker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\examples\src\spreader\spreader.c">
+      <Filter>examples\src\spreader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\examples\src\spreader\spreader_internal.c">
+      <Filter>examples\src\spreader</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

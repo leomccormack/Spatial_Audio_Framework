@@ -63,12 +63,12 @@ extern "C" {
 #ifdef AFSTFT_USE_SAF_UTILITIES
 # include "../../modules/saf_utilities/saf_utilities.h"
 #include "saf_externals.h" 
+#else
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
 #endif
-    
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+ 
 /* Coefficients for a half-band filter, i.e., the "hybrid filter" applied optionally at the bands 1--4. */
 #define COEFF1 0.031273141818515176604f /**< Filter coefficient 0 for hybrid filtering */
 #define COEFF2 0.28127313041521179171f  /**< Filter coefficient 1 for hybrid filtering */
@@ -78,7 +78,7 @@ extern "C" {
 /* ========================================================================== */
 /*                            Internal structures                             */
 /* ========================================================================== */
-    
+
 /**
  * Complex data type used by afSTFTlib
  */

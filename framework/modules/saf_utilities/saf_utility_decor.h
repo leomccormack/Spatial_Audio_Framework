@@ -31,10 +31,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
 #include "saf_utility_complex.h"
 
 /** Lattice all-pass filter coeffs (numerator) for 256 channels, 20th order */

@@ -32,9 +32,6 @@
 #ifndef __SAF_HOA_INTERNAL_H_INCLUDED__
 #define __SAF_HOA_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h> 
-#include <string.h>
 #include "saf_hoa.h"
 #include "../saf_sh/saf_sh.h"       /* for computing the legendre polynamials */
 #include "../saf_vbap/saf_vbap.h"        /* for VBAP gains utilised by AllRAD */

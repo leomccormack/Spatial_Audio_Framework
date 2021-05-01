@@ -62,12 +62,12 @@ extern "C" {
 #define AFSTFT_USE_SAF_UTILITIES
 #ifdef AFSTFT_USE_SAF_UTILITIES
 # include "../../modules/saf_utilities/saf_utilities.h"
+#else
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
 #endif
     
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 /** Prototype filter used by afSTFTlib */
 extern const float __afSTFT_protoFilter1024[10240];
 

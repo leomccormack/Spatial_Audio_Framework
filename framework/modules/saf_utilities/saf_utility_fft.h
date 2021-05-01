@@ -45,12 +45,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include <assert.h>
-#include <limits.h>
 #include "saf_utility_complex.h"
 
 /**

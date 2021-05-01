@@ -31,11 +31,6 @@
 #ifndef __SAF_SOFA_READER_H_INCLUDED__
 #define __SAF_SOFA_READER_H_INCLUDED__
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

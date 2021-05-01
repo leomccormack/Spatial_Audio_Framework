@@ -35,10 +35,6 @@
 #ifndef __SAF_SH_INTERNAL_H_INCLUDED__
 #define __SAF_SH_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h> 
-#include <string.h>
-#include <assert.h>
 #include "saf_sh.h" 
 #include "../saf_utilities/saf_utilities.h" /* for linear algebra speed-ups */
 #include "saf_externals.h" 
