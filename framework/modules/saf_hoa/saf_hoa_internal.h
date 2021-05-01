@@ -55,10 +55,10 @@ extern "C" {
  * @note The function has been written to also work when the number of spherical
  *       harmonic components exceeds the number of loudspeakers. In which case,
  *       the 'U' matrix from the SVD is truncated instead. However, ideally,
- *       nLS > nSH, like in the paper (and in general).
- * @note Additional normalisation is also applied so that when the loudspeakers
- *       are uniformly arranged, the decoding matrix gains are equivalent to
- *       those produced by SAD/MMD.
+ *       nLS > nSH.
+ * @note Additional scaling is applied so that when the loudspeakers are
+ *       uniformly arranged, the decoding matrix gains are equivalent to those
+ *       produced by SAD/MMD.
  *
  * @param[in]  order       Decoding order
  * @param[in]  ls_dirs_deg Loudspeaker directions in DEGREES [azi elev];
@@ -109,17 +109,14 @@ void getAllRAD(/* Input Arguments */
  * ready to be applied to input SH signals in the time-frequency domain, or,
  * take the inverse-FFT and apply it via matrix convolution.
  *
- * @note This standard LS decoder typically exhibits strong timbral colourations
+ * @note This standard LS decoder typically produces strong timbral colourations
  *       in the output when using lower-order input. This is due to input order
- *       truncation, as the HRTF grid is typically of much higher modal order
- *       than that of the input. This colouration especially affects high-
+ *       truncation, since the HRTF grid is typically of much higher modal order
+ *       than that of the input order. This colouration especially affects high-
  *       frequencies, since high-frequency energy is predominantly concentrated
- *       in the higher-order components, which is then lost by truncating the
- *       input order. This phenomenon actually gets worse the more HRTFs there
- *       are, and is why the "virtual loudspeaker" approach often sounds better;
- *       subsequently bewildering many mathematicians, who often assume that
- *       more points used for a least-squares approximation, can only improve
- *       things.
+ *       in the higher-order components so is then lost by truncating the input
+ *       order. This phenomenon therefore gets worse when increasing the number
+ *       of HRTFs in the set.
  *
  * @param[in]  hrtfs         The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
@@ -143,7 +140,7 @@ void getBinDecoder_LS(/* Input Arguments */
 
 /**
  * Computes a least-squares (LS) binaural ambisonic decoder with diffuse-field
- * equalisation
+ * equalisation [1]
  *
  * The binaural ambisonic decoder is computed for each frequency bin/band,
  * ready to be applied to input SH signals in the time-frequency domain, or,
@@ -178,7 +175,7 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
                             float_complex* decMtx);
 
 /**
- * Computes a binaural ambisonic decoder based on spatial resampling (basically,
+ * Computes a binaural ambisonic decoder based on spatial resampling (i.e,
  * virtual loudspeaker decoding) [1]
  *
  * The binaural ambisonic decoder is computed for each frequency bin/band,
@@ -190,7 +187,7 @@ void getBinDecoder_LSDIFFEQ(/* Input Arguments */
  *       However, it operates without equalisation. Instead, the modal order of
  *       the HRTF grid is brought closer to the decoding order by simply
  *       reducing the number of HRTF points. The LS decoder is then computed
- *       using this reduced HRTF set. Essentially, rather than assigning high-
+ *       using this reduced HRTF set. Therefore, rather than assigning high-
  *       frequency energy to higher-order components and subsequently discarding
  *       it due to order truncation, the energy is instead aliased back into the
  *       lower-order components and preserved.

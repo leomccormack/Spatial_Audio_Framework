@@ -31,27 +31,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-
-/* Included:
- *   Matrix Convolver
- *     y = H * x; looped/summed over in/output channels, applied block-by-block
- *       where
- *         y: nOutputChannels x blockSize
- *         x: nInputChannels  x blockSize
- *         H: nOutputChannels x nInputChannels x filterLength
- *
- *   Multi Convolver
- *     y = H * x; looped over channels, applied block-by-block
- *       where
- *         y: nChannels x blockSize
- *         x: nChannels x blockSize
- *         H: nChannels x filterLength
- */
-
 /* ========================================================================== */
 /*                              Matrix Convolver                              */
 /* ========================================================================== */

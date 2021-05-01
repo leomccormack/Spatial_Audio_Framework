@@ -32,12 +32,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include <math.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "saf_utility_complex.h"
-#include "saf_utility_error.h"
 
 /**
  * Whether a vector should be conjugated or not (e.g. prior to dot product) */

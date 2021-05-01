@@ -31,7 +31,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "saf_utilities.h"
+#include "saf_utility_complex.h"
 
 /* Cross-platform sleep macro (slightly modified) from:
  * https://cboard.cprogramming.com/c-programming/170381-cross-platform-wait-sleep.html */
@@ -53,10 +53,7 @@ extern "C" {
 } while (0)
 #else
 # error "Unknown system"
-#endif
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
+#endif 
 
 /**
  * A compile time assertion check.

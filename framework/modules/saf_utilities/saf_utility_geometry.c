@@ -24,9 +24,7 @@
  */
 
 #include "saf_utilities.h"
-#include "saf_externals.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "saf_externals.h" 
 
 /** Helper function for euler2rotationMatrix() */
 static void getRx

@@ -23,10 +23,8 @@
  * @date 29.01.2020
  */
 
-#include "saf_utility_misc.h"
+#include "saf_utilities.h"
 #include "saf_externals.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 /**
  * Precomputed factorials for up to !15 (i.e. the "getSH" functions will employ
