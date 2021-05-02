@@ -216,65 +216,37 @@ void ambi_bin_setChOrder(void* const hAmbi, int newOrder);
  */
 void ambi_bin_setNormType(void* const hAmbi, int newType);
 
-/**
- * Sets a flag to enable/disable the max_rE weighting
- */
+/** Sets a flag to enable/disable the max_rE weighting */
 void ambi_bin_setEnableMaxRE(void* const hAmbi, int newState);
 
-/**
- * Sets a flag to enable/disable (1 or 0) the diffuseness covariance constraint
- */
+/** Sets a flag to enable/disable (1 or 0) the diffuse-covariance constraint */
 void ambi_bin_setEnableDiffuseMatching(void* const hAmbi, int newState);
 
-/**
- * Sets a flag to enable/disable (1 or 0) truncation EQ
- */
+/** Sets a flag to enable/disable (1 or 0) truncation EQ */
 void ambi_bin_setEnableTruncationEQ(void* const hAmbi, int newState);
 
-/**
- * Sets a flag to enable/disable (1 or 0) diffuse EQ
- */
-//void ambi_bin_setEnableDiffEQ(void* const hAmbi, int newState);
-
-/**
- * Sets HRIR pre-processing strategy.
- * (see #AMBI_BIN_PREPROC enum)
- */
+/** Sets HRIR pre-processing strategy (see #AMBI_BIN_PREPROC enum) */
 void ambi_bin_setHRIRsPreProc(void* const hAmbi, AMBI_BIN_PREPROC newType);
 
-/**
- * Sets the flag to enable/disable (1 or 0) sound-field rotation
- */
+/** Sets the flag to enable/disable (1 or 0) sound-field rotation */
 void ambi_bin_setEnableRotation(void* const hAmbi, int newState);
 
-/**
- * Sets the 'yaw' rotation angle, in degrees
- */
+/** Sets the 'yaw' rotation angle, in degrees */
 void ambi_bin_setYaw(void* const hAmbi, float newYaw_deg);
 
-/**
- * Sets the 'pitch' rotation angle, in degrees
- */
+/** Sets the 'pitch' rotation angle, in degrees */
 void ambi_bin_setPitch(void* const hAmbi, float newPitch);
 
-/**
- * Sets the 'roll' rotation angle, in degrees
- */
+/** Sets the 'roll' rotation angle, in degrees */
 void ambi_bin_setRoll(void* const hAmbi, float newRoll);
 
-/**
- * Sets a flag as to whether to "flip" the sign of the current 'yaw' angle
- */
+/** Sets a flag as to whether to "flip" the sign of the current 'yaw' angle */
 void ambi_bin_setFlipYaw(void* const hAmbi, int newState);
 
-/**
- * Sets a flag as to whether to "flip" the sign of the current 'pitch' angle
- */
+/** Sets a flag as to whether to "flip" the sign of the current 'pitch' angle */
 void ambi_bin_setFlipPitch(void* const hAmbi, int newState);
 
-/**
- * Sets a flag as to whether to "flip" the sign of the current 'roll' angle
- */
+/** Sets a flag as to whether to "flip" the sign of the current 'roll' angle */
 void ambi_bin_setFlipRoll(void* const hAmbi, int newState);
 
 /**
@@ -294,14 +266,10 @@ void ambi_bin_setRPYflag(void* const hAmbi, int newState);
  */
 int ambi_bin_getFrameSize(void);
 
-/**
- * Returns current codec status, see #CODEC_STATUS enum
- */
+/** Returns current codec status, see #CODEC_STATUS enum */
 CODEC_STATUS ambi_bin_getCodecStatus(void* const hAmbi);
     
-/**
- * (Optional) Returns current intialisation/processing progress, between 0..1
- */
+/** (Optional) Returns current intialisation/processing progress, between 0..1*/
 float ambi_bin_getProgressBar0_1(void* const hAmbi);
     
 /**
@@ -361,9 +329,7 @@ int ambi_bin_getChOrder(void* const hAmbi);
  */
 int ambi_bin_getNormType(void* const hAmbi); 
 
-/**
- * Returns the number of ears possessed by the average homo sapien (2)
- */
+/** Returns the number of ears possessed by the average homo sapien (2) */
 int ambi_bin_getNumEars(void);
 
 /**
@@ -391,12 +357,6 @@ int ambi_bin_getEnableDiffuseMatching(void* const hAmbi);
 int ambi_bin_getEnableTruncationEQ(void* const hAmbi);
 
 /**
- * Returns the flag value which dictates whether the diffuse EQ is currently
- * enabled ('0' disabled, '1' enabled).
- */
-// int ambi_bin_getEnableDiffEQ(void* const hAmbi);
-
-/**
  * Returns HRIR pre-processing strategy.  
  * (see #AMBI_BIN_PREPROC enum)
  */
@@ -408,19 +368,13 @@ AMBI_BIN_PREPROC ambi_bin_getHRIRsPreProc(void* const hAmbi);
  */
 int ambi_bin_getEnableRotation(void* const hAmbi);
 
-/**
- * Returns the 'yaw' rotation angle, in degree
- */
+/** Returns the 'yaw' rotation angle, in degree */
 float ambi_bin_getYaw(void* const hAmbi);
 
-/**
- * Returns the 'pitch' rotation angle, in degrees
- */
+/** Returns the 'pitch' rotation angle, in degrees */
 float ambi_bin_getPitch(void* const hAmbi);
 
-/**
- * Returns the 'roll' rotation angle, in degrees
- */
+/** Returns the 'roll' rotation angle, in degrees */
 float ambi_bin_getRoll(void* const hAmbi);
 
 /**
@@ -447,24 +401,16 @@ int ambi_bin_getFlipRoll(void* const hAmbi);
  */
 int ambi_bin_getRPYflag(void* const hAmbi);
 
-/**
- * Returns the number of directions in the currently used HRIR set
- */
+/** Returns the number of directions in the currently used HRIR set */
 int ambi_bin_getNDirs(void* const hAmbi);
 
-/**
- * Returns the length of HRIRs in time-domain samples
- */
+/** Returns the length of HRIRs in time-domain samples */
 int ambi_bin_getHRIRlength(void* const hAmbi);
 
-/**
- * Returns the HRIR sample rate
- */
+/** Returns the HRIR sample rate */
 int ambi_bin_getHRIRsamplerate(void* const hAmbi);
 
-/**
- * Returns the DAW/Host sample rate
- */
+/** Returns the DAW/Host sample rate */
 int ambi_bin_getDAWsamplerate(void* const hAmbi);
 
 /**

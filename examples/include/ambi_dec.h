@@ -260,9 +260,7 @@ void ambi_dec_setUseDefaultHRIRsflag(void* const hAmbi, int newState);
  */
 void ambi_dec_setSofaFilePath(void* const hAmbi, const char* path);
 
-/**
- * Enable (1) or disable (0) the pre-processing applied to the HRTFs.
- */
+/** Enable (1) or disable (0) the pre-processing applied to the HRTFs. */
 void ambi_dec_setEnableHRIRsPreProc(void* const hAmbi, int newState);
 
 /**
@@ -353,9 +351,7 @@ void ambi_dec_setTransitionFreq(void* const hAmbi, float newValue);
  */
 int ambi_dec_getFrameSize(void);
 
-/**
- * Returns current codec status (see #CODEC_STATUS enum)
- */
+/** Returns current codec status (see #CODEC_STATUS enum) */
 CODEC_STATUS ambi_dec_getCodecStatus(void* const hAmbi);
 
 /**
@@ -373,9 +369,7 @@ float ambi_dec_getProgressBar0_1(void* const hAmbi);
  */
 void ambi_dec_getProgressBarText(void* const hAmbi, char* text);
 
-/**
- * Returns the master/maximum decoding order (see #SH_ORDERS enum)
- */
+/** Returns the master/maximum decoding order (see #SH_ORDERS enum) */
 int ambi_dec_getMasterDecOrder(void* const hAmbi);
     
 /**
@@ -384,9 +378,7 @@ int ambi_dec_getMasterDecOrder(void* const hAmbi);
  */
 int ambi_dec_getDecOrder(void* const hAmbi, int bandIdx);
   
-/**
- * Returns the decoding order for the first band (see #SH_ORDERS enum)
- */
+/** Returns the decoding order for the first band (see #SH_ORDERS enum) */
 int ambi_dec_getDecOrderAllBands(void* const hAmbi);
 
 /**
@@ -402,29 +394,19 @@ void ambi_dec_getDecOrderHandle(void* const hAmbi,
                                 int** pY_values,
                                 int* pNpoints);
 
-/**
- * Returns the number of frequency bands employed by ambi_dec.
- */
+/** Returns the number of frequency bands employed by ambi_dec */
 int ambi_dec_getNumberOfBands(void);
 
-/**
- * Returns the loudspeaker azimuth in degrees for a given index.
- */
+/** Returns the loudspeaker azimuth in degrees for a given index */
 float ambi_dec_getLoudspeakerAzi_deg(void* const hAmbi, int index);
 
-/**
- * Returns the loudspeaker elevation in degrees for a given index.
- */
+/** Returns the loudspeaker elevation in degrees for a given index */
 float ambi_dec_getLoudspeakerElev_deg(void* const hAmbi, int index);
 
-/**
- * Returns the number of loudspeakers in the current layout
- */
+/** Returns the number of loudspeakers in the current layout */
 int ambi_dec_getNumLoudspeakers(void* const hAmbi);
 
-/**
- * Returns the maximum number of loudspeakers supported by ambi_dec
- */
+/** Returns the maximum number of loudspeakers supported by ambi_dec */
 int ambi_dec_getMaxNumLoudspeakers(void);
 
 /**
@@ -514,14 +496,10 @@ int ambi_dec_getDecNormType(void* const hAmbi, int index);
  */
 float ambi_dec_getTransitionFreq(void* const hAmbi);
     
-/**
- * Returns the HRIR sample rate
- */
+/** Returns the HRIR sample rate */
 int ambi_dec_getHRIRsamplerate(void* const hAmbi);
 
-/**
- * Returns the DAW/Host sample rate
- */
+/** Returns the DAW/Host sample rate */
 int ambi_dec_getDAWsamplerate(void* const hAmbi);
     
 /**
@@ -535,4 +513,4 @@ int ambi_dec_getProcessingDelay(void);
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif /* __AMBIDEC_H_INCLUDED__ */
+#endif /* __AMBI_DEC_H_INCLUDED__ */

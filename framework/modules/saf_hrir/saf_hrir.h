@@ -86,9 +86,9 @@ void estimateITDs(/* Input Arguments */
  * @param[in]  N_dirs     Number of HRIRs
  * @param[in]  hrir_len   Length of the HRIRs in samples
  * @param[in]  hopsize    Hop size in samples
- * @param[in]  hybridmode 0:disabled, 1:enabled
- * @param[out] hrtf_fb    HRTFs as filterbank coeffs;
- *                        FLAT:
+ * @param[in]  LDmode     Low-Delay mode, 0:disabled, 1:enabled
+ * @param[in]  hybridmode Hybrid-filtering, 0:disabled, 1:enabled
+ * @param[out] hrtf_fb    HRTFs as filterbank coeffs; FLAT:
  *                        (hybrid ? hopsize+5 : hopsize+1) x #NUM_EARS x N_dirs
  */
 void HRIRs2HRTFs_afSTFT(/* Input Arguments */
@@ -96,6 +96,7 @@ void HRIRs2HRTFs_afSTFT(/* Input Arguments */
                         int N_dirs,
                         int hrir_len,
                         int hopsize,
+                        int LDmode,
                         int hybridmode,
                         /* Output Arguments */
                         float_complex* hrtf_fb);

@@ -408,7 +408,7 @@ void ambi_dec_initCodec
         strcpy(pData->progressBarText,"Preparing HRIRs");
         pData->progressBar0_1 = 0.85f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
-        HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 1, pars->hrtf_fb);
+        HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 0, 1, pars->hrtf_fb);
         /* HRIR pre-processing */
         if(pData->enableHRIRsPreProc){
             /* get integration weights */

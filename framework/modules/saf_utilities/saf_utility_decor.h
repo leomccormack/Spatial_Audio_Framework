@@ -131,28 +131,27 @@ void synthesiseNoiseReverb(/* Input Arguments */
  * domain, and is therefore well-suited for audio coding [1] or Direction Audio
  * Coding (DirAC) [2] purposes.
  *
- * @note It is recommended to use lower orders. You may also cascade 2 instances
- *       (each with lower orders), to attain the desired decorrelation without
- *       introducing instabilities, which accompanies the use of the much higher
- *       filter orders.
  * @test test__latticeDecorrelator()
  *
- * @param[in] phDecor      (&) address of lattice decorrelator handle
- * @param[in] nCH          Number of channels
- * @param[in] orders       Lattice all-pass filter orders (2,3,4,6,8,10,12,14,
- *                         15,16 18, or 20) per band grouping (except the last
- *                         one); nCutoffs x 1
- * @param[in] freqCutoffs  Frequency cut-offs defining the band groupings;
- *                         nCutoffs x 1
- * @param[in] fixedDelays  Fixed time-frequency hop delays; (nCutoffs+1) x 1
- * @param[in] nCutoffs     Number of cutoff frequencies
- * @param[in] freqVector   A vector with the centre frequency for each band in
- *                         the filterbank or bin in the STFT. Use e.g.
- *                         afSTFT_getCentreFreqs() or getUniformFreqVector() to
- *                         obtain it; nBands x 1
- * @param[in] lookupOffset Optional offset for look-up tables (set to 0 if using
- *                         just one instance)
- * @param[in] nBands       Number of bands
+ * @param[in] phDecor       (&) address of lattice decorrelator handle
+ * @param[in] fs            Sampling rate
+ * @param[in] hopsize       Hopsize in samples
+ * @param[in] freqVector    A vector with the centre frequency for each band in
+ *                          the filterbank or bin in the STFT. Use e.g.
+ *                          afSTFT_getCentreFreqs() or getUniformFreqVector() to
+ *                          obtain it; nBands x 1
+ * @param[in] nBands        Number of bands
+ * @param[in] nCH           Number of channels
+ * @param[in] orders        Lattice all-pass filter orders (2,3,4,6,8,10,12,14,
+ *                          15,16 18, or 20) per band grouping (except the last
+ *                          one); nCutoffs x 1
+ * @param[in] freqCutoffs   Frequency cut-offs defining the band groupings;
+ *                          nCutoffs x 1
+ * @param[in] nCutoffs      Number of cutoff frequencies
+ * @param[in] maxDelay      Maximum static delay (hops, i.e. maxDelay*hopsize)
+ * @param[in] lookupOffset  Optional offset for look-up tables (set to 0 if
+ *                          using just one instance)
+ * @param[in] enComp_coeff  Energy compensation coefficient, [0..1]
  *
  * @see [1] Herre, J., Kjo"rling, K., Breebaart, J., Faller, C., Disch, S.,
  *          Purnhagen, H., Koppens, J., Hilpert, J., Ro"den, J., Oomen, W. and
@@ -164,14 +163,17 @@ void synthesiseNoiseReverb(/* Input Arguments */
  */
 void latticeDecorrelator_create(/* Input Arguments */
                                 void** phDecor,
+                                float fs,
+                                int hopsize,
+                                float* freqVector,
+                                int nBands,
                                 int nCH,
                                 int* orders,
                                 float* freqCutoffs,
-                                int* fixedDelays,
                                 int nCutoffs,
-                                float* freqVector,
-                                int lookupOffset,
-                                int nBands);
+                                int maxDelay,
+                                int lookupOffset, 
+                                float enComp_coeff);
 
 /**
  * Destroys an instance of the lattice all-pass-filter-based multi-channel
@@ -181,6 +183,9 @@ void latticeDecorrelator_create(/* Input Arguments */
  */
 void latticeDecorrelator_destroy(/* Input Arguments */
                                  void** phDecor);
+
+/** Sets the internal buffers to zero */
+void latticeDecorrelator_reset(void* hDecor);
 
 /**
  * Applies the lattice all-pass-filter-based multi-channel signal decorrelator
@@ -198,7 +203,7 @@ void latticeDecorrelator_apply(/* Input Arguments */
                                float_complex*** decorFrame);
 
 /**
- * Creates an instance of the transient ducker
+ * Creates an instance of the transient ducker/extractor
  *
  * @param[in] phDucker (&) address of ducker handle
  * @param[in] nCH       Number of channels
@@ -218,14 +223,18 @@ void transientDucker_destroy(/* Input Arguments */
                              void** phDucker);
 
 /**
- * Applies the transient ducker
+ * Applies the transient ducker, returning either the "ducked" input frame,
+ * or the transient part of the input frame, or both
  *
- * @param[in]  hDucker    ducker handle
- * @param[in]  inFrame    input frame; nBands x nCH x nTimeSlots
- * @param[in]  nTimeSlots Number of time slots per frame
- * @param[in]  alpha      alpha value [0,1];
- * @param[in]  beta       beta value [0,1];
- * @param[out] outFrame   ducked frame; nBands x nCH x nTimeSlots
+ * @param[in]  hDucker        ducker handle
+ * @param[in]  inFrame        input frame; nBands x nCH x nTimeSlots
+ * @param[in]  nTimeSlots     Number of time slots per frame
+ * @param[in]  alpha          alpha value [0,1]; (e.g. alpha = 0.95f)
+ * @param[in]  beta           beta value [0,1];  (e.g. beta = 0.995f)
+ * @param[out] residualFrame  Residual part (set to NULL if not wanted);
+ *                            nBands x nCH x nTimeSlots
+ * @param[out] transientFrame Transient part (set to NULL if not wanted);
+ *                            nBands x nCH x nTimeSlots
  */
 void transientDucker_apply(/* Input Arguments */
                            void* hDucker,
@@ -234,7 +243,8 @@ void transientDucker_apply(/* Input Arguments */
                            float alpha,
                            float beta,
                            /* Output Arguments */
-                           float_complex*** outFrame);
+                           float_complex*** residualFrame,
+                           float_complex*** transientFrame);
 
 
 #ifdef __cplusplus

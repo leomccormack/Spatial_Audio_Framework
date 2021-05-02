@@ -31,6 +31,7 @@
 # include "powermap.h"
 # include "rotator.h"
 # include "sldoa.h"
+# include "spreader.h"
 # include "tvconv.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
@@ -71,7 +72,10 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
 
-    /* run each unit test */ 
+    /* run each unit test */
+#if SAF_ENABLE_EXAMPLES_TESTS == 1
+    RUN_TEST(test__saf_example_spreader);
+#endif /* SAF_ENABLE_EXAMPLES_TESTS */
     RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
@@ -132,6 +136,56 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+#if SAF_ENABLE_EXAMPLES_TESTS == 1
+void test__saf_example_spreader(void){
+    int Q, i, ch, framesize, nOutputs;
+    void* hSpr;
+    float** inSigs, **outSigs;
+    float** inSig_frame, **outSig_frame;
+
+    /* Config */
+    const int fs = 48000;
+    const int nInputs = 1;
+    const int signalLength = fs*2;
+
+    /* Create and initialise an instance of spreader */
+    spreader_create(&hSpr);
+
+    /* Configure and initialise the spreader codec */
+    spreader_setUseDefaultHRIRsflag(hSpr, 1);
+    nOutputs = NUM_EARS; /* the default is binaural operation */
+    spreader_setNumSources(hSpr, nInputs);
+    spreader_init(hSpr, fs); /* Should be called before calling "process"
+                               * Cannot be called while "process" is on-going */
+    spreader_initCodec(hSpr); /* Can be called whenever (thread-safe) */
+
+    /* Define input mono signal */
+    inSigs = (float**)malloc2d(nInputs,signalLength,sizeof(float));
+    outSigs = (float**)malloc2d(nOutputs,signalLength,sizeof(float));
+    rand_m1_1(FLATTEN2D(inSigs), nInputs*signalLength); /* white-noise signals */
+
+    /* Apply spreader */
+    framesize = spreader_getFrameSize();
+    inSig_frame = (float**)malloc1d(nInputs*sizeof(float*));
+    outSig_frame = (float**)malloc1d(nOutputs*sizeof(float*));
+    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
+        for(ch=0; ch<nInputs; ch++)
+            inSig_frame[ch] = &inSigs[ch][i*framesize];
+        for(ch=0; ch<nOutputs; ch++)
+            outSig_frame[ch] = &outSigs[ch][i*framesize];
+
+        spreader_process(hSpr, inSig_frame, outSig_frame, nInputs, nOutputs, framesize);
+    }
+
+    /* Clean-up */
+    spreader_destroy(&hSpr);
+    free(inSigs);
+    free(outSigs);
+    free(inSig_frame);
+    free(outSig_frame);
+}
+#endif
 
 void test__quaternion(void){
     int i, j;
@@ -952,19 +1006,19 @@ void test__realloc2d_r(void){
 
 void test__latticeDecorrelator(void){
     int c, band, nBands, idx, hopIdx, i;
-    void* hDecor, *hDecor2, *hSTFT;
+    void* hDecor, *hSTFT;
     float icc, tmp, tmp2;
     float* freqVector;
     float** inputTimeDomainData, **outputTimeDomainData, **tempHop;
     float_complex*** inTFframe, ***outTFframe;
 
     /* config */
-    const float acceptedICC = 0.02f;
+    const float acceptedICC = 0.05f;
     const int nCH = 24;
     const int nTestHops = 2000;
     const int hopSize = 128;
-    const int afSTFTdelay = hopSize*12;
-    const int lSig = nTestHops*hopSize+afSTFTdelay;
+    const int procDelay = hopSize*12 + 12;
+    const int lSig = nTestHops*hopSize+procDelay;
     const float fs = 48e3f;
     nBands = hopSize+5;
 
@@ -981,19 +1035,14 @@ void test__latticeDecorrelator(void){
     freqVector = malloc1d(nBands*sizeof(float));
     afSTFT_getCentreFreqs(hSTFT, fs, nBands, freqVector);
 
-    /* setup decorrelator 1 */
-    int orders[5] = {6, 6, 6, 3, 2};
-    float freqCutoffs[5] = {700.0f, 2.4e3f, 4e3f, 12e3f, 20e3f};
-    int fixedDelays[6] = {8, 8, 7, 2, 1, 2};
-    latticeDecorrelator_create(&hDecor, nCH, orders, freqCutoffs, fixedDelays, 5, freqVector, 0, 133);
+    /* setup decorrelator */
+    int orders[4] = {20, 15, 6, 6}; /* 20th order up to 700Hz, 15th->2.4kHz, 6th->4kHz, 3rd->12kHz, NONE(only delays)->Nyquist */
+    //float freqCutoffs[4] = {600.0f, 2.6e3f, 4.5e3f, 12e3f};
+    float freqCutoffs[4] = {900.0f, 6.8e3f, 12e3f, 24e3f};
+    const int maxDelay = 12;
+    latticeDecorrelator_create(&hDecor, fs, hopSize, freqVector, nBands, nCH, orders, freqCutoffs, 4, maxDelay, 0, 0.75f);
 
-    /* setup decorrelator 2 */
-    float freqCutoffs2[3] = {700.0f, 2.4e3f, 4e3f};
-    int orders2[3] = {2, 3, 2};
-    int fixedDelays2[4] = {2, 2, 1, 0};
-    latticeDecorrelator_create(&hDecor2, nCH, orders2, freqCutoffs2, fixedDelays2, 3, freqVector, nCH, 133);
-
-    /* Pass input data through afSTFT */
+    /* Processing loop */
     idx = 0;
     hopIdx = 0;
     while(idx<lSig){
@@ -1008,7 +1057,6 @@ void test__latticeDecorrelator(void){
 
         /* decorrelate */
         latticeDecorrelator_apply(hDecor, inTFframe, 1, outTFframe);
-        latticeDecorrelator_apply(hDecor2, outTFframe, 1, outTFframe);
 
         /*  backward TF transform */
         afSTFT_backward(hSTFT, outTFframe, hopSize, tempHop);
@@ -1020,13 +1068,13 @@ void test__latticeDecorrelator(void){
         hopIdx++;
     }
 
-    /* Compensate for afSTFT delay, and check that the inter-channel correlation
+    /* Compensate for processing delay, and check that the inter-channel correlation
      * coefficient is below the accepted threshold (ideally 0, if fully
      * decorrelated...) */
     for(c=0; c<nCH; c++){
-        utility_svvdot(inputTimeDomainData[0], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &icc);
-        utility_svvdot(inputTimeDomainData[0], inputTimeDomainData[0], (lSig-afSTFTdelay), &tmp);
-        utility_svvdot(&outputTimeDomainData[c][afSTFTdelay], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &tmp2);
+        utility_svvdot(inputTimeDomainData[0], &outputTimeDomainData[c][procDelay], (lSig-procDelay), &icc);
+        utility_svvdot(inputTimeDomainData[0], inputTimeDomainData[0], (lSig-procDelay), &tmp);
+        utility_svvdot(&outputTimeDomainData[c][procDelay], &outputTimeDomainData[c][procDelay], (lSig-procDelay), &tmp2);
 
         icc = icc/sqrtf(tmp*tmp2); /* normalise */
         TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
@@ -1036,19 +1084,20 @@ void test__latticeDecorrelator(void){
     int c2;
     for(c=0; c<nCH; c++){
         for(c2=0; c2<nCH; c2++){
-            utility_svvdot(&outputTimeDomainData[c][afSTFTdelay], &outputTimeDomainData[c2][afSTFTdelay], (lSig-afSTFTdelay), &icc);
-            utility_svvdot(&outputTimeDomainData[c2][afSTFTdelay], &outputTimeDomainData[c2][afSTFTdelay], (lSig-afSTFTdelay), &tmp);
-            utility_svvdot(&outputTimeDomainData[c][afSTFTdelay], &outputTimeDomainData[c][afSTFTdelay], (lSig-afSTFTdelay), &tmp2);
+            utility_svvdot(&outputTimeDomainData[c][procDelay], &outputTimeDomainData[c2][procDelay], (lSig-procDelay), &icc);
+            utility_svvdot(&outputTimeDomainData[c2][procDelay], &outputTimeDomainData[c2][procDelay], (lSig-procDelay), &tmp);
+            utility_svvdot(&outputTimeDomainData[c][procDelay], &outputTimeDomainData[c][procDelay], (lSig-procDelay), &tmp2);
 
-            icc = icc/sqrtf(tmp*tmp2); /* normalise */
-           // TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
+            if (c!=c2){
+                icc = icc/sqrtf(tmp*tmp2); /* normalise */
+                TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
+            }
         }
     }
 #endif
 
     /* Clean-up */
     latticeDecorrelator_destroy(&hDecor);
-    latticeDecorrelator_destroy(&hDecor2);
     free(inTFframe);
     free(outTFframe);
     free(tempHop);

@@ -66,14 +66,14 @@ typedef struct _decorrelator
     float** InputFrameTD;
     float** OutputFrameTD;
     float_complex*** InputFrameTF;
+    float_complex*** transientFrameTF;
     float_complex*** OutputFrameTF;
     void* hSTFT;                    /**< afSTFT handle */
     int afSTFTdelay;                /**< for host delay compensation */ 
     float freqVector[HYBRID_BANDS]; /**< frequency vector for time-frequency transform, in Hz */
      
     /* our codec configuration */
-    void* hDec;
-    void* hDec2;
+    void* hDecor; 
     void* hDucker;
     CODEC_STATUS codecStatus;
     float progressBar0_1;
@@ -86,6 +86,8 @@ typedef struct _decorrelator
     /* user parameters */
     int nChannels;
     int enableTransientDucker;
+    float decorAmount;
+    int compensateLevel;
     
 } decorrelator_data;
 

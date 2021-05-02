@@ -50,6 +50,8 @@ void ambi_roomsim_create
     memcpy(pData->room_dims, default_room_dims, 3*sizeof(float));
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
+    memset(pData->src_pos, 0, ROOM_SIM_MAX_NUM_SOURCES*3*sizeof(float));
+    memset(pData->rec_pos, 0, ROOM_SIM_MAX_NUM_RECEIVERS*3*sizeof(float));
 
     /* Internal */
     pData->hIms = NULL;
@@ -64,7 +66,6 @@ void ambi_roomsim_create
     float rec_pos[3]  = {5.2f, 3.5f, 1.4f};
     memcpy(pData->rec_pos[0], rec_pos, 3*sizeof(float));
     memcpy(pData->rec_pos[1], rec_pos, 3*sizeof(float));
-
     pData->new_sh_order = pData->sh_order;
     pData->new_nSources = pData->nSources;
     pData->new_nReceivers = pData->nReceivers;

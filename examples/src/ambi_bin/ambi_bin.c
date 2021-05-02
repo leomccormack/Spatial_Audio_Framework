@@ -246,7 +246,7 @@ void ambi_bin_initCodec
         /* convert hrirs to filterbank coefficients */
         pData->progressBar0_1 = 0.4f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
-        HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 1, pars->hrtf_fb);
+        HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 0, 1, pars->hrtf_fb);
         /* get integration weights */
         pData->progressBar0_1 = 0.6f;
         if(pars->N_hrir_dirs<=1000){
@@ -576,15 +576,6 @@ void ambi_bin_setEnableTruncationEQ(void* const hAmbi, int newState)
     }
 }
 
-/* void ambi_bin_setEnableDiffEQ(void* const hAmbi, int newState)
-{
-    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    if(pData->enablePreProcEQ != newState){
-        pData->enablePreProcEQ = newState;
-        ambi_bin_refreshParams(hAmbi);  // re-init and re-calc
-    }
-} */
-
 void ambi_bin_setHRIRsPreProc(void* const hAmbi, AMBI_BIN_PREPROC newType)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
@@ -685,12 +676,6 @@ int ambi_bin_getUseDefaultHRIRsflag(void* const hAmbi)
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     return pData->useDefaultHRIRsFLAG;
 }
-
-/* int ambi_bin_getEnableDiffEQ(void* const hAmbi)
-{
-    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    return pData->enablePreProcEQ;
-} */
 
 AMBI_BIN_PREPROC ambi_bin_getHRIRsPreProc(void* const hAmbi)
 {

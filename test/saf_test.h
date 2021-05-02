@@ -154,6 +154,9 @@ void test__sphESPRIT(void);
  * Testing the sphModalCoeffs() function */
 void test__sphModalCoeffs(void);
 /**
+ * Testing the truncation EQ */
+void test__truncationEQ(void);
+/**
  * Testing the SAF ambi_bin example (this may also serve as a tutorial on how
  * to use it) */
 void test__saf_example_ambi_bin(void);
@@ -174,8 +177,10 @@ void test__saf_example_array2sh(void);
  * to use it) */
 void test__saf_example_rotator(void);
 /**
- * Testing the truncation EQ */
-void test__truncationEQ(void);
+ * Testing the SAF spread example (this may also serve as a tutorial on how
+ * to use it) */
+void test__saf_example_spreader(void);
+
 /**
  * Testing the tvconv */
 void test__tvconv(void);

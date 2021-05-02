@@ -25,7 +25,8 @@ if(NOT DEFINED saf_example_list)
     set(saf_example_list ${saf_example_list}
         ambi_bin 
         ambi_dec
-        binauraliser)
+        binauraliser
+        spreader)
     else()
         message(STATUS "  Note: examples that depend on the saf_sofa_reader module have been disabled")
     endif()

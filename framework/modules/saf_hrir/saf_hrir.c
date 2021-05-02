@@ -111,12 +111,13 @@ void HRIRs2HRTFs_afSTFT
     int N_dirs,
     int hrir_len,
     int hopsize,
+    int LDmode,
     int hybridmode,
     float_complex* hrtf_fb /* nBands x NUM_EARS x N_dirs */
 )
 {
     /* convert the HRIRs to filterbank coefficients */
-    afSTFT_FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, hopsize, hybridmode, hrtf_fb);
+    afSTFT_FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, hopsize, LDmode, hybridmode, hrtf_fb);
 }
 
 void HRIRs2HRTFs_qmf
