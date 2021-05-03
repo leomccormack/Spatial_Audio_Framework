@@ -144,7 +144,7 @@ void ambi_bin_initCodec(void* const hAmbi);
  * @param[in] nSamples Number of samples in 'inputs'/'output' matrices
  */
 void ambi_bin_process(void* const hAmbi,
-                      float** const inputs,
+                      const float** const inputs,
                       float** const outputs,
                       int nInputs,
                       int nOutputs,

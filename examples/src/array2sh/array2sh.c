@@ -170,7 +170,7 @@ void array2sh_evalEncoder
 void array2sh_process
 (
     void  *  const hA2sh,
-    float ** const inputs,
+    const float ** const inputs,
     float ** const outputs,
     int            nInputs,
     int            nOutputs,

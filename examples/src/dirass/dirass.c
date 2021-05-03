@@ -196,7 +196,7 @@ void dirass_initCodec
 void dirass_analysis
 (
     void  *  const hDir,
-    float ** const inputs,
+    const float ** const inputs,
     int            nInputs,
     int            nSamples,
     int            isPlaying

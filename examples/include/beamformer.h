@@ -70,7 +70,7 @@ void beamformer_init(void* const hBeam,
  * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void beamformer_process(void* const hBeam,
-                        float** const inputs,
+                        const float** const inputs,
                         float** const outputs,
                         int nInputs,
                         int nOutputs,

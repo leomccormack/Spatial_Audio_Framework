@@ -186,7 +186,7 @@ void powermap_initCodec
 void powermap_analysis
 (
     void  *  const hPm,
-    float ** const inputs,
+    const float ** const inputs,
     int            nInputs,
     int            nSamples,
     int            isPlaying

@@ -97,7 +97,7 @@ void matrixconv_init
 void matrixconv_process
 (
     void  *  const hMCnv,
-    float ** const inputs,
+    const float ** const inputs,
     float ** const outputs,
     int            nInputs,
     int            nOutputs,

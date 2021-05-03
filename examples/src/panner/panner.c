@@ -174,7 +174,7 @@ void panner_initCodec
 void panner_process
 (
     void  *  const hPan,
-    float ** const inputs,
+    const float ** const inputs,
     float ** const outputs,
     int            nInputs,
     int            nOutputs,

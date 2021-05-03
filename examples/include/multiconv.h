@@ -70,7 +70,7 @@ void multiconv_init(void* const hMCnv,
  * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void multiconv_process(void* const hMCnv,
-                       float** const inputs,
+                       const float** const inputs,
                        float** const outputs,
                        int nInputs,
                        int nOutputs,

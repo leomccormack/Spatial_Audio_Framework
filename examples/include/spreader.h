@@ -99,7 +99,7 @@ void spreader_initCodec(void* const hSpr);
  * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void spreader_process(void* const hSpr,
-                      float** const inputs,
+                      const float** const inputs,
                       float** const outputs,
                       int nInputs,
                       int nOutputs,

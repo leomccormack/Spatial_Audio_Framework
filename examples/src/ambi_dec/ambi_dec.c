@@ -449,7 +449,7 @@ void ambi_dec_initCodec
 void ambi_dec_process
 (
     void  *  const hAmbi,
-    float ** const inputs,
+    const float ** const inputs,
     float ** const outputs,
     int            nInputs,
     int            nOutputs,

@@ -327,7 +327,7 @@ void spreader_initCodec
 void spreader_process
 (
     void  *  const hSpr,
-    float ** const inputs,
+    const float ** const inputs,
     float ** const outputs,
     int            nInputs,
     int            nOutputs,

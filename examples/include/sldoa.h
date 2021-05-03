@@ -120,7 +120,7 @@ void sldoa_initCodec(void* const hSld);
  *          pp.840-854.
  */
 void sldoa_analysis(void* const hSld,
-                    float** const inputs,
+                    const float** const inputs,
                     int nInputs,
                     int nSamples,
                     int isPlaying);

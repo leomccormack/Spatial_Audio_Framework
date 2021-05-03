@@ -72,7 +72,7 @@ void ambi_enc_init(void* const hAmbi,
  * @param[in] nSamples Number of samples in 'inputs'/'output' matrices
  */
 void ambi_enc_process(void* const hAmbi,
-                      float** const inputs,
+                      const float** const inputs,
                       float** const outputs,
                       int nInputs,
                       int nOutputs,
