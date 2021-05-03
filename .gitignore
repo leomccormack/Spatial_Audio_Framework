@@ -1,5 +1,5 @@
-doxygen/html
-doxygen/latex
+docs/doxygen/html
+docs/doxygen/latex
 xcuserdata/
 build/
 x64/
@@ -8,3 +8,16 @@ x64/
 *idea/
 cmake-build-debug/
 cmake-build-release/
+*.db
+dependencies/Win64/lib/saf_mkl_custom.lib
+dependencies/Win64/lib/libiomp5md.lib
+*.c~
+*.m~
+*.h~
+*.cpp~
+*.hpp~
+*.zip
+*.mexmaci64
+*.mexa64
+*.mexw64
+saf_doxygen.tag

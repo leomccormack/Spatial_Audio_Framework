@@ -90,7 +90,10 @@ void binauraliser_interpHRTFs
     
     /* introduce interaural phase difference */
     for (band = 0; band < HYBRID_BANDS; band++) {
-        ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*M_PI*(pData->freqVector[band]) * itdInterp + M_PI, 2.0f*M_PI) - M_PI)/2.0f); 
+        if(pData->freqVector[band]<1.5e3f)
+            ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*SAF_PI*(pData->freqVector[band]) * itdInterp + SAF_PI, 2.0f*SAF_PI) - SAF_PI)/2.0f);
+        else
+            ipd = cmplxf(0.0f, 0.0f);
         h_intrp[band][0] = crmulf(cexpf(ipd), magInterp[band][0]);
         h_intrp[band][1] = crmulf(conjf(cexpf(ipd)), magInterp[band][1]);
     }
@@ -101,29 +104,52 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     int i;
     float* hrtf_vbap_gtable;
+    SAF_SOFA_ERROR_CODES error;
+    saf_sofa_container sofa;
     
     strcpy(pData->progressBarText,"Loading HRIRs");
     pData->progressBar0_1 = 0.2f;
     
     /* load sofa file or load default hrir data */
     if(!pData->useDefaultHRIRsFLAG && pData->sofa_filepath!=NULL){
-        loadSofaFile(pData->sofa_filepath,
-                     &(pData->hrirs),
-                     &(pData->hrir_dirs_deg),
-                     &(pData->N_hrir_dirs),
-                     &(pData->hrir_len),
-                     &(pData->hrir_fs));
+        /* Load SOFA file */
+        error = saf_sofa_open(&sofa, pData->sofa_filepath);
+
+        /* Load defaults instead */
+        if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS)
+            pData->useDefaultHRIRsFLAG = 1;
+        else{
+            /* Copy SOFA data */
+            pData->hrir_fs = (int)sofa.DataSamplingRate;
+            pData->hrir_len = sofa.DataLengthIR;
+            pData->N_hrir_dirs = sofa.nSources;
+            pData->hrirs = realloc1d(pData->hrirs, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
+            memcpy(pData->hrirs, sofa.DataIR, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
+            pData->hrir_dirs_deg = realloc1d(pData->hrir_dirs_deg, pData->N_hrir_dirs*2*sizeof(float));
+            cblas_scopy(pData->N_hrir_dirs, sofa.SourcePosition, 3, pData->hrir_dirs_deg, 2); /* azi */
+            cblas_scopy(pData->N_hrir_dirs, &sofa.SourcePosition[1], 3, &pData->hrir_dirs_deg[1], 2); /* elev */ 
+        }
+
+        /* Clean-up */
+        saf_sofa_close(&sofa);
     }
-    else{
-        loadSofaFile(NULL, /* setting path to NULL loads default HRIR data */
-                     &(pData->hrirs),
-                     &(pData->hrir_dirs_deg),
-                     &(pData->N_hrir_dirs),
-                     &(pData->hrir_len),
-                     &(pData->hrir_fs));
+    if(pData->useDefaultHRIRsFLAG){
+        /* Copy default HRIR data */
+        pData->hrir_fs = __default_hrir_fs;
+        pData->hrir_len = __default_hrir_len;
+        pData->N_hrir_dirs = __default_N_hrir_dirs;
+        pData->hrirs = realloc1d(pData->hrirs, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
+        memcpy(pData->hrirs, (float*)__default_hrirs, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
+        pData->hrir_dirs_deg = realloc1d(pData->hrir_dirs_deg, pData->N_hrir_dirs*2*sizeof(float));
+        memcpy(pData->hrir_dirs_deg, (float*)__default_hrir_dirs_deg, pData->N_hrir_dirs*2*sizeof(float));
     }
-    
+
+    /* Convert from the 0..360 convention, to -180..180 */
+    convert_0_360To_m180_180(pData->hrir_dirs_deg, pData->N_hrir_dirs);
+
     /* estimate the ITDs for each HRIR */
+    strcpy(pData->progressBarText,"Estimating ITDs");
+    pData->progressBar0_1 = 0.4f;
     pData->itds_s = realloc1d(pData->itds_s, pData->N_hrir_dirs*sizeof(float));
     estimateITDs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrir_fs, pData->itds_s);
     
@@ -147,12 +173,25 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     compressVBAPgainTable3D(hrtf_vbap_gtable, pData->N_hrtf_vbap_gtable, pData->N_hrir_dirs, pData->hrtf_vbap_gtableComp, pData->hrtf_vbap_gtableIdx);
     
     /* convert hrirs to filterbank coefficients */
-    strcpy(pData->progressBarText,"Applying HRIR diffuse-field EQ");
-    pData->progressBar0_1 = 0.8f;
+    pData->progressBar0_1 = 0.6f;
     pData->hrtf_fb = realloc1d(pData->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pData->N_hrir_dirs)*sizeof(float_complex));
-    HRIRs2FilterbankHRTFs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, HOP_SIZE, 1, pData->hrtf_fb);
-    diffuseFieldEqualiseHRTFs(pData->N_hrir_dirs, pData->itds_s, pData->freqVector, HYBRID_BANDS, pData->hrtf_fb);
-    
+    HRIRs2HRTFs_afSTFT(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, HOP_SIZE, 0, 1, pData->hrtf_fb);
+    /* HRIR pre-processing */
+    if(pData->enableHRIRsPreProc){
+        /* get integration weights */
+        strcpy(pData->progressBarText,"Applying HRIR Pre-Processing");
+        pData->progressBar0_1 = 0.9f;
+        if(pData->N_hrir_dirs<=3600){
+            pData->weights = realloc1d(pData->weights, pData->N_hrir_dirs*sizeof(float));
+            getVoronoiWeights(pData->hrir_dirs_deg, pData->N_hrir_dirs, 0, pData->weights);
+        }
+        else{
+            pData->weights = realloc1d(pData->weights, pData->N_hrir_dirs*sizeof(float));
+            for(int idx=0; idx < pData->N_hrir_dirs; idx++)
+                pData->weights[idx] = 4.f*SAF_PI / (float)pData->N_hrir_dirs;
+        }
+        diffuseFieldEqualiseHRTFs(pData->N_hrir_dirs, pData->itds_s, pData->freqVector, HYBRID_BANDS, pData->weights, 1, 0, pData->hrtf_fb);
+    }
     /* calculate magnitude responses */
     pData->hrtf_fb_mag = realloc1d(pData->hrtf_fb_mag, HYBRID_BANDS*NUM_EARS*(pData->N_hrir_dirs)*sizeof(float)); 
     for(i=0; i<HYBRID_BANDS*NUM_EARS* (pData->N_hrir_dirs); i++)
@@ -170,10 +209,10 @@ void binauraliser_initTFT
     binauraliser_data *pData = (binauraliser_data*)(hBin);
  
     if(pData->hSTFT==NULL)
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, pData->new_nSources, NUM_EARS, 0, 1);
+        afSTFT_create(&(pData->hSTFT), pData->new_nSources, NUM_EARS, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
     else if(pData->new_nSources!=pData->nSources){
-        afSTFTchannelChange(pData->hSTFT, pData->new_nSources, NUM_EARS);
-        afSTFTclearBuffers(pData->hSTFT);
+        afSTFT_channelChange(pData->hSTFT, pData->new_nSources, NUM_EARS);
+        afSTFT_clearBuffers(pData->hSTFT);
     }
     pData->nSources = pData->new_nSources;
 }
@@ -268,6 +307,7 @@ void binauraliser_loadPreset
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __9_10_3p2_dirs_deg[ch][i];
+            break;
         case SOURCE_CONFIG_PRESET_AALTO_MCC:
             nCH = 45;
             for(ch=0; ch<nCH; ch++)

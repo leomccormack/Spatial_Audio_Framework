@@ -16,8 +16,8 @@
 
 /**
  * @file sldoa_internal.h
- * @brief A spatially-localised active-intensity based direction-of-arrival
- *        estimator (SLDoA).
+ * @brief A spatially-localised active-intensity (SLAI) based direction-of-
+ *        arrival estimator (SLDoA)
  *
  * VBAP gain patterns are imposed on the spherical harmonic signals, such that
  * the DoA can be estimated in a spatially-constrained region; thus mitigating
@@ -27,16 +27,16 @@
  * The algorithms within sldoa were developed in collaboration with Symeon
  * Delikaris-Manias and Angelo Farina, and are explained in more detail in [1,2]
  *
- * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
- *          Pulkki, V., "Real-time conversion of sensor array signals into
- *          spherical harmonic signals with applications to spatially localised
- *          sub-band sound-field analysis," in Audio Engineering Society
- *          Convention 144, Audio Engineering Society, 2018.
- * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ * @see [1] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
  *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
  *          Spatially Localized Active-Intensity Vectors for Sound-Field
  *          Visualization. Journal of the Audio Engineering Society, 67(11),
  *          pp.840-854.
+ * @see [2] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
+ *          Pulkki, V., "Real-time conversion of sensor array signals into
+ *          spherical harmonic signals with applications to spatially localised
+ *          sub-band sound-field analysis," in Audio Engineering Society
+ *          Convention 144, Audio Engineering Society, 2018.
  *
  * @author Leo McCormack
  * @date 18.10.2017
@@ -52,6 +52,7 @@
 #include "sldoa.h"
 #include "sldoa_database.h"
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,7 +67,6 @@ extern "C" {
 #endif
 //#define ORDER2NUMSECTORS(L) ( 2*L )
 #define ORDER2NUMSECTORS(L) ( L*L )
-
 #define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* Processing relies on fdHop = 16 */
@@ -75,7 +75,9 @@ extern "C" {
 #ifndef M_PI
 # define M_PI ( 3.14159265359f )
 #endif
-    
+#if (FRAME_SIZE % HOP_SIZE != 0)
+# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#endif
     
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -91,11 +93,9 @@ typedef struct _sldoa
     float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
 
     /* TFT */
-    float SHframeTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    void* hSTFT;
-    complexVector* STFTInputFrameTF;
-    float** tempHopFrameTD;
+    float** SHframeTD;
+    float_complex*** SHframeTF;
+    void* hSTFT; 
     float freqVector[HYBRID_BANDS];
     float fs;
       
@@ -139,7 +139,7 @@ typedef struct _sldoa
 /* ========================================================================== */
 
 /**
- * Sets codec status (see #_CODEC_STATUS enum)
+ * Sets codec status (see #CODEC_STATUS enum)
  */
 void sldoa_setCodecStatus(void* const hSld, CODEC_STATUS newStatus);
 
@@ -178,7 +178,7 @@ void sldoa_initTFT(void* const hSld);
  * @note If anaOrder is 1, then the algorithm reverts to the standard active-
  *       intensity based DoA estimation.
  *
- * @param[in]  SHframeTF Input SH frame
+ * @param[in]  SHframeTF Input SH frame; MAX_NUM_SH_SIGNALS x TIME_SLOTS
  * @param[in]  anaOrder  Analysis order (1:AI, 2+: SLAI)
  * @param[in]  secCoeffs Sector coefficients for this order
  * @param[out] doa       Resulting DoA estimates per timeslot and sector
@@ -195,7 +195,7 @@ void sldoa_initTFT(void* const hSld);
  *          Visualization. Journal of the Audio Engineering Society, 67(11),
  *          pp.840-854.
  */
-void sldoa_estimateDoA(float_complex SHframeTF[MAX_NUM_SH_SIGNALS][TIME_SLOTS],
+void sldoa_estimateDoA(float_complex** SHframeTF,
                        int anaOrder,
                        float_complex* secCoeffs,
                        float doa[MAX_NUM_SECTORS][TIME_SLOTS][2],

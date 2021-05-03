@@ -32,6 +32,8 @@ void matrixconv_create
     matrixconv_data* pData = (matrixconv_data*)malloc1d(sizeof(matrixconv_data));
     *phMCnv = (void*)pData;
 
+    printf(SAF_VERSION_LICENSE_STRING);
+    
     /* Default user parameters */
     pData->nInputChannels = 1;
     pData->enablePartitionedConv = 0;
@@ -85,6 +87,7 @@ void matrixconv_init
 
     if(pData->hostBlockSize != hostBlockSize){
         pData->hostBlockSize = hostBlockSize;
+        pData->hostBlockSize_clamped = CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
         pData->reInitFilters = 1;
     }
     

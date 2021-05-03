@@ -16,8 +16,10 @@
 
 /**
  * @file rotator.c
- * @brief  A simple spherical harmonic domain rotator, based on the recursive
- *         approach detailed in [1].
+ * @brief A basic spherical harmonic/ Ambisonic signals rotator, based on the
+ *        recursive approach detailed in [1]
+ *
+ * @test test__saf_example_rotator()
  *
  * @see [1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real
  *          Spherical Harmonics. Direct Determination by Recursion Page:
@@ -38,10 +40,17 @@ void rotator_create
 {
     rotator_data* pData = (rotator_data*)malloc1d(sizeof(rotator_data));
     *phRot = (void*)pData;
+
+    printf(SAF_VERSION_LICENSE_STRING);
     
-    pData->recalc_M_rotFLAG = 1;
+    pData->M_rot_status = M_ROT_RECOMPUTE_QUATERNION;
   
     /* Default user parameters */
+    pData->Q.w = 1.0f;
+    pData->Q.x = 0.0f;
+    pData->Q.y = 0.0f;
+    pData->Q.z = 0.0f;
+    pData->bFlipQuaternion = 0;
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
     pData->roll = 0.0f;
@@ -75,6 +84,8 @@ void rotator_init
 {
     rotator_data *pData = (rotator_data*)(hRot);
     int i;
+
+    pData->fs = sampleRate;
     
     /* starting values */
     for(i=1; i<=FRAME_SIZE; i++)
@@ -82,7 +93,7 @@ void rotator_init
     memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
     memset(pData->prev_M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
     memset(pData->prev_inputFrameTD, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
-    pData->recalc_M_rotFLAG = 1;
+    pData->M_rot_status = M_ROT_RECOMPUTE_QUATERNION;
 }
 
 void rotator_process
@@ -100,11 +111,9 @@ void rotator_process
     float Rxyz[3][3];
     float* M_rot_tmp;
     CH_ORDER chOrdering;
-    NORM_TYPES norm;
 
     /* locals */
     chOrdering = pData->chOrdering;
-    norm = pData->norm;
     order = (int)pData->inputOrder;
     nSH = ORDER2NSH(order);
 
@@ -125,37 +134,27 @@ void rotator_process
                 break;
         }
 
-#if 0
-        /* account for input normalisation scheme */
-
-        /* actually doesn't matter, since only components of the same order are
-        * used to rotate a given order of component; i.e, dipoles are used to
-        * rotate dipoles, quadrapoles-qaudrapoles etc.. so this scaling doesn't
-        * affect anything here */
-        switch(norm){
-            case NORM_N3D:  /* already in N3D, do nothing */
-                break;
-            case NORM_SN3D: /* convert to N3D */
-                convertHOANormConvention((float*)pData->inputFrameTD, order, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
-                break;
-            case NORM_FUMA: /* only for first-order, convert to N3D */
-                convertHOANormConvention((float*)pData->inputFrameTD, order, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
-                break;
-        }
-#endif
-
         if (order>0){
             /* calculate rotation matrix */
-            if(pData->recalc_M_rotFLAG){
+            if(pData->M_rot_status != M_ROT_READY){
                 memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
                 M_rot_tmp = malloc1d(nSH*nSH*sizeof(float));
-                yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
+                if(pData->M_rot_status == M_ROT_RECOMPUTE_EULER){
+                    yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
+                    euler2Quaternion(pData->yaw, pData->pitch, pData->roll, 0,
+                                     pData->useRollPitchYawFlag ? EULER_ROTATION_ROLL_PITCH_YAW : EULER_ROTATION_YAW_PITCH_ROLL, &(pData->Q));
+                }
+                else {/* M_ROT_RECOMPUTE_QUATERNION */
+                    quaternion2rotationMatrix(&(pData->Q), Rxyz);
+                    quaternion2euler(&(pData->Q), 0, pData->useRollPitchYawFlag ? EULER_ROTATION_ROLL_PITCH_YAW : EULER_ROTATION_YAW_PITCH_ROLL,
+                                     &(pData->yaw), &(pData->pitch), &(pData->roll));
+                }
                 getSHrotMtxReal(Rxyz, M_rot_tmp, order);
                 for(i=0; i<nSH; i++)
                     for(j=0; j<nSH; j++)
                         pData->M_rot[i][j] = M_rot_tmp[i*nSH+j];
                 free(M_rot_tmp);
-                pData->recalc_M_rotFLAG = 0;
+                pData->M_rot_status = M_ROT_READY;
             }
             else
                 utility_svvcopy((const float*)pData->prev_M_rot, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS, (float*)pData->M_rot);
@@ -179,20 +178,7 @@ void rotator_process
         }
         else
             utility_svvcopy((const float*)pData->inputFrameTD[0], FRAME_SIZE, (float*)pData->outputFrameTD[0]);
-
-        /* account for norm scheme */
-        switch(norm){
-            case NORM_N3D:
-                /* again, actually doesn't matter */
-                break;
-            case NORM_SN3D:
-                /* again, actually doesn't matter */
-                break;
-            case NORM_FUMA:
-                /* again, actually doesn't matter */
-                break;
-        }
-
+  
         /* account for channel order */
         switch(chOrdering){
             case CH_ACN: /* already ACN */
@@ -214,25 +200,56 @@ void rotator_process
     }
 }
 
-void rotator_setYaw(void  * const hRot, float newYaw)
+
+/*sets*/
+
+void rotator_setYaw(void* const hRot, float newYaw)
 {
     rotator_data *pData = (rotator_data*)(hRot);
     pData->yaw = pData->bFlipYaw == 1 ? -DEG2RAD(newYaw) : DEG2RAD(newYaw);
-    pData->recalc_M_rotFLAG = 1;
+    pData->M_rot_status = M_ROT_RECOMPUTE_EULER;
 }
 
 void rotator_setPitch(void* const hRot, float newPitch)
 {
     rotator_data *pData = (rotator_data*)(hRot);
     pData->pitch = pData->bFlipPitch == 1 ? -DEG2RAD(newPitch) : DEG2RAD(newPitch);
-    pData->recalc_M_rotFLAG = 1;
+    pData->M_rot_status = M_ROT_RECOMPUTE_EULER;
 }
 
 void rotator_setRoll(void* const hRot, float newRoll)
 {
     rotator_data *pData = (rotator_data*)(hRot);
     pData->roll = pData->bFlipRoll == 1 ? -DEG2RAD(newRoll) : DEG2RAD(newRoll);
-    pData->recalc_M_rotFLAG = 1;
+    pData->M_rot_status = M_ROT_RECOMPUTE_EULER;
+}
+
+void rotator_setQuaternionW(void* const hRot, float newValue)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    pData->Q.w = newValue;
+    pData->M_rot_status = M_ROT_RECOMPUTE_QUATERNION;
+}
+
+void rotator_setQuaternionX(void* const hRot, float newValue)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    pData->Q.x = pData->bFlipQuaternion == 1 ? -newValue : newValue;
+    pData->M_rot_status = M_ROT_RECOMPUTE_QUATERNION;
+}
+
+void rotator_setQuaternionY(void* const hRot, float newValue)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    pData->Q.y = pData->bFlipQuaternion == 1 ? -newValue : newValue;
+    pData->M_rot_status = M_ROT_RECOMPUTE_QUATERNION;
+}
+
+void rotator_setQuaternionZ(void* const hRot, float newValue)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    pData->Q.z = pData->bFlipQuaternion == 1 ? -newValue : newValue;
+    pData->M_rot_status = M_ROT_RECOMPUTE_QUATERNION;
 }
 
 void rotator_setFlipYaw(void* const hRot, int newState)
@@ -262,6 +279,17 @@ void rotator_setFlipRoll(void* const hRot, int newState)
     }
 }
 
+void rotator_setFlipQuaternion(void* const hRot, int newState)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    if(newState !=pData->bFlipQuaternion ){
+        pData->bFlipQuaternion = newState;
+        rotator_setQuaternionX(hRot, -rotator_getQuaternionX(hRot));
+        rotator_setQuaternionY(hRot, -rotator_getQuaternionY(hRot));
+        rotator_setQuaternionZ(hRot, -rotator_getQuaternionZ(hRot));
+    }
+}
+
 void rotator_setRPYflag(void* const hRot, int newState)
 {
     rotator_data *pData = (rotator_data*)(hRot);
@@ -286,7 +314,7 @@ void rotator_setOrder(void* const hRot, int newOrder)
 {
     rotator_data *pData = (rotator_data*)(hRot);
     pData->inputOrder = (SH_ORDERS)newOrder;
-    pData->recalc_M_rotFLAG = 1;
+    pData->M_rot_status = M_ROT_RECOMPUTE_QUATERNION;
     /* FUMA only supports 1st order */
     if(pData->inputOrder!=SH_ORDER_FIRST && pData->chOrdering == CH_FUMA)
         pData->chOrdering = CH_ACN;
@@ -320,6 +348,30 @@ float rotator_getRoll(void* const hRot)
     return pData->bFlipRoll == 1 ? -RAD2DEG(pData->roll) : RAD2DEG(pData->roll);
 }
 
+float rotator_getQuaternionW(void* const hRot)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    return pData->Q.w;
+}
+
+float rotator_getQuaternionX(void* const hRot)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    return pData->bFlipQuaternion == 1 ? -(pData->Q.x) : pData->Q.x;
+}
+
+float rotator_getQuaternionY(void* const hRot)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    return pData->bFlipQuaternion == 1 ? -(pData->Q.y) : pData->Q.y;
+}
+
+float rotator_getQuaternionZ(void* const hRot)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    return pData->bFlipQuaternion == 1 ? -(pData->Q.z) : pData->Q.z;
+}
+
 int rotator_getFlipYaw(void* const hRot)
 {
     rotator_data *pData = (rotator_data*)(hRot);
@@ -336,6 +388,12 @@ int rotator_getFlipRoll(void* const hRot)
 {
     rotator_data *pData = (rotator_data*)(hRot);
     return pData->bFlipRoll;
+}
+
+int rotator_getFlipQuaternion(void* const hRot)
+{
+    rotator_data *pData = (rotator_data*)(hRot);
+    return pData->bFlipQuaternion;
 }
 
 int rotator_getRPYflag(void* const hRot)

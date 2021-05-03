@@ -37,23 +37,22 @@ extern "C" {
 /*                         IMS Shoebox Room Simulator                         */
 /* ========================================================================== */
 /*
- * Note that this simulator is based on the shoebox-roomsim Matlab code by
- * Archontis Politis: https://github.com/polarch/shoebox-roomsim
+ * Note that this simulator is based on the shoebox-roomsim Matlab library
+ * (BSD-3-Clause License): https://github.com/polarch/shoebox-roomsim
  */
 
 /**
- * Maximum number of sources supported by IMS Shoebox
+ * TODO: Arbitrary array receiver option; Directional source option; finish
+ * ims_shoebox_renderRIRs() function;
  */
-#define IMS_MAX_NUM_SOURCES 100
 
-/**
- * Maximum number of receivers supported by IMS Shoebox
- */
-#define IMS_MAX_NUM_RECEIVERS 10
+/** Maximum number of sources supported by IMS Shoebox */
+#define IMS_MAX_NUM_SOURCES 128
 
-/**
- * Output format of the rendered room impulse responses (RIR)
- */
+/** Maximum number of receivers supported by IMS Shoebox */
+#define IMS_MAX_NUM_RECEIVERS 16
+
+/** Output format of the rendered room impulse responses (RIR) */
 typedef struct _ims_rir{
     float* data;
     int length, nChannels;
@@ -92,9 +91,7 @@ typedef struct _ims_rir{
  * @test test__ims_shoebox_RIR(), test__ims_shoebox_TD()
  *
  * @param[in] phIms            (&) address of the ims_shoebox handle
- * @param[in] length           Length of the room in meters
- * @param[in] width            Width of the room in meters
- * @param[in] height           Height of the room in meters
+ * @param[in] roomDimensions   Room Length x Width x Height, in meters; 3 x 1
  * @param[in] abs_wall         Absorption coefficents per octave band and wall;
  *                             FLAT: nOctBands x 6
  * @param[in] lowestOctaveBand lowest octave band centre freq, in Hz (e.g. 125)
@@ -104,9 +101,7 @@ typedef struct _ims_rir{
  * @param[in] fs               SampleRate, Hz
  */
 void ims_shoebox_create(void** phIms,
-                        int length,
-                        int width,
-                        int height,
+                        float roomDimensions[3],
                         float* abs_wall,
                         float lowestOctaveBand,
                         int nOctBands,
@@ -126,14 +121,18 @@ void ims_shoebox_destroy(void** phIms);
  * The sources are omnidirectional point sources, whereas the receiver will
  * have the directivity of whatever they are configured to have
  *
+ * @note Set either the maximum order (maxN) or the maximum IR length in seconds
+ *       (maxTime_s). The option you don't want to use set to <0.
  * @note The echograms are only updated if needed, so it is "OK" to call this
  *       function as many times as you wish, since there will be virtually no
  *       CPU overhead incurred if no update is required.
  *
  * @param[in] hIms      ims_shoebox handle
+ * @param[in] maxN      Maximum reflection order
  * @param[in] maxTime_s Maximum length of time to compute the echograms, seconds
  */
 void ims_shoebox_computeEchograms(void* hIms,
+                                  int maxN,
                                   float maxTime_s);
 
 /**
@@ -147,7 +146,7 @@ void ims_shoebox_renderRIRs(void* hIms,
 
 /**
  * Applies the currently computed echograms in the time-domain, for all
- * sources and one specified receiver
+ * sources, for one specified receiver
  *
  * Note the following:
  *  - The signal pointers must be valid, and have allocated enough memory for
@@ -167,7 +166,18 @@ void ims_shoebox_applyEchogramTD(/* Input Arguments */
                                  int fractionalDelaysFLAG);
 
 
-/* ====================== Add/Remove/Update functions ======================= */
+/* =========================== Set/Get functions ============================ */
+
+/** Sets the room dimensions */
+void ims_shoebox_setRoomDimensions(void* hIms,
+                                   float new_roomDimensions[3]);
+
+/** Sets the wall absorption coefficients per wall and per band */
+void ims_shoebox_setWallAbsCoeffs(void* hIms,
+                                  float* abs_wall);
+
+
+/* ================== Add/Remove/Update Objects functions ==================== */
 
 /**
  * Adds a source object to the simulator, and returns a unique ID corresponding
@@ -186,9 +196,9 @@ void ims_shoebox_applyEchogramTD(/* Input Arguments */
  *
  * @returns A unique ID corresponding to this source object
  */
-long ims_shoebox_addSource(void* hIms,
-                           float position_xyz[3],
-                           float** pSrc_sig);
+int ims_shoebox_addSource(void* hIms,
+                          float position_xyz[3],
+                          float** pSrc_sig);
 
 /**
  * Adds a spherical harmonic (SH) receiver object to the simulator of a given
@@ -208,23 +218,23 @@ long ims_shoebox_addSource(void* hIms,
  *
  * @returns A unique ID corresponding to this receiver object
  */
-long ims_shoebox_addReceiverSH(void* hIms,
-                               int sh_order,
-                               float position_xyz[3],
-                               float*** pSH_sigs);
+int ims_shoebox_addReceiverSH(void* hIms,
+                              int sh_order,
+                              float position_xyz[3],
+                              float*** pSH_sigs);
 
 /**
  * Updates the position of a specific source in the simulation
  */
 void ims_shoebox_updateSource(void* hIms,
-                              long sourceID,
+                              int sourceID,
                               float position_xyz[3]);
 
 /**
  * Updates the position of a specific receiver in the simulation
  */
 void ims_shoebox_updateReceiver(void* hIms,
-                                long receiverID,
+                                int receiverID,
                                 float position_xyz[3]);
 
 /**
@@ -233,7 +243,7 @@ void ims_shoebox_updateReceiver(void* hIms,
  * @note This does NOT free the source signal 'pSrc_sig'.
  */
 void ims_shoebox_removeSource(void* hIms,
-                              long sourceID);
+                              int sourceID);
 
 /**
  * Removes a specific receiver from the simulation
@@ -241,7 +251,7 @@ void ims_shoebox_removeSource(void* hIms,
  * @note This does NOT free the receiver signals 'pSH_sigs'.
  */
 void ims_shoebox_removeReceiver(void* hIms,
-                                long receiverID);
+                                int receiverID);
 
 
 #ifdef __cplusplus

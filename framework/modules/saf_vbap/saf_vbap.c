@@ -20,7 +20,7 @@
  * @brief Public source for the VBAP/MDAP module (#SAF_VBAP_MODULE)
  *
  * VBAP functions largely derived from the Matlab library by Archontis Politis,
- * found in [1].
+ * found in [1] (BSD-3-Clause License).
  *
  * @see [1] https://github.com/polarch/Vector-Base-Amplitude-Panning
  *
@@ -44,6 +44,10 @@
 # define SAVE_PATH3 "../vbapGains_table.txt"
 #endif
 
+/* ========================================================================== */
+/*                               Misc. Functions                              */
+/* ========================================================================== */
+
 void generateVBAPgainTable3D_srcs
 (
     float* src_dirs_deg,
@@ -64,7 +68,7 @@ void generateVBAPgainTable3D_srcs
     int i, L_d;
     int needDummy[2] = {1, 1};
     float* ls_dirs_d_deg;
-    
+
     /* find loudspeaker triangles */
     out_vertices = NULL;
     out_faces = NULL;
@@ -133,7 +137,7 @@ void generateVBAPgainTable3D_srcs
         if(needDummy[0] || needDummy[1]){
             /* remove the gains for the dummy loudspeakers, they have served their purpose and can now be laid to rest */
             for(i=0; i<N_points; i++)
-                memcpy(&(*gtable)[i*L], &(*gtable)[i*numOutVertices], L*sizeof(float));
+                memmove(&(*gtable)[i*L], &(*gtable)[i*numOutVertices], L*sizeof(float));
             (*gtable) = realloc((*gtable), N_points*L*sizeof(float));
         }
     }
@@ -184,7 +188,7 @@ void generateVBAPgainTable3D
     int L_d;
     int needDummy[2] = {1, 1};
     float* ls_dirs_d_deg;
-    
+
     /* compute source directions for the grid */
     N_azi = (int)((360.0f/(float)az_res_deg) + 1.5f);
     N_ele = (int)((180.0f/(float)el_res_deg) + 1.5f);
@@ -201,7 +205,7 @@ void generateVBAPgainTable3D
             src_dirs[(i*N_azi + j)*2+1] = ele[i];
         }
     }
-    
+
     /* find loudspeaker triangles */
     out_vertices = NULL;
     out_faces = NULL;
@@ -258,11 +262,11 @@ void generateVBAPgainTable3D
     fprintf(objfile, "];\n\n\n");
     fclose(objfile);
 #endif
-    
+
     /* Invert matrix */
     layoutInvMtx = NULL;
     invertLsMtx3D(out_vertices, out_faces, numOutFaces, &layoutInvMtx);
-    
+
     /* Calculate VBAP gains for each source position */
     N_points = N_azi*N_ele;
     vbap3D(src_dirs, N_points, numOutVertices, out_faces, numOutFaces, spread, layoutInvMtx,  gtable);
@@ -271,7 +275,7 @@ void generateVBAPgainTable3D
     if(enableDummies){
         if(needDummy[0] || needDummy[1]){
             for(i=0; i<N_points; i++)
-                memcpy(&(*gtable)[i*L], &(*gtable)[i*numOutVertices], L*sizeof(float));
+                memmove(&(*gtable)[i*L], &(*gtable)[i*numOutVertices], L*sizeof(float));
             (*gtable) = realloc((*gtable), N_points*L*sizeof(float));
         }
     }
@@ -485,6 +489,11 @@ void getPvalues
     } 
 }
 
+
+/* ========================================================================== */
+/*                               Main Functions                               */
+/* ========================================================================== */
+
 void findLsTriplets
 (
     float* ls_dirs_deg,
@@ -496,8 +505,7 @@ void findLsTriplets
     int* numOutFaces
 )
 {
-    int i, j, k, numValidFaces, minIntVal, minIdx, nFaces;
-    int tmp3[3], circface[3];
+    int i, j, numValidFaces, nFaces;
     int* validFacesID, *valid_faces, *valid_faces2, *faces;
     float dotcc, aperture_lim;
     float vecs[3][3], cvec[3], centroid[3], a[3], b[3], abc[3];
@@ -525,6 +533,10 @@ void findLsTriplets
         saf_error_print(SAF_ERROR__FAILED_TO_BUILD_CONVEX_HULL);
 #endif
     assert(faces!=NULL);
+
+#if 0
+    int k, minIntVal, minIdx, nFaces;
+    int tmp3[3], circface[3];
 
     /* circularily shift the indices to start from lowest value */
     for(i=0; i<nFaces; i++){
@@ -559,19 +571,6 @@ void findLsTriplets
     for (j=0; j<nFaces - 1; j++)  {
         for (i=0; i<nFaces - 1; i++) {
             if ( (faces[(i+1)*3+1] < faces[i*3+1]) && (faces[(i+1)*3+0] == faces[i*3+0]) ) {
-                for(k=0; k<3; k++){
-                    tmp3[k] = faces[i*3+k];
-                    faces[i*3+k] = faces[(i+1)*3+k];
-                    faces[(i+1)*3+k] = tmp3[k];
-                }
-            }
-        }
-    }
-#if 0
-    /* sort indices in accending order for the third dimension */
-    for (j=0; j<nFaces - 1; j++)  {
-        for (i=0; i<nFaces - 1; i++) {
-            if ( (faces[(i+1)*3+2] < faces[i*3+2]) && (faces[(i+1)*3+0] == faces[i*3+0]) && (faces[(i+1)*3+1] == faces[i*3+1])) {
                 for(k=0; k<3; k++){
                     tmp3[k] = faces[i*3+k];
                     faces[i*3+k] = faces[(i+1)*3+k];
@@ -618,7 +617,7 @@ void findLsTriplets
     }
     free(validFacesID);
 
-    /* Omit Triangules that have an aperture larger than APERTURE_LIMIT_DEG */
+    /* Omit Trianges that have an aperture larger than APERTURE_LIMIT_DEG */
     valid_faces2 = NULL;
     if(omitLargeTriangles) {
         aperture_lim = APERTURE_LIMIT_DEG * SAF_PI/180.0f;
@@ -700,10 +699,10 @@ void invertLsMtx3D
 
         /* get inverse of current group */
         utility_sinv(tempGroup,tempGroup,3);
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 3, 3, 3, 1.0,
-                    eye3, 3,
-                    tempGroup, 3, 0.0,
-                    tempInv, 3);
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 3, 3, 3, 1.0f,
+                    (float*)eye3, 3,
+                    tempGroup, 3, 0.0f,
+                    (float*)tempInv, 3);
 
         /* store the vectorized inverse as a row the output */
         for(i=0; i<3; i++)

@@ -51,12 +51,14 @@ void panner_create
     *phPan = (void*)pData;
     int ch, dummy;
 
+    printf(SAF_VERSION_LICENSE_STRING);
+
     /* default user parameters */
-    panner_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
+    panner_loadSourcePreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
     pData->nSources = pData->new_nSources;
     pData->DTT = 0.5f;
     pData->spread_deg = 0.0f;
-    panner_loadPreset(SOURCE_CONFIG_PRESET_5PX, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->output_nDims)); /*check setStateInformation if you change default preset*/
+    panner_loadLoudspeakerPreset(LOUDSPEAKER_ARRAY_PRESET_STEREO, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->output_nDims)); /*check setStateInformation if you change default preset*/
     pData->nLoudpkrs = pData->new_nLoudpkrs;
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
@@ -67,18 +69,11 @@ void panner_create
     
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->STFTInputFrameTF = malloc1d(MAX_NUM_INPUTS*sizeof(complexVector));
-    pData->STFTOutputFrameTF = malloc1d(MAX_NUM_OUTPUTS*sizeof(complexVector));
-    for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
-    for(ch=0; ch< MAX_NUM_OUTPUTS; ch++) {
-        pData->STFTOutputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTOutputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
-    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_INPUTS, MAX_NUM_OUTPUTS), HOP_SIZE, sizeof(float));
-    
+    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, FRAME_SIZE, sizeof(float));
+    pData->outputFrameTD = (float**)malloc2d(MAX_NUM_OUTPUTS, FRAME_SIZE, sizeof(float));
+    pData->inputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
+    pData->outputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
+
     /* flags and gain table */
     pData->progressBar0_1 = 0.0f;
     pData->progressBarText = malloc1d(PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
@@ -98,7 +93,6 @@ void panner_destroy
 )
 {
     panner_data *pData = (panner_data*)(*phPan);
-    int ch;
 
     if (pData != NULL) {
         /* not safe to free memory during intialisation/processing loop */
@@ -109,19 +103,11 @@ void panner_destroy
         
         /* free afSTFT and buffers */
         if(pData->hSTFT !=NULL)
-            afSTFTfree(pData->hSTFT);
-        for(ch=0; ch< MAX_NUM_INPUTS; ch++) {
-            free(pData->STFTInputFrameTF[ch].re);
-            free(pData->STFTInputFrameTF[ch].im);
-        }
-    
-        for (ch = 0; ch< MAX_NUM_OUTPUTS; ch++) {
-            free(pData->STFTOutputFrameTF[ch].re);
-            free(pData->STFTOutputFrameTF[ch].im);
-        }
-        free(pData->STFTInputFrameTF);
-        free(pData->STFTOutputFrameTF);
-        free(pData->tempHopFrameTD);
+            afSTFT_destroy(&(pData->hSTFT));
+        free(pData->inputFrameTD);
+        free(pData->outputFrameTD);
+        free(pData->inputframeTF);
+        free(pData->outputframeTF);
         free(pData->vbap_gtable);
         free(pData->progressBarText);
         
@@ -137,16 +123,10 @@ void panner_init
 )
 {
     panner_data *pData = (panner_data*)(hPan);
-    int band;
     
     /* define frequency vector */
     pData->fs = sampleRate;
-    for(band=0; band <HYBRID_BANDS; band++){
-        if(sampleRate == 44100)
-            pData->freqVector[band] =  (float)__afCenterFreq44100[band];
-        else
-            pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
-    }
+    afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
     
     /* calculate pValue per frequency */
     getPvalues(pData->DTT, pData->freqVector, HYBRID_BANDS, pData->pValue);
@@ -225,18 +205,10 @@ void panner_process
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform (TFT) */
-        for(t=0; t< TIME_SLOTS; t++) {
-            for(ch = 0; ch < nSources; ch++)
-                utility_svvcopy(&(pData->inputFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
-            afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
-            for(band=0; band<HYBRID_BANDS; band++)
-                for(ch=0; ch < nSources; ch++)
-                    pData->inputframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
-        }
-        memset(pData->outputframeTF, 0, HYBRID_BANDS*MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
+        afSTFT_forward(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, pData->inputframeTF);
+        memset(FLATTEN3D(pData->outputframeTF), 0, HYBRID_BANDS*MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
         memset(outputTemp, 0, MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
 
-        /* Main processing: */
         /* Rotate source directions */
         if(pData->recalc_M_rotFLAG){
             yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, 0, Rxyz);
@@ -295,7 +267,7 @@ void panner_process
             for (band = 0; band < HYBRID_BANDS; band++) {
                 cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nLoudspeakers, TIME_SLOTS, nSources, &calpha,
                     pData->G_src[band], MAX_NUM_OUTPUTS,
-                    pData->inputframeTF[band], TIME_SLOTS, &cbeta,
+                    FLATTEN2D(pData->inputframeTF[band]), TIME_SLOTS, &cbeta,
                     outputTemp, TIME_SLOTS);
                 for (i = 0; i < nLoudspeakers; i++)
                     for (t = 0; t < TIME_SLOTS; t++)
@@ -336,6 +308,7 @@ void panner_process
                 }
             }
         }
+
         /* scale by sqrt(number of sources) */
         for (band = 0; band < HYBRID_BANDS; band++)
             for (ls = 0; ls < nLoudspeakers; ls++)
@@ -343,19 +316,12 @@ void panner_process
                     pData->outputframeTF[band][ls][t] = crmulf(pData->outputframeTF[band][ls][t], 1.0f/sqrtf((float)nSources));
 
         /* inverse-TFT and copy to output */
-        for(t = 0; t < TIME_SLOTS; t++) {
-            for(band = 0; band < HYBRID_BANDS; band++) {
-                for(ch = 0; ch < nLoudspeakers; ch++) {
-                    pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->outputframeTF[band][ch][t]);
-                    pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->outputframeTF[band][ch][t]);
-                }
-            }
-            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
-            for (ch = 0; ch < MIN(nLoudspeakers, nOutputs); ch++)
-                utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
-            for (; ch < nOutputs; ch++)
-                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
-        }
+        afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outputFrameTD);
+        for (ch = 0; ch < MIN(nLoudspeakers, nOutputs); ch++)
+            utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
+        for (; ch < nOutputs; ch++)
+            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+
     }
     else
         for (ch=0; ch < nOutputs; ch++)
@@ -473,7 +439,7 @@ void panner_setOutputConfigPreset(void* const hPan, int newPresetID)
 {
     panner_data *pData = (panner_data*)(hPan);
     int ch, dummy;
-    panner_loadPreset(newPresetID, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &dummy);
+    panner_loadLoudspeakerPreset(newPresetID, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &dummy);
     pData->reInitGainTables=1;
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
@@ -485,7 +451,7 @@ void panner_setInputConfigPreset(void* const hPan, int newPresetID)
 {
     panner_data *pData = (panner_data*)(hPan);
     int ch, dummy;
-    panner_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &dummy);
+    panner_loadSourcePreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &dummy);
     for(ch=0; ch<pData->new_nSources; ch++)
         pData->recalc_gainsFLAG[ch] = 1;
     pData->recalc_M_rotFLAG = 1;

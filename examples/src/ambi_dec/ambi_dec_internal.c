@@ -16,16 +16,27 @@
 
 /**
  * @file ambi_dec_internal.c
- * @brief A frequency-dependent Ambisonic decoder for loudspeakers.
+ * @brief A frequency-dependent Ambisonic decoder for reproducing Ambisonic
+ *        sound scenes over loudspeakers
  *
  * Different decoder settings can be specified for the low and high frequencies.
- * When utilising spherical harmonic signals derived from real microphone
- * arrays, this implementation also allows the decoding order per frequency band
- * to be specified; of course, this may also be used creatively. Optionally, a
- * SOFA file may be loaded for personalised headphone listening.
+ * A number of decoding options are also offered, including [1,2]. When
+ * utilising spherical harmonic signals derived from real microphone arrays,
+ * this implementation also allows the decoding order to be specified per
+ * frequency band; of course, this may also be used creatively. An optional,
+ * loudspeaker channel binauraliser is included, along with with SOFA file
+ * loading, for headphone listening.
  *
  * The algorithms utilised in this Ambisonic decoder were pieced together and
  * developed in collaboration with Archontis Politis.
+ *
+ * @test test__saf_example_ambi_dec()
+ *
+ * @see [1] Zotter F, Pomberger H, Noisternig M. Energy--preserving ambisonic
+ *          decoding. Acta Acustica united with Acustica. 2012 Jan 1;
+ *          98(1):37-47.
+ * @see [2] Zotter F, Frank M. All-round ambisonic panning and decoding. Journal
+ *          of the audio engineering society. 2012 Nov 26; 60(10):807-20.
  *
  * @author Leo McCormack
  * @date 07.12.2017
@@ -93,7 +104,10 @@ void ambi_dec_interpHRTFs
     
     /* reintroduce the interaural phase difference per band */
     for (band = 0; band < HYBRID_BANDS; band++) {
-        ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*SAF_PI* (pData->freqVector[band]) * itdInterp[0] + SAF_PI, 2.0f*SAF_PI) - SAF_PI) / 2.0f); 
+        if(pData->freqVector[band]<1.5e3f)
+            ipd = cmplxf(0.0f, (matlab_fmodf(2.0f*SAF_PI*(pData->freqVector[band]) * itdInterp[0] + SAF_PI, 2.0f*SAF_PI) - SAF_PI)/2.0f);
+        else
+            ipd = cmplxf(0.0f, 0.0f);
         h_intrp[band][0] = ccmulf(cmplxf(magInterp[band][0], 0.0f), cexpf(ipd));
         h_intrp[band][1] = ccmulf(cmplxf(magInterp[band][1], 0.0f), conjf(cexpf(ipd)));
     }
@@ -109,10 +123,13 @@ void loadLoudspeakerArrayPreset
 {
     float sum_elev;
     int ch, i, nCH;
-    
+
+    nCH = ch = 0;
     switch(preset){
         default:
+            /* fall through */
         case LOUDSPEAKER_ARRAY_PRESET_DEFAULT:
+            /* fall through */
         case LOUDSPEAKER_ARRAY_PRESET_5PX:
             nCH = 5;
             for(ch=0; ch<nCH; ch++)
@@ -273,6 +290,7 @@ void loadLoudspeakerArrayPreset
                     dirs_deg[ch][i] = __SphCovering_64_dirs_deg[ch][i];
             break;
     }
+    assert(nCH>0);
     
     /* Fill remaining slots with default coords */
     for(; ch<MAX_NUM_LOUDSPEAKERS; ch++)

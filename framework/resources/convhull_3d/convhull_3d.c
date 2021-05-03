@@ -48,6 +48,7 @@
 #include <string.h>
 #include "convhull_3d.h"
 #include "../modules/saf_utilities/saf_utilities.h"
+#include "saf_externals.h" 
 
 /* Force using CBLAS: */
 #ifndef CONVHULL_3D_USE_CBLAS
@@ -898,14 +899,14 @@ void extractVerticesFromObjFile(char* const obj_filename, ch_vertex** out_vertic
         if(vexists!=NULL){
             prev_char_isDigit = 0;
             vertID = -1;
-            for(int j=0; j<strlen(line)-1; j++){
+            for(int j=0; j<(int)strlen(line)-1; j++){
                 if(isdigit(line[j])||line[j]=='.'||line[j]=='-'||line[j]=='+'||line[j]=='E'||line[j]=='e'){
                     vert_char[strlen(vert_char)] = line[j];
                     current_char_isDigit = 1;
                 }
                 else
                     current_char_isDigit = 0;
-                if((prev_char_isDigit && !current_char_isDigit) || j ==strlen(line)-2 ){
+                if((prev_char_isDigit && !current_char_isDigit) || j ==(int)strlen(line)-2 ){
                     vertID++;
                     if(vertID>4){
                         /* not a valid file */

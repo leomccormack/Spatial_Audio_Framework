@@ -20,7 +20,7 @@
  * @brief Public source for the higher-order Ambisonics module (#SAF_HOA_MODULE)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
- * the Matlab library by Archontis Politis [1].
+ * the Matlab library by Archontis Politis [1] (BSD-3-Clause License).
  *
  * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
  *
@@ -65,9 +65,9 @@ void convertHOAChannelConvention
 
     /* Convert FUMA to ACN */
     if(inConvention==HOA_CH_ORDER_FUMA && outConvention==HOA_CH_ORDER_ACN){
-        memcpy(tmp[0], &insig[3*signalLength], signalLength*sizeof(float));
-        memcpy(tmp[1], &insig[1*signalLength], signalLength*sizeof(float));
-        memcpy(tmp[2], &insig[2*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[0], &insig[2*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[1], &insig[3*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[2], &insig[1*signalLength], signalLength*sizeof(float));
 
         memcpy(&insig[1*signalLength], tmp[0], signalLength*sizeof(float));
         memcpy(&insig[2*signalLength], tmp[1], signalLength*sizeof(float));
@@ -75,9 +75,9 @@ void convertHOAChannelConvention
     }
     /* Convert ACN to FUMA */
     else if(inConvention==HOA_CH_ORDER_ACN && outConvention==HOA_CH_ORDER_FUMA){
-        memcpy(tmp[0], &insig[2*signalLength], signalLength*sizeof(float));
-        memcpy(tmp[1], &insig[3*signalLength], signalLength*sizeof(float));
-        memcpy(tmp[2], &insig[1*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[0], &insig[3*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[1], &insig[1*signalLength], signalLength*sizeof(float));
+        memcpy(tmp[2], &insig[2*signalLength], signalLength*sizeof(float));
 
         memcpy(&insig[1*signalLength], tmp[0], signalLength*sizeof(float));
         memcpy(&insig[2*signalLength], tmp[1], signalLength*sizeof(float));
@@ -158,6 +158,9 @@ void getRSH
     int i, nSH;
     float scale;
     float* dirs_rad;
+
+    if(nDirs<1)
+        return;
     
     nSH = (N+1)*(N+1);
     scale = sqrtf(4.0f*SAF_PI);
@@ -190,6 +193,9 @@ void getRSH_recur
     float Nn0, Nnm;
     float sleg_n[8], sleg_n_1[8], sleg_n_2[8], ssin_el, sfactorials_n[15];
     float* leg_n, *leg_n_1, *leg_n_2, *sin_el, *factorials_n;
+
+    if(nDirs<1)
+        return;
 
     if(N<=7 && nDirs == 1){
         /* Single direction optimisation for up to 7th order */
@@ -292,6 +298,63 @@ void getMaxREweights
     free(ppm);
 }
 
+void truncationEQ
+(
+    float* w_n,
+    int order_truncated,
+    int order_target,
+    double* kr,
+    int nBands,
+    float softThreshold,
+    float* gain
+)
+{
+    /* For more information refer to:
+     * Hold, C., Gamper, H., Pulkki, V., Raghuvanshi, N., & Tashev, I. J. (2019).
+     * Improving Binaural Ambisonics Decoding by Spherical Harmonics Domain Tapering
+     * and Coloration Compensation. ICASSP, IEEE International Conference on Acoustics,
+     * Speech and Signal Processing - Proceedings.
+     */
+    double_complex* b_n_target = calloc1d(nBands*(order_target+1), sizeof(double_complex));
+    double_complex* b_n_truncated = calloc1d(nBands*(order_truncated+1), sizeof(double_complex));
+    double* p_target = calloc1d(nBands, sizeof(double));
+    double* p_truncated = calloc1d(nBands, sizeof(double));
+
+    sphModalCoeffs(order_target, kr, nBands, ARRAY_CONSTRUCTION_RIGID, 0., b_n_target);
+    sphModalCoeffs(order_truncated, kr, nBands, ARRAY_CONSTRUCTION_RIGID, 0., b_n_truncated);
+
+    /* p_full */
+    for (int idxBand=0; idxBand<nBands; idxBand++)
+        for (int idxOrder=0; idxOrder<=order_target; idxOrder++)
+            p_target[idxBand] += (2.0*idxOrder + 1.0) * pow(cabs(b_n_target[idxBand*(order_target+1) + idxOrder]), 2.0);
+    /* p_truncated from (tapered) modal weighting */
+    for (int idxBand=0; idxBand<nBands; idxBand++)
+        for (int idxOrder=0; idxOrder<=order_truncated; idxOrder++)
+            p_truncated[idxBand] += w_n[idxOrder] * (2.0*idxOrder + 1.0) * pow(cabs(b_n_truncated[idxBand*(order_truncated+1) + idxOrder]), 2.0);
+
+    /* inverse ratio is filter gain */
+    for (int idxBand=0; idxBand < nBands; idxBand++) {
+        p_target[idxBand] = 1.0/(4.0*SAF_PI) * sqrt(p_target[idxBand]);
+        p_truncated[idxBand] = 1.0/(4.0*SAF_PI) * sqrt(p_truncated[idxBand]);
+        gain[idxBand] = (float)(p_target[idxBand] / (p_truncated[idxBand]+2.23e-13));
+    }
+
+    /* soft clip to limit maximum gain */
+    float clipFactor = powf(10.0f, softThreshold/20.0f);
+    for (int idxBand=0; idxBand<nBands; idxBand++){
+        gain[idxBand] = gain[idxBand]/clipFactor;  /* norm by threshold */
+        if (gain[idxBand] > 1.0f)
+            gain[idxBand] = 1.0f + tanhf(gain[idxBand] - 1.0f);  /* soft clip to 2 */
+        gain[idxBand] = gain[idxBand] * clipFactor;  /* de-norm */
+    }
+
+    /* clean-up */
+    free(b_n_target);
+    free(b_n_truncated);
+    free(p_target);
+    free(p_truncated);
+}
+
 void getLoudspeakerDecoderMtx
 (
     float* ls_dirs_deg,
@@ -386,25 +449,11 @@ void getBinauralAmbiDecoderMtx
     switch(method){
         default:
         case BINAURAL_DECODER_DEFAULT:
-        case BINAURAL_DECODER_LS:
-            getBinDecoder_LS(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, weights, decMtx);
-            break;
-            
-        case BINAURAL_DECODER_LSDIFFEQ:
-            getBinDecoder_LSDIFFEQ(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, weights, decMtx);
-            break;
-            
-        case BINAURAL_DECODER_SPR:
-            getBinDecoder_SPR(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, weights, decMtx);
-            break;
-            
-        case BINAURAL_DECODER_TA:
-            getBinDecoder_TA(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, freqVector, itd_s, weights, decMtx);
-            break;
-            
-        case BINAURAL_DECODER_MAGLS:
-            getBinDecoder_MAGLS(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, freqVector, weights, decMtx);
-            break;
+        case BINAURAL_DECODER_LS: getBinDecoder_LS(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, weights, decMtx); break;
+        case BINAURAL_DECODER_LSDIFFEQ: getBinDecoder_LSDIFFEQ(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, weights, decMtx); break;
+        case BINAURAL_DECODER_SPR:      getBinDecoder_SPR(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, weights, decMtx); break;
+        case BINAURAL_DECODER_TA:       getBinDecoder_TA(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, freqVector, itd_s, weights, decMtx); break;
+        case BINAURAL_DECODER_MAGLS:    getBinDecoder_MAGLS(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, freqVector, weights, decMtx); break;
     }
     
     /* apply Max RE weighting per bin */

@@ -44,8 +44,8 @@ extern "C" {
 
 /* Default HRIRs: Genelec Aural ID of a KEMAR Dummy Head. (@48kHz)
  * Kindly provided by Aki Mäkivirta and Jaan Johansson */
-extern const double __default_hrirs[836][2][1024];   /**< Default HRIR data */
-extern const double __default_hrir_dirs_deg[836][2]; /**< HRIR directions */
+extern const float __default_hrirs[836][2][256];     /**< Default HRIR data */
+extern const float __default_hrir_dirs_deg[836][2];  /**< HRIR directions */
 extern const int __default_N_hrir_dirs;              /**< Number of HRIRs */
 extern const int __default_hrir_len;                 /**< HRIR length */
 extern const int __default_hrir_fs;                  /**< HRIR samplerate */
@@ -86,22 +86,50 @@ void estimateITDs(/* Input Arguments */
  * @param[in]  N_dirs     Number of HRIRs
  * @param[in]  hrir_len   Length of the HRIRs in samples
  * @param[in]  hopsize    Hop size in samples
+ * @param[in]  LDmode     Low-Delay mode, 0:disabled, 1:enabled
+ * @param[in]  hybridmode Hybrid-filtering, 0:disabled, 1:enabled
+ * @param[out] hrtf_fb    HRTFs as filterbank coeffs; FLAT:
+ *                        (hybrid ? hopsize+5 : hopsize+1) x #NUM_EARS x N_dirs
+ */
+void HRIRs2HRTFs_afSTFT(/* Input Arguments */
+                        float* hrirs,
+                        int N_dirs,
+                        int hrir_len,
+                        int hopsize,
+                        int LDmode,
+                        int hybridmode,
+                        /* Output Arguments */
+                        float_complex* hrtf_fb);
+
+/**
+ * Passes zero padded HRIRs through the qmf filterbank
+ *
+ * The filterbank coefficients are then normalised with the energy of an
+ * impulse, which is centered at approximately the beginning of the HRIR peak.
+ *
+ * @warning This function is NOT suitable for binaural room impulse responses
+ *          (BRIRs)!
+ *
+ * @param[in]  hrirs      HRIRs; FLAT: N_dirs x #NUM_EARS x hrir_len
+ * @param[in]  N_dirs     Number of HRIRs
+ * @param[in]  hrir_len   Length of the HRIRs in samples
+ * @param[in]  hopsize    Hop size in samples
  * @param[in]  hybridmode 0:disabled, 1:enabled
  * @param[out] hrtf_fb    HRTFs as filterbank coeffs;
  *                        FLAT:
- *                        (hybrid ? hopsize+5 : hopsize+1) x #NUM_EARS x N_dirs
+ *                        (hybrid ? hopsize+7 : hopsize) x #NUM_EARS x N_dirs
  */
-void HRIRs2FilterbankHRTFs(/* Input Arguments */
-                           float* hrirs,
-                           int N_dirs,
-                           int hrir_len,
-                           int hopsize,
-                           int hybridmode,
-                           /* Output Arguments */
-                           float_complex* hrtf_fb);
+void HRIRs2HRTFs_qmf(/* Input Arguments */
+                     float* hrirs,
+                     int N_dirs,
+                     int hrir_len,
+                     int hopsize,
+                     int hybridmode,
+                     /* Output Arguments */
+                     float_complex* hrtf_fb);
 
 /**
- * Converts HRIRs to HRTFs, with a given FFT size
+ * Converts HRIRs to HRTFs using a given FFT size
  *
  * @note If the HRIRs are shorter than the FFT size (hrir_len<fftSize), then the
  *       HRIRs are zero-padded. If they are longer, then they are truncated.
@@ -121,15 +149,23 @@ void HRIRs2HRTFs(/* Input Arguments */
                  float_complex* hrtfs);
 
 /**
- * Applies diffuse-field equalisation to a set of HRTFs
+ * Applies pre-processing to a set of HRTFs, which can either be diffuse-field
+ * EQ of an (optionally weighted) average of all HRTFs (CTF), phase s
+ * implification based on ITDs, or both.
  *
+ * @note 'weights' (if used) should sum to 4pi, and 'itds_s' is only required
+ *       if applyPhase=1.
  * @warning This function is NOT suitable for binaural room impulse responses
  *          (BRIRs)!
  *
  * @param[in]     N_dirs     Number of HRTFs
- * @param[in]     itds_s     HRIR ITDs; N_dirs x 1
+ * @param[in]     itds_s     HRIR ITDs (set to NULL if not needed); N_dirs x 1
  * @param[in]     centreFreq Frequency vector; N_bands x 1
  * @param[in]     N_bands    Number of frequency bands/bins
+ * @param[in]     weights    Grid weights (set to NULL if not available);
+ *                           N_dirs x 1
+ * @param[in]     applyEQ    Diffuse-field EQ / CTF; 0:disabled, 1:enabled
+ * @param[in]     applyPhase Phase simplification; 0:disabled, 1:enabled
  * @param[in,out] hrtfs      The HRTFs; FLAT: N_bands x #NUM_EARS x N_dirs
  */
 void diffuseFieldEqualiseHRTFs(/* Input Arguments */
@@ -137,6 +173,9 @@ void diffuseFieldEqualiseHRTFs(/* Input Arguments */
                                float* itds_s,
                                float* centreFreq,
                                int N_bands,
+                               float* weights,
+                               int applyEQ,
+                               int applyPhase,
                                /* Input/Output Arguments */
                                float_complex* hrtfs);
 
@@ -152,6 +191,8 @@ void diffuseFieldEqualiseHRTFs(/* Input Arguments */
  *       normalised VBAP gain table, and convert it to an amplitude-normalised
  *       interpolation table. (Basically, amplitude-normalised VBAP gains are
  *       equivalent to triangular interpolation weights).
+ * @warning This function is NOT suitable for binaural room impulse responses
+ *          (BRIRs)!
  *
  * @param[in]  hrtfs         HRTFs as filterbank coeffs;
  *                           FLAT: N_bands x #NUM_EARS x N_hrtf_dirs

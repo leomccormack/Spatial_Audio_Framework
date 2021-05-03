@@ -18,7 +18,7 @@
  *@addtogroup Utilities
  *@{
  * @file: saf_utility_filters.h
- * @brief A collection of IIR/FIR filter design equations
+ * @brief A collection of IIR/FIR filter and filterbank designs
  *
  * @author Leo McCormack
  * @date 01.03.2019 
@@ -43,20 +43,32 @@ extern "C" {
 
 /**
  * Bi-quadratic (second-order) IIR filter design options
+ *
+ * @note By default, the filter designs have been taken from [1]. While those
+ *       with the "_EQCB" suffix have instead been taken from [2].
+ *
+ * @see [1] Zo"lzer, U., 2012. Digital audio effects (2nd edition). New York:
+ *          Wiley.
+ * @see [2] https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
  */
-typedef enum _BIQUAD_FILTER_TYPES {
-    BIQUAD_FILTER_LPF,       /**< low-pass filter */
-    BIQUAD_FILTER_HPF,       /**< high-pass filter */
-    BIQUAD_FILTER_PEAK,      /**< peaking filter */
-    BIQUAD_FILTER_LOW_SHELF, /**< low-shelving filter */
-    BIQUAD_FILTER_HI_SHELF   /**< high-shelving filter */
+typedef enum {
+    BIQUAD_FILTER_LPF,            /**< low-pass filter (DAFx-Zolzer) */
+    BIQUAD_FILTER_LPF_EQCB,       /**< low-pass filter (EQ-cookbook) */
+    BIQUAD_FILTER_HPF,            /**< high-pass filter (DAFx-Zolzer) */
+    BIQUAD_FILTER_HPF_EQCB,       /**< high-pass filter (EQ-cookbook) */
+    BIQUAD_FILTER_PEAK,           /**< peaking filter (DAFx-Zolzer) */
+    BIQUAD_FILTER_PEAK_EQCB,      /**< peaking filter (EQ-cookbook) */
+    BIQUAD_FILTER_LOW_SHELF,      /**< low-shelving filter (DAFx-Zolzer) */
+    BIQUAD_FILTER_LOW_SHELF_EQCB, /**< low-shelving filter (EQ-cookbook) */
+    BIQUAD_FILTER_HI_SHELF,       /**< high-shelving filter (DAFx-Zolzer) */
+    BIQUAD_FILTER_HI_SHELF_EQCB,  /**< high-shelving filter (EQ-cookbook) */
     
 }BIQUAD_FILTER_TYPES;
 
 /**
  * Butterworth Infinite Impulse Response (IIR) filter design options
  */
-typedef enum _BUTTER_FILTER_TYPES {
+typedef enum {
     BUTTER_FILTER_LPF, /**< low-pass filter */
     BUTTER_FILTER_HPF, /**< high-pass filter */
     BUTTER_FILTER_BPF, /**< band-pass filter */
@@ -67,7 +79,7 @@ typedef enum _BUTTER_FILTER_TYPES {
 /**
  * Finite Impulse Response (FIR) filter design options
  */
-typedef enum _FIR_FILTER_TYPES {
+typedef enum {
     FIR_FILTER_LPF, /**< low-pass filter */
     FIR_FILTER_HPF, /**< high-pass filter */
     FIR_FILTER_BPF, /**< band-pass filter */
@@ -82,7 +94,7 @@ typedef enum _FIR_FILTER_TYPES {
  * are evaluated: 0 <= n < winlength. Largely taken from:
  * https://en.wikipedia.org/wiki/Window_function
  */
-typedef enum _WINDOWING_FUNCTION_TYPES {
+typedef enum {
     WINDOWING_FUNCTION_RECTANGULAR,      /**< Rectangular */
     WINDOWING_FUNCTION_HAMMING,          /**< Hamming */
     WINDOWING_FUNCTION_HANN,             /**< Hann */
@@ -111,7 +123,7 @@ typedef enum _WINDOWING_FUNCTION_TYPES {
  * if odd:
  *  - index "(winlength-1)/2" = 1, and first value==last value
  *
- * @param[in]  type      See #_WINDOWING_FUNCTION_TYPES enum
+ * @param[in]  type      See #WINDOWING_FUNCTION_TYPES enum
  * @param[in]  winlength Window length in samples
  * @param[out] win       Windowing function; winlength x 1
  */
@@ -167,6 +179,29 @@ void getOctaveBandCutoffFreqs(float* centreFreqs,
 void flattenMinphase(float* x,
                      int len);
 
+/**
+ * Interpolate filters (w.r.t. frequency) in the frequency-domain
+ *
+ * @param[in]  inFFTsize   Input FFT size
+ * @param[in]  outFFTsize  Output FFT size
+ * @param[in]  nFilters    Number of filters to interpolate
+ * @param[in]  filters_in  Input filters; FLAT: inFFTsize x nFilters
+ * @param[out] filters_out Output filters; FLAT: outFFTsize x nFilters
+ */
+void interpolateFiltersH(/* Input arguments */
+                         int inFFTsize,
+                         int outFFTsize,
+                         int nFilters,
+                         float_complex* filters_in,
+                         /* Output arguments */
+                         float_complex* filters_out);
+
+/** Converts filter octave band-width to Q-factor */
+float convertBW2Q(float BW);
+
+/** Converts filter Q-factor to octave band-width */
+float convertQ2BW(float Q);
+
 
 /* ========================================================================== */
 /*                             IIR Filter Functions                           */
@@ -175,7 +210,7 @@ void flattenMinphase(float* x,
 /**
  * Calculates 2nd order IIR filter coefficients [1]
  *
- * @param[in]  filterType See #_BIQUAD_FILTER_TYPES enum
+ * @param[in]  filterType See #BIQUAD_FILTER_TYPES enum
  * @param[in]  fc         Centre frequency, Hz
  * @param[in]  fs         Sampling frequency, Hz
  * @param[in]  Q          Q-factor
@@ -201,6 +236,8 @@ void biQuadCoeffs(/* input arguments */
  * equation: https://en.wikipedia.org/wiki/Digital_biquad_filter
  *
  * @note input 'signal' is filtered in place (i.e. it becomes the output signal)
+ * @warning It is assumed that a[0] = 1.0f! Scale all coefficients by a[0] if
+ *          this is not the case, prior to calling this function.
  *
  * @param[in]      b        b filter coefficients; 3 x 1
  * @param[in]      a        a filter coefficients; 3 x 1
@@ -224,7 +261,8 @@ void applyBiQuadFilter(/* Input arguments */
  * @param[in]  freqs        Frequencies at which to evaluate, Hz; nFreqs x 1
  * @param[in]  nFreqs       Number of frequencies at which to avaluate
  * @param[in]  fs           Sampling frequency, Hz
- * @param[out] magnitude_dB Magnitude, dB, at each frequency (set to NULL of not
+ * @param[in]  mag2dB       0: 'magnitude' returned in linear scale, 1: dB scale
+ * @param[out] magnitude    Magnitude, at each frequency (set to NULL of not
  *                          wanted); nFreqs x 1
  * @param[out] phase_rad    Phase, radians, at each frequency (set to NULL of
  *                          not wanted); nFreqs x 1
@@ -235,8 +273,9 @@ void evalBiQuadTransferFunction(/* Input arguments */
                                 float* freqs,
                                 int nFreqs,
                                 float fs,
+                                int mag2dB,
                                 /* Output arguments */
-                                float* magnitude_dB,
+                                float* magnitude,
                                 float* phase_rad);
 
 /**
@@ -244,8 +283,10 @@ void evalBiQuadTransferFunction(/* Input arguments */
  * difference equation)
  *
  * @note The function assumes the numerator coefficents are the same length
- *       as the denominator, i.e. a[0] is assumed to be 1 and ignored. The
- *       output signal and input signal can also be the same.
+ *       as the denominator. The output signal and input signal can also be the
+ *       same.
+ * @warning It is assumed that a[0] = 1.0f! Scale all coefficients by a[0] if
+ *          this is not the case, prior to calling this function.
  *
  * @param[in]     in_signal  Input signal; nSamples x 1
  * @param[in]     nSamples   Number of samples to process
@@ -281,7 +322,7 @@ void applyIIR(/* Input arguments */
  *
  * @test test__butterCoeffs()
  *
- * @param[in]  filterType  See #_BUTTER_FILTER_TYPES enum
+ * @param[in]  filterType  See #BUTTER_FILTER_TYPES enum
  * @param[in]  order       Filter order (N)
  * @param[in]  cutoff1     Filter1 cutoff in Hz, for LPF/HPF, and lower cutoff
  *                         for BPF/BSF
@@ -395,14 +436,14 @@ void faf_IIRFilterbank_destroy(void** hFaF);
  *  - HPF @ 200Hz - N~450
  *  - HPF @ 4kHz  - N~60
  *
- * @param[in]  filterType  See #_FIR_FILTER_TYPES enum
+ * @param[in]  filterType  See #FIR_FILTER_TYPES enum
  * @param[in]  order       Filter order (N). Must be even.
  * @param[in]  cutoff1     Filter1 cutoff in Hz, for LPF/HPF, and lower cutoff
  *                         for BPF/BSF
  * @param[in]  cutoff2     Filter2 cutoff in Hz, not needed for LPF/HPF, this is
  *                         the upper cutoff for BPF/BSF
  * @param[in]  sampleRate  Sampling rate in Hz
- * @param[in]  windowType  See #_WINDOWING_FUNCTION_TYPES enum
+ * @param[in]  windowType  See #WINDOWING_FUNCTION_TYPES enum
  * @param[in]  scalingFLAG '0' none, '1' scaling applied to ensure passband is
  *                         at 0dB
  * @param[out] filter      Filter coefficients/weights/taps; (order+1) x 1
@@ -441,7 +482,7 @@ void FIRCoeffs(/* Input arguments */
  * @param[in]  fc           Vector of cutoff frequencies; nCutoffFreqs x 1
  * @param[in]  nCutoffFreqs Number of cutoff frequencies in vector 'fc'.
  * @param[in]  sampleRate   Sampling rate in Hz
- * @param[in]  windowType   See #_WINDOWING_FUNCTION_TYPES enum
+ * @param[in]  windowType   See #WINDOWING_FUNCTION_TYPES enum
  * @param[in]  scalingFLAG  '0' none, '1' scaling applied to ensure passbands
  *                          are at 0dB
  * @param[out] filterbank   Filter coefficients/weights/taps;

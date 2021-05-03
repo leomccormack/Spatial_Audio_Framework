@@ -16,24 +16,24 @@
 
 /**
  * @file ambi_drc_internal.h
- * @brief A frequency-dependent spherical harmonic domain dynamic range
- *        compressor (DRC).
+ * @brief A frequency-dependent Ambisonic sound scene dynamic range compressor
+ *        (DRC)
  *
  * The implementation can also keep track of the frequency-dependent gain
- * factors for the omnidirectional component over time, for optional plotting.
+ * factors for the omnidirectional component over time (for optional plotting).
  * The design is based on the algorithm presented in [1].
  *
- * The DRC gain factors are determined based on analysing the omnidirectional
- * component. These gain factors are then applied to the higher-order
- * components, in a such a manner as to retain the spatial information within
- * them.
- *
- * @author Leo McCormack
- * @date 07.01.2017
+ * The DRC gain factors per band are determined based on the omnidirectional
+ * component, which are then applied to all of the higher-order components;
+ * thus, the spatial information of the Ambisonic sound scene is retained
+ * (although, your perception of them may change due to the DRC).
  *
  * @see [1] McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range
  *          Compression". in Proceedings of the 14th Sound and Music Computing
  *          Conference, July 5-8, Espoo, Finland.
+ *
+ * @author Leo McCormack
+ * @date 07.01.2017
  */
 
 #ifndef __AMBI_DRC_INTERNAL_H_INCLUDED__
@@ -44,6 +44,7 @@
 #include <string.h>
 #include "ambi_drc.h" 
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -59,7 +60,9 @@ extern "C" {
 #define HOP_SIZE ( 128 )  /* STFT hop size, can be flexible, but only 'hybrid' mode afSTFT is supported (i.e. non uniform) */
 #define TIME_SLOTS ( FRAME_SIZE/HOP_SIZE ) /* time-frequency domain frame size */
 #define HYBRID_BANDS ( HOP_SIZE + 5 ) /* hybrid mode incurs an additional 5 bands  */
-
+#if (FRAME_SIZE % HOP_SIZE != 0)
+# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#endif
 
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -72,13 +75,10 @@ extern "C" {
 typedef struct _ambi_drc
 { 
     /* audio buffers and afSTFT handle */
-    float inputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
-    float_complex inputFrameTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    float_complex outputFrameTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    void* hSTFT; 
-    complexVector* STFTInputFrameTF;
-    complexVector* STFTOutputFrameTF;    
-    float** tempHopFrameTD;
+    float** frameTD;
+    float_complex*** inputFrameTF;
+    float_complex*** outputFrameTF;
+    void* hSTFT;
     float freqVector[HYBRID_BANDS];
 
     /* internal */

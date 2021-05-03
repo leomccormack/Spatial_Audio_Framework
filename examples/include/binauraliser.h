@@ -45,7 +45,7 @@ extern "C" {
 /**
  * Available interpolation modes
  */
-typedef enum _INTERP_MODES{
+typedef enum {
     INTERP_TRI = 1  /**< Triangular interpolation */
 }INTERP_MODES;
 
@@ -167,7 +167,12 @@ void binauraliser_setUseDefaultHRIRsflag(void* const hBin, int newState);
 void binauraliser_setSofaFilePath(void* const hBin, const char* path);
 
 /**
- * Loads an input preset (see #_SOURCE_CONFIG_PRESETS enum)
+ * Enable (1) or disable (0) the pre-processing applied to the HRTFs.
+ */
+void binauraliser_setEnableHRIRsPreProc(void* const hBin, int newState);
+
+/**
+ * Loads an input preset (see #SOURCE_CONFIG_PRESETS enum)
  */
 void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID);
 
@@ -219,6 +224,7 @@ void binauraliser_setRPYflag(void* const hBin, int newState);
 void binauraliser_setInterpMode(void* const hBin, int newMode);
 
 
+
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
@@ -230,7 +236,7 @@ void binauraliser_setInterpMode(void* const hBin, int newMode);
 int binauraliser_getFrameSize(void);
 
 /**
- * Returns current codec status codec status (see #_CODEC_STATUS enum)
+ * Returns current codec status codec status (see #CODEC_STATUS enum)
  */
 CODEC_STATUS binauraliser_getCodecStatus(void* const hBin);
 
@@ -326,6 +332,12 @@ int binauraliser_getUseDefaultHRIRsflag(void* const hBin);
  * @returns        File path to .sofa file (WITH file extension)
  */
 char* binauraliser_getSofaFilePath(void* const hBin);
+
+/**
+ * Returns the flag indicating whether the pre-processing applied to the HRTFs
+ * is enabled (1) or disabled (0).
+ */
+int binauraliser_getEnableHRIRsPreProc(void* const hBin);
 
 /**
  * Returns the DAW/Host sample rate

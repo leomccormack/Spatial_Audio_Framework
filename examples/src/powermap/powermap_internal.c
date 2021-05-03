@@ -42,7 +42,6 @@ void powermap_setCodecStatus(void* const hPm, CODEC_STATUS newStatus)
     pData->codecStatus = newStatus;
 }
 
-
 void powermap_initAna(void* const hPm)
 {
     powermap_data *pData = (powermap_data*)(hPm);
@@ -131,10 +130,10 @@ void powermap_initTFT
     nSH = (pData->masterOrder+1)*(pData->masterOrder+1);
     new_nSH = (pData->new_masterOrder+1)*(pData->new_masterOrder+1);
     if(pData->hSTFT==NULL)
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, new_nSH, 0, 0, 1);
+        afSTFT_create(&(pData->hSTFT), new_nSH, 0, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
     else if(nSH!=new_nSH){
-        afSTFTchannelChange(pData->hSTFT, new_nSH, 0);
-        afSTFTclearBuffers(pData->hSTFT);
+        afSTFT_channelChange(pData->hSTFT, new_nSH, 0);
+        afSTFT_clearBuffers(pData->hSTFT);
         memset(pData->Cx, 0 , MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*HYBRID_BANDS*sizeof(float_complex));
     }
 }

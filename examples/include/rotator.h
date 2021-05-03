@@ -16,15 +16,15 @@
 
 /**
  * @file rotator.h
- * @brief  A simple spherical harmonic domain rotator, based on the recursive
- *         approach detailed in [1].
+ * @brief A basic spherical harmonic/ Ambisonic signals rotator, based on the
+ *        recursive approach detailed in [1]
+ *
+ * @test test__saf_example_rotator()
  *
  * @see [1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real
  *          Spherical Harmonics. Direct Determination by Recursion Page:
  *          Additions and Corrections. Journal of Physical Chemistry A, 102(45),
  *          9099?9100.
- *
- * @test test__saf_example_rotator()
  *
  * @author Leo McCormack
  * @date 02.11.2017
@@ -94,20 +94,26 @@ void rotator_process(void* const hRot,
  */
 int rotator_getFrameSize(void);
 
-/**
- * Sets the 'yaw' rotation angle, in DEGREES
- */
+/** Sets the 'yaw' rotation angle, in DEGREES */
 void rotator_setYaw(void* const hRot, float newYaw);
 
-/**
- * Sets the 'pitch' rotation angle, in DEGREES
- */
+/** Sets the 'pitch' rotation angle, in DEGREES */
 void rotator_setPitch(void* const hRot, float newPitch);
 
-/**
- * Sets the 'roll' rotation angle , in DEGREES
- */
+/** Sets the 'roll' rotation angle , in DEGREES */
 void rotator_setRoll(void* const hRot, float newRoll);
+
+/** Sets the quaternion 'W' value [-1..1] */
+void rotator_setQuaternionW(void* const hRot, float newValue);
+
+/** Sets the quaternion 'X' value [-1..1] */
+void rotator_setQuaternionX(void* const hRot, float newValue);
+
+/** Sets the quaternion 'Y' value [-1..1] */
+void rotator_setQuaternionY(void* const hRot, float newValue);
+
+/** Sets the quaternion 'Z' value [-1..1] */
+void rotator_setQuaternionZ(void* const hRot, float newValue);
 
 /**
  * Sets a flag as to whether to "flip" the sign of the current 'yaw' angle
@@ -128,20 +134,24 @@ void rotator_setFlipPitch(void* const hRot, int newState);
 void rotator_setFlipRoll(void* const hRot, int newState);
 
 /**
+ * Sets a flag as to whether to invert the quaternion used for rotation
+ * (0: do not flip sign, 1: flip the sign)
+ */
+void rotator_setFlipQuaternion(void* const hRot, int newState);
+
+/**
  * Sets the Ambisonic channel ordering convention to decode with, in order to
- * match the convention employed by the input signals (see #_CH_ORDER enum)
+ * match the convention employed by the input signals (see #CH_ORDER enum)
  */
 void rotator_setChOrder(void* const hRot, int newOrder);
 
 /**
  * Sets the Ambisonic normalisation convention to decode with, in order to match
- * with the convention employed by the input signals (see #_NORM_TYPES enum)
+ * with the convention employed by the input signals (see #NORM_TYPES enum)
  */
 void rotator_setNormType(void* const hRot, int newType);
 
-/**
- * Sets the input/output order (see #_SH_ORDERS enum)
- */
+/** Sets the input/output order (see #SH_ORDERS enum) */
 void rotator_setOrder(void* const hRot, int newOrder);
 
 /**
@@ -155,20 +165,26 @@ void rotator_setRPYflag(void* const hRot, int newState);
 /*                                Get Functions                               */
 /* ========================================================================== */
 
-/**
- * Returns the 'yaw' rotation angle, in DEGREES
- */
+/** Returns the 'yaw' rotation angle, in DEGREES */
 float rotator_getYaw(void* const hRot);
 
-/**
- * Returns the 'pitch' rotation angle, in DEGREES
- */
+/** Returns the 'pitch' rotation angle, in DEGREES */
 float rotator_getPitch(void* const hRot);
 
-/**
- * Returns the 'roll' rotation angle, in DEGREES
- */
+/** Returns the 'roll' rotation angle, in DEGREES */
 float rotator_getRoll(void* const hRot);
+
+/** Returns the quaternion 'W' value [-1..1] */
+float rotator_getQuaternionW(void* const hRot);
+
+/** Returns the quaternion 'X' value [-1..1] */
+float rotator_getQuaternionX(void* const hRot);
+
+/** Returns the quaternion 'Y' value [-1..1] */
+float rotator_getQuaternionY(void* const hRot);
+
+/** Returns the quaternion 'Z' value [-1..1] */
+float rotator_getQuaternionZ(void* const hRot);
 
 /**
  * Returns a flag as to whether to "flip" the sign of the current 'yaw' angle
@@ -189,6 +205,12 @@ int rotator_getFlipPitch(void* const hRot);
 int rotator_getFlipRoll(void* const hRot);
 
 /**
+ * Returns a flag as to whether to invert the quaternion used for rotation
+ * (0: do not flip sign, 1: flip the sign)
+ */
+int rotator_getFlipQuaternion(void* const hRot);
+
+/**
  * Returns a flag as to whether to use "yaw-pitch-roll" (0) or "roll-pitch-yaw"
  * (1) rotation order.
  */
@@ -197,19 +219,19 @@ int rotator_getRPYflag(void* const hRot);
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see #_CH_ORDER enum)
+ * (see #CH_ORDER enum)
  */
 int rotator_getChOrder(void* const hRot);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals
- * (see #_NORM_TYPES enum)
+ * (see #NORM_TYPES enum)
  */
 int rotator_getNormType(void* const hRot);
 
 /**
- * Returns the input/output order (see #_SH_ORDERS enum)
+ * Returns the input/output order (see #SH_ORDERS enum)
  */
 int rotator_getOrder(void* const hRot);
 

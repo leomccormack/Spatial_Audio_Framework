@@ -21,12 +21,12 @@
  * @brief Main header for the VBAP/MDAP module (#SAF_VBAP_MODULE)
  *
  * VBAP functions largely derived from the Matlab library by Archontis Politis,
- * found in [1].
+ * found in [1] (BSD-3-Clause License).
  *
  * @see [1] https://github.com/polarch/Vector-Base-Amplitude-Panning
  *
  * @author Leo McCormack
- * @date 02.10.2017
+ * @date 02.10.2017 
  */
 
 #ifndef __SAF_VBAP_H_INCLUDED__
@@ -44,19 +44,19 @@ extern "C" {
  * Generates a 3-D VBAP [1] gain table based on specified source and loudspeaker
  * directions, with optional spreading [2]
  *
- * @note gtable is returned as NULL if the triangulation failed. The VBAP gains
+ * @note gtable is returned as NULL if the triangulation fails. The VBAP gains
  *       are also ENERGY normalised; i.e. sum(gains^2) = 1
  *
- * @param[in]  src_dirs_deg       Source directions in DEGREES; FLAT: S x 2
+ * @param[in]  src_dirs_deg       Source directions in degrees; FLAT: S x 2
  * @param[in]  S                  Number of Sources
- * @param[in]  ls_dirs_deg        Loudspeaker directions in DEGREES; FLAT: L x 2
+ * @param[in]  ls_dirs_deg        Loudspeaker directions in degrees; FLAT: L x 2
  * @param[in]  L                  Number of loudspeakers
  * @param[in]  omitLargeTriangles '0' normal triangulation, '1' remove large
  *                                triangles
  * @param[in]  enableDummies      '0' disabled, '1' enabled, and dummies are
  *                                placed at +/-90 elevation if required
- * @param[in]  spread             Spreading factor in DEGREES, 0: VBAP, >0: MDAP
- * @param[out] gtable             (&) The 3D VBAP gain table ENERGY normalised;
+ * @param[in]  spread             Spreading factor in degrees, 0: VBAP, >0: MDAP
+ * @param[out] gtable             (&) The 3D VBAP gain table energy normalised;
  *                                FLAT: N_gtable x L
  * @param[out] N_gtable           (&) number of points in the gain table
  * @param[out] nTriangles         (&) number of loudspeaker triangles
@@ -100,18 +100,18 @@ void generateVBAPgainTable3D_srcs(/* Input arguments */
  * where 'gains3D' are the loudspeaker gains to pan the source to [AZI ELEV],
  * using the nearest grid point
  *
- * @note 'gtable' is returned as NULL if the triangulation failed. The VBAP
+ * @note 'gtable' is returned as NULL if the triangulation fails. The VBAP
  *       gains are also ENERGY normalised; i.e. sum(gains^2) = 1
  *
- * @param[in]  ls_dirs_deg        Loudspeaker directions in DEGREES; FLAT: L x 2
+ * @param[in]  ls_dirs_deg        Loudspeaker directions in degrees; FLAT: L x 2
  * @param[in]  L                  Number of loudspeakers
- * @param[in]  az_res_deg         Azimuthal resolution in DEGREES
- * @param[in]  el_res_deg         Elevation resolution in DEGREES
+ * @param[in]  az_res_deg         Azimuthal resolution in degrees
+ * @param[in]  el_res_deg         Elevation resolution in degrees
  * @param[in]  omitLargeTriangles '0' normal triangulation, '1' remove large
  *                                triangles
  * @param[in]  enableDummies      '0' disabled, '1' enabled. Dummies are placed
  *                                at +/-90 elevation if required
- * @param[in]  spread             Spreading factor in DEGREES, 0: VBAP, >0: MDAP
+ * @param[in]  spread             Spreading factor in degrees, 0: VBAP, >0: MDAP
  * @param[out] gtable             (&) The 3D VBAP gain table ENERGY normalised;
  *                                FLAT: N_gtable x L
  * @param[out] N_gtable           (&) number of points in the gain table
@@ -140,7 +140,7 @@ void generateVBAPgainTable3D(/* Input arguments */
 
 /**
  * Compresses a VBAP gain table to use less memory and CPU (by removing the
- * elements that are zero)
+ * elements which are just zero)
  *
  * Handy for large grid sizes for interpolation purposes. Therefore, the gains
  * are also re-normalised to have the AMPLITUDE-preserving property.
@@ -165,7 +165,7 @@ void generateVBAPgainTable3D(/* Input arguments */
  * @param[in]  vbap_gtable     The 3D VBAP gain table; FLAT: nTable x nDirs
  * @param[in]  nTable          number of points in the gain table
  * @param[in]  nDirs           number of loudspeakers
- * @param[out] vbap_gtableComp The compressed 3D VBAP gain table AMPLITUDE-
+ * @param[out] vbap_gtableComp The compressed 3D VBAP gain table amplitude-
  *                             normalised; FLAT: nTable x 3
  * @param[out] vbap_gtableIdx  The indices for the compressed 3D VBAP gain
  *                             table; FLAT: nTable x 3
@@ -179,14 +179,14 @@ void compressVBAPgainTable3D(/* Input arguments */
                              int* vbap_gtableIdx);
 
 /**
- * Renormalises a vbap gain table in-place, so it may be utilised for
+ * Renormalises a VBAP gain table (in-place) so it may be utilised for
  * interpolation of data (for example, powermaps or HRTFs)
  *
  * @note The VBAP gains are AMPLITUDE normalised; i.e. sum(gains) = 1.
  *
  * @param[in,out] vbap_gtable The 3D VBAP gain table; FLAT: nTable x nDirs
  * @param[in]     nTable      Number of points in the gain table
- * @param[in]     nDirs       Number of loudspeakers
+ * @param[in]     nDirs       Number of loudspeaker directions
  */
 void VBAPgainTable2InterpTable(float* vbap_gtable,
                                int nTable,
@@ -200,13 +200,13 @@ void VBAPgainTable2InterpTable(float* vbap_gtable,
  *       zeros, i.e. [src_az1, 0; src_az2, 0; src_az3, 0;]. The VBAP gains are
  *       also ENERGY normalised; i.e. sum(gains^2) = 1
  *
- * @param[in]  src_dirs_deg Source directions in DEGREES (elev assumed to be 0
+ * @param[in]  src_dirs_deg Source directions in degrees (elev assumed to be 0
  *                          for all); FLAT: S x 2
  * @param[in]  S            Number of Sources
- * @param[in]  ls_dirs_deg  Loudspeaker directions in DEGREES (elev assumed to
+ * @param[in]  ls_dirs_deg  Loudspeaker directions in degrees (elev assumed to
  *                          be 0 for all); FLAT: L x 2
  * @param[in]  L            Number of loudspeakers
- * @param[out] gtable       (&) The 2D VBAP gain table ENERGY normalised;
+ * @param[out] gtable       (&) The 2D VBAP gain table energy normalised;
  *                          FLAT: S x L
  * @param[out] N_gtable     (&) number of points in the gain table, N_gtable=S
  * @param[out] nPairs       (&) number of loudspeaker pairs
@@ -238,11 +238,11 @@ void generateVBAPgainTable2D_srcs(/* Input arguments */
  *
  * @note The VBAP gains are ENERGY normalised; i.e. sum(gains^2) = 1
  *
- * @param[in]  ls_dirs_deg Loudspeaker directions in DEGREES (elev assumed to
+ * @param[in]  ls_dirs_deg Loudspeaker directions in degrees (elev assumed to
  *                         be 0 for all); FLAT: L x 2
  * @param[in]  L           Number of loudspeakers
- * @param[in]  az_res_deg  Azimuthal resolution in DEGREES
- * @param[out] gtable      (&) The 2D VBAP gain table ENERGY normalised;
+ * @param[in]  az_res_deg  Azimuthal resolution in degrees
+ * @param[out] gtable      (&) The 2D VBAP gain table energy normalised;
  *                         FLAT: S x L
  * @param[out] N_gtable    (&) number of points in the gain table, N_gtable=S
  * @param[out] nPairs      (&) number of loudspeaker pairs
@@ -299,18 +299,28 @@ void getPvalues(/* Input arguments */
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
+/*
+ * Note that the main functions are largely based on the VBAP Matlab library
+ * (BSD-3-Clause License) found here:
+ * https://github.com/polarch/Vector-Base-Amplitude-Panning
+ */
 
 /**
  * Computes the 3D convex-hull of a spherical grid of loudspeaker directions
  *
- * @param[in]  ls_dirs_deg        Loudspeaker directions in DEGREES; FLAT: L x 2
+ * @note Compared with sphDelaunay(), this function also omits triangles where
+ *       the normals and the centroid to the triangles have an angle larger than
+ *       pi/2. Trianges which have an aperture larger than #APERTURE_LIMIT_DEG
+ *       are also ommited.
+ *
+ * @param[in]  ls_dirs_deg        Loudspeaker directions in degrees; FLAT: L x 2
  * @param[in]  L                  Number of loudspeakers
  * @param[in]  omitLargeTriangles '0' normal triangulation, '1' remove large
  *                                triangles
  * @param[out] out_vertices       (&) loudspeaker directions in cartesian
  *                                coordinates; FLAT: L x 3
  * @param[out] numOutVertices     (&) number of loudspeakers
- * @param[out] out_faces          (&) true loudspeaker triangle indices;
+ * @param[out] out_faces          (&) loudspeaker triangle indices;
  *                                FLAT: numOutFaces x 3
  * @param[out] numOutFaces        (&) number of true loudspeaker triangles
  */
@@ -325,7 +335,7 @@ void findLsTriplets(/* Input Arguments */
                     int* numOutFaces);
 
 /**
- * Inverts a loudspeaker matrix
+ * Inverts a 3x3 loudspeaker matrix
  *
  * @param[in]  U_spkr       Loudspeaker directions as cartesian coordinates
  *                          (unit length); FLAT: L x 3
@@ -342,11 +352,11 @@ void invertLsMtx3D(/* Input Arguments */
                    float** layoutInvMtx);
 
 /**
- * Computes a set of points that surround the source direction with a specific
+ * Computes a set of points which surround the source direction given a specific
  * degree of spread
  *
- * @param[in]  src_azi_rad  Source azimuth, in RADIANS
- * @param[in]  src_elev_rad Source elevation, in RADIANS
+ * @param[in]  src_azi_rad  Source azimuth, in radians
+ * @param[in]  src_elev_rad Source elevation, in radians
  * @param[in]  spread       Spread in DEGREES
  * @param[in]  num_src      Number of auxiliary sources to use for spreading
  * @param[in]  num_rings_3d Number of concentric rings of num_src each to
@@ -364,17 +374,18 @@ void getSpreadSrcDirs3D(/* Input Arguments */
                         float* U_spread);
 
 /**
- * Calculates 3D VBAP gains for pre-calculated loudspeaker triangles and
- * predefined source directions
+ * Calculates 3D VBAP gains given pre-computed loudspeaker triangles for each
+ * source direction
  *
- * @param[in]  src_dirs     Source directions in DEGREES; FLAT: src_num x 2
+ * @param[in]  src_dirs     Source directions in degrees; FLAT: src_num x 2
  * @param[in]  src_num      Number of sources
  * @param[in]  ls_num       Number of loudspeakers
- * @param[in]  ls_groups    True loudspeaker triangle indices; FLAT: nFaces x 3
+ * @param[in]  ls_groups    Loudspeaker triangle indices, see findLsTriplets();
+ *                          FLAT: nFaces x 3
  * @param[in]  nFaces       Number of true loudspeaker triangles
  * @param[in]  spread       Spreading in degrees, 0: VBAP, >0: MDAP
- * @param[in]  layoutInvMtx Inverted 3x3 loudspeaker matrix flattened;
- *                          FLAT: nFaces x 9
+ * @param[in]  layoutInvMtx Inverted 3x3 loudspeaker matrix flattened, see
+ *                          invertLsMtx3D(); FLAT: nFaces x 9
  * @param[out] GainMtx      (&) Loudspeaker VBAP gain table;
  *                          FLAT: src_num x ls_num
  */
@@ -392,7 +403,7 @@ void vbap3D(/* Input Arguments */
 /**
  * Calculates loudspeaker pairs for a circular grid of loudspeaker directions
  *
- * @param[in]  ls_dirs_deg Loudspeaker directions in DEGREES; FLAT: L x 1
+ * @param[in]  ls_dirs_deg Loudspeaker directions in degrees; FLAT: L x 1
  * @param[in]  L           Number of loudspeakers
  * @param[out] out_pairs   (&) loudspeaker pair indices; FLAT: numOutPairs x 2
  * @param[out] numOutPairs (&) number of loudspeaker pairs
@@ -405,7 +416,7 @@ void findLsPairs(/* Input Arguments */
                  int* numOutPairs);
 
 /**
- * Inverts the loudspeaker matrix
+ * Inverts a 2x2 loudspeaker matrix
  *
  * @param[in]  U_spkr       Loudspeaker directions in cartesian (xy)
  *                          coordinates; FLAT: L x 2
@@ -425,7 +436,7 @@ void invertLsMtx2D(/* Input Arguments */
  * Calculates 2D VBAP gains for pre-calculated loudspeaker pairs and predefined
  * source positions
  *
- * @param[in]  src_dirs     Source directions in DEGREES; FLAT: src_num x 1
+ * @param[in]  src_dirs     Source directions in degrees; FLAT: src_num x 1
  * @param[in]  src_num      Number of sources
  * @param[in]  ls_num       Number of loudspeakers
  * @param[in]  ls_pairs     Loudspeaker pair indices; FLAT: N_pairs x 2

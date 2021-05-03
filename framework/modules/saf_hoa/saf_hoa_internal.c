@@ -21,7 +21,7 @@
  *        (#SAF_HOA_MODULE)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
- * the Matlab library by Archontis Politis [1].
+ * the Matlab library by Archontis Politis [1] (BSD-3-Clause License).
  *
  * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
  *
@@ -350,13 +350,13 @@ void getBinDecoder_SPR
     W = calloc1d(N_dirs*N_dirs, sizeof(float));
     if(weights!=NULL)
         for(i=0; i<N_dirs; i++)
-            W[i*N_dirs+i] = weights[i];
+            W[i*N_dirs+i] = weights[i]/(4.0f*SAF_PI);
     else
         for(i=0; i<N_dirs; i++)
             W[i*N_dirs+i] = 1.0f/(float)N_dirs;
     
     /* find SH-order for interpolation of the HRTF set */
-    Nh_max = (int)(sqrtf((float)N_dirs)-1.0f);
+    Nh_max = MIN((int)(sqrtf((float)N_dirs)-1.0f), 20); /* Cap to something more sensible if needed... */
     hrtf_dirs_rad = malloc1d(N_dirs*2*sizeof(float));
     cnd_num = malloc1d((Nh_max+1)*sizeof(float));
     for(i=0; i<N_dirs; i++){ /* [azi, elev] degrees, to: [azi, inclination] radians */
@@ -494,9 +494,9 @@ void getBinDecoder_TA
         /* Remove itd from high frequency HRTFs */
         if(band>=band_cutoff){
             for(j=0; j<N_dirs; j++){
-                hrtfs_mod[0*N_dirs+j] = ccmulf(hrtfs[band*2*N_dirs + 0*N_dirs + j],
+                hrtfs_mod[0*N_dirs+j] = ccmulf(hrtfs[band_cutoff*2*N_dirs + 0*N_dirs + j],
                                                cexpf( crmulf(cmplxf(0.0f, 0.0f), (itd_s[j]/2.0f))));
-                hrtfs_mod[1*N_dirs+j] = ccmulf(hrtfs[band*2*N_dirs + 1*N_dirs + j],
+                hrtfs_mod[1*N_dirs+j] = ccmulf(hrtfs[band_cutoff*2*N_dirs + 1*N_dirs + j],
                                                cexpf( crmulf(cmplxf(0.0f, 0.0f), (-itd_s[j]/2.0f))));
             }
         }
@@ -613,6 +613,7 @@ void getBinDecoder_MAGLS
     
     free(W);
     free(Y_na);
+    free(Yna_W);
     free(Yna_W_Yna);
     free(Yna_W_H);
     free(B_magls);

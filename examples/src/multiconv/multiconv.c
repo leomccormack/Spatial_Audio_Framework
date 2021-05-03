@@ -32,6 +32,8 @@ void multiconv_create
     multiconv_data* pData = (multiconv_data*)malloc1d(sizeof(multiconv_data));
     *phMCnv = (void*)pData;
 
+    printf(SAF_VERSION_LICENSE_STRING);
+
     /* Default user parameters */
     pData->nChannels = 1;
     pData->enablePartitionedConv = 0;
@@ -82,6 +84,7 @@ void multiconv_init
     pData->host_fs = sampleRate;
     if(pData->hostBlockSize != hostBlockSize){
         pData->hostBlockSize = hostBlockSize;
+        pData->hostBlockSize_clamped = CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
         pData->reInitFilters = 1;
     }
     

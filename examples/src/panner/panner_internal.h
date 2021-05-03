@@ -49,6 +49,7 @@
 #include <string.h>
 #include "panner.h"
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -72,7 +73,9 @@ extern "C" {
 #ifndef RAD2DEG
 # define RAD2DEG(x) (x * 180.0f / SAF_PI)
 #endif
-    
+#if (FRAME_SIZE % HOP_SIZE != 0)
+# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#endif
     
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -85,12 +88,10 @@ extern "C" {
 typedef struct _panner
 {
     /* audio buffers */
-    float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
-    float_complex inputframeTF[HYBRID_BANDS][MAX_NUM_INPUTS][TIME_SLOTS];
-    float_complex outputframeTF[HYBRID_BANDS][MAX_NUM_OUTPUTS][TIME_SLOTS];
-    complexVector* STFTInputFrameTF;
-    complexVector* STFTOutputFrameTF;
-    float** tempHopFrameTD;
+    float** inputFrameTD; 
+    float** outputFrameTD;
+    float_complex*** inputframeTF;
+    float_complex*** outputframeTF;
     int fs;
     
     /* time-frequency transform */
@@ -139,7 +140,7 @@ typedef struct _panner
 /* ========================================================================== */
 
 /**
- * Sets codec status (see #_CODEC_STATUS enum)
+ * Sets codec status (see #CODEC_STATUS enum)
  */
 void panner_setCodecStatus(void* const hPan, CODEC_STATUS newStatus);
     
@@ -158,17 +159,30 @@ void panner_initGainTables(void* const hPan);
 void panner_initTFT(void* const hPan);
     
 /**
- * Loads source/loudspeaker directions from preset
+ * Loads source directions from preset
  *
- * @param[in]  preset   See #_SOURCE_CONFIG_PRESETS enum
+ * @param[in]  preset   See #SOURCE_CONFIG_PRESETS enum
  * @param[out] dirs_deg Source/loudspeaker directions
  * @param[out] newNCH   (&) new number of channels
  * @param[out] nDims    (&) estimate of the number of dimensions (2 or 3)
  */
-void panner_loadPreset(SOURCE_CONFIG_PRESETS preset,
-                       float dirs_deg[MAX_NUM_INPUTS][2],
-                       int* newNCH,
-                       int* nDims);
+void panner_loadSourcePreset(SOURCE_CONFIG_PRESETS preset,
+                             float dirs_deg[MAX_NUM_INPUTS][2],
+                             int* newNCH,
+                             int* nDims);
+
+/**
+ * Loads source/loudspeaker directions from preset
+ *
+ * @param[in]  preset   See #LOUDSPEAKER_ARRAY_PRESETS enum
+ * @param[out] dirs_deg Source/loudspeaker directions
+ * @param[out] newNCH   (&) new number of channels
+ * @param[out] nDims    (&) estimate of the number of dimensions (2 or 3)
+ */
+void panner_loadLoudspeakerPreset(LOUDSPEAKER_ARRAY_PRESETS preset,
+                                  float dirs_deg[MAX_NUM_INPUTS][2],
+                                  int* newNCH,
+                                  int* nDims);
 
 
 #ifdef __cplusplus

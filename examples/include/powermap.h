@@ -138,12 +138,12 @@ void powermap_analysis(void* const hPm,
 void powermap_refreshSettings(void* const hPm);
 
 /**
- * Sets the powermap/activity-map approach, (see #_POWERMAP_MODES enum)
+ * Sets the powermap/activity-map approach, (see #POWERMAP_MODES enum)
  */
 void powermap_setPowermapMode(void* const hPm, int newMode);
 
 /**
- * Sets the maximum input/analysis order (see #_SH_ORDERS enum)
+ * Sets the maximum input/analysis order (see #SH_ORDERS enum)
  */
 void powermap_setMasterOrder(void* const hPm,  int newValue);
 
@@ -175,19 +175,19 @@ void powermap_setCovAvgCoeff(void* const hPm, float newAvg);
 
 /**
  * Sets the Ambisonic channel ordering convention to decode with, in order to
- * match the convention employed by the input signals (see #_CH_ORDER enum)
+ * match the convention employed by the input signals (see #CH_ORDER enum)
  */
 void powermap_setChOrder(void* const hPm, int newOrder);
 
 /**
  * Sets the Ambisonic normalisation convention to decode with, in order to match
- * with the convention employed by the input signals (see #_NORM_TYPES enum)
+ * with the convention employed by the input signals (see #NORM_TYPES enum)
  */
 void powermap_setNormType(void* const hPm, int newType);
 
 /**
  * Sets an input preset; the microphone/hyrophone array used to capture
- * the input signals, (see #_MIC_PRESETS enum)
+ * the input signals, (see #MIC_PRESETS enum)
  */
 void powermap_setSourcePreset(void* const hPm, int newPresetID);
 
@@ -198,13 +198,13 @@ void powermap_setNumSources(void* const hPm, int newValue);
 
 /**
  * Sets the visualisation display window horizontal field-of-view (FOV)
- * (see #_HFOV_OPTIONS enum)
+ * (see #HFOV_OPTIONS enum)
  */
 void powermap_setDispFOV(void* const hPm, int newOption);
 
 /**
  * Sets the visualisation display window aspect-ratio (see
- * #_ASPECT_RATIO_OPTIONS enum)
+ * #ASPECT_RATIO_OPTIONS enum)
  */
 void powermap_setAspectRatio(void* const hPm, int newOption);
 
@@ -231,7 +231,7 @@ void powermap_requestPmapUpdate(void* const hPm);
 int powermap_getFrameSize(void);
 
 /**
- * Returns current codec status (see #_CODEC_STATUS enum)
+ * Returns current codec status (see #CODEC_STATUS enum)
  */
 CODEC_STATUS powermap_getCodecStatus(void* const hPm);
 
@@ -250,13 +250,13 @@ float powermap_getProgressBar0_1(void* const hPm);
 void powermap_getProgressBarText(void* const hPm, char* text);
 
 /**
- * Returns the current maximum analysis/input order (see #_SH_ORDERS enum)
+ * Returns the current maximum analysis/input order (see #SH_ORDERS enum)
  */
 int powermap_getMasterOrder(void* const hPm);
 
 /**
  * Returns the powermap/activity-map mode to employed for the analysis
- * see #_POWERMAP_MODES enum.
+ * see #POWERMAP_MODES enum.
  */
 int powermap_getPowermapMode(void* const hPm);
 
@@ -331,14 +331,14 @@ void powermap_getAnaOrderHandle(void* const hPm,
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see #_CH_ORDER enum)
+ * (see #CH_ORDER enum)
  */
 int powermap_getChOrder(void* const hPm);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals (see
- * #_NORM_TYPES enum)
+ * #NORM_TYPES enum)
  */
 int powermap_getNormType(void* const hPm);
 
@@ -349,13 +349,13 @@ int powermap_getNumSources(void* const hPm);
 
 /**
  * Returns the current visualisation display window horizontal field-of-view
- * (FOV) (see #_HFOV_OPTIONS enum)
+ * (FOV) (see #HFOV_OPTIONS enum)
  */
 int powermap_getDispFOV(void* const hPm);
 
 /**
  * Returns the current visualisation display window aspect-ratio (see
- * #_ASPECT_RATIO_OPTIONS enum)
+ * #ASPECT_RATIO_OPTIONS enum)
  */
 int powermap_getAspectRatio(void* const hPm);
 

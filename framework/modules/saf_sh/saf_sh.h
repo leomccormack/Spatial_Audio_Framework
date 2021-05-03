@@ -22,7 +22,8 @@
  *        Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
- * derived from Matlab libraries by Archontis Politis [1-3].
+ * derived from Matlab libraries by Archontis Politis [1-3] (BSD-3-Clause
+ * License).
  *
  * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
  * @see [2] https://github.com/polarch/Array-Response-Simulator
@@ -57,7 +58,7 @@ extern "C" {
 /**
  * Microphone/Hydrophone array construction types
  */
-typedef enum _ARRAY_CONSTRUCTION_TYPES {
+typedef enum {
     ARRAY_CONSTRUCTION_OPEN,             /**< Open array, omni-directional
                                           *   sensors */
     ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, /**< Open array, directional sensors */
@@ -74,7 +75,7 @@ typedef enum _ARRAY_CONSTRUCTION_TYPES {
  *          and diffuseness estimation in a directionally-constrained region.
  *          arXiv preprint arXiv:1609.03409
  */
-typedef enum _SECTOR_PATTERNS{
+typedef enum {
     SECTOR_PATTERN_PWD,     /**< Plane-wave decomposition/Hyper-cardioid */
     SECTOR_PATTERN_MAXRE,   /**< Spatially tapered hyper-cardioid, such that it
                              *   has maximum energy concentrated in the look-
@@ -87,62 +88,6 @@ typedef enum _SECTOR_PATTERNS{
 /* ========================================================================== */
 /*                               Misc. Functions                              */
 /* ========================================================================== */
-
-/**
- * Constructs a 3x3 rotation matrix from the Euler angles, using the
- * yaw-pitch-roll (zyx) convention
- *
- * @param[in]  yaw              Yaw angle in radians
- * @param[in]  pitch            Pitch angle in radians
- * @param[in]  roll             Roll angle in radians
- * @param[in]  rollPitchYawFLAG '1' to use Rxyz, i.e. apply roll, pitch and then
- *                              yaw, '0' Rzyx / y-p-r
- * @param[out] R                zyx rotation matrix; 3 x 3
- */
-void yawPitchRoll2Rzyx (/* Input Arguments */
-                        float yaw,
-                        float pitch,
-                        float roll,
-                        int rollPitchYawFLAG,
-                        /* Output Arguments */
-                        float R[3][3]);
-
-/**
- * Converts spherical coordinates to Cartesian coordinates of unit length
- *
- * @param[in]  azi_rad  Azimuth in radians
- * @param[in]  elev_rad Elevation in radians
- * @param[out] xyz      Unit cartesian coords, xyz; 3 x 1
- */
-void unitSph2Cart(/* Input Arguments */
-                  float azi_rad,
-                  float elev_rad,
-                  /* Output Arguments */
-                  float xyz[3]);
-
-/**
- * Converts Cartesian coordinates of unit length to spherical coordinates
- *
- * @param[in]  xyz         Unit cartesian coords, xyz
- * @param[out] AziElev_rad Azimuth and elevation in radians
- */
-void unitCart2Sph(/* Input Arguments */
-                  float xyz[3],
-                  /* Output Arguments */
-                  float AziElev_rad[2]);
-
-/**
- * Converts Cartesian coordinates of unit length to spherical coordinates
- *
- * @param[in]  xyz      Unit cartesian coords, xyz
- * @param[out] azi_rad  (&) azimuth in radians
- * @param[out] elev_rad (&) elevation in radians
- */
-void unitCart2Sph_aziElev(/* Input Arguments */
-                          float xyz[3],
-                          /* Output Arguments */
-                          float* azi_rad,
-                          float* elev_rad);
 
 /**
  * Calculates unnormalised Legendre polynomials up to order N, for all values in
@@ -303,8 +248,6 @@ void getSHcomplex(/* Input Arguments */
  * r_N = T_c2r * y_N, where r_N and y_N is are the real and complex SH vectors,
  * respectively.
  *
- * @warning The T_r2c matrix is returned transposed! TODO: fix
- *
  * @test test__complex2realSHMtx()
  *
  * @param[in]  order Order of spherical harmonic expansion
@@ -323,8 +266,6 @@ void complex2realSHMtx(/* Input Arguments */
  * spherical harmonics with respect to the real harmonics, so that
  * y_N = T_r2c * r_N, where r_N and y_N are the real and complex SH vectors,
  * respectively.
- *
- * @warning The T_r2c matrix is returned transposed! TODO: fix
  *
  * @test test__real2complexSHMtx()
  *
@@ -422,7 +363,7 @@ void computeVelCoeffsMtx(/* Input Arguments */
  * @param[in]  orderSec     Order of sector patterns
  * @param[in]  A_xyz        Velocity coefficients, see computeVelCoeffsMtx();
  *                          FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3
- * @param[in]  pattern      See #_SECTOR_PATTERNS enum for the options
+ * @param[in]  pattern      See #SECTOR_PATTERNS enum for the options
  * @param[in]  sec_dirs_deg Sector directions [azi elev], in DEGREES;
  *                          FLAT: nSecDirs x 2
  * @param[in]  nSecDirs     Number of sectors
@@ -469,7 +410,7 @@ float computeSectorCoeffsEP(/* Input Arguments */
  * @param[in]  orderSec     Order of sector patterns
  * @param[in]  A_xyz        Velocity coefficients, see computeVelCoeffsMtx();
  *                          FLAT: (sectorOrder+2)^2 x (sectorOrder+1)^2 x 3
- * @param[in]  pattern      See #_SECTOR_PATTERNS enum for the options
+ * @param[in]  pattern      See #SECTOR_PATTERNS enum for the options
  * @param[in]  sec_dirs_deg Sector directions [azi elev], in DEGREES;
  *                          FLAT: nSecDirs x 2
  * @param[in]  nSecDirs     Number of sectors
@@ -710,8 +651,159 @@ void checkCondNumberSHTReal(/* Input arguments */
 
 
 /* ========================================================================== */
-/*                     Localisation Functions in the  SHD                     */
+/*                     Localisation Functions in the SHD                     */
 /* ========================================================================== */
+
+/**
+ * Creates an instance of the spherical harmonic domain PWD implementation,
+ * which may be used for computing power-maps for visualisation/DoA estimation
+ * purposes
+ *
+ * @param[in] phPWD         (&) address of the sphPWD handle
+ * @param[in] order         Spherical harmonic input order
+ * @param[in] grid_dirs_deg Scanning grid directions; FLAT: nDirs x 2
+ * @param[in] nDirs         Number of scanning directions
+ */
+void sphPWD_create(void ** const phPWD,
+                   int order,
+                   float* grid_dirs_deg,
+                   int nDirs);
+
+/**
+ * Destroys an instance of the spherical harmonic domain PWD implementation
+ *
+ * @param[in] phPWD (&) address of the sphPWD handle
+ */
+void sphPWD_destroy(void ** const phPWD);
+
+/**
+ * Computes a power-map based on determining the energy of hyper-cardioid
+ * beamformers; optionally, also returning the grid indices corresponding to the
+ * N highest peaks (N=nSrcs)
+ *
+ * @param[in] hPWD      sphPWD handle
+ * @param[in] Cx        Signal covariance matrix; FLAT: nSH x nSH
+ * @param[in] nSrcs     Number of sources (or an estimate of the number of
+ *                      sources), for the optional peak finding (peak_inds)
+ * @param[in] P_map     Power-map (set to NULL if not wanted); nDirs x 1
+ * @param[in] peak_inds Indices corresponding to the "nSrcs" highest peaks in
+ *                      the power-map (set to NULL if not wanted);
+ *                      nSrcs x 1
+ */
+void sphPWD_compute(/* Input arguments */
+                    void* const hPWD,
+                    float_complex *Cx,
+                    int nSrcs,
+                    /* Output arguments */
+                    float* P_map,
+                    int* peak_inds);
+
+/**
+ * Creates an instance of the spherical harmonic domain MUSIC implementation,
+ * which may be used for computing pseudo-spectrums for visualisation/DoA
+ * estimation purposes
+ *
+ * @note Subspace approaches such as MUSIC can offer higher spatial resolution
+ *       than beamforming approaches, such as the steered-response power (PWD),
+ *       as long as the source signals are not correlated between them and are
+ *       presented in a reverberant/diffuse sound.
+ * @test test__sphMUSIC()
+ *
+ * @param[in] phMUSIC       (&) address of the sphMUSIC handle
+ * @param[in] order         Spherical harmonic input order
+ * @param[in] grid_dirs_deg Scanning grid directions; FLAT: nDirs x 2
+ * @param[in] nDirs         Number of scanning directions
+ */
+void sphMUSIC_create(void ** const phMUSIC,
+                     int order,
+                     float* grid_dirs_deg,
+                     int nDirs);
+
+/**
+ * Destroys an instance of the spherical harmonic domain MUSIC implementation,
+ * which may be used for computing pseudo-spectrums for visualisation/DoA
+ * estimation purposes
+ *
+ * @param[in] phMUSIC    (&) address of the sphMUSIC handle
+ */
+void sphMUSIC_destroy(void ** const phMUSIC);
+
+/**
+ * Computes a pseudo-spectrum based on the MUSIC algorithm in the spherical
+ * harmonic domain; optionally returning the grid indices corresponding to the
+ * N highest peaks (N=nSrcs)
+ *
+ * @warning The number of sources should not exceed: floor(nSH/2)!
+ *
+ * @param[in] hMUSIC    sphMUSIC handle
+ * @param[in] Vn        Noise subspace; FLAT: nSH x (nSH - nSrcs)
+ * @param[in] nSrcs     Number of sources (or an estimate of the number of
+ *                      sources)
+ * @param[in] P_music   Pseudo-spectrum (set to NULL if not wanted); nDirs x 1
+ * @param[in] peak_inds Indices corresponding to the "nSrcs" highest peaks in
+ *                      the pseudo-spectrum (set to NULL if not wanted);
+ *                      nSrcs x 1
+ */
+void sphMUSIC_compute(/* Input arguments */
+                      void* const hMUSIC,
+                      float_complex *Vn, 
+                      int nSrcs,
+                      /* Output arguments */
+                      float* P_music,
+                      int* peak_inds);
+
+/**
+ * Creates an instance of the spherical harmonic domain ESPRIT-based direction
+ * of arrival estimator
+ *
+ * The ESPRIT method (in this case, using spherical harmonic input signals)
+ * returns the analysed DoAs directly; i.e. without any grid searching/
+ * scanning (like e.g. MUSIC requires...). The DoA estimates are therefore
+ * continuous, i.e. not bound to any grid.
+ *
+ * This particular implementation is is based on the "3-recurrence relationship"
+ * design, detailed in [1].
+ *
+ * @test test__sphESPRIT()
+ *
+ * @param[in] phESPRIT  (&) address of the ESPRIT DoA estimator handle
+ * @param[in] order     Spherical harmonic input order
+ *
+ * @see [1] B. Jo and J.-W. Choi, "Parametric direction-of-arrival estimation
+ *          with three recurrence relations of spherical harmonics," J. Acoust.
+ *          Soc. Amer.,vol. 145, no. 1, pp. 480--488, Jan. 2019.
+ */
+void sphESPRIT_create(void ** const phESPRIT,
+                      int order);
+
+/**
+ * Destroys an instance of the spherical harmonic domain ESPRIT-based direction
+ * of arrival estimator
+ *
+ * @param[in] phESPRIT  (&) address of the ESPRIT DoA estimator handle
+ */
+void sphESPRIT_destroy(void ** const phESPRIT);
+
+/**
+ * Estimates the direction-of-arrival (DoA) based on the ESPRIT-based estimator,
+ * in the spherical harmonic domain
+ *
+ * @note The "signal subspace" refers to the first K eigenvectors of the spatial
+ *       correlation matrix, after sorting them such that the eigenvalue are in
+ *       descending order.
+ * @warning The number of sources (K) cannot exceed: order^2!
+ *
+ * @param[in]  hESPRIT      The ESPRIT DoA estimator handle
+ * @param[in]  Us           Signal subspace; FLAT: (order+1)^2 x K
+ * @param[in]  K            Number of sources
+ * @param[out] src_dirs_rad Source directions, in radians; K x 2
+ */
+void sphESPRIT_estimateDirs(/* Input arguments */
+                            void * const hESPRIT,
+                            float_complex* Us,
+                            int K,
+                            /* Output arguments */
+                            float* src_dirs_rad);
 
 /**
  * Generates a powermap based on the energy of plane-wave decomposition (PWD)
@@ -856,7 +948,7 @@ void generateMinNormMap(/* Input arguments */
  * @param[in]  order     Max order (highest is ~30 given numerical precision)
  * @param[in]  kr        wavenumber*radius; nBands x 1
  * @param[in]  nBands    Number of frequency bands/bins
- * @param[in]  arrayType See #_ARRAY_CONSTRUCTION_TYPES enum
+ * @param[in]  arrayType See #ARRAY_CONSTRUCTION_TYPES enum
  * @param[out] b_N       Modal coefficients per kr and 0:order;
  *                       FLAT: nBands x (order+1)
  */
@@ -897,7 +989,7 @@ float sphArrayAliasLim(/* Input arguments */
  * @param[in]  Nsensors  Number of sensors
  * @param[in]  r         Mic radius, meters
  * @param[in]  c         Speed of sound, m/s
- * @param[in]  arrayType See #_ARRAY_CONSTRUCTION_TYPES enum
+ * @param[in]  arrayType See #ARRAY_CONSTRUCTION_TYPES enum
  * @param[in]  dirCoeff  Only for directional (open) arrays, 1: omni, 0.5: card,
  *                       0:dipole
  * @param[in]  maxG_db   Max allowed amplification for the noise level,
@@ -926,7 +1018,7 @@ void sphArrayNoiseThreshold(/* Input arguments */
  * @param[in]  order     Max order (highest is ~30 given numerical precision)
  * @param[in]  kr        wavenumber*radius; nBands x 1
  * @param[in]  nBands    Number of frequency bands/bins
- * @param[in]  arrayType See #_ARRAY_CONSTRUCTION_TYPES enum
+ * @param[in]  arrayType See #ARRAY_CONSTRUCTION_TYPES enum
  * @param[in]  dirCoeff  Only for directional (open) arrays, 1: omni, 0.5: card,
  *                       0:dipole
  * @param[out] b_N       Modal coefficients per kr and 0:order;
@@ -995,12 +1087,10 @@ void sphScattererDirModalCoeffs(/* Input arguments */
  * @param[in]  sensor_dirs_rad Spherical coords of the sensors in RADIANS,
  *                             [azi ELEV]; FLAT: N_sensors x 2
  * @param[in]  N_sensors       Number of sensors
- * @param[in]  arrayType       See #_ARRAY_CONSTRUCTION_TYPES enum
+ * @param[in]  arrayType       See #ARRAY_CONSTRUCTION_TYPES enum
  * @param[in]  dirCoeff        Only for directional (open) arrays, 1: omni,
  *                             0.5: card, 0:dipole
  * @param[in]  kr              wavenumber*sensor_radius; nBands x 1
- * @param[in]  kR              wavenumber*scatterer_radius, set to NULL if not
- *                             applicable; nBands x 1
  * @param[in]  nBands          Number of frequency bands/bins
  * @param[out] M_diffcoh       Theoretical diffuse coherence matrix per
  *                             frequency; FLAT: N_sensors x N_sensors x nBands
@@ -1012,7 +1102,6 @@ void sphDiffCohMtxTheory(/* Input arguments */
                          ARRAY_CONSTRUCTION_TYPES arrayType,
                          double dirCoeff,
                          double* kr,
-                         double* kR,
                          int nBands,
                          /* Output arguments */
                          double* M_diffcoh);
@@ -1031,7 +1120,7 @@ void sphDiffCohMtxTheory(/* Input arguments */
  * @param[in]  src_dirs_deg    Spherical coords of the plane waves in DEGREES,
  *                             [azi ELEV]; FLAT: N_srcs x 2
  * @param[in]  N_srcs          Number sources (DoAs of plane waves)
- * @param[in]  arrayType       See #_ARRAY_CONSTRUCTION_TYPES enum
+ * @param[in]  arrayType       See #ARRAY_CONSTRUCTION_TYPES enum
  * @param[out] H_array         Simulated array response for each plane wave;
  *                             FLAT: nBands x N_sensors x N_srcs
  */
@@ -1063,7 +1152,7 @@ void simulateCylArray(/* Input arguments */
  * @param[in]  src_dirs_deg    Spherical coords of the plane waves in DEGREES,
  *                             [azi ELEV]; FLAT: N_srcs x 2
  * @param[in]  N_srcs          Number sources (DoAs of plane waves)
- * @param[in]  arrayType       See #_ARRAY_CONSTRUCTION_TYPES enum
+ * @param[in]  arrayType       See #ARRAY_CONSTRUCTION_TYPES enum
  * @param[in]  dirCoeff        Only for directional (open) arrays, 1: omni,
  *                             0.5: card, 0:dipole
  * @param[out]  H_array        Simulated array response for each plane wave;

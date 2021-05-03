@@ -38,6 +38,7 @@
 #include <string.h>
 #include "binauraliser.h"
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -59,7 +60,9 @@ extern "C" {
 #ifndef RAD2DEG
 # define RAD2DEG(x) (x * 180.0f / M_PI)
 #endif
-
+#if (FRAME_SIZE % HOP_SIZE != 0)
+# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#endif
 
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -72,13 +75,10 @@ extern "C" {
 typedef struct _binauraliser
 {
     /* audio buffers */
-    float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
-    float outframeTD[NUM_EARS][FRAME_SIZE];
-    float_complex inputframeTF[HYBRID_BANDS][MAX_NUM_INPUTS][TIME_SLOTS];
-    float_complex outputframeTF[HYBRID_BANDS][NUM_EARS][TIME_SLOTS];
-    complexVector* STFTInputFrameTF;
-    complexVector* STFTOutputFrameTF;
-    float** tempHopFrameTD;
+    float** inputFrameTD;
+    float** outframeTD;
+    float_complex*** inputframeTF;
+    float_complex*** outputframeTF;
     int fs;
     float freqVector[HYBRID_BANDS]; 
     void* hSTFT;
@@ -90,6 +90,7 @@ typedef struct _binauraliser
     int N_hrir_dirs;
     int hrir_len;
     int hrir_fs;
+    float* weights;
     
     /* vbap gain table */
     int hrtf_vbapTableRes[2];
@@ -98,7 +99,6 @@ typedef struct _binauraliser
     float* hrtf_vbap_gtableComp;     /**< N_hrtf_vbap_gtable x 3 */
     
     /* hrir filterbank coefficients */
-    int useDefaultHRIRsFLAG; 
     float* itds_s;                   /**< interaural-time differences for each HRIR (in seconds); nBands x 1 */
     float_complex* hrtf_fb;          /**< hrtf filterbank coefficients; nBands x nCH x N_hrirs */
     float* hrtf_fb_mag;              /**< magnitudes of the hrtf filterbank coefficients; nBands x nCH x N_hrirs */
@@ -126,6 +126,8 @@ typedef struct _binauraliser
     int new_nSources;
     float src_dirs_deg[MAX_NUM_INPUTS][2];
     INTERP_MODES interpMode;
+    int useDefaultHRIRsFLAG;                 /**< 1: use default HRIRs in database, 0: use those from SOFA file */
+    int enableHRIRsPreProc;                  /**< flag to apply pre-processing to the currently loaded HRTFs */
     int enableRotation;
     float yaw, roll, pitch;                  /**< rotation angles in degrees */
     int bFlipYaw, bFlipPitch, bFlipRoll;     /**< flag to flip the sign of the individual rotation angles */
@@ -139,7 +141,7 @@ typedef struct _binauraliser
 /* ========================================================================== */
 
 /**
- * Sets codec status (see #_CODEC_STATUS enum)
+ * Sets codec status (see #CODEC_STATUS enum)
  */
 void binauraliser_setCodecStatus(void* const hBin,
                                  CODEC_STATUS newStatus);
@@ -184,7 +186,7 @@ void binauraliser_initTFT(void* const hBin);
  * this. This can help avoid scenarios of many sources being panned in the same
  * direction, or triangulations errors.
  *
- * @param[in]  preset   See #_SOURCE_CONFIG_PRESETS enum.
+ * @param[in]  preset   See #SOURCE_CONFIG_PRESETS enum.
  * @param[out] dirs_deg Source directions, [azimuth elevation] convention, in
  *                      DEGREES;
  * @param[out] newNCH   (&) new number of channels

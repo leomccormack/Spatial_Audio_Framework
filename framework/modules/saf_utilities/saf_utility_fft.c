@@ -33,7 +33,7 @@
  */
 
 #include "saf_utilities.h"
-#include "saf_utility_fft.h"
+#include "saf_externals.h"
 
 /**
  * Data structure for short-time Fourier transform
@@ -56,7 +56,15 @@ typedef struct _saf_stft_data {
 typedef struct _saf_rfft_data {
     int N;
     float  Scale;
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_INTEL_IPP)
+    int useIPPfft_FLAG;
+    int specSize, specBufferSize, bufferSize, log2n;
+    IppsDFTSpec_R_32f* hDFTspec;
+    IppsFFTSpec_R_32f* hFFTspec;
+    Ipp8u* memSpec;
+    Ipp8u* buffer;
+    Ipp8u* memInit;
+#elif defined(__ACCELERATE__)
     int log2n;
     FFTSetup FFT;
     DSPSplitComplex VDSP_split;
@@ -76,7 +84,15 @@ typedef struct _saf_rfft_data {
 typedef struct _saf_fft_data {
     int N;
     float  Scale;
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_INTEL_IPP)
+    int useIPPfft_FLAG;
+    int specSize, specBufferSize, bufferSize, log2n;
+    IppsDFTSpec_C_32fc* hDFTspec;
+    IppsFFTSpec_C_32fc* hFFTspec;
+    Ipp8u* memSpec;
+    Ipp8u* buffer;
+    Ipp8u* memInit;
+#elif defined(__ACCELERATE__)
     int log2n;
     FFTSetup FFT;
     DSPSplitComplex VDSP_split;
@@ -89,24 +105,6 @@ typedef struct _saf_fft_data {
     kiss_fft_cfg kissFFThandle_bkw;
     
 }saf_fft_data;
-
-/**
- * A simple function which returns the next power of 2, taken from:
- * https://github.com/amaggi/legacy-code
- */
-static int nextpow2(int numsamp)
-{
-    int npts_max;
-    
-    if (numsamp > INT_MAX)
-        return 0;
-    npts_max = 1;
-    while( 1 ){
-        npts_max *= 2;
-        if (npts_max >= numsamp)
-            return npts_max;
-    }
-}
 
 
 /* ========================================================================== */
@@ -492,8 +490,31 @@ void saf_rfft_create
     
     h->N = N;
     h->Scale = 1.0f/(float)N; /* output scaling after ifft */
-    assert(N>=2); /* only even (non zero) FFT sizes allowed */
-#if defined(__ACCELERATE__)
+    assert(N>=2 && ISEVEN(N)); /* only even (non zero) FFT sizes allowed */
+#if defined(SAF_USE_INTEL_IPP)
+    h->useKissFFT_flag = 0;
+    /* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */
+    if(ceilf(log2f(N)) == floorf(log2f(N))){
+        h->useIPPfft_FLAG = 1;
+        h->log2n = (int)(log2f((float)N)+0.1f);
+        ippsFFTGetSize_R_32f(h->log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &(h->specSize), &(h->specBufferSize), &(h->bufferSize));
+        h->hFFTspec = NULL;
+        h->memSpec = (Ipp8u*) ippMalloc(h->specSize);
+        h->buffer  = (Ipp8u*) ippMalloc(h->bufferSize);
+        h->memInit = (Ipp8u*) ippMalloc(h->specBufferSize);
+        ippsFFTInit_R_32f(&(h->hFFTspec), h->log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h->memSpec, h->memInit);
+    }
+    else{
+        h->useIPPfft_FLAG = 0;
+        ippsDFTGetSize_R_32f(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &(h->specSize), &(h->specBufferSize), &(h->bufferSize));
+        h->hDFTspec = (IppsDFTSpec_R_32f*) ippMalloc(h->specSize);
+        h->buffer  = (Ipp8u*) ippMalloc(h->bufferSize);
+        h->memInit = (Ipp8u*) ippMalloc(h->specBufferSize);
+        ippsDFTInit_R_32f(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h->hDFTspec, h->memInit);
+    }
+    if (h->memInit)
+        ippFree(h->memInit);
+#elif defined(__ACCELERATE__)
     if(ceilf(log2f(N)) == floorf(log2f(N))) /* true if N is 2 to the power of some integer number */
         h->useKissFFT_flag = 0;
     else
@@ -534,7 +555,18 @@ void saf_rfft_destroy
 {
     saf_rfft_data *h = (saf_rfft_data*)(*phFFT);
     if(h!=NULL){
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_INTEL_IPP)
+        if(h->useIPPfft_FLAG){
+            if(h->memSpec)
+                ippFree(h->memSpec);
+        }
+        else {
+            if(h->hDFTspec)
+                ippFree(h->hDFTspec);
+        }
+        if(h->buffer)
+            ippFree(h->buffer);
+#elif defined(__ACCELERATE__)
         if(!h->useKissFFT_flag){
             vDSP_destroy_fftsetup(h->FFT);
             free(h->VDSP_split.realp);
@@ -560,7 +592,13 @@ void saf_rfft_forward
 )
 {
     saf_rfft_data *h = (saf_rfft_data*)(hFFT);
-#if defined(__ACCELERATE__)
+
+#if defined(SAF_USE_INTEL_IPP)
+    if(h->useIPPfft_FLAG)
+        ippsFFTFwd_RToCCS_32f((Ipp32f*)inputTD, (Ipp32f*)outputFD, h->hFFTspec, h->buffer);
+    else
+        ippsDFTFwd_RToCCS_32f((Ipp32f*)inputTD, (Ipp32f*)outputFD, h->hDFTspec, h->buffer);
+#elif defined(__ACCELERATE__)
     int i;
     if(!h->useKissFFT_flag){
         vDSP_ctoz((DSPComplex*)inputTD, 2, &(h->VDSP_split), 1, (h->N)/2);
@@ -592,7 +630,13 @@ void saf_rfft_backward
 {
     saf_rfft_data *h = (saf_rfft_data*)(hFFT);
     int i;
-#if defined(__ACCELERATE__)
+    
+#if defined(SAF_USE_INTEL_IPP)
+    if(h->useIPPfft_FLAG)
+        ippsFFTInv_CCSToR_32f((Ipp32f*)inputFD, (Ipp32f*)outputTD, h->hFFTspec, h->buffer);
+    else
+        ippsDFTInv_CCSToR_32f((Ipp32f*)inputFD, (Ipp32f*)outputTD, h->hDFTspec, h->buffer);
+#elif defined(__ACCELERATE__)
     if(!h->useKissFFT_flag){
         h->VDSP_split.realp[0] = crealf(inputFD[0]);
         h->VDSP_split.imagp[0] = crealf(inputFD[h->N/2]);
@@ -631,7 +675,30 @@ void saf_fft_create
     h->N = N;
     h->Scale = 1.0f/(float)N; /* output scaling after ifft */
     assert(N>=2); /* only even (non zero) FFT sizes allowed */
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_INTEL_IPP)
+    h->useKissFFT_flag = 0;
+    /* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */
+    if(ceilf(log2f(N)) == floorf(log2f(N))){
+        h->useIPPfft_FLAG = 1;
+        h->log2n = (int)(log2f((float)N)+0.1f);
+        ippsFFTGetSize_C_32f(h->log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &(h->specSize), &(h->specBufferSize), &(h->bufferSize));
+        h->hFFTspec = NULL;
+        h->memSpec = (Ipp8u*) ippsMalloc_8u(h->specSize);
+        h->buffer  = (Ipp8u*) ippsMalloc_8u(h->bufferSize);
+        h->memInit = (Ipp8u*) ippsMalloc_8u(h->specBufferSize);
+        ippsFFTInit_C_32fc(&(h->hFFTspec), h->log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h->memSpec, h->memInit);
+    }
+    else{
+        h->useIPPfft_FLAG = 0;
+        ippsDFTGetSize_C_32f(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &(h->specSize), &(h->specBufferSize), &(h->bufferSize));
+        h->hDFTspec = (IppsDFTSpec_C_32fc*) ippsMalloc_8u(h->specSize);
+        h->buffer  = (Ipp8u*) ippsMalloc_8u(h->bufferSize);
+        h->memInit = (Ipp8u*) ippsMalloc_8u(h->specBufferSize);
+        ippsDFTInit_C_32fc(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h->hDFTspec, h->memInit);
+    }
+    if (h->memInit)
+        ippFree(h->memInit);
+#elif defined(__ACCELERATE__) && 0 /* NOT IMPLEMENTED YET */
     if(ceilf(log2f(N)) == floorf(log2f(N))) /* true if N is 2 to the power of some integer number */
         h->useKissFFT_flag = 0;
     else
@@ -670,7 +737,18 @@ void saf_fft_destroy
     saf_fft_data *h = (saf_fft_data*)(*phFFT);
     
     if(h!=NULL){
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_INTEL_IPP)
+        if(h->useIPPfft_FLAG){
+            if(h->memSpec)
+                ippFree(h->memSpec);
+        }
+        else {
+            if(h->hDFTspec)
+                ippFree(h->hDFTspec);
+        }
+        if(h->buffer)
+            ippFree(h->buffer);
+#elif defined(__ACCELERATE__) && 0 /* NOT IMPLEMENTED YET */
         if(!h->useKissFFT_flag){
             vDSP_destroy_fftsetup(h->FFT);
             free(h->VDSP_split.realp);
@@ -697,23 +775,13 @@ void saf_fft_forward
 {
     saf_fft_data *h = (saf_fft_data*)(hFFT);
     
-#if defined(__ACCELERATE__)
-    assert(0); // NOT IMPLEMENTED YET
-    int i;
-    if(!h->useKissFFT_flag){
-        vDSP_ctoz((DSPComplex*)inputTD, 2, &(h->VDSP_split), 1, (h->N)/2);
-        vDSP_fft_zrip((FFTSetup)(h->FFT),&(h->VDSP_split), 1, h->log2n, FFT_FORWARD);
-        /* DC */
-        outputFD[0] = cmplxf(h->VDSP_split.realp[0]/2.0f, 0.0f);
-        /* Note: the output is scaled by 2, because vDSP_fft automatically compensates for the loss of energy
-         * when removing the symmetric/conjugate (N/2+2:N) bins. However, this is dumb... so the 2x scaling
-         * is removed here; so it has parity with the other FFT implementations supported by SAF. */
-        for(i=1; i<h->N/2; i++)
-            outputFD[i] = cmplxf(h->VDSP_split.realp[i]/2.0f, h->VDSP_split.imagp[i]/2.0f);
-        /* the real part of the Nyquist value is the imaginary part of DC. */
-        outputFD[h->N/2] = cmplxf(h->VDSP_split.imagp[0]/2.0f, 0.0f);
-        /* https://stackoverflow.com/questions/43289265/implementing-an-fft-using-vdsp */
-    }
+#if defined(SAF_USE_INTEL_IPP)
+    if(h->useIPPfft_FLAG)
+        ippsFFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h->hFFTspec, h->buffer);
+    else
+        ippsDFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h->hDFTspec, h->buffer);
+#elif defined(__ACCELERATE__) && 0 /* NOT IMPLEMENTED YET */
+
 #elif defined(INTEL_MKL_VERSION)
     h->Status = DftiComputeForward(h->MKL_FFT_Handle, inputTD, outputFD);
 #endif
@@ -730,19 +798,13 @@ void saf_fft_backward
 {
     saf_fft_data *h = (saf_fft_data*)(hFFT);
     int i;
-#if defined(__ACCELERATE__)
-    assert(0); // NOT IMPLEMENTED YET
-    if(!h->useKissFFT_flag){
-        h->VDSP_split.realp[0] = crealf(inputFD[0]);
-        h->VDSP_split.imagp[0] = crealf(inputFD[h->N/2]);
-        for(i=1; i<h->N/2; i++){
-            h->VDSP_split.realp[i] = crealf(inputFD[i]);
-            h->VDSP_split.imagp[i] = cimagf(inputFD[i]);
-        }
-        vDSP_fft_zrip(h->FFT, &(h->VDSP_split), 1, h->log2n, FFT_INVERSE);
-        vDSP_ztoc(&(h->VDSP_split), 1, (DSPComplex*)outputTD, 2, (h->N)/2);
-        vDSP_vsmul(outputTD, 1, &(h->Scale), outputTD, 1, h->N);
-    }
+#if defined(SAF_USE_INTEL_IPP)
+    if(h->useIPPfft_FLAG)
+        ippsFFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h->hFFTspec, h->buffer);
+    else
+        ippsDFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h->hDFTspec, h->buffer);
+#elif defined(__ACCELERATE__) && 0 /* NOT IMPLEMENTED YET */
+ 
 #elif defined(INTEL_MKL_VERSION)
     h->Status = DftiComputeBackward(h->MKL_FFT_Handle, inputFD, outputTD);
 #endif

@@ -21,7 +21,8 @@
  *        Array Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
- * derived from Matlab libraries by Archontis Politis [1-3].
+ * derived from Matlab libraries by Archontis Politis [1-3] (BSD-3-Clause
+ * License).
  *
  * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
  * @see [2] https://github.com/polarch/Array-Response-Simulator
@@ -40,10 +41,57 @@
 #include <assert.h>
 #include "saf_sh.h" 
 #include "../saf_utilities/saf_utilities.h" /* for linear algebra speed-ups */
+#include "saf_externals.h" 
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+
+/** Internal data structure for sphPWD */
+typedef struct _sphPWD_data {
+    int order, nSH, nDirs;
+    float_complex* grid_svecs;
+    float_complex* A_Cx; 
+    float* grid_dirs_xyz; 
+    float* pSpec;
+    float* P_minus_peak;
+    float* VM_mask;
+
+}sphPWD_data;
+
+/** Internal data structure for sphMUSIC */
+typedef struct _sphMUSIC_data {
+    int order, nSH, nDirs;
+    float_complex* grid_svecs;
+    float_complex* VnA;
+    float* grid_dirs_xyz;
+    float* abs_VnA;
+    float* pSpec;
+    float* P_minus_peak;
+    float* VM_mask;
+
+}sphMUSIC_data;
+
+/** Internal data structure for sphESPRIT */
+typedef struct _sphESPRIT_data {
+    int N, NN, maxK;
+
+    /* matrices and indices to be pre-computed */
+    double* rWVnimu[6];             /* [6] x FLAT: N^2 x N^2 */
+    double_complex* WVnimu[6];      /* [6] x FLAT: N^2 x N^2 */
+    int* idx_from_Ynm2Ynimu[12];    /* [12] x nIdx[i] x 1 */
+    int nIdx[12];                   /* number of indices in each "idx_from_Ynm2Ynimu" vector */
+
+    /* matrices for run-time */
+    double_complex* Us_1m1, *Us_m1m1, *Us_11, *Us_m11, *Us_m10, *Us_10, *Us_00;
+    double_complex* WVnimu0_Us1m1, *WVnimu1_Usm1m1, *WVnimu2_Us11;
+    double_complex* WVnimu3_Usm11, *WVnimu4_Usm10,  *WVnimu5_Us10;
+    double_complex* LambdaXYp, *LambdaXYm, *LambdaZ;
+    double_complex* pinvUs, *PsiXYp, *PsiXYm, *PsiZ;
+    double_complex* tmp_KK, *V, *PhiXYp, *PhiXYm, *PhiZ;
+
+}sphESPRIT_data;
+
 
 /* ========================================================================== */
 /*                          Misc. Internal Functions                          */
@@ -98,29 +146,41 @@ void gaunt_mtx(/* Input arguments */
 /* ========================================================================== */
 
 /**
- * Helper function for getSHrotMtxReal()
- */
+ * Helper function for getSHrotMtxReal() */
 float getP(int i, int l, int a, int b, float** R_1, float** R_lm1);
 
 /**
- * Helper function for getSHrotMtxReal()
- */
+ * Helper function for getSHrotMtxReal() */
 float getU(int l, int m, int n, float** R_1, float** R_lm1);
 
 /**
- * Helper function for getSHrotMtxReal()
- */
+ * Helper function for getSHrotMtxReal() */
 float getV(int l, int m, int n, float** R_1, float** R_lm1);
 
 /**
- * Helper function for getSHrotMtxReal()
- */
+ * Helper function for getSHrotMtxReal() */
 float getW(int l, int m, int n, float** R_1, float** R_lm1);
 
 /**
- * Helper function for getSHrotMtxReal()
- */
+ * Helper function for getSHrotMtxReal() */
 float getW(int l, int m, int n, float** R_1, float** R_lm1);
+
+
+/* ========================================================================== */
+/*                        Internal functions for sphESPRIT                    */
+/* ========================================================================== */
+
+/**
+ * Helper function for sphESPRIT_create() */
+void getWnimu(int order, int mm, int ni, int mu, double* Wnimu);
+
+/**
+ * Helper function for sphESPRIT_create() */
+void getVnimu(int order, int ni, int mu, double* Vnimu);
+
+/**
+ * Helper function for sphESPRIT_create() */
+void muni2q(int order, int ni, int mu, int* idx_nimu, int* idx_nm);
 
 
 #ifdef __cplusplus

@@ -19,15 +19,15 @@
  * @brief A sound-field visualiser based on the directional re-assignment of
  *        beamformer energy based on local DoA estimates [1,2]
  *
- * @see [1] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of
- *          angular spectra based on a directional re-assignment approach for
- *          ambisonic sound-field visualisation". IEEE International Conference
- *          on Acoustics, Speech and Signal Processing (ICASSP).
- * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ * @see [1] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
  *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
  *          Spatially Localized Active-Intensity Vectors for Sound-Field
  *          Visualization. Journal of the Audio Engineering Society, 67(11),
  *          pp.840-854.
+ * @see [2] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of
+ *          angular spectra based on a directional re-assignment approach for
+ *          ambisonic sound-field visualisation". IEEE International Conference
+ *          on Acoustics, Speech and Signal Processing (ICASSP).
  *
  * @author Leo McCormack
  * @date 21.02.2019
@@ -42,6 +42,7 @@
 #include <float.h>
 #include "dirass.h"
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -138,7 +139,7 @@ typedef struct _dirass
     /* User parameters */
     int new_inputOrder, inputOrder;         /**< input/analysis order */
     STATIC_BEAM_TYPES beamType;             /**< beamformer type mode */
-    DIRASS_REASS_MODES DirAssMode;          /**< see #_DIRASS_REASS_MODES enum */
+    DIRASS_REASS_MODES DirAssMode;          /**< see #DIRASS_REASS_MODES enum */
     int new_upscaleOrder, upscaleOrder;     /**< target upscale order */
     DIRASS_GRID_OPTIONS gridOption;         /**< grid option */
     float pmapAvgCoeff;                     /**< averaging coefficient for the intensity vector per grid direction */
@@ -157,7 +158,7 @@ typedef struct _dirass
 /* ========================================================================== */
 
 /**
- * Sets codec status (see #_CODEC_STATUS enum)
+ * Sets codec status (see #CODEC_STATUS enum)
  */
 void dirass_setCodecStatus(void* const hDir, CODEC_STATUS newStatus);
 

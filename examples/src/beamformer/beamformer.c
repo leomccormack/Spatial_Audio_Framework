@@ -34,6 +34,8 @@ void beamformer_create
     *phBeam = (void*)pData;
     int i, ch;
 
+    printf(SAF_VERSION_LICENSE_STRING);
+
     /* default user parameters */
     pData->beamOrder = 1;
     for(i=0; i<MAX_NUM_BEAMS; i++){
@@ -99,14 +101,12 @@ void beamformer_process
 )
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    int n, ch, i, j, bi, nSH;
-    int o[MAX_SH_ORDER+2];
+    int ch, i, j, bi, nSH;
 
     /* local copies of user parameters */
     int nBeams, beamOrder;
     NORM_TYPES norm;
     CH_ORDER chOrdering;
-    for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
     beamOrder = pData->beamOrder;
     nSH = ORDER2NSH(beamOrder);
     nBeams = pData->nBeams;
@@ -185,10 +185,10 @@ void beamformer_process
         utility_svvcopy((const float*)pData->beamWeights, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_beamWeights);
 
         /* copy to output buffer */
-            for(ch = 0; ch < MIN(nBeams, nOutputs); ch++)
-                utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
-            for (; ch < nOutputs; ch++)
-                memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+        for(ch = 0; ch < MIN(nBeams, nOutputs); ch++)
+            utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
+        for (; ch < nOutputs; ch++)
+            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
     }
     else
         for (ch=0; ch < nOutputs; ch++)
@@ -200,6 +200,10 @@ void beamformer_process
 
 void beamformer_refreshSettings(void* const hBeam)
 {
+    beamformer_data *pData = (beamformer_data*)(hBeam);
+    int ch;
+    for(ch=0; ch<MAX_NUM_BEAMS; ch++)
+        pData->recalc_beamWeights[ch] = 1;
 }
 
 void beamformer_setBeamOrder(void  * const hBeam, int newValue)

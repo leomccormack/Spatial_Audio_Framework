@@ -23,8 +23,7 @@
  * @author Leo McCormack
  * @date 26.05.2020
  */
-
-#include "saf_utility_bessel.h"
+ 
 #include "saf_utilities.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,7 +66,7 @@ static int MSTA1
 
     NN = 0;
     A0=fabs(X);
-    N0=floor(1.1*A0)+1;
+    N0=(int)(floor(1.1*A0)+1.0);
     F0=ENVJ(N0,A0)-MP;
     N1=N0+5;
     F1=ENVJ(N1,A0)-MP;
@@ -105,7 +104,7 @@ static int MSTA2
     EJN=ENVJ(N,A0);
     if (EJN <= HMP) {
         OBJ=MP;
-        N0=floor(1.1*A0);
+        N0=(int)floor(1.1*A0);
     }
     else {
         OBJ=HMP+EJN;

@@ -21,7 +21,7 @@
  *        (#SAF_HOA_MODULE)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
- * the Matlab library by Archontis Politis [1].
+ * the Matlab library by Archontis Politis [1] (BSD-3-Clause License).
  *
  * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
  *
@@ -39,6 +39,7 @@
 #include "../saf_sh/saf_sh.h"       /* for computing the legendre polynamials */
 #include "../saf_vbap/saf_vbap.h"        /* for VBAP gains utilised by AllRAD */
 #include "../saf_utilities/saf_utilities.h"   /* for linear algebra speed-ups */
+#include "saf_externals.h" 
 
 #ifdef __cplusplus
 extern "C" {

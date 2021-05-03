@@ -38,6 +38,7 @@
 #include "powermap.h"
 
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,6 +59,9 @@ extern "C" {
 #define MAX_COV_AVG_COEFF ( 0.45f )    /*  */
 #ifndef M_PI
 # define M_PI ( 3.14159265359f )
+#endif
+#if (FRAME_SIZE % HOP_SIZE != 0)
+# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
     
     
@@ -93,11 +97,9 @@ typedef struct _powermap
     float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
 
     /* TFT */
-    float SHframeTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];        
+    float** SHframeTD;
+    float_complex*** SHframeTF;
     void* hSTFT;
-    complexVector* STFTInputFrameTF;
-    float** tempHopFrameTD;
     float freqVector[HYBRID_BANDS];
     float fs;
     
@@ -144,7 +146,7 @@ typedef struct _powermap
 /* ========================================================================== */
 
 /**
- * Sets codec status (see #_CODEC_STATUS enum)
+ * Sets codec status (see #CODEC_STATUS enum)
  */
 void powermap_setCodecStatus(void* const hPm, CODEC_STATUS newStatus);
 

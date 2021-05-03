@@ -16,8 +16,10 @@
 
 /**
  * @file rotator_internal.h
- * @brief  A simple spherical harmonic domain rotator, based on the recursive
- *         approach detailed in [1].
+ * @brief A basic spherical harmonic/ Ambisonic signals rotator, based on the
+ *        recursive approach detailed in [1]
+ *
+ * @test test__saf_example_rotator()
  *
  * @see [1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real
  *          Spherical Harmonics. Direct Determination by Recursion Page:
@@ -36,6 +38,7 @@
 #include <string.h>
 #include "rotator.h"
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,6 +57,14 @@ extern "C" {
 #ifndef RAD2DEG
 # define RAD2DEG(x) (x * 180.0f / SAF_PI)
 #endif
+
+/** Available Ambisonic channel ordering conventions */
+typedef enum {
+    M_ROT_READY = 1,           /**< M_rot is ready */
+    M_ROT_RECOMPUTE_EULER,     /**< Use Euler angles to recompute M_rot */
+    M_ROT_RECOMPUTE_QUATERNION /**< Use Quaternions to recompute M_rot */
+
+} M_ROT_STATUS;
     
     
 /* ========================================================================== */
@@ -73,15 +84,18 @@ typedef struct _rotator
     float interpolator[FRAME_SIZE];
     float M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     float prev_M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
-    int recalc_M_rotFLAG;
+    M_ROT_STATUS M_rot_status;
+    int fs;
 
     /* user parameters */
-    float yaw, roll, pitch;              /**< rotation angles in degrees */
-    int bFlipYaw, bFlipPitch, bFlipRoll; /**< flag to flip the sign of the individual rotation angles */
-    CH_ORDER chOrdering;                 /**< only ACN is supported */
-    NORM_TYPES norm;                     /**< N3D or SN3D */
-    SH_ORDERS inputOrder;                /**< current input/output order int order;*/
-    int useRollPitchYawFlag;             /**< rotation order flag, 1: r-p-y, 0: y-p-r */
+    quaternion_data Q;                    /**< Quaternion used for rotation */
+    int bFlipQuaternion;                  /**< 1: invert quaternion, 0: no inversion */
+    float yaw, roll, pitch;               /**< rotation angles in degrees */
+    int bFlipYaw, bFlipPitch, bFlipRoll;  /**< flags to flip the sign of the Euler rotation angles */
+    CH_ORDER chOrdering;                  /**< only ACN is supported */
+    NORM_TYPES norm;                      /**< N3D or SN3D */
+    SH_ORDERS inputOrder;                 /**< current input/output order int order;*/
+    int useRollPitchYawFlag;              /**< rotation order flag, 1: r-p-y, 0: y-p-r */
     
 } rotator_data;
     

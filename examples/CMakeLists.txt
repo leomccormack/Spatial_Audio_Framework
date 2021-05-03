@@ -1,39 +1,46 @@
 
 message(STATUS "Configuring SAF examples:")
 
-# List of examples which have the common structure (<example>.h/.c, <example>_internal.h/.c) and do not require the saf_sofa_reader module:
-set(example_list
-    ambi_drc
-    ambi_enc
-    array2sh
-    beamformer
-    dirass
-    matrixconv
-    multiconv
-    panner
-    pitch_shifter
-    powermap
-    rotator
-    sldoa)
+if(NOT DEFINED saf_example_list)
 
-# Append examples which use the saf_sofa_reader module, or print a warning
-if(SAF_ENABLE_SOFA_READER_MODULE)
-set(example_list ${example_list}
-    ambi_bin 
-    ambi_dec
-    binauraliser)
-else()
-    message(STATUS "  Note: examples that depend on the saf_sofa_reader module have been disabled")
+    # List of examples which have the common structure (<example>.h/.c, <example>_internal.h/.c) and do not require the saf_sofa_reader module:
+    set(saf_example_list
+        ambi_drc
+        ambi_enc
+        ambi_roomsim
+        array2sh
+        beamformer
+        decorrelator
+        dirass
+        matrixconv
+        multiconv
+        panner
+        pitch_shifter
+        powermap
+        rotator
+        sldoa)
+
+    # Append examples which use the saf_sofa_reader module, or print a warning
+    if(SAF_ENABLE_SOFA_READER_MODULE)
+    set(saf_example_list ${saf_example_list}
+        ambi_bin 
+        ambi_dec
+        binauraliser
+        spreader)
+    else()
+        message(STATUS "  Note: examples that depend on the saf_sofa_reader module have been disabled")
+    endif()
+
 endif()
 
 # Find number of examples
-list(LENGTH example_list num_examples)
+list(LENGTH saf_example_list num_examples)
 math(EXPR num_examples "${num_examples} - 1")
 
 # Loop over all examples
 foreach(current_example RANGE ${num_examples})
     # Get current example string
-    list(GET example_list ${current_example} current_string)
+    list(GET saf_example_list ${current_example} current_string)
 
     # Set-up project
     message(STATUS "  ${current_string}")
@@ -58,6 +65,11 @@ foreach(current_example RANGE ${num_examples})
             ${CMAKE_CURRENT_SOURCE_DIR}/src/${current_string}/${current_string}_database.c
             ${CMAKE_CURRENT_SOURCE_DIR}/src/${current_string}/${current_string}_database.h
         )
+    endif()
+
+    # enable compiler warnings
+    if(UNIX)
+        target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
     endif()
 
     # Include directory

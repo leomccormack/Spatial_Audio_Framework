@@ -16,24 +16,24 @@
 
 /**
  * @file ambi_drc.h
- * @brief A frequency-dependent spherical harmonic domain dynamic range
- *        compressor (DRC).
+ * @brief A frequency-dependent Ambisonic sound scene dynamic range compressor
+ *        (DRC)
  *
  * The implementation can also keep track of the frequency-dependent gain
- * factors for the omnidirectional component over time, for optional plotting.
+ * factors for the omnidirectional component over time (for optional plotting).
  * The design is based on the algorithm presented in [1].
  *
- * The DRC gain factors are determined based on analysing the omnidirectional
- * component. These gain factors are then applied to the higher-order
- * components, in a such a manner as to retain the spatial information within
- * them.
- *
- * @author Leo McCormack
- * @date 07.01.2017
+ * The DRC gain factors per band are determined based on the omnidirectional
+ * component, which are then applied to all of the higher-order components;
+ * thus, the spatial information of the Ambisonic sound scene is retained
+ * (although, your perception of them may change due to the DRC).
  *
  * @see [1] McCormack, L., & Välimäki, V. (2017). "FFT-Based Dynamic Range
  *          Compression". in Proceedings of the 14th Sound and Music Computing
  *          Conference, July 5-8, Espoo, Finland.
+ *
+ * @author Leo McCormack
+ * @date 07.01.2017
  */
 
 #ifndef __AMBI_DRC_H_INCLUDED__
@@ -58,11 +58,11 @@ extern "C" {
 # define AMBI_DRC_NUM_DISPLAY_TIME_SLOTS ( (int)(AMBI_DRC_NUM_DISPLAY_SECONDS*48000.0f/(float)128) )
 /** Number of samples to offset when reading TF data */
 # define AMBI_DRC_READ_OFFSET ( 200 )
-/**< Number of frequency bands used during processing */
+/** Number of frequency bands used during processing */
 # define AMBI_DRC_NUM_BANDS ( 133 )
 #endif
-/**< -16dB, maximum gain reduction for a given frequency band */
-#define AMBI_DRC_SPECTRAL_FLOOR (0.1585)
+/** -16dB, maximum gain reduction for a given frequency band */
+#define AMBI_DRC_SPECTRAL_FLOOR (0.1585f)
 
 #define AMBI_DRC_IN_GAIN_MIN_VAL ( -40.0f )   /**< Minimum input gain, dB */
 #define AMBI_DRC_IN_GAIN_MAX_VAL ( 20.0f )    /**< Maximum input gain, dB */
@@ -171,13 +171,13 @@ void ambi_drc_setRelease(void* const hAmbi, float newValue);
     
 /**
  * Sets the Ambisonic channel ordering convention to decode with, in order to
- * match the convention employed by the input signals (see #_CH_ORDER enum)
+ * match the convention employed by the input signals (see #CH_ORDER enum)
  */
 void ambi_drc_setChOrder(void* const hAmbi, int newOrder);
 
 /**
  * Sets the Ambisonic normalisation convention to decode with, in order to match
- * with the convention employed by the input signals (see #_NORM_TYPES enum)
+ * with the convention employed by the input signals (see #NORM_TYPES enum)
  */
 void ambi_drc_setNormType(void* const hAmbi, int newType);
     
@@ -187,7 +187,7 @@ void ambi_drc_setNormType(void* const hAmbi, int newType);
  * If input order is set higher than the input signal order, the extra required
  * channels are filled with zeros. If the input order is set lower than the
  * input signal order, the number input signals are truncated accordingly (see
- * #_SH_ORDERS enum)
+ * #SH_ORDERS enum)
  */
 void ambi_drc_setInputPreset(void* const hAmbi, SH_ORDERS newPreset);
 
@@ -261,19 +261,19 @@ float ambi_drc_getRelease(void* const hAmbi);
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see #_CH_ORDER enum)
+ * (see #CH_ORDER enum)
  */
 int ambi_drc_getChOrder(void* const hAmbi);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals
- * (see #_NORM_TYPES enum)
+ * (see #NORM_TYPES enum)
  */
 int ambi_drc_getNormType(void* const hAmbi);
     
 /**
- * Returns the current processing order (see #_SH_ORDERS enum)
+ * Returns the current processing order (see #SH_ORDERS enum)
  */
 SH_ORDERS ambi_drc_getInputPreset(void* const hAmbi);
     

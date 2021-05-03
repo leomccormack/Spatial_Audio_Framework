@@ -21,7 +21,8 @@
  *        Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
- * derived from Matlab libraries by Archontis Politis [1-3].
+ * derived from Matlab libraries by Archontis Politis [1-3] (BSD-3-Clause
+ * License).
  *
  * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
  * @see [2] https://github.com/polarch/Array-Response-Simulator
@@ -47,97 +48,6 @@ const float wxyzCoeffs[4][4] = {
 /* ========================================================================== */
 /*                               Misc. Functions                              */
 /* ========================================================================== */
-
-void yawPitchRoll2Rzyx
-(
-    float yaw,
-    float pitch,
-    float roll,
-    int rollPitchYawFLAG, /* use Rxyz, i.e. apply roll, pitch and then yaw */
-    float R[3][3]
-)
-{
-    int m,n,k;
-    float Rtmp[3][3] = {{0.0f}};
-    float Rx[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
-    float Ry[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
-    float Rz[3][3] = { {1.0f ,0.0f ,0.0f }, { 0.0f ,1.0f ,0.0f }, { 0.0f ,0.0f ,1.0f } };
-    
-    /* var Rx, Ry, Rz; */
-    if (roll != 0) {
-        Rx[1][1] =  cosf(roll); Rx[1][2] = sinf(roll);
-        Rx[2][1] = -sinf(roll); Rx[2][2] = cosf(roll);
-    }
-    if (pitch != 0){
-        Ry[0][0] = cosf(pitch); Ry[0][2] = -sinf(pitch);
-        Ry[2][0] = sinf(pitch); Ry[2][2] =  cosf(pitch);
-    }
-    if (yaw != 0){
-        Rz[0][0] =  cosf(yaw); Rz[0][1] = sinf(yaw);
-        Rz[1][0] = -sinf(yaw); Rz[1][1] = cosf(yaw);
-    }
-    if(rollPitchYawFLAG){
-        /* rotation order: roll-pitch-yaw */
-        for (m=0;m<3; m++){
-            memset(R[m], 0, 3*sizeof(float));
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    Rtmp[m][n] += Ry[m][k] * Rx[k][n];
-        }
-        for (m=0;m<3; m++)
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    R[m][n] += Rz[m][k] * Rtmp[k][n];
-    }
-    else{
-        /* rotation order: yaw-pitch-roll */
-        for (m=0;m<3; m++){
-            memset(R[m], 0, 3*sizeof(float));
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    Rtmp[m][n] += Ry[m][k] * Rz[k][n];
-        }
-        for (m=0;m<3; m++)
-            for(n=0;n<3; n++)
-                for(k=0; k<3; k++)
-                    R[m][n] += Rx[m][k] * Rtmp[k][n];
-    }
-}
-
-void unitSph2Cart
-(
-    float azi_rad,
-    float elev_rad,
-    float xyz[3]
-)
-{
-    xyz[0] = cosf(elev_rad) * cosf(azi_rad);
-    xyz[1] = cosf(elev_rad) * sinf(azi_rad);
-    xyz[2] = sinf(elev_rad);
-}
-
-void unitCart2Sph
-(
-    float xyz[3],
-    float AziElev_rad[2]
-)
-{
-    float hypotxy = sqrtf(powf(xyz[0], 2.0f) + powf(xyz[1], 2.0f));
-    AziElev_rad[0] = atan2f(xyz[1], xyz[0]);
-    AziElev_rad[1] = atan2f(xyz[2], hypotxy);
-}
-
-void unitCart2Sph_aziElev
-(
-    float xyz[3],
-    float* azi_rad,
-    float* elev_rad
-)
-{
-    float hypotxy = sqrtf(powf(xyz[0], 2.0f) + powf(xyz[1], 2.0f));
-    (*azi_rad) = atan2f(xyz[1], xyz[0]);
-    (*elev_rad) = atan2f(xyz[2], hypotxy);
-}
 
 void unnorm_legendreP
 (
@@ -288,6 +198,9 @@ void getSHreal
     double* Lnm, *CosSin;
     double *p_nm, *cos_incl;
     double *norm_real;
+
+    if(nDirs<1)
+        return;
     
     Lnm = malloc1d((2*order+1)*nDirs*sizeof(double));
     norm_real = malloc1d((2*order+1)*sizeof(double));
@@ -350,6 +263,9 @@ void getSHreal_recur
     float Nn0, Nnm;
     float sleg_n[8], sleg_n_1[8], sleg_n_2[8], scos_incl, sfactorials_n[15];
     float* leg_n, *leg_n_1, *leg_n_2, *cos_incl, *factorials_n;
+
+    if(nDirs<1)
+        return;
 
     if(N<=7 && nDirs == 1){
         /* Single direction optimisation for up to 7th order */
@@ -1033,6 +949,500 @@ void checkCondNumberSHTReal
 /*                     Localisation Functions in the  SHD                     */
 /* ========================================================================== */
 
+void sphPWD_create
+(
+    void ** const phPWD,
+    int order,
+    float* grid_dirs_deg,
+    int nDirs
+)
+{
+    *phPWD = malloc1d(sizeof(sphPWD_data));
+    sphPWD_data *h = (sphPWD_data*)(*phPWD);
+    int i, j;
+    float** grid_dirs_rad, **grid_svecs_tmp;
+
+    h->order = order;
+    h->nSH = ORDER2NSH(h->order);
+    h->nDirs = nDirs;
+
+    /* steering vectors for each grid direction  */
+    h->grid_svecs = malloc1d(h->nSH * (h->nDirs) * sizeof(float_complex));
+    grid_dirs_rad  = (float**)malloc2d(h->nDirs, 2, sizeof(float));
+    grid_svecs_tmp = (float**)malloc2d(h->nSH, h->nDirs, sizeof(float));
+    for(i=0; i<h->nDirs; i++){
+        grid_dirs_rad[i][0] = grid_dirs_deg[i*2]*SAF_PI/180.0f;
+        grid_dirs_rad[i][1] = SAF_PI/2.0f - grid_dirs_deg[i*2+1]*SAF_PI/180.0f;
+    }
+    getSHreal(h->order, FLATTEN2D(grid_dirs_rad), h->nDirs, FLATTEN2D(grid_svecs_tmp));
+    for(i=0; i<h->nSH; i++)
+        for(j=0; j<h->nDirs; j++)
+            h->grid_svecs[j*(h->nSH)+i] = cmplxf(grid_svecs_tmp[i][j], 0.0f);
+
+    /* store cartesian coords of scanning directions (for optional peak finding) */
+    h->grid_dirs_xyz = malloc1d(h->nDirs * 3 * sizeof(float));
+    unitSph2cart(grid_dirs_deg, h->nDirs, 1, h->grid_dirs_xyz);
+
+    /* for run-time */
+    h->A_Cx = malloc1d((h->nSH) * sizeof(float_complex));
+    h->pSpec = malloc1d(h->nDirs*sizeof(float));
+    h->P_minus_peak = malloc1d(h->nDirs*sizeof(float));
+    h->VM_mask = malloc1d(h->nDirs*sizeof(float));
+
+    /* clean-up */
+    free(grid_dirs_rad);
+    free(grid_svecs_tmp);
+}
+
+void sphPWD_destroy
+(
+    void ** const phPWD
+)
+{
+    sphPWD_data *h = (sphPWD_data*)(*phPWD);
+
+    if (h != NULL) {
+        free(h->grid_dirs_xyz);
+        free(h->grid_svecs);
+        free(h->A_Cx);
+        free(h->pSpec);
+        free(h->P_minus_peak);
+        free(h->VM_mask);
+        free(h);
+        h = NULL;
+        *phPWD = NULL;
+    }
+}
+
+void sphPWD_compute
+(
+    void* const hPWD,
+    float_complex* Cx,
+    int nSrcs,
+    float* P_map,
+    int* peak_inds
+)
+{
+    sphPWD_data *h = (sphPWD_data*)(hPWD);
+    int i, k, peak_idx;
+    float kappa, scale;
+    float VM_mean[3];
+    float_complex A_Cx_A;
+    const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f);
+
+    /* derive the power-map value for each grid direction */ 
+    for (i = 0; i < (h->nDirs); i++){
+        cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, 1, h->nSH, h->nSH, &calpha,
+                    &(h->grid_svecs[i*(h->nSH)]), 1,
+                    Cx, h->nSH, &cbeta,
+                    h->A_Cx, h->nSH);
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 1, 1, h->nSH, &calpha,
+                    h->A_Cx, h->nSH,
+                    &(h->grid_svecs[i*(h->nSH)]), 1, &cbeta,
+                    &A_Cx_A, 1);
+        h->pSpec[i] = crealf(A_Cx_A);
+    }
+
+    /* Output power-map */
+    if(P_map!=NULL)
+        cblas_scopy(h->nDirs, h->pSpec, 1, P_map, 1);
+
+    /* Peak-finding */
+    if(peak_inds!=NULL){
+        kappa = 50.0f;
+        scale = kappa/(2.0f*SAF_PI*expf(kappa)-expf(-kappa));
+        cblas_scopy(h->nDirs, h->pSpec, 1, h->P_minus_peak, 1);
+
+        /* Loop over the number of sources */
+        for(k=0; k<nSrcs; k++){
+            utility_simaxv(h->P_minus_peak, h->nDirs, &peak_idx);
+            peak_inds[k] = peak_idx;
+            if(k==nSrcs-1)
+                break;
+            VM_mean[0] = h->grid_dirs_xyz[peak_idx*3];
+            VM_mean[1] = h->grid_dirs_xyz[peak_idx*3+1];
+            VM_mean[2] = h->grid_dirs_xyz[peak_idx*3+2];
+
+            /* Apply mask for next iteration */
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, h->nDirs, 1, 3, 1.0f,
+                        h->grid_dirs_xyz, 3,
+                        (const float*)VM_mean, 3, 0.0f,
+                        h->VM_mask, 1);
+            cblas_sscal(h->nDirs, kappa, h->VM_mask, 1);
+            for(i=0; i<h->nDirs; i++)
+                h->VM_mask[i] = expf(h->VM_mask[i]);             /* VM distribution */
+            cblas_sscal(h->nDirs, scale, h->VM_mask, 1);
+            for(i=0; i<h->nDirs; i++)
+                h->VM_mask[i] = 1.0f/(0.00001f+(h->VM_mask[i])); /* inverse VM distribution */
+            utility_svvmul(h->P_minus_peak, h->VM_mask, h->nDirs, h->P_minus_peak);
+        }
+    }
+}
+
+void sphMUSIC_create
+(
+    void ** const phMUSIC,
+    int order,
+    float* grid_dirs_deg,
+    int nDirs
+)
+{
+    *phMUSIC = malloc1d(sizeof(sphMUSIC_data));
+    sphMUSIC_data *h = (sphMUSIC_data*)(*phMUSIC);
+    int i, j;
+    float** grid_dirs_rad, **grid_svecs_tmp;
+
+    h->order = order;
+    h->nSH = ORDER2NSH(h->order);
+    h->nDirs = nDirs;
+
+    /* steering vectors for each grid direction  */
+    h->grid_svecs = malloc1d(h->nSH * (h->nDirs) * sizeof(float_complex));
+    grid_dirs_rad  = (float**)malloc2d(h->nDirs, 2, sizeof(float));
+    grid_svecs_tmp = (float**)malloc2d(h->nSH, h->nDirs, sizeof(float));
+    for(i=0; i<h->nDirs; i++){
+        grid_dirs_rad[i][0] = grid_dirs_deg[i*2]*SAF_PI/180.0f;
+        grid_dirs_rad[i][1] = SAF_PI/2.0f - grid_dirs_deg[i*2+1]*SAF_PI/180.0f;
+    }
+    getSHreal(h->order, FLATTEN2D(grid_dirs_rad), h->nDirs, FLATTEN2D(grid_svecs_tmp));
+    for(i=0; i<h->nSH; i++)
+        for(j=0; j<h->nDirs; j++)
+            h->grid_svecs[i*(h->nDirs)+j] = cmplxf(grid_svecs_tmp[i][j], 0.0f);
+
+    /* store cartesian coords of scanning directions (for optional peak finding) */
+    h->grid_dirs_xyz = malloc1d(h->nDirs * 3 * sizeof(float));
+    unitSph2cart(grid_dirs_deg, h->nDirs, 1, h->grid_dirs_xyz);
+
+    /* for run-time */
+    h->VnA = malloc1d(h->nSH * (h->nDirs) * sizeof(float_complex));
+    h->abs_VnA = malloc1d(h->nSH * (h->nDirs) * sizeof(float));
+    h->pSpec = malloc1d(h->nDirs*sizeof(float));
+    h->P_minus_peak = malloc1d(h->nDirs*sizeof(float));
+    h->VM_mask = malloc1d(h->nDirs*sizeof(float));
+
+    /* clean-up */
+    free(grid_dirs_rad);
+    free(grid_svecs_tmp);
+}
+
+void sphMUSIC_destroy
+(
+    void ** const phMUSIC
+)
+{
+    sphMUSIC_data *h = (sphMUSIC_data*)(*phMUSIC);
+
+    if (h != NULL) {
+        free(h->grid_dirs_xyz);
+        free(h->grid_svecs);
+        free(h->VnA);
+        free(h->abs_VnA);
+        free(h->pSpec);
+        free(h->P_minus_peak);
+        free(h->VM_mask);
+        free(h);
+        h = NULL;
+        *phMUSIC = NULL;
+    }
+}
+
+void sphMUSIC_compute
+(
+    void* const hMUSIC,
+    float_complex *Vn, /* nSH x (nSH - nSrcs) */
+    int nSrcs,
+    float* P_music,
+    int* peak_inds
+)
+{
+    sphMUSIC_data *h = (sphMUSIC_data*)(hMUSIC);
+    int i, k, VnD2, peak_idx;
+    float tmp, kappa, scale;
+    float VM_mean[3];
+    const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f);
+
+    VnD2 = h->nSH - nSrcs; /* noise subspace second dimension length */
+
+    /* derive the pseudo-spectrum value for each grid direction */
+    cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, h->nDirs, VnD2, h->nSH, &calpha,
+                h->grid_svecs, h->nDirs,
+                Vn, VnD2, &cbeta,
+                h->VnA, VnD2);
+    utility_cvabs(h->VnA, (h->nDirs)*VnD2, h->abs_VnA);
+    for (i = 0; i < (h->nDirs); i++) { 
+        tmp = cblas_sdot(VnD2, &(h->abs_VnA[i*VnD2]), 1, &(h->abs_VnA[i*VnD2]), 1);
+        h->pSpec[i] = 1.0f / (tmp + 2.23e-10f);
+    }
+
+    /* Output pseudo-spectrum */
+    if(P_music!=NULL)
+        cblas_scopy(h->nDirs, h->pSpec, 1, P_music, 1);
+
+    /* Peak-finding */
+    if(peak_inds!=NULL){
+        kappa = 50.0f;
+        scale = kappa/(2.0f*SAF_PI*expf(kappa)-expf(-kappa));
+        cblas_scopy(h->nDirs, h->pSpec, 1, h->P_minus_peak, 1);
+
+        /* Loop over the number of sources */
+        for(k=0; k<nSrcs; k++){
+            utility_simaxv(h->P_minus_peak, h->nDirs, &peak_idx);
+            peak_inds[k] = peak_idx;
+            if(k==nSrcs-1)
+                break;
+            VM_mean[0] = h->grid_dirs_xyz[peak_idx*3];
+            VM_mean[1] = h->grid_dirs_xyz[peak_idx*3+1];
+            VM_mean[2] = h->grid_dirs_xyz[peak_idx*3+2];
+
+            /* Apply mask for next iteration */
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, h->nDirs, 1, 3, 1.0f,
+                        h->grid_dirs_xyz, 3,
+                        (const float*)VM_mean, 3, 0.0f,
+                        h->VM_mask, 1);
+            cblas_sscal(h->nDirs, kappa, h->VM_mask, 1);
+            for(i=0; i<h->nDirs; i++)
+                h->VM_mask[i] = expf(h->VM_mask[i]);             /* VM distribution */
+            cblas_sscal(h->nDirs, scale, h->VM_mask, 1);
+            for(i=0; i<h->nDirs; i++)
+                h->VM_mask[i] = 1.0f/(0.00001f+(h->VM_mask[i])); /* inverse VM distribution */
+            utility_svvmul(h->P_minus_peak, h->VM_mask, h->nDirs, h->P_minus_peak);
+        }
+    }
+}
+
+void sphESPRIT_create
+(
+    void ** const phESPRIT,
+    int order
+)
+{
+    *phESPRIT = malloc1d(sizeof(sphESPRIT_data));
+    sphESPRIT_data *h = (sphESPRIT_data*)(*phESPRIT);
+    int i, j;
+
+    h->N = order;
+    h->NN = order*order;
+    h->maxK = h->NN;
+
+    /* pre-compute indices and matrices */
+    for(i=0; i<6; i++){
+        h->rWVnimu[i] = malloc1d((order*order) * (order*order) * sizeof(double));
+        h->WVnimu[i]  = malloc1d((order*order) * (order*order) * sizeof(double_complex));
+    }
+    h->nIdx[0] = h->nIdx[1] = h->nIdx[4] = h->nIdx[5] = h->nIdx[10] = h->nIdx[11] = (order*order);
+    h->nIdx[2] = h->nIdx[3] = h->nIdx[6] = h->nIdx[7] = h->nIdx[8]  = h->nIdx[9]  = ((order-1)*(order-1));
+    for(i=0; i<12; i++){
+        if(h->nIdx[i] == 0)
+            h->idx_from_Ynm2Ynimu[i] = NULL;
+        else
+            h->idx_from_Ynm2Ynimu[i] = calloc1d(h->nIdx[i], sizeof(int));
+    }
+    getWnimu(order, 1, 1,-1, h->rWVnimu[0]);
+    getWnimu(order,-1, 0, 0, h->rWVnimu[1]);
+    getWnimu(order,-1, 1,-1, h->rWVnimu[2]);
+    getWnimu(order, 1, 0, 0, h->rWVnimu[3]);
+    getVnimu(order, 0, 0,    h->rWVnimu[4]);
+    getVnimu(order, 1, 0,    h->rWVnimu[5]);
+    for(i=0; i<6; i++){
+        for(j=0; j<(order*order) * (order*order); j++)
+            h->WVnimu[i][j] = cmplx(h->rWVnimu[i][j], 0.0);
+    }
+    muni2q(order, 1,-1, h->idx_from_Ynm2Ynimu[0],  h->idx_from_Ynm2Ynimu[1]);
+    muni2q(order,-1,-1, h->idx_from_Ynm2Ynimu[2],  h->idx_from_Ynm2Ynimu[3]);
+    muni2q(order, 1, 1, h->idx_from_Ynm2Ynimu[4],  h->idx_from_Ynm2Ynimu[5]);
+    muni2q(order,-1, 1, h->idx_from_Ynm2Ynimu[6],  h->idx_from_Ynm2Ynimu[7]);
+    muni2q(order,-1, 0, h->idx_from_Ynm2Ynimu[8],  h->idx_from_Ynm2Ynimu[9]);
+    muni2q(order, 1, 0, h->idx_from_Ynm2Ynimu[10], h->idx_from_Ynm2Ynimu[11]);
+
+    /* memory allocations for run-time matrices */
+    h->Us_1m1  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->Us_m1m1 = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->Us_11   = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->Us_m11  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->Us_m10  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->Us_10   = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->Us_00   = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->WVnimu0_Us1m1  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->WVnimu1_Usm1m1 = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->WVnimu2_Us11   = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->WVnimu3_Usm11  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->WVnimu4_Usm10  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->WVnimu5_Us10   = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->LambdaXYp      = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->LambdaXYm      = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->LambdaZ        = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
+    h->pinvUs = malloc1d((h->maxK) * (h->NN)   * sizeof(double_complex));
+    h->PsiXYp = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->PsiXYm = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->PsiZ   = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->tmp_KK = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->V      = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->PhiXYp = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->PhiXYm = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+    h->PhiZ   = malloc1d((h->maxK) * (h->maxK) * sizeof(double_complex));
+}
+
+void sphESPRIT_destroy
+(
+    void ** const phESPRIT
+)
+{
+    sphESPRIT_data *h = (sphESPRIT_data*)(*phESPRIT);
+    int i;
+
+    if (h != NULL) {
+        for(i=0; i<6; i++){
+            free(h->rWVnimu[i]);
+            free(h->WVnimu[i]);
+        }
+        for(i=0; i<12; i++)
+            free(h->idx_from_Ynm2Ynimu[i]);
+        free(h->Us_1m1);
+        free(h->Us_m1m1);
+        free(h->Us_11);
+        free(h->Us_m11);
+        free(h->Us_m10);
+        free(h->Us_10);
+        free(h->Us_00);
+        free(h->WVnimu0_Us1m1);
+        free(h->WVnimu1_Usm1m1);
+        free(h->WVnimu2_Us11);
+        free(h->WVnimu3_Usm11);
+        free(h->WVnimu4_Usm10);
+        free(h->WVnimu5_Us10);
+        free(h->LambdaXYp);
+        free(h->LambdaXYm);
+        free(h->LambdaZ);
+        free(h->pinvUs);
+        free(h->PsiXYp);
+        free(h->PsiXYm);
+        free(h->PsiZ);
+        free(h->tmp_KK);
+        free(h->V);
+        free(h->PhiXYp);
+        free(h->PhiXYm);
+        free(h->PhiZ);
+
+        free(h);
+        h = NULL;
+        *phESPRIT = NULL;
+    }
+}
+
+void sphESPRIT_estimateDirs
+(
+    void * const hESPRIT,
+    float_complex* Us, /* nSH * K */
+    int K,
+    float* src_dirs_rad /*  K x 2 */
+)
+{
+    sphESPRIT_data *h = (sphESPRIT_data*)(hESPRIT);
+    int i, j;
+    const double_complex i2_ = cmplx(0.0, 2.0);
+    const double_complex calpha = cmplx(1.0, 0.0); const double_complex cbeta = cmplx(0.0, 0.0); /* blas */
+    double phiX, phiY;
+
+    /* Fill matrices */
+    memset(h->Us_1m1, 0, (h->NN) * K * sizeof(double_complex));
+    memset(h->Us_m1m1, 0, (h->NN) * K * sizeof(double_complex));
+    memset(h->Us_11, 0, (h->NN) * K * sizeof(double_complex));
+    memset(h->Us_m11, 0, (h->NN) * K * sizeof(double_complex));
+    memset(h->Us_m10, 0, (h->NN) * K * sizeof(double_complex));
+    memset(h->Us_10, 0, (h->NN) * K * sizeof(double_complex));
+    memset(h->Us_00, 0, (h->NN) * K * sizeof(double_complex));
+    for (i = 0; i < K; i++) {
+        for (j = 0; j < h->nIdx[0]; j++)
+            h->Us_1m1[h->idx_from_Ynm2Ynimu[0][j] * K + i] = cmplx(crealf(Us[h->idx_from_Ynm2Ynimu[1][j] * K + i]), cimagf(Us[h->idx_from_Ynm2Ynimu[1][j] * K + i]));
+        for (j = 0; j < h->nIdx[2]; j++)
+            h->Us_m1m1[h->idx_from_Ynm2Ynimu[2][j] * K + i] = cmplx(crealf(Us[h->idx_from_Ynm2Ynimu[3][j] * K + i]), cimagf(Us[h->idx_from_Ynm2Ynimu[3][j] * K + i]));
+        for (j = 0; j < h->nIdx[4]; j++)
+            h->Us_11[h->idx_from_Ynm2Ynimu[4][j] * K + i] = cmplx(crealf(Us[h->idx_from_Ynm2Ynimu[5][j] * K + i]), cimagf(Us[h->idx_from_Ynm2Ynimu[5][j] * K + i]));
+        for (j = 0; j < h->nIdx[6]; j++)
+            h->Us_m11[h->idx_from_Ynm2Ynimu[6][j] * K + i] = cmplx(crealf(Us[h->idx_from_Ynm2Ynimu[7][j] * K + i]), cimagf(Us[h->idx_from_Ynm2Ynimu[7][j] * K + i]));
+        for (j = 0; j < h->nIdx[8]; j++)
+            h->Us_m10[h->idx_from_Ynm2Ynimu[8][j] * K + i] = cmplx(crealf(Us[h->idx_from_Ynm2Ynimu[9][j] * K + i]), cimagf(Us[h->idx_from_Ynm2Ynimu[9][j] * K + i]));
+        for (j = 0; j < h->nIdx[10]; j++)
+            h->Us_10[h->idx_from_Ynm2Ynimu[10][j] * K + i] = cmplx(crealf(Us[h->idx_from_Ynm2Ynimu[11][j] * K + i]), cimagf(Us[h->idx_from_Ynm2Ynimu[11][j] * K + i]));
+        for (j = 0; j < (h->NN); j++)
+            h->Us_00[j*K + i] = cmplx(crealf(Us[j*K + i]), cimagf(Us[j*K + i]));
+    }
+
+    /*  */
+    cblas_zgemm(CblasRowMajor, CblasTrans, CblasNoTrans, (h->NN), K, (h->NN), &calpha,
+                h->WVnimu[0], (h->NN),
+                h->Us_1m1, K, &cbeta,
+                h->WVnimu0_Us1m1, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, (h->NN), K, (h->NN), &calpha,
+                h->WVnimu[1], (h->NN),
+                h->Us_m1m1, K, &cbeta,
+                h->WVnimu1_Usm1m1, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, (h->NN), K, (h->NN), &calpha,
+                h->WVnimu[2], (h->NN),
+                h->Us_11, K, &cbeta,
+                h->WVnimu2_Us11, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, (h->NN), K, (h->NN), &calpha,
+                h->WVnimu[3], (h->NN),
+                h->Us_m11, K, &cbeta,
+                h->WVnimu3_Usm11, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, (h->NN), K, (h->NN), &calpha,
+                h->WVnimu[4], (h->NN),
+                h->Us_m10, K, &cbeta,
+                h->WVnimu4_Usm10, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, (h->NN), K, (h->NN), &calpha,
+                h->WVnimu[5], (h->NN),
+                h->Us_10, K, &cbeta,
+                h->WVnimu5_Us10, K);
+    for(i=0; i<h->NN; i++){
+        for(j=0; j<K; j++){
+            h->LambdaXYp[i*K+j] = ccsub(h->WVnimu0_Us1m1[i*K + j], h->WVnimu1_Usm1m1[i*K + j]);
+            h->LambdaXYm[i*K+j] = ccadd(crmul(h->WVnimu2_Us11[i*K+j], -1.0), h->WVnimu3_Usm11[i*K+j]);
+            h->LambdaZ[i*K+j]   = ccadd(h->WVnimu4_Usm10[i*K+j], h->WVnimu5_Us10[i*K+j]);
+        }
+    }
+
+    /*  */
+    utility_zpinv(h->Us_00, h->NN, K, h->pinvUs);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, (h->NN), &calpha,
+                h->pinvUs, (h->NN),
+                h->LambdaXYp, K, &cbeta,
+                h->PsiXYp, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, (h->NN), &calpha,
+                h->pinvUs, (h->NN),
+                h->LambdaXYm, K, &cbeta,
+                h->PsiXYm, K);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, (h->NN), &calpha,
+                h->pinvUs, (h->NN),
+                h->LambdaZ, K, &cbeta,
+                h->PsiZ, K);
+
+    /*  */
+    utility_zeigmp(h->PsiXYp, h->PsiZ, K,  NULL, h->V, NULL);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
+                h->PsiXYp, K,
+                h->V, K, &cbeta,
+                h->tmp_KK, K);
+    utility_zglslv(h->V, K, h->tmp_KK, K, h->PhiXYp);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
+                h->PsiXYm, K,
+                h->V, K, &cbeta,
+                h->tmp_KK, K);
+    utility_zglslv(h->V, K, h->tmp_KK, K, h->PhiXYm);
+    cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
+                h->PsiZ, K,
+                h->V, K, &cbeta,
+                h->tmp_KK, K);
+    utility_zglslv(h->V, K, h->tmp_KK, K, h->PhiZ);
+
+    /* extract DoAs */
+    for(i=0; i<K; i++){
+        phiX = (creal(h->PhiXYp[i*K+i])+creal(h->PhiXYm[i*K+i]))/2.0;
+        phiY = creal(ccdiv(ccsub(h->PhiXYp[i*K+i], h->PhiXYm[i*K+i]), i2_));
+        src_dirs_rad[i*2] = (float)atan2(phiY, phiX);
+        src_dirs_rad[i*2+1] = (float)MIN(atan2(creal(h->PhiZ[i*K+i]), sqrt(phiX*phiX+phiY*phiY)), M_PI/2.0f);
+    }
+}
+
 void generatePWDmap
 (
     int order,
@@ -1492,7 +1902,7 @@ void sphModalCoeffs
             jn = malloc1d(nBands*(order+1)*sizeof(double));
             jnprime = malloc1d(nBands*(order+1)*sizeof(double));
             bessel_jn(order, kr, nBands, &maxN, jn, jnprime);
-            
+
             /* modal coefficients for open spherical array (directional sensors): 4*pi*1i^n * (dirCoeff*jn - 1i*(1-dirCoeff)*jnprime); */
             for(n=0; n<maxN+1; n++)
                 for(i=0; i<nBands; i++)
@@ -1518,7 +1928,7 @@ void sphModalCoeffs
             maxN = MIN(maxN_tmp, maxN);
             hankel_hn2(order, kr, nBands, &maxN_tmp, hn2, hn2prime);
             maxN = MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
-            
+
             /* modal coefficients for rigid spherical array: 4*pi*1i^n * (jn-(jnprime./hn2prime).*hn2); */
             for(i=0; i<nBands; i++){
                 for(n=0; n<maxN+1; n++){
@@ -1631,7 +2041,7 @@ void sphScattererDirModalCoeffs
                 b_N[i*(order+1)+n] = cmplx(4.0*M_PI, 0.0);
             else if(kr[i] <= 1e-20)
                 b_N[i*(order+1)+n] = cmplx(0.0, 0.0);
-            else{ // Dear god, what happened here...
+            else{ // Dear god, what happened here?!...
 //#if __STDC_VERSION__ >= 199901L
 //                b_N[i*(order+1)+n] = 4.0f*PI*cpowf(I,(float)n) * ( (dirCoeff*jn_kr[i*(order+1)+n] - I*(1.0f-dirCoeff)*jnprime_kr[i*(order+1)+n]) -
 //                                                                   (jnprime_kR[i*(order+1)+n]/hn2prime_kR[i*(order+1)+n]) * (dirCoeff*hn2_kr[i*(order+1)+n] -
@@ -1665,7 +2075,6 @@ void sphDiffCohMtxTheory
     ARRAY_CONSTRUCTION_TYPES arrayType,
     double dirCoeff,
     double* kr,
-    double* kR,
     int nBands,
     double* M_diffcoh
 )
@@ -1829,10 +2238,8 @@ void simulateSphArray
     /* calculate (unit) cartesian coords for sensors and plane waves */
     U_sensors = malloc1d(N_sensors*3*sizeof(float));
     U_srcs = malloc1d(N_srcs*3*sizeof(float));
-    for(i=0; i<N_sensors; i++)
-        unitSph2Cart(sensor_dirs_rad[i*2], sensor_dirs_rad[i*2+1], (float*)&U_sensors[i*3]);
-    for(i=0; i<N_srcs; i++)
-        unitSph2Cart(src_dirs_deg[i*2]*M_PI/180.0f, src_dirs_deg[i*2+1]*M_PI/180.0f, (float*)&U_srcs[i*3]);
+    unitSph2cart(sensor_dirs_rad, N_sensors, 0, U_sensors);
+    unitSph2cart(src_dirs_deg, N_srcs, 1, U_srcs); 
     
     /* Compute angular-dependent part of the array responses */
     ppm = malloc1d((order+1)*sizeof(double));

@@ -24,15 +24,138 @@
  */
 
 #include "saf_utility_misc.h"
+#include "saf_externals.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 /**
  * Precomputed factorials for up to !15 (i.e. the "getSH" functions will employ
- * these up to 7th order)
- */
+ * these up to 7th order) */
 static const long double factorials_15[15] =
 {1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0, 39916800.0, 479001600.0, 6.2270208e9, 8.71782891e10};
+
+void convert_0_360To_m180_180
+(
+    float* dirs_deg,
+    int nDirs
+)
+{
+    int i;
+    for(i=0; i<nDirs; i++){
+        if(dirs_deg[i*2]>180.0f)
+            dirs_deg[i*2] = -360.0f + dirs_deg[i*2];
+    }
+}
+
+int nextpow2
+(
+    int numsamp
+)
+{
+    int npts_max;
+
+    if (numsamp > INT_MAX)
+        return 0;
+    npts_max = 1;
+    while( 1 ){
+        npts_max *= 2;
+        if (npts_max >= numsamp)
+            return npts_max;
+    }
+}
+
+void lagrangeWeights
+(
+    int N,
+    float* x,
+    int len_x,
+    float* weights
+)
+{
+    int k, i, l;
+
+    for(l=0; l<len_x; l++){
+        for (k=0; k<=N; k++)
+            weights[k*len_x+l] = 1.0f;
+        for (k=0; k<=N; k++){
+            for(i=0; i<=N; i++)
+                if(k!=i)
+                    weights[i*len_x+l] *= ((x[l]-(float)k) / (float)(i-k));
+        }
+    }
+}
+
+void findERBpartitions
+(
+    float* centerFreq,
+    int nBands,
+    float maxFreqLim,
+    int** erb_idx,
+    float** erb_freqs,
+    int* nERBBands
+)
+{
+    int i, band, counter, next_erb_idx;
+    float band_centreFreq, erb, erb_centre, tmp;
+
+    band_centreFreq = (powf(2.0f, 1.0f/3.0f)+1.0f)/2.0f;
+    free(*erb_idx);
+    free(*erb_freqs);
+    (*erb_idx) = malloc1d(sizeof(int));
+    (*erb_freqs) = malloc1d(sizeof(float));
+    (*erb_idx)[0] = 1;
+    (*erb_freqs)[0] = centerFreq[0];
+    counter = 0;
+    next_erb_idx = 0;
+    while((*erb_freqs)[counter]<maxFreqLim){
+        erb = 24.7f + 0.108f * (*erb_freqs)[counter] * band_centreFreq;
+        (*erb_idx) = realloc1d((*erb_idx), (counter+2)*sizeof(int));
+        (*erb_freqs) = realloc1d((*erb_freqs), (counter+2)*sizeof(float));
+        (*erb_freqs)[counter+1] = (*erb_freqs)[counter] + erb;
+        erb_centre = FLT_MAX;
+        /*  find closest band frequency as upper partition limit */
+        for(band=0; band<nBands; band++){
+            tmp =fabsf((*erb_freqs)[counter+1] - centerFreq[band]);
+            if(tmp <erb_centre){
+                erb_centre = tmp;
+                next_erb_idx = band;
+            }
+        }
+        (*erb_idx)[counter+1] = next_erb_idx + 1;
+        if((*erb_idx)[counter+1] == (*erb_idx)[counter])
+            (*erb_idx)[counter+1] = (*erb_idx)[counter+1]+1;
+        (*erb_freqs)[counter+1] = centerFreq[(*erb_idx)[counter+1]-1];
+        counter++;
+    }
+    /* last limit set at last band */
+    (*erb_idx) = realloc1d((*erb_idx), (counter + 2) * sizeof(int));
+    (*erb_freqs) = realloc1d((*erb_freqs), (counter + 2) * sizeof(float));
+    (*erb_idx)[counter+1] = nBands;
+    (*erb_freqs)[counter+1] = centerFreq[nBands-1];
+    (*nERBBands) = counter+2;
+
+    /* subtract 1 from the indices (the above is a direct port from Matlab...) */
+    for(i=0; i<(*nERBBands); i++)
+        (*erb_idx)[i] = (*erb_idx)[i] - 1;
+}
+
+void randperm
+(
+    int len,
+    int* randperm
+)
+{
+    int i, j, tmp;
+
+    for (i = 0; i < len; i++)
+        randperm[i] = i;
+    for (i = 0; i < len; i++) {
+        j = rand() % (len-i) + i;
+        tmp = randperm[j];
+        randperm[j] = randperm[i];
+        randperm[i] = tmp;
+    }
+}
 
 long double factorial(int n)
 {
@@ -62,20 +185,19 @@ void cxcorr
     size_t lb
 )
 {
-    int m, n, negFLAG, arg;
-    size_t len, lim;
+    int m, n, negFLAG, arg, len, lim;
     
-    len = la + lb - 1;
+    len = (int)(la + lb) - 1;
     memset(x_ab, 0, len*sizeof(float));
     for(m=1; m<=len; m++){
         arg = m-(int)la;
         if(arg<0){
             negFLAG = 1;
-            lim = la + arg;
+            lim = (int)la + arg;
         }
         else{
             negFLAG = 0;
-            lim = la - arg;
+            lim = (int)la - arg;
         }
         for(n=1; n<=lim; n++){
             if(negFLAG == 0)
@@ -245,6 +367,20 @@ float sumf
     return sum;
 }
 
+int anyLessThanf
+(
+    float* values,
+    int nValues,
+    float threshold
+)
+{
+    int i;
+    for(i=0; i<nValues; i++)
+        if(values[i]<threshold)
+            return 1;
+    return 0;
+}
+
 void unique_i
 (
     int* input,
@@ -331,4 +467,140 @@ void unique_i
 
     /* clean-up */
     free(nDuplicates_perInput);
+}
+ 
+/* Based heavily on the Matlab script found here:
+ * https://se.mathworks.com/matlabcentral/fileexchange/50413-generalized-matrix-exponential
+ * Copyright (c) 2015, Kenneth Johnson (BSD-3-clause license) */
+void gexpm
+(
+    float* D,
+    int sizeD,
+    int m1,
+    float* Y
+)
+{
+    int i, j, k;
+    float tol, s, h2, h, hh, hhh, two;
+    float** D_2, **D_3, **D_4, **D_5, **Dh, **Ym1, **Ym2;
+
+    tol = FLT_EPSILON;
+
+    /* Calculate Y = expm(D), Ym1 = Y-I.
+     *
+     * Scale and square: Y = expm(D/n)^n; n = 2^s (non-negative integer s)
+     *
+     * Pade approximation: expm(D/n) = R
+     *   = (I-Dh+(2/5)*Dh^2-(1/15)*Dh^3)\(I+Dh+(2/5)*Dh^2+(1/15)*Dh^3)
+     * where Dh = D*h; h = 1/(2*n) (h = integration half-step)
+     *
+     * Pade approximation error: R-expm(D/n) = (-2/1575)*(Dh)^7
+     *
+     * Set Y = R^n. Approximate absolute error:
+     *   Y-expm(D) = R^n-expm(D/n)^n = n*R^(n-1)*(R-expm(D/n))
+     *     = n*Y*R^(-1)*(-2/1575)*(Dh)^7
+     * R^(-1) is close to I, so
+     *   Y-expm(D) = n*Y*(-2/1575)*(Dh)^7 (approx)
+     *
+     * Large D (|D|>=1): Bound the relative error magnitude by tol,
+     *   n*(2/1575)*|(Dh)^7| <= tol
+     *
+     * Small D (|D|<1): |Y-I| is of order 1 or less; the absolute error
+     * Y-expm(D) is of order n*(-2/1575)*(Dh)^7. Bound the error magnitude
+     * by tol*|D| to preserve relative accuracy of Ym1:
+     *   n*(2/1575)*|(Dh)^7| <= tol*|D|
+     *
+     * Combine large/small Dh conditions conjunctively:
+     *   n*(2/1575)*|(Dh)^7| <= tol*min(1,|D|)
+     *
+     * Substitute h = 1/(2*n):
+     *   (2*n)^6 >= |D^7|/(1575*tol*min(1,|D|))
+     * Substitute n = 2^s:
+     *   s >= log2(|D^7|/(1575*tol*min(1,|D|)))/6-1
+     * (Use the Frobenius norm for |...| to preserve symmetry of expm under
+     * matrix transposition.)
+     */
+    D_2 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, sizeD, sizeD, sizeD, 1.0f,
+                D, sizeD,
+                D, sizeD, 0.0f,
+                FLATTEN2D(D_2), sizeD);
+    D_3 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, sizeD, sizeD, sizeD, 1.0f,
+                FLATTEN2D(D_2), sizeD,
+                D, sizeD, 0.0f,
+                FLATTEN2D(D_3), sizeD);
+    D_4 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, sizeD, sizeD, sizeD, 1.0f,
+                FLATTEN2D(D_3), sizeD,
+                FLATTEN2D(D_3), sizeD, 0.0f,
+                FLATTEN2D(D_4), sizeD);
+    D_5 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, sizeD, sizeD, sizeD, 1.0f,
+                FLATTEN2D(D_4), sizeD,
+                D, sizeD, 0.0f,
+                FLATTEN2D(D_5), sizeD); 
+    s = ceilf(log2f(Frob_norm(FLATTEN2D(D_5), sizeD, sizeD)/
+                    (1575.0f*tol*MIN(1.0f,Frob_norm(D, sizeD, sizeD))))/6.0f-1.0f);
+    s = MAX(s, 0.0f);
+
+    /* Get Pade approximation for expm(D*h2) = Y =
+     *   (I-Dh+(2/5)*Dh^2-(1/15)*Dh^3)\(I+Dh+(2/5)*Dh^2+(1/15)*Dh^3)
+     * Ym1 = Y-I =
+     *   (I-Dh+(2/5)*Dh^2-(1/15)*Dh^3)\(2*(Dh+(1/15)*Dh^3))
+     * (Calculate Ym1, not Y, to avoid precision loss from dominant I
+     * terms when Dh is small.) */
+    h2 = powf(2.0f,-s);
+    h = h2/2.0f;
+    hh = h*h;
+    hhh = hh*h;
+    Dh = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    memcpy(FLATTEN2D(Dh), D, sizeD*sizeD*sizeof(float));
+    utility_svsmul(FLATTEN2D(Dh), &h, sizeD*sizeD, NULL);
+    utility_svsmul(FLATTEN2D(D_2), &hh, sizeD*sizeD, NULL);
+    utility_svsmul(FLATTEN2D(D_3), &hhh, sizeD*sizeD, NULL);
+    Ym1 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    for(i=0; i<sizeD; i++)
+        for(j=0; j<sizeD; j++)
+            Ym1[i][j] = Dh[i][j] + (1.0f/15.0f)*D_3[i][j];
+    Ym2 = (float**)malloc2d(sizeD, sizeD, sizeof(float));
+    for(i=0; i<sizeD; i++){
+        for(j=0; j<sizeD; j++){
+            Ym2[i][j] = (2.0f/5.0f)*D_2[i][j]-Ym1[i][j];
+            if(i==j)
+                Ym2[i][j] += 1.0f;
+        }
+    }
+    two = 2.0f;
+    utility_svsmul(FLATTEN2D(Ym1), &two, sizeD*sizeD, NULL);
+    utility_sglslv(FLATTEN2D(Ym2), sizeD, FLATTEN2D(Ym1), sizeD, FLATTEN2D(Ym1));
+
+    /* Y = Ym1+I = expm(D)
+     * Square Y (i.e., Y <-- Y*Y) s times to get Y = expm(D*2^s). */
+    for (k = 0; k<(int)s; k++){
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, sizeD, sizeD, sizeD, 1.0f,
+                    FLATTEN2D(Ym1), sizeD,
+                    FLATTEN2D(Ym1), sizeD, 0.0f,
+                    FLATTEN2D(Ym2), sizeD);
+        for(i=0; i<sizeD; i++)
+            for(j=0; j<sizeD; j++)
+                Ym1[i][j] = Ym2[i][j] + 2.0f*Ym1[i][j]; /* (Ym1+I) <-- (Ym1+I)*(Ym1+I) */
+    }
+    memcpy(Y, FLATTEN2D(Ym1), sizeD*sizeD*sizeof(float));
+    if (m1){}
+    else{
+        for(i=0; i<sizeD; i++)
+           for(j=0; j<sizeD; j++)
+               if(i==j)
+                   Y[i*sizeD+j] += 1.0f;
+    }
+
+    /* clean-up */
+    free(D_2);
+    free(D_3);
+    free(D_4);
+    free(D_5);
+    free(Dh);
+    free(Ym1);
+    free(Ym2);
 }

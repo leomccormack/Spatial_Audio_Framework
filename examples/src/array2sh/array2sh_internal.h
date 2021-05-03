@@ -16,8 +16,9 @@
 
 /**
  * @file array2sh_internal.h
- * @brief Spatially encodes spherical or cylindrical sensor array signals into
- *        spherical harmonic signals utilising theoretical encoding filters.
+ * @brief Spatially encodes spherical microphone array signals into spherical
+ *        harmonic signals (aka: Ambisonic signals) utilising theoretical
+ *        encoding filters.
  *
  * The algorithms within array2sh were pieced together and developed in
  * collaboration with Symeon Delikaris-Manias and Angelo Farina.
@@ -28,12 +29,18 @@
  * @note Since the algorithms are based on theory, only array designs where
  *       there are analytical solutions available are supported. i.e. only
  *       spherical or cylindrical arrays, which have phase-matched sensors.
+ *       For more information, the reader is referred to [2,3].
+ * @test test__saf_example_array2sh()
  *
  * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
  *          Pulkki, V., "Real-time conversion of sensor array signals into
  *          spherical harmonic signals with applications to spatially localised
  *          sub-band sound-field analysis," in Audio Engineering Society
  *          Convention 144, Audio Engineering Society, 2018.
+ * @see [2] Williams EG. Fourier acoustics: sound radiation and nearfield
+ *          acoustical holography. Elsevier; 1999 Jun 10.
+ * @see [3] Rafaely B. Fundamentals of spherical array processing. Berlin:
+ *          Springer; 2015 Feb 18.
  *
  * @author Leo McCormack
  * @date 13.09.2017
@@ -49,6 +56,7 @@
 #include <assert.h>
 #include "array2sh.h" 
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -67,7 +75,9 @@ extern "C" {
 #define MAX_NUM_SENSORS ( ARRAY2SH_MAX_NUM_SENSORS ) /* Maximum permitted number of channels for the VST standard */
 #define MAX_EVAL_FREQ_HZ ( 20e3f )             /* Up to which frequency should the evaluation be accurate */
 #define MAX_NUM_SENSORS_IN_PRESET ( MAX_NUM_SENSORS )
-
+#if (FRAME_SIZE % HOP_SIZE != 0)
+# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#endif
 
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -94,14 +104,10 @@ typedef struct _array2sh_arrayPars {
 typedef struct _array2sh
 {
     /* audio buffers */
-    float inputFrameTD[MAX_NUM_SENSORS][FRAME_SIZE];
-    float SHframeTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float_complex inputframeTF[HYBRID_BANDS][MAX_NUM_SENSORS][TIME_SLOTS];
-    float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    complexVector* STFTInputFrameTF;
-    complexVector* STFTOutputFrameTF;
-    float** tempHopFrameTD_in;
-    float** tempHopFrameTD_out;
+    float** inputFrameTD;
+    float** SHframeTD;
+    float_complex*** inputframeTF;
+    float_complex*** SHframeTF;
     
     /* intermediates */
     double_complex bN_modal[HYBRID_BANDS][MAX_SH_ORDER + 1];
@@ -209,7 +215,7 @@ void array2sh_destroyArray(void ** const hPars);
  *
  * @param[in] hPars         (&) array configuration handle
  * @param[in] preset        Array preset (see
- *                          #_ARRAY2SH_MICROPHONE_ARRAY_PRESETS enum)
+ *                          #ARRAY2SH_MICROPHONE_ARRAY_PRESETS enum)
  * @param[in] arrayOrder    (&) maximum encoding order of the current preset
  * @param[in] firstInitFLAG '1' this is the first time function is being called
  */

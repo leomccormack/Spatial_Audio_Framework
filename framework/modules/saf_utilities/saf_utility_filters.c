@@ -17,38 +17,16 @@
 /**
  * @file: saf_utility_filters.c
  * @ingroup Utilities
- * @brief A collection of IIR/FIR filter design equations
+ * @brief A collection of IIR/FIR filter and filterbank designs
  *
  * @author Leo McCormack
  * @date 01.03.2019
  */
-
-#include "saf_utility_filters.h"
+ 
 #include "saf_utilities.h"
 
-/** Main structure for the Favrot&Faller filterbank */
-typedef struct _faf_IIRFB_data{
-    int nBands;       /**< Number of bands in the filterbank */
-    int nFilters;     /**< Number of filters used by the filterbank */
-    int filtLen;      /**< Filter length */
-    int filtOrder;    /**< Filter order (must be 1 or 3) */
-    int maxNSamplesToExpect; /**< Maximum number of samples to expect to process
-                              *   at a time */
-    float** b_lpf;    /**< Numerator filter coeffs for low-pass filters */
-    float** a_lpf;    /**< Denominator filter coeffs for low-pass filters */
-    float** b_hpf;    /**< Numerator filter coeffs for high-pass filters */
-    float** a_hpf;    /**< Denominator filter coeffs for high-pass filters */
-    float*** wz_lpf;  /**< Delay buffers for low-pass filters */
-    float*** wz_hpf;  /**< Delay buffers for high-pass filters */
-    float*** wz_apf1; /**< Delay buffers for all-pass filter part 1 */
-    float*** wz_apf2; /**< Delay buffers for all-pass filter part 2 */
-    float* tmp;       /**< Temporary buffer; maxNSamplesToExpect x 1 */
-    float* tmp2;      /**< Temporary buffer; maxNSamplesToExpect x 1 */
-
-}faf_IIRFB_data;
-
 /**
- * Applies a windowing function (see #_WINDOWING_FUNCTION_TYPES enum) of length
+ * Applies a windowing function (see #WINDOWING_FUNCTION_TYPES enum) of length
  * 'winlength', to vector 'x'.
  */
 static void applyWindowingFunction
@@ -291,6 +269,66 @@ void flattenMinphase
     free(dt_min_f);
 }
 
+void interpolateFiltersH
+(
+    int inFFTsize,
+    int outFFTsize,
+    int nFilters,
+    float_complex* filters_in,
+    float_complex* filters_out
+)
+{
+    int i, j, nBins_in, nBins_out;
+    float* M_ifft, *M_ifft_fl;
+    float_complex* tmp;
+    void* hFFT_in, *hFFT_out;
+
+    nBins_in = inFFTsize/2 + 1;
+    nBins_out = outFFTsize/2 + 1;
+    saf_rfft_create(&hFFT_in, inFFTsize);
+    saf_rfft_create(&hFFT_out, outFFTsize);
+    M_ifft    = calloc1d(MAX(inFFTsize, outFFTsize), sizeof(float));
+    M_ifft_fl = calloc1d(MAX(inFFTsize, outFFTsize), sizeof(float));
+    tmp = malloc1d(MAX(nBins_in, nBins_out) * sizeof(float_complex));
+
+    for(i=0; i<nFilters; i++){
+        for(j=0; j<nBins_in; j++)
+            tmp[j] = filters_in[j*nFilters+i];
+        saf_rfft_backward(hFFT_in, tmp, M_ifft);
+
+        /* flip */
+        for(j=0; j<outFFTsize/2; j++){
+            M_ifft_fl[j] = M_ifft[inFFTsize/2+j];
+            M_ifft_fl[inFFTsize/2+j] = M_ifft[j];
+        }
+        saf_rfft_forward(hFFT_out, M_ifft_fl, tmp);
+        for(j=0; j<nBins_out; j++)
+            filters_out[j*nFilters+i] = tmp[j];
+    }
+
+    saf_rfft_destroy(&hFFT_in);
+    saf_rfft_destroy(&hFFT_out);
+    free(M_ifft);
+    free(M_ifft_fl);
+    free(tmp);
+}
+
+float convertBW2Q
+(
+    float BW
+)
+{
+    return sqrtf(powf(2.0f, BW))/(powf(2.0f, BW)-1.0f);
+}
+
+float convertQ2BW
+(
+    float Q
+)
+{
+    return logf(  (2.0f*Q*Q+1.0f)/(2.0f*Q*Q) + sqrtf( powf((2.0f*Q*Q+1.0f)/(Q*Q+2.23e-13f), 2.0f)/4.0f - 1.0f )) /logf(2.0f);
+}
+
 
 /* ========================================================================== */
 /*                             IIR Filter Functions                           */
@@ -307,7 +345,7 @@ void biQuadCoeffs
     float a[3] 
 )
 {
-    float K, KK, D, V0;
+    float K, KK, D, V0, A, w0, alpha, a0;
     
     a[0] = 1.0f;
     
@@ -324,6 +362,25 @@ void biQuadCoeffs
             a[1] = (2.0f * Q * (KK - 1.0f))/D;
             a[2] = (KK * Q - K + Q)/D;
             break;
+
+        case BIQUAD_FILTER_LPF_EQCB:
+            /* Filter design equations - https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html */
+            w0 = 2.0f*SAF_PI*fc/fs;
+            alpha = sinf(w0)/(2.0f*Q);
+            b[0] = (1.0f - cosf(w0))/2.0f;
+            b[1] = 1.0f - cosf(w0);
+            b[2] = b[0];
+            a0   = 1.0f + alpha;
+            a[1] = -2.0f*cosf(w0);
+            a[2] = 1.0f - alpha;
+
+            /* Scale by a0, since applyBiQuadFilter() and applyIIR() assume a0 = 1.0 */
+            b[0] /= a0;
+            b[1] /= a0;
+            b[2] /= a0;
+            a[1] /= a0;
+            a[2] /= a0;
+            break;
             
         case BIQUAD_FILTER_HPF:
             /* Filter design equations - DAFX (2nd ed) p50 */
@@ -335,6 +392,25 @@ void biQuadCoeffs
             b[2] = b[0];
             a[1] = (2.0f * Q * (KK - 1.0f))/D;
             a[2] = (KK * Q - K + Q)/D;
+            break;
+
+        case BIQUAD_FILTER_HPF_EQCB:
+            /* Filter design equations - https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html */
+            w0 = 2.0f*SAF_PI*fc/fs;
+            alpha = sinf(w0)/(2.0f*Q);
+            b[0] = (1.0f + cosf(w0))/2.0f;
+            b[1] = -(1.0f + cosf(w0));
+            b[2] = b[0];
+            a0   = 1.0f + alpha;
+            a[1] = -2.0f*cosf(w0);
+            a[2] = 1.0f - alpha;
+
+            /* Scale by a0, since applyBiQuadFilter() and applyIIR() assume a0 = 1.0 */
+            b[0] /= a0;
+            b[1] /= a0;
+            b[2] /= a0;
+            a[1] /= a0;
+            a[2] /= a0;
             break;
             
         case BIQUAD_FILTER_LOW_SHELF:
@@ -361,6 +437,26 @@ void biQuadCoeffs
                 a[2] = (V0 - sqrtf(2.0f*V0)*K + KK)/D;
             }
             break;
+
+        case BIQUAD_FILTER_LOW_SHELF_EQCB:
+            /* Filter design equations - https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html */
+            A = powf(10.0f, gain_dB/40.0f);
+            w0 = 2.0f*SAF_PI*fc/fs;
+            alpha = sinf(w0)/(2.0f*Q);
+            b[0] = A*( (A+1.0f) - (A-1.0f) * cosf(w0) + 2.0f*sqrtf(A)*alpha );
+            b[1] = 2.0f*A*( (A-1.0f) - (A+1.0f) * cosf(w0) );
+            b[2] = A*( (A+1.0f) - (A-1.0f) * cosf(w0) - 2.0f*sqrtf(A)*alpha );
+            a0   = (A+1.0f) + (A-1.0f) * cosf(w0) + 2.0f*sqrtf(A)*alpha;
+            a[1] = -2.0f*( (A-1.0f) + (A+1.0f) * cosf(w0) );
+            a[2] = (A+1.0f) + (A-1.0f) * cosf(w0) - 2.0f*sqrtf(A)*alpha;
+
+            /* Scale by a0, since applyBiQuadFilter() and applyIIR() assume a0 = 1.0 */
+            b[0] /= a0;
+            b[1] /= a0;
+            b[2] /= a0;
+            a[1] /= a0;
+            a[2] /= a0;
+            break;
             
         case BIQUAD_FILTER_HI_SHELF:
             /* Filter design equations - DAFX (2nd ed) p64 */
@@ -386,6 +482,26 @@ void biQuadCoeffs
                 a[2] = (1.0f - sqrtf(2.0f*V0)*K + V0*KK)/D;
             }
             break;
+
+        case BIQUAD_FILTER_HI_SHELF_EQCB:
+            /* Filter design equations - https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html */
+            A = powf(10.0f, gain_dB/40.0f);
+            w0 = 2.0f*SAF_PI*fc/fs;
+            alpha = sinf(w0)/(2.0f*Q);
+            b[0] = A*( (A+1.0f) + (A-1.0f) * cosf(w0) + 2.0f*sqrtf(A)*alpha );
+            b[1] = -2.0f*A*( (A-1.0f) + (A+1.0f) * cosf(w0) );
+            b[2] = A*( (A+1.0f) + (A-1.0f) * cosf(w0) - 2.0f*sqrtf(A)*alpha );
+            a0   = (A+1.0f) - (A-1.0f) * cosf(w0) + 2.0f*sqrtf(A)*alpha;
+            a[1] = 2.0f*( (A-1.0f) - (A+1.0f) * cosf(w0) );
+            a[2] = (A+1.0f) - (A-1.0f) * cosf(w0) - 2.0f*sqrtf(A)*alpha;
+
+            /* Scale by a0, since applyBiQuadFilter() and applyIIR() assume a0 = 1.0 */
+            b[0] /= a0;
+            b[1] /= a0;
+            b[2] /= a0;
+            a[1] /= a0;
+            a[2] /= a0;
+            break;
             
         case BIQUAD_FILTER_PEAK:
             /* Filter design equations - DAFX (2nd ed) p66 */
@@ -408,6 +524,26 @@ void biQuadCoeffs
                 a[1] = b[1];
                 a[2] = (1.0f - (K/(V0*Q)) + KK)/D;
             }
+            break;
+
+        case BIQUAD_FILTER_PEAK_EQCB:
+            /* Filter design equations - https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html */
+            A = powf(10.0f, gain_dB/40.0f);
+            w0 = 2.0f*SAF_PI*fc/fs;
+            alpha = sinf(w0)/(2.0f*Q);
+            b[0] = 1.0f + alpha*A;
+            b[1] = -2.0f*cosf(w0);
+            b[2] = 1.0f - alpha*A;
+            a0   = 1.0f + alpha/A;
+            a[1] = b[1];
+            a[2] = 1.0f - alpha/A;
+
+            /* Scale by a0, since applyBiQuadFilter() and applyIIR() assume a0 = 1.0 */
+            b[0] /= a0;
+            b[1] /= a0;
+            b[2] /= a0;
+            a[1] /= a0;
+            a[2] /= a0;
             break;
     }
 }
@@ -441,7 +577,8 @@ void evalBiQuadTransferFunction
     float* freqs,
     int nFreqs,
     float fs,
-    float* magnitude_dB,
+    int mag2dB,
+    float* magnitude,
     float* phase_rad
 )
 {
@@ -457,9 +594,10 @@ void evalBiQuadTransferFunction
         num_real = b[0] + b[1]*cosf(w) + b[2]*cosf(2.0f*w);
         num_imag = b[1]*sinf(w) + b[2]*sinf(2.0f*w);
         
-        if(magnitude_dB!=NULL){
-            magnitude_dB[ff] = sqrtf( (powf(num_real, 2.0f) + powf(num_imag, 2.0f)) / (powf(denom_real, 2.0f) + powf(denom_imag, 2.0f)) );
-            magnitude_dB[ff] = 20.0f*log10f(magnitude_dB[ff]);
+        if(magnitude!=NULL){
+            magnitude[ff] = sqrtf( (powf(num_real, 2.0f) + powf(num_imag, 2.0f)) / (powf(denom_real, 2.0f) + powf(denom_imag, 2.0f) + 2.23e-7f) ); 
+            if(mag2dB)
+                magnitude[ff] = 20.0f*log10f(magnitude[ff]);
         }
         if(phase_rad!=NULL)
             phase_rad[ff] = atan2f(num_imag,num_real) - atan2f(denom_imag, denom_real);
@@ -502,15 +640,15 @@ void applyIIR
 
         /* shuffle delays */
         switch(nCoeffs-1){
-            case 10: wz[9] = wz[8];
-            case 9:  wz[8] = wz[7];
-            case 8:  wz[7] = wz[6];
-            case 7:  wz[6] = wz[5];
-            case 6:  wz[5] = wz[4];
-            case 5:  wz[4] = wz[3];
-            case 4:  wz[3] = wz[2];
-            case 3:  wz[2] = wz[1];
-            case 2:  wz[1] = wz[0];
+            case 10: wz[9] = wz[8]; /* fall through */
+            case 9:  wz[8] = wz[7]; /* fall through */
+            case 8:  wz[7] = wz[6]; /* fall through */
+            case 7:  wz[6] = wz[5]; /* fall through */
+            case 6:  wz[5] = wz[4]; /* fall through */
+            case 5:  wz[4] = wz[3]; /* fall through */
+            case 4:  wz[3] = wz[2]; /* fall through */
+            case 3:  wz[2] = wz[1]; /* fall through */
+            case 2:  wz[1] = wz[0]; /* fall through */
             case 1:  wz[0] = wn; break;
             default: assert(0); /* A 5th order BPF/BSF or 10th order LPF/HPF?
                                  * Sorry, I gotta put a stop to that... */
@@ -614,6 +752,7 @@ void butterCoeffs
     switch(filterType){
         case BUTTER_FILTER_HPF:
             utility_dinv(FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
+            /* fall through */
         case BUTTER_FILTER_LPF:
             bf_ss = (double**)malloc2d(numStates,numStates,sizeof(double));
             for(i=0; i<numStates; i++)
@@ -622,6 +761,7 @@ void butterCoeffs
             break;
         case BUTTER_FILTER_BSF:
             utility_dinv(FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
+            /* fall through */
         case BUTTER_FILTER_BPF:
             numStates = numStates*2;
             w1 = 4.0*tan(SAF_PI*whi/2.0);
@@ -661,6 +801,8 @@ void butterCoeffs
     rcmplx = NULL;
     r = NULL;
     switch(filterType){
+        default:
+            /* fall through */
         case BUTTER_FILTER_LPF:
             r = malloc1d(numStates*sizeof(double));
             for(i=0; i<numStates; i++)
@@ -727,6 +869,27 @@ void butterCoeffs
     free(kern);
 }
 
+/** Main structure for the Favrot&Faller filterbank */
+typedef struct _faf_IIRFB_data{
+    int nBands;       /**< Number of bands in the filterbank */
+    int nFilters;     /**< Number of filters used by the filterbank */
+    int filtLen;      /**< Filter length */
+    int filtOrder;    /**< Filter order (must be 1 or 3) */
+    int maxNSamplesToExpect; /**< Maximum number of samples to expect to process
+                              *   at a time */
+    float** b_lpf;    /**< Numerator filter coeffs for low-pass filters */
+    float** a_lpf;    /**< Denominator filter coeffs for low-pass filters */
+    float** b_hpf;    /**< Numerator filter coeffs for high-pass filters */
+    float** a_hpf;    /**< Denominator filter coeffs for high-pass filters */
+    float*** wz_lpf;  /**< Delay buffers for low-pass filters */
+    float*** wz_hpf;  /**< Delay buffers for high-pass filters */
+    float*** wz_apf1; /**< Delay buffers for all-pass filter part 1 */
+    float*** wz_apf2; /**< Delay buffers for all-pass filter part 2 */
+    float* tmp;       /**< Temporary buffer; maxNSamplesToExpect x 1 */
+    float* tmp2;      /**< Temporary buffer; maxNSamplesToExpect x 1 */
+
+}faf_IIRFB_data;
+
 void faf_IIRFilterbank_create
 (
     void** phFaF,
@@ -751,7 +914,7 @@ void faf_IIRFilterbank_create
     fb->filtOrder = order;
     fb->filtLen = filtLen;
 
-    /* Number of filters returned is always one more than the number of cut-off
+    /* Number of bands is always one more than the number of cut-off
      * frequencies */
     fb->nFilters = nCutoffFreq;
     fb->nBands = nCutoffFreq + 1;

@@ -16,16 +16,27 @@
 
 /**
  * @file ambi_dec_internal.h
- * @brief A frequency-dependent Ambisonic decoder for loudspeakers.
+ * @brief A frequency-dependent Ambisonic decoder for reproducing Ambisonic
+ *        sound scenes over loudspeakers
  *
  * Different decoder settings can be specified for the low and high frequencies.
- * When utilising spherical harmonic signals derived from real microphone
- * arrays, this implementation also allows the decoding order per frequency band
- * to be specified; of course, this may also be used creatively. Optionally, a
- * SOFA file may be loaded for personalised headphone listening.
+ * A number of decoding options are also offered, including [1,2]. When
+ * utilising spherical harmonic signals derived from real microphone arrays,
+ * this implementation also allows the decoding order to be specified per
+ * frequency band; of course, this may also be used creatively. An optional,
+ * loudspeaker channel binauraliser is included, along with with SOFA file
+ * loading, for headphone listening.
  *
  * The algorithms utilised in this Ambisonic decoder were pieced together and
  * developed in collaboration with Archontis Politis.
+ *
+ * @test test__saf_example_ambi_dec()
+ *
+ * @see [1] Zotter F, Pomberger H, Noisternig M. Energy--preserving ambisonic
+ *          decoding. Acta Acustica united with Acustica. 2012 Jan 1;
+ *          98(1):37-47.
+ * @see [2] Zotter F, Frank M. All-round ambisonic panning and decoding. Journal
+ *          of the audio engineering society. 2012 Nov 26; 60(10):807-20.
  *
  * @author Leo McCormack
  * @date 07.12.2017
@@ -39,6 +50,7 @@
 #include <string.h>
 #include "ambi_dec.h" 
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,7 +69,9 @@ extern "C" {
 #define MAX_NUM_LOUDSPEAKERS ( MAX_NUM_OUTPUTS ) /* Maximum permitted channels for the VST standard */
 #define MIN_NUM_LOUDSPEAKERS ( 4 )            /* To help avoid traingulation errors when using AllRAD */ 
 #define NUM_DECODERS ( 2 )                    /* one for low-frequencies and another for high-frequencies */
-
+#if (FRAME_SIZE % HOP_SIZE != 0)
+# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#endif
 
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -97,6 +111,9 @@ typedef struct _ambi_dec_codecPars
     float* hrtf_fb_mag;                         /**< magnitudes of the HRTF filterbank coefficients; nBands x nCH x N_hrirs */
     float_complex hrtf_interp[MAX_NUM_LOUDSPEAKERS][HYBRID_BANDS][NUM_EARS]; /* interpolated HRTFs */
     
+    /* integration weights */
+    float* weights;         /**< grid integration weights of hrirs; N_hrirs x 1 */
+
 }ambi_dec_codecPars;
 
 /**
@@ -106,15 +123,13 @@ typedef struct _ambi_dec_codecPars
 typedef struct _ambi_dec
 {
     /* audio buffers + afSTFT time-frequency transform handle */
-    float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    float_complex outputframeTF[HYBRID_BANDS][MAX_NUM_LOUDSPEAKERS][TIME_SLOTS];
-    float_complex binframeTF[HYBRID_BANDS][NUM_EARS][TIME_SLOTS];
-    complexVector* STFTInputFrameTF;
-    complexVector* STFTOutputFrameTF;
+    float** SHFrameTD;
+    float** outputFrameTD;
+    float_complex*** SHframeTF;
+    float_complex*** outputframeTF;
+    float_complex*** binframeTF;
     void* hSTFT;                         /**< afSTFT handle */
-    int afSTFTdelay;                     /**< for host delay compensation */
-    float** tempHopFrameTD;              /**< temporary multi-channel time-domain buffer of size "HOP_SIZE". */
+    int afSTFTdelay;                     /**< for host delay compensation */ 
     int fs;                              /**< host sampling rate */
     float freqVector[HYBRID_BANDS];      /**< frequency vector for time-frequency transform, in Hz */
     
@@ -145,9 +160,10 @@ typedef struct _ambi_dec
     int nLoudpkrs;                       /**< number of loudspeakers/virtual loudspeakers */
     float loudpkrs_dirs_deg[MAX_NUM_LOUDSPEAKERS][NUM_DECODERS]; /* loudspeaker directions in degrees [azi, elev] */
     int useDefaultHRIRsFLAG;             /**< 1: use default HRIRs in database, 0: use those from SOFA file */
+    int enableHRIRsPreProc;              /**< flag to apply pre-processing to the currently loaded HRTFs */
     int binauraliseLS;                   /**< 1: convolve loudspeaker signals with HRTFs, 0: output loudspeaker signals */
-    CH_ORDER chOrdering;        /**< only ACN is supported */
-    NORM_TYPES norm;            /**< N3D or SN3D */
+    CH_ORDER chOrdering;                 /**< only ACN is supported */
+    NORM_TYPES norm;                     /**< N3D or SN3D */
     
 } ambi_dec_data;
 
@@ -157,7 +173,7 @@ typedef struct _ambi_dec
 /* ========================================================================== */
 
 /**
- * Sets codec status (see #_CODEC_STATUS enum)
+ * Sets codec status (see #CODEC_STATUS enum)
  */
 void ambi_dec_setCodecStatus(void* const hCmp, CODEC_STATUS newStatus);
 
@@ -189,7 +205,7 @@ void ambi_dec_interpHRTFs(void* const hAmbi,
  * this. This can help avoid scenarios of many sources being panned in the same
  * direction, or triangulations errors.
  *
- * @param[in]  preset   See #_LOUDSPEAKER_ARRAY_PRESETS enum
+ * @param[in]  preset   See #LOUDSPEAKER_ARRAY_PRESETS enum
  * @param[out] dirs_deg Loudspeaker directions, [azimuth elevation] convention, in
  *                      DEGREES;
  * @param[out] nCH      (&) number of loudspeaker directions in the array

@@ -24,8 +24,7 @@
  */
 
 #include "saf_utilities.h"
-#include "saf_utility_matrixConv.h"
-
+#include "saf_externals.h"
 
 /* ========================================================================== */
 /*                              Matrix Convolver                              */
@@ -67,12 +66,11 @@ void  saf_matrixConv_create
     h->nCHin = nCHin;
     h->nCHout = nCHout;
     h->usePartFLAG = usePartFLAG;
-    if(hopSize>length_h && h->usePartFLAG)
-        h->usePartFLAG = 0; /* no benefit in partitioning in this case */
     
     if(!h->usePartFLAG){
         /* intialise non-partitioned convolution mode */
         h->numOvrlpAddBlocks = (int)(ceilf((float)(hopSize+length_h-1)/(float)hopSize)+0.1f);
+        //h->numOvrlpAddBlocks = nextpow2((int)(ceilf((float)(hopSize+length_h-1)/(float)hopSize)+0.1f));
         h->fftSize = (h->numOvrlpAddBlocks)*hopSize;
         h->nBins = h->fftSize/2 + 1;
         
@@ -82,8 +80,8 @@ void  saf_matrixConv_create
         h->y_pad = malloc1d((h->nCHout)*(h->fftSize)*sizeof(float));
         h->hx_n = malloc1d((h->fftSize) * sizeof(float));
         h->H_f = malloc1d((h->nCHout)*(h->nCHin)*(h->nBins)*sizeof(float_complex));
-        h->X_n = malloc1d((h->nCHin)*(h->nBins)*sizeof(float_complex));
-        h->HX_n = malloc1d((h->nBins)*sizeof(float_complex));
+        h->X_n = malloc1d((h->nCHout)*(h->nCHin)*(h->nBins)*sizeof(float_complex));
+        h->HX_n = malloc1d((h->nCHout)*(h->nCHin)*(h->nBins)*sizeof(float_complex));
         h->z_n = malloc1d((h->fftSize) * sizeof(float));
         saf_rfft_create(&(h->hFFT), h->fftSize);
         h_pad = calloc1d(h->fftSize, sizeof(float));
@@ -97,6 +95,7 @@ void  saf_matrixConv_create
     }
     else{
         /* intialise partitioned convolution mode */
+        h->length_h = length_h;
         h->fftSize = 2*(h->hopSize);
         h->nBins = hopSize+1;
         h->numFilterBlocks = (int)ceilf((float)length_h/(float)hopSize); /* number of partitions */
@@ -174,40 +173,43 @@ void saf_matrixConv_apply
     if(!h->usePartFLAG){
         /* zero-pad input signals and perform fft */
         for(ni=0; ni<h->nCHin; ni++){
-            memcpy(&(h->x_pad[ni*(h->fftSize)]), &inputSig[ni*(h->hopSize)], h->hopSize *sizeof(float));
+            cblas_scopy(h->hopSize, &inputSig[ni*(h->hopSize)], 1, &(h->x_pad[ni*(h->fftSize)]), 1);
             saf_rfft_forward(h->hFFT, &(h->x_pad[ni*(h->fftSize)]), &(h->X_n[ni*(h->nBins)]));
         }
-        
+
+        /* Replicate for all outputs */
+        for(no=1; no<h->nCHout; no++)
+            cblas_ccopy(h->nCHin*(h->nBins), h->X_n, 1, &(h->X_n[no*ni*(h->nBins)]), 1);
+
+        /* Multiply spectra together */
+        utility_cvvmul(h->H_f, h->X_n, (h->nCHout)*(h->nCHin)*h->nBins, h->HX_n);
+
+        /* Loop over outputs */
         for(no=0; no<h->nCHout; no++){
-            /* Apply filter and perform ifft, and sum over input channels */
+            /* ifft and sum */
             memset(h->z_n, 0, (h->fftSize) * sizeof(float));
             for(ni=0; ni<h->nCHin; ni++){
-
-
-
-                /* This is the bulk of the CPU work (90.3%): */
-                utility_cvvmul(&(h->H_f[no*(h->nCHin)*(h->nBins)+ni*(h->nBins)]), &(h->X_n[ni*(h->nBins)]), h->nBins, h->HX_n);
-                saf_rfft_backward(h->hFFT, h->HX_n, h->hx_n);
-                utility_svvadd(h->z_n,  h->hx_n, h->fftSize, h->z_n); /* 7.8% */
+                saf_rfft_backward(h->hFFT, &(h->HX_n[no*(h->nCHin)*(h->nBins)+ni*(h->nBins)]), h->hx_n);
+                cblas_saxpy(h->fftSize, 1.0f, h->hx_n, 1, h->z_n, 1);
             }
-            
-            /* over-lap add buffer */
-            memcpy(&(h->ovrlpAddBuffer[no*(h->fftSize)]), &(h->ovrlpAddBuffer[no*(h->fftSize)+(h->hopSize)]), (h->numOvrlpAddBlocks-1)*(h->hopSize)*sizeof(float));
+
+            /* shuffle the over-lap add buffer */
+            memmove(&(h->ovrlpAddBuffer[no*(h->fftSize)]), &(h->ovrlpAddBuffer[no*(h->fftSize)+(h->hopSize)]), (h->numOvrlpAddBlocks-1)*(h->hopSize)*sizeof(float));
             memset(&(h->ovrlpAddBuffer[no*(h->fftSize)+(h->numOvrlpAddBlocks-1)*(h->hopSize)]), 0, (h->hopSize)*sizeof(float));
 
-            /* sum with overlap buffer and copy the result to the output buffer */
-            utility_svvadd(&(h->ovrlpAddBuffer[no*(h->fftSize)]),  h->z_n, (h->fftSize), &(h->ovrlpAddBuffer[no*(h->fftSize)]));
+            /* sum with overlap-add buffer */
+            cblas_saxpy(h->fftSize, 1.0f, h->z_n, 1, &(h->ovrlpAddBuffer[no*(h->fftSize)]), 1);
 
             /* truncate buffer and output */
-            memcpy(&(outputSig[no*(h->hopSize)]), &(h->ovrlpAddBuffer[no*(h->fftSize)]), h->hopSize*sizeof(float));
+            cblas_scopy(h->hopSize, &(h->ovrlpAddBuffer[no*(h->fftSize)]), 1, &(outputSig[no*(h->hopSize)]), 1); 
         }
     }
     /* apply partitioned convolution */
     else{
         /* zero-pad input signals and perform fft. Store in partition slot 1. */
-        memcpy(&(h->X_n[1*(h->nCHin)*(h->nBins)]), h->X_n, (h->numFilterBlocks-1)*(h->nCHin)*(h->nBins)*sizeof(float_complex)); /* shuffle */
-        for(ni=0; ni<h->nCHin; ni++){
-            memcpy(h->x_pad, &(inputSig[ni*(h->hopSize)]), h->hopSize *sizeof(float));
+        memmove(&(h->X_n[1*(h->nCHin)*(h->nBins)]), h->X_n, (h->numFilterBlocks-1)*(h->nCHin)*(h->nBins)*sizeof(float_complex)); /* shuffle */
+        for(ni=0; ni<h->nCHin; ni++){ 
+            cblas_scopy(h->hopSize, &(inputSig[ni*(h->hopSize)]), 1, h->x_pad, 1);
             saf_rfft_forward(h->hFFT, h->x_pad, &(h->X_n[0*(h->nCHin)*(h->nBins)+ni*(h->nBins)]));
         }
         
@@ -221,13 +223,13 @@ void saf_matrixConv_apply
             /* output frame for this channel is the sum over all partitions and input channels */
             memset(h->z_n, 0, (h->fftSize) * sizeof(float));
             for(nb=0; nb<h->numFilterBlocks*(h->nCHin); nb++)
-                utility_svvadd(h->z_n, (const float*)&(h->hx_n[nb*(h->fftSize)]), h->fftSize, h->z_n);
+                cblas_saxpy(h->fftSize, 1.0f, &(h->hx_n[nb*(h->fftSize)]), 1, h->z_n, 1);
 
             /* sum with overlap buffer and copy the result to the output buffer */
             utility_svvadd(h->z_n, (const float*)&(h->y_n_overlap[no*(h->hopSize)]), h->hopSize, &(outputSig[no*(h->hopSize)]));
 
             /* for next iteration: */
-            memcpy(&(h->y_n_overlap[no*(h->hopSize)]), &(h->z_n[h->hopSize]), h->hopSize*sizeof(float));
+            cblas_scopy(h->hopSize, &(h->z_n[h->hopSize]), 1, &(h->y_n_overlap[no*(h->hopSize)]), 1);
         }
     }
 }
@@ -269,9 +271,7 @@ void saf_multiConv_create
     h->hopSize = hopSize;
     h->length_h = length_h;
     h->nCH = nCH;
-    h->usePartFLAG = usePartFLAG;
-    if(hopSize>length_h && h->usePartFLAG)
-        h->usePartFLAG = 0; /* no benefit in partitioning in this case */
+    h->usePartFLAG = usePartFLAG; 
     
     if(!h->usePartFLAG){
         /* intialise non-partitioned convolution mode */

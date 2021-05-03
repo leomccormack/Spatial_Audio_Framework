@@ -31,6 +31,23 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** Quaternion data struct */
+typedef struct _quaternion_data {
+    union {
+        struct { float w, x, y, z; };
+        float Q[4]; /** WXYZ values [-1..1] */
+    };
+} quaternion_data;
+
+/** Available euler2rotationMatrix() conventions */
+typedef enum {
+    EULER_ROTATION_Y_CONVENTION,   /**< y-convention, 'zyz' */
+    EULER_ROTATION_X_CONVENTION,   /**< x-convention, 'zxz' */
+    EULER_ROTATION_YAW_PITCH_ROLL, /**< yaw-pitch-roll, 'zyx' */
+    EULER_ROTATION_ROLL_PITCH_YAW  /**< roll-pitch-yaw, 'xyz' */
+
+} EULER_ROTATION_CONVENTIONS;
+
 /**
  * Data structure for Voronoi diagrams
  *
@@ -46,25 +63,136 @@ typedef struct _voronoi_data{
 
 }voronoi_data;
 
+/** Constructs a 3x3 rotation matrix based on Quaternions */
+void quaternion2rotationMatrix(/* Input Arguments */
+                               quaternion_data* Q,
+                               /* Output Arguments */
+                               float R[3][3]);
+
+/** Calculates Quaternions from a 3x3 rotation matrix */
+void rotationMatrix2quaternion(/* Input Arguments */
+                               float R[3][3],
+                               /* Output Arguments */
+                               quaternion_data* Q);
+
+/** Converts Euler angles to Quaternion */
+void euler2Quaternion(/* Input Arguments */
+                      float alpha,
+                      float beta,
+                      float gamma,
+                      int degreesFlag,
+                      EULER_ROTATION_CONVENTIONS convention,
+                      /* Output Arguments */
+                      quaternion_data* Q);
+
+/** Converts Quaternion to Euler angles */
+void quaternion2euler(/* Input Arguments */
+                      quaternion_data* Q,
+                      int degreesFlag,
+                      EULER_ROTATION_CONVENTIONS convention,
+                      /* Output Arguments */
+                      float* alpha,
+                      float* beta,
+                      float* gamma);
+
+/**
+ * Constructs a 3x3 rotation matrix from the Euler angles
+ *
+ * @param[in]  alpha       first rotation angle
+ * @param[in]  beta        first rotation angle
+ * @param[in]  gamma       first rotation angle
+ * @param[in]  degreesFlag 1: angles are in degrees, 0: angles are in radians
+ * @param[in]  convention  see #EULER_ROTATION_CONVENTIONS enum
+ * @param[out] R           resulting 3x3 rotation matrix
+ */
+void euler2rotationMatrix(/* Input Arguments */
+                          float alpha,
+                          float beta,
+                          float gamma,
+                          int degreesFlag,
+                          EULER_ROTATION_CONVENTIONS convention,
+                          /* Output Arguments */
+                          float R[3][3]);
+
+/**
+ * Constructs a 3x3 rotation matrix from the Euler angles, using the
+ * yaw-pitch-roll (zyx) convention
+ *
+ * @note This function now just calls: euler2rotationMatrix()
+ *
+ * @param[in]  yaw              Yaw angle in radians
+ * @param[in]  pitch            Pitch angle in radians
+ * @param[in]  roll             Roll angle in radians
+ * @param[in]  rollPitchYawFLAG '1' to use Rxyz, i.e. apply roll, pitch and then
+ *                              yaw, '0' Rzyx / y-p-r
+ * @param[out] R                zyx rotation matrix; 3 x 3
+ */
+void yawPitchRoll2Rzyx (/* Input Arguments */
+                        float yaw,
+                        float pitch,
+                        float roll,
+                        int rollPitchYawFLAG,
+                        float R[3][3]);
+
+/**
+ * Converts spherical coordinates to Cartesian coordinates of unit length
+ *
+ * @param[in]  dirs                Spherical coordinates; FLAT: nDirs x 2
+ * @param[in]  nDirs               Number of directions/coordinates
+ * @param[in]  anglesInDegreesFLAG 0: dirs given in radians, 1: degrees instead
+ * @param[out] dirs_xyz            Cartesian coordinates; FLAT: nDirs x 3
+ */
+void unitSph2cart(/* Input Arguments */
+                  float* dirs,
+                  int nDirs,
+                  int anglesInDegreesFLAG,
+                  /* Output Arguments */
+                  float* dirs_xyz);
+
+/**
+ * Converts Cartesian coordinates of unit length to spherical coordinates
+ *
+ * @param[in]  dirs_xyz            Cartesian coordinates; FLAT: nDirs x 3
+ * @param[in]  nDirs               Number of directions/coordinates
+ * @param[in]  anglesInDegreesFLAG 0: dirs wanted in radians, 1: degrees instead
+ * @param[out] dirs                Spherical coordinates; FLAT: nDirs x 2
+ */
+void unitCart2sph(/* Input Arguments */
+                  float* dirs_xyz,
+                  int nDirs,
+                  int anglesInDegreesFLAG,
+                  /* Output Arguments */
+                  float* dirs);
+
 /**
  * L2 (Euclidean) norm of a 3-element vector
  */
-float L2_norm(float v[3]);
+float L2_norm3(float v[3]);
+
+/**
+ * L2 (Euclidean) norm of an arbitrary length vector
+ */
+float L2_norm(float* v, int lenV);
+
+/**
+ * Frobenius Norm of a matrix M, of dimensions: lenX x lenY
+ */
+float Frob_norm(float* M, int lenX, int lenY);
 
 /**
  * Cross product between two 3-element floating point vectors (c = a x b)
  */
-void crossProduct(/* Input Arguments */
-                  float a[3],
-                  float b[3],
-                  /* Output Arguments */
-                  float c[3]);
+void crossProduct3(/* Input Arguments */
+                   float a[3],
+                   float b[3],
+                   /* Output Arguments */
+                   float c[3]);
 
 /**
  * Builds the 3-D convex hull given a list of vertices
  *
  * @warning Currently, this does not check if there are duplicate vertices or
- *          whether any of them are co-linear.
+ *          whether any of them are co-linear!
  *
  * @param[in]  vertices The vertices; FLAT: nDirs x 3
  * @param[in]  nDirs    Number of vertices

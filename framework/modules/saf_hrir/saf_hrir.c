@@ -29,7 +29,7 @@
  */
  
 #include "saf_hrir.h"
-#include "saf_hrir_internal.h"
+#include "saf_externals.h"
 
 /* ========================================================================== */
 /*                               Main Functions                               */
@@ -105,7 +105,22 @@ void estimateITDs
     free(hrir_lpf);
 }
 
-void HRIRs2FilterbankHRTFs
+void HRIRs2HRTFs_afSTFT
+(
+    float* hrirs, /* N_dirs x NUM_EARS x hrir_len */
+    int N_dirs,
+    int hrir_len,
+    int hopsize,
+    int LDmode,
+    int hybridmode,
+    float_complex* hrtf_fb /* nBands x NUM_EARS x N_dirs */
+)
+{
+    /* convert the HRIRs to filterbank coefficients */
+    afSTFT_FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, hopsize, LDmode, hybridmode, hrtf_fb);
+}
+
+void HRIRs2HRTFs_qmf
 (
     float* hrirs, /* N_dirs x NUM_EARS x hrir_len */
     int N_dirs,
@@ -116,7 +131,7 @@ void HRIRs2FilterbankHRTFs
 )
 {
     /* convert the HRIRs to filterbank coefficients */
-    FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, hopsize, hybridmode, hrtf_fb);
+    qmf_FIRtoFilterbankCoeffs(hrirs, N_dirs, NUM_EARS, hrir_len, hopsize, hybridmode, hrtf_fb);
 }
 
 void HRIRs2HRTFs
@@ -159,47 +174,67 @@ void diffuseFieldEqualiseHRTFs
     float* itds_s,
     float* centreFreq,
     int N_bands,
-    float_complex* hrtfs   /* N_bands x 2 x N_dirs */
+    float* weights,
+    int applyEQ,
+    int applyPhase,
+    float_complex* hrtfs   /* N_bands x #NUM_EARS x N_dirs */
 )
 {
-    int i, j, nd, band;
-    float* ipd, *hrtf_diff;
-    
-    /* convert ITDs to phase differences -pi..pi */
-    ipd = malloc1d(N_bands*N_dirs*sizeof(float));
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_bands, N_dirs, 1, 1.0,
-                centreFreq, 1,
-                itds_s, 1, 0.0,
-                ipd, N_dirs);
-    for(i=0; i<N_bands; i++)
-        for(j=0; j<N_dirs; j++)
-            ipd[i*N_dirs+j] = (matlab_fmodf(2.0f*SAF_PI*ipd[i*N_dirs+j] + SAF_PI, 2.0f*SAF_PI) - SAF_PI)/2.0f; /* /2 here, not later */
-    
-    /* diffuse-field equalise */
-    hrtf_diff = calloc1d(N_bands*NUM_EARS, sizeof(float));
-    for(band=0; band<N_bands; band++)
-        for(i=0; i<NUM_EARS; i++)
-            for(j=0; j<N_dirs; j++)
-                hrtf_diff[band*NUM_EARS + i] += powf(cabsf(hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + j]), 2.0f);
-    for(band=0; band<N_bands; band++)
-        for(i=0; i<NUM_EARS; i++)
-            hrtf_diff[band*NUM_EARS + i] = sqrtf(hrtf_diff[band*NUM_EARS + i]/(float)N_dirs);
-    for(band=0; band<N_bands; band++)
-        for(i=0; i<NUM_EARS; i++)
-            for(nd=0; nd<N_dirs; nd++)
-                hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + nd] = ccdivf(hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + nd], cmplxf(hrtf_diff[band*NUM_EARS + i] + 2.23e-8f, 0.0f));
-    
-    /* create complex HRTFs by introducing the interaural phase differences
-     * (IPDs) to the HRTF magnitude responses */
-    for(band=0; band<N_bands; band++){
-        for(nd=0; nd<N_dirs; nd++){
-            hrtfs[band*NUM_EARS*N_dirs + 0*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f, ipd[band*N_dirs + nd])), cabsf(hrtfs[band*NUM_EARS*N_dirs + 0*N_dirs + nd]) );
-            hrtfs[band*NUM_EARS*N_dirs + 1*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f,-ipd[band*N_dirs + nd])), cabsf(hrtfs[band*NUM_EARS*N_dirs + 1*N_dirs + nd]) );
+    /* Anything to do at all? */
+    if(applyEQ + applyPhase)
+    {
+        int i, j, nd, band;
+        float* ipd, *hrtf_diff, *_weights;
+      
+        /* diffuse-field equalise */
+        if(applyEQ){
+            hrtf_diff = calloc1d(N_bands*NUM_EARS, sizeof(float));
+            if(weights == NULL){
+                _weights = malloc1d(N_dirs*sizeof(float));
+                for(int idx=0; idx < N_dirs; idx++)
+                    _weights[idx] = 4.f*SAF_PI / (float)N_dirs;
+            }
+            else
+                _weights = weights;
+            for(band=0; band<N_bands; band++)
+                for(i=0; i<NUM_EARS; i++)
+                    for(j=0; j<N_dirs; j++)
+                        hrtf_diff[band*NUM_EARS + i] += _weights[j]/(4.f*SAF_PI) * powf(cabsf(hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + j]), 2.0f);
+            for(band=0; band<N_bands; band++)
+                for(i=0; i<NUM_EARS; i++)
+                    hrtf_diff[band*NUM_EARS + i] = sqrtf(hrtf_diff[band*NUM_EARS + i]);
+            for(band=0; band<N_bands; band++)
+                for(i=0; i<NUM_EARS; i++)
+                    for(nd=0; nd<N_dirs; nd++)
+                        hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + nd] = ccdivf(hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + nd], cmplxf(hrtf_diff[band*NUM_EARS + i] + 2.23e-8f, 0.0f));
+            free(hrtf_diff);
+            if(weights==NULL)
+                free(_weights);
+        }
+        
+        /* Create complex HRTFs by introducing the interaural phase differences
+         * (IPDs) to the HRTF magnitude responses */
+        if(applyPhase){
+            /* convert ITDs to phase differences -pi..pi */
+            ipd = malloc1d(N_bands*N_dirs*sizeof(float));
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_bands, N_dirs, 1, 1.0,
+                        centreFreq, 1,
+                        itds_s, 1, 0.0,
+                        ipd, N_dirs);
+            for(i=0; i<N_bands; i++)
+                for(j=0; j<N_dirs; j++)
+                    ipd[i*N_dirs+j] = (matlab_fmodf(2.0f*SAF_PI*ipd[i*N_dirs+j] + SAF_PI, 2.0f*SAF_PI) - SAF_PI)/2.0f; /* /2 here, not later */
+  
+            for(band=0; band<N_bands; band++){
+                for(nd=0; nd<N_dirs; nd++){
+                    hrtfs[band*NUM_EARS*N_dirs + 0*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f, ipd[band*N_dirs + nd])), cabsf(hrtfs[band*NUM_EARS*N_dirs + 0*N_dirs + nd]) );
+                    hrtfs[band*NUM_EARS*N_dirs + 1*N_dirs + nd] = crmulf( cexpf(cmplxf(0.0f,-ipd[band*N_dirs + nd])), cabsf(hrtfs[band*NUM_EARS*N_dirs + 1*N_dirs + nd]) );
+                }
+            }
+            free(ipd);
         }
     }
-    
-    free(ipd);
-    free(hrtf_diff); 
+
 }
  
 void interpHRTFs

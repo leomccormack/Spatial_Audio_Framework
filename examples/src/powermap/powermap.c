@@ -38,8 +38,10 @@ void powermap_create
 {
     powermap_data* pData = (powermap_data*)malloc1d(sizeof(powermap_data));
     *phPm = (void*)pData;
-    int n, i, ch, band;
+    int n, i, band;
 
+    printf(SAF_VERSION_LICENSE_STRING);
+    
     /* Default user parameters */
     pData->masterOrder = pData->new_masterOrder = SH_ORDER_FIRST;
     for(band=0; band<HYBRID_BANDS; band++){
@@ -55,14 +57,10 @@ void powermap_create
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     
-    afSTFTinit(&(pData->hSTFT), HOP_SIZE, MAX_NUM_SH_SIGNALS, 0, 0, 1);
-    pData->STFTInputFrameTF = malloc1d(MAX_NUM_SH_SIGNALS*sizeof(complexVector));
-    for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
-    pData->tempHopFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, HOP_SIZE, sizeof(float));
-    
+    afSTFT_create(&(pData->hSTFT), MAX_NUM_SH_SIGNALS, 0, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
+    pData->SHframeTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
+    pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
+
     /* codec data */
     pData->pars = (powermap_codecPars*)malloc1d(sizeof(powermap_codecPars));
     powermap_codecPars* pars = pData->pars;
@@ -101,7 +99,7 @@ void powermap_destroy
 {
     powermap_data *pData = (powermap_data*)(*phPm);
     powermap_codecPars* pars;
-    int i, ch;
+    int i;
     
     if (pData != NULL) {
         /* not safe to free memory during intialisation/processing loop */
@@ -111,14 +109,11 @@ void powermap_destroy
         }
 
         pars = pData->pars;
+
         /* free afSTFT and buffers */
-        afSTFTfree(pData->hSTFT);
-        for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-            free(pData->STFTInputFrameTF[ch].re);
-            free(pData->STFTInputFrameTF[ch].im);
-        }
-        free(pData->STFTInputFrameTF);
-        free(pData->tempHopFrameTD);
+        afSTFT_destroy(&(pData->hSTFT));
+        free(pData->SHframeTD);
+        free(pData->SHframeTF);
         
         free(pData->pmap);
         free(pData->prev_pmap);
@@ -145,22 +140,11 @@ void powermap_init
 {
     powermap_data *pData = (powermap_data*)(hPm);
     powermap_codecPars* pars = pData->pars;
-    int band;
     
     pData->fs = sampleRate;
     
     /* specify frequency vector and determine the number of bands */
-    switch ((int)(sampleRate+0.5f)){
-        case 44100:
-            for(band=0; band<HYBRID_BANDS; band++)
-                pData->freqVector[band] = (float)__afCenterFreq44100[band];
-            break;
-        default:
-        case 48000:
-            for(band=0; band<HYBRID_BANDS; band++)
-                pData->freqVector[band] = (float)__afCenterFreq48e3[band];
-            break;
-    }
+    afSTFT_getCentreFreqs(pData->hSTFT, sampleRate, HYBRID_BANDS, pData->freqVector);
     
     /* intialise parameters */
     memset(pData->Cx, 0 , MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*HYBRID_BANDS*sizeof(float_complex));
@@ -210,7 +194,7 @@ void powermap_analysis
 {
     powermap_data *pData = (powermap_data*)(hPm);
     powermap_codecPars* pars = pData->pars;
-    int s, i, j, t, ch, band, nSH_order, order_band, nSH_maxOrder, maxOrder;
+    int s, i, j, ch, band, nSH_order, order_band, nSH_maxOrder, maxOrder;
     float C_grp_trace, covScale, pmapEQ_band;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float_complex new_Cx[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
@@ -253,14 +237,14 @@ void powermap_analysis
 
             /* Load time-domain data */
             for(ch=0; ch<nSH; ch++)
-                memcpy(pData->SHframeTD[ch],pData->inFIFO[ch], FRAME_SIZE*sizeof(float));
+                memcpy(pData->SHframeTD[ch], pData->inFIFO[ch], FRAME_SIZE*sizeof(float));
 
             /* account for input channel order */
             switch(chOrdering){
                 case CH_ACN: /* already ACN */
                     break;
                 case CH_FUMA:
-                    convertHOAChannelConvention((float*)pData->SHframeTD, masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
+                    convertHOAChannelConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
                     break;
             }
 
@@ -269,29 +253,22 @@ void powermap_analysis
                 case NORM_N3D:  /* already in N3D, do nothing */
                     break;
                 case NORM_SN3D: /* convert to N3D */
-                    convertHOANormConvention((float*)pData->SHframeTD, masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
+                    convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
                     break;
                 case NORM_FUMA: /* only for first-order, convert to N3D */
-                    convertHOANormConvention((float*)pData->SHframeTD, masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
+                    convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
                     break;
             }
 
             /* apply the time-frequency transform */
-            for(t = 0; t < TIME_SLOTS; t++) {
-                for(ch = 0; ch < nSH; ch++)
-                    utility_svvcopy(&(pData->SHframeTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
-                afSTFTforward(pData->hSTFT, (float**)pData->tempHopFrameTD, (complexVector*)pData->STFTInputFrameTF);
-                for (band = 0; band < HYBRID_BANDS; band++)
-                    for (ch = 0; ch < nSH; ch++)
-                        pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
-            }
+            afSTFT_forward(pData->hSTFT, pData->SHframeTD, FRAME_SIZE, pData->SHframeTF);
 
             /* Update covarience matrix per band */
             covScale = 1.0f/(float)(nSH);
             for(band=0; band<HYBRID_BANDS; band++){
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, TIME_SLOTS, &calpha,
-                            pData->SHframeTF[band], TIME_SLOTS,
-                            pData->SHframeTF[band], TIME_SLOTS, &cbeta,
+                            FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS,
+                            FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS, &cbeta,
                             new_Cx, MAX_NUM_SH_SIGNALS);
 
                 /* scale with nSH */

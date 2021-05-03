@@ -24,16 +24,350 @@
  */
 
 #include "saf_utilities.h"
+#include "saf_externals.h"
 #include <stdio.h>
 #include <stdlib.h>
 
+/** Helper function for euler2rotationMatrix() */
+static void getRx
+(
+    float theta_rad,
+    float Rx[3][3]
+)
+{
+    Rx[0][0] = 1.0f;
+    Rx[0][1] = 0.0f;
+    Rx[0][2] = 0.0f;
+    Rx[1][0] = 0.0f;
+    Rx[1][1] = cosf(theta_rad);
+    Rx[1][2] = sinf(theta_rad);
+    Rx[2][0] = 0.0f;
+    Rx[2][1] = -sinf(theta_rad);
+    Rx[2][2] = cosf(theta_rad);
+}
 
-float L2_norm(float v[3])
+/** Helper function for euler2rotationMatrix() */
+static void getRy
+(
+    float theta_rad,
+    float Ry[3][3]
+)
+{
+    Ry[0][0] = cosf(theta_rad);
+    Ry[0][1] = 0.0f;
+    Ry[0][2] = -sinf(theta_rad);
+    Ry[1][0] = 0.0f;
+    Ry[1][1] = 1.0f;
+    Ry[1][2] = 0.0f;
+    Ry[2][0] = sinf(theta_rad);
+    Ry[2][1] = 0.0f;
+    Ry[2][2] = cosf(theta_rad);
+}
+
+/** Helper function for euler2rotationMatrix() */
+static void getRz
+(
+    float theta_rad,
+    float Rz[3][3]
+)
+{
+    Rz[0][0] = cosf(theta_rad);
+    Rz[0][1] = sinf(theta_rad);
+    Rz[0][2] = 0.0f;
+    Rz[1][0] = -sinf(theta_rad);
+    Rz[1][1] = cosf(theta_rad);
+    Rz[1][2] = 0.0f;
+    Rz[2][0] = 0.0f;
+    Rz[2][1] = 0.0f;
+    Rz[2][2] = 1.0f;
+}
+
+void quaternion2rotationMatrix
+(
+    quaternion_data* Q,
+    float R[3][3]
+)
+{
+    R[0][0] = 2.0f * (Q->w * Q->w + Q->z * Q->z) - 1.0f;
+    R[0][1] = 2.0f * (Q->z * Q->y - Q->w * Q->x);
+    R[0][2] = 2.0f * (Q->z * Q->x + Q->w * Q->y);
+    R[1][0] = 2.0f * (Q->z * Q->y + Q->w * Q->x);
+    R[1][1] = 2.0f * (Q->w * Q->w + Q->y * Q->y) - 1.0f;
+    R[1][2] = 2.0f * (Q->y * Q->x - Q->w * Q->z);
+    R[2][0] = 2.0f * (Q->z * Q->x - Q->w * Q->y);
+    R[2][1] = 2.0f * (Q->y * Q->x + Q->w * Q->z);
+    R[2][2] = 2.0f * (Q->w * Q->w + Q->x * Q->x) - 1.0f; 
+}
+
+/* Adapted from: https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/forum.htm */
+void rotationMatrix2quaternion
+(
+    float R[3][3],
+    quaternion_data* Q
+)
+{
+    Q->w = sqrtf( MAX( 0.0f, 1.0f + R[0][0] + R[1][1] + R[2][2] ) ) / 2.0f;
+    Q->z = sqrtf( MAX( 0.0f, 1.0f + R[0][0] - R[1][1] - R[2][2] ) ) / 2.0f;
+    Q->y = sqrtf( MAX( 0.0f, 1.0f - R[0][0] + R[1][1] - R[2][2] ) ) / 2.0f;
+    Q->x = sqrtf( MAX( 0.0f, 1.0f - R[0][0] - R[1][1] + R[2][2] ) ) / 2.0f;
+    Q->z = copysignf( Q->z, R[2][1] - R[1][2] );
+    Q->y = copysignf( Q->y, R[0][2] - R[2][0] );
+    Q->x = copysignf( Q->x, R[1][0] - R[0][1] );
+}
+
+/* Adapted from (ISC License): https://github.com/MartinWeigel/Quaternion  */
+void euler2Quaternion
+(
+    float alpha,
+    float beta,
+    float gamma,
+    int degreesFlag,
+    EULER_ROTATION_CONVENTIONS convention,
+    quaternion_data* Q
+)
+{
+    float cy, sy, cr, sr, cp, sp;
+
+    cy = sy = cr = sr = cp = sp = 0.0f; 
+    switch(convention){
+        case EULER_ROTATION_Y_CONVENTION: /* fall through*/
+        case EULER_ROTATION_X_CONVENTION: assert(0);  /* Not supported */; return; 
+        case EULER_ROTATION_YAW_PITCH_ROLL:
+            cy = cosf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* x */
+            sy = sinf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* x */
+            cp = cosf((degreesFlag ? beta*SAF_PI/180.0f : beta) * 0.5f);    /* y */
+            sp = sinf((degreesFlag ? beta*SAF_PI/180.0f : beta) * 0.5f);    /* y */
+            cr = cosf((degreesFlag ? gamma*SAF_PI/180.0f : gamma)  * 0.5f); /* z */
+            sr = sinf((degreesFlag ? gamma*SAF_PI/180.0f : gamma)  * 0.5f); /* z */
+            break;
+        case EULER_ROTATION_ROLL_PITCH_YAW:
+            cy = cosf((degreesFlag ? gamma*SAF_PI/180.0f : gamma)  * 0.5f); /* x */
+            sy = sinf((degreesFlag ? gamma*SAF_PI/180.0f : gamma)  * 0.5f); /* x */
+            cp = cosf((degreesFlag ? beta*SAF_PI/180.0f : beta) * 0.5f);    /* y */
+            sp = sinf((degreesFlag ? beta*SAF_PI/180.0f : beta) * 0.5f);    /* y */
+            cr = cosf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* z */
+            sr = sinf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* z */
+            break;
+    }
+    Q->w = cy * cr * cp + sy * sr * sp;
+    Q->x = cy * sr * cp - sy * cr * sp;
+    Q->y = cy * cr * sp + sy * sr * cp;
+    Q->z = sy * cr * cp - cy * sr * sp;
+}
+
+/* Adapted from (ISC License): https://github.com/MartinWeigel/Quaternion  */
+void quaternion2euler
+(
+    quaternion_data* Q,
+    int degreesFlag,
+    EULER_ROTATION_CONVENTIONS convention,
+    float* alpha,
+    float* beta,
+    float* gamma
+)
+{
+    float sinr_cosp, cosr_cosp, sinp, siny_cosp, cosy_cosp;
+
+    sinr_cosp = 2.0f * (Q->w * Q->x + Q->y * Q->z);
+    cosr_cosp = 1.0f - 2.0f * (Q->x * Q->x + Q->y * Q->y);
+    sinp = 2.0f * (Q->w * Q->y - Q->z * Q->x);
+    siny_cosp = 2.0f * (Q->w * Q->z + Q->x * Q->y);
+    cosy_cosp = 1.0f - 2.0f * (Q->y * Q->y + Q->z * Q->z);
+    switch(convention){
+        case EULER_ROTATION_Y_CONVENTION: assert(0) /* Not supported */; break;
+        case EULER_ROTATION_X_CONVENTION: assert(0) /* Not supported */; break;
+        case EULER_ROTATION_YAW_PITCH_ROLL:
+            /* Yaw (z-axis rotation) */
+            (*gamma) = atan2f(sinr_cosp, cosr_cosp);
+            /* Pitch (y-axis rotation) */
+            if (fabsf(sinp) >= 1.0f)
+                (*beta) = copysignf(SAF_PI / 2.0f, sinp); /* use 90 degrees if out of range */
+            else
+                (*beta) = asinf(sinp);
+            /* Roll (x-axis rotation) */
+           (*alpha) = atan2f(siny_cosp, cosy_cosp);
+            break;
+        case EULER_ROTATION_ROLL_PITCH_YAW:
+            /* Roll (x-axis rotation) */
+            (*alpha) = atan2f(sinr_cosp, cosr_cosp);
+            /* Pitch (y-axis rotation) */
+            if (fabs(sinp) >= 1.0f)
+                (*beta) = copysignf(SAF_PI / 2.0f, sinp); /* use 90 degrees if out of range */
+            else
+                (*beta) = asinf(sinp);
+            /* Yaw (z-axis rotation) */
+            (*gamma) = atan2f(siny_cosp, cosy_cosp); 
+            break;
+    }
+    if(degreesFlag){
+        (*alpha) *= 180.0f/SAF_PI;
+        (*beta)  *= 180.0f/SAF_PI;
+        (*gamma) *= 180.0f/SAF_PI;
+    }
+}
+
+void euler2rotationMatrix
+(
+    float alpha,
+    float beta,
+    float gamma,
+    int degreesFlag,
+    EULER_ROTATION_CONVENTIONS convention,
+    float R[3][3]
+)
+{
+    float R1[3][3], R2[3][3], R3[3][3], Rtmp[3][3];
+
+    switch(convention){
+        case EULER_ROTATION_Y_CONVENTION:
+            getRz(degreesFlag ? alpha*SAF_PI/180.0f : alpha, R1);
+            getRy(degreesFlag ? beta*SAF_PI/180.0f  : beta,  R2);
+            getRz(degreesFlag ? gamma*SAF_PI/180.0f : gamma, R3);
+            break;
+        case EULER_ROTATION_X_CONVENTION:
+            getRz(degreesFlag ? alpha*SAF_PI/180.0f : alpha, R1);
+            getRx(degreesFlag ? beta*SAF_PI/180.0f  : beta,  R2);
+            getRz(degreesFlag ? gamma*SAF_PI/180.0f : gamma, R3);
+            break;
+        case EULER_ROTATION_YAW_PITCH_ROLL:
+            getRz(degreesFlag ? alpha*SAF_PI/180.0f : alpha, R1);
+            getRy(degreesFlag ? beta*SAF_PI/180.0f  : beta,  R2);
+            getRx(degreesFlag ? gamma*SAF_PI/180.0f : gamma, R3);
+            break;
+        case EULER_ROTATION_ROLL_PITCH_YAW:
+            getRx(degreesFlag ? alpha*SAF_PI/180.0f : alpha, R1);
+            getRy(degreesFlag ? beta*SAF_PI/180.0f  : beta,  R2);
+            getRz(degreesFlag ? gamma*SAF_PI/180.0f : gamma, R3);
+            break;
+    }
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 3, 3, 1.0f,
+                (float*)R2, 3,
+                (float*)R1, 3, 0.0f,
+                (float*)Rtmp, 3);
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 3, 3, 1.0f,
+                (float*)R3, 3,
+                (float*)Rtmp, 3, 0.0f,
+                (float*)R, 3);
+}
+
+void yawPitchRoll2Rzyx
+(
+    float yaw,
+    float pitch,
+    float roll,
+    int rollPitchYawFLAG,
+    float R[3][3]
+)
+{
+    if(rollPitchYawFLAG)
+        euler2rotationMatrix(yaw, pitch, roll, 0, EULER_ROTATION_ROLL_PITCH_YAW, R);
+    else
+        euler2rotationMatrix(yaw, pitch, roll, 0, EULER_ROTATION_YAW_PITCH_ROLL, R);
+}
+
+void unitSph2cart
+(
+    float* dirs,
+    int nDirs,
+    int anglesInDegreesFLAG,
+    float* dirs_xyz
+)
+{
+    int i;
+    float tmp_rad[2];
+
+    if(anglesInDegreesFLAG){
+        for(i=0; i<nDirs; i++){
+            tmp_rad[0] = dirs[i*2]   * SAF_PI/180.0f;
+            tmp_rad[1] = dirs[i*2+1] * SAF_PI/180.0f;
+            dirs_xyz[i*3]   = cosf(tmp_rad[1]) * cosf(tmp_rad[0]);
+            dirs_xyz[i*3+1] = cosf(tmp_rad[1]) * sinf(tmp_rad[0]);
+            dirs_xyz[i*3+2] = sinf(tmp_rad[1]);
+        }
+    }
+    else { /* Angles given in radians */
+        for(i=0; i<nDirs; i++){
+            dirs_xyz[i*3]   = cosf(dirs[i*2+1]) * cosf(dirs[i*2]);
+            dirs_xyz[i*3+1] = cosf(dirs[i*2+1]) * sinf(dirs[i*2]);
+            dirs_xyz[i*3+2] = sinf(dirs[i*2+1]);
+        }
+    } 
+}
+
+void unitCart2sph
+(
+    float* dirs_xyz,
+    int nDirs,
+    int anglesInDegreesFLAG,
+    float* dirs
+)
+{
+    int i;
+    float hypotxy;
+
+    for(i=0; i<nDirs; i++){
+        hypotxy = sqrtf(dirs_xyz[i*3]*dirs_xyz[i*3] + dirs_xyz[i*3+1]*dirs_xyz[i*3+1]);
+        dirs[i*2]   = atan2f(dirs_xyz[i*3+1], dirs_xyz[i*3]);
+        dirs[i*2+1] = atan2f(dirs_xyz[i*3+2], hypotxy);
+    }
+
+    /* Return in degrees instead... */
+    if(anglesInDegreesFLAG)
+        for(i=0; i<nDirs*2; i++)
+            dirs[i] *= (180.0f/SAF_PI);
+}
+
+float L2_norm3
+(
+    float v[3]
+)
 {
     return sqrtf(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
 }
 
-void crossProduct(float a[3], float b[3], float c[3]){
+float L2_norm
+(
+    float* v,
+    int lenV
+)
+{
+    int i;
+    float res;
+    res = 0.0f;
+    for(i=0; i<lenV; i++)
+        res += (v[i]*v[i]);
+    return sqrtf(res);
+}
+
+float Frob_norm
+(
+    float* M,
+    int lenX,
+    int lenY
+)
+{
+    int i;
+    float res;
+    float* MMT;
+    MMT = malloc1d(lenX*lenX*sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, lenX, lenX, lenY, 1.0f,
+                M, lenY,
+                M, lenY, 0.0f,
+                MMT, lenX);
+    res = 0.0f;
+    for(i=0; i<lenX; i++)
+        res += MMT[i*lenX+i];
+    free(MMT); 
+    return sqrtf(res);
+}
+
+void crossProduct3
+(
+    float a[3],
+    float b[3],
+    float c[3]
+)
+{
     c[0] = a[1]*b[2]-a[2]*b[1];
     c[1] = a[2]*b[0]-a[0]*b[2];
     c[2] = a[0]*b[1]-a[1]*b[0];
@@ -88,7 +422,8 @@ void sphDelaunay
         vertices_tmp[i*3+1] = rcoselev * sinf(dirs_deg[i*2+0]*SAF_PI/180.0f);
     }
 
-    /* Delaunay triangulation of a spherical */
+    /* Delaunay triangulation of a spherical grid is equivalent to the computing
+     * the 3d convex hull */
     convhull3d(vertices_tmp, nDirs, faces, nFaces);
 
     /* optionally, also output the vertices */
@@ -129,9 +464,9 @@ void sphVoronoi
         r_13[0] = vertices[faces[n*3+2]*3]   - vertices[faces[n*3]*3];
         r_13[1] = vertices[faces[n*3+2]*3+1] - vertices[faces[n*3]*3+1];
         r_13[2] = vertices[faces[n*3+2]*3+2] - vertices[faces[n*3]*3+2];
-        crossProduct(r_12, r_13, r_normal);
+        crossProduct3(r_12, r_13, r_normal);
 
-        norm = 1.0f/L2_norm(r_normal);
+        norm = 1.0f/L2_norm3(r_normal);
         utility_svsmul(r_normal, &norm, 3, r_normal);
         memcpy(voronoi->vert[n], r_normal, 3*sizeof(float));
     }
@@ -301,24 +636,24 @@ void sphVoronoiAreas
             memcpy(r_02, voronoi->vert[face[1]], 3*sizeof(float));
 
             /* find normal vector to the great circle of 1 & 2 */
-            crossProduct(r_02, r_01, r_2x1);
+            crossProduct3(r_02, r_01, r_2x1);
 
             /* find tangent vector to great circle at 2 */
-            crossProduct(r_2x1, r_02, r_21);
+            crossProduct3(r_2x1, r_02, r_21);
 
             /* find vector between vertex origin and vertex 3 */
             memcpy(r_03, voronoi->vert[face[2]], 3*sizeof(float));
 
             /* find normal vector to the great circle of 2 & 3 */
-            crossProduct(r_02, r_03, r_2x3);
+            crossProduct3(r_02, r_03, r_2x3);
 
             /* find tangent vector to great circle at 2 */
-            crossProduct(r_2x3, r_02, r_23);
+            crossProduct3(r_2x3, r_02, r_23);
 
             /* normalise tangent vectors */
-            r_21_norm = 1.0f/L2_norm(r_21);
+            r_21_norm = 1.0f/L2_norm3(r_21);
             utility_svsmul(r_21, &r_21_norm, 3, r_21);
-            r_23_norm = 1.0f/L2_norm(r_23);
+            r_23_norm = 1.0f/L2_norm3(r_23);
             utility_svsmul(r_23, &r_23_norm, 3, r_23);
 
             /* get angle between the normals */
@@ -367,6 +702,7 @@ void getVoronoiWeights
 
     /* Store weights */
     if(diagFLAG){
+        /* along the diagonal... */
         memset(weights, 0, nDirs*nDirs*sizeof(float));
         for(i=0; i<nDirs; i++)
             weights[i*nDirs+i] = areas[i];

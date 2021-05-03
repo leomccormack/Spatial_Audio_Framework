@@ -30,6 +30,7 @@
 #include <string.h>
 #include "pitch_shifter.h"
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -84,7 +85,7 @@ typedef struct _pitch_shifter
 /* ========================================================================== */
 
 /**
- * Sets codec status (see #_CODEC_STATUS enum)
+ * Sets codec status (see #CODEC_STATUS enum)
  */
 void pitch_shifter_setCodecStatus(void* const hPS,
                                   CODEC_STATUS newStatus);

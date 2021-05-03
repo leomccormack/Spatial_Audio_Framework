@@ -59,11 +59,103 @@ extern "C" {
 #include <math.h>
 
 /**
+ * A compile time assertion check.
+ *
+ * Validate at compile time that the predicate is true without generating code.
+ * This can be used at any point in a source file where typedef is legal.
+ *
+ * On success, compilation proceeds normally.
+ *
+ * On failure, attempts to typedef an array type of negative size. The offending
+ * line will look like:
+ *      typedef assertion_failed_file_h_42[-1]
+ * where file is the content of the second parameter which should typically be
+ * related in some obvious way to the containing file name, 42 is the line
+ * number in the file on which the assertion appears, and -1 is the result of a
+ * calculation based on the predicate failing.
+ *
+ * @param[in] predicate The predicate to test. It must evaluate to something
+ *                      that can be coerced to a normal C boolean.
+ * @param[in] file      A sequence of legal identifier characters that should
+ *                      uniquely identify the source file in which this
+ *                      condition appears.
+ *
+ * Taken from (no license):
+ * https://stackoverflow.com/questions/807244/c-compiler-asserts-how-to-implement
+ */
+#define SAF_CASSERT(predicate, file) _impl_CASSERT_LINE(predicate,__LINE__,file)
+/** CASSERT helper macro */
+#define _impl_PASTE(a,b) a##b
+/** CASSERT helper macro */
+#define _impl_CASSERT_LINE(predicate, line, file) \
+ typedef char _impl_PASTE(assertion_failed_##file##_,line)[2*!!(predicate)-1];
+
+
+/**
+ * Wraps around any angles exeeding 180 degrees (e.g., 200-> -160)
+ */
+void convert_0_360To_m180_180(float* dirs_deg,
+                              int nDirs);
+
+/**
+ * A simple function which returns the next power of 2.
+ *
+ * Taken from (no license):
+ * https://github.com/amaggi/legacy-code
+ */
+int nextpow2(int numsamp);
+
+/**
+ * Computes Lagrange interpolation weights of order 'N' for value 'x'
+ *
+ * @param[in]  N        Order
+ * @param[in]  x        Values; len_x x 1
+ * @param[in]  len_x    Number of values
+ * @param[out] weights  Weights; (ORDER+1) x len_x
+ */
+void lagrangeWeights(int N,
+                     float* x,
+                     int len_x,
+                     float* weights);
+
+/**
+ * This function takes a frequency vector and groups its frequencies into
+ * critical bands [Equivalent-Rectangular Bandwidth (ERB)].
+ *
+ * e.g.
+ *   - centerFreq[erb_idx[0]] -> centerFreq[erb_idx[1]] is ERB band 1
+ *   - centerFreq[erb_idx[1]] -> centerFreq[erb_idx[2]] is ERB band 2
+ *
+ * @param[in]  centerFreq Frequency vector; nBands x 1
+ * @param[in]  nBands     Number of bins/bands in frequency vector
+ * @param[in]  maxFreqLim Past this frequency the bands are grouped into 1 band
+ * @param[out] erb_idx    (&) ERB indices; nERBBands x 1
+ * @param[out] erb_freqs  (&) ERB frequencies; nERBBands x 1
+ * @param[out] nERBBands  (&) Number of ERB bands; 1 x 1
+ */
+void findERBpartitions(/* Input Arguments */
+                       float* centerFreq,
+                       int nBands,
+                       float maxFreqLim,
+                       /* Output Arguments */
+                       int** erb_idx,
+                       float** erb_freqs,
+                       int* nERBBands);
+
+/**
+ * Returns the indices required to randomly permute a vector of length 'len'
+ */
+void randperm(/* Input Arguments */
+              int len,
+              /* Output Arguments */
+              int* randperm_inds);
+
+/**
  * Factorial, accurate up to n<=25
  *
  * @note The magnitude will still be correct above 25, but the precision will be
  *       truncated. The function also returns pre-computed values up to n=15
- *       to make it faster (e.g. for up to 7th order SH computations).
+ *       to make it faster (e.g. for up to 7th order SH computations...).
  *
  * @param[in] n Order
  * @returns factorial(n)
@@ -193,6 +285,14 @@ float sumf(float* values,
            int nValues);
 
 /**
+ * Returns 1, if any value in 'values' (nValues x 1) is less than 'threshold',
+ * otherwise, it returns 0
+ */
+int anyLessThanf(float* values,
+                 int nValues,
+                 float threshold);
+
+/**
  * Finds the unique values (and their indices) of the input vector
  *
  * @note this is equivalent to using "unique(vals, 'last')" in Matlab
@@ -212,6 +312,41 @@ void unique_i(int* input,
               int** uniqueVals,
               int** uniqueInds,
               int* nUnique);
+
+
+/**
+ * Numerically solves first-order, linear, homogeneous differential equation
+ * systems, with non-constant coefficients, by generalization of the Pade-
+ * approximant method for exponential matrices.
+ *
+ * The equations are described in matrix form as
+ *     Y'(t) = D(t)*Y(t)
+ * where D and Y are square-matrix functions of scalar t. The initial condition
+ * is Y(0) = I (the identity matrix), and the result is Y(1). For the special
+ * case of a constant coefficient matrix D, gexpm is equivalent to the standard
+ * matrix exponential (expm).
+ *
+ * m1: true or false, optional, default should be false.
+ *     "minus 1" flag: if m1 = false the generalized exponential is Y; if
+ *     true it is Y+I. gexpm is analogous to the expm1 function
+ *     ("exponential-minus-1") when m1 is true.
+ *
+ * @note For both cases of constant and non-constant D, the solution is
+ *       determined from a Pade approximation of order 6, using scale-and-square
+ *       for constant D and multi-step integration for non-constant D. The form
+ *       of the Pade approximant is outlined in the associated document
+ *       KJohnson_2015_04_01.pdf. Notes on error control are in the code
+ *       comments.
+ *
+ * This function is based on the Matlab script found:
+ * mathworks.com/matlabcentral/fileexchange/50413-generalized-matrix-exponential
+ *
+ * Copyright (c) 2015, Kenneth Johnson (BSD-3-clause license)
+ */
+void gexpm(float* D,
+           int sizeD,
+           int m1,
+           float* Y);
 
 
 #ifdef __cplusplus

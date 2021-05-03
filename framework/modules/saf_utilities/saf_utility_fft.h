@@ -51,7 +51,7 @@ extern "C" {
 /**
  * Options for how the frequency domain data is permuted when using saf_stft
  */
-typedef enum _SAF_STFT_FDDATA_FORMAT{
+typedef enum {
     SAF_STFT_BANDS_CH_TIME, /**< nBands x nChannels x nTimeHops */
     SAF_STFT_TIME_CH_BANDS  /**< nTimeHops x nChannels x nBands */
 
@@ -150,7 +150,7 @@ void hilbert(float_complex* x,
  * @param[in] nCHin    Number of input channels
  * @param[in] nCHout   Number of ooutput channels
  * @param[in] FDformat Format for the frequency-domain data (see the
- *                     #_SAF_STFT_FDDATA_FORMAT enum)
+ *                     #SAF_STFT_FDDATA_FORMAT enum)
  */
 void saf_stft_create(void ** const phSTFT,
                      int winsize,
@@ -172,11 +172,7 @@ void saf_stft_destroy(void ** const phSTFT);
  * @param[in]  hSTFT     saf_stft handle
  * @param[in]  dataTD    Time-domain input; nCHin x framesize
  * @param[in]  framesize Frame size of time-domain data
- * @param[out] dataFD    Frequency-domain output;
- *                       if FDformat == #SAF_STFT_TIME_CH_BANDS:
- *                           (framesize/hopsize) x nCHin x (fftsize/2+1)
- *                       if FDformat == #SAF_STFT_BANDS_CH_TIME:
- *                           (fftsize/2+1)  x nCHin x (framesize/hopsize)
+ * @param[out] dataFD    Frequency-domain output; see #SAF_STFT_FDDATA_FORMAT
  */
 void saf_stft_forward(void * const hSTFT,
                       float** dataTD,
@@ -187,11 +183,7 @@ void saf_stft_forward(void * const hSTFT,
  * Performs the backward-STFT operation for the current frame
  *
  * @param[in]  hSTFT     saf_stft handle
- * @param[in]  dataFD    Frequency-domain output;
- *                       if FDformat == #SAF_STFT_TIME_CH_BANDS:
- *                           (framesize/hopsize) x nCHout x (fftsize/2+1)
- *                       if FDformat == #SAF_STFT_BANDS_CH_TIME:
- *                           (fftsize/2+1)  x nCHout x (framesize/hopsize)
+ * @param[in]  dataFD    Frequency-domain output; see #SAF_STFT_FDDATA_FORMAT
  * @param[in]  framesize Frame size of time-domain data
  * @param[out] dataTD    Time-domain output;  nCHout x framesize
  */

@@ -16,7 +16,7 @@
 
 /**
  * @file ambi_enc_internal.h
- * @brief A simple, but flexible, Ambisonic encoder.
+ * @brief A basic Ambisonic encoder
  *
  * @author Leo McCormack
  * @date 07.10.2016
@@ -30,6 +30,7 @@
 #include <string.h>
 #include "ambi_enc.h"
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -91,7 +92,7 @@ typedef struct _ambi_enc
  * help avoid scenarios of many sources being panned in the same direction, or
  * triangulations errors.
  *
- * @param[in]  preset   See #_SOURCE_CONFIG_PRESETS enum
+ * @param[in]  preset   See #SOURCE_CONFIG_PRESETS enum
  * @param[out] dirs_deg Source directions, [azimuth elevation] convention, in
  *                      DEGREES;
  * @param[out] nCH      (&) number of source directions in the configuration

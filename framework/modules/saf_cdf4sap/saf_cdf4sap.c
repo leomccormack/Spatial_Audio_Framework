@@ -37,6 +37,7 @@
  */
 
 #include "saf_cdf4sap.h"
+#include "saf_externals.h" 
 #include "../saf_utilities/saf_utilities.h"
 
 /**

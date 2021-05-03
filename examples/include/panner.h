@@ -179,13 +179,13 @@ void panner_setLoudspeakerElev_deg(void* const hPan, int index, float newElev_de
 void panner_setNumLoudspeakers(void* const hPan, int new_nLoudspeakers);
 
 /**
- * Sets a preset for the output configuration (see #_LOUDSPEAKER_ARRAY_PRESETS
+ * Sets a preset for the output configuration (see #LOUDSPEAKER_ARRAY_PRESETS
  * enum)
  */
 void panner_setOutputConfigPreset(void* const hPan, int newPresetID);
 
 /**
- * Sets a preset for the input configuration (see #_SOURCE_CONFIG_PRESETS enum)
+ * Sets a preset for the input configuration (see #SOURCE_CONFIG_PRESETS enum)
  */
 void panner_setInputConfigPreset(void* const hPan, int newPresetID);
 
@@ -250,7 +250,7 @@ void panner_setFlipRoll(void* const hPan, int newState);
 int panner_getFrameSize(void);
 
 /**
- * Returns current codec status (see #_CODEC_STATUS enum)
+ * Returns current codec status (see #CODEC_STATUS enum)
  */
 CODEC_STATUS panner_getCodecStatus(void* const hPan);
 

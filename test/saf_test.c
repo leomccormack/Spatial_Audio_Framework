@@ -1,19 +1,3 @@
-/*
- * Copyright 2020 Leo McCormack
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
- * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
- * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
- * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
- * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
- */
-
 /**
  * @file saf_test.c
  * @brief Unit testing program for the Spatial_Audio_Framework
@@ -26,16 +10,19 @@
 #include "unity.h"   /* unit testing suite */
 #include "timer.h"   /* for timing the individual tests */
 #include "saf.h"     /* master framework include header */
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
-#ifdef SAF_ENABLE_EXAMPLES_TESTS
+#if SAF_ENABLE_EXAMPLES_TESTS == 1
 /* SAF example headers: */
 # include "ambi_bin.h"
 # include "ambi_dec.h"
 # include "ambi_drc.h"
 # include "ambi_enc.h"
+# include "ambi_roomsim.h"
 # include "array2sh.h"
 # include "beamformer.h"
 # include "binauraliser.h"
+# include "decorrelator.h"
 # include "dirass.h"
 # include "matrixconv.h"
 # include "multiconv.h"
@@ -44,6 +31,7 @@
 # include "powermap.h"
 # include "rotator.h"
 # include "sldoa.h"
+# include "spreader.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
 /* ========================================================================== */
@@ -84,17 +72,18 @@ int main_test(void) {
     UNITY_BEGIN();
 
     /* run each unit test */
-
+#if SAF_ENABLE_EXAMPLES_TESTS == 1
+    RUN_TEST(test__saf_example_spreader);
+#endif /* SAF_ENABLE_EXAMPLES_TESTS */
+    RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
     RUN_TEST(test__ims_shoebox_TD);
-    RUN_TEST(test__saf_rfft);
     RUN_TEST(test__saf_matrixConv);
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
-    RUN_TEST(test__afSTFTMatrix);
-#endif
+    RUN_TEST(test__saf_rfft); 
     RUN_TEST(test__afSTFT);
+    RUN_TEST(test__qmf);
     RUN_TEST(test__smb_pitchShifter);
     RUN_TEST(test__sortf);
     RUN_TEST(test__sortz);
@@ -102,6 +91,16 @@ int main_test(void) {
     RUN_TEST(test__getVoronoiWeights);
     RUN_TEST(test__unique_i);
     RUN_TEST(test__realloc2d_r);
+    RUN_TEST(test__latticeDecorrelator);
+    RUN_TEST(test__butterCoeffs);
+    RUN_TEST(test__faf_IIRFilterbank);
+    RUN_TEST(test__gexpm);
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
+    RUN_TEST(test__saf_sofa_open);
+#endif
+#ifdef SAF_ENABLE_TRACKER_MODULE
+    RUN_TEST(test__tracker3d);
+#endif
     RUN_TEST(test__formulate_M_and_Cr);
     RUN_TEST(test__formulate_M_and_Cr_cmplx);
     RUN_TEST(test__getLoudspeakerDecoderMtx);
@@ -113,13 +112,15 @@ int main_test(void) {
     RUN_TEST(test__complex2realSHMtx);
     RUN_TEST(test__computeSectorCoeffsEP);
     RUN_TEST(test__checkCondNumberSHTReal);
-    RUN_TEST(test__butterCoeffs);
-    RUN_TEST(test__faf_IIRFilterbank);
-#ifdef SAF_ENABLE_EXAMPLES_TESTS
+    RUN_TEST(test__sphMUSIC);
+    RUN_TEST(test__sphESPRIT);
+    RUN_TEST(test__sphModalCoeffs);
+    RUN_TEST(test__truncationEQ);
+#if SAF_ENABLE_EXAMPLES_TESTS == 1
     RUN_TEST(test__saf_example_ambi_bin);
     RUN_TEST(test__saf_example_ambi_dec);
     RUN_TEST(test__saf_example_ambi_enc);
-    RUN_TEST(test__saf_example_array2sh);
+    RUN_TEST(test__saf_example_array2sh); 
     RUN_TEST(test__saf_example_rotator);
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
@@ -133,6 +134,93 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+#if SAF_ENABLE_EXAMPLES_TESTS == 1
+void test__saf_example_spreader(void){
+    int Q, i, ch, framesize, nOutputs;
+    void* hSpr;
+    float** inSigs, **outSigs;
+    float** inSig_frame, **outSig_frame;
+
+    /* Config */
+    const int fs = 48000;
+    const int nInputs = 1;
+    const int signalLength = fs*2;
+
+    /* Create and initialise an instance of spreader */
+    spreader_create(&hSpr);
+
+    /* Configure and initialise the spreader codec */
+    spreader_setUseDefaultHRIRsflag(hSpr, 1);
+    nOutputs = NUM_EARS; /* the default is binaural operation */
+    spreader_setNumSources(hSpr, nInputs);
+    spreader_init(hSpr, fs); /* Should be called before calling "process"
+                               * Cannot be called while "process" is on-going */
+    spreader_initCodec(hSpr); /* Can be called whenever (thread-safe) */
+
+    /* Define input mono signal */
+    inSigs = (float**)malloc2d(nInputs,signalLength,sizeof(float));
+    outSigs = (float**)malloc2d(nOutputs,signalLength,sizeof(float));
+    rand_m1_1(FLATTEN2D(inSigs), nInputs*signalLength); /* white-noise signals */
+
+    /* Apply spreader */
+    framesize = spreader_getFrameSize();
+    inSig_frame = (float**)malloc1d(nInputs*sizeof(float*));
+    outSig_frame = (float**)malloc1d(nOutputs*sizeof(float*));
+    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
+        for(ch=0; ch<nInputs; ch++)
+            inSig_frame[ch] = &inSigs[ch][i*framesize];
+        for(ch=0; ch<nOutputs; ch++)
+            outSig_frame[ch] = &outSigs[ch][i*framesize];
+
+        spreader_process(hSpr, inSig_frame, outSig_frame, nInputs, nOutputs, framesize);
+    }
+
+    /* Clean-up */
+    spreader_destroy(&hSpr);
+    free(inSigs);
+    free(outSigs);
+    free(inSig_frame);
+    free(outSig_frame);
+}
+#endif
+
+void test__quaternion(void){
+    int i, j;
+    float norm;
+    float rot[3][3], rot2[3][3], residual[9], ypr[3], test_ypr[3];
+    quaternion_data Q, Q1, Q2;
+
+    for(i=0; i<1000; i++){
+        /* Randomise the quaternion values */
+        rand_m1_1(Q.Q, 4);
+
+        /* Normalise to make it valid */
+        norm = L2_norm(Q.Q, 4);
+        Q.w /= norm;
+        Q.x /= norm;
+        Q.y /= norm;
+        Q.z /= norm;
+        /* Q.w = 0; Q.x = 0.0000563298236; Q.y = 0.947490811; Q.z = -0.319783032; // Problem case! */
+
+        /* Convert to rotation matrix, then back, then to rotation matrix again */
+        quaternion2rotationMatrix(&Q, rot);
+        rotationMatrix2quaternion(rot, &Q1);
+        quaternion2rotationMatrix(&Q1, rot2);
+
+        /* Ensure that the difference between them is 0 */
+        utility_svvsub((float*)rot, (float*)rot2, 9, residual);
+        for(j=0; j<9; j++)
+            TEST_ASSERT_TRUE(fabsf(residual[j])<1e-3f);
+
+        /* Testing that quaternion2euler() and euler2Quaternion() are invertable */
+        quaternion2euler(&Q1, 1, EULER_ROTATION_YAW_PITCH_ROLL, &ypr[0], &ypr[1], &ypr[2]);
+        euler2Quaternion(ypr[0], ypr[1], ypr[2], 1, EULER_ROTATION_YAW_PITCH_ROLL, &Q2);
+        quaternion2euler(&Q2, 1, EULER_ROTATION_YAW_PITCH_ROLL, &test_ypr[0], &test_ypr[1], &test_ypr[2]);
+        for(j=0; j<3; j++)
+            TEST_ASSERT_TRUE(fabsf(test_ypr[j]-ypr[j])<1e-3f);
+    }
+}
 
 void test__saf_stft_50pc_overlap(void){
     int frame, winsize, hopsize, nFrames, ch, i, nBands, nTimesSlots, band;
@@ -257,67 +345,11 @@ void test__saf_stft_LTI(void){
     free(outspec);
 }
 
-void test__ims_shoebox_TD(void){
-    void* hIms;
-    float maxTime_s;
-    float mov_src_pos[3], mov_rec_pos[3];
-    float** src_sigs, ***rec_sh_outsigs;
-    long sourceIDs[4], receiverIDs[1];
-    int i;
-
-    /* Config */
-    const int signalLength = 10000;
-    const int sh_order = 3;
-    const int nBands = 5;
-    const float abs_wall[5][6] =  /* Absorption Coefficients per Octave band, and per wall */
-      { {0.180791250f, 0.207307300f, 0.134990800f, 0.229002250f, 0.212128400f, 0.241055000f},
-        {0.225971250f, 0.259113700f, 0.168725200f, 0.286230250f, 0.265139600f, 0.301295000f},
-        {0.258251250f, 0.296128100f, 0.192827600f, 0.327118250f, 0.303014800f, 0.344335000f},
-        {0.301331250f, 0.345526500f, 0.224994001f, 0.381686250f, 0.353562000f, 0.401775000f},
-        {0.361571250f, 0.414601700f, 0.269973200f, 0.457990250f, 0.424243600f, 0.482095000f} };
-    const float src_pos[3]  = {5.1f, 6.0f, 1.1f};
-    const float src2_pos[3] = {2.1f, 1.0f, 1.3f};
-    const float src3_pos[3] = {3.1f, 5.0f, 2.3f};
-    const float src4_pos[3] = {7.1f, 2.0f, 1.4f};
-    const float rec_pos[3]  = {8.8f, 5.5f, 0.9f};
-
-    /* Allocate memory for 4 sources and 1 spherical harmonic receiver */
-    rec_sh_outsigs = (float***)malloc3d(1, ORDER2NSH(sh_order), signalLength, sizeof(float));
-    src_sigs = (float**)malloc2d(4, signalLength, sizeof(float));
-    rand_m1_1(FLATTEN2D(src_sigs), 4*signalLength);
-
-    /* Set-up the shoebox room simulator for these four sources and SH receiver */
-    ims_shoebox_create(&hIms, 10, 7, 3, (float*)abs_wall, 250.0f, nBands, 343.0f, 48e3f);
-    sourceIDs[0] = ims_shoebox_addSource(hIms, (float*)src_pos, &src_sigs[0]);
-    sourceIDs[1] = ims_shoebox_addSource(hIms, (float*)src2_pos, &src_sigs[1]);
-    sourceIDs[2] = ims_shoebox_addSource(hIms, (float*)src3_pos, &src_sigs[2]);
-    sourceIDs[3] = ims_shoebox_addSource(hIms, (float*)src4_pos, &src_sigs[3]);
-    receiverIDs[0] = ims_shoebox_addReceiverSH(hIms, sh_order, (float*)rec_pos, &rec_sh_outsigs[0]);
-
-    /* Moving source No.1 and the receiver */
-    maxTime_s = 0.025f; /* 50ms */
-    memcpy(mov_src_pos, src_pos, 3*sizeof(float));
-    memcpy(mov_rec_pos, rec_pos, 3*sizeof(float));
-    for(i=0; i<5; i++){
-        mov_src_pos[1] = 2.0f + (float)i/100.0f;
-        mov_rec_pos[0] = 3.0f + (float)i/100.0f;
-        ims_shoebox_updateSource(hIms, sourceIDs[0], mov_src_pos);
-        ims_shoebox_updateReceiver(hIms, receiverIDs[0], mov_rec_pos);
-        ims_shoebox_computeEchograms(hIms, maxTime_s);
-        ims_shoebox_applyEchogramTD(hIms, receiverIDs[0], signalLength, 0);
-    }
-
-    /* clean-up */
-    free(src_sigs);
-    free(rec_sh_outsigs);
-    ims_shoebox_destroy(&hIms);
-}
-
 void test__ims_shoebox_RIR(void){
     void* hIms;
     float maxTime_s;
     float mov_src_pos[3], mov_rec_pos[3];
-    long sourceID_1, sourceID_2, sourceID_3, sourceID_4, sourceID_5, receiverID;
+    int sourceID_1, sourceID_2, sourceID_3, sourceID_4, sourceID_5, receiverID;
     int i;
 
     /* Config */
@@ -337,9 +369,10 @@ void test__ims_shoebox_RIR(void){
     const float src4_pos[3] = {6.4f, 4.0f, 1.3f};
     const float src5_pos[3] = {8.5f, 5.0f, 1.8f};
     const float rec_pos[3] = {8.8f, 5.5f, 0.9f};
+    const float roomdims[3] = {10.0f, 7.0f, 3.0f};
 
     /* Set-up the shoebox room simulator, with two sources and one spherical harmonic receiver */
-    ims_shoebox_create(&hIms, 10, 7, 3, (float*)abs_wall, 125.0f, nBands, 343.0f, 48e3f);
+    ims_shoebox_create(&hIms, (float*)roomdims, (float*)abs_wall, 125.0f, nBands, 343.0f, 48e3f);
     sourceID_1 = ims_shoebox_addSource(hIms, (float*)src_pos, NULL);
     sourceID_2 = ims_shoebox_addSource(hIms, (float*)src2_pos, NULL);
     receiverID = ims_shoebox_addReceiverSH(hIms, sh_order, (float*)rec_pos, NULL);
@@ -353,7 +386,7 @@ void test__ims_shoebox_RIR(void){
         mov_rec_pos[0] = 3.0f + (float)i/100.0f;
         ims_shoebox_updateSource(hIms, sourceID_1, mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
-        ims_shoebox_computeEchograms(hIms, maxTime_s);
+        ims_shoebox_computeEchograms(hIms, -1, maxTime_s);
         ims_shoebox_renderRIRs(hIms, 0);
     }
 
@@ -370,16 +403,73 @@ void test__ims_shoebox_RIR(void){
     sourceID_4 = ims_shoebox_addSource(hIms, (float*)src4_pos, NULL);
 
     /* Continue rendering */
-    for(i=0; i<100; i++){
-        mov_src_pos[1] = 2.0f + (float)i/1000.0f;
-        mov_rec_pos[0] = 3.0f + (float)i/1000.0f;
+    for(i=0; i<10; i++){
+        mov_src_pos[1] = 2.0f + (float)i/10.0f;
+        mov_rec_pos[0] = 3.0f + (float)i/10.0f;
         ims_shoebox_updateSource(hIms, sourceID_4, mov_src_pos);
         ims_shoebox_updateReceiver(hIms, receiverID, mov_rec_pos);
-        ims_shoebox_computeEchograms(hIms, maxTime_s);
+        ims_shoebox_computeEchograms(hIms, -1, maxTime_s);
         ims_shoebox_renderRIRs(hIms, 0);
     }
 
     /* clean-up */
+    ims_shoebox_destroy(&hIms);
+}
+
+void test__ims_shoebox_TD(void){
+    void* hIms;
+    float maxTime_s;
+    float mov_src_pos[3], mov_rec_pos[3];
+    float** src_sigs, ***rec_sh_outsigs;
+    int sourceIDs[4], receiverIDs[1];
+    int i;
+
+    /* Config */
+    const int signalLength = 10000;
+    const int sh_order = 3;
+    const int nBands = 5;
+    const float abs_wall[5][6] =  /* Absorption Coefficients per Octave band, and per wall */
+      { {0.180791250f, 0.207307300f, 0.134990800f, 0.229002250f, 0.212128400f, 0.241055000f},
+        {0.225971250f, 0.259113700f, 0.168725200f, 0.286230250f, 0.265139600f, 0.301295000f},
+        {0.258251250f, 0.296128100f, 0.192827600f, 0.327118250f, 0.303014800f, 0.344335000f},
+        {0.301331250f, 0.345526500f, 0.224994001f, 0.381686250f, 0.353562000f, 0.401775000f},
+        {0.361571250f, 0.414601700f, 0.269973200f, 0.457990250f, 0.424243600f, 0.482095000f} };
+    const float src_pos[3]  = {5.1f, 6.0f, 1.1f};
+    const float src2_pos[3] = {2.1f, 1.0f, 1.3f};
+    const float src3_pos[3] = {3.1f, 5.0f, 2.3f};
+    const float src4_pos[3] = {7.1f, 2.0f, 1.4f};
+    const float rec_pos[3]  = {8.8f, 5.5f, 0.9f};
+    const float roomdims[3] = {10.0f, 7.0f, 3.0f};
+
+    /* Allocate memory for 4 sources and 1 spherical harmonic receiver */
+    rec_sh_outsigs = (float***)malloc3d(1, ORDER2NSH(sh_order), signalLength, sizeof(float));
+    src_sigs = (float**)malloc2d(4, signalLength, sizeof(float));
+    rand_m1_1(FLATTEN2D(src_sigs), 4*signalLength);
+
+    /* Set-up the shoebox room simulator for these four sources and SH receiver */
+    ims_shoebox_create(&hIms, (float*)roomdims, (float*)abs_wall, 250.0f, nBands, 343.0f, 48e3f);
+    sourceIDs[0] = ims_shoebox_addSource(hIms, (float*)src_pos, &src_sigs[0]);
+    sourceIDs[1] = ims_shoebox_addSource(hIms, (float*)src2_pos, &src_sigs[1]);
+    sourceIDs[2] = ims_shoebox_addSource(hIms, (float*)src3_pos, &src_sigs[2]);
+    sourceIDs[3] = ims_shoebox_addSource(hIms, (float*)src4_pos, &src_sigs[3]);
+    receiverIDs[0] = ims_shoebox_addReceiverSH(hIms, sh_order, (float*)rec_pos, &rec_sh_outsigs[0]);
+
+    /* Moving source No.1 and the receiver */
+    maxTime_s = 0.025f; /* 50ms */
+    memcpy(mov_src_pos, src_pos, 3*sizeof(float));
+    memcpy(mov_rec_pos, rec_pos, 3*sizeof(float));
+    for(i=0; i<1; i++){
+        mov_src_pos[1] = 2.0f + (float)i/100.0f;
+        mov_rec_pos[0] = 3.0f + (float)i/100.0f;
+        ims_shoebox_updateSource(hIms, sourceIDs[0], mov_src_pos);
+        ims_shoebox_updateReceiver(hIms, receiverIDs[0], mov_rec_pos);
+        ims_shoebox_computeEchograms(hIms, -1, maxTime_s);
+        ims_shoebox_applyEchogramTD(hIms, receiverIDs[0], signalLength, 0);
+    }
+
+    /* clean-up */
+    free(src_sigs);
+    free(rec_sh_outsigs);
     ims_shoebox_destroy(&hIms);
 }
 
@@ -391,10 +481,10 @@ void test__saf_matrixConv(void){
 
     /* config */
     const int signalLength = 48000;
-    const int hostBlockSize = 1024;
+    const int hostBlockSize = 2048;
     const int filterLength = 512;
-    const int nInputs = 64;
-    const int nOutputs = 64;
+    const int nInputs = 32;
+    const int nOutputs = 40;
 
     /* prep */
     inputTD = (float**)malloc2d(nInputs, signalLength, sizeof(float));
@@ -405,7 +495,7 @@ void test__saf_matrixConv(void){
     rand_m1_1(FLATTEN3D(filters), nOutputs*nInputs*filterLength);
     rand_m1_1(FLATTEN2D(inputTD), nInputs*signalLength);
     saf_matrixConv_create(&hMatrixConv, hostBlockSize, FLATTEN3D(filters), filterLength,
-                          nInputs, nOutputs, 0);
+                          nInputs, nOutputs, 1);
 
     /* Apply */
     for(frame = 0; frame<(int)signalLength/hostBlockSize; frame++){
@@ -465,144 +555,143 @@ void test__saf_rfft(void){
     }
 }
 
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
-void test__afSTFTMatrix(void){
-    int idx,frameIdx,c,t;
-    int numChannels;
-    float** inputTimeDomainData, **outputTimeDomainData, **tempFrame;
-    float_complex*** frequencyDomainData;
-
-    /* Config */
-    const float acceptedTolerance_dB = -50.0f;
-    const int nTestFrames = 250;
-    const int frameSize = 512;
-    const int hopSize = 128;
-    numChannels = 10;
-    const int hybridMode = 1;
-
-    /* prep */
-    const int nTimeSlots = frameSize / hopSize;
-    const int nBands = hopSize + (hybridMode ? 5 : 1);
-    const int afSTFTdelay = hopSize * (hybridMode ? 12 : 9);
-    const int lSig = nTestFrames*frameSize+afSTFTdelay;
-    void* hSTFT;
-    inputTimeDomainData = (float**) malloc2d(numChannels, lSig, sizeof(float));
-    outputTimeDomainData = (float**) malloc2d(numChannels, lSig, sizeof(float));
-    tempFrame = (float**) malloc2d(numChannels, frameSize, sizeof(float));
-    frequencyDomainData = (float_complex***) malloc3d(nBands, numChannels, nTimeSlots, sizeof(float_complex));
-
-    /* Initialise afSTFT and input data */
-    afSTFTMatrixInit(&hSTFT, hopSize, numChannels, numChannels, 0, hybridMode, frameSize);
-    rand_m1_1(FLATTEN2D(inputTimeDomainData), numChannels*lSig); /* populate with random numbers */
-
-    /* Pass input data through afSTFT */
-    idx = 0;
-    frameIdx = 0;
-    while(idx<lSig){
-        for(c=0; c<numChannels; c++)
-            memcpy(tempFrame[c], &(inputTimeDomainData[c][frameIdx*frameSize]), frameSize*sizeof(float));
-
-        /* forward and inverse */
-        afSTFTMatrixForward(hSTFT, tempFrame, frequencyDomainData);
-        afSTFTMatrixInverse(hSTFT, frequencyDomainData, tempFrame);
-
-        for(c=0; c<numChannels; c++)
-            memcpy(&(outputTimeDomainData[c][frameIdx*frameSize]), tempFrame[c], frameSize*sizeof(float)); 
-        idx+=frameSize;
-        frameIdx++;
-    }
-
-    /* Compensate for afSTFT delay, and check that input==output, given some numerical precision */
-    for(c=0; c<numChannels; c++){
-        memcpy(outputTimeDomainData[c], &(outputTimeDomainData[c][afSTFTdelay]), (lSig-afSTFTdelay) *sizeof(float));
-        for(t=0; t<(lSig-afSTFTdelay); t++)
-            TEST_ASSERT_TRUE( 20.0f*log10f(fabsf(inputTimeDomainData[c][t]-outputTimeDomainData[c][t]))<= acceptedTolerance_dB );
-    }
-
-    /* tidy-up */
-    afSTFTMatrixFree(hSTFT);
-    free(inputTimeDomainData);
-    free(outputTimeDomainData);
-    free(frequencyDomainData);
-}
-#endif
-
 void test__afSTFT(void){
-    int idx,hopIdx,c,t;
-    int numChannels;
-    float** inputTimeDomainData, **outputTimeDomainData, **tempHop;
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
-    float_complex** frequencyDomainData;
-#else
-    complexVector* frequencyDomainData;
-#endif
-
-    /* Config */
-    const float acceptedTolerance_dB = -50.0f;
-    const int nTestHops = 2000;
-    const int hopSize = 128;
-    numChannels = 10;
-    const int hybridMode = 1;
+    int frame, nFrames, ch, i, nBands, procDelay, band, nHops;
+    void* hSTFT;
+    float* freqVector;
+    float** insig, **outsig, **inframe, **outframe;
+    float_complex*** inspec, ***outspec;
 
     /* prep */
-    const int nBands = hopSize + (hybridMode ? 5 : 1);
-    const int afSTFTdelay = hopSize * (hybridMode ? 12 : 9);
-    const int lSig = nTestHops*hopSize+afSTFTdelay;
-    void* hSTFT;
-    inputTimeDomainData = (float**) malloc2d(numChannels, lSig, sizeof(float));
-    outputTimeDomainData = (float**) malloc2d(numChannels, lSig, sizeof(float));
-    tempHop = (float**) malloc2d(numChannels, hopSize, sizeof(float));
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
-    frequencyDomainData = (float_complex**) malloc2d(numChannels, nBands, sizeof(float_complex));
-#else
-    frequencyDomainData = malloc1d(numChannels * sizeof(complexVector));
-    for(c=0; c<numChannels; c++){
-        frequencyDomainData[c].re = malloc1d(nBands*sizeof(float));
-        frequencyDomainData[c].im = malloc1d(nBands*sizeof(float));
+    const float acceptedTolerance = 0.01f;
+    const int fs = 48000;
+    const int signalLength = 1*fs;
+    const int framesize = 512;
+    const int hopsize = 128;
+    const int nCHin = 60;
+    const int hybridMode = 1;
+    const int nCHout = 64;
+    insig = (float**)malloc2d(nCHin,signalLength,sizeof(float)); /* One second long */
+    outsig = (float**)malloc2d(nCHout,signalLength,sizeof(float));
+    inframe = (float**)malloc2d(nCHin,framesize,sizeof(float));
+    outframe = (float**)malloc2d(nCHout,framesize,sizeof(float));
+    rand_m1_1(FLATTEN2D(insig), nCHin*signalLength); /* populate with random numbers */
+
+    /* Set-up */
+    nHops = framesize/hopsize;
+    afSTFT_create(&hSTFT, nCHin, nCHout, hopsize, 0, hybridMode, AFSTFT_BANDS_CH_TIME);
+    procDelay = afSTFT_getProcDelay(hSTFT);
+    nBands = afSTFT_getNBands(hSTFT);
+    freqVector = malloc1d(nBands*sizeof(float));
+    afSTFT_getCentreFreqs(hSTFT, (float)fs, nBands, freqVector);
+    inspec = (float_complex***)malloc3d(nBands, nCHin, nHops, sizeof(float_complex));
+    outspec = (float_complex***)malloc3d(nBands, nCHout, nHops, sizeof(float_complex));
+
+    /* just some messing around... */
+    afSTFT_channelChange(hSTFT, 100, 5);
+    afSTFT_clearBuffers(hSTFT);
+    afSTFT_channelChange(hSTFT, 39, 81);
+    afSTFT_channelChange(hSTFT, nCHin, nCHout); /* back to original config */
+    afSTFT_clearBuffers(hSTFT);
+
+    /* Pass insig through the QMF filterbank, block-wise processing */
+    nFrames = (int)((float)signalLength/(float)framesize);
+    for(frame = 0; frame<nFrames; frame++){
+        /* Forward transform */
+        for(ch=0; ch<nCHin; ch++)
+            memcpy(inframe[ch], &insig[ch][frame*framesize], framesize*sizeof(float));
+        afSTFT_forward(hSTFT, inframe, framesize, inspec);
+
+        /* Copy first channel of inspec to all outspec channels */
+        for(band=0; band<nBands; band++)
+            for(ch=0; ch<nCHout; ch++)
+                memcpy(outspec[band][ch], inspec[band][0], nHops*sizeof(float_complex));
+
+        /* Backwards transform */
+        afSTFT_backward(hSTFT, outspec, framesize, outframe);
+        for(ch=0; ch<nCHout; ch++)
+            memcpy(&outsig[ch][frame*framesize], outframe[ch], framesize*sizeof(float));
     }
-#endif
 
-    /* Initialise afSTFT and input data */
-    afSTFTinit(&hSTFT, hopSize, numChannels, numChannels, 0, hybridMode);
-    rand_m1_1(FLATTEN2D(inputTimeDomainData), numChannels*lSig); /* populate with random numbers */
+    /* Check that input==output (given some numerical precision) - channel 0 */
+    for(i=0; i<signalLength-procDelay-framesize; i++)
+        TEST_ASSERT_TRUE( fabsf(insig[0][i] - outsig[0][i+procDelay]) <= acceptedTolerance );
 
-    /* Pass input data through afSTFT */
-    idx = 0;
-    hopIdx = 0;
-    while(idx<lSig){
-        for(c=0; c<numChannels; c++)
-            memcpy(tempHop[c], &(inputTimeDomainData[c][hopIdx*hopSize]), hopSize*sizeof(float));
+    /* Clean-up */
+    afSTFT_destroy(&hSTFT);
+    free(insig);
+    free(outsig);
+    free(inframe);
+    free(outframe);
+    free(inspec);
+    free(outspec);
+    free(freqVector);
+}
 
-        /* forward and inverse */
-        afSTFTforward(hSTFT, tempHop, frequencyDomainData);
-        afSTFTinverse(hSTFT, frequencyDomainData, tempHop);
+void test__qmf(void){
+    int frame, nFrames, ch, i, nBands, procDelay, band, nHops;
+    void* hQMF;
+    float* freqVector;
+    float** insig, **outsig, **inframe, **outframe;
+    float_complex*** inspec, ***outspec;
 
-        for(c=0; c<numChannels; c++)
-            memcpy(&(outputTimeDomainData[c][hopIdx*hopSize]), tempHop[c], hopSize*sizeof(float));
-        idx+=hopSize;
-        hopIdx++;
+    /* prep */
+    const float acceptedTolerance = 0.01f;
+    const int fs = 48000;
+    const int signalLength = 1*fs;
+    const int framesize = 512;
+    const int hopsize = 128;
+    const int nCHin = 60;
+    const int hybridMode = 1;
+    const int nCHout = 64;
+    insig = (float**)malloc2d(nCHin,signalLength,sizeof(float)); /* One second long */
+    outsig = (float**)malloc2d(nCHout,signalLength,sizeof(float));
+    inframe = (float**)malloc2d(nCHin,framesize,sizeof(float));
+    outframe = (float**)malloc2d(nCHout,framesize,sizeof(float));
+    rand_m1_1(FLATTEN2D(insig), nCHin*signalLength); /* populate with random numbers */
+
+    /* Set-up */
+    nHops = framesize/hopsize;
+    qmf_create(&hQMF, nCHin, nCHout, hopsize, hybridMode, QMF_BANDS_CH_TIME);
+    procDelay = qmf_getProcDelay(hQMF);
+    nBands = qmf_getNBands(hQMF);
+    freqVector = malloc1d(nBands*sizeof(float));
+    qmf_getCentreFreqs(hQMF, (float)fs, nBands, freqVector);
+    inspec = (float_complex***)malloc3d(nBands, nCHin, nHops, sizeof(float_complex));
+    outspec = (float_complex***)malloc3d(nBands, nCHout, nHops, sizeof(float_complex));
+
+    /* Pass insig through the QMF filterbank, block-wise processing */
+    nFrames = (int)((float)signalLength/(float)framesize);
+    for(frame = 0; frame<nFrames; frame++){
+        /* QMF Analysis */
+        for(ch=0; ch<nCHin; ch++)
+            memcpy(inframe[ch], &insig[ch][frame*framesize], framesize*sizeof(float));
+        qmf_analysis(hQMF, inframe, framesize, inspec);
+
+        /* Copy first channel of inspec to all outspec channels */
+        for(band=0; band<nBands; band++)
+            for(ch=0; ch<nCHout; ch++)
+                memcpy(outspec[band][ch], inspec[band][0], nHops*sizeof(float_complex));
+
+        /* QMF Synthesis */
+        qmf_synthesis(hQMF, outspec, framesize, outframe);
+        for(ch=0; ch<nCHout; ch++)
+            memcpy(&outsig[ch][frame*framesize], outframe[ch], framesize*sizeof(float));
     }
 
-    /* Compensate for afSTFT delay, and check that input==output, given some numerical precision */
-    for(c=0; c<numChannels; c++){
-        memcpy(outputTimeDomainData[c], &(outputTimeDomainData[c][afSTFTdelay]), (lSig-afSTFTdelay) *sizeof(float));
-        for(t=0; t<(lSig-afSTFTdelay); t++)
-            TEST_ASSERT_TRUE( 20.0f*log10f(fabsf(inputTimeDomainData[c][t]-outputTimeDomainData[c][t]))<= acceptedTolerance_dB );
-    }
+    /* Check that input==output (given some numerical precision) - channel 0 */
+    for(i=0; i<signalLength-procDelay-framesize; i++)
+        TEST_ASSERT_TRUE( fabsf(insig[0][i] - outsig[0][i+procDelay]) <= acceptedTolerance );
 
-    /* tidy-up */
-    afSTFTfree(hSTFT);
-    free(inputTimeDomainData);
-    free(outputTimeDomainData);
-#ifdef AFSTFT_USE_FLOAT_COMPLEX
-    free(frequencyDomainData);
-#else
-    for(c=0; c<numChannels; c++){
-        free(frequencyDomainData[c].re);
-        free(frequencyDomainData[c].im);
-    }
-    free(frequencyDomainData);
-#endif
+    /* Clean-up */
+    qmf_destroy(&hQMF);
+    free(insig);
+    free(outsig);
+    free(inframe);
+    free(outframe);
+    free(inspec);
+    free(outspec);
+    free(freqVector);
 }
 
 void test__smb_pitchShifter(void){
@@ -614,7 +703,7 @@ void test__smb_pitchShifter(void){
     /* Config */
     const int sampleRate = 48000;
     const int FFTsize = 8192;
-    const int osfactor = 16;
+    const int osfactor = 4;
     const int nSamples = 8*FFTsize;
 
     /* prep */
@@ -912,6 +1001,530 @@ void test__realloc2d_r(void){
     /* clean-up */
     free(test);
 }
+
+void test__latticeDecorrelator(void){
+    int c, band, nBands, idx, hopIdx, i;
+    void* hDecor, *hSTFT;
+    float icc, tmp, tmp2;
+    float* freqVector;
+    float** inputTimeDomainData, **outputTimeDomainData, **tempHop;
+    float_complex*** inTFframe, ***outTFframe;
+
+    /* config */
+    const float acceptedICC = 0.05f;
+    const int nCH = 24;
+    const int nTestHops = 2000;
+    const int hopSize = 128;
+    const int procDelay = hopSize*12 + 12;
+    const int lSig = nTestHops*hopSize+procDelay;
+    const float fs = 48e3f;
+    nBands = hopSize+5;
+
+    /* audio buffers */
+    inputTimeDomainData = (float**) malloc2d(1, lSig, sizeof(float));
+    outputTimeDomainData = (float**) malloc2d(nCH, lSig, sizeof(float));
+    inTFframe = (float_complex***)malloc3d(nBands, nCH, 1, sizeof(float_complex));
+    outTFframe = (float_complex***)malloc3d(nBands, nCH, 1, sizeof(float_complex));
+    tempHop = (float**) malloc2d(nCH, hopSize, sizeof(float));
+
+    /* Initialise afSTFT and input data */
+    afSTFT_create(&hSTFT, 1, nCH, hopSize, 0, 1, AFSTFT_BANDS_CH_TIME);
+    rand_m1_1(FLATTEN2D(inputTimeDomainData), 1*lSig); /* populate with random numbers */
+    freqVector = malloc1d(nBands*sizeof(float));
+    afSTFT_getCentreFreqs(hSTFT, fs, nBands, freqVector);
+
+    /* setup decorrelator */
+    int orders[4] = {20, 15, 6, 6}; /* 20th order up to 700Hz, 15th->2.4kHz, 6th->4kHz, 3rd->12kHz, NONE(only delays)->Nyquist */
+    //float freqCutoffs[4] = {600.0f, 2.6e3f, 4.5e3f, 12e3f};
+    float freqCutoffs[4] = {900.0f, 6.8e3f, 12e3f, 24e3f};
+    const int maxDelay = 12;
+    latticeDecorrelator_create(&hDecor, fs, hopSize, freqVector, nBands, nCH, orders, freqCutoffs, 4, maxDelay, 0, 0.75f);
+
+    /* Processing loop */
+    idx = 0;
+    hopIdx = 0;
+    while(idx<lSig){
+        for(c=0; c<1; c++)
+            memcpy(tempHop[c], &(inputTimeDomainData[c][hopIdx*hopSize]), hopSize*sizeof(float));
+
+        /* forward TF transform, and replicate to all channels */
+        afSTFT_forward(hSTFT, tempHop, hopSize, inTFframe);
+        for(band=0; band<nBands; band++)
+            for(i=1; i<nCH;i++)
+                inTFframe[band][i][0] = inTFframe[band][0][0];
+
+        /* decorrelate */
+        latticeDecorrelator_apply(hDecor, inTFframe, 1, outTFframe);
+
+        /*  backward TF transform */
+        afSTFT_backward(hSTFT, outTFframe, hopSize, tempHop);
+
+        /* Copy frame to output TD buffer */
+        for(c=0; c<nCH; c++)
+            memcpy(&(outputTimeDomainData[c][hopIdx*hopSize]), tempHop[c], hopSize*sizeof(float));
+        idx+=hopSize;
+        hopIdx++;
+    }
+
+    /* Compensate for processing delay, and check that the inter-channel correlation
+     * coefficient is below the accepted threshold (ideally 0, if fully
+     * decorrelated...) */
+    for(c=0; c<nCH; c++){
+        utility_svvdot(inputTimeDomainData[0], &outputTimeDomainData[c][procDelay], (lSig-procDelay), &icc);
+        utility_svvdot(inputTimeDomainData[0], inputTimeDomainData[0], (lSig-procDelay), &tmp);
+        utility_svvdot(&outputTimeDomainData[c][procDelay], &outputTimeDomainData[c][procDelay], (lSig-procDelay), &tmp2);
+
+        icc = icc/sqrtf(tmp*tmp2); /* normalise */
+        TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
+    }
+#if 0
+    /* Check for mutually decorrelated channels... */
+    int c2;
+    for(c=0; c<nCH; c++){
+        for(c2=0; c2<nCH; c2++){
+            utility_svvdot(&outputTimeDomainData[c][procDelay], &outputTimeDomainData[c2][procDelay], (lSig-procDelay), &icc);
+            utility_svvdot(&outputTimeDomainData[c2][procDelay], &outputTimeDomainData[c2][procDelay], (lSig-procDelay), &tmp);
+            utility_svvdot(&outputTimeDomainData[c][procDelay], &outputTimeDomainData[c][procDelay], (lSig-procDelay), &tmp2);
+
+            if (c!=c2){
+                icc = icc/sqrtf(tmp*tmp2); /* normalise */
+                TEST_ASSERT_TRUE(fabsf(icc)<acceptedICC);
+            }
+        }
+    }
+#endif
+
+    /* Clean-up */
+    latticeDecorrelator_destroy(&hDecor);
+    free(inTFframe);
+    free(outTFframe);
+    free(tempHop);
+    afSTFT_destroy(&hSTFT);
+    free(inputTimeDomainData);
+    free(outputTimeDomainData);
+}
+
+void test__butterCoeffs(void){
+    int i;
+    float fs, cutoff_freq, cutoff_freq2;
+    int order;
+
+    /* Config */
+    const double acceptedTolerance = 0.00001f;
+
+    /* 1st order Low-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 3000.0f;
+    order = 1;
+    double a_test1[2], b_test1[2];
+    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test1, (double*)a_test1);
+    const double a_ref1[2] = {1,-0.668178637919299};
+    const double b_ref1[2] = {0.165910681040351,0.165910681040351};
+    for(i=0; i<2; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test1[i], a_ref1[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test1[i], b_ref1[i]);
+    }
+
+    /* 2nd order Low-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 12000.0f;
+    order = 2;
+    double a_test2[3], b_test2[3];
+    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test2, (double*)a_test2);
+    const double a_ref2[3] = {1.0,-2.22044604925031e-16,0.171572875253810};
+    const double b_ref2[3] = {0.292893218813452,0.585786437626905,0.292893218813452};
+    for(i=0; i<3; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test2[i], a_ref2[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test2[i], b_ref2[i]);
+    }
+
+    /* 3rd order Low-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 200.0f;
+    order = 3;
+    double a_test3[4], b_test3[4];
+    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test3, (double*)a_test3);
+    const double a_ref3[4] = {1.0,-2.94764161678340,2.89664496645376,-0.948985866903327};
+    const double b_ref3[4] = {2.18534587909103e-06,6.55603763727308e-06,6.55603763727308e-06,2.18534587909103e-06};
+    for(i=0; i<4; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test3[i], a_ref3[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test3[i], b_ref3[i]);
+    }
+
+    /* 6th order Low-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 1e3f;
+    order = 6;
+    double a_test4[7], b_test4[7];
+    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test4, (double*)a_test4);
+    const double a_ref4[7] = {1,-5.49431292177096,12.5978414666894,-15.4285267903275,10.6436770055305,-3.92144696766748,0.602772146971300};
+    const double b_ref4[7] = {6.15535184628202e-08,3.69321110776921e-07,9.23302776942303e-07,1.23107036925640e-06,9.23302776942303e-07,3.69321110776921e-07,6.15535184628202e-08};
+    for(i=0; i<7; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test4[i], a_ref4[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test4[i], b_ref4[i]);
+    }
+
+    /* 3rd order High-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 3000.0f;
+    order = 3;
+    double a_test5[4], b_test5[4];
+    butterCoeffs(BUTTER_FILTER_HPF, order, cutoff_freq, 0.0f, fs, (double*)b_test5, (double*)a_test5);
+    const double a_ref5[4] = {1,-2.21916861831167,1.71511783003340,-0.453545933365530};
+    const double b_ref5[4] = {0.673479047713825,-2.02043714314147,2.02043714314147,-0.673479047713825};
+    for(i=0; i<4; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test5[i], a_ref5[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test5[i], b_ref5[i]);
+    }
+
+    /* 4th order High-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 100.0;
+    order = 4;
+    double a_test6[5], b_test6[5];
+    butterCoeffs(BUTTER_FILTER_HPF, order, cutoff_freq, 0.0f, fs, (double*)b_test6, (double*)a_test6);
+    const double a_ref6[5] = {1.0,-3.96579438007005,5.89796693861409,-3.89854491737242,0.966372387692057};
+    const double b_ref6[5] = {0.983042413984288,-3.93216965593715,5.89825448390573,-3.93216965593715,0.983042413984288};
+    for(i=0; i<5; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test6[i], a_ref6[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test6[i], b_ref6[i]);
+    }
+
+    /* 2nd order Band-pass filter */
+    fs = 48e3f;
+    cutoff_freq = 100.0;
+    cutoff_freq2 = 400.0;
+    order = 2;
+    double a_test7[5], b_test7[5];
+    butterCoeffs(BUTTER_FILTER_BPF, order, cutoff_freq, cutoff_freq2, fs, (double*)b_test7, (double*)a_test7);
+    const double a_ref7[5] = {1.0,-3.94312581006024,5.83226704209421,-3.83511871130750,0.945977936232284};
+    const double b_ref7[5] = {0.000375069616051004,0.0,-0.000750139232102008,0.0,0.000375069616051004};
+    for(i=0; i<5; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test7[i], a_ref7[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test7[i], b_ref7[i]);
+    }
+
+    /* 3rd order Band-stop filter */
+    fs = 48e3f;
+    cutoff_freq = 240.0;
+    cutoff_freq2 = 1600.0;
+    order = 3;
+    double a_test9[7], b_test9[7];
+    butterCoeffs(BUTTER_FILTER_BSF, order, cutoff_freq, cutoff_freq2, fs, (double*)b_test9, (double*)a_test9);
+    const double a_ref9[7] = {1,-5.62580309774365,13.2124846784594,-16.5822627287366,11.7304049556188,-4.43493124452282,0.700107676775329};
+    const double b_ref9[7] = {0.836724592951539,-5.00379660039217,12.4847741945760,-16.6354041344203,12.4847741945760,-5.00379660039217,0.836724592951539};
+    for(i=0; i<7; i++){ /* Compare with the values given by Matlab's butter function */
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test9[i], a_ref9[i]);
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test9[i], b_ref9[i]);
+    }
+}
+
+void test__faf_IIRFilterbank(void){
+    void* hFaF;
+    int i, band;
+    float* inSig, *outSig;
+    float** outFrame, **outSig_bands;
+    void* hFFT;
+    float_complex* insig_fft, *outsig_fft;
+
+    /* Config */
+    const float acceptedTolerance_dB = 0.5f;
+    const int signalLength = 256;
+    const int frameSize = 16;
+    float fs = 48e3;
+    int order = 3;
+    float fc[6] = {176.776695296637f, 353.553390593274f, 707.106781186547f, 1414.21356237309f, 2828.42712474619f, 5656.85424949238f};
+    inSig = malloc1d(signalLength * sizeof(float));
+    outSig_bands = (float**)malloc2d(7, signalLength, sizeof(float));
+    outSig = calloc1d(signalLength, sizeof(float));
+
+    insig_fft = malloc1d((signalLength / 2 + 1) * sizeof(float_complex));
+    outsig_fft = malloc1d((signalLength / 2 + 1) * sizeof(float_complex));
+
+    /* Impulse */
+    memset(inSig, 0, signalLength*sizeof(float));
+    inSig[0] = 1.0f;
+
+    /* Pass impulse through filterbank */
+    outFrame = (float**)malloc2d(7, frameSize, sizeof(float));
+    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
+    for(i=0; i< signalLength/frameSize; i++){
+        faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
+        for(band=0; band<7; band++)
+            memcpy(&outSig_bands[band][i*frameSize], outFrame[band], frameSize*sizeof(float));
+    }
+    faf_IIRFilterbank_destroy(&hFaF);
+
+    /* Sum the individual bands */
+    for(band=0; band<7; band++)
+        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
+
+    /* Check that the magnitude difference between input and output is below 0.5dB */
+    saf_rfft_create(&hFFT, signalLength);
+    saf_rfft_forward(hFFT, inSig, insig_fft);
+    saf_rfft_forward(hFFT, outSig, outsig_fft);
+    for(i=0; i<signalLength/2+1; i++)
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance_dB, 0.0f, 20.0f * log10f(cabsf( ccdivf(outsig_fft[i],insig_fft[i]) )));
+
+    /* Now the same thing, but for 1st order */
+    order = 1;
+    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
+    for(i=0; i< signalLength/frameSize; i++){
+        faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
+        for(band=0; band<7; band++)
+            memcpy(&outSig_bands[band][i*frameSize], outFrame[band], frameSize*sizeof(float));
+    }
+    faf_IIRFilterbank_destroy(&hFaF);
+    memset(outSig, 0, signalLength*sizeof(float));
+    for(band=0; band<7; band++)
+        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
+    saf_rfft_forward(hFFT, outSig, outsig_fft);
+    for(i=0; i<signalLength/2+1; i++)
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance_dB, 0.0f, 20.0f * log10f(cabsf(ccdivf(outsig_fft[i], insig_fft[i]))));
+
+    /* clean-up */
+    saf_rfft_destroy(&hFFT);
+    free(outFrame);
+    free(inSig);
+    free(outSig_bands);
+    free(outSig);
+    free(insig_fft);
+    free(outsig_fft);
+}
+
+void test__gexpm(void){
+    int i, j;
+    float outM[6][6];
+
+    /* prep */
+    const float acceptedTolerance = 0.0001f;
+    const float inM[6][6] = {
+        {-0.376858200853762,0.656790634216694,0.124479178614046,-0.334752428307223,1.50745241578235,0.0290651989052969},
+        {0.608382058262806,0.581930485432986,3.23135406998058,-0.712003744668929,-1.33872571354702,-0.334742482743222},
+        {-0.795741418256672,0.690709474622409,0.620971281129248,1.38749471231620,0.897245329198841,-0.0693670166113321},
+        {0.179789913109994,-1.06135084902804,-1.10032635271188,0.612441344250358,-2.43213807790664,-0.479265889956047},
+        {-0.277441781278754,-0.0732116130293688,-0.572551795688137,1.02024767389969,0.167385894565923,1.45210312619277},
+        {-0.205305770089918,-1.59783032780633,1.08539265129120,0.460057585947626,-1.02420974042838,1.04117461500218}
+    };
+    const float outM_ref[6][6] = {
+        {0.385163650730121,0.0865151585709784,0.898406722231524,0.877640791713973,0.435244824708340,0.888866982998854},
+        {-0.664938511314777,5.02943129352875,8.24444951891833,2.23840978101979,-0.942669833528886,-2.38535530623266},
+        {-0.388189314743059,0.429308537172675,1.13870842882926,1.60875776611798,-1.44249911796405,-1.51822150286392},
+        {1.05630187656688,0.256606570814868,-2.42701873560847,-1.42372526577009,-0.335273289873574,-1.94362909671742},
+        {0.0261470437116839,-3.03329326250434,-3.50207776203591,0.412043775125377,-0.536000387729306,1.61801775548557},
+        {-0.292024827617294,-4.31537192033477,-3.99160103133879,0.312499067924889,-1.46924802440347,1.98522802303672}
+    };
+
+    /* Compute matrix exponential */
+    gexpm((float*)inM, 6, 0, (float*)outM);
+
+    /* Check that output of SAF's gexpm, is similar to Matlab's expm: */
+    for(i=0; i<6; i++)
+        for(j=0; j<6; j++)
+            TEST_ASSERT_TRUE( fabsf(outM[i][j] - outM_ref[i][j]) <= acceptedTolerance );
+}
+
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
+void test__saf_sofa_open(void){
+    SAF_SOFA_ERROR_CODES error;
+    saf_sofa_container sofa;
+    error = saf_sofa_open(&sofa, "/Users/mccorml1/Documents/FABIAN_HRTF_DATABASE_V1/1 HRIRs/SOFA/FABIAN_HRIR_measured_HATO_20.sofa");
+    saf_sofa_close(&sofa);
+}
+#endif
+
+#ifdef SAF_ENABLE_TRACKER_MODULE
+void test__tracker3d(void){
+    int hop, i, j, k, nSH, nGrid, rand_idx, dropouts;
+    int inds[2];
+    int* target_IDs;
+    void* hT3d, *hMUSIC;
+    float measNoiseSD_deg, noiseSpecDen_deg, scale, rand01;
+    float est_dirs_deg[2][2], est_dirs_xyz[2][3];
+    float* grid_dirs_deg;
+    float** insigs, **inputSH, **inputSH_noise, **inputSH_hop, **Y, **Cx, **V, **Vn;
+    float_complex** Vn_cmplx;
+    int nTargets;
+    float *target_dirs_xyz;
+
+    /* Test configuration */
+    const float acceptedTolerance = 0.001f;
+    const int order = 2;
+    const float fs = 48e3;
+    const int hopsize = 128;
+    const float sigLen = fs*5;
+    const int nSources = 2; /* cannot be changed, hard-coded for 2 */
+    const float src_dirs_deg[2][2] = { {-35.0f, 30.0f}, {120.0f, 0.0f} };
+
+    /* Configure the tracker */
+    tracker3d_config tpars;
+    /* Number of Monte Carlo samples/particles. The more complex the
+     * distribution is, the more particles required (but also, the more
+     * computationally expensive the tracker becomes). */
+    tpars.Np = 20;
+    tpars.ARE_UNIT_VECTORS = 1;
+    tpars.maxNactiveTargets = 4; /* about 2 higher than expected is good */
+    /* Likelihood of an estimate being noise/clutter */
+    tpars.noiseLikelihood = 0.2f; /* between [0..1] */
+    /* Measurement noise - e.g. to assume that estimates within the range +/-20
+     * degrees belong to the same target, set SDmnoise_deg = 20 */
+    measNoiseSD_deg = 20.0f;
+    tpars.measNoiseSD = 1.0f-cosf(measNoiseSD_deg*SAF_PI/180.0f); /* Measurement noise standard deviation */
+    /* Noise spectral density - not fully understood. But it influences the
+     * smoothness of the target tracks */
+    noiseSpecDen_deg = 1.0f;
+    tpars.noiseSpecDen = 1.0f-cosf(noiseSpecDen_deg*SAF_PI/180.0f);  /* Noise spectral density */
+    /* FLAG - whether to allow for multiple target deaths in the same tracker
+     * prediction step */
+    tpars.ALLOW_MULTI_DEATH = 1;
+    /* Probability of birth and death */
+    tpars.init_birth = 0.5f; /* value between [0 1] - Prior probability of birth */
+    tpars.alpha_death = 20.0f; /* always >= 1; 1 is good */      /* 20-> means death is very unlikely... */
+    tpars.beta_death = 1.0f; /* always >= 1; 1 is good */
+    /* Elapsed time (in seconds) between observations */
+    tpars.dt = 1.0f/(fs/(float)hopsize); /* Hop length of frames */
+    /* Whether or not to allow multiple active sources for each update */
+    /* Real-time tracking is based on the particle with highest weight. A
+     * one-pole averaging filter is used to smooth the weights over time. */
+    tpars.W_avg_coeff = 0.5f;
+    /* Force kill targets that are close to another target. In these cases, the
+     * target that has been 'alive' for the least amount of time, is killed */
+    tpars.FORCE_KILL_TARGETS = 1;
+    tpars.forceKillDistance = 0.2f;
+    /* Mean position priors x,y,z (assuming directly in-front) */
+    tpars.M0[0] = 1.0f; tpars.M0[1] = 0.0f; tpars.M0[2] = 0.0f;
+    /* Mean Velocity priors x,y,z (assuming stationary) */
+    tpars.M0[3] = 0.0f; tpars.M0[4] = 0.0f; tpars.M0[5] = 0.0f;
+    /* Target velocity - e.g. to assume that a target can move 20 degrees in
+    * two seconds along the horizontal, set V_azi = 20/2 */
+    const float Vazi_deg = 3.0f;  /* Velocity of target on azimuthal plane */
+    const float Vele_deg = 3.0f;  /* Velocity of target on median plane */
+    memset(tpars.P0, 0, 6*6*sizeof(float));
+    /* Variance PRIORs of estimates along the x,y,z axes, respectively. Assuming
+     * coordinates will lay on the unit sphere +/- x,y,z, so a range of 2, and
+     * hence a variance of 2^2: */
+    tpars.P0[0][0] = 4.0f; tpars.P0[1][1] = 4.0f; tpars.P0[2][2] = 4.0f;
+    /* Velocity PRIORs of estimates the x,y,z axes */
+    tpars.P0[3][3] = 1.0f-cosf(Vazi_deg*SAF_PI/180.0f); /* x */
+    tpars.P0[4][4] = tpars.P0[3][3];                    /* y */
+    tpars.P0[5][5] = 1.0f-cosf(Vele_deg*SAF_PI/180.0f); /* z */
+    /* PRIOR probabilities of noise. (Assuming the noise is uniformly
+     * distributed in the entire spatial grid). */
+    tpars.cd = 1.0f/(4.0f*SAF_PI);
+
+    /* Create tracker */
+    tracker3d_create(&hT3d, tpars);
+
+    /* Create spherical harmonic input signals */
+    insigs = (float**)malloc2d(nSources, sigLen, sizeof(float));
+    rand_m1_1(FLATTEN2D(insigs), nSources*sigLen);
+    nSH = ORDER2NSH(order);
+    Y = (float**)malloc2d(nSH, nSources, sizeof(float));
+    getRSH(order, (float*)src_dirs_deg, nSources, FLATTEN2D(Y));
+    scale = 1.0f/(float)nSources;
+    utility_svsmul(FLATTEN2D(Y), &scale, nSH*nSources, NULL);
+    inputSH = (float**)malloc2d(nSH, sigLen, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, sigLen, nSources, 1.0f,
+                FLATTEN2D(Y), nSources,
+                FLATTEN2D(insigs), sigLen, 0.0f,
+                FLATTEN2D(inputSH), sigLen);
+
+    /* Add some noise */
+    inputSH_noise = (float**)malloc2d(nSH, sigLen, sizeof(float));
+    rand_m1_1(FLATTEN2D(inputSH_noise), nSH*sigLen);
+    scale = 0.05f;
+    utility_svsmul(FLATTEN2D(inputSH_noise), &scale, nSH*sigLen, NULL);
+    utility_svvadd(FLATTEN2D(inputSH), FLATTEN2D(inputSH_noise), nSH*sigLen, FLATTEN2D(inputSH));
+
+    /* Create DoA estimator */
+    nGrid = 240; /* number of points in a t-design of degree 21 */
+    grid_dirs_deg = (float*)__Tdesign_degree_21_dirs_deg;
+    sphMUSIC_create(&hMUSIC, order, grid_dirs_deg, nGrid);
+
+    /* Memory allocations */
+    inputSH_hop = (float**)malloc2d(nSH, hopsize, sizeof(float));
+    Cx = (float**)malloc2d(nSH, nSH, sizeof(float));
+    V = (float**)malloc2d(nSH, nSH, sizeof(float));
+    Vn = (float**)malloc2d(nSH, (nSH-nSources), sizeof(float)); /* noise subspace */
+    Vn_cmplx = (float_complex**)malloc2d(nSH, (nSH-nSources), sizeof(float_complex));
+    target_dirs_xyz = NULL;
+    target_IDs = NULL;
+
+    /* Loop over hops */
+    dropouts = 0;
+    for(hop=0; hop<(int)((float)sigLen/(float)hopsize); hop++){
+        /* Grab current hop */
+        for(i=0; i<nSH; i++)
+            memcpy(inputSH_hop[i], &inputSH[i][hop*hopsize], hopsize*sizeof(float));
+
+        /* Eigenvalue decomposition and truncation of eigen vectors to obtain
+         * noise subspace (based on source number) */
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, hopsize, 1.0f,
+                    FLATTEN2D(inputSH_hop), hopsize,
+                    FLATTEN2D(inputSH_hop), hopsize, 0.0f,
+                    FLATTEN2D(Cx), nSH);
+        utility_sseig(FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
+        for(i=0; i<nSH; i++)
+            for(j=0, k=nSources; j<nSH-nSources; j++, k++)
+                Vn[i][j] = V[i][k];
+        for(i=0; i<nSH; i++)
+            for(j=0; j<nSH-nSources; j++)
+                Vn_cmplx[i][j] = cmplxf(Vn[i][j], 0.0f);
+
+        /* DoA estimation */
+        sphMUSIC_compute(hMUSIC, FLATTEN2D(Vn_cmplx), nSources, NULL, (int*)inds);
+        est_dirs_deg[0][0] = grid_dirs_deg[inds[0]*2+0];
+        est_dirs_deg[0][1] = grid_dirs_deg[inds[0]*2+1];
+        est_dirs_deg[1][0] = grid_dirs_deg[inds[1]*2+0];
+        est_dirs_deg[1][1] = grid_dirs_deg[inds[1]*2+1];
+        unitSph2cart((float*)est_dirs_deg, nSources, 1, (float*)est_dirs_xyz);
+
+        /* Pick an estimate at random */
+        rand_0_1(&rand01, 1);
+        rand_idx = (int)(rand01*(float)nSources);
+
+        /* Feed tracker */
+        tracker3d_step(hT3d, (float*)&est_dirs_xyz[rand_idx], 1, &target_dirs_xyz, &target_IDs, &nTargets);
+
+        /* Give the tracker a couple of steps, and then assert that it is keeping track of these two targets */
+        if(hop>10){
+            TEST_ASSERT_TRUE( nTargets <= nSources );
+            if(nTargets==nSources){
+                TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[0][0] - target_dirs_xyz[0*3+0]) <= acceptedTolerance ||
+                                  fabsf(est_dirs_xyz[0][0] - target_dirs_xyz[1*3+0]) <= acceptedTolerance);
+                TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[0][1] - target_dirs_xyz[0*3+1]) <= acceptedTolerance ||
+                                  fabsf(est_dirs_xyz[0][1] - target_dirs_xyz[1*3+1]) <= acceptedTolerance);
+                TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[0][2] - target_dirs_xyz[0*3+2]) <= acceptedTolerance ||
+                                  fabsf(est_dirs_xyz[0][2] - target_dirs_xyz[1*3+2]) <= acceptedTolerance);
+                TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[1][0] - target_dirs_xyz[0*3+0]) <= acceptedTolerance ||
+                                  fabsf(est_dirs_xyz[1][0] - target_dirs_xyz[1*3+0]) <= acceptedTolerance);
+                TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[1][1] - target_dirs_xyz[0*3+1]) <= acceptedTolerance ||
+                                  fabsf(est_dirs_xyz[1][1] - target_dirs_xyz[1*3+1]) <= acceptedTolerance);
+                TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[1][2] - target_dirs_xyz[0*3+2]) <= acceptedTolerance ||
+                                  fabsf(est_dirs_xyz[1][2] - target_dirs_xyz[1*3+2]) <= acceptedTolerance);
+            }
+            else
+                dropouts++; /* Should be very unlikely, (as the probably of death set to be so low), but it can still happen... */
+        }
+    }
+    TEST_ASSERT_TRUE(dropouts<5);
+
+    /* Clean-up */
+    tracker3d_destroy(&hT3d);
+    sphMUSIC_destroy(&hMUSIC);
+    free(target_dirs_xyz);
+    free(target_IDs);
+    free(insigs);
+    free(inputSH);
+    free(inputSH_noise);
+    free(inputSH_hop);
+    free(Y);
+    free(Cx);
+    free(V);
+    free(Vn);
+    free(Vn_cmplx);
+}
+#endif
 
 void test__formulate_M_and_Cr(void){
     int i, j, it, nCHin, nCHout, lenSig;
@@ -1234,8 +1847,8 @@ void test__formulate_M_and_Cr_cmplx(void){
 
 void test__getLoudspeakerDecoderMtx(void){
     int i, j, k, nLS, order, nSH;
-    float* ls_dirs_deg;
-    float** decMtx_SAD, **decMtx_MMD, **decMtx_EPAD, **decMtx_AllRAD;
+    float* ls_dirs_deg, *amp, *en;
+    float** ls_dirs_rad, **decMtx_SAD, **decMtx_MMD, **decMtx_EPAD, **decMtx_AllRAD, **Ysrc, **LSout;
 
     /* Config */
     const float acceptedTolerance = 0.00001f;
@@ -1250,6 +1863,11 @@ void test__getLoudspeakerDecoderMtx(void){
         /* Pull an appropriate t-design for this order */
         ls_dirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[2 * order-1];
         nLS = __Tdesign_nPoints_per_degree[2 * order-1];
+        ls_dirs_rad = (float**)malloc2d(nLS, 2, sizeof(float));
+        for(j=0; j<nLS; j++){
+            ls_dirs_rad[j][0] = ls_dirs_deg[j*2] * M_PI/180.0f;
+            ls_dirs_rad[j][1] = M_PI/2.0f - ls_dirs_deg[j*2+1] * M_PI/180.0f; /* elevation->inclination */
+        }
 
         /* Compute decoders */
         decMtx_SAD = (float**)malloc2d(nLS, nSH, sizeof(float));
@@ -1269,11 +1887,40 @@ void test__getLoudspeakerDecoderMtx(void){
             for(k=0; k<nSH; k++)
                 TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, decMtx_SAD[j][k], decMtx_EPAD[j][k]);
 
+        /* Compute output for PWs in direction of Loudspeakers: */
+        Ysrc = (float**)malloc2d(nSH, nLS, sizeof(float));
+        getSHreal(order, FLATTEN2D(ls_dirs_rad), nLS, FLATTEN2D(Ysrc));
+        LSout = (float**)malloc2d(nLS, nLS, sizeof(float));
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLS, nLS, nSH, 1.0f,
+                    FLATTEN2D(decMtx_EPAD), nSH,
+                    FLATTEN2D(Ysrc), nLS, 0.0f,
+                    FLATTEN2D(LSout), nLS);
+        
+        /* Compute amplitude and energy for each source */
+        amp = (float*)calloc1d(nLS, sizeof(float));
+        en = (float*)calloc1d(nLS, sizeof(float));
+        for (int idxSrc=0; idxSrc<nLS; idxSrc++) {
+            for (int idxLS=0; idxLS<nLS; idxLS++) {
+                amp[idxSrc] += LSout[idxLS][idxSrc];
+                en[idxSrc] += LSout[idxLS][idxSrc] * LSout[idxLS][idxSrc];
+            }
+        }
+        /* Check output amplitude and Energy */
+        for (int idxSrc=0; idxSrc<nLS; idxSrc++) {
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, amp[idxSrc], 1.0);
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, en[idxSrc], (float)nSH / (float)nLS);
+        }
+
         /* Clean-up */
         free(decMtx_SAD);
         free(decMtx_MMD);
         free(decMtx_EPAD);
         free(decMtx_AllRAD);
+        free(ls_dirs_rad);
+        free(amp);
+        free(en);
+        free(Ysrc);
+        free(LSout);
     }
 }
 
@@ -1676,195 +2323,292 @@ void test__checkCondNumberSHTReal(void){
     }
 }
 
-void test__butterCoeffs(void){
-    int i;
-    float fs, cutoff_freq, cutoff_freq2;
-    int order;
+void test__sphMUSIC(void){
+    int i, j, k, nGrid, nSH, nSrcs, srcInd_1, srcInd_2;
+    float test_dirs_deg[2][2];
+    float* grid_dirs_deg;
+    float** Y_src, **src_sigs, **src_sigs_sh, **Cx, **V, **Vn;
+    float_complex** Vn_cmplx;
+    void* hMUSIC;
 
-    /* Config */
-    const double acceptedTolerance = 0.00001f;
+    /* config */
+    const int order = 3;
+    const int lsig = 48000;
 
-    /* 1st order Low-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 3000.0f;
-    order = 1;
-    double a_test1[2], b_test1[2];
-    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test1, (double*)a_test1);
-    const double a_ref1[2] = {1,-0.668178637919299};
-    const double b_ref1[2] = {0.165910681040351,0.165910681040351};
-    for(i=0; i<2; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test1[i], a_ref1[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test1[i], b_ref1[i]);
-    }
+    /* define scanning grid directions */
+    nGrid = 240;
+    grid_dirs_deg = (float*)__Tdesign_degree_21_dirs_deg;
 
-    /* 2nd order Low-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 12000.0f;
-    order = 2;
-    double a_test2[3], b_test2[3];
-    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test2, (double*)a_test2);
-    const double a_ref2[3] = {1.0,-2.22044604925031e-16,0.171572875253810};
-    const double b_ref2[3] = {0.292893218813452,0.585786437626905,0.292893218813452};
-    for(i=0; i<3; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test2[i], a_ref2[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test2[i], b_ref2[i]);
-    }
+    /* test scenario and signals */
+    nSrcs = 2;
+    srcInd_1 = 139;
+    srcInd_2 = 204;
+    test_dirs_deg[0][0] = grid_dirs_deg[srcInd_1*2];
+    test_dirs_deg[0][1] = grid_dirs_deg[srcInd_1*2+1];
+    test_dirs_deg[1][0] = grid_dirs_deg[srcInd_2*2];
+    test_dirs_deg[1][1] = grid_dirs_deg[srcInd_2*2+1];
+    nSH = ORDER2NSH(order);
+    Y_src = (float**)malloc2d(nSH, nSrcs, sizeof(float));
+    getRSH(order, (float*)test_dirs_deg, nSrcs, FLATTEN2D(Y_src));
+    src_sigs = (float**)malloc2d(nSrcs, lsig, sizeof(float));
+    rand_m1_1(FLATTEN2D(src_sigs), nSrcs*lsig); /* uncorrelated noise sources */
 
-    /* 3rd order Low-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 200.0f;
-    order = 3;
-    double a_test3[4], b_test3[4];
-    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test3, (double*)a_test3);
-    const double a_ref3[4] = {1.0,-2.94764161678340,2.89664496645376,-0.948985866903327};
-    const double b_ref3[4] = {2.18534587909103e-06,6.55603763727308e-06,6.55603763727308e-06,2.18534587909103e-06};
-    for(i=0; i<4; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test3[i], a_ref3[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test3[i], b_ref3[i]);
-    }
+    /* encode to SH and compute spatial covariance matrix */
+    src_sigs_sh = (float**)malloc2d(nSH, lsig, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, lsig, nSrcs, 1.0f,
+                FLATTEN2D(Y_src), nSrcs,
+                FLATTEN2D(src_sigs), lsig, 0.0f,
+                FLATTEN2D(src_sigs_sh), lsig);
+    Cx = (float**)malloc2d(nSH, nSH, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, lsig, 1.0f,
+                FLATTEN2D(src_sigs_sh), lsig,
+                FLATTEN2D(src_sigs_sh), lsig, 0.0f,
+                FLATTEN2D(Cx), nSH);
 
-    /* 6th order Low-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 1e3f;
-    order = 6;
-    double a_test4[7], b_test4[7];
-    butterCoeffs(BUTTER_FILTER_LPF, order, cutoff_freq, 0.0f, fs, (double*)b_test4, (double*)a_test4);
-    const double a_ref4[7] = {1,-5.49431292177096,12.5978414666894,-15.4285267903275,10.6436770055305,-3.92144696766748,0.602772146971300};
-    const double b_ref4[7] = {6.15535184628202e-08,3.69321110776921e-07,9.23302776942303e-07,1.23107036925640e-06,9.23302776942303e-07,3.69321110776921e-07,6.15535184628202e-08};
-    for(i=0; i<7; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test4[i], a_ref4[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test4[i], b_ref4[i]);
-    }
+    /* Eigenvalue decomposition and truncation of eigen vectors to obtain
+     * noise subspace (based on source number) */
+    V = (float**)malloc2d(nSH, nSH, sizeof(float));
+    utility_sseig(FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
+    Vn = (float**)malloc2d(nSH, (nSH-nSrcs), sizeof(float)); /* noise subspace */
+    for(i=0; i<nSH; i++)
+        for(j=0, k=nSrcs; j<nSH-nSrcs; j++, k++)
+            Vn[i][j] = V[i][k];
+    Vn_cmplx = (float_complex**)malloc2d(nSH, (nSH-nSrcs), sizeof(float_complex)); /* noise subspace (complex) */
+    for(i=0; i<nSH; i++)
+        for(j=0; j<nSH-nSrcs; j++)
+            Vn_cmplx[i][j] = cmplxf(Vn[i][j], 0.0f);
 
-    /* 3rd order High-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 3000.0f;
-    order = 3;
-    double a_test5[4], b_test5[4];
-    butterCoeffs(BUTTER_FILTER_HPF, order, cutoff_freq, 0.0f, fs, (double*)b_test5, (double*)a_test5);
-    const double a_ref5[4] = {1,-2.21916861831167,1.71511783003340,-0.453545933365530};
-    const double b_ref5[4] = {0.673479047713825,-2.02043714314147,2.02043714314147,-0.673479047713825};
-    for(i=0; i<4; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test5[i], a_ref5[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test5[i], b_ref5[i]);
-    }
+    /* compute sphMUSIC, returning "peak-find" indices */
+    int inds[2];
+    sphMUSIC_create(&hMUSIC, order, grid_dirs_deg, nGrid);
+    sphMUSIC_compute(hMUSIC, FLATTEN2D(Vn_cmplx), nSrcs, NULL, (int*)inds);
 
-    /* 4th order High-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 100.0;
-    order = 4;
-    double a_test6[5], b_test6[5];
-    butterCoeffs(BUTTER_FILTER_HPF, order, cutoff_freq, 0.0f, fs, (double*)b_test6, (double*)a_test6);
-    const double a_ref6[5] = {1.0,-3.96579438007005,5.89796693861409,-3.89854491737242,0.966372387692057};
-    const double b_ref6[5] = {0.983042413984288,-3.93216965593715,5.89825448390573,-3.93216965593715,0.983042413984288};
-    for(i=0; i<5; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test6[i], a_ref6[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test6[i], b_ref6[i]);
-    }
-
-    /* 2nd order Band-pass filter */
-    fs = 48e3f;
-    cutoff_freq = 100.0;
-    cutoff_freq2 = 400.0;
-    order = 2;
-    double a_test7[5], b_test7[5];
-    butterCoeffs(BUTTER_FILTER_BPF, order, cutoff_freq, cutoff_freq2, fs, (double*)b_test7, (double*)a_test7);
-    const double a_ref7[5] = {1.0,-3.94312581006024,5.83226704209421,-3.83511871130750,0.945977936232284};
-    const double b_ref7[5] = {0.000375069616051004,0.0,-0.000750139232102008,0.0,0.000375069616051004};
-    for(i=0; i<5; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test7[i], a_ref7[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test7[i], b_ref7[i]);
-    }
-
-    /* 3rd order Band-stop filter */
-    fs = 48e3f;
-    cutoff_freq = 240.0;
-    cutoff_freq2 = 1600.0;
-    order = 3;
-    double a_test9[7], b_test9[7];
-    butterCoeffs(BUTTER_FILTER_BSF, order, cutoff_freq, cutoff_freq2, fs, (double*)b_test9, (double*)a_test9);
-    const double a_ref9[7] = {1,-5.62580309774365,13.2124846784594,-16.5822627287366,11.7304049556188,-4.43493124452282,0.700107676775329};
-    const double b_ref9[7] = {0.836724592951539,-5.00379660039217,12.4847741945760,-16.6354041344203,12.4847741945760,-5.00379660039217,0.836724592951539};
-    for(i=0; i<7; i++){ /* Compare with the values given by Matlab's butter function */
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, a_test9[i], a_ref9[i]);
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, b_test9[i], b_ref9[i]);
-    }
-}
-
-void test__faf_IIRFilterbank(void){
-    void* hFaF;
-    int i, band;
-    float* inSig, *outSig;
-    float** outFrame, **outSig_bands;
-    void* hFFT;
-    float_complex* insig_fft, *outsig_fft;
-
-    /* Config */
-    const float acceptedTolerance_dB = 0.5f;
-    const int signalLength = 256;
-    const int frameSize = 16;
-    float fs = 48e3;
-    int order = 3;
-    float fc[6] = {176.776695296637f, 353.553390593274f, 707.106781186547f, 1414.21356237309f, 2828.42712474619f, 5656.85424949238f};
-    inSig = malloc1d(signalLength * sizeof(float));
-    outSig_bands = (float**)malloc2d(7, signalLength, sizeof(float));
-    outSig = calloc1d(signalLength, sizeof(float));
-
-    insig_fft = malloc1d((signalLength / 2 + 1) * sizeof(float_complex));
-    outsig_fft = malloc1d((signalLength / 2 + 1) * sizeof(float_complex));
-
-    /* Impulse */
-    memset(inSig, 0, signalLength*sizeof(float));
-    inSig[0] = 1.0f;
-
-    /* Pass impulse through filterbank */
-    outFrame = (float**)malloc2d(7, frameSize, sizeof(float));
-    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
-    for(i=0; i< signalLength/frameSize; i++){
-        faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
-        for(band=0; band<7; band++)
-            memcpy(&outSig_bands[band][i*frameSize], outFrame[band], frameSize*sizeof(float));
-    }
-    faf_IIRFilterbank_destroy(&hFaF);
-
-    /* Sum the individual bands */
-    for(band=0; band<7; band++)
-        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
-
-    /* Check that the magnitude difference between input and output is below 0.5dB */
-    saf_rfft_create(&hFFT, signalLength);
-    saf_rfft_forward(hFFT, inSig, insig_fft);
-    saf_rfft_forward(hFFT, outSig, outsig_fft);
-    for(i=0; i<signalLength/2+1; i++)
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance_dB, 0.0f, 20.0f * log10f(cabsf( ccdivf(outsig_fft[i],insig_fft[i]) )));
-
-    /* Now the same thing, but for 1st order */
-    order = 1;
-    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
-    for(i=0; i< signalLength/frameSize; i++){
-        faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
-        for(band=0; band<7; band++)
-            memcpy(&outSig_bands[band][i*frameSize], outFrame[band], frameSize*sizeof(float));
-    }
-    faf_IIRFilterbank_destroy(&hFaF);
-    memset(outSig, 0, signalLength*sizeof(float));
-    for(band=0; band<7; band++)
-        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
-    saf_rfft_forward(hFFT, outSig, outsig_fft);
-    for(i=0; i<signalLength/2+1; i++)
-        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance_dB, 0.0f, 20.0f * log10f(cabsf(ccdivf(outsig_fft[i], insig_fft[i]))));
+    /* Assert that the true source indices were found (note that the order can flip) */
+    TEST_ASSERT_TRUE(inds[0] == srcInd_1 || inds[0] == srcInd_2);
+    TEST_ASSERT_TRUE(inds[1] == srcInd_1 || inds[1] == srcInd_2);
 
     /* clean-up */
-    saf_rfft_destroy(&hFFT);
-    free(outFrame);
-    free(inSig);
-    free(outSig_bands);
-    free(outSig);
-    free(insig_fft);
-    free(outsig_fft);
+    sphMUSIC_destroy(&hMUSIC);
+    free(Y_src);
+    free(src_sigs);
+    free(src_sigs_sh);
+    free(Cx);
+    free(V);
+    free(Vn);
+    free(Vn_cmplx);
 }
 
-#ifdef SAF_ENABLE_EXAMPLES_TESTS
+void test__sphESPRIT(void){
+    int i,j,nSH, nSrcs;
+    void* hESPRIT;
+    float test_dirs_deg[2][2], estdirs_deg[2][2];
+    float** Y_src, **src_sigs, **src_sigs_sh, **tmpCx;
+    float_complex** Cx, **C_Cx, **T_r2c, **Cx_R, **U, **Us;
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+
+    /* config */
+    const float acceptedTolerance = 0.01f; /* degrees */
+    const int order = 3;
+    const int lsig = 48000;
+
+    /* test scenario and signals */
+    nSrcs = 2;
+    test_dirs_deg[0][0] = -90.0f;
+    test_dirs_deg[0][1] = 10.0f;
+    test_dirs_deg[1][0] = 20.0f;
+    test_dirs_deg[1][1] = -40.0f;
+    nSH = ORDER2NSH(order);
+    Y_src = (float**)malloc2d(nSH, nSrcs, sizeof(float));
+    getRSH(order, (float*)test_dirs_deg, nSrcs, FLATTEN2D(Y_src));
+    src_sigs = (float**)malloc2d(nSrcs, lsig, sizeof(float));
+    rand_m1_1(FLATTEN2D(src_sigs), nSrcs*lsig); /* uncorrelated noise sources */
+
+    /* encode to SH and compute spatial covariance matrix */
+    src_sigs_sh = (float**)malloc2d(nSH, lsig, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, lsig, nSrcs, 1.0f,
+                FLATTEN2D(Y_src), nSrcs,
+                FLATTEN2D(src_sigs), lsig, 0.0f,
+                FLATTEN2D(src_sigs_sh), lsig);
+    tmpCx = (float**)malloc2d(nSH, nSH, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, lsig, 1.0f,
+                FLATTEN2D(src_sigs_sh), lsig,
+                FLATTEN2D(src_sigs_sh), lsig, 0.0f,
+                FLATTEN2D(tmpCx), nSH);
+    Cx = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
+    for(i=0; i<nSH; i++)
+        for(j=0; j<nSH; j++)
+            Cx[i][j] = cmplxf(tmpCx[i][j], 0.0f); /* real->complex data-type */
+
+    /* Convert to complex basis */
+    T_r2c = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
+    real2complexSHMtx(order, FLATTEN2D(T_r2c));
+    for(i=0; i<nSH; i++)
+        for(j=0; j<nSH; j++)
+            T_r2c[i][j] = conjf(T_r2c[i][j]);
+    Cx_R = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, nSH, &calpha,
+                FLATTEN2D(Cx), nSH,
+                FLATTEN2D(T_r2c), nSH, &cbeta,
+                FLATTEN2D(Cx_R), nSH);
+    C_Cx = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, nSH, nSH, &calpha,
+                FLATTEN2D(T_r2c), nSH,
+                FLATTEN2D(Cx_R), nSH, &cbeta,
+                FLATTEN2D(C_Cx), nSH);
+
+    /* Eigenvalue decomposition and truncation of eigen vectors to obtain
+     * signal subspace (based on source number) */
+    U = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
+    utility_cseig(FLATTEN2D(C_Cx), nSH, 1, FLATTEN2D(U), NULL, NULL);
+    Us = (float_complex**)malloc2d(nSH, nSrcs, sizeof(float_complex)); /* signal subspace */
+    for(i=0; i<nSH; i++)
+        for(j=0; j<nSrcs; j++)
+            Us[i][j] = U[i][j];
+
+    /* use sphESPRIT to estimate source directions... */
+    sphESPRIT_create(&hESPRIT, order);
+    sphESPRIT_estimateDirs(hESPRIT, FLATTEN2D(Us), nSrcs, (float*)estdirs_deg);
+    for(i=0; i<nSrcs; i++){
+        estdirs_deg[i][0]*=180.0f/M_PI; /* rad->deg */
+        estdirs_deg[i][1]*=180.0f/M_PI;
+    }
+
+    /* Assert that the true source directions were found (note that the order can flip) */
+    TEST_ASSERT_TRUE(fabsf(estdirs_deg[0][0]-test_dirs_deg[0][0])<acceptedTolerance ||
+                     fabsf(estdirs_deg[1][0]-test_dirs_deg[0][0])<acceptedTolerance);
+    TEST_ASSERT_TRUE(fabsf(estdirs_deg[0][1]-test_dirs_deg[0][1])<acceptedTolerance ||
+                     fabsf(estdirs_deg[1][1]-test_dirs_deg[0][1])<acceptedTolerance);
+    TEST_ASSERT_TRUE(fabsf(estdirs_deg[0][0]-test_dirs_deg[1][0])<acceptedTolerance ||
+                     fabsf(estdirs_deg[1][0]-test_dirs_deg[1][0])<acceptedTolerance);
+    TEST_ASSERT_TRUE(fabsf(estdirs_deg[0][1]-test_dirs_deg[1][1])<acceptedTolerance ||
+                     fabsf(estdirs_deg[1][1]-test_dirs_deg[1][1])<acceptedTolerance);
+
+    /* clean-up */
+    sphESPRIT_destroy(&hESPRIT);
+    free(Y_src);
+    free(src_sigs);
+    free(src_sigs_sh);
+    free(tmpCx);
+    free(Cx);
+    free(C_Cx);
+    free(T_r2c);
+    free(Cx_R);
+    free(U);
+    free(Us);
+}
+
+void test__sphModalCoeffs(void){
+    int i, j;
+    float* freqVector;
+    double* kr;
+    double_complex** b_N_dipole, **b_N_card, **b_N_omni, **b_N_omni_test;
+
+    /* Config */
+    const double acceptedTolerance = 0.000001f;
+    const int order = 4;
+    const int N = 16;
+    const float fs = 48000;
+    const double radius = 0.04;
+    const double c = 343.0;
+
+    /* prep */
+    freqVector = malloc1d((N/2+1)*sizeof(float));
+    getUniformFreqVector(N, fs, freqVector);
+    kr = malloc1d((N/2+1)*sizeof(double));
+    for(i=0; i<N/2+1; i++)
+        kr[i] = 2.0*SAF_PId* (double)freqVector[i] * radius/c;
+    b_N_dipole = (double_complex**)malloc2d((N/2+1), (order+1), sizeof(double_complex));
+    b_N_card = (double_complex**)malloc2d((N/2+1), (order+1), sizeof(double_complex));
+    b_N_omni = (double_complex**)malloc2d((N/2+1), (order+1), sizeof(double_complex));
+    b_N_omni_test = (double_complex**)malloc2d((N/2+1), (order+1), sizeof(double_complex));
+
+    /* Compute modal coefficients */
+    sphModalCoeffs(order, kr, (N/2+1), ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.0, FLATTEN2D(b_N_dipole));
+    sphModalCoeffs(order, kr, (N/2+1), ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 0.5, FLATTEN2D(b_N_card));
+    sphModalCoeffs(order, kr, (N/2+1), ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, 1.0, FLATTEN2D(b_N_omni));
+    sphModalCoeffs(order, kr, (N/2+1), ARRAY_CONSTRUCTION_OPEN, 666.0 /* not used */, FLATTEN2D(b_N_omni_test));
+
+    /* Check that "open directional", with "dirCoeff=1" is identical to just "open" */
+    for(i=0; i<N/2+1; i++){
+        for(j=0; j< order+1; j++){
+            TEST_ASSERT_TRUE( fabs(creal(b_N_omni[i][j]) - creal(b_N_omni_test[i][j])) <= acceptedTolerance );
+            TEST_ASSERT_TRUE( fabs(cimag(b_N_omni[i][j]) - cimag(b_N_omni_test[i][j])) <= acceptedTolerance );
+        }
+    }
+
+    /* clean-up */
+    free(b_N_dipole);
+    free(b_N_card);
+    free(b_N_omni);
+    free(b_N_omni_test);
+}
+
+void test__truncationEQ(void)
+{
+    double *kr;
+    float *w_n, *gain, *gainDB;
+
+    /* Config */
+    const int order_truncated = 4;
+    const int order_target = 42;
+    const float softThreshold = 12.0f;
+    const int enableMaxRE = 1;
+    const double fs = 48000;
+    const int nBands = 128;
+    kr = malloc1d(nBands * sizeof(double));
+    const double r = 0.085;
+    const double c = 343.;
+    w_n = calloc1d((order_truncated+1), sizeof(float));
+    gain = malloc1d(nBands * sizeof(float));
+
+    /* Prep */
+    double* freqVector = malloc1d(nBands*sizeof(double));
+    for (int k=0; k<nBands; k++)
+    {
+        freqVector[k] = (double)k * fs/(2.0*((double)nBands-1));
+        kr[k] = 2.0*SAF_PId / c * freqVector[k] * r;
+    }
+    if (enableMaxRE) {
+        // maxRE as order weighting
+        float *maxRECoeffs = malloc1d((order_truncated+1) * sizeof(float));
+        beamWeightsMaxEV(order_truncated, maxRECoeffs);
+        for (int idx_n=0; idx_n<order_truncated+1; idx_n++) {
+            w_n[idx_n] = maxRECoeffs[idx_n];
+            w_n[idx_n] /= sqrtf((float)(2*idx_n+1) / (4.0*SAF_PI));
+        }
+        float w_0 = w_n[0];
+        for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
+            w_n[idx_n] /= w_0;
+        free(maxRECoeffs);
+    }
+    else {
+        // just truncation, no tapering
+        for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
+            w_n[idx_n] = 1.0f;
+    }
+
+    truncationEQ(w_n, order_truncated, order_target, kr, nBands, softThreshold, gain);
+
+    /* Asserting gain offset */
+    TEST_ASSERT_TRUE(gain[0]-1.0 < 2.0e-6);
+
+    /* Asserting that gain within 0 and 12 (+6db soft clip) */
+    gainDB = malloc1d(nBands * sizeof(double));
+    for (int idxBand=0; idxBand<nBands; idxBand++){
+        gainDB[idxBand] = 20.0*log10(gain[idxBand]);
+        TEST_ASSERT_TRUE(gainDB[idxBand] > 0-2.0e-6);
+        TEST_ASSERT_TRUE(gainDB[idxBand] < softThreshold + 6.0 + 0-2.0e-6);
+    }
+
+    /* clean-up */
+    free(kr);
+    free(w_n);
+    free(freqVector);
+    free(gain);
+    free(gainDB);
+}
+
+#if SAF_ENABLE_EXAMPLES_TESTS == 1
 void test__saf_example_ambi_bin(void){
     int nSH, i, ch, framesize;
     void* hAmbi;
@@ -1879,7 +2623,6 @@ void test__saf_example_ambi_bin(void){
 
     /* Create and initialise an instance of ambi_bin */
     ambi_bin_create(&hAmbi);
-    ambi_bin_init(hAmbi, fs); /* Cannot be called while "process" is on-going */
 
     /* Configure and initialise the ambi_bin codec */
     ambi_bin_setNormType(hAmbi, NORM_N3D);
@@ -1891,6 +2634,10 @@ void test__saf_example_ambi_bin(void){
      * thread is perfectly safe and viable. Also, if the intialisations take
      * longer than it takes to "process" the current block of samples, then the
      * output is simply muted/zeroed during this time. */
+
+    ambi_bin_init(hAmbi, fs); /* Should be called before calling "process"
+                               * Cannot be called while "process" is on-going */
+    ambi_bin_initCodec(hAmbi); /* Can be called whenever (thread-safe) */
 
     /* Define input mono signal */
     nSH = ORDER2NSH(order);
@@ -1954,7 +2701,6 @@ void test__saf_example_ambi_dec(void){
 
     /* Create and initialise an instance of ambi_dec */
     ambi_dec_create(&hAmbi);
-    ambi_dec_init(hAmbi, fs); /* Cannot be called while "process" is on-going */
 
     /* Configure and initialise the ambi_dec codec */
     ambi_dec_setNormType(hAmbi, NORM_N3D);
@@ -1970,6 +2716,9 @@ void test__saf_example_ambi_dec(void){
      * thread is perfectly safe and viable. Also, if the intialisations take
      * longer than it takes to "process" the current block of samples, then the
      * output is simply muted/zeroed during this time. */
+
+    ambi_dec_init(hAmbi, fs); /* Should be called before calling "process"
+                               * Cannot be called while "process" is on-going */
 
     /* Define input mono signal */
     nSH = ORDER2NSH(order);
@@ -2159,7 +2908,7 @@ void test__saf_example_array2sh(void){
 
     /* Encode simulated Eigenmike signals into spherical harmonic signals */
     framesize = array2sh_getFrameSize();
-    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float)); 
+    shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
     micSig_frame = (float**)malloc1d(32*sizeof(float*));
     shSig_frame = (float**)malloc1d(nSH*sizeof(float*));
     for(i=0; i<(int)((float)signalLength/(float)framesize); i++){

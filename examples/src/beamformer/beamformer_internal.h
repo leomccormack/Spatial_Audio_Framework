@@ -31,6 +31,7 @@
 #include <string.h>
 #include "beamformer.h"
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -78,7 +79,7 @@ typedef struct _beamformer
     int beamOrder;                           /**< beam order */
     int nBeams;                              /**< number of loudspeakers/virtual loudspeakers */
     float beam_dirs_deg[MAX_NUM_BEAMS][2];   /**< beam directions in degrees [azi, elev] */
-    STATIC_BEAM_TYPES beamType;              /**< see #_STATIC_BEAM_TYPES enum */
+    STATIC_BEAM_TYPES beamType;              /**< see #STATIC_BEAM_TYPES enum */
     CH_ORDER chOrdering;                     /**< only ACN is supported */
     NORM_TYPES norm;                         /**< N3D or SN3D */
     

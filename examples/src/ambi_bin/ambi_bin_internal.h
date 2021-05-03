@@ -16,12 +16,29 @@
 
 /**
  * @file ambi_bin_internal.h
- * @brief A binaural Ambisonic decoder for reproducing ambisonic signals over
- *        headphones
+ * @brief A binaural Ambisonic decoder for reproducing Ambisonic sound scenes
+ *        over headphones
  *
- * The decoder includes many historic and current state-of-the-art decoding
- * approaches. It also supports sound-field rotation for head-tracking and may
- * also accomodate custom HRIR sets via the SOFA standard.
+ * The decoder offers choice over many different binaural decoding options [1-4]
+ * It also supports sound-field rotation for head-tracking and can accomodate
+ * loading custom HRIR sets via the SOFA standard.
+ *
+ * @test test__saf_example_ambi_bin()
+ *
+ * @see [1] Z. Ben-Hur, F. Brinkmann, J. Sheaffer, S. Weinzierl, and B. Rafaely,
+ *          "Spectral equalization in binaural signals represented by order-
+ *          truncated spherical harmonics" The Journal of the Acoustical
+ *          Society of America, vol. 141, no. 6, pp. 4087--4096, 2017.
+ * @see [2] B. Bernschutz, A. V. Giner, C. Po"rschmann, and J. Arend, "Binaural
+ *          reproduction of plane waves with reduced modal order" Acta Acustica
+ *          united with Acustica, vol. 100, no. 5, pp. 972--983, 2014.
+ * @see [3] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. Binaural rendering of
+ *          Ambisonic signals by head-related impulse response time alignment
+ *          and a diffuseness constraint. The Journal of the Acoustical Society
+ *          of America. 2018 Jun 19;143(6):3616-27
+ * @see [4] Scho"rkhuber C, Zaunschirm M, Ho"ldrich R. Binaural Rendering of
+ *          Ambisonic Signals via Magnitude Least Squares. InProceedings of the
+ *          DAGA 2018 (Vol. 44, pp. 339-342).
  *
  * @author Leo McCormack
  * @date 14.04.2018
@@ -35,6 +52,7 @@
 #include <string.h>
 #include "ambi_bin.h"   
 #include "saf.h"
+#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,6 +74,9 @@ extern "C" {
 #endif
 #ifndef RAD2DEG
 # define RAD2DEG(x) (x * 180.0f / M_PI)
+#endif
+#if (FRAME_SIZE % HOP_SIZE != 0)
+# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
 
     
@@ -82,6 +103,9 @@ typedef struct _ambi_bin_codecPars
     /* hrtf filterbank coefficients */
     float* itds_s;          /**< interaural-time differences for each HRIR (in seconds); N_hrirs x 1 */
     float_complex* hrtf_fb; /**< HRTF filterbank coeffs; FLAT: nBands x nCH x N_hrirs */
+
+    /* integration weights */
+    float* weights;         /**< grid integration weights of hrirs; N_hrirs x 1 */
     
 }ambi_bin_codecPars;
     
@@ -89,19 +113,17 @@ typedef struct _ambi_bin_codecPars
  * Main structure for ambi_bin. Contains variables for audio buffers, afSTFT,
  * rotation matrices, internal variables, flags, user parameters
  */
-typedef struct _ambi_bin
+typedef struct ambi_bin
 {
     /* audio buffers + afSTFT time-frequency transform handle */
     int fs;                         /**< host sampling rate */ 
-    float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float_complex SHframeTF[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    float_complex SHframeTF_rot[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][TIME_SLOTS];
-    float_complex binframeTF[HYBRID_BANDS][NUM_EARS][TIME_SLOTS];
-    complexVector* STFTInputFrameTF;
-    complexVector* STFTOutputFrameTF;
+    float** SHFrameTD;
+    float** binFrameTD;
+    float_complex*** SHframeTF;
+    float_complex*** SHframeTF_rot;
+    float_complex*** binframeTF;
     void* hSTFT;                    /**< afSTFT handle */
     int afSTFTdelay;                /**< for host delay compensation */
-    float** tempHopFrameTD;         /**< temporary multi-channel time-domain buffer of size "HOP_SIZE". */
     float freqVector[HYBRID_BANDS]; /**< frequency vector for time-frequency transform, in Hz */
      
     /* our codec configuration */
@@ -124,10 +146,11 @@ typedef struct _ambi_bin
     int order;                      /**< current decoding order */
     int enableMaxRE;                /**< 0: disabled, 1: enabled */
     int enableDiffuseMatching;      /**< 0: disabled, 1: enabled */
-    int enablePhaseWarping;         /**< 0: disabled, 1: enabled */
+    int enableTruncationEQ;         /**< 0: disabled, 1: enabled */
     AMBI_BIN_DECODING_METHODS method; /* current decoding method */
     float EQ[HYBRID_BANDS];         /**< EQ curve */
     int useDefaultHRIRsFLAG;        /**< 1: use default HRIRs in database, 0: use those from SOFA file */
+    AMBI_BIN_PREPROC preProc;       /**< HRIR pre-processing strategy */
     CH_ORDER chOrdering;
     NORM_TYPES norm;
     int enableRotation;

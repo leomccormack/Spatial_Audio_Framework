@@ -16,8 +16,8 @@
 
 /**
  * @file sldoa_internal.c
- * @brief A spatially-localised active-intensity based direction-of-arrival
- *        estimator (SLDoA).
+ * @brief A spatially-localised active-intensity (SLAI) based direction-of-
+ *        arrival estimator (SLDoA)
  *
  * VBAP gain patterns are imposed on the spherical harmonic signals, such that
  * the DoA can be estimated in a spatially-constrained region; thus mitigating
@@ -27,16 +27,16 @@
  * The algorithms within sldoa were developed in collaboration with Symeon
  * Delikaris-Manias and Angelo Farina, and are explained in more detail in [1,2]
  *
- * @see [1] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
- *          Pulkki, V., "Real-time conversion of sensor array signals into
- *          spherical harmonic signals with applications to spatially localised
- *          sub-band sound-field analysis," in Audio Engineering Society
- *          Convention 144, Audio Engineering Society, 2018.
- * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ * @see [1] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
  *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
  *          Spatially Localized Active-Intensity Vectors for Sound-Field
  *          Visualization. Journal of the Audio Engineering Society, 67(11),
  *          pp.840-854.
+ * @see [2] McCormack, L., Delikaris-Manias, S., Farina, A., Pinardi, D., and
+ *          Pulkki, V., "Real-time conversion of sensor array signals into
+ *          spherical harmonic signals with applications to spatially localised
+ *          sub-band sound-field analysis," in Audio Engineering Society
+ *          Convention 144, Audio Engineering Society, 2018.
  *
  * @author Leo McCormack
  * @date 18.10.2017
@@ -131,17 +131,16 @@ void sldoa_initTFT
     nSH = (pData->masterOrder+1)*(pData->masterOrder+1);
     new_nSH = (pData->new_masterOrder+1)*(pData->new_masterOrder+1);
     if(pData->hSTFT==NULL)
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, new_nSH, 0, 0, 1);
+        afSTFT_create(&(pData->hSTFT), new_nSH, 0, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
     else if(nSH!=new_nSH){
-        afSTFTchannelChange(pData->hSTFT, new_nSH, 0);
-        afSTFTclearBuffers(pData->hSTFT);
+        afSTFT_channelChange(pData->hSTFT, new_nSH, 0);
+        afSTFT_clearBuffers(pData->hSTFT);
     }
 }
 
-
 void sldoa_estimateDoA
 (
-    float_complex SHframeTF[MAX_NUM_SH_SIGNALS][TIME_SLOTS],
+    float_complex** SHframeTF,
     int anaOrder,
     float_complex* secCoeffs,
     float doa[MAX_NUM_SECTORS][TIME_SLOTS][2],
@@ -153,8 +152,6 @@ void sldoa_estimateDoA
     float_complex* sec_c;
     float secEnergy[TIME_SLOTS], secIntensity[3][TIME_SLOTS], secAzi[TIME_SLOTS], secElev[TIME_SLOTS];
     const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f);
-    int o[MAX_SH_ORDER+2];
-    for(n=0; n<MAX_SH_ORDER+2; n++){  o[n] = n*n;  }
     
     /* prep */
     memset(doa,0,MAX_NUM_SECTORS*TIME_SLOTS*2*sizeof(float));
@@ -175,7 +172,7 @@ void sldoa_estimateDoA
                     sec_c[i*nSH+j] = secCoeffs[i*(nSectors*nSH)+n*nSH+j];
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 4, TIME_SLOTS, nSH, &calpha,
                         sec_c, nSH,
-                        SHframeTF, TIME_SLOTS, &cbeta,
+                        FLATTEN2D(SHframeTF), TIME_SLOTS, &cbeta,
                         secSig, TIME_SLOTS);
         }
         

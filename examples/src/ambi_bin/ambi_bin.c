@@ -16,12 +16,29 @@
 
 /**
  * @file ambi_bin.c
- * @brief A binaural Ambisonic decoder for reproducing ambisonic signals over
- *        headphones
+ * @brief A binaural Ambisonic decoder for reproducing Ambisonic sound scenes
+ *        over headphones
  *
- * The decoder includes many historic and current state-of-the-art decoding
- * approaches. It also supports sound-field rotation for head-tracking and may
- * also accomodate custom HRIR sets via the SOFA standard.
+ * The decoder offers choice over many different binaural decoding options [1-4]
+ * It also supports sound-field rotation for head-tracking and can accomodate
+ * loading custom HRIR sets via the SOFA standard.
+ *
+ * @test test__saf_example_ambi_bin()
+ *
+ * @see [1] Z. Ben-Hur, F. Brinkmann, J. Sheaffer, S. Weinzierl, and B. Rafaely,
+ *          "Spectral equalization in binaural signals represented by order-
+ *          truncated spherical harmonics" The Journal of the Acoustical
+ *          Society of America, vol. 141, no. 6, pp. 4087--4096, 2017.
+ * @see [2] B. Bernschutz, A. V. Giner, C. Po"rschmann, and J. Arend, "Binaural
+ *          reproduction of plane waves with reduced modal order" Acta Acustica
+ *          united with Acustica, vol. 100, no. 5, pp. 972--983, 2014.
+ * @see [3] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. Binaural rendering of
+ *          Ambisonic signals by head-related impulse response time alignment
+ *          and a diffuseness constraint. The Journal of the Acoustical Society
+ *          of America. 2018 Jun 19;143(6):3616-27
+ * @see [4] Scho"rkhuber C, Zaunschirm M, Ho"ldrich R. Binaural Rendering of
+ *          Ambisonic Signals via Magnitude Least Squares. InProceedings of the
+ *          DAGA 2018 (Vol. 44, pp. 339-342).
  *
  * @author Leo McCormack
  * @date 14.04.2018
@@ -36,17 +53,20 @@ void ambi_bin_create
 {
     ambi_bin_data* pData = (ambi_bin_data*)malloc1d(sizeof(ambi_bin_data));
     *phAmbi = (void*)pData;
-    int ch, band;
+    int band;
+
+    printf(SAF_VERSION_LICENSE_STRING);
 
     /* default user parameters */
     for (band = 0; band<HYBRID_BANDS; band++)
         pData->EQ[band] = 1.0f;
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
+    pData->preProc = HRIR_PREPROC_ALL;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->enableMaxRE = 1;
     pData->enableDiffuseMatching = 0;
-    pData->enablePhaseWarping = 0;
+    pData->enableTruncationEQ = 1;
     pData->enableRotation = 0;
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
@@ -59,19 +79,13 @@ void ambi_bin_create
     pData->order = pData->new_order = 1;
     pData->nSH =  (pData->order+1)*(pData->order+1);
     
-    /* afSTFT stuff */
+    /* afSTFT and audio buffers */
     pData->hSTFT = NULL;
-    pData->STFTOutputFrameTF = malloc1d(NUM_EARS * sizeof(complexVector));
-    for(ch=0; ch< NUM_EARS; ch++) {
-        pData->STFTOutputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTOutputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
-    pData->tempHopFrameTD = (float**)malloc2d( MAX(MAX_NUM_SH_SIGNALS, NUM_EARS), HOP_SIZE, sizeof(float));
-    pData->STFTInputFrameTF = malloc1d(MAX_NUM_SH_SIGNALS * sizeof(complexVector));
-    for(ch=0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-        pData->STFTInputFrameTF[ch].re = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-        pData->STFTInputFrameTF[ch].im = (float*)calloc1d(HYBRID_BANDS, sizeof(float));
-    }
+    pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
+    pData->binFrameTD = (float**)malloc2d(NUM_EARS, FRAME_SIZE, sizeof(float));
+    pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
+    pData->SHframeTF_rot= (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
+    pData->binframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
 
     /* codec data */
     pData->progressBar0_1 = 0.0f;
@@ -84,6 +98,7 @@ void ambi_bin_create
     pars->hrir_dirs_deg = NULL;
     pars->itds_s = NULL;
     pars->hrtf_fb = NULL;
+    pars->weights = NULL;
     
     /* flags */
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
@@ -99,7 +114,6 @@ void ambi_bin_destroy
 {
     ambi_bin_data *pData = (ambi_bin_data*)(*phAmbi);
     ambi_bin_codecPars *pars;
-    int ch;
     
     if (pData != NULL) {
         /* not safe to free memory during intialisation/processing loop */
@@ -108,24 +122,16 @@ void ambi_bin_destroy
             SAF_SLEEP(10);
         }
         
-        /* free afSTFT and buffers */ 
-        if(pData->hSTFT!=NULL)
-            afSTFTfree(pData->hSTFT);
-        if(pData->STFTInputFrameTF!=NULL){
-            for (ch = 0; ch< MAX_NUM_SH_SIGNALS; ch++) {
-                free(pData->STFTInputFrameTF[ch].re);
-                free(pData->STFTInputFrameTF[ch].im);
-            }
-        }
-        for (ch = 0; ch< NUM_EARS; ch++) {
-            free(pData->STFTOutputFrameTF[ch].re);
-            free(pData->STFTOutputFrameTF[ch].im);
-        }
-        free(pData->STFTInputFrameTF);
-        free(pData->STFTOutputFrameTF);
-        free(pData->tempHopFrameTD);
+        /* free afSTFT and buffers */
+        afSTFT_destroy(&(pData->hSTFT));
+        free(pData->SHFrameTD);
+        free(pData->binFrameTD);
+        free(pData->SHframeTF);
+        free(pData->SHframeTF_rot);
+        free(pData->binframeTF);
 
         pars = pData->pars;
+        free(pars->weights);
         free(pars->hrtf_fb);
         free(pars->itds_s);
         free(pars->hrirs);
@@ -146,16 +152,14 @@ void ambi_bin_init
 )
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    int band;
     
     /* define frequency vector */
-    pData->fs = sampleRate;
-    for(band=0; band <HYBRID_BANDS; band++){
-        if(sampleRate == 44100)
-            pData->freqVector[band] =  (float)__afCenterFreq44100[band];
-        else /* Assume 48kHz */
-            pData->freqVector[band] =  (float)__afCenterFreq48e3[band];
+    if(pData->fs != sampleRate){
+        pData->fs = sampleRate;
+        pData->reinit_hrtfsFLAG = 1;
+        ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     }
+    afSTFT_getCentreFreqs(pData->hSTFT, (float)pData->fs, HYBRID_BANDS, (float*)pData->freqVector);
 
     /* default starting values */
     pData->recalc_M_rotFLAG = 1;
@@ -169,6 +173,8 @@ void ambi_bin_initCodec
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     ambi_bin_codecPars* pars = pData->pars;
     int i, j, nSH, order, band;
+    SAF_SOFA_ERROR_CODES error;
+    saf_sofa_container sofa;
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
         return; /* re-init not required, or already happening */
@@ -187,10 +193,10 @@ void ambi_bin_initCodec
     order = pData->new_order;
     nSH = (order+1)*(order+1);
     if(pData->hSTFT==NULL)
-        afSTFTinit(&(pData->hSTFT), HOP_SIZE, nSH, NUM_EARS, 0, 1);
+        afSTFT_create(&(pData->hSTFT), nSH, NUM_EARS, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
     else if(pData->nSH != nSH) {/* Or change the number of channels */
-        afSTFTchannelChange(pData->hSTFT, nSH, NUM_EARS);
-        afSTFTclearBuffers(pData->hSTFT);
+        afSTFT_channelChange(pData->hSTFT, nSH, NUM_EARS);
+        afSTFT_clearBuffers(pData->hSTFT);
     }
     pData->nSH = nSH;
     
@@ -198,33 +204,65 @@ void ambi_bin_initCodec
         /* load sofa file or default hrir data */
         strcpy(pData->progressBarText,"Preparing HRIRs");
         pData->progressBar0_1 = 0.15f;
+        /* load sofa file or load default hrir data */
         if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
-            loadSofaFile(pars->sofa_filepath,
-                         &(pars->hrirs),
-                         &(pars->hrir_dirs_deg),
-                         &(pars->N_hrir_dirs),
-                         &(pars->hrir_len),
-                         &(pars->hrir_fs));
+            /* Load SOFA file */
+            error = saf_sofa_open(&sofa, pars->sofa_filepath);
+
+            /* Load defaults instead */
+            if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS)
+                pData->useDefaultHRIRsFLAG = 1;
+            else{
+                /* Copy SOFA data */
+                pars->hrir_fs = (int)sofa.DataSamplingRate;
+                pars->hrir_len = sofa.DataLengthIR;
+                pars->N_hrir_dirs = sofa.nSources;
+                pars->hrirs = realloc1d(pars->hrirs, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
+                memcpy(pars->hrirs, sofa.DataIR, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
+                pars->hrir_dirs_deg = realloc1d(pars->hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
+                cblas_scopy(pars->N_hrir_dirs, sofa.SourcePosition, 3, pars->hrir_dirs_deg, 2); /* azi */
+                cblas_scopy(pars->N_hrir_dirs, &sofa.SourcePosition[1], 3, &pars->hrir_dirs_deg[1], 2); /* elev */
+            }
+
+            /* Clean-up */
+            saf_sofa_close(&sofa);
         }
-        else{
-            loadSofaFile(NULL, /* setting path to NULL loads default HRIR data */
-                         &(pars->hrirs),
-                         &(pars->hrir_dirs_deg),
-                         &(pars->N_hrir_dirs),
-                         &(pars->hrir_len),
-                         &(pars->hrir_fs));
+        if(pData->useDefaultHRIRsFLAG){
+            /* Copy default HRIR data */
+            pars->hrir_fs = __default_hrir_fs;
+            pars->hrir_len = __default_hrir_len;
+            pars->N_hrir_dirs = __default_N_hrir_dirs;
+            pars->hrirs = realloc1d(pars->hrirs, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
+            memcpy(pars->hrirs, (float*)__default_hrirs, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
+            pars->hrir_dirs_deg = realloc1d(pars->hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
+            memcpy(pars->hrir_dirs_deg, (float*)__default_hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
         }
         
         /* estimate the ITDs for each HRIR */
         pData->progressBar0_1 = 0.3f;
         pars->itds_s = realloc1d(pars->itds_s, pars->N_hrir_dirs*sizeof(float));
         estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pars->itds_s);
-        
+ 
         /* convert hrirs to filterbank coefficients */
-        pData->progressBar0_1 = 0.9f;
+        pData->progressBar0_1 = 0.4f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
-        HRIRs2FilterbankHRTFs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 1, pars->hrtf_fb);
-        diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->hrtf_fb);
+        HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 0, 1, pars->hrtf_fb);
+        /* get integration weights */
+        pData->progressBar0_1 = 0.6f;
+        if(pars->N_hrir_dirs<=1000){
+            pars->weights = realloc1d(pars->weights, pars->N_hrir_dirs*sizeof(float));
+            getVoronoiWeights(pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, pars->weights);
+        }
+        else{
+            free(pars->weights);
+            pars->weights = NULL;
+        }
+        /* HRIR pre-processing */
+        pData->progressBar0_1 = 0.75f;
+        diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->weights,
+                                  pData->preProc == HRIR_PREPROC_EQ    || pData->preProc == HRIR_PREPROC_ALL ? 1 : 0, /* Apply Diffuse-field EQ? */
+                                  pData->preProc == HRIR_PREPROC_PHASE || pData->preProc == HRIR_PREPROC_ALL ? 1 : 0, /* Apply phase simplification EQ? */
+                                  pars->hrtf_fb);
         pData->reinit_hrtfsFLAG = 0;
     }
     
@@ -237,34 +275,85 @@ void ambi_bin_initCodec
         default:
         case DECODING_METHOD_LS:
             getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
-                                      BINAURAL_DECODER_LS, order, pData->freqVector, pars->itds_s, NULL,
+                                      BINAURAL_DECODER_LS, order, pData->freqVector, pars->itds_s, pars->weights,
                                       pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
             break;
         case DECODING_METHOD_LSDIFFEQ:
             getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
-                                      BINAURAL_DECODER_LSDIFFEQ, order, pData->freqVector, pars->itds_s, NULL,
+                                      BINAURAL_DECODER_LSDIFFEQ, order, pData->freqVector, pars->itds_s, pars->weights,
                                       pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
             break;
         case DECODING_METHOD_SPR:
             getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
-                                      BINAURAL_DECODER_SPR, order, pData->freqVector, pars->itds_s, NULL,
+                                      BINAURAL_DECODER_SPR, order, pData->freqVector, pars->itds_s, pars->weights,
                                       pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
             break;
         case DECODING_METHOD_TA:
             getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
-                                      BINAURAL_DECODER_TA, order, pData->freqVector, pars->itds_s, NULL,
+                                      BINAURAL_DECODER_TA, order, pData->freqVector, pars->itds_s, pars->weights,
                                       pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
             break;
         case DECODING_METHOD_MAGLS:
             getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,
-                                      BINAURAL_DECODER_MAGLS, order, pData->freqVector, pars->itds_s, NULL,
+                                      BINAURAL_DECODER_MAGLS, order, pData->freqVector, pars->itds_s, pars->weights,
                                       pData->enableDiffuseMatching, pData->enableMaxRE, decMtx);
             break;
     }
     
-    /* Apply Phase Warping */
-    if(pData->enablePhaseWarping){
-        // COMING SOON
+    /* Apply Truncation EQ */
+    if(pData->enableTruncationEQ &&
+       pData->method==DECODING_METHOD_LS &&
+       pData->preProc!=HRIR_PREPROC_PHASE &&
+       pData->preProc!=HRIR_PREPROC_ALL)
+    {
+        double *kr;
+        float *w_n, *eqGain;
+        const int order_truncated = order;
+        const int order_target = 42;       /* Equalizing diffuse field to 42nd order equivalent. */
+        const float softThreshold = 9.0;  /* results in +9 dB max */
+        const double r = 0.085;            /* spherical scatterer radius (approx. size of human head) */
+        const int numBands = HYBRID_BANDS;
+        const double c = 343.;
+
+        /* Prep */
+        kr = malloc1d(numBands * sizeof(double));
+        w_n = calloc1d((order_truncated+1), sizeof(float));
+        eqGain = calloc1d(numBands, sizeof(float));
+        for (int k=0; k<numBands; k++)
+            kr[k] = 2.0*SAF_PId / c * (double)pData->freqVector[k] * r;
+        
+        if (pData->enableMaxRE) {
+            /* maxRE as order weighting */
+            float *maxRECoeffs = malloc1d((order_truncated+1) * sizeof(float));
+            beamWeightsMaxEV(order_truncated, maxRECoeffs);
+            for (int idx_n=0; idx_n<order_truncated+1; idx_n++) {
+                w_n[idx_n] = maxRECoeffs[idx_n];
+                w_n[idx_n] /= sqrtf((float)(2*idx_n+1) / (4.0*SAF_PI));
+            }
+            float w_0 = w_n[0];
+            for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
+                w_n[idx_n] /= w_0;
+            free(maxRECoeffs);
+        }
+        else {
+            /* just truncation, no tapering */
+            for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
+                w_n[idx_n] = 1.0f;
+        }
+        truncationEQ(w_n, order_truncated, order_target, kr, numBands, softThreshold, eqGain);
+
+        /* apply to decoding matrix */
+        for (int idxBand=0; idxBand<numBands; idxBand++){
+            for (int idxSH=0; idxSH<pData->nSH; idxSH++){
+                decMtx[idxBand*NUM_EARS*nSH+0*nSH+idxSH] = crmulf(decMtx[idxBand*NUM_EARS*nSH+0*nSH+idxSH], eqGain[idxBand]); /* left ear */
+                decMtx[idxBand*NUM_EARS*nSH+1*nSH+idxSH] = crmulf(decMtx[idxBand*NUM_EARS*nSH+1*nSH+idxSH], eqGain[idxBand]); /* right ear */
+            }
+        }
+
+        /* clean-up */
+        free(kr);
+        free(w_n);
+        free(eqGain);
     }
     
     /* replace current decoder */
@@ -295,7 +384,7 @@ void ambi_bin_process
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     ambi_bin_codecPars* pars = pData->pars;
-    int t, ch, i, j, band;
+    int ch, i, j, band;
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float Rxyz[3][3];
     float* M_rot_tmp;
@@ -323,10 +412,10 @@ void ambi_bin_process
         /* account for channel order convention */
         switch(chOrdering){
             case CH_ACN:
-                convertHOAChannelConvention((float*)pData->SHFrameTD, order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_ACN);
+                convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_ACN);
                 break;
             case CH_FUMA:
-                convertHOAChannelConvention((float*)pData->SHFrameTD, order, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
+                convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
                 break;
         }
 
@@ -335,22 +424,15 @@ void ambi_bin_process
             case NORM_N3D:  /* already in N3D, do nothing */
                 break;
             case NORM_SN3D: /* convert to N3D */
-                convertHOANormConvention((float*)pData->SHFrameTD, order, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
+                convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
                 break;
             case NORM_FUMA: /* only for first-order, convert to N3D */
-                convertHOANormConvention((float*)pData->SHFrameTD, order, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
+                convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
                 break;
         }
 
         /* Apply time-frequency transform (TFT) */
-        for(t=0; t< TIME_SLOTS; t++) {
-            for(ch = 0; ch < nSH; ch++)
-                utility_svvcopy(&(pData->SHFrameTD[ch][t*HOP_SIZE]), HOP_SIZE, pData->tempHopFrameTD[ch]);
-            afSTFTforward(pData->hSTFT, pData->tempHopFrameTD, pData->STFTInputFrameTF);
-            for(band=0; band<HYBRID_BANDS; band++)
-                for(ch=0; ch < nSH; ch++)
-                    pData->SHframeTF[band][ch][t] = cmplxf(pData->STFTInputFrameTF[ch].re[band], pData->STFTInputFrameTF[ch].im[band]);
-        }
+        afSTFT_forward(pData->hSTFT, pData->SHFrameTD, FRAME_SIZE, pData->SHframeTF);
 
         /* Main processing: */
         if(order > 0 && enableRot) {
@@ -369,36 +451,29 @@ void ambi_bin_process
             for(band = 0; band < HYBRID_BANDS; band++) {
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, nSH, &calpha,
                             pData->M_rot, MAX_NUM_SH_SIGNALS,
-                            pData->SHframeTF[band], TIME_SLOTS, &cbeta,
-                            pData->SHframeTF_rot[band], TIME_SLOTS);
+                            FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS, &cbeta,
+                            FLATTEN2D(pData->SHframeTF_rot[band]), TIME_SLOTS);
             }
         }
         else
-            memcpy(pData->SHframeTF_rot, pData->SHframeTF, HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
+            memcpy(FLATTEN3D(pData->SHframeTF_rot), FLATTEN3D(pData->SHframeTF), HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
 
         /* mix to headphones */
         for(band = 0; band < HYBRID_BANDS; band++) {
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
                         pars->M_dec[band], MAX_NUM_SH_SIGNALS,
-                        pData->SHframeTF_rot[band], TIME_SLOTS, &cbeta,
-                        pData->binframeTF[band], TIME_SLOTS);
+                        FLATTEN2D(pData->SHframeTF_rot[band]), TIME_SLOTS, &cbeta,
+                        FLATTEN2D(pData->binframeTF[band]), TIME_SLOTS);
         }
 
         /* inverse-TFT */
-        //postGain = powf(10.0f, POST_GAIN/20.0f);
-        for(t = 0; t < TIME_SLOTS; t++) {
-            for(band = 0; band < HYBRID_BANDS; band++) {
-                for(ch = 0; ch < NUM_EARS; ch++) {
-                    pData->STFTOutputFrameTF[ch].re[band] = crealf(pData->binframeTF[band][ch][t]);
-                    pData->STFTOutputFrameTF[ch].im[band] = cimagf(pData->binframeTF[band][ch][t]);
-                }
-            }
-            afSTFTinverse(pData->hSTFT, pData->STFTOutputFrameTF, pData->tempHopFrameTD);
-            for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
-                utility_svvcopy(pData->tempHopFrameTD[ch], HOP_SIZE, &(outputs[ch][t* HOP_SIZE]));
-            for (; ch < nOutputs; ch++)
-                memset(&(outputs[ch][t* HOP_SIZE]), 0, HOP_SIZE*sizeof(float));
-        }
+        afSTFT_backward(pData->hSTFT, pData->binframeTF, FRAME_SIZE, pData->binFrameTD);
+
+        /* Copy to output */
+        for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
+            utility_svvcopy(pData->binFrameTD[ch], FRAME_SIZE, outputs[ch]);
+        for (; ch < nOutputs; ch++)
+            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
     }
     else
         for (ch=0; ch < nOutputs; ch++)
@@ -423,8 +498,7 @@ void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState)
     
     if((!pData->useDefaultHRIRsFLAG) && (newState)){
         pData->useDefaultHRIRsFLAG = newState;
-        pData->reinit_hrtfsFLAG = 1;
-        ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
+        ambi_bin_refreshParams(hAmbi);  // re-init and re-calc
     }
 }
 
@@ -436,8 +510,8 @@ void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path)
     pars->sofa_filepath = malloc1d(strlen(path) + 1);
     strcpy(pars->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
-    pData->reinit_hrtfsFLAG = 1;
-    ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
+    ambi_bin_refreshParams(hAmbi);  // re-init and re-calc
+
 }
 
 void ambi_bin_setInputOrderPreset(void* const hAmbi, SH_ORDERS newOrder)
@@ -493,12 +567,21 @@ void ambi_bin_setEnableDiffuseMatching(void* const hAmbi, int newState)
     }
 }
 
-void ambi_bin_setEnablePhaseWarping(void* const hAmbi, int newState)
+void ambi_bin_setEnableTruncationEQ(void* const hAmbi, int newState)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    if(pData->enablePhaseWarping != newState){
-        pData->enablePhaseWarping = newState;
+    if(pData->enableTruncationEQ != newState){
+        pData->enableTruncationEQ = newState;
         ambi_bin_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
+    }
+}
+
+void ambi_bin_setHRIRsPreProc(void* const hAmbi, AMBI_BIN_PREPROC newType)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    if(pData->preProc != newType){
+        pData->preProc = newType;
+        ambi_bin_refreshParams(hAmbi);
     }
 }
 
@@ -594,13 +677,19 @@ int ambi_bin_getUseDefaultHRIRsflag(void* const hAmbi)
     return pData->useDefaultHRIRsFLAG;
 }
 
+AMBI_BIN_PREPROC ambi_bin_getHRIRsPreProc(void* const hAmbi)
+{
+    ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
+    return pData->preProc;
+}
+
 int ambi_bin_getInputOrderPreset(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     return pData->new_order;
 }
 
-int ambi_bin_getDecodingMethod(void* const hAmbi)
+AMBI_BIN_DECODING_METHODS ambi_bin_getDecodingMethod(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     return pData->method;
@@ -640,10 +729,10 @@ int ambi_bin_getEnableDiffuseMatching(void* const hAmbi)
     return pData->enableDiffuseMatching;
 }
 
-int ambi_bin_getEnablePhaseWarping(void* const hAmbi)
+int ambi_bin_getEnableTruncationEQ(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
-    return pData->enablePhaseWarping;
+    return pData->enableTruncationEQ;
 }
 
 int ambi_bin_getNumEars()

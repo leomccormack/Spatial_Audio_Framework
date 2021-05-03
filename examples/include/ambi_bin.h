@@ -16,14 +16,29 @@
 
 /**
  * @file ambi_bin.h 
- * @brief A binaural Ambisonic decoder for reproducing ambisonic signals over
- *        headphones
+ * @brief A binaural Ambisonic decoder for reproducing Ambisonic sound scenes
+ *        over headphones
  *
- * The decoder includes many historic and current state-of-the-art decoding
- * approaches. It also supports sound-field rotation for head-tracking and may
- * also accomodate custom HRIR sets via the SOFA standard.
+ * The decoder offers choice over many different binaural decoding options [1-4]
+ * It also supports sound-field rotation for head-tracking and can accomodate
+ * loading custom HRIR sets via the SOFA standard.
  *
  * @test test__saf_example_ambi_bin()
+ *
+ * @see [1] Z. Ben-Hur, F. Brinkmann, J. Sheaffer, S. Weinzierl, and B. Rafaely,
+ *          "Spectral equalization in binaural signals represented by order-
+ *          truncated spherical harmonics" The Journal of the Acoustical
+ *          Society of America, vol. 141, no. 6, pp. 4087--4096, 2017.
+ * @see [2] B. Bernschutz, A. V. Giner, C. Po"rschmann, and J. Arend, "Binaural
+ *          reproduction of plane waves with reduced modal order" Acta Acustica
+ *          united with Acustica, vol. 100, no. 5, pp. 972--983, 2014.
+ * @see [3] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. Binaural rendering of
+ *          Ambisonic signals by head-related impulse response time alignment
+ *          and a diffuseness constraint. The Journal of the Acoustical Society
+ *          of America. 2018 Jun 19;143(6):3616-27
+ * @see [4] Scho"rkhuber C, Zaunschirm M, Ho"ldrich R. Binaural Rendering of
+ *          Ambisonic Signals via Magnitude Least Squares. InProceedings of the
+ *          DAGA 2018 (Vol. 44, pp. 339-342).
  *
  * @author Leo McCormack
  * @date 14.04.2018
@@ -46,7 +61,7 @@ extern "C" {
  * Available decoding methods for the ambi_bin example. See saf_hoa_internal.h
  * for a more indepth descriptions of the approaches.
  */
-typedef enum _AMBI_BIN_DECODING_METHODS{
+typedef enum {
     DECODING_METHOD_LS = 1,   /**< Least-squares (LS) decoder */
     DECODING_METHOD_LSDIFFEQ, /**< Least-squares (LS) decoder with diffuse-field
                                *   spectral equalisation */
@@ -59,6 +74,17 @@ typedef enum _AMBI_BIN_DECODING_METHODS{
     
 /** Number of decoding method options */
 #define AMBI_BIN_NUM_DECODING_METHODS ( 5 )
+
+/** Available HRIR pre-preprocessing options */
+typedef enum {
+    HRIR_PREPROC_OFF = 1,     /**< No pre-processing active */
+    HRIR_PREPROC_EQ,          /**< Diffuse-field EQ (compensates CTF) */
+    HRIR_PREPROC_PHASE,       /**< Phase simplification based on ITD */
+    HRIR_PREPROC_ALL,         /**< Diffuse-field EQ AND phase-simplification */
+}AMBI_BIN_PREPROC;
+
+/** Number of HRIR pre-preprocessing options */
+#define AMBI_BIN_NUM_HRIR_PREPROC_OPTIONS ( 4 )
 
 
 /* ========================================================================== */
@@ -162,7 +188,7 @@ void ambi_bin_setUseDefaultHRIRsflag(void* const hAmbi, int newState);
 void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path);
 
 /**
- * Sets the decoding order (see #_SH_ORDERS enum)
+ * Sets the decoding order (see #SH_ORDERS enum)
  *
  * @note If decoding order is higher than the input signal order, the extra
  *       required channels are filled with zeros. If the decoding order is lower
@@ -173,7 +199,7 @@ void ambi_bin_setInputOrderPreset(void* const hAmbi,
                                   SH_ORDERS newPreset);
 
 /**
- * Sets the decoding method (see #_AMBI_BIN_DECODING_METHODS enum)
+ * Sets the decoding method (see #AMBI_BIN_DECODING_METHODS enum)
  */
 void ambi_bin_setDecodingMethod(void* const hAmbi,
                                 AMBI_BIN_DECODING_METHODS newMethod);
@@ -190,54 +216,37 @@ void ambi_bin_setChOrder(void* const hAmbi, int newOrder);
  */
 void ambi_bin_setNormType(void* const hAmbi, int newType);
 
-/**
- * Sets a flag to enable/disable the max_rE weighting
- */
+/** Sets a flag to enable/disable the max_rE weighting */
 void ambi_bin_setEnableMaxRE(void* const hAmbi, int newState);
 
-/**
- * Sets a flag to enable/disable (1 or 0) the diffuseness covariance constraint
- */
+/** Sets a flag to enable/disable (1 or 0) the diffuse-covariance constraint */
 void ambi_bin_setEnableDiffuseMatching(void* const hAmbi, int newState);
 
-/**
- * Not implemented yet! Sets a flag to enable/disable (1 or 0) phase warping
- */
-void ambi_bin_setEnablePhaseWarping(void* const hAmbi, int newState);
+/** Sets a flag to enable/disable (1 or 0) truncation EQ */
+void ambi_bin_setEnableTruncationEQ(void* const hAmbi, int newState);
 
-/**
- * Sets the flag to enable/disable (1 or 0) sound-field rotation
- */
+/** Sets HRIR pre-processing strategy (see #AMBI_BIN_PREPROC enum) */
+void ambi_bin_setHRIRsPreProc(void* const hAmbi, AMBI_BIN_PREPROC newType);
+
+/** Sets the flag to enable/disable (1 or 0) sound-field rotation */
 void ambi_bin_setEnableRotation(void* const hAmbi, int newState);
 
-/**
- * Sets the 'yaw' rotation angle, in degrees
- */
+/** Sets the 'yaw' rotation angle, in degrees */
 void ambi_bin_setYaw(void* const hAmbi, float newYaw_deg);
 
-/**
- * Sets the 'pitch' rotation angle, in degrees
- */
+/** Sets the 'pitch' rotation angle, in degrees */
 void ambi_bin_setPitch(void* const hAmbi, float newPitch);
 
-/**
- * Sets the 'roll' rotation angle, in degrees
- */
+/** Sets the 'roll' rotation angle, in degrees */
 void ambi_bin_setRoll(void* const hAmbi, float newRoll);
 
-/**
- * Sets a flag as to whether to "flip" the sign of the current 'yaw' angle
- */
+/** Sets a flag as to whether to "flip" the sign of the current 'yaw' angle */
 void ambi_bin_setFlipYaw(void* const hAmbi, int newState);
 
-/**
- * Sets a flag as to whether to "flip" the sign of the current 'pitch' angle
- */
+/** Sets a flag as to whether to "flip" the sign of the current 'pitch' angle */
 void ambi_bin_setFlipPitch(void* const hAmbi, int newState);
 
-/**
- * Sets a flag as to whether to "flip" the sign of the current 'roll' angle
- */
+/** Sets a flag as to whether to "flip" the sign of the current 'roll' angle */
 void ambi_bin_setFlipRoll(void* const hAmbi, int newState);
 
 /**
@@ -257,14 +266,10 @@ void ambi_bin_setRPYflag(void* const hAmbi, int newState);
  */
 int ambi_bin_getFrameSize(void);
 
-/**
- * Returns current codec status, see #_CODEC_STATUS enum
- */
+/** Returns current codec status, see #CODEC_STATUS enum */
 CODEC_STATUS ambi_bin_getCodecStatus(void* const hAmbi);
     
-/**
- * (Optional) Returns current intialisation/processing progress, between 0..1
- */
+/** (Optional) Returns current intialisation/processing progress, between 0..1*/
 float ambi_bin_getProgressBar0_1(void* const hAmbi);
     
 /**
@@ -296,9 +301,9 @@ int ambi_bin_getInputOrderPreset(void* const hAmbi);
 
 /**
  * Returns the currently selected decoding method (see
- * #_AMBI_BIN_DECODING_METHODS enum)
+ * #AMBI_BIN_DECODING_METHODS enum)
  */
-int ambi_bin_getDecodingMethod(void* const hAmbi);
+AMBI_BIN_DECODING_METHODS ambi_bin_getDecodingMethod(void* const hAmbi);
 
 /**
  * Returns the file path for a .sofa file
@@ -313,20 +318,18 @@ char* ambi_bin_getSofaFilePath(void* const hAmbi);
 /**
  * Returns the Ambisonic channel ordering convention currently being used to
  * decode with, which should match the convention employed by the input signals
- * (see #_CH_ORDER enum)
+ * (see #CH_ORDER enum)
  */
 int ambi_bin_getChOrder(void* const hAmbi);
 
 /**
  * Returns the Ambisonic normalisation convention currently being usedto decode
  * with, which should match the convention employed by the input signals (see
- * #_NORM_TYPES enum).
+ * #NORM_TYPES enum).
  */
 int ambi_bin_getNormType(void* const hAmbi); 
 
-/**
- * Returns the number of ears possessed by the average homo sapien (2)
- */
+/** Returns the number of ears possessed by the average homo sapien (2) */
 int ambi_bin_getNumEars(void);
 
 /**
@@ -348,10 +351,16 @@ int ambi_bin_getEnableMaxRE(void* const hAmbi);
 int ambi_bin_getEnableDiffuseMatching(void* const hAmbi);
 
 /**
- * Returns the flag value which dictates whether the phase warping is currently
+ * Returns the flag value which dictates whether the truncation EQ is currently
  * enabled ('0' disabled, '1' enabled).
  */
-int ambi_bin_getEnablePhaseWarping(void* const hAmbi);
+int ambi_bin_getEnableTruncationEQ(void* const hAmbi);
+
+/**
+ * Returns HRIR pre-processing strategy.  
+ * (see #AMBI_BIN_PREPROC enum)
+ */
+AMBI_BIN_PREPROC ambi_bin_getHRIRsPreProc(void* const hAmbi);
 
 /**
  * Returns the flag value which dictates whether to enable/disable sound-field
@@ -359,19 +368,13 @@ int ambi_bin_getEnablePhaseWarping(void* const hAmbi);
  */
 int ambi_bin_getEnableRotation(void* const hAmbi);
 
-/**
- * Returns the 'yaw' rotation angle, in degree
- */
+/** Returns the 'yaw' rotation angle, in degree */
 float ambi_bin_getYaw(void* const hAmbi);
 
-/**
- * Returns the 'pitch' rotation angle, in degrees
- */
+/** Returns the 'pitch' rotation angle, in degrees */
 float ambi_bin_getPitch(void* const hAmbi);
 
-/**
- * Returns the 'roll' rotation angle, in degrees
- */
+/** Returns the 'roll' rotation angle, in degrees */
 float ambi_bin_getRoll(void* const hAmbi);
 
 /**
@@ -398,24 +401,16 @@ int ambi_bin_getFlipRoll(void* const hAmbi);
  */
 int ambi_bin_getRPYflag(void* const hAmbi);
 
-/**
- * Returns the number of directions in the currently used HRIR set
- */
+/** Returns the number of directions in the currently used HRIR set */
 int ambi_bin_getNDirs(void* const hAmbi);
 
-/**
- * Returns the length of HRIRs in time-domain samples
- */
+/** Returns the length of HRIRs in time-domain samples */
 int ambi_bin_getHRIRlength(void* const hAmbi);
 
-/**
- * Returns the HRIR sample rate
- */
+/** Returns the HRIR sample rate */
 int ambi_bin_getHRIRsamplerate(void* const hAmbi);
 
-/**
- * Returns the DAW/Host sample rate
- */
+/** Returns the DAW/Host sample rate */
 int ambi_bin_getDAWsamplerate(void* const hAmbi);
 
 /**

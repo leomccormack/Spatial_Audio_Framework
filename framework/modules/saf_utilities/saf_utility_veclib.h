@@ -21,26 +21,6 @@
  * @brief Wrappers for optimised linear algebra routines, utilising CBLAS and
  *        LAPACK
  *
- * ## Dependencies
- *   A performance library comprising CBLAS and LAPACK routines is required by
- *   the module and, thus, also by SAF as a whole. Add one of the following
- *   FLAGS to your project's preprocessor definitions list in order to enable
- *   one of these suitable performance libraries, which must also be correctly
- *   linked to your project.
- *   - SAF_USE_INTEL_MKL:
- *       to enable Intel's Math Kernal Library with the Fortran LAPACK interface
- *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
- *       to enable OpenBLAS with the LAPACKE interface
- *   - SAF_USE_APPLE_ACCELERATE:
- *       to enable the Accelerate framework with the Fortran LAPACK interface
- *   - SAF_USE_ATLAS:
- *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
- * 
- * @see More information can be found here:
- *      https://github.com/leomccormack/Spatial_Audio_Framework
- * @note MacOSX users only: saf_utilities will employ Apple's Accelerate library
- *       by default, if none of the above FLAGS are defined.
- *
  * @author Leo McCormack
  * @date 11.07.2016
  */
@@ -58,41 +38,10 @@ extern "C" {
 #include <string.h>
 #include "saf_utility_complex.h"
 #include "saf_utility_error.h"
-#include <immintrin.h>
-#ifdef __SSE__
-# include <xmmintrin.h>
-#endif
-#ifdef __SSE2__
-# include <emmintrin.h>
-#endif
-#ifdef __SSE3__
-# include <pmmintrin.h>
-#endif
-#ifdef __SSSE3__
-# include <tmmintrin.h>
-#endif
-#ifdef __SSE4_1__
-# include <smmintrin.h>
-#endif
-#ifdef CBLAS_H
-# define NO_TRANSPOSE (CblasNoTrans)
-# define TRANSPOSE (CblasTrans)
-# define CONJ_TRANSPOSE (CblasConjTrans)
-  typedef enum CBLAS_TRANSPOSE TRANS_FLAG;
-#else
- /**
-  * Matrix transpose options
-  */
-  typedef enum _TRANS_FLAG{
-    NO_TRANSPOSE = 1,   /**< Do not transpose */
-    TRANSPOSE = 2,      /**< Transpose */
-    CONJ_TRANSPOSE = 3  /**< Conjugate transpose / Hermition */
-  }TRANS_FLAG;
-#endif
+
 /**
- * Whether a vector should be conjugated or not (e.g. prior to dot product)
- */
-typedef enum _CONJ_FLAG{
+ * Whether a vector should be conjugated or not (e.g. prior to dot product) */
+typedef enum {
   NO_CONJ = 1,  /**< Do not take the conjugate */
   CONJ = 2      /**< Take the conjugate */
 }CONJ_FLAG;
@@ -219,6 +168,29 @@ void utility_cvabs(/* Input Arguments */
 
 
 /* ========================================================================== */
+/*                            Vector-Modulus (?vmod)                          */
+/* ========================================================================== */
+
+/**
+ * Single-precision, modulus of vector elements, i.e.
+ * \code{.m}
+ *     c = mod(a,b)
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  b   Input vector b; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_svmod(/* Input Arguments */
+                   const float* a,
+                   const float* b,
+                   const int len,
+                   /* Output Arguments */
+                   float* c);
+
+
+/* ========================================================================== */
 /*                        Vector-Vector Copy (?vvcopy)                        */
 /* ========================================================================== */
 
@@ -253,6 +225,38 @@ void utility_cvvcopy(/* Input Arguments */
                      const int len,
                      /* Output Arguments */
                      float_complex* c);
+
+/**
+ * double-precision, vector-vector copy, i.e.
+ * \code{.m}
+ *     c = a
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_dvvcopy(/* Input Arguments */
+                     const double* a,
+                     const int len,
+                     /* Output Arguments */
+                     double* c);
+
+/**
+ * double-precision, complex, vector-vector copy, i.e.
+ * \code{.m}
+ *     c = a
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_zvvcopy(/* Input Arguments */
+                     const double_complex* a,
+                     const int len,
+                     /* Output Arguments */
+                     double_complex* c);
 
 
 /* ========================================================================== */
@@ -379,6 +383,30 @@ void utility_cvvmul(/* Input Arguments */
 
 
 /* ========================================================================== */
+/*            Vector-Vector Multiplication and Addition (?vvmuladd)           */
+/* ========================================================================== */
+
+/**
+ * Single-precision, element-wise vector-vector multiplication and addition,
+ * i.e.
+ * \code{.m}
+ *     c = c + a.*b
+ * \endcode
+ *
+ * @param[in]     a   Input vector a; len x 1
+ * @param[in]     b   Input vector b; len x 1
+ * @param[in]     len Vector length
+ * @param[in,out] c   Input/Output vector c
+ */
+void utility_svvmuladd(/* Input Arguments */
+                       float* a,
+                       const float* b,
+                       const int len,
+                       /* Input/Output Arguments */
+                       float* c);
+
+
+/* ========================================================================== */
 /*                     Vector-Vector Dot Product (?vvdot)                     */
 /* ========================================================================== */
 
@@ -409,7 +437,7 @@ void utility_svvdot(/* Input Arguments */
  * @param[in]  a    Input vector a; len x 1
  * @param[in]  b    Input vector b; len x 1
  * @param[in]  flag '0' do not take the conjugate of 'b', '1', take the
- *                  conjugate of 'b'. (see #_CONJ_FLAG enum)
+ *                  conjugate of 'b'. (see #CONJ_FLAG enum)
  * @param[in]  len  Vector length
  * @param[out] c    (&) output vector c; 1 x 1
  */
@@ -465,6 +493,45 @@ void utility_cvsmul(/* Input Arguments */
                     /* Output Arguments */
                     float_complex* c);
 
+/**
+ * Double-precision, multiplies each element in vector 'a' with a scalar 's',
+ * i.e.
+ * \code{.m}
+ *     c = a.*s, OR: a = a.*s (if c==NULL)
+ * \endcode
+ *
+ * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  s   (&) input scalar s; 1 x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
+ *                 len x 1
+ */
+void utility_dvsmul(/* Input Arguments */
+                    double* a,
+                    const double* s,
+                    const int len,
+                    /* Output Arguments */
+                    double* c);
+
+/**
+ * Double-precision, complex, multiplies each element in vector 'a' with a
+ * scalar 's', i.e.
+ * \code{.m}
+ *     c = a.*s, OR: a = a.*s (if c==NULL)
+ * \endcode
+ *
+ * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  s   (&) input scalar s; 1 x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
+ */
+void utility_zvsmul(/* Input Arguments */
+                    double_complex* a,
+                    const double_complex* s,
+                    const int len,
+                    /* Output Arguments */
+                    double_complex* c);
+
 
 /* ========================================================================== */
 /*                       Vector-Scalar Division (?vsdiv)                      */
@@ -474,14 +541,13 @@ void utility_cvsmul(/* Input Arguments */
  * Single-precision, divides each element in vector 'a' with a scalar 's',
  * i.e.
  * \code{.m}
- *     c = a./s, OR: a = a./s (if c==NULL)
+ *     c = a./s 
  * \endcode
  *
- * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  a   Input vector a; len x 1
  * @param[in]  s   (&) input scalar s; 1 x 1
  * @param[in]  len Vector length
- * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
- *                 len x 1
+ * @param[out] c   Output vector c; len x 1
  */
 void utility_svsdiv(/* Input Arguments */
                     float* a,
@@ -498,14 +564,13 @@ void utility_svsdiv(/* Input Arguments */
 /**
  * Single-precision, adds each element in vector 'a' with a scalar 's', i.e.
  * \code{.m}
- *     c = a+s, OR: a = a+s (if c==NULL)
+ *     c = a+s
  * \endcode
  *
- * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  a   Input vector a; len x 1
  * @param[in]  s   (&) input scalar s; 1 x 1
  * @param[in]  len Vector length
- * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
- *                 len x 1
+ * @param[out] c   Output vector c; len x 1
  */
 void utility_svsadd(/* Input Arguments */
                     float* a,
@@ -523,14 +588,13 @@ void utility_svsadd(/* Input Arguments */
  * Single-precision, subtracts each element in vector 'a' with a scalar 's',
  * i.e.
  * \code{.m}
- *     c = a-s, OR: a = a-s (if c==NULL)
+ *     c = a-s,
  * \endcode
  *
- * @param[in]  a   Input vector a, and output if c==NULL; len x 1
+ * @param[in]  a   Input vector a; len x 1
  * @param[in]  s   (&) input scalar s; 1 x 1
  * @param[in]  len Vector length
- * @param[out] c   Output vector c (set to NULL if you want 'a' as output);
- *                 len x 1
+ * @param[out] c   Output vector c; len x 1
  */
 void utility_svssub(/* Input Arguments */
                     float* a,
@@ -538,6 +602,32 @@ void utility_svssub(/* Input Arguments */
                     const int len,
                     /* Output Arguments */
                     float* c);
+
+
+/* ========================================================================== */
+/*      Sparse-Vector to Compressed-Vector (Known Indices) (?sv2cv_inds)      */
+/* ========================================================================== */
+
+/**
+ * Single-precision, sparse-vector to compressed vector given known indices
+ * i.e.
+ * \code{.m}
+ *     cv = sv(inds)
+ * \endcode
+ *
+ * @warning 'sv' must be of at least max(inds) in length!
+ *
+ * @param[in]  sv   Input sparse-vector; ? x 1
+ * @param[in]  inds Indices; len x 1
+ * @param[in]  len  Compressed-vector length/number of indices
+ * @param[out] cv   Output compressed-vector; len x 1
+ */
+void utility_ssv2cv_inds(/* Input Arguments */
+                         const float* sv,
+                         const int* inds,
+                         const int len,
+                         /* Output Arguments */
+                         float* cv);
 
 
 /* ========================================================================== */
@@ -880,6 +970,53 @@ void utility_zglslv(/* Input Arguments */
 
 
 /* ========================================================================== */
+/*                      General Linear Solver (?glslvt)                       */
+/* ========================================================================== */
+
+/**
+ * General linear solver (the other way): single precision, i.e.
+ * \code{.m}
+ *     X = linsolve(B.',A.').' = A/B;
+ * \endcode
+ *
+ * @param[in]  A    Input square matrix; FLAT: dim x dim
+ * @param[in]  dim  Dimensions for square matrix 'A'
+ * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
+ * @param[in]  nCol Number of columns in right hand side matrix
+ * @param[out] X    The solution; FLAT: dim x nCol
+ */
+void utility_sglslvt(/* Input Arguments */
+                     const float* A,
+                     const int dim,
+                     float* B,
+                     int nCol,
+                     /* Output Arguments */
+                     float* X);
+
+/**
+ * General linear solver (the other way): single precision complex, i.e.
+ * \code{.m}
+ *     X = linsolve(B',A')' = A/B;
+ * \endcode
+ *
+ * @warning UNSURE IF THIS IS CORRECT!
+ *
+ * @param[in]  A    Input square matrix; FLAT: dim x dim
+ * @param[in]  dim  Dimensions for square matrix 'A'
+ * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
+ * @param[in]  nCol Number of columns in right hand side matrix
+ * @param[out] X    The solution; FLAT: dim x nCol
+ */
+void utility_cglslvt(/* Input Arguments */
+                     const float_complex* A,
+                     const int dim,
+                     float_complex* B,
+                     int nCol,
+                     /* Output Arguments */
+                     float_complex* X);
+
+
+/* ========================================================================== */
 /*                      Symmetric Linear Solver (?slslv)                      */
 /* ========================================================================== */
 
@@ -1043,6 +1180,24 @@ void utility_cchol(/* Input Arguments */
                    const int dim,
                    /* Output Arguments */
                    float_complex* X);
+
+
+/* ========================================================================== */
+/*                        Determinant of a Matrix (?det)                      */
+/* ========================================================================== */
+
+/**
+ * Determinant of a Matrix, single precision, i,e.
+ * \code{.m}
+ *     d = det(A);
+ * \endcode
+ *
+ * @param[in]  A Input square matrix; FLAT: N x N
+ * @param[in]  N size of matrix
+ * @returns determinant
+ */
+float utility_sdet(float* A,
+                   int N);
 
     
 /* ========================================================================== */

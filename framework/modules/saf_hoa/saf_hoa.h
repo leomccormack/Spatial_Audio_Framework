@@ -21,7 +21,7 @@
  * @brief Main header for the higher-order Ambisonics module (#SAF_HOA_MODULE)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
- * the Matlab library by Archontis Politis [1].
+ * the Matlab library by Archontis Politis [1] (BSD-3-Clause License).
  *
  * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
  *
@@ -46,7 +46,7 @@ extern "C" {
 /**
  * Ambisonic decoding options for loudspeaker playback
  *
- * Note that the MDD and EPAD decoding options revert back to "SAD" if the
+ * Note that the MMD and EPAD decoding options revert back to "SAD" if the
  * loudspeakers are uniformly distributed on the sphere. The benefits afforded
  * by MMD, EPAD [1], and AllRAD [2] relate to their improved performance when
  * using irregular loudspeaker arrangements.
@@ -57,7 +57,7 @@ extern "C" {
  * @see [2] Zotter F, Frank M. All-round ambisonic panning and decoding. Journal
  *          of the audio engineering society. 2012 Nov 26; 60(10):807-20.
  */
-typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
+typedef enum {
     /**
      * The default decoder is #LOUDSPEAKER_DECODER_SAD
      */
@@ -65,32 +65,45 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
     /**
      * Sampling Ambisonic Decoder (SAD): transpose of the loudspeaker spherical
      * harmonic matrix, scaled by the number of loudspeakers. This is the
-     * simplest decoding approach, as it essentially just generating hyper-
-     * cardioid beamformers for each loudspeaker direction.
+     * simplest decoding approach, as it essentially just generates hyper-
+     * cardioid beamformers (aka virtual microphones) towards each loudspeaker
+     * direction. This approach is numerically robust to irregular loudspeaker
+     * arrangements. However, it does not preserve the energy of a source (or
+     * localisation cues) as it is panned around in different directions over
+     * irregular setups.
      */
     LOUDSPEAKER_DECODER_SAD,
     /**
      * Mode-Matching Decoder (MMD): pseudo-inverse of the loudspeaker spherical
      * harmonic matrix. Due to the pseudo-inverse, more signal energy is lent to
      * regions on the surface of the sphere that are more sparsely populated
-     * with loudspeakers. Therefore, one must also be careful, as some
-     * loudspeakers may be given a huge amount of signal energy and wake the
-     * dead!
+     * with loudspeakers; (this is essentially a least-squares solution).
+     * Therefore, this approach can help balance out directional loudness
+     * differences when using slightly irregular setups. However, one must also
+     * be careful since loudspeakers that are very far way from all the other
+     * loudspeakers (e.g. voice-of-god) may be given significantly more signal
+     * energy than expected. Therefore, this approach is not recommended for
+     * highly irregular loudspeaker arrangements!
      */
     LOUDSPEAKER_DECODER_MMD,
     /**
-     * Energy-Preserving Ambisonic Decoder (EPAD) [1].
+     * Energy-Preserving Ambisonic Decoder (EPAD) [1]. This decoder aims to
+     * preserve the energy of a source, as it panned around to directions of the
+     * sphere; essentially, addressing the energy-preserving issues of the
+     * SAD and MMD decoding approaches, especially for irregular layouts.
      */
     LOUDSPEAKER_DECODER_EPAD,
     /**
      * All-Round Ambisonic Decoder (AllRAD): SAD decoding to t-design, panned
      * for the target loudspeaker directions using VBAP [2]. Perhaps the
      * Ambisonic decoder we would most recommend for irregular loudspeaker
-     * layouts. Note, given a high (well, technically infinite) order, AllRAD
+     * layouts. Note, given a high (well... technically infinite) order, AllRAD
      * will converge to VBAP. However, since lower-orders are employed in
-     * practice: AllRAD will not be as spatially "sharp" as VBAP, but it will
-     * yield more constistent source spreading when panning a source inbetween
-     * the loudspeakers.
+     * practice, AllRAD is not as spatially "sharp" as VBAP, but it will yield
+     * more consistent source spread when panning a source inbetween the
+     * loudspeakers.
+     * The approach is highly robust to irregular loudspeaker setups, and
+     * exhibits low directional error and good energy-preserving properties.
      */
     LOUDSPEAKER_DECODER_ALLRAD
     
@@ -117,7 +130,7 @@ typedef enum _LOUDSPEAKER_AMBI_DECODER_METHODS {
  *          Ambisonic Signals via Magnitude Least Squares. InProceedings of the
  *          DAGA 2018 (Vol. 44, pp. 339-342).
  */
-typedef enum _BINAURAL_AMBI_DECODER_METHODS {
+typedef enum {
     /**
      * The default decoder is #BINAURAL_DECODER_LS
      */
@@ -127,12 +140,16 @@ typedef enum _BINAURAL_AMBI_DECODER_METHODS {
      */
     BINAURAL_DECODER_LS,
     /**
-     * Least-squares (LS) decoder with diffuse-field spectral equalisation [1]
+     * Least-squares (LS) decoder with diffuse-field spectral equalisation [1].
+     * Note that the diffuse-field EQ is applied in the spherical harmonic
+     * domain (to account for the truncation error/loss of high frequencies), so
+     * this is not the same as applying diffuseFieldEqualiseHRTFs() on the HRTFs
+     * followed by BINAURAL_DECODER_LS.
      */
     BINAURAL_DECODER_LSDIFFEQ,
     /**
      * Spatial resampling decoder (on the same lines as the virtual loudspeaker
-     * approach) [2]
+     * approach) [2].
      */
     BINAURAL_DECODER_SPR,
     /**
@@ -154,13 +171,13 @@ typedef enum _BINAURAL_AMBI_DECODER_METHODS {
 /**
  * Available Ambisonic channel ordering conventions
  *
- * @note ACN channel ordering with SN3D normalisation are often collectively
+ * @note ACN channel ordering with SN3D normalisation is often collectively
  *       referred to as the 'AmbiX' format.
  * @warning FuMa is a deprecated legacy format and is only supported for first-
  *          order! The recommended Ambisonic conventions are ACN with N3D/SN3D
  *          normalisation.
  */
-typedef enum _HOA_CH_ORDER{
+typedef enum {
     HOA_CH_ORDER_ACN,  /**< Ambisonic Channel numbering (ACN) convention, which
                         *   is employed by all spherical harmonic related
                         *   functions in SAF */
@@ -174,13 +191,13 @@ typedef enum _HOA_CH_ORDER{
 /**
  * Available Ambisonic normalisation conventions
  *
- * @note ACN channel ordering with SN3D normalisation are often collectively
+ * @note ACN channel ordering with SN3D normalisation is often collectively
  *       referred to as the 'AmbiX' format.
  * @warning FuMa is a deprecated legacy format and is only supported for first-
  *          order! The recommended Ambisonic conventions are ACN with N3D/SN3D
  *          normalisation.
  */
-typedef enum _HOA_NORM{
+typedef enum {
     HOA_NORM_N3D,  /**< Orthonormalised (N3D) convention, which is the default
                     *   convention used by SAF */
     HOA_NORM_SN3D, /**< Schmidt semi-normalisation (SN3D) convention, as used
@@ -343,6 +360,35 @@ void getMaxREweights(/* Input Arguments */
                      float* a_n);
 
 /**
+ * Filter that equalizes the high frequency roll-off due to SH truncation and
+ * tapering. Details can be found in [1].
+ *
+ * @param[in]  w_n             Tapering weights; (order_truncated + 1) x 1
+ *                             E.g. maxRE, or all ones for truncation only
+ * @param[in]  order_truncated Input SH order
+ * @param[in]  order_target    Target SH order, (should be higher, e.g. 38)
+ * @param[in]  kr              kr vector, r e.g. 0.085 m; nBands x 1
+ * @param[in]  nBands          Number of frequency bins
+ * @param[in]  softThreshold   Threshold in dB, soft limiting above to +6dB
+ * @param[out] gain            Gain factor for compensation filter; nBands x 1
+ *
+ * @see [1] Hold, C., Gamper, H., Pulkki, V., Raghuvanshi, N., & Tashev, I. J. 
+ *          (2019). Improving Binaural Ambisonics Decoding by Spherical 
+ *          Harmonics Domain Tapering and Coloration Compensation. ICASSP, 
+ *          IEEE International Conference on Acoustics, Speech and Signal 
+ *          Processing - Proceedings.
+ */
+void truncationEQ(/* Input arguments */
+                   float* w_n,
+                   int order_truncated,
+                   int order_target,
+                   double* kr,
+                   int nBands,
+                   float softThreshold,
+                   /* Output arguments */
+                   float* gain);
+
+/**
  * Computes an ambisonic decoding matrix of a specific order, for a given
  * loudspeaker layout
  *
@@ -352,7 +398,7 @@ void getMaxREweights(/* Input Arguments */
  *                         FLAT: nLS x 2
  * @param[in]  nLS         Number of loudspeakers
  * @param[in]  method      Decoding method (see
- *                         #_LOUDSPEAKER_AMBI_DECODER_METHODS enum)
+ *                         #LOUDSPEAKER_AMBI_DECODER_METHODS enum)
  * @param[in]  order       Decoding order
  * @param[in]  enableMaxrE Set to '0' to disable, '1' to enable
  * @param[out] decMtx      Decoding matrix; FLAT: nLS x (order+1)^2
@@ -374,7 +420,7 @@ void getLoudspeakerDecoderMtx(/* Input Arguments */
  * @param[in]  hrtf_dirs_deg HRTF directions; FLAT: N_dirs x 2
  * @param[in]  N_dirs        Number of HRTF directions
  * @param[in]  N_bands       Number of frequency bands/bins
- * @param[in]  method        Decoder method (see #_BINAURAL_AMBI_DECODER_METHODS
+ * @param[in]  method        Decoder method (see #BINAURAL_AMBI_DECODER_METHODS
  *                           enum)
  * @param[in]  order         Decoding order
  * @param[in]  freqVector    Only needed for #BINAURAL_DECODER_TA or
@@ -414,7 +460,7 @@ void getBinauralAmbiDecoderMtx(/* Input Arguments */
  * @param[in]  N_dirs        Number of HRTF directions
  * @param[in]  fftSize       FFT size
  * @param[in]  fs            Sampling rate
- * @param[in]  method        Decoder method (see #_BINAURAL_AMBI_DECODER_METHODS
+ * @param[in]  method        Decoder method (see #BINAURAL_AMBI_DECODER_METHODS
  *                           enum)
  * @param[in]  order         Decoding order
  * @param[in]  itd_s         Only needed for #BINAURAL_DECODER_TA decoder (can

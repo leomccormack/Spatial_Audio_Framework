@@ -16,7 +16,7 @@
 
 /**
  * @file ambi_enc.c
- * @brief A simple, but flexible, Ambisonic encoder.
+ * @brief A basic Ambisonic encoder
  *
  * @author Leo McCormack
  * @date 07.10.2016
@@ -33,6 +33,9 @@ void ambi_enc_create
     ambi_enc_data* pData = (ambi_enc_data*)malloc1d(sizeof(ambi_enc_data));
     *phAmbi = (void*)pData;
     int i;
+
+    printf(SAF_VERSION_LICENSE_STRING);
+
     pData->order = 1;
     
     /* default user parameters */
@@ -212,8 +215,8 @@ void ambi_enc_setOutputOrder(void* const hAmbi, int newOrder)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
     int i;
-    if(newOrder != pData->order){
-        pData->order = newOrder; 
+    if((SH_ORDERS)newOrder != pData->order){
+        pData->order = (SH_ORDERS)newOrder;
         for(i=0; i<MAX_NUM_INPUTS; i++)
             pData->recalc_SH_FLAG[i] = 1;
         /* FUMA only supports 1st order */

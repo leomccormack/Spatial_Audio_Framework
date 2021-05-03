@@ -19,15 +19,15 @@
  * @brief A sound-field visualiser based on the directional re-assignment of
  *        beamformer energy based on local DoA estimates [1,2]
  *
- * @see [1] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of
- *          angular spectra based on a directional re-assignment approach for
- *          ambisonic sound-field visualisation". IEEE International Conference
- *          on Acoustics, Speech and Signal Processing (ICASSP).
- * @see [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
+ * @see [1] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D.,
  *          Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of
  *          Spatially Localized Active-Intensity Vectors for Sound-Field
  *          Visualization. Journal of the Audio Engineering Society, 67(11),
  *          pp.840-854.
+ * @see [2] McCormack, L., Politis, A., and Pulkki, V. (2019). "Sharpening of
+ *          angular spectra based on a directional re-assignment approach for
+ *          ambisonic sound-field visualisation". IEEE International Conference
+ *          on Acoustics, Speech and Signal Processing (ICASSP).
  *
  * @author Leo McCormack
  * @date 21.02.2019
@@ -44,6 +44,8 @@ void dirass_create
     dirass_data* pData = (dirass_data*)malloc1d(sizeof(dirass_data));
     *phDir = (void*)pData;
     int i;
+
+    printf(SAF_VERSION_LICENSE_STRING);
 
     /* Default user parameters */
     pData->inputOrder = pData->new_inputOrder = SH_ORDER_FIRST;
@@ -118,8 +120,9 @@ void dirass_destroy
         for(i=0; i<NUM_DISP_SLOTS; i++)
             free(pData->pmap_grid[i]);
 
-        pars = pData->pars; 
+        pars = pData->pars;
         free(pars->interp_dirs_deg);
+        free(pars->interp_dirs_rad);
         free(pars->Y_up);
         free(pars->interp_table);
         free(pars->ss);
@@ -129,6 +132,7 @@ void dirass_destroy
         free(pars->Cw);
         free(pars->Uw);
         free(pars->est_dirs);
+        free(pars->est_dirs_idx);
         free(pars->prev_intensity);
         free(pars->prev_energy);
         
@@ -189,7 +193,6 @@ void dirass_initCodec
     pData->codecStatus = CODEC_STATUS_INITIALISED;
 }
 
-
 void dirass_analysis
 (
     void  *  const hDir,
@@ -234,7 +237,7 @@ void dirass_analysis
         pData->FIFO_idx++;
 
         /* Process frame if inFIFO is full and codec is ready for it */
-        if (pData->FIFO_idx >= FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying ) {
+        if (pData->FIFO_idx >= FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying) {
             pData->FIFO_idx = 0;
             pData->procStatus = PROC_STATUS_ONGOING;
 
@@ -409,10 +412,10 @@ void dirass_analysis
                     pData->dispSlotIdx = 0;
                 pData->pmapReady = 1;
             }
-            else if(pData->FIFO_idx >= FRAME_SIZE){
-                /* reset FIFO_idx index if codec was not ready */
-                pData->FIFO_idx = 0;
-            }
+        }
+        else if(pData->FIFO_idx >= FRAME_SIZE){
+            /* reset FIFO_idx index if codec was not ready */
+            pData->FIFO_idx = 0;
         }
     }
     
@@ -452,8 +455,8 @@ void dirass_setInputOrder(void* const hDir,  int newValue)
 void dirass_setDisplayGridOption(void* const hDir,  int newState)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    if(pData->gridOption != newState){
-        pData->gridOption = newState;
+    if(pData->gridOption != (DIRASS_GRID_OPTIONS)newState){
+        pData->gridOption = (DIRASS_GRID_OPTIONS)newState;
         dirass_setCodecStatus(hDir, CODEC_STATUS_NOT_INITIALISED);
     }
 }
@@ -480,8 +483,8 @@ void dirass_setDiRAssMode(void* const hDir,  int newMode)
 {
     dirass_data *pData = (dirass_data*)(hDir);
     dirass_codecPars* pars = pData->pars;
-    if(pData->DirAssMode!=newMode){
-        pData->DirAssMode = newMode;
+    if(pData->DirAssMode!=(DIRASS_REASS_MODES)newMode){
+        pData->DirAssMode = (DIRASS_REASS_MODES)newMode;
         if(pars->prev_intensity!=NULL)
             memset(pars->prev_intensity, 0, pars->grid_nDirs*3*sizeof(float));
         memset(pars->prev_energy, 0, pars->grid_nDirs*sizeof(float));

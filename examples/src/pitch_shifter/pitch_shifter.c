@@ -32,7 +32,9 @@ void pitch_shifter_create
 {
     pitch_shifter_data* pData = (pitch_shifter_data*)malloc1d(sizeof(pitch_shifter_data));
     *phPS = (void*)pData;
- 
+
+    printf(SAF_VERSION_LICENSE_STRING);
+    
     /* Default user parameters */
     pData->new_nChannels = pData->nChannels = 1;
     pData->pitchShift_factor = 0.5f; 
@@ -87,8 +89,8 @@ void pitch_shifter_init
 {
     pitch_shifter_data *pData = (pitch_shifter_data*)(hPS);
 
-    if(pData->sampleRate != sampleRate){
-        pData->sampleRate = sampleRate;
+    if(pData->sampleRate != (float)sampleRate){
+        pData->sampleRate = (float)sampleRate;
         pitch_shifter_setCodecStatus(hPS, CODEC_STATUS_NOT_INITIALISED);
     } 
 }
@@ -122,6 +124,8 @@ void pitch_shifter_initCodec
 
     /* Config */
     switch(pData->osamp_option){
+        default:
+            /* fall through */
         case PITCH_SHIFTER_OSAMP_2:  osamp = 2; break;
         case PITCH_SHIFTER_OSAMP_4:  osamp = 4; break;
         case PITCH_SHIFTER_OSAMP_8:  osamp = 8; break;
@@ -129,6 +133,8 @@ void pitch_shifter_initCodec
         case PITCH_SHIFTER_OSAMP_32: osamp = 32; break;
     }
     switch(pData->fftsize_option){
+        default:
+            /* fall through */
         case PITCH_SHIFTER_FFTSIZE_512:   fftSize = 512; break;
         case PITCH_SHIFTER_FFTSIZE_1024:  fftSize = 1024; break;
         case PITCH_SHIFTER_FFTSIZE_2048:  fftSize = 2048; break;
