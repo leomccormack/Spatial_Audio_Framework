@@ -374,12 +374,12 @@ void ambi_bin_initCodec
 
 void ambi_bin_process
 (
-    void  *  const hAmbi,
+    void        *  const hAmbi,
     const float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);

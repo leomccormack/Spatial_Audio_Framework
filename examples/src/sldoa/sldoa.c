@@ -194,11 +194,11 @@ void sldoa_initCodec
 
 void sldoa_analysis
 (
-    void  *  const hSld,
+    void        *  const hSld,
     const float ** const inputs,
-    int            nInputs,
-    int            nSamples,
-    int            isPlaying 
+    int                  nInputs,
+    int                  nSamples,
+    int                  isPlaying 
 )
 {
     sldoa_data *pData = (sldoa_data*)(hSld);

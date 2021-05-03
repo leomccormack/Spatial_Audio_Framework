@@ -96,12 +96,12 @@ void matrixconv_init
 
 void matrixconv_process
 (
-    void  *  const hMCnv,
+    void        *  const hMCnv,
     const float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     matrixconv_data *pData = (matrixconv_data*)(hMCnv);

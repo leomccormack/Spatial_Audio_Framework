@@ -98,12 +98,12 @@ void rotator_init
 
 void rotator_process
 (
-    void  *  const hRot,
+    void        *  const hRot,
     const float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     rotator_data *pData = (rotator_data*)(hRot);

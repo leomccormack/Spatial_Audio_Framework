@@ -157,12 +157,12 @@ void pitch_shifter_initCodec
 
 void pitch_shifter_process
 (
-    void  *  const hPS,
+    void        *  const hPS,
     const float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     pitch_shifter_data *pData = (pitch_shifter_data*)(hPS);
