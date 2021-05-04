@@ -23,6 +23,17 @@
 
 #include "tvconv_internal.h"
 
+void tvconv_setCodecStatus(void* const hTVCnv, CODEC_STATUS newStatus)
+{
+    tvconv_data *pData = (tvconv_data*)(hTVCnv);
+    if(newStatus==CODEC_STATUS_NOT_INITIALISED){
+        /* Pause until current initialisation is complete */
+        while(pData->codecStatus == CODEC_STATUS_INITIALISING)
+            SAF_SLEEP(10);
+    }
+    pData->codecStatus = newStatus;
+}
+
 void tvconv_findNearestNeigbour(void* const hTVCnv)
 {
     float dist = 0, minDist = 0;

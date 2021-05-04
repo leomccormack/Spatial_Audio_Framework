@@ -62,6 +62,15 @@ void tvconv_create
     pData->position_idx = 0;
     pData->position_idx_Last = 0;
     pData->position_idx_Last2 = 0;
+    for (int d = 0; d < NUM_DIMENSIONS; d++)
+        pData->position[d] = 0;
+    
+    /* flags/status */
+    pData->progressBar0_1 = 0.0f;
+    pData->progressBarText = malloc1d(PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
+    strcpy(pData->progressBarText,"");
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
 
 void tvconv_destroy
@@ -72,6 +81,12 @@ void tvconv_destroy
     tvconv_data* pData = (tvconv_data*)(*phTVCnv);
     
     if (pData != NULL){
+        /* not safe to free memory during intialisation/processing loop */
+        while (pData->codecStatus == CODEC_STATUS_INITIALISING ||
+               pData->procStatus == PROC_STATUS_ONGOING){
+            SAF_SLEEP(10);
+        }
+        
         free(pData->inputFrameTD);
         free(pData->outputFrameTD);
         free(pData->irs);
@@ -98,6 +113,7 @@ void tvconv_init
         pData->hostBlockSize = hostBlockSize;
         pData->hostBlockSize_clamped = CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
         pData->reInitFilters = 1;
+        tvconv_setCodecStatus(hTVCnv, CODEC_STATUS_NOT_INITIALISED);
     }
     
     tvconv_checkReInit(hTVCnv);
@@ -118,7 +134,7 @@ void tvconv_process
     int numInputChannels, numOutputChannels;
  
     tvconv_checkReInit(hTVCnv);
-
+    pData->procStatus = PROC_STATUS_ONGOING;
     /* prep */
     numInputChannels = pData->nInputChannels;
     numOutputChannels = pData->nOutputChannels;
@@ -140,7 +156,8 @@ void tvconv_process
         pData->FIFO_idx++;
 
         /* Process frame if inFIFO is full and filters are loaded and saf_matrixConv_apply is ready for it */
-        if (pData->FIFO_idx >= pData->hostBlockSize_clamped && pData->reInitFilters == 0 ) {
+        if (pData->FIFO_idx >= pData->hostBlockSize_clamped && pData->reInitFilters == 0 &&
+            pData->codecStatus == CODEC_STATUS_INITIALISED) {
             pData->FIFO_idx = 0;
 
             /* Load time-domain data */
@@ -164,6 +181,7 @@ void tvconv_process
             memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
         }
     }
+    pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
 
 /*sets*/
@@ -172,6 +190,7 @@ void tvconv_refreshParams(void* const hTVCnv)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
     pData->reInitFilters = 1;
+    //tvconv_setCodecStatus(hTVCnv, CODEC_STATUS_NOT_INITIALISED);
 }
 
 void tvconv_checkReInit(void* const hTVCnv)
@@ -181,6 +200,8 @@ void tvconv_checkReInit(void* const hTVCnv)
     /* reinitialise if needed */
     if ((pData->reInitFilters == 1) && (pData->irs != NULL)) {
         pData->reInitFilters = 2;
+//    if ((pData->codecStatus == CODEC_STATUS_NOT_INITIALISED) && (pData->irs != NULL)) {
+        pData->codecStatus = CODEC_STATUS_INITIALISING;
         saf_matrixConv_destroy(&(pData->hMatrixConv));
         pData->hMatrixConv = NULL;
         
@@ -208,6 +229,7 @@ void tvconv_checkReInit(void* const hTVCnv)
         memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
 
         pData->reInitFilters = 0;
+        pData->codecStatus = CODEC_STATUS_INITIALISED;
     }
 }
 
@@ -217,13 +239,33 @@ void tvconv_setFiltersAndPositions
 )
 {
     tvconv_data* pData = (tvconv_data*) hTVCnv;
+    
+    if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
+        return; /* re-init not required, or already happening */
+    while (pData->procStatus == PROC_STATUS_ONGOING){
+        /* re-init required, but we need to wait for the current processing loop to end */
+        pData->codecStatus = CODEC_STATUS_INITIALISING; /* indicate that we want to init */
+        SAF_SLEEP(10);
+    }
+    
+    /* for progress bar */
+    pData->codecStatus = CODEC_STATUS_INITIALISING;
+    strcpy(pData->progressBarText,"Initialising");
+    pData->progressBar0_1 = 0.0f;
+    
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
     int i;
     if(pData->sofa_filepath!=NULL){
+        strcpy(pData->progressBarText,"Opening SOFA file");
+        pData->progressBar0_1 = 0.2f;
         error = saf_sofa_open(&sofa, pData->sofa_filepath);
         
         if(error==SAF_SOFA_OK){
+            
+            strcpy(pData->progressBarText,"Loading IRs");
+            pData->progressBar0_1 = 0.5f;
+            
             pData->ir_fs = (int)sofa.DataSamplingRate;
             pData->ir_length = sofa.DataLengthIR;
             pData->nIrChannels = sofa.nReceivers;
@@ -233,6 +275,10 @@ void tvconv_setFiltersAndPositions
             for(i=0; i<pData->nPositions; i++){
                 memcpy(pData->irs[i], &(sofa.DataIR[i*tmp_length]), tmp_length*sizeof(float));
             }
+            
+            strcpy(pData->progressBarText,"Loading positions");
+            pData->progressBar0_1 = 0.8f;
+            
             pData->positions = (vectorND*)realloc1d((void*)pData->positions, pData->nPositions*sizeof(vectorND));
             memcpy(pData->positions, sofa.ListenerPosition, pData->nPositions*sizeof(vectorND));
         }
@@ -242,6 +288,11 @@ void tvconv_setFiltersAndPositions
     saf_sofa_close(&sofa);
     tvconv_setMinMaxDimensions(hTVCnv);
     pData->reInitFilters = 1;
+    
+    /* done! */
+    strcpy(pData->progressBarText,"Done!");
+    pData->progressBar0_1 = 1.0f;
+    pData->codecStatus = CODEC_STATUS_INITIALISED;
 }
 
 void tvconv_setEnablePart(void* const hTVCnv, int newState)
@@ -259,6 +310,7 @@ void tvconv_setSofaFilePath(void* const hTVCnv, const char* path)
     
     pData->sofa_filepath = malloc1d(strlen(path) + 1);
     strcpy(pData->sofa_filepath, path);
+    pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     tvconv_setFiltersAndPositions(hTVCnv);
     pData->reInitFilters = 1;  // re-init and re-calc
 }
@@ -308,6 +360,38 @@ int tvconv_getNIRs(void* const hTVCnv)
     return pData->nIrChannels;
 }
 
+int tvconv_getNPositions(void* const hTVCnv)
+{
+    tvconv_data *pData = (tvconv_data*)(hTVCnv);
+    return pData->nPositions;
+}
+int tvconv_getPositionIdx(void* const hTVCnv)
+{
+    tvconv_data *pData = (tvconv_data*)(hTVCnv);
+    return pData->position_idx;
+}
+
+float tvconv_getPosition(void* const hTVCnv, int dim)
+{
+    tvconv_data *pData = (tvconv_data*)(hTVCnv);
+    assert(dim >= 0 && dim < NUM_DIMENSIONS);
+    return (float) pData->position[dim];
+}
+
+float tvconv_getMinDimension(void* const hTVCnv, int dim)
+{
+    tvconv_data *pData = (tvconv_data*)(hTVCnv);
+    assert(dim >= 0 && dim < NUM_DIMENSIONS);
+    return (float) pData->minDimensions[dim];
+}
+
+float tvconv_getMaxDimension(void* const hTVCnv, int dim)
+{
+    tvconv_data *pData = (tvconv_data*)(hTVCnv);
+    assert(dim >= 0 && dim < NUM_DIMENSIONS);
+    return (float) pData->maxDimensions[dim];
+}
+
 int tvconv_getIRLength(void* const hTVCnv)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
@@ -330,6 +414,12 @@ int tvconv_getProcessingDelay(void* const hTVCnv)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
     return pData->hostBlockSize_clamped;
+}
+
+CODEC_STATUS tvconv_getCodecStatus(void* const hTVCnv)
+{
+    tvconv_data *pData = (tvconv_data*)(hTVCnv);
+    return pData->codecStatus;
 }
 
 void tvconv_test(void* const hTVCnv)

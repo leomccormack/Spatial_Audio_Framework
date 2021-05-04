@@ -144,10 +144,35 @@ int tvconv_getNumOutputChannels(void* const hTVCnv);
 int tvconv_getHostBlockSize(void* const hTVCnv);
 
 /**
- * Returns the number of filters in the loaded wav file (number of outputs
- * multiplied by the number of inputs)
+ * Returns the number of IR channels in the loaded sofa file
  */
 int tvconv_getNIRs(void* const hTVCnv);
+
+/**
+ * Returns the number of listener positions in the loaded sofa file
+ */
+int tvconv_getNPositions(void* const hTVCnv);
+
+/**
+ * Returns the index of the current IR position
+ */
+int tvconv_getPositionIdx(void* const hTVCnv);
+
+/**
+ * Returns the current coordinate of dimension dim  (0 ... NUM_DIMENSIONS-1)
+ */
+float tvconv_getPosition(void* const hTVCnv, int dim);
+
+
+/**
+ * Returns minimum cooridinate of dimension dim (0 ... NUM_DIMENSIONS-1)
+ */
+float tvconv_getMinDimension(void* const hTVCnv, int dim);
+
+/**
+ * Returns minimum cooridinate of dimension dim  (0 ... NUM_DIMENSIONS-1)
+ */
+float tvconv_getMaxDimension(void* const hTVCnv, int dim);
 
 /**
  * Returns the current filter length, in samples
@@ -169,6 +194,11 @@ int tvconv_getHostFs(void* const hTVCnv);
  * features)
  */
 int tvconv_getProcessingDelay(void* const hTVCnv);
+
+/**
+ * Returns current codec status (see #CODEC_STATUS enum)
+ */
+CODEC_STATUS tvconv_getCodecStatus(void* const hTVCnv);
 
 void tvconv_test(void* const hTVCnv);
 

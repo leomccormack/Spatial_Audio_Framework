@@ -96,12 +96,17 @@ typedef struct _tvconv
     vectorND* positions; /** < npositions x 3 */
     vectorND* positions_Last;
     int nPositions;
-    float minDimensions[NUM_DIMENSIONS];
-    float maxDimensions[NUM_DIMENSIONS];
+    vectorND minDimensions;
+    vectorND maxDimensions;
     int position_idx;
     int position_idx_Last;
     int position_idx_Last2;
     
+    /* flags/status */
+    CODEC_STATUS codecStatus;
+    float progressBar0_1;
+    char* progressBarText;
+    PROC_STATUS procStatus;
     
     /* user parameters */
     int nInputChannels;        /**< number of input channels */
@@ -115,6 +120,11 @@ typedef struct _tvconv
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
+/**
+ * Sets codec status (see #CODEC_STATUS enum)
+ */
+void tvconv_setCodecStatus(void* const hTVCnv,
+                                 CODEC_STATUS newStatus);
 /**
  * FInds the index holding the nearest neigbour to the selected position
  */
