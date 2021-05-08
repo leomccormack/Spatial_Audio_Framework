@@ -162,16 +162,17 @@ void tracker3d_step
     void* const hT3d,
     float* newObs_xyz,
     int nObs,
-    float** target_xyz,
+    float** target_pos_xyz,
+    float** target_var_xyz,
     int** target_IDs,
     int* nTargets
 )
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
-    int i, kt, ob, maxIdx, nt;
-    float Neff;
+    int i, kt, ob, maxIdx, nt, nt2;
+    float Neff, w_sum;
     int s[TRACKER3D_MAX_NUM_PARTICLES];
-    MCS_data* S_max;
+    MCS_data* S_max, *S_tmp;
 #ifdef TRACKER_VERBOSE
     char c_str[256], tmp[256];
     memset(c_str, 0, 256*sizeof(char));
@@ -218,15 +219,17 @@ void tracker3d_step
         }
     } 
 
-    /* Find most significant particle.. */
+    /* Find most dominant particle.. */
     maxIdx = tracker3d_getMaxParticleIdx(hT3d);
     S_max = (MCS_data*)pData->SS[maxIdx];
  
     /* Output */
     if(S_max->nTargets==0){
-        free((*target_xyz));
+        free((*target_pos_xyz));
+        free((*target_var_xyz));
         free((*target_IDs));
-        (*target_xyz) = NULL;
+        (*target_pos_xyz) = NULL;
+        (*target_var_xyz) = NULL;
         (*target_IDs) = NULL;
         (*nTargets) = 0;
 #ifdef TRACKER_VERBOSE
@@ -234,17 +237,58 @@ void tracker3d_step
 #endif
     }
     else{
-        (*target_xyz) = realloc1d((*target_xyz), S_max->nTargets*3*sizeof(float));
+        (*target_pos_xyz) = realloc1d((*target_pos_xyz), S_max->nTargets*3*sizeof(float));
+        (*target_var_xyz) = realloc1d((*target_var_xyz), S_max->nTargets*3*sizeof(float));
         (*target_IDs) = realloc1d((*target_IDs), S_max->nTargets*sizeof(int));
         (*nTargets) = S_max->nTargets;
 
+        /* Loop over targets */
         for(nt=0; nt<S_max->nTargets; nt++){
 #ifdef TRACKER_VERBOSE
             sprintf(tmp, "ID_%d: [%.5f,%.5f,%.5f] ", S_max->targetIDs[nt], S_max->M[nt].m0, S_max->M[nt].m1, S_max->M[nt].m2);
             strcat(c_str, tmp);
 #endif
+            /* Target IDs are based on those defined by the most dominant particle */
             (*target_IDs)[nt] = S_max->targetIDs[nt];
-            memcpy(&(*target_xyz)[nt*3], S_max->M[nt].M, 3*sizeof(float));
+            memcpy(&(*target_pos_xyz)[nt*3], S_max->M[nt].M, 3*sizeof(float));
+            (*target_var_xyz)[nt*3]   = S_max->P[nt].p00;
+            (*target_var_xyz)[nt*3+1] = S_max->P[nt].p11;
+            (*target_var_xyz)[nt*3+2] = S_max->P[nt].p22;
+
+            /* Apply the corresponding importance weight */
+            w_sum = S_max->W;
+            (*target_pos_xyz)[nt*3]   *= S_max->W;
+            (*target_pos_xyz)[nt*3+1] *= S_max->W;
+            (*target_pos_xyz)[nt*3+2] *= S_max->W;
+            (*target_var_xyz)[nt*3]   *= S_max->W;
+            (*target_var_xyz)[nt*3+1] *= S_max->W;
+            (*target_var_xyz)[nt*3+2] *= S_max->W;
+
+            /* Loop over all of the other particles - importance sampling */
+            for(int p = 0; p<pData->tpars.Np; p++){
+                if(p!=maxIdx){
+                    S_tmp = (MCS_data*)pData->SS[p];
+                    for(nt2=0; nt2<S_max->nTargets; nt2++){
+                        if((*target_IDs)[nt] == S_tmp->targetIDs[nt2]){
+                            w_sum += S_tmp->W;
+                            (*target_pos_xyz)[nt*3]   += (S_tmp->M[nt2].m0 * S_tmp->W);
+                            (*target_pos_xyz)[nt*3+1] += (S_tmp->M[nt2].m1 * S_tmp->W);
+                            (*target_pos_xyz)[nt*3+2] += (S_tmp->M[nt2].m2 * S_tmp->W);
+                            (*target_var_xyz)[nt*3]   += (S_tmp->P[nt2].p00 * S_tmp->W);
+                            (*target_var_xyz)[nt*3+1] += (S_tmp->P[nt2].p11 * S_tmp->W);
+                            (*target_var_xyz)[nt*3+2] += (S_tmp->P[nt2].p22 * S_tmp->W);
+                        }
+                    }
+                }
+            }
+
+            /* Renormalise based on the combined importance weights */
+            (*target_pos_xyz)[nt*3]   /= w_sum;
+            (*target_pos_xyz)[nt*3+1] /= w_sum;
+            (*target_pos_xyz)[nt*3+2] /= w_sum;
+            (*target_var_xyz)[nt*3]   /= w_sum;
+            (*target_var_xyz)[nt*3+1] /= w_sum;
+            (*target_var_xyz)[nt*3+2] /= w_sum;
         }
 #ifdef TRACKER_VERBOSE
         printf("%s\n", c_str);

@@ -142,17 +142,19 @@ void tracker3d_reset(void* const hT3d);
  *       If there are no new observations/measurements then still call this
  *       function, but set newObs_xyz=NULL and/or, nObs=0.
  *
- * @param[in]  hT3d       tracker3d handle
- * @param[in]  newObs_xyz New observations/measurements; nObs x 3
- * @param[in]  nObs       Number of new observations/measurements
- * @param[out] target_xyz (&) Current target locations; *nTargets x 3
- * @param[out] target_IDs (&) (Unique) target IDs; *nTargets x 1
- * @param[out] nTargets   (&) Current number of targets being tracked
+ * @param[in]  hT3d           tracker3d handle
+ * @param[in]  newObs_xyz     New observations/measurements; nObs x 3
+ * @param[in]  nObs           Number of new observations/measurements
+ * @param[out] target_pos_xyz (&) Current target positions; *nTargets x 3
+ * @param[out] target_var_xyz (&) Current target variances; *nTargets x 3
+ * @param[out] target_IDs     (&) (Unique) target IDs; *nTargets x 1
+ * @param[out] nTargets       (&) Current number of targets being tracked
  */
 void tracker3d_step(void* const hT3d,
                     float* newObs_xyz,
                     int nObs,
-                    float** target_xyz,
+                    float** target_pos_xyz,
+                    float** target_var_xyz,
                     int** target_IDs,
                     int* nTargets);
 
