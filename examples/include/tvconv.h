@@ -111,6 +111,8 @@ void tvconv_setNumInputChannels(void* const hTVCnv, int newValue);
 
 void tvconv_setSofaFilePath(void* const hTVCnv, const char* path);
 
+void tvconv_setPosition(void* const hTVCnv, int dim, float position);
+
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
