@@ -250,7 +250,9 @@ void tracker3d_step
 #endif
             /* Target IDs are based on those defined by the most dominant particle */
             (*target_IDs)[nt] = S_max->targetIDs[nt];
-            memcpy(&(*target_pos_xyz)[nt*3], S_max->M[nt].M, 3*sizeof(float));
+            (*target_pos_xyz)[nt*3]   = S_max->M[nt].m0;
+            (*target_pos_xyz)[nt*3+1] = S_max->M[nt].m1;
+            (*target_pos_xyz)[nt*3+2] = S_max->M[nt].m2;
             (*target_var_xyz)[nt*3]   = S_max->P[nt].p00;
             (*target_var_xyz)[nt*3+1] = S_max->P[nt].p11;
             (*target_var_xyz)[nt*3+2] = S_max->P[nt].p22;
@@ -268,7 +270,7 @@ void tracker3d_step
             for(int p = 0; p<pData->tpars.Np; p++){
                 if(p!=maxIdx){
                     S_tmp = (MCS_data*)pData->SS[p];
-                    for(nt2=0; nt2<S_max->nTargets; nt2++){
+                    for(nt2=0; nt2<S_tmp->nTargets; nt2++){
                         if((*target_IDs)[nt] == S_tmp->targetIDs[nt2]){
                             w_sum += S_tmp->W;
                             (*target_pos_xyz)[nt*3]   += (S_tmp->M[nt2].m0 * S_tmp->W);
@@ -293,7 +295,7 @@ void tracker3d_step
 #ifdef TRACKER_VERBOSE
         printf("%s\n", c_str);
 #endif
-    }
+    } 
 }
 
 #endif /* SAF_ENABLE_TRACKER_MODULE */

@@ -411,7 +411,7 @@ void tracker3d_update
         pData->evl[cidx] = tpars->cd;
         tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
         cidx++;
-
+ 
         /* Loop over associations to targets */
         for (j=0; j<S->nTargets; j++){
             /* Compute update result and likelihood for association to signal j */
