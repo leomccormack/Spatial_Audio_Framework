@@ -2393,6 +2393,55 @@ float utility_sdet
 #endif
 
     if(INFO!=0) {
+        det=0.0f;
+    #ifndef NDEBUG
+        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+    #endif
+    }
+    else {
+        det = 1.0f;
+        for( i = 0; i < N; i++ ) {
+            det*=tmp[i*N+i];
+            if(IPIV[i] != i+1)
+                det *= -1.0f;
+        }
+    }
+    free(IPIV);
+    free(WORK);
+    free(tmp);
+    return det;
+}
+
+double utility_ddet
+(
+    double* A,
+    int N
+)
+{
+    veclib_int i,j;
+    veclib_int *IPIV;
+    IPIV = malloc1d(N * sizeof(veclib_int));
+    int LWORK = N*N;
+    double *WORK, *tmp;
+    WORK = (double*)malloc1d(LWORK * sizeof(double));
+    tmp = malloc1d(N*N*sizeof(double));
+    veclib_int INFO;
+    double det;
+
+    /* Store in column major order */
+    for(i=0; i<N; i++)
+        for(j=0; j<N; j++)
+            tmp[j*N+i] = A[i*N+j];
+
+#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    dgetrf_((veclib_int*)&N, (veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, &INFO);
+#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+    INFO = clapack_dgetrf(CblasColMajor, N, N, tmp, N, IPIV);
+#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+    INFO = LAPACKE_dgetrf(CblasColMajor, N, N, tmp, N, IPIV);
+#endif
+
+    if(INFO!=0) {
         det=0.0;
     #ifndef NDEBUG
         saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
@@ -2403,7 +2452,7 @@ float utility_sdet
         for( i = 0; i < N; i++ ) {
             det*=tmp[i*N+i];
             if(IPIV[i] != i+1)
-                det *= -1.0f;
+                det *= -1.0;
         }
     }
     free(IPIV);

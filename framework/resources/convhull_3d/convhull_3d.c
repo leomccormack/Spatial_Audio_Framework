@@ -48,7 +48,9 @@
 #include <string.h>
 #include "convhull_3d.h"
 #include "../modules/saf_utilities/saf_utilities.h"
-#include "saf_externals.h" 
+#include "saf_externals.h"
+
+#define CONVHULL_ND_MAX_DIMENSIONS ( 5 )
 
 /* Force using CBLAS: */
 #ifndef CONVHULL_3D_USE_CBLAS
@@ -275,6 +277,65 @@ static void plane_3d
         (*d) += -p[i] * c[i];
 }
 
+/* Calculates the coefficients of the equation of a PLANE in ND.
+ * Original Copyright (c) 2014, George Papazafeiropoulos
+ * Distributed under the BSD (2-clause) license
+ */
+static void plane_nd
+(
+    const int Nd,
+    CH_FLOAT* p,
+    CH_FLOAT* c,
+    CH_FLOAT* d
+)
+{
+    int i, j, k, l;
+    int r[CONVHULL_ND_MAX_DIMENSIONS];
+    CH_FLOAT sign, det, norm_c;
+    CH_FLOAT pdiff[CONVHULL_ND_MAX_DIMENSIONS-1][CONVHULL_ND_MAX_DIMENSIONS], pdiff_s[CONVHULL_ND_MAX_DIMENSIONS-1][CONVHULL_ND_MAX_DIMENSIONS-1];
+
+    for(i=0; i<Nd-1; i++)
+        for(j=0; j<Nd; j++)
+            pdiff[i][j] = p[(i+1)*Nd+j] - p[i*Nd+j];
+    memset(c, 0, Nd*sizeof(CH_FLOAT));
+    sign = 1.0;
+    for(i=0; i<Nd; i++)
+        r[i] = i;
+    for(i=0; i<Nd; i++){
+        for(j=0; j<Nd-1; j++){
+            for(k=0, l=0; k<Nd; k++){
+                if(r[k]!=i){
+                    pdiff_s[j][l] = pdiff[j][k];
+                    l++;
+                }
+            }
+        }
+        /* Determinant 1 dimension lower */
+        if(Nd==3)
+            det = pdiff_s[0][0]*pdiff_s[1][1] - pdiff_s[1][0]*pdiff_s[0][1];
+        else if(Nd==5)
+            det = det_4x4((CH_FLOAT*)pdiff_s);
+        else{
+#ifdef CONVHULL_3D_USE_FLOAT_PRECISION
+            det = utility_sdet((CH_FLOAT*)pdiff_s, Nd-1);
+#else
+            det = utility_ddet((CH_FLOAT*)pdiff_s, Nd-1);
+#endif
+        }
+        c[i] = sign * det;
+        sign *= -1.0;
+    }
+    norm_c = (CH_FLOAT)0.0;
+    for(i=0; i<Nd; i++)
+        norm_c += (pow(c[i], 2.0));
+    norm_c = sqrt(norm_c);
+    for(i=0; i<Nd; i++)
+        c[i] /= norm_c;
+    (*d) = (CH_FLOAT)0.0;
+    for(i=0; i<Nd; i++)
+        (*d) += -p[i] * c[i];
+}
+
 static void ismember
 (
     int* pLeft,          /* left vector; nLeftElements x 1 */
@@ -305,6 +366,8 @@ void convhull_3d_build
     ch_vertex* const in_vertices,
     const int nVert,
     int** out_faces,
+    CH_FLOAT** out_cf,
+    CH_FLOAT** out_df,
     int* nOut_faces
 )
 {
@@ -323,21 +386,42 @@ void convhull_3d_build
     /* 3 dimensions. The code should theoretically work for >=2 dimensions, but "plane_3d" and "det_4x4" are hardcoded for 3,
      * so would need to be rewritten */
     d = 3;
-    span = (CH_FLOAT*)malloc(d*sizeof(CH_FLOAT));
-    for(j=0; j<d; j++){
-        max_p = 2.23e-13; min_p = 2.23e+13;
-        for(i=0; i<nVert; i++){
-            max_p = MAX(max_p, in_vertices[i].v[j]);
-            min_p = MIN(min_p, in_vertices[i].v[j]);
-        }
-        span[j] = max_p - min_p;
-    }
+
+    /* Add noise to the points */
     points = (CH_FLOAT*)malloc(nVert*(d+1)*sizeof(CH_FLOAT));
     for(i=0; i<nVert; i++){
         for(j=0; j<d; j++)
             points[i*(d+1)+j] = in_vertices[i].v[j] + CH_NOISE_VAL*rand()/(float)RAND_MAX; /* noise mitigates duplicates */
         points[i*(d+1)+d] = 1.0f; /* add a last column of ones. Used only for determinant calculation */
     }
+
+    /* Find the span */
+    span = (CH_FLOAT*)malloc(d*sizeof(CH_FLOAT));
+    for(j=0; j<d; j++){
+        max_p = 2.23e-13; min_p = 2.23e+13;
+        for(i=0; i<nVert; i++){
+            max_p = MAX(max_p, points[i*(d+1)+j]);
+            min_p = MIN(min_p, points[i*(d+1)+j]);
+        }
+        span[j] = max_p - min_p;
+        assert(span[j]>0.0000001f);
+    }
+
+//    span = (CH_FLOAT*)malloc(d*sizeof(CH_FLOAT));
+//    for(j=0; j<d; j++){
+//        max_p = 2.23e-13; min_p = 2.23e+13;
+//        for(i=0; i<nVert; i++){
+//            max_p = MAX(max_p, in_vertices[i].v[j]);
+//            min_p = MIN(min_p, in_vertices[i].v[j]);
+//        }
+//        span[j] = max_p - min_p;
+//    }
+//    points = (CH_FLOAT*)malloc(nVert*(d+1)*sizeof(CH_FLOAT));
+//    for(i=0; i<nVert; i++){
+//        for(j=0; j<d; j++)
+//            points[i*(d+1)+j] = in_vertices[i].v[j] + CH_NOISE_VAL*rand()/(float)RAND_MAX; /* noise mitigates duplicates */
+//        points[i*(d+1)+d] = 1.0f; /* add a last column of ones. Used only for determinant calculation */
+//    }
     
     /* The initial convex hull is a simplex with (d+1) facets, where d is the number of dimensions */
     nFaces = (d+1);
@@ -718,14 +802,518 @@ void convhull_3d_build
     /* output */
     if(FUCKED){
         (*out_faces) = NULL;
+        if(out_cf!=NULL)
+            (*out_cf) = NULL;
+        if(out_df!=NULL)
+            (*out_df) = NULL;
         (*nOut_faces) = 0;
     }
     else{
         (*out_faces) = (int*)malloc(nFaces*d*sizeof(int));
         memcpy((*out_faces),faces, nFaces*d*sizeof(int));
         (*nOut_faces) = nFaces;
+        if(out_cf!=NULL){
+            (*out_cf) = (CH_FLOAT*)malloc(nFaces*d*sizeof(CH_FLOAT));
+            memcpy((*out_cf),cf, nFaces*d*sizeof(CH_FLOAT));
+        }
+        if(out_df!=NULL){
+            (*out_df) = (CH_FLOAT*)malloc(nFaces*sizeof(CH_FLOAT));
+            memcpy((*out_df),df, nFaces*sizeof(CH_FLOAT));
+        }
     }
     
+    /* clean-up */
+    free(visible_ind);
+    free(points_cf);
+    free(points_s);
+    free(face_s);
+    free(gVec);
+    free(meanp);
+    free(absdist);
+    free(reldist);
+    free(desReldist);
+    free(ind);
+    free(span);
+    free(points);
+    free(faces);
+    free(aVec);
+    free(cf);
+    free(cfi);
+    free(df);
+    free(p_s);
+    free(face_tmp);
+    free(fVec);
+    free(asfVec);
+    free(bVec);
+    free(A);
+}
+
+/* A C version of the ND quickhull matlab implementation from here:
+ * https://www.mathworks.com/matlabcentral/fileexchange/48509-computational-geometry-toolbox?focused=3851550&tab=example
+ * (*out_faces) is returned as NULL, if triangulation fails *
+ * Original Copyright (c) 2014, George Papazafeiropoulos
+ * Distributed under the BSD (2-clause) license
+ * Reference: "The Quickhull Algorithm for Convex Hull, C. Bradford Barber, David P. Dobkin
+ *             and Hannu Huhdanpaa, Geometry Center Technical Report GCG53, July 30, 1993"
+ */
+void convhull_nd_build
+(
+    CH_FLOAT* const in_vertices,
+    const int nVert,
+    const int d,
+    int** out_faces,
+    CH_FLOAT** out_cf,
+    CH_FLOAT** out_df,
+    int* nOut_faces
+)
+{
+    int i, j, k, l, h;
+    int nFaces, p;
+    int* aVec, *faces;
+    CH_FLOAT dfi, v, max_p, min_p;
+    CH_FLOAT* points, *cf, *cfi, *df, *p_s, *span;
+
+    if(nVert<d || in_vertices==NULL){
+        (*out_faces) = NULL;
+        (*nOut_faces) = 0;
+        return;
+    }
+
+    /* Add noise to the points */
+    points = (CH_FLOAT*)malloc(nVert*(d+1)*sizeof(CH_FLOAT));
+    for(i=0; i<nVert; i++){
+        for(j=0; j<d; j++)
+            points[i*(d+1)+j] = in_vertices[i*d+j] + CH_NOISE_VAL*rand()/(float)RAND_MAX;  
+        points[i*(d+1)+d] = 1.0f; /* add a last column of ones. Used only for determinant calculation */
+    }
+
+    /* Find the span */
+    span = (CH_FLOAT*)malloc(d*sizeof(CH_FLOAT));
+    for(j=0; j<d; j++){
+        max_p = 2.23e-13; min_p = 2.23e+13;
+        for(i=0; i<nVert; i++){
+            max_p = MAX(max_p, points[i*(d+1)+j]);
+            min_p = MIN(min_p, points[i*(d+1)+j]);
+        }
+        span[j] = max_p - min_p;
+        assert(span[j]>0.0000001f);
+    }
+
+    /* The initial convex hull is a simplex with (d+1) facets, where d is the number of dimensions */
+    nFaces = (d+1);
+    faces = (int*)calloc(nFaces*d, sizeof(int));
+    aVec = (int*)malloc(nFaces*sizeof(int));
+    for(i=0; i<nFaces; i++)
+        aVec[i] = i;
+
+    /* Each column of cf contains the coefficients of a plane */
+    cf = (CH_FLOAT*)malloc(nFaces*d*sizeof(CH_FLOAT));
+    cfi = (CH_FLOAT*)malloc(d*sizeof(CH_FLOAT));
+    df = (CH_FLOAT*)malloc(nFaces*sizeof(CH_FLOAT));
+    p_s = (CH_FLOAT*)malloc(d*d*sizeof(CH_FLOAT));
+    for(i=0; i<nFaces; i++){
+        /* Set the indices of the points defining the face  */
+        for(j=0, k=0; j<(d+1); j++){
+            if(aVec[j]!=i){
+                faces[i*d+k] = aVec[j];
+                k++;
+            }
+        }
+
+        /* Calculate and store the plane coefficients of the face */
+        for(j=0; j<d; j++)
+            for(k=0; k<d; k++)
+                p_s[j*d+k] = points[(faces[i*d+j])*(d+1) + k];
+
+        /* Calculate and store the plane coefficients of the face */
+        plane_nd(d, p_s, cfi, &dfi);
+        for(j=0; j<d; j++)
+            cf[i*d+j] = cfi[j];
+        df[i] = dfi;
+    }
+    CH_FLOAT *A;
+    int *bVec, *fVec, *asfVec, *face_tmp;
+
+    /* Check to make sure that faces are correctly oriented */
+    bVec = (int*)malloc((d+1)*sizeof(int));
+    for(i=0; i<d+1; i++)
+        bVec[i] = i;
+
+    /* A contains the coordinates of the points forming a simplex */
+    A = (CH_FLOAT*)calloc((d+1)*(d+1), sizeof(CH_FLOAT));
+    face_tmp = (int*)malloc((d+1)*sizeof(int));
+    fVec = (int*)malloc((d+1)*sizeof(int));
+    asfVec = (int*)malloc((d+1)*sizeof(int));
+    for(k=0; k<(d+1); k++){
+        /* Get the point that is not on the current face (point p) */
+        for(i=0; i<d; i++)
+            fVec[i] = faces[k*d+i];
+        sort_int(fVec, NULL, NULL, d, 0); /* sort accending */
+        p=k;
+        for(i=0; i<d; i++)
+            for(j=0; j<(d+1); j++)
+                A[i*(d+1)+j] = points[(faces[k*d+i])*(d+1) + j];
+        for(; i<(d+1); i++)
+            for(j=0; j<(d+1); j++)
+                A[i*(d+1)+j] = points[p*(d+1)+j];
+
+        /* det(A) determines the orientation of the face */
+        if(d==3)
+            v = det_4x4(A);
+        else{
+#ifdef CONVHULL_3D_USE_FLOAT_PRECISION
+            v = utility_sdet((CH_FLOAT*)A, d+1);
+#else
+            v = utility_ddet((CH_FLOAT*)A, d+1);
+#endif
+        }
+
+        /* Orient so that each point on the original simplex can't see the opposite face */
+        if(v<0){
+            /* Reverse the order of the last two vertices to change the volume */
+            for(j=0; j<d; j++)
+                face_tmp[j] = faces[k*d+j];
+            for(j=0, l=d-2; j<d-1; j++, l++)
+                faces[k*d+l] = face_tmp[d-j-1];
+
+            /* Modify the plane coefficients of the properly oriented faces */
+            for(j=0; j<d; j++)
+                cf[k*d+j] = -cf[k*d+j];
+            df[k] = -df[k];
+            for(i=0; i<d; i++)
+                for(j=0; j<(d+1); j++)
+                    A[i*(d+1)+j] = points[(faces[k*d+i])*(d+1) + j];
+            for(; i<(d+1); i++)
+                for(j=0; j<(d+1); j++)
+                    A[i*(d+1)+j] = points[p*(d+1)+j];
+        }
+    }
+
+    /* Coordinates of the center of the point set */
+    CH_FLOAT* meanp, *absdist, *reldist, *desReldist;
+    meanp = (CH_FLOAT*)calloc(d, sizeof(CH_FLOAT));
+    for(i=d+1; i<nVert; i++)
+        for(j=0; j<d; j++)
+            meanp[j] += points[i*(d+1)+j];
+    for(j=0; j<d; j++)
+        meanp[j] = meanp[j]/(CH_FLOAT)(nVert-d-1);
+
+    /* Absolute distance of points from the center */
+    absdist = (CH_FLOAT*)malloc((nVert-d-1)*d * sizeof(CH_FLOAT));
+    for(i=d+1, k=0; i<nVert; i++, k++)
+        for(j=0; j<d; j++)
+            absdist[k*d+j] = (points[i*(d+1)+j] -  meanp[j])/span[j];
+
+    /* Relative distance of points from the center */
+    reldist = (CH_FLOAT*)calloc((nVert-d-1), sizeof(CH_FLOAT));
+    desReldist = (CH_FLOAT*)malloc((nVert-d-1) * sizeof(CH_FLOAT));
+    for(i=0; i<(nVert-d-1); i++)
+        for(j=0; j<d; j++)
+            reldist[i] += pow(absdist[i*d+j], 2.0);
+
+    /* Sort from maximum to minimum relative distance */
+    int num_pleft, cnt;
+    int* ind, *pleft;
+    ind = (int*)malloc((nVert-d-1) * sizeof(int));
+    pleft = (int*)malloc((nVert-d-1) * sizeof(int));
+    sort_float(reldist, desReldist, ind, (nVert-d-1), 1);
+
+    /* Initialize the vector of points left. The points with the larger relative
+     distance from the center are scanned first. */
+    num_pleft = (nVert-d-1);
+    for(i=0; i<num_pleft; i++)
+        pleft[i] = ind[i]+d+1;
+
+    /* Loop over all remaining points that are not deleted. Deletion of points
+     occurs every #iter2del# iterations of this while loop */
+    memset(A, 0, (d+1)*(d+1) * sizeof(CH_FLOAT));
+
+    /* cnt is equal to the points having been selected without deletion of
+     nonvisible points (i.e. points inside the current convex hull) */
+    cnt=0;
+
+    /* The main loop for the quickhull algorithm */
+    CH_FLOAT detA;
+    CH_FLOAT* points_cf, *points_s;
+    int* visible_ind, *visible, *nonvisible_faces, *f0, *face_s, *u, *gVec, *horizon, *hVec, *pp, *hVec_mem_face;
+    int num_visible_ind, num_nonvisible_faces, n_newfaces, count, vis;
+    int f0_sum, u_len, start, num_p, index, horizon_size1;
+    int FUCKED;
+    FUCKED = 0;
+    u = horizon = NULL;
+    nFaces = d+1;
+    visible_ind = (int*)malloc(nFaces*sizeof(int));
+    points_cf = (CH_FLOAT*)malloc(nFaces*sizeof(CH_FLOAT));
+    points_s = (CH_FLOAT*)malloc(d*sizeof(CH_FLOAT));
+    face_s = (int*)malloc(d*sizeof(int));
+    gVec = (int*)malloc(d*sizeof(int));
+    while( (num_pleft>0) ){
+        /* i is the first point of the points left */
+        i = pleft[0];
+
+        /* Delete the point selected */
+        for(j=0; j<num_pleft-1; j++)
+            pleft[j] = pleft[j+1];
+        num_pleft--;
+        if(num_pleft == 0)
+            free(pleft);
+        else
+            pleft = (int*)realloc(pleft, num_pleft*sizeof(int));
+
+        /* Update point selection counter */
+        cnt++;
+
+        /* find visible faces */
+        for(j=0; j<d; j++)
+            points_s[j] = points[i*(d+1)+j];
+        points_cf = (CH_FLOAT*)realloc(points_cf, nFaces*sizeof(CH_FLOAT));
+        visible_ind = (int*)realloc(visible_ind, nFaces*sizeof(int));
+#ifdef CONVHULL_3D_USE_CBLAS
+  #ifdef CONVHULL_3D_USE_FLOAT_PRECISION
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, nFaces, d, 1.0f,
+                    points_s, d,
+                    cf, d, 0.0f,
+                    points_cf, nFaces);
+  #else
+        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, nFaces, d, 1.0,
+                    points_s, d,
+                    cf, d, 0.0,
+                    points_cf, nFaces);
+  #endif
+#else
+        for (j = 0; j < nFaces; j++) {
+            points_cf[j] = 0;
+            for (k = 0; k < d; k++)
+                points_cf[j] += points_s[k]*cf[j*d+k];
+        }
+#endif
+        num_visible_ind = 0;
+        for(j=0; j<nFaces; j++){
+            if(points_cf[j] + df[j] > 0.0){
+                num_visible_ind++; /* will sum to 0 if none are visible */
+                visible_ind[j] = 1;
+            }
+            else
+                visible_ind[j] = 0;
+        }
+        num_nonvisible_faces = nFaces - num_visible_ind;
+
+        /* proceed if there are any visible faces */
+        if(num_visible_ind!=0){
+            /* Find visible face indices */
+            visible = (int*)malloc(num_visible_ind*sizeof(int));
+            for(j=0, k=0; j<nFaces; j++){
+                if(visible_ind[j]==1){
+                    visible[k]=j;
+                    k++;
+                }
+            }
+
+            /* Find nonvisible faces */
+            nonvisible_faces = (int*)malloc(num_nonvisible_faces*d*sizeof(int));
+            f0 = (int*)malloc(num_nonvisible_faces*d*sizeof(int));
+            for(j=0, k=0; j<nFaces; j++){
+                if(visible_ind[j]==0){
+                    for(l=0; l<d; l++)
+                        nonvisible_faces[k*d+l]= faces[j*d+l];
+                    k++;
+                }
+            }
+
+            /* Create horizon (count is the number of the edges of the horizon) */
+            count=0;
+            for(j=0; j<num_visible_ind; j++){
+                /* visible face */
+                vis = visible[j];
+                for(k=0; k<d; k++)
+                    face_s[k] = faces[vis*d+k];
+                sort_int(face_s, NULL, NULL, d, 0);
+                ismember(nonvisible_faces, face_s, f0, num_nonvisible_faces*d, d);
+                u_len = 0;
+
+                /* u are the nonvisible faces connected to the face v, if any */
+                for(k=0; k<num_nonvisible_faces; k++){
+                    f0_sum = 0;
+                    for(l=0; l<d; l++)
+                        f0_sum += f0[k*d + l];
+                    if(f0_sum == d-1){
+                        u_len++;
+                        if(u_len==1)
+                            u = (int*)malloc(u_len*sizeof(int));
+                        else
+                            u = (int*)realloc(u, u_len*sizeof(int));
+                        u[u_len-1] = k;
+                    }
+                }
+                for(k=0; k<u_len; k++){
+                    /* The boundary between the visible face v and the k(th) nonvisible face connected to the face v forms part of the horizon */
+                    count++;
+                    if(count==1)
+                        horizon = (int*)malloc(count*(d-1)*sizeof(int));
+                    else
+                        horizon = (int*)realloc(horizon, count*(d-1)*sizeof(int));
+                    for(l=0; l<d; l++)
+                        gVec[l] = nonvisible_faces[u[k]*d+l];
+                    for(l=0, h=0; l<d; l++){
+                        if(f0[u[k]*d+l]){
+                            horizon[(count-1)*(d-1)+h] = gVec[l];
+                            h++;
+                        }
+                    }
+                }
+                if(u_len!=0)
+                    free(u);
+            }
+            horizon_size1 = count;
+            for(j=0, l=0; j<nFaces; j++){
+                if(!visible_ind[j]){
+                    /* Delete visible faces */
+                    for(k=0; k<d; k++)
+                        faces[l*d+k] = faces[j*d+k];
+
+                    /* Delete the corresponding plane coefficients of the faces */
+                    for(k=0; k<d; k++)
+                        cf[l*d+k] = cf[j*d+k];
+                    df[l] = df[j];
+                    l++;
+                }
+            }
+
+            /* Update the number of faces */
+            nFaces = nFaces-num_visible_ind;
+            faces = (int*)realloc(faces, nFaces*d*sizeof(int));
+            cf = (CH_FLOAT*)realloc(cf, nFaces*d*sizeof(CH_FLOAT));
+            df = (CH_FLOAT*)realloc(df, nFaces*sizeof(CH_FLOAT));
+
+            /* start is the first row of the new faces */
+            start=nFaces;
+
+            /* Add faces connecting horizon to the new point */
+            n_newfaces = horizon_size1;
+            for(j=0; j<n_newfaces; j++){
+                nFaces++;
+                faces = (int*)realloc(faces, nFaces*d*sizeof(int));
+                cf = (CH_FLOAT*)realloc(cf, nFaces*d*sizeof(CH_FLOAT));
+                df = (CH_FLOAT*)realloc(df, nFaces*sizeof(CH_FLOAT));
+                for(k=0; k<d-1; k++)
+                    faces[(nFaces-1)*d+k] = horizon[j*(d-1)+k];
+                faces[(nFaces-1)*d+(d-1)] = i;
+
+                /* Calculate and store appropriately the plane coefficients of the faces */
+                for(k=0; k<d; k++)
+                    for(l=0; l<d; l++)
+                        p_s[k*d+l] = points[(faces[(nFaces-1)*d+k])*(d+1) + l];
+                plane_nd(d, p_s, cfi, &dfi);
+                for(k=0; k<d; k++)
+                    cf[(nFaces-1)*d+k] = cfi[k];
+                df[(nFaces-1)] = dfi;
+                if(nFaces > CH_MAX_NUM_FACES){
+                    FUCKED = 1;
+                    nFaces = 0;
+                    break;
+                }
+            }
+
+            /* Orient each new face properly */
+            hVec = (int*)malloc( nFaces*sizeof(int));
+            hVec_mem_face = (int*)malloc( nFaces*sizeof(int));
+            for(j=0; j<nFaces; j++)
+                hVec[j] = j;
+            for(k=start; k<nFaces; k++){
+                for(j=0; j<d; j++)
+                    face_s[j] = faces[k*d+j];
+                sort_int(face_s, NULL, NULL, d, 0);
+                ismember(hVec, face_s, hVec_mem_face, nFaces, d);
+                num_p = 0;
+                for(j=0; j<nFaces; j++)
+                    if(!hVec_mem_face[j])
+                        num_p++;
+                pp = (int*)malloc(num_p*sizeof(int));
+                for(j=0, l=0; j<nFaces; j++){
+                    if(!hVec_mem_face[j]){
+                        pp[l] = hVec[j];
+                        l++;
+                    }
+                }
+                index = 0;
+                detA = 0.0;
+
+                /* While new point is coplanar, choose another point */
+                while(detA==0.0){
+                    for(j=0;j<d; j++)
+                        for(l=0; l<d+1; l++)
+                            A[j*(d+1)+l] = points[(faces[k*d+j])*(d+1) + l];
+                    for(; j<d+1; j++)
+                        for(l=0; l<d+1; l++)
+                            A[j*(d+1)+l] = points[pp[index]*(d+1)+l];
+                    index++;
+                    if(d==3)
+                        detA = det_4x4(A);
+                    else{
+#ifdef CONVHULL_3D_USE_FLOAT_PRECISION
+                        detA = utility_sdet((CH_FLOAT*)A, d+1);
+#else
+                        detA = utility_ddet((CH_FLOAT*)A, d+1);
+#endif
+                    }
+                }
+
+                /* Orient faces so that each point on the original simplex can't see the opposite face */
+                if (detA<0.0){
+                    /* If orientation is improper, reverse the order to change the volume sign */
+                    for(j=0; j<d; j++)
+                        face_tmp[j] = faces[k*d+j];
+                    for(j=0, l=d-2; j<d-1; j++, l++)
+                        faces[k*d+l] = face_tmp[d-j-1];
+
+                    /* Modify the plane coefficients of the properly oriented faces */
+                    for(j=0; j<d; j++)
+                        cf[k*d+j] = -cf[k*d+j];
+                    df[k] = -df[k];
+                    for(l=0; l<d; l++)
+                        for(j=0; j<d+1; j++)
+                            A[l*(d+1)+j] = points[(faces[k*d+l])*(d+1) + j];
+                    for(; l<d+1; l++)
+                        for(j=0; j<d+1; j++)
+                            A[l*(d+1)+j] = points[pp[index]*(d+1)+j];
+                }
+                free(pp);
+            }
+            free(horizon);
+            free(f0);
+            free(nonvisible_faces);
+            free(visible);
+            free(hVec);
+            free(hVec_mem_face);
+        }
+        if(FUCKED){
+            break;
+        }
+    }
+
+    /* output */
+    if(FUCKED){
+        (*out_faces) = NULL;
+        if(out_cf!=NULL)
+            (*out_cf) = NULL;
+        if(out_df!=NULL)
+            (*out_df) = NULL;
+        (*nOut_faces) = 0;
+    }
+    else{
+        (*out_faces) = (int*)malloc(nFaces*d*sizeof(int));
+        memcpy((*out_faces),faces, nFaces*d*sizeof(int));
+        (*nOut_faces) = nFaces;
+        if(out_cf!=NULL){
+            (*out_cf) = (CH_FLOAT*)malloc(nFaces*d*sizeof(CH_FLOAT));
+            memcpy((*out_cf), cf, nFaces*d*sizeof(CH_FLOAT));
+        }
+        if(out_df!=NULL){
+            (*out_df) = (CH_FLOAT*)malloc(nFaces*sizeof(CH_FLOAT));
+            memcpy((*out_df), df, nFaces*sizeof(CH_FLOAT));
+        }
+    }
+
     /* clean-up */
     free(visible_ind);
     free(points_cf);

@@ -31,6 +31,10 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/* ========================================================================== */
+/*                        Basic Geometrical Functions                         */
+/* ========================================================================== */
+
 /** Quaternion data structure */
 typedef struct _quaternion_data {
     union {
@@ -184,8 +188,13 @@ void crossProduct3(/* Input Arguments */
                    /* Output Arguments */
                    float c[3]);
 
+
+/* ========================================================================== */
+/*                     Computational Geometry Functions                       */
+/* ========================================================================== */
+
 /**
- * Builds the 3-D convex hull given a list of vertices
+ * Builds the 3D convex hull given a list of vertices
  *
  * @warning Currently, this does not check if there are duplicate vertices or
  *          whether any of them are co-linear!
@@ -203,7 +212,43 @@ void convhull3d(/* Input Arguments */
                 int* nFaces);
 
 /**
+ * Builds the ND convex hull given a list of vertices (Maximum is 5-dimesions)
+ *
+ * @param[in]  vertices The vertices; FLAT: nDirs x nd
+ * @param[in]  nDirs    Number of vertices
+ * @param[in]  nd       The number of dimensions (max=5)
+ * @param[out] faces    (&) The face indices; FLAT: nFaces x nd
+ * @param[out] nFaces   (&) Number of faces found
+ */
+void convhullnd(/* Input Arguments */
+                const float* vertices,
+                const int nDirs,
+                const int nd,
+                /* Output Arguments */
+                int** faces,
+                int* nFaces);
+
+/**
  * Delaunay triangulation of a spherical arrangement of points
+ *
+ * @note d
+ *
+ * @param[in]  vertices   The intputvertices; FLAT: nDirs x 3
+ * @param[in]  nDirs      Number of points/directions
+ * @param[out] faces      (&) The face indices; FLAT: nFaces x 3
+ * @param[out] nFaces     (&) Number of faces found
+ */
+void delaunay3d(/* Input Arguments */
+                const float* vertices,
+                const int nDirs,
+                /* Output Arguments */
+                int** faces,
+                int* nFaces);
+
+/**
+ * Delaunay triangulation of a spherical arrangement of points
+ *
+ * @note d
  *
  * @param[in]  dirs_deg Coordinates for spherically arranged points, in degrees;
  *                      FLAT: nDirs x 2

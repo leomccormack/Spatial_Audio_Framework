@@ -527,7 +527,7 @@ void findLsTriplets
         vertices[i].z = (*out_vertices)[i*3+2];
     }
     faces = NULL;
-    convhull_3d_build(vertices, L, &faces, &nFaces);
+    convhull_3d_build(vertices, L, &faces, NULL, NULL, &nFaces);
 #ifndef NDEBUG
     if(faces==NULL)
         saf_error_print(SAF_ERROR__FAILED_TO_BUILD_CONVEX_HULL);

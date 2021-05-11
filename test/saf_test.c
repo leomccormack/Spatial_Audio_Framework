@@ -1293,7 +1293,7 @@ void test__tracker3d(void){
     float** insigs, **inputSH, **inputSH_noise, **inputSH_hop, **Y, **Cx, **V, **Vn;
     float_complex** Vn_cmplx;
     int nTargets;
-    float *target_dirs_xyz;
+    float *target_dirs_xyz, *target_var_xyz;
 
     /* Test configuration */
     const float acceptedTolerance = 0.001f;
@@ -1396,6 +1396,7 @@ void test__tracker3d(void){
     Vn = (float**)malloc2d(nSH, (nSH-nSources), sizeof(float)); /* noise subspace */
     Vn_cmplx = (float_complex**)malloc2d(nSH, (nSH-nSources), sizeof(float_complex));
     target_dirs_xyz = NULL;
+    target_var_xyz = NULL;
     target_IDs = NULL;
 
     /* Loop over hops */
@@ -1432,7 +1433,7 @@ void test__tracker3d(void){
         rand_idx = (int)(rand01*(float)nSources);
 
         /* Feed tracker */
-        tracker3d_step(hT3d, (float*)&est_dirs_xyz[rand_idx], 1, &target_dirs_xyz, &target_IDs, &nTargets);
+        tracker3d_step(hT3d, (float*)&est_dirs_xyz[rand_idx], 1, &target_dirs_xyz, &target_var_xyz, &target_IDs, &nTargets);
 
         /* Give the tracker a couple of steps, and then assert that it is keeping track of these two targets */
         if(hop>10){
@@ -1461,6 +1462,7 @@ void test__tracker3d(void){
     tracker3d_destroy(&hT3d);
     sphMUSIC_destroy(&hMUSIC);
     free(target_dirs_xyz);
+    free(target_var_xyz);
     free(target_IDs);
     free(insigs);
     free(inputSH);

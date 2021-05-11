@@ -80,6 +80,11 @@ static void getRz
     Rz[2][2] = 1.0f;
 }
 
+
+/* ========================================================================== */
+/*                        Basic Geometrical Functions                         */
+/* ========================================================================== */
+
 void quaternion2rotationMatrix
 (
     quaternion_data* Q,
@@ -371,6 +376,11 @@ void crossProduct3
     c[2] = a[0]*b[1]-a[1]*b[0];
 }
 
+
+/* ========================================================================== */
+/*                     Computational Geometry Functions                       */
+/* ========================================================================== */
+
 void convhull3d
 (
     const float* vertices,
@@ -392,10 +402,64 @@ void convhull3d
 
     /* build convex hull */
     assert(*faces == NULL); /* nFaces not known yet, shouldn't be pre-allocated... */
-    convhull_3d_build(ch_vertices, nDirs, faces, nFaces);
+    convhull_3d_build(ch_vertices, nDirs, faces, NULL, NULL, nFaces);
 
     /* clean-up */
     free(ch_vertices);
+}
+
+void convhullnd
+(
+    const float* vertices,
+    const int nDirs,
+    const int nd,
+    int** faces,
+    int* nFaces
+)
+{
+    int i, j;
+    CH_FLOAT* ch_vertices;
+
+    /* convert vertices to use CH_FLOAT used by convhull_nd_build() */
+    ch_vertices = malloc1d(nDirs*nd*sizeof(CH_FLOAT));
+    for(i = 0; i < nDirs; i++) {
+        for(j=0; j<nd; j++)
+            ch_vertices[i*nd+j] = (CH_FLOAT)vertices[i*nd+j];
+    }
+
+    /* build convex hull */
+    assert(*faces == NULL); /* nFaces not known yet, shouldn't be pre-allocated... */
+    convhull_nd_build(ch_vertices, nDirs, 3, faces, NULL, NULL, nFaces);
+
+    /* clean-up */
+    free(ch_vertices);
+}
+
+void delaunay3d
+(
+    const float* vertices,
+    const int nDirs,
+    int** faces,
+    int* nFaces
+)
+{
+    int i;
+    CH_FLOAT* projpoints, *cf, *df;
+
+    /* Project the input points onto a 4d paraboloid */
+//    projpoints = malloc1d(nDirs*4*sizeof(CH_FLOAT));
+//    for(i = 0; i < nDirs; i++) {
+//        projpoints[i*3+2] =
+//        projpoints[i*3] =
+//        projpoints[i*3+1] =
+//
+//    }
+
+    /* The 3d delaunay triangulation requires the convex hull of a 4d paraboloid */
+    convhullnd(projpoints, nDirs, 4, faces, nFaces);
+
+    /* clean up */
+    free(projpoints);
 }
 
 void sphDelaunay
@@ -422,7 +486,7 @@ void sphDelaunay
 
     /* Delaunay triangulation of a spherical grid is equivalent to the computing
      * the 3d convex hull */
-    convhull3d(vertices_tmp, nDirs, faces, nFaces);
+    convhull3d(vertices_tmp, nDirs, faces, nFaces); 
 
     /* optionally, also output the vertices */
     if(vertices!=NULL)

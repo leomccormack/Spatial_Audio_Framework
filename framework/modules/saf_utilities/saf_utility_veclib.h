@@ -1194,6 +1194,19 @@ void utility_cchol(/* Input Arguments */
 float utility_sdet(float* A,
                    int N);
 
+/**
+ * Determinant of a Matrix, double precision, i,e.
+ * \code{.m}
+ *     d = det(A);
+ * \endcode
+ *
+ * @param[in]  A Input square matrix; FLAT: N x N
+ * @param[in]  N size of matrix
+ * @returns determinant
+ */
+double utility_ddet(double* A,
+                    int N);
+
     
 /* ========================================================================== */
 /*                           Matrix Inversion (?inv)                          */
