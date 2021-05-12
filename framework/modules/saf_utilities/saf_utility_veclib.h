@@ -87,6 +87,38 @@ void utility_ciminv(/* Input Arguments */
                     /* Output Arguments */
                     int* index);
 
+/**
+ * Double-precision, index of minimum absolute value in a vector, i.e.
+ * \code{.m}
+ *     [~,ind] = min(abs(a))
+ * \endcode
+ *
+ * @param[in]  a     Input vector a; len x 1
+ * @param[in]  len   Vector length
+ * @param[out] index (&) Index of minimum value; 1 x 1
+ */
+void utility_diminv(/* Input Arguments */
+                    const double* a,
+                    const int len,
+                    /* Output Arguments */
+                    int* index);
+
+/**
+ * Double-precision, complex, index of maximum absolute value in a vector, i.e.
+ * \code{.m}
+ *     [~,ind] = min(abs(a))
+ * \endcode
+ *
+ * @param[in]  a     Input vector a; len x 1
+ * @param[in]  len   Vector length
+ * @param[out] index (&) index of minimum value; 1 x 1
+ */
+void utility_ziminv(/* Input Arguments */
+                    const double_complex* a,
+                    const int len,
+                    /* Output Arguments */
+                    int* index);
+
 
 /* ========================================================================== */
 /*                     Find Index of Max-Abs-Value (?imaxv)                   */
@@ -120,6 +152,38 @@ void utility_simaxv(/* Input Arguments */
  */
 void utility_cimaxv(/* Input Arguments */
                     const float_complex* a,
+                    const int len,
+                    /* Output Arguments */
+                    int* index);
+
+/**
+ * Double-precision, index of maximum absolute value in a vector, i.e.
+ * \code{.m}
+ *     [~,ind] = max(abs(a))
+ * \endcode
+ *
+ * @param[in]  a     Input vector a; len x 1
+ * @param[in]  len   Vector length
+ * @param[out] index (&) index of maximum value; 1 x 1
+ */
+void utility_dimaxv(/* Input Arguments */
+                    const double* a,
+                    const int len,
+                    /* Output Arguments */
+                    int* index);
+
+/**
+ * Double-precision, complex, index of maximum absolute value in a vector, i.e.
+ * \code{.m}
+ *     [~,ind] = max(abs(a))
+ * \endcode
+ *
+ * @param[in]  a     Input vector a; len x 1
+ * @param[in]  len   Vector length
+ * @param[out] index (&) index of maximum value; 1 x 1
+ */
+void utility_zimaxv(/* Input Arguments */
+                    const double_complex* a,
                     const int len,
                     /* Output Arguments */
                     int* index);

@@ -141,6 +141,50 @@ void utility_ciminv
 #endif
 }
 
+void utility_diminv
+(
+    const double* a,
+    const int len,
+    int* index
+)
+{
+#if defined(INTEL_MKL_VERSION)
+    *index = (int)cblas_idamin(len, a, 1);
+#else
+    int i;
+    *index = 0;
+    double minVal=DBL_MAX;
+    for(i=0; i<len; i++){
+        if(fabs(a[i])<minVal){
+            minVal = fabs(a[i]);
+            *index = i;
+        }
+    }
+#endif
+}
+
+void utility_ziminv
+(
+    const double_complex* a,
+    const int len,
+    int* index
+)
+{
+#if defined(INTEL_MKL_VERSION)
+    *index = (int)cblas_izamin(len, a, 1);
+#else
+    int i;
+    *index = 0;
+    double minVal=DBL_MAX;
+    for(i=0; i<len; i++){
+        if(cabs(a[i])<minVal){
+            minVal = cabs(a[i]);
+            *index = i;
+        }
+    }
+#endif
+}
+
 
 /* ========================================================================== */
 /*                     Find Index of Max-Abs-Value (?imaxv)                   */
@@ -164,6 +208,26 @@ void utility_cimaxv
 )
 {
     *index = (int)cblas_icamax(len, a, 1);
+}
+
+void utility_dimaxv
+(
+    const double* a,
+    const int len,
+    int* index
+)
+{
+    *index = (int)cblas_idamax(len, a, 1);
+}
+
+void utility_zimaxv
+(
+    const double_complex* a,
+    const int len,
+    int* index
+)
+{
+    *index = (int)cblas_izamax(len, a, 1);
 }
 
 

@@ -384,32 +384,25 @@ void crossProduct3
 void convhull3d
 (
     const float* vertices,
-    const int nDirs,
+    const int nVert,
     int** faces,
     int* nFaces
 )
 {
     int i;
     ch_vertex* ch_vertices;
-//    CH_FLOAT* sdsds;
 
     /* convert vertices to use "ch_vertex" format used by convhull_3d_build() */
-    ch_vertices = malloc1d(nDirs*sizeof(ch_vertex));
-//    sdsds  = malloc1d(nDirs*3*sizeof(CH_FLOAT));
-    for(i = 0; i < nDirs; i++) {
+    ch_vertices = malloc1d(nVert*sizeof(ch_vertex));
+    for(i = 0; i < nVert; i++) {
         ch_vertices[i].z = (CH_FLOAT)vertices[i*3+2];
         ch_vertices[i].x = (CH_FLOAT)vertices[i*3];
         ch_vertices[i].y = (CH_FLOAT)vertices[i*3+1];
-//        sdsds[i*3+0] = (CH_FLOAT)vertices[i*3];
-//        sdsds[i*3+1] = (CH_FLOAT)vertices[i*3+1];
-//        sdsds[i*3+2] = (CH_FLOAT)vertices[i*3+2];
     }
 
     /* build convex hull */
     assert(*faces == NULL); /* nFaces not known yet, shouldn't be pre-allocated... */
-    convhull_3d_build(ch_vertices, nDirs, faces, NULL, NULL, nFaces);
-//    convhull_nd_build(sdsds, nDirs, 3, faces, NULL, NULL, nFaces);
-//    free(sdsds);
+    convhull_3d_build(ch_vertices, nVert, faces, NULL, NULL, nFaces);
 
     /* clean-up */
     free(ch_vertices);
@@ -417,60 +410,126 @@ void convhull3d
 
 void convhullnd
 (
-    const float* vertices,
-    const int nDirs,
+    const float* points,
+    const int nPoints,
     const int nd,
     int** faces,
     int* nFaces
 )
 {
     int i, j;
-    CH_FLOAT* ch_vertices;
+    CH_FLOAT* ch_points;
 
     /* convert vertices to use CH_FLOAT used by convhull_nd_build() */
-    ch_vertices = malloc1d(nDirs*nd*sizeof(CH_FLOAT));
-    for(i = 0; i < nDirs; i++) {
+    ch_points = malloc1d(nPoints*nd*sizeof(CH_FLOAT));
+    for(i = 0; i < nPoints; i++) {
         for(j=0; j<nd; j++)
-            ch_vertices[i*nd+j] = (CH_FLOAT)vertices[i*nd+j];
+        ch_points[i*nd+j] = (CH_FLOAT)points[i*nd+j];
     }
 
     /* build convex hull */
     assert(*faces == NULL); /* nFaces not known yet, shouldn't be pre-allocated... */
-    convhull_nd_build(ch_vertices, nDirs, 3, faces, NULL, NULL, nFaces);
+    convhull_nd_build(ch_points, nPoints, 3, faces, NULL, NULL, nFaces);
 
     /* clean-up */
-    free(ch_vertices);
+    free(ch_points);
 }
 
-void delaunay3d
+void delaunaynd
 (
-    const float* vertices,
-    const int nDirs,
-    int** faces,
-    int* nFaces
+    const float* points,
+    const int nPoints,
+    const int nd,
+    int** DT,
+    int* nDT
 )
 {
-    int i;
+    int i, j, k, nHullFaces, maxW_idx, nVisible;
     int* hullfaces;
-    CH_FLOAT* projpoints, *cf, *df;
+    CH_FLOAT w0, w_optimal, w_optimal2;
+    CH_FLOAT* projpoints, *cf, *df, *p0, *p, *visible;
 
-    /* Project the input points onto a 4d paraboloid */
-    projpoints = malloc1d(nDirs*4*sizeof(CH_FLOAT));
-    for(i = 0; i < nDirs; i++) {
-        projpoints[i*4] = (CH_FLOAT)vertices[i*3];
-        projpoints[i*4+1] = (CH_FLOAT)vertices[i*3+1];
-        projpoints[i*4+2] = (CH_FLOAT)vertices[i*3+2];
-        projpoints[i*4+3] = (CH_FLOAT)(vertices[i*3]*vertices[i*3] + vertices[i*3+1]*vertices[i*3+1] + vertices[i*3+2]*vertices[i*3+2]);
+    /* Project the N-dimensional points onto a N+1-dimensional paraboloid */
+    projpoints = malloc1d(nPoints*(nd+1)*sizeof(CH_FLOAT));
+    for(i = 0; i < nPoints; i++) {
+        projpoints[i*(nd+1)+nd] = 0.0;
+        for(j=0; j<nd; j++){
+            projpoints[i*(nd+1)+j] = (CH_FLOAT)points[i*nd+j];
+            projpoints[i*(nd+1)+nd] += (CH_FLOAT)points[i*nd+j]*(CH_FLOAT)points[i*nd+j]; /* w vector */
+        }
     }
 
-    /* The 3d delaunay triangulation requires the convex hull of this 4d paraboloid */
+    /* The N-dimensional delaunay triangulation requires first computing the convex hull of this N+1-dimensional paraboloid */
     hullfaces = NULL;
     cf = df = NULL;
-    convhull_nd_build(projpoints, nDirs, 4, &hullfaces, &cf, &df, nFaces);
+    convhull_nd_build(projpoints, nPoints, nd+1, &hullfaces, &cf, &df, &nHullFaces);
 
+    /* Find the coordinates of the point with the maximum (N+1 dimension) coordinate (i.e. the w vector) */
+    if(sizeof(CH_FLOAT)==sizeof(double))
+        maxW_idx = (int)cblas_idamax(nPoints, (double*)&projpoints[nd], nd+1);
+    else
+        maxW_idx = (int)cblas_isamax(nPoints, (float*)&projpoints[nd], nd+1);
+    w0 = projpoints[maxW_idx*(nd+1)+nd];
+    p0 = malloc1d(nd*sizeof(CH_FLOAT));
+    for(j=0; j<nd; j++)
+        p0[j] = projpoints[maxW_idx*(nd+1)+j];
+
+    /* Find the point where the plane tangent to the point (p0,w0) on the paraboloid crosses the w axis.
+     * This is the point that can see the entire lower hull. */
+    w_optimal = 0.0;
+    for(j=0; j<nd; j++)
+       w_optimal += (2.0*p0[j]*p0[j]);
+    w_optimal = w0-w_optimal;
+
+    /* Subtract 1000 times the absolute value of w_optimal to ensure that the point where the tangent plane
+     * crosses the w axis will see all points on the lower hull. This avoids numerical roundoff errors. */
+    w_optimal2=w_optimal-1000.0*fabs(w_optimal);
+
+    /* Set the point where the tangent plane crosses the w axis */
+    p = calloc1d((nd+1),sizeof(CH_FLOAT));
+    p[nd] = w_optimal2;
+
+    /* Find all faces that are visible from this point */
+    visible = malloc1d(nHullFaces*sizeof(CH_FLOAT));
+    if(sizeof(CH_FLOAT)==sizeof(double))
+        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nHullFaces, 1, nd+1, 1.0,
+                    (double*)cf, nd+1,
+                    (double*)p, 1, 0.0,
+                    (double*)visible, 1);
+    else
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nHullFaces, 1, nd+1, 1.0f,
+                    (float*)cf, nd+1,
+                    (float*)p, 1, 0.0f,
+                    (float*)visible, 1);
+    nVisible = 0;
+    for(j=0; j<nHullFaces; j++){
+        visible[j] += df[j];
+        if(visible[j]>0.0)
+            nVisible++;
+    }
+
+    /* Output */
+    (*nDT) = nVisible;
+    if(nVisible>0){
+        (*DT) = malloc1d(nVisible*(nd+1)*sizeof(int));
+        for(i=0, j=0; i<nHullFaces; i++){
+            if(visible[i]>0.0){
+                for(k=0; k<nd+1; k++)
+                    (*DT)[j*(nd+1)+k] = hullfaces[i*(nd+1)+k];
+                j++;
+            }
+        }
+        assert(j=nVisible);
+    } 
 
     /* clean up */
     free(projpoints);
+    free(hullfaces);
+    free(cf);
+    free(df);
+    free(p0);
+    free(p);
+    free(visible);
 }
 
 void sphDelaunay
@@ -498,27 +557,6 @@ void sphDelaunay
     /* Delaunay triangulation of a spherical grid is equivalent to the computing
      * the 3d convex hull */
     convhull3d(vertices_tmp, nDirs, faces, nFaces);
-
-    int hullNfaces;
-    int* hullfaces;
-    CH_FLOAT* projpoints, *cf, *df;
-    hullfaces = NULL;
-    cf = df = NULL;
-
-    /* Project the input points onto a 4d paraboloid */
-    projpoints = malloc1d(nDirs*4*sizeof(CH_FLOAT));
-    for(i = 0; i < nDirs; i++) {
-        projpoints[i*4] = (CH_FLOAT)vertices_tmp[i*3];
-        projpoints[i*4+1] = (CH_FLOAT)vertices_tmp[i*3+1];
-        projpoints[i*4+2] = (CH_FLOAT)vertices_tmp[i*3+2];
-        projpoints[i*4+3] = (CH_FLOAT)(vertices_tmp[i*3]*vertices_tmp[i*3] + vertices_tmp[i*3+1]*vertices_tmp[i*3+1] + vertices_tmp[i*3+2]*vertices_tmp[i*3+2]);
-    }
-
-
-    convhull_nd_build(projpoints, nDirs, 4, &hullfaces, &cf, &df, &hullNfaces);
-
-
-
 
     /* optionally, also output the vertices */
     if(vertices!=NULL)

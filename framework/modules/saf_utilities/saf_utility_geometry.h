@@ -194,61 +194,88 @@ void crossProduct3(/* Input Arguments */
 /* ========================================================================== */
 
 /**
- * Builds the 3D convex hull given a list of vertices
+ * Builds the convex hull of an arrangement of vertices in 3-dimensional space
+ *
+ * This function employs algorithms originally implemented in MATLAB by George
+ * Papazafeiropoulos [1] (BSD 2-clause license), which are based on [2].
  *
  * @warning Currently, this does not check if there are duplicate vertices or
  *          whether any of them are co-linear!
  *
  * @param[in]  vertices The vertices; FLAT: nDirs x 3
- * @param[in]  nDirs    Number of vertices
+ * @param[in]  nVert    Number of vertices
  * @param[out] faces    (&) The face indices; FLAT: nFaces x 3
  * @param[out] nFaces   (&) Number of faces found
+ *
+ * @see [1] https://www.mathworks.com/matlabcentral/fileexchange/48509-computational-geometry-toolbox?focused=3851550&tab=example
+ * @see [2] The Quickhull Algorithm for Convex Hull, C. Bradford Barber, David
+ *          P. Dobkin and Hannu Huhdanpaa, Geometry Center Technical Report
+ *          GCG53, July 30, 1993
  */
 void convhull3d(/* Input Arguments */
                 const float* vertices,
-                const int nDirs,
+                const int nVert,
                 /* Output Arguments */
                 int** faces,
                 int* nFaces);
 
 /**
- * Builds the ND convex hull given a list of vertices (Maximum is 5-dimesions)
+ * Builds the convex hull of an arrangement of points in N-dimensional space
  *
- * @param[in]  vertices The vertices; FLAT: nDirs x nd
- * @param[in]  nDirs    Number of vertices
- * @param[in]  nd       The number of dimensions (max=5)
- * @param[out] faces    (&) The face indices; FLAT: nFaces x nd
- * @param[out] nFaces   (&) Number of faces found
+ * This function employs algorithms originally implemented in MATLAB by George
+ * Papazafeiropoulos [1] (BSD 2-clause license), which are based on [2].
+ *
+ * @param[in]  points  The input points; FLAT: nDirs x nd
+ * @param[in]  nPoints Number of points
+ * @param[in]  nd      The number of dimensions (max=5)
+ * @param[out] faces   (&) The face indices; FLAT: nFaces x nd
+ * @param[out] nFaces  (&) Number of faces found
+ *
+ * @see [1] https://www.mathworks.com/matlabcentral/fileexchange/48509-computational-geometry-toolbox?focused=3851550&tab=example
+ * @see [2] The Quickhull Algorithm for Convex Hull, C. Bradford Barber, David
+ *          P. Dobkin and Hannu Huhdanpaa, Geometry Center Technical Report
+ *          GCG53, July 30, 1993
  */
 void convhullnd(/* Input Arguments */
-                const float* vertices,
-                const int nDirs,
+                const float* points,
+                const int nPoints,
                 const int nd,
                 /* Output Arguments */
                 int** faces,
                 int* nFaces);
 
 /**
- * Delaunay triangulation of a spherical arrangement of points
+ * Computes the Delaunay triangulation of an arrangement of points in
+ * N-dimensional space
  *
- * @note d
+ * This function employs algorithms originally implemented in MATLAB by George
+ * Papazafeiropoulos [1] (BSD 2-clause license), which are based on [2].
  *
- * @param[in]  vertices   The intputvertices; FLAT: nDirs x 3
- * @param[in]  nDirs      Number of points/directions
- * @param[out] faces      (&) The face indices; FLAT: nFaces x 3
- * @param[out] nFaces     (&) Number of faces found
+ * @note If you know that your points all reside on a sphere, then you should
+ *       use sphDelaunay() instead; as it is faster and more accurate.
+ *
+ * @param[in]  points  The intput points; FLAT: nDirs x nd
+ * @param[in]  nPoints Number of points
+ * @param[in]  nd      The number of dimensions (max=5)
+ * @param[out] DT      (&) The indices defining the Delaunay triangulation of
+ *                     the points; FLAT: nDT x (nd+1)
+ * @param[out] nDT     (&) Number of triangulations
+ *
+ * @see [1] https://www.mathworks.com/matlabcentral/fileexchange/48509-computational-geometry-toolbox?focused=3851550&tab=example
+ * @see [2] The Quickhull Algorithm for Convex Hull, C. Bradford Barber, David
+ *          P. Dobkin and Hannu Huhdanpaa, Geometry Center Technical Report
+ *          GCG53, July 30, 1993
  */
-void delaunay3d(/* Input Arguments */
-                const float* vertices,
-                const int nDirs,
+void delaunaynd(/* Input Arguments */
+                const float* points,
+                const int nPoints,
+                const int nd,
                 /* Output Arguments */
-                int** faces,
-                int* nFaces);
+                int** DT,
+                int* nDT);
 
 /**
  * Delaunay triangulation of a spherical arrangement of points
- *
- * @note d
  *
  * @param[in]  dirs_deg Coordinates for spherically arranged points, in degrees;
  *                      FLAT: nDirs x 2
