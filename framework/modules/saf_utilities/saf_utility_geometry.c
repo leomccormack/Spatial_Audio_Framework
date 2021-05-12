@@ -424,7 +424,7 @@ void convhullnd
     ch_points = malloc1d(nPoints*nd*sizeof(CH_FLOAT));
     for(i = 0; i < nPoints; i++) {
         for(j=0; j<nd; j++)
-        ch_points[i*nd+j] = (CH_FLOAT)points[i*nd+j];
+            ch_points[i*nd+j] = (CH_FLOAT)points[i*nd+j];
     }
 
     /* build convex hull */
@@ -454,8 +454,8 @@ void delaunaynd
     for(i = 0; i < nPoints; i++) {
         projpoints[i*(nd+1)+nd] = 0.0;
         for(j=0; j<nd; j++){
-            projpoints[i*(nd+1)+j] = (CH_FLOAT)points[i*nd+j];
-            projpoints[i*(nd+1)+nd] += (CH_FLOAT)points[i*nd+j]*(CH_FLOAT)points[i*nd+j]; /* w vector */
+            projpoints[i*(nd+1)+j] = (CH_FLOAT)points[i*nd+j] + 0.0000001*(CH_FLOAT)rand()/(CH_FLOAT)RAND_MAX; // 0.0000001
+            projpoints[i*(nd+1)+nd] += (projpoints[i*(nd+1)+j]*projpoints[i*(nd+1)+j]); /* w vector */
         }
     }
 
@@ -478,7 +478,7 @@ void delaunaynd
      * This is the point that can see the entire lower hull. */
     w_optimal = 0.0;
     for(j=0; j<nd; j++)
-       w_optimal += (2.0*p0[j]*p0[j]);
+       w_optimal += (2.0*pow(p0[j], 2.0));
     w_optimal = w0-w_optimal;
 
     /* Subtract 1000 times the absolute value of w_optimal to ensure that the point where the tangent plane
@@ -491,23 +491,25 @@ void delaunaynd
 
     /* Find all faces that are visible from this point */
     visible = malloc1d(nHullFaces*sizeof(CH_FLOAT));
-    if(sizeof(CH_FLOAT)==sizeof(double))
+    if(sizeof(CH_FLOAT)==sizeof(double)){
         cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nHullFaces, 1, nd+1, 1.0,
                     (double*)cf, nd+1,
                     (double*)p, 1, 0.0,
                     (double*)visible, 1);
-    else
+    }
+    else{
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nHullFaces, 1, nd+1, 1.0f,
                     (float*)cf, nd+1,
                     (float*)p, 1, 0.0f,
                     (float*)visible, 1);
+    }
     nVisible = 0;
     for(j=0; j<nHullFaces; j++){
         visible[j] += df[j];
         if(visible[j]>0.0)
             nVisible++;
     }
-
+ 
     /* Output */
     (*nDT) = nVisible;
     if(nVisible>0){
@@ -520,7 +522,7 @@ void delaunaynd
             }
         }
         assert(j=nVisible);
-    } 
+    }
 
     /* clean up */
     free(projpoints);

@@ -21,6 +21,9 @@ int main_test(void);
 /* ========================================================================== */
 
 /**
+ * Testing that the delaunaynd() function can triangulate basic shapes */
+void test__delaunaynd(void);
+/**
  * Testing that quaternion2rotationMatrix() and rotationMatrix2quaternion()
  * are reversible */
 void test__quaternion(void);

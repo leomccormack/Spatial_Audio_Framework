@@ -396,7 +396,7 @@ void convhull_3d_build
     points = (CH_FLOAT*)malloc(nVert*(d+1)*sizeof(CH_FLOAT));
     for(i=0; i<nVert; i++){
         for(j=0; j<d; j++)
-            points[i*(d+1)+j] = in_vertices[i].v[j] + CH_NOISE_VAL*rand()/(CH_FLOAT)RAND_MAX; /* noise mitigates duplicates */
+            points[i*(d+1)+j] = in_vertices[i].v[j] + CH_NOISE_VAL*(CH_FLOAT)rand()/(CH_FLOAT)RAND_MAX; /* noise mitigates duplicates */
         points[i*(d+1)+d] = 1.0f; /* add a last column of ones. Used only for determinant calculation */
     }
 
@@ -879,7 +879,7 @@ void convhull_nd_build
     points = (CH_FLOAT*)malloc(nVert*(d+1)*sizeof(CH_FLOAT));
     for(i=0; i<nVert; i++){
         for(j=0; j<d; j++)
-            points[i*(d+1)+j] = in_vertices[i*d+j] + CH_NOISE_VAL*rand()/(CH_FLOAT)RAND_MAX;
+            points[i*(d+1)+j] = in_vertices[i*d+j] + CH_NOISE_VAL*(CH_FLOAT)rand()/(CH_FLOAT)RAND_MAX;
         points[i*(d+1)+d] = 1.0; /* add a last column of ones. Used only for determinant calculation */
     }
 

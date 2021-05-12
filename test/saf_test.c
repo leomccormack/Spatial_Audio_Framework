@@ -71,7 +71,8 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
 
-    /* run each unit test */ 
+    /* run each unit test */
+    RUN_TEST(test__delaunaynd);
     RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
@@ -85,7 +86,7 @@ int main_test(void) {
     RUN_TEST(test__sortf);
     RUN_TEST(test__sortz);
     RUN_TEST(test__cmplxPairUp);
-    RUN_TEST(test__getVoronoiWeights); 
+    RUN_TEST(test__getVoronoiWeights);
     RUN_TEST(test__unique_i);
     RUN_TEST(test__realloc2d_r);
     RUN_TEST(test__latticeDecorrelator);
@@ -132,6 +133,46 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__delaunaynd(void){
+    int nMesh;
+    int* mesh;
+
+    /* Not really a unit test... You have to copy the mesh indices into e.g. Matlab, plot, and see... */
+
+    /* 2D 4 points */
+    float four_xy[4][2] =
+      { {7.0f,7.0f},{2.0f,7.0f},{2.0f,1.0f},{7.0f,1.0f} };
+    mesh = NULL;
+    delaunaynd((float*)four_xy, 4, 2/*nDims*/, &mesh, &nMesh);
+    free(mesh);
+
+    /* 2D Square */
+    float square_xy[26][2] =
+      { {-1.0f,-1.0f},{-1.0f,-0.5f},{-1.0f,0.0f},{-1.0f,0.5f},{-1.0f,1.0f},{-0.5f,-1.0f},{-0.5f,-0.5f},{-0.5f,0.0f},{-0.5f,0.5f},
+        {-0.5f,1.0f},{0.0f,-1.0f},{0.0f,-0.5f},{0.0f,0.0f},{0.0f,0.5f},{0.0f,1.0f},{0.5f,-1.0f},
+        {0.5f,-0.5f},{0.5f,0.0f},{0.5f,0.5f},{0.5f,1.0f},{1.0f,-1.0f},{1.0f,-0.5f},
+        {1.0f,0.0f},{1.0f,0.5f},{1.0f,1.0f},{0.0f,0.0f} };
+    mesh = NULL;
+    delaunaynd((float*)square_xy, 26, 2/*nDims*/, &mesh, &nMesh);
+    free(mesh);
+
+    /* 3D Cube */
+    float cube_xyz[8][3] =
+      { {-1.0f,-1.0f,-1.0f},{-1.0f,1.0f,-1.0f},{1.0f,-1.0f,-1.0f},{1.0f,1.0f,-1.0f},
+        {-1.0f,-1.0f,1.0f}, {-1.0f,1.0f,1.0f}, {1.0f,-1.0f,1.0f}, {1.0f,1.0f,1.0f} };
+    mesh = NULL;
+    delaunaynd((float*)cube_xyz, 8, 3/*nDims*/, &mesh, &nMesh);
+    free(mesh);
+
+    /* 3D Cube with a point in the centre */
+    float cube_xyz2[9][3] =
+      { {-1.0f,-1.0f,-1.0f},{-1.0f,1.0f,-1.0f},{1.0f,-1.0f,-1.0f},{1.0f,1.0f,-1.0f},
+        {-1.0f,-1.0f,1.0f}, {-1.0f,1.0f,1.0f}, {1.0f,-1.0f,1.0f}, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f} };
+    mesh = NULL;
+    delaunaynd((float*)cube_xyz2, 9, 3/*nDims*/, &mesh, &nMesh);
+    free(mesh);
+}
 
 void test__quaternion(void){
     int i, j;
