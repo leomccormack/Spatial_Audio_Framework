@@ -1504,7 +1504,7 @@ void test__tracker3d(void){
                 dropouts++; /* Should be very unlikely, (as the probably of death set to be so low), but it can still happen... */
         }
     }
-    TEST_ASSERT_TRUE(dropouts<5);
+    TEST_ASSERT_TRUE(dropouts<10);
 
     /* Clean-up */
     tracker3d_destroy(&hT3d);
