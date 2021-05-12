@@ -228,11 +228,11 @@ static CH_FLOAT det_4x4(CH_FLOAT* m) {
     m[1] * m[4] * m[10] * m[15] + m[0] * m[5] * m[10] * m[15];
 }
 
-static CH_FLOAT det_NxN(CH_FLOAT* A, int n){
+static CH_FLOAT det_NxN(CH_FLOAT* m, int d){
 #ifdef CONVHULL_3D_USE_FLOAT_PRECISION
-    return utility_sdet((CH_FLOAT*)A, n);
+    return utility_sdet((CH_FLOAT*)m, d);
 #else
-    return utility_ddet((CH_FLOAT*)A, n);
+    return utility_ddet((CH_FLOAT*)m, d);
 #endif
 }
 
@@ -382,6 +382,10 @@ void convhull_3d_build
     if(nVert<3 || in_vertices==NULL){
         (*out_faces) = NULL;
         (*nOut_faces) = 0;
+        if(out_cf!=NULL)
+            (*out_cf) = NULL;
+        if(out_df!=NULL)
+            (*out_df) = NULL;
         return;
     }
 
@@ -445,7 +449,7 @@ void convhull_3d_build
     int face_tmp[2];
 
     /* Check to make sure that faces are correctly oriented */
-    bVec = (int*)malloc(4*sizeof(int));
+    bVec = (int*)malloc((d+1)*sizeof(int));
     for(i=0; i<d+1; i++)
         bVec[i] = i;
 
@@ -559,7 +563,7 @@ void convhull_3d_build
         if(num_pleft == 0)
             free(pleft);
         else
-            pleft = (int*)realloc(pleft, 10+10*num_pleft*sizeof(int));
+            pleft = (int*)realloc(pleft, num_pleft*sizeof(int));
 
         /* Update point selection counter */
         cnt++;
@@ -567,8 +571,8 @@ void convhull_3d_build
         /* find visible faces */
         for(j=0; j<d; j++)
             points_s[j] = points[i*(d+1)+j];
-        points_cf = (CH_FLOAT*)realloc(points_cf, 10+10*nFaces*sizeof(CH_FLOAT));
-        visible_ind = (int*)realloc(visible_ind, 10+10*nFaces*sizeof(int));
+        points_cf = (CH_FLOAT*)realloc(points_cf, nFaces*sizeof(CH_FLOAT));
+        visible_ind = (int*)realloc(visible_ind, nFaces*sizeof(int));
 #ifdef CONVHULL_3D_USE_CBLAS
   #ifdef CONVHULL_3D_USE_FLOAT_PRECISION
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, nFaces, d, 1.0f,
@@ -642,7 +646,7 @@ void convhull_3d_build
                         if(u_len==1)
                             u = (int*)malloc(u_len*sizeof(int));
                         else
-                            u = (int*)realloc(u, 10+10*u_len*sizeof(int));
+                            u = (int*)realloc(u, u_len*sizeof(int));
                         u[u_len-1] = k;
                     }
                 }
@@ -650,9 +654,9 @@ void convhull_3d_build
                     /* The boundary between the visible face v and the k(th) nonvisible face connected to the face v forms part of the horizon */
                     count++;
                     if(count==1)
-                        horizon = (int*)malloc(10+10*count*(d-1)*sizeof(int));
+                        horizon = (int*)malloc(count*(d-1)*sizeof(int));
                     else
-                        horizon = (int*)realloc(horizon, 10+10*count*(d-1)*sizeof(int));
+                        horizon = (int*)realloc(horizon, count*(d-1)*sizeof(int));
                     for(l=0; l<d; l++)
                         gVec[l] = nonvisible_faces[u[k]*d+l];
                     for(l=0, h=0; l<d; l++){
@@ -682,9 +686,9 @@ void convhull_3d_build
 
             /* Update the number of faces */
             nFaces = nFaces-num_visible_ind;
-            faces = (int*)realloc(faces, 10+10*nFaces*d*sizeof(int));
-            cf = (CH_FLOAT*)realloc(cf, 10+10*nFaces*d*sizeof(CH_FLOAT));
-            df = (CH_FLOAT*)realloc(df, 10+10*nFaces*sizeof(CH_FLOAT));
+            faces = (int*)realloc(faces, nFaces*d*sizeof(int));
+            cf = (CH_FLOAT*)realloc(cf, nFaces*d*sizeof(CH_FLOAT));
+            df = (CH_FLOAT*)realloc(df, nFaces*sizeof(CH_FLOAT));
 
             /* start is the first row of the new faces */
             start=nFaces;
@@ -693,9 +697,9 @@ void convhull_3d_build
             n_newfaces = horizon_size1;
             for(j=0; j<n_newfaces; j++){
                 nFaces++;
-                faces = (int*)realloc(faces, 10+10*nFaces*d*sizeof(int));
-                cf = (CH_FLOAT*)realloc(cf, 10+10*nFaces*d*sizeof(CH_FLOAT));
-                df = (CH_FLOAT*)realloc(df, 10+10*nFaces*sizeof(CH_FLOAT));
+                faces = (int*)realloc(faces, nFaces*d*sizeof(int));
+                cf = (CH_FLOAT*)realloc(cf, nFaces*d*sizeof(CH_FLOAT));
+                df = (CH_FLOAT*)realloc(df, nFaces*sizeof(CH_FLOAT));
                 for(k=0; k<d-1; k++)
                     faces[(nFaces-1)*d+k] = horizon[j*(d-1)+k];
                 faces[(nFaces-1)*d+(d-1)] = i;
@@ -772,7 +776,8 @@ void convhull_3d_build
                 }
                 free(pp);
             }
-            free(horizon);
+            if(horizon_size1>0)
+                free(horizon);
             free(f0);
             free(nonvisible_faces);
             free(visible);
@@ -859,23 +864,27 @@ void convhull_nd_build
 
     assert(d<=CONVHULL_ND_MAX_DIMENSIONS);
 
+    /* Solution not possible... */
     if(nVert<d || in_vertices==NULL){
         (*out_faces) = NULL;
         (*nOut_faces) = 0;
-////////FILL
+        if(out_cf!=NULL)
+            (*out_cf) = NULL;
+        if(out_df!=NULL)
+            (*out_df) = NULL;
         return;
     }
 
     /* Add noise to the points */
-    points = (CH_FLOAT*)malloc(10+10*nVert*(d+1)*sizeof(CH_FLOAT));
+    points = (CH_FLOAT*)malloc(nVert*(d+1)*sizeof(CH_FLOAT));
     for(i=0; i<nVert; i++){
         for(j=0; j<d; j++)
-            points[i*(d+1)+j] = in_vertices[i*d+j] + CH_NOISE_VAL*rand()/(CH_FLOAT)RAND_MAX;  
+            points[i*(d+1)+j] = in_vertices[i*d+j] + CH_NOISE_VAL*rand()/(CH_FLOAT)RAND_MAX;
         points[i*(d+1)+d] = 1.0; /* add a last column of ones. Used only for determinant calculation */
     }
 
     /* Find the span */
-    span = (CH_FLOAT*)malloc(10+10*d*sizeof(CH_FLOAT));
+    span = (CH_FLOAT*)malloc(d*sizeof(CH_FLOAT));
     for(j=0; j<d; j++){
         max_p = -2.23e+13; min_p = 2.23e+13;
         for(i=0; i<nVert; i++){
@@ -888,16 +897,16 @@ void convhull_nd_build
 
     /* The initial convex hull is a simplex with (d+1) facets, where d is the number of dimensions */
     nFaces = (d+1);
-    faces = (int*)calloc(10+10*nFaces*d, sizeof(int));
-    aVec = (int*)malloc(10+10*nFaces*sizeof(int));
+    faces = (int*)calloc(nFaces*d, sizeof(int));
+    aVec = (int*)malloc(nFaces*sizeof(int));
     for(i=0; i<nFaces; i++)
         aVec[i] = i;
 
     /* Each column of cf contains the coefficients of a plane */
-    cf = (CH_FLOAT*)malloc(10+10*nFaces*d*sizeof(CH_FLOAT));
-    cfi = (CH_FLOAT*)malloc(10+10*d*sizeof(CH_FLOAT));
-    df = (CH_FLOAT*)malloc(10+10*nFaces*sizeof(CH_FLOAT));
-    p_s = (CH_FLOAT*)malloc(10+10*d*d*sizeof(CH_FLOAT));
+    cf = (CH_FLOAT*)malloc(nFaces*d*sizeof(CH_FLOAT));
+    cfi = (CH_FLOAT*)malloc(d*sizeof(CH_FLOAT));
+    df = (CH_FLOAT*)malloc(nFaces*sizeof(CH_FLOAT));
+    p_s = (CH_FLOAT*)malloc(d*d*sizeof(CH_FLOAT));
     for(i=0; i<nFaces; i++){
         /* Set the indices of the points defining the face  */
         for(j=0, k=0; j<(d+1); j++){
@@ -923,13 +932,13 @@ void convhull_nd_build
     int face_tmp[2];
 
     /* Check to make sure that faces are correctly oriented */
-    bVec = (int*)malloc(10+10*(d+1)*sizeof(int));
+    bVec = (int*)malloc((d+1)*sizeof(int));
     for(i=0; i<d+1; i++)
         bVec[i] = i;
 
     /* A contains the coordinates of the points forming a simplex */
-    A = (CH_FLOAT*)calloc(10+10*(d+1)*(d+1), sizeof(CH_FLOAT));
-    fVec = (int*)malloc(10+10*(d+1)*sizeof(int));
+    A = (CH_FLOAT*)calloc((d+1)*(d+1), sizeof(CH_FLOAT));
+    fVec = (int*)malloc((d+1)*sizeof(int));
     for(k=0; k<(d+1); k++){
         /* Get the point that is not on the current face (point p) */
         for(i=0; i<d; i++)
@@ -972,8 +981,7 @@ void convhull_nd_build
 
     /* Coordinates of the center of the point set */
     CH_FLOAT* meanp, *reldist, *desReldist, *absdist;
-    //CH_FLOAT absdist[100] = {0.0};
-    meanp = (CH_FLOAT*)calloc(10+10*d, sizeof(CH_FLOAT));
+    meanp = (CH_FLOAT*)calloc(d, sizeof(CH_FLOAT));
     for(i=d+1; i<nVert; i++)
         for(j=0; j<d; j++)
             meanp[j] += points[i*(d+1)+j];
@@ -981,7 +989,7 @@ void convhull_nd_build
         meanp[j] = meanp[j]/(CH_FLOAT)(nVert-d-1);
 
     /* Absolute distance of points from the center */
-    absdist = (CH_FLOAT*)malloc(10+10*(nVert-d-1)*d * sizeof(CH_FLOAT));
+    absdist = (CH_FLOAT*)malloc((nVert-d-1)*d * sizeof(CH_FLOAT));
     for(i=d+1, k=0; i<nVert; i++, k++)
         for(j=0; j<d; j++)
             absdist[k*d+j] = (points[i*(d+1)+j] -  meanp[j])/span[j];
@@ -996,8 +1004,8 @@ void convhull_nd_build
     /* Sort from maximum to minimum relative distance */
     int num_pleft, cnt;
     int* ind, *pleft;
-    ind = (int*)malloc(10+10*(nVert-d-1) * sizeof(int));
-    pleft = (int*)malloc(10+10*(nVert-d-1) * sizeof(int));
+    ind = (int*)malloc((nVert-d-1) * sizeof(int));
+    pleft = (int*)malloc((nVert-d-1) * sizeof(int));
     sort_float(reldist, desReldist, ind, (nVert-d-1), 1);
 
     /* Initialize the vector of points left. The points with the larger relative
@@ -1024,11 +1032,11 @@ void convhull_nd_build
     FUCKED = 0;
     u = horizon = NULL;
     nFaces = d+1;
-    visible_ind = (int*)malloc(10+10*nFaces*sizeof(int));
-    points_cf = (CH_FLOAT*)malloc(10+10*nFaces*sizeof(CH_FLOAT));
-    points_s = (CH_FLOAT*)malloc(10+10*d*sizeof(CH_FLOAT));
-    face_s = (int*)malloc(10+10*d*sizeof(int));
-    gVec = (int*)malloc(10+10*d*sizeof(int));
+    visible_ind = (int*)malloc(nFaces*sizeof(int));
+    points_cf = (CH_FLOAT*)malloc(nFaces*sizeof(CH_FLOAT));
+    points_s = (CH_FLOAT*)malloc(d*sizeof(CH_FLOAT));
+    face_s = (int*)malloc(d*sizeof(int));
+    gVec = (int*)malloc(d*sizeof(int));
     while( (num_pleft>0) ){
         /* i is the first point of the points left */
         i = pleft[0];
@@ -1040,7 +1048,7 @@ void convhull_nd_build
         if(num_pleft == 0)
             free(pleft);
         else
-            pleft = (int*)realloc(pleft, 10+10*num_pleft*sizeof(int));
+            pleft = (int*)realloc(pleft, num_pleft*sizeof(int));
 
         /* Update point selection counter */
         cnt++;
@@ -1048,8 +1056,8 @@ void convhull_nd_build
         /* find visible faces */
         for(j=0; j<d; j++)
             points_s[j] = points[i*(d+1)+j];
-        points_cf = (CH_FLOAT*)realloc(points_cf,10+10*nFaces*sizeof(CH_FLOAT));
-        visible_ind = (int*)realloc(visible_ind, 10+10*nFaces*sizeof(int));
+        points_cf = (CH_FLOAT*)realloc(points_cf,nFaces*sizeof(CH_FLOAT));
+        visible_ind = (int*)realloc(visible_ind, nFaces*sizeof(int));
 #ifdef CONVHULL_3D_USE_CBLAS
   #ifdef CONVHULL_3D_USE_FLOAT_PRECISION
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, nFaces, d, 1.0f,
@@ -1083,7 +1091,7 @@ void convhull_nd_build
         /* proceed if there are any visible faces */
         if(num_visible_ind!=0){
             /* Find visible face indices */
-            visible = (int*)malloc(10+10*num_visible_ind*sizeof(int));
+            visible = (int*)malloc(num_visible_ind*sizeof(int));
             for(j=0, k=0; j<nFaces; j++){
                 if(visible_ind[j]==1){
                     visible[k]=j;
@@ -1092,8 +1100,8 @@ void convhull_nd_build
             }
 
             /* Find nonvisible faces */
-            nonvisible_faces = (int*)malloc(10+10*num_nonvisible_faces*d*sizeof(int));
-            f0 = (int*)malloc(10+10*num_nonvisible_faces*d*sizeof(int));
+            nonvisible_faces = (int*)malloc(num_nonvisible_faces*d*sizeof(int));
+            f0 = (int*)malloc(num_nonvisible_faces*d*sizeof(int));
             for(j=0, k=0; j<nFaces; j++){
                 if(visible_ind[j]==0){
                     for(l=0; l<d; l++)
@@ -1121,9 +1129,9 @@ void convhull_nd_build
                     if(f0_sum == d-1){
                         u_len++;
                         if(u_len==1)
-                            u = (int*)malloc(10+10*u_len*sizeof(int));
+                            u = (int*)malloc(u_len*sizeof(int));
                         else
-                            u = (int*)realloc(u, 10+10*u_len*sizeof(int));
+                            u = (int*)realloc(u, u_len*sizeof(int));
                         u[u_len-1] = k;
                     }
                 }
@@ -1131,9 +1139,9 @@ void convhull_nd_build
                     /* The boundary between the visible face v and the k(th) nonvisible face connected to the face v forms part of the horizon */
                     count++;
                     if(count==1)
-                        horizon = (int*)malloc(10+10*count*(d-1)*sizeof(int));
+                        horizon = (int*)malloc(count*(d-1)*sizeof(int));
                     else
-                        horizon = (int*)realloc(horizon, 10+10*count*(d-1)*sizeof(int));
+                        horizon = (int*)realloc(horizon, count*(d-1)*sizeof(int));
                     for(l=0; l<d; l++)
                         gVec[l] = nonvisible_faces[u[k]*d+l];
                     for(l=0, h=0; l<d; l++){
@@ -1146,8 +1154,6 @@ void convhull_nd_build
                 if(u_len!=0)
                     free(u);
             }
-
-            assert(count>0);
             horizon_size1 = count;
             for(j=0, l=0; j<nFaces; j++){
                 if(!visible_ind[j]){
@@ -1165,9 +1171,9 @@ void convhull_nd_build
 
             /* Update the number of faces */
             nFaces = nFaces-num_visible_ind;
-            faces = (int*)realloc(faces, 10+10*nFaces*d*sizeof(int));
-            cf = (CH_FLOAT*)realloc(cf, 10+10*nFaces*d*sizeof(CH_FLOAT));
-            df = (CH_FLOAT*)realloc(df, 10+10*nFaces*sizeof(CH_FLOAT));
+            faces = (int*)realloc(faces, nFaces*d*sizeof(int));
+            cf = (CH_FLOAT*)realloc(cf, nFaces*d*sizeof(CH_FLOAT));
+            df = (CH_FLOAT*)realloc(df, nFaces*sizeof(CH_FLOAT));
 
             /* start is the first row of the new faces */
             start=nFaces;
@@ -1176,9 +1182,9 @@ void convhull_nd_build
             n_newfaces = horizon_size1;
             for(j=0; j<n_newfaces; j++){
                 nFaces++;
-                faces = (int*)realloc(faces, 10+10*nFaces*d*sizeof(int));
-                cf = (CH_FLOAT*)realloc(cf, 10+10*nFaces*d*sizeof(CH_FLOAT));
-                df = (CH_FLOAT*)realloc(df, 10+10*nFaces*sizeof(CH_FLOAT));
+                faces = (int*)realloc(faces, nFaces*d*sizeof(int));
+                cf = (CH_FLOAT*)realloc(cf, nFaces*d*sizeof(CH_FLOAT));
+                df = (CH_FLOAT*)realloc(df, nFaces*sizeof(CH_FLOAT));
                 for(k=0; k<d-1; k++)
                     faces[(nFaces-1)*d+k] = horizon[j*(d-1)+k];
                 faces[(nFaces-1)*d+(d-1)] = i;
@@ -1199,8 +1205,8 @@ void convhull_nd_build
             }
 
             /* Orient each new face properly */
-            hVec = (int*)malloc( 10+10*nFaces*sizeof(int));
-            hVec_mem_face = (int*)malloc( 10+10*nFaces*sizeof(int));
+            hVec = (int*)malloc( nFaces*sizeof(int));
+            hVec_mem_face = (int*)malloc( nFaces*sizeof(int));
             for(j=0; j<nFaces; j++)
                 hVec[j] = j;
             for(k=start; k<nFaces; k++){
@@ -1212,7 +1218,7 @@ void convhull_nd_build
                 for(j=0; j<nFaces; j++)
                     if(!hVec_mem_face[j])
                         num_p++;
-                pp = (int*)malloc(10+10*num_p*sizeof(int));
+                pp = (int*)malloc(num_p*sizeof(int));
                 for(j=0, l=0; j<nFaces; j++){
                     if(!hVec_mem_face[j]){
                         pp[l] = hVec[j];
@@ -1244,10 +1250,6 @@ void convhull_nd_build
                         face_tmp[j] = faces[k*d+d-j-1];
                     for(j=0; j<2; j++)
                         faces[k*d+d-j-1] = face_tmp[1-j];
-//                    for(j=0; j<d; j++)
-//                        face_tmp[j] = faces[k*d+j];
-//                    for(j=0, l=d-2; l<d; j++, l++)
-//                        faces[k*d+l] = face_tmp[d-j-1];
 
                     /* Modify the plane coefficients of the properly oriented faces */
                     for(j=0; j<d; j++)
@@ -1259,13 +1261,14 @@ void convhull_nd_build
                     for(; l<d+1; l++)
                         for(j=0; j<d+1; j++)
                             A[l*(d+1)+j] = points[pp[index]*(d+1)+j];
-
+#ifndef NDEBUG
                     /* Check */
                     if(d==3)
                         detA = det_4x4(A);
                     else
                         detA = det_NxN((CH_FLOAT*)A, d+1);
                     assert(detA>0.0);
+#endif
                 }
                 free(pp);
             }

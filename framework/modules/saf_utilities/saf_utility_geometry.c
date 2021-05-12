@@ -463,7 +463,7 @@ void delaunay3d
         projpoints[i*4+3] = (CH_FLOAT)(vertices[i*3]*vertices[i*3] + vertices[i*3+1]*vertices[i*3+1] + vertices[i*3+2]*vertices[i*3+2]);
     }
 
-    /* The 3d delaunay triangulation requires the convex hull of a 4d paraboloid */
+    /* The 3d delaunay triangulation requires the convex hull of this 4d paraboloid */
     hullfaces = NULL;
     cf = df = NULL;
     convhull_nd_build(projpoints, nDirs, 4, &hullfaces, &cf, &df, nFaces);
