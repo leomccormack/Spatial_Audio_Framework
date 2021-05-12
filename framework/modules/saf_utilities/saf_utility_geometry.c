@@ -408,7 +408,6 @@ float getDistBetween2Points
 }
 
 
-
 /* ========================================================================== */
 /*                     Computational Geometry Functions                       */
 /* ========================================================================== */
@@ -486,7 +485,7 @@ void delaunaynd
     for(i = 0; i < nPoints; i++) {
         projpoints[i*(nd+1)+nd] = 0.0;
         for(j=0; j<nd; j++){
-            projpoints[i*(nd+1)+j] = (CH_FLOAT)points[i*nd+j] + 0.0000001*(CH_FLOAT)rand()/(CH_FLOAT)RAND_MAX; // 0.0000001
+            projpoints[i*(nd+1)+j] = (CH_FLOAT)points[i*nd+j] + 0.0000001*(CH_FLOAT)rand()/(CH_FLOAT)RAND_MAX;  
             projpoints[i*(nd+1)+nd] += (projpoints[i*(nd+1)+j]*projpoints[i*(nd+1)+j]); /* w vector */
         }
     }
