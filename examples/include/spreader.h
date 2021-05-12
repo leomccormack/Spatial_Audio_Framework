@@ -16,7 +16,8 @@
 
 /**
  * @file: spreader.h
- * @brief spreader
+ * @brief An arbitrary array panner (HRIRs, microphone array IRs, etc.) with
+ *        coherent and incoherent spreading modes.
  * @author Leo McCormack
  * @date 07.04.2021
  */
