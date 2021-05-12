@@ -379,7 +379,7 @@ void convhull_3d_build
     CH_FLOAT dfi, v, max_p, min_p;
     CH_FLOAT* points, *cf, *cfi, *df, *p_s, *span;
 
-    if(nVert<3 || in_vertices==NULL){
+    if(nVert<=3 || in_vertices==NULL){
         (*out_faces) = NULL;
         (*nOut_faces) = 0;
         if(out_cf!=NULL)
@@ -865,7 +865,7 @@ void convhull_nd_build
     assert(d<=CONVHULL_ND_MAX_DIMENSIONS);
 
     /* Solution not possible... */
-    if(nVert<d || in_vertices==NULL){
+    if(nVert<=d || in_vertices==NULL){
         (*out_faces) = NULL;
         (*nOut_faces) = 0;
         if(out_cf!=NULL)

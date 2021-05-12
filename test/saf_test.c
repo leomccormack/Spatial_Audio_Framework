@@ -140,6 +140,13 @@ void test__delaunaynd(void){
 
     /* Not really a unit test... You have to copy the mesh indices into e.g. Matlab, plot, and see... */
 
+    /* 2D 3 points */
+    float three_xy[4][2] =
+      { {7.0f,7.0f},{2.0f,7.0f},{2.0f,1.0f} };
+    mesh = NULL;
+    delaunaynd((float*)three_xy, 3, 2/*nDims*/, &mesh, &nMesh);
+    free(mesh);
+
     /* 2D 4 points */
     float four_xy[4][2] =
       { {7.0f,7.0f},{2.0f,7.0f},{2.0f,1.0f},{7.0f,1.0f} };
