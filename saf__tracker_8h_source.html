@@ -149,25 +149,26 @@ $(document).ready(function(){initNavTree('saf__tracker_8h_source.html',''); init
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___tracker.html#ga8b986b61b557a94d7097cfb6752da1dd">tracker3d_reset</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hT3d);</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___tracker.html#ga237407dc76fdd49c236ff34bc00b3d55">tracker3d_step</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hT3d,</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                    <span class="keywordtype">float</span>* newObs_xyz,</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                    <span class="keywordtype">int</span> nObs,</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;                    <span class="keywordtype">float</span>** target_xyz,</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                    <span class="keywordtype">int</span>** target_IDs,</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                    <span class="keywordtype">int</span>* nTargets);</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SAF_ENABLE_TRACKER_MODULE */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___tracker.html#gaf180f16dc2e7664b7ffbce8f9b2dd2ab">tracker3d_step</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hT3d,</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                    <span class="keywordtype">float</span>* newObs_xyz,</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;                    <span class="keywordtype">int</span> nObs,</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                    <span class="keywordtype">float</span>** target_pos_xyz,</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                    <span class="keywordtype">float</span>** target_var_xyz,</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                    <span class="keywordtype">int</span>** target_IDs,</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                    <span class="keywordtype">int</span>* nTargets);</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;} <span class="comment">/* extern &quot;C&quot; */</span></div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160; </div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __SAF_TRACKER_H_INCLUDED__ */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; <span class="comment">/* doxygen addtogroup Tracker */</span></div>
-<div class="ttc" id="agroup___tracker_html_ga237407dc76fdd49c236ff34bc00b3d55"><div class="ttname"><a href="group___tracker.html#ga237407dc76fdd49c236ff34bc00b3d55">tracker3d_step</a></div><div class="ttdeci">void tracker3d_step(void *const hT3d, float *newObs_xyz, int nObs, float **target_xyz, int **target_IDs, int *nTargets)</div><div class="ttdoc">Tracker time step to update &amp; predict current target locations and to parse new measurements/observat...</div><div class="ttdef"><b>Definition:</b> <a href="saf__tracker_8c_source.html#l00160">saf_tracker.c:161</a></div></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SAF_ENABLE_TRACKER_MODULE */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;} <span class="comment">/* extern &quot;C&quot; */</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __SAF_TRACKER_H_INCLUDED__ */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; <span class="comment">/* doxygen addtogroup Tracker */</span></div>
 <div class="ttc" id="agroup___tracker_html_ga8b986b61b557a94d7097cfb6752da1dd"><div class="ttname"><a href="group___tracker.html#ga8b986b61b557a94d7097cfb6752da1dd">tracker3d_reset</a></div><div class="ttdeci">void tracker3d_reset(void *const hT3d)</div><div class="ttdoc">Resets an instance of the mighty tracker3d.</div><div class="ttdef"><b>Definition:</b> <a href="saf__tracker_8c_source.html#l00147">saf_tracker.c:148</a></div></div>
 <div class="ttc" id="agroup___tracker_html_gae5896d9356c382e6e7c1d339c378d3ea"><div class="ttname"><a href="group___tracker.html#gae5896d9356c382e6e7c1d339c378d3ea">tracker3d_destroy</a></div><div class="ttdeci">void tracker3d_destroy(void **const phT3d)</div><div class="ttdoc">Destroys an instance of the mighty tracker3d.</div><div class="ttdef"><b>Definition:</b> <a href="saf__tracker_8c_source.html#l00120">saf_tracker.c:121</a></div></div>
+<div class="ttc" id="agroup___tracker_html_gaf180f16dc2e7664b7ffbce8f9b2dd2ab"><div class="ttname"><a href="group___tracker.html#gaf180f16dc2e7664b7ffbce8f9b2dd2ab">tracker3d_step</a></div><div class="ttdeci">void tracker3d_step(void *const hT3d, float *newObs_xyz, int nObs, float **target_pos_xyz, float **target_var_xyz, int **target_IDs, int *nTargets)</div><div class="ttdoc">Tracker time step to update &amp; predict current target locations and to parse new measurements/observat...</div><div class="ttdef"><b>Definition:</b> <a href="saf__tracker_8c_source.html#l00160">saf_tracker.c:161</a></div></div>
 <div class="ttc" id="agroup___tracker_html_gaf55e4f5dfcc90657444cc92059674970"><div class="ttname"><a href="group___tracker.html#gaf55e4f5dfcc90657444cc92059674970">tracker3d_create</a></div><div class="ttdeci">void tracker3d_create(void **const phT3d, tracker3d_config tpars)</div><div class="ttdoc">Creates an instance of the mighty tracker3d.</div><div class="ttdef"><b>Definition:</b> <a href="saf__tracker_8c_source.html#l00046">saf_tracker.c:47</a></div></div>
 <div class="ttc" id="astructtracker3d__config_html"><div class="ttname"><a href="structtracker3d__config.html">tracker3d_config</a></div><div class="ttdoc">User parameters for tracker3d.</div><div class="ttdef"><b>Definition:</b> <a href="saf__tracker_8h_source.html#l00056">saf_tracker.h:56</a></div></div>
 <div class="ttc" id="astructtracker3d__config_html_a0504fc3d19d3fba10514c8cdd71b6f4d"><div class="ttname"><a href="structtracker3d__config.html#a0504fc3d19d3fba10514c8cdd71b6f4d">tracker3d_config::dt</a></div><div class="ttdeci">float dt</div><div class="ttdoc">Elapsed time (in seconds) between observations/measurements.</div><div class="ttdef"><b>Definition:</b> <a href="saf__tracker_8h_source.html#l00081">saf_tracker.h:81</a></div></div>
@@ -191,7 +192,7 @@ $(document).ready(function(){initNavTree('saf__tracker_8h_source.html',''); init
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_94f812345eda9da4101fb25ab77a5824.html">saf_tracker</a></li><li class="navelem"><a class="el" href="saf__tracker_8h.html">saf_tracker.h</a></li>
-    <li class="footer">Generated on Wed Apr 21 2021 16:34:35 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 12 2021 14:41:21 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

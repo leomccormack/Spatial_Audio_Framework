@@ -92,12 +92,7 @@ $(document).ready(function(){initNavTree('saf__utility__veclib_8h.html',''); ini
 
 <p>Wrappers for optimised linear algebra routines, utilising CBLAS and LAPACK.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;math.h&gt;</code><br />
-<code>#include &lt;stdlib.h&gt;</code><br />
-<code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &lt;string.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="saf__utility__complex_8h_source.html">saf_utility_complex.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="saf__utility__error_8h_source.html">saf_utility_error.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="saf__utility__complex_8h_source.html">saf_utility_complex.h</a>&quot;</code><br />
 </div>
 <p><a href="saf__utility__veclib_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -117,12 +112,24 @@ Functions</h2></td></tr>
 <tr class="memitem:ga47f536159d4f1c1ecd05a8f13f10a2d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga47f536159d4f1c1ecd05a8f13f10a2d5">utility_ciminv</a> (const float_complex *a, const int len, int *index)</td></tr>
 <tr class="memdesc:ga47f536159d4f1c1ecd05a8f13f10a2d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single-precision, complex, index of maximum absolute value in a vector, i.e.  <a href="group___utilities.html#ga47f536159d4f1c1ecd05a8f13f10a2d5">More...</a><br /></td></tr>
 <tr class="separator:ga47f536159d4f1c1ecd05a8f13f10a2d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8ae160778b599a27fe389084c080f077"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga8ae160778b599a27fe389084c080f077">utility_diminv</a> (const double *a, const int len, int *index)</td></tr>
+<tr class="memdesc:ga8ae160778b599a27fe389084c080f077"><td class="mdescLeft">&#160;</td><td class="mdescRight">Double-precision, index of minimum absolute value in a vector, i.e.  <a href="group___utilities.html#ga8ae160778b599a27fe389084c080f077">More...</a><br /></td></tr>
+<tr class="separator:ga8ae160778b599a27fe389084c080f077"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga27ba81ead144d6909ec8125afe91e91f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga27ba81ead144d6909ec8125afe91e91f">utility_ziminv</a> (const double_complex *a, const int len, int *index)</td></tr>
+<tr class="memdesc:ga27ba81ead144d6909ec8125afe91e91f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Double-precision, complex, index of maximum absolute value in a vector, i.e.  <a href="group___utilities.html#ga27ba81ead144d6909ec8125afe91e91f">More...</a><br /></td></tr>
+<tr class="separator:ga27ba81ead144d6909ec8125afe91e91f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf733d65eaed0015c6ba428a07eda867a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaf733d65eaed0015c6ba428a07eda867a">utility_simaxv</a> (const float *a, const int len, int *index)</td></tr>
 <tr class="memdesc:gaf733d65eaed0015c6ba428a07eda867a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single-precision, index of maximum absolute value in a vector, i.e.  <a href="group___utilities.html#gaf733d65eaed0015c6ba428a07eda867a">More...</a><br /></td></tr>
 <tr class="separator:gaf733d65eaed0015c6ba428a07eda867a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6600bec30da8cb52c95697fc81ded614"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga6600bec30da8cb52c95697fc81ded614">utility_cimaxv</a> (const float_complex *a, const int len, int *index)</td></tr>
 <tr class="memdesc:ga6600bec30da8cb52c95697fc81ded614"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single-precision, complex, index of maximum absolute value in a vector, i.e.  <a href="group___utilities.html#ga6600bec30da8cb52c95697fc81ded614">More...</a><br /></td></tr>
 <tr class="separator:ga6600bec30da8cb52c95697fc81ded614"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga005909eceb2e45f59890ced458300433"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga005909eceb2e45f59890ced458300433">utility_dimaxv</a> (const double *a, const int len, int *index)</td></tr>
+<tr class="memdesc:ga005909eceb2e45f59890ced458300433"><td class="mdescLeft">&#160;</td><td class="mdescRight">Double-precision, index of maximum absolute value in a vector, i.e.  <a href="group___utilities.html#ga005909eceb2e45f59890ced458300433">More...</a><br /></td></tr>
+<tr class="separator:ga005909eceb2e45f59890ced458300433"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4d81ec7663bbc27601aa31ab44d99d49"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga4d81ec7663bbc27601aa31ab44d99d49">utility_zimaxv</a> (const double_complex *a, const int len, int *index)</td></tr>
+<tr class="memdesc:ga4d81ec7663bbc27601aa31ab44d99d49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Double-precision, complex, index of maximum absolute value in a vector, i.e.  <a href="group___utilities.html#ga4d81ec7663bbc27601aa31ab44d99d49">More...</a><br /></td></tr>
+<tr class="separator:ga4d81ec7663bbc27601aa31ab44d99d49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaeaaae918746a4c589ea33cc62ea079fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaeaaae918746a4c589ea33cc62ea079fb">utility_svabs</a> (const float *a, const int len, float *c)</td></tr>
 <tr class="memdesc:gaeaaae918746a4c589ea33cc62ea079fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single-precision, absolute values of vector elements, i.e.  <a href="group___utilities.html#gaeaaae918746a4c589ea33cc62ea079fb">More...</a><br /></td></tr>
 <tr class="separator:gaeaaae918746a4c589ea33cc62ea079fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -264,6 +271,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gae23cb083ce0bfc2929a942cb76f6399e"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gae23cb083ce0bfc2929a942cb76f6399e">utility_sdet</a> (float *A, int N)</td></tr>
 <tr class="memdesc:gae23cb083ce0bfc2929a942cb76f6399e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determinant of a Matrix, single precision, i,e.  <a href="group___utilities.html#gae23cb083ce0bfc2929a942cb76f6399e">More...</a><br /></td></tr>
 <tr class="separator:gae23cb083ce0bfc2929a942cb76f6399e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga00f300e682daee405591f6d0dcb4b7c5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga00f300e682daee405591f6d0dcb4b7c5">utility_ddet</a> (double *A, int N)</td></tr>
+<tr class="memdesc:ga00f300e682daee405591f6d0dcb4b7c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determinant of a Matrix, double precision, i,e.  <a href="group___utilities.html#ga00f300e682daee405591f6d0dcb4b7c5">More...</a><br /></td></tr>
+<tr class="separator:ga00f300e682daee405591f6d0dcb4b7c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga43095d697bc4b7f42285876ef4d785cf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga43095d697bc4b7f42285876ef4d785cf">utility_sinv</a> (float *A, float *B, const int dim)</td></tr>
 <tr class="memdesc:ga43095d697bc4b7f42285876ef4d785cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Matrix inversion: single precision, i.e.  <a href="group___utilities.html#ga43095d697bc4b7f42285876ef4d785cf">More...</a><br /></td></tr>
 <tr class="separator:ga43095d697bc4b7f42285876ef4d785cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -286,7 +296,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__veclib_8h.html">saf_utility_veclib.h</a></li>
-    <li class="footer">Generated on Wed Apr 21 2021 16:34:36 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 12 2021 14:41:23 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

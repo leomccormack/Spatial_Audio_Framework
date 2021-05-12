@@ -126,9 +126,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga8b986b61b557a94d7097cfb6752da1dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___tracker.html#ga8b986b61b557a94d7097cfb6752da1dd">tracker3d_reset</a> (void *const hT3d)</td></tr>
 <tr class="memdesc:ga8b986b61b557a94d7097cfb6752da1dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets an instance of the mighty tracker3d.  <a href="group___tracker.html#ga8b986b61b557a94d7097cfb6752da1dd">More...</a><br /></td></tr>
 <tr class="separator:ga8b986b61b557a94d7097cfb6752da1dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga237407dc76fdd49c236ff34bc00b3d55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___tracker.html#ga237407dc76fdd49c236ff34bc00b3d55">tracker3d_step</a> (void *const hT3d, float *newObs_xyz, int nObs, float **target_xyz, int **target_IDs, int *nTargets)</td></tr>
-<tr class="memdesc:ga237407dc76fdd49c236ff34bc00b3d55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tracker time step to update &amp; predict current target locations and to parse new measurements/observations.  <a href="group___tracker.html#ga237407dc76fdd49c236ff34bc00b3d55">More...</a><br /></td></tr>
-<tr class="separator:ga237407dc76fdd49c236ff34bc00b3d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf180f16dc2e7664b7ffbce8f9b2dd2ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___tracker.html#gaf180f16dc2e7664b7ffbce8f9b2dd2ab">tracker3d_step</a> (void *const hT3d, float *newObs_xyz, int nObs, float **target_pos_xyz, float **target_var_xyz, int **target_IDs, int *nTargets)</td></tr>
+<tr class="memdesc:gaf180f16dc2e7664b7ffbce8f9b2dd2ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tracker time step to update &amp; predict current target locations and to parse new measurements/observations.  <a href="group___tracker.html#gaf180f16dc2e7664b7ffbce8f9b2dd2ab">More...</a><br /></td></tr>
+<tr class="separator:gaf180f16dc2e7664b7ffbce8f9b2dd2ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Particle-filtering-based tracker. </p>
@@ -229,8 +229,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga237407dc76fdd49c236ff34bc00b3d55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga237407dc76fdd49c236ff34bc00b3d55">&#9670;&nbsp;</a></span>tracker3d_step()</h2>
+<a id="gaf180f16dc2e7664b7ffbce8f9b2dd2ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf180f16dc2e7664b7ffbce8f9b2dd2ab">&#9670;&nbsp;</a></span>tracker3d_step()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -257,7 +257,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float **&#160;</td>
-          <td class="paramname"><em>target_xyz</em>, </td>
+          <td class="paramname"><em>target_pos_xyz</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float **&#160;</td>
+          <td class="paramname"><em>target_var_xyz</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -286,7 +292,8 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">hT3d</td><td>tracker3d handle </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">newObs_xyz</td><td>New observations/measurements; nObs x 3 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nObs</td><td>Number of new observations/measurements </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">target_xyz</td><td>(&amp;) Current target locations; *nTargets x 3 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">target_pos_xyz</td><td>(&amp;) Current target positions; *nTargets x 3 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">target_var_xyz</td><td>(&amp;) Current target variances; *nTargets x 3 </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">target_IDs</td><td>(&amp;) (Unique) target IDs; *nTargets x 1 </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">nTargets</td><td>(&amp;) Current number of targets being tracked </td></tr>
   </table>
@@ -302,7 +309,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Apr 21 2021 16:34:36 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 12 2021 14:41:23 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

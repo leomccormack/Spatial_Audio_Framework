@@ -155,16 +155,16 @@ Functions</h2></td></tr>
 <tr class="memdesc:gae64fac66ae4e7564551f1f04378726d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts an Ambisonic signal from one normalisation convention to another.  <a href="group___h_o_a.html#gae64fac66ae4e7564551f1f04378726d4">More...</a><br /></td></tr>
 <tr class="separator:gae64fac66ae4e7564551f1f04378726d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac2804e1b897727e3ed1cd0d6dc74d179"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_o_a.html#gac2804e1b897727e3ed1cd0d6dc74d179">getRSH</a> (int order, float *dirs_deg, int nDirs, float *Y)</td></tr>
-<tr class="memdesc:gac2804e1b897727e3ed1cd0d6dc74d179"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes REAL spherical harmonics [1] for each given direction on the unit sphere.  <a href="group___h_o_a.html#gac2804e1b897727e3ed1cd0d6dc74d179">More...</a><br /></td></tr>
+<tr class="memdesc:gac2804e1b897727e3ed1cd0d6dc74d179"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes real-valued spherical harmonics [1] for each given direction on the unit sphere.  <a href="group___h_o_a.html#gac2804e1b897727e3ed1cd0d6dc74d179">More...</a><br /></td></tr>
 <tr class="separator:gac2804e1b897727e3ed1cd0d6dc74d179"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf095b87aecb2c38ce5014669c70d4f6f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_o_a.html#gaf095b87aecb2c38ce5014669c70d4f6f">getRSH_recur</a> (int order, float *dirs_deg, int nDirs, float *Y)</td></tr>
-<tr class="memdesc:gaf095b87aecb2c38ce5014669c70d4f6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes REAL spherical harmonics [1] for each given direction on the unit sphere.  <a href="group___h_o_a.html#gaf095b87aecb2c38ce5014669c70d4f6f">More...</a><br /></td></tr>
+<tr class="memdesc:gaf095b87aecb2c38ce5014669c70d4f6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes real-valued spherical harmonics [1] for each given direction on the unit sphere.  <a href="group___h_o_a.html#gaf095b87aecb2c38ce5014669c70d4f6f">More...</a><br /></td></tr>
 <tr class="separator:gaf095b87aecb2c38ce5014669c70d4f6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf2dc357da0a7df362e1d53a91936955c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_o_a.html#gaf2dc357da0a7df362e1d53a91936955c">getMaxREweights</a> (int order, int diagMtxFlag, float *a_n)</td></tr>
 <tr class="memdesc:gaf2dc357da0a7df362e1d53a91936955c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the weights required to manipulate a hyper-cardioid beam-pattern, such that it has maximum energy in the given look-direction.  <a href="group___h_o_a.html#gaf2dc357da0a7df362e1d53a91936955c">More...</a><br /></td></tr>
 <tr class="separator:gaf2dc357da0a7df362e1d53a91936955c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf7fa5744bdd8395ab6d34e238f757599"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_o_a.html#gaf7fa5744bdd8395ab6d34e238f757599">truncationEQ</a> (float *w_n, int order_truncated, int order_target, double *kr, int nBands, float softThreshold, float *gain)</td></tr>
-<tr class="memdesc:gaf7fa5744bdd8395ab6d34e238f757599"><td class="mdescLeft">&#160;</td><td class="mdescRight">Filter that equalizes the high frequency roll-off due to SH truncation and tapering.  <a href="group___h_o_a.html#gaf7fa5744bdd8395ab6d34e238f757599">More...</a><br /></td></tr>
+<tr class="memdesc:gaf7fa5744bdd8395ab6d34e238f757599"><td class="mdescLeft">&#160;</td><td class="mdescRight">Filter that equalises the high frequency roll-off due to SH truncation and tapering; as described in [1].  <a href="group___h_o_a.html#gaf7fa5744bdd8395ab6d34e238f757599">More...</a><br /></td></tr>
 <tr class="separator:gaf7fa5744bdd8395ab6d34e238f757599"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7c5ef22cd1066f447256dcb0ba7f76a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_o_a.html#ga7c5ef22cd1066f447256dcb0ba7f76a2">getLoudspeakerDecoderMtx</a> (float *ls_dirs_deg, int nLS, <a class="el" href="group___h_o_a.html#gaa9bfe259decc1175b881c63f05edfae2">LOUDSPEAKER_AMBI_DECODER_METHODS</a> method, int order, int enableMaxrE, float *decMtx)</td></tr>
 <tr class="memdesc:ga7c5ef22cd1066f447256dcb0ba7f76a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes an ambisonic decoding matrix of a specific order, for a given loudspeaker layout.  <a href="group___h_o_a.html#ga7c5ef22cd1066f447256dcb0ba7f76a2">More...</a><br /></td></tr>
@@ -208,7 +208,7 @@ Functions</h2></td></tr>
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116ab9d8239b3e918ada247720015cee827f"></a>BINAURAL_DECODER_DEFAULT&#160;</td><td class="fielddoc"><p>The default decoder is <a class="el" href="group___h_o_a.html#ggaeb6116ef26ca8f592af4e81f5f963116a25059f43250b90fb659563953d6e52a4" title="Least-squares (LS) decoder.">BINAURAL_DECODER_LS</a>. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116a25059f43250b90fb659563953d6e52a4"></a>BINAURAL_DECODER_LS&#160;</td><td class="fielddoc"><p>Least-squares (LS) decoder. </p>
-<p>The simplest binaural decoder. </p>
+<p>The simplest binaural decoder, which is based on a least-squares fit of the spherical harmonic patterns onto the HRTF directivity patterns. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116aea7d5ff9e0fec9c3e86274cde48a6436"></a>BINAURAL_DECODER_LSDIFFEQ&#160;</td><td class="fielddoc"><p>Least-squares (LS) decoder with diffuse-field spectral equalisation [1]. </p>
 <p>Note that the diffuse-field EQ is applied in the spherical harmonic domain (to account for the truncation error/loss of high frequencies), so this is not the same as applying <a class="el" href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c" title="Applies pre-processing to a set of HRTFs, which can either be diffuse-field EQ of an (optionally weig...">diffuseFieldEqualiseHRTFs()</a> on the HRTFs followed by BINAURAL_DECODER_LS. </p>
@@ -216,14 +216,14 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116ab52d181ecdf9d10fcb9c5d761cac8a98"></a>BINAURAL_DECODER_SPR&#160;</td><td class="fielddoc"><p>Spatial resampling decoder (on the same lines as the virtual loudspeaker approach) [2]. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116ad06de101e3b304af994c611b744df457"></a>BINAURAL_DECODER_TA&#160;</td><td class="fielddoc"><p>Time-alignment decoder [3]. </p>
-<p>Relies on discarding the phase information of the HRTFs, past the frequency at which humans are less sensitive to inter-aural time differences. Therefore, the least-squares fitting priorites matching the interaural level differences (ILDs), rather than the interaural time differences (ITDs). </p>
+<p>Relies on discarding the phase information of the HRTFs, past the frequency at which humans are less sensitive to inter-aural time difference cues. Therefore, the least-squares fitting priorites matching the interaural level differences (ILDs), rather than the interaural time differences (ITDs). </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116a02f30e94818bd69708ce020110589ce4"></a>BINAURAL_DECODER_MAGLS&#160;</td><td class="fielddoc"><p>Magnitude least-squares decoder [4]. </p>
-<p>On similar lines to the time- alignment decoder, but differing in its execution. </p>
+<p>On similar lines to the time- alignment decoder, but differing slightly in its execution. </p>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="saf__hoa_8h_source.html#l00133">133</a> of file <a class="el" href="saf__hoa_8h_source.html">saf_hoa.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hoa_8h_source.html#l00132">132</a> of file <a class="el" href="saf__hoa_8h_source.html">saf_hoa.h</a>.</p>
 
 </div>
 </div>
@@ -241,7 +241,7 @@ Functions</h2></td></tr>
 
 <p>Available Ambisonic channel ordering conventions. </p>
 <dl class="section note"><dt>Note</dt><dd>ACN channel ordering with SN3D normalisation is often collectively referred to as the 'AmbiX' format. </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>FuMa is a deprecated legacy format and is only supported for first- order! The recommended Ambisonic conventions are ACN with N3D/SN3D normalisation. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>FuMa is a deprecated legacy format and is only supported for first- order! The recommended Ambisonic conventions are ACN with N3D or SN3D normalisation. </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga736d1bf23b9d8a0b2018888b96295591a59dc12dec2431faddbf49fa9af554dd7"></a>HOA_CH_ORDER_ACN&#160;</td><td class="fielddoc"><p>Ambisonic Channel numbering (ACN) convention, which is employed by all spherical harmonic related functions in SAF. </p>
 </td></tr>
@@ -250,7 +250,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="saf__hoa_8h_source.html#l00180">180</a> of file <a class="el" href="saf__hoa_8h_source.html">saf_hoa.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hoa_8h_source.html#l00181">181</a> of file <a class="el" href="saf__hoa_8h_source.html">saf_hoa.h</a>.</p>
 
 </div>
 </div>
@@ -275,11 +275,11 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="ggad26ea0ae544afa82568f7d6a51303f52a9f7d4d31d27255bf7df49c21234b82e4"></a>HOA_NORM_SN3D&#160;</td><td class="fielddoc"><p>Schmidt semi-normalisation (SN3D) convention, as used by the AmbiX standard. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ggad26ea0ae544afa82568f7d6a51303f52a5f31b11f5e519ab3fb25ecc2d7eaee93"></a>HOA_NORM_FUMA&#160;</td><td class="fielddoc"><p>Furse-Malham (FuMa) convention. </p>
-<p>This is similar to SN3D (at first-order), except theres an additional 1/sqrt(2) scaling applied to the omni. </p>
+<p>This is similar to SN3D (at first-order), except theres an additional 1/sqrt(2) scaling applied to the omni. This is also known as maxN normalisation. </p>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="saf__hoa_8h_source.html#l00200">200</a> of file <a class="el" href="saf__hoa_8h_source.html">saf_hoa.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hoa_8h_source.html#l00201">201</a> of file <a class="el" href="saf__hoa_8h_source.html">saf_hoa.h</a>.</p>
 
 </div>
 </div>
@@ -310,14 +310,14 @@ Functions</h2></td></tr>
 <p>Due to the pseudo-inverse, more signal energy is lent to regions on the surface of the sphere that are more sparsely populated with loudspeakers; (this is essentially a least-squares solution). Therefore, this approach can help balance out directional loudness differences when using slightly irregular setups. However, one must also be careful since loudspeakers that are very far way from all the other loudspeakers (e.g. voice-of-god) may be given significantly more signal energy than expected. Therefore, this approach is not recommended for highly irregular loudspeaker arrangements! </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ggaa9bfe259decc1175b881c63f05edfae2aa1e10487b21890502a1c72b34d2b7add"></a>LOUDSPEAKER_DECODER_EPAD&#160;</td><td class="fielddoc"><p>Energy-Preserving Ambisonic Decoder (EPAD) [1]. </p>
-<p>This decoder aims to preserve the energy of a source, as it panned around to directions of the sphere; essentially, addressing the energy-preserving issues of the SAD and MMD decoding approaches, especially for irregular layouts. </p>
+<p>This decoder aims to preserve the energy of a source, as it panned around to directions of the sphere; essentially, addressing the energy-preserving issues of the SAD and MMD decoding approaches for irregular layouts. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ggaa9bfe259decc1175b881c63f05edfae2a30fc2a59a858885b6651fd5a1fd34145"></a>LOUDSPEAKER_DECODER_ALLRAD&#160;</td><td class="fielddoc"><p>All-Round Ambisonic Decoder (AllRAD): SAD decoding to t-design, panned for the target loudspeaker directions using VBAP [2]. </p>
+<tr><td class="fieldname"><a id="ggaa9bfe259decc1175b881c63f05edfae2a30fc2a59a858885b6651fd5a1fd34145"></a>LOUDSPEAKER_DECODER_ALLRAD&#160;</td><td class="fielddoc"><p>All-Round Ambisonic Decoder (AllRAD): SAD decoding to a t-design, panned for the target loudspeaker directions using VBAP [2]. </p>
 <p>Perhaps the Ambisonic decoder we would most recommend for irregular loudspeaker layouts. Note, given a high (well... technically infinite) order, AllRAD will converge to VBAP. However, since lower-orders are employed in practice, AllRAD is not as spatially "sharp" as VBAP, but it will yield more consistent source spread when panning a source inbetween the loudspeakers. The approach is highly robust to irregular loudspeaker setups, and exhibits low directional error and good energy-preserving properties. </p>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="saf__hoa_8h_source.html#l00060">60</a> of file <a class="el" href="saf__hoa_8h_source.html">saf_hoa.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hoa_8h_source.html#l00059">59</a> of file <a class="el" href="saf__hoa_8h_source.html">saf_hoa.h</a>.</p>
 
 </div>
 </div>
@@ -505,7 +505,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Converts an Ambisonic signal from one normalisation convention to another. </p>
-<dl class="section warning"><dt>Warning</dt><dd>If one of the in/out conventions is FuMa, then only the first 4 channels are converted, and any remaining channels of 'insig' are set to zeros (i.e. FuMa is strictly first-order only in SAF). </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>If one of the in/out conventions is FuMa, then only the first 4 channels are converted, and any remaining channels of 'insig' are set to zeros (FuMa is strictly first-order only in SAF). </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>insig is converted "in-place". Also, if the in/out conventions are the same, then the function is bypassed.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -841,7 +841,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Computes the weights required to manipulate a hyper-cardioid beam-pattern, such that it has maximum energy in the given look-direction. </p>
-<p>Traditionally, due to the back lobes of beamformers when panning a source via Ambisonics encoding/decoding, there is unwanted energy given to loudspeakers directly opposite the true source direction. This max_rE weighting [1] essentially spatially "tapers" the spherical harmonic patterns used to generate said beams, reducing the contribution of the higher orders to the beam patterns. This results in worse spatial selectivity, as the width of the beam pattern main lobe is widened, however, the back lobes are also reduced; thus mitigating the aforementioned problem.</p>
+<p>Due to the side and back lobes of the beamformers employed by the Ambisonic decoder, when panning a source there can be unwanted energy given to loudspeakers directly opposite the true source direction. This max_rE weighting [1] essentially spatially tapers the spherical harmonic components used to generate the beamformers, thus reducing the contribution of the higher order components. This results in worse spatial selectivity, as the width of the beam pattern main lobe is widened, however, the back lobes are also reduced, thus mitigating perceptual issues that may arise due to the aforementioned problem.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Order of spherical harmonic expansion </td></tr>
@@ -894,8 +894,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Computes REAL spherical harmonics [1] for each given direction on the unit sphere. </p>
-<p>The real spherical harmonics are computed WITHOUT the 1/sqrt(4*pi) term. i.e. max(omni) = 1. Also, compared to <a class="el" href="group___h_o_a.html#gaf095b87aecb2c38ce5014669c70d4f6f" title="Computes REAL spherical harmonics [1] for each given direction on the unit sphere.">getRSH_recur()</a>, this function uses <a class="el" href="group___s_h.html#ga1ff15ddf9e257b1f185421568ef349dd" title="Calculates unnormalised Legendre polynomials up to order N, for all values in vector x [1].">unnorm_legendreP()</a> and double precision, so is more suitable for determining 'Y' in an initialisation stage. This version is indeed slower, but more precise (especially for high orders).</p>
+<p>Computes real-valued spherical harmonics [1] for each given direction on the unit sphere. </p>
+<p>The spherical harmonic values are computed WITHOUT the 1/sqrt(4*pi) term. Compared to <a class="el" href="group___h_o_a.html#gaf095b87aecb2c38ce5014669c70d4f6f" title="Computes real-valued spherical harmonics [1] for each given direction on the unit sphere.">getRSH_recur()</a>, this function uses <a class="el" href="group___s_h.html#ga1ff15ddf9e257b1f185421568ef349dd" title="Calculates unnormalised Legendre polynomials up to order N, for all values in vector x [1].">unnorm_legendreP()</a> and double precision, so is more suitable for being computed in an initialisation stage. This version is indeed slower, but more precise (especially for high orders).</p>
 <dl class="section note"><dt>Note</dt><dd>This function is mainly intended for Ambisonics, due to the omission of the 1/sqrt(4*pi) scaling, and the directions are given in [azimuth elevation] (degrees). In Ambisonics literature, the format convention of 'Y' is referred to as ACN/N3D</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -950,8 +950,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Computes REAL spherical harmonics [1] for each given direction on the unit sphere. </p>
-<p>The real spherical harmonics are computed WITHOUT the 1/sqrt(4*pi) term. i.e. max(omni) = 1. Also, Compared to <a class="el" href="group___h_o_a.html#gac2804e1b897727e3ed1cd0d6dc74d179" title="Computes REAL spherical harmonics [1] for each given direction on the unit sphere.">getRSH()</a>, this function uses <a class="el" href="group___s_h.html#ga3851842c7f6c520c3f645f0ae686443c" title="Calculates unnormalised Legendre polynomials up to order N, for all values in vector x.">unnorm_legendreP_recur()</a> and single precision, so is more suitable for determining 'Y' in a real-time loop. It sacrifices some precision, as numerical error propogates through the recursion, but it is much faster.</p>
+<p>Computes real-valued spherical harmonics [1] for each given direction on the unit sphere. </p>
+<p>The real spherical harmonics are computed WITHOUT the 1/sqrt(4*pi) term. Compared to <a class="el" href="group___h_o_a.html#gac2804e1b897727e3ed1cd0d6dc74d179" title="Computes real-valued spherical harmonics [1] for each given direction on the unit sphere.">getRSH()</a>, this function uses <a class="el" href="group___s_h.html#ga3851842c7f6c520c3f645f0ae686443c" title="Calculates unnormalised Legendre polynomials up to order N, for all values in vector x.">unnorm_legendreP_recur()</a> and single precision, so is more suitable for being computed in a real-time loop. It sacrifices some precision, and numerical error propogates through the recursion, but it is much faster.</p>
+<p>The function also uses static memory buffers for single direction and up to 7th order, which speeds things up considerably for such use cases.</p>
 <dl class="section note"><dt>Note</dt><dd>This function is mainly intended for Ambisonics, due to the omission of the 1/sqrt(4*pi) scaling, and the directions are given in [azimuth elevation] (degrees). In Ambisonics literature, the format convention of 'Y' is referred to as ACN/N3D</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1024,8 +1025,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Filter that equalizes the high frequency roll-off due to SH truncation and tapering. </p>
-<p>Details can be found in [1].</p>
+<p>Filter that equalises the high frequency roll-off due to SH truncation and tapering; as described in [1]. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">w_n</td><td>Tapering weights; (order_truncated + 1) x 1 E.g. maxRE, or all ones for truncation only </td></tr>
@@ -1049,7 +1049,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Apr 21 2021 16:34:36 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 12 2021 14:41:23 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

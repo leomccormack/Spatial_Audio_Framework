@@ -92,6 +92,7 @@ $(document).ready(function(){initNavTree('saf__hrir_8c.html',''); initResizable(
 <p>Public source for the HRIR/HRTF processing module (<a class="el" href="saf_8h.html#a2afda4360b65935e869ca8c4fd98fea1" title="SAF Module: HRIR.">SAF_HRIR_MODULE</a>)  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="saf__hrir_8h_source.html">saf_hrir.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="saf__utilities_8h_source.html">../saf_utilities/saf_utilities.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="saf__externals_8h_source.html">saf_externals.h</a>&quot;</code><br />
 </div>
 <p><a href="saf__hrir_8c_source.html">Go to the source code of this file.</a></p>
@@ -99,7 +100,7 @@ $(document).ready(function(){initNavTree('saf__hrir_8c.html',''); initResizable(
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:gaf4e65a8546982cb60e4553dedca1f4a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gaf4e65a8546982cb60e4553dedca1f4a2">estimateITDs</a> (float *hrirs, int N_dirs, int hrir_len, int fs, float *itds_s)</td></tr>
-<tr class="memdesc:gaf4e65a8546982cb60e4553dedca1f4a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimates the interaural time-differences (ITDs) for each HRIR via the cross- correlation between the left and right channels.  <a href="group___h_r_i_r.html#gaf4e65a8546982cb60e4553dedca1f4a2">More...</a><br /></td></tr>
+<tr class="memdesc:gaf4e65a8546982cb60e4553dedca1f4a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimates the interaural time-differences (ITDs) for each HRIR based on the cross-correlation between the left and right channels, which are first low-pass filtered at 750Hz.  <a href="group___h_r_i_r.html#gaf4e65a8546982cb60e4553dedca1f4a2">More...</a><br /></td></tr>
 <tr class="separator:gaf4e65a8546982cb60e4553dedca1f4a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf7213481e6b8afa3b25fbf4343c1ca50"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gaf7213481e6b8afa3b25fbf4343c1ca50">HRIRs2HRTFs_afSTFT</a> (float *hrirs, int N_dirs, int hrir_len, int hopsize, int LDmode, int hybridmode, float_complex *hrtf_fb)</td></tr>
 <tr class="memdesc:gaf7213481e6b8afa3b25fbf4343c1ca50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Passes zero padded HRIRs through the afSTFT filterbank.  <a href="group___h_r_i_r.html#gaf7213481e6b8afa3b25fbf4343c1ca50">More...</a><br /></td></tr>
@@ -108,10 +109,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:gadfaf82c46f2d7033e5182b9fc945ba93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Passes zero padded HRIRs through the qmf filterbank.  <a href="group___h_r_i_r.html#gadfaf82c46f2d7033e5182b9fc945ba93">More...</a><br /></td></tr>
 <tr class="separator:gadfaf82c46f2d7033e5182b9fc945ba93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga95e3ef60ada22e4bea2c40dcd38b4573">HRIRs2HRTFs</a> (float *hrirs, int N_dirs, int hrir_len, int fftSize, float_complex *hrtfs)</td></tr>
-<tr class="memdesc:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts HRIRs to HRTFs using a given FFT size.  <a href="group___h_r_i_r.html#ga95e3ef60ada22e4bea2c40dcd38b4573">More...</a><br /></td></tr>
+<tr class="memdesc:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts HRIRs to HRTFs for a given FFT size.  <a href="group___h_r_i_r.html#ga95e3ef60ada22e4bea2c40dcd38b4573">More...</a><br /></td></tr>
 <tr class="separator:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaced04b646c57d04a25e26b469e18588c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">diffuseFieldEqualiseHRTFs</a> (int N_dirs, float *itds_s, float *centreFreq, int N_bands, float *weights, int applyEQ, int applyPhase, float_complex *hrtfs)</td></tr>
-<tr class="memdesc:gaced04b646c57d04a25e26b469e18588c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies pre-processing to a set of HRTFs, which can either be diffuse-field EQ of an (optionally weighted) average of all HRTFs (CTF), phase s implification based on ITDs, or both.  <a href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">More...</a><br /></td></tr>
+<tr class="memdesc:gaced04b646c57d04a25e26b469e18588c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies pre-processing to a set of HRTFs, which can either be diffuse-field EQ of an (optionally weighted) average of all HRTFs (CTF), phase simplification based on ITDs, or both.  <a href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">More...</a><br /></td></tr>
 <tr class="separator:gaced04b646c57d04a25e26b469e18588c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga23e9a79557d045fcc850a5253733aed7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7">interpHRTFs</a> (float_complex *hrtfs, float *itds, float *freqVector, float *vbap_gtable, int N_hrtf_dirs, int N_bands, int N_interp_dirs, float_complex *hrtfs_interp)</td></tr>
 <tr class="memdesc:ga23e9a79557d045fcc850a5253733aed7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interpolates a set of HRTFs for specified directions, defined by an amplitude normalised VBAP interpolation table (see <a class="el" href="saf__vbap_8h.html" title="Main header for the VBAP/MDAP module (SAF_VBAP_MODULE)">saf_vbap.h</a>)  <a href="group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7">More...</a><br /></td></tr>
@@ -122,7 +123,7 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Public source for the HRIR/HRTF processing module (<a class="el" href="saf_8h.html#a2afda4360b65935e869ca8c4fd98fea1" title="SAF Module: HRIR.">SAF_HRIR_MODULE</a>) </p>
-<p>A collection of head-related impulse-response (HRIR) functions. Including estimation of the interaural time differences (ITDs), conversion of HRIRs to HRTF filterbank coefficients, and HRTF interpolation utilising amplitude- normalised VBAP gains.</p>
+<p>A collection functions for processing head-related impulse-response (HRIR). Including: estimation of the interaural time differences (ITDs), conversion of HRIRs to HRTFs or filterbank coefficients; diffuse-field equalisation and phase simplication; and HRTF interpolation.</p>
 <dl class="section author"><dt>Author</dt><dd>Leo McCormack </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>12.12.2016 </dd></dl>
 
@@ -133,7 +134,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_7537ddf6938b30af6f0305d5e585e1f2.html">saf_hrir</a></li><li class="navelem"><a class="el" href="saf__hrir_8c.html">saf_hrir.c</a></li>
-    <li class="footer">Generated on Wed Apr 21 2021 16:34:36 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 12 2021 14:41:22 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

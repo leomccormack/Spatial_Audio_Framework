@@ -7,6 +7,7 @@ var saf__test_8h =
     [ "test__cmplxPairUp", "saf__test_8h.html#a48643f2e901629d2d1fea9474932ba14", null ],
     [ "test__complex2realSHMtx", "saf__test_8h.html#aa287f898d7c0f64e7823c09bc11824fa", null ],
     [ "test__computeSectorCoeffsEP", "saf__test_8h.html#aa313ae6eb64e8ab4db6b5482882ac348", null ],
+    [ "test__delaunaynd", "saf__test_8h.html#a74ffb0dd64f546bf87b0e6b4986cf4b0", null ],
     [ "test__faf_IIRFilterbank", "saf__test_8h.html#aa4cef2722415c8366710c1425a917a06", null ],
     [ "test__formulate_M_and_Cr", "saf__test_8h.html#a0d7a7f9075302291e06092caaa6f07cc", null ],
     [ "test__formulate_M_and_Cr_cmplx", "saf__test_8h.html#a996c9314e242eaf4aa5ac61fdc7c0772", null ],

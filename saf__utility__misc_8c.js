@@ -1,11 +1,13 @@
 var saf__utility__misc_8c =
 [
     [ "anyLessThanf", "group___utilities.html#gae6a18584c72d6f66b84ac4c4b900a001", null ],
+    [ "combinationUtil", "saf__utility__misc_8c.html#af48dca30519c6e20da28018055819ef8", null ],
     [ "convd", "group___utilities.html#gab6cd4596eec8746244d1566eb2adad85", null ],
     [ "convert_0_360To_m180_180", "group___utilities.html#ga37c35ff6667014c738a9d4713b9728a5", null ],
     [ "convz", "group___utilities.html#gaec989e56048e1f146084901654e99eaf", null ],
     [ "cxcorr", "group___utilities.html#ga58f5d8c2b3c44c035aadc4493a790842", null ],
     [ "factorial", "group___utilities.html#ga9e753ee3390aba5fed74f311a3540a67", null ],
+    [ "findCombinations", "group___utilities.html#ga14a716b17d73bf3719ab9c6a74e1bf44", null ],
     [ "findERBpartitions", "group___utilities.html#ga3220f281bd9856bb1fc32439c627e142", null ],
     [ "gexpm", "group___utilities.html#ga73a34795743a4dbfb1f3cea323bec90e", null ],
     [ "lagrangeWeights", "group___utilities.html#gae3216f9f562a0bf51a327adff0b40744", null ],

@@ -123,7 +123,7 @@ Macros</h2></td></tr>
 <tr class="separator:gadcc46a52e7b23231d700877864b831e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gade6691adf17d4e97d1566a7bce6ab0db"><td class="memItemLeft" align="right" valign="top"><a id="gade6691adf17d4e97d1566a7bce6ab0db"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___reverb.html#gade6691adf17d4e97d1566a7bce6ab0db">IMS_MAX_NUM_RECEIVERS</a>&#160;&#160;&#160;16</td></tr>
-<tr class="memdesc:gade6691adf17d4e97d1566a7bce6ab0db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of receivers supported by IMS Shoebox. <br /></td></tr>
+<tr class="memdesc:gade6691adf17d4e97d1566a7bce6ab0db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of receivers supported by an instance of the IMS simulator. <br /></td></tr>
 <tr class="separator:gade6691adf17d4e97d1566a7bce6ab0db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
@@ -145,11 +145,11 @@ Functions</h2></td></tr>
 <tr class="separator:ga6d063c79c4718703ea53adbd206f8329"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0d98415908e422f55d7dd178b7070712"><td class="memItemLeft" align="right" valign="top"><a id="ga0d98415908e422f55d7dd178b7070712"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___reverb.html#ga0d98415908e422f55d7dd178b7070712">ims_shoebox_setRoomDimensions</a> (void *hIms, float new_roomDimensions[3])</td></tr>
-<tr class="memdesc:ga0d98415908e422f55d7dd178b7070712"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the room dimensions. <br /></td></tr>
+<tr class="memdesc:ga0d98415908e422f55d7dd178b7070712"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets new room dimensions. <br /></td></tr>
 <tr class="separator:ga0d98415908e422f55d7dd178b7070712"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf2f60c1f14656e38eb62cfa6a293af2a"><td class="memItemLeft" align="right" valign="top"><a id="gaf2f60c1f14656e38eb62cfa6a293af2a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___reverb.html#gaf2f60c1f14656e38eb62cfa6a293af2a">ims_shoebox_setWallAbsCoeffs</a> (void *hIms, float *abs_wall)</td></tr>
-<tr class="memdesc:gaf2f60c1f14656e38eb62cfa6a293af2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the wall absorption coefficients per wall and per band. <br /></td></tr>
+<tr class="memdesc:gaf2f60c1f14656e38eb62cfa6a293af2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets new wall absorption coefficients per wall and per band. <br /></td></tr>
 <tr class="separator:gaf2f60c1f14656e38eb62cfa6a293af2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga59f818fd730d0510affdefef5573e0ab"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___reverb.html#ga59f818fd730d0510affdefef5573e0ab">ims_shoebox_addSource</a> (void *hIms, float position_xyz[3], float **pSrc_sig)</td></tr>
 <tr class="memdesc:ga59f818fd730d0510affdefef5573e0ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a source object to the simulator, and returns a unique ID corresponding to it.  <a href="group___reverb.html#ga59f818fd730d0510affdefef5573e0ab">More...</a><br /></td></tr>
@@ -188,7 +188,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="grou
 </div><div class="memdoc">
 
 <p>TODO: Arbitrary array receiver option; Directional source option; finish <a class="el" href="group___reverb.html#gab454a1a24911b3911d6d8638e3ac3c1a" title="Renders room impulse responses for all active source/receiver combinations.">ims_shoebox_renderRIRs()</a> function;. </p>
-<p>Maximum number of sources supported by IMS Shoebox </p>
+<p>Maximum number of sources supported by an instance of the IMS simulator </p>
 
 <p class="definition">Definition at line <a class="el" href="saf__reverb_8h_source.html#l00050">50</a> of file <a class="el" href="saf__reverb_8h_source.html">saf_reverb.h</a>.</p>
 
@@ -342,7 +342,7 @@ You are responsible for making sure that the signal pointers actually point to a
 
 <p>Applies the currently computed echograms in the time-domain, for all sources, for one specified receiver. </p>
 <p>Note the following:</p><ul>
-<li>The signal pointers must be valid, and have allocated enough memory for the number of channels and be of (at least) nSamples in length.</li>
+<li>The signal pointers for all the sources and the specified receiver must be valid, and have allocated enough memory for the number of channels and be of (at least) nSamples in length.</li>
 <li>The given receiverID must exist in the simulation. If it does not, then an assertion error is triggered.</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
@@ -393,9 +393,9 @@ You are responsible for making sure that the signal pointers actually point to a
 
 <p>Computes echograms for all active source/receiver combinations. </p>
 <p>The sources are omnidirectional point sources, whereas the receiver will have the directivity of whatever they are configured to have</p>
-<dl class="section note"><dt>Note</dt><dd>Set either the maximum order (maxN) or the maximum IR length in seconds (maxTime_s). The option you don't want to use set to &lt;0. </dd>
+<dl class="section note"><dt>Note</dt><dd>Set either the maximum reflection order (maxN) or the maximum IR length in seconds (maxTime_s). The option you don't want to use: set to &lt;0. </dd>
 <dd>
-The echograms are only updated if needed, so it is "OK" to call this function as many times as you wish, since there will be virtually no CPU overhead incurred if no update is required.</dd></dl>
+The echograms are only updated if needed, so it is OK to call this function as many times as you wish, since there will be virtually no CPU overhead incurred if no update is required.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">hIms</td><td>ims_shoebox handle </td></tr>
@@ -553,7 +553,7 @@ The echograms are only updated if needed, so it is "OK" to call this function as
 </div><div class="memdoc">
 
 <p>Removes a specific receiver from the simulation. </p>
-<dl class="section note"><dt>Note</dt><dd>This does NOT free the receiver signals 'pSH_sigs'. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This does NOT free the receiver signals pointer 'pSH_sigs'. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="saf__reverb_8c_source.html#l00822">822</a> of file <a class="el" href="saf__reverb_8c_source.html">saf_reverb.c</a>.</p>
 
@@ -586,7 +586,7 @@ The echograms are only updated if needed, so it is "OK" to call this function as
 </div><div class="memdoc">
 
 <p>Removes a specific source from the simulation. </p>
-<dl class="section note"><dt>Note</dt><dd>This does NOT free the source signal 'pSrc_sig'. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This does NOT free the source signal pointer 'pSrc_sig'. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="saf__reverb_8c_source.html#l00789">789</a> of file <a class="el" href="saf__reverb_8c_source.html">saf_reverb.c</a>.</p>
 
@@ -636,7 +636,7 @@ The echograms are only updated if needed, so it is "OK" to call this function as
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Apr 21 2021 16:34:36 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 12 2021 14:41:23 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

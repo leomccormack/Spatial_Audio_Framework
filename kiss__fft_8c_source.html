@@ -304,7 +304,7 @@ $(document).ready(function(){initNavTree('kiss__fft_8c_source.html',''); initRes
 <div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;            <span class="keywordtype">int</span> twidx=0;</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;            Fout[ k ] = scratch[0];</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;            <span class="keywordflow">for</span> (q=1;q&lt;p;++q ) {</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                twidx += fstride * k;</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                twidx += (int)fstride * k;</div>
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                <span class="keywordflow">if</span> (twidx&gt;=Norig) twidx-=Norig;</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                C_MUL(t,scratch[q] , twiddles[twidx] );</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                C_ADDTO( Fout[ k ] ,t);</div>
@@ -501,7 +501,7 @@ $(document).ready(function(){initNavTree('kiss__fft_8c_source.html',''); initRes
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_c95fe3454413c7e9946bfee944a4e42b.html">resources</a></li><li class="navelem"><a class="el" href="dir_b00f08dc110422ef7a7a278b3dff2a0b.html">kissFFT</a></li><li class="navelem"><a class="el" href="kiss__fft_8c.html">kiss_fft.c</a></li>
-    <li class="footer">Generated on Wed Apr 21 2021 16:34:35 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 12 2021 14:41:22 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

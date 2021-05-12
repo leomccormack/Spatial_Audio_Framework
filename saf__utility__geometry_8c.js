@@ -1,10 +1,14 @@
 var saf__utility__geometry_8c =
 [
-    [ "convhull3d", "group___utilities.html#gaf9c0fe2057ad3b9e68c821de0080af4f", null ],
+    [ "convhull3d", "group___utilities.html#ga3d0d4af5965dcfa11215a830071a46ba", null ],
+    [ "convhullnd", "group___utilities.html#gac8f94455afdbc17faf5ffa747eb671ed", null ],
     [ "crossProduct3", "group___utilities.html#ga6184d4e03844102c7e7921c7081b7fd7", null ],
+    [ "delaunaynd", "group___utilities.html#gae58c09c415e9a7f6eeac6cf495bcef42", null ],
     [ "euler2Quaternion", "group___utilities.html#ga40bf87e6403c71d773a504fe1351bb8e", null ],
     [ "euler2rotationMatrix", "group___utilities.html#ga19a8e982f11eb0deaade1383781e179b", null ],
     [ "Frob_norm", "group___utilities.html#ga9ea794d041c0d2b6455cc3ddb227a3de", null ],
+    [ "getDistBetween2Points", "group___utilities.html#gabed590c9ff52f2dd97ed34ff5ee9776f", null ],
+    [ "getDistBetweenPointAndLine", "group___utilities.html#ga99982bf93ca7de69a77415877434383a", null ],
     [ "getRx", "saf__utility__geometry_8c.html#aa95f5c4e753fcc1122bc7f9edafd51ea", null ],
     [ "getRy", "saf__utility__geometry_8c.html#a119467db7040e6fcb71f7abaf179a6a3", null ],
     [ "getRz", "saf__utility__geometry_8c.html#a00acb906a2c25b457ce87fb2ea2eec96", null ],

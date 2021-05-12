@@ -91,29 +91,30 @@ $(document).ready(function(){initNavTree('af_s_t_f_t__proto_filter_8h.html','');
 
 <p>Prototype filter used by afSTFTlib.  
 <a href="#details">More...</a></p>
-
+<div class="textblock"><code>#include &quot;<a class="el" href="af_s_t_f_tlib_8h_source.html">afSTFTlib.h</a>&quot;</code><br />
+</div>
 <p><a href="af_s_t_f_t__proto_filter_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a875559db4e89723a1f26b2cbf356d4ce"><td class="memItemLeft" align="right" valign="top"><a id="a875559db4e89723a1f26b2cbf356d4ce"></a>
-const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_t__proto_filter_8h.html#a875559db4e89723a1f26b2cbf356d4ce">protoFilter1024</a> [10240]</td></tr>
-<tr class="memdesc:a875559db4e89723a1f26b2cbf356d4ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prototype filter used by afSTFTlib. <br /></td></tr>
-<tr class="separator:a875559db4e89723a1f26b2cbf356d4ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16ee5aa15b361851fb79fdd223feeb58"><td class="memItemLeft" align="right" valign="top"><a id="a16ee5aa15b361851fb79fdd223feeb58"></a>
-const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_t__proto_filter_8h.html#a16ee5aa15b361851fb79fdd223feeb58">protoFilter1024LD</a> [10240]</td></tr>
-<tr class="memdesc:a16ee5aa15b361851fb79fdd223feeb58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prototype filter used by afSTFTlib (low-delay mode) <br /></td></tr>
-<tr class="separator:a16ee5aa15b361851fb79fdd223feeb58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e97d4016d2121f5498cd9f50820cbc7"><td class="memItemLeft" align="right" valign="top"><a id="a0e97d4016d2121f5498cd9f50820cbc7"></a>
+const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_t__proto_filter_8h.html#a0e97d4016d2121f5498cd9f50820cbc7">__afSTFT_protoFilter1024</a> [10240]</td></tr>
+<tr class="memdesc:a0e97d4016d2121f5498cd9f50820cbc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prototype filter used by afSTFTlib. <br /></td></tr>
+<tr class="separator:a0e97d4016d2121f5498cd9f50820cbc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b50f1cd483991553f746f8514547c8f"><td class="memItemLeft" align="right" valign="top"><a id="a9b50f1cd483991553f746f8514547c8f"></a>
+const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_t__proto_filter_8h.html#a9b50f1cd483991553f746f8514547c8f">__afSTFT_protoFilter1024LD</a> [10240]</td></tr>
+<tr class="memdesc:a9b50f1cd483991553f746f8514547c8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prototype filter used by afSTFTlib (low-delay mode) <br /></td></tr>
+<tr class="separator:a9b50f1cd483991553f746f8514547c8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Prototype filter used by afSTFTlib. </p>
-<p>The code to compute the prototype filter is taken from [1] (Chapter 1) </p><div class="fragment"><div class="line">f = 5.845594e-04; % computed <span class="keyword">using</span> the method detailed in [2]</div>
+<p>The MATLAB code to compute the prototype filter is taken from [1] </p><div class="fragment"><div class="line">f = 5.845594e-04; % computed <span class="keyword">using</span> the method detailed in [2]</div>
 <div class="line">K = 1024;</div>
 <div class="line">C = 5;</div>
 <div class="line">N = 2*K*C;</div>
 <div class="line">prototypeFilter = firceqrip(N-1, f, [1e-6 1e-5]);</div>
 <div class="line">prototypeFilter = prototypeFilter./max(prototypeFilter);</div>
-</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd>[1] Pulkki, V., Delikaris-Manias, S. and Politis, A. 2018. Parametric time&ndash;frequency domain spatial audio. John Wiley &amp; Sons, Incorporated. </dd>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd>[1] Vilkamo, J., &amp; Ba"ckstro"m, T. (2018). Time&ndash;Frequency Processing: Methods and Tools. In Parametric Time&ndash;Frequency Domain Spatial Audio. John Wiley &amp; Sons. </dd>
 <dd>
 [2] Creusere, C.D. and Mitra, S.K., 1995. A simple method for designing high-quality prototype filters for M-band pseudo QMF banks. IEEE Transactions on signal processing, 43(4), pp.1005-1007. </dd></dl>
 
@@ -124,7 +125,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_c95fe3454413c7e9946bfee944a4e42b.html">resources</a></li><li class="navelem"><a class="el" href="dir_45a37e71ed05dd7d57de17724fd5b226.html">afSTFT</a></li><li class="navelem"><a class="el" href="af_s_t_f_t__proto_filter_8h.html">afSTFT_protoFilter.h</a></li>
-    <li class="footer">Generated on Wed Apr 21 2021 16:34:36 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 12 2021 14:41:23 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

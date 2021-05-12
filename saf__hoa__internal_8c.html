@@ -108,10 +108,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:a5bbdd392aae72987779019353f429643"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a standard least-squares (LS) binaural ambisonic decoder.  <a href="saf__hoa__internal_8c.html#a5bbdd392aae72987779019353f429643">More...</a><br /></td></tr>
 <tr class="separator:a5bbdd392aae72987779019353f429643"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d606a16cebf5e87e83465e9bc7f9d06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hoa__internal_8c.html#a1d606a16cebf5e87e83465e9bc7f9d06">getBinDecoder_LSDIFFEQ</a> (float_complex *hrtfs, float *hrtf_dirs_deg, int N_dirs, int N_bands, int order, float *weights, float_complex *decMtx)</td></tr>
-<tr class="memdesc:a1d606a16cebf5e87e83465e9bc7f9d06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a least-squares (LS) binaural ambisonic decoder with diffuse-field equalisation.  <a href="saf__hoa__internal_8c.html#a1d606a16cebf5e87e83465e9bc7f9d06">More...</a><br /></td></tr>
+<tr class="memdesc:a1d606a16cebf5e87e83465e9bc7f9d06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a least-squares (LS) binaural ambisonic decoder with diffuse-field equalisation [1].  <a href="saf__hoa__internal_8c.html#a1d606a16cebf5e87e83465e9bc7f9d06">More...</a><br /></td></tr>
 <tr class="separator:a1d606a16cebf5e87e83465e9bc7f9d06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ae1d9234ebffb4d901a82524e925f07"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hoa__internal_8c.html#a2ae1d9234ebffb4d901a82524e925f07">getBinDecoder_SPR</a> (float_complex *hrtfs, float *hrtf_dirs_deg, int N_dirs, int N_bands, int order, float *weights, float_complex *decMtx)</td></tr>
-<tr class="memdesc:a2ae1d9234ebffb4d901a82524e925f07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a binaural ambisonic decoder based on spatial resampling (basically, virtual loudspeaker decoding) [1].  <a href="saf__hoa__internal_8c.html#a2ae1d9234ebffb4d901a82524e925f07">More...</a><br /></td></tr>
+<tr class="memdesc:a2ae1d9234ebffb4d901a82524e925f07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a binaural ambisonic decoder based on spatial resampling (i.e, virtual loudspeaker decoding) [1].  <a href="saf__hoa__internal_8c.html#a2ae1d9234ebffb4d901a82524e925f07">More...</a><br /></td></tr>
 <tr class="separator:a2ae1d9234ebffb4d901a82524e925f07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a138f39eb021a09200594f8759932b9af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hoa__internal_8c.html#a138f39eb021a09200594f8759932b9af">getBinDecoder_TA</a> (float_complex *hrtfs, float *hrtf_dirs_deg, int N_dirs, int N_bands, int order, float *freqVector, float *itd_s, float *weights, float_complex *decMtx)</td></tr>
 <tr class="memdesc:a138f39eb021a09200594f8759932b9af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a binaural ambisonic decoder based on the time-alignment (TA) method described in [1].  <a href="saf__hoa__internal_8c.html#a138f39eb021a09200594f8759932b9af">More...</a><br /></td></tr>
@@ -122,7 +122,7 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Internal source for the higher-order Ambisonics module (<a class="el" href="saf_8h.html#a9c2c7080a25d54c9d7bc99588935ea8f" title="SAF Module: HOA.">SAF_HOA_MODULE</a>) </p>
-<p>A collection of Ambisonics related functions. Many of which are derived from the Matlab library by Archontis Politis [1] (BSD-3-Clause License).</p>
+<p>A collection of Ambisonics related functions. Many of which are derived from the MATLAB library by Archontis Politis in [1] (BSD-3-Clause License).</p>
 <dl class="section see"><dt>See also</dt><dd>[1] <a href="https://github.com/polarch/Higher-Order-Ambisonics">https://github.com/polarch/Higher-Order-Ambisonics</a></dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Leo McCormack </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>19.03.2018 </dd></dl>
@@ -241,7 +241,7 @@ Functions</h2></td></tr>
 
 <p>Computes a standard least-squares (LS) binaural ambisonic decoder. </p>
 <p>The binaural ambisonic decoder is computed for each frequency bin/band, ready to be applied to input SH signals in the time-frequency domain, or, take the inverse-FFT and apply it via matrix convolution.</p>
-<dl class="section note"><dt>Note</dt><dd>This standard LS decoder typically exhibits strong timbral colourations in the output when using lower-order input. This is due to input order truncation, as the HRTF grid is typically of much higher modal order than that of the input. This colouration especially affects high- frequencies, since high-frequency energy is predominantly concentrated in the higher-order components, which is then lost by truncating the input order. This phenomenon actually gets worse the more HRTFs there are, and is why the "virtual loudspeaker" approach often sounds better; subsequently bewildering many mathematicians, who often assume that more points used for a least-squares approximation, can only improve things.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This standard LS decoder typically produces strong timbral colourations in the output when using lower-order input. This is due to input order truncation, since the HRTF grid is typically of much higher modal order than that of the input order. This colouration especially affects high- frequencies, since high-frequency energy is predominantly concentrated in the higher-order components so is then lost by truncating the input order. This phenomenon therefore gets worse when increasing the number of HRTFs in the set.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">hrtfs</td><td>The HRTFs; FLAT: N_bands x <a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84" title="2 (true for most humans)">NUM_EARS</a> x N_dirs </td></tr>
@@ -315,7 +315,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Computes a least-squares (LS) binaural ambisonic decoder with diffuse-field equalisation. </p>
+<p>Computes a least-squares (LS) binaural ambisonic decoder with diffuse-field equalisation [1]. </p>
 <p>The binaural ambisonic decoder is computed for each frequency bin/band, ready to be applied to input SH signals in the time-frequency domain, or, take the inverse-FFT and apply it via matrix convolution.</p>
 <dl class="section note"><dt>Note</dt><dd>This equalisation mitagates some of the timbral colourations exhibited by standard LS decoding; especially at lower input orders.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
@@ -479,9 +479,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Computes a binaural ambisonic decoder based on spatial resampling (basically, virtual loudspeaker decoding) [1]. </p>
+<p>Computes a binaural ambisonic decoder based on spatial resampling (i.e, virtual loudspeaker decoding) [1]. </p>
 <p>The binaural ambisonic decoder is computed for each frequency bin/band, ready to be applied to input SH signals in the time-frequency domain, or, take the inverse-FFT and apply it via matrix convolution.</p>
-<dl class="section note"><dt>Note</dt><dd>Like <a class="el" href="saf__hoa__internal_8h.html#a1d606a16cebf5e87e83465e9bc7f9d06" title="Computes a least-squares (LS) binaural ambisonic decoder with diffuse-field equalisation.">getBinDecoder_LSDIFFEQ()</a> this method mitagates some of the timbral colourations exhibited by standard LS decoding at lower input orders. However, it operates without equalisation. Instead, the modal order of the HRTF grid is brought closer to the decoding order by simply reducing the number of HRTF points. The LS decoder is then computed using this reduced HRTF set. Essentially, rather than assigning high- frequency energy to higher-order components and subsequently discarding it due to order truncation, the energy is instead aliased back into the lower-order components and preserved.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Like <a class="el" href="saf__hoa__internal_8h.html#a1d606a16cebf5e87e83465e9bc7f9d06" title="Computes a least-squares (LS) binaural ambisonic decoder with diffuse-field equalisation [1].">getBinDecoder_LSDIFFEQ()</a> this method mitagates some of the timbral colourations exhibited by standard LS decoding at lower input orders. However, it operates without equalisation. Instead, the modal order of the HRTF grid is brought closer to the decoding order by simply reducing the number of HRTF points. The LS decoder is then computed using this reduced HRTF set. Therefore, rather than assigning high- frequency energy to higher-order components and subsequently discarding it due to order truncation, the energy is instead aliased back into the lower-order components and preserved.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">hrtfs</td><td>The HRTFs; FLAT: N_bands x <a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84" title="2 (true for most humans)">NUM_EARS</a> x N_dirs </td></tr>
@@ -633,9 +633,9 @@ The paper [1] also detailed a diffuse-field covariance constraint, and the origi
 </div><div class="memdoc">
 
 <p>Computes the Energy preserving Ambisonic decoder (EPAD), as detailed in [1]. </p>
-<dl class="section note"><dt>Note</dt><dd>The function has been written to also work when the number of spherical harmonic components exceeds the number of loudspeakers. In which case, the 'U' matrix from the SVD is truncated instead. However, ideally, nLS &gt; nSH, like in the paper (and in general). </dd>
+<dl class="section note"><dt>Note</dt><dd>The function has been written to also work when the number of spherical harmonic components exceeds the number of loudspeakers. In which case, the 'U' matrix from the SVD is truncated instead. However, ideally, nLS &gt; nSH. </dd>
 <dd>
-Additional normalisation is also applied so that when the loudspeakers are uniformly arranged, the decoding matrix gains are equivalent to those produced by SAD/MMD.</dd></dl>
+Additional scaling is applied so that when the loudspeakers are uniformly arranged, the decoding matrix gains are equivalent to those produced by SAD/MMD.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Decoding order </td></tr>
@@ -657,7 +657,7 @@ Additional normalisation is also applied so that when the loudspeakers are unifo
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_99016b584a5af87cdf49f1484dd80da6.html">saf_hoa</a></li><li class="navelem"><a class="el" href="saf__hoa__internal_8c.html">saf_hoa_internal.c</a></li>
-    <li class="footer">Generated on Wed Apr 21 2021 16:34:36 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 12 2021 14:41:22 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

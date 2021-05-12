@@ -209,7 +209,7 @@ Functions</h2></td></tr>
 <div class="line">    gains[i] =  vbap_gtableComp[idx3d*3+i];</div>
 <div class="line">    idx[i]   =  vbap_gtableIdx[idx3d*3+i];</div>
 <div class="line">}</div>
-<div class="ttc" id="agroup___utilities_html_ga3b9806b290b960cd718bac53080235ae"><div class="ttname"><a href="group___utilities.html#ga3b9806b290b960cd718bac53080235ae">matlab_fmodf</a></div><div class="ttdeci">float matlab_fmodf(float x, float y)</div><div class="ttdoc">C fmodf function, except it behaves like 'mod' in Matlab (i.e.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__misc_8c_source.html#l00174">saf_utility_misc.c:174</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga3b9806b290b960cd718bac53080235ae"><div class="ttname"><a href="group___utilities.html#ga3b9806b290b960cd718bac53080235ae">matlab_fmodf</a></div><div class="ttdeci">float matlab_fmodf(float x, float y)</div><div class="ttdoc">C fmodf function, except it behaves like 'mod' in Matlab (i.e.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__misc_8c_source.html#l00187">saf_utility_misc.c:187</a></div></div>
 </div><!-- fragment --><p>where 'gains' are then the gains for loudspeakers('idx') to pan the source to [AZI ELEV], using the nearest grid point</p>
 <dl class="section note"><dt>Note</dt><dd>The VBAP gains are AMPLITUDE normalised; i.e. sum(gains) = 1</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
@@ -755,7 +755,7 @@ Functions</h2></td></tr>
 <div class="line">   <span class="keywordflow">for</span> (i = 0; i &lt; nLoudspeakers; i++){</div>
 <div class="line">       gains_p[i] = gains[i] / (gains3D_sum_pvf+2.23e-13f);}</div>
 <div class="line">}</div>
-<div class="ttc" id="agroup___utilities_html_gafa99ec4acc4ecb2dc3c2d05da15d0e3f"><div class="ttname"><a href="group___utilities.html#gafa99ec4acc4ecb2dc3c2d05da15d0e3f">MAX</a></div><div class="ttdeci">#define MAX(a, b)</div><div class="ttdoc">Returns the maximum of the two values.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00051">saf_utilities.h:51</a></div></div>
+<div class="ttc" id="agroup___utilities_html_gafa99ec4acc4ecb2dc3c2d05da15d0e3f"><div class="ttname"><a href="group___utilities.html#gafa99ec4acc4ecb2dc3c2d05da15d0e3f">MAX</a></div><div class="ttdeci">#define MAX(a, b)</div><div class="ttdoc">Returns the maximum of the two values.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00062">saf_utilities.h:62</a></div></div>
 </div><!-- fragment --><p>Where "gains" are the original energy normalised VBAP gains and "gains_p" have amplitude normalisation for the low frequencies, and energy normalisation at the high frequencies [1].</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1152,7 +1152,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Apr 21 2021 16:34:36 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 12 2021 14:41:23 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

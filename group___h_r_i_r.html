@@ -109,7 +109,7 @@ Files</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:gaf4e65a8546982cb60e4553dedca1f4a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gaf4e65a8546982cb60e4553dedca1f4a2">estimateITDs</a> (float *hrirs, int N_dirs, int hrir_len, int fs, float *itds_s)</td></tr>
-<tr class="memdesc:gaf4e65a8546982cb60e4553dedca1f4a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimates the interaural time-differences (ITDs) for each HRIR via the cross- correlation between the left and right channels.  <a href="group___h_r_i_r.html#gaf4e65a8546982cb60e4553dedca1f4a2">More...</a><br /></td></tr>
+<tr class="memdesc:gaf4e65a8546982cb60e4553dedca1f4a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimates the interaural time-differences (ITDs) for each HRIR based on the cross-correlation between the left and right channels, which are first low-pass filtered at 750Hz.  <a href="group___h_r_i_r.html#gaf4e65a8546982cb60e4553dedca1f4a2">More...</a><br /></td></tr>
 <tr class="separator:gaf4e65a8546982cb60e4553dedca1f4a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf7213481e6b8afa3b25fbf4343c1ca50"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gaf7213481e6b8afa3b25fbf4343c1ca50">HRIRs2HRTFs_afSTFT</a> (float *hrirs, int N_dirs, int hrir_len, int hopsize, int LDmode, int hybridmode, float_complex *hrtf_fb)</td></tr>
 <tr class="memdesc:gaf7213481e6b8afa3b25fbf4343c1ca50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Passes zero padded HRIRs through the afSTFT filterbank.  <a href="group___h_r_i_r.html#gaf7213481e6b8afa3b25fbf4343c1ca50">More...</a><br /></td></tr>
@@ -118,10 +118,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:gadfaf82c46f2d7033e5182b9fc945ba93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Passes zero padded HRIRs through the qmf filterbank.  <a href="group___h_r_i_r.html#gadfaf82c46f2d7033e5182b9fc945ba93">More...</a><br /></td></tr>
 <tr class="separator:gadfaf82c46f2d7033e5182b9fc945ba93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga95e3ef60ada22e4bea2c40dcd38b4573">HRIRs2HRTFs</a> (float *hrirs, int N_dirs, int hrir_len, int fftSize, float_complex *hrtfs)</td></tr>
-<tr class="memdesc:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts HRIRs to HRTFs using a given FFT size.  <a href="group___h_r_i_r.html#ga95e3ef60ada22e4bea2c40dcd38b4573">More...</a><br /></td></tr>
+<tr class="memdesc:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts HRIRs to HRTFs for a given FFT size.  <a href="group___h_r_i_r.html#ga95e3ef60ada22e4bea2c40dcd38b4573">More...</a><br /></td></tr>
 <tr class="separator:ga95e3ef60ada22e4bea2c40dcd38b4573"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaced04b646c57d04a25e26b469e18588c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">diffuseFieldEqualiseHRTFs</a> (int N_dirs, float *itds_s, float *centreFreq, int N_bands, float *weights, int applyEQ, int applyPhase, float_complex *hrtfs)</td></tr>
-<tr class="memdesc:gaced04b646c57d04a25e26b469e18588c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies pre-processing to a set of HRTFs, which can either be diffuse-field EQ of an (optionally weighted) average of all HRTFs (CTF), phase s implification based on ITDs, or both.  <a href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">More...</a><br /></td></tr>
+<tr class="memdesc:gaced04b646c57d04a25e26b469e18588c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies pre-processing to a set of HRTFs, which can either be diffuse-field EQ of an (optionally weighted) average of all HRTFs (CTF), phase simplification based on ITDs, or both.  <a href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">More...</a><br /></td></tr>
 <tr class="separator:gaced04b646c57d04a25e26b469e18588c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga23e9a79557d045fcc850a5253733aed7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7">interpHRTFs</a> (float_complex *hrtfs, float *itds, float *freqVector, float *vbap_gtable, int N_hrtf_dirs, int N_bands, int N_interp_dirs, float_complex *hrtf_interp)</td></tr>
 <tr class="memdesc:ga23e9a79557d045fcc850a5253733aed7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interpolates a set of HRTFs for specified directions, defined by an amplitude normalised VBAP interpolation table (see <a class="el" href="saf__vbap_8h.html" title="Main header for the VBAP/MDAP module (SAF_VBAP_MODULE)">saf_vbap.h</a>)  <a href="group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7">More...</a><br /></td></tr>
@@ -134,23 +134,24 @@ Functions</h2></td></tr>
 Variables</h2></td></tr>
 <tr class="memitem:ga14115e45e9ce40b9a69d6774f4ab1b93"><td class="memItemLeft" align="right" valign="top"><a id="ga14115e45e9ce40b9a69d6774f4ab1b93"></a>
 const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga14115e45e9ce40b9a69d6774f4ab1b93">__default_hrirs</a> [836][2][256]</td></tr>
-<tr class="memdesc:ga14115e45e9ce40b9a69d6774f4ab1b93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default HRIR data. <br /></td></tr>
+<tr class="memdesc:ga14115e45e9ce40b9a69d6774f4ab1b93"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default HRIR data for SAF. <br /></td></tr>
 <tr class="separator:ga14115e45e9ce40b9a69d6774f4ab1b93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4a23e61b93b39a3d1a7ea105e90ec6e3"><td class="memItemLeft" align="right" valign="top"><a id="ga4a23e61b93b39a3d1a7ea105e90ec6e3"></a>
 const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga4a23e61b93b39a3d1a7ea105e90ec6e3">__default_hrir_dirs_deg</a> [836][2]</td></tr>
-<tr class="memdesc:ga4a23e61b93b39a3d1a7ea105e90ec6e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">HRIR directions. <br /></td></tr>
+<tr class="memdesc:ga4a23e61b93b39a3d1a7ea105e90ec6e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The measurement directions used for the default HRIR dataset. <br /></td></tr>
 <tr class="separator:ga4a23e61b93b39a3d1a7ea105e90ec6e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga1048f71aa4c4c76ad69ecc6a73d6d78d"><td class="memItemLeft" align="right" valign="top"><a id="ga1048f71aa4c4c76ad69ecc6a73d6d78d"></a>
 const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga1048f71aa4c4c76ad69ecc6a73d6d78d">__default_N_hrir_dirs</a></td></tr>
-<tr class="memdesc:ga1048f71aa4c4c76ad69ecc6a73d6d78d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of HRIRs. <br /></td></tr>
+<tr class="memdesc:ga1048f71aa4c4c76ad69ecc6a73d6d78d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of directions/measurements in the default HRIR dataset. <br /></td></tr>
 <tr class="separator:ga1048f71aa4c4c76ad69ecc6a73d6d78d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga870147e3c6feb936858bbf47a08d4f83"><td class="memItemLeft" align="right" valign="top"><a id="ga870147e3c6feb936858bbf47a08d4f83"></a>
 const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga870147e3c6feb936858bbf47a08d4f83">__default_hrir_len</a></td></tr>
-<tr class="memdesc:ga870147e3c6feb936858bbf47a08d4f83"><td class="mdescLeft">&#160;</td><td class="mdescRight">HRIR length. <br /></td></tr>
+<tr class="memdesc:ga870147e3c6feb936858bbf47a08d4f83"><td class="mdescLeft">&#160;</td><td class="mdescRight">The length of the filters, in samples, for the default HRIR dataset. <br /></td></tr>
 <tr class="separator:ga870147e3c6feb936858bbf47a08d4f83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gacd7a06259341a856fd3d0d72aa7ef09b"><td class="memItemLeft" align="right" valign="top"><a id="gacd7a06259341a856fd3d0d72aa7ef09b"></a>
 const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gacd7a06259341a856fd3d0d72aa7ef09b">__default_hrir_fs</a></td></tr>
-<tr class="memdesc:gacd7a06259341a856fd3d0d72aa7ef09b"><td class="mdescLeft">&#160;</td><td class="mdescRight">HRIR samplerate. <br /></td></tr>
+<tr class="memdesc:gacd7a06259341a856fd3d0d72aa7ef09b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The samplerate used to measure the default HRIR filters <br  />
+ <br /></td></tr>
 <tr class="separator:gacd7a06259341a856fd3d0d72aa7ef09b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -221,7 +222,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <dl class="section see"><dt>See also</dt><dd>[1] A. Politis, "Diffuse-field coherence of sensors with arbitrary
          directional responses," arXiv preprint arXiv:1608.07713,2016. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00299">299</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00300">300</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -287,7 +288,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
 </div><div class="memdoc">
 
-<p>Applies pre-processing to a set of HRTFs, which can either be diffuse-field EQ of an (optionally weighted) average of all HRTFs (CTF), phase s implification based on ITDs, or both. </p>
+<p>Applies pre-processing to a set of HRTFs, which can either be diffuse-field EQ of an (optionally weighted) average of all HRTFs (CTF), phase simplification based on ITDs, or both. </p>
 <dl class="section note"><dt>Note</dt><dd>'weights' (if used) should sum to 4pi, and 'itds_s' is only required if applyPhase=1. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>This function is NOT suitable for binaural room impulse responses (BRIRs)!</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
@@ -304,7 +305,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00171">171</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00172">172</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -352,7 +353,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
 </div><div class="memdoc">
 
-<p>Estimates the interaural time-differences (ITDs) for each HRIR via the cross- correlation between the left and right channels. </p>
+<p>Estimates the interaural time-differences (ITDs) for each HRIR based on the cross-correlation between the left and right channels, which are first low-pass filtered at 750Hz. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">hrirs</td><td>HRIRs; FLAT: N_dirs x <a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84" title="2 (true for most humans)">NUM_EARS</a> x hrir_len </td></tr>
@@ -364,7 +365,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00038">38</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00039">39</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -412,7 +413,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
 </div><div class="memdoc">
 
-<p>Converts HRIRs to HRTFs using a given FFT size. </p>
+<p>Converts HRIRs to HRTFs for a given FFT size. </p>
 <dl class="section note"><dt>Note</dt><dd>If the HRIRs are shorter than the FFT size (hrir_len&lt;fftSize), then the HRIRs are zero-padded. If they are longer, then they are truncated.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -425,7 +426,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00137">137</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00138">138</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -486,7 +487,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div><div class="memdoc">
 
 <p>Passes zero padded HRIRs through the afSTFT filterbank. </p>
-<p>The filterbank coefficients are then normalised with the energy of an impulse, which is centered at approximately the beginning of the HRIR peak.</p>
+<p>The filterbank coefficients are then normalised with the energy of an impulse, which is centered at approximately the beginning of the median HRIR peak.</p>
 <dl class="section warning"><dt>Warning</dt><dd>This function is NOT suitable for binaural room impulse responses (BRIRs)!</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -501,7 +502,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00108">108</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00109">109</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -556,7 +557,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div><div class="memdoc">
 
 <p>Passes zero padded HRIRs through the qmf filterbank. </p>
-<p>The filterbank coefficients are then normalised with the energy of an impulse, which is centered at approximately the beginning of the HRIR peak.</p>
+<p>The filterbank coefficients are then normalised with the energy of an impulse, which is centered at approximately the beginning of the median HRIR peak.</p>
 <dl class="section warning"><dt>Warning</dt><dd>This function is NOT suitable for binaural room impulse responses (BRIRs)!</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -570,7 +571,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00123">123</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00124">124</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -654,7 +655,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00240">240</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00241">241</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -663,7 +664,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Apr 21 2021 16:34:36 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 12 2021 14:41:23 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

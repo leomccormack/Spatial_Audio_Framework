@@ -108,14 +108,17 @@ $(document).ready(function(){initNavTree('convhull__3d_8c.html',''); initResizab
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structfloat__w__idx.html">float_w_idx</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper struct for qsort in <a class="el" href="convhull__3d_8c.html#a5603f178dbc7737a91eb50edfef8084d" title="Builds the 3-D convexhull using the quickhull algorithm [1].">convhull_3d_build()</a>  <a href="structfloat__w__idx.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper struct for qsort in <a class="el" href="convhull__3d_8c.html#a65d8828d809e7dc08771d1726fff994c" title="Builds the 3-D convexhull using the quickhull algorithm [1].">convhull_3d_build()</a>  <a href="structfloat__w__idx.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structint__w__idx.html">int_w_idx</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper struct for qsort in <a class="el" href="convhull__3d_8c.html#a5603f178dbc7737a91eb50edfef8084d" title="Builds the 3-D convexhull using the quickhull algorithm [1].">convhull_3d_build()</a>  <a href="structint__w__idx.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper struct for qsort in <a class="el" href="convhull__3d_8c.html#a65d8828d809e7dc08771d1726fff994c" title="Builds the 3-D convexhull using the quickhull algorithm [1].">convhull_3d_build()</a>  <a href="structint__w__idx.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:af9672d662ade561f96cbfd01576ab527"><td class="memItemLeft" align="right" valign="top"><a id="af9672d662ade561f96cbfd01576ab527"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>CONVHULL_ND_MAX_DIMENSIONS</b>&#160;&#160;&#160;( 5 )</td></tr>
+<tr class="separator:af9672d662ade561f96cbfd01576ab527"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a6c3207d81d9daa24f6710861fb2c18"><td class="memItemLeft" align="right" valign="top"><a id="a6a6c3207d81d9daa24f6710861fb2c18"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>CONVHULL_3D_USE_CBLAS</b></td></tr>
 <tr class="separator:a6a6c3207d81d9daa24f6710861fb2c18"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -176,9 +179,18 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>plane_3d</b> (
 <tr class="memitem:ae24d3993a17236a21070e8bbb4cab1b3"><td class="memItemLeft" align="right" valign="top"><a id="ae24d3993a17236a21070e8bbb4cab1b3"></a>
 static void&#160;</td><td class="memItemRight" valign="bottom"><b>ismember</b> (int *, int *, int *, int, int)</td></tr>
 <tr class="separator:ae24d3993a17236a21070e8bbb4cab1b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5603f178dbc7737a91eb50edfef8084d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convhull__3d_8c.html#a5603f178dbc7737a91eb50edfef8084d">convhull_3d_build</a> (<a class="el" href="structch__vertex.html">ch_vertex</a> *const in_vertices, const int nVert, int **out_faces, int *nOut_faces)</td></tr>
-<tr class="memdesc:a5603f178dbc7737a91eb50edfef8084d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds the 3-D convexhull using the quickhull algorithm [1].  <a href="convhull__3d_8c.html#a5603f178dbc7737a91eb50edfef8084d">More...</a><br /></td></tr>
-<tr class="separator:a5603f178dbc7737a91eb50edfef8084d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a767278991f27d0f51d57a5e5972492d1"><td class="memItemLeft" align="right" valign="top"><a id="a767278991f27d0f51d57a5e5972492d1"></a>
+static CH_FLOAT&#160;</td><td class="memItemRight" valign="bottom"><b>det_NxN</b> (CH_FLOAT *m, int d)</td></tr>
+<tr class="separator:a767278991f27d0f51d57a5e5972492d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8eb6a5148dd5bc06f5e80834b44db604"><td class="memItemLeft" align="right" valign="top"><a id="a8eb6a5148dd5bc06f5e80834b44db604"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>plane_nd</b> (const int Nd, CH_FLOAT *p, CH_FLOAT *c, CH_FLOAT *d)</td></tr>
+<tr class="separator:a8eb6a5148dd5bc06f5e80834b44db604"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65d8828d809e7dc08771d1726fff994c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convhull__3d_8c.html#a65d8828d809e7dc08771d1726fff994c">convhull_3d_build</a> (<a class="el" href="structch__vertex.html">ch_vertex</a> *const in_vertices, const int nVert, int **out_faces, CH_FLOAT **out_cf, CH_FLOAT **out_df, int *nOut_faces)</td></tr>
+<tr class="memdesc:a65d8828d809e7dc08771d1726fff994c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds the 3-D convexhull using the quickhull algorithm [1].  <a href="convhull__3d_8c.html#a65d8828d809e7dc08771d1726fff994c">More...</a><br /></td></tr>
+<tr class="separator:a65d8828d809e7dc08771d1726fff994c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1180b638dce2b1918a5dcc83583bb08"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convhull__3d_8c.html#ae1180b638dce2b1918a5dcc83583bb08">convhull_nd_build</a> (CH_FLOAT *const in_vertices, const int nVert, const int d, int **out_faces, CH_FLOAT **out_cf, CH_FLOAT **out_df, int *nOut_faces)</td></tr>
+<tr class="memdesc:ae1180b638dce2b1918a5dcc83583bb08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds the N-D convexhull using the quickhull algorithm [1].  <a href="convhull__3d_8c.html#ae1180b638dce2b1918a5dcc83583bb08">More...</a><br /></td></tr>
+<tr class="separator:ae1180b638dce2b1918a5dcc83583bb08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6aaf09ca437fdc7ea936e589baedba0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convhull__3d_8c.html#ac6aaf09ca437fdc7ea936e589baedba0">convhull_3d_export_obj</a> (<a class="el" href="structch__vertex.html">ch_vertex</a> *const vertices, const int nVert, int *const faces, const int nFaces, const int keepOnlyUsedVerticesFLAG, char *const obj_filename)</td></tr>
 <tr class="memdesc:ac6aaf09ca437fdc7ea936e589baedba0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exports the vertices, face indices, and face normals, as an '.obj' file, ready for the GPU.  <a href="convhull__3d_8c.html#ac6aaf09ca437fdc7ea936e589baedba0">More...</a><br /></td></tr>
 <tr class="separator:ac6aaf09ca437fdc7ea936e589baedba0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -202,8 +214,8 @@ Dependencies</h2>
 
 <p class="definition">Definition in file <a class="el" href="convhull__3d_8c_source.html">convhull_3d.c</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a5603f178dbc7737a91eb50edfef8084d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5603f178dbc7737a91eb50edfef8084d">&#9670;&nbsp;</a></span>convhull_3d_build()</h2>
+<a id="a65d8828d809e7dc08771d1726fff994c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65d8828d809e7dc08771d1726fff994c">&#9670;&nbsp;</a></span>convhull_3d_build()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -229,6 +241,18 @@ Dependencies</h2>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">CH_FLOAT **&#160;</td>
+          <td class="paramname"><em>out_cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CH_FLOAT **&#160;</td>
+          <td class="paramname"><em>out_df</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">int *&#160;</td>
           <td class="paramname"><em>nOut_faces</em>&#160;</td>
         </tr>
@@ -246,6 +270,8 @@ Dependencies</h2>
     <tr><td class="paramdir">[in]</td><td class="paramname">in_vertices</td><td>Vector of input vertices; nVert x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nVert</td><td>Number of vertices </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">out_faces</td><td>(&amp;) output face indices; FLAT: nOut_faces x 3 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out_cf</td><td>(&amp;) contains the coefficients of the planes (set to NULL if not wanted); FLAT: nOut_faces x 3 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out_df</td><td>(&amp;) contains the constant terms of the planes (set to NULL if not wanted); nOut_faces x 1 </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">nOut_faces</td><td>(&amp;) number of output face indices</td></tr>
   </table>
   </dd>
@@ -253,7 +279,7 @@ Dependencies</h2>
 <dl class="section see"><dt>See also</dt><dd>[1] C. Bradford, Barber, David P. Dobkin and Hannu Huhdanpaa, "The
          Quickhull Algorithm for Convex Hull". Geometry Center Technical Report GCG53, July 30, 1993 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="convhull__3d_8c_source.html#l00303">303</a> of file <a class="el" href="convhull__3d_8c_source.html">convhull_3d.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convhull__3d_8c_source.html#l00366">366</a> of file <a class="el" href="convhull__3d_8c_source.html">convhull_3d.c</a>.</p>
 
 </div>
 </div>
@@ -313,7 +339,7 @@ Dependencies</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="convhull__3d_8c_source.html#l00835">835</a> of file <a class="el" href="convhull__3d_8c_source.html">convhull_3d.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convhull__3d_8c_source.html#l01415">1415</a> of file <a class="el" href="convhull__3d_8c_source.html">convhull_3d.c</a>.</p>
 
 </div>
 </div>
@@ -380,7 +406,83 @@ Dependencies</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="convhull__3d_8c_source.html#l00755">755</a> of file <a class="el" href="convhull__3d_8c_source.html">convhull_3d.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convhull__3d_8c_source.html#l01335">1335</a> of file <a class="el" href="convhull__3d_8c_source.html">convhull_3d.c</a>.</p>
+
+</div>
+</div>
+<a id="ae1180b638dce2b1918a5dcc83583bb08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1180b638dce2b1918a5dcc83583bb08">&#9670;&nbsp;</a></span>convhull_nd_build()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void convhull_nd_build </td>
+          <td>(</td>
+          <td class="paramtype">CH_FLOAT *const&#160;</td>
+          <td class="paramname"><em>in_vertices</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>nVert</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>d</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int **&#160;</td>
+          <td class="paramname"><em>out_faces</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CH_FLOAT **&#160;</td>
+          <td class="paramname"><em>out_cf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CH_FLOAT **&#160;</td>
+          <td class="paramname"><em>out_df</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>nOut_faces</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Builds the N-D convexhull using the quickhull algorithm [1]. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">in_vertices</td><td>Matrix of nVertices in 'd' dimensions; FLAT:nVert x d </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nVert</td><td>Number of vertices </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">d</td><td>Number of dimensions </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out_faces</td><td>(&amp;) output face indices; FLAT: nOut_faces x d </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out_cf</td><td>(&amp;) contains the coefficients of the planes (set to NULL if not wanted); FLAT: nOut_faces x d </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out_df</td><td>(&amp;) contains the constant terms of the planes (set to NULL if not wanted); nOut_faces x 1 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">nOut_faces</td><td>(&amp;) number of output face indices</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd>[1] C. Bradford, Barber, David P. Dobkin and Hannu Huhdanpaa, "The
+         Quickhull Algorithm for Convex Hull". Geometry Center Technical Report GCG53, July 30, 1993 </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="convhull__3d_8c_source.html#l00848">848</a> of file <a class="el" href="convhull__3d_8c_source.html">convhull_3d.c</a>.</p>
 
 </div>
 </div>
@@ -426,7 +528,7 @@ Dependencies</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="convhull__3d_8c_source.html#l00871">871</a> of file <a class="el" href="convhull__3d_8c_source.html">convhull_3d.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convhull__3d_8c_source.html#l01451">1451</a> of file <a class="el" href="convhull__3d_8c_source.html">convhull_3d.c</a>.</p>
 
 </div>
 </div>
@@ -436,7 +538,7 @@ Dependencies</h2>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_c95fe3454413c7e9946bfee944a4e42b.html">resources</a></li><li class="navelem"><a class="el" href="dir_e7d329ec4ec3b31f4a52cdc64b39588e.html">convhull_3d</a></li><li class="navelem"><a class="el" href="convhull__3d_8c.html">convhull_3d.c</a></li>
-    <li class="footer">Generated on Wed Apr 21 2021 16:34:36 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 12 2021 14:41:23 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

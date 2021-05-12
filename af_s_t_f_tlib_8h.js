@@ -16,5 +16,7 @@ var af_s_t_f_tlib_8h =
     [ "afSTFT_forward_flat", "af_s_t_f_tlib_8h.html#a5a7b8ec77ca85e17a6640e32077e4c85", null ],
     [ "afSTFT_getCentreFreqs", "af_s_t_f_tlib_8h.html#aaf529d28c5dca94aacd10883055a8d10", null ],
     [ "afSTFT_getNBands", "af_s_t_f_tlib_8h.html#a6d5a9257248d4c13744bbe914a7ed936", null ],
-    [ "afSTFT_getProcDelay", "af_s_t_f_tlib_8h.html#a82f6272ed146c0befdef52c71a4e2229", null ]
+    [ "afSTFT_getProcDelay", "af_s_t_f_tlib_8h.html#a82f6272ed146c0befdef52c71a4e2229", null ],
+    [ "__afSTFT_protoFilter1024", "af_s_t_f_tlib_8h.html#a0e97d4016d2121f5498cd9f50820cbc7", null ],
+    [ "__afSTFT_protoFilter1024LD", "af_s_t_f_tlib_8h.html#a9b50f1cd483991553f746f8514547c8f", null ]
 ];

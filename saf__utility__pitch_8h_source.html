@@ -109,40 +109,35 @@ $(document).ready(function(){initNavTree('saf__utility__pitch_8h_source.html',''
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#include &lt;stdlib.h&gt;</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#include &lt;stdio.h&gt;</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#include &lt;string.h&gt;</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#include &lt;math.h&gt;</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">/*                              SMB PitchShifter                              */</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#ga034cb7d6d3b64474c8916b07648448c6">smb_pitchShift_create</a>(<span class="comment">/* Input Arguments */</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                           <span class="keywordtype">void</span>** hSmb,</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                           <span class="keywordtype">int</span> nCH,</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                           <span class="keywordtype">int</span> fftFrameSize,</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                           <span class="keywordtype">int</span> osamp,</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                           <span class="keywordtype">float</span> sampleRate);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#ga706269fb1901b1bfa1d5e686e134e7f2">smb_pitchShift_destroy</a>(<span class="comment">/* Input Arguments */</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                            <span class="keywordtype">void</span> ** <span class="keyword">const</span> hSmb);</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#ga52ff2b20212e3995318e38bda80c5a42">smb_pitchShift_apply</a>(<span class="comment">/* Input Arguments */</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                          <span class="keywordtype">void</span>* hSmb,</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                          <span class="keywordtype">float</span> pitchShift,</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                          <span class="keywordtype">int</span> frameSize,</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                          <span class="keywordtype">float</span> *inFrame,</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                          <span class="comment">/* Output Arguments */</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                          <span class="keywordtype">float</span> *outFrame);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">/*                              SMB PitchShifter                              */</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#ga034cb7d6d3b64474c8916b07648448c6">smb_pitchShift_create</a>(<span class="comment">/* Input Arguments */</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                           <span class="keywordtype">void</span>** hSmb,</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                           <span class="keywordtype">int</span> nCH,</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                           <span class="keywordtype">int</span> fftFrameSize,</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                           <span class="keywordtype">int</span> osamp,</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                           <span class="keywordtype">float</span> sampleRate);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#ga706269fb1901b1bfa1d5e686e134e7f2">smb_pitchShift_destroy</a>(<span class="comment">/* Input Arguments */</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                            <span class="keywordtype">void</span> ** <span class="keyword">const</span> hSmb);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#ga52ff2b20212e3995318e38bda80c5a42">smb_pitchShift_apply</a>(<span class="comment">/* Input Arguments */</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                          <span class="keywordtype">void</span>* hSmb,</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                          <span class="keywordtype">float</span> pitchShift,</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                          <span class="keywordtype">int</span> frameSize,</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                          <span class="keywordtype">float</span> *inFrame,</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                          <span class="comment">/* Output Arguments */</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                          <span class="keywordtype">float</span> *outFrame);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}<span class="comment">/* extern &quot;C&quot; */</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;}<span class="comment">/* extern &quot;C&quot; */</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SAF_PITCH_H_INCLUDED */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; <span class="comment">/* doxygen addtogroup Utilities */</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SAF_PITCH_H_INCLUDED */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; <span class="comment">/* doxygen addtogroup Utilities */</span></div>
 <div class="ttc" id="agroup___utilities_html_ga034cb7d6d3b64474c8916b07648448c6"><div class="ttname"><a href="group___utilities.html#ga034cb7d6d3b64474c8916b07648448c6">smb_pitchShift_create</a></div><div class="ttdeci">void smb_pitchShift_create(void **hSmb, int nCH, int fftFrameSize, int osamp, float sampleRate)</div><div class="ttdoc">Creates an instance of SMB PitchShifter.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__pitch_8c_source.html#l00122">saf_utility_pitch.c:123</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga52ff2b20212e3995318e38bda80c5a42"><div class="ttname"><a href="group___utilities.html#ga52ff2b20212e3995318e38bda80c5a42">smb_pitchShift_apply</a></div><div class="ttdeci">void smb_pitchShift_apply(void *hSmb, float pitchShift, int frameSize, float *inFrame, float *outFrame)</div><div class="ttdoc">Performs pitch shifting of the input signals, while retaining the same time duration as the original ...</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__pitch_8c_source.html#l00210">saf_utility_pitch.c:211</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga706269fb1901b1bfa1d5e686e134e7f2"><div class="ttname"><a href="group___utilities.html#ga706269fb1901b1bfa1d5e686e134e7f2">smb_pitchShift_destroy</a></div><div class="ttdeci">void smb_pitchShift_destroy(void **const hSmb)</div><div class="ttdoc">Destroys an instance of SMB PitchShifter.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__pitch_8c_source.html#l00168">saf_utility_pitch.c:169</a></div></div>
@@ -152,7 +147,7 @@ $(document).ready(function(){initNavTree('saf__utility__pitch_8h_source.html',''
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__pitch_8h.html">saf_utility_pitch.h</a></li>
-    <li class="footer">Generated on Wed Apr 21 2021 16:34:35 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed May 12 2021 14:41:22 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
