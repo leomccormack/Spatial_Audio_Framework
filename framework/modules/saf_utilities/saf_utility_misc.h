@@ -310,6 +310,23 @@ void unique_i(int* input,
               int** uniqueInds,
               int* nUnique);
 
+/**
+ * Given an array of values, find all the possible combinations (nCr) for
+ * subgroups of "nElements"; derived based on [1].
+ *
+ * @param[in]  arrValues The array values; nValues x 1
+ * @param[in]  nValues   Number of array values (n)
+ * @param[in]  nElements Number of elements per combination (r)
+ * @param[out] comb      (&) the combinations; FLAT: nComb x nElements
+ * @param[out] nComb     (&) the number of combinations (nCr)
+ *
+ * @see [1] https://www.geeksforgeeks.org/print-all-possible-combinations-of-r-elements-in-a-given-array-of-size-n/
+ */
+void findCombinations(int* arrValues,
+                      int nValues,
+                      int nElements,
+                      int** comb,
+                      int* nComb);
 
 /**
  * Numerically solves first-order, linear, homogeneous differential equation

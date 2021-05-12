@@ -188,6 +188,20 @@ void crossProduct3(/* Input Arguments */
                    /* Output Arguments */
                    float c[3]);
 
+/**
+ * Returns the distance between a "point" and an infinite line described by the
+ * two points "v1" and "v2"
+ */
+float getDistBetweenPointAndLine(/* Input Arguments */
+                                 float point[3],
+                                 float v1[3],
+                                 float v2[3]);
+
+/** Returns the distance between "point_a" and "point_b" */
+float getDistBetween2Points(/* Input Arguments */
+                            float point_a[3],
+                            float point_b[3]);
+
 
 /* ========================================================================== */
 /*                     Computational Geometry Functions                       */

@@ -32,6 +32,21 @@
 static const long double factorials_15[15] =
 {1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0, 39916800.0, 479001600.0, 6.2270208e9, 8.71782891e10};
 
+/** Helper function for findCombinations() */
+void combinationUtil(int* arr, int* data, int start, int end, int index, int r, int** comb, int* nComb) {
+    if (index == r) {
+        (*nComb)++;
+        (*comb) = realloc1d( (*comb), (*nComb)*r*sizeof(int));
+        for (int j=0; j<r; j++)
+            (*comb)[((*nComb)-1)*r+j] = data[j];
+        return;
+    }
+    for (int i=start; i<=end && end-i+1 >= r-index; i++) {
+        data[index] = arr[i];
+        combinationUtil(arr, data, i+1, end, index+1, r, comb, nComb);
+    }
+}
+
 void convert_0_360To_m180_180
 (
     float* dirs_deg,
@@ -465,6 +480,23 @@ void unique_i
 
     /* clean-up */
     free(nDuplicates_perInput);
+}
+
+void findCombinations
+(
+    int* arrValues,
+    int nValues,
+    int nElements,
+    int** comb,
+    int* nComb
+)
+{
+    int* data;
+    data = malloc1d(nElements*sizeof(int));
+    assert(*comb==NULL);
+    (*nComb) = 0;
+    combinationUtil(arrValues, data, 0, nValues-1, 0, nElements, comb, nComb);
+    free(data);
 }
  
 /* Based heavily on the Matlab script found here:

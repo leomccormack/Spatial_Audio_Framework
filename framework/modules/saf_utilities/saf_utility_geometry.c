@@ -376,6 +376,38 @@ void crossProduct3
     c[2] = a[0]*b[1]-a[1]*b[0];
 }
 
+float getDistBetweenPointAndLine
+(
+    float point[3],
+    float v1[3],
+    float v2[3]
+)
+{
+    float a[3], b[3], cross_a_ab[3];
+    a[0] = v1[0] - v2[0];
+    a[1] = v1[1] - v2[1];
+    a[2] = v1[2] - v2[2];
+    b[0] = point[0] - v2[0];
+    b[1] = point[1] - v2[1];
+    b[2] = point[2] - v2[2];
+    crossProduct3(a, b, cross_a_ab);
+    return L2_norm3(cross_a_ab)/(L2_norm3(a)+2.3e-9f);
+}
+
+float getDistBetween2Points
+(
+    float point_a[3],
+    float point_b[3]
+)
+{
+    float a_b[3];
+    a_b[0] = point_a[0] - point_b[0];
+    a_b[1] = point_a[1] - point_b[1];
+    a_b[2] = point_a[2] - point_b[2];
+    return L2_norm3(a_b);
+}
+
+
 
 /* ========================================================================== */
 /*                     Computational Geometry Functions                       */
