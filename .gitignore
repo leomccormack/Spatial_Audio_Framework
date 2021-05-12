@@ -8,7 +8,6 @@ x64/
 *idea/
 cmake-build-debug/
 cmake-build-release/
-.vscode/
 *.db
 dependencies/Win64/lib/saf_mkl_custom.lib
 dependencies/Win64/lib/libiomp5md.lib

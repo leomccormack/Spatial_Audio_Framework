@@ -1,0 +1,37 @@
+{
+    "env": {
+        "commonIncludePaths": [
+            "${workspaceFolder}/**",
+            "${workspaceFolder}/extern/saf/framework/include",
+            "${workspaceFolder}/examples/include",
+            "${workspaceFolder}/test/unity",
+            "${workspaceFolder}/test/timer"
+        ],
+        "commonDefs": [
+            "SAF_USE_INTEL_MKL",
+            "SAF_ENABLE_SOFA_READER_MODULE",
+            "SAF_ENABLE_TRACKER_MODULE"
+        ]
+    },
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${commonIncludePaths}",
+                "${workspaceFolder}/extern/saf/dependencies/MacOSX/include",
+                "/opt/intel/compilers_and_libraries/mac/mkl/include"
+            ],
+            "defines": [
+                "${commonDefs}"
+            ],
+            "macFrameworkPath": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "${default}",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
+}
