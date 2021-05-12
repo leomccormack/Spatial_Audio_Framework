@@ -85,7 +85,9 @@ int main_test(void) {
     RUN_TEST(test__sortf);
     RUN_TEST(test__sortz);
     RUN_TEST(test__cmplxPairUp);
+    for(int i=0; i<100; i++){
     RUN_TEST(test__getVoronoiWeights);
+    }
     RUN_TEST(test__unique_i);
     RUN_TEST(test__realloc2d_r);
     RUN_TEST(test__latticeDecorrelator);

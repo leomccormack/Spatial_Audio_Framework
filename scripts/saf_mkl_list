@@ -107,6 +107,10 @@ LAPACKE_sspsv
 LAPACKE_cspsv
 LAPACKE_dspsv
 LAPACKE_zspsv
+LAPACKE_sgeqrf
+LAPACKE_cgeqrf
+LAPACKE_dgeqrf
+LAPACKE_zgeqrf
 sgeev_
 cgeev_
 dgeev_
@@ -147,6 +151,14 @@ sspsv_
 cspsv_
 dspsv_
 zspsv_
+sgetc2_
+cgetc2_
+dgetc2_
+zgetc2_
+sgeqrf_
+cgeqrf_
+dgeqrf_
+zgeqrf_
 vsAdd
 vcAdd
 vdAdd

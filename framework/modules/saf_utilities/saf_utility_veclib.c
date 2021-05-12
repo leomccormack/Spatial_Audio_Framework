@@ -2372,9 +2372,7 @@ float utility_sdet
     veclib_int i,j;
     veclib_int *IPIV;
     IPIV = malloc1d(N * sizeof(veclib_int));
-    int LWORK = N*N;
-    float *WORK, *tmp;
-    WORK = (float*)malloc1d(LWORK * sizeof(float));
+    float *tmp;
     tmp = malloc1d(N*N*sizeof(float));
     veclib_int INFO;
     float det;
@@ -2406,8 +2404,7 @@ float utility_sdet
                 det *= -1.0f;
         }
     }
-    free(IPIV);
-    free(WORK);
+    free(IPIV); 
     free(tmp);
     return det;
 }
@@ -2418,27 +2415,31 @@ double utility_ddet
     int N
 )
 {
-    veclib_int i,j;
-    veclib_int *IPIV;
-    IPIV = malloc1d(N * sizeof(veclib_int));
-    int LWORK = N*N;
-    double *WORK, *tmp;
-    WORK = (double*)malloc1d(LWORK * sizeof(double));
-    tmp = malloc1d(N*N*sizeof(double));
-    veclib_int INFO;
-    double det;
+
+    veclib_int i,j,INFO, LWORK, lwork3;
+    double *tmp, *TAU, *WORK;
+    double lwork2, det;
 
     /* Store in column major order */
+    tmp = malloc(N*N*sizeof(double));
     for(i=0; i<N; i++)
         for(j=0; j<N; j++)
             tmp[j*N+i] = A[i*N+j];
 
+
+    TAU = malloc(sizeof(double)*N);
+    LWORK=-1;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    dgetrf_((veclib_int*)&N, (veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, &INFO);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    INFO = clapack_dgetrf(CblasColMajor, N, N, tmp, N, IPIV);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    INFO = LAPACKE_dgetrf(CblasColMajor, N, N, tmp, N, IPIV);
+    dgeqrf_(&N, &N, tmp, &N, TAU, &lwork2, &LWORK, &INFO);
+#else
+    assert(0); /* NOT IMPLEMENTED YET */
+#endif
+    lwork3=(veclib_int)lwork2;
+    WORK=malloc(lwork3*sizeof(double));
+#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    dgeqrf_(&N, &N, tmp, &N, TAU, WORK, &lwork3, &INFO);
+#else
+    assert(0); /* NOT IMPLEMENTED YET */
 #endif
 
     if(INFO!=0) {
@@ -2448,15 +2449,16 @@ double utility_ddet
     #endif
     }
     else {
-        det = 1.0;
-        for( i = 0; i < N; i++ ) {
+        det=1;
+        for (i=0;i<N;i++)
             det*=tmp[i*N+i];
-            if(IPIV[i] != i+1)
-                det *= -1.0;
-        }
+        /* Householder algorithm */
+        if(N%2==0)
+            det*=-1;
     }
-    free(IPIV);
+
     free(WORK);
+    free(TAU);
     free(tmp);
     return det;
 }
