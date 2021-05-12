@@ -342,6 +342,10 @@ void spreader_process
     float_complex tmpFrame[MAX_NUM_CHANNELS][TIME_SLOTS], H_tmp[MAX_NUM_CHANNELS], Cy[MAX_NUM_CHANNELS*MAX_NUM_CHANNELS];
     float_complex E_dir[MAX_NUM_CHANNELS*MAX_NUM_CHANNELS], V[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS], D[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS];
     float_complex Cproto[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS];
+#if 0
+    float_complex Cx[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS];
+    float CxDiag[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS];
+#endif
     SPREADER_PROC_MODES procMode;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
@@ -383,7 +387,7 @@ void spreader_process
 
             /* Define Prototype signals */
              switch(procMode){
-                case SPREADER_MODE_NAIVE:/* fall through */
+                case SPREADER_MODE_NAIVE: /* fall through */
                 case SPREADER_MODE_OM:
                     for(band=0; band<HYBRID_BANDS; band++){
                         if(pData->freqVector[band]<MAX_SPREAD_FREQ){
@@ -421,6 +425,20 @@ void spreader_process
                         cblas_cscal(Q*TIME_SLOTS, &scaleC, FLATTEN2D(pData->protoframeTF[band]), 1);
                     }
                     break;
+#if 0
+                 case SPREADER_MODE_OM:
+                     /* Use the centre direction as the prototype */
+                     for(band=0; band<HYBRID_BANDS; band++){
+                         for(q=0; q<Q; q++)
+                             H_tmp[q] = pData->H_grid[band*Q*pData->nGrid + q*pData->nGrid + centre_ind];
+                         cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, Q, TIME_SLOTS, 1, &calpha,
+                                     H_tmp, 1,
+                                     pData->inputframeTF[band][src], TIME_SLOTS, &cbeta,
+                                     FLATTEN2D(pData->protoframeTF[band]), TIME_SLOTS);
+                     }
+                     break;
+#endif
+
                 case SPREADER_MODE_EVD:
                     /* Replicate the mono signal for all Q channels */
                     for(band=0; band<HYBRID_BANDS; band++)
@@ -456,9 +474,12 @@ void spreader_process
                     /* Sum the H_array outer product matrices for the whole spreading area */
                     if(pData->freqVector[band]<MAX_SPREAD_FREQ){
                         memset(Cy, 0, Q*Q*sizeof(float_complex));
+                        memset(H_tmp, 0, Q*sizeof(float_complex));
                         for(ng=0, nSpread=0; ng<pData->nGrid; ng++){
                             if(pData->angles[ng] <= (src_spread[src]/2.0f)){
                                 cblas_caxpy(Q*Q, &calpha, pData->HHH[band][ng], 1, Cy, 1);
+                                for(q=0; q<Q; q++)
+                                    H_tmp[q] = ccaddf(H_tmp[q], pData->H_grid[band*Q*pData->nGrid + q*pData->nGrid + ng]);
                                 nSpread++;
                                 pData->dirActive[src][ng] = 1;
                             }
@@ -472,10 +493,12 @@ void spreader_process
                     /* If no directions found in the spread area, then just include the nearest one */
                     if(nSpread==0) {
                         cblas_caxpy(Q*Q, &calpha, pData->HHH[band][centre_ind], 1, Cy, 1);
+                        for(q=0; q<Q; q++)
+                            H_tmp[q] = pData->H_grid[band*Q*pData->nGrid + q*pData->nGrid + centre_ind];
                         nSpread++;
                     }
-
-                    /* The OM-solution requires some target energies too */
+#if 1
+                    /* Impose target energies too */
                     if (procMode == SPREADER_MODE_OM && pData->freqVector[band]<MAX_SPREAD_FREQ){
                         /* Normalise Cy */
                         trace = 0.0f;
@@ -503,7 +526,7 @@ void spreader_process
                         scaleC = cmplxf(trace, 0.0f);
                         cblas_cscal(Q*Q, &scaleC, Cy, 1);
                     }
-
+#endif
                     /* Average over time */
                     scaleC = cmplxf(pData->covAvgCoeff, 0.0f);
                     cblas_cscal(Q*Q, &scaleC, pData->Cy[src][band], 1);
@@ -540,9 +563,11 @@ void spreader_process
                                         pData->new_M[band], Q);
                         }
                         break;
+
                     case SPREADER_MODE_OM:
                         for(band=0; band<HYBRID_BANDS; band++){
                             if(pData->freqVector[band]<MAX_SPREAD_FREQ){
+#if 1
                                 /* Diagonalise and diagonally load the Cproto matrices */
                                 cblas_ccopy(Q*Q, pData->Cproto[src][band], 1, Cproto, 1);
                                 for(i=0; i<Q; i++){
@@ -558,6 +583,23 @@ void spreader_process
                                 for(i=0; i<Q*Q; i++)
                                     pData->Cr[i] = crealf(pData->Cr_cmplx[i]);
                                 formulate_M_and_Cr(pData->hCdf_res, CprotoDiag, pData->Cr, pData->Qmix, 0, 0.2f, pData->new_Mr[band], NULL);
+#else
+                                for(q=0; q<Q; q++)
+                                    H_tmp[q] = pData->H_grid[band*Q*pData->nGrid + q*pData->nGrid + centre_ind];
+                                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, Q, Q, 1, &calpha,
+                                            H_tmp, 1,
+                                            H_tmp, 1, &cbeta,
+                                            Cx, Q);
+                                memset(CxDiag, 0, Q*Q*sizeof(float));
+                                for(i=0; i<Q; i++)
+                                    CxDiag[i*Q+i] = crealf(Cx[i*Q+i]);
+
+                                /* Compute mixing matrices */
+                                formulate_M_and_Cr_cmplx(pData->hCdf, Cx, pData->Cy[src][band], pData->Qmix_cmplx, 0, 0.2f, pData->new_M[band], pData->Cr_cmplx);
+                                for(i=0; i<Q*Q; i++)
+                                    pData->Cr[i] = crealf(pData->Cr_cmplx[i]);
+                                formulate_M_and_Cr(pData->hCdf_res, CxDiag, pData->Cr, pData->Qmix, 0, 0.2f, pData->new_Mr[band], NULL);
+#endif
                             }
                             else{
                                 memcpy(pData->new_M[band], pData->Qmix_cmplx, Q*Q*sizeof(float_complex));
