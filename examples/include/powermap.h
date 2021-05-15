@@ -121,7 +121,7 @@ void powermap_initCodec(void* const hPm);
  *                      no audio, reduced processing, 1: audio, full processing
  */
 void powermap_analysis(void* const hPm,
-                       float** const inputs,
+                       const float *const * inputs,
                        int nInputs,
                        int nSamples,
                        int isPlaying);

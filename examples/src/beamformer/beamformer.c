@@ -92,12 +92,12 @@ void beamformer_init
 
 void beamformer_process
 (
-    void  *  const hBeam,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hBeam,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);

@@ -327,12 +327,12 @@ void spreader_initCodec
 
 void spreader_process
 (
-    void  *  const hSpr,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hSpr,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     spreader_data *pData = (spreader_data*)(hSpr);

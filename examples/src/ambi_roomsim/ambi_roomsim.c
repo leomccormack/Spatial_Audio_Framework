@@ -104,12 +104,12 @@ void ambi_roomsim_init
 
 void ambi_roomsim_process
 (
-    void  *  const hAmbi,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hAmbi,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);

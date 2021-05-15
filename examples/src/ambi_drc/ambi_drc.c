@@ -135,11 +135,11 @@ void ambi_drc_init
 
 void ambi_drc_process
 (
-    void*   const hAmbi,
-    float** const inputs,
-    float** const outputs,
-    int nCh,
-    int nSamples
+    void        *  const hAmbi,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nCh,
+    int                  nSamples
 )                                         
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
