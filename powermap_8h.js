@@ -9,7 +9,7 @@ var powermap_8h =
       [ "PM_MODE_MINNORM", "powermap_8h.html#abca8a09b8bc8fab7741071d644a51f1da78762be23f12f78beb640a8c0fef7b5a", null ],
       [ "PM_MODE_MINNORM_LOG", "powermap_8h.html#abca8a09b8bc8fab7741071d644a51f1da80298504d11ef7ce644908a7e09a8712", null ]
     ] ],
-    [ "powermap_analysis", "powermap_8h.html#a2bcb65e208e70e373c19c8023566fa40", null ],
+    [ "powermap_analysis", "powermap_8h.html#ab39f8f468871c5c98f06b4937ed82746", null ],
     [ "powermap_create", "powermap_8h.html#abade8942a6c410b5aa03233c05bfeddd", null ],
     [ "powermap_destroy", "powermap_8h.html#a5f5ea29a4d2875c37a5393591d8b4658", null ],
     [ "powermap_getAnaOrder", "powermap_8h.html#a0d05a71dffb1e00b8c49639188257c3a", null ],

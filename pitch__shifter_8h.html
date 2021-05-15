@@ -156,9 +156,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a727f39df47434251aea85dd5a02ab250"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pitch__shifter_8h.html#a727f39df47434251aea85dd5a02ab250">pitch_shifter_initCodec</a> (void *const hPS)</td></tr>
 <tr class="memdesc:a727f39df47434251aea85dd5a02ab250"><td class="mdescLeft">&#160;</td><td class="mdescRight">Intialises the codec variables, based on current global/user parameters.  <a href="pitch__shifter_8h.html#a727f39df47434251aea85dd5a02ab250">More...</a><br /></td></tr>
 <tr class="separator:a727f39df47434251aea85dd5a02ab250"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23ee7b7bca7e2918ced24c9b141a156c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pitch__shifter_8h.html#a23ee7b7bca7e2918ced24c9b141a156c">pitch_shifter_process</a> (void *const hPS, float **const inputs, float **const outputs, int nInputs, int nOutputs, int nSamples)</td></tr>
-<tr class="memdesc:a23ee7b7bca7e2918ced24c9b141a156c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pitch shifts the input signals.  <a href="pitch__shifter_8h.html#a23ee7b7bca7e2918ced24c9b141a156c">More...</a><br /></td></tr>
-<tr class="separator:a23ee7b7bca7e2918ced24c9b141a156c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a349ba201dca5b7207e9799b2607f7248"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pitch__shifter_8h.html#a349ba201dca5b7207e9799b2607f7248">pitch_shifter_process</a> (void *const hPS, const float *const *inputs, float **const outputs, int nInputs, int nOutputs, int nSamples)</td></tr>
+<tr class="memdesc:a349ba201dca5b7207e9799b2607f7248"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pitch shifts the input signals.  <a href="pitch__shifter_8h.html#a349ba201dca5b7207e9799b2607f7248">More...</a><br /></td></tr>
+<tr class="separator:a349ba201dca5b7207e9799b2607f7248"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af540aaa43652f57aad5f9aebba6a2dc5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pitch__shifter_8h.html#af540aaa43652f57aad5f9aebba6a2dc5">pitch_shifter_refreshParams</a> (void *const hPS)</td></tr>
 <tr class="memdesc:af540aaa43652f57aad5f9aebba6a2dc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets all intialisation flags to 1; re-initialising all settings/variables as pitch_shifter is currently configured, at next available opportunity.  <a href="pitch__shifter_8h.html#af540aaa43652f57aad5f9aebba6a2dc5">More...</a><br /></td></tr>
 <tr class="separator:af540aaa43652f57aad5f9aebba6a2dc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -449,8 +449,8 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 
 </div>
 </div>
-<a id="a23ee7b7bca7e2918ced24c9b141a156c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a23ee7b7bca7e2918ced24c9b141a156c">&#9670;&nbsp;</a></span>pitch_shifter_process()</h2>
+<a id="a349ba201dca5b7207e9799b2607f7248"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a349ba201dca5b7207e9799b2607f7248">&#9670;&nbsp;</a></span>pitch_shifter_process()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -464,7 +464,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float **const&#160;</td>
+          <td class="paramtype">const float *const *&#160;</td>
           <td class="paramname"><em>inputs</em>, </td>
         </tr>
         <tr>
@@ -550,7 +550,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_7ea9cec8c8a74419de82b1d94b0f1364.html">include</a></li><li class="navelem"><a class="el" href="pitch__shifter_8h.html">pitch_shifter.h</a></li>
-    <li class="footer">Generated on Wed May 12 2021 14:41:22 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sat May 15 2021 15:03:29 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

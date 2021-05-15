@@ -230,7 +230,6 @@ var NAVTREEINDEX0 =
 "ambi__bin_8h.html#a565da4cd04ade4c1839000bd4f770156":[14,0,0,0,1,54],
 "ambi__bin_8h.html#a57b8872aafea780018612b45c5ec7d03":[14,0,0,0,1,12],
 "ambi__bin_8h.html#a594f16356ebf8bd2657a4b054e18b818":[14,0,0,0,1,6],
-"ambi__bin_8h.html#a597acae7dca810034495b4891c29f3a6":[14,0,0,0,1,37],
 "ambi__bin_8h.html#a5c5ae071aa27ea0c9ae5a1f0874b9178":[14,0,0,0,1,25],
 "ambi__bin_8h.html#a5d950301131218cc3c05abc204ba4e87":[14,0,0,0,1,36],
 "ambi__bin_8h.html#a61903c56b2c1e75fdc6d5929e3bca0d4":[14,0,0,0,1,26],
@@ -247,6 +246,7 @@ var NAVTREEINDEX0 =
 "ambi__bin_8h.html#a90f39fa6230940647b05f3f68ecc88eb":[14,0,0,0,1,28],
 "ambi__bin_8h.html#a96434ef17a8305400570bf7d95b62cd6":[14,0,0,0,1,5],
 "ambi__bin_8h.html#a96b32f53501b732aecd6f511d68d4632":[14,0,0,0,1,55],
+"ambi__bin_8h.html#aa22247c4479ee3c6beff08254b14b094":[14,0,0,0,1,37],
 "ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20b":[14,0,0,0,1,3],
 "ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba13d3b159deeff57a97a9038a295f79b7":[14,0,0,0,1,3,2],
 "ambi__bin_8h.html#aa2b2ed703143d42a1b727cb56836e20ba427785335e2006e12117edc28ed3bf51":[14,0,0,0,1,3,1]

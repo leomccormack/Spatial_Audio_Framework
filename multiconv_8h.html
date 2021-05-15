@@ -106,9 +106,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a6a479838ce9c0b322b41aa4056360269"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiconv_8h.html#a6a479838ce9c0b322b41aa4056360269">multiconv_init</a> (void *const hMCnv, int samplerate, int hostBlockSize)</td></tr>
 <tr class="memdesc:a6a479838ce9c0b322b41aa4056360269"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialises an instance of multiconv with default settings.  <a href="multiconv_8h.html#a6a479838ce9c0b322b41aa4056360269">More...</a><br /></td></tr>
 <tr class="separator:a6a479838ce9c0b322b41aa4056360269"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade46d30b7852e2e453c3ac4db564bb0f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiconv_8h.html#ade46d30b7852e2e453c3ac4db564bb0f">multiconv_process</a> (void *const hMCnv, float **const inputs, float **const outputs, int nInputs, int nOutputs, int nSamples)</td></tr>
-<tr class="memdesc:ade46d30b7852e2e453c3ac4db564bb0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs the multuchannel convolution processing.  <a href="multiconv_8h.html#ade46d30b7852e2e453c3ac4db564bb0f">More...</a><br /></td></tr>
-<tr class="separator:ade46d30b7852e2e453c3ac4db564bb0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae96e7a6249f60898b79df1a75fcca844"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiconv_8h.html#ae96e7a6249f60898b79df1a75fcca844">multiconv_process</a> (void *const hMCnv, const float *const *inputs, float **const outputs, int nInputs, int nOutputs, int nSamples)</td></tr>
+<tr class="memdesc:ae96e7a6249f60898b79df1a75fcca844"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs the multuchannel convolution processing.  <a href="multiconv_8h.html#ae96e7a6249f60898b79df1a75fcca844">More...</a><br /></td></tr>
+<tr class="separator:ae96e7a6249f60898b79df1a75fcca844"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1ff0aa602e5db93b1f53ce7ffd22551"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiconv_8h.html#ad1ff0aa602e5db93b1f53ce7ffd22551">multiconv_refreshParams</a> (void *const hMCnv)</td></tr>
 <tr class="memdesc:ad1ff0aa602e5db93b1f53ce7ffd22551"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets all intialisation flags to 1.  <a href="multiconv_8h.html#ad1ff0aa602e5db93b1f53ce7ffd22551">More...</a><br /></td></tr>
 <tr class="separator:ad1ff0aa602e5db93b1f53ce7ffd22551"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -273,8 +273,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multi
 
 </div>
 </div>
-<a id="ade46d30b7852e2e453c3ac4db564bb0f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ade46d30b7852e2e453c3ac4db564bb0f">&#9670;&nbsp;</a></span>multiconv_process()</h2>
+<a id="ae96e7a6249f60898b79df1a75fcca844"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae96e7a6249f60898b79df1a75fcca844">&#9670;&nbsp;</a></span>multiconv_process()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -288,7 +288,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multi
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float **const&#160;</td>
+          <td class="paramtype">const float *const *&#160;</td>
           <td class="paramname"><em>inputs</em>, </td>
         </tr>
         <tr>
@@ -429,7 +429,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multi
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_7ea9cec8c8a74419de82b1d94b0f1364.html">include</a></li><li class="navelem"><a class="el" href="multiconv_8h.html">multiconv.h</a></li>
-    <li class="footer">Generated on Wed May 12 2021 14:41:22 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sat May 15 2021 15:03:29 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

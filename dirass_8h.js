@@ -41,7 +41,7 @@ var dirass_8h =
       [ "UPSCALE_ORDER_NINETEENTH", "dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fea1ddb0be3ffe36696c77f4eb1db30504b", null ],
       [ "UPSCALE_ORDER_TWENTIETH", "dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fea1b56d23f66f2c61270fc3f75ba0a96c3", null ]
     ] ],
-    [ "dirass_analysis", "dirass_8h.html#a14a30fe7bc12a62b221f611cd4161db7", null ],
+    [ "dirass_analysis", "dirass_8h.html#a42583d71549c990d0e1b49df052069dd", null ],
     [ "dirass_create", "dirass_8h.html#a1ebaa9cbdc65f96051890d324bc2b41a", null ],
     [ "dirass_destroy", "dirass_8h.html#a43e6d85a0034502629258b6ae04bd1e6", null ],
     [ "dirass_getAspectRatio", "dirass_8h.html#accb39504ab4063c46c1ac28f2f367da2", null ],

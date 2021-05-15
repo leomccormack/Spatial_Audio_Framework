@@ -41,7 +41,7 @@ var ambi__drc_8h =
     [ "ambi_drc_getSamplerate", "ambi__drc_8h.html#ade16b76d5dba048d3fa32187f304b6a9", null ],
     [ "ambi_drc_getThreshold", "ambi__drc_8h.html#a358912104c07e14477f0e890642e7991", null ],
     [ "ambi_drc_init", "ambi__drc_8h.html#a0c1443c70c717f77a01e219dbe8f7f1d", null ],
-    [ "ambi_drc_process", "ambi__drc_8h.html#aae441b6cc4d9691007ca04eb6db590dd", null ],
+    [ "ambi_drc_process", "ambi__drc_8h.html#a3651c0e22ff19ae055f6ff3099cc8345", null ],
     [ "ambi_drc_refreshSettings", "ambi__drc_8h.html#aa9d5813e13fdb63f482ca3ec0b38ccc2", null ],
     [ "ambi_drc_setAttack", "ambi__drc_8h.html#ae3139834711b258d42562725bef57f2b", null ],
     [ "ambi_drc_setChOrder", "ambi__drc_8h.html#a77c23172ffefadc613b5a4ed143e80e0", null ],

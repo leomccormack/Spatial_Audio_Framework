@@ -109,9 +109,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a32f5033789d2932f25480cc214a3f447"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sldoa_8h.html#a32f5033789d2932f25480cc214a3f447">sldoa_initCodec</a> (void *const hSld)</td></tr>
 <tr class="memdesc:a32f5033789d2932f25480cc214a3f447"><td class="mdescLeft">&#160;</td><td class="mdescRight">Intialises the codec variables, based on current global/user parameters.  <a href="sldoa_8h.html#a32f5033789d2932f25480cc214a3f447">More...</a><br /></td></tr>
 <tr class="separator:a32f5033789d2932f25480cc214a3f447"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0def62a9b1e2f0757b7348a4141ac1c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sldoa_8h.html#af0def62a9b1e2f0757b7348a4141ac1c">sldoa_analysis</a> (void *const hSld, float **const inputs, int nInputs, int nSamples, int isPlaying)</td></tr>
-<tr class="memdesc:af0def62a9b1e2f0757b7348a4141ac1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the spatially-localised active-intensity based direction-of-arrival estimator (SLDoA) onto the input signals [1,2].  <a href="sldoa_8h.html#af0def62a9b1e2f0757b7348a4141ac1c">More...</a><br /></td></tr>
-<tr class="separator:af0def62a9b1e2f0757b7348a4141ac1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0f5a0d0c4265c51db3c995c34e7252a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sldoa_8h.html#ab0f5a0d0c4265c51db3c995c34e7252a">sldoa_analysis</a> (void *const hSld, const float *const *inputs, int nInputs, int nSamples, int isPlaying)</td></tr>
+<tr class="memdesc:ab0f5a0d0c4265c51db3c995c34e7252a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the spatially-localised active-intensity based direction-of-arrival estimator (SLDoA) onto the input signals [1,2].  <a href="sldoa_8h.html#ab0f5a0d0c4265c51db3c995c34e7252a">More...</a><br /></td></tr>
+<tr class="separator:ab0f5a0d0c4265c51db3c995c34e7252a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6d11e9cbdde9a264dc6de4287b82f4c"><td class="memItemLeft" align="right" valign="top"><a id="ae6d11e9cbdde9a264dc6de4287b82f4c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sldoa_8h.html#ae6d11e9cbdde9a264dc6de4287b82f4c">sldoa_setMasterOrder</a> (void *const hSld, int newValue)</td></tr>
 <tr class="memdesc:ae6d11e9cbdde9a264dc6de4287b82f4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the maximum input/analysis order (see <a class="el" href="__common_8h.html#accad30b1b7667d4eedc40c116206a5db" title="Available spherical harmonic (SH) input/output order options.">SH_ORDERS</a> enum) <br /></td></tr>
@@ -232,8 +232,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sldoa
 
 <p class="definition">Definition in file <a class="el" href="sldoa_8h_source.html">sldoa.h</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="af0def62a9b1e2f0757b7348a4141ac1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af0def62a9b1e2f0757b7348a4141ac1c">&#9670;&nbsp;</a></span>sldoa_analysis()</h2>
+<a id="ab0f5a0d0c4265c51db3c995c34e7252a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0f5a0d0c4265c51db3c995c34e7252a">&#9670;&nbsp;</a></span>sldoa_analysis()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -247,7 +247,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sldoa
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float **const&#160;</td>
+          <td class="paramtype">const float *const *&#160;</td>
           <td class="paramname"><em>inputs</em>, </td>
         </tr>
         <tr>
@@ -653,7 +653,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_7ea9cec8c8a74419de82b1d94b0f1364.html">include</a></li><li class="navelem"><a class="el" href="sldoa_8h.html">sldoa.h</a></li>
-    <li class="footer">Generated on Wed May 12 2021 14:41:22 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sat May 15 2021 15:03:29 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

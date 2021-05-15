@@ -143,9 +143,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a5d950301131218cc3c05abc204ba4e87"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#a5d950301131218cc3c05abc204ba4e87">ambi_bin_initCodec</a> (void *const hAmbi)</td></tr>
 <tr class="memdesc:a5d950301131218cc3c05abc204ba4e87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Intialises the codec variables, based on current global/user parameters.  <a href="ambi__bin_8h.html#a5d950301131218cc3c05abc204ba4e87">More...</a><br /></td></tr>
 <tr class="separator:a5d950301131218cc3c05abc204ba4e87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a597acae7dca810034495b4891c29f3a6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#a597acae7dca810034495b4891c29f3a6">ambi_bin_process</a> (void *const hAmbi, float **const inputs, float **const outputs, int nInputs, int nOutputs, int nSamples)</td></tr>
-<tr class="memdesc:a597acae7dca810034495b4891c29f3a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decodes input spherical harmonic signals to the binaural channels.  <a href="ambi__bin_8h.html#a597acae7dca810034495b4891c29f3a6">More...</a><br /></td></tr>
-<tr class="separator:a597acae7dca810034495b4891c29f3a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa22247c4479ee3c6beff08254b14b094"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#aa22247c4479ee3c6beff08254b14b094">ambi_bin_process</a> (void *const hAmbi, const float *const *inputs, float **const outputs, int nInputs, int nOutputs, int nSamples)</td></tr>
+<tr class="memdesc:aa22247c4479ee3c6beff08254b14b094"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decodes input spherical harmonic signals to the binaural channels.  <a href="ambi__bin_8h.html#aa22247c4479ee3c6beff08254b14b094">More...</a><br /></td></tr>
+<tr class="separator:aa22247c4479ee3c6beff08254b14b094"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affbef03043aab1e4e03584651bc13ded"><td class="memItemLeft" align="right" valign="top"><a id="affbef03043aab1e4e03584651bc13ded"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ambi__bin_8h.html#affbef03043aab1e4e03584651bc13ded">ambi_bin_refreshParams</a> (void *const hAmbi)</td></tr>
 <tr class="memdesc:affbef03043aab1e4e03584651bc13ded"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets intialisation flags to 1, so as to re-initialise all settings/variables (as ambi_bin is currently configured), at next available opportunity. <br /></td></tr>
@@ -665,8 +665,8 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 
 </div>
 </div>
-<a id="a597acae7dca810034495b4891c29f3a6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a597acae7dca810034495b4891c29f3a6">&#9670;&nbsp;</a></span>ambi_bin_process()</h2>
+<a id="aa22247c4479ee3c6beff08254b14b094"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa22247c4479ee3c6beff08254b14b094">&#9670;&nbsp;</a></span>ambi_bin_process()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -680,7 +680,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float **const&#160;</td>
+          <td class="paramtype">const float *const *&#160;</td>
           <td class="paramname"><em>inputs</em>, </td>
         </tr>
         <tr>
@@ -851,7 +851,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_7ea9cec8c8a74419de82b1d94b0f1364.html">include</a></li><li class="navelem"><a class="el" href="ambi__bin_8h.html">ambi_bin.h</a></li>
-    <li class="footer">Generated on Wed May 12 2021 14:41:22 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sat May 15 2021 15:03:29 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

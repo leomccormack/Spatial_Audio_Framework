@@ -35,7 +35,7 @@ var searchData=
   ['rotator_5fgetrpyflag_3001',['rotator_getRPYflag',['../rotator_8h.html#a0e6493a5e09ad1066e0facd75a5a1f4f',1,'rotator.h']]],
   ['rotator_5fgetyaw_3002',['rotator_getYaw',['../rotator_8h.html#a74594b0ff15e880324345ae78857c087',1,'rotator.h']]],
   ['rotator_5finit_3003',['rotator_init',['../rotator_8h.html#a6fe53ef17ed25040bde6a9f984bef6f9',1,'rotator.h']]],
-  ['rotator_5fprocess_3004',['rotator_process',['../rotator_8h.html#ac9e857dc53347fc2756132f2133ce16f',1,'rotator.h']]],
+  ['rotator_5fprocess_3004',['rotator_process',['../rotator_8h.html#ab1cde5fd46c846c1c792d23b75d92889',1,'rotator.h']]],
   ['rotator_5fsetchorder_3005',['rotator_setChOrder',['../rotator_8h.html#ab517ada7840c6d5acb4f9208375aa903',1,'rotator.h']]],
   ['rotator_5fsetflippitch_3006',['rotator_setFlipPitch',['../rotator_8h.html#a3617d07c75d37dd48656fa7c168bc210',1,'rotator.h']]],
   ['rotator_5fsetflipquaternion_3007',['rotator_setFlipQuaternion',['../rotator_8h.html#af297849bbde2df7932873bd516da7037',1,'rotator.h']]],

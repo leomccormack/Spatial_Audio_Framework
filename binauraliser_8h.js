@@ -36,7 +36,7 @@ var binauraliser_8h =
     [ "binauraliser_getYaw", "binauraliser_8h.html#a9f3bf18771284bc2cc7bb9f5c3553ce2", null ],
     [ "binauraliser_init", "binauraliser_8h.html#a4eb1dc0407020c4198ef1b915b928e68", null ],
     [ "binauraliser_initCodec", "binauraliser_8h.html#a296b20a81475b7bb8598170d85466b1f", null ],
-    [ "binauraliser_process", "binauraliser_8h.html#a0050e98b6955a323475eff6891cbb1a8", null ],
+    [ "binauraliser_process", "binauraliser_8h.html#a26fc1d17b52a1613b86beee8e1c3b5ae", null ],
     [ "binauraliser_refreshSettings", "binauraliser_8h.html#a07287820c8dfc646d99333c97d868407", null ],
     [ "binauraliser_setEnableHRIRsPreProc", "binauraliser_8h.html#ab50d04362a8852270936a8c85a3e8247", null ],
     [ "binauraliser_setEnableRotation", "binauraliser_8h.html#aa883cc599585fba9c2e90b7f4f04df49", null ],
