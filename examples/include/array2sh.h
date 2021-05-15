@@ -232,7 +232,7 @@ void array2sh_evalEncoder(void* const hA2sh);
  * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void array2sh_process(void* const hA2sh,
-                      const float** const inputs,
+                      const float *const * inputs,
                       float** const outputs,
                       int nInputs,
                       int nOutputs,

@@ -95,7 +95,7 @@ void multiconv_init
 void multiconv_process
 (
     void        *  const hMCnv,
-    const float ** const inputs,
+    const float *const * inputs,
     float       ** const outputs,
     int                  nInputs,
     int                  nOutputs,

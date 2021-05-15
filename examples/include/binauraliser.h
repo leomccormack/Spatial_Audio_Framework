@@ -107,7 +107,7 @@ void binauraliser_initCodec(void* const hBin);
  * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void binauraliser_process(void* const hBin,
-                          const float** const inputs,
+                          const float *const * inputs,
                           float** const outputs,
                           int nInputs,
                           int nOutputs,

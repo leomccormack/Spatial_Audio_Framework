@@ -375,7 +375,7 @@ void ambi_bin_initCodec
 void ambi_bin_process
 (
     void        *  const hAmbi,
-    const float ** const inputs,
+    const float *const * inputs,
     float       ** const outputs,
     int                  nInputs,
     int                  nOutputs,

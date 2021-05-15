@@ -88,7 +88,7 @@ void decorrelator_initCodec(void* const hDecor);
  * @param[in] nSamples Number of samples in 'inputs'/'output' matrices
  */
 void decorrelator_process(void* const hDecor,
-                          const float** const inputs,
+                          const float *const * inputs,
                           float** const outputs,
                           int nInputs,
                           int nOutputs,

@@ -99,7 +99,7 @@ void rotator_init
 void rotator_process
 (
     void        *  const hRot,
-    const float ** const inputs,
+    const float *const * inputs,
     float       ** const outputs,
     int                  nInputs,
     int                  nOutputs,

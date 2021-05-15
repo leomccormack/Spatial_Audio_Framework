@@ -195,7 +195,7 @@ void sldoa_initCodec
 void sldoa_analysis
 (
     void        *  const hSld,
-    const float ** const inputs,
+    const float *const * inputs,
     int                  nInputs,
     int                  nSamples,
     int                  isPlaying 

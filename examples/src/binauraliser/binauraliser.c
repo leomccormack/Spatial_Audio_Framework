@@ -182,7 +182,7 @@ void binauraliser_initCodec
 void binauraliser_process
 (
     void        *  const hBin,
-    const float ** const inputs,
+    const float *const * inputs,
     float       ** const outputs,
     int                  nInputs,
     int                  nOutputs,

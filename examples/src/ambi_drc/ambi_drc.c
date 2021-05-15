@@ -136,7 +136,7 @@ void ambi_drc_init
 void ambi_drc_process
 (
     void        *  const hAmbi,
-    const float ** const inputs,
+    const float *const * inputs,
     float       ** const outputs,
     int                  nCh,
     int                  nSamples

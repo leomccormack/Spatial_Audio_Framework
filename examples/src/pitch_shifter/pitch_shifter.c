@@ -158,7 +158,7 @@ void pitch_shifter_initCodec
 void pitch_shifter_process
 (
     void        *  const hPS,
-    const float ** const inputs,
+    const float *const * inputs,
     float       ** const outputs,
     int                  nInputs,
     int                  nOutputs,

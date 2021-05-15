@@ -74,7 +74,7 @@ void ambi_roomsim_init(void* const hAmbi,
  * @param[in] nSamples Number of samples in 'inputs'/'output' matrices
  */
 void ambi_roomsim_process(void* const hAmbi,
-                          const float** const inputs,
+                          const float *const * inputs,
                           float** const outputs,
                           int nInputs,
                           int nOutputs,
