@@ -169,12 +169,12 @@ void array2sh_evalEncoder
 
 void array2sh_process
 (
-    void  *  const hA2sh,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hA2sh,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);

@@ -181,12 +181,12 @@ void binauraliser_initCodec
 
 void binauraliser_process
 (
-    void  *  const hBin,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hBin,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);

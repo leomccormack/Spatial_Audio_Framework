@@ -82,12 +82,12 @@ void ambi_enc_init
 
 void ambi_enc_process
 (
-    void  *  const hAmbi,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hAmbi,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);

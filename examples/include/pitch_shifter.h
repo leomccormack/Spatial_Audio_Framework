@@ -132,7 +132,7 @@ void pitch_shifter_initCodec(void* const hPS);
  * @param[in] nSamples Number of samples in 'inputs'/'output' matrices
  */
 void pitch_shifter_process(void* const hPS,
-                           float** const inputs,
+                           const float *const * inputs,
                            float** const outputs,
                            int nInputs,
                            int nOutputs,

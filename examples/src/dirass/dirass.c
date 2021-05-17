@@ -195,11 +195,11 @@ void dirass_initCodec
 
 void dirass_analysis
 (
-    void  *  const hDir,
-    float ** const inputs,
-    int            nInputs,
-    int            nSamples,
-    int            isPlaying
+    void        *  const hDir,
+    const float *const * inputs,
+    int                  nInputs,
+    int                  nSamples,
+    int                  isPlaying
 )
 {
     dirass_data *pData = (dirass_data*)(hDir);

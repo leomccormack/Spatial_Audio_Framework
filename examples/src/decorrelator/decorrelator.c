@@ -160,12 +160,12 @@ void decorrelator_initCodec
 
 void decorrelator_process
 (
-    void  *  const hDecor,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hDecor,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     decorrelator_data *pData = (decorrelator_data*)(hDecor);
