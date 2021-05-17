@@ -2,6 +2,11 @@ message(STATUS "Configuring SAFMEX wrappers:")
 
 cmake_minimum_required(VERSION 3.15)
 
+# add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
+# (apparently needs to go before add)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 add_subdirectory(CXX_API) # new experimental mex versions using c++ API
 
 project(safmex LANGUAGES C)
