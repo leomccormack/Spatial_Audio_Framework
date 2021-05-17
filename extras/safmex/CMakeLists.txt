@@ -2,7 +2,9 @@ message(STATUS "Configuring SAFMEX wrappers:")
 
 cmake_minimum_required(VERSION 3.15)
 
-add_subdirectory(CXX_API) # new experimental mex versions using c++ API
+if(SAF_MEX_CXX)
+    add_subdirectory(CXX_API) # new experimental mex versions using c++ API
+endif()
 
 project(safmex LANGUAGES C)
 find_package(Matlab)
