@@ -85,6 +85,15 @@ void test__unique_i(void);
  * the previous data order; except truncated or extended) */
 void test__realloc2d_r(void);
 /**
+ * Testing that malloc4d() works, and is truely contiguously allocated */
+void test__malloc4d(void);
+/**
+ * Testing that malloc5d() works, and is truely contiguously allocated */
+void test__malloc5d(void);
+/**
+ * Testing that malloc6d() works, and is truely contiguously allocated */
+void test__malloc6d(void);
+/**
  * Testing the performance of the latticeDecorrelator, verifying that the inter-
  * channel cross-correlation coefficients are near 0 */
 void test__latticeDecorrelator(void);

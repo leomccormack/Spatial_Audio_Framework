@@ -89,6 +89,9 @@ int main_test(void) {
     RUN_TEST(test__getVoronoiWeights);
     RUN_TEST(test__unique_i);
     RUN_TEST(test__realloc2d_r);
+    RUN_TEST(test__malloc4d);
+    RUN_TEST(test__malloc5d);
+    RUN_TEST(test__malloc6d);
     RUN_TEST(test__latticeDecorrelator);
     RUN_TEST(test__butterCoeffs);
     RUN_TEST(test__faf_IIRFilterbank);
@@ -133,6 +136,8 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+
 
 void test__delaunaynd(void){
     int nMesh;
@@ -996,6 +1001,108 @@ void test__realloc2d_r(void){
 
     /* clean-up */
     free(test);
+}
+
+void test__malloc4d(void){
+    int i,j,k,l;
+    int REF[3][4][2][5];
+    int CPY[3][4][2][5];
+    int**** test_malloc_4d;
+    test_malloc_4d = (int****)malloc4d(3, 4, 2, 5, sizeof(int));
+
+    /* Fill the reference static 4D array, and the dynamically allocated 4D array with the same values */
+    for(i=0; i<3; i++){
+        for(j=0; j<4; j++){
+            for(k=0; k<2; k++){
+                for(l=0; l<5; l++){
+                    test_malloc_4d[i][j][k][l] = i*4*2*5 + j*2*5 + k*5 + l;
+                    REF[i][j][k][l] = i*4*2*5 + j*2*5 + k*5 + l;
+                }
+            }
+        }
+    }
+
+    /* Copy the dynamically allocated array to a static copy (to check that the data has actually been contiguously allocated) */
+    memcpy(CPY, FLATTEN4D(test_malloc_4d), 3*4*2*5*sizeof(int));
+    for(i=0; i<3; i++)
+        for(j=0; j<4; j++)
+            for(k=0; k<2; k++)
+                for(l=0; l<5; l++) /* The copy should be identical to the reference */
+                    TEST_ASSERT_TRUE(CPY[i][j][k][l] == REF[i][j][k][l]);
+
+    /* Clean-up */
+    free(test_malloc_4d);
+}
+
+void test__malloc5d(void){
+    int i,j,k,l,p;
+    int REF[2][4][3][5][2];
+    int CPY[2][4][3][5][2];
+    int***** test_malloc_5d;
+    test_malloc_5d = (int*****)malloc5d(2, 4, 3, 5, 2, sizeof(int));
+
+    /* Fill the reference static 5D array, and the dynamically allocated 5D array with the same values */
+    for(i=0; i<2; i++){
+        for(j=0; j<4; j++){
+            for(k=0; k<3; k++){
+                for(l=0; l<5; l++){
+                    for(p=0; p<2; p++){
+                        test_malloc_5d[i][j][k][l][p] = i*4*3*5*2 + j*3*5*2 + k*5*2 + l*2 + p;
+                        REF[i][j][k][l][p] = i*4*3*5*2 + j*3*5*2 + k*5*2 + l*2 + p;
+                    }
+                }
+            }
+        }
+    }
+
+    /* Copy the dynamically allocated array to a static copy (to check that the data has actually been contiguously allocated) */
+    memcpy(CPY, FLATTEN5D(test_malloc_5d), 2*4*3*5*2*sizeof(int));
+    for(i=0; i<2; i++)
+        for(j=0; j<4; j++)
+            for(k=0; k<3; k++)
+                for(l=0; l<5; l++)
+                    for(p=0; p<2; p++)/* The copy should be identical to the reference */
+                        TEST_ASSERT_TRUE(CPY[i][j][k][l][p] == REF[i][j][k][l][p]);
+
+    /* Clean-up */
+    free(test_malloc_5d);
+}
+
+void test__malloc6d(void){
+    int i,j,k,l,p,o;
+    int REF[2][3][2][4][2][3];
+    int CPY[2][3][2][4][2][3];
+    int****** test_malloc_6d;
+    test_malloc_6d = (int******)malloc6d(2, 3, 2, 4, 2, 3, sizeof(int));
+
+    /* Fill the reference static 5D array, and the dynamically allocated 5D array with the same values */
+    for(i=0; i<2; i++){
+        for(j=0; j<3; j++){
+            for(k=0; k<2; k++){
+                for(l=0; l<4; l++){
+                    for(p=0; p<2; p++){
+                        for(o=0; o<3; o++){
+                            test_malloc_6d[i][j][k][l][p][o] = i*3*2*4*2*3 + j*2*4*2*3 + k*4*2*3 + l*2*3 + p*3 + o;
+                            REF[i][j][k][l][p][o] = i*3*2*4*2*3 + j*2*4*2*3 + k*4*2*3 + l*2*3 + p*3 + o;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* Copy the dynamically allocated array to a static copy (to check that the data has actually been contiguously allocated) */
+    memcpy(CPY, FLATTEN6D(test_malloc_6d), 2*3*2*4*2*3*sizeof(int));
+    for(i=0; i<2; i++)
+        for(j=0; j<3; j++)
+            for(k=0; k<2; k++)
+                for(l=0; l<4; l++)
+                    for(p=0; p<2; p++)
+                        for(o=0; o<3; o++)/* The copy should be identical to the reference */
+                            TEST_ASSERT_TRUE(CPY[i][j][k][l][p][o] == REF[i][j][k][l][p][o]);
+
+    /* Clean-up */
+    free(test_malloc_6d);
 }
 
 void test__latticeDecorrelator(void){
@@ -2664,7 +2771,7 @@ void test__saf_example_ambi_bin(void){
         for(ch=0; ch<NUM_EARS; ch++)
             binSig_frame[ch] = &binSig[ch][i*framesize];
 
-        ambi_bin_process(hAmbi, shSig_frame, binSig_frame, nSH, NUM_EARS, framesize);
+        ambi_bin_process(hAmbi, (const float* const*)shSig_frame, binSig_frame, nSH, NUM_EARS, framesize);
     }
 
     /* Assert that left ear energy is higher than the right ear */
@@ -2745,7 +2852,7 @@ void test__saf_example_ambi_dec(void){
         for(ch=0; ch<22; ch++)
             lsSig_frame[ch] = &lsSig[ch][i*framesize];
 
-        ambi_dec_process(hAmbi, shSig_frame, lsSig_frame, nSH, 22, framesize);
+        ambi_dec_process(hAmbi, (const float* const*)shSig_frame, lsSig_frame, nSH, 22, framesize);
     }
 
     /* Assert that channel 8 (corresponding to the loudspeaker where the plane-
@@ -2825,7 +2932,7 @@ void test__saf_example_ambi_enc(void){
         for(ch=0; ch<nSH; ch++)
             shSig_frame[ch] = &shSig[ch][i*framesize];
 
-        ambi_enc_process(hAmbi, inSig_frame, shSig_frame, 2, nSH, framesize);
+        ambi_enc_process(hAmbi, (const float* const*)inSig_frame, shSig_frame, 2, nSH, framesize);
     }
 
     /* ambi_enc should be equivalent to the reference, except delayed due to the
@@ -2915,7 +3022,7 @@ void test__saf_example_array2sh(void){
         for(ch=0; ch<nSH; ch++)
             shSig_frame[ch] = &shSig[ch][i*framesize];
 
-        array2sh_process(hA2sh, micSig_frame, shSig_frame, 32, nSH, framesize);
+        array2sh_process(hA2sh, (const float* const*)micSig_frame, shSig_frame, 32, nSH, framesize);
     }
 
     /* Clean-up */
@@ -2999,7 +3106,7 @@ void test__saf_example_rotator(void){
         for(ch=0; ch<nSH; ch++)
             shSig_rot_frame[ch] = &shSig_rot[ch][i*framesize];
 
-        rotator_process(hRot, shSig_frame, shSig_rot_frame, nSH, nSH, framesize);
+        rotator_process(hRot, (const float* const*)shSig_frame, shSig_rot_frame, nSH, nSH, framesize);
     }
 
     /* ambi_enc should be equivalent to the reference, except delayed due to the
@@ -3056,7 +3163,7 @@ void test__saf_example_spreader(void){
         for(ch=0; ch<nOutputs; ch++)
             outSig_frame[ch] = &outSigs[ch][i*framesize];
 
-        spreader_process(hSpr, inSig_frame, outSig_frame, nInputs, nOutputs, framesize);
+        spreader_process(hSpr, (const float* const*)inSig_frame, outSig_frame, nInputs, nOutputs, framesize);
     }
 
     /* Clean-up */

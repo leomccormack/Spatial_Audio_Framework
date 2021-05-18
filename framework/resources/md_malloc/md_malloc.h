@@ -22,7 +22,7 @@
 
 /**
  * @file md_malloc.h
- * @brief Memory allocation functions for contiguous multi-dimensional arrays
+ * @brief Contiguous memory allocation functions for multi-dimensional arrays
  *
  * Adapted from: https://github.com/leomccormack/md_malloc
  *
@@ -31,7 +31,7 @@
  *   float*** example3D = (float***)malloc3d(10, 20, 5, sizeof(float);
  *   // Due to the contiguous nature of the allocation, this is possible:
  *   memset(FLATTEN3D(example3D), 0, 10*20*5*sizeof(float));
- *   // And may still be indexed normally as:
+ *   // And it may also be indexed normally as:
  *   example3D[3][19][2] = 22.0f;
  *   // To free, simply call:
  *   free(example3D);
@@ -57,6 +57,8 @@ extern "C" {
  * \code{.c}
  *   float** array2D = (float**)malloc2d(10, 40, sizeof(float));
  *   memset(FLATTEN2D(array2D), 0, 10*40*sizeof(float));
+ *   // ...
+ *   free(array2D);
  * \endcode
  */
 #define FLATTEN2D(A) (*A)  /* || (&A[0][0]) */
@@ -74,6 +76,20 @@ extern "C" {
  * of data
  */
 #define FLATTEN4D(A) (***A) /* || (&A[0][0][0][0]) */
+
+/**
+ * Use this macro when passing a 5-D dynamic multi-dimensional array to
+ * memset, memcpy or any other function that expects a flat contiguous 1-D block
+ * of data
+ */
+#define FLATTEN5D(A) (****A) /* || (&A[0][0][0][0][0]) */
+
+/**
+ * Use this macro when passing a 6-D dynamic multi-dimensional array to
+ * memset, memcpy or any other function that expects a flat contiguous 1-D block
+ * of data
+ */
+#define FLATTEN6D(A) (*****A) /* || (&A[0][0][0][0][0][0]) */
     
 /** 1-D malloc (same as malloc, but with error checking) */
 void* malloc1d(size_t dim1_data_size);
@@ -116,10 +132,41 @@ void*** realloc3d_r(void*** ptr, size_t new_dim1, size_t new_dim2,
                     size_t new_dim3, size_t prev_dim1, size_t prev_dim2,
                     size_t prev_dim3, size_t data_size);
 
-//UNTESTED!
 /** 4-D malloc (contiguously allocated, so use free() as usual to deallocate) */
 void**** malloc4d(size_t dim1, size_t dim2, size_t dim3, size_t dim4,
                   size_t data_size);
+
+/** 4-D calloc (contiguously allocated, so use free() as usual to deallocate) */
+void**** calloc4d(size_t dim1, size_t dim2, size_t dim3, size_t dim4,
+                  size_t data_size);
+
+/** 4-D realloc which does NOT retain previous data order */
+void**** realloc4d(void**** ptr, size_t dim1, size_t dim2, size_t dim3,
+                   size_t dim4, size_t data_size);
+
+/** 5-D malloc (contiguously allocated, so use free() as usual to deallocate) */
+void***** malloc5d(size_t dim1, size_t dim2, size_t dim3, size_t dim4,
+                   size_t dim5, size_t data_size);
+
+/** 5-D calloc (contiguously allocated, so use free() as usual to deallocate) */
+void***** calloc5d(size_t dim1, size_t dim2, size_t dim3, size_t dim4,
+                   size_t dim5, size_t data_size);
+
+/** 5-D realloc which does NOT retain previous data order */
+void***** realloc5d(void***** ptr, size_t dim1, size_t dim2, size_t dim3,
+                    size_t dim4, size_t dim5, size_t data_size);
+
+/** 6-D malloc (contiguously allocated, so use free() as usual to deallocate) */
+void****** malloc6d(size_t dim1, size_t dim2, size_t dim3, size_t dim4,
+                    size_t dim5, size_t dim6, size_t data_size);
+
+/** 6-D malloc (contiguously allocated, so use free() as usual to deallocate) */
+void****** calloc6d(size_t dim1, size_t dim2, size_t dim3, size_t dim4,
+                    size_t dim5, size_t dim6, size_t data_size);
+
+/** 6-D realloc which does NOT retain previous data order */
+void****** realloc6d(void****** ptr, size_t dim1, size_t dim2, size_t dim3,
+                     size_t dim4, size_t dim5, size_t dim6, size_t data_size);
 
 
 #ifdef __cplusplus
