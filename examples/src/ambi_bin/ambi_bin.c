@@ -173,8 +173,11 @@ void ambi_bin_initCodec
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     ambi_bin_codecPars* pars = pData->pars;
     int i, j, nSH, order, band;
+  
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
+#endif
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
         return; /* re-init not required, or already happening */
@@ -205,6 +208,7 @@ void ambi_bin_initCodec
         strcpy(pData->progressBarText,"Preparing HRIRs");
         pData->progressBar0_1 = 0.15f;
         /* load sofa file or load default hrir data */
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
         if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
             /* Load SOFA file */
             error = saf_sofa_open(&sofa, pars->sofa_filepath);
@@ -227,6 +231,7 @@ void ambi_bin_initCodec
             /* Clean-up */
             saf_sofa_close(&sofa);
         }
+#endif
         if(pData->useDefaultHRIRsFLAG){
             /* Copy default HRIR data */
             pars->hrir_fs = __default_hrir_fs;
