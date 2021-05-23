@@ -455,7 +455,7 @@ void ims_shoebox_applyEchogramTD
                             echogram_abs = (echogram_data*)wrk->hPrevEchogram_abs[band];
                         else
                             echogram_abs = (echogram_data*)wrk->hEchogram_abs[band];
-                        assert(echogram_abs_0->numImageSources == echogram_abs->numImageSources);
+                        saf_assert(echogram_abs_0->numImageSources == echogram_abs->numImageSources, "Below code is assuming that the number of image sources should be the same across octave bands");
 
                         /* Pull values from the circular buffer corresponding to these read indices, and store this sparse vector as a "compressed" vector */
                         utility_ssv2cv_inds(sc->circ_buffer[k][src_idx][band], echogram_abs_0->rIdx, echogram_abs->numImageSources, echogram_abs->cb_vals[0]);
@@ -604,7 +604,7 @@ int ims_shoebox_addSource
 
     /* Increment number of sources */
     sc->nSources++;
-    assert(sc->nSources <= IMS_MAX_NUM_SOURCES);
+    saf_assert(sc->nSources <= IMS_MAX_NUM_SOURCES, "Exceeded the maximum supported number of sources");
 
     /* Find an unoccupied object */
     obj_idx = IMS_UNASSIGNED;
@@ -615,7 +615,7 @@ int ims_shoebox_addSource
             break;
         }
     }
-    assert(obj_idx != IMS_UNASSIGNED);
+    saf_assert(obj_idx != IMS_UNASSIGNED, "Ugly error");
 
     /* Assign unique ID */
     sc->srcs[obj_idx].ID = 0;
@@ -627,7 +627,7 @@ int ims_shoebox_addSource
     //CHECK
     for(i=0; i<IMS_MAX_NUM_SOURCES; i++)
         if(i!=obj_idx)
-            assert(sc->srcs[obj_idx].ID != sc->srcs[i].ID);
+            saf_assert(sc->srcs[obj_idx].ID != sc->srcs[i].ID, "Ugly error");
 
     /* Set source starting position and signal pointer */
     sc->srcs[obj_idx].pos.x = src_xyz[0];
@@ -656,7 +656,7 @@ int ims_shoebox_addReceiverSH
 
     /* Increment number of receivers */
     sc->nReceivers++;
-    assert(sc->nReceivers <= IMS_MAX_NUM_RECEIVERS);
+    saf_assert(sc->nReceivers <= IMS_MAX_NUM_RECEIVERS, "Exceeded the maximum supported number of receivers");
 
     /* Find an unoccupied object */
     obj_idx = IMS_UNASSIGNED;
@@ -667,7 +667,7 @@ int ims_shoebox_addReceiverSH
             break;
         }
     }
-    assert(obj_idx != IMS_UNASSIGNED);
+    saf_assert(obj_idx != IMS_UNASSIGNED, "Ugly error");
 
     /* Assign unique ID */
     sc->recs[obj_idx].ID = 0;
@@ -679,7 +679,7 @@ int ims_shoebox_addReceiverSH
     //CHECK
     for(i=0; i<IMS_MAX_NUM_RECEIVERS; i++)
         if(i!=obj_idx)
-            assert(sc->recs[obj_idx].ID != sc->recs[i].ID);
+            saf_assert(sc->recs[obj_idx].ID != sc->recs[i].ID, "Ugly error");
 
     /* Set starting position, signal pointers, and indicate that this object is
      * a spherical harmonic receiver of order: "sh_order" */
@@ -709,7 +709,7 @@ void ims_shoebox_updateSource
     ims_core_workspace* work;
     int i, rec, src_idx;
 
-    assert(sourceID >= 0);
+    saf_assert(sourceID >= 0, "Invalid sourceID");
 
     /* Find index corresponding to this source ID */
     src_idx = IMS_UNASSIGNED;
@@ -719,7 +719,7 @@ void ims_shoebox_updateSource
             break;
         }
     }
-    assert(src_idx != IMS_UNASSIGNED);
+    saf_assert(src_idx != IMS_UNASSIGNED, "Invalid sourceID");
 
     /* Check if source has actually moved */
     if( (new_position_xyz[0] != sc->srcs[src_idx].pos.x) ||
@@ -753,7 +753,7 @@ void ims_shoebox_updateReceiver
     ims_core_workspace* work;
     int i, src, rec_idx;
 
-    assert(receiverID >= 0);
+    saf_assert(receiverID >= 0, "Invalid receiverID");
 
     /* Find index corresponding to this receiver ID */
     rec_idx = IMS_UNASSIGNED;
@@ -763,7 +763,7 @@ void ims_shoebox_updateReceiver
             break;
         }
     }
-    assert(rec_idx != IMS_UNASSIGNED);
+    saf_assert(rec_idx != IMS_UNASSIGNED, "Invalid receiverID");
 
     /* Check if Receiver has actually moved */
     if( (new_position_xyz[0] != sc->recs[rec_idx].pos.x) ||
@@ -795,7 +795,7 @@ void ims_shoebox_removeSource
     ims_scene_data *sc = (ims_scene_data*)(hIms);
     int i, obj_idx, rec;
 
-    assert(sourceID >= 0);
+    saf_assert(sourceID >= 0, "Invalid sourceID");
 
     /* Find index corresponding to this source ID */
     obj_idx = IMS_UNASSIGNED;
@@ -805,7 +805,7 @@ void ims_shoebox_removeSource
             break;
         }
     }
-    assert(obj_idx != IMS_UNASSIGNED);
+    saf_assert(obj_idx != IMS_UNASSIGNED, "Invalid sourceID");
 
     /* Set ID to -1 (invalid, so no longer rendered) */
     sc->srcs[obj_idx].ID = IMS_UNASSIGNED;
@@ -828,7 +828,7 @@ void ims_shoebox_removeReceiver
     ims_scene_data *sc = (ims_scene_data*)(hIms);
     int i, obj_idx, src;
 
-    assert(receiverID >= 0);
+    saf_assert(receiverID >= 0, "Invalid receiverID");
 
     /* Find index corresponding to this source ID */
     obj_idx = IMS_UNASSIGNED;
@@ -838,7 +838,7 @@ void ims_shoebox_removeReceiver
             break;
         }
     }
-    assert(obj_idx != IMS_UNASSIGNED);
+    saf_assert(obj_idx != IMS_UNASSIGNED, "Invalid receiverID");
 
     /* Set ID to -1 (invalid, so no longer active) */
     sc->recs[obj_idx].ID = IMS_UNASSIGNED;

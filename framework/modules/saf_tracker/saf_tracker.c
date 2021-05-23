@@ -60,7 +60,7 @@ void tracker3d_create
 
     /* Parameter checking */
     pData->tpars.Np = CLAMP(pData->tpars.Np, 1, TRACKER3D_MAX_NUM_PARTICLES);
-    assert(pData->tpars.ARE_UNIT_VECTORS == 0 || pData->tpars.ARE_UNIT_VECTORS == 1);
+    saf_assert(pData->tpars.ARE_UNIT_VECTORS == 0 || pData->tpars.ARE_UNIT_VECTORS == 1, "ARE_UNIT_VECTORS is a bool");
     pData->tpars.init_birth = CLAMP(pData->tpars.init_birth, 0.0f, 0.99f);
     pData->tpars.alpha_death = CLAMP(pData->tpars.alpha_death, 1.0f, 20.0f);
     pData->tpars.beta_death = CLAMP(pData->tpars.beta_death, 1.0f, 20.0f);

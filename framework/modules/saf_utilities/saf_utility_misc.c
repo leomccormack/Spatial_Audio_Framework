@@ -460,7 +460,7 @@ void unique_i
             nDups++;
         }
     }
-    assert((*nUnique)>-1);
+    saf_assert((*nUnique)>-1, "Something very bad happened");
     free(dups);
 
     /* If no unique values were found */
@@ -504,7 +504,7 @@ void findCombinations
 {
     int* data;
     data = malloc1d(nElements*sizeof(int));
-    assert(*comb==NULL);
+    saf_assert(*comb==NULL, "comb must be empty and NULL prior to calling findCombinations()");
     (*nComb) = 0;
     combinationUtil(arrValues, data, 0, nValues-1, 0, nElements, comb, nComb);
     free(data);

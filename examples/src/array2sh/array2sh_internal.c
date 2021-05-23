@@ -130,11 +130,11 @@ void array2sh_calculate_sht_matrix
             case ARRAY_CYLINDRICAL:
                 switch (arraySpecs->weightType){
                     case WEIGHT_RIGID_OMNI:   cylModalCoeffs(order, kr, HYBRID_BANDS, ARRAY_CONSTRUCTION_RIGID, pData->bN); break;
-                    case WEIGHT_RIGID_CARD:   assert(0); /* not supported */ break;
-                    case WEIGHT_RIGID_DIPOLE: /* not supported */ break;
+                    case WEIGHT_RIGID_CARD:   saf_print_error("weightType is not supported"); break;
+                    case WEIGHT_RIGID_DIPOLE: saf_print_error("weightType is not supported"); break;
                     case WEIGHT_OPEN_OMNI:    cylModalCoeffs(order, kr, HYBRID_BANDS, ARRAY_CONSTRUCTION_OPEN, pData->bN);  break;
-                    case WEIGHT_OPEN_CARD:    assert(0); /* not supported */ break;
-                    case WEIGHT_OPEN_DIPOLE:  assert(0); /* not supported */ break;
+                    case WEIGHT_OPEN_CARD:    saf_print_error("weightType is not supported"); break;
+                    case WEIGHT_OPEN_DIPOLE:  saf_print_error("weightType is not supported"); break;
                 }
                 break;
             case ARRAY_SPHERICAL:
@@ -517,7 +517,7 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
     float* Y_grid_real;
     float_complex* Y_grid, *H_array, *Wshort;
      
-    assert(pData->W != NULL);
+    saf_assert(pData->W != NULL, "The initCodec function must have been called prior to calling array2sh_evaluateSHTfilters()");
     
     strcpy(pData->progressBarText,"Simulating microphone array");
     pData->progressBar0_1 = 0.35f;

@@ -335,7 +335,7 @@ void compressVBAPgainTable3D
                 j++;
             }
         }
-        //assert(j<4);
+        //saf_assert(j<4);
         for(i=0; i<j; i++){
             vbap_gtableComp[nt*3+i] = MAX(gains_nt[i]/gains_sum, 0.0f);
             vbap_gtableIdx[nt*3+i] = idx_nt[i];

@@ -1822,7 +1822,7 @@ void cylModalCoeffs
             
         case ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL:
         case ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL:
-            assert(0);/* not supported */
+            saf_print_error("Unsupported array type");
             break;
     }
 }

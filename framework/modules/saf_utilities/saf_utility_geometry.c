@@ -432,7 +432,7 @@ void convhull3d
     }
 
     /* build convex hull */
-    assert(*faces == NULL); /* nFaces not known yet, shouldn't be pre-allocated... */
+    saf_assert(*faces == NULL, "nFaces not known yet, and so shouldn't be pre-allocated...");
     convhull_3d_build(ch_vertices, nVert, faces, NULL, NULL, nFaces);
 
     /* clean-up */
@@ -459,7 +459,7 @@ void convhullnd
     }
 
     /* build convex hull */
-    assert(*faces == NULL); /* nFaces not known yet, shouldn't be pre-allocated... */
+    saf_assert(*faces == NULL, "nFaces not known yet, and so shouldn't be pre-allocated...");
     convhull_nd_build(ch_points, nPoints, 3, faces, NULL, NULL, nFaces);
 
     /* clean-up */
@@ -552,7 +552,7 @@ void delaunaynd
                 j++;
             }
         }
-        assert(j=nVisible);
+        saf_assert(j==nVisible, "Ugly error");
     }
 
     /* clean up */
@@ -699,7 +699,7 @@ void sphVoronoi
                 break;
             }
         }
-        assert(currentvertIdx!=-1);
+        saf_assert(currentvertIdx!=-1, "Ugly error");
         currentvert = currentface[currentvertIdx];
 
         /* Prep */
@@ -717,7 +717,7 @@ void sphVoronoi
                     l++;
                 }
             }
-            assert(l==nFaceIdx-1);
+            saf_assert(l==nFaceIdx-1, "Ugly error");
 
             for (l = 0; l<nFaceIdx-1; l++){
                 currentfaceIdx = tempfacelist[l];

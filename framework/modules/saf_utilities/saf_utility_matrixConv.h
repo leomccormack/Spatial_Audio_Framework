@@ -71,8 +71,8 @@ void saf_matrixConv_destroy(/* Input Arguments */
 /**
  * Performs the matrix convolution.
  *
- * @note If the number of input+output channels, the filters, or the hopsize
- *       need tochange: simply destroy and re-create the matrixConv instance.
+ * @note If the number of input or output channels, the filters, or the hopsize
+ *       need to change: simply destroy and re-create the matrixConv instance.
  *
  * @param[in]  hMC        matrixConv handle
  * @param[in]  inputSigs  Input signals;  FLAT: nCHin  x hopSize

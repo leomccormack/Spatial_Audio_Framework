@@ -268,14 +268,14 @@ void decorrelator_setDecorrelationAmount(void* const hDecor, float newValue)
 void decorrelator_setLevelCompensationFlag(void* const hDecor, int newValue)
 {
     decorrelator_data *pData = (decorrelator_data*)(hDecor);
-    assert(newValue==0 || newValue==1);
+    saf_assert(newValue==0 || newValue==1, "newValue is a bool");
     pData->compensateLevel = newValue;
 }
 
 void decorrelator_setTransientBypassFlag(void* const hDecor, int newValue)
 {
     decorrelator_data *pData = (decorrelator_data*)(hDecor);
-    assert(newValue==0 || newValue==1);
+    saf_assert(newValue==0 || newValue==1, "newValue is a bool");
     pData->enableTransientDucker = newValue;
 }
  

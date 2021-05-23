@@ -537,7 +537,7 @@ void spreader_process
 
                 /* Formulate mixing matrices */
                 switch(procMode){
-                    case SPREADER_MODE_NAIVE: assert(0); break;
+                    case SPREADER_MODE_NAIVE: saf_print_error("Shouldn't have gotten this far?"); break;
                     case SPREADER_MODE_EVD:
                         /* For normalising the level of Cy */
                         Ey = Eproto = 0.0f;
@@ -691,7 +691,7 @@ void spreader_setAveragingCoeff(void* const hSpr, float newValue)
 void spreader_setSourceAzi_deg(void* const hSpr, int index, float newAzi_deg)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    assert(index<SPREADER_MAX_NUM_SOURCES);
+    saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
     newAzi_deg = MAX(newAzi_deg, -180.0f);
@@ -703,7 +703,7 @@ void spreader_setSourceAzi_deg(void* const hSpr, int index, float newAzi_deg)
 void spreader_setSourceElev_deg(void* const hSpr, int index, float newElev_deg)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    assert(index<SPREADER_MAX_NUM_SOURCES);
+    saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
     newElev_deg = MAX(newElev_deg, -90.0f);
     newElev_deg = MIN(newElev_deg, 90.0f);
     if(pData->src_dirs_deg[index][1] != newElev_deg)
@@ -713,7 +713,7 @@ void spreader_setSourceElev_deg(void* const hSpr, int index, float newElev_deg)
 void spreader_setSourceSpread_deg(void* const hSpr, int index, float newSpread_deg)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    assert(index<SPREADER_MAX_NUM_SOURCES);
+    saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
     newSpread_deg = MAX(newSpread_deg, 0.0f);
     newSpread_deg = MIN(newSpread_deg, 360.0f);
     if(pData->src_spread[index] != newSpread_deg)
@@ -793,21 +793,21 @@ float spreader_getAveragingCoeff(void* const hSpr)
 float spreader_getSourceAzi_deg(void* const hSpr, int index)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    assert(index<SPREADER_MAX_NUM_SOURCES);
+    saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
     return pData->src_dirs_deg[index][0];
 }
 
 float spreader_getSourceElev_deg(void* const hSpr, int index)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    assert(index<SPREADER_MAX_NUM_SOURCES);
+    saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
     return pData->src_dirs_deg[index][1];
 }
 
 float spreader_getSourceSpread_deg(void* const hSpr, int index)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    assert(index<SPREADER_MAX_NUM_SOURCES);
+    saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
     return pData->src_spread[index];
 }
 

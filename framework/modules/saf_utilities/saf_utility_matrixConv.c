@@ -99,7 +99,7 @@ void  saf_matrixConv_create
         h->fftSize = 2*(h->hopSize);
         h->nBins = hopSize+1;
         h->numFilterBlocks = (int)ceilf((float)length_h/(float)hopSize); /* number of partitions */
-        assert(h->numFilterBlocks>=1);
+        saf_assert(h->numFilterBlocks>=1, "Number of filter blocks/partitions must be at least 1");
         
         /* Allocate memory for buffers and perform fft on partitioned H */
         h_pad = calloc1d(h->numFilterBlocks * hopSize, sizeof(float));
@@ -300,7 +300,7 @@ void saf_multiConv_create
         h->fftSize = 2*(h->hopSize);
         h->nBins = hopSize+1;
         h->numFilterBlocks = (int)ceilf((float)length_h/(float)hopSize); /* number of partitions */
-        assert(h->numFilterBlocks>=1);
+        saf_assert(h->numFilterBlocks>=1, "Number of filter blocks/partitions must be at least 1");
         
         /* Allocate memory for buffers and perform fft on partitioned H */
         h_pad = calloc1d(h->numFilterBlocks * hopSize, sizeof(float));

@@ -214,7 +214,7 @@ void matrixconv_setFilters
 {
     matrixconv_data *pData = (matrixconv_data*)(hMCnv);
     int i;
-    assert(numChannels<=MAX_NUM_CHANNELS_FOR_WAV && numChannels > 0 && numSamples > 0);
+    saf_assert(numChannels<=MAX_NUM_CHANNELS_FOR_WAV && numChannels > 0 && numSamples > 0, "WAV is limited to 1024 channels");
     
     pData->nOutputChannels = MIN(numChannels, MAX_NUM_CHANNELS);
     pData->input_wav_length = numSamples;

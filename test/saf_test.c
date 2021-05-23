@@ -70,7 +70,7 @@ int main_test(void) {
     timer_lib_initialize();
     start = timer_current();
     UNITY_BEGIN();
-
+    
     /* run each unit test */
     RUN_TEST(test__delaunaynd);
     RUN_TEST(test__quaternion);

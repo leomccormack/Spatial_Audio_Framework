@@ -230,7 +230,7 @@ void hilbert
             h[i] = cmplxf(2.0f, 0.0f);
     }
     else{
-        assert(0); // uneven lengths not actually supported by saf_fft
+        saf_print_error("Uneven lengths are not  supported by saf_fft"); 
         /* odd */
         h[0] = cmplxf(1.0f, 0.0f);
         for(i=1;i<(x_len+1)/2;i++)
@@ -331,7 +331,7 @@ void saf_stft_forward
     saf_stft_data *h = (saf_stft_data*)(hSTFT);
     int ch, j, nHops, t, band, idx, hIdx;
 
-    assert(framesize % h->hopsize == 0); /* framesize must be multiple of hopsize */
+    saf_assert(framesize % h->hopsize == 0, "framesize must be multiple of hopsize");  
     nHops = framesize/h->hopsize;
 
     /* For linear time-invariant (LTI) operation (i.e. no previous hops are
@@ -402,7 +402,7 @@ void saf_stft_backward
     saf_stft_data *h = (saf_stft_data*)(hSTFT);
     int t, ch, nHops, band;
 
-    assert(framesize % h->hopsize == 0); /* framesize must be multiple of hopsize */
+    saf_assert(framesize % h->hopsize == 0, "framesize must be multiple of hopsize");
     nHops = framesize/h->hopsize;
 
     for (t = 0; t<nHops; t++){
@@ -495,7 +495,7 @@ void saf_rfft_create
     
     h->N = N;
     h->Scale = 1.0f/(float)N; /* output scaling after ifft */
-    assert(N>=2 && ISEVEN(N)); /* only even (non zero) FFT sizes allowed */
+    saf_assert(N>=2 && ISEVEN(N), "Only even (non zero) FFT sizes are supported");
 #if defined(SAF_USE_INTEL_IPP)
     h->useKissFFT_flag = 0;
     /* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */
@@ -679,7 +679,7 @@ void saf_fft_create
     
     h->N = N;
     h->Scale = 1.0f/(float)N; /* output scaling after ifft */
-    assert(N>=2); /* only even (non zero) FFT sizes allowed */
+    saf_assert(N>=2, "Only even (non zero) FFT sizes are supported");
 #if defined(SAF_USE_INTEL_IPP)
     h->useKissFFT_flag = 0;
     /* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */

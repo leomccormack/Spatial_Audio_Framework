@@ -366,7 +366,7 @@ void getBinDecoder_SPR
     checkCondNumberSHTReal(Nh_max, hrtf_dirs_rad, N_dirs, weights, cnd_num);
     for(i=0, Nh=0; i<Nh_max+1; i++)
         Nh = cnd_num[i] < 100.0f ? i : Nh;
-    assert(Nh>=order);
+    saf_assert(Nh>=order, "Input order exceeds the modal order of the spatial grid");
     nSH_nh = (Nh+1)*(Nh+1);
     Y_nh = malloc1d(nSH_nh*N_dirs*sizeof(float));
     getRSH(Nh, hrtf_dirs_deg, N_dirs, Y_nh);

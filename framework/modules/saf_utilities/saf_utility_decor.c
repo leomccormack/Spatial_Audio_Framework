@@ -265,7 +265,7 @@ void latticeDecorrelator_create
                     case 4:  memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o4[ch+lookupOffset],  (h->orders[filterIdx])*sizeof(float)); break;
                     case 3:  memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o3[ch+lookupOffset],  (h->orders[filterIdx])*sizeof(float)); break;
                     case 2:  memcpy(h->lttc_apf[band][ch].coeffs[0], __lattice_coeffs_o2[ch+lookupOffset],  (h->orders[filterIdx])*sizeof(float)); break;
-                    default: assert(0); /* Unsupported filter order specified */
+                    default: saf_print_error("Unsupported filter order was specified"); break;
                 }
 
                 /* denominator coefficients */

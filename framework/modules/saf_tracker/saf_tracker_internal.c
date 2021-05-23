@@ -291,7 +291,7 @@ void tracker3d_predict
                 for(k=0; k<S->nTargets; k++)
                     if(dead[j]==k)
                         ind = k;
-                assert(ind != -1);
+                saf_assert(ind != -1, "Ugly error");
 
                 /* Shimy target data down by 1... overriding the dead target */
                 S->nTargets--;
@@ -325,7 +325,7 @@ void tracker3d_predict
                 for(k=0; k<S->nTargets; k++)
                     if(dead[0]==k)
                         ind = k;
-                assert(ind != -1);
+                saf_assert(ind != -1, "Ugly error");
 
                 S->nTargets--;
                 if(ind!=S->nTargets){
@@ -391,7 +391,7 @@ void tracker3d_update
         n_events = S->nTargets + 1; /* clutter (+1) or 1 of the targets is active */
         if( S->nTargets < tpars->maxNactiveTargets)
             n_events++; /* Also a chance of a new target */
-        assert(n_events<=TRACKER3D_MAX_NUM_EVENTS);
+        saf_assert(n_events<=TRACKER3D_MAX_NUM_EVENTS, "Number of hypotheses/events exceeded the maximum");
 
         /* Prep */
 #ifdef TRACKER_VERBOSE
@@ -489,7 +489,7 @@ void tracker3d_update
         norm = 1.0f/sumf(pData->imp, count);
         cblas_sscal(count, norm, pData->imp, 1);
         ev = categ_rnd(pData->imp, count);  /* Event index */
-        assert(ev!=-1);
+        saf_assert(ev!=-1, "Ugly error");
 
         /* Update particle */
         tracker3d_particleCopy(pData->str[ev], pData->SS[i]);
@@ -529,7 +529,7 @@ int tracker3d_getMaxParticleIdx
             maxIdx = i;
         }
     }
-    assert(maxIdx!=-1);
+    saf_assert(maxIdx!=-1, "Ugly error");
     return maxIdx;
 }
 

@@ -628,7 +628,7 @@ void loadSofaFile
 #endif
         return;
     }
-    assert(ncid!=-1);
+    saf_assert(ncid!=-1, "Something very bad happened");
  
     /* Determine dimension IDs and lengths */
     /* Note: there are 6 possible dimension lengths in the sofa standard */

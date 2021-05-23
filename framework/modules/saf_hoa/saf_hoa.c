@@ -55,9 +55,8 @@ void convertHOAChannelConvention
 #if 0 /* Now changed to just zeroing the remaining channels */
     /* Assert that FuMa is not being used for anything other than 1st order */
     if(order!=1){
-        /* FuMa not supported for more than 1st order */
-        assert(inConvention!=HOA_CH_ORDER_FUMA);
-        assert(outConvention!=HOA_CH_ORDER_FUMA);
+        saf_assert(inConvention!=HOA_CH_ORDER_FUMA, "FuMa not supported for more than 1st order");
+        saf_assert(outConvention!=HOA_CH_ORDER_FUMA, "FuMa not supported for more than 1st order");
     }
 #endif
     /* Temp frame */

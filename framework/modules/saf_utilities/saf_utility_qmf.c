@@ -161,7 +161,7 @@ void qmf_create
     float scale, eq;
     float* k_tmp, *n_tmp;
 
-    saf_assert(hopsize==4 || hopsize==8 || hopsize==16 || hopsize==32 || hopsize==64 || hopsize==128);
+    saf_assert(hopsize==4 || hopsize==8 || hopsize==16 || hopsize==32 || hopsize==64 || hopsize==128, "Unsupported hopsize");
 
     h->nCHin = nCHin;
     h->nCHout = nCHout;
@@ -323,7 +323,7 @@ void qmf_analysis
     float_complex subBands8[8], subBands2[2];
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
-    saf_assert(framesize % h->hopsize == 0); /* framesize must be multiple of hopsize */
+    saf_assert(framesize % h->hopsize == 0, "framesize must be multiple of hopsize");  
     nHops = framesize/h->hopsize;
 
     for(ch=0; ch<h->nCHin; ch++){
@@ -444,7 +444,7 @@ void qmf_synthesis
     qmf_data *h = (qmf_data*)(hQMF);
     int ch, t, nHops, band;
 
-    saf_assert(framesize % h->hopsize == 0); /* framesize must be multiple of hopsize */
+    saf_assert(framesize % h->hopsize == 0, "framesize must be multiple of hopsize");
     nHops = framesize/h->hopsize;
 
     for(ch=0; ch<h->nCHout; ch++){
@@ -636,7 +636,7 @@ void qmf_getCentreFreqs
     float* cutoffs;
     float centreFreqs_qmf[QMF_NBANDS_2_SUBDIVIDE];
 
-    saf_assert(nBands==h->nBands); /* just to check that "centreFreq" is of correct length */
+    saf_assert(nBands==h->nBands, "Just to check that \"centreFreq\" is of correct length");  
 
     /* QMF cutoff frequencies */
     hopsize = h->hopsize;

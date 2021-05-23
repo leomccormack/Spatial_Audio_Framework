@@ -33,7 +33,7 @@ extern "C" {
 
 #include "saf_utility_complex.h"
 
-/* Cross-platform sleep macro (slightly modified) from:
+/* Cross-platform sleep macro (slightly modified), originally taken from:
  * https://cboard.cprogramming.com/c-programming/170381-cross-platform-wait-sleep.html */
 #ifdef _WIN32
     /* For Windows (32- and 64-bit) */
@@ -96,20 +96,22 @@ extern "C" {
 # define saf_print_error(message) saf_print_error_FL(message, \
                                                      __FILE__, __LINE__)
 
-/** Macro to make an assertion and give the filename and line number if fail */
-# define saf_assert(x) if (!(x)) {printf("SAF ASSERTION FAILED: (%s) [%s LINE %u].\n",\
-                                  MKSTRING(x), __FILE__, __LINE__); exit(EXIT_FAILURE); }
+/** Macro to make an assertion, along with a string explaining its purpose */
+# define saf_assert(x, message) if (!(x)) \
+                    {printf("SAF ASSERTION FAILED: (%s), %s [%s LINE %u].\n", \
+                     MKSTRING(x), message, __FILE__, __LINE__); \
+                     exit(EXIT_FAILURE); }
 
-/** Function to print a warning message along with the filename and line number */
+/** Function to print a warning message with the filename and line number */
 void saf_print_warning_FL(char* message, char* fileName, int lineNumber);
 
-/** Function to print a error message along with the filename and line number */
+/** Function to print a error message with the filename and line number */
 void saf_print_error_FL(char* message, char* fileName, int lineNumber);
 
-#else /* Macros do nothing, or just standard behaviour... */
+#else /* ...otherwise macros do nothing, or just the standard behaviour... */
 # define saf_print_warning(message)
-# define saf_print_error(message)
-# define saf_assert(x) assert(x)
+# define saf_print_error(message) exit(EXIT_FAILURE)
+# define saf_assert(x, message) assert(x)
 #endif
 
 /** Wraps around any angles exeeding 180 degrees (e.g., 200-> -160) */
@@ -161,9 +163,7 @@ void findERBpartitions(/* Input Arguments */
                        float** erb_freqs,
                        int* nERBBands);
 
-/**
- * Returns the indices required to randomly permute a vector of length 'len'
- */
+/** Returns the indices required to randomly permute a vector of length 'len' */
 void randperm(/* Input Arguments */
               int len,
               /* Output Arguments */

@@ -620,7 +620,7 @@ void applyIIR
 
     /* For compiler speed-ups */  
     switch(nCoeffs){
-        case 1: assert(0); /* just divide in_signal by b[0]... */
+        case 1: saf_print_error("Just divide in_signal by b[0]...");
         case 2: applyIIR_1(in_signal, nSamples, b, a, wz, out_signal); return;
         case 3: applyIIR_2(in_signal, nSamples, b, a, wz, out_signal); return;
         case 4: applyIIR_3(in_signal, nSamples, b, a, wz, out_signal); return;
@@ -650,8 +650,7 @@ void applyIIR
             case 3:  wz[2] = wz[1]; /* fall through */
             case 2:  wz[1] = wz[0]; /* fall through */
             case 1:  wz[0] = wn; break;
-            default: assert(0); /* A 5th order BPF/BSF or 10th order LPF/HPF?
-                                 * Sorry, I gotta put a stop to that... */
+            default: saf_print_error("Unsupported number of IIR filter coefficients.");
         }
     }
 }
@@ -779,8 +778,7 @@ void butterCoeffs
                 for(j=numStates/2; j<numStates; j++)
                     bf_ss[i][j] = i == (j-numStates/2) ? Wn1 : 0.0;
             break;
-    }
-	assert(bf_ss != NULL);
+    } 
     nCoeffs = numStates+1;
 
     /* Bilinear transformation to find the discrete equivalent of the filter */
@@ -908,8 +906,8 @@ void faf_IIRFilterbank_create
     double_complex z[3], A[3][3], ztmp[7], ztmp2[7];
     int i, j, f, filtLen, d1_len, d2_len;
 
-    assert( (order==1) || (order==3) );
-    assert(nCutoffFreq>1);
+    saf_assert( (order==1) || (order==3), "Only odd number orders are supported, and 5th order+ is numerically unstable");
+    saf_assert(nCutoffFreq>1, "Number of filterbank cut-off frequencies must be more than 1");
     filtLen = order + 1;
     fb->filtOrder = order;
     fb->filtLen = filtLen;
@@ -1030,7 +1028,7 @@ void faf_IIRFilterbank_apply
     faf_IIRFB_data *fb = (faf_IIRFB_data*)(hFaF);
     int band,j;
 
-    assert(nSamples <= fb->maxNSamplesToExpect);
+    saf_assert(nSamples <= fb->maxNSamplesToExpect, "Number of samples exceeds the maximum number informed when calling faf_IIRFilterbank_create()");
 
     /* Copy input signal to all output bands/channels */
     for(band=0; band<fb->nBands; band++)
@@ -1164,7 +1162,7 @@ void FIRCoeffs
         }
     }
     else
-        assert(0); /* please specify an even value for the filter 'order' argument */
+        saf_print_error("Please specify an even value for the filter 'order' argument"); 
     
     /* Apply windowing function */
     applyWindowingFunction(windowType, h_len, h_filt);
