@@ -159,7 +159,7 @@ void ambi_roomsim_process
     /* local copies of user parameters */
     chOrdering = pData->chOrdering;
     norm = pData->norm;
-    order = MIN(pData->sh_order, MAX_SH_ORDER);
+    order = SAF_MIN(pData->sh_order, MAX_SH_ORDER);
     nSH = ORDER2NSH(order);
     nSources = pData->nSources;
     nReceivers = pData->nReceivers;
@@ -168,7 +168,7 @@ void ambi_roomsim_process
     /* Process frame */
     if (nSamples == FRAME_SIZE) {
         /* Load time-domain data */
-        for(i=0; i < MIN(nSources,nInputs); i++)
+        for(i=0; i < SAF_MIN(nSources,nInputs); i++)
             memcpy(pData->src_sigs[i], inputs[i], FRAME_SIZE * sizeof(float));
         for(; i < nInputs; i++)
             memset(pData->src_sigs[i], 0, FRAME_SIZE * sizeof(float));
@@ -203,7 +203,7 @@ void ambi_roomsim_process
             }
 
             /* Append this receiver's output channels to the master output buffer */
-            for(j=0; (j<MIN(nSH, MAX_NUM_SH_SIGNALS) && i<MIN(nOutputs, MAX_NUM_CHANNELS)); j++, i++)
+            for(j=0; (j<SAF_MIN(nSH, MAX_NUM_SH_SIGNALS) && i<SAF_MIN(nOutputs, MAX_NUM_CHANNELS)); j++, i++)
                 memcpy(outputs[i], pData->rec_sh_outsigs[rec][j], FRAME_SIZE * sizeof(float));
         }
         for(; i < nOutputs; i++)
@@ -253,7 +253,7 @@ void ambi_roomsim_setOutputOrder(void* const hAmbi, int newOrder)
 void ambi_roomsim_setNumSources(void* const hAmbi, int new_nSources)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    pData->new_nSources = CLAMP(new_nSources, 1, ROOM_SIM_MAX_NUM_SOURCES); 
+    pData->new_nSources = SAF_CLAMP(new_nSources, 1, ROOM_SIM_MAX_NUM_SOURCES);
 }
 
 void ambi_roomsim_setSourceX(void* const hAmbi, int index, float newValue)
@@ -280,7 +280,7 @@ void ambi_roomsim_setSourceZ(void* const hAmbi, int index, float newValue)
 void ambi_roomsim_setNumReceivers(void* const hAmbi, int new_nReceivers)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    pData->new_nReceivers = CLAMP(new_nReceivers, 1, ROOM_SIM_MAX_NUM_RECEIVERS);
+    pData->new_nReceivers = SAF_CLAMP(new_nReceivers, 1, ROOM_SIM_MAX_NUM_RECEIVERS);
 }
 
 void ambi_roomsim_setReceiverX(void* const hAmbi, int index, float newValue)

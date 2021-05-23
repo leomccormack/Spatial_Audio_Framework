@@ -183,7 +183,7 @@ void afSTFT_create
     else
         h->STFTOutputFrameTF = NULL;
     if(nCHout > 0 || nCHin > 0)
-        h->tempHopFrameTD = (float**)malloc2d( MAX(nCHin, nCHout), hopsize, sizeof(float));
+        h->tempHopFrameTD = (float**)malloc2d( SAF_MAX(nCHin, nCHout), hopsize, sizeof(float));
     if(nCHin>0){
         h->STFTInputFrameTF = malloc1d(nCHin * sizeof(complexVector));
         for(ch=0; ch < nCHin; ch++) {
@@ -421,8 +421,8 @@ void afSTFT_channelChange
             h->STFTOutputFrameTF[i].im = (float*)calloc1d(h->nBands, sizeof(float));
         }
     }
-    if( MAX(h->nCHin, h->nCHout) != MAX(new_nCHin, new_nCHout))
-        h->tempHopFrameTD = (float**)realloc2d((void**)h->tempHopFrameTD, MAX(new_nCHin, new_nCHout), h->hopsize, sizeof(float));
+    if( SAF_MAX(h->nCHin, h->nCHout) != SAF_MAX(new_nCHin, new_nCHout))
+        h->tempHopFrameTD = (float**)realloc2d((void**)h->tempHopFrameTD, SAF_MAX(new_nCHin, new_nCHout), h->hopsize, sizeof(float));
 
     h->nCHin = new_nCHin;
     h->nCHout = new_nCHout;
@@ -523,9 +523,9 @@ void afSTFT_FIRtoFilterbankCoeffs
 
     nBands = hopSize + (hybridmode ? 5 : 1);
     ir_pad = 1024;//+512;
-    nTimeSlots = (MAX(ir_len,hopSize)+ir_pad)/hopSize;
+    nTimeSlots = (SAF_MAX(ir_len,hopSize)+ir_pad)/hopSize;
     maxIdx = calloc1d(nCH,sizeof(int));
-    centerImpulse = calloc1d(MAX(ir_len,hopSize)+ir_pad, sizeof(float));
+    centerImpulse = calloc1d(SAF_MAX(ir_len,hopSize)+ir_pad, sizeof(float));
 
     /* pick a direction to estimate the center of FIR delays */
     for(j=0; j<nCH; j++){
@@ -548,26 +548,26 @@ void afSTFT_FIRtoFilterbankCoeffs
 
     /* analyse impulse with the filterbank */
     centerImpulseFB = malloc1d(nBands*nTimeSlots*nCH*sizeof(float_complex));
-    afAnalyse(centerImpulse, MAX(ir_len,hopSize)+ir_pad, 1, hopSize, LDmode, hybridmode, centerImpulseFB);
+    afAnalyse(centerImpulse, SAF_MAX(ir_len,hopSize)+ir_pad, 1, hopSize, LDmode, hybridmode, centerImpulseFB);
     centerImpulseFB_energy = calloc1d(nBands, sizeof(float));
     for(i=0; i<nBands; i++)
         for(t=0; t<nTimeSlots; t++)
             centerImpulseFB_energy[i] += powf(cabsf(centerImpulseFB[i*nTimeSlots + t]), 2.0f);
 
     /* initialise FB coefficients */
-    ir = calloc1d( (MAX(ir_len,hopSize)+ir_pad) * nCH, sizeof(float));
+    ir = calloc1d( (SAF_MAX(ir_len,hopSize)+ir_pad) * nCH, sizeof(float));
     irFB = malloc1d(nBands*nCH*nTimeSlots*sizeof(float_complex));
     for(nd=0; nd<N_dirs; nd++){
         for(j=0; j<ir_len; j++)
             for(i=0; i<nCH; i++)
                 ir[j*nCH+i] = hIR[nd*nCH*ir_len + i*ir_len + j];
-        afAnalyse(ir, MAX(ir_len,hopSize)+ir_pad, nCH, hopSize, LDmode, hybridmode, irFB);
+        afAnalyse(ir, SAF_MAX(ir_len,hopSize)+ir_pad, nCH, hopSize, LDmode, hybridmode, irFB);
         for(nm=0; nm<nCH; nm++){
             for(i=0; i<nBands; i++){
                 irFB_energy = 0;
                 for(t=0; t<nTimeSlots; t++)
                     irFB_energy += powf(cabsf(irFB[i*nTimeSlots*nCH + t*nCH + nm]), 2.0f); /* out_nBands x nTimeslots x nCH */
-                irFB_gain = sqrtf(irFB_energy/MAX(centerImpulseFB_energy[i], 2.23e-8f));
+                irFB_gain = sqrtf(irFB_energy/SAF_MAX(centerImpulseFB_energy[i], 2.23e-8f));
                 cross = cmplxf(0.0f,0.0f);
                 for(t=0; t<nTimeSlots; t++)
                     cross = ccaddf(cross, ccmulf(irFB[i*nTimeSlots*nCH + t*nCH + nm], conjf(centerImpulseFB[i*nTimeSlots + t])));

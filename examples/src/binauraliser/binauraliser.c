@@ -204,7 +204,7 @@ void binauraliser_process
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
-        for(i=0; i < MIN(nSources,nInputs); i++)
+        for(i=0; i < SAF_MIN(nSources,nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<nSources; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
@@ -260,7 +260,7 @@ void binauraliser_process
         afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outframeTD);
 
         /* Copy to output buffer */
-        for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
+        for (ch = 0; ch < SAF_MIN(NUM_EARS, nOutputs); ch++)
             utility_svvcopy(pData->outframeTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
@@ -290,8 +290,8 @@ void binauraliser_setSourceAzi_deg(void* const hBin, int index, float newAzi_deg
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
-    newAzi_deg = MAX(newAzi_deg, -180.0f);
-    newAzi_deg = MIN(newAzi_deg, 180.0f);
+    newAzi_deg = SAF_MAX(newAzi_deg, -180.0f);
+    newAzi_deg = SAF_MIN(newAzi_deg, 180.0f);
     if(pData->src_dirs_deg[index][0]!=newAzi_deg){
         pData->src_dirs_deg[index][0] = newAzi_deg;
         pData->recalc_hrtf_interpFLAG[index] = 1;
@@ -302,8 +302,8 @@ void binauraliser_setSourceAzi_deg(void* const hBin, int index, float newAzi_deg
 void binauraliser_setSourceElev_deg(void* const hBin, int index, float newElev_deg)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);
+    newElev_deg = SAF_MAX(newElev_deg, -90.0f);
+    newElev_deg = SAF_MIN(newElev_deg, 90.0f);
     if(pData->src_dirs_deg[index][1] != newElev_deg){
         pData->src_dirs_deg[index][1] = newElev_deg;
         pData->recalc_hrtf_interpFLAG[index] = 1;
@@ -314,7 +314,7 @@ void binauraliser_setSourceElev_deg(void* const hBin, int index, float newElev_d
 void binauraliser_setNumSources(void* const hBin, int new_nSources)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    pData->new_nSources = CLAMP(new_nSources, 1, MAX_NUM_INPUTS);
+    pData->new_nSources = SAF_CLAMP(new_nSources, 1, MAX_NUM_INPUTS);
     pData->recalc_M_rotFLAG = 1;
     binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
 }

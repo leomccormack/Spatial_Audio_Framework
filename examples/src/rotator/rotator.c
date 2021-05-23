@@ -120,7 +120,7 @@ void rotator_process
     if (nSamples == FRAME_SIZE) {
 
         /* Load time-domain data */
-        for(i=0; i < MIN(nSH, nInputs); i++)
+        for(i=0; i < SAF_MIN(nSH, nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<nSH; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
@@ -189,7 +189,7 @@ void rotator_process
         }
 
         /* Copy to output */
-        for (i = 0; i < MIN(nSH, nOutputs); i++)
+        for (i = 0; i < SAF_MIN(nSH, nOutputs); i++)
             utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
         for (; i < nOutputs; i++)
             memset(outputs[i], 0, FRAME_SIZE*sizeof(float)); 

@@ -356,7 +356,7 @@ void getBinDecoder_SPR
             W[i*N_dirs+i] = 1.0f/(float)N_dirs;
     
     /* find SH-order for interpolation of the HRTF set */
-    Nh_max = MIN((int)(sqrtf((float)N_dirs)-1.0f), 20); /* Cap to something more sensible if needed... */
+    Nh_max = SAF_MIN((int)(sqrtf((float)N_dirs)-1.0f), 20); /* Cap to something more sensible if needed... */
     hrtf_dirs_rad = malloc1d(N_dirs*2*sizeof(float));
     cnd_num = malloc1d((Nh_max+1)*sizeof(float));
     for(i=0; i<N_dirs; i++){ /* [azi, elev] degrees, to: [azi, inclination] radians */

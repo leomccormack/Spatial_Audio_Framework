@@ -213,7 +213,7 @@ void powermap_analysis
     norm = pData->norm;
     chOrdering = pData->chOrdering;
     nSources = pData->nSources;
-    covAvgCoeff = MIN(pData->covAvgCoeff, MAX_COV_AVG_COEFF);
+    covAvgCoeff = SAF_MIN(pData->covAvgCoeff, MAX_COV_AVG_COEFF);
     pmapAvgCoeff = pData->pmapAvgCoeff;
     pmap_mode = pData->pmap_mode;
     masterOrder = pData->masterOrder;
@@ -222,7 +222,7 @@ void powermap_analysis
     /* Loop over all samples */
     for(s=0; s<nSamples; s++){
         /* Load input signals into inFIFO buffer */
-        for(ch=0; ch<MIN(nInputs,nSH); ch++)
+        for(ch=0; ch<SAF_MIN(nInputs,nSH); ch++)
             pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
         for(; ch<nSH; ch++) /* Zero any channels that were not given */
             pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
@@ -290,15 +290,15 @@ void powermap_analysis
                 /* determine maximum analysis order */
                 maxOrder = 1;
                 for(i=0; i<HYBRID_BANDS; i++)
-                    maxOrder = MAX(maxOrder, MIN(analysisOrderPerBand[i], masterOrder));
+                    maxOrder = SAF_MAX(maxOrder, SAF_MIN(analysisOrderPerBand[i], masterOrder));
                 nSH_maxOrder = (maxOrder+1)*(maxOrder+1);
 
                 /* group covarience matrices */
                 C_grp = calloc1d(nSH_maxOrder*nSH_maxOrder, sizeof(float_complex));
                 for (band=0; band<HYBRID_BANDS; band++){
-                    order_band = MAX(MIN(pData->analysisOrderPerBand[band], masterOrder),1);
+                    order_band = SAF_MAX(SAF_MIN(pData->analysisOrderPerBand[band], masterOrder),1);
                     nSH_order = (order_band+1)*(order_band+1);
-                    pmapEQ_band = MIN(MAX(pmapEQ[band], 0.0f), 2.0f);
+                    pmapEQ_band = SAF_MIN(SAF_MAX(pmapEQ[band], 0.0f), 2.0f);
                     for(i=0; i<nSH_order; i++)
                         for(j=0; j<nSH_order; j++)
                             C_grp[i*nSH_maxOrder+j] = ccaddf(C_grp[i*nSH_maxOrder+j], crmulf(pData->Cx[band][i][j], 1e3f*pmapEQ_band));
@@ -429,7 +429,7 @@ void powermap_setMasterOrder(void* const hPm,  int newValue)
 void powermap_setCovAvgCoeff(void* const hPm, float newAvg)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    pData->covAvgCoeff = MIN(MAX(0.0f, newAvg), 0.99999999f);
+    pData->covAvgCoeff = SAF_MIN(SAF_MAX(0.0f, newAvg), 0.99999999f);
 }
 
 void powermap_setNumSources(void* const hPm, int newValue)
@@ -467,7 +467,7 @@ void powermap_setSourcePreset(void* const hPm, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->analysisOrderPerBand[band] = MIN(pData->new_masterOrder,curOrder);
+                pData->analysisOrderPerBand[band] = SAF_MIN(pData->new_masterOrder,curOrder);
                 if(pData->freqVector[band] > __Zylia_freqRange[(__Zylia_maxOrder-1)*2 - 1])
                     pData->pmapEQ[band] = 0.0f;
             }
@@ -485,7 +485,7 @@ void powermap_setSourcePreset(void* const hPm, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->analysisOrderPerBand[band] = MIN(pData->new_masterOrder,curOrder);
+                pData->analysisOrderPerBand[band] = SAF_MIN(pData->new_masterOrder,curOrder);
                 if(pData->freqVector[band] > __Eigenmike32_freqRange[(__Eigenmike32_maxOrder-1)*2 - 1])
                     pData->pmapEQ[band] = 0.0f;
             }
@@ -503,7 +503,7 @@ void powermap_setSourcePreset(void* const hPm, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->analysisOrderPerBand[band] = MIN(pData->new_masterOrder,curOrder);
+                pData->analysisOrderPerBand[band] = SAF_MIN(pData->new_masterOrder,curOrder);
                 if(pData->freqVector[band] > __DTU_mic_freqRange[(__DTU_mic_maxOrder-1)*2 - 1])
                     pData->pmapEQ[band] = 0.0f;
             }
@@ -514,7 +514,7 @@ void powermap_setSourcePreset(void* const hPm, int newPresetID)
 void powermap_setAnaOrder(void  * const hPm, int newValue, int bandIdx)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    pData->analysisOrderPerBand[bandIdx] = MIN(MAX(newValue,1), pData->new_masterOrder);
+    pData->analysisOrderPerBand[bandIdx] = SAF_MIN(SAF_MAX(newValue,1), pData->new_masterOrder);
 }
 
 void powermap_setAnaOrderAllBands(void  * const hPm, int newValue)
@@ -523,7 +523,7 @@ void powermap_setAnaOrderAllBands(void  * const hPm, int newValue)
     int band;
 
     for(band=0; band<HYBRID_BANDS; band++)
-        pData->analysisOrderPerBand[band] = MIN(MAX(newValue,1), pData->new_masterOrder);
+        pData->analysisOrderPerBand[band] = SAF_MIN(SAF_MAX(newValue,1), pData->new_masterOrder);
 }
 
 void powermap_setPowermapEQ(void  * const hPm, float newValue, int bandIdx)
@@ -576,7 +576,7 @@ void powermap_setAspectRatio(void* const hPm, int newOption)
 void powermap_setPowermapAvgCoeff(void* const hPm, float newValue)
 {
     powermap_data *pData = (powermap_data*)(hPm);
-    pData->pmapAvgCoeff = MIN(MAX(0.0f, newValue), 0.99999999f);
+    pData->pmapAvgCoeff = SAF_MIN(SAF_MAX(0.0f, newValue), 0.99999999f);
 }
 
 void powermap_requestPmapUpdate(void* const hPm)

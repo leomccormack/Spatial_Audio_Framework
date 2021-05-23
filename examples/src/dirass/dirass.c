@@ -228,7 +228,7 @@ void dirass_analysis
     /* Loop over all samples */
     for(s=0; s<nSamples; s++){
         /* Load input signals into inFIFO buffer */
-        for(ch=0; ch<MIN(nInputs,nSH); ch++)
+        for(ch=0; ch<SAF_MIN(nInputs,nSH); ch++)
             pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
         for(; ch<nSH; ch++) /* Zero any channels that were not given */
             pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
@@ -538,7 +538,7 @@ void dirass_setAspectRatio(void* const hDir, int newOption)
 void dirass_setMapAvgCoeff(void* const hDir, float newValue)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->pmapAvgCoeff = MIN(MAX(0.0f, newValue), 0.999f);
+    pData->pmapAvgCoeff = SAF_MIN(SAF_MAX(0.0f, newValue), 0.999f);
 }
 
 void dirass_requestPmapUpdate(void* const hDir)

@@ -88,10 +88,10 @@ void getDecorrelationDelays
     delayRangeMin = malloc1d(nFreqs*sizeof(float));
     tmp_delays = malloc1d(nChannels*sizeof(float));
     delays = malloc1d(nFreqs*nChannels*sizeof(float));
-    maxMilliseconds = MIN(80.0f, (maxTFdelay-1.0f)*(float)hopSize/fs*1000.0f);
+    maxMilliseconds = SAF_MIN(80.0f, (maxTFdelay-1.0f)*(float)hopSize/fs*1000.0f);
     for(band=0; band<nFreqs; band++){
-        delayRangeMax[band] = MAX(7.0f, MIN(maxMilliseconds, 50.0f*1000.0f/(freqs[band]+2.23e-9f)));
-        delayRangeMin[band] = MAX(3.0f, MIN(20.0f, 10.0f*1000.0f/(freqs[band]+2.23e-9f)));
+        delayRangeMax[band] = SAF_MAX(7.0f, SAF_MIN(maxMilliseconds, 50.0f*1000.0f/(freqs[band]+2.23e-9f)));
+        delayRangeMin[band] = SAF_MAX(3.0f, SAF_MIN(20.0f, 10.0f*1000.0f/(freqs[band]+2.23e-9f)));
     }
     for(band=0; band<nFreqs; band++)
         for(ch=0; ch<nChannels; ch++)
@@ -105,7 +105,7 @@ void getDecorrelationDelays
     for(band=0; band<nFreqs; band++){
         for(ch=0; ch<nChannels; ch++){
             delays[band*nChannels+ch] = delays[band*nChannels+ch]*(delayRangeMax[band]-delayRangeMin[band])+delayRangeMin[band];
-            delayTF[band*nChannels+ch]  = MAX((int)(delays[band*nChannels+ch]/1000.0f*fs/(float)hopSize + 0.5f)-1,0);
+            delayTF[band*nChannels+ch]  = SAF_MAX((int)(delays[band*nChannels+ch]/1000.0f*fs/(float)hopSize + 0.5f)-1,0);
         }
     }
     
@@ -403,7 +403,7 @@ void latticeDecorrelator_apply
 
                     /* Energy compensation */
                     h->decor_energy[band][ch] = (1.0f-h->enComp_coeff)*powf(cabsf(decorFrame[band][ch][t]), 2.0f) + (h->enComp_coeff)*(h->decor_energy[band][ch]);
-                    decorFrame[band][ch][t] *= MIN(sqrtf(h->in_energy[band][ch]/(h->decor_energy[band][ch]+2.23e-9f)), 1.0f);
+                    decorFrame[band][ch][t] *= SAF_MIN(sqrtf(h->in_energy[band][ch]/(h->decor_energy[band][ch]+2.23e-9f)), 1.0f);
 
                     /* propagate through the rest of the lattice filter structure */
                     for(i=0; i<h->lttc_apf[band][ch].order-1; i++){
@@ -479,7 +479,7 @@ void transientDucker_apply
                 h->transientDetector2[band][i] = h->transientDetector2[band][i]*beta + (1.0f-beta)*(h->transientDetector1[band][i]);
                 if(h->transientDetector2[band][i] > h->transientDetector1[band][i])
                     h->transientDetector2[band][i] = h->transientDetector1[band][i];
-                transientEQ = MIN(1.0f, 4.0f * (h->transientDetector2[band][i])/(h->transientDetector1[band][i]+2.23e-9f));
+                transientEQ = SAF_MIN(1.0f, 4.0f * (h->transientDetector2[band][i])/(h->transientDetector1[band][i]+2.23e-9f));
 #ifdef _MSC_VER
                 if(residualFrame!=NULL)
                     residualFrame[band][i][t] = crmulf(inFrame[band][i][t], transientEQ);

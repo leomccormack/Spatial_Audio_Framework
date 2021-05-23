@@ -337,7 +337,7 @@ void compressVBAPgainTable3D
         }
         //saf_assert(j<4);
         for(i=0; i<j; i++){
-            vbap_gtableComp[nt*3+i] = MAX(gains_nt[i]/gains_sum, 0.0f);
+            vbap_gtableComp[nt*3+i] = SAF_MAX(gains_nt[i]/gains_sum, 0.0f);
             vbap_gtableIdx[nt*3+i] = idx_nt[i];
         }
     }
@@ -484,7 +484,7 @@ void getPvalues
     a1 = 0.00045f;
     a2 = 0.000085f;
     for(i=0; i<nFreq; i++){
-        p0 = 1.5f - 0.5f * cosf(4.7f*tanhf(a1*freq[i])) * MAX(0.0f, 1.0f-a2*freq[i]);
+        p0 = 1.5f - 0.5f * cosf(4.7f*tanhf(a1*freq[i])) * SAF_MAX(0.0f, 1.0f-a2*freq[i]);
         pValues[i] = (p0-2.0f)*sqrtf(DTT)+2.0f;
     } 
 }
@@ -597,7 +597,7 @@ void findLsTriplets
         for(j=0; j<3; j++)
             centroid[j] = (vecs[0][j] + vecs[1][j] + vecs[2][j])/3.0f;
         dotcc = cvec[0] * centroid[0] + cvec[1] * centroid[1] + cvec[2] * centroid[2];
-        if(acosf(MAX(MIN(dotcc,0.99999999f),-0.99999999f)/* avoids complex numbers */)<(SAF_PI/2.0f)){
+        if(acosf(SAF_MAX(SAF_MIN(dotcc,0.99999999f),-0.99999999f)/* avoids complex numbers */)<(SAF_PI/2.0f)){
             validFacesID[i] = 1;
             numValidFaces++;
         }
@@ -838,7 +838,7 @@ void vbap3D
                     min_val = 2.23e13f;
                     g_tmp_rms = 0.0;
                     for(j=0; j<3; j++){
-                        min_val = MIN(min_val, g_tmp[j]);
+                        min_val = SAF_MIN(min_val, g_tmp[j]);
                         g_tmp_rms +=  powf(g_tmp[j], 2.0f);
                     }
                     g_tmp_rms = sqrtf(g_tmp_rms);
@@ -853,7 +853,7 @@ void vbap3D
                 gains_rms += powf(gains[i], 2.0f);
             gains_rms = sqrtf(gains_rms);
             for(i=0; i<ls_num; i++)
-                (*GainMtx)[ns*ls_num+i] = MAX(gains[i]/gains_rms, 0.0f);
+                (*GainMtx)[ns*ls_num+i] = SAF_MAX(gains[i]/gains_rms, 0.0f);
         }
 
         free(U_spread);
@@ -880,7 +880,7 @@ void vbap3D
                 min_val = 2.23e13f;
                 g_tmp_rms = 0.0;
                 for(j=0; j<3; j++){
-                    min_val = MIN(min_val, g_tmp[j]);
+                    min_val = SAF_MIN(min_val, g_tmp[j]);
                     g_tmp_rms +=  powf(g_tmp[j], 2.0f);
                 }
                 g_tmp_rms = sqrtf(g_tmp_rms);
@@ -895,7 +895,7 @@ void vbap3D
                 gains_rms += powf(gains[i], 2.0f);
             gains_rms = sqrtf(gains_rms);
             for(i=0; i<ls_num; i++)
-                (*GainMtx)[ns*ls_num+i] = MAX(gains[i]/gains_rms, 0.0f);
+                (*GainMtx)[ns*ls_num+i] = SAF_MAX(gains[i]/gains_rms, 0.0f);
         }
     }
 
@@ -1014,7 +1014,7 @@ void vbap2D
             min_val = 2.23e13f;
             g_tmp_rms = 0.0;
             for(j=0; j<2; j++){
-                min_val = MIN(min_val, g_tmp[j]);
+                min_val = SAF_MIN(min_val, g_tmp[j]);
                 g_tmp_rms +=  powf(g_tmp[j], 2.0f);
             }
             g_tmp_rms = sqrtf(g_tmp_rms);
@@ -1028,7 +1028,7 @@ void vbap2D
             gains_rms += powf(gains[i], 2.0f);
         gains_rms = sqrtf(gains_rms);
         for(i=0; i<ls_num; i++)
-            (*GainMtx)[ns*ls_num+i] = MAX(gains[i]/gains_rms, 0.0f);
+            (*GainMtx)[ns*ls_num+i] = SAF_MAX(gains[i]/gains_rms, 0.0f);
     }
 
     free(gains);

@@ -487,7 +487,7 @@ void utility_svvsub
     float* c
 )
 {
-#if NDEBUG
+#if NDEBUG && 0
     int i;
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
@@ -506,7 +506,8 @@ void utility_svvsub
     }
 #endif
 #ifdef __ACCELERATE__
-    vDSP_vsub(a, 1, b, 1, c, 1, len);
+    vDSP_vsub(b, 1, a, 1, c, 1, len);  /* WTF Apple... */
+    //vDSP_vsub(a, 1, b, 1, c, 1, len);
 #elif defined(INTEL_MKL_VERSION)
     vsSub(len, a, b, c);
 #else
@@ -524,7 +525,7 @@ void utility_cvvsub
     float_complex* c
 )
 {
-#if __STDC_VERSION__ >= 199901L && NDEBUG
+#if __STDC_VERSION__ >= 199901L && NDEBUG && 0
     int i;
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
@@ -564,7 +565,7 @@ void utility_svvmul
     float* c
 )
 {
-#if NDEBUG
+#if NDEBUG && 0
     int i;
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
@@ -601,7 +602,7 @@ void utility_cvvmul
     float_complex* c
 )
 {
-#if __STDC_VERSION__ >= 199901L && NDEBUG
+#if __STDC_VERSION__ >= 199901L && NDEBUG && 0
     int i;
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
@@ -900,7 +901,7 @@ void utility_ssvd
 #endif
     
     a = malloc1d(lda*n*sizeof(float));
-    s = malloc1d(MIN(n,m)*sizeof(float));
+    s = malloc1d(SAF_MIN(n,m)*sizeof(float));
     u = malloc1d(ldu*m*sizeof(float));
     vt = malloc1d(ldvt*n*sizeof(float));
     
@@ -934,7 +935,7 @@ void utility_ssvd
         if (V != NULL)
             memset(V, 0, dim2*dim2*sizeof(float));
         if (sing != NULL)
-            memset(sing, 0, MIN(dim1, dim2)*sizeof(float));
+            memset(sing, 0, SAF_MIN(dim1, dim2)*sizeof(float));
 #ifndef NDEBUG
         /* The SVD failed to converge, or the input matrix contained illegal
          * values so no solution was attempted. In these cases this function
@@ -947,7 +948,7 @@ void utility_ssvd
         if (S != NULL){
             memset(S, 0, dim1*dim2*sizeof(float));
             /* singular values on the diagonal MIN(dim1, dim2). The remaining elements are 0.  */
-            for(i=0; i<MIN(dim1, dim2); i++)
+            for(i=0; i<SAF_MIN(dim1, dim2); i++)
                 S[i*dim2+i] = s[i];
         }
         
@@ -964,7 +965,7 @@ void utility_ssvd
                     V[i*dim2+j] = vt[i*dim2+j];
         
         if (sing != NULL)
-            for(i=0; i<MIN(dim1, dim2); i++)
+            for(i=0; i<SAF_MIN(dim1, dim2); i++)
                 sing[i] = s[i];
     }
     
@@ -999,7 +1000,7 @@ void utility_csvd
 #endif
     
     a = malloc1d(lda*n*sizeof(float_complex));
-    s = malloc1d(MIN(n,m)*sizeof(float));
+    s = malloc1d(SAF_MIN(n,m)*sizeof(float));
     u = malloc1d(ldu*m*sizeof(float_complex));
     vt = malloc1d(ldvt*n*sizeof(float_complex));
     
@@ -1010,7 +1011,7 @@ void utility_csvd
     
     /* perform the singular value decomposition */
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    rwork = malloc1d(m*MAX(1, 5*MIN(n,m))*sizeof(float));
+    rwork = malloc1d(m*SAF_MAX(1, 5*SAF_MIN(n,m))*sizeof(float));
     lwork = -1;
     cgesvd_( "A", "A", (veclib_int*)&m, (veclib_int*)&n, (veclib_float_complex*)a, (veclib_int*)&lda, s, (veclib_float_complex*)u, (veclib_int*)&ldu,
             (veclib_float_complex*)vt, &ldvt, (veclib_float_complex*)&wkopt, &lwork, rwork, (veclib_int*)&info );
@@ -1037,7 +1038,7 @@ void utility_csvd
         if (V != NULL)
             memset(V, 0, dim2*dim2*sizeof(float_complex));
         if (sing != NULL)
-            memset(sing, 0, MIN(dim1, dim2)*sizeof(float_complex));
+            memset(sing, 0, SAF_MIN(dim1, dim2)*sizeof(float_complex));
 #ifndef NDEBUG
         /* The SVD failed to converge, or the input matrix contained illegal
          * values so no solution was attempted. In these cases this function
@@ -1050,7 +1051,7 @@ void utility_csvd
         if (S != NULL){
             memset(S, 0, dim1*dim2*sizeof(float_complex));
             /* singular values on the diagonal MIN(dim1, dim2). The remaining elements are 0.  */
-            for(i=0; i<MIN(dim1, dim2); i++)
+            for(i=0; i<SAF_MIN(dim1, dim2); i++)
                 S[i*dim2+i] = cmplxf(s[i], 0.0f);
         }
         /*return as row-major*/
@@ -1066,7 +1067,7 @@ void utility_csvd
                     V[i*dim2+j] = conjf(vt[i*dim2+j]); /* v^H */
         
         if (sing != NULL)
-            for(i=0; i<MIN(dim1, dim2); i++)
+            for(i=0; i<SAF_MIN(dim1, dim2); i++)
                 sing[i] = s[i];
     }
     
@@ -2204,7 +2205,7 @@ void utility_cpinv
     n = dim2;
     k = ldvt = m < n ? m : n;
     a = malloc1d(lda*n*sizeof(float_complex));
-    s = malloc1d(MIN(n,m)*sizeof(float));
+    s = malloc1d(SAF_MIN(n,m)*sizeof(float));
     u = malloc1d(ldu*m*sizeof(float_complex));
     vt = malloc1d(ldvt*n*sizeof(float_complex));
     
@@ -2215,7 +2216,7 @@ void utility_cpinv
     
     /* singular value decomposition */
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    rwork = malloc1d(m*MAX(1, 5*MIN(n,m))*sizeof(float));
+    rwork = malloc1d(m*SAF_MAX(1, 5*SAF_MIN(n,m))*sizeof(float));
     lwork = -1;
     cgesvd_( "A", "A", &m, &n, (veclib_float_complex*)a, &lda, s, (veclib_float_complex*)u, &ldu, (veclib_float_complex*)vt, &ldvt,
             (veclib_float_complex*)&wkopt, &lwork, rwork, &info );
@@ -2384,7 +2385,7 @@ void utility_zpinv
     n = dim2;
     k = ldvt = m < n ? m : n;
     a = malloc1d(lda*n*sizeof(double_complex));
-    s = malloc1d(MIN(n,m)*sizeof(double));
+    s = malloc1d(SAF_MIN(n,m)*sizeof(double));
     u = malloc1d(ldu*m*sizeof(double_complex));
     vt = malloc1d(ldvt*n*sizeof(double_complex));
     
@@ -2395,7 +2396,7 @@ void utility_zpinv
     
     /* singular value decomposition */
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    rwork = malloc1d(m*MAX(1, 5*MIN(n,m))*sizeof(double));
+    rwork = malloc1d(m*SAF_MAX(1, 5*SAF_MIN(n,m))*sizeof(double));
     lwork = -1;
     zgesvd_( "A", "A", &m, &n, (veclib_double_complex*)a, &lda, s, (veclib_double_complex*)u, &ldu, (veclib_double_complex*)vt, &ldvt,
             (veclib_double_complex*)&wkopt, &lwork, rwork, &info );

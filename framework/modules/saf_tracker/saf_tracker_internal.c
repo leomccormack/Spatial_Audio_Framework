@@ -745,7 +745,7 @@ void lti_disc
     /* Defaults: */
     if(opt_L==NULL){ /* Identity */
         L = calloc1d(len_N*len_Q, sizeof(float));
-        for(i=0; i<MIN(len_N, len_Q); i++)
+        for(i=0; i<SAF_MIN(len_N, len_Q); i++)
             L[i*len_Q+i] = 1.0f;
     }
     else
@@ -866,7 +866,7 @@ int categ_rnd
     for(i=1; i<len_P; i++)
         Ptmp[i] += Ptmp[i-1];
     rand_0_1(&rand01, 1);
-	rand01 = MIN(rand01, 0.9999f);
+	rand01 = SAF_MIN(rand01, 0.9999f);
     for(i=0; i<len_P; i++)
         if(Ptmp[i]>rand01)
             return i;

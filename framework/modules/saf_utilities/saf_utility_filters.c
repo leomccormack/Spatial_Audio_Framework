@@ -287,9 +287,9 @@ void interpolateFiltersH
     nBins_out = outFFTsize/2 + 1;
     saf_rfft_create(&hFFT_in, inFFTsize);
     saf_rfft_create(&hFFT_out, outFFTsize);
-    M_ifft    = calloc1d(MAX(inFFTsize, outFFTsize), sizeof(float));
-    M_ifft_fl = calloc1d(MAX(inFFTsize, outFFTsize), sizeof(float));
-    tmp = malloc1d(MAX(nBins_in, nBins_out) * sizeof(float_complex));
+    M_ifft    = calloc1d(SAF_MAX(inFFTsize, outFFTsize), sizeof(float));
+    M_ifft_fl = calloc1d(SAF_MAX(inFFTsize, outFFTsize), sizeof(float));
+    tmp = malloc1d(SAF_MAX(nBins_in, nBins_out) * sizeof(float_complex));
 
     for(i=0; i<nFilters; i++){
         for(j=0; j<nBins_in; j++)

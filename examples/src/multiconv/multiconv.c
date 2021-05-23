@@ -84,7 +84,7 @@ void multiconv_init
     pData->host_fs = sampleRate;
     if(pData->hostBlockSize != hostBlockSize){
         pData->hostBlockSize = hostBlockSize;
-        pData->hostBlockSize_clamped = CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
+        pData->hostBlockSize_clamped = SAF_CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
         pData->reInitFilters = 1;
     }
     
@@ -113,13 +113,13 @@ void multiconv_process
 
     for(s=0; s<nSamples; s++){
         /* Load input signals into inFIFO buffer */
-        for(ch=0; ch<MIN(MIN(nInputs,numChannels),MAX_NUM_CHANNELS); ch++)
+        for(ch=0; ch<SAF_MIN(SAF_MIN(nInputs,numChannels),MAX_NUM_CHANNELS); ch++)
             pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
         for(; ch<numChannels; ch++) /* Zero any channels that were not given */
             pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
 
         /* Pull output signals from outFIFO buffer */
-        for(ch=0; ch<MIN(MIN(nOutputs, numChannels),MAX_NUM_CHANNELS); ch++)
+        for(ch=0; ch<SAF_MIN(SAF_MIN(nOutputs, numChannels),MAX_NUM_CHANNELS); ch++)
             outputs[ch][s] = pData->outFIFO[ch][pData->FIFO_idx];
         for(; ch<nOutputs; ch++) /* Zero any extra channels */
             outputs[ch][s] = 0.0f;
@@ -142,7 +142,7 @@ void multiconv_process
                 memset(FLATTEN2D(pData->outputFrameTD), 0, MAX_NUM_CHANNELS * (pData->hostBlockSize_clamped)*sizeof(float));
 
             /* copy signals to output buffer */
-            for (i = 0; i < MIN(numChannels, MAX_NUM_CHANNELS); i++)
+            for (i = 0; i < SAF_MIN(numChannels, MAX_NUM_CHANNELS); i++)
                 utility_svvcopy(pData->outputFrameTD[i], pData->hostBlockSize_clamped, pData->outFIFO[i]);
         }
         else if(pData->FIFO_idx >= pData->hostBlockSize_clamped){
@@ -170,7 +170,7 @@ void multiconv_checkReInit(void* const hMCnv)
     if ((pData->reInitFilters == 1) && (pData->filters !=NULL)) {
         pData->reInitFilters = 2;
         saf_multiConv_destroy(&(pData->hMultiConv));
-        pData->hostBlockSize_clamped = CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
+        pData->hostBlockSize_clamped = SAF_CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
         saf_multiConv_create(&(pData->hMultiConv),
                              pData->hostBlockSize_clamped,
                              pData->filters,
@@ -225,7 +225,7 @@ void multiconv_setEnablePart(void* const hMCnv, int newState)
 void multiconv_setNumChannels(void* const hMCnv, int newValue)
 {
     multiconv_data *pData = (multiconv_data*)(hMCnv);
-    pData->nChannels = CLAMP(newValue, 1, MAX_NUM_CHANNELS);
+    pData->nChannels = SAF_CLAMP(newValue, 1, MAX_NUM_CHANNELS);
 }
 
 /*gets*/

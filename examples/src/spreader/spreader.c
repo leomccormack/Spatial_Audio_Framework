@@ -362,7 +362,7 @@ void spreader_process
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
-        for(i=0; i < MIN(nSources,nInputs); i++)
+        for(i=0; i < SAF_MIN(nSources,nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<nSources; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
@@ -383,7 +383,7 @@ void spreader_process
                         src_dir_xyz, 1, 0.0f,
                         pData->angles, 1);
             for(i=0; i<pData->nGrid; i++)
-                pData->angles[i] = acosf(MIN(pData->angles[i], 0.9999999f))*180.0f/SAF_PI;
+                pData->angles[i] = acosf(SAF_MIN(pData->angles[i], 0.9999999f))*180.0f/SAF_PI;
             utility_siminv(pData->angles, pData->nGrid, &centre_ind);
 
             /* Define Prototype signals */
@@ -655,7 +655,7 @@ void spreader_process
         afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outframeTD);
 
         /* Copy to output buffer */
-        for (ch = 0; ch < MIN(Q, nOutputs); ch++)
+        for (ch = 0; ch < SAF_MIN(Q, nOutputs); ch++)
             utility_svvcopy(pData->outframeTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
@@ -694,8 +694,8 @@ void spreader_setSourceAzi_deg(void* const hSpr, int index, float newAzi_deg)
     saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
-    newAzi_deg = MAX(newAzi_deg, -180.0f);
-    newAzi_deg = MIN(newAzi_deg, 180.0f);
+    newAzi_deg = SAF_MAX(newAzi_deg, -180.0f);
+    newAzi_deg = SAF_MIN(newAzi_deg, 180.0f);
     if(pData->src_dirs_deg[index][0]!=newAzi_deg)
         pData->src_dirs_deg[index][0] = newAzi_deg;
 }
@@ -704,8 +704,8 @@ void spreader_setSourceElev_deg(void* const hSpr, int index, float newElev_deg)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
     saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
-    newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);
+    newElev_deg = SAF_MAX(newElev_deg, -90.0f);
+    newElev_deg = SAF_MIN(newElev_deg, 90.0f);
     if(pData->src_dirs_deg[index][1] != newElev_deg)
         pData->src_dirs_deg[index][1] = newElev_deg;
 }
@@ -714,8 +714,8 @@ void spreader_setSourceSpread_deg(void* const hSpr, int index, float newSpread_d
 {
     spreader_data *pData = (spreader_data*)(hSpr);
     saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
-    newSpread_deg = MAX(newSpread_deg, 0.0f);
-    newSpread_deg = MIN(newSpread_deg, 360.0f);
+    newSpread_deg = SAF_MAX(newSpread_deg, 0.0f);
+    newSpread_deg = SAF_MIN(newSpread_deg, 360.0f);
     if(pData->src_spread[index] != newSpread_deg)
         pData->src_spread[index] = newSpread_deg;
 }
@@ -723,7 +723,7 @@ void spreader_setSourceSpread_deg(void* const hSpr, int index, float newSpread_d
 void spreader_setNumSources(void* const hSpr, int new_nSources)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    pData->new_nSources = CLAMP(new_nSources, 1, SPREADER_MAX_NUM_SOURCES);
+    pData->new_nSources = SAF_CLAMP(new_nSources, 1, SPREADER_MAX_NUM_SOURCES);
     spreader_setCodecStatus(hSpr, CODEC_STATUS_NOT_INITIALISED);
 }
 

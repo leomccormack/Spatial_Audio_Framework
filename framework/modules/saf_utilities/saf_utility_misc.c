@@ -279,9 +279,9 @@ void convd
     len_y = len_h+len_x-1;
     memset(y, 0, len_y*sizeof(double));
     for (i=0; i<len_y; i++) {
-        x_start = MAX(0,i-len_h+1);
-        x_end   = MIN(i+1,len_x);
-        h_start = MIN(i,len_h-1);
+        x_start = SAF_MAX(0,i-len_h+1);
+        x_end   = SAF_MIN(i+1,len_x);
+        h_start = SAF_MIN(i,len_h-1);
         for(j=x_start; j<x_end; j++)
             y[i] += h[h_start--]*x[j];
     }
@@ -301,9 +301,9 @@ void convz
     len_y = len_h+len_x-1;
     memset(y, 0, len_y*sizeof(double_complex));
     for (i=0; i<len_y; i++) {
-        x_start = MAX(0,i-len_h+1);
-        x_end   = MIN(i+1,len_x);
-        h_start = MIN(i,len_h-1);
+        x_start = SAF_MAX(0,i-len_h+1);
+        x_end   = SAF_MIN(i+1,len_x);
+        h_start = SAF_MIN(i,len_h-1);
         for(j=x_start; j<x_end; j++)
             y[i] = ccadd(y[i], ccmul(h[h_start--], x[j]));
     }
@@ -582,8 +582,8 @@ void gexpm
                 D, sizeD, 0.0f,
                 FLATTEN2D(D_5), sizeD); 
     s = ceilf(log2f(Frob_norm(FLATTEN2D(D_5), sizeD, sizeD)/
-                    (1575.0f*tol*MIN(1.0f,Frob_norm(D, sizeD, sizeD))))/6.0f-1.0f);
-    s = MAX(s, 0.0f);
+                    (1575.0f*tol*SAF_MIN(1.0f,Frob_norm(D, sizeD, sizeD))))/6.0f-1.0f);
+    s = SAF_MAX(s, 0.0f);
 
     /* Get Pade approximation for expm(D*h2) = Y =
      *   (I-Dh+(2/5)*Dh^2-(1/15)*Dh^3)\(I+Dh+(2/5)*Dh^2+(1/15)*Dh^3)

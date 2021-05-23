@@ -167,7 +167,7 @@ void ambi_drc_process
     if (nSamples == FRAME_SIZE && pData->reInitTFT == 0) {
 
         /* Load time-domain data */
-        for(i=0; i < MIN(pData->nSH, nCh); i++)
+        for(i=0; i < SAF_MIN(pData->nSH, nCh); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->frameTD[i]);
         for(; i<pData->nSH; i++)
             memset(pData->frameTD[i], 0, FRAME_SIZE * sizeof(float));
@@ -192,7 +192,7 @@ void ambi_drc_process
                 yL = ambi_drc_smoothPeakDetector(xL, pData->yL_z1[band], alpha_a, alpha_r);
                 pData->yL_z1[band] = yL;
                 cdB = -yL;
-                cdB = MAX(AMBI_DRC_SPECTRAL_FLOOR, sqrtf(powf(10.0f, cdB / 20.0f)));
+                cdB = SAF_MAX(AMBI_DRC_SPECTRAL_FLOOR, sqrtf(powf(10.0f, cdB / 20.0f)));
 
 #ifdef ENABLE_TF_DISPLAY
                 /* store gain factors in circular buffer for plotting */
@@ -223,7 +223,7 @@ void ambi_drc_process
         afSTFT_backward(pData->hSTFT, pData->outputFrameTF, FRAME_SIZE, pData->frameTD);
 
         /* Copy to output */
-        for(ch = 0; ch < MIN(pData->nSH, nCh); ch++)
+        for(ch = 0; ch < SAF_MIN(pData->nSH, nCh); ch++)
             utility_svvcopy(pData->frameTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nCh; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
@@ -245,43 +245,43 @@ void ambi_drc_refreshSettings(void* const hAmbi)
 void ambi_drc_setThreshold(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->theshold = CLAMP(newValue, AMBI_DRC_THRESHOLD_MIN_VAL, AMBI_DRC_THRESHOLD_MAX_VAL);
+    pData->theshold = SAF_CLAMP(newValue, AMBI_DRC_THRESHOLD_MIN_VAL, AMBI_DRC_THRESHOLD_MAX_VAL);
 }
 
 void ambi_drc_setRatio(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->ratio = CLAMP(newValue, AMBI_DRC_RATIO_MIN_VAL, AMBI_DRC_RATIO_MAX_VAL);
+    pData->ratio = SAF_CLAMP(newValue, AMBI_DRC_RATIO_MIN_VAL, AMBI_DRC_RATIO_MAX_VAL);
 }
 
 void ambi_drc_setKnee(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->knee = CLAMP(newValue, AMBI_DRC_KNEE_MIN_VAL, AMBI_DRC_KNEE_MAX_VAL);
+    pData->knee = SAF_CLAMP(newValue, AMBI_DRC_KNEE_MIN_VAL, AMBI_DRC_KNEE_MAX_VAL);
 }
 
 void ambi_drc_setInGain(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->inGain = CLAMP(newValue, AMBI_DRC_IN_GAIN_MIN_VAL, AMBI_DRC_IN_GAIN_MAX_VAL);
+    pData->inGain = SAF_CLAMP(newValue, AMBI_DRC_IN_GAIN_MIN_VAL, AMBI_DRC_IN_GAIN_MAX_VAL);
 }
 
 void ambi_drc_setOutGain(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->outGain = CLAMP(newValue, AMBI_DRC_OUT_GAIN_MIN_VAL, AMBI_DRC_OUT_GAIN_MAX_VAL);
+    pData->outGain = SAF_CLAMP(newValue, AMBI_DRC_OUT_GAIN_MIN_VAL, AMBI_DRC_OUT_GAIN_MAX_VAL);
 }
 
 void ambi_drc_setAttack(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->attack_ms = CLAMP(newValue, AMBI_DRC_ATTACK_MIN_VAL, AMBI_DRC_ATTACK_MAX_VAL);
+    pData->attack_ms = SAF_CLAMP(newValue, AMBI_DRC_ATTACK_MIN_VAL, AMBI_DRC_ATTACK_MAX_VAL);
 }
 
 void ambi_drc_setRelease(void* const hAmbi, float newValue)
 {
     ambi_drc_data *pData = (ambi_drc_data*)(hAmbi);
-    pData->release_ms = CLAMP(newValue, AMBI_DRC_RELEASE_MIN_VAL, AMBI_DRC_RELEASE_MAX_VAL);
+    pData->release_ms = SAF_CLAMP(newValue, AMBI_DRC_RELEASE_MIN_VAL, AMBI_DRC_RELEASE_MAX_VAL);
 }
 
 void ambi_drc_setChOrder(void* const hAmbi, int newOrder)

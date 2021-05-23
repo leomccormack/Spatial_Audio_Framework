@@ -109,10 +109,10 @@ void rotationMatrix2quaternion
     quaternion_data* Q
 )
 {
-    Q->w = sqrtf( MAX( 0.0f, 1.0f + R[0][0] + R[1][1] + R[2][2] ) ) / 2.0f;
-    Q->z = sqrtf( MAX( 0.0f, 1.0f + R[0][0] - R[1][1] - R[2][2] ) ) / 2.0f;
-    Q->y = sqrtf( MAX( 0.0f, 1.0f - R[0][0] + R[1][1] - R[2][2] ) ) / 2.0f;
-    Q->x = sqrtf( MAX( 0.0f, 1.0f - R[0][0] - R[1][1] + R[2][2] ) ) / 2.0f;
+    Q->w = sqrtf( SAF_MAX( 0.0f, 1.0f + R[0][0] + R[1][1] + R[2][2] ) ) / 2.0f;
+    Q->z = sqrtf( SAF_MAX( 0.0f, 1.0f + R[0][0] - R[1][1] - R[2][2] ) ) / 2.0f;
+    Q->y = sqrtf( SAF_MAX( 0.0f, 1.0f - R[0][0] + R[1][1] - R[2][2] ) ) / 2.0f;
+    Q->x = sqrtf( SAF_MAX( 0.0f, 1.0f - R[0][0] - R[1][1] + R[2][2] ) ) / 2.0f;
     Q->z = copysignf( Q->z, R[2][1] - R[1][2] );
     Q->y = copysignf( Q->y, R[0][2] - R[2][0] );
     Q->x = copysignf( Q->x, R[1][0] - R[0][1] );

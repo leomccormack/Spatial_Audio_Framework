@@ -683,7 +683,7 @@ void test__qmf(void){
     /* Check that input==output (given some numerical precision) - channel 0 */
     for(i=0; i<signalLength-procDelay-framesize; i++)
         TEST_ASSERT_TRUE( fabsf(insig[0][i] - outsig[0][i+procDelay]) <= acceptedTolerance );
- 
+
     /* Clean-up */
     qmf_destroy(&hQMF);
     free(insig);
@@ -1657,7 +1657,7 @@ void test__formulate_M_and_Cr(void){
 
         /* Define prototype decoder and compute input signal covariance matrix */
         Q = (float**)calloc2d(nCHout, nCHin, sizeof(float));
-        for(i=0; i<MIN(nCHin, nCHout); i++)
+        for(i=0; i<SAF_MIN(nCHin, nCHout); i++)
             Q[i][i] = 1.0f; /* Identity */
         x = (float**)malloc2d(nCHin, lenSig, sizeof(float));
         rand_m1_1(FLATTEN2D(x), nCHin*lenSig);
@@ -1812,7 +1812,7 @@ void test__formulate_M_and_Cr_cmplx(void){
 
         /* Define prototype decoder and compute input signal covariance matrix */
         Q = (float_complex**)calloc2d(nCHout, nCHin, sizeof(float_complex));
-        for(i=0; i<MIN(nCHin, nCHout); i++)
+        for(i=0; i<SAF_MIN(nCHin, nCHout); i++)
             Q[i][i] = cmplxf(1.0f, 0.0f); /* Identity */
         x = (float_complex**)malloc2d(nCHin, lenSig, sizeof(float_complex));
         rand_cmplx_m1_1(FLATTEN2D(x), nCHin*lenSig);

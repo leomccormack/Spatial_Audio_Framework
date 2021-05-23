@@ -157,7 +157,7 @@ void HRIRs2HRTFs
     hrtf = malloc1d(nBins*sizeof(float_complex));
     for(i=0; i<N_dirs; i++){
         for(j=0; j<NUM_EARS; j++){
-            memcpy(hrir_pad, &hrirs[i*NUM_EARS*hrir_len+j*hrir_len], MIN(fftSize, hrir_len)*sizeof(float));
+            memcpy(hrir_pad, &hrirs[i*NUM_EARS*hrir_len+j*hrir_len], SAF_MIN(fftSize, hrir_len)*sizeof(float));
             saf_rfft_forward(hSafFFT, hrir_pad, hrtf);
             for(k=0; k<nBins; k++)
                 hrtfs[k*NUM_EARS*N_dirs + j*N_dirs + i] = hrtf[k];

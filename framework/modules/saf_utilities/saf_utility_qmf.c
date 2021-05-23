@@ -476,7 +476,7 @@ void qmf_synthesis
                 h->qmfTF_frame[1] = h->hybQmfTF_frame[6]+h->hybQmfTF_frame[7];
                 h->qmfTF_frame[2] = h->hybQmfTF_frame[8]+h->hybQmfTF_frame[9];
 #endif
-                memcpy(&(h->qmfTF_frame[3]), &(h->hybQmfTF_frame[10]), (h->hopsize - QMF_NBANDS_2_SUBDIVIDE)*sizeof(float_complex));
+                memmove(&(h->qmfTF_frame[3]), &(h->hybQmfTF_frame[10]), (h->hopsize - QMF_NBANDS_2_SUBDIVIDE)*sizeof(float_complex));
             }
             else{
                 switch(h->format){
@@ -686,9 +686,9 @@ void qmf_FIRtoFilterbankCoeffs
 
     nBands = hopSize + (hybridmode ? 7 : 0);
     ir_pad = 1024;//+512;
-    nTimeSlots = (MAX(ir_len,hopSize)+ir_pad)/hopSize;
+    nTimeSlots = (SAF_MAX(ir_len,hopSize)+ir_pad)/hopSize;
     maxIdx = calloc1d(nCH,sizeof(int));
-    centerImpulse = calloc1d(MAX(ir_len,hopSize)+ir_pad, sizeof(float));
+    centerImpulse = calloc1d(SAF_MAX(ir_len,hopSize)+ir_pad, sizeof(float));
 
     /* pick a direction to estimate the center of FIR delays */
     for(j=0; j<nCH; j++){
@@ -711,26 +711,26 @@ void qmf_FIRtoFilterbankCoeffs
 
     /* analyse impulse with the filterbank */
     centerImpulseFB = malloc1d(nBands*nTimeSlots*nCH*sizeof(float_complex));
-    qmfAnalyse(centerImpulse, MAX(ir_len,hopSize)+ir_pad, 1, hopSize, hybridmode, centerImpulseFB);
+    qmfAnalyse(centerImpulse, SAF_MAX(ir_len,hopSize)+ir_pad, 1, hopSize, hybridmode, centerImpulseFB);
     centerImpulseFB_energy = calloc1d(nBands, sizeof(float));
     for(i=0; i<nBands; i++)
         for(t=0; t<nTimeSlots; t++)
             centerImpulseFB_energy[i] += powf(cabsf(centerImpulseFB[i*nTimeSlots + t]), 2.0f);
 
     /* initialise FB coefficients */
-    ir = calloc1d( (MAX(ir_len,hopSize)+ir_pad) * nCH, sizeof(float));
+    ir = calloc1d( (SAF_MAX(ir_len,hopSize)+ir_pad) * nCH, sizeof(float));
     irFB = malloc1d(nBands*nCH*nTimeSlots*sizeof(float_complex));
     for(nd=0; nd<N_dirs; nd++){
         for(j=0; j<ir_len; j++)
             for(i=0; i<nCH; i++)
                 ir[j*nCH+i] = hIR[nd*nCH*ir_len + i*ir_len + j];
-        qmfAnalyse(ir, MAX(ir_len,hopSize)+ir_pad, nCH, hopSize, hybridmode, irFB);
+        qmfAnalyse(ir, SAF_MAX(ir_len,hopSize)+ir_pad, nCH, hopSize, hybridmode, irFB);
         for(nm=0; nm<nCH; nm++){
             for(i=0; i<nBands; i++){
                 irFB_energy = 0;
                 for(t=0; t<nTimeSlots; t++)
                     irFB_energy += powf(cabsf(irFB[i*nTimeSlots*nCH + t*nCH + nm]), 2.0f); /* out_nBands x nTimeslots x nCH */
-                irFB_gain = sqrtf(irFB_energy/MAX(centerImpulseFB_energy[i], 2.23e-8f));
+                irFB_gain = sqrtf(irFB_energy/SAF_MAX(centerImpulseFB_energy[i], 2.23e-8f));
                 cross = cmplxf(0.0f,0.0f);
                 for(t=0; t<nTimeSlots; t++)
                     cross = ccaddf(cross, ccmulf(irFB[i*nTimeSlots*nCH + t*nCH + nm], conjf(centerImpulseFB[i*nTimeSlots + t])));

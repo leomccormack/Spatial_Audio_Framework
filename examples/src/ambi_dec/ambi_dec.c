@@ -76,7 +76,7 @@ void ambi_dec_create
     /* afSTFT stuff and audio buffers */
     pData->hSTFT = NULL;
     pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
-    pData->outputFrameTD = (float**)malloc2d(MAX(MAX_NUM_LOUDSPEAKERS, NUM_EARS), FRAME_SIZE, sizeof(float));
+    pData->outputFrameTD = (float**)malloc2d(SAF_MAX(MAX_NUM_LOUDSPEAKERS, NUM_EARS), FRAME_SIZE, sizeof(float));
     pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
     pData->outputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_LOUDSPEAKERS, TIME_SLOTS, sizeof(float_complex));
     pData->binframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
@@ -484,7 +484,7 @@ void ambi_dec_process
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
-        for(i=0; i < MIN(nSH, nInputs); i++)
+        for(i=0; i < SAF_MIN(nSH, nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
         for(; i<nSH; i++)
             memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
@@ -517,7 +517,7 @@ void ambi_dec_process
         /* Decode to loudspeaker set-up */
         memset(FLATTEN3D(pData->outputframeTF), 0, HYBRID_BANDS*MAX_NUM_LOUDSPEAKERS*TIME_SLOTS*sizeof(float_complex));
         for(band=0; band<HYBRID_BANDS; band++){
-            orderBand = MAX(MIN(orderPerBand[band], masterOrder),1);
+            orderBand = SAF_MAX(SAF_MIN(orderPerBand[band], masterOrder),1);
             nSH_band = (orderBand+1)*(orderBand+1);
             decIdx = pData->freqVector[band] < transitionFreq ? 0 : 1; /* different decoder for low (0) and high (1) frequencies */
             if(rE_WEIGHT[decIdx]){
@@ -571,7 +571,7 @@ void ambi_dec_process
             afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outputFrameTD);
 
         /* Copy to output buffer */
-        for(ch = 0; ch < MIN(binauraliseLS==1 ? NUM_EARS : nLoudspeakers, nOutputs); ch++)
+        for(ch = 0; ch < SAF_MIN(binauraliseLS==1 ? NUM_EARS : nLoudspeakers, nOutputs); ch++)
             utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
@@ -599,7 +599,7 @@ void ambi_dec_refreshSettings(void* const hAmbi)
 void ambi_dec_setMasterDecOrder(void  * const hAmbi, int newValue)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    pData->new_masterOrder = MIN(MAX(newValue,1), MAX_SH_ORDER);
+    pData->new_masterOrder = SAF_MIN(SAF_MAX(newValue,1), MAX_SH_ORDER);
     ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     /* FUMA only supports 1st order */
     if(pData->new_masterOrder!=SH_ORDER_FIRST && pData->chOrdering == CH_FUMA)
@@ -611,7 +611,7 @@ void ambi_dec_setMasterDecOrder(void  * const hAmbi, int newValue)
 void ambi_dec_setDecOrder(void  * const hAmbi, int newValue, int bandIdx)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    pData->orderPerBand[bandIdx] = MIN(MAX(newValue,1), pData->new_masterOrder);
+    pData->orderPerBand[bandIdx] = SAF_MIN(SAF_MAX(newValue,1), pData->new_masterOrder);
 }
 
 void ambi_dec_setDecOrderAllBands(void  * const hAmbi, int newValue)
@@ -620,7 +620,7 @@ void ambi_dec_setDecOrderAllBands(void  * const hAmbi, int newValue)
     int band;
     
     for(band=0; band<HYBRID_BANDS; band++)
-        pData->orderPerBand[band] = MIN(MAX(newValue,1), pData->new_masterOrder);
+        pData->orderPerBand[band] = SAF_MIN(SAF_MAX(newValue,1), pData->new_masterOrder);
 }
 
 void ambi_dec_setLoudspeakerAzi_deg(void* const hAmbi, int index, float newAzi_deg)
@@ -628,8 +628,8 @@ void ambi_dec_setLoudspeakerAzi_deg(void* const hAmbi, int index, float newAzi_d
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
-    newAzi_deg = MAX(newAzi_deg, -180.0f);
-    newAzi_deg = MIN(newAzi_deg, 180.0f);
+    newAzi_deg = SAF_MAX(newAzi_deg, -180.0f);
+    newAzi_deg = SAF_MIN(newAzi_deg, 180.0f);
     if(pData->loudpkrs_dirs_deg[index][0] != newAzi_deg){
         pData->loudpkrs_dirs_deg[index][0] = newAzi_deg;
         pData->recalc_hrtf_interpFLAG[index] = 1;
@@ -640,8 +640,8 @@ void ambi_dec_setLoudspeakerAzi_deg(void* const hAmbi, int index, float newAzi_d
 void ambi_dec_setLoudspeakerElev_deg(void* const hAmbi, int index, float newElev_deg)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);
+    newElev_deg = SAF_MAX(newElev_deg, -90.0f);
+    newElev_deg = SAF_MIN(newElev_deg, 90.0f);
     if(pData->loudpkrs_dirs_deg[index][1] != newElev_deg){
         pData->loudpkrs_dirs_deg[index][1] = newElev_deg;
         pData->recalc_hrtf_interpFLAG[index] = 1;
@@ -654,7 +654,7 @@ void ambi_dec_setNumLoudspeakers(void* const hAmbi, int new_nLoudspeakers)
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     int ch; 
     pData->new_nLoudpkrs = new_nLoudspeakers > MAX_NUM_LOUDSPEAKERS ? MAX_NUM_LOUDSPEAKERS : new_nLoudspeakers;
-    pData->new_nLoudpkrs = MAX(MIN_NUM_LOUDSPEAKERS, pData->new_nLoudpkrs);
+    pData->new_nLoudpkrs = SAF_MAX(MIN_NUM_LOUDSPEAKERS, pData->new_nLoudpkrs);
     if(pData->nLoudpkrs != pData->new_nLoudpkrs){
         for(ch=0; ch<MAX_NUM_LOUDSPEAKERS; ch++)
             pData->recalc_hrtf_interpFLAG[ch] = 1;
@@ -740,7 +740,7 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->orderPerBand[band] = MIN(pData->masterOrder,curOrder);
+                pData->orderPerBand[band] = SAF_MIN(pData->masterOrder,curOrder);
             }
             break;
 
@@ -756,7 +756,7 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->orderPerBand[band] = MIN(pData->masterOrder,curOrder);
+                pData->orderPerBand[band] = SAF_MIN(pData->masterOrder,curOrder);
             }
             break;
 
@@ -772,7 +772,7 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->orderPerBand[band] = MIN(pData->masterOrder,curOrder);
+                pData->orderPerBand[band] = SAF_MIN(pData->masterOrder,curOrder);
             }
             break;
     }
@@ -814,7 +814,7 @@ void ambi_dec_setDecNormType(void* const hAmbi, int index, int newID)
 void ambi_dec_setTransitionFreq(void* const hAmbi, float newValue)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    pData->transitionFreq = CLAMP(newValue, AMBI_DEC_TRANSITION_MIN_VALUE, AMBI_DEC_TRANSITION_MAX_VALUE);
+    pData->transitionFreq = SAF_CLAMP(newValue, AMBI_DEC_TRANSITION_MIN_VALUE, AMBI_DEC_TRANSITION_MAX_VALUE);
 }
 
 

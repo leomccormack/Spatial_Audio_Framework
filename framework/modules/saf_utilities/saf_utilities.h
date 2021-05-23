@@ -54,25 +54,17 @@
 # define SAF_PRINT_VERSION_LICENSE_STRING printf(SAF_VERSION_LICENSE_STRING)
 #endif
 
-#ifndef NUM_EARS
 /** 2 (true for most humans) */
-# define NUM_EARS 2
-#endif
+#define NUM_EARS 2
 
-#ifndef MIN
 /** Returns the minimum of the two values */
-# define MIN(a,b) (( (a) < (b) ) ? (a) : (b))
-#endif
+#define SAF_MIN(a,b) (( (a) < (b) ) ? (a) : (b))
 
-#ifndef MAX
 /** Returns the maximum of the two values */
-# define MAX(a,b) (( (a) > (b) ) ? (a) : (b))
-#endif
+#define SAF_MAX(a,b) (( (a) > (b) ) ? (a) : (b))
 
-#ifndef CLAMP
 /** Ensures value "a" is clamped between the "min" and "max" values */
-# define CLAMP(a,min,max) (MAX(min, MIN(max, a)))
-#endif
+#define SAF_CLAMP(a,min,max) (SAF_MAX(min, SAF_MIN(max, a)))
 
 #ifndef M_PI
 /** pi constant (single precision) */

@@ -59,17 +59,17 @@ void tracker3d_create
     pData->tpars = tpars;
 
     /* Parameter checking */
-    pData->tpars.Np = CLAMP(pData->tpars.Np, 1, TRACKER3D_MAX_NUM_PARTICLES);
+    pData->tpars.Np = SAF_CLAMP(pData->tpars.Np, 1, TRACKER3D_MAX_NUM_PARTICLES);
     saf_assert(pData->tpars.ARE_UNIT_VECTORS == 0 || pData->tpars.ARE_UNIT_VECTORS == 1, "ARE_UNIT_VECTORS is a bool");
-    pData->tpars.init_birth = CLAMP(pData->tpars.init_birth, 0.0f, 0.99f);
-    pData->tpars.alpha_death = CLAMP(pData->tpars.alpha_death, 1.0f, 20.0f);
-    pData->tpars.beta_death = CLAMP(pData->tpars.beta_death, 1.0f, 20.0f);
-    pData->tpars.dt = MAX(pData->tpars.dt, 0.0001f);
-    pData->tpars.cd = MAX(pData->tpars.cd, 0.0001f);
-    pData->tpars.W_avg_coeff = CLAMP(pData->tpars.W_avg_coeff, 0.0f, 0.99f);
-    pData->tpars.noiseSpecDen = MAX(pData->tpars.noiseSpecDen, 0.0001f);
-    pData->tpars.noiseLikelihood = CLAMP(pData->tpars.noiseLikelihood, 0.0f, 0.99f);
-    pData->tpars.measNoiseSD = MAX(pData->tpars.measNoiseSD, 0.001f);
+    pData->tpars.init_birth = SAF_CLAMP(pData->tpars.init_birth, 0.0f, 0.99f);
+    pData->tpars.alpha_death = SAF_CLAMP(pData->tpars.alpha_death, 1.0f, 20.0f);
+    pData->tpars.beta_death = SAF_CLAMP(pData->tpars.beta_death, 1.0f, 20.0f);
+    pData->tpars.dt = SAF_MAX(pData->tpars.dt, 0.0001f);
+    pData->tpars.cd = SAF_MAX(pData->tpars.cd, 0.0001f);
+    pData->tpars.W_avg_coeff = SAF_CLAMP(pData->tpars.W_avg_coeff, 0.0f, 0.99f);
+    pData->tpars.noiseSpecDen = SAF_MAX(pData->tpars.noiseSpecDen, 0.0001f);
+    pData->tpars.noiseLikelihood = SAF_CLAMP(pData->tpars.noiseLikelihood, 0.0f, 0.99f);
+    pData->tpars.measNoiseSD = SAF_MAX(pData->tpars.measNoiseSD, 0.001f);
 
     /* Measurement noise PRIORs along the x,y,z axis, respectively  */
     sd_xyz = pData->tpars.measNoiseSD;

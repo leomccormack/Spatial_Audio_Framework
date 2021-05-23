@@ -172,13 +172,13 @@ void pitch_shifter_process
     /* Loop over all samples */
     for(s=0; s<nSamples; s++){
         /* Load input signals into inFIFO buffer */
-        for(ch=0; ch<MIN(nInputs,nChannels); ch++)
+        for(ch=0; ch<SAF_MIN(nInputs,nChannels); ch++)
             pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
         for(; ch<nChannels; ch++) /* Zero any channels that were not given */
             pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
 
         /* Pull output signals from outFIFO buffer */
-        for(ch=0; ch<MIN(nOutputs, nChannels); ch++)
+        for(ch=0; ch<SAF_MIN(nOutputs, nChannels); ch++)
             outputs[ch][s] = pData->outFIFO[ch][pData->FIFO_idx];
         for(; ch<nOutputs; ch++) /* Zero any extra channels */
             outputs[ch][s] = 0.0f;

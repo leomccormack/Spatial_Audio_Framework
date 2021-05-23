@@ -117,7 +117,7 @@ void beamformer_process
     if(nSamples == FRAME_SIZE) {
 
         /* Load time-domain data */
-        for(i=0; i < MIN(nSH, nInputs); i++)
+        for(i=0; i < SAF_MIN(nSH, nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
         for(; i<nSH; i++)
             memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
@@ -185,7 +185,7 @@ void beamformer_process
         utility_svvcopy((const float*)pData->beamWeights, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_beamWeights);
 
         /* copy to output buffer */
-        for(ch = 0; ch < MIN(nBeams, nOutputs); ch++)
+        for(ch = 0; ch < SAF_MIN(nBeams, nOutputs); ch++)
             utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
@@ -210,7 +210,7 @@ void beamformer_setBeamOrder(void  * const hBeam, int newValue)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
     int ch;
-    pData->beamOrder = MIN(MAX(newValue,1), MAX_SH_ORDER);
+    pData->beamOrder = SAF_MIN(SAF_MAX(newValue,1), MAX_SH_ORDER);
     for(ch=0; ch<MAX_NUM_BEAMS; ch++)
         pData->recalc_beamWeights[ch] = 1;
     /* FUMA only supports 1st order */
@@ -225,8 +225,8 @@ void beamformer_setBeamAzi_deg(void* const hBeam, int index, float newAzi_deg)
     beamformer_data *pData = (beamformer_data*)(hBeam);
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
-    newAzi_deg = MAX(newAzi_deg, -180.0f);
-    newAzi_deg = MIN(newAzi_deg, 180.0f);
+    newAzi_deg = SAF_MAX(newAzi_deg, -180.0f);
+    newAzi_deg = SAF_MIN(newAzi_deg, 180.0f);
     pData->beam_dirs_deg[index][0] = newAzi_deg;
     pData->recalc_beamWeights[index] = 1;
 }
@@ -234,8 +234,8 @@ void beamformer_setBeamAzi_deg(void* const hBeam, int index, float newAzi_deg)
 void beamformer_setBeamElev_deg(void* const hBeam, int index, float newElev_deg)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);
+    newElev_deg = SAF_MAX(newElev_deg, -90.0f);
+    newElev_deg = SAF_MIN(newElev_deg, 90.0f);
     pData->beam_dirs_deg[index][1] = newElev_deg;
     pData->recalc_beamWeights[index] = 1;
 }

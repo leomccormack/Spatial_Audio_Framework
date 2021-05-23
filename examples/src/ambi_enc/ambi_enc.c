@@ -103,7 +103,7 @@ void ambi_enc_process
     norm = pData->norm;
     nSources = pData->nSources;
     memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
-    order = MIN(pData->order, MAX_SH_ORDER);
+    order = SAF_MIN(pData->order, MAX_SH_ORDER);
     nSH = ORDER2NSH(order);
 
     /* Process frame */
@@ -113,7 +113,7 @@ void ambi_enc_process
         Y_src = malloc1d(nSH*sizeof(float));
 
         /* Load time-domain data */
-        for(i=0; i < MIN(nSources,nInputs); i++)
+        for(i=0; i < SAF_MIN(nSources,nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<MAX_NUM_INPUTS; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
@@ -182,7 +182,7 @@ void ambi_enc_process
         }
 
         /* Copy to output */
-        for(i = 0; i < MIN(nSH,nOutputs); i++)
+        for(i = 0; i < SAF_MIN(nSH,nOutputs); i++)
             utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
         for(; i < nOutputs; i++)
             memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
@@ -232,8 +232,8 @@ void ambi_enc_setSourceAzi_deg(void* const hAmbi, int index, float newAzi_deg)
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
-    newAzi_deg = MAX(newAzi_deg, -180.0f);
-    newAzi_deg = MIN(newAzi_deg, 180.0f);
+    newAzi_deg = SAF_MAX(newAzi_deg, -180.0f);
+    newAzi_deg = SAF_MIN(newAzi_deg, 180.0f);
     pData->recalc_SH_FLAG[index] = 1;
     pData->src_dirs_deg[index][0] = newAzi_deg;
 }
@@ -241,8 +241,8 @@ void ambi_enc_setSourceAzi_deg(void* const hAmbi, int index, float newAzi_deg)
 void ambi_enc_setSourceElev_deg(void* const hAmbi, int index, float newElev_deg)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
-    newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);
+    newElev_deg = SAF_MAX(newElev_deg, -90.0f);
+    newElev_deg = SAF_MIN(newElev_deg, 90.0f);
     pData->recalc_SH_FLAG[index] = 1;
     pData->src_dirs_deg[index][1] = newElev_deg;
 }
@@ -251,7 +251,7 @@ void ambi_enc_setNumSources(void* const hAmbi, int new_nSources)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
     int i;
-    pData->new_nSources = CLAMP(new_nSources, 1, MAX_NUM_INPUTS);
+    pData->new_nSources = SAF_CLAMP(new_nSources, 1, MAX_NUM_INPUTS);
     pData->nSources = pData->new_nSources;
     for(i=0; i<MAX_NUM_INPUTS; i++)
         pData->recalc_SH_FLAG[i] = 1;

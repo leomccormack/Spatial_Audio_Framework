@@ -409,7 +409,7 @@ void ambi_bin_process
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
-        for(i=0; i < MIN(nSH, nInputs); i++)
+        for(i=0; i < SAF_MIN(nSH, nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
         for(; i<nSH; i++)
             memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
@@ -475,7 +475,7 @@ void ambi_bin_process
         afSTFT_backward(pData->hSTFT, pData->binframeTF, FRAME_SIZE, pData->binFrameTD);
 
         /* Copy to output */
-        for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
+        for (ch = 0; ch < SAF_MIN(NUM_EARS, nOutputs); ch++)
             utility_svvcopy(pData->binFrameTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));

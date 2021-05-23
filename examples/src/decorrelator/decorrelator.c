@@ -185,7 +185,7 @@ void decorrelator_process
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
-        for(i=0; i < MIN(nCH, nInputs); i++)
+        for(i=0; i < SAF_MIN(nCH, nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->InputFrameTD[i]);
         for(; i<nCH; i++)
             memset(pData->InputFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
@@ -229,7 +229,7 @@ void decorrelator_process
         afSTFT_backward(pData->hSTFT, pData->OutputFrameTF, FRAME_SIZE, pData->OutputFrameTD);
 
         /* Copy to output buffer */
-        for (ch = 0; ch < MIN(nCH, nOutputs); ch++)
+        for (ch = 0; ch < SAF_MIN(nCH, nOutputs); ch++)
             utility_svvcopy(pData->OutputFrameTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
@@ -262,7 +262,7 @@ void decorrelator_setNumberOfChannels(void* const hDecor, int newValue )
 void decorrelator_setDecorrelationAmount(void* const hDecor, float newValue)
 {
     decorrelator_data *pData = (decorrelator_data*)(hDecor);
-    pData->decorAmount = CLAMP(newValue, 0.0f, 1.0f);
+    pData->decorAmount = SAF_CLAMP(newValue, 0.0f, 1.0f);
 }
 
 void decorrelator_setLevelCompensationFlag(void* const hDecor, int newValue)

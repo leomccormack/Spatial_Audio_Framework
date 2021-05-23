@@ -252,7 +252,7 @@ void array2sh_process
         utility_svsmul(FLATTEN2D(pData->SHframeTD), &gain_lin, nSH*FRAME_SIZE, NULL);
 
         /* Copy to output */
-        for(i = 0; i < MIN(nSH,nOutputs); i++)
+        for(i = 0; i < SAF_MIN(nSH,nOutputs); i++)
             utility_svvcopy(pData->SHframeTD[i], FRAME_SIZE, outputs[i]);
         for(; i < nOutputs; i++)
             memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
@@ -405,7 +405,7 @@ void array2sh_setr(void* const hA2sh, float newr)
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     
-    newr = CLAMP(newr, ARRAY2SH_ARRAY_RADIUS_MIN_VALUE/1e3f, ARRAY2SH_ARRAY_RADIUS_MAX_VALUE/1e3f);
+    newr = SAF_CLAMP(newr, ARRAY2SH_ARRAY_RADIUS_MIN_VALUE/1e3f, ARRAY2SH_ARRAY_RADIUS_MAX_VALUE/1e3f);
     if(arraySpecs->r!=newr){
         arraySpecs->r = newr;
         pData->reinitSHTmatrixFLAG = 1;
@@ -418,7 +418,7 @@ void array2sh_setR(void* const hA2sh, float newR)
     array2sh_data *pData = (array2sh_data*)(hA2sh);
     array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     
-    newR = CLAMP(newR, ARRAY2SH_BAFFLE_RADIUS_MIN_VALUE/1e3f, ARRAY2SH_BAFFLE_RADIUS_MAX_VALUE/1e3f);
+    newR = SAF_CLAMP(newR, ARRAY2SH_BAFFLE_RADIUS_MIN_VALUE/1e3f, ARRAY2SH_BAFFLE_RADIUS_MAX_VALUE/1e3f);
     if(arraySpecs->R!=newR){
         arraySpecs->R = newR;
         pData->reinitSHTmatrixFLAG = 1;
@@ -464,7 +464,7 @@ void array2sh_setFilterType(void* const hA2sh, int newType)
 void array2sh_setRegPar(void* const hA2sh, float newVal)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-     newVal = CLAMP(newVal, ARRAY2SH_MAX_GAIN_MIN_VALUE, ARRAY2SH_MAX_GAIN_MAX_VALUE);
+    newVal = SAF_CLAMP(newVal, ARRAY2SH_MAX_GAIN_MIN_VALUE, ARRAY2SH_MAX_GAIN_MAX_VALUE);
     if(pData->regPar!=newVal){
         pData->regPar = newVal;
         pData->reinitSHTmatrixFLAG = 1;
@@ -489,7 +489,7 @@ void array2sh_setNormType(void* const hA2sh, int newType)
 void array2sh_setc(void* const hA2sh, float newc)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    newc = CLAMP(newc, ARRAY2SH_SPEED_OF_SOUND_MIN_VALUE, ARRAY2SH_SPEED_OF_SOUND_MAX_VALUE);
+    newc = SAF_CLAMP(newc, ARRAY2SH_SPEED_OF_SOUND_MIN_VALUE, ARRAY2SH_SPEED_OF_SOUND_MAX_VALUE);
     if(newc!=pData->c){
         pData->c = newc;
         pData->reinitSHTmatrixFLAG = 1;
@@ -500,7 +500,7 @@ void array2sh_setc(void* const hA2sh, float newc)
 void array2sh_setGain(void* const hA2sh, float newGain)
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh);
-    pData->gain_dB = CLAMP(newGain, ARRAY2SH_POST_GAIN_MIN_VALUE, ARRAY2SH_POST_GAIN_MAX_VALUE);
+    pData->gain_dB = SAF_CLAMP(newGain, ARRAY2SH_POST_GAIN_MIN_VALUE, ARRAY2SH_POST_GAIN_MAX_VALUE);
 }
 
 
