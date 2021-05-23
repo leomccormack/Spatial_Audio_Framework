@@ -38,7 +38,7 @@ void ambi_roomsim_create
     ambi_roomsim_data* pData = (ambi_roomsim_data*)malloc1d(sizeof(ambi_roomsim_data));
     *phAmbi = (void*)pData;
     
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* default user parameters */
     pData->enableReflections = 1;

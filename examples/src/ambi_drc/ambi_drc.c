@@ -47,7 +47,7 @@ void ambi_drc_create
     ambi_drc_data* pData = (ambi_drc_data*)malloc1d(sizeof(ambi_drc_data));
     *phAmbi = (void*)pData;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
  
     /* afSTFT stuff and audio buffers*/
     pData->hSTFT = NULL;

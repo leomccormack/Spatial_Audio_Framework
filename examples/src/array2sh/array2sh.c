@@ -56,7 +56,7 @@ void array2sh_create
     array2sh_data* pData = (array2sh_data*)malloc1d(sizeof(array2sh_data));
     *phA2sh = (void*)pData;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* defualt parameters */
     array2sh_createArray(&(pData->arraySpecs)); 

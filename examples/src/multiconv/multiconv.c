@@ -32,7 +32,7 @@ void multiconv_create
     multiconv_data* pData = (multiconv_data*)malloc1d(sizeof(multiconv_data));
     *phMCnv = (void*)pData;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* Default user parameters */
     pData->nChannels = 1;

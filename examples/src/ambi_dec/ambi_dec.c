@@ -53,7 +53,7 @@ void ambi_dec_create
     *phAmbi = (void*)pData;
     int i, j, ch, band;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* default user parameters */
     loadLoudspeakerArrayPreset(LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_24, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));

@@ -45,7 +45,7 @@ void dirass_create
     *phDir = (void*)pData;
     int i;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* Default user parameters */
     pData->inputOrder = pData->new_inputOrder = SH_ORDER_FIRST;
