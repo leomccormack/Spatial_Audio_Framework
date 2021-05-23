@@ -1116,7 +1116,7 @@ void test__latticeDecorrelator(void){
     /* config */
     const float acceptedICC = 0.05f;
     const int nCH = 24;
-    const int nTestHops = 2000;
+    const int nTestHops = 800;
     const int hopSize = 128;
     const int procDelay = hopSize*12 + 12;
     const int lSig = nTestHops*hopSize+procDelay;
@@ -1124,8 +1124,8 @@ void test__latticeDecorrelator(void){
     nBands = hopSize+5;
 
     /* audio buffers */
-    inputTimeDomainData = (float**) malloc2d(1, lSig, sizeof(float));
-    outputTimeDomainData = (float**) malloc2d(nCH, lSig, sizeof(float));
+    inputTimeDomainData = (float**) calloc2d(1, lSig, sizeof(float));
+    outputTimeDomainData = (float**) calloc2d(nCH, lSig, sizeof(float));
     inTFframe = (float_complex***)malloc3d(nBands, nCH, 1, sizeof(float_complex));
     outTFframe = (float_complex***)malloc3d(nBands, nCH, 1, sizeof(float_complex));
     tempHop = (float**) malloc2d(nCH, hopSize, sizeof(float));
@@ -1146,7 +1146,7 @@ void test__latticeDecorrelator(void){
     /* Processing loop */
     idx = 0;
     hopIdx = 0;
-    while(idx<lSig){
+    while(idx<lSig-hopSize*2){
         for(c=0; c<1; c++)
             memcpy(tempHop[c], &(inputTimeDomainData[c][hopIdx*hopSize]), hopSize*sizeof(float));
 

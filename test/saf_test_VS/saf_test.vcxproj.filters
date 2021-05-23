@@ -252,9 +252,6 @@
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_decor.h">
       <Filter>framework\modules\saf_utilities</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_error.h">
-      <Filter>framework\modules\saf_utilities</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_fft.h">
       <Filter>framework\modules\saf_utilities</Filter>
     </ClInclude>
@@ -471,9 +468,6 @@
       <Filter>framework\modules\saf_utilities</Filter>
     </ClCompile>
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_decor.c">
-      <Filter>framework\modules\saf_utilities</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_error.c">
       <Filter>framework\modules\saf_utilities</Filter>
     </ClCompile>
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_fft.c">
