@@ -624,7 +624,7 @@ void loadSofaFile
         /* also output warning message, if encountering this error value was
          * unintentional (i.e. sofa_filepath!=NULL) */
         if(sofa_filepath!=NULL)
-            saf_error_print(SAF_WARNING__SOFA_FILE_NOT_FOUND);
+            saf_print_warning("Unable to load the specified SOFA file. The default HRIR data has been loaded instead.");
 #endif
         return;
     }

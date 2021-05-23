@@ -127,9 +127,6 @@
 /*                 External Resources and SAF Utility Headers                 */
 /* ========================================================================== */
 
-/* For error message handling */
-#include "saf_utility_error.h"
-
 /* For allocating contiguous multi-dimensional arrays.
  * The original source code can be found here (MIT license):
  *   https://github.com/leomccormack/md_malloc

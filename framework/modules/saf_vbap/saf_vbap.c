@@ -530,9 +530,8 @@ void findLsTriplets
     convhull_3d_build(vertices, L, &faces, NULL, NULL, &nFaces);
 #ifndef NDEBUG
     if(faces==NULL)
-        saf_error_print(SAF_ERROR__FAILED_TO_BUILD_CONVEX_HULL);
+        saf_print_error("Failed to compute the Convex Hull of the specified vertices.");
 #endif
-    assert(faces!=NULL);
 
 #if 0
     int k, minIntVal, minIdx, nFaces;

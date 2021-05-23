@@ -550,8 +550,14 @@ void bessel_jn
     }
     *maxN = *maxN==1e8 ? 0 : *maxN; /* maximum order that could be computed */
 #ifndef NDEBUG
-    if(*maxN<N)
-        saf_error_print(SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER);
+    if(*maxN<N){
+        /* Unable to compute the spherical Bessel (jn) function at the specified
+         * order (N) and input value(s). In this case, the Bessel functions are
+         * instead returned at the maximum order that was possible (maxN). The
+         * maximum order is made known to the caller/returned by this function,
+         * so that things can be handled accordingly. */
+        saf_print_warning("Unable to compute the spherical Bessel (jn) function at the specified order and input value(s).");
+    }
 #endif
 
     free(j_n_tmp);
@@ -605,8 +611,14 @@ void bessel_in /* untested */
     }
     *maxN = *maxN==1e8 ? 0 : *maxN; /* maximum order that could be computed */
 #ifndef NDEBUG
-    if(*maxN<N)
-        saf_error_print(SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER);
+    if(*maxN<N){
+        /* Unable to compute the spherical Bessel (in) function at the specified
+         * order (N) and input value(s). In this case, the Bessel functions are
+         * instead returned at the maximum order that was possible (maxN). The
+         * maximum order is made known to the caller/returned by this function,
+         * so that things can be handled accordingly. */
+        saf_print_warning("Unable to compute the spherical Bessel (in) function at the specified order and input value(s).");
+    }
 #endif
 
     free(i_n_tmp);
@@ -655,8 +667,14 @@ void bessel_yn
     }
     *maxN = *maxN==1e8 ? 0 : *maxN; /* maximum order that could be computed */
 #ifndef NDEBUG
-    if(*maxN<N)
-        saf_error_print(SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER);
+    if(*maxN<N){
+        /* Unable to compute the spherical Bessel (yn) function at the specified
+         * order (N) and input value(s). In this case, the Bessel functions are
+         * instead returned at the maximum order that was possible (maxN). The
+         * maximum order is made known to the caller/returned by this function,
+         * so that things can be handled accordingly. */
+        saf_print_warning("Unable to compute the spherical Bessel (yn) function at the specified order and input value(s).");
+    }
 #endif
 
     free(y_n_tmp);
@@ -705,8 +723,14 @@ void bessel_kn /* untested */
     }
     *maxN = *maxN==1e8 ? 0 : *maxN; /* maximum order that could be computed */
 #ifndef NDEBUG
-    if(*maxN<N)
-        saf_error_print(SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER);
+    if(*maxN<N){
+        /* Unable to compute the spherical Bessel (kn) function at the specified
+         * order (N) and input value(s). In this case, the Bessel functions are
+         * instead returned at the maximum order that was possible (maxN). The
+         * maximum order is made known to the caller/returned by this function,
+         * so that things can be handled accordingly. */
+        saf_print_warning("Unable to compute the spherical Bessel (kn) function at the specified order and input value(s).");
+    }
 #endif
 
     free(k_n_tmp);
@@ -761,8 +785,14 @@ void hankel_hn1
     }
     *maxN = *maxN==1e8 ? 0 : *maxN; /* maximum order that could be computed */
 #ifndef NDEBUG
-    if(*maxN<N)
-        saf_error_print(SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER);
+    if(*maxN<N){
+        /* Unable to compute the spherical Hankel (hn1) function at the
+         * specified order (N) and input value(s). In this case, the Hankel
+         * functions are instead returned at the maximum order that was possible
+         * (maxN). The maximum order is made known to the caller/returned by
+         * this function, so that things can be handled accordingly. */
+        saf_print_warning("Unable to compute the spherical Hankel (hn1) function at the specified order and input value(s).");
+    }
 #endif
 
     free(j_n_tmp);
@@ -819,8 +849,14 @@ void hankel_hn2
     }
     *maxN = *maxN==1e8 ? 0 : *maxN; /* maximum order that could be computed */
 #ifndef NDEBUG
-    if(*maxN<N)
-        saf_error_print(SAF_WARNING__UNABLE_TO_COMPUTE_BESSEL_FUNCTION_AT_SPECIFIED_ORDER);
+    if(*maxN<N){
+        /* Unable to compute the spherical Hankel (hn2) function at the
+         * specified order (N) and input value(s). In this case, the Hankel
+         * functions are instead returned at the maximum order that was possible
+         * (maxN). The maximum order is made known to the caller/returned by
+         * this function, so that things can be handled accordingly. */
+        saf_print_warning("Unable to compute the spherical Hankel (hn2) function at the specified order and input value(s).");
+    }
 #endif
 
     free(j_n_tmp);

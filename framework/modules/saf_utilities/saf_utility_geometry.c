@@ -134,7 +134,7 @@ void euler2Quaternion
     cy = sy = cr = sr = cp = sp = 0.0f; 
     switch(convention){
         case EULER_ROTATION_Y_CONVENTION: /* fall through*/
-        case EULER_ROTATION_X_CONVENTION: assert(0);  /* Not supported */; return; 
+        case EULER_ROTATION_X_CONVENTION: saf_print_error("This convention is not supported"); return;
         case EULER_ROTATION_YAW_PITCH_ROLL:
             cy = cosf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* x */
             sy = sinf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* x */
@@ -177,8 +177,8 @@ void quaternion2euler
     siny_cosp = 2.0f * (Q->w * Q->z + Q->x * Q->y);
     cosy_cosp = 1.0f - 2.0f * (Q->y * Q->y + Q->z * Q->z);
     switch(convention){
-        case EULER_ROTATION_Y_CONVENTION: assert(0) /* Not supported */; break;
-        case EULER_ROTATION_X_CONVENTION: assert(0) /* Not supported */; break;
+        case EULER_ROTATION_Y_CONVENTION: /* fall through */
+        case EULER_ROTATION_X_CONVENTION: saf_print_error("This convention is not supported"); break;
         case EULER_ROTATION_YAW_PITCH_ROLL:
             /* Yaw (z-axis rotation) */
             (*gamma) = atan2f(sinr_cosp, cosr_cosp);

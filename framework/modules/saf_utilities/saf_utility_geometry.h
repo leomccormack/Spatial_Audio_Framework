@@ -31,10 +31,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/* ========================================================================== */
-/*                        Basic Geometrical Functions                         */
-/* ========================================================================== */
-
 /** Quaternion data structure */
 typedef struct _quaternion_data {
     union {
@@ -70,6 +66,11 @@ typedef struct _voronoi_data{
     int* nPointsPerFace; /**< Number of points for each face; nFaces x 1 */
 
 }voronoi_data;
+
+
+/* ========================================================================== */
+/*                        Basic Geometrical Functions                         */
+/* ========================================================================== */
 
 /** Constructs a 3x3 rotation matrix based on a quaternion */
 void quaternion2rotationMatrix(/* Input Arguments */
@@ -140,6 +141,7 @@ void yawPitchRoll2Rzyx (/* Input Arguments */
                         float pitch,
                         float roll,
                         int rollPitchYawFLAG,
+                        /* Output Arguments */
                         float R[3][3]);
 
 /**
@@ -172,13 +174,13 @@ void unitCart2sph(/* Input Arguments */
                   /* Output Arguments */
                   float* dirs);
 
-/** L2 (Euclidean) norm of a 3-element vector */
+/** Returns the L2 (Euclidean) norm of a 3-element vector */
 float L2_norm3(float v[3]);
 
-/** L2 (Euclidean) norm of an arbitrary length vector */
+/** Returns the L2 (Euclidean) norm of an arbitrary length vector */
 float L2_norm(float* v, int lenV);
 
-/** Frobenius Norm of a matrix M, of dimensions: lenX x lenY */
+/** Returns the Frobenius Norm of a matrix M, of dimensions: lenX x lenY */
 float Frob_norm(float* M, int lenX, int lenY);
 
 /** Cross product between two 3-element floating point vectors (c = a x b) */

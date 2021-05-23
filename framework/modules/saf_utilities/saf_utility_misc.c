@@ -33,7 +33,7 @@ static const long double factorials_15[15] =
 {1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0, 39916800.0, 479001600.0, 6.2270208e9, 8.71782891e10};
 
 /** Helper function for findCombinations() */
-void combinationUtil(int* arr, int* data, int start, int end, int index, int r, int** comb, int* nComb) {
+static void combinationUtil(int* arr, int* data, int start, int end, int index, int r, int** comb, int* nComb) {
     if (index == r) {
         (*nComb)++;
         (*comb) = realloc1d( (*comb), (*nComb)*r*sizeof(int));
@@ -46,6 +46,17 @@ void combinationUtil(int* arr, int* data, int start, int end, int index, int r, 
         combinationUtil(arr, data, i+1, end, index+1, r, comb, nComb);
     }
 }
+
+#ifndef NDEBUG
+void saf_print_warning_FL(char* message, char* fileName, int lineNumber){
+    fprintf(stdout, "SAF WARNING: %s [%s LINE %u] \n", message, fileName, lineNumber);
+}
+
+void saf_print_error_FL(char* message, char* fileName, int lineNumber){
+    fprintf(stderr, "SAF ERROR: %s [%s LINE %u] \n", message, fileName, lineNumber);
+    exit(EXIT_FAILURE);
+}
+#endif
 
 void convert_0_360To_m180_180
 (
