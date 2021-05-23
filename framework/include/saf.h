@@ -118,6 +118,12 @@
   "   (_______) |_|   |_| |_|   (Version: " SAF_VERSION_STRING ", License:"   \
   " " SAF_LICENSE_STRING ")                                              \n\n"
 
+/** Printing the Spatial_Audio_Framework Version and License as a string */
+#ifdef SAF_DISABLE_PRINT_VERSION
+#define SAF_PRINT_VERSION_LICENSE_STRING
+#else
+#define SAF_PRINT_VERSION_LICENSE_STRING printf(SAF_VERSION_LICENSE_STRING)
+#endif
 
 /* ========================================================================== */
 /*                                Core Modules                                */

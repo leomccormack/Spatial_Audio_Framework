@@ -34,7 +34,7 @@ void ambi_enc_create
     *phAmbi = (void*)pData;
     int i;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     pData->order = 1;
     

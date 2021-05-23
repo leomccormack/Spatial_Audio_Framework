@@ -33,7 +33,7 @@ void spreader_create
     *phSpr = (void*)pData;
     int band, t, src;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* user parameters */
     pData->sofa_filepath = NULL;
