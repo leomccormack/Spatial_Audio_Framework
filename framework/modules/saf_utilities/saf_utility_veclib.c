@@ -44,7 +44,6 @@
 
 #include "saf_utilities.h"
 #include "saf_externals.h"
-#include <float.h>
 
 /* just to remove compiler warnings: */
 #if defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
@@ -74,6 +73,71 @@
   typedef float_complex        veclib_float_complex;
   /** double precision floating-point datatype used by veclib */
   typedef double_complex       veclib_double_complex;
+#endif
+
+
+/* ========================================================================== */
+/*                     Built-in CBLAS Functions (Level 0)                     */
+/* ========================================================================== */
+
+#ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
+void cblas_scopy(const int N, const float *X, const int incX, float *Y, const int incY){
+    int i,j;
+    for(i=j=0; i<N; i+=incX, j+=incY)
+        Y[i] = X[j];
+}
+
+void cblas_dcopy(const int N, const double *X, const int incX, double *Y, const int incY){
+    int i,j;
+    for(i=j=0; i<N; i+=incX, j+=incY)
+        Y[i] = X[j];
+}
+
+void cblas_ccopy(const int N, const void *X, const int incX, void *Y, const int incY){
+    int i,j;
+    float_complex *cX, *cY;
+    cX = (float_complex*)X;
+    cY = (float_complex*)Y;
+    for(i=j=0; i<N; i+=incX, j+=incY)
+        cY[i] = cX[j];
+}
+
+void cblas_zcopy(const int N, const void *X, const int incX, void *Y, const int incY){
+    int i,j;
+    double_complex *cX, *cY;
+    cX = (double_complex*)X;
+    cY = (double_complex*)Y;
+    for(i=j=0; i<N; i+=incX, j+=incY)
+        cY[i] = cX[j];
+}
+
+void cblas_saxpy(const int N, const float alpha, const float* X, const int incX, float* Y, const int incY) {
+    int i,j;
+    for (i=j=0; i<N; i+=incX, j+=incY)
+        Y[i] = alpha * X[i] + Y[i];
+}
+
+void cblas_daxpy(const int N, const double alpha, const double* X, const int incX, double* Y, const int incY) {
+    int i,j;
+    for (i=j=0; i<N; i+=incX, j+=incY)
+        Y[i] = alpha * X[i] + Y[i];
+}
+#endif
+
+
+/* ========================================================================== */
+/*                     Built-in CBLAS Functions (Level 3)                     */
+/* ========================================================================== */
+
+#ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
+void cblas_sgemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA,
+                 const enum CBLAS_TRANSPOSE TransB, const int M, const int N,
+                 const int K, const float alpha, const float* A,
+                 const int lda, const float* B, const int ldb,
+                 const float beta, float* C, const int ldc)
+{
+    assert(0);
+}
 #endif
 
 

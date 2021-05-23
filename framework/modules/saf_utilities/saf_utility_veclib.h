@@ -41,6 +41,11 @@ typedef enum {
   CONJ = 2      /**< Take the conjugate */
 }CONJ_FLAG;
 
+#ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
+ enum { CblasRowMajor = 101, CblasColMajor = 102 } CBLAS_ORDER;
+ enum { CblasNoTrans = 111, CblasTrans = 112, CblasConjTrans = 113 } CBLAS_TRANSPOSE;
+#endif
+
 /* KEY:
  * ? -> s -> single floating-point precision
  * ? -> d -> double floating-point precision
@@ -50,6 +55,44 @@ typedef enum {
  * s -> scalar
  * v -> vector
  * m -> matrix */
+
+/* ========================================================================== */
+/*                     Built-in CBLAS Functions (Level 0)                     */
+/* ========================================================================== */
+
+#ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
+void cblas_scopy(const int N, const float *X, const int incX,
+                 float *Y, const int incY);
+void cblas_dcopy(const int N, const double *X, const int incX,
+                 double *Y, const int incY);
+void cblas_ccopy(const int N, const void *X, const int incX,
+                 void *Y, const int incY);
+void cblas_zcopy(const int N, const void *X, const int incX,
+                 void *Y, const int incY);
+
+void cblas_saxpy(const int N, const float alpha, const float* X,
+                 const int incX, float* Y, const int incY);
+void cblas_daxpy(const int N, const double alpha, const double* X,
+                 const int incX, double* Y, const int incY);
+void cblas_caxpy(const int N, const void* alpha, const void* X,
+                 const int incX, void* Y, const int incY);
+void cblas_zaxpy(const int N, const void* alpha, const void* X,
+                 const int incX, void* Y, const int incY);
+#endif
+
+
+/* ========================================================================== */
+/*                     Built-in CBLAS Functions (Level 3)                     */
+/* ========================================================================== */
+
+#ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
+void cblas_sgemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA,
+                 const enum CBLAS_TRANSPOSE TransB, const int M, const int N,
+                 const int K, const float alpha, const float* A,
+                 const int lda, const float* B, const int ldb,
+                 const float beta, float* C, const int ldc);
+#endif
+
 
 /* ========================================================================== */
 /*                     Find Index of Min-Abs-Value (?iminv)                   */
