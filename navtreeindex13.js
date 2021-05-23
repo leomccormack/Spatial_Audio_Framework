@@ -1,5 +1,6 @@
 var NAVTREEINDEX13 =
 {
+"saf__tracker__internal_8c.html#a5d56f0015c7770700f2eef0fe1ea7342":[14,0,2,1,6,2,13],
 "saf__tracker__internal_8c.html#a5e2cf827a3056a11f59b5421170859c2":[14,0,2,1,6,2,8],
 "saf__tracker__internal_8c.html#a62f538b7849ec11a69b21b1d3fabe0d0":[14,0,2,1,6,2,5],
 "saf__tracker__internal_8c.html#a6aeac15c7c476ff1c336004864254858":[14,0,2,1,6,2,17],
@@ -248,6 +249,5 @@ var NAVTREEINDEX13 =
 "safmex__lattice_decorrelator_8c.html#a478822845f16539a169cfef0e0633210":[14,0,1,0,6,7],
 "safmex__lattice_decorrelator_8c.html#a6a215cbfde54f82a3ce599228fc3fce5":[14,0,1,0,6,3],
 "safmex__lattice_decorrelator_8c.html#a8e1a1c0a3e82c79b8f396659cf016399":[14,0,1,0,6,9],
-"safmex__lattice_decorrelator_8c.html#a993d8f15628dae509d1d02c21de11517":[14,0,1,0,6,11],
-"safmex__lattice_decorrelator_8c.html#a99f28a771358440bc079286cda234df6":[14,0,1,0,6,6]
+"safmex__lattice_decorrelator_8c.html#a993d8f15628dae509d1d02c21de11517":[14,0,1,0,6,11]
 };

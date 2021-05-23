@@ -6,6 +6,7 @@ var saf_8h =
     [ "SAF_HOA_MODULE", "saf_8h.html#a9c2c7080a25d54c9d7bc99588935ea8f", null ],
     [ "SAF_HRIR_MODULE", "saf_8h.html#a2afda4360b65935e869ca8c4fd98fea1", null ],
     [ "SAF_LICENSE_STRING", "saf_8h.html#a8b83f86f63ef9d7d0b3608fc757722f6", null ],
+    [ "SAF_PRINT_VERSION_LICENSE_STRING", "saf_8h.html#ad9e446e2d96097a798a1d26dfde1c3b8", null ],
     [ "SAF_REVERB_MODULE", "saf_8h.html#a5cdcc71107076032f33b20660a8b10be", null ],
     [ "SAF_SH_MODULE", "saf_8h.html#a4267176e3a1b83ff894c602e2af10025", null ],
     [ "SAF_SOFA_READER_MODULE", "saf_8h.html#a98df8902e6c5a7fba09c35d489505f77", null ],
