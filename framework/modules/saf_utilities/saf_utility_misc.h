@@ -96,15 +96,20 @@ extern "C" {
 # define saf_print_error(message) saf_print_error_FL(message, \
                                                      __FILE__, __LINE__)
 
+/** Macro to make an assertion and give the filename and line number if fail */
+# define saf_assert(x) if (!(x)) {printf("SAF ASSERTION FAILED: (%s) [%s LINE %u].\n",\
+                                  MKSTRING(x), __FILE__, __LINE__); exit(EXIT_FAILURE); }
+
 /** Function to print a warning message along with the filename and line number */
 void saf_print_warning_FL(char* message, char* fileName, int lineNumber);
 
 /** Function to print a error message along with the filename and line number */
 void saf_print_error_FL(char* message, char* fileName, int lineNumber);
 
-#else /* Macros do nothing... */
+#else /* Macros do nothing, or just standard behaviour... */
 # define saf_print_warning(message)
 # define saf_print_error(message)
+# define saf_assert(x) assert(x)
 #endif
 
 /** Wraps around any angles exeeding 180 degrees (e.g., 200-> -160) */

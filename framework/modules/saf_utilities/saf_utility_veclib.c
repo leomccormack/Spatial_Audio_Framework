@@ -136,7 +136,7 @@ void cblas_sgemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA
                  const int lda, const float* B, const int ldb,
                  const float beta, float* C, const int ldc)
 {
-    assert(0);
+    saf_assert(0);
 }
 #endif
 
@@ -1931,7 +1931,7 @@ void utility_cglslvt
     veclib_int* IPIV;
     float_complex* a, *b;
 
-    assert(0); /* This function needs checking */
+    saf_print_error("Function needs checking!");  
 
     IPIV = malloc1d(dim*sizeof(veclib_int));
     a = malloc1d(dim*dim*sizeof(float_complex));
@@ -2629,14 +2629,14 @@ double utility_ddet
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     dgeqrf_(&N, &N, tmp, &N, TAU, &lwork2, &LWORK, &INFO);
 #else
-    assert(0); /* NOT IMPLEMENTED YET */
+    saf_assert(0); /* NOT IMPLEMENTED YET */
 #endif
     lwork3=(veclib_int)lwork2;
     WORK=malloc(lwork3*sizeof(double));
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     dgeqrf_(&N, &N, tmp, &N, TAU, WORK, &lwork3, &INFO);
 #else
-    assert(0); /* NOT IMPLEMENTED YET */
+    saf_assert(0); /* NOT IMPLEMENTED YET */
 #endif
 
     if(INFO!=0) {

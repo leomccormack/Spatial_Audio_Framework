@@ -122,6 +122,16 @@
 # define RAD2DEG(x) (x * 180.0f / SAF_PI)
 #endif
 
+#ifndef MKSTRING_
+/** Used to make strings inside of Macros */
+# define MKSTRING_(s) #s
+#endif
+
+#ifndef MKSTRING
+/** Used to make strings inside of Macros */
+# define MKSTRING(s) MKSTRING_(s)
+#endif
+
 
 /* ========================================================================== */
 /*                 External Resources and SAF Utility Headers                 */
