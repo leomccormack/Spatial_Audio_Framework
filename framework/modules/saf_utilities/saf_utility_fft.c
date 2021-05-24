@@ -644,8 +644,7 @@ void saf_rfft_backward
     h->Status = DftiComputeBackward(h->MKL_FFT_Handle, inputFD, outputTD);
 #else
     kiss_fftri(h->kissFFThandle_bkw, (kiss_fft_cpx*)inputFD, outputTD);
-    for(i=0; i<h->N; i++)
-        outputTD[i] /= (float)(h->N);
+    cblas_sscal(h->N, 1.0f/(float)(h->N), outputTD, 1);
 #endif
 }
 
@@ -802,7 +801,6 @@ void saf_fft_backward
     h->Status = DftiComputeBackward(h->MKL_FFT_Handle, inputFD, outputTD);
 #else
     kiss_fft(h->kissFFThandle_bkw, (kiss_fft_cpx*)inputFD, (kiss_fft_cpx*)outputTD);
-    for(i=0; i<h->N; i++)
-        outputTD[i] = crmulf(outputTD[i], 1.0f/(float)(h->N));
+    cblas_sscal(2*(h->N), 1.0f/(float)(h->N), (float*)outputTD, 1);
 #endif
 }
