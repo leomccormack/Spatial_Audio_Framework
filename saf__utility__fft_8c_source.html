@@ -700,168 +700,166 @@ $(document).ready(function(){initNavTree('saf__utility__fft_8c_source.html','');
 <div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;    h-&gt;Status = DftiComputeBackward(h-&gt;MKL_FFT_Handle, inputFD, outputTD);</div>
 <div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;<span class="preprocessor">#else</span></div>
 <div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;    kiss_fftri(h-&gt;kissFFThandle_bkw, (<a class="code" href="structkiss__fft__cpx.html">kiss_fft_cpx</a>*)inputFD, outputTD);</div>
-<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;h-&gt;N; i++)</div>
-<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;        outputTD[i] /= (<span class="keywordtype">float</span>)(h-&gt;N);</div>
-<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;}</div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;    cblas_sscal(h-&gt;N, 1.0f/(<span class="keywordtype">float</span>)(h-&gt;N), outputTD, 1);</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;}</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160; </div>
 <div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160; </div>
-<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160; </div>
-<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
-<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;<span class="comment">/*                            Complex&lt;-&gt;Complex FFT                           */</span></div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
-<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160; </div>
-<div class="line"><a name="l00657"></a><span class="lineno"><a class="line" href="group___utilities.html#ga4f859fb116fa81157cc86c83360d8db1">  657</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#ga4f859fb116fa81157cc86c83360d8db1">saf_fft_create</a></div>
-<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;(</div>
-<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;    <span class="keywordtype">void</span> ** <span class="keyword">const</span> phFFT,</div>
-<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;    <span class="keywordtype">int</span> N</div>
-<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;)</div>
-<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;{</div>
-<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;    *phFFT = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(<span class="keyword">sizeof</span>(<a class="code" href="structsaf__fft__data.html">saf_fft_data</a>));</div>
-<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;    <a class="code" href="structsaf__fft__data.html">saf_fft_data</a> *h = (<a class="code" href="structsaf__fft__data.html">saf_fft_data</a>*)(*phFFT);</div>
-<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;    </div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;    h-&gt;N = N;</div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;    h-&gt;Scale = 1.0f/(float)N; <span class="comment">/* output scaling after ifft */</span></div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;    <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(N&gt;=2, <span class="stringliteral">&quot;Only even (non zero) FFT sizes are supported&quot;</span>);</div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;    <span class="comment">/* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */</span></div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;    <span class="keywordflow">if</span>(ceilf(log2f(N)) == floorf(log2f(N))){</div>
-<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;        h-&gt;useIPPfft_FLAG = 1;</div>
-<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;        h-&gt;log2n = (int)(log2f((<span class="keywordtype">float</span>)N)+0.1f);</div>
-<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;        ippsFFTGetSize_C_32f(h-&gt;log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &amp;(h-&gt;specSize), &amp;(h-&gt;specBufferSize), &amp;(h-&gt;bufferSize));</div>
-<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;        h-&gt;hFFTspec = NULL;</div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;        h-&gt;memSpec = (Ipp8u*) ippsMalloc_8u(h-&gt;specSize);</div>
-<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;        h-&gt;buffer  = (Ipp8u*) ippsMalloc_8u(h-&gt;bufferSize);</div>
-<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;        h-&gt;memInit = (Ipp8u*) ippsMalloc_8u(h-&gt;specBufferSize);</div>
-<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;        ippsFFTInit_C_32fc(&amp;(h-&gt;hFFTspec), h-&gt;log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h-&gt;memSpec, h-&gt;memInit);</div>
-<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;    }</div>
-<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;    <span class="keywordflow">else</span>{</div>
-<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;        h-&gt;useIPPfft_FLAG = 0;</div>
-<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;        ippsDFTGetSize_C_32f(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &amp;(h-&gt;specSize), &amp;(h-&gt;specBufferSize), &amp;(h-&gt;bufferSize));</div>
-<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;        h-&gt;hDFTspec = (IppsDFTSpec_C_32fc*) ippsMalloc_8u(h-&gt;specSize);</div>
-<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;        h-&gt;buffer  = (Ipp8u*) ippsMalloc_8u(h-&gt;bufferSize);</div>
-<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;        h-&gt;memInit = (Ipp8u*) ippsMalloc_8u(h-&gt;specBufferSize);</div>
-<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;        ippsDFTInit_C_32fc(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h-&gt;hDFTspec, h-&gt;memInit);</div>
-<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;    }</div>
-<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;    <span class="keywordflow">if</span> (h-&gt;memInit)</div>
-<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;        ippFree(h-&gt;memInit);</div>
-<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;<span class="preprocessor">#elif defined(__ACCELERATE__)</span></div>
-<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;    h-&gt;DFT_fwd = vDSP_DFT_zop_CreateSetup(0, N, vDSP_DFT_FORWARD);</div>
-<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;    h-&gt;DFT_bwd = vDSP_DFT_zop_CreateSetup(0, N, vDSP_DFT_INVERSE);</div>
-<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;    <span class="comment">/* Note that DFT lengths must satisfy: f * 2.^g, where f is 1, 3, 5, or 15, and g &gt;=3 */</span></div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;    <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(h-&gt;DFT_fwd!=0 &amp;&amp; h-&gt;DFT_bwd!=0, <span class="stringliteral">&quot;Failed to create vDSP DFT&quot;</span>);</div>
-<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;    h-&gt;VDSP_split_tmp.realp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>((h-&gt;N)*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;    h-&gt;VDSP_split_tmp.imagp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>((h-&gt;N)*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;    h-&gt;VDSP_split.realp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>((h-&gt;N)*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;    h-&gt;VDSP_split.imagp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>((h-&gt;N)*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;<span class="preprocessor">#elif defined(INTEL_MKL_VERSION)</span></div>
-<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;    h-&gt;MKL_FFT_Handle = 0;</div>
-<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;    h-&gt;Status = DftiCreateDescriptor( &amp;(h-&gt;MKL_FFT_Handle), DFTI_SINGLE,</div>
-<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;                                  DFTI_COMPLEX, 1, h-&gt;N); <span class="comment">/* 1-D, single precision, complex_input_td-&gt;fft-&gt;complex_input_fd-&gt;ifft-&gt;complex_output_td */</span></div>
-<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;    h-&gt;Status = DftiSetValue(h-&gt;MKL_FFT_Handle, DFTI_PLACEMENT, DFTI_NOT_INPLACE); <span class="comment">/* Not inplace, i.e. output has its own dedicated memory */</span></div>
-<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;    <span class="comment">/* Configuration parameters for backward-FFT */</span></div>
-<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;    h-&gt;Status = DftiSetValue(h-&gt;MKL_FFT_Handle, DFTI_BACKWARD_SCALE, h-&gt;Scale);      <span class="comment">/* scalar applied after ifft */</span></div>
-<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;    <span class="comment">/* commit these chosen parameters */</span></div>
-<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;    h-&gt;Status = DftiCommitDescriptor(h-&gt;MKL_FFT_Handle);</div>
-<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;    <span class="keywordflow">if</span>(h-&gt;useKissFFT_flag){</div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;        h-&gt;kissFFThandle_fwd = <a class="code" href="kiss__fft_8c.html#ab5ad1560b58375ec071da45401911358">kiss_fft_alloc</a>(h-&gt;N, 0, NULL, NULL);</div>
-<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;        h-&gt;kissFFThandle_bkw = <a class="code" href="kiss__fft_8c.html#ab5ad1560b58375ec071da45401911358">kiss_fft_alloc</a>(h-&gt;N, 1, NULL, NULL);</div>
-<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;    }</div>
-<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;}</div>
-<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160; </div>
-<div class="line"><a name="l00717"></a><span class="lineno"><a class="line" href="group___utilities.html#gaec25738562c4665910dc8be232ddb416">  717</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#gaec25738562c4665910dc8be232ddb416">saf_fft_destroy</a></div>
-<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;(</div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;    <span class="keywordtype">void</span> ** <span class="keyword">const</span> phFFT</div>
-<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;)</div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;{</div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;    <a class="code" href="structsaf__fft__data.html">saf_fft_data</a> *h = (<a class="code" href="structsaf__fft__data.html">saf_fft_data</a>*)(*phFFT);</div>
-<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;    </div>
-<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;    <span class="keywordflow">if</span>(h!=NULL){</div>
-<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
-<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;        <span class="keywordflow">if</span>(h-&gt;useIPPfft_FLAG){</div>
-<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;            <span class="keywordflow">if</span>(h-&gt;memSpec)</div>
-<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;                ippFree(h-&gt;memSpec);</div>
-<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;        }</div>
-<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;        <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;            <span class="keywordflow">if</span>(h-&gt;hDFTspec)</div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;                ippFree(h-&gt;hDFTspec);</div>
-<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;        }</div>
-<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;        <span class="keywordflow">if</span>(h-&gt;buffer)</div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;            ippFree(h-&gt;buffer);</div>
-<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;<span class="preprocessor">#elif defined(__ACCELERATE__)</span></div>
-<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;        vDSP_DFT_DestroySetup(h-&gt;DFT_fwd);</div>
-<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;        vDSP_DFT_DestroySetup(h-&gt;DFT_bwd);</div>
-<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;        free(h-&gt;VDSP_split_tmp.realp);</div>
-<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;        free(h-&gt;VDSP_split_tmp.imagp);</div>
-<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;        free(h-&gt;VDSP_split.realp);</div>
-<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;        free(h-&gt;VDSP_split.imagp);</div>
-<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;<span class="preprocessor">#elif defined(INTEL_MKL_VERSION)</span></div>
-<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;        h-&gt;Status = DftiFreeDescriptor(&amp;(h-&gt;MKL_FFT_Handle));</div>
-<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;        kiss_fft_free(h-&gt;kissFFThandle_fwd);</div>
-<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;        kiss_fft_free(h-&gt;kissFFThandle_bkw);</div>
-<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;        free(h);</div>
-<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;        h=NULL;</div>
-<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;    }</div>
-<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;}</div>
-<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160; </div>
-<div class="line"><a name="l00754"></a><span class="lineno"><a class="line" href="group___utilities.html#ga7162fa814256c16096f78d67022b72c2">  754</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#ga7162fa814256c16096f78d67022b72c2">saf_fft_forward</a></div>
-<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;(</div>
-<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;    <span class="keywordtype">void</span> * <span class="keyword">const</span> hFFT,</div>
-<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;    float_complex* inputTD,</div>
-<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;    float_complex* outputFD</div>
-<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;)</div>
-<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;{</div>
-<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;    <a class="code" href="structsaf__fft__data.html">saf_fft_data</a> *h = (<a class="code" href="structsaf__fft__data.html">saf_fft_data</a>*)(hFFT);</div>
-<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;    </div>
-<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
-<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;    <span class="keywordflow">if</span>(h-&gt;useIPPfft_FLAG)</div>
-<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;        ippsFFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h-&gt;hFFTspec, h-&gt;buffer);</div>
-<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;        ippsDFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h-&gt;hDFTspec, h-&gt;buffer);</div>
-<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;<span class="preprocessor">#elif defined(__ACCELERATE__)</span></div>
-<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;    cblas_scopy(h-&gt;N, &amp;((<span class="keywordtype">float</span>*)(inputTD))[0], 2, h-&gt;VDSP_split_tmp.realp, 1);</div>
-<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;    cblas_scopy(h-&gt;N, &amp;((<span class="keywordtype">float</span>*)(inputTD))[1], 2, h-&gt;VDSP_split_tmp.imagp, 1);</div>
-<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;    vDSP_DFT_Execute(h-&gt;DFT_fwd, h-&gt;VDSP_split_tmp.realp, h-&gt;VDSP_split_tmp.imagp, h-&gt;VDSP_split.realp, h-&gt;VDSP_split.imagp);</div>
-<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;    cblas_scopy(h-&gt;N, h-&gt;VDSP_split.realp, 1, &amp;((<span class="keywordtype">float</span>*)(outputFD))[0], 2);</div>
-<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;    cblas_scopy(h-&gt;N, h-&gt;VDSP_split.imagp, 1, &amp;((<span class="keywordtype">float</span>*)(outputFD))[1], 2);</div>
-<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;<span class="preprocessor">#elif defined(INTEL_MKL_VERSION)</span></div>
-<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;    h-&gt;Status = DftiComputeForward(h-&gt;MKL_FFT_Handle, inputTD, outputFD);</div>
-<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;    <a class="code" href="kiss__fft_8c.html#ab36e2bb33b74c1a7eabe3271d0916030">kiss_fft</a>(h-&gt;kissFFThandle_fwd, (<a class="code" href="structkiss__fft__cpx.html">kiss_fft_cpx</a>*)inputTD, (<a class="code" href="structkiss__fft__cpx.html">kiss_fft_cpx</a>*)outputFD);</div>
-<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;}</div>
-<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160; </div>
-<div class="line"><a name="l00781"></a><span class="lineno"><a class="line" href="group___utilities.html#ga40834d6833d2268419969c881b08d147">  781</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#ga40834d6833d2268419969c881b08d147">saf_fft_backward</a></div>
-<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;(</div>
-<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;    <span class="keywordtype">void</span> * <span class="keyword">const</span> hFFT,</div>
-<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;    float_complex* inputFD,</div>
-<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;    float_complex* outputTD</div>
-<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;)</div>
-<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;{</div>
-<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;    <a class="code" href="structsaf__fft__data.html">saf_fft_data</a> *h = (<a class="code" href="structsaf__fft__data.html">saf_fft_data</a>*)(hFFT);</div>
-<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
-<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;    <span class="keywordflow">if</span>(h-&gt;useIPPfft_FLAG)</div>
-<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;        ippsFFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h-&gt;hFFTspec, h-&gt;buffer);</div>
-<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;        ippsDFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h-&gt;hDFTspec, h-&gt;buffer);</div>
-<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;<span class="preprocessor">#elif defined(__ACCELERATE__)</span></div>
-<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;    cblas_scopy(h-&gt;N, &amp;((<span class="keywordtype">float</span>*)(inputFD))[0], 2, h-&gt;VDSP_split_tmp.realp, 1);</div>
-<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;    cblas_scopy(h-&gt;N, &amp;((<span class="keywordtype">float</span>*)(inputFD))[1], 2, h-&gt;VDSP_split_tmp.imagp, 1);</div>
-<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;    vDSP_DFT_Execute(h-&gt;DFT_bwd, h-&gt;VDSP_split_tmp.realp, h-&gt;VDSP_split_tmp.imagp, h-&gt;VDSP_split.realp, h-&gt;VDSP_split.imagp);</div>
-<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;    cblas_scopy(h-&gt;N, h-&gt;VDSP_split.realp, 1, &amp;((<span class="keywordtype">float</span>*)(outputTD))[0], 2);</div>
-<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;    cblas_scopy(h-&gt;N, h-&gt;VDSP_split.imagp, 1, &amp;((<span class="keywordtype">float</span>*)(outputTD))[1], 2);</div>
-<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;    cblas_sscal(2*(h-&gt;N), 1.0f/(<span class="keywordtype">float</span>)(h-&gt;N), (<span class="keywordtype">float</span>*)outputTD, 1);</div>
-<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;<span class="preprocessor">#elif defined(INTEL_MKL_VERSION)</span></div>
-<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;    h-&gt;Status = DftiComputeBackward(h-&gt;MKL_FFT_Handle, inputFD, outputTD);</div>
-<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;    <a class="code" href="kiss__fft_8c.html#ab36e2bb33b74c1a7eabe3271d0916030">kiss_fft</a>(h-&gt;kissFFThandle_bkw, (<a class="code" href="structkiss__fft__cpx.html">kiss_fft_cpx</a>*)inputFD, (<a class="code" href="structkiss__fft__cpx.html">kiss_fft_cpx</a>*)outputTD);</div>
-<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;h-&gt;N; i++)</div>
-<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;        outputTD[i] = crmulf(outputTD[i], 1.0f/(<span class="keywordtype">float</span>)(h-&gt;N));</div>
-<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;}</div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;<span class="comment">/*                            Complex&lt;-&gt;Complex FFT                           */</span></div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160; </div>
+<div class="line"><a name="l00656"></a><span class="lineno"><a class="line" href="group___utilities.html#ga4f859fb116fa81157cc86c83360d8db1">  656</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#ga4f859fb116fa81157cc86c83360d8db1">saf_fft_create</a></div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;(</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;    <span class="keywordtype">void</span> ** <span class="keyword">const</span> phFFT,</div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;    <span class="keywordtype">int</span> N</div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;)</div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;{</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;    *phFFT = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(<span class="keyword">sizeof</span>(<a class="code" href="structsaf__fft__data.html">saf_fft_data</a>));</div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;    <a class="code" href="structsaf__fft__data.html">saf_fft_data</a> *h = (<a class="code" href="structsaf__fft__data.html">saf_fft_data</a>*)(*phFFT);</div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;    </div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;    h-&gt;N = N;</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;    h-&gt;Scale = 1.0f/(float)N; <span class="comment">/* output scaling after ifft */</span></div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;    <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(N&gt;=2, <span class="stringliteral">&quot;Only even (non zero) FFT sizes are supported&quot;</span>);</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;    <span class="comment">/* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */</span></div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;    <span class="keywordflow">if</span>(ceilf(log2f(N)) == floorf(log2f(N))){</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;        h-&gt;useIPPfft_FLAG = 1;</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;        h-&gt;log2n = (int)(log2f((<span class="keywordtype">float</span>)N)+0.1f);</div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;        ippsFFTGetSize_C_32f(h-&gt;log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &amp;(h-&gt;specSize), &amp;(h-&gt;specBufferSize), &amp;(h-&gt;bufferSize));</div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;        h-&gt;hFFTspec = NULL;</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;        h-&gt;memSpec = (Ipp8u*) ippsMalloc_8u(h-&gt;specSize);</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;        h-&gt;buffer  = (Ipp8u*) ippsMalloc_8u(h-&gt;bufferSize);</div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;        h-&gt;memInit = (Ipp8u*) ippsMalloc_8u(h-&gt;specBufferSize);</div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;        ippsFFTInit_C_32fc(&amp;(h-&gt;hFFTspec), h-&gt;log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h-&gt;memSpec, h-&gt;memInit);</div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;    }</div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;    <span class="keywordflow">else</span>{</div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;        h-&gt;useIPPfft_FLAG = 0;</div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;        ippsDFTGetSize_C_32f(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &amp;(h-&gt;specSize), &amp;(h-&gt;specBufferSize), &amp;(h-&gt;bufferSize));</div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;        h-&gt;hDFTspec = (IppsDFTSpec_C_32fc*) ippsMalloc_8u(h-&gt;specSize);</div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;        h-&gt;buffer  = (Ipp8u*) ippsMalloc_8u(h-&gt;bufferSize);</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;        h-&gt;memInit = (Ipp8u*) ippsMalloc_8u(h-&gt;specBufferSize);</div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;        ippsDFTInit_C_32fc(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h-&gt;hDFTspec, h-&gt;memInit);</div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;    }</div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;    <span class="keywordflow">if</span> (h-&gt;memInit)</div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;        ippFree(h-&gt;memInit);</div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;<span class="preprocessor">#elif defined(__ACCELERATE__)</span></div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;    h-&gt;DFT_fwd = vDSP_DFT_zop_CreateSetup(0, N, vDSP_DFT_FORWARD);</div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;    h-&gt;DFT_bwd = vDSP_DFT_zop_CreateSetup(0, N, vDSP_DFT_INVERSE);</div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;    <span class="comment">/* Note that DFT lengths must satisfy: f * 2.^g, where f is 1, 3, 5, or 15, and g &gt;=3 */</span></div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;    <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(h-&gt;DFT_fwd!=0 &amp;&amp; h-&gt;DFT_bwd!=0, <span class="stringliteral">&quot;Failed to create vDSP DFT&quot;</span>);</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;    h-&gt;VDSP_split_tmp.realp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>((h-&gt;N)*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;    h-&gt;VDSP_split_tmp.imagp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>((h-&gt;N)*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;    h-&gt;VDSP_split.realp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>((h-&gt;N)*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;    h-&gt;VDSP_split.imagp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>((h-&gt;N)*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;<span class="preprocessor">#elif defined(INTEL_MKL_VERSION)</span></div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;    h-&gt;MKL_FFT_Handle = 0;</div>
+<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;    h-&gt;Status = DftiCreateDescriptor( &amp;(h-&gt;MKL_FFT_Handle), DFTI_SINGLE,</div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;                                  DFTI_COMPLEX, 1, h-&gt;N); <span class="comment">/* 1-D, single precision, complex_input_td-&gt;fft-&gt;complex_input_fd-&gt;ifft-&gt;complex_output_td */</span></div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;    h-&gt;Status = DftiSetValue(h-&gt;MKL_FFT_Handle, DFTI_PLACEMENT, DFTI_NOT_INPLACE); <span class="comment">/* Not inplace, i.e. output has its own dedicated memory */</span></div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;    <span class="comment">/* Configuration parameters for backward-FFT */</span></div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;    h-&gt;Status = DftiSetValue(h-&gt;MKL_FFT_Handle, DFTI_BACKWARD_SCALE, h-&gt;Scale);      <span class="comment">/* scalar applied after ifft */</span></div>
+<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;    <span class="comment">/* commit these chosen parameters */</span></div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;    h-&gt;Status = DftiCommitDescriptor(h-&gt;MKL_FFT_Handle);</div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;    <span class="keywordflow">if</span>(h-&gt;useKissFFT_flag){</div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;        h-&gt;kissFFThandle_fwd = <a class="code" href="kiss__fft_8c.html#ab5ad1560b58375ec071da45401911358">kiss_fft_alloc</a>(h-&gt;N, 0, NULL, NULL);</div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;        h-&gt;kissFFThandle_bkw = <a class="code" href="kiss__fft_8c.html#ab5ad1560b58375ec071da45401911358">kiss_fft_alloc</a>(h-&gt;N, 1, NULL, NULL);</div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;    }</div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;}</div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160; </div>
+<div class="line"><a name="l00716"></a><span class="lineno"><a class="line" href="group___utilities.html#gaec25738562c4665910dc8be232ddb416">  716</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#gaec25738562c4665910dc8be232ddb416">saf_fft_destroy</a></div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;(</div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;    <span class="keywordtype">void</span> ** <span class="keyword">const</span> phFFT</div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;)</div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;{</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;    <a class="code" href="structsaf__fft__data.html">saf_fft_data</a> *h = (<a class="code" href="structsaf__fft__data.html">saf_fft_data</a>*)(*phFFT);</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;    </div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;    <span class="keywordflow">if</span>(h!=NULL){</div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;        <span class="keywordflow">if</span>(h-&gt;useIPPfft_FLAG){</div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;            <span class="keywordflow">if</span>(h-&gt;memSpec)</div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;                ippFree(h-&gt;memSpec);</div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;        }</div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;        <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;            <span class="keywordflow">if</span>(h-&gt;hDFTspec)</div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;                ippFree(h-&gt;hDFTspec);</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;        }</div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;        <span class="keywordflow">if</span>(h-&gt;buffer)</div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;            ippFree(h-&gt;buffer);</div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;<span class="preprocessor">#elif defined(__ACCELERATE__)</span></div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;        vDSP_DFT_DestroySetup(h-&gt;DFT_fwd);</div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;        vDSP_DFT_DestroySetup(h-&gt;DFT_bwd);</div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;        free(h-&gt;VDSP_split_tmp.realp);</div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;        free(h-&gt;VDSP_split_tmp.imagp);</div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;        free(h-&gt;VDSP_split.realp);</div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;        free(h-&gt;VDSP_split.imagp);</div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;<span class="preprocessor">#elif defined(INTEL_MKL_VERSION)</span></div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;        h-&gt;Status = DftiFreeDescriptor(&amp;(h-&gt;MKL_FFT_Handle));</div>
+<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;        kiss_fft_free(h-&gt;kissFFThandle_fwd);</div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;        kiss_fft_free(h-&gt;kissFFThandle_bkw);</div>
+<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;        free(h);</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;        h=NULL;</div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;    }</div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;}</div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160; </div>
+<div class="line"><a name="l00753"></a><span class="lineno"><a class="line" href="group___utilities.html#ga7162fa814256c16096f78d67022b72c2">  753</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#ga7162fa814256c16096f78d67022b72c2">saf_fft_forward</a></div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;(</div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;    <span class="keywordtype">void</span> * <span class="keyword">const</span> hFFT,</div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;    float_complex* inputTD,</div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;    float_complex* outputFD</div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;)</div>
+<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;{</div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;    <a class="code" href="structsaf__fft__data.html">saf_fft_data</a> *h = (<a class="code" href="structsaf__fft__data.html">saf_fft_data</a>*)(hFFT);</div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;    </div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;    <span class="keywordflow">if</span>(h-&gt;useIPPfft_FLAG)</div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;        ippsFFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h-&gt;hFFTspec, h-&gt;buffer);</div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;        ippsDFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h-&gt;hDFTspec, h-&gt;buffer);</div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;<span class="preprocessor">#elif defined(__ACCELERATE__)</span></div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;    cblas_scopy(h-&gt;N, &amp;((<span class="keywordtype">float</span>*)(inputTD))[0], 2, h-&gt;VDSP_split_tmp.realp, 1);</div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;    cblas_scopy(h-&gt;N, &amp;((<span class="keywordtype">float</span>*)(inputTD))[1], 2, h-&gt;VDSP_split_tmp.imagp, 1);</div>
+<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;    vDSP_DFT_Execute(h-&gt;DFT_fwd, h-&gt;VDSP_split_tmp.realp, h-&gt;VDSP_split_tmp.imagp, h-&gt;VDSP_split.realp, h-&gt;VDSP_split.imagp);</div>
+<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;    cblas_scopy(h-&gt;N, h-&gt;VDSP_split.realp, 1, &amp;((<span class="keywordtype">float</span>*)(outputFD))[0], 2);</div>
+<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;    cblas_scopy(h-&gt;N, h-&gt;VDSP_split.imagp, 1, &amp;((<span class="keywordtype">float</span>*)(outputFD))[1], 2);</div>
+<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;<span class="preprocessor">#elif defined(INTEL_MKL_VERSION)</span></div>
+<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;    h-&gt;Status = DftiComputeForward(h-&gt;MKL_FFT_Handle, inputTD, outputFD);</div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;    <a class="code" href="kiss__fft_8c.html#ab36e2bb33b74c1a7eabe3271d0916030">kiss_fft</a>(h-&gt;kissFFThandle_fwd, (<a class="code" href="structkiss__fft__cpx.html">kiss_fft_cpx</a>*)inputTD, (<a class="code" href="structkiss__fft__cpx.html">kiss_fft_cpx</a>*)outputFD);</div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;}</div>
+<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160; </div>
+<div class="line"><a name="l00780"></a><span class="lineno"><a class="line" href="group___utilities.html#ga40834d6833d2268419969c881b08d147">  780</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___utilities.html#ga40834d6833d2268419969c881b08d147">saf_fft_backward</a></div>
+<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;(</div>
+<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;    <span class="keywordtype">void</span> * <span class="keyword">const</span> hFFT,</div>
+<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;    float_complex* inputFD,</div>
+<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;    float_complex* outputTD</div>
+<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;)</div>
+<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;{</div>
+<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;    <a class="code" href="structsaf__fft__data.html">saf_fft_data</a> *h = (<a class="code" href="structsaf__fft__data.html">saf_fft_data</a>*)(hFFT);</div>
+<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;    <span class="keywordflow">if</span>(h-&gt;useIPPfft_FLAG)</div>
+<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;        ippsFFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h-&gt;hFFTspec, h-&gt;buffer);</div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;        ippsDFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h-&gt;hDFTspec, h-&gt;buffer);</div>
+<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;<span class="preprocessor">#elif defined(__ACCELERATE__)</span></div>
+<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;    cblas_scopy(h-&gt;N, &amp;((<span class="keywordtype">float</span>*)(inputFD))[0], 2, h-&gt;VDSP_split_tmp.realp, 1);</div>
+<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;    cblas_scopy(h-&gt;N, &amp;((<span class="keywordtype">float</span>*)(inputFD))[1], 2, h-&gt;VDSP_split_tmp.imagp, 1);</div>
+<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;    vDSP_DFT_Execute(h-&gt;DFT_bwd, h-&gt;VDSP_split_tmp.realp, h-&gt;VDSP_split_tmp.imagp, h-&gt;VDSP_split.realp, h-&gt;VDSP_split.imagp);</div>
+<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;    cblas_scopy(h-&gt;N, h-&gt;VDSP_split.realp, 1, &amp;((<span class="keywordtype">float</span>*)(outputTD))[0], 2);</div>
+<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;    cblas_scopy(h-&gt;N, h-&gt;VDSP_split.imagp, 1, &amp;((<span class="keywordtype">float</span>*)(outputTD))[1], 2);</div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;    cblas_sscal(2*(h-&gt;N), 1.0f/(<span class="keywordtype">float</span>)(h-&gt;N), (<span class="keywordtype">float</span>*)outputTD, 1);</div>
+<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;<span class="preprocessor">#elif defined(INTEL_MKL_VERSION)</span></div>
+<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;    h-&gt;Status = DftiComputeBackward(h-&gt;MKL_FFT_Handle, inputFD, outputTD);</div>
+<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;    <a class="code" href="kiss__fft_8c.html#ab36e2bb33b74c1a7eabe3271d0916030">kiss_fft</a>(h-&gt;kissFFThandle_bkw, (<a class="code" href="structkiss__fft__cpx.html">kiss_fft_cpx</a>*)inputFD, (<a class="code" href="structkiss__fft__cpx.html">kiss_fft_cpx</a>*)outputTD);</div>
+<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;    cblas_sscal(2*(h-&gt;N), 1.0f/(<span class="keywordtype">float</span>)(h-&gt;N), (<span class="keywordtype">float</span>*)outputTD, 1);</div>
+<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;}</div>
 <div class="ttc" id="agroup___utilities_html_ga00dfffc88bae83749d1263b68c091f46"><div class="ttname"><a href="group___utilities.html#ga00dfffc88bae83749d1263b68c091f46">saf_print_error</a></div><div class="ttdeci">#define saf_print_error(message)</div><div class="ttdoc">Macro to print a error message along with the filename and line number.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__misc_8h_source.html#l00096">saf_utility_misc.h:96</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga0881ba2caf293c6452a207e8714e53ee"><div class="ttname"><a href="group___utilities.html#ga0881ba2caf293c6452a207e8714e53ee">fftfilt</a></div><div class="ttdeci">void fftfilt(float *x, float *h, int x_len, int h_len, int nCH, float *y)</div><div class="ttdoc">FFT-based convolution for FIR filters.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00186">saf_utility_fft.c:187</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga0eb4202c164d11f304e4474080afc7e7"><div class="ttname"><a href="group___utilities.html#ga0eb4202c164d11f304e4474080afc7e7">saf_stft_backward</a></div><div class="ttdeci">void saf_stft_backward(void *const hSTFT, float_complex ***dataFD, int framesize, float **dataTD)</div><div class="ttdoc">Performs the backward-STFT operation for the current frame.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00396">saf_utility_fft.c:397</a></div></div>
@@ -869,14 +867,14 @@ $(document).ready(function(){initNavTree('saf__utility__fft_8c_source.html','');
 <div class="ttc" id="agroup___utilities_html_ga19b13278c166abedb99d7b94267d70ce"><div class="ttname"><a href="group___utilities.html#ga19b13278c166abedb99d7b94267d70ce">saf_stft_forward</a></div><div class="ttdeci">void saf_stft_forward(void *const hSTFT, float **dataTD, int framesize, float_complex ***dataFD)</div><div class="ttdoc">Performs the forward-STFT operation for the current frame.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00324">saf_utility_fft.c:325</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga38f869495477f67567e9b662aad2bf8b"><div class="ttname"><a href="group___utilities.html#ga38f869495477f67567e9b662aad2bf8b">fftconv</a></div><div class="ttdeci">void fftconv(float *x, float *h, int x_len, int h_len, int nCH, float *y)</div><div class="ttdoc">FFT-based convolution of signal 'x' with filter 'h'.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00133">saf_utility_fft.c:134</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga3b7b87de5c1612d3318f014fe787fa7d"><div class="ttname"><a href="group___utilities.html#ga3b7b87de5c1612d3318f014fe787fa7d">SAF_STFT_FDDATA_FORMAT</a></div><div class="ttdeci">SAF_STFT_FDDATA_FORMAT</div><div class="ttdoc">Options for how the frequency domain data is permuted when using saf_stft.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8h_source.html#l00053">saf_utility_fft.h:53</a></div></div>
-<div class="ttc" id="agroup___utilities_html_ga40834d6833d2268419969c881b08d147"><div class="ttname"><a href="group___utilities.html#ga40834d6833d2268419969c881b08d147">saf_fft_backward</a></div><div class="ttdeci">void saf_fft_backward(void *const hFFT, float_complex *inputFD, float_complex *outputTD)</div><div class="ttdoc">Performs the backward-FFT operation; use for complex to complex transformations.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00781">saf_utility_fft.c:782</a></div></div>
-<div class="ttc" id="agroup___utilities_html_ga4f859fb116fa81157cc86c83360d8db1"><div class="ttname"><a href="group___utilities.html#ga4f859fb116fa81157cc86c83360d8db1">saf_fft_create</a></div><div class="ttdeci">void saf_fft_create(void **const phFFT, int N)</div><div class="ttdoc">Creates an instance of saf_fft; complex&lt;-&gt;complex FFT.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00657">saf_utility_fft.c:658</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga40834d6833d2268419969c881b08d147"><div class="ttname"><a href="group___utilities.html#ga40834d6833d2268419969c881b08d147">saf_fft_backward</a></div><div class="ttdeci">void saf_fft_backward(void *const hFFT, float_complex *inputFD, float_complex *outputTD)</div><div class="ttdoc">Performs the backward-FFT operation; use for complex to complex transformations.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00780">saf_utility_fft.c:781</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga4f859fb116fa81157cc86c83360d8db1"><div class="ttname"><a href="group___utilities.html#ga4f859fb116fa81157cc86c83360d8db1">saf_fft_create</a></div><div class="ttdeci">void saf_fft_create(void **const phFFT, int N)</div><div class="ttdoc">Creates an instance of saf_fft; complex&lt;-&gt;complex FFT.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00656">saf_utility_fft.c:657</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga516c920b2e335cb295f8293a7f90c868"><div class="ttname"><a href="group___utilities.html#ga516c920b2e335cb295f8293a7f90c868">saf_stft_channelChange</a></div><div class="ttdeci">void saf_stft_channelChange(void *const hSTFT, int new_nCHin, int new_nCHout)</div><div class="ttdoc">Changes the number of input/output channels.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00448">saf_utility_fft.c:449</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga53abea091b23be8c8d441fc9d2280b19"><div class="ttname"><a href="group___utilities.html#ga53abea091b23be8c8d441fc9d2280b19">hilbert</a></div><div class="ttdeci">void hilbert(float_complex *x, int x_len, float_complex *y)</div><div class="ttdoc">Computes the discrete-time analytic signal via the Hilbert transform [1].</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00206">saf_utility_fft.c:207</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga5cedb44e24c42582413629cd17c16ed1"><div class="ttname"><a href="group___utilities.html#ga5cedb44e24c42582413629cd17c16ed1">utility_cvvmul</a></div><div class="ttdeci">void utility_cvvmul(float_complex *a, const float_complex *b, const int len, float_complex *c)</div><div class="ttdoc">Single-precision, complex, element-wise vector-vector multiplication i.e.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__veclib_8c_source.html#l00597">saf_utility_veclib.c:598</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga66b301071b98e49191c801f07af83346"><div class="ttname"><a href="group___utilities.html#ga66b301071b98e49191c801f07af83346">saf_rfft_create</a></div><div class="ttdeci">void saf_rfft_create(void **const phFFT, int N)</div><div class="ttdoc">Creates an instance of saf_rfft; real&lt;-&gt;half-complex (conjugate-symmetric) FFT.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00489">saf_utility_fft.c:490</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga6766a85de86080960730929366b69c05"><div class="ttname"><a href="group___utilities.html#ga6766a85de86080960730929366b69c05">getWindowingFunction</a></div><div class="ttdeci">void getWindowingFunction(WINDOWING_FUNCTION_TYPES type, int winlength, float *win)</div><div class="ttdoc">Computes the weights of a specific windowing function.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__filters_8c_source.html#l00199">saf_utility_filters.c:200</a></div></div>
-<div class="ttc" id="agroup___utilities_html_ga7162fa814256c16096f78d67022b72c2"><div class="ttname"><a href="group___utilities.html#ga7162fa814256c16096f78d67022b72c2">saf_fft_forward</a></div><div class="ttdeci">void saf_fft_forward(void *const hFFT, float_complex *inputTD, float_complex *outputFD)</div><div class="ttdoc">Performs the forward-FFT operation; use for complex to complex transformations.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00754">saf_utility_fft.c:755</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga7162fa814256c16096f78d67022b72c2"><div class="ttname"><a href="group___utilities.html#ga7162fa814256c16096f78d67022b72c2">saf_fft_forward</a></div><div class="ttdeci">void saf_fft_forward(void *const hFFT, float_complex *inputTD, float_complex *outputFD)</div><div class="ttdoc">Performs the forward-FFT operation; use for complex to complex transformations.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00753">saf_utility_fft.c:754</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga90fda008ac4a802d1c3f72450af14814"><div class="ttname"><a href="group___utilities.html#ga90fda008ac4a802d1c3f72450af14814">saf_rfft_forward</a></div><div class="ttdeci">void saf_rfft_forward(void *const hFFT, float *inputTD, float_complex *outputFD)</div><div class="ttdoc">Performs the forward-FFT operation; use for real to complex (conjugate symmetric) transformations.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00586">saf_utility_fft.c:587</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga9a0085bad83e7f4c66d2dd8c05e081b4"><div class="ttname"><a href="group___utilities.html#ga9a0085bad83e7f4c66d2dd8c05e081b4">getUniformFreqVector</a></div><div class="ttdeci">void getUniformFreqVector(int fftSize, float fs, float *freqVector)</div><div class="ttdoc">Calculates the frequencies (in Hz) of uniformly spaced bins, for a given FFT size and sampling rate.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00121">saf_utility_fft.c:122</a></div></div>
 <div class="ttc" id="agroup___utilities_html_gaa2cba44909322a8b0d3a3f94c7b1e062"><div class="ttname"><a href="group___utilities.html#gaa2cba44909322a8b0d3a3f94c7b1e062">saf_rfft_backward</a></div><div class="ttdeci">void saf_rfft_backward(void *const hFFT, float_complex *inputFD, float *outputTD)</div><div class="ttdoc">Performs the backward-FFT operation; use for complex (conjugate symmetric) to real transformations.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00621">saf_utility_fft.c:622</a></div></div>
@@ -886,7 +884,7 @@ $(document).ready(function(){initNavTree('saf__utility__fft_8c_source.html','');
 <div class="ttc" id="agroup___utilities_html_gabb05654602cfc66de387630c21351635"><div class="ttname"><a href="group___utilities.html#gabb05654602cfc66de387630c21351635">ISEVEN</a></div><div class="ttdeci">#define ISEVEN(n)</div><div class="ttdoc">Returns 1 if &quot;n&quot; is even valued, and 0 if it is not.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00090">saf_utilities.h:90</a></div></div>
 <div class="ttc" id="agroup___utilities_html_gabe4d225cb0b7c5d36742236d1bbcb043"><div class="ttname"><a href="group___utilities.html#gabe4d225cb0b7c5d36742236d1bbcb043">nextpow2</a></div><div class="ttdeci">int nextpow2(int numsamp)</div><div class="ttdoc">A simple function which returns the next power of 2.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__misc_8c_source.html#l00074">saf_utility_misc.c:75</a></div></div>
 <div class="ttc" id="agroup___utilities_html_gaea697cb44ad7b76878545521ecdc8bbc"><div class="ttname"><a href="group___utilities.html#gaea697cb44ad7b76878545521ecdc8bbc">saf_stft_flushBuffers</a></div><div class="ttdeci">void saf_stft_flushBuffers(void *const hSTFT)</div><div class="ttdoc">Flushes the internal buffers with zeros.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00437">saf_utility_fft.c:438</a></div></div>
-<div class="ttc" id="agroup___utilities_html_gaec25738562c4665910dc8be232ddb416"><div class="ttname"><a href="group___utilities.html#gaec25738562c4665910dc8be232ddb416">saf_fft_destroy</a></div><div class="ttdeci">void saf_fft_destroy(void **const phFFT)</div><div class="ttdoc">Destroys an instance of saf_fft.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00717">saf_utility_fft.c:718</a></div></div>
+<div class="ttc" id="agroup___utilities_html_gaec25738562c4665910dc8be232ddb416"><div class="ttname"><a href="group___utilities.html#gaec25738562c4665910dc8be232ddb416">saf_fft_destroy</a></div><div class="ttdeci">void saf_fft_destroy(void **const phFFT)</div><div class="ttdoc">Destroys an instance of saf_fft.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00716">saf_utility_fft.c:717</a></div></div>
 <div class="ttc" id="agroup___utilities_html_gaef0461d3c77d84c5108198595ff14064"><div class="ttname"><a href="group___utilities.html#gaef0461d3c77d84c5108198595ff14064">saf_stft_create</a></div><div class="ttdeci">void saf_stft_create(void **const phSTFT, int winsize, int hopsize, int nCHin, int nCHout, SAF_STFT_FDDATA_FORMAT FDformat)</div><div class="ttdoc">Creates an instance of saf_stft.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00257">saf_utility_fft.c:258</a></div></div>
 <div class="ttc" id="agroup___utilities_html_gaffb907cad281bbfae4258f615431d8e1"><div class="ttname"><a href="group___utilities.html#gaffb907cad281bbfae4258f615431d8e1">utility_svvmul</a></div><div class="ttdeci">void utility_svvmul(float *a, const float *b, const int len, float *c)</div><div class="ttdoc">Single-precision, element-wise vector-vector multiplication i.e.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__veclib_8c_source.html#l00560">saf_utility_veclib.c:561</a></div></div>
 <div class="ttc" id="agroup___utilities_html_gga11cf92ddf3389349c5dd4d7ccab6c619a8880d391dc20bb41b913c2158c964bbf"><div class="ttname"><a href="group___utilities.html#gga11cf92ddf3389349c5dd4d7ccab6c619a8880d391dc20bb41b913c2158c964bbf">WINDOWING_FUNCTION_HANN</a></div><div class="ttdeci">@ WINDOWING_FUNCTION_HANN</div><div class="ttdoc">Hann.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__filters_8h_source.html#l00090">saf_utility_filters.h:90</a></div></div>
@@ -914,7 +912,7 @@ $(document).ready(function(){initNavTree('saf__utility__fft_8c_source.html','');
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__fft_8c.html">saf_utility_fft.c</a></li>
-    <li class="footer">Generated on Mon May 24 2021 07:15:41 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Mon May 24 2021 07:22:55 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
