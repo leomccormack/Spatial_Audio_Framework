@@ -706,10 +706,8 @@ void saf_fft_create
     /* commit these chosen parameters */
     h->Status = DftiCommitDescriptor(h->MKL_FFT_Handle);
 #else
-    if(h->useKissFFT_flag){
-        h->kissFFThandle_fwd = kiss_fft_alloc(h->N, 0, NULL, NULL);
-        h->kissFFThandle_bkw = kiss_fft_alloc(h->N, 1, NULL, NULL);
-    }
+    h->kissFFThandle_fwd = kiss_fft_alloc(h->N, 0, NULL, NULL);
+    h->kissFFThandle_bkw = kiss_fft_alloc(h->N, 1, NULL, NULL);
 #endif
 }
 
