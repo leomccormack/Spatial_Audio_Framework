@@ -104,20 +104,25 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     int i;
     float* hrtf_vbap_gtable;
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
+#endif
     
     strcpy(pData->progressBarText,"Loading HRIRs");
     pData->progressBar0_1 = 0.2f;
     
     /* load sofa file or load default hrir data */
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
     if(!pData->useDefaultHRIRsFLAG && pData->sofa_filepath!=NULL){
         /* Load SOFA file */
         error = saf_sofa_open(&sofa, pData->sofa_filepath);
 
         /* Load defaults instead */
-        if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS)
+        if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS){
             pData->useDefaultHRIRsFLAG = 1;
+            saf_print_warning("Unable to load the specified SOFA file, or it contained something other than 2 channels. Using default HRIR data instead.");
+        }
         else{
             /* Copy SOFA data */
             pData->hrir_fs = (int)sofa.DataSamplingRate;
@@ -133,6 +138,9 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
         /* Clean-up */
         saf_sofa_close(&sofa);
     }
+#else
+    pData->useDefaultHRIRsFLAG = 1; /* Can only load the default HRIR data */
+#endif
     if(pData->useDefaultHRIRsFLAG){
         /* Copy default HRIR data */
         pData->hrir_fs = __default_hrir_fs;

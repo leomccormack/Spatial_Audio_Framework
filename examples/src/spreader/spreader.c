@@ -187,7 +187,10 @@ void spreader_initCodec
     spreader_data *pData = (spreader_data*)(hSpr);
     int q, band, ng, nSources, src;
     float_complex scaleC;
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
+    saf_sofa_container sofa;
     SAF_SOFA_ERROR_CODES error;
+#endif
     SPREADER_PROC_MODES procMode;
     float_complex H_tmp[MAX_NUM_CHANNELS];
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
@@ -209,6 +212,9 @@ void spreader_initCodec
     pData->progressBar0_1 = 0.0f;
 
     /* Load measurements (e.g. HRIRs, Microphone array IRs etc.) */
+#ifndef SAF_ENABLE_SOFA_READER_MODULE
+    pData->useDefaultHRIRsFLAG = 1;
+#endif
     if(pData->useDefaultHRIRsFLAG){
         /* Load default HRIR data */
         pData->Q = NUM_EARS;
@@ -220,13 +226,14 @@ void spreader_initCodec
         pData->grid_dirs_deg = realloc1d(pData->grid_dirs_deg, pData->nGrid * 2 * sizeof(float));
         memcpy(pData->grid_dirs_deg, (float*)__default_hrir_dirs_deg, pData->nGrid * 2 * sizeof(float));
     }
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
     else{
         /* Use sofa loader */
-        saf_sofa_container sofa;
         error = saf_sofa_open(&sofa, pData->sofa_filepath);
         if(error!=SAF_SOFA_OK){
             /* if failed, then load default data instead */
             pData->useDefaultHRIRsFLAG = 1;
+            saf_print_warning("Unable to load the specified SOFA file. Using default HRIR data instead");
             spreader_initCodec(hSpr);
         }
         pData->h_fs = sofa.DataSamplingRate;
@@ -239,6 +246,7 @@ void spreader_initCodec
         cblas_scopy(pData->nGrid, &sofa.SourcePosition[1], 3, &pData->grid_dirs_deg[1], 2); /* elev */
         saf_sofa_close(&sofa);
     }
+#endif
 
     /* Convert from the 0..360 convention, to -180..180, and pre-compute unit Cartesian vectors */
     convert_0_360To_m180_180(pData->grid_dirs_deg, pData->nGrid);

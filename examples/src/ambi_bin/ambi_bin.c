@@ -173,7 +173,6 @@ void ambi_bin_initCodec
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     ambi_bin_codecPars* pars = pData->pars;
     int i, j, nSH, order, band;
-  
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
@@ -214,8 +213,10 @@ void ambi_bin_initCodec
             error = saf_sofa_open(&sofa, pars->sofa_filepath);
 
             /* Load defaults instead */
-            if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS)
+            if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS){
                 pData->useDefaultHRIRsFLAG = 1;
+                saf_print_warning("Unable to load the specified SOFA file, or it contained something other than 2 channels. Using default HRIR data instead.");
+            }
             else{
                 /* Copy SOFA data */
                 pars->hrir_fs = (int)sofa.DataSamplingRate;
@@ -231,6 +232,8 @@ void ambi_bin_initCodec
             /* Clean-up */
             saf_sofa_close(&sofa);
         }
+#else
+        pData->useDefaultHRIRsFLAG = 1; /* Can only load the default HRIR data */
 #endif
         if(pData->useDefaultHRIRsFLAG){
             /* Copy default HRIR data */

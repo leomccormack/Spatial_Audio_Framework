@@ -188,8 +188,10 @@ void ambi_dec_initCodec
     int i, ch, d, j, n, ng, nGrid_dirs, masterOrder, nSH_order, max_nSH, nLoudspeakers;
     float* grid_dirs_deg, *Y, *M_dec_tmp, *g, *a, *e, *a_n, *hrtf_vbap_gtable;;
     float a_avg[MAX_SH_ORDER], e_avg[MAX_SH_ORDER], azi_incl[2], sum_elev;
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
+#endif
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
         return; /* re-init not required, or already happening */
@@ -350,13 +352,16 @@ void ambi_dec_initCodec
         pData->progressBar0_1 = 0.4f;
         
         /* load sofa file or load default hrir data */
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
         if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
             /* Load SOFA file */ 
             error = saf_sofa_open(&sofa, pars->sofa_filepath);
 
             /* Load defaults instead */
-            if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS)
+            if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS){
                 pData->useDefaultHRIRsFLAG = 1;
+                saf_print_warning("Unable to load the specified SOFA file, or it contained something other than 2 channels. Using default HRIR data instead.");
+            }
             else{
                 /* Copy SOFA data */
                 pars->hrir_fs = (int)sofa.DataSamplingRate;
@@ -372,6 +377,9 @@ void ambi_dec_initCodec
             /* Clean-up */
             saf_sofa_close(&sofa);
         }
+#else
+        pData->useDefaultHRIRsFLAG = 1; /* Can only load the default HRIR data */
+#endif
         if(pData->useDefaultHRIRsFLAG){
             /* Copy default HRIR data */
             pars->hrir_fs = __default_hrir_fs;

@@ -22,7 +22,7 @@ PUBLIC
 target_link_libraries(${PROJECT_NAME} PRIVATE saf)
 
 # SAF examples tests
-if(SAF_ENABLE_SOFA_READER_MODULE AND SAF_BUILD_EXAMPLES)
+if(SAF_BUILD_EXAMPLES)
     target_compile_definitions(${PROJECT_NAME} PRIVATE SAF_ENABLE_EXAMPLES_TESTS=1) 
     target_compile_definitions(${PROJECT_NAME} PRIVATE SAF_DISABLE_PRINT_VERSION=1) 
     target_link_libraries(${PROJECT_NAME} 
