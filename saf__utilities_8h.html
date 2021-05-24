@@ -98,7 +98,6 @@ $(document).ready(function(){initNavTree('saf__utilities_8h.html',''); initResiz
 <code>#include &lt;float.h&gt;</code><br />
 <code>#include &lt;assert.h&gt;</code><br />
 <code>#include &lt;limits.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="saf__utility__error_8h_source.html">saf_utility_error.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="md__malloc_8h_source.html">../../resources/md_malloc/md_malloc.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="kiss__fftr_8h_source.html">../../resources/kissFFT/kiss_fftr.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="kiss__fft_8h_source.html">../../resources/kissFFT/kiss_fft.h</a>&quot;</code><br />
@@ -123,22 +122,26 @@ $(document).ready(function(){initNavTree('saf__utilities_8h.html',''); initResiz
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:gad9e446e2d96097a798a1d26dfde1c3b8"><td class="memItemLeft" align="right" valign="top">
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gad9e446e2d96097a798a1d26dfde1c3b8">SAF_PRINT_VERSION_LICENSE_STRING</a>&#160;&#160;&#160;printf(<a class="el" href="saf_8h.html#a7eab29efd1939350256ae87c53bf1527">SAF_VERSION_LICENSE_STRING</a>)</td></tr>
+<tr class="memdesc:gad9e446e2d96097a798a1d26dfde1c3b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints the Spatial_Audio_Framework Version and License as a string. <br /></td></tr>
+<tr class="separator:gad9e446e2d96097a798a1d26dfde1c3b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga39b45c9e65aebd2a8ef72c3081baea84"><td class="memItemLeft" align="right" valign="top">
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>&#160;&#160;&#160;2</td></tr>
 <tr class="memdesc:ga39b45c9e65aebd2a8ef72c3081baea84"><td class="mdescLeft">&#160;</td><td class="mdescRight">2 (true for most humans) <br /></td></tr>
 <tr class="separator:ga39b45c9e65aebd2a8ef72c3081baea84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3acffbd305ee72dcd4593c0d8af64a4f"><td class="memItemLeft" align="right" valign="top">
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga3acffbd305ee72dcd4593c0d8af64a4f">MIN</a>(a,  b)&#160;&#160;&#160;(( (a) &lt; (b) ) ? (a) : (b))</td></tr>
-<tr class="memdesc:ga3acffbd305ee72dcd4593c0d8af64a4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the minimum of the two values. <br /></td></tr>
-<tr class="separator:ga3acffbd305ee72dcd4593c0d8af64a4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gafa99ec4acc4ecb2dc3c2d05da15d0e3f"><td class="memItemLeft" align="right" valign="top">
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gafa99ec4acc4ecb2dc3c2d05da15d0e3f">MAX</a>(a,  b)&#160;&#160;&#160;(( (a) &gt; (b) ) ? (a) : (b))</td></tr>
-<tr class="memdesc:gafa99ec4acc4ecb2dc3c2d05da15d0e3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum of the two values. <br /></td></tr>
-<tr class="separator:gafa99ec4acc4ecb2dc3c2d05da15d0e3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4a9e2bcf9a01a99a3fd077f5db6e99a2"><td class="memItemLeft" align="right" valign="top">
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga4a9e2bcf9a01a99a3fd077f5db6e99a2">CLAMP</a>(a,  min,  max)&#160;&#160;&#160;(<a class="el" href="group___utilities.html#gafa99ec4acc4ecb2dc3c2d05da15d0e3f">MAX</a>(min, <a class="el" href="group___utilities.html#ga3acffbd305ee72dcd4593c0d8af64a4f">MIN</a>(max, a)))</td></tr>
-<tr class="memdesc:ga4a9e2bcf9a01a99a3fd077f5db6e99a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensures value "a" is clamped between the "min" and "max" values. <br /></td></tr>
-<tr class="separator:ga4a9e2bcf9a01a99a3fd077f5db6e99a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8f9630332cc11a6cb17128033f07ffdf"><td class="memItemLeft" align="right" valign="top">
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga8f9630332cc11a6cb17128033f07ffdf">SAF_MIN</a>(a,  b)&#160;&#160;&#160;(( (a) &lt; (b) ) ? (a) : (b))</td></tr>
+<tr class="memdesc:ga8f9630332cc11a6cb17128033f07ffdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the minimum of the two values. <br /></td></tr>
+<tr class="separator:ga8f9630332cc11a6cb17128033f07ffdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga30c447b96fd750ea49c28b918cf0e03d"><td class="memItemLeft" align="right" valign="top">
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga30c447b96fd750ea49c28b918cf0e03d">SAF_MAX</a>(a,  b)&#160;&#160;&#160;(( (a) &gt; (b) ) ? (a) : (b))</td></tr>
+<tr class="memdesc:ga30c447b96fd750ea49c28b918cf0e03d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum of the two values. <br /></td></tr>
+<tr class="separator:ga30c447b96fd750ea49c28b918cf0e03d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0f5f412901ab1f82745d6fb2a23ec4cc"><td class="memItemLeft" align="right" valign="top">
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga0f5f412901ab1f82745d6fb2a23ec4cc">SAF_CLAMP</a>(a,  min,  max)&#160;&#160;&#160;(<a class="el" href="group___utilities.html#ga30c447b96fd750ea49c28b918cf0e03d">SAF_MAX</a>(min, <a class="el" href="group___utilities.html#ga8f9630332cc11a6cb17128033f07ffdf">SAF_MIN</a>(max, a)))</td></tr>
+<tr class="memdesc:ga0f5f412901ab1f82745d6fb2a23ec4cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensures value "a" is clamped between the "min" and "max" values. <br /></td></tr>
+<tr class="separator:ga0f5f412901ab1f82745d6fb2a23ec4cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae71449b1cc6e6250b91f539153a7a0d3"><td class="memItemLeft" align="right" valign="top">
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gae71449b1cc6e6250b91f539153a7a0d3">M_PI</a>&#160;&#160;&#160;( 3.14159265358979323846264338327950288f )</td></tr>
 <tr class="memdesc:gae71449b1cc6e6250b91f539153a7a0d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">pi constant (single precision) <br /></td></tr>
@@ -188,6 +191,14 @@ Macros</h2></td></tr>
 <tr class="memdesc:gaf93ab8e29004f71549e1cd50278c5473"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts radians to degrees <br  />
  <br /></td></tr>
 <tr class="separator:gaf93ab8e29004f71549e1cd50278c5473"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf0cbde7c74c0dd6349ae1adc978b9424"><td class="memItemLeft" align="right" valign="top">
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaf0cbde7c74c0dd6349ae1adc978b9424">MKSTRING_</a>(s)&#160;&#160;&#160;#s</td></tr>
+<tr class="memdesc:gaf0cbde7c74c0dd6349ae1adc978b9424"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used to make strings inside of Macros. <br /></td></tr>
+<tr class="separator:gaf0cbde7c74c0dd6349ae1adc978b9424"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaba0fb640ea3653b1ece6501d3b0cd7f0"><td class="memItemLeft" align="right" valign="top">
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaba0fb640ea3653b1ece6501d3b0cd7f0">MKSTRING</a>(s)&#160;&#160;&#160;<a class="el" href="group___utilities.html#gaf0cbde7c74c0dd6349ae1adc978b9424">MKSTRING_</a>(s)</td></tr>
+<tr class="memdesc:gaba0fb640ea3653b1ece6501d3b0cd7f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used to make strings inside of Macros. <br /></td></tr>
+<tr class="separator:gaba0fb640ea3653b1ece6501d3b0cd7f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Main header for the utilities module (<a class="el" href="saf_8h.html#aa80205e1be538a932e2ab08b3a4fe6d9" title="SAF Module: Utilities.">SAF_UTILITIES_MODULE</a>) </p>
@@ -202,7 +213,7 @@ Macros</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utilities_8h.html">saf_utilities.h</a></li>
-    <li class="footer">Generated on Sun May 23 2021 11:16:05 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Mon May 24 2021 07:15:42 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

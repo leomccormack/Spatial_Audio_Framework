@@ -1,7 +1,7 @@
 var saf__utility__misc_8c =
 [
     [ "anyLessThanf", "group___utilities.html#gae6a18584c72d6f66b84ac4c4b900a001", null ],
-    [ "combinationUtil", "saf__utility__misc_8c.html#af48dca30519c6e20da28018055819ef8", null ],
+    [ "combinationUtil", "saf__utility__misc_8c.html#ae69b2cf84d03e3ab54a3b047bd8979eb", null ],
     [ "convd", "group___utilities.html#gab6cd4596eec8746244d1566eb2adad85", null ],
     [ "convert_0_360To_m180_180", "group___utilities.html#ga37c35ff6667014c738a9d4713b9728a5", null ],
     [ "convz", "group___utilities.html#gaec989e56048e1f146084901654e99eaf", null ],
@@ -20,6 +20,8 @@ var saf__utility__misc_8c =
     [ "rand_cmplx_m1_1", "group___utilities.html#ga71609f8a78ff8b2ea98e81f44bc79fd5", null ],
     [ "rand_m1_1", "group___utilities.html#gaed4eef5b5f7a6f7a15eeb08c45127738", null ],
     [ "randperm", "group___utilities.html#ga67b59e17207ee35a30f8b252db525559", null ],
+    [ "saf_print_error_FL", "group___utilities.html#ga81c37657a9353a6cbfea5978077f1d75", null ],
+    [ "saf_print_warning_FL", "group___utilities.html#ga7047547b9159615661414b65f3f34d08", null ],
     [ "sumf", "group___utilities.html#gaa2dbc701d05112cccb1a2d7fdc998598", null ],
     [ "unique_i", "group___utilities.html#ga426cf3884b949ed5d8debc6a941b814a", null ],
     [ "factorials_15", "saf__utility__misc_8c.html#ae987dfa48ca149a577ffb2ba6ac5e662", null ]

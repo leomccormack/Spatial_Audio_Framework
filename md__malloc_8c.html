@@ -90,7 +90,7 @@ $(document).ready(function(){initNavTree('md__malloc_8c.html',''); initResizable
 </div><!--header-->
 <div class="contents">
 
-<p>Memory allocation functions for contiguous multi-dimensional arrays.  
+<p>Contiguous memory allocation functions for multi-dimensional arrays.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;math.h&gt;</code><br />
@@ -159,9 +159,41 @@ void ***&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 void ****&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="md__malloc_8c.html#a3a0b751f694dfdadb72faa461e2cf098">malloc4d</a> (size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t data_size)</td></tr>
 <tr class="memdesc:a3a0b751f694dfdadb72faa461e2cf098"><td class="mdescLeft">&#160;</td><td class="mdescRight">4-D malloc (contiguously allocated, so use free() as usual to deallocate) <br /></td></tr>
 <tr class="separator:a3a0b751f694dfdadb72faa461e2cf098"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae39a46e28e6a2122a6fc77f9ef660058"><td class="memItemLeft" align="right" valign="top"><a id="ae39a46e28e6a2122a6fc77f9ef660058"></a>
+void ****&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="md__malloc_8c.html#ae39a46e28e6a2122a6fc77f9ef660058">calloc4d</a> (size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t data_size)</td></tr>
+<tr class="memdesc:ae39a46e28e6a2122a6fc77f9ef660058"><td class="mdescLeft">&#160;</td><td class="mdescRight">4-D calloc (contiguously allocated, so use free() as usual to deallocate) <br /></td></tr>
+<tr class="separator:ae39a46e28e6a2122a6fc77f9ef660058"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25d2b60e63de4b1d57245c7e6aa7728b"><td class="memItemLeft" align="right" valign="top"><a id="a25d2b60e63de4b1d57245c7e6aa7728b"></a>
+void ****&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="md__malloc_8c.html#a25d2b60e63de4b1d57245c7e6aa7728b">realloc4d</a> (void ****ptr, size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t data_size)</td></tr>
+<tr class="memdesc:a25d2b60e63de4b1d57245c7e6aa7728b"><td class="mdescLeft">&#160;</td><td class="mdescRight">4-D realloc which does NOT retain previous data order <br /></td></tr>
+<tr class="separator:a25d2b60e63de4b1d57245c7e6aa7728b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafdcf8a94e2d40a4b778328e1811e26a"><td class="memItemLeft" align="right" valign="top"><a id="aafdcf8a94e2d40a4b778328e1811e26a"></a>
+void *****&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="md__malloc_8c.html#aafdcf8a94e2d40a4b778328e1811e26a">malloc5d</a> (size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dim5, size_t data_size)</td></tr>
+<tr class="memdesc:aafdcf8a94e2d40a4b778328e1811e26a"><td class="mdescLeft">&#160;</td><td class="mdescRight">5-D malloc (contiguously allocated, so use free() as usual to deallocate) <br /></td></tr>
+<tr class="separator:aafdcf8a94e2d40a4b778328e1811e26a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c7deccfa013943852b88f37e99cab96"><td class="memItemLeft" align="right" valign="top"><a id="a8c7deccfa013943852b88f37e99cab96"></a>
+void *****&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="md__malloc_8c.html#a8c7deccfa013943852b88f37e99cab96">calloc5d</a> (size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dim5, size_t data_size)</td></tr>
+<tr class="memdesc:a8c7deccfa013943852b88f37e99cab96"><td class="mdescLeft">&#160;</td><td class="mdescRight">5-D calloc (contiguously allocated, so use free() as usual to deallocate) <br /></td></tr>
+<tr class="separator:a8c7deccfa013943852b88f37e99cab96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bc626ed92c4147e0961289a0c2ffd21"><td class="memItemLeft" align="right" valign="top"><a id="a2bc626ed92c4147e0961289a0c2ffd21"></a>
+void *****&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="md__malloc_8c.html#a2bc626ed92c4147e0961289a0c2ffd21">realloc5d</a> (void *****ptr, size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dim5, size_t data_size)</td></tr>
+<tr class="memdesc:a2bc626ed92c4147e0961289a0c2ffd21"><td class="mdescLeft">&#160;</td><td class="mdescRight">5-D realloc which does NOT retain previous data order <br /></td></tr>
+<tr class="separator:a2bc626ed92c4147e0961289a0c2ffd21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd41bbf1bbc90f543913fa3ec38155e7"><td class="memItemLeft" align="right" valign="top"><a id="afd41bbf1bbc90f543913fa3ec38155e7"></a>
+void ******&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="md__malloc_8c.html#afd41bbf1bbc90f543913fa3ec38155e7">malloc6d</a> (size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dim5, size_t dim6, size_t data_size)</td></tr>
+<tr class="memdesc:afd41bbf1bbc90f543913fa3ec38155e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">6-D malloc (contiguously allocated, so use free() as usual to deallocate) <br /></td></tr>
+<tr class="separator:afd41bbf1bbc90f543913fa3ec38155e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5863f1f218967cfb1016aab2f884eabe"><td class="memItemLeft" align="right" valign="top"><a id="a5863f1f218967cfb1016aab2f884eabe"></a>
+void ******&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="md__malloc_8c.html#a5863f1f218967cfb1016aab2f884eabe">calloc6d</a> (size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dim5, size_t dim6, size_t data_size)</td></tr>
+<tr class="memdesc:a5863f1f218967cfb1016aab2f884eabe"><td class="mdescLeft">&#160;</td><td class="mdescRight">6-D malloc (contiguously allocated, so use free() as usual to deallocate) <br /></td></tr>
+<tr class="separator:a5863f1f218967cfb1016aab2f884eabe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdd02548baa6a29e927d8a918ee38ee0"><td class="memItemLeft" align="right" valign="top"><a id="acdd02548baa6a29e927d8a918ee38ee0"></a>
+void ******&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="md__malloc_8c.html#acdd02548baa6a29e927d8a918ee38ee0">realloc6d</a> (void ******ptr, size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dim5, size_t dim6, size_t data_size)</td></tr>
+<tr class="memdesc:acdd02548baa6a29e927d8a918ee38ee0"><td class="mdescLeft">&#160;</td><td class="mdescRight">6-D realloc which does NOT retain previous data order <br /></td></tr>
+<tr class="separator:acdd02548baa6a29e927d8a918ee38ee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Memory allocation functions for contiguous multi-dimensional arrays. </p>
+<div class="textblock"><p>Contiguous memory allocation functions for multi-dimensional arrays. </p>
 <p>Adapted from: <a href="https://github.com/leomccormack/md_malloc">https://github.com/leomccormack/md_malloc</a></p>
 <p>An example of allocating, indexing and freeing a 3-D "array": </p><div class="fragment"><div class="line"><span class="keywordtype">float</span>*** example3D = (<span class="keywordtype">float</span>***)<a class="code" href="md__malloc_8c.html#a572497274ef44be377c4032d3c0672f9">malloc3d</a>(10, 20, 5, <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>);</div>
 <div class="line"><span class="comment">// Due to the contiguous nature of the allocation, this is possible:</span></div>
@@ -170,8 +202,8 @@ void ****&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <div class="line">example3D[3][19][2] = 22.0f;</div>
 <div class="line"><span class="comment">// To free, simply call:</span></div>
 <div class="line">free(example3D);</div>
-<div class="ttc" id="amd__malloc_8c_html_a572497274ef44be377c4032d3c0672f9"><div class="ttname"><a href="md__malloc_8c.html#a572497274ef44be377c4032d3c0672f9">malloc3d</a></div><div class="ttdeci">void *** malloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size)</div><div class="ttdoc">3-D malloc (contiguously allocated, so use free() as usual to deallocate)</div><div class="ttdef"><b>Definition:</b> <a href="md__malloc_8c_source.html#l00174">md_malloc.c:174</a></div></div>
-<div class="ttc" id="amd__malloc_8h_html_ae441f3802ba2433d441b5e1db5fef808"><div class="ttname"><a href="md__malloc_8h.html#ae441f3802ba2433d441b5e1db5fef808">FLATTEN3D</a></div><div class="ttdeci">#define FLATTEN3D(A)</div><div class="ttdoc">Use this macro when passing a 3-D dynamic multi-dimensional array to memset, memcpy or any other func...</div><div class="ttdef"><b>Definition:</b> <a href="md__malloc_8h_source.html#l00069">md_malloc.h:69</a></div></div>
+<div class="ttc" id="amd__malloc_8c_html_a572497274ef44be377c4032d3c0672f9"><div class="ttname"><a href="md__malloc_8c.html#a572497274ef44be377c4032d3c0672f9">malloc3d</a></div><div class="ttdeci">void *** malloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size)</div><div class="ttdoc">3-D malloc (contiguously allocated, so use free() as usual to deallocate)</div><div class="ttdef"><b>Definition:</b> <a href="md__malloc_8c_source.html#l00150">md_malloc.c:150</a></div></div>
+<div class="ttc" id="amd__malloc_8h_html_ae441f3802ba2433d441b5e1db5fef808"><div class="ttname"><a href="md__malloc_8h.html#ae441f3802ba2433d441b5e1db5fef808">FLATTEN3D</a></div><div class="ttdeci">#define FLATTEN3D(A)</div><div class="ttdoc">Use this macro when passing a 3-D dynamic multi-dimensional array to memset, memcpy or any other func...</div><div class="ttdef"><b>Definition:</b> <a href="md__malloc_8h_source.html#l00071">md_malloc.h:71</a></div></div>
 </div><!-- fragment --><dl class="section author"><dt>Author</dt><dd>Leo McCormack </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>11.06.2019 </dd></dl>
 
@@ -230,7 +262,7 @@ void ****&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <p>2-D realloc which does retain previous data order </p>
 <dl class="test"><dt><b><a class="el" href="test.html#_test000036">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a172905f574f05bb5b156ca40d617ab62" title="Testing the realloc2d_r() function (reallocating 2-D array, while retaining the previous data order; ...">test__realloc2d_r()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="md__malloc_8c_source.html#l00145">145</a> of file <a class="el" href="md__malloc_8c_source.html">md_malloc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="md__malloc_8c_source.html#l00126">126</a> of file <a class="el" href="md__malloc_8c_source.html">md_malloc.c</a>.</p>
 
 </div>
 </div>
@@ -240,7 +272,7 @@ void ****&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_c95fe3454413c7e9946bfee944a4e42b.html">resources</a></li><li class="navelem"><a class="el" href="dir_74cf0f11bf866827284c076127524f17.html">md_malloc</a></li><li class="navelem"><a class="el" href="md__malloc_8c.html">md_malloc.c</a></li>
-    <li class="footer">Generated on Sun May 23 2021 11:16:05 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Mon May 24 2021 07:15:42 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

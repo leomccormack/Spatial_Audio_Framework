@@ -109,9 +109,26 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaee15f58b2e7b74a7107fedda6c9e0e6f">_impl_CASSERT_LINE</a>(predicate,  line,  file)&#160;&#160;&#160; typedef char <a class="el" href="group___utilities.html#gab127f5ccb9b1065a239a25c6e88a3b13">_impl_PASTE</a>(assertion_failed_##file##_,line)[2*!!(predicate)-1];</td></tr>
 <tr class="memdesc:gaee15f58b2e7b74a7107fedda6c9e0e6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">CASSERT helper macro. <br /></td></tr>
 <tr class="separator:gaee15f58b2e7b74a7107fedda6c9e0e6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaad02a5dce819d156746129bc8121052c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaad02a5dce819d156746129bc8121052c">saf_print_warning</a>(<a class="el" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>)</td></tr>
+<tr class="memdesc:gaad02a5dce819d156746129bc8121052c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro to print a warning message along with the filename and line number.  <a href="group___utilities.html#gaad02a5dce819d156746129bc8121052c">More...</a><br /></td></tr>
+<tr class="separator:gaad02a5dce819d156746129bc8121052c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga00dfffc88bae83749d1263b68c091f46"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga00dfffc88bae83749d1263b68c091f46">saf_print_error</a>(<a class="el" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>)</td></tr>
+<tr class="memdesc:ga00dfffc88bae83749d1263b68c091f46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro to print a error message along with the filename and line number.  <a href="group___utilities.html#ga00dfffc88bae83749d1263b68c091f46">More...</a><br /></td></tr>
+<tr class="separator:ga00dfffc88bae83749d1263b68c091f46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0ebdaa72f19e4e545aa1f3305badf215"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(x,  <a class="el" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>)</td></tr>
+<tr class="memdesc:ga0ebdaa72f19e4e545aa1f3305badf215"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro to make an assertion, along with a string explaining its purpose.  <a href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">More...</a><br /></td></tr>
+<tr class="separator:ga0ebdaa72f19e4e545aa1f3305badf215"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ga7047547b9159615661414b65f3f34d08"><td class="memItemLeft" align="right" valign="top">
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga7047547b9159615661414b65f3f34d08">saf_print_warning_FL</a> (char *<a class="el" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>, char *fileName, int lineNumber)</td></tr>
+<tr class="memdesc:ga7047547b9159615661414b65f3f34d08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to print a warning message with the filename and line number. <br /></td></tr>
+<tr class="separator:ga7047547b9159615661414b65f3f34d08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga81c37657a9353a6cbfea5978077f1d75"><td class="memItemLeft" align="right" valign="top">
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga81c37657a9353a6cbfea5978077f1d75">saf_print_error_FL</a> (char *<a class="el" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>, char *fileName, int lineNumber)</td></tr>
+<tr class="memdesc:ga81c37657a9353a6cbfea5978077f1d75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to print a error message with the filename and line number. <br /></td></tr>
+<tr class="separator:ga81c37657a9353a6cbfea5978077f1d75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga37c35ff6667014c738a9d4713b9728a5"><td class="memItemLeft" align="right" valign="top">
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga37c35ff6667014c738a9d4713b9728a5">convert_0_360To_m180_180</a> (float *dirs_deg, int nDirs)</td></tr>
 <tr class="memdesc:ga37c35ff6667014c738a9d4713b9728a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wraps around any angles exeeding 180 degrees (e.g., 200-&gt; -160) <br /></td></tr>
@@ -192,7 +209,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__misc_8h.html">saf_utility_misc.h</a></li>
-    <li class="footer">Generated on Sun May 23 2021 11:16:05 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Mon May 24 2021 07:15:42 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

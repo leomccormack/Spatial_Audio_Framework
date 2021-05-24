@@ -7,8 +7,6 @@ var dir_ba0a5884162be49ca564693d469c3119 =
     [ "saf_utility_complex.h", "saf__utility__complex_8h.html", null ],
     [ "saf_utility_decor.c", "saf__utility__decor_8c.html", "saf__utility__decor_8c" ],
     [ "saf_utility_decor.h", "saf__utility__decor_8h.html", "saf__utility__decor_8h" ],
-    [ "saf_utility_error.c", "saf__utility__error_8c.html", "saf__utility__error_8c" ],
-    [ "saf_utility_error.h", "saf__utility__error_8h.html", "saf__utility__error_8h" ],
     [ "saf_utility_fft.c", "saf__utility__fft_8c.html", "saf__utility__fft_8c" ],
     [ "saf_utility_fft.h", "saf__utility__fft_8h.html", "saf__utility__fft_8h" ],
     [ "saf_utility_filters.c", "saf__utility__filters_8c.html", "saf__utility__filters_8c" ],

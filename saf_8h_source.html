@@ -165,61 +165,56 @@ $(document).ready(function(){initNavTree('saf_8h_source.html',''); initResizable
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  &quot;   (_______) |_|   |_| |_|   (Version: &quot; SAF_VERSION_STRING &quot;, License:&quot;   \</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  &quot; &quot; SAF_LICENSE_STRING &quot;)                                              \n\n&quot;</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="preprocessor">#ifdef SAF_DISABLE_PRINT_VERSION</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="preprocessor">#define SAF_PRINT_VERSION_LICENSE_STRING</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00125"></a><span class="lineno"><a class="line" href="saf_8h.html#ad9e446e2d96097a798a1d26dfde1c3b8">  125</a></span>&#160;<span class="preprocessor">#define SAF_PRINT_VERSION_LICENSE_STRING printf(SAF_VERSION_LICENSE_STRING)</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment">/*                                Core Modules                                */</span></div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
-<div class="line"><a name="l00148"></a><span class="lineno"><a class="line" href="saf_8h.html#aa80205e1be538a932e2ab08b3a4fe6d9">  148</a></span>&#160;<span class="preprocessor">#define SAF_UTILITIES_MODULE</span></div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_utilities/saf_utilities.h&quot;</span></div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
-<div class="line"><a name="l00166"></a><span class="lineno"><a class="line" href="saf_8h.html#ac7a86922cec9850fb4ea80e7e1ac64fc">  166</a></span>&#160;<span class="preprocessor">#define SAF_CDF4SAP_MODULE</span></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_cdf4sap/saf_cdf4sap.h&quot;</span></div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160; </div>
-<div class="line"><a name="l00182"></a><span class="lineno"><a class="line" href="saf_8h.html#a9c2c7080a25d54c9d7bc99588935ea8f">  182</a></span>&#160;<span class="preprocessor">#define SAF_HOA_MODULE</span></div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_hoa/saf_hoa.h&quot;</span></div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
-<div class="line"><a name="l00197"></a><span class="lineno"><a class="line" href="saf_8h.html#a2afda4360b65935e869ca8c4fd98fea1">  197</a></span>&#160;<span class="preprocessor">#define SAF_HRIR_MODULE</span></div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_hrir/saf_hrir.h&quot;</span></div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160; </div>
-<div class="line"><a name="l00210"></a><span class="lineno"><a class="line" href="saf_8h.html#a5cdcc71107076032f33b20660a8b10be">  210</a></span>&#160;<span class="preprocessor">#define SAF_REVERB_MODULE</span></div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_reverb/saf_reverb.h&quot;</span></div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
-<div class="line"><a name="l00228"></a><span class="lineno"><a class="line" href="saf_8h.html#a4267176e3a1b83ff894c602e2af10025">  228</a></span>&#160;<span class="preprocessor">#define SAF_SH_MODULE</span></div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_sh/saf_sh.h&quot;</span></div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
-<div class="line"><a name="l00244"></a><span class="lineno"><a class="line" href="saf_8h.html#a7c135beedf7ba9f63cf2f71ca6fad5c6">  244</a></span>&#160;<span class="preprocessor">#define SAF_VBAP_MODULE</span></div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_vbap/saf_vbap.h&quot;</span></div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;<span class="comment">/*                              Optional Modules                              */</span></div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;<span class="preprocessor">#ifdef SAF_ENABLE_SOFA_READER_MODULE</span></div>
-<div class="line"><a name="l00270"></a><span class="lineno"><a class="line" href="saf_8h.html#a98df8902e6c5a7fba09c35d489505f77">  270</a></span>&#160;<span class="preprocessor"># define SAF_SOFA_READER_MODULE</span></div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="preprocessor"># include &quot;../modules/saf_sofa_reader/saf_sofa_reader.h&quot;</span></div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SAF_ENABLE_SOFA_READER_MODULE */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160; </div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="preprocessor">#ifdef SAF_ENABLE_TRACKER_MODULE</span></div>
-<div class="line"><a name="l00288"></a><span class="lineno"><a class="line" href="saf_8h.html#a9160681450d951e3e3b0492a7db4da08">  288</a></span>&#160;<span class="preprocessor"># define SAF_TRACKER_MODULE</span></div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;<span class="preprocessor"># include &quot;../modules/saf_tracker/saf_tracker.h&quot;</span></div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SAF_ENABLE_TRACKER_MODULE */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SAF_H_INCLUDED */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">/*                                Core Modules                                */</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno"><a class="line" href="saf_8h.html#aa80205e1be538a932e2ab08b3a4fe6d9">  142</a></span>&#160;<span class="preprocessor">#define SAF_UTILITIES_MODULE</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_utilities/saf_utilities.h&quot;</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
+<div class="line"><a name="l00160"></a><span class="lineno"><a class="line" href="saf_8h.html#ac7a86922cec9850fb4ea80e7e1ac64fc">  160</a></span>&#160;<span class="preprocessor">#define SAF_CDF4SAP_MODULE</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_cdf4sap/saf_cdf4sap.h&quot;</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
+<div class="line"><a name="l00176"></a><span class="lineno"><a class="line" href="saf_8h.html#a9c2c7080a25d54c9d7bc99588935ea8f">  176</a></span>&#160;<span class="preprocessor">#define SAF_HOA_MODULE</span></div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_hoa/saf_hoa.h&quot;</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
+<div class="line"><a name="l00191"></a><span class="lineno"><a class="line" href="saf_8h.html#a2afda4360b65935e869ca8c4fd98fea1">  191</a></span>&#160;<span class="preprocessor">#define SAF_HRIR_MODULE</span></div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_hrir/saf_hrir.h&quot;</span></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
+<div class="line"><a name="l00204"></a><span class="lineno"><a class="line" href="saf_8h.html#a5cdcc71107076032f33b20660a8b10be">  204</a></span>&#160;<span class="preprocessor">#define SAF_REVERB_MODULE</span></div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_reverb/saf_reverb.h&quot;</span></div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
+<div class="line"><a name="l00222"></a><span class="lineno"><a class="line" href="saf_8h.html#a4267176e3a1b83ff894c602e2af10025">  222</a></span>&#160;<span class="preprocessor">#define SAF_SH_MODULE</span></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_sh/saf_sh.h&quot;</span></div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160; </div>
+<div class="line"><a name="l00238"></a><span class="lineno"><a class="line" href="saf_8h.html#a7c135beedf7ba9f63cf2f71ca6fad5c6">  238</a></span>&#160;<span class="preprocessor">#define SAF_VBAP_MODULE</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="preprocessor">#include &quot;../modules/saf_vbap/saf_vbap.h&quot;</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="comment">/*                              Optional Modules                              */</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="preprocessor">#ifdef SAF_ENABLE_SOFA_READER_MODULE</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno"><a class="line" href="saf_8h.html#a98df8902e6c5a7fba09c35d489505f77">  264</a></span>&#160;<span class="preprocessor"># define SAF_SOFA_READER_MODULE</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;<span class="preprocessor"># include &quot;../modules/saf_sofa_reader/saf_sofa_reader.h&quot;</span></div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SAF_ENABLE_SOFA_READER_MODULE */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="preprocessor">#ifdef SAF_ENABLE_TRACKER_MODULE</span></div>
+<div class="line"><a name="l00282"></a><span class="lineno"><a class="line" href="saf_8h.html#a9160681450d951e3e3b0492a7db4da08">  282</a></span>&#160;<span class="preprocessor"># define SAF_TRACKER_MODULE</span></div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;<span class="preprocessor"># include &quot;../modules/saf_tracker/saf_tracker.h&quot;</span></div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SAF_ENABLE_TRACKER_MODULE */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160; </div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160; </div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SAF_H_INCLUDED */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_dd40116cd1cfebdc77a7c7114b29912e.html">include</a></li><li class="navelem"><a class="el" href="saf_8h.html">saf.h</a></li>
-    <li class="footer">Generated on Sun May 23 2021 11:16:03 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Mon May 24 2021 07:15:40 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

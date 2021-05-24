@@ -5,13 +5,21 @@ var md__malloc_8c =
     [ "calloc1d", "md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4", null ],
     [ "calloc2d", "md__malloc_8c.html#abfdeaacad98e5fd9991c9baca19df870", null ],
     [ "calloc3d", "md__malloc_8c.html#a4950bbd19bef3f14b737d558b821a6ba", null ],
+    [ "calloc4d", "md__malloc_8c.html#ae39a46e28e6a2122a6fc77f9ef660058", null ],
+    [ "calloc5d", "md__malloc_8c.html#a8c7deccfa013943852b88f37e99cab96", null ],
+    [ "calloc6d", "md__malloc_8c.html#a5863f1f218967cfb1016aab2f884eabe", null ],
     [ "malloc1d", "md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53", null ],
     [ "malloc2d", "md__malloc_8c.html#a54ecd26868d015ef09b29a0acb490d9d", null ],
     [ "malloc3d", "md__malloc_8c.html#a572497274ef44be377c4032d3c0672f9", null ],
     [ "malloc4d", "md__malloc_8c.html#a3a0b751f694dfdadb72faa461e2cf098", null ],
+    [ "malloc5d", "md__malloc_8c.html#aafdcf8a94e2d40a4b778328e1811e26a", null ],
+    [ "malloc6d", "md__malloc_8c.html#afd41bbf1bbc90f543913fa3ec38155e7", null ],
     [ "realloc1d", "md__malloc_8c.html#a9f6670dbc2e1f4252b628d94f0c0b5be", null ],
     [ "realloc2d", "md__malloc_8c.html#a9e6acbb544a679e661c198498cbc1b7a", null ],
     [ "realloc2d_r", "md__malloc_8c.html#acecac896ddf5dc6e387509171a8c02ac", null ],
     [ "realloc3d", "md__malloc_8c.html#ad1bd3d76b4bd71aad369a385745f3e65", null ],
-    [ "realloc3d_r", "md__malloc_8c.html#af74a56307a70f3292b9a6c3561528d26", null ]
+    [ "realloc3d_r", "md__malloc_8c.html#af74a56307a70f3292b9a6c3561528d26", null ],
+    [ "realloc4d", "md__malloc_8c.html#a25d2b60e63de4b1d57245c7e6aa7728b", null ],
+    [ "realloc5d", "md__malloc_8c.html#a2bc626ed92c4147e0961289a0c2ffd21", null ],
+    [ "realloc6d", "md__malloc_8c.html#acdd02548baa6a29e927d8a918ee38ee0", null ]
 ];
