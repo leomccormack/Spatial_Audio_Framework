@@ -71,7 +71,7 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
     
-    /* run each unit test */
+    /* run each unit test */ 
     RUN_TEST(test__delaunaynd);
     RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
@@ -2978,10 +2978,9 @@ void test__saf_example_ambi_enc(void){
         ambi_enc_process(hAmbi, (const float* const*)inSig_frame, shSig_frame, 2, nSH, framesize);
     }
 
-    /* ambi_enc should be equivalent to the reference, except delayed due to the
-     * temporal interpolation employed in ambi_enc */
+    /* ambi_enc should be equivalent to the reference */
     for(i=0; i<nSH; i++)
-        for(j=0; j<signalLength-delay-framesize; j++)
+        for(j=framesize; j<signalLength-delay; j++)
             TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, shSig_ref[i][j], shSig[i][j+delay]);
 
     /* Clean-up */

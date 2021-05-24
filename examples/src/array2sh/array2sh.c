@@ -229,23 +229,15 @@ void array2sh_process
 
         /* account for output channel order */
         switch(chOrdering){
-            case CH_ACN: /* already ACN */
-                break;
-            case CH_FUMA:
-                convertHOAChannelConvention(FLATTEN2D(pData->SHframeTD), order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA);
-                break;
+            case CH_ACN:  /* already ACN, do nothing */ break;
+            case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHframeTD), order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA); break;
         }
 
         /* account for normalisation scheme */
         switch(norm){
-            case NORM_N3D: /* already N3D */
-                break;
-            case NORM_SN3D:
-                convertHOANormConvention(FLATTEN2D(pData->SHframeTD), order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D);
-                break;
-            case NORM_FUMA:
-                convertHOANormConvention(FLATTEN2D(pData->SHframeTD), order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA);
-                break;
+            case NORM_N3D:  /* already N3D, do nothing */ break;  
+            case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D); break;
+            case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA); break;
         }
 
         /* Apply post-gain */

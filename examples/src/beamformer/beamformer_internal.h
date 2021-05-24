@@ -55,24 +55,24 @@ extern "C" {
 /* ========================================================================== */
 
 /**
- * Main structure for beamformer. Contains variables for audio buffers, afSTFT,
+ * Main structure for beamformer. Contains variables for audio buffers,
  * beamforming weights, internal variables, flags, user parameters
  */
 typedef struct _beamformer
 {
-    /* audio buffers + afSTFT time-frequency transform handle */
-    float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float prev_SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    /* Internal audio buffers */
+    float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
     float tempFrame[MAX_NUM_BEAMS][FRAME_SIZE];
+    float tempFrame_fadeOut[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float outputFrameTD[MAX_NUM_BEAMS][FRAME_SIZE];
+    float outputFrameTD_fadeIn[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+
+    /* internal variables */
     int fs;
-    
-    /* internal variables */ 
     float beamWeights[MAX_NUM_BEAMS][MAX_NUM_SH_SIGNALS];
     float prev_beamWeights[MAX_NUM_BEAMS][MAX_NUM_SH_SIGNALS];
-    float interpolator[FRAME_SIZE];
-    
-    /* flags */
+    float interpolator_fadeIn[FRAME_SIZE];
+    float interpolator_fadeOut[FRAME_SIZE];
     int recalc_beamWeights[MAX_NUM_BEAMS];   /**< 0: no init required, 1: init required */ 
     
     /* user parameters */

@@ -21,15 +21,10 @@
  * @brief Wrappers for optimised fast Fourier transform (FFT) routines
  *
  * @note If none of the supported optimised FFT implementations are linked, then
- *       saf_fft employs the highly respectable KissFFT from here (BSD 3-Clause
- *       License): https://github.com/mborgerding/kissfft
- * @note If linking Apple Accelerate: KissFFT is also used in cases where the
- *       FFT size is not 2^x.
- * @note The developers are aware of the existance of FFTW. However, due to how
- *       cumbersome it is to install for multiple platforms, and since it is not
- *       as fast as Intel IPP/MKL in our experience, we haven't yet included it
- *       in this wrapper. However, if you wish to add support for it, then we
- *       are happy to accept pull requests.
+ *       saf_fft employs the highly respectable KissFFT (BSD 3-Clause License):
+ *       https://github.com/mborgerding/kissfft
+ * @note If you would like to use some other FFT implementation, then feel free
+ *       to add it and submit a pull request :-)
  *
  * ## Dependencies
  *   Intel MKL, Intel IPP, Apple Accelerate, or KissFFT (included in SAF)
