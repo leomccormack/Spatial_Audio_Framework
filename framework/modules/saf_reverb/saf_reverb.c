@@ -304,8 +304,8 @@ void ims_shoebox_applyEchogramTD
     int k, i, n, im, band, ch, rec_idx, src_idx, time_samples, wIdx_n;
     unsigned long rIdx;
 
-    assert(fractionalDelaysFLAG==0); /* Not tested yet... */
-    assert(nSamples <= IMS_MAX_NSAMPLES_PER_FRAME);
+    saf_assert(fractionalDelaysFLAG==0, "Untested!");
+    saf_assert(nSamples <= IMS_MAX_NSAMPLES_PER_FRAME, "nSamples exceeds the maximum number that ims_shoebox_applyEchogramTD() can process at a time");
 
     /* Allocate circular buffers (if this is the first time this function is being called) */
     if(sc->circ_buffer[0] == NULL)
@@ -333,7 +333,7 @@ void ims_shoebox_applyEchogramTD
             break;
         }
     }
-    assert(rec_idx != IMS_UNASSIGNED);
+    saf_assert(rec_idx != IMS_UNASSIGNED, "Invalid receiverID");
 
     /* Allocate temporary buffer (if this is the first time this function is being called)  */
     if( (sc->recs[rec_idx].ID != IMS_UNASSIGNED) && (sc->rec_sig_tmp[IMS_EG_CURRENT][rec_idx] == NULL) ){
@@ -455,7 +455,7 @@ void ims_shoebox_applyEchogramTD
                             echogram_abs = (echogram_data*)wrk->hPrevEchogram_abs[band];
                         else
                             echogram_abs = (echogram_data*)wrk->hEchogram_abs[band];
-                        saf_assert(echogram_abs_0->numImageSources == echogram_abs->numImageSources, "Below code is assuming that the number of image sources should be the same across octave bands");
+                        saf_assert(echogram_abs_0->numImageSources == echogram_abs->numImageSources, "The below code is assuming that the number of image sources should be the same across octave bands!");
 
                         /* Pull values from the circular buffer corresponding to these read indices, and store this sparse vector as a "compressed" vector */
                         utility_ssv2cv_inds(sc->circ_buffer[k][src_idx][band], echogram_abs_0->rIdx, echogram_abs->numImageSources, echogram_abs->cb_vals[0]);

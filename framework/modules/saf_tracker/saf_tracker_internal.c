@@ -489,7 +489,7 @@ void tracker3d_update
         norm = 1.0f/sumf(pData->imp, count);
         cblas_sscal(count, norm, pData->imp, 1);
         ev = categ_rnd(pData->imp, count);  /* Event index */
-        saf_assert(ev!=-1, "Ugly error");
+        saf_assert(ev!=-1, "Falied to randomly select an event");
 
         /* Update particle */
         tracker3d_particleCopy(pData->str[ev], pData->SS[i]);
@@ -870,7 +870,7 @@ int categ_rnd
     for(i=0; i<len_P; i++)
         if(Ptmp[i]>rand01)
             return i;
-	 
+
     return -1; /* indicates error */
 }
 

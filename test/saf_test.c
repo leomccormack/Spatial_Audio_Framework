@@ -211,14 +211,14 @@ void test__quaternion(void){
         /* Ensure that the difference between them is 0 */
         utility_svvsub((float*)rot, (float*)rot2, 9, residual);
         for(j=0; j<9; j++) 
-            assert(fabsf(residual[j])<1e-3f); // TEST_ASSERT_TRUE
+            TEST_ASSERT_TRUE(fabsf(residual[j])<1e-3f);
 
         /* Testing that quaternion2euler() and euler2Quaternion() are invertable */
         quaternion2euler(&Q1, 1, EULER_ROTATION_YAW_PITCH_ROLL, &ypr[0], &ypr[1], &ypr[2]);
         euler2Quaternion(ypr[0], ypr[1], ypr[2], 1, EULER_ROTATION_YAW_PITCH_ROLL, &Q2);
         quaternion2euler(&Q2, 1, EULER_ROTATION_YAW_PITCH_ROLL, &test_ypr[0], &test_ypr[1], &test_ypr[2]);
         for(j=0; j<3; j++)
-            assert(fabsf(test_ypr[j]-ypr[j])<1e-2f);
+            TEST_ASSERT_TRUE(fabsf(test_ypr[j]-ypr[j])<1e-2f);
     }
 }
 
