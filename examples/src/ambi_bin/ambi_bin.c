@@ -417,24 +417,15 @@ void ambi_bin_process
 
         /* account for channel order convention */
         switch(chOrdering){
-            case CH_ACN:
-                convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_ACN);
-                break;
-            case CH_FUMA:
-                convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
-                break;
+            case CH_ACN:  /* already in ACN, do nothing */ break; /* Otherwise, convert to ACN... */
+            case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
         }
 
         /* account for input normalisation scheme */
         switch(norm){
-            case NORM_N3D:  /* already in N3D, do nothing */
-                break;
-            case NORM_SN3D: /* convert to N3D */
-                convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
-                break;
-            case NORM_FUMA: /* only for first-order, convert to N3D */
-                convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
-                break;
+            case NORM_N3D:  /* already in N3D, do nothing */ break; /* Otherwise, convert to N3D... */
+            case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
+            case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
         }
 
         /* Apply time-frequency transform (TFT) */
@@ -444,6 +435,7 @@ void ambi_bin_process
         if(order > 0 && enableRot) {
             /* Apply rotation */
             if(pData->recalc_M_rotFLAG){
+                /* Compute the new SH rotation matrix */
                 memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
                 M_rot_tmp = malloc1d(nSH*nSH * sizeof(float));
                 yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
@@ -464,7 +456,7 @@ void ambi_bin_process
             }
         }
 
-        /* mix to headphones */
+        /* Apply the decoder to go from SH input to binaural output */
         for(band = 0; band < HYBRID_BANDS; band++) {
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
                         enableRot ? pars->M_dec_rot[band] : pars->M_dec[band], MAX_NUM_SH_SIGNALS,
