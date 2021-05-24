@@ -47,6 +47,9 @@ void test__ims_shoebox_RIR(void);
  * Testing the forward and backward real-(half)complex FFT (saf_rfft) */
 void test__saf_rfft(void);
 /**
+ * Testing the forward and backward complex-complex FFT (saf_fft) */
+void test__saf_fft(void);
+/**
  * Testing the saf_matrixConv */
 void test__saf_matrixConv(void);
 /**

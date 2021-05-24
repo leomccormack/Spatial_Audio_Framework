@@ -71,7 +71,7 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
     
-    /* run each unit test */
+    /* run each unit test */ 
     RUN_TEST(test__delaunaynd);
     RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
@@ -79,7 +79,8 @@ int main_test(void) {
     RUN_TEST(test__ims_shoebox_RIR);
     RUN_TEST(test__ims_shoebox_TD);
     RUN_TEST(test__saf_matrixConv);
-    RUN_TEST(test__saf_rfft); 
+    RUN_TEST(test__saf_rfft);
+    RUN_TEST(test__saf_fft);
     RUN_TEST(test__afSTFT);
     RUN_TEST(test__qmf);
     RUN_TEST(test__smb_pitchShifter);
@@ -136,8 +137,6 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
-
-
 
 void test__delaunaynd(void){
     int nMesh;
@@ -526,11 +525,12 @@ void test__saf_rfft(void){
 
     /* Config */
     const float acceptedTolerance = 0.000001f;
-    const int fftSizesToTest[12] =
-        {16,256,512,1024,2048,4096,8192,16384,32768,65536,1048576,33554432};
+    const int fftSizesToTest[24] =
+        {16,256,512,1024,2048,4096,8192,16384,32768,65536,1048576,     /*     2^x */
+         80,160,320,640,1280,240,480,960,1920,3840,7680,15360,30720 }; /* non-2^x, (but still supported by vDSP) */
 
     /* Loop over the different FFT sizes */
-    for (i=0; i<11; i++){
+    for (i=0; i<24; i++){
         N = fftSizesToTest[i];
 
         /* prep */
@@ -550,6 +550,47 @@ void test__saf_rfft(void){
 
         /* clean-up */
         saf_rfft_destroy(&hFFT);
+        free(x_fd);
+        free(x_td);
+        free(test);
+    }
+}
+
+void test__saf_fft(void){
+    int i, j, N;
+    float_complex* x_td, *test;
+    float_complex* x_fd;
+    void *hFFT;
+
+    /* Config */
+    const float acceptedTolerance = 0.000001f;
+    const int fftSizesToTest[24] =
+        {16,256,512,1024,2048,4096,8192,16384,32768,65536,1048576,     /*     2^x */
+         80,160,320,640,1280,240,480,960,1920,3840,7680,15360,30720 }; /* non-2^x, (but still supported by vDSP) */
+
+    /* Loop over the different FFT sizes */
+    for (i=0; i<24; i++){
+        N = fftSizesToTest[i];
+
+        /* prep */
+        x_td = malloc1d(N*sizeof(float_complex));
+        test = malloc1d(N*sizeof(float_complex));
+        x_fd = malloc1d(N*sizeof(float_complex));
+        rand_m1_1((float*)x_td, N*2); /* populate with random numbers */
+        saf_fft_create(&hFFT, N);
+
+        /* forward and backward transform */
+        saf_fft_forward(hFFT, x_td, x_fd);
+        saf_fft_backward(hFFT, x_fd, test);
+
+        /* Check that, x_td==test */
+        for(j=0; j<N; j++){
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, crealf(x_td[j]), crealf(test[j]));
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, cimagf(x_td[j]), cimagf(test[j]));
+        }
+
+        /* clean-up */
+        saf_fft_destroy(&hFFT);
         free(x_fd);
         free(x_td);
         free(test);
