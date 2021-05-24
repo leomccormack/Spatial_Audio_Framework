@@ -914,7 +914,7 @@ void utility_ssvd
 #ifdef VECLIB_USE_CLAPACK_INTERFACE
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    superb = malloc((MIN(m,n)-1)*sizeof(float));
+    superb = malloc((SAF_MIN(m,n)-1)*sizeof(float));
     info = LAPACKE_sgesvd(CblasColMajor, 'A', 'A', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
     free(superb);
 #elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
@@ -1024,7 +1024,7 @@ void utility_csvd
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    superb = malloc((MIN(m,n)-1)*sizeof(float));
+    superb = malloc((SAF_MIN(m,n)-1)*sizeof(float));
     info = LAPACKE_cgesvd(CblasColMajor, 'A', 'A', m, n, (veclib_float_complex*)a, lda, s, (veclib_float_complex*)u, ldu, vt, ldvt, superb);
     free(superb);
 #endif
@@ -2136,7 +2136,7 @@ void utility_spinv
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    superb = malloc((MIN(m,n)-1)*sizeof(float));
+    superb = malloc((SAF_MIN(m,n)-1)*sizeof(float));
     info = LAPACKE_sgesvd(CblasColMajor, 'S', 'S', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
     free(superb);
 #endif
@@ -2229,7 +2229,7 @@ void utility_cpinv
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    superb = malloc((MIN(m,n)-1)*sizeof(float));
+    superb = malloc((SAF_MIN(m,n)-1)*sizeof(float));
     info = LAPACKE_cgesvd(CblasColMajor, 'S', 'S', m, n, (veclib_float_complex*)a, lda, s, (veclib_float_complex*)u, ldu,
                           (veclib_float_complex*)vt, ldvt, superb);
     free(superb);
@@ -2316,7 +2316,7 @@ void utility_dpinv
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    superb = malloc((MIN(m,n)-1)*sizeof(double));
+    superb = malloc((SAF_MIN(m,n)-1)*sizeof(double));
     info = LAPACKE_dgesvd(CblasColMajor, 'S', 'S', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
     free(superb);
 #endif
@@ -2409,7 +2409,7 @@ void utility_zpinv
 #elif defined(VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    superb = malloc((MIN(m,n)-1)*sizeof(double));
+    superb = malloc((SAF_MIN(m,n)-1)*sizeof(double));
     info = LAPACKE_zgesvd(CblasColMajor, 'A', 'A', m, n, (veclib_double_complex*)a, lda, s, (veclib_double_complex*)u, ldu,
                           (veclib_double_complex*)vt, ldvt, superb);
     free(superb);
@@ -2630,14 +2630,14 @@ double utility_ddet
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     dgeqrf_(&N, &N, tmp, &N, TAU, &lwork2, &LWORK, &INFO);
 #else
-    saf_assert(0); /* NOT IMPLEMENTED YET */
+    saf_print_error("Not implemented yet");
 #endif
     lwork3=(veclib_int)lwork2;
     WORK=malloc(lwork3*sizeof(double));
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     dgeqrf_(&N, &N, tmp, &N, TAU, WORK, &lwork3, &INFO);
 #else
-    saf_assert(0); /* NOT IMPLEMENTED YET */
+    saf_print_error("Not implemented yet");
 #endif
 
     if(INFO!=0) {
