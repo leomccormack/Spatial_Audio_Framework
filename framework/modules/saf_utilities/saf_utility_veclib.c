@@ -1025,7 +1025,7 @@ void utility_csvd
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
     superb = malloc((SAF_MIN(m,n)-1)*sizeof(float));
-    info = LAPACKE_cgesvd(CblasColMajor, 'A', 'A', m, n, (veclib_float_complex*)a, lda, s, (veclib_float_complex*)u, ldu, vt, ldvt, superb);
+    info = LAPACKE_cgesvd(CblasColMajor, 'A', 'A', m, n, (veclib_float_complex*)a, lda, s, (veclib_float_complex*)u, ldu, (veclib_float_complex*)vt, ldvt, superb);
     free(superb);
 #endif
 
@@ -1950,7 +1950,7 @@ void utility_cglslvt
 #ifdef VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_cgesv(CblasColMajor, n, nrhs, a, ldb, IPIV, b, lda);
 #elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_cgesv(CblasColMajor, n, nrhs, a, ldb, IPIV, b, lda );
+    info = LAPACKE_cgesv(CblasColMajor, n, nrhs, (veclib_float_complex*)a, ldb, IPIV, (veclib_float_complex*)b, lda );
 #elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     cgesv_( &n, &nrhs, (veclib_float_complex*)a, &ldb, IPIV, (veclib_float_complex*)b, &lda, &info );
 #endif
@@ -2623,21 +2623,24 @@ double utility_ddet
     for(i=0; i<N; i++)
         for(j=0; j<N; j++)
             tmp[j*N+i] = A[i*N+j];
-
-
+ 
     TAU = malloc(sizeof(double)*N);
     LWORK=-1;
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     dgeqrf_(&N, &N, tmp, &N, TAU, &lwork2, &LWORK, &INFO);
-#else
-    saf_print_error("Not implemented yet");
+#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation in ATLAS CLAPACK");
+#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+    INFO = LAPACKE_dgeqrf_work(CblasColMajor, N, N, tmp, N, TAU, &lwork2, LWORK);
 #endif
     lwork3=(veclib_int)lwork2;
     WORK=malloc(lwork3*sizeof(double));
 #if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     dgeqrf_(&N, &N, tmp, &N, TAU, WORK, &lwork3, &INFO);
-#else
-    saf_print_error("Not implemented yet");
+#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation in ATLAS CLAPACK");
+#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+    INFO = LAPACKE_dgeqrf_work(CblasColMajor, N, N, tmp, N, TAU, WORK, lwork3);
 #endif
 
     if(INFO!=0) {
