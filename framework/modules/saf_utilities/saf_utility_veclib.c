@@ -1932,7 +1932,7 @@ void utility_cglslvt
     veclib_int* IPIV;
     float_complex* a, *b;
 
-    saf_print_error("Function needs checking!");  
+    saf_assert(dim==-1, "Function needs checking!");  
 
     IPIV = malloc1d(dim*sizeof(veclib_int));
     a = malloc1d(dim*dim*sizeof(float_complex));

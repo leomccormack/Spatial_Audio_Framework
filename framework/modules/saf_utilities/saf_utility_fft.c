@@ -232,7 +232,7 @@ void hilbert
             h[i] = cmplxf(2.0f, 0.0f);
     }
     else{
-        saf_print_error("Uneven lengths are not  supported by saf_fft"); 
+        saf_assert(x_len % 2 == 0, "Uneven lengths are not supported by saf_fft"); 
         /* odd */
         h[0] = cmplxf(1.0f, 0.0f);
         for(i=1;i<(x_len+1)/2;i++)

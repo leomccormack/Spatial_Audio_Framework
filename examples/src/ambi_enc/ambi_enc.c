@@ -77,7 +77,6 @@ void ambi_enc_init
         pData->interpolator_fadeOut[i-1] = 1.0f - pData->interpolator_fadeIn[i-1];
     }
     memset(pData->prev_Y, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
-    memset(pData->prev_inputFrameTD, 0, MAX_NUM_INPUTS*FRAME_SIZE*sizeof(float));
     for(i=0; i<MAX_NUM_INPUTS; i++)
         pData->recalc_SH_FLAG[i] = 1;
 }
@@ -135,14 +134,14 @@ void ambi_enc_process
         /* spatially encode the input signals into spherical harmonic signals */
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0f,
                     (float*)pData->Y, MAX_NUM_INPUTS,
-                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
+                    (float*)pData->inputFrameTD, FRAME_SIZE, 0.0f,
                     (float*)pData->outputFrameTD, FRAME_SIZE);
 
         /* Fade between (linearly inerpolate) the new gains and the previous gains (only if the new gains are different) */
         if(mixWithPreviousFLAG){
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0f,
                         (float*)pData->prev_Y, MAX_NUM_INPUTS,
-                        (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
+                        (float*)pData->inputFrameTD, FRAME_SIZE, 0.0f,
                         (float*)pData->tempFrame, FRAME_SIZE);
 
             /* Apply the linear interpolation */
@@ -150,15 +149,12 @@ void ambi_enc_process
                 utility_svvmul((float*)pData->interpolator_fadeIn, (float*)pData->outputFrameTD[i], FRAME_SIZE, (float*)pData->outputFrameTD_fadeIn[i]);
                 utility_svvmul((float*)pData->interpolator_fadeOut, (float*)pData->tempFrame[i], FRAME_SIZE, (float*)pData->tempFrame_fadeOut[i]);
             }
-            cblas_scopy(nSH*FRAME_SIZE, (float*)pData->outputFrameTD_fadeIn[i], 1, (float*)pData->outputFrameTD[i], 1);
-            cblas_saxpy(nSH*FRAME_SIZE, 1.0f, (float*)pData->tempFrame_fadeOut, 1, (float*)pData->outputFrameTD[i], 1);
+            cblas_scopy(nSH*FRAME_SIZE, (float*)pData->outputFrameTD_fadeIn, 1, (float*)pData->outputFrameTD, 1);
+            cblas_saxpy(nSH*FRAME_SIZE, 1.0f, (float*)pData->tempFrame_fadeOut, 1, (float*)pData->outputFrameTD, 1);
 
             /* for next frame */
             utility_svvcopy((const float*)pData->Y, MAX_NUM_INPUTS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_Y);
         }
-
-        /* for next frame */
-        utility_svvcopy((const float*)pData->inputFrameTD, nSources*FRAME_SIZE, (float*)pData->prev_inputFrameTD);
 
         /* scale by 1/sqrt(nSources) */
         if(pData->enablePostScaling){
