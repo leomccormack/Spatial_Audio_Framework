@@ -90,7 +90,8 @@ extern "C" {
 typedef struct _ambi_bin_codecPars
 {
     /* Decoder */
-    float_complex M_dec[HYBRID_BANDS][NUM_EARS][MAX_NUM_SH_SIGNALS];
+    float_complex M_dec[HYBRID_BANDS][NUM_EARS][MAX_NUM_SH_SIGNALS];     /**< Decoding matrix per band*/
+    float_complex M_dec_rot[HYBRID_BANDS][NUM_EARS][MAX_NUM_SH_SIGNALS]; /**< Decording matrix per band, with sound-field rotation baked-in */
     
     /* sofa file info */
     char* sofa_filepath;    /**< absolute/relevative file path for a sofa file */
@@ -119,8 +120,7 @@ typedef struct ambi_bin
     int fs;                         /**< host sampling rate */ 
     float** SHFrameTD;
     float** binFrameTD;
-    float_complex*** SHframeTF;
-    float_complex*** SHframeTF_rot;
+    float_complex*** SHframeTF; 
     float_complex*** binframeTF;
     void* hSTFT;                    /**< afSTFT handle */
     int afSTFTdelay;                /**< for host delay compensation */

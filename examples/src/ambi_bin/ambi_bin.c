@@ -84,7 +84,6 @@ void ambi_bin_create
     pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
     pData->binFrameTD = (float**)malloc2d(NUM_EARS, FRAME_SIZE, sizeof(float));
     pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
-    pData->SHframeTF_rot= (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
     pData->binframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
 
     /* codec data */
@@ -127,7 +126,6 @@ void ambi_bin_destroy
         free(pData->SHFrameTD);
         free(pData->binFrameTD);
         free(pData->SHframeTF);
-        free(pData->SHframeTF_rot);
         free(pData->binframeTF);
 
         pars = pData->pars;
@@ -454,23 +452,23 @@ void ambi_bin_process
                     for (j = 0; j < nSH; j++)
                         pData->M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH + j], 0.0f);
                 free(M_rot_tmp);
+
+                /* Bake the rotation into the decoding matrix */
+                for(band = 0; band < HYBRID_BANDS; band++) {
+                    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, nSH, nSH, &calpha,
+                                pars->M_dec[band], MAX_NUM_SH_SIGNALS,
+                                pData->M_rot, MAX_NUM_SH_SIGNALS, &cbeta,
+                                pars->M_dec_rot[band], MAX_NUM_SH_SIGNALS);
+                }
                 pData->recalc_M_rotFLAG = 0;
             }
-            for(band = 0; band < HYBRID_BANDS; band++) {
-                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, nSH, &calpha,
-                            pData->M_rot, MAX_NUM_SH_SIGNALS,
-                            FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS, &cbeta,
-                            FLATTEN2D(pData->SHframeTF_rot[band]), TIME_SLOTS);
-            }
         }
-        else
-            memcpy(FLATTEN3D(pData->SHframeTF_rot), FLATTEN3D(pData->SHframeTF), HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
 
         /* mix to headphones */
         for(band = 0; band < HYBRID_BANDS; band++) {
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
-                        pars->M_dec[band], MAX_NUM_SH_SIGNALS,
-                        FLATTEN2D(pData->SHframeTF_rot[band]), TIME_SLOTS, &cbeta,
+                        enableRot ? pars->M_dec_rot[band] : pars->M_dec[band], MAX_NUM_SH_SIGNALS,
+                        FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS, &cbeta,
                         FLATTEN2D(pData->binframeTF[band]), TIME_SLOTS);
         }
 

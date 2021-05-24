@@ -71,7 +71,7 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
     
-    /* run each unit test */ 
+    /* run each unit test */
     RUN_TEST(test__delaunaynd);
     RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
@@ -2784,6 +2784,8 @@ void test__saf_example_ambi_bin(void){
     ambi_bin_init(hAmbi, fs); /* Should be called before calling "process"
                                * Cannot be called while "process" is on-going */
     ambi_bin_initCodec(hAmbi); /* Can be called whenever (thread-safe) */
+    ambi_bin_setEnableRotation(hAmbi, 1);
+    ambi_bin_setYaw(hAmbi, 180.0f); /* turn the listener around */
 
     /* Define input mono signal */
     nSH = ORDER2NSH(order);
@@ -2792,7 +2794,7 @@ void test__saf_example_ambi_bin(void){
     rand_m1_1(inSig, signalLength); /* Mono white-noise signal */
 
     /* Encode to get input spherical harmonic (Ambisonic) signal */
-    direction_deg[0] = 90.0f; /* encode hard-left */
+    direction_deg[0] = -90.0f; /* encode hard-right */
     direction_deg[1] = 0.0f;
     y = malloc1d(nSH*sizeof(float));
     getRSH(order, (float*)direction_deg, 1, y); /* SH plane-wave weights */
