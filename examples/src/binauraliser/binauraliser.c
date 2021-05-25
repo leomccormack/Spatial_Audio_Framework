@@ -190,8 +190,9 @@ void binauraliser_process
 )
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    int t, ch, ear, i, band, nSources;
+    int ch, ear, i, band, nSources;
     float src_dirs[MAX_NUM_INPUTS][2], Rxyz[3][3], hypotxy;
+    float_complex scaleC;
     int enableRotation;
 
     /* copy user parameters to local variables */
@@ -212,7 +213,6 @@ void binauraliser_process
         /* Apply time-frequency transform (TFT) */
         afSTFT_forward(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, pData->inputframeTF);
 
-        /* Main processing: */
         /* Rotate source directions */
         if(enableRotation && pData->recalc_M_rotFLAG){
             yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
@@ -244,17 +244,16 @@ void binauraliser_process
                     binauraliser_interpHRTFs(hBin, pData->src_dirs_deg[ch][0], pData->src_dirs_deg[ch][1], pData->hrtf_interp[ch]);
                 pData->recalc_hrtf_interpFLAG[ch] = 0;
             }
+
+            /* Convolve this channel with the interpolated HRTF, and add it to the binaural buffer */
             for (band = 0; band < HYBRID_BANDS; band++)
                 for (ear = 0; ear < NUM_EARS; ear++)
-                    for (t = 0; t < TIME_SLOTS; t++)
-                        pData->outputframeTF[band][ear][t] = ccaddf(pData->outputframeTF[band][ear][t], ccmulf(pData->inputframeTF[band][ch][t], pData->hrtf_interp[ch][band][ear]));
+                    cblas_caxpy(TIME_SLOTS, &pData->hrtf_interp[ch][band][ear], pData->outputframeTF[band][ch], 1, pData->outputframeTF[band][ear], 1);
         }
 
         /* scale by number of sources */
-        for (band = 0; band < HYBRID_BANDS; band++)
-            for (ear = 0; ear < NUM_EARS; ear++)
-                for (t = 0; t < TIME_SLOTS; t++)
-                    pData->outputframeTF[band][ear][t] = crmulf(pData->outputframeTF[band][ear][t], 1.0f/sqrtf((float)nSources));
+        scaleC = cmplxf(1.0f/sqrtf((float)nSources), 0.0f);
+        cblas_cscal(HYBRID_BANDS*NUM_EARS*TIME_SLOTS, &scaleC, FLATTEN3D(pData->outputframeTF), 1);
 
         /* inverse-TFT */
         afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outframeTD);

@@ -60,8 +60,8 @@ void ambi_bin_create
     /* default user parameters */
     for (band = 0; band<HYBRID_BANDS; band++)
         pData->EQ[band] = 1.0f;
-    pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
-    pData->preProc = HRIR_PREPROC_ALL;
+    pData->useDefaultHRIRsFLAG = 1;   /* pars->sofa_filepath must be valid to set this to 0 */
+    pData->preProc = HRIR_PREPROC_EQ;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->enableMaxRE = 1;

@@ -84,9 +84,7 @@ extern "C" {
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/**
- * Contains variables for sofa file loading, HRIRs, and the binaural decoder.
- */
+/** Contains variables for sofa file loading, HRIRs, and the binaural decoder */
 typedef struct _ambi_bin_codecPars
 {
     /* Decoder */
@@ -118,22 +116,22 @@ typedef struct ambi_bin
 {
     /* audio buffers + afSTFT time-frequency transform handle */
     int fs;                         /**< host sampling rate */ 
-    float** SHFrameTD;
-    float** binFrameTD;
-    float_complex*** SHframeTF; 
-    float_complex*** binframeTF;
+    float** SHFrameTD;              /**< Input spherical harmonic (SH) signals in the time-domain; #MAX_NUM_SH_SIGNALS x #FRAME_SIZE */
+    float** binFrameTD;             /**< Output binaural signals in the time-domain; #NUM_EARS x #FRAME_SIZE */
+    float_complex*** SHframeTF;     /**< Input spherical harmonic (SH) signals in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
+    float_complex*** binframeTF;    /**< Output binaural signals in the time-frequency domain; #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS */
     void* hSTFT;                    /**< afSTFT handle */
     int afSTFTdelay;                /**< for host delay compensation */
     float freqVector[HYBRID_BANDS]; /**< frequency vector for time-frequency transform, in Hz */
      
     /* our codec configuration */
-    CODEC_STATUS codecStatus;
-    float progressBar0_1;
-    char* progressBarText;
-    ambi_bin_codecPars* pars;
+    CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
+    float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;          /**< Current (re)initialisation step, string */
+    ambi_bin_codecPars* pars;       /**< Decoding specific data */
     
     /* internal variables */
-    PROC_STATUS procStatus;
+    PROC_STATUS procStatus;         /**< see #PROC_STATUS */
     float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS]; 
     int new_order;                  /**< new decoding order */
     int nSH;                        /**< number of spherical harmonic signals */
@@ -151,11 +149,15 @@ typedef struct ambi_bin
     float EQ[HYBRID_BANDS];         /**< EQ curve */
     int useDefaultHRIRsFLAG;        /**< 1: use default HRIRs in database, 0: use those from SOFA file */
     AMBI_BIN_PREPROC preProc;       /**< HRIR pre-processing strategy */
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
-    int enableRotation;
-    float yaw, roll, pitch;         /**< rotation angles in degrees */
-    int bFlipYaw, bFlipPitch, bFlipRoll; /**< flag to flip the sign of the individual rotation angles */
+    CH_ORDER chOrdering;            /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                /**< Ambisonic normalisation convention (see #NORM_TYPES) */
+    int enableRotation;             /**< Whether rotation should be enabled (1) or disabled (0) */
+    float yaw;                      /**< yaw (Euler) rotation angle, in degrees */
+    float roll;                     /**< roll (Euler) rotation angle, in degrees */
+    float pitch;                    /**< pitch (Euler) rotation angle, in degrees */
+    int bFlipYaw;                   /**< flag to flip the sign of the yaw rotation angle */
+    int bFlipPitch;                 /**< flag to flip the sign of the pitch rotation angle */
+    int bFlipRoll;                  /**< flag to flip the sign of the roll rotation angle */
     int useRollPitchYawFlag;        /**< rotation order flag, 1: r-p-y, 0: y-p-r */
     
 } ambi_bin_data;
@@ -165,9 +167,7 @@ typedef struct ambi_bin
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/**
- * Sets codec status. 
- */
+/** Sets codec status */
 void ambi_bin_setCodecStatus(void* const hAmbi,
                              CODEC_STATUS newStatus);
 
