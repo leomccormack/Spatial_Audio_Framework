@@ -57,7 +57,8 @@ extern "C" {
 typedef struct _ambi_enc
 {
     /* Internal audio buffers */
-    float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE]; 
+    float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
+    float prev_inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
     float tempFrame_fadeOut[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float outputFrameTD_fadeIn[MAX_NUM_SH_SIGNALS][FRAME_SIZE];

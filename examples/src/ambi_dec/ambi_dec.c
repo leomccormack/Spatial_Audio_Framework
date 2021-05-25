@@ -466,7 +466,7 @@ void ambi_dec_process
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     ambi_dec_codecPars* pars = pData->pars;
-    int t, ch, ear, i, band, orderBand, nSH_band, decIdx, nSH;
+    int ch, ear, i, band, orderBand, nSH_band, decIdx, nSH;
     float_complex scaleC;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 

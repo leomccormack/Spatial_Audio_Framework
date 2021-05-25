@@ -82,6 +82,7 @@ void beamformer_init
    
     /* defaults */
     memset(pData->beamWeights, 0, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS*sizeof(float));
+    memset(pData->prev_SHFrameTD, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
     memset(pData->prev_beamWeights, 0, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS*sizeof(float));
     for(ch=0; ch<MAX_NUM_BEAMS; ch++)
         pData->recalc_beamWeights[ch] = 1;
@@ -120,7 +121,7 @@ void beamformer_process
         /* Load time-domain data */
         for(i=0; i < SAF_MIN(nSH, nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
-        for(; i<nSH; i++)
+        for(; i<MAX_NUM_SH_SIGNALS; i++)
             memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
 
         /* account for input channel order convention */
@@ -156,14 +157,14 @@ void beamformer_process
         /* Apply beam weights */
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, nSH, 1.0f,
                     (const float*)pData->beamWeights, MAX_NUM_SH_SIGNALS,
-                    (const float*)pData->SHFrameTD, FRAME_SIZE, 0.0f,
+                    (const float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
                     (float*)pData->outputFrameTD, FRAME_SIZE);
 
         /* Fade between (linearly inerpolate) the new weights and the previous weights (only if the new weights are different) */
         if(mixWithPreviousFLAG){
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, nSH, 1.0f,
                         (float*)pData->prev_beamWeights, MAX_NUM_SH_SIGNALS,
-                        (float*)pData->SHFrameTD, FRAME_SIZE, 0.0f,
+                        (float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
                         (float*)pData->tempFrame, FRAME_SIZE);
 
             /* Apply the linear interpolation */
@@ -177,6 +178,9 @@ void beamformer_process
             /* for next frame */
             utility_svvcopy((const float*)pData->beamWeights, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_beamWeights);
         }
+
+        /* for next frame */
+        utility_svvcopy((const float*)pData->SHFrameTD, MAX_NUM_SH_SIGNALS*FRAME_SIZE, (float*)pData->prev_SHFrameTD);
         
         /* copy to output buffer */
         for(ch = 0; ch < SAF_MIN(nBeams, nOutputs); ch++)
@@ -335,7 +339,7 @@ int beamformer_getBeamType(void* const hBeam)
 
 int beamformer_getProcessingDelay()
 {
-    return 0;
+    return FRAME_SIZE;
 }
 
 

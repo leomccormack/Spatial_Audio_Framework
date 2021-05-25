@@ -2980,7 +2980,7 @@ void test__saf_example_ambi_enc(void){
 
     /* ambi_enc should be equivalent to the reference */
     for(i=0; i<nSH; i++)
-        for(j=framesize; j<signalLength-delay; j++)
+        for(j=0; j<signalLength-delay; j++)
             TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, shSig_ref[i][j], shSig[i][j+delay]);
 
     /* Clean-up */

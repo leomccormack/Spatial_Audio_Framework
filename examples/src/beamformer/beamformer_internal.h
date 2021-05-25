@@ -61,7 +61,8 @@ extern "C" {
 typedef struct _beamformer
 {
     /* Internal audio buffers */
-    float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
+    float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float prev_SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float tempFrame[MAX_NUM_BEAMS][FRAME_SIZE];
     float tempFrame_fadeOut[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float outputFrameTD[MAX_NUM_BEAMS][FRAME_SIZE];
