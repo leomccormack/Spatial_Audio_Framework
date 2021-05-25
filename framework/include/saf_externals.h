@@ -72,7 +72,9 @@
  * Using Intel's Math Kernal Library (MKL)
  * (Generally the fastest library for x86 based architectures)
  */
-# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortran LAPACK interface */
+/* Note that Intel MKL can support either LAPACK interface: */
+//# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortran LAPACK interface */
+# define VECLIB_USE_LAPACKE_INTERFACE          /**< LAPACKE interface */
 # include "mkl.h"
 
 #elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)

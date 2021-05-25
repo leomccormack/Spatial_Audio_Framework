@@ -241,23 +241,15 @@ void powermap_analysis
 
             /* account for input channel order */
             switch(chOrdering){
-                case CH_ACN: /* already ACN */
-                    break;
-                case CH_FUMA:
-                    convertHOAChannelConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
-                    break;
+                case CH_ACN:  /* already ACN */ break; /* Otherwise, convert to ACN... */
+                case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
             }
 
             /* account for input normalisation scheme */
             switch(norm){
-                case NORM_N3D:  /* already in N3D, do nothing */
-                    break;
-                case NORM_SN3D: /* convert to N3D */
-                    convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
-                    break;
-                case NORM_FUMA: /* only for first-order, convert to N3D */
-                    convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
-                    break;
+                case NORM_N3D:  /* already in N3D, do nothing */ break; /* Otherwise, convert to N3D... */
+                case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
+                case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
             }
 
             /* apply the time-frequency transform */
