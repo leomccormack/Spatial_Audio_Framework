@@ -91,7 +91,7 @@ void mexFunction
     /* mex variables */
     int i,j,nDims;
     int *pDims = NULL;
-     
+   
     /* DESTROY */
     if(nrhs == 0){
         if(hDecor!=NULL){

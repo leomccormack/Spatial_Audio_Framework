@@ -71,7 +71,7 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
     
-    /* run each unit test */ 
+    /* run each unit test */
     RUN_TEST(test__delaunaynd);
     RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);

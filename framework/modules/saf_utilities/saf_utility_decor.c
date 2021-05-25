@@ -225,6 +225,11 @@ void latticeDecorrelator_create
     /* Static delays */
     getDecorrelationDelays(h->nCH, freqVector, h->nBands, fs, maxDelay, hopsize, h->TF_delays);
 
+    /* Find true max delay */
+    maxDelay = 0;
+    for(i=0; i<nBands*nCH; i++)
+        maxDelay = h->TF_delays[i] > maxDelay ? h->TF_delays[i] : maxDelay;
+
     /* set-up allpass filters per band and channel */
     for(band=0; band<nBands; band++){
         filterIdx = -1;
@@ -278,11 +283,11 @@ void latticeDecorrelator_create
     /* Run-time */
     h->maxBufferLen = maxDelay+1;
     h->delayBuffers = (float_complex***)calloc3d(nBands, nCH, h->maxBufferLen, sizeof(float_complex));
-    h->rIdx = malloc1d(nBands*nCH*sizeof(int));
+    h->wIdx = malloc1d(nBands*nCH*sizeof(int));
     for(band=0; band<nBands; band++)
         for(ch=0; ch<nCH; ch++)
-            h->rIdx[band*nCH+ch] = h->TF_delays[band*nCH+ch];
-    h->wIdx = calloc1d(nBands*nCH,sizeof(int));
+            h->wIdx[band*nCH+ch] = h->TF_delays[band*nCH+ch];
+    h->rIdx = calloc1d(nBands*nCH,sizeof(int));
 }
 
 void latticeDecorrelator_destroy
@@ -352,9 +357,9 @@ void latticeDecorrelator_apply
                 /* increment and wrap-around as needed */
                 h->rIdx[band*(h->nCH) + ch]++;
                 h->wIdx[band*(h->nCH) + ch]++;
-                if( h->rIdx[band*(h->nCH) + ch] >= h->TF_delays[band*(h->nCH) + ch] )
+                if( h->rIdx[band*(h->nCH) + ch] > h->TF_delays[band*(h->nCH) + ch] )
                     h->rIdx[band*(h->nCH) + ch] = 0;
-                if( h->wIdx[band*(h->nCH) + ch] >= h->TF_delays[band*(h->nCH) + ch] )
+                if( h->wIdx[band*(h->nCH) + ch] > h->TF_delays[band*(h->nCH) + ch] )
                     h->wIdx[band*(h->nCH) + ch] = 0;
             }
         }
@@ -381,7 +386,7 @@ void latticeDecorrelator_apply
                     /* propagate through the rest of the lattice filter structure */
                     for(i=0; i<h->lttc_apf[band][ch].order-1; i++){
                         h->lttc_apf[band][ch].buffer[i] = ccaddf(h->lttc_apf[band][ch].buffer[i+1],
-                                                                 ccsubf(crmulf(xtmp, h->lttc_apf[band][ch].coeffs[0][i+1]),   /* numerator */
+                                                                 ccsubf(crmulf(xtmp, h->lttc_apf[band][ch].coeffs[0][i+1]),    /* numerator */
                                                                         crmulf(ytmp, h->lttc_apf[band][ch].coeffs[1][i+1])));  /* denominator */
                     }
                 }
@@ -398,7 +403,7 @@ void latticeDecorrelator_apply
 
                     /* First tap in filter */
                     xtmp = decorFrame[band][ch][t];
-                    ytmp = h->lttc_apf[band][ch].buffer[0] + xtmp * (h->lttc_apf[band][ch].coeffs[0][0]);
+                    ytmp = xtmp * (h->lttc_apf[band][ch].coeffs[0][0]) + h->lttc_apf[band][ch].buffer[0];
                     decorFrame[band][ch][t] = ytmp;
 
                     /* Energy compensation */
@@ -417,7 +422,6 @@ void latticeDecorrelator_apply
     }
 #endif
 }
-
 
 void transientDucker_create
 (
