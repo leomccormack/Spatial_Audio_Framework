@@ -146,9 +146,9 @@ void decorrelator_initCodec
 
     /* Init decorrelator  */
     const int orders[4] = {20, 15, 6, 3}; /* 20th order up to 700Hz, 15th->2.4kHz, 6th->4kHz, 3rd->12kHz, NONE(only delays)->Nyquist */
-    //const float freqCutoffs[4] = {600.0f, 2.4e3f, 4.0e3f, 12e3f};
-    const float freqCutoffs[4] = {900.0f, 6.8e3f, 12e3f, 16e3f};
-    const int maxDelay = 12;
+    const float freqCutoffs[4] = {600.0f, 2.4e3f, 4.0e3f, 12e3f};
+    //const float freqCutoffs[4] = {900.0f, 6.8e3f, 12e3f, 16e3f};
+    const int maxDelay = 8;
     latticeDecorrelator_destroy(&(pData->hDecor));
     latticeDecorrelator_create(&(pData->hDecor), pData->fs, HOP_SIZE, pData->freqVector, HYBRID_BANDS, pData->nChannels, (int*)orders, (float*)freqCutoffs, 4, maxDelay, 0, 0.75f);
 
