@@ -40,6 +40,9 @@ fi
 # Define output dir
 output_dir="/usr/local/lib/"
 
+# MKL Interface (lp64 / ilp64)
+mkl_interface="ilp64"
+
 # Define output and MKL build directories
 if [[ "$OSTYPE" == "linux"* ]]; then
     if ! [ -d ${mkl_builder_dir} ]; then
@@ -70,9 +73,9 @@ cp ${parent_path}/saf_mkl_list ${mkl_builder_dir}
 
 # build custom library
 if [[ ${build_type} == "sequential" ]]; then
-    (cd ${mkl_builder_dir} && make libintel64 interface=ilp64 threading=sequential name=libsaf_mkl_custom export=saf_mkl_list)
+    (cd ${mkl_builder_dir} && make libintel64 interface=${mkl_interface} threading=sequential name=libsaf_mkl_custom export=saf_mkl_list)
 elif [[ ${build_type} == "threaded" ]]; then
-    (cd ${mkl_builder_dir} && make libintel64 interface=ilp64 threading=parallel name=libsaf_mkl_custom export=saf_mkl_list)
+    (cd ${mkl_builder_dir} && make libintel64 interface=${mkl_interface} threading=parallel name=libsaf_mkl_custom export=saf_mkl_list)
 fi
 
 # copy library
