@@ -41,13 +41,13 @@ fi
 output_dir="/usr/local/lib/"
 
 # Define output and MKL build directories
-if [[ "$OSTYPE" == "linux-gnu" ]]; then
+if [[ "$OSTYPE" == "linux"* ]]; then
     if ! [ -d ${mkl_builder_dir} ]; then
         echo "Error: Intel MKL not installed"
         exit 1
     fi
 
-elif [[ "$OSTYPE" == "darwin" ]]; then
+elif [[ "$OSTYPE" == "darwin"* ]]; then
     if ! [ -d ${mkl_builder_dir} ]; then
         echo "Error: Intel MKL not installed"
         exit 1
@@ -76,9 +76,9 @@ elif [[ ${build_type} == "threaded" ]]; then
 fi
 
 # copy library
-if [[ "$OSTYPE" == "linux-gnu" ]]; then
+if [[ "$OSTYPE" == "linux"* ]]; then
     (cd ${mkl_builder_dir} && cp libsaf_mkl_custom.so ${output_dir})
-elif [[ "$OSTYPE" == "darwin" ]]; then
+elif [[ "$OSTYPE" == "darwin"* ]]; then
     (cd ${mkl_builder_dir} && cp libsaf_mkl_custom.dylib ${output_dir})
 fi
 
