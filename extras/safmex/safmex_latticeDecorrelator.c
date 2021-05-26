@@ -172,7 +172,7 @@ void mexFunction
     }
     
     /* APPLY */
-   else if(nrhs == 1 && nlhs == 1){
+    else if(nrhs == 1 && nlhs == 1){
         if(hDecor==NULL)
             mexErrMsgIdAndTxt("MyToolbox:inputError","safmex_latticeDecorrelator is uninitialised!");
           
