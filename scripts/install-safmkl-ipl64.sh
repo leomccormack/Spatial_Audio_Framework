@@ -66,10 +66,9 @@ parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 # copy saf_mkl_list
 cp ${parent_path}/saf_mkl_list ${mkl_builder_dir}
 
-#echo ${build_type}
+echo "Configuration: Builder ${mkl_builder_dir}, ${build_type} ${mkl_interface}"
 #echo ${parent_path}
 #echo ${output_dir}
-#echo ${mkl_builder_dir}
 
 # build custom library
 if [[ ${build_type} == "sequential" ]]; then
