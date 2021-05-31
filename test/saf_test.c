@@ -524,7 +524,7 @@ void test__saf_rfft(void){
     void *hFFT;
 
     /* Config */
-    const float acceptedTolerance = 0.000001f;
+    const float acceptedTolerance = 0.00001f;
     const int fftSizesToTest[24] =
         {16,256,512,1024,2048,4096,8192,16384,32768,65536,1048576,     /*     2^x */
          80,160,320,640,1280,240,480,960,1920,3840,7680,15360,30720 }; /* non-2^x, (but still supported by vDSP) */
@@ -563,7 +563,7 @@ void test__saf_fft(void){
     void *hFFT;
 
     /* Config */
-    const float acceptedTolerance = 0.000001f;
+    const float acceptedTolerance = 0.00001f;
     const int fftSizesToTest[24] =
         {16,256,512,1024,2048,4096,8192,16384,32768,65536,1048576,     /*     2^x */
          80,160,320,640,1280,240,480,960,1920,3840,7680,15360,30720 }; /* non-2^x, (but still supported by vDSP) */

@@ -23,6 +23,8 @@
  * @note If none of the supported optimised FFT implementations are linked, then
  *       saf_fft employs the highly respectable KissFFT (BSD 3-Clause License):
  *       https://github.com/mborgerding/kissfft
+ * @note If using Apple Accelerate's vDSP for the FFT with an unsupported FFT
+ *       size, then KissFFT is employed instead.
  * @note If you would like to use some other FFT implementation, then feel free
  *       to add it and submit a pull request :-)
  *
