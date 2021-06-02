@@ -31,8 +31,10 @@
  *   SAF. Add one of the following FLAGS to your project's preprocessor
  *   definitions in order to enable one of these suitable performance libraries,
  *   (which must be correctly linked when building SAF):
- *   - SAF_USE_INTEL_MKL:
+ *   - SAF_USE_INTEL_MKL_LP64:
  *       to enable Intel's Math Kernal Library with the Fortran LAPACK interface
+ *   - SAF_USE_INTEL_MKL_ILP64
+ *       same as SAF_USE_INTEL_MKL except using int64 and LAPACKE interface
  *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
  *       to enable OpenBLAS with the LAPACKE interface
  *   - SAF_USE_APPLE_ACCELERATE:
@@ -57,24 +59,42 @@
 
 /* Assert that only one CBLAS/LAPACK performance library has been specified */
 #if (defined(SAF_USE_INTEL_MKL) + \
+     defined(SAF_USE_INTEL_MKL_LP64) + \
+     defined(SAF_USE_INTEL_MKL_ILP64) + \
      defined(SAF_USE_OPEN_BLAS_AND_LAPACKE) + \
      defined(SAF_USE_ATLAS) + \
      defined(SAF_USE_APPLE_ACCELERATE)) > 1
 # error Only one performance library flag can be defined!
 #endif
 
+/* The default MKL configuration is LP64 (32-bit int) */
+#if defined(SAF_USE_INTEL_MKL)
+# define SAF_USE_INTEL_MKL_LP64
+#endif
+
 /* ========================================================================== */
 /*                        Performance Library to Employ                       */
 /* ========================================================================== */
 
-#if defined(SAF_USE_INTEL_MKL)
+#if defined(SAF_USE_INTEL_MKL_LP64)
 /*
- * Using Intel's Math Kernal Library (MKL)
+ * Using Intel's Math Kernal Library (MKL) LP64 configuration (32-bit int)
  * (Generally the fastest library for x86 based architectures)
  */
-/* Note that Intel MKL can support either LAPACK interface: */
-//# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortran LAPACK interface */
-# define VECLIB_USE_LAPACKE_INTERFACE          /**< LAPACKE interface */
+/* Note that Intel MKL LP64 supports Fortran LAPACK and LAPACKE interfaces: */
+# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortran LAPACK interface */
+# include "mkl.h"
+
+#elif defined(SAF_USE_INTEL_MKL_ILP64)
+/*
+ * Using Intel's Math Kernal Library (MKL) ILP64 configuration (64-bit int)
+ * (Generally the fastest library for x86 based architectures. This 64-bit int
+ * version is the one employed by e.g. MATLAB. Therefore it is required if you
+ * wish to build MEX objects using SAF code; see e.g. extras/safmex)
+ */
+/* Note that Intel MKL ILP64 will only work with the LAPACKE interface: */
+# define VECLIB_USE_LAPACKE_INTERFACE /**< LAPACKE interface */
+# define MKL_ILP64
 # include "mkl.h"
 
 #elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)

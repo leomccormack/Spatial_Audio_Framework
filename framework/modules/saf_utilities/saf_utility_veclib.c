@@ -26,8 +26,10 @@
  *   FLAGS to your project's preprocessor definitions list in order to enable
  *   one of these suitable performance libraries, which must also be correctly
  *   linked to your project.
- *   - SAF_USE_INTEL_MKL:
+ *   - SAF_USE_INTEL_MKL_LP64:
  *       to enable Intel's Math Kernal Library with the Fortran LAPACK interface
+ *   - SAF_USE_INTEL_MKL_ILP64
+ *       same as SAF_USE_INTEL_MKL except using int64 and LAPACKE interface
  *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
  *       to enable OpenBLAS with the LAPACKE interface
  *   - SAF_USE_APPLE_ACCELERATE:
@@ -45,19 +47,22 @@
 #include "saf_utilities.h"
 #include "saf_externals.h"
 
-/* just to remove compiler warnings: */
+/* Assert that only one LAPACK interface has been specified */
+#if (defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE) + \
+     defined(VECLIB_USE_LAPACKE_INTERFACE) + \
+     defined(VECLIB_USE_CLAPACK_INTERFACE)) > 1
+# error Only one LAPACK interface can be used!
+#endif
+
+/* mainly to just to remove compiler warnings: */
 #if defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
   typedef __CLPK_integer       veclib_int;
   typedef __CLPK_real          veclib_float;
   typedef __CLPK_doublereal    veclib_double;
   typedef __CLPK_complex       veclib_float_complex;
   typedef __CLPK_doublecomplex veclib_double_complex;
-#elif defined(SAF_USE_INTEL_MKL)
-# ifdef MKL_ILP64
-   typedef long long int       veclib_int;
-# elif defined(MKL_LP64) || 1 /* (this is the default MKL config) */
-   typedef int                 veclib_int;
-# endif
+#elif defined(INTEL_MKL_VERSION)
+  typedef MKL_INT              veclib_int;
   typedef float                veclib_float;
   typedef double               veclib_double;
   typedef MKL_Complex8         veclib_float_complex;
@@ -865,7 +870,17 @@ void utility_ssv2cv_inds
 )
 {
 #ifdef INTEL_MKL_VERSION
-    cblas_sgthr(len, sv, cv, inds);
+    int i;
+    veclib_int* inds_tmp;
+    if(sizeof(veclib_int)==sizeof(int)) /* LP64 MKL */
+        cblas_sgthr(len, sv, cv, (veclib_int*)inds);
+    else{ /* ILP64 MKL */
+        inds_tmp = malloc1d(len*sizeof(veclib_int));
+        for(i=0; i<len; i++)
+            inds_tmp[i] = (veclib_int)inds[i];
+        cblas_sgthr(len, sv, cv, (veclib_int*)inds_tmp);
+        free(inds_tmp);
+    }
 #else
     int i;
     for(i=0; i<len; i++)
