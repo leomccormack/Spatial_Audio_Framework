@@ -115,7 +115,7 @@ if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL_LP64" OR ${SAF_PERFORMANCE
             elseif(APPLE)
                 set(INTEL_MKL_LIB "/usr/local/lib/libsaf_mkl_custom_ilp64.dylib")
             elseif(UNIX AND NOT APPLE)
-                set(INTEL_MKL_LIB "/usr/local/lib/libsaf_mkl_custo_ilp64.so")
+                set(INTEL_MKL_LIB "/usr/local/lib/libsaf_mkl_custom_ilp64.so")
             endif()
         endif()
     endif()
