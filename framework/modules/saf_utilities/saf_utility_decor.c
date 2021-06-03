@@ -381,7 +381,7 @@ void latticeDecorrelator_apply
 
                     /* Energy compensation */
                     h->decor_energy[band][ch] = (1.0f-h->enComp_coeff)*powf(cabsf(decorFrame[band][ch][t]),2.0f) + (h->enComp_coeff)*h->decor_energy[band][ch];
-                    decorFrame[band][ch][t] = crmulf(decorFrame[band][ch][t], MIN(sqrtf(h->in_energy[band][ch]/(h->decor_energy[band][ch]+2.23e-9f)), 1.0f));
+                    decorFrame[band][ch][t] = crmulf(decorFrame[band][ch][t], SAF_MIN(sqrtf(h->in_energy[band][ch]/(h->decor_energy[band][ch]+2.23e-9f)), 1.0f));
 
                     /* propagate through the rest of the lattice filter structure */
                     for(i=0; i<h->lttc_apf[band][ch].order-1; i++){

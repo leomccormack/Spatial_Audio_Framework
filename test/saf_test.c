@@ -1492,7 +1492,7 @@ void test__tracker3d(void){
     float *target_dirs_xyz, *target_var_xyz;
 
     /* Test configuration */
-    const float acceptedTolerance = 0.001f;
+    const float acceptedTolerance = 0.01f;
     const int order = 2;
     const float fs = 48e3;
     const int hopsize = 128;
