@@ -1492,7 +1492,7 @@ void test__tracker3d(void){
     float *target_dirs_xyz, *target_var_xyz;
 
     /* Test configuration */
-    const float acceptedTolerance = 0.01f;
+    const float acceptedTolerance = 0.001f;
     const int order = 2;
     const float fs = 48e3;
     const int hopsize = 128;
@@ -1507,7 +1507,7 @@ void test__tracker3d(void){
      * computationally expensive the tracker becomes). */
     tpars.Np = 20;
     tpars.ARE_UNIT_VECTORS = 1;
-    tpars.maxNactiveTargets = 4; /* about 2 higher than expected is good */
+    tpars.maxNactiveTargets = 2; /* about 2 higher than expected is good */
     /* Likelihood of an estimate being noise/clutter */
     tpars.noiseLikelihood = 0.2f; /* between [0..1] */
     /* Measurement noise - e.g. to assume that estimates within the range +/-20
@@ -1633,7 +1633,6 @@ void test__tracker3d(void){
 
         /* Give the tracker a couple of steps, and then assert that it is keeping track of these two targets */
         if(hop>10){
-            TEST_ASSERT_TRUE( nTargets <= nSources );
             if(nTargets==nSources){
                 TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[0][0] - target_dirs_xyz[0*3+0]) <= acceptedTolerance ||
                                   fabsf(est_dirs_xyz[0][0] - target_dirs_xyz[1*3+0]) <= acceptedTolerance);
