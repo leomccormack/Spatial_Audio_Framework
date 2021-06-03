@@ -93,7 +93,7 @@ The available SAF-related build options (and their default values) are:
 -DSAF_BUILD_TESTS=1                        # build unit testing program
 ```
 
-If using **SAF_USE_INTEL_MKL** as the performance library, note that the default header and library search paths may be overridden with:
+If using **SAF_USE_INTEL_MKL** as the performance library, note that the default header and library search paths may be overridden [according to your setup](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md) with:
 ``` 
 -DINTEL_MKL_HEADER_PATH="path/to/mkl/headers"
 -DINTEL_MKL_LIB="path/to/mkl/libs/mkl_rt(.so/.dylib/.lib)"   # OR:

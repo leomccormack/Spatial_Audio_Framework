@@ -35,6 +35,7 @@ sudo ./install-safmkl.sh [threaded|sequential] [lp64|ilp64]
 Add the following header search path to your project:
 
 ```
+[/opt|~]/intel/oneapi/mkl/latest/include/                   # New
 [/opt|~]/intel/compilers_and_libraries/linux/mkl/include    # Linux users
 [/opt|~]/intel/compilers_and_libraries/mac/mkl/include      # MacOSX users
 ```
@@ -76,12 +77,18 @@ saf_mkl_custom.lib
 
 This custom MKL library is also installed alongside the [SPARTA](http://research.spa.aalto.fi/projects/sparta_vsts/) VST plug-in suite. Athough, it will be noted that this may not be the most up-to-date version of the library.
 
-You may of course also elect to not build this custom library and link directly with:
+You may of course also elect to not build this custom library and link directly, e.g. with:
 ```
-[/opt|~]/intel/compilers_and_libraries/linux/mkl/lib/mkl_rt.so                              # Linux users
-[/opt|~]/intel/compilers_and_libraries/mac/mkl/lib/mkl_rt.dylib                             # MacOSX users
-C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/lib/libmkl_rt.lib   # Windows users
+/opt/intel/oneapi/mkl/latest/lib/libmkl_rt.[dylib|so]
 ```
+
+This will select the interface and threading at runtime, based on environment variables.
+You can check the options for your system with intel's [link-line-advisor](https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl/link-line-advisor.html)
+The options can be passed directly to CMAKE, e.g. with
+```
+-DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL_ILP64 -DINTEL_MKL_HEADER_PATH="/opt/intel/oneapi/mkl/latest/include" -DINTEL_MKL_LIB="/opt/intel/oneapi/mkl/latest/lib/libmkl_intel_ilp64.dylib;/opt/intel/oneapi/mkl/latest/lib/libmkl_sequential.dylib;/opt/intel/oneapi/mkl/latest/lib/libmkl_core.dylib"
+```
+
 
 Intel MKL also ships with recent [Anaconda](https://anaconda.org) distributions. The easiest way to install with conda is:
 ```
