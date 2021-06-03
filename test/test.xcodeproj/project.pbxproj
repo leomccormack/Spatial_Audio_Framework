@@ -1099,7 +1099,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",
-					"-lsaf_mkl_custom",
+					"-lsaf_mkl_custom_lp64",
 					"-L/usr/local/lib",
 					"-Wl,-rpath,/usr/local/lib",
 					"-lnetcdf",
@@ -1145,7 +1145,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",
-					"-lsaf_mkl_custom",
+					"-lsaf_mkl_custom_lp64",
 					"-L/usr/local/lib",
 					"-Wl,-rpath,/usr/local/lib",
 					"-lnetcdf",

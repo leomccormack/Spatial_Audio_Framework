@@ -8,9 +8,11 @@ A script to build and install a custom Intel MKL library tailored to SAF.
 
 Usage:"
 
-  sudo ./$(basename $0) build_type [mkl_builder_dir]
+  sudo ./$(basename $0) build_type [mkl_interface] [mkl_builder_dir]
 
-  build_type must be "sequential" or "threaded", with optional "mkl_builder_dir".
+  build_type must be either "sequential" or "threaded",
+  (optional) mkl_interface must be either "lp64" (default) or "ilp64"
+  (optional) mkl_builder_dir the path for the MKL "builder" folder
 
   Examples:
       sudo ./$(basename $0) sequential
@@ -29,19 +31,32 @@ else
     echo "Error: the build_type argument must be \"sequential\" or \"threaded\"."
     exit 1
 fi
-# Check if MKL build directory is provided
+
+# Check if MKL interface is specified (and if so, is valid)
 if [ ! -z "$2" ]; then
-    mkl_builder_dir=${2}
+    if [ "$2" == "lp64" ]; then
+        mkl_interface=${2}
+    elif [ "$2" == "ilp64" ]; then
+        mkl_interface=${2}
+    else
+        echo "Error: the mkl_interface argument must be \"lp64\" or \"ilp64\"."
+        exit 1
+    fi
 else
-    echo "Using default MKL builder path"
+    echo "Using default MKL interface configuration (lp64)"
+    mkl_interface="lp64"
+fi
+
+# Check if MKL build directory is provided
+if [ ! -z "$3" ]; then
+    mkl_builder_dir=${3}
+else
     mkl_builder_dir="/opt/intel/oneapi/mkl/latest/tools/builder"
+    echo "Using default MKL builder path (${mkl_builder_dir})"
 fi
 
 # Define output dir
 output_dir="/usr/local/lib/"
-
-# MKL Interface (lp64 / ilp64)
-mkl_interface="ilp64"
 
 # Define output and MKL build directories
 if [[ "$OSTYPE" == "linux"* ]]; then
@@ -72,18 +87,18 @@ echo "Configuration: Builder ${mkl_builder_dir}, ${build_type} ${mkl_interface}"
 
 # build custom library
 if [[ ${build_type} == "sequential" ]]; then
-    (cd ${mkl_builder_dir} && make libintel64 interface=${mkl_interface} threading=sequential name=libsaf_mkl_custom export=saf_mkl_list)
+    (cd ${mkl_builder_dir} && make libintel64 interface=${mkl_interface} threading=sequential name="libsaf_mkl_custom_${mkl_interface}" export=saf_mkl_list)
 elif [[ ${build_type} == "threaded" ]]; then
-    (cd ${mkl_builder_dir} && make libintel64 interface=${mkl_interface} threading=parallel name=libsaf_mkl_custom export=saf_mkl_list)
+    (cd ${mkl_builder_dir} && make libintel64 interface=${mkl_interface} threading=parallel name="libsaf_mkl_custom_${mkl_interface}" export=saf_mkl_list)
 fi
 
 # copy library
 if [[ "$OSTYPE" == "linux"* ]]; then
-    (cd ${mkl_builder_dir} && cp libsaf_mkl_custom.so ${output_dir})
+    (cd ${mkl_builder_dir} && cp "libsaf_mkl_custom_${mkl_interface}.so" ${output_dir})
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-    (cd ${mkl_builder_dir} && cp libsaf_mkl_custom.dylib ${output_dir})
+    (cd ${mkl_builder_dir} && cp "libsaf_mkl_custom_${mkl_interface}.dylib" ${output_dir})
 fi
 
-echo "Installed libsaf_mkl_custom into ${output_dir}"
+echo "Installed libsaf_mkl_custom_${mkl_interface} into ${output_dir}"
 
 set +e
