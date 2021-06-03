@@ -56,28 +56,34 @@
 
 /* mainly to just to remove compiler warnings: */
 #if defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
-  typedef __CLPK_integer       veclib_int;
-  typedef __CLPK_real          veclib_float;
-  typedef __CLPK_doublereal    veclib_double;
-  typedef __CLPK_complex       veclib_float_complex;
-  typedef __CLPK_doublecomplex veclib_double_complex;
+  typedef __CLPK_integer        veclib_int;
+  typedef __CLPK_real           veclib_float;
+  typedef __CLPK_doublereal     veclib_double;
+  typedef __CLPK_complex        veclib_float_complex;
+  typedef __CLPK_doublecomplex  veclib_double_complex;
 #elif defined(INTEL_MKL_VERSION)
-  typedef MKL_INT              veclib_int;
-  typedef float                veclib_float;
-  typedef double               veclib_double;
-  typedef MKL_Complex8         veclib_float_complex;
-  typedef MKL_Complex16        veclib_double_complex;
+  typedef MKL_INT               veclib_int;
+  typedef float                 veclib_float;
+  typedef double                veclib_double;
+  typedef MKL_Complex8          veclib_float_complex;
+  typedef MKL_Complex16         veclib_double_complex;
+#elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
+  typedef lapack_int            veclib_int;
+  typedef float                 veclib_float;
+  typedef double                veclib_double;
+  typedef lapack_complex_float  veclib_float_complex;
+  typedef lapack_complex_double veclib_double_complex;
 #else
   /** integer datatype used by veclib */
-  typedef int                  veclib_int;
+  typedef int                   veclib_int;
   /** single precision floating-point datatype used by veclib */
-  typedef float                veclib_float;
+  typedef float                 veclib_float;
   /** single precision floating-point datatype used by veclib */
-  typedef double               veclib_double;
+  typedef double                veclib_double;
   /** single precision complex floating-point datatype used by veclib */
-  typedef float_complex        veclib_float_complex;
+  typedef float_complex         veclib_float_complex;
   /** double precision floating-point datatype used by veclib */
-  typedef double_complex       veclib_double_complex;
+  typedef double_complex        veclib_double_complex;
 #endif
 
 
