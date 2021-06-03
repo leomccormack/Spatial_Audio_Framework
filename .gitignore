@@ -9,7 +9,8 @@ x64/
 cmake-build-debug/
 cmake-build-release/
 *.db
-dependencies/Win64/lib/saf_mkl_custom.lib
+dependencies/Win64/lib/saf_mkl_custom_lp64.lib
+dependencies/Win64/lib/saf_mkl_custom_ilp64.lib
 dependencies/Win64/lib/libiomp5md.lib
 *.c~
 *.m~
