@@ -83,7 +83,7 @@ You may of course also elect to not build this custom library and link directly,
 ```
 
 This will select the interface and threading at runtime, based on environment variables.
-You can check the options for your system with intel's [link-line-advisor](https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl/link-line-advisor.html)
+You can check the options for your system with intel's [link-line-advisor](https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl/link-line-advisor.html).
 The options can be passed directly to CMAKE, e.g. with
 ```
 -DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL_ILP64 -DINTEL_MKL_HEADER_PATH="/opt/intel/oneapi/mkl/latest/include" -DINTEL_MKL_LIB="/opt/intel/oneapi/mkl/latest/lib/libmkl_intel_ilp64.dylib;/opt/intel/oneapi/mkl/latest/lib/libmkl_sequential.dylib;/opt/intel/oneapi/mkl/latest/lib/libmkl_core.dylib"
