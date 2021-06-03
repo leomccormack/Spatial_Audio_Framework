@@ -5,14 +5,15 @@ The Spatial_Audio_Framework (SAF) requires any library (or combination of librar
 Currently, SAF supports [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries), [OpenBLAS](https://github.com/xianyi/OpenBLAS), [Apple Accelerate](https://developer.apple.com/documentation/accelerate), and [ATLAS](http://math-atlas.sourceforge.net/). You may select which option you wish to use by adding one of the following pre-processor definitions:
 
 ```
-SAF_USE_INTEL_MKL             # great option, but only for x86 architectures    
+SAF_USE_INTEL_MKL_LP64        # great option, but only for x86 architectures (using the LP64 config [int32])
+SAF_USE_INTEL_MKL_ILP64       # great option, but only for x86 architectures (using the ILP64 config [int64])  
 SAF_USE_OPEN_BLAS_AND_LAPACKE # good option, works on everything
 SAF_USE_APPLE_ACCELERATE      # good option (x86 and ARM), faster than OpenBLAS, but MacOSX only & slower than MKL
 SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing
 SAF_USE...                    # please get in touch if you use something else! :-)
 ```
 
-## SAF_USE_INTEL_MKL
+## SAF_USE_INTEL_MKL_LP64 or SAF_USE_INTEL_MKL_ILP64
 
 Intel MKL is perhaps the fastest library for **x86** platforms. It also includes an optimised FFT implementation and a number of additional vectorised utility functions which SAF is also able to make use of. 
 
@@ -28,7 +29,7 @@ Run the following bash script (**sudo** privileges required):
 
 ```
 cd scripts
-sudo ./install-safmkl.sh [threaded|sequential]
+sudo ./install-safmkl.sh [threaded|sequential] [lp64|ilp64]
 ```
 
 Add the following header search path to your project:
@@ -41,8 +42,8 @@ Add the following header search path to your project:
 Then add the following linker flag to your project:
 
 ```
--L/usr/lib -lsaf_mkl_custom        # Linux users
--L/usr/local/lib -lsaf_mkl_custom  # MacOSX users
+-L/usr/local/lib -lsaf_mkl_custom_lp64   # if you built the lp64 (32-bit integer) version
+-L/usr/local/lib -lsaf_mkl_custom_ilp64  # if you built the ilp64 (64-bit integer) version
 ``` 
 
 ### Windows users
@@ -101,7 +102,7 @@ However, if you are not on Linux, or would prefer to have more control over thin
 
 ```
 git clone https://github.com/xianyi/OpenBLAS.git
-# install fortran compiler if you haven't already (for lapack support)
+# install a fortran compiler if you haven't already (for lapack support)
 sudo apt-get install gfortran
 # build static libs
 mkdir build
