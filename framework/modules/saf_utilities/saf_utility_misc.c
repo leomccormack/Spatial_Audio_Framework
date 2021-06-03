@@ -47,17 +47,6 @@ static void combinationUtil(int* arr, int* data, int start, int end, int index, 
     }
 }
 
-#ifndef NDEBUG
-void saf_print_warning_FL(char* message, char* fileName, int lineNumber){
-    fprintf(stdout, "SAF WARNING: %s [%s LINE %u] \n", message, fileName, lineNumber);
-}
-
-void saf_print_error_FL(char* message, char* fileName, int lineNumber){
-    fprintf(stderr, "SAF ERROR: %s [%s LINE %u] \n", message, fileName, lineNumber);
-    exit(EXIT_FAILURE);
-}
-#endif
-
 void convert_0_360To_m180_180
 (
     float* dirs_deg,

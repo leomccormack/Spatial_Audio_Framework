@@ -87,33 +87,6 @@ extern "C" {
 #define _impl_CASSERT_LINE(predicate, line, file) \
  typedef char _impl_PASTE(assertion_failed_##file##_,line)[2*!!(predicate)-1];
 
-#ifndef NDEBUG
-/** Macro to print a warning message along with the filename and line number */
-# define saf_print_warning(message) saf_print_warning_FL(message, \
-                                                         __FILE__, __LINE__)
-
-/** Macro to print a error message along with the filename and line number */
-# define saf_print_error(message) saf_print_error_FL(message, \
-                                                     __FILE__, __LINE__)
-
-/** Macro to make an assertion, along with a string explaining its purpose */
-# define saf_assert(x, message) if (!(x)) \
-                    {printf("SAF ASSERTION FAILED: (%s), %s [%s LINE %u].\n", \
-                     MKSTRING(x), message, __FILE__, __LINE__); \
-                     exit(EXIT_FAILURE); }
-
-/** Function to print a warning message with the filename and line number */
-void saf_print_warning_FL(char* message, char* fileName, int lineNumber);
-
-/** Function to print a error message with the filename and line number */
-void saf_print_error_FL(char* message, char* fileName, int lineNumber);
-
-#else /* ...otherwise macros do nothing, or just the standard behaviour... */
-# define saf_print_warning(message)
-# define saf_print_error(message) exit(EXIT_FAILURE)
-# define saf_assert(x, message) assert(x)
-#endif
-
 /** Wraps around any angles exeeding 180 degrees (e.g., 200-> -160) */
 void convert_0_360To_m180_180(float* dirs_deg,
                               int nDirs);

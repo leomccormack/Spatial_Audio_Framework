@@ -124,6 +124,30 @@
 # define MKSTRING(s) MKSTRING_(s)
 #endif
 
+#ifndef NDEBUG /* If debug mode: */
+/** Macro to print a warning message along with the filename and line number */
+# define saf_print_warning(message) {fprintf(stdout, \
+                                    "SAF WARNING: %s [%s LINE %u] \n", message,\
+                                    __FILE__, __LINE__);}
+
+/** Macro to print a error message along with the filename and line number */
+# define saf_print_error(message) {fprintf(stderr, \
+                                  "SAF ERROR: %s [%s LINE %u] \n", message, \
+                                  __FILE__, __LINE__); \
+                                  exit(EXIT_FAILURE);}
+
+/** Macro to make an assertion, along with a string explaining its purpose */
+# define saf_assert(x, message) if (!(x)) \
+                    {printf("SAF ASSERTION FAILED: (%s), %s [%s LINE %u].\n", \
+                     MKSTRING(x), message, __FILE__, __LINE__); \
+                     exit(EXIT_FAILURE); }
+
+#else /* ...otherwise macros do nothing, or just the standard behaviour: */
+# define saf_print_warning(message)
+# define saf_print_error(message) exit(EXIT_FAILURE)
+# define saf_assert(x, message) assert(x)
+#endif
+
 
 /* ========================================================================== */
 /*                 External Resources and SAF Utility Headers                 */

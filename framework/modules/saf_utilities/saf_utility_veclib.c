@@ -48,9 +48,9 @@
 #include "saf_externals.h"
 
 /* Assert that only one LAPACK interface has been specified */
-#if (defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE) + \
-     defined(VECLIB_USE_LAPACKE_INTERFACE) + \
-     defined(VECLIB_USE_CLAPACK_INTERFACE)) > 1
+#if (defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE) + \
+     defined(SAF_VECLIB_USE_LAPACKE_INTERFACE) + \
+     defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)) > 1
 # error Only one LAPACK interface can be used!
 #endif
 
@@ -907,11 +907,11 @@ void utility_ssvd
     veclib_int i, j, m, n, lda, ldu, ldvt, info;
     m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
     float* a, *s, *u, *vt;
-#ifdef VECLIB_USE_LAPACK_FORTRAN_INTERFACE
+#ifdef SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE
     veclib_int lwork;
     float wkopt;
     float *work;
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     float* superb;
 #endif
     
@@ -924,15 +924,16 @@ void utility_ssvd
     for(i=0; i<dim1; i++)
         for(j=0; j<dim2; j++)
             a[j*dim1+i] = A[i*dim2 +j];
+    //MKL_Somatcopy('R', 'T', dim1, dim2, 1.0f, A, dim2, a, dim1); // TODO: see if this is faster... LAPACKE could also be configured for rowMajor, and this replaced by cblas_?copy
 
     /* perform the singular value decomposition */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     saf_print_error("No such implementation available in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     superb = malloc((SAF_MIN(m,n)-1)*sizeof(float));
     info = LAPACKE_sgesvd(CblasColMajor, 'A', 'A', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
     free(superb);
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     sgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info );
     lwork = (int)wkopt;
@@ -1005,12 +1006,12 @@ void utility_csvd
     m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
     float_complex* a, *u, *vt;
     float* s;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float_complex wkopt;
     float* rwork;
     float_complex* *work;
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     float* superb;
 #endif
     
@@ -1025,7 +1026,7 @@ void utility_csvd
             a[j*dim1+i] = A[i*dim2 +j];
     
     /* perform the singular value decomposition */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     rwork = malloc1d(m*SAF_MAX(1, 5*SAF_MIN(n,m))*sizeof(float));
     lwork = -1;
     cgesvd_( "A", "A", (veclib_int*)&m, (veclib_int*)&n, (veclib_float_complex*)a, (veclib_int*)&lda, s, (veclib_float_complex*)u, (veclib_int*)&ldu,
@@ -1036,9 +1037,9 @@ void utility_csvd
             (veclib_float_complex*)work, &lwork, rwork, &info);
     free(work);
     free(rwork);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     superb = malloc((SAF_MIN(m,n)-1)*sizeof(float));
     info = LAPACKE_cgesvd(CblasColMajor, 'A', 'A', m, n, (veclib_float_complex*)a, lda, s, (veclib_float_complex*)u, ldu, (veclib_float_complex*)vt, ldvt, superb);
     free(superb);
@@ -1108,7 +1109,7 @@ void utility_sseig
 )
 {
     veclib_int i, j, n, lda, info;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float wkopt;
     float* work;
@@ -1126,16 +1127,16 @@ void utility_sseig
             a[i*dim+j] = A[j*dim+i];
     
     /* solve the eigenproblem */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     ssyev_( "Vectors", "Upper", &n, a, &lda, w, &wkopt, &lwork, &info );
     lwork = (int)wkopt;
     work = (float*)malloc1d( lwork*sizeof(float) );
     ssyev_( "Vectors", "Upper", &n, a, &lda, w, work, &lwork, &info );
     free(work);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_ssyev(CblasColMajor, 'V', 'U', n, a, lda, w );
 #endif
     
@@ -1196,7 +1197,7 @@ void utility_cseig
     veclib_int i, j, n, lda, info;
     float *w;
     float_complex* a;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float *rwork;
     float_complex wkopt;
@@ -1214,7 +1215,7 @@ void utility_cseig
             a[i*dim+j] = A[j*dim+i];
     
     /* solve the eigenproblem */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     rwork = malloc1d((3*n-2)*sizeof(float));
     lwork = -1;
     cheev_( "Vectors", "Upper", &n, (veclib_float_complex*)a, &lda, w, (veclib_float_complex*)&wkopt, &lwork, rwork, &info );
@@ -1223,9 +1224,9 @@ void utility_cseig
     cheev_( "Vectors", "Upper", &n, (veclib_float_complex*)a, &lda, w, (veclib_float_complex*)work, &lwork, rwork, &info );
     free(work);
     free(rwork);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cheev(CblasColMajor, 'V', 'U', n, (veclib_float_complex*)a, lda, w);
 #endif
     
@@ -1293,7 +1294,7 @@ void utility_ceigmp
     veclib_int i, j;
     veclib_int n, lda, ldb, ldvl, ldvr, info;
     float_complex* a, *b, *vl, *vr, *alpha, *beta;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float* rwork;
     float_complex* work;
@@ -1316,7 +1317,7 @@ void utility_ceigmp
             b[j*dim+i] = B[i*dim+j];
     
     /* solve eigen problem */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = 4*n; /* 2x more than required, but is faster */
     work = malloc1d(lwork*sizeof(float_complex));
     rwork = malloc1d(4*lwork*sizeof(float)); /* 2x more than required, but is faster */
@@ -1324,9 +1325,9 @@ void utility_ceigmp
            (veclib_float_complex*)vl, &ldvl, (veclib_float_complex*)vr, &ldvr, (veclib_float_complex*)work, &lwork, rwork, &info);
     free(work);
     free(rwork);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cggev(CblasColMajor, 'V', 'V', n, (veclib_float_complex*)a, lda, (veclib_float_complex*)b, ldb, (veclib_float_complex*)alpha,
                          (veclib_float_complex*)beta, (veclib_float_complex*)vl, ldvl, (veclib_float_complex*)vr, ldvr);
 #endif
@@ -1385,7 +1386,7 @@ void utility_zeigmp
     veclib_int i, j;
     veclib_int n, lda, ldb, ldvl, ldvr, info;
     double_complex* a, *b, *vl, *vr, *alpha, *beta;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     double* rwork;
     double_complex* work;
@@ -1408,7 +1409,7 @@ void utility_zeigmp
             b[j*dim+i] = B[i*dim+j]; /* store in column major order */
     
     /* solve eigen problem */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = 4*n; /* 2x more than required, but is faster */
     work = malloc1d(lwork*sizeof(double_complex));
     rwork = malloc1d(4*lwork*sizeof(double)); /* 2x more than required, but is faster */
@@ -1416,9 +1417,9 @@ void utility_zeigmp
            (veclib_double_complex*)vl, &ldvl, (veclib_double_complex*)vr, &ldvr, (veclib_double_complex*)work, &lwork, rwork, &info);
     free(work);
     free(rwork);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_zggev(CblasColMajor, 'V', 'V', n, (veclib_double_complex*)a, lda, (veclib_double_complex*)b, ldb, (veclib_double_complex*)alpha,
                          (veclib_double_complex*)beta, (veclib_double_complex*)vl, ldvl, (veclib_double_complex*)vr, ldvr);
 #endif
@@ -1481,7 +1482,7 @@ void utility_ceig
 {
     veclib_int i, j, n, lda, ldvl, ldvr, info;
     float_complex *w, *vl, *vr, *a;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float* rwork;
     float_complex wkopt;
@@ -1500,7 +1501,7 @@ void utility_ceig
             a[i*dim+j] = A[j*dim+i];
 
     /* solve the eigenproblem */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     rwork = malloc1d(2*dim*sizeof(float));
     cgeev_( "Vectors", "Vectors", &n, (veclib_float_complex*)a, &lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, &ldvl,
@@ -1511,9 +1512,9 @@ void utility_ceig
            (veclib_float_complex*)vr, &ldvr, (veclib_float_complex*)work, &lwork, rwork, &info );
     free(rwork);
     free(work);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cgeev(CblasColMajor, 'V', 'V', n, (veclib_float_complex*)a, lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, ldvl,
                          (veclib_float_complex*)vr, ldvr );
 #endif
@@ -1572,7 +1573,7 @@ void utility_zeig
 {
     veclib_int i, j, n, lda, ldvl, ldvr, info;
     double_complex *w, *vl, *vr, *a;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     double* rwork;
     double_complex wkopt;
@@ -1591,7 +1592,7 @@ void utility_zeig
             a[i*dim+j] = A[j*dim+i];
 
     /* solve the eigenproblem */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     rwork = malloc1d(2*dim*sizeof(double));
     zgeev_( "Vectors", "Vectors", &n, (veclib_double_complex*)a, &lda, (veclib_double_complex*)w, (veclib_double_complex*)vl, &ldvl,
@@ -1602,9 +1603,9 @@ void utility_zeig
            (veclib_double_complex*)vr, &ldvr, (veclib_double_complex*)work, &lwork, rwork, &info );
     free(rwork);
     free(work);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_zgeev(CblasColMajor, 'V', 'V', n, (veclib_double_complex*)a, lda, (veclib_double_complex*)w, (veclib_double_complex*)vl, ldvl,
                          (veclib_double_complex*)vr, ldvr );
 #endif
@@ -1682,11 +1683,11 @@ void utility_sglslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_sgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_sgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb );
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     sgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
 #endif
     
@@ -1738,11 +1739,11 @@ void utility_cglslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     cgesv_( &n, &nrhs, (veclib_float_complex*)a, &lda, IPIV, (veclib_float_complex*)b, &ldb, &info );
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     info = clapack_cgesv(CblasColMajor, n, nrhs, (veclib_float_complex*)a, lda, IPIV, (veclib_float_complex*)b, ldb);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cgesv(CblasColMajor, n, nrhs, (veclib_float_complex*)a, lda, IPIV, (veclib_float_complex*)b, ldb);
 #endif
     
@@ -1794,11 +1795,11 @@ void utility_dglslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_dgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_dgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     dgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
 #endif
     
@@ -1850,11 +1851,11 @@ void utility_zglslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     zgesv_( &n, &nrhs, (veclib_double_complex*)a, &lda, IPIV, (veclib_double_complex*)b, &ldb, &info );
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     info = clapack_zgesv(CblasColMajor, n, nrhs, (veclib_double_complex*)a, lda, IPIV, (veclib_double_complex*)b, ldb);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_zgesv(CblasColMajor, n, nrhs, (veclib_double_complex*)a, lda, IPIV, (veclib_double_complex*)b, ldb);
 #endif
     
@@ -1907,11 +1908,11 @@ void utility_sglslvt
     cblas_scopy(dim*nCol, B, 1, b, 1);
 
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_sgesv(CblasColMajor, n, nrhs, b, ldb, IPIV, a, lda);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_sgesv(CblasColMajor, n, nrhs, b, ldb, IPIV, a, lda );
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     sgesv_( &n, &nrhs, b, &ldb, IPIV, a, &lda, &info );
 #endif
 
@@ -1962,11 +1963,11 @@ void utility_cglslvt
         b[i] = conjf(b[i]);
 
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_cgesv(CblasColMajor, n, nrhs, a, ldb, IPIV, b, lda);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cgesv(CblasColMajor, n, nrhs, (veclib_float_complex*)a, ldb, IPIV, (veclib_float_complex*)b, lda );
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     cgesv_( &n, &nrhs, (veclib_float_complex*)a, &ldb, IPIV, (veclib_float_complex*)b, &lda, &info );
 #endif
 
@@ -2020,11 +2021,11 @@ void utility_sslslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_sposv(CblasColMajor, CblasUpper, n, nrhs, a, lda, b, ldb);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_sposv(CblasColMajor, CblasUpper, n, nrhs, a, lda, b, ldb);
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     sposv_( "U", &n, &nrhs, a, &lda, b, &ldb, &info );
 #endif
     
@@ -2073,11 +2074,11 @@ void utility_cslslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     cposv_( "U", &n, &nrhs, (veclib_float_complex*)a, &lda, (veclib_float_complex*)b, &ldb, &info );
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     info = clapack_cposv(CblasColMajor, CblasUpper, n, nrhs, (veclib_float_complex*)a, lda, (veclib_float_complex*)b, ldb);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cposv(CblasColMajor, CblasUpper, n, nrhs, (veclib_float_complex*)a, lda, (veclib_float_complex*)b, ldb);
 #endif
     
@@ -2119,11 +2120,11 @@ void utility_spinv
     veclib_int i, j, m, n, k, lda, ldu, ldvt, info;
     float* a, *s, *u, *vt, *inva;
     float ss;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float wkopt;
     float* work;
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     float* superb;
 #endif
     
@@ -2141,16 +2142,16 @@ void utility_spinv
             a[j*m+i] = inM[i*n+j];
     
     /* singular value decomposition */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
     lwork = (int)wkopt;
     work = (float*)malloc1d(lwork*sizeof(float));
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
     free(work);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     superb = malloc((SAF_MIN(m,n)-1)*sizeof(float));
     info = LAPACKE_sgesvd(CblasColMajor, 'S', 'S', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
     free(superb);
@@ -2207,12 +2208,12 @@ void utility_cpinv
     const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f); /* blas */
     float *s;
     float ss;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float* rwork;
     float_complex wkopt;
     float_complex* work;
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     float* superb;
 #endif
     
@@ -2230,7 +2231,7 @@ void utility_cpinv
             a[j*dim1+i] = inM[i*dim2 +j];
     
     /* singular value decomposition */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     rwork = malloc1d(m*SAF_MAX(1, 5*SAF_MIN(n,m))*sizeof(float));
     lwork = -1;
     cgesvd_( "A", "A", &m, &n, (veclib_float_complex*)a, &lda, s, (veclib_float_complex*)u, &ldu, (veclib_float_complex*)vt, &ldvt,
@@ -2241,9 +2242,9 @@ void utility_cpinv
             (veclib_float_complex*)work, &lwork, rwork, &info);
     free(work);
     free(rwork);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     superb = malloc((SAF_MIN(m,n)-1)*sizeof(float));
     info = LAPACKE_cgesvd(CblasColMajor, 'S', 'S', m, n, (veclib_float_complex*)a, lda, s, (veclib_float_complex*)u, ldu,
                           (veclib_float_complex*)vt, ldvt, superb);
@@ -2299,11 +2300,11 @@ void utility_dpinv
     veclib_int i, j, m, n, k, lda, ldu, ldvt, info;
     double* a, *s, *u, *vt, *inva;
     double ss;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     double wkopt;
     double* work;
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     double* superb;
 #endif
     
@@ -2321,16 +2322,16 @@ void utility_dpinv
             a[j*m+i] = inM[i*n+j];
     
     /* singular value decomposition */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
     lwork = (int)wkopt;
     work = (double*)malloc1d(lwork*sizeof(double));
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
     free(work);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     superb = malloc((SAF_MIN(m,n)-1)*sizeof(double));
     info = LAPACKE_dgesvd(CblasColMajor, 'S', 'S', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
     free(superb);
@@ -2387,12 +2388,12 @@ void utility_zpinv
     const double_complex calpha = cmplx(1.0, 0.0); const double_complex cbeta = cmplx(0.0, 0.0); /* blas */
     double* s;
     double ss;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     double* rwork;
     double_complex wkopt;
     double_complex* work;
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     double* superb;
 #endif
     
@@ -2410,7 +2411,7 @@ void utility_zpinv
             a[j*dim1+i] = inM[i*dim2 +j];
     
     /* singular value decomposition */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     rwork = malloc1d(m*SAF_MAX(1, 5*SAF_MIN(n,m))*sizeof(double));
     lwork = -1;
     zgesvd_( "A", "A", &m, &n, (veclib_double_complex*)a, &lda, s, (veclib_double_complex*)u, &ldu, (veclib_double_complex*)vt, &ldvt,
@@ -2421,9 +2422,9 @@ void utility_zpinv
             (veclib_double_complex*)work, &lwork, rwork, &info);
     free(work);
     free(rwork);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     superb = malloc((SAF_MIN(m,n)-1)*sizeof(double));
     info = LAPACKE_zgesvd(CblasColMajor, 'A', 'A', m, n, (veclib_double_complex*)a, lda, s, (veclib_double_complex*)u, ldu,
                           (veclib_double_complex*)vt, ldvt, superb);
@@ -2492,11 +2493,11 @@ void utility_schol
             a[j*dim+i] = A[i*dim+j];
     
     /* a is replaced by solution */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_spotrf(CblasColMajor, CblasUpper, n, a, lda);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_spotrf(CblasColMajor, CblasUpper, n, a, lda);
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     spotrf_( "U", &n, a, &lda, &info );
 #endif
     
@@ -2541,11 +2542,11 @@ void utility_cchol
             a[j*dim+i] = A[i*dim+j];
     
     /* a is replaced by solution */
-#if defined(VECLIB_USE_CLAPACK_INTERFACE)
+#if defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     info = clapack_cpotrf(CblasColMajor, CblasUpper, n, (veclib_float_complex*)a, lda);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cpotrf(CblasColMajor, CblasUpper, n, (veclib_float_complex*)a, lda);
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     cpotrf_( "U", &n, (veclib_float_complex*)a, &lda, &info );
 #endif
     
@@ -2593,11 +2594,11 @@ float utility_sdet
         for(j=0; j<N; j++)
             tmp[j*N+i] = A[i*N+j];
 
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     sgetrf_((veclib_int*)&N, (veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, &INFO);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     INFO = clapack_sgetrf(CblasColMajor, N, N, tmp, N, IPIV);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     INFO = LAPACKE_sgetrf(CblasColMajor, N, N, tmp, N, IPIV);
 #endif
 
@@ -2641,20 +2642,20 @@ double utility_ddet
  
     TAU = malloc(sizeof(double)*N);
     LWORK=-1;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     dgeqrf_(&N, &N, tmp, &N, TAU, &lwork2, &LWORK, &INFO);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     INFO = LAPACKE_dgeqrf_work(CblasColMajor, N, N, tmp, N, TAU, &lwork2, LWORK);
 #endif
     lwork3=(veclib_int)lwork2;
     WORK=malloc(lwork3*sizeof(double));
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     dgeqrf_(&N, &N, tmp, &N, TAU, WORK, &lwork3, &INFO);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation in ATLAS CLAPACK");
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     INFO = LAPACKE_dgeqrf_work(CblasColMajor, N, N, tmp, N, TAU, WORK, lwork3);
 #endif
 
@@ -2708,13 +2709,13 @@ void utility_sinv
         for(j=0; j<N; j++)
             tmp[j*N+i] = A[i*N+j];
 
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     sgetrf_((veclib_int*)&N_, (veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, &INFO);
     sgetri_((veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, WORK, &LWORK, &INFO);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     INFO = clapack_sgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
     INFO = clapack_sgetri(CblasColMajor, N_, tmp, N_, IPIV);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     INFO = LAPACKE_sgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
     INFO = LAPACKE_sgetri(CblasColMajor, N_, tmp, N_, IPIV);
 #endif
@@ -2762,13 +2763,13 @@ void utility_dinv
         for(j=0; j<N; j++)
             tmp[j*N+i] = A[i*N+j];
 
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     dgetrf_((veclib_int*)&N_, (veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, &INFO);
     dgetri_((veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, WORK, &LWORK, &INFO);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     INFO = clapack_dgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
     INFO = clapack_dgetri(CblasColMajor, N_, tmp, N_, IPIV);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     INFO = LAPACKE_dgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
     INFO = LAPACKE_dgetri(CblasColMajor, N_, tmp, N_, IPIV);
 #endif
@@ -2816,13 +2817,13 @@ void utility_cinv
         for(j=0; j<N; j++)
             tmp[j*N+i] = A[i*N+j];
     
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     cgetrf_((veclib_int*)&N_, (veclib_int*)&N_, (veclib_float_complex*)tmp, (veclib_int*)&N_, IPIV, &INFO);
     cgetri_((veclib_int*)&N_, (veclib_float_complex*)tmp, (veclib_int*)&N_, IPIV, (veclib_float_complex*)WORK, &LWORK, &INFO);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     INFO = clapack_cgetrf(CblasColMajor, N_, N_, (veclib_float_complex*)tmp, N_, IPIV);
     INFO = clapack_cgetri(CblasColMajor, N_, (veclib_float_complex*)tmp, N_, IPIV);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     INFO = LAPACKE_cgetrf(CblasColMajor, N_, N_, (veclib_float_complex*)tmp, N_, IPIV);
     INFO = LAPACKE_cgetri(CblasColMajor, N_, (veclib_float_complex*)tmp, N_, IPIV);
 #endif

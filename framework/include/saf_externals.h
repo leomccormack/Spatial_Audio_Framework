@@ -82,7 +82,7 @@
  * (Generally the fastest library for x86 based architectures)
  */
 /* Note that Intel MKL LP64 supports Fortran LAPACK and LAPACKE interfaces: */
-# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortran LAPACK interface */
+# define SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< LAPACK interface */
 # include "mkl.h"
 
 #elif defined(SAF_USE_INTEL_MKL_ILP64)
@@ -93,7 +93,7 @@
  * wish to build MEX objects using SAF code; see e.g. extras/safmex)
  */
 /* Note that Intel MKL ILP64 will only work with the LAPACKE interface: */
-# define VECLIB_USE_LAPACKE_INTERFACE /**< LAPACKE interface */
+# define SAF_VECLIB_USE_LAPACKE_INTERFACE /**< LAPACK interface */
 # define MKL_ILP64
 # include "mkl.h"
 
@@ -102,7 +102,7 @@
  * Using OpenBLAS and the LAPACKE interface
  * (A good option for both x86 and ARM based architectures)
  */
-# define VECLIB_USE_LAPACKE_INTERFACE /**< LAPACKE interface */
+# define SAF_VECLIB_USE_LAPACKE_INTERFACE /**< LAPACK interface */
 # include "cblas.h"
 # include "lapacke.h"
 
@@ -111,7 +111,7 @@
  * Using the Automatically Tuned Linear Algebra Software (ATLAS) library
  * (Not recommended, since some saf_veclib functions do not work with ATLAS)
  */ 
-# define VECLIB_USE_CLAPACK_INTERFACE /**< CLAPACK interface */
+# define SAF_VECLIB_USE_CLAPACK_INTERFACE /**< LAPACK interface */
 # include "cblas-atlas.h"
 # include "clapack.h"
 # warning Note: CLAPACK does not include all LAPACK routines!
@@ -122,7 +122,7 @@
  * (Solid choice for both x86 and ARM, but only works under MacOSX and is not as
  * fast as Intel MKL for x86 systems)
  */
-# define VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< Fortran LAPACK interface */
+# define SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< LAPACK interface */
 # include "Accelerate/Accelerate.h"
 
 #else
