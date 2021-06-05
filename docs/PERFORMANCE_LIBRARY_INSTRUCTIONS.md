@@ -29,15 +29,15 @@ Run the following bash script (**sudo** privileges required):
 
 ```
 cd scripts
-sudo ./install-safmkl.sh [threaded|sequential] [lp64|ilp64]
+sudo ./install-safmkl.sh [threaded|sequential] [lp64|ilp64] [path/to/mkl/tools/builder]
 ```
 
 Add the following header search path to your project:
 
 ```
-[/opt|~]/intel/oneapi/mkl/latest/include/                   # New
-[/opt|~]/intel/compilers_and_libraries/linux/mkl/include    # Linux users
-[/opt|~]/intel/compilers_and_libraries/mac/mkl/include      # MacOSX users
+[/opt|~]/intel/oneapi/mkl/latest/include/                   # The new oneapi path
+[/opt|~]/intel/compilers_and_libraries/linux/mkl/include    # Old path for Linux users
+[/opt|~]/intel/compilers_and_libraries/mac/mkl/include      # Old path for MacOSX users
 ```
 
 Then add the following linker flag to your project:
@@ -46,6 +46,12 @@ Then add the following linker flag to your project:
 -L/usr/local/lib -lsaf_mkl_custom_lp64   # if you built the lp64 (32-bit integer) version
 -L/usr/local/lib -lsaf_mkl_custom_ilp64  # if you built the ilp64 (64-bit integer) version
 ``` 
+
+Finally, add the appropriate global definition:
+```
+SAF_USE_INTEL_MKL_LP64      # if you are linking with the lp64 (32-bit integer) version
+SAF_USE_INTEL_MKL_ILP64     # if you are linking with the ilp64 (64-bit integer) version
+```
 
 ### Windows users
  
@@ -65,17 +71,24 @@ C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include
 Add the following library search path to your project:
 
 ```
-C:/Users/[YOUR WORKING DIRECTORY]/SDKs/Spatial_Audio_Framework/dependencies/Win64/lib
+C:/YOUR/WORKING/DIRECTORY/Spatial_Audio_Framework/dependencies/Win64/lib
 ```
 
-link your project against the following library:
+Link your project against the following library:
 ```
-saf_mkl_custom.lib 
+saf_mkl_custom_lp64.lib    # if you built the lp64 (32-bit integer) version
+saf_mkl_custom_ilp64.lib   # if you built the ilp64 (64-bit integer) version
+```
+
+Finally, add the appropriate global definition:
+```
+SAF_USE_INTEL_MKL_LP64      # if you are linking with the lp64 (32-bit integer) version
+SAF_USE_INTEL_MKL_ILP64     # if you are linking with the ilp64 (64-bit integer) version
 ```
 
 ### Other options
 
-This custom MKL library is also installed alongside the [SPARTA](http://research.spa.aalto.fi/projects/sparta_vsts/) VST plug-in suite. Athough, it will be noted that this may not be the most up-to-date version of the library.
+This custom MKL library (lp64) is also installed alongside the [SPARTA](http://research.spa.aalto.fi/projects/sparta_vsts/) VST plug-in suite. Athough, it will be noted that this may not be the most up-to-date version of the library.
 
 You may of course also elect to not build this custom library and link directly, e.g. with:
 ```
@@ -84,11 +97,10 @@ You may of course also elect to not build this custom library and link directly,
 
 This will select the interface and threading at runtime, based on environment variables.
 You can check the options for your system with intel's [link-line-advisor](https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl/link-line-advisor.html).
-The options can be passed directly to CMAKE, e.g. with
+The options can be passed directly to CMake, e.g. with
 ```
 -DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL_ILP64 -DINTEL_MKL_HEADER_PATH="/opt/intel/oneapi/mkl/latest/include" -DINTEL_MKL_LIB="/opt/intel/oneapi/mkl/latest/lib/libmkl_intel_ilp64.dylib;/opt/intel/oneapi/mkl/latest/lib/libmkl_sequential.dylib;/opt/intel/oneapi/mkl/latest/lib/libmkl_core.dylib"
 ```
-
 
 Intel MKL also ships with recent [Anaconda](https://anaconda.org) distributions. The easiest way to install with conda is:
 ```
