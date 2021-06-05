@@ -2,10 +2,7 @@ var saf__utility__misc_8h =
 [
     [ "_impl_CASSERT_LINE", "group___utilities.html#gaee15f58b2e7b74a7107fedda6c9e0e6f", null ],
     [ "_impl_PASTE", "group___utilities.html#gab127f5ccb9b1065a239a25c6e88a3b13", null ],
-    [ "saf_assert", "group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215", null ],
     [ "SAF_CASSERT", "group___utilities.html#ga74f8bcd39c712a7fd5099353a84f780b", null ],
-    [ "saf_print_error", "group___utilities.html#ga00dfffc88bae83749d1263b68c091f46", null ],
-    [ "saf_print_warning", "group___utilities.html#gaad02a5dce819d156746129bc8121052c", null ],
     [ "anyLessThanf", "group___utilities.html#gae6a18584c72d6f66b84ac4c4b900a001", null ],
     [ "convd", "group___utilities.html#gab6cd4596eec8746244d1566eb2adad85", null ],
     [ "convert_0_360To_m180_180", "group___utilities.html#ga37c35ff6667014c738a9d4713b9728a5", null ],
@@ -25,8 +22,6 @@ var saf__utility__misc_8h =
     [ "rand_cmplx_m1_1", "group___utilities.html#ga71609f8a78ff8b2ea98e81f44bc79fd5", null ],
     [ "rand_m1_1", "group___utilities.html#gaed4eef5b5f7a6f7a15eeb08c45127738", null ],
     [ "randperm", "group___utilities.html#ga67b59e17207ee35a30f8b252db525559", null ],
-    [ "saf_print_error_FL", "group___utilities.html#ga81c37657a9353a6cbfea5978077f1d75", null ],
-    [ "saf_print_warning_FL", "group___utilities.html#ga7047547b9159615661414b65f3f34d08", null ],
     [ "sumf", "group___utilities.html#gaa2dbc701d05112cccb1a2d7fdc998598", null ],
     [ "unique_i", "group___utilities.html#ga426cf3884b949ed5d8debc6a941b814a", null ]
 ];

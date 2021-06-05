@@ -235,7 +235,7 @@ $(document).ready(function(){initNavTree('safmex_8h_source.html',''); initResiza
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    </div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="comment">/* convert mwSize-&gt;int */</span></div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    (*nDims) = (int)nDims_mx;</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    (*pDims) = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>((*nDims)*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    (*pDims) = <a class="code" href="md__malloc_8c.html#a9f6670dbc2e1f4252b628d94f0c0b5be">realloc1d</a>((*pDims), (*nDims)*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;(*nDims); i++)</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        (*pDims)[i] = (int)pDims_mx[i];</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    </div>
@@ -508,6 +508,7 @@ $(document).ready(function(){initNavTree('safmex_8h_source.html',''); initResiza
 <div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;    <span class="comment">/* clean-up */</span></div>
 <div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;    free(pDims_mx);</div>
 <div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;}</div>
+<div class="ttc" id="amd__malloc_8c_html_a9f6670dbc2e1f4252b628d94f0c0b5be"><div class="ttname"><a href="md__malloc_8c.html#a9f6670dbc2e1f4252b628d94f0c0b5be">realloc1d</a></div><div class="ttdeci">void * realloc1d(void *ptr, size_t dim1_data_size)</div><div class="ttdoc">1-D realloc (same as realloc, but with error checking)</div><div class="ttdef"><b>Definition:</b> <a href="md__malloc_8c_source.html#l00078">md_malloc.c:78</a></div></div>
 <div class="ttc" id="amd__malloc_8c_html_ad1757ad65cdad25d187c81188a501c53"><div class="ttname"><a href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a></div><div class="ttdeci">void * malloc1d(size_t dim1_data_size)</div><div class="ttdoc">1-D malloc (same as malloc, but with error checking)</div><div class="ttdef"><b>Definition:</b> <a href="md__malloc_8c_source.html#l00058">md_malloc.c:58</a></div></div>
 <div class="ttc" id="asaf_8h_html"><div class="ttname"><a href="saf_8h.html">saf.h</a></div><div class="ttdoc">Main include header for the Spatial_Audio_Framework (SAF)</div></div>
 <div class="ttc" id="asafmex_8h_html_a02508eeaadb43a6833f7f46fa9920d23"><div class="ttname"><a href="safmex_8h.html#a02508eeaadb43a6833f7f46fa9920d23">MEXdouble2SAFsingle</a></div><div class="ttdeci">void MEXdouble2SAFsingle(const mxArray *in, float **out, int *nDims, int **pDims)</div><div class="ttdoc">Convert a mex double-precision array into single precision array for SAF.</div><div class="ttdef"><b>Definition:</b> <a href="safmex_8h_source.html#l00151">safmex.h:151</a></div></div>
@@ -538,7 +539,7 @@ $(document).ready(function(){initNavTree('safmex_8h_source.html',''); initResiza
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_1510bd745cd29c20d24c27171ebe5ba5.html">extras</a></li><li class="navelem"><a class="el" href="dir_ceb95d790a4cfeea9a2b697328335b4f.html">safmex</a></li><li class="navelem"><a class="el" href="safmex_8h.html">safmex.h</a></li>
-    <li class="footer">Generated on Mon May 31 2021 04:56:00 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sat Jun 5 2021 11:04:01 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

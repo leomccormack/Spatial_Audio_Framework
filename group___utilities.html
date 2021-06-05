@@ -278,6 +278,15 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaba0fb640ea3653b1ece6501d3b0cd7f0">MKSTRING</a>(s)&#160;&#160;&#160;<a class="el" href="group___utilities.html#gaf0cbde7c74c0dd6349ae1adc978b9424">MKSTRING_</a>(s)</td></tr>
 <tr class="memdesc:gaba0fb640ea3653b1ece6501d3b0cd7f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used to make strings inside of Macros. <br /></td></tr>
 <tr class="separator:gaba0fb640ea3653b1ece6501d3b0cd7f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaad02a5dce819d156746129bc8121052c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaad02a5dce819d156746129bc8121052c">saf_print_warning</a>(<a class="el" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>)</td></tr>
+<tr class="memdesc:gaad02a5dce819d156746129bc8121052c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro to print a warning message along with the filename and line number.  <a href="group___utilities.html#gaad02a5dce819d156746129bc8121052c">More...</a><br /></td></tr>
+<tr class="separator:gaad02a5dce819d156746129bc8121052c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga00dfffc88bae83749d1263b68c091f46"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga00dfffc88bae83749d1263b68c091f46">saf_print_error</a>(<a class="el" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>)</td></tr>
+<tr class="memdesc:ga00dfffc88bae83749d1263b68c091f46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro to print a error message along with the filename and line number.  <a href="group___utilities.html#ga00dfffc88bae83749d1263b68c091f46">More...</a><br /></td></tr>
+<tr class="separator:ga00dfffc88bae83749d1263b68c091f46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0ebdaa72f19e4e545aa1f3305badf215"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(x,  <a class="el" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>)</td></tr>
+<tr class="memdesc:ga0ebdaa72f19e4e545aa1f3305badf215"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro to make an assertion, along with a string explaining its purpose.  <a href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">More...</a><br /></td></tr>
+<tr class="separator:ga0ebdaa72f19e4e545aa1f3305badf215"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga74f8bcd39c712a7fd5099353a84f780b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga74f8bcd39c712a7fd5099353a84f780b">SAF_CASSERT</a>(predicate,  file)&#160;&#160;&#160;<a class="el" href="group___utilities.html#gaee15f58b2e7b74a7107fedda6c9e0e6f">_impl_CASSERT_LINE</a>(predicate,__LINE__,file)</td></tr>
 <tr class="memdesc:ga74f8bcd39c712a7fd5099353a84f780b"><td class="mdescLeft">&#160;</td><td class="mdescRight">A compile time assertion check.  <a href="group___utilities.html#ga74f8bcd39c712a7fd5099353a84f780b">More...</a><br /></td></tr>
 <tr class="separator:ga74f8bcd39c712a7fd5099353a84f780b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -289,15 +298,6 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaee15f58b2e7b74a7107fedda6c9e0e6f">_impl_CASSERT_LINE</a>(predicate,  line,  file)&#160;&#160;&#160; typedef char <a class="el" href="group___utilities.html#gab127f5ccb9b1065a239a25c6e88a3b13">_impl_PASTE</a>(assertion_failed_##file##_,line)[2*!!(predicate)-1];</td></tr>
 <tr class="memdesc:gaee15f58b2e7b74a7107fedda6c9e0e6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">CASSERT helper macro. <br /></td></tr>
 <tr class="separator:gaee15f58b2e7b74a7107fedda6c9e0e6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaad02a5dce819d156746129bc8121052c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaad02a5dce819d156746129bc8121052c">saf_print_warning</a>(<a class="el" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>)</td></tr>
-<tr class="memdesc:gaad02a5dce819d156746129bc8121052c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro to print a warning message along with the filename and line number.  <a href="group___utilities.html#gaad02a5dce819d156746129bc8121052c">More...</a><br /></td></tr>
-<tr class="separator:gaad02a5dce819d156746129bc8121052c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga00dfffc88bae83749d1263b68c091f46"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga00dfffc88bae83749d1263b68c091f46">saf_print_error</a>(<a class="el" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>)</td></tr>
-<tr class="memdesc:ga00dfffc88bae83749d1263b68c091f46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro to print a error message along with the filename and line number.  <a href="group___utilities.html#ga00dfffc88bae83749d1263b68c091f46">More...</a><br /></td></tr>
-<tr class="separator:ga00dfffc88bae83749d1263b68c091f46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0ebdaa72f19e4e545aa1f3305badf215"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(x,  <a class="el" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>)</td></tr>
-<tr class="memdesc:ga0ebdaa72f19e4e545aa1f3305badf215"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro to make an assertion, along with a string explaining its purpose.  <a href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">More...</a><br /></td></tr>
-<tr class="separator:ga0ebdaa72f19e4e545aa1f3305badf215"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -627,14 +627,6 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="gro
 <tr class="memitem:ga2ca45b00a559a054bdc5428599da1dc4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga2ca45b00a559a054bdc5428599da1dc4">saf_multiConv_apply</a> (void *const hMC, float *inputSigs, float *outputSigs)</td></tr>
 <tr class="memdesc:ga2ca45b00a559a054bdc5428599da1dc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs the multi-channel convolution.  <a href="group___utilities.html#ga2ca45b00a559a054bdc5428599da1dc4">More...</a><br /></td></tr>
 <tr class="separator:ga2ca45b00a559a054bdc5428599da1dc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7047547b9159615661414b65f3f34d08"><td class="memItemLeft" align="right" valign="top"><a id="ga7047547b9159615661414b65f3f34d08"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga7047547b9159615661414b65f3f34d08">saf_print_warning_FL</a> (char *<a class="el" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>, char *fileName, int lineNumber)</td></tr>
-<tr class="memdesc:ga7047547b9159615661414b65f3f34d08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to print a warning message with the filename and line number. <br /></td></tr>
-<tr class="separator:ga7047547b9159615661414b65f3f34d08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga81c37657a9353a6cbfea5978077f1d75"><td class="memItemLeft" align="right" valign="top"><a id="ga81c37657a9353a6cbfea5978077f1d75"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga81c37657a9353a6cbfea5978077f1d75">saf_print_error_FL</a> (char *<a class="el" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>, char *fileName, int lineNumber)</td></tr>
-<tr class="memdesc:ga81c37657a9353a6cbfea5978077f1d75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to print a error message with the filename and line number. <br /></td></tr>
-<tr class="separator:ga81c37657a9353a6cbfea5978077f1d75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga37c35ff6667014c738a9d4713b9728a5"><td class="memItemLeft" align="right" valign="top"><a id="ga37c35ff6667014c738a9d4713b9728a5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga37c35ff6667014c738a9d4713b9728a5">convert_0_360To_m180_180</a> (float *dirs_deg, int nDirs)</td></tr>
 <tr class="memdesc:ga37c35ff6667014c738a9d4713b9728a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wraps around any angles exeeding 180 degrees (e.g., 200-&gt; -160) <br /></td></tr>
@@ -1881,14 +1873,14 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">                    <span class="keywordflow">if</span> (!(x)) \</div>
 <div class="line">                    {printf(<span class="stringliteral">&quot;SAF ASSERTION FAILED: (%s), %s [%s LINE %u].\n&quot;</span>, \</div>
-<div class="line">                     <a class="code" href="saf_8h.html#aba0fb640ea3653b1ece6501d3b0cd7f0">MKSTRING</a>(x), <a class="code" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>, __FILE__, __LINE__); \</div>
+<div class="line">                     <a class="code" href="group___utilities.html#gaba0fb640ea3653b1ece6501d3b0cd7f0">MKSTRING</a>(x), <a class="code" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>, __FILE__, __LINE__); \</div>
 <div class="line">                     exit(EXIT_FAILURE); }</div>
-<div class="ttc" id="asaf_8h_html_aba0fb640ea3653b1ece6501d3b0cd7f0"><div class="ttname"><a href="saf_8h.html#aba0fb640ea3653b1ece6501d3b0cd7f0">MKSTRING</a></div><div class="ttdeci">#define MKSTRING(s)</div><div class="ttdoc">Stringify.</div><div class="ttdef"><b>Definition:</b> <a href="saf_8h_source.html#l00096">saf.h:96</a></div></div>
+<div class="ttc" id="agroup___utilities_html_gaba0fb640ea3653b1ece6501d3b0cd7f0"><div class="ttname"><a href="group___utilities.html#gaba0fb640ea3653b1ece6501d3b0cd7f0">MKSTRING</a></div><div class="ttdeci">#define MKSTRING(s)</div><div class="ttdoc">Used to make strings inside of Macros.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00124">saf_utilities.h:124</a></div></div>
 <div class="ttc" id="asafmex_8h_html_a1e3430e018fa65c35f62f6593a4712b9"><div class="ttname"><a href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a></div><div class="ttdeci">char message[MSG_STR_LENGTH]</div><div class="ttdoc">Current warning/error message.</div><div class="ttdef"><b>Definition:</b> <a href="safmex_8h_source.html#l00029">safmex.h:29</a></div></div>
 </div><!-- fragment -->
 <p>Macro to make an assertion, along with a string explaining its purpose. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8h_source.html#l00100">100</a> of file <a class="el" href="saf__utility__misc_8h_source.html">saf_utility_misc.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utilities_8h_source.html#l00140">140</a> of file <a class="el" href="saf__utilities_8h_source.html">saf_utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1950,13 +1942,14 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">                                                     <a class="code" href="group___utilities.html#ga81c37657a9353a6cbfea5978077f1d75">saf_print_error_FL</a>(<a class="code" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>, \</div>
-<div class="line">                                                     __FILE__, __LINE__)</div>
-<div class="ttc" id="agroup___utilities_html_ga81c37657a9353a6cbfea5978077f1d75"><div class="ttname"><a href="group___utilities.html#ga81c37657a9353a6cbfea5978077f1d75">saf_print_error_FL</a></div><div class="ttdeci">void saf_print_error_FL(char *message, char *fileName, int lineNumber)</div><div class="ttdoc">Function to print a error message with the filename and line number.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__misc_8c_source.html#l00055">saf_utility_misc.c:55</a></div></div>
+<b>Value:</b><div class="fragment"><div class="line">                                  {fprintf(stderr, \</div>
+<div class="line">                                  <span class="stringliteral">&quot;SAF ERROR: %s [%s LINE %u] \n&quot;</span>, <a class="code" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>, \</div>
+<div class="line">                                  __FILE__, __LINE__); \</div>
+<div class="line">                                  exit(EXIT_FAILURE);}</div>
 </div><!-- fragment -->
 <p>Macro to print a error message along with the filename and line number. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8h_source.html#l00096">96</a> of file <a class="el" href="saf__utility__misc_8h_source.html">saf_utility_misc.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utilities_8h_source.html#l00134">134</a> of file <a class="el" href="saf__utilities_8h_source.html">saf_utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1975,13 +1968,13 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">                                                         <a class="code" href="group___utilities.html#ga7047547b9159615661414b65f3f34d08">saf_print_warning_FL</a>(<a class="code" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>, \</div>
-<div class="line">                                                         __FILE__, __LINE__)</div>
-<div class="ttc" id="agroup___utilities_html_ga7047547b9159615661414b65f3f34d08"><div class="ttname"><a href="group___utilities.html#ga7047547b9159615661414b65f3f34d08">saf_print_warning_FL</a></div><div class="ttdeci">void saf_print_warning_FL(char *message, char *fileName, int lineNumber)</div><div class="ttdoc">Function to print a warning message with the filename and line number.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__misc_8c_source.html#l00051">saf_utility_misc.c:51</a></div></div>
+<b>Value:</b><div class="fragment"><div class="line">                                    {fprintf(stdout, \</div>
+<div class="line">                                    <span class="stringliteral">&quot;SAF WARNING: %s [%s LINE %u] \n&quot;</span>, <a class="code" href="safmex_8h.html#a1e3430e018fa65c35f62f6593a4712b9">message</a>,\</div>
+<div class="line">                                    __FILE__, __LINE__);}</div>
 </div><!-- fragment -->
 <p>Macro to print a warning message along with the filename and line number. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8h_source.html#l00092">92</a> of file <a class="el" href="saf__utility__misc_8h_source.html">saf_utility_misc.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utilities_8h_source.html#l00129">129</a> of file <a class="el" href="saf__utilities_8h_source.html">saf_utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2183,7 +2176,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8h_source.html#l00053">53</a> of file <a class="el" href="saf__utility__fft_8h_source.html">saf_utility_fft.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8h_source.html#l00050">50</a> of file <a class="el" href="saf__utility__fft_8h_source.html">saf_utility_fft.h</a>.</p>
 
 </div>
 </div>
@@ -3018,7 +3011,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00268">268</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00257">257</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -3200,7 +3193,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00290">290</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00279">279</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -3260,7 +3253,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00203">203</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00192">192</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -3503,7 +3496,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>factorial(n) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00184">184</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00173">173</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -3752,7 +3745,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00133">133</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00126">126</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -3820,7 +3813,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00186">186</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00179">179</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -3963,7 +3956,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] <a href="https://www.geeksforgeeks.org/print-all-possible-combinations-of-r-elements-in-a-given-array-of-size-n/">https://www.geeksforgeeks.org/print-all-possible-combinations-of-r-elements-in-a-given-array-of-size-n/</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00496">496</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00485">485</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -4034,7 +4027,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00112">112</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00101">101</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -4436,7 +4429,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00121">121</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00114">114</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -4592,7 +4585,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>This function is based on the Matlab script found: mathworks.com/matlabcentral/fileexchange/50413-generalized-matrix-exponential</p>
 <p>Copyright (c) 2015, Kenneth Johnson (BSD-3-clause license) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00516">516</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00505">505</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -4900,7 +4893,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Marple, L., 1999. Computing the discrete-time" analytic" signal via FFT. IEEE Transactions on signal processing, 47(9), pp.2600-2603. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00206">206</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00199">199</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -5014,7 +5007,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00091">91</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00080">80</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -5067,7 +5060,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00333">333</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00338">338</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
 
 </div>
 </div>
@@ -5210,7 +5203,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00288">288</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00293">293</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
 
 </div>
 </div>
@@ -5251,7 +5244,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>fmodf(n) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00198">198</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00187">187</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -5274,7 +5267,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>A simple function which returns the next power of 2. </p>
 <p>Taken from (no license): <a href="https://github.com/amaggi/legacy-code">https://github.com/amaggi/legacy-code</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00074">74</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00063">63</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -5320,7 +5313,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00348">348</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00337">337</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -5366,7 +5359,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00312">312</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00301">301</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -5412,7 +5405,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00330">330</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00319">319</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -5827,7 +5820,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00257">257</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00246">246</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -5866,7 +5859,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00246">246</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00235">235</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -5905,7 +5898,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00235">235</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00224">224</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -5951,7 +5944,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00778">778</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00805">805</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -5991,7 +5984,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00656">656</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00668">668</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -6019,7 +6012,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00714">714</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00735">735</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -6065,7 +6058,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00751">751</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00776">776</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -6406,7 +6399,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00621">621</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00630">630</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -6452,10 +6445,10 @@ Example Usage</h2>
 <div class="line"><a class="code" href="group___utilities.html#gaa2cba44909322a8b0d3a3f94c7b1e062">saf_rfft_backward</a>(hFFT, x_out, test); <span class="comment">// perform backwards transform</span></div>
 <div class="line"><span class="comment">// &#39;x_in&#39; should equal &#39;test&#39; (given some numerical error)</span></div>
 <div class="line"><a class="code" href="group___utilities.html#gaa36181d15c604825034d54843b884616">saf_rfft_destroy</a>(&amp;hFFT);              <span class="comment">// destroys instance of safFFT</span></div>
-<div class="ttc" id="agroup___utilities_html_ga66b301071b98e49191c801f07af83346"><div class="ttname"><a href="group___utilities.html#ga66b301071b98e49191c801f07af83346">saf_rfft_create</a></div><div class="ttdeci">void saf_rfft_create(void **const phFFT, int N)</div><div class="ttdoc">Creates an instance of saf_rfft; real&lt;-&gt;half-complex (conjugate-symmetric) FFT.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00489">saf_utility_fft.c:490</a></div></div>
-<div class="ttc" id="agroup___utilities_html_ga90fda008ac4a802d1c3f72450af14814"><div class="ttname"><a href="group___utilities.html#ga90fda008ac4a802d1c3f72450af14814">saf_rfft_forward</a></div><div class="ttdeci">void saf_rfft_forward(void *const hFFT, float *inputTD, float_complex *outputFD)</div><div class="ttdoc">Performs the forward-FFT operation; use for real to complex (conjugate symmetric) transformations.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00586">saf_utility_fft.c:587</a></div></div>
-<div class="ttc" id="agroup___utilities_html_gaa2cba44909322a8b0d3a3f94c7b1e062"><div class="ttname"><a href="group___utilities.html#gaa2cba44909322a8b0d3a3f94c7b1e062">saf_rfft_backward</a></div><div class="ttdeci">void saf_rfft_backward(void *const hFFT, float_complex *inputFD, float *outputTD)</div><div class="ttdoc">Performs the backward-FFT operation; use for complex (conjugate symmetric) to real transformations.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00621">saf_utility_fft.c:622</a></div></div>
-<div class="ttc" id="agroup___utilities_html_gaa36181d15c604825034d54843b884616"><div class="ttname"><a href="group___utilities.html#gaa36181d15c604825034d54843b884616">saf_rfft_destroy</a></div><div class="ttdeci">void saf_rfft_destroy(void **const phFFT)</div><div class="ttdoc">Destroys an instance of saf_rfft.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00550">saf_utility_fft.c:551</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga66b301071b98e49191c801f07af83346"><div class="ttname"><a href="group___utilities.html#ga66b301071b98e49191c801f07af83346">saf_rfft_create</a></div><div class="ttdeci">void saf_rfft_create(void **const phFFT, int N)</div><div class="ttdoc">Creates an instance of saf_rfft; real&lt;-&gt;half-complex (conjugate-symmetric) FFT.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00482">saf_utility_fft.c:483</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga90fda008ac4a802d1c3f72450af14814"><div class="ttname"><a href="group___utilities.html#ga90fda008ac4a802d1c3f72450af14814">saf_rfft_forward</a></div><div class="ttdeci">void saf_rfft_forward(void *const hFFT, float *inputTD, float_complex *outputFD)</div><div class="ttdoc">Performs the forward-FFT operation; use for real to complex (conjugate symmetric) transformations.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00593">saf_utility_fft.c:594</a></div></div>
+<div class="ttc" id="agroup___utilities_html_gaa2cba44909322a8b0d3a3f94c7b1e062"><div class="ttname"><a href="group___utilities.html#gaa2cba44909322a8b0d3a3f94c7b1e062">saf_rfft_backward</a></div><div class="ttdeci">void saf_rfft_backward(void *const hFFT, float_complex *inputFD, float *outputTD)</div><div class="ttdoc">Performs the backward-FFT operation; use for complex (conjugate symmetric) to real transformations.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00630">saf_utility_fft.c:631</a></div></div>
+<div class="ttc" id="agroup___utilities_html_gaa36181d15c604825034d54843b884616"><div class="ttname"><a href="group___utilities.html#gaa36181d15c604825034d54843b884616">saf_rfft_destroy</a></div><div class="ttdeci">void saf_rfft_destroy(void **const phFFT)</div><div class="ttdoc">Destroys an instance of saf_rfft.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00553">saf_utility_fft.c:554</a></div></div>
 </div><!-- fragment --><dl class="test"><dt><b><a class="el" href="test.html#_test000024">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a61e4197e4ad12c1669f952118a37c17b" title="Testing the forward and backward real-(half)complex FFT (saf_rfft)">test__saf_rfft()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -6465,7 +6458,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00489">489</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00482">482</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -6493,7 +6486,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00550">550</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00553">553</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -6540,7 +6533,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00586">586</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00593">593</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -6593,7 +6586,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00396">396</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00389">389</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -6639,7 +6632,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00448">448</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00441">441</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -6707,7 +6700,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00257">257</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00250">250</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -6735,7 +6728,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00305">305</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00298">298</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -6763,7 +6756,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00437">437</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00430">430</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -6816,7 +6809,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00324">324</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__fft_8c_source.html#l00317">317</a> of file <a class="el" href="saf__utility__fft_8c_source.html">saf_utility_fft.c</a>.</p>
 
 </div>
 </div>
@@ -7573,7 +7566,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00454">454</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00458">458</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
 
 </div>
 </div>
@@ -7619,7 +7612,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00422">422</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00426">426</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
 
 </div>
 </div>
@@ -7647,7 +7640,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00438">438</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__decor_8c_source.html#l00442">442</a> of file <a class="el" href="saf__utility__decor_8c_source.html">saf_utility_decor.c</a>.</p>
 
 </div>
 </div>
@@ -7709,7 +7702,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00408">408</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__misc_8c_source.html#l00397">397</a> of file <a class="el" href="saf__utility__misc_8c_source.html">saf_utility_misc.c</a>.</p>
 
 </div>
 </div>
@@ -7862,7 +7855,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02510">2510</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02532">2532</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -7931,7 +7924,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01457">1457</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01479">1479</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -7999,7 +7992,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01268">1268</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01290">1290</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8060,7 +8053,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01700">1700</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01722">1722</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8122,7 +8115,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01921">1921</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01943">1943</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8169,7 +8162,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00267">267</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00278">278</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8216,7 +8209,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00175">175</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00186">186</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8263,7 +8256,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02782">2782</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02804">2804</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8317,7 +8310,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02181">2181</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02203">2203</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8386,7 +8379,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01171">1171</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01193">1193</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8448,7 +8441,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02037">2037</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02059">2059</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8524,7 +8517,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00978">978</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01000">1000</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8571,7 +8564,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00318">318</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00329">329</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8625,7 +8618,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00733">733</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00744">744</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8679,7 +8672,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00442">442</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00453">453</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8726,7 +8719,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00370">370</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00381">381</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8787,7 +8780,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00685">685</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00696">696</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8841,7 +8834,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00597">597</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00608">608</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8895,7 +8888,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00520">520</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00531">531</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8936,7 +8929,7 @@ Example Usage</h2>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>determinant </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02610">2610</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02632">2632</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -8997,7 +8990,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01756">1756</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01778">1778</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9044,7 +9037,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00277">277</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00288">288</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9091,7 +9084,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00208">208</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00219">219</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9138,7 +9131,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02728">2728</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02750">2750</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9192,7 +9185,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02276">2276</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02298">2298</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9246,7 +9239,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00749">749</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00760">760</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9293,7 +9286,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00380">380</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00391">391</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9340,7 +9333,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02461">2461</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02483">2483</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9381,7 +9374,7 @@ Example Usage</h2>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>determinant </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02562">2562</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02584">2584</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9442,7 +9435,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01644">1644</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01666">1666</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9503,7 +9496,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01873">1873</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01895">1895</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9550,7 +9543,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00257">257</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00268">268</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9597,7 +9590,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00148">148</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00159">159</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9644,7 +9637,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02674">2674</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02696">2696</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9698,7 +9691,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02095">2095</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02117">2117</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9767,7 +9760,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01085">1085</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01107">1107</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9829,7 +9822,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01984">1984</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02006">2006</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9884,7 +9877,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00859">859</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00870">870</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -9960,7 +9953,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00881">881</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00902">902</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10007,7 +10000,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00302">302</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00313">313</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10061,7 +10054,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00338">338</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00349">349</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10115,7 +10108,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00819">819</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00830">830</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10169,7 +10162,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00793">793</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00804">804</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10223,7 +10216,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00710">710</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00721">721</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10277,7 +10270,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00841">841</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00852">852</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10331,7 +10324,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00405">405</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00416">416</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10378,7 +10371,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00360">360</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00371">371</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10432,7 +10425,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00674">674</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00685">685</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10486,7 +10479,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00560">560</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00571">571</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10540,7 +10533,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00642">642</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00653">653</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10594,7 +10587,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00482">482</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00493">493</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10663,7 +10656,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01548">1548</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01570">1570</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10731,7 +10724,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01360">1360</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01382">1382</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10792,7 +10785,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01812">1812</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l01834">1834</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10839,7 +10832,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00287">287</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00298">298</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10886,7 +10879,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00230">230</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00241">241</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10940,7 +10933,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02361">2361</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l02383">2383</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -10994,7 +10987,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00772">772</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00783">783</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -11041,7 +11034,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00390">390</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00401">401</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
 
 </div>
 </div>
@@ -11539,7 +11532,7 @@ Example Usage</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon May 31 2021 04:56:03 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sat Jun 5 2021 11:04:03 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

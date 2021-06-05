@@ -20,8 +20,6 @@ var saf__utility__misc_8c =
     [ "rand_cmplx_m1_1", "group___utilities.html#ga71609f8a78ff8b2ea98e81f44bc79fd5", null ],
     [ "rand_m1_1", "group___utilities.html#gaed4eef5b5f7a6f7a15eeb08c45127738", null ],
     [ "randperm", "group___utilities.html#ga67b59e17207ee35a30f8b252db525559", null ],
-    [ "saf_print_error_FL", "group___utilities.html#ga81c37657a9353a6cbfea5978077f1d75", null ],
-    [ "saf_print_warning_FL", "group___utilities.html#ga7047547b9159615661414b65f3f34d08", null ],
     [ "sumf", "group___utilities.html#gaa2dbc701d05112cccb1a2d7fdc998598", null ],
     [ "unique_i", "group___utilities.html#ga426cf3884b949ed5d8debc6a941b814a", null ],
     [ "factorials_15", "saf__utility__misc_8c.html#ae987dfa48ca149a577ffb2ba6ac5e662", null ]

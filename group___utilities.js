@@ -213,8 +213,6 @@ var group___utilities =
     [ "saf_multiConv_apply", "group___utilities.html#ga2ca45b00a559a054bdc5428599da1dc4", null ],
     [ "saf_multiConv_create", "group___utilities.html#ga67e885c1f28623d02358a4e11a232d84", null ],
     [ "saf_multiConv_destroy", "group___utilities.html#ga023177fea5c89f6d7263ccb6bc2bd2e3", null ],
-    [ "saf_print_error_FL", "group___utilities.html#ga81c37657a9353a6cbfea5978077f1d75", null ],
-    [ "saf_print_warning_FL", "group___utilities.html#ga7047547b9159615661414b65f3f34d08", null ],
     [ "saf_rfft_backward", "group___utilities.html#gaa2cba44909322a8b0d3a3f94c7b1e062", null ],
     [ "saf_rfft_create", "group___utilities.html#ga66b301071b98e49191c801f07af83346", null ],
     [ "saf_rfft_destroy", "group___utilities.html#gaa36181d15c604825034d54843b884616", null ],
