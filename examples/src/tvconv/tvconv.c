@@ -117,7 +117,7 @@ void tvconv_init
 
     if(pData->hostBlockSize != hostBlockSize){
         pData->hostBlockSize = hostBlockSize;
-        pData->hostBlockSize_clamped = CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
+        pData->hostBlockSize_clamped = SAF_CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
         pData->reInitFilters = 1;
         tvconv_setCodecStatus(hTVCnv, CODEC_STATUS_NOT_INITIALISED);
     }
@@ -147,13 +147,13 @@ void tvconv_process
 
     for(s=0; s<nSamples; s++){
         /* Load input signals into inFIFO buffer */
-        for(ch=0; ch<MIN(MIN(nInputs,numInputChannels),MAX_NUM_CHANNELS); ch++)
+        for(ch=0; ch<SAF_MIN(SAF_MIN(nInputs,numInputChannels),MAX_NUM_CHANNELS); ch++)
             pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
         for(; ch<numInputChannels; ch++) /* Zero any channels that were not given */
             pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
 
         /* Pull output signals from outFIFO buffer */
-        for(ch=0; ch<MIN(MIN(nOutputs, numOutputChannels),MAX_NUM_CHANNELS); ch++)
+        for(ch=0; ch<SAF_MIN(SAF_MIN(nOutputs, numOutputChannels),MAX_NUM_CHANNELS); ch++)
             outputs[ch][s] = pData->outFIFO[ch][pData->FIFO_idx];
         for(; ch<nOutputs; ch++) /* Zero any extra channels */
             outputs[ch][s] = 0.0f;
@@ -180,7 +180,7 @@ void tvconv_process
                 memset(FLATTEN2D(pData->outputFrameTD), 0, MAX_NUM_CHANNELS * (pData->hostBlockSize_clamped)*sizeof(float));
 
             /* copy signals to output buffer */
-            for (i = 0; i < MIN(numOutputChannels, MAX_NUM_CHANNELS); i++)
+            for (i = 0; i < SAF_MIN(numOutputChannels, MAX_NUM_CHANNELS); i++)
                 utility_svvcopy(pData->outputFrameTD[i], pData->hostBlockSize_clamped, pData->outFIFO[i]);
         }
         else if(pData->FIFO_idx >= pData->hostBlockSize_clamped){
@@ -219,7 +219,7 @@ void tvconv_checkReInit(void* const hTVCnv)
         
         /* if length of the loaded sofa file was not divisable by the specified number of inputs, then the handle remains NULL,
          * and no convolution is applied */
-        pData->hostBlockSize_clamped = CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
+        pData->hostBlockSize_clamped = SAF_CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
         if(pData->ir_length>0){
             for (int n = 0; n < pData->nPositions; n++){
                 saf_matrixConv_create(&(pData->hMatrixConvs[n]),
@@ -305,7 +305,7 @@ void tvconv_setFiltersAndPositions
         }
     }
     
-    pData->nOutputChannels = MIN(pData->nIrChannels, MAX_NUM_CHANNELS);
+    pData->nOutputChannels = SAF_MIN(pData->nIrChannels, MAX_NUM_CHANNELS);
     saf_sofa_close(&sofa);
     tvconv_setMinMaxDimensions(hTVCnv);
     pData->codecStatus = CODEC_STATUS_INITIALISED;
