@@ -42,9 +42,7 @@ extern "C" {
 /*                             Presets + Constants                            */
 /* ========================================================================== */
 
-/**
- * Available interpolation modes
- */
+/** Available interpolation modes */
 typedef enum {
     INTERP_TRI = 1  /**< Triangular interpolation */
 }INTERP_MODES;
@@ -107,7 +105,7 @@ void binauraliser_initCodec(void* const hBin);
  * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void binauraliser_process(void* const hBin,
-                          float** const inputs,
+                          const float *const * inputs,
                           float** const outputs,
                           int nInputs,
                           int nOutputs,
@@ -124,23 +122,17 @@ void binauraliser_process(void* const hBin,
  */
 void binauraliser_refreshSettings(void* const hBin);
     
-/**
- * Sets the panning azimuth for a specific channel index, in DEGREES
- */
+/** Sets the panning azimuth for a specific channel index, in DEGREES */
 void binauraliser_setSourceAzi_deg(void* const hBin,
                                    int index,
                                    float newAzi_deg);
 
-/**
- * Sets the panning elevation for a specific channel index, in DEGREES
- */
+/** Sets the panning elevation for a specific channel index, in DEGREES */
 void binauraliser_setSourceElev_deg(void* const hBin,
                                     int index,
                                     float newElev_deg);
 
-/**
- * Sets the number of input channels/sources to binauralise.
- */
+/** Sets the number of input channels/sources to binauralise */
 void binauraliser_setNumSources(void* const hBin, int new_nSources);
 
 /**
@@ -166,34 +158,22 @@ void binauraliser_setUseDefaultHRIRsflag(void* const hBin, int newState);
  */
 void binauraliser_setSofaFilePath(void* const hBin, const char* path);
 
-/**
- * Enable (1) or disable (0) the pre-processing applied to the HRTFs.
- */
+/** Enable (1) or disable (0) the pre-processing applied to the HRTFs */
 void binauraliser_setEnableHRIRsPreProc(void* const hBin, int newState);
 
-/**
- * Loads an input preset (see #SOURCE_CONFIG_PRESETS enum)
- */
+/** Loads an input preset (see #SOURCE_CONFIG_PRESETS enum) */
 void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID);
 
-/**
- * Sets the flag to enable/disable (1 or 0) rotation.
- */
+/** Sets the flag to enable/disable (1 or 0) rotation */
 void binauraliser_setEnableRotation(void* const hBin, int newState);
 
-/**
- * Sets the 'yaw' rotation angle, in DEGREES
- */
+/** Sets the 'yaw' rotation angle, in DEGREES */
 void binauraliser_setYaw(void* const hBin, float newYaw);
 
-/**
- * Sets the 'pitch' rotation angle, in DEGREES
- */
+/** Sets the 'pitch' rotation angle, in DEGREES */
 void binauraliser_setPitch(void* const hBin, float newPitch);
 
-/**
- * Sets the 'roll' rotation angle, in DEGREES
- */
+/** Sets the 'roll' rotation angle, in DEGREES */
 void binauraliser_setRoll(void* const hBin, float newRoll);
 
 /**
@@ -235,9 +215,7 @@ void binauraliser_setInterpMode(void* const hBin, int newMode);
  */
 int binauraliser_getFrameSize(void);
 
-/**
- * Returns current codec status codec status (see #CODEC_STATUS enum)
- */
+/** Returns current codec status codec status (see #CODEC_STATUS enum) */
 CODEC_STATUS binauraliser_getCodecStatus(void* const hBin);
 
 /**
@@ -255,34 +233,22 @@ float binauraliser_getProgressBar0_1(void* const hBin);
  */
 void binauraliser_getProgressBarText(void* const hBin, char* text);
 
-/**
- * Returns the source azimuth for a given index, in DEGREES
- */
+/** Returns the source azimuth for a given index, in DEGREES */
 float binauraliser_getSourceAzi_deg(void* const hBin, int index);
 
-/**
- * Returns the source elevation for a given index, in DEGREES
- */
+/** Returns the source elevation for a given index, in DEGREES */
 float binauraliser_getSourceElev_deg(void* const hBin, int index);
 
-/**
- * Returns the number of inputs/sources in the current layout
- */
+/** Returns the number of inputs/sources in the current layout */
 int binauraliser_getNumSources(void* const hBin);
 
-/**
- * Returns the maximum number of input sources supported by binauraliser
- */
+/** Returns the maximum number of input sources supported by binauraliser */
 int binauraliser_getMaxNumSources(void);
 
-/**
- * Returns the number of ears possessed by the average homo sapien
- */
+/** Returns the number of ears possessed by the average homo sapien */
 int binauraliser_getNumEars(void);
 
-/**
- * Returns the number of directions in the currently used HRIR set
- */
+/** Returns the number of directions in the currently used HRIR set */
 int binauraliser_getNDirs(void* const hBin);
 
 /**
@@ -291,24 +257,16 @@ int binauraliser_getNDirs(void* const hBin);
  */
 int binauraliser_getNTriangles(void* const hBin);
 
-/**
- * Returns the HRIR/HRTF azimuth for a given index, in DEGREES
- */
+/** Returns the HRIR/HRTF azimuth for a given index, in DEGREES */
 float binauraliser_getHRIRAzi_deg(void* const hBin, int index);
 
-/**
- * Returns the HRIR/HRTF elevation for a given index, in DEGREES
- */
+/** Returns the HRIR/HRTF elevation for a given index, in DEGREES */
 float binauraliser_getHRIRElev_deg(void* const hBin, int index);
 
-/**
- * Returns the length of HRIRs in time-domain samples
- */
+/** Returns the length of HRIRs in time-domain samples */
 int binauraliser_getHRIRlength(void* const hBin);
 
-/**
- * Returns the HRIR sample rate
- */
+/** Returns the HRIR sample rate */
 int binauraliser_getHRIRsamplerate(void* const hBin);
 
 /**
@@ -339,9 +297,7 @@ char* binauraliser_getSofaFilePath(void* const hBin);
  */
 int binauraliser_getEnableHRIRsPreProc(void* const hBin);
 
-/**
- * Returns the DAW/Host sample rate
- */
+/** Returns the DAW/Host sample rate */
 int binauraliser_getDAWsamplerate(void* const hBin);
 
 /**
@@ -350,19 +306,13 @@ int binauraliser_getDAWsamplerate(void* const hBin);
  */
 int binauraliser_getEnableRotation(void* const hBin);
 
-/**
- * Returns the 'yaw' rotation angle, in DEGREES
- */
+/** Returns the 'yaw' rotation angle, in DEGREES */
 float binauraliser_getYaw(void* const hBin);
 
-/**
- * Returns the 'pitch' rotation angle, in DEGREES
- */
+/** Returns the 'pitch' rotation angle, in DEGREES */
 float binauraliser_getPitch(void* const hBin);
 
-/**
- * Returns the 'roll' rotation angle, in DEGREES
- */
+/** Returns the 'roll' rotation angle, in DEGREES */
 float binauraliser_getRoll(void* const hBin);
 
 /**

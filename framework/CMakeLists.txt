@@ -69,9 +69,8 @@ add_subdirectory(resources)
 
 ############################################################################
 # Performance library dependencies
-if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL" )
-    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_INTEL_MKL=1)
-
+if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL_LP64" OR ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL_ILP64")
+   
     # Default header path and libs, (which are platform dependent):
     if(NOT DEFINED INTEL_MKL_HEADER_PATH)
         if(MSVC)
@@ -90,15 +89,34 @@ if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL" )
             endif()
         endif()
     endif()
-    if (NOT DEFINED INTEL_MKL_LIB)
-        if(MSVC) 
-            set(INTEL_MKL_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_mkl_custom.lib")  
-        elseif(MSYS OR MINGW) 
-            set(INTEL_MKL_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_mkl_custom.lib") 
-        elseif(APPLE)
-            set(INTEL_MKL_LIB "/usr/local/lib/libsaf_mkl_custom.dylib") 
-        elseif(UNIX AND NOT APPLE)
-            set(INTEL_MKL_LIB "/usr/lib/libsaf_mkl_custom.so") 
+    if ( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL_LP64" )
+        target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_INTEL_MKL_LP64=1)
+
+        if (NOT DEFINED INTEL_MKL_LIB)
+            if(MSVC)
+                set(INTEL_MKL_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_mkl_custom_lp64.lib")
+            elseif(MSYS OR MINGW)
+                set(INTEL_MKL_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_mkl_custom_lp64.lib")
+            elseif(APPLE)
+                set(INTEL_MKL_LIB "/usr/local/lib/libsaf_mkl_custom_lp64.dylib")
+            elseif(UNIX AND NOT APPLE)
+                set(INTEL_MKL_LIB "/usr/local/lib/libsaf_mkl_custom_lp64.so")
+            endif()
+        endif()
+
+    else()
+        target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_INTEL_MKL_ILP64=1)
+
+        if (NOT DEFINED INTEL_MKL_LIB)
+            if(MSVC)
+                set(INTEL_MKL_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_mkl_custom_ilp64.lib")
+            elseif(MSYS OR MINGW)
+                set(INTEL_MKL_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_mkl_custom_ilp64.lib")
+            elseif(APPLE)
+                set(INTEL_MKL_LIB "/usr/local/lib/libsaf_mkl_custom_ilp64.dylib")
+            elseif(UNIX AND NOT APPLE)
+                set(INTEL_MKL_LIB "/usr/local/lib/libsaf_mkl_custom_ilp64.so")
+            endif()
         endif()
     endif()
 
@@ -242,6 +260,14 @@ if(SAF_ENABLE_TRACKER_MODULE)
 
 else()
     message(STATUS "saf_tracker module disabled.")
+endif()
+
+
+############################################################################
+# Disable print of SAF version and license
+if(SAF_DISABLE_PRINT_VERSION)
+    message(STATUS "saf version and license printing disabled. ")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_DISABLE_PRINT_VERSION=${SAF_DISABLE_PRINT_VERSION})
 endif()
 
 

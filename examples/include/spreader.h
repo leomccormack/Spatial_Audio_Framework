@@ -16,7 +16,8 @@
 
 /**
  * @file: spreader.h
- * @brief spreader
+ * @brief An arbitrary array panner (HRIRs, microphone array IRs, etc.) with
+ *        coherent and incoherent spreading modes.
  * @author Leo McCormack
  * @date 07.04.2021
  */
@@ -99,7 +100,7 @@ void spreader_initCodec(void* const hSpr);
  * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void spreader_process(void* const hSpr,
-                      float** const inputs,
+                      const float *const * inputs,
                       float** const outputs,
                       int nInputs,
                       int nOutputs,

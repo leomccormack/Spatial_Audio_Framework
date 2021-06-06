@@ -22,9 +22,9 @@
 
 /**
  * @file afSTFT_internal.c
- * @brief Slightly modified version of afSTFTlib
+ * @brief A modified version of afSTFTlib
  *
- * The original afSTFT code written by Juha Vilkamo can be found here:
+ * The original afSTFT code (by Juha Vilkamo) can be found here:
  * https://github.com/jvilkamo/afSTFT
  * This version is slightly modified to be more in-line with how the rest of SAF
  * is structured.
@@ -36,11 +36,11 @@
  * vector and the current processing delay.
  * It also incorporates SAF utilities (for the vectorisation and FFT).
  *
- * Note that the afSTFT design is layed out in detail in chapter 1 of [1]
+ * The afSTFT design is also described in more detail in [1]
  *
- * @see [1] Pulkki, V., Delikaris-Manias, S. and Politis, A. 2018. Parametric
- *          time--frequency domain spatial audio. John Wiley & Sons,
- *          Incorporated.
+ * @see [1] Vilkamo, J., & Ba"ckstro"m, T. (2018). Time--Frequency Processing:
+ *          Methods and Tools. In Parametric Time--Frequency Domain Spatial
+ *          Audio. John Wiley & Sons.
  *
  * @author Juha Vilkamo
  * @date 08.04.2015
@@ -126,8 +126,8 @@ void afSTFTlib_init
         eq = 1.0f/sqrtf((float)h->hopSize*5.487604141f);
 #endif
         for (k=0; k<h->hLen; k++) {
-            h->protoFilter[h->hLen-k-1] = protoFilter1024[k*dsFactor]*eq;
-            h->protoFilterI[h->hLen-k-1] = protoFilter1024[k*dsFactor]*eq;
+            h->protoFilter[h->hLen-k-1] = __afSTFT_protoFilter1024[k*dsFactor]*eq;
+            h->protoFilterI[h->hLen-k-1] = __afSTFT_protoFilter1024[k*dsFactor]*eq;
         }
     } 
     else
@@ -138,8 +138,8 @@ void afSTFTlib_init
         eq = 1.0f/sqrtf((float)h->hopSize*4.544559956f);
 #endif
         for (k=0; k<h->hLen; k++) {
-            h->protoFilter[h->hLen-k-1] = protoFilter1024LD[k*dsFactor]*eq;
-            h->protoFilterI[k]=protoFilter1024LD[k*dsFactor]*eq;
+            h->protoFilter[h->hLen-k-1] = __afSTFT_protoFilter1024LD[k*dsFactor]*eq;
+            h->protoFilterI[k]=__afSTFT_protoFilter1024LD[k*dsFactor]*eq;
         }
     }
     for(ch=0;ch<h->inChannels;ch++)

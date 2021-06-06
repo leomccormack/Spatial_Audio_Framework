@@ -31,27 +31,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-
-/* Included:
- *   Matrix Convolver
- *     y = H * x; looped/summed over in/output channels, applied block-by-block
- *       where
- *         y: nOutputChannels x blockSize
- *         x: nInputChannels  x blockSize
- *         H: nOutputChannels x nInputChannels x filterLength
- *
- *   Multi Convolver
- *     y = H * x; looped over channels, applied block-by-block
- *       where
- *         y: nChannels x blockSize
- *         x: nChannels x blockSize
- *         H: nChannels x filterLength
- */
-
 /* ========================================================================== */
 /*                              Matrix Convolver                              */
 /* ========================================================================== */
@@ -92,8 +71,8 @@ void saf_matrixConv_destroy(/* Input Arguments */
 /**
  * Performs the matrix convolution.
  *
- * @note If the number of input+output channels, the filters, or the hopsize
- *       need tochange: simply destroy and re-create the matrixConv instance.
+ * @note If the number of input or output channels, the filters, or the hopsize
+ *       need to change: simply destroy and re-create the matrixConv instance.
  *
  * @param[in]  hMC        matrixConv handle
  * @param[in]  inputSigs  Input signals;  FLAT: nCHin  x hopSize

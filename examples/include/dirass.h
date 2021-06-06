@@ -46,9 +46,7 @@ extern "C" {
 /*                             Presets + Constants                            */
 /* ========================================================================== */
 
-/**
- * Available upscaling orders
- */
+/** Available upscaling orders */
 typedef enum {
     UPSCALE_ORDER_FIRST = 1,   /**< First-order upscaling */
     UPSCALE_ORDER_SECOND,      /**< Second-order upscaling */
@@ -73,9 +71,7 @@ typedef enum {
     
 }DIRASS_UPSCALE_ORDERS;
    
-/**
- * Available scanning grid options
- */
+/** Available scanning grid options */
 typedef enum {
     T_DESIGN_3 = 1,    /**< T_DESIGN_3        - 6 points */
     T_DESIGN_4,        /**< T_DESIGN_4        - 12 points */
@@ -182,7 +178,7 @@ void dirass_initCodec(void* const hDir);
  *          pp.840-854.
  */
 void dirass_analysis(void* const hDir,
-                     float** const inputs,
+                     const float *const * inputs,
                      int nInputs,
                      int nSamples,
                      int isPlaying);
@@ -204,9 +200,7 @@ void dirass_refreshSettings(void* const hDir);
  */
 void dirass_setBeamType(void* const hDir, int newType);
     
-/**
- * Sets the input/analysis order (see #SH_ORDERS enum)
- */
+/** Sets the input/analysis order (see #SH_ORDERS enum) */
 void dirass_setInputOrder(void* const hDir,  int newValue);
     
 /**
@@ -235,14 +229,10 @@ void dirass_setUpscaleOrder(void* const hDir,  int newOrder);
  */
 void dirass_setDiRAssMode(void* const hDir,  int newMode);
     
-/**
- * Sets the minimum analysis frequency, in Hz
- */
+/** Sets the minimum analysis frequency, in Hz */
 void dirass_setMinFreq(void* const hDir,  float newValue);
 
-/**
- * Sets the maximum analysis frequency, in Hz
- */
+/** Sets the maximum analysis frequency, in Hz */
 void dirass_setMaxFreq(void* const hDir,  float newValue);
 
 /**
@@ -269,14 +259,10 @@ void dirass_setDispFOV(void* const hDir, int newOption);
  */
 void dirass_setAspectRatio(void* const hDir, int newOption);
     
-/**
- * Sets the activity-map averaging coefficient, 0..1
- */
+/** Sets the activity-map averaging coefficient, 0..1 */
 void dirass_setMapAvgCoeff(void* const hDir, float newValue);
     
-/**
- * Informs dirass that it should compute a new activity-map
- */
+/** Informs dirass that it should compute a new activity-map */
 void dirass_requestPmapUpdate(void* const hDir);
     
 
@@ -290,9 +276,7 @@ void dirass_requestPmapUpdate(void* const hDir);
  */
 int dirass_getFrameSize(void);
 
-/**
- * Returns current codec status (see #CODEC_STATUS enum)
- */
+/** Returns current codec status (see #CODEC_STATUS enum) */
 CODEC_STATUS dirass_getCodecStatus(void* const hDir);
 
 /**
@@ -324,19 +308,13 @@ int dirass_getInputOrder(void* const hDir);
  */
 int dirass_getBeamType(void* const hDir);
 
-/**
- * Returns the current display grid option (see #DIRASS_GRID_OPTIONS enum)
- */
+/** Returns the current display grid option (see #DIRASS_GRID_OPTIONS enum) */
 int dirass_getDisplayGridOption(void* const hDir);
 
-/**
- * Returns the current output display width in pixels
- */
+/** Returns the current output display width in pixels */
 int dirass_getDispWidth(void* const hDir);
 
-/**
- * Returns the current upscale order (see #DIRASS_UPSCALE_ORDERS enum).
- */
+/** Returns the current upscale order (see #DIRASS_UPSCALE_ORDERS enum) */
 int dirass_getUpscaleOrder(void* const hDir);
 
 /**
@@ -345,19 +323,13 @@ int dirass_getUpscaleOrder(void* const hDir);
  */
 int dirass_getDiRAssMode(void* const hDir); 
 
-/**
- * Returns the current minimum analysis frequency, in Hz
- */
+/** Returns the current minimum analysis frequency, in Hz */
 float dirass_getMinFreq(void* const hDir);
 
-/**
- * Returns the current maximum analysis frequency, in Hz
- */
+/** Returns the current maximum analysis frequency, in Hz */
 float dirass_getMaxFreq(void* const hDir);
 
-/**
- * Returns the current sampling rate, in Hz
- */
+/** Returns the current sampling rate, in Hz */
 int dirass_getSamplingRate(void* const hDir); 
     
 /**
@@ -392,9 +364,7 @@ int dirass_getDispFOV(void* const hDir);
  */
 int dirass_getAspectRatio(void* const hDir);
 
-/**
- * Returns the current activity-map averaging coefficient, 0..1
- */
+/** Returns the current activity-map averaging coefficient, 0..1 */
 float dirass_getMapAvgCoeff(void* const hDir);
     
 /**

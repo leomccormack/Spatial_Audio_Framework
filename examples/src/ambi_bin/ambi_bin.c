@@ -55,13 +55,13 @@ void ambi_bin_create
     *phAmbi = (void*)pData;
     int band;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* default user parameters */
     for (band = 0; band<HYBRID_BANDS; band++)
         pData->EQ[band] = 1.0f;
-    pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
-    pData->preProc = HRIR_PREPROC_ALL;
+    pData->useDefaultHRIRsFLAG = 1;   /* pars->sofa_filepath must be valid to set this to 0 */
+    pData->preProc = HRIR_PREPROC_EQ;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->enableMaxRE = 1;
@@ -84,7 +84,6 @@ void ambi_bin_create
     pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
     pData->binFrameTD = (float**)malloc2d(NUM_EARS, FRAME_SIZE, sizeof(float));
     pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
-    pData->SHframeTF_rot= (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
     pData->binframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
 
     /* codec data */
@@ -127,7 +126,6 @@ void ambi_bin_destroy
         free(pData->SHFrameTD);
         free(pData->binFrameTD);
         free(pData->SHframeTF);
-        free(pData->SHframeTF_rot);
         free(pData->binframeTF);
 
         pars = pData->pars;
@@ -173,8 +171,10 @@ void ambi_bin_initCodec
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     ambi_bin_codecPars* pars = pData->pars;
     int i, j, nSH, order, band;
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
+#endif
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
         return; /* re-init not required, or already happening */
@@ -205,13 +205,16 @@ void ambi_bin_initCodec
         strcpy(pData->progressBarText,"Preparing HRIRs");
         pData->progressBar0_1 = 0.15f;
         /* load sofa file or load default hrir data */
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
         if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
             /* Load SOFA file */
             error = saf_sofa_open(&sofa, pars->sofa_filepath);
 
             /* Load defaults instead */
-            if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS)
+            if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS){
                 pData->useDefaultHRIRsFLAG = 1;
+                saf_print_warning("Unable to load the specified SOFA file, or it contained something other than 2 channels. Using default HRIR data instead.");
+            }
             else{
                 /* Copy SOFA data */
                 pars->hrir_fs = (int)sofa.DataSamplingRate;
@@ -227,6 +230,9 @@ void ambi_bin_initCodec
             /* Clean-up */
             saf_sofa_close(&sofa);
         }
+#else
+        pData->useDefaultHRIRsFLAG = 1; /* Can only load the default HRIR data */
+#endif
         if(pData->useDefaultHRIRsFLAG){
             /* Copy default HRIR data */
             pars->hrir_fs = __default_hrir_fs;
@@ -328,7 +334,7 @@ void ambi_bin_initCodec
             beamWeightsMaxEV(order_truncated, maxRECoeffs);
             for (int idx_n=0; idx_n<order_truncated+1; idx_n++) {
                 w_n[idx_n] = maxRECoeffs[idx_n];
-                w_n[idx_n] /= sqrtf((float)(2*idx_n+1) / (4.0*SAF_PI));
+                w_n[idx_n] /= sqrtf((float)(2*idx_n+1) / (4.0f*SAF_PI));
             }
             float w_0 = w_n[0];
             for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
@@ -374,12 +380,12 @@ void ambi_bin_initCodec
 
 void ambi_bin_process
 (
-    void  *  const hAmbi,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hAmbi,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
@@ -404,31 +410,22 @@ void ambi_bin_process
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
-        for(i=0; i < MIN(nSH, nInputs); i++)
+        for(i=0; i < SAF_MIN(nSH, nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
         for(; i<nSH; i++)
             memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
 
         /* account for channel order convention */
         switch(chOrdering){
-            case CH_ACN:
-                convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_ACN);
-                break;
-            case CH_FUMA:
-                convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
-                break;
+            case CH_ACN:  /* already in ACN, do nothing */ break; /* Otherwise, convert to ACN... */
+            case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
         }
 
         /* account for input normalisation scheme */
         switch(norm){
-            case NORM_N3D:  /* already in N3D, do nothing */
-                break;
-            case NORM_SN3D: /* convert to N3D */
-                convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
-                break;
-            case NORM_FUMA: /* only for first-order, convert to N3D */
-                convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
-                break;
+            case NORM_N3D:  /* already in N3D, do nothing */ break; /* Otherwise, convert to N3D... */
+            case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
+            case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
         }
 
         /* Apply time-frequency transform (TFT) */
@@ -438,6 +435,7 @@ void ambi_bin_process
         if(order > 0 && enableRot) {
             /* Apply rotation */
             if(pData->recalc_M_rotFLAG){
+                /* Compute the new SH rotation matrix */
                 memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
                 M_rot_tmp = malloc1d(nSH*nSH * sizeof(float));
                 yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
@@ -446,23 +444,23 @@ void ambi_bin_process
                     for (j = 0; j < nSH; j++)
                         pData->M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH + j], 0.0f);
                 free(M_rot_tmp);
+
+                /* Bake the rotation into the decoding matrix */
+                for(band = 0; band < HYBRID_BANDS; band++) {
+                    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, nSH, nSH, &calpha,
+                                pars->M_dec[band], MAX_NUM_SH_SIGNALS,
+                                pData->M_rot, MAX_NUM_SH_SIGNALS, &cbeta,
+                                pars->M_dec_rot[band], MAX_NUM_SH_SIGNALS);
+                }
                 pData->recalc_M_rotFLAG = 0;
             }
-            for(band = 0; band < HYBRID_BANDS; band++) {
-                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, nSH, &calpha,
-                            pData->M_rot, MAX_NUM_SH_SIGNALS,
-                            FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS, &cbeta,
-                            FLATTEN2D(pData->SHframeTF_rot[band]), TIME_SLOTS);
-            }
         }
-        else
-            memcpy(FLATTEN3D(pData->SHframeTF_rot), FLATTEN3D(pData->SHframeTF), HYBRID_BANDS*MAX_NUM_SH_SIGNALS*TIME_SLOTS*sizeof(float_complex));
 
-        /* mix to headphones */
+        /* Apply the decoder to go from SH input to binaural output */
         for(band = 0; band < HYBRID_BANDS; band++) {
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
-                        pars->M_dec[band], MAX_NUM_SH_SIGNALS,
-                        FLATTEN2D(pData->SHframeTF_rot[band]), TIME_SLOTS, &cbeta,
+                        enableRot ? pars->M_dec_rot[band] : pars->M_dec[band], MAX_NUM_SH_SIGNALS,
+                        FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS, &cbeta,
                         FLATTEN2D(pData->binframeTF[band]), TIME_SLOTS);
         }
 
@@ -470,7 +468,7 @@ void ambi_bin_process
         afSTFT_backward(pData->hSTFT, pData->binframeTF, FRAME_SIZE, pData->binFrameTD);
 
         /* Copy to output */
-        for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
+        for (ch = 0; ch < SAF_MIN(NUM_EARS, nOutputs); ch++)
             utility_svvcopy(pData->binFrameTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));

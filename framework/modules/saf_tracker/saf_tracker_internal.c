@@ -291,7 +291,7 @@ void tracker3d_predict
                 for(k=0; k<S->nTargets; k++)
                     if(dead[j]==k)
                         ind = k;
-                assert(ind != -1);
+                saf_assert(ind != -1, "Ugly error");
 
                 /* Shimy target data down by 1... overriding the dead target */
                 S->nTargets--;
@@ -325,7 +325,7 @@ void tracker3d_predict
                 for(k=0; k<S->nTargets; k++)
                     if(dead[0]==k)
                         ind = k;
-                assert(ind != -1);
+                saf_assert(ind != -1, "Ugly error");
 
                 S->nTargets--;
                 if(ind!=S->nTargets){
@@ -391,7 +391,7 @@ void tracker3d_update
         n_events = S->nTargets + 1; /* clutter (+1) or 1 of the targets is active */
         if( S->nTargets < tpars->maxNactiveTargets)
             n_events++; /* Also a chance of a new target */
-        assert(n_events<=TRACKER3D_MAX_NUM_EVENTS);
+        saf_assert(n_events<=TRACKER3D_MAX_NUM_EVENTS, "Number of hypotheses/events exceeded the maximum");
 
         /* Prep */
 #ifdef TRACKER_VERBOSE
@@ -411,7 +411,7 @@ void tracker3d_update
         pData->evl[cidx] = tpars->cd;
         tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
         cidx++;
-
+ 
         /* Loop over associations to targets */
         for (j=0; j<S->nTargets; j++){
             /* Compute update result and likelihood for association to signal j */
@@ -489,7 +489,7 @@ void tracker3d_update
         norm = 1.0f/sumf(pData->imp, count);
         cblas_sscal(count, norm, pData->imp, 1);
         ev = categ_rnd(pData->imp, count);  /* Event index */
-        assert(ev!=-1);
+        saf_assert(ev!=-1, "Falied to randomly select an event");
 
         /* Update particle */
         tracker3d_particleCopy(pData->str[ev], pData->SS[i]);
@@ -529,7 +529,7 @@ int tracker3d_getMaxParticleIdx
             maxIdx = i;
         }
     }
-    assert(maxIdx!=-1);
+    saf_assert(maxIdx!=-1, "Ugly error");
     return maxIdx;
 }
 
@@ -558,7 +558,7 @@ void resampstr
     for (i=0; i<NP; i++){
         c+=pn[i];
         if (c>=1.0f) {
-            a = floorf(c);
+            a = (int)floorf(c);
             c = c-a;
             for(j=0; j<a; j++)
                 s[k+j]=i;
@@ -722,7 +722,7 @@ float gamma_cdf
     x = (x-mu)/beta;
 
     /* Compute the probability using the imcomplete gamma function */
-    return (float)incompletegamma((double)gam, (double)x)/tgamma(x);
+    return (float)(incompletegamma((double)gam, (double)x)/tgamma((double)x));
 }
 
 void lti_disc
@@ -745,7 +745,7 @@ void lti_disc
     /* Defaults: */
     if(opt_L==NULL){ /* Identity */
         L = calloc1d(len_N*len_Q, sizeof(float));
-        for(i=0; i<MIN(len_N, len_Q); i++)
+        for(i=0; i<SAF_MIN(len_N, len_Q); i++)
             L[i*len_Q+i] = 1.0f;
     }
     else
@@ -866,11 +866,11 @@ int categ_rnd
     for(i=1; i<len_P; i++)
         Ptmp[i] += Ptmp[i-1];
     rand_0_1(&rand01, 1);
-	rand01 = MIN(rand01, 0.9999f);
+	rand01 = SAF_MIN(rand01, 0.9999f);
     for(i=0; i<len_P; i++)
         if(Ptmp[i]>rand01)
             return i;
-	 
+
     return -1; /* indicates error */
 }
 
@@ -896,7 +896,7 @@ static double lngamma
         q = -x;
         w = lngamma(q, &tmp);
         p = floor(q);
-        i = floor(p+0.5);
+        i = (int)floor(p+0.5);
         if( i%2==0 )
             *sgngam = (double)(-1);
         else

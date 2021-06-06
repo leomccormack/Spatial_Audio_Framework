@@ -27,7 +27,6 @@
 		50E36065249BDDCC00B74C25 /* saf_utility_bessel.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36029249BDDCB00B74C25 /* saf_utility_bessel.c */; };
 		50E36066249BDDCC00B74C25 /* saf_utility_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3602D249BDDCB00B74C25 /* saf_utility_fft.c */; };
 		50E36067249BDDCC00B74C25 /* saf_utility_misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3602E249BDDCB00B74C25 /* saf_utility_misc.c */; };
-		50E36068249BDDCC00B74C25 /* saf_utility_error.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36031249BDDCC00B74C25 /* saf_utility_error.c */; };
 		50E36069249BDDCC00B74C25 /* saf_utility_pitch.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36032249BDDCC00B74C25 /* saf_utility_pitch.c */; };
 		50E3606B249BDDCC00B74C25 /* saf_utility_filters.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36039249BDDCC00B74C25 /* saf_utility_filters.c */; };
 		50E3606C249BDDCC00B74C25 /* saf_utility_complex.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3603A249BDDCC00B74C25 /* saf_utility_complex.c */; };
@@ -149,7 +148,6 @@
 		50E3602E249BDDCB00B74C25 /* saf_utility_misc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_misc.c; sourceTree = "<group>"; };
 		50E3602F249BDDCC00B74C25 /* saf_utility_veclib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_veclib.h; sourceTree = "<group>"; };
 		50E36030249BDDCC00B74C25 /* saf_utility_sort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_sort.h; sourceTree = "<group>"; };
-		50E36031249BDDCC00B74C25 /* saf_utility_error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_error.c; sourceTree = "<group>"; };
 		50E36032249BDDCC00B74C25 /* saf_utility_pitch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_pitch.c; sourceTree = "<group>"; };
 		50E36033249BDDCC00B74C25 /* saf_utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utilities.h; sourceTree = "<group>"; };
 		50E36034249BDDCC00B74C25 /* saf_utility_decor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_decor.h; sourceTree = "<group>"; };
@@ -160,7 +158,6 @@
 		50E3603A249BDDCC00B74C25 /* saf_utility_complex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_complex.c; sourceTree = "<group>"; };
 		50E3603B249BDDCC00B74C25 /* saf_utility_loudspeaker_presets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_loudspeaker_presets.c; sourceTree = "<group>"; };
 		50E3603C249BDDCC00B74C25 /* saf_utility_bessel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_bessel.h; sourceTree = "<group>"; };
-		50E3603D249BDDCC00B74C25 /* saf_utility_error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_error.h; sourceTree = "<group>"; };
 		50E3603E249BDDCC00B74C25 /* saf_utility_veclib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_veclib.c; sourceTree = "<group>"; };
 		50E3603F249BDDCC00B74C25 /* saf_utility_sort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_sort.c; sourceTree = "<group>"; };
 		50E36040249BDDCC00B74C25 /* saf_utility_misc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_misc.h; sourceTree = "<group>"; };
@@ -465,8 +462,6 @@
 				50E3602A249BDDCB00B74C25 /* saf_utility_complex.h */,
 				50E36042249BDDCC00B74C25 /* saf_utility_decor.c */,
 				50E36034249BDDCC00B74C25 /* saf_utility_decor.h */,
-				50E36031249BDDCC00B74C25 /* saf_utility_error.c */,
-				50E3603D249BDDCC00B74C25 /* saf_utility_error.h */,
 				50E3602D249BDDCB00B74C25 /* saf_utility_fft.c */,
 				50E36038249BDDCC00B74C25 /* saf_utility_fft.h */,
 				50E36039249BDDCC00B74C25 /* saf_utility_filters.c */,
@@ -912,7 +907,6 @@
 				50E3606F249BDDCC00B74C25 /* saf_utility_sort.c in Sources */,
 				50E3DEBE24C1C56800589B17 /* ambi_enc_internal.c in Sources */,
 				50E3DF0624C1D4EA00589B17 /* sldoa.c in Sources */,
-				50E36068249BDDCC00B74C25 /* saf_utility_error.c in Sources */,
 				50E36067249BDDCC00B74C25 /* saf_utility_misc.c in Sources */,
 				50E3DF0524C1D4EA00589B17 /* sldoa_database.c in Sources */,
 				50E3DEDD24C1C80C00589B17 /* dirass_internal.c in Sources */,
@@ -1103,10 +1097,11 @@
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				CODE_SIGN_STYLE = Automatic;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					SAF_USE_INTEL_MKL,
+					SAF_USE_INTEL_MKL_LP64,
 					SAF_ENABLE_SOFA_READER_MODULE,
 					SAF_ENABLE_EXAMPLES_TESTS,
 					SAF_ENABLE_TRACKER_MODULE,
+					SAF_DISABLE_PRINT_VERSION,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -1124,7 +1119,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",
-					"-lsaf_mkl_custom",
+					"-lsaf_mkl_custom_lp64",
 					"-L/usr/local/lib",
 					"-Wl,-rpath,/usr/local/lib",
 					"-lnetcdf",
@@ -1148,10 +1143,11 @@
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				CODE_SIGN_STYLE = Automatic;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					SAF_USE_INTEL_MKL,
+					SAF_USE_INTEL_MKL_LP64,
 					SAF_ENABLE_SOFA_READER_MODULE,
 					SAF_ENABLE_EXAMPLES_TESTS,
 					SAF_ENABLE_TRACKER_MODULE,
+					SAF_DISABLE_PRINT_VERSION,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -1169,7 +1165,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",
-					"-lsaf_mkl_custom",
+					"-lsaf_mkl_custom_lp64",
 					"-L/usr/local/lib",
 					"-Wl,-rpath,/usr/local/lib",
 					"-lnetcdf",

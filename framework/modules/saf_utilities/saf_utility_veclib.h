@@ -32,12 +32,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include <math.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "saf_utility_complex.h"
-#include "saf_utility_error.h"
 
 /**
  * Whether a vector should be conjugated or not (e.g. prior to dot product) */
@@ -45,6 +40,11 @@ typedef enum {
   NO_CONJ = 1,  /**< Do not take the conjugate */
   CONJ = 2      /**< Take the conjugate */
 }CONJ_FLAG;
+
+#ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
+ enum { CblasRowMajor = 101, CblasColMajor = 102 } CBLAS_ORDER;
+ enum { CblasNoTrans = 111, CblasTrans = 112, CblasConjTrans = 113 } CBLAS_TRANSPOSE;
+#endif
 
 /* KEY:
  * ? -> s -> single floating-point precision
@@ -55,6 +55,44 @@ typedef enum {
  * s -> scalar
  * v -> vector
  * m -> matrix */
+
+/* ========================================================================== */
+/*                     Built-in CBLAS Functions (Level 0)                     */
+/* ========================================================================== */
+
+#ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
+void cblas_scopy(const int N, const float *X, const int incX,
+                 float *Y, const int incY);
+void cblas_dcopy(const int N, const double *X, const int incX,
+                 double *Y, const int incY);
+void cblas_ccopy(const int N, const void *X, const int incX,
+                 void *Y, const int incY);
+void cblas_zcopy(const int N, const void *X, const int incX,
+                 void *Y, const int incY);
+
+void cblas_saxpy(const int N, const float alpha, const float* X,
+                 const int incX, float* Y, const int incY);
+void cblas_daxpy(const int N, const double alpha, const double* X,
+                 const int incX, double* Y, const int incY);
+void cblas_caxpy(const int N, const void* alpha, const void* X,
+                 const int incX, void* Y, const int incY);
+void cblas_zaxpy(const int N, const void* alpha, const void* X,
+                 const int incX, void* Y, const int incY);
+#endif
+
+
+/* ========================================================================== */
+/*                     Built-in CBLAS Functions (Level 3)                     */
+/* ========================================================================== */
+
+#ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
+void cblas_sgemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA,
+                 const enum CBLAS_TRANSPOSE TransB, const int M, const int N,
+                 const int K, const float alpha, const float* A,
+                 const int lda, const float* B, const int ldb,
+                 const float beta, float* C, const int ldc);
+#endif
+
 
 /* ========================================================================== */
 /*                     Find Index of Min-Abs-Value (?iminv)                   */
@@ -92,6 +130,38 @@ void utility_ciminv(/* Input Arguments */
                     /* Output Arguments */
                     int* index);
 
+/**
+ * Double-precision, index of minimum absolute value in a vector, i.e.
+ * \code{.m}
+ *     [~,ind] = min(abs(a))
+ * \endcode
+ *
+ * @param[in]  a     Input vector a; len x 1
+ * @param[in]  len   Vector length
+ * @param[out] index (&) Index of minimum value; 1 x 1
+ */
+void utility_diminv(/* Input Arguments */
+                    const double* a,
+                    const int len,
+                    /* Output Arguments */
+                    int* index);
+
+/**
+ * Double-precision, complex, index of maximum absolute value in a vector, i.e.
+ * \code{.m}
+ *     [~,ind] = min(abs(a))
+ * \endcode
+ *
+ * @param[in]  a     Input vector a; len x 1
+ * @param[in]  len   Vector length
+ * @param[out] index (&) index of minimum value; 1 x 1
+ */
+void utility_ziminv(/* Input Arguments */
+                    const double_complex* a,
+                    const int len,
+                    /* Output Arguments */
+                    int* index);
+
 
 /* ========================================================================== */
 /*                     Find Index of Max-Abs-Value (?imaxv)                   */
@@ -125,6 +195,38 @@ void utility_simaxv(/* Input Arguments */
  */
 void utility_cimaxv(/* Input Arguments */
                     const float_complex* a,
+                    const int len,
+                    /* Output Arguments */
+                    int* index);
+
+/**
+ * Double-precision, index of maximum absolute value in a vector, i.e.
+ * \code{.m}
+ *     [~,ind] = max(abs(a))
+ * \endcode
+ *
+ * @param[in]  a     Input vector a; len x 1
+ * @param[in]  len   Vector length
+ * @param[out] index (&) index of maximum value; 1 x 1
+ */
+void utility_dimaxv(/* Input Arguments */
+                    const double* a,
+                    const int len,
+                    /* Output Arguments */
+                    int* index);
+
+/**
+ * Double-precision, complex, index of maximum absolute value in a vector, i.e.
+ * \code{.m}
+ *     [~,ind] = max(abs(a))
+ * \endcode
+ *
+ * @param[in]  a     Input vector a; len x 1
+ * @param[in]  len   Vector length
+ * @param[out] index (&) index of maximum value; 1 x 1
+ */
+void utility_zimaxv(/* Input Arguments */
+                    const double_complex* a,
                     const int len,
                     /* Output Arguments */
                     int* index);
@@ -1198,6 +1300,19 @@ void utility_cchol(/* Input Arguments */
  */
 float utility_sdet(float* A,
                    int N);
+
+/**
+ * Determinant of a Matrix, double precision, i,e.
+ * \code{.m}
+ *     d = det(A);
+ * \endcode
+ *
+ * @param[in]  A Input square matrix; FLAT: N x N
+ * @param[in]  N size of matrix
+ * @returns determinant
+ */
+double utility_ddet(double* A,
+                    int N);
 
     
 /* ========================================================================== */

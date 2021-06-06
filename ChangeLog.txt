@@ -1,0 +1,116 @@
+     _____     _____     _____
+   (  ____ ) (  ___  ) (  ____ )
+   | ( __ |/ | ( _ ) | | ( _  |/
+   (_____  ) |  ___  | |  __)
+   /|____) | | |   | | | |
+   (_______) |_|   |_| |_|   
+
+Major and/or breaking changes to the Spatial_Audio_Framework are listed here.
+For descriptions of minor changes and bug fixes, please refer to the git log.
+
+====================================================================================================
+v1.1.7
+ - saf_utility_fft now uses vDSP's DFT implementation, rather than the scrict 2^x FFT 
+   implementation, when the performance library is set to SAF_USE_APPLE_ACCELERATE
+ - Added the ability to select either the LP64 or ILP64 version of Intel MKL as the performance 
+   library (the install script has been updated accordingly)
+ - Added support for building N-dimensional convexhulls and Delaunay meshes to saf_utility_geometry
+ - Added support for dynamically allocating 4d, 5d, and 6d arrays to md_malloc
+ - The examples that previously required the saf_sofa_reader module to be enabled in order to build
+   them, now no longer require it (instead they use only the default HRIR data)
+ - tracker_3d can now optionally return the tracked target variances
+ - Added saf_print_warning, saf_print_error, and saf_assert macros to saf_utilities.h
+
+Breaking changes:
+
+Due to the newly added ability to select between the LP64 and ILP64 variants of Intel MKL, the old 
+flag "SAF_USE_INTEL_MKL" (which was always LP64), should be replaced by "SAF_USE_INTEL_MKL_LP64" or 
+"SAF_USE_INTEL_MKL_ILP64". If you were linking your project with the "saf_mkl_custom" library, then
+you will also need to create a new saf_mkl_custom_lp64, or saf_mkl_custom_ilp64 library using the 
+updated scripts/install-safmkl.sh/.bat script.
+
+To avoid conflicts between non-define guarded "MIN" and "MAX" macros, they have now been changed to
+"SAF_MIN" and "SAF_MAX", respectively, throughout the framework.
+
+Removed saf_utility_error.h/.c files. Its functionality has been replaced by the cleaner/simpler
+saf_print_warning, saf_print_error, and saf_assert macros.
+
+====================================================================================================
+v1.1.6
+ - Added a "spreader" example which demonstrates coherent and incoherent source spreading (default 
+   is binaural)
+ - Added truncationEQ to saf_hoa module
+ - Added Quaternion support to saf_utility_geometry.h/.c
+ - Improvements to the image-source simulator in saf_reverb module, and the ambi_room_sim example
+ - Improvements to the lattice decorrelator in saf_utility_decor.h/.c
+ - A number of bug fixes and improvements all round.
+
+====================================================================================================
+v1.1.5
+ - Bug fix in the ACN/FuMa conversion.
+ - Some minor Doxygen improvements.
+ - Linked repository with zenodo.org to generate DOI for it.
+
+====================================================================================================
+v1.1.4
+ - Doxygen-Documentation is now generated via a github-action and hosted here: 
+   https://leomccormack.github.io/Spatial_Audio_Framework/
+ - Added an improved SOFA reader, saf_sofa_open(), which fully conforms to the SOFA 1.0 FIR standard
+ - Added extras/matlab, which includes scripts to generate the default HRIR database, and the 
+   saf_sofa_open matlab equivalent.
+ - Added Intel IPP support to the saf_utility_fft.h/c wrapper. Enable with: "SAF_USE_INTEL_IPP".
+ - Further optimised the multi-channel and matrix convolvers in saf_utility_matrixConv.h/.c
+ - A number of bug fixes and improvements all round.
+
+====================================================================================================
+v1.1.3beta
+ - Added an optional saf_tracker module (GPLv2) for tracking 3-D data points (e.g., direction-of-
+   arrival estimates as unit vectors, Cartesian coordinates [x,y,z] etc.).
+ - A number of improvements to the image-source simulator in the saf_reverb module.
+ - Added CMake support for the safmex wrappers.
+
+====================================================================================================
+v1.1.2
+ - Decoupled SAF from its external dependencies
+ - Added a extras/safmex folder which contains Matlab MEX wrappers; currently for the: afSTFT, QMF, 
+   IIR filterbank, VBAP gain tables, and getSHreal/complex SAF functions
+ - General bug fixes and improvements all round
+
+Breaking changes:
+
+Due to the decoupling of SAF from its external dependencies, no longer will you be able to use SAF's
+dependencies within your own project by default; i.e. when including SAF via #include "saf.h", you 
+will no longer also inherit the cblas/lapack functions etc. Instead, these external dependencies are 
+included only internally within SAF by default. However, if you would like to retain access to these
+external dependencies within your own project, then you may now optionally include them by adding: 
+#include "saf_externals.h" along with #include "saf.h".
+
+====================================================================================================
+v1.1.1
+ - Reworked the afSTFT interface, and optimised its internals
+ - Added several more utility functions to saf_utilities, and added a resampler (based on 
+   libsamplerate) to resources
+ - Added more unit tests
+ - General bug fixes and improvements all round
+
+Breaking changes:
+
+Due to the afSTFT interface rework, existing code that uses afSTFT will need to be modified. The 
+main difference is that complexVector has been replaced with the native "float_complex" data type. 
+It also no longer requires the input audio to be subdivided into chunks of "hopsize", as this is 
+now done internally. Users must now also specify if they want the 3-D frequency-domain data 
+permuted as: bands x channels x time, or time x channels x bands. The required changes should be 
+quite self-explanatory, however, one may also refer to the examples (e.g. ambi_bin), which have been
+updated to use this new interface.
+
+====================================================================================================
+v1.1.0
+ - Added comprehensive CMake support
+ - Documentation improvements
+ - Added more unit tests
+ - Added saf_utility_geometry.h/c (convexhull, spherical Delaunay + Voronoi functions etc.)
+ - General bug fixes and improvements all round
+
+====================================================================================================
+v1.0.0
+ - First official release!

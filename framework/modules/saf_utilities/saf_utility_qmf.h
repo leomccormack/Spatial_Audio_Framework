@@ -131,7 +131,7 @@ int qmf_getNBands(void * const hQMF);
  * @param[in]  hQMF       qmf handle
  * @param[in]  fs         Sampling rate in Hz
  * @param[in]  nBands     Length of 'centreFreq'
- * @param[out] centreFreq The frequency vector: centreFreq x 1
+ * @param[out] centreFreq The frequency vector: nBands x 1
  */
 void qmf_getCentreFreqs(/* Input Arguments */
                         void * const hQMF,

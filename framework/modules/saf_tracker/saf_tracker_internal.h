@@ -41,9 +41,6 @@
 #ifndef __SAF_TRACKER_INTERNAL_H_INCLUDED__
 #define __SAF_TRACKER_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
 #include "saf_tracker.h"
 #include "../../modules/saf_utilities/saf_utilities.h"
 #include "saf_externals.h"

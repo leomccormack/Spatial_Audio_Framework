@@ -49,9 +49,7 @@ typedef enum {
 
 }PITCH_SHIFTER_FFTSIZE_OPTIONS;
 
-/**
- * Number of FFT size options
- */
+/** Number of FFT size options */
 #define PITCH_SHIFTER_NUM_FFTSIZE_OPTIONS ( 6 )
 
 /**
@@ -134,7 +132,7 @@ void pitch_shifter_initCodec(void* const hPS);
  * @param[in] nSamples Number of samples in 'inputs'/'output' matrices
  */
 void pitch_shifter_process(void* const hPS,
-                           float** const inputs,
+                           const float *const * inputs,
                            float** const outputs,
                            int nInputs,
                            int nOutputs,
@@ -159,9 +157,7 @@ void pitch_shifter_refreshParams(void* const hPS);
  */
 void pitch_shifter_setPitchShiftFactor(void* const hPS, float newValue);
 
-/**
- * Sets the number channels to pitch shift
- */
+/** Sets the number channels to pitch shift */
 void pitch_shifter_setNumChannels(void* const hPS, int newValue);
 
 /**
@@ -189,9 +185,7 @@ void pitch_shifter_setOSampOption(void* const hPS,
  */
 int pitch_shifter_getFrameSize(void);
 
-/**
- * Returns current codec status (see #CODEC_STATUS enum)
- */
+/** Returns current codec status (see #CODEC_STATUS enum) */
 CODEC_STATUS pitch_shifter_getCodecStatus(void* const hPS);
 
 /**
@@ -227,9 +221,7 @@ PITCH_SHIFTER_FFTSIZE_OPTIONS pitch_shifter_getFFTSizeOption(void* const hPS);
  */
 PITCH_SHIFTER_OSAMP_OPTIONS pitch_shifter_getOSampOption(void* const hPS);
 
-/**
- * Returns the number of channels required by the current configuration
- */
+/** Returns the number of channels required by the current configuration */
 int pitch_shifter_getNCHrequired(void* const hPS);
 
 /**

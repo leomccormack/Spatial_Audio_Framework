@@ -19,16 +19,17 @@
  * @ingroup HRIR
  * @brief Public source for the HRIR/HRTF processing module (#SAF_HRIR_MODULE)
  *
- * A collection of head-related impulse-response (HRIR) functions. Including
- * estimation of the interaural time differences (ITDs), conversion of HRIRs to
- * HRTF filterbank coefficients, and HRTF interpolation utilising amplitude-
- * normalised VBAP gains.
+ * A collection functions for processing head-related impulse-response (HRIR).
+ * Including: estimation of the interaural time differences (ITDs), conversion
+ * of HRIRs to HRTFs or filterbank coefficients; diffuse-field equalisation and
+ * phase simplication; and HRTF interpolation.
  *
  * @author Leo McCormack
  * @date 12.12.2016
  */
  
 #include "saf_hrir.h"
+#include "../saf_utilities/saf_utilities.h"
 #include "saf_externals.h"
 
 /* ========================================================================== */
@@ -156,7 +157,7 @@ void HRIRs2HRTFs
     hrtf = malloc1d(nBins*sizeof(float_complex));
     for(i=0; i<N_dirs; i++){
         for(j=0; j<NUM_EARS; j++){
-            memcpy(hrir_pad, &hrirs[i*NUM_EARS*hrir_len+j*hrir_len], MIN(fftSize, hrir_len)*sizeof(float));
+            memcpy(hrir_pad, &hrirs[i*NUM_EARS*hrir_len+j*hrir_len], SAF_MIN(fftSize, hrir_len)*sizeof(float));
             saf_rfft_forward(hSafFFT, hrir_pad, hrtf);
             for(k=0; k<nBins; k++)
                 hrtfs[k*NUM_EARS*N_dirs + j*N_dirs + i] = hrtf[k];

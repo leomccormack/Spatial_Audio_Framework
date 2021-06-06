@@ -47,28 +47,77 @@ IF ERRORLEVEL 1 GOTO Sequential
 
 :Parallel
 ECHO.
-ECHO Building threaded versions of the custom MKL library for SAF...
+ECHO 1.lp64 configuration (32-bit integers; recommended)
+ECHO 2.ilp64 configuration (64-bit integers; required for safmex)
+ECHO.
+
+CHOICE /C 12 /M "Enter your choice:"
+
+IF ERRORLEVEL 2 GOTO Parallel_ILP64   
+IF ERRORLEVEL 1 GOTO Parallel_LP64
+
+
+:Parallel_LP64
+ECHO.
+ECHO Building threaded versions of the custom MKL library (LP64 interface) for SAF...
 cd C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
-nmake intel64 interface=lp64 threading=parallel name=saf_mkl_custom export=saf_mkl_list
+nmake intel64 interface=lp64 threading=parallel name=saf_mkl_custom_lp64 export=saf_mkl_list
 ECHO.
 ECHO Copying files to correct folders...
 cd /d "%~dp0"
-xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom.lib" "..\dependencies\Win64\lib" 
-xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom.dll" "C:\Windows\System32\"
+xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom_lp64.lib" "..\dependencies\Win64\lib" 
+xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom_lp64.dll" "C:\Windows\System32\"
+xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\compiler\lib\intel64\libiomp5md.lib" "..\dependencies\Win64\lib"
+xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\redist\intel64\compiler\libiomp5md.dll" "C:\Windows\System32\"
+GOTO End
+
+:Parallel_ILP64
+ECHO.
+ECHO Building threaded versions of the custom MKL library (ILP64 interface) for SAF...
+cd C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
+nmake intel64 interface=ilp64 threading=parallel name=saf_mkl_custom_ilp64 export=saf_mkl_list
+ECHO.
+ECHO Copying files to correct folders...
+cd /d "%~dp0"
+xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom_ilp64.lib" "..\dependencies\Win64\lib" 
+xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom_ilp64.dll" "C:\Windows\System32\"
 xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\compiler\lib\intel64\libiomp5md.lib" "..\dependencies\Win64\lib"
 xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\redist\intel64\compiler\libiomp5md.dll" "C:\Windows\System32\"
 GOTO End
 
 :Sequential
 ECHO.
-ECHO Building sequential versions of the custom MKL library for SAF...
+ECHO 1.lp64 configuration (32-bit integers; recommended)
+ECHO 2.ilp64 configuration (64-bit integers; required for safmex)
+ECHO.
+
+CHOICE /C 12 /M "Enter your choice:"
+
+IF ERRORLEVEL 2 GOTO Sequential_ILP64  
+IF ERRORLEVEL 1 GOTO Sequential_LP64 
+
+:Sequential_LP64
+ECHO.
+ECHO Building sequential versions of the custom MKL library (LP64 interface) for SAF...
 cd C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
-nmake intel64 interface=lp64 threading=sequential name=saf_mkl_custom export=saf_mkl_list
+nmake intel64 interface=lp64 threading=sequential name=saf_mkl_custom_lp64 export=saf_mkl_list
 ECHO.
 ECHO Copying files to correct folders...
 cd /d "%~dp0"
-xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom.lib" "..\dependencies\Win64\lib" 
-xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom.dll" "C:\Windows\System32\"
+xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom_lp64.lib" "..\dependencies\Win64\lib" 
+xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom_lp64.dll" "C:\Windows\System32\"
+GOTO End
+
+:Sequential_ILP64
+ECHO.
+ECHO Building sequential versions of the custom MKL library (ILP64 interface) for SAF...
+cd C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/tools/builder
+nmake intel64 interface=ilp64 threading=sequential name=saf_mkl_custom_ilp64 export=saf_mkl_list
+ECHO.
+ECHO Copying files to correct folders...
+cd /d "%~dp0"
+xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom_ilp64.lib" "..\dependencies\Win64\lib" 
+xcopy "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl\tools\builder\saf_mkl_custom_ilp64.dll" "C:\Windows\System32\"
 GOTO End
 
 :End

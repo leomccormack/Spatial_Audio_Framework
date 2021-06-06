@@ -19,7 +19,7 @@
  * @ingroup VBAP
  * @brief Internal header for the VBAP/MDAP module (#SAF_VBAP_MODULE)
  *
- * VBAP functions largely derived from the Matlab library by Archontis Politis,
+ * VBAP functions largely derived from the MATLAB library by Archontis Politis,
  * found in [1] (BSD-3-Clause License).
  *
  * @see [1] https://github.com/polarch/Vector-Base-Amplitude-Panning
@@ -31,10 +31,6 @@
 #ifndef __SAF_VBAP_INTERNAL_H_INCLUDED__
 #define __SAF_VBAP_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <complex.h>
-#include <string.h>
 #include "saf_vbap.h"
 #include "../saf_utilities/saf_utilities.h"
 #include "saf_externals.h" 

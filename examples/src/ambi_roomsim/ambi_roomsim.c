@@ -38,7 +38,7 @@ void ambi_roomsim_create
     ambi_roomsim_data* pData = (ambi_roomsim_data*)malloc1d(sizeof(ambi_roomsim_data));
     *phAmbi = (void*)pData;
     
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* default user parameters */
     pData->enableReflections = 1;
@@ -104,12 +104,12 @@ void ambi_roomsim_init
 
 void ambi_roomsim_process
 (
-    void  *  const hAmbi,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hAmbi,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
@@ -159,7 +159,7 @@ void ambi_roomsim_process
     /* local copies of user parameters */
     chOrdering = pData->chOrdering;
     norm = pData->norm;
-    order = MIN(pData->sh_order, MAX_SH_ORDER);
+    order = SAF_MIN(pData->sh_order, MAX_SH_ORDER);
     nSH = ORDER2NSH(order);
     nSources = pData->nSources;
     nReceivers = pData->nReceivers;
@@ -168,7 +168,7 @@ void ambi_roomsim_process
     /* Process frame */
     if (nSamples == FRAME_SIZE) {
         /* Load time-domain data */
-        for(i=0; i < MIN(nSources,nInputs); i++)
+        for(i=0; i < SAF_MIN(nSources,nInputs); i++)
             memcpy(pData->src_sigs[i], inputs[i], FRAME_SIZE * sizeof(float));
         for(; i < nInputs; i++)
             memset(pData->src_sigs[i], 0, FRAME_SIZE * sizeof(float));
@@ -203,7 +203,7 @@ void ambi_roomsim_process
             }
 
             /* Append this receiver's output channels to the master output buffer */
-            for(j=0; (j<MIN(nSH, MAX_NUM_SH_SIGNALS) && i<MIN(nOutputs, MAX_NUM_CHANNELS)); j++, i++)
+            for(j=0; (j<SAF_MIN(nSH, MAX_NUM_SH_SIGNALS) && i<SAF_MIN(nOutputs, MAX_NUM_CHANNELS)); j++, i++)
                 memcpy(outputs[i], pData->rec_sh_outsigs[rec][j], FRAME_SIZE * sizeof(float));
         }
         for(; i < nOutputs; i++)
@@ -253,54 +253,54 @@ void ambi_roomsim_setOutputOrder(void* const hAmbi, int newOrder)
 void ambi_roomsim_setNumSources(void* const hAmbi, int new_nSources)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    pData->new_nSources = CLAMP(new_nSources, 1, ROOM_SIM_MAX_NUM_SOURCES); 
+    pData->new_nSources = SAF_CLAMP(new_nSources, 1, ROOM_SIM_MAX_NUM_SOURCES);
 }
 
 void ambi_roomsim_setSourceX(void* const hAmbi, int index, float newValue)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
+    saf_assert(index<=ROOM_SIM_MAX_NUM_SOURCES, "Index exceeds the maximum number of sources permitted");
     pData->src_pos[index][0] = newValue;
 }
 
 void ambi_roomsim_setSourceY(void* const hAmbi, int index, float newValue)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
+    saf_assert(index<=ROOM_SIM_MAX_NUM_SOURCES, "Index exceeds the maximum number of sources permitted");
     pData->src_pos[index][1] = newValue;
 }
 
 void ambi_roomsim_setSourceZ(void* const hAmbi, int index, float newValue)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
+    saf_assert(index<=ROOM_SIM_MAX_NUM_SOURCES, "Index exceeds the maximum number of sources permitted");
     pData->src_pos[index][2] = newValue;
 }
 
 void ambi_roomsim_setNumReceivers(void* const hAmbi, int new_nReceivers)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    pData->new_nReceivers = CLAMP(new_nReceivers, 1, ROOM_SIM_MAX_NUM_RECEIVERS);
+    pData->new_nReceivers = SAF_CLAMP(new_nReceivers, 1, ROOM_SIM_MAX_NUM_RECEIVERS);
 }
 
 void ambi_roomsim_setReceiverX(void* const hAmbi, int index, float newValue)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS);
+    saf_assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS, "Index exceeds the maximum number of receivers permitted");
     pData->rec_pos[index][0] = newValue;
 }
 
 void ambi_roomsim_setReceiverY(void* const hAmbi, int index, float newValue)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS);
+    saf_assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS, "Index exceeds the maximum number of receivers permitted");
     pData->rec_pos[index][1] = newValue;
 }
 
 void ambi_roomsim_setReceiverZ(void* const hAmbi, int index, float newValue)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS);
+    saf_assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS, "Index exceeds the maximum number of receivers permitted");
     pData->rec_pos[index][2] = newValue;
 }
 
@@ -331,8 +331,8 @@ void ambi_roomsim_setRoomDimZ(void* const hAmbi, float newValue)
 void ambi_roomsim_setWallAbsCoeff(void* const hAmbi, int xyz_idx, int posNeg_idx, float new_value)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    assert(xyz_idx<4);
-    assert(posNeg_idx==0 || posNeg_idx==1);
+    saf_assert(xyz_idx<4, "xyz_idx indicates each spatial axis, so cannot exceed 4");
+    saf_assert(posNeg_idx==0 || posNeg_idx==1, "posNeg_idx is a bool");
     if(new_value!=pData->abs_wall[2*xyz_idx+posNeg_idx]){
         pData->abs_wall[2*xyz_idx+posNeg_idx] = new_value;
     }
@@ -398,21 +398,21 @@ int ambi_roomsim_getNSHrequired(void* const hAmbi)
 float ambi_roomsim_getSourceX(void* const hAmbi, int index)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
+    saf_assert(index<=ROOM_SIM_MAX_NUM_SOURCES, "Index exceeds the maximum number of sources permitted");
     return pData->src_pos[index][0];
 }
 
 float ambi_roomsim_getSourceY(void* const hAmbi, int index)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
+    saf_assert(index<=ROOM_SIM_MAX_NUM_SOURCES, "Index exceeds the maximum number of sources permitted");
     return pData->src_pos[index][1];
 }
 
 float ambi_roomsim_getSourceZ(void* const hAmbi, int index)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    assert(index<=ROOM_SIM_MAX_NUM_SOURCES);
+    saf_assert(index<=ROOM_SIM_MAX_NUM_SOURCES, "Index exceeds the maximum number of sources permitted");
     return pData->src_pos[index][2];
 }
 
@@ -430,21 +430,21 @@ int ambi_roomsim_getMaxNumReceivers()
 float ambi_roomsim_getReceiverX(void* const hAmbi, int index)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS);
+    saf_assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS, "Index exceeds the maximum number of receivers permitted");
     return pData->rec_pos[index][0];
 }
 
 float ambi_roomsim_getReceiverY(void* const hAmbi, int index)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS);
+    saf_assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS, "Index exceeds the maximum number of receivers permitted");
     return pData->rec_pos[index][1];
 }
 
 float ambi_roomsim_getReceiverZ(void* const hAmbi, int index)
 {
     ambi_roomsim_data *pData = (ambi_roomsim_data*)(hAmbi);
-    assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS);
+    saf_assert(index<=ROOM_SIM_MAX_NUM_RECEIVERS, "Index exceeds the maximum number of receivers permitted");
     return pData->rec_pos[index][2];
 }
 

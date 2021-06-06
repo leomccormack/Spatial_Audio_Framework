@@ -70,7 +70,7 @@ void matrixconv_init(void* const hMCnv,
  * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void matrixconv_process(void* const hMCnv,
-                        float** const inputs,
+                        const float *const * inputs,
                         float** const outputs,
                         int nInputs,
                         int nOutputs,
@@ -116,9 +116,7 @@ void matrixconv_setFilters(void* const hMCnv,
                            int numSamples,
                            int sampleRate);
 
-/**
- * Enable (1), disable (0), partitioned convolution
- */
+/** Enable (1), disable (0), partitioned convolution */
 void matrixconv_setEnablePart(void* const hMCnv, int newState);
     
 /**
@@ -148,9 +146,7 @@ int matrixconv_getFrameSize(void);
  */
 int matrixconv_getEnablePart(void* const hMCnv);
     
-/**
- * Returns the number input channels
- */
+/** Returns the number input channels */
 int matrixconv_getNumInputChannels(void* const hMCnv);
 
 /**
@@ -159,9 +155,7 @@ int matrixconv_getNumInputChannels(void* const hMCnv);
  */
 int matrixconv_getNumOutputChannels(void* const hMCnv);
 
-/**
- * Returns the currect host block size
- */
+/** Returns the currect host block size */
 int matrixconv_getHostBlockSize(void* const hMCnv);
 
 /**
@@ -170,19 +164,13 @@ int matrixconv_getHostBlockSize(void* const hMCnv);
  */
 int matrixconv_getNfilters(void* const hMCnv);
 
-/**
- * Returns the current filter length, in samples
- */
+/** Returns the current filter length, in samples */
 int matrixconv_getFilterLength(void* const hMCnv);
 
-/**
- * Returns the samplerate of the loaded filters
- */
+/** Returns the samplerate of the loaded filters */
 int matrixconv_getFilterFs(void* const hMCnv);
 
-/**
- * Returns the samperate of the host
- */
+/** Returns the samperate of the host */
 int matrixconv_getHostFs(void* const hMCnv);
 
 /**

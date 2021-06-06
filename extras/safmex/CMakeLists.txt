@@ -2,7 +2,9 @@ message(STATUS "Configuring SAFMEX wrappers:")
 
 cmake_minimum_required(VERSION 3.15)
 
-add_subdirectory(CXX_API) # new experimental mex versions using c++ API
+if(SAF_MEX_CXX)
+    add_subdirectory(CXX_API) # new experimental mex versions using c++ API
+endif()
 
 project(safmex LANGUAGES C)
 find_package(Matlab)
@@ -43,3 +45,10 @@ endforeach()
 install(TARGETS ${safmex_list} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/
         COMPONENT safmex)
 message(STATUS "Install safmex into ${CMAKE_CURRENT_SOURCE_DIR}/ ")
+set_target_properties(${safmex_list} PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+#This does not work for macOS for some reason (get_filename_component behaviour is different)
+#if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL_ILP64" )
+#    get_filename_component(SAF_MKL_PATH ${INTEL_MKL_LIB} DIRECTORY)
+#    set_target_properties(${safmex_list} PROPERTIES INSTALL_RPATH ${SAF_MKL_PATH})
+#endif()

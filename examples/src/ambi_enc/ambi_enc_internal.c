@@ -107,7 +107,7 @@ void loadSourceConfigPreset
                     dirs_deg[ch][i] = __22pX_dirs_deg[ch][i];
             break;
         case SOURCE_CONFIG_PRESET_22P2_9_10_3:
-            assert(0); /* Not suitable, since it contains LFE channels */
+            saf_print_error("Not suitable, since it contains LFE channels");
             break;
         case SOURCE_CONFIG_PRESET_AALTO_MCC:
             nCH = 45;
@@ -212,7 +212,7 @@ void loadSourceConfigPreset
                     dirs_deg[ch][i] = __SphCovering_64_dirs_deg[ch][i];
             break;
     }
-    assert(nCH>0);
+    saf_assert(nCH>0, "Number of channels must be more than 0");
     
     /* Fill remaining slots with default coords */
     for(; ch<MAX_NUM_INPUTS; ch++)

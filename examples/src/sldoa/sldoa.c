@@ -55,7 +55,7 @@ void sldoa_create
     *phSld = (void*)pData;
     int i, j, band;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* Default user parameters */
     pData->new_masterOrder = pData->masterOrder = 1;
@@ -194,11 +194,11 @@ void sldoa_initCodec
 
 void sldoa_analysis
 (
-    void  *  const hSld,
-    float ** const inputs,
-    int            nInputs,
-    int            nSamples,
-    int            isPlaying 
+    void        *  const hSld,
+    const float *const * inputs,
+    int                  nInputs,
+    int                  nSamples,
+    int                  isPlaying 
 )
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
@@ -227,7 +227,7 @@ void sldoa_analysis
     /* Loop over all samples */
     for(s=0; s<nSamples; s++){
         /* Load input signals into inFIFO buffer */
-        for(ch=0; ch<MIN(nInputs,nSH); ch++)
+        for(ch=0; ch<SAF_MIN(nInputs,nSH); ch++)
             pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
         for(; ch<nSH; ch++) /* Zero any channels that were not given */
             pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
@@ -247,23 +247,15 @@ void sldoa_analysis
 
             /* account for input channel order */
             switch(chOrdering){
-                case CH_ACN: /* already ACN */
-                    break;
-                case CH_FUMA:
-                    convertHOAChannelConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
-                    break;
+                case CH_ACN:  /* already ACN */ break; /* Otherwise, convert to ACN... */
+                case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
             }
 
             /* account for input normalisation scheme */
             switch(norm){
-                case NORM_N3D:  /* already in N3D, do nothing */
-                    break;
-                case NORM_SN3D: /* convert to N3D */
-                    convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
-                    break;
-                case NORM_FUMA: /* only for first-order, convert to N3D */
-                    convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
-                    break;
+                case NORM_N3D:  /* already in N3D, do nothing */ break; /* Otherwise, convert to N3D... */
+                case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
+                case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
             }
         
             /* apply the time-frequency transform */
@@ -278,7 +270,7 @@ void sldoa_analysis
                 if(pData->freqVector[band] >= minFreq && pData->freqVector[band]<=maxFreq){
                     nSectors = nSectorsPerBand[band];
                     avgCoeff = avg_ms < 10.0f ? 1.0f : 1.0f / ((avg_ms/1e3f) / (1.0f/(float)HOP_SIZE) + 2.23e-9f);
-                    avgCoeff = MAX(MIN(avgCoeff, 0.99999f), 0.0f); /* ensures stability */
+                    avgCoeff = SAF_MAX(SAF_MIN(avgCoeff, 0.99999f), 0.0f); /* ensures stability */
                     sldoa_estimateDoA(pData->SHframeTF[band],
                                       analysisOrderPerBand[band],
                                       pData->secCoeffs[analysisOrderPerBand[band]-2], /* -2, as first order is skipped */
@@ -331,7 +323,7 @@ void sldoa_analysis
                         if( analysisOrderPerBand[band]==1  )
                             pData->alphaScale[current_disp_idx][band*MAX_NUM_SECTORS + i] = 1.0f;
                         else
-                            pData->alphaScale[current_disp_idx][band*MAX_NUM_SECTORS + i] = MIN(MAX((pData->energy[band][i]-min_en[band])/(max_en[band]-min_en[band]+2.3e-10f), 0.05f),1.0f);
+                            pData->alphaScale[current_disp_idx][band*MAX_NUM_SECTORS + i] = SAF_MIN(SAF_MAX((pData->energy[band][i]-min_en[band])/(max_en[band]-min_en[band]+2.3e-10f), 0.05f),1.0f);
                     }
                 }
                 else{
@@ -375,7 +367,7 @@ void sldoa_refreshSettings(void* const hSld)
 void sldoa_setMaxFreq(void* const hSld, float newFreq)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    newFreq = MAX(MIN(newFreq, pData->fs/2.0f),0.0f);
+    newFreq = SAF_MAX(SAF_MIN(newFreq, pData->fs/2.0f),0.0f);
     if(newFreq < pData->minFreq )
         pData->minFreq = newFreq;
     pData->maxFreq = newFreq;
@@ -384,7 +376,7 @@ void sldoa_setMaxFreq(void* const hSld, float newFreq)
 void sldoa_setMinFreq(void* const hSld, float newFreq)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    newFreq = MAX(MIN(newFreq, pData->fs/2.0f),0.0f);
+    newFreq = SAF_MAX(SAF_MIN(newFreq, pData->fs/2.0f),0.0f);
     if(newFreq > pData->maxFreq )
         pData->maxFreq = newFreq;
     pData->minFreq = newFreq;
@@ -422,7 +414,7 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->analysisOrderPerBand[band] = MIN(pData->new_masterOrder,curOrder);
+                pData->analysisOrderPerBand[band] = SAF_MIN(pData->new_masterOrder,curOrder);
             }
             pData->maxFreq = __Zylia_freqRange[(__Zylia_maxOrder-1)*2-1];
             break;
@@ -439,7 +431,7 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->analysisOrderPerBand[band] = MIN(pData->new_masterOrder,curOrder);
+                pData->analysisOrderPerBand[band] = SAF_MIN(pData->new_masterOrder,curOrder);
             }
             pData->maxFreq = __Eigenmike32_freqRange[(__Eigenmike32_maxOrder-1)*2-1];
             break;
@@ -456,7 +448,7 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->analysisOrderPerBand[band] = MIN(pData->new_masterOrder,curOrder);
+                pData->analysisOrderPerBand[band] = SAF_MIN(pData->new_masterOrder,curOrder);
             }
             pData->maxFreq = __DTU_mic_freqRange[(__DTU_mic_maxOrder-1)*2-1];
             break;
@@ -468,7 +460,7 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID)
 void sldoa_setAnaOrder(void * const hSld, int newValue, int bandIdx)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
-    pData->analysisOrderPerBand[bandIdx] = MIN(MAX(newValue,1), pData->new_masterOrder);
+    pData->analysisOrderPerBand[bandIdx] = SAF_MIN(SAF_MAX(newValue,1), pData->new_masterOrder);
     pData->nSectorsPerBand[bandIdx] = ORDER2NUMSECTORS(pData->analysisOrderPerBand[bandIdx]);
 }
 
@@ -478,7 +470,7 @@ void sldoa_setAnaOrderAllBands(void * const hSld, int newValue)
     int band;
     
     for(band=0; band<HYBRID_BANDS; band++){
-        pData->analysisOrderPerBand[band] = MIN(MAX(newValue,1), pData->new_masterOrder);
+        pData->analysisOrderPerBand[band] = SAF_MIN(SAF_MAX(newValue,1), pData->new_masterOrder);
         pData->nSectorsPerBand[band] = ORDER2NUMSECTORS(pData->analysisOrderPerBand[band]);
     }
 }

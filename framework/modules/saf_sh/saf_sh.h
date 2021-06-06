@@ -22,7 +22,7 @@
  *        Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
- * derived from Matlab libraries by Archontis Politis [1-3] (BSD-3-Clause
+ * derived from MATLAB libraries by Archontis Politis [1-3] (BSD-3-Clause
  * License).
  *
  * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
@@ -146,13 +146,14 @@ void unnorm_legendreP_recur(/* Input Arguments */
 /* ========================================================================== */
 
 /**
- * Computes REAL spherical harmonics [1] for each given direction on the unit
- * sphere
+ * Computes real-valued spherical harmonics [1] for each given direction on the
+ * unit sphere
  *
- * The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term.
- * i.e. max(omni) = 1/sqrt(4*pi). Compared to getSHreal_recur(), this function
- * employs unnorm_legendreP() and double precision, which is slower but more
- * precise.
+ * The spherical harmonic values are computed WITH the 1/sqrt(4*pi) term.
+ * Compared to getSHreal_recur(), this function uses unnorm_legendreP() and
+ * double precision, so is more suitable for being computed in an initialisation
+ * stage. This version is indeed slower, but more precise (especially for high
+ * orders).
  *
  * @warning This function assumes [azi, inclination] convention! Note that one
  *          may convert from elevation, with: [azi, pi/2-elev].
@@ -177,13 +178,14 @@ void getSHreal(/* Input Arguments */
                float* Y);
 
 /**
- * Computes REAL spherical harmonics [1] for each given direction on the unit
- * sphere
+ * Computes real-valued spherical harmonics [1] for each given direction on the
+ * unit sphere
  *
  * The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term.
- * i.e. max(omni) = 1/sqrt(4*pi). Compared to getSHreal(), this function employs
- * unnorm_legendreP_recur() and single precision, which is faster but less
- * precise.
+ * Compared to getSHreal(), this function uses unnorm_legendreP_recur() and
+ * single precision, so is more suitable for being computed in a real-time loop.
+ * It sacrifices some precision, and numerical error propogates through the
+ * recursion, but it is much faster.
  *
  * The function also uses static memory buffers for single direction and up to
  * 7th order, which speeds things up considerably for such use cases.
@@ -211,12 +213,11 @@ void getSHreal_recur(/* Input Arguments */
                      float* Y);
 
 /**
- * Computes COMPLEX spherical harmonics [1] for each given direction on the unit
- * sphere
+ * Computes complex-valued spherical harmonics [1] for each given direction on
+ * the unit sphere
  *
  * The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term.
- * i.e. max(omni) = 1/sqrt(4*pi) + i0. This function employs unnorm_legendreP()
- * and double precision.
+ * This function employs unnorm_legendreP() and double precision.
  *
  * @warning This function assumes [azi, inclination] convention! Note that one
  *          may convert from elevation, with: [azi, pi/2-elev].
@@ -294,7 +295,8 @@ void complex2realCoeffs(/* Input Arguments */
                         float* R_N);
 
 /**
- * Generates a real-valued spherical harmonic rotation matrix [1]
+ * Generates a real-valued spherical harmonic rotation matrix [1] based on a 3x3
+ * rotation matrix (see quaternion2rotationMatrix(), euler2rotationMatrix())
  *
  * The rotation should then be applied as:
  * \code{.m}
@@ -309,7 +311,7 @@ void complex2realCoeffs(/* Input Arguments */
  *
  * @test test__getSHrotMtxReal()
  *
- * @param[in]  R      zyx rotation matrix; 3 x 3
+ * @param[in]  R      The 3x3 rotation matrix
  * @param[in]  L      Order of spherical harmonic expansion
  * @param[out] RotMtx SH domain rotation matrix; FLAT: (L+1)^2 x (L+1)^2
  *
@@ -327,8 +329,8 @@ void getSHrotMtxReal(float R[3][3],
  * order (sectorOrder+1) that is essentially the product of a pattern of
  * order=sectorOrder and a dipole
  *
- * It is used in beamWeightsVelocityPatterns(). For the derivation of the
- * matrices see [1].
+ * It is used in beamWeightsVelocityPatterns(). For a derivation of the matrices
+ * refer to [1].
  *
  * @test test__computeSectorCoeffsEP()
  *
@@ -347,11 +349,11 @@ void computeVelCoeffsMtx(/* Input Arguments */
 
 /**
  * Computes beamforming matrices (sector coefficients) which, when applied to
- * input SH signals, yield ENERGY-preserving (EP) sectors.
+ * input SH signals, yield energy-preserving (EP) sectors.
  *
  * This partitioning of the sound-field into spatially-localised sectors has
- * been used for parametric sound-field reproduction in [1] and visualisation in
- * [2,3].
+ * been used e.g. for parametric sound-field reproduction in [1] and
+ * visualisation in [2,3].
  *
  * @note Each sector comprises 1x sector pattern of order "orderSec", and 3x
  *       weighted dipoles which are essentially the product of the sector
@@ -396,11 +398,11 @@ float computeSectorCoeffsEP(/* Input Arguments */
 
 /**
  * Computes beamforming matrices (sector coefficients) which, when applied to
- * input SH signals, yield AMPLITUDE-preserving (EP) sectors.
+ * input SH signals, yield amplitude-preserving (EP) sectors.
  *
  * This partitioning of the sound-field into spatially-localised sectors has
- * been used for parametric sound-field reproduction in [1] and visualisation in
- * [2,3].
+ * been used e.g. for parametric sound-field reproduction in [1] and
+ * visualisation in [2,3].
  *
  * @note Each sector comprises 1x sector pattern of order "orderSec", and 3x
  *       weighted dipoles which are essentially the product of the sector
@@ -445,7 +447,7 @@ float computeSectorCoeffsAP(/* Input Arguments */
  * Generates spherical coefficients for generating cardioid beampatterns
  *
  * For a specific order N of a higher order cardioid of the form
- * D(theta)=(1/2)^N * (1+cos(theta))^N, this funtion generates the beamweights
+ * D(theta)=(1/2)^N * (1+cos(theta))^N, this function generates the beamweights
  * for the same pattern, but in the SHD. Because the pattern is axisymmetric
  * only the N+1 coefficients of m=0 are returned.
  *
@@ -651,13 +653,13 @@ void checkCondNumberSHTReal(/* Input arguments */
 
 
 /* ========================================================================== */
-/*                     Localisation Functions in the SHD                     */
+/*                     Localisation Functions in the SHD                      */
 /* ========================================================================== */
 
 /**
- * Creates an instance of the spherical harmonic domain PWD implementation,
- * which may be used for computing power-maps for visualisation/DoA estimation
- * purposes
+ * Creates an instance of a spherical harmonic domain implementation of the
+ * steer-response power (SRP) approach for computing power-maps, which can then
+ * be used for sound-field visualisation/DoA estimation purposes
  *
  * @param[in] phPWD         (&) address of the sphPWD handle
  * @param[in] order         Spherical harmonic input order
@@ -685,7 +687,7 @@ void sphPWD_destroy(void ** const phPWD);
  * @param[in] Cx        Signal covariance matrix; FLAT: nSH x nSH
  * @param[in] nSrcs     Number of sources (or an estimate of the number of
  *                      sources), for the optional peak finding (peak_inds)
- * @param[in] P_map     Power-map (set to NULL if not wanted); nDirs x 1
+ * @param[in] P_map     Powermap (set to NULL if not wanted); nDirs x 1
  * @param[in] peak_inds Indices corresponding to the "nSrcs" highest peaks in
  *                      the power-map (set to NULL if not wanted);
  *                      nSrcs x 1
@@ -720,9 +722,7 @@ void sphMUSIC_create(void ** const phMUSIC,
                      int nDirs);
 
 /**
- * Destroys an instance of the spherical harmonic domain MUSIC implementation,
- * which may be used for computing pseudo-spectrums for visualisation/DoA
- * estimation purposes
+ * Destroys an instance of the spherical harmonic domain MUSIC implementation
  *
  * @param[in] phMUSIC    (&) address of the sphMUSIC handle
  */
@@ -806,11 +806,11 @@ void sphESPRIT_estimateDirs(/* Input arguments */
                             float* src_dirs_rad);
 
 /**
- * Generates a powermap based on the energy of plane-wave decomposition (PWD)
- * (aka hyper-cardioid)  beamformers
+ * Generates a powermap based on the energy of a plane-wave decomposition (PWD)
+ * (i.e. hyper-cardioid) beamformers
  *
  * @param[in]  order      Analysis order
- * @param[in]  Cx         Correlation/covarience matrix;
+ * @param[in]  Cx         Correlation/covariance matrix;
  *                        FLAT: (order+1)^2 x (order+1)^2
  * @param[in]  Y_grid     Steering vectors for each grid direcionts;
  *                        FLAT: (order+1)^2 x nGrid_dirs
@@ -830,7 +830,7 @@ void generatePWDmap(/* Input arguments */
  * Distortion-less Response (MVDR) beamformers
  *
  * @param[in]  order      Analysis order
- * @param[in]  Cx         Correlation/covarience matrix;
+ * @param[in]  Cx         Correlation/covariance matrix;
  *                        FLAT: (order+1)^2 x (order+1)^2
  * @param[in]  Y_grid     Steering vectors for each grid direcionts;
  *                        FLAT: (order+1)^2 x nGrid_dirs
@@ -864,7 +864,7 @@ void generateMVDRmap(/* Input arguments */
  * is the same.
  *
  * @param[in]  order      Analysis order
- * @param[in]  Cx         Correlation/covarience matrix;
+ * @param[in]  Cx         Correlation/covariance matrix;
  *                        FLAT: (order+1)^2 x (order+1)^2
  * @param[in]  Y_grid     Steering vectors for each grid direcionts;
  *                        FLAT: (order+1)^2 x nGrid_dirs
@@ -894,7 +894,7 @@ void generateCroPaCLCMVmap(/* Input arguments */
  * classification (MUSIC) method
  *
  * @param[in]  order        Analysis order
- * @param[in]  Cx           Correlation/covarience matrix;
+ * @param[in]  Cx           Correlation/covariance matrix;
  *                          FLAT: (order+1)^2 x (order+1)^2
  * @param[in]  Y_grid       Steering vectors for each grid direcionts;
  *                          FLAT: (order+1)^2 x nGrid_dirs
@@ -918,7 +918,7 @@ void generateMUSICmap(/* Input arguments */
  * method
  *
  * @param[in]  order        Analysis order
- * @param[in]  Cx           Correlation/covarience matrix;
+ * @param[in]  Cx           Correlation/covariance matrix;
  *                          FLAT: (order+1)^2 x (order+1)^2
  * @param[in]  Y_grid       Steering vectors for each grid direcionts;
  *                          FLAT: (order+1)^2 x nGrid_dirs
@@ -974,7 +974,7 @@ float sphArrayAliasLim(/* Input arguments */
                        int maxN);
 
 /**
- * Computes the frequncies (per order), at which the noise of a SHT of a SMA
+ * Computes the frequencies (per order), at which the noise of a SHT of a SMA
  * exceeds a specified maximum level
  *
  * Computes the frequencies that the noise in the output channels of a spherical

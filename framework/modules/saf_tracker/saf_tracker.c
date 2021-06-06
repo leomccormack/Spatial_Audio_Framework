@@ -59,17 +59,17 @@ void tracker3d_create
     pData->tpars = tpars;
 
     /* Parameter checking */
-    pData->tpars.Np = CLAMP(pData->tpars.Np, 1, TRACKER3D_MAX_NUM_PARTICLES);
-    assert(pData->tpars.ARE_UNIT_VECTORS == 0 || pData->tpars.ARE_UNIT_VECTORS == 1);
-    pData->tpars.init_birth = CLAMP(pData->tpars.init_birth, 0.0f, 0.99f);
-    pData->tpars.alpha_death = CLAMP(pData->tpars.alpha_death, 1.0f, 20.0f);
-    pData->tpars.beta_death = CLAMP(pData->tpars.beta_death, 1.0f, 20.0f);
-    pData->tpars.dt = MAX(pData->tpars.dt, 0.0001f);
-    pData->tpars.cd = MAX(pData->tpars.cd, 0.0001f);
-    pData->tpars.W_avg_coeff = CLAMP(pData->tpars.W_avg_coeff, 0.0f, 0.99f);
-    pData->tpars.noiseSpecDen = MAX(pData->tpars.noiseSpecDen, 0.0001f);
-    pData->tpars.noiseLikelihood = CLAMP(pData->tpars.noiseLikelihood, 0.0f, 0.99f);
-    pData->tpars.measNoiseSD = MAX(pData->tpars.measNoiseSD, 0.001f);
+    pData->tpars.Np = SAF_CLAMP(pData->tpars.Np, 1, TRACKER3D_MAX_NUM_PARTICLES);
+    saf_assert(pData->tpars.ARE_UNIT_VECTORS == 0 || pData->tpars.ARE_UNIT_VECTORS == 1, "ARE_UNIT_VECTORS is a bool");
+    pData->tpars.init_birth = SAF_CLAMP(pData->tpars.init_birth, 0.0f, 0.99f);
+    pData->tpars.alpha_death = SAF_CLAMP(pData->tpars.alpha_death, 1.0f, 20.0f);
+    pData->tpars.beta_death = SAF_CLAMP(pData->tpars.beta_death, 1.0f, 20.0f);
+    pData->tpars.dt = SAF_MAX(pData->tpars.dt, 0.0001f);
+    pData->tpars.cd = SAF_MAX(pData->tpars.cd, 0.0001f);
+    pData->tpars.W_avg_coeff = SAF_CLAMP(pData->tpars.W_avg_coeff, 0.0f, 0.99f);
+    pData->tpars.noiseSpecDen = SAF_MAX(pData->tpars.noiseSpecDen, 0.0001f);
+    pData->tpars.noiseLikelihood = SAF_CLAMP(pData->tpars.noiseLikelihood, 0.0f, 0.99f);
+    pData->tpars.measNoiseSD = SAF_MAX(pData->tpars.measNoiseSD, 0.001f);
 
     /* Measurement noise PRIORs along the x,y,z axis, respectively  */
     sd_xyz = pData->tpars.measNoiseSD;
@@ -162,16 +162,17 @@ void tracker3d_step
     void* const hT3d,
     float* newObs_xyz,
     int nObs,
-    float** target_xyz,
+    float** target_pos_xyz,
+    float** target_var_xyz,
     int** target_IDs,
     int* nTargets
 )
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
-    int i, kt, ob, maxIdx, nt;
-    float Neff;
+    int i, kt, ob, maxIdx, nt, nt2;
+    float Neff, w_sum;
     int s[TRACKER3D_MAX_NUM_PARTICLES];
-    MCS_data* S_max;
+    MCS_data* S_max, *S_tmp;
 #ifdef TRACKER_VERBOSE
     char c_str[256], tmp[256];
     memset(c_str, 0, 256*sizeof(char));
@@ -218,15 +219,17 @@ void tracker3d_step
         }
     } 
 
-    /* Find most significant particle.. */
+    /* Find most dominant particle.. */
     maxIdx = tracker3d_getMaxParticleIdx(hT3d);
     S_max = (MCS_data*)pData->SS[maxIdx];
  
     /* Output */
     if(S_max->nTargets==0){
-        free((*target_xyz));
+        free((*target_pos_xyz));
+        free((*target_var_xyz));
         free((*target_IDs));
-        (*target_xyz) = NULL;
+        (*target_pos_xyz) = NULL;
+        (*target_var_xyz) = NULL;
         (*target_IDs) = NULL;
         (*nTargets) = 0;
 #ifdef TRACKER_VERBOSE
@@ -234,22 +237,65 @@ void tracker3d_step
 #endif
     }
     else{
-        (*target_xyz) = realloc1d((*target_xyz), S_max->nTargets*3*sizeof(float));
+        (*target_pos_xyz) = realloc1d((*target_pos_xyz), S_max->nTargets*3*sizeof(float));
+        (*target_var_xyz) = realloc1d((*target_var_xyz), S_max->nTargets*3*sizeof(float));
         (*target_IDs) = realloc1d((*target_IDs), S_max->nTargets*sizeof(int));
         (*nTargets) = S_max->nTargets;
 
+        /* Loop over targets */
         for(nt=0; nt<S_max->nTargets; nt++){
 #ifdef TRACKER_VERBOSE
             sprintf(tmp, "ID_%d: [%.5f,%.5f,%.5f] ", S_max->targetIDs[nt], S_max->M[nt].m0, S_max->M[nt].m1, S_max->M[nt].m2);
             strcat(c_str, tmp);
 #endif
+            /* Target IDs are based on those defined by the most dominant particle */
             (*target_IDs)[nt] = S_max->targetIDs[nt];
-            memcpy(&(*target_xyz)[nt*3], S_max->M[nt].M, 3*sizeof(float));
+            (*target_pos_xyz)[nt*3]   = S_max->M[nt].m0;
+            (*target_pos_xyz)[nt*3+1] = S_max->M[nt].m1;
+            (*target_pos_xyz)[nt*3+2] = S_max->M[nt].m2;
+            (*target_var_xyz)[nt*3]   = S_max->P[nt].p00;
+            (*target_var_xyz)[nt*3+1] = S_max->P[nt].p11;
+            (*target_var_xyz)[nt*3+2] = S_max->P[nt].p22;
+
+            /* Apply the corresponding importance weight */
+            w_sum = S_max->W;
+            (*target_pos_xyz)[nt*3]   *= S_max->W;
+            (*target_pos_xyz)[nt*3+1] *= S_max->W;
+            (*target_pos_xyz)[nt*3+2] *= S_max->W;
+            (*target_var_xyz)[nt*3]   *= S_max->W;
+            (*target_var_xyz)[nt*3+1] *= S_max->W;
+            (*target_var_xyz)[nt*3+2] *= S_max->W;
+
+            /* Loop over all of the other particles - importance sampling */
+            for(int p = 0; p<pData->tpars.Np; p++){
+                if(p!=maxIdx){
+                    S_tmp = (MCS_data*)pData->SS[p];
+                    for(nt2=0; nt2<S_tmp->nTargets; nt2++){
+                        if((*target_IDs)[nt] == S_tmp->targetIDs[nt2]){
+                            w_sum += S_tmp->W;
+                            (*target_pos_xyz)[nt*3]   += (S_tmp->M[nt2].m0 * S_tmp->W);
+                            (*target_pos_xyz)[nt*3+1] += (S_tmp->M[nt2].m1 * S_tmp->W);
+                            (*target_pos_xyz)[nt*3+2] += (S_tmp->M[nt2].m2 * S_tmp->W);
+                            (*target_var_xyz)[nt*3]   += (S_tmp->P[nt2].p00 * S_tmp->W);
+                            (*target_var_xyz)[nt*3+1] += (S_tmp->P[nt2].p11 * S_tmp->W);
+                            (*target_var_xyz)[nt*3+2] += (S_tmp->P[nt2].p22 * S_tmp->W);
+                        }
+                    }
+                }
+            }
+
+            /* Renormalise based on the combined importance weights */
+            (*target_pos_xyz)[nt*3]   /= w_sum;
+            (*target_pos_xyz)[nt*3+1] /= w_sum;
+            (*target_pos_xyz)[nt*3+2] /= w_sum;
+            (*target_var_xyz)[nt*3]   /= w_sum;
+            (*target_var_xyz)[nt*3+1] /= w_sum;
+            (*target_var_xyz)[nt*3+2] /= w_sum;
         }
 #ifdef TRACKER_VERBOSE
         printf("%s\n", c_str);
 #endif
-    }
+    } 
 }
 
 #endif /* SAF_ENABLE_TRACKER_MODULE */

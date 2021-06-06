@@ -34,7 +34,7 @@ void ambi_enc_create
     *phAmbi = (void*)pData;
     int i;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     pData->order = 1;
     
@@ -72,28 +72,30 @@ void ambi_enc_init
     int i;
     
     pData->fs = (float)sampleRate;
-    for(i=1; i<=FRAME_SIZE; i++)
-        pData->interpolator[i-1] = (float)i*1.0f/(float)FRAME_SIZE;
+    for(i=1; i<=FRAME_SIZE; i++){
+        pData->interpolator_fadeIn[i-1]  = (float)i*1.0f/(float)FRAME_SIZE;
+        pData->interpolator_fadeOut[i-1] = 1.0f - pData->interpolator_fadeIn[i-1];
+    }
     memset(pData->prev_Y, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
-    memset(pData->prev_inputFrameTD, 0, MAX_NUM_INPUTS*FRAME_SIZE*sizeof(float));
+    memset(pData->prev_inputFrameTD, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
     for(i=0; i<MAX_NUM_INPUTS; i++)
         pData->recalc_SH_FLAG[i] = 1;
 }
 
 void ambi_enc_process
 (
-    void  *  const hAmbi,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hAmbi,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
-    int i, j, ch, nSources, nSH; 
-    float src_dirs[MAX_NUM_INPUTS][2], azi_incl[2], scale;
-    float* Y_src;
+    int i, j, ch, nSources, nSH, mixWithPreviousFLAG;
+    float src_dirs[MAX_NUM_INPUTS][2], scale;
+    float Y_src[MAX_NUM_SH_SIGNALS];
 
     /* local copies of user parameters */
     CH_ORDER chOrdering;
@@ -103,92 +105,85 @@ void ambi_enc_process
     norm = pData->norm;
     nSources = pData->nSources;
     memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
-    order = MIN(pData->order, MAX_SH_ORDER);
+    order = SAF_MIN(pData->order, MAX_SH_ORDER);
     nSH = ORDER2NSH(order);
 
     /* Process frame */
     if (nSamples == FRAME_SIZE) {
-
-        /* prep */
-        Y_src = malloc1d(nSH*sizeof(float));
-
         /* Load time-domain data */
-        for(i=0; i < MIN(nSources,nInputs); i++)
+        for(i=0; i < SAF_MIN(nSources,nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<MAX_NUM_INPUTS; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 
-        /* recalulate SHs */
+        /* recalulate SHs (only if encoding direction has changed) */
+        mixWithPreviousFLAG = 0;
         for(i=0; i<nSources; i++){
             if(pData->recalc_SH_FLAG[i]){
-                azi_incl[0] = pData->src_dirs_deg[i][0]*M_PI/180.0f;
-                azi_incl[1] =  M_PI/2.0f - pData->src_dirs_deg[i][1]*M_PI/180.0f;
-                getSHreal_recur(order, azi_incl, 1, Y_src);
+                getRSH_recur(order, pData->src_dirs_deg[i], 1, (float*)Y_src);
                 for(j=0; j<nSH; j++)
-                    pData->Y[j][i] = sqrtf(4.0f*M_PI)*Y_src[j];
+                    pData->Y[j][i] = Y_src[j];
                 for(; j<MAX_NUM_SH_SIGNALS; j++)
                     pData->Y[j][i] = 0.0f;
                 pData->recalc_SH_FLAG[i] = 0;
-            }
-            else{
-                for(j=0; j<MAX_NUM_SH_SIGNALS; j++)
-                    pData->Y[j][i] = pData->prev_Y[j][i];
+
+                /* If encoding gains have changed, then we should also mix with and interpolate the previous gains */
+                mixWithPreviousFLAG = 1;
             }
         }
 
         /* spatially encode the input signals into spherical harmonic signals */
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0f,
-                    (float*)pData->prev_Y, MAX_NUM_INPUTS,
-                    (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
-                    (float*)pData->tempFrame, FRAME_SIZE);
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0f,
                     (float*)pData->Y, MAX_NUM_INPUTS,
                     (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
                     (float*)pData->outputFrameTD, FRAME_SIZE);
 
-        for (i=0; i < nSH; i++)
-            for(j=0; j<FRAME_SIZE; j++)
-                pData->outputFrameTD[i][j] = pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
+        /* Fade between (linearly inerpolate) the new gains and the previous gains (only if the new gains are different) */
+        if(mixWithPreviousFLAG){
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSources, 1.0f,
+                        (float*)pData->prev_Y, MAX_NUM_INPUTS,
+                        (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
+                        (float*)pData->tempFrame, FRAME_SIZE);
+
+            /* Apply the linear interpolation */
+            for (i=0; i < nSH; i++){
+                utility_svvmul((float*)pData->interpolator_fadeIn, (float*)pData->outputFrameTD[i], FRAME_SIZE, (float*)pData->outputFrameTD_fadeIn[i]);
+                utility_svvmul((float*)pData->interpolator_fadeOut, (float*)pData->tempFrame[i], FRAME_SIZE, (float*)pData->tempFrame_fadeOut[i]);
+            }
+            cblas_scopy(nSH*FRAME_SIZE, (float*)pData->outputFrameTD_fadeIn, 1, (float*)pData->outputFrameTD, 1);
+            cblas_saxpy(nSH*FRAME_SIZE, 1.0f, (float*)pData->tempFrame_fadeOut, 1, (float*)pData->outputFrameTD, 1);
+
+            /* for next frame */
+            utility_svvcopy((const float*)pData->Y, MAX_NUM_INPUTS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_Y);
+        }
 
         /* for next frame */
-        utility_svvcopy((const float*)pData->inputFrameTD, nSources*FRAME_SIZE, (float*)pData->prev_inputFrameTD);
-        utility_svvcopy((const float*)pData->Y, MAX_NUM_INPUTS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_Y);
+        utility_svvcopy((const float*)pData->inputFrameTD, MAX_NUM_INPUTS*FRAME_SIZE, (float*)pData->prev_inputFrameTD);
 
         /* scale by 1/sqrt(nSources) */
         if(pData->enablePostScaling){
             scale = 1.0f/sqrtf((float)nSources);
-            utility_svsmul((float*)pData->outputFrameTD, &scale, nSH*FRAME_SIZE, (float*)pData->outputFrameTD);
+            cblas_sscal(nSH*FRAME_SIZE, scale, (float*)pData->outputFrameTD, 1);
         }
 
         /* account for output channel order */
         switch(chOrdering){
-            case CH_ACN: /* already ACN */
-                break;
-            case CH_FUMA:
-                convertHOAChannelConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA);
-                break;
+            case CH_ACN:  /* already ACN, do nothing */  break;
+            case CH_FUMA: convertHOAChannelConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA); break;
         }
 
         /* account for normalisation scheme */
         switch(norm){
-            case NORM_N3D: /* already N3D */
-                break;
-            case NORM_SN3D:
-                convertHOANormConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D);
-                break;
-            case NORM_FUMA:
-                convertHOANormConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA);
-                break;
+            case NORM_N3D:  /* already N3D, do nothing */ break;  
+            case NORM_SN3D: convertHOANormConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D); break;
+            case NORM_FUMA: convertHOANormConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA); break;
         }
 
         /* Copy to output */
-        for(i = 0; i < MIN(nSH,nOutputs); i++)
+        for(i = 0; i < SAF_MIN(nSH,nOutputs); i++)
             utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
         for(; i < nOutputs; i++)
             memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
-
-        /* clean-up */
-        free(Y_src);
     }
     else{
         for (ch=0; ch < nOutputs; ch++)
@@ -232,8 +227,8 @@ void ambi_enc_setSourceAzi_deg(void* const hAmbi, int index, float newAzi_deg)
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
-    newAzi_deg = MAX(newAzi_deg, -180.0f);
-    newAzi_deg = MIN(newAzi_deg, 180.0f);
+    newAzi_deg = SAF_MAX(newAzi_deg, -180.0f);
+    newAzi_deg = SAF_MIN(newAzi_deg, 180.0f);
     pData->recalc_SH_FLAG[index] = 1;
     pData->src_dirs_deg[index][0] = newAzi_deg;
 }
@@ -241,8 +236,8 @@ void ambi_enc_setSourceAzi_deg(void* const hAmbi, int index, float newAzi_deg)
 void ambi_enc_setSourceElev_deg(void* const hAmbi, int index, float newElev_deg)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
-    newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);
+    newElev_deg = SAF_MAX(newElev_deg, -90.0f);
+    newElev_deg = SAF_MIN(newElev_deg, 90.0f);
     pData->recalc_SH_FLAG[index] = 1;
     pData->src_dirs_deg[index][1] = newElev_deg;
 }
@@ -251,7 +246,7 @@ void ambi_enc_setNumSources(void* const hAmbi, int new_nSources)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
     int i;
-    pData->new_nSources = CLAMP(new_nSources, 1, MAX_NUM_INPUTS);
+    pData->new_nSources = SAF_CLAMP(new_nSources, 1, MAX_NUM_INPUTS);
     pData->nSources = pData->new_nSources;
     for(i=0; i<MAX_NUM_INPUTS; i++)
         pData->recalc_SH_FLAG[i] = 1;

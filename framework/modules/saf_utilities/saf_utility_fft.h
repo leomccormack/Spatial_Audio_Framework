@@ -21,13 +21,15 @@
  * @brief Wrappers for optimised fast Fourier transform (FFT) routines
  *
  * @note If none of the supported optimised FFT implementations are linked, then
- *       saf_fft employs the highly respectable KissFFT from here (BSD 3-Clause
- *       License): https://github.com/mborgerding/kissfft
- * @note If linking Apple Accelerate: KissFFT is also used in cases where the
- *       FFT size is not 2^x.
+ *       saf_fft employs the highly respectable KissFFT (BSD 3-Clause License):
+ *       https://github.com/mborgerding/kissfft
+ * @note If using Apple Accelerate's vDSP for the FFT with an unsupported FFT
+ *       size, then KissFFT is employed instead.
+ * @note If you would like to use some other FFT implementation, then feel free
+ *       to add it and submit a pull request :-)
  *
  * ## Dependencies
- *   Intel MKL, Apple Accelerate, or KissFFT (included in the framework)
+ *   Intel MKL, Intel IPP, Apple Accelerate, or KissFFT (included in SAF)
  *
  * @author Leo McCormack
  * @date 06.04.2019
@@ -40,12 +42,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include <assert.h>
-#include <limits.h>
 #include "saf_utility_complex.h"
 
 /**

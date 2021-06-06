@@ -5,14 +5,15 @@ The Spatial_Audio_Framework (SAF) requires any library (or combination of librar
 Currently, SAF supports [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries), [OpenBLAS](https://github.com/xianyi/OpenBLAS), [Apple Accelerate](https://developer.apple.com/documentation/accelerate), and [ATLAS](http://math-atlas.sourceforge.net/). You may select which option you wish to use by adding one of the following pre-processor definitions:
 
 ```
-SAF_USE_INTEL_MKL             # great option, but only for x86 architectures    
+SAF_USE_INTEL_MKL_LP64        # great option, but only for x86 architectures (using the LP64 config [int32])
+SAF_USE_INTEL_MKL_ILP64       # great option, but only for x86 architectures (using the ILP64 config [int64])  
 SAF_USE_OPEN_BLAS_AND_LAPACKE # good option, works on everything
 SAF_USE_APPLE_ACCELERATE      # good option (x86 and ARM), faster than OpenBLAS, but MacOSX only & slower than MKL
 SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing
 SAF_USE...                    # please get in touch if you use something else! :-)
 ```
 
-## SAF_USE_INTEL_MKL
+## SAF_USE_INTEL_MKL_LP64 or SAF_USE_INTEL_MKL_ILP64
 
 Intel MKL is perhaps the fastest library for **x86** platforms. It also includes an optimised FFT implementation and a number of additional vectorised utility functions which SAF is also able to make use of. 
 
@@ -28,22 +29,29 @@ Run the following bash script (**sudo** privileges required):
 
 ```
 cd scripts
-sudo ./install-safmkl.sh [threaded|sequential]
+sudo ./install-safmkl.sh [threaded|sequential] [lp64|ilp64] [path/to/mkl/tools/builder]
 ```
 
 Add the following header search path to your project:
 
 ```
-[/opt|~]/intel/compilers_and_libraries/linux/mkl/include    # Linux users
-[/opt|~]/intel/compilers_and_libraries/mac/mkl/include      # MacOSX users
+[/opt|~]/intel/oneapi/mkl/latest/include/                   # The new oneapi path
+[/opt|~]/intel/compilers_and_libraries/linux/mkl/include    # Old path for Linux users
+[/opt|~]/intel/compilers_and_libraries/mac/mkl/include      # Old path for MacOSX users
 ```
 
 Then add the following linker flag to your project:
 
 ```
--L/usr/lib -lsaf_mkl_custom        # Linux users
--L/usr/local/lib -lsaf_mkl_custom  # MacOSX users
+-L/usr/local/lib -lsaf_mkl_custom_lp64   # if you built the lp64 (32-bit integer) version
+-L/usr/local/lib -lsaf_mkl_custom_ilp64  # if you built the ilp64 (64-bit integer) version
 ``` 
+
+Finally, add the appropriate global definition:
+```
+SAF_USE_INTEL_MKL_LP64      # if you are linking with the lp64 (32-bit integer) version
+SAF_USE_INTEL_MKL_ILP64     # if you are linking with the ilp64 (64-bit integer) version
+```
 
 ### Windows users
  
@@ -63,23 +71,35 @@ C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include
 Add the following library search path to your project:
 
 ```
-C:/Users/[YOUR WORKING DIRECTORY]/SDKs/Spatial_Audio_Framework/dependencies/Win64/lib
+C:/YOUR/WORKING/DIRECTORY/Spatial_Audio_Framework/dependencies/Win64/lib
 ```
 
-link your project against the following library:
+Link your project against the following library:
 ```
-saf_mkl_custom.lib 
+saf_mkl_custom_lp64.lib    # if you built the lp64 (32-bit integer) version
+saf_mkl_custom_ilp64.lib   # if you built the ilp64 (64-bit integer) version
+```
+
+Finally, add the appropriate global definition:
+```
+SAF_USE_INTEL_MKL_LP64      # if you are linking with the lp64 (32-bit integer) version
+SAF_USE_INTEL_MKL_ILP64     # if you are linking with the ilp64 (64-bit integer) version
 ```
 
 ### Other options
 
-This custom MKL library is also installed alongside the [SPARTA](http://research.spa.aalto.fi/projects/sparta_vsts/) VST plug-in suite. Athough, it will be noted that this may not be the most up-to-date version of the library.
+This custom MKL library (lp64) is also installed alongside the [SPARTA](http://research.spa.aalto.fi/projects/sparta_vsts/) VST plug-in suite. Athough, it will be noted that this may not be the most up-to-date version of the library.
 
-You may of course also elect to not build this custom library and link directly with:
+You may of course also elect to not build this custom library and link directly, e.g. with:
 ```
-[/opt|~]/intel/compilers_and_libraries/linux/mkl/lib/mkl_rt.so                              # Linux users
-[/opt|~]/intel/compilers_and_libraries/mac/mkl/lib/mkl_rt.dylib                             # MacOSX users
-C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/lib/libmkl_rt.lib   # Windows users
+/opt/intel/oneapi/mkl/latest/lib/libmkl_rt.[dylib|so]
+```
+
+This will select the interface and threading at runtime, based on environment variables.
+You can check the options for your system with intel's [link-line-advisor](https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl/link-line-advisor.html).
+The options can be passed directly to CMake, e.g. with
+```
+-DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL_ILP64 -DINTEL_MKL_HEADER_PATH="/opt/intel/oneapi/mkl/latest/include" -DINTEL_MKL_LIB="/opt/intel/oneapi/mkl/latest/lib/libmkl_intel_ilp64.dylib;/opt/intel/oneapi/mkl/latest/lib/libmkl_sequential.dylib;/opt/intel/oneapi/mkl/latest/lib/libmkl_core.dylib"
 ```
 
 Intel MKL also ships with recent [Anaconda](https://anaconda.org) distributions. The easiest way to install with conda is:
@@ -101,7 +121,7 @@ However, if you are not on Linux, or would prefer to have more control over thin
 
 ```
 git clone https://github.com/xianyi/OpenBLAS.git
-# install fortran compiler if you haven't already (for lapack support)
+# install a fortran compiler if you haven't already (for lapack support)
 sudo apt-get install gfortran
 # build static libs
 mkdir build

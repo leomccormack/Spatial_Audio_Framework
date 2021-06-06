@@ -71,31 +71,38 @@ typedef enum {
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/**
- * Main struct for the rotator
- */
+/** Main struct for the rotator */
 typedef struct _rotator
 {
-    /* internal */
+    /* Internal buffers */
     float inputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float prev_inputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float tempFrame_fadeOut[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float interpolator[FRAME_SIZE];
+    float outputFrameTD_fadeIn[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+
+    /* Internal variables */
+    float interpolator_fadeIn[FRAME_SIZE];
+    float interpolator_fadeOut[FRAME_SIZE];
     float M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     float prev_M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     M_ROT_STATUS M_rot_status;
     int fs;
 
     /* user parameters */
-    quaternion_data Q;                    /**< Quaternion used for rotation */
-    int bFlipQuaternion;                  /**< 1: invert quaternion, 0: no inversion */
-    float yaw, roll, pitch;               /**< rotation angles in degrees */
-    int bFlipYaw, bFlipPitch, bFlipRoll;  /**< flags to flip the sign of the Euler rotation angles */
-    CH_ORDER chOrdering;                  /**< only ACN is supported */
-    NORM_TYPES norm;                      /**< N3D or SN3D */
-    SH_ORDERS inputOrder;                 /**< current input/output order int order;*/
-    int useRollPitchYawFlag;              /**< rotation order flag, 1: r-p-y, 0: y-p-r */
+    quaternion_data Q;              /**< Quaternion used for rotation */
+    int bFlipQuaternion;            /**< 1: invert quaternion, 0: no inversion */
+    float yaw;                      /**< yaw (Euler) rotation angle, in degrees */
+    float roll;                     /**< roll (Euler) rotation angle, in degrees */
+    float pitch;                    /**< pitch (Euler) rotation angle, in degrees */
+    int bFlipYaw;                   /**< flag to flip the sign of the yaw rotation angle */
+    int bFlipPitch;                 /**< flag to flip the sign of the pitch rotation angle */
+    int bFlipRoll;                  /**< flag to flip the sign of the roll rotation angle */
+    int useRollPitchYawFlag;        /**< rotation order flag, 1: r-p-y, 0: y-p-r */
+    CH_ORDER chOrdering;            /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                /**< Ambisonic normalisation convention (see #NORM_TYPES) */
+    SH_ORDERS inputOrder;           /**< current input/output SH order */ 
     
 } rotator_data;
     

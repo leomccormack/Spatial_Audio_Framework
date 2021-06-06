@@ -21,7 +21,6 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_bessel.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_complex.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_decor.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_error.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_fft.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_filters.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_utilities/saf_utility_geometry.c

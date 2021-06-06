@@ -56,20 +56,25 @@ extern "C" {
  */
 typedef struct _ambi_enc
 {
-    /* Internals */
+    /* Internal audio buffers */
     float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
     float prev_inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
+    float tempFrame_fadeOut[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float outputFrameTD_fadeIn[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
     float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+
+    /* Internal variables */
     float fs;
     int recalc_SH_FLAG[MAX_NUM_INPUTS];
     float Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
     float prev_Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
-    float interpolator[FRAME_SIZE];
+    float interpolator_fadeIn[FRAME_SIZE];
+    float interpolator_fadeOut[FRAME_SIZE];
+    int new_nSources;
     
     /* user parameters */
     int nSources;
-    int new_nSources;
     float src_dirs_deg[MAX_NUM_INPUTS][2];
     CH_ORDER chOrdering;
     NORM_TYPES norm;

@@ -1,4 +1,4 @@
-message(STATUS "Configuring SAFMEX wrappers:")
+message(STATUS "Configuring SAFMEX CXX wrappers:")
 
 cmake_minimum_required(VERSION 3.15)
 
@@ -42,3 +42,4 @@ endforeach()
 install(TARGETS ${safmex_list} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/
         COMPONENT safmex)
 message(STATUS "Install safmex into ${CMAKE_CURRENT_SOURCE_DIR}/ ")
+set_target_properties(${safmex_list} PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)

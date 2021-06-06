@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4118286.svg)](https://doi.org/10.5281/zenodo.4118286)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4707945.svg)](https://doi.org/10.5281/zenodo.4707945)
 
 <img src="saf.svg"> 
 
@@ -7,9 +7,9 @@
 
 # About
 
-The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related applications in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a rather large codebase comprising a number of distinct **modules**; with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). Several **examples** are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects.
+The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related applications in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a rather large codebase comprising a number of distinct [**modules**](framework/modules); with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). Several [**examples**](examples/include) are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects.
 
-Owing to its modular design, expanding the framework is quite straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged :-)
+Owing to its modular design, expanding the framework is straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged! :-) 
 
 # Prerequisites
 
@@ -20,7 +20,8 @@ The framework requires the following external libraries:
 
 In order to inform SAF which CBLAS/LAPACK supporting library/libraries you have linked to your project, simply add **one** of the following global pre-processor definitions:
 ```
-SAF_USE_INTEL_MKL             # great option, but only for x86 architectures    
+SAF_USE_INTEL_MKL_LP64        # great option, but only for x86 architectures (using the LP64 config [int32])
+SAF_USE_INTEL_MKL_ILP64       # great option, but only for x86 architectures (using the ILP64 config [int64])
 SAF_USE_OPEN_BLAS_AND_LAPACKE # good option, works on everything
 SAF_USE_APPLE_ACCELERATE      # good option (x86 and ARM), faster than OpenBLAS, but MacOSX only & slower than MKL
 SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing
@@ -92,7 +93,7 @@ The available SAF-related build options (and their default values) are:
 -DSAF_BUILD_TESTS=1                        # build unit testing program
 ```
 
-If using **SAF_USE_INTEL_MKL** as the performance library, note that the default header and library search paths may be overridden with:
+If using **SAF_USE_INTEL_MKL** as the performance library, note that the default header and library search paths may be overridden [according to your setup](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md) with:
 ``` 
 -DINTEL_MKL_HEADER_PATH="path/to/mkl/headers"
 -DINTEL_MKL_LIB="path/to/mkl/libs/mkl_rt(.so/.dylib/.lib)"   # OR:
@@ -107,7 +108,7 @@ If the **saf_sofa_reader** module is enabled, CMake will use the statically buil
 -DNETCDF_LIBRARY="/c/msys64/mingw64/lib/libnetcdf.dll.a"
 ```
 
-For Unix users: the framework, examples, and unit testing program may be built as follows:
+For Linux/MacOS users: the framework, examples, and unit testing program may be built as follows:
 ```
 cmake -S . -B build 
 cd build
@@ -115,7 +116,7 @@ make
 test/saf_test # To run the unit testing program
 ```
 
-Or for Visual Studio (e.g. 2017) users (using x64 Native Tools Command Prompt):
+Or for Visual Studio (e.g. 2017) users (using e.g. x64 Native Tools Command Prompt):
 ```
 cmake -S . -B build -G "Visual Studio 15 Win64"   
 cd build
@@ -160,7 +161,7 @@ Several **examples** have also been included in the repository, which may serve 
 * **powermap** - sound-field visualiser based on beamformer (PWD, MVDR) energy or subspace methods (MUSIC).
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll Euler rotation angles.
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors for multiple frequencies. 
-* **spreader** - an arbitrary array encoder (HRIRs, microphone array IRs, etc.) with coherent and incoherent spreading modes.
+* **spreader** - an arbitrary array panner (HRIRs, microphone array IRs, etc.) with coherent and incoherent spreading modes.
 
 Many of these examples have also been released as VST audio plug-ins under the [SPARTA](https://github.com/leomccormack/SPARTA) banner. The following open-source projects also employ the framework: [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
 

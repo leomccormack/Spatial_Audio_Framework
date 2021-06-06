@@ -77,7 +77,7 @@ void rotator_init(void* const hRot,
  * @param[in] nSamples Number of samples in 'inputs'/'output' matrices
  */
 void rotator_process(void* const hRot,
-                     float** const inputs,
+                     const float *const * inputs,
                      float** const outputs,
                      int nInputs,
                      int nOutputs,
@@ -230,9 +230,7 @@ int rotator_getChOrder(void* const hRot);
  */
 int rotator_getNormType(void* const hRot);
 
-/**
- * Returns the input/output order (see #SH_ORDERS enum)
- */
+/** Returns the input/output order (see #SH_ORDERS enum) */
 int rotator_getOrder(void* const hRot);
 
 /**

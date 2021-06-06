@@ -32,7 +32,7 @@ void matrixconv_create
     matrixconv_data* pData = (matrixconv_data*)malloc1d(sizeof(matrixconv_data));
     *phMCnv = (void*)pData;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
     
     /* Default user parameters */
     pData->nInputChannels = 1;
@@ -87,7 +87,7 @@ void matrixconv_init
 
     if(pData->hostBlockSize != hostBlockSize){
         pData->hostBlockSize = hostBlockSize;
-        pData->hostBlockSize_clamped = CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
+        pData->hostBlockSize_clamped = SAF_CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
         pData->reInitFilters = 1;
     }
     
@@ -96,12 +96,12 @@ void matrixconv_init
 
 void matrixconv_process
 (
-    void  *  const hMCnv,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hMCnv,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     matrixconv_data *pData = (matrixconv_data*)(hMCnv);
@@ -116,13 +116,13 @@ void matrixconv_process
 
     for(s=0; s<nSamples; s++){
         /* Load input signals into inFIFO buffer */
-        for(ch=0; ch<MIN(MIN(nInputs,numInputChannels),MAX_NUM_CHANNELS); ch++)
+        for(ch=0; ch<SAF_MIN(SAF_MIN(nInputs,numInputChannels),MAX_NUM_CHANNELS); ch++)
             pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
         for(; ch<numInputChannels; ch++) /* Zero any channels that were not given */
             pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
 
         /* Pull output signals from outFIFO buffer */
-        for(ch=0; ch<MIN(MIN(nOutputs, numOutputChannels),MAX_NUM_CHANNELS); ch++)
+        for(ch=0; ch<SAF_MIN(SAF_MIN(nOutputs, numOutputChannels),MAX_NUM_CHANNELS); ch++)
             outputs[ch][s] = pData->outFIFO[ch][pData->FIFO_idx];
         for(; ch<nOutputs; ch++) /* Zero any extra channels */
             outputs[ch][s] = 0.0f;
@@ -146,7 +146,7 @@ void matrixconv_process
                 memset(FLATTEN2D(pData->outputFrameTD), 0, MAX_NUM_CHANNELS * (pData->hostBlockSize_clamped)*sizeof(float));
 
             /* copy signals to output buffer */
-            for (i = 0; i < MIN(numOutputChannels, MAX_NUM_CHANNELS); i++)
+            for (i = 0; i < SAF_MIN(numOutputChannels, MAX_NUM_CHANNELS); i++)
                 utility_svvcopy(pData->outputFrameTD[i], pData->hostBlockSize_clamped, pData->outFIFO[i]);
         }
         else if(pData->FIFO_idx >= pData->hostBlockSize_clamped){
@@ -178,7 +178,7 @@ void matrixconv_checkReInit(void* const hMCnv)
         
         /* if length of the loaded wav file was not divisable by the specified number of inputs, then the handle remains NULL,
          * and no convolution is applied */
-        pData->hostBlockSize_clamped = CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
+        pData->hostBlockSize_clamped = SAF_CLAMP(pData->hostBlockSize, MIN_FRAME_SIZE, MAX_FRAME_SIZE);
         if(pData->filter_length>0){
             saf_matrixConv_create(&(pData->hMatrixConv),
                                   pData->hostBlockSize_clamped, /*pData->hostBlockSize,*/
@@ -214,9 +214,9 @@ void matrixconv_setFilters
 {
     matrixconv_data *pData = (matrixconv_data*)(hMCnv);
     int i;
-    assert(numChannels<=MAX_NUM_CHANNELS_FOR_WAV && numChannels > 0 && numSamples > 0);
+    saf_assert(numChannels<=MAX_NUM_CHANNELS_FOR_WAV && numChannels > 0 && numSamples > 0, "WAV is limited to 1024 channels");
     
-    pData->nOutputChannels = MIN(numChannels, MAX_NUM_CHANNELS);
+    pData->nOutputChannels = SAF_MIN(numChannels, MAX_NUM_CHANNELS);
     pData->input_wav_length = numSamples;
     pData->nfilters = (pData->nOutputChannels) * (pData->nInputChannels);
     
@@ -248,7 +248,7 @@ void matrixconv_setEnablePart(void* const hMCnv, int newState)
 void matrixconv_setNumInputChannels(void* const hMCnv, int newValue)
 {
     matrixconv_data *pData = (matrixconv_data*)(hMCnv);
-    pData->nInputChannels = CLAMP(newValue, 1, MAX_NUM_CHANNELS);
+    pData->nInputChannels = SAF_CLAMP(newValue, 1, MAX_NUM_CHANNELS);
     pData->nfilters = (pData->nOutputChannels) * (pData->nInputChannels);
     if((pData->nOutputChannels > 0) && (pData->input_wav_length % pData->nInputChannels == 0))
         pData->filter_length = (pData->input_wav_length) / (pData->nInputChannels);

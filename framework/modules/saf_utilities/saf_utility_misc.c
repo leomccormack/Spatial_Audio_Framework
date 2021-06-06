@@ -23,16 +23,29 @@
  * @date 29.01.2020
  */
 
-#include "saf_utility_misc.h"
+#include "saf_utilities.h"
 #include "saf_externals.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 /**
  * Precomputed factorials for up to !15 (i.e. the "getSH" functions will employ
  * these up to 7th order) */
 static const long double factorials_15[15] =
 {1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0, 39916800.0, 479001600.0, 6.2270208e9, 8.71782891e10};
+
+/** Helper function for findCombinations() */
+static void combinationUtil(int* arr, int* data, int start, int end, int index, int r, int** comb, int* nComb) {
+    if (index == r) {
+        (*nComb)++;
+        (*comb) = realloc1d( (*comb), (*nComb)*r*sizeof(int));
+        for (int j=0; j<r; j++)
+            (*comb)[((*nComb)-1)*r+j] = data[j];
+        return;
+    }
+    for (int i=start; i<=end && end-i+1 >= r-index; i++) {
+        data[index] = arr[i];
+        combinationUtil(arr, data, i+1, end, index+1, r, comb, nComb);
+    }
+}
 
 void convert_0_360To_m180_180
 (
@@ -255,9 +268,9 @@ void convd
     len_y = len_h+len_x-1;
     memset(y, 0, len_y*sizeof(double));
     for (i=0; i<len_y; i++) {
-        x_start = MAX(0,i-len_h+1);
-        x_end   = MIN(i+1,len_x);
-        h_start = MIN(i,len_h-1);
+        x_start = SAF_MAX(0,i-len_h+1);
+        x_end   = SAF_MIN(i+1,len_x);
+        h_start = SAF_MIN(i,len_h-1);
         for(j=x_start; j<x_end; j++)
             y[i] += h[h_start--]*x[j];
     }
@@ -277,9 +290,9 @@ void convz
     len_y = len_h+len_x-1;
     memset(y, 0, len_y*sizeof(double_complex));
     for (i=0; i<len_y; i++) {
-        x_start = MAX(0,i-len_h+1);
-        x_end   = MIN(i+1,len_x);
-        h_start = MIN(i,len_h-1);
+        x_start = SAF_MAX(0,i-len_h+1);
+        x_end   = SAF_MIN(i+1,len_x);
+        h_start = SAF_MIN(i,len_h-1);
         for(j=x_start; j<x_end; j++)
             y[i] = ccadd(y[i], ccmul(h[h_start--], x[j]));
     }
@@ -436,7 +449,7 @@ void unique_i
             nDups++;
         }
     }
-    assert((*nUnique)>-1);
+    saf_assert((*nUnique)>-1, "Something very bad happened");
     free(dups);
 
     /* If no unique values were found */
@@ -467,6 +480,23 @@ void unique_i
 
     /* clean-up */
     free(nDuplicates_perInput);
+}
+
+void findCombinations
+(
+    int* arrValues,
+    int nValues,
+    int nElements,
+    int** comb,
+    int* nComb
+)
+{
+    int* data;
+    data = malloc1d(nElements*sizeof(int));
+    saf_assert(*comb==NULL, "comb must be empty and NULL prior to calling findCombinations()");
+    (*nComb) = 0;
+    combinationUtil(arrValues, data, 0, nValues-1, 0, nElements, comb, nComb);
+    free(data);
 }
  
 /* Based heavily on the Matlab script found here:
@@ -541,8 +571,8 @@ void gexpm
                 D, sizeD, 0.0f,
                 FLATTEN2D(D_5), sizeD); 
     s = ceilf(log2f(Frob_norm(FLATTEN2D(D_5), sizeD, sizeD)/
-                    (1575.0f*tol*MIN(1.0f,Frob_norm(D, sizeD, sizeD))))/6.0f-1.0f);
-    s = MAX(s, 0.0f);
+                    (1575.0f*tol*SAF_MIN(1.0f,Frob_norm(D, sizeD, sizeD))))/6.0f-1.0f);
+    s = SAF_MAX(s, 0.0f);
 
     /* Get Pade approximation for expm(D*h2) = Y =
      *   (I-Dh+(2/5)*Dh^2-(1/15)*Dh^3)\(I+Dh+(2/5)*Dh^2+(1/15)*Dh^3)

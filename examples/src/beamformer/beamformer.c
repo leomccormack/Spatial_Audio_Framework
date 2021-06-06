@@ -34,7 +34,7 @@ void beamformer_create
     *phBeam = (void*)pData;
     int i, ch;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* default user parameters */
     pData->beamOrder = 1;
@@ -82,26 +82,29 @@ void beamformer_init
    
     /* defaults */
     memset(pData->beamWeights, 0, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS*sizeof(float));
-    memset(pData->prev_beamWeights, 0, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS*sizeof(float));
     memset(pData->prev_SHFrameTD, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
+    memset(pData->prev_beamWeights, 0, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS*sizeof(float));
     for(ch=0; ch<MAX_NUM_BEAMS; ch++)
         pData->recalc_beamWeights[ch] = 1;
-    for(i=1; i<=FRAME_SIZE; i++)
-        pData->interpolator[i-1] = (float)i*1.0f/(float)FRAME_SIZE;
+    for(i=1; i<=FRAME_SIZE; i++){
+        pData->interpolator_fadeIn[i-1] = (float)i*1.0f/(float)FRAME_SIZE;
+        pData->interpolator_fadeOut[i-1] = 1.0f - pData->interpolator_fadeIn[i-1];
+    }
 }
 
 void beamformer_process
 (
-    void  *  const hBeam,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hBeam,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    int ch, i, j, bi, nSH;
+    int ch, i, bi, nSH, mixWithPreviousFLAG;
+    float c_n[MAX_SH_ORDER+1];
 
     /* local copies of user parameters */
     int nBeams, beamOrder;
@@ -114,40 +117,28 @@ void beamformer_process
     chOrdering = pData->chOrdering;
      
     /* Apply beamformer */
-    if(nSamples == FRAME_SIZE) {
-
+    if(nSamples == FRAME_SIZE) { 
         /* Load time-domain data */
-        for(i=0; i < MIN(nSH, nInputs); i++)
+        for(i=0; i < SAF_MIN(nSH, nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
-        for(; i<nSH; i++)
+        for(; i<MAX_NUM_SH_SIGNALS; i++)
             memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
 
         /* account for input channel order convention */
         switch(chOrdering){
-          case CH_ACN: /* already ACN */
-                break;
-          case CH_FUMA:
-              convertHOAChannelConvention((float*)pData->SHFrameTD, beamOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
-              break;
+          case CH_ACN:  /* already ACN, do nothing*/ break; /* Otherwise, convert to ACN... */
+          case CH_FUMA: convertHOAChannelConvention((float*)pData->SHFrameTD, beamOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
         }
 
         /* account for input normalisation scheme */
         switch(norm){
-          case NORM_N3D:  /* already in N3D */
-              break;
-          case NORM_SN3D: /* convert to N3D */
-              convertHOANormConvention((float*)pData->SHFrameTD, beamOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
-              break;
-          case NORM_FUMA: /* only for first-order, convert to N3D */
-              convertHOANormConvention((float*)pData->SHFrameTD, beamOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
-              break;
+          case NORM_N3D:  /* already in N3D, do nothing */ break; /* Otherwise, convert to N3D... */
+          case NORM_SN3D: convertHOANormConvention((float*)pData->SHFrameTD, beamOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
+          case NORM_FUMA: convertHOANormConvention((float*)pData->SHFrameTD, beamOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
         }
 
-        /* Main processing: */
-        float* c_n;
-        c_n = malloc1d((beamOrder+1)*sizeof(float));
-
-        /* calculate beamforming coeffients */
+        /* Calculate beamforming coeffients */
+        mixWithPreviousFLAG = 0;
         for(bi=0; bi<nBeams; bi++){
             if(pData->recalc_beamWeights[bi]){
                 memset(pData->beamWeights[bi], 0, MAX_NUM_SH_SIGNALS*sizeof(float));
@@ -156,36 +147,43 @@ void beamformer_process
                     case STATIC_BEAM_TYPE_HYPERCARDIOID: beamWeightsHypercardioid2Spherical(beamOrder, c_n); break;
                     case STATIC_BEAM_TYPE_MAX_EV: beamWeightsMaxEV(beamOrder, c_n); break;
                 }
-                rotateAxisCoeffsReal(beamOrder, c_n, M_PI/2.0f - pData->beam_dirs_deg[bi][1]*M_PI/180.0f,
-                                        pData->beam_dirs_deg[bi][0]*M_PI/180.0f, (float*)pData->beamWeights[bi]);
-
+                rotateAxisCoeffsReal(beamOrder, (float*)c_n, SAF_PI/2.0f - pData->beam_dirs_deg[bi][1]*SAF_PI/180.0f,
+                                        pData->beam_dirs_deg[bi][0]*SAF_PI/180.0f, (float*)pData->beamWeights[bi]);
                 pData->recalc_beamWeights[bi] = 0;
+                mixWithPreviousFLAG = 1;
             }
-            else
-                memcpy(pData->beamWeights[bi], pData->prev_beamWeights[bi], nSH*sizeof(float));
         }
-        free(c_n);
 
-        /* apply beam weights */
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, nSH, 1.0f,
-                    (const float*)pData->prev_beamWeights, MAX_NUM_SH_SIGNALS,
-                    (const float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
-                    (float*)pData->tempFrame, FRAME_SIZE);
+        /* Apply beam weights */
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, nSH, 1.0f,
                     (const float*)pData->beamWeights, MAX_NUM_SH_SIGNALS,
                     (const float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
                     (float*)pData->outputFrameTD, FRAME_SIZE);
 
-        for (i=0; i <nBeams; i++)
-            for(j=0; j<FRAME_SIZE; j++)
-                pData->outputFrameTD[i][j] =  pData->interpolator[j] * pData->outputFrameTD[i][j] + (1.0f-pData->interpolator[j]) * pData->tempFrame[i][j];
+        /* Fade between (linearly inerpolate) the new weights and the previous weights (only if the new weights are different) */
+        if(mixWithPreviousFLAG){
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBeams, FRAME_SIZE, nSH, 1.0f,
+                        (float*)pData->prev_beamWeights, MAX_NUM_SH_SIGNALS,
+                        (float*)pData->prev_SHFrameTD, FRAME_SIZE, 0.0f,
+                        (float*)pData->tempFrame, FRAME_SIZE);
+
+            /* Apply the linear interpolation */
+            for (i=0; i < nBeams; i++){
+                utility_svvmul((float*)pData->interpolator_fadeIn, (float*)pData->outputFrameTD[i], FRAME_SIZE, (float*)pData->outputFrameTD_fadeIn[i]);
+                utility_svvmul((float*)pData->interpolator_fadeOut, (float*)pData->tempFrame[i], FRAME_SIZE, (float*)pData->tempFrame_fadeOut[i]);
+            }
+            cblas_scopy(nBeams*FRAME_SIZE, (float*)pData->outputFrameTD_fadeIn, 1, (float*)pData->outputFrameTD, 1);
+            cblas_saxpy(nBeams*FRAME_SIZE, 1.0f, (float*)pData->tempFrame_fadeOut, 1, (float*)pData->outputFrameTD, 1);
+
+            /* for next frame */
+            utility_svvcopy((const float*)pData->beamWeights, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_beamWeights);
+        }
 
         /* for next frame */
-        utility_svvcopy((const float*)pData->SHFrameTD, nSH*FRAME_SIZE, (float*)pData->prev_SHFrameTD);
-        utility_svvcopy((const float*)pData->beamWeights, MAX_NUM_BEAMS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_beamWeights);
-
+        utility_svvcopy((const float*)pData->SHFrameTD, MAX_NUM_SH_SIGNALS*FRAME_SIZE, (float*)pData->prev_SHFrameTD);
+        
         /* copy to output buffer */
-        for(ch = 0; ch < MIN(nBeams, nOutputs); ch++)
+        for(ch = 0; ch < SAF_MIN(nBeams, nOutputs); ch++)
             utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
@@ -210,7 +208,7 @@ void beamformer_setBeamOrder(void  * const hBeam, int newValue)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
     int ch;
-    pData->beamOrder = MIN(MAX(newValue,1), MAX_SH_ORDER);
+    pData->beamOrder = SAF_MIN(SAF_MAX(newValue,1), MAX_SH_ORDER);
     for(ch=0; ch<MAX_NUM_BEAMS; ch++)
         pData->recalc_beamWeights[ch] = 1;
     /* FUMA only supports 1st order */
@@ -225,8 +223,8 @@ void beamformer_setBeamAzi_deg(void* const hBeam, int index, float newAzi_deg)
     beamformer_data *pData = (beamformer_data*)(hBeam);
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
-    newAzi_deg = MAX(newAzi_deg, -180.0f);
-    newAzi_deg = MIN(newAzi_deg, 180.0f);
+    newAzi_deg = SAF_MAX(newAzi_deg, -180.0f);
+    newAzi_deg = SAF_MIN(newAzi_deg, 180.0f);
     pData->beam_dirs_deg[index][0] = newAzi_deg;
     pData->recalc_beamWeights[index] = 1;
 }
@@ -234,8 +232,8 @@ void beamformer_setBeamAzi_deg(void* const hBeam, int index, float newAzi_deg)
 void beamformer_setBeamElev_deg(void* const hBeam, int index, float newElev_deg)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
-    newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);
+    newElev_deg = SAF_MAX(newElev_deg, -90.0f);
+    newElev_deg = SAF_MIN(newElev_deg, 90.0f);
     pData->beam_dirs_deg[index][1] = newElev_deg;
     pData->recalc_beamWeights[index] = 1;
 }

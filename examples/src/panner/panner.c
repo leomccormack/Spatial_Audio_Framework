@@ -51,7 +51,7 @@ void panner_create
     *phPan = (void*)pData;
     int ch, dummy;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* default user parameters */
     panner_loadSourcePreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
@@ -173,12 +173,12 @@ void panner_initCodec
 
 void panner_process
 (
-    void  *  const hPan,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hPan,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     panner_data *pData = (panner_data*)(hPan);
@@ -199,7 +199,7 @@ void panner_process
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
-        for(i=0; i < MIN(nSources,nInputs); i++)
+        for(i=0; i < SAF_MIN(nSources,nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<MAX_NUM_INPUTS; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
@@ -251,7 +251,7 @@ void panner_process
                         if(pv_f != 2.0f){
                             gains3D_sum_pvf = 0.0f;
                             for (ls = 0; ls < nLoudspeakers; ls++)
-                                gains3D_sum_pvf += powf(MAX(gains3D[ls], 0.0f), pv_f);
+                                gains3D_sum_pvf += powf(SAF_MAX(gains3D[ls], 0.0f), pv_f);
                             gains3D_sum_pvf = powf(gains3D_sum_pvf, 1.0f/(pv_f+2.23e-9f));
                             for (ls = 0; ls < nLoudspeakers; ls++)
                                 pData->G_src[band][ch][ls] = cmplxf(gains3D[ls] / (gains3D_sum_pvf+2.23e-9f), 0.0f);
@@ -289,7 +289,7 @@ void panner_process
                         if(pv_f != 2.0f){
                             gains2D_sum_pvf = 0.0f;
                             for (ls = 0; ls < nLoudspeakers; ls++)
-                                gains2D_sum_pvf += powf(MAX(gains2D[ls], 0.0f), pv_f);
+                                gains2D_sum_pvf += powf(SAF_MAX(gains2D[ls], 0.0f), pv_f);
                             gains2D_sum_pvf = powf(gains2D_sum_pvf, 1.0f/(pv_f+2.23e-9f));
                             for (ls = 0; ls < nLoudspeakers; ls++)
                                 pData->G_src[band][ch][ls] = cmplxf(gains2D[ls] / (gains2D_sum_pvf+2.23e-9f), 0.0f);
@@ -317,7 +317,7 @@ void panner_process
 
         /* inverse-TFT and copy to output */
         afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outputFrameTD);
-        for (ch = 0; ch < MIN(nLoudspeakers, nOutputs); ch++)
+        for (ch = 0; ch < SAF_MIN(nLoudspeakers, nOutputs); ch++)
             utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
@@ -349,8 +349,8 @@ void panner_setSourceAzi_deg(void* const hPan, int index, float newAzi_deg)
     panner_data *pData = (panner_data*)(hPan);
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
-    newAzi_deg = MAX(newAzi_deg, -180.0f);
-    newAzi_deg = MIN(newAzi_deg, 180.0f);
+    newAzi_deg = SAF_MAX(newAzi_deg, -180.0f);
+    newAzi_deg = SAF_MIN(newAzi_deg, 180.0f);
     if(pData->src_dirs_deg[index][0] != newAzi_deg){
         pData->src_dirs_deg[index][0] = newAzi_deg;
         pData->recalc_gainsFLAG[index] = 1;
@@ -361,8 +361,8 @@ void panner_setSourceAzi_deg(void* const hPan, int index, float newAzi_deg)
 void panner_setSourceElev_deg(void* const hPan, int index, float newElev_deg)
 {
     panner_data *pData = (panner_data*)(hPan);
-    newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);
+    newElev_deg = SAF_MAX(newElev_deg, -90.0f);
+    newElev_deg = SAF_MIN(newElev_deg, 90.0f);
     if(pData->src_dirs_deg[index][1] != newElev_deg){
         pData->src_dirs_deg[index][1] = newElev_deg;
         pData->recalc_gainsFLAG[index] = 1;
@@ -391,8 +391,8 @@ void panner_setLoudspeakerAzi_deg(void* const hPan, int index, float newAzi_deg)
     int ch;
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
-    newAzi_deg = MAX(newAzi_deg, -180.0f);
-    newAzi_deg = MIN(newAzi_deg, 180.0f);
+    newAzi_deg = SAF_MAX(newAzi_deg, -180.0f);
+    newAzi_deg = SAF_MIN(newAzi_deg, 180.0f);
     if(pData->loudpkrs_dirs_deg[index][0] != newAzi_deg){
         pData->loudpkrs_dirs_deg[index][0] = newAzi_deg;
         pData->reInitGainTables=1;
@@ -407,8 +407,8 @@ void panner_setLoudspeakerElev_deg(void* const hPan, int index, float newElev_de
 {
     panner_data *pData = (panner_data*)(hPan);
     int ch;
-    newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);
+    newElev_deg = SAF_MAX(newElev_deg, -90.0f);
+    newElev_deg = SAF_MIN(newElev_deg, 90.0f);
     if(pData->loudpkrs_dirs_deg[index][1] != newElev_deg){
         pData->loudpkrs_dirs_deg[index][1] = newElev_deg;
         pData->reInitGainTables=1;
@@ -477,7 +477,7 @@ void panner_setSpread(void* const hPan, float newValue)
     panner_data *pData = (panner_data*)(hPan);
     int ch;
     if(pData->spread_deg!=newValue){
-        pData->spread_deg = CLAMP(newValue, PANNER_SPREAD_MIN_VALUE, PANNER_SPREAD_MAX_VALUE);
+        pData->spread_deg = SAF_CLAMP(newValue, PANNER_SPREAD_MIN_VALUE, PANNER_SPREAD_MAX_VALUE);
         pData->reInitGainTables=1;
         for(ch=0; ch<MAX_NUM_INPUTS; ch++)
             pData->recalc_gainsFLAG[ch] = 1;

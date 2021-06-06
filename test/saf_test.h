@@ -21,6 +21,9 @@ int main_test(void);
 /* ========================================================================== */
 
 /**
+ * Testing that the delaunaynd() function can triangulate basic shapes */
+void test__delaunaynd(void);
+/**
  * Testing that quaternion2rotationMatrix() and rotationMatrix2quaternion()
  * are reversible */
 void test__quaternion(void);
@@ -43,6 +46,9 @@ void test__ims_shoebox_RIR(void);
 /**
  * Testing the forward and backward real-(half)complex FFT (saf_rfft) */
 void test__saf_rfft(void);
+/**
+ * Testing the forward and backward complex-complex FFT (saf_fft) */
+void test__saf_fft(void);
 /**
  * Testing the saf_matrixConv */
 void test__saf_matrixConv(void);
@@ -81,6 +87,15 @@ void test__unique_i(void);
  * Testing the realloc2d_r() function (reallocating 2-D array, while retaining
  * the previous data order; except truncated or extended) */
 void test__realloc2d_r(void);
+/**
+ * Testing that malloc4d() works, and is truely contiguously allocated */
+void test__malloc4d(void);
+/**
+ * Testing that malloc5d() works, and is truely contiguously allocated */
+void test__malloc5d(void);
+/**
+ * Testing that malloc6d() works, and is truely contiguously allocated */
+void test__malloc6d(void);
 /**
  * Testing the performance of the latticeDecorrelator, verifying that the inter-
  * channel cross-correlation coefficients are near 0 */

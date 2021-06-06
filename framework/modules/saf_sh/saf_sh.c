@@ -21,7 +21,7 @@
  *        Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
- * derived from Matlab libraries by Archontis Politis [1-3] (BSD-3-Clause
+ * derived from MATLAB libraries by Archontis Politis [1-3] (BSD-3-Clause
  * License).
  *
  * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
@@ -35,9 +35,7 @@
 #include "saf_sh.h"
 #include "saf_sh_internal.h"
 
-/**
- * First-order ACN/N3D to FuMa [without sqrt(4pi) term] conversion matrix
- */
+/** First-order ACN/N3D to FuMa [without sqrt(4pi) term] conversion matrix */
 const float wxyzCoeffs[4][4] = {
     {3.544907701811032f, 0.0f, 0.0f, 0.0f},
     {0.0f, 0.0f, 0.0f, 2.046653415892977f},
@@ -1439,7 +1437,7 @@ void sphESPRIT_estimateDirs
         phiX = (creal(h->PhiXYp[i*K+i])+creal(h->PhiXYm[i*K+i]))/2.0;
         phiY = creal(ccdiv(ccsub(h->PhiXYp[i*K+i], h->PhiXYm[i*K+i]), i2_));
         src_dirs_rad[i*2] = (float)atan2(phiY, phiX);
-        src_dirs_rad[i*2+1] = (float)MIN(atan2(creal(h->PhiZ[i*K+i]), sqrt(phiX*phiX+phiY*phiY)), M_PI/2.0f);
+        src_dirs_rad[i*2+1] = (float)SAF_MIN(atan2(creal(h->PhiZ[i*K+i]), sqrt(phiX*phiX+phiY*phiY)), M_PI/2.0f);
     }
 }
 
@@ -1633,9 +1631,9 @@ void generateCroPaCLCMVmap
         utility_cvvdot(wo, Cx_Y_s, nSH, NO_CONJ, &Y_wo_xspec);
         
         /* derive CroPaC weights  */
-        S = MIN(cabsf(Y_wo_xspec), mvdr_map[i]); /* ensures distortionless response */
+        S = SAF_MIN(cabsf(Y_wo_xspec), mvdr_map[i]); /* ensures distortionless response */
         G = sqrtf(S/(mvdr_map[i]+2.23e-10f));
-        G = MAX(lambda, G); /* optional spectral floor parameter, to control harshness of attenuation (good for demos) */
+        G = SAF_MAX(lambda, G); /* optional spectral floor parameter, to control harshness of attenuation (good for demos) */
         for(j=0; j<nSH; j++)
             w_CroPaC[j*nGrid_dirs + i] = crmulf(w_CroPaC[j*nGrid_dirs + i], G);
     }
@@ -1672,7 +1670,7 @@ void generateMUSICmap
     float_complex tmp;
     
     nSH = ORDER2NSH(order);
-    nSources = MIN(nSources, nSH/2);
+    nSources = SAF_MIN(nSources, nSH/2);
     V = malloc1d(nSH*nSH*sizeof(float_complex));
     Vn = malloc1d(nSH*(nSH-nSources)*sizeof(float_complex));
     Vn_Y = malloc1d((nSH-nSources)*nGrid_dirs*sizeof(float_complex));
@@ -1720,7 +1718,7 @@ void generateMinNormMap
     float_complex Vn1_Vn1H;
     
     nSH = ORDER2NSH(order);
-    nSources = MIN(nSources, nSH/2);
+    nSources = SAF_MIN(nSources, nSH/2);
     V = malloc1d(nSH*nSH*sizeof(float_complex));
     Vn = malloc1d(nSH*(nSH-nSources)*sizeof(float_complex));
     Vn1 = malloc1d((nSH-nSources)*sizeof(float_complex));
@@ -1824,7 +1822,7 @@ void cylModalCoeffs
             
         case ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL:
         case ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL:
-            assert(0);/* not supported */
+            saf_print_error("Unsupported array type");
             break;
     }
 }
@@ -1925,9 +1923,9 @@ void sphModalCoeffs
             hn2prime = malloc1d(nBands*(order+1)*sizeof(double_complex));
             maxN = 1000000000;
             bessel_jn(order, kr, nBands, &maxN_tmp, jn, jnprime);
-            maxN = MIN(maxN_tmp, maxN);
+            maxN = SAF_MIN(maxN_tmp, maxN);
             hankel_hn2(order, kr, nBands, &maxN_tmp, hn2, hn2prime);
-            maxN = MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
+            maxN = SAF_MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
 
             /* modal coefficients for rigid spherical array: 4*pi*1i^n * (jn-(jnprime./hn2prime).*hn2); */
             for(i=0; i<nBands; i++){
@@ -1971,13 +1969,13 @@ void sphScattererModalCoeffs
     hn2prime = malloc1d(nBands*(order+1)*sizeof(double_complex));
     maxN = 1000000000;
     bessel_jn(order, kr, nBands, &maxN_tmp, jn, NULL);
-    maxN = MIN(maxN_tmp, maxN);
+    maxN = SAF_MIN(maxN_tmp, maxN);
     bessel_jn(order, kR, nBands, &maxN_tmp, NULL, jnprime);
-    maxN = MIN(maxN_tmp, maxN);
+    maxN = SAF_MIN(maxN_tmp, maxN);
     hankel_hn2(order, kr, nBands, &maxN_tmp, hn2, NULL);
-    maxN = MIN(maxN_tmp, maxN);
+    maxN = SAF_MIN(maxN_tmp, maxN);
     hankel_hn2(order, kR, nBands, &maxN_tmp, NULL, hn2prime);
-    maxN = MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
+    maxN = SAF_MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
     
     /* modal coefficients for rigid spherical array (OMNI): 4*pi*1i^n * (jn_kr-(jnprime_kr./hn2prime_kr).*hn2_kr); */
     /* modal coefficients for rigid spherical scatterer (OMNI): 4*pi*1i^n * (jn_kr-(jnprime_kR./hn2prime_kR).*hn2_kr); */
@@ -2023,13 +2021,13 @@ void sphScattererDirModalCoeffs
     hn2prime_kR = malloc1d(nBands*(order+1)*sizeof(double_complex));
     maxN = 1000000000;
     bessel_jn(order, kr, nBands, &maxN_tmp, jn_kr, jnprime_kr);
-    maxN = MIN(maxN_tmp, maxN);
+    maxN = SAF_MIN(maxN_tmp, maxN);
     bessel_jn(order, kR, nBands, &maxN_tmp, NULL, jnprime_kR);
-    maxN = MIN(maxN_tmp, maxN);
+    maxN = SAF_MIN(maxN_tmp, maxN);
     hankel_hn2(order, kr, nBands, &maxN_tmp, hn2_kr, hn2prime_kr);
-    maxN = MIN(maxN_tmp, maxN);
+    maxN = SAF_MIN(maxN_tmp, maxN);
     hankel_hn2(order, kR, nBands, &maxN_tmp, NULL, hn2prime_kR);
-    maxN = MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
+    maxN = SAF_MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
     
     /* modal coefficients for rigid spherical array (OMNI): 4*pi*1i^n * (jn_kr-(jnprime_kr./hn2prime_kr).*hn2_kr); */
     /* modal coefficients for rigid spherical scatterer (OMNI): 4*pi*1i^n * (jn_kr-(jnprime_kR./hn2prime_kR).*hn2_kr); */
@@ -2326,7 +2324,7 @@ void evaluateSHTfilters
                 lSH_nm = crealf(yre_yre_dot);
                 lSH_n += lSH_nm;
             }
-            cSH[band*(order+1)+n] = MAX(MIN(cabsf(cSH_n)/(2.0f*(float)n+1.0f),1.0f),0.0f);
+            cSH[band*(order+1)+n] = SAF_MAX(SAF_MIN(cabsf(cSH_n)/(2.0f*(float)n+1.0f),1.0f),0.0f);
             lSH[band*(order+1)+n] = 10.0f*log10f(lSH_n/(2.0f*(float)n+1.0f)+2.23e-9f);
         } 
     }

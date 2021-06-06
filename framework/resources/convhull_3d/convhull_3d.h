@@ -74,6 +74,10 @@ typedef ch_vertex ch_vec3;
  * @param[in]  in_vertices Vector of input vertices; nVert x 1
  * @param[in]  nVert       Number of vertices
  * @param[out] out_faces   (&) output face indices; FLAT: nOut_faces x 3
+ * @param[out] out_cf      (&) contains the coefficients of the planes (set to
+ *                         NULL if not wanted); FLAT: nOut_faces x 3
+ * @param[out] out_df      (&) contains the constant terms of the planes (set to
+ *                         NULL if not wanted); nOut_faces x 1
  * @param[out] nOut_faces  (&) number of output face indices
  *
  * @see [1] C. Bradford, Barber, David P. Dobkin and Hannu Huhdanpaa, "The
@@ -85,6 +89,35 @@ void convhull_3d_build(/* Input arguments */
                        const int nVert,
                        /* Output arguments */
                        int** out_faces,
+                       CH_FLOAT** out_cf,
+                       CH_FLOAT** out_df,
+                       int* nOut_faces);
+
+/**
+ * Builds the N-D convexhull using the quickhull algorithm [1]
+ *
+ * @param[in]  in_vertices Matrix of nVertices in 'd' dimensions; FLAT:nVert x d
+ * @param[in]  nVert       Number of vertices
+ * @param[in]  d           Number of dimensions
+ * @param[out] out_faces   (&) output face indices; FLAT: nOut_faces x d
+ * @param[out] out_cf      (&) contains the coefficients of the planes (set to
+ *                         NULL if not wanted); FLAT: nOut_faces x d
+ * @param[out] out_df      (&) contains the constant terms of the planes (set to
+ *                         NULL if not wanted); nOut_faces x 1
+ * @param[out] nOut_faces  (&) number of output face indices
+ *
+ * @see [1] C. Bradford, Barber, David P. Dobkin and Hannu Huhdanpaa, "The
+ *          Quickhull Algorithm for Convex Hull". Geometry Center Technical
+ *          Report GCG53, July 30, 1993
+ */
+void convhull_nd_build(/* Input arguments */
+                       CH_FLOAT* const in_vertices,
+                       const int nVert,
+                       const int d,
+                       /* Output arguments */
+                       int** out_faces,
+                       CH_FLOAT** out_cf,
+                       CH_FLOAT** out_df,
                        int* nOut_faces);
 
 /**

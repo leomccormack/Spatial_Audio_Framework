@@ -31,9 +31,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "saf_utilities.h"
+#include "saf_utility_complex.h"
 
-/* Cross-platform sleep macro (slightly modified) from:
+/* Cross-platform sleep macro (slightly modified), originally taken from:
  * https://cboard.cprogramming.com/c-programming/170381-cross-platform-wait-sleep.html */
 #ifdef _WIN32
     /* For Windows (32- and 64-bit) */
@@ -54,9 +54,6 @@ extern "C" {
 #else
 # error "Unknown system"
 #endif
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
 
 /**
  * A compile time assertion check.
@@ -90,10 +87,7 @@ extern "C" {
 #define _impl_CASSERT_LINE(predicate, line, file) \
  typedef char _impl_PASTE(assertion_failed_##file##_,line)[2*!!(predicate)-1];
 
-
-/**
- * Wraps around any angles exeeding 180 degrees (e.g., 200-> -160)
- */
+/** Wraps around any angles exeeding 180 degrees (e.g., 200-> -160) */
 void convert_0_360To_m180_180(float* dirs_deg,
                               int nDirs);
 
@@ -142,9 +136,7 @@ void findERBpartitions(/* Input Arguments */
                        float** erb_freqs,
                        int* nERBBands);
 
-/**
- * Returns the indices required to randomly permute a vector of length 'len'
- */
+/** Returns the indices required to randomly permute a vector of length 'len' */
 void randperm(/* Input Arguments */
               int len,
               /* Output Arguments */
@@ -278,9 +270,7 @@ void polyd_m(double* X,
              double_complex* poly,
              int size_x);
 
-/**
- * Returns the sum of all values
- */
+/** Returns the sum of all values */
 float sumf(float* values,
            int nValues);
 
@@ -313,6 +303,23 @@ void unique_i(int* input,
               int** uniqueInds,
               int* nUnique);
 
+/**
+ * Given an array of values, find all the possible combinations (nCr) for
+ * subgroups of "nElements"; derived based on [1].
+ *
+ * @param[in]  arrValues The array values; nValues x 1
+ * @param[in]  nValues   Number of array values (n)
+ * @param[in]  nElements Number of elements per combination (r)
+ * @param[out] comb      (&) the combinations; FLAT: nComb x nElements
+ * @param[out] nComb     (&) the number of combinations (nCr)
+ *
+ * @see [1] https://www.geeksforgeeks.org/print-all-possible-combinations-of-r-elements-in-a-given-array-of-size-n/
+ */
+void findCombinations(int* arrValues,
+                      int nValues,
+                      int nElements,
+                      int** comb,
+                      int* nComb);
 
 /**
  * Numerically solves first-order, linear, homogeneous differential equation

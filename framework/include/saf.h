@@ -90,7 +90,7 @@
 
 #define SAF_VERSION_MAJOR 1        /**< Major version */
 #define SAF_VERSION_MINOR 1        /**< Minor version */
-#define SAF_VERSION_PATCH 6        /**< Patch version */
+#define SAF_VERSION_PATCH 7        /**< Patch version */
 #define SAF_VERSION_SPECIAL ""     /**< Append text ("alpha", "beta", "") */
 #define MKSTRING_(s) #s            /**< Stringify */
 #define MKSTRING(s) MKSTRING_(s)   /**< Stringify */
@@ -243,6 +243,7 @@
 /*                              Optional Modules                              */
 /* ========================================================================== */
 
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
 /**
  * SAF Module: SOFA_Reader
  *
@@ -260,11 +261,11 @@
  *
  * License: ISC
  */
-#define SAF_SOFA_READER_MODULE
-#ifdef  SAF_ENABLE_SOFA_READER_MODULE
+# define SAF_SOFA_READER_MODULE
 # include "../modules/saf_sofa_reader/saf_sofa_reader.h"
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */
 
+#ifdef SAF_ENABLE_TRACKER_MODULE
 /**
  * SAF Module: Tracker
  *
@@ -278,8 +279,7 @@
  *
  * License: GNU GPLv2
  */
-#define SAF_TRACKER_MODULE
-#ifdef  SAF_ENABLE_TRACKER_MODULE
+# define SAF_TRACKER_MODULE
 # include "../modules/saf_tracker/saf_tracker.h"
 #endif /* SAF_ENABLE_TRACKER_MODULE */
 

@@ -21,7 +21,7 @@
  * @brief Main header for the higher-order Ambisonics module (#SAF_HOA_MODULE)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
- * the Matlab library by Archontis Politis [1] (BSD-3-Clause License).
+ * the MATLAB library by Archontis Politis in [1] (BSD-3-Clause License).
  *
  * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
  *
@@ -37,7 +37,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include "../saf_utilities/saf_utility_complex.h"
-#include "../saf_utilities/saf_utility_error.h"
 
 /* ========================================================================== */
 /*                                    Enums                                   */
@@ -90,11 +89,11 @@ typedef enum {
      * Energy-Preserving Ambisonic Decoder (EPAD) [1]. This decoder aims to
      * preserve the energy of a source, as it panned around to directions of the
      * sphere; essentially, addressing the energy-preserving issues of the
-     * SAD and MMD decoding approaches, especially for irregular layouts.
+     * SAD and MMD decoding approaches for irregular layouts.
      */
     LOUDSPEAKER_DECODER_EPAD,
     /**
-     * All-Round Ambisonic Decoder (AllRAD): SAD decoding to t-design, panned
+     * All-Round Ambisonic Decoder (AllRAD): SAD decoding to a t-design, panned
      * for the target loudspeaker directions using VBAP [2]. Perhaps the
      * Ambisonic decoder we would most recommend for irregular loudspeaker
      * layouts. Note, given a high (well... technically infinite) order, AllRAD
@@ -136,7 +135,9 @@ typedef enum {
      */
     BINAURAL_DECODER_DEFAULT,
     /**
-     * Least-squares (LS) decoder. The simplest binaural decoder.
+     * Least-squares (LS) decoder. The simplest binaural decoder, which is based
+     * on a least-squares fit of the spherical harmonic patterns onto the HRTF
+     * directivity patterns.
      */
     BINAURAL_DECODER_LS,
     /**
@@ -155,14 +156,14 @@ typedef enum {
     /**
      * Time-alignment decoder [3]. Relies on discarding the phase information of
      * the HRTFs, past the frequency at which humans are less sensitive to
-     * inter-aural time differences. Therefore, the least-squares fitting
+     * inter-aural time difference cues. Therefore, the least-squares fitting
      * priorites matching the interaural level differences (ILDs), rather than
      * the interaural time differences (ITDs).
      */
     BINAURAL_DECODER_TA,
     /**
      * Magnitude least-squares decoder [4]. On similar lines to the time-
-     * alignment decoder, but differing in its execution.
+     * alignment decoder, but differing slightly in its execution.
      */
     BINAURAL_DECODER_MAGLS
     
@@ -174,8 +175,8 @@ typedef enum {
  * @note ACN channel ordering with SN3D normalisation is often collectively
  *       referred to as the 'AmbiX' format.
  * @warning FuMa is a deprecated legacy format and is only supported for first-
- *          order! The recommended Ambisonic conventions are ACN with N3D/SN3D
- *          normalisation.
+ *          order! The recommended Ambisonic conventions are ACN with N3D or
+ *          SN3D normalisation.
  */
 typedef enum {
     HOA_CH_ORDER_ACN,  /**< Ambisonic Channel numbering (ACN) convention, which
@@ -204,7 +205,8 @@ typedef enum {
                     *   by the AmbiX standard */
     HOA_NORM_FUMA  /**< Furse-Malham (FuMa) convention. This is similar to SN3D
                     *   (at first-order), except theres an additional 1/sqrt(2)
-                    *   scaling applied to the omni. */
+                    *   scaling applied to the omni. This is also known as maxN
+                    *   normalisation. */
 
 }HOA_NORM;
 
@@ -242,7 +244,7 @@ void convertHOAChannelConvention(/* Input Arguments */
  *
  * @warning If one of the in/out conventions is FuMa, then only the first 4
  *          channels are converted, and any remaining channels of 'insig' are
- *          set to zeros (i.e. FuMa is strictly first-order only in SAF).
+ *          set to zeros (FuMa is strictly first-order only in SAF).
  * @note insig is converted "in-place". Also, if the in/out conventions are the
  *       same, then the function is bypassed.
  *
@@ -256,21 +258,20 @@ void convertHOAChannelConvention(/* Input Arguments */
  * @param[in]     outConvention Normalisation convention of the output signals
  */
 void convertHOANormConvention(/* Input Arguments */
-                                 float* insig,
-                                 int order,
-                                 int signalLength,
-                                 HOA_NORM inConvention,
-                                 HOA_NORM outConvention);
+                              float* insig,
+                              int order,
+                              int signalLength,
+                              HOA_NORM inConvention,
+                              HOA_NORM outConvention);
 
 /**
- * Computes REAL spherical harmonics [1] for each given direction on the unit
- * sphere
+ * Computes real-valued spherical harmonics [1] for each given direction on the
+ * unit sphere
  *
- * The real spherical harmonics are computed WITHOUT the 1/sqrt(4*pi) term.
- * i.e. max(omni) = 1. Also, compared to getRSH_recur(), this function uses
- * unnorm_legendreP() and double precision, so is more suitable for determining
- * 'Y' in an initialisation stage. This version is indeed slower, but more
- * precise (especially for high orders).
+ * The spherical harmonic values are computed WITHOUT the 1/sqrt(4*pi) term.
+ * Compared to getRSH_recur(), this function uses unnorm_legendreP() and double
+ * precision, so is more suitable for being computed in an initialisation stage.
+ * This version is indeed slower, but more precise (especially for high orders).
  *
  * @note This function is mainly intended for Ambisonics, due to the omission of
  *       the 1/sqrt(4*pi) scaling, and the directions are given in
@@ -295,14 +296,17 @@ void getRSH(/* Input Arguments */
             float* Y);
 
 /**
- * Computes REAL spherical harmonics [1] for each given direction on the unit
- * sphere
+ * Computes real-valued spherical harmonics [1] for each given direction on the
+ * unit sphere
  *
  * The real spherical harmonics are computed WITHOUT the 1/sqrt(4*pi) term.
- * i.e. max(omni) = 1. Also, Compared to getRSH(), this function uses
- * unnorm_legendreP_recur() and single precision, so is more suitable for
- * determining 'Y' in a real-time loop. It sacrifices some precision, as
- * numerical error propogates through the recursion, but it is much faster.
+ * Compared to getRSH(), this function uses unnorm_legendreP_recur() and single
+ * precision, so is more suitable for being computed in a real-time loop. It
+ * sacrifices some precision, and numerical error propogates through the
+ * recursion, but it is much faster.
+ *
+ * The function also uses static memory buffers for single direction and up to
+ * 7th order, which speeds things up considerably for such use cases.
  *
  * @note This function is mainly intended for Ambisonics, due to the omission of
  *       the 1/sqrt(4*pi) scaling, and the directions are given in
@@ -335,14 +339,15 @@ void getRSH_recur(/* Input Arguments */
  * Computes the weights required to manipulate a hyper-cardioid beam-pattern,
  * such that it has maximum energy in the given look-direction
  *
- * Traditionally, due to the back lobes of beamformers when panning a source
- * via Ambisonics encoding/decoding, there is unwanted energy given to
+ * Due to the side and back lobes of the beamformers employed by the Ambisonic
+ * decoder, when panning a source there can be unwanted energy given to
  * loudspeakers directly opposite the true source direction. This max_rE
- * weighting [1] essentially spatially "tapers" the spherical harmonic patterns
- * used to generate said beams, reducing the contribution of the higher
- * orders to the beam patterns. This results in worse spatial selectivity, as
+ * weighting [1] essentially spatially tapers the spherical harmonic components
+ * used to generate the beamformers, thus reducing the contribution of the
+ * higher order components. This results in worse spatial selectivity, as
  * the width of the beam pattern main lobe is widened, however, the back lobes
- * are also reduced; thus mitigating the aforementioned problem.
+ * are also reduced, thus mitigating perceptual issues that may arise due to the
+ * aforementioned problem.
  *
  * @param[in]  order       Order of spherical harmonic expansion
  * @param[in]  diagMtxFlag Set to '0' if you want the weights to be returned as
@@ -360,8 +365,8 @@ void getMaxREweights(/* Input Arguments */
                      float* a_n);
 
 /**
- * Filter that equalizes the high frequency roll-off due to SH truncation and
- * tapering. Details can be found in [1].
+ * Filter that equalises the high frequency roll-off due to SH truncation and
+ * tapering; as described in [1].
  *
  * @param[in]  w_n             Tapering weights; (order_truncated + 1) x 1
  *                             E.g. maxRE, or all ones for truncation only

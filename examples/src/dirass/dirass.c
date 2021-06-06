@@ -45,7 +45,7 @@ void dirass_create
     *phDir = (void*)pData;
     int i;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* Default user parameters */
     pData->inputOrder = pData->new_inputOrder = SH_ORDER_FIRST;
@@ -195,11 +195,11 @@ void dirass_initCodec
 
 void dirass_analysis
 (
-    void  *  const hDir,
-    float ** const inputs,
-    int            nInputs,
-    int            nSamples,
-    int            isPlaying
+    void        *  const hDir,
+    const float *const * inputs,
+    int                  nInputs,
+    int                  nSamples,
+    int                  isPlaying
 )
 {
     dirass_data *pData = (dirass_data*)(hDir);
@@ -228,7 +228,7 @@ void dirass_analysis
     /* Loop over all samples */
     for(s=0; s<nSamples; s++){
         /* Load input signals into inFIFO buffer */
-        for(ch=0; ch<MIN(nInputs,nSH); ch++)
+        for(ch=0; ch<SAF_MIN(nInputs,nSH); ch++)
             pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
         for(; ch<nSH; ch++) /* Zero any channels that were not given */
             pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
@@ -247,23 +247,15 @@ void dirass_analysis
 
             /* account for input channel order */
             switch(chOrdering){
-                case CH_ACN: /* already ACN */
-                    break;
-                case CH_FUMA:
-                    convertHOAChannelConvention((float*)pData->SHframeTD, inputOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
-                    break;
+                case CH_ACN:  /* already ACN */ break; /* Otherwise, convert to ACN... */
+                case CH_FUMA: convertHOAChannelConvention((float*)pData->SHframeTD, inputOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
             }
 
             /* account for input normalisation scheme */
             switch(norm){
-                case NORM_N3D:  /* already in N3D, do nothing */
-                    break;
-                case NORM_SN3D: /* convert to N3D */
-                    convertHOANormConvention((float*)pData->SHframeTD, inputOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
-                    break;
-                case NORM_FUMA: /* only for first-order, convert to N3D */
-                    convertHOANormConvention((float*)pData->SHframeTD, inputOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
-                    break;
+                case NORM_N3D:  /* already in N3D, do nothing */ break; /* Otherwise, convert to N3D... */
+                case NORM_SN3D: convertHOANormConvention((float*)pData->SHframeTD, inputOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
+                case NORM_FUMA: convertHOANormConvention((float*)pData->SHframeTD, inputOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
             }
 
             /* update the dirass powermap */
@@ -538,7 +530,7 @@ void dirass_setAspectRatio(void* const hDir, int newOption)
 void dirass_setMapAvgCoeff(void* const hDir, float newValue)
 {
     dirass_data *pData = (dirass_data*)(hDir);
-    pData->pmapAvgCoeff = MIN(MAX(0.0f, newValue), 0.999f);
+    pData->pmapAvgCoeff = SAF_MIN(SAF_MAX(0.0f, newValue), 0.999f);
 }
 
 void dirass_requestPmapUpdate(void* const hDir)

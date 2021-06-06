@@ -24,9 +24,7 @@
  */
 
 #include "saf_utilities.h"
-#include "saf_externals.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "saf_externals.h" 
 
 /** Helper function for euler2rotationMatrix() */
 static void getRx
@@ -82,6 +80,11 @@ static void getRz
     Rz[2][2] = 1.0f;
 }
 
+
+/* ========================================================================== */
+/*                        Basic Geometrical Functions                         */
+/* ========================================================================== */
+
 void quaternion2rotationMatrix
 (
     quaternion_data* Q,
@@ -106,10 +109,10 @@ void rotationMatrix2quaternion
     quaternion_data* Q
 )
 {
-    Q->w = sqrtf( MAX( 0.0f, 1.0f + R[0][0] + R[1][1] + R[2][2] ) ) / 2.0f;
-    Q->z = sqrtf( MAX( 0.0f, 1.0f + R[0][0] - R[1][1] - R[2][2] ) ) / 2.0f;
-    Q->y = sqrtf( MAX( 0.0f, 1.0f - R[0][0] + R[1][1] - R[2][2] ) ) / 2.0f;
-    Q->x = sqrtf( MAX( 0.0f, 1.0f - R[0][0] - R[1][1] + R[2][2] ) ) / 2.0f;
+    Q->w = sqrtf( SAF_MAX( 0.0f, 1.0f + R[0][0] + R[1][1] + R[2][2] ) ) / 2.0f;
+    Q->z = sqrtf( SAF_MAX( 0.0f, 1.0f + R[0][0] - R[1][1] - R[2][2] ) ) / 2.0f;
+    Q->y = sqrtf( SAF_MAX( 0.0f, 1.0f - R[0][0] + R[1][1] - R[2][2] ) ) / 2.0f;
+    Q->x = sqrtf( SAF_MAX( 0.0f, 1.0f - R[0][0] - R[1][1] + R[2][2] ) ) / 2.0f;
     Q->z = copysignf( Q->z, R[2][1] - R[1][2] );
     Q->y = copysignf( Q->y, R[0][2] - R[2][0] );
     Q->x = copysignf( Q->x, R[1][0] - R[0][1] );
@@ -131,7 +134,7 @@ void euler2Quaternion
     cy = sy = cr = sr = cp = sp = 0.0f; 
     switch(convention){
         case EULER_ROTATION_Y_CONVENTION: /* fall through*/
-        case EULER_ROTATION_X_CONVENTION: assert(0);  /* Not supported */; return; 
+        case EULER_ROTATION_X_CONVENTION: saf_print_error("This convention is not supported"); return;
         case EULER_ROTATION_YAW_PITCH_ROLL:
             cy = cosf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* x */
             sy = sinf((degreesFlag ? alpha*SAF_PI/180.0f : alpha)  * 0.5f); /* x */
@@ -174,8 +177,8 @@ void quaternion2euler
     siny_cosp = 2.0f * (Q->w * Q->z + Q->x * Q->y);
     cosy_cosp = 1.0f - 2.0f * (Q->y * Q->y + Q->z * Q->z);
     switch(convention){
-        case EULER_ROTATION_Y_CONVENTION: assert(0) /* Not supported */; break;
-        case EULER_ROTATION_X_CONVENTION: assert(0) /* Not supported */; break;
+        case EULER_ROTATION_Y_CONVENTION: /* fall through */
+        case EULER_ROTATION_X_CONVENTION: saf_print_error("This convention is not supported"); break;
         case EULER_ROTATION_YAW_PITCH_ROLL:
             /* Yaw (z-axis rotation) */
             (*gamma) = atan2f(sinr_cosp, cosr_cosp);
@@ -373,10 +376,46 @@ void crossProduct3
     c[2] = a[0]*b[1]-a[1]*b[0];
 }
 
+float getDistBetweenPointAndLine
+(
+    float point[3],
+    float v1[3],
+    float v2[3]
+)
+{
+    float a[3], b[3], cross_a_ab[3];
+    a[0] = v1[0] - v2[0];
+    a[1] = v1[1] - v2[1];
+    a[2] = v1[2] - v2[2];
+    b[0] = point[0] - v2[0];
+    b[1] = point[1] - v2[1];
+    b[2] = point[2] - v2[2];
+    crossProduct3(a, b, cross_a_ab);
+    return L2_norm3(cross_a_ab)/(L2_norm3(a)+2.3e-9f);
+}
+
+float getDistBetween2Points
+(
+    float point_a[3],
+    float point_b[3]
+)
+{
+    float a_b[3];
+    a_b[0] = point_a[0] - point_b[0];
+    a_b[1] = point_a[1] - point_b[1];
+    a_b[2] = point_a[2] - point_b[2];
+    return L2_norm3(a_b);
+}
+
+
+/* ========================================================================== */
+/*                     Computational Geometry Functions                       */
+/* ========================================================================== */
+
 void convhull3d
 (
     const float* vertices,
-    const int nDirs,
+    const int nVert,
     int** faces,
     int* nFaces
 )
@@ -385,19 +424,145 @@ void convhull3d
     ch_vertex* ch_vertices;
 
     /* convert vertices to use "ch_vertex" format used by convhull_3d_build() */
-    ch_vertices = malloc1d(nDirs*sizeof(ch_vertex));
-    for(i = 0; i < nDirs; i++) {
+    ch_vertices = malloc1d(nVert*sizeof(ch_vertex));
+    for(i = 0; i < nVert; i++) {
         ch_vertices[i].z = (CH_FLOAT)vertices[i*3+2];
         ch_vertices[i].x = (CH_FLOAT)vertices[i*3];
         ch_vertices[i].y = (CH_FLOAT)vertices[i*3+1];
     }
 
     /* build convex hull */
-    assert(*faces == NULL); /* nFaces not known yet, shouldn't be pre-allocated... */
-    convhull_3d_build(ch_vertices, nDirs, faces, nFaces);
+    saf_assert(*faces == NULL, "nFaces not known yet, and so shouldn't be pre-allocated...");
+    convhull_3d_build(ch_vertices, nVert, faces, NULL, NULL, nFaces);
 
     /* clean-up */
     free(ch_vertices);
+}
+
+void convhullnd
+(
+    const float* points,
+    const int nPoints,
+    const int nd,
+    int** faces,
+    int* nFaces
+)
+{
+    int i, j;
+    CH_FLOAT* ch_points;
+
+    /* convert vertices to use CH_FLOAT used by convhull_nd_build() */
+    ch_points = malloc1d(nPoints*nd*sizeof(CH_FLOAT));
+    for(i = 0; i < nPoints; i++) {
+        for(j=0; j<nd; j++)
+            ch_points[i*nd+j] = (CH_FLOAT)points[i*nd+j];
+    }
+
+    /* build convex hull */
+    saf_assert(*faces == NULL, "nFaces not known yet, and so shouldn't be pre-allocated...");
+    convhull_nd_build(ch_points, nPoints, 3, faces, NULL, NULL, nFaces);
+
+    /* clean-up */
+    free(ch_points);
+}
+
+void delaunaynd
+(
+    const float* points,
+    const int nPoints,
+    const int nd,
+    int** DT,
+    int* nDT
+)
+{
+    int i, j, k, nHullFaces, maxW_idx, nVisible;
+    int* hullfaces;
+    CH_FLOAT w0, w_optimal, w_optimal2;
+    CH_FLOAT* projpoints, *cf, *df, *p0, *p, *visible;
+
+    /* Project the N-dimensional points onto a N+1-dimensional paraboloid */
+    projpoints = malloc1d(nPoints*(nd+1)*sizeof(CH_FLOAT));
+    for(i = 0; i < nPoints; i++) {
+        projpoints[i*(nd+1)+nd] = 0.0;
+        for(j=0; j<nd; j++){
+            projpoints[i*(nd+1)+j] = (CH_FLOAT)points[i*nd+j] + 0.0000001*(CH_FLOAT)rand()/(CH_FLOAT)RAND_MAX;  
+            projpoints[i*(nd+1)+nd] += (projpoints[i*(nd+1)+j]*projpoints[i*(nd+1)+j]); /* w vector */
+        }
+    }
+
+    /* The N-dimensional delaunay triangulation requires first computing the convex hull of this N+1-dimensional paraboloid */
+    hullfaces = NULL;
+    cf = df = NULL;
+    convhull_nd_build(projpoints, nPoints, nd+1, &hullfaces, &cf, &df, &nHullFaces);
+
+    /* Find the coordinates of the point with the maximum (N+1 dimension) coordinate (i.e. the w vector) */
+    if(sizeof(CH_FLOAT)==sizeof(double))
+        maxW_idx = (int)cblas_idamax(nPoints, (double*)&projpoints[nd], nd+1);
+    else
+        maxW_idx = (int)cblas_isamax(nPoints, (float*)&projpoints[nd], nd+1);
+    w0 = projpoints[maxW_idx*(nd+1)+nd];
+    p0 = malloc1d(nd*sizeof(CH_FLOAT));
+    for(j=0; j<nd; j++)
+        p0[j] = projpoints[maxW_idx*(nd+1)+j];
+
+    /* Find the point where the plane tangent to the point (p0,w0) on the paraboloid crosses the w axis.
+     * This is the point that can see the entire lower hull. */
+    w_optimal = 0.0;
+    for(j=0; j<nd; j++)
+       w_optimal += (2.0*pow(p0[j], 2.0));
+    w_optimal = w0-w_optimal;
+
+    /* Subtract 1000 times the absolute value of w_optimal to ensure that the point where the tangent plane
+     * crosses the w axis will see all points on the lower hull. This avoids numerical roundoff errors. */
+    w_optimal2=w_optimal-1000.0*fabs(w_optimal);
+
+    /* Set the point where the tangent plane crosses the w axis */
+    p = calloc1d((nd+1),sizeof(CH_FLOAT));
+    p[nd] = w_optimal2;
+
+    /* Find all faces that are visible from this point */
+    visible = malloc1d(nHullFaces*sizeof(CH_FLOAT));
+    if(sizeof(CH_FLOAT)==sizeof(double)){
+        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nHullFaces, 1, nd+1, 1.0,
+                    (double*)cf, nd+1,
+                    (double*)p, 1, 0.0,
+                    (double*)visible, 1);
+    }
+    else{
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nHullFaces, 1, nd+1, 1.0f,
+                    (float*)cf, nd+1,
+                    (float*)p, 1, 0.0f,
+                    (float*)visible, 1);
+    }
+    nVisible = 0;
+    for(j=0; j<nHullFaces; j++){
+        visible[j] += df[j];
+        if(visible[j]>0.0)
+            nVisible++;
+    }
+ 
+    /* Output */
+    (*nDT) = nVisible;
+    if(nVisible>0){
+        (*DT) = malloc1d(nVisible*(nd+1)*sizeof(int));
+        for(i=0, j=0; i<nHullFaces; i++){
+            if(visible[i]>0.0){
+                for(k=0; k<nd+1; k++)
+                    (*DT)[j*(nd+1)+k] = hullfaces[i*(nd+1)+k];
+                j++;
+            }
+        }
+        saf_assert(j==nVisible, "Ugly error");
+    }
+
+    /* clean up */
+    free(projpoints);
+    free(hullfaces);
+    free(cf);
+    free(df);
+    free(p0);
+    free(p);
+    free(visible);
 }
 
 void sphDelaunay
@@ -534,7 +699,7 @@ void sphVoronoi
                 break;
             }
         }
-        assert(currentvertIdx!=-1);
+        saf_assert(currentvertIdx!=-1, "Ugly error");
         currentvert = currentface[currentvertIdx];
 
         /* Prep */
@@ -552,7 +717,7 @@ void sphVoronoi
                     l++;
                 }
             }
-            assert(l==nFaceIdx-1);
+            saf_assert(l==nFaceIdx-1, "Ugly error");
 
             for (l = 0; l<nFaceIdx-1; l++){
                 currentfaceIdx = tempfacelist[l];

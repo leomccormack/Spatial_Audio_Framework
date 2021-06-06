@@ -31,11 +31,15 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/** Quaternion data struct */
+/** Quaternion data structure */
 typedef struct _quaternion_data {
     union {
-        struct { float w, x, y, z; };
-        float Q[4]; /** WXYZ values [-1..1] */
+        struct { float w; /**< W value of the quaternion [-1..1] */
+                 float x; /**< X value of the quaternion [-1..1] */
+                 float y; /**< Y value of the quaternion [-1..1] */
+                 float z; /**< Z value of the quaternion [-1..1] */
+        };
+        float Q[4]; /**< WXYZ values of the quaternion [-1..1] */
     };
 } quaternion_data;
 
@@ -52,7 +56,7 @@ typedef enum {
  * Data structure for Voronoi diagrams
  *
  * @warning 'faces' is NOT contiguously allocated! [i.e., you cannot do
- *          free(faces), you must loop over nFaces: free(faces[i]) ]
+ *          free(faces), you must loop over the i=0:nFaces-1: free(faces[i]) ]
  */
 typedef struct _voronoi_data{
     int nVert;           /**< Number of vertices */
@@ -63,19 +67,24 @@ typedef struct _voronoi_data{
 
 }voronoi_data;
 
-/** Constructs a 3x3 rotation matrix based on Quaternions */
+
+/* ========================================================================== */
+/*                        Basic Geometrical Functions                         */
+/* ========================================================================== */
+
+/** Constructs a 3x3 rotation matrix based on a quaternion */
 void quaternion2rotationMatrix(/* Input Arguments */
                                quaternion_data* Q,
                                /* Output Arguments */
                                float R[3][3]);
 
-/** Calculates Quaternions from a 3x3 rotation matrix */
+/** Calculates the quaternion corresponding to a 3x3 rotation matrix */
 void rotationMatrix2quaternion(/* Input Arguments */
                                float R[3][3],
                                /* Output Arguments */
                                quaternion_data* Q);
 
-/** Converts Euler angles to Quaternion */
+/** Converts Euler angles to a quaternion */
 void euler2Quaternion(/* Input Arguments */
                       float alpha,
                       float beta,
@@ -85,7 +94,7 @@ void euler2Quaternion(/* Input Arguments */
                       /* Output Arguments */
                       quaternion_data* Q);
 
-/** Converts Quaternion to Euler angles */
+/** Converts a quaternion to Euler angles */
 void quaternion2euler(/* Input Arguments */
                       quaternion_data* Q,
                       int degreesFlag,
@@ -118,7 +127,7 @@ void euler2rotationMatrix(/* Input Arguments */
  * Constructs a 3x3 rotation matrix from the Euler angles, using the
  * yaw-pitch-roll (zyx) convention
  *
- * @note This function now just calls: euler2rotationMatrix()
+ * @note DEPRICATED. This function now just calls: euler2rotationMatrix()
  *
  * @param[in]  yaw              Yaw angle in radians
  * @param[in]  pitch            Pitch angle in radians
@@ -132,6 +141,7 @@ void yawPitchRoll2Rzyx (/* Input Arguments */
                         float pitch,
                         float roll,
                         int rollPitchYawFLAG,
+                        /* Output Arguments */
                         float R[3][3]);
 
 /**
@@ -164,24 +174,16 @@ void unitCart2sph(/* Input Arguments */
                   /* Output Arguments */
                   float* dirs);
 
-/**
- * L2 (Euclidean) norm of a 3-element vector
- */
+/** Returns the L2 (Euclidean) norm of a 3-element vector */
 float L2_norm3(float v[3]);
 
-/**
- * L2 (Euclidean) norm of an arbitrary length vector
- */
+/** Returns the L2 (Euclidean) norm of an arbitrary length vector */
 float L2_norm(float* v, int lenV);
 
-/**
- * Frobenius Norm of a matrix M, of dimensions: lenX x lenY
- */
+/** Returns the Frobenius Norm of a matrix M, of dimensions: lenX x lenY */
 float Frob_norm(float* M, int lenX, int lenY);
 
-/**
- * Cross product between two 3-element floating point vectors (c = a x b)
- */
+/** Cross product between two 3-element floating point vectors (c = a x b) */
 void crossProduct3(/* Input Arguments */
                    float a[3],
                    float b[3],
@@ -189,22 +191,104 @@ void crossProduct3(/* Input Arguments */
                    float c[3]);
 
 /**
- * Builds the 3-D convex hull given a list of vertices
+ * Returns the distance between a "point" and an infinite line described by the
+ * two points "v1" and "v2"
+ */
+float getDistBetweenPointAndLine(/* Input Arguments */
+                                 float point[3],
+                                 float v1[3],
+                                 float v2[3]);
+
+/** Returns the distance between "point_a" and "point_b" */
+float getDistBetween2Points(/* Input Arguments */
+                            float point_a[3],
+                            float point_b[3]);
+
+
+/* ========================================================================== */
+/*                     Computational Geometry Functions                       */
+/* ========================================================================== */
+
+/**
+ * Builds the convex hull of an arrangement of vertices in 3-dimensional space
+ *
+ * This function employs algorithms originally implemented in MATLAB by George
+ * Papazafeiropoulos [1] (BSD 2-clause license), which are based on [2].
  *
  * @warning Currently, this does not check if there are duplicate vertices or
  *          whether any of them are co-linear!
  *
  * @param[in]  vertices The vertices; FLAT: nDirs x 3
- * @param[in]  nDirs    Number of vertices
+ * @param[in]  nVert    Number of vertices
  * @param[out] faces    (&) The face indices; FLAT: nFaces x 3
  * @param[out] nFaces   (&) Number of faces found
+ *
+ * @see [1] https://www.mathworks.com/matlabcentral/fileexchange/48509-computational-geometry-toolbox?focused=3851550&tab=example
+ * @see [2] The Quickhull Algorithm for Convex Hull, C. Bradford Barber, David
+ *          P. Dobkin and Hannu Huhdanpaa, Geometry Center Technical Report
+ *          GCG53, July 30, 1993
  */
 void convhull3d(/* Input Arguments */
                 const float* vertices,
-                const int nDirs,
+                const int nVert,
                 /* Output Arguments */
                 int** faces,
                 int* nFaces);
+
+/**
+ * Builds the convex hull of an arrangement of points in N-dimensional space
+ *
+ * This function employs algorithms originally implemented in MATLAB by George
+ * Papazafeiropoulos [1] (BSD 2-clause license), which are based on [2].
+ *
+ * @param[in]  points  The input points; FLAT: nDirs x nd
+ * @param[in]  nPoints Number of points
+ * @param[in]  nd      The number of dimensions (max=5)
+ * @param[out] faces   (&) The face indices; FLAT: nFaces x nd
+ * @param[out] nFaces  (&) Number of faces found
+ *
+ * @see [1] https://www.mathworks.com/matlabcentral/fileexchange/48509-computational-geometry-toolbox?focused=3851550&tab=example
+ * @see [2] The Quickhull Algorithm for Convex Hull, C. Bradford Barber, David
+ *          P. Dobkin and Hannu Huhdanpaa, Geometry Center Technical Report
+ *          GCG53, July 30, 1993
+ */
+void convhullnd(/* Input Arguments */
+                const float* points,
+                const int nPoints,
+                const int nd,
+                /* Output Arguments */
+                int** faces,
+                int* nFaces);
+
+/**
+ * Computes the Delaunay triangulation of an arrangement of points in
+ * N-dimensional space
+ *
+ * This function employs algorithms originally implemented in MATLAB by George
+ * Papazafeiropoulos [1] (BSD 2-clause license), which are based on [2].
+ *
+ * @note If you know that your points all reside on a sphere, then you should
+ *       use sphDelaunay() instead; as it is faster and more accurate.
+ *
+ * @param[in]  points  The intput points; FLAT: nDirs x nd
+ * @param[in]  nPoints Number of points
+ * @param[in]  nd      The number of dimensions (max=5)
+ * @param[out] DT      (&) The indices defining the Delaunay triangulation of
+ *                     the points; FLAT: nDT x (nd+1)
+ * @param[out] nDT     (&) Number of triangulations
+ *
+ * @see [1] https://www.mathworks.com/matlabcentral/fileexchange/48509-computational-geometry-toolbox?focused=3851550&tab=example
+ * @see [2] The Quickhull Algorithm for Convex Hull, C. Bradford Barber, David
+ *          P. Dobkin and Hannu Huhdanpaa, Geometry Center Technical Report
+ *          GCG53, July 30, 1993
+ */
+void delaunaynd(/* Input Arguments */
+                const float* points,
+                const int nPoints,
+                const int nd,
+                /* Output Arguments */
+                int** DT,
+                int* nDT);
 
 /**
  * Delaunay triangulation of a spherical arrangement of points

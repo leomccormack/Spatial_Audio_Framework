@@ -22,9 +22,9 @@
 
 /**
  * @file afSTFT_internal.h
- * @brief Slightly modified version of afSTFTlib
+ * @brief A modified version of afSTFTlib
  *
- * The original afSTFT code written by Juha Vilkamo can be found here:
+ * The original afSTFT code (by Juha Vilkamo) can be found here:
  * https://github.com/jvilkamo/afSTFT
  * This version is slightly modified to be more in-line with how the rest of SAF
  * is structured.
@@ -36,11 +36,11 @@
  * vector and the current processing delay.
  * It also incorporates SAF utilities (for the vectorisation and FFT).
  *
- * Note that the afSTFT design is layed out in detail in chapter 1 of [1]
+ * The afSTFT design is also described in more detail in [1]
  *
- * @see [1] Pulkki, V., Delikaris-Manias, S. and Politis, A. 2018. Parametric
- *          time--frequency domain spatial audio. John Wiley & Sons,
- *          Incorporated.
+ * @see [1] Vilkamo, J., & Ba"ckstro"m, T. (2018). Time--Frequency Processing:
+ *          Methods and Tools. In Parametric Time--Frequency Domain Spatial
+ *          Audio. John Wiley & Sons.
  *
  * @author Juha Vilkamo
  * @date 08.04.2015
@@ -63,12 +63,12 @@ extern "C" {
 #ifdef AFSTFT_USE_SAF_UTILITIES
 # include "../../modules/saf_utilities/saf_utilities.h"
 #include "saf_externals.h" 
+#else
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
 #endif
-    
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+ 
 /* Coefficients for a half-band filter, i.e., the "hybrid filter" applied optionally at the bands 1--4. */
 #define COEFF1 0.031273141818515176604f /**< Filter coefficient 0 for hybrid filtering */
 #define COEFF2 0.28127313041521179171f  /**< Filter coefficient 1 for hybrid filtering */
@@ -78,7 +78,7 @@ extern "C" {
 /* ========================================================================== */
 /*                            Internal structures                             */
 /* ========================================================================== */
-    
+
 /**
  * Complex data type used by afSTFTlib
  */
@@ -168,45 +168,37 @@ void afSTFTlib_channelChange(void* handle,
                              int new_inChannels,
                              int new_outChannels);
 
-/**
- * Flushes time-domain buffers with zeros. */
+/** Flushes time-domain buffers with zeros */
 void afSTFTlib_clearBuffers(void* handle);
 
-/**
- * Applies the forward afSTFT transform. */
+/** Applies the forward afSTFT transform */
 void afSTFTlib_forward(void* handle,
                        float** inTD,
                        complexVector* outFD);
 
-/**
- * Applies the backward afSTFT transform. */
+/** Applies the backward afSTFT transform. */
 void afSTFTlib_inverse(void* handle,
                        complexVector* inFD,
                        float** outTD);
 
-/**
- * Destroys an instance of afSTFTlib */
+/** Destroys an instance of afSTFTlib */
 void afSTFTlib_free(void* handle);
 
-/**
- * Creates and initialises an instance of the afHybrid filtering structure */
+/** Creates and initialises an instance of the afHybrid filtering structure */
 void afHybridInit(void** handle,
                   int hopSize,
                   int inChannels,
                   int outChannels);
 
-/**
- * Forward hybrid-filtering transform */
+/** Forward hybrid-filtering transform */
 void afHybridForward(void* handle,
                      complexVector* FD);
 
-/**
- * Inverse hybrid-filtering transform */
+/** Inverse hybrid-filtering transform */
 void afHybridInverse(void* handle,
                      complexVector* FD);
 
-/**
- * Frees an instnce of the afHybrid filtering structure */
+/** Frees an instnce of the afHybrid filtering structure */
 void afHybridFree(void* handle);
 
 

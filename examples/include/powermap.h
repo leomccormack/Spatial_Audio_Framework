@@ -121,7 +121,7 @@ void powermap_initCodec(void* const hPm);
  *                      no audio, reduced processing, 1: audio, full processing
  */
 void powermap_analysis(void* const hPm,
-                       float** const inputs,
+                       const float *const * inputs,
                        int nInputs,
                        int nSamples,
                        int isPlaying);
@@ -137,24 +137,16 @@ void powermap_analysis(void* const hPm,
  */
 void powermap_refreshSettings(void* const hPm);
 
-/**
- * Sets the powermap/activity-map approach, (see #POWERMAP_MODES enum)
- */
+/** Sets the powermap/activity-map approach, (see #POWERMAP_MODES enum) */
 void powermap_setPowermapMode(void* const hPm, int newMode);
 
-/**
- * Sets the maximum input/analysis order (see #SH_ORDERS enum)
- */
+/** Sets the maximum input/analysis order (see #SH_ORDERS enum) */
 void powermap_setMasterOrder(void* const hPm,  int newValue);
 
-/**
- * Sets the input/analysis order for one specific frequency band index
- */
+/** Sets the input/analysis order for one specific frequency band index */
 void powermap_setAnaOrder(void* const hPm,  int newValue, int bandIdx);
 
-/**
- * Sets the input/analysis order for all frequency bands.
- */
+/** Sets the input/analysis order for all frequency bands */
 void powermap_setAnaOrderAllBands(void* const hPm, int newValue);
     
 /**
@@ -163,14 +155,10 @@ void powermap_setAnaOrderAllBands(void* const hPm, int newValue);
  */
 void powermap_setPowermapEQ(void* const hPm,  float newValue, int bandIdx);
 
-/**
- * Sets the weighting coefficient for all frequency bands.
- */
+/** Sets the weighting coefficient for all frequency bands */
 void powermap_setPowermapEQAllBands(void* const hPm,  float newValue);
     
-/**
- * Sets the covariance matrix averaging coefficient, 0..1
- */
+/** Sets the covariance matrix averaging coefficient, 0..1 */
 void powermap_setCovAvgCoeff(void* const hPm, float newAvg);
 
 /**
@@ -191,9 +179,7 @@ void powermap_setNormType(void* const hPm, int newType);
  */
 void powermap_setSourcePreset(void* const hPm, int newPresetID);
 
-/**
- * Sets the number of sources present in the input sound scene.
- */
+/** Sets the number of sources present in the input sound scene */
 void powermap_setNumSources(void* const hPm, int newValue);
 
 /**
@@ -208,9 +194,7 @@ void powermap_setDispFOV(void* const hPm, int newOption);
  */
 void powermap_setAspectRatio(void* const hPm, int newOption);
 
-/**
- * Sets the activity-map averaging coefficient, 0..1
- */
+/** Sets the activity-map averaging coefficient, 0..1 */
 void powermap_setPowermapAvgCoeff(void* const hPm, float newValue);
 
 /**
@@ -230,9 +214,7 @@ void powermap_requestPmapUpdate(void* const hPm);
  */
 int powermap_getFrameSize(void);
 
-/**
- * Returns current codec status (see #CODEC_STATUS enum)
- */
+/** Returns current codec status (see #CODEC_STATUS enum) */
 CODEC_STATUS powermap_getCodecStatus(void* const hPm);
 
 /**
@@ -260,19 +242,13 @@ int powermap_getMasterOrder(void* const hPm);
  */
 int powermap_getPowermapMode(void* const hPm);
 
-/**
- * Returns the current sampling rate, in Hz
- */
+/** Returns the current sampling rate, in Hz */
 int powermap_getSamplingRate(void* const hPm);
 
-/**
- * Returns the current covariance averaging coefficient value, in Hz
- */
+/** Returns the current covariance averaging coefficient value, in Hz */
 float powermap_getCovAvgCoeff(void* const hPm);
 
-/**
- * Returns the number of frequency bands used for the analysis
- */
+/** Returns the number of frequency bands used for the analysis */
 int powermap_getNumberOfBands(void);
     
 /**
@@ -305,14 +281,10 @@ void powermap_getPowermapEQHandle(void* const hPm,
                                   float** pY_values,
                                   int* pNpoints);
 
-/**
- * Returns the input/analysis order for one specific frequency band.
- */
+/** Returns the input/analysis order for one specific frequency band */
 int powermap_getAnaOrder(void* const hPm, int bandIdx);
 
-/**
- * Returns the input/analysis order for the first frequency band
- */
+/** Returns the input/analysis order for the first frequency band */
 int powermap_getAnaOrderAllBands(void* const hPm);
 
 /**
@@ -342,9 +314,7 @@ int powermap_getChOrder(void* const hPm);
  */
 int powermap_getNormType(void* const hPm);
 
-/**
- * Returns the number of sources present in the input sound scene.
- */
+/** Returns the number of sources present in the input sound scene */
 int powermap_getNumSources(void* const hPm);
 
 /**
@@ -359,9 +329,7 @@ int powermap_getDispFOV(void* const hPm);
  */
 int powermap_getAspectRatio(void* const hPm);
 
-/**
- * Returns the current activity-map averaging coefficient, 0..1
- */
+/** Returns the current activity-map averaging coefficient, 0..1 */
 float powermap_getPowermapAvgCoeff(void* const hPm);
 
 /**

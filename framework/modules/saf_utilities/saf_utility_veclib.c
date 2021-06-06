@@ -26,8 +26,10 @@
  *   FLAGS to your project's preprocessor definitions list in order to enable
  *   one of these suitable performance libraries, which must also be correctly
  *   linked to your project.
- *   - SAF_USE_INTEL_MKL:
+ *   - SAF_USE_INTEL_MKL_LP64:
  *       to enable Intel's Math Kernal Library with the Fortran LAPACK interface
+ *   - SAF_USE_INTEL_MKL_ILP64
+ *       same as SAF_USE_INTEL_MKL except using int64 and LAPACKE interface
  *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
  *       to enable OpenBLAS with the LAPACKE interface
  *   - SAF_USE_APPLE_ACCELERATE:
@@ -37,8 +39,6 @@
  *
  * @see More information can be found here:
  *      https://github.com/leomccormack/Spatial_Audio_Framework
- * @note MacOSX users only: saf_utilities will employ Apple's Accelerate library
- *       by default, if none of the above FLAGS are defined.
  *
  * @author Leo McCormack
  * @date 11.07.2016
@@ -46,36 +46,109 @@
 
 #include "saf_utilities.h"
 #include "saf_externals.h"
-#include <float.h>
 
-/* just to remove compiler warnings, and to be more explicit: */
+/* Assert that only one LAPACK interface has been specified */
+#if (defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE) + \
+     defined(SAF_VECLIB_USE_LAPACKE_INTERFACE) + \
+     defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)) > 1
+# error Only one LAPACK interface can be used!
+#endif
+
+/* mainly to just to remove compiler warnings: */
 #if defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
-  typedef __CLPK_integer       veclib_int;
-  typedef __CLPK_real          veclib_float;
-  typedef __CLPK_doublereal    veclib_double;
-  typedef __CLPK_complex       veclib_float_complex;
-  typedef __CLPK_doublecomplex veclib_double_complex;
-#elif defined(SAF_USE_INTEL_MKL)
-# ifdef MKL_ILP64
-   typedef long long int       veclib_int;
-# elif defined(MKL_LP64) || 1 /* also default */
-   typedef int                 veclib_int;
-# endif
-  typedef float                veclib_float;
-  typedef double               veclib_double;
-  typedef MKL_Complex8         veclib_float_complex;
-  typedef MKL_Complex16        veclib_double_complex;
+  typedef __CLPK_integer        veclib_int;
+  typedef __CLPK_real           veclib_float;
+  typedef __CLPK_doublereal     veclib_double;
+  typedef __CLPK_complex        veclib_float_complex;
+  typedef __CLPK_doublecomplex  veclib_double_complex;
+#elif defined(INTEL_MKL_VERSION)
+  typedef MKL_INT               veclib_int;
+  typedef float                 veclib_float;
+  typedef double                veclib_double;
+  typedef MKL_Complex8          veclib_float_complex;
+  typedef MKL_Complex16         veclib_double_complex;
+#elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
+  typedef lapack_int            veclib_int;
+  typedef float                 veclib_float;
+  typedef double                veclib_double;
+  typedef lapack_complex_float  veclib_float_complex;
+  typedef lapack_complex_double veclib_double_complex;
 #else
   /** integer datatype used by veclib */
-  typedef int                  veclib_int;
+  typedef int                   veclib_int;
   /** single precision floating-point datatype used by veclib */
-  typedef float                veclib_float;
+  typedef float                 veclib_float;
   /** single precision floating-point datatype used by veclib */
-  typedef double               veclib_double;
+  typedef double                veclib_double;
   /** single precision complex floating-point datatype used by veclib */
-  typedef float_complex        veclib_float_complex;
+  typedef float_complex         veclib_float_complex;
   /** double precision floating-point datatype used by veclib */
-  typedef double_complex       veclib_double_complex;
+  typedef double_complex        veclib_double_complex;
+#endif
+
+
+/* ========================================================================== */
+/*                     Built-in CBLAS Functions (Level 0)                     */
+/* ========================================================================== */
+
+#ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
+void cblas_scopy(const int N, const float *X, const int incX, float *Y, const int incY){
+    int i,j;
+    for(i=j=0; i<N; i+=incX, j+=incY)
+        Y[i] = X[j];
+}
+
+void cblas_dcopy(const int N, const double *X, const int incX, double *Y, const int incY){
+    int i,j;
+    for(i=j=0; i<N; i+=incX, j+=incY)
+        Y[i] = X[j];
+}
+
+void cblas_ccopy(const int N, const void *X, const int incX, void *Y, const int incY){
+    int i,j;
+    float_complex *cX, *cY;
+    cX = (float_complex*)X;
+    cY = (float_complex*)Y;
+    for(i=j=0; i<N; i+=incX, j+=incY)
+        cY[i] = cX[j];
+}
+
+void cblas_zcopy(const int N, const void *X, const int incX, void *Y, const int incY){
+    int i,j;
+    double_complex *cX, *cY;
+    cX = (double_complex*)X;
+    cY = (double_complex*)Y;
+    for(i=j=0; i<N; i+=incX, j+=incY)
+        cY[i] = cX[j];
+}
+
+void cblas_saxpy(const int N, const float alpha, const float* X, const int incX, float* Y, const int incY) {
+    int i,j;
+    for (i=j=0; i<N; i+=incX, j+=incY)
+        Y[i] = alpha * X[i] + Y[i];
+}
+
+void cblas_daxpy(const int N, const double alpha, const double* X, const int incX, double* Y, const int incY) {
+    int i,j;
+    for (i=j=0; i<N; i+=incX, j+=incY)
+        Y[i] = alpha * X[i] + Y[i];
+}
+#endif
+
+
+/* ========================================================================== */
+/*                     Built-in CBLAS Functions (Level 3)                     */
+/* ========================================================================== */
+
+#ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
+void cblas_sgemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA,
+                 const enum CBLAS_TRANSPOSE TransB, const int M, const int N,
+                 const int K, const float alpha, const float* A,
+                 const int lda, const float* B, const int ldb,
+                 const float beta, float* C, const int ldc)
+{
+    saf_assert(0);
+}
 #endif
 
 
@@ -143,6 +216,50 @@ void utility_ciminv
 #endif
 }
 
+void utility_diminv
+(
+    const double* a,
+    const int len,
+    int* index
+)
+{
+#if defined(INTEL_MKL_VERSION)
+    *index = (int)cblas_idamin(len, a, 1);
+#else
+    int i;
+    *index = 0;
+    double minVal=DBL_MAX;
+    for(i=0; i<len; i++){
+        if(fabs(a[i])<minVal){
+            minVal = fabs(a[i]);
+            *index = i;
+        }
+    }
+#endif
+}
+
+void utility_ziminv
+(
+    const double_complex* a,
+    const int len,
+    int* index
+)
+{
+#if defined(INTEL_MKL_VERSION)
+    *index = (int)cblas_izamin(len, a, 1);
+#else
+    int i;
+    *index = 0;
+    double minVal=DBL_MAX;
+    for(i=0; i<len; i++){
+        if(cabs(a[i])<minVal){
+            minVal = cabs(a[i]);
+            *index = i;
+        }
+    }
+#endif
+}
+
 
 /* ========================================================================== */
 /*                     Find Index of Max-Abs-Value (?imaxv)                   */
@@ -166,6 +283,26 @@ void utility_cimaxv
 )
 {
     *index = (int)cblas_icamax(len, a, 1);
+}
+
+void utility_dimaxv
+(
+    const double* a,
+    const int len,
+    int* index
+)
+{
+    *index = (int)cblas_idamax(len, a, 1);
+}
+
+void utility_zimaxv
+(
+    const double_complex* a,
+    const int len,
+    int* index
+)
+{
+    *index = (int)cblas_izamax(len, a, 1);
 }
 
 
@@ -361,7 +498,7 @@ void utility_svvsub
     float* c
 )
 {
-#if NDEBUG
+#if NDEBUG && 0
     int i;
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
@@ -380,7 +517,8 @@ void utility_svvsub
     }
 #endif
 #ifdef __ACCELERATE__
-    vDSP_vsub(a, 1, b, 1, c, 1, len);
+    vDSP_vsub(b, 1, a, 1, c, 1, len);  /* WTF Apple... */
+    //vDSP_vsub(a, 1, b, 1, c, 1, len);
 #elif defined(INTEL_MKL_VERSION)
     vsSub(len, a, b, c);
 #else
@@ -398,7 +536,7 @@ void utility_cvvsub
     float_complex* c
 )
 {
-#if __STDC_VERSION__ >= 199901L && NDEBUG
+#if __STDC_VERSION__ >= 199901L && NDEBUG && 0
     int i;
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
@@ -438,7 +576,7 @@ void utility_svvmul
     float* c
 )
 {
-#if NDEBUG
+#if NDEBUG && 0
     int i;
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
@@ -475,7 +613,7 @@ void utility_cvvmul
     float_complex* c
 )
 {
-#if __STDC_VERSION__ >= 199901L && NDEBUG
+#if __STDC_VERSION__ >= 199901L && NDEBUG && 0
     int i;
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
@@ -616,9 +754,6 @@ void utility_cvsmul
     else {
         cblas_ccopy(len, a, 1, c, 1);
         cblas_cscal(len, s, c, 1);
-//        int i;
-//        for (i = 0; i<len; i++)
-//            c[i] = ccmulf(a[i], s[0]);
     }
 }
 
@@ -658,9 +793,6 @@ void utility_zvsmul
     else {
         cblas_zcopy(len, a, 1, c, 1);
         cblas_zscal(len, s, c, 1);
-//        int i;
-//        for (i = 0; i<len; i++)
-//            c[i] = ccmul(a[i], s[0]);
     }
 }
 
@@ -744,7 +876,17 @@ void utility_ssv2cv_inds
 )
 {
 #ifdef INTEL_MKL_VERSION
-    cblas_sgthr(len, sv, cv, inds);
+    int i;
+    veclib_int* inds_tmp;
+    if(sizeof(veclib_int)==sizeof(int)) /* LP64 MKL */
+        cblas_sgthr(len, sv, cv, (veclib_int*)inds);
+    else{ /* ILP64 MKL */
+        inds_tmp = malloc1d(len*sizeof(veclib_int));
+        for(i=0; i<len; i++)
+            inds_tmp[i] = (veclib_int)inds[i];
+        cblas_sgthr(len, sv, cv, (veclib_int*)inds_tmp);
+        free(inds_tmp);
+    }
 #else
     int i;
     for(i=0; i<len; i++)
@@ -771,16 +913,16 @@ void utility_ssvd
     veclib_int i, j, m, n, lda, ldu, ldvt, info;
     m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
     float* a, *s, *u, *vt;
-#ifdef VECLIB_USE_LAPACK_FORTRAN_INTERFACE
+#ifdef SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE
     veclib_int lwork;
     float wkopt;
     float *work;
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     float* superb;
 #endif
     
     a = malloc1d(lda*n*sizeof(float));
-    s = malloc1d(MIN(n,m)*sizeof(float));
+    s = malloc1d(SAF_MIN(n,m)*sizeof(float));
     u = malloc1d(ldu*m*sizeof(float));
     vt = malloc1d(ldvt*n*sizeof(float));
     
@@ -788,16 +930,16 @@ void utility_ssvd
     for(i=0; i<dim1; i++)
         for(j=0; j<dim2; j++)
             a[j*dim1+i] = A[i*dim2 +j];
-    
+    //MKL_Somatcopy('R', 'T', dim1, dim2, 1.0f, A, dim2, a, dim1); // TODO: see if this is faster... LAPACKE could also be configured for rowMajor, and this replaced by cblas_?copy
+
     /* perform the singular value decomposition */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
-    /* no such implementation in altas-clapack */
-    assert(0);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    superb = malloc((MIN(m,n)-1)*sizeof(float));
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
+    saf_print_error("No such implementation available in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
+    superb = malloc((SAF_MIN(m,n)-1)*sizeof(float));
     info = LAPACKE_sgesvd(CblasColMajor, 'A', 'A', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
     free(superb);
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     sgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info );
     lwork = (int)wkopt;
@@ -805,7 +947,7 @@ void utility_ssvd
     sgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
     free(work);
 #endif
-    
+
     /* svd failed to converge */
     if( info != 0 ) {
         if (S != NULL)
@@ -815,9 +957,12 @@ void utility_ssvd
         if (V != NULL)
             memset(V, 0, dim2*dim2*sizeof(float));
         if (sing != NULL)
-            memset(sing, 0, MIN(dim1, dim2)*sizeof(float));
+            memset(sing, 0, SAF_MIN(dim1, dim2)*sizeof(float));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+        /* The SVD failed to converge, or the input matrix contained illegal
+         * values so no solution was attempted. In these cases this function
+         * will zero all output matrices and/or vectors. */
+        saf_print_warning("Could not compute SVD in utility_ssvd(). Output matrices/vectors have been zeroed.");
 #endif
     }
     /* svd successful */
@@ -825,7 +970,7 @@ void utility_ssvd
         if (S != NULL){
             memset(S, 0, dim1*dim2*sizeof(float));
             /* singular values on the diagonal MIN(dim1, dim2). The remaining elements are 0.  */
-            for(i=0; i<MIN(dim1, dim2); i++)
+            for(i=0; i<SAF_MIN(dim1, dim2); i++)
                 S[i*dim2+i] = s[i];
         }
         
@@ -842,7 +987,7 @@ void utility_ssvd
                     V[i*dim2+j] = vt[i*dim2+j];
         
         if (sing != NULL)
-            for(i=0; i<MIN(dim1, dim2); i++)
+            for(i=0; i<SAF_MIN(dim1, dim2); i++)
                 sing[i] = s[i];
     }
     
@@ -867,17 +1012,17 @@ void utility_csvd
     m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
     float_complex* a, *u, *vt;
     float* s;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float_complex wkopt;
     float* rwork;
     float_complex* *work;
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     float* superb;
 #endif
     
     a = malloc1d(lda*n*sizeof(float_complex));
-    s = malloc1d(MIN(n,m)*sizeof(float));
+    s = malloc1d(SAF_MIN(n,m)*sizeof(float));
     u = malloc1d(ldu*m*sizeof(float_complex));
     vt = malloc1d(ldvt*n*sizeof(float_complex));
     
@@ -887,8 +1032,8 @@ void utility_csvd
             a[j*dim1+i] = A[i*dim2 +j];
     
     /* perform the singular value decomposition */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    rwork = malloc1d(m*MAX(1, 5*MIN(n,m))*sizeof(float));
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    rwork = malloc1d(m*SAF_MAX(1, 5*SAF_MIN(n,m))*sizeof(float));
     lwork = -1;
     cgesvd_( "A", "A", (veclib_int*)&m, (veclib_int*)&n, (veclib_float_complex*)a, (veclib_int*)&lda, s, (veclib_float_complex*)u, (veclib_int*)&ldu,
             (veclib_float_complex*)vt, &ldvt, (veclib_float_complex*)&wkopt, &lwork, rwork, (veclib_int*)&info );
@@ -898,11 +1043,11 @@ void utility_csvd
             (veclib_float_complex*)work, &lwork, rwork, &info);
     free(work);
     free(rwork);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    assert(0); /* no such implementation in clapack */
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    superb = malloc((MIN(m,n)-1)*sizeof(float));
-    info = LAPACKE_cgesvd(CblasColMajor, 'A', 'A', m, n, (veclib_float_complex*)a, lda, s, (veclib_float_complex*)u, ldu, vt, ldvt, superb);
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation available in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
+    superb = malloc((SAF_MIN(m,n)-1)*sizeof(float));
+    info = LAPACKE_cgesvd(CblasColMajor, 'A', 'A', m, n, (veclib_float_complex*)a, lda, s, (veclib_float_complex*)u, ldu, (veclib_float_complex*)vt, ldvt, superb);
     free(superb);
 #endif
 
@@ -915,9 +1060,12 @@ void utility_csvd
         if (V != NULL)
             memset(V, 0, dim2*dim2*sizeof(float_complex));
         if (sing != NULL)
-            memset(sing, 0, MIN(dim1, dim2)*sizeof(float_complex));
+            memset(sing, 0, SAF_MIN(dim1, dim2)*sizeof(float_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+        /* The SVD failed to converge, or the input matrix contained illegal
+         * values so no solution was attempted. In these cases this function
+         * will zero all output matrices and/or vectors. */
+        saf_print_warning("Could not compute SVD in utility_csvd(). Output matrices/vectors have been zeroed.");
 #endif
     }
     /* svd successful */
@@ -925,7 +1073,7 @@ void utility_csvd
         if (S != NULL){
             memset(S, 0, dim1*dim2*sizeof(float_complex));
             /* singular values on the diagonal MIN(dim1, dim2). The remaining elements are 0.  */
-            for(i=0; i<MIN(dim1, dim2); i++)
+            for(i=0; i<SAF_MIN(dim1, dim2); i++)
                 S[i*dim2+i] = cmplxf(s[i], 0.0f);
         }
         /*return as row-major*/
@@ -941,7 +1089,7 @@ void utility_csvd
                     V[i*dim2+j] = conjf(vt[i*dim2+j]); /* v^H */
         
         if (sing != NULL)
-            for(i=0; i<MIN(dim1, dim2); i++)
+            for(i=0; i<SAF_MIN(dim1, dim2); i++)
                 sing[i] = s[i];
     }
     
@@ -967,7 +1115,7 @@ void utility_sseig
 )
 {
     veclib_int i, j, n, lda, info;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float wkopt;
     float* work;
@@ -985,16 +1133,16 @@ void utility_sseig
             a[i*dim+j] = A[j*dim+i];
     
     /* solve the eigenproblem */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     ssyev_( "Vectors", "Upper", &n, a, &lda, w, &wkopt, &lwork, &info );
     lwork = (int)wkopt;
     work = (float*)malloc1d( lwork*sizeof(float) );
     ssyev_( "Vectors", "Upper", &n, a, &lda, w, work, &lwork, &info );
     free(work);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    assert(0); /* no such implementation in clapack */
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation available in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_ssyev(CblasColMajor, 'V', 'U', n, a, lda, w );
 #endif
     
@@ -1006,7 +1154,11 @@ void utility_sseig
         if(V!=NULL)
             memset(V, 0, dim*dim*sizeof(float));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_EVG);
+        /* Failed to compute all of the eigenvalues, some eigenvectors have not
+         * been computed, or the input matrix contained illegal values so no
+         * solution was attempted. In these cases the function will zero all
+         * output matrices and vectors. */
+        saf_print_warning("Could not compute EVD in utility_sseig(). Output matrices/vectors have been zeroed.");
 #endif
     }
     else{
@@ -1051,7 +1203,7 @@ void utility_cseig
     veclib_int i, j, n, lda, info;
     float *w;
     float_complex* a;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float *rwork;
     float_complex wkopt;
@@ -1069,7 +1221,7 @@ void utility_cseig
             a[i*dim+j] = A[j*dim+i];
     
     /* solve the eigenproblem */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     rwork = malloc1d((3*n-2)*sizeof(float));
     lwork = -1;
     cheev_( "Vectors", "Upper", &n, (veclib_float_complex*)a, &lda, w, (veclib_float_complex*)&wkopt, &lwork, rwork, &info );
@@ -1078,9 +1230,9 @@ void utility_cseig
     cheev_( "Vectors", "Upper", &n, (veclib_float_complex*)a, &lda, w, (veclib_float_complex*)work, &lwork, rwork, &info );
     free(work);
     free(rwork);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    assert(0); /* no such implementation in clapack */
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation available in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cheev(CblasColMajor, 'V', 'U', n, (veclib_float_complex*)a, lda, w);
 #endif
     
@@ -1092,7 +1244,11 @@ void utility_cseig
         if(V!=NULL)
             memset(V, 0, dim*dim*sizeof(float_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_EVG);
+        /* Failed to compute all of the eigenvalues, some eigenvectors have not
+         * been computed, or the input matrix contained illegal values so no
+         * solution was attempted. In these cases the function will zero all
+         * output matrices and vectors. */
+        saf_print_warning("Could not compute EVD in utility_cseig(). Output matrices/vectors have been zeroed.");
 #endif
     }
     
@@ -1144,7 +1300,7 @@ void utility_ceigmp
     veclib_int i, j;
     veclib_int n, lda, ldb, ldvl, ldvr, info;
     float_complex* a, *b, *vl, *vr, *alpha, *beta;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float* rwork;
     float_complex* work;
@@ -1167,7 +1323,7 @@ void utility_ceigmp
             b[j*dim+i] = B[i*dim+j];
     
     /* solve eigen problem */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = 4*n; /* 2x more than required, but is faster */
     work = malloc1d(lwork*sizeof(float_complex));
     rwork = malloc1d(4*lwork*sizeof(float)); /* 2x more than required, but is faster */
@@ -1175,9 +1331,9 @@ void utility_ceigmp
            (veclib_float_complex*)vl, &ldvl, (veclib_float_complex*)vr, &ldvr, (veclib_float_complex*)work, &lwork, rwork, &info);
     free(work);
     free(rwork);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    assert(0); /* no such implementation in clapack */
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation available in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cggev(CblasColMajor, 'V', 'V', n, (veclib_float_complex*)a, lda, (veclib_float_complex*)b, ldb, (veclib_float_complex*)alpha,
                          (veclib_float_complex*)beta, (veclib_float_complex*)vl, ldvl, (veclib_float_complex*)vr, ldvr);
 #endif
@@ -1192,7 +1348,11 @@ void utility_ceigmp
         if(VR!=NULL)
             memset(VR, 0, dim*dim*sizeof(float_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_EVG);
+        /* Failed to compute all of the eigenvalues, some eigenvectors have not
+         * been computed, or the input matrix contained illegal values so no
+         * solution was attempted. In these cases the function will zero all
+         * output matrices and vectors. */
+        saf_print_warning("Could not compute EVD in utility_ceigmp(). Output matrices/vectors have been zeroed.");
 #endif
     }
     /* transpose, back to row-major */
@@ -1232,7 +1392,7 @@ void utility_zeigmp
     veclib_int i, j;
     veclib_int n, lda, ldb, ldvl, ldvr, info;
     double_complex* a, *b, *vl, *vr, *alpha, *beta;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     double* rwork;
     double_complex* work;
@@ -1255,7 +1415,7 @@ void utility_zeigmp
             b[j*dim+i] = B[i*dim+j]; /* store in column major order */
     
     /* solve eigen problem */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = 4*n; /* 2x more than required, but is faster */
     work = malloc1d(lwork*sizeof(double_complex));
     rwork = malloc1d(4*lwork*sizeof(double)); /* 2x more than required, but is faster */
@@ -1263,9 +1423,9 @@ void utility_zeigmp
            (veclib_double_complex*)vl, &ldvl, (veclib_double_complex*)vr, &ldvr, (veclib_double_complex*)work, &lwork, rwork, &info);
     free(work);
     free(rwork);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    assert(0); /* no such implementation in clapack */
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation available in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_zggev(CblasColMajor, 'V', 'V', n, (veclib_double_complex*)a, lda, (veclib_double_complex*)b, ldb, (veclib_double_complex*)alpha,
                          (veclib_double_complex*)beta, (veclib_double_complex*)vl, ldvl, (veclib_double_complex*)vr, ldvr);
 #endif
@@ -1280,7 +1440,11 @@ void utility_zeigmp
         if(VR!=NULL)
             memset(VR, 0, dim*dim*sizeof(double_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_EVG);
+        /* Failed to compute all of the eigenvalues, some eigenvectors have not
+         * been computed, or the input matrix contained illegal values so no
+         * solution was attempted. In these cases the function will zero all
+         * output matrices and vectors. */
+        saf_print_warning("Could not compute EVD in utility_zeigmp(). Output matrices/vectors have been zeroed.");
 #endif
     }
     /* transpose, back to row-major */
@@ -1324,7 +1488,7 @@ void utility_ceig
 {
     veclib_int i, j, n, lda, ldvl, ldvr, info;
     float_complex *w, *vl, *vr, *a;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float* rwork;
     float_complex wkopt;
@@ -1343,7 +1507,7 @@ void utility_ceig
             a[i*dim+j] = A[j*dim+i];
 
     /* solve the eigenproblem */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     rwork = malloc1d(2*dim*sizeof(float));
     cgeev_( "Vectors", "Vectors", &n, (veclib_float_complex*)a, &lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, &ldvl,
@@ -1354,9 +1518,9 @@ void utility_ceig
            (veclib_float_complex*)vr, &ldvr, (veclib_float_complex*)work, &lwork, rwork, &info );
     free(rwork);
     free(work);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    assert(0); /* no such implementation in clapack */
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation available in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cgeev(CblasColMajor, 'V', 'V', n, (veclib_float_complex*)a, lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, ldvl,
                          (veclib_float_complex*)vr, ldvr );
 #endif
@@ -1374,7 +1538,11 @@ void utility_ceig
         if(eig!=NULL)
             memset(eig, 0, dim*sizeof(float_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_EVG);
+        /* Failed to compute all of the eigenvalues, some eigenvectors have not
+         * been computed, or the input matrix contained illegal values so no
+         * solution was attempted. In these cases the function will zero all
+         * output matrices and vectors. */
+        saf_print_warning("Could not compute EVD in utility_ceig(). Output matrices/vectors have been zeroed.");
 #endif
     }
     /* transpose, back to row-major */
@@ -1411,7 +1579,7 @@ void utility_zeig
 {
     veclib_int i, j, n, lda, ldvl, ldvr, info;
     double_complex *w, *vl, *vr, *a;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     double* rwork;
     double_complex wkopt;
@@ -1430,7 +1598,7 @@ void utility_zeig
             a[i*dim+j] = A[j*dim+i];
 
     /* solve the eigenproblem */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     rwork = malloc1d(2*dim*sizeof(double));
     zgeev_( "Vectors", "Vectors", &n, (veclib_double_complex*)a, &lda, (veclib_double_complex*)w, (veclib_double_complex*)vl, &ldvl,
@@ -1441,9 +1609,9 @@ void utility_zeig
            (veclib_double_complex*)vr, &ldvr, (veclib_double_complex*)work, &lwork, rwork, &info );
     free(rwork);
     free(work);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    assert(0); /* no such implementation in clapack */
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation available in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_zgeev(CblasColMajor, 'V', 'V', n, (veclib_double_complex*)a, lda, (veclib_double_complex*)w, (veclib_double_complex*)vl, ldvl,
                          (veclib_double_complex*)vr, ldvr );
 #endif
@@ -1461,7 +1629,11 @@ void utility_zeig
         if(eig!=NULL)
             memset(eig, 0, dim*sizeof(double_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_EVG);
+        /* Failed to compute all of the eigenvalues, some eigenvectors have not
+         * been computed, or the input matrix contained illegal values so no
+         * solution was attempted. In these cases the function will zero all
+         * output matrices and vectors. */
+        saf_print_warning("Could not compute EVD in utility_zeig(). Output matrices/vectors have been zeroed.");
 #endif
     }
     /* transpose, back to row-major */
@@ -1517,11 +1689,11 @@ void utility_sglslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_sgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_sgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb );
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     sgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
 #endif
     
@@ -1529,7 +1701,10 @@ void utility_sglslv
         /* A is singular, solution not possible */
         memset(X, 0, dim*nCol*sizeof(float));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_SOLVE_LINEAR_EQUATION);
+        /* Input matrix was singular, solution was unable to be computed, or the
+         * input matrix contained illegal values so no solution was attempted.
+         * In these cases the function will zero the output matrix. */
+        saf_print_warning("Could not solve the linear equation in utility_sglslv(). Output matrices/vectors have been zeroed.");
 #endif
     }
     else{
@@ -1570,11 +1745,11 @@ void utility_cglslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     cgesv_( &n, &nrhs, (veclib_float_complex*)a, &lda, IPIV, (veclib_float_complex*)b, &ldb, &info );
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     info = clapack_cgesv(CblasColMajor, n, nrhs, (veclib_float_complex*)a, lda, IPIV, (veclib_float_complex*)b, ldb);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cgesv(CblasColMajor, n, nrhs, (veclib_float_complex*)a, lda, IPIV, (veclib_float_complex*)b, ldb);
 #endif
     
@@ -1582,7 +1757,10 @@ void utility_cglslv
     if(info!=0){
         memset(X, 0, dim*nCol*sizeof(float_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_SOLVE_LINEAR_EQUATION);
+        /* Input matrix was singular, solution was unable to be computed, or the
+         * input matrix contained illegal values so no solution was attempted.
+         * In these cases the function will zero the output matrix. */
+        saf_print_warning("Could not solve the linear equation in utility_cglslv(). Output matrices/vectors have been zeroed.");
 #endif
     }
     /* store solution in row-major order */
@@ -1623,11 +1801,11 @@ void utility_dglslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_dgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_dgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     dgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
 #endif
     
@@ -1635,7 +1813,10 @@ void utility_dglslv
     if(info!=0){
         memset(X, 0, dim*nCol*sizeof(double));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_SOLVE_LINEAR_EQUATION);
+        /* Input matrix was singular, solution was unable to be computed, or the
+         * input matrix contained illegal values so no solution was attempted.
+         * In these cases the function will zero the output matrix. */
+        saf_print_warning("Could not solve the linear equation in utility_dglslv(). Output matrices/vectors have been zeroed.");
 #endif
     }
     /* store solution in row-major order */
@@ -1676,11 +1857,11 @@ void utility_zglslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     zgesv_( &n, &nrhs, (veclib_double_complex*)a, &lda, IPIV, (veclib_double_complex*)b, &ldb, &info );
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     info = clapack_zgesv(CblasColMajor, n, nrhs, (veclib_double_complex*)a, lda, IPIV, (veclib_double_complex*)b, ldb);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_zgesv(CblasColMajor, n, nrhs, (veclib_double_complex*)a, lda, IPIV, (veclib_double_complex*)b, ldb);
 #endif
     
@@ -1688,7 +1869,10 @@ void utility_zglslv
     if(info!=0){
         memset(X, 0, dim*nCol*sizeof(double_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_SOLVE_LINEAR_EQUATION);
+        /* Input matrix was singular, solution was unable to be computed, or the
+         * input matrix contained illegal values so no solution was attempted.
+         * In these cases the function will zero the output matrix. */
+        saf_print_warning("Could not solve the linear equation in utility_zglslv(). Output matrices/vectors have been zeroed.");
 #endif
     }
     /* store solution in row-major order */
@@ -1730,11 +1914,11 @@ void utility_sglslvt
     cblas_scopy(dim*nCol, B, 1, b, 1);
 
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_sgesv(CblasColMajor, n, nrhs, b, ldb, IPIV, a, lda);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_sgesv(CblasColMajor, n, nrhs, b, ldb, IPIV, a, lda );
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     sgesv_( &n, &nrhs, b, &ldb, IPIV, a, &lda, &info );
 #endif
 
@@ -1742,7 +1926,10 @@ void utility_sglslvt
         /* A is singular, solution not possible */
         memset(X, 0, dim*nCol*sizeof(float));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_SOLVE_LINEAR_EQUATION);
+        /* Input matrix was singular, solution was unable to be computed, or the
+         * input matrix contained illegal values so no solution was attempted.
+         * In these cases the function will zero the output matrix. */
+        saf_print_warning("Could not solve the linear equation in utility_sglslvt(). Output matrices/vectors have been zeroed.");
 #endif
     }
     else
@@ -1767,7 +1954,7 @@ void utility_cglslvt
     veclib_int* IPIV;
     float_complex* a, *b;
 
-    assert(0); /* This function needs checking */
+    saf_assert(dim==-1, "Function needs checking!");  
 
     IPIV = malloc1d(dim*sizeof(veclib_int));
     a = malloc1d(dim*dim*sizeof(float_complex));
@@ -1782,11 +1969,11 @@ void utility_cglslvt
         b[i] = conjf(b[i]);
 
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_cgesv(CblasColMajor, n, nrhs, a, ldb, IPIV, b, lda);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_cgesv(CblasColMajor, n, nrhs, a, ldb, IPIV, b, lda );
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_cgesv(CblasColMajor, n, nrhs, (veclib_float_complex*)a, ldb, IPIV, (veclib_float_complex*)b, lda );
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     cgesv_( &n, &nrhs, (veclib_float_complex*)a, &ldb, IPIV, (veclib_float_complex*)b, &lda, &info );
 #endif
 
@@ -1794,7 +1981,10 @@ void utility_cglslvt
         /* A is singular, solution not possible */
         memset(X, 0, dim*nCol*sizeof(float_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_SOLVE_LINEAR_EQUATION);
+        /* Input matrix was singular, solution was unable to be computed, or the
+         * input matrix contained illegal values so no solution was attempted.
+         * In these cases the function will zero the output matrix. */
+        saf_print_warning("Could not solve the linear equation in utility_cglslvt(). Output matrices/vectors have been zeroed.");
 #endif
     }
     else{
@@ -1837,11 +2027,11 @@ void utility_sslslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_sposv(CblasColMajor, CblasUpper, n, nrhs, a, lda, b, ldb);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_sposv(CblasColMajor, CblasUpper, n, nrhs, a, lda, b, ldb);
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     sposv_( "U", &n, &nrhs, a, &lda, b, &ldb, &info );
 #endif
     
@@ -1849,7 +2039,10 @@ void utility_sslslv
     if(info!=0){
         memset(X, 0, dim*nCol*sizeof(float));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_SOLVE_LINEAR_EQUATION);
+        /* Input matrix was singular, solution was unable to be computed, or the
+         * input matrix contained illegal values so no solution was attempted.
+         * In these cases the function will zero the output matrix. */
+        saf_print_warning("Could not solve the linear equation in utility_sslslv(). Output matrices/vectors have been zeroed.");
 #endif
     }
     /* store solution in row-major order */
@@ -1887,11 +2080,11 @@ void utility_cslslv
             b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     cposv_( "U", &n, &nrhs, (veclib_float_complex*)a, &lda, (veclib_float_complex*)b, &ldb, &info );
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     info = clapack_cposv(CblasColMajor, CblasUpper, n, nrhs, (veclib_float_complex*)a, lda, (veclib_float_complex*)b, ldb);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cposv(CblasColMajor, CblasUpper, n, nrhs, (veclib_float_complex*)a, lda, (veclib_float_complex*)b, ldb);
 #endif
     
@@ -1899,7 +2092,10 @@ void utility_cslslv
     if(info!=0){
         memset(X, 0, dim*nCol*sizeof(float_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_SOLVE_LINEAR_EQUATION);
+        /* Input matrix was singular, solution was unable to be computed, or the
+         * input matrix contained illegal values so no solution was attempted.
+         * In these cases the function will zero the output matrix. */
+        saf_print_warning("Could not solve the linear equation in utility_cslslv(). Output matrices/vectors have been zeroed.");
 #endif
     }
     /* store solution in row-major order */
@@ -1930,11 +2126,11 @@ void utility_spinv
     veclib_int i, j, m, n, k, lda, ldu, ldvt, info;
     float* a, *s, *u, *vt, *inva;
     float ss;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float wkopt;
     float* work;
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     float* superb;
 #endif
     
@@ -1952,17 +2148,17 @@ void utility_spinv
             a[j*m+i] = inM[i*n+j];
     
     /* singular value decomposition */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
     lwork = (int)wkopt;
     work = (float*)malloc1d(lwork*sizeof(float));
     sgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
     free(work);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    assert(0); /* no such implementation in clapack */
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    superb = malloc((MIN(m,n)-1)*sizeof(float));
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation available in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
+    superb = malloc((SAF_MIN(m,n)-1)*sizeof(float));
     info = LAPACKE_sgesvd(CblasColMajor, 'S', 'S', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
     free(superb);
 #endif
@@ -1970,7 +2166,10 @@ void utility_spinv
     if( info != 0 ) {
         memset(outM, 0, dim1*dim2*sizeof(float));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+        /* The SVD failed to converge, or the input matrix contained illegal
+         * values so no solution was attempted. In these cases this function
+         * will zero all output matrices and/or vectors. */
+        saf_print_warning("Could not compute SVD in utility_spinv(). Output matrices/vectors have been zeroed.");
 #endif
     }
     int incx=1;
@@ -2015,12 +2214,12 @@ void utility_cpinv
     const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f); /* blas */
     float *s;
     float ss;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     float* rwork;
     float_complex wkopt;
     float_complex* work;
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     float* superb;
 #endif
     
@@ -2028,7 +2227,7 @@ void utility_cpinv
     n = dim2;
     k = ldvt = m < n ? m : n;
     a = malloc1d(lda*n*sizeof(float_complex));
-    s = malloc1d(MIN(n,m)*sizeof(float));
+    s = malloc1d(SAF_MIN(n,m)*sizeof(float));
     u = malloc1d(ldu*m*sizeof(float_complex));
     vt = malloc1d(ldvt*n*sizeof(float_complex));
     
@@ -2038,8 +2237,8 @@ void utility_cpinv
             a[j*dim1+i] = inM[i*dim2 +j];
     
     /* singular value decomposition */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    rwork = malloc1d(m*MAX(1, 5*MIN(n,m))*sizeof(float));
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    rwork = malloc1d(m*SAF_MAX(1, 5*SAF_MIN(n,m))*sizeof(float));
     lwork = -1;
     cgesvd_( "A", "A", &m, &n, (veclib_float_complex*)a, &lda, s, (veclib_float_complex*)u, &ldu, (veclib_float_complex*)vt, &ldvt,
             (veclib_float_complex*)&wkopt, &lwork, rwork, &info );
@@ -2049,10 +2248,10 @@ void utility_cpinv
             (veclib_float_complex*)work, &lwork, rwork, &info);
     free(work);
     free(rwork);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    assert(0); /* no such implementation in clapack */
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    superb = malloc((MIN(m,n)-1)*sizeof(float));
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation available in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
+    superb = malloc((SAF_MIN(m,n)-1)*sizeof(float));
     info = LAPACKE_cgesvd(CblasColMajor, 'S', 'S', m, n, (veclib_float_complex*)a, lda, s, (veclib_float_complex*)u, ldu,
                           (veclib_float_complex*)vt, ldvt, superb);
     free(superb);
@@ -2061,7 +2260,10 @@ void utility_cpinv
     if( info != 0 ) {
         memset(outM, 0, dim1*dim2*sizeof(float_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+        /* The SVD failed to converge, or the input matrix contained illegal
+         * values so no solution was attempted. In these cases this function
+         * will zero all output matrices and/or vectors. */
+        saf_print_warning("Could not compute SVD in utility_cpinv(). Output matrices/vectors have been zeroed.");
 #endif
     }
     int incx=1;
@@ -2104,11 +2306,11 @@ void utility_dpinv
     veclib_int i, j, m, n, k, lda, ldu, ldvt, info;
     double* a, *s, *u, *vt, *inva;
     double ss;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     double wkopt;
     double* work;
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     double* superb;
 #endif
     
@@ -2126,17 +2328,17 @@ void utility_dpinv
             a[j*m+i] = inM[i*n+j];
     
     /* singular value decomposition */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     lwork = -1;
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info);
     lwork = (int)wkopt;
     work = (double*)malloc1d(lwork*sizeof(double));
     dgesvd_("S", "S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
     free(work);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    assert(0); /* no such implementation in clapack */
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    superb = malloc((MIN(m,n)-1)*sizeof(double));
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation available in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
+    superb = malloc((SAF_MIN(m,n)-1)*sizeof(double));
     info = LAPACKE_dgesvd(CblasColMajor, 'S', 'S', m, n, a, lda, s, u, ldu, vt, ldvt, superb);
     free(superb);
 #endif
@@ -2144,7 +2346,10 @@ void utility_dpinv
     if( info != 0 ) {
         memset(outM, 0, dim1*dim2*sizeof(float));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+        /* The SVD failed to converge, or the input matrix contained illegal
+         * values so no solution was attempted. In these cases this function
+         * will zero all output matrices and/or vectors. */
+        saf_print_warning("Could not compute SVD in utility_dpinv(). Output matrices/vectors have been zeroed.");
 #endif
     }
     int incx=1;
@@ -2189,12 +2394,12 @@ void utility_zpinv
     const double_complex calpha = cmplx(1.0, 0.0); const double_complex cbeta = cmplx(0.0, 0.0); /* blas */
     double* s;
     double ss;
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     veclib_int lwork;
     double* rwork;
     double_complex wkopt;
     double_complex* work;
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     double* superb;
 #endif
     
@@ -2202,7 +2407,7 @@ void utility_zpinv
     n = dim2;
     k = ldvt = m < n ? m : n;
     a = malloc1d(lda*n*sizeof(double_complex));
-    s = malloc1d(MIN(n,m)*sizeof(double));
+    s = malloc1d(SAF_MIN(n,m)*sizeof(double));
     u = malloc1d(ldu*m*sizeof(double_complex));
     vt = malloc1d(ldvt*n*sizeof(double_complex));
     
@@ -2212,8 +2417,8 @@ void utility_zpinv
             a[j*dim1+i] = inM[i*dim2 +j];
     
     /* singular value decomposition */
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    rwork = malloc1d(m*MAX(1, 5*MIN(n,m))*sizeof(double));
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    rwork = malloc1d(m*SAF_MAX(1, 5*SAF_MIN(n,m))*sizeof(double));
     lwork = -1;
     zgesvd_( "A", "A", &m, &n, (veclib_double_complex*)a, &lda, s, (veclib_double_complex*)u, &ldu, (veclib_double_complex*)vt, &ldvt,
             (veclib_double_complex*)&wkopt, &lwork, rwork, &info );
@@ -2223,10 +2428,10 @@ void utility_zpinv
             (veclib_double_complex*)work, &lwork, rwork, &info);
     free(work);
     free(rwork);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
-    assert(0); /* no such implementation in clapack */
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
-    superb = malloc((MIN(m,n)-1)*sizeof(double));
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation available in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
+    superb = malloc((SAF_MIN(m,n)-1)*sizeof(double));
     info = LAPACKE_zgesvd(CblasColMajor, 'A', 'A', m, n, (veclib_double_complex*)a, lda, s, (veclib_double_complex*)u, ldu,
                           (veclib_double_complex*)vt, ldvt, superb);
     free(superb);
@@ -2235,7 +2440,10 @@ void utility_zpinv
     if( info != 0 ) {
         memset(outM, 0, dim1*dim2*sizeof(double_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+        /* The SVD failed to converge, or the input matrix contained illegal
+         * values so no solution was attempted. In these cases this function
+         * will zero all output matrices and/or vectors. */
+        saf_print_warning("Could not compute SVD in utility_zpinv(). Output matrices/vectors have been zeroed.");
 #endif
     }
     int incx=1;
@@ -2291,11 +2499,11 @@ void utility_schol
             a[j*dim+i] = A[i*dim+j];
     
     /* a is replaced by solution */
-#ifdef VECLIB_USE_CLAPACK_INTERFACE
+#ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_spotrf(CblasColMajor, CblasUpper, n, a, lda);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_spotrf(CblasColMajor, CblasUpper, n, a, lda);
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     spotrf_( "U", &n, a, &lda, &info );
 #endif
     
@@ -2303,7 +2511,11 @@ void utility_schol
     if(info!=0){
         memset(X, 0, dim*dim*sizeof(float));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_CHOL);
+        /* Input matrix is not positive definite so the Cholesky factorisation
+         * could not be computed, or the input matrix contained illegal values
+         * so no solution was attempted. In these cases the function will zero
+         * the output matrix. */
+        saf_print_warning("Could not compute the Cholesky factorisation in utility_schol(). Output matrices/vectors have been zeroed.");
 #endif
     }
     
@@ -2336,11 +2548,11 @@ void utility_cchol
             a[j*dim+i] = A[i*dim+j];
     
     /* a is replaced by solution */
-#if defined(VECLIB_USE_CLAPACK_INTERFACE)
+#if defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     info = clapack_cpotrf(CblasColMajor, CblasUpper, n, (veclib_float_complex*)a, lda);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cpotrf(CblasColMajor, CblasUpper, n, (veclib_float_complex*)a, lda);
-#elif defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     cpotrf_( "U", &n, (veclib_float_complex*)a, &lda, &info );
 #endif
     
@@ -2348,7 +2560,11 @@ void utility_cchol
     if(info!=0){
         memset(X, 0, dim*dim*sizeof(float_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_CHOL);
+        /* Input matrix is not positive definite so the Cholesky factorisation
+         * could not be computed, or the input matrix contained illegal values
+         * so no solution was attempted. In these cases the function will zero
+         * the output matrix. */
+        saf_print_warning("Could not compute the Cholesky factorisation in utility_cchol(). Output matrices/vectors have been zeroed.");
 #endif
     }
     /* store solution in row-major order */
@@ -2374,9 +2590,7 @@ float utility_sdet
     veclib_int i,j;
     veclib_int *IPIV;
     IPIV = malloc1d(N * sizeof(veclib_int));
-    int LWORK = N*N;
-    float *WORK, *tmp;
-    WORK = (float*)malloc1d(LWORK * sizeof(float));
+    float *tmp;
     tmp = malloc1d(N*N*sizeof(float));
     veclib_int INFO;
     float det;
@@ -2386,30 +2600,90 @@ float utility_sdet
         for(j=0; j<N; j++)
             tmp[j*N+i] = A[i*N+j];
 
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     sgetrf_((veclib_int*)&N, (veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, &INFO);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     INFO = clapack_sgetrf(CblasColMajor, N, N, tmp, N, IPIV);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     INFO = LAPACKE_sgetrf(CblasColMajor, N, N, tmp, N, IPIV);
 #endif
 
     if(INFO!=0) {
-        det=0.0;
-    #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
-    #endif
+        det=0.0f;
+#ifndef NDEBUG
+        /* Input matrix was singular or contained illegal values so no solution
+         * was attempted. In these cases the determinant is returned as 0. */
+        saf_print_warning("Unable to compute determinant of input matrix. The function utility_sdet() returned 0. ");
+#endif
     }
     else {
-        det = 1.0;
+        det = 1.0f;
         for( i = 0; i < N; i++ ) {
             det*=tmp[i*N+i];
             if(IPIV[i] != i+1)
                 det *= -1.0f;
         }
     }
-    free(IPIV);
+    free(IPIV); 
+    free(tmp);
+    return det;
+}
+
+double utility_ddet
+(
+    double* A,
+    int N
+)
+{
+
+    veclib_int i,j,INFO, LWORK, lwork3;
+    double *tmp, *TAU, *WORK;
+    double lwork2, det;
+
+    /* Store in column major order */
+    tmp = malloc(N*N*sizeof(double));
+    for(i=0; i<N; i++)
+        for(j=0; j<N; j++)
+            tmp[j*N+i] = A[i*N+j];
+ 
+    TAU = malloc(sizeof(double)*N);
+    LWORK=-1;
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    dgeqrf_(&N, &N, tmp, &N, TAU, &lwork2, &LWORK, &INFO);
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
+    INFO = LAPACKE_dgeqrf_work(CblasColMajor, N, N, tmp, N, TAU, &lwork2, LWORK);
+#endif
+    lwork3=(veclib_int)lwork2;
+    WORK=malloc(lwork3*sizeof(double));
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    dgeqrf_(&N, &N, tmp, &N, TAU, WORK, &lwork3, &INFO);
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
+    INFO = LAPACKE_dgeqrf_work(CblasColMajor, N, N, tmp, N, TAU, WORK, lwork3);
+#endif
+
+    if(INFO!=0) {
+        det=0.0;
+#ifndef NDEBUG
+        /* Input matrix was singular or contained illegal values so no solution
+         * was attempted. In these cases the determinant is returned as 0. */
+        saf_print_warning("Unable to compute determinant of input matrix. The function utility_ddet() returned 0. ");
+#endif
+    }
+    else {
+        det=1;
+        for (i=0;i<N;i++)
+            det*=tmp[i*N+i];
+        /* Householder algorithm */
+        if(N%2==0)
+            det*=-1;
+    }
+
     free(WORK);
+    free(TAU);
     free(tmp);
     return det;
 }
@@ -2441,13 +2715,13 @@ void utility_sinv
         for(j=0; j<N; j++)
             tmp[j*N+i] = A[i*N+j];
 
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     sgetrf_((veclib_int*)&N_, (veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, &INFO);
     sgetri_((veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, WORK, &LWORK, &INFO);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     INFO = clapack_sgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
     INFO = clapack_sgetri(CblasColMajor, N_, tmp, N_, IPIV);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     INFO = LAPACKE_sgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
     INFO = LAPACKE_sgetri(CblasColMajor, N_, tmp, N_, IPIV);
 #endif
@@ -2455,7 +2729,10 @@ void utility_sinv
     if(INFO!=0) {
         memset(B, 0, N*N*sizeof(float));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+        /* Input matrix was singular or contained illegal values so no inversion
+         * was attempted. In these cases the function will zero the output
+         * matrix. */
+        saf_print_warning("Unable to compute the inverse of input matrix. The function utility_sinv() returned a matrix of zeros. ");
 #endif
     }
     else {
@@ -2492,23 +2769,24 @@ void utility_dinv
         for(j=0; j<N; j++)
             tmp[j*N+i] = A[i*N+j];
 
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     dgetrf_((veclib_int*)&N_, (veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, &INFO);
     dgetri_((veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, WORK, &LWORK, &INFO);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     INFO = clapack_dgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
     INFO = clapack_dgetri(CblasColMajor, N_, tmp, N_, IPIV);
-    assert(INFO==0);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     INFO = LAPACKE_dgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
     INFO = LAPACKE_dgetri(CblasColMajor, N_, tmp, N_, IPIV);
-    assert(INFO==0);
 #endif
 
     if(INFO!=0) {
         memset(B, 0, N*N*sizeof(double));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+        /* Input matrix was singular or contained illegal values so no inversion
+         * was attempted. In these cases the function will zero the output
+         * matrix. */
+        saf_print_warning("Unable to compute the inverse of input matrix. The function utility_dinv() returned a matrix of zeros. ");
 #endif
     }
     else {
@@ -2545,23 +2823,24 @@ void utility_cinv
         for(j=0; j<N; j++)
             tmp[j*N+i] = A[i*N+j];
     
-#if defined(VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     cgetrf_((veclib_int*)&N_, (veclib_int*)&N_, (veclib_float_complex*)tmp, (veclib_int*)&N_, IPIV, &INFO);
     cgetri_((veclib_int*)&N_, (veclib_float_complex*)tmp, (veclib_int*)&N_, IPIV, (veclib_float_complex*)WORK, &LWORK, &INFO);
-#elif defined(VECLIB_USE_CLAPACK_INTERFACE)
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     INFO = clapack_cgetrf(CblasColMajor, N_, N_, (veclib_float_complex*)tmp, N_, IPIV);
     INFO = clapack_cgetri(CblasColMajor, N_, (veclib_float_complex*)tmp, N_, IPIV);
-    assert(INFO==0);
-#elif defined(VECLIB_USE_LAPACKE_INTERFACE)
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     INFO = LAPACKE_cgetrf(CblasColMajor, N_, N_, (veclib_float_complex*)tmp, N_, IPIV);
     INFO = LAPACKE_cgetri(CblasColMajor, N_, (veclib_float_complex*)tmp, N_, IPIV);
-    assert(INFO==0);
 #endif
 
     if(INFO!=0) {
         memset(B, 0, N*N*sizeof(float_complex));
 #ifndef NDEBUG
-        saf_error_print(SAF_WARNING__FAILED_TO_COMPUTE_SVD);
+        /* Input matrix was singular or contained illegal values so no inversion
+         * was attempted. In these cases the function will zero the output
+         * matrix. */
+        saf_print_warning("Unable to compute the inverse of input matrix. The function utility_cinv() returned a matrix of zeros. ");
 #endif
     }
     else {

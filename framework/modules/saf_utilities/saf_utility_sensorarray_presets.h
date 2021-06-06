@@ -81,7 +81,6 @@ extern const float __DTU_mic_coords_rad[52][2];
 /**
  * Default sensor array coordinates */
 extern const float __default_SENSORcoords64_rad[64][2];
-
 /**
  * Max spherical harmonic order for the custom hydrophone array made at Aalto
  * University */
@@ -105,7 +104,6 @@ extern const int __Eigenmike32_maxOrder;
  * Max spherical harmonic order for the custom 52-sensor array built at the
  * Technical University of Denmark (DTU) */
 extern const int __DTU_mic_maxOrder;
-
 /**
  * Sensor array frequency ranges for each SH order, for the Zylia array (should
  * only be used as a rough estimate).

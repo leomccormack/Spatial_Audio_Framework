@@ -88,7 +88,7 @@ void decorrelator_initCodec(void* const hDecor);
  * @param[in] nSamples Number of samples in 'inputs'/'output' matrices
  */
 void decorrelator_process(void* const hDecor,
-                          float** const inputs,
+                          const float *const * inputs,
                           float** const outputs,
                           int nInputs,
                           int nOutputs,
@@ -132,9 +132,7 @@ void decorrelator_setTransientBypassFlag(void* const hDecor,
  */
 int decorrelator_getFrameSize(void);
 
-/**
- * Returns current codec status, see #CODEC_STATUS enum
- */
+/** Returns current codec status, see #CODEC_STATUS enum */
 CODEC_STATUS decorrelator_getCodecStatus(void* const hDecor);
     
 /**
@@ -152,7 +150,6 @@ void decorrelator_getProgressBarText(void* const hDecor, char* text);
 
 /** Returns the number of input/output channels */
 int decorrelator_getNumberOfChannels(void* const hDecor);
-
 
 /** Returns the decorrelation amount [0..1] */
 float decorrelator_getDecorrelationAmount(void* const hDecor);

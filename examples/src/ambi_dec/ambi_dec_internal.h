@@ -112,7 +112,7 @@ typedef struct _ambi_dec_codecPars
     float_complex hrtf_interp[MAX_NUM_LOUDSPEAKERS][HYBRID_BANDS][NUM_EARS]; /* interpolated HRTFs */
     
     /* integration weights */
-    float* weights;         /**< grid integration weights of hrirs; N_hrirs x 1 */
+    float* weights;                             /**< grid integration weights of hrirs; N_hrirs x 1 */
 
 }ambi_dec_codecPars;
 
@@ -123,47 +123,47 @@ typedef struct _ambi_dec_codecPars
 typedef struct _ambi_dec
 {
     /* audio buffers + afSTFT time-frequency transform handle */
-    float** SHFrameTD;
-    float** outputFrameTD;
-    float_complex*** SHframeTF;
-    float_complex*** outputframeTF;
-    float_complex*** binframeTF;
+    float** SHFrameTD;                   /**< Input spherical harmonic (SH) signals in the time-domain; #MAX_NUM_SH_SIGNALS x #FRAME_SIZE */
+    float** outputFrameTD;               /**< Output loudspeaker or binaural signals in the time-domain; #MAX_NUM_LOUDSPEAKERS x #FRAME_SIZE */
+    float_complex*** SHframeTF;          /**< Input spherical harmonic (SH) signals in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
+    float_complex*** outputframeTF;      /**< Output loudspeaker signals in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_LOUDSPEAKERS x #TIME_SLOTS */
+    float_complex*** binframeTF;         /**< Output binaural signals in the time-frequency domain; #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS */
     void* hSTFT;                         /**< afSTFT handle */
     int afSTFTdelay;                     /**< for host delay compensation */ 
     int fs;                              /**< host sampling rate */
     float freqVector[HYBRID_BANDS];      /**< frequency vector for time-frequency transform, in Hz */
     
     /* our codec configuration */
-    CODEC_STATUS codecStatus;
-    float progressBar0_1;
-    char* progressBarText;
+    CODEC_STATUS codecStatus;            /**< see #CODEC_STATUS */
+    float progressBar0_1;                /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;               /**< Current (re)initialisation step, string */
     ambi_dec_codecPars* pars;            /**< codec parameters */
     
     /* internal variables */
     int loudpkrs_nDims;                  /**< dimensionality of the current loudspeaker set-up */
     int new_nLoudpkrs;                   /**< if new_nLoudpkrs != nLoudpkrs, afSTFT is reinitialised */
     int new_binauraliseLS;               /**< if new_binauraliseLS != binauraliseLS, ambi_dec is reinitialised */
-    int new_masterOrder;
+    int new_masterOrder;                 /**< if new_masterOrder != masterOrder, ambi_dec is reinitialised */
     
     /* flags */
-    PROC_STATUS procStatus;
-    int reinit_hrtfsFLAG; /**< 0: no init required, 1: init required */
+    PROC_STATUS procStatus;              /**< see #PROC_STATUS */
+    int reinit_hrtfsFLAG;                /**< 0: no init required, 1: init required */
     int recalc_hrtf_interpFLAG[MAX_NUM_LOUDSPEAKERS]; /**< 0: no init required, 1: init required */
     
     /* user parameters */
-    int masterOrder;
+    int masterOrder;                     /**< Current maximum/master decoding order */
     int orderPerBand[HYBRID_BANDS];      /**< Ambisonic decoding order per frequency band 1..SH_ORDER */
-    AMBI_DEC_DECODING_METHODS dec_method[NUM_DECODERS]; /**< decoding methods for each decoder, see "DECODING_METHODS" enum */
+    AMBI_DEC_DECODING_METHODS dec_method[NUM_DECODERS]; /**< decoding methods for each decoder, see #DECODING_METHODS enum */
     int rE_WEIGHT[NUM_DECODERS];         /**< 0:disabled, 1: enable max_rE weight */
-    AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH diffEQmode[NUM_DECODERS]; /**< diffuse-field EQ approach; see "DIFFUSE_FIELD_EQ_APPROACH" enum */
+    AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH diffEQmode[NUM_DECODERS]; /**< diffuse-field EQ approach; see #DIFFUSE_FIELD_EQ_APPROACH enum */
     float transitionFreq;                /**< transition frequency for the 2 decoders, in Hz */
     int nLoudpkrs;                       /**< number of loudspeakers/virtual loudspeakers */
     float loudpkrs_dirs_deg[MAX_NUM_LOUDSPEAKERS][NUM_DECODERS]; /* loudspeaker directions in degrees [azi, elev] */
     int useDefaultHRIRsFLAG;             /**< 1: use default HRIRs in database, 0: use those from SOFA file */
     int enableHRIRsPreProc;              /**< flag to apply pre-processing to the currently loaded HRTFs */
     int binauraliseLS;                   /**< 1: convolve loudspeaker signals with HRTFs, 0: output loudspeaker signals */
-    CH_ORDER chOrdering;                 /**< only ACN is supported */
-    NORM_TYPES norm;                     /**< N3D or SN3D */
+    CH_ORDER chOrdering;                 /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                     /**< Ambisonic normalisation convention (see #NORM_TYPES) */
     
 } ambi_dec_data;
 

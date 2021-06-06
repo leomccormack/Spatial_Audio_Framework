@@ -11,7 +11,7 @@ option(SAF_BUILD_EXTRAS              "Build SAF extras."                        
 option(SAF_ENABLE_SOFA_READER_MODULE "Enable the SAF SOFA READER module"          OFF)
 option(SAF_ENABLE_TRACKER_MODULE     "Enable the SAF TRACKER module"              OFF)
 if (NOT SAF_PERFORMANCE_LIB)
-    set(SAF_PERFORMANCE_LIB "SAF_USE_INTEL_MKL" CACHE STRING "Performance library for SAF to use.")
+    set(SAF_PERFORMANCE_LIB "SAF_USE_INTEL_MKL_LP64" CACHE STRING "Performance library for SAF to use.")
 endif()
 #message(STATUS "PERFORMACE LIB is ${SAF_PERFORMANCE_LIB}")
 if (NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")

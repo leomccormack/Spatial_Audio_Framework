@@ -22,9 +22,9 @@
 
 /**
  * @file afSTFTlib.h
- * @brief Slightly modified version of afSTFTlib
+ * @brief A modified version of afSTFTlib
  *
- * The original afSTFT code written by Juha Vilkamo can be found here:
+ * The original afSTFT code (by Juha Vilkamo) can be found here:
  * https://github.com/jvilkamo/afSTFT
  * This version is slightly modified to be more in-line with how the rest of SAF
  * is structured.
@@ -36,11 +36,11 @@
  * vector and the current processing delay.
  * It also incorporates SAF utilities (for the vectorisation and FFT).
  *
- * Note that the afSTFT design is layed out in detail in chapter 1 of [1]
+ * The afSTFT design is also described in more detail in [1]
  *
- * @see [1] Pulkki, V., Delikaris-Manias, S. and Politis, A. 2018. Parametric
- *          time--frequency domain spatial audio. John Wiley & Sons,
- *          Incorporated.
+ * @see [1] Vilkamo, J., & Ba"ckstro"m, T. (2018). Time--Frequency Processing:
+ *          Methods and Tools. In Parametric Time--Frequency Domain Spatial
+ *          Audio. John Wiley & Sons.
  *
  * @author Juha Vilkamo
  * @date 08.04.2015
@@ -62,15 +62,19 @@ extern "C" {
 #define AFSTFT_USE_SAF_UTILITIES
 #ifdef AFSTFT_USE_SAF_UTILITIES
 # include "../../modules/saf_utilities/saf_utilities.h"
+#else
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
 #endif
     
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+/** Prototype filter used by afSTFTlib */
+extern const float __afSTFT_protoFilter1024[10240];
 
-/**
- * Options for how the frequency domain data is permuted when using afSTFT
- */
+/** Prototype filter used by afSTFTlib (low-delay mode) */
+extern const float __afSTFT_protoFilter1024LD[10240];
+
+/** Options for how the frequency domain data is permuted when using afSTFT */
 typedef enum {
     AFSTFT_BANDS_CH_TIME, /**< nBands x nChannels x nTimeHops */
     AFSTFT_TIME_CH_BANDS  /**< nTimeHops x nChannels x nBands */

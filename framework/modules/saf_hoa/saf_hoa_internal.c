@@ -21,7 +21,7 @@
  *        (#SAF_HOA_MODULE)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
- * the Matlab library by Archontis Politis [1] (BSD-3-Clause License).
+ * the MATLAB library by Archontis Politis in [1] (BSD-3-Clause License).
  *
  * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
  *
@@ -356,7 +356,7 @@ void getBinDecoder_SPR
             W[i*N_dirs+i] = 1.0f/(float)N_dirs;
     
     /* find SH-order for interpolation of the HRTF set */
-    Nh_max = MIN((int)(sqrtf((float)N_dirs)-1.0f), 20); /* Cap to something more sensible if needed... */
+    Nh_max = SAF_MIN((int)(sqrtf((float)N_dirs)-1.0f), 20); /* Cap to something more sensible if needed... */
     hrtf_dirs_rad = malloc1d(N_dirs*2*sizeof(float));
     cnd_num = malloc1d((Nh_max+1)*sizeof(float));
     for(i=0; i<N_dirs; i++){ /* [azi, elev] degrees, to: [azi, inclination] radians */
@@ -366,7 +366,7 @@ void getBinDecoder_SPR
     checkCondNumberSHTReal(Nh_max, hrtf_dirs_rad, N_dirs, weights, cnd_num);
     for(i=0, Nh=0; i<Nh_max+1; i++)
         Nh = cnd_num[i] < 100.0f ? i : Nh;
-    assert(Nh>=order);
+    saf_assert(Nh>=order, "Input order exceeds the modal order of the spatial grid");
     nSH_nh = (Nh+1)*(Nh+1);
     Y_nh = malloc1d(nSH_nh*N_dirs*sizeof(float));
     getRSH(Nh, hrtf_dirs_deg, N_dirs, Y_nh);

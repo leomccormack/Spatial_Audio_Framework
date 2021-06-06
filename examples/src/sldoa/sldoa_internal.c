@@ -156,7 +156,7 @@ void sldoa_estimateDoA
     /* prep */
     memset(doa,0,MAX_NUM_SECTORS*TIME_SLOTS*2*sizeof(float));
     memset(energy,0,MAX_NUM_SECTORS*TIME_SLOTS*sizeof(float));
-    analysisOrder = MAX(MIN(MAX_SH_ORDER, anaOrder),1);
+    analysisOrder = SAF_MAX(SAF_MIN(MAX_SH_ORDER, anaOrder),1);
     nSectors = ORDER2NUMSECTORS(analysisOrder);
     nSH = (analysisOrder+1)*(analysisOrder+1);
     sec_c = malloc1d(4*nSH*sizeof(float_complex));

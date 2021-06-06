@@ -35,7 +35,8 @@ tracker3d_config tpars;
 
 /* internal parameters */
 void* hT3d = NULL;                /* tracker3d handle */ 
-float* target_xyz = NULL;
+float* target_pos_xyz = NULL;
+float* target_var_xyz = NULL;
 int* target_IDs = NULL;
 int nTargets;
 
@@ -61,8 +62,9 @@ void mexFunction
         if(hT3d!=NULL){
             mexPrintf("Destroying tracker3d.\n");
             tracker3d_destroy(&hT3d); 
-            free(target_xyz); target_xyz = NULL;
-            free(target_IDs); target_IDs = NULL;
+            free(target_pos_xyz); target_pos_xyz = NULL;
+            free(target_var_xyz); target_var_xyz = NULL;
+            free(target_IDs);     target_IDs = NULL;
             hT3d = NULL;
         } 
         else
@@ -242,7 +244,7 @@ void mexFunction
         nObs = pDims[0];
         
         /* Pass to tracker */
-        tracker3d_step(hT3d, newObs_xyz, nObs, &target_xyz, &target_IDs, &nTargets);
+        tracker3d_step(hT3d, newObs_xyz, nObs, &target_pos_xyz, &target_var_xyz, &target_IDs, &nTargets);
          
         /* output */
         if(nTargets==0){
@@ -254,7 +256,7 @@ void mexFunction
             pDims = realloc1d(pDims, nDims*sizeof(int));
             pDims[0] = nTargets;
             pDims[1] = 3;
-            SAFsingle2MEXdouble(target_xyz, nDims, pDims, &plhs[0]);
+            SAFsingle2MEXdouble(target_pos_xyz, nDims, pDims, &plhs[0]);
             pDims[0] = nTargets;
             pDims[1] = 1;
             SAFsingle2MEXdouble_int(target_IDs, nDims, pDims, &plhs[1]);

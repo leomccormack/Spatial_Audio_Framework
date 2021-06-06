@@ -53,7 +53,7 @@ void ambi_dec_create
     *phAmbi = (void*)pData;
     int i, j, ch, band;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* default user parameters */
     loadLoudspeakerArrayPreset(LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_24, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
@@ -76,7 +76,7 @@ void ambi_dec_create
     /* afSTFT stuff and audio buffers */
     pData->hSTFT = NULL;
     pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
-    pData->outputFrameTD = (float**)malloc2d(MAX(MAX_NUM_LOUDSPEAKERS, NUM_EARS), FRAME_SIZE, sizeof(float));
+    pData->outputFrameTD = (float**)malloc2d(SAF_MAX(MAX_NUM_LOUDSPEAKERS, NUM_EARS), FRAME_SIZE, sizeof(float));
     pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
     pData->outputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_LOUDSPEAKERS, TIME_SLOTS, sizeof(float_complex));
     pData->binframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
@@ -188,8 +188,10 @@ void ambi_dec_initCodec
     int i, ch, d, j, n, ng, nGrid_dirs, masterOrder, nSH_order, max_nSH, nLoudspeakers;
     float* grid_dirs_deg, *Y, *M_dec_tmp, *g, *a, *e, *a_n, *hrtf_vbap_gtable;;
     float a_avg[MAX_SH_ORDER], e_avg[MAX_SH_ORDER], azi_incl[2], sum_elev;
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
+#endif
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
         return; /* re-init not required, or already happening */
@@ -350,13 +352,16 @@ void ambi_dec_initCodec
         pData->progressBar0_1 = 0.4f;
         
         /* load sofa file or load default hrir data */
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
         if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
             /* Load SOFA file */ 
             error = saf_sofa_open(&sofa, pars->sofa_filepath);
 
             /* Load defaults instead */
-            if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS)
+            if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS){
                 pData->useDefaultHRIRsFLAG = 1;
+                saf_print_warning("Unable to load the specified SOFA file, or it contained something other than 2 channels. Using default HRIR data instead.");
+            }
             else{
                 /* Copy SOFA data */
                 pars->hrir_fs = (int)sofa.DataSamplingRate;
@@ -372,6 +377,9 @@ void ambi_dec_initCodec
             /* Clean-up */
             saf_sofa_close(&sofa);
         }
+#else
+        pData->useDefaultHRIRsFLAG = 1; /* Can only load the default HRIR data */
+#endif
         if(pData->useDefaultHRIRsFLAG){
             /* Copy default HRIR data */
             pars->hrir_fs = __default_hrir_fs;
@@ -448,17 +456,18 @@ void ambi_dec_initCodec
 
 void ambi_dec_process
 (
-    void  *  const hAmbi,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hAmbi,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     ambi_dec_codecPars* pars = pData->pars;
-    int t, ch, ear, i, band, orderBand, nSH_band, decIdx, nSH;
+    int ch, ear, i, band, orderBand, nSH_band, decIdx, nSH;
+    float_complex scaleC;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
     /* local copies of user parameters */
@@ -484,42 +493,35 @@ void ambi_dec_process
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
-        for(i=0; i < MIN(nSH, nInputs); i++)
+        for(i=0; i < SAF_MIN(nSH, nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
         for(; i<nSH; i++)
             memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
 
         /* account for channel order convention */
         switch(chOrdering){
-            case CH_ACN: /* already ACN */
-                break;
-            case CH_FUMA:
-                convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN);
-                break;
+            case CH_ACN: /* already ACN, do nothing */ break; /* Otherwise, convert to ACN... */
+            case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
         }
 
         /* account for input normalisation scheme */
         switch(norm){
-            case NORM_N3D:  /* already in N3D, do nothing */
-                break;
-            case NORM_SN3D: /* convert to N3D */
-                convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D);
-                break;
-            case NORM_FUMA: /* only for first-order, convert to N3D */
-                convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D);
-                break;
+            case NORM_N3D:  /* already in N3D, do nothing */ break; /* Otherwise, convert to N3D... */
+            case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
+            case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
         }
 
         /* Apply time-frequency transform (TFT) */
         afSTFT_forward(pData->hSTFT, pData->SHFrameTD, FRAME_SIZE, pData->SHframeTF);
 
-        /* Main processing: */
         /* Decode to loudspeaker set-up */
         memset(FLATTEN3D(pData->outputframeTF), 0, HYBRID_BANDS*MAX_NUM_LOUDSPEAKERS*TIME_SLOTS*sizeof(float_complex));
         for(band=0; band<HYBRID_BANDS; band++){
-            orderBand = MAX(MIN(orderPerBand[band], masterOrder),1);
+            orderBand = SAF_MAX(SAF_MIN(orderPerBand[band], masterOrder),1);
             nSH_band = (orderBand+1)*(orderBand+1);
-            decIdx = pData->freqVector[band] < transitionFreq ? 0 : 1; /* different decoder for low (0) and high (1) frequencies */
+
+            /* There is a different decoder for low (0) and high (1) frequencies, and for max_rE weights enabled/disabled */
+            decIdx = pData->freqVector[band] < transitionFreq ? 0 : 1;
             if(rE_WEIGHT[decIdx]){
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nLoudspeakers, TIME_SLOTS, nSH_band, &calpha,
                             pars->M_dec_cmplx_maxrE[decIdx][orderBand-1], nSH_band,
@@ -532,46 +534,41 @@ void ambi_dec_process
                             FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS, &cbeta,
                             FLATTEN2D(pData->outputframeTF[band]), TIME_SLOTS);
             }
-            for(i=0; i<nLoudspeakers; i++){
-                for(t=0; t<TIME_SLOTS; t++){
-                    if(diffEQmode[decIdx]==AMPLITUDE_PRESERVING)
-                        pData->outputframeTF[band][i][t] = crmulf(pData->outputframeTF[band][i][t], pars->M_norm[decIdx][orderBand-1][0]);
-                    else
-                        pData->outputframeTF[band][i][t] = crmulf(pData->outputframeTF[band][i][t], pars->M_norm[decIdx][orderBand-1][1]);
-                }
-            }
+
+            /* Apply scaling to preserve either the amplitude or energy when the decododing orders are different over frequency */
+            scaleC = diffEQmode[decIdx]==AMPLITUDE_PRESERVING ? cmplxf(pars->M_norm[decIdx][orderBand-1][0], 0.0f) : cmplxf(pars->M_norm[decIdx][orderBand-1][1], 0.0f);
+            cblas_cscal(nLoudspeakers*TIME_SLOTS, &scaleC, FLATTEN2D(pData->outputframeTF[band]), 1);
         }
 
-        /* binauralise the loudspeaker signals */
+        /* Binauralise the loudspeaker signals */
         if(binauraliseLS){
+            /* Initialise the binaural buffer with zeros */
             memset(FLATTEN3D(pData->binframeTF), 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
-            /* interpolate hrtfs and apply to each source */
+
+            /* Convolve each loudspeaker signals with the respective HRTFs */
             for (ch = 0; ch < nLoudspeakers; ch++) {
                 if(pData->recalc_hrtf_interpFLAG[ch]){
+                    /* Re-compute the interpolated HRTF (only if loudspeaker direction changed) */
                     ambi_dec_interpHRTFs(hAmbi, pData->loudpkrs_dirs_deg[ch][0], pData->loudpkrs_dirs_deg[ch][1], pars->hrtf_interp[ch]);
                     pData->recalc_hrtf_interpFLAG[ch] = 0;
                 }
+
+                /* Convolve this loudspeaker channel with the interpolated HRTF, and add it to the binaural buffer */
                 for (band = 0; band < HYBRID_BANDS; band++)
                     for (ear = 0; ear < NUM_EARS; ear++)
-                        for (t = 0; t < TIME_SLOTS; t++)
-                            pData->binframeTF[band][ear][t] = ccaddf(pData->binframeTF[band][ear][t], ccmulf(pData->outputframeTF[band][ch][t], pars->hrtf_interp[ch][band][ear]));
+                        cblas_caxpy(TIME_SLOTS, &pars->hrtf_interp[ch][band][ear], pData->outputframeTF[band][ch], 1, pData->binframeTF[band][ear], 1);
             }
 
-            /* scale by sqrt(number of loudspeakers) */
-            for (band = 0; band < HYBRID_BANDS; band++)
-                for (ear = 0; ear < NUM_EARS; ear++)
-                    for (t = 0; t < TIME_SLOTS; t++)
-                        pData->binframeTF[band][ear][t] = crmulf(pData->binframeTF[band][ear][t], 1.0f/sqrtf((float)nLoudspeakers));
+            /* Scale by sqrt(number of loudspeakers) */
+            scaleC = cmplxf(1.0f/sqrtf((float)nLoudspeakers), 0.0f);
+            cblas_cscal(HYBRID_BANDS*NUM_EARS*TIME_SLOTS, &scaleC, FLATTEN3D(pData->binframeTF), 1);
         }
 
         /* inverse-TFT */
-        if(binauraliseLS)
-            afSTFT_backward(pData->hSTFT, pData->binframeTF, FRAME_SIZE, pData->outputFrameTD);
-        else
-            afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outputFrameTD);
+        afSTFT_backward(pData->hSTFT, binauraliseLS ? pData->binframeTF : pData->outputframeTF, FRAME_SIZE, pData->outputFrameTD);
 
         /* Copy to output buffer */
-        for(ch = 0; ch < MIN(binauraliseLS==1 ? NUM_EARS : nLoudspeakers, nOutputs); ch++)
+        for(ch = 0; ch < SAF_MIN(binauraliseLS==1 ? NUM_EARS : nLoudspeakers, nOutputs); ch++)
             utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
@@ -599,7 +596,7 @@ void ambi_dec_refreshSettings(void* const hAmbi)
 void ambi_dec_setMasterDecOrder(void  * const hAmbi, int newValue)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    pData->new_masterOrder = MIN(MAX(newValue,1), MAX_SH_ORDER);
+    pData->new_masterOrder = SAF_MIN(SAF_MAX(newValue,1), MAX_SH_ORDER);
     ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
     /* FUMA only supports 1st order */
     if(pData->new_masterOrder!=SH_ORDER_FIRST && pData->chOrdering == CH_FUMA)
@@ -611,7 +608,7 @@ void ambi_dec_setMasterDecOrder(void  * const hAmbi, int newValue)
 void ambi_dec_setDecOrder(void  * const hAmbi, int newValue, int bandIdx)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    pData->orderPerBand[bandIdx] = MIN(MAX(newValue,1), pData->new_masterOrder);
+    pData->orderPerBand[bandIdx] = SAF_MIN(SAF_MAX(newValue,1), pData->new_masterOrder);
 }
 
 void ambi_dec_setDecOrderAllBands(void  * const hAmbi, int newValue)
@@ -620,7 +617,7 @@ void ambi_dec_setDecOrderAllBands(void  * const hAmbi, int newValue)
     int band;
     
     for(band=0; band<HYBRID_BANDS; band++)
-        pData->orderPerBand[band] = MIN(MAX(newValue,1), pData->new_masterOrder);
+        pData->orderPerBand[band] = SAF_MIN(SAF_MAX(newValue,1), pData->new_masterOrder);
 }
 
 void ambi_dec_setLoudspeakerAzi_deg(void* const hAmbi, int index, float newAzi_deg)
@@ -628,8 +625,8 @@ void ambi_dec_setLoudspeakerAzi_deg(void* const hAmbi, int index, float newAzi_d
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
-    newAzi_deg = MAX(newAzi_deg, -180.0f);
-    newAzi_deg = MIN(newAzi_deg, 180.0f);
+    newAzi_deg = SAF_MAX(newAzi_deg, -180.0f);
+    newAzi_deg = SAF_MIN(newAzi_deg, 180.0f);
     if(pData->loudpkrs_dirs_deg[index][0] != newAzi_deg){
         pData->loudpkrs_dirs_deg[index][0] = newAzi_deg;
         pData->recalc_hrtf_interpFLAG[index] = 1;
@@ -640,8 +637,8 @@ void ambi_dec_setLoudspeakerAzi_deg(void* const hAmbi, int index, float newAzi_d
 void ambi_dec_setLoudspeakerElev_deg(void* const hAmbi, int index, float newElev_deg)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);
+    newElev_deg = SAF_MAX(newElev_deg, -90.0f);
+    newElev_deg = SAF_MIN(newElev_deg, 90.0f);
     if(pData->loudpkrs_dirs_deg[index][1] != newElev_deg){
         pData->loudpkrs_dirs_deg[index][1] = newElev_deg;
         pData->recalc_hrtf_interpFLAG[index] = 1;
@@ -654,7 +651,7 @@ void ambi_dec_setNumLoudspeakers(void* const hAmbi, int new_nLoudspeakers)
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     int ch; 
     pData->new_nLoudpkrs = new_nLoudspeakers > MAX_NUM_LOUDSPEAKERS ? MAX_NUM_LOUDSPEAKERS : new_nLoudspeakers;
-    pData->new_nLoudpkrs = MAX(MIN_NUM_LOUDSPEAKERS, pData->new_nLoudpkrs);
+    pData->new_nLoudpkrs = SAF_MAX(MIN_NUM_LOUDSPEAKERS, pData->new_nLoudpkrs);
     if(pData->nLoudpkrs != pData->new_nLoudpkrs){
         for(ch=0; ch<MAX_NUM_LOUDSPEAKERS; ch++)
             pData->recalc_hrtf_interpFLAG[ch] = 1;
@@ -740,7 +737,7 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->orderPerBand[band] = MIN(pData->masterOrder,curOrder);
+                pData->orderPerBand[band] = SAF_MIN(pData->masterOrder,curOrder);
             }
             break;
 
@@ -756,7 +753,7 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->orderPerBand[band] = MIN(pData->masterOrder,curOrder);
+                pData->orderPerBand[band] = SAF_MIN(pData->masterOrder,curOrder);
             }
             break;
 
@@ -772,7 +769,7 @@ void ambi_dec_setSourcePreset(void* const hAmbi, int newPresetID)
                         rangeIdx++;
                     }
                 }
-                pData->orderPerBand[band] = MIN(pData->masterOrder,curOrder);
+                pData->orderPerBand[band] = SAF_MIN(pData->masterOrder,curOrder);
             }
             break;
     }
@@ -814,7 +811,7 @@ void ambi_dec_setDecNormType(void* const hAmbi, int index, int newID)
 void ambi_dec_setTransitionFreq(void* const hAmbi, float newValue)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
-    pData->transitionFreq = CLAMP(newValue, AMBI_DEC_TRANSITION_MIN_VALUE, AMBI_DEC_TRANSITION_MAX_VALUE);
+    pData->transitionFreq = SAF_CLAMP(newValue, AMBI_DEC_TRANSITION_MIN_VALUE, AMBI_DEC_TRANSITION_MAX_VALUE);
 }
 
 

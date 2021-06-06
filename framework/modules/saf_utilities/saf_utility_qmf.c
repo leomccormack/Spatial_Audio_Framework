@@ -157,11 +157,11 @@ void qmf_create
 {
     *phQMF = malloc1d(sizeof(qmf_data));
     qmf_data *h = (qmf_data*)(*phQMF);
-    int i,j,K,N;
-    float scale;
+    int i,j,K,N,dsFactor;
+    float scale, eq;
     float* k_tmp, *n_tmp;
 
-    assert(hopsize==4 || hopsize==8 || hopsize==16 || hopsize==32 || hopsize==64 || hopsize==128);
+    saf_assert(hopsize==4 || hopsize==8 || hopsize==16 || hopsize==32 || hopsize==64 || hopsize==128, "Unsupported hopsize");
 
     h->nCHin = nCHin;
     h->nCHout = nCHout;
@@ -201,8 +201,15 @@ void qmf_create
 
     /* Prototype filter */
     h->h_p = malloc1d(10*hopsize*sizeof(float));
-    for(i=0,j=0; i<10*QMF_MAX_HOP_SIZE; i+=QMF_MAX_HOP_SIZE/hopsize, j++)
-        h->h_p[j] = (float)__qmf_protofilter[i];
+    if(hopsize<=QMF_MAX_HOP_SIZE)
+        for(i=0,j=0; i<10*QMF_MAX_HOP_SIZE; i+=QMF_MAX_HOP_SIZE/hopsize, j++)
+            h->h_p[j] = (float)__qmf_protofilter[i];
+    else{ /* Borrow the one from afSTFT: */
+        eq = 2.0f/sqrtf(5.487604141f);
+        dsFactor = 1024/hopsize;
+        for(i=0; i<10*hopsize; i++)
+            h->h_p[i] = __afSTFT_protoFilter1024[i*dsFactor]*eq;
+    }
 
     /* Run-time buffers */
     h->buffer_ana = (float**)malloc1d(nCHin*sizeof(float*)); /* actually faster to go with non-contiguous allocated memory here due to memmove... */
@@ -316,7 +323,7 @@ void qmf_analysis
     float_complex subBands8[8], subBands2[2];
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
-    assert(framesize % h->hopsize == 0); /* framesize must be multiple of hopsize */
+    saf_assert(framesize % h->hopsize == 0, "framesize must be multiple of hopsize");  
     nHops = framesize/h->hopsize;
 
     for(ch=0; ch<h->nCHin; ch++){
@@ -437,7 +444,7 @@ void qmf_synthesis
     qmf_data *h = (qmf_data*)(hQMF);
     int ch, t, nHops, band;
 
-    assert(framesize % h->hopsize == 0); /* framesize must be multiple of hopsize */
+    saf_assert(framesize % h->hopsize == 0, "framesize must be multiple of hopsize");
     nHops = framesize/h->hopsize;
 
     for(ch=0; ch<h->nCHout; ch++){
@@ -469,7 +476,7 @@ void qmf_synthesis
                 h->qmfTF_frame[1] = h->hybQmfTF_frame[6]+h->hybQmfTF_frame[7];
                 h->qmfTF_frame[2] = h->hybQmfTF_frame[8]+h->hybQmfTF_frame[9];
 #endif
-                memcpy(&(h->qmfTF_frame[3]), &(h->hybQmfTF_frame[10]), (h->hopsize - QMF_NBANDS_2_SUBDIVIDE)*sizeof(float_complex));
+                memmove(&(h->qmfTF_frame[3]), &(h->hybQmfTF_frame[10]), (h->hopsize - QMF_NBANDS_2_SUBDIVIDE)*sizeof(float_complex));
             }
             else{
                 switch(h->format){
@@ -629,7 +636,7 @@ void qmf_getCentreFreqs
     float* cutoffs;
     float centreFreqs_qmf[QMF_NBANDS_2_SUBDIVIDE];
 
-    assert(nBands==h->nBands); /* just to check that "centreFreq" is of correct length */
+    saf_assert(nBands==h->nBands, "Just to check that \"centreFreq\" is of correct length");  
 
     /* QMF cutoff frequencies */
     hopsize = h->hopsize;
@@ -679,9 +686,9 @@ void qmf_FIRtoFilterbankCoeffs
 
     nBands = hopSize + (hybridmode ? 7 : 0);
     ir_pad = 1024;//+512;
-    nTimeSlots = (MAX(ir_len,hopSize)+ir_pad)/hopSize;
+    nTimeSlots = (SAF_MAX(ir_len,hopSize)+ir_pad)/hopSize;
     maxIdx = calloc1d(nCH,sizeof(int));
-    centerImpulse = calloc1d(MAX(ir_len,hopSize)+ir_pad, sizeof(float));
+    centerImpulse = calloc1d(SAF_MAX(ir_len,hopSize)+ir_pad, sizeof(float));
 
     /* pick a direction to estimate the center of FIR delays */
     for(j=0; j<nCH; j++){
@@ -704,26 +711,26 @@ void qmf_FIRtoFilterbankCoeffs
 
     /* analyse impulse with the filterbank */
     centerImpulseFB = malloc1d(nBands*nTimeSlots*nCH*sizeof(float_complex));
-    qmfAnalyse(centerImpulse, MAX(ir_len,hopSize)+ir_pad, 1, hopSize, hybridmode, centerImpulseFB);
+    qmfAnalyse(centerImpulse, SAF_MAX(ir_len,hopSize)+ir_pad, 1, hopSize, hybridmode, centerImpulseFB);
     centerImpulseFB_energy = calloc1d(nBands, sizeof(float));
     for(i=0; i<nBands; i++)
         for(t=0; t<nTimeSlots; t++)
             centerImpulseFB_energy[i] += powf(cabsf(centerImpulseFB[i*nTimeSlots + t]), 2.0f);
 
     /* initialise FB coefficients */
-    ir = calloc1d( (MAX(ir_len,hopSize)+ir_pad) * nCH, sizeof(float));
+    ir = calloc1d( (SAF_MAX(ir_len,hopSize)+ir_pad) * nCH, sizeof(float));
     irFB = malloc1d(nBands*nCH*nTimeSlots*sizeof(float_complex));
     for(nd=0; nd<N_dirs; nd++){
         for(j=0; j<ir_len; j++)
             for(i=0; i<nCH; i++)
                 ir[j*nCH+i] = hIR[nd*nCH*ir_len + i*ir_len + j];
-        qmfAnalyse(ir, MAX(ir_len,hopSize)+ir_pad, nCH, hopSize, hybridmode, irFB);
+        qmfAnalyse(ir, SAF_MAX(ir_len,hopSize)+ir_pad, nCH, hopSize, hybridmode, irFB);
         for(nm=0; nm<nCH; nm++){
             for(i=0; i<nBands; i++){
                 irFB_energy = 0;
                 for(t=0; t<nTimeSlots; t++)
                     irFB_energy += powf(cabsf(irFB[i*nTimeSlots*nCH + t*nCH + nm]), 2.0f); /* out_nBands x nTimeslots x nCH */
-                irFB_gain = sqrtf(irFB_energy/MAX(centerImpulseFB_energy[i], 2.23e-8f));
+                irFB_gain = sqrtf(irFB_energy/SAF_MAX(centerImpulseFB_energy[i], 2.23e-8f));
                 cross = cmplxf(0.0f,0.0f);
                 for(t=0; t<nTimeSlots; t++)
                     cross = ccaddf(cross, ccmulf(irFB[i*nTimeSlots*nCH + t*nCH + nm], conjf(centerImpulseFB[i*nTimeSlots + t])));

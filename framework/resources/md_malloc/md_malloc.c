@@ -22,7 +22,7 @@
 
 /**
  * @file md_malloc.c
- * @brief Memory allocation functions for contiguous multi-dimensional arrays
+ * @brief Contiguous memory allocation functions for multi-dimensional arrays
  *
  * Adapted from: https://github.com/leomccormack/md_malloc
  *
@@ -55,15 +55,11 @@
 # define MAX(a,b) (( (a) > (b) ) ? (a) : (b))
 #endif
 
-#ifdef __APPLE__
-# define MD_MALLOC_ENABLE_ERROR_MESSAGES
-#endif
-
 void* malloc1d(size_t dim1_data_size)
 {
     void *ptr = malloc(dim1_data_size);
-#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
-    if (ptr == NULL)
+#if !defined(NDEBUG)
+    if (ptr == NULL && dim1_data_size!=0)
         fprintf(stderr, "Error: 'malloc1d' failed to allocate %zu bytes.\n", dim1_data_size);
 #endif
     return ptr;
@@ -72,8 +68,8 @@ void* malloc1d(size_t dim1_data_size)
 void* calloc1d(size_t dim1, size_t data_size)
 {
     void *ptr = calloc(dim1, data_size);
-#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
-    if (ptr == NULL)
+#if !defined(NDEBUG)
+    if (ptr == NULL && dim1!=0)
         fprintf(stderr, "Error: 'calloc1d' failed to allocate %zu bytes.\n", dim1*data_size);
 #endif
     return ptr;
@@ -82,8 +78,8 @@ void* calloc1d(size_t dim1, size_t data_size)
 void* realloc1d(void* ptr, size_t dim1_data_size)
 {
     ptr = realloc(ptr, dim1_data_size);
-#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
-    if (ptr == NULL)
+#if !defined(NDEBUG)
+    if (ptr == NULL && dim1_data_size!=0)
         fprintf(stderr, "Error: 'realloc1d' failed to allocate %zu bytes.\n", dim1_data_size);
 #endif
     return ptr;
@@ -95,12 +91,7 @@ void** malloc2d(size_t dim1, size_t dim2, size_t data_size)
     void** ptr;
     unsigned char* p2;
     stride = dim2*data_size;
-    ptr = malloc(dim1*sizeof(void*) + dim1*stride);
-#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
-    if(ptr==NULL)
-        fprintf(stderr, "Error: 'malloc2d' failed to allocate %zu bytes.\n", dim1*sizeof(void*) + dim1*stride);
-#endif
-    assert(ptr!=NULL);
+    ptr = malloc1d(dim1*sizeof(void*) + dim1*stride);
     p2 = (unsigned char*)(ptr + dim1);
     for(i=0; i<dim1; i++)
         ptr[i] = &p2[i*stride];
@@ -113,12 +104,7 @@ void** calloc2d(size_t dim1, size_t dim2, size_t data_size)
     void** ptr;
     unsigned char* p2;
     stride = dim2*data_size;
-    ptr = calloc(dim1, sizeof(void*) + stride);
-#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
-    if(ptr==NULL)
-        fprintf(stderr, "Error: 'calloc2d' failed to allocate %zu bytes.\n", dim1*sizeof(void*) + dim1*stride);
-#endif
-    assert(ptr!=NULL);
+    ptr = calloc1d(dim1, sizeof(void*) + stride);
     p2 = (unsigned char*)(ptr + dim1);
     for(i=0; i<dim1; i++)
         ptr[i] = &p2[i*stride];
@@ -130,12 +116,7 @@ void** realloc2d(void** ptr, size_t dim1, size_t dim2, size_t data_size)
     size_t i, stride;
     unsigned char* p2;
     stride = dim2*data_size;
-    ptr = realloc(ptr, dim1*sizeof(void*) + dim1*stride);
-#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
-    if(ptr==NULL)
-        fprintf(stderr, "Error: 'realloc2d' failed to allocate %zu bytes.\n", dim1*sizeof(void*) + dim1*stride);
-#endif
-    assert(ptr!=NULL);
+    ptr = realloc1d(ptr, dim1*sizeof(void*) + dim1*stride);
     p2 = (unsigned char*)(ptr + dim1);
     for(i=0;i<dim1;i++)
         ptr[i] = &p2[i*stride];
@@ -154,12 +135,7 @@ void** realloc2d_r(void** ptr, size_t new_dim1, size_t new_dim2, size_t prev_dim
     /* Resize */
     unsigned char* p2;
     stride = new_dim2*data_size;
-    ptr = realloc(ptr, new_dim1*sizeof(void*) + new_dim1*stride);
-#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
-    if(ptr==NULL)
-        fprintf(stderr, "Error: 'realloc2d' failed to allocate %zu bytes.\n", new_dim1*sizeof(void*) + new_dim1*stride);
-#endif
-    assert(ptr!=NULL);
+    ptr = realloc1d(ptr, new_dim1*sizeof(void*) + new_dim1*stride);
     p2 = (unsigned char*)(ptr + new_dim1);
     for(i=0;i<new_dim1;i++)
         ptr[i] = &p2[i*stride];
@@ -179,12 +155,7 @@ void*** malloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size)
     unsigned char* p3;
     stride1 = dim2*dim3*data_size;
     stride2 = dim3*data_size;
-    ptr = malloc(dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
-#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
-    if(ptr==NULL)
-        fprintf(stderr, "Error: 'malloc3d' failed to allocate %zu bytes.\n", dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
-#endif
-    assert(ptr!=NULL);
+    ptr = malloc1d(dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
     p2 = (void**)(ptr + dim1);
     p3 = (unsigned char*)(p2 + dim1*dim2);
     for(i=0;i<dim1;i++)
@@ -203,12 +174,7 @@ void*** calloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size)
     unsigned char* p3;
     stride1 = dim2*dim3*data_size;
     stride2 = dim3*data_size;
-    ptr = calloc(dim1, sizeof(void**) + dim2*sizeof(void*) + stride1);
-#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
-    if(ptr==NULL)
-        fprintf(stderr, "Error: 'calloc3d' failed to allocate %zu bytes.\n", dim1*sizeof(void**) + dim1*dim2*sizeof(void*) + dim1*stride1);
-#endif
-    assert(ptr!=NULL);
+    ptr = calloc1d(dim1, sizeof(void**) + dim2*sizeof(void*) + stride1);
     p2 = (void**)(ptr + dim1);
     p3 = (unsigned char*)(p2 + dim1*dim2);
     for(i=0;i<dim1;i++)
@@ -226,12 +192,7 @@ void*** realloc3d(void*** ptr, size_t new_dim1, size_t new_dim2, size_t new_dim3
     unsigned char* p3;
     stride1 = new_dim2*new_dim3*data_size;
     stride2 = new_dim3*data_size;
-    ptr = realloc(ptr, new_dim1*sizeof(void**) + new_dim1*new_dim2*sizeof(void*) + new_dim1*stride1);
-#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
-    if(ptr==NULL)
-        fprintf(stderr, "Error: 'realloc3d' failed to allocate %zu bytes.\n", new_dim1*sizeof(void**) + new_dim1*new_dim2*sizeof(void*) + new_dim1*stride1);
-#endif
-    assert(ptr!=NULL);
+    ptr = realloc1d(ptr, new_dim1*sizeof(void**) + new_dim1*new_dim2*sizeof(void*) + new_dim1*stride1);
     p2 = (void**)(ptr + new_dim1);
     p3 = (unsigned char*)(p2 + new_dim1*new_dim2);
     for(i=0;i<new_dim1;i++)
@@ -256,12 +217,7 @@ void*** realloc3d_r(void*** ptr, size_t new_dim1, size_t new_dim2, size_t new_di
     /* Resize */
     stride1 = new_dim2*new_dim3*data_size;
     stride2 = new_dim3*data_size;
-    ptr = realloc(ptr, new_dim1*sizeof(void**) + new_dim1*new_dim2*sizeof(void*) + new_dim1*stride1);
-#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
-    if(ptr==NULL)
-        fprintf(stderr, "Error: 'realloc3d' failed to allocate %zu bytes.\n", new_dim1*sizeof(void**) + new_dim1*new_dim2*sizeof(void*) + new_dim1*stride1);
-#endif
-    assert(ptr!=NULL);
+    ptr = realloc1d(ptr, new_dim1*sizeof(void**) + new_dim1*new_dim2*sizeof(void*) + new_dim1*stride1);
     p2 = (void**)(ptr + new_dim1);
     p3 = (unsigned char*)(p2 + new_dim1*new_dim2);
     for(i=0;i<new_dim1;i++)
@@ -288,12 +244,7 @@ void**** malloc4d(size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dat
     stride1 = dim2*dim3*dim4*data_size;
     stride2 = dim3*dim4*data_size;
     stride3 = dim4*data_size;
-    ptr = malloc(dim1*sizeof(void***) + dim1*dim2*sizeof(void**) + dim1*dim2*dim3*sizeof(void*) + dim1*stride1);
-#if !defined(NDEBUG) && !defined(_MSC_VER) && defined(MD_MALLOC_ENABLE_ERROR_MESSAGES)
-    if(ptr==NULL)
-        fprintf(stderr, "Error: 'malloc4d' failed to allocate %zu bytes.\n", dim1*sizeof(void***) + dim1*dim2*sizeof(void**) + dim1*dim2*dim3*sizeof(void*) + dim1*stride1);
-#endif
-    assert(ptr!=NULL); 
+    ptr = malloc1d(dim1*sizeof(void***) + dim1*dim2*sizeof(void**) + dim1*dim2*dim3*sizeof(void*) + dim1*stride1);
     p2 = (void***)(ptr + dim1);
     p3 = (void**)(p2 + dim1*dim2);
     p4 = (unsigned char*)(p3 + dim1*dim2*dim3);
@@ -301,10 +252,293 @@ void**** malloc4d(size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dat
         ptr[i] = &p2[i*dim2];
     for(i=0;i<dim1;i++)
         for(j=0;j<dim2;j++)
-            p2[i*dim2+j] = &p3[i*stride1 + j*stride2];
+            p2[i*dim2+j] = &p3[i*dim2*dim3 + j*dim3];
     for(i=0;i<dim1;i++)
         for(j=0;j<dim2;j++)
             for(k=0;k<dim3;k++)
                 p3[i*dim2*dim3+j*dim3+k] = &p4[i*stride1 + j*stride2 + k*stride3];
+    return ptr;
+}
+
+void**** calloc4d(size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t data_size)
+{
+    size_t i, j, k, stride1, stride2, stride3;
+    void**** ptr;
+    void*** p2;
+    void** p3;
+    unsigned char* p4;
+    stride1 = dim2*dim3*dim4*data_size;
+    stride2 = dim3*dim4*data_size;
+    stride3 = dim4*data_size;
+    ptr = calloc1d(dim1, sizeof(void***) + dim2*sizeof(void**) + dim2*dim3*sizeof(void*) + stride1);
+    p2 = (void***)(ptr + dim1);
+    p3 = (void**)(p2 + dim1*dim2);
+    p4 = (unsigned char*)(p3 + dim1*dim2*dim3);
+    for(i=0;i<dim1;i++)
+        ptr[i] = &p2[i*dim2];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            p2[i*dim2+j] = &p3[i*dim2*dim3 + j*dim3];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                p3[i*dim2*dim3+j*dim3+k] = &p4[i*stride1 + j*stride2 + k*stride3];
+    return ptr;
+}
+
+void**** realloc4d(void**** ptr, size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t data_size)
+{
+    size_t i, j, k, stride1, stride2, stride3;
+    void*** p2;
+    void** p3;
+    unsigned char* p4;
+    stride1 = dim2*dim3*dim4*data_size;
+    stride2 = dim3*dim4*data_size;
+    stride3 = dim4*data_size;
+    ptr = realloc1d(ptr, dim1*sizeof(void***) + dim1*dim2*sizeof(void**) + dim1*dim2*dim3*sizeof(void*) + dim1*stride1);
+    p2 = (void***)(ptr + dim1);
+    p3 = (void**)(p2 + dim1*dim2);
+    p4 = (unsigned char*)(p3 + dim1*dim2*dim3);
+    for(i=0;i<dim1;i++)
+        ptr[i] = &p2[i*dim2];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            p2[i*dim2+j] = &p3[i*dim2*dim3 + j*dim3];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                p3[i*dim2*dim3+j*dim3+k] = &p4[i*stride1 + j*stride2 + k*stride3];
+    return ptr;
+}
+
+void***** malloc5d(size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dim5, size_t data_size)
+{
+    size_t i, j, k, l, stride1, stride2, stride3, stride4;
+    void***** ptr;
+    void**** p2;
+    void*** p3;
+    void** p4;
+    unsigned char* p5;
+    stride1 = dim2*dim3*dim4*dim5*data_size;
+    stride2 = dim3*dim4*dim5*data_size;
+    stride3 = dim4*dim5*data_size;
+    stride4 = dim5*data_size;
+    ptr = malloc1d(dim1*sizeof(void****) + dim1*dim2*sizeof(void***) + dim1*dim2*dim3*sizeof(void**) + dim1*dim2*dim3*dim4*sizeof(void*) + dim1*stride1);
+    p2 = (void****)(ptr + dim1);
+    p3 = (void***)(p2 + dim1*dim2);
+    p4 = (void**)(p3 + dim1*dim2*dim3);
+    p5 = (unsigned char*)(p4 + dim1*dim2*dim3*dim4);
+    for(i=0;i<dim1;i++)
+        ptr[i] = &p2[i*dim2];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            p2[i*dim2+j] = &p3[i*dim2*dim3 + j*dim3];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                p3[i*dim2*dim3 + j*dim3 + k] = &p4[i*dim2*dim3*dim4 + j*dim3*dim4 + k*dim4];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                for(l=0;l<dim4;l++)
+                    p4[i*dim2*dim3*dim4 + j*dim3*dim4 + k*dim4 + l] = &p5[i*stride1 + j*stride2 + k*stride3 + l*stride4];
+    return ptr;
+}
+
+void***** calloc5d(size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dim5, size_t data_size)
+{
+    size_t i, j, k, l, stride1, stride2, stride3, stride4;
+    void***** ptr;
+    void**** p2;
+    void*** p3;
+    void** p4;
+    unsigned char* p5;
+    stride1 = dim2*dim3*dim4*dim5*data_size;
+    stride2 = dim3*dim4*dim5*data_size;
+    stride3 = dim4*dim5*data_size;
+    stride4 = dim5*data_size;
+    ptr = calloc1d(dim1, sizeof(void****) + dim2*sizeof(void***) + dim2*dim3*sizeof(void**) + dim2*dim3*dim4*sizeof(void*) + stride1);
+    p2 = (void****)(ptr + dim1);
+    p3 = (void***)(p2 + dim1*dim2);
+    p4 = (void**)(p3 + dim1*dim2*dim3);
+    p5 = (unsigned char*)(p4 + dim1*dim2*dim3*dim4);
+    for(i=0;i<dim1;i++)
+        ptr[i] = &p2[i*dim2];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            p2[i*dim2+j] = &p3[i*dim2*dim3 + j*dim3];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                p3[i*dim2*dim3 + j*dim3 + k] = &p4[i*dim2*dim3*dim4 + j*dim3*dim4 + k*dim4];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                for(l=0;l<dim4;l++)
+                    p4[i*dim2*dim3*dim4 + j*dim3*dim4 + k*dim4 + l] = &p5[i*stride1 + j*stride2 + k*stride3 + l*stride4];
+    return ptr;
+}
+
+void***** realloc5d(void***** ptr, size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dim5, size_t data_size)
+{
+    size_t i, j, k, l, stride1, stride2, stride3, stride4;
+    void**** p2;
+    void*** p3;
+    void** p4;
+    unsigned char* p5;
+    stride1 = dim2*dim3*dim4*dim5*data_size;
+    stride2 = dim3*dim4*dim5*data_size;
+    stride3 = dim4*dim5*data_size;
+    stride4 = dim5*data_size;
+    ptr = realloc1d(ptr, dim1*sizeof(void****) + dim1*dim2*sizeof(void***) + dim1*dim2*dim3*sizeof(void**) + dim1*dim2*dim3*dim4*sizeof(void*) + dim1*stride1);
+    p2 = (void****)(ptr + dim1);
+    p3 = (void***)(p2 + dim1*dim2);
+    p4 = (void**)(p3 + dim1*dim2*dim3);
+    p5 = (unsigned char*)(p4 + dim1*dim2*dim3*dim4);
+    for(i=0;i<dim1;i++)
+        ptr[i] = &p2[i*dim2];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            p2[i*dim2+j] = &p3[i*dim2*dim3 + j*dim3];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                p3[i*dim2*dim3 + j*dim3 + k] = &p4[i*dim2*dim3*dim4 + j*dim3*dim4 + k*dim4];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                for(l=0;l<dim4;l++)
+                    p4[i*dim2*dim3*dim4 + j*dim3*dim4 + k*dim4 + l] = &p5[i*stride1 + j*stride2 + k*stride3 + l*stride4];
+    return ptr;
+}
+
+void****** malloc6d(size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dim5, size_t dim6, size_t data_size)
+{
+    size_t i, j, k, l, p, stride1, stride2, stride3, stride4, stride5;
+    void****** ptr;
+    void***** p2;
+    void**** p3;
+    void*** p4;
+    void** p5;
+    unsigned char* p6;
+    stride1 = dim2*dim3*dim4*dim5*dim6*data_size;
+    stride2 = dim3*dim4*dim5*dim6*data_size;
+    stride3 = dim4*dim5*dim6*data_size;
+    stride4 = dim5*dim6*data_size;
+    stride5 = dim6*data_size;
+    ptr = malloc1d(dim1*sizeof(void*****) + dim1*dim2*sizeof(void****) + dim1*dim2*dim3*sizeof(void***) +
+                   dim1*dim2*dim3*dim4*sizeof(void**) + dim1*dim2*dim3*dim4*dim5*sizeof(void*) + dim1*stride1);
+    p2 = (void*****)(ptr + dim1);
+    p3 = (void****)(p2 + dim1*dim2);
+    p4 = (void***)(p3 + dim1*dim2*dim3);
+    p5 = (void**)(p4 + dim1*dim2*dim3*dim4);
+    p6 = (unsigned char*)(p5 + dim1*dim2*dim3*dim4*dim5);
+    for(i=0;i<dim1;i++)
+        ptr[i] = &p2[i*dim2];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            p2[i*dim2+j] = &p3[i*dim2*dim3 + j*dim3];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                p3[i*dim2*dim3 + j*dim3 + k] = &p4[i*dim2*dim3*dim4 + j*dim3*dim4 + k*dim4];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                for(p=0;p<dim4;p++)
+                    p4[i*dim2*dim3*dim4 + j*dim3*dim4 + k*dim4 + p] = &p5[i*dim2*dim3*dim4*dim5 + j*dim3*dim4*dim5 + k*dim4*dim5 + p*dim5];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                for(l=0;l<dim4;l++)
+                    for(p=0;p<dim5;p++)
+                         p5[i*dim2*dim3*dim4*dim5 + j*dim3*dim4*dim5 + k*dim4*dim5 + l*dim5 + p] = &p6[i*stride1 + j*stride2 + k*stride3 + l*stride4 + p*stride5];
+    return ptr;
+}
+
+void****** calloc6d(size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dim5, size_t dim6, size_t data_size)
+{
+    size_t i, j, k, l, p, stride1, stride2, stride3, stride4, stride5;
+    void****** ptr;
+    void***** p2;
+    void**** p3;
+    void*** p4;
+    void** p5;
+    unsigned char* p6;
+    stride1 = dim2*dim3*dim4*dim5*dim6*data_size;
+    stride2 = dim3*dim4*dim5*dim6*data_size;
+    stride3 = dim4*dim5*dim6*data_size;
+    stride4 = dim5*dim6*data_size;
+    stride5 = dim6*data_size;
+    ptr = calloc1d(dim1, sizeof(void*****) + dim2*sizeof(void****) + dim2*dim3*sizeof(void***) +
+                   dim2*dim3*dim4*sizeof(void**) + dim2*dim3*dim4*dim5*sizeof(void*) + stride1);
+    p2 = (void*****)(ptr + dim1);
+    p3 = (void****)(p2 + dim1*dim2);
+    p4 = (void***)(p3 + dim1*dim2*dim3);
+    p5 = (void**)(p4 + dim1*dim2*dim3*dim4);
+    p6 = (unsigned char*)(p5 + dim1*dim2*dim3*dim4*dim5);
+    for(i=0;i<dim1;i++)
+        ptr[i] = &p2[i*dim2];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            p2[i*dim2+j] = &p3[i*dim2*dim3 + j*dim3];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                p3[i*dim2*dim3 + j*dim3 + k] = &p4[i*dim2*dim3*dim4 + j*dim3*dim4 + k*dim4];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                for(p=0;p<dim4;p++)
+                    p4[i*dim2*dim3*dim4 + j*dim3*dim4 + k*dim4 + p] = &p5[i*dim2*dim3*dim4*dim5 + j*dim3*dim4*dim5 + k*dim4*dim5 + p*dim5];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                for(l=0;l<dim4;l++)
+                    for(p=0;p<dim5;p++)
+                         p5[i*dim2*dim3*dim4*dim5 + j*dim3*dim4*dim5 + k*dim4*dim5 + l*dim5 + p] = &p6[i*stride1 + j*stride2 + k*stride3 + l*stride4 + p*stride5];
+    return ptr;
+}
+
+void****** realloc6d(void****** ptr, size_t dim1, size_t dim2, size_t dim3, size_t dim4, size_t dim5, size_t dim6, size_t data_size)
+{
+    size_t i, j, k, l, p, stride1, stride2, stride3, stride4, stride5;
+    void***** p2;
+    void**** p3;
+    void*** p4;
+    void** p5;
+    unsigned char* p6;
+    stride1 = dim2*dim3*dim4*dim5*dim6*data_size;
+    stride2 = dim3*dim4*dim5*dim6*data_size;
+    stride3 = dim4*dim5*dim6*data_size;
+    stride4 = dim5*dim6*data_size;
+    stride5 = dim6*data_size;
+    ptr = realloc1d(ptr, dim1*sizeof(void*****) + dim1*dim2*sizeof(void****) + dim1*dim2*dim3*sizeof(void***) +
+                    dim1*dim2*dim3*dim4*sizeof(void**) + dim1*dim2*dim3*dim4*dim5*sizeof(void*) + dim1*stride1);
+    p2 = (void*****)(ptr + dim1);
+    p3 = (void****)(p2 + dim1*dim2);
+    p4 = (void***)(p3 + dim1*dim2*dim3);
+    p5 = (void**)(p4 + dim1*dim2*dim3*dim4);
+    p6 = (unsigned char*)(p5 + dim1*dim2*dim3*dim4*dim5);
+    for(i=0;i<dim1;i++)
+        ptr[i] = &p2[i*dim2];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            p2[i*dim2+j] = &p3[i*dim2*dim3 + j*dim3];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                p3[i*dim2*dim3 + j*dim3 + k] = &p4[i*dim2*dim3*dim4 + j*dim3*dim4 + k*dim4];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                for(p=0;p<dim4;p++)
+                    p4[i*dim2*dim3*dim4 + j*dim3*dim4 + k*dim4 + p] = &p5[i*dim2*dim3*dim4*dim5 + j*dim3*dim4*dim5 + k*dim4*dim5 + p*dim5];
+    for(i=0;i<dim1;i++)
+        for(j=0;j<dim2;j++)
+            for(k=0;k<dim3;k++)
+                for(l=0;l<dim4;l++)
+                    for(p=0;p<dim5;p++)
+                         p5[i*dim2*dim3*dim4*dim5 + j*dim3*dim4*dim5 + k*dim4*dim5 + l*dim5 + p] = &p6[i*stride1 + j*stride2 + k*stride3 + l*stride4 + p*stride5];
     return ptr;
 }

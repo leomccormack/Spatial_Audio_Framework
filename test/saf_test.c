@@ -71,18 +71,17 @@ int main_test(void) {
     timer_lib_initialize();
     start = timer_current();
     UNITY_BEGIN();
-
+    
     /* run each unit test */
-#if SAF_ENABLE_EXAMPLES_TESTS == 1
-    RUN_TEST(test__saf_example_spreader);
-#endif /* SAF_ENABLE_EXAMPLES_TESTS */
+    RUN_TEST(test__delaunaynd);
     RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
     RUN_TEST(test__saf_stft_LTI);
     RUN_TEST(test__ims_shoebox_RIR);
     RUN_TEST(test__ims_shoebox_TD);
     RUN_TEST(test__saf_matrixConv);
-    RUN_TEST(test__saf_rfft); 
+    RUN_TEST(test__saf_rfft);
+    RUN_TEST(test__saf_fft);
     RUN_TEST(test__afSTFT);
     RUN_TEST(test__qmf);
     RUN_TEST(test__smb_pitchShifter);
@@ -92,6 +91,9 @@ int main_test(void) {
     RUN_TEST(test__getVoronoiWeights);
     RUN_TEST(test__unique_i);
     RUN_TEST(test__realloc2d_r);
+    RUN_TEST(test__malloc4d);
+    RUN_TEST(test__malloc5d);
+    RUN_TEST(test__malloc6d);
     RUN_TEST(test__latticeDecorrelator);
     RUN_TEST(test__butterCoeffs);
     RUN_TEST(test__faf_IIRFilterbank);
@@ -123,6 +125,7 @@ int main_test(void) {
     RUN_TEST(test__saf_example_ambi_enc);
     RUN_TEST(test__saf_example_array2sh); 
     RUN_TEST(test__saf_example_rotator);
+    RUN_TEST(test__saf_example_spreader);
     RUN_TEST(test__tvconv);
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
@@ -137,55 +140,52 @@ int main_test(void) {
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
 
-#if SAF_ENABLE_EXAMPLES_TESTS == 1
-void test__saf_example_spreader(void){
-    int Q, i, ch, framesize, nOutputs;
-    void* hSpr;
-    float** inSigs, **outSigs;
-    float** inSig_frame, **outSig_frame;
+void test__delaunaynd(void){
+    int nMesh;
+    int* mesh;
 
-    /* Config */
-    const int fs = 48000;
-    const int nInputs = 1;
-    const int signalLength = fs*2;
+    /* Not really a unit test... You have to copy the mesh indices into e.g. Matlab, plot, and see... */
 
-    /* Create and initialise an instance of spreader */
-    spreader_create(&hSpr);
+    /* 2D 3 points */
+    float three_xy[3][2] =
+      { {7.0f,7.0f},{2.0f,7.0f},{2.0f,1.0f} };
+    mesh = NULL;
+    delaunaynd((float*)three_xy, 3, 2/*nDims*/, &mesh, &nMesh);
+    free(mesh);
 
-    /* Configure and initialise the spreader codec */
-    spreader_setUseDefaultHRIRsflag(hSpr, 1);
-    nOutputs = NUM_EARS; /* the default is binaural operation */
-    spreader_setNumSources(hSpr, nInputs);
-    spreader_init(hSpr, fs); /* Should be called before calling "process"
-                               * Cannot be called while "process" is on-going */
-    spreader_initCodec(hSpr); /* Can be called whenever (thread-safe) */
+    /* 2D 4 points */
+    float four_xy[4][2] =
+      { {7.0f,7.0f},{2.0f,7.0f},{2.0f,1.0f},{7.0f,1.0f} };
+    mesh = NULL;
+    delaunaynd((float*)four_xy, 4, 2/*nDims*/, &mesh, &nMesh);
+    free(mesh);
 
-    /* Define input mono signal */
-    inSigs = (float**)malloc2d(nInputs,signalLength,sizeof(float));
-    outSigs = (float**)malloc2d(nOutputs,signalLength,sizeof(float));
-    rand_m1_1(FLATTEN2D(inSigs), nInputs*signalLength); /* white-noise signals */
+    /* 2D Square */
+    float square_xy[26][2] =
+      { {-1.0f,-1.0f},{-1.0f,-0.5f},{-1.0f,0.0f},{-1.0f,0.5f},{-1.0f,1.0f},{-0.5f,-1.0f},{-0.5f,-0.5f},{-0.5f,0.0f},{-0.5f,0.5f},
+        {-0.5f,1.0f},{0.0f,-1.0f},{0.0f,-0.5f},{0.0f,0.0f},{0.0f,0.5f},{0.0f,1.0f},{0.5f,-1.0f},
+        {0.5f,-0.5f},{0.5f,0.0f},{0.5f,0.5f},{0.5f,1.0f},{1.0f,-1.0f},{1.0f,-0.5f},
+        {1.0f,0.0f},{1.0f,0.5f},{1.0f,1.0f},{0.0f,0.0f} };
+    mesh = NULL;
+    delaunaynd((float*)square_xy, 26, 2/*nDims*/, &mesh, &nMesh);
+    free(mesh);
 
-    /* Apply spreader */
-    framesize = spreader_getFrameSize();
-    inSig_frame = (float**)malloc1d(nInputs*sizeof(float*));
-    outSig_frame = (float**)malloc1d(nOutputs*sizeof(float*));
-    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
-        for(ch=0; ch<nInputs; ch++)
-            inSig_frame[ch] = &inSigs[ch][i*framesize];
-        for(ch=0; ch<nOutputs; ch++)
-            outSig_frame[ch] = &outSigs[ch][i*framesize];
+    /* 3D Cube */
+    float cube_xyz[8][3] =
+      { {-1.0f,-1.0f,-1.0f},{-1.0f,1.0f,-1.0f},{1.0f,-1.0f,-1.0f},{1.0f,1.0f,-1.0f},
+        {-1.0f,-1.0f,1.0f}, {-1.0f,1.0f,1.0f}, {1.0f,-1.0f,1.0f}, {1.0f,1.0f,1.0f} };
+    mesh = NULL;
+    delaunaynd((float*)cube_xyz, 8, 3/*nDims*/, &mesh, &nMesh);
+    free(mesh);
 
-        spreader_process(hSpr, inSig_frame, outSig_frame, nInputs, nOutputs, framesize);
-    }
-
-    /* Clean-up */
-    spreader_destroy(&hSpr);
-    free(inSigs);
-    free(outSigs);
-    free(inSig_frame);
-    free(outSig_frame);
+    /* 3D Cube with a point in the centre */
+    float cube_xyz2[9][3] =
+      { {-1.0f,-1.0f,-1.0f},{-1.0f,1.0f,-1.0f},{1.0f,-1.0f,-1.0f},{1.0f,1.0f,-1.0f},
+        {-1.0f,-1.0f,1.0f}, {-1.0f,1.0f,1.0f}, {1.0f,-1.0f,1.0f}, {1.0f,1.0f,1.0f}, {0.0f,0.0f,0.0f} };
+    mesh = NULL;
+    delaunaynd((float*)cube_xyz2, 9, 3/*nDims*/, &mesh, &nMesh);
+    free(mesh);
 }
-#endif
 
 void test__quaternion(void){
     int i, j;
@@ -212,7 +212,7 @@ void test__quaternion(void){
 
         /* Ensure that the difference between them is 0 */
         utility_svvsub((float*)rot, (float*)rot2, 9, residual);
-        for(j=0; j<9; j++)
+        for(j=0; j<9; j++) 
             TEST_ASSERT_TRUE(fabsf(residual[j])<1e-3f);
 
         /* Testing that quaternion2euler() and euler2Quaternion() are invertable */
@@ -220,7 +220,7 @@ void test__quaternion(void){
         euler2Quaternion(ypr[0], ypr[1], ypr[2], 1, EULER_ROTATION_YAW_PITCH_ROLL, &Q2);
         quaternion2euler(&Q2, 1, EULER_ROTATION_YAW_PITCH_ROLL, &test_ypr[0], &test_ypr[1], &test_ypr[2]);
         for(j=0; j<3; j++)
-            TEST_ASSERT_TRUE(fabsf(test_ypr[j]-ypr[j])<1e-3f);
+            TEST_ASSERT_TRUE(fabsf(test_ypr[j]-ypr[j])<1e-2f);
     }
 }
 
@@ -526,12 +526,13 @@ void test__saf_rfft(void){
     void *hFFT;
 
     /* Config */
-    const float acceptedTolerance = 0.000001f;
-    const int fftSizesToTest[12] =
-        {16,256,512,1024,2048,4096,8192,16384,32768,65536,1048576,33554432};
+    const float acceptedTolerance = 0.00001f;
+    const int fftSizesToTest[24] =
+        {16,256,512,1024,2048,4096,8192,16384,32768,65536,1048576,     /*     2^x */
+         80,160,320,640,1280,240,480,960,1920,3840,7680,15360,30720 }; /* non-2^x, (but still supported by vDSP) */
 
     /* Loop over the different FFT sizes */
-    for (i=0; i<11; i++){
+    for (i=0; i<24; i++){
         N = fftSizesToTest[i];
 
         /* prep */
@@ -551,6 +552,47 @@ void test__saf_rfft(void){
 
         /* clean-up */
         saf_rfft_destroy(&hFFT);
+        free(x_fd);
+        free(x_td);
+        free(test);
+    }
+}
+
+void test__saf_fft(void){
+    int i, j, N;
+    float_complex* x_td, *test;
+    float_complex* x_fd;
+    void *hFFT;
+
+    /* Config */
+    const float acceptedTolerance = 0.00001f;
+    const int fftSizesToTest[24] =
+        {16,256,512,1024,2048,4096,8192,16384,32768,65536,1048576,     /*     2^x */
+         80,160,320,640,1280,240,480,960,1920,3840,7680,15360,30720 }; /* non-2^x, (but still supported by vDSP) */
+
+    /* Loop over the different FFT sizes */
+    for (i=0; i<24; i++){
+        N = fftSizesToTest[i];
+
+        /* prep */
+        x_td = malloc1d(N*sizeof(float_complex));
+        test = malloc1d(N*sizeof(float_complex));
+        x_fd = malloc1d(N*sizeof(float_complex));
+        rand_m1_1((float*)x_td, N*2); /* populate with random numbers */
+        saf_fft_create(&hFFT, N);
+
+        /* forward and backward transform */
+        saf_fft_forward(hFFT, x_td, x_fd);
+        saf_fft_backward(hFFT, x_fd, test);
+
+        /* Check that, x_td==test */
+        for(j=0; j<N; j++){
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, crealf(x_td[j]), crealf(test[j]));
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, cimagf(x_td[j]), cimagf(test[j]));
+        }
+
+        /* clean-up */
+        saf_fft_destroy(&hFFT);
         free(x_fd);
         free(x_td);
         free(test);
@@ -1004,6 +1046,108 @@ void test__realloc2d_r(void){
     free(test);
 }
 
+void test__malloc4d(void){
+    int i,j,k,l;
+    int REF[3][4][2][5];
+    int CPY[3][4][2][5];
+    int**** test_malloc_4d;
+    test_malloc_4d = (int****)malloc4d(3, 4, 2, 5, sizeof(int));
+
+    /* Fill the reference static 4D array, and the dynamically allocated 4D array with the same values */
+    for(i=0; i<3; i++){
+        for(j=0; j<4; j++){
+            for(k=0; k<2; k++){
+                for(l=0; l<5; l++){
+                    test_malloc_4d[i][j][k][l] = i*4*2*5 + j*2*5 + k*5 + l;
+                    REF[i][j][k][l] = i*4*2*5 + j*2*5 + k*5 + l;
+                }
+            }
+        }
+    }
+
+    /* Copy the dynamically allocated array to a static copy (to check that the data has actually been contiguously allocated) */
+    memcpy(CPY, FLATTEN4D(test_malloc_4d), 3*4*2*5*sizeof(int));
+    for(i=0; i<3; i++)
+        for(j=0; j<4; j++)
+            for(k=0; k<2; k++)
+                for(l=0; l<5; l++) /* The copy should be identical to the reference */
+                    TEST_ASSERT_TRUE(CPY[i][j][k][l] == REF[i][j][k][l]);
+
+    /* Clean-up */
+    free(test_malloc_4d);
+}
+
+void test__malloc5d(void){
+    int i,j,k,l,p;
+    int REF[2][4][3][5][2];
+    int CPY[2][4][3][5][2];
+    int***** test_malloc_5d;
+    test_malloc_5d = (int*****)malloc5d(2, 4, 3, 5, 2, sizeof(int));
+
+    /* Fill the reference static 5D array, and the dynamically allocated 5D array with the same values */
+    for(i=0; i<2; i++){
+        for(j=0; j<4; j++){
+            for(k=0; k<3; k++){
+                for(l=0; l<5; l++){
+                    for(p=0; p<2; p++){
+                        test_malloc_5d[i][j][k][l][p] = i*4*3*5*2 + j*3*5*2 + k*5*2 + l*2 + p;
+                        REF[i][j][k][l][p] = i*4*3*5*2 + j*3*5*2 + k*5*2 + l*2 + p;
+                    }
+                }
+            }
+        }
+    }
+
+    /* Copy the dynamically allocated array to a static copy (to check that the data has actually been contiguously allocated) */
+    memcpy(CPY, FLATTEN5D(test_malloc_5d), 2*4*3*5*2*sizeof(int));
+    for(i=0; i<2; i++)
+        for(j=0; j<4; j++)
+            for(k=0; k<3; k++)
+                for(l=0; l<5; l++)
+                    for(p=0; p<2; p++)/* The copy should be identical to the reference */
+                        TEST_ASSERT_TRUE(CPY[i][j][k][l][p] == REF[i][j][k][l][p]);
+
+    /* Clean-up */
+    free(test_malloc_5d);
+}
+
+void test__malloc6d(void){
+    int i,j,k,l,p,o;
+    int REF[2][3][2][4][2][3];
+    int CPY[2][3][2][4][2][3];
+    int****** test_malloc_6d;
+    test_malloc_6d = (int******)malloc6d(2, 3, 2, 4, 2, 3, sizeof(int));
+
+    /* Fill the reference static 5D array, and the dynamically allocated 5D array with the same values */
+    for(i=0; i<2; i++){
+        for(j=0; j<3; j++){
+            for(k=0; k<2; k++){
+                for(l=0; l<4; l++){
+                    for(p=0; p<2; p++){
+                        for(o=0; o<3; o++){
+                            test_malloc_6d[i][j][k][l][p][o] = i*3*2*4*2*3 + j*2*4*2*3 + k*4*2*3 + l*2*3 + p*3 + o;
+                            REF[i][j][k][l][p][o] = i*3*2*4*2*3 + j*2*4*2*3 + k*4*2*3 + l*2*3 + p*3 + o;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* Copy the dynamically allocated array to a static copy (to check that the data has actually been contiguously allocated) */
+    memcpy(CPY, FLATTEN6D(test_malloc_6d), 2*3*2*4*2*3*sizeof(int));
+    for(i=0; i<2; i++)
+        for(j=0; j<3; j++)
+            for(k=0; k<2; k++)
+                for(l=0; l<4; l++)
+                    for(p=0; p<2; p++)
+                        for(o=0; o<3; o++)/* The copy should be identical to the reference */
+                            TEST_ASSERT_TRUE(CPY[i][j][k][l][p][o] == REF[i][j][k][l][p][o]);
+
+    /* Clean-up */
+    free(test_malloc_6d);
+}
+
 void test__latticeDecorrelator(void){
     int c, band, nBands, idx, hopIdx, i;
     void* hDecor, *hSTFT;
@@ -1015,7 +1159,7 @@ void test__latticeDecorrelator(void){
     /* config */
     const float acceptedICC = 0.05f;
     const int nCH = 24;
-    const int nTestHops = 2000;
+    const int nTestHops = 800;
     const int hopSize = 128;
     const int procDelay = hopSize*12 + 12;
     const int lSig = nTestHops*hopSize+procDelay;
@@ -1023,8 +1167,8 @@ void test__latticeDecorrelator(void){
     nBands = hopSize+5;
 
     /* audio buffers */
-    inputTimeDomainData = (float**) malloc2d(1, lSig, sizeof(float));
-    outputTimeDomainData = (float**) malloc2d(nCH, lSig, sizeof(float));
+    inputTimeDomainData = (float**) calloc2d(1, lSig, sizeof(float));
+    outputTimeDomainData = (float**) calloc2d(nCH, lSig, sizeof(float));
     inTFframe = (float_complex***)malloc3d(nBands, nCH, 1, sizeof(float_complex));
     outTFframe = (float_complex***)malloc3d(nBands, nCH, 1, sizeof(float_complex));
     tempHop = (float**) malloc2d(nCH, hopSize, sizeof(float));
@@ -1045,7 +1189,7 @@ void test__latticeDecorrelator(void){
     /* Processing loop */
     idx = 0;
     hopIdx = 0;
-    while(idx<lSig){
+    while(idx<lSig-hopSize*2){
         for(c=0; c<1; c++)
             memcpy(tempHop[c], &(inputTimeDomainData[c][hopIdx*hopSize]), hopSize*sizeof(float));
 
@@ -1301,20 +1445,20 @@ void test__gexpm(void){
     /* prep */
     const float acceptedTolerance = 0.0001f;
     const float inM[6][6] = {
-        {-0.376858200853762,0.656790634216694,0.124479178614046,-0.334752428307223,1.50745241578235,0.0290651989052969},
-        {0.608382058262806,0.581930485432986,3.23135406998058,-0.712003744668929,-1.33872571354702,-0.334742482743222},
-        {-0.795741418256672,0.690709474622409,0.620971281129248,1.38749471231620,0.897245329198841,-0.0693670166113321},
-        {0.179789913109994,-1.06135084902804,-1.10032635271188,0.612441344250358,-2.43213807790664,-0.479265889956047},
-        {-0.277441781278754,-0.0732116130293688,-0.572551795688137,1.02024767389969,0.167385894565923,1.45210312619277},
-        {-0.205305770089918,-1.59783032780633,1.08539265129120,0.460057585947626,-1.02420974042838,1.04117461500218}
+        {-0.376858200853762f,0.656790634216694f,0.124479178614046f,-0.334752428307223f,1.50745241578235f,0.0290651989052969f},
+        {0.608382058262806f,0.581930485432986f,3.23135406998058f,-0.712003744668929f,-1.33872571354702f,-0.334742482743222f},
+        {-0.795741418256672f,0.690709474622409f,0.620971281129248f,1.38749471231620f,0.897245329198841f,-0.0693670166113321f},
+        {0.179789913109994f,-1.06135084902804f,-1.10032635271188f,0.612441344250358f,-2.43213807790664f,-0.479265889956047f},
+        {-0.277441781278754f,-0.0732116130293688f,-0.572551795688137f,1.02024767389969f,0.167385894565923f,1.45210312619277f},
+        {-0.205305770089918f,-1.59783032780633f,1.08539265129120f,0.460057585947626f,-1.02420974042838f,1.04117461500218f}
     };
     const float outM_ref[6][6] = {
-        {0.385163650730121,0.0865151585709784,0.898406722231524,0.877640791713973,0.435244824708340,0.888866982998854},
-        {-0.664938511314777,5.02943129352875,8.24444951891833,2.23840978101979,-0.942669833528886,-2.38535530623266},
-        {-0.388189314743059,0.429308537172675,1.13870842882926,1.60875776611798,-1.44249911796405,-1.51822150286392},
-        {1.05630187656688,0.256606570814868,-2.42701873560847,-1.42372526577009,-0.335273289873574,-1.94362909671742},
-        {0.0261470437116839,-3.03329326250434,-3.50207776203591,0.412043775125377,-0.536000387729306,1.61801775548557},
-        {-0.292024827617294,-4.31537192033477,-3.99160103133879,0.312499067924889,-1.46924802440347,1.98522802303672}
+        {0.385163650730121f,0.0865151585709784f,0.898406722231524f,0.877640791713973f,0.435244824708340f,0.888866982998854f},
+        {-0.664938511314777f,5.02943129352875f,8.24444951891833f,2.23840978101979f,-0.942669833528886f,-2.38535530623266f},
+        {-0.388189314743059f,0.429308537172675f,1.13870842882926f,1.60875776611798f,-1.44249911796405f,-1.51822150286392f},
+        {1.05630187656688f,0.256606570814868f,-2.42701873560847f,-1.42372526577009f,-0.335273289873574f,-1.94362909671742f},
+        {0.0261470437116839f,-3.03329326250434f,-3.50207776203591f,0.412043775125377f,-0.536000387729306f,1.61801775548557f},
+        {-0.292024827617294f,-4.31537192033477f,-3.99160103133879f,0.312499067924889f,-1.46924802440347f,1.98522802303672f}
     };
 
     /* Compute matrix exponential */
@@ -1347,14 +1491,14 @@ void test__tracker3d(void){
     float** insigs, **inputSH, **inputSH_noise, **inputSH_hop, **Y, **Cx, **V, **Vn;
     float_complex** Vn_cmplx;
     int nTargets;
-    float *target_dirs_xyz;
+    float *target_dirs_xyz, *target_var_xyz;
 
     /* Test configuration */
     const float acceptedTolerance = 0.001f;
     const int order = 2;
     const float fs = 48e3;
     const int hopsize = 128;
-    const float sigLen = fs*5;
+    const int sigLen = (int)fs*5;
     const int nSources = 2; /* cannot be changed, hard-coded for 2 */
     const float src_dirs_deg[2][2] = { {-35.0f, 30.0f}, {120.0f, 0.0f} };
 
@@ -1365,7 +1509,7 @@ void test__tracker3d(void){
      * computationally expensive the tracker becomes). */
     tpars.Np = 20;
     tpars.ARE_UNIT_VECTORS = 1;
-    tpars.maxNactiveTargets = 4; /* about 2 higher than expected is good */
+    tpars.maxNactiveTargets = 2; /* about 2 higher than expected is good */
     /* Likelihood of an estimate being noise/clutter */
     tpars.noiseLikelihood = 0.2f; /* between [0..1] */
     /* Measurement noise - e.g. to assume that estimates within the range +/-20
@@ -1450,6 +1594,7 @@ void test__tracker3d(void){
     Vn = (float**)malloc2d(nSH, (nSH-nSources), sizeof(float)); /* noise subspace */
     Vn_cmplx = (float_complex**)malloc2d(nSH, (nSH-nSources), sizeof(float_complex));
     target_dirs_xyz = NULL;
+    target_var_xyz = NULL;
     target_IDs = NULL;
 
     /* Loop over hops */
@@ -1486,11 +1631,10 @@ void test__tracker3d(void){
         rand_idx = (int)(rand01*(float)nSources);
 
         /* Feed tracker */
-        tracker3d_step(hT3d, (float*)&est_dirs_xyz[rand_idx], 1, &target_dirs_xyz, &target_IDs, &nTargets);
+        tracker3d_step(hT3d, (float*)&est_dirs_xyz[rand_idx], 1, &target_dirs_xyz, &target_var_xyz, &target_IDs, &nTargets);
 
         /* Give the tracker a couple of steps, and then assert that it is keeping track of these two targets */
         if(hop>10){
-            TEST_ASSERT_TRUE( nTargets <= nSources );
             if(nTargets==nSources){
                 TEST_ASSERT_TRUE( fabsf(est_dirs_xyz[0][0] - target_dirs_xyz[0*3+0]) <= acceptedTolerance ||
                                   fabsf(est_dirs_xyz[0][0] - target_dirs_xyz[1*3+0]) <= acceptedTolerance);
@@ -1509,12 +1653,13 @@ void test__tracker3d(void){
                 dropouts++; /* Should be very unlikely, (as the probably of death set to be so low), but it can still happen... */
         }
     }
-    TEST_ASSERT_TRUE(dropouts<5);
+    TEST_ASSERT_TRUE(dropouts<10);
 
     /* Clean-up */
     tracker3d_destroy(&hT3d);
     sphMUSIC_destroy(&hMUSIC);
     free(target_dirs_xyz);
+    free(target_var_xyz);
     free(target_IDs);
     free(insigs);
     free(inputSH);
@@ -1554,7 +1699,7 @@ void test__formulate_M_and_Cr(void){
 
         /* Define prototype decoder and compute input signal covariance matrix */
         Q = (float**)calloc2d(nCHout, nCHin, sizeof(float));
-        for(i=0; i<MIN(nCHin, nCHout); i++)
+        for(i=0; i<SAF_MIN(nCHin, nCHout); i++)
             Q[i][i] = 1.0f; /* Identity */
         x = (float**)malloc2d(nCHin, lenSig, sizeof(float));
         rand_m1_1(FLATTEN2D(x), nCHin*lenSig);
@@ -1709,7 +1854,7 @@ void test__formulate_M_and_Cr_cmplx(void){
 
         /* Define prototype decoder and compute input signal covariance matrix */
         Q = (float_complex**)calloc2d(nCHout, nCHin, sizeof(float_complex));
-        for(i=0; i<MIN(nCHin, nCHout); i++)
+        for(i=0; i<SAF_MIN(nCHin, nCHout); i++)
             Q[i][i] = cmplxf(1.0f, 0.0f); /* Identity */
         x = (float_complex**)malloc2d(nCHin, lenSig, sizeof(float_complex));
         rand_cmplx_m1_1(FLATTEN2D(x), nCHin*lenSig);
@@ -2576,7 +2721,7 @@ void test__truncationEQ(void)
         beamWeightsMaxEV(order_truncated, maxRECoeffs);
         for (int idx_n=0; idx_n<order_truncated+1; idx_n++) {
             w_n[idx_n] = maxRECoeffs[idx_n];
-            w_n[idx_n] /= sqrtf((float)(2*idx_n+1) / (4.0*SAF_PI));
+            w_n[idx_n] /= sqrtf((float)(2*idx_n+1) / (FOURPI));
         }
         float w_0 = w_n[0];
         for (int idx_n=0; idx_n<order_truncated+1; idx_n++)
@@ -2597,7 +2742,7 @@ void test__truncationEQ(void)
     /* Asserting that gain within 0 and 12 (+6db soft clip) */
     gainDB = malloc1d(nBands * sizeof(double));
     for (int idxBand=0; idxBand<nBands; idxBand++){
-        gainDB[idxBand] = 20.0*log10(gain[idxBand]);
+        gainDB[idxBand] = 20.0f*log10f(gain[idxBand]);
         TEST_ASSERT_TRUE(gainDB[idxBand] > 0-2.0e-6);
         TEST_ASSERT_TRUE(gainDB[idxBand] < softThreshold + 6.0 + 0-2.0e-6);
     }
@@ -2640,6 +2785,8 @@ void test__saf_example_ambi_bin(void){
     ambi_bin_init(hAmbi, fs); /* Should be called before calling "process"
                                * Cannot be called while "process" is on-going */
     ambi_bin_initCodec(hAmbi); /* Can be called whenever (thread-safe) */
+    ambi_bin_setEnableRotation(hAmbi, 1);
+    ambi_bin_setYaw(hAmbi, 180.0f); /* turn the listener around */
 
     /* Define input mono signal */
     nSH = ORDER2NSH(order);
@@ -2648,7 +2795,7 @@ void test__saf_example_ambi_bin(void){
     rand_m1_1(inSig, signalLength); /* Mono white-noise signal */
 
     /* Encode to get input spherical harmonic (Ambisonic) signal */
-    direction_deg[0] = 90.0f; /* encode hard-left */
+    direction_deg[0] = -90.0f; /* encode hard-right */
     direction_deg[1] = 0.0f;
     y = malloc1d(nSH*sizeof(float));
     getRSH(order, (float*)direction_deg, 1, y); /* SH plane-wave weights */
@@ -2668,7 +2815,7 @@ void test__saf_example_ambi_bin(void){
         for(ch=0; ch<NUM_EARS; ch++)
             binSig_frame[ch] = &binSig[ch][i*framesize];
 
-        ambi_bin_process(hAmbi, shSig_frame, binSig_frame, nSH, NUM_EARS, framesize);
+        ambi_bin_process(hAmbi, (const float* const*)shSig_frame, binSig_frame, nSH, NUM_EARS, framesize);
     }
 
     /* Assert that left ear energy is higher than the right ear */
@@ -2749,7 +2896,7 @@ void test__saf_example_ambi_dec(void){
         for(ch=0; ch<22; ch++)
             lsSig_frame[ch] = &lsSig[ch][i*framesize];
 
-        ambi_dec_process(hAmbi, shSig_frame, lsSig_frame, nSH, 22, framesize);
+        ambi_dec_process(hAmbi, (const float* const*)shSig_frame, lsSig_frame, nSH, 22, framesize);
     }
 
     /* Assert that channel 8 (corresponding to the loudspeaker where the plane-
@@ -2829,13 +2976,12 @@ void test__saf_example_ambi_enc(void){
         for(ch=0; ch<nSH; ch++)
             shSig_frame[ch] = &shSig[ch][i*framesize];
 
-        ambi_enc_process(hAmbi, inSig_frame, shSig_frame, 2, nSH, framesize);
+        ambi_enc_process(hAmbi, (const float* const*)inSig_frame, shSig_frame, 2, nSH, framesize);
     }
 
-    /* ambi_enc should be equivalent to the reference, except delayed due to the
-     * temporal interpolation employed in ambi_enc */
+    /* ambi_enc should be equivalent to the reference */
     for(i=0; i<nSH; i++)
-        for(j=0; j<signalLength-delay-framesize; j++)
+        for(j=0; j<signalLength-delay; j++)
             TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, shSig_ref[i][j], shSig[i][j+delay]);
 
     /* Clean-up */
@@ -2919,7 +3065,7 @@ void test__saf_example_array2sh(void){
         for(ch=0; ch<nSH; ch++)
             shSig_frame[ch] = &shSig[ch][i*framesize];
 
-        array2sh_process(hA2sh, micSig_frame, shSig_frame, 32, nSH, framesize);
+        array2sh_process(hA2sh, (const float* const*)micSig_frame, shSig_frame, 32, nSH, framesize);
     }
 
     /* Clean-up */
@@ -3003,7 +3149,7 @@ void test__saf_example_rotator(void){
         for(ch=0; ch<nSH; ch++)
             shSig_rot_frame[ch] = &shSig_rot[ch][i*framesize];
 
-        rotator_process(hRot, shSig_frame, shSig_rot_frame, nSH, nSH, framesize);
+        rotator_process(hRot, (const float* const*)shSig_frame, shSig_rot_frame, nSH, nSH, framesize);
     }
 
     /* ambi_enc should be equivalent to the reference, except delayed due to the
@@ -3021,6 +3167,54 @@ void test__saf_example_rotator(void){
     free(y);
     free(shSig_frame);
     free(shSig_rot_frame);
+}
+
+void test__saf_example_spreader(void){
+    int i, ch, framesize, nOutputs;
+    void* hSpr;
+    float** inSigs, **outSigs;
+    float** inSig_frame, **outSig_frame;
+
+    /* Config */
+    const int fs = 48000;
+    const int nInputs = 1;
+    const int signalLength = fs*2;
+
+    /* Create and initialise an instance of spreader */
+    spreader_create(&hSpr);
+
+    /* Configure and initialise the spreader codec */
+    spreader_setUseDefaultHRIRsflag(hSpr, 1);
+    nOutputs = NUM_EARS; /* the default is binaural operation */
+    spreader_setNumSources(hSpr, nInputs);
+    spreader_init(hSpr, fs); /* Should be called before calling "process"
+                               * Cannot be called while "process" is on-going */
+    spreader_initCodec(hSpr); /* Can be called whenever (thread-safe) */
+
+    /* Define input mono signal */
+    inSigs = (float**)malloc2d(nInputs,signalLength,sizeof(float));
+    outSigs = (float**)malloc2d(nOutputs,signalLength,sizeof(float));
+    rand_m1_1(FLATTEN2D(inSigs), nInputs*signalLength); /* white-noise signals */
+
+    /* Apply spreader */
+    framesize = spreader_getFrameSize();
+    inSig_frame = (float**)malloc1d(nInputs*sizeof(float*));
+    outSig_frame = (float**)malloc1d(nOutputs*sizeof(float*));
+    for(i=0; i<(int)((float)signalLength/(float)framesize); i++){
+        for(ch=0; ch<nInputs; ch++)
+            inSig_frame[ch] = &inSigs[ch][i*framesize];
+        for(ch=0; ch<nOutputs; ch++)
+            outSig_frame[ch] = &outSigs[ch][i*framesize];
+
+        spreader_process(hSpr, (const float* const*)inSig_frame, outSig_frame, nInputs, nOutputs, framesize);
+    }
+
+    /* Clean-up */
+    spreader_destroy(&hSpr);
+    free(inSigs);
+    free(outSigs);
+    free(inSig_frame);
+    free(outSig_frame);
 }
 void test__tvconv(void){
     void* hTVCnv;

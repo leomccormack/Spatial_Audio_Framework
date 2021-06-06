@@ -42,7 +42,7 @@ void ims_shoebox_echogramCreate
     echogram_data *ec = (echogram_data*)(*phEcho);
     int i;
 
-    assert(include_rt_vars==0 || include_rt_vars==1);
+    saf_assert(include_rt_vars==0 || include_rt_vars==1, "include_rt_vars is a bool");
 
     /* Echogram data */
     ec->numImageSources = 0;
@@ -113,7 +113,7 @@ void ims_shoebox_echogramCopy
     echogram_data *ecY = (echogram_data*)(hEchoY);
     int nChannels, numImageSources;
 
-    assert(hEchoX!=NULL && hEchoY!=NULL);
+    saf_assert(hEchoX!=NULL && hEchoY!=NULL, "Echograms must be allocated first");
     if(hEchoX==hEchoY)
         return; /* no copying required... */
 
@@ -663,7 +663,7 @@ void ims_shoebox_renderRIR
         /* Render rir */
         if(fractionalDelayFLAG){
             // TODO: implement
-            assert(0);
+            saf_print_error("Not implemented yet!");
         }
         else{
             /* Resize RIR vector */

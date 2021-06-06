@@ -15,8 +15,9 @@
  */
 
 /**
- * @file: spreader.h
- * @brief spreader
+ * @file: spreader.c
+ * @brief An arbitrary array panner (HRIRs, microphone array IRs, etc.) with
+ *        coherent and incoherent spreading modes.
  * @author Leo McCormack
  * @date 07.04.2021
  */
@@ -32,7 +33,7 @@ void spreader_create
     *phSpr = (void*)pData;
     int band, t, src;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* user parameters */
     pData->sofa_filepath = NULL;
@@ -186,7 +187,10 @@ void spreader_initCodec
     spreader_data *pData = (spreader_data*)(hSpr);
     int q, band, ng, nSources, src;
     float_complex scaleC;
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
+    saf_sofa_container sofa;
     SAF_SOFA_ERROR_CODES error;
+#endif
     SPREADER_PROC_MODES procMode;
     float_complex H_tmp[MAX_NUM_CHANNELS];
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
@@ -208,6 +212,9 @@ void spreader_initCodec
     pData->progressBar0_1 = 0.0f;
 
     /* Load measurements (e.g. HRIRs, Microphone array IRs etc.) */
+#ifndef SAF_ENABLE_SOFA_READER_MODULE
+    pData->useDefaultHRIRsFLAG = 1;
+#endif
     if(pData->useDefaultHRIRsFLAG){
         /* Load default HRIR data */
         pData->Q = NUM_EARS;
@@ -219,16 +226,17 @@ void spreader_initCodec
         pData->grid_dirs_deg = realloc1d(pData->grid_dirs_deg, pData->nGrid * 2 * sizeof(float));
         memcpy(pData->grid_dirs_deg, (float*)__default_hrir_dirs_deg, pData->nGrid * 2 * sizeof(float));
     }
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
     else{
         /* Use sofa loader */
-        saf_sofa_container sofa;
         error = saf_sofa_open(&sofa, pData->sofa_filepath);
         if(error!=SAF_SOFA_OK){
             /* if failed, then load default data instead */
             pData->useDefaultHRIRsFLAG = 1;
+            saf_print_warning("Unable to load the specified SOFA file. Using default HRIR data instead");
             spreader_initCodec(hSpr);
         }
-        pData->h_fs = (int)sofa.DataSamplingRate;
+        pData->h_fs = sofa.DataSamplingRate;
         pData->h_len = sofa.DataLengthIR;
         pData->nGrid = sofa.nSources;
         pData->h_grid = realloc1d(pData->h_grid, pData->nGrid*(pData->Q)*(pData->h_len)*sizeof(float));
@@ -238,6 +246,7 @@ void spreader_initCodec
         cblas_scopy(pData->nGrid, &sofa.SourcePosition[1], 3, &pData->grid_dirs_deg[1], 2); /* elev */
         saf_sofa_close(&sofa);
     }
+#endif
 
     /* Convert from the 0..360 convention, to -180..180, and pre-compute unit Cartesian vectors */
     convert_0_360To_m180_180(pData->grid_dirs_deg, pData->nGrid);
@@ -253,7 +262,7 @@ void spreader_initCodec
     const int maxDelay = 12;
     for(src=0; src<SPREADER_MAX_NUM_SOURCES; src++){
         latticeDecorrelator_destroy(&(pData->hDecor[src]));
-        latticeDecorrelator_create(&(pData->hDecor[src]), pData->fs, HOP_SIZE, pData->freqVector, HYBRID_BANDS, pData->Q, orders, freqCutoffs, 4, maxDelay, 0, 0.75f);
+        latticeDecorrelator_create(&(pData->hDecor[src]), (float)pData->fs, HOP_SIZE, pData->freqVector, HYBRID_BANDS, pData->Q, orders, freqCutoffs, 4, maxDelay, 0, 0.75f);
     }
 
     /* Convert to filterbank coefficients and pre-compute outer products */
@@ -326,12 +335,12 @@ void spreader_initCodec
 
 void spreader_process
 (
-    void  *  const hSpr,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hSpr,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     spreader_data *pData = (spreader_data*)(hSpr);
@@ -342,6 +351,10 @@ void spreader_process
     float_complex tmpFrame[MAX_NUM_CHANNELS][TIME_SLOTS], H_tmp[MAX_NUM_CHANNELS], Cy[MAX_NUM_CHANNELS*MAX_NUM_CHANNELS];
     float_complex E_dir[MAX_NUM_CHANNELS*MAX_NUM_CHANNELS], V[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS], D[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS];
     float_complex Cproto[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS];
+#if 0
+    float_complex Cx[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS];
+    float CxDiag[MAX_NUM_OUTPUTS*MAX_NUM_OUTPUTS];
+#endif
     SPREADER_PROC_MODES procMode;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
@@ -357,7 +370,7 @@ void spreader_process
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
-        for(i=0; i < MIN(nSources,nInputs); i++)
+        for(i=0; i < SAF_MIN(nSources,nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<nSources; i++)
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
@@ -378,12 +391,12 @@ void spreader_process
                         src_dir_xyz, 1, 0.0f,
                         pData->angles, 1);
             for(i=0; i<pData->nGrid; i++)
-                pData->angles[i] = acosf(MIN(pData->angles[i], 0.9999999f))*180.0f/SAF_PI;
+                pData->angles[i] = acosf(SAF_MIN(pData->angles[i], 0.9999999f))*180.0f/SAF_PI;
             utility_siminv(pData->angles, pData->nGrid, &centre_ind);
 
             /* Define Prototype signals */
              switch(procMode){
-                case SPREADER_MODE_NAIVE:/* fall through */
+                case SPREADER_MODE_NAIVE: /* fall through */
                 case SPREADER_MODE_OM:
                     for(band=0; band<HYBRID_BANDS; band++){
                         if(pData->freqVector[band]<MAX_SPREAD_FREQ){
@@ -421,6 +434,20 @@ void spreader_process
                         cblas_cscal(Q*TIME_SLOTS, &scaleC, FLATTEN2D(pData->protoframeTF[band]), 1);
                     }
                     break;
+#if 0
+                 case SPREADER_MODE_OM:
+                     /* Use the centre direction as the prototype */
+                     for(band=0; band<HYBRID_BANDS; band++){
+                         for(q=0; q<Q; q++)
+                             H_tmp[q] = pData->H_grid[band*Q*pData->nGrid + q*pData->nGrid + centre_ind];
+                         cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, Q, TIME_SLOTS, 1, &calpha,
+                                     H_tmp, 1,
+                                     pData->inputframeTF[band][src], TIME_SLOTS, &cbeta,
+                                     FLATTEN2D(pData->protoframeTF[band]), TIME_SLOTS);
+                     }
+                     break;
+#endif
+
                 case SPREADER_MODE_EVD:
                     /* Replicate the mono signal for all Q channels */
                     for(band=0; band<HYBRID_BANDS; band++)
@@ -456,9 +483,12 @@ void spreader_process
                     /* Sum the H_array outer product matrices for the whole spreading area */
                     if(pData->freqVector[band]<MAX_SPREAD_FREQ){
                         memset(Cy, 0, Q*Q*sizeof(float_complex));
+                        memset(H_tmp, 0, Q*sizeof(float_complex));
                         for(ng=0, nSpread=0; ng<pData->nGrid; ng++){
                             if(pData->angles[ng] <= (src_spread[src]/2.0f)){
                                 cblas_caxpy(Q*Q, &calpha, pData->HHH[band][ng], 1, Cy, 1);
+                                for(q=0; q<Q; q++)
+                                    H_tmp[q] = ccaddf(H_tmp[q], pData->H_grid[band*Q*pData->nGrid + q*pData->nGrid + ng]);
                                 nSpread++;
                                 pData->dirActive[src][ng] = 1;
                             }
@@ -472,10 +502,12 @@ void spreader_process
                     /* If no directions found in the spread area, then just include the nearest one */
                     if(nSpread==0) {
                         cblas_caxpy(Q*Q, &calpha, pData->HHH[band][centre_ind], 1, Cy, 1);
+                        for(q=0; q<Q; q++)
+                            H_tmp[q] = pData->H_grid[band*Q*pData->nGrid + q*pData->nGrid + centre_ind];
                         nSpread++;
                     }
-
-                    /* The OM-solution requires some target energies too */
+#if 1
+                    /* Impose target energies too */
                     if (procMode == SPREADER_MODE_OM && pData->freqVector[band]<MAX_SPREAD_FREQ){
                         /* Normalise Cy */
                         trace = 0.0f;
@@ -503,7 +535,7 @@ void spreader_process
                         scaleC = cmplxf(trace, 0.0f);
                         cblas_cscal(Q*Q, &scaleC, Cy, 1);
                     }
-
+#endif
                     /* Average over time */
                     scaleC = cmplxf(pData->covAvgCoeff, 0.0f);
                     cblas_cscal(Q*Q, &scaleC, pData->Cy[src][band], 1);
@@ -513,7 +545,7 @@ void spreader_process
 
                 /* Formulate mixing matrices */
                 switch(procMode){
-                    case SPREADER_MODE_NAIVE: assert(0); break;
+                    case SPREADER_MODE_NAIVE: saf_print_error("Shouldn't have gotten this far?"); break;
                     case SPREADER_MODE_EVD:
                         /* For normalising the level of Cy */
                         Ey = Eproto = 0.0f;
@@ -540,9 +572,11 @@ void spreader_process
                                         pData->new_M[band], Q);
                         }
                         break;
+
                     case SPREADER_MODE_OM:
                         for(band=0; band<HYBRID_BANDS; band++){
                             if(pData->freqVector[band]<MAX_SPREAD_FREQ){
+#if 1
                                 /* Diagonalise and diagonally load the Cproto matrices */
                                 cblas_ccopy(Q*Q, pData->Cproto[src][band], 1, Cproto, 1);
                                 for(i=0; i<Q; i++){
@@ -558,6 +592,23 @@ void spreader_process
                                 for(i=0; i<Q*Q; i++)
                                     pData->Cr[i] = crealf(pData->Cr_cmplx[i]);
                                 formulate_M_and_Cr(pData->hCdf_res, CprotoDiag, pData->Cr, pData->Qmix, 0, 0.2f, pData->new_Mr[band], NULL);
+#else
+                                for(q=0; q<Q; q++)
+                                    H_tmp[q] = pData->H_grid[band*Q*pData->nGrid + q*pData->nGrid + centre_ind];
+                                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, Q, Q, 1, &calpha,
+                                            H_tmp, 1,
+                                            H_tmp, 1, &cbeta,
+                                            Cx, Q);
+                                memset(CxDiag, 0, Q*Q*sizeof(float));
+                                for(i=0; i<Q; i++)
+                                    CxDiag[i*Q+i] = crealf(Cx[i*Q+i]);
+
+                                /* Compute mixing matrices */
+                                formulate_M_and_Cr_cmplx(pData->hCdf, Cx, pData->Cy[src][band], pData->Qmix_cmplx, 0, 0.2f, pData->new_M[band], pData->Cr_cmplx);
+                                for(i=0; i<Q*Q; i++)
+                                    pData->Cr[i] = crealf(pData->Cr_cmplx[i]);
+                                formulate_M_and_Cr(pData->hCdf_res, CxDiag, pData->Cr, pData->Qmix, 0, 0.2f, pData->new_Mr[band], NULL);
+#endif
                             }
                             else{
                                 memcpy(pData->new_M[band], pData->Qmix_cmplx, Q*Q*sizeof(float_complex));
@@ -612,7 +663,7 @@ void spreader_process
         afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outframeTD);
 
         /* Copy to output buffer */
-        for (ch = 0; ch < MIN(Q, nOutputs); ch++)
+        for (ch = 0; ch < SAF_MIN(Q, nOutputs); ch++)
             utility_svvcopy(pData->outframeTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
@@ -648,11 +699,11 @@ void spreader_setAveragingCoeff(void* const hSpr, float newValue)
 void spreader_setSourceAzi_deg(void* const hSpr, int index, float newAzi_deg)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    assert(index<SPREADER_MAX_NUM_SOURCES);
+    saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
-    newAzi_deg = MAX(newAzi_deg, -180.0f);
-    newAzi_deg = MIN(newAzi_deg, 180.0f);
+    newAzi_deg = SAF_MAX(newAzi_deg, -180.0f);
+    newAzi_deg = SAF_MIN(newAzi_deg, 180.0f);
     if(pData->src_dirs_deg[index][0]!=newAzi_deg)
         pData->src_dirs_deg[index][0] = newAzi_deg;
 }
@@ -660,9 +711,9 @@ void spreader_setSourceAzi_deg(void* const hSpr, int index, float newAzi_deg)
 void spreader_setSourceElev_deg(void* const hSpr, int index, float newElev_deg)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    assert(index<SPREADER_MAX_NUM_SOURCES);
-    newElev_deg = MAX(newElev_deg, -90.0f);
-    newElev_deg = MIN(newElev_deg, 90.0f);
+    saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
+    newElev_deg = SAF_MAX(newElev_deg, -90.0f);
+    newElev_deg = SAF_MIN(newElev_deg, 90.0f);
     if(pData->src_dirs_deg[index][1] != newElev_deg)
         pData->src_dirs_deg[index][1] = newElev_deg;
 }
@@ -670,9 +721,9 @@ void spreader_setSourceElev_deg(void* const hSpr, int index, float newElev_deg)
 void spreader_setSourceSpread_deg(void* const hSpr, int index, float newSpread_deg)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    assert(index<SPREADER_MAX_NUM_SOURCES);
-    newSpread_deg = MAX(newSpread_deg, 0.0f);
-    newSpread_deg = MIN(newSpread_deg, 360.0f);
+    saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
+    newSpread_deg = SAF_MAX(newSpread_deg, 0.0f);
+    newSpread_deg = SAF_MIN(newSpread_deg, 360.0f);
     if(pData->src_spread[index] != newSpread_deg)
         pData->src_spread[index] = newSpread_deg;
 }
@@ -680,7 +731,7 @@ void spreader_setSourceSpread_deg(void* const hSpr, int index, float newSpread_d
 void spreader_setNumSources(void* const hSpr, int new_nSources)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    pData->new_nSources = CLAMP(new_nSources, 1, SPREADER_MAX_NUM_SOURCES);
+    pData->new_nSources = SAF_CLAMP(new_nSources, 1, SPREADER_MAX_NUM_SOURCES);
     spreader_setCodecStatus(hSpr, CODEC_STATUS_NOT_INITIALISED);
 }
 
@@ -750,21 +801,21 @@ float spreader_getAveragingCoeff(void* const hSpr)
 float spreader_getSourceAzi_deg(void* const hSpr, int index)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    assert(index<SPREADER_MAX_NUM_SOURCES);
+    saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
     return pData->src_dirs_deg[index][0];
 }
 
 float spreader_getSourceElev_deg(void* const hSpr, int index)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    assert(index<SPREADER_MAX_NUM_SOURCES);
+    saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
     return pData->src_dirs_deg[index][1];
 }
 
 float spreader_getSourceSpread_deg(void* const hSpr, int index)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    assert(index<SPREADER_MAX_NUM_SOURCES);
+    saf_assert(index<SPREADER_MAX_NUM_SOURCES, "index exceeds the maximum number of sources permitted");
     return pData->src_spread[index];
 }
 
@@ -818,7 +869,7 @@ int spreader_getIRlength(void* const hSpr)
 int spreader_getIRsamplerate(void* const hSpr)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    return pData->h_fs;
+    return (int)pData->h_fs;
 }
 
 int spreader_getUseDefaultHRIRsflag(void* const hSpr)

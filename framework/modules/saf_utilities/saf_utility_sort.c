@@ -25,27 +25,21 @@
 
 #include "saf_utilities.h"
 
-/**
- * Helper struct for sorting a vector of integers using 'qsort'
- */
+/** Helper struct for sorting a vector of integers using 'qsort' */
 typedef struct saf_sort_int {
     int val; /**< value */
     int idx; /**< corresponding index, so that the sorting functions may also
               *   return the sorted indexes if required */
 }saf_sort_int;
 
-/**
- * Helper struct for sorting a vector of floats using 'qsort'
- */
+/** Helper struct for sorting a vector of floats using 'qsort' */
 typedef struct saf_sort_float {
     float val; /**< value */
     int idx;   /**< corresponding index, so that the sorting functions may also
                 *   return the sorted indexes if required */
 }saf_sort_float;
 
-/**
- * Helper struct for sorting a vector of doubles using 'qsort'
- */
+/** Helper struct for sorting a vector of doubles using 'qsort' */
 typedef struct saf_sort_double {
     double val; /**< value */
     int idx;    /**< corresponding index, so that the sorting functions may also
@@ -447,13 +441,3 @@ void findClosestGridPoints
     free(grid_xyz);
     free(target_xyz);
 }
-
-
-
-
-
-
-
-
-
-

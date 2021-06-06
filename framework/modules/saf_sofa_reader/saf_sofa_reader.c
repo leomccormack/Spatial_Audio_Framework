@@ -29,6 +29,7 @@
 
 #include "saf_sofa_reader.h"
 #include "../saf_hrir/saf_hrir.h" /* for access to default HRIR data */
+#include "../saf_utilities/saf_utilities.h"
 #include "saf_externals.h"
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
@@ -160,7 +161,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
                 nc_inq_attname(ncid, varid, attnum, attname);
                 nc_inq_attlen(ncid, varid, attname, &lenp);
                 if (!strcmp((char*)attname,"Units")){
-                    h->DataSamplingRateUnits = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+                    h->DataSamplingRateUnits = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
                     nc_get_att(ncid, varid, attname, h->DataSamplingRateUnits);
                 }
             }
@@ -201,11 +202,11 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
                 nc_inq_attname(ncid, varid, attnum, attname);
                 nc_inq_attlen(ncid, varid, attname, &lenp);
                 if (!strcmp((char*)attname,"Type")){
-                    h->SourcePositionType = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+                    h->SourcePositionType = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
                     nc_get_att(ncid, varid, attname, h->SourcePositionType);
                 }
                 else if (!strcmp((char*)attname,"Units")){
-                    h->SourcePositionUnits = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+                    h->SourcePositionUnits = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
                     nc_get_att(ncid, varid, attname, h->SourcePositionUnits);
                 }
             }
@@ -257,11 +258,11 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
                 nc_inq_attname(ncid, varid, attnum, attname);
                 nc_inq_attlen(ncid, varid, attname, &lenp);
                 if (!strcmp((char*)attname,"Type")){
-                    h->ReceiverPositionType = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+                    h->ReceiverPositionType = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
                     nc_get_att(ncid, varid, attname, h->ReceiverPositionType);
                 }
                 else if (!strcmp((char*)attname,"Units")){
-                    h->ReceiverPositionUnits = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+                    h->ReceiverPositionUnits = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
                     nc_get_att(ncid, varid, attname, h->ReceiverPositionUnits);
                 }
             }
@@ -288,11 +289,11 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
                 nc_inq_attname(ncid, varid, attnum, attname);
                 nc_inq_attlen(ncid, varid, attname, &lenp);
                 if (!strcmp((char*)attname,"Type")){
-                    h->ListenerPositionType = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+                    h->ListenerPositionType = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
                     nc_get_att(ncid, varid, attname, h->ListenerPositionType);
                 }
                 else if (!strcmp((char*)attname,"Units")){
-                    h->ListenerPositionUnits = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+                    h->ListenerPositionUnits = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
                     nc_get_att(ncid, varid, attname, h->ListenerPositionUnits);
                 }
             }
@@ -336,11 +337,11 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
                 nc_inq_attname(ncid, varid, attnum, attname);
                 nc_inq_attlen(ncid, varid, attname, &lenp);
                 if (!strcmp((char*)attname,"Type")){
-                    h->ListenerViewType = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+                    h->ListenerViewType = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
                     nc_get_att(ncid, varid, attname, h->ListenerViewType);
                 }
                 else if (!strcmp((char*)attname,"Units")){
-                    h->ListenerViewUnits = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+                    h->ListenerViewUnits = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
                     nc_get_att(ncid, varid, attname, h->ListenerViewUnits);
                 }
             }
@@ -394,11 +395,11 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
                 nc_inq_attname(ncid, varid, attnum, attname);
                 nc_inq_attlen(ncid, varid, attname, &lenp);
                 if (!strcmp((char*)attname,"Type")){
-                    h->EmitterPositionType = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+                    h->EmitterPositionType = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
                     nc_get_att(ncid, varid, attname, h->EmitterPositionType);
                 }
                 else if (!strcmp((char*)attname,"Units")){
-                    h->EmitterPositionUnits = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+                    h->EmitterPositionUnits = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
                     nc_get_att(ncid, varid, attname, h->EmitterPositionUnits);
                 }
             }
@@ -411,91 +412,91 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         nc_inq_attlen(ncid, -1, attname, &lenp);
 
         if (!strcmp((char*)attname,"DataType")){
-            h->DataType = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->DataType = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, -1, attname, h->DataType);
         }
         else if (!strcmp((char*)attname,"Conventions")){
-            h->Conventions = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->Conventions = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, -1, attname, h->Conventions);
         }
         else if (!strcmp((char*)attname,"Version")){
-            h->Version = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->Version = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->Version);
         }
         else if (!strcmp((char*)attname,"SOFAConventions")){
-            h->SOFAConventions = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->SOFAConventions = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->SOFAConventions);
         }
         else if (!strcmp((char*)attname,"SOFAConventionsVersion")){
-            h->SOFAConventionsVersion = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->SOFAConventionsVersion = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->SOFAConventionsVersion);
         }
         else if (!strcmp((char*)attname,"APIName")){
-            h->APIName = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->APIName = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->APIName);
         }
         else if (!strcmp((char*)attname,"APIVersion")){
-            h->APIVersion = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->APIVersion = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->APIVersion);
         }
         else if (!strcmp((char*)attname,"ApplicationName")){
-            h->ApplicationName = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->ApplicationName = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->ApplicationName);
         }
         else if (!strcmp((char*)attname,"ApplicationVersion")){
-            h->ApplicationVersion = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->ApplicationVersion = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->ApplicationVersion);
         }
         else if (!strcmp((char*)attname,"AuthorContact")){
-            h->AuthorContact = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->AuthorContact = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->AuthorContact);
         }
         else if (!strcmp((char*)attname,"Comment")){
-            h->Comment = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->Comment = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->Comment);
         }
         else if (!strcmp((char*)attname,"History")){
-            h->History = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->History = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->History);
         }
         else if (!strcmp((char*)attname,"License")){
-            h->License = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->License = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->License);
         }
         else if (!strcmp((char*)attname,"Organization")||!strcmp((char*)attname,"Organisation")){
-            h->Organisation = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->Organisation = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->Organisation);
         }
         else if (!strcmp((char*)attname,"References")){
-            h->References = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->References = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->References);
         }
         else if (!strcmp((char*)attname,"RoomType")){
-            h->RoomType = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->RoomType = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->RoomType);
         }
         else if (!strcmp((char*)attname,"Origin")){
-            h->Origin = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->Origin = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->Origin);
         }
         else if (!strcmp((char*)attname,"DateCreated")){
-            h->DateCreated = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->DateCreated = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->DateCreated);
         }
         else if (!strcmp((char*)attname,"DateModified")){
-            h->DateModified = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->DateModified = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->DateModified);
         }
         else if (!strcmp((char*)attname,"Title")){
-            h->Title = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->Title = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->Title);
         }
         else if (!strcmp((char*)attname,"DatabaseName")){
-            h->DatabaseName = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->DatabaseName = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->DatabaseName);
         }
         else if (!strcmp((char*)attname,"ListenerShortName")){
-            h->ListenerShortName = calloc1d(MAX((NC_MAX_NAME+1),lenp), sizeof(char));
+            h->ListenerShortName = calloc1d(SAF_MAX((NC_MAX_NAME+1),lenp), sizeof(char));
             nc_get_att(ncid, NC_GLOBAL, attname, h->ListenerShortName);
         }
     }
@@ -629,11 +630,11 @@ void loadSofaFile
         /* also output warning message, if encountering this error value was
          * unintentional (i.e. sofa_filepath!=NULL) */
         if(sofa_filepath!=NULL)
-            saf_error_print(SAF_WARNING__SOFA_FILE_NOT_FOUND);
+            saf_print_warning("Unable to load the specified SOFA file. The default HRIR data has been loaded instead.");
 #endif
         return;
     }
-    assert(ncid!=-1);
+    saf_assert(ncid!=-1, "Something very bad happened");
  
     /* Determine dimension IDs and lengths */
     /* Note: there are 6 possible dimension lengths in the sofa standard */

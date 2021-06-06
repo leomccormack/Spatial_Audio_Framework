@@ -104,7 +104,7 @@ void array2sh_calculate_sht_matrix
     /* prep */
     order = pData->new_order;
     nSH = (order+1)*(order+1);
-    arraySpecs->R = MIN(arraySpecs->R, arraySpecs->r);
+    arraySpecs->R = SAF_MIN(arraySpecs->R, arraySpecs->r);
     for(band=0; band<HYBRID_BANDS; band++){
         kr[band] = 2.0*M_PI*(pData->freqVector[band])*(arraySpecs->r)/pData->c;
         kR[band] = 2.0*M_PI*(pData->freqVector[band])*(arraySpecs->R)/pData->c;
@@ -130,11 +130,11 @@ void array2sh_calculate_sht_matrix
             case ARRAY_CYLINDRICAL:
                 switch (arraySpecs->weightType){
                     case WEIGHT_RIGID_OMNI:   cylModalCoeffs(order, kr, HYBRID_BANDS, ARRAY_CONSTRUCTION_RIGID, pData->bN); break;
-                    case WEIGHT_RIGID_CARD:   assert(0); /* not supported */ break;
-                    case WEIGHT_RIGID_DIPOLE: /* not supported */ break;
+                    case WEIGHT_RIGID_CARD:   saf_print_error("weightType is not supported"); break;
+                    case WEIGHT_RIGID_DIPOLE: saf_print_error("weightType is not supported"); break;
                     case WEIGHT_OPEN_OMNI:    cylModalCoeffs(order, kr, HYBRID_BANDS, ARRAY_CONSTRUCTION_OPEN, pData->bN);  break;
-                    case WEIGHT_OPEN_CARD:    assert(0); /* not supported */ break;
-                    case WEIGHT_OPEN_DIPOLE:  assert(0); /* not supported */ break;
+                    case WEIGHT_OPEN_CARD:    saf_print_error("weightType is not supported"); break;
+                    case WEIGHT_OPEN_DIPOLE:  saf_print_error("weightType is not supported"); break;
                 }
                 break;
             case ARRAY_SPHERICAL:
@@ -398,7 +398,7 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
     dM_diffcoh_s = malloc1d((arraySpecs->Q)*(arraySpecs->Q) * sizeof(double_complex));
     f_max = 20e3f;
     kR_max = 2.0f*M_PI*f_max*(arraySpecs->r)/pData->c;
-    array_order = MIN((int)(ceilf(2.0f*kR_max)+0.01f), 28); /* Cap at around 28, as Bessels at 30+ can be numerically unstable */
+    array_order = SAF_MIN((int)(ceilf(2.0f*kR_max)+0.01f), 28); /* Cap at around 28, as Bessels at 30+ can be numerically unstable */
     for(band=0; band<HYBRID_BANDS; band++)
         kr[band] = 2.0*M_PI*(pData->freqVector[band])*(arraySpecs->r)/pData->c;
     
@@ -461,7 +461,7 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
         L_diff_fal[i][i] = crmul(L_diff_fal[i][i], 1.0/(4.0*M_PI)); /* only care about the diagonal entries */
     
     /* diffuse-field equalise bands above aliasing. */
-    for(band = MAX(idxf_alias,0)+1; band<HYBRID_BANDS; band++){
+    for(band = SAF_MAX(idxf_alias,0)+1; band<HYBRID_BANDS; band++){
         for(i=0; i<arraySpecs->Q; i++)
             for(j=0; j<arraySpecs->Q; j++)
                 dM_diffcoh_s[i*(arraySpecs->Q)+j] = cmplx(dM_diffcoh[i*(arraySpecs->Q)* (HYBRID_BANDS) + j*(HYBRID_BANDS) + (band)], 0.0);
@@ -517,7 +517,7 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
     float* Y_grid_real;
     float_complex* Y_grid, *H_array, *Wshort;
      
-    assert(pData->W != NULL);
+    saf_assert(pData->W != NULL, "The initCodec function must have been called prior to calling array2sh_evaluateSHTfilters()");
     
     strcpy(pData->progressBarText,"Simulating microphone array");
     pData->progressBar0_1 = 0.35f;

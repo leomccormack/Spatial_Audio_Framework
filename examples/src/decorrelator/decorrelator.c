@@ -32,7 +32,7 @@ void decorrelator_create
     decorrelator_data* pData = (decorrelator_data*)malloc1d(sizeof(decorrelator_data));
     *phDecor = (void*)pData;
 
-    printf(SAF_VERSION_LICENSE_STRING);
+    SAF_PRINT_VERSION_LICENSE_STRING;
 
     /* default user parameters */
     pData->nChannels = 1;
@@ -146,9 +146,9 @@ void decorrelator_initCodec
 
     /* Init decorrelator  */
     const int orders[4] = {20, 15, 6, 3}; /* 20th order up to 700Hz, 15th->2.4kHz, 6th->4kHz, 3rd->12kHz, NONE(only delays)->Nyquist */
-    //const float freqCutoffs[4] = {600.0f, 2.4e3f, 4.0e3f, 12e3f};
-    const float freqCutoffs[4] = {900.0f, 6.8e3f, 12e3f, 16e3f};
-    const int maxDelay = 12;
+    const float freqCutoffs[4] = {600.0f, 2.4e3f, 4.0e3f, 12e3f};
+    //const float freqCutoffs[4] = {900.0f, 6.8e3f, 12e3f, 16e3f};
+    const int maxDelay = 8;
     latticeDecorrelator_destroy(&(pData->hDecor));
     latticeDecorrelator_create(&(pData->hDecor), pData->fs, HOP_SIZE, pData->freqVector, HYBRID_BANDS, pData->nChannels, (int*)orders, (float*)freqCutoffs, 4, maxDelay, 0, 0.75f);
 
@@ -160,12 +160,12 @@ void decorrelator_initCodec
 
 void decorrelator_process
 (
-    void  *  const hDecor,
-    float ** const inputs,
-    float ** const outputs,
-    int            nInputs,
-    int            nOutputs,
-    int            nSamples
+    void        *  const hDecor,
+    const float *const * inputs,
+    float       ** const outputs,
+    int                  nInputs,
+    int                  nOutputs,
+    int                  nSamples
 )
 {
     decorrelator_data *pData = (decorrelator_data*)(hDecor);
@@ -185,7 +185,7 @@ void decorrelator_process
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
-        for(i=0; i < MIN(nCH, nInputs); i++)
+        for(i=0; i < SAF_MIN(nCH, nInputs); i++)
             utility_svvcopy(inputs[i], FRAME_SIZE, pData->InputFrameTD[i]);
         for(; i<nCH; i++)
             memset(pData->InputFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
@@ -229,7 +229,7 @@ void decorrelator_process
         afSTFT_backward(pData->hSTFT, pData->OutputFrameTF, FRAME_SIZE, pData->OutputFrameTD);
 
         /* Copy to output buffer */
-        for (ch = 0; ch < MIN(nCH, nOutputs); ch++)
+        for (ch = 0; ch < SAF_MIN(nCH, nOutputs); ch++)
             utility_svvcopy(pData->OutputFrameTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
             memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
@@ -262,20 +262,20 @@ void decorrelator_setNumberOfChannels(void* const hDecor, int newValue )
 void decorrelator_setDecorrelationAmount(void* const hDecor, float newValue)
 {
     decorrelator_data *pData = (decorrelator_data*)(hDecor);
-    pData->decorAmount = CLAMP(newValue, 0.0f, 1.0f);
+    pData->decorAmount = SAF_CLAMP(newValue, 0.0f, 1.0f);
 }
 
 void decorrelator_setLevelCompensationFlag(void* const hDecor, int newValue)
 {
     decorrelator_data *pData = (decorrelator_data*)(hDecor);
-    assert(newValue==0 || newValue==1);
+    saf_assert(newValue==0 || newValue==1, "newValue is a bool");
     pData->compensateLevel = newValue;
 }
 
 void decorrelator_setTransientBypassFlag(void* const hDecor, int newValue)
 {
     decorrelator_data *pData = (decorrelator_data*)(hDecor);
-    assert(newValue==0 || newValue==1);
+    saf_assert(newValue==0 || newValue==1, "newValue is a bool");
     pData->enableTransientDucker = newValue;
 }
  
