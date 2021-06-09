@@ -17,7 +17,7 @@ Usage:"
   Examples:
       sudo ./$(basename $0) sequential
       sudo ./$(basename $0) threaded
-      sudo ./$(basename $0) sequential /opt/intel/oneapi/mkl/latest/tools/builder
+      sudo ./$(basename $0) sequential ilp64 /opt/intel/oneapi/mkl/latest/tools/builder
 EOT
     exit 1
 fi
