@@ -195,9 +195,9 @@ void powermap_analysis
     powermap_data *pData = (powermap_data*)(hPm);
     powermap_codecPars* pars = pData->pars;
     int s, i, j, ch, band, nSH_order, order_band, nSH_maxOrder, maxOrder;
-    float C_grp_trace, covScale, pmapEQ_band;
+    float C_grp_trace, pmapEQ_band;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
-    float_complex new_Cx[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
+    float_complex new_Cx[MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS];
     float_complex* C_grp;
     
     /* local parameters */
@@ -256,22 +256,15 @@ void powermap_analysis
             afSTFT_forward(pData->hSTFT, pData->SHframeTD, FRAME_SIZE, pData->SHframeTF);
 
             /* Update covarience matrix per band */
-            covScale = 1.0f/(float)(nSH);
             for(band=0; band<HYBRID_BANDS; band++){
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, TIME_SLOTS, &calpha,
                             FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS,
                             FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS, &cbeta,
-                            new_Cx, MAX_NUM_SH_SIGNALS);
-
-                /* scale with nSH */
-                for(i=0; i<nSH; i++)
-                    for(j=0; j<nSH; j++)
-                        new_Cx[i][j] = crmulf(new_Cx[i][j], covScale);
+                            new_Cx, nSH);
 
                 /* average over time */
-                for(i=0; i<nSH; i++)
-                    for(j=0; j<nSH; j++)
-                        pData->Cx[band][i][j] = ccaddf( crmulf(new_Cx[i][j], 1.0f-covAvgCoeff), crmulf(pData->Cx[band][i][j], covAvgCoeff));
+                cblas_sscal(nSH*nSH*2, covAvgCoeff, (float*)pData->Cx[band], 1);
+                cblas_saxpy(nSH*nSH*2, 1.0f-covAvgCoeff, (float*)new_Cx, 1, (float*)pData->Cx[band], 1);
             }
 
             /* update the powermap */
@@ -293,7 +286,7 @@ void powermap_analysis
                     pmapEQ_band = SAF_MIN(SAF_MAX(pmapEQ[band], 0.0f), 2.0f);
                     for(i=0; i<nSH_order; i++)
                         for(j=0; j<nSH_order; j++)
-                            C_grp[i*nSH_maxOrder+j] = ccaddf(C_grp[i*nSH_maxOrder+j], crmulf(pData->Cx[band][i][j], 1e3f*pmapEQ_band));
+                            C_grp[i*nSH_maxOrder+j] = ccaddf(C_grp[i*nSH_maxOrder+j], crmulf(pData->Cx[band][i*nSH+j], 1e3f*pmapEQ_band));
                 }
 
                 /* generate powermap */

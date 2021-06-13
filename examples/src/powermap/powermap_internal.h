@@ -104,7 +104,7 @@ typedef struct _powermap
     float fs;
     
     /* internal */
-    float_complex Cx[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];     /* cov matrices */
+    float_complex Cx[HYBRID_BANDS][MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS];     /* cov matrices */
     int new_masterOrder;
     int dispWidth;
     
