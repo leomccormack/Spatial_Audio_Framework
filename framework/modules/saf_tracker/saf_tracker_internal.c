@@ -134,10 +134,10 @@ void tracker3d_particleCreate
     p->W0 = W0;
     p->nTargets = 0;
     p->dt = dt;
-    p->M = NULL;
-    p->P = NULL;
-    p->targetIDs = NULL;
-    p->Tcount = NULL;
+    p->M = malloc1d(TRACKER3D_MAX_NUM_TARGETS*sizeof(M6));
+    p->P = malloc1d(TRACKER3D_MAX_NUM_TARGETS*sizeof(P66));
+    p->targetIDs = malloc1d(TRACKER3D_MAX_NUM_TARGETS*sizeof(int));
+    p->Tcount = malloc1d(TRACKER3D_MAX_NUM_TARGETS*sizeof(int));
 }
 
 void tracker3d_particleReset
@@ -150,14 +150,10 @@ void tracker3d_particleReset
     p->W = p->W0;
     p->W_prev = p->W0;
     p->nTargets = 0;
-    free(p->M);
-    free(p->P);
-    free(p->targetIDs);
-    free(p->Tcount);
-    p->M = NULL;
-    p->P = NULL;
-    p->targetIDs = NULL;
-    p->Tcount = NULL;
+    memset(p->M, 0, TRACKER3D_MAX_NUM_TARGETS*sizeof(M6));
+    memset(p->P, 0, TRACKER3D_MAX_NUM_TARGETS*sizeof(P66));
+    memset(p->targetIDs, 0, TRACKER3D_MAX_NUM_TARGETS*sizeof(int));
+    memset(p->Tcount, 0, TRACKER3D_MAX_NUM_TARGETS*sizeof(int));
 }
 
 void tracker3d_particleCopy
@@ -174,12 +170,8 @@ void tracker3d_particleCopy
     p2->W0 = p1->W0;
     p2->nTargets = p1->nTargets;
     p2->dt = p1->dt;
-    p2->M = realloc1d(p2->M, p1->nTargets*sizeof(M6));
-    p2->P = realloc1d(p2->P, p1->nTargets*sizeof(P66));
     memcpy(p2->M, p1->M, p1->nTargets*sizeof(M6));
     memcpy(p2->P, p1->P, p1->nTargets*sizeof(P66));
-    p2->targetIDs = realloc1d(p2->targetIDs, p1->nTargets*sizeof(int));
-    p2->Tcount = realloc1d(p2->Tcount, p1->nTargets*sizeof(int));
     memcpy(p2->targetIDs, p1->targetIDs, p1->nTargets*sizeof(int));
     memcpy(p2->Tcount, p1->Tcount, p1->nTargets*sizeof(int));
 }
@@ -308,12 +300,6 @@ void tracker3d_predict
                     memmove(&S->targetIDs[ind], &S->targetIDs[ind+1], (S->nTargets-ind)*sizeof(int));
                 }
 
-                /* resize */
-                S->M = realloc1d(S->M, S->nTargets*sizeof(M6));
-                S->P = realloc1d(S->P, S->nTargets*sizeof(P66));
-                S->Tcount = realloc1d(S->Tcount, S->nTargets*sizeof(int));
-                S->targetIDs = realloc1d(S->targetIDs, S->nTargets*sizeof(int));
-
                 /* Remove dead index for next iteration */
                 for(k=0; k<nDead; k++)
                     dead[k]--;
@@ -340,12 +326,6 @@ void tracker3d_predict
                     memmove(&S->Tcount[ind], &S->Tcount[ind+1], (S->nTargets-ind)*sizeof(int));
                     memmove(&S->targetIDs[ind], &S->targetIDs[ind+1], (S->nTargets-ind)*sizeof(int));
                 }
-
-                /* resize */
-                S->M = realloc1d(S->M, S->nTargets * sizeof(M6));
-                S->P = realloc1d(S->P, S->nTargets * sizeof(P66));
-                S->Tcount = realloc1d(S->Tcount, S->nTargets * sizeof(int));
-                S->targetIDs = realloc1d(S->targetIDs, S->nTargets * sizeof(int));
 
 #ifdef TRACKER_VERY_VERBOSE
                 sprintf(tmp, ", Target %d died ", ind);
@@ -411,8 +391,7 @@ void tracker3d_update
 #ifdef TRACKER_VERBOSE
         strcpy(pData->evt[cidx], "Clutter");
 #endif
-        free(pData->evta[cidx]);
-        pData->evta[cidx] = NULL;
+        pData->evta[cidx] = -1;
         pData->evp[cidx] = (1.0f-tpars->init_birth)*tpars->noiseLikelihood;
         pData->evl[cidx] = tpars->cd;
         tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
@@ -430,8 +409,7 @@ void tracker3d_update
 #ifdef TRACKER_VERBOSE
             sprintf(pData->evt[cidx], "Target %d ", S->targetIDs[j]);
 #endif
-            pData->evta[cidx] = realloc1d(pData->evta[cidx], sizeof(int));
-            pData->evta[cidx][0] = S->targetIDs[j];
+            pData->evta[cidx] = S->targetIDs[j];
             pData->evp[cidx] = (1.0f-tpars->init_birth)*TP0;
             pData->evl[cidx] = LH;
             tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
@@ -444,7 +422,7 @@ void tracker3d_update
         }
 
         /* Association to new target */
-        if (S->nTargets < tpars->maxNactiveTargets){
+        if (S->nTargets < tpars->maxNactiveTargets && S->nTargets < TRACKER3D_MAX_NUM_TARGETS){
             /* Initialization of new target */
             kf_update6(pData->hKF6, tpars->M0, tpars->P0, Y, pData->H, pData->R, M, P, &LH);
             if(pData->tpars.ARE_UNIT_VECTORS)
@@ -470,20 +448,15 @@ void tracker3d_update
 #ifdef TRACKER_VERBOSE
             sprintf(pData->evt[cidx], "New Target %d ", j);
 #endif
-            pData->evta[cidx] = realloc1d(pData->evta[cidx], sizeof(int));
-            pData->evta[cidx][0] = j;
+            pData->evta[cidx] = j;
             pData->evp[cidx] = tpars->init_birth;
             pData->evl[cidx] = LH;
             tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
             S_event = (MCS_data*)pData->str[cidx];
             S_event->nTargets = j+1;
-            S_event->M = realloc1d(S_event->M, S_event->nTargets*sizeof(M6));
-            S_event->P = realloc1d(S_event->P, S_event->nTargets*sizeof(P66));
             memcpy(S_event->M[j].M, M, sizeof(M6));
             memcpy(S_event->P[j].P, P, sizeof(P66));
-            S_event->Tcount = realloc1d(S_event->Tcount, S_event->nTargets*sizeof(int));
-            S_event->Tcount[j] = 0;
-            S_event->targetIDs = realloc1d(S_event->targetIDs, S_event->nTargets*sizeof(int));
+            S_event->Tcount[j] = 0; 
             S_event->targetIDs[j] = j_new;
             cidx++;
         }

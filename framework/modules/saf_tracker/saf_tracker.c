@@ -114,7 +114,7 @@ void tracker3d_create
     
     /* Event starting values */
     for(i=0; i<TRACKER3D_MAX_NUM_EVENTS; i++){
-        pData->evta[i] = NULL;
+        pData->evta[i] = -1;
         tracker3d_particleCreate(&(pData->str[i]), pData->W0, pData->tpars.dt);
     }
     pData->incrementTime = 0;
@@ -139,10 +139,8 @@ void tracker3d_destroy
         free(pData->SS);
         free(pData->SS_resamp);
 
-        for(i=0; i<TRACKER3D_MAX_NUM_EVENTS; i++){
-            free(pData->evta[i]);
+        for(i=0; i<TRACKER3D_MAX_NUM_EVENTS; i++)
             tracker3d_particleDestroy(&pData->str[i]);
-        }
 
         free(pData);
         pData = NULL;

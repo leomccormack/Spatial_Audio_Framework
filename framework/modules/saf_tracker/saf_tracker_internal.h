@@ -58,6 +58,8 @@ extern "C" {
 //# define TRACKER_VERY_VERBOSE
 #endif
 
+/** Maximum number of targets that can be tracked */
+#define TRACKER3D_MAX_NUM_TARGETS ( 24 )
 /** Maximum number of possible events during update */
 #define TRACKER3D_MAX_NUM_EVENTS ( 24 )
 /** Maximum number of particles */
@@ -134,7 +136,7 @@ typedef struct _tracker3d
 #ifdef TRACKER_VERBOSE
     char evt[TRACKER3D_MAX_NUM_EVENTS][256]; /**< Event descriptions */
 #endif
-    int* evta[TRACKER3D_MAX_NUM_EVENTS];   /**< Event targets */
+    int evta[TRACKER3D_MAX_NUM_EVENTS];    /**< Event targets */
     float evp[TRACKER3D_MAX_NUM_EVENTS];   /**< Event priors */
     float evl[TRACKER3D_MAX_NUM_EVENTS];   /**< Event likelhoods*/
     float imp[TRACKER3D_MAX_NUM_EVENTS];   /**< Event distributions */
