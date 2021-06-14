@@ -259,7 +259,7 @@ void sldoa_analysis
             }
         
             /* apply the time-frequency transform */
-            afSTFT_forward(pData->hSTFT, pData->SHframeTD, FRAME_SIZE, pData->SHframeTF);
+            afSTFT_forward_knownDimensions(pData->hSTFT, pData->SHframeTD, FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->SHframeTF);
 
             /* apply sector-based, frequency-dependent DOA analysis */
             numAnalysisBands = 0;

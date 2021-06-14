@@ -211,7 +211,7 @@ void binauraliser_process
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, pData->inputframeTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
 
         /* Rotate source directions */
         if(enableRotation && pData->recalc_M_rotFLAG){
@@ -256,7 +256,7 @@ void binauraliser_process
         cblas_cscal(HYBRID_BANDS*NUM_EARS*TIME_SLOTS, &scaleC, FLATTEN3D(pData->outputframeTF), 1);
 
         /* inverse-TFT */
-        afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outframeTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, NUM_EARS, TIME_SLOTS, pData->outframeTD);
 
         /* Copy to output buffer */
         for (ch = 0; ch < SAF_MIN(NUM_EARS, nOutputs); ch++)

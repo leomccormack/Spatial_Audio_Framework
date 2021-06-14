@@ -253,7 +253,7 @@ void powermap_analysis
             }
 
             /* apply the time-frequency transform */
-            afSTFT_forward(pData->hSTFT, pData->SHframeTD, FRAME_SIZE, pData->SHframeTF);
+            afSTFT_forward_knownDimensions(pData->hSTFT, pData->SHframeTD, FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->SHframeTF);
 
             /* Update covarience matrix per band */
             for(band=0; band<HYBRID_BANDS; band++){

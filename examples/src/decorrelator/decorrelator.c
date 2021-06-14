@@ -191,7 +191,7 @@ void decorrelator_process
             memset(pData->InputFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward(pData->hSTFT, pData->InputFrameTD, FRAME_SIZE, pData->InputFrameTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->InputFrameTD, FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->InputFrameTF);
 
         /* Apply decorrelation */
         if(enableTransientDucker){
@@ -226,7 +226,7 @@ void decorrelator_process
         }
 
         /* inverse-TFT */
-        afSTFT_backward(pData->hSTFT, pData->OutputFrameTF, FRAME_SIZE, pData->OutputFrameTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->OutputFrameTF, FRAME_SIZE, MAX_NUM_OUTPUTS, TIME_SLOTS, pData->OutputFrameTD);
 
         /* Copy to output buffer */
         for (ch = 0; ch < SAF_MIN(nCH, nOutputs); ch++)

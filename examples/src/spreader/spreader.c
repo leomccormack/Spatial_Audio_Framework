@@ -376,7 +376,7 @@ void spreader_process
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, pData->inputframeTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
 
         /* Zero output buffer */
         for(band=0; band<HYBRID_BANDS; band++)
@@ -660,7 +660,7 @@ void spreader_process
         }
 
         /* inverse-TFT */
-        afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outframeTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, MAX_NUM_OUTPUTS, TIME_SLOTS, pData->outframeTD);
 
         /* Copy to output buffer */
         for (ch = 0; ch < SAF_MIN(Q, nOutputs); ch++)

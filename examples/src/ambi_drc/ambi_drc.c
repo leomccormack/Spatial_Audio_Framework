@@ -173,7 +173,7 @@ void ambi_drc_process
             memset(pData->frameTD[i], 0, FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform */
-        afSTFT_forward(pData->hSTFT, pData->frameTD, FRAME_SIZE, pData->inputFrameTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->frameTD, FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->inputFrameTF);
 
         /* Main processing: */
         /* Calculate the dynamic range compression gain factors per frequency band based on the omnidirectional component.
@@ -220,7 +220,7 @@ void ambi_drc_process
         }
 
         /* Inverse time-frequency transform */
-        afSTFT_backward(pData->hSTFT, pData->outputFrameTF, FRAME_SIZE, pData->frameTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->outputFrameTF, FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->frameTD);
 
         /* Copy to output */
         for(ch = 0; ch < SAF_MIN(pData->nSH, nCh); ch++)

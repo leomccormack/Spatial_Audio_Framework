@@ -126,6 +126,10 @@ void afSTFT_forward(void * const hSTFT,
 /**
  * Performs forward afSTFT transform (dataFD dimensions are known)
  *
+ * @note If the dimensions of dataFD are known, then this function will use the
+ *       same dataFD format as used by afSTFT_forward(), but with the speed
+ *       of afSTFT_forward_flat()
+ *
  * @param[in]  hSTFT        afSTFT handle
  * @param[in]  dataTD       Time-domain input; nCHin x framesize
  * @param[in]  framesize    Frame size of time-domain data
@@ -133,12 +137,12 @@ void afSTFT_forward(void * const hSTFT,
  * @param[in]  dataFD_nHops Number of timeslots dataFD is allocated (the max)
  * @param[out] dataFD       Frequency-domain output; #AFSTFT_FDDATA_FORMAT
  */
-void afSTFT_forward_knownSize(void * const hSTFT,
-                              float** dataTD,
-                              int framesize,
-                              int dataFD_nCH,
-                              int dataFD_nHops,
-                              float_complex*** dataFD);
+void afSTFT_forward_knownDimensions(void * const hSTFT,
+                                    float** dataTD,
+                                    int framesize,
+                                    int dataFD_nCH,
+                                    int dataFD_nHops,
+                                    float_complex*** dataFD);
 
 /**
  * Performs forward afSTFT transform (flattened arrays)
@@ -165,6 +169,27 @@ void afSTFT_backward(void * const hSTFT,
                      float_complex*** dataFD,
                      int framesize,
                      float** dataTD);
+
+/**
+ * Performs backward afSTFT transform (dataFD dimensions are known)
+ *
+ * @note If the dimensions of dataFD are known, then this function will use the
+ *       same dataFD format as used by afSTFT_backward(), but with the speed
+ *       of afSTFT_backward_flat()
+ *
+ * @param[in]  hSTFT        afSTFT handle
+ * @param[in]  dataFD       Frequency-domain input; #AFSTFT_FDDATA_FORMAT
+ * @param[in]  framesize    Frame size of time-domain data
+ * @param[in]  dataFD_nCH   Number of channels dataFD is allocated (the max)
+ * @param[in]  dataFD_nHops Number of timeslots dataFD is allocated (the max)
+ * @param[out] dataTD       Time-domain output;  nCHout x framesize
+ */
+void afSTFT_backward_knownDimensions(void * const hSTFT,
+                                     float_complex*** dataFD,
+                                     int framesize,
+                                     int dataFD_nCH,
+                                     int dataFD_nHops,
+                                     float** dataTD);
 
 /**
  * Performs backward afSTFT transform (flattened arrays)

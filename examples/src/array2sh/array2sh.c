@@ -214,7 +214,7 @@ void array2sh_process
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, pData->inputframeTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, MAX_NUM_SENSORS, TIME_SLOTS, pData->inputframeTF);
 
         /* Apply spherical harmonic transform (SHT) */
         for(band=0; band<HYBRID_BANDS; band++){
@@ -225,7 +225,7 @@ void array2sh_process
         }
 
         /* inverse-TFT */
-        afSTFT_backward(pData->hSTFT, pData->SHframeTF, FRAME_SIZE, pData->SHframeTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->SHframeTF, FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->SHframeTD);
 
         /* account for output channel order */
         switch(chOrdering){

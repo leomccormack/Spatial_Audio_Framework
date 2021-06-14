@@ -512,7 +512,7 @@ void ambi_dec_process
         }
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward_knownSize(pData->hSTFT, pData->SHFrameTD, FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->SHframeTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->SHFrameTD, FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->SHframeTF);
 
         /* Decode to loudspeaker set-up */
         memset(FLATTEN3D(pData->outputframeTF), 0, HYBRID_BANDS*MAX_NUM_LOUDSPEAKERS*TIME_SLOTS*sizeof(float_complex));
@@ -565,7 +565,8 @@ void ambi_dec_process
         }
 
         /* inverse-TFT */
-        afSTFT_backward(pData->hSTFT, binauraliseLS ? pData->binframeTF : pData->outputframeTF, FRAME_SIZE, pData->outputFrameTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, binauraliseLS ? pData->binframeTF : pData->outputframeTF,
+                                        FRAME_SIZE,   binauraliseLS ? NUM_EARS : MAX_NUM_LOUDSPEAKERS, TIME_SLOTS, pData->outputFrameTD);
 
         /* Copy to output buffer */
         for(ch = 0; ch < SAF_MIN(binauraliseLS==1 ? NUM_EARS : nLoudspeakers, nOutputs); ch++)

@@ -205,7 +205,7 @@ void panner_process
             memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, pData->inputframeTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
         memset(FLATTEN3D(pData->outputframeTF), 0, HYBRID_BANDS*MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
         memset(outputTemp, 0, MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
 
@@ -300,6 +300,7 @@ void panner_process
                     }
                     pData->recalc_gainsFLAG[ch] = 0;
                 }
+
                 /* apply panning gains */
                 for (band = 0; band < HYBRID_BANDS; band++){
                     for (ls = 0; ls < nLoudspeakers; ls++)
@@ -311,12 +312,10 @@ void panner_process
 
         /* scale by sqrt(number of sources) */
         for (band = 0; band < HYBRID_BANDS; band++)
-            for (ls = 0; ls < nLoudspeakers; ls++)
-                for (t = 0; t < TIME_SLOTS; t++)
-                    pData->outputframeTF[band][ls][t] = crmulf(pData->outputframeTF[band][ls][t], 1.0f/sqrtf((float)nSources));
+            cblas_sscal(/*re+im*/2*nLoudspeakers*TIME_SLOTS, 1.0f/sqrtf((float)nSources), (float*)FLATTEN2D(pData->outputframeTF[band]), 1);
 
         /* inverse-TFT and copy to output */
-        afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outputFrameTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, MAX_NUM_OUTPUTS, TIME_SLOTS, pData->outputFrameTD);
         for (ch = 0; ch < SAF_MIN(nLoudspeakers, nOutputs); ch++)
             utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)

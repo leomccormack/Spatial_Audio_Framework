@@ -429,7 +429,7 @@ void ambi_bin_process
         }
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward(pData->hSTFT, pData->SHFrameTD, FRAME_SIZE, pData->SHframeTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->SHFrameTD, FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->SHframeTF);
 
         /* Main processing: */
         if(order > 0 && enableRot) {
@@ -465,7 +465,7 @@ void ambi_bin_process
         }
 
         /* inverse-TFT */
-        afSTFT_backward(pData->hSTFT, pData->binframeTF, FRAME_SIZE, pData->binFrameTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->binframeTF, FRAME_SIZE, NUM_EARS, TIME_SLOTS, pData->binFrameTD);
 
         /* Copy to output */
         for (ch = 0; ch < SAF_MIN(NUM_EARS, nOutputs); ch++)
