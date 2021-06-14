@@ -58,18 +58,12 @@
 #define __SAF_EXTERNALS_H_INCLUDED__
 
 /* Assert that only one CBLAS/LAPACK performance library has been specified */
-#if (defined(SAF_USE_INTEL_MKL) + \
-     defined(SAF_USE_INTEL_MKL_LP64) + \
+#if (defined(SAF_USE_INTEL_MKL_LP64) + \
      defined(SAF_USE_INTEL_MKL_ILP64) + \
      defined(SAF_USE_OPEN_BLAS_AND_LAPACKE) + \
      defined(SAF_USE_ATLAS) + \
      defined(SAF_USE_APPLE_ACCELERATE)) > 1
 # error Only one performance library flag can be defined!
-#endif
-
-/* The default MKL configuration is LP64 (32-bit int) */
-#if defined(SAF_USE_INTEL_MKL)
-# define SAF_USE_INTEL_MKL_LP64
 #endif
 
 /* ========================================================================== */
