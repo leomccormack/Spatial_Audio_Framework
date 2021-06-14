@@ -235,7 +235,6 @@ void diffuseFieldEqualiseHRTFs
             free(ipd);
         }
     }
-
 }
  
 void interpHRTFs

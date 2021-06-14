@@ -55,6 +55,10 @@ cblas_scopy
 cblas_ccopy
 cblas_dcopy
 cblas_zcopy
+cblas_sswap
+cblas_cswap
+cblas_dswap
+cblas_zswap
 cblas_sscal
 cblas_dscal
 cblas_cscal
