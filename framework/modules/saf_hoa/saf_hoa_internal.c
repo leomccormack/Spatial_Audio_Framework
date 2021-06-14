@@ -56,7 +56,7 @@ void getEPAD
     U = malloc1d(nSH*nSH*sizeof(float));
     V = malloc1d(nLS*nLS*sizeof(float));
     getRSH(order, ls_dirs_deg, nLS, Y_ls);
-    utility_svsmul(Y_ls, &scale, nLS*nSH, Y_ls);
+    cblas_sscal(nLS*nSH, scale, Y_ls, 1);
     utility_ssvd(Y_ls, nSH, nLS, U, NULL, V, NULL);
 
     /* Apply truncation */
@@ -103,7 +103,7 @@ void getAllRAD
     float* decMtx
 )
 {
-    int i, nDirs_td, N_gtable, nGroups, nSH;
+    int nDirs_td, N_gtable, nGroups, nSH;
     float scale;
     float* Y_td, *G_td, *t_dirs;
     
@@ -139,15 +139,14 @@ void getAllRAD
     generateVBAPgainTable3D_srcs(t_dirs, nDirs_td, ls_dirs_deg, nLS, 0, 0, 0.0f, &G_td, &N_gtable, &nGroups);
     Y_td = malloc1d(nSH*nDirs_td*sizeof(float));
     getRSH(order, t_dirs, nDirs_td, Y_td);
-    utility_svsmul(Y_td, &scale, nDirs_td*nSH, Y_td);
+    cblas_sscal(nDirs_td*nSH, scale, Y_td, 1);
     
     /* AllRAD decoder is simply (G_td * T_td * 1/nDirs_td) */
     cblas_sgemm(CblasRowMajor, CblasTrans, CblasTrans, nLS, nSH, nDirs_td, 1.0f,
                 G_td, nLS,
                 Y_td, nDirs_td, 0.0f,
                 decMtx, nSH);
-    for(i=0; i<nLS*nSH; i++)
-        decMtx[i] *= (4.0f*M_PI)/(float)nDirs_td;
+    cblas_sscal(nLS*nSH, (4.0f*M_PI)/(float)nDirs_td, decMtx, 1);
 
     free(Y_td);
     free(G_td);

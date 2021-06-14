@@ -45,48 +45,26 @@ void convertHOAChannelConvention
 )
 {
     int i, nSH;
-    float** tmp;
 
     nSH = ORDER2NSH(order);
 
     /* bypass, if 0th order, or no conversion required */
     if(order==0 || inConvention == outConvention)
         return;
-#if 0 /* Now changed to just zeroing the remaining channels */ 
-    if(order!=1){
-        saf_assert(inConvention!=HOA_CH_ORDER_FUMA, "FuMa not supported for more than 1st order");
-        saf_assert(outConvention!=HOA_CH_ORDER_FUMA, "FuMa not supported for more than 1st order");
-    }
-#endif
-    /* Temp frame */
-    tmp = (float**)malloc2d(3, signalLength, sizeof(float));
 
     /* Convert FUMA to ACN */
     if(inConvention==HOA_CH_ORDER_FUMA && outConvention==HOA_CH_ORDER_ACN){
-        memcpy(tmp[0], &insig[2*signalLength], signalLength*sizeof(float));
-        memcpy(tmp[1], &insig[3*signalLength], signalLength*sizeof(float));
-        memcpy(tmp[2], &insig[1*signalLength], signalLength*sizeof(float));
-
-        memcpy(&insig[1*signalLength], tmp[0], signalLength*sizeof(float));
-        memcpy(&insig[2*signalLength], tmp[1], signalLength*sizeof(float));
-        memcpy(&insig[3*signalLength], tmp[2], signalLength*sizeof(float));
+        cblas_sswap(signalLength, &insig[1*signalLength], 1, &insig[3*signalLength], 1); /* Swap X and Z */
+        cblas_sswap(signalLength, &insig[1*signalLength], 1, &insig[2*signalLength], 1); /* Swap Z and Y */
     }
     /* Convert ACN to FUMA */
     else if(inConvention==HOA_CH_ORDER_ACN && outConvention==HOA_CH_ORDER_FUMA){
-        memcpy(tmp[0], &insig[3*signalLength], signalLength*sizeof(float));
-        memcpy(tmp[1], &insig[1*signalLength], signalLength*sizeof(float));
-        memcpy(tmp[2], &insig[2*signalLength], signalLength*sizeof(float));
-
-        memcpy(&insig[1*signalLength], tmp[0], signalLength*sizeof(float));
-        memcpy(&insig[2*signalLength], tmp[1], signalLength*sizeof(float));
-        memcpy(&insig[3*signalLength], tmp[2], signalLength*sizeof(float));
+        cblas_sswap(signalLength, &insig[1*signalLength], 1, &insig[2*signalLength], 1); /* Swap Y and Z */
+        cblas_sswap(signalLength, &insig[1*signalLength], 1, &insig[3*signalLength], 1); /* Swap Z and X */
     }
     /* Fill any remaining channels with zeros */
     for(i=4; i<nSH; i++)
         memset(&insig[i*signalLength], 0, signalLength * sizeof(float));
-
-    /* clean-up */
-    free(tmp);
 }
 
 void convertHOANormConvention
@@ -98,7 +76,7 @@ void convertHOANormConvention
     HOA_NORM outConvention
 )
 {
-    int n, ch, i;
+    int n, ch;
 
     if(order==0 || inConvention == outConvention)
         return; /* Nothing to do */
@@ -107,41 +85,31 @@ void convertHOANormConvention
         if(outConvention == HOA_NORM_SN3D){
             for (n = 0; n<order+1; n++)
                 for (ch = ORDER2NSH(n-1); ch < ORDER2NSH(n); ch++)
-                    for(i = 0; i<signalLength; i++)
-                        insig[ch*signalLength+i] /= sqrtf(2.0f*(float)n+1.0f);
+                    cblas_sscal(signalLength, 1.0f/sqrtf(2.0f*(float)n+1.0f), &insig[ch*signalLength], 1);
         }
         else if(outConvention==HOA_NORM_FUMA){
-            for(i = 0; i<signalLength; i++)
-                insig[i] /= sqrtf(2.0f);
+            cblas_sscal(signalLength, 1.0f/sqrtf(2.0f), insig, 1);
             for (ch = 1; ch<4 /* 1st order only */; ch++)
-                for(i = 0; i<signalLength; i++)
-                    insig[ch*signalLength+i] /= sqrtf(3.0f);
+                cblas_sscal(signalLength, 1.0f/sqrtf(3.0f), &insig[ch*signalLength], 1);
         }
     }
     else if(inConvention==HOA_NORM_SN3D){
         if(outConvention == HOA_NORM_N3D){
-             for (n = 0; n<order+1; n++)
-                 for (ch = ORDER2NSH(n-1); ch<ORDER2NSH(n); ch++)
-                     for(i = 0; i<signalLength; i++)
-                         insig[ch*signalLength+i] *= sqrtf(2.0f*(float)n+1.0f);
+            for (n = 0; n<order+1; n++)
+                for (ch = ORDER2NSH(n-1); ch<ORDER2NSH(n); ch++)
+                    cblas_sscal(signalLength, sqrtf(2.0f*(float)n+1.0f), &insig[ch*signalLength], 1);
         }
-        else if(outConvention==HOA_NORM_FUMA){
-             for(i = 0; i<signalLength; i++)
-                 insig[i] /= sqrtf(2.0f);
-        }
+        else if(outConvention==HOA_NORM_FUMA)
+            cblas_sscal(signalLength, 1.0f/sqrtf(2.0f), insig, 1);
     }
     else if(inConvention==HOA_NORM_FUMA){
         if(outConvention == HOA_NORM_N3D){
-            for(i = 0; i<signalLength; i++)
-                insig[i] *= sqrtf(2.0f);
+            cblas_sscal(signalLength, sqrtf(2.0f), insig, 1);
             for (ch = 1; ch<4 /* 1st order only */; ch++)
-                for(i = 0; i<signalLength; i++)
-                    insig[ch*signalLength+i] *= sqrtf(3.0f);
+                cblas_sscal(signalLength, sqrtf(3.0f), &insig[ch*signalLength], 1);
         }
-        else if(outConvention == HOA_NORM_SN3D){
-            for(i = 0; i<signalLength; i++)
-                insig[i] *= sqrtf(2.0f);
-        }
+        else if(outConvention == HOA_NORM_SN3D)
+            cblas_sscal(signalLength, sqrtf(2.0f), insig, 1);
     }
 }
 
@@ -379,7 +347,7 @@ void getLoudspeakerDecoderMtx
              */
             Y_ls = malloc1d(nSH*nLS*sizeof(float));
             getRSH(order, ls_dirs_deg, nLS, Y_ls);
-            utility_svsmul(Y_ls, &scale, nLS*nSH, Y_ls);
+            cblas_sscal(nLS*nSH, scale, Y_ls, 1);
             for(i=0; i<nLS; i++)
                 for(j=0; j<nSH; j++)
                     decMtx[i*nSH+j] = (4.0f*SAF_PI) * Y_ls[j*nLS + i]/(float)nLS;
@@ -391,7 +359,7 @@ void getLoudspeakerDecoderMtx
              * loudspeaker spherical harmonic matrix. */
             Y_ls = malloc1d(nSH*nLS*sizeof(float));
             getRSH(order, ls_dirs_deg, nLS, Y_ls);
-            utility_svsmul(Y_ls, &scale, nLS*nSH, Y_ls);
+            cblas_sscal(nLS*nSH, scale, Y_ls, 1);
             utility_spinv(Y_ls, nSH, nLS, decMtx);
             free(Y_ls);
             break;
@@ -447,7 +415,7 @@ void getBinauralAmbiDecoderMtx
     switch(method){
         default:
         case BINAURAL_DECODER_DEFAULT:
-        case BINAURAL_DECODER_LS: getBinDecoder_LS(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, weights, decMtx); break;
+        case BINAURAL_DECODER_LS:       getBinDecoder_LS(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, weights, decMtx); break;
         case BINAURAL_DECODER_LSDIFFEQ: getBinDecoder_LSDIFFEQ(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, weights, decMtx); break;
         case BINAURAL_DECODER_SPR:      getBinDecoder_SPR(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, weights, decMtx); break;
         case BINAURAL_DECODER_TA:       getBinDecoder_TA(hrtfs, hrtf_dirs_deg, N_dirs, N_bands, order, freqVector, itd_s, weights, decMtx); break;
