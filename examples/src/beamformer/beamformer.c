@@ -34,8 +34,6 @@ void beamformer_create
     *phBeam = (void*)pData;
     int i, ch;
 
-    SAF_PRINT_VERSION_LICENSE_STRING;
-
     /* default user parameters */
     pData->beamOrder = 1;
     for(i=0; i<MAX_NUM_BEAMS; i++){

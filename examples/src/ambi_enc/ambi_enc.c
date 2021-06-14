@@ -34,8 +34,6 @@ void ambi_enc_create
     *phAmbi = (void*)pData;
     int i;
 
-    SAF_PRINT_VERSION_LICENSE_STRING;
-
     pData->order = 1;
     
     /* default user parameters */
