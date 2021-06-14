@@ -119,6 +119,7 @@ typedef struct _tracker3d
     tracker3d_config tpars;
 
     /* Internal */
+    void* hKF6;         /**< kf_update6 handle */
     voidPtr* SS;        /**< The particles; tpars.Np x 1 */
     voidPtr* SS_resamp; /**< Resampled particles; tpars.Np x 1 */
     float R[3][3];      /**< Diagonal matrix, measurement noise PRIORs along the
@@ -295,6 +296,12 @@ void kf_predict6(float M[6],
                  float A[6][6],
                  float Q[6][6]);
 
+/** Creates helper structure for kf_update6() */
+void kf_update6_create(void ** const phUp6);
+
+/** Destroys helper structure for kf_update6() */
+void kf_update6_destroy(void ** const phUp6);
+
 /**
  * Kalman Filter update step
  *
@@ -326,6 +333,7 @@ void kf_predict6(float M[6],
  * @note This has been hard-coded for N=6 and without 'K', 'IM' and 'IS', but a
  *       general version should be quite straight-forward (just not needed yet).
  *
+ * @param[in]  hUp6  Handle for helper structure
  * @param[in]  X     Nx1 mean state estimate after prediction step
  * @param[in]  P     NxN state covariance after prediction step
  * @param[in]  y     Dx1 measurement vector.
@@ -337,7 +345,8 @@ void kf_predict6(float M[6],
  *
  * Original Copyright (C) 2002, 2003 Simo Särkkä, 2007 Jouni Hartikainen (GPLv2)
  */
-void kf_update6(float X[6],
+void kf_update6(void * const hUp6,
+                float X[6],
                 float P[6][6],
                 float y[3],
                 float H[3][6],
@@ -408,14 +417,16 @@ void lti_disc(/* Input Arguments */
  * @note This has been hard-coded for N=3, but a general version should be quite
  *       straight-forward (just not needed yet)...
  *
- * @param[in] X Values
- * @param[in] M Mean of distibution or values as 3x3 matrix.
- * @param[in] S 3x3 covariance matrix
+ * @param[in] hUp6  Handle for helper structure
+ * @param[in] X     Values
+ * @param[in] M     Mean of distibution or values as 3x3 matrix.
+ * @param[in] S     3x3 covariance matrix
  * @returns Probability of X.
  *
  * Original Copyright (C) 2002 Simo Särkkä (GPLv2)
  */
 float gauss_pdf3(/* Input Arguments */
+                 void * const hUp6,
                  float X[3],
                  float M[3],
                  float S[3][3]);

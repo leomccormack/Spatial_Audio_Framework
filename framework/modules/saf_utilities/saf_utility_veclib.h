@@ -833,10 +833,16 @@ void utility_sseig(/* Input Arguments */
                    float* D,
                    float* eig);
 
-/** (Optional) pre-allocate the working struct used by utility_cseig() */
-void utility_cseig_create(void ** const phWork, int dim);
+/**
+ * Pre-allocate the working struct used by utility_cseig()
+ *
+ * @param[in] phWork (&) address of work handle, to then pass to utility_cseig()
+ * @param[in] maxDim (&) maximum size 'dim' can be in utility_cseig()
+ */
+void utility_cseig_create(void ** const phWork,
+                          int maxDim);
 
-/** (Optional) de-allocate the working struct used by utility_cseig() */
+/** De-allocate the working struct used by utility_cseig() */
 void utility_cseig_destroy(void ** const phWork);
 
 /**
@@ -1001,18 +1007,35 @@ void utility_zeig(/* Input Arguments */
 /* ========================================================================== */
 
 /**
+ * Pre-allocate the working struct used by utility_sglslv()
+ *
+ * @param[in] phWork  (&) address of work handle,to then passto utility_sglslv()
+ * @param[in] maxDim  (&) maximum size 'dim' can be in utility_sglslv()
+ * @param[in] maxNCol (&) maximum size 'nCol' can be in utility_sglslv()
+ */
+void utility_sglslv_create(void ** const phWork,
+                           int maxDim,
+                           int maxNCol);
+
+/** De-allocate the working struct used by utility_sglslv() */
+void utility_sglslv_destroy(void ** const phWork);
+
+/**
  * General linear solver: single precision, i.e.
  * \code{.m}
  *     X = linsolve(A,B) = A\B; where, AX = B
  * \endcode
  *
- * @param[in]  A    Input square matrix; FLAT: dim x dim
- * @param[in]  dim  Dimensions for square matrix 'A'
- * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
- * @param[in]  nCol Number of columns in right hand side matrix
- * @param[out] X    The solution; FLAT: dim x nCol
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square matrix; FLAT: dim x dim
+ * @param[in]  dim   Dimensions for square matrix 'A'
+ * @param[in]  B     Right hand side matrix; FLAT: dim x nCol
+ * @param[in]  nCol  Number of columns in right hand side matrix
+ * @param[out] X     The solution; FLAT: dim x nCol
  */
 void utility_sglslv(/* Input Arguments */
+                    void* const hWork,
                     const float* A,
                     const int dim,
                     float* B,
@@ -1086,18 +1109,35 @@ void utility_zglslv(/* Input Arguments */
 /* ========================================================================== */
 
 /**
+ * Pre-allocate the working struct used by utility_sglslvt()
+ *
+ * @param[in] phWork (&) address of work handle,to then passto utility_sglslvt()
+ * @param[in] maxDim (&) maximum size 'dim' can be in utility_sglslvt()
+ * @param[in] maxNCol (&) maximum size 'nCol' can be in utility_sglslvt()
+ */
+void utility_sglslvt_create(void ** const phWork,
+                            int maxDim,
+                            int maxNCol);
+
+/** De-allocate the working struct used by utility_sglslvt() */
+void utility_sglslvt_destroy(void ** const phWork);
+
+/**
  * General linear solver (the other way): single precision, i.e.
  * \code{.m}
  *     X = linsolve(B.',A.').' = A/B;
  * \endcode
  *
- * @param[in]  A    Input square matrix; FLAT: dim x dim
- * @param[in]  dim  Dimensions for square matrix 'A'
- * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
- * @param[in]  nCol Number of columns in right hand side matrix
- * @param[out] X    The solution; FLAT: dim x nCol
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square matrix; FLAT: dim x dim
+ * @param[in]  dim   Dimensions for square matrix 'A'
+ * @param[in]  B     Right hand side matrix; FLAT: dim x nCol
+ * @param[in]  nCol  Number of columns in right hand side matrix
+ * @param[out] X     The solution; FLAT: dim x nCol
  */
 void utility_sglslvt(/* Input Arguments */
+                     void* const hWork,
                      const float* A,
                      const int dim,
                      float* B,

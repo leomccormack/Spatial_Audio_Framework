@@ -43,6 +43,12 @@
 
 #ifdef  SAF_ENABLE_TRACKER_MODULE
 
+/** Data structure for kf_update6() */
+typedef struct _kf_update6 {
+    void* sglslv_handle;
+    void* sglslvt_handle;
+}kf_update6_data;
+
 /* ========================================================================== */
 /*                             Static Prototypes                              */
 /* ========================================================================== */
@@ -415,7 +421,7 @@ void tracker3d_update
         /* Loop over associations to targets */
         for (j=0; j<S->nTargets; j++){
             /* Compute update result and likelihood for association to signal j */
-            kf_update6(S->M[j].M, S->P[j].P, Y, pData->H, pData->R, M, P, &LH);
+            kf_update6(pData->hKF6, S->M[j].M, S->P[j].P, Y, pData->H, pData->R, M, P, &LH);
             if(pData->tpars.ARE_UNIT_VECTORS)
                 cblas_sscal(3, 1.0f/L2_norm3(M), M, 1);
 
@@ -440,7 +446,7 @@ void tracker3d_update
         /* Association to new target */
         if (S->nTargets < tpars->maxNactiveTargets){
             /* Initialization of new target */
-            kf_update6(tpars->M0, tpars->P0, Y, pData->H, pData->R, M, P, &LH);
+            kf_update6(pData->hKF6, tpars->M0, tpars->P0, Y, pData->H, pData->R, M, P, &LH);
             if(pData->tpars.ARE_UNIT_VECTORS)
                 cblas_sscal(3, 1.0f/L2_norm3(M), M, 1);
 
@@ -642,9 +648,32 @@ void kf_predict6
     utility_svvadd((float*)APAT, (float*)Q, 36, (float*)P);
 }
 
+void kf_update6_create(void ** const phUp6)
+{
+    *phUp6 = malloc1d(sizeof(kf_update6_data));
+    kf_update6_data *h = (kf_update6_data*)(*phUp6);
+
+    utility_sglslv_create(&h->sglslv_handle, 3, 1);
+    utility_sglslvt_create(&h->sglslvt_handle, 6, 3);
+}
+void kf_update6_destroy(void ** const phUp6)
+{
+    kf_update6_data *h = (kf_update6_data*)(*phUp6);
+
+    if(h!=NULL){
+        utility_sglslv_destroy(&h->sglslv_handle);
+        utility_sglslvt_destroy(&h->sglslvt_handle);
+
+        free(h);
+        h=NULL;
+        *phUp6 = NULL;
+     }
+}
+
 /* hard-coded for length(X)=6 ... */
 void kf_update6
 (
+    void * const hUp6,
     float X[6],
     float P[6][6],
     float y[3],
@@ -655,6 +684,7 @@ void kf_update6
     float* LH
 )
 {
+    kf_update6_data *h = (kf_update6_data*)(hUp6);
     int i;
     float yIM[3], IM[3], IS[3][3], HP[3][6], HPHT[3][3], PHT[6][3], K[6][3], K_yIM[6], KIS[6][3];
 
@@ -676,7 +706,7 @@ void kf_update6
                 (float*)P, 6,
                 (float*)H, 6, 0.0f,
                 (float*)PHT, 3);
-    utility_sglslvt((float*)PHT, 6, (float*)IS, 3, (float*)K);
+    utility_sglslvt(h->sglslvt_handle, (float*)PHT, 6, (float*)IS, 3, (float*)K);
     yIM[0] = y[0]-IM[0];
     yIM[1] = y[1]-IM[1];
     yIM[2] = y[2]-IM[2];
@@ -707,7 +737,7 @@ void kf_update6
         P_out[i][5] = P[i][5] - P_out[i][5];
     }
     if (LH!=NULL)
-      *LH = gauss_pdf3(y,IM,IS);
+      *LH = gauss_pdf3(hUp6, y,IM,IS);
 }
 
 float gamma_cdf
@@ -800,7 +830,7 @@ void lti_disc
             AB2_T[j][i] = AB[i+len_N][j];
         }
     }
-    utility_sglslv(FLATTEN2D(AB2_T), len_N, FLATTEN2D(AB1_T), len_N, FLATTEN2D(Q_T));
+    utility_sglslv(NULL, FLATTEN2D(AB2_T), len_N, FLATTEN2D(AB1_T), len_N, FLATTEN2D(Q_T));
 
     /* transpose back */
     for(i=0; i<len_N; i++)
@@ -827,18 +857,20 @@ void lti_disc
 /* hard-coded for length(M)=3 ... */
 float gauss_pdf3
 (
+    void * const hUp6,
     float X[3],
     float M[3],
     float S[3][3]
 )
 {
+    kf_update6_data *h = (kf_update6_data*)(hUp6);
     float E;
     float DX[3], S_DX[3];
 
     DX[0] = X[0]-M[0];
     DX[1] = X[1]-M[1];
     DX[2] = X[2]-M[2];
-    utility_sglslv((float*)S, 3, (float*)DX, 1, (float*)S_DX);
+    utility_sglslv(h->sglslv_handle, (float*)S, 3, (float*)DX, 1, (float*)S_DX);
     E = DX[0] * S_DX[0];
     E += DX[1] * S_DX[1];
     E += DX[2] * S_DX[2];

@@ -1192,6 +1192,7 @@ void utility_sseig
 
 /** Data structure for utility_cseig */
 typedef struct _utility_cseig_data {
+    int maxDim;
     int currentWorkSize;
     float* rwork;
     float* w;
@@ -1199,15 +1200,16 @@ typedef struct _utility_cseig_data {
     float_complex* work;
 }utility_cseig_data;
 
-void utility_cseig_create(void ** const phWork, int dim)
+void utility_cseig_create(void ** const phWork, int maxDim)
 {
     *phWork = malloc1d(sizeof(utility_cseig_data));
     utility_cseig_data *h = (utility_cseig_data*)(*phWork);
 
-    h->currentWorkSize = SAF_MAX(1, 2*dim-1);
-    h->rwork = malloc1d((3*dim-2)*sizeof(float));
-    h->w = malloc1d(dim*sizeof(float));
-    h->a = malloc1d(dim*dim*sizeof(float_complex));
+    h->maxDim = maxDim;
+    h->currentWorkSize = SAF_MAX(1, 2*maxDim-1);
+    h->rwork = malloc1d((3*maxDim-2)*sizeof(float));
+    h->w = malloc1d(maxDim*sizeof(float));
+    h->a = malloc1d(maxDim*maxDim*sizeof(float_complex));
     h->work = malloc1d(h->currentWorkSize*sizeof(float_complex));
 }
 
@@ -1254,8 +1256,10 @@ void utility_cseig
     /* Work struct */
     if(hWork==NULL)
         utility_cseig_create((void**)&h, dim);
-    else
+    else{
         h = (utility_cseig_data*)(hWork);
+        saf_assert(dim<=h->maxDim, "dim exceeds the maximum length specified");
+    }
     
     /* store in column major order (i.e. transpose) */
 #ifdef INTEL_MKL_VERSION
@@ -1724,8 +1728,46 @@ void utility_zeig
 /*                       General Linear Solver (?glslv)                       */
 /* ========================================================================== */
 
+/** Data structure for utility_cseig */
+typedef struct _utility_sglslv_data {
+    int maxDim;
+    int maxNCol;
+    veclib_int* IPIV;
+    float* a;
+    float* b;
+}utility_sglslv_data;
+
+void utility_sglslv_create(void ** const phWork, int maxDim, int maxNCol)
+{
+    *phWork = malloc1d(sizeof(utility_sglslv_data));
+    utility_sglslv_data *h = (utility_sglslv_data*)(*phWork);
+
+    h->maxDim = maxDim;
+    h->maxNCol = maxNCol;
+
+    h->IPIV = malloc1d(maxDim*sizeof(veclib_int));
+    h->a = malloc1d(maxDim*maxDim*sizeof(float));
+    h->b = malloc1d(maxDim*maxNCol*sizeof(float));
+}
+
+void utility_sglslv_destroy(void ** const phWork)
+{
+    utility_sglslv_data *h = (utility_sglslv_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->IPIV);
+        free(h->a);
+        free(h->b);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
+}
+
 void utility_sglslv
 (
+    void* const hWork,
     const float* A,
     const int dim,
     float* B,
@@ -1733,29 +1775,41 @@ void utility_sglslv
     float* X
 )
 {
-    veclib_int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
-    veclib_int* IPIV;
-    float* a, *b;
+    utility_sglslv_data *h;
+    veclib_int n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
+#ifndef INTEL_MKL_VERSION 
+    veclib_int i, j;
+#endif
 
-    IPIV = malloc1d(dim*sizeof(veclib_int));
-    a = malloc1d(dim*dim*sizeof(float));
-    b = malloc1d(dim*nrhs*sizeof(float));
+    /* Work struct */
+    if(hWork==NULL)
+        utility_sglslv_create((void**)&h, dim, nCol);
+    else {
+        h = (utility_sglslv_data*)(hWork);
+        saf_assert(dim<=h->maxDim, "dim exceeds the maximum length specified");
+        saf_assert(nCol<=h->maxNCol, "nCol exceeds the maximum length specified");
+    }
     
     /* store in column major order */
+#ifdef INTEL_MKL_VERSION
+    MKL_Somatcopy('R', 'T', dim, dim, 1.0f, A, dim, h->a, dim);
+    MKL_Somatcopy('R', 'T', dim, nCol, 1.0f, B, nCol, h->b, dim);
+#else
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
-            a[j*dim+i] = A[i*dim+j];
+            h->a[i*dim+j] = A[j*dim+i];
     for(i=0; i<dim; i++)
         for(j=0; j<nCol; j++)
             b[j*dim+i] = B[i*nCol+j];
+#endif
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
 #ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
-    info = clapack_sgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb);
+    info = clapack_sgesv(CblasColMajor, n, nrhs, h->a, lda, IPIV, h->b, ldb);
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_sgesv(CblasColMajor, n, nrhs, a, lda, IPIV, b, ldb );
+    info = LAPACKE_sgesv(CblasColMajor, n, nrhs, h->a, lda, IPIV, h->b, ldb);
 #elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    sgesv_( &n, &nrhs, a, &lda, IPIV, b, &ldb, &info );
+    sgesv_( &n, &nrhs, h->a, &lda, h->IPIV, h->b, &ldb, &info );
 #endif
     
     if(info!=0){
@@ -1770,14 +1824,17 @@ void utility_sglslv
     }
     else{
         /* store solution in row-major order */
+#ifdef INTEL_MKL_VERSION
+        MKL_Somatcopy('R', 'T', nCol, dim, 1.0f, h->b, dim, X, nCol);
+#else
         for(i=0; i<dim; i++)
             for(j=0; j<nCol; j++)
-                X[i*nCol+j] = b[j*dim+i];
+                X[i*nCol+j] = h->b[j*dim+i];
+#endif
     }
     
-    free(IPIV);
-    free(a);
-    free(b);
+    if(hWork == NULL)
+        utility_sglslv_destroy((void**)&h);
 }
 
 void utility_cglslv
@@ -1953,8 +2010,46 @@ void utility_zglslv
 /*                      General Linear Solver (?glslvt)                       */
 /* ========================================================================== */
 
+/** Data structure for utility_cseig */
+typedef struct _utility_sglslvt_data {
+    int maxDim;
+    int maxNCol;
+    veclib_int* IPIV;
+    float* a;
+    float* b;
+}utility_sglslvt_data;
+
+void utility_sglslvt_create(void ** const phWork, int maxDim, int maxNCol)
+{
+    *phWork = malloc1d(sizeof(utility_sglslvt_data));
+    utility_sglslvt_data *h = (utility_sglslvt_data*)(*phWork);
+
+    h->maxDim = maxDim;
+    h->maxNCol = maxNCol;
+
+    h->IPIV = malloc1d(maxDim*sizeof(veclib_int));
+    h->a = malloc1d(maxDim*maxDim*sizeof(float));
+    h->b = malloc1d(maxDim*maxNCol*sizeof(float));
+}
+
+void utility_sglslvt_destroy(void ** const phWork)
+{
+    utility_sglslvt_data *h = (utility_sglslvt_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->IPIV);
+        free(h->a);
+        free(h->b);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
+}
+
 void utility_sglslvt
 (
+    void* const hWork,
     const float* A,
     const int dim,
     float* B,
@@ -1962,17 +2057,21 @@ void utility_sglslvt
     float* X
 )
 {
+    utility_sglslvt_data *h;
     veclib_int n = nCol, nrhs = dim, lda = nCol, ldb = nCol, info;
-    veclib_int* IPIV;
-    float* a, *b;
 
-    IPIV = malloc1d(dim*sizeof(veclib_int));
-    a = malloc1d(dim*dim*sizeof(float));
-    b = malloc1d(dim*nrhs*sizeof(float));
+    /* Work struct */
+    if(hWork==NULL)
+        utility_sglslvt_create((void**)&h, dim, nCol);
+    else {
+        h = (utility_sglslvt_data*)(hWork);
+        saf_assert(dim<=h->maxDim, "dim exceeds the maximum length specified");
+        saf_assert(nCol<=h->maxNCol, "nCol exceeds the maximum length specified");
+    }
 
     /* store locally */
-    cblas_scopy(dim*dim, A, 1, a, 1);
-    cblas_scopy(dim*nCol, B, 1, b, 1);
+    cblas_scopy(dim*dim, A, 1, h->a, 1);
+    cblas_scopy(dim*nCol, B, 1, h->b, 1);
 
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
 #ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
@@ -1980,7 +2079,7 @@ void utility_sglslvt
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_sgesv(CblasColMajor, n, nrhs, b, ldb, IPIV, a, lda );
 #elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    sgesv_( &n, &nrhs, b, &ldb, IPIV, a, &lda, &info );
+    sgesv_( &n, &nrhs, h->b, &ldb, h->IPIV, h->a, &lda, &info );
 #endif
 
     if(info!=0){
@@ -1994,11 +2093,10 @@ void utility_sglslvt
 #endif
     }
     else
-        cblas_scopy(dim*nCol, a, 1, X, 1);
+        cblas_scopy(dim*nCol, h->a, 1, X, 1);
 
-    free(IPIV);
-    free(a);
-    free(b);
+    if(hWork == NULL)
+        utility_sglslvt_destroy((void**)&h);
 }
 
 void utility_cglslvt
@@ -2650,11 +2748,37 @@ float utility_sdet
 {
     veclib_int i,j;
     veclib_int *IPIV;
-    IPIV = malloc1d(N * sizeof(veclib_int));
     float *tmp;
-    tmp = malloc1d(N*N*sizeof(float));
     veclib_int INFO;
     float det;
+
+    /* Simple cases: */
+    if(N==2){
+        return A[0]*A[3] - A[2]*A[1];
+    }
+    else if(N==3){
+        return A[0] * ((A[4]*A[8]) - (A[7]*A[5])) -A[1] * (A[3]
+           * A[8] - A[6] * A[5]) + A[2] * (A[3] * A[7] - A[6] * A[4]);
+    }
+    else if (N==4){
+        return
+        A[3] * A[6] * A[9] * A[12] - A[2] * A[7] * A[9] * A[12] -
+        A[3] * A[5] * A[10] * A[12] + A[1] * A[7] * A[10] * A[12] +
+        A[2] * A[5] * A[11] * A[12] - A[1] * A[6] * A[11] * A[12] -
+        A[3] * A[6] * A[8] * A[13] + A[2] * A[7] * A[8] * A[13] +
+        A[3] * A[4] * A[10] * A[13] - A[0] * A[7] * A[10] * A[13] -
+        A[2] * A[4] * A[11] * A[13] + A[0] * A[6] * A[11] * A[13] +
+        A[3] * A[5] * A[8] * A[14] - A[1] * A[7] * A[8] * A[14] -
+        A[3] * A[4] * A[9] * A[14] + A[0] * A[7] * A[9] * A[14] +
+        A[1] * A[4] * A[11] * A[14] - A[0] * A[5] * A[11] * A[14] -
+        A[2] * A[5] * A[8] * A[15] + A[1] * A[6] * A[8] * A[15] +
+        A[2] * A[4] * A[9] * A[15] - A[0] * A[6] * A[9] * A[15] -
+        A[1] * A[4] * A[10] * A[15] + A[0] * A[5] * A[10] * A[15];
+    }
+
+    /* Otherwise, the arbitrary NxN solution: */
+    IPIV = malloc1d(N * sizeof(veclib_int));
+    tmp = malloc1d(N*N*sizeof(float));
 
     /* Store in column major order */
     for(i=0; i<N; i++)
@@ -2701,6 +2825,31 @@ double utility_ddet
     double *tmp, *TAU, *WORK;
     double lwork2, det;
 
+    /* Simple cases: */
+    if(N==2){
+        return A[0]*A[3] - A[2]*A[1];
+    }
+    else if(N==3){
+        return A[0] * ((A[4]*A[8]) - (A[7]*A[5])) -A[1] * (A[3]
+           * A[8] - A[6] * A[5]) + A[2] * (A[3] * A[7] - A[6] * A[4]);
+    }
+    else if (N==4){
+        return
+        A[3] * A[6] * A[9] * A[12] - A[2] * A[7] * A[9] * A[12] -
+        A[3] * A[5] * A[10] * A[12] + A[1] * A[7] * A[10] * A[12] +
+        A[2] * A[5] * A[11] * A[12] - A[1] * A[6] * A[11] * A[12] -
+        A[3] * A[6] * A[8] * A[13] + A[2] * A[7] * A[8] * A[13] +
+        A[3] * A[4] * A[10] * A[13] - A[0] * A[7] * A[10] * A[13] -
+        A[2] * A[4] * A[11] * A[13] + A[0] * A[6] * A[11] * A[13] +
+        A[3] * A[5] * A[8] * A[14] - A[1] * A[7] * A[8] * A[14] -
+        A[3] * A[4] * A[9] * A[14] + A[0] * A[7] * A[9] * A[14] +
+        A[1] * A[4] * A[11] * A[14] - A[0] * A[5] * A[11] * A[14] -
+        A[2] * A[5] * A[8] * A[15] + A[1] * A[6] * A[8] * A[15] +
+        A[2] * A[4] * A[9] * A[15] - A[0] * A[6] * A[9] * A[15] -
+        A[1] * A[4] * A[10] * A[15] + A[0] * A[5] * A[10] * A[15];
+    }
+
+    /* Otherwise, the arbitrary NxN solution: */
     /* Store in column major order */
     tmp = malloc(N*N*sizeof(double));
     for(i=0; i<N; i++)

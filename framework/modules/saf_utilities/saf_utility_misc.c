@@ -603,7 +603,7 @@ void gexpm
     }
     two = 2.0f;
     utility_svsmul(FLATTEN2D(Ym1), &two, sizeD*sizeD, NULL);
-    utility_sglslv(FLATTEN2D(Ym2), sizeD, FLATTEN2D(Ym1), sizeD, FLATTEN2D(Ym1));
+    utility_sglslv(NULL, FLATTEN2D(Ym2), sizeD, FLATTEN2D(Ym1), sizeD, FLATTEN2D(Ym1));
 
     /* Y = Ym1+I = expm(D)
      * Square Y (i.e., Y <-- Y*Y) s times to get Y = expm(D*2^s). */
