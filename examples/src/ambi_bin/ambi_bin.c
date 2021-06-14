@@ -55,8 +55,6 @@ void ambi_bin_create
     *phAmbi = (void*)pData;
     int band;
 
-    SAF_PRINT_VERSION_LICENSE_STRING;
-
     /* default user parameters */
     for (band = 0; band<HYBRID_BANDS; band++)
         pData->EQ[band] = 1.0f;

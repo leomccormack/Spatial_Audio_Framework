@@ -45,8 +45,6 @@ void dirass_create
     *phDir = (void*)pData;
     int i;
 
-    SAF_PRINT_VERSION_LICENSE_STRING;
-
     /* Default user parameters */
     pData->inputOrder = pData->new_inputOrder = SH_ORDER_FIRST;
     pData->beamType = STATIC_BEAM_TYPE_HYPERCARDIOID;

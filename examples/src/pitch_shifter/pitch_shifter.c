@@ -32,8 +32,6 @@ void pitch_shifter_create
 {
     pitch_shifter_data* pData = (pitch_shifter_data*)malloc1d(sizeof(pitch_shifter_data));
     *phPS = (void*)pData;
-
-    SAF_PRINT_VERSION_LICENSE_STRING;
     
     /* Default user parameters */
     pData->new_nChannels = pData->nChannels = 1;

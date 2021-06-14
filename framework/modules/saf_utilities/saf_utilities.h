@@ -47,13 +47,6 @@
 /*                        Macros and Global Constants                         */
 /* ========================================================================== */
 
-#ifdef SAF_DISABLE_PRINT_VERSION
-# define SAF_PRINT_VERSION_LICENSE_STRING
-#else
-/** Prints the Spatial_Audio_Framework Version and License as a string */
-# define SAF_PRINT_VERSION_LICENSE_STRING printf(SAF_VERSION_LICENSE_STRING)
-#endif
-
 /** 2 (true for most humans) */
 #define NUM_EARS 2
 

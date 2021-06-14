@@ -40,8 +40,6 @@ void binauraliser_create
     *phBin = (void*)pData;
     int ch;
 
-    SAF_PRINT_VERSION_LICENSE_STRING;
-
     /* user parameters */
     binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */

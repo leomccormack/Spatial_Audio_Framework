@@ -55,8 +55,6 @@ void sldoa_create
     *phSld = (void*)pData;
     int i, j, band;
 
-    SAF_PRINT_VERSION_LICENSE_STRING;
-
     /* Default user parameters */
     pData->new_masterOrder = pData->masterOrder = 1;
     for(band=0; band<HYBRID_BANDS; band++){

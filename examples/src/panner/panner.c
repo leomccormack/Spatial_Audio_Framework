@@ -51,8 +51,6 @@ void panner_create
     *phPan = (void*)pData;
     int ch, dummy;
 
-    SAF_PRINT_VERSION_LICENSE_STRING;
-
     /* default user parameters */
     panner_loadSourcePreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
     pData->nSources = pData->new_nSources;

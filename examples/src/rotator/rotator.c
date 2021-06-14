@@ -40,8 +40,6 @@ void rotator_create
 {
     rotator_data* pData = (rotator_data*)malloc1d(sizeof(rotator_data));
     *phRot = (void*)pData;
-
-    SAF_PRINT_VERSION_LICENSE_STRING;
     
     pData->M_rot_status = M_ROT_RECOMPUTE_QUATERNION;
   
