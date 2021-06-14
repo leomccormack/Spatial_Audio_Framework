@@ -627,6 +627,7 @@ void test__afSTFT(void){
     freqVector = malloc1d(nBands*sizeof(float));
     afSTFT_getCentreFreqs(hSTFT, (float)fs, nBands, freqVector);
     inspec = (float_complex***)malloc3d(nBands, nCHin, nHops, sizeof(float_complex));
+    //inspec = (float_complex***)malloc3d(nBands, nCHin+12, nHops+10, sizeof(float_complex));
     outspec = (float_complex***)malloc3d(nBands, nCHout, nHops, sizeof(float_complex));
 
     /* just some messing around... */
@@ -643,6 +644,7 @@ void test__afSTFT(void){
         for(ch=0; ch<nCHin; ch++)
             memcpy(inframe[ch], &insig[ch][frame*framesize], framesize*sizeof(float));
         afSTFT_forward(hSTFT, inframe, framesize, inspec);
+        //afSTFT_forward_knownSize(hSTFT, inframe, framesize, nCHin+12, nHops+10, inspec);
 
         /* Copy first channel of inspec to all outspec channels */
         for(band=0; band<nBands; band++)
@@ -2604,7 +2606,7 @@ void test__sphESPRIT(void){
     /* Eigenvalue decomposition and truncation of eigen vectors to obtain
      * signal subspace (based on source number) */
     U = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
-    utility_cseig(FLATTEN2D(C_Cx), nSH, 1, FLATTEN2D(U), NULL, NULL);
+    utility_cseig(NULL, FLATTEN2D(C_Cx), nSH, 1, FLATTEN2D(U), NULL, NULL);
     Us = (float_complex**)malloc2d(nSH, nSrcs, sizeof(float_complex)); /* signal subspace */
     for(i=0; i<nSH; i++)
         for(j=0; j<nSrcs; j++)

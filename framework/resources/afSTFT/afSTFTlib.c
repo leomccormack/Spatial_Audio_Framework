@@ -254,10 +254,54 @@ void afSTFT_forward
                     for(ch=0; ch < h->nCHin; ch++)
                         dataFD[band][ch][t] = cmplxf(h->STFTInputFrameTF[ch].re[band], h->STFTInputFrameTF[ch].im[band]);
                 break;
-            case AFSTFT_TIME_CH_BANDS: 
-                for(band=0; band<h->nBands; band++)
-                    for(ch=0; ch < h->nCHin; ch++)
-                        dataFD[t][ch][band] = cmplxf(h->STFTInputFrameTF[ch].re[band], h->STFTInputFrameTF[ch].im[band]);
+            case AFSTFT_TIME_CH_BANDS:
+                for(ch=0; ch < h->nCHin; ch++){
+                    cblas_scopy(h->nBands, h->STFTInputFrameTF[ch].re, 1, (float*)dataFD[t][ch], 2);
+                    cblas_scopy(h->nBands, h->STFTInputFrameTF[ch].im, 1, &((float*)dataFD[t][ch])[1], 2);
+                }
+                break;
+        }
+    }
+}
+
+void afSTFT_forward_knownSize
+(
+    void * const hSTFT,
+    float** dataTD,
+    int framesize,
+    int dataFD_nCH,
+    int dataFD_nHops,
+    float_complex*** dataFD
+)
+{
+    afSTFT_data *h = (afSTFT_data*)(hSTFT);
+    int ch, t, nHops;
+    float_complex* pDataFD;
+
+    assert(framesize % h->hopsize == 0); /* framesize must be multiple of hopsize */
+    nHops = framesize/h->hopsize;
+    pDataFD = &dataFD[0][0][0];
+
+    /* Loop over hops */
+    for(t=0; t < nHops; t++) {
+        /* forward transform */
+        for(ch = 0; ch < h->nCHin; ch++)
+            utility_svvcopy(&(dataTD[ch][t*(h->hopsize)]), (h->hopsize), h->tempHopFrameTD[ch]);
+        afSTFTlib_forward(h->hInt, h->tempHopFrameTD, h->STFTInputFrameTF);
+
+        /* store */
+        switch(h->format){
+            case AFSTFT_BANDS_CH_TIME:
+                for(ch=0; ch < h->nCHin; ch++){
+                    cblas_scopy(h->nBands, h->STFTInputFrameTF[ch].re, 1, (float*)&pDataFD[0*dataFD_nCH*nHops + ch*dataFD_nHops + t], dataFD_nCH*dataFD_nHops*2);
+                    cblas_scopy(h->nBands, h->STFTInputFrameTF[ch].im, 1, &((float*)&pDataFD[0*dataFD_nCH*nHops + ch*dataFD_nHops + t])[1], dataFD_nCH*dataFD_nHops*2);
+                } 
+                break;
+            case AFSTFT_TIME_CH_BANDS:
+                for(ch=0; ch < h->nCHin; ch++){
+                    cblas_scopy(h->nBands, h->STFTInputFrameTF[ch].re, 1, (float*)dataFD[t][ch], 2);
+                    cblas_scopy(h->nBands, h->STFTInputFrameTF[ch].im, 1, &((float*)dataFD[t][ch])[1], 2);
+                }
                 break;
         }
     }

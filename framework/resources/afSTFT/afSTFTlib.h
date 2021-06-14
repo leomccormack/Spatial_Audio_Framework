@@ -124,6 +124,23 @@ void afSTFT_forward(void * const hSTFT,
                     float_complex*** dataFD);
 
 /**
+ * Performs forward afSTFT transform (dataFD dimensions are known)
+ *
+ * @param[in]  hSTFT        afSTFT handle
+ * @param[in]  dataTD       Time-domain input; nCHin x framesize
+ * @param[in]  framesize    Frame size of time-domain data
+ * @param[in]  dataFD_nCH   Number of channels dataFD is allocated (the max)
+ * @param[in]  dataFD_nHops Number of timeslots dataFD is allocated (the max)
+ * @param[out] dataFD       Frequency-domain output; #AFSTFT_FDDATA_FORMAT
+ */
+void afSTFT_forward_knownSize(void * const hSTFT,
+                              float** dataTD,
+                              int framesize,
+                              int dataFD_nCH,
+                              int dataFD_nHops,
+                              float_complex*** dataFD);
+
+/**
  * Performs forward afSTFT transform (flattened arrays)
  *
  * @param[in]  hSTFT     afSTFT handle

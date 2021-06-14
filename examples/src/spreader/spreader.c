@@ -562,7 +562,7 @@ void spreader_process
                         for(band=0; band<HYBRID_BANDS; band++){
                             memcpy(Cy, pData->Cy[src][band], Q*Q*sizeof(float_complex));
                             cblas_cscal(Q*Q, &scaleC, Cy, 1);
-                            utility_cseig(Cy, Q, 1, V, D, NULL);
+                            utility_cseig(NULL, Cy, Q, 1, V, D, NULL);
                             for(i=0; i<Q; i++)
                                 for(j=0; j<Q; j++)
                                     D[i*Q+j] = i==j ? csqrtf(D[i*Q+j]) : cmplxf(0.0f, 0.0f);

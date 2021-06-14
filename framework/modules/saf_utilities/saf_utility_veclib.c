@@ -1190,8 +1190,46 @@ void utility_sseig
     free(a);
 }
 
+/** Data structure for utility_cseig */
+typedef struct _utility_cseig_data {
+    int currentWorkSize;
+    float* rwork;
+    float* w;
+    float_complex* a;
+    float_complex* work;
+}utility_cseig_data;
+
+void utility_cseig_create(void ** const phWork, int dim)
+{
+    *phWork = malloc1d(sizeof(utility_cseig_data));
+    utility_cseig_data *h = (utility_cseig_data*)(*phWork);
+
+    h->currentWorkSize = SAF_MAX(1, 2*dim-1);
+    h->rwork = malloc1d((3*dim-2)*sizeof(float));
+    h->w = malloc1d(dim*sizeof(float));
+    h->a = malloc1d(dim*dim*sizeof(float_complex));
+    h->work = malloc1d(h->currentWorkSize*sizeof(float_complex));
+}
+
+void utility_cseig_destroy(void ** const phWork)
+{
+    utility_cseig_data *h = (utility_cseig_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->rwork);
+        free(h->w);
+        free(h->a);
+        free(h->work);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
+}
+
 void utility_cseig
 (
+    void* const hWork,
     const float_complex* A,
     const int dim,
     int sortDecFLAG,
@@ -1200,42 +1238,56 @@ void utility_cseig
     float* eig
 )
 {
-    veclib_int i, j, n, lda, info;
-    float *w;
-    float_complex* a;
-#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    utility_cseig_data *h;
+    veclib_int i, n, lda, info;
     veclib_int lwork;
-    float *rwork;
     float_complex wkopt;
-    float_complex *work;
+#ifdef INTEL_MKL_VERSION
+    const MKL_Complex8 calpha = {1.0f, 0.0f};
+#else
+    int j;
 #endif
 
     n = dim;
     lda = dim;
-    w = malloc1d(dim*sizeof(float));
-    a = malloc1d(dim*dim*sizeof(float_complex));
+    
+    /* Work struct */
+    if(hWork==NULL)
+        utility_cseig_create((void**)&h, dim);
+    else
+        h = (utility_cseig_data*)(hWork);
     
     /* store in column major order (i.e. transpose) */
+#ifdef INTEL_MKL_VERSION
+    MKL_Comatcopy('R', 'T', dim, dim, calpha, (veclib_float_complex*)A, dim, (veclib_float_complex*)h->a, dim);
+#else
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
-            a[i*dim+j] = A[j*dim+i];
-    
+            h->a[i*dim+j] = A[j*dim+i];
+#endif
+
     /* solve the eigenproblem */
-#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    rwork = malloc1d((3*n-2)*sizeof(float));
     lwork = -1;
-    cheev_( "Vectors", "Upper", &n, (veclib_float_complex*)a, &lda, w, (veclib_float_complex*)&wkopt, &lwork, rwork, &info );
-    lwork = (int)crealf(wkopt);
-    work = (float_complex*)malloc1d( lwork*sizeof(float_complex) );
-    cheev_( "Vectors", "Upper", &n, (veclib_float_complex*)a, &lda, w, (veclib_float_complex*)work, &lwork, rwork, &info );
-    free(work);
-    free(rwork);
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    cheev_( "Vectors", "Upper", &n, (veclib_float_complex*)h->a, &lda, h->w, (veclib_float_complex*)&wkopt, &lwork, h->rwork, &info );
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_cheev(CblasColMajor, 'V', 'U', n, (veclib_float_complex*)a, lda, w);
+    info = LAPACKE_cheev_work(CblasColMajor, 'V', 'U', n, (veclib_float_complex*)h->a, lda, h->w, (veclib_float_complex*)&wkopt, lwork, h->rwork);
 #endif
-    
+    lwork = (int)crealf(wkopt);
+    if(lwork>h->currentWorkSize){
+        h->currentWorkSize = lwork;
+        h->work = realloc1d(h->work, h->currentWorkSize*sizeof(float_complex));
+    }
+#if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    cheev_( "Vectors", "Upper", &n, (veclib_float_complex*)h->a, &lda, h->w, (veclib_float_complex*)h->work, &lwork, h->rwork, &info );
+#elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
+    saf_print_error("No such implementation available in ATLAS CLAPACK");
+#elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
+    info = LAPACKE_cheev_work(CblasColMajor, 'V', 'U', n, (veclib_float_complex*)h->a, lda, h->w, (veclib_float_complex*)h->work, lwork, h->rwork);
+#endif
+
     /* output */
     if(D!=NULL)
         memset(D, 0, dim*dim*sizeof(float_complex));
@@ -1252,34 +1304,43 @@ void utility_cseig
 #endif
     }
     
-    /* transpose, back to row-major and reverse order */
+    /* transpose, back to row-major and reverse order if sortDecFlag==1 */
     else{
+        if(sortDecFLAG && V!=NULL)
+            for(i=0; i<(int)((float)dim/2.0f); i++)
+                cblas_cswap(dim, &h->a[i*dim], 1, &h->a[(dim-i-1)*dim], 1);
+
+        if(V!=NULL){
+#ifdef INTEL_MKL_VERSION
+            MKL_Comatcopy('R', 'T', dim, dim, calpha, (veclib_float_complex*)h->a, dim, (veclib_float_complex*)V, dim);
+#else
+            if(V!=NULL)
+                for(i=0; i<dim; i++)
+                    for(j=0; j<dim; j++)
+                        V[i*dim+j] = h->a[j*dim+i];
+#endif
+        }
+
         if(sortDecFLAG){
             for(i=0; i<dim; i++) {
-                if(V!=NULL)
-                    for(j=0; j<dim; j++)
-                        V[i*dim+j] = a[(dim-j-1)*dim+i];
                 if(D!=NULL)
-                    D[i*dim+i] = cmplxf(w[dim-i-1], 0.0f); /* store along the diagonal, reversing the order */
+                    D[i*dim+i] = cmplxf(h->w[dim-i-1], 0.0f); /* store along the diagonal, reversing the order */
                 if(eig!=NULL)
-                    eig[i] = w[dim-i-1];
+                    eig[i] = h->w[dim-i-1];
             }
         }
         else {
             for(i=0; i<dim; i++){
-                if(V!=NULL)
-                    for(j=0; j<dim; j++)
-                        V[i*dim+j] = a[j*dim+i];
                 if(D!=NULL)
-                    D[i*dim+i] = cmplxf(w[i], 0.0f); /* store along the diagonal */
+                    D[i*dim+i] = cmplxf(h->w[i], 0.0f); /* store along the diagonal */
                 if(eig!=NULL)
-                    eig[i] = w[i];
+                    eig[i] = h->w[i];
             }
         }
     }
-    
-    free(w);
-    free(a);
+
+    if(hWork == NULL)
+        utility_cseig_destroy((void**)&h);
 }
 
 

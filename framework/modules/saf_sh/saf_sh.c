@@ -1677,7 +1677,7 @@ void generateMUSICmap
     
     /* obtain eigenvectors */
     //utility_ceig(Cx, nSH, 1, NULL, V, NULL, NULL);
-    utility_cseig(Cx, nSH, 1, V, NULL, NULL);
+    utility_cseig(NULL, Cx, nSH, 1, V, NULL, NULL);
     
     /* truncate, to obtain noise sub-space */
     for (i = 0; i < nSH; i++)

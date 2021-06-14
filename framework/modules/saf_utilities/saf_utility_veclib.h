@@ -833,6 +833,12 @@ void utility_sseig(/* Input Arguments */
                    float* D,
                    float* eig);
 
+/** (Optional) pre-allocate the working struct used by utility_cseig() */
+void utility_cseig_create(void ** const phWork, int dim);
+
+/** (Optional) de-allocate the working struct used by utility_cseig() */
+void utility_cseig_destroy(void ** const phWork);
+
 /**
  * Eigenvalue decomposition of a SYMMETRIC/HERMITION matrix: single
  * precision complex, i.e.
@@ -843,6 +849,9 @@ void utility_sseig(/* Input Arguments */
  * @note 'D' contains the eigen values along the diagonal, while 'eig' are the
  *       eigen values as a vector
  *
+ * @param[in]  hWork       Handle for the work struct (set to NULL if not
+ *                         available, in which case memory is allocated on the
+ *                         fly)
  * @param[in]  A           Input SYMMETRIC square matrix; FLAT: dim x dim
  * @param[in]  dim         Dimensions for square matrix 'A'
  * @param[in]  sortDecFLAG '1' sort eigen values and vectors in decending order.
@@ -855,6 +864,7 @@ void utility_sseig(/* Input Arguments */
  *                         needed); dim x 1
  */
 void utility_cseig(/* Input Arguments */
+                   void* const hWork,
                    const float_complex* A,
                    const int dim,
                    int sortDecFLAG,
