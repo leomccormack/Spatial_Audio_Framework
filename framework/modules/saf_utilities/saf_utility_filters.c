@@ -747,7 +747,7 @@ void butterCoeffs
     }
 
     /* Transform lowpass filter into the desired filter (while in state space) */
-	bf_ss = NULL;
+    bf_ss = NULL;
     switch(filterType){
         case BUTTER_FILTER_HPF:
             utility_dinv(FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
@@ -950,8 +950,8 @@ void faf_IIRFilterbank_create
         if(order==3){
             //q[3]=conj(-1.0*q[0]);
             //q[2]=conj(-1.0*q[1]);
-			q[3] = -1.0*q[0];
-			q[2] = -1.0*q[1];
+            q[3] = -1.0*q[0];
+            q[2] = -1.0*q[1];
         }
         for(i=0; i<filtLen; i++)
             q[i] =  b_lpf[i] - q[i];
@@ -977,7 +977,7 @@ void faf_IIRFilterbank_create
         for(i=0; i<order; i++){
             if (cabs(z[i]) < 1.0){
                 ztmp[0] = cmplx(1.0, 0.0);
-				ztmp[1] = crmul(z[i], -1.0);
+                ztmp[1] = crmul(z[i], -1.0);
                 convz(d2,ztmp,d2_len,2,ztmp2);
                 d2_len++;
                 for(j=0; j<d2_len; j++)

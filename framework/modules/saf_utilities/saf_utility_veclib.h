@@ -422,7 +422,7 @@ void utility_svvsub(/* Input Arguments */
                     const float* b,
                     const int len,
                     /* Output Arguments */
-	                float* c);
+                    float* c);
 
 /**
  * Single-precision, complex, vector-vector subtraction, i.e.
@@ -478,10 +478,10 @@ void utility_svvmul(/* Input Arguments */
  */
 void utility_cvvmul(/* Input Arguments */
                     float_complex* a,
-	                const float_complex* b,
-	                const int len,
+                    const float_complex* b,
+                    const int len,
                     /* Output Arguments */
-	                float_complex* c);
+                    float_complex* c);
 
 
 /* ========================================================================== */

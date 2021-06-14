@@ -55,8 +55,8 @@ void estimateITDs
     K = tanf(SAF_PI * fc/(float)fs);
     KK = K * K; 
     D = KK * Q + K + Q;
-	b[0] = (KK * Q) / D; b[1] = (2.0f * KK * Q) / D; b[2] = (KK * Q) / D;
-	a[0] = 1.0f; a[1] = (2.0f * Q * (KK - 1.0f)) / D; a[2] = (KK * Q - K + Q) / D;
+    b[0] = (KK * Q) / D; b[1] = (2.0f * KK * Q) / D; b[2] = (KK * Q) / D;
+    a[0] = 1.0f; a[1] = (2.0f * Q * (KK - 1.0f)) / D; a[2] = (KK * Q - K + Q) / D;
     
     /* determine the ITD via the cross-correlation between the LPF'd left and right HRIR signals */
     xcorr_len = 2*(hrir_len)-1;

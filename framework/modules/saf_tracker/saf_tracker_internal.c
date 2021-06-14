@@ -336,10 +336,10 @@ void tracker3d_predict
                 }
 
                 /* resize */
-				S->M = realloc1d(S->M, S->nTargets * sizeof(M6));
-				S->P = realloc1d(S->P, S->nTargets * sizeof(P66));
-				S->Tcount = realloc1d(S->Tcount, S->nTargets * sizeof(int));
-				S->targetIDs = realloc1d(S->targetIDs, S->nTargets * sizeof(int));
+                S->M = realloc1d(S->M, S->nTargets * sizeof(M6));
+                S->P = realloc1d(S->P, S->nTargets * sizeof(P66));
+                S->Tcount = realloc1d(S->Tcount, S->nTargets * sizeof(int));
+                S->targetIDs = realloc1d(S->targetIDs, S->nTargets * sizeof(int));
 
 #ifdef TRACKER_VERY_VERBOSE
                 sprintf(tmp, ", Target %d died ", ind);
@@ -856,8 +856,8 @@ int categ_rnd
 {
     int i;
     float rand01, norm;
-	float Ptmp[TRACKER3D_MAX_NUM_EVENTS];   
-	 
+    float Ptmp[TRACKER3D_MAX_NUM_EVENTS];
+     
     cblas_scopy(len_P, P, 1, Ptmp, 1);
 
     /* Draw the categories */
@@ -866,7 +866,7 @@ int categ_rnd
     for(i=1; i<len_P; i++)
         Ptmp[i] += Ptmp[i-1];
     rand_0_1(&rand01, 1);
-	rand01 = SAF_MIN(rand01, 0.9999f);
+    rand01 = SAF_MIN(rand01, 0.9999f);
     for(i=0; i<len_P; i++)
         if(Ptmp[i]>rand01)
             return i;

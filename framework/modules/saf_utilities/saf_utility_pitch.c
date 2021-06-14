@@ -218,7 +218,7 @@ void smb_pitchShift_apply
 {
     smb_pitchShift_data *h = (smb_pitchShift_data*)(hSmb);
     float magn, phase, tmp, real, imag;
-	float freqPerBin, expct;
+    float freqPerBin, expct;
     int ch, i, k, qpd, index, fftFrameSize2;
 
     /* set up some handy variables */
