@@ -185,8 +185,8 @@ void panner_process
     int t, ch, ls, i, band, nSources, nLoudspeakers, N_azi, aziIndex, elevIndex, idx3d, idx2D;
     float aziRes, elevRes, pv_f, gains3D_sum_pvf, gains2D_sum_pvf, Rxyz[3][3], hypotxy;
     float src_dirs[MAX_NUM_INPUTS][2], pValue[HYBRID_BANDS], gains3D[MAX_NUM_OUTPUTS], gains2D[MAX_NUM_OUTPUTS];
-	const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
-	float_complex outputTemp[MAX_NUM_OUTPUTS][TIME_SLOTS];
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+    float_complex outputTemp[MAX_NUM_OUTPUTS][TIME_SLOTS];
 
     /* copy user parameters to local variables */
     memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
