@@ -899,8 +899,49 @@ void utility_ssv2cv_inds
 /*                     Singular-Value Decomposition (?svd)                    */
 /* ========================================================================== */
 
+/** Data structure for utility_ssvd() */
+typedef struct _utility_ssvd_data {
+    int maxDim1, maxDim2;
+    int currentWorkSize;
+    float* a, *s, *u, *vt;
+    float* work;
+}utility_ssvd_data;
+
+void utility_ssvd_create(void ** const phWork, int maxDim1, int maxDim2)
+{
+    *phWork = malloc1d(sizeof(utility_ssvd_data));
+    utility_ssvd_data *h = (utility_ssvd_data*)(*phWork);
+
+    h->maxDim1 = maxDim1;
+    h->maxDim2 = maxDim2;
+    h->currentWorkSize = 0;
+    h->a = malloc1d(maxDim1*maxDim2*sizeof(float));
+    h->s = malloc1d(SAF_MIN(maxDim2,maxDim1)*sizeof(float));
+    h->u = malloc1d(maxDim1*maxDim1*sizeof(float));
+    h->vt = malloc1d(maxDim2*maxDim2*sizeof(float));
+    h->work = NULL;
+}
+
+void utility_ssvd_destroy(void ** const phWork)
+{
+    utility_ssvd_data *h = (utility_ssvd_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->a);
+        free(h->s);
+        free(h->u);
+        free(h->vt);
+        free(h->work);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
+}
+
 void utility_ssvd
 (
+    void* const hWork,
     const float* A,
     const int dim1,
     const int dim2,
@@ -910,44 +951,52 @@ void utility_ssvd
     float* sing
 )
 {
+    utility_ssvd_data *h;
     veclib_int i, j, m, n, lda, ldu, ldvt, info;
-    m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
-    float* a, *s, *u, *vt;
     veclib_int lwork;
     float wkopt;
-    float *work;
-    
-    a = malloc1d(lda*n*sizeof(float));
-    s = malloc1d(SAF_MIN(n,m)*sizeof(float));
-    u = malloc1d(ldu*m*sizeof(float));
-    vt = malloc1d(ldvt*n*sizeof(float));
-    
+
+    m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
+
+    /* Work struct */
+    if(hWork==NULL)
+        utility_ssvd_create((void**)&h, dim1, dim2);
+    else{
+        h = (utility_ssvd_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(dim1<=h->maxDim1, "dim1 exceeds the maximum length specified");
+        saf_assert(dim2<=h->maxDim2, "dim2 exceeds the maximum length specified");
+#endif
+    }
+
     /* store in column major order */
     for(i=0; i<dim1; i++)
         for(j=0; j<dim2; j++)
-            a[j*dim1+i] = A[i*dim2 +j];
+            h->a[j*dim1+i] = A[i*dim2 +j];
 
     /* Query how much "work" memory is required */
     lwork = -1;
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    sgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, &info );
+    sgesvd_( "A", "A", &m, &n, h->a, &lda, h->s, h->u, &ldu, h->vt, &ldvt, &wkopt, &lwork, &info );
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_sgesvd_work(CblasColMajor, 'A', 'A', m, n, a, lda, s, u, ldu, vt, ldvt, &wkopt, lwork);
+    info = LAPACKE_sgesvd_work(CblasColMajor, 'A', 'A', m, n, h->a, lda, h->s, h->u, ldu, h->vt, ldvt, &wkopt, lwork);
 #endif
     lwork = (int)wkopt;
-    work = malloc1d( lwork*sizeof(float) );
+    if(lwork>h->currentWorkSize){
+        h->currentWorkSize = lwork;
+        h->work = realloc1d(h->work, h->currentWorkSize*sizeof(float));
+    }
 
     /* perform the singular value decomposition */
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    sgesvd_( "A", "A", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, &info );
+    sgesvd_( "A", "A", &m, &n, h->a, &lda, h->s, h->u, &ldu, h->vt, &ldvt, h->work, &lwork, &info );
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_sgesvd_work(CblasColMajor, 'A', 'A', m, n, a, lda, s, u, ldu, vt, ldvt, work, lwork);
+    info = LAPACKE_sgesvd_work(CblasColMajor, 'A', 'A', m, n, h->a, lda, h->s, h->u, ldu, h->vt, ldvt, h->work, lwork);
 #endif
-    free(work);
 
     /* svd failed to converge */
     if( info != 0 ) {
@@ -972,34 +1021,74 @@ void utility_ssvd
             memset(S, 0, dim1*dim2*sizeof(float));
             /* singular values on the diagonal MIN(dim1, dim2). The remaining elements are 0.  */
             for(i=0; i<SAF_MIN(dim1, dim2); i++)
-                S[i*dim2+i] = s[i];
+                S[i*dim2+i] = h->s[i];
         }
         
         /*return as row-major*/
         if (U != NULL)
             for(i=0; i<dim1; i++)
                 for(j=0; j<dim1; j++)
-                    U[i*dim1+j] = u[j*dim1+i];
+                    U[i*dim1+j] = h->u[j*dim1+i];
         
         /* lapack returns VT, i.e. row-major V already */
         if (V != NULL)
             for(i=0; i<dim2; i++)
                 for(j=0; j<dim2; j++)
-                    V[i*dim2+j] = vt[i*dim2+j];
-        
+                    V[i*dim2+j] = h->vt[i*dim2+j];
         if (sing != NULL)
             for(i=0; i<SAF_MIN(dim1, dim2); i++)
-                sing[i] = s[i];
+                sing[i] = h->s[i];
     }
-    
-    free(a);
-    free(s);
-    free(u);
-    free(vt);
+
+    if(hWork == NULL)
+        utility_ssvd_destroy((void**)&h);
+}
+
+/** Data structure for utility_csvd() */
+typedef struct _utility_csvd_data {
+    int maxDim1, maxDim2;
+    int currentWorkSize;
+    float_complex* a, *u, *vt, *work;
+    float *s, *rwork;
+}utility_csvd_data;
+
+void utility_csvd_create(void ** const phWork, int maxDim1, int maxDim2)
+{
+    *phWork = malloc1d(sizeof(utility_csvd_data));
+    utility_csvd_data *h = (utility_csvd_data*)(*phWork);
+
+    h->maxDim1 = maxDim1;
+    h->maxDim2 = maxDim2;
+    h->currentWorkSize = 0;
+    h->a = malloc1d(maxDim1*maxDim2*sizeof(float_complex));
+    h->s = malloc1d(SAF_MIN(maxDim2,maxDim1)*sizeof(float));
+    h->u = malloc1d(maxDim1*maxDim1*sizeof(float_complex));
+    h->vt = malloc1d(maxDim2*maxDim2*sizeof(float_complex));
+    h->rwork = malloc1d(maxDim1*SAF_MAX(1, 5*SAF_MIN(maxDim2,maxDim1))*sizeof(float));
+    h->work = NULL;
+}
+
+void utility_csvd_destroy(void ** const phWork)
+{
+    utility_csvd_data *h = (utility_csvd_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->a);
+        free(h->s);
+        free(h->u);
+        free(h->vt);
+        free(h->work);
+        free(h->rwork);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
 }
 
 void utility_csvd
 (
+    void* const hWork,
     const float_complex* A,
     const int dim1,
     const int dim2,
@@ -1009,39 +1098,45 @@ void utility_csvd
     float* sing
 )
 {
+    utility_csvd_data *h;
     veclib_int i, j, m, n, lda, ldu, ldvt, info;
-    m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
-    float_complex* a, *u, *vt;
-    float* s;
     veclib_int lwork;
     float_complex wkopt;
-    float* rwork;
-    float_complex* *work;
-    
-    a = malloc1d(lda*n*sizeof(float_complex));
-    s = malloc1d(SAF_MIN(n,m)*sizeof(float));
-    u = malloc1d(ldu*m*sizeof(float_complex));
-    vt = malloc1d(ldvt*n*sizeof(float_complex));
-    
+
+    m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
+
+    /* Work struct */
+    if(hWork==NULL)
+        utility_csvd_create((void**)&h, dim1, dim2);
+    else{
+        h = (utility_csvd_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(dim1<=h->maxDim1, "dim1 exceeds the maximum length specified");
+        saf_assert(dim2<=h->maxDim2, "dim2 exceeds the maximum length specified");
+#endif
+    }
+
     /* store in column major order */
     for(i=0; i<dim1; i++)
         for(j=0; j<dim2; j++)
-            a[j*dim1+i] = A[i*dim2 +j];
+            h->a[j*dim1+i] = A[i*dim2 +j];
 
     /* Query how much "work" memory is required */
-    rwork = malloc1d(m*SAF_MAX(1, 5*SAF_MIN(n,m))*sizeof(float));
     lwork = -1;
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    cgesvd_( "A", "A", (veclib_int*)&m, (veclib_int*)&n, (veclib_float_complex*)a, (veclib_int*)&lda, s, (veclib_float_complex*)u, (veclib_int*)&ldu,
-            (veclib_float_complex*)vt, &ldvt, (veclib_float_complex*)&wkopt, &lwork, rwork, (veclib_int*)&info );
+    cgesvd_( "A", "A", (veclib_int*)&m, (veclib_int*)&n, (veclib_float_complex*)h->a, (veclib_int*)&lda, h->s, (veclib_float_complex*)h->u, (veclib_int*)&ldu,
+            (veclib_float_complex*)h->vt, &ldvt, (veclib_float_complex*)&wkopt, &lwork, h->rwork, (veclib_int*)&info );
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_cgesvd_work(CblasColMajor, 'A', 'A', m, n, (veclib_float_complex*)a, lda, s, (veclib_float_complex*)u, ldu,
-                               (veclib_float_complex*)vt, ldvt, (veclib_float_complex*)&wkopt, lwork, rwork);
+    info = LAPACKE_cgesvd_work(CblasColMajor, 'A', 'A', m, n, (veclib_float_complex*)h->a, lda, h->s, (veclib_float_complex*)h->u, ldu,
+                               (veclib_float_complex*)h->vt, ldvt, (veclib_float_complex*)&wkopt, lwork, h->rwork);
 #endif
     lwork = (int)(crealf(wkopt)+0.01f);
-    work = malloc1d( lwork*sizeof(float_complex) );
+    if(lwork>h->currentWorkSize){
+        h->currentWorkSize = lwork;
+        h->work = realloc1d(h->work, h->currentWorkSize*sizeof(float_complex));
+    }
 
     /* perform the singular value decomposition */
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
@@ -1050,11 +1145,9 @@ void utility_csvd
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_cgesvd_work(CblasColMajor, 'A', 'A', m, n, (veclib_float_complex*)a, lda, s, (veclib_float_complex*)u, ldu, (veclib_float_complex*)vt, ldvt,
-                              (veclib_float_complex*)work, lwork, rwork);
+    info = LAPACKE_cgesvd_work(CblasColMajor, 'A', 'A', m, n, (veclib_float_complex*)h->a, lda, h->s, (veclib_float_complex*)h->u, ldu, (veclib_float_complex*)h->vt, ldvt,
+                              (veclib_float_complex*)h->work, lwork, h->rwork);
 #endif
-    free(work);
-    free(rwork);
 
     /* svd failed to converge */
     if( info != 0 ) {
@@ -1079,29 +1172,27 @@ void utility_csvd
             memset(S, 0, dim1*dim2*sizeof(float_complex));
             /* singular values on the diagonal MIN(dim1, dim2). The remaining elements are 0.  */
             for(i=0; i<SAF_MIN(dim1, dim2); i++)
-                S[i*dim2+i] = cmplxf(s[i], 0.0f);
+                S[i*dim2+i] = cmplxf(h->s[i], 0.0f);
         }
         /*return as row-major*/
         if (U != NULL)
             for(i=0; i<dim1; i++)
                 for(j=0; j<dim1; j++)
-                    U[i*dim1+j] = u[j*dim1+i];
+                    U[i*dim1+j] = h->u[j*dim1+i];
         
         /* lapack returns VT, i.e. row-major V already */
         if (V != NULL)
             for(i=0; i<dim2; i++)
                 for(j=0; j<dim2; j++)
-                    V[i*dim2+j] = conjf(vt[i*dim2+j]); /* v^H */
+                    V[i*dim2+j] = conjf(h->vt[i*dim2+j]); /* v^H */
         
         if (sing != NULL)
             for(i=0; i<SAF_MIN(dim1, dim2); i++)
-                sing[i] = s[i];
+                sing[i] = h->s[i];
     }
-    
-    free(a);
-    free(s);
-    free(u);
-    free(vt);
+
+    if(hWork == NULL)
+        utility_csvd_destroy((void**)&h);
 }
 
 

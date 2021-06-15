@@ -758,6 +758,7 @@ void utility_ssv2cv_inds(/* Input Arguments */
  *                  min(dim1, dim2) x 1
  */
 void utility_ssvd(/* Input Arguments */
+                  void* const hWork,
                   const float* A,
                   const int dim1,
                   const int dim2,
@@ -789,6 +790,7 @@ void utility_ssvd(/* Input Arguments */
  *                  min(dim1, dim2) x 1
  */
 void utility_csvd(/* Input Arguments */
+                  void* const hWork,
                   const float_complex* A,
                   const int dim1,
                   const int dim2,

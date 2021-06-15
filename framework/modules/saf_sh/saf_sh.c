@@ -926,7 +926,7 @@ void checkCondNumberSHTReal
         }
         
         /* condition number = max(singularValues)/min(singularValues) */
-        utility_ssvd(YY_n, nSH_n, nSH_n, NULL, NULL, NULL, s);
+        utility_ssvd(NULL, YY_n, nSH_n, nSH_n, NULL, NULL, NULL, s);
         utility_simaxv(s, nSH_n, &ind);
         maxVal = s[ind];
         utility_siminv(s, nSH_n, &ind);

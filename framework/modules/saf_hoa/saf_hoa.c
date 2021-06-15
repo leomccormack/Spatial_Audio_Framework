@@ -575,7 +575,7 @@ void applyDiffCovMatching
                     (float_complex*)X_ambi, NUM_EARS,
                     (float_complex*)X, NUM_EARS, &cbeta,
                     (float_complex*)XH_Xambi, NUM_EARS);
-        utility_csvd((float_complex*)XH_Xambi, NUM_EARS, NUM_EARS, (float_complex*)U, NULL, (float_complex*)V, NULL);
+        utility_csvd(NULL, (float_complex*)XH_Xambi, NUM_EARS, NUM_EARS, (float_complex*)U, NULL, (float_complex*)V, NULL);
         
         /* apply matching */
         cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans, NUM_EARS, NUM_EARS, NUM_EARS, &calpha,

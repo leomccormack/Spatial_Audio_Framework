@@ -57,7 +57,7 @@ void getEPAD
     V = malloc1d(nLS*nLS*sizeof(float));
     getRSH(order, ls_dirs_deg, nLS, Y_ls);
     cblas_sscal(nLS*nSH, scale, Y_ls, 1);
-    utility_ssvd(Y_ls, nSH, nLS, U, NULL, V, NULL);
+    utility_ssvd(NULL, Y_ls, nSH, nLS, U, NULL, V, NULL);
 
     /* Apply truncation */
     if(nSH>nLS){
