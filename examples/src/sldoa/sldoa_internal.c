@@ -98,7 +98,7 @@ void sldoa_initAna(void* const hSld)
             utility_svvmul(&(grid_vbap_gtable_T[n*NUM_GRID_DIRS]), pData->grid_Y[0], NUM_GRID_DIRS, secPatterns[0]);
             for(j=0; j<3; j++)
                 utility_svvmul(&(grid_vbap_gtable_T[n*NUM_GRID_DIRS]), pData->grid_Y_dipoles_norm[j], NUM_GRID_DIRS, secPatterns[j+1]);
-            utility_spinv(&(pData->grid_Y[0][0]), nSH, NUM_GRID_DIRS, pinv_Y);
+            utility_spinv(NULL, &(pData->grid_Y[0][0]), nSH, NUM_GRID_DIRS, pinv_Y);
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 4, nSH, NUM_GRID_DIRS, 1.0f,
                         &(secPatterns[0][0]), NUM_GRID_DIRS,
                         pinv_Y, nSH, 0.0f,

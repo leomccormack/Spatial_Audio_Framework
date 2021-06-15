@@ -360,7 +360,7 @@ void getLoudspeakerDecoderMtx
             Y_ls = malloc1d(nSH*nLS*sizeof(float));
             getRSH(order, ls_dirs_deg, nLS, Y_ls);
             cblas_sscal(nLS*nSH, scale, Y_ls, 1);
-            utility_spinv(Y_ls, nSH, nLS, decMtx);
+            utility_spinv(NULL, Y_ls, nSH, nLS, decMtx);
             free(Y_ls);
             break;
             

@@ -791,7 +791,7 @@ void butterCoeffs
             tmp2[i][j] = (i==j ? 1.0f : 0.0f) - bf_ss[i][j]*0.25;
         }
     }
-    utility_dglslv(FLATTEN2D(tmp2), numStates, FLATTEN2D(tmp1), numStates, FLATTEN2D(a_bili));
+    utility_dglslv(NULL, FLATTEN2D(tmp2), numStates, FLATTEN2D(tmp1), numStates, FLATTEN2D(a_bili));
 
     /* Compute the filter coefficients for the numerator and denominator */
     a_coeffs_cmplx = malloc1d(nCoeffs*sizeof(double_complex));

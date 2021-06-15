@@ -1400,7 +1400,7 @@ void sphESPRIT_estimateDirs
     }
 
     /*  */
-    utility_zpinv(h->Us_00, h->NN, K, h->pinvUs);
+    utility_zpinv(NULL, h->Us_00, h->NN, K, h->pinvUs);
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, (h->NN), &calpha,
                 h->pinvUs, (h->NN),
                 h->LambdaXYp, K, &cbeta,
@@ -1420,17 +1420,17 @@ void sphESPRIT_estimateDirs
                 h->PsiXYp, K,
                 h->V, K, &cbeta,
                 h->tmp_KK, K);
-    utility_zglslv(h->V, K, h->tmp_KK, K, h->PhiXYp);
+    utility_zglslv(NULL, h->V, K, h->tmp_KK, K, h->PhiXYp);
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
                 h->PsiXYm, K,
                 h->V, K, &cbeta,
                 h->tmp_KK, K);
-    utility_zglslv(h->V, K, h->tmp_KK, K, h->PhiXYm);
+    utility_zglslv(NULL, h->V, K, h->tmp_KK, K, h->PhiXYm);
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
                 h->PsiZ, K,
                 h->V, K, &cbeta,
                 h->tmp_KK, K);
-    utility_zglslv(h->V, K, h->tmp_KK, K, h->PhiZ);
+    utility_zglslv(NULL, h->V, K, h->tmp_KK, K, h->PhiZ);
 
     /* extract DoAs */
     for(i=0; i<K; i++){
@@ -1516,7 +1516,7 @@ void generateMVDRmap
         Cx_d[i*nSH+i] = craddf(Cx_d[i*nSH+i], regPar*Cx_trace);
     
     /* solve the numerator part of the MVDR weights for all grid directions: Cx^-1 * Y */
-    utility_cslslv(Cx_d, nSH, Y_grid, nGrid_dirs, invCx_Ygrid);
+    utility_cslslv(NULL, Cx_d, nSH, Y_grid, nGrid_dirs, invCx_Ygrid);
     for(i=0; i<nGrid_dirs; i++){
         /* solve the denumerator part of the MVDR weights for each grid direction: Y^T * Cx^-1 * Y */
         for(j=0; j<nSH; j++){
@@ -1609,7 +1609,7 @@ void generateCroPaCLCMVmap
         }
         
         /* solve for minimisation problem for LCMV weights: (Cx^-1 * A) * (A^H * Cx^-1 * A)^-1 * b */
-        utility_cslslv(Cx_d, nSH, A, 2, invCxd_A);
+        utility_cslslv(NULL, Cx_d, nSH, A, 2, invCxd_A);
         for(j=0; j<nSH*2; j++)
             invCxd_A_tmp[j] = conjf(invCxd_A[j]);
         cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans, 2, 2, nSH, &calpha,
