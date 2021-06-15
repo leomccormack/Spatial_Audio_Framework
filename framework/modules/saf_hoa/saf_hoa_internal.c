@@ -210,7 +210,7 @@ void getBinDecoder_LS
                     Yna_W, N_dirs,
                     &hrtfs[band*2*N_dirs], N_dirs, &cbeta,
                     Yna_W_H, 2);
-        utility_cglslv(Yna_W_Yna, nSH, Yna_W_H, 2, B);
+        utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B);
         for(i=0; i<nSH; i++)
             for(j=0; j<2; j++)
                 decMtx[band*2*nSH + j*nSH + i] = conjf(B[i*2+j]); /* ^H */
@@ -283,7 +283,7 @@ void getBinDecoder_LSDIFFEQ
                     Yna_W, N_dirs,
                     &hrtfs[band*2*N_dirs], N_dirs, &cbeta,
                     Yna_W_H, 2);
-        utility_cglslv(Yna_W_Yna, nSH, Yna_W_H, 2, B_ls);
+        utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B_ls);
         cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans, 2, N_dirs, nSH, &calpha,
                     B_ls, 2,
                     Y_na, N_dirs, &cbeta,
@@ -505,7 +505,7 @@ void getBinDecoder_TA
                     Yna_W, N_dirs,
                     hrtfs_mod, N_dirs, &cbeta,
                     Yna_W_H, 2);
-        utility_cglslv(Yna_W_Yna, nSH, Yna_W_H, 2, B);
+        utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B);
         for(i=0; i<nSH; i++)
             for(j=0; j<2; j++)
                 decMtx[band*2*nSH + j*nSH + i] = conjf(B[i*2+j]); /* ^H */
@@ -588,7 +588,7 @@ void getBinDecoder_MAGLS
                         Yna_W, N_dirs,
                         &hrtfs[band*2*N_dirs], N_dirs, &cbeta,
                         Yna_W_H, 2);
-            utility_cglslv(Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);
+            utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);
         }
         else{
             /* Remove itd from high frequency HRTFs */
@@ -602,7 +602,7 @@ void getBinDecoder_MAGLS
                         Yna_W, N_dirs,
                         H_mod, N_dirs, &cbeta,
                         Yna_W_H, 2);
-            utility_cglslv(Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);
+            utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);
         }
         
         for(i=0; i<nSH; i++)

@@ -1429,7 +1429,7 @@ void utility_cseig
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_cheev_work(CblasColMajor, 'V', 'U', n, (veclib_float_complex*)h->a, lda, h->w, (veclib_float_complex*)&wkopt, lwork, h->rwork);
 #endif
-    lwork = (int)crealf(wkopt);
+    lwork = (veclib_int)crealf(wkopt);
     if(lwork>h->currentWorkSize){
         h->currentWorkSize = lwork;
         h->work = realloc1d(h->work, h->currentWorkSize*sizeof(float_complex));
@@ -1771,8 +1771,51 @@ void utility_zeigmp
 /*                       Eigenvalue Decomposition (?eig)                      */
 /* ========================================================================== */
 
+/** Data structure for utility_ceig() */
+typedef struct _utility_ceig_data {
+    int maxDim;
+    veclib_int currentWorkSize;
+    float_complex *w, *vl, *vr, *a;
+    float* rwork;
+    float_complex* work;
+}utility_ceig_data;
+
+void utility_ceig_create(void ** const phWork, int maxDim)
+{
+    *phWork = malloc1d(sizeof(utility_ceig_data));
+    utility_ceig_data *h = (utility_ceig_data*)(*phWork);
+
+    h->maxDim = maxDim;
+    h->currentWorkSize = 0;
+    h->rwork = malloc1d(4*maxDim*sizeof(float));
+    h->w = malloc1d(maxDim*sizeof(float_complex));
+    h->vl = malloc1d(maxDim*maxDim*sizeof(float_complex));
+    h->vr = malloc1d(maxDim*maxDim*sizeof(float_complex));
+    h->a = malloc1d(maxDim*maxDim*sizeof(float_complex));
+    h->work = NULL;
+}
+
+void utility_ceig_destroy(void ** const phWork)
+{
+    utility_ceig_data *h = (utility_ceig_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->rwork);
+        free(h->w);
+        free(h->vl);
+        free(h->vr);
+        free(h->a);
+        free(h->work);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
+}
+
 void utility_ceig
 (
+    void* const hWork,
     const float_complex* A,
     const int dim,
     float_complex* VL,
@@ -1781,51 +1824,55 @@ void utility_ceig
     float_complex* eig
 )
 {
+    utility_ceig_data *h;
     veclib_int i, j, n, lda, ldvl, ldvr, info;
-    float_complex *w, *vl, *vr, *a;
     veclib_int lwork;
-    float* rwork;
     float_complex wkopt;
-    float_complex* work;
 
     n = lda = ldvl = ldvr = dim;
-    w = malloc1d(dim*sizeof(float_complex));
-    vl = malloc1d(dim*dim*sizeof(float_complex));
-    vr = malloc1d(dim*dim*sizeof(float_complex));
-    a = malloc1d(dim*dim*sizeof(float_complex));
-    
+
+    /* Work struct */
+    if(hWork==NULL)
+        utility_ceig_create((void**)&h, dim);
+    else{
+        h = (utility_ceig_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(dim<=h->maxDim, "dim exceeds the maximum length specified");
+#endif
+    }
+
     /* store in column major order (i.e. transpose) */
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
-            a[i*dim+j] = A[j*dim+i];
+            h->a[i*dim+j] = A[j*dim+i];
 
     /* Query how much "work" memory is required */
     lwork = -1;
-    rwork = malloc1d(4*dim*sizeof(float));
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    cgeev_( "Vectors", "Vectors", &n, (veclib_float_complex*)a, &lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, &ldvl,
-           (veclib_float_complex*)vr, &ldvr, (veclib_float_complex*)&wkopt, &lwork, rwork, &info );
+    cgeev_( "Vectors", "Vectors", &n, (veclib_float_complex*)h->a, &lda, (veclib_float_complex*)h->w, (veclib_float_complex*)h->vl, &ldvl,
+           (veclib_float_complex*)h->vr, &ldvr, (veclib_float_complex*)&wkopt, &lwork, h->rwork, &info );
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_cgeev_work(CblasColMajor, 'V', 'V', n, (veclib_float_complex*)a, lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, ldvl,
-                              (veclib_float_complex*)vr, ldvr, (veclib_float_complex*)&wkopt, lwork, rwork);
+    info = LAPACKE_cgeev_work(CblasColMajor, 'V', 'V', n, (veclib_float_complex*)h->a, lda, (veclib_float_complex*)h->w, (veclib_float_complex*)h->vl, ldvl,
+                              (veclib_float_complex*)h->vr, ldvr, (veclib_float_complex*)&wkopt, lwork, h->rwork);
 #endif
-    lwork = (int)crealf(wkopt);
-    work = malloc1d( lwork*sizeof(float_complex) );
+    lwork = (veclib_int)crealf(wkopt);
+    if(lwork>h->currentWorkSize){
+        h->currentWorkSize = lwork;
+        h->work = realloc1d(h->work, h->currentWorkSize*sizeof(float_complex));
+    }
 
     /* solve the eigenproblem */
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    cgeev_( "Vectors", "Vectors", &n, (veclib_float_complex*)a, &lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, &ldvl,
-           (veclib_float_complex*)vr, &ldvr, (veclib_float_complex*)work, &lwork, rwork, &info );
+    cgeev_( "Vectors", "Vectors", &n, (veclib_float_complex*)h->a, &lda, (veclib_float_complex*)h->w, (veclib_float_complex*)h->vl, &ldvl,
+           (veclib_float_complex*)h->vr, &ldvr, (veclib_float_complex*)h->work, &lwork, h->rwork, &info );
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_cgeev_work(CblasColMajor, 'V', 'V', n, (veclib_float_complex*)a, lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, ldvl,
-                              (veclib_float_complex*)vr, ldvr, (veclib_float_complex*)work, lwork, rwork);
+    info = LAPACKE_cgeev_work(CblasColMajor, 'V', 'V', n, (veclib_float_complex*)h->a, lda, (veclib_float_complex*)h->w, (veclib_float_complex*)h->vl, ldvl,
+                              (veclib_float_complex*)h->vr, ldvr, (veclib_float_complex*)h->work, lwork, h->rwork);
 #endif
-    free(rwork);
-    free(work);
 
     /* output */
     if(D!=NULL)
@@ -1852,25 +1899,66 @@ void utility_ceig
         for(i=0; i<dim; i++){
             if(VL!=NULL)
                 for(j=0; j<dim; j++)
-                    VL[i*dim+j] = vl[j*dim+i];
+                    VL[i*dim+j] = h->vl[j*dim+i];
             if(VR!=NULL)
                 for(j=0; j<dim; j++)
-                    VR[i*dim+j] = vr[j*dim+i];
+                    VR[i*dim+j] = h->vr[j*dim+i];
             if(D!=NULL)
-                D[i*dim+i] = w[i]; /* store along the diagonal */
+                D[i*dim+i] = h->w[i]; /* store along the diagonal */
             if(eig!=NULL)
-                eig[i] = w[i];
+                eig[i] = h->w[i];
         }
     }
-    
-    free(w);
-    free(vl);
-    free(vr);
-    free(a);
+
+    if(hWork == NULL)
+        utility_ceig_destroy((void**)&h);
+}
+
+/** Data structure for utility_zeig() */
+typedef struct _utility_zeig_data {
+    int maxDim;
+    veclib_int currentWorkSize;
+    double_complex *w, *vl, *vr, *a;
+    double* rwork;
+    double_complex* work;
+}utility_zeig_data;
+
+void utility_zeig_create(void ** const phWork, int maxDim)
+{
+    *phWork = malloc1d(sizeof(utility_zeig_data));
+    utility_zeig_data *h = (utility_zeig_data*)(*phWork);
+
+    h->maxDim = maxDim;
+    h->currentWorkSize = 0;
+    h->rwork = malloc1d(4*maxDim*sizeof(double));
+    h->w = malloc1d(maxDim*sizeof(double_complex));
+    h->vl = malloc1d(maxDim*maxDim*sizeof(double_complex));
+    h->vr = malloc1d(maxDim*maxDim*sizeof(double_complex));
+    h->a = malloc1d(maxDim*maxDim*sizeof(double_complex));
+    h->work = NULL;
+}
+
+void utility_zeig_destroy(void ** const phWork)
+{
+    utility_zeig_data *h = (utility_zeig_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->rwork);
+        free(h->w);
+        free(h->vl);
+        free(h->vr);
+        free(h->a);
+        free(h->work);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
 }
 
 void utility_zeig
 (
+    void* const hWork,
     const double_complex* A,
     const int dim,
     double_complex* VL,
@@ -1879,38 +1967,44 @@ void utility_zeig
     double_complex* eig
 )
 {
+    utility_zeig_data *h;
     veclib_int i, j, n, lda, ldvl, ldvr, info;
-    double_complex *w, *vl, *vr, *a;
     veclib_int lwork;
-    double* rwork;
     double_complex wkopt;
-    double_complex* work;
 
     n = lda = ldvl = ldvr = dim;
-    w = malloc1d(dim*sizeof(double_complex));
-    vl = malloc1d(dim*dim*sizeof(double_complex));
-    vr = malloc1d(dim*dim*sizeof(double_complex));
-    a = malloc1d(dim*dim*sizeof(double_complex));
+
+    /* Work struct */
+    if(hWork==NULL)
+        utility_zeig_create((void**)&h, dim);
+    else{
+        h = (utility_zeig_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(dim<=h->maxDim, "dim exceeds the maximum length specified");
+#endif
+    }
 
     /* store in column major order (i.e. transpose) */
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
-            a[i*dim+j] = A[j*dim+i];
+            h->a[i*dim+j] = A[j*dim+i];
 
     /* Query how much "work" memory is required */
     lwork = -1;
-    rwork = malloc1d(4*dim*sizeof(double));
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    zgeev_( "Vectors", "Vectors", &n, (veclib_double_complex*)a, &lda, (veclib_double_complex*)w, (veclib_double_complex*)vl, &ldvl,
-           (veclib_double_complex*)vr, &ldvr, (veclib_double_complex*)&wkopt, &lwork, rwork, &info );
+    zgeev_( "Vectors", "Vectors", &n, (veclib_double_complex*)h->a, &lda, (veclib_double_complex*)h->w, (veclib_double_complex*)h->vl, &ldvl,
+           (veclib_double_complex*)h->vr, &ldvr, (veclib_double_complex*)&wkopt, &lwork, h->rwork, &info );
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_zgeev_work(CblasColMajor, 'V', 'V', n, (veclib_double_complex*)a, lda, (veclib_double_complex*)w, (veclib_double_complex*)vl, ldvl,
-                              (veclib_double_complex*)vr, ldvr, (veclib_double_complex*)&wkopt, lwork, rwork);
+    info = LAPACKE_zgeev_work(CblasColMajor, 'V', 'V', n, (veclib_double_complex*)h->a, lda, (veclib_double_complex*)h->w, (veclib_double_complex*)h->vl, ldvl,
+                              (veclib_double_complex*)h->vr, ldvr, (veclib_double_complex*)&wkopt, lwork, h->rwork);
 #endif
-    lwork = (int)creal(wkopt);
-    work = malloc1d( lwork*sizeof(double_complex) );
+    lwork = (veclib_int)creal(wkopt);
+    if(lwork>h->currentWorkSize){
+        h->currentWorkSize = lwork;
+        h->work = realloc1d(h->work, h->currentWorkSize*sizeof(double_complex));
+    }
 
     /* solve the eigenproblem */
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
@@ -1919,11 +2013,9 @@ void utility_zeig
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_zgeev_work(CblasColMajor, 'V', 'V', n, (veclib_double_complex*)a, lda, (veclib_double_complex*)w, (veclib_double_complex*)vl, ldvl,
-                              (veclib_double_complex*)vr, ldvr, (veclib_double_complex*)work, lwork, rwork);
+    info = LAPACKE_zgeev_work(CblasColMajor, 'V', 'V', n, (veclib_double_complex*)h->a, lda, (veclib_double_complex*)h->w, (veclib_double_complex*)h->vl, ldvl,
+                              (veclib_double_complex*)h->vr, ldvr, (veclib_double_complex*)h->work, lwork, h->rwork);
 #endif
-    free(rwork);
-    free(work);
 
     /* output */
     if(D!=NULL)
@@ -1950,21 +2042,19 @@ void utility_zeig
         for(i=0; i<dim; i++){
             if(VL!=NULL)
                 for(j=0; j<dim; j++)
-                    VL[i*dim+j] = vl[j*dim+i];
+                    VL[i*dim+j] = h->vl[j*dim+i];
             if(VR!=NULL)
                 for(j=0; j<dim; j++)
-                    VR[i*dim+j] = vr[j*dim+i];
+                    VR[i*dim+j] = h->vr[j*dim+i];
             if(D!=NULL)
-                D[i*dim+i] = w[i]; /* store along the diagonal */
+                D[i*dim+i] = h->w[i]; /* store along the diagonal */
             if(eig!=NULL)
-                eig[i] = w[i];
+                eig[i] = h->w[i];
         }
     }
 
-    free(w);
-    free(vl);
-    free(vr);
-    free(a);
+    if(hWork == NULL)
+        utility_zeig_destroy((void**)&h);
 }
 
 
@@ -2083,8 +2173,46 @@ void utility_sglslv
         utility_sglslv_destroy((void**)&h);
 }
 
+/** Data structure for utility_cglslv() */
+typedef struct _utility_cglslv_data {
+    int maxDim;
+    int maxNCol;
+    veclib_int* IPIV;
+    float_complex* a;
+    float_complex* b;
+}utility_cglslv_data;
+
+void utility_cglslv_create(void ** const phWork, int maxDim, int maxNCol)
+{
+    *phWork = malloc1d(sizeof(utility_cglslv_data));
+    utility_cglslv_data *h = (utility_cglslv_data*)(*phWork);
+
+    h->maxDim = maxDim;
+    h->maxNCol = maxNCol;
+
+    h->IPIV = malloc1d(maxDim*sizeof(veclib_int));
+    h->a = malloc1d(maxDim*maxDim*sizeof(float_complex));
+    h->b = malloc1d(maxDim*maxNCol*sizeof(float_complex));
+}
+
+void utility_cglslv_destroy(void ** const phWork)
+{
+    utility_cglslv_data *h = (utility_cglslv_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->IPIV);
+        free(h->a);
+        free(h->b);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
+}
+
 void utility_cglslv
 (
+    void* const hWork,
     const float_complex* A,
     const int dim,
     float_complex* B,
@@ -2092,29 +2220,40 @@ void utility_cglslv
     float_complex* X
 )
 {
-    veclib_int i, j, n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
-    veclib_int* IPIV;
-    IPIV = malloc1d(dim*sizeof(veclib_int));
-    float_complex* a, *b;
+    utility_cglslv_data *h;
+    veclib_int i, j, n, nrhs, lda, ldb, info;
 
-    a = malloc1d(dim*dim*sizeof(float_complex));
-    b = malloc1d(dim*nrhs*sizeof(float_complex));
-    
+    n = dim;
+    nrhs = nCol;
+    lda = dim;
+    ldb = dim;
+
+    /* Work struct */
+    if(hWork==NULL)
+        utility_cglslv_create((void**)&h, dim, nCol);
+    else {
+        h = (utility_cglslv_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(dim<=h->maxDim, "dim exceeds the maximum length specified");
+        saf_assert(nCol<=h->maxNCol, "nCol exceeds the maximum length specified");
+#endif
+    }
+
     /* store in column major order */
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
-            a[j*dim+i] = A[i*dim+j];
+            h->a[j*dim+i] = A[i*dim+j];
     for(i=0; i<dim; i++)
         for(j=0; j<nCol; j++)
-            b[j*dim+i] = B[i*nCol+j];
+            h->b[j*dim+i] = B[i*nCol+j];
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    cgesv_( &n, &nrhs, (veclib_float_complex*)a, &lda, IPIV, (veclib_float_complex*)b, &ldb, &info );
+    cgesv_( &n, &nrhs, (veclib_float_complex*)h->a, &lda, h->IPIV, (veclib_float_complex*)h->b, &ldb, &info );
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
-    info = clapack_cgesv(CblasColMajor, n, nrhs, (veclib_float_complex*)a, lda, IPIV, (veclib_float_complex*)b, ldb);
+    info = clapack_cgesv(CblasColMajor, n, nrhs, (veclib_float_complex*)h->a, lda, h->IPIV, (veclib_float_complex*)h->b, ldb);
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_cgesv_work(CblasColMajor, n, nrhs, (veclib_float_complex*)a, lda, IPIV, (veclib_float_complex*)b, ldb);
+    info = LAPACKE_cgesv_work(CblasColMajor, n, nrhs, (veclib_float_complex*)h->a, lda, h->IPIV, (veclib_float_complex*)h->b, ldb);
 #endif
     
     /* A is singular, solution not possible */
@@ -2131,12 +2270,11 @@ void utility_cglslv
     else{
         for(i=0; i<dim; i++)
             for(j=0; j<nCol; j++)
-                X[i*nCol+j] = b[j*dim+i];
+                X[i*nCol+j] = h->b[j*dim+i];
     }
-    
-    free(IPIV);
-    free(a);
-    free(b);
+
+    if(hWork == NULL)
+        utility_cglslv_destroy((void**)&h);
 }
 
 void utility_dglslv

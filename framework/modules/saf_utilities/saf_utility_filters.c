@@ -966,7 +966,7 @@ void faf_IIRFilterbank_create
             A[0][2] = cmplx(-q[3]/q[0], 0.0);
             A[1][0] = cmplx(1.0, 0.0);
             A[2][1] = cmplx(1.0, 0.0);
-            utility_zeig((double_complex*)A, 3, NULL, NULL, NULL, (double_complex*)z);
+            utility_zeig(NULL, (double_complex*)A, 3, NULL, NULL, NULL, (double_complex*)z);
         }
 
         /* Separate the zeros inside the unit circle and the ones outside to

@@ -1619,7 +1619,7 @@ void generateCroPaCLCMVmap
         for(j=0; j<nSH; j++)
             for(k=0; k<2; k++)
                 invCxd_A_tmp[k*nSH+j] = invCxd_A[j*2+k];
-        utility_cglslv((float_complex*)A_invCxd_A, 2, invCxd_A_tmp, nSH, w_LCMV_s);
+        utility_cglslv(NULL, (float_complex*)A_invCxd_A, 2, invCxd_A_tmp, nSH, w_LCMV_s);
         cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nSH, 1, 2, &calpha,
                     w_LCMV_s, nSH,
                     b, 1, &cbeta,
@@ -1726,7 +1726,7 @@ void generateMinNormMap
     Un_Y = malloc1d(nGrid_dirs*sizeof(float_complex));
     
     /* obtain eigenvectors */
-    utility_ceig(Cx, nSH, NULL, V, NULL, NULL);
+    utility_ceig(NULL, Cx, nSH, NULL, V, NULL, NULL);
     
     /* truncate, to obtain noise sub-space */
     for(i=0; i<nSH; i++)

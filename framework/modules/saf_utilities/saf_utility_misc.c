@@ -349,7 +349,7 @@ void polyd_m
     e = malloc1d(size_x*sizeof(double_complex));
     for(i=0; i<size_x*size_x; i++)
         Xcmplx[i] = cmplx(X[i], 0.0);
-    utility_zeig(Xcmplx, size_x, NULL, NULL, NULL, e);
+    utility_zeig(NULL, Xcmplx, size_x, NULL, NULL, NULL, e);
 
     /* recursion formula */
     memset(poly, 0, (size_x+1)*sizeof(double_complex));

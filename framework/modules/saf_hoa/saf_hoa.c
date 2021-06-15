@@ -586,7 +586,7 @@ void applyDiffCovMatching
                     (float_complex*)V, NUM_EARS,
                     (float_complex*)UX, NUM_EARS, &cbeta,
                     (float_complex*)VUX, NUM_EARS);
-        utility_cglslv((float_complex*)X_ambi, NUM_EARS, (float_complex*)VUX, NUM_EARS, (float_complex*)M);
+        utility_cglslv(NULL, (float_complex*)X_ambi, NUM_EARS, (float_complex*)VUX, NUM_EARS, (float_complex*)M);
         cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans, NUM_EARS, nSH, NUM_EARS, &calpha,
                     (float_complex*)M, NUM_EARS,
                     &decMtx[band*NUM_EARS*nSH], nSH, &cbeta,

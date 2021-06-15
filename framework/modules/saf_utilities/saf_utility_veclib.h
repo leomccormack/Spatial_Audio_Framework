@@ -968,6 +968,7 @@ void utility_zeigmp(/* Input Arguments */
  *                 dim x 1
  */
 void utility_ceig(/* Input Arguments */
+                  void* const hWork,
                   const float_complex* A,
                   const int dim, 
                   /* Output Arguments */
@@ -998,6 +999,7 @@ void utility_ceig(/* Input Arguments */
  *                 dim x 1
  */
 void utility_zeig(/* Input Arguments */
+                  void* const hWork,
                   const double_complex* A,
                   const int dim,
                   /* Output Arguments */
@@ -1061,6 +1063,7 @@ void utility_sglslv(/* Input Arguments */
  * @param[out] X    The solution; FLAT: dim x nCol
  */
 void utility_cglslv(/* Input Arguments */
+                    void* const hWork,
                     const float_complex* A,
                     const int dim,
                     float_complex* B,
