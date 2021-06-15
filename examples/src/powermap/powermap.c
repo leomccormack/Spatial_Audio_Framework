@@ -277,6 +277,7 @@ void powermap_analysis
                 nSH_maxOrder = (maxOrder+1)*(maxOrder+1);
 
                 /* group covarience matrices */
+                memset(C_grp, 0, nSH_maxOrder*nSH_maxOrder*sizeof(float_complex));
                 for (band=0; band<HYBRID_BANDS; band++){
                     order_band = SAF_MAX(SAF_MIN(pData->analysisOrderPerBand[band], masterOrder),1);
                     nSH_order = (order_band+1)*(order_band+1);
