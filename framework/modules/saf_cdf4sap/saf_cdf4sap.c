@@ -49,6 +49,7 @@ typedef struct _cdf4sap_data {
     int nXcols, nYcols;
     
     /* intermediate vectors & matrices */
+    void* hSVD;
     float* lambda, *U_Cy, *S_Cy, *Ky, *U_Cx, *S_Cx, *s_Cx, *Kx, *Kx_reg_inverse, *U, *V, *P;
     float* G_hat, *Cx_QH;
     float* GhatH_Ky, *QH_GhatH_Ky, *KxH_QH_GhatH_Ky, *lambda_UH;
@@ -67,6 +68,7 @@ typedef struct _cdf4sap_cmplx_data {
     int nXcols, nYcols;
     
     /* intermediate vectors & matrices */
+    void* hSVD;
     float_complex* Cr_cmplx;
     float_complex* lambda, *U_Cy, *S_Cy, *S_Cx, *Ky, *U_Cx, *Kx, *Kx_reg_inverse, *U, *V, *P;
     float* s_Cx;
@@ -91,6 +93,9 @@ void cdf4sap_create
     h->nXcols = nXcols;
     h->nYcols = nYcols;
     h->lambda = malloc1d(nYcols * nXcols * sizeof(float));
+
+    /* For the SVD */
+    utility_ssvd_create(&h->hSVD, SAF_MAX(nXcols, nYcols), SAF_MAX(nXcols, nYcols));
     
     /* For the decomposition of Cy */
     h->U_Cy = malloc1d(nYcols*nYcols*sizeof(float));
@@ -144,7 +149,10 @@ void cdf4sap_cmplx_create
     h->nYcols = nYcols;
     h->lambda = malloc1d(nYcols * nXcols * sizeof(float_complex));
     h->Cr_cmplx = malloc1d(nYcols * nYcols * sizeof(float_complex));
-    
+
+    /* For the SVD */
+    utility_csvd_create(&h->hSVD, SAF_MAX(nXcols, nYcols), SAF_MAX(nXcols, nYcols));
+
     /* For the decomposition of Cy */
     h->U_Cy = malloc1d(nYcols*nYcols*sizeof(float_complex));
     h->S_Cy = malloc1d(nYcols*nYcols*sizeof(float_complex));
@@ -191,6 +199,7 @@ void cdf4sap_destroy
     cdf4sap_data *h = (cdf4sap_data*)(*phCdf);
     
     if(h!=NULL){
+        utility_ssvd_destroy(&h->hSVD);
         free(h->lambda);
         free(h->U_Cy);
         free(h->S_Cy);
@@ -226,6 +235,7 @@ void cdf4sap_cmplx_destroy
     cdf4sap_cmplx_data *h = (cdf4sap_cmplx_data*)(*phCdf);
     
     if(h!=NULL){
+        utility_csvd_destroy(&h->hSVD);
         free(h->lambda);
         free(h->Cr_cmplx);
         free(h->U_Cy);
@@ -277,7 +287,7 @@ void formulate_M_and_Cr
         h->lambda[i*nXcols + i] = 1.0f;
 
     /* Decomposition of Cy */
-    utility_ssvd(NULL, Cy, nYcols, nYcols, h->U_Cy, h->S_Cy, NULL, NULL);
+    utility_ssvd(h->hSVD, Cy, nYcols, nYcols, h->U_Cy, h->S_Cy, NULL, NULL);
     for(i=0; i< nYcols; i++)
         h->S_Cy[i*nYcols+i] = sqrtf(SAF_MAX(h->S_Cy[i*nYcols+i], 2.23e-20f));
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nYcols, nYcols, nYcols, 1.0f,
@@ -286,7 +296,7 @@ void formulate_M_and_Cr
                 h->Ky, nYcols);
 
     /* Decomposition of Cx */
-    utility_ssvd(NULL, Cx, nXcols, nXcols, h->U_Cx, h->S_Cx, NULL, h->s_Cx);
+    utility_ssvd(h->hSVD, Cx, nXcols, nXcols, h->U_Cx, h->S_Cx, NULL, h->s_Cx);
     for(i=0; i< nXcols; i++){
         h->S_Cx[i*nXcols+i] = sqrtf(SAF_MAX(h->S_Cx[i*nXcols+i], 2.23e-20f));
         h->s_Cx[i] = sqrtf(SAF_MAX(h->s_Cx[i], 2.23e-20f));
@@ -340,7 +350,7 @@ void formulate_M_and_Cr
                 h->Kx, nXcols,
                 h->QH_GhatH_Ky, nYcols, 0.0f,
                 h->KxH_QH_GhatH_Ky, nYcols);
-    utility_ssvd(NULL, h->KxH_QH_GhatH_Ky, nXcols, nYcols, h->U, NULL, h->V, NULL);
+    utility_ssvd(h->hSVD, h->KxH_QH_GhatH_Ky, nXcols, nYcols, h->U, NULL, h->V, NULL);
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nYcols, nXcols, nXcols, 1.0f,
                 h->lambda, nXcols,
                 h->U, nXcols, 0.0f,
@@ -412,7 +422,7 @@ void formulate_M_and_Cr_cmplx
         h->lambda[i*nXcols + i] = cmplxf(1.0f, 0.0f);
     
     /* Decomposition of Cy */
-    utility_csvd(NULL, Cy, nYcols, nYcols, h->U_Cy, h->S_Cy, NULL, NULL);
+    utility_csvd(h->hSVD, Cy, nYcols, nYcols, h->U_Cy, h->S_Cy, NULL, NULL);
     for(i=0; i< nYcols; i++)
         h->S_Cy[i*nYcols+i] = cmplxf(sqrtf(SAF_MAX(crealf(h->S_Cy[i*nYcols+i]), 2.23e-20f)), 0.0f);
     cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nYcols, nYcols, nYcols, &calpha,
@@ -421,7 +431,7 @@ void formulate_M_and_Cr_cmplx
                 h->Ky, nYcols);
     
     /* Decomposition of Cx */
-    utility_csvd(NULL, Cx, nXcols, nXcols, h->U_Cx, h->S_Cx, NULL, h->s_Cx);
+    utility_csvd(h->hSVD, Cx, nXcols, nXcols, h->U_Cx, h->S_Cx, NULL, h->s_Cx);
     for(i=0; i< nXcols; i++){
         h->s_Cx[i] = sqrtf(SAF_MAX(h->s_Cx[i], 2.23e-13f));
         h->S_Cx[i*nXcols+i] = cmplxf(h->s_Cx[i], 0.0f);
@@ -478,7 +488,7 @@ void formulate_M_and_Cr_cmplx
                 h->Kx, nXcols,
                 h->QH_GhatH_Ky, nYcols, &cbeta,
                 h->KxH_QH_GhatH_Ky, nYcols);
-    utility_csvd(NULL, h->KxH_QH_GhatH_Ky, nXcols, nYcols, h->U, NULL, h->V, NULL);
+    utility_csvd(h->hSVD, h->KxH_QH_GhatH_Ky, nXcols, nYcols, h->U, NULL, h->V, NULL);
     cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nYcols, nXcols, nXcols, &calpha,
                 h->lambda, nXcols,
                 h->U, nXcols, &cbeta,
