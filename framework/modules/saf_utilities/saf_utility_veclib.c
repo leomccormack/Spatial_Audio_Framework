@@ -1140,8 +1140,8 @@ void utility_csvd
 
     /* perform the singular value decomposition */
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    cgesvd_( "A", "A", &m, &n, (veclib_float_complex*)a, &lda, s, (veclib_float_complex*)u, &ldu, (veclib_float_complex*)vt, &ldvt,
-            (veclib_float_complex*)work, &lwork, rwork, &info);
+    cgesvd_( "A", "A", &m, &n, (veclib_float_complex*)h->a, &lda, h->s, (veclib_float_complex*)h->u, &ldu, (veclib_float_complex*)h->vt, &ldvt,
+            (veclib_float_complex*)h->work, &lwork, h->rwork, &info);
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
@@ -1590,7 +1590,7 @@ void utility_ceigmp
     lwork = h->currentWorkSize;
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     cggev_("V", "V", &n, (veclib_float_complex*)h->a, &lda, (veclib_float_complex*)h->b, &ldb, (veclib_float_complex*)h->alpha, (veclib_float_complex*)h->beta,
-           (veclib_float_complex*)h->vl, &ldvl, (veclib_float_complex*)h->vr, &ldvr, (veclib_float_complex*)h->work, lwork, h->rwork, &info);
+           (veclib_float_complex*)h->vl, &ldvl, (veclib_float_complex*)h->vr, &ldvr, (veclib_float_complex*)h->work, &lwork, h->rwork, &info);
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
@@ -2008,8 +2008,8 @@ void utility_zeig
 
     /* solve the eigenproblem */
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    zgeev_( "Vectors", "Vectors", &n, (veclib_double_complex*)a, &lda, (veclib_double_complex*)w, (veclib_double_complex*)vl, &ldvl,
-           (veclib_double_complex*)vr, &ldvr, (veclib_double_complex*)work, &lwork, rwork, &info );
+    zgeev_( "Vectors", "Vectors", &n, (veclib_double_complex*)h->a, &lda, (veclib_double_complex*)h->w, (veclib_double_complex*)h->vl, &ldvl,
+           (veclib_double_complex*)h->vr, &ldvr, (veclib_double_complex*)h->work, &lwork, h->rwork, &info );
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
@@ -3752,7 +3752,7 @@ double utility_ddet
 
     /* Decompose matrix */
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    dgeqrf_(&N, &N, tmp, &N, TAU, WORK, &lwork3, &INFO);
+    dgeqrf_(&N, &N, h->tmp, &N, h->TAU, h->WORK, &lwork3, &INFO);
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
