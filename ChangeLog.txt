@@ -9,6 +9,18 @@ Major and/or breaking changes to the Spatial_Audio_Framework are listed here.
 For descriptions of minor changes and bug fixes, please refer to the git log.
 
 ====================================================================================================
+v1.2.0
+ - All lapack-related saf_utility_veclib functions now include an option to pre-allocate the run-
+   time memory.
+
+Breaking changes:
+
+Since the lapack-related saf_utility_veclib now allow a pre-allocated object to be passed to them,
+the first input argument should either be set to "NULL", (in which case they revert to how they were
+previously), or you can pass the pre-allocated object, (in which case no run-time malloc calls are 
+made).
+
+====================================================================================================
 v1.1.7
  - saf_utility_fft now uses vDSP's DFT implementation, rather than the scrict 2^x FFT 
    implementation, when the performance library is set to SAF_USE_APPLE_ACCELERATE
