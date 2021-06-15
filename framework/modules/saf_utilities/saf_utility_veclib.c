@@ -3330,7 +3330,7 @@ void utility_zpinv
                 ss=h->s[i];
             ss_cmplx = cmplx(ss, 0.0);
             cblas_zscal(m, &ss_cmplx, &h->u[i*m], 1);
-        } 
+        }
         ld_inva=n;
         cblas_zgemm(CblasColMajor, CblasConjTrans, CblasConjTrans, n, m, k, &calpha,
                     h->vt, ldvt,
@@ -3353,31 +3353,69 @@ void utility_zpinv
 /*                       Cholesky Factorisation (?chol)                       */
 /* ========================================================================== */
 
+/** Data structure for utility_schol() */
+typedef struct _utility_schol_data {
+    int maxDim;
+    float* a;
+}utility_schol_data;
+
+void utility_schol_create(void ** const phWork, int maxDim)
+{
+    *phWork = malloc1d(sizeof(utility_schol_data));
+    utility_schol_data *h = (utility_schol_data*)(*phWork);
+
+    h->maxDim = maxDim;
+    h->a = malloc1d(maxDim*maxDim*sizeof(float));
+}
+
+void utility_schol_destroy(void ** const phWork)
+{
+    utility_schol_data *h = (utility_schol_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->a);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
+}
+
 void utility_schol
 (
+    void* const hWork,
     const float* A,
     const int dim,
     float* X
 )
 {
+    utility_schol_data *h;
     veclib_int i, j, info, n, lda;
-    float* a;
  
     n = lda = dim;
-    a = malloc1d(dim*dim*sizeof(float));
+
+    /* Work struct */
+    if(hWork==NULL)
+        utility_schol_create((void**)&h, dim);
+    else{
+        h = (utility_schol_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(dim<=h->maxDim, "dim exceeds the maximum length specified");
+#endif
+    }
     
     /* store in column major order */
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
-            a[j*dim+i] = A[i*dim+j];
+            h->a[j*dim+i] = A[i*dim+j];
     
     /* a is replaced by solution */
 #ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
-    info = clapack_spotrf(CblasColMajor, CblasUpper, n, a, lda);
+    info = clapack_spotrf(CblasColMajor, CblasUpper, n, h->a, lda);
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_spotrf_work(CblasColMajor, CblasUpper, n, a, lda);
+    info = LAPACKE_spotrf_work(CblasColMajor, CblasUpper, n, h->a, lda);
 #elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    spotrf_( "U", &n, a, &lda, &info );
+    spotrf_( "U", &n, h->a, &lda, &info );
 #endif
     
     /* A is not positive definate, solution not possible */
@@ -3391,42 +3429,81 @@ void utility_schol
         saf_print_warning("Could not compute the Cholesky factorisation in utility_schol(). Output matrices/vectors have been zeroed.");
 #endif
     }
-    
     /* store solution in row-major order */
     else{
         for(i=0; i<dim; i++)
             for(j=0; j<dim; j++)
-                X[i*dim+j] = j>=i ? a[j*dim+i] : 0.0f;
+                X[i*dim+j] = j>=i ? h->a[j*dim+i] : 0.0f;
     }
     
-    free(a);
+    /* clean-up */
+    if(hWork == NULL)
+        utility_schol_destroy((void**)&h);
+}
+
+/** Data structure for utility_cchol() */
+typedef struct _utility_cchol_data {
+    int maxDim;
+    float_complex* a;
+}utility_cchol_data;
+
+void utility_cchol_create(void ** const phWork, int maxDim)
+{
+    *phWork = malloc1d(sizeof(utility_cchol_data));
+    utility_cchol_data *h = (utility_cchol_data*)(*phWork);
+
+    h->maxDim = maxDim;
+    h->a = malloc1d(maxDim*maxDim*sizeof(float_complex));
+}
+
+void utility_cchol_destroy(void ** const phWork)
+{
+    utility_cchol_data *h = (utility_cchol_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->a);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
 }
 
 void utility_cchol
 (
+    void* const hWork,
     const float_complex* A,
     const int dim,
     float_complex* X
 )
 {
+    utility_cchol_data *h;
     veclib_int i, j, info, n, lda;
-    float_complex* a;
     
     n = lda = dim;
-    a = malloc1d(dim*dim*sizeof(float_complex));
+
+    /* Work struct */
+    if(hWork==NULL)
+        utility_cchol_create((void**)&h, dim);
+    else{
+        h = (utility_cchol_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(dim<=h->maxDim, "dim exceeds the maximum length specified");
+#endif
+    }
     
     /* store in column major order */
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
-            a[j*dim+i] = A[i*dim+j];
+            h->a[j*dim+i] = A[i*dim+j];
     
     /* a is replaced by solution */
 #if defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
-    info = clapack_cpotrf(CblasColMajor, CblasUpper, n, (veclib_float_complex*)a, lda);
+    info = clapack_cpotrf(CblasColMajor, CblasUpper, n, (veclib_float_complex*)h->a, lda);
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_cpotrf_work(CblasColMajor, CblasUpper, n, (veclib_float_complex*)a, lda);
+    info = LAPACKE_cpotrf_work(CblasColMajor, CblasUpper, n, (veclib_float_complex*)h->a, lda);
 #elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    cpotrf_( "U", &n, (veclib_float_complex*)a, &lda, &info );
+    cpotrf_( "U", &n, (veclib_float_complex*)h->a, &lda, &info );
 #endif
     
     /* A is not positive definate, solution not possible */
@@ -3444,26 +3521,58 @@ void utility_cchol
     else{
         for(i=0; i<dim; i++)
             for(j=0; j<dim; j++)
-                X[i*dim+j] = j>=i ? a[j*dim+i] : cmplxf(0.0f, 0.0f);
+                X[i*dim+j] = j>=i ? h->a[j*dim+i] : cmplxf(0.0f, 0.0f);
     }
     
-    free(a);
+    /* clean-up */
+    if(hWork == NULL)
+        utility_cchol_destroy((void**)&h);
 }
 
 /* ========================================================================== */
 /*                        Determinant of a Matrix (?det)                      */
 /* ========================================================================== */
 
+/** Data structure for utility_sdet() */
+typedef struct _utility_sdet_data {
+    veclib_int maxN;
+    veclib_int *IPIV;
+    float *tmp;
+}utility_sdet_data;
+
+void utility_sdet_create(void ** const phWork, int maxN)
+{
+    *phWork = malloc1d(sizeof(utility_sdet_data));
+    utility_sdet_data *h = (utility_sdet_data*)(*phWork);
+
+    h->maxN = maxN;
+    h->IPIV = malloc1d(maxN*sizeof(veclib_int));
+    h->tmp = malloc1d(maxN*maxN*sizeof(float));
+}
+
+void utility_sdet_destroy(void ** const phWork)
+{
+    utility_sdet_data *h = (utility_sdet_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->IPIV);
+        free(h->tmp);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
+}
+
 float utility_sdet
 (
+    void* const hWork,
     float* A,
     int N
 )
 {
-    veclib_int i,j;
-    veclib_int *IPIV;
-    float *tmp;
-    veclib_int INFO;
+    utility_sdet_data *h;
+    veclib_int i, j, INFO;
     float det;
 
     /* Simple cases: */
@@ -3491,20 +3600,27 @@ float utility_sdet
     }
 
     /* Otherwise, the arbitrary NxN solution: */
-    IPIV = malloc1d(N * sizeof(veclib_int));
-    tmp = malloc1d(N*N*sizeof(float));
+    /* Work struct */
+    if(hWork==NULL)
+        utility_sdet_create((void**)&h, N);
+    else{
+        h = (utility_sdet_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(N<=h->maxN, "N exceeds the maximum length specified");
+#endif
+    }
 
     /* Store in column major order */
     for(i=0; i<N; i++)
         for(j=0; j<N; j++)
-            tmp[j*N+i] = A[i*N+j];
+            h->tmp[j*N+i] = A[i*N+j];
 
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    sgetrf_((veclib_int*)&N, (veclib_int*)&N, tmp, (veclib_int*)&N, IPIV, &INFO);
+    sgetrf_((veclib_int*)&N, (veclib_int*)&N, h->tmp, (veclib_int*)&N, h->IPIV, &INFO);
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
-    INFO = clapack_sgetrf(CblasColMajor, N, N, tmp, N, IPIV);
+    INFO = clapack_sgetrf(CblasColMajor, N, N, h->tmp, N, h->IPIV);
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    INFO = LAPACKE_sgetrf_work(CblasColMajor, N, N, tmp, N, IPIV);
+    INFO = LAPACKE_sgetrf_work(CblasColMajor, N, N, h->tmp, N, h->IPIV);
 #endif
 
     if(INFO!=0) {
@@ -3518,25 +3634,65 @@ float utility_sdet
     else {
         det = 1.0f;
         for( i = 0; i < N; i++ ) {
-            det*=tmp[i*N+i];
-            if(IPIV[i] != i+1)
+            det*=h->tmp[i*N+i];
+            if(h->IPIV[i] != i+1)
                 det *= -1.0f;
         }
     }
-    free(IPIV); 
-    free(tmp);
+
+    /* clean-up */
+    if(hWork == NULL)
+        utility_sdet_destroy((void**)&h);
+
     return det;
+}
+
+/** Data structure for utility_ddet() */
+typedef struct _utility_ddet_data {
+    int currentWorkSize;
+    veclib_int maxN;
+    veclib_int *IPIV;
+    double *tmp, *TAU, *WORK;
+}utility_ddet_data;
+
+void utility_ddet_create(void ** const phWork, int maxN)
+{
+    *phWork = malloc1d(sizeof(utility_ddet_data));
+    utility_ddet_data *h = (utility_ddet_data*)(*phWork);
+
+    h->maxN = maxN;
+    h->currentWorkSize = 0;
+    h->IPIV = malloc1d(maxN*sizeof(veclib_int));
+    h->tmp = malloc1d(maxN*maxN*sizeof(double));
+    h->TAU = malloc1d(maxN*sizeof(double));
+    h->WORK = NULL;
+}
+
+void utility_ddet_destroy(void ** const phWork)
+{
+    utility_ddet_data *h = (utility_ddet_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->IPIV);
+        free(h->tmp);
+        free(h->TAU);
+        free(h->WORK);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
 }
 
 double utility_ddet
 (
+    void* const hWork,
     double* A,
     int N
 )
 {
-
+    utility_ddet_data *h;
     veclib_int i,j,INFO, LWORK, lwork3;
-    double *tmp, *TAU, *WORK;
     double lwork2, det;
 
     /* Simple cases: */
@@ -3564,29 +3720,43 @@ double utility_ddet
     }
 
     /* Otherwise, the arbitrary NxN solution: */
+    /* Work struct */
+    if(hWork==NULL)
+        utility_ddet_create((void**)&h, N);
+    else{
+        h = (utility_ddet_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(N<=h->maxN, "N exceeds the maximum length specified");
+#endif
+    }
+
     /* Store in column major order */
-    tmp = malloc(N*N*sizeof(double));
     for(i=0; i<N; i++)
         for(j=0; j<N; j++)
-            tmp[j*N+i] = A[i*N+j];
- 
-    TAU = malloc(sizeof(double)*N);
+            h->tmp[j*N+i] = A[i*N+j];
+
+    /* Query how much "work" memory is required */
     LWORK=-1;
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    dgeqrf_(&N, &N, tmp, &N, TAU, &lwork2, &LWORK, &INFO);
+    dgeqrf_(&N, &N, h->tmp, &N, h->TAU, &lwork2, &LWORK, &INFO);
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    INFO = LAPACKE_dgeqrf_work(CblasColMajor, N, N, tmp, N, TAU, &lwork2, LWORK);
+    INFO = LAPACKE_dgeqrf_work(CblasColMajor, N, N, h->tmp, N, h->TAU, &lwork2, LWORK);
 #endif
     lwork3=(veclib_int)lwork2;
-    WORK=malloc(lwork3*sizeof(double));
+    if(lwork3>h->currentWorkSize){
+        h->currentWorkSize = lwork3;
+        h->WORK = realloc1d(h->WORK, h->currentWorkSize*sizeof(double));
+    }
+
+    /* Decompose matrix */
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     dgeqrf_(&N, &N, tmp, &N, TAU, WORK, &lwork3, &INFO);
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    INFO = LAPACKE_dgeqrf_work(CblasColMajor, N, N, tmp, N, TAU, WORK, lwork3);
+    INFO = LAPACKE_dgeqrf_work(CblasColMajor, N, N, h->tmp, N, h->TAU, h->WORK, lwork3);
 #endif
 
     if(INFO!=0) {
@@ -3600,15 +3770,16 @@ double utility_ddet
     else {
         det=1;
         for (i=0;i<N;i++)
-            det*=tmp[i*N+i];
+            det*=h->tmp[i*N+i];
         /* Householder algorithm */
         if(N%2==0)
             det*=-1;
     }
 
-    free(WORK);
-    free(TAU);
-    free(tmp);
+    /* clean-up */
+    if(hWork == NULL)
+        utility_ddet_destroy((void**)&h);
+
     return det;
 }
 
@@ -3617,37 +3788,79 @@ double utility_ddet
 /*                           Matrix Inversion (?inv)                          */
 /* ========================================================================== */
 
+/** Data structure for utility_sinv() */
+typedef struct _utility_sinv_data {
+    int maxN;
+    veclib_int *IPIV;
+    float *WORK, *tmp;
+}utility_sinv_data;
+
+void utility_sinv_create(void ** const phWork, int maxN)
+{
+    *phWork = malloc1d(sizeof(utility_sinv_data));
+    utility_sinv_data *h = (utility_sinv_data*)(*phWork);
+
+    h->maxN = maxN;
+    h->IPIV = malloc1d(maxN*sizeof(veclib_int));
+    h->tmp = malloc1d(maxN*maxN*sizeof(float));
+    h->WORK = malloc1d(maxN*maxN*sizeof(float));
+}
+
+void utility_sinv_destroy(void ** const phWork)
+{
+    utility_sinv_data *h = (utility_sinv_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->IPIV);
+        free(h->tmp);
+        free(h->WORK);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
+}
+
 void utility_sinv
 (
+    void* const hWork,
     float* A,
-    float * B,
+    float* B,
     const int N
 )
 {
+    utility_sinv_data *h;
     veclib_int i, j, N_;
-    veclib_int *IPIV;
-    IPIV = malloc1d(N * sizeof(veclib_int));
-    veclib_int LWORK = N*N;
-    float *WORK, *tmp;
-    WORK = (float*)malloc1d(LWORK * sizeof(float));
-    tmp = malloc1d(N*N*sizeof(float));
+    veclib_int LWORK;
     veclib_int INFO;
+
+    LWORK = N*N;
     N_ = (veclib_int)N;
+
+    /* Work struct */
+    if(hWork==NULL)
+        utility_sinv_create((void**)&h, N);
+    else{
+        h = (utility_sinv_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(N<=h->maxN, "N exceeds the maximum length specified");
+#endif
+    }
 
     /* Store in column major order */
     for(i=0; i<N; i++)
         for(j=0; j<N; j++)
-            tmp[j*N+i] = A[i*N+j];
+            h->tmp[j*N+i] = A[i*N+j];
 
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    sgetrf_((veclib_int*)&N_, (veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, &INFO);
-    sgetri_((veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, WORK, &LWORK, &INFO);
+    sgetrf_((veclib_int*)&N_, (veclib_int*)&N_, h->tmp, (veclib_int*)&N_, h->IPIV, &INFO);
+    sgetri_((veclib_int*)&N_, h->tmp, (veclib_int*)&N_, h->IPIV, h->WORK, &LWORK, &INFO);
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
-    INFO = clapack_sgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
-    INFO = clapack_sgetri(CblasColMajor, N_, tmp, N_, IPIV);
+    INFO = clapack_sgetrf(CblasColMajor, N_, N_, h->tmp, N_, h->IPIV);
+    INFO = clapack_sgetri(CblasColMajor, N_, h->tmp, N_, h->IPIV);
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    INFO = LAPACKE_sgetrf_work(CblasColMajor, N_, N_, tmp, N_, IPIV);
-    INFO = LAPACKE_sgetri_work(CblasColMajor, N_, tmp, N_, IPIV, WORK, LWORK);
+    INFO = LAPACKE_sgetrf_work(CblasColMajor, N_, N_, h->tmp, N_, h->IPIV);
+    INFO = LAPACKE_sgetri_work(CblasColMajor, N_, h->tmp, N_, h->IPIV, h->WORK, LWORK);
 #endif
 
     if(INFO!=0) {
@@ -3663,45 +3876,87 @@ void utility_sinv
         /* Output in row major order */
         for(i=0; i<N; i++)
             for(j=0; j<N; j++)
-                B[j*N+i] = tmp[i*N+j];
+                B[j*N+i] = h->tmp[i*N+j];
     }
     
-    free(IPIV);
-    free(WORK);
-    free(tmp);
+    /* clean-up */
+    if(hWork == NULL)
+        utility_sinv_destroy((void**)&h);
+}
+
+/** Data structure for utility_dinv() */
+typedef struct _utility_dinv_data {
+    int maxN;
+    veclib_int *IPIV;
+    double *WORK, *tmp;
+}utility_dinv_data;
+
+void utility_dinv_create(void ** const phWork, int maxN)
+{
+    *phWork = malloc1d(sizeof(utility_dinv_data));
+    utility_dinv_data *h = (utility_dinv_data*)(*phWork);
+
+    h->maxN = maxN;
+    h->IPIV = malloc1d(maxN*sizeof(veclib_int));
+    h->tmp = malloc1d(maxN*maxN*sizeof(double));
+    h->WORK = malloc1d(maxN*maxN*sizeof(double));
+}
+
+void utility_dinv_destroy(void ** const phWork)
+{
+    utility_dinv_data *h = (utility_dinv_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->IPIV);
+        free(h->tmp);
+        free(h->WORK);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
 }
 
 void utility_dinv
 (
+    void* const hWork,
     double* A,
     double* B,
     const int N
 )
 {
+    utility_dinv_data *h;
     veclib_int i, j, N_;
-    veclib_int *IPIV;
-    IPIV = malloc1d( (N+1)*sizeof(veclib_int));
-    veclib_int LWORK = N*N;
-    double *WORK, *tmp;
-    WORK = malloc1d( LWORK*sizeof(double));
-    tmp = malloc1d(N*N*sizeof(double));
+    veclib_int LWORK;
     veclib_int INFO;
+
+    LWORK = N*N;
     N_ = (veclib_int)N;
+
+    /* Work struct */
+    if(hWork==NULL)
+        utility_dinv_create((void**)&h, N);
+    else{
+        h = (utility_dinv_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(N<=h->maxN, "N exceeds the maximum length specified");
+#endif
+    }
 
     /* Store in column major order */
     for(i=0; i<N; i++)
         for(j=0; j<N; j++)
-            tmp[j*N+i] = A[i*N+j];
+            h->tmp[j*N+i] = A[i*N+j];
 
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    dgetrf_((veclib_int*)&N_, (veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, &INFO);
-    dgetri_((veclib_int*)&N_, tmp, (veclib_int*)&N_, IPIV, WORK, &LWORK, &INFO);
+    dgetrf_((veclib_int*)&N_, (veclib_int*)&N_, h->tmp, (veclib_int*)&N_, h->IPIV, &INFO);
+    dgetri_((veclib_int*)&N_, h->tmp, (veclib_int*)&N_, h->IPIV, h->WORK, &LWORK, &INFO);
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
-    INFO = clapack_dgetrf(CblasColMajor, N_, N_, tmp, N_, IPIV);
-    INFO = clapack_dgetri(CblasColMajor, N_, tmp, N_, IPIV);
+    INFO = clapack_dgetrf(CblasColMajor, N_, N_, h->tmp, N_, h->IPIV);
+    INFO = clapack_dgetri(CblasColMajor, N_, h->tmp, N_, h->IPIV);
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    INFO = LAPACKE_dgetrf_work(CblasColMajor, N_, N_, tmp, N_, IPIV);
-    INFO = LAPACKE_dgetri_work(CblasColMajor, N_, tmp, N_, IPIV, WORK, LWORK);
+    INFO = LAPACKE_dgetrf_work(CblasColMajor, N_, N_, h->tmp, N_, h->IPIV);
+    INFO = LAPACKE_dgetri_work(CblasColMajor, N_, h->tmp, N_, h->IPIV, h->WORK, LWORK);
 #endif
 
     if(INFO!=0) {
@@ -3717,45 +3972,87 @@ void utility_dinv
         /* Output in row major order */
         for(i=0; i<N; i++)
             for(j=0; j<N; j++)
-                B[j*N+i] = tmp[i*N+j];
+                B[j*N+i] = h->tmp[i*N+j];
     }
     
-    free(IPIV);
-    free(WORK);
-    free(tmp);
+    /* clean-up */
+    if(hWork == NULL)
+        utility_dinv_destroy((void**)&h);
+}
+
+/** Data structure for utility_cinv() */
+typedef struct _utility_cinv_data {
+    int maxN;
+    veclib_int *IPIV;
+    float_complex *WORK, *tmp;
+}utility_cinv_data;
+
+void utility_cinv_create(void ** const phWork, int maxN)
+{
+    *phWork = malloc1d(sizeof(utility_cinv_data));
+    utility_cinv_data *h = (utility_cinv_data*)(*phWork);
+
+    h->maxN = maxN;
+    h->IPIV = malloc1d(maxN*sizeof(veclib_int));
+    h->tmp = malloc1d(maxN*maxN*sizeof(float_complex));
+    h->WORK = malloc1d(maxN*maxN*sizeof(float_complex));
+}
+
+void utility_cinv_destroy(void ** const phWork)
+{
+    utility_cinv_data *h = (utility_cinv_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->IPIV);
+        free(h->tmp);
+        free(h->WORK);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
 }
 
 void utility_cinv
 (
+    void* const hWork,
     float_complex* A,
     float_complex* B,
     const int N
 )
 {
+    utility_cinv_data *h;
     veclib_int i, j, N_;
-    veclib_int *IPIV;
-    IPIV = malloc1d(N * sizeof(int));
-    veclib_int LWORK = N*N;
-    float_complex *WORK, *tmp;
-    WORK = (float_complex*)malloc1d(LWORK * sizeof(float_complex));
-    tmp = malloc1d(N*N*sizeof(float_complex));
+    veclib_int LWORK;
     veclib_int INFO;
+
     N_ = (veclib_int)N;
+    LWORK = N*N;
+
+    /* Work struct */
+    if(hWork==NULL)
+        utility_cinv_create((void**)&h, N);
+    else{
+        h = (utility_cinv_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(N<=h->maxN, "N exceeds the maximum length specified");
+#endif
+    }
 
     /* Store in column major order */
     for(i=0; i<N; i++)
         for(j=0; j<N; j++)
-            tmp[j*N+i] = A[i*N+j];
+            h->tmp[j*N+i] = A[i*N+j];
     
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    cgetrf_((veclib_int*)&N_, (veclib_int*)&N_, (veclib_float_complex*)tmp, (veclib_int*)&N_, IPIV, &INFO);
-    cgetri_((veclib_int*)&N_, (veclib_float_complex*)tmp, (veclib_int*)&N_, IPIV, (veclib_float_complex*)WORK, &LWORK, &INFO);
+    cgetrf_((veclib_int*)&N_, (veclib_int*)&N_, (veclib_float_complex*)h->tmp, (veclib_int*)&N_, h->IPIV, &INFO);
+    cgetri_((veclib_int*)&N_, (veclib_float_complex*)h->tmp, (veclib_int*)&N_, h->IPIV, (veclib_float_complex*)h->WORK, &LWORK, &INFO);
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
-    INFO = clapack_cgetrf(CblasColMajor, N_, N_, (veclib_float_complex*)tmp, N_, IPIV);
-    INFO = clapack_cgetri(CblasColMajor, N_, (veclib_float_complex*)tmp, N_, IPIV);
+    INFO = clapack_cgetrf(CblasColMajor, N_, N_, (veclib_float_complex*)h->tmp, N_, h->IPIV);
+    INFO = clapack_cgetri(CblasColMajor, N_, (veclib_float_complex*)h->tmp, N_, h->IPIV);
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    INFO = LAPACKE_cgetrf_work(CblasColMajor, N_, N_, (veclib_float_complex*)tmp, N_, IPIV);
-    INFO = LAPACKE_cgetri_work(CblasColMajor, N_, (veclib_float_complex*)tmp, N_, IPIV, (veclib_float_complex*)WORK, LWORK);
+    INFO = LAPACKE_cgetrf_work(CblasColMajor, N_, N_, (veclib_float_complex*)h->tmp, N_, h->IPIV);
+    INFO = LAPACKE_cgetri_work(CblasColMajor, N_, (veclib_float_complex*)h->tmp, N_, h->IPIV, (veclib_float_complex*)h->WORK, LWORK);
 #endif
 
     if(INFO!=0) {
@@ -3771,10 +4068,10 @@ void utility_cinv
         /* Output in row major order */
         for(i=0; i<N; i++)
             for(j=0; j<N; j++)
-                B[j*N+i] = tmp[i*N+j];
+                B[j*N+i] = h->tmp[i*N+j];
     }
 
-    free(IPIV);
-    free(WORK);
-    free(tmp);
+    /* clean-up */
+    if(hWork == NULL)
+        utility_cinv_destroy((void**)&h);
 }

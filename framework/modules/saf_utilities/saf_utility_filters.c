@@ -750,7 +750,7 @@ void butterCoeffs
     bf_ss = NULL;
     switch(filterType){
         case BUTTER_FILTER_HPF:
-            utility_dinv(FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
+            utility_dinv(NULL, FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
             /* fall through */
         case BUTTER_FILTER_LPF:
             bf_ss = (double**)malloc2d(numStates,numStates,sizeof(double));
@@ -759,7 +759,7 @@ void butterCoeffs
                     bf_ss[i][j] = w0*(a_state[i][j]);
             break;
         case BUTTER_FILTER_BSF:
-            utility_dinv(FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
+            utility_dinv(NULL, FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
             /* fall through */
         case BUTTER_FILTER_BPF:
             numStates = numStates*2;

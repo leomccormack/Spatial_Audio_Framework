@@ -697,7 +697,7 @@ void invertLsMtx3D
                 tempGroup[j*3+i] = U_spkr[ls_groups[n*3+i]*3 + j]; 
 
         /* get inverse of current group */
-        utility_sinv(tempGroup,tempGroup,3);
+        utility_sinv(NULL, tempGroup,tempGroup,3);
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 3, 3, 3, 1.0f,
                     (float*)eye3, 3,
                     tempGroup, 3, 0.0f,
@@ -960,7 +960,7 @@ void invertLsMtx2D
                 tempGroup[j*2+i] = U_spkr[ls_pairs[n*2+i]*2 + j];
 
         /* get inverse of current group */
-        utility_sinv(tempGroup,tempGroup,2);
+        utility_sinv(NULL, tempGroup,tempGroup,2);
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 2, 2, 2, 1.0,
                     eye2, 2,
                     tempGroup, 2, 0.0,

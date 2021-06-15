@@ -848,7 +848,7 @@ float gauss_pdf3
     E += DX[1] * S_DX[1];
     E += DX[2] * S_DX[2];
     E *= 0.5f;
-    E = E + 1.5f * logf(2.0f*SAF_PI) + 0.5f * logf(utility_sdet((float*)S, 3));
+    E = E + 1.5f * logf(2.0f*SAF_PI) + 0.5f * logf(utility_sdet(NULL, (float*)S, 3));
 
     return expf(-E);
 }

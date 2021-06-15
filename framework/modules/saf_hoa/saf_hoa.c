@@ -553,7 +553,7 @@ void applyDiffCovMatching
                     (float_complex*)C_ref, NUM_EARS);
         for(i=0; i<NUM_EARS; i++)
             C_ref[i][i] = cmplxf(crealf(C_ref[i][i]), 0.0f); /* force diagonal to be real */
-        utility_cchol((float_complex*)C_ref, NUM_EARS, (float_complex*)X);
+        utility_cchol(NULL, (float_complex*)C_ref, NUM_EARS, (float_complex*)X);
         cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, N_dirs, nSH, &calpha,
                     &decMtx[band*NUM_EARS*nSH], nSH,
                     Y_na, N_dirs, &cbeta,
@@ -568,7 +568,7 @@ void applyDiffCovMatching
                     (float_complex*)C_ambi, NUM_EARS);
         for(i=0; i<NUM_EARS; i++)
             C_ambi[i][i] = cmplxf(crealf(C_ambi[i][i]), 0.0f); /* force diagonal to be real */
-        utility_cchol((float_complex*)C_ambi, NUM_EARS, (float_complex*)X_ambi);
+        utility_cchol(NULL, (float_complex*)C_ambi, NUM_EARS, (float_complex*)X_ambi);
         
         /* SVD */
         cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans, NUM_EARS, NUM_EARS, NUM_EARS, &calpha,
