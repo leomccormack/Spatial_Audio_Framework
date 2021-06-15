@@ -849,10 +849,28 @@ float gauss_pdf3
     kf_update6_data *h = (kf_update6_data*)(hUp6);
     float E;
     float DX[3], S_DX[3];
+#if 0
+    float Snd_sum;
+    float SS[3][3] = {0.0f};
+#endif
 
     DX[0] = X[0]-M[0];
     DX[1] = X[1]-M[1];
     DX[2] = X[2]-M[2];
+#if 0
+    /* If S is diagonal, then the inverse is simple. However, this doesn't seem to speed things up... */
+    Snd_sum = S[0][1] + S[0][2] + S[1][2] + S[1][0] + S[2][0] + S[2][1];
+    if(Snd_sum<0.00001f){
+        SS[0][0] = 1.0f/S[0][0];
+        SS[1][1] = 1.0f/S[1][1];
+        SS[2][2] = 1.0f/S[2][2];
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 1, 3, 1.0f,
+                    (float*)SS, 3,
+                    (float*)DX, 1, 0.0f,
+                    (float*)S_DX, 1);
+    }
+    else
+#endif
     utility_sglslv(h->sglslv_handle, (float*)S, 3, (float*)DX, 1, (float*)S_DX);
     E = DX[0] * S_DX[0];
     E += DX[1] * S_DX[1];

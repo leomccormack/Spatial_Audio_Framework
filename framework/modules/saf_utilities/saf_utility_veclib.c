@@ -2303,7 +2303,6 @@ void utility_dglslv_create(void ** const phWork, int maxDim, int maxNCol)
 
     h->maxDim = maxDim;
     h->maxNCol = maxNCol;
-
     h->IPIV = malloc1d(maxDim*sizeof(veclib_int));
     h->a = malloc1d(maxDim*maxDim*sizeof(double));
     h->b = malloc1d(maxDim*maxNCol*sizeof(double));
@@ -2406,8 +2405,7 @@ void utility_zglslv_create(void ** const phWork, int maxDim, int maxNCol)
     utility_zglslv_data *h = (utility_zglslv_data*)(*phWork);
 
     h->maxDim = maxDim;
-    h->maxNCol = maxNCol;
-
+    h->maxNCol = maxNCol; 
     h->IPIV = malloc1d(maxDim*sizeof(veclib_int));
     h->a = malloc1d(maxDim*maxDim*sizeof(double_complex));
     h->b = malloc1d(maxDim*maxNCol*sizeof(double_complex));
