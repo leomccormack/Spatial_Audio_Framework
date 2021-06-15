@@ -959,7 +959,7 @@ void faf_IIRFilterbank_create
         /* Find roots of polynomial  */
         if(order==1)
             z[0] = cmplx(-q[1]/q[0], 0.0);
-        else{ /* 3rd order */
+        else if(order==3){
             memset(A, 0, 9*sizeof(double_complex));
             A[0][0] = cmplx(-q[1]/q[0], 0.0);
             A[0][1] = cmplx(-q[2]/q[0], 0.0);
