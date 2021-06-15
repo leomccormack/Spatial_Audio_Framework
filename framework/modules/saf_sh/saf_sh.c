@@ -1253,6 +1253,9 @@ void sphESPRIT_create
     muni2q(order, 1, 0, h->idx_from_Ynm2Ynimu[10], h->idx_from_Ynm2Ynimu[11]);
 
     /* memory allocations for run-time matrices */
+    utility_zpinv_create(&(h->hZpinv), h->maxK, h->maxK);
+    utility_zeigmp_create(&(h->hZeigmp), h->maxK);
+    utility_zglslv_create(&(h->hZglslv), h->maxK, h->maxK);
     h->Us_1m1  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
     h->Us_m1m1 = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
     h->Us_11   = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
@@ -1295,6 +1298,9 @@ void sphESPRIT_destroy
         }
         for(i=0; i<12; i++)
             free(h->idx_from_Ynm2Ynimu[i]);
+        utility_zpinv_destroy(&(h->hZpinv));
+        utility_zeigmp_destroy(&(h->hZeigmp));
+        utility_zglslv_destroy(&(h->hZglslv));
         free(h->Us_1m1);
         free(h->Us_m1m1);
         free(h->Us_11);
@@ -1400,7 +1406,7 @@ void sphESPRIT_estimateDirs
     }
 
     /*  */
-    utility_zpinv(NULL, h->Us_00, h->NN, K, h->pinvUs);
+    utility_zpinv(h->hZpinv, h->Us_00, h->NN, K, h->pinvUs);
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, (h->NN), &calpha,
                 h->pinvUs, (h->NN),
                 h->LambdaXYp, K, &cbeta,
@@ -1415,22 +1421,22 @@ void sphESPRIT_estimateDirs
                 h->PsiZ, K);
 
     /*  */
-    utility_zeigmp(NULL, h->PsiXYp, h->PsiZ, K,  NULL, h->V, NULL);
+    utility_zeigmp(h->hZeigmp, h->PsiXYp, h->PsiZ, K,  NULL, h->V, NULL);
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
                 h->PsiXYp, K,
                 h->V, K, &cbeta,
                 h->tmp_KK, K);
-    utility_zglslv(NULL, h->V, K, h->tmp_KK, K, h->PhiXYp);
+    utility_zglslv(h->hZglslv, h->V, K, h->tmp_KK, K, h->PhiXYp);
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
                 h->PsiXYm, K,
                 h->V, K, &cbeta,
                 h->tmp_KK, K);
-    utility_zglslv(NULL, h->V, K, h->tmp_KK, K, h->PhiXYm);
+    utility_zglslv(h->hZglslv, h->V, K, h->tmp_KK, K, h->PhiXYm);
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
                 h->PsiZ, K,
                 h->V, K, &cbeta,
                 h->tmp_KK, K);
-    utility_zglslv(NULL, h->V, K, h->tmp_KK, K, h->PhiZ);
+    utility_zglslv(h->hZglslv, h->V, K, h->tmp_KK, K, h->PhiZ);
 
     /* extract DoAs */
     for(i=0; i<K; i++){

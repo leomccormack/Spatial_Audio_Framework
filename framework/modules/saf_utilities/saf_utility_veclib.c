@@ -2125,25 +2125,31 @@ void utility_sglslv
         saf_assert(nCol<=h->maxNCol, "nCol exceeds the maximum length specified");
 #endif
     }
-    
+
+#if defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
+    /* Copy locally */
+    cblas_scopy(dim*dim, A, 1, h->a, 1);
+    cblas_scopy(dim*nCol, B, 1, h->b, 1);
+#else
     /* store in column major order */
-#ifdef INTEL_MKL_VERSION
+# ifdef INTEL_MKL_VERSION
     MKL_Somatcopy('R', 'T', dim, dim, 1.0f, A, dim, h->a, dim);
     MKL_Somatcopy('R', 'T', dim, nCol, 1.0f, B, nCol, h->b, dim);
-#else
+# else
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
             h->a[i*dim+j] = A[j*dim+i];
     for(i=0; i<dim; i++)
         for(j=0; j<nCol; j++)
             b[j*dim+i] = B[i*nCol+j];
+# endif
 #endif
     
     /* solve Ax = b for each column in b (b is replaced by the solution: x) */
 #ifdef SAF_VECLIB_USE_CLAPACK_INTERFACE
     info = clapack_sgesv(CblasColMajor, n, nrhs, h->a, lda, h->IPIV, h->b, ldb);
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_sgesv_work(CblasColMajor, n, nrhs, h->a, lda, h->IPIV, h->b, ldb);
+    info = LAPACKE_sgesv_work(CblasRowMajor, n, nrhs, h->a, lda, h->IPIV, h->b, ldb);
 #elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     sgesv_( &n, &nrhs, h->a, &lda, h->IPIV, h->b, &ldb, &info );
 #endif
@@ -2159,13 +2165,17 @@ void utility_sglslv
 #endif
     }
     else{
-        /* store solution in row-major order */
-#ifdef INTEL_MKL_VERSION
-        MKL_Somatcopy('R', 'T', nCol, dim, 1.0f, h->b, dim, X, nCol);
+#if defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
+        cblas_scopy(dim*nCol, h->b, 1, X, 1);
 #else
+        /* store solution in row-major order */
+# ifdef INTEL_MKL_VERSION
+        MKL_Somatcopy('R', 'T', nCol, dim, 1.0f, h->b, dim, X, nCol);
+# else
         for(i=0; i<dim; i++)
             for(j=0; j<nCol; j++)
                 X[i*nCol+j] = h->b[j*dim+i];
+# endif
 #endif
     }
     

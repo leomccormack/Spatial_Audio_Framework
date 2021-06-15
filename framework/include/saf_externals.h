@@ -76,7 +76,7 @@
  * (Generally the fastest library for x86 based architectures)
  */
 /* Note that Intel MKL LP64 supports Fortran LAPACK and LAPACKE interfaces: */
-# define SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< LAPACK interface */ 
+# define SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< LAPACK interface */
 # include "mkl.h"
 
 #elif defined(SAF_USE_INTEL_MKL_ILP64)

@@ -79,6 +79,7 @@ typedef struct _sphESPRIT_data {
     int nIdx[12];                   /* number of indices in each "idx_from_Ynm2Ynimu" vector */
 
     /* matrices for run-time */
+    void* hZpinv, *hZeigmp, *hZglslv;
     double_complex* Us_1m1, *Us_m1m1, *Us_11, *Us_m11, *Us_m10, *Us_10, *Us_00;
     double_complex* WVnimu0_Us1m1, *WVnimu1_Usm1m1, *WVnimu2_Us11;
     double_complex* WVnimu3_Usm11, *WVnimu4_Usm10,  *WVnimu5_Us10;

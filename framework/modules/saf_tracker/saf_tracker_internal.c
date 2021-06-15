@@ -43,6 +43,9 @@
 
 #ifdef  SAF_ENABLE_TRACKER_MODULE
 
+/** log(2pi) */
+#define SAF_LOG_2PI ( logf(2.0f*SAF_PI) )
+
 /** Data structure for kf_update6() */
 typedef struct _kf_update6 {
     void* sglslv_handle;
@@ -658,7 +661,6 @@ void kf_update6
 )
 {
     kf_update6_data *h = (kf_update6_data*)(hUp6);
-    int i;
     float yIM[3], IM[3], IS[3][3], HP[3][6], HPHT[3][3], PHT[6][3], K[6][3], K_yIM[6], KIS[6][3];
 
     /* update step */
@@ -674,7 +676,10 @@ void kf_update6
                 (float*)HP, 6,
                 (float*)H, 6, 0.0f,
                 (float*)HPHT, 3);
-    utility_svvadd((float*)HPHT, (float*)R, 9, (float*)IS);
+    //utility_svvadd((float*)HPHT, (float*)R, 9, (float*)IS);
+    IS[0][0] = HPHT[0][0] + R[0][0]; IS[0][1] = HPHT[0][1] + R[0][1]; IS[0][2] = HPHT[0][2] + R[0][2];
+    IS[1][0] = HPHT[1][0] + R[1][0]; IS[1][1] = HPHT[1][1] + R[1][1]; IS[1][2] = HPHT[1][2] + R[1][2];
+    IS[2][0] = HPHT[2][0] + R[2][0]; IS[2][1] = HPHT[2][1] + R[2][1]; IS[2][2] = HPHT[2][2] + R[2][2];
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 6, 3, 6, 1.0f,
                 (float*)P, 6,
                 (float*)H, 6, 0.0f,
@@ -701,6 +706,10 @@ void kf_update6
                 (float*)KIS, 3,
                 (float*)K, 3, 0.0f,
                 (float*)P_out, 6);
+#if 1
+    cblas_sscal(6*6, -1.0f, (float*)P_out, 1);
+    cblas_saxpy(6*6, 1.0f, (float*)P, 1, (float*)P_out, 1);
+#else
     for(i=0; i<6; i++){
         P_out[i][0] = P[i][0] - P_out[i][0];
         P_out[i][1] = P[i][1] - P_out[i][1];
@@ -709,8 +718,9 @@ void kf_update6
         P_out[i][4] = P[i][4] - P_out[i][4];
         P_out[i][5] = P[i][5] - P_out[i][5];
     }
+#endif
     if (LH!=NULL)
-      *LH = gauss_pdf3(hUp6, y,IM,IS);
+        *LH = gauss_pdf3(hUp6, y,IM,IS);
 }
 
 float gamma_cdf
@@ -848,7 +858,7 @@ float gauss_pdf3
     E += DX[1] * S_DX[1];
     E += DX[2] * S_DX[2];
     E *= 0.5f;
-    E = E + 1.5f * logf(2.0f*SAF_PI) + 0.5f * logf(utility_sdet(NULL, (float*)S, 3));
+    E = E + 1.5f * SAF_LOG_2PI + 0.5f * logf(utility_sdet(NULL, (float*)S, 3));
 
     return expf(-E);
 }
