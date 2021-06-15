@@ -1415,7 +1415,7 @@ void sphESPRIT_estimateDirs
                 h->PsiZ, K);
 
     /*  */
-    utility_zeigmp(h->PsiXYp, h->PsiZ, K,  NULL, h->V, NULL);
+    utility_zeigmp(NULL, h->PsiXYp, h->PsiZ, K,  NULL, h->V, NULL);
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
                 h->PsiXYp, K,
                 h->V, K, &cbeta,

@@ -902,7 +902,7 @@ void utility_ssv2cv_inds
 /** Data structure for utility_ssvd() */
 typedef struct _utility_ssvd_data {
     int maxDim1, maxDim2;
-    int currentWorkSize;
+    veclib_int currentWorkSize;
     float* a, *s, *u, *vt;
     float* work;
 }utility_ssvd_data;
@@ -1047,7 +1047,7 @@ void utility_ssvd
 /** Data structure for utility_csvd() */
 typedef struct _utility_csvd_data {
     int maxDim1, maxDim2;
-    int currentWorkSize;
+    veclib_int currentWorkSize;
     float_complex* a, *u, *vt, *work;
     float *s, *rwork;
 }utility_csvd_data;
@@ -1200,8 +1200,45 @@ void utility_csvd
 /*                 Symmetric Eigenvalue Decomposition (?seig)                 */
 /* ========================================================================== */
 
+/** Data structure for utility_sseig() */
+typedef struct _utility_sseig_data {
+    int maxDim;
+    veclib_int currentWorkSize;
+    float* w;
+    float* a;
+    float* work;
+}utility_sseig_data;
+
+void utility_sseig_create(void ** const phWork, int maxDim)
+{
+    *phWork = malloc1d(sizeof(utility_sseig_data));
+    utility_sseig_data *h = (utility_sseig_data*)(*phWork);
+
+    h->maxDim = maxDim;
+    h->currentWorkSize = 0;
+    h->w = malloc1d(maxDim*sizeof(float));
+    h->a = malloc1d(maxDim*maxDim*sizeof(float));
+    h->work = NULL;
+}
+
+void utility_sseig_destroy(void ** const phWork)
+{
+    utility_sseig_data *h = (utility_sseig_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->w);
+        free(h->a);
+        free(h->work);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
+}
+
 void utility_sseig
 (
+    void* const hWork,
     const float* A,
     const int dim,
     int sortDecFLAG,
@@ -1210,43 +1247,52 @@ void utility_sseig
     float* eig
 )
 {
+    utility_sseig_data *h;
     veclib_int i, j, n, lda, info;
     veclib_int lwork;
     float wkopt;
-    float* work;
-    float* w, *a;
 
     n = dim;
     lda = dim;
-    w = malloc1d(dim*sizeof(float));
-    a = malloc1d(dim*dim*sizeof(float));
+
+    /* Work struct */
+    if(hWork==NULL)
+        utility_sseig_create((void**)&h, dim);
+    else{
+        h = (utility_sseig_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(dim<=h->maxDim, "dim exceeds the maximum length specified");
+#endif
+    }
     
     /* store in column major order (i.e. transpose) */
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
-            a[i*dim+j] = A[j*dim+i];
+            h->a[i*dim+j] = A[j*dim+i];
 
     /* Query how much "work" memory is required */
     lwork = -1;
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    ssyev_( "Vectors", "Upper", &n, a, &lda, w, &wkopt, &lwork, &info );
+    ssyev_( "Vectors", "Upper", &n, h->a, &lda, h->w, &wkopt, &lwork, &info );
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_ssyev_work(CblasColMajor, 'V', 'U', n, a, lda, w, &wkopt, lwork);
+    info = LAPACKE_ssyev_work(CblasColMajor, 'V', 'U', n, h->a, lda, h->w, &wkopt, lwork);
 #endif
     lwork = (int)wkopt;
-    work = (float*)malloc1d( lwork*sizeof(float) );
+    if(lwork>h->currentWorkSize){
+        h->currentWorkSize = lwork;
+        h->work = realloc1d(h->work, h->currentWorkSize*sizeof(float));
+    }
 
     /* solve the eigenproblem */
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    ssyev_( "Vectors", "Upper", &n, a, &lda, w, work, &lwork, &info );
+    ssyev_( "Vectors", "Upper", &n, h->a, &lda, h->w, h->work, &lwork, &info );
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_ssyev_work(CblasColMajor, 'V', 'U', n, a, lda, w, work, lwork);
+    info = LAPACKE_ssyev_work(CblasColMajor, 'V', 'U', n, h->a, lda, h->w, h->work, lwork);
 #endif
-    free(work);
     
     /* output */
     if(D!=NULL)
@@ -1268,34 +1314,34 @@ void utility_sseig
             for(i=0; i<dim; i++){
                 if(V!=NULL)
                     for(j=0; j<dim; j++)
-                        V[i*dim+j] = a[(dim-j-1)*dim+i]; /* transpose, back to row-major and reverse order */
+                        V[i*dim+j] = h->a[(dim-j-1)*dim+i]; /* transpose, back to row-major and reverse order */
                 if(D!=NULL)
-                    D[i*dim+i] = w[dim-i-1]; /* store along the diagonal, reversing the order */
+                    D[i*dim+i] = h->w[dim-i-1]; /* store along the diagonal, reversing the order */
                 if(eig!=NULL)
-                    eig[i] = w[dim-i-1];
+                    eig[i] = h->w[dim-i-1];
             }
         }
         else{
             for(i=0; i<dim; i++){
                 if(V!=NULL)
                     for(j=0; j<dim; j++)
-                        V[i*dim+j] = a[j*dim+i]; /* transpose, back to row-major */
+                        V[i*dim+j] = h->a[j*dim+i]; /* transpose, back to row-major */
                 if(D!=NULL)
-                    D[i*dim+i] = w[i]; /* store along the diagonal */
+                    D[i*dim+i] = h->w[i]; /* store along the diagonal */
                 if(eig!=NULL)
-                    eig[i] = w[i];
+                    eig[i] = h->w[i];
             }
         }
     }
-    
-    free(w);
-    free(a);
+
+    if(hWork == NULL)
+        utility_sseig_destroy((void**)&h);
 }
 
 /** Data structure for utility_cseig() */
 typedef struct _utility_cseig_data {
     int maxDim;
-    int currentWorkSize;
+    veclib_int currentWorkSize;
     float* rwork;
     float* w;
     float_complex* a;
@@ -1458,8 +1504,55 @@ void utility_cseig
 /*                     Eigenvalues of Matrix Pair (?eigmp)                    */
 /* ========================================================================== */
 
+/** Data structure for utility_ceigmp() */
+typedef struct _utility_ceigmp_data {
+    int maxDim;
+    veclib_int currentWorkSize;
+    float_complex* a, *b, *vl, *vr, *alpha, *beta;
+    float* rwork;
+    float_complex* work;
+}utility_ceigmp_data;
+
+void utility_ceigmp_create(void** const phWork, int maxDim)
+{
+    *phWork = malloc1d(sizeof(utility_ceigmp_data));
+    utility_ceigmp_data *h = (utility_ceigmp_data*)(*phWork);
+
+    h->maxDim = maxDim;
+    h->currentWorkSize = 4*maxDim;
+    h->rwork = malloc1d(4*(h->currentWorkSize)*sizeof(float));
+    h->a = malloc1d(maxDim*maxDim*sizeof(float_complex));
+    h->b = malloc1d(maxDim*maxDim*sizeof(float_complex));
+    h->vl = malloc1d(maxDim*maxDim*sizeof(float_complex));
+    h->vr = malloc1d(maxDim*maxDim*sizeof(float_complex));
+    h->alpha = malloc1d(maxDim*sizeof(float_complex));
+    h->beta = malloc1d(maxDim*sizeof(float_complex));
+    h->work = malloc1d(h->currentWorkSize*sizeof(float_complex));
+}
+
+void utility_ceigmp_destroy(void ** const phWork)
+{
+    utility_ceigmp_data *h = (utility_ceigmp_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->rwork);
+        free(h->a);
+        free(h->b);
+        free(h->vl);
+        free(h->vr);
+        free(h->alpha);
+        free(h->beta);
+        free(h->work);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
+}
+
 void utility_ceigmp
 (
+    void* const hWork,
     const float_complex* A,
     const float_complex* B,
     const int dim,
@@ -1468,44 +1561,42 @@ void utility_ceigmp
     float_complex* D
 )
 {
+    utility_ceigmp_data *h;
     veclib_int i, j;
     veclib_int n, lda, ldb, ldvl, ldvr, info;
-    float_complex* a, *b, *vl, *vr, *alpha, *beta;
     veclib_int lwork;
-    float* rwork;
-    float_complex* work;
     
     n = lda = ldb = ldvl = ldvr = dim;
-    a = malloc1d(dim*dim*sizeof(float_complex));
-    b = malloc1d(dim*dim*sizeof(float_complex));
-    vl = malloc1d(dim*dim*sizeof(float_complex));
-    vr = malloc1d(dim*dim*sizeof(float_complex));
-    alpha = malloc1d(dim*sizeof(float_complex));
-    beta = malloc1d(dim*sizeof(float_complex));
+
+    /* Work struct */
+    if(hWork==NULL)
+        utility_ceigmp_create((void**)&h, dim);
+    else{
+        h = (utility_ceigmp_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(dim<=h->maxDim, "dim exceeds the maximum length specified");
+#endif
+    }
     
     /* store in column major order */
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
-            a[j*dim+i] = A[i*dim+j];
+            h->a[j*dim+i] = A[i*dim+j];
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
-            b[j*dim+i] = B[i*dim+j];
+            h->b[j*dim+i] = B[i*dim+j];
 
     /* solve eigen problem */
-    lwork = 4*n;
-    work = malloc1d(lwork*sizeof(float_complex));
-    rwork = malloc1d(4*lwork*sizeof(float));
+    lwork = h->currentWorkSize;
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    cggev_("V", "V", &n, (veclib_float_complex*)a, &lda, (veclib_float_complex*)b, &ldb, (veclib_float_complex*)alpha, (veclib_float_complex*)beta,
-           (veclib_float_complex*)vl, &ldvl, (veclib_float_complex*)vr, &ldvr, (veclib_float_complex*)work, lwork, rwork, &info);
+    cggev_("V", "V", &n, (veclib_float_complex*)h->a, &lda, (veclib_float_complex*)h->b, &ldb, (veclib_float_complex*)h->alpha, (veclib_float_complex*)h->beta,
+           (veclib_float_complex*)h->vl, &ldvl, (veclib_float_complex*)h->vr, &ldvr, (veclib_float_complex*)h->work, lwork, h->rwork, &info);
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_cggev_work(CblasColMajor, 'V', 'V', n, (veclib_float_complex*)a, lda, (veclib_float_complex*)b, ldb, (veclib_float_complex*)alpha, (veclib_float_complex*)beta,
-                              (veclib_float_complex*)vl, ldvl, (veclib_float_complex*)vr, ldvr, (veclib_float_complex*)work, lwork, rwork);
+    info = LAPACKE_cggev_work(CblasColMajor, 'V', 'V', n, (veclib_float_complex*)h->a, lda, (veclib_float_complex*)h->b, ldb, (veclib_float_complex*)h->alpha, (veclib_float_complex*)h->beta,
+                              (veclib_float_complex*)h->vl, ldvl, (veclib_float_complex*)h->vr, ldvr, (veclib_float_complex*)h->work, lwork, h->rwork);
 #endif
-    free(work);
-    free(rwork);
     
     if(D!=NULL)
         memset(D, 0, dim*dim*sizeof(float_complex));
@@ -1528,28 +1619,71 @@ void utility_ceigmp
     else{
         if(D!=NULL)
             for(i=0; i<dim; i++)
-                D[i*dim+i] = ccdivf(alpha[i],beta[i]);
+                D[i*dim+i] = ccdivf(h->alpha[i],h->beta[i]);
         
         if(VL!=NULL)
             for(i=0; i<dim; i++)
                 for(j=0; j<dim; j++)
-                    VL[i*dim+j] = vl[j*dim+i];
+                    VL[i*dim+j] = h->vl[j*dim+i];
         if(VR!=NULL)
             for(i=0; i<dim; i++)
                 for(j=0; j<dim; j++)
-                    VR[i*dim+j] = vr[j*dim+i];
+                    VR[i*dim+j] = h->vr[j*dim+i];
     }
-    
-    free(a);
-    free(b);
-    free(vl);
-    free(vr);
-    free(alpha);
-    free(beta);
+
+    if(hWork == NULL)
+        utility_ceigmp_destroy((void**)&h);
+}
+
+/** Data structure for utility_zeigmp() */
+typedef struct _utility_zeigmp_data {
+    int maxDim;
+    veclib_int currentWorkSize;
+    double_complex* a, *b, *vl, *vr, *alpha, *beta;
+    double* rwork;
+    double_complex* work;
+}utility_zeigmp_data;
+
+void utility_zeigmp_create(void** const phWork, int maxDim)
+{
+    *phWork = malloc1d(sizeof(utility_zeigmp_data));
+    utility_zeigmp_data *h = (utility_zeigmp_data*)(*phWork);
+
+    h->maxDim = maxDim;
+    h->currentWorkSize = 4*maxDim;
+    h->rwork = malloc1d(4*(h->currentWorkSize)*sizeof(double));
+    h->a = malloc1d(maxDim*maxDim*sizeof(double_complex));
+    h->b = malloc1d(maxDim*maxDim*sizeof(double_complex));
+    h->vl = malloc1d(maxDim*maxDim*sizeof(double_complex));
+    h->vr = malloc1d(maxDim*maxDim*sizeof(double_complex));
+    h->alpha = malloc1d(maxDim*sizeof(double_complex));
+    h->beta = malloc1d(maxDim*sizeof(double_complex));
+    h->work = malloc1d(h->currentWorkSize*sizeof(double_complex));
+}
+
+void utility_zeigmp_destroy(void ** const phWork)
+{
+    utility_zeigmp_data *h = (utility_zeigmp_data*)(*phWork);
+
+    if(h!=NULL){
+        free(h->rwork);
+        free(h->a);
+        free(h->b);
+        free(h->vl);
+        free(h->vr);
+        free(h->alpha);
+        free(h->beta);
+        free(h->work);
+
+        free(h);
+        h=NULL;
+        *phWork = NULL;
+     }
 }
 
 void utility_zeigmp
 (
+    void* const hWork,
     const double_complex* A,
     const double_complex* B,
     const int dim,
@@ -1558,44 +1692,42 @@ void utility_zeigmp
     double_complex* D
 )
 {
+    utility_zeigmp_data *h;
     veclib_int i, j;
     veclib_int n, lda, ldb, ldvl, ldvr, info;
-    double_complex* a, *b, *vl, *vr, *alpha, *beta;
     veclib_int lwork;
-    double* rwork;
-    double_complex* work;
     
     n = lda = ldb = ldvl = ldvr = dim;
-    a = malloc1d(dim*dim*sizeof(double_complex));
-    b = malloc1d(dim*dim*sizeof(double_complex));
-    vl = malloc1d(dim*dim*sizeof(double_complex));
-    vr = malloc1d(dim*dim*sizeof(double_complex));
-    alpha = malloc1d(dim*sizeof(double_complex));
-    beta = malloc1d(dim*sizeof(double_complex));
+
+    /* Work struct */
+    if(hWork==NULL)
+        utility_zeigmp_create((void**)&h, dim);
+    else{
+        h = (utility_zeigmp_data*)(hWork);
+#ifndef NDEBUG
+        saf_assert(dim<=h->maxDim, "dim exceeds the maximum length specified");
+#endif
+    }
     
     /* store in column major order */
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
-            a[j*dim+i] = A[i*dim+j];
+            h->a[j*dim+i] = A[i*dim+j];
     for(i=0; i<dim; i++)
         for(j=0; j<dim; j++)
-            b[j*dim+i] = B[i*dim+j]; /* store in column major order */
+            h->b[j*dim+i] = B[i*dim+j]; /* store in column major order */
     
     /* solve eigen problem */
-    lwork = 4*n; /* 2x more than required, but is faster */
-    work = malloc1d(lwork*sizeof(double_complex));
-    rwork = malloc1d(4*lwork*sizeof(double)); /* 2x more than required, but is faster */
+    lwork = h->currentWorkSize;
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    zggev_("V", "V", &n, (veclib_double_complex*)a, &lda, (veclib_double_complex*)b, &ldb, (veclib_double_complex*)alpha, (veclib_double_complex*)beta,
-           (veclib_double_complex*)vl, &ldvl, (veclib_double_complex*)vr, &ldvr, (veclib_double_complex*)work, &lwork, rwork, &info);
+    zggev_("V", "V", &n, (veclib_double_complex*)h->a, &lda, (veclib_double_complex*)h->b, &ldb, (veclib_double_complex*)h->alpha, (veclib_double_complex*)h->beta,
+           (veclib_double_complex*)h->vl, &ldvl, (veclib_double_complex*)h->vr, &ldvr, (veclib_double_complex*)h->work, &lwork, h->rwork, &info);
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_zggev_work(CblasColMajor, 'V', 'V', n, (veclib_double_complex*)a, lda, (veclib_double_complex*)b, ldb, (veclib_double_complex*)alpha, (veclib_double_complex*)beta,
-                              (veclib_double_complex*)vl, ldvl, (veclib_double_complex*)vr, ldvr, (veclib_double_complex*)work, lwork, rwork);
+    info = LAPACKE_zggev_work(CblasColMajor, 'V', 'V', n, (veclib_double_complex*)h->a, lda, (veclib_double_complex*)h->b, ldb, (veclib_double_complex*)h->alpha, (veclib_double_complex*)h->beta,
+                              (veclib_double_complex*)h->vl, ldvl, (veclib_double_complex*)h->vr, ldvr, (veclib_double_complex*)h->work, lwork, h->rwork);
 #endif
-    free(work);
-    free(rwork);
     
     if(D!=NULL)
         memset(D, 0, dim*dim*sizeof(double_complex));
@@ -1618,24 +1750,20 @@ void utility_zeigmp
     else{
         if(D!=NULL)
             for(i=0; i<dim; i++)
-                D[i*dim+i] = ccdiv(alpha[i],beta[i]);
+                D[i*dim+i] = ccdiv(h->alpha[i],h->beta[i]);
         
         if(VL!=NULL)
             for(i=0; i<dim; i++)
                 for(j=0; j<dim; j++)
-                    VL[i*dim+j] = vl[j*dim+i];
+                    VL[i*dim+j] = h->vl[j*dim+i];
         if(VR!=NULL)
             for(i=0; i<dim; i++)
                 for(j=0; j<dim; j++)
-                    VR[i*dim+j] = vr[j*dim+i];
+                    VR[i*dim+j] = h->vr[j*dim+i];
     }
-    
-    free(a);
-    free(b);
-    free(vl);
-    free(vr);
-    free(alpha);
-    free(beta);
+
+    if(hWork == NULL)
+        utility_zeigmp_destroy((void**)&h);
 }
 
 
@@ -1673,7 +1801,7 @@ void utility_ceig
 
     /* Query how much "work" memory is required */
     lwork = -1;
-    rwork = malloc1d(2*dim*sizeof(float));
+    rwork = malloc1d(4*dim*sizeof(float));
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     cgeev_( "Vectors", "Vectors", &n, (veclib_float_complex*)a, &lda, (veclib_float_complex*)w, (veclib_float_complex*)vl, &ldvl,
            (veclib_float_complex*)vr, &ldvr, (veclib_float_complex*)&wkopt, &lwork, rwork, &info );
@@ -1771,7 +1899,7 @@ void utility_zeig
 
     /* Query how much "work" memory is required */
     lwork = -1;
-    rwork = malloc1d(2*dim*sizeof(double));
+    rwork = malloc1d(4*dim*sizeof(double));
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
     zgeev_( "Vectors", "Vectors", &n, (veclib_double_complex*)a, &lda, (veclib_double_complex*)w, (veclib_double_complex*)vl, &ldvl,
            (veclib_double_complex*)vr, &ldvr, (veclib_double_complex*)&wkopt, &lwork, rwork, &info );

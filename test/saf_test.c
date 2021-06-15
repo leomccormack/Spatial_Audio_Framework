@@ -1610,7 +1610,7 @@ void test__tracker3d(void){
                     FLATTEN2D(inputSH_hop), hopsize,
                     FLATTEN2D(inputSH_hop), hopsize, 0.0f,
                     FLATTEN2D(Cx), nSH);
-        utility_sseig(FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
+        utility_sseig(NULL, FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
         for(i=0; i<nSH; i++)
             for(j=0, k=nSources; j<nSH-nSources; j++, k++)
                 Vn[i][j] = V[i][k];
@@ -2515,7 +2515,7 @@ void test__sphMUSIC(void){
     /* Eigenvalue decomposition and truncation of eigen vectors to obtain
      * noise subspace (based on source number) */
     V = (float**)malloc2d(nSH, nSH, sizeof(float));
-    utility_sseig(FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
+    utility_sseig(NULL, FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
     Vn = (float**)malloc2d(nSH, (nSH-nSrcs), sizeof(float)); /* noise subspace */
     for(i=0; i<nSH; i++)
         for(j=0, k=nSrcs; j<nSH-nSrcs; j++, k++)

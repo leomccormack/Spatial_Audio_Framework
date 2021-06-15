@@ -827,6 +827,7 @@ void utility_csvd(/* Input Arguments */
  *                         needed); dim x 1
  */
 void utility_sseig(/* Input Arguments */
+                   void* const hWork,
                    const float* A,
                    const int dim,
                    int sortDecFLAG,
@@ -904,6 +905,7 @@ void utility_cseig(/* Input Arguments */
  *                 FLAT: dim x dim
  */
 void utility_ceigmp(/* Input Arguments */
+                    void* const hWork,
                     const float_complex* A,
                     const float_complex* B,
                     const int dim,
@@ -930,6 +932,7 @@ void utility_ceigmp(/* Input Arguments */
  *                 FLAT: dim x dim
  */
 void utility_zeigmp(/* Input Arguments */
+                    void* const hWork,
                     const double_complex* A,
                     const double_complex* B,
                     const int dim,
