@@ -190,7 +190,6 @@ void binauraliser_process
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     int ch, ear, i, band, nSources;
     float src_dirs[MAX_NUM_INPUTS][2], Rxyz[3][3], hypotxy;
-    float_complex scaleC;
     int enableRotation;
 
     /* copy user parameters to local variables */
@@ -249,9 +248,8 @@ void binauraliser_process
                     cblas_caxpy(TIME_SLOTS, &pData->hrtf_interp[ch][band][ear], pData->inputframeTF[band][ch], 1, pData->outputframeTF[band][ear], 1);
         }
 
-        /* scale by number of sources */
-        scaleC = cmplxf(1.0f/sqrtf((float)nSources), 0.0f);
-        cblas_cscal(HYBRID_BANDS*NUM_EARS*TIME_SLOTS, &scaleC, FLATTEN3D(pData->outputframeTF), 1);
+        /* scale by number of sources */ 
+        cblas_sscal(/*re+im*/2*HYBRID_BANDS*NUM_EARS*TIME_SLOTS, 1.0f/sqrtf((float)nSources), (float*)FLATTEN3D(pData->outputframeTF), 1);
 
         /* inverse-TFT */
         afSTFT_backward_knownDimensions(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, NUM_EARS, TIME_SLOTS, pData->outframeTD);

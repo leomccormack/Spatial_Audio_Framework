@@ -391,7 +391,7 @@ void ambi_bin_process
     int ch, i, j, band;
     const float_complex calpha = cmplxf(1.0f,0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float Rxyz[3][3];
-    float* M_rot_tmp;
+    float M_rot_tmp[MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS];
     
     /* local copies of user parameters */
     int order, nSH, enableRot;
@@ -435,13 +435,11 @@ void ambi_bin_process
             if(pData->recalc_M_rotFLAG){
                 /* Compute the new SH rotation matrix */
                 memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float_complex));
-                M_rot_tmp = malloc1d(nSH*nSH * sizeof(float));
                 yawPitchRoll2Rzyx(pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
-                getSHrotMtxReal(Rxyz, M_rot_tmp, order);
+                getSHrotMtxReal(Rxyz, (float*)M_rot_tmp, order);
                 for (i = 0; i < nSH; i++)
                     for (j = 0; j < nSH; j++)
                         pData->M_rot[i][j] = cmplxf(M_rot_tmp[i*nSH + j], 0.0f);
-                free(M_rot_tmp);
 
                 /* Bake the rotation into the decoding matrix */
                 for(band = 0; band < HYBRID_BANDS; band++) {

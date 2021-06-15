@@ -109,7 +109,7 @@ void rotator_process
     rotator_data *pData = (rotator_data*)(hRot);
     int i, j, order, nSH, mixWithPreviousFLAG;
     float Rxyz[3][3];
-    float* M_rot_tmp;
+    float M_rot_tmp[MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS];
     CH_ORDER chOrdering;
 
     /* locals */
@@ -136,7 +136,6 @@ void rotator_process
             mixWithPreviousFLAG = 0;
             if(pData->M_rot_status != M_ROT_READY){
                 memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
-                M_rot_tmp = malloc1d(nSH*nSH*sizeof(float));
                 if(pData->M_rot_status == M_ROT_RECOMPUTE_EULER){
                     yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
                     euler2Quaternion(pData->yaw, pData->pitch, pData->roll, 0,
@@ -147,11 +146,10 @@ void rotator_process
                     quaternion2euler(&(pData->Q), 0, pData->useRollPitchYawFlag ? EULER_ROTATION_ROLL_PITCH_YAW : EULER_ROTATION_YAW_PITCH_ROLL,
                                      &(pData->yaw), &(pData->pitch), &(pData->roll));
                 }
-                getSHrotMtxReal(Rxyz, M_rot_tmp, order);
+                getSHrotMtxReal(Rxyz, (float*)M_rot_tmp, order);
                 for(i=0; i<nSH; i++)
                     for(j=0; j<nSH; j++)
                         pData->M_rot[i][j] = M_rot_tmp[i*nSH+j];
-                free(M_rot_tmp);
                 mixWithPreviousFLAG = 1;
                 pData->M_rot_status = M_ROT_READY;
             }

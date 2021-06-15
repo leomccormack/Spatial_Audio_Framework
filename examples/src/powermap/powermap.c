@@ -196,7 +196,7 @@ void powermap_analysis
     float C_grp_trace, pmapEQ_band;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float_complex new_Cx[MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS];
-    float_complex* C_grp;
+    float_complex C_grp[MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS];
     
     /* local parameters */
     int analysisOrderPerBand[HYBRID_BANDS];
@@ -277,7 +277,6 @@ void powermap_analysis
                 nSH_maxOrder = (maxOrder+1)*(maxOrder+1);
 
                 /* group covarience matrices */
-                C_grp = calloc1d(nSH_maxOrder*nSH_maxOrder, sizeof(float_complex));
                 for (band=0; band<HYBRID_BANDS; band++){
                     order_band = SAF_MAX(SAF_MIN(pData->analysisOrderPerBand[band], masterOrder),1);
                     nSH_order = (order_band+1)*(order_band+1);
@@ -294,52 +293,51 @@ void powermap_analysis
                 switch(pmap_mode){
                     default:
                     case PM_MODE_PWD:
-                        generatePWDmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], pars->grid_nDirs, pData->pmap);
+                        generatePWDmap(maxOrder, (float_complex*)C_grp, pars->Y_grid_cmplx[maxOrder-1], pars->grid_nDirs, pData->pmap);
                         break;
 
                     case PM_MODE_MVDR:
                         if(C_grp_trace>1e-8f)
-                            generateMVDRmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], pars->grid_nDirs, 8.0f, pData->pmap, NULL);
+                            generateMVDRmap(maxOrder, (float_complex*)C_grp, pars->Y_grid_cmplx[maxOrder-1], pars->grid_nDirs, 8.0f, pData->pmap, NULL);
                         else
                             memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
                         break;
 
                     case PM_MODE_CROPAC_LCMV:
                         if(C_grp_trace>1e-8f)
-                            generateCroPaCLCMVmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], pars->grid_nDirs, 8.0f, 0.0f, pData->pmap);
+                            generateCroPaCLCMVmap(maxOrder, (float_complex*)C_grp, pars->Y_grid_cmplx[maxOrder-1], pars->grid_nDirs, 8.0f, 0.0f, pData->pmap);
                         else
                             memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
                         break;
 
                     case PM_MODE_MUSIC:
                         if(C_grp_trace>1e-8f)
-                            generateMUSICmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 0, pData->pmap);
+                            generateMUSICmap(maxOrder, (float_complex*)C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 0, pData->pmap);
                         else
                             memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
                         break;
 
                     case PM_MODE_MUSIC_LOG:
                         if(C_grp_trace>1e-8f)
-                            generateMUSICmap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 1, pData->pmap);
+                            generateMUSICmap(maxOrder, (float_complex*)C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 1, pData->pmap);
                         else
                             memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
                         break;
 
                     case PM_MODE_MINNORM:
                         if(C_grp_trace>1e-8f)
-                            generateMinNormMap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 0, pData->pmap);
+                            generateMinNormMap(maxOrder, (float_complex*)C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 0, pData->pmap);
                         else
                             memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
                         break;
 
                     case PM_MODE_MINNORM_LOG:
                         if(C_grp_trace>1e-8f)
-                            generateMinNormMap(maxOrder, C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 1, pData->pmap);
+                            generateMinNormMap(maxOrder, (float_complex*)C_grp, pars->Y_grid_cmplx[maxOrder-1], nSources, pars->grid_nDirs, 1, pData->pmap);
                         else
                             memset(pData->pmap, 0, pars->grid_nDirs*sizeof(float));
                         break;
                 }
-                free(C_grp);
 
                 /* average powermap over time */
                 for(i=0; i<pars->grid_nDirs; i++)

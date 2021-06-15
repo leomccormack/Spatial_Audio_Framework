@@ -169,7 +169,6 @@ void decorrelator_process
     decorrelator_data *pData = (decorrelator_data*)(hDecor);
     int ch, i, band, enableTransientDucker, compensateLevel;
     float decorAmount;
-    float_complex scalec, scalec2;
     
     /* local copies of user parameters */
     int nCH;
@@ -203,24 +202,21 @@ void decorrelator_process
 
         /* Optionally compensate for the level (as they channels wll no longer sum coherently) */
         if(compensateLevel){
-            scalec = cmplxf(0.75f*(float)nCH/(sqrtf((float)nCH)), 0.0f);
             for(band=0; band<HYBRID_BANDS; band++)
-                cblas_cscal(nCH*TIME_SLOTS, &scalec, FLATTEN2D(pData->OutputFrameTF[band]), 1);
+                cblas_sscal(/*re+im*/2*nCH*TIME_SLOTS, 0.75f*(float)nCH/(sqrtf((float)nCH)), (float*)FLATTEN2D(pData->OutputFrameTF[band]), 1);
         }
 
         /* re-introduce the transient part */
         if(enableTransientDucker){
-            scalec =  cmplxf(1.0f, 0.0f);//!compensateLevel ? cmplxf(1.25f*(sqrtf((float)nCH)/(float)nCH), 0.0f) : cmplxf(1.0f, 0.0f);
+            //scalec =  cmplxf(1.0f, 0.0f);//!compensateLevel ? cmplxf(1.25f*(sqrtf((float)nCH)/(float)nCH), 0.0f) : cmplxf(1.0f, 0.0f);
             for(band=0; band<HYBRID_BANDS; band++)
-                cblas_caxpy(nCH*TIME_SLOTS, &scalec, FLATTEN2D(pData->transientFrameTF[band]), 1, FLATTEN2D(pData->OutputFrameTF[band]), 1);
+                cblas_saxpy(/*re+im*/2*nCH*TIME_SLOTS, 1.0f, (float*)FLATTEN2D(pData->transientFrameTF[band]), 1, (float*)FLATTEN2D(pData->OutputFrameTF[band]), 1);
         }
 
-        /* Mix  thedecorrelated audio with the input non-decorrelated audio */
-        scalec = cmplxf(decorAmount, 0.0f);
-        scalec2 = cmplxf(1.0f-decorAmount, 0.0f);
+        /* Mix  thedecorrelated audio with the input non-decorrelated audio */ 
         for(band=0; band<HYBRID_BANDS; band++){
-            cblas_cscal(nCH*TIME_SLOTS, &scalec, FLATTEN2D(pData->OutputFrameTF[band]), 1);
-            cblas_caxpy(nCH*TIME_SLOTS, &scalec2, FLATTEN2D(pData->InputFrameTF[band]), 1, FLATTEN2D(pData->OutputFrameTF[band]), 1);
+            cblas_sscal(/*re+im*/2*nCH*TIME_SLOTS, decorAmount, (float*)FLATTEN2D(pData->OutputFrameTF[band]), 1);
+            cblas_saxpy(/*re+im*/2*nCH*TIME_SLOTS, 1.0f-decorAmount, (float*)FLATTEN2D(pData->InputFrameTF[band]), 1, (float*)FLATTEN2D(pData->OutputFrameTF[band]), 1);
         }
 
         /* inverse-TFT */

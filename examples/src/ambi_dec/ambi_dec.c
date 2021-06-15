@@ -465,7 +465,6 @@ void ambi_dec_process
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     ambi_dec_codecPars* pars = pData->pars;
     int ch, ear, i, band, orderBand, nSH_band, decIdx, nSH;
-    float_complex scaleC;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
     /* local copies of user parameters */
@@ -534,8 +533,8 @@ void ambi_dec_process
             }
 
             /* Apply scaling to preserve either the amplitude or energy when the decododing orders are different over frequency */
-            scaleC = diffEQmode[decIdx]==AMPLITUDE_PRESERVING ? cmplxf(pars->M_norm[decIdx][orderBand-1][0], 0.0f) : cmplxf(pars->M_norm[decIdx][orderBand-1][1], 0.0f);
-            cblas_cscal(nLoudspeakers*TIME_SLOTS, &scaleC, FLATTEN2D(pData->outputframeTF[band]), 1);
+            cblas_sscal(/*re+im*/2*nLoudspeakers*TIME_SLOTS, pars->M_norm[decIdx][orderBand-1][diffEQmode[decIdx]==AMPLITUDE_PRESERVING ? 0 : 1],
+                        (float*)FLATTEN2D(pData->outputframeTF[band]), 1);
         }
 
         /* Binauralise the loudspeaker signals */
@@ -558,8 +557,7 @@ void ambi_dec_process
             }
 
             /* Scale by sqrt(number of loudspeakers) */
-            scaleC = cmplxf(1.0f/sqrtf((float)nLoudspeakers), 0.0f);
-            cblas_cscal(HYBRID_BANDS*NUM_EARS*TIME_SLOTS, &scaleC, FLATTEN3D(pData->binframeTF), 1);
+            cblas_sscal(/*re+im*/2*HYBRID_BANDS*NUM_EARS*TIME_SLOTS, 1.0f/sqrtf((float)nLoudspeakers), (float*)FLATTEN3D(pData->binframeTF), 1);
         }
 
         /* inverse-TFT */
