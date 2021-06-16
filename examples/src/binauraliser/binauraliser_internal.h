@@ -32,13 +32,9 @@
 #ifndef __BINAURALISER_INTERNAL_H_INCLUDED__
 #define __BINAURALISER_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-#include "binauraliser.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "binauraliser.h"  /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,15 +47,9 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 128 )
 #endif
-#define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
-#ifndef DEG2RAD
-# define DEG2RAD(x) (x * M_PI / 180.0f)
-#endif
-#ifndef RAD2DEG
-# define RAD2DEG(x) (x * 180.0f / M_PI)
-#endif
+#define HOP_SIZE ( 128 )                     /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
+#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
 #if (FRAME_SIZE % HOP_SIZE != 0)
 # error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
@@ -105,10 +95,10 @@ typedef struct _binauraliser
     float_complex hrtf_interp[MAX_NUM_INPUTS][HYBRID_BANDS][NUM_EARS];
     
     /* flags/status */
-    CODEC_STATUS codecStatus;
-    float progressBar0_1;
-    char* progressBarText;
-    PROC_STATUS procStatus;
+    CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
+    float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;          /**< Current (re)initialisation step, string */
+    PROC_STATUS procStatus;         /**< see #PROC_STATUS */
     int recalc_hrtf_interpFLAG[MAX_NUM_INPUTS];
     int reInitHRTFsAndGainTables;
     int recalc_M_rotFLAG;
@@ -140,9 +130,7 @@ typedef struct _binauraliser
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/**
- * Sets codec status (see #CODEC_STATUS enum)
- */
+/** Sets codec status (see #CODEC_STATUS enum) */
 void binauraliser_setCodecStatus(void* const hBin,
                                  CODEC_STATUS newStatus);
 

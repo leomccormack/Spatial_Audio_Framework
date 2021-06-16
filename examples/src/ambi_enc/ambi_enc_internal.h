@@ -25,12 +25,9 @@
 #ifndef __AMBI_ENC_INTERNAL_H_INCLUDED__
 #define __AMBI_ENC_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include "ambi_enc.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "ambi_enc.h"      /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,8 +40,6 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 64 ) 
 #endif
-#define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1) ) /* (L+1)^2 */
-
 
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -76,8 +71,8 @@ typedef struct _ambi_enc
     /* user parameters */
     int nSources;
     float src_dirs_deg[MAX_NUM_INPUTS][2];
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
+    CH_ORDER chOrdering;                 /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                     /**< Ambisonic normalisation convention (see #NORM_TYPES) */
     SH_ORDERS order;
     int enablePostScaling;
     

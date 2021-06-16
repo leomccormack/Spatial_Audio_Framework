@@ -26,12 +26,9 @@
 #ifndef __DECORRELATOR_INTERNAL_H_INCLUDED__
 #define __DECORRELATOR_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include "decorrelator.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "decorrelator.h"  /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,9 +41,9 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 128 )
 #endif
-#define HOP_SIZE ( 128 ) /* STFT hop size */
-#define HYBRID_BANDS ( 133 )
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )  
+#define HOP_SIZE ( 128 )                     /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
+#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
 #if (FRAME_SIZE % HOP_SIZE != 0)
 # error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
@@ -75,12 +72,12 @@ typedef struct _decorrelator
     /* our codec configuration */
     void* hDecor; 
     void* hDucker;
-    CODEC_STATUS codecStatus;
-    float progressBar0_1;
-    char* progressBarText;
+    CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
+    float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;          /**< Current (re)initialisation step, string */
     
     /* internal variables */
-    PROC_STATUS procStatus;
+    PROC_STATUS procStatus;         /**< see #PROC_STATUS */
     int new_nChannels;
 
     /* user parameters */

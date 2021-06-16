@@ -25,12 +25,9 @@
 #ifndef __AMBI_ROOMSIM_INTERNAL_H_INCLUDED__
 #define __AMBI_ROOMSIM_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include "ambi_roomsim.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "ambi_roomsim.h"  /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,8 +40,6 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 128 )
 #endif
-#define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1) ) /* (L+1)^2 */
-
 
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -84,8 +79,8 @@ typedef struct _ambi_roomsim
     float abs_wall[6];        /**< Absorption coefficients per wall, in the order in which the axis intersect walls: +x -x +y -y +z -z */
     float src_pos[ROOM_SIM_MAX_NUM_SOURCES][3];   /**< Current source Cartesian coordinates, meters */
     float rec_pos[ROOM_SIM_MAX_NUM_RECEIVERS][3]; /**< Current receiver Cartesian coordinates, meters */
-    CH_ORDER chOrdering;      /**< see #CH_ORDER */
-    NORM_TYPES norm;          /**< see #NORM_TYPES */
+    CH_ORDER chOrdering;      /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;          /**< Ambisonic normalisation convention (see #NORM_TYPES) */
     
 } ambi_roomsim_data;
     

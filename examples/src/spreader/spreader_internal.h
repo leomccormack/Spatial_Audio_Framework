@@ -25,13 +25,9 @@
 #ifndef __SPREADER_INTERNAL_H_INCLUDED__
 #define __SPREADER_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-#include "spreader.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "spreader.h"      /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,16 +40,10 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 512 )
 #endif
-#define MAX_SPREAD_FREQ ( 16e3f )
-#define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
-#ifndef DEG2RAD
-# define DEG2RAD(x) (x * SAF_PI / 180.0f)
-#endif
-#ifndef RAD2DEG
-# define RAD2DEG(x) (x * 180.0f / SAF_PI)
-#endif
+#define MAX_SPREAD_FREQ ( 16e3f )            /**< Maximum spread frequency, above which no spreading occurs */
+#define HOP_SIZE ( 128 )                     /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
+#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
 #if (FRAME_SIZE % HOP_SIZE != 0)
 # error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
@@ -117,10 +107,10 @@ typedef struct _spreader
     float_complex* Cr_cmplx;           /**< Residual covariance; FLAT: Q x Q */
  
     /* flags/status */
-    CODEC_STATUS codecStatus;
-    float progressBar0_1;
-    char* progressBarText;
-    PROC_STATUS procStatus;
+    CODEC_STATUS codecStatus;          /**< see #CODEC_STATUS */
+    float progressBar0_1;              /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;             /**< Current (re)initialisation step, string */
+    PROC_STATUS procStatus;            /**< see #PROC_STATUS */
     int new_nSources;
     SPREADER_PROC_MODES new_procMode;
 

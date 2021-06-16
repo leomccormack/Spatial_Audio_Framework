@@ -24,13 +24,9 @@
 #ifndef __MULTICONV_INTERNAL_H_INCLUDED__
 #define __MULTICONV_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <assert.h>
-#include "multiconv.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "multiconv.h"     /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,14 +37,7 @@ extern "C" {
 /* ========================================================================== */
 
 #define MIN_FRAME_SIZE ( 512 )
-#define MAX_FRAME_SIZE ( 8192 ) 
-#ifndef DEG2RAD
-# define DEG2RAD(x) (x * PI / 180.0f)
-#endif
-#ifndef RAD2DEG
-# define RAD2DEG(x) (x * 180.0f / PI)
-#endif
-    
+#define MAX_FRAME_SIZE ( 8192 )
     
 /* ========================================================================== */
 /*                                 Structures                                 */

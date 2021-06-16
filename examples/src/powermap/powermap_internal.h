@@ -31,14 +31,9 @@
 #ifndef __POWERMAP_INTERNAL_H_INCLUDED__
 #define __POWERMAP_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <float.h>
-#include "powermap.h"
-
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "powermap.h"      /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,15 +46,11 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 1024 ) 
 #endif
-#define MAX_SH_ORDER ( 7 )
-#define HOP_SIZE ( 128 )                   /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )      /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /* Processing relies on fdHop = 16 */
+#define HOP_SIZE ( 128 )                     /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
+#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
 #define NUM_DISP_SLOTS ( 2 )
 #define MAX_COV_AVG_COEFF ( 0.45f )    /*  */
-#ifndef M_PI
-# define M_PI ( 3.14159265359f )
-#endif
 #if (FRAME_SIZE % HOP_SIZE != 0)
 # error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
@@ -109,10 +100,10 @@ typedef struct _powermap
     int dispWidth;
     
     /* ana configuration */
-    CODEC_STATUS codecStatus;
-    PROC_STATUS procStatus;
-    float progressBar0_1;
-    char* progressBarText;
+    CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
+    PROC_STATUS procStatus;         /**< see #PROC_STATUS */
+    float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;          /**< Current (re)initialisation step, string */
     powermap_codecPars* pars;                                          /* codec parameters */
     
     /* display */
@@ -135,8 +126,8 @@ typedef struct _powermap
     float pmapAvgCoeff;
     int nSources;
     POWERMAP_MODES pmap_mode;
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
+    CH_ORDER chOrdering;                 /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                     /**< Ambisonic normalisation convention (see #NORM_TYPES) */
     
 } powermap_data;
 
@@ -145,14 +136,10 @@ typedef struct _powermap
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/**
- * Sets codec status (see #CODEC_STATUS enum)
- */
+/** Sets codec status (see #CODEC_STATUS enum) */
 void powermap_setCodecStatus(void* const hPm, CODEC_STATUS newStatus);
 
-/**
- * Intialises the codec variables, based on current global/user parameters
- */
+/** Intialises the codec variables, based on current global/user parameters */
 void powermap_initAna(void* const hPm);
 
 /**

@@ -33,12 +33,9 @@
 #ifndef __ROTATOR_INTERNAL_H_INCLUDED__
 #define __ROTATOR_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include "rotator.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "rotator.h"       /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,12 +47,6 @@ extern "C" {
 
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 64 ) 
-#endif
-#ifndef DEG2RAD
-# define DEG2RAD(x) (x * SAF_PI / 180.0f)
-#endif
-#ifndef RAD2DEG
-# define RAD2DEG(x) (x * 180.0f / SAF_PI)
 #endif
 
 /** Available Ambisonic channel ordering conventions */

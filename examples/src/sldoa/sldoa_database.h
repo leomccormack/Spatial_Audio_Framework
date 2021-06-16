@@ -1,8 +1,10 @@
-/*
-    Leo McCormack
-    ../../database/sldoa_database/sldoa_database.h
-    Generated using MatLab on: 12-Feb-2018 
-*/
+/**
+ * @file sldoa_database.h
+ * @brief A spatially-localised active-intensity (SLAI) based direction-of-
+ *        arrival estimator (SLDoA)
+ * @author Leo McCormack
+ * @date 12.02.2018
+ */
 
 #ifndef __SLDOA_DATABASE_INCLUDED__
 #define __SLDOA_DATABASE_INCLUDED__

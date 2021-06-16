@@ -43,13 +43,9 @@
 #ifndef __PANNER_INTERNAL_H_INCLUDED__
 #define __PANNER_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-#include "panner.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "panner.h"        /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -59,20 +55,14 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define FORCE_3D_LAYOUT /* Even 2D loudspeaker setups will use 3D VBAP, with 2 virtual loudspeakers on the top/bottom */
+#define FORCE_3D_LAYOUT /**< To force 2D loudspeaker setups to use 3D VBAP (i.e. with 2 virtual loudspeakers on the top/bottom) */
 
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 128 ) 
 #endif
-#define HOP_SIZE ( 128 )                            /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )               /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )        /* 4/8/16 */
-#ifndef DEG2RAD
-# define DEG2RAD(x) (x * SAF_PI / 180.0f)
-#endif
-#ifndef RAD2DEG
-# define RAD2DEG(x) (x * 180.0f / SAF_PI)
-#endif
+#define HOP_SIZE ( 128 )                     /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
+#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
 #if (FRAME_SIZE % HOP_SIZE != 0)
 # error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
@@ -105,10 +95,10 @@ typedef struct _panner
     float_complex G_src[HYBRID_BANDS][MAX_NUM_INPUTS][MAX_NUM_OUTPUTS];
     
     /* flags */
-    CODEC_STATUS codecStatus;
-    PROC_STATUS procStatus;
-    float progressBar0_1;
-    char* progressBarText;
+    CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
+    PROC_STATUS procStatus;         /**< see #PROC_STATUS */
+    float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;          /**< Current (re)initialisation step, string */
     int recalc_gainsFLAG[MAX_NUM_INPUTS];
     int recalc_M_rotFLAG;
     int reInitGainTables;
@@ -139,9 +129,7 @@ typedef struct _panner
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/**
- * Sets codec status (see #CODEC_STATUS enum)
- */
+/** Sets codec status (see #CODEC_STATUS enum) */
 void panner_setCodecStatus(void* const hPan, CODEC_STATUS newStatus);
     
 /**

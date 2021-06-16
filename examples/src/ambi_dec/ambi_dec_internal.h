@@ -45,12 +45,9 @@
 #ifndef __AMBI_DEC_INTERNAL_H_INCLUDED__
 #define __AMBI_DEC_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include "ambi_dec.h" 
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "ambi_dec.h"      /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -63,12 +60,12 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 128 ) 
 #endif
-#define HOP_SIZE ( 128 )                      /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )         /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )  /* 4/8/16 */ 
-#define MAX_NUM_LOUDSPEAKERS ( MAX_NUM_OUTPUTS ) /* Maximum permitted channels for the VST standard */
-#define MIN_NUM_LOUDSPEAKERS ( 4 )            /* To help avoid traingulation errors when using AllRAD */ 
-#define NUM_DECODERS ( 2 )                    /* one for low-frequencies and another for high-frequencies */
+#define HOP_SIZE ( 128 )                         /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )            /**< Number of frequency bands */
+#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )     /**< Number of STFT timeslots */
+#define MAX_NUM_LOUDSPEAKERS ( MAX_NUM_OUTPUTS ) /**< Maximum permitted output channels */
+#define MIN_NUM_LOUDSPEAKERS ( 4 )               /**< To avoid triangulation errors when using AllRAD */
+#define NUM_DECODERS ( 2 )                       /**< One for low-frequencies and another for high-frequencies */
 #if (FRAME_SIZE % HOP_SIZE != 0)
 # error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif

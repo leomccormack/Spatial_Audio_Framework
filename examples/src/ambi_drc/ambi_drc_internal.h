@@ -39,12 +39,9 @@
 #ifndef __AMBI_DRC_INTERNAL_H_INCLUDED__
 #define __AMBI_DRC_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include "ambi_drc.h" 
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "ambi_drc.h"      /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,9 +54,9 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 128 ) 
 #endif
-#define HOP_SIZE ( 128 )  /* STFT hop size, can be flexible, but only 'hybrid' mode afSTFT is supported (i.e. non uniform) */
-#define TIME_SLOTS ( FRAME_SIZE/HOP_SIZE ) /* time-frequency domain frame size */
-#define HYBRID_BANDS ( HOP_SIZE + 5 ) /* hybrid mode incurs an additional 5 bands  */
+#define HOP_SIZE ( 128 )                     /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
+#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
 #if (FRAME_SIZE % HOP_SIZE != 0)
 # error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
@@ -96,8 +93,8 @@ typedef struct _ambi_drc
 
     /* user parameters */
     float theshold, ratio, knee, inGain, outGain, attack_ms, release_ms;
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
+    CH_ORDER chOrdering;                 /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                     /**< Ambisonic normalisation convention (see #NORM_TYPES) */
     SH_ORDERS currentOrder;
     
 } ambi_drc_data;
@@ -111,9 +108,7 @@ float ambi_drc_gainComputer(float xG, float T, float R, float W);
 
 float ambi_drc_smoothPeakDetector(float xL, float yL_z1, float alpha_a, float alpha_r);
     
-/**
- * Initialise the filterbank used by ambi_drc.
- */
+/** Initialise the filterbank used by ambi_drc */
 void ambi_drc_initTFT(void* const hAmbi);
 
 void ambi_drc_setInputOrder(SH_ORDERS inOrder, int* nSH);

@@ -24,13 +24,9 @@
 #ifndef __MATRIXCONV_INTERNAL_H_INCLUDED__
 #define __MATRIXCONV_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <assert.h>
-#include "matrixconv.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "matrixconv.h"    /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,7 +39,6 @@ extern "C" {
 #define MIN_FRAME_SIZE ( 512 )
 #define MAX_FRAME_SIZE ( 8192 ) 
 #define MAX_NUM_CHANNELS_FOR_WAV ( 1024 )
-    
     
 /* ========================================================================== */
 /*                                 Structures                                 */

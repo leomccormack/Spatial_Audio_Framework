@@ -26,12 +26,9 @@
 #ifndef __BEAMFORMER_INTERNAL_H_INCLUDED__
 #define __BEAMFORMER_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include "beamformer.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "beamformer.h"    /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,11 +41,7 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 128 ) 
 #endif
-#define HOP_SIZE ( 128 )                         /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )            /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )     /* 4/8/16 */
-#define MAX_NUM_BEAMS ( MAX_NUM_OUTPUTS ) /* Maximum permitted channels for the VST standard */
-
+#define MAX_NUM_BEAMS ( MAX_NUM_OUTPUTS ) /**< Maximum permitted number of beams/output channels */
 
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -81,8 +74,8 @@ typedef struct _beamformer
     int nBeams;                              /**< number of loudspeakers/virtual loudspeakers */
     float beam_dirs_deg[MAX_NUM_BEAMS][2];   /**< beam directions in degrees [azi, elev] */
     STATIC_BEAM_TYPES beamType;              /**< see #STATIC_BEAM_TYPES enum */
-    CH_ORDER chOrdering;                     /**< only ACN is supported */
-    NORM_TYPES norm;                         /**< N3D or SN3D */
+    CH_ORDER chOrdering;                     /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                         /**< Ambisonic normalisation convention (see #NORM_TYPES) */
     
 } beamformer_data;
 

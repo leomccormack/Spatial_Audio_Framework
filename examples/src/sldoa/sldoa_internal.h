@@ -45,14 +45,10 @@
 #ifndef __SLDOA_INTERNAL_H_INCLUDED__
 #define __SLDOA_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <float.h>
-#include "sldoa.h"
-#include "sldoa_database.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "sldoa.h"         /* Include header for this example */
+#include "sldoa_database.h"/* Database header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -83,9 +79,7 @@ extern "C" {
 /*                                 Structures                                 */
 /* ========================================================================== */
    
-/**
- * Main struct for sldoa
- */
+/** Main struct for sldoa */
 typedef struct _sldoa
 {
     /* FIFO buffers */
@@ -100,10 +94,10 @@ typedef struct _sldoa
     float fs;
       
     /* ana configuration */
-    CODEC_STATUS codecStatus;
-    PROC_STATUS procStatus;
-    float progressBar0_1;
-    char* progressBarText;
+    CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
+    PROC_STATUS procStatus;         /**< see #PROC_STATUS */
+    float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;          /**< Current (re)initialisation step, string */
     
     /* internal */
     float grid_Y[64][NUM_GRID_DIRS];
@@ -128,8 +122,8 @@ typedef struct _sldoa
     float maxFreq;
     float minFreq;
     float avg_ms;
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
+    CH_ORDER chOrdering;                 /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                     /**< Ambisonic normalisation convention (see #NORM_TYPES) */
 
 } sldoa_data;
      

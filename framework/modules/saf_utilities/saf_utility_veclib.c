@@ -2152,7 +2152,7 @@ void utility_sglslv
             h->a[i*dim+j] = A[j*dim+i];
     for(i=0; i<dim; i++)
         for(j=0; j<nCol; j++)
-            b[j*dim+i] = B[i*nCol+j];
+            h->b[j*dim+i] = B[i*nCol+j];
 # endif
 #endif
     

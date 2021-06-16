@@ -47,12 +47,9 @@
 #ifndef __AMBI_BIN_INTERNAL_H_INCLUDED__
 #define __AMBI_BIN_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include "ambi_bin.h"   
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "ambi_bin.h"      /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,16 +62,10 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 128 )
 #endif
-#define HOP_SIZE ( 128 ) /* STFT hop size */
-#define HYBRID_BANDS ( 133 )
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )  
-#define POST_GAIN ( -9.0f )   /* dB */
-#ifndef DEG2RAD
-# define DEG2RAD(x) (x * M_PI / 180.0f)
-#endif
-#ifndef RAD2DEG
-# define RAD2DEG(x) (x * 180.0f / M_PI)
-#endif
+#define HOP_SIZE ( 128 )                     /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
+#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
+#define POST_GAIN ( -9.0f )                  /**< Post-gain scaling, in dB */
 #if (FRAME_SIZE % HOP_SIZE != 0)
 # error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif

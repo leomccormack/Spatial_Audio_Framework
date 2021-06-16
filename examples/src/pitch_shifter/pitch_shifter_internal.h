@@ -25,12 +25,9 @@
 #ifndef __PITCH_SHIFTER_INTERNAL_H_INCLUDED__
 #define __PITCH_SHIFTER_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include "pitch_shifter.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "pitch_shifter.h" /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,7 +40,6 @@ extern "C" {
 #ifndef FRAME_SIZE
 # define FRAME_SIZE ( 128 ) 
 #endif
-
 
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -61,10 +57,10 @@ typedef struct _pitch_shifter
 
     /* internal */
     void* hSmb;
-    CODEC_STATUS codecStatus;
-    float progressBar0_1;
-    char* progressBarText;
-    PROC_STATUS procStatus;
+    CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
+    float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;          /**< Current (re)initialisation step, string */
+    PROC_STATUS procStatus;         /**< see #PROC_STATUS */
     float sampleRate;
     float inputFrame[MAX_NUM_CHANNELS][FRAME_SIZE];
     float outputFrame[MAX_NUM_CHANNELS][FRAME_SIZE];

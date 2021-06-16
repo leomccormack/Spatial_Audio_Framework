@@ -144,12 +144,6 @@ int beamformer_getFrameSize(void);
 
 /** Returns the beamforming order (see #SH_ORDERS enum) */
 int beamformer_getBeamOrder(void* const hBeam);
-    
-/**
- * Returns the number of frequency bands used by beamformer (only for adaptive
- * beamformer algorithms).
- */
-int beamformer_getNumberOfBands(void);
 
 /** Returns the beamformer azimuth direction of a given index h, in DEGREES */
 float beamformer_getBeamAzi_deg(void* const hBeam, int index);

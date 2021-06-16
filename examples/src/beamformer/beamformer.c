@@ -283,11 +283,6 @@ int beamformer_getBeamOrder(void  * const hBeam)
     return pData->beamOrder;
 }
 
-int beamformer_getNumberOfBands(void)
-{
-    return HYBRID_BANDS;
-}
-
 float beamformer_getBeamAzi_deg(void* const hBeam, int index)
 {
     beamformer_data *pData = (beamformer_data*)(hBeam);
