@@ -15,6 +15,16 @@
  */
 
 /**
+ * @example binauraliser
+ * @brief Convolves input audio (up to 64 channels) with interpolated HRTFs in
+ *        the time-frequency domain.
+ * ### Include Header
+ * binauraliser.h
+ * ### Source Files
+ * binauraliser_internal.h, binauraliser.c, binauraliser_internal.c
+ */
+
+/**
  * @file: binauraliser.h
  * @brief Convolves input audio (up to 64 channels) with interpolated HRTFs in
  *        the time-frequency domain.

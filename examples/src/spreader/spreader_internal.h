@@ -49,10 +49,10 @@ extern "C" {
 #define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
 #ifndef DEG2RAD
-# define DEG2RAD(x) (x * M_PI / 180.0f)
+# define DEG2RAD(x) (x * SAF_PI / 180.0f)
 #endif
 #ifndef RAD2DEG
-# define RAD2DEG(x) (x * 180.0f / M_PI)
+# define RAD2DEG(x) (x * 180.0f / SAF_PI)
 #endif
 #if (FRAME_SIZE % HOP_SIZE != 0)
 # error "FRAME_SIZE must be an integer multiple of HOP_SIZE"

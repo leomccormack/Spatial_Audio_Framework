@@ -15,6 +15,17 @@
  */
 
 /**
+ * @example sldoa
+ * @brief A spatially-localised active-intensity (SLAI) based direction-of-
+ *        arrival estimator (SLDoA)
+ * ### Include Header
+ * sldoa.h
+ * ### Source Files
+ * sldoa_internal.h, sldoa_database.h, sldoa.c, sldoa_internal.c, 
+ * sldoa_database.c
+ */
+
+/**
  * @file sldoa.h
  * @brief A spatially-localised active-intensity (SLAI) based direction-of-
  *        arrival estimator (SLDoA)

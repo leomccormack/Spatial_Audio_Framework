@@ -15,6 +15,15 @@
  */
 
 /**
+ * @example rotator
+ * @brief A basic spherical harmonic signals rotator
+ * ### Include Header
+ * rotator.h
+ * ### Source Files
+ * rotator_internal.h, rotator.c, rotator_internal.c
+ */
+
+/**
  * @file rotator.h
  * @brief A basic spherical harmonic/ Ambisonic signals rotator, based on the
  *        recursive approach detailed in [1]

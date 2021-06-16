@@ -15,13 +15,12 @@
  */
 
 /**
- * @file decorrelator_interal.c
+ * @file decorrelator_internal.c
  * @brief A multi-channel decorrelator
  *
  * @author Leo McCormack
  * @date 07.07.2020
  */
-
 
 #include "decorrelator.h"
 #include "decorrelator_internal.h"

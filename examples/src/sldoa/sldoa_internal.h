@@ -66,12 +66,12 @@ extern "C" {
 # define FRAME_SIZE ( 512 )
 #endif
 //#define ORDER2NUMSECTORS(L) ( 2*L )
-#define ORDER2NUMSECTORS(L) ( L*L )
-#define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* Processing relies on fdHop = 16 */
-#define MAX_NUM_SECTORS ( ORDER2NUMSECTORS(MAX_SH_ORDER) )      /* maximum number of sectors */
-#define NUM_DISP_SLOTS ( 2 )                                /* needs to be at least 2. On slower systems that skip frames, consider more slots.  */
+#define ORDER2NUMSECTORS(L) ( L*L )                         /**< Macro to convert SH order to number of sectors */
+#define HOP_SIZE ( 128 )                                    /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )                       /**< hybrid mode incurs an additional 5 bands  */
+#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /**< Processing relies on fdHop = 16 */
+#define MAX_NUM_SECTORS ( ORDER2NUMSECTORS(MAX_SH_ORDER) )  /**< maximum number of sectors */
+#define NUM_DISP_SLOTS ( 2 )                                /**< needs to be at least 2. On slower systems that skip frames, consider adding more slots.  */
 #ifndef M_PI
 # define M_PI ( 3.14159265359f )
 #endif

@@ -29,26 +29,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/*  doxygen example definitions: */
-/** @example ambi_bin.h */
-/** @example ambi_dec.h */
-/** @example ambi_drc.h */
-/** @example ambi_enc.h */
-/** @example ambi_roomsim.h */
-/** @example array2sh.h */
-/** @example beamformer.h */
-/** @example binauraliser.h */
-/** @example decorrelator.h */
-/** @example dirass.h */
-/** @example matrixconv.h */
-/** @example multiconv.h */
-/** @example panner.h */
-/** @example pitch_shifter.h */
-/** @example powermap.h */
-/** @example rotator.h*/
-/** @example sldoa.h*/
-/** @example spreader.h*/
-
 /* ========================================================================== */
 /*                             Presets + Constants                            */
 /* ========================================================================== */

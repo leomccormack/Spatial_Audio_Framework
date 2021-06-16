@@ -15,6 +15,15 @@
  */
 
 /**
+ * @example ambi_roomsim
+ * @brief A simple shoebox room Ambisonic encoder.
+ * ### Include Header
+ * ambi_roomsim.h
+ * ### Source Files
+ * ambi_roomsim_internal.h, ambi_roomsim.c, ambi_roomsim_internal.c
+ */
+
+/**
  * @file ambi_roomsim.h
  * @brief A simple shoebox room Ambisonic encoder.
  *

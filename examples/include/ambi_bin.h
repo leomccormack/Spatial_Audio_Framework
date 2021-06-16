@@ -15,6 +15,16 @@
  */
 
 /**
+ * @example ambi_bin
+ * @brief A binaural Ambisonic decoder for reproducing Ambisonic sound scenes
+ *        over headphones
+ * ### Include Header
+ * ambi_bin.h
+ * ### Source Files
+ * ambi_bin_internal.h, ambi_bin.c, ambi_bin_internal.c
+ */
+
+/**
  * @file ambi_bin.h 
  * @brief A binaural Ambisonic decoder for reproducing Ambisonic sound scenes
  *        over headphones

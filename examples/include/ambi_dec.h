@@ -15,6 +15,16 @@
  */
 
 /**
+ * @example ambi_dec
+ * @brief A frequency-dependent Ambisonic decoder for reproducing Ambisonic
+ *        sound scenes over loudspeakers
+ * ### Include Header
+ * ambi_dec.h
+ * ### Source Files
+ * ambi_dec_internal.h, ambi_dec.c, ambi_dec_internal.c
+ */
+
+/**
  * @file ambi_dec.h
  * @brief A frequency-dependent Ambisonic decoder for reproducing Ambisonic
  *        sound scenes over loudspeakers

@@ -15,6 +15,16 @@
  */
 
 /**
+ * @example beamformer
+ * @brief Generates beamformers/virtual microphones in arbitrary directions
+ *        with several different beam patterns to choose from
+ * ### Include Header
+ * beamformer.h
+ * ### Source Files
+ * beamformer_internal.h, beamformer.c, beamformer_internal.c
+ */
+
+/**
  * @file beamformer.h
  * @brief Generates beamformers/virtual microphones in arbitrary directions
  *        with several different beam patterns to choose from
@@ -182,7 +192,6 @@ int beamformer_getBeamType(void* const hBeam);
  */
 int beamformer_getProcessingDelay(void);
 
-    
     
 #ifdef __cplusplus
 } /* extern "C" { */
