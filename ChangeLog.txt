@@ -12,6 +12,8 @@ For descriptions of minor changes and bug fixes, please refer to the git log.
 v1.2.0
  - All lapack-related saf_utility_veclib functions now include an option to pre-allocate the run-
    time memory.
+ - Many optimisations. Some minor, some significant.
+ - Significantly improved the doxygen documentation for the examples
 
 Breaking changes:
 
