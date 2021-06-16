@@ -181,8 +181,8 @@ void ims_shoebox_coreWorkspaceCreate
     int i, band;
 
     /* locals */
-    wrk->d_max = 0.0f;
-    wrk->N_max = 0;
+    wrk->d_max = -1.0f;
+    wrk->N_max = -1;
     wrk->lengthVec = 0;
     wrk->numImageSources = 0;
     memset(wrk->room, 0, 3*sizeof(int));

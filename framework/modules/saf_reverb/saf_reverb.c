@@ -190,7 +190,8 @@ void ims_shoebox_computeEchograms
     ims_pos_xyz src2, rec2;
     int src_idx, rec_idx, band;
 
-    assert(maxN<0 || maxTime_ms<0.0f); /* one must be more than 0, and one less */
+    saf_assert(maxN<0 || maxTime_ms<0.0f, "one of these input arguments must be the same or greater than 0, and the other one must be less than 0.");
+    saf_assert(maxN>=0 || maxTime_ms>0.0f, "one of these input arguments must be the same or greater than 0, and the other one must be less than 0.");
 
     /* Compute echograms for active source/receiver combinations */
     for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++){
