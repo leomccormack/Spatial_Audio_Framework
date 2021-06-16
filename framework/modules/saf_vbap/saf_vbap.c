@@ -682,6 +682,7 @@ void invertLsMtx3D
     int i, j, n;
     float* tempGroup;
     float tempInv[9], eye3[9];
+    void* hSinv;
 
     for(i=0; i<3; i++)
         for(j=0; j<3; j++)
@@ -690,6 +691,7 @@ void invertLsMtx3D
 
     /* pre-calculate inversions of the loudspeaker groups and store into matrix */
     (*layoutInvMtx) = malloc1d(N_group * 9 * sizeof(float));
+    utility_sinv_create(&hSinv, 3);
     for(n=0; n<N_group; n++){
         /* get the unit vectors for the current group */
         for(i=0; i<3; i++)
@@ -697,7 +699,7 @@ void invertLsMtx3D
                 tempGroup[j*3+i] = U_spkr[ls_groups[n*3+i]*3 + j]; 
 
         /* get inverse of current group */
-        utility_sinv(NULL, tempGroup,tempGroup,3);
+        utility_sinv(hSinv, tempGroup,tempGroup,3);
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 3, 3, 3, 1.0f,
                     (float*)eye3, 3,
                     tempGroup, 3, 0.0f,
@@ -709,6 +711,7 @@ void invertLsMtx3D
                 (*layoutInvMtx)[n*9+(i*3+j)] = tempInv[j*3+i];
     }
     free(tempGroup);
+    utility_sinv_destroy(&hSinv);
 }
 
 void getSpreadSrcDirs3D
@@ -945,6 +948,7 @@ void invertLsMtx2D
     int i, j, n;
     float* tempGroup;
     float tempInv[4], eye2[4];
+    void* hSinv;
 
     for(i=0; i<2; i++)
         for(j=0; j<2; j++)
@@ -953,6 +957,7 @@ void invertLsMtx2D
 
     /* pre-calculate inversions of the loudspeaker groups and store into matrix */
     (*layoutInvMtx) = malloc1d(N_pairs * 4 * sizeof(float));
+    utility_sinv_create(&hSinv, 2);
     for(n=0; n<N_pairs; n++){
         /* get the unit vectors for the current group */
         for(i=0; i<2; i++)
@@ -960,7 +965,7 @@ void invertLsMtx2D
                 tempGroup[j*2+i] = U_spkr[ls_pairs[n*2+i]*2 + j];
 
         /* get inverse of current group */
-        utility_sinv(NULL, tempGroup,tempGroup,2);
+        utility_sinv(hSinv, tempGroup,tempGroup,2);
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 2, 2, 2, 1.0,
                     eye2, 2,
                     tempGroup, 2, 0.0,
@@ -973,6 +978,7 @@ void invertLsMtx2D
     }
 
     free(tempGroup);
+    utility_sinv_destroy(&hSinv);
 }
 
 void vbap2D

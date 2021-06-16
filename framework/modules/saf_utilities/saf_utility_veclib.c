@@ -54,6 +54,17 @@
 # error Only one LAPACK interface can be used!
 #endif
 
+/* Additional flags for Intel MKL */
+#if defined(INTEL_MKL_VERSION)
+# ifndef SAF_INTEL_MKL_VML_MODE
+/**
+ * The flag passed to Intel VML functions:
+ *  - Enhanced performance accuracy versions of VM functions (VML_EP) and
+ *  - Faster processing of denormalized inputs is enabled (VML_FTZDAZ_ON) */
+#  define SAF_INTEL_MKL_VML_MODE ( VML_EP | VML_FTZDAZ_ON )
+# endif
+#endif
+
 /* mainly to just to remove compiler warnings: */
 #if defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
   typedef __CLPK_integer        veclib_int;
@@ -318,7 +329,7 @@ void utility_svabs
 )
 {
 #ifdef INTEL_MKL_VERSION
-    vsAbs(len, a, c);
+    vmsAbs(len, a, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int i;
     for(i=0; i<len; i++)
@@ -334,7 +345,7 @@ void utility_cvabs
 )
 {
 #ifdef INTEL_MKL_VERSION
-    vcAbs(len, (MKL_Complex8*)a, c);
+    vmcAbs(len, (MKL_Complex8*)a, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int i;
     for(i=0; i<len; i++)
@@ -355,7 +366,7 @@ void utility_svmod
 )
 {
 #ifdef INTEL_MKL_VERSION
-    vsFmod(len, a, b, c);
+    vmsFmod(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int i;
     for(i=0; i<len; i++)
@@ -442,7 +453,7 @@ void utility_svvadd
 #ifdef __ACCELERATE__
     vDSP_vadd(a, 1, b, 1, c, 1, len);
 #elif defined(INTEL_MKL_VERSION)
-    vsAdd(len, a, b, c);
+    vmsAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -477,7 +488,7 @@ void utility_cvvadd
     }
 #endif
 #ifdef INTEL_MKL_VERSION
-    vcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
+    vmcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -520,7 +531,7 @@ void utility_svvsub
     vDSP_vsub(b, 1, a, 1, c, 1, len);  /* WTF Apple... */
     //vDSP_vsub(a, 1, b, 1, c, 1, len);
 #elif defined(INTEL_MKL_VERSION)
-    vsSub(len, a, b, c);
+    vmsSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -555,7 +566,7 @@ void utility_cvvsub
     }
 #endif
 #ifdef INTEL_MKL_VERSION
-    vcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
+    vmcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -597,7 +608,7 @@ void utility_svvmul
 #ifdef __ACCELERATE__
     vDSP_vmul(a, 1, b, 1, c, 1, len);
 #elif defined(INTEL_MKL_VERSION)
-    vsMul(len, a, b, c);
+    vmsMul(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -632,7 +643,7 @@ void utility_cvvmul
     }
 #endif
 #ifdef INTEL_MKL_VERSION
-    vcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c);
+    vmcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
 # if __STDC_VERSION__ >= 199901L

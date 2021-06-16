@@ -2342,7 +2342,7 @@ void evaluateSHTfilters
                     &M_array2SH[band*nSH*nSensors], nSensors,
                     &M_array2SH[band*nSH*nSensors], nSensors, &cbeta,
                     MH_M, nSensors);
-        utility_ceig(MH_M, nSensors, 1, NULL, NULL, EigV); /* eigenvalues in decending order */
+        utility_ceig(NULL, MH_M, nSensors, 1, NULL, NULL, EigV); /* eigenvalues in decending order */
         WNG[band] = 10.0f*log10f(crealf(EigV[0])+2.23e-9f);
     }
 #endif
