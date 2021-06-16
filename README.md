@@ -163,7 +163,7 @@ Several **examples** have also been included in the repository, which may serve 
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors for multiple frequencies. 
 * **spreader** - an arbitrary array panner (HRIRs, microphone array IRs, etc.) with coherent and incoherent spreading modes.
 
-Many of these examples have also been released as VST audio plug-ins under the [SPARTA](https://github.com/leomccormack/SPARTA) banner. The following open-source projects also employ the framework: [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
+Many of these examples have also been released as VST audio plug-ins under the [SPARTA](https://github.com/leomccormack/SPARTA) banner. The following open-source projects also employ the framework: [Super-Hearing](https://github.com/leomccormack/Super-Hearing/), [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
 
 ## Extras
 
