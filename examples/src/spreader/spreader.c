@@ -76,7 +76,6 @@ void spreader_create
     pData->interp_M = NULL;
     pData->interp_Mr = NULL;
     pData->interp_Mr_cmplx = NULL;
-    pData->inFrame_t = NULL;
     for(t=0; t<TIME_SLOTS; t++){
         pData->interpolatorFadeIn[t] = ((float)t+1.0f)/(float)TIME_SLOTS;
         pData->interpolatorFadeOut[t] = 1.0f - ((float)t+1.0f)/(float)TIME_SLOTS;
@@ -147,7 +146,6 @@ void spreader_destroy
         free(pData->interp_M);
         free(pData->interp_Mr);
         free(pData->interp_Mr_cmplx);
-        free(pData->inFrame_t);
 
         /* Optimal mixing */
         cdf4sap_cmplx_destroy(&(pData->hCdf));
@@ -319,7 +317,6 @@ void spreader_initCodec
     pData->interp_Mr = realloc1d(pData->interp_Mr, (pData->Q)*(pData->Q) * sizeof(float));
     pData->interp_Mr_cmplx = realloc1d(pData->interp_Mr_cmplx, (pData->Q)*(pData->Q) * sizeof(float_complex));
     memset(pData->interp_Mr_cmplx, 0, (pData->Q)*(pData->Q) * sizeof(float_complex));
-    pData->inFrame_t = realloc1d(pData->inFrame_t, (pData->Q) * sizeof(float_complex));
 
     /* New config */
     pData->nSources = nSources;
@@ -614,10 +611,11 @@ void spreader_process
                         scaleC = cmplxf(pData->interpolatorFadeIn[t], 0.0f);
                         utility_cvsmul(pData->new_M[band], &scaleC, Q*Q, pData->interp_M);
                         cblas_saxpy(/*re+im*/2*Q*Q, pData->interpolatorFadeOut[t], (float*)pData->prev_M[src][band], 1, (float*)pData->interp_M, 1);
-                        for(j=0; j<Q; j++)
-                            pData->inFrame_t[j] = procMode == SPREADER_MODE_EVD ? pData->decorframeTF[band][j][t] : pData->protoframeTF[band][j][t];
-                        for(i=0; i<Q; i++)
-                            utility_cvvdot((float_complex*)(&(pData->interp_M[i*Q])), pData->inFrame_t, Q, NO_CONJ, &(pData->spreadframeTF[band][i][t]));
+                        for(i=0; i<Q; i++) {
+                            cblas_cdotu_sub(Q, (float_complex*)(&(pData->interp_M[i*Q])), 1,
+                                            FLATTEN2D((procMode == SPREADER_MODE_EVD ? pData->decorframeTF[band] : pData->protoframeTF[band])) + t,
+                                            TIME_SLOTS, &(pData->spreadframeTF[band][i][t]));
+                        }
                     }
 
                     /* Also mix in the residual part */
@@ -626,11 +624,9 @@ void spreader_process
                             for(t=0; t<TIME_SLOTS; t++){
                                 utility_svsmul(pData->new_Mr[band], &(pData->interpolatorFadeIn[t]), Q*Q, pData->interp_Mr);
                                 cblas_saxpy(Q*Q, pData->interpolatorFadeOut[t], pData->prev_Mr[src][band], 1, pData->interp_Mr, 1);
-                                for(j=0; j<Q; j++)
-                                    pData->inFrame_t[j] = pData->decorframeTF[band][j][t];
                                 cblas_scopy(Q*Q, pData->interp_Mr, 1, (float*)pData->interp_Mr_cmplx, 2);
                                 for(i=0; i<Q; i++){
-                                    utility_cvvdot((float_complex*)(&(pData->interp_Mr_cmplx[i*Q])), pData->inFrame_t, Q, NO_CONJ, &tmp);
+                                    cblas_cdotu_sub(Q, (float_complex*)(&(pData->interp_Mr_cmplx[i*Q])), 1, FLATTEN2D(pData->decorframeTF[band]) + t, TIME_SLOTS, &tmp);
                                     pData->spreadframeTF[band][i][t] = ccaddf(pData->spreadframeTF[band][i][t], tmp);
                                 }
                             }
@@ -641,7 +637,7 @@ void spreader_process
 
             /* Add the spread frame to the output frame, then move onto the next source... */
             for(band=0; band<HYBRID_BANDS; band++)
-               cblas_saxpy(/*re+im*/2*Q*TIME_SLOTS, 1.0f, (float*)FLATTEN2D(pData->spreadframeTF[band]), 1, (float*)FLATTEN2D(pData->outputframeTF[band]), 1);
+                cblas_saxpy(/*re+im*/2*Q*TIME_SLOTS, 1.0f, (float*)FLATTEN2D(pData->spreadframeTF[band]), 1, (float*)FLATTEN2D(pData->outputframeTF[band]), 1);
 
             /* For next frame */
             cblas_ccopy(HYBRID_BANDS*Q*Q, FLATTEN2D(pData->new_M), 1, FLATTEN2D(pData->prev_M[src]), 1);

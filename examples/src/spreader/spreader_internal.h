@@ -101,8 +101,7 @@ typedef struct _spreader
     float** new_Mr;                    /**< residual mixing matrices; HYBRID_BANDS x FLAT:(Q x Q) */
     float_complex* interp_M;           /**< Interpolated mixing matrix; FLAT:(Q x Q) */
     float* interp_Mr;                  /**< Interpolated residual mixing matrix; FLAT:(Q x Q) */
-    float_complex* interp_Mr_cmplx;    /**< Complex variant of interp_Mr */
-    float_complex* inFrame_t;          /**< Temporary input frame; Q x 1 */
+    float_complex* interp_Mr_cmplx;    /**< Complex variant of interp_Mr */ 
     float interpolatorFadeIn[TIME_SLOTS];  /**< Interpolator */
     float interpolatorFadeOut[TIME_SLOTS]; /**< Interpolator */
 
