@@ -38,7 +38,7 @@ extern "C" {
 /* ========================================================================== */
 
 #ifndef FRAME_SIZE
-# define FRAME_SIZE ( 64 ) 
+# define FRAME_SIZE ( 64 ) /**< Framesize, in time-domain samples */
 #endif
 
 /* ========================================================================== */
@@ -52,29 +52,29 @@ extern "C" {
 typedef struct _ambi_enc
 {
     /* Internal audio buffers */
-    float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
-    float prev_inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
-    float tempFrame_fadeOut[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float outputFrameTD_fadeIn[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];              /**< Input frame of signals */
+    float prev_inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];         /**< Previous frame of signals */
+    float tempFrame_fadeOut[MAX_NUM_SH_SIGNALS][FRAME_SIZE];     /**< Temporary frame with linear interpolation (fade-in) applied */
+    float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];             /**< Temporary frame */
+    float outputFrameTD_fadeIn[MAX_NUM_SH_SIGNALS][FRAME_SIZE];  /**< Output frame of SH signals with linear interpolation (fade-out) applied */
+    float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];         /**< Output frame of SH signals */
 
     /* Internal variables */
-    float fs;
-    int recalc_SH_FLAG[MAX_NUM_INPUTS];
-    float Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
-    float prev_Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];
-    float interpolator_fadeIn[FRAME_SIZE];
-    float interpolator_fadeOut[FRAME_SIZE];
-    int new_nSources;
+    float fs;                                                    /**< Host sampling rate */
+    int recalc_SH_FLAG[MAX_NUM_INPUTS];                          /**< Flags, 1: recalc SH weights, 0: do not */
+    float Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];                 /**< SH weights */
+    float prev_Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];            /**< Previous SH weights */
+    float interpolator_fadeIn[FRAME_SIZE];                       /**< Linear Interpolator (fade-in) */
+    float interpolator_fadeOut[FRAME_SIZE];                      /**< Linear Interpolator (fade-out) */
+    int new_nSources;                                            /**< New number of input signals */
     
     /* user parameters */
-    int nSources;
-    float src_dirs_deg[MAX_NUM_INPUTS][2];
-    CH_ORDER chOrdering;                 /**< Ambisonic channel order convention (see #CH_ORDER) */
-    NORM_TYPES norm;                     /**< Ambisonic normalisation convention (see #NORM_TYPES) */
-    SH_ORDERS order;
-    int enablePostScaling;
+    int nSources;                                                /**< Current number of input signals */
+    float src_dirs_deg[MAX_NUM_INPUTS][2];                       /**< Source directions, in degrees */
+    CH_ORDER chOrdering;                                         /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                                             /**< Ambisonic normalisation convention (see #NORM_TYPES) */
+    SH_ORDERS order;                                             /**< Current SH encoding order */
+    int enablePostScaling;                                       /**< Flag 1: output signals scaled by 1/sqrt(nSources), 0: disabled */
     
 } ambi_enc_data;
     

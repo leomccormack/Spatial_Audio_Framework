@@ -36,9 +36,9 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define MIN_FRAME_SIZE ( 512 )
-#define MAX_FRAME_SIZE ( 8192 ) 
-#define MAX_NUM_CHANNELS_FOR_WAV ( 1024 )
+#define MIN_FRAME_SIZE ( 512 )            /**< Minimum framesize, in time-domain samples */
+#define MAX_FRAME_SIZE ( 8192 )           /**< Maximum framesize, in time-domain samples */
+#define MAX_NUM_CHANNELS_FOR_WAV ( 1024 ) /**< Minimum number of channels supported by WAV files */
     
 /* ========================================================================== */
 /*                                 Structures                                 */

@@ -49,12 +49,12 @@ extern "C" {
 /* ========================================================================== */
 
 #ifndef FRAME_SIZE
-# define FRAME_SIZE ( 1024 ) 
+# define FRAME_SIZE ( 1024 )                 /**< Framesize, in time-domain samples */
 #endif
 #define MAX_DISPLAY_SH_ORDER ( 20 )          /**< Maximum display/upscaling SH order */
 #define MAX_NUM_INPUT_SH_SIGNALS ( (MAX_SH_ORDER+1)*(MAX_SH_ORDER+1) )   /**< Maximum number of SH signals for the input */
 #define MAX_NUM_DISPLAY_SH_SIGNALS ( (MAX_DISPLAY_SH_ORDER+1)*(MAX_DISPLAY_SH_ORDER+1) )  /**< Maximum number of SH signals for the display/upscaling SH output */
-#define NUM_DISP_SLOTS ( 2 )  /**< Number of display slots */
+#define NUM_DISP_SLOTS ( 2 )                 /**< Number of display slots */
 
 
 /* ========================================================================== */
@@ -99,12 +99,12 @@ typedef struct _dirass_codecPars
 typedef struct _dirass
 {
     /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_INPUT_SH_SIGNALS][FRAME_SIZE]; 
+    int FIFO_idx;                           /**< FIFO buffer index */
+    float inFIFO[MAX_NUM_INPUT_SH_SIGNALS][FRAME_SIZE]; /**< FIFO buffer */
     
     /* Buffers */
-    float SHframeTD[MAX_NUM_INPUT_SH_SIGNALS][FRAME_SIZE];
-    float SHframe_upTD[MAX_NUM_DISPLAY_SH_SIGNALS][FRAME_SIZE];
+    float SHframeTD[MAX_NUM_INPUT_SH_SIGNALS][FRAME_SIZE];       /**< Input SH signals */
+    float SHframe_upTD[MAX_NUM_DISPLAY_SH_SIGNALS][FRAME_SIZE];  /**< Upscaled SH signals */
     float fs;                               /**< host sampling rate */
     
     /* internal */ 

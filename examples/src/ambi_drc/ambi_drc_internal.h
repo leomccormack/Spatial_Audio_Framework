@@ -52,7 +52,7 @@ extern "C" {
 /* ========================================================================== */
 
 #ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 ) 
+# define FRAME_SIZE ( 128 )                  /**< Framesize, in time-domain samples */
 #endif
 #define HOP_SIZE ( 128 )                     /**< STFT hop size */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
@@ -72,30 +72,38 @@ extern "C" {
 typedef struct _ambi_drc
 { 
     /* audio buffers and afSTFT handle */
-    float** frameTD;
-    float_complex*** inputFrameTF;
-    float_complex*** outputFrameTF;
-    void* hSTFT;
-    float freqVector[HYBRID_BANDS];
+    float** frameTD;                 /**< Input/output SH signals, in the time-domain; MAX_NUM_SH_SIGNALS x FRAME_SIZE */
+    float_complex*** inputFrameTF;   /**< Input SH signals, in the time-frequency domain; HYBRID_BANDS x MAX_NUM_SH_SIGNALS x TIME_SLOTS */
+    float_complex*** outputFrameTF;  /**< Output SH signals, in the time-frequency domain; HYBRID_BANDS x MAX_NUM_SH_SIGNALS x TIME_SLOTS */
+    void* hSTFT;                     /**< Time-frequency transform handle */
+    float freqVector[HYBRID_BANDS];  /**< Frequency vector */
 
     /* internal */
-    int nSH, new_nSH;
-    float fs;
-    float yL_z1[HYBRID_BANDS];
-    int reInitTFT; /**< 0: no init required, 1: init required, 2: init in progress */
+    int nSH;                         /**< Current number of SH signals */
+    int new_nSH;                     /**< New number of SH signals */
+    float fs;                        /**< Host sampling rate, in Hz */
+    float yL_z1[HYBRID_BANDS];       /**< Delay elements */
+    int reInitTFT;                   /**< 0: no init required, 1: init required, 2: init in progress */
 
 #ifdef ENABLE_TF_DISPLAY
-    int wIdx, rIdx;
-    int storeIdx;
-    float** gainsTF_bank0;
-    float** gainsTF_bank1;
+    int wIdx;                        /**< Display slot write index */
+    int rIdx;                        /**< Display slot read index */
+    int storeIdx;                    /**< Display slot storage index */
+    float** gainsTF_bank0;           /**< Display slot "0" DRC gains */
+    float** gainsTF_bank1;           /**< Display slot "1" DRC gains */
 #endif
 
     /* user parameters */
-    float theshold, ratio, knee, inGain, outGain, attack_ms, release_ms;
-    CH_ORDER chOrdering;                 /**< Ambisonic channel order convention (see #CH_ORDER) */
-    NORM_TYPES norm;                     /**< Ambisonic normalisation convention (see #NORM_TYPES) */
-    SH_ORDERS currentOrder;
+    float theshold;                  /**< Threshold parameter, in dB */
+    float ratio;                     /**< Compression ratio */
+    float knee;                      /**< Knee width, in dB */
+    float inGain;                    /**< Pre-gain, in dB */
+    float outGain;                   /**< Post-gain, in dB*/
+    float attack_ms;                 /**< Attack time, in ms */
+    float release_ms;                /**< Release time, in ms */
+    CH_ORDER chOrdering;             /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                 /**< Ambisonic normalisation convention (see #NORM_TYPES) */
+    SH_ORDERS currentOrder;          /**< Current input SH order */
     
 } ambi_drc_data;
      

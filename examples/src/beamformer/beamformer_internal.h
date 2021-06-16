@@ -39,7 +39,7 @@ extern "C" {
 /* ========================================================================== */
 
 #ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 ) 
+# define FRAME_SIZE ( 128 )               /**< Framesize, in time-domain samples */
 #endif
 #define MAX_NUM_BEAMS ( MAX_NUM_OUTPUTS ) /**< Maximum permitted number of beams/output channels */
 

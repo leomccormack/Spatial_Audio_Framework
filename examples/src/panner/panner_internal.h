@@ -55,10 +55,10 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define FORCE_3D_LAYOUT /**< To force 2D loudspeaker setups to use 3D VBAP (i.e. with 2 virtual loudspeakers on the top/bottom) */
+#define FORCE_3D_LAYOUT                      /**< Force 2D loudspeaker setups to also use 3D VBAP (i.e. with 2 virtual loudspeakers on the top/bottom) */
 
 #ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 ) 
+# define FRAME_SIZE ( 128 )                  /**< Framesize, in time-domain samples */
 #endif
 #define HOP_SIZE ( 128 )                     /**< STFT hop size */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */

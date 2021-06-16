@@ -36,8 +36,8 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define MIN_FRAME_SIZE ( 512 )
-#define MAX_FRAME_SIZE ( 8192 )
+#define MIN_FRAME_SIZE ( 512 )   /**< Minimum framesize, in time-domain samples */
+#define MAX_FRAME_SIZE ( 8192 )  /**< Maximum framesize, in time-domain samples */
     
 /* ========================================================================== */
 /*                                 Structures                                 */

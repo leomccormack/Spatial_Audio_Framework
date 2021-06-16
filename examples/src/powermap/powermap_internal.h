@@ -44,13 +44,13 @@ extern "C" {
 /* ========================================================================== */
 
 #ifndef FRAME_SIZE
-# define FRAME_SIZE ( 1024 ) 
+# define FRAME_SIZE ( 1024 )                 /**< Framesize, in time-domain samples */
 #endif
 #define HOP_SIZE ( 128 )                     /**< STFT hop size */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
 #define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
-#define NUM_DISP_SLOTS ( 2 )
-#define MAX_COV_AVG_COEFF ( 0.45f )    /*  */
+#define NUM_DISP_SLOTS ( 2 )                 /**< Number of display slots */
+#define MAX_COV_AVG_COEFF ( 0.45f )          /**< Maximum supported covariance averaging coefficient  */
 #if (FRAME_SIZE % HOP_SIZE != 0)
 # error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
@@ -60,9 +60,7 @@ extern "C" {
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/**
- * Contains variables for scanning grids, and beamforming
- */
+/** Contains variables for scanning grids, and beamforming */
 typedef struct _powermap_codecPars
 {
     float* grid_dirs_deg; /* grid_nDirs x 2 */

@@ -58,7 +58,7 @@ extern "C" {
 /* ========================================================================== */
 
 #ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 ) 
+# define FRAME_SIZE ( 128 )                      /**< Framesize, in time-domain samples */
 #endif
 #define HOP_SIZE ( 128 )                         /**< STFT hop size */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )            /**< Number of frequency bands */

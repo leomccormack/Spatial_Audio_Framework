@@ -38,7 +38,7 @@ extern "C" {
 /* ========================================================================== */
 
 #ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 )
+# define FRAME_SIZE ( 128 ) /**< Framesize, in time-domain samples */
 #endif
 
 /* ========================================================================== */
@@ -52,11 +52,9 @@ extern "C" {
 typedef struct _ambi_roomsim
 {
     /* Internals */
-    float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
-    float prev_inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];
-    float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float fs;
+    float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];      /**< Input frame of signals */
+    float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; /**< Output frame of SH signals */
+    float fs;                 /**< Host sampling rate, in Hz */
 
     /* Internal */
     void* hIms;               /**< Image source implementation handle */

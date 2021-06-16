@@ -38,7 +38,7 @@ extern "C" {
 /* ========================================================================== */
 
 #ifndef FRAME_SIZE
-# define FRAME_SIZE ( 512 )
+# define FRAME_SIZE ( 512 )                  /**< Framesize, in time-domain samples */
 #endif
 #define MAX_SPREAD_FREQ ( 16e3f )            /**< Maximum spread frequency, above which no spreading occurs */
 #define HOP_SIZE ( 128 )                     /**< STFT hop size */

@@ -46,7 +46,7 @@ extern "C" {
 /* ========================================================================== */
 
 #ifndef FRAME_SIZE
-# define FRAME_SIZE ( 64 ) 
+# define FRAME_SIZE ( 64 )  /**< Framesize, in time-domain samples */
 #endif
 
 /** Available Ambisonic channel ordering conventions */
