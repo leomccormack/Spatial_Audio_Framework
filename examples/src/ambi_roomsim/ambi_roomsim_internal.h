@@ -67,9 +67,9 @@ typedef struct _ambi_roomsim
     float** src_sigs;         /**< Source signal buffers; ROOM_SIM_MAX_NUM_SOURCES x AMBI_ROOMSIM_FRAME_SIZE */
     float*** rec_sh_outsigs;  /**< Receiver signal buffers; ROOM_SIM_MAX_NUM_RECEIVERS x MAX_NUM_SH_SIGNALS x AMBI_ROOMSIM_FRAME_SIZE */
     int reinit_room;          /**< Flag, 1: re-init required, 0: not required*/
-    int new_sh_order;         /**< New receiver SH order */
-    int new_nSources;         /**< New number of sources */
-    int new_nReceivers;       /**< New number of receivers */
+    int new_sh_order;         /**< New receiver SH order (current value will be replaced by this after next re-init) */
+    int new_nSources;         /**< New number of sources (current value will be replaced by this after next re-init) */
+    int new_nReceivers;       /**< New number of receivers (current value will be replaced by this after next re-init) */
     
     /* user parameters */
     int sh_order;             /**< Current SH order of receivers */

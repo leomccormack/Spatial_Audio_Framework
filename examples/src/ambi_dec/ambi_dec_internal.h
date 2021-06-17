@@ -112,7 +112,7 @@ typedef struct _ambi_dec_codecPars
     float* itds_s;                              /**< interaural-time differences for each HRIR (in seconds); N_hrirs x 1 */
     float_complex* hrtf_fb;                     /**< HRTF filterbank coefficients; nBands x nCH x N_hrirs */
     float* hrtf_fb_mag;                         /**< magnitudes of the HRTF filterbank coefficients; nBands x nCH x N_hrirs */
-    float_complex hrtf_interp[MAX_NUM_LOUDSPEAKERS][HYBRID_BANDS][NUM_EARS]; /* interpolated HRTFs */
+    float_complex hrtf_interp[MAX_NUM_LOUDSPEAKERS][HYBRID_BANDS][NUM_EARS]; /**< interpolated HRTFs */
     
     /* integration weights */
     float* weights;                             /**< grid integration weights of hrirs; N_hrirs x 1 */
@@ -144,9 +144,9 @@ typedef struct _ambi_dec
     
     /* internal variables */
     int loudpkrs_nDims;                  /**< dimensionality of the current loudspeaker set-up */
-    int new_nLoudpkrs;                   /**< if new_nLoudpkrs != nLoudpkrs, afSTFT is reinitialised */
-    int new_binauraliseLS;               /**< if new_binauraliseLS != binauraliseLS, ambi_dec is reinitialised */
-    int new_masterOrder;                 /**< if new_masterOrder != masterOrder, ambi_dec is reinitialised */
+    int new_nLoudpkrs;                   /**< if new_nLoudpkrs != nLoudpkrs, afSTFT is reinitialised  (current value will be replaced by this after next re-init) */
+    int new_binauraliseLS;               /**< if new_binauraliseLS != binauraliseLS, ambi_dec is reinitialised (current value will be replaced by this after next re-init) */
+    int new_masterOrder;                 /**< if new_masterOrder != masterOrder, ambi_dec is reinitialised (current value will be replaced by this after next re-init) */
     
     /* flags */
     PROC_STATUS procStatus;              /**< see #PROC_STATUS */

@@ -38,10 +38,10 @@ void binauraliser_create
 {
     binauraliser_data* pData = (binauraliser_data*)malloc1d(sizeof(binauraliser_data));
     *phBin = (void*)pData;
-    int ch;
+    int ch, dummy;
 
     /* user parameters */
-    binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
+    binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
     pData->enableHRIRsPreProc = 1;
     pData->nSources = pData->new_nSources;
@@ -345,9 +345,9 @@ void binauraliser_setEnableHRIRsPreProc(void* const hBin, int newState)
 void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    int ch;
+    int ch, dummy;
     
-    binauraliser_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims));
+    binauraliser_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &(dummy));
     if(pData->nSources != pData->new_nSources)
         binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)

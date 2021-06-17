@@ -77,7 +77,7 @@ typedef struct _spreader
     void* hSTFT;                       /**< afSTFT handle */
 
     /* Internal */
-    int Q;                             /**< Number of channels in the target playback setup; e.g. 2 for binaural */
+    int Q;                             /**< Number of channels in the target playback setup; for example: 2 for binaural */
     int nGrid;                         /**< Number of directions/measurements/HRTFs etc. */
     int h_len;                         /**< Length of time-domain filters, in samples */
     float h_fs;                        /**< Sample rate used to measure the filters */
@@ -98,8 +98,8 @@ typedef struct _spreader
     float_complex* interp_M;           /**< Interpolated mixing matrix; FLAT:(Q x Q) */
     float* interp_Mr;                  /**< Interpolated residual mixing matrix; FLAT:(Q x Q) */
     float_complex* interp_Mr_cmplx;    /**< Complex variant of interp_Mr */ 
-    float interpolatorFadeIn[TIME_SLOTS];  /**< Interpolator */
-    float interpolatorFadeOut[TIME_SLOTS]; /**< Interpolator */
+    float interpolatorFadeIn[TIME_SLOTS];  /**< Linear Interpolator - Fade in */
+    float interpolatorFadeOut[TIME_SLOTS]; /**< Linear Interpolator - Fade out */
 
     /* For visualisation */
     int* dirActive[SPREADER_MAX_NUM_SOURCES]; /**< 1: IR direction currently used for spreading, 0: not */
@@ -117,8 +117,8 @@ typedef struct _spreader
     float progressBar0_1;              /**< Current (re)initialisation progress, between [0..1] */
     char* progressBarText;             /**< Current (re)initialisation step, string */
     PROC_STATUS procStatus;            /**< see #PROC_STATUS */
-    int new_nSources;                  /**< New number of input signals */
-    SPREADER_PROC_MODES new_procMode;  /**< See #SPREADER_PROC_MODES */
+    int new_nSources;                  /**< New number of input signals (current value will be replaced by this after next re-init) */
+    SPREADER_PROC_MODES new_procMode;  /**< See #SPREADER_PROC_MODES (current value will be replaced by this after next re-init) */
 
     /* user parameters */
     SPREADER_PROC_MODES procMode;      /**< See #SPREADER_PROC_MODES */

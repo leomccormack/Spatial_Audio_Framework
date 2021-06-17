@@ -78,15 +78,15 @@ extern "C" {
 typedef struct _ambi_drc
 { 
     /* audio buffers and afSTFT handle */
-    float** frameTD;                 /**< Input/output SH signals, in the time-domain; MAX_NUM_SH_SIGNALS x AMBI_DRC_FRAME_SIZE */
-    float_complex*** inputFrameTF;   /**< Input SH signals, in the time-frequency domain; HYBRID_BANDS x MAX_NUM_SH_SIGNALS x TIME_SLOTS */
-    float_complex*** outputFrameTF;  /**< Output SH signals, in the time-frequency domain; HYBRID_BANDS x MAX_NUM_SH_SIGNALS x TIME_SLOTS */
+    float** frameTD;                 /**< Input/output SH signals, in the time-domain; #MAX_NUM_SH_SIGNALS x #AMBI_DRC_FRAME_SIZE */
+    float_complex*** inputFrameTF;   /**< Input SH signals, in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
+    float_complex*** outputFrameTF;  /**< Output SH signals, in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
     void* hSTFT;                     /**< Time-frequency transform handle */
     float freqVector[HYBRID_BANDS];  /**< Frequency vector */
 
     /* internal */
     int nSH;                         /**< Current number of SH signals */
-    int new_nSH;                     /**< New number of SH signals */
+    int new_nSH;                     /**< New number of SH signals (current value will be replaced by this after next re-init) */
     float fs;                        /**< Host sampling rate, in Hz */
     float yL_z1[HYBRID_BANDS];       /**< Delay elements */
     int reInitTFT;                   /**< 0: no init required, 1: init required, 2: init in progress */
@@ -118,13 +118,16 @@ typedef struct _ambi_drc
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
+/** The DRC gain computer */
 float ambi_drc_gainComputer(float xG, float T, float R, float W);
 
+/** The envelope detector */
 float ambi_drc_smoothPeakDetector(float xL, float yL_z1, float alpha_a, float alpha_r);
     
 /** Initialise the filterbank used by ambi_drc */
 void ambi_drc_initTFT(void* const hAmbi);
 
+/** Sets the internal input order */
 void ambi_drc_setInputOrder(SH_ORDERS inOrder, int* nSH);
 
     

@@ -86,7 +86,8 @@ extern "C" {
 
 /** Contains variables for describing the microphone/hydrophone array */
 typedef struct _array2sh_arrayPars {
-    int Q, newQ;                                /**< number of sensors */
+    int Q;                                      /**< Current number of sensors */
+    int newQ;                                   /**< New number of sensors (current value replaced by this after next re-init) */
     float r;                                    /**< radius of sensors */
     float R;                                    /**< radius of scatterer (only for rigid arrays) */
     ARRAY2SH_ARRAY_TYPES arrayType;             /**< see #ARRAY2SH_ARRAY_TYPES */
@@ -111,8 +112,8 @@ typedef struct _array2sh
     /* intermediates */
     double_complex bN_modal[HYBRID_BANDS][MAX_SH_ORDER + 1];    /**< Current modal coeffients */
     double_complex* bN;                                         /**< Temp vector for the modal coefficients */
-    double_complex bN_inv[HYBRID_BANDS][MAX_SH_ORDER + 1];      /**< 1./bN_modal */
-    double_complex bN_inv_R[HYBRID_BANDS][MAX_NUM_SH_SIGNALS];  /**< 1./bN_modal with regularisation */
+    double_complex bN_inv[HYBRID_BANDS][MAX_SH_ORDER + 1];      /**< 1/bN_modal */
+    double_complex bN_inv_R[HYBRID_BANDS][MAX_NUM_SH_SIGNALS];  /**< 1/bN_modal with regularisation */
     float_complex W[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];        /**< Encoding weights */
     float_complex W_diffEQ[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS]; /**< Encoding weights with diffuse-field EQ above the spatial aliasing limit */
     
@@ -132,7 +133,7 @@ typedef struct _array2sh
     float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
     char* progressBarText;          /**< Current (re)initialisation step, string */ 
     int fs;                         /**< sampling rate, hz */
-    int new_order;                  /**< new encoding order */
+    int new_order;                  /**< new encoding order (current value will be replaced by this after next re-init) */
     
     /* flags */
     PROC_STATUS procStatus;         /**< see #PROC_STATUS */

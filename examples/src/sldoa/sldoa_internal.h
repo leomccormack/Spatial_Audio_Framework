@@ -102,14 +102,14 @@ typedef struct _sldoa
     char* progressBarText;          /**< Current (re)initialisation step, string */
     
     /* internal */
-    float grid_Y[64][NUM_GRID_DIRS];
-    float grid_Y_dipoles_norm[3][NUM_GRID_DIRS];
-    float grid_dirs_deg[NUM_GRID_DIRS][2];
-    float_complex* secCoeffs[MAX_SH_ORDER-1];
-    float doa_rad[HYBRID_BANDS][MAX_NUM_SECTORS][2];
-    float energy [HYBRID_BANDS][MAX_NUM_SECTORS];
-    int nSectorsPerBand[HYBRID_BANDS];
-    int new_masterOrder;
+    float grid_Y[64][NUM_GRID_DIRS];                 /**< SH basis */
+    float grid_Y_dipoles_norm[3][NUM_GRID_DIRS];     /**< SH basis */
+    float grid_dirs_deg[NUM_GRID_DIRS][2];           /**< Grid directions, in degrees */
+    float_complex* secCoeffs[MAX_SH_ORDER-1];        /**< Sector beamforming weights/coefficients */
+    float doa_rad[HYBRID_BANDS][MAX_NUM_SECTORS][2]; /**< Current DoA estimates per band and sector, in radians */
+    float energy [HYBRID_BANDS][MAX_NUM_SECTORS];    /**< Current Sector energies */
+    int nSectorsPerBand[HYBRID_BANDS];               /**< Number of sectors per band */
+    int new_masterOrder;                             /**< New master/maximum analysis order (current value will be replaced by this after next re-init) */
     
     /* display */
     float* azi_deg[NUM_DISP_SLOTS];      /**< DoA azimuths, in degrees */
@@ -134,9 +134,7 @@ typedef struct _sldoa
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/**
- * Sets codec status (see #CODEC_STATUS enum)
- */
+/** Sets codec status (see #CODEC_STATUS enum) */
 void sldoa_setCodecStatus(void* const hSld, CODEC_STATUS newStatus);
 
 /**

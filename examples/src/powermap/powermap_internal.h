@@ -68,15 +68,14 @@ extern "C" {
 /** Contains variables for scanning grids, and beamforming */
 typedef struct _powermap_codecPars
 {
-    float* grid_dirs_deg; /* grid_nDirs x 2 */
-    int grid_nDirs;
-    float* interp_dirs_deg;
-    float* interp_table;    /* interp_nDirs x grid_nDirs */
-    int interp_nDirs;
-    int interp_nTri;
-    
-    float* Y_grid[MAX_SH_ORDER];                 /* MAX_NUM_SH_SIGNALS x grid_nDirs */
-    float_complex* Y_grid_cmplx[MAX_SH_ORDER];   /* MAX_NUM_SH_SIGNALS x grid_nDirs */
+    float* grid_dirs_deg;   /**< Spherical scanning grid directions, in degrees; FLAT: grid_nDirs x 2 */
+    int grid_nDirs;         /**< Number of scanning directions */
+    float* interp_dirs_deg; /**< 2D rectangular window interpolation directions, in degrees; FLAT: interp_nDirs x 2 */
+    float* interp_table;    /**< Spherical->2D interpolation table; FLAT: interp_nDirs x grid_nDirs */
+    int interp_nDirs;       /**< Number of interpolation directions */
+    int interp_nTri;        /**< Number of triangles in the spherical triangulared grid */
+    float* Y_grid[MAX_SH_ORDER];                 /**< real SH basis (real datatype); MAX_NUM_SH_SIGNALS x grid_nDirs */
+    float_complex* Y_grid_cmplx[MAX_SH_ORDER];   /**< real SH basis (complex datatype); MAX_NUM_SH_SIGNALS x grid_nDirs */
     
 }powermap_codecPars;
     
@@ -87,50 +86,50 @@ typedef struct _powermap_codecPars
 typedef struct _powermap
 {
     /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_SH_SIGNALS][POWERMAP_FRAME_SIZE];
+    int FIFO_idx;                   /**< FIFO buffer index */
+    float inFIFO[MAX_NUM_SH_SIGNALS][POWERMAP_FRAME_SIZE]; /**< Input FIFO buffer */
 
     /* TFT */
-    float** SHframeTD;
-    float_complex*** SHframeTF;
-    void* hSTFT;
-    float freqVector[HYBRID_BANDS];
-    float fs;
+    float** SHframeTD;              /**< time-domain SH input frame; #MAX_NUM_SH_SIGNALS x #POWERMAP_FRAME_SIZE */
+    float_complex*** SHframeTF;     /**< time-frequency domain SH input frame; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
+    void* hSTFT;                    /**< afSTFT handle */
+    float freqVector[HYBRID_BANDS]; /**< Frequency vector (filterbank centre frequencies) */
+    float fs;                       /**< Host sample rate, in Hz*/
     
     /* internal */
-    float_complex Cx[HYBRID_BANDS][MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS];     /* cov matrices */
-    int new_masterOrder;
-    int dispWidth;
+    float_complex Cx[HYBRID_BANDS][MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS];     /**< covariance matrices per band */
+    int new_masterOrder;            /**< New maximum/master SH analysis order (current value will be replaced by this after next re-init) */
+    int dispWidth;                  /**< Number of pixels on the horizontal in the 2D interpolated powermap image */
     
     /* ana configuration */
     CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
     PROC_STATUS procStatus;         /**< see #PROC_STATUS */
     float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
     char* progressBarText;          /**< Current (re)initialisation step, string */
-    powermap_codecPars* pars;                                          /* codec parameters */
+    powermap_codecPars* pars;       /**< codec parameters */
     
     /* display */
-    float* pmap;                           /* grid_nDirs x 1 */
-    float* prev_pmap;                      /* grid_nDirs x 1 */
-    float* pmap_grid[NUM_DISP_SLOTS];      /* powermap interpolated to grid; interp_nDirs x 1 */
-    int dispSlotIdx;
-    float pmap_grid_minVal;
-    float pmap_grid_maxVal;
-    int recalcPmap;   /* set this to 1 to generate a new powermap */
-    int pmapReady;    /* 0: powermap not started yet, 1: powermap is ready for plotting*/
+    float* pmap;                    /**< grid_nDirs x 1 */
+    float* prev_pmap;               /**< grid_nDirs x 1 */
+    float* pmap_grid[NUM_DISP_SLOTS]; /**< powermap interpolated to grid; interp_nDirs x 1 */
+    int dispSlotIdx;                /**< Current display slot */
+    float pmap_grid_minVal;         /**< Current minimum value in pmap (used to normalise [0..1]) */
+    float pmap_grid_maxVal;         /**< Current maximum value in pmap (used to normalise [0..1]) */
+    int recalcPmap;                 /**< set this to 1 to generate a new powermap */
+    int pmapReady;                  /**< 0: powermap not started yet, 1: powermap is ready for plotting*/
     
     /* User parameters */
-    int masterOrder;
-    int analysisOrderPerBand[HYBRID_BANDS];
-    float pmapEQ[HYBRID_BANDS]; 
-    HFOV_OPTIONS HFOVoption;
-    ASPECT_RATIO_OPTIONS aspectRatioOption;
-    float covAvgCoeff;
-    float pmapAvgCoeff;
-    int nSources;
-    POWERMAP_MODES pmap_mode;
-    CH_ORDER chOrdering;                 /**< Ambisonic channel order convention (see #CH_ORDER) */
-    NORM_TYPES norm;                     /**< Ambisonic normalisation convention (see #NORM_TYPES) */
+    int masterOrder;                /**< Current maximum/master SH analysis order */
+    int analysisOrderPerBand[HYBRID_BANDS]; /**< SH analysis order per frequency band */
+    float pmapEQ[HYBRID_BANDS];     /**< Equalisation/weights per band */
+    HFOV_OPTIONS HFOVoption;        /**< see #HFOV_OPTIONS */
+    ASPECT_RATIO_OPTIONS aspectRatioOption; /**< see #ASPECT_RATIO_OPTIONS */
+    float covAvgCoeff;              /**< Covariance matrix averaging coefficient, [0..1] */
+    float pmapAvgCoeff;             /**< Powermap averaging coefficient, [0..1] */
+    int nSources;                   /**< Current number of sources (used for MUSIC) */
+    POWERMAP_MODES pmap_mode;       /**< see #POWERMAP_MODES*/
+    CH_ORDER chOrdering;            /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                /**< Ambisonic normalisation convention (see #NORM_TYPES) */
     
 } powermap_data;
 

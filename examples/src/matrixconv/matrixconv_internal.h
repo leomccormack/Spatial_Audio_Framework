@@ -44,9 +44,7 @@ extern "C" {
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/**
- * Main structure for matrixconv.
- */
+/** Main structure for matrixconv */
 typedef struct _matrixconv
 {
     /* FIFO buffers */
@@ -55,17 +53,17 @@ typedef struct _matrixconv
     float outFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE]; /**< Output FIFO buffer */
 
     /* input/output buffers */
-    float** inputFrameTD;
-    float** outputFrameTD;
+    float** inputFrameTD;  /**< Input buffer; #MAX_NUM_CHANNELS x hostBlockSize_clamped */
+    float** outputFrameTD; /**< Output buffer; #MAX_NUM_CHANNELS x hostBlockSize_clamped */
     
     /* internal */
     void* hMatrixConv;     /**< saf_matrixConv handle */
     int hostBlockSize;     /**< current host block size */
-    int hostBlockSize_clamped; /**< Clamped between MIN and #MAX_FRAME_SIZE */
+    int hostBlockSize_clamped; /**< Clamped between #MIN_FRAME_SIZE and #MAX_FRAME_SIZE */
     float* filters;        /**< the matrix of filters; FLAT: nOutputChannels x nInputChannels x filter_length */
     int nfilters;          /**< the number of filters (nOutputChannels x nInputChannels) */
     int input_wav_length;  /**< length of the wav files loaded in samples (inputs are concatenated) */
-    int filter_length;     /**< length of the filters (i.e. input_wav_length/nInputChannels) */
+    int filter_length;     /**< length of the filters (input_wav_length/nInputChannels) */
     int filter_fs;         /**< current samplerate of the filters */
     int host_fs;           /**< current samplerate of the host */
     int reInitFilters;     /**< FLAG: 0: do not reinit, 1: reinit, 2: reinit in progress */

@@ -98,35 +98,37 @@ typedef struct _binauraliser
     float* itds_s;                   /**< interaural-time differences for each HRIR (in seconds); nBands x 1 */
     float_complex* hrtf_fb;          /**< hrtf filterbank coefficients; nBands x nCH x N_hrirs */
     float* hrtf_fb_mag;              /**< magnitudes of the hrtf filterbank coefficients; nBands x nCH x N_hrirs */
-    float_complex hrtf_interp[MAX_NUM_INPUTS][HYBRID_BANDS][NUM_EARS];
+    float_complex hrtf_interp[MAX_NUM_INPUTS][HYBRID_BANDS][NUM_EARS]; /**< Interpolated HRTFs */
     
     /* flags/status */
-    CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
-    float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
-    char* progressBarText;          /**< Current (re)initialisation step, string */
-    PROC_STATUS procStatus;         /**< see #PROC_STATUS */
-    int recalc_hrtf_interpFLAG[MAX_NUM_INPUTS];
-    int reInitHRTFsAndGainTables;
-    int recalc_M_rotFLAG;
+    CODEC_STATUS codecStatus;        /**< see #CODEC_STATUS */
+    float progressBar0_1;            /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;           /**< Current (re)initialisation step, string */
+    PROC_STATUS procStatus;          /**< see #PROC_STATUS */
+    int recalc_hrtf_interpFLAG[MAX_NUM_INPUTS]; /**< 1: re-calculate/interpolate the HRTF, 0: do not */
+    int reInitHRTFsAndGainTables;    /**< 1: reinitialise the HRTFs and interpolation tables, 0: do not */
+    int recalc_M_rotFLAG;            /**< 1: re-calculate the rotation matrix, 0: do not */
     
     /* misc. */
-    float src_dirs_rot_deg[MAX_NUM_INPUTS][2];
-    float src_dirs_rot_xyz[MAX_NUM_INPUTS][3];
-    float src_dirs_xyz[MAX_NUM_INPUTS][3]; 
-    int nTriangles;
-    int input_nDims;  
-    int output_nDims;
-    
+    float src_dirs_rot_deg[MAX_NUM_INPUTS][2]; /**< Intermediate rotated source directions, in degrees */
+    float src_dirs_rot_xyz[MAX_NUM_INPUTS][3]; /**< Intermediate rotated source directions, as unit-length Cartesian coordinates */
+    float src_dirs_xyz[MAX_NUM_INPUTS][3];     /**< Intermediate source directions, as unit-length Cartesian coordinates  */
+    int nTriangles;                            /**< Number of triangles in the convex hull of the spherical arrangement of HRIR directions/points */
+    int new_nSources;                          /**< New number of input/source signals (current value will be replaced by this after next re-init) */
+
     /* user parameters */
-    int nSources;
-    int new_nSources;
-    float src_dirs_deg[MAX_NUM_INPUTS][2];
-    INTERP_MODES interpMode;
+    int nSources;                            /**< Current number of input/source signals */
+    float src_dirs_deg[MAX_NUM_INPUTS][2];   /**< Current source/panning directions, in degrees */
+    INTERP_MODES interpMode;                 /**< see #INTERP_MODES */
     int useDefaultHRIRsFLAG;                 /**< 1: use default HRIRs in database, 0: use those from SOFA file */
     int enableHRIRsPreProc;                  /**< flag to apply pre-processing to the currently loaded HRTFs */
     int enableRotation;                      /**< 1: enable rotation, 0: disable */
-    float yaw, roll, pitch;                  /**< rotation angles in degrees */
-    int bFlipYaw, bFlipPitch, bFlipRoll;     /**< flag to flip the sign of the individual rotation angles */
+    float yaw;                               /**< yaw (Euler) rotation angle, in degrees */
+    float roll;                              /**< roll (Euler) rotation angle, in degrees */
+    float pitch;                             /**< pitch (Euler) rotation angle, in degrees */
+    int bFlipYaw;                            /**< flag to flip the sign of the yaw rotation angle */
+    int bFlipPitch;                          /**< flag to flip the sign of the pitch rotation angle */
+    int bFlipRoll;                           /**< flag to flip the sign of the roll rotation angle */
     int useRollPitchYawFlag;                 /**< rotation order flag, 1: r-p-y, 0: y-p-r */
     
 } binauraliser_data;

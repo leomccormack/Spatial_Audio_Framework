@@ -78,10 +78,10 @@ typedef struct _rotator
     /* Internal variables */
     float interpolator_fadeIn[ROTATOR_FRAME_SIZE];       /**< Linear Interpolator (fade-in) */
     float interpolator_fadeOut[ROTATOR_FRAME_SIZE];      /**< Linear Interpolator (fade-out) */
-    float M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];     /**< */
-    float prev_M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
-    M_ROT_STATUS M_rot_status;
-    int fs;
+    float M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];      /**< Current SH rotation matrix [1] */
+    float prev_M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS]; /**< Previous SH rotation matrix [1] */
+    M_ROT_STATUS M_rot_status;      /**< see #M_ROT_STATUS */
+    int fs;                         /**< Host sampling rate, in Hz */
 
     /* user parameters */
     quaternion_data Q;              /**< Quaternion used for rotation */

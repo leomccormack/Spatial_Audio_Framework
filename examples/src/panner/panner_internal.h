@@ -55,7 +55,7 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define FORCE_3D_LAYOUT /**< Force 2D loudspeaker setups to also use 3D VBAP (i.e. with 2 virtual loudspeakers on the top/bottom) */
+#define FORCE_3D_LAYOUT /**< FLAG: Force 2D loudspeaker setups to also use 3D VBAP (i.e. with 2 virtual loudspeakers on the top/bottom) */
 #if !defined(PANNER_FRAME_SIZE)
 # if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
 #  define PANNER_FRAME_SIZE ( FRAME_SIZE )          /**< Framesize, in time-domain samples */
@@ -83,49 +83,56 @@ extern "C" {
 typedef struct _panner
 {
     /* audio buffers */
-    float** inputFrameTD; 
-    float** outputFrameTD;
-    float_complex*** inputframeTF;
-    float_complex*** outputframeTF;
-    int fs;
+    float** inputFrameTD;           /**< Input signals, in the time-domain; #MAX_NUM_INPUTS x #PANNER_FRAME_SIZE */
+    float** outputFrameTD;          /**< Output signals, in the time-domain; #MAX_NUM_OUTPUTS x #PANNER_FRAME_SIZE */
+    float_complex*** inputframeTF;  /**< Input signals, in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_INPUTS x #TIME_SLOTS */
+    float_complex*** outputframeTF; /**< Output signals, in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_OUTPUTS x #TIME_SLOTS */
+    int fs;                         /**< Host sampling rate */
     
     /* time-frequency transform */
-    float freqVector[HYBRID_BANDS];
-    void* hSTFT;
+    float freqVector[HYBRID_BANDS]; /**< Frequency vector (centre frequencies) */
+    void* hSTFT;                    /**< afSTFT handle */
     
     /* Internal */
-    int vbapTableRes[2];
-    float* vbap_gtable; /**< N_hrtf_vbap_gtable x nLoudpkrs */
-    int N_vbap_gtable;
-    float_complex G_src[HYBRID_BANDS][MAX_NUM_INPUTS][MAX_NUM_OUTPUTS];
+    int vbapTableRes[2];            /**< [0] azimuth, and [1] elevation grid resolution, in degrees */
+    float* vbap_gtable;             /**< Current VBAP gains; FLAT: N_hrtf_vbap_gtable x nLoudpkrs */
+    int N_vbap_gtable;              /**< Number of directions in the VBAP gain table */
+    float_complex G_src[HYBRID_BANDS][MAX_NUM_INPUTS][MAX_NUM_OUTPUTS];  /**< Current VBAP gains per source */
     
     /* flags */
     CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
     PROC_STATUS procStatus;         /**< see #PROC_STATUS */
     float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
     char* progressBarText;          /**< Current (re)initialisation step, string */
-    int recalc_gainsFLAG[MAX_NUM_INPUTS];
-    int recalc_M_rotFLAG;
-    int reInitGainTables;
+    int recalc_gainsFLAG[MAX_NUM_INPUTS]; /**< 1: VBAP gains need to be recalculated for this source, 0: do not */
+    int recalc_M_rotFLAG;           /**< 1: recalculate the rotation matrix, 0: do not */
+    int reInitGainTables;           /**< 1: reinitialise the VBAP gain table, 0: do not */
     
     /* misc. */
-    float src_dirs_rot_deg[MAX_NUM_INPUTS][2];
-    float src_dirs_rot_xyz[MAX_NUM_INPUTS][3];
-    float src_dirs_xyz[MAX_NUM_INPUTS][3]; 
-    int nTriangles;
-    int output_nDims; /**< 2: 2-D, 3: 3-D */
+    float src_dirs_rot_deg[MAX_NUM_INPUTS][2]; /**< Intermediate rotated source directions, in degrees */
+    float src_dirs_rot_xyz[MAX_NUM_INPUTS][3]; /**< Intermediate rotated source directions, as unit-length Cartesian coordinates */
+    float src_dirs_xyz[MAX_NUM_INPUTS][3];     /**< Intermediate source directions, as unit-length Cartesian coordinates */
+    int nTriangles;                 /**< Number of loudspeaker triangles */
+    int output_nDims;               /**< Dimensionality of the loudspeaker array, 2: 2-D, 3: 3-D */
+    int new_nLoudpkrs;              /**< New number of loudspeakers in the array */
+    int new_nSources;               /**< New number of inputs/sources */
     
     /* pValue */
-    float pValue[HYBRID_BANDS];
+    float pValue[HYBRID_BANDS];     /**< Used for the frequency-dependent panning normalisation */
     
     /* user parameters */
-    int nSources, new_nSources;
-    float src_dirs_deg[MAX_NUM_INPUTS][2];
-    float DTT, spread_deg;
-    int nLoudpkrs, new_nLoudpkrs;
-    float loudpkrs_dirs_deg[MAX_NUM_OUTPUTS][2];
-    float yaw, roll, pitch;                  /**< rotation angles in degrees */
-    int bFlipYaw, bFlipPitch, bFlipRoll;     /**< flag to flip the sign of the individual rotation angles */
+    int nSources;                   /**< Current number of inputs/sources */
+    float src_dirs_deg[MAX_NUM_INPUTS][2]; /**< Current source directions */
+    float DTT;                      /**< Room coefficient [3] */
+    float spread_deg;               /**< Source spread/MDAP [2] */
+    int nLoudpkrs;                  /**< Current number of loudspeakers in the array */
+    float loudpkrs_dirs_deg[MAX_NUM_OUTPUTS][2]; /**< Current loudspeaker directions */
+    float yaw;                      /**< yaw (Euler) rotation angle, in degrees */
+    float roll;                     /**< roll (Euler) rotation angle, in degrees */
+    float pitch;                    /**< pitch (Euler) rotation angle, in degrees */
+    int bFlipYaw;                   /**< flag to flip the sign of the yaw rotation angle */
+    int bFlipPitch;                 /**< flag to flip the sign of the pitch rotation angle */
+    int bFlipRoll;                  /**< flag to flip the sign of the roll rotation angle */
     
 } panner_data;
      

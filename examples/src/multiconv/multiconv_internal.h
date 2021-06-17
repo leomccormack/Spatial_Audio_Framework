@@ -43,34 +43,32 @@ extern "C" {
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/**
- * Main structure for multiconv.
- */
+/** Main structure for multiconv */
 typedef struct _multiconv
 {
     /* FIFO buffers */
-    int FIFO_idx;                /**< FIFO buffer index */
+    int FIFO_idx;           /**< FIFO buffer index */
     float inFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];  /**< Input FIFO buffer */
     float outFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE]; /**< Output FIFO buffer */
 
     /* Internal buffers */
-    float** inputFrameTD;
-    float** outputFrameTD;
-    
+    float** inputFrameTD;  /**< Input buffer; #MAX_NUM_CHANNELS x hostBlockSize_clamped */
+    float** outputFrameTD; /**< Output buffer; #MAX_NUM_CHANNELS x hostBlockSize_clamped */
+
     /* internal */
-    void* hMultiConv;
-    int hostBlockSize;
-    int hostBlockSize_clamped; /**< Clamped between MIN and #MAX_FRAME_SIZE */
-    float* filters;   /**< FLAT: nfilters x filter_length */
-    int nfilters;
-    int filter_length;
-    int filter_fs;
-    int host_fs;
-    int reInitFilters;
+    void* hMultiConv;      /**< convolver handle */
+    int hostBlockSize;     /**< current host block size */
+    int hostBlockSize_clamped; /**< Clamped between #MIN_FRAME_SIZE and #MAX_FRAME_SIZE */
+    float* filters;        /**< FLAT: nfilters x filter_length */
+    int nfilters;          /**< Current number of FIR filters */
+    int filter_length;     /**< length of the filters (input_wav_length/nInputChannels) */
+    int filter_fs;         /**< current samplerate of the filters */
+    int host_fs;           /**< current samplerate of the host */
+    int reInitFilters;     /**< FLAG: 0: do not reinit, 1: reinit, 2: reinit in progress */
     
     /* user parameters */
-    int nChannels;
-    int enablePartitionedConv;
+    int nChannels;         /**< Current number of input/output channels */
+    int enablePartitionedConv; /**< 1: enable partitioned convolution, 0: regular convolution (fft over the length of the filter) */
     
 } multiconv_data;
 

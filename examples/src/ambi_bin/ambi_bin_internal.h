@@ -109,7 +109,7 @@ typedef struct _ambi_bin_codecPars
  * Main structure for ambi_bin. Contains variables for audio buffers, afSTFT,
  * rotation matrices, internal variables, flags, user parameters
  */
-typedef struct ambi_bin
+typedef struct _ambi_bin
 {
     /* audio buffers + afSTFT time-frequency transform handle */
     int fs;                         /**< host sampling rate */ 
@@ -129,8 +129,8 @@ typedef struct ambi_bin
     
     /* internal variables */
     PROC_STATUS procStatus;         /**< see #PROC_STATUS */
-    float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS]; 
-    int new_order;                  /**< new decoding order */
+    float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS]; /**< Current SH rotation matrix */
+    int new_order;                  /**< new decoding order (current value will be replaced by this after next re-init) */
     int nSH;                        /**< number of spherical harmonic signals */
     
     /* flags */ 
@@ -142,7 +142,7 @@ typedef struct ambi_bin
     int enableMaxRE;                /**< 0: disabled, 1: enabled */
     int enableDiffuseMatching;      /**< 0: disabled, 1: enabled */
     int enableTruncationEQ;         /**< 0: disabled, 1: enabled */
-    AMBI_BIN_DECODING_METHODS method; /* current decoding method */
+    AMBI_BIN_DECODING_METHODS method; /**< current decoding method (see #AMBI_BIN_DECODING_METHODS) */
     float EQ[HYBRID_BANDS];         /**< EQ curve */
     int useDefaultHRIRsFLAG;        /**< 1: use default HRIRs in database, 0: use those from SOFA file */
     AMBI_BIN_PREPROC preProc;       /**< HRIR pre-processing strategy */

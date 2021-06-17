@@ -70,7 +70,7 @@ typedef struct _ambi_enc
     float prev_Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];            /**< Previous SH weights */
     float interpolator_fadeIn[AMBI_ENC_FRAME_SIZE];              /**< Linear Interpolator (fade-in) */
     float interpolator_fadeOut[AMBI_ENC_FRAME_SIZE];             /**< Linear Interpolator (fade-out) */
-    int new_nSources;                                            /**< New number of input signals */
+    int new_nSources;                                            /**< New number of input signals (current value will be replaced by this after next re-init) */
     
     /* user parameters */
     int nSources;                                                /**< Current number of input signals */

@@ -111,9 +111,11 @@ typedef struct _dirass
     float fs;                               /**< host sampling rate */
     
     /* internal */ 
-    int dispWidth;                               /**< number of interpolation points on the horizontal */
+    int dispWidth;                          /**< number of interpolation points on the horizontal */
     float Wz12_hpf[MAX_NUM_INPUT_SH_SIGNALS][2]; /**< delayed elements used in the HPF */
     float Wz12_lpf[MAX_NUM_INPUT_SH_SIGNALS][2]; /**< delayed elements used in the LPF */
+    int new_inputOrder;                     /**< New input/analysis order */
+    int new_upscaleOrder;                   /**< New target upscale order */
     
     /* ana configuration */
     CODEC_STATUS codecStatus;               /**< see #CODEC_STATUS */
@@ -132,10 +134,10 @@ typedef struct _dirass
     int pmapReady;                          /**< 0: image generation not started yet, 1: image is ready for plotting*/
     
     /* User parameters */
-    int new_inputOrder, inputOrder;         /**< input/analysis order */
+    int inputOrder;                         /**< Current input/analysis order */
     STATIC_BEAM_TYPES beamType;             /**< beamformer type mode */
     DIRASS_REASS_MODES DirAssMode;          /**< see #DIRASS_REASS_MODES enum */
-    int new_upscaleOrder, upscaleOrder;     /**< target upscale order */
+    int upscaleOrder;                       /**< Current target upscale order */
     DIRASS_GRID_OPTIONS gridOption;         /**< grid option */
     float pmapAvgCoeff;                     /**< averaging coefficient for the intensity vector per grid direction */
     float minFreq_hz;                       /**< minimum frequency to include in pmap generation, Hz */

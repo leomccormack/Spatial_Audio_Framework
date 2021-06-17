@@ -84,7 +84,7 @@ typedef struct _decorrelator
     
     /* internal variables */
     PROC_STATUS procStatus;           /**< see #PROC_STATUS */
-    int new_nChannels;                /**< New number of input/output channels */
+    int new_nChannels;                /**< New number of input/output channels (current value will be replaced by this after next re-init) */
 
     /* user parameters */
     int nChannels;                    /**< Current number of input/output channels */
