@@ -33,9 +33,7 @@ extern "C" {
 /*                             Presets + Constants                            */
 /* ========================================================================== */
 
-/**
- * Available spherical harmonic (SH) input/output order options
- */
+/** Available spherical harmonic (SH) input/output order options */
 typedef enum {
     SH_ORDER_FIRST = 1, /**< First-order (4 channels) */
     SH_ORDER_SECOND,    /**< Second-order (9 channels) */
@@ -94,9 +92,7 @@ typedef enum {
 
 }MIC_PRESETS;
 
-/**
- * Available loudspeaker array presets
- */
+/** Available loudspeaker array presets */
 typedef enum {
     LOUDSPEAKER_ARRAY_PRESET_DEFAULT = 1,
     LOUDSPEAKER_ARRAY_PRESET_STEREO,
@@ -130,9 +126,7 @@ typedef enum {
 
 }LOUDSPEAKER_ARRAY_PRESETS;
 
-/**
- * Available source configurations presets to use for encoding/panning
- */
+/** Available source configurations presets to use for encoding/panning */
 typedef enum {
     SOURCE_CONFIG_PRESET_DEFAULT = 1,
     SOURCE_CONFIG_PRESET_MONO,
@@ -167,9 +161,7 @@ typedef enum {
 
 }SOURCE_CONFIG_PRESETS;
 
-/**
- * Available static beamforming approaches
- */
+/** Available static beamforming approaches */
 typedef enum {
     STATIC_BEAM_TYPE_CARDIOID = 1,  /**< cardioid */
     STATIC_BEAM_TYPE_HYPERCARDIOID, /**< hyper-cardioid */
@@ -180,9 +172,7 @@ typedef enum {
 /** Number of available static beamformer types */
 #define NUM_STATIC_BEAM_TYPES ( 3 )
 
-/**
- * Available horizontal field-of-view (FOV) options
- */
+/** Available horizontal field-of-view (FOV) options */
 typedef enum {
     HFOV_360 = 1, /**< 360 degrees */
     HFOV_180,     /**< 180 degrees */
@@ -191,9 +181,7 @@ typedef enum {
 
 }HFOV_OPTIONS;
 
-/**
- * Available aspect ratios
- */
+/** Available aspect ratios */
 typedef enum {
     ASPECT_RATIO_2_1 = 1, /**< ASPECT_RATIO_2_1  - 2:1 */
     ASPECT_RATIO_16_9,    /**< ASPECT_RATIO_16_9 - 16:9 */

@@ -40,11 +40,11 @@ void decorrelator_create
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
-    pData->InputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, DECORRELATOR_FRAME_SIZE, sizeof(float));
-    pData->OutputFrameTD = (float**)malloc2d(MAX_NUM_OUTPUTS, DECORRELATOR_FRAME_SIZE, sizeof(float));
-    pData->InputFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
-    pData->OutputFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
-    pData->transientFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
+    pData->InputFrameTD = (float**)malloc2d(MAX_NUM_CHANNELS, DECORRELATOR_FRAME_SIZE, sizeof(float));
+    pData->OutputFrameTD = (float**)malloc2d(MAX_NUM_CHANNELS, DECORRELATOR_FRAME_SIZE, sizeof(float));
+    pData->InputFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_CHANNELS, TIME_SLOTS, sizeof(float_complex));
+    pData->OutputFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_CHANNELS, TIME_SLOTS, sizeof(float_complex));
+    pData->transientFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_CHANNELS, TIME_SLOTS, sizeof(float_complex));
 
     /* codec data */
     pData->hDecor = NULL;
@@ -188,7 +188,7 @@ void decorrelator_process
             memset(pData->InputFrameTD[i], 0, DECORRELATOR_FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward_knownDimensions(pData->hSTFT, pData->InputFrameTD, DECORRELATOR_FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->InputFrameTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->InputFrameTD, DECORRELATOR_FRAME_SIZE, MAX_NUM_CHANNELS, TIME_SLOTS, pData->InputFrameTF);
 
         /* Apply decorrelation */
         if(enableTransientDucker){
@@ -220,7 +220,7 @@ void decorrelator_process
         }
 
         /* inverse-TFT */
-        afSTFT_backward_knownDimensions(pData->hSTFT, pData->OutputFrameTF, DECORRELATOR_FRAME_SIZE, MAX_NUM_OUTPUTS, TIME_SLOTS, pData->OutputFrameTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->OutputFrameTF, DECORRELATOR_FRAME_SIZE, MAX_NUM_CHANNELS, TIME_SLOTS, pData->OutputFrameTD);
 
         /* Copy to output buffer */
         for (ch = 0; ch < SAF_MIN(nCH, nOutputs); ch++)

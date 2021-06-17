@@ -85,15 +85,15 @@ extern "C" {
 typedef struct _sldoa
 {
     /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_SH_SIGNALS][SLDOA_FRAME_SIZE];
+    int FIFO_idx;                    /**< FIFO buffer index */
+    float inFIFO[MAX_NUM_SH_SIGNALS][SLDOA_FRAME_SIZE]; /**< FIFO buffer */
 
     /* TFT */
-    float** SHframeTD;
-    float_complex*** SHframeTF;
-    void* hSTFT; 
-    float freqVector[HYBRID_BANDS];
-    float fs;
+    float** SHframeTD;              /**< time-domain SH input frame; #MAX_NUM_SH_SIGNALS x #SLDOA_FRAME_SIZE */
+    float_complex*** SHframeTF;     /**< time-frequency domain SH input frame; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
+    void* hSTFT;                    /**< afSTFT handle */
+    float freqVector[HYBRID_BANDS]; /**< Frequency vector (filterbank centre frequencies) */
+    float fs;                       /**< Host sampling rate, in Hz */
       
     /* ana configuration */
     CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
@@ -112,18 +112,18 @@ typedef struct _sldoa
     int new_masterOrder;
     
     /* display */
-    float* azi_deg[NUM_DISP_SLOTS];
-    float* elev_deg[NUM_DISP_SLOTS];
-    float* colourScale[NUM_DISP_SLOTS];
-    float* alphaScale[NUM_DISP_SLOTS]; 
-    int current_disp_idx;
+    float* azi_deg[NUM_DISP_SLOTS];      /**< DoA azimuths, in degrees */
+    float* elev_deg[NUM_DISP_SLOTS];     /**< DoA elevations, in degrees */
+    float* colourScale[NUM_DISP_SLOTS];  /**< Values dictating each DoA marker colour */
+    float* alphaScale[NUM_DISP_SLOTS];   /**< Values dictating each DoA marker transparency */
+    int current_disp_idx;                /**< Current display slot */
     
     /* User parameters */
-    int masterOrder;
-    int analysisOrderPerBand[HYBRID_BANDS];
-    float maxFreq;
-    float minFreq;
-    float avg_ms;
+    int masterOrder;                     /**< Current master/maximum analysis order */
+    int analysisOrderPerBand[HYBRID_BANDS]; /**< Analysis order MIN(anaPerBand, masterOrder) for each frequency band */
+    float maxFreq;                       /**< Maximum display frequency, in Hz */
+    float minFreq;                       /**< Minimum display frequency, in Hz */
+    float avg_ms;                        /**< Temporal averaging, in ms */
     CH_ORDER chOrdering;                 /**< Ambisonic channel order convention (see #CH_ORDER) */
     NORM_TYPES norm;                     /**< Ambisonic normalisation convention (see #NORM_TYPES) */
 

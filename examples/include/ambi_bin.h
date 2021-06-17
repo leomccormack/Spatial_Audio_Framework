@@ -22,6 +22,38 @@
  * ambi_bin.h
  * ### Source Files
  * ambi_bin_internal.h, ambi_bin.c, ambi_bin_internal.c
+ * ### Usage
+ * \code{.m}
+ * int main(void) {
+ *     void* hAmbi;
+ *
+ *     // Create an instance of ambi_bin
+ *     ambi_bin_create(&hAmbi);
+ *
+ *     // Call any set functions, e.g.:
+ *     ambi_bin_setNormType(hAmbi, NORM_N3D);
+ *     ambi_bin_setInputOrderPreset(hAmbi, SH_ORDER_FIRST);
+ *     ambi_bin_setEnableRotation(hAmbi, SAF_TRUE);
+ *     ambi_bin_setYaw(hAmbi, 180.0f); // turn the listener around
+ *
+ *     // "initCodec" should be called after calling any of the "set" functions
+ *     // (Fully thread-safe)
+ *     ambi_bin_initCodec(hAmbi);
+ *
+ *     // "init" Should be called before calling "process"
+ *     // (Not thread-safe!)
+ *     ambi_bin_init(hAmbi, hostSamplingRate);
+ *
+ *     // Processing frame-by-frame
+ *     ...
+ *     ambi_bin_process(hAmbi, inputSignalBuffer, outputSignalBuffer,
+ *                      numberOfInputs, numberOfOutputs, numberOfSamples);
+ *     ...
+ *
+ *     // Destroy this instance of ambi_bin
+ *     ambi_bin_destroy(&hAmbi);
+ * }
+ *\endcode
  */
 
 /**

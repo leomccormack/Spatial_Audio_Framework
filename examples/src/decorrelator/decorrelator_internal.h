@@ -65,32 +65,32 @@ extern "C" {
 typedef struct _decorrelator
 {
     /* audio buffers + afSTFT time-frequency transform handle */
-    int fs;                         /**< host sampling rate */ 
-    float** InputFrameTD;
-    float** OutputFrameTD;
-    float_complex*** InputFrameTF;
-    float_complex*** transientFrameTF;
-    float_complex*** OutputFrameTF;
-    void* hSTFT;                    /**< afSTFT handle */
-    int afSTFTdelay;                /**< for host delay compensation */ 
-    float freqVector[HYBRID_BANDS]; /**< frequency vector for time-frequency transform, in Hz */
+    int fs;                           /**< host sampling rate */
+    float** InputFrameTD;             /**< Input time-domain signals; #MAX_NUM_CHANNELS x #DECORRELATOR_FRAME_SIZE */
+    float** OutputFrameTD;            /**< Output time-domain signals; #MAX_NUM_CHANNELS x #DECORRELATOR_FRAME_SIZE */
+    float_complex*** InputFrameTF;    /**< Input time-frequency domain signals; #HYBRID_BANDS x #MAX_NUM_CHANNELS x #TIME_SLOTS */
+    float_complex*** transientFrameTF; /**< Transient time-frequency domain signals; #HYBRID_BANDS x #MAX_NUM_CHANNELS x #TIME_SLOTS */
+    float_complex*** OutputFrameTF;   /**< Output time-frequency domain signals; #HYBRID_BANDS x #MAX_NUM_CHANNELS x #TIME_SLOTS */
+    void* hSTFT;                      /**< afSTFT handle */
+    int afSTFTdelay;                  /**< for host delay compensation */
+    float freqVector[HYBRID_BANDS];   /**< frequency vector for time-frequency transform, in Hz */
      
     /* our codec configuration */
-    void* hDecor; 
-    void* hDucker;
-    CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
-    float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
-    char* progressBarText;          /**< Current (re)initialisation step, string */
+    void* hDecor;                     /**< Decorrelator handle */
+    void* hDucker;                    /**< Transient extractor/Ducker handle */
+    CODEC_STATUS codecStatus;         /**< see #CODEC_STATUS */
+    float progressBar0_1;             /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;            /**< Current (re)initialisation step, string */
     
     /* internal variables */
-    PROC_STATUS procStatus;         /**< see #PROC_STATUS */
-    int new_nChannels;
+    PROC_STATUS procStatus;           /**< see #PROC_STATUS */
+    int new_nChannels;                /**< New number of input/output channels */
 
     /* user parameters */
-    int nChannels;
-    int enableTransientDucker;
-    float decorAmount;
-    int compensateLevel;
+    int nChannels;                    /**< Current number of input/output channels */
+    int enableTransientDucker;        /**< 1: transient extractor is enabled, 0: disabled */
+    float decorAmount;                /**< The mix between decorrelated signals and the input signals [0..1], 1: fully decorrelated 0: bypassed */
+    int compensateLevel;              /**< 1: apply a sqrt(nChannels)/nChannels scaling on the output signals, 0: disabled */
     
 } decorrelator_data;
 

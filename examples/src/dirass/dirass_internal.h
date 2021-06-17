@@ -152,14 +152,10 @@ typedef struct _dirass
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/**
- * Sets codec status (see #CODEC_STATUS enum)
- */
+/** Sets codec status (see #CODEC_STATUS enum) */
 void dirass_setCodecStatus(void* const hDir, CODEC_STATUS newStatus);
 
-/**
- * Intialises the codec variables, based on current global/user parameters
- */
+/** Intialises the codec variables, based on current global/user parameters */
 void dirass_initAna(void* const hDir);
 
 

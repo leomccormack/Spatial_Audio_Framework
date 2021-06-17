@@ -59,6 +59,12 @@
 /** Ensures value "a" is clamped between the "min" and "max" values */
 #define SAF_CLAMP(a,min,max) (SAF_MAX(min, SAF_MIN(max, a)))
 
+/** Boolean true */
+#define SAF_TRUE ( 1 )
+
+/** Boolean false */
+#define SAF_FALSE ( 0 )
+
 #ifndef M_PI
 /** pi constant (single precision) */
 # define M_PI ( 3.14159265358979323846264338327950288f )

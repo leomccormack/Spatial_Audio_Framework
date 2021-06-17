@@ -65,19 +65,19 @@ extern "C" {
 typedef struct _spreader
 {
     /* audio buffers and time-frequency transform */
-    float** inputFrameTD;
-    float** outframeTD;
-    float_complex*** inputframeTF;
-    float_complex*** protoframeTF;
-    float_complex*** decorframeTF;
-    float_complex*** spreadframeTF;
-    float_complex*** outputframeTF;
-    int fs;
-    float freqVector[HYBRID_BANDS]; 
-    void* hSTFT;
+    float** inputFrameTD;              /**< time-domain input frame; #MAX_NUM_INPUTS x #SPREADER_FRAME_SIZE */
+    float** outframeTD;                /**< time-domain output frame; #MAX_NUM_OUTPUTS x #SPREADER_FRAME_SIZE */
+    float_complex*** inputframeTF;     /**< time-frequency domain input frame; #HYBRID_BANDS x #MAX_NUM_INPUTS x #TIME_SLOTS */
+    float_complex*** protoframeTF;     /**< time-frequency domain prototype frame; #HYBRID_BANDS x #MAX_NUM_OUTPUTS x #TIME_SLOTS */
+    float_complex*** decorframeTF;     /**< time-frequency domain decorrelated frame; #HYBRID_BANDS x #MAX_NUM_OUTPUTS x #TIME_SLOTS */
+    float_complex*** spreadframeTF;    /**< time-frequency domain spread frame; #HYBRID_BANDS x #MAX_NUM_OUTPUTS x #TIME_SLOTS */
+    float_complex*** outputframeTF;    /**< time-frequency domain output frame; #HYBRID_BANDS x #MAX_NUM_OUTPUTS x #TIME_SLOTS */
+    int fs;                            /**< Host sampling rate, in Hz */
+    float freqVector[HYBRID_BANDS];    /**< Frequency vector (filterbank centre frequencies) */
+    void* hSTFT;                       /**< afSTFT handle */
 
     /* Internal */
-    int Q;                             /**< Number of channels in the target; e.g. 2 for binaural */
+    int Q;                             /**< Number of channels in the target playback setup; e.g. 2 for binaural */
     int nGrid;                         /**< Number of directions/measurements/HRTFs etc. */
     int h_len;                         /**< Length of time-domain filters, in samples */
     float h_fs;                        /**< Sample rate used to measure the filters */
@@ -117,17 +117,17 @@ typedef struct _spreader
     float progressBar0_1;              /**< Current (re)initialisation progress, between [0..1] */
     char* progressBarText;             /**< Current (re)initialisation step, string */
     PROC_STATUS procStatus;            /**< see #PROC_STATUS */
-    int new_nSources;
-    SPREADER_PROC_MODES new_procMode;
+    int new_nSources;                  /**< New number of input signals */
+    SPREADER_PROC_MODES new_procMode;  /**< See #SPREADER_PROC_MODES */
 
     /* user parameters */
-    SPREADER_PROC_MODES procMode;     /**< See #SPREADER_PROC_MODES */
-    char* sofa_filepath;
-    int nSources;
-    float src_spread[SPREADER_MAX_NUM_SOURCES];
-    float src_dirs_deg[SPREADER_MAX_NUM_SOURCES][2]; 
-    int useDefaultHRIRsFLAG;          /**< 1: use default HRIRs in database, 0: use the measurements from SOFA file (can be anything, not just HRTFs) */
-    float covAvgCoeff;
+    SPREADER_PROC_MODES procMode;      /**< See #SPREADER_PROC_MODES */
+    char* sofa_filepath;               /**< SOFA file path */
+    int nSources;                      /**< Current number of input signals */
+    float src_spread[SPREADER_MAX_NUM_SOURCES];      /**< Source spreading, in degrees */
+    float src_dirs_deg[SPREADER_MAX_NUM_SOURCES][2]; /**< Source directions, in degrees */
+    int useDefaultHRIRsFLAG;           /**< 1: use default HRIRs in database, 0: use the measurements from SOFA file (can be anything, not just HRTFs) */
+    float covAvgCoeff;                 /**< Covariance matrix averaging coefficient, [0..1] */
 
 } spreader_data;
 
