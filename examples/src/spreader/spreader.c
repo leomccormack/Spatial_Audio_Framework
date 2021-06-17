@@ -44,8 +44,8 @@ void spreader_create
 
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, FRAME_SIZE, sizeof(float));
-    pData->outframeTD = (float**)malloc2d(MAX_NUM_OUTPUTS, FRAME_SIZE, sizeof(float));
+    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, SPREADER_FRAME_SIZE, sizeof(float));
+    pData->outframeTD = (float**)malloc2d(MAX_NUM_OUTPUTS, SPREADER_FRAME_SIZE, sizeof(float));
     pData->inputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
     pData->protoframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
     pData->decorframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
@@ -361,17 +361,17 @@ void spreader_process
     memcpy((float*)src_spread, pData->src_spread, nSources*sizeof(float));
 
     /* apply binaural panner */
-    if ((nSamples == FRAME_SIZE) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ){
+    if ((nSamples == SPREADER_FRAME_SIZE) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ){
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
         for(i=0; i < SAF_MIN(nSources,nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
+            utility_svvcopy(inputs[i], SPREADER_FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<nSources; i++)
-            memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
+            memset(pData->inputFrameTD[i], 0, SPREADER_FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, SPREADER_FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
 
         /* Zero output buffer */
         for(band=0; band<HYBRID_BANDS; band++)
@@ -645,17 +645,17 @@ void spreader_process
         }
 
         /* inverse-TFT */
-        afSTFT_backward_knownDimensions(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, MAX_NUM_OUTPUTS, TIME_SLOTS, pData->outframeTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->outputframeTF, SPREADER_FRAME_SIZE, MAX_NUM_OUTPUTS, TIME_SLOTS, pData->outframeTD);
 
         /* Copy to output buffer */
         for (ch = 0; ch < SAF_MIN(Q, nOutputs); ch++)
-            utility_svvcopy(pData->outframeTD[ch], FRAME_SIZE, outputs[ch]);
+            utility_svvcopy(pData->outframeTD[ch], SPREADER_FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
-            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch], 0, SPREADER_FRAME_SIZE*sizeof(float));
     }
     else{
         for (ch=0; ch < nOutputs; ch++)
-            memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch],0, SPREADER_FRAME_SIZE*sizeof(float));
     }
 
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
@@ -744,7 +744,7 @@ void spreader_setSofaFilePath(void* const hSpr, const char* path)
 
 int spreader_getFrameSize(void)
 {
-    return FRAME_SIZE;
+    return SPREADER_FRAME_SIZE;
 }
 
 CODEC_STATUS spreader_getCodecStatus(void* const hSpr)

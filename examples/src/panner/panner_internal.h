@@ -55,16 +55,21 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define FORCE_3D_LAYOUT                      /**< Force 2D loudspeaker setups to also use 3D VBAP (i.e. with 2 virtual loudspeakers on the top/bottom) */
-
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 )                  /**< Framesize, in time-domain samples */
+#define FORCE_3D_LAYOUT /**< Force 2D loudspeaker setups to also use 3D VBAP (i.e. with 2 virtual loudspeakers on the top/bottom) */
+#if !defined(PANNER_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define PANNER_FRAME_SIZE ( FRAME_SIZE )          /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define PANNER_FRAME_SIZE ( 128 )                 /**< Framesize, in time-domain samples */
+# endif
 #endif
-#define HOP_SIZE ( 128 )                     /**< STFT hop size */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define HOP_SIZE ( 128 )                            /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )               /**< Number of frequency bands */
+#define TIME_SLOTS ( PANNER_FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
+
+/* Checks: */
+#if (PANNER_FRAME_SIZE % HOP_SIZE != 0)
+# error "PANNER_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
     
 /* ========================================================================== */

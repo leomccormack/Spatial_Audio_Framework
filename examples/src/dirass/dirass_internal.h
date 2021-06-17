@@ -48,14 +48,17 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 1024 )                 /**< Framesize, in time-domain samples */
+#if !defined(DIRASS_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define DIRASS_FRAME_SIZE ( FRAME_SIZE )   /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define DIRASS_FRAME_SIZE ( 1024 )         /**< Framesize, in time-domain samples */
+# endif
 #endif
 #define MAX_DISPLAY_SH_ORDER ( 20 )          /**< Maximum display/upscaling SH order */
 #define MAX_NUM_INPUT_SH_SIGNALS ( (MAX_SH_ORDER+1)*(MAX_SH_ORDER+1) )   /**< Maximum number of SH signals for the input */
 #define MAX_NUM_DISPLAY_SH_SIGNALS ( (MAX_DISPLAY_SH_ORDER+1)*(MAX_DISPLAY_SH_ORDER+1) )  /**< Maximum number of SH signals for the display/upscaling SH output */
 #define NUM_DISP_SLOTS ( 2 )                 /**< Number of display slots */
-
 
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -74,8 +77,8 @@ typedef struct _dirass_codecPars
     float* interp_table;      /**< interpolation table (spherical->rectangular grid); FLAT: interp_nDirs x grid_nDirs */
     int interp_nDirs;         /**< number of interpolation directions */
     int interp_nTri;          /**< number of triangles in the spherical scanning grid mesh */
-    float* ss;                /**< beamformer sector signals; FLAT: grid_nDirs x FRAME_SIZE */
-    float* ssxyz;             /**< beamformer velocity signals; FLAT: 3 x FRAME_SIZE */
+    float* ss;                /**< beamformer sector signals; FLAT: grid_nDirs x DIRASS_FRAME_SIZE */
+    float* ssxyz;             /**< beamformer velocity signals; FLAT: 3 x DIRASS_FRAME_SIZE */
     int* est_dirs_idx;        /**< DoA indices, into the interpolation directions; grid_nDirs x 1 */
     float* prev_intensity;    /**< previous intensity vectors (for averaging); FLAT: grid_nDirs x 3 */
     float* prev_energy;       /**< previous energy (for averaging); FLAT: grid_nDirs x 1 */
@@ -100,11 +103,11 @@ typedef struct _dirass
 {
     /* FIFO buffers */
     int FIFO_idx;                           /**< FIFO buffer index */
-    float inFIFO[MAX_NUM_INPUT_SH_SIGNALS][FRAME_SIZE]; /**< FIFO buffer */
+    float inFIFO[MAX_NUM_INPUT_SH_SIGNALS][DIRASS_FRAME_SIZE]; /**< FIFO buffer */
     
     /* Buffers */
-    float SHframeTD[MAX_NUM_INPUT_SH_SIGNALS][FRAME_SIZE];       /**< Input SH signals */
-    float SHframe_upTD[MAX_NUM_DISPLAY_SH_SIGNALS][FRAME_SIZE];  /**< Upscaled SH signals */
+    float SHframeTD[MAX_NUM_INPUT_SH_SIGNALS][DIRASS_FRAME_SIZE];       /**< Input SH signals */
+    float SHframe_upTD[MAX_NUM_DISPLAY_SH_SIGNALS][DIRASS_FRAME_SIZE];  /**< Upscaled SH signals */
     float fs;                               /**< host sampling rate */
     
     /* internal */ 

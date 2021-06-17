@@ -69,7 +69,7 @@ void sldoa_create
 
     /* TFT */
     afSTFT_create(&(pData->hSTFT), MAX_NUM_SH_SIGNALS, 0, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
-    pData->SHframeTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
+    pData->SHframeTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, SLDOA_FRAME_SIZE, sizeof(float));
     pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
 
     /* internal */
@@ -100,7 +100,7 @@ void sldoa_create
 
     /* set FIFO buffer */
     pData->FIFO_idx = 0;
-    memset(pData->inFIFO, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
+    memset(pData->inFIFO, 0, MAX_NUM_SH_SIGNALS*SLDOA_FRAME_SIZE*sizeof(float));
 }
 
 void sldoa_destroy
@@ -234,30 +234,30 @@ void sldoa_analysis
         pData->FIFO_idx++;
 
         /* Process frame if inFIFO is full and codec is ready for it */
-        if (pData->FIFO_idx >= FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying) {
+        if (pData->FIFO_idx >= SLDOA_FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying) {
             pData->FIFO_idx = 0;
             pData->procStatus = PROC_STATUS_ONGOING;
             current_disp_idx = pData->current_disp_idx;
 
             /* Load time-domain data */
             for(ch=0; ch<nSH; ch++)
-                memcpy(pData->SHframeTD[ch],pData->inFIFO[ch], FRAME_SIZE*sizeof(float));
+                memcpy(pData->SHframeTD[ch],pData->inFIFO[ch], SLDOA_FRAME_SIZE*sizeof(float));
 
             /* account for input channel order */
             switch(chOrdering){
                 case CH_ACN:  /* already ACN */ break; /* Otherwise, convert to ACN... */
-                case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
+                case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHframeTD), masterOrder, SLDOA_FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
             }
 
             /* account for input normalisation scheme */
             switch(norm){
                 case NORM_N3D:  /* already in N3D, do nothing */ break; /* Otherwise, convert to N3D... */
-                case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
-                case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
+                case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, SLDOA_FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
+                case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), masterOrder, SLDOA_FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
             }
         
             /* apply the time-frequency transform */
-            afSTFT_forward_knownDimensions(pData->hSTFT, pData->SHframeTD, FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->SHframeTF);
+            afSTFT_forward_knownDimensions(pData->hSTFT, pData->SHframeTD, SLDOA_FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->SHframeTF);
 
             /* apply sector-based, frequency-dependent DOA analysis */
             numAnalysisBands = 0;
@@ -332,7 +332,7 @@ void sldoa_analysis
                 }
             }
         }
-        else if(pData->FIFO_idx >= FRAME_SIZE){
+        else if(pData->FIFO_idx >= SLDOA_FRAME_SIZE){
             /* reset FIFO_idx if codec was not ready */
             pData->FIFO_idx = 0;
         }
@@ -492,7 +492,7 @@ void sldoa_setNormType(void* const hSld, int newType)
 
 int sldoa_getFrameSize(void)
 {
-    return FRAME_SIZE;
+    return SLDOA_FRAME_SIZE;
 }
 
 CODEC_STATUS sldoa_getCodecStatus(void* const hSld)
@@ -631,5 +631,5 @@ int sldoa_getNormType(void* const hSld)
 
 int sldoa_getProcessingDelay()
 {
-    return FRAME_SIZE + 12*HOP_SIZE;
+    return SLDOA_FRAME_SIZE + 12*HOP_SIZE;
 }

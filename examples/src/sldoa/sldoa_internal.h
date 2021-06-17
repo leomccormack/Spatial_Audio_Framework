@@ -58,18 +58,23 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 512 )                                 /**< Framesize, in time-domain samples */
+#if !defined(SLDOA_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define SLDOA_FRAME_SIZE ( FRAME_SIZE )  /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define SLDOA_FRAME_SIZE ( 512 )         /**< Framesize, in time-domain samples */
+# endif
 #endif
-//#define ORDER2NUMSECTORS(L) ( 2*L )
-#define ORDER2NUMSECTORS(L) ( L*L )                         /**< Macro to convert SH order to number of sectors */
-#define HOP_SIZE ( 128 )                                    /**< STFT hop size */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )                       /**< hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /**< Processing relies on fdHop = 16 */
+#define ORDER2NUMSECTORS(L) ( L*L )        /**< Macro to convert SH order to number of sectors */
+#define HOP_SIZE ( 128 )                   /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )      /**< hybrid mode incurs an additional 5 bands  */
+#define TIME_SLOTS ( SLDOA_FRAME_SIZE / HOP_SIZE )          /**< Processing relies on fdHop = 16 */
 #define MAX_NUM_SECTORS ( ORDER2NUMSECTORS(MAX_SH_ORDER) )  /**< maximum number of sectors */
-#define NUM_DISP_SLOTS ( 2 )                                /**< Number of display slots; needs to be at least 2. On slower systems that skip frames, consider adding more slots.  */
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define NUM_DISP_SLOTS ( 2 )               /**< Number of display slots; needs to be at least 2. On slower systems that skip frames, consider adding more slots.  */
+
+/* Checks: */
+#if (SLDOA_FRAME_SIZE % HOP_SIZE != 0)
+# error "SLDOA_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
     
 /* ========================================================================== */
@@ -81,7 +86,7 @@ typedef struct _sldoa
 {
     /* FIFO buffers */
     int FIFO_idx;
-    float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
+    float inFIFO[MAX_NUM_SH_SIGNALS][SLDOA_FRAME_SIZE];
 
     /* TFT */
     float** SHframeTD;

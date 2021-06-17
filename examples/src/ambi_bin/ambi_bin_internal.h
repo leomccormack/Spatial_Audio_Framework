@@ -59,15 +59,21 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 )                  /**< Framesize, in time-domain samples */
+#if !defined(AMBI_BIN_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define AMBI_BIN_FRAME_SIZE ( FRAME_SIZE )          /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define AMBI_BIN_FRAME_SIZE ( 128 )                 /**< Framesize, in time-domain samples */
+# endif
 #endif
-#define HOP_SIZE ( 128 )                     /**< STFT hop size */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
-#define POST_GAIN ( -9.0f )                  /**< Post-gain scaling, in dB */
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define HOP_SIZE ( 128 )                              /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )                 /**< Number of frequency bands */
+#define TIME_SLOTS ( AMBI_BIN_FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
+#define POST_GAIN ( -9.0f )                           /**< Post-gain scaling, in dB */
+
+/* Checks: */
+#if (AMBI_BIN_FRAME_SIZE % HOP_SIZE != 0)
+# error "AMBI_BIN_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
 
     
@@ -107,8 +113,8 @@ typedef struct ambi_bin
 {
     /* audio buffers + afSTFT time-frequency transform handle */
     int fs;                         /**< host sampling rate */ 
-    float** SHFrameTD;              /**< Input spherical harmonic (SH) signals in the time-domain; #MAX_NUM_SH_SIGNALS x #FRAME_SIZE */
-    float** binFrameTD;             /**< Output binaural signals in the time-domain; #NUM_EARS x #FRAME_SIZE */
+    float** SHFrameTD;              /**< Input spherical harmonic (SH) signals in the time-domain; #MAX_NUM_SH_SIGNALS x #AMBI_BIN_FRAME_SIZE */
+    float** binFrameTD;             /**< Output binaural signals in the time-domain; #NUM_EARS x #AMBI_BIN_FRAME_SIZE */
     float_complex*** SHframeTF;     /**< Input spherical harmonic (SH) signals in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
     float_complex*** binframeTF;    /**< Output binaural signals in the time-frequency domain; #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS */
     void* hSTFT;                    /**< afSTFT handle */

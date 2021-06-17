@@ -40,8 +40,8 @@ void decorrelator_create
     
     /* afSTFT stuff */
     pData->hSTFT = NULL;
-    pData->InputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, FRAME_SIZE, sizeof(float));
-    pData->OutputFrameTD = (float**)malloc2d(MAX_NUM_OUTPUTS, FRAME_SIZE, sizeof(float));
+    pData->InputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, DECORRELATOR_FRAME_SIZE, sizeof(float));
+    pData->OutputFrameTD = (float**)malloc2d(MAX_NUM_OUTPUTS, DECORRELATOR_FRAME_SIZE, sizeof(float));
     pData->InputFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
     pData->OutputFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
     pData->transientFrameTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
@@ -178,17 +178,17 @@ void decorrelator_process
     compensateLevel = pData->compensateLevel;
 
     /* Process frame */
-    if (nSamples == FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) ) {
+    if (nSamples == DECORRELATOR_FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) ) {
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
         for(i=0; i < SAF_MIN(nCH, nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->InputFrameTD[i]);
+            utility_svvcopy(inputs[i], DECORRELATOR_FRAME_SIZE, pData->InputFrameTD[i]);
         for(; i<nCH; i++)
-            memset(pData->InputFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+            memset(pData->InputFrameTD[i], 0, DECORRELATOR_FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward_knownDimensions(pData->hSTFT, pData->InputFrameTD, FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->InputFrameTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->InputFrameTD, DECORRELATOR_FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->InputFrameTF);
 
         /* Apply decorrelation */
         if(enableTransientDucker){
@@ -220,17 +220,17 @@ void decorrelator_process
         }
 
         /* inverse-TFT */
-        afSTFT_backward_knownDimensions(pData->hSTFT, pData->OutputFrameTF, FRAME_SIZE, MAX_NUM_OUTPUTS, TIME_SLOTS, pData->OutputFrameTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->OutputFrameTF, DECORRELATOR_FRAME_SIZE, MAX_NUM_OUTPUTS, TIME_SLOTS, pData->OutputFrameTD);
 
         /* Copy to output buffer */
         for (ch = 0; ch < SAF_MIN(nCH, nOutputs); ch++)
-            utility_svvcopy(pData->OutputFrameTD[ch], FRAME_SIZE, outputs[ch]);
+            utility_svvcopy(pData->OutputFrameTD[ch], DECORRELATOR_FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
-            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch], 0, DECORRELATOR_FRAME_SIZE*sizeof(float));
     }
     else
         for (ch=0; ch < nOutputs; ch++)
-            memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch],0, DECORRELATOR_FRAME_SIZE*sizeof(float));
 
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
@@ -277,7 +277,7 @@ void decorrelator_setTransientBypassFlag(void* const hDecor, int newValue)
 
 int decorrelator_getFrameSize(void)
 {
-    return FRAME_SIZE;
+    return DECORRELATOR_FRAME_SIZE;
 }
 
 CODEC_STATUS decorrelator_getCodecStatus(void* const hDecor)

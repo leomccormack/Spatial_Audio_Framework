@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 Leo McCormack
+ * Copyright 2018-2021 Leo McCormack
  *
  * This software is dual-licensed.
  *

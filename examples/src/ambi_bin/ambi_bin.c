@@ -79,8 +79,8 @@ void ambi_bin_create
     
     /* afSTFT and audio buffers */
     pData->hSTFT = NULL;
-    pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
-    pData->binFrameTD = (float**)malloc2d(NUM_EARS, FRAME_SIZE, sizeof(float));
+    pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, AMBI_BIN_FRAME_SIZE, sizeof(float));
+    pData->binFrameTD = (float**)malloc2d(NUM_EARS, AMBI_BIN_FRAME_SIZE, sizeof(float));
     pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
     pData->binframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
 
@@ -404,30 +404,30 @@ void ambi_bin_process
     enableRot = pData->enableRotation;
 
     /* Process frame */
-    if (nSamples == FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) ) {
+    if (nSamples == AMBI_BIN_FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) ) {
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
         for(i=0; i < SAF_MIN(nSH, nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
+            utility_svvcopy(inputs[i], AMBI_BIN_FRAME_SIZE, pData->SHFrameTD[i]);
         for(; i<nSH; i++)
-            memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+            memset(pData->SHFrameTD[i], 0, AMBI_BIN_FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
 
         /* account for channel order convention */
         switch(chOrdering){
             case CH_ACN:  /* already in ACN, do nothing */ break; /* Otherwise, convert to ACN... */
-            case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
+            case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), order, AMBI_BIN_FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
         }
 
         /* account for input normalisation scheme */
         switch(norm){
             case NORM_N3D:  /* already in N3D, do nothing */ break; /* Otherwise, convert to N3D... */
-            case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
-            case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
+            case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, AMBI_BIN_FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
+            case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), order, AMBI_BIN_FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
         }
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward_knownDimensions(pData->hSTFT, pData->SHFrameTD, FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->SHframeTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->SHFrameTD, AMBI_BIN_FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->SHframeTF);
 
         /* Main processing: */
         if(order > 0 && enableRot) {
@@ -461,17 +461,17 @@ void ambi_bin_process
         }
 
         /* inverse-TFT */
-        afSTFT_backward_knownDimensions(pData->hSTFT, pData->binframeTF, FRAME_SIZE, NUM_EARS, TIME_SLOTS, pData->binFrameTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->binframeTF, AMBI_BIN_FRAME_SIZE, NUM_EARS, TIME_SLOTS, pData->binFrameTD);
 
         /* Copy to output */
         for (ch = 0; ch < SAF_MIN(NUM_EARS, nOutputs); ch++)
-            utility_svvcopy(pData->binFrameTD[ch], FRAME_SIZE, outputs[ch]);
+            utility_svvcopy(pData->binFrameTD[ch], AMBI_BIN_FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
-            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch], 0, AMBI_BIN_FRAME_SIZE*sizeof(float));
     }
     else
         for (ch=0; ch < nOutputs; ch++)
-            memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch],0, AMBI_BIN_FRAME_SIZE*sizeof(float));
 
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
@@ -644,7 +644,7 @@ void ambi_bin_setRPYflag(void* const hAmbi, int newState)
 
 int ambi_bin_getFrameSize(void)
 {
-    return FRAME_SIZE;
+    return AMBI_BIN_FRAME_SIZE;
 }
 
 CODEC_STATUS ambi_bin_getCodecStatus(void* const hAmbi)

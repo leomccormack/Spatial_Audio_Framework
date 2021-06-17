@@ -37,8 +37,12 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 ) /**< Framesize, in time-domain samples */
+#if !defined(AMBI_ROOMSIM_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define AMBI_ROOMSIM_FRAME_SIZE ( FRAME_SIZE )   /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define AMBI_ROOMSIM_FRAME_SIZE ( 128 )          /**< Framesize, in time-domain samples */
+# endif
 #endif
 
 /* ========================================================================== */
@@ -52,16 +56,16 @@ extern "C" {
 typedef struct _ambi_roomsim
 {
     /* Internals */
-    float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];      /**< Input frame of signals */
-    float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; /**< Output frame of SH signals */
+    float inputFrameTD[MAX_NUM_INPUTS][AMBI_ROOMSIM_FRAME_SIZE];      /**< Input frame of signals */
+    float outputFrameTD[MAX_NUM_SH_SIGNALS][AMBI_ROOMSIM_FRAME_SIZE]; /**< Output frame of SH signals */
     float fs;                 /**< Host sampling rate, in Hz */
 
     /* Internal */
     void* hIms;               /**< Image source implementation handle */
     int sourceIDs[ROOM_SIM_MAX_NUM_SOURCES];     /**< Unique IDs per source in the simulation */
     int receiverIDs[ROOM_SIM_MAX_NUM_RECEIVERS]; /**< Unique IDs per receiver in the simulation */
-    float** src_sigs;         /**< Source signal buffers; ROOM_SIM_MAX_NUM_SOURCES x FRAME_SIZE */
-    float*** rec_sh_outsigs;  /**< Receiver signal buffers; ROOM_SIM_MAX_NUM_RECEIVERS x MAX_NUM_SH_SIGNALS x FRAME_SIZE */
+    float** src_sigs;         /**< Source signal buffers; ROOM_SIM_MAX_NUM_SOURCES x AMBI_ROOMSIM_FRAME_SIZE */
+    float*** rec_sh_outsigs;  /**< Receiver signal buffers; ROOM_SIM_MAX_NUM_RECEIVERS x MAX_NUM_SH_SIGNALS x AMBI_ROOMSIM_FRAME_SIZE */
     int reinit_room;          /**< Flag, 1: re-init required, 0: not required*/
     int new_sh_order;         /**< New receiver SH order */
     int new_nSources;         /**< New number of sources */

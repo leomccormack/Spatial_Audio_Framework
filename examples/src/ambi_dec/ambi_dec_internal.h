@@ -57,17 +57,23 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 )                      /**< Framesize, in time-domain samples */
+#if !defined(AMBI_DEC_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define AMBI_DEC_FRAME_SIZE ( FRAME_SIZE )           /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define AMBI_DEC_FRAME_SIZE ( 128 )                  /**< Framesize, in time-domain samples */
+# endif
 #endif
-#define HOP_SIZE ( 128 )                         /**< STFT hop size */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )            /**< Number of frequency bands */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )     /**< Number of STFT timeslots */
-#define MAX_NUM_LOUDSPEAKERS ( MAX_NUM_OUTPUTS ) /**< Maximum permitted output channels */
-#define MIN_NUM_LOUDSPEAKERS ( 4 )               /**< To avoid triangulation errors when using AllRAD */
-#define NUM_DECODERS ( 2 )                       /**< One for low-frequencies and another for high-frequencies */
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define HOP_SIZE ( 128 )                               /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )                  /**< Number of frequency bands */
+#define TIME_SLOTS ( AMBI_DEC_FRAME_SIZE / HOP_SIZE )  /**< Number of STFT timeslots */
+#define MAX_NUM_LOUDSPEAKERS ( MAX_NUM_OUTPUTS )       /**< Maximum permitted output channels */
+#define MIN_NUM_LOUDSPEAKERS ( 4 )                     /**< To avoid triangulation errors when using AllRAD */
+#define NUM_DECODERS ( 2 )                             /**< One for low-frequencies and another for high-frequencies */
+
+/* Checks: */
+#if (AMBI_DEC_FRAME_SIZE % HOP_SIZE != 0)
+# error "AMBI_DEC_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
 
 /* ========================================================================== */
@@ -120,8 +126,8 @@ typedef struct _ambi_dec_codecPars
 typedef struct _ambi_dec
 {
     /* audio buffers + afSTFT time-frequency transform handle */
-    float** SHFrameTD;                   /**< Input spherical harmonic (SH) signals in the time-domain; #MAX_NUM_SH_SIGNALS x #FRAME_SIZE */
-    float** outputFrameTD;               /**< Output loudspeaker or binaural signals in the time-domain; #MAX_NUM_LOUDSPEAKERS x #FRAME_SIZE */
+    float** SHFrameTD;                   /**< Input spherical harmonic (SH) signals in the time-domain; #MAX_NUM_SH_SIGNALS x #AMBI_DEC_FRAME_SIZE */
+    float** outputFrameTD;               /**< Output loudspeaker or binaural signals in the time-domain; #MAX_NUM_LOUDSPEAKERS x #AMBI_DEC_FRAME_SIZE */
     float_complex*** SHframeTF;          /**< Input spherical harmonic (SH) signals in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
     float_complex*** outputframeTF;      /**< Output loudspeaker signals in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_LOUDSPEAKERS x #TIME_SLOTS */
     float_complex*** binframeTF;         /**< Output binaural signals in the time-frequency domain; #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS */
@@ -155,7 +161,7 @@ typedef struct _ambi_dec
     AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH diffEQmode[NUM_DECODERS]; /**< diffuse-field EQ approach; see #DIFFUSE_FIELD_EQ_APPROACH enum */
     float transitionFreq;                /**< transition frequency for the 2 decoders, in Hz */
     int nLoudpkrs;                       /**< number of loudspeakers/virtual loudspeakers */
-    float loudpkrs_dirs_deg[MAX_NUM_LOUDSPEAKERS][NUM_DECODERS]; /* loudspeaker directions in degrees [azi, elev] */
+    float loudpkrs_dirs_deg[MAX_NUM_LOUDSPEAKERS][NUM_DECODERS]; /**< loudspeaker directions in degrees [azi, elev] */
     int useDefaultHRIRsFLAG;             /**< 1: use default HRIRs in database, 0: use those from SOFA file */
     int enableHRIRsPreProc;              /**< flag to apply pre-processing to the currently loaded HRTFs */
     int binauraliseLS;                   /**< 1: convolve loudspeaker signals with HRTFs, 0: output loudspeaker signals */

@@ -38,14 +38,20 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 )                  /**< Framesize, in time-domain samples */
+#if !defined(DECORRELATOR_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define DECORRELATOR_FRAME_SIZE ( FRAME_SIZE )          /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define DECORRELATOR_FRAME_SIZE ( 128 )                 /**< Framesize, in time-domain samples */
+# endif
 #endif
-#define HOP_SIZE ( 128 )                     /**< STFT hop size */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define HOP_SIZE ( 128 )                                  /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )                     /**< Number of frequency bands */
+#define TIME_SLOTS ( DECORRELATOR_FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
+
+/* Checks: */
+#if (DECORRELATOR_FRAME_SIZE % HOP_SIZE != 0)
+# error "DECORRELATOR_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
     
 /* ========================================================================== */

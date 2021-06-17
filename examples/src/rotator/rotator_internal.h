@@ -40,43 +40,45 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
+
 /* ========================================================================== */
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 64 )  /**< Framesize, in time-domain samples */
+#if !defined(ROTATOR_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define ROTATOR_FRAME_SIZE ( FRAME_SIZE ) /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define ROTATOR_FRAME_SIZE ( 64 )         /**< Framesize, in time-domain samples */
+# endif
 #endif
+
+/* ========================================================================== */
+/*                                 Structures                                 */
+/* ========================================================================== */
 
 /** Available Ambisonic channel ordering conventions */
 typedef enum {
     M_ROT_READY = 1,           /**< M_rot is ready */
     M_ROT_RECOMPUTE_EULER,     /**< Use Euler angles to recompute M_rot */
     M_ROT_RECOMPUTE_QUATERNION /**< Use Quaternions to recompute M_rot */
-
 } M_ROT_STATUS;
-    
-    
-/* ========================================================================== */
-/*                                 Structures                                 */
-/* ========================================================================== */
 
 /** Main struct for the rotator */
 typedef struct _rotator
 {
     /* Internal buffers */
-    float inputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float prev_inputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float tempFrame_fadeOut[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float outputFrameTD_fadeIn[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float inputFrameTD[MAX_NUM_SH_SIGNALS][ROTATOR_FRAME_SIZE];         /**< Input frame of signals */
+    float prev_inputFrameTD[MAX_NUM_SH_SIGNALS][ROTATOR_FRAME_SIZE];    /**< Previous frame of signals */
+    float tempFrame[MAX_NUM_SH_SIGNALS][ROTATOR_FRAME_SIZE];            /**< Temporary frame */
+    float tempFrame_fadeOut[MAX_NUM_SH_SIGNALS][ROTATOR_FRAME_SIZE];    /**< Temporary frame with linear interpolation (fade-out) applied */
+    float outputFrameTD[MAX_NUM_SH_SIGNALS][ROTATOR_FRAME_SIZE];        /**< Output frame of SH signals */
+    float outputFrameTD_fadeIn[MAX_NUM_SH_SIGNALS][ROTATOR_FRAME_SIZE]; /**< Output frame of SH signals with linear interpolation (fade-in) applied */
 
     /* Internal variables */
-    float interpolator_fadeIn[FRAME_SIZE];
-    float interpolator_fadeOut[FRAME_SIZE];
-    float M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
+    float interpolator_fadeIn[ROTATOR_FRAME_SIZE];       /**< Linear Interpolator (fade-in) */
+    float interpolator_fadeOut[ROTATOR_FRAME_SIZE];      /**< Linear Interpolator (fade-out) */
+    float M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];     /**< */
     float prev_M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     M_ROT_STATUS M_rot_status;
     int fs;

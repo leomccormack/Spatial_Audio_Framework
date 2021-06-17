@@ -43,18 +43,23 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 1024 )                 /**< Framesize, in time-domain samples */
+#if !defined(POWERMAP_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define POWERMAP_FRAME_SIZE ( FRAME_SIZE )          /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define POWERMAP_FRAME_SIZE ( 1024 )                /**< Framesize, in time-domain samples */
+# endif
 #endif
-#define HOP_SIZE ( 128 )                     /**< STFT hop size */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
-#define NUM_DISP_SLOTS ( 2 )                 /**< Number of display slots */
-#define MAX_COV_AVG_COEFF ( 0.45f )          /**< Maximum supported covariance averaging coefficient  */
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define HOP_SIZE ( 128 )                              /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )                 /**< Number of frequency bands */
+#define TIME_SLOTS ( POWERMAP_FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
+#define NUM_DISP_SLOTS ( 2 )                          /**< Number of display slots */
+#define MAX_COV_AVG_COEFF ( 0.45f )                   /**< Maximum supported covariance averaging coefficient  */
+
+/* Checks: */
+#if (POWERMAP_FRAME_SIZE % HOP_SIZE != 0)
+# error "POWERMAP_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
-    
     
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -83,7 +88,7 @@ typedef struct _powermap
 {
     /* FIFO buffers */
     int FIFO_idx;
-    float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
+    float inFIFO[MAX_NUM_SH_SIGNALS][POWERMAP_FRAME_SIZE];
 
     /* TFT */
     float** SHframeTD;

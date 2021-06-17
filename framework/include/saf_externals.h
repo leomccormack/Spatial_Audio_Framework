@@ -121,8 +121,8 @@
 
 #else
 /*
- * Note that if you would like to use some other CBLAS/LAPACK supporting library
- * then please get in touch! :-)
+ * If you would like to use some other CBLAS/LAPACK supporting library then
+ * please get in touch! :-)
  */
 # error SAF requires a library (or libraries) which supports CBLAS and LAPACK
 #endif
@@ -148,7 +148,7 @@
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
 /*
- * If your compiler stopped at this point, then please add the path to the
+ * If your compiler stopped at this point, then please add the path for the
  * netcdf include file to your project's include header paths.
  * Instructions for linking the required "netcdf" library may also be found
  * here: docs/SOFA_READER_MODULE_DEPENDENCIES.md

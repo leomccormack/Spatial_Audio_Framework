@@ -37,8 +37,12 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 64 ) /**< Framesize, in time-domain samples */
+#if !defined(AMBI_ENC_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define AMBI_ENC_FRAME_SIZE ( FRAME_SIZE )   /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define AMBI_ENC_FRAME_SIZE ( 64 )           /**< Framesize, in time-domain samples */
+# endif
 #endif
 
 /* ========================================================================== */
@@ -52,20 +56,20 @@ extern "C" {
 typedef struct _ambi_enc
 {
     /* Internal audio buffers */
-    float inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];              /**< Input frame of signals */
-    float prev_inputFrameTD[MAX_NUM_INPUTS][FRAME_SIZE];         /**< Previous frame of signals */
-    float tempFrame_fadeOut[MAX_NUM_SH_SIGNALS][FRAME_SIZE];     /**< Temporary frame with linear interpolation (fade-in) applied */
-    float tempFrame[MAX_NUM_SH_SIGNALS][FRAME_SIZE];             /**< Temporary frame */
-    float outputFrameTD_fadeIn[MAX_NUM_SH_SIGNALS][FRAME_SIZE];  /**< Output frame of SH signals with linear interpolation (fade-out) applied */
-    float outputFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];         /**< Output frame of SH signals */
+    float inputFrameTD[MAX_NUM_INPUTS][AMBI_ENC_FRAME_SIZE];              /**< Input frame of signals */
+    float prev_inputFrameTD[MAX_NUM_INPUTS][AMBI_ENC_FRAME_SIZE];         /**< Previous frame of signals */
+    float tempFrame_fadeOut[MAX_NUM_SH_SIGNALS][AMBI_ENC_FRAME_SIZE];     /**< Temporary frame with linear interpolation (fade-out) applied */
+    float tempFrame[MAX_NUM_SH_SIGNALS][AMBI_ENC_FRAME_SIZE];             /**< Temporary frame */
+    float outputFrameTD_fadeIn[MAX_NUM_SH_SIGNALS][AMBI_ENC_FRAME_SIZE];  /**< Output frame of SH signals with linear interpolation (fade-in) applied */
+    float outputFrameTD[MAX_NUM_SH_SIGNALS][AMBI_ENC_FRAME_SIZE];         /**< Output frame of SH signals */
 
     /* Internal variables */
     float fs;                                                    /**< Host sampling rate */
     int recalc_SH_FLAG[MAX_NUM_INPUTS];                          /**< Flags, 1: recalc SH weights, 0: do not */
     float Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];                 /**< SH weights */
     float prev_Y[MAX_NUM_SH_SIGNALS][MAX_NUM_INPUTS];            /**< Previous SH weights */
-    float interpolator_fadeIn[FRAME_SIZE];                       /**< Linear Interpolator (fade-in) */
-    float interpolator_fadeOut[FRAME_SIZE];                      /**< Linear Interpolator (fade-out) */
+    float interpolator_fadeIn[AMBI_ENC_FRAME_SIZE];              /**< Linear Interpolator (fade-in) */
+    float interpolator_fadeOut[AMBI_ENC_FRAME_SIZE];             /**< Linear Interpolator (fade-out) */
     int new_nSources;                                            /**< New number of input signals */
     
     /* user parameters */

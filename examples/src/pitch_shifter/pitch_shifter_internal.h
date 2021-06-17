@@ -37,8 +37,12 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 )  /**< Framesize, in time-domain samples */
+#if !defined(PITCH_SHIFTER_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define PITCH_SHIFTER_FRAME_SIZE ( FRAME_SIZE )  /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define PITCH_SHIFTER_FRAME_SIZE ( 128 )         /**< Framesize, in time-domain samples */
+# endif
 #endif
 
 /* ========================================================================== */
@@ -52,8 +56,8 @@ typedef struct _pitch_shifter
 {
     /* FIFO buffers */
     int FIFO_idx;
-    float inFIFO[MAX_NUM_CHANNELS][FRAME_SIZE];
-    float outFIFO[MAX_NUM_CHANNELS][FRAME_SIZE];
+    float inFIFO[MAX_NUM_CHANNELS][PITCH_SHIFTER_FRAME_SIZE];
+    float outFIFO[MAX_NUM_CHANNELS][PITCH_SHIFTER_FRAME_SIZE];
 
     /* internal */
     void* hSmb;
@@ -62,8 +66,8 @@ typedef struct _pitch_shifter
     char* progressBarText;          /**< Current (re)initialisation step, string */
     PROC_STATUS procStatus;         /**< see #PROC_STATUS */
     float sampleRate;
-    float inputFrame[MAX_NUM_CHANNELS][FRAME_SIZE];
-    float outputFrame[MAX_NUM_CHANNELS][FRAME_SIZE];
+    float inputFrame[MAX_NUM_CHANNELS][PITCH_SHIFTER_FRAME_SIZE];
+    float outputFrame[MAX_NUM_CHANNELS][PITCH_SHIFTER_FRAME_SIZE];
     int new_nChannels;
     int fftFrameSize, stepsize;
 

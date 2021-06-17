@@ -38,10 +38,14 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 )               /**< Framesize, in time-domain samples */
+#if !defined(BEAMFORMER_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define BEAMFORMER_FRAME_SIZE ( FRAME_SIZE ) /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define BEAMFORMER_FRAME_SIZE ( 128 )        /**< Framesize, in time-domain samples */
+# endif
 #endif
-#define MAX_NUM_BEAMS ( MAX_NUM_OUTPUTS ) /**< Maximum permitted number of beams/output channels */
+#define MAX_NUM_BEAMS ( MAX_NUM_OUTPUTS )      /**< Maximum permitted number of beams/output channels */
 
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -54,20 +58,20 @@ extern "C" {
 typedef struct _beamformer
 {
     /* Internal audio buffers */
-    float SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float prev_SHFrameTD[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float tempFrame[MAX_NUM_BEAMS][FRAME_SIZE];
-    float tempFrame_fadeOut[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
-    float outputFrameTD[MAX_NUM_BEAMS][FRAME_SIZE];
-    float outputFrameTD_fadeIn[MAX_NUM_SH_SIGNALS][FRAME_SIZE];
+    float SHFrameTD[MAX_NUM_SH_SIGNALS][BEAMFORMER_FRAME_SIZE];             /**< Input frame of SH signals */
+    float prev_SHFrameTD[MAX_NUM_SH_SIGNALS][BEAMFORMER_FRAME_SIZE];        /**< Previous frame of SH signals */
+    float tempFrame[MAX_NUM_BEAMS][BEAMFORMER_FRAME_SIZE];                  /**< Temporary frame */
+    float tempFrame_fadeOut[MAX_NUM_SH_SIGNALS][BEAMFORMER_FRAME_SIZE];     /**< Temporary frame with linear interpolation (fade-out) applied */
+    float outputFrameTD[MAX_NUM_BEAMS][BEAMFORMER_FRAME_SIZE];              /**< Output frame of beam signals */
+    float outputFrameTD_fadeIn[MAX_NUM_SH_SIGNALS][BEAMFORMER_FRAME_SIZE];  /**< Output frame of beam signals with linear interpolation (fade-in) applied */
 
     /* internal variables */
-    int fs;
-    float beamWeights[MAX_NUM_BEAMS][MAX_NUM_SH_SIGNALS];
-    float prev_beamWeights[MAX_NUM_BEAMS][MAX_NUM_SH_SIGNALS];
-    float interpolator_fadeIn[FRAME_SIZE];
-    float interpolator_fadeOut[FRAME_SIZE];
-    int recalc_beamWeights[MAX_NUM_BEAMS];   /**< 0: no init required, 1: init required */ 
+    int fs;                                             /**< Host sampling rate, in Hz */
+    float beamWeights[MAX_NUM_BEAMS][MAX_NUM_SH_SIGNALS];      /**< Current beamforming weights */
+    float prev_beamWeights[MAX_NUM_BEAMS][MAX_NUM_SH_SIGNALS]; /**< Previous beamforming weights */
+    float interpolator_fadeIn[BEAMFORMER_FRAME_SIZE];   /**< Linear Interpolator (fade-in) */
+    float interpolator_fadeOut[BEAMFORMER_FRAME_SIZE];  /**< Linear Interpolator (fade-out) */
+    int recalc_beamWeights[MAX_NUM_BEAMS];              /**< 0: no init required, 1: init required */
     
     /* user parameters */
     int beamOrder;                           /**< beam order */

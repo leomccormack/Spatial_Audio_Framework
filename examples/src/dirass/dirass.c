@@ -94,7 +94,7 @@ void dirass_create
 
     /* set FIFO buffers */
     pData->FIFO_idx = 0;
-    memset(pData->inFIFO, 0, MAX_NUM_INPUT_SH_SIGNALS*FRAME_SIZE*sizeof(float));
+    memset(pData->inFIFO, 0, MAX_NUM_INPUT_SH_SIGNALS*DIRASS_FRAME_SIZE*sizeof(float));
 }
 
 void dirass_destroy
@@ -235,25 +235,25 @@ void dirass_analysis
         pData->FIFO_idx++;
 
         /* Process frame if inFIFO is full and codec is ready for it */
-        if (pData->FIFO_idx >= FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying) {
+        if (pData->FIFO_idx >= DIRASS_FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) && isPlaying) {
             pData->FIFO_idx = 0;
             pData->procStatus = PROC_STATUS_ONGOING;
 
             /* Load time-domain data */
             for(ch=0; ch<nSH; ch++)
-                memcpy(pData->SHframeTD[ch],pData->inFIFO[ch], FRAME_SIZE*sizeof(float));
+                memcpy(pData->SHframeTD[ch],pData->inFIFO[ch], DIRASS_FRAME_SIZE*sizeof(float));
 
             /* account for input channel order */
             switch(chOrdering){
                 case CH_ACN:  /* already ACN */ break; /* Otherwise, convert to ACN... */
-                case CH_FUMA: convertHOAChannelConvention((float*)pData->SHframeTD, inputOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
+                case CH_FUMA: convertHOAChannelConvention((float*)pData->SHframeTD, inputOrder, DIRASS_FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
             }
 
             /* account for input normalisation scheme */
             switch(norm){
                 case NORM_N3D:  /* already in N3D, do nothing */ break; /* Otherwise, convert to N3D... */
-                case NORM_SN3D: convertHOANormConvention((float*)pData->SHframeTD, inputOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
-                case NORM_FUMA: convertHOANormConvention((float*)pData->SHframeTD, inputOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
+                case NORM_SN3D: convertHOANormConvention((float*)pData->SHframeTD, inputOrder, DIRASS_FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
+                case NORM_FUMA: convertHOANormConvention((float*)pData->SHframeTD, inputOrder, DIRASS_FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
             }
 
             /* update the dirass powermap */
@@ -265,32 +265,32 @@ void dirass_analysis
                 float b[3], a[3];
                 biQuadCoeffs(BIQUAD_FILTER_HPF, minFreq_hz, pData->fs, 0.7071f, 0.0f, b, a);
                 for(i=0; i<nSH; i++)
-                    applyBiQuadFilter(b, a, pData->Wz12_hpf[i], pData->SHframeTD[i], FRAME_SIZE);
+                    applyBiQuadFilter(b, a, pData->Wz12_hpf[i], pData->SHframeTD[i], DIRASS_FRAME_SIZE);
                 biQuadCoeffs(BIQUAD_FILTER_LPF, maxFreq_hz, pData->fs, 0.7071f, 0.0f, b, a);
                 for(i=0; i<nSH; i++)
-                    applyBiQuadFilter(b, a, pData->Wz12_lpf[i], pData->SHframeTD[i], FRAME_SIZE);
+                    applyBiQuadFilter(b, a, pData->Wz12_lpf[i], pData->SHframeTD[i], DIRASS_FRAME_SIZE);
 
                 /* DoA estimation for each spatially-localised sector */
                 if(DirAssMode==REASS_UPSCALE || DirAssMode==REASS_NEAREST){
                     /* Beamform using the sector patterns */
-                    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->grid_nDirs, FRAME_SIZE, sec_nSH, 1.0f,
+                    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->grid_nDirs, DIRASS_FRAME_SIZE, sec_nSH, 1.0f,
                                 pars->Cw, sec_nSH,
-                                (const float*)pData->SHframeTD, FRAME_SIZE, 0.0f,
-                                pars->ss, FRAME_SIZE);
+                                (const float*)pData->SHframeTD, DIRASS_FRAME_SIZE, 0.0f,
+                                pars->ss, DIRASS_FRAME_SIZE);
 
                     for(i=0; i<pars->grid_nDirs; i++){
                         /* beamforming to get velocity patterns */
-                        cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, 3, FRAME_SIZE, nSH, 1.0f,
+                        cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, 3, DIRASS_FRAME_SIZE, nSH, 1.0f,
                                     &(pars->Cxyz[i*nSH*3]), 3,
-                                    (const float*)pData->SHframeTD, FRAME_SIZE, 0.0f,
-                                    pars->ssxyz, FRAME_SIZE);
+                                    (const float*)pData->SHframeTD, DIRASS_FRAME_SIZE, 0.0f,
+                                    pars->ssxyz, DIRASS_FRAME_SIZE);
 
                         /* take the sum or mean ss.*ssxyz, to get intensity vector */
                         memset(intensity, 0, 3*sizeof(float));
                         for(k=0; k<3; k++){
-                            for(j=0; j<FRAME_SIZE; j++)
-                                intensity[k] += pars->ssxyz[k*FRAME_SIZE + j] * pars->ss[i*FRAME_SIZE+j];
-                            intensity[k] /= (float)FRAME_SIZE;
+                            for(j=0; j<DIRASS_FRAME_SIZE; j++)
+                                intensity[k] += pars->ssxyz[k*DIRASS_FRAME_SIZE + j] * pars->ss[i*DIRASS_FRAME_SIZE+j];
+                            intensity[k] /= (float)DIRASS_FRAME_SIZE;
 
                             /* average over time */
                             intensity[k] = pmapAvgCoeff * (pars->prev_intensity[i*3+k]) + (1.0f-pmapAvgCoeff) * intensity[k];
@@ -311,16 +311,16 @@ void dirass_analysis
                     default:
                     case REASS_MODE_OFF:
                         /* Standard beamformer-based pmap */
-                        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->grid_nDirs, FRAME_SIZE, nSH, 1.0f,
+                        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->grid_nDirs, DIRASS_FRAME_SIZE, nSH, 1.0f,
                                     pars->w, nSH,
-                                    (const float*)pData->SHframeTD, FRAME_SIZE, 0.0f,
-                                    pars->ss, FRAME_SIZE);
+                                    (const float*)pData->SHframeTD, DIRASS_FRAME_SIZE, 0.0f,
+                                    pars->ss, DIRASS_FRAME_SIZE);
 
                         /* sum energy over the length of the frame to obtain the pmap */
                         memset(pData->pmap, 0, pars->grid_nDirs *sizeof(float));
                         for(i=0; i<pars->grid_nDirs; i++)
-                            for(j=0; j<FRAME_SIZE; j++)
-                                pData->pmap[i] += (pars->ss[i*FRAME_SIZE+j])*(pars->ss[i*FRAME_SIZE+j]);
+                            for(j=0; j<DIRASS_FRAME_SIZE; j++)
+                                pData->pmap[i] += (pars->ss[i*DIRASS_FRAME_SIZE+j])*(pars->ss[i*DIRASS_FRAME_SIZE+j]);
 
                         /* average energy over time */
                         for(i=0; i<pars->grid_nDirs; i++){
@@ -338,22 +338,22 @@ void dirass_analysis
                     case REASS_UPSCALE:
                         /* upscale */
                         getSHreal_recur(upscaleOrder, pars->est_dirs, pars->grid_nDirs, pars->Y_up);
-                        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, up_nSH, FRAME_SIZE, pars->grid_nDirs, 1.0f,
+                        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, up_nSH, DIRASS_FRAME_SIZE, pars->grid_nDirs, 1.0f,
                                     pars->Y_up, pars->grid_nDirs,
-                                    pars->ss, FRAME_SIZE, 0.0f,
-                                    (float*)pData->SHframe_upTD, FRAME_SIZE);
+                                    pars->ss, DIRASS_FRAME_SIZE, 0.0f,
+                                    (float*)pData->SHframe_upTD, DIRASS_FRAME_SIZE);
 
                         /* Beamform using the new spatially upscaled frame */
-                        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->grid_nDirs, FRAME_SIZE, up_nSH, 1.0f,
+                        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, pars->grid_nDirs, DIRASS_FRAME_SIZE, up_nSH, 1.0f,
                                     pars->Uw, up_nSH,
-                                    (float*)pData->SHframe_upTD, FRAME_SIZE, 0.0f,
-                                    pars->ss, FRAME_SIZE);
+                                    (float*)pData->SHframe_upTD, DIRASS_FRAME_SIZE, 0.0f,
+                                    pars->ss, DIRASS_FRAME_SIZE);
 
                         /* sum energy over the length of the frame to obtain the pmap */
                         memset(pData->pmap, 0, pars->grid_nDirs *sizeof(float));
                         for(i=0; i<pars->grid_nDirs; i++)
-                            for(j=0; j<FRAME_SIZE; j++)
-                                pData->pmap[i] += (pars->ss[i*FRAME_SIZE+j])*(pars->ss[i*FRAME_SIZE+j]);
+                            for(j=0; j<DIRASS_FRAME_SIZE; j++)
+                                pData->pmap[i] += (pars->ss[i*DIRASS_FRAME_SIZE+j])*(pars->ss[i*DIRASS_FRAME_SIZE+j]);
 
                         /* average energy over time */
                         for(i=0; i<pars->grid_nDirs; i++){
@@ -373,8 +373,8 @@ void dirass_analysis
                         findClosestGridPoints(pars->interp_dirs_rad, pars->interp_nDirs, pars->est_dirs, pars->grid_nDirs, 0, pars->est_dirs_idx, NULL, NULL);
                         memset(pData->pmap_grid[pData->dispSlotIdx], 0, pars->interp_nDirs * sizeof(float));
                         for(i=0; i< pars->grid_nDirs; i++)
-                            for(j=0; j<FRAME_SIZE; j++)
-                                pData->pmap[i] = (pars->ss[i*FRAME_SIZE+j])*(pars->ss[i*FRAME_SIZE+j]);
+                            for(j=0; j<DIRASS_FRAME_SIZE; j++)
+                                pData->pmap[i] = (pars->ss[i*DIRASS_FRAME_SIZE+j])*(pars->ss[i*DIRASS_FRAME_SIZE+j]);
 
                         /* average energy over time, and assign to nearest grid direction */
                         for(i=0; i<pars->grid_nDirs; i++){
@@ -403,7 +403,7 @@ void dirass_analysis
                 pData->pmapReady = 1;
             }
         }
-        else if(pData->FIFO_idx >= FRAME_SIZE){
+        else if(pData->FIFO_idx >= DIRASS_FRAME_SIZE){
             /* reset FIFO_idx index if codec was not ready */
             pData->FIFO_idx = 0;
         }
@@ -542,7 +542,7 @@ void dirass_requestPmapUpdate(void* const hDir)
 
 int dirass_getFrameSize(void)
 {
-    return FRAME_SIZE;
+    return DIRASS_FRAME_SIZE;
 }
 
 CODEC_STATUS dirass_getCodecStatus(void* const hDir)
@@ -681,5 +681,5 @@ int dirass_getPmap(void* const hDir, float** grid_dirs, float** pmap, int* nDirs
 
 int dirass_getProcessingDelay()
 {
-    return 2*FRAME_SIZE;
+    return 2*DIRASS_FRAME_SIZE;
 }

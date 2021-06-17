@@ -51,14 +51,20 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 )                  /**< Framesize, in time-domain samples */
+#if !defined(AMBI_DRC_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define AMBI_DRC_FRAME_SIZE ( FRAME_SIZE )          /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define AMBI_DRC_FRAME_SIZE ( 128 )                 /**< Framesize, in time-domain samples */
+# endif
 #endif
-#define HOP_SIZE ( 128 )                     /**< STFT hop size */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define HOP_SIZE ( 128 )                              /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )                 /**< Number of frequency bands */
+#define TIME_SLOTS ( AMBI_DRC_FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
+
+/* Checks: */
+#if (AMBI_DRC_FRAME_SIZE % HOP_SIZE != 0)
+# error "AMBI_DRC_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
 
 /* ========================================================================== */
@@ -72,7 +78,7 @@ extern "C" {
 typedef struct _ambi_drc
 { 
     /* audio buffers and afSTFT handle */
-    float** frameTD;                 /**< Input/output SH signals, in the time-domain; MAX_NUM_SH_SIGNALS x FRAME_SIZE */
+    float** frameTD;                 /**< Input/output SH signals, in the time-domain; MAX_NUM_SH_SIGNALS x AMBI_DRC_FRAME_SIZE */
     float_complex*** inputFrameTF;   /**< Input SH signals, in the time-frequency domain; HYBRID_BANDS x MAX_NUM_SH_SIGNALS x TIME_SLOTS */
     float_complex*** outputFrameTF;  /**< Output SH signals, in the time-frequency domain; HYBRID_BANDS x MAX_NUM_SH_SIGNALS x TIME_SLOTS */
     void* hSTFT;                     /**< Time-frequency transform handle */

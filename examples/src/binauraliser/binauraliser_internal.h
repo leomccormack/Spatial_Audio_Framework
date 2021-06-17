@@ -44,14 +44,20 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 )                  /**< Framesize, in time-domain samples */
+#if !defined(BINAURALISER_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define BINAURALISER_FRAME_SIZE ( FRAME_SIZE )          /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define BINAURALISER_FRAME_SIZE ( 128 )                 /**< Framesize, in time-domain samples */
+# endif
 #endif
-#define HOP_SIZE ( 128 )                     /**< STFT hop size */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )        /**< Number of frequency bands */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define HOP_SIZE ( 128 )                                  /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )                     /**< Number of frequency bands */
+#define TIME_SLOTS ( BINAURALISER_FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
+
+/* Checks: */
+#if (BINAURALISER_FRAME_SIZE % HOP_SIZE != 0)
+# error "BINAURALISER_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
 
 /* ========================================================================== */
@@ -65,26 +71,26 @@ extern "C" {
 typedef struct _binauraliser
 {
     /* audio buffers */
-    float** inputFrameTD;
-    float** outframeTD;
-    float_complex*** inputframeTF;
-    float_complex*** outputframeTF;
-    int fs;
-    float freqVector[HYBRID_BANDS]; 
-    void* hSTFT;
+    float** inputFrameTD;            /**< time-domain input frame; #MAX_NUM_INPUTS x #BINAURALISER_FRAME_SIZE */
+    float** outframeTD;              /**< time-domain output frame; #NUM_EARS x #BINAURALISER_FRAME_SIZE */
+    float_complex*** inputframeTF;   /**< time-frequency domain input frame; #HYBRID_BANDS x #MAX_NUM_INPUTS x #TIME_SLOTS */
+    float_complex*** outputframeTF;  /**< time-frequency domain input frame; #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS */
+    int fs;                          /**< Host sampling rate, in Hz */
+    float freqVector[HYBRID_BANDS];  /**< Frequency vector (filterbank centre frequencies) */
+    void* hSTFT;                     /**< afSTFT handle */
     
     /* sofa file info */
-    char* sofa_filepath; 
-    float* hrirs;
-    float* hrir_dirs_deg;
-    int N_hrir_dirs;
-    int hrir_len;
-    int hrir_fs;
-    float* weights;
+    char* sofa_filepath;             /**< absolute/relevative file path for a sofa file */
+    float* hrirs;                    /**< time domain HRIRs; FLAT: N_hrir_dirs x #NUM_EARS x hrir_len */
+    float* hrir_dirs_deg;            /**< directions of the HRIRs in degrees [azi elev]; FLAT: N_hrir_dirs x 2 */
+    int N_hrir_dirs;                 /**< number of HRIR directions in the current sofa file */
+    int hrir_len;                    /**< length of the HRIRs, this can be truncated, see "saf_sofa_reader.h" */
+    int hrir_fs;                     /**< sampling rate of the HRIRs, should ideally match the host sampling rate, although not required */
+    float* weights;                  /**< Integration weights for the HRIR measurement grid */
     
     /* vbap gain table */
-    int hrtf_vbapTableRes[2];
-    int N_hrtf_vbap_gtable;
+    int hrtf_vbapTableRes[2];        /**< [0] azimuth, and [1] elevation grid resolution, in degrees */
+    int N_hrtf_vbap_gtable;          /**< Number of interpolation weights/directions */
     int* hrtf_vbap_gtableIdx;        /**< N_hrtf_vbap_gtable x 3 */
     float* hrtf_vbap_gtableComp;     /**< N_hrtf_vbap_gtable x 3 */
     
@@ -118,7 +124,7 @@ typedef struct _binauraliser
     INTERP_MODES interpMode;
     int useDefaultHRIRsFLAG;                 /**< 1: use default HRIRs in database, 0: use those from SOFA file */
     int enableHRIRsPreProc;                  /**< flag to apply pre-processing to the currently loaded HRTFs */
-    int enableRotation;
+    int enableRotation;                      /**< 1: enable rotation, 0: disable */
     float yaw, roll, pitch;                  /**< rotation angles in degrees */
     int bFlipYaw, bFlipPitch, bFlipRoll;     /**< flag to flip the sign of the individual rotation angles */
     int useRollPitchYawFlag;                 /**< rotation order flag, 1: r-p-y, 0: y-p-r */

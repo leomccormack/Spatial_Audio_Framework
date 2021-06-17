@@ -68,8 +68,8 @@ void ambi_roomsim_create
     pData->new_nSources = pData->nSources;
     pData->new_nReceivers = pData->nReceivers;
 
-    pData->src_sigs = (float**)malloc2d(MAX_NUM_CHANNELS, FRAME_SIZE, sizeof(float));
-    pData->rec_sh_outsigs = (float***)malloc3d(IMS_MAX_NUM_RECEIVERS, MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
+    pData->src_sigs = (float**)malloc2d(MAX_NUM_CHANNELS, AMBI_ROOMSIM_FRAME_SIZE, sizeof(float));
+    pData->rec_sh_outsigs = (float***)malloc3d(IMS_MAX_NUM_RECEIVERS, MAX_NUM_SH_SIGNALS, AMBI_ROOMSIM_FRAME_SIZE, sizeof(float));
 
     pData->reinit_room = 1;
 }
@@ -164,12 +164,12 @@ void ambi_roomsim_process
     maxTime_s = -0.05f; /* 50ms */
 
     /* Process frame */
-    if (nSamples == FRAME_SIZE) {
+    if (nSamples == AMBI_ROOMSIM_FRAME_SIZE) {
         /* Load time-domain data */
         for(i=0; i < SAF_MIN(nSources,nInputs); i++)
-            memcpy(pData->src_sigs[i], inputs[i], FRAME_SIZE * sizeof(float));
+            memcpy(pData->src_sigs[i], inputs[i], AMBI_ROOMSIM_FRAME_SIZE * sizeof(float));
         for(; i < nInputs; i++)
-            memset(pData->src_sigs[i], 0, FRAME_SIZE * sizeof(float));
+            memset(pData->src_sigs[i], 0, AMBI_ROOMSIM_FRAME_SIZE * sizeof(float));
 
         /* Update source/receiver positions, room dims/coeffs and re-compute echgrams
          * (note, if nothing has changed since last frame then these calls will be bypassed internally) */
@@ -190,22 +190,22 @@ void ambi_roomsim_process
             /* account for output channel order */
             switch(chOrdering){
                 case CH_ACN: break;
-                case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->rec_sh_outsigs[rec]), order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA); break;
+                case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->rec_sh_outsigs[rec]), order, AMBI_ROOMSIM_FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA); break;
             }
 
             /* account for normalisation scheme */
             switch(norm){
                 case NORM_N3D: break;
-                case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->rec_sh_outsigs[rec]), order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D); break;
-                case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->rec_sh_outsigs[rec]), order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA); break;
+                case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->rec_sh_outsigs[rec]), order, AMBI_ROOMSIM_FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D); break;
+                case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->rec_sh_outsigs[rec]), order, AMBI_ROOMSIM_FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA); break;
             }
 
             /* Append this receiver's output channels to the master output buffer */
             for(j=0; (j<SAF_MIN(nSH, MAX_NUM_SH_SIGNALS) && i<SAF_MIN(nOutputs, MAX_NUM_CHANNELS)); j++, i++)
-                memcpy(outputs[i], pData->rec_sh_outsigs[rec][j], FRAME_SIZE * sizeof(float));
+                memcpy(outputs[i], pData->rec_sh_outsigs[rec][j], AMBI_ROOMSIM_FRAME_SIZE * sizeof(float));
         }
         for(; i < nOutputs; i++)
-            memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
+            memset(outputs[i], 0, AMBI_ROOMSIM_FRAME_SIZE * sizeof(float));
     }
     else{
         for (ch=0; ch < nOutputs; ch++)
@@ -355,7 +355,7 @@ void ambi_roomsim_setNormType(void* const hAmbi, int newType)
 
 int ambi_roomsim_getFrameSize(void)
 {
-    return FRAME_SIZE;
+    return AMBI_ROOMSIM_FRAME_SIZE;
 }
 
 int ambi_roomsim_getEnableIMSflag(void* const hAmbi)
@@ -484,5 +484,5 @@ int ambi_roomsim_getNormType(void* const hAmbi)
 
 int ambi_roomsim_getProcessingDelay()
 {
-    return FRAME_SIZE;
+    return AMBI_ROOMSIM_FRAME_SIZE;
 }
