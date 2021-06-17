@@ -401,6 +401,42 @@ void utility_cvvadd(/* Input Arguments */
                     /* Output Arguments */
                     float_complex* c);
 
+/**
+ * Double-precision, vector-vector addition, i.e.
+ * \code{.m}
+ *     c = a+b
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  b   Input vector b; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_dvvadd(/* Input Arguments */
+                    double* a,
+                    const double* b,
+                    const int len,
+                    /* Output Arguments */
+                    double* c);
+
+/**
+ * Double-precision, complex, vector-vector addition, i.e.
+ * \code{.m}
+ *     c = a+b
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  b   Input vector b; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_zvvadd(/* Input Arguments */
+                    double_complex* a,
+                    const double_complex* b,
+                    const int len,
+                    /* Output Arguments */
+                    double_complex* c);
+
 
 /* ========================================================================== */
 /*                     Vector-Vector Subtraction (?vvsub)                     */
@@ -441,6 +477,42 @@ void utility_cvvsub(/* Input Arguments */
                     const int len,
                     /* Output Arguments */
                     float_complex* c);
+
+/**
+ * Double-precision, vector-vector subtraction, i.e.
+ * \code{.m}
+ *     c = a-b
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  b   Input vector b; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_dvvsub(/* Input Arguments */
+                    double* a,
+                    const double* b,
+                    const int len,
+                    /* Output Arguments */
+                    double* c);
+
+/**
+ * Double-precision, complex, vector-vector subtraction, i.e.
+ * \code{.m}
+ *     c = a-b
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  b   Input vector b; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_zvvsub(/* Input Arguments */
+                    double_complex* a,
+                    const double_complex* b,
+                    const int len,
+                    /* Output Arguments */
+                    double_complex* c);
 
 
 /* ========================================================================== */

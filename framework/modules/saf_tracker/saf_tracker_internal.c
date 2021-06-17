@@ -48,7 +48,7 @@
 
 /** Data structure for kf_update6() */
 typedef struct _kf_update6 {
-    void* sglslv_handle;
+    void* sslslv_handle;
     void* sglslvt_handle;
 }kf_update6_data;
 
@@ -629,7 +629,7 @@ void kf_update6_create(void ** const phUp6)
     *phUp6 = malloc1d(sizeof(kf_update6_data));
     kf_update6_data *h = (kf_update6_data*)(*phUp6);
 
-    utility_sglslv_create(&h->sglslv_handle, 3, 1);
+    utility_sslslv_create(&h->sslslv_handle, 3, 1);
     utility_sglslvt_create(&h->sglslvt_handle, 6, 3);
 }
 void kf_update6_destroy(void ** const phUp6)
@@ -637,7 +637,7 @@ void kf_update6_destroy(void ** const phUp6)
     kf_update6_data *h = (kf_update6_data*)(*phUp6);
 
     if(h!=NULL){
-        utility_sglslv_destroy(&h->sglslv_handle);
+        utility_sslslv_destroy(&h->sslslv_handle);
         utility_sglslvt_destroy(&h->sglslvt_handle);
 
         free(h);
@@ -871,7 +871,7 @@ float gauss_pdf3
     }
     else
 #endif
-    utility_sglslv(h->sglslv_handle, (float*)S, 3, (float*)DX, 1, (float*)S_DX);
+    utility_sslslv(h->sslslv_handle, (float*)S, 3, (float*)DX, 1, (float*)S_DX);
     E = DX[0] * S_DX[0];
     E += DX[1] * S_DX[1];
     E += DX[2] * S_DX[2];

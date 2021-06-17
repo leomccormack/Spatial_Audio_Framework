@@ -254,7 +254,8 @@ void afSTFTlib_forward
         hopIndex_this2 = h->hopIndexIn;
         p1=&(h->inBuffer[ch][hopIndex_this2*h->hopSize]);
         p2=inTD[ch];
-        memcpy((void*)p1,(void*)p2,sizeof(float)*(h->hopSize));
+        //memcpy((void*)p1,(void*)p2,sizeof(float)*(h->hopSize));
+        cblas_scopy(h->hopSize, p2, 1, p1, 1);
         
         hopIndex_this2++;
         if (hopIndex_this2 >= h->totalHops)
@@ -543,8 +544,10 @@ void afHybridForward
         pi1 = FD[ch].im;
         pr2 = h->analysisBuffer[ch][h->loopPointer].re;
         pi2 = h->analysisBuffer[ch][h->loopPointer].im;
-        memcpy((void*)pr2,(void*)pr1,sizeof(float)*(h->hopSize+1));
-        memcpy((void*)pi2,(void*)pi1,sizeof(float)*(h->hopSize+1));
+//        memcpy(pr2, pr1, sizeof(float)*(h->hopSize+1));
+//        memcpy(pi2, pi1, sizeof(float)*(h->hopSize+1));
+        cblas_scopy(h->hopSize+1, pr1, 1, pr2, 1);
+        cblas_scopy(h->hopSize+1, pi1, 1, pi2, 1);
         
         /* Get the pointer to a position corresponding to the group delay of the linear-phase half-band filter. */
         loopPointerThis = h->loopPointer - 3;
@@ -568,7 +571,8 @@ void afHybridForward
             *(pr1+8) = *(pr1+7);
             
             /* The rest of the bands are shifted upwards in the frequency indices, and delayed by the group delay of the half-band filters */
-            memcpy((void*)(pr1+9),(void*)(pr2+5),sizeof(float)*(h->hopSize-4));
+            //memcpy((void*)(pr1+9),(void*)(pr2+5),sizeof(float)*(h->hopSize-4));
+            cblas_scopy(h->hopSize-4, pr2+5, 1, pr1+9, 1);
             
             /* Repeat process for the imaginary part, at next iteration. */
             pr1 = FD[ch].im;

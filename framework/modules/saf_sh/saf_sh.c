@@ -1397,13 +1397,10 @@ void sphESPRIT_estimateDirs
                 h->WVnimu[5], (h->NN),
                 h->Us_10, K, &cbeta,
                 h->WVnimu5_Us10, K);
-    for(i=0; i<h->NN; i++){
-        for(j=0; j<K; j++){
-            h->LambdaXYp[i*K+j] = ccsub(h->WVnimu0_Us1m1[i*K + j], h->WVnimu1_Usm1m1[i*K + j]);
-            h->LambdaXYm[i*K+j] = ccadd(crmul(h->WVnimu2_Us11[i*K+j], -1.0), h->WVnimu3_Usm11[i*K+j]);
-            h->LambdaZ[i*K+j]   = ccadd(h->WVnimu4_Usm10[i*K+j], h->WVnimu5_Us10[i*K+j]);
-        }
-    }
+    utility_zvvsub(h->WVnimu0_Us1m1, h->WVnimu1_Usm1m1, h->NN*K, h->LambdaXYp);
+    cblas_dscal(/*re+im*/2*h->NN*K, -1.0, (double*)h->WVnimu2_Us11, 1);
+    utility_zvvadd(h->WVnimu2_Us11, h->WVnimu3_Usm11, h->NN*K, h->LambdaXYm);
+    utility_zvvadd(h->WVnimu4_Usm10, h->WVnimu5_Us10, h->NN*K, h->LambdaZ);
 
     /*  */
     utility_zpinv(h->hZpinv, h->Us_00, h->NN, K, h->pinvUs);
@@ -1443,7 +1440,7 @@ void sphESPRIT_estimateDirs
         phiX = (creal(h->PhiXYp[i*K+i])+creal(h->PhiXYm[i*K+i]))/2.0;
         phiY = creal(ccdiv(ccsub(h->PhiXYp[i*K+i], h->PhiXYm[i*K+i]), i2_));
         src_dirs_rad[i*2] = (float)atan2(phiY, phiX);
-        src_dirs_rad[i*2+1] = (float)SAF_MIN(atan2(creal(h->PhiZ[i*K+i]), sqrt(phiX*phiX+phiY*phiY)), M_PI/2.0f);
+        src_dirs_rad[i*2+1] = (float)SAF_MIN(atan2(creal(h->PhiZ[i*K+i]), sqrt(phiX*phiX+phiY*phiY)), SAF_PI/2.0f);
     }
 }
 

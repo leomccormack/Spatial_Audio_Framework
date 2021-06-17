@@ -496,6 +496,42 @@ void utility_cvvadd
 #endif
 }
 
+void utility_dvvadd
+(
+    double* a,
+    const double* b,
+    const int len,
+    double* c
+)
+{
+#ifdef __ACCELERATE__
+    vDSP_vaddD(a, 1, b, 1, c, 1, len);
+#elif defined(INTEL_MKL_VERSION)
+    vmdAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
+#else
+    int j;
+    for (j = 0; j < len; j++)
+        c[j] = a[j] + b[j];
+#endif
+}
+
+void utility_zvvadd
+(
+    double_complex* a,
+    const double_complex* b,
+    const int len,
+    double_complex* c
+)
+{
+#ifdef INTEL_MKL_VERSION
+    vmzAdd(len, (MKL_Complex16*)a, (MKL_Complex16*)b, (MKL_Complex16*)c, SAF_INTEL_MKL_VML_MODE);
+#else
+    int j;
+    for (j = 0; j < len; j++)
+        c[j] = ccadd(a[j], b[j]);
+#endif
+}
+
 
 /* ========================================================================== */
 /*                     Vector-Vector Subtraction (?vvsub)                     */
@@ -571,6 +607,43 @@ void utility_cvvsub
     int j;
     for (j = 0; j < len; j++)
         c[j] = ccsubf(a[j], b[j]);
+#endif
+}
+
+void utility_dvvsub
+(
+    double* a,
+    const double* b,
+    const int len,
+    double* c
+)
+{
+#ifdef __ACCELERATE__
+    vDSP_vsubD(b, 1, a, 1, c, 1, len);  /* WTF Apple... */
+    //vDSP_vsub(a, 1, b, 1, c, 1, len);
+#elif defined(INTEL_MKL_VERSION)
+    vmdSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
+#else
+    int j;
+    for (j = 0; j < len; j++)
+        c[j] = a[j] - b[j];
+#endif
+}
+
+void utility_zvvsub
+(
+    double_complex* a,
+    const double_complex* b,
+    const int len,
+    double_complex* c
+)
+{
+#ifdef INTEL_MKL_VERSION
+    vmzSub(len, (MKL_Complex16*)a, (MKL_Complex16*)b, (MKL_Complex16*)c, SAF_INTEL_MKL_VML_MODE);
+#else
+    int j;
+    for (j = 0; j < len; j++)
+        c[j] = ccsub(a[j], b[j]);
 #endif
 }
 
@@ -2579,6 +2652,7 @@ void utility_sglslvt
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     info = LAPACKE_sgesv_work(CblasColMajor, n, nrhs, h->b, ldb, h->IPIV, h->a, lda);
 #elif defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
+    //sposv_("U", &n, &nrhs, h->b, &ldb, h->a, &lda, &info );
     sgesv_( &n, &nrhs, h->b, &ldb, h->IPIV, h->a, &lda, &info );
 #endif
 
