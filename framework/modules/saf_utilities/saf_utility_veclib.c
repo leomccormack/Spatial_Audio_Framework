@@ -376,6 +376,27 @@ void utility_svmod
 
 
 /* ========================================================================== */
+/*                          Vector-Reciprocal (?vrecip)                       */
+/* ========================================================================== */
+
+void utility_svrecip
+(
+    const float* a,
+    const int len,
+    float* c
+)
+{
+#ifdef INTEL_MKL_VERSION
+    vmsInv(len, a, c, SAF_INTEL_MKL_VML_MODE);
+#else
+    int i;
+    for(i=0; i<len; i++)
+        c[i] = 1.0f/a[i];
+#endif
+}
+
+
+/* ========================================================================== */
 /*                        Vector-Vector Copy (?vvcopy)                        */
 /* ========================================================================== */
 

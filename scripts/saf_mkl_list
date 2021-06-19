@@ -210,6 +210,8 @@ vmsCeil
 vmdCeil
 vmsRound
 vmdRound
+vmsInv
+vmdInv
 DftiCommitDescriptor
 DftiComputeBackward
 DftiComputeForward

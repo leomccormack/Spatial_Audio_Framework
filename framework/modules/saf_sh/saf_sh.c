@@ -1115,6 +1115,7 @@ void sphMUSIC_create
     h->VnA = malloc1d(h->nSH * (h->nDirs) * sizeof(float_complex));
     h->abs_VnA = malloc1d(h->nSH * (h->nDirs) * sizeof(float));
     h->pSpec = malloc1d(h->nDirs*sizeof(float));
+    h->pSpecInv = malloc1d(h->nDirs*sizeof(float));
     h->P_minus_peak = malloc1d(h->nDirs*sizeof(float));
     h->VM_mask = malloc1d(h->nDirs*sizeof(float));
 
@@ -1136,6 +1137,7 @@ void sphMUSIC_destroy
         free(h->VnA);
         free(h->abs_VnA);
         free(h->pSpec);
+        free(h->pSpecInv);
         free(h->P_minus_peak);
         free(h->VM_mask);
         free(h);
@@ -1155,7 +1157,7 @@ void sphMUSIC_compute
 {
     sphMUSIC_data *h = (sphMUSIC_data*)(hMUSIC);
     int i, k, VnD2, peak_idx;
-    float tmp, kappa, scale;
+    float kappa, scale;
     float VM_mean[3];
     const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f);
 
@@ -1167,10 +1169,10 @@ void sphMUSIC_compute
                 Vn, VnD2, &cbeta,
                 h->VnA, VnD2);
     utility_cvabs(h->VnA, (h->nDirs)*VnD2, h->abs_VnA);
-    for (i = 0; i < (h->nDirs); i++) { 
-        tmp = cblas_sdot(VnD2, &(h->abs_VnA[i*VnD2]), 1, &(h->abs_VnA[i*VnD2]), 1);
-        h->pSpec[i] = 1.0f / (tmp + 2.23e-10f);
-    }
+    for (i = 0; i < (h->nDirs); i++)
+        h->pSpecInv[i] = cblas_sdot(VnD2, &(h->abs_VnA[i*VnD2]), 1, &(h->abs_VnA[i*VnD2]), 1);
+    //h->pSpec[i] = 1.0f / (h->pSpecInv[i] + 2.23e-10f);
+    utility_svrecip(h->pSpecInv, h->nDirs, h->pSpec);
 
     /* Output pseudo-spectrum */
     if(P_music!=NULL)

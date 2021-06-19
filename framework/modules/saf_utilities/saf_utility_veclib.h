@@ -293,6 +293,25 @@ void utility_svmod(/* Input Arguments */
 
 
 /* ========================================================================== */
+/*                          Vector-Reciprocal (?vrecip)                       */
+/* ========================================================================== */
+
+/**
+ * Single-precision, vector-reciprocal/inversion, i.e.
+ * \code{.m}
+ *     c = 1/a
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_svrecip(const float* a,
+                     const int len,
+                     float* c);
+
+
+/* ========================================================================== */
 /*                        Vector-Vector Copy (?vvcopy)                        */
 /* ========================================================================== */
 

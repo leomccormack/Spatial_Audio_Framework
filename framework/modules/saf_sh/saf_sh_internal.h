@@ -63,6 +63,7 @@ typedef struct _sphMUSIC_data {
     float* grid_dirs_xyz;
     float* abs_VnA;
     float* pSpec;
+    float* pSpecInv;
     float* P_minus_peak;
     float* VM_mask;
 

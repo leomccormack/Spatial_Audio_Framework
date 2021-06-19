@@ -417,8 +417,8 @@ void tracker3d_update
             pData->evl[cidx] = LH;
             tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
             S_event = (MCS_data*)pData->str[cidx];
-            memcpy(S_event->M[j].M, M, sizeof(M6));
-            memcpy(S_event->P[j].P, P, sizeof(P66));
+            cblas_scopy(6,   (float*)M, 1, (float*)S_event->M[j].M, 1);
+            cblas_scopy(6*6, (float*)P, 1, (float*)S_event->P[j].P, 1);
             for(k=0; k<S->nTargets; k++)
                 S_event->Tcount[k] += Tinc;
             cidx++;
@@ -456,9 +456,9 @@ void tracker3d_update
             pData->evl[cidx] = LH;
             tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
             S_event = (MCS_data*)pData->str[cidx];
-            S_event->nTargets = j+1;
-            memcpy(S_event->M[j].M, M, sizeof(M6));
-            memcpy(S_event->P[j].P, P, sizeof(P66));
+            S_event->nTargets = j+1; 
+            cblas_scopy(6,   (float*)M, 1, (float*)S_event->M[j].M, 1);
+            cblas_scopy(6*6, (float*)P, 1, (float*)S_event->P[j].P, 1);
             S_event->Tcount[j] = 0; 
             S_event->targetIDs[j] = j_new;
             cidx++;

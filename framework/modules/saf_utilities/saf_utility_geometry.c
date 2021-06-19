@@ -306,12 +306,10 @@ void unitCart2sph
 )
 {
     int i;
-    float hypotxy;
 
     for(i=0; i<nDirs; i++){
-        hypotxy = sqrtf(dirs_xyz[i*3]*dirs_xyz[i*3] + dirs_xyz[i*3+1]*dirs_xyz[i*3+1]);
         dirs[i*2]   = atan2f(dirs_xyz[i*3+1], dirs_xyz[i*3]);
-        dirs[i*2+1] = atan2f(dirs_xyz[i*3+2], hypotxy);
+        dirs[i*2+1] = atan2f(dirs_xyz[i*3+2], sqrtf(dirs_xyz[i*3]*dirs_xyz[i*3] + dirs_xyz[i*3+1]*dirs_xyz[i*3+1]));
     }
 
     /* Return in degrees instead... */
