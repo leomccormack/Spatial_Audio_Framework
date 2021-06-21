@@ -398,7 +398,7 @@ float getDistBetween2Points
     float point_b[3]
 )
 {
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     float dist;
     vDSP_distancesq((const float*)point_a, 1, (const float*)point_b, 1, &dist, 3);
     return dist;

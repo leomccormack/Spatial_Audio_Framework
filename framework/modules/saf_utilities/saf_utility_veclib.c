@@ -55,7 +55,7 @@
 #endif
 
 /* Additional flags for Intel MKL */
-#if defined(INTEL_MKL_VERSION)
+#if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
 # ifndef SAF_INTEL_MKL_VML_MODE
 /**
  * The flag passed to Intel VML functions:
@@ -72,7 +72,7 @@
   typedef __CLPK_doublereal     veclib_double;
   typedef __CLPK_complex        veclib_float_complex;
   typedef __CLPK_doublecomplex  veclib_double_complex;
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
   typedef MKL_INT               veclib_int;
   typedef float                 veclib_float;
   typedef double                veclib_double;
@@ -174,12 +174,12 @@ void utility_siminv
     int* index
 )
 {
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     float minVal;
     vDSP_Length ind_tmp;
     vDSP_minmgvi(a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
     *index = (int)ind_tmp; 
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     *index = (int)cblas_isamin(len, a, 1);
 #else
     int i;
@@ -201,7 +201,7 @@ void utility_ciminv
     int* index
 )
 {
-#if defined(__ACCELERATE__) /* Unfortunately requires a malloc call */
+#if defined(SAF_USE_APPLE_ACCELERATE) /* Unfortunately requires a malloc call */
     float* abs_a;
     float minVal;
     abs_a = malloc1d(len*sizeof(float));
@@ -210,7 +210,7 @@ void utility_ciminv
     vDSP_minmgvi(abs_a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
     *index = (int)ind_tmp;
     free(abs_a);
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     *index = (int)cblas_icamin(len, a, 1);
 #else
     int i;
@@ -232,12 +232,12 @@ void utility_diminv
     int* index
 )
 {
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     double minVal;
     vDSP_Length ind_tmp;
     vDSP_minmgviD(a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
     *index = (int)ind_tmp;
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     *index = (int)cblas_idamin(len, a, 1);
 #else
     int i;
@@ -259,7 +259,7 @@ void utility_ziminv
     int* index
 )
 {
-#if defined(__ACCELERATE__) /* Unfortunately requires a malloc call */
+#if defined(SAF_USE_APPLE_ACCELERATE) /* Unfortunately requires a malloc call */
     double* abs_a;
     double minVal;
     abs_a = malloc1d(len*sizeof(double));
@@ -268,7 +268,7 @@ void utility_ziminv
     vDSP_minmgviD(abs_a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
     *index = (int)ind_tmp;
     free(abs_a);
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     *index = (int)cblas_izamin(len, a, 1);
 #else
     int i;
@@ -340,9 +340,9 @@ void utility_svabs
     float* c
 )
 {
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vabs(a, 1, c, 1, (vDSP_Length)len);
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsAbs(len, a, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int i;
@@ -358,9 +358,9 @@ void utility_cvabs
     float* c
 )
 {
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vdist((float*)a/*real*/, 2, (float*)a+1/*imag*/, 2, c, 1, (vDSP_Length)len);
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcAbs(len, (MKL_Complex8*)a, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int i;
@@ -382,7 +382,9 @@ void utility_svmod
     float* c
 )
 {
-#if defined(INTEL_MKL_VERSION)
+#if defined(SAF_USE_APPLE_ACCELERATE)
+    vvfmodf(c, a, b, &len);
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsFmod(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int i;
@@ -403,11 +405,11 @@ void utility_svrecip
     float* c
 )
 {
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     float one;
     one = 1.0f;
     vDSP_svdiv(&one, a, 1, c, 1, (vDSP_Length)len);
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsInv(len, a, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int i;
@@ -492,9 +494,9 @@ void utility_svvadd
         return;
     }
 #endif
-#ifdef __ACCELERATE__
+#ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vadd(a, 1, b, 1, c, 1, (vDSP_Length)len);
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -529,9 +531,9 @@ void utility_cvvadd
         return;
     }
 #endif
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vadd((float*)a, 1, (float*)b, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len);
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -548,9 +550,9 @@ void utility_dvvadd
     double* c
 )
 {
-#ifdef __ACCELERATE__
+#ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vaddD(a, 1, b, 1, c, 1, (vDSP_Length)len);
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmdAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -567,9 +569,9 @@ void utility_zvvadd
     double_complex* c
 )
 {
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vaddD((double*)a, 1, (double*)b, 1, (double*)c, 1, /*re+im*/2*(vDSP_Length)len);
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmzAdd(len, (MKL_Complex16*)a, (MKL_Complex16*)b, (MKL_Complex16*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -609,9 +611,9 @@ void utility_svvsub
         return;
     }
 #endif
-#ifdef __ACCELERATE__
+#ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vsub(b, 1, a, 1, c, 1, (vDSP_Length)len);  /* Apple "logic"... 'a' and 'b' are switched */
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -646,9 +648,9 @@ void utility_cvvsub
         return;
     }
 #endif
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vsub((float*)b, 1, (float*)a, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -665,9 +667,9 @@ void utility_dvvsub
     double* c
 )
 {
-#ifdef __ACCELERATE__
+#ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vsubD(b, 1, a, 1, c, 1, (vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmdSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -684,9 +686,9 @@ void utility_zvvsub
     double_complex* c
 )
 {
-#if defined(__ACCELERATE__)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vsubD((double*)b, 1, (double*)a, 1, (double*)c, 1, /*re+im*/2*(vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmzSub(len, (MKL_Complex16*)a, (MKL_Complex16*)b, (MKL_Complex16*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -726,9 +728,9 @@ void utility_svvmul
         return;
     }
 #endif
-#ifdef __ACCELERATE__
+#ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vmul(a, 1, b, 1, c, 1, (vDSP_Length)len);
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsMul(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -763,14 +765,14 @@ void utility_cvvmul
         return;
     }
 #endif
-#if defined(__ACCELERATE__)  /* Due to Apple "logic", this is unfortunately quite complicated, and probably slower than it should be... */
+#if defined(SAF_USE_APPLE_ACCELERATE)  /* Due to Apple "logic", this is unfortunately quite complicated, and probably slower than it should be... */
     /* Imaginary part of the output */
     vDSP_vmul((float*)a/*real*/, 2, (float*)b+1/*imag*/, 2, (float*)c+1/*imag*/, 2, (vDSP_Length)len);
     vDSP_vma((float*)a+1/*imag*/, 2, (float*)b/*real*/, 2, (float*)c+1/*imag*/, 2, (float*)c/*real*/, 2, (vDSP_Length)len); /* Use the real part of c as a temporary buffer */
     cblas_scopy(len, (float*)c/*real*/, 2, (float*)c+1/*imag*/, 2); /* Copy the imaginary part from the temporary buffer */
     /* Real part of the output */
     vDSP_vmmsb((float*)a/*real*/, 2, (float*)b/*real*/, 2, (float*)a+1/*imag*/, 2, (float*)b+1/*imag*/, 2, (float*)c/*real*/, 2, (vDSP_Length)len);
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -833,7 +835,7 @@ void utility_svsmul
     float* c
 )
 {
-#ifdef __ACCELERATE__
+#ifdef SAF_USE_APPLE_ACCELERATE
     if(c==NULL)
         cblas_sscal(len, s[0], a, 1);
     else
@@ -872,7 +874,7 @@ void utility_dvsmul
     double* c
 )
 {
-#ifdef __ACCELERATE__
+#ifdef SAF_USE_APPLE_ACCELERATE
     if(c==NULL)
         cblas_dscal(len, s[0], a, 1);
     else
@@ -920,7 +922,7 @@ void utility_svsdiv
         memset(c, 0, len*sizeof(float));
         return;
     }
-#ifdef __ACCELERATE__
+#ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vsdiv(a, 1, s, c, 1, (vDSP_Length)len);
 #else
     int i;
@@ -942,7 +944,7 @@ void utility_svsadd
     float* c
 )
 {
-#ifdef __ACCELERATE__
+#ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vsadd(a, 1, s, c, 1, (vDSP_Length)len);
 #else
     int i;
@@ -982,7 +984,7 @@ void utility_ssv2cv_inds
     float* cv
 )
 {
-#ifdef __ACCELERATE__ /* Unfortunately requires a malloc call */
+#ifdef SAF_USE_APPLE_ACCELERATE /* Unfortunately requires a malloc call */
     /* Due to Apple "logic", we first need to add 1 to all of the indicies, since "vDSP_vgathr" is going to then subtract 1 from them all... */
     int i;
     vDSP_Length* inds_vDSP;
@@ -991,7 +993,7 @@ void utility_ssv2cv_inds
         inds_vDSP[i] = (vDSP_Length)(inds[i] + 1);
     vDSP_vgathr(sv, inds_vDSP, 1, cv, 1, (vDSP_Length)len);
     free(inds_vDSP);
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     int i;
     veclib_int* inds_tmp;
     if(sizeof(veclib_int)==sizeof(int)) /* LP64 MKL */
@@ -1508,7 +1510,7 @@ void utility_cseig
     veclib_int i, n, lda, info;
     veclib_int lwork;
     float_complex wkopt;
-#ifdef INTEL_MKL_VERSION
+#if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     const MKL_Complex8 calpha = {1.0f, 0.0f};
 #else
     int j;
@@ -1528,7 +1530,7 @@ void utility_cseig
     }
     
     /* store in column major order (i.e. transpose) */
-#ifdef INTEL_MKL_VERSION
+#if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     MKL_Comatcopy('R', 'T', dim, dim, calpha, (veclib_float_complex*)A, dim, (veclib_float_complex*)h->a, dim);
 #else
     for(i=0; i<dim; i++)
@@ -1583,7 +1585,7 @@ void utility_cseig
                 cblas_cswap(dim, &h->a[i*dim], 1, &h->a[(dim-i-1)*dim], 1);
 
         if(V!=NULL){
-#ifdef INTEL_MKL_VERSION
+#if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
             MKL_Comatcopy('R', 'T', dim, dim, calpha, (veclib_float_complex*)h->a, dim, (veclib_float_complex*)V, dim);
 #else
             if(V!=NULL)
@@ -2227,7 +2229,7 @@ void utility_sglslv
 {
     utility_sglslv_data *h;
     veclib_int n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
-#ifndef INTEL_MKL_VERSION 
+#if !(defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64))
     veclib_int i, j;
 #endif
 
@@ -2248,7 +2250,7 @@ void utility_sglslv
     cblas_scopy(dim*nCol, B, 1, h->b, 1);
 #else
     /* store in column major order */
-# ifdef INTEL_MKL_VERSION
+# if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     MKL_Somatcopy('R', 'T', dim, dim, 1.0f, A, dim, h->a, dim);
     MKL_Somatcopy('R', 'T', dim, nCol, 1.0f, B, nCol, h->b, dim);
 # else
@@ -2285,7 +2287,7 @@ void utility_sglslv
         cblas_scopy(dim*nCol, h->b, 1, X, 1);
 #else
         /* store solution in row-major order */
-# ifdef INTEL_MKL_VERSION
+# if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
         MKL_Somatcopy('R', 'T', nCol, dim, 1.0f, h->b, dim, X, nCol);
 # else
         for(i=0; i<dim; i++)
