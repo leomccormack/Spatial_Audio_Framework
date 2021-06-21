@@ -458,7 +458,7 @@ void convhullnd
 
     /* build convex hull */
     saf_assert(*faces == NULL, "nFaces not known yet, and so shouldn't be pre-allocated...");
-    convhull_nd_build(ch_points, nPoints, 3, faces, NULL, NULL, nFaces);
+    convhull_nd_build(ch_points, nPoints, nd, faces, NULL, NULL, nFaces);
 
     /* clean-up */
     free(ch_points);
