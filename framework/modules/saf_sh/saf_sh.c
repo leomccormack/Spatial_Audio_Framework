@@ -1030,6 +1030,13 @@ void sphPWD_compute
 
     /* derive the power-map value for each grid direction */ 
     for (i = 0; i < (h->nDirs); i++){
+#if 1  
+        cblas_cgemv(CblasRowMajor, CblasNoTrans, h->nSH, h->nSH, &calpha,
+                    Cx, h->nSH,
+                    &(h->grid_svecs[i*(h->nSH)]), 1, &cbeta,
+                    h->A_Cx, 1); 
+        cblas_cdotu_sub(h->nSH, h->A_Cx, 1, &(h->grid_svecs[i*(h->nSH)]), 1, &A_Cx_A);
+#else
         cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, 1, h->nSH, h->nSH, &calpha,
                     &(h->grid_svecs[i*(h->nSH)]), 1,
                     Cx, h->nSH, &cbeta,
@@ -1038,6 +1045,7 @@ void sphPWD_compute
                     h->A_Cx, h->nSH,
                     &(h->grid_svecs[i*(h->nSH)]), 1, &cbeta,
                     &A_Cx_A, 1);
+#endif
         h->pSpec[i] = crealf(A_Cx_A);
     }
 
