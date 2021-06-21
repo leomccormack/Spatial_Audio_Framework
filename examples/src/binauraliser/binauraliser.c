@@ -236,9 +236,9 @@ void binauraliser_process
         for (ch = 0; ch < nSources; ch++) {
             if(pData->recalc_hrtf_interpFLAG[ch]){
                 if(enableRotation)
-                    binauraliser_interpHRTFs(hBin, pData->src_dirs_rot_deg[ch][0], pData->src_dirs_rot_deg[ch][1], pData->hrtf_interp[ch]);
+                    binauraliser_interpHRTFs(hBin, pData->interpMode, pData->src_dirs_rot_deg[ch][0], pData->src_dirs_rot_deg[ch][1], pData->hrtf_interp[ch]);
                 else
-                    binauraliser_interpHRTFs(hBin, pData->src_dirs_deg[ch][0], pData->src_dirs_deg[ch][1], pData->hrtf_interp[ch]);
+                    binauraliser_interpHRTFs(hBin, pData->interpMode, pData->src_dirs_deg[ch][0], pData->src_dirs_deg[ch][1], pData->hrtf_interp[ch]);
                 pData->recalc_hrtf_interpFLAG[ch] = 0;
             }
 
@@ -422,7 +422,10 @@ void binauraliser_setRPYflag(void* const hBin, int newState)
 void binauraliser_setInterpMode(void* const hBin, int newMode)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
+    int ch;
     pData->interpMode = newMode;
+    for(ch=0; ch<MAX_NUM_INPUTS; ch++)
+        pData->recalc_hrtf_interpFLAG[ch] = 1;
 }
 
 

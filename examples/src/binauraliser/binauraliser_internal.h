@@ -149,11 +149,13 @@ void binauraliser_setCodecStatus(void* const hBin,
  * re-introducing the phase.
  *
  * @param[in]  hBin          binauraliser handle
+ * @param[in]  mode          see #INTERP_MODES 
  * @param[in]  azimuth_deg   Source azimuth in DEGREES
  * @param[in]  elevation_deg Source elevation in DEGREES
  * @param[out] h_intrp       Interpolated HRTF
  */
 void binauraliser_interpHRTFs(void* const hBin,
+                              INTERP_MODES mode,
                               float azimuth_deg,
                               float elevation_deg,
                               float_complex h_intrp[HYBRID_BANDS][NUM_EARS]);
