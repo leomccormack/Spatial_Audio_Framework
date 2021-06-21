@@ -476,8 +476,13 @@ void utility_svvadd
     float* c
 )
 {
-#if NDEBUG && 0
+#ifdef SAF_USE_APPLE_ACCELERATE
+    vDSP_vadd(a, 1, b, 1, c, 1, (vDSP_Length)len);
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    vmsAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
+#elif NDEBUG
     int i;
+    /* try to indirectly "trigger" some compiler optimisations */
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
             c[i] = a[i] + b[i];
@@ -493,11 +498,6 @@ void utility_svvadd
             c[i] = a[i] + b[i];
         return;
     }
-#endif
-#ifdef SAF_USE_APPLE_ACCELERATE
-    vDSP_vadd(a, 1, b, 1, c, 1, (vDSP_Length)len);
-#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
-    vmsAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -513,8 +513,13 @@ void utility_cvvadd
     float_complex* c
 )
 {
-#if __STDC_VERSION__ >= 199901L && NDEBUG
+#if defined(SAF_USE_APPLE_ACCELERATE)
+    vDSP_vadd((float*)a, 1, (float*)b, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len);
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    vmcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
+#elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
+    /* try to indirectly "trigger" some compiler optimisations */
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
             c[i] = a[i] + b[i];
@@ -530,11 +535,6 @@ void utility_cvvadd
             c[i] = a[i] + b[i];
         return;
     }
-#endif
-#if defined(SAF_USE_APPLE_ACCELERATE)
-    vDSP_vadd((float*)a, 1, (float*)b, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len);
-#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
-    vmcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -593,8 +593,13 @@ void utility_svvsub
     float* c
 )
 {
-#if NDEBUG && 0
+#ifdef SAF_USE_APPLE_ACCELERATE
+    vDSP_vsub(b, 1, a, 1, c, 1, (vDSP_Length)len);  /* Apple "logic"... 'a' and 'b' are switched */
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    vmsSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
+#elif NDEBUG
     int i;
+    /* try to indirectly "trigger" some compiler optimisations */
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
             c[i] = a[i] - b[i];
@@ -610,11 +615,6 @@ void utility_svvsub
             c[i] = a[i] - b[i];
         return;
     }
-#endif
-#ifdef SAF_USE_APPLE_ACCELERATE
-    vDSP_vsub(b, 1, a, 1, c, 1, (vDSP_Length)len);  /* Apple "logic"... 'a' and 'b' are switched */
-#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
-    vmsSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -630,8 +630,13 @@ void utility_cvvsub
     float_complex* c
 )
 {
-#if __STDC_VERSION__ >= 199901L && NDEBUG && 0
+#if defined(SAF_USE_APPLE_ACCELERATE)
+    vDSP_vsub((float*)b, 1, (float*)a, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    vmcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
+#elif __STDC_VERSION__ >= 199901L
     int i;
+    /* try to indirectly "trigger" some compiler optimisations */
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
             c[i] = a[i] - b[i];
@@ -647,11 +652,6 @@ void utility_cvvsub
             c[i] = a[i] - b[i];
         return;
     }
-#endif
-#if defined(SAF_USE_APPLE_ACCELERATE)
-    vDSP_vsub((float*)b, 1, (float*)a, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
-#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
-    vmcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -710,8 +710,13 @@ void utility_svvmul
     float* c
 )
 {
-#if NDEBUG && 0
+#ifdef SAF_USE_APPLE_ACCELERATE
+    vDSP_vmul(a, 1, b, 1, c, 1, (vDSP_Length)len);
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    vmsMul(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
+#elif NDEBUG
     int i;
+    /* try to indirectly "trigger" some compiler optimisations */
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
             c[i] = a[i] * b[i];
@@ -727,11 +732,6 @@ void utility_svvmul
             c[i] = a[i] * b[i];
         return;
     }
-#endif
-#ifdef SAF_USE_APPLE_ACCELERATE
-    vDSP_vmul(a, 1, b, 1, c, 1, (vDSP_Length)len);
-#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
-    vmsMul(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -747,8 +747,18 @@ void utility_cvvmul
     float_complex* c
 )
 {
-#if __STDC_VERSION__ >= 199901L && NDEBUG && 0
+#if defined(SAF_USE_APPLE_ACCELERATE)  /* Due to Apple "logic", this is unfortunately quite complicated, and probably slower than it should be... */
+    /* Imaginary part of the output */
+    vDSP_vmul((float*)a/*real*/, 2, (float*)b+1/*imag*/, 2, (float*)c+1/*imag*/, 2, (vDSP_Length)len);
+    vDSP_vma((float*)a+1/*imag*/, 2, (float*)b/*real*/, 2, (float*)c+1/*imag*/, 2, (float*)c/*real*/, 2, (vDSP_Length)len); /* Use the real part of c as a temporary buffer */
+    cblas_scopy(len, (float*)c/*real*/, 2, (float*)c+1/*imag*/, 2); /* Copy the imaginary part from the temporary buffer */
+    /* Real part of the output */
+    vDSP_vmmsb((float*)a/*real*/, 2, (float*)b/*real*/, 2, (float*)a+1/*imag*/, 2, (float*)b+1/*imag*/, 2, (float*)c/*real*/, 2, (vDSP_Length)len);
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    vmcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
+#elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
+    /* try to indirectly "trigger" some compiler optimisations */
     if (len<10e4 && len > 7){
         for(i=0; i<len-8; i+=8){
             c[i] = a[i] * b[i];
@@ -764,25 +774,9 @@ void utility_cvvmul
             c[i] = a[i] * b[i];
         return;
     }
-#endif
-#if defined(SAF_USE_APPLE_ACCELERATE)  /* Due to Apple "logic", this is unfortunately quite complicated, and probably slower than it should be... */
-    /* Imaginary part of the output */
-    vDSP_vmul((float*)a/*real*/, 2, (float*)b+1/*imag*/, 2, (float*)c+1/*imag*/, 2, (vDSP_Length)len);
-    vDSP_vma((float*)a+1/*imag*/, 2, (float*)b/*real*/, 2, (float*)c+1/*imag*/, 2, (float*)c/*real*/, 2, (vDSP_Length)len); /* Use the real part of c as a temporary buffer */
-    cblas_scopy(len, (float*)c/*real*/, 2, (float*)c+1/*imag*/, 2); /* Copy the imaginary part from the temporary buffer */
-    /* Real part of the output */
-    vDSP_vmmsb((float*)a/*real*/, 2, (float*)b/*real*/, 2, (float*)a+1/*imag*/, 2, (float*)b+1/*imag*/, 2, (float*)c/*real*/, 2, (vDSP_Length)len);
-#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
-    vmcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #else
-    int j;
-# if __STDC_VERSION__ >= 199901L
-    for (j = 0; j < len; j++)
-        c[j] = a[j] * b[j];
-# else
     for (j = 0; j < len; j++)
         c[j] = ccmulf(a[j], b[j]);
-# endif
 #endif
 }
 
