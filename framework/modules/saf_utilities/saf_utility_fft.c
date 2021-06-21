@@ -36,6 +36,12 @@
 
 #include "saf_utilities.h"
 #include "saf_externals.h"
+#ifdef SAF_USE_APPLE_ACCELERATE
+# include "AvailabilityVersions.h"
+# ifdef __MAC_12_0
+//#  define SAF_USE_INTERLEAVED_VDSP /**< New interleaved implementation as of macOS 12.0+. UNFINISHED+UNTESTED! */
+# endif
+#endif
 
 /** Data structure for short-time Fourier transform */
 typedef struct _saf_stft_data {
@@ -63,12 +69,17 @@ typedef struct _saf_rfft_data {
     Ipp8u* memSpec;
     Ipp8u* buffer;
     Ipp8u* memInit;
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
+# ifdef SAF_USE_INTERLEAVED_VDSP
+    vDSP_DFT_Interleaved_Setup DFT_fwd;
+    vDSP_DFT_Interleaved_Setup DFT_bwd;
+# else
     vDSP_DFT_Setup DFT_fwd;
     vDSP_DFT_Setup DFT_bwd;
     DSPSplitComplex VDSP_split;
     DSPSplitComplex VDSP_split_tmp;
-#elif defined(INTEL_MKL_VERSION)
+# endif
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     DFTI_DESCRIPTOR_HANDLE MKL_FFT_Handle;
     MKL_LONG input_strides[2], output_strides[2], Status;
 #endif
@@ -91,12 +102,17 @@ typedef struct _saf_fft_data {
     Ipp8u* memSpec;
     Ipp8u* buffer;
     Ipp8u* memInit;
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
+# ifdef SAF_USE_INTERLEAVED_VDSP
+    vDSP_DFT_Interleaved_Setup DFT_fwd;
+    vDSP_DFT_Interleaved_Setup DFT_bwd;
+# else
     vDSP_DFT_Setup DFT_fwd;
     vDSP_DFT_Setup DFT_bwd;
     DSPSplitComplex VDSP_split;
     DSPSplitComplex VDSP_split_tmp;
-#elif defined(INTEL_MKL_VERSION)
+# endif
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     DFTI_DESCRIPTOR_HANDLE MKL_FFT_Handle;
     MKL_LONG Status;
 #endif
@@ -514,20 +530,27 @@ void saf_rfft_create
     }
     if (h->memInit)
         ippFree(h->memInit);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
+# ifdef SAF_USE_INTERLEAVED_VDSP
+    h->DFT_fwd = vDSP_DFT_Interleaved_CreateSetup(0, N, vDSP_DFT_FORWARD, vDSP_DFT_Interleaved_RealtoComplex);
+    h->DFT_bwd = vDSP_DFT_Interleaved_CreateSetup(0, N, vDSP_DFT_INVERSE, vDSP_DFT_Interleaved_RealtoComplex);
+# else
     h->DFT_fwd = vDSP_DFT_zrop_CreateSetup(0, N, vDSP_DFT_FORWARD);
     h->DFT_bwd = vDSP_DFT_zrop_CreateSetup(0, N, vDSP_DFT_INVERSE);
+# endif
     if(h->DFT_fwd==0 || h->DFT_bwd==0) /* specified N not supported by vDSP, so must use the default */
         h->useKissFFT_FLAG = 1;
     else{
         /* Note that DFT lengths must satisfy: f * 2.^g, where f is 1, 3, 5, or 15, and g >=4 */
         saf_assert(h->DFT_fwd!=0 && h->DFT_bwd!=0, "Failed to create vDSP DFT");
+# ifndef SAF_USE_INTERLEAVED_VDSP
         h->VDSP_split_tmp.realp = malloc1d((h->N/2)*sizeof(float));
         h->VDSP_split_tmp.imagp = malloc1d((h->N/2)*sizeof(float));
         h->VDSP_split.realp = malloc1d((h->N/2)*sizeof(float));
         h->VDSP_split.imagp = malloc1d((h->N/2)*sizeof(float));
+#endif
     }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     h->MKL_FFT_Handle = 0;
     h->Status = DftiCreateDescriptor(&(h->MKL_FFT_Handle), DFTI_SINGLE, DFTI_REAL, 1, h->N); /* 1-D, single precision, real_input->fft->half_complex->ifft->real_output */
     h->Status = DftiSetValue(h->MKL_FFT_Handle, DFTI_PLACEMENT, DFTI_NOT_INPLACE); /* Not inplace, i.e. output has its own dedicated memory */
@@ -568,16 +591,21 @@ void saf_rfft_destroy
         }
         if(h->buffer)
             ippFree(h->buffer);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
         if(!h->useKissFFT_FLAG){
+# ifdef SAF_USE_INTERLEAVED_VDSP
+            vDSP_DFT_Interleaved_DestroySetup(h->DFT_fwd);
+            vDSP_DFT_Interleaved_DestroySetup(h->DFT_bwd);
+# else
             vDSP_DFT_DestroySetup(h->DFT_fwd);
             vDSP_DFT_DestroySetup(h->DFT_bwd);
             free(h->VDSP_split_tmp.realp);
             free(h->VDSP_split_tmp.imagp);
             free(h->VDSP_split.realp);
             free(h->VDSP_split.imagp);
+# endif
         }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
         h->Status = DftiFreeDescriptor(&(h->MKL_FFT_Handle));
 #endif
         if(h->useKissFFT_FLAG){
@@ -604,8 +632,11 @@ void saf_rfft_forward
         ippsFFTFwd_RToCCS_32f((Ipp32f*)inputTD, (Ipp32f*)outputFD, h->hFFTspec, h->buffer);
     else
         ippsDFTFwd_RToCCS_32f((Ipp32f*)inputTD, (Ipp32f*)outputFD, h->hDFTspec, h->buffer);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     if(!h->useKissFFT_FLAG){
+# ifdef SAF_USE_INTERLEAVED_VDSP
+        saf_print_error("Not implemented yet");
+# else
         vDSP_ctoz((DSPComplex*)inputTD, 2, &(h->VDSP_split_tmp), 1, (h->N)/2);
         vDSP_DFT_Execute(h->DFT_fwd, h->VDSP_split_tmp.realp, h->VDSP_split_tmp.imagp, h->VDSP_split.realp, h->VDSP_split.imagp);
         /* DC */
@@ -618,9 +649,10 @@ void saf_rfft_forward
         /* Note: the output is scaled by 2, because vDSP_fft automatically compensates for the loss of energy
          * when removing the symmetric/conjugate (N/2+2:N) bins. However, this is dumb... so the 2x scaling
          * is removed here; so it has parity with the other FFT implementations supported by SAF. */
+# endif
         cblas_sscal(2*(h->N/2+1), 0.5f, (float*)outputFD, 1);
     }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     h->Status = DftiComputeForward(h->MKL_FFT_Handle, inputTD, outputFD);
 #endif
     if(h->useKissFFT_FLAG)
@@ -641,8 +673,11 @@ void saf_rfft_backward
         ippsFFTInv_CCSToR_32f((Ipp32f*)inputFD, (Ipp32f*)outputTD, h->hFFTspec, h->buffer);
     else
         ippsDFTInv_CCSToR_32f((Ipp32f*)inputFD, (Ipp32f*)outputTD, h->hDFTspec, h->buffer);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     if(!h->useKissFFT_FLAG){
+# ifdef SAF_USE_INTERLEAVED_VDSP
+        saf_print_error("Not implemented yet");
+# else
         h->VDSP_split_tmp.realp[0] = crealf(inputFD[0]);
         h->VDSP_split_tmp.imagp[0] = crealf(inputFD[h->N/2]);
         cblas_scopy(h->N/2-1, &((float*)(inputFD))[2], 2, &h->VDSP_split_tmp.realp[1], 1);
@@ -650,8 +685,9 @@ void saf_rfft_backward
         vDSP_DFT_Execute(h->DFT_bwd, h->VDSP_split_tmp.realp, h->VDSP_split_tmp.imagp, h->VDSP_split.realp, h->VDSP_split.imagp);
         vDSP_ztoc(&(h->VDSP_split), 1, (DSPComplex*)outputTD, 2, (h->N)/2);
         vDSP_vsmul(outputTD, 1, &(h->Scale), outputTD, 1, h->N);
+# endif
     }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     h->Status = DftiComputeBackward(h->MKL_FFT_Handle, inputFD, outputTD);
 #endif
     if(h->useKissFFT_FLAG){
@@ -699,20 +735,27 @@ void saf_fft_create
     }
     if (h->memInit)
         ippFree(h->memInit);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
+# ifdef SAF_USE_INTERLEAVED_VDSP
+    h->DFT_fwd = vDSP_DFT_Interleaved_CreateSetup(0, N, vDSP_DFT_FORWARD, vDSP_DFT_Interleaved_RealtoComplex);
+    h->DFT_bwd = vDSP_DFT_Interleaved_CreateSetup(0, N, vDSP_DFT_INVERSE, vDSP_DFT_Interleaved_RealtoComplex);
+# else
     h->DFT_fwd = vDSP_DFT_zop_CreateSetup(0, N, vDSP_DFT_FORWARD);
     h->DFT_bwd = vDSP_DFT_zop_CreateSetup(0, N, vDSP_DFT_INVERSE);
+# endif
     if(h->DFT_fwd==0 || h->DFT_bwd==0) /* specified N not supported by vDSP, so must use the default */
         h->useKissFFT_FLAG = 1;
     else{
         /* Note that DFT lengths must satisfy: f * 2.^g, where f is 1, 3, 5, or 15, and g >=3 */
         saf_assert(h->DFT_fwd!=0 && h->DFT_bwd!=0, "Failed to create vDSP DFT");
+# ifndef SAF_USE_INTERLEAVED_VDSP
         h->VDSP_split_tmp.realp = malloc1d((h->N)*sizeof(float));
         h->VDSP_split_tmp.imagp = malloc1d((h->N)*sizeof(float));
         h->VDSP_split.realp = malloc1d((h->N)*sizeof(float));
         h->VDSP_split.imagp = malloc1d((h->N)*sizeof(float));
+# endif
     }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     h->MKL_FFT_Handle = 0;
     h->Status = DftiCreateDescriptor( &(h->MKL_FFT_Handle), DFTI_SINGLE,
                                   DFTI_COMPLEX, 1, h->N); /* 1-D, single precision, complex_input_td->fft->complex_input_fd->ifft->complex_output_td */
@@ -751,16 +794,21 @@ void saf_fft_destroy
         }
         if(h->buffer)
             ippFree(h->buffer);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
         if(!h->useKissFFT_FLAG){
+# ifdef SAF_USE_INTERLEAVED_VDSP
+            vDSP_DFT_Interleaved_DestroySetup(h->DFT_fwd);
+            vDSP_DFT_Interleaved_DestroySetup(h->DFT_bwd);
+# else
             vDSP_DFT_DestroySetup(h->DFT_fwd);
             vDSP_DFT_DestroySetup(h->DFT_bwd);
             free(h->VDSP_split_tmp.realp);
             free(h->VDSP_split_tmp.imagp);
             free(h->VDSP_split.realp);
             free(h->VDSP_split.imagp);
+# endif
         }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
         h->Status = DftiFreeDescriptor(&(h->MKL_FFT_Handle));
 #endif
         if(h->useKissFFT_FLAG){
@@ -787,15 +835,19 @@ void saf_fft_forward
         ippsFFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h->hFFTspec, h->buffer);
     else
         ippsDFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h->hDFTspec, h->buffer);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     if(!h->useKissFFT_FLAG){
+# ifdef SAF_USE_INTERLEAVED_VDSP
+        saf_print_error("Not implemented yet");
+# else
         cblas_scopy(h->N, &((float*)(inputTD))[0], 2, h->VDSP_split_tmp.realp, 1);
         cblas_scopy(h->N, &((float*)(inputTD))[1], 2, h->VDSP_split_tmp.imagp, 1);
         vDSP_DFT_Execute(h->DFT_fwd, h->VDSP_split_tmp.realp, h->VDSP_split_tmp.imagp, h->VDSP_split.realp, h->VDSP_split.imagp);
         cblas_scopy(h->N, h->VDSP_split.realp, 1, &((float*)(outputFD))[0], 2);
         cblas_scopy(h->N, h->VDSP_split.imagp, 1, &((float*)(outputFD))[1], 2);
+# endif
     }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     h->Status = DftiComputeForward(h->MKL_FFT_Handle, inputTD, outputFD);
 #endif
     if(h->useKissFFT_FLAG)
@@ -815,16 +867,20 @@ void saf_fft_backward
         ippsFFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h->hFFTspec, h->buffer);
     else
         ippsDFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h->hDFTspec, h->buffer);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     if(!h->useKissFFT_FLAG){
+# ifdef SAF_USE_INTERLEAVED_VDSP
+        saf_print_error("Not implemented yet");
+# else
         cblas_scopy(h->N, &((float*)(inputFD))[0], 2, h->VDSP_split_tmp.realp, 1);
         cblas_scopy(h->N, &((float*)(inputFD))[1], 2, h->VDSP_split_tmp.imagp, 1);
         vDSP_DFT_Execute(h->DFT_bwd, h->VDSP_split_tmp.realp, h->VDSP_split_tmp.imagp, h->VDSP_split.realp, h->VDSP_split.imagp);
         cblas_scopy(h->N, h->VDSP_split.realp, 1, &((float*)(outputTD))[0], 2);
         cblas_scopy(h->N, h->VDSP_split.imagp, 1, &((float*)(outputTD))[1], 2);
         cblas_sscal(2*(h->N), 1.0f/(float)(h->N), (float*)outputTD, 1);
+# endif
     }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     h->Status = DftiComputeBackward(h->MKL_FFT_Handle, inputFD, outputTD);
 #endif
     if(h->useKissFFT_FLAG){

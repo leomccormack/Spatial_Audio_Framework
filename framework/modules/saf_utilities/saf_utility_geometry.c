@@ -398,11 +398,17 @@ float getDistBetween2Points
     float point_b[3]
 )
 {
+#if defined(__ACCELERATE__)
+    float dist;
+    vDSP_distancesq((const float*)point_a, 1, (const float*)point_b, 1, &dist, 3);
+    return dist;
+#else
     float a_b[3];
     a_b[0] = point_a[0] - point_b[0];
     a_b[1] = point_a[1] - point_b[1];
     a_b[2] = point_a[2] - point_b[2];
     return L2_norm3(a_b);
+#endif
 }
 
 
