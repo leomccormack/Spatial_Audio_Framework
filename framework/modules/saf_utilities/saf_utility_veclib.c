@@ -177,7 +177,7 @@ void utility_siminv
 #if defined(__ACCELERATE__)
     float minVal;
     vDSP_Length ind_tmp;
-    vDSP_minvi(a, 1, &minVal, &ind_tmp, len);
+    vDSP_minmgvi(a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
     *index = (int)ind_tmp; 
 #elif defined(INTEL_MKL_VERSION)
     *index = (int)cblas_isamin(len, a, 1);
@@ -201,15 +201,13 @@ void utility_ciminv
     int* index
 )
 {
-#if defined(__ACCELERATE__)
-    int i;
+#if defined(__ACCELERATE__) /* Unfortunately requires a malloc call */
     float* abs_a;
     float minVal;
     abs_a = malloc1d(len*sizeof(float));
-    for(i=0; i<len; i++)
-        abs_a[i] = cabsf(a[i]);
+    vDSP_vdist((float*)a/*real*/, 2, (float*)a+1/*imag*/, 2, abs_a, 1, (vDSP_Length)len); /* cabsf */
     vDSP_Length ind_tmp;
-    vDSP_minvi(abs_a, 1, &minVal, &ind_tmp, len);
+    vDSP_minmgvi(abs_a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
     *index = (int)ind_tmp;
     free(abs_a);
 #elif defined(INTEL_MKL_VERSION)
@@ -234,7 +232,12 @@ void utility_diminv
     int* index
 )
 {
-#if defined(INTEL_MKL_VERSION)
+#if defined(__ACCELERATE__)
+    double minVal;
+    vDSP_Length ind_tmp;
+    vDSP_minmgviD(a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
+    *index = (int)ind_tmp;
+#elif defined(INTEL_MKL_VERSION)
     *index = (int)cblas_idamin(len, a, 1);
 #else
     int i;
@@ -256,7 +259,16 @@ void utility_ziminv
     int* index
 )
 {
-#if defined(INTEL_MKL_VERSION)
+#if defined(__ACCELERATE__) /* Unfortunately requires a malloc call */
+    double* abs_a;
+    double minVal;
+    abs_a = malloc1d(len*sizeof(double));
+    vDSP_vdistD((double*)a/*real*/, 2, (double*)a+1/*imag*/, 2, abs_a, 1, (vDSP_Length)len); /* cabs */
+    vDSP_Length ind_tmp;
+    vDSP_minmgviD(abs_a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
+    *index = (int)ind_tmp;
+    free(abs_a);
+#elif defined(INTEL_MKL_VERSION)
     *index = (int)cblas_izamin(len, a, 1);
 #else
     int i;
@@ -328,7 +340,9 @@ void utility_svabs
     float* c
 )
 {
-#ifdef INTEL_MKL_VERSION
+#if defined(__ACCELERATE__)
+    vDSP_vabs(a, 1, c, 1, (vDSP_Length)len);
+#elif defined(INTEL_MKL_VERSION)
     vmsAbs(len, a, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int i;
@@ -344,7 +358,9 @@ void utility_cvabs
     float* c
 )
 {
-#ifdef INTEL_MKL_VERSION
+#if defined(__ACCELERATE__)
+    vDSP_vdist((float*)a/*real*/, 2, (float*)a+1/*imag*/, 2, c, 1, (vDSP_Length)len);
+#elif defined(INTEL_MKL_VERSION)
     vmcAbs(len, (MKL_Complex8*)a, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int i;
@@ -352,6 +368,7 @@ void utility_cvabs
         c[i] = cabsf(a[i]);
 #endif
 }
+
 
 /* ========================================================================== */
 /*                            Vector-Modulus (?vmod)                          */
@@ -365,7 +382,7 @@ void utility_svmod
     float* c
 )
 {
-#ifdef INTEL_MKL_VERSION
+#if defined(INTEL_MKL_VERSION)
     vmsFmod(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int i;
@@ -386,7 +403,11 @@ void utility_svrecip
     float* c
 )
 {
-#ifdef INTEL_MKL_VERSION
+#if defined(__ACCELERATE__)
+    float one;
+    one = 1.0f;
+    vDSP_svdiv(&one, a, 1, c, 1, (vDSP_Length)len);
+#elif defined(INTEL_MKL_VERSION)
     vmsInv(len, a, c, SAF_INTEL_MKL_VML_MODE);
 #else
     int i;
@@ -472,7 +493,7 @@ void utility_svvadd
     }
 #endif
 #ifdef __ACCELERATE__
-    vDSP_vadd(a, 1, b, 1, c, 1, len);
+    vDSP_vadd(a, 1, b, 1, c, 1, (vDSP_Length)len);
 #elif defined(INTEL_MKL_VERSION)
     vmsAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
@@ -508,7 +529,9 @@ void utility_cvvadd
         return;
     }
 #endif
-#ifdef INTEL_MKL_VERSION
+#if defined(__ACCELERATE__)
+    vDSP_vadd((float*)a, 1, (float*)b, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len);
+#elif defined(INTEL_MKL_VERSION)
     vmcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -526,7 +549,7 @@ void utility_dvvadd
 )
 {
 #ifdef __ACCELERATE__
-    vDSP_vaddD(a, 1, b, 1, c, 1, len);
+    vDSP_vaddD(a, 1, b, 1, c, 1, (vDSP_Length)len);
 #elif defined(INTEL_MKL_VERSION)
     vmdAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
@@ -544,7 +567,9 @@ void utility_zvvadd
     double_complex* c
 )
 {
-#ifdef INTEL_MKL_VERSION
+#if defined(__ACCELERATE__)
+    vDSP_vaddD((double*)a, 1, (double*)b, 1, (double*)c, 1, /*re+im*/2*(vDSP_Length)len);
+#elif defined(INTEL_MKL_VERSION)
     vmzAdd(len, (MKL_Complex16*)a, (MKL_Complex16*)b, (MKL_Complex16*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -585,8 +610,7 @@ void utility_svvsub
     }
 #endif
 #ifdef __ACCELERATE__
-    vDSP_vsub(b, 1, a, 1, c, 1, len);  /* WTF Apple... */
-    //vDSP_vsub(a, 1, b, 1, c, 1, len);
+    vDSP_vsub(b, 1, a, 1, c, 1, (vDSP_Length)len);  /* Apple "logic"... 'a' and 'b' are switched */
 #elif defined(INTEL_MKL_VERSION)
     vmsSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
@@ -622,7 +646,9 @@ void utility_cvvsub
         return;
     }
 #endif
-#ifdef INTEL_MKL_VERSION
+#if defined(__ACCELERATE__)
+    vDSP_vsub((float*)b, 1, (float*)a, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
+#elif defined(INTEL_MKL_VERSION)
     vmcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -640,8 +666,7 @@ void utility_dvvsub
 )
 {
 #ifdef __ACCELERATE__
-    vDSP_vsubD(b, 1, a, 1, c, 1, len);  /* WTF Apple... */
-    //vDSP_vsub(a, 1, b, 1, c, 1, len);
+    vDSP_vsubD(b, 1, a, 1, c, 1, (vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
 #elif defined(INTEL_MKL_VERSION)
     vmdSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
@@ -659,7 +684,9 @@ void utility_zvvsub
     double_complex* c
 )
 {
-#ifdef INTEL_MKL_VERSION
+#if defined(__ACCELERATE__)
+    vDSP_vsubD((double*)b, 1, (double*)a, 1, (double*)c, 1, /*re+im*/2*(vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
+#elif defined(INTEL_MKL_VERSION)
     vmzSub(len, (MKL_Complex16*)a, (MKL_Complex16*)b, (MKL_Complex16*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -700,7 +727,7 @@ void utility_svvmul
     }
 #endif
 #ifdef __ACCELERATE__
-    vDSP_vmul(a, 1, b, 1, c, 1, len);
+    vDSP_vmul(a, 1, b, 1, c, 1, (vDSP_Length)len);
 #elif defined(INTEL_MKL_VERSION)
     vmsMul(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #else
@@ -736,7 +763,14 @@ void utility_cvvmul
         return;
     }
 #endif
-#ifdef INTEL_MKL_VERSION
+#if defined(__ACCELERATE__)  /* Due to Apple "logic", this is unfortunately quite complicated, and probably slower than it should be... */
+    /* Imaginary part of the output */
+    vDSP_vmul((float*)a/*real*/, 2, (float*)b+1/*imag*/, 2, (float*)c+1/*imag*/, 2, (vDSP_Length)len);
+    vDSP_vma((float*)a+1/*imag*/, 2, (float*)b/*real*/, 2, (float*)c+1/*imag*/, 2, (float*)c/*real*/, 2, (vDSP_Length)len); /* Use the real part of c as a temporary buffer */
+    cblas_scopy(len, (float*)c/*real*/, 2, (float*)c+1/*imag*/, 2); /* Copy the imaginary part from the temporary buffer */
+    /* Real part of the output */
+    vDSP_vmmsb((float*)a/*real*/, 2, (float*)b/*real*/, 2, (float*)a+1/*imag*/, 2, (float*)b+1/*imag*/, 2, (float*)c/*real*/, 2, (vDSP_Length)len);
+#elif defined(INTEL_MKL_VERSION)
     vmcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #else
     int j;
@@ -748,38 +782,6 @@ void utility_cvvmul
         c[j] = ccmulf(a[j], b[j]);
 # endif
 #endif
-}
-
-
-/* ========================================================================== */
-/*            Vector-Vector Multiplication and Addition (?vvmuladd)           */
-/* ========================================================================== */
-
-void utility_svvmuladd
-(
-    float* a,
-    const float* b,
-    const int len,
-    float* c
-)
-{
-#if NDEBUG
-    int i;
-    if (len<10e4 && len > 3){
-        for(i=0; i<len-4; i+=4){
-            c[i] += a[i] * b[i];
-            c[i+1] += a[i+1] * b[i+1];
-            c[i+2] += a[i+2] * b[i+2];
-            c[i+3] += a[i+3] * b[i+3];
-        }
-        for(; i<len; i++)
-            c[i] += a[i] * b[i];
-        return;
-    }
-#endif
-    int j;
-    for (j = 0; j < len; j++)
-        c[j] += a[j] * b[j];
 }
 
 
@@ -835,7 +837,7 @@ void utility_svsmul
     if(c==NULL)
         cblas_sscal(len, s[0], a, 1);
     else
-        vDSP_vsmul(a, 1, s, c, 1, len);
+        vDSP_vsmul(a, 1, s, c, 1, (vDSP_Length)len);
 #else
     if (c == NULL)
         cblas_sscal(len, s[0], a, 1);
@@ -874,7 +876,7 @@ void utility_dvsmul
     if(c==NULL)
         cblas_dscal(len, s[0], a, 1);
     else
-        vDSP_vsmulD(a, 1, s, c, 1, len);
+        vDSP_vsmulD(a, 1, s, c, 1, (vDSP_Length)len);
 #else
     if (c == NULL)
         cblas_dscal(len, s[0], a, 1);
@@ -919,7 +921,7 @@ void utility_svsdiv
         return;
     }
 #ifdef __ACCELERATE__
-    vDSP_vsdiv(a, 1, s, c, 1, len);
+    vDSP_vsdiv(a, 1, s, c, 1, (vDSP_Length)len);
 #else
     int i;
     for(i=0; i<len; i++)
@@ -941,7 +943,7 @@ void utility_svsadd
 )
 {
 #ifdef __ACCELERATE__
-    vDSP_vsadd(a, 1, s, c, 1, len);
+    vDSP_vsadd(a, 1, s, c, 1, (vDSP_Length)len);
 #else
     int i;
     for(i=0; i<len; i++)
@@ -980,13 +982,22 @@ void utility_ssv2cv_inds
     float* cv
 )
 {
-#ifdef INTEL_MKL_VERSION
+#ifdef __ACCELERATE__ /* Unfortunately requires a malloc call */
+    /* Due to Apple "logic", we first need to add 1 to all of the indicies, since "vDSP_vgathr" is going to then subtract 1 from them all... */
+    int i;
+    vDSP_Length* inds_vDSP;
+    inds_vDSP = malloc1d(len*sizeof(vDSP_Length));
+    for(i=0; i<len; i++)
+        inds_vDSP[i] = (vDSP_Length)(inds[i] + 1);
+    vDSP_vgathr(sv, inds_vDSP, 1, cv, 1, (vDSP_Length)len);
+    free(inds_vDSP);
+#elif defined(INTEL_MKL_VERSION)
     int i;
     veclib_int* inds_tmp;
     if(sizeof(veclib_int)==sizeof(int)) /* LP64 MKL */
         cblas_sgthr(len, sv, cv, (veclib_int*)inds);
     else{ /* ILP64 MKL */
-        inds_tmp = malloc1d(len*sizeof(veclib_int));
+        inds_tmp = malloc1d(len*sizeof(veclib_int)); /* Unfortunately requires a malloc call */
         for(i=0; i<len; i++)
             inds_tmp[i] = (veclib_int)inds[i];
         cblas_sgthr(len, sv, cv, (veclib_int*)inds_tmp);

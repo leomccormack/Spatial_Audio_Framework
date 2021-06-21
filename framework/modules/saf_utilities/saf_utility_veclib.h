@@ -576,30 +576,6 @@ void utility_cvvmul(/* Input Arguments */
 
 
 /* ========================================================================== */
-/*            Vector-Vector Multiplication and Addition (?vvmuladd)           */
-/* ========================================================================== */
-
-/**
- * Single-precision, element-wise vector-vector multiplication and addition,
- * i.e.
- * \code{.m}
- *     c = c + a.*b
- * \endcode
- *
- * @param[in]     a   Input vector a; len x 1
- * @param[in]     b   Input vector b; len x 1
- * @param[in]     len Vector length
- * @param[in,out] c   Input/Output vector c
- */
-void utility_svvmuladd(/* Input Arguments */
-                       float* a,
-                       const float* b,
-                       const int len,
-                       /* Input/Output Arguments */
-                       float* c);
-
-
-/* ========================================================================== */
 /*                     Vector-Vector Dot Product (?vvdot)                     */
 /* ========================================================================== */
 
