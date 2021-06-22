@@ -169,8 +169,8 @@ void binauraliser_setUseDefaultHRIRsflag(void* const hBin, int newState);
  */
 void binauraliser_setSofaFilePath(void* const hBin, const char* path);
 
-/** Enable (1) or disable (0) the pre-processing applied to the HRTFs */
-void binauraliser_setEnableHRIRsPreProc(void* const hBin, int newState);
+/** Enable (1) or disable (0) the diffuse-field EQ applied to the HRTFs */
+void binauraliser_setEnableHRIRsDiffuseEQ(void* const hBin, int newState);
 
 /** Loads an input preset (see #SOURCE_CONFIG_PRESETS enum) */
 void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID);
@@ -303,10 +303,10 @@ int binauraliser_getUseDefaultHRIRsflag(void* const hBin);
 char* binauraliser_getSofaFilePath(void* const hBin);
 
 /**
- * Returns the flag indicating whether the pre-processing applied to the HRTFs
+ * Returns the flag indicating whether the diffuse-field EQ applied to the HRTFs
  * is enabled (1) or disabled (0).
  */
-int binauraliser_getEnableHRIRsPreProc(void* const hBin);
+int binauraliser_getEnableHRIRsDiffuseEQ(void* const hBin);
 
 /** Returns the DAW/Host sample rate */
 int binauraliser_getDAWsamplerate(void* const hBin);

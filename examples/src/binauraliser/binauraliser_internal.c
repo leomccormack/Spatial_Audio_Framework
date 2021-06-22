@@ -207,9 +207,9 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     pData->hrtf_fb = realloc1d(pData->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pData->N_hrir_dirs)*sizeof(float_complex));
     HRIRs2HRTFs_afSTFT(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, HOP_SIZE, 0, 1, pData->hrtf_fb);
     /* HRIR pre-processing */
-    if(pData->enableHRIRsPreProc){
+    if(pData->enableHRIRsDiffuseEQ){
         /* get integration weights */
-        strcpy(pData->progressBarText,"Applying HRIR Pre-Processing");
+        strcpy(pData->progressBarText,"Applying HRIR diffuse-field EQ");
         pData->progressBar0_1 = 0.9f;
         if(pData->N_hrir_dirs<=3600){
             pData->weights = realloc1d(pData->weights, pData->N_hrir_dirs*sizeof(float));

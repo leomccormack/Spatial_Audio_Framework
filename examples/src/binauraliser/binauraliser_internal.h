@@ -121,7 +121,7 @@ typedef struct _binauraliser
     float src_dirs_deg[MAX_NUM_INPUTS][2];   /**< Current source/panning directions, in degrees */
     INTERP_MODES interpMode;                 /**< see #INTERP_MODES */
     int useDefaultHRIRsFLAG;                 /**< 1: use default HRIRs in database, 0: use those from SOFA file */
-    int enableHRIRsPreProc;                  /**< flag to apply pre-processing to the currently loaded HRTFs */
+    int enableHRIRsDiffuseEQ;                /**< flag to diffuse-field equalisation to the currently loaded HRTFs */
     int enableRotation;                      /**< 1: enable rotation, 0: disable */
     float yaw;                               /**< yaw (Euler) rotation angle, in degrees */
     float roll;                              /**< roll (Euler) rotation angle, in degrees */

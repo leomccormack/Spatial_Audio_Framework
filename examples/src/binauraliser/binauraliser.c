@@ -43,7 +43,7 @@ void binauraliser_create
     /* user parameters */
     binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
-    pData->enableHRIRsPreProc = 1;
+    pData->enableHRIRsDiffuseEQ = 1;
     pData->nSources = pData->new_nSources;
     pData->interpMode = INTERP_TRI;
     pData->yaw = 0.0f;
@@ -333,11 +333,11 @@ void binauraliser_setSofaFilePath(void* const hBin, const char* path)
     binauraliser_refreshSettings(hBin);  // re-init and re-calc
 }
 
-void binauraliser_setEnableHRIRsPreProc(void* const hBin, int newState)
+void binauraliser_setEnableHRIRsDiffuseEQ(void* const hBin, int newState)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    if(newState!=pData->enableHRIRsPreProc){
-        pData->enableHRIRsPreProc = newState;
+    if(newState!=pData->enableHRIRsDiffuseEQ){
+        pData->enableHRIRsDiffuseEQ = newState;
         binauraliser_refreshSettings(hBin);  // re-init and re-calc
     }
 }
@@ -540,10 +540,10 @@ char* binauraliser_getSofaFilePath(void* const hBin)
         return "no_file";
 }
 
-int binauraliser_getEnableHRIRsPreProc(void* const hBin)
+int binauraliser_getEnableHRIRsDiffuseEQ(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    return pData->enableHRIRsPreProc;
+    return pData->enableHRIRsDiffuseEQ;
 }
 
 int binauraliser_getDAWsamplerate(void* const hBin)
