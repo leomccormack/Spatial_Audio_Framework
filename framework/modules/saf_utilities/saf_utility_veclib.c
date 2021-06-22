@@ -496,8 +496,10 @@ void utility_svvadd
         }
         for(; i<len; i++)
             c[i] = a[i] + b[i];
-        return;
     }
+    else
+        for(i=0; i<len; i++)
+            c[i] = a[i] + b[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -533,8 +535,10 @@ void utility_cvvadd
         }
         for(; i<len; i++)
             c[i] = a[i] + b[i];
-        return;
     }
+    else
+        for(i=0; i<len; i++)
+            c[i] = a[i] + b[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -613,8 +617,10 @@ void utility_svvsub
         }
         for(; i<len; i++)
             c[i] = a[i] - b[i];
-        return;
     }
+    else
+        for(i=0; i<len; i++)
+            c[i] = a[i] - b[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -634,7 +640,7 @@ void utility_cvvsub
     vDSP_vsub((float*)b, 1, (float*)a, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
-#elif __STDC_VERSION__ >= 199901L
+#elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
     if (len<10e4 && len > 7){
@@ -650,8 +656,10 @@ void utility_cvvsub
         }
         for(; i<len; i++)
             c[i] = a[i] - b[i];
-        return;
     }
+    else
+        for(i=0; i<len; i++)
+            c[i] = a[i] - b[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -730,8 +738,10 @@ void utility_svvmul
         }
         for(; i<len; i++)
             c[i] = a[i] * b[i];
-        return;
     }
+    else
+        for(i=0; i<len; i++)
+            c[i] = a[i] * b[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -772,11 +782,14 @@ void utility_cvvmul
         }
         for(; i<len; i++)
             c[i] = a[i] * b[i];
-        return;
     }
+    else
+        for (i = 0; i < len; i++)
+            c[i] = a[i] * b[i];
 #else
-    for (j = 0; j < len; j++)
-        c[j] = ccmulf(a[j], b[j]);
+    int i;
+    for (i = 0; i < len; i++)
+        c[i] = ccmulf(a[i], b[i]);
 #endif
 }
 
@@ -2223,7 +2236,7 @@ void utility_sglslv
 {
     utility_sglslv_data *h;
     veclib_int n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
-#if !(defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64))
+#if !defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
     veclib_int i, j;
 #endif
 
