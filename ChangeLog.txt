@@ -11,9 +11,13 @@ For descriptions of minor changes and bug fixes, please refer to the git log.
 ====================================================================================================
 v1.2.0
  - All lapack-related saf_utility_veclib functions now include an option to pre-allocate the run-
-   time memory.
- - Many optimisations. Some minor, some significant.
- - Significantly improved the doxygen documentation for the examples
+   time memory
+ - All saf_utility_veclib vector-vector operations, when using Apple Accelerate as the chosen
+   performance library, now call the appropriate optimised routines. The Intel MKL vector-vector
+   operations have been switched to the "mode overiding" variants, which allows some accuracy to be
+   traded for faster computations
+ - A number of other minor and some significant optimisations throughout the framework
+ - Improved doxygen documentation for the examples
 
 Breaking changes:
 
@@ -21,6 +25,8 @@ Since the lapack-related saf_utility_veclib now allow a pre-allocated object to 
 the first input argument should either be set to "NULL", (in which case they revert to how they were
 previously), or you can pass the pre-allocated object, (in which case no run-time malloc calls are 
 made).
+
+The SAF_PRINT_VERSION_LICENSE_STRING macro has been removed; refer to SAF_LICENSE_STRING instead.
 
 ====================================================================================================
 v1.1.7
