@@ -8,6 +8,7 @@ var structsph_m_u_s_i_c__data =
     [ "order", "structsph_m_u_s_i_c__data.html#a377b3746783e5bb2c62cf9b9b27ff48e", null ],
     [ "P_minus_peak", "structsph_m_u_s_i_c__data.html#a5217834e9f1eb8e91a905c1a7e1e25d2", null ],
     [ "pSpec", "structsph_m_u_s_i_c__data.html#aac13944455644f65072cfd5dce92cfc8", null ],
+    [ "pSpecInv", "structsph_m_u_s_i_c__data.html#adebe97c1d9ff650894cdf33ec381c588", null ],
     [ "VM_mask", "structsph_m_u_s_i_c__data.html#a20f6457909d6378821a2758149f86038", null ],
     [ "VnA", "structsph_m_u_s_i_c__data.html#a4ecf57be3d16c2e947733ead53643536", null ]
 ];

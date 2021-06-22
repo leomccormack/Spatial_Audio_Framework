@@ -1,0 +1,27 @@
+var ambi__enc_8c =
+[
+    [ "ambi_enc_create", "ambi__enc_8c.html#ac6c34540fa3754ddc85fb29e18ba7454", null ],
+    [ "ambi_enc_destroy", "ambi__enc_8c.html#ac45a2489e334479c376152ed666e5d41", null ],
+    [ "ambi_enc_getChOrder", "ambi__enc_8c.html#a864d9944a7e0dd28318d2b635212296f", null ],
+    [ "ambi_enc_getEnablePostScaling", "ambi__enc_8c.html#a2bc7905101986ccc80e7a2bfc56b6cd7", null ],
+    [ "ambi_enc_getFrameSize", "ambi__enc_8c.html#a1c460240f2f85b9cc53605de69385163", null ],
+    [ "ambi_enc_getMaxNumSources", "ambi__enc_8c.html#a82dc301337c78fb5a942965f07ad8d98", null ],
+    [ "ambi_enc_getNormType", "ambi__enc_8c.html#ac1fef9f71178a26c7d648451ab4e4355", null ],
+    [ "ambi_enc_getNSHrequired", "ambi__enc_8c.html#ad3597505430e43edb95f0d58cbe1de0f", null ],
+    [ "ambi_enc_getNumSources", "ambi__enc_8c.html#af0837109c559d961e567c14707e5a159", null ],
+    [ "ambi_enc_getOutputOrder", "ambi__enc_8c.html#afaf80c74f269dd584c37477c08164aa6", null ],
+    [ "ambi_enc_getProcessingDelay", "ambi__enc_8c.html#a86516c26809b8251c6c06396631215b5", null ],
+    [ "ambi_enc_getSourceAzi_deg", "ambi__enc_8c.html#ae0561538f935ab8eec6f7b7ae592b401", null ],
+    [ "ambi_enc_getSourceElev_deg", "ambi__enc_8c.html#ad7a6cec3e139c1b875021a09b7752fee", null ],
+    [ "ambi_enc_init", "ambi__enc_8c.html#afea441688a41405da68d2f68d695d80d", null ],
+    [ "ambi_enc_process", "ambi__enc_8c.html#a0ddf80a79deb2b322d1740eb6dab9c39", null ],
+    [ "ambi_enc_refreshParams", "ambi__enc_8c.html#a261a1f584979af30dd9c17e267c76e54", null ],
+    [ "ambi_enc_setChOrder", "ambi__enc_8c.html#af0754e972e00bc278f86df823875e8f8", null ],
+    [ "ambi_enc_setEnablePostScaling", "ambi__enc_8c.html#a183dffff01ca3170f6c046c6eec57c52", null ],
+    [ "ambi_enc_setInputConfigPreset", "ambi__enc_8c.html#a9d3d489de15e3627dccadebc9ee0bf87", null ],
+    [ "ambi_enc_setNormType", "ambi__enc_8c.html#a589bcbe9db211be7e33e344f9ad44c49", null ],
+    [ "ambi_enc_setNumSources", "ambi__enc_8c.html#a9c09fbb950001d84a9272955e99682fc", null ],
+    [ "ambi_enc_setOutputOrder", "ambi__enc_8c.html#ad023e3253ce8579bff2550aafdc0bcd9", null ],
+    [ "ambi_enc_setSourceAzi_deg", "ambi__enc_8c.html#aa946fe0f556605f899bd4f79562c0170", null ],
+    [ "ambi_enc_setSourceElev_deg", "ambi__enc_8c.html#a4d2e3eb79ed030c9487697d107aa0a54", null ]
+];

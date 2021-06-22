@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['room_5fsim_5fmax_5fnum_5freceivers_3986',['ROOM_SIM_MAX_NUM_RECEIVERS',['../ambi__roomsim_8h.html#a759859b9f50722b59089619b839f549e',1,'ambi_roomsim.h']]],
-  ['room_5fsim_5fmax_5fnum_5fsources_3987',['ROOM_SIM_MAX_NUM_SOURCES',['../ambi__roomsim_8h.html#ae37bd11a312fadc8de57df4001675ece',1,'ambi_roomsim.h']]],
-  ['run_5ftest_3988',['RUN_TEST',['../saf__test_8c.html#a2dd273a252c1e79b21f222579a35c21a',1,'saf_test.c']]]
+  ['num_5fch_5forderings_5068',['NUM_CH_ORDERINGS',['../__common_8h.html#ae493a0fa8189067d6b3c8563cacf9920',1,'_common.h']]],
+  ['num_5fdecoders_5069',['NUM_DECODERS',['../ambi__dec__internal_8h.html#af4b08f8c6f0bddb3ceade14ec2bcc252',1,'ambi_dec_internal.h']]],
+  ['num_5fdisp_5fslots_5070',['NUM_DISP_SLOTS',['../dirass__internal_8h.html#adda7fe1f613b848cb3b86ea4c7678b24',1,'NUM_DISP_SLOTS():&#160;dirass_internal.h'],['../powermap__internal_8h.html#adda7fe1f613b848cb3b86ea4c7678b24',1,'NUM_DISP_SLOTS():&#160;powermap_internal.h'],['../sldoa__internal_8h.html#adda7fe1f613b848cb3b86ea4c7678b24',1,'NUM_DISP_SLOTS():&#160;sldoa_internal.h']]],
+  ['num_5fnorm_5ftypes_5071',['NUM_NORM_TYPES',['../__common_8h.html#a7ac45c6ee0b03db9b702697659536582',1,'_common.h']]],
+  ['num_5fstatic_5fbeam_5ftypes_5072',['NUM_STATIC_BEAM_TYPES',['../__common_8h.html#a24f1146a5a435a57ea1e1478257e79c3',1,'_common.h']]]
 ];

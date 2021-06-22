@@ -1,23 +1,10 @@
 var searchData=
 [
-  ['upscale_5forder_5feighteenth_3868',['UPSCALE_ORDER_EIGHTEENTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fea0b5166ca0ab0967f672d0cc99faa1150',1,'dirass.h']]],
-  ['upscale_5forder_5feighth_3869',['UPSCALE_ORDER_EIGHTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50feaa1c912b982a0d6a4bc921785b2620611',1,'dirass.h']]],
-  ['upscale_5forder_5feleventh_3870',['UPSCALE_ORDER_ELEVENTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50feaeb72acee2b795f67a46f572161f5ab88',1,'dirass.h']]],
-  ['upscale_5forder_5ffifteenth_3871',['UPSCALE_ORDER_FIFTEENTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50feaacde24ba1bcb386d4bf06534326134f4',1,'dirass.h']]],
-  ['upscale_5forder_5ffifth_3872',['UPSCALE_ORDER_FIFTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50feadaf26b45885d5dafc9e074de6ce61f7d',1,'dirass.h']]],
-  ['upscale_5forder_5ffirst_3873',['UPSCALE_ORDER_FIRST',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fea24f312db5127f88579addaa763d8e103',1,'dirass.h']]],
-  ['upscale_5forder_5ffourteenth_3874',['UPSCALE_ORDER_FOURTEENTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50feaebf12ba5a8de5b5f1b98f762fe46d996',1,'dirass.h']]],
-  ['upscale_5forder_5ffourth_3875',['UPSCALE_ORDER_FOURTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50feaaf0a644a40d98ec2325f687edd53aed9',1,'dirass.h']]],
-  ['upscale_5forder_5fnineteenth_3876',['UPSCALE_ORDER_NINETEENTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fea1ddb0be3ffe36696c77f4eb1db30504b',1,'dirass.h']]],
-  ['upscale_5forder_5fninth_3877',['UPSCALE_ORDER_NINTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50feab00b26f0a0008cd8f5caab2f372ec13c',1,'dirass.h']]],
-  ['upscale_5forder_5fsecond_3878',['UPSCALE_ORDER_SECOND',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50feaa9e2a1fe73664e77244ff40ed89aa276',1,'dirass.h']]],
-  ['upscale_5forder_5fseventeenth_3879',['UPSCALE_ORDER_SEVENTEENTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fea3ff14e03f9f488b71de8a1d59c173636',1,'dirass.h']]],
-  ['upscale_5forder_5fseventh_3880',['UPSCALE_ORDER_SEVENTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fea2e43d63a77230427b260ed6028027794',1,'dirass.h']]],
-  ['upscale_5forder_5fsixth_3881',['UPSCALE_ORDER_SIXTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fea2d348e34f9581da68bd841650b1ee909',1,'dirass.h']]],
-  ['upscale_5forder_5fsixthteenth_3882',['UPSCALE_ORDER_SIXTHTEENTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50feae7418455b3178f770d4e08559bb374b1',1,'dirass.h']]],
-  ['upscale_5forder_5ftenth_3883',['UPSCALE_ORDER_TENTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50feaf68e3443e23c1d25b79cd949057f5ed5',1,'dirass.h']]],
-  ['upscale_5forder_5fthird_3884',['UPSCALE_ORDER_THIRD',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fead1297baf45cf2dbb0757a9527efd4d5e',1,'dirass.h']]],
-  ['upscale_5forder_5fthirteenth_3885',['UPSCALE_ORDER_THIRTEENTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50feab1696bf094bfa9f145fe630aee43be76',1,'dirass.h']]],
-  ['upscale_5forder_5ftwelfth_3886',['UPSCALE_ORDER_TWELFTH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fea8a116693d85ed5dedbb2959928addce9',1,'dirass.h']]],
-  ['upscale_5forder_5ftwentieth_3887',['UPSCALE_ORDER_TWENTIETH',['../dirass_8h.html#af4bdc02dd291ef83d484a7590afb50fea1b56d23f66f2c61270fc3f75ba0a96c3',1,'dirass.h']]]
+  ['t_5fdesign_5f13_4928',['T_DESIGN_13',['../dirass_8h.html#ad75eaf1ab73abf6305e73ce7c6009936a40add30777f13f10b6cad57e68d5a6e9',1,'dirass.h']]],
+  ['t_5fdesign_5f18_4929',['T_DESIGN_18',['../dirass_8h.html#ad75eaf1ab73abf6305e73ce7c6009936ad7edafcfbcfb336386e72553a5655b3c',1,'dirass.h']]],
+  ['t_5fdesign_5f3_4930',['T_DESIGN_3',['../dirass_8h.html#ad75eaf1ab73abf6305e73ce7c6009936a3ef8583d96c2171c1cf39a8402638018',1,'dirass.h']]],
+  ['t_5fdesign_5f30_4931',['T_DESIGN_30',['../dirass_8h.html#ad75eaf1ab73abf6305e73ce7c6009936ab1050dc045f1c5ee00c6782c3322f076',1,'dirass.h']]],
+  ['t_5fdesign_5f4_4932',['T_DESIGN_4',['../dirass_8h.html#ad75eaf1ab73abf6305e73ce7c6009936ae2a3b5efafe3cda0e160ffb838f790d8',1,'dirass.h']]],
+  ['t_5fdesign_5f6_4933',['T_DESIGN_6',['../dirass_8h.html#ad75eaf1ab73abf6305e73ce7c6009936a7e35f539973dc348132fe8b3b5cf7489',1,'dirass.h']]],
+  ['t_5fdesign_5f9_4934',['T_DESIGN_9',['../dirass_8h.html#ad75eaf1ab73abf6305e73ce7c6009936a3347ff9e44c00f1759c93adb23654d2d',1,'dirass.h']]]
 ];

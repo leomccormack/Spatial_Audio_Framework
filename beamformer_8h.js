@@ -12,7 +12,6 @@ var beamformer_8h =
     [ "beamformer_getNormType", "beamformer_8h.html#affe0b1571af0915548300b666575606c", null ],
     [ "beamformer_getNSHrequired", "beamformer_8h.html#a6beebb6e4300033f25a07070c323ce6b", null ],
     [ "beamformer_getNumBeams", "beamformer_8h.html#a37f6e24062aa34a213cee08a7ef4ffa2", null ],
-    [ "beamformer_getNumberOfBands", "beamformer_8h.html#a85ff6f3da083d34cba352d13a3c5e713", null ],
     [ "beamformer_getProcessingDelay", "beamformer_8h.html#a2518e0bd354d5d49c82ef4857f724763", null ],
     [ "beamformer_init", "beamformer_8h.html#a6979b023ef547f9a03b75879c0948d38", null ],
     [ "beamformer_process", "beamformer_8h.html#a2891b3780608af8deb4bba61a1119e7f", null ],

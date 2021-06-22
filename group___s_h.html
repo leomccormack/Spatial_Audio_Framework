@@ -692,7 +692,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Computes the condition numbers for a least-squares SHT. </p>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000018">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aa8b8eef199b8983d3b18cbf453fc2cf0" title="Testing that for T-designs, the condition numbers are all equal to 1.">test__checkCondNumberSHTReal()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000030">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aa8b8eef199b8983d3b18cbf453fc2cf0" title="Testing that for T-designs, the condition numbers are all equal to 1.">test__checkCondNumberSHTReal()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Order of spherical harmonic expansion </td></tr>
@@ -789,7 +789,7 @@ Functions</h2></td></tr>
 
 <p>Computes a complex to real spherical harmonic transform matrix. </p>
 <p>Computes the unitary transformation matrix T_c2r. It expresses the real spherical harmonics with respect to the complex harmonics, so that r_N = T_c2r * y_N, where r_N and y_N is are the real and complex SH vectors, respectively.</p>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000013">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aa287f898d7c0f64e7823c09bc11824fa" title="Testing the complex to real spherical harmonic conversion, using getSHreal() as the reference.">test__complex2realSHMtx()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000025">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aa287f898d7c0f64e7823c09bc11824fa" title="Testing the complex to real spherical harmonic conversion, using getSHreal() as the reference.">test__complex2realSHMtx()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Order of spherical harmonic expansion </td></tr>
@@ -930,7 +930,7 @@ Functions</h2></td></tr>
 <p>Computes beamforming matrices (sector coefficients) which, when applied to input SH signals, yield energy-preserving (EP) sectors. </p>
 <p>This partitioning of the sound-field into spatially-localised sectors has been used e.g. for parametric sound-field reproduction in [1] and visualisation in [2,3].</p>
 <dl class="section note"><dt>Note</dt><dd>Each sector comprises 1x sector pattern of order "orderSec", and 3x weighted dipoles which are essentially the product of the sector pattern with (unweighted) dipoles, and have the directivity of one higher order (orderSec+1).</dd></dl>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000017">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aa313ae6eb64e8ab4db6b5482882ac348" title="Testing the computeSectorCoeffsEP() and computeVelCoeffsMtx() functions and comparing their output to...">test__computeSectorCoeffsEP()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000029">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aa313ae6eb64e8ab4db6b5482882ac348" title="Testing the computeSectorCoeffsEP() and computeVelCoeffsMtx() functions and comparing their output to...">test__computeSectorCoeffsEP()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">orderSec</td><td>Order of sector patterns </td></tr>
@@ -981,7 +981,7 @@ Functions</h2></td></tr>
 
 <p>Computes the matrices which generate the coefficients of a beampattern of order (sectorOrder+1) that is essentially the product of a pattern of order=sectorOrder and a dipole. </p>
 <p>It is used in beamWeightsVelocityPatterns(). For a derivation of the matrices refer to [1].</p>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000016">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aa313ae6eb64e8ab4db6b5482882ac348" title="Testing the computeSectorCoeffsEP() and computeVelCoeffsMtx() functions and comparing their output to...">test__computeSectorCoeffsEP()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000028">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#aa313ae6eb64e8ab4db6b5482882ac348" title="Testing the computeSectorCoeffsEP() and computeVelCoeffsMtx() functions and comparing their output to...">test__computeSectorCoeffsEP()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">sectorOrder</td><td>Order of patterns </td></tr>
@@ -1051,7 +1051,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01765">1765</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01778">1778</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1143,7 +1143,7 @@ Functions</h2></td></tr>
 <dd>
 [2] Politis, A., Gamper, H. (2017). "Comparing Modelled And Measurement- Based Spherical Harmonic Encoding Filters For Spherical Microphone Arrays. In IEEE Workshop on Applications of Signal Processing to Audio and Acoustics (WASPAA). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02275">2275</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02288">2288</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1219,7 +1219,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Delikaris-Manias, S., Vilkamo, J., &amp; Pulkki, V. (2016). Signal- dependent spatial filtering based on weighted-orthogonal beamformers in the spherical harmonic domain. IEEE/ACM Transactions on Audio, Speech and Language Processing (TASLP), 24(9), 1507-1519. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01552">1552</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01565">1565</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1293,7 +1293,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01704">1704</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01717">1717</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1367,7 +1367,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01656">1656</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01669">1669</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1441,7 +1441,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01486">1486</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01499">1499</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1502,7 +1502,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01444">1444</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01457">1457</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1547,7 +1547,7 @@ Functions</h2></td></tr>
 <p>Computes complex-valued spherical harmonics [1] for each given direction on the unit sphere. </p>
 <p>The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term. This function employs <a class="el" href="group___s_h.html#ga1ff15ddf9e257b1f185421568ef349dd" title="Calculates unnormalised Legendre polynomials up to order N, for all values in vector x [1].">unnorm_legendreP()</a> and double precision.</p>
 <dl class="section warning"><dt>Warning</dt><dd>This function assumes [azi, inclination] convention! Note that one may convert from elevation, with: [azi, pi/2-elev].</dd></dl>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000012">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#ad64c17df200f732d064245776199dee0" title="Testing the orthogonality of the getSHcomplex() function.">test__getSHcomplex()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000024">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#ad64c17df200f732d064245776199dee0" title="Testing the orthogonality of the getSHcomplex() function.">test__getSHcomplex()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Order of spherical harmonic expansion </td></tr>
@@ -1604,7 +1604,7 @@ Functions</h2></td></tr>
 <p>Computes real-valued spherical harmonics [1] for each given direction on the unit sphere. </p>
 <p>The spherical harmonic values are computed WITH the 1/sqrt(4*pi) term. Compared to <a class="el" href="group___s_h.html#gabf4d86ed458c9fcdb13065c7e2f4c436" title="Computes real-valued spherical harmonics [1] for each given direction on the unit sphere.">getSHreal_recur()</a>, this function uses <a class="el" href="group___s_h.html#ga1ff15ddf9e257b1f185421568ef349dd" title="Calculates unnormalised Legendre polynomials up to order N, for all values in vector x [1].">unnorm_legendreP()</a> and double precision, so is more suitable for being computed in an initialisation stage. This version is indeed slower, but more precise (especially for high orders).</p>
 <dl class="section warning"><dt>Warning</dt><dd>This function assumes [azi, inclination] convention! Note that one may convert from elevation, with: [azi, pi/2-elev].</dd></dl>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000010">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a26eb1d422499252a5d6ce0fa72b0df8a" title="Testing the orthogonality of the getSHreal() function.">test__getSHreal()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000022">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a26eb1d422499252a5d6ce0fa72b0df8a" title="Testing the orthogonality of the getSHreal() function.">test__getSHreal()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Order of spherical harmonic expansion </td></tr>
@@ -1662,7 +1662,7 @@ Functions</h2></td></tr>
 <p>The real spherical harmonics are computed WITH the 1/sqrt(4*pi) term. Compared to <a class="el" href="group___s_h.html#gadab8bc47f1068e8edd58e5d5c93a3fa4" title="Computes real-valued spherical harmonics [1] for each given direction on the unit sphere.">getSHreal()</a>, this function uses <a class="el" href="group___s_h.html#ga3851842c7f6c520c3f645f0ae686443c" title="Calculates unnormalised Legendre polynomials up to order N, for all values in vector x.">unnorm_legendreP_recur()</a> and single precision, so is more suitable for being computed in a real-time loop. It sacrifices some precision, and numerical error propogates through the recursion, but it is much faster.</p>
 <p>The function also uses static memory buffers for single direction and up to 7th order, which speeds things up considerably for such use cases.</p>
 <dl class="section warning"><dt>Warning</dt><dd>This function assumes [azi, inclination] convention! Note that one may convert from elevation, with: [azi, pi/2-elev].</dd></dl>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000011">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a180a86ce81b6ee9cdd6e9c1390045632" title="Testing that the getSHreal_recur() function is somewhat numerically identical to the full-fat getSHre...">test__getSHreal_recur()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000023">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a180a86ce81b6ee9cdd6e9c1390045632" title="Testing that the getSHreal_recur() function is somewhat numerically identical to the full-fat getSHre...">test__getSHreal_recur()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Order of spherical harmonic expansion </td></tr>
@@ -1714,7 +1714,7 @@ Functions</h2></td></tr>
 <p>The rotation should then be applied as: </p><div class="fragment"><div class="line">outSig = RotMtx * inSig; % where inSig/outSig are: (L+1)^2 x signalLength</div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>The normalisation convention does not matter, since only dipoles are used to rotate dipoles, quadrapoles to rotate quadrapoles etc. So any order-dependent scaling is irrelevant. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The resulting rotation matrix should be applied to signals which follow the ACN channel ordering convention!</dd></dl>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000015">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a8a5477ba3d6118be1ea4b962c573c9f9" title="Testing the spherical harmonic rotation matrix function getSHrotMtxReal()">test__getSHrotMtxReal()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000027">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a8a5477ba3d6118be1ea4b962c573c9f9" title="Testing the spherical harmonic rotation matrix function getSHrotMtxReal()">test__getSHrotMtxReal()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">R</td><td>The 3x3 rotation matrix </td></tr>
@@ -1757,7 +1757,7 @@ Functions</h2></td></tr>
 
 <p>Computes a real to complex spherical harmonic transform matrix. </p>
 <p>Computes the unitary transformation matrix T_r2c the expresses the complex spherical harmonics with respect to the real harmonics, so that y_N = T_r2c * r_N, where r_N and y_N are the real and complex SH vectors, respectively.</p>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000014">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a073d3c584fce77cc00fd2d11237436d9" title="Testing the real to complex spherical harmonic conversion, using getSHcomplex() as the reference.">test__real2complexSHMtx()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000026">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a073d3c584fce77cc00fd2d11237436d9" title="Testing the real to complex spherical harmonic conversion, using getSHcomplex() as the reference.">test__real2complexSHMtx()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Order of spherical harmonic expansion </td></tr>
@@ -1974,7 +1974,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02145">2145</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02158">2158</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2076,7 +2076,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02197">2197</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02210">2210</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2123,7 +2123,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Spatial aliasing limit estimate, in Hz </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01830">1830</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01843">1843</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2206,7 +2206,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Politis, A., Vilkamo, J., &amp; Pulkki, V. (2015). Sector-based parametric sound field reproduction in the spherical harmonic domain. IEEE Journal of Selected Topics in Signal Processing, 9(5), 852-866. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01840">1840</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01853">1853</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2287,7 +2287,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02068">2068</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02081">2081</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2320,7 +2320,7 @@ Functions</h2></td></tr>
 <p>Creates an instance of the spherical harmonic domain ESPRIT-based direction of arrival estimator. </p>
 <p>The ESPRIT method (in this case, using spherical harmonic input signals) returns the analysed DoAs directly; i.e. without any grid searching/ scanning (like e.g. MUSIC requires...). The DoA estimates are therefore continuous, i.e. not bound to any grid.</p>
 <p>This particular implementation is is based on the "3-recurrence relationship" design, detailed in [1].</p>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000020">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a70a6ae2e1c5ad450fac2422246c703b5" title="Testing the DoA estimation performance of sphESPRIT()">test__sphESPRIT()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000032">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a70a6ae2e1c5ad450fac2422246c703b5" title="Testing the DoA estimation performance of sphESPRIT()">test__sphESPRIT()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">phESPRIT</td><td>(&amp;) address of the ESPRIT DoA estimator handle </td></tr>
@@ -2331,7 +2331,7 @@ Functions</h2></td></tr>
 <dl class="section see"><dt>See also</dt><dd>[1] B. Jo and J.-W. Choi, "Parametric direction-of-arrival estimation
          with three recurrence relations of spherical harmonics," J. Acoust. Soc. Amer.,vol. 145, no. 1, pp. 480&ndash;488, Jan. 2019. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01211">1211</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01221">1221</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2359,7 +2359,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01283">1283</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01296">1296</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2414,7 +2414,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01330">1330</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01346">1346</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2481,7 +2481,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01868">1868</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01881">1881</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2542,7 +2542,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01147">1147</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01157">1157</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2586,7 +2586,7 @@ Functions</h2></td></tr>
 
 <p>Creates an instance of the spherical harmonic domain MUSIC implementation, which may be used for computing pseudo-spectrums for visualisation/DoA estimation purposes. </p>
 <dl class="section note"><dt>Note</dt><dd>Subspace approaches such as MUSIC can offer higher spatial resolution than beamforming approaches, such as the steered-response power (PWD), as long as the source signals are not correlated between them and are presented in a reverberant/diffuse sound. </dd></dl>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000019">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#ada1afadc3ce01509670706830fec494e" title="Testing the DoA estimation performance of sphMUSIC()">test__sphMUSIC()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000031">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#ada1afadc3ce01509670706830fec494e" title="Testing the DoA estimation performance of sphMUSIC()">test__sphMUSIC()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">phMUSIC</td><td>(&amp;) address of the sphMUSIC handle </td></tr>
@@ -2597,7 +2597,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01080">1080</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01088">1088</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2625,7 +2625,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01126">1126</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01135">1135</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2834,7 +2834,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02001">2001</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02014">2014</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2895,7 +2895,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01952">1952</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01965">1965</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -3029,7 +3029,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sat Jun 12 2021 11:14:00 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Jun 22 2021 15:42:32 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

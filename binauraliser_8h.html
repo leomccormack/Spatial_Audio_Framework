@@ -99,6 +99,7 @@ $(document).ready(function(){initNavTree('binauraliser_8h.html',''); initResizab
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:a5421d617c5a14c37e48ec2a679436ec8"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8">INTERP_MODES</a> { <a class="el" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8a543b349158a350ea95cbf4f29b78c504">INTERP_TRI</a> = 1
+, <a class="el" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8aee5855604637fea447bd08f639a78d8d">INTERP_TRI_PS</a>
  }</td></tr>
 <tr class="memdesc:a5421d617c5a14c37e48ec2a679436ec8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available interpolation modes.  <a href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8">More...</a><br /></td></tr>
 <tr class="separator:a5421d617c5a14c37e48ec2a679436ec8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,10 +143,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bina
 <tr class="memitem:a0628549e0203c0f65bb8737526e88be6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a0628549e0203c0f65bb8737526e88be6">binauraliser_setSofaFilePath</a> (void *const hBin, const char *path)</td></tr>
 <tr class="memdesc:a0628549e0203c0f65bb8737526e88be6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the file path for a .sofa file, in order to employ a custom HRIR set for the decoding.  <a href="binauraliser_8h.html#a0628549e0203c0f65bb8737526e88be6">More...</a><br /></td></tr>
 <tr class="separator:a0628549e0203c0f65bb8737526e88be6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab50d04362a8852270936a8c85a3e8247"><td class="memItemLeft" align="right" valign="top"><a id="ab50d04362a8852270936a8c85a3e8247"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#ab50d04362a8852270936a8c85a3e8247">binauraliser_setEnableHRIRsPreProc</a> (void *const hBin, int newState)</td></tr>
-<tr class="memdesc:ab50d04362a8852270936a8c85a3e8247"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable (1) or disable (0) the pre-processing applied to the HRTFs. <br /></td></tr>
-<tr class="separator:ab50d04362a8852270936a8c85a3e8247"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a097a72d5a21abfc0760b5f52a2035dd9"><td class="memItemLeft" align="right" valign="top"><a id="a097a72d5a21abfc0760b5f52a2035dd9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a097a72d5a21abfc0760b5f52a2035dd9">binauraliser_setEnableHRIRsDiffuseEQ</a> (void *const hBin, int newState)</td></tr>
+<tr class="memdesc:a097a72d5a21abfc0760b5f52a2035dd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable (1) or disable (0) the diffuse-field EQ applied to the HRTFs. <br /></td></tr>
+<tr class="separator:a097a72d5a21abfc0760b5f52a2035dd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0b45c5419c26dd9760b715c7940353e"><td class="memItemLeft" align="right" valign="top"><a id="ab0b45c5419c26dd9760b715c7940353e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#ab0b45c5419c26dd9760b715c7940353e">binauraliser_setInputConfigPreset</a> (void *const hBin, int newPresetID)</td></tr>
 <tr class="memdesc:ab0b45c5419c26dd9760b715c7940353e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads an input preset (see <a class="el" href="__common_8h.html#a7ea45ad31bea000c76c733ace2441204" title="Available source configurations presets to use for encoding/panning.">SOURCE_CONFIG_PRESETS</a> enum) <br /></td></tr>
@@ -250,10 +251,10 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
 <tr class="memitem:a62330358d5d762f4ba9f8ec07855f4bf"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a62330358d5d762f4ba9f8ec07855f4bf">binauraliser_getSofaFilePath</a> (void *const hBin)</td></tr>
 <tr class="memdesc:a62330358d5d762f4ba9f8ec07855f4bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the file path for a .sofa file.  <a href="binauraliser_8h.html#a62330358d5d762f4ba9f8ec07855f4bf">More...</a><br /></td></tr>
 <tr class="separator:a62330358d5d762f4ba9f8ec07855f4bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a091346da0120773d0d9a6ccbc3d55570"><td class="memItemLeft" align="right" valign="top"><a id="a091346da0120773d0d9a6ccbc3d55570"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a091346da0120773d0d9a6ccbc3d55570">binauraliser_getEnableHRIRsPreProc</a> (void *const hBin)</td></tr>
-<tr class="memdesc:a091346da0120773d0d9a6ccbc3d55570"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the flag indicating whether the pre-processing applied to the HRTFs is enabled (1) or disabled (0). <br /></td></tr>
-<tr class="separator:a091346da0120773d0d9a6ccbc3d55570"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45bf51c7c7713dea59fdd570143a44c8"><td class="memItemLeft" align="right" valign="top"><a id="a45bf51c7c7713dea59fdd570143a44c8"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a45bf51c7c7713dea59fdd570143a44c8">binauraliser_getEnableHRIRsDiffuseEQ</a> (void *const hBin)</td></tr>
+<tr class="memdesc:a45bf51c7c7713dea59fdd570143a44c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the flag indicating whether the diffuse-field EQ applied to the HRTFs is enabled (1) or disabled (0). <br /></td></tr>
+<tr class="separator:a45bf51c7c7713dea59fdd570143a44c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fd18f2d20e08c1ba8a5d174dbc3678e"><td class="memItemLeft" align="right" valign="top"><a id="a8fd18f2d20e08c1ba8a5d174dbc3678e"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a8fd18f2d20e08c1ba8a5d174dbc3678e">binauraliser_getDAWsamplerate</a> (void *const hBin)</td></tr>
 <tr class="memdesc:a8fd18f2d20e08c1ba8a5d174dbc3678e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the DAW/Host sample rate. <br /></td></tr>
@@ -323,11 +324,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a5421d617c5a14c37e48ec2a679436ec8a543b349158a350ea95cbf4f29b78c504"></a>INTERP_TRI&#160;</td><td class="fielddoc"><p>Triangular interpolation. </p>
 </td></tr>
+<tr><td class="fieldname"><a id="a5421d617c5a14c37e48ec2a679436ec8aee5855604637fea447bd08f639a78d8d"></a>INTERP_TRI_PS&#160;</td><td class="fielddoc"><p>Triangular interpolation (with phase-simplification) </p>
+</td></tr>
 </table>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a1">binauraliser.h</a>.</dd>
-</dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser_8h_source.html#l00046">46</a> of file <a class="el" href="binauraliser_8h_source.html">binauraliser.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser_8h_source.html#l00056">56</a> of file <a class="el" href="binauraliser_8h_source.html">binauraliser.h</a>.</p>
 
 </div>
 </div>
@@ -355,8 +356,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
   </table>
   </dd>
 </dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a2">binauraliser.h</a>.</dd>
-</dl>
+
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00034">34</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -383,8 +384,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
   </table>
   </dd>
 </dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a3">binauraliser.h</a>.</dd>
-</dl>
+
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00092">92</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -409,8 +410,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
 <li>0: intialisation/processing has started</li>
 <li>1: intialisation/processing has ended </li>
 </ul>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a26">binauraliser.h</a>.</dd>
-</dl>
+
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00446">446</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -442,8 +443,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
 
 <p>(Optional) Returns current intialisation/processing progress text </p>
 <dl class="section note"><dt>Note</dt><dd>"text" string should be (at least) of length: <a class="el" href="__common_8h.html#a72a166eb078e82f81bd29753838c5080" title="Length of progress bar string.">PROGRESSBARTEXT_CHAR_LENGTH</a> </dd></dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a27">binauraliser.h</a>.</dd>
-</dl>
+
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00452">452</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -472,8 +473,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>File path to .sofa file (WITH file extension) </dd></dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a40">binauraliser.h</a>.</dd>
-</dl>
+
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00534">534</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -495,8 +496,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
 
 <p>Returns the value of a flag used to dictate whether the default HRIRs in the Spatial_Audio_Framework should be used (1), or a custom HRIR set loaded via a SOFA file (0). </p>
 <dl class="section note"><dt>Note</dt><dd>If the custom set fails to load correctly, binauraliser will revert to the defualt set, so this will be '1' </dd></dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a39">binauraliser.h</a>.</dd>
-</dl>
+
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00528">528</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -535,8 +536,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
   </table>
   </dd>
 </dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a4">binauraliser.h</a>.</dd>
-</dl>
+
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00128">128</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -566,8 +567,8 @@ This function does nothing if no re-initialisations are required.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a5">binauraliser.h</a>.</dd>
-</dl>
+
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00144">144</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -633,8 +634,8 @@ This function does nothing if no re-initialisations are required.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a6">binauraliser.h</a>.</dd>
-</dl>
+
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00180">180</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -673,8 +674,8 @@ This function does nothing if no re-initialisations are required.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a12">binauraliser.h</a>.</dd>
-</dl>
+
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00326">326</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -706,8 +707,8 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 
 <p>Sets flag to dictate whether the default HRIRs in the Spatial_Audio_Framework should be used (1), or a custom HRIR set loaded via a SOFA file (0). </p>
 <dl class="section note"><dt>Note</dt><dd>If the custom set fails to load correctly, binauraliser will revert to the defualt set. Use <a class="el" href="binauraliser_8h.html#a21ca6250fe63d4b0353ea59d581eccf5" title="Returns the value of a flag used to dictate whether the default HRIRs in the Spatial_Audio_Framework ...">binauraliser_getUseDefaultHRIRsflag()</a> to check if loading was successful. </dd></dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a11">binauraliser.h</a>.</dd>
-</dl>
+
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00317">317</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -717,7 +718,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_7ea9cec8c8a74419de82b1d94b0f1364.html">include</a></li><li class="navelem"><a class="el" href="binauraliser_8h.html">binauraliser.h</a></li>
-    <li class="footer">Generated on Sat Jun 12 2021 11:14:00 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Jun 22 2021 15:42:31 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

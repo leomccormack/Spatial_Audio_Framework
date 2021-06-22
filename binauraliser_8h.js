@@ -1,13 +1,14 @@
 var binauraliser_8h =
 [
     [ "INTERP_MODES", "binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8", [
-      [ "INTERP_TRI", "binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8a543b349158a350ea95cbf4f29b78c504", null ]
+      [ "INTERP_TRI", "binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8a543b349158a350ea95cbf4f29b78c504", null ],
+      [ "INTERP_TRI_PS", "binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8aee5855604637fea447bd08f639a78d8d", null ]
     ] ],
     [ "binauraliser_create", "binauraliser_8h.html#a6473297408bb09628b8bd26db1992e18", null ],
     [ "binauraliser_destroy", "binauraliser_8h.html#a1dabd5a3c51745400f12b23d99982654", null ],
     [ "binauraliser_getCodecStatus", "binauraliser_8h.html#a5f2e92ede7ff228dbb11fd28cb764036", null ],
     [ "binauraliser_getDAWsamplerate", "binauraliser_8h.html#a8fd18f2d20e08c1ba8a5d174dbc3678e", null ],
-    [ "binauraliser_getEnableHRIRsPreProc", "binauraliser_8h.html#a091346da0120773d0d9a6ccbc3d55570", null ],
+    [ "binauraliser_getEnableHRIRsDiffuseEQ", "binauraliser_8h.html#a45bf51c7c7713dea59fdd570143a44c8", null ],
     [ "binauraliser_getEnableRotation", "binauraliser_8h.html#a7794b570c54bd09a2222437ccf69c039", null ],
     [ "binauraliser_getFlipPitch", "binauraliser_8h.html#a09cb4ddfd211b4e35b8b07bbd6669b03", null ],
     [ "binauraliser_getFlipRoll", "binauraliser_8h.html#a34c4cd90caeb3411ee79ddaa0ba186f3", null ],
@@ -38,7 +39,7 @@ var binauraliser_8h =
     [ "binauraliser_initCodec", "binauraliser_8h.html#a296b20a81475b7bb8598170d85466b1f", null ],
     [ "binauraliser_process", "binauraliser_8h.html#a26fc1d17b52a1613b86beee8e1c3b5ae", null ],
     [ "binauraliser_refreshSettings", "binauraliser_8h.html#a07287820c8dfc646d99333c97d868407", null ],
-    [ "binauraliser_setEnableHRIRsPreProc", "binauraliser_8h.html#ab50d04362a8852270936a8c85a3e8247", null ],
+    [ "binauraliser_setEnableHRIRsDiffuseEQ", "binauraliser_8h.html#a097a72d5a21abfc0760b5f52a2035dd9", null ],
     [ "binauraliser_setEnableRotation", "binauraliser_8h.html#aa883cc599585fba9c2e90b7f4f04df49", null ],
     [ "binauraliser_setFlipPitch", "binauraliser_8h.html#aa4a61e22775458ea4c4dfa63a173e7ea", null ],
     [ "binauraliser_setFlipRoll", "binauraliser_8h.html#ace89b40dd28201cb817256dd4d3aa88a", null ],

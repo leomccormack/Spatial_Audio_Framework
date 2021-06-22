@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['no_5fconj_3808',['NO_CONJ',['../group___utilities.html#gga64250558cc5507fb5ec6515ab4d337cea067cd409aeb9fbf93ccd17291119fe38',1,'saf_utility_veclib.h']]],
-  ['norm_5ffuma_3809',['NORM_FUMA',['../__common_8h.html#a9d0a41517784f33989ba258d6fd889bea41458d7f24da8073d20eb3954b3ddbbe',1,'_common.h']]],
-  ['norm_5fn3d_3810',['NORM_N3D',['../__common_8h.html#a9d0a41517784f33989ba258d6fd889beae954b0ce6f73c0b15ab272ee38535236',1,'_common.h']]],
-  ['norm_5fsn3d_3811',['NORM_SN3D',['../__common_8h.html#a9d0a41517784f33989ba258d6fd889bea09f0bb05f476f73c3c591011be982c5e',1,'_common.h']]]
+  ['m_5frot_5fready_4872',['M_ROT_READY',['../rotator__internal_8h.html#a176ae72a65e28807724a65db63ea184ca15d8bb734d10f3c93b726df257cba681',1,'rotator_internal.h']]],
+  ['m_5frot_5frecompute_5feuler_4873',['M_ROT_RECOMPUTE_EULER',['../rotator__internal_8h.html#a176ae72a65e28807724a65db63ea184cac99dbb883fe4ae33421ef5600ebf5a89',1,'rotator_internal.h']]],
+  ['m_5frot_5frecompute_5fquaternion_4874',['M_ROT_RECOMPUTE_QUATERNION',['../rotator__internal_8h.html#a176ae72a65e28807724a65db63ea184ca7bd4a96659161be9b8db5d9a0e6f4e05',1,'rotator_internal.h']]]
 ];

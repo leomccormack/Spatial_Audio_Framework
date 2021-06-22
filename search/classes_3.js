@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['faf_5fiirfb_5fdata_2036',['faf_IIRFB_data',['../structfaf___i_i_r_f_b__data.html',1,'']]],
-  ['float_5fw_5fidx_2037',['float_w_idx',['../structfloat__w__idx.html',1,'']]]
+  ['decorrelator_5fdata_2600',['decorrelator_data',['../structdecorrelator__data.html',1,'']]],
+  ['dirass_5fcodecpars_2601',['dirass_codecPars',['../structdirass__codec_pars.html',1,'']]],
+  ['dirass_5fdata_2602',['dirass_data',['../structdirass__data.html',1,'']]]
 ];

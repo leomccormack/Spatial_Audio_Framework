@@ -123,12 +123,18 @@ Functions</h2></td></tr>
 <tr class="memitem:aa45604a8611ac750f0fe0d60ca44f9ff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_tlib_8h.html#aa45604a8611ac750f0fe0d60ca44f9ff">afSTFT_forward</a> (void *const hSTFT, float **dataTD, int framesize, float_complex ***dataFD)</td></tr>
 <tr class="memdesc:aa45604a8611ac750f0fe0d60ca44f9ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs forward afSTFT transform.  <a href="af_s_t_f_tlib_8h.html#aa45604a8611ac750f0fe0d60ca44f9ff">More...</a><br /></td></tr>
 <tr class="separator:aa45604a8611ac750f0fe0d60ca44f9ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaae499f20afd718d2af9adeb93053274"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_tlib_8h.html#aaae499f20afd718d2af9adeb93053274">afSTFT_forward_knownDimensions</a> (void *const hSTFT, float **dataTD, int framesize, int dataFD_nCH, int dataFD_nHops, float_complex ***dataFD)</td></tr>
+<tr class="memdesc:aaae499f20afd718d2af9adeb93053274"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs forward afSTFT transform (dataFD dimensions are known)  <a href="af_s_t_f_tlib_8h.html#aaae499f20afd718d2af9adeb93053274">More...</a><br /></td></tr>
+<tr class="separator:aaae499f20afd718d2af9adeb93053274"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a7b8ec77ca85e17a6640e32077e4c85"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_tlib_8h.html#a5a7b8ec77ca85e17a6640e32077e4c85">afSTFT_forward_flat</a> (void *const hSTFT, float *dataTD, int framesize, float_complex *dataFD)</td></tr>
 <tr class="memdesc:a5a7b8ec77ca85e17a6640e32077e4c85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs forward afSTFT transform (flattened arrays)  <a href="af_s_t_f_tlib_8h.html#a5a7b8ec77ca85e17a6640e32077e4c85">More...</a><br /></td></tr>
 <tr class="separator:a5a7b8ec77ca85e17a6640e32077e4c85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0acd3e0495bbe8f3241592aa5b0b744"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_tlib_8h.html#af0acd3e0495bbe8f3241592aa5b0b744">afSTFT_backward</a> (void *const hSTFT, float_complex ***dataFD, int framesize, float **dataTD)</td></tr>
 <tr class="memdesc:af0acd3e0495bbe8f3241592aa5b0b744"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs backward afSTFT transform.  <a href="af_s_t_f_tlib_8h.html#af0acd3e0495bbe8f3241592aa5b0b744">More...</a><br /></td></tr>
 <tr class="separator:af0acd3e0495bbe8f3241592aa5b0b744"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c5933d8726117d5b516574f04122468"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_tlib_8h.html#a9c5933d8726117d5b516574f04122468">afSTFT_backward_knownDimensions</a> (void *const hSTFT, float_complex ***dataFD, int framesize, int dataFD_nCH, int dataFD_nHops, float **dataTD)</td></tr>
+<tr class="memdesc:a9c5933d8726117d5b516574f04122468"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs backward afSTFT transform (dataFD dimensions are known)  <a href="af_s_t_f_tlib_8h.html#a9c5933d8726117d5b516574f04122468">More...</a><br /></td></tr>
+<tr class="separator:a9c5933d8726117d5b516574f04122468"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a142ac81c06277d7b2cc63434cbfb7389"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="af_s_t_f_tlib_8h.html#a142ac81c06277d7b2cc63434cbfb7389">afSTFT_backward_flat</a> (void *const hSTFT, float_complex *dataFD, int framesize, float *dataTD)</td></tr>
 <tr class="memdesc:a142ac81c06277d7b2cc63434cbfb7389"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs backward afSTFT transform (flattened arrays)  <a href="af_s_t_f_tlib_8h.html#a142ac81c06277d7b2cc63434cbfb7389">More...</a><br /></td></tr>
 <tr class="separator:a142ac81c06277d7b2cc63434cbfb7389"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -270,7 +276,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00303">303</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00347">347</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -323,7 +329,75 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00346">346</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00433">433</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+
+</div>
+</div>
+<a id="a9c5933d8726117d5b516574f04122468"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c5933d8726117d5b516574f04122468">&#9670;&nbsp;</a></span>afSTFT_backward_knownDimensions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void afSTFT_backward_knownDimensions </td>
+          <td>(</td>
+          <td class="paramtype">void *const&#160;</td>
+          <td class="paramname"><em>hSTFT</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex ***&#160;</td>
+          <td class="paramname"><em>dataFD</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>framesize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>dataFD_nCH</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>dataFD_nHops</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float **&#160;</td>
+          <td class="paramname"><em>dataTD</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Performs backward afSTFT transform (dataFD dimensions are known) </p>
+<dl class="section note"><dt>Note</dt><dd>If the dimensions of dataFD are known, then this function will use the same dataFD format as used by <a class="el" href="af_s_t_f_tlib_8h.html#af0acd3e0495bbe8f3241592aa5b0b744" title="Performs backward afSTFT transform.">afSTFT_backward()</a>, but with the speed of <a class="el" href="af_s_t_f_tlib_8h.html#a142ac81c06277d7b2cc63434cbfb7389" title="Performs backward afSTFT transform (flattened arrays)">afSTFT_backward_flat()</a></dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hSTFT</td><td>afSTFT handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dataFD</td><td>Frequency-domain input; <a class="el" href="af_s_t_f_tlib_8h.html#a98dcaa8ebad6ce38baff3e1671f5cec4" title="Options for how the frequency domain data is permuted when using afSTFT.">AFSTFT_FDDATA_FORMAT</a> </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">framesize</td><td>Frame size of time-domain data </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dataFD_nCH</td><td>Number of channels dataFD is allocated (the max) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dataFD_nHops</td><td>Number of timeslots dataFD is allocated (the max) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dataTD</td><td>Time-domain output; nCHout x framesize </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00390">390</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -369,7 +443,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00389">389</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00476">476</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -430,7 +504,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div><div class="memdoc">
 
 <p>Creates an instance of afSTFT. </p>
-<dl class="test"><dt><b><a class="el" href="test.html#_test000035">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a905bf3c380d7d04e6a0a4d9b4e056bf7" title="Testing the alias-free STFT filterbank (near)-perfect reconstruction performance.">test__afSTFT()</a></dd></dl>
+<dl class="test"><dt><b><a class="el" href="test.html#_test000047">Test:</a></b></dt><dd><a class="el" href="saf__test_8c.html#a905bf3c380d7d04e6a0a4d9b4e056bf7" title="Testing the alias-free STFT filterbank (near)-perfect reconstruction performance.">test__afSTFT()</a></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">phSTFT</td><td>(&amp;) address of afSTFT handle </td></tr>
@@ -553,7 +627,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00505">505</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00592">592</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -659,7 +733,75 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00266">266</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00310">310</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+
+</div>
+</div>
+<a id="aaae499f20afd718d2af9adeb93053274"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaae499f20afd718d2af9adeb93053274">&#9670;&nbsp;</a></span>afSTFT_forward_knownDimensions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void afSTFT_forward_knownDimensions </td>
+          <td>(</td>
+          <td class="paramtype">void *const&#160;</td>
+          <td class="paramname"><em>hSTFT</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float **&#160;</td>
+          <td class="paramname"><em>dataTD</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>framesize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>dataFD_nCH</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>dataFD_nHops</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex ***&#160;</td>
+          <td class="paramname"><em>dataFD</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Performs forward afSTFT transform (dataFD dimensions are known) </p>
+<dl class="section note"><dt>Note</dt><dd>If the dimensions of dataFD are known, then this function will use the same dataFD format as used by <a class="el" href="af_s_t_f_tlib_8h.html#aa45604a8611ac750f0fe0d60ca44f9ff" title="Performs forward afSTFT transform.">afSTFT_forward()</a>, but with the speed of <a class="el" href="af_s_t_f_tlib_8h.html#a5a7b8ec77ca85e17a6640e32077e4c85" title="Performs forward afSTFT transform (flattened arrays)">afSTFT_forward_flat()</a></dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hSTFT</td><td>afSTFT handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dataTD</td><td>Time-domain input; nCHin x framesize </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">framesize</td><td>Frame size of time-domain data </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dataFD_nCH</td><td>Number of channels dataFD is allocated (the max) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dataFD_nHops</td><td>Number of timeslots dataFD is allocated (the max) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dataFD</td><td>Frequency-domain output; <a class="el" href="af_s_t_f_tlib_8h.html#a98dcaa8ebad6ce38baff3e1671f5cec4" title="Options for how the frequency domain data is permuted when using afSTFT.">AFSTFT_FDDATA_FORMAT</a> </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00267">267</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -683,7 +825,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <dl class="section note"><dt>Note</dt><dd>The base delay is 9*hopsize, which is increased to 12*hopsize when the hybrid filtering mode is enabled. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Currently only correct when low delay mode is disabled! </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00449">449</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="af_s_t_f_tlib_8c_source.html#l00536">536</a> of file <a class="el" href="af_s_t_f_tlib_8c_source.html">afSTFTlib.c</a>.</p>
 
 </div>
 </div>
@@ -693,7 +835,7 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_c95fe3454413c7e9946bfee944a4e42b.html">resources</a></li><li class="navelem"><a class="el" href="dir_45a37e71ed05dd7d57de17724fd5b226.html">afSTFT</a></li><li class="navelem"><a class="el" href="af_s_t_f_tlib_8h.html">afSTFTlib.h</a></li>
-    <li class="footer">Generated on Sat Jun 12 2021 11:14:00 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Jun 22 2021 15:42:32 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

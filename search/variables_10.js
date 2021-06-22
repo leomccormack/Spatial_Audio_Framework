@@ -1,21 +1,6 @@
 var searchData=
 [
-  ['sig_3621',['sig',['../structims__src__obj.html#a5990a62de5885ff49c0ec16cfbb168da',1,'ims_src_obj']]],
-  ['sigs_3622',['sigs',['../structims__rec__obj.html#aeb5ff5554d91f15d474545a0db343b13',1,'ims_rec_obj']]],
-  ['sofaconventions_3623',['SOFAConventions',['../structsaf__sofa__container.html#a55c4446ecce24f4b448738e10c2e1552',1,'saf_sofa_container']]],
-  ['sofaconventionsversion_3624',['SOFAConventionsVersion',['../structsaf__sofa__container.html#a0ea0b276f276e53f535f73d64f419fd7',1,'saf_sofa_container']]],
-  ['sortedidx_3625',['sortedIdx',['../structechogram__data.html#aba9c1429868a9fc1fad9da6eb2a8d984',1,'echogram_data']]],
-  ['sourceposition_3626',['SourcePosition',['../structsaf__sofa__container.html#a332444cf5cc9be318b74a5a6d704b75b',1,'saf_sofa_container']]],
-  ['sourcepositiontype_3627',['SourcePositionType',['../structsaf__sofa__container.html#a403da2b197d6ddf9f068680277749820',1,'saf_sofa_container']]],
-  ['sourcepositionunits_3628',['SourcePositionUnits',['../structsaf__sofa__container.html#a3d4fa961f74af73f552a6293e4fc7afb',1,'saf_sofa_container']]],
-  ['src_3629',['src',['../structims__core__workspace.html#aadd2a11680ff10d4b44055fbaab38727',1,'ims_core_workspace']]],
-  ['src_5fsigs_5fbands_3630',['src_sigs_bands',['../structims__scene__data.html#a6c85109a187c9430ad2dbf852f9c9500',1,'ims_scene_data']]],
-  ['srcs_3631',['srcs',['../structims__scene__data.html#aa535ea315425398b5b906763e6acce1c',1,'ims_scene_data']]],
-  ['ss_3632',['SS',['../structtracker3d__data.html#aa99183e945eae69161742584fa30abe1',1,'tracker3d_data']]],
-  ['ss_5fresamp_3633',['SS_resamp',['../structtracker3d__data.html#a9f932d39afc7dbbdfd3b97d15d590643',1,'tracker3d_data']]],
-  ['start_3634',['start',['../saf__test_8c.html#a6aec73a6feb926e21556a2adeae8fecf',1,'saf_test.c']]],
-  ['start_5ftest_3635',['start_test',['../saf__test_8c.html#afd95090af51c393d941571b765e7ccf8',1,'saf_test.c']]],
-  ['stftinputframetf_3636',['STFTInputFrameTF',['../structaf_s_t_f_t__data.html#ae940a937f67c944e861cf0f263c077fe',1,'afSTFT_data']]],
-  ['stftoutputframetf_3637',['STFTOutputFrameTF',['../structaf_s_t_f_t__data.html#a6b0b07acf36222e9bebf0a251500e1ff',1,'afSTFT_data']]],
-  ['str_3638',['str',['../structtracker3d__data.html#aa2bc7a3647bb7a452b350b256842bad0',1,'tracker3d_data']]]
+  ['q_4596',['Q',['../structarray2sh__array_pars.html#a21fc04398be0fc3422c67f850b0f07af',1,'array2sh_arrayPars::Q()'],['../structrotator__data.html#ab48fab07eb9f0c560e105525a793a72d',1,'rotator_data::Q()'],['../structspreader__data.html#ab223e296e18b49306265fd99b5df3159',1,'spreader_data::Q()'],['../structtracker3d__data.html#a3823119f8ee8b6f0c1d881489fe7564f',1,'tracker3d_data::Q()'],['../structquaternion__data.html#a09165a780c141af04de3ff5946839e68',1,'quaternion_data::Q()']]],
+  ['qmix_4597',['Qmix',['../structspreader__data.html#a5a67a64b87346b0caa7d65588645b458',1,'spreader_data']]],
+  ['qmix_5fcmplx_4598',['Qmix_cmplx',['../structspreader__data.html#a5b900d628f38342e25f8d2a3747d14c7',1,'spreader_data']]]
 ];

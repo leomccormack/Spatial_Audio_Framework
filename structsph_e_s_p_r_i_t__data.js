@@ -1,5 +1,8 @@
 var structsph_e_s_p_r_i_t__data =
 [
+    [ "hZeigmp", "structsph_e_s_p_r_i_t__data.html#ab7d09c9af69d77aae17f67ae9f666d99", null ],
+    [ "hZglslv", "structsph_e_s_p_r_i_t__data.html#a6747c2c3d1614eb520a4e165fc764656", null ],
+    [ "hZpinv", "structsph_e_s_p_r_i_t__data.html#af5131cdea9faf956f42cd62d739a7bc9", null ],
     [ "idx_from_Ynm2Ynimu", "structsph_e_s_p_r_i_t__data.html#a4f7ef10a80bf2cbb21955606d103227d", null ],
     [ "LambdaXYm", "structsph_e_s_p_r_i_t__data.html#a0443286fa0abd50ce146f1981be806e7", null ],
     [ "LambdaXYp", "structsph_e_s_p_r_i_t__data.html#a11c6b9e5ed9630df8553ec8b6822b189", null ],

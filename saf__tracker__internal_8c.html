@@ -83,6 +83,8 @@ $(document).ready(function(){initNavTree('saf__tracker__internal_8c.html',''); i
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">saf_tracker_internal.c File Reference<div class="ingroups"><a class="el" href="group___tracker.html">saf_tracker</a></div></div>  </div>
@@ -96,6 +98,19 @@ $(document).ready(function(){initNavTree('saf__tracker__internal_8c.html',''); i
 </div>
 <p><a href="saf__tracker__internal_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structkf__update6__data.html">kf_update6_data</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data structure for <a class="el" href="saf__tracker__internal_8c.html#a38b9540be2fdaed6ff479a9a4797831d" title="Kalman Filter update step.">kf_update6()</a>  <a href="structkf__update6__data.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ae807692052ad1370774e1cbf3d8169c8"><td class="memItemLeft" align="right" valign="top"><a id="ae807692052ad1370774e1cbf3d8169c8"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__tracker__internal_8c.html#ae807692052ad1370774e1cbf3d8169c8">SAF_LOG_2PI</a>&#160;&#160;&#160;( logf(2.0f*<a class="el" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>) )</td></tr>
+<tr class="memdesc:ae807692052ad1370774e1cbf3d8169c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">log(2pi) <br /></td></tr>
+<tr class="separator:ae807692052ad1370774e1cbf3d8169c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a5e2cf827a3056a11f59b5421170859c2"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__tracker__internal_8c.html#a5e2cf827a3056a11f59b5421170859c2">lngamma</a> (double x, double *sgngam)</td></tr>
@@ -140,18 +155,26 @@ Functions</h2></td></tr>
 <tr class="memitem:ae1aa65c689d3ba44d8991bee017c2044"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__tracker__internal_8c.html#ae1aa65c689d3ba44d8991bee017c2044">kf_predict6</a> (float M[6], float P[6][6], float A[6][6], float Q[6][6])</td></tr>
 <tr class="memdesc:ae1aa65c689d3ba44d8991bee017c2044"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform Kalman Filter prediction step.  <a href="saf__tracker__internal_8c.html#ae1aa65c689d3ba44d8991bee017c2044">More...</a><br /></td></tr>
 <tr class="separator:ae1aa65c689d3ba44d8991bee017c2044"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3137cdbd0f56b49d9c4ceede8c53c9d9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__tracker__internal_8c.html#a3137cdbd0f56b49d9c4ceede8c53c9d9">kf_update6</a> (float X[6], float P[6][6], float y[3], float H[3][6], float R[3][3], float X_out[6], float P_out[6][6], float *LH)</td></tr>
-<tr class="memdesc:a3137cdbd0f56b49d9c4ceede8c53c9d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kalman Filter update step.  <a href="saf__tracker__internal_8c.html#a3137cdbd0f56b49d9c4ceede8c53c9d9">More...</a><br /></td></tr>
-<tr class="separator:a3137cdbd0f56b49d9c4ceede8c53c9d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b1a13eeaac0ad58986cf9d8fcd1fb9d"><td class="memItemLeft" align="right" valign="top"><a id="a5b1a13eeaac0ad58986cf9d8fcd1fb9d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__tracker__internal_8c.html#a5b1a13eeaac0ad58986cf9d8fcd1fb9d">kf_update6_create</a> (void **const phUp6)</td></tr>
+<tr class="memdesc:a5b1a13eeaac0ad58986cf9d8fcd1fb9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates helper structure for <a class="el" href="saf__tracker__internal_8h.html#a38b9540be2fdaed6ff479a9a4797831d" title="Kalman Filter update step.">kf_update6()</a> <br /></td></tr>
+<tr class="separator:a5b1a13eeaac0ad58986cf9d8fcd1fb9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad59cd2586cfb9616736053d134a9727a"><td class="memItemLeft" align="right" valign="top"><a id="ad59cd2586cfb9616736053d134a9727a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__tracker__internal_8c.html#ad59cd2586cfb9616736053d134a9727a">kf_update6_destroy</a> (void **const phUp6)</td></tr>
+<tr class="memdesc:ad59cd2586cfb9616736053d134a9727a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys helper structure for <a class="el" href="saf__tracker__internal_8h.html#a38b9540be2fdaed6ff479a9a4797831d" title="Kalman Filter update step.">kf_update6()</a> <br /></td></tr>
+<tr class="separator:ad59cd2586cfb9616736053d134a9727a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38b9540be2fdaed6ff479a9a4797831d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__tracker__internal_8c.html#a38b9540be2fdaed6ff479a9a4797831d">kf_update6</a> (void *const hUp6, float X[6], float P[6][6], float y[3], float H[3][6], float R[3][3], float X_out[6], float P_out[6][6], float *LH)</td></tr>
+<tr class="memdesc:a38b9540be2fdaed6ff479a9a4797831d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kalman Filter update step.  <a href="saf__tracker__internal_8c.html#a38b9540be2fdaed6ff479a9a4797831d">More...</a><br /></td></tr>
+<tr class="separator:a38b9540be2fdaed6ff479a9a4797831d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d08de636971ddec1e748a2126ac9b33"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__tracker__internal_8c.html#a2d08de636971ddec1e748a2126ac9b33">gamma_cdf</a> (float x, float gam, float beta, float mu)</td></tr>
 <tr class="memdesc:a2d08de636971ddec1e748a2126ac9b33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cumulative density function of a Gamma distribution.  <a href="saf__tracker__internal_8c.html#a2d08de636971ddec1e748a2126ac9b33">More...</a><br /></td></tr>
 <tr class="separator:a2d08de636971ddec1e748a2126ac9b33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cb945f00b454e590bf47c7a9272e2bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__tracker__internal_8c.html#a6cb945f00b454e590bf47c7a9272e2bb">lti_disc</a> (float *F, int len_N, int len_Q, float *opt_L, float *opt_Qc, float dt, float *A, float *Q)</td></tr>
 <tr class="memdesc:a6cb945f00b454e590bf47c7a9272e2bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">LTI_DISC Discretize LTI ODE with Gaussian Noise.  <a href="saf__tracker__internal_8c.html#a6cb945f00b454e590bf47c7a9272e2bb">More...</a><br /></td></tr>
 <tr class="separator:a6cb945f00b454e590bf47c7a9272e2bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acea407ecf31c4b73fa9238465fc9b13a"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__tracker__internal_8c.html#acea407ecf31c4b73fa9238465fc9b13a">gauss_pdf3</a> (float X[3], float M[3], float S[3][3])</td></tr>
-<tr class="memdesc:acea407ecf31c4b73fa9238465fc9b13a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multivariate Gaussian PDF.  <a href="saf__tracker__internal_8c.html#acea407ecf31c4b73fa9238465fc9b13a">More...</a><br /></td></tr>
-<tr class="separator:acea407ecf31c4b73fa9238465fc9b13a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb68e5b8166fd7d4e7e5d83242171603"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__tracker__internal_8c.html#abb68e5b8166fd7d4e7e5d83242171603">gauss_pdf3</a> (void *const hUp6, float X[3], float M[3], float S[3][3])</td></tr>
+<tr class="memdesc:abb68e5b8166fd7d4e7e5d83242171603"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multivariate Gaussian PDF.  <a href="saf__tracker__internal_8c.html#abb68e5b8166fd7d4e7e5d83242171603">More...</a><br /></td></tr>
+<tr class="separator:abb68e5b8166fd7d4e7e5d83242171603"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4eb16727870ffdd326a11cc170b32e75"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__tracker__internal_8c.html#a4eb16727870ffdd326a11cc170b32e75">categ_rnd</a> (float *P, int len_P)</td></tr>
 <tr class="memdesc:a4eb16727870ffdd326a11cc170b32e75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws samples from a given one dimensional discrete distribution.  <a href="saf__tracker__internal_8c.html#a4eb16727870ffdd326a11cc170b32e75">More...</a><br /></td></tr>
 <tr class="separator:a4eb16727870ffdd326a11cc170b32e75"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -202,7 +225,7 @@ Functions</h2></td></tr>
 </dl>
 <p>Original Copyright (C) 2002 Simo Särkkä, 2008 Jouni Hartikainen (GPLv2) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00851">851</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00884">884</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -244,7 +267,7 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Number of effective particles</dd></dl>
 <p>Original Copyright (C) 2003 Simo Särkkä, 2008 Jouni Hartikainen (GPLv2) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00575">575</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00557">557</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -299,12 +322,12 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Cumulative density at the given locations</dd></dl>
 <p>Original Copyright (C) 2003 Simo Särkkä, 2008 Jouni Hartikainen (GPLv2) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00713">713</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00737">737</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
-<a id="acea407ecf31c4b73fa9238465fc9b13a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acea407ecf31c4b73fa9238465fc9b13a">&#9670;&nbsp;</a></span>gauss_pdf3()</h2>
+<a id="abb68e5b8166fd7d4e7e5d83242171603"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb68e5b8166fd7d4e7e5d83242171603">&#9670;&nbsp;</a></span>gauss_pdf3()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -312,6 +335,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">float gauss_pdf3 </td>
           <td>(</td>
+          <td class="paramtype">void *const&#160;</td>
+          <td class="paramname"><em>hUp6</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">float&#160;</td>
           <td class="paramname"><em>X</em>[3], </td>
         </tr>
@@ -340,6 +369,7 @@ Functions</h2></td></tr>
 <dl class="section note"><dt>Note</dt><dd>This has been hard-coded for N=3, but a general version should be quite straight-forward (just not needed yet)...</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hUp6</td><td>Handle for helper structure </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">X</td><td>Values </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">M</td><td>Mean of distibution or values as 3x3 matrix. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">S</td><td>3x3 covariance matrix </td></tr>
@@ -349,7 +379,7 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Probability of X.</dd></dl>
 <p>Original Copyright (C) 2002 Simo Särkkä (GPLv2) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00828">828</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00852">852</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -398,7 +428,7 @@ Functions</h2></td></tr>
 * </pre><p>In this implementation both arguments must be positive. The integral is evaluated by either a power series or continued fraction expansion, depending on the relative values of a and x.</p>
 <p>Adapted from: <a href="https://www.alglib.net/download.php#cpp">https://www.alglib.net/download.php#cpp</a> Original Copyright 1985, 1987, 2000 by Stephen L. Moshier (GPLv2) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l01040">1040</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l01073">1073</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -449,7 +479,7 @@ Functions</h2></td></tr>
 * </pre><p>In this implementation both arguments must be positive. The integral is evaluated by either a power series or continued fraction expansion, depending on the relative values of a and x.</p>
 <p>Adapted from: <a href="https://www.alglib.net/download.php#cpp">https://www.alglib.net/download.php#cpp</a> Original Copyright 1985, 1987, 2000 by Stephen L. Moshier (GPLv2) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00976">976</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l01009">1009</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -506,12 +536,12 @@ Functions</h2></td></tr>
 </dl>
 <p>Original Copyright (C) 2002-2006 Simo Särkkä, 2007 Jouni Hartikainen (GPLv2) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00616">616</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00598">598</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
-<a id="a3137cdbd0f56b49d9c4ceede8c53c9d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3137cdbd0f56b49d9c4ceede8c53c9d9">&#9670;&nbsp;</a></span>kf_update6()</h2>
+<a id="a38b9540be2fdaed6ff479a9a4797831d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38b9540be2fdaed6ff479a9a4797831d">&#9670;&nbsp;</a></span>kf_update6()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -519,6 +549,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void kf_update6 </td>
           <td>(</td>
+          <td class="paramtype">void *const&#160;</td>
+          <td class="paramname"><em>hUp6</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">float&#160;</td>
           <td class="paramname"><em>X</em>[6], </td>
         </tr>
@@ -582,6 +618,7 @@ Functions</h2></td></tr>
 <dl class="section note"><dt>Note</dt><dd>This has been hard-coded for N=6 and without 'K', 'IM' and 'IS', but a general version should be quite straight-forward (just not needed yet).</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hUp6</td><td>Handle for helper structure </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">X</td><td>Nx1 mean state estimate after prediction step </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">P</td><td>NxN state covariance after prediction step </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">y</td><td>Dx1 measurement vector. </td></tr>
@@ -595,7 +632,7 @@ Functions</h2></td></tr>
 </dl>
 <p>Original Copyright (C) 2002, 2003 Simo Särkkä, 2007 Jouni Hartikainen (GPLv2) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00646">646</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00650">650</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -644,7 +681,7 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>logarithm of the absolute value of the Gamma(X).</dd></dl>
 <p>Adapted from: <a href="https://www.alglib.net/download.php#cpp">https://www.alglib.net/download.php#cpp</a> Original Copyright 1984, 1987, 1989, 1992, 2000 by Stephen L. Moshier (GPLv2) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00882">882</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00915">915</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -729,7 +766,7 @@ Functions</h2></td></tr>
 </dl>
 <p>Original Copyright (C) 2002, 2003 Simo Särkkä (GPLv2) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00728">728</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00752">752</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -769,7 +806,7 @@ Functions</h2></td></tr>
 </dl>
 <p>Original Copyright (C) 2008 Jouni Hartikainen (GPLv2) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00594">594</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00576">576</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -820,7 +857,7 @@ Functions</h2></td></tr>
 <dl class="section see"><dt>See also</dt><dd>[1] Kitagawa, G., Monte Carlo Filter and Smoother for Non-Gaussian Nonlinear State Space Models, Journal of Computational and Graphical Statistics, 5(1):1-25, 1996.</dd></dl>
 <p>Original Copyright (c) 2003-2004 Aki Vehtari (GPLv2) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00541">541</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00523">523</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -849,7 +886,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>index of the most important particle </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00514">514</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00496">496</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -888,7 +925,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00157">157</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00162">162</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -934,7 +971,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00116">116</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00125">125</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -962,7 +999,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00181">181</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00182">182</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -990,7 +1027,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00137">137</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00146">146</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -1029,7 +1066,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00198">198</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00199">199</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -1075,7 +1112,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00365">365</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__tracker__internal_8c_source.html#l00354">354</a> of file <a class="el" href="saf__tracker__internal_8c_source.html">saf_tracker_internal.c</a>.</p>
 
 </div>
 </div>
@@ -1085,7 +1122,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_94f812345eda9da4101fb25ab77a5824.html">saf_tracker</a></li><li class="navelem"><a class="el" href="saf__tracker__internal_8c.html">saf_tracker_internal.c</a></li>
-    <li class="footer">Generated on Sat Jun 12 2021 11:14:00 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Jun 22 2021 15:42:32 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

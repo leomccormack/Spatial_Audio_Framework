@@ -123,9 +123,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gaced04b646c57d04a25e26b469e18588c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">diffuseFieldEqualiseHRTFs</a> (int N_dirs, float *itds_s, float *centreFreq, int N_bands, float *weights, int applyEQ, int applyPhase, float_complex *hrtfs)</td></tr>
 <tr class="memdesc:gaced04b646c57d04a25e26b469e18588c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies pre-processing to a set of HRTFs, which can either be diffuse-field EQ of an (optionally weighted) average of all HRTFs (CTF), phase simplification based on ITDs, or both.  <a href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">More...</a><br /></td></tr>
 <tr class="separator:gaced04b646c57d04a25e26b469e18588c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga23e9a79557d045fcc850a5253733aed7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7">interpHRTFs</a> (float_complex *hrtfs, float *itds, float *freqVector, float *vbap_gtable, int N_hrtf_dirs, int N_bands, int N_interp_dirs, float_complex *hrtf_interp)</td></tr>
-<tr class="memdesc:ga23e9a79557d045fcc850a5253733aed7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interpolates a set of HRTFs for specified directions, defined by an amplitude normalised VBAP interpolation table (see <a class="el" href="saf__vbap_8h.html" title="Main header for the VBAP/MDAP module (SAF_VBAP_MODULE)">saf_vbap.h</a>)  <a href="group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7">More...</a><br /></td></tr>
-<tr class="separator:ga23e9a79557d045fcc850a5253733aed7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadafcc51c7593d930ae24225c0b4da085"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gadafcc51c7593d930ae24225c0b4da085">interpHRTFs</a> (float_complex *hrtfs, float *itds, float *freqVector, float *interp_table, int N_hrtf_dirs, int N_bands, int N_interp_dirs, float_complex *hrtf_interp)</td></tr>
+<tr class="memdesc:gadafcc51c7593d930ae24225c0b4da085"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interpolates a set of HRTFs based on a specified interpolation table.  <a href="group___h_r_i_r.html#gadafcc51c7593d930ae24225c0b4da085">More...</a><br /></td></tr>
+<tr class="separator:gadafcc51c7593d930ae24225c0b4da085"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gadbd157cc21c2840342448509f1bec412"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___h_r_i_r.html#gadbd157cc21c2840342448509f1bec412">binauralDiffuseCoherence</a> (float_complex *hrtfs, float *itds, float *freqVector, int N_hrtf_dirs, int N_bands, float *HRTFcoh)</td></tr>
 <tr class="memdesc:gadbd157cc21c2840342448509f1bec412"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the binaural diffuse coherence per frequency for a given HRTF set, as described in [1].  <a href="group___h_r_i_r.html#gadbd157cc21c2840342448509f1bec412">More...</a><br /></td></tr>
 <tr class="separator:gadbd157cc21c2840342448509f1bec412"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -222,7 +222,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <dl class="section see"><dt>See also</dt><dd>[1] A. Politis, "Diffuse-field coherence of sensors with arbitrary
          directional responses," arXiv preprint arXiv:1608.07713,2016. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00300">300</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00321">321</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -289,13 +289,13 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div><div class="memdoc">
 
 <p>Applies pre-processing to a set of HRTFs, which can either be diffuse-field EQ of an (optionally weighted) average of all HRTFs (CTF), phase simplification based on ITDs, or both. </p>
-<dl class="section note"><dt>Note</dt><dd>'weights' (if used) should sum to 4pi, and 'itds_s' is only required if applyPhase=1. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>'weights' (if used) should sum to 4pi. 'itds_s' and 'centreFreq' are only required if applyPhase==1, so can be set to NULL otherwise. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>This function is NOT suitable for binaural room impulse responses (BRIRs)!</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">N_dirs</td><td>Number of HRTFs </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">itds_s</td><td>HRIR ITDs (set to NULL if not needed); N_dirs x 1 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">centreFreq</td><td>Frequency vector; N_bands x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">centreFreq</td><td>Frequency vector (set to NULL if not needed); N_bands x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">N_bands</td><td>Number of frequency bands/bins </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">weights</td><td>Grid weights (set to NULL if not available); N_dirs x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">applyEQ</td><td>Diffuse-field EQ / CTF; 0:disabled, 1:enabled </td></tr>
@@ -575,8 +575,8 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="ga23e9a79557d045fcc850a5253733aed7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga23e9a79557d045fcc850a5253733aed7">&#9670;&nbsp;</a></span>interpHRTFs()</h2>
+<a id="gadafcc51c7593d930ae24225c0b4da085"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadafcc51c7593d930ae24225c0b4da085">&#9670;&nbsp;</a></span>interpHRTFs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -603,7 +603,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float *&#160;</td>
-          <td class="paramname"><em>vbap_gtable</em>, </td>
+          <td class="paramname"><em>interp_table</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -637,16 +637,17 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
 </div><div class="memdoc">
 
-<p>Interpolates a set of HRTFs for specified directions, defined by an amplitude normalised VBAP interpolation table (see <a class="el" href="saf__vbap_8h.html" title="Main header for the VBAP/MDAP module (SAF_VBAP_MODULE)">saf_vbap.h</a>) </p>
-<p>The interpolation is performed by applying interpolation gains to the HRTF magnitudes and HRIR inter-aural time differences separately. The inter-aural phase differences are then reintroduced for each frequency band.</p>
-<dl class="section note"><dt>Note</dt><dd>Use <a class="el" href="group___v_b_a_p.html#gaa637de69b5718effebcdb18bef1c3016" title="Renormalises a VBAP gain table (in-place) so it may be utilised for interpolation of data (for exampl...">VBAPgainTable2InterpTable()</a> to take a conventional energy- normalised VBAP gain table, and convert it to an amplitude-normalised interpolation table. (Basically, amplitude-normalised VBAP gains are equivalent to triangular interpolation weights). </dd></dl>
+<p>Interpolates a set of HRTFs based on a specified interpolation table. </p>
+<dl class="section note"><dt>Note</dt><dd>For 'interp_table' you can use e.g. <a class="el" href="group___v_b_a_p.html#gaa637de69b5718effebcdb18bef1c3016" title="Renormalises a VBAP gain table (in-place) so it may be utilised for interpolation of data (for exampl...">VBAPgainTable2InterpTable()</a> to take a conventional energy-normalised VBAP gain table, and convert it to an amplitude-normalised interpolation table. Note: amplitude-normalised VBAP gains are the same as triangular interpolation weights. </dd>
+<dd>
+If itds!=NULL &amp;&amp; freqVector!=NULL, then the interpolation is performed by applying interpolation gains to the HRTF magnitudes and HRIR inter- aural time differences (ITDs) separately. The inter-aural phase differences (IPDs) are then reintroduced for each frequency band. If itds==NULL || freqVector==NULL then the interpolatation is applied directly on the complex spectra. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>This function is NOT suitable for binaural room impulse responses (BRIRs)!</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">hrtfs</td><td>HRTFs as filterbank coeffs; FLAT: N_bands x <a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84" title="2 (true for most humans)">NUM_EARS</a> x N_hrtf_dirs </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">itds</td><td>The inter-aural time difference (ITD) for each HRIR; N_hrtf_dirs x 1 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">freqVector</td><td>Frequency vector; N_bands x 1 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">vbap_gtable</td><td>Amplitude-Normalised VBAP gain table; FLAT: N_interp_dirs x N_hrtf_dirs </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">itds</td><td>The inter-aural time difference (ITD) for each HRIR (set to NULL if you do not want phase simplication to be applied); N_hrtf_dirs x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">freqVector</td><td>Frequency vector (set to NULL if you do not want phase simplication to be applied); N_bands x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">interp_table</td><td>Amplitude-Normalised VBAP gain table; FLAT: N_interp_dirs x N_hrtf_dirs </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">N_hrtf_dirs</td><td>Number of HRTF directions </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">N_bands</td><td>Number of frequency bands </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">N_interp_dirs</td><td>Number of interpolated hrtf positions </td></tr>
@@ -655,7 +656,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00241">241</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__hrir_8c_source.html#l00240">240</a> of file <a class="el" href="saf__hrir_8c_source.html">saf_hrir.c</a>.</p>
 
 </div>
 </div>
@@ -664,7 +665,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sat Jun 12 2021 11:14:00 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Jun 22 2021 15:42:32 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

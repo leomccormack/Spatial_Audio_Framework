@@ -7,6 +7,7 @@ var structcdf4sap__cmplx__data =
     [ "G_hat", "structcdf4sap__cmplx__data.html#a3da4810680c6faa254a51de49cccbf05", null ],
     [ "G_M", "structcdf4sap__cmplx__data.html#a8b205aa757c6d041838c330f954c5cc3", null ],
     [ "GhatH_Ky", "structcdf4sap__cmplx__data.html#adfd635d62883ff6ff3348d4027a2d0ac", null ],
+    [ "hSVD", "structcdf4sap__cmplx__data.html#a5e26d6468d0f71760fbf934202c23ad5", null ],
     [ "Kx", "structcdf4sap__cmplx__data.html#ad65885f1eab92a054b3df9d316e7d6fa", null ],
     [ "Kx_reg_inverse", "structcdf4sap__cmplx__data.html#a5c0ca7762dd2bbd4842f682626831e31", null ],
     [ "KxH_QH_GhatH_Ky", "structcdf4sap__cmplx__data.html#a54d77ff889d668ae5ae2df069d4ccdbd", null ],

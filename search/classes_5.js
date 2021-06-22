@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['kiss_5ffft_5fcpx_2045',['kiss_fft_cpx',['../structkiss__fft__cpx.html',1,'']]],
-  ['kiss_5ffft_5fstate_2046',['kiss_fft_state',['../structkiss__fft__state.html',1,'']]],
-  ['kiss_5ffftr_5fstate_2047',['kiss_fftr_state',['../structkiss__fftr__state.html',1,'']]]
+  ['faf_5fiirfb_5fdata_2604',['faf_IIRFB_data',['../structfaf___i_i_r_f_b__data.html',1,'']]],
+  ['float_5fw_5fidx_2605',['float_w_idx',['../structfloat__w__idx.html',1,'']]]
 ];

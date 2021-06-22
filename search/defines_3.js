@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['flatten2d_3948',['FLATTEN2D',['../md__malloc_8h.html#ad8ff7754607066fa6ca828e14bc5483e',1,'md_malloc.h']]],
-  ['flatten3d_3949',['FLATTEN3D',['../md__malloc_8h.html#ae441f3802ba2433d441b5e1db5fef808',1,'md_malloc.h']]],
-  ['flatten4d_3950',['FLATTEN4D',['../md__malloc_8h.html#a334ac6d41e355768db9c407f9e3a55f8',1,'md_malloc.h']]],
-  ['flatten5d_3951',['FLATTEN5D',['../md__malloc_8h.html#aed5a028232e542932c979f9c3b91ae07',1,'md_malloc.h']]],
-  ['flatten6d_3952',['FLATTEN6D',['../md__malloc_8h.html#a28436aabcdb6c582994e8781787f2ec6',1,'md_malloc.h']]]
+  ['decorrelator_5fframe_5fsize_5021',['DECORRELATOR_FRAME_SIZE',['../decorrelator__internal_8h.html#ad18deb1077268143b98514d9a29c4a0b',1,'decorrelator_internal.h']]],
+  ['dirass_5fframe_5fsize_5022',['DIRASS_FRAME_SIZE',['../dirass__internal_8h.html#aa0eb7086915a5accde46e13daaf2969a',1,'dirass_internal.h']]]
 ];

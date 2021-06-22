@@ -1,10 +1,15 @@
 var searchData=
 [
-  ['panner_5fspread_5fmax_5fvalue_3976',['PANNER_SPREAD_MAX_VALUE',['../panner_8h.html#a4a52ec05a580f8f3e118076631a6e77a',1,'panner.h']]],
-  ['panner_5fspread_5fmin_5fvalue_3977',['PANNER_SPREAD_MIN_VALUE',['../panner_8h.html#ac618c40b8f1dcc3c9644f44e49a29e8b',1,'panner.h']]],
-  ['pitch_5fshifter_5fmax_5fshift_5ffactor_3978',['PITCH_SHIFTER_MAX_SHIFT_FACTOR',['../pitch__shifter_8h.html#a708e3059a27391c9e2cd62cb24c13d89',1,'pitch_shifter.h']]],
-  ['pitch_5fshifter_5fmin_5fshift_5ffactor_3979',['PITCH_SHIFTER_MIN_SHIFT_FACTOR',['../pitch__shifter_8h.html#a2ebd6f2936e4d4ef1817bac3d16ba6c6',1,'pitch_shifter.h']]],
-  ['pitch_5fshifter_5fnum_5ffftsize_5foptions_3980',['PITCH_SHIFTER_NUM_FFTSIZE_OPTIONS',['../pitch__shifter_8h.html#aa024ed3d76eba8c792fde63d81475727',1,'pitch_shifter.h']]],
-  ['pitch_5fshifter_5fnum_5fosamp_5foptions_3981',['PITCH_SHIFTER_NUM_OSAMP_OPTIONS',['../pitch__shifter_8h.html#a18f18496a2781a10f41851a1ac218574',1,'pitch_shifter.h']]],
-  ['progressbartext_5fchar_5flength_3982',['PROGRESSBARTEXT_CHAR_LENGTH',['../__common_8h.html#a72a166eb078e82f81bd29753838c5080',1,'_common.h']]]
+  ['ims_5fcirc_5fbuffer_5flength_5033',['IMS_CIRC_BUFFER_LENGTH',['../saf__reverb__internal_8h.html#a8afcb44b4156c40c709d48a780987ce2',1,'saf_reverb_internal.h']]],
+  ['ims_5fcirc_5fbuffer_5flength_5fmask_5034',['IMS_CIRC_BUFFER_LENGTH_MASK',['../saf__reverb__internal_8h.html#a8f6e4e700d927e99ae26e084734d2f00',1,'saf_reverb_internal.h']]],
+  ['ims_5feg_5fcurrent_5035',['IMS_EG_CURRENT',['../saf__reverb__internal_8h.html#a863b45dffd3b4e1e0dc68baa508eca02',1,'saf_reverb_internal.h']]],
+  ['ims_5feg_5fnum_5fslots_5036',['IMS_EG_NUM_SLOTS',['../saf__reverb__internal_8h.html#af9babb5e0d0be943aa0625ea56f78c47',1,'saf_reverb_internal.h']]],
+  ['ims_5feg_5fprev_5037',['IMS_EG_PREV',['../saf__reverb__internal_8h.html#ae160b75b9b1d7312f84976095cfdbd43',1,'saf_reverb_internal.h']]],
+  ['ims_5ffir_5ffilterbank_5forder_5038',['IMS_FIR_FILTERBANK_ORDER',['../saf__reverb__internal_8h.html#ad9edcde90242c28b1cf51db18fe91129',1,'saf_reverb_internal.h']]],
+  ['ims_5fiir_5ffilterbank_5forder_5039',['IMS_IIR_FILTERBANK_ORDER',['../saf__reverb__internal_8h.html#a96f4cbfc7aa2295abe4aed1846cc4420',1,'saf_reverb_internal.h']]],
+  ['ims_5flagrange_5flookup_5ftable_5fsize_5040',['IMS_LAGRANGE_LOOKUP_TABLE_SIZE',['../saf__reverb__internal_8h.html#a7ce4719c4f56a82b346d35c7f038854a',1,'saf_reverb_internal.h']]],
+  ['ims_5flagrange_5forder_5041',['IMS_LAGRANGE_ORDER',['../saf__reverb__internal_8h.html#a2920e95c5f613a1496c8ba8a57adddda',1,'saf_reverb_internal.h']]],
+  ['ims_5fmax_5fnsamples_5fper_5fframe_5042',['IMS_MAX_NSAMPLES_PER_FRAME',['../saf__reverb__internal_8h.html#a7abc97cfcf8e547d2b4ae9361d4977c2',1,'saf_reverb_internal.h']]],
+  ['ims_5fnum_5fwalls_5fshoebox_5043',['IMS_NUM_WALLS_SHOEBOX',['../saf__reverb__internal_8h.html#a9c7ccfebfbe1c992aba5d0e25264d176',1,'saf_reverb_internal.h']]],
+  ['ims_5funassigned_5044',['IMS_UNASSIGNED',['../saf__reverb__internal_8h.html#a4164e5b97ed2f00037e3c4891c8994ab',1,'saf_reverb_internal.h']]]
 ];

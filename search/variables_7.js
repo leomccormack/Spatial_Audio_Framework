@@ -1,16 +1,11 @@
 var searchData=
 [
-  ['h_3543',['H',['../structtracker3d__data.html#aed92a7b0367c68ede0b354b8ec9384c5',1,'tracker3d_data']]],
-  ['h_5ffilt_3544',['H_filt',['../structims__scene__data.html#ac7d1bb7d6d13cf3b939d55c412fe068d',1,'ims_scene_data']]],
-  ['h_5ffrac_3545',['h_frac',['../structechogram__data.html#a8c03cb89cfc6ebb2fe15da780a7d0466',1,'echogram_data']]],
-  ['hcorewrkspc_3546',['hCoreWrkSpc',['../structims__scene__data.html#a9fb5cdf534279ebf0c70f1987feec8eb',1,'ims_scene_data']]],
-  ['hechogram_3547',['hEchogram',['../structims__core__workspace.html#a9a434ccd8f9476f61941be38ae2afd3b',1,'ims_core_workspace']]],
-  ['hechogram_5fabs_3548',['hEchogram_abs',['../structims__core__workspace.html#a51b176760beb1e4a69ef9058a080fb1d',1,'ims_core_workspace']]],
-  ['hechogram_5frec_3549',['hEchogram_rec',['../structims__core__workspace.html#a18f72ee56aa40c4dde587bac9d93af60',1,'ims_core_workspace']]],
-  ['hfafbank_3550',['hFaFbank',['../structims__scene__data.html#af4325be2dccb18b5fb1d91674c0cf935',1,'ims_scene_data']]],
-  ['hint_3551',['hInt',['../structaf_s_t_f_t__data.html#af3db6690c474c901dad6acd5755d0683',1,'afSTFT_data']]],
-  ['history_3552',['History',['../structsaf__sofa__container.html#aa5fc0b5595ff704ac964dcdbd64a6455',1,'saf_sofa_container']]],
-  ['hopsize_3553',['hopsize',['../structqmf__data.html#ab5dc307a125369f0fc7922b7a1ec29d4',1,'qmf_data::hopsize()'],['../structaf_s_t_f_t__data.html#acf52707889305bc0b91cfcb7ccc1538c',1,'afSTFT_data::hopsize()']]],
-  ['hprevechogram_5fabs_3554',['hPrevEchogram_abs',['../structims__core__workspace.html#a24af7fe0f3f0e0ddce80e0b41effa8c2',1,'ims_core_workspace']]],
-  ['hybridmode_3555',['hybridmode',['../structqmf__data.html#a47543cfc4425c7106317036dd244d6e9',1,'qmf_data::hybridmode()'],['../structaf_s_t_f_t__data.html#a9047d21ba6b054c499c4d037aa314bda',1,'afSTFT_data::hybridmode()']]]
+  ['g_5fsrc_4382',['G_src',['../structpanner__data.html#aa6b6ec1ef052dafd54d61cb5ff957faa',1,'panner_data']]],
+  ['gain_5fdb_4383',['gain_dB',['../structarray2sh__data.html#a88f94d7d9c04fdcf87bbd6a94dd1af46',1,'array2sh_data']]],
+  ['grid_5fdirs_5fdeg_4384',['grid_dirs_deg',['../structdirass__codec_pars.html#a1c9a6d0326df860dca09b8e9bfef53f9',1,'dirass_codecPars::grid_dirs_deg()'],['../structpowermap__codec_pars.html#ac21f8682e8cfbe2df63bbb2bb87c8837',1,'powermap_codecPars::grid_dirs_deg()'],['../structsldoa__data.html#a0ce7d6c666a6fd33e3d84d036cb31fba',1,'sldoa_data::grid_dirs_deg()'],['../structspreader__data.html#adcd083b7276c294940cfdc0501e24e49',1,'spreader_data::grid_dirs_deg()']]],
+  ['grid_5fdirs_5fxyz_4385',['grid_dirs_xyz',['../structspreader__data.html#a56be28947a141d33b111315de159cdc0',1,'spreader_data']]],
+  ['grid_5fndirs_4386',['grid_nDirs',['../structdirass__codec_pars.html#a93cc882c0dd4f499207fa33b757980b4',1,'dirass_codecPars::grid_nDirs()'],['../structpowermap__codec_pars.html#ab1d6a22da02509dcc22e5b398b6ba94b',1,'powermap_codecPars::grid_nDirs()']]],
+  ['grid_5fy_4387',['grid_Y',['../structsldoa__data.html#a65a60460c97cd167de8ea6cf0b5a0fa3',1,'sldoa_data']]],
+  ['grid_5fy_5fdipoles_5fnorm_4388',['grid_Y_dipoles_norm',['../structsldoa__data.html#ace3b41a0d5b35be06b6785ba141a24ff',1,'sldoa_data']]],
+  ['gridoption_4389',['gridOption',['../structdirass__data.html#a9d8b4b9ae8fd7f0653e2ab5fb374bd77',1,'dirass_data']]]
 ];

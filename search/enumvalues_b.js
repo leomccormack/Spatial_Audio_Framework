@@ -1,12 +1,7 @@
 var searchData=
 [
-  ['pm_5fmode_5fcropac_5flcmv_3812',['PM_MODE_CROPAC_LCMV',['../powermap_8h.html#abca8a09b8bc8fab7741071d644a51f1daf20038ef7a6d047d4456ad0b697e637d',1,'powermap.h']]],
-  ['pm_5fmode_5fminnorm_3813',['PM_MODE_MINNORM',['../powermap_8h.html#abca8a09b8bc8fab7741071d644a51f1da78762be23f12f78beb640a8c0fef7b5a',1,'powermap.h']]],
-  ['pm_5fmode_5fminnorm_5flog_3814',['PM_MODE_MINNORM_LOG',['../powermap_8h.html#abca8a09b8bc8fab7741071d644a51f1da80298504d11ef7ce644908a7e09a8712',1,'powermap.h']]],
-  ['pm_5fmode_5fmusic_3815',['PM_MODE_MUSIC',['../powermap_8h.html#abca8a09b8bc8fab7741071d644a51f1daf3933c38c17beada5be30d7a6bfe8d62',1,'powermap.h']]],
-  ['pm_5fmode_5fmusic_5flog_3816',['PM_MODE_MUSIC_LOG',['../powermap_8h.html#abca8a09b8bc8fab7741071d644a51f1dab267e1edf3845cab12a7f68bde8dfb38',1,'powermap.h']]],
-  ['pm_5fmode_5fmvdr_3817',['PM_MODE_MVDR',['../powermap_8h.html#abca8a09b8bc8fab7741071d644a51f1da7275355d16e1220e03fbb353463254b7',1,'powermap.h']]],
-  ['pm_5fmode_5fpwd_3818',['PM_MODE_PWD',['../powermap_8h.html#abca8a09b8bc8fab7741071d644a51f1da285a6825bd8e769a9df09c90e939f232',1,'powermap.h']]],
-  ['proc_5fstatus_5fnot_5fongoing_3819',['PROC_STATUS_NOT_ONGOING',['../__common_8h.html#a818d3c650d98e2a6203c16c6e4fe72ecaabaaa74e487f25b723dd3930a946372b',1,'_common.h']]],
-  ['proc_5fstatus_5fongoing_3820',['PROC_STATUS_ONGOING',['../__common_8h.html#a818d3c650d98e2a6203c16c6e4fe72eca47020f07be7a25c9b492e96ff70454ff',1,'_common.h']]]
+  ['no_5fconj_4875',['NO_CONJ',['../group___utilities.html#gga64250558cc5507fb5ec6515ab4d337cea067cd409aeb9fbf93ccd17291119fe38',1,'saf_utility_veclib.h']]],
+  ['norm_5ffuma_4876',['NORM_FUMA',['../__common_8h.html#a9d0a41517784f33989ba258d6fd889bea41458d7f24da8073d20eb3954b3ddbbe',1,'_common.h']]],
+  ['norm_5fn3d_4877',['NORM_N3D',['../__common_8h.html#a9d0a41517784f33989ba258d6fd889beae954b0ce6f73c0b15ab272ee38535236',1,'_common.h']]],
+  ['norm_5fsn3d_4878',['NORM_SN3D',['../__common_8h.html#a9d0a41517784f33989ba258d6fd889bea09f0bb05f476f73c3c591011be982c5e',1,'_common.h']]]
 ];

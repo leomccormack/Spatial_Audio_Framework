@@ -1,21 +1,15 @@
 var searchData=
 [
-  ['n_5fmax_3579',['N_max',['../structims__core__workspace.html#aa48d25953559de60dbb180b66c25a710',1,'ims_core_workspace']]],
-  ['nbands_3580',['nBands',['../structims__core__workspace.html#ab0768c55c92461ee11723ff6653c7576',1,'ims_core_workspace::nBands()'],['../structims__scene__data.html#a5c89eed63acbd4316ee92599816b2a9b',1,'ims_scene_data::nBands()'],['../structfaf___i_i_r_f_b__data.html#a1a61391b734a4ff3750a4f714b5f7cbf',1,'faf_IIRFB_data::nBands()'],['../structqmf__data.html#a9c8c7ebb336752589716135ac9c2c183',1,'qmf_data::nBands()'],['../structaf_s_t_f_t__data.html#a52d4eda75394c556b8fda711fd8322f1',1,'afSTFT_data::nBands()']]],
-  ['nchannels_3581',['nChannels',['../structims__rec__obj.html#a6d844818e305be5aca1411a00923d79c',1,'ims_rec_obj::nChannels()'],['../structechogram__data.html#a5d6786d413c2e08c75ad60c874a08ee0',1,'echogram_data::nChannels()']]],
-  ['nchin_3582',['nCHin',['../structqmf__data.html#ac9536a6734fea5aa833b968c6a6763ac',1,'qmf_data::nCHin()'],['../structaf_s_t_f_t__data.html#af4eb9ce96212013222e58cc50a873a27',1,'afSTFT_data::nCHin()']]],
-  ['nchout_3583',['nCHout',['../structqmf__data.html#a7987888cfab02c3388a19c60e2efc101',1,'qmf_data::nCHout()'],['../structaf_s_t_f_t__data.html#a408dc511cc33c5d2f1f036554db677c1',1,'afSTFT_data::nCHout()']]],
-  ['nemitters_3584',['nEmitters',['../structsaf__sofa__container.html#aaf9e6b25b848fae120e465279c93b734',1,'saf_sofa_container']]],
-  ['nfaces_3585',['nFaces',['../structvoronoi__data.html#abbb3175863e5ab01707b047bb373f626',1,'voronoi_data']]],
-  ['nfilters_3586',['nFilters',['../structfaf___i_i_r_f_b__data.html#aa24ec85f0329ed53cee88ef3e271f0a4',1,'faf_IIRFB_data']]],
-  ['nlisteners_3587',['nListeners',['../structsaf__sofa__container.html#a351b717cf6ab9a8522039e272c4ee786',1,'saf_sofa_container']]],
-  ['noiselikelihood_3588',['noiseLikelihood',['../structtracker3d__config.html#ad893a2f41dc559896c2dcbdc240e0fb7',1,'tracker3d_config']]],
-  ['noisespecden_3589',['noiseSpecDen',['../structtracker3d__config.html#afe2f4c26084d9ce7cdc4ecae520a7ebe',1,'tracker3d_config']]],
-  ['np_3590',['Np',['../structtracker3d__config.html#acf93906eeaceb2fc3071f83c82a5c98a',1,'tracker3d_config']]],
-  ['npointsperface_3591',['nPointsPerFace',['../structvoronoi__data.html#ac281655c83352a3a806c112547f436dc',1,'voronoi_data']]],
-  ['nreceivers_3592',['nReceivers',['../structims__scene__data.html#a955a21013a45b95d64799217b35c3712',1,'ims_scene_data::nReceivers()'],['../structsaf__sofa__container.html#add23cec9f0705ce89fa0ca0f6ae83a6d',1,'saf_sofa_container::nReceivers()']]],
-  ['nsources_3593',['nSources',['../structims__scene__data.html#a1d3504213c398687cda898bdc18a5532',1,'ims_scene_data::nSources()'],['../structsaf__sofa__container.html#a137ce2c750d10398ed1e7bb55eccc921',1,'saf_sofa_container::nSources()']]],
-  ['ntargets_3594',['nTargets',['../struct_m_c_s__data.html#abcdc54e95535c27de9baacce914dc80e',1,'MCS_data']]],
-  ['numimagesources_3595',['numImageSources',['../structechogram__data.html#a253336fb2ed3d614c996123ce604ed7e',1,'echogram_data']]],
-  ['nvert_3596',['nVert',['../structvoronoi__data.html#add91b9f6a3885c13aa35b22fa2018151',1,'voronoi_data']]]
+  ['license_4467',['License',['../structsaf__sofa__container.html#af03f642f1001e3e58e17197a2ebc6e42',1,'saf_sofa_container']]],
+  ['listenerposition_4468',['ListenerPosition',['../structsaf__sofa__container.html#a6680c041ba070abbb895b4e04a84db47',1,'saf_sofa_container']]],
+  ['listenerpositiontype_4469',['ListenerPositionType',['../structsaf__sofa__container.html#a54a1e199da1fe20f4ce4fdcc6c0188f3',1,'saf_sofa_container']]],
+  ['listenerpositionunits_4470',['ListenerPositionUnits',['../structsaf__sofa__container.html#a5de922dedc9722b648678a8f7878becf',1,'saf_sofa_container']]],
+  ['listenershortname_4471',['ListenerShortName',['../structsaf__sofa__container.html#accdf5193db678bd1defbee3ef35eff19',1,'saf_sofa_container']]],
+  ['listenerup_4472',['ListenerUp',['../structsaf__sofa__container.html#ae160eec77d296e01401e1c3de4540801',1,'saf_sofa_container']]],
+  ['listenerview_4473',['ListenerView',['../structsaf__sofa__container.html#a8bc89a51423b71ed6cbe496323b1acf8',1,'saf_sofa_container']]],
+  ['listenerviewtype_4474',['ListenerViewType',['../structsaf__sofa__container.html#ae0cd3f54c2b0cc940a32034c297fe6a7',1,'saf_sofa_container']]],
+  ['listenerviewunits_4475',['ListenerViewUnits',['../structsaf__sofa__container.html#ab9504d4e960d5524f1bf790a7e7f40ae',1,'saf_sofa_container']]],
+  ['loudpkrs_5fdirs_5fdeg_4476',['loudpkrs_dirs_deg',['../structambi__dec__data.html#a40d70d00c2ef73a985b6e88a1cab82ae',1,'ambi_dec_data::loudpkrs_dirs_deg()'],['../structpanner__data.html#a848b4a93038ed4aa6019dba218a40f9e',1,'panner_data::loudpkrs_dirs_deg()']]],
+  ['loudpkrs_5fndims_4477',['loudpkrs_nDims',['../structambi__dec__data.html#a38cbcc8a432285fb431542f881f843cf',1,'ambi_dec_data']]],
+  ['lsh_4478',['lSH',['../structarray2sh__data.html#ada7e806139dba3de1a5186d8b0f237a8',1,'array2sh_data']]]
 ];

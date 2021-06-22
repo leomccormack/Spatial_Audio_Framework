@@ -6,5 +6,5 @@ var saf__hrir_8c =
     [ "HRIRs2HRTFs", "group___h_r_i_r.html#ga95e3ef60ada22e4bea2c40dcd38b4573", null ],
     [ "HRIRs2HRTFs_afSTFT", "group___h_r_i_r.html#gaf7213481e6b8afa3b25fbf4343c1ca50", null ],
     [ "HRIRs2HRTFs_qmf", "group___h_r_i_r.html#gadfaf82c46f2d7033e5182b9fc945ba93", null ],
-    [ "interpHRTFs", "group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7", null ]
+    [ "interpHRTFs", "group___h_r_i_r.html#gadafcc51c7593d930ae24225c0b4da085", null ]
 ];

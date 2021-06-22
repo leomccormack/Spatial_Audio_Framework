@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['reass_5fmode_5foff_3823',['REASS_MODE_OFF',['../dirass_8h.html#a47016c1cfae4390d7ab6108a9d8f2c3daa3727e3d40725e90f59f84f31e66f2cd',1,'dirass.h']]],
-  ['reass_5fnearest_3824',['REASS_NEAREST',['../dirass_8h.html#a47016c1cfae4390d7ab6108a9d8f2c3da1fb29abb853e60f4fd6e97e0f6cf7832',1,'dirass.h']]],
-  ['reass_5fupscale_3825',['REASS_UPSCALE',['../dirass_8h.html#a47016c1cfae4390d7ab6108a9d8f2c3dae4c62c2eb21b4ad3e54d8d569d547213',1,'dirass.h']]],
-  ['receiver_5fsh_3826',['RECEIVER_SH',['../saf__reverb__internal_8h.html#a1774d63e2e65e1a979fdc382b041b315a8f580fefdda8a6f19778e0030a360a88',1,'saf_reverb_internal.h']]]
+  ['qmf_5fbands_5fch_5ftime_4888',['QMF_BANDS_CH_TIME',['../group___utilities.html#gga4701e2c3dbbf3c03c1de47f5b6ce213fa3d24aece2d730b422ba01a440aa70676',1,'saf_utility_qmf.h']]],
+  ['qmf_5ftime_5fch_5fbands_4889',['QMF_TIME_CH_BANDS',['../group___utilities.html#gga4701e2c3dbbf3c03c1de47f5b6ce213faaaa4679cf1fc014d75df416f42751a9a',1,'saf_utility_qmf.h']]]
 ];

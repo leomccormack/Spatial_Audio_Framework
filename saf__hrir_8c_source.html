@@ -309,127 +309,148 @@ $(document).ready(function(){initNavTree('saf__hrir_8c_source.html',''); initRes
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;            free(ipd);</div>
 <div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        }</div>
 <div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    }</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;}</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
-<div class="line"><a name="l00241"></a><span class="lineno"><a class="line" href="group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7">  241</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7">interpHRTFs</a></div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;(</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    float_complex* hrtfs, <span class="comment">/* N_bands x 2 x N_hrtf_dirs */</span></div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    <span class="keywordtype">float</span>* itds,</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    <span class="keywordtype">float</span>* freqVector,</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    <span class="keywordtype">float</span>* vbap_gtable, </div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    <span class="keywordtype">int</span> N_hrtf_dirs,</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    <span class="keywordtype">int</span> N_bands,</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    <span class="keywordtype">int</span> N_interp_dirs,</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    float_complex* hrtfs_interp <span class="comment">/* pre-alloc, N_bands x 2 x N_interp_dirs */</span></div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;)</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;{</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    <span class="keywordtype">int</span> i, band;</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keywordtype">float</span>* itd_interp, *mags_interp, *ipd_interp;</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    <span class="keywordtype">float</span>** mags;</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    </div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    mags = (<span class="keywordtype">float</span>**)<a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_bands*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>*));</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    itd_interp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_interp_dirs*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    mags_interp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_interp_dirs*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    ipd_interp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_interp_dirs*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    </div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="comment">/* calculate HRTF magnitudes */</span></div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keywordflow">for</span>(band=0; band&lt;N_bands; band++){</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        mags[band] = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a> * N_hrtf_dirs*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt; <a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a> * N_hrtf_dirs ; i++)</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            mags[band][i] = cabsf(hrtfs[band*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a> * N_hrtf_dirs + i]);</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    }</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    </div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    <span class="comment">/* interpolate ITDs */</span></div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N_interp_dirs, 1, N_hrtf_dirs, 1.0f,</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                vbap_gtable, N_hrtf_dirs,</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                itds, 1, 0.0f,</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;                itd_interp, 1);</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <span class="keywordflow">for</span>(band=0; band&lt;N_bands; band++){</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        <span class="comment">/* interpolate HRTF magnitudes */</span></div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_interp_dirs, <a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>, N_hrtf_dirs, 1.0f,</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;                    vbap_gtable, N_hrtf_dirs,</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                    mags[band], N_hrtf_dirs, 0.0f,</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                    mags_interp, <a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>);</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        </div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        <span class="comment">/* convert ITDs to phase differences -pi..pi */</span></div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;N_interp_dirs; i++)</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;            ipd_interp[i] = (<a class="code" href="group___utilities.html#ga3b9806b290b960cd718bac53080235ae">matlab_fmodf</a>(2.0f*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>*freqVector[band]*itd_interp[i] + <a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>, 2.0f*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>) - <a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>)/2.0f; <span class="comment">/* /2 here, not later */</span></div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        </div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        <span class="comment">/* reintroduce the interaural phase differences (IPD) */</span></div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;N_interp_dirs; i++){</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;            hrtfs_interp[band*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_interp_dirs + 0* N_interp_dirs +i] = ccmulf( cmplxf(mags_interp[i*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>+0],0.0f), cexpf(cmplxf(0.0f, ipd_interp[i])) );</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            hrtfs_interp[band*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_interp_dirs + 1* N_interp_dirs +i] = ccmulf( cmplxf(mags_interp[i*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>+1],0.0f), cexpf(cmplxf(0.0f,-ipd_interp[i])) );</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        }</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    }</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    free(itd_interp);</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    <span class="keywordflow">for</span>(band=0; band&lt;N_bands; band++)</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        free(mags[band]);</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    free(mags);</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    free(mags_interp);</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    free(ipd_interp);</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;}</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;}</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160; </div>
+<div class="line"><a name="l00240"></a><span class="lineno"><a class="line" href="group___h_r_i_r.html#gadafcc51c7593d930ae24225c0b4da085">  240</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___h_r_i_r.html#gadafcc51c7593d930ae24225c0b4da085">interpHRTFs</a></div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;(</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    float_complex* hrtfs, <span class="comment">/* N_bands x 2 x N_hrtf_dirs */</span></div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordtype">float</span>* itds,</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    <span class="keywordtype">float</span>* freqVector,</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    <span class="keywordtype">float</span>* interp_table,</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    <span class="keywordtype">int</span> N_hrtf_dirs,</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    <span class="keywordtype">int</span> N_bands,</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    <span class="keywordtype">int</span> N_interp_dirs,</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    float_complex* hrtfs_interp <span class="comment">/* pre-alloc, N_bands x 2 x N_interp_dirs */</span></div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;)</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;{</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    <span class="keywordtype">int</span> i, band;</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    <span class="keywordtype">float</span>* itd_interp, *mags_interp, *ipd_interp;</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keywordtype">float</span>** mags;</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    float_complex* interp_table_cmplx;</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    <span class="keyword">const</span> float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160; </div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="keywordflow">if</span>(itds==NULL || freqVector==NULL){</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        <span class="comment">/* prep */</span></div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        interp_table_cmplx = <a class="code" href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a>(N_interp_dirs*N_hrtf_dirs, <span class="keyword">sizeof</span>(float_complex));</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        cblas_scopy(N_interp_dirs*N_hrtf_dirs, interp_table, 1, (<span class="keywordtype">float</span>*)interp_table_cmplx, 2);</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        <span class="comment">/* interpolate HRTF spectra */</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        <span class="keywordflow">for</span>(band=0; band&lt;N_bands; band++){</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, <a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>, N_interp_dirs, N_hrtf_dirs, &amp;calpha,</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                        &amp;hrtfs[band*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_hrtf_dirs], N_hrtf_dirs,</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                        interp_table_cmplx, N_hrtf_dirs, &amp;cbeta,</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                        &amp;hrtfs_interp[band*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_interp_dirs], N_interp_dirs);</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;        }</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        <span class="comment">/* clean-up */</span></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;        free(interp_table_cmplx);</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    }</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <span class="keywordflow">else</span>{</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        <span class="comment">/* prep */</span></div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        mags = (<span class="keywordtype">float</span>**)<a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_bands*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>*));</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;        itd_interp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_interp_dirs*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;        mags_interp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_interp_dirs*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        ipd_interp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_interp_dirs*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160; </div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        <span class="comment">/* calculate HRTF magnitudes */</span></div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;        <span class="keywordflow">for</span>(band=0; band&lt;N_bands; band++){</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;            mags[band] = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a> * N_hrtf_dirs*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt; <a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a> * N_hrtf_dirs ; i++)</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                mags[band][i] = cabsf(hrtfs[band*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a> * N_hrtf_dirs + i]);</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        }</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160; </div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;        <span class="comment">/* interpolate ITDs */</span></div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N_interp_dirs, 1, N_hrtf_dirs, 1.0f,</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                    interp_table, N_hrtf_dirs,</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                    itds, 1, 0.0f,</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                    itd_interp, 1);</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;        <span class="keywordflow">for</span>(band=0; band&lt;N_bands; band++){</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            <span class="comment">/* interpolate HRTF magnitudes */</span></div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_interp_dirs, <a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>, N_hrtf_dirs, 1.0f,</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                        interp_table, N_hrtf_dirs,</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                        mags[band], N_hrtf_dirs, 0.0f,</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                        mags_interp, <a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>);</div>
 <div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160; </div>
-<div class="line"><a name="l00300"></a><span class="lineno"><a class="line" href="group___h_r_i_r.html#gadbd157cc21c2840342448509f1bec412">  300</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___h_r_i_r.html#gadbd157cc21c2840342448509f1bec412">binauralDiffuseCoherence</a></div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;(</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    float_complex* hrtfs, <span class="comment">/* N_bands x 2 x N_hrtf_dirs */</span></div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keywordtype">float</span>* itds,</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="keywordtype">float</span>* freqVector,</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="keywordtype">int</span> N_hrtf_dirs,</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="keywordtype">int</span> N_bands,</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    <span class="keywordtype">float</span>* HRTFcoh</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;)</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;{</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    <span class="keywordtype">int</span> i, j;</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="keywordtype">float</span>* ipd;</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    float_complex *hrtf_ipd_lr;</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    </div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    <span class="comment">/* convert ITDs to phase differences -pi..pi */</span></div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    ipd = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_bands*N_hrtf_dirs*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_bands, N_hrtf_dirs, 1, 1.0,</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;                freqVector, 1,</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;                itds, 1, 0.0,</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;                ipd, N_hrtf_dirs);</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;N_bands; i++)</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;        <span class="keywordflow">for</span>(j=0; j&lt;N_hrtf_dirs; j++)</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;            ipd[i*N_hrtf_dirs+j] = (<a class="code" href="group___utilities.html#ga3b9806b290b960cd718bac53080235ae">matlab_fmodf</a>(2.0f*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>*ipd[i*N_hrtf_dirs+j] + <a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>, 2.0f*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>) - <a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>);</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    </div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    <span class="comment">/* compute complex coherence */</span></div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    hrtf_ipd_lr = <a class="code" href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a>(N_bands, <span class="keyword">sizeof</span>(float_complex));</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;N_bands; i++){</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;        <span class="keywordflow">for</span>(j=0; j&lt;N_hrtf_dirs; j++)</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;            hrtf_ipd_lr[i] = ccaddf(hrtf_ipd_lr[i], crmulf(cexpf(crmulf(cmplxf(0.0f, 1.0f), ipd[i*N_hrtf_dirs+j])),</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;                                                    cabsf(hrtfs[i*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_hrtf_dirs + 0*N_hrtf_dirs + j])*</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;                                                    cabsf(hrtfs[i*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_hrtf_dirs + 1*N_hrtf_dirs + j])));</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        hrtf_ipd_lr[i] = ccdivf(hrtf_ipd_lr[i], cmplxf((<span class="keywordtype">float</span>)N_hrtf_dirs, 0.0f));</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    }</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    </div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    <span class="comment">/* due to almost axisymmetry of ITD, the coherence is almost real */</span></div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;N_bands; i++)</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;        HRTFcoh[i] = crealf(hrtf_ipd_lr[i]) &lt; 0.0f ? 0.0f : crealf(hrtf_ipd_lr[i]);</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    HRTFcoh[0] = 1.0f; <span class="comment">/* force 1 at DC */</span></div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    </div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    free(ipd);</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    free(hrtf_ipd_lr);</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;}</div>
-<div class="ttc" id="aaf_s_t_f_tlib_8c_html_a55dc2784fe833793e8a988c72b131ba2"><div class="ttname"><a href="af_s_t_f_tlib_8c.html#a55dc2784fe833793e8a988c72b131ba2">afSTFT_FIRtoFilterbankCoeffs</a></div><div class="ttdeci">void afSTFT_FIRtoFilterbankCoeffs(float *hIR, int N_dirs, int nCH, int ir_len, int hopSize, int LDmode, int hybridmode, float_complex *hFB)</div><div class="ttdoc">Converts FIR filters into Filterbank Coefficients by passing them through the afSTFT filterbank.</div><div class="ttdef"><b>Definition:</b> <a href="af_s_t_f_tlib_8c_source.html#l00505">afSTFTlib.c:506</a></div></div>
-<div class="ttc" id="agroup___h_r_i_r_html_ga23e9a79557d045fcc850a5253733aed7"><div class="ttname"><a href="group___h_r_i_r.html#ga23e9a79557d045fcc850a5253733aed7">interpHRTFs</a></div><div class="ttdeci">void interpHRTFs(float_complex *hrtfs, float *itds, float *freqVector, float *vbap_gtable, int N_hrtf_dirs, int N_bands, int N_interp_dirs, float_complex *hrtfs_interp)</div><div class="ttdoc">Interpolates a set of HRTFs for specified directions, defined by an amplitude normalised VBAP interpo...</div><div class="ttdef"><b>Definition:</b> <a href="saf__hrir_8c_source.html#l00241">saf_hrir.c:242</a></div></div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;            <span class="comment">/* convert ITDs to phase differences -pi..pi */</span></div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;N_interp_dirs; i++)</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                ipd_interp[i] = (<a class="code" href="group___utilities.html#ga3b9806b290b960cd718bac53080235ae">matlab_fmodf</a>(2.0f*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>*freqVector[band]*itd_interp[i] + <a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>, 2.0f*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>) - <a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>)/2.0f; <span class="comment">/* /2 here, not later */</span></div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160; </div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;            <span class="comment">/* reintroduce the interaural phase differences (IPD) */</span></div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;N_interp_dirs; i++){</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;                hrtfs_interp[band*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_interp_dirs + 0* N_interp_dirs +i] = ccmulf( cmplxf(mags_interp[i*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>+0],0.0f), cexpf(cmplxf(0.0f, ipd_interp[i])) );</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;                hrtfs_interp[band*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_interp_dirs + 1* N_interp_dirs +i] = ccmulf( cmplxf(mags_interp[i*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>+1],0.0f), cexpf(cmplxf(0.0f,-ipd_interp[i])) );</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;            }</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;        }</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160; </div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;        <span class="comment">/* clean-up */</span></div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;        free(itd_interp);</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        <span class="keywordflow">for</span>(band=0; band&lt;N_bands; band++)</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;            free(mags[band]);</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        free(mags);</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        free(mags_interp);</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;        free(ipd_interp);</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    }</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;}</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160; </div>
+<div class="line"><a name="l00321"></a><span class="lineno"><a class="line" href="group___h_r_i_r.html#gadbd157cc21c2840342448509f1bec412">  321</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___h_r_i_r.html#gadbd157cc21c2840342448509f1bec412">binauralDiffuseCoherence</a></div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;(</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    float_complex* hrtfs, <span class="comment">/* N_bands x 2 x N_hrtf_dirs */</span></div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    <span class="keywordtype">float</span>* itds,</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    <span class="keywordtype">float</span>* freqVector,</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    <span class="keywordtype">int</span> N_hrtf_dirs,</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    <span class="keywordtype">int</span> N_bands,</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <span class="keywordtype">float</span>* HRTFcoh</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;)</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;{</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    <span class="keywordtype">int</span> i, j;</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    <span class="keywordtype">float</span>* ipd;</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    float_complex *hrtf_ipd_lr;</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    </div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="comment">/* convert ITDs to phase differences -pi..pi */</span></div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    ipd = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_bands*N_hrtf_dirs*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_bands, N_hrtf_dirs, 1, 1.0,</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                freqVector, 1,</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                itds, 1, 0.0,</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;                ipd, N_hrtf_dirs);</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;N_bands; i++)</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;        <span class="keywordflow">for</span>(j=0; j&lt;N_hrtf_dirs; j++)</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;            ipd[i*N_hrtf_dirs+j] = (<a class="code" href="group___utilities.html#ga3b9806b290b960cd718bac53080235ae">matlab_fmodf</a>(2.0f*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>*ipd[i*N_hrtf_dirs+j] + <a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>, 2.0f*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>) - <a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>);</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    </div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <span class="comment">/* compute complex coherence */</span></div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    hrtf_ipd_lr = <a class="code" href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a>(N_bands, <span class="keyword">sizeof</span>(float_complex));</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;N_bands; i++){</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;        <span class="keywordflow">for</span>(j=0; j&lt;N_hrtf_dirs; j++)</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;            hrtf_ipd_lr[i] = ccaddf(hrtf_ipd_lr[i], crmulf(cexpf(crmulf(cmplxf(0.0f, 1.0f), ipd[i*N_hrtf_dirs+j])),</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;                                                    cabsf(hrtfs[i*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_hrtf_dirs + 0*N_hrtf_dirs + j])*</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                                                    cabsf(hrtfs[i*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_hrtf_dirs + 1*N_hrtf_dirs + j])));</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;        hrtf_ipd_lr[i] = ccdivf(hrtf_ipd_lr[i], cmplxf((<span class="keywordtype">float</span>)N_hrtf_dirs, 0.0f));</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    }</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    </div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="comment">/* due to almost axisymmetry of ITD, the coherence is almost real */</span></div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;N_bands; i++)</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;        HRTFcoh[i] = crealf(hrtf_ipd_lr[i]) &lt; 0.0f ? 0.0f : crealf(hrtf_ipd_lr[i]);</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    HRTFcoh[0] = 1.0f; <span class="comment">/* force 1 at DC */</span></div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    </div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    free(ipd);</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;    free(hrtf_ipd_lr);</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;}</div>
+<div class="ttc" id="aaf_s_t_f_tlib_8c_html_a55dc2784fe833793e8a988c72b131ba2"><div class="ttname"><a href="af_s_t_f_tlib_8c.html#a55dc2784fe833793e8a988c72b131ba2">afSTFT_FIRtoFilterbankCoeffs</a></div><div class="ttdeci">void afSTFT_FIRtoFilterbankCoeffs(float *hIR, int N_dirs, int nCH, int ir_len, int hopSize, int LDmode, int hybridmode, float_complex *hFB)</div><div class="ttdoc">Converts FIR filters into Filterbank Coefficients by passing them through the afSTFT filterbank.</div><div class="ttdef"><b>Definition:</b> <a href="af_s_t_f_tlib_8c_source.html#l00592">afSTFTlib.c:593</a></div></div>
 <div class="ttc" id="agroup___h_r_i_r_html_ga95e3ef60ada22e4bea2c40dcd38b4573"><div class="ttname"><a href="group___h_r_i_r.html#ga95e3ef60ada22e4bea2c40dcd38b4573">HRIRs2HRTFs</a></div><div class="ttdeci">void HRIRs2HRTFs(float *hrirs, int N_dirs, int hrir_len, int fftSize, float_complex *hrtfs)</div><div class="ttdoc">Converts HRIRs to HRTFs for a given FFT size.</div><div class="ttdef"><b>Definition:</b> <a href="saf__hrir_8c_source.html#l00138">saf_hrir.c:139</a></div></div>
 <div class="ttc" id="agroup___h_r_i_r_html_gaced04b646c57d04a25e26b469e18588c"><div class="ttname"><a href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">diffuseFieldEqualiseHRTFs</a></div><div class="ttdeci">void diffuseFieldEqualiseHRTFs(int N_dirs, float *itds_s, float *centreFreq, int N_bands, float *weights, int applyEQ, int applyPhase, float_complex *hrtfs)</div><div class="ttdoc">Applies pre-processing to a set of HRTFs, which can either be diffuse-field EQ of an (optionally weig...</div><div class="ttdef"><b>Definition:</b> <a href="saf__hrir_8c_source.html#l00172">saf_hrir.c:173</a></div></div>
-<div class="ttc" id="agroup___h_r_i_r_html_gadbd157cc21c2840342448509f1bec412"><div class="ttname"><a href="group___h_r_i_r.html#gadbd157cc21c2840342448509f1bec412">binauralDiffuseCoherence</a></div><div class="ttdeci">void binauralDiffuseCoherence(float_complex *hrtfs, float *itds, float *freqVector, int N_hrtf_dirs, int N_bands, float *HRTFcoh)</div><div class="ttdoc">Computes the binaural diffuse coherence per frequency for a given HRTF set, as described in [1].</div><div class="ttdef"><b>Definition:</b> <a href="saf__hrir_8c_source.html#l00300">saf_hrir.c:301</a></div></div>
+<div class="ttc" id="agroup___h_r_i_r_html_gadafcc51c7593d930ae24225c0b4da085"><div class="ttname"><a href="group___h_r_i_r.html#gadafcc51c7593d930ae24225c0b4da085">interpHRTFs</a></div><div class="ttdeci">void interpHRTFs(float_complex *hrtfs, float *itds, float *freqVector, float *interp_table, int N_hrtf_dirs, int N_bands, int N_interp_dirs, float_complex *hrtfs_interp)</div><div class="ttdoc">Interpolates a set of HRTFs based on a specified interpolation table.</div><div class="ttdef"><b>Definition:</b> <a href="saf__hrir_8c_source.html#l00240">saf_hrir.c:241</a></div></div>
+<div class="ttc" id="agroup___h_r_i_r_html_gadbd157cc21c2840342448509f1bec412"><div class="ttname"><a href="group___h_r_i_r.html#gadbd157cc21c2840342448509f1bec412">binauralDiffuseCoherence</a></div><div class="ttdeci">void binauralDiffuseCoherence(float_complex *hrtfs, float *itds, float *freqVector, int N_hrtf_dirs, int N_bands, float *HRTFcoh)</div><div class="ttdoc">Computes the binaural diffuse coherence per frequency for a given HRTF set, as described in [1].</div><div class="ttdef"><b>Definition:</b> <a href="saf__hrir_8c_source.html#l00321">saf_hrir.c:322</a></div></div>
 <div class="ttc" id="agroup___h_r_i_r_html_gadfaf82c46f2d7033e5182b9fc945ba93"><div class="ttname"><a href="group___h_r_i_r.html#gadfaf82c46f2d7033e5182b9fc945ba93">HRIRs2HRTFs_qmf</a></div><div class="ttdeci">void HRIRs2HRTFs_qmf(float *hrirs, int N_dirs, int hrir_len, int hopsize, int hybridmode, float_complex *hrtf_fb)</div><div class="ttdoc">Passes zero padded HRIRs through the qmf filterbank.</div><div class="ttdef"><b>Definition:</b> <a href="saf__hrir_8c_source.html#l00124">saf_hrir.c:125</a></div></div>
 <div class="ttc" id="agroup___h_r_i_r_html_gaf4e65a8546982cb60e4553dedca1f4a2"><div class="ttname"><a href="group___h_r_i_r.html#gaf4e65a8546982cb60e4553dedca1f4a2">estimateITDs</a></div><div class="ttdeci">void estimateITDs(float *hrirs, int N_dirs, int hrir_len, int fs, float *itds_s)</div><div class="ttdoc">Estimates the interaural time-differences (ITDs) for each HRIR based on the cross-correlation between...</div><div class="ttdef"><b>Definition:</b> <a href="saf__hrir_8c_source.html#l00039">saf_hrir.c:40</a></div></div>
 <div class="ttc" id="agroup___h_r_i_r_html_gaf7213481e6b8afa3b25fbf4343c1ca50"><div class="ttname"><a href="group___h_r_i_r.html#gaf7213481e6b8afa3b25fbf4343c1ca50">HRIRs2HRTFs_afSTFT</a></div><div class="ttdeci">void HRIRs2HRTFs_afSTFT(float *hrirs, int N_dirs, int hrir_len, int hopsize, int LDmode, int hybridmode, float_complex *hrtf_fb)</div><div class="ttdoc">Passes zero padded HRIRs through the afSTFT filterbank.</div><div class="ttdef"><b>Definition:</b> <a href="saf__hrir_8c_source.html#l00109">saf_hrir.c:110</a></div></div>
-<div class="ttc" id="agroup___utilities_html_ga0fb1cec5cac527df5a9956ee3d137c5c"><div class="ttname"><a href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a></div><div class="ttdeci">#define SAF_PI</div><div class="ttdoc">pi constant (single precision)</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00080">saf_utilities.h:80</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga0fb1cec5cac527df5a9956ee3d137c5c"><div class="ttname"><a href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a></div><div class="ttdeci">#define SAF_PI</div><div class="ttdoc">pi constant (single precision)</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00079">saf_utilities.h:79</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga1c1c180952e189572dfe20c89f9dd2f6"><div class="ttname"><a href="group___utilities.html#ga1c1c180952e189572dfe20c89f9dd2f6">qmf_FIRtoFilterbankCoeffs</a></div><div class="ttdeci">void qmf_FIRtoFilterbankCoeffs(float *hIR, int N_dirs, int nCH, int ir_len, int hopSize, int hybridmode, float_complex *hFB)</div><div class="ttdoc">Converts FIR filters into Filterbank Coefficients by passing them through the QMF filterbank.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__qmf_8c_source.html#l00669">saf_utility_qmf.c:670</a></div></div>
-<div class="ttc" id="agroup___utilities_html_ga39b45c9e65aebd2a8ef72c3081baea84"><div class="ttname"><a href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a></div><div class="ttdeci">#define NUM_EARS</div><div class="ttdoc">2 (true for most humans)</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00058">saf_utilities.h:58</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga39b45c9e65aebd2a8ef72c3081baea84"><div class="ttname"><a href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a></div><div class="ttdeci">#define NUM_EARS</div><div class="ttdoc">2 (true for most humans)</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00051">saf_utilities.h:51</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga3b9806b290b960cd718bac53080235ae"><div class="ttname"><a href="group___utilities.html#ga3b9806b290b960cd718bac53080235ae">matlab_fmodf</a></div><div class="ttdeci">float matlab_fmodf(float x, float y)</div><div class="ttdoc">C fmodf function, except it behaves like 'mod' in Matlab (i.e.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__misc_8c_source.html#l00187">saf_utility_misc.c:187</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga58f5d8c2b3c44c035aadc4493a790842"><div class="ttname"><a href="group___utilities.html#ga58f5d8c2b3c44c035aadc4493a790842">cxcorr</a></div><div class="ttdeci">void cxcorr(float *a, float *b, float *x_ab, size_t la, size_t lb)</div><div class="ttdoc">Calculates the cross correlation between two vectors.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__misc_8c_source.html#l00192">saf_utility_misc.c:193</a></div></div>
-<div class="ttc" id="agroup___utilities_html_ga66b301071b98e49191c801f07af83346"><div class="ttname"><a href="group___utilities.html#ga66b301071b98e49191c801f07af83346">saf_rfft_create</a></div><div class="ttdeci">void saf_rfft_create(void **const phFFT, int N)</div><div class="ttdoc">Creates an instance of saf_rfft; real&lt;-&gt;half-complex (conjugate-symmetric) FFT.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00482">saf_utility_fft.c:483</a></div></div>
-<div class="ttc" id="agroup___utilities_html_ga8f9630332cc11a6cb17128033f07ffdf"><div class="ttname"><a href="group___utilities.html#ga8f9630332cc11a6cb17128033f07ffdf">SAF_MIN</a></div><div class="ttdeci">#define SAF_MIN(a, b)</div><div class="ttdoc">Returns the minimum of the two values.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00061">saf_utilities.h:61</a></div></div>
-<div class="ttc" id="agroup___utilities_html_ga90fda008ac4a802d1c3f72450af14814"><div class="ttname"><a href="group___utilities.html#ga90fda008ac4a802d1c3f72450af14814">saf_rfft_forward</a></div><div class="ttdeci">void saf_rfft_forward(void *const hFFT, float *inputTD, float_complex *outputFD)</div><div class="ttdoc">Performs the forward-FFT operation; use for real to complex (conjugate symmetric) transformations.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00593">saf_utility_fft.c:594</a></div></div>
-<div class="ttc" id="agroup___utilities_html_gaa36181d15c604825034d54843b884616"><div class="ttname"><a href="group___utilities.html#gaa36181d15c604825034d54843b884616">saf_rfft_destroy</a></div><div class="ttdeci">void saf_rfft_destroy(void **const phFFT)</div><div class="ttdoc">Destroys an instance of saf_rfft.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00553">saf_utility_fft.c:554</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga66b301071b98e49191c801f07af83346"><div class="ttname"><a href="group___utilities.html#ga66b301071b98e49191c801f07af83346">saf_rfft_create</a></div><div class="ttdeci">void saf_rfft_create(void **const phFFT, int N)</div><div class="ttdoc">Creates an instance of saf_rfft; real&lt;-&gt;half-complex (conjugate-symmetric) FFT.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00498">saf_utility_fft.c:499</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga8f9630332cc11a6cb17128033f07ffdf"><div class="ttname"><a href="group___utilities.html#ga8f9630332cc11a6cb17128033f07ffdf">SAF_MIN</a></div><div class="ttdeci">#define SAF_MIN(a, b)</div><div class="ttdoc">Returns the minimum of the two values.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00054">saf_utilities.h:54</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga90fda008ac4a802d1c3f72450af14814"><div class="ttname"><a href="group___utilities.html#ga90fda008ac4a802d1c3f72450af14814">saf_rfft_forward</a></div><div class="ttdeci">void saf_rfft_forward(void *const hFFT, float *inputTD, float_complex *outputFD)</div><div class="ttdoc">Performs the forward-FFT operation; use for real to complex (conjugate symmetric) transformations.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00621">saf_utility_fft.c:622</a></div></div>
+<div class="ttc" id="agroup___utilities_html_gaa36181d15c604825034d54843b884616"><div class="ttname"><a href="group___utilities.html#gaa36181d15c604825034d54843b884616">saf_rfft_destroy</a></div><div class="ttdeci">void saf_rfft_destroy(void **const phFFT)</div><div class="ttdoc">Destroys an instance of saf_rfft.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__fft_8c_source.html#l00576">saf_utility_fft.c:577</a></div></div>
 <div class="ttc" id="amd__malloc_8c_html_a86ed7125e02f24d421e080d1be9ca2c4"><div class="ttname"><a href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a></div><div class="ttdeci">void * calloc1d(size_t dim1, size_t data_size)</div><div class="ttdoc">1-D calloc (same as calloc, but with error checking)</div><div class="ttdef"><b>Definition:</b> <a href="md__malloc_8c_source.html#l00068">md_malloc.c:68</a></div></div>
 <div class="ttc" id="amd__malloc_8c_html_ad1757ad65cdad25d187c81188a501c53"><div class="ttname"><a href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a></div><div class="ttdeci">void * malloc1d(size_t dim1_data_size)</div><div class="ttdoc">1-D malloc (same as malloc, but with error checking)</div><div class="ttdef"><b>Definition:</b> <a href="md__malloc_8c_source.html#l00058">md_malloc.c:58</a></div></div>
 <div class="ttc" id="asaf__externals_8h_html"><div class="ttname"><a href="saf__externals_8h.html">saf_externals.h</a></div><div class="ttdoc">Include header for SAF externals.</div></div>
@@ -440,7 +461,7 @@ $(document).ready(function(){initNavTree('saf__hrir_8c_source.html',''); initRes
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_7537ddf6938b30af6f0305d5e585e1f2.html">saf_hrir</a></li><li class="navelem"><a class="el" href="saf__hrir_8c.html">saf_hrir.c</a></li>
-    <li class="footer">Generated on Sat Jun 12 2021 11:13:58 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Jun 22 2021 15:42:30 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
