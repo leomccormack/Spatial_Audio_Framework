@@ -164,7 +164,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../dependencies/Win64/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>saf_mkl_custom.lib;libszip.lib;libzlib.lib;libhdf5.lib;libhdf5_hl.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>saf_mkl_custom_lp64.lib;libszip.lib;libzlib.lib;libhdf5.lib;libhdf5_hl.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
