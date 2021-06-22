@@ -165,14 +165,15 @@ void HRIRs2HRTFs(/* Input Arguments */
  * EQ of an (optionally weighted) average of all HRTFs (CTF), phase
  * simplification based on ITDs, or both.
  *
- * @note 'weights' (if used) should sum to 4pi, and 'itds_s' is only required
- *       if applyPhase=1.
+ * @note 'weights' (if used) should sum to 4pi. 'itds_s' and 'centreFreq' are
+ *       only required if applyPhase==1, so can be set to NULL otherwise.
  * @warning This function is NOT suitable for binaural room impulse responses
  *          (BRIRs)!
  *
  * @param[in]     N_dirs     Number of HRTFs
  * @param[in]     itds_s     HRIR ITDs (set to NULL if not needed); N_dirs x 1
- * @param[in]     centreFreq Frequency vector; N_bands x 1
+ * @param[in]     centreFreq Frequency vector (set to NULL if not needed);
+ *                           N_bands x 1
  * @param[in]     N_bands    Number of frequency bands/bins
  * @param[in]     weights    Grid weights (set to NULL if not available);
  *                           N_dirs x 1
@@ -192,26 +193,29 @@ void diffuseFieldEqualiseHRTFs(/* Input Arguments */
                                float_complex* hrtfs);
 
 /**
- * Interpolates a set of HRTFs for specified directions, defined by an amplitude
- * normalised VBAP interpolation table (see saf_vbap.h)
+ * Interpolates a set of HRTFs based on a specified interpolation table
  *
- * The interpolation is performed by applying interpolation gains to the HRTF
- * magnitudes and HRIR inter-aural time differences separately. The inter-aural
- * phase differences are then reintroduced for each frequency band.
- *
- * @note Use VBAPgainTable2InterpTable() to take a conventional energy-
- *       normalised VBAP gain table, and convert it to an amplitude-normalised
- *       interpolation table. (Basically, amplitude-normalised VBAP gains are
- *       equivalent to triangular interpolation weights).
+ * @note For 'interp_table' you can use e.g. VBAPgainTable2InterpTable() to take
+ *       a conventional energy-normalised VBAP gain table, and convert it to an
+ *       amplitude-normalised interpolation table. Note: amplitude-normalised
+ *       VBAP gains are the same as triangular interpolation weights.
+ * @note If itds!=NULL && freqVector!=NULL, then the interpolation is performed
+ *       by applying interpolation gains to the HRTF magnitudes and HRIR inter-
+ *       aural time differences (ITDs) separately. The inter-aural phase
+ *       differences (IPDs) are then reintroduced for each frequency band.
+ *       If itds==NULL || freqVector==NULL then the interpolatation is applied
+ *       directly on the complex spectra.
  * @warning This function is NOT suitable for binaural room impulse responses
  *          (BRIRs)!
  *
  * @param[in]  hrtfs         HRTFs as filterbank coeffs;
  *                           FLAT: N_bands x #NUM_EARS x N_hrtf_dirs
  * @param[in]  itds          The inter-aural time difference (ITD) for each
- *                           HRIR; N_hrtf_dirs x 1
- * @param[in]  freqVector    Frequency vector; N_bands x 1
- * @param[in]  vbap_gtable   Amplitude-Normalised VBAP gain table;
+ *                           HRIR (set to NULL if you do not want phase
+ *                           simplication to be applied); N_hrtf_dirs x 1
+ * @param[in]  freqVector    Frequency vector (set to NULL if you do not want
+ *                           phase simplication to be applied); N_bands x 1
+ * @param[in]  interp_table  Amplitude-Normalised VBAP gain table;
  *                           FLAT: N_interp_dirs x N_hrtf_dirs
  * @param[in]  N_hrtf_dirs   Number of HRTF directions
  * @param[in]  N_bands       Number of frequency bands
@@ -223,7 +227,7 @@ void interpHRTFs(/* Input Arguments */
                  float_complex* hrtfs,
                  float* itds,
                  float* freqVector,
-                 float* vbap_gtable,
+                 float* interp_table,
                  int N_hrtf_dirs,
                  int N_bands,
                  int N_interp_dirs,

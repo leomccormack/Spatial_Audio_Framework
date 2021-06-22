@@ -242,7 +242,7 @@ void interpHRTFs
     float_complex* hrtfs, /* N_bands x 2 x N_hrtf_dirs */
     float* itds,
     float* freqVector,
-    float* vbap_gtable, 
+    float* interp_table,
     int N_hrtf_dirs,
     int N_bands,
     int N_interp_dirs,
@@ -252,48 +252,70 @@ void interpHRTFs
     int i, band;
     float* itd_interp, *mags_interp, *ipd_interp;
     float** mags;
-    
-    mags = (float**)malloc1d(N_bands*sizeof(float*));
-    itd_interp = malloc1d(N_interp_dirs*sizeof(float));
-    mags_interp = malloc1d(N_interp_dirs*NUM_EARS*sizeof(float));
-    ipd_interp = malloc1d(N_interp_dirs*sizeof(float));
-    
-    /* calculate HRTF magnitudes */
-    for(band=0; band<N_bands; band++){
-        mags[band] = malloc1d(NUM_EARS * N_hrtf_dirs*sizeof(float));
-        for(i=0; i< NUM_EARS * N_hrtf_dirs ; i++)
-            mags[band][i] = cabsf(hrtfs[band*NUM_EARS * N_hrtf_dirs + i]);
-    }
-    
-    /* interpolate ITDs */
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N_interp_dirs, 1, N_hrtf_dirs, 1.0f,
-                vbap_gtable, N_hrtf_dirs,
-                itds, 1, 0.0f,
-                itd_interp, 1);
-    for(band=0; band<N_bands; band++){
-        /* interpolate HRTF magnitudes */
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_interp_dirs, NUM_EARS, N_hrtf_dirs, 1.0f,
-                    vbap_gtable, N_hrtf_dirs,
-                    mags[band], N_hrtf_dirs, 0.0f,
-                    mags_interp, NUM_EARS);
-        
-        /* convert ITDs to phase differences -pi..pi */
-        for(i=0; i<N_interp_dirs; i++)
-            ipd_interp[i] = (matlab_fmodf(2.0f*SAF_PI*freqVector[band]*itd_interp[i] + SAF_PI, 2.0f*SAF_PI) - SAF_PI)/2.0f; /* /2 here, not later */
-        
-        /* reintroduce the interaural phase differences (IPD) */
-        for(i=0; i<N_interp_dirs; i++){
-            hrtfs_interp[band*NUM_EARS*N_interp_dirs + 0* N_interp_dirs +i] = ccmulf( cmplxf(mags_interp[i*NUM_EARS+0],0.0f), cexpf(cmplxf(0.0f, ipd_interp[i])) );
-            hrtfs_interp[band*NUM_EARS*N_interp_dirs + 1* N_interp_dirs +i] = ccmulf( cmplxf(mags_interp[i*NUM_EARS+1],0.0f), cexpf(cmplxf(0.0f,-ipd_interp[i])) );
-        }
-    }
+    float_complex* interp_table_cmplx;
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
-    free(itd_interp);
-    for(band=0; band<N_bands; band++)
-        free(mags[band]);
-    free(mags);
-    free(mags_interp);
-    free(ipd_interp);
+    if(itds==NULL || freqVector==NULL){
+        /* prep */
+        interp_table_cmplx = calloc1d(N_interp_dirs*N_hrtf_dirs, sizeof(float_complex));
+        cblas_scopy(N_interp_dirs*N_hrtf_dirs, interp_table, 1, (float*)interp_table_cmplx, 2);
+
+        /* interpolate HRTF spectra */
+        for(band=0; band<N_bands; band++){
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, NUM_EARS, N_interp_dirs, N_hrtf_dirs, &calpha,
+                        &hrtfs[band*NUM_EARS*N_hrtf_dirs], N_hrtf_dirs,
+                        interp_table_cmplx, N_hrtf_dirs, &cbeta,
+                        &hrtfs_interp[band*NUM_EARS*N_interp_dirs], N_interp_dirs);
+        }
+
+        /* clean-up */
+        free(interp_table_cmplx);
+    }
+    else{
+        /* prep */
+        mags = (float**)malloc1d(N_bands*sizeof(float*));
+        itd_interp = malloc1d(N_interp_dirs*sizeof(float));
+        mags_interp = malloc1d(N_interp_dirs*NUM_EARS*sizeof(float));
+        ipd_interp = malloc1d(N_interp_dirs*sizeof(float));
+
+        /* calculate HRTF magnitudes */
+        for(band=0; band<N_bands; band++){
+            mags[band] = malloc1d(NUM_EARS * N_hrtf_dirs*sizeof(float));
+            for(i=0; i< NUM_EARS * N_hrtf_dirs ; i++)
+                mags[band][i] = cabsf(hrtfs[band*NUM_EARS * N_hrtf_dirs + i]);
+        }
+
+        /* interpolate ITDs */
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N_interp_dirs, 1, N_hrtf_dirs, 1.0f,
+                    interp_table, N_hrtf_dirs,
+                    itds, 1, 0.0f,
+                    itd_interp, 1);
+        for(band=0; band<N_bands; band++){
+            /* interpolate HRTF magnitudes */
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_interp_dirs, NUM_EARS, N_hrtf_dirs, 1.0f,
+                        interp_table, N_hrtf_dirs,
+                        mags[band], N_hrtf_dirs, 0.0f,
+                        mags_interp, NUM_EARS);
+
+            /* convert ITDs to phase differences -pi..pi */
+            for(i=0; i<N_interp_dirs; i++)
+                ipd_interp[i] = (matlab_fmodf(2.0f*SAF_PI*freqVector[band]*itd_interp[i] + SAF_PI, 2.0f*SAF_PI) - SAF_PI)/2.0f; /* /2 here, not later */
+
+            /* reintroduce the interaural phase differences (IPD) */
+            for(i=0; i<N_interp_dirs; i++){
+                hrtfs_interp[band*NUM_EARS*N_interp_dirs + 0* N_interp_dirs +i] = ccmulf( cmplxf(mags_interp[i*NUM_EARS+0],0.0f), cexpf(cmplxf(0.0f, ipd_interp[i])) );
+                hrtfs_interp[band*NUM_EARS*N_interp_dirs + 1* N_interp_dirs +i] = ccmulf( cmplxf(mags_interp[i*NUM_EARS+1],0.0f), cexpf(cmplxf(0.0f,-ipd_interp[i])) );
+            }
+        }
+
+        /* clean-up */
+        free(itd_interp);
+        for(band=0; band<N_bands; band++)
+            free(mags[band]);
+        free(mags);
+        free(mags_interp);
+        free(ipd_interp);
+    }
 }
 
 void binauralDiffuseCoherence
