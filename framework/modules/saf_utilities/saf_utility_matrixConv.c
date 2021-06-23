@@ -412,3 +412,208 @@ void saf_multiConv_apply
     }
 }
 
+/* ========================================================================== */
+/*                              Time-Varying Convolver                        */
+/* ========================================================================== */
+
+/**
+ * Data structure for the time-varying convolver.
+ */
+typedef struct _safTVConv_data {
+    int hopSize, fftSize, nBins;
+    int length_h, nPos, nCHout;
+    int numFilterBlocks;
+    void* hFFT;
+    float* x_pad, *hx_n,
+            *z_n, *z_n_last, *z_n_last2,
+            *y_n_overlap, *y_n_overlap_last,
+            *out1, *out2,
+            *fadeIn, *fadeOut,
+            *outFadeIn, *outFadeOut;
+    float_complex* X_n, *HX_n;
+    float_complex*** Hpart_f;
+    int posIdx_last, posIdx_last2;
+}safTVConv_data;
+ 
+void  saf_TVConv_create
+(
+    void ** const phTVC,
+    int hopSize,
+    float** H,         /* nPos x FLAT(nCHout x length_h) */
+    int length_h,
+    int nPos,
+    int nCHout,
+    int initIdx
+)
+{
+    *phTVC = malloc1d(sizeof(safTVConv_data));
+    safTVConv_data *h = (safTVConv_data*)(*phTVC);
+    int np, no, nb, n;
+    float* h_pad, *h_pad_2hops;
+    
+    h->hopSize = hopSize;
+    h->length_h = length_h;
+    h->nPos = nPos;
+    h->nCHout = nCHout;
+    if (initIdx < nPos){
+        h->posIdx_last = initIdx;
+        h->posIdx_last2 = initIdx;
+    } else {
+        h->posIdx_last = 0;
+        h->posIdx_last2 = 0;
+    }
+    
+    /* intialise partitioned convolution mode */
+    h->length_h = length_h;
+    h->fftSize = 2*(h->hopSize);
+    h->nBins = hopSize+1;
+    h->numFilterBlocks = (int)ceilf((float)length_h/(float)hopSize); /* number of partitions */
+    saf_assert(h->numFilterBlocks>=1, "Number of filter blocks/partitions must be at least 1");
+    
+    /* Allocate memory for buffers and perform fft on partitioned H */
+    h_pad = calloc1d(h->numFilterBlocks * hopSize, sizeof(float));
+    h_pad_2hops = calloc1d(2 * hopSize, sizeof(float));
+    h->Hpart_f = (float_complex***) malloc2d(nPos, nCHout, sizeof(float_complex*));
+    h->X_n = calloc1d(h->numFilterBlocks * (h->nBins), sizeof(float_complex));
+    h->HX_n = malloc1d(h->numFilterBlocks * (h->nBins) * sizeof(float_complex));
+    h->x_pad = calloc1d(2 * hopSize, sizeof(float));
+    h->hx_n = malloc1d(h->numFilterBlocks*(h->fftSize)*sizeof(float));
+    h->y_n_overlap = calloc1d(nCHout*hopSize, sizeof(float));
+    h->y_n_overlap_last = calloc1d(nCHout*hopSize, sizeof(float));
+    h->z_n = malloc1d((h->fftSize) * sizeof(float));
+    h->z_n_last = malloc1d((h->fftSize) * sizeof(float));
+    h->z_n_last2 = malloc1d((h->fftSize) * sizeof(float));
+    h->out1 = malloc1d(hopSize * sizeof(float));
+    h->out2 = malloc1d(hopSize * sizeof(float));
+    h->fadeIn = malloc1d(hopSize * sizeof(float));
+    h->fadeOut = malloc1d(hopSize * sizeof(float));
+    h->outFadeIn = malloc1d(hopSize * sizeof(float));
+    h->outFadeOut = malloc1d(hopSize * sizeof(float));
+    for(n=0; n<hopSize; n++){
+        h->fadeIn[n] = (float) n / (float) (hopSize-1);
+        h->fadeOut[n] = (float) (hopSize-1-n) / (float) (hopSize-1);
+    }
+    saf_rfft_create(&(h->hFFT), h->fftSize);
+    for(np=0; np<nPos; np++){
+        for(no=0; no<nCHout; no++){
+            h->Hpart_f[np][no] = malloc1d(h->numFilterBlocks*(h->nBins)*sizeof(float_complex));
+            memcpy(h_pad, &H[np][no*length_h], length_h*sizeof(float)); /* zero pad filter, to be multiple of hopsize */
+            for (nb=0; nb<h->numFilterBlocks; nb++){
+                memcpy(h_pad_2hops, &(h_pad[nb*hopSize]), hopSize*sizeof(float));
+                saf_rfft_forward(h->hFFT, h_pad_2hops, &(h->Hpart_f[np][no][nb*(h->nBins)]));
+            }
+        }
+    }
+    
+    free(h_pad);
+    free(h_pad_2hops);
+}
+
+void saf_TVConv_destroy
+(
+    void ** const phTVC
+)
+{
+    safTVConv_data *h = (safTVConv_data*)(*phTVC);
+    int np, no;
+    
+    if(h!=NULL){
+        saf_rfft_destroy(&(h->hFFT));
+        free(h->X_n);
+        free(h->x_pad);
+        free(h->z_n);
+        free(h->z_n_last);
+        free(h->z_n_last2);
+        free(h->hx_n);
+        free(h->HX_n);
+        free(h->y_n_overlap);
+        free(h->y_n_overlap_last);
+        free(h->out1);
+        free(h->out2);
+        free(h->fadeIn);
+        free(h->fadeOut);
+        free(h->outFadeIn);
+        free(h->outFadeOut);
+        for(np=0; np<h->nPos; np++){
+            for(no=0; no<h->nCHout; no++)
+                free(h->Hpart_f[np][no]);
+        }
+        free(h->Hpart_f);
+        }
+        free(h);
+        h=NULL;
+}
+
+void saf_TVConv_apply
+(
+    void * const hTVC,
+    float* inputSig,
+    float* outputSig,
+    int    posIdx
+)
+{
+    safTVConv_data *h = (safTVConv_data*)(hTVC);
+    int no, nb;
+    
+    /* zero-pad input signals and perform fft. Store in partition slot 1. */
+    memmove(&(h->X_n[1*(h->nBins)]), h->X_n, (h->numFilterBlocks-1)*(h->nBins)*sizeof(float_complex)); /* shuffle */
+    
+    cblas_scopy(h->hopSize, inputSig, 1, h->x_pad, 1);
+    saf_rfft_forward(h->hFFT, h->x_pad, h->X_n);
+    
+    /* apply convolution and inverse fft */
+    for(no=0; no<h->nCHout; no++){
+        utility_cvvmul(h->Hpart_f[posIdx][no], h->X_n, h->numFilterBlocks * (h->nBins), h->HX_n); /* This is the bulk of the CPU work */
+        for(nb=0; nb<h->numFilterBlocks; nb++)
+            saf_rfft_backward(h->hFFT, &(h->HX_n[nb*(h->nBins)]), &(h->hx_n[nb*(h->fftSize)]));
+        
+        /* output frame for this channel is the sum over all partitions */
+        memset(h->z_n, 0, (h->fftSize) * sizeof(float));
+        for(nb=0; nb<h->numFilterBlocks; nb++)
+            cblas_saxpy(h->fftSize, 1.0f, &(h->hx_n[nb*(h->fftSize)]), 1, h->z_n, 1);
+        
+        /* If position changed perform convolution at previous steps too */
+        if(posIdx != h->posIdx_last){
+            utility_cvvmul(h->Hpart_f[h->posIdx_last][no], h->X_n, h->numFilterBlocks * (h->nBins), h->HX_n);
+            for(nb=0; nb<h->numFilterBlocks; nb++)
+                saf_rfft_backward(h->hFFT, &(h->HX_n[nb*(h->nBins)]), &(h->hx_n[nb*(h->fftSize)]));
+            
+            /* output frame for this channel is the sum over all partitions */
+            memset(h->z_n_last, 0, (h->fftSize) * sizeof(float));
+            for(nb=0; nb<h->numFilterBlocks; nb++)
+                cblas_saxpy(h->fftSize, 1.0f, &(h->hx_n[nb*(h->fftSize)]), 1, h->z_n_last, 1);
+        }
+        else {
+            utility_svvcopy(h->z_n, h->fftSize, h->z_n_last);
+        }
+        if(h->posIdx_last != h->posIdx_last2){
+            utility_cvvmul(h->Hpart_f[h->posIdx_last2][no], h->X_n, h->numFilterBlocks * (h->nBins), h->HX_n);
+            for(nb=0; nb<h->numFilterBlocks; nb++)
+                saf_rfft_backward(h->hFFT, &(h->HX_n[nb*(h->nBins)]), &(h->hx_n[nb*(h->fftSize)]));
+            
+            /* output frame for this channel is the sum over all partitions */
+            memset(h->z_n_last2, 0, (h->fftSize) * sizeof(float));
+            for(nb=0; nb<h->numFilterBlocks; nb++)
+                cblas_saxpy(h->fftSize, 1.0f, &(h->hx_n[nb*(h->fftSize)]), 1, h->z_n_last2, 1);
+        }
+        else {
+            utility_svvcopy(h->z_n_last, h->fftSize, h->z_n_last2);
+        }
+    
+        /* sum with overlap buffer and copy the result to the output buffer */
+//      utility_svvadd(h->z_n, (const float*)&(h->y_n_overlap[no*(h->hopSize)]), h->hopSize, &(outputSig[no*(h->hopSize)]));
+        utility_svvadd(h->z_n_last, (const float*)&(h->y_n_overlap[no*(h->hopSize)]), h->hopSize, h->out1);
+        utility_svvadd(h->z_n_last2, (const float*)&(h->y_n_overlap_last[no*(h->hopSize)]), h->hopSize, h->out2);
+        utility_svvmul(h->out1, (const float*)h->fadeIn, h->hopSize, h->outFadeIn);
+        utility_svvmul(h->out2, (const float*)h->fadeOut, h->hopSize, h->outFadeOut);
+
+        utility_svvadd(h->outFadeIn, (const float*)h->outFadeOut, h->hopSize, &(outputSig[no*(h->hopSize)]));
+        
+        /* for next iteration: */
+        cblas_scopy(h->hopSize, &(h->z_n[h->hopSize]), 1, &(h->y_n_overlap[no*(h->hopSize)]), 1);
+        cblas_scopy(h->hopSize, &(h->z_n_last[h->hopSize]), 1, &(h->y_n_overlap_last[no*(h->hopSize)]), 1);
+    }
+    
+    h->posIdx_last2 = h->posIdx_last;
+    h->posIdx_last = posIdx;
+}

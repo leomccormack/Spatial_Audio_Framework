@@ -69,5 +69,8 @@ void tvconv_setMinMaxDimensions(void* const hTVCnv)
                     pData->maxDimensions[d] = pData->positions[i][d];
             }
         }
+        /* resetting current position to the start */
+        for(d = 0; d < NUM_DIMENSIONS; d++)
+            pData->position[d] = pData->minDimensions[d];
     }
 }

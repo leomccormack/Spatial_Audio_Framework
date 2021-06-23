@@ -95,11 +95,6 @@ void tvconv_checkReInit(void* const hTVCnv);
 void tvconv_setFiltersAndPositions(void* const hTVCnv);
 
 /**
- * Enable (1), disable (0), partitioned convolution
- */
-void tvconv_setEnablePart(void* const hTVCnv, int newState);
-
-/**
  * Sets the number of input channels.
  *
  * @note The loaded wav data channels are divided by the number of channels
@@ -107,7 +102,6 @@ void tvconv_setEnablePart(void* const hTVCnv, int newState);
  *       filters to apply to each input channel to acquire the corresponding
  *       output channel
  */
-void tvconv_setNumInputChannels(void* const hTVCnv, int newValue);
 
 void tvconv_setSofaFilePath(void* const hTVCnv, const char* path);
 
@@ -123,11 +117,6 @@ void tvconv_setPosition(void* const hTVCnv, int dim, float position);
  */
 int tvconv_getFrameSize(void);
 
-/**
- * Returns a flag indicating whether partitioned convolution is enabled (1) or
- * disabled (0)
- */
-int tvconv_getEnablePart(void* const hTVCnv);
     
 /**
  * Returns the number input channels

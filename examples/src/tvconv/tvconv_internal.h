@@ -67,40 +67,24 @@ typedef struct _tvconv
     float** inputFrameTD;
     float** outputFrameTD;
     
-    /* overlap buffers */
-    float** overlapTD;
-    float** overlapTD_Last;
-    float* fadeIn;
-    float* fadeOut;
-    
     /* internal */
-    void** hMatrixConvs;     /**< saf_matrixConv handle */
+    void* hTVConv;     /**< saf_TVConv handle */
     int hostBlockSize;     /**< current host block size */
     int hostBlockSize_clamped; /**< Clamped between MIN and #MAX_FRAME_SIZE */
-    //float* filters;        /**< the matrix of filters; FLAT: nOutputChannels x nInputChannels x filter_length */
-    //int nfilters;          /**< the number of filters (nOutputChannels x nInputChannels) */
-    //int input_wav_length;  /**< length of the wav files loaded in samples (inputs are concatenated) */
-    //int filter_length;     /**< length of the filters (i.e. input_wav_length/nInputChannels) */
-    //int filter_fs;         /**< current samplerate of the filters */
     int host_fs;           /**< current samplerate of the host */
     int reInitFilters;     /**< FLAG: 0: do not reinit, 1: reinit, 2: reinit in progress */
     int nOutputChannels;   /**< number of output channels (same as the number of channels in the loaded wav) */
     
-    
-    //void* hMatrixconv_data;
     int ir_fs;
     float** irs;   /**< npositionsx x (FLAT: nfilters x filter_length) */
     int nIrChannels; /** < number of filters per position */
     int ir_length;
     /* positions */
     vectorND* positions; /** < npositions x 3 */
-    vectorND* positions_Last;
     int nPositions;
     vectorND minDimensions;
     vectorND maxDimensions;
     int position_idx;
-    int position_idx_Last;
-    int position_idx_Last2;
     
     /* flags/status */
     CODEC_STATUS codecStatus;
@@ -110,7 +94,6 @@ typedef struct _tvconv
     
     /* user parameters */
     int nInputChannels;        /**< number of input channels */
-    int enablePartitionedConv; /**< 0: disabled, 1: enabled */
     vectorND position;    
     char* sofa_filepath;
 

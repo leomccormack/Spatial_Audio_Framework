@@ -134,6 +134,59 @@ void saf_multiConv_apply(/* Input Arguments */
                          /* Output Arguments */
                          float* outputSigs);
 
+/* ========================================================================== */
+/*                              Time-Varying Convolver                        */
+/* ========================================================================== */
+
+/**
+ * Creates an instance of matrixConv
+ *
+ * This is a matrix convolver intended for block-by-block processing.
+ *
+ * @test test__saf_matrixConv()
+ *
+ * @param[in] phMC        (&) address of matrixConv handle
+ * @param[in] hopSize     Hop size in samples.
+ * @param[in] H           Time-domain filters; FLAT: nCHout x nCHin x length_h
+ * @param[in] length_h    Length of the filters
+ * @param[in] nCHin       Number of input channels
+ * @param[in] nCHout      Number of output channels
+ * @param[in] usePartFLAG '0': normal fft-based convolution, '1': fft-based
+ *                        partitioned convolution
+ */
+void saf_TVConv_create(/* Input Arguments */
+                           void ** const phTVC,
+                           int hopSize,
+                           float** H,
+                           int length_h,
+                           int nPos,
+                           int nCHout,
+                           int initIdx);
+
+/**
+ * Destroys an instance of matrixConv
+ *
+ * @param[in] phMC (&) address of matrixConv handle
+ */
+void saf_TVConv_destroy(/* Input Arguments */
+                            void ** const phTVC);
+
+/**
+ * Performs the matrix convolution.
+ *
+ * @note If the number of input or output channels, the filters, or the hopsize
+ *       need to change: simply destroy and re-create the matrixConv instance.
+ *
+ * @param[in]  hMC        matrixConv handle
+ * @param[in]  inputSigs  Input signals;  FLAT: nCHin  x hopSize
+ * @param[out] outputSigs Output signals; FLAT: nCHout x hopSize
+ */
+void saf_TVConv_apply(/* Input Arguments */
+                          void * const hTVC,
+                          float* inputSigs,
+                          /* Output Arguments */
+                          float* outputSigs,
+                          int posIdx);
 
 #ifdef __cplusplus
 }/* extern "C" */
