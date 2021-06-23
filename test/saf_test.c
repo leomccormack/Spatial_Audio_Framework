@@ -72,6 +72,7 @@ int main_test(void) {
     UNITY_BEGIN();
     
     /* run each unit test */
+    RUN_TEST(test__resampleHRIRs);
     RUN_TEST(test__delaunaynd);
     RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
@@ -137,6 +138,43 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__resampleHRIRs(void){
+    float* hrirs_out, *hrirs_tmp;
+    int i, j, target_fs, hrirs_out_len, hrirs_tmp_len;
+
+    /* Config */
+    const float acceptedTolerance = 0.05f;
+
+    /* Test 1 */
+//    target_fs = 48000; /* i.e., no actual resampling */
+//    hrirs_out = NULL;
+//    resampleHRIRs((float*)__default_hrirs, __default_N_hrir_dirs, __default_hrir_len, __default_hrir_fs,
+//                  target_fs, 0 /*do not zero pad*/, &hrirs_out, &hrirs_out_len);
+//    for(i=0; i<__default_N_hrir_dirs*NUM_EARS; i++) /* Loop over IRs */
+//        for(j=0; j<SAF_MIN(__default_hrir_len,hrirs_out_len); j++) /* Loop over Samples */
+//            TEST_ASSERT_TRUE(fabsf(((float*)__default_hrirs)[i*__default_hrir_len+j] - hrirs_out[i*hrirs_out_len+j]) <= acceptedTolerance);
+//    TEST_ASSERT_TRUE(__default_hrir_len==hrirs_out_len);
+//    free(hrirs_out);
+
+    /* Test 2 */
+    target_fs = 44100;
+    hrirs_tmp = NULL;
+    resampleHRIRs((float*)__default_hrirs, __default_N_hrir_dirs, __default_hrir_len, __default_hrir_fs,
+                  target_fs, 0 /*do not zero pad*/, &hrirs_tmp, &hrirs_tmp_len);
+    target_fs = 48000;
+    hrirs_out = NULL;
+    resampleHRIRs(hrirs_tmp, __default_N_hrir_dirs, hrirs_tmp_len, 44100,
+                  target_fs, 0 /*do not zero pad*/, &hrirs_out, &hrirs_out_len);
+
+
+    for(i=0; i<__default_N_hrir_dirs*NUM_EARS; i++) /* Loop over IRs */
+        for(j=0; j<SAF_MIN(__default_hrir_len,hrirs_out_len); j++) /* Loop over Samples */
+            TEST_ASSERT_TRUE(fabsf(((float*)__default_hrirs)[i*__default_hrir_len+j] - hrirs_out[i*hrirs_out_len+j]) <= acceptedTolerance);
+    TEST_ASSERT_TRUE(__default_hrir_len==hrirs_out_len);
+    free(hrirs_out);
+
+}
 
 void test__delaunaynd(void){
     int nMesh;

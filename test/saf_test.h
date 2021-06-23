@@ -21,6 +21,9 @@ int main_test(void);
 /* ========================================================================== */
 
 /**
+ * Testing that resampleHRIRs() is resampling adequately */
+void test__resampleHRIRs(void);
+/**
  * Testing that the delaunaynd() function can triangulate basic shapes */
 void test__delaunaynd(void);
 /**

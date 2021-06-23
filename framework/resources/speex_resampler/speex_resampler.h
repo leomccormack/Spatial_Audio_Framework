@@ -40,7 +40,7 @@
 #define SPEEX_RESAMPLER_H
 
 #define OUTSIDE_SPEEX
-#define RANDOM_PREFIX saf
+#define RANDOM_PREFIX speex_
 
 #ifdef OUTSIDE_SPEEX
 

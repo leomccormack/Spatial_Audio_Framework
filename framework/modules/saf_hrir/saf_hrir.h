@@ -259,6 +259,18 @@ void binauralDiffuseCoherence(/* Input Arguments */
                               /* Output Arguments */
                               float* HRTFcoh);
 
+/** */
+void resampleHRIRs(/* Input Arguments */
+                   float* hrirs_in,
+                   int hrirs_N_dirs,
+                   int hrirs_in_len,
+                   int hrirs_in_fs,
+                   int hrirs_out_fs,
+                   int padToNextPow2,
+                   /* Output Arguments */
+                   float** hrirs_out,
+                   int* hrirs_out_len);
+
 
 #ifdef __cplusplus
 } /* extern "C" */

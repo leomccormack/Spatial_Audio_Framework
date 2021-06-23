@@ -1018,7 +1018,7 @@ EXPORT int speex_resampler_process_int(SpeexResamplerState *st, spx_uint32_t cha
      }
 
      for (j=0;j<(int)(ochunk+omagic);++j)
-#ifdef FIXED_POINT
+#ifdef FIXED_POINTf
         out[j*ostride_save] = ystack[j];
 #else
         out[j*ostride_save] = WORD2INT(ystack[j]);
