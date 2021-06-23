@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		506DE0D1268311B700BFD406 /* resample.c in Sources */ = {isa = PBXBuildFile; fileRef = 506DE0CE268311B700BFD406 /* resample.c */; };
 		508CC48024EAA0A4006DF0C7 /* saf_tracker_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 508CC47C24EAA0A4006DF0C7 /* saf_tracker_internal.c */; };
 		508CC48124EAA0A4006DF0C7 /* saf_tracker.c in Sources */ = {isa = PBXBuildFile; fileRef = 508CC47E24EAA0A4006DF0C7 /* saf_tracker.c */; };
 		508FBDA12456D31F0076C205 /* unity.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBD9E2456D31F0076C205 /* unity.c */; };
@@ -99,6 +100,13 @@
 
 /* Begin PBXFileReference section */
 		506254B92456BCCB00C304A7 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
+		506DE0CE268311B700BFD406 /* resample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resample.c; sourceTree = "<group>"; };
+		506DE0CF268311B700BFD406 /* resample_neon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resample_neon.h; sourceTree = "<group>"; };
+		506DE0D0268311B700BFD406 /* resample_sse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resample_sse.h; sourceTree = "<group>"; };
+		506DE0D32683126900BFD406 /* speex_resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = speex_resampler.h; sourceTree = "<group>"; };
+		506DE0D5268313FC00BFD406 /* arch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = arch.h; sourceTree = "<group>"; };
+		506DE0D7268314A500BFD406 /* speexdsp_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = speexdsp_types.h; sourceTree = "<group>"; };
+		506DE0D92683151300BFD406 /* os_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = os_support.h; sourceTree = "<group>"; };
 		508CC47C24EAA0A4006DF0C7 /* saf_tracker_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_tracker_internal.c; sourceTree = "<group>"; };
 		508CC47D24EAA0A4006DF0C7 /* saf_tracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_tracker.h; sourceTree = "<group>"; };
 		508CC47E24EAA0A4006DF0C7 /* saf_tracker.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_tracker.c; sourceTree = "<group>"; };
@@ -294,6 +302,20 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		506DE0CD268311B700BFD406 /* speex_resampler */ = {
+			isa = PBXGroup;
+			children = (
+				506DE0D5268313FC00BFD406 /* arch.h */,
+				506DE0D92683151300BFD406 /* os_support.h */,
+				506DE0D32683126900BFD406 /* speex_resampler.h */,
+				506DE0CE268311B700BFD406 /* resample.c */,
+				506DE0CF268311B700BFD406 /* resample_neon.h */,
+				506DE0D0268311B700BFD406 /* resample_sse.h */,
+				506DE0D7268314A500BFD406 /* speexdsp_types.h */,
+			);
+			path = speex_resampler;
+			sourceTree = "<group>";
+		};
 		508CC47B24EAA0A4006DF0C7 /* saf_tracker */ = {
 			isa = PBXGroup;
 			children = (
@@ -363,6 +385,7 @@
 				50E36019249BDDCB00B74C25 /* convhull_3d */,
 				50E3600F249BDDCB00B74C25 /* kissFFT */,
 				50E3600C249BDDCB00B74C25 /* md_malloc */,
+				506DE0CD268311B700BFD406 /* speex_resampler */,
 			);
 			path = resources;
 			sourceTree = "<group>";
@@ -849,6 +872,7 @@
 				50E36065249BDDCC00B74C25 /* saf_utility_bessel.c in Sources */,
 				50E3DEE024C1C80C00589B17 /* pitch_shifter.c in Sources */,
 				50E3DEF424C1D3A900589B17 /* decorrelator_internal.c in Sources */,
+				506DE0D1268311B700BFD406 /* resample.c in Sources */,
 				50E36075249BDDCC00B74C25 /* saf_sh_internal.c in Sources */,
 				50E3DEE124C1C80C00589B17 /* rotator_internal.c in Sources */,
 				50E36078249BDDCC00B74C25 /* saf_vbap.c in Sources */,

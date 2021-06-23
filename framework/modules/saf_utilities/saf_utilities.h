@@ -166,10 +166,17 @@
 #include "../../resources/kissFFT/kiss_fftr.h"
 #include "../../resources/kissFFT/kiss_fft.h"
 
-/* For Computing 3-D convex hulls.
+/* For computing N-dimensional convex hulls and Delaunay meshes.
  * The original source code can be found here (MIT license):
- *   https://github.com/leomccormack/convhull_3d */
+ *   https://github.com/leomccormack/convhull_3d
+ */
 #include "../../resources/convhull_3d/convhull_3d.h"
+
+/* For resampling audio and FIR filters.
+ * The original source code can be found here (BSD-3-Clause license):
+ *   https://github.com/xiph/speexdsp/
+ */
+#include "../../resources/speex_resampler/speex_resampler.h"
 
 /* For cross-platform complex number support */
 #include "saf_utility_complex.h"
@@ -180,8 +187,10 @@
 /* Filter coefficients and filterbanks (IIR/FIR) */
 #include "saf_utility_filters.h"
 
-/* Many handy linear algebra functions based on CBLAS/LAPACK, and some based on
- * optimised proprietary Intel MKL and Apple Accelerate routines */
+/* Many handy linear algebra functions based on CBLAS/LAPACK. Additionally, some
+ * optimised proprietary Intel MKL and Apple Accelerate routines are employed
+ * (for e.g. vector-vector products, addition etc.) if available; otherwise
+ * reverting to default implementations. */
 #include "saf_utility_veclib.h"
 
 /* For computing spherical/cylindrical Bessel and Hankel functions and their
