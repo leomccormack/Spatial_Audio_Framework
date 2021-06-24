@@ -10,4 +10,5 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/kissFFT/kiss_fft.c
     ${CMAKE_CURRENT_SOURCE_DIR}/kissFFT/kiss_fftr.c
     ${CMAKE_CURRENT_SOURCE_DIR}/md_malloc/md_malloc.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/speex_resampler/arch.h    ${CMAKE_CURRENT_SOURCE_DIR}/speex_resampler/os_support.h    ${CMAKE_CURRENT_SOURCE_DIR}/speex_resampler/resample_neon.h    ${CMAKE_CURRENT_SOURCE_DIR}/speex_resampler/resample_sse.h    ${CMAKE_CURRENT_SOURCE_DIR}/speex_resampler/resample.c    ${CMAKE_CURRENT_SOURCE_DIR}/speex_resampler/speex_resampler.h    ${CMAKE_CURRENT_SOURCE_DIR}/speex_resampler/speexdsp_types.h
 )
