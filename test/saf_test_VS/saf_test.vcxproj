@@ -239,6 +239,12 @@
     <ClInclude Include="..\..\framework\resources\kissFFT\kiss_fftr.h" />
     <ClInclude Include="..\..\framework\resources\kissFFT\_kiss_fft_guts.h" />
     <ClInclude Include="..\..\framework\resources\md_malloc\md_malloc.h" />
+    <ClInclude Include="..\..\framework\resources\speex_resampler\arch.h" />
+    <ClInclude Include="..\..\framework\resources\speex_resampler\os_support.h" />
+    <ClInclude Include="..\..\framework\resources\speex_resampler\resample_neon.h" />
+    <ClInclude Include="..\..\framework\resources\speex_resampler\resample_sse.h" />
+    <ClInclude Include="..\..\framework\resources\speex_resampler\speexdsp_types.h" />
+    <ClInclude Include="..\..\framework\resources\speex_resampler\speex_resampler.h" />
     <ClInclude Include="..\saf_test.h" />
     <ClInclude Include="..\timer\timer.h" />
     <ClInclude Include="..\unity\unity.h" />
@@ -313,6 +319,7 @@
     <ClCompile Include="..\..\framework\resources\kissFFT\kiss_fft.c" />
     <ClCompile Include="..\..\framework\resources\kissFFT\kiss_fftr.c" />
     <ClCompile Include="..\..\framework\resources\md_malloc\md_malloc.c" />
+    <ClCompile Include="..\..\framework\resources\speex_resampler\resample.c" />
     <ClCompile Include="..\saf_test.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

@@ -381,7 +381,7 @@ void resampleHRIRs
 
     /* New HRIR length */
     resample_factor = (float)hrirs_out_fs / (float)hrirs_in_fs;
-    (*hrirs_out_len) = ceilf((float)hrirs_in_len * resample_factor);
+    (*hrirs_out_len) = (int)ceilf((float)hrirs_in_len * resample_factor);
     hrirs_out_ld = padToNextPow2 ? (int)pow(2.0, ceil(log((double)(*hrirs_out_len))/log(2.0))) : (*hrirs_out_len);
 
     /* Initialise SPEEX resampler */

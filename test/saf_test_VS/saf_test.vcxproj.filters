@@ -121,6 +121,9 @@
     <Filter Include="examples\src\spreader">
       <UniqueIdentifier>{ccf5bf3c-6813-4f3a-ae39-cb1bfa556211}</UniqueIdentifier>
     </Filter>
+    <Filter Include="framework\resources\speex_resampler">
+      <UniqueIdentifier>{ff384652-8bc6-455b-9088-3f4d6fa963e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\timer\timer.h">
@@ -348,6 +351,24 @@
     <ClInclude Include="..\..\examples\src\spreader\spreader_internal.h">
       <Filter>examples\src\spreader</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\framework\resources\speex_resampler\arch.h">
+      <Filter>framework\resources\speex_resampler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\speex_resampler\os_support.h">
+      <Filter>framework\resources\speex_resampler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\speex_resampler\resample_neon.h">
+      <Filter>framework\resources\speex_resampler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\speex_resampler\resample_sse.h">
+      <Filter>framework\resources\speex_resampler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\speex_resampler\speex_resampler.h">
+      <Filter>framework\resources\speex_resampler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\speex_resampler\speexdsp_types.h">
+      <Filter>framework\resources\speex_resampler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\timer\timer.c">
@@ -565,6 +586,9 @@
     </ClCompile>
     <ClCompile Include="..\..\examples\src\spreader\spreader_internal.c">
       <Filter>examples\src\spreader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\speex_resampler\resample.c">
+      <Filter>framework\resources\speex_resampler</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

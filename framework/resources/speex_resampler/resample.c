@@ -302,7 +302,7 @@ static spx_word16_t sinc(float cutoff, float x, int N, const struct FuncDef *win
    else if (fabs(x) > .5*N)
       return 0;
    /*FIXME: Can it really be any slower than this? */
-   return cutoff*sin(M_PI*xx)/(M_PI*xx) * compute_func(fabs(2.*x/N), window_func);
+   return cutoff*sinf((float)M_PI*xx)/((float)M_PI*xx) * (float)compute_func(fabsf(2.0f*x/(float)N), window_func);
 }
 #endif
 
@@ -332,7 +332,7 @@ static void cubic_coef(spx_word16_t frac, spx_word16_t interp[4])
    /*interp[2] = 1.f - 0.5f*frac - frac*frac + 0.5f*frac*frac*frac;*/
    interp[3] = -0.33333f*frac + 0.5f*frac*frac - 0.16667f*frac*frac*frac;
    /* Just to make sure we don't have rounding problems */
-   interp[2] = 1.-interp[0]-interp[1]-interp[3];
+   interp[2] = 1.f-interp[0]-interp[1]-interp[3];
 }
 #endif
 
@@ -436,7 +436,7 @@ static int resampler_basic_direct_double(SpeexResamplerState *st, spx_uint32_t c
       sum = inner_product_double(sinct, iptr, N);
 #endif
 
-      out[out_stride * out_sample++] = PSHR32(sum, 15);
+      out[out_stride * out_sample++] = (spx_word16_t)PSHR32(sum, 15);
       last_sample += int_advance;
       samp_frac_num += frac_advance;
       if (samp_frac_num >= den_rate)
@@ -553,7 +553,7 @@ static int resampler_basic_interpolate_double(SpeexResamplerState *st, spx_uint3
       }
 
       cubic_coef(frac, interp);
-      sum = MULT16_32_Q15(interp[0],accum[0]) + MULT16_32_Q15(interp[1],accum[1]) + MULT16_32_Q15(interp[2],accum[2]) + MULT16_32_Q15(interp[3],accum[3]);
+      sum = (spx_word32_t)(MULT16_32_Q15(interp[0],accum[0]) + MULT16_32_Q15(interp[1],accum[1]) + MULT16_32_Q15(interp[2],accum[2]) + MULT16_32_Q15(interp[3],accum[3]));
 #else
       cubic_coef(frac, interp);
       sum = interpolate_product_double(iptr, st->sinc_table + st->oversample + 4 - offset - 2, N, st->oversample, interp);
