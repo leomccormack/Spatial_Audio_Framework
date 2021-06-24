@@ -18,6 +18,7 @@ v1.2.0
    traded for faster computations
  - A number of other minor and some significant optimisations throughout the framework
  - Improved doxygen documentation for the examples
+ - Added resampleHRIR() function to saf_hrir module, which employs the SPEEX algorithm.
 
 Breaking changes:
 

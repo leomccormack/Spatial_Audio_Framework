@@ -2236,7 +2236,7 @@ void utility_sglslv
 {
     utility_sglslv_data *h;
     veclib_int n = dim, nrhs = nCol, lda = dim, ldb = dim, info;
-#if !defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
+#if !defined(SAF_VECLIB_USE_LAPACKE_INTERFACE) && !(defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64))
     veclib_int i, j;
 #endif
 
