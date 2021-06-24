@@ -1,0 +1,10 @@
+var dir_e14e50a7237de0f4a7b9a6a212f89e45 =
+[
+    [ "arch.h", "arch_8h.html", "arch_8h" ],
+    [ "os_support.h", "os__support_8h_source.html", null ],
+    [ "resample.c", "resample_8c_source.html", null ],
+    [ "resample_neon.h", "resample__neon_8h.html", null ],
+    [ "resample_sse.h", "resample__sse_8h.html", "resample__sse_8h" ],
+    [ "speex_resampler.h", "speex__resampler_8h_source.html", null ],
+    [ "speexdsp_types.h", "speexdsp__types_8h.html", null ]
+];

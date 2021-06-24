@@ -140,14 +140,23 @@ float *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbinauraliser__data.html#a484d2463f3b1f2c84f5afcdcc4755c4a">N_hrir_dirs</a></td></tr>
 <tr class="memdesc:a484d2463f3b1f2c84f5afcdcc4755c4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of HRIR directions in the current sofa file <br /></td></tr>
 <tr class="separator:a484d2463f3b1f2c84f5afcdcc4755c4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13d53d4d9f34dca1ee38711c2bd0f18d"><td class="memItemLeft" align="right" valign="top"><a id="a13d53d4d9f34dca1ee38711c2bd0f18d"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbinauraliser__data.html#a13d53d4d9f34dca1ee38711c2bd0f18d">hrir_len</a></td></tr>
-<tr class="memdesc:a13d53d4d9f34dca1ee38711c2bd0f18d"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of the HRIRs, this can be truncated, see "saf_sofa_reader.h" <br /></td></tr>
-<tr class="separator:a13d53d4d9f34dca1ee38711c2bd0f18d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24595af6dee32275ac51079cf1b3ca35"><td class="memItemLeft" align="right" valign="top"><a id="a24595af6dee32275ac51079cf1b3ca35"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbinauraliser__data.html#a24595af6dee32275ac51079cf1b3ca35">hrir_fs</a></td></tr>
-<tr class="memdesc:a24595af6dee32275ac51079cf1b3ca35"><td class="mdescLeft">&#160;</td><td class="mdescRight">sampling rate of the HRIRs, should ideally match the host sampling rate, although not required <br /></td></tr>
-<tr class="separator:a24595af6dee32275ac51079cf1b3ca35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab85a642a830f5b80aeb89247312d9691"><td class="memItemLeft" align="right" valign="top"><a id="ab85a642a830f5b80aeb89247312d9691"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbinauraliser__data.html#ab85a642a830f5b80aeb89247312d9691">hrir_loaded_len</a></td></tr>
+<tr class="memdesc:ab85a642a830f5b80aeb89247312d9691"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of the loaded HRIRs, in samples <br /></td></tr>
+<tr class="separator:ab85a642a830f5b80aeb89247312d9691"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0940e2f511292053c6f7a821aefada7c"><td class="memItemLeft" align="right" valign="top"><a id="a0940e2f511292053c6f7a821aefada7c"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbinauraliser__data.html#a0940e2f511292053c6f7a821aefada7c">hrir_runtime_len</a></td></tr>
+<tr class="memdesc:a0940e2f511292053c6f7a821aefada7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of the HRIRs being used for processing (after any resampling), in samples <br /></td></tr>
+<tr class="separator:a0940e2f511292053c6f7a821aefada7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae26b562f3456eb51ff8d164e18c238c3"><td class="memItemLeft" align="right" valign="top"><a id="ae26b562f3456eb51ff8d164e18c238c3"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbinauraliser__data.html#ae26b562f3456eb51ff8d164e18c238c3">hrir_loaded_fs</a></td></tr>
+<tr class="memdesc:ae26b562f3456eb51ff8d164e18c238c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">sampling rate of the loaded HRIRs <br  />
+ <br /></td></tr>
+<tr class="separator:ae26b562f3456eb51ff8d164e18c238c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e0ea3bc7601d93e5a19ae94c7580018"><td class="memItemLeft" align="right" valign="top"><a id="a6e0ea3bc7601d93e5a19ae94c7580018"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbinauraliser__data.html#a6e0ea3bc7601d93e5a19ae94c7580018">hrir_runtime_fs</a></td></tr>
+<tr class="memdesc:a6e0ea3bc7601d93e5a19ae94c7580018"><td class="mdescLeft">&#160;</td><td class="mdescRight">sampling rate of the HRIRs being used for processing (after any resampling) <br /></td></tr>
+<tr class="separator:a6e0ea3bc7601d93e5a19ae94c7580018"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81b8fac03ca7b0b38023cbf4f6d245f4"><td class="memItemLeft" align="right" valign="top"><a id="a81b8fac03ca7b0b38023cbf4f6d245f4"></a>
 float *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbinauraliser__data.html#a81b8fac03ca7b0b38023cbf4f6d245f4">weights</a></td></tr>
 <tr class="memdesc:a81b8fac03ca7b0b38023cbf4f6d245f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integration weights for the HRIR measurement grid. <br /></td></tr>
@@ -300,7 +309,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structbinauraliser__data.html">binauraliser_data</a></li>
-    <li class="footer">Generated on Wed Jun 23 2021 06:12:52 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Thu Jun 24 2021 11:58:33 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

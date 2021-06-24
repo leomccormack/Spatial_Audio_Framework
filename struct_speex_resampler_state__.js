@@ -1,0 +1,27 @@
+var struct_speex_resampler_state__ =
+[
+    [ "buffer_size", "struct_speex_resampler_state__.html#ac8e1eb4e657270e58761905ca81c5be0", null ],
+    [ "cutoff", "struct_speex_resampler_state__.html#af1b68e45cb5c0b556eaacdc075b643b1", null ],
+    [ "den_rate", "struct_speex_resampler_state__.html#ac8b57238e01d1c726da1c1f3eb87099b", null ],
+    [ "filt_len", "struct_speex_resampler_state__.html#a6e87d7ab3cdfae6742cdf7735087e876", null ],
+    [ "frac_advance", "struct_speex_resampler_state__.html#aa21fbb435665fa74b644e56855c6fd03", null ],
+    [ "in_rate", "struct_speex_resampler_state__.html#a1bd17fa5c955a71c631700d6910b454f", null ],
+    [ "in_stride", "struct_speex_resampler_state__.html#a4adbb4ad7cd228c0bac93d086e6a5bfe", null ],
+    [ "initialised", "struct_speex_resampler_state__.html#a092e89e2dff932c0ef8e0bc75502a84c", null ],
+    [ "int_advance", "struct_speex_resampler_state__.html#ada9937dd33e93795a57d56cdb32a1cdf", null ],
+    [ "last_sample", "struct_speex_resampler_state__.html#a5aed27f2f3bb3adef388b16400611307", null ],
+    [ "magic_samples", "struct_speex_resampler_state__.html#a490e3f3c09ab684759f94559c2b9a5e8", null ],
+    [ "mem", "struct_speex_resampler_state__.html#aca087deb3c65cb1147bc3cdcb9d2403c", null ],
+    [ "mem_alloc_size", "struct_speex_resampler_state__.html#aea3480be8708f43a7db47dd4cb3b3279", null ],
+    [ "nb_channels", "struct_speex_resampler_state__.html#a18aca2e18b2f1fd9e3b304a566752709", null ],
+    [ "num_rate", "struct_speex_resampler_state__.html#a1c89c2db97e41ecef7c075ba6d61bbcb", null ],
+    [ "out_rate", "struct_speex_resampler_state__.html#aae0de329ecb38bbe6cf3a2be39534eae", null ],
+    [ "out_stride", "struct_speex_resampler_state__.html#afe41340f0dbb142b7f1673668fdf791a", null ],
+    [ "oversample", "struct_speex_resampler_state__.html#afa3df8a3bd26709a34069836189e61db", null ],
+    [ "quality", "struct_speex_resampler_state__.html#acd0a914eb2565bf24e17ed7d347b63a3", null ],
+    [ "resampler_ptr", "struct_speex_resampler_state__.html#a504de6822b4950b67e3e4961bbf9f929", null ],
+    [ "samp_frac_num", "struct_speex_resampler_state__.html#aea90f6f26ba3f98051d2b355aca391bd", null ],
+    [ "sinc_table", "struct_speex_resampler_state__.html#ae5452f1c97ecf3def2e2c12ced3c2142", null ],
+    [ "sinc_table_length", "struct_speex_resampler_state__.html#abceb122aad69b84c01d3194fe7bb3f2a", null ],
+    [ "started", "struct_speex_resampler_state__.html#a2bf1a577eb48bdc3a65e9bd7e96017d7", null ]
+];

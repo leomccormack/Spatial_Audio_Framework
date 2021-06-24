@@ -31,6 +31,7 @@ var saf__test_8c =
     [ "test__quaternion", "saf__test_8c.html#affac516deac2b319765430a4088f8a07", null ],
     [ "test__real2complexSHMtx", "saf__test_8c.html#a073d3c584fce77cc00fd2d11237436d9", null ],
     [ "test__realloc2d_r", "saf__test_8c.html#a172905f574f05bb5b156ca40d617ab62", null ],
+    [ "test__resampleHRIRs", "saf__test_8c.html#afe34c5886629d3cfdc0d9b6ad87b7ea8", null ],
     [ "test__saf_fft", "saf__test_8c.html#a112cd16c0fc8cc3658050a45c607cf0d", null ],
     [ "test__saf_matrixConv", "saf__test_8c.html#ad992431654877a596b057b67120c3cac", null ],
     [ "test__saf_rfft", "saf__test_8c.html#a61e4197e4ad12c1669f952118a37c17b", null ],

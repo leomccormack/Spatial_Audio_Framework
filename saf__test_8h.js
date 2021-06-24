@@ -28,6 +28,7 @@ var saf__test_8h =
     [ "test__quaternion", "saf__test_8h.html#affac516deac2b319765430a4088f8a07", null ],
     [ "test__real2complexSHMtx", "saf__test_8h.html#a073d3c584fce77cc00fd2d11237436d9", null ],
     [ "test__realloc2d_r", "saf__test_8h.html#a172905f574f05bb5b156ca40d617ab62", null ],
+    [ "test__resampleHRIRs", "saf__test_8h.html#afe34c5886629d3cfdc0d9b6ad87b7ea8", null ],
     [ "test__saf_example_ambi_bin", "saf__test_8h.html#a94e98c02477f75870c18dde3623c51d8", null ],
     [ "test__saf_example_ambi_dec", "saf__test_8h.html#aed4764878fa6c3dc8141e4a234c1a8cd", null ],
     [ "test__saf_example_ambi_enc", "saf__test_8h.html#a91ddc76de989bca60ca1baf119332152", null ],

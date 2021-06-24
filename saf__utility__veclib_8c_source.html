@@ -2276,7 +2276,7 @@ $(document).ready(function(){initNavTree('saf__utility__veclib_8c_source.html','
 <div class="line"><a name="l02236"></a><span class="lineno"> 2236</span>&#160;{</div>
 <div class="line"><a name="l02237"></a><span class="lineno"> 2237</span>&#160;    <a class="code" href="structutility__sglslv__data.html">utility_sglslv_data</a> *h;</div>
 <div class="line"><a name="l02238"></a><span class="lineno"> 2238</span>&#160;    <a class="code" href="saf__utility__veclib_8c.html#ac904704865eb4702c3656aca0888558c">veclib_int</a> n = dim, nrhs = nCol, lda = dim, ldb = dim, info;</div>
-<div class="line"><a name="l02239"></a><span class="lineno"> 2239</span>&#160;<span class="preprocessor">#if !defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)</span></div>
+<div class="line"><a name="l02239"></a><span class="lineno"> 2239</span>&#160;<span class="preprocessor">#if !defined(SAF_VECLIB_USE_LAPACKE_INTERFACE) &amp;&amp; !(defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64))</span></div>
 <div class="line"><a name="l02240"></a><span class="lineno"> 2240</span>&#160;    <a class="code" href="saf__utility__veclib_8c.html#ac904704865eb4702c3656aca0888558c">veclib_int</a> i, j;</div>
 <div class="line"><a name="l02241"></a><span class="lineno"> 2241</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l02242"></a><span class="lineno"> 2242</span>&#160; </div>
@@ -4395,7 +4395,7 @@ $(document).ready(function(){initNavTree('saf__utility__veclib_8c_source.html','
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__veclib_8c.html">saf_utility_veclib.c</a></li>
-    <li class="footer">Generated on Wed Jun 23 2021 06:12:51 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Thu Jun 24 2021 11:58:32 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

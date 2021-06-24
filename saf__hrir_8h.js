@@ -7,6 +7,7 @@ var saf__hrir_8h =
     [ "HRIRs2HRTFs_afSTFT", "group___h_r_i_r.html#gaf7213481e6b8afa3b25fbf4343c1ca50", null ],
     [ "HRIRs2HRTFs_qmf", "group___h_r_i_r.html#gadfaf82c46f2d7033e5182b9fc945ba93", null ],
     [ "interpHRTFs", "group___h_r_i_r.html#gadafcc51c7593d930ae24225c0b4da085", null ],
+    [ "resampleHRIRs", "group___h_r_i_r.html#gad49d2272299ecf0bdb6aaa71ea110f25", null ],
     [ "__default_hrir_dirs_deg", "group___h_r_i_r.html#ga4a23e61b93b39a3d1a7ea105e90ec6e3", null ],
     [ "__default_hrir_fs", "group___h_r_i_r.html#gacd7a06259341a856fd3d0d72aa7ef09b", null ],
     [ "__default_hrir_len", "group___h_r_i_r.html#ga870147e3c6feb936858bbf47a08d4f83", null ],
