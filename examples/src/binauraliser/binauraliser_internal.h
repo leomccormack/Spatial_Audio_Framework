@@ -84,8 +84,10 @@ typedef struct _binauraliser
     float* hrirs;                    /**< time domain HRIRs; FLAT: N_hrir_dirs x #NUM_EARS x hrir_len */
     float* hrir_dirs_deg;            /**< directions of the HRIRs in degrees [azi elev]; FLAT: N_hrir_dirs x 2 */
     int N_hrir_dirs;                 /**< number of HRIR directions in the current sofa file */
-    int hrir_len;                    /**< length of the HRIRs, this can be truncated, see "saf_sofa_reader.h" */
-    int hrir_fs;                     /**< sampling rate of the HRIRs, should ideally match the host sampling rate, although not required */
+    int hrir_loaded_len;             /**< length of the loaded HRIRs, in samples */
+    int hrir_runtime_len;            /**< length of the HRIRs being used for processing (after any resampling), in samples */
+    int hrir_loaded_fs;              /**< sampling rate of the loaded HRIRs  */
+    int hrir_runtime_fs;             /**< sampling rate of the HRIRs being used for processing (after any resampling) */
     float* weights;                  /**< Integration weights for the HRIR measurement grid */
     
     /* vbap gain table */

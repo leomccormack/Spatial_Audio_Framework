@@ -35,8 +35,7 @@
 #ifndef ARCH_H
 #define ARCH_H
 
-#define FLOATING_POINT /*  */
-//#define USE_SSE
+#define FLOATING_POINT  
 
 /* A couple test to catch stupid option combinations */
 #ifdef FIXED_POINT

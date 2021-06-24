@@ -141,13 +141,32 @@ int main_test(void) {
 
 void test__resampleHRIRs(void){
     float* hrirs_out, *hrirs_tmp;
-    int i, j, target_fs, hrirs_out_len, hrirs_tmp_len;
+    int i, j, target_fs, hrirs_out_len, hrirs_tmp_len, max_ind;
 
-    /* Config */
+    /* The Speex resampler has generally quite a good compromise between quality and speed.
+     * This tolerance is quite high, but ultimately, it's how it sounds that matters. */
     const float acceptedTolerance = 0.05f;
 
-    /* Test 1 - 48e3 to 48e3 */
-    target_fs = 48000; /* i.e., no actual resampling */
+    /* Test 1 - passing a unit impulse through, and asserting the peak is where it should be */
+    float* ir;
+    ir = calloc1d(NUM_EARS * 256, sizeof(float));
+    ir[10] = 1.0f;
+    hrirs_out = NULL;
+    resampleHRIRs((float*)ir, 1, 256, 48000, 48000, 0, &hrirs_out, &hrirs_out_len); /* 1x samplerate */
+    utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
+    TEST_ASSERT_TRUE(max_ind==10);
+    free(hrirs_out);
+    resampleHRIRs((float*)ir, 1, 256, 48000, 96000, 0, &hrirs_out, &hrirs_out_len); /* 2x samplerate */
+    utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
+    TEST_ASSERT_TRUE(max_ind==20);
+    free(hrirs_out);
+    resampleHRIRs((float*)ir, 1, 256, 48000, 24000, 0, &hrirs_out, &hrirs_out_len); /* 0.5x samplerate */
+    utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
+    TEST_ASSERT_TRUE(max_ind==5);
+    free(hrirs_out);
+
+    /* Test 2 - converting 48e3 to 48e3 (i.e., no actual resampling, but still passing through the filter) */
+    target_fs = 48000;
     hrirs_out = NULL;
     resampleHRIRs((float*)__default_hrirs, __default_N_hrir_dirs, __default_hrir_len, __default_hrir_fs,
                   target_fs, 0 /*do not zero pad*/, &hrirs_out, &hrirs_out_len);
@@ -157,7 +176,7 @@ void test__resampleHRIRs(void){
     TEST_ASSERT_TRUE(__default_hrir_len==hrirs_out_len);
     free(hrirs_out);
 
-    /* Test 2 - 48e3 to 96e3 to 48e3 */
+    /* Test 2 - converting 48e3 to 96e3 and then back to 48e3 */
     target_fs = 96000;
     hrirs_tmp = NULL;
     resampleHRIRs((float*)__default_hrirs, __default_N_hrir_dirs, __default_hrir_len, __default_hrir_fs,
@@ -165,22 +184,6 @@ void test__resampleHRIRs(void){
     target_fs = 48000;
     hrirs_out = NULL;
     resampleHRIRs(hrirs_tmp, __default_N_hrir_dirs, hrirs_tmp_len, 96000,
-                  target_fs, 0 /*do not zero pad*/, &hrirs_out, &hrirs_out_len);
-    for(i=0; i<__default_N_hrir_dirs*NUM_EARS; i++) /* Loop over IRs */
-        for(j=0; j<SAF_MIN(__default_hrir_len,hrirs_out_len); j++) /* Loop over Samples */
-            TEST_ASSERT_TRUE(fabsf(((float*)__default_hrirs)[i*__default_hrir_len+j] - hrirs_out[i*hrirs_out_len+j]) <= acceptedTolerance);
-    TEST_ASSERT_TRUE(__default_hrir_len==hrirs_out_len);
-    free(hrirs_tmp);
-    free(hrirs_out);
-
-    /* Test 3 - 48e3 to 44.1e3 to 48e3 */
-    target_fs = 44100;
-    hrirs_tmp = NULL;
-    resampleHRIRs((float*)__default_hrirs, __default_N_hrir_dirs, __default_hrir_len, __default_hrir_fs,
-                  target_fs, 0 /*do not zero pad*/, &hrirs_tmp, &hrirs_tmp_len);
-    target_fs = 48000;
-    hrirs_out = NULL;
-    resampleHRIRs(hrirs_tmp, __default_N_hrir_dirs, hrirs_tmp_len, 44100,
                   target_fs, 0 /*do not zero pad*/, &hrirs_out, &hrirs_out_len);
     for(i=0; i<__default_N_hrir_dirs*NUM_EARS; i++) /* Loop over IRs */
         for(j=0; j<SAF_MIN(__default_hrir_len,hrirs_out_len); j++) /* Loop over Samples */

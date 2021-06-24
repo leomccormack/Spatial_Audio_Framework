@@ -376,7 +376,7 @@ void resampleHRIRs
     unsigned int in_length, out_length;
     int ch, ERROR_VAL, hrirs_out_ld, out_latency, nsample_proc;
     float resample_factor;
-    float* zeros;
+    float *zeros;
     SpeexResamplerState *pRS;
 
     /* New HRIR length */
@@ -385,35 +385,37 @@ void resampleHRIRs
     hrirs_out_ld = padToNextPow2 ? (int)pow(2.0, ceil(log((double)(*hrirs_out_len))/log(2.0))) : (*hrirs_out_len);
 
     /* Initialise SPEEX resampler */
-    pRS = speex__resampler_init(hrirs_N_dirs*NUM_EARS, hrirs_in_fs, hrirs_out_fs, 10 /* Max Quality Level */, &ERROR_VAL);
-    speex__resampler_reset_mem(pRS);
-    speex__resampler_skip_zeros(pRS);
+    pRS = speex__resampler_init(1 /*one channel at a time*/, hrirs_in_fs, hrirs_out_fs, SPEEX_RESAMPLER_QUALITY_MAX, &ERROR_VAL);
     out_latency = speex__resampler_get_output_latency(pRS);
     zeros = calloc1d(out_latency, sizeof(float));
 
     /* Apply SPEEX resampler */
-    (*hrirs_out) = calloc1d(hrirs_N_dirs*NUM_EARS*hrirs_out_ld, sizeof(float));
+    (*hrirs_out) = calloc1d(hrirs_N_dirs*NUM_EARS*(hrirs_out_ld), sizeof(float));
     for(ch=0; ch<hrirs_N_dirs*NUM_EARS; ch++){
+        speex__resampler_reset_mem(pRS);
+        speex__resampler_skip_zeros(pRS);
+        nsample_proc = 0;
+
         /* Pass the FIR through the resampler */
         in_length = hrirs_in_len;
-        out_length = (*hrirs_out_len);
-        nsample_proc = 0;
-        ERROR_VAL = speex__resampler_process_float((pRS), ch, hrirs_in + ch * hrirs_in_len, &in_length,
-                                                   (*hrirs_out) + ch * hrirs_out_ld, &out_length);
+        out_length = hrirs_out_ld;
+        ERROR_VAL = speex__resampler_process_float((pRS), 0, hrirs_in + ch * hrirs_in_len, &in_length,
+                                                   (*hrirs_out) + ch * (hrirs_out_ld), &out_length);
         nsample_proc += out_length; /* Current number of output samples processed */
 
-        /* Pass through some zeros to get the tail of the filter too */
-        if(nsample_proc<(*hrirs_out_len)){
+        /* Pass through zeros to get the tail of the filter too */
+        while(nsample_proc<(hrirs_out_ld)){
             in_length = out_latency;
-            out_length = (*hrirs_out_len)-nsample_proc;
-            ERROR_VAL = speex__resampler_process_float((pRS), ch, zeros, &in_length,
-                                                       (*hrirs_out) + ch * hrirs_out_ld + nsample_proc, &out_length);
+            out_length = (hrirs_out_ld)-nsample_proc;
+            ERROR_VAL = speex__resampler_process_float((pRS), 0, zeros, &in_length,
+                                                       (*hrirs_out) + ch * (hrirs_out_ld) + nsample_proc, &out_length);
             nsample_proc += out_length;
         }
-        saf_assert(nsample_proc<=hrirs_out_ld, "Memory reading out of bounds!");
-
-
-        int sdsds = 23;
+        saf_assert(nsample_proc==(hrirs_out_ld), "Not all samples were processed!"); 
     }
 
+    (*hrirs_out_len) = hrirs_out_ld;
+
+    speex__resampler_destroy(pRS);
+    free(zeros);
 }

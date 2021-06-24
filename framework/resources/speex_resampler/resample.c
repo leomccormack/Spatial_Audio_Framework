@@ -57,6 +57,12 @@
    The latter both reduces CPU time and makes the algorithm more SIMD-friendly.
 */
 
+
+#define SPEEX_USE_CBLAS
+#ifdef SPEEX_USE_CBLAS
+# include "saf_externals.h"
+#endif
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -349,9 +355,14 @@ static int resampler_basic_direct_single(SpeexResamplerState *st, spx_uint32_t c
       const spx_word16_t *iptr = & in[last_sample];
 
 #ifndef OVERRIDE_INNER_PRODUCT_SINGLE
+# ifdef SPEEX_USE_CBLAS
+       sum = (double)cblas_sdot(N, sinct, 1, iptr, 1);
+# else
       int j;
       sum = 0;
       for(j=0;j<N;j++) sum += MULT16_16(sinct[j], iptr[j]);
+# endif
+
 
 /*    This code is slower on most DSPs which have only 2 accumulators.
       Plus this this forces truncation to 32 bits and you lose the HW guard bits.
@@ -407,6 +418,9 @@ static int resampler_basic_direct_double(SpeexResamplerState *st, spx_uint32_t c
       const spx_word16_t *iptr = & in[last_sample];
 
 #ifndef OVERRIDE_INNER_PRODUCT_DOUBLE
+# ifdef SPEEX_USE_CBLAS
+       sum = (double)cblas_sdot(N, sinct, 1, iptr, 1);
+# else
       int j;
       double accum[4] = {0,0,0,0};
 
@@ -417,6 +431,7 @@ static int resampler_basic_direct_double(SpeexResamplerState *st, spx_uint32_t c
         accum[3] += sinct[j+3]*iptr[j+3];
       }
       sum = accum[0] + accum[1] + accum[2] + accum[3];
+# endif
 #else
       sum = inner_product_double(sinct, iptr, N);
 #endif

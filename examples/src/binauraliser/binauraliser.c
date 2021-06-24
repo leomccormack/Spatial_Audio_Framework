@@ -67,16 +67,19 @@ void binauraliser_create
     pData->hrir_dirs_deg = NULL;
     pData->sofa_filepath = NULL;
     pData->weights = NULL;
+    pData->N_hrir_dirs = pData->hrir_loaded_len = pData->hrir_runtime_len = 0;
+    pData->hrir_loaded_fs = pData->hrir_runtime_fs = -1; /* unknown */
     
     /* vbap (amplitude normalised) */
     pData->hrtf_vbap_gtableIdx = NULL;
     pData->hrtf_vbap_gtableComp = NULL;
+    pData->nTriangles = pData->N_hrtf_vbap_gtable = 0;
     
     /* HRTF filterbank coefficients */
     pData->itds_s = NULL;
     pData->hrtf_fb = NULL;
     pData->hrtf_fb_mag = NULL;
-    
+
     /* flags/status */
     pData->progressBar0_1 = 0.0f;
     pData->progressBarText = malloc1d(PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
@@ -136,6 +139,10 @@ void binauraliser_init
     /* define frequency vector */
     pData->fs = sampleRate;
     afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
+    if(pData->hrir_runtime_fs!=pData->fs){
+        pData->reInitHRTFsAndGainTables = 1;
+        binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
+    }
 
     /* defaults */
     pData->recalc_M_rotFLAG = 1;
@@ -516,13 +523,13 @@ float binauraliser_getHRIRElev_deg(void* const hBin, int index)
 int binauraliser_getHRIRlength(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    return pData->hrir_len;
+    return pData->hrir_loaded_len;
 }
 
 int binauraliser_getHRIRsamplerate(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    return pData->hrir_fs;
+    return pData->hrir_loaded_fs;
 }
 
 int binauraliser_getUseDefaultHRIRsflag(void* const hBin)
