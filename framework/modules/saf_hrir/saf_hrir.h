@@ -259,7 +259,20 @@ void binauralDiffuseCoherence(/* Input Arguments */
                               /* Output Arguments */
                               float* HRTFcoh);
 
-/** */
+/**
+ * Resamples a set of HRIRs from its original samplerate to a new samplerate
+ *
+ * @param[in]  hrirs_in      Input HRIRs;
+ *                           FLAT: hrirs_N_dirs x #NUM_EARS x hrirs_in_len
+ * @param[in]  hrirs_N_dirs  Number of HRIRs
+ * @param[in]  hrirs_in_len  Length of input HRIRs, in samples
+ * @param[in]  hrirs_in_fs   Original sampling rate, in Hz
+ * @param[in]  hrirs_out_fs  New sampling rate, in Hz
+ * @param[in]  padToNextPow2 1: length of output HRIRs padded to next 2^x, 0: no
+ * @param[out] hrirs_out     Resampled HRIRs;
+ *                           FLAT: hrirs_N_dirs x #NUM_EARS x hrirs_out_len
+ * @param[out] hrirs_out_len (&) New HRIR length
+ */
 void resampleHRIRs(/* Input Arguments */
                    float* hrirs_in,
                    int hrirs_N_dirs,

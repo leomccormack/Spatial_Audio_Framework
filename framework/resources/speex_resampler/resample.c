@@ -356,7 +356,7 @@ static int resampler_basic_direct_single(SpeexResamplerState *st, spx_uint32_t c
 
 #ifndef OVERRIDE_INNER_PRODUCT_SINGLE
 # ifdef SPEEX_USE_CBLAS
-       sum = (double)cblas_sdot(N, sinct, 1, iptr, 1);
+       sum = cblas_sdot(N, sinct, 1, iptr, 1);
 # else
       int j;
       sum = 0;
