@@ -129,7 +129,7 @@ void HRIRs2HRTFs_afSTFT(/* Input Arguments */
  * @param[in]  hybridmode 0:disabled, 1:enabled
  * @param[out] hrtf_fb    HRTFs as filterbank coeffs;
  *                        FLAT:
- *                        (hybrid ? hopsize+7 : hopsize) x #NUM_EARS x N_dirs
+ *                        (hybrid ? hopsize+7 : hopsize+1) x #NUM_EARS x N_dirs
  */
 void HRIRs2HRTFs_qmf(/* Input Arguments */
                      float* hrirs,

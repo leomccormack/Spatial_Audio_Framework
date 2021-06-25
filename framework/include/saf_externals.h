@@ -48,6 +48,8 @@
  *
  *   Intel IPP may be optionally used with the flag: SAF_USE_INTEL_IPP
  *
+ *   SSE/SSE2/SSE3 intrinsics may be enabled with: SAF_ENABLE_SIMD
+ *
  * @see More information can be found in the docs folder regarding dependencies
  *
  * @author Leo McCormack
@@ -141,12 +143,27 @@
 # include "ipp.h"
 #endif
 
+#if defined(SAF_ENABLE_SIMD)
+/*
+ * SAF heavily favours the use of optimised routines provided by e.g. Intel MKL
+ * or Apple Accelerate, which internally employ SIMD intrinsics (SSE/AVX etc.).
+ * However, in cases where the employed performance library does not offer an
+ * implementation for a particular routine, SAF provides fall-back option(s).
+ * SIMD accelerated fall-back options may be enabled with: SAF_ENABLE_SIMD
+ *
+ * Note that SSE intrinsics require CPUs based on the x86_64 architecture.
+ */
+# include <xmmintrin.h> /* for SSE  */
+# include <emmintrin.h> /* for SSE2 */
+# include <pmmintrin.h> /* for SSE3 */
+#endif
+
 
 /* ========================================================================== */
 /*     External Libraries Required by the Optional saf_sofa_reader Module     */
 /* ========================================================================== */
 
-#ifdef SAF_ENABLE_SOFA_READER_MODULE
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
 /*
  * If your compiler stopped at this point, then please add the path for the
  * netcdf include file to your project's include header paths.

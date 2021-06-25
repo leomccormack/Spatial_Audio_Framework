@@ -104,9 +104,16 @@
 
 #ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
 void cblas_scopy(const int N, const float *X, const int incX, float *Y, const int incY){
-    int i,j;
-    for(i=j=0; i<N; i+=incX, j+=incY)
-        Y[i] = X[j];
+    int i;
+#if defined(SAF_ENABLE_SIMD)
+    for(i=0; i<(N-3); i+=4)
+        _mm_storeu_ps(Y+i*incY, _mm_loadu_ps(X+i*incX));
+    for(;i<N; i++) /* The residual (if N was not divisable by 4): */
+        Y[i*incY] = X[i*incX];
+#else
+    for(i=0; i<N; i++)
+        Y[i*incY] = X[i*incX];
+#endif
 }
 
 void cblas_dcopy(const int N, const double *X, const int incX, double *Y, const int incY){
@@ -144,6 +151,33 @@ void cblas_daxpy(const int N, const double alpha, const double* X, const int inc
     for (i=j=0; i<N; i+=incX, j+=incY)
         Y[i] = alpha * X[i] + Y[i];
 }
+
+float cblas_sdot(const int N, const float* X, const int incX, const float* Y, const int incY){
+    int i;
+    float ret;
+#if defined(SAF_ENABLE_SIMD)
+    float sum2;
+    sum2 = 0.0f;
+    __m128 sum = _mm_setzero_ps();
+    /* Sum over all elements in groups of 4 */
+    for(i=0; i<(N-3); i+=4)
+       sum = _mm_add_ps(sum, _mm_mul_ps(_mm_loadu_ps(X+i*incX), _mm_loadu_ps(Y+i*incY)));
+    /* sum the first 2 elements with the second 2 elements and store in the first 2 elements */
+    sum = _mm_add_ps(sum, _mm_movehl_ps(sum, sum)/* copy elements 3 and 4 to 1 and 2 */);
+    /* sum the first 2 elements and store in the first element */
+    sum = _mm_add_ss(sum, _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(3, 2, 0, 1))/* shuffle so that element 2 goes to element 1 */);
+    _mm_store_ss(&ret, sum); /* get the first element (the result) */
+    for(;i<N; i++) /* The residual (if N was not divisable by 4): */
+        sum2 += X[i*incX] * Y[i*incY];
+    ret += sum2;
+#else
+    ret = 0.0f;
+    for(i=0; i<N; i++)
+        ret += X[i*incX] * Y[i*incY];
+#endif
+    return ret;
+}
+
 #endif
 
 
@@ -158,7 +192,7 @@ void cblas_sgemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA
                  const int lda, const float* B, const int ldb,
                  const float beta, float* C, const int ldc)
 {
-    saf_assert(0);
+    saf_assert(0, "INCOMPLETE");
 }
 #endif
 
@@ -483,23 +517,14 @@ void utility_svvadd
 #elif NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
-    if (len<10e4 && len > 7){
-        for(i=0; i<len-8; i+=8){
-            c[i] = a[i] + b[i];
-            c[i+1] = a[i+1] + b[i+1];
-            c[i+2] = a[i+2] + b[i+2];
-            c[i+3] = a[i+3] + b[i+3];
-            c[i+4] = a[i+4] + b[i+4];
-            c[i+5] = a[i+5] + b[i+5];
-            c[i+6] = a[i+6] + b[i+6];
-            c[i+7] = a[i+7] + b[i+7];
-        }
-        for(; i<len; i++)
-            c[i] = a[i] + b[i];
+    for(i=0; i<len-3; i+=4){
+        c[i] = a[i] + b[i];
+        c[i+1] = a[i+1] + b[i+1];
+        c[i+2] = a[i+2] + b[i+2];
+        c[i+3] = a[i+3] + b[i+3];
     }
-    else
-        for(i=0; i<len; i++)
-            c[i] = a[i] + b[i];
+    for(; i<len; i++)
+        c[i] = a[i] + b[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -522,23 +547,14 @@ void utility_cvvadd
 #elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
-    if (len<10e4 && len > 7){
-        for(i=0; i<len-8; i+=8){
-            c[i] = a[i] + b[i];
-            c[i+1] = a[i+1] + b[i+1];
-            c[i+2] = a[i+2] + b[i+2];
-            c[i+3] = a[i+3] + b[i+3];
-            c[i+4] = a[i+4] + b[i+4];
-            c[i+5] = a[i+5] + b[i+5];
-            c[i+6] = a[i+6] + b[i+6];
-            c[i+7] = a[i+7] + b[i+7];
-        }
-        for(; i<len; i++)
-            c[i] = a[i] + b[i];
+    for(i=0; i<len-3; i+=4){
+        c[i] = a[i] + b[i];
+        c[i+1] = a[i+1] + b[i+1];
+        c[i+2] = a[i+2] + b[i+2];
+        c[i+3] = a[i+3] + b[i+3];
     }
-    else
-        for(i=0; i<len; i++)
-            c[i] = a[i] + b[i];
+    for(; i<len; i++)
+        c[i] = a[i] + b[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -604,23 +620,14 @@ void utility_svvsub
 #elif NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
-    if (len<10e4 && len > 7){
-        for(i=0; i<len-8; i+=8){
-            c[i] = a[i] - b[i];
-            c[i+1] = a[i+1] - b[i+1];
-            c[i+2] = a[i+2] - b[i+2];
-            c[i+3] = a[i+3] - b[i+3];
-            c[i+4] = a[i+4] - b[i+4];
-            c[i+5] = a[i+5] - b[i+5];
-            c[i+6] = a[i+6] - b[i+6];
-            c[i+7] = a[i+7] - b[i+7];
-        }
-        for(; i<len; i++)
-            c[i] = a[i] - b[i];
+    for(i=0; i<len-3; i+=4){
+        c[i] = a[i] - b[i];
+        c[i+1] = a[i+1] - b[i+1];
+        c[i+2] = a[i+2] - b[i+2];
+        c[i+3] = a[i+3] - b[i+3];
     }
-    else
-        for(i=0; i<len; i++)
-            c[i] = a[i] - b[i];
+    for(; i<len; i++)
+        c[i] = a[i] - b[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -643,23 +650,14 @@ void utility_cvvsub
 #elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
-    if (len<10e4 && len > 7){
-        for(i=0; i<len-8; i+=8){
-            c[i] = a[i] - b[i];
-            c[i+1] = a[i+1] - b[i+1];
-            c[i+2] = a[i+2] - b[i+2];
-            c[i+3] = a[i+3] - b[i+3];
-            c[i+4] = a[i+4] - b[i+4];
-            c[i+5] = a[i+5] - b[i+5];
-            c[i+6] = a[i+6] - b[i+6];
-            c[i+7] = a[i+7] - b[i+7];
-        }
-        for(; i<len; i++)
-            c[i] = a[i] - b[i];
+    for(i=0; i<len-3; i+=4){
+        c[i] = a[i] - b[i];
+        c[i+1] = a[i+1] - b[i+1];
+        c[i+2] = a[i+2] - b[i+2];
+        c[i+3] = a[i+3] - b[i+3];
     }
-    else
-        for(i=0; i<len; i++)
-            c[i] = a[i] - b[i];
+    for(; i<len; i++)
+        c[i] = a[i] - b[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -722,26 +720,24 @@ void utility_svvmul
     vDSP_vmul(a, 1, b, 1, c, 1, (vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsMul(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
+#elif defined(SAF_ENABLE_SIMD)
+    int i, incX, incY, incZ;
+    incX = incY = incZ = 1;
+    for(i=0; i<(len-3); i+=4)
+        _mm_storeu_ps(c+i*incZ, _mm_mul_ps(_mm_loadu_ps(a+i*incX), _mm_loadu_ps(b+i*incY)));
+    for(;i<len; i++) /* The residual (if len was not divisable by 4): */
+        c[i*incZ] = a[i*incX] * b[i*incY];
 #elif NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
-    if (len<10e4 && len > 7){
-        for(i=0; i<len-8; i+=8){
-            c[i] = a[i] * b[i];
-            c[i+1] = a[i+1] * b[i+1];
-            c[i+2] = a[i+2] * b[i+2];
-            c[i+3] = a[i+3] * b[i+3];
-            c[i+4] = a[i+4] * b[i+4];
-            c[i+5] = a[i+5] * b[i+5];
-            c[i+6] = a[i+6] * b[i+6];
-            c[i+7] = a[i+7] * b[i+7];
-        }
-        for(; i<len; i++)
-            c[i] = a[i] * b[i];
+    for(i=0; i<len-3; i+=4){
+        c[i] = a[i] * b[i];
+        c[i+1] = a[i+1] * b[i+1];
+        c[i+2] = a[i+2] * b[i+2];
+        c[i+3] = a[i+3] * b[i+3];
     }
-    else
-        for(i=0; i<len; i++)
-            c[i] = a[i] * b[i];
+    for(; i<len; i++)
+        c[i] = a[i] * b[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -766,26 +762,42 @@ void utility_cvvmul
     vDSP_vmmsb((float*)a/*real*/, 2, (float*)b/*real*/, 2, (float*)a+1/*imag*/, 2, (float*)b+1/*imag*/, 2, (float*)c/*real*/, 2, (vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
+#elif defined(SAF_ENABLE_SIMD)
+    int i, incA, incB, incC;
+    float* sa, *sb, *sc;
+    incA = incB = incC = 1;
+    sa = (float*)a; sb = (float*)b; sc = (float*)c;
+    for(i=0; i<(len-1); i+=2){
+        /* Load only the real parts of a */
+        __m128 src1 = _mm_moveldup_ps(_mm_loadu_ps(sa+2*i*incA)/*|a1|b1|a2|b2|*/); /*|a1|a1|a2|a2|*/
+        /* Load real+imag parts of b */
+        __m128 src2 = _mm_loadu_ps(sb+2*i*incB); /*|c1|d1|c2|d2|*/
+        /* Multiply together */
+        __m128 tmp1 = _mm_mul_ps(src1, src2);
+        /* Swap the real+imag parts of b to be imag+real instead: */
+        __m128 b1 = _mm_shuffle_ps(src2, src2, _MM_SHUFFLE(2, 3, 0, 1));
+        /* Load only the imag parts of a */
+        src1 = _mm_movehdup_ps(_mm_loadu_ps(sa+2*i*incA)/*|a1|b1|a2|b2|*/); /*|b1|b1|b2|b2|*/
+        /* Multiply together */
+        __m128 tmp2 = _mm_mul_ps(src1, b1);
+        /* Add even indices, subtract odd indices */
+        _mm_storeu_ps(sc+2*i*incC, _mm_addsub_ps(tmp1, tmp2));
+    }
+    for(;i<len; i++){ /* The residual (if len was not divisable by 2): */
+        sc[2*i*incC]   = sa[2*i*incA] * sb[2*i*incB]   - sa[2*i*incA+1] * sb[2*i*incB+1];
+        sc[2*i*incC+1] = sa[2*i*incA] * sb[2*i*incB+1] + sa[2*i*incA+1] * sb[2*i*incB];
+    }
 #elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
-    if (len<10e4 && len > 7){
-        for(i=0; i<len-8; i+=8){
-            c[i] = a[i] * b[i];
-            c[i+1] = a[i+1] * b[i+1];
-            c[i+2] = a[i+2] * b[i+2];
-            c[i+3] = a[i+3] * b[i+3];
-            c[i+4] = a[i+4] * b[i+4];
-            c[i+5] = a[i+5] * b[i+5];
-            c[i+6] = a[i+6] * b[i+6];
-            c[i+7] = a[i+7] * b[i+7];
-        }
-        for(; i<len; i++)
-            c[i] = a[i] * b[i];
+    for(i=0; i<len-3; i+=4){
+        c[i] = a[i] * b[i];
+        c[i+1] = a[i+1] * b[i+1];
+        c[i+2] = a[i+2] * b[i+2];
+        c[i+3] = a[i+3] * b[i+3];
     }
-    else
-        for (i = 0; i < len; i++)
-            c[i] = a[i] * b[i];
+    for(; i<len; i++)
+        c[i] = a[i] * b[i];
 #else
     int i;
     for (i = 0; i < len; i++)
