@@ -1,9 +1,11 @@
 /* Copyright (C) 2007-2008 Jean-Marc Valin
    Copyright (C) 2008      Thorvald Natvig
-
-   File: resample.c
-   Arbitrary resampling code
-
+ */
+/**
+   @file resample.c
+   @brief Main source file for the Speex resampler
+*/
+/*
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are
    met:

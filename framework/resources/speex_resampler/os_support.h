@@ -1,5 +1,9 @@
-/* Copyright (C) 2007 Jean-Marc Valin
-
+/* Copyright (C) 2007 Jean-Marc Valin */
+/**
+   @file os_support.c
+   @brief Supported OSs for Speex resampler
+*/
+/*
    File: os_support.h
    This is the (tiny) OS abstraction layer. Aside from math.h, this is the
    only place where system headers are allowed.

@@ -1,5 +1,9 @@
-/* Copyright (C) 2007 Jean-Marc Valin
-
+/* Copyright (C) 2007 Jean-Marc Valin */
+/**
+   @file speex_resampler.h
+   @brief Main header file for the Speex resampler
+*/
+/*
    File: speex_resampler.h
    Resampling code
 
