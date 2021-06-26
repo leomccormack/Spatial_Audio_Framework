@@ -201,5 +201,6 @@ var searchData=
   ['_5fcommon_2eh_198',['_common.h',['../__common_8h.html',1,'']]],
   ['_5fimpl_5fcassert_5fline_199',['_impl_CASSERT_LINE',['../group___utilities.html#gaee15f58b2e7b74a7107fedda6c9e0e6f',1,'saf_utility_misc.h']]],
   ['_5fimpl_5fpaste_200',['_impl_PASTE',['../group___utilities.html#gab127f5ccb9b1065a239a25c6e88a3b13',1,'saf_utility_misc.h']]],
-  ['_5fkiss_5ffft_5fguts_2eh_201',['_kiss_fft_guts.h',['../__kiss__fft__guts_8h.html',1,'']]]
+  ['_5fkiss_5ffft_5fguts_2eh_201',['_kiss_fft_guts.h',['../__kiss__fft__guts_8h.html',1,'']]],
+  ['_5fspeex_5fputc_202',['_speex_putc',['../os__support_8h.html#a769db876e1d98759256ea387a9d89bee',1,'os_support.h']]]
 ];

@@ -128,16 +128,16 @@ var NAVTREEINDEX =
 "group___utilities.html#gae236acb1964154d15b307096066a5b5e",
 "group___v_b_a_p.html#ga4174a71ff53c3fe412364662761592cb",
 "multiconv_8h.html#a79f19cfc2f9aa5f1b2ac9c93b75b7d2d",
-"powermap_8h.html#a04077a5380fec276b1eda43a1f0adc99",
-"saf__cdf4sap_8h_source.html",
-"saf__tracker__internal_8h.html#a5d56f0015c7770700f2eef0fe1ea7342",
-"safmex__qmf_8c.html#a5215b58e51121cf44afaf3311866e5eb",
-"spreader_8h.html#a7968bed2e929d9cf765ff4466a67b16c",
-"structambi__dec__data.html#a7931b130f90bbc787d5c8af1b1106a4e",
-"structch__vertex.html",
-"structmatrixconv__data.html#ad4a013464916120442cc82fc0b953532",
-"structsaf__stft__data.html",
-"structtracker3d__data.html#a9f932d39afc7dbbdfd3b97d15d590643"
+"powermap_8c.html#ab39f8f468871c5c98f06b4937ed82746",
+"saf_8h.html#a9160681450d951e3e3b0492a7db4da08",
+"saf__tracker__internal_8c.html#ac0884212702124413c94f3589f8b0ae8",
+"safmex__lattice_decorrelator_8c.html#abda5a6ad49c233891cb4b563a37ab105",
+"spreader_8h.html#a089421aa9e19c94c60651b79a5d31b03",
+"structambi__dec__codec_pars.html#afc0d3b1519a390be4e1d440024601801",
+"structcdf4sap__data.html#a65a4c1fba1f3f6b01c142bb50e02ae71",
+"structlattice_decor__data.html#aeab380a232dfc40724497cef2a11b86f",
+"structsaf__sofa__container.html#add23cec9f0705ce89fa0ca0f6ae83a6d",
+"structtracker3d__config.html#a866c575c878bd7fc1b00ed7d345725fa"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -1,10 +1,15 @@
 var searchData=
 [
-  ['resample_2ec_2799',['resample.c',['../resample_8c.html',1,'']]],
-  ['resample_5fneon_2eh_2800',['resample_neon.h',['../resample__neon_8h.html',1,'']]],
-  ['resample_5fsse_2eh_2801',['resample_sse.h',['../resample__sse_8h.html',1,'']]],
-  ['rotator_2ec_2802',['rotator.c',['../rotator_8c.html',1,'']]],
-  ['rotator_2eh_2803',['rotator.h',['../rotator_8h.html',1,'']]],
-  ['rotator_5finternal_2ec_2804',['rotator_internal.c',['../rotator__internal_8c.html',1,'']]],
-  ['rotator_5finternal_2eh_2805',['rotator_internal.h',['../rotator__internal_8h.html',1,'']]]
+  ['panner_2ec_2797',['panner.c',['../panner_8c.html',1,'']]],
+  ['panner_2eh_2798',['panner.h',['../panner_8h.html',1,'']]],
+  ['panner_5finternal_2ec_2799',['panner_internal.c',['../panner__internal_8c.html',1,'']]],
+  ['panner_5finternal_2eh_2800',['panner_internal.h',['../panner__internal_8h.html',1,'']]],
+  ['pitch_5fshifter_2ec_2801',['pitch_shifter.c',['../pitch__shifter_8c.html',1,'']]],
+  ['pitch_5fshifter_2eh_2802',['pitch_shifter.h',['../pitch__shifter_8h.html',1,'']]],
+  ['pitch_5fshifter_5finternal_2ec_2803',['pitch_shifter_internal.c',['../pitch__shifter__internal_8c.html',1,'']]],
+  ['pitch_5fshifter_5finternal_2eh_2804',['pitch_shifter_internal.h',['../pitch__shifter__internal_8h.html',1,'']]],
+  ['powermap_2ec_2805',['powermap.c',['../powermap_8c.html',1,'']]],
+  ['powermap_2eh_2806',['powermap.h',['../powermap_8h.html',1,'']]],
+  ['powermap_5finternal_2ec_2807',['powermap_internal.c',['../powermap__internal_8c.html',1,'']]],
+  ['powermap_5finternal_2eh_2808',['powermap_internal.h',['../powermap__internal_8h.html',1,'']]]
 ];
