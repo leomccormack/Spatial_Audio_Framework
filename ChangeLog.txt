@@ -16,6 +16,7 @@ v1.2.0
    performance library, now call the appropriate optimised routines. The Intel MKL vector-vector
    operations have been switched to the "mode overiding" variants, which allows some accuracy to be
    traded for faster computations
+ - Added some SIMD (SSE) optimised functions, which may be enabled with "SAF_ENABLE_SIMD"
  - A number of other minor and some significant optimisations throughout the framework
  - Improved doxygen documentation for the examples
  - Added resampleHRIR() function to saf_hrir module, which employs the SPEEX algorithm.
@@ -27,7 +28,7 @@ the first input argument should either be set to "NULL", (in which case they rev
 previously), or you can pass the pre-allocated object, (in which case no run-time malloc calls are 
 made).
 
-The SAF_PRINT_VERSION_LICENSE_STRING macro has been removed; refer to SAF_LICENSE_STRING instead.
+The SAF_PRINT_VERSION_LICENSE_STRING macro has been removed; use the SAF_LICENSE_STRING instead.
 
 ====================================================================================================
 v1.1.7
