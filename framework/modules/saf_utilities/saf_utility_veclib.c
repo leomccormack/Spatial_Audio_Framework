@@ -514,6 +514,13 @@ void utility_svvadd
     vDSP_vadd(a, 1, b, 1, c, 1, (vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
+#elif defined(SAF_ENABLE_SIMD)
+    int i, incX, incY, incZ;
+    incX = incY = incZ = 1;
+    for(i=0; i<(len-3); i+=4)
+        _mm_storeu_ps(c+i*incZ, _mm_add_ps(_mm_loadu_ps(a+i*incX), _mm_loadu_ps(b+i*incY)));
+    for(;i<len; i++) /* The residual (if len was not divisable by 4): */
+        c[i*incZ] = a[i*incX] - b[i*incY];
 #elif NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
@@ -544,6 +551,17 @@ void utility_cvvadd
     vDSP_vadd((float*)a, 1, (float*)b, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
+#elif defined(SAF_ENABLE_SIMD)
+    int i, incX, incY, incZ;
+    float* sa, *sb, *sc;
+    sa = (float*)a; sb = (float*)b; sc = (float*)c;
+    incX = incY = incZ = 1;
+    for(i=0; i<(len-1); i+=2)
+        _mm_storeu_ps(sc+2*i*incZ, _mm_add_ps(_mm_loadu_ps(sa+2*i*incX), _mm_loadu_ps(sb+2*i*incY)));
+    for(;i<len; i++){ /* The residual (if len was not divisable by 4): */
+        sc[2*i*incZ] = sa[2*i*incX] + sb[2*i*incY];
+        sc[2*i*incZ+1] = sa[2*i*incX+1] + sb[2*i*incY+1];
+    }
 #elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
@@ -617,6 +635,13 @@ void utility_svvsub
     vDSP_vsub(b, 1, a, 1, c, 1, (vDSP_Length)len);  /* Apple "logic"... 'a' and 'b' are switched */
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
+#elif defined(SAF_ENABLE_SIMD)
+    int i, incX, incY, incZ;
+    incX = incY = incZ = 1;
+    for(i=0; i<(len-3); i+=4)
+        _mm_storeu_ps(c+i*incZ, _mm_sub_ps(_mm_loadu_ps(a+i*incX), _mm_loadu_ps(b+i*incY)));
+    for(;i<len; i++) /* The residual (if len was not divisable by 4): */
+        c[i*incZ] = a[i*incX] - b[i*incY];
 #elif NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
@@ -647,6 +672,17 @@ void utility_cvvsub
     vDSP_vsub((float*)b, 1, (float*)a, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
+#elif defined(SAF_ENABLE_SIMD)
+    int i, incX, incY, incZ;
+    float* sa, *sb, *sc;
+    sa = (float*)a; sb = (float*)b; sc = (float*)c;
+    incX = incY = incZ = 1;
+    for(i=0; i<(len-1); i+=2)
+        _mm_storeu_ps(sc+2*i*incZ, _mm_sub_ps(_mm_loadu_ps(sa+2*i*incX), _mm_loadu_ps(sb+2*i*incY)));
+    for(;i<len; i++){ /* The residual (if len was not divisable by 4): */
+        sc[2*i*incZ] = sa[2*i*incX] - sb[2*i*incY];
+        sc[2*i*incZ+1] = sa[2*i*incX+1] - sb[2*i*incY+1];
+    }
 #elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
