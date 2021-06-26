@@ -1,6 +1,6 @@
 /* Copyright (C) 2007 Jean-Marc Valin */
 /**
-   @file os_support.c
+   @file os_support.h
    @brief Supported OSs for Speex resampler
 */
 /*
