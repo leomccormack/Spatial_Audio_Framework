@@ -19,7 +19,7 @@
  *@{
  * @file saf_utility_veclib.h
  * @brief Wrappers for optimised linear algebra routines, utilising CBLAS and
- *        LAPACK
+ *        LAPACK, and/or SIMD intrinsics
  *
  * @author Leo McCormack
  * @date 11.07.2016

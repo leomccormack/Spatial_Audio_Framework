@@ -48,10 +48,11 @@
  *
  *   Intel IPP may be optionally used with the flag: SAF_USE_INTEL_IPP
  *
- *   SSE/SSE2/SSE3 intrinsics support may be enabled with: SAF_ENABLE_SIMD
- *   Alternatively, AVX/AVX2 intrinsics may be employed with the additional
- *   flag: SAF_USE_AVX
- *   (Note that intrinsics require a supported x86_64 processor)
+ *   SIMD intrinsics support may be enabled with: SAF_ENABLE_SIMD
+ *    - SSE/SSE2/SSE3 intrinsics are used by default
+ *    - AVX/AVX2 intrinsics are enabled with compiler flag: -mavx2
+ *    - AVX-512  intrinsics are enabled with compiler flag: -mavx512f
+ *   (Note that intrinsics require a CPU that supports them)
  *
  * @see More information can be found in the docs folder regarding dependencies
  *
@@ -71,15 +72,23 @@
 # error Only one performance library flag can be defined!
 #endif
 
-/* If SAF_USE_AVX is defined, then so must SAF_ENABLE_SIMD */
-#if defined(SAF_USE_AVX) && !defined(SAF_ENABLE_SIMD)
-# error SAF_USE_AVX requies SAF_ENABLE_SIMD to also be defined!
+/* Check minimum requirements for SIMD support */
+#if defined(SAF_ENABLE_SIMD) && !(defined(__SSE__) && defined(__SSE2__) && \
+                                  defined(__SSE3__))
+# error SAF_ENABLE_SIMD requires at least SSE, SSE2 and SSE3 support
 #endif
 
 /* ========================================================================== */
 /*                        Performance Library to Employ                       */
 /* ========================================================================== */
 
+/*
+ * Due to the nature of spatial audio and multi-channel audio signal processing,
+ * SAF is required to employ heavy use of linear algebra operations. Therefore,
+ * the framework has been written from the ground up to conform to the CBLAS and
+ * LAPACK standards, of which there a number of highly optimised performance
+ * libraries that offer such support:
+ */
 #if defined(SAF_USE_INTEL_MKL_LP64)
 /*
  * Using Intel's Math Kernal Library (MKL) LP64 configuration (32-bit int)
@@ -145,8 +154,8 @@
 #if defined(SAF_USE_INTEL_IPP)
 /*
  * The use of Intel's Integrated Performance Primitives (IPP) is optional, but
- * does lead to some minor performance improvements for saf_fft (compared with
- * Intel MKL).
+ * does lead to some minor performance improvements for saf_fft compared with
+ * Intel MKL.
  */
 # include "ipp.h"
 #endif
@@ -154,28 +163,31 @@
 #if defined(SAF_ENABLE_SIMD)
 /*
  * SAF heavily favours the use of optimised routines provided by e.g. Intel MKL
- * or Apple Accelerate, which internally employ SIMD intrinsics (SSE/AVX etc.).
+ * or Accelerate, since they optimally employ vectorisation (with SSE/AVX etc.).
  * However, in cases where the employed performance library does not offer an
  * implementation for a particular routine, SAF provides fall-back option(s).
  * SIMD accelerated fall-back options may be enabled with: SAF_ENABLE_SIMD
  *
- * By default SSE-based intrinsics are employed, unless the additional flag
- * SAF_USE_AVX is defined, in which case AVX/AVX2 intrinsics are employed.
+ * By default SSE, SSE2, and SSE3 intrinsics are employed, unless one of the
+ * following compiler flags are defined:
+ *    - AVX/AVX2 intrinsics are enabled with: -mavx2
+ *    - AVX-512  intrinsics are enabled with: -mavx512f
+ *
+ * Note that intrinsics require a CPU that supports them (x86_64 architecture)
+ * To find out which intrinsics are supported by your own CPU, use the
+ * following terminal command on macOS: $ sysctl -a | grep machdep.cpu.features
+ * Or on Linux, use: $ lscpu
  */
-# if defined(SAF_USE_AVX)
+# if defined(__AVX__) || defined(__AVX2__) || defined(__AVX512F__)
 /*
- * Note that AVX/AVX2 requires the '-mavx' and '-mavx2' compiler flags and a
- * supported CPU (x86_64 architecture)
+ * Note that AVX/AVX2 requires the '-mavx2' compiler flag
+ * Whereas AVX-512 requires the '-mavx512f' compiler flag
  */
-#  include <immintrin.h> /* for AVX and AVX2 */
-# else
-/*
- * Note that SSE intrinsics require a supported CPU (x86_64 architecture)
- */
-#  include <xmmintrin.h> /* for SSE  */
-#  include <emmintrin.h> /* for SSE2 */
-#  include <pmmintrin.h> /* for SSE3 */
+#  include <immintrin.h> /* for AVX, AVX2, and/or AVX-512 */
 # endif
+# include <xmmintrin.h>  /* for SSE  */
+# include <emmintrin.h>  /* for SSE2 */
+# include <pmmintrin.h>  /* for SSE3 */
 #endif
 
 

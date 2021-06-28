@@ -1108,7 +1108,6 @@
 					SAF_ENABLE_EXAMPLES_TESTS,
 					SAF_ENABLE_TRACKER_MODULE,
 					SAF_ENABLE_SIMD,
-					SAF_USE_AVX,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -1123,7 +1122,6 @@
 				OTHER_CFLAGS = (
 					"-Wall",
 					"-Wextra",
-					"-mavx",
 					"-mavx2",
 				);
 				OTHER_LDFLAGS = (
@@ -1157,7 +1155,6 @@
 					SAF_ENABLE_EXAMPLES_TESTS,
 					SAF_ENABLE_TRACKER_MODULE,
 					SAF_ENABLE_SIMD,
-					SAF_USE_AVX,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -1172,7 +1169,6 @@
 				OTHER_CFLAGS = (
 					"-Wall",
 					"-Wextra",
-					"-mavx",
 					"-mavx2",
 				);
 				OTHER_LDFLAGS = (

@@ -56,8 +56,7 @@ Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unid
 The framework can be configured further, with the following options:
 ```
 SAF_USE_INTEL_IPP # To use Intel IPP for the saf_utility_fft wrapper
-SAF_ENABLE_SIMD   # To enable SSE(1-3) intrinsics for certain functions, although e.g. MKL/Accelerate are generally still favoured
-SAF_USE_AVX       # To use AVX(1-2) intrinsics instead of SSE(1-3), (also requires: SAF_ENABLE_SIMD)
+SAF_ENABLE_SIMD   # To enable (SSE/AVX/AVX512) intrinsics for certain functions (note: MKL/Accelerate are still favoured) 
 ```
 
 # Using the framework
