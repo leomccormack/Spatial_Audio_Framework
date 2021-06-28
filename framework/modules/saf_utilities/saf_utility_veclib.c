@@ -457,14 +457,17 @@ void utility_svrecip
     vmsInv(len, a, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
     int i;
+    i = 0;
 # if defined(__AVX512F__)
-    for(i=0; i<(len-15); i+=16)
+    for(; i<(len-15); i+=16)
         _mm512_storeu_ps(c+i, _mm512_rcp14_ps(_mm512_loadu_ps(a+i)));
-# elif defined(__AVX__) && defined(__AVX2__)
-    for(i=0; i<(len-7); i+=8)
+# endif
+# if defined(__AVX__) && defined(__AVX2__)
+    for(; i<(len-7); i+=8)
         _mm256_storeu_ps(c+i, _mm256_rcp_ps(_mm256_loadu_ps(a+i)));
-# else /* USE SSE */
-    for(i=0; i<(len-3); i+=4)
+# endif
+# if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
+    for(; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_rcp_ps(_mm_loadu_ps(a+i)));
 # endif
     for(;i<len; i++) /* The residual (if len was not divisable by the step size): */
@@ -547,17 +550,20 @@ void utility_svvadd
     vmsAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
     int i;
+    i = 0;
 # if defined(__AVX512F__)
-    for(i=0; i<(len-15); i+=16)
+    for(; i<(len-15); i+=16)
         _mm512_storeu_ps(c+i, _mm512_add_ps(_mm512_loadu_ps(a+i), _mm512_loadu_ps(b+i)));
-# elif defined(__AVX__) && defined(__AVX2__)
-    for(i=0; i<(len-7); i+=8)
+# endif
+# if defined(__AVX__) && defined(__AVX2__)
+    for(; i<(len-7); i+=8)
         _mm256_storeu_ps(c+i, _mm256_add_ps(_mm256_loadu_ps(a+i), _mm256_loadu_ps(b+i)));
-#else /* USE SSE */
-    for(i=0; i<(len-3); i+=4)
+# endif
+# if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
+    for(; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_add_ps(_mm_loadu_ps(a+i), _mm_loadu_ps(b+i)));
 # endif
-    for(;i<len; i++) /* The residual (if len was not divisable by the step size): */
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
         c[i] = a[i] + b[i];
 #elif defined(NDEBUG)
     int i;
@@ -568,7 +574,7 @@ void utility_svvadd
         c[i+2] = a[i+2] + b[i+2];
         c[i+3] = a[i+3] + b[i+3];
     }
-    for(; i<len; i++)
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
         c[i] = a[i] + b[i];
 #else
     int j;
@@ -601,17 +607,20 @@ void utility_cvvadd
     float* sa, *sb, *sc;
     len2 = len*2;
     sa = (float*)a; sb = (float*)b; sc = (float*)c;
+    i = 0;
 # if defined(__AVX512F__)
-    for(i=0; i<(len2-15); i+=16)
+    for(; i<(len2-15); i+=16)
         _mm512_storeu_ps(sc+i, _mm512_add_ps(_mm512_loadu_ps(sa+i), _mm512_loadu_ps(sb+i)));
-# elif defined(__AVX__) && defined(__AVX2__)
-    for(i=0; i<(len2-7); i+=8)
+# endif
+# if defined(__AVX__) && defined(__AVX2__)
+    for(; i<(len2-7); i+=8)
         _mm256_storeu_ps(sc+i, _mm256_add_ps(_mm256_loadu_ps(sa+i), _mm256_loadu_ps(sb+i)));
-# else /* USE SSE */
-    for(i=0; i<(len2-3); i+=4)
+# endif
+# if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
+    for(; i<(len2-3); i+=4)
         _mm_storeu_ps(sc+i, _mm_add_ps(_mm_loadu_ps(sa+i), _mm_loadu_ps(sb+i)));
 # endif
-    for(;i<len2; i++) /* The residual (if len2 was not divisable by the step size): */
+    for(; i<len2; i++) /* The residual (if len2 was not divisable by the step size): */
         sc[i] = sa[i] + sb[i];
 #elif __STDC_VERSION__ >= 199901L && defined(NDEBUG)
     int i;
@@ -622,7 +631,7 @@ void utility_cvvadd
         c[i+2] = a[i+2] + b[i+2];
         c[i+3] = a[i+3] + b[i+3];
     }
-    for(; i<len; i++)
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
         c[i] = a[i] + b[i];
 #else
     int j;
@@ -652,17 +661,20 @@ void utility_dvvadd
     vmdAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
     int i;
+    i = 0;
 # if defined(__AVX512F__)
-    for(i=0; i<(len-7); i+=8)
+    for(; i<(len-7); i+=8)
         _mm512_storeu_pd(c+i, _mm512_add_pd(_mm512_loadu_pd(a+i), _mm512_loadu_pd(b+i)));
-# elif defined(__AVX__) && defined(__AVX2__)
-    for(i=0; i<(len-3); i+=4)
+# endif
+# if defined(__AVX__) && defined(__AVX2__)
+    for(; i<(len-3); i+=4)
         _mm256_storeu_pd(c+i, _mm256_add_pd(_mm256_loadu_pd(a+i), _mm256_loadu_pd(b+i)));
-# else /* USE SSE */
-    for(i=0; i<(len-1); i+=2)
+# endif
+# if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
+    for(; i<(len-1); i+=2)
         _mm_storeu_pd(c+i, _mm_add_pd(_mm_loadu_pd(a+i), _mm_loadu_pd(b+i)));
 # endif
-    for(;i<len; i++) /* The residual (if len was not divisable by the step size): */
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
         c[i] = a[i] + b[i];
 #else
     int j;
@@ -695,17 +707,20 @@ void utility_zvvadd
     double* sa, *sb, *sc;
     len2 = len*2;
     sa = (double*)a; sb = (double*)b; sc = (double*)c;
+    i = 0;
 # if defined(__AVX512F__)
-    for(i=0; i<(len2-7); i+=8)
+    for(; i<(len2-7); i+=8)
         _mm512_storeu_pd(sc+i, _mm512_add_pd(_mm512_loadu_pd(sa+i), _mm512_loadu_pd(sb+i)));
-# elif defined(__AVX__) && defined(__AVX2__)
-    for(i=0; i<(len2-3); i+=4)
+# endif
+# if defined(__AVX__) && defined(__AVX2__)
+    for(; i<(len2-3); i+=4)
         _mm256_storeu_pd(sc+i, _mm256_add_pd(_mm256_loadu_pd(sa+i), _mm256_loadu_pd(sb+i)));
-# else /* USE SSE */
-    for(i=0; i<(len2-1); i+=2)
+# endif
+# if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
+    for(; i<(len2-1); i+=2)
         _mm_storeu_pd(sc+i, _mm_add_pd(_mm_loadu_pd(sa+i), _mm_loadu_pd(sb+i)));
 # endif
-    for(;i<len2; i++) /* The residual (if len2 was not divisable by the step size): */
+    for(; i<len2; i++) /* The residual (if len2 was not divisable by the step size): */
         sc[i] = sa[i] + sb[i];
 #else
     int j;
@@ -740,17 +755,20 @@ void utility_svvsub
     vmsSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
     int i;
+    i = 0;
 # if defined(__AVX512F__)
-    for(i=0; i<(len-15); i+=16)
+    for(; i<(len-15); i+=16)
         _mm512_storeu_ps(c+i, _mm512_sub_ps(_mm512_loadu_ps(a+i), _mm512_loadu_ps(b+i)));
-# elif defined(__AVX__) && defined(__AVX2__)
-    for(i=0; i<(len-7); i+=8)
+# endif
+# if defined(__AVX__) && defined(__AVX2__)
+    for(; i<(len-7); i+=8)
         _mm256_storeu_ps(c+i, _mm256_sub_ps(_mm256_loadu_ps(a+i), _mm256_loadu_ps(b+i)));
-# else /* USE SSE */
-    for(i=0; i<(len-3); i+=4)
+# endif
+# if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
+    for(; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_sub_ps(_mm_loadu_ps(a+i), _mm_loadu_ps(b+i)));
 # endif
-    for(;i<len; i++) /* The residual (if len was not divisable by the step size): */
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
         c[i] = a[i] - b[i];
 #elif defined(NDEBUG)
     int i;
@@ -761,7 +779,7 @@ void utility_svvsub
         c[i+2] = a[i+2] - b[i+2];
         c[i+3] = a[i+3] - b[i+3];
     }
-    for(; i<len; i++)
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
         c[i] = a[i] - b[i];
 #else
     int j;
@@ -794,17 +812,20 @@ void utility_cvvsub
     float* sa, *sb, *sc;
     len2 = len*2;
     sa = (float*)a; sb = (float*)b; sc = (float*)c;
+    i = 0;
 # if defined(__AVX512F__)
-    for(i=0; i<(len2-15); i+=16)
+    for(; i<(len2-15); i+=16)
         _mm512_storeu_ps(sc+i, _mm512_sub_ps(_mm512_loadu_ps(sa+i), _mm512_loadu_ps(sb+i)));
-# elif defined(__AVX__) && defined(__AVX2__)
-    for(i=0; i<(len2-7); i+=8)
+# endif
+# if defined(__AVX__) && defined(__AVX2__)
+    for(; i<(len2-7); i+=8)
         _mm256_storeu_ps(sc+i, _mm256_sub_ps(_mm256_loadu_ps(sa+i), _mm256_loadu_ps(sb+i)));
-# else /* USE SSE */
-    for(i=0; i<(len2-3); i+=4)
+# endif
+# if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
+    for(; i<(len2-3); i+=4)
         _mm_storeu_ps(sc+i, _mm_sub_ps(_mm_loadu_ps(sa+i), _mm_loadu_ps(sb+i)));
 # endif
-    for(;i<len2; i++) /* The residual (if len2 was not divisable by the step size): */
+    for(; i<len2; i++) /* The residual (if len2 was not divisable by the step size): */
         sc[i] = sa[i] - sb[i];
 #elif __STDC_VERSION__ >= 199901L && defined(NDEBUG)
     int i;
@@ -815,7 +836,7 @@ void utility_cvvsub
         c[i+2] = a[i+2] - b[i+2];
         c[i+3] = a[i+3] - b[i+3];
     }
-    for(; i<len; i++)
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
         c[i] = a[i] - b[i];
 #else
     int j;
@@ -845,14 +866,17 @@ void utility_dvvsub
     vmdSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
     int i;
+    i = 0;
 # if defined(__AVX512F__)
-    for(i=0; i<(len-7); i+=8)
+    for(; i<(len-7); i+=8)
         _mm512_storeu_pd(c+i, _mm512_sub_pd(_mm512_loadu_pd(a+i), _mm512_loadu_pd(b+i)));
-# elif defined(__AVX__) && defined(__AVX2__)
-    for(i=0; i<(len-3); i+=4)
+# endif
+# if defined(__AVX__) && defined(__AVX2__)
+    for(; i<(len-3); i+=4)
         _mm256_storeu_pd(c+i, _mm256_sub_pd(_mm256_loadu_pd(a+i), _mm256_loadu_pd(b+i)));
-# else /* USE SSE */
-    for(i=0; i<(len-1); i+=2)
+# endif
+# if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
+    for(; i<(len-1); i+=2)
         _mm_storeu_pd(c+i, _mm_sub_pd(_mm_loadu_pd(a+i), _mm_loadu_pd(b+i)));
 # endif
     for(;i<len; i++) /* The residual (if len was not divisable by the step size): */
@@ -888,14 +912,17 @@ void utility_zvvsub
     double* sa, *sb, *sc;
     len2 = len*2;
     sa = (double*)a; sb = (double*)b; sc = (double*)c;
+    i = 0;
 # if defined(__AVX512F__)
-    for(i=0; i<(len2-7); i+=8)
+    for(; i<(len2-7); i+=8)
         _mm512_storeu_pd(sc+i, _mm512_sub_pd(_mm512_loadu_pd(sa+i), _mm512_loadu_pd(sb+i)));
-# elif defined(__AVX__) && defined(__AVX2__)
-    for(i=0; i<(len2-3); i+=4)
+# endif
+# if defined(__AVX__) && defined(__AVX2__)
+    for(; i<(len2-3); i+=4)
         _mm256_storeu_pd(sc+i, _mm256_sub_pd(_mm256_loadu_pd(sa+i), _mm256_loadu_pd(sb+i)));
-# else /* USE SSE */
-    for(i=0; i<(len2-1); i+=2)
+# endif
+# if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
+    for(; i<(len2-1); i+=2)
         _mm_storeu_pd(sc+i, _mm_sub_pd(_mm_loadu_pd(sa+i), _mm_loadu_pd(sb+i)));
 # endif
     for(;i<len2; i++) /* The residual (if len2 was not divisable by the step size): */
@@ -933,14 +960,17 @@ void utility_svvmul
     vmsMul(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
     int i;
+    i = 0;
 # if defined(__AVX512F__)
-    for(i=0; i<(len-15); i+=16)
+    for(; i<(len-15); i+=16)
         _mm512_storeu_ps(c+i, _mm512_mul_ps(_mm512_loadu_ps(a+i), _mm512_loadu_ps(b+i)));
-# elif defined(__AVX__) && defined(__AVX2__)
-    for(i=0; i<(len-7); i+=8)
+# endif
+# if defined(__AVX__) && defined(__AVX2__)
+    for(; i<(len-7); i+=8)
         _mm256_storeu_ps(c+i, _mm256_mul_ps(_mm256_loadu_ps(a+i), _mm256_loadu_ps(b+i)));
-# else /* USE SSE */
-    for(i=0; i<(len-3); i+=4)
+# endif
+# if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
+    for(; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_mul_ps(_mm_loadu_ps(a+i), _mm_loadu_ps(b+i)));
 # endif
     for(;i<len; i++) /* The residual (if len was not divisable by the step size): */
@@ -954,7 +984,7 @@ void utility_svvmul
         c[i+2] = a[i+2] * b[i+2];
         c[i+3] = a[i+3] * b[i+3];
     }
-    for(; i<len; i++)
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
         c[i] = a[i] * b[i];
 #else
     int j;
@@ -1009,7 +1039,7 @@ void utility_cvvmul
         /* Add even indices, subtract odd indices */
         _mm256_storeu_ps(sc+2*i, _mm256_addsub_ps(tmp1, tmp2));
     }
-# else /* USE SSE */
+# elif defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
     for(i=0; i<(len-1); i+=2){
         /* Load only the real parts of a */
         __m128 src1 = _mm_moveldup_ps(_mm_loadu_ps(sa+2*i)/*|a1|b1|a2|b2|*/); /*|a1|a1|a2|a2|*/
@@ -1040,7 +1070,7 @@ void utility_cvvmul
         c[i+2] = a[i+2] * b[i+2];
         c[i+3] = a[i+3] * b[i+3];
     }
-    for(; i<len; i++)
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
         c[i] = a[i] * b[i];
 #else
     int i;
@@ -1218,7 +1248,7 @@ void utility_svsadd
     __m256 s8 = _mm256_set1_ps(s[0]);
     for(i=0; i<(len-7); i+=8)
         _mm256_storeu_ps(c+i, _mm256_add_ps(_mm256_loadu_ps(a+i), s8));
-# else /* USE SSE */
+# elif defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
     __m128 s4 = _mm_load_ps1(s);
     for(i=0; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_add_ps(_mm_loadu_ps(a+i), s4));
@@ -1259,7 +1289,7 @@ void utility_svssub
     __m256 s8 = _mm256_set1_ps(s[0]);
     for(i=0; i<(len-7); i+=8)
         _mm256_storeu_ps(c+i, _mm256_sub_ps(_mm256_loadu_ps(a+i), s8));
-# else /* USE SSE */
+# elif defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
     __m128 s4 = _mm_load_ps1(s);
     for(i=0; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_sub_ps(_mm_loadu_ps(a+i), s4));
@@ -1295,7 +1325,7 @@ void utility_ssv2cv_inds
         inds_vDSP[i] = (vDSP_Length)(inds[i] + 1);
     vDSP_vgathr(sv, inds_vDSP, 1, cv, 1, (vDSP_Length)len);
     free(inds_vDSP);
-//#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     veclib_int* inds_tmp;
     if(sizeof(veclib_int)==sizeof(int)) /* LP64 MKL */
         cblas_sgthr(len, sv, cv, (veclib_int*)inds);
@@ -1314,7 +1344,7 @@ void utility_ssv2cv_inds
         cv[i+2] = sv[inds[i+2]];
         cv[i+3] = sv[inds[i+3]];
     }
-    for(; i<len; i++)
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
         cv[i] = sv[inds[i]];
 #else
     for(i=0; i<len; i++)
