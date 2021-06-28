@@ -982,7 +982,7 @@ void utility_cvvmul
     float* sa, *sb, *sc;
     sa = (float*)a; sb = (float*)b; sc = (float*)c;
 # if defined(SAF_USE_AVX)
-    __m256i interleave = _mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1);
+    __m256i permute_ri = _mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1);
     for(i=0; i<(len-3); i+=4){
         /* Load only the real parts of a */
         __m256 src1 = _mm256_moveldup_ps(_mm256_loadu_ps(sa+2*i)/*|a1|b1|a2|b2|a3|b3|a4|b4|*/); /*|a1|a1|a2|a2|a3|a3|a4|a4|*/
@@ -991,7 +991,7 @@ void utility_cvvmul
         /* Multiply together */
         __m256 tmp1 = _mm256_mul_ps(src1, src2);
         /* Swap the real+imag parts of b to be imag+real instead: */
-        __m256 b1 = _mm256_permutevar8x32_ps(src2, interleave);
+        __m256 b1 = _mm256_permutevar8x32_ps(src2, permute_ri);
         /* Load only the imag parts of a */
         src1 = _mm256_movehdup_ps(_mm256_loadu_ps(sa+2*i)/*|a1|b1|a2|b2|a3|b3|a4|b4|*/); /*|b1|b1|b2|b2|b3|b3|b4|b4|*/
         /* Multiply together */

@@ -48,8 +48,8 @@
 
 /** Data structure for kf_update6() */
 typedef struct _kf_update6 {
-    void* sslslv_handle;
-    void* sglslvt_handle;
+    void* hLinSolve;    /* Linear solver handle '\' */
+    void* hLinSolveT;   /* Linear solver handle '/' */
 }kf_update6_data;
 
 /* ========================================================================== */
@@ -629,16 +629,16 @@ void kf_update6_create(void ** const phUp6)
     *phUp6 = malloc1d(sizeof(kf_update6_data));
     kf_update6_data *h = (kf_update6_data*)(*phUp6);
 
-    utility_sslslv_create(&h->sslslv_handle, 3, 1);
-    utility_sglslvt_create(&h->sglslvt_handle, 6, 3);
+    utility_sslslv_create(&h->hLinSolve, 3, 1);
+    utility_sglslvt_create(&h->hLinSolveT, 6, 3);
 }
 void kf_update6_destroy(void ** const phUp6)
 {
     kf_update6_data *h = (kf_update6_data*)(*phUp6);
 
     if(h!=NULL){
-        utility_sslslv_destroy(&h->sslslv_handle);
-        utility_sglslvt_destroy(&h->sglslvt_handle);
+        utility_sslslv_destroy(&h->hLinSolve);
+        utility_sglslvt_destroy(&h->hLinSolveT);
 
         free(h);
         h=NULL;
@@ -706,7 +706,7 @@ void kf_update6
         K[5][2] = 1.0f/IS[2][2] * PHT[5][2];
     }
     else
-        utility_sglslvt(h->sglslvt_handle, (float*)PHT, 6, (float*)IS, 3, (float*)K);
+        utility_sglslvt(h->hLinSolveT, (float*)PHT, 6, (float*)IS, 3, (float*)K);
     yIM[0] = y[0]-IM[0];
     yIM[1] = y[1]-IM[1];
     yIM[2] = y[2]-IM[2];
@@ -871,7 +871,7 @@ float gauss_pdf3
         S_DX[2] = 1.0f/S[2][2] * DX[2];
     }
     else
-        utility_sslslv(h->sslslv_handle, (float*)S, 3, (float*)DX, 1, (float*)S_DX);
+        utility_sslslv(h->hLinSolve, (float*)S, 3, (float*)DX, 1, (float*)S_DX);
     E = DX[0] * S_DX[0];
     E += DX[1] * S_DX[1];
     E += DX[2] * S_DX[2];

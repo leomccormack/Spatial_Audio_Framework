@@ -49,8 +49,8 @@
  *   Intel IPP may be optionally used with the flag: SAF_USE_INTEL_IPP
  *
  *   SSE/SSE2/SSE3 intrinsics support may be enabled with: SAF_ENABLE_SIMD
- *   Alternatively, AVX/AVX2 intrinsics may be employed instead with the
- *   additional flag: SAF_USE_AVX
+ *   Alternatively, AVX/AVX2 intrinsics may be employed with the additional
+ *   flag: SAF_USE_AVX
  *   (Note that intrinsics require a supported x86_64 processor)
  *
  * @see More information can be found in the docs folder regarding dependencies
@@ -164,7 +164,7 @@
  */
 # if defined(SAF_USE_AVX)
 /*
- * Note that AVX requires the '-mavx' and '-mavx2' compiler flags and a
+ * Note that AVX/AVX2 requires the '-mavx' and '-mavx2' compiler flags and a
  * supported CPU (x86_64 architecture)
  */
 #  include <immintrin.h> /* for AVX and AVX2 */
