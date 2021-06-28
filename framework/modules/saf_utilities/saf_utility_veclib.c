@@ -456,14 +456,13 @@ void utility_svrecip
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsInv(len, a, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
-# if defined(SAF_USE_AVX)
     int i;
+# if defined(SAF_USE_AVX)
     for(i=0; i<(len-7); i+=8)
         _mm256_storeu_ps(c+i, _mm256_rcp_ps(_mm256_loadu_ps(a+i)));
     for(;i<len; i++) /* The residual (if len was not divisable by 8): */
         c[i] = 1.0f/a[i];
 # else /* USE SSE */
-    int i;
     for(i=0; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_rcp_ps(_mm_loadu_ps(a+i)));
     for(;i<len; i++) /* The residual (if len was not divisable by 4): */
@@ -546,14 +545,13 @@ void utility_svvadd
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
-# if defined(SAF_USE_AVX)
     int i;
+# if defined(SAF_USE_AVX)
     for(i=0; i<(len-7); i+=8)
         _mm256_storeu_ps(c+i, _mm256_add_ps(_mm256_loadu_ps(a+i), _mm256_loadu_ps(b+i)));
     for(;i<len; i++) /* The residual (if len was not divisable by 8): */
         c[i] = a[i] + b[i];
 #else /* USE SSE */
-    int i;
     for(i=0; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_add_ps(_mm_loadu_ps(a+i), _mm_loadu_ps(b+i)));
     for(;i<len; i++) /* The residual (if len was not divisable by 4): */
@@ -651,10 +649,17 @@ void utility_dvvadd
     vmdAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
     int i;
+# if defined(SAF_USE_AVX)
+    for(i=0; i<(len-3); i+=4)
+        _mm256_storeu_pd(c+i, _mm256_add_pd(_mm256_loadu_pd(a+i), _mm256_loadu_pd(b+i)));
+    for(;i<len; i++) /* The residual (if len was not divisable by 4): */
+        c[i] = a[i] + b[i];
+# else /* USE SSE */
     for(i=0; i<(len-1); i+=2)
         _mm_storeu_pd(c+i, _mm_add_pd(_mm_loadu_pd(a+i), _mm_loadu_pd(b+i)));
     for(;i<len; i++) /* The residual (if len was not divisable by 2): */
-        c[i] = a[i] - b[i];
+        c[i] = a[i] + b[i];
+# endif
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -686,10 +691,17 @@ void utility_zvvadd
     double* sa, *sb, *sc;
     len2 = len*2;
     sa = (double*)a; sb = (double*)b; sc = (double*)c;
+# if defined(SAF_USE_AVX)
+    for(i=0; i<(len2-3); i+=4)
+        _mm256_storeu_pd(sc+i, _mm256_add_pd(_mm256_loadu_pd(sa+i), _mm256_loadu_pd(sb+i)));
+    for(;i<len2; i++) /* The residual (if len2 was not divisable by 4): */
+        sc[i] = sa[i] + sb[i];
+# else /* USE SSE */
     for(i=0; i<(len2-1); i+=2)
         _mm_storeu_pd(sc+i, _mm_add_pd(_mm_loadu_pd(sa+i), _mm_loadu_pd(sb+i)));
     for(;i<len2; i++) /* The residual (if len2 was not divisable by 2): */
         sc[i] = sa[i] + sb[i];
+# endif
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -723,10 +735,17 @@ void utility_svvsub
     vmsSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
     int i;
+# if defined(SAF_USE_AVX)
+    for(i=0; i<(len-7); i+=8)
+        _mm256_storeu_ps(c+i, _mm256_sub_ps(_mm256_loadu_ps(a+i), _mm256_loadu_ps(b+i)));
+    for(;i<len; i++) /* The residual (if len was not divisable by 8): */
+        c[i] = a[i] - b[i];
+# else /* USE SSE */
     for(i=0; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_sub_ps(_mm_loadu_ps(a+i), _mm_loadu_ps(b+i)));
     for(;i<len; i++) /* The residual (if len was not divisable by 4): */
         c[i] = a[i] - b[i];
+# endif
 #elif NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
@@ -769,11 +788,17 @@ void utility_cvvsub
     float* sa, *sb, *sc;
     len2 = len*2;
     sa = (float*)a; sb = (float*)b; sc = (float*)c;
+# if defined(SAF_USE_AVX)
+    for(i=0; i<(len2-7); i+=8)
+        _mm256_storeu_ps(sc+i, _mm256_sub_ps(_mm256_loadu_ps(sa+i), _mm256_loadu_ps(sb+i)));
+    for(;i<len2; i++) /* The residual (if len2 was not divisable by 8): */
+        sc[i] = sa[i] - sb[i];
+# else /* USE SSE */
     for(i=0; i<(len2-3); i+=4)
         _mm_storeu_ps(sc+i, _mm_sub_ps(_mm_loadu_ps(sa+i), _mm_loadu_ps(sb+i)));
-    for(;i<len2; i++){ /* The residual (if len2 was not divisable by 4): */
+    for(;i<len2; i++) /* The residual (if len2 was not divisable by 4): */
         sc[i] = sa[i] - sb[i];
-    }
+# endif
 #elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
@@ -813,10 +838,17 @@ void utility_dvvsub
     vmdSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
     int i;
+# if defined(SAF_USE_AVX)
+    for(i=0; i<(len-3); i+=4)
+        _mm256_storeu_pd(c+i, _mm256_sub_pd(_mm256_loadu_pd(a+i), _mm256_loadu_pd(b+i)));
+    for(;i<len; i++) /* The residual (if len was not divisable by 4): */
+        c[i] = a[i] - b[i];
+# else /* USE SSE */
     for(i=0; i<(len-1); i+=2)
         _mm_storeu_pd(c+i, _mm_sub_pd(_mm_loadu_pd(a+i), _mm_loadu_pd(b+i)));
     for(;i<len; i++) /* The residual (if len was not divisable by 2): */
         c[i] = a[i] - b[i];
+# endif
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -848,10 +880,17 @@ void utility_zvvsub
     double* sa, *sb, *sc;
     len2 = len*2;
     sa = (double*)a; sb = (double*)b; sc = (double*)c;
+# if defined(SAF_USE_AVX)
+    for(i=0; i<(len2-3); i+=4)
+        _mm256_storeu_pd(sc+i, _mm256_sub_pd(_mm256_loadu_pd(sa+i), _mm256_loadu_pd(sb+i)));
+    for(;i<len2; i++) /* The residual (if len2 was not divisable by 4): */
+        sc[i] = sa[i] - sb[i];
+# else /* USE SSE */
     for(i=0; i<(len2-1); i+=2)
         _mm_storeu_pd(sc+i, _mm_sub_pd(_mm_loadu_pd(sa+i), _mm_loadu_pd(sb+i)));
     for(;i<len2; i++) /* The residual (if len2 was not divisable by 2): */
         sc[i] = sa[i] - sb[i];
+# endif
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -885,10 +924,17 @@ void utility_svvmul
     vmsMul(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
     int i;
+# if defined(SAF_USE_AVX)
+    for(i=0; i<(len-7); i+=8)
+        _mm256_storeu_ps(c+i, _mm256_mul_ps(_mm256_loadu_ps(a+i), _mm256_loadu_ps(b+i)));
+    for(;i<len; i++) /* The residual (if len was not divisable by 8): */
+        c[i] = a[i] * b[i];
+# else /* USE SSE */
     for(i=0; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_mul_ps(_mm_loadu_ps(a+i), _mm_loadu_ps(b+i)));
     for(;i<len; i++) /* The residual (if len was not divisable by 4): */
         c[i] = a[i] * b[i];
+# endif
 #elif NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
@@ -935,6 +981,29 @@ void utility_cvvmul
     int i;
     float* sa, *sb, *sc;
     sa = (float*)a; sb = (float*)b; sc = (float*)c;
+# if defined(SAF_USE_AVX)
+    __m256i interleave = _mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1);
+    for(i=0; i<(len-3); i+=4){
+        /* Load only the real parts of a */
+        __m256 src1 = _mm256_moveldup_ps(_mm256_loadu_ps(sa+2*i)/*|a1|b1|a2|b2|a3|b3|a4|b4|*/); /*|a1|a1|a2|a2|a3|a3|a4|a4|*/
+        /* Load real+imag parts of b */
+        __m256 src2 = _mm256_loadu_ps(sb+2*i); /*|c1|d1|c2|d2|c3|d3|c4|d4|*/
+        /* Multiply together */
+        __m256 tmp1 = _mm256_mul_ps(src1, src2);
+        /* Swap the real+imag parts of b to be imag+real instead: */
+        __m256 b1 = _mm256_permutevar8x32_ps(src2, interleave);
+        /* Load only the imag parts of a */
+        src1 = _mm256_movehdup_ps(_mm256_loadu_ps(sa+2*i)/*|a1|b1|a2|b2|a3|b3|a4|b4|*/); /*|b1|b1|b2|b2|b3|b3|b4|b4|*/
+        /* Multiply together */
+        __m256 tmp2 = _mm256_mul_ps(src1, b1);
+        /* Add even indices, subtract odd indices */
+        _mm256_storeu_ps(sc+2*i, _mm256_addsub_ps(tmp1, tmp2));
+    }
+    for(;i<len; i++){ /* The residual (if len was not divisable by 4): */
+        sc[2*i]   = sa[2*i] * sb[2*i]   - sa[2*i+1] * sb[2*i+1];
+        sc[2*i+1] = sa[2*i] * sb[2*i+1] + sa[2*i+1] * sb[2*i];
+    }
+# else /* USE SSE */
     for(i=0; i<(len-1); i+=2){
         /* Load only the real parts of a */
         __m128 src1 = _mm_moveldup_ps(_mm_loadu_ps(sa+2*i)/*|a1|b1|a2|b2|*/); /*|a1|a1|a2|a2|*/
@@ -955,6 +1024,7 @@ void utility_cvvmul
         sc[2*i]   = sa[2*i] * sb[2*i]   - sa[2*i+1] * sb[2*i+1];
         sc[2*i+1] = sa[2*i] * sb[2*i+1] + sa[2*i+1] * sb[2*i];
     }
+# endif
 #elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
@@ -1134,11 +1204,19 @@ void utility_svsadd
     vDSP_vsadd(a, 1, s, c, 1, (vDSP_Length)len);
 #elif defined(SAF_ENABLE_SIMD)
     int i;
+# if defined(SAF_USE_AVX)
+    __m256 s8 = _mm256_set1_ps(s[0]);
+    for(i=0; i<(len-7); i+=8)
+        _mm256_storeu_ps(c+i, _mm256_add_ps(_mm256_loadu_ps(a+i), s8));
+    for(;i<len; i++) /* The residual (if len was not divisable by 8): */
+        c[i] = a[i] + s[0];
+# else /* USE SSE */
     __m128 s4 = _mm_load_ps1(s);
     for(i=0; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_add_ps(_mm_loadu_ps(a+i), s4));
     for(;i<len; i++) /* The residual (if len was not divisable by 4): */
         c[i] = a[i] + s[0];
+# endif
 #else
     int i;
     for(i=0; i<len; i++)
@@ -1165,11 +1243,19 @@ void utility_svssub
     vDSP_vsadd(a, 1, &inv_s, c, 1, (vDSP_Length)len);
 #elif defined(SAF_ENABLE_SIMD)
     int i;
+# if defined(SAF_USE_AVX)
+    __m256 s8 = _mm256_set1_ps(s[0]);
+    for(i=0; i<(len-7); i+=8)
+        _mm256_storeu_ps(c+i, _mm256_sub_ps(_mm256_loadu_ps(a+i), s8));
+    for(;i<len; i++) /* The residual (if len was not divisable by 8): */
+        c[i] = a[i] - s[0];
+# else /* USE SSE */
     __m128 s4 = _mm_load_ps1(s);
     for(i=0; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_sub_ps(_mm_loadu_ps(a+i), s4));
     for(;i<len; i++) /* The residual (if len was not divisable by 4): */
         c[i] = a[i] - s[0];
+# endif
 #else
     int i;
     for(i=0; i<len; i++)
@@ -1190,9 +1276,9 @@ void utility_ssv2cv_inds
     float* cv
 )
 {
+    int i;
 #ifdef SAF_USE_APPLE_ACCELERATE /* Unfortunately requires a malloc call */
     /* Due to Apple "logic", we first need to add 1 to all of the indicies, since "vDSP_vgathr" is going to then subtract 1 from them all... */
-    int i;
     vDSP_Length* inds_vDSP;
     inds_vDSP = malloc1d(len*sizeof(vDSP_Length));
     for(i=0; i<len; i++)
@@ -1200,7 +1286,6 @@ void utility_ssv2cv_inds
     vDSP_vgathr(sv, inds_vDSP, 1, cv, 1, (vDSP_Length)len);
     free(inds_vDSP);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
-    int i;
     veclib_int* inds_tmp;
     if(sizeof(veclib_int)==sizeof(int)) /* LP64 MKL */
         cblas_sgthr(len, sv, cv, (veclib_int*)inds);
@@ -1212,7 +1297,6 @@ void utility_ssv2cv_inds
         free(inds_tmp);
     }
 #else
-    int i;
     for(i=0; i<len; i++)
         cv[i] = sv[inds[i]];
 #endif

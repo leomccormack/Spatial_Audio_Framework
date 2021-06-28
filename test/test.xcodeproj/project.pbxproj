@@ -1122,8 +1122,9 @@
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;
 				OTHER_CFLAGS = (
 					"-Wall",
-					"-mavx",
 					"-Wextra",
+					"-mavx",
+					"-mavx2",
 				);
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",
@@ -1170,8 +1171,9 @@
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;
 				OTHER_CFLAGS = (
 					"-Wall",
-					"-mavx",
 					"-Wextra",
+					"-mavx",
+					"-mavx2",
 				);
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",
