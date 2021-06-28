@@ -1108,6 +1108,7 @@
 					SAF_ENABLE_EXAMPLES_TESTS,
 					SAF_ENABLE_TRACKER_MODULE,
 					SAF_ENABLE_SIMD,
+					SAF_USE_AVX,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -1121,6 +1122,7 @@
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;
 				OTHER_CFLAGS = (
 					"-Wall",
+					"-mavx",
 					"-Wextra",
 				);
 				OTHER_LDFLAGS = (
@@ -1154,6 +1156,7 @@
 					SAF_ENABLE_EXAMPLES_TESTS,
 					SAF_ENABLE_TRACKER_MODULE,
 					SAF_ENABLE_SIMD,
+					SAF_USE_AVX,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -1167,6 +1170,7 @@
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;
 				OTHER_CFLAGS = (
 					"-Wall",
+					"-mavx",
 					"-Wextra",
 				);
 				OTHER_LDFLAGS = (

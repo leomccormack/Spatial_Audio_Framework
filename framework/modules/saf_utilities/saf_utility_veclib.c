@@ -456,11 +456,19 @@ void utility_svrecip
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsInv(len, a, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
+# if defined(SAF_USE_AVX)
+    int i;
+    for(i=0; i<(len-7); i+=8)
+        _mm256_storeu_ps(c+i, _mm256_rcp_ps(_mm256_loadu_ps(a+i)));
+    for(;i<len; i++) /* The residual (if len was not divisable by 8): */
+        c[i] = 1.0f/a[i];
+# else /* USE SSE */
     int i;
     for(i=0; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_rcp_ps(_mm_loadu_ps(a+i)));
     for(;i<len; i++) /* The residual (if len was not divisable by 4): */
         c[i] = 1.0f/a[i];
+# endif
 #else
     int i;
     for(i=0; i<len; i++)
@@ -538,11 +546,19 @@ void utility_svvadd
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
+# if defined(SAF_USE_AVX)
+    int i;
+    for(i=0; i<(len-7); i+=8)
+        _mm256_storeu_ps(c+i, _mm256_add_ps(_mm256_loadu_ps(a+i), _mm256_loadu_ps(b+i)));
+    for(;i<len; i++) /* The residual (if len was not divisable by 8): */
+        c[i] = a[i] + b[i];
+#else /* USE SSE */
     int i;
     for(i=0; i<(len-3); i+=4)
         _mm_storeu_ps(c+i, _mm_add_ps(_mm_loadu_ps(a+i), _mm_loadu_ps(b+i)));
     for(;i<len; i++) /* The residual (if len was not divisable by 4): */
-        c[i] = a[i] - b[i];
+        c[i] = a[i] + b[i];
+# endif
 #elif NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
@@ -585,10 +601,17 @@ void utility_cvvadd
     float* sa, *sb, *sc;
     len2 = len*2;
     sa = (float*)a; sb = (float*)b; sc = (float*)c;
+# if defined(SAF_USE_AVX)
+    for(i=0; i<(len2-7); i+=8)
+        _mm256_storeu_ps(sc+i, _mm256_add_ps(_mm256_loadu_ps(sa+i), _mm256_loadu_ps(sb+i)));
+    for(;i<len2; i++) /* The residual (if len2 was not divisable by 8): */
+        sc[i] = sa[i] + sb[i];
+# else /* USE SSE */
     for(i=0; i<(len2-3); i+=4)
         _mm_storeu_ps(sc+i, _mm_add_ps(_mm_loadu_ps(sa+i), _mm_loadu_ps(sb+i)));
     for(;i<len2; i++) /* The residual (if len2 was not divisable by 4): */
         sc[i] = sa[i] + sb[i];
+# endif
 #elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
