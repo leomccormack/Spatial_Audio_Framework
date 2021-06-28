@@ -51,6 +51,7 @@ typedef struct _sphPWD_data {
     float* grid_dirs_xyz; 
     float* pSpec;
     float* P_minus_peak;
+    float* P_tmp;
     float* VM_mask;
 
 }sphPWD_data;
@@ -65,6 +66,7 @@ typedef struct _sphMUSIC_data {
     float* pSpec;
     float* pSpecInv;
     float* P_minus_peak;
+    float* P_tmp;
     float* VM_mask;
 
 }sphMUSIC_data;

@@ -986,6 +986,7 @@ void sphPWD_create
     h->pSpec = malloc1d(h->nDirs*sizeof(float));
     h->P_minus_peak = malloc1d(h->nDirs*sizeof(float));
     h->VM_mask = malloc1d(h->nDirs*sizeof(float));
+    h->P_tmp = malloc1d(h->nDirs*sizeof(float));
 
     /* clean-up */
     free(grid_dirs_rad);
@@ -1005,6 +1006,7 @@ void sphPWD_destroy
         free(h->A_Cx);
         free(h->pSpec);
         free(h->P_minus_peak);
+        free(h->P_tmp);
         free(h->VM_mask);
         free(h);
         h = NULL;
@@ -1029,23 +1031,12 @@ void sphPWD_compute
     const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f);
 
     /* derive the power-map value for each grid direction */ 
-    for (i = 0; i < (h->nDirs); i++){
-#if 1  
+    for (i = 0; i < (h->nDirs); i++){ 
         cblas_cgemv(CblasRowMajor, CblasNoTrans, h->nSH, h->nSH, &calpha,
                     Cx, h->nSH,
                     &(h->grid_svecs[i*(h->nSH)]), 1, &cbeta,
                     h->A_Cx, 1); 
         cblas_cdotu_sub(h->nSH, h->A_Cx, 1, &(h->grid_svecs[i*(h->nSH)]), 1, &A_Cx_A);
-#else
-        cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, 1, h->nSH, h->nSH, &calpha,
-                    &(h->grid_svecs[i*(h->nSH)]), 1,
-                    Cx, h->nSH, &cbeta,
-                    h->A_Cx, h->nSH);
-        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 1, 1, h->nSH, &calpha,
-                    h->A_Cx, h->nSH,
-                    &(h->grid_svecs[i*(h->nSH)]), 1, &cbeta,
-                    &A_Cx_A, 1);
-#endif
         h->pSpec[i] = crealf(A_Cx_A);
     }
 
@@ -1080,7 +1071,8 @@ void sphPWD_compute
             cblas_sscal(h->nDirs, scale, h->VM_mask, 1);
             for(i=0; i<h->nDirs; i++)
                 h->VM_mask[i] = 1.0f/(0.00001f+(h->VM_mask[i])); /* inverse VM distribution */
-            utility_svvmul(h->P_minus_peak, h->VM_mask, h->nDirs, h->P_minus_peak);
+            utility_svvmul(h->P_minus_peak, h->VM_mask, h->nDirs, h->P_tmp);
+            cblas_scopy(h->nDirs, h->P_tmp, 1, h->P_minus_peak, 1);
         }
     }
 }
@@ -1125,6 +1117,7 @@ void sphMUSIC_create
     h->pSpec = malloc1d(h->nDirs*sizeof(float));
     h->pSpecInv = malloc1d(h->nDirs*sizeof(float));
     h->P_minus_peak = malloc1d(h->nDirs*sizeof(float));
+    h->P_tmp = malloc1d(h->nDirs*sizeof(float));
     h->VM_mask = malloc1d(h->nDirs*sizeof(float));
 
     /* clean-up */
@@ -1147,6 +1140,7 @@ void sphMUSIC_destroy
         free(h->pSpec);
         free(h->pSpecInv);
         free(h->P_minus_peak);
+        free(h->P_tmp);
         free(h->VM_mask);
         free(h);
         h = NULL;
@@ -1213,7 +1207,8 @@ void sphMUSIC_compute
             cblas_sscal(h->nDirs, scale, h->VM_mask, 1);
             for(i=0; i<h->nDirs; i++)
                 h->VM_mask[i] = 1.0f/(0.00001f+(h->VM_mask[i])); /* inverse VM distribution */
-            utility_svvmul(h->P_minus_peak, h->VM_mask, h->nDirs, h->P_minus_peak);
+            utility_svvmul(h->P_minus_peak, h->VM_mask, h->nDirs, h->P_tmp);
+            cblas_scopy(h->nDirs, h->P_tmp, 1, h->P_minus_peak, 1);
         }
     }
 }

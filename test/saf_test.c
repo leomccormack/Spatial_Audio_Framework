@@ -116,6 +116,7 @@ int main_test(void) {
     RUN_TEST(test__computeSectorCoeffsEP);
     RUN_TEST(test__checkCondNumberSHTReal);
     RUN_TEST(test__sphMUSIC);
+    RUN_TEST(test__sphPWD);
     RUN_TEST(test__sphESPRIT);
     RUN_TEST(test__sphModalCoeffs);
     RUN_TEST(test__truncationEQ);
@@ -1458,7 +1459,7 @@ void test__faf_IIRFilterbank(void){
 
     /* Sum the individual bands */
     for(band=0; band<7; band++)
-        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
+        cblas_saxpy(signalLength, 1.0f, outSig_bands[band], 1, outSig, 1);
 
     /* Check that the magnitude difference between input and output is below 0.5dB */
     saf_rfft_create(&hFFT, signalLength);
@@ -1478,7 +1479,7 @@ void test__faf_IIRFilterbank(void){
     faf_IIRFilterbank_destroy(&hFaF);
     memset(outSig, 0, signalLength*sizeof(float));
     for(band=0; band<7; band++)
-        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
+        cblas_saxpy(signalLength, 1.0f, outSig_bands[band], 1, outSig, 1);
     saf_rfft_forward(hFFT, outSig, outsig_fft);
     for(i=0; i<signalLength/2+1; i++)
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance_dB, 0.0f, 20.0f * log10f(cabsf(ccdivf(outsig_fft[i], insig_fft[i]))));
@@ -1635,7 +1636,7 @@ void test__tracker3d(void){
     rand_m1_1(FLATTEN2D(inputSH_noise), nSH*sigLen);
     scale = 0.05f;
     utility_svsmul(FLATTEN2D(inputSH_noise), &scale, nSH*sigLen, NULL);
-    utility_svvadd(FLATTEN2D(inputSH), FLATTEN2D(inputSH_noise), nSH*sigLen, FLATTEN2D(inputSH));
+    cblas_saxpy(nSH*sigLen, 1.0f, FLATTEN2D(inputSH_noise), 1, FLATTEN2D(inputSH), 1);
 
     /* Create DoA estimator */
     nGrid = 240; /* number of points in a t-design of degree 21 */
@@ -1847,7 +1848,7 @@ void test__formulate_M_and_Cr(void){
                     FLATTEN2D(Mr), nCHout,
                     FLATTEN2D(decor), lenSig, 0.0f,
                     FLATTEN2D(z_r), lenSig);
-        utility_svvadd(FLATTEN2D(z), FLATTEN2D(z_r), nCHout*lenSig, FLATTEN2D(z));
+        cblas_saxpy(nCHout*lenSig, 1.0f, FLATTEN2D(z_r), 1, FLATTEN2D(z), 1);
 
         /* Assert that the covariance matrix of 'z' matches the target covariance
          * matrix */
@@ -2007,7 +2008,7 @@ void test__formulate_M_and_Cr_cmplx(void){
                     FLATTEN2D(Mr), nCHout,
                     FLATTEN2D(decor), lenSig, &cbeta,
                     FLATTEN2D(z_r), lenSig);
-        utility_cvvadd(FLATTEN2D(z), FLATTEN2D(z_r), nCHout*lenSig, FLATTEN2D(z));
+        cblas_saxpy(/*re+im*/2*nCHout*lenSig, 1.0f, (const float*)FLATTEN2D(z_r), 1, (float*)FLATTEN2D(z), 1);
 
         /* Assert that the covariance matrix of 'z' matches the target covariance
          * matrix */
@@ -2598,6 +2599,68 @@ void test__sphMUSIC(void){
     free(V);
     free(Vn);
     free(Vn_cmplx);
+}
+
+void test__sphPWD(void){
+    int nGrid, nSH, nSrcs, srcInd_1, srcInd_2;
+    float test_dirs_deg[2][2];
+    float* grid_dirs_deg;
+    float** Y_src, **src_sigs, **src_sigs_sh, **Cx;
+    float_complex** Cx_cmplx;
+    void* hPWD;
+
+    /* config */
+    const int order = 3;
+    const int lsig = 48000;
+
+    /* define scanning grid directions */
+    nGrid = 240;
+    grid_dirs_deg = (float*)__Tdesign_degree_21_dirs_deg;
+
+    /* test scenario and signals */
+    nSrcs = 2;
+    srcInd_1 = 139;
+    srcInd_2 = 204;
+    test_dirs_deg[0][0] = grid_dirs_deg[srcInd_1*2];
+    test_dirs_deg[0][1] = grid_dirs_deg[srcInd_1*2+1];
+    test_dirs_deg[1][0] = grid_dirs_deg[srcInd_2*2];
+    test_dirs_deg[1][1] = grid_dirs_deg[srcInd_2*2+1];
+    nSH = ORDER2NSH(order);
+    Y_src = (float**)malloc2d(nSH, nSrcs, sizeof(float));
+    getRSH(order, (float*)test_dirs_deg, nSrcs, FLATTEN2D(Y_src));
+    src_sigs = (float**)malloc2d(nSrcs, lsig, sizeof(float));
+    rand_m1_1(FLATTEN2D(src_sigs), nSrcs*lsig); /* uncorrelated noise sources */
+
+    /* encode to SH and compute spatial covariance matrix */
+    src_sigs_sh = (float**)malloc2d(nSH, lsig, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, lsig, nSrcs, 1.0f,
+                FLATTEN2D(Y_src), nSrcs,
+                FLATTEN2D(src_sigs), lsig, 0.0f,
+                FLATTEN2D(src_sigs_sh), lsig);
+    Cx = (float**)malloc2d(nSH, nSH, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, lsig, 1.0f,
+                FLATTEN2D(src_sigs_sh), lsig,
+                FLATTEN2D(src_sigs_sh), lsig, 0.0f,
+                FLATTEN2D(Cx), nSH);
+    Cx_cmplx = (float_complex**)calloc2d(nSH, nSH, sizeof(float_complex));
+    cblas_scopy(nSH*nSH, FLATTEN2D(Cx), 1, (float*)FLATTEN2D(Cx_cmplx), 2);
+
+    /* compute sphMUSIC, returning "peak-find" indices */
+    int inds[2];
+    sphPWD_create(&hPWD, order, grid_dirs_deg, nGrid);
+    sphPWD_compute(hPWD, FLATTEN2D(Cx_cmplx), nSrcs, NULL, (int*)inds);
+
+    /* Assert that the true source indices were found (note that the order can flip) */
+    TEST_ASSERT_TRUE(inds[0] == srcInd_1 || inds[0] == srcInd_2);
+    TEST_ASSERT_TRUE(inds[1] == srcInd_1 || inds[1] == srcInd_2);
+
+    /* clean-up */
+    sphPWD_destroy(&hPWD);
+    free(Y_src);
+    free(src_sigs);
+    free(src_sigs_sh);
+    free(Cx);
+    free(Cx_cmplx);
 }
 
 void test__sphESPRIT(void){

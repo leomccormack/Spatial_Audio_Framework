@@ -106,10 +106,15 @@
 void cblas_scopy(const int N, const float *X, const int incX, float *Y, const int incY){
     int i;
 #if defined(SAF_ENABLE_SIMD)
-    for(i=0; i<(N-3); i+=4)
-        _mm_storeu_ps(Y+i*incY, _mm_loadu_ps(X+i*incX));
-    for(;i<N; i++) /* The residual (if N was not divisable by 4): */
-        Y[i*incY] = X[i*incX];
+    if(incX==1 && incY==1){
+        for(i=0; i<(N-3); i+=4)
+            _mm_storeu_ps(Y+i, _mm_loadu_ps(X+i));
+        for(;i<N; i++) /* The residual (if N was not divisable by 4): */
+            Y[i] = X[i];
+    }
+    else
+        for(i=0; i<N; i++)
+            Y[i*incY] = X[i*incX];
 #else
     for(i=0; i<N; i++)
         Y[i*incY] = X[i*incX];
@@ -157,19 +162,24 @@ float cblas_sdot(const int N, const float* X, const int incX, const float* Y, co
     float ret;
 #if defined(SAF_ENABLE_SIMD)
     float sum2;
-    sum2 = 0.0f;
-    __m128 sum = _mm_setzero_ps();
-    /* Sum over all elements in groups of 4 */
-    for(i=0; i<(N-3); i+=4)
-       sum = _mm_add_ps(sum, _mm_mul_ps(_mm_loadu_ps(X+i*incX), _mm_loadu_ps(Y+i*incY)));
-    /* sum the first 2 elements with the second 2 elements and store in the first 2 elements */
-    sum = _mm_add_ps(sum, _mm_movehl_ps(sum, sum)/* copy elements 3 and 4 to 1 and 2 */);
-    /* sum the first 2 elements and store in the first element */
-    sum = _mm_add_ss(sum, _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(3, 2, 0, 1))/* shuffle so that element 2 goes to element 1 */);
-    _mm_store_ss(&ret, sum); /* get the first element (the result) */
-    for(;i<N; i++) /* The residual (if N was not divisable by 4): */
-        sum2 += X[i*incX] * Y[i*incY];
-    ret += sum2;
+    if(incX==1 && incY==1){
+        sum2 = 0.0f;
+        __m128 sum = _mm_setzero_ps();
+        /* Sum over all elements in groups of 4 */
+        for(i=0; i<(N-3); i+=4)
+           sum = _mm_add_ps(sum, _mm_mul_ps(_mm_loadu_ps(X+i), _mm_loadu_ps(Y+i)));
+        /* sum the first 2 elements with the second 2 elements and store in the first 2 elements */
+        sum = _mm_add_ps(sum, _mm_movehl_ps(sum, sum)/* copy elements 3 and 4 to 1 and 2 */);
+        /* sum the first 2 elements and store in the first element */
+        sum = _mm_add_ss(sum, _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(3, 2, 0, 1))/* shuffle so that element 2 goes to element 1 */);
+        _mm_store_ss(&ret, sum); /* get the first element (the result) */
+        for(;i<N; i++) /* The residual (if N was not divisable by 4): */
+            sum2 += X[i] * Y[i];
+        ret += sum2;
+    }
+    else
+        for(i=0; i<N; i++)
+            ret += X[i*incX] * Y[i*incY];
 #else
     ret = 0.0f;
     for(i=0; i<N; i++)
@@ -445,6 +455,12 @@ void utility_svrecip
     vDSP_svdiv(&one, a, 1, c, 1, (vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsInv(len, a, c, SAF_INTEL_MKL_VML_MODE);
+#elif defined(SAF_ENABLE_SIMD)
+    int i;
+    for(i=0; i<(len-3); i+=4)
+        _mm_storeu_ps(c+i, _mm_rcp_ps(_mm_loadu_ps(a+i)));
+    for(;i<len; i++) /* The residual (if len was not divisable by 4): */
+        c[i] = 1.0f/a[i];
 #else
     int i;
     for(i=0; i<len; i++)
@@ -504,23 +520,29 @@ void utility_zvvcopy
 
 void utility_svvadd
 (
-    float* a,
+    const float* a,
     const float* b,
     const int len,
     float* c
 )
 {
+    /* Checks: */
+#ifndef NDEBUG
+    saf_assert(c!=NULL, "'c' can no longer be NULL");
+    saf_assert(a!=c && b!=c, "In-place operation is no longer supported, use e.g. cblas_saxby() instead.");
+#endif
+
+    /* The operation: */
 #ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vadd(a, 1, b, 1, c, 1, (vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
-    int i, incX, incY, incZ;
-    incX = incY = incZ = 1;
+    int i;
     for(i=0; i<(len-3); i+=4)
-        _mm_storeu_ps(c+i*incZ, _mm_add_ps(_mm_loadu_ps(a+i*incX), _mm_loadu_ps(b+i*incY)));
+        _mm_storeu_ps(c+i, _mm_add_ps(_mm_loadu_ps(a+i), _mm_loadu_ps(b+i)));
     for(;i<len; i++) /* The residual (if len was not divisable by 4): */
-        c[i*incZ] = a[i*incX] - b[i*incY];
+        c[i] = a[i] - b[i];
 #elif NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
@@ -541,27 +563,32 @@ void utility_svvadd
 
 void utility_cvvadd
 (
-    float_complex* a,
+    const float_complex* a,
     const float_complex* b,
     const int len,
     float_complex* c
 )
 {
+    /* Checks: */
+#ifndef NDEBUG
+    saf_assert(c!=NULL, "'c' can no longer be NULL");
+    saf_assert(a!=c && b!=c, "In-place operation is no longer supported, use e.g. cblas_caxby() instead.");
+#endif
+
+    /* The operation: */
 #if defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vadd((float*)a, 1, (float*)b, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
-    int i, incX, incY, incZ;
+    int i, len2;
     float* sa, *sb, *sc;
+    len2 = len*2;
     sa = (float*)a; sb = (float*)b; sc = (float*)c;
-    incX = incY = incZ = 1;
-    for(i=0; i<(len-1); i+=2)
-        _mm_storeu_ps(sc+2*i*incZ, _mm_add_ps(_mm_loadu_ps(sa+2*i*incX), _mm_loadu_ps(sb+2*i*incY)));
-    for(;i<len; i++){ /* The residual (if len was not divisable by 4): */
-        sc[2*i*incZ] = sa[2*i*incX] + sb[2*i*incY];
-        sc[2*i*incZ+1] = sa[2*i*incX+1] + sb[2*i*incY+1];
-    }
+    for(i=0; i<(len2-3); i+=4)
+        _mm_storeu_ps(sc+i, _mm_add_ps(_mm_loadu_ps(sa+i), _mm_loadu_ps(sb+i)));
+    for(;i<len2; i++) /* The residual (if len2 was not divisable by 4): */
+        sc[i] = sa[i] + sb[i];
 #elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
@@ -582,16 +609,29 @@ void utility_cvvadd
 
 void utility_dvvadd
 (
-    double* a,
+    const double* a,
     const double* b,
     const int len,
     double* c
 )
 {
+    /* Checks: */
+#ifndef NDEBUG
+    saf_assert(c!=NULL, "'c' can no longer be NULL");
+    saf_assert(a!=c && b!=c, "In-place operation is no longer supported, use e.g. cblas_daxby() instead.");
+#endif
+
+    /* The operation: */
 #ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vaddD(a, 1, b, 1, c, 1, (vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmdAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
+#elif defined(SAF_ENABLE_SIMD)
+    int i;
+    for(i=0; i<(len-1); i+=2)
+        _mm_storeu_pd(c+i, _mm_add_pd(_mm_loadu_pd(a+i), _mm_loadu_pd(b+i)));
+    for(;i<len; i++) /* The residual (if len was not divisable by 2): */
+        c[i] = a[i] - b[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -601,16 +641,32 @@ void utility_dvvadd
 
 void utility_zvvadd
 (
-    double_complex* a,
+    const double_complex* a,
     const double_complex* b,
     const int len,
     double_complex* c
 )
 {
+    /* Checks: */
+#ifndef NDEBUG
+    saf_assert(c!=NULL, "'c' can no longer be NULL");
+    saf_assert(a!=c && b!=c, "In-place operation is no longer supported, use e.g. cblas_zaxby() instead.");
+#endif
+
+    /* The operation: */
 #if defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vaddD((double*)a, 1, (double*)b, 1, (double*)c, 1, /*re+im*/2*(vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmzAdd(len, (MKL_Complex16*)a, (MKL_Complex16*)b, (MKL_Complex16*)c, SAF_INTEL_MKL_VML_MODE);
+#elif defined(SAF_ENABLE_SIMD)
+    int i, len2;
+    double* sa, *sb, *sc;
+    len2 = len*2;
+    sa = (double*)a; sb = (double*)b; sc = (double*)c;
+    for(i=0; i<(len2-1); i+=2)
+        _mm_storeu_pd(sc+i, _mm_add_pd(_mm_loadu_pd(sa+i), _mm_loadu_pd(sb+i)));
+    for(;i<len2; i++) /* The residual (if len2 was not divisable by 2): */
+        sc[i] = sa[i] + sb[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -625,23 +681,29 @@ void utility_zvvadd
 
 void utility_svvsub
 (
-    float* a,
+    const float* a,
     const float* b,
     const int len,
     float* c
 )
 {
+    /* Checks: */
+#ifndef NDEBUG
+    saf_assert(c!=NULL, "'c' cannot be NULL");
+    saf_assert(a!=c && b!=c, "In-place operation is not supported.");
+#endif
+
+    /* The operation: */
 #ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vsub(b, 1, a, 1, c, 1, (vDSP_Length)len);  /* Apple "logic"... 'a' and 'b' are switched */
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
-    int i, incX, incY, incZ;
-    incX = incY = incZ = 1;
+    int i;
     for(i=0; i<(len-3); i+=4)
-        _mm_storeu_ps(c+i*incZ, _mm_sub_ps(_mm_loadu_ps(a+i*incX), _mm_loadu_ps(b+i*incY)));
+        _mm_storeu_ps(c+i, _mm_sub_ps(_mm_loadu_ps(a+i), _mm_loadu_ps(b+i)));
     for(;i<len; i++) /* The residual (if len was not divisable by 4): */
-        c[i*incZ] = a[i*incX] - b[i*incY];
+        c[i] = a[i] - b[i];
 #elif NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
@@ -662,26 +724,32 @@ void utility_svvsub
 
 void utility_cvvsub
 (
-    float_complex* a,
+    const float_complex* a,
     const float_complex* b,
     const int len,
     float_complex* c
 )
 {
+    /* Checks: */
+#ifndef NDEBUG
+    saf_assert(c!=NULL, "'c' cannot be NULL");
+    saf_assert(a!=c && b!=c, "In-place operation is not supported.");
+#endif
+
+    /* The operation: */
 #if defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vsub((float*)b, 1, (float*)a, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
-    int i, incX, incY, incZ;
+    int i, len2;
     float* sa, *sb, *sc;
+    len2 = len*2;
     sa = (float*)a; sb = (float*)b; sc = (float*)c;
-    incX = incY = incZ = 1;
-    for(i=0; i<(len-1); i+=2)
-        _mm_storeu_ps(sc+2*i*incZ, _mm_sub_ps(_mm_loadu_ps(sa+2*i*incX), _mm_loadu_ps(sb+2*i*incY)));
-    for(;i<len; i++){ /* The residual (if len was not divisable by 4): */
-        sc[2*i*incZ] = sa[2*i*incX] - sb[2*i*incY];
-        sc[2*i*incZ+1] = sa[2*i*incX+1] - sb[2*i*incY+1];
+    for(i=0; i<(len2-3); i+=4)
+        _mm_storeu_ps(sc+i, _mm_sub_ps(_mm_loadu_ps(sa+i), _mm_loadu_ps(sb+i)));
+    for(;i<len2; i++){ /* The residual (if len2 was not divisable by 4): */
+        sc[i] = sa[i] - sb[i];
     }
 #elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
@@ -703,16 +771,29 @@ void utility_cvvsub
 
 void utility_dvvsub
 (
-    double* a,
+    const double* a,
     const double* b,
     const int len,
     double* c
 )
 {
+    /* Checks: */
+#ifndef NDEBUG
+    saf_assert(c!=NULL, "'c' cannot be NULL");
+    saf_assert(a!=c && b!=c, "In-place operation is not supported.");
+#endif
+
+    /* The operation: */
 #ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vsubD(b, 1, a, 1, c, 1, (vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmdSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
+#elif defined(SAF_ENABLE_SIMD)
+    int i;
+    for(i=0; i<(len-1); i+=2)
+        _mm_storeu_pd(c+i, _mm_sub_pd(_mm_loadu_pd(a+i), _mm_loadu_pd(b+i)));
+    for(;i<len; i++) /* The residual (if len was not divisable by 2): */
+        c[i] = a[i] - b[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -722,16 +803,32 @@ void utility_dvvsub
 
 void utility_zvvsub
 (
-    double_complex* a,
+    const double_complex* a,
     const double_complex* b,
     const int len,
     double_complex* c
 )
 {
+    /* Checks: */
+#ifndef NDEBUG
+    saf_assert(c!=NULL, "'c' cannot be NULL");
+    saf_assert(a!=c && b!=c, "In-place operation is not supported.");
+#endif
+
+    /* The operation: */
 #if defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vsubD((double*)b, 1, (double*)a, 1, (double*)c, 1, /*re+im*/2*(vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmzSub(len, (MKL_Complex16*)a, (MKL_Complex16*)b, (MKL_Complex16*)c, SAF_INTEL_MKL_VML_MODE);
+#elif defined(SAF_ENABLE_SIMD)
+    int i, len2;
+    double* sa, *sb, *sc;
+    len2 = len*2;
+    sa = (double*)a; sb = (double*)b; sc = (double*)c;
+    for(i=0; i<(len2-1); i+=2)
+        _mm_storeu_pd(sc+i, _mm_sub_pd(_mm_loadu_pd(sa+i), _mm_loadu_pd(sb+i)));
+    for(;i<len2; i++) /* The residual (if len2 was not divisable by 2): */
+        sc[i] = sa[i] - sb[i];
 #else
     int j;
     for (j = 0; j < len; j++)
@@ -746,23 +843,29 @@ void utility_zvvsub
 
 void utility_svvmul
 (
-    float* a,
+    const float* a,
     const float* b,
     const int len,
     float* c
 )
 {
+    /* Checks: */
+#ifndef NDEBUG
+    saf_assert(c!=NULL, "'c' can no longer be NULL");
+    saf_assert(a!=c && b!=c, "In-place operation is no longer supported.");
+#endif
+
+    /* The operation: */
 #ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vmul(a, 1, b, 1, c, 1, (vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsMul(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
-    int i, incX, incY, incZ;
-    incX = incY = incZ = 1;
+    int i;
     for(i=0; i<(len-3); i+=4)
-        _mm_storeu_ps(c+i*incZ, _mm_mul_ps(_mm_loadu_ps(a+i*incX), _mm_loadu_ps(b+i*incY)));
+        _mm_storeu_ps(c+i, _mm_mul_ps(_mm_loadu_ps(a+i), _mm_loadu_ps(b+i)));
     for(;i<len; i++) /* The residual (if len was not divisable by 4): */
-        c[i*incZ] = a[i*incX] * b[i*incY];
+        c[i] = a[i] * b[i];
 #elif NDEBUG
     int i;
     /* try to indirectly "trigger" some compiler optimisations */
@@ -783,12 +886,19 @@ void utility_svvmul
 
 void utility_cvvmul
 (
-    float_complex* a,
+    const float_complex* a,
     const float_complex* b,
     const int len,
     float_complex* c
 )
 {
+    /* Checks: */
+#ifndef NDEBUG
+    saf_assert(c!=NULL, "'c' can no longer be NULL");
+    saf_assert(a!=c && b!=c, "In-place operation is no longer supported.");
+#endif
+
+    /* The operation: */
 #if defined(SAF_USE_APPLE_ACCELERATE)  /* Due to Apple "logic", this is unfortunately quite complicated, and probably slower than it should be... */
     /* Imaginary part of the output */
     vDSP_vmul((float*)a/*real*/, 2, (float*)b+1/*imag*/, 2, (float*)c+1/*imag*/, 2, (vDSP_Length)len);
@@ -799,29 +909,28 @@ void utility_cvvmul
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcMul(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
-    int i, incA, incB, incC;
+    int i;
     float* sa, *sb, *sc;
-    incA = incB = incC = 1;
     sa = (float*)a; sb = (float*)b; sc = (float*)c;
     for(i=0; i<(len-1); i+=2){
         /* Load only the real parts of a */
-        __m128 src1 = _mm_moveldup_ps(_mm_loadu_ps(sa+2*i*incA)/*|a1|b1|a2|b2|*/); /*|a1|a1|a2|a2|*/
+        __m128 src1 = _mm_moveldup_ps(_mm_loadu_ps(sa+2*i)/*|a1|b1|a2|b2|*/); /*|a1|a1|a2|a2|*/
         /* Load real+imag parts of b */
-        __m128 src2 = _mm_loadu_ps(sb+2*i*incB); /*|c1|d1|c2|d2|*/
+        __m128 src2 = _mm_loadu_ps(sb+2*i); /*|c1|d1|c2|d2|*/
         /* Multiply together */
         __m128 tmp1 = _mm_mul_ps(src1, src2);
         /* Swap the real+imag parts of b to be imag+real instead: */
         __m128 b1 = _mm_shuffle_ps(src2, src2, _MM_SHUFFLE(2, 3, 0, 1));
         /* Load only the imag parts of a */
-        src1 = _mm_movehdup_ps(_mm_loadu_ps(sa+2*i*incA)/*|a1|b1|a2|b2|*/); /*|b1|b1|b2|b2|*/
+        src1 = _mm_movehdup_ps(_mm_loadu_ps(sa+2*i)/*|a1|b1|a2|b2|*/); /*|b1|b1|b2|b2|*/
         /* Multiply together */
         __m128 tmp2 = _mm_mul_ps(src1, b1);
         /* Add even indices, subtract odd indices */
-        _mm_storeu_ps(sc+2*i*incC, _mm_addsub_ps(tmp1, tmp2));
+        _mm_storeu_ps(sc+2*i, _mm_addsub_ps(tmp1, tmp2));
     }
     for(;i<len; i++){ /* The residual (if len was not divisable by 2): */
-        sc[2*i*incC]   = sa[2*i*incA] * sb[2*i*incB]   - sa[2*i*incA+1] * sb[2*i*incB+1];
-        sc[2*i*incC+1] = sa[2*i*incA] * sb[2*i*incB+1] + sa[2*i*incA+1] * sb[2*i*incB];
+        sc[2*i]   = sa[2*i] * sb[2*i]   - sa[2*i+1] * sb[2*i+1];
+        sc[2*i+1] = sa[2*i] * sb[2*i+1] + sa[2*i+1] * sb[2*i];
     }
 #elif __STDC_VERSION__ >= 199901L && NDEBUG
     int i;
@@ -967,7 +1076,7 @@ void utility_zvsmul
 
 void utility_svsdiv
 (
-    float* a,
+    const float* a,
     const float* s,
     const int len,
     float* c
@@ -980,9 +1089,8 @@ void utility_svsdiv
 #ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vsdiv(a, 1, s, c, 1, (vDSP_Length)len);
 #else
-    int i;
-    for(i=0; i<len; i++)
-        c[i] = a[i] / s[0];
+    cblas_scopy(len, a, 1, c, 1);
+    cblas_sscal(len, 1.0/s[0], c, 1);
 #endif
 }
 
@@ -1001,6 +1109,13 @@ void utility_svsadd
 {
 #ifdef SAF_USE_APPLE_ACCELERATE
     vDSP_vsadd(a, 1, s, c, 1, (vDSP_Length)len);
+#elif defined(SAF_ENABLE_SIMD)
+    int i;
+    __m128 s4 = _mm_load_ps1(s);
+    for(i=0; i<(len-3); i+=4)
+        _mm_storeu_ps(c+i, _mm_add_ps(_mm_loadu_ps(a+i), s4));
+    for(;i<len; i++) /* The residual (if len was not divisable by 4): */
+        c[i] = a[i] + s[0];
 #else
     int i;
     for(i=0; i<len; i++)
@@ -1021,9 +1136,22 @@ void utility_svssub
     float* c
 )
 {
+#ifdef SAF_USE_APPLE_ACCELERATE
+    float inv_s;
+    inv_s = -s[0];
+    vDSP_vsadd(a, 1, &inv_s, c, 1, (vDSP_Length)len);
+#elif defined(SAF_ENABLE_SIMD)
+    int i;
+    __m128 s4 = _mm_load_ps1(s);
+    for(i=0; i<(len-3); i+=4)
+        _mm_storeu_ps(c+i, _mm_sub_ps(_mm_loadu_ps(a+i), s4));
+    for(;i<len; i++) /* The residual (if len was not divisable by 4): */
+        c[i] = a[i] - s[0];
+#else
     int i;
     for(i=0; i<len; i++)
         c[i] = a[i] - s[0];
+#endif
 }
 
 

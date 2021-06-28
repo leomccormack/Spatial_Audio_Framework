@@ -166,6 +166,9 @@ void test__checkCondNumberSHTReal(void);
  * Testing the DoA estimation performance of sphMUSIC() */
 void test__sphMUSIC(void);
 /**
+ * Testing the DoA estimation performance of sphPWD() */
+void test__sphPWD(void);
+/**
  * Testing the DoA estimation performance of sphESPRIT() */
 void test__sphESPRIT(void);
 /**

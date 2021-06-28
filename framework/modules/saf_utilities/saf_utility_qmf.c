@@ -338,9 +338,9 @@ void qmf_analysis
 
             /* Sum all 5 consecutive 1:2*hopsize */
             utility_svvadd(h->buffer_win, &(h->buffer_win[h->hopsize*2]), h->hopsize*2, h->win_sum);
-            utility_svvadd(h->win_sum, &(h->buffer_win[h->hopsize*4]), h->hopsize*2, h->win_sum);
-            utility_svvadd(h->win_sum, &(h->buffer_win[h->hopsize*6]), h->hopsize*2, h->win_sum);
-            utility_svvadd(h->win_sum, &(h->buffer_win[h->hopsize*8]), h->hopsize*2, h->win_sum);
+            cblas_saxpy(h->hopsize*2, 1.0f, h->buffer_win + h->hopsize*4, 1, h->win_sum, 1);
+            cblas_saxpy(h->hopsize*2, 1.0f, h->buffer_win + h->hopsize*6, 1, h->win_sum, 1);
+            cblas_saxpy(h->hopsize*2, 1.0f, h->buffer_win + h->hopsize*8, 1, h->win_sum, 1);
             cblas_scopy(h->hopsize*2, h->win_sum, 1, h->win_sum_cmplx_dummy, 2);
 
             /* Apply complex-QMF analysis modulators  */
@@ -491,7 +491,7 @@ void qmf_synthesis
             }
 
             /* Shift samples to the right by 2*hopsize */
-            memmove(&(h->buffer_syn[ch][h->hopsize*2]), h->buffer_syn[ch], h->hopsize * 18 * sizeof(float));
+            memmove(h->buffer_syn[ch] + h->hopsize*2, h->buffer_syn[ch], h->hopsize * 18 * sizeof(float));
 
             /* Apply complex-QMF synthesis modulators */
             cblas_scopy(h->hopsize, (float*)h->qmfTF_frame, 2, h->qmfTF_frame_tmp, 1); /* creal(h->qmfTF_frame) */
@@ -510,26 +510,26 @@ void qmf_synthesis
 
             /* Apply prototype filter/window */
             utility_svvmul(h->buffer_syn[ch], h->h_p, h->hopsize, h->buffer_win);
-            utility_svvmul(&(h->buffer_syn[ch][h->hopsize*3]),  &(h->h_p[h->hopsize]),   h->hopsize, &(h->buffer_win[h->hopsize]));
-            utility_svvmul(&(h->buffer_syn[ch][h->hopsize*4]),  &(h->h_p[h->hopsize*2]), h->hopsize, &(h->buffer_win[h->hopsize*2]));
-            utility_svvmul(&(h->buffer_syn[ch][h->hopsize*7]),  &(h->h_p[h->hopsize*3]), h->hopsize, &(h->buffer_win[h->hopsize*3]));
-            utility_svvmul(&(h->buffer_syn[ch][h->hopsize*8]),  &(h->h_p[h->hopsize*4]), h->hopsize, &(h->buffer_win[h->hopsize*4]));
-            utility_svvmul(&(h->buffer_syn[ch][h->hopsize*11]), &(h->h_p[h->hopsize*5]), h->hopsize, &(h->buffer_win[h->hopsize*5]));
-            utility_svvmul(&(h->buffer_syn[ch][h->hopsize*12]), &(h->h_p[h->hopsize*6]), h->hopsize, &(h->buffer_win[h->hopsize*6]));
-            utility_svvmul(&(h->buffer_syn[ch][h->hopsize*15]), &(h->h_p[h->hopsize*7]), h->hopsize, &(h->buffer_win[h->hopsize*7]));
-            utility_svvmul(&(h->buffer_syn[ch][h->hopsize*16]), &(h->h_p[h->hopsize*8]), h->hopsize, &(h->buffer_win[h->hopsize*8]));
-            utility_svvmul(&(h->buffer_syn[ch][h->hopsize*19]), &(h->h_p[h->hopsize*9]), h->hopsize, &(h->buffer_win[h->hopsize*9]));
+            utility_svvmul(h->buffer_syn[ch] + h->hopsize*3,  h->h_p + h->hopsize,   h->hopsize, h->buffer_win + h->hopsize);
+            utility_svvmul(h->buffer_syn[ch] + h->hopsize*4,  h->h_p + h->hopsize*2, h->hopsize, h->buffer_win + h->hopsize*2);
+            utility_svvmul(h->buffer_syn[ch] + h->hopsize*7,  h->h_p + h->hopsize*3, h->hopsize, h->buffer_win + h->hopsize*3);
+            utility_svvmul(h->buffer_syn[ch] + h->hopsize*8,  h->h_p + h->hopsize*4, h->hopsize, h->buffer_win + h->hopsize*4);
+            utility_svvmul(h->buffer_syn[ch] + h->hopsize*11, h->h_p + h->hopsize*5, h->hopsize, h->buffer_win + h->hopsize*5);
+            utility_svvmul(h->buffer_syn[ch] + h->hopsize*12, h->h_p + h->hopsize*6, h->hopsize, h->buffer_win + h->hopsize*6);
+            utility_svvmul(h->buffer_syn[ch] + h->hopsize*15, h->h_p + h->hopsize*7, h->hopsize, h->buffer_win + h->hopsize*7);
+            utility_svvmul(h->buffer_syn[ch] + h->hopsize*16, h->h_p + h->hopsize*8, h->hopsize, h->buffer_win + h->hopsize*8);
+            utility_svvmul(h->buffer_syn[ch] + h->hopsize*19, h->h_p + h->hopsize*9, h->hopsize, h->buffer_win + h->hopsize*9);
 
             /* Sum all 1:hopsizes to get output frame */
-            utility_svvadd(h->buffer_win, &(h->buffer_win[h->hopsize]),   h->hopsize, &dataTD[ch][t*(h->hopsize)]);
-            utility_svvadd(&dataTD[ch][t*(h->hopsize)], &(h->buffer_win[h->hopsize*2]), h->hopsize, &dataTD[ch][t*(h->hopsize)]);
-            utility_svvadd(&dataTD[ch][t*(h->hopsize)], &(h->buffer_win[h->hopsize*3]), h->hopsize, &dataTD[ch][t*(h->hopsize)]);
-            utility_svvadd(&dataTD[ch][t*(h->hopsize)], &(h->buffer_win[h->hopsize*4]), h->hopsize, &dataTD[ch][t*(h->hopsize)]);
-            utility_svvadd(&dataTD[ch][t*(h->hopsize)], &(h->buffer_win[h->hopsize*5]), h->hopsize, &dataTD[ch][t*(h->hopsize)]);
-            utility_svvadd(&dataTD[ch][t*(h->hopsize)], &(h->buffer_win[h->hopsize*6]), h->hopsize, &dataTD[ch][t*(h->hopsize)]);
-            utility_svvadd(&dataTD[ch][t*(h->hopsize)], &(h->buffer_win[h->hopsize*7]), h->hopsize, &dataTD[ch][t*(h->hopsize)]);
-            utility_svvadd(&dataTD[ch][t*(h->hopsize)], &(h->buffer_win[h->hopsize*8]), h->hopsize, &dataTD[ch][t*(h->hopsize)]);
-            utility_svvadd(&dataTD[ch][t*(h->hopsize)], &(h->buffer_win[h->hopsize*9]), h->hopsize, &dataTD[ch][t*(h->hopsize)]);
+            utility_svvadd(h->buffer_win, h->buffer_win + h->hopsize,   h->hopsize, dataTD[ch] + t*(h->hopsize));
+            cblas_saxpy(h->hopsize, 1.0f, h->buffer_win + h->hopsize*2, 1, dataTD[ch] + t*(h->hopsize), 1);
+            cblas_saxpy(h->hopsize, 1.0f, h->buffer_win + h->hopsize*3, 1, dataTD[ch] + t*(h->hopsize), 1);
+            cblas_saxpy(h->hopsize, 1.0f, h->buffer_win + h->hopsize*4, 1, dataTD[ch] + t*(h->hopsize), 1);
+            cblas_saxpy(h->hopsize, 1.0f, h->buffer_win + h->hopsize*5, 1, dataTD[ch] + t*(h->hopsize), 1);
+            cblas_saxpy(h->hopsize, 1.0f, h->buffer_win + h->hopsize*6, 1, dataTD[ch] + t*(h->hopsize), 1);
+            cblas_saxpy(h->hopsize, 1.0f, h->buffer_win + h->hopsize*7, 1, dataTD[ch] + t*(h->hopsize), 1);
+            cblas_saxpy(h->hopsize, 1.0f, h->buffer_win + h->hopsize*8, 1, dataTD[ch] + t*(h->hopsize), 1);
+            cblas_saxpy(h->hopsize, 1.0f, h->buffer_win + h->hopsize*9, 1, dataTD[ch] + t*(h->hopsize), 1);
         }
     }
 }

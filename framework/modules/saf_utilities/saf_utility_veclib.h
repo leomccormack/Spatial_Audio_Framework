@@ -396,7 +396,7 @@ void utility_zvvcopy(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_svvadd(/* Input Arguments */
-                    float* a,
+                    const float* a,
                     const float* b,
                     const int len,
                     /* Output Arguments */
@@ -414,7 +414,7 @@ void utility_svvadd(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_cvvadd(/* Input Arguments */
-                    float_complex* a,
+                    const float_complex* a,
                     const float_complex* b,
                     const int len,
                     /* Output Arguments */
@@ -432,7 +432,7 @@ void utility_cvvadd(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_dvvadd(/* Input Arguments */
-                    double* a,
+                    const double* a,
                     const double* b,
                     const int len,
                     /* Output Arguments */
@@ -450,7 +450,7 @@ void utility_dvvadd(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_zvvadd(/* Input Arguments */
-                    double_complex* a,
+                    const double_complex* a,
                     const double_complex* b,
                     const int len,
                     /* Output Arguments */
@@ -473,7 +473,7 @@ void utility_zvvadd(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_svvsub(/* Input Arguments */
-                    float* a,
+                    const float* a,
                     const float* b,
                     const int len,
                     /* Output Arguments */
@@ -491,7 +491,7 @@ void utility_svvsub(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_cvvsub(/* Input Arguments */
-                    float_complex* a,
+                    const float_complex* a,
                     const float_complex* b,
                     const int len,
                     /* Output Arguments */
@@ -509,7 +509,7 @@ void utility_cvvsub(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_dvvsub(/* Input Arguments */
-                    double* a,
+                    const double* a,
                     const double* b,
                     const int len,
                     /* Output Arguments */
@@ -527,7 +527,7 @@ void utility_dvvsub(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_zvvsub(/* Input Arguments */
-                    double_complex* a,
+                    const double_complex* a,
                     const double_complex* b,
                     const int len,
                     /* Output Arguments */
@@ -550,7 +550,7 @@ void utility_zvvsub(/* Input Arguments */
  * @param[out] c   Output vector c
  */
 void utility_svvmul(/* Input Arguments */
-                    float* a,
+                    const float* a,
                     const float* b,
                     const int len,
                     /* Output Arguments */
@@ -568,7 +568,7 @@ void utility_svvmul(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_cvvmul(/* Input Arguments */
-                    float_complex* a,
+                    const float_complex* a,
                     const float_complex* b,
                     const int len,
                     /* Output Arguments */
@@ -719,7 +719,7 @@ void utility_zvsmul(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_svsdiv(/* Input Arguments */
-                    float* a,
+                    const float* a,
                     const float* s,
                     const int len,
                     /* Output Arguments */

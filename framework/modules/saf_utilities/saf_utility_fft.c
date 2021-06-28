@@ -48,7 +48,7 @@ typedef struct _saf_stft_data {
     int winsize, hopsize, fftsize, nCHin, nCHout, nBands;
     void* hFFT;
     int numOvrlpAddBlocks, bufferlength, nPrevHops;
-    float* window, *insig_win, *outsig_win;
+    float* window, *insig_rect_win, *insig_win, *outsig_win;
     float** overlapAddBuffer;
     float*** prev_inhops;
     float_complex* tmp_fft;
@@ -286,6 +286,7 @@ void saf_stft_create
     /* set-up FFT */
     h->fftsize = 2*winsize;
     saf_rfft_create(&(h->hFFT), h->fftsize);
+    h->insig_rect_win = calloc1d(h->fftsize, sizeof(float));
     h->insig_win = calloc1d(h->fftsize, sizeof(float));
 
     /* Intermediate buffers */
@@ -321,6 +322,7 @@ void saf_stft_destroy
         saf_rfft_destroy(&(h->hFFT));
         free(h->window);
         free(h->overlapAddBuffer);
+        free(h->insig_rect_win);
         free(h->insig_win);
         free(h->tmp_fft);
         free(h->prev_inhops);
@@ -351,16 +353,16 @@ void saf_stft_forward
         for (t = 0; t<nHops; t++){
             for(ch=0; ch < h->nCHin; ch++){
                 /* Window input signal (Rectangular) */
-                memcpy(h->insig_win, &dataTD[ch][t*(h->hopsize)], h->winsize*sizeof(float));
+                memcpy(h->insig_rect_win, &dataTD[ch][t*(h->hopsize)], h->winsize*sizeof(float));
 
                 /* Apply FFT and copy data to output dataFD buffer */
                 switch(h->FDformat){
                     case SAF_STFT_TIME_CH_BANDS:
-                        saf_rfft_forward(h->hFFT, h->insig_win, dataFD[t][ch]);
+                        saf_rfft_forward(h->hFFT, h->insig_rect_win, dataFD[t][ch]);
                         break;
 
                     case SAF_STFT_BANDS_CH_TIME:
-                        saf_rfft_forward(h->hFFT, h->insig_win, h->tmp_fft);
+                        saf_rfft_forward(h->hFFT, h->insig_rect_win, h->tmp_fft);
                         for(band=0; band<h->nBands; band++)
                             dataFD[band][ch][t] = h->tmp_fft[band];
                         break;
@@ -376,13 +378,13 @@ void saf_stft_forward
                 hIdx = 0;
                 /* Window input signal */
                 while (hIdx < h->winsize){
-                    memcpy(&(h->insig_win[hIdx]), h->prev_inhops[0][ch], h->hopsize*sizeof(float));
+                    memcpy(&(h->insig_rect_win[hIdx]), h->prev_inhops[0][ch], h->hopsize*sizeof(float));
                     for(j=0; j< h->nPrevHops-1; j++)
                         memcpy(h->prev_inhops[j][ch], h->prev_inhops[j+1][ch], h->hopsize*sizeof(float));
                     memcpy(h->prev_inhops[h->nPrevHops-1][ch], &dataTD[ch][idx], h->hopsize*sizeof(float));
                     hIdx += h->hopsize;
                 }
-                utility_svvmul(h->insig_win, h->window, h->winsize, h->insig_win);
+                utility_svvmul(h->insig_rect_win, h->window, h->winsize, h->insig_win);
 
                 /* Apply FFT and copy data to output dataFD buffer */
                 switch(h->FDformat){
@@ -419,10 +421,10 @@ void saf_stft_backward
     for (t = 0; t<nHops; t++){
         for(ch=0; ch < h->nCHout; ch++){
             /* Shift data down */
-            memcpy(h->overlapAddBuffer[ch], &h->overlapAddBuffer[ch][h->hopsize], (h->numOvrlpAddBlocks-1)*(h->hopsize)*sizeof(float));
+            memcpy(h->overlapAddBuffer[ch], h->overlapAddBuffer[ch] + h->hopsize, (h->numOvrlpAddBlocks-1)*(h->hopsize)*sizeof(float));
 
             /* Append with zeros */
-            memset(&h->overlapAddBuffer[ch][(h->numOvrlpAddBlocks-1)*(h->hopsize)], 0, h->hopsize*sizeof(float));
+            memset(h->overlapAddBuffer[ch] + (h->numOvrlpAddBlocks-1)*(h->hopsize), 0, h->hopsize*sizeof(float));
 
             /* Apply inverse FFT */
             switch(h->FDformat){
@@ -436,9 +438,9 @@ void saf_stft_backward
                     break;
             }
 
-            /* Overlap-Add and copy 1:hopsize to output buffer */
-            utility_svvadd(h->overlapAddBuffer[ch], h->outsig_win, h->fftsize, h->overlapAddBuffer[ch]);
-            memcpy(&dataTD[ch][t*(h->hopsize)], h->overlapAddBuffer[ch], h->hopsize*sizeof(float)); 
+            /* Overlap-Add 1:hopsize to output buffer */
+            cblas_saxpy(h->fftsize, 1.0f, h->outsig_win, 1, h->overlapAddBuffer[ch], 1);
+            memcpy(dataTD[ch] + t*(h->hopsize), h->overlapAddBuffer[ch], h->hopsize*sizeof(float));
         }
     }
 }
