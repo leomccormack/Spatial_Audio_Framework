@@ -32,7 +32,7 @@
  *   definitions in order to enable one of these suitable performance libraries,
  *   (which must be correctly linked when building SAF):
  *   - SAF_USE_INTEL_MKL_LP64:
- *       to enable Intel's Math Kernal Library with the Fortran LAPACK interface
+ *       to enable Intel's Math Kernel Library with the Fortran LAPACK interface
  *   - SAF_USE_INTEL_MKL_ILP64
  *       same as SAF_USE_INTEL_MKL except using int64 and LAPACKE interface
  *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
@@ -91,7 +91,7 @@
  */
 #if defined(SAF_USE_INTEL_MKL_LP64)
 /*
- * Using Intel's Math Kernal Library (MKL) LP64 configuration (32-bit int)
+ * Using Intel's Math Kernel Library (MKL) LP64 configuration (32-bit int)
  * (Generally the fastest library for x86 based architectures)
  */
 /* Note that Intel MKL LP64 supports Fortran LAPACK and LAPACKE interfaces: */
@@ -100,7 +100,7 @@
 
 #elif defined(SAF_USE_INTEL_MKL_ILP64)
 /*
- * Using Intel's Math Kernal Library (MKL) ILP64 configuration (64-bit int)
+ * Using Intel's Math Kernel Library (MKL) ILP64 configuration (64-bit int)
  * (Generally the fastest library for x86 based architectures. This 64-bit int
  * version is the one employed by e.g. MATLAB. Therefore it is required if you
  * wish to build MEX objects using SAF code; see e.g. extras/safmex)

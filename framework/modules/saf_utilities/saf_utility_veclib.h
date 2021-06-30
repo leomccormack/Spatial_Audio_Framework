@@ -86,11 +86,11 @@ void cblas_zaxpy(const int N, const void* alpha, const void* X,
 /* ========================================================================== */
 
 #ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
-void cblas_sgemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA,
-                 const enum CBLAS_TRANSPOSE TransB, const int M, const int N,
-                 const int K, const float alpha, const float* A,
-                 const int lda, const float* B, const int ldb,
-                 const float beta, float* C, const int ldc);
+void cblas_sgemm(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA,
+                     const CBLAS_TRANSPOSE TransB, const int M, const int N,
+                     const int K, const float alpha, const float *A,
+                     const int lda, const float *B, const int ldb,
+                     const float beta, float *C, const int ldc);
 #endif
 
 

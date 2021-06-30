@@ -27,7 +27,7 @@
  *   one of these suitable performance libraries, which must also be correctly
  *   linked to your project.
  *   - SAF_USE_INTEL_MKL_LP64:
- *       to enable Intel's Math Kernal Library with the Fortran LAPACK interface
+ *       to enable Intel's Math Kernel Library with the Fortran LAPACK interface
  *   - SAF_USE_INTEL_MKL_ILP64
  *       same as SAF_USE_INTEL_MKL except using int64 and LAPACKE interface
  *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
@@ -196,13 +196,41 @@ float cblas_sdot(const int N, const float* X, const int incX, const float* Y, co
 /* ========================================================================== */
 
 #ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
-void cblas_sgemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA,
-                 const enum CBLAS_TRANSPOSE TransB, const int M, const int N,
-                 const int K, const float alpha, const float* A,
-                 const int lda, const float* B, const int ldb,
-                 const float beta, float* C, const int ldc)
+void cblas_sgemm(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA,
+                     const CBLAS_TRANSPOSE TransB, const int M, const int N,
+                     const int K, const float alpha, const float *A,
+                     const int lda, const float *B, const int ldb,
+                     const float beta, float *C, const int ldc)
 {
-    saf_assert(0, "INCOMPLETE");
+    saf_assert(0, "INCOMPLETE and UNTESTED");
+    int i,j,k;
+    int _transA;
+    int _transB;
+
+    switch(Layout){
+        case CblasRowMajor:
+            _transA = (TransA == CblasNoTrans) ? SAF_FALSE : SAF_TRUE;
+            _transB = (TransB == CblasNoTrans) ? SAF_FALSE : SAF_TRUE;
+            break;
+        case CblasColMajor:
+            _transA = (TransA == CblasNoTrans) ? SAF_TRUE : SAF_FALSE;
+            _transB = (TransB == CblasNoTrans) ? SAF_TRUE : SAF_FALSE;
+            break;
+    }
+
+    if(!_transA && !_transB){
+        for(i=0; i<M; i++){
+            for(j=0; j<N; j++){
+                C[i*ldc+j] = 0.0f;
+                for(k=0; k<K; k++)
+                    C[i*ldc+j] += A[i*lda+k] * B[k*ldb+j];
+            }
+        }
+    }
+    else if(_transA && !_transB){
+    }
+    else if(_transA && _transB){ 
+    }
 }
 #endif
 
