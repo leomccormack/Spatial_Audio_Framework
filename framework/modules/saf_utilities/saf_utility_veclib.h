@@ -312,6 +312,39 @@ void utility_svrecip(const float* a,
 
 
 /* ========================================================================== */
+/*                           Vector-Conjugate (?vconj)                        */
+/* ========================================================================== */
+
+/**
+ * Single-precision, complex, vector-conjugate, i.e.
+ * \code{.m}
+ *     c = conj(a)
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_cvconj(const float_complex* a,
+                    const int len,
+                    float_complex* c);
+
+/**
+ * Double-precision, complex, vector-conjugate, i.e.
+ * \code{.m}
+ *     c = conj(a)
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_zvconj(const double_complex* a,
+                    const int len,
+                    double_complex* c);
+
+
+/* ========================================================================== */
 /*                        Vector-Vector Copy (?vvcopy)                        */
 /* ========================================================================== */
 

@@ -229,7 +229,7 @@ void cblas_sgemm(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA,
     }
     else if(_transA && !_transB){
     }
-    else if(_transA && _transB){ 
+    else if(_transA && _transB){
     }
 }
 #endif
@@ -505,6 +505,33 @@ void utility_svrecip
     for(i=0; i<len; i++)
         c[i] = 1.0f/a[i];
 #endif
+}
+
+
+/* ========================================================================== */
+/*                           Vector-Conjugate (?vconj)                        */
+/* ========================================================================== */
+
+void utility_cvconj
+(
+    const float_complex* a,
+    const int len,
+    float_complex* c
+)
+{
+    cblas_ccopy(len, a, 1, c, 1);
+    cblas_sscal(len, -1.0f, ((float*)c)+1, 2);
+}
+
+void utility_zvconj
+(
+    const double_complex* a,
+    const int len,
+    double_complex* c
+)
+{
+    cblas_zcopy(len, a, 1, c, 1);
+    cblas_dscal(len, -1.0, ((double*)c)+1, 2);
 }
 
 
