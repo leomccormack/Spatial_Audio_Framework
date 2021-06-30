@@ -99,7 +99,7 @@ $(document).ready(function(){initNavTree('saf__externals_8h.html',''); initResiz
 <h2><a class="anchor" id="autotoc_md86"></a>
 Required Dependencies</h2>
 <p>A performance library comprising CBLAS and LAPACK routines is required by SAF. Add one of the following FLAGS to your project's preprocessor definitions in order to enable one of these suitable performance libraries, (which must be correctly linked when building SAF):</p><ul>
-<li>SAF_USE_INTEL_MKL_LP64: to enable Intel's Math Kernal Library with the Fortran LAPACK interface</li>
+<li>SAF_USE_INTEL_MKL_LP64: to enable Intel's Math Kernel Library with the Fortran LAPACK interface</li>
 <li>SAF_USE_INTEL_MKL_ILP64 same as SAF_USE_INTEL_MKL except using int64 and LAPACKE interface</li>
 <li>SAF_USE_OPENBLAS_WITH_LAPACKE: to enable OpenBLAS with the LAPACKE interface</li>
 <li>SAF_USE_APPLE_ACCELERATE: to enable the Accelerate framework with the Fortran LAPACK interface</li>
@@ -109,7 +109,11 @@ Required Dependencies</h2>
 Optional dependencies</h2>
 <p>netcdf is required by the optional saf_sofa_reader module, which is enabled with the following pre-processor flag: SAF_ENABLE_SOFA_READER_MODULE</p>
 <p>Intel IPP may be optionally used with the flag: SAF_USE_INTEL_IPP</p>
-<p>SSE/SSE2/SSE3 intrinsics may be enabled with: SAF_ENABLE_SIMD</p>
+<p>SIMD intrinsics support may be enabled with: SAF_ENABLE_SIMD</p><ul>
+<li>SSE/SSE2/SSE3 intrinsics are used by default</li>
+<li>AVX/AVX2 intrinsics are enabled with compiler flag: -mavx2</li>
+<li>AVX-512 intrinsics are enabled with compiler flag: -mavx512f (Note that intrinsics require a CPU that supports them)</li>
+</ul>
 <dl class="section see"><dt>See also</dt><dd>More information can be found in the docs folder regarding dependencies</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Leo McCormack </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>06.08.2020 </dd></dl>
@@ -121,7 +125,7 @@ Optional dependencies</h2>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_dd40116cd1cfebdc77a7c7114b29912e.html">include</a></li><li class="navelem"><a class="el" href="saf__externals_8h.html">saf_externals.h</a></li>
-    <li class="footer">Generated on Sat Jun 26 2021 13:36:40 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed Jun 30 2021 18:36:28 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

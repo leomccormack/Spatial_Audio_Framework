@@ -24,5 +24,6 @@ var structims__scene__data =
     [ "room_dims", "structims__scene__data.html#a6f40f17955010f2f1123d5defd08082e", null ],
     [ "src_sigs_bands", "structims__scene__data.html#a6c85109a187c9430ad2dbf852f9c9500", null ],
     [ "srcs", "structims__scene__data.html#aa535ea315425398b5b906763e6acce1c", null ],
+    [ "tmp_frame", "structims__scene__data.html#a89732a128e2fbef414612dffc871dbb6", null ],
     [ "wIdx", "structims__scene__data.html#ac7ac40adcdce6a33d48b7dc713b1424c", null ]
 ];

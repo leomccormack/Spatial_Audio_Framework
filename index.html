@@ -94,8 +94,8 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 </ul>
 <h1><a class="anchor" id="autotoc_md94"></a>
 About</h1>
-<p>The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related applications in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a rather large codebase comprising a number of distinct <a href="framework/modules"><b>modules</b></a>; with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). Several <a href="examples/include"><b>examples</b></a> are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects.</p>
-<p>Owing to its modular design, expanding the framework is straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged! :-)</p>
+<p>The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related algorithms and software in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a rather large codebase comprising a number of distinct <a href="framework/modules"><b>modules</b></a>; with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). The framework also makes use of highly optimised linear algebra libraries (such as Intel MKL, Apple Accelerate, OpenBLAS) as well as SIMD intrinsics (SSE, AVX, AVX-512). Several <a href="examples/include"><b>examples</b></a> are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects.</p>
+<p>Owing to its modular design, expanding the framework is relatively straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged! :-)</p>
 <h1><a class="anchor" id="autotoc_md95"></a>
 Prerequisites</h1>
 <p>The framework requires the following external libraries:</p><ul>
@@ -130,7 +130,8 @@ Framework structure</h2>
 </div><!-- fragment --><p> Note that the <b>saf_sofa_reader</b> module also requires <a href="https://www.unidata.ucar.edu/software/netcdf/">netCDF</a> to be linked to your project. <a class="el" href="md_docs__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html">Instructions on how to install/link this dependency can be found here</a>.</p>
 <h3><a class="anchor" id="autotoc_md97"></a>
 Additional options</h3>
-<p>The framework can be configured further, with the following options: </p><div class="fragment"><div class="line">SAF_USE_INTEL_IPP  # To use Intel IPP for the saf_utility_fft wrapper</div>
+<p>The framework can be configured further, with the following options: </p><div class="fragment"><div class="line">SAF_USE_INTEL_IPP # To use Intel IPP for the saf_utility_fft wrapper</div>
+<div class="line">SAF_ENABLE_SIMD   # To enable (SSE/AVX/AVX512) intrinsics for certain functions (note: MKL/Accelerate are still favoured) </div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md98"></a>
 Using the framework</h1>
 <p>Once a CBLAS/LAPACK flag is defined (and the correct libraries are linked to your project), add the files found in the <b>framework</b> folder to your project and add the following directory to your project's header search paths:</p>
@@ -192,7 +193,7 @@ Examples</h2>
 <li><b>dirass</b> - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction.</li>
 <li><b>matrixconv</b> - a basic matrix convolver with an optional partitioned convolution mode.</li>
 <li><b>multiconv</b> - a basic multi-channel convolver with an optional partitioned convolution mode.</li>
-<li><b>panner</b> - a frequency-dependent VBAP panner, which accomodates a source loudness compensation (as a function of the room) option.</li>
+<li><b>panner</b> - a frequency-dependent VBAP panner, which accommodates a source loudness compensation (as a function of the room) option.</li>
 <li><b>pitch_shifter</b> - a basic multi-channel pitch shifter, based on the phase vocoder approach.</li>
 <li><b>powermap</b> - sound-field visualiser based on beamformer (PWD, MVDR) energy or subspace methods (MUSIC).</li>
 <li><b>rotator</b> - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll Euler rotation angles.</li>
@@ -237,7 +238,7 @@ License</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sat Jun 26 2021 13:36:40 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed Jun 30 2021 18:36:29 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

@@ -1,5 +1,5 @@
 var structkf__update6__data =
 [
-    [ "sglslvt_handle", "structkf__update6__data.html#a0edbec2a9e5a1fe6a253bce4454e0f3b", null ],
-    [ "sslslv_handle", "structkf__update6__data.html#abaad2bfe993f779f0487cd9f850ef6e1", null ]
+    [ "hLinSolve", "structkf__update6__data.html#abeab917caeb97dd724f3f1eb4dfb34b3", null ],
+    [ "hLinSolveT", "structkf__update6__data.html#af610eee0d120183c9bb71b8441d594af", null ]
 ];

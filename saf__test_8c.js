@@ -44,6 +44,7 @@ var saf__test_8c =
     [ "test__sphESPRIT", "saf__test_8c.html#a70a6ae2e1c5ad450fac2422246c703b5", null ],
     [ "test__sphModalCoeffs", "saf__test_8c.html#a8f427996abe95165a8fc9e0a03d51ec9", null ],
     [ "test__sphMUSIC", "saf__test_8c.html#ada1afadc3ce01509670706830fec494e", null ],
+    [ "test__sphPWD", "saf__test_8c.html#a0ea653444e19da7e8a5e6e0a2f6d5614", null ],
     [ "test__tracker3d", "saf__test_8c.html#ac4ed53fa08ff598c41985d827df25536", null ],
     [ "test__truncationEQ", "saf__test_8c.html#a1a014cc394faa77a9675cdb74873210b", null ],
     [ "test__unique_i", "saf__test_8c.html#a596d9bd6c2a96c64f6600b1afc4c6fca", null ],

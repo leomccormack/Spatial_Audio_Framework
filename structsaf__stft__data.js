@@ -5,6 +5,7 @@ var structsaf__stft__data =
     [ "fftsize", "structsaf__stft__data.html#a942cd5dd25141acf011ab607e95366dc", null ],
     [ "hFFT", "structsaf__stft__data.html#a6499d2d804351520498165b78479df8c", null ],
     [ "hopsize", "structsaf__stft__data.html#a4c7ce7ab9fc399b770eebf662fd2104a", null ],
+    [ "insig_rect_win", "structsaf__stft__data.html#ad729e4d7ca033ad951aa0be0b33a68c6", null ],
     [ "insig_win", "structsaf__stft__data.html#a94c99de404bd9e45007348a7e7be7781", null ],
     [ "nBands", "structsaf__stft__data.html#a70218244fad953149cfbd76f916c816b", null ],
     [ "nCHin", "structsaf__stft__data.html#a8db4d5eaf7ece3c956c587d5bbce4ed5", null ],

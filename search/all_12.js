@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['r_1806',['R',['../structarray2sh__array_pars.html#a26d7db536f293c1ec954dc3f4246d305',1,'array2sh_arrayPars::R()'],['../structtracker3d__data.html#a9101ad752f4e6527dcd788562446fc0e',1,'tracker3d_data::R()']]],
-  ['r_1807',['r',['../structarray2sh__array_pars.html#afab68c3dcf3e79fe98bddcd0f5ea1f43',1,'array2sh_arrayPars']]],
+  ['r_1806',['r',['../structarray2sh__array_pars.html#afab68c3dcf3e79fe98bddcd0f5ea1f43',1,'array2sh_arrayPars']]],
+  ['r_1807',['R',['../structarray2sh__array_pars.html#a26d7db536f293c1ec954dc3f4246d305',1,'array2sh_arrayPars::R()'],['../structtracker3d__data.html#a9101ad752f4e6527dcd788562446fc0e',1,'tracker3d_data::R()']]],
   ['rad2deg_1808',['RAD2DEG',['../group___utilities.html#gaf93ab8e29004f71549e1cd50278c5473',1,'saf_utilities.h']]],
   ['rand_5f0_5f1_1809',['rand_0_1',['../group___utilities.html#ga6124c7cc2d620ff3c9a832b9437dccc7',1,'rand_0_1(float *vector, int length):&#160;saf_utility_misc.c'],['../group___utilities.html#ga6124c7cc2d620ff3c9a832b9437dccc7',1,'rand_0_1(float *vector, int length):&#160;saf_utility_misc.c']]],
   ['rand_5fcmplx_5fm1_5f1_1810',['rand_cmplx_m1_1',['../group___utilities.html#ga71609f8a78ff8b2ea98e81f44bc79fd5',1,'rand_cmplx_m1_1(float_complex *vector, int length):&#160;saf_utility_misc.c'],['../group___utilities.html#ga71609f8a78ff8b2ea98e81f44bc79fd5',1,'rand_cmplx_m1_1(float_complex *vector, int length):&#160;saf_utility_misc.c']]],
