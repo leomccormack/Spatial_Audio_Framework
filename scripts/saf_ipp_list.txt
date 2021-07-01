@@ -17,11 +17,3 @@ ippsDFTInv_CToC_32fc
 ippMalloc
 ippFree
 ippsMalloc_8u
-
-
-
-
-
-
-
-

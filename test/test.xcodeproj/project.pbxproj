@@ -1108,6 +1108,7 @@
 					SAF_ENABLE_EXAMPLES_TESTS,
 					SAF_ENABLE_TRACKER_MODULE,
 					SAF_ENABLE_SIMD,
+					SAF_USE_INTEL_IPP,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -1116,6 +1117,7 @@
 					timer,
 					../dependencies/MacOSX/include,
 					/opt/intel/compilers_and_libraries/mac/mkl/include,
+					/opt/intel/compilers_and_libraries/mac/ipp/include,
 				);
 				INSTALL_PATH = bin/;
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;
@@ -1126,6 +1128,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",
+					"-lsaf_ipp_custom",
 					"-lsaf_mkl_custom_lp64",
 					"-L/usr/local/lib",
 					"-Wl,-rpath,/usr/local/lib",
@@ -1155,6 +1158,7 @@
 					SAF_ENABLE_EXAMPLES_TESTS,
 					SAF_ENABLE_TRACKER_MODULE,
 					SAF_ENABLE_SIMD,
+					SAF_USE_INTEL_IPP,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -1163,6 +1167,7 @@
 					timer,
 					../dependencies/MacOSX/include,
 					/opt/intel/compilers_and_libraries/mac/mkl/include,
+					/opt/intel/compilers_and_libraries/mac/ipp/include,
 				);
 				INSTALL_PATH = bin/;
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;
@@ -1173,6 +1178,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",
+					"-lsaf_ipp_custom",
 					"-lsaf_mkl_custom_lp64",
 					"-L/usr/local/lib",
 					"-Wl,-rpath,/usr/local/lib",

@@ -22,3 +22,4 @@ dependencies/Win64/lib/libiomp5md.lib
 *.mexa64
 *.mexw64
 saf_doxygen.tag
+build_saf_ipp_custom_intel64.sh

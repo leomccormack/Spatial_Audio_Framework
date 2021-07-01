@@ -83,11 +83,11 @@
 /* ========================================================================== */
 
 /*
- * Due to the nature of spatial audio and multi-channel audio signal processing,
- * SAF is required to employ heavy use of linear algebra operations. Therefore,
- * the framework has been written from the ground up to conform to the CBLAS and
+ * Due to the nature of spatial/multi-channel audio signal processing, SAF is
+ * required to employ heavy use of linear algebra operations. Therefore, the
+ * framework has been written from the ground up to conform to the CBLAS and
  * LAPACK standards, of which there a number of highly optimised performance
- * libraries that offer such support:
+ * libraries that support them:
  */
 #if defined(SAF_USE_INTEL_MKL_LP64)
 /*
@@ -107,7 +107,7 @@
  */
 /* Note that Intel MKL ILP64 will only work with the LAPACKE interface: */
 # define SAF_VECLIB_USE_LAPACKE_INTERFACE /**< LAPACK interface */
-# define MKL_ILP64
+# define MKL_ILP64 /**< Indicates to MKL that we've linked the ILP64 variant */
 # include "mkl.h"
 
 #elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
@@ -122,7 +122,8 @@
 #elif defined(SAF_USE_ATLAS)
 /*
  * Using the Automatically Tuned Linear Algebra Software (ATLAS) library
- * (Not recommended, since some saf_veclib functions do not work with ATLAS)
+ * (Not recommended, since some saf_utility_veclib functions do not work with
+ * ATLAS)
  */ 
 # define SAF_VECLIB_USE_CLAPACK_INTERFACE /**< LAPACK interface */
 # include "cblas-atlas.h"
@@ -154,8 +155,9 @@
 #if defined(SAF_USE_INTEL_IPP)
 /*
  * The use of Intel's Integrated Performance Primitives (IPP) is optional, but
- * does lead to some minor performance improvements for saf_fft compared with
- * Intel MKL.
+ * does lead to some minor performance improvements for saf_utility_fft compared
+ * with the implementation in Intel MKL. We've found that the FFT
+ * implementations found in MKL and IPP are both faster than the FFTW library.
  */
 # include "ipp.h"
 #endif
@@ -178,7 +180,7 @@
  * following terminal command on macOS: $ sysctl -a | grep machdep.cpu.features
  * Or on Linux, use: $ lscpu
  */
-# if defined(__AVX__) || defined(__AVX2__) || defined(__AVX512F__)
+# if (defined(__AVX__) && defined(__AVX2__)) || defined(__AVX512F__)
 /*
  * Note that AVX/AVX2 requires the '-mavx2' compiler flag
  * Whereas AVX-512 requires the '-mavx512f' compiler flag

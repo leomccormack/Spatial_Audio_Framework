@@ -8,13 +8,16 @@ A script to build and install a custom Intel IPP library tailored to SAF.
 
 Usage:"
 
-  sudo ./$(basename $0) build_type
+  sudo ./$(basename $0) build_type [ipp_builder_dir]
 
-  build_type must be "sequential" or "threaded".
+  build_type must be "sequential" or "threaded"
+  (optional) ipp_builder_dir the path for the IPP "custom_library_tool_python" folder
 
   Examples:
       sudo ./$(basename $0) sequential
       sudo ./$(basename $0) threaded
+      sudo ./$(basename $0) sequential /opt/intel/oneapi/ipp/latest/tools/custom_library_tool_python
+      sudo ./$(basename $0) sequential /opt/intel/compilers_and_libraries/linux/ipp/tools/custom_library_tool_python
 EOT
     exit 1
 fi
@@ -30,24 +33,22 @@ else
 fi
 shift
 
+# Check if IPP build directory is provided
+if [ ! -z "$2" ]; then
+    ipp_builder_dir=${2}
+else
+    ipp_builder_dir="/opt/intel/oneapi/ipp/latest/tools/custom_library_tool_python"
+    echo "Using default IPP builder path (${ipp_builder_dir})"
+fi
+
 # Define output and MKL build directories
-if [[ "$OSTYPE" == "linux-gnu" ]]; then
-    output_dir="/usr/lib/"
-    ipp_builder_dir="~/intel/compilers_and_libraries/linux/ipp/tools/custom_library_tool_python"
-    if ! [ -d ${ipp_builder_dir} ]; then
-        ipp_builder_dir="/opt/intel/compilers_and_libraries/linux/ipp/tools/custom_library_tool_python"
-    fi
+if [[ "$OSTYPE" == "linux"* ]]; then
     if ! [ -d ${ipp_builder_dir} ]; then
         echo "Error: Intel IPP not installed"
         exit 1
     fi
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-    output_dir="/usr/local/lib/"
-    ipp_builder_dir="~/intel/compilers_and_libraries/mac/ipp/tools/custom_library_tool_python"
-    if ! [ -d ${ipp_builder_dir} ]; then
-        ipp_builder_dir="/opt/intel/compilers_and_libraries/mac/ipp/tools/custom_library_tool_python"
-    fi
     if ! [ -d ${ipp_builder_dir} ]; then
         echo "Error: Intel IPP not installed"
         exit 1
@@ -60,26 +61,40 @@ fi
 # Current path
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
-# copy saf_mkl_list
-cp ${parent_path}/saf_ipp_list ${ipp_builder_dir}
+# copy saf_ipp_list
+#cp "${parent_path}/saf_ipp_list.txt" ${ipp_builder_dir}
 
-# build and copy custom library into output dir
+echo "Configuration: ${build_type}, AVX2"
+echo "IPP list: ${parent_path}/saf_ipp_list.txt"
+#source "/opt/intel/oneapi/setvars.sh" -arch intel64 --force
+
+# Create the build script
 if [[ ${build_type} == "sequential"* ]]; then
-    (cd ${ipp_builder_dir} && python main.py -c -g
-    –n saf_ipp_custom
-    -p “${output_dir}”
-    -ff “saf_ipp_list”
-    -d avx512bw
-    -arch=intel64)
+    (cd ${ipp_builder_dir} && python main.py -c -g -n saf_ipp_custom -p "${parent_path}" -ff "${parent_path}/saf_ipp_list.txt" -d avx2 -arch=intel64)
 elif [[ ${build_type} == "threaded"* ]]; then
-    (cd ${ipp_builder_dir} && python main.py -c -g
-    –n saf_ipp_custom
-    -p “${output_dir}”
-    -ff “saf_ipp_list”
-    -d avx512bw
-    -arch=intel64 -mt )
+    (cd ${ipp_builder_dir} && python main.py -c -g -n saf_ipp_custom -p "${parent_path}" -ff "${parent_path}/saf_ipp_list.txt" -d avx2 -arch=intel64 -mt)
+fi
+
+# Run the build script
+./build_saf_ipp_custom_intel64.sh
+
+# Define output dir
+output_dir="/usr/local/lib/"
+
+# copy library
+if [[ "$OSTYPE" == "linux"* ]]; then
+    (mv "libsaf_ipp_custom.so" ${output_dir})
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    (mv "libsaf_ipp_custom.dylib" ${output_dir})
 fi
 
 echo "Installed libsaf_ipp_custom into ${output_dir}"
+
+# clean-up
+rm custom_dispatcher.c
+rm custom_dispatcher.obj
+rm "export.lib-export"
+rm main.c
+rm main.obj
 
 set +e

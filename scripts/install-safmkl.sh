@@ -94,9 +94,9 @@ fi
 
 # copy library
 if [[ "$OSTYPE" == "linux"* ]]; then
-    (cd ${mkl_builder_dir} && cp "libsaf_mkl_custom_${mkl_interface}.so" ${output_dir})
+    (cd ${mkl_builder_dir} && mv "libsaf_mkl_custom_${mkl_interface}.so" ${output_dir})
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-    (cd ${mkl_builder_dir} && cp "libsaf_mkl_custom_${mkl_interface}.dylib" ${output_dir})
+    (cd ${mkl_builder_dir} && mv "libsaf_mkl_custom_${mkl_interface}.dylib" ${output_dir})
 fi
 
 echo "Installed libsaf_mkl_custom_${mkl_interface} into ${output_dir}"
