@@ -87,12 +87,20 @@
  * required to employ heavy use of linear algebra operations. Therefore, the
  * framework has been written from the ground up to conform to the CBLAS and
  * LAPACK standards, of which there a number of highly optimised performance
- * libraries that support them:
+ * libraries available:
  */
 #if defined(SAF_USE_INTEL_MKL_LP64)
 /*
  * Using Intel's Math Kernel Library (MKL) LP64 configuration (32-bit int)
  * (Generally the fastest library for x86 based architectures)
+ *
+ * Note that Intel MKL not only supports CBLAS and LAPACK, but also offers:
+ *  - a highly optimised discrete/fast Fourier transform (DFT/FFT), which is
+ *    used by the saf_utility_fft wrapper.
+ *  - a number of additional vector, vector-vector, vector-scalar operations
+ *    that are not covered by the CBLAS standard; such as: hadamard products,
+ *    element-wise additions/substractions, and the modulus or reciprical of
+ *    all vector elements, etc.
  */
 /* Note that Intel MKL LP64 supports Fortran LAPACK and LAPACKE interfaces: */
 # define SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< LAPACK interface */
@@ -101,9 +109,14 @@
 #elif defined(SAF_USE_INTEL_MKL_ILP64)
 /*
  * Using Intel's Math Kernel Library (MKL) ILP64 configuration (64-bit int)
- * (Generally the fastest library for x86 based architectures. This 64-bit int
- * version is the one employed by e.g. MATLAB. Therefore it is required if you
- * wish to build MEX objects using SAF code; see e.g. extras/safmex)
+ * (Generally the fastest library for x86 based architectures)
+
+ * This 64-bit int version is the one employed by e.g. MATLAB. Therefore it is
+ * required if you wish to build MEX objects using SAF code; see e.g.
+ * extras/safmex. In general, the performance of this option is practically the
+ * same as "SAF_USE_INTEL_MKL_LP64", but it is slower in some very rare special
+ * cases. Therefore, "SAF_USE_INTEL_MKL_LP64" is still the favoured option if
+ * you are not planning on building MEX objects using SAF.
  */
 /* Note that Intel MKL ILP64 will only work with the LAPACKE interface: */
 # define SAF_VECLIB_USE_LAPACKE_INTERFACE /**< LAPACK interface */
@@ -114,6 +127,14 @@
 /*
  * Using OpenBLAS and the LAPACKE interface
  * (A good option for both x86 and ARM based architectures)
+ *
+ * This option provides implementations of the CBLAS/LAPACK functions that have
+ * good performance. However, unlike Intel MKL or Apple Accelerate, it does not
+ * offer an optimised DFT/FFT or any other linear algebra functions outside of
+ * these standards. Therefore, if you are using this option, consider using
+ * Intel's IPP library for the FFT, along with the SSE/AVX/AVX-512 fallback
+ * implementations for the other linear algebra options, by also defining:
+ * "SAF_USE_INTEL_IPP" and "SAF_ENABLE_SIMD" (see the instructions below).
  */
 # define SAF_VECLIB_USE_LAPACKE_INTERFACE /**< LAPACK interface */
 # include "cblas.h"
@@ -124,6 +145,10 @@
  * Using the Automatically Tuned Linear Algebra Software (ATLAS) library
  * (Not recommended, since some saf_utility_veclib functions do not work with
  * ATLAS)
+ *
+ * Basically, do not use this unless you have to, and if you do, know that some
+ * linear algebra functions in saf_utility_veclib will exit the program if they
+ * are called.
  */ 
 # define SAF_VECLIB_USE_CLAPACK_INTERFACE /**< LAPACK interface */
 # include "cblas-atlas.h"
@@ -135,6 +160,18 @@
  * Using Apple's Accelerate library (vDSP)
  * (Solid choice for both x86 and ARM, but only works under MacOSX and is not as
  * fast as Intel MKL for x86 systems)
+ *
+ * Note that Apple Accelerate not only supports CBLAS and LAPACK, but also
+ * offers:
+ *  - an optimised discrete/fast Fourier transform (DFT/FFT), which is used by
+ *    the saf_utility_fft wrapper.
+ *  - a number of additional vector, vector-vector, vector-scalar operations
+ *    that are not covered by the CBLAS standard; such as hadamard products,
+ *    element-wise additions/substractions, etc.
+ *
+ * Unlike Intel MKL, not all even number DFT lengths are supported by vDSP.
+ * Therefore, the default kissFFT library (included in framework/resources) is
+ * used as a fall-back option in such cases.
  */
 # define SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< LAPACK interface */
 # include "Accelerate/Accelerate.h"
