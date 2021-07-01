@@ -24,6 +24,7 @@
  */
  
 #include "saf_utilities.h"
+#include "saf_externals.h"
 
 /**
  * Applies a windowing function (see #WINDOWING_FUNCTION_TYPES enum) of length
@@ -617,6 +618,29 @@ void applyIIR
 {
     int n, i;
     float wn;
+    
+#if defined(SAF_USE_INTEL_IPP) && 0 /* Couldn't get this to give the same/correct result... */
+    int pBufSize;
+    Ipp32f* ba;
+    IppsIIRState_32f* pIppIIR;
+    Ipp8u * m_pBuf;
+    ba = malloc1d(nCoeffs*2*sizeof(Ipp32f));
+    for(i=0; i<nCoeffs; i++){
+        ba[i] = b[i];
+        ba[i+nCoeffs] = a[i];
+    }
+    ippsIIRGetStateSize_32f( nCoeffs-1, &pBufSize );
+    m_pBuf = ippsMalloc_8u(pBufSize);
+
+    pIppIIR = NULL;
+    IppStatus error = ippsIIRInit_32f(&pIppIIR, ba, nCoeffs-1, NULL, m_pBuf);
+    error = ippsIIR_32f( in_signal, out_signal, nSamples, pIppIIR );
+
+    free(ba);
+    ippsFree(m_pBuf);
+
+    return;
+#endif
 
     /* For compiler speed-ups */  
     switch(nCoeffs){
@@ -1060,7 +1084,6 @@ void faf_IIRFilterbank_apply
         /* low-pass filters */
         for(j=band; j<fb->nBands-1; j++)
             applyIIR(outBands[band], nSamples, fb->filtLen, fb->b_lpf[j], fb->a_lpf[j], fb->wz_lpf[band][j], outBands[band]);
-
     }
 
     /* Band N-1 */

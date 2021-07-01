@@ -17,3 +17,11 @@ ippsDFTInv_CToC_32fc
 ippMalloc
 ippFree
 ippsMalloc_8u
+ippsSet_8u
+ippsFree
+ippsIIRInit_32f
+ippsIIRGetStateSize_32f
+ippsIIR_32f
+ippsResamplePolyphaseFixedGetSize_32f
+ippsResamplePolyphaseFixedInit_32f
+ippsResamplePolyphaseFixed_32f

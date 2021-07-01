@@ -384,6 +384,60 @@ void resampleHRIRs
     (*hrirs_out_len) = (int)ceilf((float)hrirs_in_len * resample_factor);
     hrirs_out_ld = padToNextPow2 ? (int)pow(2.0, ceil(log((double)(*hrirs_out_len))/log(2.0))) : (*hrirs_out_len);
 
+#if defined(SAF_USE_INTEL_IPP) && 0  /* This is doesn't work: */
+    int targetFilterLength=64;
+    int filterLength, pSize, numFilters;
+    IppStatus error;
+
+    error = ippsResamplePolyphaseFixedGetSize_32f(hrirs_in_fs, hrirs_out_fs, targetFilterLength, &pSize, &filterLength, &numFilters, ippAlgHintFast);
+    IppsResamplingPolyphaseFixed_32f* spec;
+    spec = (IppsResamplingPolyphaseFixed_32f*)ippsMalloc_8u(pSize);
+    error = ippsResamplePolyphaseFixedInit_32f(hrirs_in_fs, hrirs_out_fs, filterLength, 0.98f, 12.0f, spec, ippAlgHintFast);
+
+    zeros = calloc1d(hrirs_in_len, sizeof(float));
+
+    Ipp64f pTime;
+    int outL;
+    (*hrirs_out) = calloc1d(hrirs_N_dirs*NUM_EARS*(hrirs_out_ld), sizeof(float));
+    for(ch=0; ch<hrirs_N_dirs*NUM_EARS; ch++){
+        /* Apply resampling */
+//        if(hrirs_out_fs==hrirs_in_fs)
+//            pTime = -((Ipp64f)hrirs_in_len/4.0);
+//        else
+            pTime = 0;
+        outL =  0;
+
+        error = ippsResamplePolyphaseFixed_32f(hrirs_in + ch * hrirs_in_len, hrirs_in_len,
+                                       (*hrirs_out) + ch * (hrirs_out_ld),
+                                       1.0f, &pTime, &outL, spec);
+
+        /* If required, pass through zeros */
+        for(int kk=1; kk<numFilters; kk++){
+            error = ippsResamplePolyphaseFixed_32f(zeros, hrirs_in_len,
+                                           (*hrirs_out) + ch * (hrirs_out_ld) + kk*hrirs_in_len,
+                                           1.0f, &pTime, &outL, spec);
+        }
+        saf_assert(hrirs_out_ld==outL, "Not all samples were processed!");
+
+        /* Remove the filter delay */
+//        if(hrirs_out_fs==hrirs_in_fs)
+          //  memmove((*hrirs_out) + ch * (hrirs_out_ld), (*hrirs_out) + ch * (hrirs_out_ld+filterLength/2), hrirs_out_ld);
+
+        if(hrirs_out_fs==hrirs_in_fs){
+            memset((*hrirs_out) + ch * (hrirs_out_ld) + (hrirs_out_ld-filterLength/2), 0, filterLength/2*sizeof(float));
+        }
+
+//        float sdsdsds[128];
+//        memcpy(sdsdsds, (*hrirs_out) + ch * (hrirs_out_ld), 128*sizeof(float));
+//        int asdasds = 22222;
+    }
+
+    (*hrirs_out_len) = hrirs_out_ld;
+
+    free(zeros);
+    return;
+#endif
+
     /* Initialise SPEEX resampler */
     pRS = speex__resampler_init(1 /*one channel at a time*/, hrirs_in_fs, hrirs_out_fs, SPEEX_RESAMPLER_QUALITY_MAX, &ERROR_VAL);
     out_latency = speex__resampler_get_output_latency(pRS);
@@ -411,7 +465,7 @@ void resampleHRIRs
                                                        (*hrirs_out) + ch * (hrirs_out_ld) + nsample_proc, &out_length);
             nsample_proc += out_length;
         }
-        saf_assert(nsample_proc==(hrirs_out_ld), "Not all samples were processed!"); 
+        saf_assert(nsample_proc==(hrirs_out_ld), "Not all samples were processed!");
     }
 
     (*hrirs_out_len) = hrirs_out_ld;

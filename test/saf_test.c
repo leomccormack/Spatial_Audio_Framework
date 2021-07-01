@@ -152,19 +152,27 @@ void test__resampleHRIRs(void){
     float* ir;
     ir = calloc1d(NUM_EARS * 256, sizeof(float));
     ir[10] = 1.0f;
+    ir[256+10] = 1.0f;
     hrirs_out = NULL;
     resampleHRIRs((float*)ir, 1, 256, 48000, 48000, 0, &hrirs_out, &hrirs_out_len); /* 1x samplerate */
     utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
     TEST_ASSERT_TRUE(max_ind==10);
-    free(hrirs_out);
+    utility_simaxv(hrirs_out+hrirs_out_len, hrirs_out_len, &max_ind);
+    TEST_ASSERT_TRUE(max_ind==10);
+    free(hrirs_out); hrirs_out = NULL;
     resampleHRIRs((float*)ir, 1, 256, 48000, 96000, 0, &hrirs_out, &hrirs_out_len); /* 2x samplerate */
     utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
+    TEST_ASSERT_TRUE(max_ind==20);
+    utility_simaxv(hrirs_out+hrirs_out_len, hrirs_out_len, &max_ind);
     TEST_ASSERT_TRUE(max_ind==20);
     free(hrirs_out);
     resampleHRIRs((float*)ir, 1, 256, 48000, 24000, 0, &hrirs_out, &hrirs_out_len); /* 0.5x samplerate */
     utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
     TEST_ASSERT_TRUE(max_ind==5);
+    utility_simaxv(hrirs_out+hrirs_out_len, hrirs_out_len, &max_ind);
+    TEST_ASSERT_TRUE(max_ind==5);
     free(hrirs_out);
+    free(ir);
 
     /* Test 2 - converting 48e3 to 48e3 (i.e., no actual resampling, but still passing through the filter) */
     target_fs = 48000;
@@ -1432,7 +1440,7 @@ void test__faf_IIRFilterbank(void){
     /* Config */
     const float acceptedTolerance_dB = 0.5f;
     const int signalLength = 256;
-    const int frameSize = 16;
+    const int frameSize = 256;//16;
     float fs = 48e3;
     int order = 3;
     float fc[6] = {176.776695296637f, 353.553390593274f, 707.106781186547f, 1414.21356237309f, 2828.42712474619f, 5656.85424949238f};
@@ -1449,7 +1457,7 @@ void test__faf_IIRFilterbank(void){
 
     /* Pass impulse through filterbank */
     outFrame = (float**)malloc2d(7, frameSize, sizeof(float));
-    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
+    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, frameSize);
     for(i=0; i< signalLength/frameSize; i++){
         faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
         for(band=0; band<7; band++)
@@ -1470,7 +1478,7 @@ void test__faf_IIRFilterbank(void){
 
     /* Now the same thing, but for 1st order */
     order = 1;
-    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
+    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, frameSize);
     for(i=0; i< signalLength/frameSize; i++){
         faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
         for(band=0; band<7; band++)
