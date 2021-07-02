@@ -17,7 +17,7 @@
 /**
  * @file saf_utility_fft.c
  * @ingroup Utilities
- * @brief Wrappers for optimised fast Fourier transform (FFT) routines
+ * @brief Wrappers for optimised discrete/fast Fourier transform (FFT) routines
  *
  * @note If none of the supported optimised FFT implementations are linked, then
  *       saf_fft employs the highly respectable KissFFT (BSD 3-Clause License):
@@ -28,7 +28,7 @@
  *       to add it and submit a pull request :-)
  *
  * ## Dependencies
- *   Intel MKL, Intel IPP, Apple Accelerate, or KissFFT (included in SAF)
+ *   Intel MKL, Intel IPP, Apple Accelerate, FFTW, or KissFFT (included in SAF)
  *
  * @author Leo McCormack
  * @date 06.04.2019
@@ -61,7 +61,14 @@ typedef struct _saf_rfft_data {
     int N;
     float  Scale;
     int useKissFFT_FLAG;
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+    fftwf_plan p_fwd;
+    fftwf_plan p_bwd;
+    float* fwd_bufferTD;
+    float* bwd_bufferTD;
+    fftwf_complex* fwd_bufferFD;
+    fftwf_complex* bwd_bufferFD;
+#elif defined(SAF_USE_INTEL_IPP)
     int useIPPfft_FLAG;
     int specSize, specBufferSize, bufferSize, log2n;
     IppsDFTSpec_R_32f* hDFTspec;
@@ -94,7 +101,14 @@ typedef struct _saf_fft_data {
     int N;
     float  Scale;
     int useKissFFT_FLAG;
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+    fftwf_plan p_fwd;
+    fftwf_plan p_bwd;
+    fftwf_complex* fwd_bufferTD;
+    fftwf_complex* bwd_bufferTD;
+    fftwf_complex* fwd_bufferFD;
+    fftwf_complex* bwd_bufferFD;
+#elif defined(SAF_USE_INTEL_IPP)
     int useIPPfft_FLAG;
     int specSize, specBufferSize, bufferSize, log2n;
     IppsDFTSpec_C_32fc* hDFTspec;
@@ -510,7 +524,14 @@ void saf_rfft_create
     h->Scale = 1.0f/(float)N; /* output scaling after ifft */
     saf_assert(N>=2 && ISEVEN(N), "Only even (non zero) FFT sizes are supported");
     h->useKissFFT_FLAG = 0;
-#if defined(SAF_USE_INTEL_IPP) 
+#if defined(SAF_USE_FFTW)
+    h->fwd_bufferTD = malloc1d(h->N*sizeof(float));
+    h->bwd_bufferTD = malloc1d(h->N*sizeof(float));
+    h->fwd_bufferFD = malloc1d((h->N/2+1)*sizeof(fftwf_complex));
+    h->bwd_bufferFD = malloc1d((h->N/2+1)*sizeof(fftwf_complex));
+    h->p_fwd = fftwf_plan_dft_r2c_1d(h->N, h->fwd_bufferTD, h->fwd_bufferFD, FFTW_ESTIMATE);
+    h->p_bwd = fftwf_plan_dft_c2r_1d(h->N, h->bwd_bufferFD, h->bwd_bufferTD, FFTW_ESTIMATE);
+#elif defined(SAF_USE_INTEL_IPP)
     /* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */
     if(ceilf(log2f(N)) == floorf(log2f(N))){
         h->useIPPfft_FLAG = 1;
@@ -582,7 +603,14 @@ void saf_rfft_destroy
 {
     saf_rfft_data *h = (saf_rfft_data*)(*phFFT);
     if(h!=NULL){
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+        free(h->fwd_bufferTD);
+        free(h->bwd_bufferTD);
+        free(h->fwd_bufferFD);
+        free(h->bwd_bufferFD);
+        fftwf_destroy_plan(h->p_bwd);
+        fftwf_destroy_plan(h->p_fwd);
+#elif defined(SAF_USE_INTEL_IPP)
         if(h->useIPPfft_FLAG){
             if(h->memSpec)
                 ippFree(h->memSpec);
@@ -629,7 +657,11 @@ void saf_rfft_forward
 {
     saf_rfft_data *h = (saf_rfft_data*)(hFFT);
 
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+    cblas_scopy(h->N, inputTD, 1, h->fwd_bufferTD, 1);
+    fftwf_execute(h->p_fwd);
+    cblas_ccopy(h->N/2+1, h->fwd_bufferFD, 1, outputFD, 1);
+#elif defined(SAF_USE_INTEL_IPP)
     if(h->useIPPfft_FLAG)
         ippsFFTFwd_RToCCS_32f((Ipp32f*)inputTD, (Ipp32f*)outputFD, h->hFFTspec, h->buffer);
     else
@@ -670,7 +702,12 @@ void saf_rfft_backward
 {
     saf_rfft_data *h = (saf_rfft_data*)(hFFT); 
     
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+    cblas_ccopy(h->N/2+1, inputFD, 1, h->bwd_bufferFD, 1);
+    fftwf_execute(h->p_bwd);
+    cblas_scopy(h->N, h->bwd_bufferTD, 1, outputTD, 1);
+    cblas_sscal(h->N, h->Scale, outputTD, 1);
+#elif defined(SAF_USE_INTEL_IPP)
     if(h->useIPPfft_FLAG)
         ippsFFTInv_CCSToR_32f((Ipp32f*)inputFD, (Ipp32f*)outputTD, h->hFFTspec, h->buffer);
     else
@@ -715,7 +752,14 @@ void saf_fft_create
     h->N = N;
     h->Scale = 1.0f/(float)N; /* output scaling after ifft */
     saf_assert(N>=2, "Only even (non zero) FFT sizes are supported");
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+    h->fwd_bufferTD = malloc1d(h->N*sizeof(fftwf_complex));
+    h->bwd_bufferTD = malloc1d(h->N*sizeof(fftwf_complex));
+    h->fwd_bufferFD = malloc1d(h->N*sizeof(fftwf_complex));
+    h->bwd_bufferFD = malloc1d(h->N*sizeof(fftwf_complex));
+    h->p_fwd = fftwf_plan_dft_1d(h->N, h->fwd_bufferTD, h->fwd_bufferFD, FFTW_FORWARD,  FFTW_ESTIMATE);
+    h->p_bwd = fftwf_plan_dft_1d(h->N, h->bwd_bufferFD, h->bwd_bufferTD, FFTW_BACKWARD, FFTW_ESTIMATE);
+#elif defined(SAF_USE_INTEL_IPP)
     /* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */
     if(ceilf(log2f(N)) == floorf(log2f(N))){
         h->useIPPfft_FLAG = 1;
@@ -785,7 +829,14 @@ void saf_fft_destroy
     saf_fft_data *h = (saf_fft_data*)(*phFFT);
     
     if(h!=NULL){
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+        free(h->fwd_bufferTD);
+        free(h->bwd_bufferTD);
+        free(h->fwd_bufferFD);
+        free(h->bwd_bufferFD);
+        fftwf_destroy_plan(h->p_bwd);
+        fftwf_destroy_plan(h->p_fwd);
+#elif defined(SAF_USE_INTEL_IPP)
         if(h->useIPPfft_FLAG){
             if(h->memSpec)
                 ippFree(h->memSpec);
@@ -832,7 +883,11 @@ void saf_fft_forward
 {
     saf_fft_data *h = (saf_fft_data*)(hFFT);
     
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+    cblas_ccopy(h->N, inputTD, 1, h->fwd_bufferTD, 1);
+    fftwf_execute(h->p_fwd);
+    cblas_ccopy(h->N, h->fwd_bufferFD, 1, outputFD, 1);
+#elif defined(SAF_USE_INTEL_IPP)
     if(h->useIPPfft_FLAG)
         ippsFFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h->hFFTspec, h->buffer);
     else
@@ -864,7 +919,13 @@ void saf_fft_backward
 )
 {
     saf_fft_data *h = (saf_fft_data*)(hFFT);
-#if defined(SAF_USE_INTEL_IPP)
+
+#if defined(SAF_USE_FFTW)
+    cblas_ccopy(h->N, inputFD, 1, h->bwd_bufferFD, 1);
+    fftwf_execute(h->p_bwd);
+    cblas_ccopy(h->N, h->bwd_bufferTD, 1, outputTD, 1);
+    cblas_sscal(/*re+im*/2 * h->N, h->Scale, (float*)outputTD, 1);
+#elif defined(SAF_USE_INTEL_IPP)
     if(h->useIPPfft_FLAG)
         ippsFFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h->hFFTspec, h->buffer);
     else
@@ -879,7 +940,7 @@ void saf_fft_backward
         vDSP_DFT_Execute(h->DFT_bwd, h->VDSP_split_tmp.realp, h->VDSP_split_tmp.imagp, h->VDSP_split.realp, h->VDSP_split.imagp);
         cblas_scopy(h->N, h->VDSP_split.realp, 1, &((float*)(outputTD))[0], 2);
         cblas_scopy(h->N, h->VDSP_split.imagp, 1, &((float*)(outputTD))[1], 2);
-        cblas_sscal(2*(h->N), 1.0f/(float)(h->N), (float*)outputTD, 1);
+        cblas_sscal(/*re+im*/2*(h->N), 1.0f/(float)(h->N), (float*)outputTD, 1);
 # endif
     }
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
@@ -887,6 +948,6 @@ void saf_fft_backward
 #endif
     if(h->useKissFFT_FLAG){
         kiss_fft(h->kissFFThandle_bkw, (kiss_fft_cpx*)inputFD, (kiss_fft_cpx*)outputTD);
-        cblas_sscal(2*(h->N), 1.0f/(float)(h->N), (float*)outputTD, 1);
+        cblas_sscal(/*re+im*/2*(h->N), 1.0f/(float)(h->N), (float*)outputTD, 1);
     }
 }

@@ -48,6 +48,8 @@
  *
  *   Intel IPP may be optionally used with the flag: SAF_USE_INTEL_IPP
  *
+ *   FFTW may be optionally used with the flag: SAF_USE_FFTW
+ *
  *   SIMD intrinsics support may be enabled with: SAF_ENABLE_SIMD
  *    - SSE/SSE2/SSE3 intrinsics are used by default
  *    - AVX/AVX2 intrinsics are enabled with compiler flag: -mavx2
@@ -181,20 +183,40 @@
  * The use of Intel's Integrated Performance Primitives (IPP) is optional, but
  * does lead to improvements in the following:
  *   - slightly faster DFT/FFT (for saf_utility_fft) compared with the
- *     implementation in Intel MKL, which are both faster than the DFT/FFT
- *     implementation in Apple Accelerate vDSP.
+ *     implementation found in Intel MKL, which are both faster than the DFT/FFT
+ *     implementation found in Apple Accelerate vDSP.
  *   - this overrides the included resources/speex_resampler with the IPP
  *     resampler, which is marginally faster and more accurate.
+ *
+ * Note that the IPP DFT/FFT is overriden by FFTW if SAF_USE_FFTW is defined.
  */
 # include "ipp.h"
 #endif
 
+#if defined(SAF_USE_FFTW)
+/*
+ * The use of FFTW is optional, but it is faster than the default kissFFT
+ * DFT/FFT implementation. However, if you are on an x86 CPU then the DFT/FFT
+ * implementations found in Intel IPP, Intel MKL and Apple Accelerate are all
+ * faster options.
+ *
+ * Note, SAF uses the single-precision version (fftw3f.a), which is built with:
+ *   $ ./configure --enable-float
+ *   $ make
+ *
+ * If SAF_USE_FFTW is defined, then FFTW overrides all of the other available
+ * DFT/FFT implementations in the saf_utility_fft wrapper.
+ */
+# include "fftw3.h"
+#endif
+
 #if defined(SAF_ENABLE_SIMD)
 /*
- * SAF heavily favours the use of optimised routines provided by e.g. Intel MKL
- * or Accelerate, since they optimally employ vectorisation (with SSE/AVX etc.).
- * However, in cases where the employed performance library does not offer an
- * implementation for a particular routine, SAF provides fall-back option(s).
+ * SAF heavily favours the use of optimised linear algebra routines provided by
+ * e.g. Intel MKL or Accelerate, since they optimally employ vectorisation
+ * (with SSE/AVX etc.). However, in cases where the employed performance library
+ * does not offer an implementation for a particular routine, SAF provides fall-
+ * back option(s).
  * SIMD accelerated fall-back options may be enabled with: SAF_ENABLE_SIMD
  *
  * By default SSE, SSE2, and SSE3 intrinsics are employed, unless one of the
