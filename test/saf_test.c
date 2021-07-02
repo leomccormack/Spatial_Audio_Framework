@@ -145,7 +145,8 @@ void test__resampleHRIRs(void){
     int i, j, target_fs, hrirs_out_len, hrirs_tmp_len, max_ind;
 
     /* The Speex resampler has generally quite a good compromise between quality and speed.
-     * This tolerance is quite high, but ultimately, it's how it sounds that matters. */
+     * This tolerance is quite high, but ultimately, it's how it sounds that matters.
+     * If SAF_USE_INTEL_IPP is defined, then the Intel IPP resampler is employed instead */
     const float acceptedTolerance = 0.05f;
 
     /* Test 1 - passing a unit impulse through, and asserting the peak is where it should be */
@@ -154,24 +155,26 @@ void test__resampleHRIRs(void){
     ir[10] = 1.0f;
     ir[256+10] = 1.0f;
     hrirs_out = NULL;
-    resampleHRIRs((float*)ir, 1, 256, 48000, 48000, 0, &hrirs_out, &hrirs_out_len); /* 1x samplerate */
-    utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
-    TEST_ASSERT_TRUE(max_ind==10);
-    utility_simaxv(hrirs_out+hrirs_out_len, hrirs_out_len, &max_ind);
-    TEST_ASSERT_TRUE(max_ind==10);
-    free(hrirs_out); hrirs_out = NULL;
-    resampleHRIRs((float*)ir, 1, 256, 48000, 96000, 0, &hrirs_out, &hrirs_out_len); /* 2x samplerate */
-    utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
-    TEST_ASSERT_TRUE(max_ind==20);
-    utility_simaxv(hrirs_out+hrirs_out_len, hrirs_out_len, &max_ind);
-    TEST_ASSERT_TRUE(max_ind==20);
-    free(hrirs_out);
-    resampleHRIRs((float*)ir, 1, 256, 48000, 24000, 0, &hrirs_out, &hrirs_out_len); /* 0.5x samplerate */
-    utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
-    TEST_ASSERT_TRUE(max_ind==5);
-    utility_simaxv(hrirs_out+hrirs_out_len, hrirs_out_len, &max_ind);
-    TEST_ASSERT_TRUE(max_ind==5);
-    free(hrirs_out);
+    for(i=0; i<100; i++){
+        resampleHRIRs((float*)ir, 1, 256, 48000, 48000, 0, &hrirs_out, &hrirs_out_len); /* 1x samplerate */
+        utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
+        TEST_ASSERT_TRUE(max_ind==10);
+        utility_simaxv(hrirs_out+hrirs_out_len, hrirs_out_len, &max_ind);
+        TEST_ASSERT_TRUE(max_ind==10);
+        free(hrirs_out); hrirs_out = NULL;
+        resampleHRIRs((float*)ir, 1, 256, 48000, 96000, 0, &hrirs_out, &hrirs_out_len); /* 2x samplerate */
+        utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
+        TEST_ASSERT_TRUE(max_ind==20);
+        utility_simaxv(hrirs_out+hrirs_out_len, hrirs_out_len, &max_ind);
+        TEST_ASSERT_TRUE(max_ind==20);
+        free(hrirs_out); hrirs_out = NULL;
+        resampleHRIRs((float*)ir, 1, 256, 48000, 24000, 0, &hrirs_out, &hrirs_out_len); /* 0.5x samplerate */
+        utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
+        TEST_ASSERT_TRUE(max_ind==5);
+        utility_simaxv(hrirs_out+hrirs_out_len, hrirs_out_len, &max_ind);
+        TEST_ASSERT_TRUE(max_ind==5);
+        free(hrirs_out); hrirs_out = NULL;
+    }
     free(ir);
 
     /* Test 2 - converting 48e3 to 48e3 (i.e., no actual resampling, but still passing through the filter) */

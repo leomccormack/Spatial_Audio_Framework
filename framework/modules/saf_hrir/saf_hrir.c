@@ -373,71 +373,56 @@ void resampleHRIRs
     int* hrirs_out_len
 )
 {
-    unsigned int in_length, out_length;
-    int ch, ERROR_VAL, hrirs_out_ld, out_latency, nsample_proc;
+    int ch, hrirs_out_ld;
     float resample_factor;
+#if defined(SAF_USE_INTEL_IPP)
+    Ipp64f pTime;
+    const int history = 128;
+    float *inBuffer, *outBuffer;
+    int filterLength, pSize, numFilters, outL;
+#else
+    unsigned int in_length, out_length;
+    int ERROR_VAL, out_latency, nsample_proc;
     float *zeros;
     SpeexResamplerState *pRS;
+#endif
 
     /* New HRIR length */
     resample_factor = (float)hrirs_out_fs / (float)hrirs_in_fs;
     (*hrirs_out_len) = (int)ceilf((float)hrirs_in_len * resample_factor);
     hrirs_out_ld = padToNextPow2 ? (int)pow(2.0, ceil(log((double)(*hrirs_out_len))/log(2.0))) : (*hrirs_out_len);
 
-#if defined(SAF_USE_INTEL_IPP) && 0  /* This is doesn't work: */
-    int targetFilterLength=64;
-    int filterLength, pSize, numFilters;
-    IppStatus error;
-
-    error = ippsResamplePolyphaseFixedGetSize_32f(hrirs_in_fs, hrirs_out_fs, targetFilterLength, &pSize, &filterLength, &numFilters, ippAlgHintFast);
+#if defined(SAF_USE_INTEL_IPP)
+    /* Initialise IPP resampler */
+    saf_assert(!ippsResamplePolyphaseFixedGetSize_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), &pSize, &filterLength, &numFilters, ippAlgHintFast), "IPP error");
     IppsResamplingPolyphaseFixed_32f* spec;
     spec = (IppsResamplingPolyphaseFixed_32f*)ippsMalloc_8u(pSize);
-    error = ippsResamplePolyphaseFixedInit_32f(hrirs_in_fs, hrirs_out_fs, filterLength, 0.98f, 12.0f, spec, ippAlgHintFast);
+    saf_assert(!ippsResamplePolyphaseFixedInit_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), 0.98f, 12.0f, spec, ippAlgHintFast), "IPP error");
+    inBuffer = ippsMalloc_32f(hrirs_in_len + history * 2 + 2);
+    outBuffer = ippsMalloc_32f(hrirs_out_ld + 2);
+    ippsZero_32f(inBuffer, hrirs_in_len + history * 2 + 2);
 
-    zeros = calloc1d(hrirs_in_len, sizeof(float));
-
-    Ipp64f pTime;
-    int outL;
+    /* Apply IPP resampler */
     (*hrirs_out) = calloc1d(hrirs_N_dirs*NUM_EARS*(hrirs_out_ld), sizeof(float));
     for(ch=0; ch<hrirs_N_dirs*NUM_EARS; ch++){
-        /* Apply resampling */
-//        if(hrirs_out_fs==hrirs_in_fs)
-//            pTime = -((Ipp64f)hrirs_in_len/4.0);
-//        else
-            pTime = 0;
+        pTime = history;
         outL =  0;
 
-        error = ippsResamplePolyphaseFixed_32f(hrirs_in + ch * hrirs_in_len, hrirs_in_len,
-                                       (*hrirs_out) + ch * (hrirs_out_ld),
-                                       1.0f, &pTime, &outL, spec);
-
-        /* If required, pass through zeros */
-        for(int kk=1; kk<numFilters; kk++){
-            error = ippsResamplePolyphaseFixed_32f(zeros, hrirs_in_len,
-                                           (*hrirs_out) + ch * (hrirs_out_ld) + kk*hrirs_in_len,
-                                           1.0f, &pTime, &outL, spec);
-        }
+        /* Apply resampling */
+        ippsCopy_32f(hrirs_in + ch * hrirs_in_len, inBuffer + history, hrirs_in_len);
+        saf_assert(!ippsResamplePolyphaseFixed_32f(inBuffer, hrirs_in_len, outBuffer, 1.0f, &pTime, &outL, spec), "IPP error");
+        ippsCopy_32f(outBuffer, (*hrirs_out) + ch * (hrirs_out_ld), hrirs_out_ld);
         saf_assert(hrirs_out_ld==outL, "Not all samples were processed!");
-
-        /* Remove the filter delay */
-//        if(hrirs_out_fs==hrirs_in_fs)
-          //  memmove((*hrirs_out) + ch * (hrirs_out_ld), (*hrirs_out) + ch * (hrirs_out_ld+filterLength/2), hrirs_out_ld);
-
-        if(hrirs_out_fs==hrirs_in_fs){
-            memset((*hrirs_out) + ch * (hrirs_out_ld) + (hrirs_out_ld-filterLength/2), 0, filterLength/2*sizeof(float));
-        }
-
-//        float sdsdsds[128];
-//        memcpy(sdsdsds, (*hrirs_out) + ch * (hrirs_out_ld), 128*sizeof(float));
-//        int asdasds = 22222;
     }
 
     (*hrirs_out_len) = hrirs_out_ld;
 
-    free(zeros);
-    return;
-#endif
+    /* Clean-up */
+    ippsFree(spec);
+    ippsFree(inBuffer);
+    ippsFree(outBuffer);
 
+#else
     /* Initialise SPEEX resampler */
     pRS = speex__resampler_init(1 /*one channel at a time*/, hrirs_in_fs, hrirs_out_fs, SPEEX_RESAMPLER_QUALITY_MAX, &ERROR_VAL);
     out_latency = speex__resampler_get_output_latency(pRS);
@@ -470,6 +455,8 @@ void resampleHRIRs
 
     (*hrirs_out_len) = hrirs_out_ld;
 
+    /* Clean-up */
     speex__resampler_destroy(pRS);
     free(zeros);
+#endif
 }

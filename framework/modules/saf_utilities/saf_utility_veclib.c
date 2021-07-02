@@ -47,11 +47,21 @@
 #include "saf_utilities.h"
 #include "saf_externals.h"
 
-/* Assert that only one LAPACK interface has been specified */
-#if (defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE) + \
-     defined(SAF_VECLIB_USE_LAPACKE_INTERFACE) + \
-     defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)) > 1
-# error Only one LAPACK interface can be used!
+/* Specify which LAPACK interface should be used: */
+#if defined(SAF_USE_INTEL_MKL_LP64)
+/* Note that Intel MKL LP64 supports Fortran LAPACK and LAPACKE interfaces: */
+# define SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< LAPACK interface */
+#elif defined(SAF_USE_INTEL_MKL_ILP64)
+/* Note that Intel MKL ILP64 will only work with the LAPACKE interface: */
+# define SAF_VECLIB_USE_LAPACKE_INTERFACE        /**< LAPACK interface */
+#elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
+# define SAF_VECLIB_USE_LAPACKE_INTERFACE        /**< LAPACK interface */
+#elif defined(SAF_USE_ATLAS)
+# define SAF_VECLIB_USE_CLAPACK_INTERFACE        /**< LAPACK interface */
+#elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
+# define SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< LAPACK interface */
+#else
+# error No LAPACK interface was specified!
 #endif
 
 /* Additional flags for Intel MKL */
@@ -65,7 +75,7 @@
 # endif
 #endif
 
-/* mainly to just to remove compiler warnings: */
+/* These are mainly just to remove compiler warnings: */
 #if defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
   typedef __CLPK_integer        veclib_int;
   typedef __CLPK_real           veclib_float;

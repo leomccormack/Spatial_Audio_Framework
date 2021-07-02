@@ -19,6 +19,9 @@ ippFree
 ippsMalloc_8u
 ippsSet_8u
 ippsFree
+ippsMalloc_32f
+ippsZero_32f
+ippsCopy_32f
 ippsIIRInit_32f
 ippsIIRGetStateSize_32f
 ippsIIR_32f

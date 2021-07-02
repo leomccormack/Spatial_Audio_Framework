@@ -63,6 +63,10 @@
 #ifndef __SAF_EXTERNALS_H_INCLUDED__
 #define __SAF_EXTERNALS_H_INCLUDED__
 
+/* ========================================================================== */
+/*                        Performance Library to Employ                       */
+/* ========================================================================== */
+
 /* Assert that only one CBLAS/LAPACK performance library has been specified */
 #if (defined(SAF_USE_INTEL_MKL_LP64) + \
      defined(SAF_USE_INTEL_MKL_ILP64) + \
@@ -71,16 +75,6 @@
      defined(SAF_USE_APPLE_ACCELERATE)) > 1
 # error Only one performance library flag can be defined!
 #endif
-
-/* Check minimum requirements for SIMD support */
-#if defined(SAF_ENABLE_SIMD) && !(defined(__SSE__) && defined(__SSE2__) && \
-                                  defined(__SSE3__))
-# error SAF_ENABLE_SIMD requires at least SSE, SSE2 and SSE3 support
-#endif
-
-/* ========================================================================== */
-/*                        Performance Library to Employ                       */
-/* ========================================================================== */
 
 /*
  * Due to the nature of spatial/multi-channel audio signal processing, SAF is
@@ -102,41 +96,36 @@
  *    element-wise additions/substractions, and the modulus or reciprical of
  *    all vector elements, etc.
  */
-/* Note that Intel MKL LP64 supports Fortran LAPACK and LAPACKE interfaces: */
-# define SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< LAPACK interface */
 # include "mkl.h"
 
 #elif defined(SAF_USE_INTEL_MKL_ILP64)
 /*
  * Using Intel's Math Kernel Library (MKL) ILP64 configuration (64-bit int)
  * (Generally the fastest library for x86 based architectures)
-
- * This 64-bit int version is the one employed by e.g. MATLAB. Therefore it is
+ *
+ * This 64-bit int version is the one employed by e.g. MATLAB. Therefore, it is
  * required if you wish to build MEX objects using SAF code; see e.g.
  * extras/safmex. In general, the performance of this option is practically the
  * same as "SAF_USE_INTEL_MKL_LP64", but it is slower in some very rare special
  * cases. Therefore, "SAF_USE_INTEL_MKL_LP64" is still the favoured option if
  * you are not planning on building MEX objects using SAF.
  */
-/* Note that Intel MKL ILP64 will only work with the LAPACKE interface: */
-# define SAF_VECLIB_USE_LAPACKE_INTERFACE /**< LAPACK interface */
 # define MKL_ILP64 /**< Indicates to MKL that we've linked the ILP64 variant */
 # include "mkl.h"
 
 #elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
 /*
  * Using OpenBLAS and the LAPACKE interface
- * (A good option for both x86 and ARM based architectures)
+ * (A decent option for both x86 and ARM based architectures)
  *
  * This option provides implementations of the CBLAS/LAPACK functions that have
- * good performance. However, unlike Intel MKL or Apple Accelerate, it does not
- * offer an optimised DFT/FFT or any other linear algebra functions outside of
- * these standards. Therefore, if you are using this option, consider using
- * Intel's IPP library for the FFT, along with the SSE/AVX/AVX-512 fallback
- * implementations for the other linear algebra options, by also defining:
- * "SAF_USE_INTEL_IPP" and "SAF_ENABLE_SIMD" (see the instructions below).
+ * decent performance. However, unlike Intel MKL or Apple Accelerate, it does
+ * not offer an optimised DFT/FFT or any other linear algebra functions outside
+ * of these standards. Therefore, if you are using this option, consider also
+ * using Intel's IPP library for the FFT, along with the SSE/AVX/AVX-512
+ * fallback implementations for the other linear algebra options, by also
+ * defining: "SAF_USE_INTEL_IPP" and "SAF_ENABLE_SIMD" (see instructions below).
  */
-# define SAF_VECLIB_USE_LAPACKE_INTERFACE /**< LAPACK interface */
 # include "cblas.h"
 # include "lapacke.h"
 
@@ -146,20 +135,19 @@
  * (Not recommended, since some saf_utility_veclib functions do not work with
  * ATLAS)
  *
- * Basically, do not use this unless you have to, and if you do, know that some
- * linear algebra functions in saf_utility_veclib will exit the program if they
- * are called.
- */ 
-# define SAF_VECLIB_USE_CLAPACK_INTERFACE /**< LAPACK interface */
+ * Basically, do not use this unless you have to, and if you do, be aware that
+ * some linear algebra functions in saf_utility_veclib will exit the program if
+ * they are called.
+ */
 # include "cblas-atlas.h"
 # include "clapack.h"
 # warning Note: CLAPACK does not include all LAPACK routines!
 
 #elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
 /*
- * Using Apple's Accelerate library (vDSP)
- * (Solid choice for both x86 and ARM, but only works under MacOSX and is not as
- * fast as Intel MKL for x86 systems)
+ * Using Apple's Accelerate library
+ * (Solid choice for both x86 and ARM, but only works under MacOSX and is not
+ * quite as fast as Intel MKL for x86 systems)
  *
  * Note that Apple Accelerate not only supports CBLAS and LAPACK, but also
  * offers:
@@ -170,10 +158,9 @@
  *    element-wise additions/substractions, etc.
  *
  * Unlike Intel MKL, not all even number DFT lengths are supported by vDSP.
- * Therefore, the default kissFFT library (included in framework/resources) is
- * used as a fall-back option in such cases.
+ * Therefore, be aware that the default kissFFT library (included in
+ * framework/resources) is still used as a fall-back option in such cases.
  */
-# define SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< LAPACK interface */
 # include "Accelerate/Accelerate.h"
 
 #else
@@ -193,8 +180,10 @@
 /*
  * The use of Intel's Integrated Performance Primitives (IPP) is optional, but
  * does lead to some minor performance improvements for saf_utility_fft compared
- * with the implementation in Intel MKL. We've found that the FFT
- * implementations found in MKL and IPP are both faster than the FFTW library.
+ * with the implementation in Intel MKL.
+ *
+ * This option also overrides the included resources/speex_resampler with the
+ * IPP resampler, which is marginally faster.
  */
 # include "ipp.h"
 #endif
@@ -224,9 +213,13 @@
  */
 #  include <immintrin.h> /* for AVX, AVX2, and/or AVX-512 */
 # endif
-# include <xmmintrin.h>  /* for SSE  */
-# include <emmintrin.h>  /* for SSE2 */
-# include <pmmintrin.h>  /* for SSE3 */
+# if defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
+#  include <xmmintrin.h>  /* for SSE  */
+#  include <emmintrin.h>  /* for SSE2 */
+#  include <pmmintrin.h>  /* for SSE3 */
+# else
+#  error SAF_ENABLE_SIMD requires at least SSE, SSE2 and SSE3 support
+# endif
 #endif
 
 
