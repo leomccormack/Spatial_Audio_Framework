@@ -118,7 +118,7 @@
  * Using OpenBLAS and the LAPACKE interface
  * (A decent option for both x86 and ARM based architectures)
  *
- * This option provides implementations of the CBLAS/LAPACK functions that have
+ * This option provides implementations of the CBLAS/LAPACK functions which have
  * decent performance. However, unlike Intel MKL or Apple Accelerate, it does
  * not offer an optimised DFT/FFT or any other linear algebra functions outside
  * of these standards. Therefore, if you are using this option, consider also
@@ -179,11 +179,12 @@
 #if defined(SAF_USE_INTEL_IPP)
 /*
  * The use of Intel's Integrated Performance Primitives (IPP) is optional, but
- * does lead to some minor performance improvements for saf_utility_fft compared
- * with the implementation in Intel MKL.
- *
- * This option also overrides the included resources/speex_resampler with the
- * IPP resampler, which is marginally faster.
+ * does lead to improvements in the following:
+ *   - slightly faster DFT/FFT (for saf_utility_fft) compared with the
+ *     implementation in Intel MKL, which are both faster than the DFT/FFT
+ *     implementation in Apple Accelerate vDSP.
+ *   - this overrides the included resources/speex_resampler with the IPP
+ *     resampler, which is marginally faster and more accurate.
  */
 # include "ipp.h"
 #endif
@@ -202,7 +203,7 @@
  *    - AVX-512  intrinsics are enabled with: -mavx512f
  *
  * Note that intrinsics require a CPU that supports them (x86_64 architecture)
- * To find out which intrinsics are supported by your own CPU, use the
+ * To find out which SIMD intrinsics are supported by your own CPU, use the
  * following terminal command on macOS: $ sysctl -a | grep machdep.cpu.features
  * Or on Linux, use: $ lscpu
  */

@@ -411,8 +411,8 @@ void resampleHRIRs
         /* Apply resampling */
         ippsCopy_32f(hrirs_in + ch * hrirs_in_len, inBuffer + history, hrirs_in_len);
         saf_assert(!ippsResamplePolyphaseFixed_32f(inBuffer, hrirs_in_len, outBuffer, 1.0f, &pTime, &outL, spec), "IPP error");
-        ippsCopy_32f(outBuffer, (*hrirs_out) + ch * (hrirs_out_ld), hrirs_out_ld);
         saf_assert(hrirs_out_ld==outL, "Not all samples were processed!");
+        ippsCopy_32f(outBuffer, (*hrirs_out) + ch * (hrirs_out_ld), hrirs_out_ld);
     }
 
     (*hrirs_out_len) = hrirs_out_ld;

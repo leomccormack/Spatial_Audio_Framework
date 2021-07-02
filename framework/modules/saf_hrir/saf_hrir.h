@@ -262,6 +262,9 @@ void binauralDiffuseCoherence(/* Input Arguments */
 /**
  * Resamples a set of HRIRs from its original samplerate to a new samplerate
  *
+ * @note The included speex_resampler.h is used by default. If SAF_USE_INTEL_IPP
+ *       is defined, then the IPP resampler is employed instead.
+ *
  * @param[in]  hrirs_in      Input HRIRs;
  *                           FLAT: hrirs_N_dirs x #NUM_EARS x hrirs_in_len
  * @param[in]  hrirs_N_dirs  Number of HRIRs
