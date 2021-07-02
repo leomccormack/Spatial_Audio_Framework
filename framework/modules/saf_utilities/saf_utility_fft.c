@@ -571,7 +571,7 @@ void saf_rfft_create
         h->VDSP_split_tmp.imagp = malloc1d((h->N/2)*sizeof(float));
         h->VDSP_split.realp = malloc1d((h->N/2)*sizeof(float));
         h->VDSP_split.imagp = malloc1d((h->N/2)*sizeof(float));
-#endif
+# endif
     }
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     h->MKL_FFT_Handle = 0;
