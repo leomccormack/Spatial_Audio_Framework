@@ -9,6 +9,18 @@ Major and/or breaking changes to the Spatial_Audio_Framework are listed here.
 For descriptions of minor changes and bug fixes, please refer to the git log.
 
 ====================================================================================================
+v1.2.1
+ - Added (optional) AVX and AVX-512 support, when using: SAF_ENABLE_SIMD
+ - Added (optional) FFTW support for saf_utility_fft, via the new flag: SAF_USE_FFTW
+ - If Intel IPP is enabled (SAF_USE_INTEL_IPP), then the IPP resampler is employed, instead of the
+   included SPEEX resampler, when calling resampleHRIRs()
+
+Breaking changes:
+
+The install-safipp.sh script now defaults to the new oneAPI install paths. However, an arbitrary
+install path (e.g. the old one) may also now be specified as an input argument.
+
+====================================================================================================
 v1.2.0
  - All lapack-related saf_utility_veclib functions now include an option to pre-allocate the run-
    time memory
@@ -19,7 +31,7 @@ v1.2.0
  - Added some SIMD (SSE) optimised functions, which may be enabled with "SAF_ENABLE_SIMD"
  - A number of other minor and some significant optimisations throughout the framework
  - Improved doxygen documentation for the examples
- - Added resampleHRIR() function to saf_hrir module, which employs the SPEEX algorithm.
+ - Added resampleHRIRs() function to saf_hrir module, which employs the SPEEX algorithm.
 
 Breaking changes:
 
