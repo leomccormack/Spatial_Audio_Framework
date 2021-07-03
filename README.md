@@ -16,7 +16,9 @@ Owing to its modular design, expanding the framework is relatively straightforwa
 The framework requires the following external libraries:
 * Any library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 * (**Optional**) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
-* (**Optional**) Intel's [Integrated Performance Primitives (IPP)](https://software.intel.com/content/www/us/en/develop/tools/integrated-performance-primitives.html) for the FFT.
+* (**Optional**) Intel's [Integrated Performance Primitives (IPP)](https://software.intel.com/content/www/us/en/develop/tools/integrated-performance-primitives.html) for the FFT and/or resampler
+* (**Optional**) [FFTW](https://www.fftw.org/) for the FFT
+* (**Optional**) a SSE, AVX, AVX-512 supporting CPU
 
 In order to inform SAF which CBLAS/LAPACK supporting library/libraries you have linked to your project, simply add **one** of the following global pre-processor definitions:
 ```
@@ -55,9 +57,9 @@ Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unid
 
 The framework can be configured further, with the following options:
 ```
-SAF_USE_INTEL_IPP # To use Intel IPP for performing the DFT/FFT and signal/FIR filter resampling
+SAF_USE_INTEL_IPP # To use Intel IPP for performing the DFT/FFT and resampling
 SAF_USE_FFTW      # To use the FFTW library for performing the DFT/FFT 
-SAF_ENABLE_SIMD   # To enable (SSE/AVX/AVX512) intrinsics for vector-vector operations (note: MKL/Accelerate are still favoured) 
+SAF_ENABLE_SIMD   # To enable SIMD (SSE, AVX, AVX512) intrinsics for certain vector operations
 ```
 
 # Using the framework
@@ -95,11 +97,11 @@ The available SAF-related build options (and their default values) are:
 -DSAF_BUILD_TESTS=1                        # build unit testing program
 ```
 
-If using **SAF_USE_INTEL_MKL** as the performance library, note that the default header and library search paths may be overridden [according to your setup](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md) with:
+If using e.g. **SAF_USE_INTEL_MKL_LP64** as the performance library, note that the default header and library search paths may be overridden [according to your setup](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md) with:
 ``` 
 -DINTEL_MKL_HEADER_PATH="path/to/mkl/headers"
 -DINTEL_MKL_LIB="path/to/mkl/libs/mkl_rt(.so/.dylib/.lib)"   # OR:
--DINTEL_MKL_LIB="path/to/custom/mkl/lib/saf_mkl_custom(.so/.dylib/.lib)"
+-DINTEL_MKL_LIB="path/to/custom/mkl/lib/saf_mkl_custom_lp64(.so/.dylib/.lib)"
 ```
 
 If the **saf_sofa_reader** module is enabled, CMake will use the statically built dependencies found in the **dependencies** folder for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared [netcdf library](docs/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
