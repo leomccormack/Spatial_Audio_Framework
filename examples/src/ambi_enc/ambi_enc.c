@@ -39,8 +39,10 @@ void ambi_enc_create
     /* default user parameters */
     loadSourceConfigPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources));
     pData->nSources = pData->new_nSources;
-    for(i=0; i<MAX_NUM_INPUTS; i++)
+    for(i=0; i<MAX_NUM_INPUTS; i++){
         pData->recalc_SH_FLAG[i] = 1;
+        pData->src_gains[i] = 1;
+    }
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->order = SH_ORDER_FIRST;
@@ -128,6 +130,8 @@ void ambi_enc_process
                 /* If encoding gains have changed, then we should also mix with and interpolate the previous gains */
                 mixWithPreviousFLAG = 1;
             }
+            /* Apply source gains */
+            utility_svsmul(pData->inputFrameTD[i], &(pData->src_gains[i]), AMBI_ENC_FRAME_SIZE, NULL);
         }
 
         /* spatially encode the input signals into spherical harmonic signals */
@@ -280,6 +284,30 @@ void ambi_enc_setEnablePostScaling(void* const hAmbi, int newStatus)
     pData->enablePostScaling = newStatus;
 }
 
+void ambi_enc_setSourceGain(void* const hAmbi, int srcIdx, float newGain)
+{
+    ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
+    pData->src_gains[srcIdx] = newGain;
+}
+
+void ambi_enc_setSourceSolo(void* const hAmbi, int srcIdx)
+{
+    ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
+    int i;
+    for(i=0; i<pData->nSources; i++){
+        if(i==srcIdx)
+            pData->src_gains[i] = 1.f;
+        else
+            pData->src_gains[i] = 0.f;
+    }
+}
+
+void ambi_enc_setUnSolo(void* const hAmbi)
+{
+    ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
+    for(int i=0; i<pData->nSources; i++)
+            pData->src_gains[i] = 1.f;
+}
 
 /* Get Functions */
 
