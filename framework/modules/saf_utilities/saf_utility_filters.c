@@ -24,6 +24,7 @@
  */
  
 #include "saf_utilities.h"
+#include "saf_externals.h"
 
 /**
  * Applies a windowing function (see #WINDOWING_FUNCTION_TYPES enum) of length
@@ -617,6 +618,29 @@ void applyIIR
 {
     int n, i;
     float wn;
+    
+#if defined(SAF_USE_INTEL_IPP) && 0 /* Couldn't get this to give the same/correct result... */
+    int pBufSize;
+    Ipp32f* ba;
+    IppsIIRState_32f* pIppIIR;
+    Ipp8u * m_pBuf;
+    ba = malloc1d(nCoeffs*2*sizeof(Ipp32f));
+    for(i=0; i<nCoeffs; i++){
+        ba[i] = b[i];
+        ba[i+nCoeffs] = a[i];
+    }
+    ippsIIRGetStateSize_32f( nCoeffs-1, &pBufSize );
+    m_pBuf = ippsMalloc_8u(pBufSize);
+
+    pIppIIR = NULL;
+    IppStatus error = ippsIIRInit_32f(&pIppIIR, ba, nCoeffs-1, NULL, m_pBuf);
+    error = ippsIIR_32f( in_signal, out_signal, nSamples, pIppIIR );
+
+    free(ba);
+    ippsFree(m_pBuf);
+
+    return;
+#endif
 
     /* For compiler speed-ups */  
     switch(nCoeffs){
@@ -747,10 +771,10 @@ void butterCoeffs
     }
 
     /* Transform lowpass filter into the desired filter (while in state space) */
-	bf_ss = NULL;
+    bf_ss = NULL;
     switch(filterType){
         case BUTTER_FILTER_HPF:
-            utility_dinv(FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
+            utility_dinv(NULL, FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
             /* fall through */
         case BUTTER_FILTER_LPF:
             bf_ss = (double**)malloc2d(numStates,numStates,sizeof(double));
@@ -759,7 +783,7 @@ void butterCoeffs
                     bf_ss[i][j] = w0*(a_state[i][j]);
             break;
         case BUTTER_FILTER_BSF:
-            utility_dinv(FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
+            utility_dinv(NULL, FLATTEN2D(a_state), FLATTEN2D(a_state), numStates);
             /* fall through */
         case BUTTER_FILTER_BPF:
             numStates = numStates*2;
@@ -791,7 +815,7 @@ void butterCoeffs
             tmp2[i][j] = (i==j ? 1.0f : 0.0f) - bf_ss[i][j]*0.25;
         }
     }
-    utility_dglslv(FLATTEN2D(tmp2), numStates, FLATTEN2D(tmp1), numStates, FLATTEN2D(a_bili));
+    utility_dglslv(NULL, FLATTEN2D(tmp2), numStates, FLATTEN2D(tmp1), numStates, FLATTEN2D(a_bili));
 
     /* Compute the filter coefficients for the numerator and denominator */
     a_coeffs_cmplx = malloc1d(nCoeffs*sizeof(double_complex));
@@ -950,8 +974,8 @@ void faf_IIRFilterbank_create
         if(order==3){
             //q[3]=conj(-1.0*q[0]);
             //q[2]=conj(-1.0*q[1]);
-			q[3] = -1.0*q[0];
-			q[2] = -1.0*q[1];
+            q[3] = -1.0*q[0];
+            q[2] = -1.0*q[1];
         }
         for(i=0; i<filtLen; i++)
             q[i] =  b_lpf[i] - q[i];
@@ -959,14 +983,14 @@ void faf_IIRFilterbank_create
         /* Find roots of polynomial  */
         if(order==1)
             z[0] = cmplx(-q[1]/q[0], 0.0);
-        else{ /* 3rd order */
+        else if(order==3){
             memset(A, 0, 9*sizeof(double_complex));
             A[0][0] = cmplx(-q[1]/q[0], 0.0);
             A[0][1] = cmplx(-q[2]/q[0], 0.0);
             A[0][2] = cmplx(-q[3]/q[0], 0.0);
             A[1][0] = cmplx(1.0, 0.0);
             A[2][1] = cmplx(1.0, 0.0);
-            utility_zeig((double_complex*)A, 3, NULL, NULL, NULL, (double_complex*)z);
+            utility_zeig(NULL, (double_complex*)A, 3, NULL, NULL, NULL, (double_complex*)z);
         }
 
         /* Separate the zeros inside the unit circle and the ones outside to
@@ -977,7 +1001,7 @@ void faf_IIRFilterbank_create
         for(i=0; i<order; i++){
             if (cabs(z[i]) < 1.0){
                 ztmp[0] = cmplx(1.0, 0.0);
-				ztmp[1] = crmul(z[i], -1.0);
+                ztmp[1] = crmul(z[i], -1.0);
                 convz(d2,ztmp,d2_len,2,ztmp2);
                 d2_len++;
                 for(j=0; j<d2_len; j++)
@@ -1060,7 +1084,6 @@ void faf_IIRFilterbank_apply
         /* low-pass filters */
         for(j=band; j<fb->nBands-1; j++)
             applyIIR(outBands[band], nSamples, fb->filtLen, fb->b_lpf[j], fb->a_lpf[j], fb->wz_lpf[band][j], outBands[band]);
-
     }
 
     /* Band N-1 */

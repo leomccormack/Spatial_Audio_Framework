@@ -33,8 +33,6 @@ void spreader_create
     *phSpr = (void*)pData;
     int band, t, src;
 
-    SAF_PRINT_VERSION_LICENSE_STRING;
-
     /* user parameters */
     pData->sofa_filepath = NULL;
     pData->nSources = 1;
@@ -46,8 +44,8 @@ void spreader_create
 
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, FRAME_SIZE, sizeof(float));
-    pData->outframeTD = (float**)malloc2d(MAX_NUM_OUTPUTS, FRAME_SIZE, sizeof(float));
+    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, SPREADER_FRAME_SIZE, sizeof(float));
+    pData->outframeTD = (float**)malloc2d(MAX_NUM_OUTPUTS, SPREADER_FRAME_SIZE, sizeof(float));
     pData->inputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
     pData->protoframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
     pData->decorframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
@@ -78,7 +76,6 @@ void spreader_create
     pData->interp_M = NULL;
     pData->interp_Mr = NULL;
     pData->interp_Mr_cmplx = NULL;
-    pData->inFrame_t = NULL;
     for(t=0; t<TIME_SLOTS; t++){
         pData->interpolatorFadeIn[t] = ((float)t+1.0f)/(float)TIME_SLOTS;
         pData->interpolatorFadeOut[t] = 1.0f - ((float)t+1.0f)/(float)TIME_SLOTS;
@@ -149,7 +146,6 @@ void spreader_destroy
         free(pData->interp_M);
         free(pData->interp_Mr);
         free(pData->interp_Mr_cmplx);
-        free(pData->inFrame_t);
 
         /* Optimal mixing */
         cdf4sap_cmplx_destroy(&(pData->hCdf));
@@ -321,7 +317,6 @@ void spreader_initCodec
     pData->interp_Mr = realloc1d(pData->interp_Mr, (pData->Q)*(pData->Q) * sizeof(float));
     pData->interp_Mr_cmplx = realloc1d(pData->interp_Mr_cmplx, (pData->Q)*(pData->Q) * sizeof(float_complex));
     memset(pData->interp_Mr_cmplx, 0, (pData->Q)*(pData->Q) * sizeof(float_complex));
-    pData->inFrame_t = realloc1d(pData->inFrame_t, (pData->Q) * sizeof(float_complex));
 
     /* New config */
     pData->nSources = nSources;
@@ -366,17 +361,17 @@ void spreader_process
     memcpy((float*)src_spread, pData->src_spread, nSources*sizeof(float));
 
     /* apply binaural panner */
-    if ((nSamples == FRAME_SIZE) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ){
+    if ((nSamples == SPREADER_FRAME_SIZE) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ){
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
         for(i=0; i < SAF_MIN(nSources,nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
+            utility_svvcopy(inputs[i], SPREADER_FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<nSources; i++)
-            memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
+            memset(pData->inputFrameTD[i], 0, SPREADER_FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, pData->inputframeTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, SPREADER_FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
 
         /* Zero output buffer */
         for(band=0; band<HYBRID_BANDS; band++)
@@ -430,8 +425,7 @@ void spreader_process
                                     FLATTEN2D(pData->protoframeTF[band]), TIME_SLOTS);
 
                         /* Scale by number of spreading directions */
-                        scaleC = cmplxf(1.0f/(float)nSpread, 0.0f);
-                        cblas_cscal(Q*TIME_SLOTS, &scaleC, FLATTEN2D(pData->protoframeTF[band]), 1);
+                        cblas_sscal(/*re+im*/2*Q*TIME_SLOTS, 1.0f/(float)nSpread, (float*)FLATTEN2D(pData->protoframeTF[band]), 1);
                     }
                     break;
 #if 0
@@ -472,10 +466,8 @@ void spreader_process
                                 FLATTEN2D(pData->protoframeTF[band]), TIME_SLOTS,
                                 FLATTEN2D(pData->protoframeTF[band]), TIME_SLOTS, &cbeta,
                                 Cproto, Q);
-                    scaleC = cmplxf(pData->covAvgCoeff, 0.0f);
-                    cblas_cscal(Q*Q, &scaleC, pData->Cproto[src][band], 1);
-                    scaleC = cmplxf(1.0f-pData->covAvgCoeff, 0.0f);
-                    cblas_caxpy(Q*Q, &scaleC, Cproto, 1, pData->Cproto[src][band], 1);
+                    cblas_sscal(/*re+im*/2*Q*Q, pData->covAvgCoeff, (float*)pData->Cproto[src][band], 1);
+                    cblas_saxpy(/*re+im*/2*Q*Q, 1.0f-pData->covAvgCoeff, (float*)Cproto, 1, (float*)pData->Cproto[src][band], 1);
                 }
 
                 /* Define target covariance matrices */
@@ -513,8 +505,7 @@ void spreader_process
                         trace = 0.0f;
                         for(q=0; q<Q; q++)
                             trace += crealf(Cy[q*Q+q]);
-                        scaleC = cmplxf(1.0f/(trace+2.23e-9f), 0.0f);
-                        cblas_cscal(Q*Q, &scaleC, Cy, 1);
+                        cblas_sscal(/*re+im*/2*Q*Q, 1.0f/(trace+2.23e-9f), (float*)Cy, 1);
 
                         /* Compute signals for the centre of the spread */
                         for(q=0; q<Q; q++)
@@ -532,15 +523,12 @@ void spreader_process
                         trace = 0.0f;
                         for(q=0; q<Q; q++)
                             trace += crealf(E_dir[q*Q+q]);
-                        scaleC = cmplxf(trace, 0.0f);
-                        cblas_cscal(Q*Q, &scaleC, Cy, 1);
+                        cblas_sscal(/*re+im*/2*Q*Q, trace, (float*)Cy, 1);
                     }
 #endif
                     /* Average over time */
-                    scaleC = cmplxf(pData->covAvgCoeff, 0.0f);
-                    cblas_cscal(Q*Q, &scaleC, pData->Cy[src][band], 1);
-                    scaleC = cmplxf(1.0f-pData->covAvgCoeff, 0.0f);
-                    cblas_caxpy(Q*Q, &scaleC, Cy, 1, pData->Cy[src][band], 1);
+                    cblas_sscal(/*re+im*/2*Q*Q, pData->covAvgCoeff, (float*)pData->Cy[src][band], 1);
+                    cblas_saxpy(/*re+im*/2*Q*Q, 1.0f-pData->covAvgCoeff, (float*)Cy, 1, (float*)pData->Cy[src][band], 1);
                 }
 
                 /* Formulate mixing matrices */
@@ -556,13 +544,12 @@ void spreader_process
                             }
                         }
                         Gcomp = sqrtf(Eproto/(Ey+2.23e-9f));
-                        scaleC = cmplxf(Gcomp, 0.0f);
 
                         /* Compute mixing matrix per band */
                         for(band=0; band<HYBRID_BANDS; band++){
                             memcpy(Cy, pData->Cy[src][band], Q*Q*sizeof(float_complex));
-                            cblas_cscal(Q*Q, &scaleC, Cy, 1);
-                            utility_cseig(Cy, Q, 1, V, D, NULL);
+                            cblas_sscal(/*re+im*/2*Q*Q, Gcomp, (float*)Cy, 1);
+                            utility_cseig(NULL, Cy, Q, 1, V, D, NULL);
                             for(i=0; i<Q; i++)
                                 for(j=0; j<Q; j++)
                                     D[i*Q+j] = i==j ? csqrtf(D[i*Q+j]) : cmplxf(0.0f, 0.0f);
@@ -623,12 +610,12 @@ void spreader_process
                     for(t=0; t<TIME_SLOTS; t++){
                         scaleC = cmplxf(pData->interpolatorFadeIn[t], 0.0f);
                         utility_cvsmul(pData->new_M[band], &scaleC, Q*Q, pData->interp_M);
-                        scaleC = cmplxf(pData->interpolatorFadeOut[t], 0.0f);
-                        cblas_caxpy(Q*Q, &scaleC, pData->prev_M[src][band], 1, pData->interp_M, 1);
-                        for(j=0; j<Q; j++)
-                            pData->inFrame_t[j] = procMode == SPREADER_MODE_EVD ? pData->decorframeTF[band][j][t] : pData->protoframeTF[band][j][t];
-                        for(i=0; i<Q; i++)
-                            utility_cvvdot((float_complex*)(&(pData->interp_M[i*Q])), pData->inFrame_t, Q, NO_CONJ, &(pData->spreadframeTF[band][i][t]));
+                        cblas_saxpy(/*re+im*/2*Q*Q, pData->interpolatorFadeOut[t], (float*)pData->prev_M[src][band], 1, (float*)pData->interp_M, 1);
+                        for(i=0; i<Q; i++) {
+                            cblas_cdotu_sub(Q, (float_complex*)(&(pData->interp_M[i*Q])), 1,
+                                            FLATTEN2D((procMode == SPREADER_MODE_EVD ? pData->decorframeTF[band] : pData->protoframeTF[band])) + t,
+                                            TIME_SLOTS, &(pData->spreadframeTF[band][i][t]));
+                        }
                     }
 
                     /* Also mix in the residual part */
@@ -637,11 +624,9 @@ void spreader_process
                             for(t=0; t<TIME_SLOTS; t++){
                                 utility_svsmul(pData->new_Mr[band], &(pData->interpolatorFadeIn[t]), Q*Q, pData->interp_Mr);
                                 cblas_saxpy(Q*Q, pData->interpolatorFadeOut[t], pData->prev_Mr[src][band], 1, pData->interp_Mr, 1);
-                                for(j=0; j<Q; j++)
-                                    pData->inFrame_t[j] = pData->decorframeTF[band][j][t];
                                 cblas_scopy(Q*Q, pData->interp_Mr, 1, (float*)pData->interp_Mr_cmplx, 2);
                                 for(i=0; i<Q; i++){
-                                    utility_cvvdot((float_complex*)(&(pData->interp_Mr_cmplx[i*Q])), pData->inFrame_t, Q, NO_CONJ, &tmp);
+                                    cblas_cdotu_sub(Q, (float_complex*)(&(pData->interp_Mr_cmplx[i*Q])), 1, FLATTEN2D(pData->decorframeTF[band]) + t, TIME_SLOTS, &tmp);
                                     pData->spreadframeTF[band][i][t] = ccaddf(pData->spreadframeTF[band][i][t], tmp);
                                 }
                             }
@@ -652,7 +637,7 @@ void spreader_process
 
             /* Add the spread frame to the output frame, then move onto the next source... */
             for(band=0; band<HYBRID_BANDS; band++)
-               cblas_caxpy(Q*TIME_SLOTS, &calpha, FLATTEN2D(pData->spreadframeTF[band]), 1, FLATTEN2D(pData->outputframeTF[band]), 1);
+                cblas_saxpy(/*re+im*/2*Q*TIME_SLOTS, 1.0f, (float*)FLATTEN2D(pData->spreadframeTF[band]), 1, (float*)FLATTEN2D(pData->outputframeTF[band]), 1);
 
             /* For next frame */
             cblas_ccopy(HYBRID_BANDS*Q*Q, FLATTEN2D(pData->new_M), 1, FLATTEN2D(pData->prev_M[src]), 1);
@@ -660,17 +645,17 @@ void spreader_process
         }
 
         /* inverse-TFT */
-        afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outframeTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->outputframeTF, SPREADER_FRAME_SIZE, MAX_NUM_OUTPUTS, TIME_SLOTS, pData->outframeTD);
 
         /* Copy to output buffer */
         for (ch = 0; ch < SAF_MIN(Q, nOutputs); ch++)
-            utility_svvcopy(pData->outframeTD[ch], FRAME_SIZE, outputs[ch]);
+            utility_svvcopy(pData->outframeTD[ch], SPREADER_FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
-            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch], 0, SPREADER_FRAME_SIZE*sizeof(float));
     }
     else{
         for (ch=0; ch < nOutputs; ch++)
-            memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch],0, SPREADER_FRAME_SIZE*sizeof(float));
     }
 
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
@@ -759,7 +744,7 @@ void spreader_setSofaFilePath(void* const hSpr, const char* path)
 
 int spreader_getFrameSize(void)
 {
-    return FRAME_SIZE;
+    return SPREADER_FRAME_SIZE;
 }
 
 CODEC_STATUS spreader_getCodecStatus(void* const hSpr)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 Leo McCormack
+ * Copyright 2018-2021 Leo McCormack
  *
  * This software is dual-licensed.
  *
@@ -89,8 +89,8 @@
 /* Note that this version info is also scanned and employed by CMakeLists.txt */
 
 #define SAF_VERSION_MAJOR 1        /**< Major version */
-#define SAF_VERSION_MINOR 1        /**< Minor version */
-#define SAF_VERSION_PATCH 7        /**< Patch version */
+#define SAF_VERSION_MINOR 2        /**< Minor version */
+#define SAF_VERSION_PATCH 1        /**< Patch version */
 #define SAF_VERSION_SPECIAL ""     /**< Append text ("alpha", "beta", "") */
 #define MKSTRING_(s) #s            /**< Stringify */
 #define MKSTRING(s) MKSTRING_(s)   /**< Stringify */

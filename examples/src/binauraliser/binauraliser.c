@@ -38,16 +38,14 @@ void binauraliser_create
 {
     binauraliser_data* pData = (binauraliser_data*)malloc1d(sizeof(binauraliser_data));
     *phBin = (void*)pData;
-    int ch;
-
-    SAF_PRINT_VERSION_LICENSE_STRING;
+    int ch, dummy;
 
     /* user parameters */
-    binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
+    binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
-    pData->enableHRIRsPreProc = 1;
+    pData->enableHRIRsDiffuseEQ = 1;
     pData->nSources = pData->new_nSources;
-    pData->interpMode = INTERP_TRI;
+    pData->interpMode = INTERP_TRI_PS;
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
     pData->roll = 0.0f;
@@ -59,8 +57,8 @@ void binauraliser_create
 
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, FRAME_SIZE, sizeof(float));
-    pData->outframeTD = (float**)malloc2d(NUM_EARS, FRAME_SIZE, sizeof(float));
+    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, BINAURALISER_FRAME_SIZE, sizeof(float));
+    pData->outframeTD = (float**)malloc2d(NUM_EARS, BINAURALISER_FRAME_SIZE, sizeof(float));
     pData->inputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
     pData->outputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
     
@@ -69,16 +67,19 @@ void binauraliser_create
     pData->hrir_dirs_deg = NULL;
     pData->sofa_filepath = NULL;
     pData->weights = NULL;
+    pData->N_hrir_dirs = pData->hrir_loaded_len = pData->hrir_runtime_len = 0;
+    pData->hrir_loaded_fs = pData->hrir_runtime_fs = -1; /* unknown */
     
     /* vbap (amplitude normalised) */
     pData->hrtf_vbap_gtableIdx = NULL;
     pData->hrtf_vbap_gtableComp = NULL;
+    pData->nTriangles = pData->N_hrtf_vbap_gtable = 0;
     
     /* HRTF filterbank coefficients */
     pData->itds_s = NULL;
     pData->hrtf_fb = NULL;
     pData->hrtf_fb_mag = NULL;
-    
+
     /* flags/status */
     pData->progressBar0_1 = 0.0f;
     pData->progressBarText = malloc1d(PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
@@ -138,6 +139,10 @@ void binauraliser_init
     /* define frequency vector */
     pData->fs = sampleRate;
     afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
+    if(pData->hrir_runtime_fs!=pData->fs){
+        pData->reInitHRTFsAndGainTables = 1;
+        binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
+    }
 
     /* defaults */
     pData->recalc_M_rotFLAG = 1;
@@ -192,7 +197,6 @@ void binauraliser_process
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     int ch, ear, i, band, nSources;
     float src_dirs[MAX_NUM_INPUTS][2], Rxyz[3][3], hypotxy;
-    float_complex scaleC;
     int enableRotation;
 
     /* copy user parameters to local variables */
@@ -201,17 +205,17 @@ void binauraliser_process
     memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
 
     /* apply binaural panner */
-    if ((nSamples == FRAME_SIZE) && (pData->hrtf_fb!=NULL) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ){
+    if ((nSamples == BINAURALISER_FRAME_SIZE) && (pData->hrtf_fb!=NULL) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ){
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
         for(i=0; i < SAF_MIN(nSources,nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
+            utility_svvcopy(inputs[i], BINAURALISER_FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<nSources; i++)
-            memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
+            memset(pData->inputFrameTD[i], 0, BINAURALISER_FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, pData->inputframeTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, BINAURALISER_FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
 
         /* Rotate source directions */
         if(enableRotation && pData->recalc_M_rotFLAG){
@@ -239,34 +243,33 @@ void binauraliser_process
         for (ch = 0; ch < nSources; ch++) {
             if(pData->recalc_hrtf_interpFLAG[ch]){
                 if(enableRotation)
-                    binauraliser_interpHRTFs(hBin, pData->src_dirs_rot_deg[ch][0], pData->src_dirs_rot_deg[ch][1], pData->hrtf_interp[ch]);
+                    binauraliser_interpHRTFs(hBin, pData->interpMode, pData->src_dirs_rot_deg[ch][0], pData->src_dirs_rot_deg[ch][1], pData->hrtf_interp[ch]);
                 else
-                    binauraliser_interpHRTFs(hBin, pData->src_dirs_deg[ch][0], pData->src_dirs_deg[ch][1], pData->hrtf_interp[ch]);
+                    binauraliser_interpHRTFs(hBin, pData->interpMode, pData->src_dirs_deg[ch][0], pData->src_dirs_deg[ch][1], pData->hrtf_interp[ch]);
                 pData->recalc_hrtf_interpFLAG[ch] = 0;
             }
 
             /* Convolve this channel with the interpolated HRTF, and add it to the binaural buffer */
             for (band = 0; band < HYBRID_BANDS; band++)
                 for (ear = 0; ear < NUM_EARS; ear++)
-                    cblas_caxpy(TIME_SLOTS, &pData->hrtf_interp[ch][band][ear], pData->outputframeTF[band][ch], 1, pData->outputframeTF[band][ear], 1);
+                    cblas_caxpy(TIME_SLOTS, &pData->hrtf_interp[ch][band][ear], pData->inputframeTF[band][ch], 1, pData->outputframeTF[band][ear], 1);
         }
 
-        /* scale by number of sources */
-        scaleC = cmplxf(1.0f/sqrtf((float)nSources), 0.0f);
-        cblas_cscal(HYBRID_BANDS*NUM_EARS*TIME_SLOTS, &scaleC, FLATTEN3D(pData->outputframeTF), 1);
+        /* scale by number of sources */ 
+        cblas_sscal(/*re+im*/2*HYBRID_BANDS*NUM_EARS*TIME_SLOTS, 1.0f/sqrtf((float)nSources), (float*)FLATTEN3D(pData->outputframeTF), 1);
 
         /* inverse-TFT */
-        afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outframeTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->outputframeTF, BINAURALISER_FRAME_SIZE, NUM_EARS, TIME_SLOTS, pData->outframeTD);
 
         /* Copy to output buffer */
         for (ch = 0; ch < SAF_MIN(NUM_EARS, nOutputs); ch++)
-            utility_svvcopy(pData->outframeTD[ch], FRAME_SIZE, outputs[ch]);
+            utility_svvcopy(pData->outframeTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
-            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch], 0, BINAURALISER_FRAME_SIZE*sizeof(float));
     }
     else{
         for (ch=0; ch < nOutputs; ch++)
-            memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch],0, BINAURALISER_FRAME_SIZE*sizeof(float));
     }
 
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
@@ -337,11 +340,11 @@ void binauraliser_setSofaFilePath(void* const hBin, const char* path)
     binauraliser_refreshSettings(hBin);  // re-init and re-calc
 }
 
-void binauraliser_setEnableHRIRsPreProc(void* const hBin, int newState)
+void binauraliser_setEnableHRIRsDiffuseEQ(void* const hBin, int newState)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    if(newState!=pData->enableHRIRsPreProc){
-        pData->enableHRIRsPreProc = newState;
+    if(newState!=pData->enableHRIRsDiffuseEQ){
+        pData->enableHRIRsDiffuseEQ = newState;
         binauraliser_refreshSettings(hBin);  // re-init and re-calc
     }
 }
@@ -349,9 +352,9 @@ void binauraliser_setEnableHRIRsPreProc(void* const hBin, int newState)
 void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    int ch;
+    int ch, dummy;
     
-    binauraliser_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims));
+    binauraliser_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &(dummy));
     if(pData->nSources != pData->new_nSources)
         binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
@@ -426,7 +429,10 @@ void binauraliser_setRPYflag(void* const hBin, int newState)
 void binauraliser_setInterpMode(void* const hBin, int newMode)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
+    int ch;
     pData->interpMode = newMode;
+    for(ch=0; ch<MAX_NUM_INPUTS; ch++)
+        pData->recalc_hrtf_interpFLAG[ch] = 1;
 }
 
 
@@ -435,7 +441,7 @@ void binauraliser_setInterpMode(void* const hBin, int newMode)
 
 int binauraliser_getFrameSize(void)
 {
-    return FRAME_SIZE;
+    return BINAURALISER_FRAME_SIZE;
 }
 
 CODEC_STATUS binauraliser_getCodecStatus(void* const hBin)
@@ -517,13 +523,13 @@ float binauraliser_getHRIRElev_deg(void* const hBin, int index)
 int binauraliser_getHRIRlength(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    return pData->hrir_len;
+    return pData->hrir_loaded_len;
 }
 
 int binauraliser_getHRIRsamplerate(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    return pData->hrir_fs;
+    return pData->hrir_loaded_fs;
 }
 
 int binauraliser_getUseDefaultHRIRsflag(void* const hBin)
@@ -541,10 +547,10 @@ char* binauraliser_getSofaFilePath(void* const hBin)
         return "no_file";
 }
 
-int binauraliser_getEnableHRIRsPreProc(void* const hBin)
+int binauraliser_getEnableHRIRsDiffuseEQ(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    return pData->enableHRIRsPreProc;
+    return pData->enableHRIRsDiffuseEQ;
 }
 
 int binauraliser_getDAWsamplerate(void* const hBin)

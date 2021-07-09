@@ -39,12 +39,9 @@
 #ifndef __AMBI_DRC_INTERNAL_H_INCLUDED__
 #define __AMBI_DRC_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include "ambi_drc.h" 
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "ambi_drc.h"      /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,14 +51,20 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 ) 
+#if !defined(AMBI_DRC_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define AMBI_DRC_FRAME_SIZE ( FRAME_SIZE )          /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define AMBI_DRC_FRAME_SIZE ( 128 )                 /**< Framesize, in time-domain samples */
+# endif
 #endif
-#define HOP_SIZE ( 128 )  /* STFT hop size, can be flexible, but only 'hybrid' mode afSTFT is supported (i.e. non uniform) */
-#define TIME_SLOTS ( FRAME_SIZE/HOP_SIZE ) /* time-frequency domain frame size */
-#define HYBRID_BANDS ( HOP_SIZE + 5 ) /* hybrid mode incurs an additional 5 bands  */
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define HOP_SIZE ( 128 )                              /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )                 /**< Number of frequency bands */
+#define TIME_SLOTS ( AMBI_DRC_FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
+
+/* Checks: */
+#if (AMBI_DRC_FRAME_SIZE % HOP_SIZE != 0)
+# error "AMBI_DRC_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
 
 /* ========================================================================== */
@@ -75,30 +78,38 @@ extern "C" {
 typedef struct _ambi_drc
 { 
     /* audio buffers and afSTFT handle */
-    float** frameTD;
-    float_complex*** inputFrameTF;
-    float_complex*** outputFrameTF;
-    void* hSTFT;
-    float freqVector[HYBRID_BANDS];
+    float** frameTD;                 /**< Input/output SH signals, in the time-domain; #MAX_NUM_SH_SIGNALS x #AMBI_DRC_FRAME_SIZE */
+    float_complex*** inputFrameTF;   /**< Input SH signals, in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
+    float_complex*** outputFrameTF;  /**< Output SH signals, in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
+    void* hSTFT;                     /**< Time-frequency transform handle */
+    float freqVector[HYBRID_BANDS];  /**< Frequency vector */
 
     /* internal */
-    int nSH, new_nSH;
-    float fs;
-    float yL_z1[HYBRID_BANDS];
-    int reInitTFT; /**< 0: no init required, 1: init required, 2: init in progress */
+    int nSH;                         /**< Current number of SH signals */
+    int new_nSH;                     /**< New number of SH signals (current value will be replaced by this after next re-init) */
+    float fs;                        /**< Host sampling rate, in Hz */
+    float yL_z1[HYBRID_BANDS];       /**< Delay elements */
+    int reInitTFT;                   /**< 0: no init required, 1: init required, 2: init in progress */
 
 #ifdef ENABLE_TF_DISPLAY
-    int wIdx, rIdx;
-    int storeIdx;
-    float** gainsTF_bank0;
-    float** gainsTF_bank1;
+    int wIdx;                        /**< Display slot write index */
+    int rIdx;                        /**< Display slot read index */
+    int storeIdx;                    /**< Display slot storage index */
+    float** gainsTF_bank0;           /**< Display slot "0" DRC gains */
+    float** gainsTF_bank1;           /**< Display slot "1" DRC gains */
 #endif
 
     /* user parameters */
-    float theshold, ratio, knee, inGain, outGain, attack_ms, release_ms;
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
-    SH_ORDERS currentOrder;
+    float theshold;                  /**< Threshold parameter, in dB */
+    float ratio;                     /**< Compression ratio */
+    float knee;                      /**< Knee width, in dB */
+    float inGain;                    /**< Pre-gain, in dB */
+    float outGain;                   /**< Post-gain, in dB*/
+    float attack_ms;                 /**< Attack time, in ms */
+    float release_ms;                /**< Release time, in ms */
+    CH_ORDER chOrdering;             /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                 /**< Ambisonic normalisation convention (see #NORM_TYPES) */
+    SH_ORDERS currentOrder;          /**< Current input SH order */
     
 } ambi_drc_data;
      
@@ -107,15 +118,16 @@ typedef struct _ambi_drc
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
+/** The DRC gain computer */
 float ambi_drc_gainComputer(float xG, float T, float R, float W);
 
+/** The envelope detector */
 float ambi_drc_smoothPeakDetector(float xL, float yL_z1, float alpha_a, float alpha_r);
     
-/**
- * Initialise the filterbank used by ambi_drc.
- */
+/** Initialise the filterbank used by ambi_drc */
 void ambi_drc_initTFT(void* const hAmbi);
 
+/** Sets the internal input order */
 void ambi_drc_setInputOrder(SH_ORDERS inOrder, int* nSH);
 
     

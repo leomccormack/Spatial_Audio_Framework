@@ -51,8 +51,6 @@ void panner_create
     *phPan = (void*)pData;
     int ch, dummy;
 
-    SAF_PRINT_VERSION_LICENSE_STRING;
-
     /* default user parameters */
     panner_loadSourcePreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
     pData->nSources = pData->new_nSources;
@@ -69,8 +67,8 @@ void panner_create
     
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, FRAME_SIZE, sizeof(float));
-    pData->outputFrameTD = (float**)malloc2d(MAX_NUM_OUTPUTS, FRAME_SIZE, sizeof(float));
+    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, PANNER_FRAME_SIZE, sizeof(float));
+    pData->outputFrameTD = (float**)malloc2d(MAX_NUM_OUTPUTS, PANNER_FRAME_SIZE, sizeof(float));
     pData->inputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
     pData->outputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_OUTPUTS, TIME_SLOTS, sizeof(float_complex));
 
@@ -185,8 +183,8 @@ void panner_process
     int t, ch, ls, i, band, nSources, nLoudspeakers, N_azi, aziIndex, elevIndex, idx3d, idx2D;
     float aziRes, elevRes, pv_f, gains3D_sum_pvf, gains2D_sum_pvf, Rxyz[3][3], hypotxy;
     float src_dirs[MAX_NUM_INPUTS][2], pValue[HYBRID_BANDS], gains3D[MAX_NUM_OUTPUTS], gains2D[MAX_NUM_OUTPUTS];
-	const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
-	float_complex outputTemp[MAX_NUM_OUTPUTS][TIME_SLOTS];
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+    float_complex outputTemp[MAX_NUM_OUTPUTS][TIME_SLOTS];
 
     /* copy user parameters to local variables */
     memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
@@ -195,17 +193,17 @@ void panner_process
     nLoudspeakers = pData->nLoudpkrs;
 
     /* apply panner */
-    if ((nSamples == FRAME_SIZE) && (pData->vbap_gtable != NULL) && (pData->codecStatus == CODEC_STATUS_INITIALISED) ) {
+    if ((nSamples == PANNER_FRAME_SIZE) && (pData->vbap_gtable != NULL) && (pData->codecStatus == CODEC_STATUS_INITIALISED) ) {
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
         for(i=0; i < SAF_MIN(nSources,nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
+            utility_svvcopy(inputs[i], PANNER_FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<MAX_NUM_INPUTS; i++)
-            memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
+            memset(pData->inputFrameTD[i], 0, PANNER_FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, pData->inputframeTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, PANNER_FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
         memset(FLATTEN3D(pData->outputframeTF), 0, HYBRID_BANDS*MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
         memset(outputTemp, 0, MAX_NUM_OUTPUTS*TIME_SLOTS * sizeof(float_complex));
 
@@ -300,6 +298,7 @@ void panner_process
                     }
                     pData->recalc_gainsFLAG[ch] = 0;
                 }
+
                 /* apply panning gains */
                 for (band = 0; band < HYBRID_BANDS; band++){
                     for (ls = 0; ls < nLoudspeakers; ls++)
@@ -311,21 +310,19 @@ void panner_process
 
         /* scale by sqrt(number of sources) */
         for (band = 0; band < HYBRID_BANDS; band++)
-            for (ls = 0; ls < nLoudspeakers; ls++)
-                for (t = 0; t < TIME_SLOTS; t++)
-                    pData->outputframeTF[band][ls][t] = crmulf(pData->outputframeTF[band][ls][t], 1.0f/sqrtf((float)nSources));
+            cblas_sscal(/*re+im*/2*nLoudspeakers*TIME_SLOTS, 1.0f/sqrtf((float)nSources), (float*)FLATTEN2D(pData->outputframeTF[band]), 1);
 
         /* inverse-TFT and copy to output */
-        afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outputFrameTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->outputframeTF, PANNER_FRAME_SIZE, MAX_NUM_OUTPUTS, TIME_SLOTS, pData->outputFrameTD);
         for (ch = 0; ch < SAF_MIN(nLoudspeakers, nOutputs); ch++)
-            utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
+            utility_svvcopy(pData->outputFrameTD[ch], PANNER_FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
-            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch], 0, PANNER_FRAME_SIZE*sizeof(float));
 
     }
     else
         for (ch=0; ch < nOutputs; ch++)
-            memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch],0, PANNER_FRAME_SIZE*sizeof(float));
 
 
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
@@ -539,7 +536,7 @@ void panner_setFlipRoll(void* const hBin, int newState)
 
 int panner_getFrameSize(void)
 {
-    return FRAME_SIZE;
+    return PANNER_FRAME_SIZE;
 }
 
 CODEC_STATUS panner_getCodecStatus(void* const hPan)

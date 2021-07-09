@@ -264,14 +264,6 @@ endif()
 
 
 ############################################################################
-# Disable print of SAF version and license
-if(SAF_DISABLE_PRINT_VERSION)
-    message(STATUS "saf version and license printing disabled. ")
-    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_DISABLE_PRINT_VERSION=${SAF_DISABLE_PRINT_VERSION})
-endif()
-
-
-############################################################################
 if(UNIX)
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
 endif()

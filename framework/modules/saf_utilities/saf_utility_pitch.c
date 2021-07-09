@@ -26,8 +26,8 @@
 #include "saf_utilities.h"
 
 /**
- * Enables the use of the saf_fft wrapper, instead of "smbFft" used in the
- * original implementation */
+ * Enables the use of the saf_utility_fft wrapper, instead of "smbFft" used in
+ * the original implementation */
 #define SMB_ENABLE_SAF_FFT
 
 /* ========================================================================== */
@@ -218,7 +218,7 @@ void smb_pitchShift_apply
 {
     smb_pitchShift_data *h = (smb_pitchShift_data*)(hSmb);
     float magn, phase, tmp, real, imag;
-	float freqPerBin, expct;
+    float freqPerBin, expct;
     int ch, i, k, qpd, index, fftFrameSize2;
 
     /* set up some handy variables */

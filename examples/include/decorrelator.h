@@ -15,6 +15,15 @@
  */
 
 /**
+ * @example decorrelator
+ * @brief A multi-channel decorrelator
+ * ### Include Header
+ * decorrelator.h
+ * ### Source Files
+ * decorrelator_internal.h, decorrelator.c, decorrelator_internal.c
+ */
+
+/**
  * @file decorrelator.h
  * @brief A multi-channel decorrelator
  *

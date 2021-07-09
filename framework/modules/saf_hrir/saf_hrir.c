@@ -55,8 +55,8 @@ void estimateITDs
     K = tanf(SAF_PI * fc/(float)fs);
     KK = K * K; 
     D = KK * Q + K + Q;
-	b[0] = (KK * Q) / D; b[1] = (2.0f * KK * Q) / D; b[2] = (KK * Q) / D;
-	a[0] = 1.0f; a[1] = (2.0f * Q * (KK - 1.0f)) / D; a[2] = (KK * Q - K + Q) / D;
+    b[0] = (KK * Q) / D; b[1] = (2.0f * KK * Q) / D; b[2] = (KK * Q) / D;
+    a[0] = 1.0f; a[1] = (2.0f * Q * (KK - 1.0f)) / D; a[2] = (KK * Q - K + Q) / D;
     
     /* determine the ITD via the cross-correlation between the LPF'd left and right HRIR signals */
     xcorr_len = 2*(hrir_len)-1;
@@ -235,7 +235,6 @@ void diffuseFieldEqualiseHRTFs
             free(ipd);
         }
     }
-
 }
  
 void interpHRTFs
@@ -243,7 +242,7 @@ void interpHRTFs
     float_complex* hrtfs, /* N_bands x 2 x N_hrtf_dirs */
     float* itds,
     float* freqVector,
-    float* vbap_gtable, 
+    float* interp_table,
     int N_hrtf_dirs,
     int N_bands,
     int N_interp_dirs,
@@ -253,48 +252,70 @@ void interpHRTFs
     int i, band;
     float* itd_interp, *mags_interp, *ipd_interp;
     float** mags;
-    
-    mags = (float**)malloc1d(N_bands*sizeof(float*));
-    itd_interp = malloc1d(N_interp_dirs*sizeof(float));
-    mags_interp = malloc1d(N_interp_dirs*NUM_EARS*sizeof(float));
-    ipd_interp = malloc1d(N_interp_dirs*sizeof(float));
-    
-    /* calculate HRTF magnitudes */
-    for(band=0; band<N_bands; band++){
-        mags[band] = malloc1d(NUM_EARS * N_hrtf_dirs*sizeof(float));
-        for(i=0; i< NUM_EARS * N_hrtf_dirs ; i++)
-            mags[band][i] = cabsf(hrtfs[band*NUM_EARS * N_hrtf_dirs + i]);
-    }
-    
-    /* interpolate ITDs */
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N_interp_dirs, 1, N_hrtf_dirs, 1.0f,
-                vbap_gtable, N_hrtf_dirs,
-                itds, 1, 0.0f,
-                itd_interp, 1);
-    for(band=0; band<N_bands; band++){
-        /* interpolate HRTF magnitudes */
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_interp_dirs, NUM_EARS, N_hrtf_dirs, 1.0f,
-                    vbap_gtable, N_hrtf_dirs,
-                    mags[band], N_hrtf_dirs, 0.0f,
-                    mags_interp, NUM_EARS);
-        
-        /* convert ITDs to phase differences -pi..pi */
-        for(i=0; i<N_interp_dirs; i++)
-            ipd_interp[i] = (matlab_fmodf(2.0f*SAF_PI*freqVector[band]*itd_interp[i] + SAF_PI, 2.0f*SAF_PI) - SAF_PI)/2.0f; /* /2 here, not later */
-        
-        /* reintroduce the interaural phase differences (IPD) */
-        for(i=0; i<N_interp_dirs; i++){
-            hrtfs_interp[band*NUM_EARS*N_interp_dirs + 0* N_interp_dirs +i] = ccmulf( cmplxf(mags_interp[i*NUM_EARS+0],0.0f), cexpf(cmplxf(0.0f, ipd_interp[i])) );
-            hrtfs_interp[band*NUM_EARS*N_interp_dirs + 1* N_interp_dirs +i] = ccmulf( cmplxf(mags_interp[i*NUM_EARS+1],0.0f), cexpf(cmplxf(0.0f,-ipd_interp[i])) );
-        }
-    }
+    float_complex* interp_table_cmplx;
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
-    free(itd_interp);
-    for(band=0; band<N_bands; band++)
-        free(mags[band]);
-    free(mags);
-    free(mags_interp);
-    free(ipd_interp);
+    if(itds==NULL || freqVector==NULL){
+        /* prep */
+        interp_table_cmplx = calloc1d(N_interp_dirs*N_hrtf_dirs, sizeof(float_complex));
+        cblas_scopy(N_interp_dirs*N_hrtf_dirs, interp_table, 1, (float*)interp_table_cmplx, 2);
+
+        /* interpolate HRTF spectra */
+        for(band=0; band<N_bands; band++){
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, NUM_EARS, N_interp_dirs, N_hrtf_dirs, &calpha,
+                        &hrtfs[band*NUM_EARS*N_hrtf_dirs], N_hrtf_dirs,
+                        interp_table_cmplx, N_hrtf_dirs, &cbeta,
+                        &hrtfs_interp[band*NUM_EARS*N_interp_dirs], N_interp_dirs);
+        }
+
+        /* clean-up */
+        free(interp_table_cmplx);
+    }
+    else{
+        /* prep */
+        mags = (float**)malloc1d(N_bands*sizeof(float*));
+        itd_interp = malloc1d(N_interp_dirs*sizeof(float));
+        mags_interp = malloc1d(N_interp_dirs*NUM_EARS*sizeof(float));
+        ipd_interp = malloc1d(N_interp_dirs*sizeof(float));
+
+        /* calculate HRTF magnitudes */
+        for(band=0; band<N_bands; band++){
+            mags[band] = malloc1d(NUM_EARS * N_hrtf_dirs*sizeof(float));
+            for(i=0; i< NUM_EARS * N_hrtf_dirs ; i++)
+                mags[band][i] = cabsf(hrtfs[band*NUM_EARS * N_hrtf_dirs + i]);
+        }
+
+        /* interpolate ITDs */
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N_interp_dirs, 1, N_hrtf_dirs, 1.0f,
+                    interp_table, N_hrtf_dirs,
+                    itds, 1, 0.0f,
+                    itd_interp, 1);
+        for(band=0; band<N_bands; band++){
+            /* interpolate HRTF magnitudes */
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, N_interp_dirs, NUM_EARS, N_hrtf_dirs, 1.0f,
+                        interp_table, N_hrtf_dirs,
+                        mags[band], N_hrtf_dirs, 0.0f,
+                        mags_interp, NUM_EARS);
+
+            /* convert ITDs to phase differences -pi..pi */
+            for(i=0; i<N_interp_dirs; i++)
+                ipd_interp[i] = (matlab_fmodf(2.0f*SAF_PI*freqVector[band]*itd_interp[i] + SAF_PI, 2.0f*SAF_PI) - SAF_PI)/2.0f; /* /2 here, not later */
+
+            /* reintroduce the interaural phase differences (IPD) */
+            for(i=0; i<N_interp_dirs; i++){
+                hrtfs_interp[band*NUM_EARS*N_interp_dirs + 0* N_interp_dirs +i] = ccmulf( cmplxf(mags_interp[i*NUM_EARS+0],0.0f), cexpf(cmplxf(0.0f, ipd_interp[i])) );
+                hrtfs_interp[band*NUM_EARS*N_interp_dirs + 1* N_interp_dirs +i] = ccmulf( cmplxf(mags_interp[i*NUM_EARS+1],0.0f), cexpf(cmplxf(0.0f,-ipd_interp[i])) );
+            }
+        }
+
+        /* clean-up */
+        free(itd_interp);
+        for(band=0; band<N_bands; band++)
+            free(mags[band]);
+        free(mags);
+        free(mags_interp);
+        free(ipd_interp);
+    }
 }
 
 void binauralDiffuseCoherence
@@ -338,4 +359,104 @@ void binauralDiffuseCoherence
     
     free(ipd);
     free(hrtf_ipd_lr);
+}
+
+void resampleHRIRs
+(
+    float* hrirs_in,
+    int hrirs_N_dirs,
+    int hrirs_in_len,
+    int hrirs_in_fs,
+    int hrirs_out_fs,
+    int padToNextPow2,
+    float** hrirs_out,
+    int* hrirs_out_len
+)
+{
+    int ch, hrirs_out_ld;
+    float resample_factor;
+#if defined(SAF_USE_INTEL_IPP)
+    Ipp64f pTime;
+    const int history = 128;
+    float *inBuffer, *outBuffer;
+    int filterLength, pSize, numFilters, outL;
+#else
+    unsigned int in_length, out_length;
+    int ERROR_VAL, out_latency, nsample_proc;
+    float *zeros;
+    SpeexResamplerState *pRS;
+#endif
+
+    /* New HRIR length */
+    resample_factor = (float)hrirs_out_fs / (float)hrirs_in_fs;
+    (*hrirs_out_len) = (int)ceilf((float)hrirs_in_len * resample_factor);
+    hrirs_out_ld = padToNextPow2 ? (int)pow(2.0, ceil(log((double)(*hrirs_out_len))/log(2.0))) : (*hrirs_out_len);
+
+#if defined(SAF_USE_INTEL_IPP)
+    /* Initialise IPP resampler */
+    saf_assert(!ippsResamplePolyphaseFixedGetSize_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), &pSize, &filterLength, &numFilters, ippAlgHintFast), "IPP error");
+    IppsResamplingPolyphaseFixed_32f* spec;
+    spec = (IppsResamplingPolyphaseFixed_32f*)ippsMalloc_8u(pSize);
+    saf_assert(!ippsResamplePolyphaseFixedInit_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), 0.98f, 12.0f, spec, ippAlgHintFast), "IPP error");
+    inBuffer = ippsMalloc_32f(hrirs_in_len + history * 2 + 2);
+    outBuffer = ippsMalloc_32f(hrirs_out_ld + 2);
+    ippsZero_32f(inBuffer, hrirs_in_len + history * 2 + 2);
+
+    /* Apply IPP resampler */
+    (*hrirs_out) = calloc1d(hrirs_N_dirs*NUM_EARS*(hrirs_out_ld), sizeof(float));
+    for(ch=0; ch<hrirs_N_dirs*NUM_EARS; ch++){
+        pTime = history;
+        outL =  0;
+
+        /* Apply resampling */
+        ippsCopy_32f(hrirs_in + ch * hrirs_in_len, inBuffer + history, hrirs_in_len);
+        saf_assert(!ippsResamplePolyphaseFixed_32f(inBuffer, hrirs_in_len, outBuffer, 1.0f, &pTime, &outL, spec), "IPP error");
+        saf_assert(hrirs_out_ld==outL, "Not all samples were processed!");
+        ippsCopy_32f(outBuffer, (*hrirs_out) + ch * (hrirs_out_ld), hrirs_out_ld);
+    }
+
+    (*hrirs_out_len) = hrirs_out_ld;
+
+    /* Clean-up */
+    ippsFree(spec);
+    ippsFree(inBuffer);
+    ippsFree(outBuffer);
+
+#else
+    /* Initialise SPEEX resampler */
+    pRS = speex__resampler_init(1 /*one channel at a time*/, hrirs_in_fs, hrirs_out_fs, SPEEX_RESAMPLER_QUALITY_MAX, &ERROR_VAL);
+    out_latency = speex__resampler_get_output_latency(pRS);
+    zeros = calloc1d(out_latency, sizeof(float));
+
+    /* Apply SPEEX resampler */
+    (*hrirs_out) = calloc1d(hrirs_N_dirs*NUM_EARS*(hrirs_out_ld), sizeof(float));
+    for(ch=0; ch<hrirs_N_dirs*NUM_EARS; ch++){
+        speex__resampler_reset_mem(pRS);
+        speex__resampler_skip_zeros(pRS);
+        nsample_proc = 0;
+
+        /* Pass the FIR through the resampler */
+        in_length = hrirs_in_len;
+        out_length = hrirs_out_ld;
+        ERROR_VAL = speex__resampler_process_float((pRS), 0, hrirs_in + ch * hrirs_in_len, &in_length,
+                                                   (*hrirs_out) + ch * (hrirs_out_ld), &out_length);
+        nsample_proc += out_length; /* Current number of output samples processed */
+
+        /* Pass through zeros to get the tail of the filter too */
+        while(nsample_proc<(hrirs_out_ld)){
+            in_length = out_latency;
+            out_length = (hrirs_out_ld)-nsample_proc;
+            ERROR_VAL = speex__resampler_process_float((pRS), 0, zeros, &in_length,
+                                                       (*hrirs_out) + ch * (hrirs_out_ld) + nsample_proc, &out_length);
+            nsample_proc += out_length;
+        }
+        saf_assert(nsample_proc==(hrirs_out_ld), "Not all samples were processed!");
+    }
+
+    (*hrirs_out_len) = hrirs_out_ld;
+
+    /* Clean-up */
+    speex__resampler_destroy(pRS);
+    free(zeros);
+#endif
 }

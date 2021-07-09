@@ -45,14 +45,10 @@
 #ifndef __SLDOA_INTERNAL_H_INCLUDED__
 #define __SLDOA_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <float.h>
-#include "sldoa.h"
-#include "sldoa_database.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "sldoa.h"         /* Include header for this example */
+#include "sldoa_database.h"/* Database header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -62,74 +58,74 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 512 )
+#if !defined(SLDOA_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define SLDOA_FRAME_SIZE ( FRAME_SIZE )  /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define SLDOA_FRAME_SIZE ( 512 )         /**< Framesize, in time-domain samples */
+# endif
 #endif
-//#define ORDER2NUMSECTORS(L) ( 2*L )
-#define ORDER2NUMSECTORS(L) ( L*L )
-#define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* Processing relies on fdHop = 16 */
-#define MAX_NUM_SECTORS ( ORDER2NUMSECTORS(MAX_SH_ORDER) )      /* maximum number of sectors */
-#define NUM_DISP_SLOTS ( 2 )                                /* needs to be at least 2. On slower systems that skip frames, consider more slots.  */
-#ifndef M_PI
-# define M_PI ( 3.14159265359f )
-#endif
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define ORDER2NUMSECTORS(L) ( L*L )        /**< Macro to convert SH order to number of sectors */
+#define HOP_SIZE ( 128 )                   /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )      /**< hybrid mode incurs an additional 5 bands  */
+#define TIME_SLOTS ( SLDOA_FRAME_SIZE / HOP_SIZE )          /**< Processing relies on fdHop = 16 */
+#define MAX_NUM_SECTORS ( ORDER2NUMSECTORS(MAX_SH_ORDER) )  /**< maximum number of sectors */
+#define NUM_DISP_SLOTS ( 2 )               /**< Number of display slots; needs to be at least 2. On slower systems that skip frames, consider adding more slots.  */
+
+/* Checks: */
+#if (SLDOA_FRAME_SIZE % HOP_SIZE != 0)
+# error "SLDOA_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
     
 /* ========================================================================== */
 /*                                 Structures                                 */
 /* ========================================================================== */
    
-/**
- * Main struct for sldoa
- */
+/** Main struct for sldoa */
 typedef struct _sldoa
 {
     /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_SH_SIGNALS][FRAME_SIZE]; 
+    int FIFO_idx;                    /**< FIFO buffer index */
+    float inFIFO[MAX_NUM_SH_SIGNALS][SLDOA_FRAME_SIZE]; /**< FIFO buffer */
 
     /* TFT */
-    float** SHframeTD;
-    float_complex*** SHframeTF;
-    void* hSTFT; 
-    float freqVector[HYBRID_BANDS];
-    float fs;
+    float** SHframeTD;              /**< time-domain SH input frame; #MAX_NUM_SH_SIGNALS x #SLDOA_FRAME_SIZE */
+    float_complex*** SHframeTF;     /**< time-frequency domain SH input frame; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
+    void* hSTFT;                    /**< afSTFT handle */
+    float freqVector[HYBRID_BANDS]; /**< Frequency vector (filterbank centre frequencies) */
+    float fs;                       /**< Host sampling rate, in Hz */
       
     /* ana configuration */
-    CODEC_STATUS codecStatus;
-    PROC_STATUS procStatus;
-    float progressBar0_1;
-    char* progressBarText;
+    CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
+    PROC_STATUS procStatus;         /**< see #PROC_STATUS */
+    float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;          /**< Current (re)initialisation step, string */
     
     /* internal */
-    float grid_Y[64][NUM_GRID_DIRS];
-    float grid_Y_dipoles_norm[3][NUM_GRID_DIRS];
-    float grid_dirs_deg[NUM_GRID_DIRS][2];
-    float_complex* secCoeffs[MAX_SH_ORDER-1];
-    float doa_rad[HYBRID_BANDS][MAX_NUM_SECTORS][2];
-    float energy [HYBRID_BANDS][MAX_NUM_SECTORS];
-    int nSectorsPerBand[HYBRID_BANDS];
-    int new_masterOrder;
+    float grid_Y[64][NUM_GRID_DIRS];                 /**< SH basis */
+    float grid_Y_dipoles_norm[3][NUM_GRID_DIRS];     /**< SH basis */
+    float grid_dirs_deg[NUM_GRID_DIRS][2];           /**< Grid directions, in degrees */
+    float_complex* secCoeffs[MAX_SH_ORDER-1];        /**< Sector beamforming weights/coefficients */
+    float doa_rad[HYBRID_BANDS][MAX_NUM_SECTORS][2]; /**< Current DoA estimates per band and sector, in radians */
+    float energy [HYBRID_BANDS][MAX_NUM_SECTORS];    /**< Current Sector energies */
+    int nSectorsPerBand[HYBRID_BANDS];               /**< Number of sectors per band */
+    int new_masterOrder;                             /**< New master/maximum analysis order (current value will be replaced by this after next re-init) */
     
     /* display */
-    float* azi_deg[NUM_DISP_SLOTS];
-    float* elev_deg[NUM_DISP_SLOTS];
-    float* colourScale[NUM_DISP_SLOTS];
-    float* alphaScale[NUM_DISP_SLOTS]; 
-    int current_disp_idx;
+    float* azi_deg[NUM_DISP_SLOTS];      /**< DoA azimuths, in degrees */
+    float* elev_deg[NUM_DISP_SLOTS];     /**< DoA elevations, in degrees */
+    float* colourScale[NUM_DISP_SLOTS];  /**< Values dictating each DoA marker colour */
+    float* alphaScale[NUM_DISP_SLOTS];   /**< Values dictating each DoA marker transparency */
+    int current_disp_idx;                /**< Current display slot */
     
     /* User parameters */
-    int masterOrder;
-    int analysisOrderPerBand[HYBRID_BANDS];
-    float maxFreq;
-    float minFreq;
-    float avg_ms;
-    CH_ORDER chOrdering;
-    NORM_TYPES norm;
+    int masterOrder;                     /**< Current master/maximum analysis order */
+    int analysisOrderPerBand[HYBRID_BANDS]; /**< Analysis order MIN(anaPerBand, masterOrder) for each frequency band */
+    float maxFreq;                       /**< Maximum display frequency, in Hz */
+    float minFreq;                       /**< Minimum display frequency, in Hz */
+    float avg_ms;                        /**< Temporal averaging, in ms */
+    CH_ORDER chOrdering;                 /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                     /**< Ambisonic normalisation convention (see #NORM_TYPES) */
 
 } sldoa_data;
      
@@ -138,9 +134,7 @@ typedef struct _sldoa
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/**
- * Sets codec status (see #CODEC_STATUS enum)
- */
+/** Sets codec status (see #CODEC_STATUS enum) */
 void sldoa_setCodecStatus(void* const hSld, CODEC_STATUS newStatus);
 
 /**

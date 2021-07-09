@@ -220,8 +220,8 @@ void dirass_initAna(void* const hDir)
     /* reallocate memory */
     pars->Y_up = realloc1d(pars->Y_up, nSH_up * (pars->grid_nDirs)*sizeof(float));
     pars->est_dirs = realloc1d(pars->est_dirs, pars->grid_nDirs * 2 * sizeof(float));
-    pars->ss = realloc1d(pars->ss, pars->grid_nDirs * FRAME_SIZE * sizeof(float));
-    pars->ssxyz = realloc1d(pars->ssxyz, 3 * FRAME_SIZE * sizeof(float));
+    pars->ss = realloc1d(pars->ss, pars->grid_nDirs * DIRASS_FRAME_SIZE * sizeof(float));
+    pars->ssxyz = realloc1d(pars->ssxyz, 3 * DIRASS_FRAME_SIZE * sizeof(float));
     pData->pmap = realloc1d(pData->pmap, pars->grid_nDirs*sizeof(float));
     pars->est_dirs_idx = realloc1d(pars->est_dirs_idx, pars->grid_nDirs*sizeof(int));
     pars->prev_intensity = realloc1d(pars->prev_intensity, pars->grid_nDirs*3*sizeof(float));

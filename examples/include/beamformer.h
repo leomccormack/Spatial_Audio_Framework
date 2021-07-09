@@ -15,6 +15,16 @@
  */
 
 /**
+ * @example beamformer
+ * @brief Generates beamformers/virtual microphones in arbitrary directions
+ *        with several different beam patterns to choose from
+ * ### Include Header
+ * beamformer.h
+ * ### Source Files
+ * beamformer_internal.h, beamformer.c, beamformer_internal.c
+ */
+
+/**
  * @file beamformer.h
  * @brief Generates beamformers/virtual microphones in arbitrary directions
  *        with several different beam patterns to choose from
@@ -134,12 +144,6 @@ int beamformer_getFrameSize(void);
 
 /** Returns the beamforming order (see #SH_ORDERS enum) */
 int beamformer_getBeamOrder(void* const hBeam);
-    
-/**
- * Returns the number of frequency bands used by beamformer (only for adaptive
- * beamformer algorithms).
- */
-int beamformer_getNumberOfBands(void);
 
 /** Returns the beamformer azimuth direction of a given index h, in DEGREES */
 float beamformer_getBeamAzi_deg(void* const hBeam, int index);
@@ -182,7 +186,6 @@ int beamformer_getBeamType(void* const hBeam);
  */
 int beamformer_getProcessingDelay(void);
 
-    
     
 #ifdef __cplusplus
 } /* extern "C" { */

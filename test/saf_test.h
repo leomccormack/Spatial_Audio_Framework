@@ -21,6 +21,9 @@ int main_test(void);
 /* ========================================================================== */
 
 /**
+ * Testing that resampleHRIRs() is resampling adequately */
+void test__resampleHRIRs(void);
+/**
  * Testing that the delaunaynd() function can triangulate basic shapes */
 void test__delaunaynd(void);
 /**
@@ -162,6 +165,9 @@ void test__checkCondNumberSHTReal(void);
 /**
  * Testing the DoA estimation performance of sphMUSIC() */
 void test__sphMUSIC(void);
+/**
+ * Testing the DoA estimation performance of sphPWD() */
+void test__sphPWD(void);
 /**
  * Testing the DoA estimation performance of sphESPRIT() */
 void test__sphESPRIT(void);

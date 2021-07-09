@@ -7,16 +7,18 @@
 
 # About
 
-The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related applications in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a rather large codebase comprising a number of distinct [**modules**](framework/modules); with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). Several [**examples**](examples/include) are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects.
+The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related algorithms and software in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a rather large codebase comprising a number of distinct [**modules**](framework/modules); with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). The framework also makes use of highly optimised linear algebra libraries (such as Intel MKL, Apple Accelerate, OpenBLAS) as well as SIMD intrinsics (SSE, AVX, AVX-512). Several [**examples**](examples/include) are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects.
 
-Owing to its modular design, expanding the framework is straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged! :-) 
+Owing to its modular design, expanding the framework is relatively straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged! :-) 
 
 # Prerequisites
 
 The framework requires the following external libraries:
 * Any library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
 * (**Optional**) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
-* (**Optional**) Intel's [Integrated Performance Primitives (IPP)](https://software.intel.com/content/www/us/en/develop/tools/integrated-performance-primitives.html) for the FFT.
+* (**Optional**) Intel's [Integrated Performance Primitives (IPP)](https://software.intel.com/content/www/us/en/develop/tools/integrated-performance-primitives.html) for the FFT and/or resampler
+* (**Optional**) [FFTW](https://www.fftw.org/) for the FFT
+* (**Optional**) a SSE, AVX, AVX-512 supporting CPU
 
 In order to inform SAF which CBLAS/LAPACK supporting library/libraries you have linked to your project, simply add **one** of the following global pre-processor definitions:
 ```
@@ -55,7 +57,9 @@ Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unid
 
 The framework can be configured further, with the following options:
 ```
-SAF_USE_INTEL_IPP  # To use Intel IPP for the saf_utility_fft wrapper
+SAF_USE_INTEL_IPP # To use Intel IPP for performing the DFT/FFT and resampling
+SAF_USE_FFTW      # To use the FFTW library for performing the DFT/FFT 
+SAF_ENABLE_SIMD   # To enable SIMD (SSE, AVX, AVX512) intrinsics for certain vector operations
 ```
 
 # Using the framework
@@ -93,11 +97,11 @@ The available SAF-related build options (and their default values) are:
 -DSAF_BUILD_TESTS=1                        # build unit testing program
 ```
 
-If using **SAF_USE_INTEL_MKL** as the performance library, note that the default header and library search paths may be overridden [according to your setup](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md) with:
+If using e.g. **SAF_USE_INTEL_MKL_LP64** as the performance library, note that the default header and library search paths may be overridden [according to your setup](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md) with:
 ``` 
 -DINTEL_MKL_HEADER_PATH="path/to/mkl/headers"
 -DINTEL_MKL_LIB="path/to/mkl/libs/mkl_rt(.so/.dylib/.lib)"   # OR:
--DINTEL_MKL_LIB="path/to/custom/mkl/lib/saf_mkl_custom(.so/.dylib/.lib)"
+-DINTEL_MKL_LIB="path/to/custom/mkl/lib/saf_mkl_custom_lp64(.so/.dylib/.lib)"
 ```
 
 If the **saf_sofa_reader** module is enabled, CMake will use the statically built dependencies found in the **dependencies** folder for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared [netcdf library](docs/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
@@ -156,14 +160,14 @@ Several **examples** have also been included in the repository, which may serve 
 * **dirass** - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction.
 * **matrixconv** - a basic matrix convolver with an optional partitioned convolution mode. 
 * **multiconv** - a basic multi-channel convolver with an optional partitioned convolution mode. 
-* **panner** - a frequency-dependent VBAP panner, which accomodates a source loudness compensation (as a function of the room) option.
+* **panner** - a frequency-dependent VBAP panner, which accommodates a source loudness compensation (as a function of the room) option.
 * **pitch_shifter** - a basic multi-channel pitch shifter, based on the phase vocoder approach.
 * **powermap** - sound-field visualiser based on beamformer (PWD, MVDR) energy or subspace methods (MUSIC).
 * **rotator** - rotates spherical harmonic signals (aka Ambisonic signals) given yaw-pitch-roll Euler rotation angles.
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors for multiple frequencies. 
 * **spreader** - an arbitrary array panner (HRIRs, microphone array IRs, etc.) with coherent and incoherent spreading modes.
 
-Many of these examples have also been released as VST audio plug-ins under the [SPARTA](https://github.com/leomccormack/SPARTA) banner. The following open-source projects also employ the framework: [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
+Many of these examples have also been released as VST audio plug-ins under the [SPARTA](https://github.com/leomccormack/SPARTA) banner. The following open-source projects also employ the framework: [Super-Hearing](https://github.com/leomccormack/Super-Hearing/), [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
 
 ## Extras
 

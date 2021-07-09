@@ -15,6 +15,16 @@
  */
 
 /**
+ * @example ambi_drc
+ * @brief A frequency-dependent Ambisonic sound scene dynamic range compressor
+ *        (DRC)
+ * ### Include Header
+ * ambi_drc.h
+ * ### Source Files
+ * ambi_drc_internal.h, ambi_drc.c, ambi_drc_internal.c
+ */
+
+/**
  * @file ambi_drc.h
  * @brief A frequency-dependent Ambisonic sound scene dynamic range compressor
  *        (DRC)

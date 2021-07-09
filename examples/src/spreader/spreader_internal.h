@@ -25,13 +25,9 @@
 #ifndef __SPREADER_INTERNAL_H_INCLUDED__
 #define __SPREADER_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-#include "spreader.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "spreader.h"      /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,21 +37,21 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 512 )
+#if !defined(SPREADER_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define SPREADER_FRAME_SIZE ( FRAME_SIZE )          /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define SPREADER_FRAME_SIZE ( 512 )                 /**< Framesize, in time-domain samples */
+# endif
 #endif
-#define MAX_SPREAD_FREQ ( 16e3f )
-#define HOP_SIZE ( 128 )                                    /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )                       /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )                /* 4/8/16 */
-#ifndef DEG2RAD
-# define DEG2RAD(x) (x * M_PI / 180.0f)
-#endif
-#ifndef RAD2DEG
-# define RAD2DEG(x) (x * 180.0f / M_PI)
-#endif
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define MAX_SPREAD_FREQ ( 16e3f )                     /**< Maximum spread frequency, above which no spreading occurs */
+#define HOP_SIZE ( 128 )                              /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )                 /**< Number of frequency bands */
+#define TIME_SLOTS ( SPREADER_FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
+
+/* Checks: */
+#if (SPREADER_FRAME_SIZE % HOP_SIZE != 0)
+# error "SPREADER_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
 
 /* ========================================================================== */
@@ -69,19 +65,19 @@ extern "C" {
 typedef struct _spreader
 {
     /* audio buffers and time-frequency transform */
-    float** inputFrameTD;
-    float** outframeTD;
-    float_complex*** inputframeTF;
-    float_complex*** protoframeTF;
-    float_complex*** decorframeTF;
-    float_complex*** spreadframeTF;
-    float_complex*** outputframeTF;
-    int fs;
-    float freqVector[HYBRID_BANDS]; 
-    void* hSTFT;
+    float** inputFrameTD;              /**< time-domain input frame; #MAX_NUM_INPUTS x #SPREADER_FRAME_SIZE */
+    float** outframeTD;                /**< time-domain output frame; #MAX_NUM_OUTPUTS x #SPREADER_FRAME_SIZE */
+    float_complex*** inputframeTF;     /**< time-frequency domain input frame; #HYBRID_BANDS x #MAX_NUM_INPUTS x #TIME_SLOTS */
+    float_complex*** protoframeTF;     /**< time-frequency domain prototype frame; #HYBRID_BANDS x #MAX_NUM_OUTPUTS x #TIME_SLOTS */
+    float_complex*** decorframeTF;     /**< time-frequency domain decorrelated frame; #HYBRID_BANDS x #MAX_NUM_OUTPUTS x #TIME_SLOTS */
+    float_complex*** spreadframeTF;    /**< time-frequency domain spread frame; #HYBRID_BANDS x #MAX_NUM_OUTPUTS x #TIME_SLOTS */
+    float_complex*** outputframeTF;    /**< time-frequency domain output frame; #HYBRID_BANDS x #MAX_NUM_OUTPUTS x #TIME_SLOTS */
+    int fs;                            /**< Host sampling rate, in Hz */
+    float freqVector[HYBRID_BANDS];    /**< Frequency vector (filterbank centre frequencies) */
+    void* hSTFT;                       /**< afSTFT handle */
 
     /* Internal */
-    int Q;                             /**< Number of channels in the target; e.g. 2 for binaural */
+    int Q;                             /**< Number of channels in the target playback setup; for example: 2 for binaural */
     int nGrid;                         /**< Number of directions/measurements/HRTFs etc. */
     int h_len;                         /**< Length of time-domain filters, in samples */
     float h_fs;                        /**< Sample rate used to measure the filters */
@@ -101,10 +97,9 @@ typedef struct _spreader
     float** new_Mr;                    /**< residual mixing matrices; HYBRID_BANDS x FLAT:(Q x Q) */
     float_complex* interp_M;           /**< Interpolated mixing matrix; FLAT:(Q x Q) */
     float* interp_Mr;                  /**< Interpolated residual mixing matrix; FLAT:(Q x Q) */
-    float_complex* interp_Mr_cmplx;    /**< Complex variant of interp_Mr */
-    float_complex* inFrame_t;          /**< Temporary input frame; Q x 1 */
-    float interpolatorFadeIn[TIME_SLOTS];  /**< Interpolator */
-    float interpolatorFadeOut[TIME_SLOTS]; /**< Interpolator */
+    float_complex* interp_Mr_cmplx;    /**< Complex variant of interp_Mr */ 
+    float interpolatorFadeIn[TIME_SLOTS];  /**< Linear Interpolator - Fade in */
+    float interpolatorFadeOut[TIME_SLOTS]; /**< Linear Interpolator - Fade out */
 
     /* For visualisation */
     int* dirActive[SPREADER_MAX_NUM_SOURCES]; /**< 1: IR direction currently used for spreading, 0: not */
@@ -118,21 +113,21 @@ typedef struct _spreader
     float_complex* Cr_cmplx;           /**< Residual covariance; FLAT: Q x Q */
  
     /* flags/status */
-    CODEC_STATUS codecStatus;
-    float progressBar0_1;
-    char* progressBarText;
-    PROC_STATUS procStatus;
-    int new_nSources;
-    SPREADER_PROC_MODES new_procMode;
+    CODEC_STATUS codecStatus;          /**< see #CODEC_STATUS */
+    float progressBar0_1;              /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;             /**< Current (re)initialisation step, string */
+    PROC_STATUS procStatus;            /**< see #PROC_STATUS */
+    int new_nSources;                  /**< New number of input signals (current value will be replaced by this after next re-init) */
+    SPREADER_PROC_MODES new_procMode;  /**< See #SPREADER_PROC_MODES (current value will be replaced by this after next re-init) */
 
     /* user parameters */
-    SPREADER_PROC_MODES procMode;     /**< See #SPREADER_PROC_MODES */
-    char* sofa_filepath;
-    int nSources;
-    float src_spread[SPREADER_MAX_NUM_SOURCES];
-    float src_dirs_deg[SPREADER_MAX_NUM_SOURCES][2]; 
-    int useDefaultHRIRsFLAG;          /**< 1: use default HRIRs in database, 0: use the measurements from SOFA file (can be anything, not just HRTFs) */
-    float covAvgCoeff;
+    SPREADER_PROC_MODES procMode;      /**< See #SPREADER_PROC_MODES */
+    char* sofa_filepath;               /**< SOFA file path */
+    int nSources;                      /**< Current number of input signals */
+    float src_spread[SPREADER_MAX_NUM_SOURCES];      /**< Source spreading, in degrees */
+    float src_dirs_deg[SPREADER_MAX_NUM_SOURCES][2]; /**< Source directions, in degrees */
+    int useDefaultHRIRsFLAG;           /**< 1: use default HRIRs in database, 0: use the measurements from SOFA file (can be anything, not just HRTFs) */
+    float covAvgCoeff;                 /**< Covariance matrix averaging coefficient, [0..1] */
 
 } spreader_data;
 

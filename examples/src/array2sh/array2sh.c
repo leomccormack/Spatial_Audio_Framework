@@ -56,8 +56,6 @@ void array2sh_create
     array2sh_data* pData = (array2sh_data*)malloc1d(sizeof(array2sh_data));
     *phA2sh = (void*)pData;
 
-    SAF_PRINT_VERSION_LICENSE_STRING;
-
     /* defualt parameters */
     array2sh_createArray(&(pData->arraySpecs)); 
     pData->filterType = FILTER_TIKHONOV;
@@ -72,8 +70,8 @@ void array2sh_create
     
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_SENSORS, FRAME_SIZE, sizeof(float));
-    pData->SHframeTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
+    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_SENSORS, ARRAY2SH_FRAME_SIZE, sizeof(float));
+    pData->SHframeTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, ARRAY2SH_FRAME_SIZE, sizeof(float));
     pData->inputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SENSORS, TIME_SLOTS, sizeof(float_complex));
     pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
 
@@ -204,17 +202,17 @@ void array2sh_process
     nSH = (order+1)*(order+1);
 
     /* processing loop */
-    if ((nSamples == FRAME_SIZE) && (pData->reinitSHTmatrixFLAG==0) ) {
+    if ((nSamples == ARRAY2SH_FRAME_SIZE) && (pData->reinitSHTmatrixFLAG==0) ) {
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
         for(i=0; i < nInputs; i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
+            utility_svvcopy(inputs[i], ARRAY2SH_FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<Q; i++)
-            memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
+            memset(pData->inputFrameTD[i], 0, ARRAY2SH_FRAME_SIZE * sizeof(float));
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, pData->inputframeTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, ARRAY2SH_FRAME_SIZE, MAX_NUM_SENSORS, TIME_SLOTS, pData->inputframeTF);
 
         /* Apply spherical harmonic transform (SHT) */
         for(band=0; band<HYBRID_BANDS; band++){
@@ -225,33 +223,33 @@ void array2sh_process
         }
 
         /* inverse-TFT */
-        afSTFT_backward(pData->hSTFT, pData->SHframeTF, FRAME_SIZE, pData->SHframeTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT, pData->SHframeTF, ARRAY2SH_FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->SHframeTD);
 
         /* account for output channel order */
         switch(chOrdering){
             case CH_ACN:  /* already ACN, do nothing */ break;
-            case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHframeTD), order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA); break;
+            case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHframeTD), order, ARRAY2SH_FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA); break;
         }
 
         /* account for normalisation scheme */
         switch(norm){
             case NORM_N3D:  /* already N3D, do nothing */ break;  
-            case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D); break;
-            case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), order, FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA); break;
+            case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), order, ARRAY2SH_FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D); break;
+            case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), order, ARRAY2SH_FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA); break;
         }
 
         /* Apply post-gain */
-        utility_svsmul(FLATTEN2D(pData->SHframeTD), &gain_lin, nSH*FRAME_SIZE, NULL);
+        utility_svsmul(FLATTEN2D(pData->SHframeTD), &gain_lin, nSH*ARRAY2SH_FRAME_SIZE, NULL);
 
         /* Copy to output */
         for(i = 0; i < SAF_MIN(nSH,nOutputs); i++)
-            utility_svvcopy(pData->SHframeTD[i], FRAME_SIZE, outputs[i]);
+            utility_svvcopy(pData->SHframeTD[i], ARRAY2SH_FRAME_SIZE, outputs[i]);
         for(; i < nOutputs; i++)
-            memset(outputs[i], 0, FRAME_SIZE * sizeof(float));
+            memset(outputs[i], 0, ARRAY2SH_FRAME_SIZE * sizeof(float));
     }
     else{
         for (ch=0; ch < nOutputs; ch++)
-            memset(outputs[ch],0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch],0, ARRAY2SH_FRAME_SIZE*sizeof(float));
     }
 
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
@@ -500,7 +498,7 @@ void array2sh_setGain(void* const hA2sh, float newGain)
 
 int array2sh_getFrameSize(void)
 {
-    return FRAME_SIZE;
+    return ARRAY2SH_FRAME_SIZE;
 }
 
 ARRAY2SH_EVAL_STATUS array2sh_getEvalStatus(void* const hA2sh)

@@ -18,7 +18,7 @@
  *@addtogroup Utilities
  *@{
  * @file saf_utility_fft.h
- * @brief Wrappers for optimised fast Fourier transform (FFT) routines
+ * @brief Wrappers for optimised discrete/fast Fourier transform (FFT) routines
  *
  * @note If none of the supported optimised FFT implementations are linked, then
  *       saf_fft employs the highly respectable KissFFT (BSD 3-Clause License):
@@ -29,7 +29,7 @@
  *       to add it and submit a pull request :-)
  *
  * ## Dependencies
- *   Intel MKL, Intel IPP, Apple Accelerate, or KissFFT (included in SAF)
+ *   Intel MKL, Intel IPP, Apple Accelerate, FFTW, or KissFFT (included in SAF)
  *
  * @author Leo McCormack
  * @date 06.04.2019

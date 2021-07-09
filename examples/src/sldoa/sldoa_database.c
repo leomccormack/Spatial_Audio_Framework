@@ -1,5 +1,10 @@
-/* Generated using MatLab on: 12-Feb-2018, using a script by Leo McCormack */
-/* (leo.t.mccormack@gmail.com) */
+/**
+ * @file sldoa_database.c
+ * @brief A spatially-localised active-intensity (SLAI) based direction-of-
+ *        arrival estimator (SLDoA)
+ * @author Leo McCormack
+ * @date 12.02.2018
+ */
 
 const double __grid_Y[64][2562] = 
 {    

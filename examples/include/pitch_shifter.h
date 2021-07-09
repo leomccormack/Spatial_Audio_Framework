@@ -15,6 +15,15 @@
  */
 
 /**
+ * @example pitch_shifter
+ * @brief A very basic multichannel pitch shifter
+ * ### Include Header
+ * pitch_shifter.h
+ * ### Source Files
+ * pitch_shifter_internal.h, pitch_shifter.c, pitch_shifter_internal.c
+ */
+
+/**
  * @file pitch_shifter.h
  * @brief A very basic multichannel pitch shifter
  *

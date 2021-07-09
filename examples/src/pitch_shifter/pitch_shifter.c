@@ -32,8 +32,6 @@ void pitch_shifter_create
 {
     pitch_shifter_data* pData = (pitch_shifter_data*)malloc1d(sizeof(pitch_shifter_data));
     *phPS = (void*)pData;
-
-    SAF_PRINT_VERSION_LICENSE_STRING;
     
     /* Default user parameters */
     pData->new_nChannels = pData->nChannels = 1;
@@ -56,8 +54,8 @@ void pitch_shifter_create
 
     /* set FIFO buffers */
     pData->FIFO_idx = 0;
-    memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*FRAME_SIZE*sizeof(float));
-    memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*FRAME_SIZE*sizeof(float));
+    memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*PITCH_SHIFTER_FRAME_SIZE*sizeof(float));
+    memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*PITCH_SHIFTER_FRAME_SIZE*sizeof(float));
 }
 
 void pitch_shifter_destroy
@@ -187,25 +185,25 @@ void pitch_shifter_process
         pData->FIFO_idx++;
 
         /* Process frame if inFIFO is full and codec is ready for it */
-        if (pData->FIFO_idx >= FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) ) {
+        if (pData->FIFO_idx >= PITCH_SHIFTER_FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) ) {
             pData->FIFO_idx = 0;
             pData->procStatus = PROC_STATUS_ONGOING;
 
             /* load input */
             for(ch=0; ch<nChannels; ch++)
-                memcpy(pData->inputFrame[ch], pData->inFIFO[ch], FRAME_SIZE*sizeof(float));
+                memcpy(pData->inputFrame[ch], pData->inFIFO[ch], PITCH_SHIFTER_FRAME_SIZE*sizeof(float));
 
             /* Apply pitch shifting */
-            smb_pitchShift_apply(pData->hSmb, pData->pitchShift_factor, FRAME_SIZE, (float*)pData->inputFrame, (float*)pData->outputFrame);
+            smb_pitchShift_apply(pData->hSmb, pData->pitchShift_factor, PITCH_SHIFTER_FRAME_SIZE, (float*)pData->inputFrame, (float*)pData->outputFrame);
 
             /* Copy to output */
             for(ch=0; ch<nChannels; ch++)
-                memcpy(pData->outFIFO[ch], pData->outputFrame[ch], FRAME_SIZE*sizeof(float));
+                memcpy(pData->outFIFO[ch], pData->outputFrame[ch], PITCH_SHIFTER_FRAME_SIZE*sizeof(float));
         }
-        else if(pData->FIFO_idx >= FRAME_SIZE){
+        else if(pData->FIFO_idx >= PITCH_SHIFTER_FRAME_SIZE){
             /* clear outFIFO if codec was not ready */
             pData->FIFO_idx = 0;
-            memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*FRAME_SIZE*sizeof(float));
+            memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*PITCH_SHIFTER_FRAME_SIZE*sizeof(float));
         }
     }
 
@@ -259,7 +257,7 @@ void pitch_shifter_setOSampOption
 
 int pitch_shifter_getFrameSize(void)
 {
-    return FRAME_SIZE;
+    return PITCH_SHIFTER_FRAME_SIZE;
 }
 
 CODEC_STATUS pitch_shifter_getCodecStatus(void* const hBin)
@@ -307,6 +305,6 @@ int pitch_shifter_getNCHrequired(void* const hPS)
 int pitch_shifter_getProcessingDelay(void* const hPS)
 {
     pitch_shifter_data *pData = (pitch_shifter_data*)(hPS);
-    return FRAME_SIZE + pData->fftFrameSize - (pData->stepsize);
+    return PITCH_SHIFTER_FRAME_SIZE + pData->fftFrameSize - (pData->stepsize);
 }
 

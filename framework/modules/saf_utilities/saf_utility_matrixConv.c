@@ -379,7 +379,7 @@ void saf_multiConv_apply
             /* sum with overlap buffer and copy the result to the output buffer */
             utility_svvcopy(&(h->ovrlpAddBuffer[nc*(h->fftSize)+(h->hopSize)]), (h->numOvrlpAddBlocks-1)*(h->hopSize), &(h->ovrlpAddBuffer[nc*(h->fftSize)]));
             memset(&(h->ovrlpAddBuffer[nc*(h->fftSize)+(h->numOvrlpAddBlocks-1)*(h->hopSize)]), 0, (h->hopSize)*sizeof(float));
-            utility_svvadd(&(h->ovrlpAddBuffer[nc*(h->fftSize)]),  &(h->z_n[nc*(h->fftSize)]), (h->fftSize), &(h->ovrlpAddBuffer[nc*(h->fftSize)]));
+            cblas_saxpy(h->fftSize, 1.0f, &(h->z_n[nc*(h->fftSize)]), 1, &(h->ovrlpAddBuffer[nc*(h->fftSize)]), 1);
             utility_svvcopy(&(h->ovrlpAddBuffer[nc*(h->fftSize)]), h->hopSize, &(outputSig[nc*(h->hopSize)]));
         }
     }
@@ -401,7 +401,7 @@ void saf_multiConv_apply
             /* output frame for this channel is the sum over all partitions */
             memset(h->z_n, 0, h->fftSize*sizeof(float));
             for(nb=0; nb<h->numFilterBlocks; nb++)
-                utility_svvadd(h->z_n, (const float*)&(h->hx_n[nb*(h->nCH)*(h->fftSize)+nc*(h->fftSize)]), h->fftSize, h->z_n);
+                cblas_saxpy(h->fftSize, 1.0f, (const float*)&(h->hx_n[nb*(h->nCH)*(h->fftSize)+nc*(h->fftSize)]), 1, h->z_n, 1);
             
             /* sum with overlap buffer and copy the result to the output buffer */
             utility_svvadd(h->z_n, (const float*)&(h->y_n_overlap[nc*(h->hopSize)]), h->hopSize, &(outputSig[nc* (h->hopSize)]));

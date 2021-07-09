@@ -9,6 +9,40 @@ Major and/or breaking changes to the Spatial_Audio_Framework are listed here.
 For descriptions of minor changes and bug fixes, please refer to the git log.
 
 ====================================================================================================
+v1.2.1
+ - Added (optional) AVX and AVX-512 support, when using: SAF_ENABLE_SIMD
+ - Added (optional) FFTW support for saf_utility_fft, via the new flag: SAF_USE_FFTW
+ - If Intel IPP is enabled (SAF_USE_INTEL_IPP), then the IPP resampler is employed, instead of the
+   included SPEEX resampler, when calling resampleHRIRs()
+
+Breaking changes:
+
+The install-safipp.sh script now defaults to the new oneAPI install paths. However, an arbitrary
+install path (e.g. the old one) may also now be specified as an input argument.
+
+====================================================================================================
+v1.2.0
+ - All lapack-related saf_utility_veclib functions now include an option to pre-allocate the run-
+   time memory
+ - All saf_utility_veclib vector-vector operations, when using Apple Accelerate as the chosen
+   performance library, now call the appropriate optimised routines. The Intel MKL vector-vector
+   operations have been switched to the "mode overiding" variants, which allows some accuracy to be
+   traded for faster computations
+ - Added some SIMD (SSE) optimised functions, which may be enabled with "SAF_ENABLE_SIMD"
+ - A number of other minor and some significant optimisations throughout the framework
+ - Improved doxygen documentation for the examples
+ - Added resampleHRIRs() function to saf_hrir module, which employs the SPEEX algorithm.
+
+Breaking changes:
+
+Since the lapack-related saf_utility_veclib now allow a pre-allocated object to be passed to them,
+the first input argument should either be set to "NULL", (in which case they revert to how they were
+previously), or you can pass the pre-allocated object, (in which case no run-time malloc calls are 
+made).
+
+The SAF_PRINT_VERSION_LICENSE_STRING macro has been removed; use the SAF_LICENSE_STRING instead.
+
+====================================================================================================
 v1.1.7
  - saf_utility_fft now uses vDSP's DFT implementation, rather than the scrict 2^x FFT 
    implementation, when the performance library is set to SAF_USE_APPLE_ACCELERATE

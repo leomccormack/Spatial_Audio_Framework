@@ -234,6 +234,7 @@ typedef struct _ims_scene_data
     float*** rec_sig_tmp[IMS_EG_NUM_SLOTS]; /**< [IMS_EG_NUM_SLOTS] x (nReceivers x nChannels x nSamples) */
     float* interpolator_fIn;  /**< framesize x 1 */
     float* interpolator_fOut; /**< framesize x 1 */
+    float* tmp_frame;         /**< framesize x 1 */
     int applyCrossFadeFLAG[IMS_MAX_NUM_RECEIVERS][IMS_MAX_NUM_SOURCES];
     int framesize;            /**< Curent framesize in samples */
 

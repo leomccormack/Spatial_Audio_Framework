@@ -47,12 +47,9 @@
 #ifndef __AMBI_BIN_INTERNAL_H_INCLUDED__
 #define __AMBI_BIN_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include "ambi_bin.h"   
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "ambi_bin.h"      /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -62,21 +59,21 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 )
+#if !defined(AMBI_BIN_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define AMBI_BIN_FRAME_SIZE ( FRAME_SIZE )          /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define AMBI_BIN_FRAME_SIZE ( 128 )                 /**< Framesize, in time-domain samples */
+# endif
 #endif
-#define HOP_SIZE ( 128 ) /* STFT hop size */
-#define HYBRID_BANDS ( 133 )
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )  
-#define POST_GAIN ( -9.0f )   /* dB */
-#ifndef DEG2RAD
-# define DEG2RAD(x) (x * M_PI / 180.0f)
-#endif
-#ifndef RAD2DEG
-# define RAD2DEG(x) (x * 180.0f / M_PI)
-#endif
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define HOP_SIZE ( 128 )                              /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )                 /**< Number of frequency bands */
+#define TIME_SLOTS ( AMBI_BIN_FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
+#define POST_GAIN ( -9.0f )                           /**< Post-gain scaling, in dB */
+
+/* Checks: */
+#if (AMBI_BIN_FRAME_SIZE % HOP_SIZE != 0)
+# error "AMBI_BIN_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
 
     
@@ -112,12 +109,12 @@ typedef struct _ambi_bin_codecPars
  * Main structure for ambi_bin. Contains variables for audio buffers, afSTFT,
  * rotation matrices, internal variables, flags, user parameters
  */
-typedef struct ambi_bin
+typedef struct _ambi_bin
 {
     /* audio buffers + afSTFT time-frequency transform handle */
     int fs;                         /**< host sampling rate */ 
-    float** SHFrameTD;              /**< Input spherical harmonic (SH) signals in the time-domain; #MAX_NUM_SH_SIGNALS x #FRAME_SIZE */
-    float** binFrameTD;             /**< Output binaural signals in the time-domain; #NUM_EARS x #FRAME_SIZE */
+    float** SHFrameTD;              /**< Input spherical harmonic (SH) signals in the time-domain; #MAX_NUM_SH_SIGNALS x #AMBI_BIN_FRAME_SIZE */
+    float** binFrameTD;             /**< Output binaural signals in the time-domain; #NUM_EARS x #AMBI_BIN_FRAME_SIZE */
     float_complex*** SHframeTF;     /**< Input spherical harmonic (SH) signals in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
     float_complex*** binframeTF;    /**< Output binaural signals in the time-frequency domain; #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS */
     void* hSTFT;                    /**< afSTFT handle */
@@ -132,8 +129,8 @@ typedef struct ambi_bin
     
     /* internal variables */
     PROC_STATUS procStatus;         /**< see #PROC_STATUS */
-    float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS]; 
-    int new_order;                  /**< new decoding order */
+    float_complex M_rot[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS]; /**< Current SH rotation matrix */
+    int new_order;                  /**< new decoding order (current value will be replaced by this after next re-init) */
     int nSH;                        /**< number of spherical harmonic signals */
     
     /* flags */ 
@@ -145,7 +142,7 @@ typedef struct ambi_bin
     int enableMaxRE;                /**< 0: disabled, 1: enabled */
     int enableDiffuseMatching;      /**< 0: disabled, 1: enabled */
     int enableTruncationEQ;         /**< 0: disabled, 1: enabled */
-    AMBI_BIN_DECODING_METHODS method; /* current decoding method */
+    AMBI_BIN_DECODING_METHODS method; /**< current decoding method (see #AMBI_BIN_DECODING_METHODS) */
     float EQ[HYBRID_BANDS];         /**< EQ curve */
     int useDefaultHRIRsFLAG;        /**< 1: use default HRIRs in database, 0: use those from SOFA file */
     AMBI_BIN_PREPROC preProc;       /**< HRIR pre-processing strategy */

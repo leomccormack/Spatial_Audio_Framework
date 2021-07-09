@@ -230,9 +230,9 @@ static CH_FLOAT det_4x4(CH_FLOAT* m) {
 
 static CH_FLOAT det_NxN(CH_FLOAT* m, int d){
 #ifdef CONVHULL_3D_USE_FLOAT_PRECISION
-    return utility_sdet((CH_FLOAT*)m, d);
+    return utility_sdet(NULL, (CH_FLOAT*)m, d);
 #else
-    return utility_ddet((CH_FLOAT*)m, d);
+    return utility_ddet(NULL, (CH_FLOAT*)m, d);
 #endif
 }
 

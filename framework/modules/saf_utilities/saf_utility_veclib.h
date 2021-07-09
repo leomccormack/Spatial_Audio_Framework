@@ -19,7 +19,7 @@
  *@{
  * @file saf_utility_veclib.h
  * @brief Wrappers for optimised linear algebra routines, utilising CBLAS and
- *        LAPACK
+ *        LAPACK, and/or SIMD intrinsics
  *
  * @author Leo McCormack
  * @date 11.07.2016
@@ -86,11 +86,11 @@ void cblas_zaxpy(const int N, const void* alpha, const void* X,
 /* ========================================================================== */
 
 #ifdef SAF_USE_BUILT_IN_NAIVE_CBLAS
-void cblas_sgemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA,
-                 const enum CBLAS_TRANSPOSE TransB, const int M, const int N,
-                 const int K, const float alpha, const float* A,
-                 const int lda, const float* B, const int ldb,
-                 const float beta, float* C, const int ldc);
+void cblas_sgemm(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA,
+                     const CBLAS_TRANSPOSE TransB, const int M, const int N,
+                     const int K, const float alpha, const float *A,
+                     const int lda, const float *B, const int ldb,
+                     const float beta, float *C, const int ldc);
 #endif
 
 
@@ -293,6 +293,58 @@ void utility_svmod(/* Input Arguments */
 
 
 /* ========================================================================== */
+/*                          Vector-Reciprocal (?vrecip)                       */
+/* ========================================================================== */
+
+/**
+ * Single-precision, vector-reciprocal/inversion, i.e.
+ * \code{.m}
+ *     c = 1/a
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_svrecip(const float* a,
+                     const int len,
+                     float* c);
+
+
+/* ========================================================================== */
+/*                           Vector-Conjugate (?vconj)                        */
+/* ========================================================================== */
+
+/**
+ * Single-precision, complex, vector-conjugate, i.e.
+ * \code{.m}
+ *     c = conj(a)
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_cvconj(const float_complex* a,
+                    const int len,
+                    float_complex* c);
+
+/**
+ * Double-precision, complex, vector-conjugate, i.e.
+ * \code{.m}
+ *     c = conj(a)
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_zvconj(const double_complex* a,
+                    const int len,
+                    double_complex* c);
+
+
+/* ========================================================================== */
 /*                        Vector-Vector Copy (?vvcopy)                        */
 /* ========================================================================== */
 
@@ -377,7 +429,7 @@ void utility_zvvcopy(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_svvadd(/* Input Arguments */
-                    float* a,
+                    const float* a,
                     const float* b,
                     const int len,
                     /* Output Arguments */
@@ -395,11 +447,47 @@ void utility_svvadd(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_cvvadd(/* Input Arguments */
-                    float_complex* a,
+                    const float_complex* a,
                     const float_complex* b,
                     const int len,
                     /* Output Arguments */
                     float_complex* c);
+
+/**
+ * Double-precision, vector-vector addition, i.e.
+ * \code{.m}
+ *     c = a+b
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  b   Input vector b; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_dvvadd(/* Input Arguments */
+                    const double* a,
+                    const double* b,
+                    const int len,
+                    /* Output Arguments */
+                    double* c);
+
+/**
+ * Double-precision, complex, vector-vector addition, i.e.
+ * \code{.m}
+ *     c = a+b
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  b   Input vector b; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_zvvadd(/* Input Arguments */
+                    const double_complex* a,
+                    const double_complex* b,
+                    const int len,
+                    /* Output Arguments */
+                    double_complex* c);
 
 
 /* ========================================================================== */
@@ -418,11 +506,11 @@ void utility_cvvadd(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_svvsub(/* Input Arguments */
-                    float* a,
+                    const float* a,
                     const float* b,
                     const int len,
                     /* Output Arguments */
-	                float* c);
+                    float* c);
 
 /**
  * Single-precision, complex, vector-vector subtraction, i.e.
@@ -436,11 +524,47 @@ void utility_svvsub(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_cvvsub(/* Input Arguments */
-                    float_complex* a,
+                    const float_complex* a,
                     const float_complex* b,
                     const int len,
                     /* Output Arguments */
                     float_complex* c);
+
+/**
+ * Double-precision, vector-vector subtraction, i.e.
+ * \code{.m}
+ *     c = a-b
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  b   Input vector b; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_dvvsub(/* Input Arguments */
+                    const double* a,
+                    const double* b,
+                    const int len,
+                    /* Output Arguments */
+                    double* c);
+
+/**
+ * Double-precision, complex, vector-vector subtraction, i.e.
+ * \code{.m}
+ *     c = a-b
+ * \endcode
+ *
+ * @param[in]  a   Input vector a; len x 1
+ * @param[in]  b   Input vector b; len x 1
+ * @param[in]  len Vector length
+ * @param[out] c   Output vector c; len x 1
+ */
+void utility_zvvsub(/* Input Arguments */
+                    const double_complex* a,
+                    const double_complex* b,
+                    const int len,
+                    /* Output Arguments */
+                    double_complex* c);
 
 
 /* ========================================================================== */
@@ -459,7 +583,7 @@ void utility_cvvsub(/* Input Arguments */
  * @param[out] c   Output vector c
  */
 void utility_svvmul(/* Input Arguments */
-                    float* a,
+                    const float* a,
                     const float* b,
                     const int len,
                     /* Output Arguments */
@@ -477,35 +601,11 @@ void utility_svvmul(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_cvvmul(/* Input Arguments */
-                    float_complex* a,
-	                const float_complex* b,
-	                const int len,
+                    const float_complex* a,
+                    const float_complex* b,
+                    const int len,
                     /* Output Arguments */
-	                float_complex* c);
-
-
-/* ========================================================================== */
-/*            Vector-Vector Multiplication and Addition (?vvmuladd)           */
-/* ========================================================================== */
-
-/**
- * Single-precision, element-wise vector-vector multiplication and addition,
- * i.e.
- * \code{.m}
- *     c = c + a.*b
- * \endcode
- *
- * @param[in]     a   Input vector a; len x 1
- * @param[in]     b   Input vector b; len x 1
- * @param[in]     len Vector length
- * @param[in,out] c   Input/Output vector c
- */
-void utility_svvmuladd(/* Input Arguments */
-                       float* a,
-                       const float* b,
-                       const int len,
-                       /* Input/Output Arguments */
-                       float* c);
+                    float_complex* c);
 
 
 /* ========================================================================== */
@@ -652,7 +752,7 @@ void utility_zvsmul(/* Input Arguments */
  * @param[out] c   Output vector c; len x 1
  */
 void utility_svsdiv(/* Input Arguments */
-                    float* a,
+                    const float* a,
                     const float* s,
                     const int len,
                     /* Output Arguments */
@@ -735,7 +835,19 @@ void utility_ssv2cv_inds(/* Input Arguments */
 /* ========================================================================== */
 /*                     Singular-Value Decomposition (?svd)                    */
 /* ========================================================================== */
-    
+
+/**
+ * (Optional) Pre-allocate the working struct used by utility_ssvd()
+ *
+ * @param[in] phWork  (&) address of work handle, to give to utility_ssvd()
+ * @param[in] maxDim1 (&) max size 'dim1' can be when calling utility_ssvd()
+ * @param[in] maxDim2 (&) max size 'dim2' can be when calling utility_ssvd()
+ */
+void utility_ssvd_create(void ** const phWork, int maxDim1, int maxDim2);
+
+/** De-allocate the working struct used by utility_ssvd() */
+void utility_ssvd_destroy(void ** const phWork);
+
 /**
  * Singular value decomposition: single precision, i.e.
  * \code{.m}
@@ -746,18 +858,21 @@ void utility_ssv2cv_inds(/* Input Arguments */
  *       the singular values as a vector. Also, V is returned untransposed!
  *       (like in Matlab)
  *
- * @param[in]  A    Input matrix; FLAT: dim1 x dim2
- * @param[in]  dim1 First dimension of matrix 'A'
- * @param[in]  dim2 Second dimension of matrix 'A'
- * @param[out] U    Left matrix (set to NULL if not needed); FLAT: dim1 x dim1
- * @param[out] S    Singular values along the diagonal min(dim1, dim2), (set to
- *                  NULL if not needed); FLAT: dim1 x dim2
- * @param[out] V    Right matrix (UNTRANSPOSED!) (set to NULL if not needed);
- *                  FLAT: dim2 x dim2
- * @param[out] sing Singular values as a vector, (set to NULL if not needed);
- *                  min(dim1, dim2) x 1
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input matrix; FLAT: dim1 x dim2
+ * @param[in]  dim1  First dimension of matrix 'A'
+ * @param[in]  dim2  Second dimension of matrix 'A'
+ * @param[out] U     Left matrix (set to NULL if not needed); FLAT: dim1 x dim1
+ * @param[out] S     Singular values along the diagonal min(dim1, dim2), (set to
+ *                   NULL if not needed); FLAT: dim1 x dim2
+ * @param[out] V     Right matrix (UNTRANSPOSED!) (set to NULL if not needed);
+ *                   FLAT: dim2 x dim2
+ * @param[out] sing  Singular values as a vector, (set to NULL if not needed);
+ *                   min(dim1, dim2) x 1
  */
 void utility_ssvd(/* Input Arguments */
+                  void* const hWork,
                   const float* A,
                   const int dim1,
                   const int dim2,
@@ -766,6 +881,18 @@ void utility_ssvd(/* Input Arguments */
                   float* S,
                   float* V,
                   float* sing);
+
+/**
+ * (Optional) Pre-allocate the working struct used by utility_csvd()
+ *
+ * @param[in] phWork  (&) address of work handle, to give to utility_csvd()
+ * @param[in] maxDim1 (&) max size 'dim1' can be when calling utility_csvd()
+ * @param[in] maxDim2 (&) max size 'dim2' can be when calling utility_csvd()
+ */
+void utility_csvd_create(void ** const phWork, int maxDim1, int maxDim2);
+
+/** De-allocate the working struct used by utility_csvd() */
+void utility_csvd_destroy(void ** const phWork);
 
 /**
  * Singular value decomposition: single precision complex, i.e.
@@ -777,18 +904,21 @@ void utility_ssvd(/* Input Arguments */
  *       the singular values as a vector. Also, V is returned untransposed!
  *       (like in Matlab)
  *
- * @param[in]  A    Input matrix; FLAT: dim1 x dim2
- * @param[in]  dim1 First dimension of matrix 'A'
- * @param[in]  dim2 Second dimension of matrix 'A'
- * @param[out] U    Left matrix (set to NULL if not needed); FLAT: dim1 x dim1
- * @param[out] S    Singular values along the diagonal min(dim1, dim2), (set to
- *                  NULL if not needed); FLAT: dim1 x dim2
- * @param[out] V    Right matrix (UNTRANSPOSED!) (set to NULL if not needed);
- *                  FLAT: dim2 x dim2
- * @param[out] sing Singular values as a vector, (set to NULL if not needed);
- *                  min(dim1, dim2) x 1
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input matrix; FLAT: dim1 x dim2
+ * @param[in]  dim1  First dimension of matrix 'A'
+ * @param[in]  dim2  Second dimension of matrix 'A'
+ * @param[out] U     Left matrix (set to NULL if not needed); FLAT: dim1 x dim1
+ * @param[out] S     Singular values along the diagonal min(dim1, dim2), (set to
+ *                   NULL if not needed); FLAT: dim1 x dim2
+ * @param[out] V     Right matrix (UNTRANSPOSED!) (set to NULL if not needed);
+ *                   FLAT: dim2 x dim2
+ * @param[out] sing  Singular values as a vector, (set to NULL if not needed);
+ *                   min(dim1, dim2) x 1
  */
 void utility_csvd(/* Input Arguments */
+                  void* const hWork,
                   const float_complex* A,
                   const int dim1,
                   const int dim2,
@@ -804,6 +934,17 @@ void utility_csvd(/* Input Arguments */
 /* ========================================================================== */
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_sseig()
+ *
+ * @param[in] phWork (&) address of work handle, to give to utility_sseig()
+ * @param[in] maxDim (&) max size 'dim' can be when calling utility_sseig()
+ */
+void utility_sseig_create(void ** const phWork, int maxDim);
+
+/** De-allocate the working struct used by utility_sseig() */
+void utility_sseig_destroy(void ** const phWork);
+
+/**
  * Eigenvalue decomposition of a SYMMETRIC matrix: single precision,
  * i.e.
  * \code{.m}
@@ -813,6 +954,9 @@ void utility_csvd(/* Input Arguments */
  * @note 'D' contains the eigen values along the diagonal, while 'eig' are the
  *       eigen values as a vector
  *
+ * @param[in]  hWork       Handle for the work struct (set to NULL if not
+ *                         available, in which case memory is allocated on the
+ *                         fly)
  * @param[in]  A           Input SYMMETRIC square matrix; FLAT: dim x dim
  * @param[in]  dim         Dimensions for square matrix 'A'
  * @param[in]  sortDecFLAG '1' sort eigen values and vectors in decending order.
@@ -825,6 +969,7 @@ void utility_csvd(/* Input Arguments */
  *                         needed); dim x 1
  */
 void utility_sseig(/* Input Arguments */
+                   void* const hWork,
                    const float* A,
                    const int dim,
                    int sortDecFLAG,
@@ -832,6 +977,18 @@ void utility_sseig(/* Input Arguments */
                    float* V,
                    float* D,
                    float* eig);
+
+/**
+ * (Optional) Pre-allocate the working struct used by utility_cseig()
+ *
+ * @param[in] phWork (&) address of work handle, to give to utility_cseig()
+ * @param[in] maxDim (&) max size 'dim' can be when calling utility_cseig()
+ */
+void utility_cseig_create(void ** const phWork,
+                          int maxDim);
+
+/** De-allocate the working struct used by utility_cseig() */
+void utility_cseig_destroy(void ** const phWork);
 
 /**
  * Eigenvalue decomposition of a SYMMETRIC/HERMITION matrix: single
@@ -843,6 +1000,9 @@ void utility_sseig(/* Input Arguments */
  * @note 'D' contains the eigen values along the diagonal, while 'eig' are the
  *       eigen values as a vector
  *
+ * @param[in]  hWork       Handle for the work struct (set to NULL if not
+ *                         available, in which case memory is allocated on the
+ *                         fly)
  * @param[in]  A           Input SYMMETRIC square matrix; FLAT: dim x dim
  * @param[in]  dim         Dimensions for square matrix 'A'
  * @param[in]  sortDecFLAG '1' sort eigen values and vectors in decending order.
@@ -855,6 +1015,7 @@ void utility_sseig(/* Input Arguments */
  *                         needed); dim x 1
  */
 void utility_cseig(/* Input Arguments */
+                   void* const hWork,
                    const float_complex* A,
                    const int dim,
                    int sortDecFLAG,
@@ -869,23 +1030,37 @@ void utility_cseig(/* Input Arguments */
 /* ========================================================================== */
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_ceigmp()
+ *
+ * @param[in] phWork (&) address of work handle, to give to utility_ceigmp()
+ * @param[in] maxDim (&) max size 'dim' can be when calling utility_ceigmp()
+ */
+void utility_ceigmp_create(void** const phWork, int maxDim);
+
+/** De-allocate the working struct used by utility_ceigmp() */
+void utility_ceigmp_destroy(void ** const phWork);
+
+/**
  * Computes eigenvalues of a matrix pair using the QZ method, single precision
  * complex, i.e.
  * \code{.m}
  *     [VL,VR,D] = eig(A,B,'qz'); where A*VL = B*VL*VR
  * \endcode
  *
- * @param[in]  A   Input left square matrix; FLAT: dim x dim
- * @param[in]  B   Input right square matrix; FLAT: dim x dim
- * @param[in]  dim Dimensions for square matrices 'A' and 'B'
- * @param[out] VL  Left Eigen vectors (set to NULL if not needed);
- *                 FLAT: dim x dim
- * @param[out] VR  Right Eigen vectors (set to NULL if not needed);
- *                 FLAT: dim x dim
- * @param[out] D   Eigen values along the diagonal (set to NULL if not needed);
- *                 FLAT: dim x dim
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input left square matrix; FLAT: dim x dim
+ * @param[in]  B     Input right square matrix; FLAT: dim x dim
+ * @param[in]  dim   Dimensions for square matrices 'A' and 'B'
+ * @param[out] VL    Left Eigen vectors (set to NULL if not needed);
+ *                   FLAT: dim x dim
+ * @param[out] VR    Right Eigen vectors (set to NULL if not needed);
+ *                   FLAT: dim x dim
+ * @param[out] D     Eigen values along the diagonal (set to NULL if not needed)
+ *                   FLAT: dim x dim
  */
 void utility_ceigmp(/* Input Arguments */
+                    void* const hWork,
                     const float_complex* A,
                     const float_complex* B,
                     const int dim,
@@ -895,23 +1070,37 @@ void utility_ceigmp(/* Input Arguments */
                     float_complex* D);
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_zeigmp()
+ *
+ * @param[in] phWork (&) address of work handle, to give to utility_zeigmp()
+ * @param[in] maxDim (&) max size 'dim' can be when calling utility_zeigmp()
+ */
+void utility_zeigmp_create(void** const phWork, int maxDim);
+
+/** De-allocate the working struct used by utility_zeigmp() */
+void utility_zeigmp_destroy(void ** const phWork);
+
+/**
  * Computes eigenvalues of a matrix pair using the QZ method, double precision
  * complex, i.e.
  * \code{.m}
  *     [VL,VR,D] = eig(A,B,'qz'); where A*VL = B*VL*VR
  * \endcode
  *
- * @param[in]  A   Input left square matrix; FLAT: dim x dim
- * @param[in]  B   Input right square matrix; FLAT: dim x dim
- * @param[in]  dim Dimensions for square matrices 'A' and 'B'
- * @param[out] VL  Left Eigen vectors (set to NULL if not needed);
- *                 FLAT: dim x dim
- * @param[out] VR  Right Eigen vectors (set to NULL if not needed);
- *                 FLAT: dim x dim
- * @param[out] D   Eigen values along the diagonal (set to NULL if not needed);
- *                 FLAT: dim x dim
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input left square matrix; FLAT: dim x dim
+ * @param[in]  B     Input right square matrix; FLAT: dim x dim
+ * @param[in]  dim   Dimensions for square matrices 'A' and 'B'
+ * @param[out] VL    Left Eigen vectors (set to NULL if not needed);
+ *                   FLAT: dim x dim
+ * @param[out] VR    Right Eigen vectors (set to NULL if not needed);
+ *                   FLAT: dim x dim
+ * @param[out] D     Eigen values along the diagonal (set to NULL if not needed)
+ *                   FLAT: dim x dim
  */
 void utility_zeigmp(/* Input Arguments */
+                    void* const hWork,
                     const double_complex* A,
                     const double_complex* B,
                     const int dim,
@@ -926,6 +1115,17 @@ void utility_zeigmp(/* Input Arguments */
 /* ========================================================================== */
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_ceig()
+ *
+ * @param[in] phWork (&) address of work handle, to give to utility_ceig()
+ * @param[in] maxDim (&) max size 'dim' can be when calling utility_ceig()
+ */
+void utility_ceig_create(void ** const phWork, int maxDim);
+
+/** De-allocate the working struct used by utility_ceig() */
+void utility_ceig_destroy(void ** const phWork);
+
+/**
  * Eigenvalue decomposition of a NON-SYMMETRIC matrix: single precision complex,
  * i.e.
  * \code{.m}
@@ -935,18 +1135,21 @@ void utility_zeigmp(/* Input Arguments */
  * @note 'D' contains the eigen values along the diagonal, while 'eig' are the
  *       eigen values as a vector
  *
- * @param[in]  A   Input NON-SYMMETRIC square matrix; FLAT: dim x dim
- * @param[in]  dim Dimensions for square matrix 'A'
- * @param[out] VL  Left Eigen vectors (set to NULL if not needed);
- *                 FLAT: dim x dim
- * @param[out] VR  Right Eigen vectors (set to NULL if not needed);
- *                 FLAT: dim x dim
- * @param[out] D   Eigen values along the diagonal (set to NULL if not needed);
- *                 FLAT: dim x dim
- * @param[out] eig Eigen values not diagonalised (set to NULL if not needed);
- *                 dim x 1
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input NON-SYMMETRIC square matrix; FLAT: dim x dim
+ * @param[in]  dim   Dimensions for square matrix 'A'
+ * @param[out] VL    Left Eigen vectors (set to NULL if not needed);
+ *                   FLAT: dim x dim
+ * @param[out] VR    Right Eigen vectors (set to NULL if not needed);
+ *                   FLAT: dim x dim
+ * @param[out] D     Eigen values along the diagonal (set to NULL if not needed)
+ *                   FLAT: dim x dim
+ * @param[out] eig   Eigen values not diagonalised (set to NULL if not needed);
+ *                   dim x 1
  */
 void utility_ceig(/* Input Arguments */
+                  void* const hWork,
                   const float_complex* A,
                   const int dim, 
                   /* Output Arguments */
@@ -954,6 +1157,17 @@ void utility_ceig(/* Input Arguments */
                   float_complex* VR,
                   float_complex* D,
                   float_complex* eig);
+
+/**
+ * (Optional) Pre-allocate the working struct used by utility_zeig()
+ *
+ * @param[in] phWork (&) address of work handle, to give to utility_zeig()
+ * @param[in] maxDim (&) max size 'dim' can be when calling utility_zeig()
+ */
+void utility_zeig_create(void ** const phWork, int maxDim);
+
+/** De-allocate the working struct used by utility_zeig() */
+void utility_zeig_destroy(void ** const phWork);
 
 /**
  * Eigenvalue decomposition of a NON-SYMMETRIC matrix: double precision complex,
@@ -965,18 +1179,21 @@ void utility_ceig(/* Input Arguments */
  * @note 'D' contains the eigen values along the diagonal, while 'eig' are the
  *       eigen values as a vector.
  *
- * @param[in]  A   Input NON-SYMMETRIC square matrix; FLAT: dim x dim
- * @param[in]  dim Dimensions for square matrix 'A'
- * @param[out] VL  Left Eigen vectors (set to NULL if not needed);
- *                 FLAT: dim x dim
- * @param[out] VR  Right Eigen vectors (set to NULL if not needed);
- *                 FLAT: dim x dim
- * @param[out] D   Eigen values along the diagonal (set to NULL if not needed);
- *                 FLAT: dim x dim
- * @param[out] eig Eigen values not diagonalised (set to NULL if not needed);
- *                 dim x 1
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input NON-SYMMETRIC square matrix; FLAT: dim x dim
+ * @param[in]  dim   Dimensions for square matrix 'A'
+ * @param[out] VL    Left Eigen vectors (set to NULL if not needed);
+ *                   FLAT: dim x dim
+ * @param[out] VR    Right Eigen vectors (set to NULL if not needed);
+ *                   FLAT: dim x dim
+ * @param[out] D     Eigen values along the diagonal (set to NULL if not needed)
+ *                   FLAT: dim x dim
+ * @param[out] eig   Eigen values not diagonalised (set to NULL if not needed);
+ *                   dim x 1
  */
 void utility_zeig(/* Input Arguments */
+                  void* const hWork,
                   const double_complex* A,
                   const int dim,
                   /* Output Arguments */
@@ -991,18 +1208,35 @@ void utility_zeig(/* Input Arguments */
 /* ========================================================================== */
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_sglslv()
+ *
+ * @param[in] phWork  (&) address of work handle, to give to utility_sglslv()
+ * @param[in] maxDim  (&) max size 'dim' can be when calling utility_sglslv()
+ * @param[in] maxNCol (&) max size 'nCol' can be when calling utility_sglslv()
+ */
+void utility_sglslv_create(void ** const phWork,
+                           int maxDim,
+                           int maxNCol);
+
+/** De-allocate the working struct used by utility_sglslv() */
+void utility_sglslv_destroy(void ** const phWork);
+
+/**
  * General linear solver: single precision, i.e.
  * \code{.m}
  *     X = linsolve(A,B) = A\B; where, AX = B
  * \endcode
  *
- * @param[in]  A    Input square matrix; FLAT: dim x dim
- * @param[in]  dim  Dimensions for square matrix 'A'
- * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
- * @param[in]  nCol Number of columns in right hand side matrix
- * @param[out] X    The solution; FLAT: dim x nCol
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square matrix; FLAT: dim x dim
+ * @param[in]  dim   Dimensions for square matrix 'A'
+ * @param[in]  B     Right hand side matrix; FLAT: dim x nCol
+ * @param[in]  nCol  Number of columns in right hand side matrix
+ * @param[out] X     The solution; FLAT: dim x nCol
  */
 void utility_sglslv(/* Input Arguments */
+                    void* const hWork,
                     const float* A,
                     const int dim,
                     float* B,
@@ -1011,18 +1245,33 @@ void utility_sglslv(/* Input Arguments */
                     float* X);
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_cglslv()
+ *
+ * @param[in] phWork  (&) address of work handle, to give to utility_cglslv()
+ * @param[in] maxDim  (&) max size 'dim' can be when calling utility_cglslv()
+ * @param[in] maxNCol (&) max size 'nCol' can be when calling utility_cglslv()
+ */
+void utility_cglslv_create(void ** const phWork, int maxDim, int maxNCol);
+
+/** De-allocate the working struct used by utility_cglslv() */
+void utility_cglslv_destroy(void ** const phWork);
+
+/**
  * General linear solver: single precision complex, i.e.
  * \code{.m}
  *     X = linsolve(A,B) = A\B; where, AX = B
  * \endcode
  *
- * @param[in]  A    Input square matrix; FLAT: dim x dim
- * @param[in]  dim  Dimensions for square matrix 'A'
- * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
- * @param[in]  nCol Number of columns in right hand side matrix
- * @param[out] X    The solution; FLAT: dim x nCol
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square matrix; FLAT: dim x dim
+ * @param[in]  dim   Dimensions for square matrix 'A'
+ * @param[in]  B     Right hand side matrix; FLAT: dim x nCol
+ * @param[in]  nCol  Number of columns in right hand side matrix
+ * @param[out] X     The solution; FLAT: dim x nCol
  */
 void utility_cglslv(/* Input Arguments */
+                    void* const hWork,
                     const float_complex* A,
                     const int dim,
                     float_complex* B,
@@ -1031,18 +1280,33 @@ void utility_cglslv(/* Input Arguments */
                     float_complex* X);
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_dglslv()
+ *
+ * @param[in] phWork  (&) address of work handle, to give to utility_dglslv()
+ * @param[in] maxDim  (&) max size 'dim' can be when calling utility_dglslv()
+ * @param[in] maxNCol (&) max size 'nCol' can be when calling utility_dglslv()
+ */
+void utility_dglslv_create(void ** const phWork, int maxDim, int maxNCol);
+
+/** De-allocate the working struct used by utility_dglslv() */
+void utility_dglslv_destroy(void ** const phWork);
+
+/**
  * General linear solver: double precision, i.e.
  * \code{.m}
  *     X = linsolve(A,B) = A\B; where, AX = B
  * \endcode
  *
- * @param[in]  A    Input square matrix; FLAT: dim x dim
- * @param[in]  dim  Dimensions for square matrix 'A'
- * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
- * @param[in]  nCol Number of columns in right hand side matrix
- * @param[out] X    The solution; FLAT: dim x nCol
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square matrix; FLAT: dim x dim
+ * @param[in]  dim   Dimensions for square matrix 'A'
+ * @param[in]  B     Right hand side matrix; FLAT: dim x nCol
+ * @param[in]  nCol  Number of columns in right hand side matrix
+ * @param[out] X     The solution; FLAT: dim x nCol
  */
 void utility_dglslv(/* Input Arguments */
+                    void* const hWork,
                     const double* A,
                     const int dim,
                     double* B,
@@ -1051,18 +1315,33 @@ void utility_dglslv(/* Input Arguments */
                     double* X);
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_zglslv()
+ *
+ * @param[in] phWork  (&) address of work handle, to give to utility_zglslv()
+ * @param[in] maxDim  (&) max size 'dim' can be when calling utility_zglslv()
+ * @param[in] maxNCol (&) max size 'nCol' can be when calling utility_zglslv()
+ */
+void utility_zglslv_create(void ** const phWork, int maxDim, int maxNCol);
+
+/** De-allocate the working struct used by utility_zglslv() */
+void utility_zglslv_destroy(void ** const phWork);
+
+/**
  * General linear solver: double precision complex, i.e.
  * \code{.m}
  *     X = linsolve(A,B) = A\B; where, AX = B
  * \endcode
  *
- * @param[in]  A    Input square matrix; FLAT: dim x dim
- * @param[in]  dim  Dimensions for square matrix 'A'
- * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
- * @param[in]  nCol Number of columns in right hand side matrix
- * @param[out] X    The solution; FLAT: dim x nCol
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square matrix; FLAT: dim x dim
+ * @param[in]  dim   Dimensions for square matrix 'A'
+ * @param[in]  B     Right hand side matrix; FLAT: dim x nCol
+ * @param[in]  nCol  Number of columns in right hand side matrix
+ * @param[out] X     The solution; FLAT: dim x nCol
  */
 void utility_zglslv(/* Input Arguments */
+                    void* const hWork,
                     const double_complex* A,
                     const int dim,
                     double_complex* B,
@@ -1076,18 +1355,35 @@ void utility_zglslv(/* Input Arguments */
 /* ========================================================================== */
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_sglslvt()
+ *
+ * @param[in] phWork  (&) address of work handle, to give to utility_sglslvt()
+ * @param[in] maxDim  (&) max size 'dim' can be when calling utility_sglslvt()
+ * @param[in] maxNCol (&) max size 'nCol' can be when calling utility_sglslvt()
+ */
+void utility_sglslvt_create(void ** const phWork,
+                            int maxDim,
+                            int maxNCol);
+
+/** De-allocate the working struct used by utility_sglslvt() */
+void utility_sglslvt_destroy(void ** const phWork);
+
+/**
  * General linear solver (the other way): single precision, i.e.
  * \code{.m}
  *     X = linsolve(B.',A.').' = A/B;
  * \endcode
  *
- * @param[in]  A    Input square matrix; FLAT: dim x dim
- * @param[in]  dim  Dimensions for square matrix 'A'
- * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
- * @param[in]  nCol Number of columns in right hand side matrix
- * @param[out] X    The solution; FLAT: dim x nCol
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square matrix; FLAT: dim x dim
+ * @param[in]  dim   Dimensions for square matrix 'A'
+ * @param[in]  B     Right hand side matrix; FLAT: dim x nCol
+ * @param[in]  nCol  Number of columns in right hand side matrix
+ * @param[out] X     The solution; FLAT: dim x nCol
  */
 void utility_sglslvt(/* Input Arguments */
+                     void* const hWork,
                      const float* A,
                      const int dim,
                      float* B,
@@ -1095,32 +1391,22 @@ void utility_sglslvt(/* Input Arguments */
                      /* Output Arguments */
                      float* X);
 
-/**
- * General linear solver (the other way): single precision complex, i.e.
- * \code{.m}
- *     X = linsolve(B',A')' = A/B;
- * \endcode
- *
- * @warning UNSURE IF THIS IS CORRECT!
- *
- * @param[in]  A    Input square matrix; FLAT: dim x dim
- * @param[in]  dim  Dimensions for square matrix 'A'
- * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
- * @param[in]  nCol Number of columns in right hand side matrix
- * @param[out] X    The solution; FLAT: dim x nCol
- */
-void utility_cglslvt(/* Input Arguments */
-                     const float_complex* A,
-                     const int dim,
-                     float_complex* B,
-                     int nCol,
-                     /* Output Arguments */
-                     float_complex* X);
-
 
 /* ========================================================================== */
 /*                      Symmetric Linear Solver (?slslv)                      */
 /* ========================================================================== */
+
+/**
+ * (Optional) Pre-allocate the working struct used by utility_sslslv()
+ *
+ * @param[in] phWork  (&) address of work handle, to give to utility_sslslv()
+ * @param[in] maxDim  (&) max size 'dim' can be when calling utility_sslslv()
+ * @param[in] maxNCol (&) max size 'nCol' can be when calling utility_sslslv()
+ */
+void utility_sslslv_create(void ** const phWork, int maxDim, int maxNCol);
+
+/** De-allocate the working struct used by utility_sslslv() */
+void utility_sslslv_destroy(void ** const phWork);
 
 /**
  * Linear solver for SYMMETRIC positive-definate 'A': single precision, i.e.
@@ -1129,19 +1415,35 @@ void utility_cglslvt(/* Input Arguments */
  *     X = linsolve(A,B, opts); where, AX = B, and 'A' is a symmetric matrix
  * \endcode
  *
- * @param[in]  A    Input square SYMMETRIC positive-definate matrix; FLAT: dim x dim
- * @param[in]  dim  Dimensions for square matrix 'A'
- * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
- * @param[in]  nCol Number of columns in right hand side matrix
- * @param[out] X    The solution; FLAT: dim x nCol
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square SYMMETRIC positive-definate matrix;
+ *                   FLAT: dim x dim
+ * @param[in]  dim   Dimensions for square matrix 'A'
+ * @param[in]  B     Right hand side matrix; FLAT: dim x nCol
+ * @param[in]  nCol  Number of columns in right hand side matrix
+ * @param[out] X     The solution; FLAT: dim x nCol
  */
 void utility_sslslv(/* Input Arguments */
+                    void* const hWork,
                     const float* A,
                     const int dim,
                     float* B,
                     int nCol,
                     /* Output Arguments */
                     float* X);
+
+/**
+ * (Optional) Pre-allocate the working struct used by utility_cslslv()
+ *
+ * @param[in] phWork  (&) address of work handle, to give to utility_cslslv()
+ * @param[in] maxDim  (&) max size 'dim' can be when calling utility_cslslv()
+ * @param[in] maxNCol (&) max size 'nCol' can be when calling utility_cslslv()
+ */
+void utility_cslslv_create(void ** const phWork, int maxDim, int maxNCol);
+
+/** De-allocate the working struct used by utility_cslslv() */
+void utility_cslslv_destroy(void ** const phWork);
 
 /**
  * Linear solver for HERMITIAN positive-definate 'A': single precision complex,
@@ -1151,13 +1453,17 @@ void utility_sslslv(/* Input Arguments */
  *     X = linsolve(A,B, opts); where, AX = B, and 'A' is a hermition matrix
  * \endcode
  *
- * @param[in]  A    Input square SYMMETRIC positive-definate matrix; FLAT: dim x dim
- * @param[in]  dim  Dimensions for square matrix 'A'
- * @param[in]  B    Right hand side matrix; FLAT: dim x nCol
- * @param[in]  nCol Number of columns in right hand side matrix
- * @param[out] X    The solution; FLAT: dim x nCol
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square SYMMETRIC positive-definate matrix;
+ *                   FLAT: dim x dim
+ * @param[in]  dim   Dimensions for square matrix 'A'
+ * @param[in]  B     Right hand side matrix; FLAT: dim x nCol
+ * @param[in]  nCol  Number of columns in right hand side matrix
+ * @param[out] X     The solution; FLAT: dim x nCol
  */
 void utility_cslslv(/* Input Arguments */
+                    void* const hWork,
                     const float_complex* A,
                     const int dim,
                     float_complex* B,
@@ -1171,17 +1477,32 @@ void utility_cslslv(/* Input Arguments */
 /* ========================================================================== */
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_spinv()
+ *
+ * @param[in] phWork  (&) address of work handle, to give to utility_spinv()
+ * @param[in] maxDim1 (&) max size 'dim1' can be when calling utility_spinv()
+ * @param[in] maxDim2 (&) max size 'sim2' can be when calling utility_spinv()
+ */
+void utility_spinv_create(void ** const phWork, int maxDim1, int maxDim2);
+
+/** De-allocate the working struct used by utility_spinv() */
+void utility_spinv_destroy(void ** const phWork);
+
+/**
  * General matrix pseudo-inverse (the svd way): single precision, i.e.
  * \code{.m}
  *     B = pinv(A)
  * \endcode
  *
- * @param[in]  A    Input matrix; FLAT: dim1 x dim2
- * @param[in]  dim1 Number of rows in 'A' / columns in 'B'
- * @param[in]  dim2 Number of columns in 'A' / rows in 'B'
- * @param[out] B    The solution; FLAT: dim2 x dim1
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input matrix; FLAT: dim1 x dim2
+ * @param[in]  dim1  Number of rows in 'A' / columns in 'B'
+ * @param[in]  dim2  Number of columns in 'A' / rows in 'B'
+ * @param[out] B     The solution; FLAT: dim2 x dim1
  */
 void utility_spinv(/* Input Arguments */
+                   void* const hWork,
                    const float* A,
                    const int dim1,
                    const int dim2,
@@ -1189,17 +1510,32 @@ void utility_spinv(/* Input Arguments */
                    float* B);
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_cpinv()
+ *
+ * @param[in] phWork  (&) address of work handle, to give to utility_cpinv()
+ * @param[in] maxDim1 (&) max size 'dim1' can be when calling utility_cpinv()
+ * @param[in] maxDim2 (&) max size 'sim2' can be when calling utility_cpinv()
+ */
+void utility_cpinv_create(void ** const phWork, int maxDim1, int maxDim2);
+
+/** De-allocate the working struct used by utility_cpinv() */
+void utility_cpinv_destroy(void ** const phWork);
+
+/**
  * General matrix pseudo-inverse (the svd way): single precision complex, i.e.
  * \code{.m}
  *     B = pinv(A)
  * \endcode
  *
- * @param[in]  A    Input matrix; FLAT: dim1 x dim2
- * @param[in]  dim1 Number of rows in 'A' / columns in 'B'
- * @param[in]  dim2 Number of columns in 'A' / rows in 'B'
- * @param[out] B    The solution; FLAT: dim2 x dim1
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input matrix; FLAT: dim1 x dim2
+ * @param[in]  dim1  Number of rows in 'A' / columns in 'B'
+ * @param[in]  dim2  Number of columns in 'A' / rows in 'B'
+ * @param[out] B     The solution; FLAT: dim2 x dim1
  */
 void utility_cpinv(/* Input Arguments */
+                   void* const hWork,
                    const float_complex* A,
                    const int dim1,
                    const int dim2,
@@ -1207,17 +1543,32 @@ void utility_cpinv(/* Input Arguments */
                    float_complex* B);
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_dpinv()
+ *
+ * @param[in] phWork  (&) address of work handle, to give to utility_dpinv()
+ * @param[in] maxDim1 (&) max size 'dim1' can be when calling utility_dpinv()
+ * @param[in] maxDim2 (&) max size 'sim2' can be when calling utility_dpinv()
+ */
+void utility_dpinv_create(void ** const phWork, int maxDim1, int maxDim2);
+
+/** De-allocate the working struct used by utility_dpinv() */
+void utility_dpinv_destroy(void ** const phWork);
+
+/**
  * General matrix pseudo-inverse (the svd way): double precision, i.e.
  * \code{.m}
  *     B = pinv(A)
  * \endcode
  *
- * @param[in]  A    Input matrix; FLAT: dim1 x dim2
- * @param[in]  dim1 Number of rows in 'A' / columns in 'B'
- * @param[in]  dim2 Number of columns in 'A' / rows in 'B'
- * @param[out] B    The solution; FLAT: dim2 x dim1
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input matrix; FLAT: dim1 x dim2
+ * @param[in]  dim1  Number of rows in 'A' / columns in 'B'
+ * @param[in]  dim2  Number of columns in 'A' / rows in 'B'
+ * @param[out] B     The solution; FLAT: dim2 x dim1
  */
 void utility_dpinv(/* Input Arguments */
+                   void* const hWork,
                    const double* A,
                    const int dim1,
                    const int dim2,
@@ -1225,17 +1576,32 @@ void utility_dpinv(/* Input Arguments */
                    double* B);
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_zpinv()
+ *
+ * @param[in] phWork  (&) address of work handle, to give to utility_zpinv()
+ * @param[in] maxDim1 (&) max size 'dim1' can be when calling utility_zpinv()
+ * @param[in] maxDim2 (&) max size 'sim2' can be when calling utility_zpinv()
+ */
+void utility_zpinv_create(void ** const phWork, int maxDim1, int maxDim2);
+
+/** De-allocate the working struct used by utility_zpinv() */
+void utility_zpinv_destroy(void ** const phWork);
+
+/**
  * General matrix pseudo-inverse (the svd way): double precision complex, i.e.
  * \code{.m}
  *     B = pinv(A)
  * \endcode
  *
- * @param[in]  A    Input matrix; FLAT: dim1 x dim2
- * @param[in]  dim1 Number of rows in 'A' / columns in 'B'
- * @param[in]  dim2 Number of columns in 'A' / rows in 'B'
- * @param[out] B    The solution; FLAT: dim2 x dim1
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input matrix; FLAT: dim1 x dim2
+ * @param[in]  dim1  Number of rows in 'A' / columns in 'B'
+ * @param[in]  dim2  Number of columns in 'A' / rows in 'B'
+ * @param[out] B     The solution; FLAT: dim2 x dim1
  */
 void utility_zpinv(/* Input Arguments */
+                   void* const hWork,
                    const double_complex* A,
                    const int dim1,
                    const int dim2,
@@ -1248,22 +1614,47 @@ void utility_zpinv(/* Input Arguments */
 /* ========================================================================== */
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_schol()
+ *
+ * @param[in] phWork (&) address of work handle, to give to utility_schol()
+ * @param[in] maxDim (&) max size 'dim' can be when calling utility_schol()
+ */
+void utility_schol_create(void ** const phWork, int maxDim);
+
+/** De-allocate the working struct used by utility_schol() */
+void utility_schol_destroy(void ** const phWork);
+
+/**
  * Cholesky factorisation of a symmetric matrix positive-definate matrix: single
  * precision, i.e.
  * \code{.m}
  *     X = chol(A); where A = X.'*X
  * \endcode
  *
- * @param[in]  A   Input square symmetric positive-definate matrix;
- *                 FLAT: dim x dim
- * @param[in]  dim Number of rows/colums in 'A'
- * @param[out] X   The solution; FLAT: dim x dim
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square symmetric positive-definate matrix;
+ *                   FLAT: dim x dim
+ * @param[in]  dim   Number of rows/colums in 'A'
+ * @param[out] X     The solution; FLAT: dim x dim
  */
 void utility_schol(/* Input Arguments */
+                   void* const hWork,
                    const float* A,
                    const int dim,
                    /* Output Arguments */
                    float* X);
+
+/**
+ * (Optional) Pre-allocate the working struct used by utility_cchol()
+ *
+ * @param[in] phWork (&) address of work handle, to give to utility_cchol()
+ * @param[in] maxDim (&) max size 'dim' can be when calling utility_cchol()
+ */
+void utility_cchol_create(void ** const phWork, int maxDim);
+
+/** De-allocate the working struct used by utility_cchol() */
+void utility_cchol_destroy(void ** const phWork);
 
 /**
  * Cholesky factorisation of a hermitian positive-definate matrix: single
@@ -1272,12 +1663,15 @@ void utility_schol(/* Input Arguments */
  *     X = chol(A); where A = X.'*X
  * \endcode
  *
- * @param[in]  A   Input square symmetric positive-definate matrix;
- *                 FLAT: dim x dim
- * @param[in]  dim Number of rows/colums in 'A'
- * @param[out] X   The solution; FLAT: dim x dim
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square symmetric positive-definate matrix;
+ *                   FLAT: dim x dim
+ * @param[in]  dim   Number of rows/colums in 'A'
+ * @param[out] X     The solution; FLAT: dim x dim
  */
 void utility_cchol(/* Input Arguments */
+                   void* const hWork,
                    const float_complex* A,
                    const int dim,
                    /* Output Arguments */
@@ -1289,17 +1683,42 @@ void utility_cchol(/* Input Arguments */
 /* ========================================================================== */
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_sdet()
+ *
+ * @param[in] phWork (&) address of work handle, to give to utility_sdet()
+ * @param[in] maxN   (&) max size 'N' can be when calling utility_sdet()
+ */
+void utility_sdet_create(void ** const phWork, int maxN);
+
+/** De-allocate the working struct used by utility_sdet() */
+void utility_sdet_destroy(void ** const phWork);
+
+/**
  * Determinant of a Matrix, single precision, i,e.
  * \code{.m}
  *     d = det(A);
  * \endcode
  *
- * @param[in]  A Input square matrix; FLAT: N x N
- * @param[in]  N size of matrix
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square matrix; FLAT: N x N
+ * @param[in]  N     size of matrix
  * @returns determinant
  */
-float utility_sdet(float* A,
+float utility_sdet(void* const hWork,
+                   float* A,
                    int N);
+
+/**
+ * (Optional) Pre-allocate the working struct used by utility_ddet()
+ *
+ * @param[in] phWork (&) address of work handle, to give to utility_ddet()
+ * @param[in] maxN   (&) max size 'N' can be when calling utility_ddet()
+ */
+void utility_ddet_create(void ** const phWork, int maxN);
+
+/** De-allocate the working struct used by utility_ddet() */
+void utility_ddet_destroy(void ** const phWork);
 
 /**
  * Determinant of a Matrix, double precision, i,e.
@@ -1307,11 +1726,14 @@ float utility_sdet(float* A,
  *     d = det(A);
  * \endcode
  *
- * @param[in]  A Input square matrix; FLAT: N x N
- * @param[in]  N size of matrix
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square matrix; FLAT: N x N
+ * @param[in]  N     size of matrix
  * @returns determinant
  */
-double utility_ddet(double* A,
+double utility_ddet(void* const hWork,
+                    double* A,
                     int N);
 
     
@@ -1320,18 +1742,43 @@ double utility_ddet(double* A,
 /* ========================================================================== */
 
 /**
+ * (Optional) Pre-allocate the working struct used by utility_sinv()
+ *
+ * @param[in] phWork (&) address of work handle, to give to utility_sinv()
+ * @param[in] maxDim (&) max size 'dim' can be when calling utility_sinv()
+ */
+void utility_sinv_create(void ** const phWork, int maxDim);
+
+/** De-allocate the working struct used by utility_sinv() */
+void utility_sinv_destroy(void ** const phWork);
+
+/**
  * Matrix inversion: single precision, i.e.
  * \code{.m}
  *     B = inv(A);
  * \endcode
  *
- * @param[in]  A   Input square matrix; FLAT: dim x dim
- * @param[out] B   Inverted square matrix; FLAT: dim x dim
- * @param[in]  dim size of matrix
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square matrix; FLAT: dim x dim
+ * @param[out] B     Inverted square matrix; FLAT: dim x dim
+ * @param[in]  dim   size of matrix
  */
-void utility_sinv(float* A,
+void utility_sinv(void* const hWork,
+                  float* A,
                   float* B,
                   const int dim);
+
+/**
+ * (Optional) Pre-allocate the working struct used by utility_dinv()
+ *
+ * @param[in] phWork (&) address of work handle, to give to utility_dinv()
+ * @param[in] maxDim (&) max size 'dim' can be when calling utility_dinv()
+ */
+void utility_dinv_create(void ** const phWork, int maxDim);
+
+/** De-allocate the working struct used by utility_dinv() */
+void utility_dinv_destroy(void ** const phWork);
 
 /**
  * Matrix inversion: double precision, i.e.
@@ -1339,13 +1786,27 @@ void utility_sinv(float* A,
  *     B = inv(A);
  * \endcode
  *
- * @param[in]  A   Input square matrix; FLAT: dim x dim
- * @param[out] B   Inverted square matrix; FLAT: dim x dim
- * @param[in]  dim size of matrix
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square matrix; FLAT: dim x dim
+ * @param[out] B     Inverted square matrix; FLAT: dim x dim
+ * @param[in]  dim   size of matrix
  */
-void utility_dinv(double* A,
+void utility_dinv(void* const hWork,
+                  double* A,
                   double* B,
                   const int dim);
+
+/**
+ * (Optional) Pre-allocate the working struct used by utility_cinv()
+ *
+ * @param[in] phWork (&) address of work handle, to give to utility_cinv()
+ * @param[in] maxDim (&) max size 'dim' can be when calling utility_cinv()
+ */
+void utility_cinv_create(void ** const phWork, int maxDim);
+
+/** De-allocate the working struct used by utility_cinv() */
+void utility_cinv_destroy(void ** const phWork);
 
 /**
  * Matrix inversion: double precision complex, i.e.
@@ -1353,11 +1814,14 @@ void utility_dinv(double* A,
  *     B = inv(A);
  * \endcode
  *
- * @param[in]  A   Input square matrix; FLAT: dim x dim
- * @param[out] B   Inverted square matrix; FLAT: dim x dim
- * @param[in]  dim size of matrix
+ * @param[in]  hWork Handle for the work struct (set to NULL if not available,
+ *                   in which case memory is allocated on the fly)
+ * @param[in]  A     Input square matrix; FLAT: dim x dim
+ * @param[out] B     Inverted square matrix; FLAT: dim x dim
+ * @param[in]  dim   size of matrix
  */
-void utility_cinv(float_complex* A,
+void utility_cinv(void* const hWork,
+                  float_complex* A,
                   float_complex* B,
                   const int dim);
 

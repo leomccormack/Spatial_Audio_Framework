@@ -45,12 +45,9 @@
 #ifndef __AMBI_DEC_INTERNAL_H_INCLUDED__
 #define __AMBI_DEC_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include "ambi_dec.h" 
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "ambi_dec.h"      /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,17 +57,23 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 ) 
+#if !defined(AMBI_DEC_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define AMBI_DEC_FRAME_SIZE ( FRAME_SIZE )           /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define AMBI_DEC_FRAME_SIZE ( 128 )                  /**< Framesize, in time-domain samples */
+# endif
 #endif
-#define HOP_SIZE ( 128 )                      /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )         /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )  /* 4/8/16 */ 
-#define MAX_NUM_LOUDSPEAKERS ( MAX_NUM_OUTPUTS ) /* Maximum permitted channels for the VST standard */
-#define MIN_NUM_LOUDSPEAKERS ( 4 )            /* To help avoid traingulation errors when using AllRAD */ 
-#define NUM_DECODERS ( 2 )                    /* one for low-frequencies and another for high-frequencies */
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define HOP_SIZE ( 128 )                               /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )                  /**< Number of frequency bands */
+#define TIME_SLOTS ( AMBI_DEC_FRAME_SIZE / HOP_SIZE )  /**< Number of STFT timeslots */
+#define MAX_NUM_LOUDSPEAKERS ( MAX_NUM_OUTPUTS )       /**< Maximum permitted output channels */
+#define MIN_NUM_LOUDSPEAKERS ( 4 )                     /**< To avoid triangulation errors when using AllRAD */
+#define NUM_DECODERS ( 2 )                             /**< One for low-frequencies and another for high-frequencies */
+
+/* Checks: */
+#if (AMBI_DEC_FRAME_SIZE % HOP_SIZE != 0)
+# error "AMBI_DEC_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
 
 /* ========================================================================== */
@@ -109,7 +112,7 @@ typedef struct _ambi_dec_codecPars
     float* itds_s;                              /**< interaural-time differences for each HRIR (in seconds); N_hrirs x 1 */
     float_complex* hrtf_fb;                     /**< HRTF filterbank coefficients; nBands x nCH x N_hrirs */
     float* hrtf_fb_mag;                         /**< magnitudes of the HRTF filterbank coefficients; nBands x nCH x N_hrirs */
-    float_complex hrtf_interp[MAX_NUM_LOUDSPEAKERS][HYBRID_BANDS][NUM_EARS]; /* interpolated HRTFs */
+    float_complex hrtf_interp[MAX_NUM_LOUDSPEAKERS][HYBRID_BANDS][NUM_EARS]; /**< interpolated HRTFs */
     
     /* integration weights */
     float* weights;                             /**< grid integration weights of hrirs; N_hrirs x 1 */
@@ -123,8 +126,8 @@ typedef struct _ambi_dec_codecPars
 typedef struct _ambi_dec
 {
     /* audio buffers + afSTFT time-frequency transform handle */
-    float** SHFrameTD;                   /**< Input spherical harmonic (SH) signals in the time-domain; #MAX_NUM_SH_SIGNALS x #FRAME_SIZE */
-    float** outputFrameTD;               /**< Output loudspeaker or binaural signals in the time-domain; #MAX_NUM_LOUDSPEAKERS x #FRAME_SIZE */
+    float** SHFrameTD;                   /**< Input spherical harmonic (SH) signals in the time-domain; #MAX_NUM_SH_SIGNALS x #AMBI_DEC_FRAME_SIZE */
+    float** outputFrameTD;               /**< Output loudspeaker or binaural signals in the time-domain; #MAX_NUM_LOUDSPEAKERS x #AMBI_DEC_FRAME_SIZE */
     float_complex*** SHframeTF;          /**< Input spherical harmonic (SH) signals in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
     float_complex*** outputframeTF;      /**< Output loudspeaker signals in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_LOUDSPEAKERS x #TIME_SLOTS */
     float_complex*** binframeTF;         /**< Output binaural signals in the time-frequency domain; #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS */
@@ -141,9 +144,9 @@ typedef struct _ambi_dec
     
     /* internal variables */
     int loudpkrs_nDims;                  /**< dimensionality of the current loudspeaker set-up */
-    int new_nLoudpkrs;                   /**< if new_nLoudpkrs != nLoudpkrs, afSTFT is reinitialised */
-    int new_binauraliseLS;               /**< if new_binauraliseLS != binauraliseLS, ambi_dec is reinitialised */
-    int new_masterOrder;                 /**< if new_masterOrder != masterOrder, ambi_dec is reinitialised */
+    int new_nLoudpkrs;                   /**< if new_nLoudpkrs != nLoudpkrs, afSTFT is reinitialised  (current value will be replaced by this after next re-init) */
+    int new_binauraliseLS;               /**< if new_binauraliseLS != binauraliseLS, ambi_dec is reinitialised (current value will be replaced by this after next re-init) */
+    int new_masterOrder;                 /**< if new_masterOrder != masterOrder, ambi_dec is reinitialised (current value will be replaced by this after next re-init) */
     
     /* flags */
     PROC_STATUS procStatus;              /**< see #PROC_STATUS */
@@ -158,7 +161,7 @@ typedef struct _ambi_dec
     AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH diffEQmode[NUM_DECODERS]; /**< diffuse-field EQ approach; see #DIFFUSE_FIELD_EQ_APPROACH enum */
     float transitionFreq;                /**< transition frequency for the 2 decoders, in Hz */
     int nLoudpkrs;                       /**< number of loudspeakers/virtual loudspeakers */
-    float loudpkrs_dirs_deg[MAX_NUM_LOUDSPEAKERS][NUM_DECODERS]; /* loudspeaker directions in degrees [azi, elev] */
+    float loudpkrs_dirs_deg[MAX_NUM_LOUDSPEAKERS][NUM_DECODERS]; /**< loudspeaker directions in degrees [azi, elev] */
     int useDefaultHRIRsFLAG;             /**< 1: use default HRIRs in database, 0: use those from SOFA file */
     int enableHRIRsPreProc;              /**< flag to apply pre-processing to the currently loaded HRTFs */
     int binauraliseLS;                   /**< 1: convolve loudspeaker signals with HRTFs, 0: output loudspeaker signals */

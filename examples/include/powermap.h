@@ -15,6 +15,16 @@
  */
 
 /**
+ * @example powermap
+ * @brief A sound-field visualiser, which utilises spherical harmonic signals as
+ *        input
+ * ### Include Header
+ * powermap.h
+ * ### Source Files
+ * powermap_internal.h, powermap.c, powermap_internal.c
+ */
+
+/**
  * @file powermap.h
  * @brief A sound-field visualiser, which utilises spherical harmonic signals as
  *        input; note this code is a remnant from the work described in [1]

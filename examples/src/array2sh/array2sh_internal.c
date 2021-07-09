@@ -114,7 +114,7 @@ void array2sh_calculate_sht_matrix
     Y_mic = malloc1d(nSH*(arraySpecs->Q)*sizeof(float));
     getRSH(order, (float*)arraySpecs->sensorCoords_deg, arraySpecs->Q, Y_mic); /* nSH x Q */
     pinv_Y_mic = malloc1d( arraySpecs->Q * nSH *sizeof(float));
-    utility_spinv(Y_mic, nSH, arraySpecs->Q, pinv_Y_mic);
+    utility_spinv(NULL, Y_mic, nSH, arraySpecs->Q, pinv_Y_mic);
     pinv_Y_mic_cmplx =  malloc1d((arraySpecs->Q) * nSH *sizeof(float_complex));
     for(i=0; i<(arraySpecs->Q)*nSH; i++)
         pinv_Y_mic_cmplx[i] = cmplxf(pinv_Y_mic[i], 0.0f);

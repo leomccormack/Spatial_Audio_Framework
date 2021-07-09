@@ -15,6 +15,15 @@
  */
 
 /**
+ * @example multiconv
+ * @brief A multi-channel convolver
+ * ### Include Header
+ * multiconv.h
+ * ### Source Files
+ * multiconv_internal.h, multiconv.c, multiconv_internal.c
+ */
+
+/**
  * @file multiconv.h
  * @brief A multi-channel convolver 
  * @author Leo McCormack

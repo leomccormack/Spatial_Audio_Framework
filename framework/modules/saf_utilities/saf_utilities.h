@@ -47,13 +47,6 @@
 /*                        Macros and Global Constants                         */
 /* ========================================================================== */
 
-#ifdef SAF_DISABLE_PRINT_VERSION
-# define SAF_PRINT_VERSION_LICENSE_STRING
-#else
-/** Prints the Spatial_Audio_Framework Version and License as a string */
-# define SAF_PRINT_VERSION_LICENSE_STRING printf(SAF_VERSION_LICENSE_STRING)
-#endif
-
 /** 2 (true for most humans) */
 #define NUM_EARS 2
 
@@ -65,6 +58,12 @@
 
 /** Ensures value "a" is clamped between the "min" and "max" values */
 #define SAF_CLAMP(a,min,max) (SAF_MAX(min, SAF_MIN(max, a)))
+
+/** Boolean true */
+#define SAF_TRUE ( 1 )
+
+/** Boolean false */
+#define SAF_FALSE ( 0 )
 
 #ifndef M_PI
 /** pi constant (single precision) */
@@ -167,10 +166,17 @@
 #include "../../resources/kissFFT/kiss_fftr.h"
 #include "../../resources/kissFFT/kiss_fft.h"
 
-/* For Computing 3-D convex hulls.
+/* For computing N-dimensional convex hulls and Delaunay meshes.
  * The original source code can be found here (MIT license):
- *   https://github.com/leomccormack/convhull_3d */
+ *   https://github.com/leomccormack/convhull_3d
+ */
 #include "../../resources/convhull_3d/convhull_3d.h"
+
+/* For resampling audio and FIR filters.
+ * The original source code can be found here (BSD-3-Clause license):
+ *   https://github.com/xiph/speexdsp/
+ */
+#include "../../resources/speex_resampler/speex_resampler.h"
 
 /* For cross-platform complex number support */
 #include "saf_utility_complex.h"
@@ -181,8 +187,10 @@
 /* Filter coefficients and filterbanks (IIR/FIR) */
 #include "saf_utility_filters.h"
 
-/* Many handy linear algebra functions based on CBLAS/LAPACK, and some based on
- * optimised proprietary Intel MKL and Apple Accelerate routines */
+/* Many handy linear algebra functions based on CBLAS/LAPACK. Additionally, some
+ * optimised proprietary Intel MKL and Apple Accelerate routines are employed
+ * (for e.g. vector-vector products, addition etc.) if available; otherwise
+ * reverting to default implementations. */
 #include "saf_utility_veclib.h"
 
 /* For computing spherical/cylindrical Bessel and Hankel functions and their

@@ -17,7 +17,7 @@
 /**
  * @file saf_utility_fft.c
  * @ingroup Utilities
- * @brief Wrappers for optimised fast Fourier transform (FFT) routines
+ * @brief Wrappers for optimised discrete/fast Fourier transform (FFT) routines
  *
  * @note If none of the supported optimised FFT implementations are linked, then
  *       saf_fft employs the highly respectable KissFFT (BSD 3-Clause License):
@@ -28,7 +28,7 @@
  *       to add it and submit a pull request :-)
  *
  * ## Dependencies
- *   Intel MKL, Intel IPP, Apple Accelerate, or KissFFT (included in SAF)
+ *   Intel MKL, Intel IPP, Apple Accelerate, FFTW, or KissFFT (included in SAF)
  *
  * @author Leo McCormack
  * @date 06.04.2019
@@ -36,13 +36,19 @@
 
 #include "saf_utilities.h"
 #include "saf_externals.h"
+#ifdef SAF_USE_APPLE_ACCELERATE
+# include "AvailabilityVersions.h"
+# ifdef __MAC_12_0
+//#  define SAF_USE_INTERLEAVED_VDSP /**< New interleaved implementation as of macOS 12.0+. UNFINISHED+UNTESTED! */
+# endif
+#endif
 
 /** Data structure for short-time Fourier transform */
 typedef struct _saf_stft_data {
     int winsize, hopsize, fftsize, nCHin, nCHout, nBands;
     void* hFFT;
     int numOvrlpAddBlocks, bufferlength, nPrevHops;
-    float* window, *insig_win, *outsig_win;
+    float* window, *insig_rect_win, *insig_win, *outsig_win;
     float** overlapAddBuffer;
     float*** prev_inhops;
     float_complex* tmp_fft;
@@ -55,7 +61,14 @@ typedef struct _saf_rfft_data {
     int N;
     float  Scale;
     int useKissFFT_FLAG;
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+    fftwf_plan p_fwd;
+    fftwf_plan p_bwd;
+    float* fwd_bufferTD;
+    float* bwd_bufferTD;
+    fftwf_complex* fwd_bufferFD;
+    fftwf_complex* bwd_bufferFD;
+#elif defined(SAF_USE_INTEL_IPP)
     int useIPPfft_FLAG;
     int specSize, specBufferSize, bufferSize, log2n;
     IppsDFTSpec_R_32f* hDFTspec;
@@ -63,12 +76,17 @@ typedef struct _saf_rfft_data {
     Ipp8u* memSpec;
     Ipp8u* buffer;
     Ipp8u* memInit;
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
+# ifdef SAF_USE_INTERLEAVED_VDSP
+    vDSP_DFT_Interleaved_Setup DFT_fwd;
+    vDSP_DFT_Interleaved_Setup DFT_bwd;
+# else
     vDSP_DFT_Setup DFT_fwd;
     vDSP_DFT_Setup DFT_bwd;
     DSPSplitComplex VDSP_split;
     DSPSplitComplex VDSP_split_tmp;
-#elif defined(INTEL_MKL_VERSION)
+# endif
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     DFTI_DESCRIPTOR_HANDLE MKL_FFT_Handle;
     MKL_LONG input_strides[2], output_strides[2], Status;
 #endif
@@ -83,7 +101,14 @@ typedef struct _saf_fft_data {
     int N;
     float  Scale;
     int useKissFFT_FLAG;
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+    fftwf_plan p_fwd;
+    fftwf_plan p_bwd;
+    fftwf_complex* fwd_bufferTD;
+    fftwf_complex* bwd_bufferTD;
+    fftwf_complex* fwd_bufferFD;
+    fftwf_complex* bwd_bufferFD;
+#elif defined(SAF_USE_INTEL_IPP)
     int useIPPfft_FLAG;
     int specSize, specBufferSize, bufferSize, log2n;
     IppsDFTSpec_C_32fc* hDFTspec;
@@ -91,12 +116,17 @@ typedef struct _saf_fft_data {
     Ipp8u* memSpec;
     Ipp8u* buffer;
     Ipp8u* memInit;
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
+# ifdef SAF_USE_INTERLEAVED_VDSP
+    vDSP_DFT_Interleaved_Setup DFT_fwd;
+    vDSP_DFT_Interleaved_Setup DFT_bwd;
+# else
     vDSP_DFT_Setup DFT_fwd;
     vDSP_DFT_Setup DFT_bwd;
     DSPSplitComplex VDSP_split;
     DSPSplitComplex VDSP_split_tmp;
-#elif defined(INTEL_MKL_VERSION)
+# endif
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     DFTI_DESCRIPTOR_HANDLE MKL_FFT_Handle;
     MKL_LONG Status;
 #endif
@@ -270,6 +300,7 @@ void saf_stft_create
     /* set-up FFT */
     h->fftsize = 2*winsize;
     saf_rfft_create(&(h->hFFT), h->fftsize);
+    h->insig_rect_win = calloc1d(h->fftsize, sizeof(float));
     h->insig_win = calloc1d(h->fftsize, sizeof(float));
 
     /* Intermediate buffers */
@@ -305,6 +336,7 @@ void saf_stft_destroy
         saf_rfft_destroy(&(h->hFFT));
         free(h->window);
         free(h->overlapAddBuffer);
+        free(h->insig_rect_win);
         free(h->insig_win);
         free(h->tmp_fft);
         free(h->prev_inhops);
@@ -335,16 +367,16 @@ void saf_stft_forward
         for (t = 0; t<nHops; t++){
             for(ch=0; ch < h->nCHin; ch++){
                 /* Window input signal (Rectangular) */
-                memcpy(h->insig_win, &dataTD[ch][t*(h->hopsize)], h->winsize*sizeof(float));
+                memcpy(h->insig_rect_win, &dataTD[ch][t*(h->hopsize)], h->winsize*sizeof(float));
 
                 /* Apply FFT and copy data to output dataFD buffer */
                 switch(h->FDformat){
                     case SAF_STFT_TIME_CH_BANDS:
-                        saf_rfft_forward(h->hFFT, h->insig_win, dataFD[t][ch]);
+                        saf_rfft_forward(h->hFFT, h->insig_rect_win, dataFD[t][ch]);
                         break;
 
                     case SAF_STFT_BANDS_CH_TIME:
-                        saf_rfft_forward(h->hFFT, h->insig_win, h->tmp_fft);
+                        saf_rfft_forward(h->hFFT, h->insig_rect_win, h->tmp_fft);
                         for(band=0; band<h->nBands; band++)
                             dataFD[band][ch][t] = h->tmp_fft[band];
                         break;
@@ -360,13 +392,13 @@ void saf_stft_forward
                 hIdx = 0;
                 /* Window input signal */
                 while (hIdx < h->winsize){
-                    memcpy(&(h->insig_win[hIdx]), h->prev_inhops[0][ch], h->hopsize*sizeof(float));
+                    memcpy(&(h->insig_rect_win[hIdx]), h->prev_inhops[0][ch], h->hopsize*sizeof(float));
                     for(j=0; j< h->nPrevHops-1; j++)
                         memcpy(h->prev_inhops[j][ch], h->prev_inhops[j+1][ch], h->hopsize*sizeof(float));
                     memcpy(h->prev_inhops[h->nPrevHops-1][ch], &dataTD[ch][idx], h->hopsize*sizeof(float));
                     hIdx += h->hopsize;
                 }
-                utility_svvmul(h->insig_win, h->window, h->winsize, h->insig_win);
+                utility_svvmul(h->insig_rect_win, h->window, h->winsize, h->insig_win);
 
                 /* Apply FFT and copy data to output dataFD buffer */
                 switch(h->FDformat){
@@ -403,10 +435,10 @@ void saf_stft_backward
     for (t = 0; t<nHops; t++){
         for(ch=0; ch < h->nCHout; ch++){
             /* Shift data down */
-            memcpy(h->overlapAddBuffer[ch], &h->overlapAddBuffer[ch][h->hopsize], (h->numOvrlpAddBlocks-1)*(h->hopsize)*sizeof(float));
+            memcpy(h->overlapAddBuffer[ch], h->overlapAddBuffer[ch] + h->hopsize, (h->numOvrlpAddBlocks-1)*(h->hopsize)*sizeof(float));
 
             /* Append with zeros */
-            memset(&h->overlapAddBuffer[ch][(h->numOvrlpAddBlocks-1)*(h->hopsize)], 0, h->hopsize*sizeof(float));
+            memset(h->overlapAddBuffer[ch] + (h->numOvrlpAddBlocks-1)*(h->hopsize), 0, h->hopsize*sizeof(float));
 
             /* Apply inverse FFT */
             switch(h->FDformat){
@@ -420,9 +452,9 @@ void saf_stft_backward
                     break;
             }
 
-            /* Overlap-Add and copy 1:hopsize to output buffer */
-            utility_svvadd(h->overlapAddBuffer[ch], h->outsig_win, h->fftsize, h->overlapAddBuffer[ch]);
-            memcpy(&dataTD[ch][t*(h->hopsize)], h->overlapAddBuffer[ch], h->hopsize*sizeof(float)); 
+            /* Overlap-Add 1:hopsize to output buffer */
+            cblas_saxpy(h->fftsize, 1.0f, h->outsig_win, 1, h->overlapAddBuffer[ch], 1);
+            memcpy(dataTD[ch] + t*(h->hopsize), h->overlapAddBuffer[ch], h->hopsize*sizeof(float));
         }
     }
 }
@@ -492,7 +524,14 @@ void saf_rfft_create
     h->Scale = 1.0f/(float)N; /* output scaling after ifft */
     saf_assert(N>=2 && ISEVEN(N), "Only even (non zero) FFT sizes are supported");
     h->useKissFFT_FLAG = 0;
-#if defined(SAF_USE_INTEL_IPP) 
+#if defined(SAF_USE_FFTW)
+    h->fwd_bufferTD = malloc1d(h->N*sizeof(float));
+    h->bwd_bufferTD = malloc1d(h->N*sizeof(float));
+    h->fwd_bufferFD = malloc1d((h->N/2+1)*sizeof(fftwf_complex));
+    h->bwd_bufferFD = malloc1d((h->N/2+1)*sizeof(fftwf_complex));
+    h->p_fwd = fftwf_plan_dft_r2c_1d(h->N, h->fwd_bufferTD, h->fwd_bufferFD, FFTW_ESTIMATE);
+    h->p_bwd = fftwf_plan_dft_c2r_1d(h->N, h->bwd_bufferFD, h->bwd_bufferTD, FFTW_ESTIMATE);
+#elif defined(SAF_USE_INTEL_IPP)
     /* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */
     if(ceilf(log2f(N)) == floorf(log2f(N))){
         h->useIPPfft_FLAG = 1;
@@ -514,20 +553,27 @@ void saf_rfft_create
     }
     if (h->memInit)
         ippFree(h->memInit);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
+# ifdef SAF_USE_INTERLEAVED_VDSP
+    h->DFT_fwd = vDSP_DFT_Interleaved_CreateSetup(0, N, vDSP_DFT_FORWARD, vDSP_DFT_Interleaved_RealtoComplex);
+    h->DFT_bwd = vDSP_DFT_Interleaved_CreateSetup(0, N, vDSP_DFT_INVERSE, vDSP_DFT_Interleaved_RealtoComplex);
+# else
     h->DFT_fwd = vDSP_DFT_zrop_CreateSetup(0, N, vDSP_DFT_FORWARD);
     h->DFT_bwd = vDSP_DFT_zrop_CreateSetup(0, N, vDSP_DFT_INVERSE);
+# endif
     if(h->DFT_fwd==0 || h->DFT_bwd==0) /* specified N not supported by vDSP, so must use the default */
         h->useKissFFT_FLAG = 1;
     else{
         /* Note that DFT lengths must satisfy: f * 2.^g, where f is 1, 3, 5, or 15, and g >=4 */
         saf_assert(h->DFT_fwd!=0 && h->DFT_bwd!=0, "Failed to create vDSP DFT");
+# ifndef SAF_USE_INTERLEAVED_VDSP
         h->VDSP_split_tmp.realp = malloc1d((h->N/2)*sizeof(float));
         h->VDSP_split_tmp.imagp = malloc1d((h->N/2)*sizeof(float));
         h->VDSP_split.realp = malloc1d((h->N/2)*sizeof(float));
         h->VDSP_split.imagp = malloc1d((h->N/2)*sizeof(float));
+# endif
     }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     h->MKL_FFT_Handle = 0;
     h->Status = DftiCreateDescriptor(&(h->MKL_FFT_Handle), DFTI_SINGLE, DFTI_REAL, 1, h->N); /* 1-D, single precision, real_input->fft->half_complex->ifft->real_output */
     h->Status = DftiSetValue(h->MKL_FFT_Handle, DFTI_PLACEMENT, DFTI_NOT_INPLACE); /* Not inplace, i.e. output has its own dedicated memory */
@@ -557,7 +603,14 @@ void saf_rfft_destroy
 {
     saf_rfft_data *h = (saf_rfft_data*)(*phFFT);
     if(h!=NULL){
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+        free(h->fwd_bufferTD);
+        free(h->bwd_bufferTD);
+        free(h->fwd_bufferFD);
+        free(h->bwd_bufferFD);
+        fftwf_destroy_plan(h->p_bwd);
+        fftwf_destroy_plan(h->p_fwd);
+#elif defined(SAF_USE_INTEL_IPP)
         if(h->useIPPfft_FLAG){
             if(h->memSpec)
                 ippFree(h->memSpec);
@@ -568,16 +621,21 @@ void saf_rfft_destroy
         }
         if(h->buffer)
             ippFree(h->buffer);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
         if(!h->useKissFFT_FLAG){
+# ifdef SAF_USE_INTERLEAVED_VDSP
+            vDSP_DFT_Interleaved_DestroySetup(h->DFT_fwd);
+            vDSP_DFT_Interleaved_DestroySetup(h->DFT_bwd);
+# else
             vDSP_DFT_DestroySetup(h->DFT_fwd);
             vDSP_DFT_DestroySetup(h->DFT_bwd);
             free(h->VDSP_split_tmp.realp);
             free(h->VDSP_split_tmp.imagp);
             free(h->VDSP_split.realp);
             free(h->VDSP_split.imagp);
+# endif
         }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
         h->Status = DftiFreeDescriptor(&(h->MKL_FFT_Handle));
 #endif
         if(h->useKissFFT_FLAG){
@@ -599,13 +657,20 @@ void saf_rfft_forward
 {
     saf_rfft_data *h = (saf_rfft_data*)(hFFT);
 
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+    cblas_scopy(h->N, inputTD, 1, h->fwd_bufferTD, 1);
+    fftwf_execute(h->p_fwd);
+    cblas_ccopy(h->N/2+1, h->fwd_bufferFD, 1, outputFD, 1);
+#elif defined(SAF_USE_INTEL_IPP)
     if(h->useIPPfft_FLAG)
         ippsFFTFwd_RToCCS_32f((Ipp32f*)inputTD, (Ipp32f*)outputFD, h->hFFTspec, h->buffer);
     else
         ippsDFTFwd_RToCCS_32f((Ipp32f*)inputTD, (Ipp32f*)outputFD, h->hDFTspec, h->buffer);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     if(!h->useKissFFT_FLAG){
+# ifdef SAF_USE_INTERLEAVED_VDSP
+        saf_print_error("Not implemented yet");
+# else
         vDSP_ctoz((DSPComplex*)inputTD, 2, &(h->VDSP_split_tmp), 1, (h->N)/2);
         vDSP_DFT_Execute(h->DFT_fwd, h->VDSP_split_tmp.realp, h->VDSP_split_tmp.imagp, h->VDSP_split.realp, h->VDSP_split.imagp);
         /* DC */
@@ -618,9 +683,10 @@ void saf_rfft_forward
         /* Note: the output is scaled by 2, because vDSP_fft automatically compensates for the loss of energy
          * when removing the symmetric/conjugate (N/2+2:N) bins. However, this is dumb... so the 2x scaling
          * is removed here; so it has parity with the other FFT implementations supported by SAF. */
+# endif
         cblas_sscal(2*(h->N/2+1), 0.5f, (float*)outputFD, 1);
     }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     h->Status = DftiComputeForward(h->MKL_FFT_Handle, inputTD, outputFD);
 #endif
     if(h->useKissFFT_FLAG)
@@ -636,13 +702,21 @@ void saf_rfft_backward
 {
     saf_rfft_data *h = (saf_rfft_data*)(hFFT); 
     
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+    cblas_ccopy(h->N/2+1, inputFD, 1, h->bwd_bufferFD, 1);
+    fftwf_execute(h->p_bwd);
+    cblas_scopy(h->N, h->bwd_bufferTD, 1, outputTD, 1);
+    cblas_sscal(h->N, h->Scale, outputTD, 1);
+#elif defined(SAF_USE_INTEL_IPP)
     if(h->useIPPfft_FLAG)
         ippsFFTInv_CCSToR_32f((Ipp32f*)inputFD, (Ipp32f*)outputTD, h->hFFTspec, h->buffer);
     else
         ippsDFTInv_CCSToR_32f((Ipp32f*)inputFD, (Ipp32f*)outputTD, h->hDFTspec, h->buffer);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     if(!h->useKissFFT_FLAG){
+# ifdef SAF_USE_INTERLEAVED_VDSP
+        saf_print_error("Not implemented yet");
+# else
         h->VDSP_split_tmp.realp[0] = crealf(inputFD[0]);
         h->VDSP_split_tmp.imagp[0] = crealf(inputFD[h->N/2]);
         cblas_scopy(h->N/2-1, &((float*)(inputFD))[2], 2, &h->VDSP_split_tmp.realp[1], 1);
@@ -650,8 +724,9 @@ void saf_rfft_backward
         vDSP_DFT_Execute(h->DFT_bwd, h->VDSP_split_tmp.realp, h->VDSP_split_tmp.imagp, h->VDSP_split.realp, h->VDSP_split.imagp);
         vDSP_ztoc(&(h->VDSP_split), 1, (DSPComplex*)outputTD, 2, (h->N)/2);
         vDSP_vsmul(outputTD, 1, &(h->Scale), outputTD, 1, h->N);
+# endif
     }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     h->Status = DftiComputeBackward(h->MKL_FFT_Handle, inputFD, outputTD);
 #endif
     if(h->useKissFFT_FLAG){
@@ -677,7 +752,14 @@ void saf_fft_create
     h->N = N;
     h->Scale = 1.0f/(float)N; /* output scaling after ifft */
     saf_assert(N>=2, "Only even (non zero) FFT sizes are supported");
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+    h->fwd_bufferTD = malloc1d(h->N*sizeof(fftwf_complex));
+    h->bwd_bufferTD = malloc1d(h->N*sizeof(fftwf_complex));
+    h->fwd_bufferFD = malloc1d(h->N*sizeof(fftwf_complex));
+    h->bwd_bufferFD = malloc1d(h->N*sizeof(fftwf_complex));
+    h->p_fwd = fftwf_plan_dft_1d(h->N, h->fwd_bufferTD, h->fwd_bufferFD, FFTW_FORWARD,  FFTW_ESTIMATE);
+    h->p_bwd = fftwf_plan_dft_1d(h->N, h->bwd_bufferFD, h->bwd_bufferTD, FFTW_BACKWARD, FFTW_ESTIMATE);
+#elif defined(SAF_USE_INTEL_IPP)
     /* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */
     if(ceilf(log2f(N)) == floorf(log2f(N))){
         h->useIPPfft_FLAG = 1;
@@ -699,20 +781,27 @@ void saf_fft_create
     }
     if (h->memInit)
         ippFree(h->memInit);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
+# ifdef SAF_USE_INTERLEAVED_VDSP
+    h->DFT_fwd = vDSP_DFT_Interleaved_CreateSetup(0, N, vDSP_DFT_FORWARD, vDSP_DFT_Interleaved_RealtoComplex);
+    h->DFT_bwd = vDSP_DFT_Interleaved_CreateSetup(0, N, vDSP_DFT_INVERSE, vDSP_DFT_Interleaved_RealtoComplex);
+# else
     h->DFT_fwd = vDSP_DFT_zop_CreateSetup(0, N, vDSP_DFT_FORWARD);
     h->DFT_bwd = vDSP_DFT_zop_CreateSetup(0, N, vDSP_DFT_INVERSE);
+# endif
     if(h->DFT_fwd==0 || h->DFT_bwd==0) /* specified N not supported by vDSP, so must use the default */
         h->useKissFFT_FLAG = 1;
     else{
         /* Note that DFT lengths must satisfy: f * 2.^g, where f is 1, 3, 5, or 15, and g >=3 */
         saf_assert(h->DFT_fwd!=0 && h->DFT_bwd!=0, "Failed to create vDSP DFT");
+# ifndef SAF_USE_INTERLEAVED_VDSP
         h->VDSP_split_tmp.realp = malloc1d((h->N)*sizeof(float));
         h->VDSP_split_tmp.imagp = malloc1d((h->N)*sizeof(float));
         h->VDSP_split.realp = malloc1d((h->N)*sizeof(float));
         h->VDSP_split.imagp = malloc1d((h->N)*sizeof(float));
+# endif
     }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     h->MKL_FFT_Handle = 0;
     h->Status = DftiCreateDescriptor( &(h->MKL_FFT_Handle), DFTI_SINGLE,
                                   DFTI_COMPLEX, 1, h->N); /* 1-D, single precision, complex_input_td->fft->complex_input_fd->ifft->complex_output_td */
@@ -740,7 +829,14 @@ void saf_fft_destroy
     saf_fft_data *h = (saf_fft_data*)(*phFFT);
     
     if(h!=NULL){
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+        free(h->fwd_bufferTD);
+        free(h->bwd_bufferTD);
+        free(h->fwd_bufferFD);
+        free(h->bwd_bufferFD);
+        fftwf_destroy_plan(h->p_bwd);
+        fftwf_destroy_plan(h->p_fwd);
+#elif defined(SAF_USE_INTEL_IPP)
         if(h->useIPPfft_FLAG){
             if(h->memSpec)
                 ippFree(h->memSpec);
@@ -751,16 +847,21 @@ void saf_fft_destroy
         }
         if(h->buffer)
             ippFree(h->buffer);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
         if(!h->useKissFFT_FLAG){
+# ifdef SAF_USE_INTERLEAVED_VDSP
+            vDSP_DFT_Interleaved_DestroySetup(h->DFT_fwd);
+            vDSP_DFT_Interleaved_DestroySetup(h->DFT_bwd);
+# else
             vDSP_DFT_DestroySetup(h->DFT_fwd);
             vDSP_DFT_DestroySetup(h->DFT_bwd);
             free(h->VDSP_split_tmp.realp);
             free(h->VDSP_split_tmp.imagp);
             free(h->VDSP_split.realp);
             free(h->VDSP_split.imagp);
+# endif
         }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
         h->Status = DftiFreeDescriptor(&(h->MKL_FFT_Handle));
 #endif
         if(h->useKissFFT_FLAG){
@@ -782,20 +883,28 @@ void saf_fft_forward
 {
     saf_fft_data *h = (saf_fft_data*)(hFFT);
     
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_FFTW)
+    cblas_ccopy(h->N, inputTD, 1, h->fwd_bufferTD, 1);
+    fftwf_execute(h->p_fwd);
+    cblas_ccopy(h->N, h->fwd_bufferFD, 1, outputFD, 1);
+#elif defined(SAF_USE_INTEL_IPP)
     if(h->useIPPfft_FLAG)
         ippsFFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h->hFFTspec, h->buffer);
     else
         ippsDFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h->hDFTspec, h->buffer);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     if(!h->useKissFFT_FLAG){
+# ifdef SAF_USE_INTERLEAVED_VDSP
+        saf_print_error("Not implemented yet");
+# else
         cblas_scopy(h->N, &((float*)(inputTD))[0], 2, h->VDSP_split_tmp.realp, 1);
         cblas_scopy(h->N, &((float*)(inputTD))[1], 2, h->VDSP_split_tmp.imagp, 1);
         vDSP_DFT_Execute(h->DFT_fwd, h->VDSP_split_tmp.realp, h->VDSP_split_tmp.imagp, h->VDSP_split.realp, h->VDSP_split.imagp);
         cblas_scopy(h->N, h->VDSP_split.realp, 1, &((float*)(outputFD))[0], 2);
         cblas_scopy(h->N, h->VDSP_split.imagp, 1, &((float*)(outputFD))[1], 2);
+# endif
     }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     h->Status = DftiComputeForward(h->MKL_FFT_Handle, inputTD, outputFD);
 #endif
     if(h->useKissFFT_FLAG)
@@ -810,25 +919,35 @@ void saf_fft_backward
 )
 {
     saf_fft_data *h = (saf_fft_data*)(hFFT);
-#if defined(SAF_USE_INTEL_IPP)
+
+#if defined(SAF_USE_FFTW)
+    cblas_ccopy(h->N, inputFD, 1, h->bwd_bufferFD, 1);
+    fftwf_execute(h->p_bwd);
+    cblas_ccopy(h->N, h->bwd_bufferTD, 1, outputTD, 1);
+    cblas_sscal(/*re+im*/2 * h->N, h->Scale, (float*)outputTD, 1);
+#elif defined(SAF_USE_INTEL_IPP)
     if(h->useIPPfft_FLAG)
         ippsFFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h->hFFTspec, h->buffer);
     else
         ippsDFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h->hDFTspec, h->buffer);
-#elif defined(__ACCELERATE__)
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     if(!h->useKissFFT_FLAG){
+# ifdef SAF_USE_INTERLEAVED_VDSP
+        saf_print_error("Not implemented yet");
+# else
         cblas_scopy(h->N, &((float*)(inputFD))[0], 2, h->VDSP_split_tmp.realp, 1);
         cblas_scopy(h->N, &((float*)(inputFD))[1], 2, h->VDSP_split_tmp.imagp, 1);
         vDSP_DFT_Execute(h->DFT_bwd, h->VDSP_split_tmp.realp, h->VDSP_split_tmp.imagp, h->VDSP_split.realp, h->VDSP_split.imagp);
         cblas_scopy(h->N, h->VDSP_split.realp, 1, &((float*)(outputTD))[0], 2);
         cblas_scopy(h->N, h->VDSP_split.imagp, 1, &((float*)(outputTD))[1], 2);
-        cblas_sscal(2*(h->N), 1.0f/(float)(h->N), (float*)outputTD, 1);
+        cblas_sscal(/*re+im*/2*(h->N), 1.0f/(float)(h->N), (float*)outputTD, 1);
+# endif
     }
-#elif defined(INTEL_MKL_VERSION)
+#elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     h->Status = DftiComputeBackward(h->MKL_FFT_Handle, inputFD, outputTD);
 #endif
     if(h->useKissFFT_FLAG){
         kiss_fft(h->kissFFThandle_bkw, (kiss_fft_cpx*)inputFD, (kiss_fft_cpx*)outputTD);
-        cblas_sscal(2*(h->N), 1.0f/(float)(h->N), (float*)outputTD, 1);
+        cblas_sscal(/*re+im*/2*(h->N), 1.0f/(float)(h->N), (float*)outputTD, 1);
     }
 }

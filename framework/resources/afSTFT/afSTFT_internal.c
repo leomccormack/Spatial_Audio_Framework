@@ -241,7 +241,7 @@ void afSTFTlib_forward
 )
 {
     afSTFTlib_internal_data *h = (afSTFTlib_internal_data*)(handle);
-    int ch,k,j,hopIndex_this,hopIndex_this2;
+    int ch,k,hopIndex_this,hopIndex_this2;
     float *p1,*p2,*p3;
 #ifndef AFSTFT_USE_SAF_UTILITIES
     float *p4;
@@ -254,7 +254,8 @@ void afSTFTlib_forward
         hopIndex_this2 = h->hopIndexIn;
         p1=&(h->inBuffer[ch][hopIndex_this2*h->hopSize]);
         p2=inTD[ch];
-        memcpy((void*)p1,(void*)p2,sizeof(float)*(h->hopSize));
+        //memcpy((void*)p1,(void*)p2,sizeof(float)*(h->hopSize));
+        cblas_scopy(h->hopSize, p2, 1, p1, 1);
         
         hopIndex_this2++;
         if (hopIndex_this2 >= h->totalHops)
@@ -285,14 +286,9 @@ void afSTFTlib_forward
                 p3=&(h->fftProcessFrameTD[0]);
                 lr=1;
             }
-#ifdef AFSTFT_USE_SAF_UTILITIES 
-            //utility_svvmuladd(p1, p2, h->hopSize, p3); /* somehow slower... */
-            for (j=0;j<h->hopSize;j+=4){
-                p3[j] += (p1[j])*(p2[j]);
-                p3[j+1] += (p1[j+1])*(p2[j+1]);
-                p3[j+2] += (p1[j+2])*(p2[j+2]);
-                p3[j+3] += (p1[j+3])*(p2[j+3]);
-            }
+#ifdef AFSTFT_USE_SAF_UTILITIES
+            utility_svvmul(p1, p2, h->hopSize, h->tempHopBuffer);
+            cblas_saxpy(h->hopSize, 1.0f, h->tempHopBuffer, 1, p3, 1);
 #else
             vtVma(p1, p2, p3, h->hopSize);  /* Vector multiply-add */
 #endif
@@ -306,10 +302,6 @@ void afSTFTlib_forward
         /* Apply FFT and copy the data to the output vector */
 #ifdef AFSTFT_USE_SAF_UTILITIES
         saf_rfft_forward(h->hSafFFT, h->fftProcessFrameTD, h->fftProcessFrameFD);
-//        for(k = 0; k<h->hopSize+1; k++){
-//            outFD[ch].re[k] = crealf(h->fftProcessFrameFD[k]);
-//            outFD[ch].im[k] = cimagf(h->fftProcessFrameFD[k]);
-//        }
         cblas_scopy(h->hopSize+1, (float*)h->fftProcessFrameFD, 2, outFD[ch].re, 1);
         cblas_scopy(h->hopSize+1, (float*)h->fftProcessFrameFD + 1, 2, outFD[ch].im, 1);
 #else
@@ -347,7 +339,7 @@ void afSTFTlib_inverse
 )
 {
     afSTFTlib_internal_data *h = (afSTFTlib_internal_data*)(handle);
-    int ch,k,j,hopIndex_this,hopIndex_this2;
+    int ch,k,hopIndex_this,hopIndex_this2;
     float *p1,*p2,*p3;
 #ifndef AFSTFT_USE_SAF_UTILITIES
     float *p4;
@@ -367,8 +359,6 @@ void afSTFTlib_inverse
         
         /* Inverse FFT */
 #ifdef AFSTFT_USE_SAF_UTILITIES
-        //for(k = 0; k<h->hopSize+1; k++)
-        //    h->fftProcessFrameFD[k] = cmplxf(inFD[ch].re[k], inFD[ch].im[k]);
         cblas_scopy(h->hopSize+1, inFD[ch].re, 1, (float*)h->fftProcessFrameFD, 2);
         cblas_scopy(h->hopSize+1, inFD[ch].im, 1, (float*)h->fftProcessFrameFD + 1, 2);
 
@@ -434,17 +424,12 @@ void afSTFTlib_inverse
             }
  
             /* Overlap-add to the existing data in the memory buffer (from previous frames). */
-#ifdef AFSTFT_USE_SAF_UTILITIES 
-            for (j=0;j<h->hopSize;j+=4){
-                p1[j] += (p2[j])*(p3[j]);
-                p1[j+1] += (p2[j+1])*(p3[j+1]);
-                p1[j+2] += (p2[j+2])*(p3[j+2]);
-                p1[j+3] += (p2[j+3])*(p3[j+3]);
-            }
+#ifdef AFSTFT_USE_SAF_UTILITIES
+            utility_svvmul(p2, p3, h->hopSize, h->tempHopBuffer);
+            cblas_saxpy(h->hopSize, 1.0f, h->tempHopBuffer, 1, p1, 1);
 #else
             vtVma(p2, p3, p1, h->hopSize); /* Vector multiply-add */
 #endif
-            
             hopIndex_this++;
             if (hopIndex_this >= h->totalHops)
             {
@@ -559,8 +544,10 @@ void afHybridForward
         pi1 = FD[ch].im;
         pr2 = h->analysisBuffer[ch][h->loopPointer].re;
         pi2 = h->analysisBuffer[ch][h->loopPointer].im;
-        memcpy((void*)pr2,(void*)pr1,sizeof(float)*(h->hopSize+1));
-        memcpy((void*)pi2,(void*)pi1,sizeof(float)*(h->hopSize+1));
+//        memcpy(pr2, pr1, sizeof(float)*(h->hopSize+1));
+//        memcpy(pi2, pi1, sizeof(float)*(h->hopSize+1));
+        cblas_scopy(h->hopSize+1, pr1, 1, pr2, 1);
+        cblas_scopy(h->hopSize+1, pi1, 1, pi2, 1);
         
         /* Get the pointer to a position corresponding to the group delay of the linear-phase half-band filter. */
         loopPointerThis = h->loopPointer - 3;
@@ -584,7 +571,8 @@ void afHybridForward
             *(pr1+8) = *(pr1+7);
             
             /* The rest of the bands are shifted upwards in the frequency indices, and delayed by the group delay of the half-band filters */
-            memcpy((void*)(pr1+9),(void*)(pr2+5),sizeof(float)*(h->hopSize-4));
+            //memcpy((void*)(pr1+9),(void*)(pr2+5),sizeof(float)*(h->hopSize-4));
+            cblas_scopy(h->hopSize-4, pr2+5, 1, pr1+9, 1);
             
             /* Repeat process for the imaginary part, at next iteration. */
             pr1 = FD[ch].im;

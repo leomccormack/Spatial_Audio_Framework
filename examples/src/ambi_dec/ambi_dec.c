@@ -53,8 +53,6 @@ void ambi_dec_create
     *phAmbi = (void*)pData;
     int i, j, ch, band;
 
-    SAF_PRINT_VERSION_LICENSE_STRING;
-
     /* default user parameters */
     loadLoudspeakerArrayPreset(LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_24, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
     pData->masterOrder = pData->new_masterOrder = 1;
@@ -75,8 +73,8 @@ void ambi_dec_create
     
     /* afSTFT stuff and audio buffers */
     pData->hSTFT = NULL;
-    pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, FRAME_SIZE, sizeof(float));
-    pData->outputFrameTD = (float**)malloc2d(SAF_MAX(MAX_NUM_LOUDSPEAKERS, NUM_EARS), FRAME_SIZE, sizeof(float));
+    pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, AMBI_DEC_FRAME_SIZE, sizeof(float));
+    pData->outputFrameTD = (float**)malloc2d(SAF_MAX(MAX_NUM_LOUDSPEAKERS, NUM_EARS), AMBI_DEC_FRAME_SIZE, sizeof(float));
     pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
     pData->outputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_LOUDSPEAKERS, TIME_SLOTS, sizeof(float_complex));
     pData->binframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
@@ -467,7 +465,6 @@ void ambi_dec_process
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     ambi_dec_codecPars* pars = pData->pars;
     int ch, ear, i, band, orderBand, nSH_band, decIdx, nSH;
-    float_complex scaleC;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
     /* local copies of user parameters */
@@ -489,30 +486,30 @@ void ambi_dec_process
     memcpy(rE_WEIGHT, pData->rE_WEIGHT, NUM_DECODERS*sizeof(int));
     
     /* Process frame */
-    if (nSamples == FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) ) {
+    if (nSamples == AMBI_DEC_FRAME_SIZE && (pData->codecStatus == CODEC_STATUS_INITIALISED) ) {
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Load time-domain data */
         for(i=0; i < SAF_MIN(nSH, nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->SHFrameTD[i]);
+            utility_svvcopy(inputs[i], AMBI_DEC_FRAME_SIZE, pData->SHFrameTD[i]);
         for(; i<nSH; i++)
-            memset(pData->SHFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+            memset(pData->SHFrameTD[i], 0, AMBI_DEC_FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
 
         /* account for channel order convention */
         switch(chOrdering){
             case CH_ACN: /* already ACN, do nothing */ break; /* Otherwise, convert to ACN... */
-            case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), masterOrder, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
+            case CH_FUMA: convertHOAChannelConvention(FLATTEN2D(pData->SHFrameTD), masterOrder, AMBI_DEC_FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
         }
 
         /* account for input normalisation scheme */
         switch(norm){
             case NORM_N3D:  /* already in N3D, do nothing */ break; /* Otherwise, convert to N3D... */
-            case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), masterOrder, FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
-            case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), masterOrder, FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
+            case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), masterOrder, AMBI_DEC_FRAME_SIZE, HOA_NORM_SN3D, HOA_NORM_N3D); break;
+            case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHFrameTD), masterOrder, AMBI_DEC_FRAME_SIZE, HOA_NORM_FUMA, HOA_NORM_N3D); break;
         }
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward(pData->hSTFT, pData->SHFrameTD, FRAME_SIZE, pData->SHframeTF);
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->SHFrameTD, AMBI_DEC_FRAME_SIZE, MAX_NUM_SH_SIGNALS, TIME_SLOTS, pData->SHframeTF);
 
         /* Decode to loudspeaker set-up */
         memset(FLATTEN3D(pData->outputframeTF), 0, HYBRID_BANDS*MAX_NUM_LOUDSPEAKERS*TIME_SLOTS*sizeof(float_complex));
@@ -536,8 +533,8 @@ void ambi_dec_process
             }
 
             /* Apply scaling to preserve either the amplitude or energy when the decododing orders are different over frequency */
-            scaleC = diffEQmode[decIdx]==AMPLITUDE_PRESERVING ? cmplxf(pars->M_norm[decIdx][orderBand-1][0], 0.0f) : cmplxf(pars->M_norm[decIdx][orderBand-1][1], 0.0f);
-            cblas_cscal(nLoudspeakers*TIME_SLOTS, &scaleC, FLATTEN2D(pData->outputframeTF[band]), 1);
+            cblas_sscal(/*re+im*/2*nLoudspeakers*TIME_SLOTS, pars->M_norm[decIdx][orderBand-1][diffEQmode[decIdx]==AMPLITUDE_PRESERVING ? 0 : 1],
+                        (float*)FLATTEN2D(pData->outputframeTF[band]), 1);
         }
 
         /* Binauralise the loudspeaker signals */
@@ -560,22 +557,22 @@ void ambi_dec_process
             }
 
             /* Scale by sqrt(number of loudspeakers) */
-            scaleC = cmplxf(1.0f/sqrtf((float)nLoudspeakers), 0.0f);
-            cblas_cscal(HYBRID_BANDS*NUM_EARS*TIME_SLOTS, &scaleC, FLATTEN3D(pData->binframeTF), 1);
+            cblas_sscal(/*re+im*/2*HYBRID_BANDS*NUM_EARS*TIME_SLOTS, 1.0f/sqrtf((float)nLoudspeakers), (float*)FLATTEN3D(pData->binframeTF), 1);
         }
 
         /* inverse-TFT */
-        afSTFT_backward(pData->hSTFT, binauraliseLS ? pData->binframeTF : pData->outputframeTF, FRAME_SIZE, pData->outputFrameTD);
+        afSTFT_backward_knownDimensions(pData->hSTFT,        binauraliseLS ? pData->binframeTF : pData->outputframeTF,
+                                        AMBI_DEC_FRAME_SIZE, binauraliseLS ? NUM_EARS : MAX_NUM_LOUDSPEAKERS, TIME_SLOTS, pData->outputFrameTD);
 
         /* Copy to output buffer */
         for(ch = 0; ch < SAF_MIN(binauraliseLS==1 ? NUM_EARS : nLoudspeakers, nOutputs); ch++)
-            utility_svvcopy(pData->outputFrameTD[ch], FRAME_SIZE, outputs[ch]);
+            utility_svvcopy(pData->outputFrameTD[ch], AMBI_DEC_FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
-            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch], 0, AMBI_DEC_FRAME_SIZE*sizeof(float));
     }
     else
         for (ch=0; ch < nOutputs; ch++)
-            memset(outputs[ch], 0, FRAME_SIZE*sizeof(float));
+            memset(outputs[ch], 0, AMBI_DEC_FRAME_SIZE*sizeof(float));
 
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
@@ -819,7 +816,7 @@ void ambi_dec_setTransitionFreq(void* const hAmbi, float newValue)
 
 int ambi_dec_getFrameSize(void)
 {
-    return FRAME_SIZE;
+    return AMBI_DEC_FRAME_SIZE;
 }
 
 CODEC_STATUS ambi_dec_getCodecStatus(void* const hAmbi)

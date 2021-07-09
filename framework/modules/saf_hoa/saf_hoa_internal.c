@@ -56,8 +56,8 @@ void getEPAD
     U = malloc1d(nSH*nSH*sizeof(float));
     V = malloc1d(nLS*nLS*sizeof(float));
     getRSH(order, ls_dirs_deg, nLS, Y_ls);
-    utility_svsmul(Y_ls, &scale, nLS*nSH, Y_ls);
-    utility_ssvd(Y_ls, nSH, nLS, U, NULL, V, NULL);
+    cblas_sscal(nLS*nSH, scale, Y_ls, 1);
+    utility_ssvd(NULL, Y_ls, nSH, nLS, U, NULL, V, NULL);
 
     /* Apply truncation */
     if(nSH>nLS){
@@ -103,7 +103,7 @@ void getAllRAD
     float* decMtx
 )
 {
-    int i, nDirs_td, N_gtable, nGroups, nSH;
+    int nDirs_td, N_gtable, nGroups, nSH;
     float scale;
     float* Y_td, *G_td, *t_dirs;
     
@@ -139,15 +139,14 @@ void getAllRAD
     generateVBAPgainTable3D_srcs(t_dirs, nDirs_td, ls_dirs_deg, nLS, 0, 0, 0.0f, &G_td, &N_gtable, &nGroups);
     Y_td = malloc1d(nSH*nDirs_td*sizeof(float));
     getRSH(order, t_dirs, nDirs_td, Y_td);
-    utility_svsmul(Y_td, &scale, nDirs_td*nSH, Y_td);
+    cblas_sscal(nDirs_td*nSH, scale, Y_td, 1);
     
     /* AllRAD decoder is simply (G_td * T_td * 1/nDirs_td) */
     cblas_sgemm(CblasRowMajor, CblasTrans, CblasTrans, nLS, nSH, nDirs_td, 1.0f,
                 G_td, nLS,
                 Y_td, nDirs_td, 0.0f,
                 decMtx, nSH);
-    for(i=0; i<nLS*nSH; i++)
-        decMtx[i] *= (4.0f*M_PI)/(float)nDirs_td;
+    cblas_sscal(nLS*nSH, (4.0f*M_PI)/(float)nDirs_td, decMtx, 1);
 
     free(Y_td);
     free(G_td);
@@ -211,7 +210,7 @@ void getBinDecoder_LS
                     Yna_W, N_dirs,
                     &hrtfs[band*2*N_dirs], N_dirs, &cbeta,
                     Yna_W_H, 2);
-        utility_cglslv(Yna_W_Yna, nSH, Yna_W_H, 2, B);
+        utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B);
         for(i=0; i<nSH; i++)
             for(j=0; j<2; j++)
                 decMtx[band*2*nSH + j*nSH + i] = conjf(B[i*2+j]); /* ^H */
@@ -284,7 +283,7 @@ void getBinDecoder_LSDIFFEQ
                     Yna_W, N_dirs,
                     &hrtfs[band*2*N_dirs], N_dirs, &cbeta,
                     Yna_W_H, 2);
-        utility_cglslv(Yna_W_Yna, nSH, Yna_W_H, 2, B_ls);
+        utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B_ls);
         cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans, 2, N_dirs, nSH, &calpha,
                     B_ls, 2,
                     Y_na, N_dirs, &cbeta,
@@ -506,7 +505,7 @@ void getBinDecoder_TA
                     Yna_W, N_dirs,
                     hrtfs_mod, N_dirs, &cbeta,
                     Yna_W_H, 2);
-        utility_cglslv(Yna_W_Yna, nSH, Yna_W_H, 2, B);
+        utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B);
         for(i=0; i<nSH; i++)
             for(j=0; j<2; j++)
                 decMtx[band*2*nSH + j*nSH + i] = conjf(B[i*2+j]); /* ^H */
@@ -589,7 +588,7 @@ void getBinDecoder_MAGLS
                         Yna_W, N_dirs,
                         &hrtfs[band*2*N_dirs], N_dirs, &cbeta,
                         Yna_W_H, 2);
-            utility_cglslv(Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);
+            utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);
         }
         else{
             /* Remove itd from high frequency HRTFs */
@@ -603,7 +602,7 @@ void getBinDecoder_MAGLS
                         Yna_W, N_dirs,
                         H_mod, N_dirs, &cbeta,
                         Yna_W_H, 2);
-            utility_cglslv(Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);
+            utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);
         }
         
         for(i=0; i<nSH; i++)

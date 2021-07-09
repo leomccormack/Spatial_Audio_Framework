@@ -15,6 +15,16 @@
  */
 
 /**
+ * @example spreader
+ * @brief An arbitrary array panner (HRIRs, microphone array IRs, etc.) with
+ *        coherent and incoherent spreading modes.
+ * ### Include Header
+ * spreader.h
+ * ### Source Files
+ * spreader_internal.h, spreader.c, spreader_internal.c
+ */
+
+/**
  * @file: spreader.h
  * @brief An arbitrary array panner (HRIRs, microphone array IRs, etc.) with
  *        coherent and incoherent spreading modes.

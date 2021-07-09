@@ -41,7 +41,8 @@
             ],
             "defines": [
                 "${commonDefs}"
-            ]
+            ],
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4

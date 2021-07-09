@@ -15,6 +15,15 @@
  */
 
 /**
+ * @example ambi_enc
+ * @brief A basic Ambisonic encoder
+ * ### Include Header
+ * ambi_enc.h
+ * ### Source Files
+ * ambi_enc_internal.h, ambi_enc.c, ambi_enc_internal.c
+ */
+
+/**
  * @file ambi_enc.h
  * @brief A basic Ambisonic encoder
  *

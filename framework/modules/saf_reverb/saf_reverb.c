@@ -127,6 +127,7 @@ void ims_shoebox_create
     memset(sc->applyCrossFadeFLAG, 0, IMS_MAX_NUM_RECEIVERS*IMS_MAX_NUM_SOURCES*sizeof(int));
     sc->interpolator_fIn = NULL;
     sc->interpolator_fOut = NULL;
+    sc->tmp_frame = NULL;
     sc->framesize = -1;
 
     /* Lagrange interpolator look-up table */
@@ -172,6 +173,7 @@ void ims_shoebox_destroy
         free(sc->rec_sig_tmp[IMS_EG_PREV]);
         free(sc->interpolator_fIn);
         free(sc->interpolator_fOut);
+        free(sc->tmp_frame);
         free(sc);
         sc=NULL;
         *phIms = NULL;
@@ -190,7 +192,8 @@ void ims_shoebox_computeEchograms
     ims_pos_xyz src2, rec2;
     int src_idx, rec_idx, band;
 
-    assert(maxN<0 || maxTime_ms<0.0f); /* one must be more than 0, and one less */
+    saf_assert(maxN<0 || maxTime_ms<0.0f, "one of these input arguments must be the same or greater than 0, and the other one must be less than 0.");
+    saf_assert(maxN>=0 || maxTime_ms>0.0f, "one of these input arguments must be the same or greater than 0, and the other one must be less than 0.");
 
     /* Compute echograms for active source/receiver combinations */
     for(rec_idx = 0; rec_idx < IMS_MAX_NUM_RECEIVERS; rec_idx++){
@@ -344,6 +347,7 @@ void ims_shoebox_applyEchogramTD
         sc->framesize = nSamples;
         sc->interpolator_fIn = realloc1d(sc->interpolator_fIn, nSamples*sizeof(float));
         sc->interpolator_fOut = realloc1d(sc->interpolator_fOut, nSamples*sizeof(float));
+        sc->tmp_frame = realloc1d(sc->tmp_frame, nSamples*sizeof(float));
         for(i=0; i<nSamples; i++){
             sc->interpolator_fIn[i] = (i+1)*1.0f/(float)nSamples;
             sc->interpolator_fOut[i] = 1.0f-sc->interpolator_fIn[i];
@@ -471,10 +475,10 @@ void ims_shoebox_applyEchogramTD
                                 utility_ssv2cv_inds(sc->circ_buffer[k][src_idx][band], echogram_abs_0->rIdx_frac[i-1], echogram_abs->numImageSources, echogram_abs->cb_vals[0]);
 
                                 /* Apply interpolation weights */
-                                utility_svvmul(echogram_abs->cb_vals[0], echogram_abs_0->h_frac[i], echogram_abs->numImageSources, echogram_abs->cb_vals[0]);
+                                utility_svvmul(echogram_abs->cb_vals[0], echogram_abs_0->h_frac[i], echogram_abs->numImageSources, echogram_abs->tmp2);
 
                                 /* Sum */
-                                utility_svvadd(echogram_abs->tmp1, echogram_abs->cb_vals[0], echogram_abs->numImageSources, echogram_abs->tmp1);
+                                cblas_saxpy(echogram_abs->numImageSources, 1.0f, echogram_abs->tmp2, 1, echogram_abs->tmp1, 1);
                             }
 
                             /* Copy result */
@@ -512,12 +516,10 @@ void ims_shoebox_applyEchogramTD
             if(sc->applyCrossFadeFLAG[rec_idx][src_idx]){
                 for(ch=0; ch<sc->recs[rec_idx].nChannels; ch++){
                     /* Apply linear interpolator to fade in with the new echogram and fade out with the previous echogram */
-                    utility_svvmul(sc->rec_sig_tmp[IMS_EG_CURRENT][rec_idx][ch], sc->interpolator_fIn,  nSamples, sc->rec_sig_tmp[IMS_EG_CURRENT][rec_idx][ch]);
-                    utility_svvmul(sc->rec_sig_tmp[IMS_EG_PREV][rec_idx][ch],    sc->interpolator_fOut, nSamples, sc->rec_sig_tmp[IMS_EG_PREV][rec_idx][ch]);
-
-                    /* Sum the result */
-                    cblas_saxpy(nSamples, 1.0f, sc->rec_sig_tmp[IMS_EG_CURRENT][rec_idx][ch], 1, sc->recs[rec_idx].sigs[ch], 1);
-                    cblas_saxpy(nSamples, 1.0f, sc->rec_sig_tmp[IMS_EG_PREV][rec_idx][ch],    1, sc->recs[rec_idx].sigs[ch], 1);
+                    utility_svvmul(sc->rec_sig_tmp[IMS_EG_CURRENT][rec_idx][ch], sc->interpolator_fIn,  nSamples, sc->tmp_frame);
+                    cblas_saxpy(nSamples, 1.0f, sc->tmp_frame, 1, sc->recs[rec_idx].sigs[ch], 1);
+                    utility_svvmul(sc->rec_sig_tmp[IMS_EG_PREV][rec_idx][ch],    sc->interpolator_fOut, nSamples, sc->tmp_frame);
+                    cblas_saxpy(nSamples, 1.0f, sc->tmp_frame, 1, sc->recs[rec_idx].sigs[ch], 1); 
                 }
 
                 /* No longer need to cross-fade for future frames (unless the echograms change again that is...) */

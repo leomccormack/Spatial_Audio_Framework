@@ -926,7 +926,7 @@ void checkCondNumberSHTReal
         }
         
         /* condition number = max(singularValues)/min(singularValues) */
-        utility_ssvd(YY_n, nSH_n, nSH_n, NULL, NULL, NULL, s);
+        utility_ssvd(NULL, YY_n, nSH_n, nSH_n, NULL, NULL, NULL, s);
         utility_simaxv(s, nSH_n, &ind);
         maxVal = s[ind];
         utility_siminv(s, nSH_n, &ind);
@@ -986,6 +986,7 @@ void sphPWD_create
     h->pSpec = malloc1d(h->nDirs*sizeof(float));
     h->P_minus_peak = malloc1d(h->nDirs*sizeof(float));
     h->VM_mask = malloc1d(h->nDirs*sizeof(float));
+    h->P_tmp = malloc1d(h->nDirs*sizeof(float));
 
     /* clean-up */
     free(grid_dirs_rad);
@@ -1005,6 +1006,7 @@ void sphPWD_destroy
         free(h->A_Cx);
         free(h->pSpec);
         free(h->P_minus_peak);
+        free(h->P_tmp);
         free(h->VM_mask);
         free(h);
         h = NULL;
@@ -1029,15 +1031,12 @@ void sphPWD_compute
     const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f);
 
     /* derive the power-map value for each grid direction */ 
-    for (i = 0; i < (h->nDirs); i++){
-        cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, 1, h->nSH, h->nSH, &calpha,
-                    &(h->grid_svecs[i*(h->nSH)]), 1,
-                    Cx, h->nSH, &cbeta,
-                    h->A_Cx, h->nSH);
-        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 1, 1, h->nSH, &calpha,
-                    h->A_Cx, h->nSH,
+    for (i = 0; i < (h->nDirs); i++){ 
+        cblas_cgemv(CblasRowMajor, CblasNoTrans, h->nSH, h->nSH, &calpha,
+                    Cx, h->nSH,
                     &(h->grid_svecs[i*(h->nSH)]), 1, &cbeta,
-                    &A_Cx_A, 1);
+                    h->A_Cx, 1); 
+        cblas_cdotu_sub(h->nSH, h->A_Cx, 1, &(h->grid_svecs[i*(h->nSH)]), 1, &A_Cx_A);
         h->pSpec[i] = crealf(A_Cx_A);
     }
 
@@ -1072,7 +1071,8 @@ void sphPWD_compute
             cblas_sscal(h->nDirs, scale, h->VM_mask, 1);
             for(i=0; i<h->nDirs; i++)
                 h->VM_mask[i] = 1.0f/(0.00001f+(h->VM_mask[i])); /* inverse VM distribution */
-            utility_svvmul(h->P_minus_peak, h->VM_mask, h->nDirs, h->P_minus_peak);
+            utility_svvmul(h->P_minus_peak, h->VM_mask, h->nDirs, h->P_tmp);
+            cblas_scopy(h->nDirs, h->P_tmp, 1, h->P_minus_peak, 1);
         }
     }
 }
@@ -1115,7 +1115,9 @@ void sphMUSIC_create
     h->VnA = malloc1d(h->nSH * (h->nDirs) * sizeof(float_complex));
     h->abs_VnA = malloc1d(h->nSH * (h->nDirs) * sizeof(float));
     h->pSpec = malloc1d(h->nDirs*sizeof(float));
+    h->pSpecInv = malloc1d(h->nDirs*sizeof(float));
     h->P_minus_peak = malloc1d(h->nDirs*sizeof(float));
+    h->P_tmp = malloc1d(h->nDirs*sizeof(float));
     h->VM_mask = malloc1d(h->nDirs*sizeof(float));
 
     /* clean-up */
@@ -1136,7 +1138,9 @@ void sphMUSIC_destroy
         free(h->VnA);
         free(h->abs_VnA);
         free(h->pSpec);
+        free(h->pSpecInv);
         free(h->P_minus_peak);
+        free(h->P_tmp);
         free(h->VM_mask);
         free(h);
         h = NULL;
@@ -1155,7 +1159,7 @@ void sphMUSIC_compute
 {
     sphMUSIC_data *h = (sphMUSIC_data*)(hMUSIC);
     int i, k, VnD2, peak_idx;
-    float tmp, kappa, scale;
+    float kappa, scale;
     float VM_mean[3];
     const float_complex calpha = cmplxf(1.0f, 0.0f); const float_complex cbeta = cmplxf(0.0f, 0.0f);
 
@@ -1167,10 +1171,10 @@ void sphMUSIC_compute
                 Vn, VnD2, &cbeta,
                 h->VnA, VnD2);
     utility_cvabs(h->VnA, (h->nDirs)*VnD2, h->abs_VnA);
-    for (i = 0; i < (h->nDirs); i++) { 
-        tmp = cblas_sdot(VnD2, &(h->abs_VnA[i*VnD2]), 1, &(h->abs_VnA[i*VnD2]), 1);
-        h->pSpec[i] = 1.0f / (tmp + 2.23e-10f);
-    }
+    for (i = 0; i < (h->nDirs); i++)
+        h->pSpecInv[i] = cblas_sdot(VnD2, &(h->abs_VnA[i*VnD2]), 1, &(h->abs_VnA[i*VnD2]), 1);
+    //h->pSpec[i] = 1.0f / (h->pSpecInv[i] + 2.23e-10f);
+    utility_svrecip(h->pSpecInv, h->nDirs, h->pSpec);
 
     /* Output pseudo-spectrum */
     if(P_music!=NULL)
@@ -1203,7 +1207,8 @@ void sphMUSIC_compute
             cblas_sscal(h->nDirs, scale, h->VM_mask, 1);
             for(i=0; i<h->nDirs; i++)
                 h->VM_mask[i] = 1.0f/(0.00001f+(h->VM_mask[i])); /* inverse VM distribution */
-            utility_svvmul(h->P_minus_peak, h->VM_mask, h->nDirs, h->P_minus_peak);
+            utility_svvmul(h->P_minus_peak, h->VM_mask, h->nDirs, h->P_tmp);
+            cblas_scopy(h->nDirs, h->P_tmp, 1, h->P_minus_peak, 1);
         }
     }
 }
@@ -1253,6 +1258,9 @@ void sphESPRIT_create
     muni2q(order, 1, 0, h->idx_from_Ynm2Ynimu[10], h->idx_from_Ynm2Ynimu[11]);
 
     /* memory allocations for run-time matrices */
+    utility_zpinv_create(&(h->hZpinv), h->maxK, h->maxK);
+    utility_zeigmp_create(&(h->hZeigmp), h->maxK);
+    utility_zglslv_create(&(h->hZglslv), h->maxK, h->maxK);
     h->Us_1m1  = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
     h->Us_m1m1 = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
     h->Us_11   = malloc1d((h->NN) * (h->maxK) * sizeof(double_complex));
@@ -1295,6 +1303,9 @@ void sphESPRIT_destroy
         }
         for(i=0; i<12; i++)
             free(h->idx_from_Ynm2Ynimu[i]);
+        utility_zpinv_destroy(&(h->hZpinv));
+        utility_zeigmp_destroy(&(h->hZeigmp));
+        utility_zglslv_destroy(&(h->hZglslv));
         free(h->Us_1m1);
         free(h->Us_m1m1);
         free(h->Us_11);
@@ -1391,16 +1402,13 @@ void sphESPRIT_estimateDirs
                 h->WVnimu[5], (h->NN),
                 h->Us_10, K, &cbeta,
                 h->WVnimu5_Us10, K);
-    for(i=0; i<h->NN; i++){
-        for(j=0; j<K; j++){
-            h->LambdaXYp[i*K+j] = ccsub(h->WVnimu0_Us1m1[i*K + j], h->WVnimu1_Usm1m1[i*K + j]);
-            h->LambdaXYm[i*K+j] = ccadd(crmul(h->WVnimu2_Us11[i*K+j], -1.0), h->WVnimu3_Usm11[i*K+j]);
-            h->LambdaZ[i*K+j]   = ccadd(h->WVnimu4_Usm10[i*K+j], h->WVnimu5_Us10[i*K+j]);
-        }
-    }
+    utility_zvvsub(h->WVnimu0_Us1m1, h->WVnimu1_Usm1m1, h->NN*K, h->LambdaXYp);
+    cblas_dscal(/*re+im*/2*h->NN*K, -1.0, (double*)h->WVnimu2_Us11, 1);
+    utility_zvvadd(h->WVnimu2_Us11, h->WVnimu3_Usm11, h->NN*K, h->LambdaXYm);
+    utility_zvvadd(h->WVnimu4_Usm10, h->WVnimu5_Us10, h->NN*K, h->LambdaZ);
 
     /*  */
-    utility_zpinv(h->Us_00, h->NN, K, h->pinvUs);
+    utility_zpinv(h->hZpinv, h->Us_00, h->NN, K, h->pinvUs);
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, (h->NN), &calpha,
                 h->pinvUs, (h->NN),
                 h->LambdaXYp, K, &cbeta,
@@ -1415,29 +1423,29 @@ void sphESPRIT_estimateDirs
                 h->PsiZ, K);
 
     /*  */
-    utility_zeigmp(h->PsiXYp, h->PsiZ, K,  NULL, h->V, NULL);
+    utility_zeigmp(h->hZeigmp, h->PsiXYp, h->PsiZ, K,  NULL, h->V, NULL);
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
                 h->PsiXYp, K,
                 h->V, K, &cbeta,
                 h->tmp_KK, K);
-    utility_zglslv(h->V, K, h->tmp_KK, K, h->PhiXYp);
+    utility_zglslv(h->hZglslv, h->V, K, h->tmp_KK, K, h->PhiXYp);
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
                 h->PsiXYm, K,
                 h->V, K, &cbeta,
                 h->tmp_KK, K);
-    utility_zglslv(h->V, K, h->tmp_KK, K, h->PhiXYm);
+    utility_zglslv(h->hZglslv, h->V, K, h->tmp_KK, K, h->PhiXYm);
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, K, K, &calpha,
                 h->PsiZ, K,
                 h->V, K, &cbeta,
                 h->tmp_KK, K);
-    utility_zglslv(h->V, K, h->tmp_KK, K, h->PhiZ);
+    utility_zglslv(h->hZglslv, h->V, K, h->tmp_KK, K, h->PhiZ);
 
     /* extract DoAs */
     for(i=0; i<K; i++){
         phiX = (creal(h->PhiXYp[i*K+i])+creal(h->PhiXYm[i*K+i]))/2.0;
         phiY = creal(ccdiv(ccsub(h->PhiXYp[i*K+i], h->PhiXYm[i*K+i]), i2_));
         src_dirs_rad[i*2] = (float)atan2(phiY, phiX);
-        src_dirs_rad[i*2+1] = (float)SAF_MIN(atan2(creal(h->PhiZ[i*K+i]), sqrt(phiX*phiX+phiY*phiY)), M_PI/2.0f);
+        src_dirs_rad[i*2+1] = (float)SAF_MIN(atan2(creal(h->PhiZ[i*K+i]), sqrt(phiX*phiX+phiY*phiY)), SAF_PI/2.0f);
     }
 }
 
@@ -1516,7 +1524,7 @@ void generateMVDRmap
         Cx_d[i*nSH+i] = craddf(Cx_d[i*nSH+i], regPar*Cx_trace);
     
     /* solve the numerator part of the MVDR weights for all grid directions: Cx^-1 * Y */
-    utility_cslslv(Cx_d, nSH, Y_grid, nGrid_dirs, invCx_Ygrid);
+    utility_cslslv(NULL, Cx_d, nSH, Y_grid, nGrid_dirs, invCx_Ygrid);
     for(i=0; i<nGrid_dirs; i++){
         /* solve the denumerator part of the MVDR weights for each grid direction: Y^T * Cx^-1 * Y */
         for(j=0; j<nSH; j++){
@@ -1609,7 +1617,7 @@ void generateCroPaCLCMVmap
         }
         
         /* solve for minimisation problem for LCMV weights: (Cx^-1 * A) * (A^H * Cx^-1 * A)^-1 * b */
-        utility_cslslv(Cx_d, nSH, A, 2, invCxd_A);
+        utility_cslslv(NULL, Cx_d, nSH, A, 2, invCxd_A);
         for(j=0; j<nSH*2; j++)
             invCxd_A_tmp[j] = conjf(invCxd_A[j]);
         cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans, 2, 2, nSH, &calpha,
@@ -1619,7 +1627,7 @@ void generateCroPaCLCMVmap
         for(j=0; j<nSH; j++)
             for(k=0; k<2; k++)
                 invCxd_A_tmp[k*nSH+j] = invCxd_A[j*2+k];
-        utility_cglslv((float_complex*)A_invCxd_A, 2, invCxd_A_tmp, nSH, w_LCMV_s);
+        utility_cglslv(NULL, (float_complex*)A_invCxd_A, 2, invCxd_A_tmp, nSH, w_LCMV_s);
         cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nSH, 1, 2, &calpha,
                     w_LCMV_s, nSH,
                     b, 1, &cbeta,
@@ -1677,12 +1685,12 @@ void generateMUSICmap
     
     /* obtain eigenvectors */
     //utility_ceig(Cx, nSH, 1, NULL, V, NULL, NULL);
-	utility_cseig(Cx, nSH, 1, V, NULL, NULL);
+    utility_cseig(NULL, Cx, nSH, 1, V, NULL, NULL);
     
     /* truncate, to obtain noise sub-space */
-	for (i = 0; i < nSH; i++)
-		for (j = 0; j < nSH - nSources; j++)
-			Vn[i*(nSH - nSources) + j] = V[i*nSH + j + nSources];
+    for (i = 0; i < nSH; i++)
+        for (j = 0; j < nSH - nSources; j++)
+            Vn[i*(nSH - nSources) + j] = V[i*nSH + j + nSources];
     
     /* derive the pseudo-spectrum value for each grid direction */
     cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nSH-nSources, nGrid_dirs, nSH, &calpha,
@@ -1726,7 +1734,7 @@ void generateMinNormMap
     Un_Y = malloc1d(nGrid_dirs*sizeof(float_complex));
     
     /* obtain eigenvectors */
-    utility_ceig(Cx, nSH, NULL, V, NULL, NULL);
+    utility_ceig(NULL, Cx, nSH, NULL, V, NULL, NULL);
     
     /* truncate, to obtain noise sub-space */
     for(i=0; i<nSH; i++)
@@ -2336,7 +2344,7 @@ void evaluateSHTfilters
                     &M_array2SH[band*nSH*nSensors], nSensors,
                     &M_array2SH[band*nSH*nSensors], nSensors, &cbeta,
                     MH_M, nSensors);
-        utility_ceig(MH_M, nSensors, 1, NULL, NULL, EigV); /* eigenvalues in decending order */
+        utility_ceig(NULL, MH_M, nSensors, 1, NULL, NULL, EigV); /* eigenvalues in decending order */
         WNG[band] = 10.0f*log10f(crealf(EigV[0])+2.23e-9f);
     }
 #endif

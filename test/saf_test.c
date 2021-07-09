@@ -73,6 +73,7 @@ int main_test(void) {
     UNITY_BEGIN();
     
     /* run each unit test */
+    RUN_TEST(test__resampleHRIRs);
     RUN_TEST(test__delaunaynd);
     RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
@@ -116,6 +117,7 @@ int main_test(void) {
     RUN_TEST(test__computeSectorCoeffsEP);
     RUN_TEST(test__checkCondNumberSHTReal);
     RUN_TEST(test__sphMUSIC);
+    RUN_TEST(test__sphPWD);
     RUN_TEST(test__sphESPRIT);
     RUN_TEST(test__sphModalCoeffs);
     RUN_TEST(test__truncationEQ);
@@ -139,6 +141,71 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__resampleHRIRs(void){
+    float* hrirs_out, *hrirs_tmp;
+    int i, j, target_fs, hrirs_out_len, hrirs_tmp_len, max_ind;
+
+    /* The Speex resampler has generally quite a good compromise between quality and speed.
+     * This tolerance is quite high, but ultimately, it's how it sounds that matters.
+     * If SAF_USE_INTEL_IPP is defined, then the Intel IPP resampler is employed instead */
+    const float acceptedTolerance = 0.05f;
+
+    /* Test 1 - passing a unit impulse through, and asserting the peak is where it should be */
+    float* ir;
+    ir = calloc1d(NUM_EARS * 256, sizeof(float));
+    ir[10] = 1.0f;
+    ir[256+10] = 1.0f;
+    hrirs_out = NULL;
+    for(i=0; i<100; i++){
+        resampleHRIRs((float*)ir, 1, 256, 48000, 48000, 0, &hrirs_out, &hrirs_out_len); /* 1x samplerate */
+        utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
+        TEST_ASSERT_TRUE(max_ind==10);
+        utility_simaxv(hrirs_out+hrirs_out_len, hrirs_out_len, &max_ind);
+        TEST_ASSERT_TRUE(max_ind==10);
+        free(hrirs_out); hrirs_out = NULL;
+        resampleHRIRs((float*)ir, 1, 256, 48000, 96000, 0, &hrirs_out, &hrirs_out_len); /* 2x samplerate */
+        utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
+        TEST_ASSERT_TRUE(max_ind==20);
+        utility_simaxv(hrirs_out+hrirs_out_len, hrirs_out_len, &max_ind);
+        TEST_ASSERT_TRUE(max_ind==20);
+        free(hrirs_out); hrirs_out = NULL;
+        resampleHRIRs((float*)ir, 1, 256, 48000, 24000, 0, &hrirs_out, &hrirs_out_len); /* 0.5x samplerate */
+        utility_simaxv(hrirs_out, hrirs_out_len, &max_ind);
+        TEST_ASSERT_TRUE(max_ind==5);
+        utility_simaxv(hrirs_out+hrirs_out_len, hrirs_out_len, &max_ind);
+        TEST_ASSERT_TRUE(max_ind==5);
+        free(hrirs_out); hrirs_out = NULL;
+    }
+    free(ir);
+
+    /* Test 2 - converting 48e3 to 48e3 (i.e., no actual resampling, but still passing through the filter) */
+    target_fs = 48000;
+    hrirs_out = NULL;
+    resampleHRIRs((float*)__default_hrirs, __default_N_hrir_dirs, __default_hrir_len, __default_hrir_fs,
+                  target_fs, 0 /*do not zero pad*/, &hrirs_out, &hrirs_out_len);
+    for(i=0; i<__default_N_hrir_dirs*NUM_EARS; i++) /* Loop over IRs */
+        for(j=0; j<SAF_MIN(__default_hrir_len,hrirs_out_len); j++) /* Loop over Samples */
+            TEST_ASSERT_TRUE(fabsf(((float*)__default_hrirs)[i*__default_hrir_len+j] - hrirs_out[i*hrirs_out_len+j]) <= acceptedTolerance);
+    TEST_ASSERT_TRUE(__default_hrir_len==hrirs_out_len);
+    free(hrirs_out);
+
+    /* Test 2 - converting 48e3 to 96e3 and then back to 48e3 */
+    target_fs = 96000;
+    hrirs_tmp = NULL;
+    resampleHRIRs((float*)__default_hrirs, __default_N_hrir_dirs, __default_hrir_len, __default_hrir_fs,
+                  target_fs, 0 /*do not zero pad*/, &hrirs_tmp, &hrirs_tmp_len);
+    target_fs = 48000;
+    hrirs_out = NULL;
+    resampleHRIRs(hrirs_tmp, __default_N_hrir_dirs, hrirs_tmp_len, 96000,
+                  target_fs, 0 /*do not zero pad*/, &hrirs_out, &hrirs_out_len);
+    for(i=0; i<__default_N_hrir_dirs*NUM_EARS; i++) /* Loop over IRs */
+        for(j=0; j<SAF_MIN(__default_hrir_len,hrirs_out_len); j++) /* Loop over Samples */
+            TEST_ASSERT_TRUE(fabsf(((float*)__default_hrirs)[i*__default_hrir_len+j] - hrirs_out[i*hrirs_out_len+j]) <= acceptedTolerance);
+    TEST_ASSERT_TRUE(__default_hrir_len==hrirs_out_len);
+    free(hrirs_tmp);
+    free(hrirs_out);
+}
 
 void test__delaunaynd(void){
     int nMesh;
@@ -629,6 +696,7 @@ void test__afSTFT(void){
     freqVector = malloc1d(nBands*sizeof(float));
     afSTFT_getCentreFreqs(hSTFT, (float)fs, nBands, freqVector);
     inspec = (float_complex***)malloc3d(nBands, nCHin, nHops, sizeof(float_complex));
+    //inspec = (float_complex***)malloc3d(nBands, nCHin+12, nHops+10, sizeof(float_complex));
     outspec = (float_complex***)malloc3d(nBands, nCHout, nHops, sizeof(float_complex));
 
     /* just some messing around... */
@@ -645,6 +713,7 @@ void test__afSTFT(void){
         for(ch=0; ch<nCHin; ch++)
             memcpy(inframe[ch], &insig[ch][frame*framesize], framesize*sizeof(float));
         afSTFT_forward(hSTFT, inframe, framesize, inspec);
+        //afSTFT_forward_knownSize(hSTFT, inframe, framesize, nCHin+12, nHops+10, inspec);
 
         /* Copy first channel of inspec to all outspec channels */
         for(band=0; band<nBands; band++)
@@ -1376,7 +1445,7 @@ void test__faf_IIRFilterbank(void){
     /* Config */
     const float acceptedTolerance_dB = 0.5f;
     const int signalLength = 256;
-    const int frameSize = 16;
+    const int frameSize = 256;//16;
     float fs = 48e3;
     int order = 3;
     float fc[6] = {176.776695296637f, 353.553390593274f, 707.106781186547f, 1414.21356237309f, 2828.42712474619f, 5656.85424949238f};
@@ -1393,7 +1462,7 @@ void test__faf_IIRFilterbank(void){
 
     /* Pass impulse through filterbank */
     outFrame = (float**)malloc2d(7, frameSize, sizeof(float));
-    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
+    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, frameSize);
     for(i=0; i< signalLength/frameSize; i++){
         faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
         for(band=0; band<7; band++)
@@ -1403,7 +1472,7 @@ void test__faf_IIRFilterbank(void){
 
     /* Sum the individual bands */
     for(band=0; band<7; band++)
-        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
+        cblas_saxpy(signalLength, 1.0f, outSig_bands[band], 1, outSig, 1);
 
     /* Check that the magnitude difference between input and output is below 0.5dB */
     saf_rfft_create(&hFFT, signalLength);
@@ -1414,7 +1483,7 @@ void test__faf_IIRFilterbank(void){
 
     /* Now the same thing, but for 1st order */
     order = 1;
-    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, 512);
+    faf_IIRFilterbank_create(&hFaF, order, (float*)fc, 6, fs, frameSize);
     for(i=0; i< signalLength/frameSize; i++){
         faf_IIRFilterbank_apply(hFaF, &inSig[i*frameSize], outFrame, frameSize);
         for(band=0; band<7; band++)
@@ -1423,7 +1492,7 @@ void test__faf_IIRFilterbank(void){
     faf_IIRFilterbank_destroy(&hFaF);
     memset(outSig, 0, signalLength*sizeof(float));
     for(band=0; band<7; band++)
-        utility_svvadd(outSig, outSig_bands[band], signalLength, outSig);
+        cblas_saxpy(signalLength, 1.0f, outSig_bands[band], 1, outSig, 1);
     saf_rfft_forward(hFFT, outSig, outsig_fft);
     for(i=0; i<signalLength/2+1; i++)
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance_dB, 0.0f, 20.0f * log10f(cabsf(ccdivf(outsig_fft[i], insig_fft[i]))));
@@ -1580,7 +1649,7 @@ void test__tracker3d(void){
     rand_m1_1(FLATTEN2D(inputSH_noise), nSH*sigLen);
     scale = 0.05f;
     utility_svsmul(FLATTEN2D(inputSH_noise), &scale, nSH*sigLen, NULL);
-    utility_svvadd(FLATTEN2D(inputSH), FLATTEN2D(inputSH_noise), nSH*sigLen, FLATTEN2D(inputSH));
+    cblas_saxpy(nSH*sigLen, 1.0f, FLATTEN2D(inputSH_noise), 1, FLATTEN2D(inputSH), 1);
 
     /* Create DoA estimator */
     nGrid = 240; /* number of points in a t-design of degree 21 */
@@ -1610,7 +1679,7 @@ void test__tracker3d(void){
                     FLATTEN2D(inputSH_hop), hopsize,
                     FLATTEN2D(inputSH_hop), hopsize, 0.0f,
                     FLATTEN2D(Cx), nSH);
-        utility_sseig(FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
+        utility_sseig(NULL, FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
         for(i=0; i<nSH; i++)
             for(j=0, k=nSources; j<nSH-nSources; j++, k++)
                 Vn[i][j] = V[i][k];
@@ -1792,7 +1861,7 @@ void test__formulate_M_and_Cr(void){
                     FLATTEN2D(Mr), nCHout,
                     FLATTEN2D(decor), lenSig, 0.0f,
                     FLATTEN2D(z_r), lenSig);
-        utility_svvadd(FLATTEN2D(z), FLATTEN2D(z_r), nCHout*lenSig, FLATTEN2D(z));
+        cblas_saxpy(nCHout*lenSig, 1.0f, FLATTEN2D(z_r), 1, FLATTEN2D(z), 1);
 
         /* Assert that the covariance matrix of 'z' matches the target covariance
          * matrix */
@@ -1952,7 +2021,7 @@ void test__formulate_M_and_Cr_cmplx(void){
                     FLATTEN2D(Mr), nCHout,
                     FLATTEN2D(decor), lenSig, &cbeta,
                     FLATTEN2D(z_r), lenSig);
-        utility_cvvadd(FLATTEN2D(z), FLATTEN2D(z_r), nCHout*lenSig, FLATTEN2D(z));
+        cblas_saxpy(/*re+im*/2*nCHout*lenSig, 1.0f, (const float*)FLATTEN2D(z_r), 1, (float*)FLATTEN2D(z), 1);
 
         /* Assert that the covariance matrix of 'z' matches the target covariance
          * matrix */
@@ -2515,7 +2584,7 @@ void test__sphMUSIC(void){
     /* Eigenvalue decomposition and truncation of eigen vectors to obtain
      * noise subspace (based on source number) */
     V = (float**)malloc2d(nSH, nSH, sizeof(float));
-    utility_sseig(FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
+    utility_sseig(NULL, FLATTEN2D(Cx), nSH, 1, FLATTEN2D(V), NULL, NULL);
     Vn = (float**)malloc2d(nSH, (nSH-nSrcs), sizeof(float)); /* noise subspace */
     for(i=0; i<nSH; i++)
         for(j=0, k=nSrcs; j<nSH-nSrcs; j++, k++)
@@ -2543,6 +2612,68 @@ void test__sphMUSIC(void){
     free(V);
     free(Vn);
     free(Vn_cmplx);
+}
+
+void test__sphPWD(void){
+    int nGrid, nSH, nSrcs, srcInd_1, srcInd_2;
+    float test_dirs_deg[2][2];
+    float* grid_dirs_deg;
+    float** Y_src, **src_sigs, **src_sigs_sh, **Cx;
+    float_complex** Cx_cmplx;
+    void* hPWD;
+
+    /* config */
+    const int order = 3;
+    const int lsig = 48000;
+
+    /* define scanning grid directions */
+    nGrid = 240;
+    grid_dirs_deg = (float*)__Tdesign_degree_21_dirs_deg;
+
+    /* test scenario and signals */
+    nSrcs = 2;
+    srcInd_1 = 139;
+    srcInd_2 = 204;
+    test_dirs_deg[0][0] = grid_dirs_deg[srcInd_1*2];
+    test_dirs_deg[0][1] = grid_dirs_deg[srcInd_1*2+1];
+    test_dirs_deg[1][0] = grid_dirs_deg[srcInd_2*2];
+    test_dirs_deg[1][1] = grid_dirs_deg[srcInd_2*2+1];
+    nSH = ORDER2NSH(order);
+    Y_src = (float**)malloc2d(nSH, nSrcs, sizeof(float));
+    getRSH(order, (float*)test_dirs_deg, nSrcs, FLATTEN2D(Y_src));
+    src_sigs = (float**)malloc2d(nSrcs, lsig, sizeof(float));
+    rand_m1_1(FLATTEN2D(src_sigs), nSrcs*lsig); /* uncorrelated noise sources */
+
+    /* encode to SH and compute spatial covariance matrix */
+    src_sigs_sh = (float**)malloc2d(nSH, lsig, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, lsig, nSrcs, 1.0f,
+                FLATTEN2D(Y_src), nSrcs,
+                FLATTEN2D(src_sigs), lsig, 0.0f,
+                FLATTEN2D(src_sigs_sh), lsig);
+    Cx = (float**)malloc2d(nSH, nSH, sizeof(float));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, lsig, 1.0f,
+                FLATTEN2D(src_sigs_sh), lsig,
+                FLATTEN2D(src_sigs_sh), lsig, 0.0f,
+                FLATTEN2D(Cx), nSH);
+    Cx_cmplx = (float_complex**)calloc2d(nSH, nSH, sizeof(float_complex));
+    cblas_scopy(nSH*nSH, FLATTEN2D(Cx), 1, (float*)FLATTEN2D(Cx_cmplx), 2);
+
+    /* compute sphMUSIC, returning "peak-find" indices */
+    int inds[2];
+    sphPWD_create(&hPWD, order, grid_dirs_deg, nGrid);
+    sphPWD_compute(hPWD, FLATTEN2D(Cx_cmplx), nSrcs, NULL, (int*)inds);
+
+    /* Assert that the true source indices were found (note that the order can flip) */
+    TEST_ASSERT_TRUE(inds[0] == srcInd_1 || inds[0] == srcInd_2);
+    TEST_ASSERT_TRUE(inds[1] == srcInd_1 || inds[1] == srcInd_2);
+
+    /* clean-up */
+    sphPWD_destroy(&hPWD);
+    free(Y_src);
+    free(src_sigs);
+    free(src_sigs_sh);
+    free(Cx);
+    free(Cx_cmplx);
 }
 
 void test__sphESPRIT(void){
@@ -2606,7 +2737,7 @@ void test__sphESPRIT(void){
     /* Eigenvalue decomposition and truncation of eigen vectors to obtain
      * signal subspace (based on source number) */
     U = (float_complex**)malloc2d(nSH, nSH, sizeof(float_complex));
-    utility_cseig(FLATTEN2D(C_Cx), nSH, 1, FLATTEN2D(U), NULL, NULL);
+    utility_cseig(NULL, FLATTEN2D(C_Cx), nSH, 1, FLATTEN2D(U), NULL, NULL);
     Us = (float_complex**)malloc2d(nSH, nSrcs, sizeof(float_complex)); /* signal subspace */
     for(i=0; i<nSH; i++)
         for(j=0; j<nSrcs; j++)

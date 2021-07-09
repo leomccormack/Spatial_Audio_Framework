@@ -32,8 +32,6 @@ void matrixconv_create
     matrixconv_data* pData = (matrixconv_data*)malloc1d(sizeof(matrixconv_data));
     *phMCnv = (void*)pData;
 
-    SAF_PRINT_VERSION_LICENSE_STRING;
-    
     /* Default user parameters */
     pData->nInputChannels = 1;
     pData->enablePartitionedConv = 0;

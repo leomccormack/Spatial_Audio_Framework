@@ -349,7 +349,7 @@ void polyd_m
     e = malloc1d(size_x*sizeof(double_complex));
     for(i=0; i<size_x*size_x; i++)
         Xcmplx[i] = cmplx(X[i], 0.0);
-    utility_zeig(Xcmplx, size_x, NULL, NULL, NULL, e);
+    utility_zeig(NULL, Xcmplx, size_x, NULL, NULL, NULL, e);
 
     /* recursion formula */
     memset(poly, 0, (size_x+1)*sizeof(double_complex));
@@ -603,7 +603,7 @@ void gexpm
     }
     two = 2.0f;
     utility_svsmul(FLATTEN2D(Ym1), &two, sizeD*sizeD, NULL);
-    utility_sglslv(FLATTEN2D(Ym2), sizeD, FLATTEN2D(Ym1), sizeD, FLATTEN2D(Ym1));
+    utility_sglslv(NULL, FLATTEN2D(Ym2), sizeD, FLATTEN2D(Ym1), sizeD, FLATTEN2D(Ym1));
 
     /* Y = Ym1+I = expm(D)
      * Square Y (i.e., Y <-- Y*Y) s times to get Y = expm(D*2^s). */

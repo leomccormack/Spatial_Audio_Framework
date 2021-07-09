@@ -15,6 +15,16 @@
  */
 
 /**
+ * @example dirass
+ * @brief A sound-field visualiser based on the directional re-assignment of
+ *        beamformer energy based on local DoA estimates
+ * ### Include Header
+ * dirass.h
+ * ### Source Files
+ * dirass_internal.h, dirass.c, dirass_internal.c
+ */
+
+/**
  * @file dirass.h
  * @brief A sound-field visualiser based on the directional re-assignment of
  *        beamformer energy based on local DoA estimates [1,2]

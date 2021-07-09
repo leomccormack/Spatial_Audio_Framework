@@ -17,7 +17,7 @@ Usage:"
   Examples:
       sudo ./$(basename $0) sequential
       sudo ./$(basename $0) threaded
-      sudo ./$(basename $0) sequential /opt/intel/oneapi/mkl/latest/tools/builder
+      sudo ./$(basename $0) sequential ilp64 /opt/intel/oneapi/mkl/latest/tools/builder
 EOT
     exit 1
 fi
@@ -94,9 +94,9 @@ fi
 
 # copy library
 if [[ "$OSTYPE" == "linux"* ]]; then
-    (cd ${mkl_builder_dir} && cp "libsaf_mkl_custom_${mkl_interface}.so" ${output_dir})
+    (cd ${mkl_builder_dir} && mv "libsaf_mkl_custom_${mkl_interface}.so" ${output_dir})
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-    (cd ${mkl_builder_dir} && cp "libsaf_mkl_custom_${mkl_interface}.dylib" ${output_dir})
+    (cd ${mkl_builder_dir} && mv "libsaf_mkl_custom_${mkl_interface}.dylib" ${output_dir})
 fi
 
 echo "Installed libsaf_mkl_custom_${mkl_interface} into ${output_dir}"

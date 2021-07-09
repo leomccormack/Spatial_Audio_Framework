@@ -40,8 +40,6 @@ void rotator_create
 {
     rotator_data* pData = (rotator_data*)malloc1d(sizeof(rotator_data));
     *phRot = (void*)pData;
-
-    SAF_PRINT_VERSION_LICENSE_STRING;
     
     pData->M_rot_status = M_ROT_RECOMPUTE_QUATERNION;
   
@@ -88,13 +86,13 @@ void rotator_init
     pData->fs = sampleRate;
     
     /* starting values */
-    for(i=1; i<=FRAME_SIZE; i++){
-        pData->interpolator_fadeIn[i-1] = (float)i*1.0f/(float)FRAME_SIZE;
+    for(i=1; i<=ROTATOR_FRAME_SIZE; i++){
+        pData->interpolator_fadeIn[i-1] = (float)i*1.0f/(float)ROTATOR_FRAME_SIZE;
         pData->interpolator_fadeOut[i-1] = 1.0f-pData->interpolator_fadeIn[i-1];
     }
     memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
     memset(pData->prev_M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
-    memset(pData->prev_inputFrameTD, 0, MAX_NUM_SH_SIGNALS*FRAME_SIZE*sizeof(float));
+    memset(pData->prev_inputFrameTD, 0, MAX_NUM_SH_SIGNALS*ROTATOR_FRAME_SIZE*sizeof(float));
     pData->M_rot_status = M_ROT_RECOMPUTE_QUATERNION;
 }
 
@@ -111,7 +109,7 @@ void rotator_process
     rotator_data *pData = (rotator_data*)(hRot);
     int i, j, order, nSH, mixWithPreviousFLAG;
     float Rxyz[3][3];
-    float* M_rot_tmp;
+    float M_rot_tmp[MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS];
     CH_ORDER chOrdering;
 
     /* locals */
@@ -119,18 +117,18 @@ void rotator_process
     order = (int)pData->inputOrder;
     nSH = ORDER2NSH(order);
 
-    if (nSamples == FRAME_SIZE) {
+    if (nSamples == ROTATOR_FRAME_SIZE) {
 
         /* Load time-domain data */
         for(i=0; i < SAF_MIN(nSH, nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
+            utility_svvcopy(inputs[i], ROTATOR_FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<MAX_NUM_SH_SIGNALS; i++)
-            memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
+            memset(pData->inputFrameTD[i], 0, ROTATOR_FRAME_SIZE * sizeof(float)); /* fill remaining channels with zeros */
 
         /* account for channel order */
         switch(chOrdering){
             case CH_ACN:  /* already ACN */ break; /* Otherwise, convert to ACN... */
-            case CH_FUMA: convertHOAChannelConvention((float*)pData->inputFrameTD, order, FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
+            case CH_FUMA: convertHOAChannelConvention((float*)pData->inputFrameTD, order, ROTATOR_FRAME_SIZE, HOA_CH_ORDER_FUMA, HOA_CH_ORDER_ACN); break;
         }
 
         if (order>0){
@@ -138,7 +136,6 @@ void rotator_process
             mixWithPreviousFLAG = 0;
             if(pData->M_rot_status != M_ROT_READY){
                 memset(pData->M_rot, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
-                M_rot_tmp = malloc1d(nSH*nSH*sizeof(float));
                 if(pData->M_rot_status == M_ROT_RECOMPUTE_EULER){
                     yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
                     euler2Quaternion(pData->yaw, pData->pitch, pData->roll, 0,
@@ -149,61 +146,60 @@ void rotator_process
                     quaternion2euler(&(pData->Q), 0, pData->useRollPitchYawFlag ? EULER_ROTATION_ROLL_PITCH_YAW : EULER_ROTATION_YAW_PITCH_ROLL,
                                      &(pData->yaw), &(pData->pitch), &(pData->roll));
                 }
-                getSHrotMtxReal(Rxyz, M_rot_tmp, order);
+                getSHrotMtxReal(Rxyz, (float*)M_rot_tmp, order);
                 for(i=0; i<nSH; i++)
                     for(j=0; j<nSH; j++)
                         pData->M_rot[i][j] = M_rot_tmp[i*nSH+j];
-                free(M_rot_tmp);
                 mixWithPreviousFLAG = 1;
                 pData->M_rot_status = M_ROT_READY;
             }
 
             /* apply rotation */
-            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSH, 1.0f,
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, ROTATOR_FRAME_SIZE, nSH, 1.0f,
                         (float*)(pData->M_rot), MAX_NUM_SH_SIGNALS,
-                        (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
-                        (float*)pData->outputFrameTD, FRAME_SIZE);
+                        (float*)pData->prev_inputFrameTD, ROTATOR_FRAME_SIZE, 0.0f,
+                        (float*)pData->outputFrameTD, ROTATOR_FRAME_SIZE);
 
             /* Fade between (linearly inerpolate) the new rotation matrix and the previous rotation matrix (only if the new rotation matrix is different) */
             if(mixWithPreviousFLAG){
-                cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, FRAME_SIZE, nSH, 1.0f,
+                cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, ROTATOR_FRAME_SIZE, nSH, 1.0f,
                             (float*)pData->prev_M_rot, MAX_NUM_SH_SIGNALS,
-                            (float*)pData->prev_inputFrameTD, FRAME_SIZE, 0.0f,
-                            (float*)pData->tempFrame, FRAME_SIZE);
+                            (float*)pData->prev_inputFrameTD, ROTATOR_FRAME_SIZE, 0.0f,
+                            (float*)pData->tempFrame, ROTATOR_FRAME_SIZE);
 
                 /* Apply the linear interpolation */
                 for (i=0; i < nSH; i++){
-                    utility_svvmul((float*)pData->interpolator_fadeIn, (float*)pData->outputFrameTD[i], FRAME_SIZE, (float*)pData->outputFrameTD_fadeIn[i]);
-                    utility_svvmul((float*)pData->interpolator_fadeOut, (float*)pData->tempFrame[i], FRAME_SIZE, (float*)pData->tempFrame_fadeOut[i]);
+                    utility_svvmul((float*)pData->interpolator_fadeIn, (float*)pData->outputFrameTD[i], ROTATOR_FRAME_SIZE, (float*)pData->outputFrameTD_fadeIn[i]);
+                    utility_svvmul((float*)pData->interpolator_fadeOut, (float*)pData->tempFrame[i], ROTATOR_FRAME_SIZE, (float*)pData->tempFrame_fadeOut[i]);
                 }
-                cblas_scopy(nSH*FRAME_SIZE, (float*)pData->outputFrameTD_fadeIn, 1, (float*)pData->outputFrameTD, 1);
-                cblas_saxpy(nSH*FRAME_SIZE, 1.0f, (float*)pData->tempFrame_fadeOut, 1, (float*)pData->outputFrameTD, 1);
+                cblas_scopy(nSH*ROTATOR_FRAME_SIZE, (float*)pData->outputFrameTD_fadeIn, 1, (float*)pData->outputFrameTD, 1);
+                cblas_saxpy(nSH*ROTATOR_FRAME_SIZE, 1.0f, (float*)pData->tempFrame_fadeOut, 1, (float*)pData->outputFrameTD, 1);
 
                 /* for next frame */
                 utility_svvcopy((const float*)pData->M_rot, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS, (float*)pData->prev_M_rot);
             }
 
             /* for next frame */
-            utility_svvcopy((const float*)pData->inputFrameTD, MAX_NUM_SH_SIGNALS*FRAME_SIZE, (float*)pData->prev_inputFrameTD);
+            utility_svvcopy((const float*)pData->inputFrameTD, MAX_NUM_SH_SIGNALS*ROTATOR_FRAME_SIZE, (float*)pData->prev_inputFrameTD);
         }
         else /* Pass-through the omni (cannot be rotated...) */
-            utility_svvcopy((const float*)pData->inputFrameTD[0], FRAME_SIZE, (float*)pData->outputFrameTD[0]);
+            utility_svvcopy((const float*)pData->inputFrameTD[0], ROTATOR_FRAME_SIZE, (float*)pData->outputFrameTD[0]);
   
         /* account for channel order */
         switch(chOrdering){
             case CH_ACN:  /* do nothing */ break;
-            case CH_FUMA: convertHOAChannelConvention((float*)pData->outputFrameTD, order, FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA); break;
+            case CH_FUMA: convertHOAChannelConvention((float*)pData->outputFrameTD, order, ROTATOR_FRAME_SIZE, HOA_CH_ORDER_ACN, HOA_CH_ORDER_FUMA); break;
         }
 
         /* Copy to output */
         for (i = 0; i < SAF_MIN(nSH, nOutputs); i++)
-            utility_svvcopy(pData->outputFrameTD[i], FRAME_SIZE, outputs[i]);
+            utility_svvcopy(pData->outputFrameTD[i], ROTATOR_FRAME_SIZE, outputs[i]);
         for (; i < nOutputs; i++)
-            memset(outputs[i], 0, FRAME_SIZE*sizeof(float)); 
+            memset(outputs[i], 0, ROTATOR_FRAME_SIZE*sizeof(float));
     }
     else{
         for (i = 0; i < nOutputs; i++)
-            memset(outputs[i], 0, FRAME_SIZE*sizeof(float));
+            memset(outputs[i], 0, ROTATOR_FRAME_SIZE*sizeof(float));
     }
 }
 
@@ -334,7 +330,7 @@ void rotator_setOrder(void* const hRot, int newOrder)
 
 int rotator_getFrameSize(void)
 {
-    return FRAME_SIZE;
+    return ROTATOR_FRAME_SIZE;
 }
 
 float rotator_getYaw(void* const hRot)
@@ -435,5 +431,5 @@ int rotator_getNSHrequired(void* const hRot)
 
 int rotator_getProcessingDelay()
 {
-    return FRAME_SIZE;
+    return ROTATOR_FRAME_SIZE;
 }

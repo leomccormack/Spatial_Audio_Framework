@@ -68,7 +68,7 @@ static int MSTA1
     F1=ENVJ(N1,A0)-MP;
     for (IT=1; IT<=20; IT++) {
         //NN=N1-(N1-N0)/(1.0-F0/F1);
-		NN = N1-(int)((double)(N1-N0) / (1.0-F0/F1));
+        NN = N1-(int)((double)(N1-N0) / (1.0-F0/F1));
         F=ENVJ(NN,A0)-MP;
         if (abs(NN-N1) < 1) goto e20;
         N0=N1;
@@ -112,7 +112,7 @@ static int MSTA2
     F1=ENVJ(N1,A0)-OBJ;
     for (IT=1; IT<=20; IT++) {
         //NN=N1-(N1-N0)/(1.0-F0/F1);
-		NN = N1-(int)((double)(N1-N0)/(1.0-F0/F1));
+        NN = N1-(int)((double)(N1-N0)/(1.0-F0/F1));
         F=ENVJ(NN,A0)-OBJ;
         if (abs(NN-N1) < 1) goto e20;
         N0=N1;

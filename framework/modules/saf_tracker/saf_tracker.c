@@ -100,6 +100,9 @@ void tracker3d_create
     pData->H[1][1] = 1.0f;
     pData->H[2][2] = 1.0f;
 
+    /* Create kalman filter helper struct */
+    kf_update6_create(&(pData->hKF6));
+
     /* Create particles */
     pData->SS = malloc1d(pData->tpars.Np * sizeof(voidPtr));
     pData->SS_resamp = malloc1d(pData->tpars.Np * sizeof(voidPtr));
@@ -111,7 +114,7 @@ void tracker3d_create
     
     /* Event starting values */
     for(i=0; i<TRACKER3D_MAX_NUM_EVENTS; i++){
-        pData->evta[i] = NULL;
+        pData->evta[i] = -1;
         tracker3d_particleCreate(&(pData->str[i]), pData->W0, pData->tpars.dt);
     }
     pData->incrementTime = 0;
@@ -127,6 +130,8 @@ void tracker3d_destroy
 
     if (pData != NULL) {
 
+        kf_update6_destroy(&(pData->hKF6));
+
         for(i=0; i<pData->tpars.Np; i++){
             tracker3d_particleDestroy(&pData->SS[i]);
             tracker3d_particleDestroy(&pData->SS_resamp[i]);
@@ -134,10 +139,8 @@ void tracker3d_destroy
         free(pData->SS);
         free(pData->SS_resamp);
 
-        for(i=0; i<TRACKER3D_MAX_NUM_EVENTS; i++){
-            free(pData->evta[i]);
+        for(i=0; i<TRACKER3D_MAX_NUM_EVENTS; i++)
             tracker3d_particleDestroy(&pData->str[i]);
-        }
 
         free(pData);
         pData = NULL;

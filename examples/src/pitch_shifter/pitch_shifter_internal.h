@@ -25,12 +25,9 @@
 #ifndef __PITCH_SHIFTER_INTERNAL_H_INCLUDED__
 #define __PITCH_SHIFTER_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include "pitch_shifter.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "pitch_shifter.h" /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,42 +37,44 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 ) 
+#if !defined(PITCH_SHIFTER_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define PITCH_SHIFTER_FRAME_SIZE ( FRAME_SIZE )  /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define PITCH_SHIFTER_FRAME_SIZE ( 128 )         /**< Framesize, in time-domain samples */
+# endif
 #endif
-
 
 /* ========================================================================== */
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/**
- * Main struct for the pitch_shifter
- */
+/** Main struct for the pitch_shifter */
 typedef struct _pitch_shifter
 {
     /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_CHANNELS][FRAME_SIZE];
-    float outFIFO[MAX_NUM_CHANNELS][FRAME_SIZE];
+    int FIFO_idx;                   /**< FIFO buffer index */
+    float inFIFO[MAX_NUM_CHANNELS][PITCH_SHIFTER_FRAME_SIZE];  /**< Input FIFO buffer */
+    float outFIFO[MAX_NUM_CHANNELS][PITCH_SHIFTER_FRAME_SIZE]; /**< Output FIFO buffer */
 
     /* internal */
-    void* hSmb;
-    CODEC_STATUS codecStatus;
-    float progressBar0_1;
-    char* progressBarText;
-    PROC_STATUS procStatus;
-    float sampleRate;
-    float inputFrame[MAX_NUM_CHANNELS][FRAME_SIZE];
-    float outputFrame[MAX_NUM_CHANNELS][FRAME_SIZE];
-    int new_nChannels;
-    int fftFrameSize, stepsize;
+    void* hSmb;                     /**< pitch-shifter handle */
+    CODEC_STATUS codecStatus;       /**< see #CODEC_STATUS */
+    float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;          /**< Current (re)initialisation step, string */
+    PROC_STATUS procStatus;         /**< see #PROC_STATUS */
+    float sampleRate;               /**< Host sampling rate, in Hz */
+    float inputFrame[MAX_NUM_CHANNELS][PITCH_SHIFTER_FRAME_SIZE];  /**< Current input frame */
+    float outputFrame[MAX_NUM_CHANNELS][PITCH_SHIFTER_FRAME_SIZE]; /**< Current output frame */
+    int new_nChannels;              /**< (current value will be replaced by this after next re-init) */
+    int fftFrameSize;               /**< FFT size */
+    int stepsize;                   /**< Hop size in samples*/
 
     /* user parameters */
-    int nChannels;
-    float pitchShift_factor;   /**< 1: no shift, 0.5: down one octave, 2: up one octave */
-    PITCH_SHIFTER_FFTSIZE_OPTIONS fftsize_option;
-    PITCH_SHIFTER_OSAMP_OPTIONS osamp_option; 
+    int nChannels;                  /**< Current number of input/output channels */
+    float pitchShift_factor;        /**< 1: no shift, 0.5: down one octave, 2: up one octave */
+    PITCH_SHIFTER_FFTSIZE_OPTIONS fftsize_option; /**< see #PITCH_SHIFTER_FFTSIZE_OPTIONS */
+    PITCH_SHIFTER_OSAMP_OPTIONS osamp_option;     /**< see #PITCH_SHIFTER_OSAMP_OPTIONS */
     
 } pitch_shifter_data;
 
@@ -84,9 +83,7 @@ typedef struct _pitch_shifter
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/**
- * Sets codec status (see #CODEC_STATUS enum)
- */
+/** Sets codec status (see #CODEC_STATUS enum) */
 void pitch_shifter_setCodecStatus(void* const hPS,
                                   CODEC_STATUS newStatus);
     

@@ -181,8 +181,8 @@ void ims_shoebox_coreWorkspaceCreate
     int i, band;
 
     /* locals */
-    wrk->d_max = 0.0f;
-    wrk->N_max = 0;
+    wrk->d_max = -1.0f;
+    wrk->N_max = -1;
     wrk->lengthVec = 0;
     wrk->numImageSources = 0;
     memset(wrk->room, 0, 3*sizeof(int));
@@ -702,7 +702,7 @@ void ims_shoebox_renderRIR
 
         /* Sum */
         for(i=0; i<echogram_abs->nChannels; i++)
-            utility_svvadd( &(rir->data[i*(wrk->rir_len_samples)]), wrk->rir_bands[band][i], wrk->rir_len_samples, &(rir->data[i*(wrk->rir_len_samples)]));
+            cblas_saxpy(wrk->rir_len_samples, 1.0f, wrk->rir_bands[band][i], 1, &(rir->data[i*(wrk->rir_len_samples)]), 1);
     }
 
     free(temp);

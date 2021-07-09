@@ -49,14 +49,9 @@
 #ifndef __ARRAY2SH_INTERNAL_H_INCLUDED__
 #define __ARRAY2SH_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-#include <assert.h>
-#include "array2sh.h" 
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "array2sh.h"      /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,34 +61,39 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#ifndef FRAME_SIZE
-# define FRAME_SIZE ( 128 ) 
+#if !defined(ARRAY2SH_FRAME_SIZE)
+# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+#  define ARRAY2SH_FRAME_SIZE ( FRAME_SIZE )          /**< Framesize, in time-domain samples */
+# else /* Otherwise, the default framesize for this example is: */
+#  define ARRAY2SH_FRAME_SIZE ( 128 )                 /**< Framesize, in time-domain samples */
+# endif
 #endif
-#define HOP_SIZE ( 128 )                       /* STFT hop size = nBands */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )          /* hybrid mode incurs an additional 5 bands  */
-#define TIME_SLOTS ( FRAME_SIZE / HOP_SIZE )   /* 4/8/16 */
-#define MAX_NUM_SENSORS ( ARRAY2SH_MAX_NUM_SENSORS ) /* Maximum permitted number of channels for the VST standard */
-#define MAX_EVAL_FREQ_HZ ( 20e3f )             /* Up to which frequency should the evaluation be accurate */
-#define MAX_NUM_SENSORS_IN_PRESET ( MAX_NUM_SENSORS )
-#if (FRAME_SIZE % HOP_SIZE != 0)
-# error "FRAME_SIZE must be an integer multiple of HOP_SIZE"
+#define HOP_SIZE ( 128 )                              /**< STFT hop size */
+#define HYBRID_BANDS ( HOP_SIZE + 5 )                 /**< Number of frequency bands */
+#define TIME_SLOTS ( ARRAY2SH_FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
+#define MAX_NUM_SENSORS ( ARRAY2SH_MAX_NUM_SENSORS )  /**< Maximum permitted number of inputs/sensors */
+#define MAX_EVAL_FREQ_HZ ( 20e3f )                    /**< Up to which frequency should the evaluation be accurate */
+#define MAX_NUM_SENSORS_IN_PRESET ( MAX_NUM_SENSORS ) /**< Maximum permitted number of inputs/sensors */
+
+/* Checks: */
+#if (ARRAY2SH_FRAME_SIZE % HOP_SIZE != 0)
+# error "ARRAY2SH_FRAME_SIZE must be an integer multiple of HOP_SIZE"
 #endif
 
 /* ========================================================================== */
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/**
- * Contains variables for describing the microphone/hydrophone array
- */
+/** Contains variables for describing the microphone/hydrophone array */
 typedef struct _array2sh_arrayPars {
-    int Q, newQ;                    /* number of sensors */
-    float r;                        /* radius of sensors */
-    float R;                        /* radius of scatterer (only for rigid arrays) */
-    ARRAY2SH_ARRAY_TYPES arrayType;          /* array type, spherical/cylindrical */
-    ARRAY2SH_WEIGHT_TYPES weightType;        /* open/rigid etc */
-    float sensorCoords_rad[MAX_NUM_SENSORS][2];
-    float sensorCoords_deg[MAX_NUM_SENSORS][2];
+    int Q;                                      /**< Current number of sensors */
+    int newQ;                                   /**< New number of sensors (current value replaced by this after next re-init) */
+    float r;                                    /**< radius of sensors */
+    float R;                                    /**< radius of scatterer (only for rigid arrays) */
+    ARRAY2SH_ARRAY_TYPES arrayType;             /**< see #ARRAY2SH_ARRAY_TYPES */
+    ARRAY2SH_WEIGHT_TYPES weightType;           /**< see #ARRAY2SH_WEIGHT_TYPES */
+    float sensorCoords_rad[MAX_NUM_SENSORS][2]; /**< Sensor directions in radians */
+    float sensorCoords_deg[MAX_NUM_SENSORS][2]; /**< Sensor directions in degrees */
         
 }array2sh_arrayPars;
 
@@ -104,52 +104,52 @@ typedef struct _array2sh_arrayPars {
 typedef struct _array2sh
 {
     /* audio buffers */
-    float** inputFrameTD;
-    float** SHframeTD;
-    float_complex*** inputframeTF;
-    float_complex*** SHframeTF;
+    float** inputFrameTD;           /**< Input sensor signals in the time-domain; #MAX_NUM_SENSORS x #ARRAY2SH_FRAME_SIZE */
+    float** SHframeTD;              /**< Output SH signals in the time-domain; #MAX_NUM_SH_SIGNALS x #ARRAY2SH_FRAME_SIZE */
+    float_complex*** inputframeTF;  /**< Input sensor signals in the time-domain; #HYBRID_BANDS x #MAX_NUM_SENSORS x #TIME_SLOTS */
+    float_complex*** SHframeTF;     /**< Output SH signals in the time-domain; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */
     
     /* intermediates */
-    double_complex bN_modal[HYBRID_BANDS][MAX_SH_ORDER + 1];
-    double_complex* bN;
-    double_complex bN_inv[HYBRID_BANDS][MAX_SH_ORDER + 1];
-    double_complex bN_inv_R[HYBRID_BANDS][MAX_NUM_SH_SIGNALS]; 
-    float_complex W[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
-    float_complex W_diffEQ[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
+    double_complex bN_modal[HYBRID_BANDS][MAX_SH_ORDER + 1];    /**< Current modal coeffients */
+    double_complex* bN;                                         /**< Temp vector for the modal coefficients */
+    double_complex bN_inv[HYBRID_BANDS][MAX_SH_ORDER + 1];      /**< 1/bN_modal */
+    double_complex bN_inv_R[HYBRID_BANDS][MAX_NUM_SH_SIGNALS];  /**< 1/bN_modal with regularisation */
+    float_complex W[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];        /**< Encoding weights */
+    float_complex W_diffEQ[HYBRID_BANDS][MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS]; /**< Encoding weights with diffuse-field EQ above the spatial aliasing limit */
     
     /* for displaying the bNs */
-    float** bN_modal_dB;            /* modal responses / no regulaisation; HYBRID_BANDS x (MAX_SH_ORDER +1)  */
-    float** bN_inv_dB;              /* modal responses / with regularisation; HYBRID_BANDS x (MAX_SH_ORDER +1)  */
-    float* cSH;                     /* spatial correlation; HYBRID_BANDS x 1 */
-    float* lSH;                     /* level difference; HYBRID_BANDS x 1 */ 
+    float** bN_modal_dB;            /**< modal responses / no regulaisation; HYBRID_BANDS x (MAX_SH_ORDER +1)  */
+    float** bN_inv_dB;              /**< modal responses / with regularisation; HYBRID_BANDS x (MAX_SH_ORDER +1)  */
+    float* cSH;                     /**< spatial correlation; HYBRID_BANDS x 1 */
+    float* lSH;                     /**< level difference; HYBRID_BANDS x 1 */
     
     /* time-frequency transform and array details */
-    float freqVector[HYBRID_BANDS]; /* frequency vector */
-    void* hSTFT;                    /* filterbank handle */
-    void* arraySpecs;               /* array configuration */
+    float freqVector[HYBRID_BANDS]; /**< frequency vector */
+    void* hSTFT;                    /**< filterbank handle */
+    void* arraySpecs;               /**< array configuration */
     
     /* internal parameters */
-    ARRAY2SH_EVAL_STATUS evalStatus;
-    float progressBar0_1;
-    char* progressBarText;
-    int fs;                         /* sampling rate, hz */
-    int new_order;                  /* new encoding order */
+    ARRAY2SH_EVAL_STATUS evalStatus; /**< see #ARRAY2SH_EVAL_STATUS */
+    float progressBar0_1;           /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;          /**< Current (re)initialisation step, string */ 
+    int fs;                         /**< sampling rate, hz */
+    int new_order;                  /**< new encoding order (current value will be replaced by this after next re-init) */
     
     /* flags */
-    PROC_STATUS procStatus;
-    int reinitSHTmatrixFLAG;        /* 0: do not reinit; 1: reinit; */
-    int evalRequestedFLAG;          /* 0: do not reinit; 1: reinit; */
+    PROC_STATUS procStatus;         /**< see #PROC_STATUS */
+    int reinitSHTmatrixFLAG;        /**< 0: do not reinit; 1: reinit; */
+    int evalRequestedFLAG;          /**< 0: do not reinit; 1: reinit; */
     
     /* additional user parameters that are not included in the array presets */
-    int order;                      /* current encoding order */
-    ARRAY2SH_MICROPHONE_ARRAY_PRESETS preset; /* currently selected MIC preset */
-    ARRAY2SH_FILTER_TYPES filterType;  /* encoding filter approach */
-    float regPar;                   /* regularisation upper gain limit, dB; */
-    CH_ORDER chOrdering;   /* ACN */
-    NORM_TYPES norm;       /* N3D/SN3D */
-    float c;                        /* speed of sound, m/s */
-    float gain_dB;                  /* post gain, dB */ 
-    int enableDiffEQpastAliasing;   /* 0: disabled, 1: enabled */
+    int order;                      /**< current encoding order */
+    ARRAY2SH_MICROPHONE_ARRAY_PRESETS preset; /**< currently selected MIC preset */
+    ARRAY2SH_FILTER_TYPES filterType;  /**< encoding filter approach */
+    float regPar;                   /**< regularisation upper gain limit, dB; */
+    CH_ORDER chOrdering;            /**< Ambisonic channel order convention (see #CH_ORDER) */
+    NORM_TYPES norm;                /**< Ambisonic normalisation convention (see #NORM_TYPES) */
+    float c;                        /**< speed of sound, m/s */
+    float gain_dB;                  /**< post gain, dB */
+    int enableDiffEQpastAliasing;   /**< 0: disabled, 1: enabled */
     
 } array2sh_data;
 

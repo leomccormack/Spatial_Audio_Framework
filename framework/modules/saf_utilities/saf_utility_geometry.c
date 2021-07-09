@@ -306,12 +306,10 @@ void unitCart2sph
 )
 {
     int i;
-    float hypotxy;
 
     for(i=0; i<nDirs; i++){
-        hypotxy = sqrtf(dirs_xyz[i*3]*dirs_xyz[i*3] + dirs_xyz[i*3+1]*dirs_xyz[i*3+1]);
         dirs[i*2]   = atan2f(dirs_xyz[i*3+1], dirs_xyz[i*3]);
-        dirs[i*2+1] = atan2f(dirs_xyz[i*3+2], hypotxy);
+        dirs[i*2+1] = atan2f(dirs_xyz[i*3+2], sqrtf(dirs_xyz[i*3]*dirs_xyz[i*3] + dirs_xyz[i*3+1]*dirs_xyz[i*3+1]));
     }
 
     /* Return in degrees instead... */
@@ -400,11 +398,17 @@ float getDistBetween2Points
     float point_b[3]
 )
 {
+#if defined(SAF_USE_APPLE_ACCELERATE)
+    float dist;
+    vDSP_distancesq((const float*)point_a, 1, (const float*)point_b, 1, &dist, 3);
+    return dist;
+#else
     float a_b[3];
     a_b[0] = point_a[0] - point_b[0];
     a_b[1] = point_a[1] - point_b[1];
     a_b[2] = point_a[2] - point_b[2];
     return L2_norm3(a_b);
+#endif
 }
 
 
@@ -460,7 +464,7 @@ void convhullnd
 
     /* build convex hull */
     saf_assert(*faces == NULL, "nFaces not known yet, and so shouldn't be pre-allocated...");
-    convhull_nd_build(ch_points, nPoints, 3, faces, NULL, NULL, nFaces);
+    convhull_nd_build(ch_points, nPoints, nd, faces, NULL, NULL, nFaces);
 
     /* clean-up */
     free(ch_points);

@@ -897,7 +897,6 @@ EXCLUDE_PATTERNS      += */build/*
 EXCLUDE_PATTERNS      += */cmake-build-debug/*
 EXCLUDE_PATTERNS      += */cmake-build-release/*
 EXCLUDE_PATTERNS      += *LICENSE.md* 
-EXCLUDE_PATTERNS      += */examples/src/*
 EXCLUDE_PATTERNS      += */test/timer/*
 EXCLUDE_PATTERNS      += */test/unity/*
 EXCLUDE_PATTERNS      += */test/saf_test_VS/*

@@ -43,6 +43,15 @@
 
 #ifdef  SAF_ENABLE_TRACKER_MODULE
 
+/** log(2pi) */
+#define SAF_LOG_2PI ( logf(2.0f*SAF_PI) )
+
+/** Data structure for kf_update6() */
+typedef struct _kf_update6 {
+    void* hLinSolve;    /* Linear solver handle '\' */
+    void* hLinSolveT;   /* Linear solver handle '/' */
+}kf_update6_data;
+
 /* ========================================================================== */
 /*                             Static Prototypes                              */
 /* ========================================================================== */
@@ -128,10 +137,10 @@ void tracker3d_particleCreate
     p->W0 = W0;
     p->nTargets = 0;
     p->dt = dt;
-    p->M = NULL;
-    p->P = NULL;
-    p->targetIDs = NULL;
-    p->Tcount = NULL;
+    p->M = malloc1d(TRACKER3D_MAX_NUM_TARGETS*sizeof(M6));
+    p->P = malloc1d(TRACKER3D_MAX_NUM_TARGETS*sizeof(P66));
+    p->targetIDs = malloc1d(TRACKER3D_MAX_NUM_TARGETS*sizeof(int));
+    p->Tcount = malloc1d(TRACKER3D_MAX_NUM_TARGETS*sizeof(int));
 }
 
 void tracker3d_particleReset
@@ -144,14 +153,10 @@ void tracker3d_particleReset
     p->W = p->W0;
     p->W_prev = p->W0;
     p->nTargets = 0;
-    free(p->M);
-    free(p->P);
-    free(p->targetIDs);
-    free(p->Tcount);
-    p->M = NULL;
-    p->P = NULL;
-    p->targetIDs = NULL;
-    p->Tcount = NULL;
+    memset(p->M, 0, TRACKER3D_MAX_NUM_TARGETS*sizeof(M6));
+    memset(p->P, 0, TRACKER3D_MAX_NUM_TARGETS*sizeof(P66));
+    memset(p->targetIDs, 0, TRACKER3D_MAX_NUM_TARGETS*sizeof(int));
+    memset(p->Tcount, 0, TRACKER3D_MAX_NUM_TARGETS*sizeof(int));
 }
 
 void tracker3d_particleCopy
@@ -168,12 +173,8 @@ void tracker3d_particleCopy
     p2->W0 = p1->W0;
     p2->nTargets = p1->nTargets;
     p2->dt = p1->dt;
-    p2->M = realloc1d(p2->M, p1->nTargets*sizeof(M6));
-    p2->P = realloc1d(p2->P, p1->nTargets*sizeof(P66));
-    memcpy(p2->M, p1->M, p1->nTargets*sizeof(M6));
-    memcpy(p2->P, p1->P, p1->nTargets*sizeof(P66));
-    p2->targetIDs = realloc1d(p2->targetIDs, p1->nTargets*sizeof(int));
-    p2->Tcount = realloc1d(p2->Tcount, p1->nTargets*sizeof(int));
+    cblas_scopy(p1->nTargets*6,   (float*)p1->M->M, 1, (float*)p2->M->M, 1);
+    cblas_scopy(p1->nTargets*6*6, (float*)p1->P->P, 1, (float*)p2->P->P, 1);
     memcpy(p2->targetIDs, p1->targetIDs, p1->nTargets*sizeof(int));
     memcpy(p2->Tcount, p1->Tcount, p1->nTargets*sizeof(int));
 }
@@ -302,12 +303,6 @@ void tracker3d_predict
                     memmove(&S->targetIDs[ind], &S->targetIDs[ind+1], (S->nTargets-ind)*sizeof(int));
                 }
 
-                /* resize */
-                S->M = realloc1d(S->M, S->nTargets*sizeof(M6));
-                S->P = realloc1d(S->P, S->nTargets*sizeof(P66));
-                S->Tcount = realloc1d(S->Tcount, S->nTargets*sizeof(int));
-                S->targetIDs = realloc1d(S->targetIDs, S->nTargets*sizeof(int));
-
                 /* Remove dead index for next iteration */
                 for(k=0; k<nDead; k++)
                     dead[k]--;
@@ -334,12 +329,6 @@ void tracker3d_predict
                     memmove(&S->Tcount[ind], &S->Tcount[ind+1], (S->nTargets-ind)*sizeof(int));
                     memmove(&S->targetIDs[ind], &S->targetIDs[ind+1], (S->nTargets-ind)*sizeof(int));
                 }
-
-                /* resize */
-				S->M = realloc1d(S->M, S->nTargets * sizeof(M6));
-				S->P = realloc1d(S->P, S->nTargets * sizeof(P66));
-				S->Tcount = realloc1d(S->Tcount, S->nTargets * sizeof(int));
-				S->targetIDs = realloc1d(S->targetIDs, S->nTargets * sizeof(int));
 
 #ifdef TRACKER_VERY_VERBOSE
                 sprintf(tmp, ", Target %d died ", ind);
@@ -405,8 +394,7 @@ void tracker3d_update
 #ifdef TRACKER_VERBOSE
         strcpy(pData->evt[cidx], "Clutter");
 #endif
-        free(pData->evta[cidx]);
-        pData->evta[cidx] = NULL;
+        pData->evta[cidx] = -1;
         pData->evp[cidx] = (1.0f-tpars->init_birth)*tpars->noiseLikelihood;
         pData->evl[cidx] = tpars->cd;
         tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
@@ -415,7 +403,7 @@ void tracker3d_update
         /* Loop over associations to targets */
         for (j=0; j<S->nTargets; j++){
             /* Compute update result and likelihood for association to signal j */
-            kf_update6(S->M[j].M, S->P[j].P, Y, pData->H, pData->R, M, P, &LH);
+            kf_update6(pData->hKF6, S->M[j].M, S->P[j].P, Y, pData->H, pData->R, M, P, &LH);
             if(pData->tpars.ARE_UNIT_VECTORS)
                 cblas_sscal(3, 1.0f/L2_norm3(M), M, 1);
 
@@ -424,23 +412,22 @@ void tracker3d_update
 #ifdef TRACKER_VERBOSE
             sprintf(pData->evt[cidx], "Target %d ", S->targetIDs[j]);
 #endif
-            pData->evta[cidx] = realloc1d(pData->evta[cidx], sizeof(int));
-            pData->evta[cidx][0] = S->targetIDs[j];
+            pData->evta[cidx] = S->targetIDs[j];
             pData->evp[cidx] = (1.0f-tpars->init_birth)*TP0;
             pData->evl[cidx] = LH;
             tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
             S_event = (MCS_data*)pData->str[cidx];
-            memcpy(S_event->M[j].M, M, sizeof(M6));
-            memcpy(S_event->P[j].P, P, sizeof(P66));
+            cblas_scopy(6,   (float*)M, 1, (float*)S_event->M[j].M, 1);
+            cblas_scopy(6*6, (float*)P, 1, (float*)S_event->P[j].P, 1);
             for(k=0; k<S->nTargets; k++)
                 S_event->Tcount[k] += Tinc;
             cidx++;
         }
 
         /* Association to new target */
-        if (S->nTargets < tpars->maxNactiveTargets){
+        if (S->nTargets < tpars->maxNactiveTargets && S->nTargets < TRACKER3D_MAX_NUM_TARGETS){
             /* Initialization of new target */
-            kf_update6(tpars->M0, tpars->P0, Y, pData->H, pData->R, M, P, &LH);
+            kf_update6(pData->hKF6, tpars->M0, tpars->P0, Y, pData->H, pData->R, M, P, &LH);
             if(pData->tpars.ARE_UNIT_VECTORS)
                 cblas_sscal(3, 1.0f/L2_norm3(M), M, 1);
 
@@ -464,20 +451,15 @@ void tracker3d_update
 #ifdef TRACKER_VERBOSE
             sprintf(pData->evt[cidx], "New Target %d ", j);
 #endif
-            pData->evta[cidx] = realloc1d(pData->evta[cidx], sizeof(int));
-            pData->evta[cidx][0] = j;
+            pData->evta[cidx] = j;
             pData->evp[cidx] = tpars->init_birth;
             pData->evl[cidx] = LH;
             tracker3d_particleCopy(pData->SS[i], pData->str[cidx]);
             S_event = (MCS_data*)pData->str[cidx];
-            S_event->nTargets = j+1;
-            S_event->M = realloc1d(S_event->M, S_event->nTargets*sizeof(M6));
-            S_event->P = realloc1d(S_event->P, S_event->nTargets*sizeof(P66));
-            memcpy(S_event->M[j].M, M, sizeof(M6));
-            memcpy(S_event->P[j].P, P, sizeof(P66));
-            S_event->Tcount = realloc1d(S_event->Tcount, S_event->nTargets*sizeof(int));
-            S_event->Tcount[j] = 0;
-            S_event->targetIDs = realloc1d(S_event->targetIDs, S_event->nTargets*sizeof(int));
+            S_event->nTargets = j+1; 
+            cblas_scopy(6,   (float*)M, 1, (float*)S_event->M[j].M, 1);
+            cblas_scopy(6*6, (float*)P, 1, (float*)S_event->P[j].P, 1);
+            S_event->Tcount[j] = 0; 
             S_event->targetIDs[j] = j_new;
             cidx++;
         }
@@ -642,9 +624,32 @@ void kf_predict6
     utility_svvadd((float*)APAT, (float*)Q, 36, (float*)P);
 }
 
+void kf_update6_create(void ** const phUp6)
+{
+    *phUp6 = malloc1d(sizeof(kf_update6_data));
+    kf_update6_data *h = (kf_update6_data*)(*phUp6);
+
+    utility_sslslv_create(&h->hLinSolve, 3, 1);
+    utility_sglslvt_create(&h->hLinSolveT, 6, 3);
+}
+void kf_update6_destroy(void ** const phUp6)
+{
+    kf_update6_data *h = (kf_update6_data*)(*phUp6);
+
+    if(h!=NULL){
+        utility_sslslv_destroy(&h->hLinSolve);
+        utility_sglslvt_destroy(&h->hLinSolveT);
+
+        free(h);
+        h=NULL;
+        *phUp6 = NULL;
+     }
+}
+
 /* hard-coded for length(X)=6 ... */
 void kf_update6
 (
+    void * const hUp6,
     float X[6],
     float P[6][6],
     float y[3],
@@ -655,7 +660,8 @@ void kf_update6
     float* LH
 )
 {
-    int i;
+    kf_update6_data *h = (kf_update6_data*)(hUp6);
+    float ISnd_sum;
     float yIM[3], IM[3], IS[3][3], HP[3][6], HPHT[3][3], PHT[6][3], K[6][3], K_yIM[6], KIS[6][3];
 
     /* update step */
@@ -671,12 +677,36 @@ void kf_update6
                 (float*)HP, 6,
                 (float*)H, 6, 0.0f,
                 (float*)HPHT, 3);
-    utility_svvadd((float*)HPHT, (float*)R, 9, (float*)IS);
+    IS[0][0] = HPHT[0][0] + R[0][0]; IS[0][1] = HPHT[0][1] + R[0][1]; IS[0][2] = HPHT[0][2] + R[0][2];
+    IS[1][0] = HPHT[1][0] + R[1][0]; IS[1][1] = HPHT[1][1] + R[1][1]; IS[1][2] = HPHT[1][2] + R[1][2];
+    IS[2][0] = HPHT[2][0] + R[2][0]; IS[2][1] = HPHT[2][1] + R[2][1]; IS[2][2] = HPHT[2][2] + R[2][2];
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 6, 3, 6, 1.0f,
                 (float*)P, 6,
                 (float*)H, 6, 0.0f,
                 (float*)PHT, 3);
-    utility_sglslvt((float*)PHT, 6, (float*)IS, 3, (float*)K);
+    ISnd_sum = IS[0][1] + IS[0][2] + IS[1][2] + IS[1][0] + IS[2][0] + IS[2][1];
+    if(ISnd_sum<0.00001f){ /* If "IS" is diagonal: */
+        K[0][0] = 1.0f/IS[0][0] * PHT[0][0];
+        K[0][1] = 1.0f/IS[1][1] * PHT[0][1];
+        K[0][2] = 1.0f/IS[2][2] * PHT[0][2];
+        K[1][0] = 1.0f/IS[0][0] * PHT[1][0];
+        K[1][1] = 1.0f/IS[1][1] * PHT[1][1]; 
+        K[1][2] = 1.0f/IS[2][2] * PHT[1][2];
+        K[2][0] = 1.0f/IS[0][0] * PHT[2][0];
+        K[2][1] = 1.0f/IS[1][1] * PHT[2][1];
+        K[2][2] = 1.0f/IS[2][2] * PHT[2][2];
+        K[3][0] = 1.0f/IS[0][0] * PHT[3][0];
+        K[3][1] = 1.0f/IS[1][1] * PHT[3][1];
+        K[3][2] = 1.0f/IS[2][2] * PHT[3][2];
+        K[4][0] = 1.0f/IS[0][0] * PHT[4][0];
+        K[4][1] = 1.0f/IS[1][1] * PHT[4][1];
+        K[4][2] = 1.0f/IS[2][2] * PHT[4][2];
+        K[5][0] = 1.0f/IS[0][0] * PHT[5][0];
+        K[5][1] = 1.0f/IS[1][1] * PHT[5][1];
+        K[5][2] = 1.0f/IS[2][2] * PHT[5][2];
+    }
+    else
+        utility_sglslvt(h->hLinSolveT, (float*)PHT, 6, (float*)IS, 3, (float*)K);
     yIM[0] = y[0]-IM[0];
     yIM[1] = y[1]-IM[1];
     yIM[2] = y[2]-IM[2];
@@ -698,16 +728,10 @@ void kf_update6
                 (float*)KIS, 3,
                 (float*)K, 3, 0.0f,
                 (float*)P_out, 6);
-    for(i=0; i<6; i++){
-        P_out[i][0] = P[i][0] - P_out[i][0];
-        P_out[i][1] = P[i][1] - P_out[i][1];
-        P_out[i][2] = P[i][2] - P_out[i][2];
-        P_out[i][3] = P[i][3] - P_out[i][3];
-        P_out[i][4] = P[i][4] - P_out[i][4];
-        P_out[i][5] = P[i][5] - P_out[i][5];
-    }
+    cblas_sscal(6*6, -1.0f, (float*)P_out, 1);
+    cblas_saxpy(6*6, 1.0f, (float*)P, 1, (float*)P_out, 1);
     if (LH!=NULL)
-      *LH = gauss_pdf3(y,IM,IS);
+        *LH = gauss_pdf3(hUp6, y,IM,IS);
 }
 
 float gamma_cdf
@@ -800,7 +824,7 @@ void lti_disc
             AB2_T[j][i] = AB[i+len_N][j];
         }
     }
-    utility_sglslv(FLATTEN2D(AB2_T), len_N, FLATTEN2D(AB1_T), len_N, FLATTEN2D(Q_T));
+    utility_sglslv(NULL, FLATTEN2D(AB2_T), len_N, FLATTEN2D(AB1_T), len_N, FLATTEN2D(Q_T));
 
     /* transpose back */
     for(i=0; i<len_N; i++)
@@ -827,23 +851,32 @@ void lti_disc
 /* hard-coded for length(M)=3 ... */
 float gauss_pdf3
 (
+    void * const hUp6,
     float X[3],
     float M[3],
     float S[3][3]
 )
 {
-    float E;
+    kf_update6_data *h = (kf_update6_data*)(hUp6);
+    float E, Snd_sum;
     float DX[3], S_DX[3];
 
     DX[0] = X[0]-M[0];
     DX[1] = X[1]-M[1];
     DX[2] = X[2]-M[2];
-    utility_sglslv((float*)S, 3, (float*)DX, 1, (float*)S_DX);
+    Snd_sum = S[0][1] + S[0][2] + S[1][2] + S[1][0] + S[2][0] + S[2][1];
+    if(Snd_sum<0.00001f){ /* If "S" is diagonal: */
+        S_DX[0] = 1.0f/S[0][0] * DX[0];
+        S_DX[1] = 1.0f/S[1][1] * DX[1];
+        S_DX[2] = 1.0f/S[2][2] * DX[2];
+    }
+    else
+        utility_sslslv(h->hLinSolve, (float*)S, 3, (float*)DX, 1, (float*)S_DX);
     E = DX[0] * S_DX[0];
     E += DX[1] * S_DX[1];
     E += DX[2] * S_DX[2];
     E *= 0.5f;
-    E = E + 1.5f * logf(2.0f*SAF_PI) + 0.5f * logf(utility_sdet((float*)S, 3));
+    E = E + 1.5f * SAF_LOG_2PI + 0.5f * logf(utility_sdet(NULL, (float*)S, 3));
 
     return expf(-E);
 }
@@ -856,8 +889,8 @@ int categ_rnd
 {
     int i;
     float rand01, norm;
-	float Ptmp[TRACKER3D_MAX_NUM_EVENTS];   
-	 
+    float Ptmp[TRACKER3D_MAX_NUM_EVENTS];
+     
     cblas_scopy(len_P, P, 1, Ptmp, 1);
 
     /* Draw the categories */
@@ -866,7 +899,7 @@ int categ_rnd
     for(i=1; i<len_P; i++)
         Ptmp[i] += Ptmp[i-1];
     rand_0_1(&rand01, 1);
-	rand01 = SAF_MIN(rand01, 0.9999f);
+    rand01 = SAF_MIN(rand01, 0.9999f);
     for(i=0; i<len_P; i++)
         if(Ptmp[i]>rand01)
             return i;

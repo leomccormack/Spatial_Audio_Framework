@@ -15,6 +15,15 @@
  */
 
 /**
+ * @example matrixconv
+ * @brief A standard matrix convolver
+ * ### Include Header
+ * matrixconv.h
+ * ### Source Files
+ * matrixconv_internal.h, matrixconv.c, matrixconv_internal.c
+ */
+
+/**
  * @file matrixconv.h
  * @brief A standard matrix convolver
  * @author Leo McCormack

@@ -63,7 +63,7 @@ typedef struct _ch_vertex {
         struct{
             CH_FLOAT x, y, z;
         };
-		CH_FLOAT v[3];
+        CH_FLOAT v[3];
     };
 } ch_vertex;
 typedef ch_vertex ch_vec3;

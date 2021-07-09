@@ -24,13 +24,9 @@
 #ifndef __MATRIXCONV_INTERNAL_H_INCLUDED__
 #define __MATRIXCONV_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <assert.h>
-#include "matrixconv.h"
-#include "saf.h"
-#include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
+#include "matrixconv.h"    /* Include header for this example */
+#include "saf.h"           /* Main include header for SAF */
+#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,37 +36,34 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define MIN_FRAME_SIZE ( 512 )
-#define MAX_FRAME_SIZE ( 8192 ) 
-#define MAX_NUM_CHANNELS_FOR_WAV ( 1024 )
-    
+#define MIN_FRAME_SIZE ( 512 )            /**< Minimum framesize, in time-domain samples */
+#define MAX_FRAME_SIZE ( 8192 )           /**< Maximum framesize, in time-domain samples */
+#define MAX_NUM_CHANNELS_FOR_WAV ( 1024 ) /**< Minimum number of channels supported by WAV files */
     
 /* ========================================================================== */
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/**
- * Main structure for matrixconv.
- */
+/** Main structure for matrixconv */
 typedef struct _matrixconv
 {
     /* FIFO buffers */
-    int FIFO_idx;
-    float inFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
-    float outFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
+    int FIFO_idx;          /**< FIFO buffer index */
+    float inFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];  /**< Input FIFO buffer */
+    float outFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE]; /**< Output FIFO buffer */
 
     /* input/output buffers */
-    float** inputFrameTD;
-    float** outputFrameTD;
+    float** inputFrameTD;  /**< Input buffer; #MAX_NUM_CHANNELS x hostBlockSize_clamped */
+    float** outputFrameTD; /**< Output buffer; #MAX_NUM_CHANNELS x hostBlockSize_clamped */
     
     /* internal */
     void* hMatrixConv;     /**< saf_matrixConv handle */
     int hostBlockSize;     /**< current host block size */
-    int hostBlockSize_clamped; /**< Clamped between MIN and #MAX_FRAME_SIZE */
+    int hostBlockSize_clamped; /**< Clamped between #MIN_FRAME_SIZE and #MAX_FRAME_SIZE */
     float* filters;        /**< the matrix of filters; FLAT: nOutputChannels x nInputChannels x filter_length */
     int nfilters;          /**< the number of filters (nOutputChannels x nInputChannels) */
     int input_wav_length;  /**< length of the wav files loaded in samples (inputs are concatenated) */
-    int filter_length;     /**< length of the filters (i.e. input_wav_length/nInputChannels) */
+    int filter_length;     /**< length of the filters (input_wav_length/nInputChannels) */
     int filter_fs;         /**< current samplerate of the filters */
     int host_fs;           /**< current samplerate of the host */
     int reInitFilters;     /**< FLAG: 0: do not reinit, 1: reinit, 2: reinit in progress */
