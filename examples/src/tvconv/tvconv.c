@@ -414,7 +414,7 @@ CODEC_STATUS tvconv_getCodecStatus(void* const hTVCnv)
 
 void tvconv_test(void* const hTVCnv)
 {
-    tvconv_setSofaFilePath(hTVCnv, "/Users/dauginr1/Documents/Special_Assignment/rir-interpolation-vst/rirs_unprocessed_M3_3D_rndLP.sofa");
+    tvconv_setSofaFilePath(hTVCnv, "/Users/dauginr1/Documents/Special_Assignment/rir-interpolation-vst/rirs_unprocessed_M3_test.sofa");
     //tvconv_setFiltersAndPositions(hTVCnv);
     tvconv_data* pData = (tvconv_data*) hTVCnv;
     

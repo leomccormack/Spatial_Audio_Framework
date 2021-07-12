@@ -184,7 +184,9 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         else if (!strcmp((char*)varname,"SourcePosition")){
             /* Checks */
             if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if(h->nSources!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nSources) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            /* option of 1 source position is added in case there are multiple listener positions and 1 source position.
+             This is a quick fix, but setting nSources in Data.IR should be reviewed. */
+            if(h->nSources!=-1 && ((int)dimlength[dimid[dimids[0]]] != h->nSources || (int)dimlength[dimid[dimids[0]]] != 1)) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if((int)dimlength[dimid[dimids[1]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
@@ -272,7 +274,6 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if(h->nListeners!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nListeners) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if((int)dimlength[dimid[dimids[1]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            //if((int)dimlength[dimid[dimids[1]]] != 1 && (int)dimlength[dimid[dimids[0]]] != 1) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /* Pull data */
@@ -301,14 +302,13 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         else if (!strcmp((char*)varname,"ListenerUp")){
             /* Checks */
             if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            /* Dimensions can be either 1x3 or nListenersx3 */
+            if(h->nListeners!=-1 && ((int)dimlength[dimid[dimids[0]]] != h->nListeners || (int)dimlength[dimid[dimids[0]]] != 1)) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if((int)dimlength[dimid[dimids[1]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            //if((int)dimlength[dimid[dimids[1]]] != 1 && (int)dimlength[dimid[dimids[0]]] != 1) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /*  Pull data */
-            // Will probably need to add a way to know what dimensions it takes (can be either 1x3 or nListenersx3)
             tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]];
-            //h->nListeners = (int)dimlength[dimid[dimids[0]]];
             tmp_data = realloc1d(tmp_data, tmp_size*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
             h->ListenerUp = malloc1d(tmp_size*sizeof(float));
@@ -318,14 +318,13 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         else if (!strcmp((char*)varname,"ListenerView")){
             /* Checks */
             if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            /* Dimensions can be either 1x3 or nListenersx3 */
+            if(h->nListeners!=-1 && ((int)dimlength[dimid[dimids[0]]] != h->nListeners || (int)dimlength[dimid[dimids[0]]] != 1)) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if((int)dimlength[dimid[dimids[1]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            //if((int)dimlength[dimid[dimids[1]]] != 1 && (int)dimlength[dimid[dimids[0]]] != 1) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /* Pull data */
-            // Will probably need to add a way to know what dimensions it takes (can be either 1x3 or nListenersx3)
             tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]];
-            //h->nListeners = 1;
             tmp_data = realloc1d(tmp_data, tmp_size*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
             h->ListenerView = malloc1d(tmp_size*sizeof(float));
