@@ -421,7 +421,7 @@ void saf_multiConv_apply
  */
 typedef struct _safTVConv_data {
     int hopSize, fftSize, nBins;
-    int length_h, nPos, nCHout;
+    int length_h, nIRs, nCHout;
     int numFilterBlocks;
     void* hFFT;
     float* x_pad, *hx_n,
@@ -439,9 +439,9 @@ void  saf_TVConv_create
 (
     void ** const phTVC,
     int hopSize,
-    float** H,         /* nPos x FLAT(nCHout x length_h) */
+    float** H,         /* nIRs x FLAT(nCHout x length_h) */
     int length_h,
-    int nPos,
+    int nIRs,
     int nCHout,
     int initIdx
 )
@@ -453,9 +453,9 @@ void  saf_TVConv_create
     
     h->hopSize = hopSize;
     h->length_h = length_h;
-    h->nPos = nPos;
+    h->nIRs = nIRs;
     h->nCHout = nCHout;
-    if (initIdx < nPos){
+    if (initIdx < nIRs){
         h->posIdx_last = initIdx;
         h->posIdx_last2 = initIdx;
     } else {
@@ -473,7 +473,7 @@ void  saf_TVConv_create
     /* Allocate memory for buffers and perform fft on partitioned H */
     h_pad = calloc1d(h->numFilterBlocks * hopSize, sizeof(float));
     h_pad_2hops = calloc1d(2 * hopSize, sizeof(float));
-    h->Hpart_f = (float_complex***) malloc2d(nPos, nCHout, sizeof(float_complex*));
+    h->Hpart_f = (float_complex***) malloc2d(nIRs, nCHout, sizeof(float_complex*));
     h->X_n = calloc1d(h->numFilterBlocks * (h->nBins), sizeof(float_complex));
     h->HX_n = malloc1d(h->numFilterBlocks * (h->nBins) * sizeof(float_complex));
     h->x_pad = calloc1d(2 * hopSize, sizeof(float));
@@ -494,7 +494,7 @@ void  saf_TVConv_create
         h->fadeOut[n] = (float) (hopSize-1-n) / (float) (hopSize-1);
     }
     saf_rfft_create(&(h->hFFT), h->fftSize);
-    for(np=0; np<nPos; np++){
+    for(np=0; np<nIRs; np++){
         for(no=0; no<nCHout; no++){
             h->Hpart_f[np][no] = malloc1d(h->numFilterBlocks*(h->nBins)*sizeof(float_complex));
             memcpy(h_pad, &H[np][no*length_h], length_h*sizeof(float)); /* zero pad filter, to be multiple of hopsize */
@@ -534,7 +534,7 @@ void saf_TVConv_destroy
         free(h->fadeOut);
         free(h->outFadeIn);
         free(h->outFadeOut);
-        for(np=0; np<h->nPos; np++){
+        for(np=0; np<h->nIRs; np++){
             for(no=0; no<h->nCHout; no++)
                 free(h->Hpart_f[np][no]);
         }
