@@ -186,7 +186,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             /* option of 1 source position is added in case there are multiple listener positions and 1 source position.
              This is a quick fix, but setting nSources in Data.IR should be reviewed. */
-            if(h->nSources!=-1 && ((int)dimlength[dimid[dimids[0]]] != h->nSources || (int)dimlength[dimid[dimids[0]]] != 1)) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(h->nSources!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nSources && (int)dimlength[dimid[dimids[0]]] != 1) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if((int)dimlength[dimid[dimids[1]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
@@ -303,7 +303,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             /* Checks */
             if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             /* Dimensions can be either 1x3 or nListenersx3 */
-            if(h->nListeners!=-1 && ((int)dimlength[dimid[dimids[0]]] != h->nListeners || (int)dimlength[dimid[dimids[0]]] != 1)) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(h->nListeners!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nListeners && (int)dimlength[dimid[dimids[0]]] != 1) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if((int)dimlength[dimid[dimids[1]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
@@ -319,7 +319,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             /* Checks */
             if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             /* Dimensions can be either 1x3 or nListenersx3 */
-            if(h->nListeners!=-1 && ((int)dimlength[dimid[dimids[0]]] != h->nListeners || (int)dimlength[dimid[dimids[0]]] != 1)) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(h->nListeners!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nListeners && (int)dimlength[dimid[dimids[0]]] != 1) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if((int)dimlength[dimid[dimids[1]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
