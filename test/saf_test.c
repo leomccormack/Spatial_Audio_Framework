@@ -562,7 +562,7 @@ void test__saf_matrixConv(void){
     rand_m1_1(FLATTEN3D(filters), nOutputs*nInputs*filterLength);
     rand_m1_1(FLATTEN2D(inputTD), nInputs*signalLength);
     saf_matrixConv_create(&hMatrixConv, hostBlockSize, FLATTEN3D(filters), filterLength,
-                          nInputs, nOutputs, 1);
+                          nInputs, nOutputs, SAF_TRUE);
 
     /* Apply */
     for(frame = 0; frame<(int)signalLength/hostBlockSize; frame++){

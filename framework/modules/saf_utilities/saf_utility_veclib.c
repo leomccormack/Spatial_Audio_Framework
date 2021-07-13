@@ -68,10 +68,25 @@
 #if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
 # ifndef SAF_INTEL_MKL_VML_MODE
 /**
- * The flag passed to Intel VML functions:
- *  - Enhanced performance accuracy versions of VM functions (VML_EP) and
- *  - Faster processing of denormalized inputs is enabled (VML_FTZDAZ_ON) */
-#  define SAF_INTEL_MKL_VML_MODE ( VML_EP | VML_FTZDAZ_ON )
+ * Taken from the Intel MKL VML developers reference documentation:
+ * The flag(s) that can be passed to Intel VML functions:
+ *  - Faster processing of denormalized inputs: VML_FTZDAZ_ON || VML_FTZDAZ_OFF
+ *  - High Accuracy (VML_HA), the default mode
+ *  - Low Accuracy (VML_LA), which improves performance by reducing accuracy of
+ *    the two least significant bits
+ *  - Enhanced Performance (VML_EP), which provides better performance at the
+ *    cost of significantly reduced accuracy. Approximately half of the bits in
+ *    the mantissa are correct
+ *
+ * Note that using the EP mode does not guarantee accurate processing of corner
+ * cases and special values. Although the default accuracy is HA, LA is
+ * sufficient in most cases. For applications that require less accuracy (for
+ * example, media applications, some Monte Carlo simulations, etc.), the EP mode
+ * may be sufficient.
+ *
+ * Note that this default SAF_INTEL_MKL_VML_MODE value can be overriden.
+ */
+#  define SAF_INTEL_MKL_VML_MODE ( VML_LA | VML_FTZDAZ_ON )
 # endif
 #endif
 
@@ -95,15 +110,10 @@
   typedef lapack_complex_float  veclib_float_complex;
   typedef lapack_complex_double veclib_double_complex;
 #else
-  /** integer datatype used by veclib */
   typedef int                   veclib_int;
-  /** single precision floating-point datatype used by veclib */
   typedef float                 veclib_float;
-  /** single precision floating-point datatype used by veclib */
   typedef double                veclib_double;
-  /** single precision complex floating-point datatype used by veclib */
   typedef float_complex         veclib_float_complex;
-  /** double precision floating-point datatype used by veclib */
   typedef double_complex        veclib_double_complex;
 #endif
 
@@ -256,7 +266,10 @@ void utility_siminv
     int* index
 )
 {
-#if defined(SAF_USE_APPLE_ACCELERATE)
+#if defined(SAF_USE_INTEL_IPP)
+    float minVal;
+    ippsMinAbsIndx_32f((Ipp32f*)a, len, &minVal, index);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     float minVal;
     vDSP_Length ind_tmp;
     vDSP_minmgvi(a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
@@ -314,7 +327,10 @@ void utility_diminv
     int* index
 )
 {
-#if defined(SAF_USE_APPLE_ACCELERATE)
+#if defined(SAF_USE_INTEL_IPP)
+    double minVal;
+    ippsMinAbsIndx_64f((Ipp64f*)a, len, &minVal, index);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     double minVal;
     vDSP_Length ind_tmp;
     vDSP_minmgviD(a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
@@ -377,7 +393,12 @@ void utility_simaxv
     int* index
 )
 {
+#if defined(SAF_USE_INTEL_IPP)
+    float maxVal;
+    ippsMaxAbsIndx_32f((Ipp32f*)a, len, &maxVal, index);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     *index = (int)cblas_isamax(len, a, 1);
+#endif
 }
 
 void utility_cimaxv
@@ -397,7 +418,12 @@ void utility_dimaxv
     int* index
 )
 {
+#if defined(SAF_USE_INTEL_IPP)
+    double maxVal;
+    ippsMaxAbsIndx_64f((Ipp64f*)a, len, &maxVal, index);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     *index = (int)cblas_idamax(len, a, 1);
+#endif
 }
 
 void utility_zimaxv
@@ -422,7 +448,9 @@ void utility_svabs
     float* c
 )
 {
-#if defined(SAF_USE_APPLE_ACCELERATE)
+#if defined(SAF_USE_INTEL_IPP)
+    ippsAbs_32f((Ipp32f*)a, (Ipp32f*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vabs(a, 1, c, 1, (vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsAbs(len, a, c, SAF_INTEL_MKL_VML_MODE);
@@ -440,7 +468,9 @@ void utility_cvabs
     float* c
 )
 {
-#if defined(SAF_USE_APPLE_ACCELERATE)
+#if defined(SAF_USE_INTEL_IPP)
+    ippsMagnitude_32fc((Ipp32fc*)a, (Ipp32f*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vdist((float*)a/*real*/, 2, (float*)a+1/*imag*/, 2, c, 1, (vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcAbs(len, (MKL_Complex8*)a, c, SAF_INTEL_MKL_VML_MODE);
@@ -487,7 +517,9 @@ void utility_svrecip
     float* c
 )
 {
-#if defined(SAF_USE_APPLE_ACCELERATE)
+#if defined(SAF_USE_INTEL_IPP)
+    ippsDivCRev_32f((Ipp32f*)a, 1.0f, (Ipp32f*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     float one;
     one = 1.0f;
     vDSP_svdiv(&one, a, 1, c, 1, (vDSP_Length)len);
@@ -529,8 +561,12 @@ void utility_cvconj
     float_complex* c
 )
 {
+#if defined(SAF_USE_INTEL_IPP)
+    ippsConj_32fc((Ipp32fc*)a, (Ipp32fc*)c, len);
+#else
     cblas_ccopy(len, a, 1, c, 1);
     cblas_sscal(len, -1.0f, ((float*)c)+1, 2);
+#endif
 }
 
 void utility_zvconj
@@ -540,8 +576,12 @@ void utility_zvconj
     double_complex* c
 )
 {
+#if defined(SAF_USE_INTEL_IPP)
+    ippsConj_64fc((Ipp64fc*)a, (Ipp64fc*)c, len);
+#else
     cblas_zcopy(len, a, 1, c, 1);
     cblas_dscal(len, -1.0, ((double*)c)+1, 2);
+#endif
 }
 
 
@@ -609,7 +649,9 @@ void utility_svvadd
 #endif
 
     /* The operation: */
-#ifdef SAF_USE_APPLE_ACCELERATE
+#if defined(SAF_USE_INTEL_IPP)
+    ippsAdd_32f((Ipp32f*)a, (Ipp32f*)b, (Ipp32f*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vadd(a, 1, b, 1, c, 1, (vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
@@ -663,7 +705,9 @@ void utility_cvvadd
 #endif
 
     /* The operation: */
-#if defined(SAF_USE_APPLE_ACCELERATE)
+#if defined(SAF_USE_INTEL_IPP)
+    ippsAdd_32fc((Ipp32fc*)a, (Ipp32fc*)b, (Ipp32fc*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vadd((float*)a, 1, (float*)b, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcAdd(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
@@ -720,7 +764,9 @@ void utility_dvvadd
 #endif
 
     /* The operation: */
-#ifdef SAF_USE_APPLE_ACCELERATE
+#if defined(SAF_USE_INTEL_IPP)
+    ippsAdd_64f((Ipp64f*)a, (Ipp64f*)b, (Ipp64f*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vaddD(a, 1, b, 1, c, 1, (vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmdAdd(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
@@ -763,7 +809,9 @@ void utility_zvvadd
 #endif
 
     /* The operation: */
-#if defined(SAF_USE_APPLE_ACCELERATE)
+#if defined(SAF_USE_INTEL_IPP)
+    ippsAdd_64fc((Ipp64fc*)a, (Ipp64fc*)b, (Ipp64fc*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vaddD((double*)a, 1, (double*)b, 1, (double*)c, 1, /*re+im*/2*(vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmzAdd(len, (MKL_Complex16*)a, (MKL_Complex16*)b, (MKL_Complex16*)c, SAF_INTEL_MKL_VML_MODE);
@@ -814,8 +862,10 @@ void utility_svvsub
 #endif
 
     /* The operation: */
-#ifdef SAF_USE_APPLE_ACCELERATE
-    vDSP_vsub(b, 1, a, 1, c, 1, (vDSP_Length)len);  /* Apple "logic"... 'a' and 'b' are switched */
+#if defined(SAF_USE_INTEL_IPP)
+    ippsSub_32f((Ipp32f*)b, (Ipp32f*)a, (Ipp32f*)c, len); /* 'a' and 'b' are switched */
+#elif defined(SAF_USE_APPLE_ACCELERATE)
+    vDSP_vsub(b, 1, a, 1, c, 1, (vDSP_Length)len);        /* 'a' and 'b' are switched */
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
@@ -868,8 +918,10 @@ void utility_cvvsub
 #endif
 
     /* The operation: */
-#if defined(SAF_USE_APPLE_ACCELERATE)
-    vDSP_vsub((float*)b, 1, (float*)a, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
+#if defined(SAF_USE_INTEL_IPP)
+    ippsSub_32fc((Ipp32fc*)b, (Ipp32fc*)a, (Ipp32fc*)c, len);                         /* 'a' and 'b' are switched */
+#elif defined(SAF_USE_APPLE_ACCELERATE)
+    vDSP_vsub((float*)b, 1, (float*)a, 1, (float*)c, 1, /*re+im*/2*(vDSP_Length)len); /* 'a' and 'b' are switched */
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmcSub(len, (MKL_Complex8*)a, (MKL_Complex8*)b, (MKL_Complex8*)c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
@@ -925,8 +977,10 @@ void utility_dvvsub
 #endif
 
     /* The operation: */
-#ifdef SAF_USE_APPLE_ACCELERATE
-    vDSP_vsubD(b, 1, a, 1, c, 1, (vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
+#if defined(SAF_USE_INTEL_IPP)
+    ippsSub_64f((Ipp64f*)b, (Ipp64f*)a, (Ipp64f*)c, len);  /* 'a' and 'b' are switched */
+#elif defined(SAF_USE_APPLE_ACCELERATE)
+    vDSP_vsubD(b, 1, a, 1, c, 1, (vDSP_Length)len);        /* 'a' and 'b' are switched */
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmdSub(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
@@ -968,8 +1022,10 @@ void utility_zvvsub
 #endif
 
     /* The operation: */
-#if defined(SAF_USE_APPLE_ACCELERATE)
-    vDSP_vsubD((double*)b, 1, (double*)a, 1, (double*)c, 1, /*re+im*/2*(vDSP_Length)len); /* Apple "logic"... 'a' and 'b' are switched */
+#if defined(SAF_USE_INTEL_IPP)
+    ippsSub_64fc((Ipp64fc*)b, (Ipp64fc*)a, (Ipp64fc*)c, len);                             /* 'a' and 'b' are switched */
+#elif defined(SAF_USE_APPLE_ACCELERATE)
+    vDSP_vsubD((double*)b, 1, (double*)a, 1, (double*)c, 1, /*re+im*/2*(vDSP_Length)len); /* 'a' and 'b' are switched */
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmzSub(len, (MKL_Complex16*)a, (MKL_Complex16*)b, (MKL_Complex16*)c, SAF_INTEL_MKL_VML_MODE);
 #elif defined(SAF_ENABLE_SIMD)
@@ -1019,7 +1075,9 @@ void utility_svvmul
 #endif
 
     /* The operation: */
-#ifdef SAF_USE_APPLE_ACCELERATE
+#if defined(SAF_USE_INTEL_IPP)
+    ippsMul_32f((Ipp32f*)a, (Ipp32f*)b, (Ipp32f*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vmul(a, 1, b, 1, c, 1, (vDSP_Length)len);
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
     vmsMul(len, a, b, c, SAF_INTEL_MKL_VML_MODE);
@@ -1073,7 +1131,9 @@ void utility_cvvmul
 #endif
 
     /* The operation: */
-#if defined(SAF_USE_APPLE_ACCELERATE)  /* Due to Apple "logic", this is unfortunately quite complicated, and probably slower than it should be... */
+#if defined(SAF_USE_INTEL_IPP)
+    ippsMul_32fc((Ipp32fc*)a, (Ipp32fc*)b, (Ipp32fc*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)  /* Due to Apple "logic", this is unfortunately quite complicated, and probably slower than it should be... */
     /* Imaginary part of the output */
     vDSP_vmul((float*)a/*real*/, 2, (float*)b+1/*imag*/, 2, (float*)c+1/*imag*/, 2, (vDSP_Length)len);
     vDSP_vma((float*)a+1/*imag*/, 2, (float*)b/*real*/, 2, (float*)c+1/*imag*/, 2, (float*)c/*real*/, 2, (vDSP_Length)len); /* Use the real part of c as a temporary buffer */
@@ -1193,7 +1253,12 @@ void utility_svsmul
     float* c
 )
 {
-#ifdef SAF_USE_APPLE_ACCELERATE
+#if defined(SAF_USE_INTEL_IPP)
+    if(c==NULL)
+        ippsMulC_32f_I((Ipp32f)s[0], (Ipp32f*)a, len);
+    else
+        ippsMulC_32f((Ipp32f*)a, (Ipp32f)s[0], (Ipp32f*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     if(c==NULL)
         cblas_sscal(len, s[0], a, 1);
     else
@@ -1232,7 +1297,12 @@ void utility_dvsmul
     double* c
 )
 {
-#ifdef SAF_USE_APPLE_ACCELERATE
+#if defined(SAF_USE_INTEL_IPP)
+    if(c==NULL)
+        ippsMulC_64f_I((Ipp64f)s[0], (Ipp64f*)a, len);
+    else
+        ippsMulC_64f((Ipp64f*)a, (Ipp64f)s[0], (Ipp64f*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     if(c==NULL)
         cblas_dscal(len, s[0], a, 1);
     else
@@ -1280,7 +1350,9 @@ void utility_svsdiv
         memset(c, 0, len*sizeof(float));
         return;
     }
-#ifdef SAF_USE_APPLE_ACCELERATE
+#if defined(SAF_USE_INTEL_IPP)
+    ippsDivC_32f((Ipp32f*)a, (Ipp32f)s[0], (Ipp32f*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vsdiv(a, 1, s, c, 1, (vDSP_Length)len);
 #else
     cblas_scopy(len, a, 1, c, 1);
@@ -1301,7 +1373,9 @@ void utility_svsadd
     float* c
 )
 {
-#ifdef SAF_USE_APPLE_ACCELERATE
+#if defined(SAF_USE_INTEL_IPP)
+    ippsAddC_32f((Ipp32f*)a, (Ipp32f)s[0], (Ipp32f*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     vDSP_vsadd(a, 1, s, c, 1, (vDSP_Length)len);
 #elif defined(SAF_ENABLE_SIMD)
     int i;
@@ -1340,7 +1414,9 @@ void utility_svssub
     float* c
 )
 {
-#ifdef SAF_USE_APPLE_ACCELERATE
+#if defined(SAF_USE_INTEL_IPP)
+    ippsSubC_32f((Ipp32f*)a, (Ipp32f)s[0], (Ipp32f*)c, len);
+#elif defined(SAF_USE_APPLE_ACCELERATE)
     float inv_s;
     inv_s = -s[0];
     vDSP_vsadd(a, 1, &inv_s, c, 1, (vDSP_Length)len);

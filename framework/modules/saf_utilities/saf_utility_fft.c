@@ -233,6 +233,21 @@ void hilbert
     float_complex* y
 )
 {
+#if defined(SAF_USE_INTEL_IPP) && 0 /* Untested: */
+    IppsHilbertSpec* ippSpec;
+    int ippSpecSize;
+    int ippBufferSize;
+    Ipp8u* buffer;
+
+    saf_assert(!ippsHilbertGetSize_32f32fc(x_len, ippAlgHintNone, &ippSpecSize, &ippBufferSize), "IPP error!");
+    ippSpec = (IppsHilbertSpec*)ippsMalloc_8u(ippSpecSize);
+    buffer = ippsMalloc_8u(ippBufferSize);
+    saf_assert(!ippsHilbertInit_32f32fc(x_len, ippAlgHintNone, ippSpec, buffer), "IPP error!");
+    saf_assert(!ippsHilbert_32f32fc(x, (Ipp32fc*)y, ippSpec, buffer), "IPP error!");
+
+    ippsFree(ippSpec);
+    ippsFree(buffer);
+#else
     int i;
     float_complex *xfft, *h, *xhfft; 
     void* hfft;
@@ -271,6 +286,7 @@ void hilbert
     free(xfft);
     free(h);
     free(xhfft);
+#endif
 }
 
 /* ========================================================================== */
