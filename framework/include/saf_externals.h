@@ -124,10 +124,16 @@
  * This option provides implementations of the CBLAS/LAPACK functions which have
  * decent performance. However, unlike Intel MKL or Apple Accelerate, it does
  * not offer an optimised DFT/FFT or any other linear algebra functions outside
- * of these standards. Therefore, if you are using this option, consider also
- * using Intel's IPP library for the FFT, along with the SSE/AVX/AVX-512
- * fallback implementations for the other linear algebra options, by also
- * defining: "SAF_USE_INTEL_IPP" and "SAF_ENABLE_SIMD" (see instructions below).
+ * of these standards. Therefore, consider also using Intel's IPP library or
+ * FFTW for the DFT/FFT with: "SAF_USE_INTEL_IPP" or "SAF_USE_FFTW"
+ *
+ * Note that "SAF_USE_INTEL_IPP" also offers support for certain linear algebra
+ * operations not covered by the CBLAS/LAPACK standards, which SAF can leverage.
+ *
+ * Alternatively, SSE/AVX/AVX-512 fallback implementations for certain linear
+ * algebra operations may be enabled with: "SAF_ENABLE_SIMD"
+ *
+ * More information regarding these additional options can be found below.
  */
 # include "cblas.h"
 # include "lapacke.h"
@@ -160,8 +166,8 @@
  *    that are not covered by the CBLAS standard; such as hadamard products,
  *    element-wise additions/subtractions, etc.
  *
- * Unlike Intel MKL, not all even number DFT lengths are supported by vDSP.
- * Therefore, be aware that the default kissFFT library (included in
+ * Unlike e.g. Intel MKL's DFT, not all even number DFT lengths are supported by
+ * vDSP. Therefore, be aware that the default kissFFT library (included in
  * framework/resources) is still used as a fall-back option in such cases.
  */
 # include "Accelerate/Accelerate.h"
@@ -223,7 +229,7 @@
  * SIMD accelerated fall-back options may be enabled with: SAF_ENABLE_SIMD
  *
  * By default SSE, SSE2, and SSE3 intrinsics are employed, unless one of the
- * following compiler flags are defined:
+ * following compiler flags are given:
  *    - AVX/AVX2 intrinsics are enabled with: -mavx2
  *    - AVX-512  intrinsics are enabled with: -mavx512f
  *
