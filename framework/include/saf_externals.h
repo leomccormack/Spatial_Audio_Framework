@@ -184,9 +184,11 @@
  * does lead to improvements in the following:
  *   - slightly faster DFT/FFT (for saf_utility_fft) compared with the
  *     implementation found in Intel MKL, which are both faster than the DFT/FFT
- *     implementation found in Apple Accelerate vDSP.
+ *     implementations found in Apple Accelerate vDSP and FFTW.
  *   - this overrides the included resources/speex_resampler with the IPP
  *     resampler, which is marginally faster and more accurate.
+ *   - this also overrides certain vector-vector, and vector-scalar operations,
+ *     such as element-wise multiplication, addition, scaling etc.
  *
  * Note that the IPP DFT/FFT is overriden by FFTW if SAF_USE_FFTW is defined.
  */
@@ -197,8 +199,8 @@
 /*
  * The use of FFTW is optional, but it is faster than the default kissFFT
  * DFT/FFT implementation. However, if you are on an x86 CPU then the DFT/FFT
- * implementations found in Intel IPP, Intel MKL and Apple Accelerate are all
- * faster options.
+ * implementations found in Intel IPP, Intel MKL and Apple Accelerate are
+ * usually faster options.
  *
  * Note, SAF uses the single-precision version (fftw3f.a), which is built with:
  *   $ ./configure --enable-float
