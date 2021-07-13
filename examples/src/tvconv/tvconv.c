@@ -317,7 +317,7 @@ void tvconv_setSofaFilePath(void* const hTVCnv, const char* path)
 
 void tvconv_setPosition(void* const hTVCnv, int dim, float position){
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope")
+    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope");
     pData->position[dim] = position;
     tvconv_findNearestNeigbour(hTVCnv);
 }
@@ -363,28 +363,28 @@ int tvconv_getPositionIdx(void* const hTVCnv)
 float tvconv_getPosition(void* const hTVCnv, int dim)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope")
+    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope");
     return (float) pData->position[dim];
 }
 
 float tvconv_getSourcePosition(void* const hTVCnv, int dim)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope")
+    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope");
     return (float) pData->sourcePosition[dim];
 }
 
 float tvconv_getMinDimension(void* const hTVCnv, int dim)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope")
+    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope");
     return (float) pData->minDimensions[dim];
 }
 
 float tvconv_getMaxDimension(void* const hTVCnv, int dim)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope")
+    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope");
     return (float) pData->maxDimensions[dim];
 }
 
