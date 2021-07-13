@@ -96,7 +96,7 @@
  *    used by the saf_utility_fft wrapper.
  *  - a number of additional vector, vector-vector, vector-scalar operations
  *    that are not covered by the CBLAS standard; such as: hadamard products,
- *    element-wise additions/substractions, and the modulus or reciprical of
+ *    element-wise additions/subtractions, and the modulus or reciprical of
  *    all vector elements, etc.
  */
 # include "mkl.h"
@@ -158,7 +158,7 @@
  *    the saf_utility_fft wrapper.
  *  - a number of additional vector, vector-vector, vector-scalar operations
  *    that are not covered by the CBLAS standard; such as hadamard products,
- *    element-wise additions/substractions, etc.
+ *    element-wise additions/subtractions, etc.
  *
  * Unlike Intel MKL, not all even number DFT lengths are supported by vDSP.
  * Therefore, be aware that the default kissFFT library (included in
