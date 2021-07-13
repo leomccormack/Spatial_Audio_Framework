@@ -48,6 +48,7 @@ void tvconv_create
     pData->ir_length = 0;
     pData->ir_fs = 0;
     pData->nOutputChannels = 0;
+    pData->sofa_filepath = NULL;
 
     /* set FIFO buffers */
     pData->FIFO_idx = 0;
