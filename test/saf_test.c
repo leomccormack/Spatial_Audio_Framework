@@ -3350,7 +3350,13 @@ void test__saf_example_spreader(void){
 void test__tvconv(void){
     void* hTVCnv;
     tvconv_create(&hTVCnv);
-    tvconv_test(hTVCnv);
+    tvconv_setSofaFilePath(hTVCnv,
+                           "/Users/dauginr1/Documents/Special_Assignment/rir-interpolation-vst/rirs_unprocessed_M3_3D_rndLP.sofa");
+    tvconv_setPosition(hTVCnv, 0, 0.1);
+    tvconv_setPosition(hTVCnv, 1, 0.1);
+    tvconv_setPosition(hTVCnv, 2, 0.1);
+    if (tvconv_getNPositions(hTVCnv) > 0)
+        TEST_ASSERT_EQUAL(62, tvconv_getPositionIdx(hTVCnv));
     tvconv_destroy(&hTVCnv);
 }
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */

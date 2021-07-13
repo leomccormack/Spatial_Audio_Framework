@@ -327,7 +327,8 @@ void tvconv_setPosition(void* const hTVCnv, int dim, float position){
 
 int tvconv_getNumInputChannels(void* const hTVCnv)
 {
-    return 1;
+    tvconv_data *pData = (tvconv_data*)(hTVCnv);
+    return pData->nInputChannels;
 }
 
 int tvconv_getNumOutputChannels(void* const hTVCnv)
@@ -424,20 +425,4 @@ CODEC_STATUS tvconv_getCodecStatus(void* const hTVCnv)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
     return pData->codecStatus;
-}
-
-void tvconv_test(void* const hTVCnv)
-{
-    tvconv_setSofaFilePath(hTVCnv, "/Users/dauginr1/Documents/Special_Assignment/rir-interpolation-vst/rirs_unprocessed_M3_test.sofa");
-    //tvconv_setFiltersAndPositions(hTVCnv);
-    tvconv_data* pData = (tvconv_data*) hTVCnv;
-    
-//    pData->position = malloc1d(sizeof(vectorND));
-    //pData->nPositions = 3;
-    pData->position[0] = 0.04;
-    pData->position[1] = 0.04;
-    pData->position[2] = 0.05;
-    
-    tvconv_findNearestNeigbour(hTVCnv);
-    printf("Nearest neighbour index: %i\n", pData->position_idx);
 }

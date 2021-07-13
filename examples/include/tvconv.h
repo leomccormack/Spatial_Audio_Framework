@@ -203,8 +203,6 @@ char* tvconv_getSofaFilePath(void* const hTVCnv);
  */
 CODEC_STATUS tvconv_getCodecStatus(void* const hTVCnv);
 
-void tvconv_test(void* const hTVCnv);
-
 #ifdef __cplusplus
 } /* extern "C" { */
 #endif /* __cplusplus */
