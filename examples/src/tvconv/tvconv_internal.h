@@ -18,7 +18,7 @@
  * @file tvconv_internal.h
  * @brief A time-varying multi-channel convolver
  * @author Rapolas Daugintis
- * @date 18.11.2020
+ * @date 13.07.2021
  */
 
 #ifndef __TVCONV_INTERNAL_H_INCLUDED__
@@ -85,6 +85,7 @@ typedef struct _tvconv
     vectorND minDimensions;
     vectorND maxDimensions;
     int position_idx;
+    vectorND sourcePosition;
     
     /* flags/status */
     CODEC_STATUS codecStatus;

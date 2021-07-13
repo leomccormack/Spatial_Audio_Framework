@@ -18,7 +18,7 @@
  * @file tvconv.h
  * @brief A time-varying multi-channel convolver
  * @author Rapolas Daugintis
- * @date 18.11.2020
+ * @date 13.07.2021
  */
 
 #ifndef __TVCONV_H_INCLUDED__
@@ -60,14 +60,14 @@ void tvconv_init(void* const hTVCnv,
                  int hostBlockSize);
 
 /**
- * Performs the matrix convolution processing
+ * Performs the time-varying convolution processing
  *
  * @param[in] hTVCnv    tvconv handle
  * @param[in] inputs    Input channel buffers; 2-D array: nInputs x nSamples
  * @param[in] outputs   Output channel buffers; 2-D array: nOutputs x nSamples
  * @param[in] nInputs   Number of input channels
  * @param[in] nOutputs  Number of output channels
- * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
+ * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices (block size)
  */
 void tvconv_process(void* const hTVCnv,
                     float** const inputs,
@@ -91,20 +91,22 @@ void tvconv_refreshParams(void* const hTVCnv);
  */
 void tvconv_checkReInit(void* const hTVCnv);
 
-
+/**
+ * Reads IRs and positions from the current sofa file path.
+ */
 void tvconv_setFiltersAndPositions(void* const hTVCnv);
 
 /**
- * Sets the number of input channels.
- *
- * @note The loaded wav data channels are divided by the number of channels
- *       (into equal lengths). These are interpreted by tvconv as the
- *       filters to apply to each input channel to acquire the corresponding
- *       output channel
+ *  Sets current sofa file path.
  */
-
 void tvconv_setSofaFilePath(void* const hTVCnv, const char* path);
 
+/**
+ *  Sets listener position.
+ *
+ *  @param[in] dim                  dimension of the coordinate to be set (0 is x, 1 is y, and 2 is z).
+ *  @param[in] position       new position to be set.
+ */
 void tvconv_setPosition(void* const hTVCnv, int dim, float position);
 
 /* ========================================================================== */
@@ -154,6 +156,10 @@ int tvconv_getPositionIdx(void* const hTVCnv);
  */
 float tvconv_getPosition(void* const hTVCnv, int dim);
 
+/**
+ * Returns the source coordinate of dimension dim  (0 ... NUM_DIMENSIONS-1)
+ */
+float tvconv_getSourcePosition(void* const hTVCnv, int dim);
 
 /**
  * Returns minimum cooridinate of dimension dim (0 ... NUM_DIMENSIONS-1)
@@ -185,6 +191,12 @@ int tvconv_getHostFs(void* const hTVCnv);
  * features)
  */
 int tvconv_getProcessingDelay(void* const hTVCnv);
+
+/**
+ * Returns the current Sofa file path
+ */
+char* tvconv_getSofaFilePath(void* const hTVCnv);
+
 
 /**
  * Returns current codec status (see #CODEC_STATUS enum)

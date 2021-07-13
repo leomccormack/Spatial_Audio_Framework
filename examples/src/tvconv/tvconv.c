@@ -18,7 +18,7 @@
  * @file tvconv.c
  * @brief A time-varying multi-channel convolver
  * @author Rapolas Daugintis
- * @date 18.11.2020
+ * @date 13.07.2021
  */
 
 #include "tvconv.h"
@@ -204,7 +204,6 @@ void tvconv_checkReInit(void* const hTVCnv)
     /* reinitialise if needed */
     if ((pData->reInitFilters == 1) && (pData->irs != NULL)) {
         pData->reInitFilters = 2;
-//    if ((pData->codecStatus == CODEC_STATUS_NOT_INITIALISED) && (pData->irs != NULL)) {
         saf_TVConv_destroy(&(pData->hTVConv));
         pData->hTVConv = NULL;
         /* if length of the loaded sofa file was not divisable by the specified number of inputs, then the handle remains NULL,
@@ -272,9 +271,9 @@ void tvconv_setFiltersAndPositions
             pData->ir_length = sofa.DataLengthIR;
             pData->nIrChannels = sofa.nReceivers;
             pData->nPositions = sofa.nListeners;
+            /* copy only the first source position, because number of source positions might be incorrect in sofa */
+            memcpy(pData->sourcePosition, sofa.SourcePosition, sizeof(vectorND));
             
-//            pData->hTVConv = realloc1d(pData->hTVConv, sizeof(void*));
-//            pData->hTVConv = NULL;
             pData->irs = (float**)realloc2d((void**)pData->irs, pData->nPositions, pData->nIrChannels*pData->ir_length, sizeof(float));
             int tmp_length = pData->nIrChannels * pData->ir_length;
             for(i=0; i<pData->nPositions; i++){
@@ -314,12 +313,11 @@ void tvconv_setSofaFilePath(void* const hTVCnv, const char* path)
     strcpy(pData->sofa_filepath, path);
     pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     tvconv_setFiltersAndPositions(hTVCnv);
- //   pData->reInitFilters = 1;  // re-init and re-calc
 }
 
 void tvconv_setPosition(void* const hTVCnv, int dim, float position){
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    assert(dim >= 0 && dim < NUM_DIMENSIONS);
+    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope")
     pData->position[dim] = position;
     tvconv_findNearestNeigbour(hTVCnv);
 }
@@ -364,21 +362,28 @@ int tvconv_getPositionIdx(void* const hTVCnv)
 float tvconv_getPosition(void* const hTVCnv, int dim)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    assert(dim >= 0 && dim < NUM_DIMENSIONS);
+    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope")
     return (float) pData->position[dim];
+}
+
+float tvconv_getSourcePosition(void* const hTVCnv, int dim)
+{
+    tvconv_data *pData = (tvconv_data*)(hTVCnv);
+    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope")
+    return (float) pData->sourcePosition[dim];
 }
 
 float tvconv_getMinDimension(void* const hTVCnv, int dim)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    assert(dim >= 0 && dim < NUM_DIMENSIONS);
+    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope")
     return (float) pData->minDimensions[dim];
 }
 
 float tvconv_getMaxDimension(void* const hTVCnv, int dim)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    assert(dim >= 0 && dim < NUM_DIMENSIONS);
+    saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope")
     return (float) pData->maxDimensions[dim];
 }
 
@@ -404,6 +409,15 @@ int tvconv_getProcessingDelay(void* const hTVCnv)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
     return pData->hostBlockSize_clamped;
+}
+
+char* tvconv_getSofaFilePath(void* const hTVCnv)
+{
+    tvconv_data *pData = (tvconv_data*)(hTVCnv);
+    if(pData->sofa_filepath!=NULL)
+        return pData->sofa_filepath;
+    else
+        return "no_file";
 }
 
 CODEC_STATUS tvconv_getCodecStatus(void* const hTVCnv)

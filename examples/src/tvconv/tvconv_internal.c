@@ -18,7 +18,7 @@
  * @file tvconv_internal.c
  * @brief A time-varying multi-channel convolver
  * @author Rapolas Daugintis
- * @date 18.11.2020
+ * @date 13.07.2021
  */
 
 #include "tvconv_internal.h"
@@ -39,16 +39,18 @@ void tvconv_findNearestNeigbour(void* const hTVCnv)
     float dist = 0, minDist = 0;
     int i, d, min_idx = 0;
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    for(i = 0; i < pData->nPositions; i++){ //REMEMBER TO ADD CHECK FOR NPOSITIONS
-        for(d = 0; d < NUM_DIMENSIONS; d++)
-            dist += (pData->position[d] - pData->positions[i][d]) *
-                    (pData->position[d] - pData->positions[i][d]);
-        
-        if(dist < minDist || i == 0){
-            minDist = dist;
-            min_idx = i;
+    if (pData->nPositions > 0 && pData->positions != NULL) {
+        for(i = 0; i < pData->nPositions; i++){
+            for(d = 0; d < NUM_DIMENSIONS; d++)
+                dist += (pData->position[d] - pData->positions[i][d]) *
+                        (pData->position[d] - pData->positions[i][d]);
+            
+            if(dist < minDist || i == 0){
+                minDist = dist;
+                min_idx = i;
+            }
+            dist = 0;
         }
-        dist = 0;
     }
 
     pData->position_idx = min_idx;
