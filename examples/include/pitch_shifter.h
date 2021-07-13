@@ -15,12 +15,13 @@
  */
 
 /**
- * @example pitch_shifter
+ * @example pitch_shifter.h
  * @brief A very basic multichannel pitch shifter
+ * 
+ * ### Files
+ * pitch_shifter.h (include), pitch_shifter_internal.h, pitch_shifter.c,
+ * pitch_shifter_internal.c
  * ### Include Header
- * pitch_shifter.h
- * ### Source Files
- * pitch_shifter_internal.h, pitch_shifter.c, pitch_shifter_internal.c
  */
 
 /**
@@ -29,6 +30,7 @@
  *
  * @author Leo McCormack
  * @date 05.05.2020
+ * @license ISC
  */
 
 #ifndef __PITCH_SHIFTER_H_INCLUDED__

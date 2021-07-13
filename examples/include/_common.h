@@ -20,6 +20,7 @@
  *
  * @author Leo McCormack
  * @date 04.07.2020
+ * @license ISC
  */
 
 #ifndef __COMMON_H_INCLUDED__

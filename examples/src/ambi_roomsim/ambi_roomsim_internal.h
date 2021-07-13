@@ -20,6 +20,7 @@
  *
  * @author Leo McCormack
  * @date 10.08.2020
+ * @license ISC
  */
 
 #ifndef __AMBI_ROOMSIM_INTERNAL_H_INCLUDED__

@@ -40,6 +40,7 @@
  *
  * @author Leo McCormack
  * @date 07.12.2017
+ * @license ISC
  */
 
 #ifndef __AMBI_DEC_INTERNAL_H_INCLUDED__
@@ -156,9 +157,9 @@ typedef struct _ambi_dec
     /* user parameters */
     int masterOrder;                     /**< Current maximum/master decoding order */
     int orderPerBand[HYBRID_BANDS];      /**< Ambisonic decoding order per frequency band 1..SH_ORDER */
-    AMBI_DEC_DECODING_METHODS dec_method[NUM_DECODERS]; /**< decoding methods for each decoder, see #DECODING_METHODS enum */
+    AMBI_DEC_DECODING_METHODS dec_method[NUM_DECODERS]; /**< decoding methods for each decoder, see #AMBI_DEC_DECODING_METHODS enum */
     int rE_WEIGHT[NUM_DECODERS];         /**< 0:disabled, 1: enable max_rE weight */
-    AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH diffEQmode[NUM_DECODERS]; /**< diffuse-field EQ approach; see #DIFFUSE_FIELD_EQ_APPROACH enum */
+    AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH diffEQmode[NUM_DECODERS]; /**< diffuse-field EQ approach; see #AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH enum */
     float transitionFreq;                /**< transition frequency for the 2 decoders, in Hz */
     int nLoudpkrs;                       /**< number of loudspeakers/virtual loudspeakers */
     float loudpkrs_dirs_deg[MAX_NUM_LOUDSPEAKERS][NUM_DECODERS]; /**< loudspeaker directions in degrees [azi, elev] */

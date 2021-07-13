@@ -18,6 +18,8 @@
  * @see [2] Creusere, C.D. and Mitra, S.K., 1995. A simple method for designing
  *          high-quality prototype filters for M-band pseudo QMF banks. IEEE
  *          Transactions on signal processing, 43(4), pp.1005-1007.
+ *
+ * @license MIT
  */
 
 #include "afSTFTlib.h"

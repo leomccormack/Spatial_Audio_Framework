@@ -21,6 +21,7 @@
  * 
  * @author Leo McCormack
  * @date 11.07.2016
+ * @license ISC
  */
 
 #include "saf_utility_sensorarray_presets.h"

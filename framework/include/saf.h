@@ -137,7 +137,7 @@
  *   The following resources: afSTFTlib.h, convhull_3d.h, kiss_fft.h,
  *   md_malloc.h
  *
- * License: ISC
+ * @license ISC
  */
 #define SAF_UTILITIES_MODULE
 #include "../modules/saf_utilities/saf_utilities.h"
@@ -155,7 +155,7 @@
  *          domain framework for time--frequency processing of spatial audio.
  *          Journal of the Audio Engineering Society, 61(6), 403-411.
  *
- * License: ISC
+ * @license ISC
  */
 #define SAF_CDF4SAP_MODULE
 #include "../modules/saf_cdf4sap/saf_cdf4sap.h"
@@ -171,7 +171,7 @@
  *
  * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
  *
- * License: ISC
+ * @license ISC
  */
 #define SAF_HOA_MODULE
 #include "../modules/saf_hoa/saf_hoa.h"
@@ -186,7 +186,7 @@
  * ## Dependencies
  *   saf_utilities.h
  *
- * License: ISC
+ * @license ISC
  */
 #define SAF_HRIR_MODULE
 #include "../modules/saf_hrir/saf_hrir.h"
@@ -199,7 +199,7 @@
  * ## Dependencies
  *   saf_utilities.h, saf_sh.h
  *
- * License: ISC
+ * @license ISC
  */
 #define SAF_REVERB_MODULE
 #include "../modules/saf_reverb/saf_reverb.h"
@@ -217,7 +217,7 @@
  * @see [2] https://github.com/polarch/Array-Response-Simulator
  * @see [3] https://github.com/polarch/Spherical-Array-Processing
  *
- * License: ISC
+ * @license ISC
  */
 #define SAF_SH_MODULE
 #include "../modules/saf_sh/saf_sh.h"
@@ -233,7 +233,7 @@
  *
  * @see [1] https://github.com/polarch/Vector-Base-Amplitude-Panning
  *
- * License: ISC
+ * @license ISC
  */
 #define SAF_VBAP_MODULE
 #include "../modules/saf_vbap/saf_vbap.h"
@@ -259,7 +259,7 @@
  * ## Dependencies
  *   saf_utilities.h, saf_hrir.h, netcdf
  *
- * License: ISC
+ * @license ISC
  */
 # define SAF_SOFA_READER_MODULE
 # include "../modules/saf_sofa_reader/saf_sofa_reader.h"
@@ -277,7 +277,7 @@
  * ## Dependencies
  *   saf_utilities.h
  *
- * License: GNU GPLv2
+ * @license GNU GPLv2
  */
 # define SAF_TRACKER_MODULE
 # include "../modules/saf_tracker/saf_tracker.h"

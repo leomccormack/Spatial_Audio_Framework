@@ -26,6 +26,7 @@
  *
  * @author Leo McCormack
  * @date 21.11.2017
+ * @license ISC
  */
 
 #ifndef __SAF_SOFA_READER_H_INCLUDED__

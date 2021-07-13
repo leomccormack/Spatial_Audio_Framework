@@ -15,13 +15,13 @@
  */
 
 /**
- * @example panner
+ * @example panner.h
  * @brief A frequency-dependent 3D panner based on the Vector-base Amplitude
  *        Panning (VBAP) method, with an optional spread control
+ * 
+ * ### Files
+ * panner.h (include), panner_internal.h, panner.c, panner_internal.c
  * ### Include Header
- * panner.h
- * ### Source Files
- * panner_internal.h, panner.c, panner_internal.c
  */
 
 /**
@@ -48,6 +48,7 @@
  *
  * @author Leo McCormack
  * @date 25.09.2017
+ * @license ISC
  */
 
 #ifndef __PANNER_H_INCLUDED__

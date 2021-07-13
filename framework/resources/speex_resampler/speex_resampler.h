@@ -2,6 +2,7 @@
 /**
    @file speex_resampler.h
    @brief Main header file for the Speex resampler
+   @license BSD 3-Clause
 */
 /*
    File: speex_resampler.h

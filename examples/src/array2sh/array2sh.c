@@ -44,6 +44,7 @@
  *
  * @author Leo McCormack
  * @date 13.09.2017
+ * @license ISC
  */
 
 #include "array2sh_internal.h" 

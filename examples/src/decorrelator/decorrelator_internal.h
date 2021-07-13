@@ -20,6 +20,7 @@
  *
  * @author Leo McCormack
  * @date 07.07.2020
+ * @license ISC
  */
 
 

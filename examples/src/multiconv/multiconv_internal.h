@@ -19,6 +19,7 @@
  * @brief A multi-channel convolver
  * @author Leo McCormack
  * @date 23.09.2019
+ * @license ISC
  */
 
 #ifndef __MULTICONV_INTERNAL_H_INCLUDED__
@@ -36,8 +37,8 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#define MIN_FRAME_SIZE ( 512 )   /**< Minimum framesize, in time-domain samples */
-#define MAX_FRAME_SIZE ( 8192 )  /**< Maximum framesize, in time-domain samples */
+#define MIN_FRAME_SIZE ( 512 )  /**< Minimum framesize, in time-domain samples */
+#define MAX_FRAME_SIZE ( 8192 ) /**< Maximum framesize, in time-domain samples */
     
 /* ========================================================================== */
 /*                                 Structures                                 */

@@ -10,6 +10,7 @@
  * @file kiss_fft.c
  * @brief KISS FFT, taken from: https://github.com/mborgerding/kissfft
  * @author Mark Borgerding
+ * @license BSD 3-Clause
  */
 
 

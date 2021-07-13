@@ -4,6 +4,7 @@
 /**
    @file resample_sse.h
    @brief Resampler functions (SSE version)
+   @license BSD 3-Clause
 */
 /*
    Redistribution and use in source and binary forms, with or without

@@ -38,10 +38,11 @@
  *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
  *
  * @see More information can be found here:
- *      https://github.com/leomccormack/Spatial_Audio_Framework
+ *      https://github.com/leomccormack/Spatial_Audio_Framework/docs
  *
  * @author Leo McCormack
  * @date 11.07.2016
+ * @license ISC
  */
 
 #include "saf_utilities.h"
@@ -92,29 +93,33 @@
 
 /* These are mainly just to remove compiler warnings: */
 #if defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
-  typedef __CLPK_integer        veclib_int;
-  typedef __CLPK_real           veclib_float;
-  typedef __CLPK_doublereal     veclib_double;
-  typedef __CLPK_complex        veclib_float_complex;
-  typedef __CLPK_doublecomplex  veclib_double_complex;
+  typedef __CLPK_integer        veclib_int;            /**< integer: 4-bytes */
+  typedef __CLPK_real           veclib_float;          /**< real: 4-bytes */
+  typedef __CLPK_doublereal     veclib_double;         /**< real: 8-bytes */
+  typedef __CLPK_complex        veclib_float_complex;  /**< complex: 8-bytes */
+  typedef __CLPK_doublecomplex  veclib_double_complex; /**< complex: 16-bytes */
 #elif defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
-  typedef MKL_INT               veclib_int;
-  typedef float                 veclib_float;
-  typedef double                veclib_double;
-  typedef MKL_Complex8          veclib_float_complex;
-  typedef MKL_Complex16         veclib_double_complex;
+# ifdef SAF_USE_INTEL_MKL_LP64
+  typedef MKL_INT               veclib_int;            /**< integer: 4-bytes */
+# else /* SAF_USE_INTEL_MKL_ILP64: */
+  typedef MKL_INT               veclib_int;            /**< integer: 8-bytes */
+# endif
+  typedef float                 veclib_float;          /**< real: 4-bytes */
+  typedef double                veclib_double;         /**< real: 8-bytes */
+  typedef MKL_Complex8          veclib_float_complex;  /**< complex: 8-bytes */
+  typedef MKL_Complex16         veclib_double_complex; /**< complex: 16-bytes */
 #elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
-  typedef lapack_int            veclib_int;
-  typedef float                 veclib_float;
-  typedef double                veclib_double;
-  typedef lapack_complex_float  veclib_float_complex;
-  typedef lapack_complex_double veclib_double_complex;
+  typedef lapack_int            veclib_int;            /**< integer: 4-bytes */
+  typedef float                 veclib_float;          /**< real: 4-bytes */
+  typedef double                veclib_double;         /**< real: 8-bytes */
+  typedef lapack_complex_float  veclib_float_complex;  /**< complex: 8-bytes */
+  typedef lapack_complex_double veclib_double_complex; /**< complex: 16-bytes */
 #else
-  typedef int                   veclib_int;
-  typedef float                 veclib_float;
-  typedef double                veclib_double;
-  typedef float_complex         veclib_float_complex;
-  typedef double_complex        veclib_double_complex;
+  typedef int                   veclib_int;            /**< integer: 4-bytes */
+  typedef float                 veclib_float;          /**< real: 4-bytes */
+  typedef double                veclib_double;         /**< real: 8-bytes */
+  typedef float_complex         veclib_float_complex;  /**< complex: 8-bytes */
+  typedef double_complex        veclib_double_complex; /**< complex: 16-bytes */
 #endif
 
 

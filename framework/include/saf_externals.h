@@ -60,6 +60,7 @@
  *
  * @author Leo McCormack
  * @date 06.08.2020
+ * @license ISC
  */
 
 #ifndef __SAF_EXTERNALS_H_INCLUDED__

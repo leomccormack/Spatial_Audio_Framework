@@ -18,6 +18,7 @@
 /**
    @file speexdsp_types.h
    @brief Speex types
+   @license BSD 3-Clause
 */
 #ifndef _SPEEX_TYPES_H
 #define _SPEEX_TYPES_H

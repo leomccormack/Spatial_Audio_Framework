@@ -27,6 +27,7 @@
  *
  * @author Leo McCormack
  * @date 14.07.2020
+ * @license ISC
  */
 
 #ifndef SAF_QMF_H_INCLUDED

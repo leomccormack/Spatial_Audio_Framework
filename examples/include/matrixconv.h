@@ -15,12 +15,13 @@
  */
 
 /**
- * @example matrixconv
+ * @example matrixconv.h
  * @brief A standard matrix convolver
+ * 
+ * ### Files
+ * matrixconv.h (include), matrixconv_internal.h, matrixconv.c,
+ * matrixconv_internal.c
  * ### Include Header
- * matrixconv.h
- * ### Source Files
- * matrixconv_internal.h, matrixconv.c, matrixconv_internal.c
  */
 
 /**
@@ -28,6 +29,7 @@
  * @brief A standard matrix convolver
  * @author Leo McCormack
  * @date 30.09.2019
+ * @license ISC
  */
 
 #ifndef __MATRIXCONV_H_INCLUDED__

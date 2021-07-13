@@ -23,6 +23,7 @@
  *
  * @author Leo McCormack
  * @date 11.07.2016
+ * @license ISC
  */
 
 #ifndef __SAF_LOUDSPEAKER_PRESETS_H_INCLUDED__
@@ -114,93 +115,132 @@ extern const float __default_LScoords64_rad[64][2];
 /* ========================================================================== */
 /*                                  T-designs                                 */
 /* ========================================================================== */
-    
+
+/** Number of directions in a minimum Tdesign of degree: 1 */
+extern const int   __Tdesign_degree_1_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 2 */
+extern const int   __Tdesign_degree_2_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 3 */
+extern const int   __Tdesign_degree_3_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 4 */
+extern const int   __Tdesign_degree_4_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 5 */
+extern const int   __Tdesign_degree_5_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 6 */
+extern const int   __Tdesign_degree_6_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 7 */
+extern const int   __Tdesign_degree_7_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 8 */
+extern const int   __Tdesign_degree_8_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 9 */
+extern const int   __Tdesign_degree_9_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 10 */
+extern const int   __Tdesign_degree_10_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 11 */
+extern const int   __Tdesign_degree_11_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 12 */
+extern const int   __Tdesign_degree_12_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 13 */
+extern const int   __Tdesign_degree_13_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 14 */
+extern const int   __Tdesign_degree_14_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 15 */
+extern const int   __Tdesign_degree_15_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 16 */
+extern const int   __Tdesign_degree_16_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 17 */
+extern const int   __Tdesign_degree_17_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 18 */
+extern const int   __Tdesign_degree_18_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 19 */
+extern const int   __Tdesign_degree_19_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 20 */
+extern const int   __Tdesign_degree_20_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 21 */
+extern const int   __Tdesign_degree_21_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 30 */
+extern const int   __Tdesign_degree_30_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 40 */
+extern const int   __Tdesign_degree_40_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 50 */
+extern const int   __Tdesign_degree_50_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 60 */
+extern const int   __Tdesign_degree_60_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 70 */
+extern const int   __Tdesign_degree_70_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 80 */
+extern const int   __Tdesign_degree_80_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 90 */
+extern const int   __Tdesign_degree_90_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 100 */
+extern const int   __Tdesign_degree_100_nPoints;
+/** Number of directions in a minimum Tdesign of degree: 124 */
+extern const int   __Tdesign_degree_124_nPoints;
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 1
  * @see McLaren's Improved Snub Cube and Other New Spherical Designs in Three
  *      Dimensions", R. H. Hardin and N. J. A. Sloane, Discrete and
  *      Computational Geometry, 15 (1996), pp. 429-441. */
-extern const int   __Tdesign_degree_1_nPoints;
 extern const float __Tdesign_degree_1_dirs_deg[2][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 2 */
-extern const int   __Tdesign_degree_2_nPoints;
 extern const float __Tdesign_degree_2_dirs_deg[4][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 3 */
-extern const int   __Tdesign_degree_3_nPoints;
 extern const float __Tdesign_degree_3_dirs_deg[6][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 4 */
-extern const int   __Tdesign_degree_4_nPoints;
 extern const float __Tdesign_degree_4_dirs_deg[12][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 5 */
-extern const int   __Tdesign_degree_5_nPoints;
 extern const float __Tdesign_degree_5_dirs_deg[12][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 6 */
-extern const int   __Tdesign_degree_6_nPoints;
 extern const float __Tdesign_degree_6_dirs_deg[24][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 7 */
-extern const int   __Tdesign_degree_7_nPoints;
 extern const float __Tdesign_degree_7_dirs_deg[24][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 8 */
-extern const int   __Tdesign_degree_8_nPoints;
 extern const float __Tdesign_degree_8_dirs_deg[36][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 9 */
-extern const int   __Tdesign_degree_9_nPoints;
 extern const float __Tdesign_degree_9_dirs_deg[48][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 10 */
-extern const int   __Tdesign_degree_10_nPoints;
 extern const float __Tdesign_degree_10_dirs_deg[60][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 11 */
-extern const int   __Tdesign_degree_11_nPoints;
 extern const float __Tdesign_degree_11_dirs_deg[70][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 12 */
-extern const int   __Tdesign_degree_12_nPoints;
 extern const float __Tdesign_degree_12_dirs_deg[84][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 13 */
-extern const int   __Tdesign_degree_13_nPoints;
 extern const float __Tdesign_degree_13_dirs_deg[94][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 14 */
-extern const int   __Tdesign_degree_14_nPoints;
 extern const float __Tdesign_degree_14_dirs_deg[108][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 15 */
-extern const int   __Tdesign_degree_15_nPoints;
 extern const float __Tdesign_degree_15_dirs_deg[120][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 16 */
-extern const int   __Tdesign_degree_16_nPoints;
 extern const float __Tdesign_degree_16_dirs_deg[144][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 17 */
-extern const int   __Tdesign_degree_17_nPoints;
 extern const float __Tdesign_degree_17_dirs_deg[156][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 18 */
-extern const int   __Tdesign_degree_18_nPoints;
 extern const float __Tdesign_degree_18_dirs_deg[180][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 19 */
-extern const int   __Tdesign_degree_19_nPoints;
 extern const float __Tdesign_degree_19_dirs_deg[204][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 20 */
-extern const int   __Tdesign_degree_20_nPoints;
 extern const float __Tdesign_degree_20_dirs_deg[216][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 21 */
-extern const int   __Tdesign_degree_21_nPoints;
 extern const float __Tdesign_degree_21_dirs_deg[240][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 30
@@ -210,41 +250,32 @@ extern const float __Tdesign_degree_21_dirs_deg[240][2];
  * Taken from:
  * github.com/chris-hld/spaudiopy/blob/master/spaudiopy/n_designs_1_124.mat
  */
-extern const int   __Tdesign_degree_30_nPoints;
 extern const float __Tdesign_degree_30_dirs_deg[480][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 40 */
-extern const int   __Tdesign_degree_40_nPoints;
 extern const float __Tdesign_degree_40_dirs_deg[840][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 50 */
-extern const int   __Tdesign_degree_50_nPoints;
 extern const float __Tdesign_degree_50_dirs_deg[1296][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 60 */
-extern const int   __Tdesign_degree_60_nPoints;
 extern const float __Tdesign_degree_60_dirs_deg[1860][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 70 */
-extern const int   __Tdesign_degree_70_nPoints;
 extern const float __Tdesign_degree_70_dirs_deg[2520][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 80 */
-extern const int   __Tdesign_degree_80_nPoints;
 extern const float __Tdesign_degree_80_dirs_deg[3276][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 90 */
-extern const int   __Tdesign_degree_90_nPoints;
 extern const float __Tdesign_degree_90_dirs_deg[4140][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 100
  */
-extern const int   __Tdesign_degree_100_nPoints;
 extern const float __Tdesign_degree_100_dirs_deg[5100][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 124
  */
-extern const int   __Tdesign_degree_124_nPoints;
 extern const float __Tdesign_degree_124_dirs_deg[7812][2];
 /**
  * minimum T-design HANDLES (up to degree 21 only).
@@ -476,147 +507,183 @@ extern const float* __HANDLES_SphCovering_dirs_deg[64];
 /*                                 Geosphere                                  */
 /* ========================================================================== */
 
+/** Number of directions in a ico geosphere of degree: 0 */
+extern const int   __geosphere_ico_0_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 1 */
+extern const int   __geosphere_ico_1_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 2 */
+extern const int   __geosphere_ico_2_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 3 */
+extern const int   __geosphere_ico_3_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 4 */
+extern const int   __geosphere_ico_4_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 5 */
+extern const int   __geosphere_ico_5_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 6 */
+extern const int   __geosphere_ico_6_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 7 */
+extern const int   __geosphere_ico_7_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 8 */
+extern const int   __geosphere_ico_8_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 9 */
+extern const int   __geosphere_ico_9_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 10 */
+extern const int   __geosphere_ico_10_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 11 */
+extern const int   __geosphere_ico_11_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 12 */
+extern const int   __geosphere_ico_12_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 13 */
+extern const int   __geosphere_ico_13_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 14 */
+extern const int   __geosphere_ico_14_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 15 */
+extern const int   __geosphere_ico_15_0_nPoints;
+/** Number of directions in a ico geosphere of degree: 16 */
+extern const int   __geosphere_ico_16_0_nPoints;
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 0
  * @see 3LD - Library for Loudspeaker Layout Design; release 2, 2006/03/15
  *      Copyright (c) 2006 Florian Hollerweger (floholl_AT_sbox.tugraz.at) and
  *      (c) 2002 Darren Weber. */
-extern const int   __geosphere_ico_0_0_nPoints;
 extern const float __geosphere_ico_0_0_dirs_deg[12][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 1 */
-extern const int   __geosphere_ico_1_0_nPoints;
 extern const float __geosphere_ico_1_0_dirs_deg[32][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 2 */
-extern const int   __geosphere_ico_2_0_nPoints;
 extern const float __geosphere_ico_2_0_dirs_deg[42][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 3 */
-extern const int   __geosphere_ico_3_0_nPoints;
 extern const float __geosphere_ico_3_0_dirs_deg[92][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 4 */
-extern const int   __geosphere_ico_4_0_nPoints;
 extern const float __geosphere_ico_4_0_dirs_deg[162][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 5 */
-extern const int   __geosphere_ico_5_0_nPoints;
 extern const float __geosphere_ico_5_0_dirs_deg[252][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 6 */
-extern const int   __geosphere_ico_6_0_nPoints;
 extern const float __geosphere_ico_6_0_dirs_deg[362][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 7 */
-extern const int   __geosphere_ico_7_0_nPoints;
 extern const float __geosphere_ico_7_0_dirs_deg[492][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 8 */
-extern const int   __geosphere_ico_8_0_nPoints;
 extern const float __geosphere_ico_8_0_dirs_deg[642][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 9 */
-extern const int   __geosphere_ico_9_0_nPoints;
 extern const float __geosphere_ico_9_0_dirs_deg[812][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 10 */
-extern const int   __geosphere_ico_10_0_nPoints;
 extern const float __geosphere_ico_10_0_dirs_deg[1002][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 11 */
-extern const int   __geosphere_ico_11_0_nPoints;
 extern const float __geosphere_ico_11_0_dirs_deg[1212][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 12 */
-extern const int   __geosphere_ico_12_0_nPoints;
 extern const float __geosphere_ico_12_0_dirs_deg[1442][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 13 */
-extern const int   __geosphere_ico_13_0_nPoints;
 extern const float __geosphere_ico_13_0_dirs_deg[1692][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 14 */
-extern const int   __geosphere_ico_14_0_nPoints;
 extern const float __geosphere_ico_14_0_dirs_deg[1962][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 15 */
-extern const int   __geosphere_ico_15_0_nPoints;
 extern const float __geosphere_ico_15_0_dirs_deg[2252][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 16 */
-extern const int   __geosphere_ico_16_0_nPoints;
 extern const float __geosphere_ico_16_0_dirs_deg[2562][2];
+
+/** Number of directions in a oct geosphere of degree: 0 */
+extern const int   __geosphere_oct_0_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 1 */
+extern const int   __geosphere_oct_1_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 2 */
+extern const int   __geosphere_oct_2_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 3 */
+extern const int   __geosphere_oct_3_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 4 */
+extern const int   __geosphere_oct_4_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 5 */
+extern const int   __geosphere_oct_5_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 6 */
+extern const int   __geosphere_oct_6_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 7 */
+extern const int   __geosphere_oct_7_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 8 */
+extern const int   __geosphere_oct_8_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 9 */
+extern const int   __geosphere_oct_9_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 10 */
+extern const int   __geosphere_oct_10_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 11 */
+extern const int   __geosphere_oct_11_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 12 */
+extern const int   __geosphere_oct_12_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 13 */
+extern const int   __geosphere_oct_13_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 14 */
+extern const int   __geosphere_oct_14_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 15 */
+extern const int   __geosphere_oct_15_0_nPoints;
+/** Number of directions in a oct geosphere of degree: 16 */
+extern const int   __geosphere_oct_16_0_nPoints;
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 0
  * @see 3LD - Library for Loudspeaker Layout Design; release 2, 2006/03/15
  *      Copyright (c) 2006 Florian Hollerweger (floholl_AT_sbox.tugraz.at) and
  *      (c) 2002 Darren Weber. */
-extern const int   __geosphere_oct_0_0_nPoints;
+
 extern const float __geosphere_oct_0_0_dirs_deg[6][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 1 */
-extern const int   __geosphere_oct_1_0_nPoints;
 extern const float __geosphere_oct_1_0_dirs_deg[14][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 2 */
-extern const int   __geosphere_oct_2_0_nPoints;
 extern const float __geosphere_oct_2_0_dirs_deg[18][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 3 */
-extern const int   __geosphere_oct_3_0_nPoints;
 extern const float __geosphere_oct_3_0_dirs_deg[38][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 4 */
-extern const int   __geosphere_oct_4_0_nPoints;
 extern const float __geosphere_oct_4_0_dirs_deg[66][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 5 */
-extern const int   __geosphere_oct_5_0_nPoints;
 extern const float __geosphere_oct_5_0_dirs_deg[102][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 6 */
-extern const int   __geosphere_oct_6_0_nPoints;
 extern const float __geosphere_oct_6_0_dirs_deg[146][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 7 */
-extern const int   __geosphere_oct_7_0_nPoints;
 extern const float __geosphere_oct_7_0_dirs_deg[198][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 8 */
-extern const int   __geosphere_oct_8_0_nPoints;
 extern const float __geosphere_oct_8_0_dirs_deg[258][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 9 */
-extern const int   __geosphere_oct_9_0_nPoints;
 extern const float __geosphere_oct_9_0_dirs_deg[326][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 10 */
-extern const int   __geosphere_oct_10_0_nPoints;
 extern const float __geosphere_oct_10_0_dirs_deg[402][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 11 */
-extern const int   __geosphere_oct_11_0_nPoints;
 extern const float __geosphere_oct_11_0_dirs_deg[486][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 12 */
-extern const int   __geosphere_oct_12_0_nPoints;
 extern const float __geosphere_oct_12_0_dirs_deg[578][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 13 */
-extern const int   __geosphere_oct_13_0_nPoints;
 extern const float __geosphere_oct_13_0_dirs_deg[678][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 14 */
-extern const int   __geosphere_oct_14_0_nPoints;
 extern const float __geosphere_oct_14_0_dirs_deg[786][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 15 */
-extern const int   __geosphere_oct_15_0_nPoints;
 extern const float __geosphere_oct_15_0_dirs_deg[902][2];
 /**
  * Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 16 */
-extern const int   __geosphere_oct_16_0_nPoints;
 extern const float __geosphere_oct_16_0_dirs_deg[1026][2];
 /**
  * 3LD geosphere HANDLES (freq = [0 0], [1 0],..., [16 0])

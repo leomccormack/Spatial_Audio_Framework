@@ -37,6 +37,7 @@
  *
  * @author Leo McCormack
  * @date 12.08.2020
+ * @license GNU GPLv2
  */
 
 #ifndef __SAF_TRACKER_H_INCLUDED__

@@ -26,7 +26,8 @@
  * @see [1] https://github.com/polarch/Vector-Base-Amplitude-Panning
  *
  * @author Leo McCormack
- * @date 02.10.2017 
+ * @date 02.10.2017
+ * @license ISC
  */
 
 #ifndef __SAF_VBAP_H_INCLUDED__

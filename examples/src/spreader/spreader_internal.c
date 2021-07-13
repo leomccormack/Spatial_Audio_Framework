@@ -20,6 +20,7 @@
  *        coherent and incoherent spreading modes.
  * @author Leo McCormack
  * @date 07.04.2021
+ * @license ISC
  */
 
 #include "spreader_internal.h"

@@ -34,6 +34,7 @@
  *
  * @author Leo McCormack
  * @date 07.01.2017
+ * @license ISC
  */
 
 #ifndef __AMBI_DRC_INTERNAL_H_INCLUDED__

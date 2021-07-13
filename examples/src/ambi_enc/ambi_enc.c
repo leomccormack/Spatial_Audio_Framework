@@ -20,6 +20,7 @@
  *
  * @author Leo McCormack
  * @date 07.10.2016
+ * @license ISC
  */
 
 #include "ambi_enc.h"

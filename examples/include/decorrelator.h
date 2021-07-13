@@ -15,12 +15,13 @@
  */
 
 /**
- * @example decorrelator
+ * @example decorrelator.h
  * @brief A multi-channel decorrelator
+ *
+ * ### Files
+ * decorrelator.h (include), decorrelator_internal.h, decorrelator.c,
+ * decorrelator_internal.c
  * ### Include Header
- * decorrelator.h
- * ### Source Files
- * decorrelator_internal.h, decorrelator.c, decorrelator_internal.c
  */
 
 /**
@@ -29,6 +30,7 @@
  *
  * @author Leo McCormack
  * @date 07.07.2020
+ * @license ISC
  */
 
 #ifndef __DECORRELATOR_H_INCLUDED__

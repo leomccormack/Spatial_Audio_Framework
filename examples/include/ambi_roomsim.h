@@ -15,12 +15,13 @@
  */
 
 /**
- * @example ambi_roomsim
+ * @example ambi_roomsim.h
  * @brief A simple shoebox room Ambisonic encoder.
+ *
+ * ### Files
+ * ambi_roomsim.h (include), ambi_roomsim_internal.h, ambi_roomsim.c,
+ * ambi_roomsim_internal.c
  * ### Include Header
- * ambi_roomsim.h
- * ### Source Files
- * ambi_roomsim_internal.h, ambi_roomsim.c, ambi_roomsim_internal.c
  */
 
 /**
@@ -29,6 +30,7 @@
  *
  * @author Leo McCormack
  * @date 10.08.2020
+ * @license ISC
  */
 
 #ifndef __AMBI_ROOMSIM_H_INCLUDED__

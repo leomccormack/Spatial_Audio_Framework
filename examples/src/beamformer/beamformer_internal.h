@@ -21,6 +21,7 @@
  *
  * @author Leo McCormack
  * @date 17.05.2019
+ * @license ISC
  */
 
 #ifndef __BEAMFORMER_INTERNAL_H_INCLUDED__

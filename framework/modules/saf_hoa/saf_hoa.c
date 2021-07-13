@@ -26,6 +26,7 @@
  *
  * @author Leo McCormack
  * @date 19.03.2018
+ * @license ISC
  */
 
 #include "saf_hoa.h"

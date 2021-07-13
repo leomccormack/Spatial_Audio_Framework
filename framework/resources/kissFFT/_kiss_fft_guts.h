@@ -10,6 +10,7 @@
  * @file _kiss_fft_guts.h
  * @brief KISS FFT internals, taken from: https://github.com/mborgerding/kissfft
  * @author Mark Borgerding
+ * @license BSD 3-Clause
  */
 
 /* kiss_fft.h

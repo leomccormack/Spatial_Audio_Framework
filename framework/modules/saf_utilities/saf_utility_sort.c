@@ -21,6 +21,7 @@
  *
  * @author Leo McCormack
  * @date 30.07.2018
+ * @license ISC
  */
 
 #include "saf_utilities.h"

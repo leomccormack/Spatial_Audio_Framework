@@ -23,6 +23,7 @@
  *
  * @author Leo McCormack
  * @date 06.05.2020
+ * @license ISC
  */
  
 #include "saf_reverb.h"

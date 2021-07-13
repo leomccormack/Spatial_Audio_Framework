@@ -40,6 +40,7 @@
  *
  * @author Leo McCormack
  * @date 18.10.2017
+ * @license ISC
  */
 
 #ifndef __SLDOA_INTERNAL_H_INCLUDED__

@@ -20,6 +20,7 @@
  *
  * @author Leo McCormack
  * @date 10.08.2020
+ * @license ISC
  */
 
 #include "ambi_roomsim.h"

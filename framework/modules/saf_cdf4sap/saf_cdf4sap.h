@@ -35,6 +35,7 @@
  *
  * @author Leo McCormack
  * @date 25.11.2016
+ * @license ISC
  */
 
 #ifndef __SAF_CDF4SAP_H_INCLUDED__

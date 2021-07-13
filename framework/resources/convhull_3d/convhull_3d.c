@@ -37,6 +37,7 @@
  *
  * @author Leo McCormack
  * @date 02.10.2017
+ * @license MIT
  */
 
 #include <stdlib.h>

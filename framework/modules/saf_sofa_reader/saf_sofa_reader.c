@@ -25,6 +25,7 @@
  *
  * @author Leo McCormack
  * @date 21.11.2017
+ * @license ISC
  */
 
 #include "saf_sofa_reader.h"

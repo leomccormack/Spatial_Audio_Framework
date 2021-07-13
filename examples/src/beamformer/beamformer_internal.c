@@ -21,6 +21,7 @@
  *
  * @author Leo McCormack
  * @date 17.05.2019
+ * @license ISC
  */
 
 #include "beamformer_internal.h" 

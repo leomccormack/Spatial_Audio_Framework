@@ -30,6 +30,7 @@
  *
  * @author Leo McCormack
  * @date 22.05.2016
+ * @license ISC
  */
 
 #include "saf_sh.h"

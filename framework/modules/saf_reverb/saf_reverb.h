@@ -24,6 +24,7 @@
  *
  * @author Leo McCormack
  * @date 06.05.2020
+ * @license ISC
  */
 
 #ifndef __SAF_REVERB_H_INCLUDED__

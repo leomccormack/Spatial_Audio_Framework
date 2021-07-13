@@ -21,7 +21,8 @@
  * @brief A collection of IIR/FIR filter and filterbank designs
  *
  * @author Leo McCormack
- * @date 01.03.2019 
+ * @date 01.03.2019
+ * @license ISC
  */
 
 #ifndef SAF_FILTERS_H_INCLUDED

@@ -22,6 +22,7 @@
  *
  * @author Leo McCormack
  * @date 03.07.2020
+ * @license ISC
  */
 
 #ifndef SAF_GEOMETRY_H_INCLUDED

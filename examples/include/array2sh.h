@@ -15,14 +15,14 @@
  */
 
 /**
- * @example array2sh
+ * @example array2sh.h
  * @brief Spatially encodes spherical microphone array signals into spherical
  *        harmonic signals (aka: Ambisonic signals) utilising theoretical
  *        encoding filters.
+ *
+ * ### Files
+ * array2sh.h (include), array2sh_internal.h, array2sh.c, array2sh_internal.c
  * ### Include Header
- * array2sh.h
- * ### Source Files
- * array2sh_internal.h, array2sh.c, array2sh_internal.c
  */
 
 /**
@@ -55,6 +55,7 @@
  *
  * @author Leo McCormack
  * @date 13.09.2017
+ * @license ISC
  */
 
 #ifndef __ARRAY2SH_H_INCLUDED__

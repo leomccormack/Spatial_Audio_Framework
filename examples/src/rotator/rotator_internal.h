@@ -28,6 +28,7 @@
  *
  * @author Leo McCormack
  * @date 02.11.2017
+ * @license ISC
  */
 
 #ifndef __ROTATOR_INTERNAL_H_INCLUDED__

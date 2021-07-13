@@ -34,6 +34,7 @@
  *
  * @author Leo McCormack
  * @date 07.01.2017
+ * @license ISC
  */
 
 #include "ambi_drc.h"
