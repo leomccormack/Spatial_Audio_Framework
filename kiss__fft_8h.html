@@ -147,6 +147,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kiss_
 <div class="textblock"><p>The default complex &lt;-&gt; complex FFT. </p>
 <p>Taken from: <a href="https://github.com/mborgerding/kissfft">https://github.com/mborgerding/kissfft</a></p>
 <dl class="section author"><dt>Author</dt><dd>Mark Borgerding </dd></dl>
+<dl class="section user"><dt>License</dt><dd>BSD 3-Clause </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="kiss__fft_8h_source.html">kiss_fft.h</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -185,7 +186,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kiss_
 <p>kiss_fft(cfg,in_out_buf) </p>
 <p>Perform an FFT on a complex input buffer. for a forward FFT, fin should be f[0] , f[1] , ... ,f[nfft-1] fout will be F[0] , F[1] , ... ,F[nfft-1] Note that each element is complex and can be accessed like f[k].r and f[k].i </p>
 
-<p class="definition">Definition at line <a class="el" href="kiss__fft_8c_source.html#l00385">385</a> of file <a class="el" href="kiss__fft_8c_source.html">kiss_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="kiss__fft_8c_source.html#l00386">386</a> of file <a class="el" href="kiss__fft_8c_source.html">kiss_fft.c</a>.</p>
 
 </div>
 </div>
@@ -235,7 +236,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kiss_
 <p>The state can be placed in a user supplied buffer 'mem': If lenmem is not NULL and mem is not NULL and *lenmem is large enough, then the function places the cfg in mem and the size used in *lenmem and returns mem.</p>
 <p>If lenmem is not NULL and ( mem is NULL or *lenmem is not large enough), then the function returns NULL and places the minimum cfg buffer size in *lenmem. </p>
 
-<p class="definition">Definition at line <a class="el" href="kiss__fft_8c_source.html#l00339">339</a> of file <a class="el" href="kiss__fft_8c_source.html">kiss_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="kiss__fft_8c_source.html#l00340">340</a> of file <a class="el" href="kiss__fft_8c_source.html">kiss_fft.c</a>.</p>
 
 </div>
 </div>
@@ -258,7 +259,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kiss_
 <p>Cleans up some memory that gets managed internally. </p>
 <p>Not necessary to call, but it might clean up your compiler output to call this before you exit. </p>
 
-<p class="definition">Definition at line <a class="el" href="kiss__fft_8c_source.html#l00391">391</a> of file <a class="el" href="kiss__fft_8c_source.html">kiss_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="kiss__fft_8c_source.html#l00392">392</a> of file <a class="el" href="kiss__fft_8c_source.html">kiss_fft.c</a>.</p>
 
 </div>
 </div>
@@ -303,7 +304,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kiss_
 <p>A more generic version of the above function. </p>
 <p>It reads its input from every Nth sample. </p>
 
-<p class="definition">Definition at line <a class="el" href="kiss__fft_8c_source.html#l00371">371</a> of file <a class="el" href="kiss__fft_8c_source.html">kiss_fft.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="kiss__fft_8c_source.html#l00372">372</a> of file <a class="el" href="kiss__fft_8c_source.html">kiss_fft.c</a>.</p>
 
 </div>
 </div>
@@ -313,7 +314,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kiss_
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_c95fe3454413c7e9946bfee944a4e42b.html">resources</a></li><li class="navelem"><a class="el" href="dir_b00f08dc110422ef7a7a278b3dff2a0b.html">kissFFT</a></li><li class="navelem"><a class="el" href="kiss__fft_8h.html">kiss_fft.h</a></li>
-    <li class="footer">Generated on Sat Jul 3 2021 13:44:48 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Jul 13 2021 12:04:05 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

@@ -153,6 +153,7 @@ Macros</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>KISS FFT internals, taken from: <a href="https://github.com/mborgerding/kissfft">https://github.com/mborgerding/kissfft</a>. </p>
 <dl class="section author"><dt>Author</dt><dd>Mark Borgerding </dd></dl>
+<dl class="section user"><dt>License</dt><dd>BSD 3-Clause </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
@@ -193,7 +194,7 @@ Macros</h2></td></tr>
 <div class="line">        (res).r=(a).r+(b).r;  (res).i=(a).i+(b).i; \</div>
 <div class="line">    }<span class="keywordflow">while</span>(0)</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00102">102</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00103">103</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
 
 </div>
 </div>
@@ -228,7 +229,7 @@ Macros</h2></td></tr>
 <div class="line">        (res).r += (a).r;  (res).i += (a).i;\</div>
 <div class="line">    }<span class="keywordflow">while</span>(0)</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00114">114</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00115">115</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
 
 </div>
 </div>
@@ -266,7 +267,7 @@ Macros</h2></td></tr>
 <b>Value:</b><div class="fragment"><div class="line">    <span class="keywordflow">do</span>{ (m).r = (a).r*(b).r - (a).i*(b).i;\</div>
 <div class="line">        (m).i = (a).r*(b).i + (a).i*(b).r; }<span class="keywordflow">while</span>(0)</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00089">89</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00090">90</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
 
 </div>
 </div>
@@ -298,7 +299,7 @@ Macros</h2></td></tr>
 <b>Value:</b><div class="fragment"><div class="line">    <span class="keywordflow">do</span>{ (c).r *= (s);\</div>
 <div class="line">        (c).i *= (s); }<span class="keywordflow">while</span>(0)</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00093">93</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00094">94</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
 
 </div>
 </div>
@@ -339,7 +340,7 @@ Macros</h2></td></tr>
 <div class="line">        (res).r=(a).r-(b).r;  (res).i=(a).i-(b).i; \</div>
 <div class="line">    }<span class="keywordflow">while</span>(0)</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00108">108</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00109">109</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
 
 </div>
 </div>
@@ -374,7 +375,7 @@ Macros</h2></td></tr>
 <div class="line">        (res).r -= (a).r;  (res).i -= (a).i; \</div>
 <div class="line">    }<span class="keywordflow">while</span>(0)</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00121">121</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00122">122</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
 
 </div>
 </div>
@@ -408,7 +409,7 @@ Macros</h2></td></tr>
 <div class="line">        (x)-&gt;i = KISS_FFT_SIN(phase);\</div>
 <div class="line">    }<span class="keywordflow">while</span>(0)</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00143">143</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="__kiss__fft__guts_8h_source.html#l00144">144</a> of file <a class="el" href="__kiss__fft__guts_8h_source.html">_kiss_fft_guts.h</a>.</p>
 
 </div>
 </div>
@@ -418,7 +419,7 @@ Macros</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_c95fe3454413c7e9946bfee944a4e42b.html">resources</a></li><li class="navelem"><a class="el" href="dir_b00f08dc110422ef7a7a278b3dff2a0b.html">kissFFT</a></li><li class="navelem"><a class="el" href="__kiss__fft__guts_8h.html">_kiss_fft_guts.h</a></li>
-    <li class="footer">Generated on Sat Jul 3 2021 13:44:48 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Jul 13 2021 12:04:05 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

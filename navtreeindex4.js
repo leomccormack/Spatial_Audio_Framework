@@ -12,7 +12,6 @@ var NAVTREEINDEX4 =
 "array2sh__internal_8h.html#ae6f7a2e865f6f6a26ec9a30adc03ae99":[14,0,0,1,5,2,5],
 "array2sh__internal_8h.html#affb579f24789aa7f3eb44bc549daadc5":[14,0,0,1,5,2,12],
 "array2sh__internal_8h_source.html":[14,0,0,1,5,2],
-"beamformer-example.html":[15,6],
 "beamformer_8c.html":[14,0,0,1,6,0],
 "beamformer_8c.html#a09041a0339788f8353f8b0c52a6dcb77":[14,0,0,1,6,0,2],
 "beamformer_8c.html#a0b34bc4699185073a4e9e70bf4435961":[14,0,0,1,6,0,3],
@@ -38,6 +37,7 @@ var NAVTREEINDEX4 =
 "beamformer_8c.html#afef814d3375007a585714d37411f5a96":[14,0,0,1,6,0,12],
 "beamformer_8c.html#affe0b1571af0915548300b666575606c":[14,0,0,1,6,0,9],
 "beamformer_8c_source.html":[14,0,0,1,6,0],
+"beamformer_8h-example.html":[15,6],
 "beamformer_8h.html":[14,0,0,0,7],
 "beamformer_8h.html#a09041a0339788f8353f8b0c52a6dcb77":[14,0,0,0,7,2],
 "beamformer_8h.html#a0b34bc4699185073a4e9e70bf4435961":[14,0,0,0,7,3],
@@ -69,7 +69,6 @@ var NAVTREEINDEX4 =
 "beamformer__internal_8h.html#a5d39a2b58176324057d9fd63ccd25618":[14,0,0,1,6,2,1],
 "beamformer__internal_8h.html#abf99df3653c325e5ea823e77cfd020b3":[14,0,0,1,6,2,2],
 "beamformer__internal_8h_source.html":[14,0,0,1,6,2],
-"binauraliser-example.html":[15,7],
 "binauraliser_8c.html":[14,0,0,1,7,0],
 "binauraliser_8c.html#a00b2dd76944567a387ce33d4f3ea5d89":[14,0,0,1,7,0,15],
 "binauraliser_8c.html#a020fbb57c8274c603556153ddac0a640":[14,0,0,1,7,0,17],
@@ -123,6 +122,7 @@ var NAVTREEINDEX4 =
 "binauraliser_8c.html#aeeb4e173e534b1782296455596acffe4":[14,0,0,1,7,0,42],
 "binauraliser_8c.html#afe781cc381ba0aefaaacd2709e77c39f":[14,0,0,1,7,0,19],
 "binauraliser_8c_source.html":[14,0,0,1,7,0],
+"binauraliser_8h-example.html":[15,7],
 "binauraliser_8h.html":[14,0,0,0,8],
 "binauraliser_8h.html#a020fbb57c8274c603556153ddac0a640":[14,0,0,0,8,18],
 "binauraliser_8h.html#a0628549e0203c0f65bb8737526e88be6":[14,0,0,0,8,47],
@@ -235,7 +235,6 @@ var NAVTREEINDEX4 =
 "convhull__3d_8h.html#ac6aaf09ca437fdc7ea936e589baedba0":[14,0,2,2,1,1,5],
 "convhull__3d_8h.html#ae1180b638dce2b1918a5dcc83583bb08":[14,0,2,2,1,1,6],
 "convhull__3d_8h_source.html":[14,0,2,2,1,1],
-"decorrelator-example.html":[15,8],
 "decorrelator_8c.html":[14,0,0,1,8,0],
 "decorrelator_8c.html#a18dcee0a2a3df6897afb39a3e0bd3e78":[14,0,0,1,8,0,6],
 "decorrelator_8c.html#a2902edec636e52eae241157542d52439":[14,0,0,1,8,0,16],
@@ -249,5 +248,6 @@ var NAVTREEINDEX4 =
 "decorrelator_8c.html#a9732513a9eeb3085f42f46f0f78d1444":[14,0,0,1,8,0,10],
 "decorrelator_8c.html#aa82350b01711a976fe135d333f6bf1a4":[14,0,0,1,8,0,19],
 "decorrelator_8c.html#ab270e8046aa246f9d50f544ca6e38f49":[14,0,0,1,8,0,12],
-"decorrelator_8c.html#ac1301f7d5fe8eaa65fbf87294b8f69a1":[14,0,0,1,8,0,18]
+"decorrelator_8c.html#ac1301f7d5fe8eaa65fbf87294b8f69a1":[14,0,0,1,8,0,18],
+"decorrelator_8c.html#ac79c4802b40c8abba4a5ad287b761ae0":[14,0,0,1,8,0,14]
 };

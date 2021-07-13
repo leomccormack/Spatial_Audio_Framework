@@ -84,6 +84,7 @@ $(document).ready(function(){initNavTree('saf__utility__veclib_8c.html',''); ini
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
@@ -179,28 +180,38 @@ Data Structures</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data structure for <a class="el" href="group___utilities.html#ga206dec6445519c3d2e3a72d760442a93" title="Matrix inversion: double precision complex, i.e.">utility_cinv()</a>  <a href="structutility__cinv__data.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a62af0907d66bd565ec7a82efc8217ce5"><td class="memItemLeft" align="right" valign="top"><a id="a62af0907d66bd565ec7a82efc8217ce5"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__veclib_8c.html#a62af0907d66bd565ec7a82efc8217ce5">SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE</a></td></tr>
+<tr class="memdesc:a62af0907d66bd565ec7a82efc8217ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">LAPACK interface. <br /></td></tr>
+<tr class="separator:a62af0907d66bd565ec7a82efc8217ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa85d0063826ded1109fbe6b6e029348e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__veclib_8c.html#aa85d0063826ded1109fbe6b6e029348e">SAF_INTEL_MKL_VML_MODE</a>&#160;&#160;&#160;( VML_LA | VML_FTZDAZ_ON )</td></tr>
+<tr class="memdesc:aa85d0063826ded1109fbe6b6e029348e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Taken from the Intel MKL VML developers reference documentation: The flag(s) that can be passed to Intel VML functions:  <a href="saf__utility__veclib_8c.html#aa85d0063826ded1109fbe6b6e029348e">More...</a><br /></td></tr>
+<tr class="separator:aa85d0063826ded1109fbe6b6e029348e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:ac904704865eb4702c3656aca0888558c"><td class="memItemLeft" align="right" valign="top"><a id="ac904704865eb4702c3656aca0888558c"></a>
-typedef int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__veclib_8c.html#ac904704865eb4702c3656aca0888558c">veclib_int</a></td></tr>
-<tr class="memdesc:ac904704865eb4702c3656aca0888558c"><td class="mdescLeft">&#160;</td><td class="mdescRight">integer datatype used by veclib <br /></td></tr>
-<tr class="separator:ac904704865eb4702c3656aca0888558c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a1892647cd90c5d7d67575fcfd149fa"><td class="memItemLeft" align="right" valign="top"><a id="a8a1892647cd90c5d7d67575fcfd149fa"></a>
+typedef MKL_INT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__veclib_8c.html#a8a1892647cd90c5d7d67575fcfd149fa">veclib_int</a></td></tr>
+<tr class="memdesc:a8a1892647cd90c5d7d67575fcfd149fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">integer: 4-bytes <br /></td></tr>
+<tr class="separator:a8a1892647cd90c5d7d67575fcfd149fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4916c87c8ec713c92d69bfaebef60b1"><td class="memItemLeft" align="right" valign="top"><a id="ad4916c87c8ec713c92d69bfaebef60b1"></a>
 typedef float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__veclib_8c.html#ad4916c87c8ec713c92d69bfaebef60b1">veclib_float</a></td></tr>
-<tr class="memdesc:ad4916c87c8ec713c92d69bfaebef60b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">single precision floating-point datatype used by veclib <br /></td></tr>
+<tr class="memdesc:ad4916c87c8ec713c92d69bfaebef60b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">real: 4-bytes <br /></td></tr>
 <tr class="separator:ad4916c87c8ec713c92d69bfaebef60b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a276629847a41b280b9d23b05b0a161e9"><td class="memItemLeft" align="right" valign="top"><a id="a276629847a41b280b9d23b05b0a161e9"></a>
 typedef double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__veclib_8c.html#a276629847a41b280b9d23b05b0a161e9">veclib_double</a></td></tr>
-<tr class="memdesc:a276629847a41b280b9d23b05b0a161e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">single precision floating-point datatype used by veclib <br /></td></tr>
+<tr class="memdesc:a276629847a41b280b9d23b05b0a161e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">real: 8-bytes <br /></td></tr>
 <tr class="separator:a276629847a41b280b9d23b05b0a161e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a028fb5751bd5f3c953c035ac7383b9f2"><td class="memItemLeft" align="right" valign="top"><a id="a028fb5751bd5f3c953c035ac7383b9f2"></a>
-typedef float_complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__veclib_8c.html#a028fb5751bd5f3c953c035ac7383b9f2">veclib_float_complex</a></td></tr>
-<tr class="memdesc:a028fb5751bd5f3c953c035ac7383b9f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">single precision complex floating-point datatype used by veclib <br /></td></tr>
-<tr class="separator:a028fb5751bd5f3c953c035ac7383b9f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ba5de047e7ab7607aaeadadc6f8b2b7"><td class="memItemLeft" align="right" valign="top"><a id="a0ba5de047e7ab7607aaeadadc6f8b2b7"></a>
-typedef double_complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__veclib_8c.html#a0ba5de047e7ab7607aaeadadc6f8b2b7">veclib_double_complex</a></td></tr>
-<tr class="memdesc:a0ba5de047e7ab7607aaeadadc6f8b2b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">double precision floating-point datatype used by veclib <br /></td></tr>
-<tr class="separator:a0ba5de047e7ab7607aaeadadc6f8b2b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96a92f56e80caec41cbe4a2002549b1f"><td class="memItemLeft" align="right" valign="top"><a id="a96a92f56e80caec41cbe4a2002549b1f"></a>
+typedef MKL_Complex8&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__veclib_8c.html#a96a92f56e80caec41cbe4a2002549b1f">veclib_float_complex</a></td></tr>
+<tr class="memdesc:a96a92f56e80caec41cbe4a2002549b1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">complex: 8-bytes <br /></td></tr>
+<tr class="separator:a96a92f56e80caec41cbe4a2002549b1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b3637f07b00295a2e137f60a7afe0e4"><td class="memItemLeft" align="right" valign="top"><a id="a8b3637f07b00295a2e137f60a7afe0e4"></a>
+typedef MKL_Complex16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__veclib_8c.html#a8b3637f07b00295a2e137f60a7afe0e4">veclib_double_complex</a></td></tr>
+<tr class="memdesc:a8b3637f07b00295a2e137f60a7afe0e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">complex: 16-bytes <br /></td></tr>
+<tr class="separator:a8b3637f07b00295a2e137f60a7afe0e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -590,18 +601,46 @@ Dependencies</h2>
 <li>SAF_USE_APPLE_ACCELERATE: to enable the Accelerate framework with the Fortran LAPACK interface</li>
 <li>SAF_USE_ATLAS: to enable ATLAS BLAS routines and ATLAS's CLAPACK interface</li>
 </ul>
-<dl class="section see"><dt>See also</dt><dd>More information can be found here: <a href="https://github.com/leomccormack/Spatial_Audio_Framework">https://github.com/leomccormack/Spatial_Audio_Framework</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd>More information can be found here: <a href="https://github.com/leomccormack/Spatial_Audio_Framework/docs">https://github.com/leomccormack/Spatial_Audio_Framework/docs</a></dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Leo McCormack </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>11.07.2016 </dd></dl>
+<dl class="section user"><dt>License</dt><dd>ISC </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="aa85d0063826ded1109fbe6b6e029348e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa85d0063826ded1109fbe6b6e029348e">&#9670;&nbsp;</a></span>SAF_INTEL_MKL_VML_MODE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SAF_INTEL_MKL_VML_MODE&#160;&#160;&#160;( VML_LA | VML_FTZDAZ_ON )</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Taken from the Intel MKL VML developers reference documentation: The flag(s) that can be passed to Intel VML functions: </p>
+<ul>
+<li>Faster processing of denormalized inputs: VML_FTZDAZ_ON || VML_FTZDAZ_OFF</li>
+<li>High Accuracy (VML_HA), the default mode</li>
+<li>Low Accuracy (VML_LA), which improves performance by reducing accuracy of the two least significant bits</li>
+<li>Enhanced Performance (VML_EP), which provides better performance at the cost of significantly reduced accuracy. Approximately half of the bits in the mantissa are correct</li>
+</ul>
+<p>Note that using the EP mode does not guarantee accurate processing of corner cases and special values. Although the default accuracy is HA, LA is sufficient in most cases. For applications that require less accuracy (for example, media applications, some Monte Carlo simulations, etc.), the EP mode may be sufficient.</p>
+<p>Note that this default SAF_INTEL_MKL_VML_MODE value can be overriden. </p>
+
+<p class="definition">Definition at line <a class="el" href="saf__utility__veclib_8c_source.html#l00090">90</a> of file <a class="el" href="saf__utility__veclib_8c_source.html">saf_utility_veclib.c</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__veclib_8c.html">saf_utility_veclib.c</a></li>
-    <li class="footer">Generated on Sat Jul 3 2021 13:44:48 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Jul 13 2021 12:04:05 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

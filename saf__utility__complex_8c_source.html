@@ -102,40 +102,40 @@ $(document).ready(function(){initNavTree('saf__utility__complex_8c_source.html',
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * PERFORMANCE OF THIS SOFTWARE.</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="saf__utility__complex_8h.html">saf_utility_complex.h</a>&quot;</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#if __STDC_VERSION__ &gt;= 199901L</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="comment">/* for C99 (and above) compliant compilers */</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="comment">/*</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">  Single-Precision Complex Operations</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">  */</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keyword">inline</span> float_complex cmplxf(<span class="keywordtype">float</span> re, <span class="keywordtype">float</span> im) { <span class="keywordflow">return</span> re + im * I; }</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">inline</span> float_complex ccaddf(float_complex x, float_complex y) { <span class="keywordflow">return</span> x + y; }</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">inline</span> float_complex craddf(float_complex x, <span class="keywordtype">float</span> y) { <span class="keywordflow">return</span> x + y; }</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">inline</span> float_complex ccsubf(float_complex x, float_complex y) { <span class="keywordflow">return</span> x - y; }</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">inline</span> float_complex crsubf(float_complex x, <span class="keywordtype">float</span> y) { <span class="keywordflow">return</span> x - y; }</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">inline</span> float_complex ccmulf(float_complex x, float_complex y) { <span class="keywordflow">return</span> x * y; }</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">inline</span> float_complex cccmulf(float_complex x, float_complex y, float_complex z) { <span class="keywordflow">return</span> x * y * z; }</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keyword">inline</span> float_complex crmulf(float_complex x, <span class="keywordtype">float</span> y) { <span class="keywordflow">return</span> x * y; }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keyword">inline</span> float_complex ccdivf(float_complex x, float_complex y) { <span class="keywordflow">return</span> x / y; }</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keyword">inline</span> float_complex crdivf(float_complex x, <span class="keywordtype">float</span> y) { <span class="keywordflow">return</span> x / y; }</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="comment">/*</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">  Double-Precision Complex Operations</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">  */</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keyword">inline</span> double_complex cmplx(<span class="keywordtype">double</span> re, <span class="keywordtype">double</span> im) { <span class="keywordflow">return</span> re + im * I; }</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keyword">inline</span> double_complex ccadd(double_complex x, double_complex y) { <span class="keywordflow">return</span> x + y; }</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keyword">inline</span> double_complex cradd(double_complex x, <span class="keywordtype">double</span> y) { <span class="keywordflow">return</span> x + y; }</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keyword">inline</span> double_complex ccsub(double_complex x, double_complex y) { <span class="keywordflow">return</span> x - y; }</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keyword">inline</span> double_complex crsub(double_complex x, <span class="keywordtype">double</span> y) { <span class="keywordflow">return</span> x - y; }</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keyword">inline</span> double_complex ccmul(double_complex x, double_complex y) { <span class="keywordflow">return</span> x * y; }</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keyword">inline</span> double_complex cccmul(double_complex x, double_complex y, double_complex z) { <span class="keywordflow">return</span> x * y * z; }</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keyword">inline</span> double_complex crmul(double_complex x, <span class="keywordtype">double</span> y) { <span class="keywordflow">return</span> x * y; }</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="keyword">inline</span> double_complex ccdiv(double_complex x, double_complex y) { <span class="keywordflow">return</span> x / y; }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="keyword">inline</span> double_complex crdiv(double_complex x, <span class="keywordtype">double</span> y) { <span class="keywordflow">return</span> x / y; }</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="saf__utility__complex_8h.html">saf_utility_complex.h</a>&quot;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#if __STDC_VERSION__ &gt;= 199901L</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="comment">/* for C99 (and above) compliant compilers */</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="comment">/*</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">  Single-Precision Complex Operations</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">  */</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">inline</span> float_complex cmplxf(<span class="keywordtype">float</span> re, <span class="keywordtype">float</span> im) { <span class="keywordflow">return</span> re + im * I; }</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">inline</span> float_complex ccaddf(float_complex x, float_complex y) { <span class="keywordflow">return</span> x + y; }</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">inline</span> float_complex craddf(float_complex x, <span class="keywordtype">float</span> y) { <span class="keywordflow">return</span> x + y; }</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">inline</span> float_complex ccsubf(float_complex x, float_complex y) { <span class="keywordflow">return</span> x - y; }</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">inline</span> float_complex crsubf(float_complex x, <span class="keywordtype">float</span> y) { <span class="keywordflow">return</span> x - y; }</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">inline</span> float_complex ccmulf(float_complex x, float_complex y) { <span class="keywordflow">return</span> x * y; }</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keyword">inline</span> float_complex cccmulf(float_complex x, float_complex y, float_complex z) { <span class="keywordflow">return</span> x * y * z; }</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keyword">inline</span> float_complex crmulf(float_complex x, <span class="keywordtype">float</span> y) { <span class="keywordflow">return</span> x * y; }</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keyword">inline</span> float_complex ccdivf(float_complex x, float_complex y) { <span class="keywordflow">return</span> x / y; }</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keyword">inline</span> float_complex crdivf(float_complex x, <span class="keywordtype">float</span> y) { <span class="keywordflow">return</span> x / y; }</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="comment">/*</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">  Double-Precision Complex Operations</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">  */</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keyword">inline</span> double_complex cmplx(<span class="keywordtype">double</span> re, <span class="keywordtype">double</span> im) { <span class="keywordflow">return</span> re + im * I; }</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keyword">inline</span> double_complex ccadd(double_complex x, double_complex y) { <span class="keywordflow">return</span> x + y; }</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keyword">inline</span> double_complex cradd(double_complex x, <span class="keywordtype">double</span> y) { <span class="keywordflow">return</span> x + y; }</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keyword">inline</span> double_complex ccsub(double_complex x, double_complex y) { <span class="keywordflow">return</span> x - y; }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keyword">inline</span> double_complex crsub(double_complex x, <span class="keywordtype">double</span> y) { <span class="keywordflow">return</span> x - y; }</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keyword">inline</span> double_complex ccmul(double_complex x, double_complex y) { <span class="keywordflow">return</span> x * y; }</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keyword">inline</span> double_complex cccmul(double_complex x, double_complex y, double_complex z) { <span class="keywordflow">return</span> x * y * z; }</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="keyword">inline</span> double_complex crmul(double_complex x, <span class="keywordtype">double</span> y) { <span class="keywordflow">return</span> x * y; }</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="keyword">inline</span> double_complex ccdiv(double_complex x, double_complex y) { <span class="keywordflow">return</span> x / y; }</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="keyword">inline</span> double_complex crdiv(double_complex x, <span class="keywordtype">double</span> y) { <span class="keywordflow">return</span> x / y; }</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="asaf__utility__complex_8h_html"><div class="ttname"><a href="saf__utility__complex_8h.html">saf_utility_complex.h</a></div><div class="ttdoc">Contains wrappers for handling complex numbers across both C99-compliant compilers and Microsoft Visu...</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -143,7 +143,7 @@ $(document).ready(function(){initNavTree('saf__utility__complex_8c_source.html',
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__complex_8c.html">saf_utility_complex.c</a></li>
-    <li class="footer">Generated on Sat Jul 3 2021 13:44:46 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Jul 13 2021 12:04:04 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

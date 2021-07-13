@@ -98,7 +98,8 @@ $(document).ready(function(){initNavTree('array2sh__internal_8c.html',''); initR
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:af0addc8fe5a8febaa92f8c110fdd653e"><td class="memItemLeft" align="right" valign="top"><a id="af0addc8fe5a8febaa92f8c110fdd653e"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>array2sh_replicate_order</b> (void *const hA2sh, int order)</td></tr>
+static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="array2sh__internal_8c.html#af0addc8fe5a8febaa92f8c110fdd653e">array2sh_replicate_order</a> (void *const hA2sh, int order)</td></tr>
+<tr class="memdesc:af0addc8fe5a8febaa92f8c110fdd653e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes the bNs computed up to N+1, and replicates them to be of length (N+1)^2 (replicating the 1st order bNs 3 times, 2nd -&gt; 5 times etc.) <br /></td></tr>
 <tr class="separator:af0addc8fe5a8febaa92f8c110fdd653e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bbd0e88e0951bdc6454bc69a4033abc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="array2sh__internal_8c.html#a5bbd0e88e0951bdc6454bc69a4033abc">array2sh_initTFT</a> (void *const hA2sh)</td></tr>
 <tr class="memdesc:a5bbd0e88e0951bdc6454bc69a4033abc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise the filterbank used by array2sh.  <a href="array2sh__internal_8c.html#a5bbd0e88e0951bdc6454bc69a4033abc">More...</a><br /></td></tr>
@@ -140,6 +141,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="arra
 [3] Rafaely B. Fundamentals of spherical array processing. Berlin: Springer; 2015 Feb 18.</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Leo McCormack </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>13.09.2017 </dd></dl>
+<dl class="section user"><dt>License</dt><dd>ISC </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -167,7 +169,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="arra
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00607">607</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00612">612</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -195,7 +197,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="arra
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00613">613</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00618">618</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -218,7 +220,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="arra
 <p>Evaluates the spherical harmonic transform performance with the currently configured microphone/hydrophone array. </p>
 <dl class="section note"><dt>Note</dt><dd>This is based on an analytical model of the array, so may differ in practice (although, it is usually pretty close, and saves from having to measure the array) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00510">510</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00515">515</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -271,7 +273,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="arra
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00622">622</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00627">627</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -294,7 +296,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="arra
 <p>Initialise the filterbank used by array2sh. </p>
 <dl class="section note"><dt>Note</dt><dd>Call this function before <a class="el" href="array2sh__internal_8h.html#a457a1bb8d7d48c788931d938092e32bb" title="Computes the spherical harmonic transform (SHT) matrix, to spatially encode input microphone/hydropho...">array2sh_calculate_sht_matrix()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00069">69</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00074">74</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -304,7 +306,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="arra
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_95b57effb8038f90624a8a5b60361b2e.html">src</a></li><li class="navelem"><a class="el" href="dir_d312e3ce76956974ca362d482c5b1f90.html">array2sh</a></li><li class="navelem"><a class="el" href="array2sh__internal_8c.html">array2sh_internal.c</a></li>
-    <li class="footer">Generated on Sat Jul 3 2021 13:44:47 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Jul 13 2021 12:04:05 for Spatial_Audio_Framework by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
