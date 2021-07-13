@@ -401,7 +401,7 @@ void utility_simaxv
 #if defined(SAF_USE_INTEL_IPP)
     float maxVal;
     ippsMaxAbsIndx_32f((Ipp32f*)a, len, &maxVal, index);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#else
     *index = (int)cblas_isamax(len, a, 1);
 #endif
 }
@@ -426,7 +426,7 @@ void utility_dimaxv
 #if defined(SAF_USE_INTEL_IPP)
     double maxVal;
     ippsMaxAbsIndx_64f((Ipp64f*)a, len, &maxVal, index);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#else
     *index = (int)cblas_idamax(len, a, 1);
 #endif
 }
