@@ -43,6 +43,7 @@
  *
  * @author Leo McCormack
  * @date 06.04.2018
+ * @license Mixed (module dependent)
  */
 
 #ifndef SAF_H_INCLUDED
