@@ -22,6 +22,36 @@
  *
  * ### Files
  * array2sh.h (include), array2sh_internal.h, array2sh.c, array2sh_internal.c
+ * ### Example Usage
+ * \code{.m}
+ * int main(void) {
+ *     void* hA2sh;
+ *     int frameSize;
+ *
+ *     // Create and initialise an instance of array2sh
+ *     array2sh_create(&hA2sh);
+ *     array2sh_init(hA2sh, hostSamplingRate);
+ *
+ *     // Call any set functions, e.g.:
+ *     array2sh_setPreset(hA2sh, MICROPHONE_ARRAY_PRESET_EIGENMIKE32);
+ *     array2sh_setNormType(hA2sh, NORM_N3D);
+ *     array2sh_setGain(hA2sh, 6.0f);
+ *
+ *     // The framesize of this example is fixed, and can be found with
+ *     frameSize = array2sh_getFrameSize();
+ *
+ *     // Processing frame-by-frame
+ *     ...
+ *     // Load signals into inputSignalBuffer (numberOfInputs x frameSize)
+ *     array2sh_process(hA2sh, inputSignalBuffer, outputSignalBuffer,
+ *                      numberOfInputs, numberOfOutputs, frameSize);
+ *     // Copy signals from outputSignalBuffer (numberOfOutputs x frameSize)
+ *     ...
+ *
+ *     // Destroy this instance of array2sh
+ *     array2sh_destroy(&hA2sh);
+ * }
+ *\endcode
  * ### Include Header
  */
 
