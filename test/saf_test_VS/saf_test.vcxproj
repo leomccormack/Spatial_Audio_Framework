@@ -115,6 +115,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../../framework/include;../../examples/include;../../dependencies/Win64/include;C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include;../timer;../unity;../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
