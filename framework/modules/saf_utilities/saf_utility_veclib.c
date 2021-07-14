@@ -1361,7 +1361,7 @@ void utility_svsdiv
     vDSP_vsdiv(a, 1, s, c, 1, (vDSP_Length)len);
 #else
     cblas_scopy(len, a, 1, c, 1);
-    cblas_sscal(len, 1.0/s[0], c, 1);
+    cblas_sscal(len, 1.0f/s[0], c, 1);
 #endif
 }
 

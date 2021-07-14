@@ -3,6 +3,7 @@ docs/doxygen/latex
 xcuserdata/
 build/
 x64/
+UpgradeLog.htm
 .vs/
 *.DS_Store
 *idea/
