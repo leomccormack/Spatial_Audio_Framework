@@ -89,13 +89,13 @@ target_link_libraries(${PROJECT_NAME} PRIVATE saf)
 
 The available SAF-related CMake options (and their default values) are:
 ```
--DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL    # performance library to employ
--DSAF_ENABLE_SOFA_READER_MODULE=0          # enable/disable the saf_sofa_reader module 
--DSAF_ENABLE_TRACKER_MODULE=0              # enable/disable the saf_tracker module 
--DSAF_BUILD_EXAMPLES=1                     # build saf examples
--DSAF_BUILD_EXTRAS=0                       # build safmex etc.
--DSAF_BUILD_TESTS=1                        # build unit testing program
--DSAF_USE_INTEL_IPP=0                      # To link and use Intel IPP for the FFT etc.
+-DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL_LP64 # performance library to employ
+-DSAF_ENABLE_SOFA_READER_MODULE=0            # enable/disable the saf_sofa_reader module 
+-DSAF_ENABLE_TRACKER_MODULE=0                # enable/disable the saf_tracker module 
+-DSAF_BUILD_EXAMPLES=1                       # build saf examples
+-DSAF_BUILD_EXTRAS=0                         # build safmex etc.
+-DSAF_BUILD_TESTS=1                          # build unit testing program
+-DSAF_USE_INTEL_IPP=0                        # To link and use Intel IPP for the FFT, resampler, etc.
 ```
 
 If using e.g. **SAF_USE_INTEL_MKL_LP64** as the performance library, note that the default header and library search paths may be overridden [according to your setup](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md) with:
