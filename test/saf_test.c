@@ -4,15 +4,16 @@
  *
  * @author Leo McCormack
  * @date 27.04.2020
+ * @license Mixed (module dependent)
  */
 
-#include "saf_test.h"
-#include "unity.h"   /* unit testing suite */
-#include "timer.h"   /* for timing the individual tests */
-#include "saf.h"     /* master framework include header */
+#include "saf_test.h"      /* the SAF unit test declarations */
+#include "unity.h"         /* unit testing suite */
+#include "timer.h"         /* for timing the individual tests */
+#include "saf.h"           /* master framework include header */
 #include "saf_externals.h" /* to also include saf dependencies (cblas etc.) */
 
-#if SAF_ENABLE_EXAMPLES_TESTS == 1
+#ifdef SAF_ENABLE_EXAMPLES_TESTS
 /* SAF example headers: */
 # include "ambi_bin.h"
 # include "ambi_dec.h"
@@ -121,7 +122,7 @@ int main_test(void) {
     RUN_TEST(test__sphESPRIT);
     RUN_TEST(test__sphModalCoeffs);
     RUN_TEST(test__truncationEQ);
-#if SAF_ENABLE_EXAMPLES_TESTS == 1
+#ifdef SAF_ENABLE_EXAMPLES_TESTS
     RUN_TEST(test__saf_example_ambi_bin);
     RUN_TEST(test__saf_example_ambi_dec);
     RUN_TEST(test__saf_example_ambi_enc);
@@ -2886,7 +2887,7 @@ void test__truncationEQ(void)
     free(gainDB);
 }
 
-#if SAF_ENABLE_EXAMPLES_TESTS == 1
+#ifdef SAF_ENABLE_EXAMPLES_TESTS
 void test__saf_example_ambi_bin(void){
     int nSH, i, ch, framesize;
     void* hAmbi;

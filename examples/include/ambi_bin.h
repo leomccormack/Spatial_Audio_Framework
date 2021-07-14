@@ -25,6 +25,7 @@
  * \code{.m}
  * int main(void) {
  *     void* hAmbi;
+ *     int frameSize;
  *
  *     // Create an instance of ambi_bin
  *     ambi_bin_create(&hAmbi);
@@ -35,18 +36,36 @@
  *     ambi_bin_setEnableRotation(hAmbi, SAF_TRUE);
  *     ambi_bin_setYaw(hAmbi, 180.0f); // turn the listener around
  *
- *     // "initCodec" should be called after calling any of the "set" functions
- *     // (Fully thread-safe)
+ *     // Note that many set functions, for example ambi_bin_setYaw(), will
+ *     // update their value immediately. Whereas, others, for example
+ *     // ambi_bin_setInputOrderPreset(), which could cause clicks/hangs with
+ *     // the main processing loop, will only trigger a flag that indicates that
+ *     // a re-initisation is required. Therefore, ambi_bin_initCodec() should
+ *     // be called after calling these particular set functions in order to
+ *     // update the run-time settings accordingly.
+ *     //
+ *     // This function is fully thread-safe, and actually calling this on a
+ *     // separate thread is actively encouraged, in order to avoid the
+ *     // aforementioned run-time clicks/hangs. ambi_bin_process() is muted
+ *     // if the initialisations are still on-going, and initialisations are
+ *     // paused until the current ambi_bin_process() call has completed.
  *     ambi_bin_initCodec(hAmbi);
  *
- *     // "init" Should be called before calling "process"
- *     // (Not thread-safe!)
+ *     // ambi_bin_init() should be called once before calling
+ *     // ambi_bin_process() in order to inform the example of the host sample
+ *     // rate and flush run-time buffers with zeros. It is not safe to call
+ *     // this during ambi_bin_process()!
  *     ambi_bin_init(hAmbi, hostSamplingRate);
+ *
+ *     // The framesize of this example is fixed, and can be found with
+ *     frameSize = ambi_bin_getFrameSize();
  *
  *     // Processing frame-by-frame
  *     ...
+ *     // Load signals into inputSignalBuffer (numberOfInputs x frameSize)
  *     ambi_bin_process(hAmbi, inputSignalBuffer, outputSignalBuffer,
- *                      numberOfInputs, numberOfOutputs, numberOfSamples);
+ *                      numberOfInputs, numberOfOutputs, frameSize);
+ *     // Copy signals from outputSignalBuffer (numberOfOutputs x frameSize)
  *     ...
  *
  *     // Destroy this instance of ambi_bin

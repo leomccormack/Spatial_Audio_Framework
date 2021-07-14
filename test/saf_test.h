@@ -4,6 +4,7 @@
  *
  * @author Leo McCormack
  * @date 27.04.2020
+ * @license Mixed (module dependent)
  */ 
 
 #ifndef __SAF_TEST_H_INCLUDED__
