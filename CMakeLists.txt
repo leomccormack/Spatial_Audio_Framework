@@ -10,7 +10,7 @@ option(SAF_BUILD_EXAMPLES            "Build SAF examples."                      
 option(SAF_BUILD_EXTRAS              "Build SAF extras."                          OFF)
 option(SAF_ENABLE_SOFA_READER_MODULE "Enable the SAF SOFA READER module"          OFF)
 option(SAF_ENABLE_TRACKER_MODULE     "Enable the SAF TRACKER module"              OFF)
-option(SAF_USE_INTEL_IPP             "Use Intel IPP for the FFT, resampler, etc.  OFF)
+option(SAF_USE_INTEL_IPP             "Use Intel IPP for the FFT, resampler, etc." OFF)
 if (NOT SAF_PERFORMANCE_LIB)
     set(SAF_PERFORMANCE_LIB "SAF_USE_INTEL_MKL_LP64" CACHE STRING "Performance library for SAF to use.")
 endif()
