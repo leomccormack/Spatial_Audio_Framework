@@ -19,7 +19,7 @@
  * @brief A sound-field visualiser, which utilises spherical harmonic signals as
  *        input
  *
- * ### Source Files
+ * ### Files
  * powermap.h (include), powermap_internal.h, powermap.c, powermap_internal.c
  * ### Include Header
  */
