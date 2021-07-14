@@ -78,12 +78,10 @@ if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL_LP64" OR ${SAF_PERFORMANCE
         elseif(MSYS OR MINGW) 
             set(INTEL_MKL_HEADER_PATH "/c/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include") 
         elseif(APPLE)
-            set(INTEL_MKL_HEADER_PATH "/opt/intel/compilers_and_libraries/mac/mkl/include")
+            set(INTEL_MKL_HEADER_PATH "/opt/intel/oneapi/mkl/latest/include")
         elseif(UNIX AND NOT APPLE)
-            if(EXISTS /home/$ENV{USER})
-                set(INTEL_MKL_HEADER_PATH "/home/$ENV{USER}/intel/compilers_and_libraries/linux/mkl/include")
-            elseif(EXISTS "/opt/intel/compilers_and_libraries/linux/mkl/include")
-                set(INTEL_MKL_HEADER_PATH "/opt/intel/compilers_and_libraries/linux/mkl/include")
+            if(EXISTS "/opt/intel/oneapi/mkl/latest/include")
+                set(INTEL_MKL_HEADER_PATH "/opt/intel/oneapi/mkl/latest/include")
             else()
                 message(SEND_ERROR "Intel mkl.h default path not found, please specify!")
             endif()
@@ -150,7 +148,7 @@ elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
         target_include_directories(${PROJECT_NAME} PUBLIC ${LAPACKE_HEADER_PATH})
     endif()
 
-    # Disable this particular warning...
+    # Disable this particular warning... We know, but it's OK.
     if(UNIX)
         target_compile_options(${PROJECT_NAME} PRIVATE -Wno-incompatible-pointer-types)
     endif()
@@ -167,6 +165,51 @@ elseif(APPLE AND ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_APPLE_ACCELERATE")
 else()
     message(SEND_ERROR "The specified SAF_PERFORMANCE_LIB is not supported")
 
+endif()
+
+############################################################################
+# Enable/Disable Intel IPP
+if(SAF_USE_INTEL_IPP)
+
+    # Default header path and libs, (which are platform dependent):
+    if(NOT DEFINED INTEL_IPP_HEADER_PATH)
+        if(MSVC)
+            set(INTEL_IPP_HEADER_PATH "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/ipp/include") 
+        elseif(MSYS OR MINGW) 
+            set(INTEL_IPP_HEADER_PATH "/c/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/ipp/include") 
+        elseif(APPLE)
+            set(INTEL_IPP_HEADER_PATH "/opt/intel/oneapi/ipp/latest/include")
+        elseif(UNIX AND NOT APPLE)
+            if(EXISTS "/opt/intel/oneapi/ipp/latest/include")
+                set(INTEL_IPP_HEADER_PATH "/opt/intel/oneapi/ipp/latest/include")
+            else()
+                message(SEND_ERROR "Intel ipp.h default path not found, please specify!")
+            endif()
+        endif()
+    endif()
+
+    if (NOT DEFINED INTEL_IPP_LIB)
+        if(MSVC)
+            set(INTEL_IPP_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_ipp_custom_lp64.lib")
+        elseif(MSYS OR MINGW)
+            set(INTEL_IPP_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_ipp_custom_lp64.lib")
+        elseif(APPLE)
+            set(INTEL_IPP_LIB "/usr/local/lib/libsaf_ipp_custom.dylib")
+        elseif(UNIX AND NOT APPLE)
+            set(INTEL_IPP_LIB "/usr/local/lib/libsaf_ipp_custom.so")
+        endif()
+    endif()
+
+
+    if (NOT EXISTS "${INTEL_IPP_HEADER_PATH}/ipp.h")
+        message(SEND_ERROR "Intel ipp.h not found")
+    endif()
+    message(STATUS "Using Intel IPP. Linking against: ${INTEL_IPP_LIB}")
+
+    # Add target header paths and libs
+    target_include_directories(${PROJECT_NAME} PUBLIC ${INTEL_IPP_HEADER_PATH} )
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_INTEL_IPP=1)
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${INTEL_IPP_LIB} )
 endif()
 
 
