@@ -457,86 +457,89 @@ $(document).ready(function(){initNavTree('saf__hrir_8c_source.html',''); initRes
 <div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> history = 128;</div>
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    <span class="keywordtype">float</span> *inBuffer, *outBuffer;</div>
 <div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    <span class="keywordtype">int</span> filterLength, pSize, numFilters, outL;</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> in_length, out_length;</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    <span class="keywordtype">int</span> ERROR_VAL, out_latency, nsample_proc;</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    <span class="keywordtype">float</span> *zeros;</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    SpeexResamplerState *pRS;</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160; </div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    <span class="comment">/* New HRIR length */</span></div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    resample_factor = (float)hrirs_out_fs / (<span class="keywordtype">float</span>)hrirs_in_fs;</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    (*hrirs_out_len) = (int)ceilf((<span class="keywordtype">float</span>)hrirs_in_len * resample_factor);</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    hrirs_out_ld = padToNextPow2 ? (int)pow(2.0, ceil(log((<span class="keywordtype">double</span>)(*hrirs_out_len))/log(2.0))) : (*hrirs_out_len);</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160; </div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    <span class="comment">/* Initialise IPP resampler */</span></div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(!ippsResamplePolyphaseFixedGetSize_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), &amp;pSize, &amp;filterLength, &amp;numFilters, ippAlgHintFast), <span class="stringliteral">&quot;IPP error&quot;</span>);</div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    IppsResamplingPolyphaseFixed_32f* spec;</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    spec = (IppsResamplingPolyphaseFixed_32f*)ippsMalloc_8u(pSize);</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(!ippsResamplePolyphaseFixedInit_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), 0.98f, 12.0f, spec, ippAlgHintFast), <span class="stringliteral">&quot;IPP error&quot;</span>);</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    inBuffer = ippsMalloc_32f(hrirs_in_len + history * 2 + 2);</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    outBuffer = ippsMalloc_32f(hrirs_out_ld + 2);</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    ippsZero_32f(inBuffer, hrirs_in_len + history * 2 + 2);</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160; </div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    <span class="comment">/* Apply IPP resampler */</span></div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;    (*hrirs_out) = <a class="code" href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a>(hrirs_N_dirs*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*(hrirs_out_ld), <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;    <span class="keywordflow">for</span>(ch=0; ch&lt;hrirs_N_dirs*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>; ch++){</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;        pTime = history;</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;        outL =  0;</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160; </div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;        <span class="comment">/* Apply resampling */</span></div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;        ippsCopy_32f(hrirs_in + ch * hrirs_in_len, inBuffer + history, hrirs_in_len);</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;        <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(!ippsResamplePolyphaseFixed_32f(inBuffer, hrirs_in_len, outBuffer, 1.0f, &amp;pTime, &amp;outL, spec), <span class="stringliteral">&quot;IPP error&quot;</span>);</div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;        <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(hrirs_out_ld==outL, <span class="stringliteral">&quot;Not all samples were processed!&quot;</span>);</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;        ippsCopy_32f(outBuffer, (*hrirs_out) + ch * (hrirs_out_ld), hrirs_out_ld);</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    }</div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160; </div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;    (*hrirs_out_len) = hrirs_out_ld;</div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160; </div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;    <span class="comment">/* Clean-up */</span></div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;    ippsFree(spec);</div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;    ippsFree(inBuffer);</div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;    ippsFree(outBuffer);</div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160; </div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;    <span class="comment">/* Initialise SPEEX resampler */</span></div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;    pRS = speex__resampler_init(1 <span class="comment">/*one channel at a time*/</span>, hrirs_in_fs, hrirs_out_fs, SPEEX_RESAMPLER_QUALITY_MAX, &amp;ERROR_VAL);</div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;    out_latency = speex__resampler_get_output_latency(pRS);</div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;    zeros = <a class="code" href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a>(out_latency, <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160; </div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;    <span class="comment">/* Apply SPEEX resampler */</span></div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;    (*hrirs_out) = <a class="code" href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a>(hrirs_N_dirs*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*(hrirs_out_ld), <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;    <span class="keywordflow">for</span>(ch=0; ch&lt;hrirs_N_dirs*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>; ch++){</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;        speex__resampler_reset_mem(pRS);</div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;        speex__resampler_skip_zeros(pRS);</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;        nsample_proc = 0;</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160; </div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;        <span class="comment">/* Pass the FIR through the resampler */</span></div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;        in_length = hrirs_in_len;</div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;        out_length = hrirs_out_ld;</div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;        ERROR_VAL = speex__resampler_process_float((pRS), 0, hrirs_in + ch * hrirs_in_len, &amp;in_length,</div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;                                                   (*hrirs_out) + ch * (hrirs_out_ld), &amp;out_length);</div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;        nsample_proc += out_length; <span class="comment">/* Current number of output samples processed */</span></div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160; </div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;        <span class="comment">/* Pass through zeros to get the tail of the filter too */</span></div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;        <span class="keywordflow">while</span>(nsample_proc&lt;(hrirs_out_ld)){</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;            in_length = out_latency;</div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;            out_length = (hrirs_out_ld)-nsample_proc;</div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;            ERROR_VAL = speex__resampler_process_float((pRS), 0, zeros, &amp;in_length,</div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;                                                       (*hrirs_out) + ch * (hrirs_out_ld) + nsample_proc, &amp;out_length);</div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;            nsample_proc += out_length;</div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;        }</div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;        <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(nsample_proc==(hrirs_out_ld), <span class="stringliteral">&quot;Not all samples were processed!&quot;</span>);</div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;    }</div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160; </div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    (*hrirs_out_len) = hrirs_out_ld;</div>
-<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160; </div>
-<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;    <span class="comment">/* Clean-up */</span></div>
-<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;    speex__resampler_destroy(pRS);</div>
-<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;    free(zeros);</div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;}</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    IppStatus error;</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> in_length, out_length;</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    <span class="keywordtype">int</span> ERROR_VAL, out_latency, nsample_proc;</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    <span class="keywordtype">float</span> *zeros;</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    SpeexResamplerState *pRS;</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160; </div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    <span class="comment">/* New HRIR length */</span></div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    resample_factor = (float)hrirs_out_fs / (<span class="keywordtype">float</span>)hrirs_in_fs;</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    (*hrirs_out_len) = (int)ceilf((<span class="keywordtype">float</span>)hrirs_in_len * resample_factor);</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;    hrirs_out_ld = padToNextPow2 ? (int)pow(2.0, ceil(log((<span class="keywordtype">double</span>)(*hrirs_out_len))/log(2.0))) : (*hrirs_out_len);</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160; </div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="comment">/* Initialise IPP resampler */</span></div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    error = ippsResamplePolyphaseFixedGetSize_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), &amp;pSize, &amp;filterLength, &amp;numFilters, ippAlgHintFast);</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(!error, <span class="stringliteral">&quot;IPP error&quot;</span>);</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    IppsResamplingPolyphaseFixed_32f* spec;</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    spec = (IppsResamplingPolyphaseFixed_32f*)ippsMalloc_8u(pSize);</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    error = ippsResamplePolyphaseFixedInit_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), 0.98f, 12.0f, spec, ippAlgHintFast);</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(!error, <span class="stringliteral">&quot;IPP error&quot;</span>);</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    inBuffer = ippsMalloc_32f(hrirs_in_len + history * 2 + 2);</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    outBuffer = ippsMalloc_32f(hrirs_out_ld + 2);</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;    ippsZero_32f(inBuffer, hrirs_in_len + history * 2 + 2);</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160; </div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    <span class="comment">/* Apply IPP resampler */</span></div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    (*hrirs_out) = <a class="code" href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a>(hrirs_N_dirs*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*(hrirs_out_ld), <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;    <span class="keywordflow">for</span>(ch=0; ch&lt;hrirs_N_dirs*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>; ch++){</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;        pTime = history;</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;        outL =  0;</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160; </div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;        <span class="comment">/* Apply resampling */</span></div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;        ippsCopy_32f(hrirs_in + ch * hrirs_in_len, inBuffer + history, hrirs_in_len);</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;        <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(!ippsResamplePolyphaseFixed_32f(inBuffer, hrirs_in_len, outBuffer, 1.0f, &amp;pTime, &amp;outL, spec), <span class="stringliteral">&quot;IPP error&quot;</span>);</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;        <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(hrirs_out_ld==outL, <span class="stringliteral">&quot;Not all samples were processed!&quot;</span>);</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;        ippsCopy_32f(outBuffer, (*hrirs_out) + ch * (hrirs_out_ld), hrirs_out_ld);</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;    }</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160; </div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;    (*hrirs_out_len) = hrirs_out_ld;</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160; </div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;    <span class="comment">/* Clean-up */</span></div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;    ippsFree(spec);</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;    ippsFree(inBuffer);</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;    ippsFree(outBuffer);</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160; </div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;    <span class="comment">/* Initialise SPEEX resampler */</span></div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;    pRS = speex__resampler_init(1 <span class="comment">/*one channel at a time*/</span>, hrirs_in_fs, hrirs_out_fs, SPEEX_RESAMPLER_QUALITY_MAX, &amp;ERROR_VAL);</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;    out_latency = speex__resampler_get_output_latency(pRS);</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;    zeros = <a class="code" href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a>(out_latency, <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160; </div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;    <span class="comment">/* Apply SPEEX resampler */</span></div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;    (*hrirs_out) = <a class="code" href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a>(hrirs_N_dirs*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*(hrirs_out_ld), <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;    <span class="keywordflow">for</span>(ch=0; ch&lt;hrirs_N_dirs*<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>; ch++){</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;        speex__resampler_reset_mem(pRS);</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;        speex__resampler_skip_zeros(pRS);</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;        nsample_proc = 0;</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160; </div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;        <span class="comment">/* Pass the FIR through the resampler */</span></div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;        in_length = hrirs_in_len;</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;        out_length = hrirs_out_ld;</div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;        ERROR_VAL = speex__resampler_process_float((pRS), 0, hrirs_in + ch * hrirs_in_len, &amp;in_length,</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;                                                   (*hrirs_out) + ch * (hrirs_out_ld), &amp;out_length);</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;        nsample_proc += out_length; <span class="comment">/* Current number of output samples processed */</span></div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160; </div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;        <span class="comment">/* Pass through zeros to get the tail of the filter too */</span></div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;        <span class="keywordflow">while</span>(nsample_proc&lt;(hrirs_out_ld)){</div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;            in_length = out_latency;</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;            out_length = (hrirs_out_ld)-nsample_proc;</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;            ERROR_VAL = speex__resampler_process_float((pRS), 0, zeros, &amp;in_length,</div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;                                                       (*hrirs_out) + ch * (hrirs_out_ld) + nsample_proc, &amp;out_length);</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;            nsample_proc += out_length;</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;        }</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;        <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(nsample_proc==(hrirs_out_ld), <span class="stringliteral">&quot;Not all samples were processed!&quot;</span>);</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;    }</div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160; </div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;    (*hrirs_out_len) = hrirs_out_ld;</div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160; </div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;    <span class="comment">/* Clean-up */</span></div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;    speex__resampler_destroy(pRS);</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;    free(zeros);</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;}</div>
 <div class="ttc" id="aaf_s_t_f_tlib_8c_html_a55dc2784fe833793e8a988c72b131ba2"><div class="ttname"><a href="af_s_t_f_tlib_8c.html#a55dc2784fe833793e8a988c72b131ba2">afSTFT_FIRtoFilterbankCoeffs</a></div><div class="ttdeci">void afSTFT_FIRtoFilterbankCoeffs(float *hIR, int N_dirs, int nCH, int ir_len, int hopSize, int LDmode, int hybridmode, float_complex *hFB)</div><div class="ttdoc">Converts FIR filters into Filterbank Coefficients by passing them through the afSTFT filterbank.</div><div class="ttdef"><b>Definition:</b> <a href="af_s_t_f_tlib_8c_source.html#l00593">afSTFTlib.c:594</a></div></div>
 <div class="ttc" id="agroup___h_r_i_r_html_ga95e3ef60ada22e4bea2c40dcd38b4573"><div class="ttname"><a href="group___h_r_i_r.html#ga95e3ef60ada22e4bea2c40dcd38b4573">HRIRs2HRTFs</a></div><div class="ttdeci">void HRIRs2HRTFs(float *hrirs, int N_dirs, int hrir_len, int fftSize, float_complex *hrtfs)</div><div class="ttdoc">Converts HRIRs to HRTFs for a given FFT size.</div><div class="ttdef"><b>Definition:</b> <a href="saf__hrir_8c_source.html#l00139">saf_hrir.c:140</a></div></div>
 <div class="ttc" id="agroup___h_r_i_r_html_gaced04b646c57d04a25e26b469e18588c"><div class="ttname"><a href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c">diffuseFieldEqualiseHRTFs</a></div><div class="ttdeci">void diffuseFieldEqualiseHRTFs(int N_dirs, float *itds_s, float *centreFreq, int N_bands, float *weights, int applyEQ, int applyPhase, float_complex *hrtfs)</div><div class="ttdoc">Applies pre-processing to a set of HRTFs, which can either be diffuse-field EQ of an (optionally weig...</div><div class="ttdef"><b>Definition:</b> <a href="saf__hrir_8c_source.html#l00173">saf_hrir.c:174</a></div></div>
@@ -567,7 +570,7 @@ $(document).ready(function(){initNavTree('saf__hrir_8c_source.html',''); initRes
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_7537ddf6938b30af6f0305d5e585e1f2.html">saf_hrir</a></li><li class="navelem"><a class="el" href="saf__hrir_8c.html">saf_hrir.c</a></li>
-    <li class="footer">Generated on Wed Jul 14 2021 10:39:10 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed Jul 14 2021 13:15:34 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
     <script type="text/javascript">

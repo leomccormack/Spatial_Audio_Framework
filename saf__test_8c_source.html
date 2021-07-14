@@ -227,9 +227,9 @@ $(document).ready(function(){initNavTree('saf__test_8c_source.html',''); initRes
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="comment">/* The Speex resampler has generally quite a good compromise between quality and speed.</span></div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="comment">     * This tolerance is quite high, but ultimately, it&#39;s how it sounds that matters.</span></div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="comment">     * If SAF_USE_INTEL_IPP is defined, then the Intel IPP resampler is employed instead */</span></div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">float</span> acceptedTolerance = 0.05f;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">float</span> acceptedTolerance = 0.08f;</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="comment">/* Test 1 - passing a unit impulse through, and asserting the peak is where it should be */</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="comment">/* Test 1 - passing a unit impulse through, and :qasserting the peak is where it should be */</span></div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="keywordtype">float</span>* ir;</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    ir = <a class="code" href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a>(<a class="code" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a> * 256, <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    ir[10] = 1.0f;</div>
@@ -3765,7 +3765,7 @@ $(document).ready(function(){initNavTree('saf__test_8c_source.html',''); initRes
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_13e138d54eb8818da29c3992edef070a.html">test</a></li><li class="navelem"><a class="el" href="saf__test_8c.html">saf_test.c</a></li>
-    <li class="footer">Generated on Wed Jul 14 2021 10:39:11 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed Jul 14 2021 13:15:35 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
     <script type="text/javascript">
