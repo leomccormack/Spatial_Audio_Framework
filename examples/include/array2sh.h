@@ -23,7 +23,7 @@
  * ### Files
  * array2sh.h (include), array2sh_internal.h, array2sh.c, array2sh_internal.c
  * ### Example Usage
- * \code{.m}
+ * \code{.c}
  * int main(void) {
  *     void* hA2sh;
  *     int frameSize;

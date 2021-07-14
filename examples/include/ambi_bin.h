@@ -22,7 +22,7 @@
  * ### Files
  * ambi_bin.h (include), ambi_bin_internal.h, ambi_bin.c, ambi_bin_internal.c
  * ### Example Usage
- * \code{.m}
+ * \code{.c}
  * int main(void) {
  *     void* hAmbi;
  *     int frameSize;

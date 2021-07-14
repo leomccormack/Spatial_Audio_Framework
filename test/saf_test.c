@@ -148,9 +148,9 @@ void test__resampleHRIRs(void){
     /* The Speex resampler has generally quite a good compromise between quality and speed.
      * This tolerance is quite high, but ultimately, it's how it sounds that matters.
      * If SAF_USE_INTEL_IPP is defined, then the Intel IPP resampler is employed instead */
-    const float acceptedTolerance = 0.05f;
+    const float acceptedTolerance = 0.08f;
 
-    /* Test 1 - passing a unit impulse through, and asserting the peak is where it should be */
+    /* Test 1 - passing a unit impulse through, and :qasserting the peak is where it should be */
     float* ir;
     ir = calloc1d(NUM_EARS * 256, sizeof(float));
     ir[10] = 1.0f;

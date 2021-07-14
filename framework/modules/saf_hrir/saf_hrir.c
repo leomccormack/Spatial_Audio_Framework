@@ -381,6 +381,7 @@ void resampleHRIRs
     const int history = 128;
     float *inBuffer, *outBuffer;
     int filterLength, pSize, numFilters, outL;
+    IppStatus error;
 #else
     unsigned int in_length, out_length;
     int ERROR_VAL, out_latency, nsample_proc;
@@ -395,10 +396,12 @@ void resampleHRIRs
 
 #if defined(SAF_USE_INTEL_IPP)
     /* Initialise IPP resampler */
-    saf_assert(!ippsResamplePolyphaseFixedGetSize_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), &pSize, &filterLength, &numFilters, ippAlgHintFast), "IPP error");
+    error = ippsResamplePolyphaseFixedGetSize_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), &pSize, &filterLength, &numFilters, ippAlgHintFast);
+    saf_assert(!error, "IPP error");
     IppsResamplingPolyphaseFixed_32f* spec;
     spec = (IppsResamplingPolyphaseFixed_32f*)ippsMalloc_8u(pSize);
-    saf_assert(!ippsResamplePolyphaseFixedInit_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), 0.98f, 12.0f, spec, ippAlgHintFast), "IPP error");
+    error = ippsResamplePolyphaseFixedInit_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), 0.98f, 12.0f, spec, ippAlgHintFast);
+    saf_assert(!error, "IPP error");
     inBuffer = ippsMalloc_32f(hrirs_in_len + history * 2 + 2);
     outBuffer = ippsMalloc_32f(hrirs_out_ld + 2);
     ippsZero_32f(inBuffer, hrirs_in_len + history * 2 + 2);

@@ -64,15 +64,15 @@ parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 # copy saf_ipp_list
 #cp "${parent_path}/saf_ipp_list.txt" ${ipp_builder_dir}
 
-echo "Configuration: ${build_type}, AVX2"
+echo "Configuration: ${build_type}"
 echo "IPP list: ${parent_path}/saf_ipp_list.txt"
 #source "/opt/intel/oneapi/setvars.sh" -arch intel64 --force
 
 # Create the build script
 if [[ ${build_type} == "sequential"* ]]; then
-    (cd ${ipp_builder_dir} && python main.py -c -g -n saf_ipp_custom -p "${parent_path}" -ff "${parent_path}/saf_ipp_list.txt" -d avx2 -arch=intel64)
+    (cd ${ipp_builder_dir} && python main.py -c -g -n saf_ipp_custom -p "${parent_path}" -ff "${parent_path}/saf_ipp_list.txt" -arch=intel64)
 elif [[ ${build_type} == "threaded"* ]]; then
-    (cd ${ipp_builder_dir} && python main.py -c -g -n saf_ipp_custom -p "${parent_path}" -ff "${parent_path}/saf_ipp_list.txt" -d avx2 -arch=intel64 -mt)
+    (cd ${ipp_builder_dir} && python main.py -c -g -n saf_ipp_custom -p "${parent_path}" -ff "${parent_path}/saf_ipp_list.txt" -arch=intel64 -mt)
 fi
 
 # Run the build script
@@ -91,8 +91,6 @@ fi
 echo "Installed libsaf_ipp_custom into ${output_dir}"
 
 # clean-up
-rm custom_dispatcher.c
-rm custom_dispatcher.obj
 rm "export.lib-export"
 rm main.c
 rm main.obj

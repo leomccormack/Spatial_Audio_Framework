@@ -9,6 +9,7 @@
         ],
         "commonDefs": [
             "SAF_USE_INTEL_MKL",
+            "SAF_USE_INTEL_IPP",
             "SAF_ENABLE_SOFA_READER_MODULE",
             "SAF_ENABLE_TRACKER_MODULE"
         ]
@@ -19,7 +20,8 @@
             "includePath": [
                 "${commonIncludePaths}",
                 "${workspaceFolder}/dependencies/MacOSX/include",
-                "/opt/intel/compilers_and_libraries/mac/mkl/include"
+                "/opt/intel/oneapi/mkl/latest/include",
+                "/opt/intel/oneapi/ipp/latest/include"
             ],
             "defines": [
                 "${commonDefs}"
