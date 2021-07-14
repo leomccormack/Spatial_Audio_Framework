@@ -31,6 +31,7 @@
  *
  * @author Leo McCormack
  * @date 21.02.2019
+ * @license ISC
  */
 
 #ifndef __DIRASS_INTERNAL_H_INCLUDED__

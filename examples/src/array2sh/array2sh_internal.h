@@ -44,6 +44,7 @@
  *
  * @author Leo McCormack
  * @date 13.09.2017
+ * @license ISC
  */
 
 #ifndef __ARRAY2SH_INTERNAL_H_INCLUDED__

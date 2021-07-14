@@ -23,6 +23,7 @@
  
  * @author Leo McCormack
  * @date 11.07.2016
+ * @license ISC
  */
 
 #ifndef SAF_COMPLEX_H_INCLUDED

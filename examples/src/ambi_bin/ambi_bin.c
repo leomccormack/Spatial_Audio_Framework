@@ -42,6 +42,7 @@
  *
  * @author Leo McCormack
  * @date 14.04.2018
+ * @license ISC
  */
  
 #include "ambi_bin_internal.h"

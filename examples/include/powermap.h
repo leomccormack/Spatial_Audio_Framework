@@ -15,19 +15,19 @@
  */
 
 /**
- * @example powermap
+ * @example powermap.h
  * @brief A sound-field visualiser, which utilises spherical harmonic signals as
  *        input
- * ### Include Header
- * powermap.h
+ *
  * ### Source Files
- * powermap_internal.h, powermap.c, powermap_internal.c
+ * powermap.h (include), powermap_internal.h, powermap.c, powermap_internal.c
+ * ### Include Header
  */
 
 /**
  * @file powermap.h
  * @brief A sound-field visualiser, which utilises spherical harmonic signals as
- *        input; note this code is a remnant from the work described in [1]
+ *        input; note this code is a remnant from the work conducted in [1]
  *
  * @see [1] McCormack, L., Delikaris-Manias, S. and Pulkki, V., 2017. Parametric
  *          acoustic camera for real-time sound capture, analysis and tracking.
@@ -36,6 +36,7 @@
  *
  * @author Leo McCormack
  * @date 26.04.2016
+ * @license ISC
  */
 
 #ifndef __POWERMAP_H_INCLUDED__
@@ -54,7 +55,7 @@ extern "C" {
 /**
  * Available power-map/activity-map options
  */
-typedef enum _POWERMAP_MODES {
+typedef enum {
     PM_MODE_PWD = 1,     /**< Activity-map based on the energy of hyper-cardioid
                           *   [plane-wave decomposition (PWD)] beamformers*/
     PM_MODE_MVDR,        /**< Activity-map based on the energy of minimum-

@@ -15,14 +15,13 @@
  */
 
 /**
- * @example ambi_bin
+ * @example ambi_bin.h
  * @brief A binaural Ambisonic decoder for reproducing Ambisonic sound scenes
  *        over headphones
- * ### Include Header
- * ambi_bin.h
- * ### Source Files
- * ambi_bin_internal.h, ambi_bin.c, ambi_bin_internal.c
- * ### Usage
+ *
+ * ### Files
+ * ambi_bin.h (include), ambi_bin_internal.h, ambi_bin.c, ambi_bin_internal.c
+ * ### Example Usage
  * \code{.m}
  * int main(void) {
  *     void* hAmbi;
@@ -54,6 +53,7 @@
  *     ambi_bin_destroy(&hAmbi);
  * }
  *\endcode
+ * ### Include Header
  */
 
 /**
@@ -84,6 +84,7 @@
  *
  * @author Leo McCormack
  * @date 14.04.2018
+ * @license ISC
  */
 
 #ifndef __AMBI_BIN_H_INCLUDED__

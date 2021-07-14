@@ -21,6 +21,7 @@
  *
  * @author Leo McCormack
  * @date 29.01.2020
+ * @license ISC
  */
 
 #include "saf_utilities.h"
@@ -371,12 +372,15 @@ float sumf
     int nValues
 )
 {
-    int i;
     float sum;
+#if defined(SAF_USE_INTEL_IPP)
+    ippsSum_32f((Ipp32f*)values, nValues, &sum, ippAlgHintNone);
+#else
+    int i;
     sum = 0.0f;
     for(i=0; i<nValues; i++)
         sum += values[i];
-
+#endif
     return sum;
 }
 

@@ -29,6 +29,7 @@
  *
  * @author Leo McCormack
  * @date 11.07.2016
+ * @license ISC
  */
 
 #ifndef __SAF_UTILITIES_H_INCLUDED__

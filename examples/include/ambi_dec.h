@@ -15,13 +15,13 @@
  */
 
 /**
- * @example ambi_dec
+ * @example ambi_dec.h
  * @brief A frequency-dependent Ambisonic decoder for reproducing Ambisonic
  *        sound scenes over loudspeakers
+ *
+ * ### Files
+ * ambi_dec.h (include), ambi_dec_internal.h, ambi_dec.c, ambi_dec_internal.c
  * ### Include Header
- * ambi_dec.h
- * ### Source Files
- * ambi_dec_internal.h, ambi_dec.c, ambi_dec_internal.c
  */
 
 /**
@@ -50,6 +50,7 @@
  *
  * @author Leo McCormack
  * @date 07.12.2017
+ * @license ISC
  */
 
 #ifndef __AMBI_DEC_H_INCLUDED__

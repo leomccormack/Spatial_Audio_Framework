@@ -19,6 +19,7 @@
  * @brief A standard matrix convolver
  * @author Leo McCormack
  * @date 30.09.2019
+ * @license ISC
  */
 
 #ifndef __MATRIXCONV_INTERNAL_H_INCLUDED__

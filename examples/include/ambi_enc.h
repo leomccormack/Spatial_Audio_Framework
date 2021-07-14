@@ -15,12 +15,12 @@
  */
 
 /**
- * @example ambi_enc
+ * @example ambi_enc.h
  * @brief A basic Ambisonic encoder
+ *
+ * ### Files
+ * ambi_enc.h (include), ambi_enc_internal.h, ambi_enc.c, ambi_enc_internal.c
  * ### Include Header
- * ambi_enc.h
- * ### Source Files
- * ambi_enc_internal.h, ambi_enc.c, ambi_enc_internal.c
  */
 
 /**
@@ -31,6 +31,7 @@
  * 
  * @author Leo McCormack
  * @date 07.10.2016
+ * @license ISC
  */
 
 #ifndef __AMBI_ENC_H_INCLUDED__

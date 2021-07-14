@@ -17,7 +17,7 @@
 /**
  * @file powermap_internal.h
  * @brief A sound-field visualiser, which utilises spherical harmonic signals as
- *        input; note this code is a remnant from the work described in [1]
+ *        input; note this code is a remnant from the work conducted in [1]
  *
  * @see [1] McCormack, L., Delikaris-Manias, S. and Pulkki, V., 2017. Parametric
  *          acoustic camera for real-time sound capture, analysis and tracking.
@@ -26,6 +26,7 @@
  *
  * @author Leo McCormack
  * @date 26.04.2016
+ * @license ISC
  */
 
 #ifndef __POWERMAP_INTERNAL_H_INCLUDED__

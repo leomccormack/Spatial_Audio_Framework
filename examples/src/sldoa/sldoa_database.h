@@ -4,6 +4,7 @@
  *        arrival estimator (SLDoA)
  * @author Leo McCormack
  * @date 12.02.2018
+ * @license ISC
  */
 
 #ifndef __SLDOA_DATABASE_INCLUDED__

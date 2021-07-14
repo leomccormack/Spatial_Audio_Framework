@@ -10,6 +10,7 @@
  * @file kiss_fftr.c
  * @brief KISS real FFT, taken from: https://github.com/mborgerding/kissfft
  * @author Mark Borgerding
+ * @license BSD 3-Clause
  */
 
 #include "kiss_fftr.h"

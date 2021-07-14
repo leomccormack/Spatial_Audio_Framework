@@ -20,6 +20,7 @@
  *
  * @author Leo McCormack
  * @date 07.10.2016
+ * @license ISC
  */
 
 #ifndef __AMBI_ENC_INTERNAL_H_INCLUDED__

@@ -15,14 +15,14 @@
  */
 
 /**
- * @example sldoa
+ * @example sldoa.h
  * @brief A spatially-localised active-intensity (SLAI) based direction-of-
  *        arrival estimator (SLDoA)
+ * 
+ * ### Files
+ * sldoa.h (include), sldoa_internal.h, sldoa_database.h, sldoa.c,
+ * sldoa_internal.c, sldoa_database.c
  * ### Include Header
- * sldoa.h
- * ### Source Files
- * sldoa_internal.h, sldoa_database.h, sldoa.c, sldoa_internal.c, 
- * sldoa_database.c
  */
 
 /**
@@ -51,6 +51,7 @@
  *
  * @author Leo McCormack
  * @date 18.10.2017
+ * @license ISC
  */
 
 #ifndef __SLDOA_H_INCLUDED__

@@ -21,7 +21,8 @@
  * @brief Matrix and multi-channel convolvers
  * 
  * @author Leo McCormack
- * @date 06.04.2019 
+ * @date 06.04.2019
+ * @license ISC
  */
 
 #ifndef SAF_MATRIXCOLV_H_INCLUDED

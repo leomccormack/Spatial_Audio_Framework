@@ -20,6 +20,7 @@
  *
  * @author Leo McCormack
  * @date 05.05.2020
+ * @license ISC
  */
 
 #include "pitch_shifter.h"

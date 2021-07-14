@@ -19,6 +19,7 @@
  * @brief A multi-channel convolver
  * @author Leo McCormack
  * @date 23.09.2019
+ * @license ISC
  */
 
 #include "multiconv.h"

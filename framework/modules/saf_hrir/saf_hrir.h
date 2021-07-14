@@ -27,6 +27,7 @@
  *
  * @author Leo McCormack
  * @date 12.12.2016
+ * @license ISC
  */
 
 #ifndef __SAF_HRIR_H_INCLUDED__

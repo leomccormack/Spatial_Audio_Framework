@@ -40,6 +40,7 @@
  *
  * @author Leo McCormack
  * @date 18.10.2017
+ * @license ISC
  */
 
 #include "sldoa.h"

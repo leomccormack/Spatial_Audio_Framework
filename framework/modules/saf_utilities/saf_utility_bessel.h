@@ -23,6 +23,7 @@
  
  * @author Leo McCormack
  * @date 26.05.2020
+ * @license ISC
  */
 
 #ifndef SAF_BESSEL_H_INCLUDED

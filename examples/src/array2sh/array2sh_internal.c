@@ -44,10 +44,15 @@
  *
  * @author Leo McCormack
  * @date 13.09.2017
+ * @license ISC
  */
 
 #include "array2sh_internal.h"
 
+/**
+ * Takes the bNs computed up to N+1, and replicates them to be of length
+ * (N+1)^2 (replicating the 1st order bNs 3 times, 2nd -> 5 times etc.)
+ */
 static void array2sh_replicate_order
 (
     void* const hA2sh,

@@ -39,6 +39,7 @@
  *
  * @author Leo McCormack
  * @date 11.06.2019
+ * @license MIT
  */
 
 #ifndef MD_MALLOC_INCLUDED

@@ -44,6 +44,7 @@
  *
  * @author Juha Vilkamo
  * @date 08.04.2015
+ * @license MIT
  */
 
 #include "afSTFTlib.h"

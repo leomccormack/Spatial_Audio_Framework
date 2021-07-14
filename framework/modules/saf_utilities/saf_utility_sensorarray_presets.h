@@ -21,7 +21,8 @@
  * @brief A collection of microphone array sensor directions
  * 
  * @author Leo McCormack
- * @date 11.07.2016 
+ * @date 11.07.2016
+ * @license ISC
  */
 
 #ifndef __SAF_SENSORARRAY_PRESETS_INCLUDED__

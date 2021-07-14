@@ -22,6 +22,7 @@
  *
  * @author Leo McCormack
  * @date 04.05.2020
+ * @license ISC
  */
 
 #ifndef SAF_PITCH_H_INCLUDED

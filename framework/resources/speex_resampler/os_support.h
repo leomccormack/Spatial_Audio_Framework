@@ -2,6 +2,7 @@
 /**
    @file os_support.h
    @brief Supported OSs for Speex resampler
+   @license BSD 3-Clause
 */
 /*
    File: os_support.h

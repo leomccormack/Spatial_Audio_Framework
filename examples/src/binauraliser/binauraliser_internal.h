@@ -27,6 +27,7 @@
  *
  * @author Leo McCormack
  * @date 25.09.2017
+ * @license ISC
  */
 
 #ifndef __BINAURALISER_INTERNAL_H_INCLUDED__

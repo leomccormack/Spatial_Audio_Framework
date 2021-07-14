@@ -36,6 +36,7 @@
  *
  * @author Leo McCormack
  * @date 12.08.2020
+ * @license GNU GPLv2
  */
 
 #include "saf_tracker_internal.h"

@@ -13,6 +13,7 @@
  * Taken from: https://github.com/mborgerding/kissfft
  *
  * @author Mark Borgerding
+ * @license BSD 3-Clause
  */
 
 #ifndef KISS_FTR_H

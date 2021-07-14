@@ -4,6 +4,7 @@
 /**
    @file resample.c
    @brief Main source file for the Speex resampler
+   @license BSD 3-Clause
 */
 /*
    Redistribution and use in source and binary forms, with or without

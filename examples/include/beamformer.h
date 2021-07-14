@@ -15,13 +15,14 @@
  */
 
 /**
- * @example beamformer
+ * @example beamformer.h
  * @brief Generates beamformers/virtual microphones in arbitrary directions
  *        with several different beam patterns to choose from
+ *
+ * ### Files
+ * beamformer.h (include), beamformer_internal.h, beamformer.c,
+ * beamformer_internal.c
  * ### Include Header
- * beamformer.h
- * ### Source Files
- * beamformer_internal.h, beamformer.c, beamformer_internal.c
  */
 
 /**
@@ -31,6 +32,7 @@
  * 
  * @author Leo McCormack
  * @date 17.05.2019
+ * @license ISC
  */
 
 #ifndef __BEAMFORMER_H_INCLUDED__

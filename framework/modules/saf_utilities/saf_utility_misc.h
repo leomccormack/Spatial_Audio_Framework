@@ -21,7 +21,8 @@
  * @brief A collection of miscellaneous functions
  *
  * @author Leo McCormack
- * @date 29.01.2020 
+ * @date 29.01.2020
+ * @license ISC
  */
 
 #ifndef SAF_MISC_H_INCLUDED

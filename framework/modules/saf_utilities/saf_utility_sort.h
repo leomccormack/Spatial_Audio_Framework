@@ -21,7 +21,8 @@
  * @brief A collection of useful sorting functions
  *
  * @author Leo McCormack
- * @date 30.07.2018  
+ * @date 30.07.2018
+ * @license ISC
  */
 
 #ifndef SAF_SORT_H_INCLUDED

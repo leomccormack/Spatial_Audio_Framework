@@ -4,6 +4,7 @@
  *        arrival estimator (SLDoA)
  * @author Leo McCormack
  * @date 12.02.2018
+ * @license ISC
  */
 
 const double __grid_Y[64][2562] = 

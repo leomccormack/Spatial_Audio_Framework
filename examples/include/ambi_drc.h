@@ -15,13 +15,13 @@
  */
 
 /**
- * @example ambi_drc
+ * @example ambi_drc.h
  * @brief A frequency-dependent Ambisonic sound scene dynamic range compressor
  *        (DRC)
+ *
+ * ### Files
+ * ambi_drc.h (include), ambi_drc_internal.h, ambi_drc.c, ambi_drc_internal.c
  * ### Include Header
- * ambi_drc.h
- * ### Source Files
- * ambi_drc_internal.h, ambi_drc.c, ambi_drc_internal.c
  */
 
 /**
@@ -44,6 +44,7 @@
  *
  * @author Leo McCormack
  * @date 07.01.2017
+ * @license ISC
  */
 
 #ifndef __AMBI_DRC_H_INCLUDED__

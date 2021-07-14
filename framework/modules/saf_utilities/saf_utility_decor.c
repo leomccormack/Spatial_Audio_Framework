@@ -18,8 +18,10 @@
  * @file saf_utility_decor.c
  * @ingroup Utilities
  * @brief A collection of signal decorrelators
+ *
  * @author Leo McCormack
  * @date 30.07.2018
+ * @license ISC
  */
  
 #include "saf_utilities.h"

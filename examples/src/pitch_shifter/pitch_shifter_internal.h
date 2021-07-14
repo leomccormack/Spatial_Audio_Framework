@@ -20,6 +20,7 @@
  *
  * @author Leo McCormack
  * @date 05.05.2020
+ * @license ISC
  */
 
 #ifndef __PITCH_SHIFTER_INTERNAL_H_INCLUDED__

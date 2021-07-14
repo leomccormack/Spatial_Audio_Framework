@@ -15,13 +15,13 @@
  */
 
 /**
- * @example dirass
+ * @example dirass.h
  * @brief A sound-field visualiser based on the directional re-assignment of
  *        beamformer energy based on local DoA estimates
+ *
+ * ### Files
+ * dirass.h (include), dirass_internal.h, dirass.c, dirass_internal.c
  * ### Include Header
- * dirass.h
- * ### Source Files
- * dirass_internal.h, dirass.c, dirass_internal.c
  */
 
 /**
@@ -41,6 +41,7 @@
  *
  * @author Leo McCormack
  * @date 21.02.2019
+ * @license ISC
  */
 
 #ifndef __DIRASS_H_INCLUDED__
@@ -329,7 +330,7 @@ int dirass_getUpscaleOrder(void* const hDir);
 
 /**
  * Returns the current analysis directional re-assignment mode (see
- * #DIRASS_REASS_MODE enum)
+ * #DIRASS_REASS_MODES enum)
  */
 int dirass_getDiRAssMode(void* const hDir); 
 

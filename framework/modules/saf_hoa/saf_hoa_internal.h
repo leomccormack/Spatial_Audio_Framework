@@ -27,6 +27,7 @@
  *
  * @author Leo McCormack
  * @date 19.03.2018
+ * @license ISC
  */
 
 #ifndef __SAF_HOA_INTERNAL_H_INCLUDED__

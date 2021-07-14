@@ -15,12 +15,12 @@
  */
 
 /**
- * @example rotator
+ * @example rotator.h
  * @brief A basic spherical harmonic signals rotator
+ * 
+ * ### Files
+ * rotator.h (include), rotator_internal.h, rotator.c, rotator_internal.c
  * ### Include Header
- * rotator.h
- * ### Source Files
- * rotator_internal.h, rotator.c, rotator_internal.c
  */
 
 /**
@@ -37,6 +37,7 @@
  *
  * @author Leo McCormack
  * @date 02.11.2017
+ * @license ISC
  */
 
 #ifndef __ROTATOR_H_INCLUDED__

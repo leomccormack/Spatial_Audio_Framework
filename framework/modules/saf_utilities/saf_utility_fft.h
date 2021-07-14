@@ -33,6 +33,7 @@
  *
  * @author Leo McCormack
  * @date 06.04.2019
+ * @license ISC
  */
 
 #ifndef SAF_FFT_H_INCLUDED

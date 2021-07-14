@@ -38,6 +38,7 @@
  *
  * @author Leo McCormack
  * @date 25.09.2017
+ * @license ISC
  */
 
 #include "panner.h"

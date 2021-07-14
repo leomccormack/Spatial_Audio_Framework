@@ -60,6 +60,7 @@
  *
  * @author Leo McCormack
  * @date 06.08.2020
+ * @license ISC
  */
 
 #ifndef __SAF_EXTERNALS_H_INCLUDED__
@@ -95,7 +96,7 @@
  *    used by the saf_utility_fft wrapper.
  *  - a number of additional vector, vector-vector, vector-scalar operations
  *    that are not covered by the CBLAS standard; such as: hadamard products,
- *    element-wise additions/substractions, and the modulus or reciprical of
+ *    element-wise additions/subtractions, and the modulus or reciprical of
  *    all vector elements, etc.
  */
 # include "mkl.h"
@@ -123,10 +124,16 @@
  * This option provides implementations of the CBLAS/LAPACK functions which have
  * decent performance. However, unlike Intel MKL or Apple Accelerate, it does
  * not offer an optimised DFT/FFT or any other linear algebra functions outside
- * of these standards. Therefore, if you are using this option, consider also
- * using Intel's IPP library for the FFT, along with the SSE/AVX/AVX-512
- * fallback implementations for the other linear algebra options, by also
- * defining: "SAF_USE_INTEL_IPP" and "SAF_ENABLE_SIMD" (see instructions below).
+ * of these standards. Therefore, consider also using Intel's IPP library or
+ * FFTW for the DFT/FFT with: "SAF_USE_INTEL_IPP" or "SAF_USE_FFTW"
+ *
+ * Note that "SAF_USE_INTEL_IPP" also offers support for certain linear algebra
+ * operations not covered by the CBLAS/LAPACK standards, which SAF can leverage.
+ *
+ * Alternatively, SSE/AVX/AVX-512 fallback implementations for certain linear
+ * algebra operations may be enabled with: "SAF_ENABLE_SIMD"
+ *
+ * More information regarding these additional options can be found below.
  */
 # include "cblas.h"
 # include "lapacke.h"
@@ -157,10 +164,10 @@
  *    the saf_utility_fft wrapper.
  *  - a number of additional vector, vector-vector, vector-scalar operations
  *    that are not covered by the CBLAS standard; such as hadamard products,
- *    element-wise additions/substractions, etc.
+ *    element-wise additions/subtractions, etc.
  *
- * Unlike Intel MKL, not all even number DFT lengths are supported by vDSP.
- * Therefore, be aware that the default kissFFT library (included in
+ * Unlike e.g. Intel MKL's DFT, not all even number DFT lengths are supported by
+ * vDSP. Therefore, be aware that the default kissFFT library (included in
  * framework/resources) is still used as a fall-back option in such cases.
  */
 # include "Accelerate/Accelerate.h"
@@ -184,9 +191,11 @@
  * does lead to improvements in the following:
  *   - slightly faster DFT/FFT (for saf_utility_fft) compared with the
  *     implementation found in Intel MKL, which are both faster than the DFT/FFT
- *     implementation found in Apple Accelerate vDSP.
+ *     implementations found in Apple Accelerate vDSP and FFTW.
  *   - this overrides the included resources/speex_resampler with the IPP
  *     resampler, which is marginally faster and more accurate.
+ *   - this also overrides certain vector-vector, and vector-scalar operations,
+ *     such as element-wise multiplication, addition, scaling etc.
  *
  * Note that the IPP DFT/FFT is overriden by FFTW if SAF_USE_FFTW is defined.
  */
@@ -197,8 +206,8 @@
 /*
  * The use of FFTW is optional, but it is faster than the default kissFFT
  * DFT/FFT implementation. However, if you are on an x86 CPU then the DFT/FFT
- * implementations found in Intel IPP, Intel MKL and Apple Accelerate are all
- * faster options.
+ * implementations found in Intel IPP, Intel MKL and Apple Accelerate are
+ * usually faster options.
  *
  * Note, SAF uses the single-precision version (fftw3f.a), which is built with:
  *   $ ./configure --enable-float
@@ -220,7 +229,7 @@
  * SIMD accelerated fall-back options may be enabled with: SAF_ENABLE_SIMD
  *
  * By default SSE, SSE2, and SSE3 intrinsics are employed, unless one of the
- * following compiler flags are defined:
+ * following compiler flags are given:
  *    - AVX/AVX2 intrinsics are enabled with: -mavx2
  *    - AVX-512  intrinsics are enabled with: -mavx512f
  *

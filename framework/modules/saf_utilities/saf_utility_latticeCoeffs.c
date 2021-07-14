@@ -45,6 +45,7 @@
  *
  * @author Leo McCormack
  * @date 07.07.2020
+ * @license ISC
  */
 
 #include "saf_utility_decor.h"

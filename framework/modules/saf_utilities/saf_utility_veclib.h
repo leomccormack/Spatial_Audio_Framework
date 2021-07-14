@@ -23,6 +23,7 @@
  *
  * @author Leo McCormack
  * @date 11.07.2016
+ * @license ISC
  */
 
 #ifndef SAF_VECLIB_H_INCLUDED

@@ -15,13 +15,13 @@
  */
 
 /**
- * @example spreader
+ * @example spreader.h
  * @brief An arbitrary array panner (HRIRs, microphone array IRs, etc.) with
  *        coherent and incoherent spreading modes.
+ *
+ * ### Files
+ * spreader.h (include), spreader_internal.h, spreader.c, spreader_internal.c
  * ### Include Header
- * spreader.h
- * ### Source Files
- * spreader_internal.h, spreader.c, spreader_internal.c
  */
 
 /**
@@ -30,6 +30,7 @@
  *        coherent and incoherent spreading modes.
  * @author Leo McCormack
  * @date 07.04.2021
+ * @license ISC
  */
 
 #ifndef __SPREADER_H_INCLUDED__
