@@ -32,8 +32,6 @@ void tvconv_create
     tvconv_data* pData = (tvconv_data*)malloc1d(sizeof(tvconv_data));
     *phTVCnv = (void*)pData;
 
-    printf(SAF_VERSION_LICENSE_STRING);
-
     /* Default user parameters */
     pData->nInputChannels = 1;
 
