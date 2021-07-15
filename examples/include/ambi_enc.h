@@ -146,6 +146,22 @@ void ambi_enc_setNormType(void* const hAmbi, int newType);
  */
 void ambi_enc_setEnablePostScaling(void* const hAmbi, int newStatus);
 
+
+/**
+ * Sets gain factor for an input source.
+ */
+void ambi_enc_setSourceGain(void* const hAmbi, int srcIdx, float newGain);
+
+/**
+ * Set a source to solo.
+ */
+void ambi_enc_setSourceSolo(void* const hAmbi, int srcIdx);
+
+/**
+ * Unsolo / unmute all sources.
+ */
+void ambi_enc_setUnSolo(void* const hAmbi);
+
     
 /* ========================================================================== */
 /*                                Get Functions                               */
