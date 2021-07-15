@@ -79,7 +79,7 @@ typedef struct _ambi_enc
     NORM_TYPES norm;                                             /**< Ambisonic normalisation convention (see #NORM_TYPES) */
     SH_ORDERS order;                                             /**< Current SH encoding order */
     int enablePostScaling;                                       /**< Flag 1: output signals scaled by 1/sqrt(nSources), 0: disabled */
-    float src_gains[MAX_NUM_INPUTS];
+    float src_gains[MAX_NUM_INPUTS];                             /**< Gains applied per source */
 
 } ambi_enc_data;
     

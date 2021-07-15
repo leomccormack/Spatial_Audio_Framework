@@ -41,7 +41,7 @@ void ambi_enc_create
     pData->nSources = pData->new_nSources;
     for(i=0; i<MAX_NUM_INPUTS; i++){
         pData->recalc_SH_FLAG[i] = 1;
-        pData->src_gains[i] = 1;
+        pData->src_gains[i] = 1.f;
     }
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
@@ -118,20 +118,21 @@ void ambi_enc_process
 
         /* recalulate SHs (only if encoding direction has changed) */
         mixWithPreviousFLAG = 0;
-        for(i=0; i<nSources; i++){
-            if(pData->recalc_SH_FLAG[i]){
-                getRSH_recur(order, pData->src_dirs_deg[i], 1, (float*)Y_src);
+        for(ch=0; ch<nSources; ch++){
+            if(pData->recalc_SH_FLAG[ch]){
+                getRSH_recur(order, pData->src_dirs_deg[ch], 1, (float*)Y_src);
                 for(j=0; j<nSH; j++)
-                    pData->Y[j][i] = Y_src[j];
+                    pData->Y[j][ch] = Y_src[j];
                 for(; j<MAX_NUM_SH_SIGNALS; j++)
-                    pData->Y[j][i] = 0.0f;
-                pData->recalc_SH_FLAG[i] = 0;
+                    pData->Y[j][ch] = 0.0f;
+                pData->recalc_SH_FLAG[ch] = 0;
 
                 /* If encoding gains have changed, then we should also mix with and interpolate the previous gains */
                 mixWithPreviousFLAG = 1;
             }
             /* Apply source gains */
-            utility_svsmul(pData->inputFrameTD[i], &(pData->src_gains[i]), AMBI_ENC_FRAME_SIZE, NULL);
+            if(fabsf(pData->src_gains[ch] - 1.f) > 1e-6f)
+                utility_svsmul(pData->inputFrameTD[ch], &(pData->src_gains[ch]), AMBI_ENC_FRAME_SIZE, NULL);
         }
 
         /* spatially encode the input signals into spherical harmonic signals */
@@ -306,7 +307,7 @@ void ambi_enc_setUnSolo(void* const hAmbi)
 {
     ambi_enc_data *pData = (ambi_enc_data*)(hAmbi);
     for(int i=0; i<pData->nSources; i++)
-            pData->src_gains[i] = 1.f;
+        pData->src_gains[i] = 1.f;
 }
 
 /* Get Functions */
