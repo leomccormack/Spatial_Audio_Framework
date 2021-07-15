@@ -85,6 +85,8 @@ $(document).ready(function(){initNavTree('saf__externals_8h.html',''); initResiz
 </div>
 
 <div class="header">
+  <div class="summary">
+<a href="#define-members">Macros</a>  </div>
   <div class="headertitle">
 <div class="title">saf_externals.h File Reference</div>  </div>
 </div><!--header-->
@@ -96,6 +98,31 @@ $(document).ready(function(){initNavTree('saf__externals_8h.html',''); initResiz
 <code>#include &lt;netcdf.h&gt;</code><br />
 </div>
 <p><a href="saf__externals_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ad06dcc7a228dbbfcbed609fbfd40ac84"><td class="memItemLeft" align="right" valign="top"><a id="ad06dcc7a228dbbfcbed609fbfd40ac84"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>SAF_CURRENT_PERFORMANCE_LIBRARY_STRING</b>&#160;&#160;&#160;&quot;Intel MKL (LP64)&quot;</td></tr>
+<tr class="separator:ad06dcc7a228dbbfcbed609fbfd40ac84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a237468b0aa8422e1ed8d5c6050664348"><td class="memItemLeft" align="right" valign="top"><a id="a237468b0aa8422e1ed8d5c6050664348"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>SAF_INTEL_IPP_STATUS_STRING</b>&#160;&#160;&#160;&quot;Disabled&quot;</td></tr>
+<tr class="separator:a237468b0aa8422e1ed8d5c6050664348"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e053cb1bcfe023acde67b918343dc56"><td class="memItemLeft" align="right" valign="top"><a id="a5e053cb1bcfe023acde67b918343dc56"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>SAF_FFTW_STATUS_STRING</b>&#160;&#160;&#160;&quot;Disabled&quot;</td></tr>
+<tr class="separator:a5e053cb1bcfe023acde67b918343dc56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a281dfef1ab39e8cd727ced77d7c617c7"><td class="memItemLeft" align="right" valign="top"><a id="a281dfef1ab39e8cd727ced77d7c617c7"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>SAF_SIMD_STATUS_STRING</b>&#160;&#160;&#160;&quot;Disabled&quot;</td></tr>
+<tr class="separator:a281dfef1ab39e8cd727ced77d7c617c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9a3283cb8abaa37798cb817146f3433"><td class="memItemLeft" align="right" valign="top"><a id="ac9a3283cb8abaa37798cb817146f3433"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>SAF_ENABLED_SIMD_INTRINSICS_STRING</b>&#160;&#160;&#160;&quot;None&quot;</td></tr>
+<tr class="separator:ac9a3283cb8abaa37798cb817146f3433"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5607baa106d4c2bfac17bb7d0efa116b"><td class="memItemLeft" align="right" valign="top"><a id="a5607baa106d4c2bfac17bb7d0efa116b"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>SAF_NETCDF_STATUS_STRING</b>&#160;&#160;&#160;&quot;Enabled&quot;</td></tr>
+<tr class="separator:a5607baa106d4c2bfac17bb7d0efa116b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac41fd0a2edfe7e09400fcd75b6c42fbe"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__externals_8h.html#ac41fd0a2edfe7e09400fcd75b6c42fbe">SAF_EXTERNALS_CONFIGURATION_STRING</a></td></tr>
+<tr class="memdesc:ac41fd0a2edfe7e09400fcd75b6c42fbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current configuration information.  <a href="saf__externals_8h.html#ac41fd0a2edfe7e09400fcd75b6c42fbe">More...</a><br /></td></tr>
+<tr class="separator:ac41fd0a2edfe7e09400fcd75b6c42fbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Include header for SAF externals. </p>
 <dl class="section note"><dt>Note</dt><dd>Including this header is optional and only needed if you wish to have access to these external libraries in your own project. </dd></dl>
@@ -125,14 +152,40 @@ Optional dependencies</h2>
 <dl class="section user"><dt>License</dt><dd>ISC </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="saf__externals_8h_source.html">saf_externals.h</a>.</p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ac41fd0a2edfe7e09400fcd75b6c42fbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac41fd0a2edfe7e09400fcd75b6c42fbe">&#9670;&nbsp;</a></span>SAF_EXTERNALS_CONFIGURATION_STRING</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SAF_EXTERNALS_CONFIGURATION_STRING</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">    <span class="stringliteral">&quot;Current SAF externals configuration: &quot;</span>                               <span class="stringliteral">&quot;\n&quot;</span> \</div>
+<div class="line">    <span class="stringliteral">&quot; - Performance library: &quot;</span> SAF_CURRENT_PERFORMANCE_LIBRARY_STRING     <span class="stringliteral">&quot;\n&quot;</span> \</div>
+<div class="line">    <span class="stringliteral">&quot; - Intel IPP status:    &quot;</span> SAF_INTEL_IPP_STATUS_STRING                <span class="stringliteral">&quot;\n&quot;</span> \</div>
+<div class="line">    <span class="stringliteral">&quot; - FFTW status:         &quot;</span> SAF_FFTW_STATUS_STRING                     <span class="stringliteral">&quot;\n&quot;</span> \</div>
+<div class="line">    <span class="stringliteral">&quot; - SIMD status:         &quot;</span> SAF_SIMD_STATUS_STRING                     <span class="stringliteral">&quot;\n&quot;</span> \</div>
+<div class="line">    <span class="stringliteral">&quot; - Enabled intrinsics:  &quot;</span> SAF_ENABLED_SIMD_INTRINSICS_STRING         <span class="stringliteral">&quot;\n&quot;</span> \</div>
+<div class="line">    <span class="stringliteral">&quot; - netCDF status:       &quot;</span> SAF_NETCDF_STATUS_STRING                   <span class="stringliteral">&quot;\n&quot;</span></div>
+</div><!-- fragment -->
+<p>Current configuration information. </p>
+
+<p class="definition">Definition at line <a class="el" href="saf__externals_8h_source.html#l00332">332</a> of file <a class="el" href="saf__externals_8h_source.html">saf_externals.h</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.1-->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_dd40116cd1cfebdc77a7c7114b29912e.html">include</a></li><li class="navelem"><a class="el" href="saf__externals_8h.html">saf_externals.h</a></li>
-    <li class="footer">Generated on Thu Jul 15 2021 09:03:08 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Thu Jul 15 2021 13:36:23 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
     <script type="text/javascript">

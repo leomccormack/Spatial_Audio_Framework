@@ -158,7 +158,8 @@ Building with CMake</h2>
 <div class="line">-DSAF_BUILD_EXAMPLES=1                       # build saf examples</div>
 <div class="line">-DSAF_BUILD_EXTRAS=0                         # build safmex etc.</div>
 <div class="line">-DSAF_BUILD_TESTS=1                          # build unit testing program</div>
-<div class="line">-DSAF_USE_INTEL_IPP=0                        # To link and use Intel IPP for the FFT, resampler, etc.</div>
+<div class="line">-DSAF_USE_INTEL_IPP=0                        # link and use Intel IPP for the FFT, resampler, etc.</div>
+<div class="line">-DSAF_ENABLE_SIMD=0                          # enable/disable SSE, AVX, and/or AVX-512 support</div>
 </div><!-- fragment --><p>If using e.g. <b>SAF_USE_INTEL_MKL_LP64</b> as the performance library, note that the default header and library search paths may be overridden <a class="el" href="md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html">according to your setup</a> with: </p><div class="fragment"><div class="line">-DINTEL_MKL_HEADER_PATH=&quot;path/to/mkl/headers&quot;</div>
 <div class="line">-DINTEL_MKL_LIB=&quot;path/to/mkl/libs/mkl_rt(.so/.dylib/.lib)&quot;   # OR:</div>
 <div class="line">-DINTEL_MKL_LIB=&quot;path/to/custom/mkl/lib/saf_mkl_custom_lp64(.so/.dylib/.lib)&quot;</div>
@@ -167,6 +168,8 @@ Building with CMake</h2>
 <div class="line"># e.g. MSYS2 users</div>
 <div class="line">-DNETCDF_LIBRARY=&quot;/c/msys64/mingw64/lib/libnetcdf.dll.a&quot;</div>
 </div><!-- fragment --><p>For Linux/MacOS users: the framework, examples, and unit testing program may be built as follows: </p><div class="fragment"><div class="line">cmake -S . -B build </div>
+<div class="line"># Or to also enable e.g. SSE3 and AVX2 intrinsics (for both C and C++ code)</div>
+<div class="line">cmake -S . -B build -DSAF_ENABLE_SIMD=1 -DCMAKE_CXX_FLAGS=&quot;-msse3 -mavx2&quot; -DCMAKE_C_FLAGS=&quot;-msse3 -mavx2&quot;</div>
 <div class="line">cd build</div>
 <div class="line">make</div>
 <div class="line">test/saf_test # To run the unit testing program</div>
@@ -249,7 +252,7 @@ License</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 15 2021 09:03:09 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Thu Jul 15 2021 13:36:24 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
     <script type="text/javascript">

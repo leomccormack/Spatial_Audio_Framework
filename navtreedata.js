@@ -69,15 +69,15 @@ var NAVTREEINDEX =
 "md__malloc_8h.html#ae441f3802ba2433d441b5e1db5fef808",
 "pitch_shifter_8h-example.html",
 "rotator_8h.html#a7b64afed6de180b3fbc820707d980029",
-"saf__test_8h.html#acfeb9407e10c9d0488784cf02748be16",
-"safmex__faf___i_i_r_filterbank_8c_source.html",
-"spreader_8c.html#a230c6f49f5d8f82c71d394b1c935cbfa",
-"structambi__bin__data.html#a905979baae3ed572ce09d9e615c2dbe3",
-"structbinauraliser__data.html#af51c656ba6df7215a920efa1828ca7a1",
-"structims__scene__data.html#af0a8f5d20359aaf55adaa0fc303ba317",
-"structsaf__rfft__data.html#a45708ab4697133dc3638fced1443af18",
-"structspreader__data.html#a55f2df69f559f771632c5718b1f15a4a",
-"structutility__zglslv__data.html#a1fb00b9715b1423f1c3544a5ad282f47"
+"saf__test_8h.html#aa313ae6eb64e8ab4db6b5482882ac348",
+"safmex__faf___i_i_r_filterbank_8c.html#ab15c3c966913d7e736acff47c03445f6",
+"speex__resampler_8h_source.html",
+"structambi__bin__data.html#a59c6558aa8b755695961d53cba006a35",
+"structbinauraliser__data.html#ae00dde27d04f7e101f729a93a6bb5442",
+"structims__scene__data.html#a9fb5cdf534279ebf0c70f1987feec8eb",
+"structsaf__fft__data.html#aaf1cb09e728a2f601d14506722c1d772",
+"structspreader__data.html#a24a5c34a52ed721c0e30f8448ae4402a",
+"structutility__zeigmp__data.html#a8f242250d53218709c3dfadec7f9dc8a"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
