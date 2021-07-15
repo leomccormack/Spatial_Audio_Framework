@@ -132,7 +132,8 @@ typedef struct _binauraliser
     int bFlipPitch;                          /**< flag to flip the sign of the pitch rotation angle */
     int bFlipRoll;                           /**< flag to flip the sign of the roll rotation angle */
     int useRollPitchYawFlag;                 /**< rotation order flag, 1: r-p-y, 0: y-p-r */
-    
+    float src_gains[MAX_NUM_INPUTS];         /**< Gains applied per source */
+
 } binauraliser_data;
 
 

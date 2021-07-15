@@ -87,8 +87,10 @@ void binauraliser_create
     pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
     pData->reInitHRTFsAndGainTables = 1;
-    for(ch=0; ch<MAX_NUM_INPUTS; ch++)
+    for(ch=0; ch<MAX_NUM_INPUTS; ch++) {
         pData->recalc_hrtf_interpFLAG[ch] = 1;
+        pData->src_gains[ch] = 1.f;
+    }
     pData->recalc_M_rotFLAG = 1; 
 }
 
@@ -213,6 +215,12 @@ void binauraliser_process
             utility_svvcopy(inputs[i], BINAURALISER_FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<nSources; i++)
             memset(pData->inputFrameTD[i], 0, BINAURALISER_FRAME_SIZE * sizeof(float));
+
+        /* Apply source gains */
+        for (ch = 0; ch < nSources; ch++) {
+            if(fabsf(pData->src_gains[ch] - 1.f) > 1e-6f)
+                utility_svsmul(pData->inputFrameTD[ch], &(pData->src_gains[ch]), BINAURALISER_FRAME_SIZE, NULL);
+        }
 
         /* Apply time-frequency transform (TFT) */
         afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, BINAURALISER_FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
@@ -435,6 +443,30 @@ void binauraliser_setInterpMode(void* const hBin, int newMode)
         pData->recalc_hrtf_interpFLAG[ch] = 1;
 }
 
+void binauraliser_setSourceGain(void* const hAmbi, int srcIdx, float newGain)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hAmbi);
+    pData->src_gains[srcIdx] = newGain;
+}
+
+void binauraliser_setSourceSolo(void* const hAmbi, int srcIdx)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hAmbi);
+    int i;
+    for(i=0; i<pData->nSources; i++){
+        if(i==srcIdx)
+            pData->src_gains[i] = 1.f;
+        else
+            pData->src_gains[i] = 0.f;
+    }
+}
+
+void binauraliser_setUnSolo(void* const hAmbi)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hAmbi);
+    for(int i=0; i<pData->nSources; i++)
+         pData->src_gains[i] = 1.f;
+}
 
 
 /* Get Functions */
