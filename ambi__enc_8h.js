@@ -23,5 +23,8 @@ var ambi__enc_8h =
     [ "ambi_enc_setNumSources", "ambi__enc_8h.html#a9c09fbb950001d84a9272955e99682fc", null ],
     [ "ambi_enc_setOutputOrder", "ambi__enc_8h.html#a1eec5dc699639e5413afc46d78a8bcb8", null ],
     [ "ambi_enc_setSourceAzi_deg", "ambi__enc_8h.html#aa946fe0f556605f899bd4f79562c0170", null ],
-    [ "ambi_enc_setSourceElev_deg", "ambi__enc_8h.html#a4d2e3eb79ed030c9487697d107aa0a54", null ]
+    [ "ambi_enc_setSourceElev_deg", "ambi__enc_8h.html#a4d2e3eb79ed030c9487697d107aa0a54", null ],
+    [ "ambi_enc_setSourceGain", "ambi__enc_8h.html#a463760056aad27b9f91555c3a40cccef", null ],
+    [ "ambi_enc_setSourceSolo", "ambi__enc_8h.html#a58cdb3bcf602454348e3873e90f34791", null ],
+    [ "ambi_enc_setUnSolo", "ambi__enc_8h.html#a9bdfacc0863fe8785bc8fb664167c683", null ]
 ];

@@ -190,6 +190,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bina
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#ab32dced53fc561b902890660367a63f1">binauraliser_setInterpMode</a> (void *const hBin, int newMode)</td></tr>
 <tr class="memdesc:ab32dced53fc561b902890660367a63f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">NOT IMPLEMENTED YET. <br /></td></tr>
 <tr class="separator:ab32dced53fc561b902890660367a63f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4007ed94446140072ca9c5a6fe7e5070"><td class="memItemLeft" align="right" valign="top"><a id="a4007ed94446140072ca9c5a6fe7e5070"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a4007ed94446140072ca9c5a6fe7e5070">binauraliser_setSourceGain</a> (void *const hBin, int srcIdx, float newGain)</td></tr>
+<tr class="memdesc:a4007ed94446140072ca9c5a6fe7e5070"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets gain factor for an input source. <br /></td></tr>
+<tr class="separator:a4007ed94446140072ca9c5a6fe7e5070"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add009167f571b9f6f94cb1f53dde0463"><td class="memItemLeft" align="right" valign="top"><a id="add009167f571b9f6f94cb1f53dde0463"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#add009167f571b9f6f94cb1f53dde0463">binauraliser_setSourceSolo</a> (void *const hBin, int srcIdx)</td></tr>
+<tr class="memdesc:add009167f571b9f6f94cb1f53dde0463"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a source to solo. <br /></td></tr>
+<tr class="separator:add009167f571b9f6f94cb1f53dde0463"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd4f9537a0a40e892eb8ff8f27067971"><td class="memItemLeft" align="right" valign="top"><a id="abd4f9537a0a40e892eb8ff8f27067971"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#abd4f9537a0a40e892eb8ff8f27067971">binauraliser_setUnSolo</a> (void *const hBin)</td></tr>
+<tr class="memdesc:abd4f9537a0a40e892eb8ff8f27067971"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unsolo / unmute all sources. <br /></td></tr>
+<tr class="separator:abd4f9537a0a40e892eb8ff8f27067971"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75c1299119792b422831ea5cb1c9ba24"><td class="memItemLeft" align="right" valign="top"><a id="a75c1299119792b422831ea5cb1c9ba24"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser_8h.html#a75c1299119792b422831ea5cb1c9ba24">binauraliser_getFrameSize</a> (void)</td></tr>
 <tr class="memdesc:a75c1299119792b422831ea5cb1c9ba24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the processing framesize (i.e., number of samples processed with every _process() call ) <br /></td></tr>
@@ -395,7 +407,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a4">binauraliser.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00096">96</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00098">98</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -420,10 +432,10 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
 <li>0: intialisation/processing has started</li>
 <li>1: intialisation/processing has ended </li>
 </ul>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a27">binauraliser.h</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a30">binauraliser.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00454">454</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00486">486</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -455,10 +467,10 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
 
 <p>(Optional) Returns current intialisation/processing progress text </p>
 <dl class="section note"><dt>Note</dt><dd>"text" string should be (at least) of length: <a class="el" href="__common_8h.html#a72a166eb078e82f81bd29753838c5080" title="Length of progress bar string.">PROGRESSBARTEXT_CHAR_LENGTH</a> </dd></dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a28">binauraliser.h</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a31">binauraliser.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00460">460</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00492">492</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -487,10 +499,10 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>File path to .sofa file (WITH file extension) </dd></dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a41">binauraliser.h</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a44">binauraliser.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00542">542</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00574">574</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -512,10 +524,10 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
 
 <p>Returns the value of a flag used to dictate whether the default HRIRs in the Spatial_Audio_Framework should be used (1), or a custom HRIR set loaded via a SOFA file (0). </p>
 <dl class="section note"><dt>Note</dt><dd>If the custom set fails to load correctly, binauraliser will revert to the defualt set, so this will be '1' </dd></dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a40">binauraliser.h</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a43">binauraliser.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00536">536</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00568">568</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -557,7 +569,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binau
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a5">binauraliser.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00132">132</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00134">134</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -590,7 +602,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a6">binauraliser.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00152">152</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00154">154</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -659,7 +671,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a7">binauraliser.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00188">188</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00190">190</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -701,7 +713,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a13">binauraliser.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00334">334</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00342">342</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -736,7 +748,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_8h-example.html#a12">binauraliser.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00325">325</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser_8c_source.html#l00333">333</a> of file <a class="el" href="binauraliser_8c_source.html">binauraliser.c</a>.</p>
 
 </div>
 </div>
@@ -747,7 +759,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_7ea9cec8c8a74419de82b1d94b0f1364.html">include</a></li><li class="navelem"><a class="el" href="binauraliser_8h.html">binauraliser.h</a></li>
-    <li class="footer">Generated on Thu Jul 15 2021 07:12:42 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Thu Jul 15 2021 09:03:08 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
     <script type="text/javascript">

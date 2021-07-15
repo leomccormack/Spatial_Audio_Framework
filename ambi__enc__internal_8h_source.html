@@ -156,23 +156,24 @@ $(document).ready(function(){initNavTree('ambi__enc__internal_8h_source.html',''
 <div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="structambi__enc__data.html#ac1b149519111c5a07cec823b9ee4ca1d">   80</a></span>&#160;    <a class="code" href="__common_8h.html#a9d0a41517784f33989ba258d6fd889be">NORM_TYPES</a> <a class="code" href="structambi__enc__data.html#ac1b149519111c5a07cec823b9ee4ca1d">norm</a>;                                             </div>
 <div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="structambi__enc__data.html#add4fc7e833fc652cd2a1c7a80dacf999">   81</a></span>&#160;    <a class="code" href="__common_8h.html#accad30b1b7667d4eedc40c116206a5db">SH_ORDERS</a> <a class="code" href="structambi__enc__data.html#add4fc7e833fc652cd2a1c7a80dacf999">order</a>;                                             </div>
 <div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="structambi__enc__data.html#a13b9f66c91b8f2759a358b383cd28457">   82</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="structambi__enc__data.html#a13b9f66c91b8f2759a358b383cd28457">enablePostScaling</a>;                                       </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;} <a class="code" href="structambi__enc__data.html">ambi_enc_data</a>;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">/*                             Internal Functions                             */</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="keywordtype">void</span> <a class="code" href="ambi__enc__internal_8h.html#a623538f485678f821d310aa33d12f87e">loadSourceConfigPreset</a>(<a class="code" href="__common_8h.html#a7ea45ad31bea000c76c733ace2441204">SOURCE_CONFIG_PRESETS</a> preset,</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;                            <span class="keywordtype">float</span> dirs_deg[<a class="code" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2],</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                            <span class="keywordtype">int</span>* nCH);</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
+<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="structambi__enc__data.html#ac86ed03454e32be807536a5e3c7d0cf5">   83</a></span>&#160;    <span class="keywordtype">float</span> src_gains[<a class="code" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>];                             </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;} <a class="code" href="structambi__enc__data.html">ambi_enc_data</a>;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">/*                             Internal Functions                             */</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="keywordtype">void</span> <a class="code" href="ambi__enc__internal_8h.html#a623538f485678f821d310aa33d12f87e">loadSourceConfigPreset</a>(<a class="code" href="__common_8h.html#a7ea45ad31bea000c76c733ace2441204">SOURCE_CONFIG_PRESETS</a> preset,</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                            <span class="keywordtype">float</span> dirs_deg[<a class="code" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2],</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                            <span class="keywordtype">int</span>* nCH);</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;} <span class="comment">/* extern &quot;C&quot; { */</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __AMBI_ENC_INTERNAL_H_INCLUDED__ */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;} <span class="comment">/* extern &quot;C&quot; { */</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __AMBI_ENC_INTERNAL_H_INCLUDED__ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="a__common_8h_html_a50864b1823f51c9acf5c71e0e6bac35d"><div class="ttname"><a href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a></div><div class="ttdeci">#define MAX_NUM_INPUTS</div><div class="ttdoc">Maximum number of input channels supported.</div><div class="ttdef"><b>Definition:</b> <a href="__common_8h_source.html#l00231">_common.h:231</a></div></div>
 <div class="ttc" id="a__common_8h_html_a7ea45ad31bea000c76c733ace2441204"><div class="ttname"><a href="__common_8h.html#a7ea45ad31bea000c76c733ace2441204">SOURCE_CONFIG_PRESETS</a></div><div class="ttdeci">SOURCE_CONFIG_PRESETS</div><div class="ttdoc">Available source configurations presets to use for encoding/panning.</div><div class="ttdef"><b>Definition:</b> <a href="__common_8h_source.html#l00131">_common.h:131</a></div></div>
 <div class="ttc" id="a__common_8h_html_a9d0a41517784f33989ba258d6fd889be"><div class="ttname"><a href="__common_8h.html#a9d0a41517784f33989ba258d6fd889be">NORM_TYPES</a></div><div class="ttdeci">NORM_TYPES</div><div class="ttdoc">Available Ambisonic normalisation conventions.</div><div class="ttdef"><b>Definition:</b> <a href="__common_8h_source.html#l00072">_common.h:72</a></div></div>
@@ -199,7 +200,7 @@ $(document).ready(function(){initNavTree('ambi__enc__internal_8h_source.html',''
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_95b57effb8038f90624a8a5b60361b2e.html">src</a></li><li class="navelem"><a class="el" href="dir_f6785af57030d56f2673c3cdfcb9d916.html">ambi_enc</a></li><li class="navelem"><a class="el" href="ambi__enc__internal_8h.html">ambi_enc_internal.h</a></li>
-    <li class="footer">Generated on Thu Jul 15 2021 07:12:40 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Thu Jul 15 2021 09:03:05 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
     <script type="text/javascript">

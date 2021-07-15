@@ -49,6 +49,9 @@ var binauraliser_8c =
     [ "binauraliser_setSofaFilePath", "binauraliser_8c.html#a0628549e0203c0f65bb8737526e88be6", null ],
     [ "binauraliser_setSourceAzi_deg", "binauraliser_8c.html#a390fead8e869e5c1adace25785ad2be5", null ],
     [ "binauraliser_setSourceElev_deg", "binauraliser_8c.html#a470d8621c364c01822fc1c4be7ae3291", null ],
+    [ "binauraliser_setSourceGain", "binauraliser_8c.html#ae7999b7dd24c3523fb41b196aacf9718", null ],
+    [ "binauraliser_setSourceSolo", "binauraliser_8c.html#a44bc6f3192cd3de86a249f1898c81453", null ],
+    [ "binauraliser_setUnSolo", "binauraliser_8c.html#abef1c02d04150de1556f6309df49c48f", null ],
     [ "binauraliser_setUseDefaultHRIRsflag", "binauraliser_8c.html#ab84d5d108bb01078ac6308914893dda9", null ],
     [ "binauraliser_setYaw", "binauraliser_8c.html#aaae50d24fe39de90e3fb0fe9fe0d9d48", null ]
 ];

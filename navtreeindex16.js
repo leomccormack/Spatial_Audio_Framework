@@ -1,5 +1,17 @@
 var NAVTREEINDEX16 =
 {
+"pitch_shifter_8h-example.html":[3,13],
+"powermap_8c.html":[2,0,0,1,14,0],
+"powermap_8c.html#a04077a5380fec276b1eda43a1f0adc99":[2,0,0,1,14,0,13],
+"powermap_8c.html#a089be2627e57b8a3c5bddf53513c90b4":[2,0,0,1,14,0,23],
+"powermap_8c.html#a0a8919cfa8773d69a99653181b5c2e9d":[2,0,0,1,14,0,29],
+"powermap_8c.html#a0b7209f46ec8292e314557d2007fee6c":[2,0,0,1,14,0,34],
+"powermap_8c.html#a0d05a71dffb1e00b8c49639188257c3a":[2,0,0,1,14,0,3],
+"powermap_8c.html#a0e1d2632f76ff01220b0409b969ce8bf":[2,0,0,1,14,0,15],
+"powermap_8c.html#a0edf6e2b787be184bb6de30e3995a28e":[2,0,0,1,14,0,22],
+"powermap_8c.html#a111d54a816c5478273e7ba004b3611e8":[2,0,0,1,14,0,18],
+"powermap_8c.html#a197f6fb33e1424367c3711f1984bbe34":[2,0,0,1,14,0,4],
+"powermap_8c.html#a1a989f86545998fa055e5d8027bf5d9f":[2,0,0,1,14,0,38],
 "powermap_8c.html#a1c22bbd78affe0f2de2437664c9c5baa":[2,0,0,1,14,0,24],
 "powermap_8c.html#a22db5aa4055b297b56bfc99c4bf6a94e":[2,0,0,1,14,0,33],
 "powermap_8c.html#a2316284fadbe2523ed56c4018e7be3a8":[2,0,0,1,14,0,39],
@@ -237,17 +249,5 @@ var NAVTREEINDEX16 =
 "rotator_8h.html#a70b119a478eba7ac6802b0d2745ac90c":[2,0,0,0,16,1],
 "rotator_8h.html#a70fbcfed6d9b87df63694306bede29c0":[2,0,0,0,16,33],
 "rotator_8h.html#a74594b0ff15e880324345ae78857c087":[2,0,0,0,16,19],
-"rotator_8h.html#a7a7ec4b2471b4ae43404105efb0ace88":[2,0,0,0,16,10],
-"rotator_8h.html#a7b64afed6de180b3fbc820707d980029":[2,0,0,0,16,6],
-"rotator_8h.html#a7e1fa4f6f7497aff0ae4714f1b7e6a6d":[2,0,0,0,16,34],
-"rotator_8h.html#a8b482010dec1610477720dabbb6d95f8":[2,0,0,0,16,17],
-"rotator_8h.html#a95ae74f98f690792c4c804fbe4656ddf":[2,0,0,0,16,4],
-"rotator_8h.html#aa07bb8a0fa3e0b026891d3dd6aaf0ebc":[2,0,0,0,16,31],
-"rotator_8h.html#aa5a19958361ede8d14cb73d16a3baf9b":[2,0,0,0,16,27],
-"rotator_8h.html#ab1cde5fd46c846c1c792d23b75d92889":[2,0,0,0,16,21],
-"rotator_8h.html#ab517ada7840c6d5acb4f9208375aa903":[2,0,0,0,16,22],
-"rotator_8h.html#acee21d400b00fc4785c56ac7090d8dc4":[2,0,0,0,16,14],
-"rotator_8h.html#ad3daddb2e770c6a88b515219028d374e":[2,0,0,0,16,26],
-"rotator_8h.html#ae5471aa1348ee9873cbcf3b7d28bd2ae":[2,0,0,0,16,32],
-"rotator_8h.html#aeb3bca30274e2b0bc42bdadf225704b1":[2,0,0,0,16,3]
+"rotator_8h.html#a7a7ec4b2471b4ae43404105efb0ace88":[2,0,0,0,16,10]
 };

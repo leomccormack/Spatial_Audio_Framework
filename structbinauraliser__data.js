@@ -45,6 +45,7 @@ var structbinauraliser__data =
     [ "src_dirs_rot_deg", "structbinauraliser__data.html#a5270df69fa4165205e11392e4c80a064", null ],
     [ "src_dirs_rot_xyz", "structbinauraliser__data.html#a4a801e92d375de215fad3193e663048f", null ],
     [ "src_dirs_xyz", "structbinauraliser__data.html#a923b8f548094183daeb77f12ecfc8201", null ],
+    [ "src_gains", "structbinauraliser__data.html#a8cb8e387ab468efb4374ab148dd45f7b", null ],
     [ "useDefaultHRIRsFLAG", "structbinauraliser__data.html#ae6bd299ac45fdaac254b04b8bc27656f", null ],
     [ "useRollPitchYawFlag", "structbinauraliser__data.html#a81cee1c58a9c79169bde814af57753ac", null ],
     [ "weights", "structbinauraliser__data.html#a81b8fac03ca7b0b38023cbf4f6d245f4", null ],
