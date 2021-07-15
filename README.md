@@ -121,9 +121,12 @@ make
 test/saf_test # To run the unit testing program
 ```
 
-Or for Visual Studio users (using e.g. x64 Native Tools Command Prompt for VS 2019):
+Or for Visual Studio users (using x64 Native Tools Command Prompt for VS):
 ```
+# e.g. for VS2019:
 cmake -S . -B build -G "Visual Studio 16" -A x64  
+# e.g. for VS2017:
+cmake -S . -B build -G "Visual Studio 15 Win64"
 cd build
 msbuild ALL_BUILD.vcxproj /p:Configuration=Release /m
 cd test/Release
