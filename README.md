@@ -95,7 +95,8 @@ The available SAF-related CMake options (and their default values) are:
 -DSAF_BUILD_EXAMPLES=1                       # build saf examples
 -DSAF_BUILD_EXTRAS=0                         # build safmex etc.
 -DSAF_BUILD_TESTS=1                          # build unit testing program
--DSAF_USE_INTEL_IPP=0                        # To link and use Intel IPP for the FFT, resampler, etc.
+-DSAF_USE_INTEL_IPP=0                        # link and use Intel IPP for the FFT, resampler, etc.
+-DSAF_ENABLE_SIMD=0                          # enable/disable SSE, AVX, and/or AVX-512 support
 ```
 
 If using e.g. **SAF_USE_INTEL_MKL_LP64** as the performance library, note that the default header and library search paths may be overridden [according to your setup](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md) with:
@@ -116,6 +117,8 @@ If the **saf_sofa_reader** module is enabled, CMake will use the statically buil
 For Linux/MacOS users: the framework, examples, and unit testing program may be built as follows:
 ```
 cmake -S . -B build 
+# Or to also enable e.g. SSE3 and AVX2 intrinsics (for both C and C++ code)
+cmake -S . -B build -DSAF_ENABLE_SIMD=1 -DCMAKE_CXX_FLAGS="-msse3 -mavx2" -DCMAKE_C_FLAGS="-msse3 -mavx2"
 cd build
 make
 test/saf_test # To run the unit testing program

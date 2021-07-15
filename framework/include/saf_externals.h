@@ -270,4 +270,73 @@
 #endif
 
 
+/* ========================================================================== */
+/*                   Configuration and Status Flags/Strings                   */
+/* ========================================================================== */
+
+/* Currently employed performance library: */
+#if defined(SAF_USE_INTEL_MKL_LP64)
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "Intel MKL (LP64)"
+#elif defined(SAF_USE_INTEL_MKL_ILP64)
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "Intel MKL (ILP64)"
+#elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "OpenBLAS with LAPACKE"
+#elif defined(SAF_USE_ATLAS)
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "ATLAS"
+#elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "Apple Accelerate"
+#else
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "NONE"
+#endif
+
+/* Status of Intel IPP */
+#if defined(SAF_USE_INTEL_IPP)
+# define SAF_INTEL_IPP_STATUS_STRING "Enabled"
+#else
+# define SAF_INTEL_IPP_STATUS_STRING "Disabled"
+#endif
+
+/* Status of FFTW */
+#if defined(SAF_USE_FFTW)
+# define SAF_FFTW_STATUS_STRING "Enabled"
+#else
+# define SAF_FFTW_STATUS_STRING "Disabled"
+#endif
+
+/* Status of SIMD intrinsics */
+#if defined(SAF_ENABLE_SIMD)
+# define SAF_SIMD_STATUS_STRING "Enabled"
+/* Which SIMD intrinsics are currently enabled? */
+# if defined(__AVX512F__)
+#  define SAF_ENABLED_SIMD_INTRINSICS_STRING "SSE, SSE2, SSE3, AVX, AVX2, AVX512F"
+# elif defined(__AVX__) && defined(__AVX2__)
+#  define SAF_ENABLED_SIMD_INTRINSICS_STRING "SSE, SSE2, SSE3, AVX, AVX2"
+# elif defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
+#  define SAF_ENABLED_SIMD_INTRINSICS_STRING "SSE, SSE2, SSE3"
+# else
+#  define SAF_ENABLED_SIMD_INTRINSICS_STRING "None"
+# endif
+#else
+# define SAF_SIMD_STATUS_STRING "Disabled"
+# define SAF_ENABLED_SIMD_INTRINSICS_STRING "None"
+#endif
+
+/* Status of netCDF */
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
+# define SAF_NETCDF_STATUS_STRING "Enabled"
+#else
+# define SAF_NETCDF_STATUS_STRING "Disabled"
+#endif
+
+/** Current configuration information */
+#define SAF_EXTERNALS_CONFIGURATION_STRING  \
+    "Current SAF externals configuration: "                               "\n" \
+    " - Performance library: " SAF_CURRENT_PERFORMANCE_LIBRARY_STRING     "\n" \
+    " - Intel IPP status:    " SAF_INTEL_IPP_STATUS_STRING                "\n" \
+    " - FFTW status:         " SAF_FFTW_STATUS_STRING                     "\n" \
+    " - SIMD status:         " SAF_SIMD_STATUS_STRING                     "\n" \
+    " - Enabled intrinsics:  " SAF_ENABLED_SIMD_INTRINSICS_STRING         "\n" \
+    " - netCDF status:       " SAF_NETCDF_STATUS_STRING                   "\n"
+
+
 #endif /* __SAF_EXTERNALS_H_INCLUDED__ */

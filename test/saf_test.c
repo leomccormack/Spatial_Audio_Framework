@@ -66,6 +66,7 @@ int main_test(void) {
 #else
     printf(" (Debug):\n\n");
 #endif
+    printf("%s\n", SAF_EXTERNALS_CONFIGURATION_STRING);
 
     /* initialise */
     timer_lib_initialize();

@@ -212,6 +212,15 @@ if(SAF_USE_INTEL_IPP)
     target_link_libraries(${PROJECT_NAME} PUBLIC ${INTEL_IPP_LIB} )
 endif()
 
+############################################################################
+# Enable SIMD intrinsics
+if(SAF_ENABLE_SIMD)
+    # Note that you need to pass the appropriate compiler flags to actually
+    # enable certain intrinsics, for example:
+    # $ cmake -S . -B build -DCMAKE_CXX_FLAGS="-msse3 -mavx2" -DCMAKE_C_FLAGS="-msse3 -mavx2"
+    message(STATUS "SIMD intrinsics support is enabled.")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_ENABLE_SIMD=1)
+endif()
 
 ############################################################################
 # Sofa reader module dependencies
