@@ -152,13 +152,13 @@ Building with CMake</h2>
 <p><img src="https://github.com/leomccormack/Spatial_Audio_Framework/workflows/CMake%20Build/badge.svg?branch=master" alt="CMake Build" style="pointer-events: none;" class="inline"/></p>
 <p>The framework may also be included within an existing CMake workflow with simply: </p><div class="fragment"><div class="line">add_subdirectory(Spatial_Audio_Framework)</div>
 <div class="line">target_link_libraries(${PROJECT_NAME} PRIVATE saf)</div>
-</div><!-- fragment --><p>The available SAF-related CMake options (and their default values) are: </p><div class="fragment"><div class="line">-DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL    # performance library to employ</div>
-<div class="line">-DSAF_ENABLE_SOFA_READER_MODULE=0          # enable/disable the saf_sofa_reader module </div>
-<div class="line">-DSAF_ENABLE_TRACKER_MODULE=0              # enable/disable the saf_tracker module </div>
-<div class="line">-DSAF_BUILD_EXAMPLES=1                     # build saf examples</div>
-<div class="line">-DSAF_BUILD_EXTRAS=0                       # build safmex etc.</div>
-<div class="line">-DSAF_BUILD_TESTS=1                        # build unit testing program</div>
-<div class="line">-DSAF_USE_INTEL_IPP=0                      # To link and use Intel IPP for the FFT etc.</div>
+</div><!-- fragment --><p>The available SAF-related CMake options (and their default values) are: </p><div class="fragment"><div class="line">-DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL_LP64 # performance library to employ</div>
+<div class="line">-DSAF_ENABLE_SOFA_READER_MODULE=0            # enable/disable the saf_sofa_reader module </div>
+<div class="line">-DSAF_ENABLE_TRACKER_MODULE=0                # enable/disable the saf_tracker module </div>
+<div class="line">-DSAF_BUILD_EXAMPLES=1                       # build saf examples</div>
+<div class="line">-DSAF_BUILD_EXTRAS=0                         # build safmex etc.</div>
+<div class="line">-DSAF_BUILD_TESTS=1                          # build unit testing program</div>
+<div class="line">-DSAF_USE_INTEL_IPP=0                        # To link and use Intel IPP for the FFT, resampler, etc.</div>
 </div><!-- fragment --><p>If using e.g. <b>SAF_USE_INTEL_MKL_LP64</b> as the performance library, note that the default header and library search paths may be overridden <a class="el" href="md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html">according to your setup</a> with: </p><div class="fragment"><div class="line">-DINTEL_MKL_HEADER_PATH=&quot;path/to/mkl/headers&quot;</div>
 <div class="line">-DINTEL_MKL_LIB=&quot;path/to/mkl/libs/mkl_rt(.so/.dylib/.lib)&quot;   # OR:</div>
 <div class="line">-DINTEL_MKL_LIB=&quot;path/to/custom/mkl/lib/saf_mkl_custom_lp64(.so/.dylib/.lib)&quot;</div>
@@ -170,7 +170,10 @@ Building with CMake</h2>
 <div class="line">cd build</div>
 <div class="line">make</div>
 <div class="line">test/saf_test # To run the unit testing program</div>
-</div><!-- fragment --><p>Or for Visual Studio (e.g. 2017) users (using e.g. x64 Native Tools Command Prompt): </p><div class="fragment"><div class="line">cmake -S . -B build -G &quot;Visual Studio 15 Win64&quot;   </div>
+</div><!-- fragment --><p>Or for Visual Studio users (using x64 Native Tools Command Prompt for VS): </p><div class="fragment"><div class="line"># e.g. for VS2019:</div>
+<div class="line">cmake -S . -B build -G &quot;Visual Studio 16&quot; -A x64  </div>
+<div class="line"># e.g. for VS2017:</div>
+<div class="line">cmake -S . -B build -G &quot;Visual Studio 15 Win64&quot;</div>
 <div class="line">cd build</div>
 <div class="line">msbuild ALL_BUILD.vcxproj /p:Configuration=Release /m</div>
 <div class="line">cd test/Release</div>
@@ -246,7 +249,7 @@ License</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Jul 14 2021 13:15:36 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Thu Jul 15 2021 07:12:43 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
     <script type="text/javascript">
