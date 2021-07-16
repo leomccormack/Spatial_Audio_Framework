@@ -550,7 +550,7 @@ void saf_TVConv_apply
     void * const hTVC,
     float* inputSig,
     float* outputSig,
-    int    posIdx
+    int    irIdx
 )
 {
     safTVConv_data *h = (safTVConv_data*)(hTVC);
@@ -564,7 +564,7 @@ void saf_TVConv_apply
     
     /* apply convolution and inverse fft */
     for(no=0; no<h->nCHout; no++){
-        utility_cvvmul(h->Hpart_f[posIdx][no], h->X_n, h->numFilterBlocks * (h->nBins), h->HX_n); /* This is the bulk of the CPU work */
+        utility_cvvmul(h->Hpart_f[irIdx][no], h->X_n, h->numFilterBlocks * (h->nBins), h->HX_n); /* This is the bulk of the CPU work */
         for(nb=0; nb<h->numFilterBlocks; nb++)
             saf_rfft_backward(h->hFFT, &(h->HX_n[nb*(h->nBins)]), &(h->hx_n[nb*(h->fftSize)]));
         
@@ -574,7 +574,7 @@ void saf_TVConv_apply
             cblas_saxpy(h->fftSize, 1.0f, &(h->hx_n[nb*(h->fftSize)]), 1, h->z_n, 1);
         
         /* If position changed perform convolution at previous steps too */
-        if(posIdx != h->posIdx_last){
+        if(irIdx != h->posIdx_last){
             utility_cvvmul(h->Hpart_f[h->posIdx_last][no], h->X_n, h->numFilterBlocks * (h->nBins), h->HX_n);
             for(nb=0; nb<h->numFilterBlocks; nb++)
                 saf_rfft_backward(h->hFFT, &(h->HX_n[nb*(h->nBins)]), &(h->hx_n[nb*(h->fftSize)]));
@@ -601,13 +601,13 @@ void saf_TVConv_apply
             utility_svvcopy(h->z_n_last, h->fftSize, h->z_n_last2);
         }
     
-        /* sum with overlap buffer and copy the result to the output buffer */
-//      utility_svvadd(h->z_n, (const float*)&(h->y_n_overlap[no*(h->hopSize)]), h->hopSize, &(outputSig[no*(h->hopSize)]));
+        /* sum with overlap buffer */
         utility_svvadd(h->z_n_last, (const float*)&(h->y_n_overlap[no*(h->hopSize)]), h->hopSize, h->out1);
         utility_svvadd(h->z_n_last2, (const float*)&(h->y_n_overlap_last[no*(h->hopSize)]), h->hopSize, h->out2);
+        /* multiply by cross-fade ramps */
         utility_svvmul(h->out1, (const float*)h->fadeIn, h->hopSize, h->outFadeIn);
         utility_svvmul(h->out2, (const float*)h->fadeOut, h->hopSize, h->outFadeOut);
-
+        /* cross-fade the filered signals and copy to output buffer */
         utility_svvadd(h->outFadeIn, (const float*)h->outFadeOut, h->hopSize, &(outputSig[no*(h->hopSize)]));
         
         /* for next iteration: */
@@ -616,5 +616,5 @@ void saf_TVConv_apply
     }
     
     h->posIdx_last2 = h->posIdx_last;
-    h->posIdx_last = posIdx;
+    h->posIdx_last = irIdx;
 }
