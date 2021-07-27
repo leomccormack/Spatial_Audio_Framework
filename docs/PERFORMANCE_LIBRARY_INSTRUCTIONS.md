@@ -111,13 +111,22 @@ Please refer to the documentation to find out where conda installs packages on y
 
 ## SAF_USE_OPEN_BLAS_AND_LAPACKE
 
-For those who would like to use the framework with [OpenBLAS](https://github.com/xianyi/OpenBLAS), note that for Debian/Ubuntu based Linux distributions, the libraries may be installed via:
+The framework also supports [OpenBLAS](https://github.com/xianyi/OpenBLAS). However, unlike Intel MKL and Apple Accelerate, the OpenBLAS library does not offer an optimised DFT/FFT, and some vector-vector operations; such as element-wise multiplications and additions. Therefore, consider pairing OpenBLAS with **SAF_ENABLE_SIMD** (enabling SSE3 and AVX2) and **SAF_USE_INTEL_IPP** or **SAF_USE_FFTW**, in which case, the performance of SAF will become roughly on par with e.g. Apple Accelerate; but not quite as fast as Intel MKL.
 
+For Debian/Ubuntu based Linux distributions the required libraries may be installed via:
 ```
 sudo apt-get install liblapack3 liblapack-dev libopenblas-base libopenblas-dev liblapacke-dev
 ```
+While Apple Accelerate is the more recommended option for MacOSX users, OpenBLAS may be installed and used with the following:
+```
+brew install openblas
+export LDFLAGS="-L/usr/local/opt/openblas/lib"
+export CPPFLAGS="-I/usr/local/opt/openblas/include"
+```
 
-However, if you are not on Linux, or would prefer to have more control over things, then the required libraries may also be built via CMake:
+Windows users can follow the instuctions found [here](https://github.com/xianyi/OpenBLAS/wiki/How-to-use-OpenBLAS-in-Microsoft-Visual-Studio).
+
+Lastly, you may also instead build the required libraries yourself via CMake. For example:
 
 ```
 git clone https://github.com/xianyi/OpenBLAS.git
@@ -130,22 +139,11 @@ cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=0 -DBUILD_WITHOUT_LAPACK
 make 
 ```
 
-The static openblas library can then be found in:
-```
-OpenBLAS/build/lib/libopenblas.a
-```
-
-The required include files are then found in:
-```
-OpenBLAS/lapack-netlib/CBLAS/include
-OpenBLAS/lapack-netlib/LAPACKE/include
-```
-
 ## SAF_USE_APPLE_ACCELERATE
 
-Only for MacOSX users. Simply add the [**Accelerate**](https://developer.apple.com/documentation/accelerate) framework to your XCode project, and you're good to go. 
+Only for MacOSX users. Simply link against the [**Accelerate**](https://developer.apple.com/documentation/accelerate) framework and you're good to go. 
 
-Note that Accelerate also includes an optimised FFT implementation and a number of additional vectorised utility functions which SAF is also able to make use of. 
+Note that Accelerate also includes an optimised DFT/FFT implementation and a number of additional vectorised utility functions which SAF is also able to make use of. 
 
 
 ## SAF_USE_ATLAS
