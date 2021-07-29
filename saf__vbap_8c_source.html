@@ -751,365 +751,345 @@ $(document).ready(function(){initNavTree('saf__vbap_8c_source.html',''); initRes
 <div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;)</div>
 <div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;{</div>
 <div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;    <span class="keywordtype">int</span> i, j, n;</div>
-<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;    <span class="keywordtype">float</span>* tempGroup;</div>
-<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;    <span class="keywordtype">float</span> tempInv[9], eye3[9];</div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;    <span class="keywordtype">float</span> tempGroup[9];</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;    <span class="keywordtype">float</span> tempInv[9];</div>
 <div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;    <span class="keywordtype">void</span>* hSinv;</div>
 <div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160; </div>
-<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
-<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;        <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
-<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;            eye3[i*3+j] = i==j ? 1.0f : 0.0f;</div>
-<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;    tempGroup = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(9* <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160; </div>
-<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;    <span class="comment">/* pre-calculate inversions of the loudspeaker groups and store into matrix */</span></div>
-<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;    (*layoutInvMtx) = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_group * 9 * <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;    <a class="code" href="group___utilities.html#ga62746f59cf7e134d0d9d64cec05791ae">utility_sinv_create</a>(&amp;hSinv, 3);</div>
-<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;N_group; n++){</div>
-<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;        <span class="comment">/* get the unit vectors for the current group */</span></div>
-<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
-<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
-<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;                tempGroup[j*3+i] = U_spkr[ls_groups[n*3+i]*3 + j]; </div>
-<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160; </div>
-<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;        <span class="comment">/* get inverse of current group */</span></div>
-<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;        <a class="code" href="group___utilities.html#ga7ded692ae35912f07fda80681f302fd6">utility_sinv</a>(hSinv, tempGroup,tempGroup,3);</div>
-<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 3, 3, 3, 1.0f,</div>
-<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;                    (<span class="keywordtype">float</span>*)eye3, 3,</div>
-<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;                    tempGroup, 3, 0.0f,</div>
-<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;                    (<span class="keywordtype">float</span>*)tempInv, 3);</div>
-<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160; </div>
-<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;        <span class="comment">/* store the vectorized inverse as a row the output */</span></div>
-<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
-<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;                (*layoutInvMtx)[n*9+(i*3+j)] = tempInv[j*3+i];</div>
-<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;    }</div>
-<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;    free(tempGroup);</div>
-<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;    <a class="code" href="group___utilities.html#gaeefe466110dad799a2722990d04e02f4">utility_sinv_destroy</a>(&amp;hSinv);</div>
-<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;}</div>
-<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160; </div>
-<div class="line"><a name="l00718"></a><span class="lineno"><a class="line" href="group___v_b_a_p.html#ga596dc1cf8ebb99e1619877189738cf07">  718</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___v_b_a_p.html#ga596dc1cf8ebb99e1619877189738cf07">getSpreadSrcDirs3D</a></div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;(</div>
-<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;    <span class="keywordtype">float</span> src_azi_rad,</div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;    <span class="keywordtype">float</span> src_elev_rad,</div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;    <span class="keywordtype">float</span> spread,</div>
-<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;    <span class="keywordtype">int</span> num_src,</div>
-<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;    <span class="keywordtype">int</span> num_rings_3d,</div>
-<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;    <span class="keywordtype">float</span>* U_spread</div>
-<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;)</div>
-<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;{</div>
-<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;    <span class="keywordtype">int</span> i, j, ns, nr;</div>
-<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;    <span class="keywordtype">float</span> theta, sin_theta, cos_theta, scale, spread_rad, ring_rad, U_spread_norm;</div>
-<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;    <span class="keywordtype">float</span> u[3], u_x_u[3][3], u_x[3][3], R_theta[3][3], uu2[3], spreadbase_ns[3];</div>
-<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;    <span class="keywordtype">float</span>* spreadbase;</div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160; </div>
-<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;    <span class="comment">/* rotation matrix using the axis of rotation-angle definition (around source direction) */</span></div>
-<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;    u[0] = cosf(src_elev_rad) * cosf(src_azi_rad);</div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;    u[1] = cosf(src_elev_rad) * sinf(src_azi_rad);</div>
-<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;    u[2] = sinf(src_elev_rad);</div>
-<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;    u_x_u[0][0] = powf(u[0],2.0f); u_x_u[0][1] = u[0]*u[1]; u_x_u[0][2] = u[0]*u[2];</div>
-<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;    u_x_u[1][0] = u[0]*u[1]; u_x_u[1][1] = powf(u[1],2.0f); u_x_u[1][2] = u[1]*u[2];</div>
-<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;    u_x_u[2][0] = u[0]*u[2]; u_x_u[2][1] = u[1]*u[2]; u_x_u[2][2] = powf(u[2],2.0f);</div>
-<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;    u_x[0][0] = 0.0f; u_x[0][1] = -u[2]; u_x[0][2] = u[1];</div>
-<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;    u_x[1][0] = u[2]; u_x[1][1] = 0.0f; u_x[1][2] = -u[0];</div>
-<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;    u_x[2][0] = -u[1]; u_x[2][1] = u[0]; u_x[2][2] = 0.0f;</div>
-<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;    theta = 2.0f*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/(float)num_src;</div>
-<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;    sin_theta = sinf(theta);</div>
-<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;    cos_theta = cosf(theta);</div>
-<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
-<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;        <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
-<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;            R_theta[i][j] = sin_theta*u_x[i][j] + (1.0f-cos_theta)*u_x_u[i][j] + (i==j ? cos_theta : 0.0f);</div>
-<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160; </div>
-<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;    <span class="comment">/*  create a ring of sources on the plane that is purpendicular to the source directions */</span></div>
-<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;    spreadbase = <a class="code" href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a>(num_src*3, <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;    <span class="keywordflow">if</span> ((src_elev_rad &gt; <a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/2.0f-0.01f ) || (src_elev_rad&lt;-(<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/2.0f-0.01f)))</div>
-<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;        spreadbase[0] = 1.0f;</div>
-<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;    <span class="keywordflow">else</span>{</div>
-<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">float</span> u2[3] = {0.0f, 0.0f, 1.0f};</div>
-<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;        <a class="code" href="saf__vbap__internal_8c.html#a1c94593414e6f7a1e60a3d51f6767bed">ccross</a>(u, (<span class="keywordtype">float</span>*)u2, uu2);</div>
-<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;        scale = 0.0f;</div>
-<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
-<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;            scale += powf(uu2[i],2.0f);</div>
-<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;        scale = sqrtf(scale);</div>
-<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
-<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;            spreadbase[i] = uu2[i]/scale;</div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;    <span class="comment">/* pre-calculate inversions of the loudspeaker groups and store into matrix */</span></div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;    (*layoutInvMtx) = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_group * 9 * <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;    <a class="code" href="group___utilities.html#ga62746f59cf7e134d0d9d64cec05791ae">utility_sinv_create</a>(&amp;hSinv, 3);</div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;N_group; n++){</div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;        <span class="comment">/* get the unit vectors for the current group */</span></div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;                tempGroup[j*3+i] = U_spkr[ls_groups[n*3+i]*3 + j]; </div>
+<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160; </div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;        <span class="comment">/* get inverse of current group */</span></div>
+<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;        <a class="code" href="group___utilities.html#ga7ded692ae35912f07fda80681f302fd6">utility_sinv</a>(hSinv, tempGroup, tempInv, 3);</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160; </div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;        <span class="comment">/* store the vectorized inverse as a row the output */</span></div>
+<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;                (*layoutInvMtx)[n*9+(i*3+j)] = tempInv[j*3+i];</div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;    }</div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;    <a class="code" href="group___utilities.html#gaeefe466110dad799a2722990d04e02f4">utility_sinv_destroy</a>(&amp;hSinv);</div>
+<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;}</div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160; </div>
+<div class="line"><a name="l00708"></a><span class="lineno"><a class="line" href="group___v_b_a_p.html#ga596dc1cf8ebb99e1619877189738cf07">  708</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___v_b_a_p.html#ga596dc1cf8ebb99e1619877189738cf07">getSpreadSrcDirs3D</a></div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;(</div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;    <span class="keywordtype">float</span> src_azi_rad,</div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;    <span class="keywordtype">float</span> src_elev_rad,</div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;    <span class="keywordtype">float</span> spread,</div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;    <span class="keywordtype">int</span> num_src,</div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;    <span class="keywordtype">int</span> num_rings_3d,</div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;    <span class="keywordtype">float</span>* U_spread</div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;)</div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;{</div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;    <span class="keywordtype">int</span> i, j, ns, nr;</div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;    <span class="keywordtype">float</span> theta, sin_theta, cos_theta, scale, spread_rad, ring_rad, U_spread_norm;</div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;    <span class="keywordtype">float</span> u[3], u_x_u[3][3], u_x[3][3], R_theta[3][3], uu2[3], spreadbase_ns[3];</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;    <span class="keywordtype">float</span>* spreadbase;</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160; </div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;    <span class="comment">/* rotation matrix using the axis of rotation-angle definition (around source direction) */</span></div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;    u[0] = cosf(src_elev_rad) * cosf(src_azi_rad);</div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;    u[1] = cosf(src_elev_rad) * sinf(src_azi_rad);</div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;    u[2] = sinf(src_elev_rad);</div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;    u_x_u[0][0] = powf(u[0],2.0f); u_x_u[0][1] = u[0]*u[1]; u_x_u[0][2] = u[0]*u[2];</div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;    u_x_u[1][0] = u[0]*u[1]; u_x_u[1][1] = powf(u[1],2.0f); u_x_u[1][2] = u[1]*u[2];</div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;    u_x_u[2][0] = u[0]*u[2]; u_x_u[2][1] = u[1]*u[2]; u_x_u[2][2] = powf(u[2],2.0f);</div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;    u_x[0][0] = 0.0f; u_x[0][1] = -u[2]; u_x[0][2] = u[1];</div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;    u_x[1][0] = u[2]; u_x[1][1] = 0.0f; u_x[1][2] = -u[0];</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;    u_x[2][0] = -u[1]; u_x[2][1] = u[0]; u_x[2][2] = 0.0f;</div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;    theta = 2.0f*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/(float)num_src;</div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;    sin_theta = sinf(theta);</div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;    cos_theta = cosf(theta);</div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;        <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;            R_theta[i][j] = sin_theta*u_x[i][j] + (1.0f-cos_theta)*u_x_u[i][j] + (i==j ? cos_theta : 0.0f);</div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160; </div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;    <span class="comment">/*  create a ring of sources on the plane that is purpendicular to the source directions */</span></div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;    spreadbase = <a class="code" href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a>(num_src*3, <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;    <span class="keywordflow">if</span> ((src_elev_rad &gt; <a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/2.0f-0.01f ) || (src_elev_rad&lt;-(<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/2.0f-0.01f)))</div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;        spreadbase[0] = 1.0f;</div>
+<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;    <span class="keywordflow">else</span>{</div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">float</span> u2[3] = {0.0f, 0.0f, 1.0f};</div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;        <a class="code" href="saf__vbap__internal_8c.html#a1c94593414e6f7a1e60a3d51f6767bed">ccross</a>(u, (<span class="keywordtype">float</span>*)u2, uu2);</div>
+<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;        scale = 0.0f;</div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;            scale += powf(uu2[i],2.0f);</div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;        scale = sqrtf(scale);</div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;            spreadbase[i] = uu2[i]/scale;</div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;    }</div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160; </div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;    <span class="comment">/* get ring of directions by rotating the first vector around the source */</span></div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;    <span class="keywordflow">for</span> (ns = 1; ns&lt;num_src; ns++){</div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;            spreadbase_ns[i] = spreadbase[(ns-1)*3+i];</div>
+<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 1, 3, 1.0f,</div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;                    (<span class="keyword">const</span> <span class="keywordtype">float</span>*)R_theta, 3,</div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;                    spreadbase_ns, 1, 0.0f,</div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;                    &amp;spreadbase[ns*3], 1);</div>
 <div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;    }</div>
 <div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160; </div>
-<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;    <span class="comment">/* get ring of directions by rotating the first vector around the source */</span></div>
-<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;    <span class="keywordflow">for</span> (ns = 1; ns&lt;num_src; ns++){</div>
-<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
-<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;            spreadbase_ns[i] = spreadbase[(ns-1)*3+i];</div>
-<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 3, 1, 3, 1.0f,</div>
-<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;                    (<span class="keyword">const</span> <span class="keywordtype">float</span>*)R_theta, 3,</div>
-<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;                    spreadbase_ns, 1, 0.0f,</div>
-<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;                    &amp;spreadbase[ns*3], 1);</div>
-<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;    }</div>
-<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160; </div>
-<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;    <span class="comment">/* squeeze the perpendicular ring to the desired spread */</span></div>
-<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;    spread_rad = (spread/2.0f)*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/180.0f;</div>
-<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;    ring_rad = spread_rad/(float)num_rings_3d;</div>
-<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;    memset(U_spread, 0, num_rings_3d*num_src*3*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;    <span class="keywordflow">for</span>(nr=0; nr&lt;num_rings_3d; nr++)</div>
-<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;        <span class="keywordflow">for</span> (ns = 0; ns&lt;num_src; ns++)</div>
-<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
-<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;                U_spread[(nr*num_src + ns)*3 + i] = u[i] + spreadbase[ns*3+i]*tanf(ring_rad*(<span class="keywordtype">float</span>)(nr+1));</div>
-<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160; </div>
-<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;    <span class="comment">/* normalise vectors to unity (based on first vector) */</span></div>
-<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;    U_spread_norm = sqrtf(powf(U_spread[0],2.0f) + powf(U_spread[1],2.0f) + powf(U_spread[2],2.0f));</div>
-<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;num_rings_3d*num_src*3; i++)</div>
-<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;        U_spread[i] /= U_spread_norm;</div>
-<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160; </div>
-<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;    <span class="comment">/* append the original source direction at the end */</span></div>
-<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
-<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;        U_spread[(num_rings_3d*num_src)*3 + i] = u[i];</div>
-<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160; </div>
-<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;    free(spreadbase);</div>
-<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;}</div>
-<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160; </div>
-<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160; </div>
-<div class="line"><a name="l00797"></a><span class="lineno"><a class="line" href="group___v_b_a_p.html#gad7c1c50795736cd9a19223787ea24f75">  797</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___v_b_a_p.html#gad7c1c50795736cd9a19223787ea24f75">vbap3D</a></div>
-<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;(</div>
-<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;    <span class="keywordtype">float</span>* src_dirs,</div>
-<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;    <span class="keywordtype">int</span> src_num,</div>
-<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;    <span class="keywordtype">int</span> ls_num,</div>
-<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;    <span class="keywordtype">int</span>* ls_groups,</div>
-<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;    <span class="keywordtype">int</span> nFaces,</div>
-<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;    <span class="keywordtype">float</span> spread,</div>
-<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;    <span class="keywordtype">float</span>* layoutInvMtx,</div>
-<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;    <span class="keywordtype">float</span>** GainMtx</div>
-<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;)</div>
-<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;{</div>
-<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;    <span class="keywordtype">int</span> i, j, ns, nspr;</div>
-<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;    <span class="keywordtype">float</span> azi_rad, elev_rad, min_val, g_tmp_rms, gains_rms;</div>
-<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;    <span class="keywordtype">float</span> u[3], g_tmp[3], ls_invMtx_s[3];</div>
-<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;    <span class="keywordtype">float</span>* gains;</div>
-<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160; </div>
-<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;    (*GainMtx) = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(src_num*ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;    gains = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160; </div>
-<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;    <span class="comment">/* MDAP (with spread) */</span></div>
-<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;    <span class="keywordflow">if</span> (spread &gt; 0.1f) {</div>
-<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">int</span> nSpreadSrcs = 8;</div>
-<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">int</span> nRings = 1;</div>
-<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;        <span class="keywordtype">float</span>* U_spread;</div>
-<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;        U_spread = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>((nRings*nSpreadSrcs+1)*3*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;        <span class="keywordflow">for</span>(ns=0; ns&lt;src_num; ns++){</div>
-<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;            azi_rad  = src_dirs[ns*2+0]*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/180.0f;</div>
-<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;            elev_rad = src_dirs[ns*2+1]*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/180.0f;</div>
-<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;            <a class="code" href="group___v_b_a_p.html#ga596dc1cf8ebb99e1619877189738cf07">getSpreadSrcDirs3D</a>(azi_rad, elev_rad, spread, nSpreadSrcs, nRings, U_spread);</div>
-<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;            memset(gains, 0, ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;            <span class="keywordflow">for</span>(nspr=0; nspr&lt;(nRings*nSpreadSrcs+1); nspr++){</div>
-<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;                u[0] = U_spread[nspr*3+0];</div>
-<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;                u[1] = U_spread[nspr*3+1];</div>
-<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;                u[2] = U_spread[nspr*3+2];</div>
-<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;                <span class="keywordflow">for</span>(i=0; i&lt;nFaces; i++){</div>
-<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;                    <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
-<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;                        ls_invMtx_s[j] = layoutInvMtx[i*9+j];</div>
-<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;                    <a class="code" href="group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d">utility_svvdot</a>(ls_invMtx_s, u, 3, &amp;g_tmp[0]);</div>
-<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;                    <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
-<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;                        ls_invMtx_s[j] = layoutInvMtx[i*9+j+3];</div>
-<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;                    <a class="code" href="group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d">utility_svvdot</a>(ls_invMtx_s, u, 3, &amp;g_tmp[1]);</div>
-<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;                    <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
-<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;                        ls_invMtx_s[j] = layoutInvMtx[i*9+j+6];</div>
-<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;                    <a class="code" href="group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d">utility_svvdot</a>(ls_invMtx_s, u, 3, &amp;g_tmp[2]);</div>
-<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;                    min_val = 2.23e13f;</div>
-<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;                    g_tmp_rms = 0.0;</div>
-<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;                    <span class="keywordflow">for</span>(j=0; j&lt;3; j++){</div>
-<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;                        min_val = <a class="code" href="group___utilities.html#ga8f9630332cc11a6cb17128033f07ffdf">SAF_MIN</a>(min_val, g_tmp[j]);</div>
-<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;                        g_tmp_rms +=  powf(g_tmp[j], 2.0f);</div>
-<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;                    }</div>
-<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;                    g_tmp_rms = sqrtf(g_tmp_rms);</div>
-<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;                    <span class="keywordflow">if</span>(min_val&gt;-0.001){</div>
-<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;                        <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
-<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;                            gains[ls_groups[i*3+j]] += g_tmp[j]/g_tmp_rms;</div>
-<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160;                    }</div>
-<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160;                }</div>
-<div class="line"><a name="l00854"></a><span class="lineno">  854</span>&#160;            }</div>
-<div class="line"><a name="l00855"></a><span class="lineno">  855</span>&#160;            gains_rms = 0.0;</div>
-<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;ls_num; i++)</div>
-<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;                gains_rms += powf(gains[i], 2.0f);</div>
-<div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;            gains_rms = sqrtf(gains_rms);</div>
-<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;ls_num; i++)</div>
-<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;                (*GainMtx)[ns*ls_num+i] = <a class="code" href="group___utilities.html#ga30c447b96fd750ea49c28b918cf0e03d">SAF_MAX</a>(gains[i]/gains_rms, 0.0f);</div>
-<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;        }</div>
-<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160; </div>
-<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;        free(U_spread);</div>
-<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;    }</div>
-<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;    <span class="comment">/* VBAP (no spread) */</span></div>
-<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;    <span class="keywordflow">else</span>{</div>
-<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;        <span class="keywordflow">for</span>(ns=0; ns&lt;src_num; ns++){</div>
-<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;            azi_rad  = src_dirs[ns*2+0]*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/180.0f;</div>
-<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;            elev_rad = src_dirs[ns*2+1]*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/180.0f;</div>
-<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;            u[0] = cosf(azi_rad)*cosf(elev_rad);</div>
-<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;            u[1] = sinf(azi_rad)*cosf(elev_rad);</div>
-<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;            u[2] = sinf(elev_rad);</div>
-<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;            memset(gains, 0, ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;nFaces; i++){</div>
-<div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;                <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
-<div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160;                    ls_invMtx_s[j] = layoutInvMtx[i*9+j];</div>
-<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;                <a class="code" href="group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d">utility_svvdot</a>(ls_invMtx_s, u, 3, &amp;g_tmp[0]);</div>
-<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;                <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
-<div class="line"><a name="l00879"></a><span class="lineno">  879</span>&#160;                    ls_invMtx_s[j] = layoutInvMtx[i*9+j+3];</div>
-<div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;                <a class="code" href="group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d">utility_svvdot</a>(ls_invMtx_s, u, 3, &amp;g_tmp[1]);</div>
-<div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;                <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
-<div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;                    ls_invMtx_s[j] = layoutInvMtx[i*9+j+6];</div>
-<div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;                <a class="code" href="group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d">utility_svvdot</a>(ls_invMtx_s, u, 3, &amp;g_tmp[2]);</div>
-<div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160;                min_val = 2.23e13f;</div>
-<div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;                g_tmp_rms = 0.0;</div>
-<div class="line"><a name="l00886"></a><span class="lineno">  886</span>&#160;                <span class="keywordflow">for</span>(j=0; j&lt;3; j++){</div>
-<div class="line"><a name="l00887"></a><span class="lineno">  887</span>&#160;                    min_val = <a class="code" href="group___utilities.html#ga8f9630332cc11a6cb17128033f07ffdf">SAF_MIN</a>(min_val, g_tmp[j]);</div>
-<div class="line"><a name="l00888"></a><span class="lineno">  888</span>&#160;                    g_tmp_rms +=  powf(g_tmp[j], 2.0f);</div>
-<div class="line"><a name="l00889"></a><span class="lineno">  889</span>&#160;                }</div>
-<div class="line"><a name="l00890"></a><span class="lineno">  890</span>&#160;                g_tmp_rms = sqrtf(g_tmp_rms);</div>
-<div class="line"><a name="l00891"></a><span class="lineno">  891</span>&#160;                <span class="keywordflow">if</span>(min_val&gt;-0.001){</div>
-<div class="line"><a name="l00892"></a><span class="lineno">  892</span>&#160;                    <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
-<div class="line"><a name="l00893"></a><span class="lineno">  893</span>&#160;                        gains[ls_groups[i*3+j]] = g_tmp[j]/g_tmp_rms;</div>
-<div class="line"><a name="l00894"></a><span class="lineno">  894</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00895"></a><span class="lineno">  895</span>&#160;                }</div>
-<div class="line"><a name="l00896"></a><span class="lineno">  896</span>&#160;            }</div>
-<div class="line"><a name="l00897"></a><span class="lineno">  897</span>&#160;            gains_rms = 0.0;</div>
-<div class="line"><a name="l00898"></a><span class="lineno">  898</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;ls_num; i++)</div>
-<div class="line"><a name="l00899"></a><span class="lineno">  899</span>&#160;                gains_rms += powf(gains[i], 2.0f);</div>
-<div class="line"><a name="l00900"></a><span class="lineno">  900</span>&#160;            gains_rms = sqrtf(gains_rms);</div>
-<div class="line"><a name="l00901"></a><span class="lineno">  901</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;ls_num; i++)</div>
-<div class="line"><a name="l00902"></a><span class="lineno">  902</span>&#160;                (*GainMtx)[ns*ls_num+i] = <a class="code" href="group___utilities.html#ga30c447b96fd750ea49c28b918cf0e03d">SAF_MAX</a>(gains[i]/gains_rms, 0.0f);</div>
-<div class="line"><a name="l00903"></a><span class="lineno">  903</span>&#160;        }</div>
-<div class="line"><a name="l00904"></a><span class="lineno">  904</span>&#160;    }</div>
-<div class="line"><a name="l00905"></a><span class="lineno">  905</span>&#160; </div>
-<div class="line"><a name="l00906"></a><span class="lineno">  906</span>&#160;    free(gains);</div>
-<div class="line"><a name="l00907"></a><span class="lineno">  907</span>&#160;}</div>
-<div class="line"><a name="l00908"></a><span class="lineno">  908</span>&#160; </div>
-<div class="line"><a name="l00909"></a><span class="lineno"><a class="line" href="group___v_b_a_p.html#ga7504f2e68479b9c1c6f1b860d5562396">  909</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___v_b_a_p.html#ga7504f2e68479b9c1c6f1b860d5562396">findLsPairs</a></div>
-<div class="line"><a name="l00910"></a><span class="lineno">  910</span>&#160;(</div>
-<div class="line"><a name="l00911"></a><span class="lineno">  911</span>&#160;    <span class="keywordtype">float</span>* ls_dirs_deg,</div>
-<div class="line"><a name="l00912"></a><span class="lineno">  912</span>&#160;    <span class="keywordtype">int</span> L,</div>
-<div class="line"><a name="l00913"></a><span class="lineno">  913</span>&#160;    <span class="keywordtype">int</span>** out_pairs,</div>
-<div class="line"><a name="l00914"></a><span class="lineno">  914</span>&#160;    <span class="keywordtype">int</span>* numOutPairs</div>
-<div class="line"><a name="l00915"></a><span class="lineno">  915</span>&#160;)</div>
-<div class="line"><a name="l00916"></a><span class="lineno">  916</span>&#160;{</div>
-<div class="line"><a name="l00917"></a><span class="lineno">  917</span>&#160;    <span class="keywordtype">int</span> n;</div>
-<div class="line"><a name="l00918"></a><span class="lineno">  918</span>&#160;    <span class="keywordtype">float</span>* ls_dirs_deg_tmp;</div>
-<div class="line"><a name="l00919"></a><span class="lineno">  919</span>&#160;    <span class="keywordtype">int</span>* idx_sorted;</div>
-<div class="line"><a name="l00920"></a><span class="lineno">  920</span>&#160; </div>
-<div class="line"><a name="l00921"></a><span class="lineno">  921</span>&#160;    ls_dirs_deg_tmp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(L*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00922"></a><span class="lineno">  922</span>&#160;    idx_sorted = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(L*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
-<div class="line"><a name="l00923"></a><span class="lineno">  923</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;L; n++)</div>
-<div class="line"><a name="l00924"></a><span class="lineno">  924</span>&#160;        ls_dirs_deg_tmp[n] = ls_dirs_deg[n*2];</div>
-<div class="line"><a name="l00925"></a><span class="lineno">  925</span>&#160; </div>
-<div class="line"><a name="l00926"></a><span class="lineno">  926</span>&#160;    <span class="comment">/* find the loudspeaker pairs by sorting the angles */</span></div>
-<div class="line"><a name="l00927"></a><span class="lineno">  927</span>&#160;    <a class="code" href="group___utilities.html#ga289eb2f7e45d17a787d0f193641c6b50">sortf</a>(ls_dirs_deg_tmp, NULL, idx_sorted, L, 0);</div>
-<div class="line"><a name="l00928"></a><span class="lineno">  928</span>&#160;    idx_sorted = realloc(idx_sorted, (L+1)*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
-<div class="line"><a name="l00929"></a><span class="lineno">  929</span>&#160;    idx_sorted[L] = idx_sorted[0];</div>
-<div class="line"><a name="l00930"></a><span class="lineno">  930</span>&#160;    (*out_pairs) = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(L*2*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
-<div class="line"><a name="l00931"></a><span class="lineno">  931</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;L; n++){</div>
-<div class="line"><a name="l00932"></a><span class="lineno">  932</span>&#160;        (*out_pairs)[n*2] = idx_sorted[n];</div>
-<div class="line"><a name="l00933"></a><span class="lineno">  933</span>&#160;        (*out_pairs)[n*2+1] = idx_sorted[n+1];</div>
-<div class="line"><a name="l00934"></a><span class="lineno">  934</span>&#160;    }</div>
-<div class="line"><a name="l00935"></a><span class="lineno">  935</span>&#160;    (*numOutPairs) = L;</div>
-<div class="line"><a name="l00936"></a><span class="lineno">  936</span>&#160; </div>
-<div class="line"><a name="l00937"></a><span class="lineno">  937</span>&#160;    free(ls_dirs_deg_tmp);</div>
-<div class="line"><a name="l00938"></a><span class="lineno">  938</span>&#160;    free(idx_sorted);</div>
-<div class="line"><a name="l00939"></a><span class="lineno">  939</span>&#160;}</div>
-<div class="line"><a name="l00940"></a><span class="lineno">  940</span>&#160; </div>
-<div class="line"><a name="l00941"></a><span class="lineno"><a class="line" href="group___v_b_a_p.html#gade399134c19d24848edc869eedf57e98">  941</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___v_b_a_p.html#gade399134c19d24848edc869eedf57e98">invertLsMtx2D</a></div>
-<div class="line"><a name="l00942"></a><span class="lineno">  942</span>&#160;(</div>
-<div class="line"><a name="l00943"></a><span class="lineno">  943</span>&#160;    <span class="keywordtype">float</span>* U_spkr <span class="comment">/* L x 2 */</span>,</div>
-<div class="line"><a name="l00944"></a><span class="lineno">  944</span>&#160;    <span class="keywordtype">int</span>* ls_pairs <span class="comment">/* N_group x 2 */</span>,</div>
-<div class="line"><a name="l00945"></a><span class="lineno">  945</span>&#160;    <span class="keywordtype">int</span> N_pairs,</div>
-<div class="line"><a name="l00946"></a><span class="lineno">  946</span>&#160;    <span class="keywordtype">float</span>** layoutInvMtx<span class="comment">/* N_group x 4 */</span></div>
-<div class="line"><a name="l00947"></a><span class="lineno">  947</span>&#160;)</div>
-<div class="line"><a name="l00948"></a><span class="lineno">  948</span>&#160;{</div>
-<div class="line"><a name="l00949"></a><span class="lineno">  949</span>&#160;    <span class="keywordtype">int</span> i, j, n;</div>
-<div class="line"><a name="l00950"></a><span class="lineno">  950</span>&#160;    <span class="keywordtype">float</span>* tempGroup;</div>
-<div class="line"><a name="l00951"></a><span class="lineno">  951</span>&#160;    <span class="keywordtype">float</span> tempInv[4], eye2[4];</div>
-<div class="line"><a name="l00952"></a><span class="lineno">  952</span>&#160;    <span class="keywordtype">void</span>* hSinv;</div>
-<div class="line"><a name="l00953"></a><span class="lineno">  953</span>&#160; </div>
-<div class="line"><a name="l00954"></a><span class="lineno">  954</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;2; i++)</div>
-<div class="line"><a name="l00955"></a><span class="lineno">  955</span>&#160;        <span class="keywordflow">for</span>(j=0; j&lt;2; j++)</div>
-<div class="line"><a name="l00956"></a><span class="lineno">  956</span>&#160;            eye2[i*2+j] = i==j ? 1.0f : 0.0f;</div>
-<div class="line"><a name="l00957"></a><span class="lineno">  957</span>&#160;    tempGroup = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(4* <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00958"></a><span class="lineno">  958</span>&#160; </div>
-<div class="line"><a name="l00959"></a><span class="lineno">  959</span>&#160;    <span class="comment">/* pre-calculate inversions of the loudspeaker groups and store into matrix */</span></div>
-<div class="line"><a name="l00960"></a><span class="lineno">  960</span>&#160;    (*layoutInvMtx) = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_pairs * 4 * <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l00961"></a><span class="lineno">  961</span>&#160;    <a class="code" href="group___utilities.html#ga62746f59cf7e134d0d9d64cec05791ae">utility_sinv_create</a>(&amp;hSinv, 2);</div>
-<div class="line"><a name="l00962"></a><span class="lineno">  962</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;N_pairs; n++){</div>
-<div class="line"><a name="l00963"></a><span class="lineno">  963</span>&#160;        <span class="comment">/* get the unit vectors for the current group */</span></div>
-<div class="line"><a name="l00964"></a><span class="lineno">  964</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;2; i++)</div>
-<div class="line"><a name="l00965"></a><span class="lineno">  965</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;2; j++)</div>
-<div class="line"><a name="l00966"></a><span class="lineno">  966</span>&#160;                tempGroup[j*2+i] = U_spkr[ls_pairs[n*2+i]*2 + j];</div>
-<div class="line"><a name="l00967"></a><span class="lineno">  967</span>&#160; </div>
-<div class="line"><a name="l00968"></a><span class="lineno">  968</span>&#160;        <span class="comment">/* get inverse of current group */</span></div>
-<div class="line"><a name="l00969"></a><span class="lineno">  969</span>&#160;        <a class="code" href="group___utilities.html#ga7ded692ae35912f07fda80681f302fd6">utility_sinv</a>(hSinv, tempGroup,tempGroup,2);</div>
-<div class="line"><a name="l00970"></a><span class="lineno">  970</span>&#160;        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 2, 2, 2, 1.0,</div>
-<div class="line"><a name="l00971"></a><span class="lineno">  971</span>&#160;                    eye2, 2,</div>
-<div class="line"><a name="l00972"></a><span class="lineno">  972</span>&#160;                    tempGroup, 2, 0.0,</div>
-<div class="line"><a name="l00973"></a><span class="lineno">  973</span>&#160;                    tempInv, 2);</div>
-<div class="line"><a name="l00974"></a><span class="lineno">  974</span>&#160; </div>
-<div class="line"><a name="l00975"></a><span class="lineno">  975</span>&#160;        <span class="comment">/* store the vectorized inverse as a row the output */</span></div>
-<div class="line"><a name="l00976"></a><span class="lineno">  976</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;2; i++)</div>
-<div class="line"><a name="l00977"></a><span class="lineno">  977</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;2; j++)</div>
-<div class="line"><a name="l00978"></a><span class="lineno">  978</span>&#160;                (*layoutInvMtx)[n*4+(i*2+j)] = tempInv[j*2+i];</div>
-<div class="line"><a name="l00979"></a><span class="lineno">  979</span>&#160;    }</div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;    <span class="comment">/* squeeze the perpendicular ring to the desired spread */</span></div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;    spread_rad = (spread/2.0f)*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/180.0f;</div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;    ring_rad = spread_rad/(float)num_rings_3d;</div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;    memset(U_spread, 0, num_rings_3d*num_src*3*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;    <span class="keywordflow">for</span>(nr=0; nr&lt;num_rings_3d; nr++)</div>
+<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;        <span class="keywordflow">for</span> (ns = 0; ns&lt;num_src; ns++)</div>
+<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
+<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;                U_spread[(nr*num_src + ns)*3 + i] = u[i] + spreadbase[ns*3+i]*tanf(ring_rad*(<span class="keywordtype">float</span>)(nr+1));</div>
+<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160; </div>
+<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;    <span class="comment">/* normalise vectors to unity (based on first vector) */</span></div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;    U_spread_norm = sqrtf(powf(U_spread[0],2.0f) + powf(U_spread[1],2.0f) + powf(U_spread[2],2.0f));</div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;num_rings_3d*num_src*3; i++)</div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;        U_spread[i] /= U_spread_norm;</div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160; </div>
+<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;    <span class="comment">/* append the original source direction at the end */</span></div>
+<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;3; i++)</div>
+<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;        U_spread[(num_rings_3d*num_src)*3 + i] = u[i];</div>
+<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160; </div>
+<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;    free(spreadbase);</div>
+<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;}</div>
+<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160; </div>
+<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160; </div>
+<div class="line"><a name="l00787"></a><span class="lineno"><a class="line" href="group___v_b_a_p.html#gad7c1c50795736cd9a19223787ea24f75">  787</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___v_b_a_p.html#gad7c1c50795736cd9a19223787ea24f75">vbap3D</a></div>
+<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;(</div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;    <span class="keywordtype">float</span>* src_dirs,</div>
+<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;    <span class="keywordtype">int</span> src_num,</div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;    <span class="keywordtype">int</span> ls_num,</div>
+<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;    <span class="keywordtype">int</span>* ls_groups,</div>
+<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;    <span class="keywordtype">int</span> nFaces,</div>
+<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;    <span class="keywordtype">float</span> spread,</div>
+<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;    <span class="keywordtype">float</span>* layoutInvMtx,</div>
+<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;    <span class="keywordtype">float</span>** GainMtx</div>
+<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;)</div>
+<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;{</div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;    <span class="keywordtype">int</span> i, j, ns, nspr;</div>
+<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;    <span class="keywordtype">float</span> azi_rad, elev_rad, min_val, g_tmp_rms, gains_rms;</div>
+<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;    <span class="keywordtype">float</span> u[3], g_tmp[3], ls_invMtx_s[3];</div>
+<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;    <span class="keywordtype">float</span>* gains;</div>
+<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160; </div>
+<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;    (*GainMtx) = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(src_num*ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;    gains = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160; </div>
+<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;    <span class="comment">/* MDAP (with spread) */</span></div>
+<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;    <span class="keywordflow">if</span> (spread &gt; 0.1f) {</div>
+<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">int</span> nSpreadSrcs = 8;</div>
+<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">int</span> nRings = 1;</div>
+<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;        <span class="keywordtype">float</span>* U_spread;</div>
+<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;        U_spread = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>((nRings*nSpreadSrcs+1)*3*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;        <span class="keywordflow">for</span>(ns=0; ns&lt;src_num; ns++){</div>
+<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;            azi_rad  = src_dirs[ns*2+0]*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/180.0f;</div>
+<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;            elev_rad = src_dirs[ns*2+1]*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/180.0f;</div>
+<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;            <a class="code" href="group___v_b_a_p.html#ga596dc1cf8ebb99e1619877189738cf07">getSpreadSrcDirs3D</a>(azi_rad, elev_rad, spread, nSpreadSrcs, nRings, U_spread);</div>
+<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;            memset(gains, 0, ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;            <span class="keywordflow">for</span>(nspr=0; nspr&lt;(nRings*nSpreadSrcs+1); nspr++){</div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;                u[0] = U_spread[nspr*3+0];</div>
+<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;                u[1] = U_spread[nspr*3+1];</div>
+<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;                u[2] = U_spread[nspr*3+2];</div>
+<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;                <span class="keywordflow">for</span>(i=0; i&lt;nFaces; i++){</div>
+<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;                    <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
+<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;                        ls_invMtx_s[j] = layoutInvMtx[i*9+j];</div>
+<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;                    <a class="code" href="group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d">utility_svvdot</a>(ls_invMtx_s, u, 3, &amp;g_tmp[0]);</div>
+<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;                    <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
+<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;                        ls_invMtx_s[j] = layoutInvMtx[i*9+j+3];</div>
+<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;                    <a class="code" href="group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d">utility_svvdot</a>(ls_invMtx_s, u, 3, &amp;g_tmp[1]);</div>
+<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;                    <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
+<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;                        ls_invMtx_s[j] = layoutInvMtx[i*9+j+6];</div>
+<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;                    <a class="code" href="group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d">utility_svvdot</a>(ls_invMtx_s, u, 3, &amp;g_tmp[2]);</div>
+<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;                    min_val = 2.23e13f;</div>
+<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;                    g_tmp_rms = 0.0;</div>
+<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;                    <span class="keywordflow">for</span>(j=0; j&lt;3; j++){</div>
+<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;                        min_val = <a class="code" href="group___utilities.html#ga8f9630332cc11a6cb17128033f07ffdf">SAF_MIN</a>(min_val, g_tmp[j]);</div>
+<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;                        g_tmp_rms +=  powf(g_tmp[j], 2.0f);</div>
+<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;                    }</div>
+<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;                    g_tmp_rms = sqrtf(g_tmp_rms);</div>
+<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;                    <span class="keywordflow">if</span>(min_val&gt;-0.001){</div>
+<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;                        <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
+<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;                            gains[ls_groups[i*3+j]] += g_tmp[j]/g_tmp_rms;</div>
+<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;                    }</div>
+<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;                }</div>
+<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;            }</div>
+<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;            gains_rms = 0.0;</div>
+<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;ls_num; i++)</div>
+<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;                gains_rms += powf(gains[i], 2.0f);</div>
+<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;            gains_rms = sqrtf(gains_rms);</div>
+<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;ls_num; i++)</div>
+<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;                (*GainMtx)[ns*ls_num+i] = <a class="code" href="group___utilities.html#ga30c447b96fd750ea49c28b918cf0e03d">SAF_MAX</a>(gains[i]/gains_rms, 0.0f);</div>
+<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;        }</div>
+<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160; </div>
+<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160;        free(U_spread);</div>
+<div class="line"><a name="l00854"></a><span class="lineno">  854</span>&#160;    }</div>
+<div class="line"><a name="l00855"></a><span class="lineno">  855</span>&#160;    <span class="comment">/* VBAP (no spread) */</span></div>
+<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;    <span class="keywordflow">else</span>{</div>
+<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;        <span class="keywordflow">for</span>(ns=0; ns&lt;src_num; ns++){</div>
+<div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;            azi_rad  = src_dirs[ns*2+0]*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/180.0f;</div>
+<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;            elev_rad = src_dirs[ns*2+1]*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/180.0f;</div>
+<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;            u[0] = cosf(azi_rad)*cosf(elev_rad);</div>
+<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;            u[1] = sinf(azi_rad)*cosf(elev_rad);</div>
+<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;            u[2] = sinf(elev_rad);</div>
+<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;            memset(gains, 0, ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;nFaces; i++){</div>
+<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;                <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
+<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;                    ls_invMtx_s[j] = layoutInvMtx[i*9+j];</div>
+<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;                <a class="code" href="group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d">utility_svvdot</a>(ls_invMtx_s, u, 3, &amp;g_tmp[0]);</div>
+<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;                <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
+<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;                    ls_invMtx_s[j] = layoutInvMtx[i*9+j+3];</div>
+<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;                <a class="code" href="group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d">utility_svvdot</a>(ls_invMtx_s, u, 3, &amp;g_tmp[1]);</div>
+<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;                <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
+<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;                    ls_invMtx_s[j] = layoutInvMtx[i*9+j+6];</div>
+<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;                <a class="code" href="group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d">utility_svvdot</a>(ls_invMtx_s, u, 3, &amp;g_tmp[2]);</div>
+<div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;                min_val = 2.23e13f;</div>
+<div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;                g_tmp_rms = 0.0;</div>
+<div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160;                <span class="keywordflow">for</span>(j=0; j&lt;3; j++){</div>
+<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;                    min_val = <a class="code" href="group___utilities.html#ga8f9630332cc11a6cb17128033f07ffdf">SAF_MIN</a>(min_val, g_tmp[j]);</div>
+<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;                    g_tmp_rms +=  powf(g_tmp[j], 2.0f);</div>
+<div class="line"><a name="l00879"></a><span class="lineno">  879</span>&#160;                }</div>
+<div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;                g_tmp_rms = sqrtf(g_tmp_rms);</div>
+<div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;                <span class="keywordflow">if</span>(min_val&gt;-0.001){</div>
+<div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;                    <span class="keywordflow">for</span>(j=0; j&lt;3; j++)</div>
+<div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;                        gains[ls_groups[i*3+j]] = g_tmp[j]/g_tmp_rms;</div>
+<div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;                }</div>
+<div class="line"><a name="l00886"></a><span class="lineno">  886</span>&#160;            }</div>
+<div class="line"><a name="l00887"></a><span class="lineno">  887</span>&#160;            gains_rms = 0.0;</div>
+<div class="line"><a name="l00888"></a><span class="lineno">  888</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;ls_num; i++)</div>
+<div class="line"><a name="l00889"></a><span class="lineno">  889</span>&#160;                gains_rms += powf(gains[i], 2.0f);</div>
+<div class="line"><a name="l00890"></a><span class="lineno">  890</span>&#160;            gains_rms = sqrtf(gains_rms);</div>
+<div class="line"><a name="l00891"></a><span class="lineno">  891</span>&#160;            <span class="keywordflow">for</span>(i=0; i&lt;ls_num; i++)</div>
+<div class="line"><a name="l00892"></a><span class="lineno">  892</span>&#160;                (*GainMtx)[ns*ls_num+i] = <a class="code" href="group___utilities.html#ga30c447b96fd750ea49c28b918cf0e03d">SAF_MAX</a>(gains[i]/gains_rms, 0.0f);</div>
+<div class="line"><a name="l00893"></a><span class="lineno">  893</span>&#160;        }</div>
+<div class="line"><a name="l00894"></a><span class="lineno">  894</span>&#160;    }</div>
+<div class="line"><a name="l00895"></a><span class="lineno">  895</span>&#160; </div>
+<div class="line"><a name="l00896"></a><span class="lineno">  896</span>&#160;    free(gains);</div>
+<div class="line"><a name="l00897"></a><span class="lineno">  897</span>&#160;}</div>
+<div class="line"><a name="l00898"></a><span class="lineno">  898</span>&#160; </div>
+<div class="line"><a name="l00899"></a><span class="lineno"><a class="line" href="group___v_b_a_p.html#ga7504f2e68479b9c1c6f1b860d5562396">  899</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___v_b_a_p.html#ga7504f2e68479b9c1c6f1b860d5562396">findLsPairs</a></div>
+<div class="line"><a name="l00900"></a><span class="lineno">  900</span>&#160;(</div>
+<div class="line"><a name="l00901"></a><span class="lineno">  901</span>&#160;    <span class="keywordtype">float</span>* ls_dirs_deg,</div>
+<div class="line"><a name="l00902"></a><span class="lineno">  902</span>&#160;    <span class="keywordtype">int</span> L,</div>
+<div class="line"><a name="l00903"></a><span class="lineno">  903</span>&#160;    <span class="keywordtype">int</span>** out_pairs,</div>
+<div class="line"><a name="l00904"></a><span class="lineno">  904</span>&#160;    <span class="keywordtype">int</span>* numOutPairs</div>
+<div class="line"><a name="l00905"></a><span class="lineno">  905</span>&#160;)</div>
+<div class="line"><a name="l00906"></a><span class="lineno">  906</span>&#160;{</div>
+<div class="line"><a name="l00907"></a><span class="lineno">  907</span>&#160;    <span class="keywordtype">int</span> n;</div>
+<div class="line"><a name="l00908"></a><span class="lineno">  908</span>&#160;    <span class="keywordtype">float</span>* ls_dirs_deg_tmp;</div>
+<div class="line"><a name="l00909"></a><span class="lineno">  909</span>&#160;    <span class="keywordtype">int</span>* idx_sorted;</div>
+<div class="line"><a name="l00910"></a><span class="lineno">  910</span>&#160; </div>
+<div class="line"><a name="l00911"></a><span class="lineno">  911</span>&#160;    ls_dirs_deg_tmp = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(L*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00912"></a><span class="lineno">  912</span>&#160;    idx_sorted = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(L*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
+<div class="line"><a name="l00913"></a><span class="lineno">  913</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;L; n++)</div>
+<div class="line"><a name="l00914"></a><span class="lineno">  914</span>&#160;        ls_dirs_deg_tmp[n] = ls_dirs_deg[n*2];</div>
+<div class="line"><a name="l00915"></a><span class="lineno">  915</span>&#160; </div>
+<div class="line"><a name="l00916"></a><span class="lineno">  916</span>&#160;    <span class="comment">/* find the loudspeaker pairs by sorting the angles */</span></div>
+<div class="line"><a name="l00917"></a><span class="lineno">  917</span>&#160;    <a class="code" href="group___utilities.html#ga289eb2f7e45d17a787d0f193641c6b50">sortf</a>(ls_dirs_deg_tmp, NULL, idx_sorted, L, 0);</div>
+<div class="line"><a name="l00918"></a><span class="lineno">  918</span>&#160;    idx_sorted = realloc(idx_sorted, (L+1)*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
+<div class="line"><a name="l00919"></a><span class="lineno">  919</span>&#160;    idx_sorted[L] = idx_sorted[0];</div>
+<div class="line"><a name="l00920"></a><span class="lineno">  920</span>&#160;    (*out_pairs) = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(L*2*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
+<div class="line"><a name="l00921"></a><span class="lineno">  921</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;L; n++){</div>
+<div class="line"><a name="l00922"></a><span class="lineno">  922</span>&#160;        (*out_pairs)[n*2] = idx_sorted[n];</div>
+<div class="line"><a name="l00923"></a><span class="lineno">  923</span>&#160;        (*out_pairs)[n*2+1] = idx_sorted[n+1];</div>
+<div class="line"><a name="l00924"></a><span class="lineno">  924</span>&#160;    }</div>
+<div class="line"><a name="l00925"></a><span class="lineno">  925</span>&#160;    (*numOutPairs) = L;</div>
+<div class="line"><a name="l00926"></a><span class="lineno">  926</span>&#160; </div>
+<div class="line"><a name="l00927"></a><span class="lineno">  927</span>&#160;    free(ls_dirs_deg_tmp);</div>
+<div class="line"><a name="l00928"></a><span class="lineno">  928</span>&#160;    free(idx_sorted);</div>
+<div class="line"><a name="l00929"></a><span class="lineno">  929</span>&#160;}</div>
+<div class="line"><a name="l00930"></a><span class="lineno">  930</span>&#160; </div>
+<div class="line"><a name="l00931"></a><span class="lineno"><a class="line" href="group___v_b_a_p.html#gade399134c19d24848edc869eedf57e98">  931</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___v_b_a_p.html#gade399134c19d24848edc869eedf57e98">invertLsMtx2D</a></div>
+<div class="line"><a name="l00932"></a><span class="lineno">  932</span>&#160;(</div>
+<div class="line"><a name="l00933"></a><span class="lineno">  933</span>&#160;    <span class="keywordtype">float</span>* U_spkr <span class="comment">/* L x 2 */</span>,</div>
+<div class="line"><a name="l00934"></a><span class="lineno">  934</span>&#160;    <span class="keywordtype">int</span>* ls_pairs <span class="comment">/* N_group x 2 */</span>,</div>
+<div class="line"><a name="l00935"></a><span class="lineno">  935</span>&#160;    <span class="keywordtype">int</span> N_pairs,</div>
+<div class="line"><a name="l00936"></a><span class="lineno">  936</span>&#160;    <span class="keywordtype">float</span>** layoutInvMtx<span class="comment">/* N_group x 4 */</span></div>
+<div class="line"><a name="l00937"></a><span class="lineno">  937</span>&#160;)</div>
+<div class="line"><a name="l00938"></a><span class="lineno">  938</span>&#160;{</div>
+<div class="line"><a name="l00939"></a><span class="lineno">  939</span>&#160;    <span class="keywordtype">int</span> i, j, n;</div>
+<div class="line"><a name="l00940"></a><span class="lineno">  940</span>&#160;    <span class="keywordtype">float</span> tempGroup[4];</div>
+<div class="line"><a name="l00941"></a><span class="lineno">  941</span>&#160;    <span class="keywordtype">float</span> tempInv[4];</div>
+<div class="line"><a name="l00942"></a><span class="lineno">  942</span>&#160;    <span class="keywordtype">void</span>* hSinv;</div>
+<div class="line"><a name="l00943"></a><span class="lineno">  943</span>&#160; </div>
+<div class="line"><a name="l00944"></a><span class="lineno">  944</span>&#160;    <span class="comment">/* pre-calculate inversions of the loudspeaker groups and store into matrix */</span></div>
+<div class="line"><a name="l00945"></a><span class="lineno">  945</span>&#160;    (*layoutInvMtx) = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(N_pairs * 4 * <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00946"></a><span class="lineno">  946</span>&#160;    <a class="code" href="group___utilities.html#ga62746f59cf7e134d0d9d64cec05791ae">utility_sinv_create</a>(&amp;hSinv, 2);</div>
+<div class="line"><a name="l00947"></a><span class="lineno">  947</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;N_pairs; n++){</div>
+<div class="line"><a name="l00948"></a><span class="lineno">  948</span>&#160;        <span class="comment">/* get the unit vectors for the current group */</span></div>
+<div class="line"><a name="l00949"></a><span class="lineno">  949</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;2; i++)</div>
+<div class="line"><a name="l00950"></a><span class="lineno">  950</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;2; j++)</div>
+<div class="line"><a name="l00951"></a><span class="lineno">  951</span>&#160;                tempGroup[j*2+i] = U_spkr[ls_pairs[n*2+i]*2 + j];</div>
+<div class="line"><a name="l00952"></a><span class="lineno">  952</span>&#160; </div>
+<div class="line"><a name="l00953"></a><span class="lineno">  953</span>&#160;        <span class="comment">/* get inverse of current group */</span></div>
+<div class="line"><a name="l00954"></a><span class="lineno">  954</span>&#160;        <a class="code" href="group___utilities.html#ga7ded692ae35912f07fda80681f302fd6">utility_sinv</a>(hSinv, tempGroup, tempInv, 2);</div>
+<div class="line"><a name="l00955"></a><span class="lineno">  955</span>&#160; </div>
+<div class="line"><a name="l00956"></a><span class="lineno">  956</span>&#160;        <span class="comment">/* store the vectorized inverse as a row the output */</span></div>
+<div class="line"><a name="l00957"></a><span class="lineno">  957</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;2; i++)</div>
+<div class="line"><a name="l00958"></a><span class="lineno">  958</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;2; j++)</div>
+<div class="line"><a name="l00959"></a><span class="lineno">  959</span>&#160;                (*layoutInvMtx)[n*4+(i*2+j)] = tempInv[j*2+i];</div>
+<div class="line"><a name="l00960"></a><span class="lineno">  960</span>&#160;    }</div>
+<div class="line"><a name="l00961"></a><span class="lineno">  961</span>&#160; </div>
+<div class="line"><a name="l00962"></a><span class="lineno">  962</span>&#160;    <a class="code" href="group___utilities.html#gaeefe466110dad799a2722990d04e02f4">utility_sinv_destroy</a>(&amp;hSinv);</div>
+<div class="line"><a name="l00963"></a><span class="lineno">  963</span>&#160;}</div>
+<div class="line"><a name="l00964"></a><span class="lineno">  964</span>&#160; </div>
+<div class="line"><a name="l00965"></a><span class="lineno"><a class="line" href="group___v_b_a_p.html#ga3e5ad1027139a959f74261cce8dfd67c">  965</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___v_b_a_p.html#ga3e5ad1027139a959f74261cce8dfd67c">vbap2D</a></div>
+<div class="line"><a name="l00966"></a><span class="lineno">  966</span>&#160;(</div>
+<div class="line"><a name="l00967"></a><span class="lineno">  967</span>&#160;    <span class="keywordtype">float</span>* src_dirs,</div>
+<div class="line"><a name="l00968"></a><span class="lineno">  968</span>&#160;    <span class="keywordtype">int</span> src_num,</div>
+<div class="line"><a name="l00969"></a><span class="lineno">  969</span>&#160;    <span class="keywordtype">int</span> ls_num,</div>
+<div class="line"><a name="l00970"></a><span class="lineno">  970</span>&#160;    <span class="keywordtype">int</span>* ls_pairs,</div>
+<div class="line"><a name="l00971"></a><span class="lineno">  971</span>&#160;    <span class="keywordtype">int</span> N_pairs,</div>
+<div class="line"><a name="l00972"></a><span class="lineno">  972</span>&#160;    <span class="keywordtype">float</span>* layoutInvMtx,</div>
+<div class="line"><a name="l00973"></a><span class="lineno">  973</span>&#160;    <span class="keywordtype">float</span>** GainMtx</div>
+<div class="line"><a name="l00974"></a><span class="lineno">  974</span>&#160;)</div>
+<div class="line"><a name="l00975"></a><span class="lineno">  975</span>&#160;{</div>
+<div class="line"><a name="l00976"></a><span class="lineno">  976</span>&#160;    <span class="keywordtype">int</span> i, j, ns;</div>
+<div class="line"><a name="l00977"></a><span class="lineno">  977</span>&#160;    <span class="keywordtype">float</span> azi_rad, min_val, g_tmp_rms, gains_rms;</div>
+<div class="line"><a name="l00978"></a><span class="lineno">  978</span>&#160;    <span class="keywordtype">float</span> u[2], g_tmp[2], ls_invMtx_s[2];</div>
+<div class="line"><a name="l00979"></a><span class="lineno">  979</span>&#160;    <span class="keywordtype">float</span>* gains;</div>
 <div class="line"><a name="l00980"></a><span class="lineno">  980</span>&#160; </div>
-<div class="line"><a name="l00981"></a><span class="lineno">  981</span>&#160;    free(tempGroup);</div>
-<div class="line"><a name="l00982"></a><span class="lineno">  982</span>&#160;    <a class="code" href="group___utilities.html#gaeefe466110dad799a2722990d04e02f4">utility_sinv_destroy</a>(&amp;hSinv);</div>
-<div class="line"><a name="l00983"></a><span class="lineno">  983</span>&#160;}</div>
-<div class="line"><a name="l00984"></a><span class="lineno">  984</span>&#160; </div>
-<div class="line"><a name="l00985"></a><span class="lineno"><a class="line" href="group___v_b_a_p.html#ga3e5ad1027139a959f74261cce8dfd67c">  985</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group___v_b_a_p.html#ga3e5ad1027139a959f74261cce8dfd67c">vbap2D</a></div>
-<div class="line"><a name="l00986"></a><span class="lineno">  986</span>&#160;(</div>
-<div class="line"><a name="l00987"></a><span class="lineno">  987</span>&#160;    <span class="keywordtype">float</span>* src_dirs,</div>
-<div class="line"><a name="l00988"></a><span class="lineno">  988</span>&#160;    <span class="keywordtype">int</span> src_num,</div>
-<div class="line"><a name="l00989"></a><span class="lineno">  989</span>&#160;    <span class="keywordtype">int</span> ls_num,</div>
-<div class="line"><a name="l00990"></a><span class="lineno">  990</span>&#160;    <span class="keywordtype">int</span>* ls_pairs,</div>
-<div class="line"><a name="l00991"></a><span class="lineno">  991</span>&#160;    <span class="keywordtype">int</span> N_pairs,</div>
-<div class="line"><a name="l00992"></a><span class="lineno">  992</span>&#160;    <span class="keywordtype">float</span>* layoutInvMtx,</div>
-<div class="line"><a name="l00993"></a><span class="lineno">  993</span>&#160;    <span class="keywordtype">float</span>** GainMtx</div>
-<div class="line"><a name="l00994"></a><span class="lineno">  994</span>&#160;)</div>
-<div class="line"><a name="l00995"></a><span class="lineno">  995</span>&#160;{</div>
-<div class="line"><a name="l00996"></a><span class="lineno">  996</span>&#160;    <span class="keywordtype">int</span> i, j, ns;</div>
-<div class="line"><a name="l00997"></a><span class="lineno">  997</span>&#160;    <span class="keywordtype">float</span> azi_rad, min_val, g_tmp_rms, gains_rms;</div>
-<div class="line"><a name="l00998"></a><span class="lineno">  998</span>&#160;    <span class="keywordtype">float</span> u[2], g_tmp[2], ls_invMtx_s[2];</div>
-<div class="line"><a name="l00999"></a><span class="lineno">  999</span>&#160;    <span class="keywordtype">float</span>* gains;</div>
-<div class="line"><a name="l01000"></a><span class="lineno"> 1000</span>&#160; </div>
-<div class="line"><a name="l01001"></a><span class="lineno"> 1001</span>&#160;    (*GainMtx) = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(src_num*ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l01002"></a><span class="lineno"> 1002</span>&#160;    gains = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l01003"></a><span class="lineno"> 1003</span>&#160;    <span class="keywordflow">for</span>(ns=0; ns&lt;src_num; ns++){</div>
-<div class="line"><a name="l01004"></a><span class="lineno"> 1004</span>&#160;        azi_rad  = src_dirs[ns]*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/180.0f;</div>
-<div class="line"><a name="l01005"></a><span class="lineno"> 1005</span>&#160;        u[0] = cosf(azi_rad);</div>
-<div class="line"><a name="l01006"></a><span class="lineno"> 1006</span>&#160;        u[1] = sinf(azi_rad);</div>
-<div class="line"><a name="l01007"></a><span class="lineno"> 1007</span>&#160;        memset(gains, 0, ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a name="l01008"></a><span class="lineno"> 1008</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;N_pairs; i++){</div>
-<div class="line"><a name="l01009"></a><span class="lineno"> 1009</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;2; j++)</div>
-<div class="line"><a name="l01010"></a><span class="lineno"> 1010</span>&#160;                ls_invMtx_s[j] = layoutInvMtx[i*4+j];</div>
-<div class="line"><a name="l01011"></a><span class="lineno"> 1011</span>&#160;            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, 1, 2, 1.0,</div>
-<div class="line"><a name="l01012"></a><span class="lineno"> 1012</span>&#160;                        ls_invMtx_s, 2,</div>
-<div class="line"><a name="l01013"></a><span class="lineno"> 1013</span>&#160;                        u, 2, 0.0,</div>
-<div class="line"><a name="l01014"></a><span class="lineno"> 1014</span>&#160;                        &amp;g_tmp[0], 1);</div>
-<div class="line"><a name="l01015"></a><span class="lineno"> 1015</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;2; j++)</div>
-<div class="line"><a name="l01016"></a><span class="lineno"> 1016</span>&#160;                ls_invMtx_s[j] = layoutInvMtx[i*4+j+2];</div>
-<div class="line"><a name="l01017"></a><span class="lineno"> 1017</span>&#160;            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, 1, 2, 1.0,</div>
-<div class="line"><a name="l01018"></a><span class="lineno"> 1018</span>&#160;                        ls_invMtx_s, 2,</div>
-<div class="line"><a name="l01019"></a><span class="lineno"> 1019</span>&#160;                        u, 2, 0.0,</div>
-<div class="line"><a name="l01020"></a><span class="lineno"> 1020</span>&#160;                        &amp;g_tmp[1], 1);</div>
-<div class="line"><a name="l01021"></a><span class="lineno"> 1021</span>&#160;            min_val = 2.23e13f;</div>
-<div class="line"><a name="l01022"></a><span class="lineno"> 1022</span>&#160;            g_tmp_rms = 0.0;</div>
-<div class="line"><a name="l01023"></a><span class="lineno"> 1023</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;2; j++){</div>
-<div class="line"><a name="l01024"></a><span class="lineno"> 1024</span>&#160;                min_val = <a class="code" href="group___utilities.html#ga8f9630332cc11a6cb17128033f07ffdf">SAF_MIN</a>(min_val, g_tmp[j]);</div>
-<div class="line"><a name="l01025"></a><span class="lineno"> 1025</span>&#160;                g_tmp_rms +=  powf(g_tmp[j], 2.0f);</div>
-<div class="line"><a name="l01026"></a><span class="lineno"> 1026</span>&#160;            }</div>
-<div class="line"><a name="l01027"></a><span class="lineno"> 1027</span>&#160;            g_tmp_rms = sqrtf(g_tmp_rms);</div>
-<div class="line"><a name="l01028"></a><span class="lineno"> 1028</span>&#160;            <span class="keywordflow">if</span>(min_val&gt;-0.001){</div>
-<div class="line"><a name="l01029"></a><span class="lineno"> 1029</span>&#160;                <span class="keywordflow">for</span>(j=0; j&lt;2; j++)</div>
-<div class="line"><a name="l01030"></a><span class="lineno"> 1030</span>&#160;                    gains[ls_pairs[i*2+j]] = g_tmp[j]/g_tmp_rms;</div>
-<div class="line"><a name="l01031"></a><span class="lineno"> 1031</span>&#160;            }</div>
-<div class="line"><a name="l01032"></a><span class="lineno"> 1032</span>&#160;        }</div>
-<div class="line"><a name="l01033"></a><span class="lineno"> 1033</span>&#160;        gains_rms = 0.0;</div>
-<div class="line"><a name="l01034"></a><span class="lineno"> 1034</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;ls_num; i++)</div>
-<div class="line"><a name="l01035"></a><span class="lineno"> 1035</span>&#160;            gains_rms += powf(gains[i], 2.0f);</div>
-<div class="line"><a name="l01036"></a><span class="lineno"> 1036</span>&#160;        gains_rms = sqrtf(gains_rms);</div>
-<div class="line"><a name="l01037"></a><span class="lineno"> 1037</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;ls_num; i++)</div>
-<div class="line"><a name="l01038"></a><span class="lineno"> 1038</span>&#160;            (*GainMtx)[ns*ls_num+i] = <a class="code" href="group___utilities.html#ga30c447b96fd750ea49c28b918cf0e03d">SAF_MAX</a>(gains[i]/gains_rms, 0.0f);</div>
-<div class="line"><a name="l01039"></a><span class="lineno"> 1039</span>&#160;    }</div>
-<div class="line"><a name="l01040"></a><span class="lineno"> 1040</span>&#160; </div>
-<div class="line"><a name="l01041"></a><span class="lineno"> 1041</span>&#160;    free(gains);</div>
-<div class="line"><a name="l01042"></a><span class="lineno"> 1042</span>&#160;}</div>
+<div class="line"><a name="l00981"></a><span class="lineno">  981</span>&#160;    (*GainMtx) = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(src_num*ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00982"></a><span class="lineno">  982</span>&#160;    gains = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00983"></a><span class="lineno">  983</span>&#160;    <span class="keywordflow">for</span>(ns=0; ns&lt;src_num; ns++){</div>
+<div class="line"><a name="l00984"></a><span class="lineno">  984</span>&#160;        azi_rad  = src_dirs[ns]*<a class="code" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>/180.0f;</div>
+<div class="line"><a name="l00985"></a><span class="lineno">  985</span>&#160;        u[0] = cosf(azi_rad);</div>
+<div class="line"><a name="l00986"></a><span class="lineno">  986</span>&#160;        u[1] = sinf(azi_rad);</div>
+<div class="line"><a name="l00987"></a><span class="lineno">  987</span>&#160;        memset(gains, 0, ls_num*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a name="l00988"></a><span class="lineno">  988</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;N_pairs; i++){</div>
+<div class="line"><a name="l00989"></a><span class="lineno">  989</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;2; j++)</div>
+<div class="line"><a name="l00990"></a><span class="lineno">  990</span>&#160;                ls_invMtx_s[j] = layoutInvMtx[i*4+j];</div>
+<div class="line"><a name="l00991"></a><span class="lineno">  991</span>&#160;            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, 1, 2, 1.0,</div>
+<div class="line"><a name="l00992"></a><span class="lineno">  992</span>&#160;                        ls_invMtx_s, 2,</div>
+<div class="line"><a name="l00993"></a><span class="lineno">  993</span>&#160;                        u, 2, 0.0,</div>
+<div class="line"><a name="l00994"></a><span class="lineno">  994</span>&#160;                        &amp;g_tmp[0], 1);</div>
+<div class="line"><a name="l00995"></a><span class="lineno">  995</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;2; j++)</div>
+<div class="line"><a name="l00996"></a><span class="lineno">  996</span>&#160;                ls_invMtx_s[j] = layoutInvMtx[i*4+j+2];</div>
+<div class="line"><a name="l00997"></a><span class="lineno">  997</span>&#160;            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, 1, 2, 1.0,</div>
+<div class="line"><a name="l00998"></a><span class="lineno">  998</span>&#160;                        ls_invMtx_s, 2,</div>
+<div class="line"><a name="l00999"></a><span class="lineno">  999</span>&#160;                        u, 2, 0.0,</div>
+<div class="line"><a name="l01000"></a><span class="lineno"> 1000</span>&#160;                        &amp;g_tmp[1], 1);</div>
+<div class="line"><a name="l01001"></a><span class="lineno"> 1001</span>&#160;            min_val = 2.23e13f;</div>
+<div class="line"><a name="l01002"></a><span class="lineno"> 1002</span>&#160;            g_tmp_rms = 0.0;</div>
+<div class="line"><a name="l01003"></a><span class="lineno"> 1003</span>&#160;            <span class="keywordflow">for</span>(j=0; j&lt;2; j++){</div>
+<div class="line"><a name="l01004"></a><span class="lineno"> 1004</span>&#160;                min_val = <a class="code" href="group___utilities.html#ga8f9630332cc11a6cb17128033f07ffdf">SAF_MIN</a>(min_val, g_tmp[j]);</div>
+<div class="line"><a name="l01005"></a><span class="lineno"> 1005</span>&#160;                g_tmp_rms +=  powf(g_tmp[j], 2.0f);</div>
+<div class="line"><a name="l01006"></a><span class="lineno"> 1006</span>&#160;            }</div>
+<div class="line"><a name="l01007"></a><span class="lineno"> 1007</span>&#160;            g_tmp_rms = sqrtf(g_tmp_rms);</div>
+<div class="line"><a name="l01008"></a><span class="lineno"> 1008</span>&#160;            <span class="keywordflow">if</span>(min_val&gt;-0.001){</div>
+<div class="line"><a name="l01009"></a><span class="lineno"> 1009</span>&#160;                <span class="keywordflow">for</span>(j=0; j&lt;2; j++)</div>
+<div class="line"><a name="l01010"></a><span class="lineno"> 1010</span>&#160;                    gains[ls_pairs[i*2+j]] = g_tmp[j]/g_tmp_rms;</div>
+<div class="line"><a name="l01011"></a><span class="lineno"> 1011</span>&#160;            }</div>
+<div class="line"><a name="l01012"></a><span class="lineno"> 1012</span>&#160;        }</div>
+<div class="line"><a name="l01013"></a><span class="lineno"> 1013</span>&#160;        gains_rms = 0.0;</div>
+<div class="line"><a name="l01014"></a><span class="lineno"> 1014</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;ls_num; i++)</div>
+<div class="line"><a name="l01015"></a><span class="lineno"> 1015</span>&#160;            gains_rms += powf(gains[i], 2.0f);</div>
+<div class="line"><a name="l01016"></a><span class="lineno"> 1016</span>&#160;        gains_rms = sqrtf(gains_rms);</div>
+<div class="line"><a name="l01017"></a><span class="lineno"> 1017</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;ls_num; i++)</div>
+<div class="line"><a name="l01018"></a><span class="lineno"> 1018</span>&#160;            (*GainMtx)[ns*ls_num+i] = <a class="code" href="group___utilities.html#ga30c447b96fd750ea49c28b918cf0e03d">SAF_MAX</a>(gains[i]/gains_rms, 0.0f);</div>
+<div class="line"><a name="l01019"></a><span class="lineno"> 1019</span>&#160;    }</div>
+<div class="line"><a name="l01020"></a><span class="lineno"> 1020</span>&#160; </div>
+<div class="line"><a name="l01021"></a><span class="lineno"> 1021</span>&#160;    free(gains);</div>
+<div class="line"><a name="l01022"></a><span class="lineno"> 1022</span>&#160;}</div>
 <div class="ttc" id="aconvhull__3d_8c_html_a65d8828d809e7dc08771d1726fff994c"><div class="ttname"><a href="convhull__3d_8c.html#a65d8828d809e7dc08771d1726fff994c">convhull_3d_build</a></div><div class="ttdeci">void convhull_3d_build(ch_vertex *const in_vertices, const int nVert, int **out_faces, CH_FLOAT **out_cf, CH_FLOAT **out_df, int *nOut_faces)</div><div class="ttdoc">Builds the 3-D convexhull using the quickhull algorithm [1].</div><div class="ttdef"><b>Definition:</b> <a href="convhull__3d_8c_source.html#l00367">convhull_3d.c:368</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga00dfffc88bae83749d1263b68c091f46"><div class="ttname"><a href="group___utilities.html#ga00dfffc88bae83749d1263b68c091f46">saf_print_error</a></div><div class="ttdeci">#define saf_print_error(message)</div><div class="ttdoc">Macro to print a error message along with the filename and line number.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00134">saf_utilities.h:134</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga0fb1cec5cac527df5a9956ee3d137c5c"><div class="ttname"><a href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a></div><div class="ttdeci">#define SAF_PI</div><div class="ttdoc">pi constant (single precision)</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00080">saf_utilities.h:80</a></div></div>
@@ -1122,17 +1102,17 @@ $(document).ready(function(){initNavTree('saf__vbap_8c_source.html',''); initRes
 <div class="ttc" id="agroup___utilities_html_gae190ef14372ec0af61a4ac2da3b2c77d"><div class="ttname"><a href="group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d">utility_svvdot</a></div><div class="ttdeci">void utility_svvdot(const float *a, const float *b, const int len, float *c)</div><div class="ttdoc">Single-precision, vector-vector dot product, i.e.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__veclib_8c_source.html#l01217">saf_utility_veclib.c:1218</a></div></div>
 <div class="ttc" id="agroup___utilities_html_gaeefe466110dad799a2722990d04e02f4"><div class="ttname"><a href="group___utilities.html#gaeefe466110dad799a2722990d04e02f4">utility_sinv_destroy</a></div><div class="ttdeci">void utility_sinv_destroy(void **const phWork)</div><div class="ttdoc">De-allocate the working struct used by utility_sinv()</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__veclib_8c_source.html#l04422">saf_utility_veclib.c:4422</a></div></div>
 <div class="ttc" id="agroup___v_b_a_p_html_ga2213ebfd6740ad40cf8a6be955258b15"><div class="ttname"><a href="group___v_b_a_p.html#ga2213ebfd6740ad40cf8a6be955258b15">findLsTriplets</a></div><div class="ttdeci">void findLsTriplets(float *ls_dirs_deg, int L, int omitLargeTriangles, float **out_vertices, int *numOutVertices, int **out_faces, int *numOutFaces)</div><div class="ttdoc">Computes the 3D convex-hull of a spherical grid of loudspeaker directions.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00498">saf_vbap.c:499</a></div></div>
-<div class="ttc" id="agroup___v_b_a_p_html_ga3e5ad1027139a959f74261cce8dfd67c"><div class="ttname"><a href="group___v_b_a_p.html#ga3e5ad1027139a959f74261cce8dfd67c">vbap2D</a></div><div class="ttdeci">void vbap2D(float *src_dirs, int src_num, int ls_num, int *ls_pairs, int N_pairs, float *layoutInvMtx, float **GainMtx)</div><div class="ttdoc">Calculates 2D VBAP gains for pre-calculated loudspeaker pairs and predefined source positions.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00985">saf_vbap.c:986</a></div></div>
+<div class="ttc" id="agroup___v_b_a_p_html_ga3e5ad1027139a959f74261cce8dfd67c"><div class="ttname"><a href="group___v_b_a_p.html#ga3e5ad1027139a959f74261cce8dfd67c">vbap2D</a></div><div class="ttdeci">void vbap2D(float *src_dirs, int src_num, int ls_num, int *ls_pairs, int N_pairs, float *layoutInvMtx, float **GainMtx)</div><div class="ttdoc">Calculates 2D VBAP gains for pre-calculated loudspeaker pairs and predefined source positions.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00965">saf_vbap.c:966</a></div></div>
 <div class="ttc" id="agroup___v_b_a_p_html_ga4174a71ff53c3fe412364662761592cb"><div class="ttname"><a href="group___v_b_a_p.html#ga4174a71ff53c3fe412364662761592cb">invertLsMtx3D</a></div><div class="ttdeci">void invertLsMtx3D(float *U_spkr, int *ls_groups, int N_group, float **layoutInvMtx)</div><div class="ttdoc">Inverts a 3x3 loudspeaker matrix.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00675">saf_vbap.c:676</a></div></div>
-<div class="ttc" id="agroup___v_b_a_p_html_ga596dc1cf8ebb99e1619877189738cf07"><div class="ttname"><a href="group___v_b_a_p.html#ga596dc1cf8ebb99e1619877189738cf07">getSpreadSrcDirs3D</a></div><div class="ttdeci">void getSpreadSrcDirs3D(float src_azi_rad, float src_elev_rad, float spread, int num_src, int num_rings_3d, float *U_spread)</div><div class="ttdoc">Computes a set of points which surround the source direction given a specific degree of spread.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00718">saf_vbap.c:719</a></div></div>
-<div class="ttc" id="agroup___v_b_a_p_html_ga7504f2e68479b9c1c6f1b860d5562396"><div class="ttname"><a href="group___v_b_a_p.html#ga7504f2e68479b9c1c6f1b860d5562396">findLsPairs</a></div><div class="ttdeci">void findLsPairs(float *ls_dirs_deg, int L, int **out_pairs, int *numOutPairs)</div><div class="ttdoc">Calculates loudspeaker pairs for a circular grid of loudspeaker directions.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00909">saf_vbap.c:910</a></div></div>
+<div class="ttc" id="agroup___v_b_a_p_html_ga596dc1cf8ebb99e1619877189738cf07"><div class="ttname"><a href="group___v_b_a_p.html#ga596dc1cf8ebb99e1619877189738cf07">getSpreadSrcDirs3D</a></div><div class="ttdeci">void getSpreadSrcDirs3D(float src_azi_rad, float src_elev_rad, float spread, int num_src, int num_rings_3d, float *U_spread)</div><div class="ttdoc">Computes a set of points which surround the source direction given a specific degree of spread.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00708">saf_vbap.c:709</a></div></div>
+<div class="ttc" id="agroup___v_b_a_p_html_ga7504f2e68479b9c1c6f1b860d5562396"><div class="ttname"><a href="group___v_b_a_p.html#ga7504f2e68479b9c1c6f1b860d5562396">findLsPairs</a></div><div class="ttdeci">void findLsPairs(float *ls_dirs_deg, int L, int **out_pairs, int *numOutPairs)</div><div class="ttdoc">Calculates loudspeaker pairs for a circular grid of loudspeaker directions.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00899">saf_vbap.c:900</a></div></div>
 <div class="ttc" id="agroup___v_b_a_p_html_gaa24e445a98791a5bbd9f4ecd3c949249"><div class="ttname"><a href="group___v_b_a_p.html#gaa24e445a98791a5bbd9f4ecd3c949249">generateVBAPgainTable3D</a></div><div class="ttdeci">void generateVBAPgainTable3D(float *ls_dirs_deg, int L, int az_res_deg, int el_res_deg, int omitLargeTriangles, int enableDummies, float spread, float **gtable, int *N_gtable, int *nTriangles)</div><div class="ttdoc">Generates a 3-D VBAP gain table based on specified loudspeaker directions, with optional spreading [2...</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00171">saf_vbap.c:172</a></div></div>
 <div class="ttc" id="agroup___v_b_a_p_html_gaa5b0e087cd867a66cf6781570af37403"><div class="ttname"><a href="group___v_b_a_p.html#gaa5b0e087cd867a66cf6781570af37403">generateVBAPgainTable3D_srcs</a></div><div class="ttdeci">void generateVBAPgainTable3D_srcs(float *src_dirs_deg, int S, float *ls_dirs_deg, int L, int omitLargeTriangles, int enableDummies, float spread, float **gtable, int *N_gtable, int *nTriangles)</div><div class="ttdoc">Generates a 3-D VBAP [1] gain table based on specified source and loudspeaker directions,...</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00052">saf_vbap.c:53</a></div></div>
 <div class="ttc" id="agroup___v_b_a_p_html_gaa637de69b5718effebcdb18bef1c3016"><div class="ttname"><a href="group___v_b_a_p.html#gaa637de69b5718effebcdb18bef1c3016">VBAPgainTable2InterpTable</a></div><div class="ttdeci">void VBAPgainTable2InterpTable(float *vbap_gtable, int nTable, int nDirs)</div><div class="ttdoc">Renormalises a VBAP gain table (in-place) so it may be utilised for interpolation of data (for exampl...</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00368">saf_vbap.c:369</a></div></div>
 <div class="ttc" id="agroup___v_b_a_p_html_gaaa67a9d1c155cf65880cbb4529482321"><div class="ttname"><a href="group___v_b_a_p.html#gaaa67a9d1c155cf65880cbb4529482321">generateVBAPgainTable2D_srcs</a></div><div class="ttdeci">void generateVBAPgainTable2D_srcs(float *src_dirs_deg, int S, float *ls_dirs_deg, int L, float **gtable, int *N_gtable, int *nPairs)</div><div class="ttdoc">Generates a 2-D VBAP gain table based on specified source and loudspeaker directions.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00389">saf_vbap.c:390</a></div></div>
 <div class="ttc" id="agroup___v_b_a_p_html_gaaee4a2148d03e19ed807a43d147384f3"><div class="ttname"><a href="group___v_b_a_p.html#gaaee4a2148d03e19ed807a43d147384f3">generateVBAPgainTable2D</a></div><div class="ttdeci">void generateVBAPgainTable2D(float *ls_dirs_deg, int L, int az_res_deg, float **gtable, int *N_gtable, int *nPairs)</div><div class="ttdoc">Generates a 2-D VBAP gain table based on specified loudspeaker directions.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00427">saf_vbap.c:428</a></div></div>
-<div class="ttc" id="agroup___v_b_a_p_html_gad7c1c50795736cd9a19223787ea24f75"><div class="ttname"><a href="group___v_b_a_p.html#gad7c1c50795736cd9a19223787ea24f75">vbap3D</a></div><div class="ttdeci">void vbap3D(float *src_dirs, int src_num, int ls_num, int *ls_groups, int nFaces, float spread, float *layoutInvMtx, float **GainMtx)</div><div class="ttdoc">Calculates 3D VBAP gains given pre-computed loudspeaker triangles for each source direction.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00797">saf_vbap.c:798</a></div></div>
-<div class="ttc" id="agroup___v_b_a_p_html_gade399134c19d24848edc869eedf57e98"><div class="ttname"><a href="group___v_b_a_p.html#gade399134c19d24848edc869eedf57e98">invertLsMtx2D</a></div><div class="ttdeci">void invertLsMtx2D(float *U_spkr, int *ls_pairs, int N_pairs, float **layoutInvMtx)</div><div class="ttdoc">Inverts a 2x2 loudspeaker matrix.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00941">saf_vbap.c:942</a></div></div>
+<div class="ttc" id="agroup___v_b_a_p_html_gad7c1c50795736cd9a19223787ea24f75"><div class="ttname"><a href="group___v_b_a_p.html#gad7c1c50795736cd9a19223787ea24f75">vbap3D</a></div><div class="ttdeci">void vbap3D(float *src_dirs, int src_num, int ls_num, int *ls_groups, int nFaces, float spread, float *layoutInvMtx, float **GainMtx)</div><div class="ttdoc">Calculates 3D VBAP gains given pre-computed loudspeaker triangles for each source direction.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00787">saf_vbap.c:788</a></div></div>
+<div class="ttc" id="agroup___v_b_a_p_html_gade399134c19d24848edc869eedf57e98"><div class="ttname"><a href="group___v_b_a_p.html#gade399134c19d24848edc869eedf57e98">invertLsMtx2D</a></div><div class="ttdeci">void invertLsMtx2D(float *U_spkr, int *ls_pairs, int N_pairs, float **layoutInvMtx)</div><div class="ttdoc">Inverts a 2x2 loudspeaker matrix.</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00931">saf_vbap.c:932</a></div></div>
 <div class="ttc" id="agroup___v_b_a_p_html_gae06c7d731756572e43b85f249ffb81d5"><div class="ttname"><a href="group___v_b_a_p.html#gae06c7d731756572e43b85f249ffb81d5">compressVBAPgainTable3D</a></div><div class="ttdeci">void compressVBAPgainTable3D(float *vbap_gtable, int nTable, int nDirs, float *vbap_gtableComp, int *vbap_gtableIdx)</div><div class="ttdoc">Compresses a VBAP gain table to use less memory and CPU (by removing the elements which are just zero...</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00311">saf_vbap.c:312</a></div></div>
 <div class="ttc" id="agroup___v_b_a_p_html_gaf1c8fd2b18c5ca774c606a5b1ebc7928"><div class="ttname"><a href="group___v_b_a_p.html#gaf1c8fd2b18c5ca774c606a5b1ebc7928">getPvalues</a></div><div class="ttdeci">void getPvalues(float DTT, float *freq, int nFreq, float *pValues)</div><div class="ttdoc">Calculates the frequency dependent pValues, which can be applied to ENERGY normalised VBAP gains,...</div><div class="ttdef"><b>Definition:</b> <a href="saf__vbap_8c_source.html#l00474">saf_vbap.c:475</a></div></div>
 <div class="ttc" id="amd__malloc_8c_html_a86ed7125e02f24d421e080d1be9ca2c4"><div class="ttname"><a href="md__malloc_8c.html#a86ed7125e02f24d421e080d1be9ca2c4">calloc1d</a></div><div class="ttdeci">void * calloc1d(size_t dim1, size_t data_size)</div><div class="ttdoc">1-D calloc (same as calloc, but with error checking)</div><div class="ttdef"><b>Definition:</b> <a href="md__malloc_8c_source.html#l00069">md_malloc.c:69</a></div></div>
@@ -1150,7 +1130,7 @@ $(document).ready(function(){initNavTree('saf__vbap_8c_source.html',''); initRes
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_97f95191d2c7b5fb3b10cd798a66ec79.html">saf_vbap</a></li><li class="navelem"><a class="el" href="saf__vbap_8c.html">saf_vbap.c</a></li>
-    <li class="footer">Generated on Thu Jul 15 2021 13:36:22 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Thu Jul 29 2021 07:40:50 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
     <script type="text/javascript">

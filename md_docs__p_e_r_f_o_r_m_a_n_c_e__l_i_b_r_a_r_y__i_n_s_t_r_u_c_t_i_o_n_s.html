@@ -139,9 +139,13 @@ Other options</h2>
 </div><!-- fragment --><p> Please refer to the documentation to find out where conda installs packages on your platform.</p>
 <h1><a class="anchor" id="autotoc_md17"></a>
 SAF_USE_OPEN_BLAS_AND_LAPACKE</h1>
-<p>For those who would like to use the framework with <a href="https://github.com/xianyi/OpenBLAS">OpenBLAS</a>, note that for Debian/Ubuntu based Linux distributions, the libraries may be installed via:</p>
-<div class="fragment"><div class="line">sudo apt-get install liblapack3 liblapack-dev libopenblas-base libopenblas-dev liblapacke-dev</div>
-</div><!-- fragment --><p>However, if you are not on Linux, or would prefer to have more control over things, then the required libraries may also be built via CMake:</p>
+<p>The framework also supports <a href="https://github.com/xianyi/OpenBLAS">OpenBLAS</a>. However, unlike Intel MKL and Apple Accelerate, the OpenBLAS library does not offer an optimised DFT/FFT, and some vector-vector operations; such as element-wise multiplications and additions. Therefore, consider pairing OpenBLAS with <b>SAF_ENABLE_SIMD</b> (enabling SSE3 and AVX2) and <b>SAF_USE_INTEL_IPP</b> or <b>SAF_USE_FFTW</b>, in which case, the performance of SAF will become roughly on par with e.g. Apple Accelerate; but not quite as fast as Intel MKL.</p>
+<p>For Debian/Ubuntu based Linux distributions the required libraries may be installed via: </p><div class="fragment"><div class="line">sudo apt-get install liblapack3 liblapack-dev libopenblas-base libopenblas-dev liblapacke-dev</div>
+</div><!-- fragment --><p> While Apple Accelerate is the more recommended option for MacOSX users, OpenBLAS may be installed and used with the following: </p><div class="fragment"><div class="line">brew install openblas</div>
+<div class="line">export LDFLAGS=&quot;-L/usr/local/opt/openblas/lib&quot;</div>
+<div class="line">export CPPFLAGS=&quot;-I/usr/local/opt/openblas/include&quot;</div>
+</div><!-- fragment --><p>Windows users can follow the instuctions found <a href="https://github.com/xianyi/OpenBLAS/wiki/How-to-use-OpenBLAS-in-Microsoft-Visual-Studio">here</a>.</p>
+<p>Lastly, you may also instead build the required libraries yourself via CMake. For example:</p>
 <div class="fragment"><div class="line">git clone https://github.com/xianyi/OpenBLAS.git</div>
 <div class="line"># install a fortran compiler if you haven&#39;t already (for lapack support)</div>
 <div class="line">sudo apt-get install gfortran</div>
@@ -150,13 +154,10 @@ SAF_USE_OPEN_BLAS_AND_LAPACKE</h1>
 <div class="line">cd build</div>
 <div class="line">cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=0 -DBUILD_WITHOUT_LAPACK=0</div>
 <div class="line">make </div>
-</div><!-- fragment --><p>The static openblas library can then be found in: </p><div class="fragment"><div class="line">OpenBLAS/build/lib/libopenblas.a</div>
-</div><!-- fragment --><p>The required include files are then found in: </p><div class="fragment"><div class="line">OpenBLAS/lapack-netlib/CBLAS/include</div>
-<div class="line">OpenBLAS/lapack-netlib/LAPACKE/include</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md18"></a>
 SAF_USE_APPLE_ACCELERATE</h1>
-<p>Only for MacOSX users. Simply add the <a href="https://developer.apple.com/documentation/accelerate"><b>Accelerate</b></a> framework to your XCode project, and you're good to go.</p>
-<p>Note that Accelerate also includes an optimised FFT implementation and a number of additional vectorised utility functions which SAF is also able to make use of.</p>
+<p>Only for MacOSX users. Simply link against the <a href="https://developer.apple.com/documentation/accelerate"><b>Accelerate</b></a> framework and you're good to go.</p>
+<p>Note that Accelerate also includes an optimised DFT/FFT implementation and a number of additional vectorised utility functions which SAF is also able to make use of.</p>
 <h1><a class="anchor" id="autotoc_md19"></a>
 SAF_USE_ATLAS</h1>
 <p>Using <a href="http://math-atlas.sourceforge.net/">ATLAS</a> is not recommended, since some LAPACK functions are missing. However, if you don't mind losing some SAF functionality, then this may still be a good choice for your particular project. </p>
@@ -167,7 +168,7 @@ SAF_USE_ATLAS</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 15 2021 13:36:23 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Thu Jul 29 2021 07:40:51 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
     <script type="text/javascript">
