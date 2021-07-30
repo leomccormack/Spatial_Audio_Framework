@@ -483,29 +483,38 @@ void getSHrotMtxReal
 {
     int i, j, M, l, m, n, d, bandIdx, denom;
     float u, v, w;
-    float** R_1,  **R_lm1, **R_l;
-    
+    float R_1[3][3], _R_lm1[64*64], _R_l[64*64];
+    float* R_lm1, *R_l;
+
+    /* Prep */
     M = (L+1) * (L+1);
-    R_1 = (float**)calloc2d(3, 3, sizeof(float));
-    R_lm1 = (float**)calloc2d(M, M, sizeof(float));
-    R_l = (float**)calloc2d(M, M, sizeof(float));
+    if(L<=7){
+        R_lm1 = _R_lm1;
+        R_l = _R_l;
+    }
+    else{
+        R_lm1 = malloc1d(M*M*sizeof(float));
+        R_l = malloc1d(M*M*sizeof(float));
+    }
     memset(RotMtx, 0, M*M*sizeof(float));
     
     /* zeroth-band (l=0) is invariant to rotation */
     RotMtx[0] = 1;
     
     /* the first band (l=1) is directly related to the rotation matrix */
-    R_1[-1+1][-1+1] = Rxyz[1][1];
-    R_1[-1+1][0+1] = Rxyz[1][2];
-    R_1[-1+1][1+1] = Rxyz[1][0];
-    R_1[ 0+1][-1+1] = Rxyz[2][1];
-    R_1[ 0+1][0+1] = Rxyz[2][2];
-    R_1[ 0+1][1+1] = Rxyz[2][0];
-    R_1[ 1+1][-1+1] = Rxyz[0][1];
-    R_1[ 1+1][0+1] = Rxyz[0][2];
-    R_1[ 1+1][1+1] = Rxyz[0][0];
+    R_1[0][0] = Rxyz[1][1];
+    R_1[0][1] = Rxyz[1][2];
+    R_1[0][2] = Rxyz[1][0];
+    R_1[1][0] = Rxyz[2][1];
+    R_1[1][1] = Rxyz[2][2];
+    R_1[1][2] = Rxyz[2][0];
+    R_1[2][0] = Rxyz[0][1];
+    R_1[2][1] = Rxyz[0][2];
+    R_1[2][2] = Rxyz[0][0];
     for (i=1; i<4; i++){
-        memcpy(R_lm1[i-1], R_1[i-1], 3*sizeof(float));
+        R_lm1[(i-1)*M+0] = R_1[i-1][0];
+        R_lm1[(i-1)*M+1] = R_1[i-1][1];
+        R_lm1[(i-1)*M+2] = R_1[i-1][2];
         for (j=1; j<4; j++)
             RotMtx[i*M+j] = R_1[i-1][j-1];
     }
@@ -514,7 +523,7 @@ void getSHrotMtxReal
     bandIdx = 4;
     for(l = 2; l<=L; l++){
         for(i=0; i<2*l+1; i++)
-            memset(R_l[i], 0, (2*l+1) * sizeof(float));
+            memset(R_l + i*M, 0, (2*l+1) * sizeof(float));
         for(m=-l; m<=l; m++){
             for(n=-l; n<=l; n++){
                 /* compute u,v,w terms of Eq.8.1 (Table I) */
@@ -526,28 +535,29 @@ void getSHrotMtxReal
                 
                 /* computes Eq.8.1 */
                 if (u!=0)
-                    u = u* getU(l,m,n,R_1,R_lm1);
+                    u = u* getU(M,l,m,n,R_1,R_lm1);
                 if (v!=0)
-                    v = v* getV(l,m,n,R_1,R_lm1);
+                    v = v* getV(M,l,m,n,R_1,R_lm1);
                 if (w!=0)
-                    w = w* getW(l,m,n,R_1,R_lm1);
+                    w = w* getW(M,l,m,n,R_1,R_lm1);
                 
-                R_l[m+l][n+l] = u+v+w;
+                R_l[(m+l)*M+(n+l)] = u+v+w;
             }
         }
         
         for(i=0; i<2*l+1; i++)
             for(j=0; j<2*l+1; j++)
-                RotMtx[(bandIdx + i)*M + (bandIdx + j)] = R_l[i][j];
-                //RotMtx[(bandIdx+i)*(2*l+1) +(bandIdx+j)] = R_l[i][j];
+                RotMtx[(bandIdx + i)*M + (bandIdx + j)] = R_l[i*M+j];
         for(i=0; i<2*l+1; i++)
-            memcpy(R_lm1[i], R_l[i], (2*l+1) * sizeof(float));
+            memcpy(R_lm1+i*M, R_l + i*M, (2*l+1) * sizeof(float));
         bandIdx += 2*l+1;
     }
-    
-    free(R_1);
-    free(R_lm1);
-    free(R_l);
+
+    /* clean-up */
+    if(L>7){
+        free(R_lm1);
+        free(R_l);
+    }
 }
 
 void computeVelCoeffsMtx

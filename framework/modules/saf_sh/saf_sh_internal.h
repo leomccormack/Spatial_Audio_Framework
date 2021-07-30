@@ -147,19 +147,19 @@ void gaunt_mtx(/* Input arguments */
 /* ========================================================================== */
 
 /** Helper function for getSHrotMtxReal() */
-float getP(int i, int l, int a, int b, float** R_1, float** R_lm1);
+float getP(int M, int i, int l, int a, int b, float R_1[3][3], float* R_lm1);
 
 /** Helper function for getSHrotMtxReal() */
-float getU(int l, int m, int n, float** R_1, float** R_lm1);
+float getU(int M, int l, int m, int n, float R_1[3][3], float* R_lm1);
 
 /** Helper function for getSHrotMtxReal() */
-float getV(int l, int m, int n, float** R_1, float** R_lm1);
+float getV(int M, int l, int m, int n, float R_1[3][3], float* R_lm1);
 
 /** Helper function for getSHrotMtxReal() */
-float getW(int l, int m, int n, float** R_1, float** R_lm1);
+float getW(int M, int l, int m, int n, float R_1[3][3], float* R_lm1);
 
 /** Helper function for getSHrotMtxReal() */
-float getW(int l, int m, int n, float** R_1, float** R_lm1);
+float getW(int M, int l, int m, int n, float R_1[3][3], float* R_lm1);
 
 
 /* ========================================================================== */

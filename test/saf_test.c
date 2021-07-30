@@ -2284,15 +2284,15 @@ void test__getSHcomplex(void){
 }
 
 void test__getSHrotMtxReal(void){
-    int i,j,nSH;
+    int i,j,nSH,order;
     float Rzyx[3][3];
     float** Mrot;
 
     /* Config */
     const float acceptedTolerance = 0.00001f;
-    int order = 22;
 
     /* Rotation matrix for 0,0,0 should be identity */
+    order = 22;
     yawPitchRoll2Rzyx(0.0f, 0.0f, 0.0f, 0, Rzyx);
     nSH = ORDER2NSH(order);
     Mrot = (float**)malloc2d(nSH, nSH, sizeof(float));
