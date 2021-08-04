@@ -1202,6 +1202,10 @@ void utility_cvvmul
     }
     for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
         c[i] = a[i] * b[i];
+#elif __STDC_VERSION__ >= 199901L 
+    int i;
+    for (i = 0; i < len; i++)
+        c[i] = a[i] * b[i];
 #else
     int i;
     for (i = 0; i < len; i++)

@@ -209,7 +209,7 @@
  * implementations found in Intel IPP, Intel MKL and Apple Accelerate are
  * usually faster options.
  *
- * Note, SAF uses the single-precision version (fftw3f.a), which is built with:
+ * Note, SAF uses the single-precision version (fftw3f), which is built with:
  *   $ ./configure --enable-float
  *   $ make
  *

@@ -214,6 +214,29 @@ if(SAF_USE_INTEL_IPP)
 endif()
 
 ############################################################################
+# Enable/Disable FFTW
+if(SAF_USE_FFTW)
+    # Indicate to saf that the saf_sofa_reader module should be enabled
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_FFTW=${SAF_USE_FFTW})
+        
+    # Header path and libs are platform dependent
+    if(MSVC)
+        message(FATAL_ERROR "Incomplete list")
+    elseif(MSYS OR MINGW)
+        message(FATAL_ERROR "Incomplete list")
+    elseif(APPLE) 
+        message(FATAL_ERROR "Incomplete list")
+    elseif(UNIX AND NOT APPLE) 
+        find_library(FFTW_LIBRARY fftw3f HINTS /usr/local/lib)
+        if (NOT FFTW_LIBRARY)
+            message(FATAL_ERROR "FFTW_LIBRARY not found")
+        endif()
+        target_link_libraries(${PROJECT_NAME} PUBLIC ${FFTW_LIBRARY})
+        message(STATUS "Linking FFTW: ${FFTW_LIBRARY}")
+    endif() 
+endif()
+
+############################################################################
 # Enable SIMD intrinsics
 if(SAF_ENABLE_SIMD)
     # Note that you need to pass the appropriate compiler flags to actually
