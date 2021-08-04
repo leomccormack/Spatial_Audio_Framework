@@ -128,15 +128,14 @@ if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL_LP64" OR ${SAF_PERFORMANCE
     target_link_libraries(${PROJECT_NAME} PUBLIC ${INTEL_MKL_LIB} )
 
 elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
-    message(STATUS "Using openBLAS...")
     target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_OPEN_BLAS_AND_LAPACKE=1)
 
     # find and link libraries
     if (NOT DEFINED OPENBLAS_LIBRARY)
-        find_library(OPENBLAS_LIBRARY openblas)
+        find_library(OPENBLAS_LIBRARY openblas HINTS /usr/lib/x86_64-linux-gnu /usr/lib/arm-linux-gnueabihf)
     endif()
     if (NOT DEFINED LAPACKE_LIBRARY)
-        find_library(LAPACKE_LIBRARY lapacke)
+        find_library(LAPACKE_LIBRARY lapacke HINTS /usr/lib/x86_64-linux-gnu /usr/lib/arm-linux-gnueabihf)
     endif()
     target_link_libraries(${PROJECT_NAME} PUBLIC ${OPENBLAS_LIBRARY} ${LAPACKE_LIBRARY})
 
@@ -152,6 +151,8 @@ elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
     if(UNIX)
         target_compile_options(${PROJECT_NAME} PRIVATE -Wno-incompatible-pointer-types)
     endif()
+    
+    message(STATUS "Using OpenBLAS. Linking against: ${OPENBLAS_LIBRARY}; ${LAPACKE_LIBRARY}")
 
 elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_ATLAS")
     message(STATUS "Using ATLAS...")
@@ -290,11 +291,12 @@ if(SAF_ENABLE_SOFA_READER_MODULE)
              )
          endif()
     elseif(UNIX AND NOT APPLE) 
-        find_library(NETCDF_LIBRARY netcdf HINTS /usr/lib/x86_64-linux-gnu)
+        find_library(NETCDF_LIBRARY netcdf HINTS HINTS /usr/lib/x86_64-linux-gnu /usr/lib/arm-linux-gnueabihf)
         if (NOT NETCDF_LIBRARY)
             message(FATAL_ERROR "NETCDF_LIBRARY not found")
         endif()
         target_link_libraries(${PROJECT_NAME} PUBLIC ${NETCDF_LIBRARY})
+        message(STATUS "Linking NETCDF: ${NETCDF_LIBRARY}")
     endif() 
 
 else()
