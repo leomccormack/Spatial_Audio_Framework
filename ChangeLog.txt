@@ -9,6 +9,13 @@ Major and/or breaking changes to the Spatial_Audio_Framework are listed here.
 For descriptions of minor changes and bug fixes, please refer to the git log.
 
 ====================================================================================================
+v1.2.2
+ - General documentation improvements, and also switched to a more modern doxygen theme
+ - More Intel IPP functions are favoured and called if SAF_USE_INTEL_IPP is defined
+ - Added a solo/mute feature for the ambi_enc and binauraliser examples
+ - Some more minor optimisations
+
+====================================================================================================
 v1.2.1
  - Added (optional) AVX and AVX-512 support, when using: SAF_ENABLE_SIMD
  - Added (optional) FFTW support for saf_utility_fft, via the new flag: SAF_USE_FFTW
