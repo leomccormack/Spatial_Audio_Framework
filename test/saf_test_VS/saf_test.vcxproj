@@ -111,17 +111,17 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);SAF_USE_INTEL_MKL_LP64;SAF_ENABLE_SOFA_READER_MODULE;SAF_ENABLE_EXAMPLES_TESTS;_CRT_SECURE_NO_WARNINGS;SAF_ENABLE_TRACKER_MODULE;SAF_DISABLE_PRINT_VERSION</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);SAF_USE_INTEL_MKL_LP64;SAF_ENABLE_SOFA_READER_MODULE;SAF_ENABLE_EXAMPLES_TESTS;_CRT_SECURE_NO_WARNINGS;SAF_ENABLE_TRACKER_MODULE;SAF_USE_INTEL_IPP</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../framework/include;../../examples/include;../../dependencies/Win64/include;C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include;../timer;../unity;../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../framework/include;../../examples/include;../../dependencies/Win64/include;C:/Program Files (x86)/Intel/oneAPI/mkl/latest/include;../timer;../unity;../;C:/Program Files (x86)/Intel/oneAPI/ipp/latest/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../dependencies/Win64/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>saf_mkl_custom_lp64.lib;libszip.lib;libzlib.lib;libhdf5.lib;libhdf5_hl.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>saf_mkl_custom_lp64.lib;libszip.lib;libzlib.lib;libhdf5.lib;libhdf5_hl.lib;netcdf.lib;saf_ipp_custom.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -154,10 +154,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);SAF_USE_INTEL_MKL_LP64;SAF_ENABLE_SOFA_READER_MODULE;SAF_ENABLE_EXAMPLES_TESTS;_CRT_SECURE_NO_WARNINGS;SAF_ENABLE_TRACKER_MODULE;SAF_DISABLE_PRINT_VERSION</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);SAF_USE_INTEL_MKL_LP64;SAF_ENABLE_SOFA_READER_MODULE;SAF_ENABLE_EXAMPLES_TESTS;_CRT_SECURE_NO_WARNINGS;SAF_ENABLE_TRACKER_MODULE;SAF_USE_INTEL_IPP</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../framework/include;../../examples/include;../../dependencies/Win64/include;C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include;../timer;../unity;../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../framework/include;../../examples/include;../../dependencies/Win64/include;C:/Program Files (x86)/Intel/oneAPI/mkl/latest/include;../timer;../unity;../;C:/Program Files (x86)/Intel/oneAPI/ipp/latest/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -165,7 +165,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../dependencies/Win64/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>saf_mkl_custom_lp64.lib;libszip.lib;libzlib.lib;libhdf5.lib;libhdf5_hl.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>saf_mkl_custom_lp64.lib;libszip.lib;libzlib.lib;libhdf5.lib;libhdf5_hl.lib;netcdf.lib;saf_ipp_custom.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

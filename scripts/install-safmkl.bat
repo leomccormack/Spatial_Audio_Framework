@@ -9,7 +9,7 @@ ECHO ***************************************************************************
 ECHO ************** Custom MKL library installer for the Spatial_Audio_Framework **************
 ECHO ******************************************************************************************
 ECHO.
-ECHO This batch script will build the required saf_mkl_custom and saf_mkl_custom files
+ECHO This batch script will build the required saf_mkl_custom files
 ECHO and copy them into:
 ECHO   - "Spatial_Audio_Framework/dependencies/Win64/lib/saf_mkl_custom_[lp64|ilp64].lib" 
 ECHO   - "C:/Windows/System32/saf_mkl_custom[lp64|ilp64].dll".  

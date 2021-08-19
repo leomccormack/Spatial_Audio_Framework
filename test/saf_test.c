@@ -59,7 +59,7 @@ UnityConcludeTest(); timerResult();
 
 /* Main test program */
 int main_test(void) {
-    printf("%s", SAF_VERSION_BANNER);
+    printf("%s\n", SAF_VERSION_BANNER);
     printf("%s\n", SAF_EXTERNALS_CONFIGURATION_STRING);
     printf("Executing the Spatial_Audio_Framework unit testing program");
 #ifdef NDEBUG
