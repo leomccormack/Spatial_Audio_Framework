@@ -72,12 +72,12 @@ var NAVTREEINDEX =
 "saf__test_8h.html#aa313ae6eb64e8ab4db6b5482882ac348",
 "safmex__faf___i_i_r_filterbank_8c.html#ab15c3c966913d7e736acff47c03445f6",
 "speex__resampler_8h_source.html",
-"structambi__bin__data.html#a59c6558aa8b755695961d53cba006a35",
-"structbinauraliser__data.html#ae00dde27d04f7e101f729a93a6bb5442",
-"structims__scene__data.html#a9fb5cdf534279ebf0c70f1987feec8eb",
-"structsaf__fft__data.html#aaf1cb09e728a2f601d14506722c1d772",
-"structspreader__data.html#a24a5c34a52ed721c0e30f8448ae4402a",
-"structutility__zeigmp__data.html#a8f242250d53218709c3dfadec7f9dc8a"
+"structambi__bin__data.html#a5ae948f5933ee93d5f16bff00c9b6e32",
+"structbinauraliser__data.html#ae26b562f3456eb51ff8d164e18c238c3",
+"structims__scene__data.html#aa535ea315425398b5b906763e6acce1c",
+"structsaf__fft__data.html#ac93e9c5663d86061791f77e05314d698",
+"structspreader__data.html#a3754d45d4d064269ed716c36be913b32",
+"structutility__zeigmp__data.html#aa070bd47cebecd3190c6b71ac823cc1f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

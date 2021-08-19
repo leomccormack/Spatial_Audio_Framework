@@ -121,22 +121,22 @@ Functions</h2></td></tr>
 <tr class="memitem:a2b9349c53b5355b4bf9887554d3c7c69"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__sh__internal_8h.html#a2b9349c53b5355b4bf9887554d3c7c69">gaunt_mtx</a> (int N1, int N2, int N, float *A)</td></tr>
 <tr class="memdesc:a2b9349c53b5355b4bf9887554d3c7c69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a matrix of Guant coefficients.  <a href="saf__sh__internal_8h.html#a2b9349c53b5355b4bf9887554d3c7c69">More...</a><br /></td></tr>
 <tr class="separator:a2b9349c53b5355b4bf9887554d3c7c69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa613047661f131a4f4f292cfd4a6692a"><td class="memItemLeft" align="right" valign="top"><a id="aa613047661f131a4f4f292cfd4a6692a"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__sh__internal_8h.html#aa613047661f131a4f4f292cfd4a6692a">getP</a> (int i, int l, int a, int b, float **R_1, float **R_lm1)</td></tr>
-<tr class="memdesc:aa613047661f131a4f4f292cfd4a6692a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function for <a class="el" href="group___s_h.html#gabb0681d04a190b7e1fe3d362f301f63e" title="Generates a real-valued spherical harmonic rotation matrix [1] based on a 3x3 rotation matrix (see qu...">getSHrotMtxReal()</a> <br /></td></tr>
-<tr class="separator:aa613047661f131a4f4f292cfd4a6692a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6fd56a5ce253ca1f02e1e2c890977a92"><td class="memItemLeft" align="right" valign="top"><a id="a6fd56a5ce253ca1f02e1e2c890977a92"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__sh__internal_8h.html#a6fd56a5ce253ca1f02e1e2c890977a92">getU</a> (int l, int m, int n, float **R_1, float **R_lm1)</td></tr>
-<tr class="memdesc:a6fd56a5ce253ca1f02e1e2c890977a92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function for <a class="el" href="group___s_h.html#gabb0681d04a190b7e1fe3d362f301f63e" title="Generates a real-valued spherical harmonic rotation matrix [1] based on a 3x3 rotation matrix (see qu...">getSHrotMtxReal()</a> <br /></td></tr>
-<tr class="separator:a6fd56a5ce253ca1f02e1e2c890977a92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af46e49500ff2723b3e1ff9eaf1d6bbde"><td class="memItemLeft" align="right" valign="top"><a id="af46e49500ff2723b3e1ff9eaf1d6bbde"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__sh__internal_8h.html#af46e49500ff2723b3e1ff9eaf1d6bbde">getV</a> (int l, int m, int n, float **R_1, float **R_lm1)</td></tr>
-<tr class="memdesc:af46e49500ff2723b3e1ff9eaf1d6bbde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function for <a class="el" href="group___s_h.html#gabb0681d04a190b7e1fe3d362f301f63e" title="Generates a real-valued spherical harmonic rotation matrix [1] based on a 3x3 rotation matrix (see qu...">getSHrotMtxReal()</a> <br /></td></tr>
-<tr class="separator:af46e49500ff2723b3e1ff9eaf1d6bbde"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a44edd81349209fabd60a33503a309352"><td class="memItemLeft" align="right" valign="top"><a id="a44edd81349209fabd60a33503a309352"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__sh__internal_8h.html#a44edd81349209fabd60a33503a309352">getW</a> (int l, int m, int n, float **R_1, float **R_lm1)</td></tr>
-<tr class="memdesc:a44edd81349209fabd60a33503a309352"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function for <a class="el" href="group___s_h.html#gabb0681d04a190b7e1fe3d362f301f63e" title="Generates a real-valued spherical harmonic rotation matrix [1] based on a 3x3 rotation matrix (see qu...">getSHrotMtxReal()</a> <br /></td></tr>
-<tr class="separator:a44edd81349209fabd60a33503a309352"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56e9fc0d202cd5b645f5e2efb36c0a38"><td class="memItemLeft" align="right" valign="top"><a id="a56e9fc0d202cd5b645f5e2efb36c0a38"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__sh__internal_8h.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a> (int M, int i, int l, int a, int b, float R_1[3][3], float *R_lm1)</td></tr>
+<tr class="memdesc:a56e9fc0d202cd5b645f5e2efb36c0a38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function for <a class="el" href="group___s_h.html#gabb0681d04a190b7e1fe3d362f301f63e" title="Generates a real-valued spherical harmonic rotation matrix [1] based on a 3x3 rotation matrix (see qu...">getSHrotMtxReal()</a> <br /></td></tr>
+<tr class="separator:a56e9fc0d202cd5b645f5e2efb36c0a38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50230a86e4b93261cf85ed4769f612b8"><td class="memItemLeft" align="right" valign="top"><a id="a50230a86e4b93261cf85ed4769f612b8"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__sh__internal_8h.html#a50230a86e4b93261cf85ed4769f612b8">getU</a> (int M, int l, int m, int n, float R_1[3][3], float *R_lm1)</td></tr>
+<tr class="memdesc:a50230a86e4b93261cf85ed4769f612b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function for <a class="el" href="group___s_h.html#gabb0681d04a190b7e1fe3d362f301f63e" title="Generates a real-valued spherical harmonic rotation matrix [1] based on a 3x3 rotation matrix (see qu...">getSHrotMtxReal()</a> <br /></td></tr>
+<tr class="separator:a50230a86e4b93261cf85ed4769f612b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2436a8a1f0975825fc5879261d88544b"><td class="memItemLeft" align="right" valign="top"><a id="a2436a8a1f0975825fc5879261d88544b"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__sh__internal_8h.html#a2436a8a1f0975825fc5879261d88544b">getV</a> (int M, int l, int m, int n, float R_1[3][3], float *R_lm1)</td></tr>
+<tr class="memdesc:a2436a8a1f0975825fc5879261d88544b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function for <a class="el" href="group___s_h.html#gabb0681d04a190b7e1fe3d362f301f63e" title="Generates a real-valued spherical harmonic rotation matrix [1] based on a 3x3 rotation matrix (see qu...">getSHrotMtxReal()</a> <br /></td></tr>
+<tr class="separator:a2436a8a1f0975825fc5879261d88544b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a752f5dda971019e2d76326511e8ea096"><td class="memItemLeft" align="right" valign="top"><a id="a752f5dda971019e2d76326511e8ea096"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__sh__internal_8h.html#a752f5dda971019e2d76326511e8ea096">getW</a> (int M, int l, int m, int n, float R_1[3][3], float *R_lm1)</td></tr>
+<tr class="memdesc:a752f5dda971019e2d76326511e8ea096"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function for <a class="el" href="group___s_h.html#gabb0681d04a190b7e1fe3d362f301f63e" title="Generates a real-valued spherical harmonic rotation matrix [1] based on a 3x3 rotation matrix (see qu...">getSHrotMtxReal()</a> <br /></td></tr>
+<tr class="separator:a752f5dda971019e2d76326511e8ea096"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9513e92c72b6534cb176e863d8929868"><td class="memItemLeft" align="right" valign="top"><a id="a9513e92c72b6534cb176e863d8929868"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__sh__internal_8h.html#a9513e92c72b6534cb176e863d8929868">getWnimu</a> (int order, int mm, int ni, int mu, double *Wnimu)</td></tr>
 <tr class="memdesc:a9513e92c72b6534cb176e863d8929868"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function for <a class="el" href="group___s_h.html#ga37dbabb094421f7d62d3bdf7639994e4" title="Creates an instance of the spherical harmonic domain ESPRIT-based direction of arrival estimator.">sphESPRIT_create()</a> <br /></td></tr>
@@ -265,7 +265,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf_
 <p>Helper function for <a class="el" href="group___s_h.html#ga37dbabb094421f7d62d3bdf7639994e4" title="Creates an instance of the spherical harmonic domain ESPRIT-based direction of arrival estimator.">sphESPRIT_create()</a> </p>
 <p>+1</p>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh__internal_8c_source.html#l00347">347</a> of file <a class="el" href="saf__sh__internal_8c_source.html">saf_sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh__internal_8c_source.html#l00351">351</a> of file <a class="el" href="saf__sh__internal_8c_source.html">saf_sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -344,7 +344,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf_
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_a3800911dd78ba56a8d7acc21219fcab.html">saf_sh</a></li><li class="navelem"><a class="el" href="saf__sh__internal_8h.html">saf_sh_internal.h</a></li>
-    <li class="footer">Generated on Wed Aug 4 2021 12:09:57 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Thu Aug 19 2021 13:33:14 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
     <script type="text/javascript">

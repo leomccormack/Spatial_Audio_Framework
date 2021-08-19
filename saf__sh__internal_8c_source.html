@@ -218,260 +218,264 @@ $(document).ready(function(){initNavTree('saf__sh__internal_8c_source.html','');
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="comment">/* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination</span></div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment"> * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */</span></div>
-<div class="line"><a name="l00149"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">  149</a></span>&#160;<span class="keywordtype">float</span> <a class="code" href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">getP</a></div>
+<div class="line"><a name="l00149"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">  149</a></span>&#160;<span class="keywordtype">float</span> <a class="code" href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a></div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;(</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="keywordtype">int</span> i,</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keywordtype">int</span> l,</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keywordtype">int</span> a,</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="keywordtype">int</span> b,</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordtype">float</span>** R_1,</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordtype">float</span>** R_lm1</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;)</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;{</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordtype">float</span> ret, ri1, rim1, ri0;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    </div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    ri1 = R_1[i + 1][1 + 1];</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    rim1 = R_1[i + 1][-1 + 1];</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    ri0 = R_1[i + 1][0 + 1];</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    </div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keywordflow">if</span> (b == -l)</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        ret = ri1 * R_lm1[a + l - 1][0] + rim1 * R_lm1[a + l - 1][2 * l - 2];</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        <span class="keywordflow">if</span> (b == l)</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;            ret = ri1*R_lm1[a + l - 1][2 * l - 2] - rim1 * R_lm1[a + l - 1][0];</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;            ret = ri0 * R_lm1[a + l - 1][b + l - 1];</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    }</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    </div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="keywordflow">return</span> ret;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;}</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="comment">/* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination</span></div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment"> * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#a6fd56a5ce253ca1f02e1e2c890977a92">  179</a></span>&#160;<span class="keywordtype">float</span> <a class="code" href="saf__sh__internal_8c.html#a6fd56a5ce253ca1f02e1e2c890977a92">getU</a></div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;(</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <span class="keywordtype">int</span> l,</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordtype">int</span> m,</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordtype">int</span> n,</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keywordtype">float</span>** R_1,</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="keywordtype">float</span>** R_lm1</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;)</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;{</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">getP</a>(0, l, m, n, R_1, R_lm1);</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;}</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160; </div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;<span class="comment">/* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination</span></div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="comment"> * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */</span></div>
-<div class="line"><a name="l00193"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#af46e49500ff2723b3e1ff9eaf1d6bbde">  193</a></span>&#160;<span class="keywordtype">float</span> <a class="code" href="saf__sh__internal_8c.html#af46e49500ff2723b3e1ff9eaf1d6bbde">getV</a></div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;(</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keywordtype">int</span> l,</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <span class="keywordtype">int</span> m,</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="keywordtype">int</span> n,</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keywordtype">float</span>** R_1,</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    <span class="keywordtype">float</span>** R_lm1</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;)</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;{</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    <span class="keywordtype">int</span> d;</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="keywordtype">float</span> ret, p0, p1;</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    </div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    <span class="keywordflow">if</span> (m == 0) {</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        p0 = <a class="code" href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">getP</a>(1, l, 1, n, R_1, R_lm1);</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        p1 = <a class="code" href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">getP</a>(-1, l, -1, n, R_1, R_lm1);</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        ret = p0 + p1;</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    }</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        <span class="keywordflow">if</span> (m&gt;0) {</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;            d = m == 1 ? 1 : 0;</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;            p0 = <a class="code" href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">getP</a>(1, l, m - 1, n, R_1, R_lm1);</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;            p1 = <a class="code" href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">getP</a>(-1, l, -m + 1, n, R_1, R_lm1);</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;            ret = p0*sqrtf(1.0f + d) - p1*(1.0f - d);</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        }</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            d = m == -1 ? 1 : 0;</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            p0 = <a class="code" href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">getP</a>(1, l, m + 1, n, R_1, R_lm1);</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            p1 = <a class="code" href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">getP</a>(-1, l, -m - 1, n, R_1, R_lm1);</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            ret = p0*(1.0f - (float)d) + p1*sqrtf(1.0f + (<span class="keywordtype">float</span>)d);</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;        }</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    }</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    </div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <span class="keywordflow">return</span> ret;</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;}</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="comment">/* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination</span></div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="comment"> * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */</span></div>
-<div class="line"><a name="l00230"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#a44edd81349209fabd60a33503a309352">  230</a></span>&#160;<span class="keywordtype">float</span> <a class="code" href="saf__sh__internal_8c.html#a44edd81349209fabd60a33503a309352">getW</a></div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;(</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    <span class="keywordtype">int</span> l,</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="keywordtype">int</span> m,</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    <span class="keywordtype">int</span> n,</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    <span class="keywordtype">float</span>** R_1,</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="keywordtype">float</span>** R_lm1</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;)</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;{</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keywordtype">float</span> ret, p0, p1;</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    ret = 0.0f;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    </div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    <span class="keywordflow">if</span> (m != 0) {</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        <span class="keywordflow">if</span> (m&gt;0) {</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;            p0 = <a class="code" href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">getP</a>(1, l, m + 1, n, R_1, R_lm1);</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            p1 = <a class="code" href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">getP</a>(-1, l, -m - 1, n, R_1, R_lm1);</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;            ret = p0 + p1;</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        }</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            p0 = <a class="code" href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">getP</a>(1, l, m - 1, n, R_1, R_lm1);</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            p1 = <a class="code" href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">getP</a>(-1, l, -m + 1, n, R_1, R_lm1);</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            ret = p0 - p1;</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        }</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    }</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keywordflow">return</span> ret;</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;}</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160; </div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="comment">/*                        Internal functions for sphESPRIT                    */</span></div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="keywordtype">int</span> M,</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keywordtype">int</span> i,</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keywordtype">int</span> l,</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="keywordtype">int</span> a,</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordtype">int</span> b,</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordtype">float</span> R_1[3][3],</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="keywordtype">float</span>* R_lm1</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;)</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;{</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordtype">float</span> ret, ri1, rim1, ri0;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    </div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    ri1 = R_1[i+1][2];</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    rim1 = R_1[i+1][0];</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    ri0 = R_1[i+1][1];</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    </div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordflow">if</span> (b == -l)</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        ret = ri1 * R_lm1[(a+l-1)*M+0] + rim1 * R_lm1[(a+l-1)*M+(2*l-2)];</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        <span class="keywordflow">if</span> (b == l)</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;            ret = ri1*R_lm1[(a+l-1)*M+(2*l-2)] - rim1 * R_lm1[(a+l-1)*M];</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;            ret = ri0 * R_lm1[(a+l-1)*M+(b+l-1)];</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    }</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    </div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;}</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160; </div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment">/* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment"> * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#a50230a86e4b93261cf85ed4769f612b8">  180</a></span>&#160;<span class="keywordtype">float</span> <a class="code" href="saf__sh__internal_8c.html#a50230a86e4b93261cf85ed4769f612b8">getU</a></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;(</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordtype">int</span> M,</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordtype">int</span> l,</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keywordtype">int</span> m,</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="keywordtype">int</span> n,</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordtype">float</span> R_1[3][3],</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="keywordtype">float</span>* R_lm1</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;)</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;{</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a>(M, 0, l, m, n, R_1, R_lm1);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;}</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160; </div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;<span class="comment">/* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination</span></div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;<span class="comment"> * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */</span></div>
+<div class="line"><a name="l00195"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#a2436a8a1f0975825fc5879261d88544b">  195</a></span>&#160;<span class="keywordtype">float</span> <a class="code" href="saf__sh__internal_8c.html#a2436a8a1f0975825fc5879261d88544b">getV</a></div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;(</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="keywordtype">int</span> M,</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keywordtype">int</span> l,</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    <span class="keywordtype">int</span> m,</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    <span class="keywordtype">int</span> n,</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <span class="keywordtype">float</span> R_1[3][3],</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    <span class="keywordtype">float</span>* R_lm1</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;)</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;{</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    <span class="keywordtype">int</span> d;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keywordtype">float</span> ret, p0, p1;</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    </div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordflow">if</span> (m == 0) {</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        p0 = <a class="code" href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a>(M, 1, l, 1, n, R_1, R_lm1);</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        p1 = <a class="code" href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a>(M, -1, l, -1, n, R_1, R_lm1);</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        ret = p0 + p1;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    }</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        <span class="keywordflow">if</span> (m&gt;0) {</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;            d = m == 1 ? 1 : 0;</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;            p0 = <a class="code" href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a>(M, 1, l, m - 1, n, R_1, R_lm1);</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;            p1 = <a class="code" href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a>(M, -1, l, -m + 1, n, R_1, R_lm1);</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            ret = p0*sqrtf(1.0f + d) - p1*(1.0f - d);</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        }</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            d = m == -1 ? 1 : 0;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;            p0 = <a class="code" href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a>(M, 1, l, m + 1, n, R_1, R_lm1);</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;            p1 = <a class="code" href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a>(M, -1, l, -m - 1, n, R_1, R_lm1);</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;            ret = p0*(1.0f - (float)d) + p1*sqrtf(1.0f + (<span class="keywordtype">float</span>)d);</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        }</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    }</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    </div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;}</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="comment">/* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="comment"> * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */</span></div>
+<div class="line"><a name="l00233"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#a752f5dda971019e2d76326511e8ea096">  233</a></span>&#160;<span class="keywordtype">float</span> <a class="code" href="saf__sh__internal_8c.html#a752f5dda971019e2d76326511e8ea096">getW</a></div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;(</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    <span class="keywordtype">int</span> M,</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="keywordtype">int</span> l,</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="keywordtype">int</span> m,</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <span class="keywordtype">int</span> n,</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keywordtype">float</span> R_1[3][3],</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keywordtype">float</span>* R_lm1</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;)</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;{</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordtype">float</span> ret, p0, p1;</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    ret = 0.0f;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    </div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    <span class="keywordflow">if</span> (m != 0) {</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        <span class="keywordflow">if</span> (m&gt;0) {</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;            p0 = <a class="code" href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a>(M, 1, l, m + 1, n, R_1, R_lm1);</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            p1 = <a class="code" href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a>(M, -1, l, -m - 1, n, R_1, R_lm1);</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            ret = p0 + p1;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        }</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            p0 = <a class="code" href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a>(M, 1, l, m - 1, n, R_1, R_lm1);</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            p1 = <a class="code" href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a>(M, -1, l, -m + 1, n, R_1, R_lm1);</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            ret = p0 - p1;</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        }</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    }</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;}</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
-<div class="line"><a name="l00262"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#a9513e92c72b6534cb176e863d8929868">  262</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="saf__sh__internal_8c.html#a9513e92c72b6534cb176e863d8929868">getWnimu</a></div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;(</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keywordtype">int</span> order,</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="keywordtype">int</span> mm,</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="keywordtype">int</span> ni,</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    <span class="keywordtype">int</span> mu,</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    <span class="keywordtype">double</span>* Wnimu</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;)</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;{</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keywordtype">int</span> i, n, n2_1, ind, len;</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="keywordtype">double</span>* nm, *nimu, *w_nimu;</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160; </div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    len = order*order;</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    nm = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*2*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    nimu = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*2*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    w_nimu = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    ind = 0;</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;=order-1; n++){</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        n2_1 = 2*n+1;</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;n2_1; i++, ind++){</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;            nm[ind*2] = (double)n;</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;            nm[ind*2+1] = -(double)n+(<span class="keywordtype">double</span>)i;</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        }</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    }</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    <span class="keywordflow">if</span>(mm==1){</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;len; i++){</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            nimu[i*2] = nm[i*2]+(double)ni;</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            nimu[i*2+1] = nm[i*2+1]+(double)mu;</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;        }</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    }</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    <span class="keywordflow">else</span> <span class="comment">/* mm==-1 */</span>{</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;len; i++){</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            nimu[i*2] = nm[i*2]+(double)ni;</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;            nimu[i*2+1] = -nm[i*2+1]+(double)mu;</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;        }</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    }</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;len; i++)</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        w_nimu[i] = sqrt( (nimu[i*2]-nimu[i*2+1]-1.0)*(nimu[i*2]-nimu[i*2+1])/((2.0*nimu[i*2]-1.0)*(2.0*nimu[i*2]+1.0)) );</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    memset(Wnimu, 0, len*len*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;len; i++)</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        Wnimu[i*len+i] = w_nimu[i];</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160; </div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    free(nm);</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    free(nimu);</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    free(w_nimu);</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;}</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160; </div>
-<div class="line"><a name="l00309"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#a0998cda3d3808f3ef6dae269f5bb2f82">  309</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="saf__sh__internal_8c.html#a0998cda3d3808f3ef6dae269f5bb2f82">getVnimu</a></div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;(</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="keywordtype">int</span> order,</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    <span class="keywordtype">int</span> ni,</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    <span class="keywordtype">int</span> mu,</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    <span class="keywordtype">double</span>* Vnimu</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;)</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;{</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    <span class="keywordtype">int</span> i, n, n2_1, ind, len;</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="keywordtype">double</span>* nm, *nimu, *v_nimu;</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160; </div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    len = order*order;</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    nm = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*2*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    nimu = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*2*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    v_nimu = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    ind = 0;</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;=order-1; n++){</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        n2_1 = 2*n+1;</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;n2_1; i++, ind++){</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;            nm[ind*2] = (double)n;</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;            nm[ind*2+1] = -(double)n+(<span class="keywordtype">double</span>)i;</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;        }</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    }</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;len; i++){</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        nimu[i*2] = nm[i*2]+(double)ni;</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;        nimu[i*2+1] = nm[i*2+1]+(double)mu;</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="comment">/*                        Internal functions for sphESPRIT                    */</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
+<div class="line"><a name="l00266"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#a9513e92c72b6534cb176e863d8929868">  266</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="saf__sh__internal_8c.html#a9513e92c72b6534cb176e863d8929868">getWnimu</a></div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;(</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    <span class="keywordtype">int</span> order,</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    <span class="keywordtype">int</span> mm,</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keywordtype">int</span> ni,</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keywordtype">int</span> mu,</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="keywordtype">double</span>* Wnimu</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;)</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;{</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <span class="keywordtype">int</span> i, n, n2_1, ind, len;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keywordtype">double</span>* nm, *nimu, *w_nimu;</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    len = order*order;</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    nm = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*2*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    nimu = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*2*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    w_nimu = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    ind = 0;</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;=order-1; n++){</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        n2_1 = 2*n+1;</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;n2_1; i++, ind++){</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;            nm[ind*2] = (double)n;</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;            nm[ind*2+1] = -(double)n+(<span class="keywordtype">double</span>)i;</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;        }</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    }</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    <span class="keywordflow">if</span>(mm==1){</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;len; i++){</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;            nimu[i*2] = nm[i*2]+(double)ni;</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            nimu[i*2+1] = nm[i*2+1]+(double)mu;</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        }</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    }</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="keywordflow">else</span> <span class="comment">/* mm==-1 */</span>{</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;len; i++){</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;            nimu[i*2] = nm[i*2]+(double)ni;</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;            nimu[i*2+1] = -nm[i*2+1]+(double)mu;</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;        }</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    }</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;len; i++)</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;        w_nimu[i] = sqrt( (nimu[i*2]-nimu[i*2+1]-1.0)*(nimu[i*2]-nimu[i*2+1])/((2.0*nimu[i*2]-1.0)*(2.0*nimu[i*2]+1.0)) );</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    memset(Wnimu, 0, len*len*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;len; i++)</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        Wnimu[i*len+i] = w_nimu[i];</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160; </div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    free(nm);</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    free(nimu);</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    free(w_nimu);</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;}</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160; </div>
+<div class="line"><a name="l00313"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#a0998cda3d3808f3ef6dae269f5bb2f82">  313</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="saf__sh__internal_8c.html#a0998cda3d3808f3ef6dae269f5bb2f82">getVnimu</a></div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;(</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="keywordtype">int</span> order,</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="keywordtype">int</span> ni,</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    <span class="keywordtype">int</span> mu,</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="keywordtype">double</span>* Vnimu</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;)</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;{</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="keywordtype">int</span> i, n, n2_1, ind, len;</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    <span class="keywordtype">double</span>* nm, *nimu, *v_nimu;</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    len = order*order;</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    nm = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*2*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    nimu = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*2*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    v_nimu = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    ind = 0;</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;=order-1; n++){</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;        n2_1 = 2*n+1;</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;n2_1; i++, ind++){</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;            nm[ind*2] = (double)n;</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;            nm[ind*2+1] = -(double)n+(<span class="keywordtype">double</span>)i;</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;        }</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    }</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;len; i++)</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;        v_nimu[i] = sqrt( (nimu[i*2]-nimu[i*2+1])*(nimu[i*2]+nimu[i*2+1])/((2.0*nimu[i*2]-1.0)*(2.0*nimu[i*2]+1.0)) );</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    memset(Vnimu, 0, len*len*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;len; i++)</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;        Vnimu[i*len+i] = v_nimu[i];</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160; </div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    free(nm);</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    free(nimu);</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    free(v_nimu);</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;}</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160; </div>
-<div class="line"><a name="l00347"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#ad64fb200c9e14a1795d71ef07e76b091">  347</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="saf__sh__internal_8c.html#ad64fb200c9e14a1795d71ef07e76b091">muni2q</a></div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;(</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    <span class="keywordtype">int</span> order,</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    <span class="keywordtype">int</span> ni,</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="keywordtype">int</span> mu,</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    <span class="keywordtype">int</span>* idx_nimu,</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keywordtype">int</span>* idx_nm</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;)</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;{</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    <span class="keywordtype">int</span> i, n, n2_1, ind, len;</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    <span class="keywordtype">int</span>* nm, *nimu, *qnm, *qnimu;</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160; </div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    len = order*order;</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    nm = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*2*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;    nimu = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*2*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    qnm = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    qnimu = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    ind = 0;</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;=order-1; n++){</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        n2_1 = 2*n+1;</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;n2_1; i++, ind++){</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;            nm[ind*2] = n;</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;            nm[ind*2+1] =-n+i;</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        }</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    }</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;len; i++){</div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;        nimu[i*2] = nm[i*2]+ni;</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;        nimu[i*2+1] = nm[i*2+1]+mu;</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;        qnm[i] = nm[i*2]*nm[i*2]+nm[i*2]+nm[i*2+1]; </div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;        qnimu[i] = nimu[i*2]*nimu[i*2]+nimu[i*2]+nimu[i*2+1]; </div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    }</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    <span class="keywordflow">for</span>(i=0, ind=0; i&lt;len; i++){</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;        <span class="keywordflow">if</span>(abs(nimu[i*2+1])&lt;=nimu[i*2]){</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;            idx_nm[ind] = qnimu[i];</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;            idx_nimu[ind] = qnm[i];</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;            ind++;</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;        }</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    }</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160; </div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    free(nm);</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    free(nimu);</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    free(qnm);</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    free(qnimu);</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;}</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;len; i++){</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;        nimu[i*2] = nm[i*2]+(double)ni;</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;        nimu[i*2+1] = nm[i*2+1]+(double)mu;</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    }</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;len; i++)</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        v_nimu[i] = sqrt( (nimu[i*2]-nimu[i*2+1])*(nimu[i*2]+nimu[i*2+1])/((2.0*nimu[i*2]-1.0)*(2.0*nimu[i*2]+1.0)) );</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    memset(Vnimu, 0, len*len*<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>));</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;len; i++)</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;        Vnimu[i*len+i] = v_nimu[i];</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160; </div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    free(nm);</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    free(nimu);</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    free(v_nimu);</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;}</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
+<div class="line"><a name="l00351"></a><span class="lineno"><a class="line" href="saf__sh__internal_8c.html#ad64fb200c9e14a1795d71ef07e76b091">  351</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="saf__sh__internal_8c.html#ad64fb200c9e14a1795d71ef07e76b091">muni2q</a></div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;(</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keywordtype">int</span> order,</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    <span class="keywordtype">int</span> ni,</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="keywordtype">int</span> mu,</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    <span class="keywordtype">int</span>* idx_nimu,</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    <span class="keywordtype">int</span>* idx_nm</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;)</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;{</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    <span class="keywordtype">int</span> i, n, n2_1, ind, len;</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;    <span class="keywordtype">int</span>* nm, *nimu, *qnm, *qnimu;</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160; </div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    len = order*order;</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    nm = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*2*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    nimu = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*2*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    qnm = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    qnimu = <a class="code" href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a>(len*<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>));</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    ind = 0;</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    <span class="keywordflow">for</span>(n=0; n&lt;=order-1; n++){</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        n2_1 = 2*n+1;</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;        <span class="keywordflow">for</span>(i=0; i&lt;n2_1; i++, ind++){</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;            nm[ind*2] = n;</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;            nm[ind*2+1] =-n+i;</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;        }</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;    }</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    <span class="keywordflow">for</span>(i=0; i&lt;len; i++){</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;        nimu[i*2] = nm[i*2]+ni;</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;        nimu[i*2+1] = nm[i*2+1]+mu;</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;        qnm[i] = nm[i*2]*nm[i*2]+nm[i*2]+nm[i*2+1]; </div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;        qnimu[i] = nimu[i*2]*nimu[i*2]+nimu[i*2]+nimu[i*2+1]; </div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    }</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    <span class="keywordflow">for</span>(i=0, ind=0; i&lt;len; i++){</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;        <span class="keywordflow">if</span>(abs(nimu[i*2+1])&lt;=nimu[i*2]){</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;            idx_nm[ind] = qnimu[i];</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;            idx_nimu[ind] = qnm[i];</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;            ind++;</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;        }</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    }</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160; </div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;    free(nm);</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    free(nimu);</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    free(qnm);</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    free(qnimu);</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;}</div>
 <div class="ttc" id="agroup___utilities_html_ga9e753ee3390aba5fed74f311a3540a67"><div class="ttname"><a href="group___utilities.html#ga9e753ee3390aba5fed74f311a3540a67">factorial</a></div><div class="ttdeci">long double factorial(int n)</div><div class="ttdoc">Factorial, accurate up to n&lt;=25.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__misc_8c_source.html#l00174">saf_utility_misc.c:174</a></div></div>
 <div class="ttc" id="agroup___utilities_html_gae71449b1cc6e6250b91f539153a7a0d3"><div class="ttname"><a href="group___utilities.html#gae71449b1cc6e6250b91f539153a7a0d3">M_PI</a></div><div class="ttdeci">#define M_PI</div><div class="ttdoc">pi constant (single precision)</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00071">saf_utilities.h:71</a></div></div>
 <div class="ttc" id="amd__malloc_8c_html_ad1757ad65cdad25d187c81188a501c53"><div class="ttname"><a href="md__malloc_8c.html#ad1757ad65cdad25d187c81188a501c53">malloc1d</a></div><div class="ttdeci">void * malloc1d(size_t dim1_data_size)</div><div class="ttdoc">1-D malloc (same as malloc, but with error checking)</div><div class="ttdef"><b>Definition:</b> <a href="md__malloc_8c_source.html#l00059">md_malloc.c:59</a></div></div>
 <div class="ttc" id="asaf__sh_8h_html"><div class="ttname"><a href="saf__sh_8h.html">saf_sh.h</a></div><div class="ttdoc">Main header for the Spherical Harmonic Transform and Spherical Array Processing module (SAF_SH_MODULE...</div></div>
-<div class="ttc" id="asaf__sh__internal_8c_html_a0998cda3d3808f3ef6dae269f5bb2f82"><div class="ttname"><a href="saf__sh__internal_8c.html#a0998cda3d3808f3ef6dae269f5bb2f82">getVnimu</a></div><div class="ttdeci">void getVnimu(int order, int ni, int mu, double *Vnimu)</div><div class="ttdoc">Helper function for sphESPRIT_create()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00309">saf_sh_internal.c:310</a></div></div>
+<div class="ttc" id="asaf__sh__internal_8c_html_a0998cda3d3808f3ef6dae269f5bb2f82"><div class="ttname"><a href="saf__sh__internal_8c.html#a0998cda3d3808f3ef6dae269f5bb2f82">getVnimu</a></div><div class="ttdeci">void getVnimu(int order, int ni, int mu, double *Vnimu)</div><div class="ttdoc">Helper function for sphESPRIT_create()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00313">saf_sh_internal.c:314</a></div></div>
+<div class="ttc" id="asaf__sh__internal_8c_html_a2436a8a1f0975825fc5879261d88544b"><div class="ttname"><a href="saf__sh__internal_8c.html#a2436a8a1f0975825fc5879261d88544b">getV</a></div><div class="ttdeci">float getV(int M, int l, int m, int n, float R_1[3][3], float *R_lm1)</div><div class="ttdoc">Helper function for getSHrotMtxReal()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00195">saf_sh_internal.c:196</a></div></div>
 <div class="ttc" id="asaf__sh__internal_8c_html_a2b9349c53b5355b4bf9887554d3c7c69"><div class="ttname"><a href="saf__sh__internal_8c.html#a2b9349c53b5355b4bf9887554d3c7c69">gaunt_mtx</a></div><div class="ttdeci">void gaunt_mtx(int N1, int N2, int N, float *A)</div><div class="ttdoc">Constructs a matrix of Guant coefficients.</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00098">saf_sh_internal.c:99</a></div></div>
-<div class="ttc" id="asaf__sh__internal_8c_html_a44edd81349209fabd60a33503a309352"><div class="ttname"><a href="saf__sh__internal_8c.html#a44edd81349209fabd60a33503a309352">getW</a></div><div class="ttdeci">float getW(int l, int m, int n, float **R_1, float **R_lm1)</div><div class="ttdoc">Helper function for getSHrotMtxReal()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00230">saf_sh_internal.c:231</a></div></div>
-<div class="ttc" id="asaf__sh__internal_8c_html_a6fd56a5ce253ca1f02e1e2c890977a92"><div class="ttname"><a href="saf__sh__internal_8c.html#a6fd56a5ce253ca1f02e1e2c890977a92">getU</a></div><div class="ttdeci">float getU(int l, int m, int n, float **R_1, float **R_lm1)</div><div class="ttdoc">Helper function for getSHrotMtxReal()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00179">saf_sh_internal.c:180</a></div></div>
-<div class="ttc" id="asaf__sh__internal_8c_html_a9513e92c72b6534cb176e863d8929868"><div class="ttname"><a href="saf__sh__internal_8c.html#a9513e92c72b6534cb176e863d8929868">getWnimu</a></div><div class="ttdeci">void getWnimu(int order, int mm, int ni, int mu, double *Wnimu)</div><div class="ttdoc">Helper function for sphESPRIT_create()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00262">saf_sh_internal.c:263</a></div></div>
-<div class="ttc" id="asaf__sh__internal_8c_html_aa613047661f131a4f4f292cfd4a6692a"><div class="ttname"><a href="saf__sh__internal_8c.html#aa613047661f131a4f4f292cfd4a6692a">getP</a></div><div class="ttdeci">float getP(int i, int l, int a, int b, float **R_1, float **R_lm1)</div><div class="ttdoc">Helper function for getSHrotMtxReal()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00149">saf_sh_internal.c:150</a></div></div>
-<div class="ttc" id="asaf__sh__internal_8c_html_ad64fb200c9e14a1795d71ef07e76b091"><div class="ttname"><a href="saf__sh__internal_8c.html#ad64fb200c9e14a1795d71ef07e76b091">muni2q</a></div><div class="ttdeci">void muni2q(int order, int ni, int mu, int *idx_nimu, int *idx_nm)</div><div class="ttdoc">Helper function for sphESPRIT_create()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00347">saf_sh_internal.c:348</a></div></div>
-<div class="ttc" id="asaf__sh__internal_8c_html_af46e49500ff2723b3e1ff9eaf1d6bbde"><div class="ttname"><a href="saf__sh__internal_8c.html#af46e49500ff2723b3e1ff9eaf1d6bbde">getV</a></div><div class="ttdeci">float getV(int l, int m, int n, float **R_1, float **R_lm1)</div><div class="ttdoc">Helper function for getSHrotMtxReal()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00193">saf_sh_internal.c:194</a></div></div>
+<div class="ttc" id="asaf__sh__internal_8c_html_a50230a86e4b93261cf85ed4769f612b8"><div class="ttname"><a href="saf__sh__internal_8c.html#a50230a86e4b93261cf85ed4769f612b8">getU</a></div><div class="ttdeci">float getU(int M, int l, int m, int n, float R_1[3][3], float *R_lm1)</div><div class="ttdoc">Helper function for getSHrotMtxReal()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00180">saf_sh_internal.c:181</a></div></div>
+<div class="ttc" id="asaf__sh__internal_8c_html_a56e9fc0d202cd5b645f5e2efb36c0a38"><div class="ttname"><a href="saf__sh__internal_8c.html#a56e9fc0d202cd5b645f5e2efb36c0a38">getP</a></div><div class="ttdeci">float getP(int M, int i, int l, int a, int b, float R_1[3][3], float *R_lm1)</div><div class="ttdoc">Helper function for getSHrotMtxReal()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00149">saf_sh_internal.c:150</a></div></div>
+<div class="ttc" id="asaf__sh__internal_8c_html_a752f5dda971019e2d76326511e8ea096"><div class="ttname"><a href="saf__sh__internal_8c.html#a752f5dda971019e2d76326511e8ea096">getW</a></div><div class="ttdeci">float getW(int M, int l, int m, int n, float R_1[3][3], float *R_lm1)</div><div class="ttdoc">Helper function for getSHrotMtxReal()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00233">saf_sh_internal.c:234</a></div></div>
+<div class="ttc" id="asaf__sh__internal_8c_html_a9513e92c72b6534cb176e863d8929868"><div class="ttname"><a href="saf__sh__internal_8c.html#a9513e92c72b6534cb176e863d8929868">getWnimu</a></div><div class="ttdeci">void getWnimu(int order, int mm, int ni, int mu, double *Wnimu)</div><div class="ttdoc">Helper function for sphESPRIT_create()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00266">saf_sh_internal.c:267</a></div></div>
+<div class="ttc" id="asaf__sh__internal_8c_html_ad64fb200c9e14a1795d71ef07e76b091"><div class="ttname"><a href="saf__sh__internal_8c.html#ad64fb200c9e14a1795d71ef07e76b091">muni2q</a></div><div class="ttdeci">void muni2q(int order, int ni, int mu, int *idx_nimu, int *idx_nm)</div><div class="ttdoc">Helper function for sphESPRIT_create()</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00351">saf_sh_internal.c:352</a></div></div>
 <div class="ttc" id="asaf__sh__internal_8c_html_afd8fe2b873871c49985b5924804bbc31"><div class="ttname"><a href="saf__sh__internal_8c.html#afd8fe2b873871c49985b5924804bbc31">wigner_3j</a></div><div class="ttdeci">float wigner_3j(int j1, int j2, int j3, int m1, int m2, int m3)</div><div class="ttdoc">Computes the Wigner 3j symbol through the Racah formula found in http://mathworld....</div><div class="ttdef"><b>Definition:</b> <a href="saf__sh__internal_8c_source.html#l00043">saf_sh_internal.c:44</a></div></div>
 <div class="ttc" id="asaf__sh__internal_8h_html"><div class="ttname"><a href="saf__sh__internal_8h.html">saf_sh_internal.h</a></div><div class="ttdoc">Internal header for the Spherical Harmonic Transform and Spherical Array Processing module (SAF_SH_MO...</div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -481,7 +485,7 @@ $(document).ready(function(){initNavTree('saf__sh__internal_8c_source.html','');
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_a3800911dd78ba56a8d7acc21219fcab.html">saf_sh</a></li><li class="navelem"><a class="el" href="saf__sh__internal_8c.html">saf_sh_internal.c</a></li>
-    <li class="footer">Generated on Wed Aug 4 2021 12:09:56 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Thu Aug 19 2021 13:33:13 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
     <script type="text/javascript">
