@@ -452,7 +452,7 @@ $(document).ready(function(){initNavTree('saf__hrir_8c_source.html',''); initRes
 <div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;{</div>
 <div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    <span class="keywordtype">int</span> ch, hrirs_out_ld;</div>
 <div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    <span class="keywordtype">float</span> resample_factor;</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP) &amp;&amp; 0 </span><span class="comment">/* works fine on macOS, but not on MSVC. Not tried Linux. Use SPEEX for now... */</span><span class="preprocessor"></span></div>
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    Ipp64f pTime;</div>
 <div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> history = 128;</div>
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    <span class="keywordtype">float</span> *inBuffer, *outBuffer;</div>
@@ -470,7 +470,7 @@ $(document).ready(function(){initNavTree('saf__hrir_8c_source.html',''); initRes
 <div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    (*hrirs_out_len) = (int)ceilf((<span class="keywordtype">float</span>)hrirs_in_len * resample_factor);</div>
 <div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;    hrirs_out_ld = padToNextPow2 ? (int)pow(2.0, ceil(log((<span class="keywordtype">double</span>)(*hrirs_out_len))/log(2.0))) : (*hrirs_out_len);</div>
 <div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160; </div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;<span class="preprocessor">#if defined(SAF_USE_INTEL_IPP) &amp;&amp; 0 </span><span class="comment">/* works fine on macOS, but not on MSVC. Not tried Linux. Use SPEEX for now... */</span><span class="preprocessor"></span></div>
 <div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="comment">/* Initialise IPP resampler */</span></div>
 <div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    error = ippsResamplePolyphaseFixedGetSize_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), &amp;pSize, &amp;filterLength, &amp;numFilters, ippAlgHintFast);</div>
 <div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    <a class="code" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(!error, <span class="stringliteral">&quot;IPP error&quot;</span>);</div>
@@ -570,7 +570,7 @@ $(document).ready(function(){initNavTree('saf__hrir_8c_source.html',''); initRes
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_7537ddf6938b30af6f0305d5e585e1f2.html">saf_hrir</a></li><li class="navelem"><a class="el" href="saf__hrir_8c.html">saf_hrir.c</a></li>
-    <li class="footer">Generated on Thu Aug 19 2021 13:39:17 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Fri Aug 20 2021 06:25:56 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
     <script type="text/javascript">
