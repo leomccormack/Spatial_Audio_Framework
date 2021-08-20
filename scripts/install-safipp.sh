@@ -70,9 +70,9 @@ echo "IPP list: ${parent_path}/saf_ipp_list.txt"
 
 # Create the build script
 if [[ ${build_type} == "sequential"* ]]; then
-    (cd ${ipp_builder_dir} && python main.py -c -g -n saf_ipp_custom -p "${parent_path}" -ff "${parent_path}/saf_ipp_list.txt" -arch=intel64)
+    (cd ${ipp_builder_dir} && python3 main.py -c -g -n saf_ipp_custom -p "${parent_path}" -ff "${parent_path}/saf_ipp_list.txt" -arch=intel64)
 elif [[ ${build_type} == "threaded"* ]]; then
-    (cd ${ipp_builder_dir} && python main.py -c -g -n saf_ipp_custom -p "${parent_path}" -ff "${parent_path}/saf_ipp_list.txt" -arch=intel64 -mt)
+    (cd ${ipp_builder_dir} && python3 main.py -c -g -n saf_ipp_custom -p "${parent_path}" -ff "${parent_path}/saf_ipp_list.txt" -arch=intel64 -mt)
 fi
 
 # Run the build script
@@ -91,7 +91,12 @@ fi
 echo "Installed libsaf_ipp_custom into ${output_dir}"
 
 # clean-up
-rm "export.lib-export"
+if [[ "$OSTYPE" == "linux"* ]]; then
+    rm export.def
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    rm "export.lib-export"
+fi
 rm main.c
 rm main.obj
 
