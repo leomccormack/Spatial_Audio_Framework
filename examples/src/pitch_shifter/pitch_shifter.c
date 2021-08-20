@@ -36,7 +36,7 @@ void pitch_shifter_create
     
     /* Default user parameters */
     pData->new_nChannels = pData->nChannels = 1;
-    pData->pitchShift_factor = 0.5f; 
+    pData->pitchShift_factor = 1.0f; 
     pData->osamp_option = PITCH_SHIFTER_OSAMP_4;
     pData->fftsize_option = PITCH_SHIFTER_FFTSIZE_4096;
 

@@ -9,6 +9,11 @@ Major and/or breaking changes to the Spatial_Audio_Framework are listed here.
 For descriptions of minor changes and bug fixes, please refer to the git log.
 
 ====================================================================================================
+v1.2.3
+ - Bug fix in invertLsMtx2D() and invertLsMtx3D()
+ - Added install-safipp.bat script for building a custom Intel IPP dll for SAF for Windows
+
+====================================================================================================
 v1.2.2
  - General documentation improvements, and also switched to a more modern doxygen theme
  - More Intel IPP functions are favoured and called if SAF_USE_INTEL_IPP is defined
