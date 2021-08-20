@@ -692,15 +692,13 @@ void invertLsMtx3D
         /* get the unit vectors for the current group */
         for(i=0; i<3; i++)
             for(j=0; j<3; j++)
-                tempGroup[j*3+i] = U_spkr[ls_groups[n*3+i]*3 + j]; 
+                tempGroup[j*3+i] = U_spkr[ls_groups[n*3+i]*3 + j]; /* ^T */
 
         /* get inverse of current group */
         utility_sinv(hSinv, tempGroup, tempInv, 3);
 
-        /* store the vectorized inverse as a row the output */
-        for(i=0; i<3; i++)
-            for(j=0; j<3; j++)
-                (*layoutInvMtx)[n*9+(i*3+j)] = tempInv[j*3+i];
+        /* store the vectorised inverse as a row in the output */
+        cblas_scopy(9, tempInv, 1, (*layoutInvMtx) + n*9, 1);
     }
     utility_sinv_destroy(&hSinv);
 }
