@@ -124,6 +124,12 @@
     <Filter Include="framework\resources\speex_resampler">
       <UniqueIdentifier>{ff384652-8bc6-455b-9088-3f4d6fa963e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="framework\modules\saf_sofa_reader\libmysofa">
+      <UniqueIdentifier>{5d7a6d41-86a8-4d7c-adcc-f0a7dd8ef045}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\modules\saf_sofa_reader\libmysofa\internal">
+      <UniqueIdentifier>{1c3987c3-226c-400b-ae1d-c8aec9bc8c95}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\timer\timer.h">
@@ -369,6 +375,18 @@
     <ClInclude Include="..\..\framework\resources\speex_resampler\speexdsp_types.h">
       <Filter>framework\resources\speex_resampler</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_sofa_reader\libmysofa\mysofa.h">
+      <Filter>framework\modules\saf_sofa_reader\libmysofa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_sofa_reader\libmysofa\internal\kdtree.h">
+      <Filter>framework\modules\saf_sofa_reader\libmysofa\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_sofa_reader\libmysofa\internal\hdf_reader.h">
+      <Filter>framework\modules\saf_sofa_reader\libmysofa\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_sofa_reader\libmysofa\internal\mysofa_internal.h">
+      <Filter>framework\modules\saf_sofa_reader\libmysofa\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\timer\timer.c">
@@ -589,6 +607,24 @@
     </ClCompile>
     <ClCompile Include="..\..\framework\resources\speex_resampler\resample.c">
       <Filter>framework\resources\speex_resampler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_sofa_reader\libmysofa\mysofa.c">
+      <Filter>framework\modules\saf_sofa_reader\libmysofa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_sofa_reader\libmysofa\internal\hdf_dataobject.c">
+      <Filter>framework\modules\saf_sofa_reader\libmysofa\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_sofa_reader\libmysofa\internal\hdf_fractalhead.c">
+      <Filter>framework\modules\saf_sofa_reader\libmysofa\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_sofa_reader\libmysofa\internal\hdf_reader.c">
+      <Filter>framework\modules\saf_sofa_reader\libmysofa\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_sofa_reader\libmysofa\internal\kdtree.c">
+      <Filter>framework\modules\saf_sofa_reader\libmysofa\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_sofa_reader\libmysofa\internal\mysofa_internal.c">
+      <Filter>framework\modules\saf_sofa_reader\libmysofa\internal</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

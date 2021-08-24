@@ -36,7 +36,7 @@
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
 #ifndef SAF_TEST_SOFA_FILE_PATH
-# define SAF_TEST_SOFA_FILE_PATH "/Users/mccorml1/Documents/FABIAN_HRTF_DATABASE_V1/1 HRIRs/SOFA/FABIAN_HRIR_measured_HATO_20.sofa"
+# define SAF_TEST_SOFA_FILE_PATH "C:/Users/Leo/Documents/KemarAuralID.sofa" //"/Users/mccorml1/Documents/FABIAN_HRTF_DATABASE_V1/1 HRIRs/SOFA/FABIAN_HRIR_measured_HATO_20.sofa"
 #endif
 
 /* ========================================================================== */
@@ -78,7 +78,7 @@ int main_test(void) {
     UNITY_BEGIN();
     
     /* run each unit test */
-    RUN_TEST(test__resampleHRIRs);
+	RUN_TEST(test__resampleHRIRs);
     RUN_TEST(test__delaunaynd);
     RUN_TEST(test__quaternion);
     RUN_TEST(test__saf_stft_50pc_overlap);
