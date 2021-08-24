@@ -248,17 +248,17 @@
 /**
  * SAF Module: SOFA_Reader
  *
- * A simple SOFA file reader that returns only the bare minimum needed to
- * load HRIR data.
+ * A simple SOFA file reader.
  *
  * ## Enable instructions
  *   Add this pre-processor definition to your project:
  *       SAF_ENABLE_SOFA_READER_MODULE
- *   and ensure that the netcdf library is also linked to your project. More
- *   information can be found in:
- *       docs/SOFA_READER_MODULE_DEPENDENCIES.md
+ *   Then ensure that the zlib library is also linked to your project.
+ *   Optionally, if SAF_ENABLE_NETCDF is defined, then the netcdf library must
+ *   also be linked to your project.
+ *   More information can be found in: docs/SOFA_READER_MODULE_DEPENDENCIES.md
  * ## Dependencies
- *   saf_utilities.h, saf_hrir.h, netcdf
+ *   saf_utilities.h, saf_hrir.h, zlib, netcdf (optional)
  *
  * @license ISC
  */
