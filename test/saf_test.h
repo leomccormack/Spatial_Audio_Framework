@@ -117,8 +117,14 @@ void test__faf_IIRFilterbank(void);
  * the "expm" function in Matlab */
 void test__gexpm(void);
 /**
- * Testing the SOFA reader */
+ * Testing the SAF SOFA reader that uses the netcdf library */
 void test__saf_sofa_open(void);
+/**
+ * Testing the dependency free mysofa SOFA reader */
+void test__mysofa_load(void);
+/**
+ * Testing that the two SOFA readers produce the same results */
+void test__sofa_comparison(void);
 /**
  * Testing that the particle-filtering based tracker is able to correctly track
  * two simultaneous targets */

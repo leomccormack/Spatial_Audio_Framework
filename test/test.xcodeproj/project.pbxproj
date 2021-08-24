@@ -84,6 +84,12 @@
 		50E3DFBA24E1B64800589B17 /* ambi_roomsim.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DFB824E1B64800589B17 /* ambi_roomsim.c */; };
 		50E5CD1624AF3E5800019898 /* saf_utility_geometry.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */; };
 		50E5CDAA24B4580900019898 /* saf_utility_latticeCoeffs.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */; };
+		50FA6ABB26D433B000369945 /* mysofa_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50FA6AB326D433B000369945 /* mysofa_internal.c */; };
+		50FA6ABC26D433B000369945 /* hdf_dataobject.c in Sources */ = {isa = PBXBuildFile; fileRef = 50FA6AB626D433B000369945 /* hdf_dataobject.c */; };
+		50FA6ABD26D433B000369945 /* kdtree.c in Sources */ = {isa = PBXBuildFile; fileRef = 50FA6AB726D433B000369945 /* kdtree.c */; };
+		50FA6ABE26D433B000369945 /* hdf_fractalhead.c in Sources */ = {isa = PBXBuildFile; fileRef = 50FA6AB826D433B000369945 /* hdf_fractalhead.c */; };
+		50FA6ABF26D433B000369945 /* hdf_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 50FA6AB926D433B000369945 /* hdf_reader.c */; };
+		50FA6AC026D433B000369945 /* mysofa.c in Sources */ = {isa = PBXBuildFile; fileRef = 50FA6ABA26D433B000369945 /* mysofa.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -267,6 +273,16 @@
 		50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_geometry.c; sourceTree = "<group>"; };
 		50E5CD1524AF3E5800019898 /* saf_utility_geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_geometry.h; sourceTree = "<group>"; };
 		50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_latticeCoeffs.c; sourceTree = "<group>"; };
+		50FA6AB026D433B000369945 /* mysofa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mysofa.h; sourceTree = "<group>"; };
+		50FA6AB226D433B000369945 /* kdtree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kdtree.h; sourceTree = "<group>"; };
+		50FA6AB326D433B000369945 /* mysofa_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mysofa_internal.c; sourceTree = "<group>"; };
+		50FA6AB426D433B000369945 /* hdf_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hdf_reader.h; sourceTree = "<group>"; };
+		50FA6AB526D433B000369945 /* mysofa_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mysofa_internal.h; sourceTree = "<group>"; };
+		50FA6AB626D433B000369945 /* hdf_dataobject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdf_dataobject.c; sourceTree = "<group>"; };
+		50FA6AB726D433B000369945 /* kdtree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kdtree.c; sourceTree = "<group>"; };
+		50FA6AB826D433B000369945 /* hdf_fractalhead.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdf_fractalhead.c; sourceTree = "<group>"; };
+		50FA6AB926D433B000369945 /* hdf_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdf_reader.c; sourceTree = "<group>"; };
+		50FA6ABA26D433B000369945 /* mysofa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mysofa.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -380,8 +396,8 @@
 		50E3600A249BDDCB00B74C25 /* resources */ = {
 			isa = PBXGroup;
 			children = (
-				50E3600B249BDDCB00B74C25 /* CMakeLists.txt */,
 				50E36015249BDDCB00B74C25 /* afSTFT */,
+				50E3600B249BDDCB00B74C25 /* CMakeLists.txt */,
 				50E36019249BDDCB00B74C25 /* convhull_3d */,
 				50E3600F249BDDCB00B74C25 /* kissFFT */,
 				50E3600C249BDDCB00B74C25 /* md_malloc */,
@@ -531,6 +547,7 @@
 		50E3604E249BDDCC00B74C25 /* saf_sofa_reader */ = {
 			isa = PBXGroup;
 			children = (
+				50FA6AAF26D433B000369945 /* libmysofa */,
 				50E3604F249BDDCC00B74C25 /* saf_sofa_reader.h */,
 				50E36050249BDDCC00B74C25 /* saf_sofa_reader.c */,
 			);
@@ -792,6 +809,31 @@
 			path = ambi_roomsim;
 			sourceTree = "<group>";
 		};
+		50FA6AAF26D433B000369945 /* libmysofa */ = {
+			isa = PBXGroup;
+			children = (
+				50FA6AB126D433B000369945 /* internal */,
+				50FA6ABA26D433B000369945 /* mysofa.c */,
+				50FA6AB026D433B000369945 /* mysofa.h */,
+			);
+			path = libmysofa;
+			sourceTree = "<group>";
+		};
+		50FA6AB126D433B000369945 /* internal */ = {
+			isa = PBXGroup;
+			children = (
+				50FA6AB626D433B000369945 /* hdf_dataobject.c */,
+				50FA6AB826D433B000369945 /* hdf_fractalhead.c */,
+				50FA6AB926D433B000369945 /* hdf_reader.c */,
+				50FA6AB426D433B000369945 /* hdf_reader.h */,
+				50FA6AB726D433B000369945 /* kdtree.c */,
+				50FA6AB226D433B000369945 /* kdtree.h */,
+				50FA6AB326D433B000369945 /* mysofa_internal.c */,
+				50FA6AB526D433B000369945 /* mysofa_internal.h */,
+			);
+			path = internal;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -856,6 +898,7 @@
 				50E36063249BDDCC00B74C25 /* saf_hoa.c in Sources */,
 				50E3DE3124BE00F400589B17 /* saf_utility_qmf.c in Sources */,
 				50E3DEE724C1C80C00589B17 /* matrixconv_internal.c in Sources */,
+				50FA6AC026D433B000369945 /* mysofa.c in Sources */,
 				50E3DEDF24C1C80C00589B17 /* pitch_shifter_internal.c in Sources */,
 				50E36072249BDDCC00B74C25 /* saf_reverb.c in Sources */,
 				50E36077249BDDCC00B74C25 /* saf_vbap_internal.c in Sources */,
@@ -868,14 +911,17 @@
 				50E3606E249BDDCC00B74C25 /* saf_utility_veclib.c in Sources */,
 				50E35D1F2475AECA00B74C25 /* saf_test.c in Sources */,
 				50E3605D249BDDCC00B74C25 /* kiss_fft.c in Sources */,
+				50FA6ABB26D433B000369945 /* mysofa_internal.c in Sources */,
 				50E3606B249BDDCC00B74C25 /* saf_utility_filters.c in Sources */,
 				50E36065249BDDCC00B74C25 /* saf_utility_bessel.c in Sources */,
 				50E3DEE024C1C80C00589B17 /* pitch_shifter.c in Sources */,
 				50E3DEF424C1D3A900589B17 /* decorrelator_internal.c in Sources */,
+				50FA6ABD26D433B000369945 /* kdtree.c in Sources */,
 				506DE0D1268311B700BFD406 /* resample.c in Sources */,
 				50E36075249BDDCC00B74C25 /* saf_sh_internal.c in Sources */,
 				50E3DEE124C1C80C00589B17 /* rotator_internal.c in Sources */,
 				50E36078249BDDCC00B74C25 /* saf_vbap.c in Sources */,
+				50FA6ABC26D433B000369945 /* hdf_dataobject.c in Sources */,
 				50E3605F249BDDCC00B74C25 /* afSTFTlib.c in Sources */,
 				50E3DF0724C1D4EA00589B17 /* sldoa_internal.c in Sources */,
 				50E36061249BDDCC00B74C25 /* saf_cdf4sap.c in Sources */,
@@ -895,8 +941,10 @@
 				50E3DEB824C1C36E00589B17 /* ambi_drc_internal.c in Sources */,
 				50E3607B249BDDCC00B74C25 /* saf_hrir.c in Sources */,
 				50C18ED7261E3FCC008A17B1 /* spreader_internal.c in Sources */,
+				50FA6ABF26D433B000369945 /* hdf_reader.c in Sources */,
 				508CC48024EAA0A4006DF0C7 /* saf_tracker_internal.c in Sources */,
 				50E3DEF324C1D3A900589B17 /* decorrelator.c in Sources */,
+				50FA6ABE26D433B000369945 /* hdf_fractalhead.c in Sources */,
 				50E36079249BDDCC00B74C25 /* saf_default_hrirs.c in Sources */,
 				50E3605C249BDDCC00B74C25 /* md_malloc.c in Sources */,
 				508FBDA12456D31F0076C205 /* unity.c in Sources */,
@@ -1109,6 +1157,7 @@
 					SAF_ENABLE_TRACKER_MODULE,
 					SAF_ENABLE_SIMD,
 					SAF_USE_INTEL_IPP,
+					SAF_ENABLE_NETCDF,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,
@@ -1159,6 +1208,7 @@
 					SAF_ENABLE_TRACKER_MODULE,
 					SAF_ENABLE_SIMD,
 					SAF_USE_INTEL_IPP,
+					SAF_ENABLE_NETCDF,
 				);
 				HEADER_SEARCH_PATHS = (
 					unity,

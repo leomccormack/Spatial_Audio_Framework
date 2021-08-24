@@ -38,6 +38,10 @@ extern "C" {
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
 
+/* Include also the libmysofa reader (BSD-3-Clause license), which only depends
+ * on zlib.h */
+#include "libmysofa/mysofa.h"
+
 /* ========================================================================== */
 /*                          Public Structures/Enums                           */
 /* ========================================================================== */
@@ -57,7 +61,7 @@ typedef struct _saf_sofa_container{
     float* DataIR;                /**< The impulse response (IR) Data;
                                    * FLAT:nSources x nReceivers x DataLengthIR*/
     float DataSamplingRate;       /**< Sampling rate used to measure the IRs */
-    int* DataDelay;               /**< Delay in samples; nReceivers x 1 */
+    float* DataDelay;             /**< Delay in samples; nReceivers x 1 */
     float* SourcePosition;        /**< Source positions (refer to
                                    *   SourcePositionType & SourcePositionUnits
                                    *   for the convention and units);
@@ -122,6 +126,9 @@ typedef struct _saf_sofa_container{
     char* Title;                  /**< Title of file */
     char* DatabaseName;           /**< Name of database this file belongs to */
     char* ListenerShortName;      /**< Name of the listener/dummyhead/mic etc.*/
+
+    /* libmysofa handle, which is used if SAF_ENABLE_NETCDF is not defined */
+    void* hLMSOFA;                /**< libmysofa handle */
 
 }saf_sofa_container;
 

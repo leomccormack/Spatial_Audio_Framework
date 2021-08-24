@@ -35,6 +35,7 @@
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
 
+#ifdef SAF_ENABLE_NETCDF
 /** Used as a workaround to netcdf's lack of thread safety... */
 int __SAF_NETCDF_IN_USE = 0;
 
@@ -42,6 +43,7 @@ int __SAF_NETCDF_IN_USE = 0;
 static void __saf_netcdf_setflag(int newState){
     __SAF_NETCDF_IN_USE = newState;
 }
+#endif /* SAF_ENABLE_NETCDF */
 
 /* ========================================================================== */
 /*                              Main Functions                                */
@@ -53,6 +55,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
     char* sofa_filepath
 )
 {
+#ifdef SAF_ENABLE_NETCDF
     int varid, attnum, i, j, ncid, retval, ndimsp, nvarsp, nattsp, unlimdimidp, varnattsp, counter;
     size_t tmp_size, lenp;
     char varname[NC_MAX_NAME+1], attname[NC_MAX_NAME+1];
@@ -180,7 +183,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             nc_get_var(ncid, varid, tmp_data);
             h->DataDelay = malloc1d(tmp_size*sizeof(int));
             for(i=0; i<(int)tmp_size; i++)
-                h->DataDelay[i] = (int)tmp_data[i];
+                h->DataDelay[i] = (float)tmp_data[i];
         }
         else if (!strcmp((char*)varname,"SourcePosition")){
             /* Checks */
@@ -505,6 +508,160 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
     free(dimids);
     free(tmp_data);
 
+#else /* Use libmysofa */
+
+    int err;
+    MYSOFA_HRTF *hrtf;
+    MYSOFA_ATTRIBUTE* tmp_a;
+
+    /* Default variables */
+    h->nSources = h->nReceivers = h->DataLengthIR = -1;
+    h->DataSamplingRate = 0.0f;
+    h->nEmitters = h->nListeners = -1;
+    h->DataIR = h->SourcePosition = h->ReceiverPosition = h->ListenerPosition =
+    h->ListenerUp = h->ListenerView = h->EmitterPosition = NULL;
+    h->DataDelay = NULL;
+
+    /* Default variable attributes */
+    h->ListenerPositionType = h->ListenerPositionUnits = h->ReceiverPositionType
+    = h->ReceiverPositionUnits = h->SourcePositionType = h->SourcePositionUnits
+    = h->EmitterPositionType = h->EmitterPositionUnits = h->DataSamplingRateUnits
+    = h->ListenerViewType = h->ListenerViewUnits = NULL;
+
+    /* Default global attributes */
+    h->Conventions = h->Version = h->SOFAConventions = h->SOFAConventionsVersion
+    = h->APIName = h->APIVersion = h->ApplicationName = h->ApplicationVersion
+    = h->AuthorContact = h->Comment = h->DataType = h->History = h->License
+    = h->Organisation = h->References = h->RoomType = h->Origin = h->DateCreated
+    = h->DateModified = h->Title = h->DatabaseName = h->ListenerShortName = NULL;
+
+    /* Load SOFA file */
+    hrtf = mysofa_load(sofa_filepath, &err);
+    h->hLMSOFA = (void*)hrtf;
+    switch(err){
+        case MYSOFA_OK:
+            /* Copy variables and pointers to data: */
+            h->nSources = hrtf->M;
+            h->nReceivers = hrtf->R;
+            h->DataLengthIR = hrtf->N;
+            h->DataSamplingRate = hrtf->DataSamplingRate.values[0];
+            h->nEmitters = hrtf->E;
+            h->nListeners = hrtf->_I;
+            h->DataIR = hrtf->DataIR.values;
+            h->DataDelay = hrtf->DataDelay.values;
+            h->SourcePosition = hrtf->SourcePosition.values;
+            h->ReceiverPosition = hrtf->ReceiverPosition.values;
+            h->ListenerPosition = hrtf->ListenerPosition.values;
+            h->ListenerUp = hrtf->ListenerUp.values;
+            h->ListenerView = hrtf->ListenerView.values;
+            h->EmitterPosition = hrtf->EmitterPosition.values;
+
+            /* Variable attributes */
+            tmp_a = hrtf->ListenerPosition.attributes;
+            while (tmp_a) {
+                if (!strcmp((char*)tmp_a->name,"Type"))
+                    h->ListenerPositionType = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"Units"))
+                    h->ListenerPositionUnits = tmp_a->value;
+                tmp_a = tmp_a->next;
+            }
+            tmp_a = hrtf->ReceiverPosition.attributes;
+            while (tmp_a) {
+                if (!strcmp((char*)tmp_a->name,"Type"))
+                    h->ReceiverPositionType = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"Units"))
+                    h->ReceiverPositionUnits = tmp_a->value;
+                tmp_a = tmp_a->next;
+            }
+            tmp_a = hrtf->SourcePosition.attributes;
+            while (tmp_a) {
+                if (!strcmp((char*)tmp_a->name,"Type"))
+                    h->SourcePositionType = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"Units"))
+                    h->SourcePositionUnits = tmp_a->value;
+                tmp_a = tmp_a->next;
+            }
+            tmp_a = hrtf->EmitterPosition.attributes;
+            while (tmp_a) {
+                if (!strcmp((char*)tmp_a->name,"Type"))
+                    h->EmitterPositionType = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"Units"))
+                    h->EmitterPositionUnits = tmp_a->value;
+                tmp_a = tmp_a->next;
+            }
+            tmp_a = hrtf->ListenerView.attributes;
+            while (tmp_a) {
+                if (!strcmp((char*)tmp_a->name,"Type"))
+                    h->ListenerViewType = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"Units"))
+                    h->ListenerViewUnits = tmp_a->value;
+                tmp_a = tmp_a->next;
+            }
+            tmp_a = hrtf->DataSamplingRate.attributes;
+            while (tmp_a) {
+                if (!strcmp((char*)tmp_a->name,"Units"))
+                    h->DataSamplingRateUnits = tmp_a->value;
+                tmp_a = tmp_a->next;
+            }
+
+            /* Global attributes */
+            tmp_a = hrtf->attributes;
+            while (tmp_a) {
+                if (!strcmp((char*)tmp_a->name,"Conventions"))
+                    h->Conventions = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"Version"))
+                    h->Version = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"SOFAConventions"))
+                    h->SOFAConventions = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"SOFAConventionsVersion"))
+                    h->SOFAConventionsVersion = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"APIName"))
+                    h->APIName = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"APIVersion"))
+                    h->APIVersion = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"ApplicationName"))
+                    h->ApplicationName = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"ApplicationVersion"))
+                    h->ApplicationVersion = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"AuthorContact"))
+                    h->AuthorContact = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"Comment"))
+                    h->Comment = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"DataType"))
+                    h->DataType = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"History"))
+                    h->History = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"License"))
+                    h->License = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"Organization"))
+                    h->Organisation = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"References"))
+                    h->References = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"RoomType"))
+                    h->RoomType = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"Origin"))
+                    h->Origin = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"DateCreated"))
+                    h->DateCreated = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"DateModified"))
+                    h->DateModified = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"Title"))
+                    h->Title = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"DatabaseName"))
+                    h->DatabaseName = tmp_a->value;
+                else if (!strcmp((char*)tmp_a->name,"ListenerShortName"))
+                    h->ListenerShortName = tmp_a->value;
+                tmp_a = tmp_a->next;
+            }
+            break;
+        case MYSOFA_READ_ERROR:
+            return SAF_SOFA_ERROR_INVALID_FILE_OR_FILE_PATH;
+        default:
+            return SAF_SOFA_ERROR_FORMAT_UNEXPECTED;
+    }
+
+#endif /* SAF_ENABLE_NETCDF */
+
     return SAF_SOFA_OK;
 }
 
@@ -514,6 +671,7 @@ void saf_sofa_close
     saf_sofa_container* c
 )
 {
+#ifdef SAF_ENABLE_NETCDF
     /* Vars */
     free(c->DataIR);
     free(c->SourcePosition);
@@ -560,6 +718,9 @@ void saf_sofa_close
     free(c->Title);
     free(c->DatabaseName);
     free(c->ListenerShortName);
+#else
+    mysofa_free((MYSOFA_HRTF*)c->hLMSOFA);
+#endif
 }
 
 

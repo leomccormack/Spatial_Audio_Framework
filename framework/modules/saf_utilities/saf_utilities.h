@@ -124,6 +124,9 @@
 # define MKSTRING(s) MKSTRING_(s)
 #endif
 
+/** Indicates that a particular variable is unused (& squelches any warnings) */
+#define SAF_UNUSED(x) (void)(x)
+
 #ifndef NDEBUG /* If debug mode: */
 /** Macro to print a warning message along with the filename and line number */
 # define saf_print_warning(message) {fprintf(stdout, \
@@ -178,7 +181,6 @@
  *   https://github.com/xiph/speexdsp/
  */
 #include "../../resources/speex_resampler/speex_resampler.h"
-
 /* For cross-platform complex number support */
 #include "saf_utility_complex.h"
 
