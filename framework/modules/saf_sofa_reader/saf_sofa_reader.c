@@ -35,16 +35,6 @@
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
 
-#ifdef SAF_ENABLE_NETCDF
-/** Used as a workaround to netcdf's lack of thread safety... */
-int __SAF_NETCDF_IN_USE = 0;
-
-/** Used as a workaround to netcdf's lack of thread safety... */
-static void __saf_netcdf_setflag(int newState){
-    __SAF_NETCDF_IN_USE = newState;
-}
-#endif /* SAF_ENABLE_NETCDF */
-
 /* ========================================================================== */
 /*                              Main Functions                                */
 /* ========================================================================== */
@@ -56,7 +46,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
 )
 {
 #ifdef SAF_ENABLE_NETCDF
-    int varid, attnum, i, j, ncid, retval, ndimsp, nvarsp, nattsp, unlimdimidp, varnattsp, counter;
+    int varid, attnum, i, j, ncid, retval, ndimsp, nvarsp, nattsp, unlimdimidp, varnattsp;
     size_t tmp_size, lenp;
     char varname[NC_MAX_NAME+1], attname[NC_MAX_NAME+1];
     char* dimname;
@@ -92,30 +82,11 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
     = h->DateModified = h->Title = h->DatabaseName = h->ListenerShortName = NULL;
 
 #ifdef SAF_ENABLE_NETCDF
-    counter = 0;
-    while (__SAF_NETCDF_IN_USE){
-        /* WARNING: this work around will only work with SAF-built programs.
-         * If another program tries to use netcdf while a SAF-built program is
-         * using it, then it is quite likely there will be a segfault or
-         * unexpected behaviour.
-         * More details on the status of this issue can be found here:
-         * https://github.com/Unidata/netcdf-c/issues/1373
-         */
-        /* Pause until currently active netcdf instance has been closed */
-        SAF_SLEEP(10);
-        counter++;
-        if(counter>1000) /* Give up if waiting too long... */
-            return SAF_SOFA_ERROR_NETCDF_IN_USE;
-    }
-    __saf_netcdf_setflag(1);
-
     /* Open NetCDF file */
     if ((retval = nc_open(sofa_filepath, NC_NOWRITE, &ncid)))
         nc_strerror(retval);
-    if(retval!=NC_NOERR){/* if error: */
-        __saf_netcdf_setflag(0);
+    if(retval!=NC_NOERR)/* if error: */
         return SAF_SOFA_ERROR_INVALID_FILE_OR_FILE_PATH;
-    }
     nc_inq(ncid, &ndimsp, &nvarsp, &nattsp, &unlimdimidp); /* find number of possible dimensions, variables, and attributes */
 
     /* Find dimension IDs and lengths */
@@ -140,9 +111,9 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
 
         if (!strcmp((char*)varname,"Data.IR")){
             /* Checks */
-            if(ndimsp!=3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if(h->nReceivers!=-1 && (int)dimlength[dimid[dimids[1]]] != h->nReceivers) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+            if(ndimsp!=3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(h->nReceivers!=-1 && (int)dimlength[dimid[dimids[1]]] != h->nReceivers) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /* Pull data */
             h->nSources =     (int)dimlength[dimid[dimids[0]]];
@@ -157,8 +128,8 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         }
         else if(!strcmp((char*)varname,"Data.SamplingRate")){
             /* Checks */
-            if(!(ndimsp==1 && dimlength[dimid[dimids[0]]] == 1)) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+            if(!(ndimsp==1 && dimlength[dimid[dimids[0]]] == 1)) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /* Pull data */
             tmp_data = realloc1d(tmp_data, 1*sizeof(double));
@@ -178,9 +149,9 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         else if (!strcmp((char*)varname,"Data.Delay")){
             /* Checks */
             if(!(ndimsp==2 || ndimsp==3)) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if(h->nReceivers!=-1 && !((int)dimlength[dimid[dimids[1]]] == h->nReceivers || (int)dimlength[dimid[dimids[0]]] == h->nReceivers)) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if((int)dimlength[dimid[dimids[0]]] != 1 && (int)dimlength[dimid[dimids[1]]] != 1) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+            if(h->nReceivers!=-1 && !((int)dimlength[dimid[dimids[1]]] == h->nReceivers || (int)dimlength[dimid[dimids[0]]] == h->nReceivers)) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[0]]] != 1 && (int)dimlength[dimid[dimids[1]]] != 1) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /* Pull data */
             tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]];
@@ -193,9 +164,9 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         else if (!strcmp((char*)varname,"SourcePosition")){
             /* Checks */
             if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if(h->nSources!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nSources) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if((int)dimlength[dimid[dimids[1]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+            if(h->nSources!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nSources) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[1]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /* Pull data */
             tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]];
@@ -225,9 +196,9 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
                 /* Many SOFA files have the "ReceiverPosition" variable with the following dimensions: nReceivers x 3  */
                 case 2:
                     /* Checks */
-                    if(h->nReceivers!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nReceivers) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-                    if((int)dimlength[dimid[dimids[1]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-                    if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+                    if(h->nReceivers!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nReceivers) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+                    if((int)dimlength[dimid[dimids[1]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+                    if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
                     /* Pull data */
                     h->nReceivers = (int)dimlength[dimid[dimids[0]]];
@@ -246,9 +217,9 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
                  * then please send it to the developers :-) */
                 case 3:
                     /* Checks */
-                    if(h->nReceivers!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nReceivers) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-                    if((int)dimlength[dimid[dimids[1]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-                    if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+                    if(h->nReceivers!=-1 && (int)dimlength[dimid[dimids[0]]] != h->nReceivers) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+                    if((int)dimlength[dimid[dimids[1]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+                    if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
                     /* Pull data */
                     h->nReceivers = (int)dimlength[dimid[dimids[0]]];
@@ -279,9 +250,9 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         else if (!strcmp((char*)varname,"ListenerPosition")){
             /* Checks */
             if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if((int)dimlength[dimid[dimids[1]]] != 1 && (int)dimlength[dimid[dimids[0]]] != 1) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[1]]] != 1 && (int)dimlength[dimid[dimids[0]]] != 1) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /* Pull data */
             h->nListeners = 1;
@@ -308,9 +279,9 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         else if (!strcmp((char*)varname,"ListenerUp")){
             /* Checks */
             if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if((int)dimlength[dimid[dimids[1]]] != 1 && (int)dimlength[dimid[dimids[0]]] != 1) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[1]]] != 1 && (int)dimlength[dimid[dimids[0]]] != 1) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /* Pull data */
             h->nListeners = 1;
@@ -323,8 +294,8 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
         else if (!strcmp((char*)varname,"ListenerView")){
             /* Checks */
             if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if((int)dimlength[dimid[dimids[1]]] != 1 && (int)dimlength[dimid[dimids[0]]] != 1) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            if((int)dimlength[dimid[dimids[1]]] != 1 && (int)dimlength[dimid[dimids[0]]] != 1) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /* Pull data */
@@ -354,8 +325,8 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
                 /* Many SOFA files have the "EmitterPosition" variable with the following dimensions: nEmitters x 3  */
                 case 2:
                     /* Checks */
-                    if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-                    if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+                    if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+                    if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
                     /* Pull data */
                     tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]];
@@ -376,8 +347,8 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
                  * then please send it to the developers :-) */
                 case 3:
                     /* Checks */
-                    if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-                    if(typep!=NC_DOUBLE) { __saf_netcdf_setflag(0); return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
+                    if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+                    if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
                     /* Pull data */
                     tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]];
@@ -506,7 +477,6 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
 
     /* Close the file and clean-up */
     nc_close(ncid);
-    __saf_netcdf_setflag(0);
     free(dimid);
     free(dimlength);
     free(dimname);
@@ -636,6 +606,8 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             break;
         case MYSOFA_READ_ERROR:
             return SAF_SOFA_ERROR_INVALID_FILE_OR_FILE_PATH;
+        case MYSOFA_INVALID_DIMENSIONS:
+            return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED;
         default:
             return SAF_SOFA_ERROR_FORMAT_UNEXPECTED;
     }

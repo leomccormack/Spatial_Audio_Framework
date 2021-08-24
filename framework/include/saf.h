@@ -248,10 +248,12 @@
 /**
  * SAF Module: SOFA_Reader
  *
- * A simple SOFA file reader.
+ * A simple SOFA file reader, which either wraps around the libmysofa library
+ * [1], or instead directly employs the netcdf library (if SAF_ENABLE_NETCDF is
+ * defined).
  *
  * ## Enable instructions
- *   Add this pre-processor definition to your project:
+ *   Add this pre-processor definition to your project to enable this module:
  *       SAF_ENABLE_SOFA_READER_MODULE
  *   Then ensure that the zlib library is also linked to your project.
  *   Optionally, if SAF_ENABLE_NETCDF is defined, then the netcdf library must
@@ -259,6 +261,8 @@
  *   More information can be found in: docs/SOFA_READER_MODULE_DEPENDENCIES.md
  * ## Dependencies
  *   saf_utilities.h, saf_hrir.h, zlib, netcdf (optional)
+ *
+ * @see [1] https://github.com/hoene/libmysofa
  *
  * @license ISC
  */
@@ -273,7 +277,7 @@
  * Particle filtering based tracker.
  *
  * ## Enable instructions
- *   Add this pre-processor definition to your project:
+ *   Add this pre-processor definition to your project to enable this module:
  *       SAF_ENABLE_TRACKER_MODULE
  * ## Dependencies
  *   saf_utilities.h
