@@ -902,6 +902,7 @@ EXCLUDE_PATTERNS      += */test/unity/*
 EXCLUDE_PATTERNS      += */test/saf_test_VS/*
 EXCLUDE_PATTERNS      += */test/test.xcodeproj/*
 EXCLUDE_PATTERNS      += */dependencies/third-party-licenses/*
+EXCLUDE_PATTERNS      += */framework/modules/saf_sofa_reader/libmysofa*
 
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names

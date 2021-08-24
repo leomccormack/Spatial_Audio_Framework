@@ -1181,9 +1181,9 @@
 					"-lsaf_mkl_custom_lp64",
 					"-L/usr/local/lib",
 					"-Wl,-rpath,/usr/local/lib",
-					"-lnetcdf",
 					"-lhdf5",
 					"-lhdf5_hl",
+					"-lnetcdf",
 					"-lz",
 				);
 				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include;
@@ -1232,9 +1232,9 @@
 					"-lsaf_mkl_custom_lp64",
 					"-L/usr/local/lib",
 					"-Wl,-rpath,/usr/local/lib",
-					"-lnetcdf",
 					"-lhdf5",
 					"-lhdf5_hl",
+					"-lnetcdf",
 					"-lz",
 				);
 				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include;

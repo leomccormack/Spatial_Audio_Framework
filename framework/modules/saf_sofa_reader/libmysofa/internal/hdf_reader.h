@@ -31,8 +31,14 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef READER_H_
-#define READER_H_
+#ifndef MYSOFA_HDF_READER_H_
+#define MYSOFA_HDF_READER_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
 
 #include "../mysofa.h"
 #include <stdint.h>
@@ -213,4 +219,10 @@ uint64_t readValue(struct READER *reader, int size);
 
 int gunzip(int inlen, char *in, int *outlen, char *out);
 
-#endif /* READER_H_ */
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* MYSOFA_HDF_READER_H_ */

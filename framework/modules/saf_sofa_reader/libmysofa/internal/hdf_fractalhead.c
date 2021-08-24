@@ -31,6 +31,8 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
+
 #include "hdf_reader.h"
 #include <assert.h>
 #include <errno.h>
@@ -674,3 +676,5 @@ int fractalheapRead(struct READER *reader, struct DATAOBJECT *dataobject,
 void fractalheapFree(struct FRACTALHEAP *fractalheap) {
   free(fractalheap->filter_information);
 }
+
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */

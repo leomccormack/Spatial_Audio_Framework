@@ -38,8 +38,14 @@
  *      Author: hoene
  */
 
-#ifndef SRC_TOOLS_H_
-#define SRC_TOOLS_H_
+#ifndef MYSOFA_SRC_TOOLS_H_
+#define MYSOFA_SRC_TOOLS_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
 
 #include "../mysofa.h"
 #include <math.h>
@@ -74,4 +80,11 @@ void nsearch(const void *key, const char *base, size_t num, size_t size,
              int (*cmp)(const void *key, const void *elt), int *lower,
              int *higher);
 
-#endif /* SRC_TOOLS_H_ */
+
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* MYSOFA_SRC_TOOLS_H_ */

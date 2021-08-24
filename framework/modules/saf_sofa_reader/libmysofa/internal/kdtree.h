@@ -25,12 +25,14 @@
  OF SUCH DAMAGE.
  */
 
-#ifndef _KDTREE_H_
-#define _KDTREE_H_
+#ifndef MYSOFA_KDTREE_H_
+#define MYSOFA_KDTREE_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
 
 struct kdtree;
 
@@ -46,8 +48,10 @@ int kd_insert(struct kdtree *tree, const float *pos, void *data);
 /* Find the nearest node from a given point */
 int kd_nearest(struct kdtree *tree, const float *pos, void **res);
 
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _KDTREE_H_ */
+#endif /* MYSOFA_KDTREE_H_ */

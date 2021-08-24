@@ -261,12 +261,24 @@
 
 #if defined(SAF_ENABLE_SOFA_READER_MODULE)
 /*
- * If your compiler stopped at this point, then please add the path for the
- * netcdf include file to your project's include header paths.
- * Instructions for linking the required "netcdf" library may also be found
- * here: docs/SOFA_READER_MODULE_DEPENDENCIES.md
+ * The built-in saf_sofa_open() SOFA file reader has two implementations:
+ *    - By default, the function wraps around the "libmysofa" library
+ *      (BSD-3-Clause license), which depends only on zlib.
+ *    - However, if SAF_ENABLE_NETCDF is defined, then an approximately 4 times
+ *      faster implementation is used instead. Therefore, if you intend to load
+ *      many large SOFA files (especially microphone arrays or Ambisonic IRs),
+ *      then this latter option may be preferable. Otherwise, the default
+ *      libmysofa SOFA reader is likely sufficient for most purposes.
+ *
+ * The "mysofa" interface, e.g. mysofa_load(), may also be used directly.
+ *
+ * Instructions for linking the required "netcdf" or "zlib" library can be
+ * found in: docs/SOFA_READER_MODULE_DEPENDENCIES.md
  */
-# include <netcdf.h>
+# ifdef SAF_ENABLE_NETCDF
+#  include <netcdf.h>
+# endif
+# include <zlib.h>
 #endif
 
 

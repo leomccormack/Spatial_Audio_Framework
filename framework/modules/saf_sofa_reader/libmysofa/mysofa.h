@@ -38,11 +38,12 @@
 extern "C" {
 #endif
 
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
+
 #include <stdbool.h>
 #include <stdint.h>
 
 #define MYSOFA_EXPORT
-
 #define MYSOFA_DEFAULT_NEIGH_STEP_ANGLE 0.5f
 #define MYSOFA_DEFAULT_NEIGH_STEP_RADIUS 0.01f
 
@@ -235,7 +236,10 @@ void mysofa_close_cached(struct MYSOFA_EASY *easy);
 void mysofa_getversion(int *major, int *minor, int *patch);
 char *mysofa_strdup(const char *s);
 
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */
+
 #ifdef __cplusplus
 }
 #endif
-#endif
+
+#endif /* MYSOFA_H_INCLUDED */

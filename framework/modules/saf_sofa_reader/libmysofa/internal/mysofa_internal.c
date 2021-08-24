@@ -38,6 +38,8 @@
  *      Author: hoene
  */
 
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
+
 #ifndef _USE_MATH_DEFINES
 # define _USE_MATH_DEFINES
 #endif // !_USE_MATH_DEFINES
@@ -984,3 +986,5 @@ float loudness(float *in, int size) {
   }
   return res;
 }
+
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */

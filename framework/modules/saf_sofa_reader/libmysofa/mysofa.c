@@ -31,6 +31,8 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
+
 #include "internal/hdf_reader.h"
 #include "internal/kdtree.h"
 #include "internal/mysofa_internal.h"
@@ -815,3 +817,5 @@ MYSOFA_EXPORT void mysofa_cache_release_all() {
   }
   cache = NULL;
 }
+
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */

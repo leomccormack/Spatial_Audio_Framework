@@ -31,6 +31,8 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
+
 #include "hdf_reader.h"
 #include <ctype.h>
 #include <errno.h>
@@ -1331,3 +1333,5 @@ void dataobjectFree(struct READER *reader, struct DATAOBJECT *dataobject) {
     p = &((*p)->all);
   }
 }
+
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */

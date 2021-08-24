@@ -31,6 +31,8 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
+#if defined(SAF_ENABLE_SOFA_READER_MODULE)
+
 #include <ctype.h>
 #include <errno.h>
 #include <stddef.h>
@@ -40,8 +42,8 @@
 #include <assert.h>
 #include "hdf_reader.h"
 
-/* Only external library requirement: */
-#include <zlib.h>
+/* Only external library requirement is zlib: */
+#include "saf_externals.h"
 
 /* ========================================================================== */
 /*                                 HDF Reader                                 */
@@ -861,3 +863,4 @@ void superblockFree(struct READER *reader, struct SUPERBLOCK *superblock) {
   dataobjectFree(reader, &superblock->dataobject);
 }
 
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */

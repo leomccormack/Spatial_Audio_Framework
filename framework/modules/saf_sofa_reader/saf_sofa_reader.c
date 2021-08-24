@@ -64,6 +64,11 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
     int* dimids, *dimid;
     nc_type typep;
     size_t* dimlength;
+#else
+    int err;
+    MYSOFA_HRTF *hrtf;
+    MYSOFA_ATTRIBUTE* tmp_a;
+#endif /* SAF_ENABLE_NETCDF */
 
     /* Default variables */
     h->nSources = h->nReceivers = h->DataLengthIR = -1;
@@ -86,7 +91,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
     = h->Organisation = h->References = h->RoomType = h->Origin = h->DateCreated
     = h->DateModified = h->Title = h->DatabaseName = h->ListenerShortName = NULL;
 
-    /* NetCDF is not thread safe! */
+#ifdef SAF_ENABLE_NETCDF
     counter = 0;
     while (__SAF_NETCDF_IN_USE){
         /* WARNING: this work around will only work with SAF-built programs.
@@ -510,31 +515,6 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
 
 #else /* Use libmysofa */
 
-    int err;
-    MYSOFA_HRTF *hrtf;
-    MYSOFA_ATTRIBUTE* tmp_a;
-
-    /* Default variables */
-    h->nSources = h->nReceivers = h->DataLengthIR = -1;
-    h->DataSamplingRate = 0.0f;
-    h->nEmitters = h->nListeners = -1;
-    h->DataIR = h->SourcePosition = h->ReceiverPosition = h->ListenerPosition =
-    h->ListenerUp = h->ListenerView = h->EmitterPosition = NULL;
-    h->DataDelay = NULL;
-
-    /* Default variable attributes */
-    h->ListenerPositionType = h->ListenerPositionUnits = h->ReceiverPositionType
-    = h->ReceiverPositionUnits = h->SourcePositionType = h->SourcePositionUnits
-    = h->EmitterPositionType = h->EmitterPositionUnits = h->DataSamplingRateUnits
-    = h->ListenerViewType = h->ListenerViewUnits = NULL;
-
-    /* Default global attributes */
-    h->Conventions = h->Version = h->SOFAConventions = h->SOFAConventionsVersion
-    = h->APIName = h->APIVersion = h->ApplicationName = h->ApplicationVersion
-    = h->AuthorContact = h->Comment = h->DataType = h->History = h->License
-    = h->Organisation = h->References = h->RoomType = h->Origin = h->DateCreated
-    = h->DateModified = h->Title = h->DatabaseName = h->ListenerShortName = NULL;
-
     /* Load SOFA file */
     hrtf = mysofa_load(sofa_filepath, &err);
     h->hLMSOFA = (void*)hrtf;
@@ -728,6 +708,7 @@ void saf_sofa_close
 /*                            Deprecated Functions                            */
 /* ========================================================================== */
 
+#ifdef SAF_ENABLE_NETCDF
 void loadSofaFile
 (
     char* sofa_filepath,
@@ -876,5 +857,6 @@ void loadSofaFile
     free(IR);
     free(SourcePosition);
 }
+#endif /* SAF_ENABLE_NETCDF */
 
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */
