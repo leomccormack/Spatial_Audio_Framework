@@ -1,11 +1,14 @@
 # Dependencies for the saf_sofa_reader Module 
 
-In order to use the built-in [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reader module (**saf_sofa_reader**), your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). 
+In order to use the built-in [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reader module (**saf_sofa_reader**), your project must also link against **zlib**. 
 
-Note that the following pre-processor definition is also required to enable this optional module:
+Optionally, you may also link your project with the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies), which can lead to noticeable speed-ups when loading large SOFA files. 
+
+Note that the following pre-processor definitions are used to enable this optional module:
 
 ```
 SAF_ENABLE_SOFA_READER_MODULE
+SAF_ENABLE_NETCDF   # (Optional)
 ```
 
 Platform specific instructions on how to obtain and link these dependent libraries is provided below.

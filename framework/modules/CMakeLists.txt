@@ -14,7 +14,6 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_sh/saf_sh_internal.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_sh/saf_sh_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_sh/saf_sh.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_sofa_reader/saf_sofa_reader.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker_internal.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker.c
@@ -37,3 +36,5 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap.c
 )
+
+add_subdirectory(saf_sofa_reader)

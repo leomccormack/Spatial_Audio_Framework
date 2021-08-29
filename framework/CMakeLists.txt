@@ -249,10 +249,15 @@ endif()
 ############################################################################
 # Sofa reader module dependencies
 if(SAF_ENABLE_SOFA_READER_MODULE)
-    message(STATUS "saf_sofa_reader module enabled. Linking against netcdf...")
+    message(STATUS "saf_sofa_reader module enabled. Linking against zlib...")
 
     # Indicate to saf that the saf_sofa_reader module should be enabled
     target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_ENABLE_SOFA_READER_MODULE=${SAF_ENABLE_SOFA_READER_MODULE})
+
+    if(SAF_ENABLE_NETCDF)
+        message(STATUS "netcdf enabled for saf_sofa_reader module. Linking against netcdf...")
+        target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_ENABLE_NETCDF=${SAF_ENABLE_NETCDF})
+    endif()
         
     # Header path and libs are platform dependent
     if(MSVC)
@@ -268,11 +273,15 @@ if(SAF_ENABLE_SOFA_READER_MODULE)
         else()
             target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include)
             set(SAF_HDF5_LIBS
-                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libzlib.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libszip.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5_hl.lib
             )
+            if (SAF_ENABLE_NETCDF)
+                set(SAF_HDF5_LIBS ${SAF_HDF5_LIBS}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5.lib
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libszip.lib
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5_hl.lib
+                )
+            endif()
         endif()
         target_link_libraries(${PROJECT_NAME} PRIVATE ${SAF_HDF5_LIBS})
         message(STATUS "Linking HDF5: ${SAF_HDF5_LIBS}")
@@ -281,23 +290,16 @@ if(SAF_ENABLE_SOFA_READER_MODULE)
         if(SAF_NETCDF_INCLUDE_DIR AND SAF_NETCDF_LIB_DIR)
             target_include_directories(${PROJECT_NAME} PUBLIC ${SAF_NETCDF_INCLUDE_DIR})
             set(SAF_NETCDF_LIBS ${SAF_NETCDF_LIB_DIR}/netcdf.lib)
-        else()
+        elseif(SAF_ENABLE_NETCDF)
             target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include)
             set(SAF_NETCDF_LIBS ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/netcdf.lib)
         endif()
-        target_link_libraries(${PROJECT_NAME} PRIVATE ${SAF_NETCDF_LIBS})
-        message(STATUS "Linking NETCDF: ${SAF_NETCDF_LIBS}")
-    elseif(MSYS OR MINGW)
-        message(SEND_ERROR "Unsupported on MSYS because I can't get the damn thing to link no matter what I do..") 
-        target_include_directories(${PROJECT_NAME} PUBLIC 
-             /c/msys64/mingw64/include)
-        #set (CMAKE_SHARED_LINKER_FLAGS "-lnetcdf")
-        find_library(NETCDF_LIBRARY netcdf HINTS "/c/msys64/mingw64/lib/libnetcdf.dll.a")
-        if (NOT NETCDF_LIBRARY)
-            message(FATAL_ERROR "NETCDF_LIBRARY not found")
+        if(SAF_ENABLE_NETCDF)
+            target_link_libraries(${PROJECT_NAME} PRIVATE ${SAF_NETCDF_LIBS})
+            message(STATUS "Linking NETCDF: ${SAF_NETCDF_LIBS}")
         endif()
-        target_link_libraries(${PROJECT_NAME} INTERFACE ${NETCDF_LIBRARY})
-         
+    elseif(MSYS OR MINGW)
+        message(SEND_ERROR "Currently unsupported on MSYS")
     elseif(APPLE) 
         if (SAF_NETCDF_INCLUDE_DIR AND SAF_NETCDF_LIBRARIES)
              message(STATUS "Using NetCDF include dir ${SAF_NETCDF_INCLUDE_DIR} and libraries ${SAF_NETCDF_LIBRARIES}")
@@ -307,11 +309,16 @@ if(SAF_ENABLE_SOFA_READER_MODULE)
              target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/include)
              target_link_libraries(${PROJECT_NAME}
              PRIVATE
-                 ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libnetcdf.a
-                 ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5.a
                  ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libz.a
-                 ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5_hl.a
              )
+             if(SAF_ENABLE_NETCDF)
+                 target_link_libraries(${PROJECT_NAME}
+                 PRIVATE
+                     ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libnetcdf.a
+                     ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5.a
+                     ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5_hl.a
+                 )
+             endif()
          endif()
     elseif(UNIX AND NOT APPLE) 
         find_library(NETCDF_LIBRARY netcdf HINTS HINTS /usr/lib/x86_64-linux-gnu /usr/lib/arm-linux-gnueabihf)

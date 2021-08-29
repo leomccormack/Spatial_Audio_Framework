@@ -43,8 +43,11 @@
  *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
  *
  * ## Optional dependencies
- *   netcdf is required by the optional saf_sofa_reader module, which is enabled
+ *   zlib is required by the optional saf_sofa_reader module, which is enabled
  *   with the following pre-processor flag: SAF_ENABLE_SOFA_READER_MODULE
+ *
+ *   Optionally, SAF_ENABLE_NETCDF can be defined, in which case the netcdf
+ *   library is employed by the saf_sofa_reader.
  *
  *   Intel IPP may be optionally used with the flag: SAF_USE_INTEL_IPP
  *
@@ -335,7 +338,7 @@
 #endif
 
 /* Status of netCDF */
-#if defined(SAF_ENABLE_SOFA_READER_MODULE)
+#if defined(SAF_ENABLE_NETCDF)
 # define SAF_NETCDF_STATUS_STRING "Enabled"
 #else
 # define SAF_NETCDF_STATUS_STRING "Disabled"
