@@ -19,20 +19,22 @@
 /**
  * @file saf_tracker.c
  * @ingroup Tracker
- * @brief Particle filtering based tracker (#SAF_TRACKER_MODULE)
+ * @brief Particle filtering based 3D multi-target tracker (#SAF_TRACKER_MODULE)
  *
- * Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Sa"rkka" and
+ * Based on the RBMCDA [1] MATLAB toolbox (GPLv2 license) by Simo Sa"rkka" and
  * Jouni Hartikainen (Copyright (C) 2003-2008):
  *     https://users.aalto.fi/~ssarkka/#softaudio
  *
- * And also inspired by the work of Sharath Adavanne, Archontis Politis, Joonas
- * Nikunen, and Tuomas Virtanen (GPLv2 license):
- *     https://github.com/sharathadavanne/multiple-target-tracking
+ * More information regarding this specific implementation can be found in [2]
  *
  * @see [1] Sa"rkka", S., Vehtari, A. and Lampinen, J., 2004, June. Rao-
  *          Blackwellized Monte Carlo data association for multiple target
  *          tracking. In Proceedings of the seventh international conference on
  *          information fusion (Vol. 1, pp. 583-590). I.
+ * @see [2] McCormack, L., Politis, A. Sa"rkka", S., and Pulkki, V., 2021.
+ *          Real-Time Tracking of Multiple Acoustical Sources Utilising
+ *          Rao-Blackwellised Particle Filtering. In 29th European Signal
+ *          Processing Conference (EUSIPCO), (pp. 206-210).
  *
  * @author Leo McCormack
  * @date 12.08.2020
