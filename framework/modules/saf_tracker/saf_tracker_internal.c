@@ -178,8 +178,8 @@ void tracker3d_particleCopy
     p2->dt = p1->dt;
     cblas_scopy(p1->nTargets*6,   (float*)p1->M->M, 1, (float*)p2->M->M, 1);
     cblas_scopy(p1->nTargets*6*6, (float*)p1->P->P, 1, (float*)p2->P->P, 1);
-    memcpy(p2->targetIDs, p1->targetIDs, p1->nTargets*sizeof(int));
-    memcpy(p2->Tcount, p1->Tcount, p1->nTargets*sizeof(int));
+    cblas_scopy(p1->nTargets, (float*)p1->targetIDs, 1, (float*)p2->targetIDs, 1);
+    cblas_scopy(p1->nTargets, (float*)p1->Tcount, 1, (float*)p2->Tcount, 1);
 }
 
 void tracker3d_particleDestroy
@@ -851,6 +851,21 @@ void lti_disc
     free(Q_T);
 }
 
+/* Approximate expf and logf (BSD-3-clause License), Copyright 2011 Edward Kmett, https://github.com/ekmett/approximate */
+#ifdef LITTLE_ENDIAN
+static float expf_fast(float a) {
+    union { float f; int x; } u;
+    a=SAF_MAX(a, -80.0f);
+    u.x = (int) (12102203 * a + 1064866805);
+    return u.f;
+}
+
+static float logf_fast(float a) {
+    union { float f; int x; } u = { a };
+    return (u.x - 1064866805) * 8.262958405176314e-8f; /* 1 / 12102203.0; */
+}
+#endif
+
 /* hard-coded for length(M)=3 ... */
 float gauss_pdf3
 (
@@ -879,9 +894,15 @@ float gauss_pdf3
     E += DX[1] * S_DX[1];
     E += DX[2] * S_DX[2];
     E *= 0.5f;
-    E = E + 1.5f * SAF_LOG_2PI + 0.5f * logf(utility_sdet(NULL, (float*)S, 3));
 
+#ifdef LITTLE_ENDIAN
+    E = E + 1.5f * SAF_LOG_2PI + 0.5f *
+        logf_fast(S[0][0] * (S[1][1] * S[2][2] - S[2][1] * S[1][2])-S[1][0] * (S[0][1] * S[2][2] - S[2][1] * S[0][2])+S[2][0] * (S[0][1] * S[1][2] - S[1][1] * S[0][2]));
+    return expf_fast(-E);
+#else
+    E = E + 1.5f * SAF_LOG_2PI + 0.5f * logf(utility_sdet(NULL, (float*)S, 3));
     return expf(-E);
+#endif
 }
 
 int categ_rnd
