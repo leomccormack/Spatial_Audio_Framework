@@ -9,6 +9,18 @@ Major and/or breaking changes to the Spatial_Audio_Framework are listed here.
 For descriptions of minor changes and bug fixes, please refer to the git log.
 
 ====================================================================================================
+v1.2.4
+ - Added libmysofa to the saf_sofa_reader module. The saf_sofa_open() function now uses libmysofa by
+   default, unless "SAF_ENABLE_NETCDF" is defined.
+ - Some optimisations for saf_tracker3d
+
+Breaking changes:
+
+Since saf_sofa_open() now uses libmysofa by default, the required dependency is zlib and no longer 
+netcdf. Note that zlib is still included in the dependencies folder. If you would like to revert to
+the previous behaviour (using netcdf directly rather than libmysofa), define also: SAF_ENABLE_NETCDF
+
+====================================================================================================
 v1.2.3
  - Bug fix in invertLsMtx2D() and invertLsMtx3D()
  - Added install-safipp.bat script for building a custom Intel IPP dll for SAF for Windows

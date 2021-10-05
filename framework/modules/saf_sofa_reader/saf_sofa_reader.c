@@ -19,9 +19,10 @@
  * @ingroup SOFA_Reader
  * @brief Public source for the sofa reader module (#SAF_SOFA_READER_MODULE)
  *
- * @warning This (optional) SOFA reader, requires netcdf to be linked to your
- *          project! Refer to docs/SOFA_READER_MODULE_DEPENDENCIES.md for
- *          more information.
+ * @note This (optional) SOFA reader, requires either netcdf (and its
+ *       dependencies) or zlib to be linked to your project. Note that zlib is
+ *       used by default, unless "SAF_ENABLE_NETCDF" is defined.
+ *       Refer to docs/SOFA_READER_MODULE_DEPENDENCIES.md for more information.
  *
  * @author Leo McCormack
  * @date 21.11.2017

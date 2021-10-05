@@ -96,7 +96,8 @@
  *
  * Note that Intel MKL not only supports CBLAS and LAPACK, but also offers:
  *  - a highly optimised discrete/fast Fourier transform (DFT/FFT), which is
- *    used by the saf_utility_fft wrapper.
+ *    used by the saf_utility_fft wrapper [unless this is overriden by the Intel
+ *    IPP implementation (SAF_USE_INTEL_IPP), or FFTW (SAF_USE_FFTW)].
  *  - a number of additional vector, vector-vector, vector-scalar operations
  *    that are not covered by the CBLAS standard; such as: hadamard products,
  *    element-wise additions/subtractions, and the modulus or reciprical of
@@ -164,7 +165,8 @@
  * Note that Apple Accelerate not only supports CBLAS and LAPACK, but also
  * offers:
  *  - an optimised discrete/fast Fourier transform (DFT/FFT), which is used by
- *    the saf_utility_fft wrapper.
+ *    the saf_utility_fft wrapper  [unless this is overriden by the Intel IPP
+ *    implementation (SAF_USE_INTEL_IPP), or FFTW (SAF_USE_FFTW)].
  *  - a number of additional vector, vector-vector, vector-scalar operations
  *    that are not covered by the CBLAS standard; such as hadamard products,
  *    element-wise additions/subtractions, etc.
@@ -267,7 +269,7 @@
  * The built-in saf_sofa_open() SOFA file reader has two implementations:
  *    - By default, the function wraps around the "libmysofa" library
  *      (BSD-3-Clause license), which depends only on zlib.
- *    - However, if SAF_ENABLE_NETCDF is defined, then an approximately 4 times
+ *    - However, if SAF_ENABLE_NETCDF is defined, then an approximately 3 times
  *      faster implementation is used instead. Therefore, if you intend to load
  *      many large SOFA files (especially microphone arrays or Ambisonic IRs),
  *      then this latter option may be preferable. Otherwise, the default

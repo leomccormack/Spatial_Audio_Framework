@@ -20,9 +20,10 @@
  * @file saf_sofa_reader.h 
  * @brief Main header for the sofa reader module (#SAF_SOFA_READER_MODULE)
  *
- * @warning This (optional) SOFA reader, requires netcdf to be linked to your
- *          project! Refer to docs/SOFA_READER_MODULE_DEPENDENCIES.md for
- *          more information.
+ * @note This (optional) SOFA reader, requires netcdf (and its dependencies)
+ *       and/or zlib to be linked to your project. Note that zlib is used by
+ *       default, unless "SAF_ENABLE_NETCDF" is defined.
+ *       Refer to docs/SOFA_READER_MODULE_DEPENDENCIES.md for more information.
  *
  * @author Leo McCormack
  * @date 21.11.2017
@@ -38,8 +39,8 @@ extern "C" {
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
 
-/* Include also the libmysofa reader (BSD-3-Clause license), which only depends
- * on zlib.h */
+/* Include also the interface for the libmysofa reader (BSD-3-Clause license),
+ * which only depends on zlib.h */
 #include "libmysofa/mysofa.h"
 
 /* ========================================================================== */
