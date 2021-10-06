@@ -148,9 +148,9 @@ void tracker3d_reset(void* const hT3d);
  * @param[in]  hT3d           tracker3d handle
  * @param[in]  newObs_xyz     New observations/measurements; nObs x 3
  * @param[in]  nObs           Number of new observations/measurements
- * @param[out] target_pos_xyz (&) Current target positions; *nTargets x 3
- * @param[out] target_var_xyz (&) Current target variances; *nTargets x 3
- * @param[out] target_IDs     (&) (Unique) target IDs; *nTargets x 1
+ * @param[out] target_pos_xyz (&) Current target positions; nTargets x 3
+ * @param[out] target_var_xyz (&) Current target variances; nTargets x 3
+ * @param[out] target_IDs     (&) Unique target IDs; nTargets x 1
  * @param[out] nTargets       (&) Current number of targets being tracked
  *
  * @see [1] McCormack, L., Politis, A. Sa"rkka", S., and Pulkki, V., 2021.
