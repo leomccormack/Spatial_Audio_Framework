@@ -28,7 +28,7 @@ var ambi__bin_8c =
     [ "ambi_bin_getProgressBarText", "ambi__bin_8c.html#aed47ec0f7af7b7db879b4a063df441d3", null ],
     [ "ambi_bin_getRoll", "ambi__bin_8c.html#a68dfb8adccde08cf765b7ba05a1ef93a", null ],
     [ "ambi_bin_getRPYflag", "ambi__bin_8c.html#abb57f987741e3b3ebaf0de33fdca08f8", null ],
-    [ "ambi_bin_getSofaFilePath", "ambi__bin_8c.html#adf2c09e264e7f19558bb1215741e1533", null ],
+    [ "ambi_bin_getSofaFilePath", "ambi__bin_8c.html#a90a26a945a9121b694427349151f176e", null ],
     [ "ambi_bin_getUseDefaultHRIRsflag", "ambi__bin_8c.html#ae0ba54110a677150115a986abe1a0a41", null ],
     [ "ambi_bin_getYaw", "ambi__bin_8c.html#ae2118f337a9cc0cb7e57dd9554b98fa7", null ],
     [ "ambi_bin_init", "ambi__bin_8c.html#adacd25ce222712fe55444b63e47dd5cc", null ],

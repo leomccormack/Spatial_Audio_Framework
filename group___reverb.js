@@ -4,11 +4,7 @@ var group___reverb =
     [ "saf_reverb.h", "saf__reverb_8h.html", null ],
     [ "saf_reverb_internal.c", "saf__reverb__internal_8c.html", null ],
     [ "saf_reverb_internal.h", "saf__reverb__internal_8h.html", null ],
-    [ "ims_rir", "structims__rir.html", [
-      [ "data", "structims__rir.html#ad9671031b843d8cc89519a80b599ab00", null ],
-      [ "length", "structims__rir.html#a9fd4bc6254b8f6bd6f77e87f2838001e", null ],
-      [ "nChannels", "structims__rir.html#a517783e9a564acc0cccdf193b814b1a6", null ]
-    ] ],
+    [ "ims_rir", "structims__rir.html", null ],
     [ "IMS_MAX_NUM_RECEIVERS", "group___reverb.html#gade6691adf17d4e97d1566a7bce6ab0db", null ],
     [ "IMS_MAX_NUM_SOURCES", "group___reverb.html#gadcc46a52e7b23231d700877864b831e2", null ],
     [ "ims_shoebox_addReceiverSH", "group___reverb.html#ga59f53cd055df23a1aec877407f883ca9", null ],

@@ -1,8 +1,8 @@
 var af_s_t_f_t__internal_8h =
 [
-    [ "complexVector", "structcomplex_vector.html", "structcomplex_vector" ],
-    [ "afSTFTlib_internal_data", "structaf_s_t_f_tlib__internal__data.html", "structaf_s_t_f_tlib__internal__data" ],
-    [ "afHybrid", "structaf_hybrid.html", "structaf_hybrid" ],
+    [ "complexVector", "structcomplex_vector.html", null ],
+    [ "afSTFTlib_internal_data", "structaf_s_t_f_tlib__internal__data.html", null ],
+    [ "afHybrid", "structaf_hybrid.html", null ],
     [ "AFSTFT_USE_SAF_UTILITIES", "af_s_t_f_t__internal_8h.html#ada4ffad6174c77dc350da36b3e6c83b0", null ],
     [ "COEFF1", "af_s_t_f_t__internal_8h.html#ab32b845aeac4309a22d2ad696aeb0af8", null ],
     [ "COEFF2", "af_s_t_f_t__internal_8h.html#a4d22d8ee6f014146072b4a1a8d3d02a1", null ],

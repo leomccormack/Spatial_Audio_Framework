@@ -1,7 +1,7 @@
 var saf__cdf4sap_8c =
 [
-    [ "cdf4sap_data", "structcdf4sap__data.html", "structcdf4sap__data" ],
-    [ "cdf4sap_cmplx_data", "structcdf4sap__cmplx__data.html", "structcdf4sap__cmplx__data" ],
+    [ "cdf4sap_data", "structcdf4sap__data.html", null ],
+    [ "cdf4sap_cmplx_data", "structcdf4sap__cmplx__data.html", null ],
     [ "cdf4sap_cmplx_create", "group___c_d_f4_s_a_p.html#gac78ef375d990870fcf3c8abc65f3ef34", null ],
     [ "cdf4sap_cmplx_destroy", "group___c_d_f4_s_a_p.html#gabeca3d8542ba976fbbaedbc5189aec4f", null ],
     [ "cdf4sap_create", "group___c_d_f4_s_a_p.html#gab6a33536abed2bcd66f8e05bc8ebd026", null ],

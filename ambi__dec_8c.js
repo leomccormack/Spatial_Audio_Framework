@@ -26,7 +26,7 @@ var ambi__dec_8c =
     [ "ambi_dec_getProcessingDelay", "ambi__dec_8c.html#a98ea8c974460b492dca155ee68165557", null ],
     [ "ambi_dec_getProgressBar0_1", "ambi__dec_8c.html#a32f1a6794a6c71021e118b015e1befdc", null ],
     [ "ambi_dec_getProgressBarText", "ambi__dec_8c.html#a667738046075b48544c5f730ac920420", null ],
-    [ "ambi_dec_getSofaFilePath", "ambi__dec_8c.html#a04abad743b216e3bbf7a4ecb606c32b1", null ],
+    [ "ambi_dec_getSofaFilePath", "ambi__dec_8c.html#abbcf8d52978cfe2e4f5c321591b04e9d", null ],
     [ "ambi_dec_getTransitionFreq", "ambi__dec_8c.html#ab7b59f93a29dfceefa9fb13688ce11b4", null ],
     [ "ambi_dec_getUseDefaultHRIRsflag", "ambi__dec_8c.html#a738500776cf4a3b28dd67e725b9c8082", null ],
     [ "ambi_dec_init", "ambi__dec_8c.html#ad0887ed5ef302cecf03452b691213d6e", null ],

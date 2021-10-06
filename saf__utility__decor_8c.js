@@ -1,8 +1,8 @@
 var saf__utility__decor_8c =
 [
-    [ "latticeAPF", "structlattice_a_p_f.html", "structlattice_a_p_f" ],
-    [ "latticeDecor_data", "structlattice_decor__data.html", "structlattice_decor__data" ],
-    [ "transientDucker_data", "structtransient_ducker__data.html", "structtransient_ducker__data" ],
+    [ "latticeAPF", "structlattice_a_p_f.html", null ],
+    [ "latticeDecor_data", "structlattice_decor__data.html", null ],
+    [ "transientDucker_data", "structtransient_ducker__data.html", null ],
     [ "getDecorrelationDelays", "group___utilities.html#gaf46a6e146753e79dbe3d19ccf3bf902f", null ],
     [ "latticeDecorrelator_apply", "group___utilities.html#ga88cb15c08fbf7cf58a4512b0bdd256a0", null ],
     [ "latticeDecorrelator_create", "group___utilities.html#gaa4881d27f54bbe5db5fc027a9e421f08", null ],

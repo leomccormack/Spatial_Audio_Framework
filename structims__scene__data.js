@@ -1,7 +1,6 @@
 var structims__scene__data =
 [
     [ "abs_wall", "structims__scene__data.html#a65e7259b74b4f75ef786e24521a34f20", null ],
-    [ "applyCrossFadeFLAG", "structims__scene__data.html#a18cf32cf51833580b0d5a759c203815e", null ],
     [ "band_centerfreqs", "structims__scene__data.html#a7df90c67e4f3823b0bed6a4bb482b474", null ],
     [ "band_cutofffreqs", "structims__scene__data.html#a0cc63f2c0d47bd86a1760a346646402c", null ],
     [ "c_ms", "structims__scene__data.html#a52674f0bdfc7c8174554ec81adcb3cbe", null ],
@@ -13,8 +12,6 @@ var structims__scene__data =
     [ "hFaFbank", "structims__scene__data.html#af4325be2dccb18b5fb1d91674c0cf935", null ],
     [ "interpolator_fIn", "structims__scene__data.html#a5bfd7c6b3b058392b03fb2a0ff8a9437", null ],
     [ "interpolator_fOut", "structims__scene__data.html#aea63b8b221b0845af244d6b4d782be50", null ],
-    [ "lookup_fractions", "structims__scene__data.html#a96bc2433f0977df9210197510abd38fe", null ],
-    [ "lookup_H_frac", "structims__scene__data.html#a8da8e5a57d7f3a6b1109a6e98a9fa7ad", null ],
     [ "nBands", "structims__scene__data.html#a5c89eed63acbd4316ee92599816b2a9b", null ],
     [ "nReceivers", "structims__scene__data.html#a955a21013a45b95d64799217b35c3712", null ],
     [ "nSources", "structims__scene__data.html#a1d3504213c398687cda898bdc18a5532", null ],

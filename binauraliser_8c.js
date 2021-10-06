@@ -26,7 +26,7 @@ var binauraliser_8c =
     [ "binauraliser_getProgressBarText", "binauraliser_8c.html#a7a18aa1cd9adf953ceb009d87c8f1307", null ],
     [ "binauraliser_getRoll", "binauraliser_8c.html#ac6e663295862748d006aef9661bcc002", null ],
     [ "binauraliser_getRPYflag", "binauraliser_8c.html#a707e489fa1f9350543f25caf0d79b8a8", null ],
-    [ "binauraliser_getSofaFilePath", "binauraliser_8c.html#a62330358d5d762f4ba9f8ec07855f4bf", null ],
+    [ "binauraliser_getSofaFilePath", "binauraliser_8c.html#a08a79d5d757593248cf6db1bd103652b", null ],
     [ "binauraliser_getSourceAzi_deg", "binauraliser_8c.html#ac3c286f7e0708bca584b3b5510812f09", null ],
     [ "binauraliser_getSourceElev_deg", "binauraliser_8c.html#aa39ba3761c2c575d6828757c274177d7", null ],
     [ "binauraliser_getUseDefaultHRIRsflag", "binauraliser_8c.html#a21ca6250fe63d4b0353ea59d581eccf5", null ],

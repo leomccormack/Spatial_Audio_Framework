@@ -1,8 +1,8 @@
 var saf__utility__fft_8c =
 [
-    [ "saf_stft_data", "structsaf__stft__data.html", "structsaf__stft__data" ],
-    [ "saf_rfft_data", "structsaf__rfft__data.html", "structsaf__rfft__data" ],
-    [ "saf_fft_data", "structsaf__fft__data.html", "structsaf__fft__data" ],
+    [ "saf_stft_data", "structsaf__stft__data.html", null ],
+    [ "saf_rfft_data", "structsaf__rfft__data.html", null ],
+    [ "saf_fft_data", "structsaf__fft__data.html", null ],
     [ "fftconv", "group___utilities.html#ga38f869495477f67567e9b662aad2bf8b", null ],
     [ "fftfilt", "group___utilities.html#ga0881ba2caf293c6452a207e8714e53ee", null ],
     [ "getUniformFreqVector", "group___utilities.html#ga9a0085bad83e7f4c66d2dd8c05e081b4", null ],

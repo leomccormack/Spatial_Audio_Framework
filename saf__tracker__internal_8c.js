@@ -1,6 +1,6 @@
 var saf__tracker__internal_8c =
 [
-    [ "kf_update6_data", "structkf__update6__data.html", "structkf__update6__data" ],
+    [ "kf_update6_data", "structkf__update6__data.html", null ],
     [ "SAF_LOG_2PI", "saf__tracker__internal_8c.html#ae807692052ad1370774e1cbf3d8169c8", null ],
     [ "categ_rnd", "saf__tracker__internal_8c.html#a4eb16727870ffdd326a11cc170b32e75", null ],
     [ "eff_particles", "saf__tracker__internal_8c.html#ac0884212702124413c94f3589f8b0ae8", null ],

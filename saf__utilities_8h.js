@@ -22,5 +22,6 @@ var saf__utilities_8h =
     [ "saf_print_error", "group___utilities.html#ga00dfffc88bae83749d1263b68c091f46", null ],
     [ "saf_print_warning", "group___utilities.html#gaad02a5dce819d156746129bc8121052c", null ],
     [ "SAF_TRUE", "group___utilities.html#ga6ce95109000cef7ab8c9c4aaa8c00da7", null ],
+    [ "SAF_UNUSED", "group___utilities.html#ga183e238a2eb57ebee73c14f258dbaea8", null ],
     [ "SQRT4PI", "group___utilities.html#gae1b62759b810eae84b243da1ded29871", null ]
 ];

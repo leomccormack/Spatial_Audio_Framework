@@ -1,7 +1,7 @@
 var saf__utility__matrix_conv_8c =
 [
-    [ "safMatConv_data", "structsaf_mat_conv__data.html", "structsaf_mat_conv__data" ],
-    [ "safMulConv_data", "structsaf_mul_conv__data.html", "structsaf_mul_conv__data" ],
+    [ "safMatConv_data", "structsaf_mat_conv__data.html", null ],
+    [ "safMulConv_data", "structsaf_mul_conv__data.html", null ],
     [ "saf_matrixConv_apply", "group___utilities.html#ga09d3cb4f08ddc2a2dd2e1658d03ef49e", null ],
     [ "saf_matrixConv_create", "group___utilities.html#ga574f6d6fded463eeb37ed4112f70f2e5", null ],
     [ "saf_matrixConv_destroy", "group___utilities.html#ga8d42d0ecba6ee38660bc51d8a28dbe2c", null ],
