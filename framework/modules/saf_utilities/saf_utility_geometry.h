@@ -146,6 +146,36 @@ void yawPitchRoll2Rzyx (/* Input Arguments */
                         float R[3][3]);
 
 /**
+ * Converts spherical coordinates to Cartesian coordinates
+ *
+ * @param[in]  sph                 Spherical coordinates; FLAT: nDirs x 3
+ * @param[in]  nDirs               Number of directions/coordinates
+ * @param[in]  anglesInDegreesFLAG 0: dirs given in radians, 1: degrees instead
+ * @param[out] cart                Cartesian coordinates; FLAT: nDirs x 3
+ */
+void sph2cart(/* Input Arguments */
+              float* sph,
+              int nDirs,
+              int anglesInDegreesFLAG,
+              /* Output Arguments */
+              float* cart);
+
+/**
+ * Converts Cartesian coordinates to spherical coordinates
+ *
+ * @param[in]  cart                Cartesian coordinates; FLAT: nDirs x 3
+ * @param[in]  nDirs               Number of directions/coordinates
+ * @param[in]  anglesInDegreesFLAG 0: dirs wanted in radians, 1: degrees instead
+ * @param[out] sph                 Spherical coordinates; FLAT: nDirs x 2
+ */
+void cart2sph(/* Input Arguments */
+              float* cart,
+              int nDirs,
+              int anglesInDegreesFLAG,
+              /* Output Arguments */
+              float* sph);
+
+/**
  * Converts spherical coordinates to Cartesian coordinates of unit length
  *
  * @param[in]  dirs                Spherical coordinates; FLAT: nDirs x 2

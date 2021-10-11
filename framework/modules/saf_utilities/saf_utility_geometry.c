@@ -269,6 +269,55 @@ void yawPitchRoll2Rzyx
         euler2rotationMatrix(yaw, pitch, roll, 0, EULER_ROTATION_YAW_PITCH_ROLL, R);
 }
 
+void sph2cart(float* sph,
+              int nDirs,
+              int anglesInDegreesFLAG,
+              float* cart)
+{
+    int i;
+    float tmp_rad[2];
+
+    if(anglesInDegreesFLAG){
+        for(i=0; i<nDirs; i++){
+            tmp_rad[0] = sph[i*3]   * SAF_PI/180.0f;
+            tmp_rad[1] = sph[i*3+1] * SAF_PI/180.0f;
+            cart[i*3]   = sph[i*3+2] * cosf(tmp_rad[1]) * cosf(tmp_rad[0]);
+            cart[i*3+1] = sph[i*3+2] * cosf(tmp_rad[1]) * sinf(tmp_rad[0]);
+            cart[i*3+2] = sph[i*3+2] * sinf(tmp_rad[1]);
+        }
+    }
+    else { /* Angles given in radians */
+        for(i=0; i<nDirs; i++){
+            cart[i*3]   = sph[i*3+2] * cosf(sph[i*3+1]) * cosf(sph[i*3]);
+            cart[i*3+1] = sph[i*3+2] * cosf(sph[i*3+1]) * sinf(sph[i*3]);
+            cart[i*3+2] = sph[i*3+2] * sinf(sph[i*3+1]);
+        }
+    } 
+}
+
+void cart2sph(float* cart,
+              int nDirs,
+              int anglesInDegreesFLAG,
+              float* sph)
+{
+    int i;
+    float hypotxy;
+
+    for(i=0; i<nDirs; i++){
+        hypotxy = sqrtf(cart[i*3]*cart[i*3] + cart[i*3+1]*cart[i*3+1]);
+        sph[i*3]   = atan2f(cart[i*3+1], cart[i*3]);
+        sph[i*3+1] = atan2f(cart[i*3+2], hypotxy);
+        sph[i*3+2] = L2_norm3(&cart[i*3]);
+    }
+
+    /* Return in degrees instead... */
+    if(anglesInDegreesFLAG)
+        for(i=0; i<nDirs; i++){
+            sph[i*3] *= (180.0f/SAF_PI);
+            sph[i*3+1] *= (180.0f/SAF_PI);
+        }
+}
+
 void unitSph2cart
 (
     float* dirs,
