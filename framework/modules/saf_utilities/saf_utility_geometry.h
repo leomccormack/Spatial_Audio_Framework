@@ -166,7 +166,7 @@ void sph2cart(/* Input Arguments */
  * @param[in]  cart                Cartesian coordinates; FLAT: nDirs x 3
  * @param[in]  nDirs               Number of directions/coordinates
  * @param[in]  anglesInDegreesFLAG 0: dirs wanted in radians, 1: degrees instead
- * @param[out] sph                 Spherical coordinates; FLAT: nDirs x 2
+ * @param[out] sph                 Spherical coordinates; FLAT: nDirs x 3
  */
 void cart2sph(/* Input Arguments */
               float* cart,
