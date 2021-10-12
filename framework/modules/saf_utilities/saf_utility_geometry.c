@@ -311,11 +311,12 @@ void cart2sph(float* cart,
     }
 
     /* Return in degrees instead... */
-    if(anglesInDegreesFLAG)
+    if(anglesInDegreesFLAG){
         for(i=0; i<nDirs; i++){
             sph[i*3] *= (180.0f/SAF_PI);
             sph[i*3+1] *= (180.0f/SAF_PI);
         }
+    }
 }
 
 void unitSph2cart

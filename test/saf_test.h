@@ -22,6 +22,9 @@ int main_test(void);
 /* ========================================================================== */
 
 /**
+ * Testing cart2sph() and sph2cart() are reversible */
+void test__cart2sph(void);
+/**
  * Testing that resampleHRIRs() is resampling adequately */
 void test__resampleHRIRs(void);
 /**

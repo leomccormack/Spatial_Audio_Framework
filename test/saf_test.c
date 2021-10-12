@@ -78,6 +78,7 @@ int main_test(void) {
     UNITY_BEGIN();
     
     /* run each unit test */
+    RUN_TEST(test__cart2sph);
     RUN_TEST(test__resampleHRIRs);
     RUN_TEST(test__delaunaynd);
     RUN_TEST(test__quaternion);
@@ -147,6 +148,30 @@ int main_test(void) {
 /* ========================================================================== */
 /*                                 Unit Tests                                 */
 /* ========================================================================== */
+
+void test__cart2sph(void){
+    const float acceptedTolerance = 0.00001f;
+    float cordCar [100][3];
+    float cordSph [100][3];
+    float cordCarTest [100][3];
+
+    /* Generate some random Cartesian coordinates */
+    rand_m1_1((float*) cordCar, 100*3);
+
+    /* rad */
+    cart2sph((float*) cordCar, 100, SAF_FALSE, (float*) cordSph);
+    sph2cart((float*) cordSph, 100, SAF_FALSE, (float*) cordCarTest);
+    for (int i=0; i<100; i++)
+        for (int j=0; j<3; j++)
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, cordCar[i][j], cordCarTest[i][j]);
+
+    /*deg */
+    cart2sph((float*) cordCar, 100, SAF_TRUE, (float*) cordSph);
+    sph2cart((float*) cordSph, 100, SAF_TRUE, (float*) cordCarTest);
+    for (int i=0; i<100; i++)
+        for (int j=0; j<3; j++)
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, cordCar[i][j], cordCarTest[i][j]);
+}
 
 void test__resampleHRIRs(void){
     float* hrirs_out, *hrirs_tmp;
