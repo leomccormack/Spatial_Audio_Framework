@@ -6,6 +6,7 @@ var saf__utility__geometry_8h =
       [ "EULER_ROTATION_YAW_PITCH_ROLL", "group___utilities.html#gga3093dd635473d82de533d0ec310c45c3a01b5352c338580dbc17e181afe0f6c26", null ],
       [ "EULER_ROTATION_ROLL_PITCH_YAW", "group___utilities.html#gga3093dd635473d82de533d0ec310c45c3a1cbbe9bc027dfb9b2544a445fbc9ede6", null ]
     ] ],
+    [ "cart2sph", "group___utilities.html#gacf7b2c5a9357e4e4b6c2d079c6593db8", null ],
     [ "convhull3d", "group___utilities.html#ga3d0d4af5965dcfa11215a830071a46ba", null ],
     [ "convhullnd", "group___utilities.html#gac8f94455afdbc17faf5ffa747eb671ed", null ],
     [ "crossProduct3", "group___utilities.html#ga6184d4e03844102c7e7921c7081b7fd7", null ],
@@ -21,6 +22,7 @@ var saf__utility__geometry_8h =
     [ "quaternion2euler", "group___utilities.html#ga59948f366d271d97c1b12a0d829e1109", null ],
     [ "quaternion2rotationMatrix", "group___utilities.html#ga2e80b68f78c7c6317073e603b6ed0b78", null ],
     [ "rotationMatrix2quaternion", "group___utilities.html#ga7a6535d2ee4b9f1147d3394b2d186a1a", null ],
+    [ "sph2cart", "group___utilities.html#ga6d6346f44f08ddae58339b54be3fa49b", null ],
     [ "sphDelaunay", "group___utilities.html#gab81aab7da3deb5671c4cde3448855543", null ],
     [ "sphVoronoi", "group___utilities.html#ga9eaf842897a359954c56aa53b151fc81", null ],
     [ "sphVoronoiAreas", "group___utilities.html#ga3fa1da3ec65285471c82ce5ac8cee740", null ],

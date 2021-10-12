@@ -1,5 +1,7 @@
 var NAVTREEINDEX14 =
 {
+"structaf_s_t_f_t__data.html#af4eb9ce96212013222e58cc50a873a27":[1,0,1,6],
+"structaf_s_t_f_tlib__internal__data.html":[1,0,2],
 "structambi__bin__codec_pars.html":[1,0,3],
 "structambi__bin__codec_pars.html#a078628274994dcb676d621f5109f20df":[1,0,3,8],
 "structambi__bin__codec_pars.html#a0b500953afef981a7dc83d35f759e47a":[1,0,3,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX14 =
 "structbinauraliser__data.html#a408d8def8f2ca0065d46d8854f4a3186":[1,0,13,28],
 "structbinauraliser__data.html#a410992f9ddf659314f3dcd3d17867613":[1,0,13,17],
 "structbinauraliser__data.html#a484d2463f3b1f2c84f5afcdcc4755c4a":[1,0,13,25],
-"structbinauraliser__data.html#a4a801e92d375de215fad3193e663048f":[1,0,13,43],
-"structbinauraliser__data.html#a50eeb512792c4ae41823bd0de0dad1e3":[1,0,13,13],
-"structbinauraliser__data.html#a5270df69fa4165205e11392e4c80a064":[1,0,13,42]
+"structbinauraliser__data.html#a4a801e92d375de215fad3193e663048f":[1,0,13,43]
 };

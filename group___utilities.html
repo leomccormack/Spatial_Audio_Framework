@@ -539,6 +539,12 @@ Functions</h2></td></tr>
 <tr class="memitem:gac71d1d0c99dbe0cc27bd25790e04d779"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gac71d1d0c99dbe0cc27bd25790e04d779">yawPitchRoll2Rzyx</a> (float yaw, float pitch, float roll, int rollPitchYawFLAG, float R[3][3])</td></tr>
 <tr class="memdesc:gac71d1d0c99dbe0cc27bd25790e04d779"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a 3x3 rotation matrix from the Euler angles, using the yaw-pitch-roll (zyx) convention.  <a href="group___utilities.html#gac71d1d0c99dbe0cc27bd25790e04d779">More...</a><br /></td></tr>
 <tr class="separator:gac71d1d0c99dbe0cc27bd25790e04d779"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6d6346f44f08ddae58339b54be3fa49b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga6d6346f44f08ddae58339b54be3fa49b">sph2cart</a> (float *sph, int nDirs, int anglesInDegreesFLAG, float *cart)</td></tr>
+<tr class="memdesc:ga6d6346f44f08ddae58339b54be3fa49b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts spherical coordinates to Cartesian coordinates.  <a href="group___utilities.html#ga6d6346f44f08ddae58339b54be3fa49b">More...</a><br /></td></tr>
+<tr class="separator:ga6d6346f44f08ddae58339b54be3fa49b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacf7b2c5a9357e4e4b6c2d079c6593db8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gacf7b2c5a9357e4e4b6c2d079c6593db8">cart2sph</a> (float *cart, int nDirs, int anglesInDegreesFLAG, float *sph)</td></tr>
+<tr class="memdesc:gacf7b2c5a9357e4e4b6c2d079c6593db8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts Cartesian coordinates to spherical coordinates.  <a href="group___utilities.html#gacf7b2c5a9357e4e4b6c2d079c6593db8">More...</a><br /></td></tr>
+<tr class="separator:gacf7b2c5a9357e4e4b6c2d079c6593db8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa6aec07d37ddac3d1e5579416869dc8c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaa6aec07d37ddac3d1e5579416869dc8c">unitSph2cart</a> (float *dirs, int nDirs, int anglesInDegreesFLAG, float *dirs_xyz)</td></tr>
 <tr class="memdesc:gaa6aec07d37ddac3d1e5579416869dc8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts spherical coordinates to Cartesian coordinates of unit length.  <a href="group___utilities.html#gaa6aec07d37ddac3d1e5579416869dc8c">More...</a><br /></td></tr>
 <tr class="separator:gaa6aec07d37ddac3d1e5579416869dc8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -3452,6 +3458,59 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="gacf7b2c5a9357e4e4b6c2d079c6593db8" name="gacf7b2c5a9357e4e4b6c2d079c6593db8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacf7b2c5a9357e4e4b6c2d079c6593db8">&#9670;&nbsp;</a></span>cart2sph()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void cart2sph </td>
+          <td>(</td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>cart</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nDirs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>anglesInDegreesFLAG</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>sph</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Converts Cartesian coordinates to spherical coordinates. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cart</td><td>Cartesian coordinates; FLAT: nDirs x 3 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nDirs</td><td>Number of directions/coordinates </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">anglesInDegreesFLAG</td><td>0: dirs wanted in radians, 1: degrees instead </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">sph</td><td>Spherical coordinates; FLAT: nDirs x 3 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00298">298</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+
+</div>
+</div>
 <a id="ga4be4a4a82a31cde4fde08490baedbed0" name="ga4be4a4a82a31cde4fde08490baedbed0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga4be4a4a82a31cde4fde08490baedbed0">&#9670;&nbsp;</a></span>cmplxPairUp()</h2>
 
@@ -3690,7 +3749,7 @@ Variables</h2></td></tr>
 <dd>
 [2] The Quickhull Algorithm for Convex Hull, C. Bradford Barber, David P. Dobkin and Hannu Huhdanpaa, Geometry Center Technical Report GCG53, July 30, 1993 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00420">420</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00469">469</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -3754,7 +3813,7 @@ Variables</h2></td></tr>
 <dd>
 [2] The Quickhull Algorithm for Convex Hull, C. Bradford Barber, David P. Dobkin and Hannu Huhdanpaa, Geometry Center Technical Report GCG53, July 30, 1993 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00447">447</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00496">496</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -3852,7 +3911,7 @@ Variables</h2></td></tr>
 
 <p>Cross product between two 3-element floating point vectors (c = a x b) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00366">366</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00415">415</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -3977,7 +4036,7 @@ Variables</h2></td></tr>
 <dd>
 [2] The Quickhull Algorithm for Convex Hull, C. Bradford Barber, David P. Dobkin and Hannu Huhdanpaa, Geometry Center Technical Report GCG53, July 30, 1993 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00474">474</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00523">523</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -4999,7 +5058,7 @@ Variables</h2></td></tr>
 
 <p>Returns the Frobenius Norm of a matrix M, of dimensions: lenX x lenY. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00344">344</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00393">393</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -5106,7 +5165,7 @@ Variables</h2></td></tr>
 
 <p>Returns the distance between "point_a" and "point_b". </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00396">396</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00445">445</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -5144,7 +5203,7 @@ Variables</h2></td></tr>
 
 <p>Returns the distance between a "point" and an infinite line described by the two points "v1" and "v2". </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00378">378</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00427">427</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -5306,7 +5365,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00848">848</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00897">897</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -5809,7 +5868,7 @@ Variables</h2></td></tr>
 
 <p>Returns the L2 (Euclidean) norm of an arbitrary length vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00330">330</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00379">379</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -5831,7 +5890,7 @@ Variables</h2></td></tr>
 
 <p>Returns the L2 (Euclidean) norm of a 3-element vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00322">322</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00371">371</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -8372,6 +8431,59 @@ Example Usage</h2>
 
 </div>
 </div>
+<a id="ga6d6346f44f08ddae58339b54be3fa49b" name="ga6d6346f44f08ddae58339b54be3fa49b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6d6346f44f08ddae58339b54be3fa49b">&#9670;&nbsp;</a></span>sph2cart()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sph2cart </td>
+          <td>(</td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>sph</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nDirs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>anglesInDegreesFLAG</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>cart</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Converts spherical coordinates to Cartesian coordinates. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">sph</td><td>Spherical coordinates; FLAT: nDirs x 3 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nDirs</td><td>Number of directions/coordinates </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">anglesInDegreesFLAG</td><td>0: dirs given in radians, 1: degrees instead </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">cart</td><td>Cartesian coordinates; FLAT: nDirs x 3 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00272">272</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+
+</div>
+</div>
 <a id="gab81aab7da3deb5671c4cde3448855543" name="gab81aab7da3deb5671c4cde3448855543"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gab81aab7da3deb5671c4cde3448855543">&#9670;&nbsp;</a></span>sphDelaunay()</h2>
 
@@ -8428,7 +8540,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00573">573</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00622">622</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -8488,7 +8600,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00607">607</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00656">656</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -8527,7 +8639,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00783">783</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00832">832</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -8904,7 +9016,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00301">301</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00350">350</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -8957,7 +9069,7 @@ Example Usage</h2>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00272">272</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__geometry_8c_source.html#l00321">321</a> of file <a class="el" href="saf__utility__geometry_8c_source.html">saf_utility_geometry.c</a>.</p>
 
 </div>
 </div>
@@ -20788,7 +20900,7 @@ Example Usage</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Oct 11 2021 15:28:12 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Tue Oct 12 2021 07:03:43 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
     <script type="text/javascript">

@@ -59,16 +59,16 @@ var NAVTREEINDEX =
 "dirass_8c.html#a50678a45056570c525ee93c05d286412",
 "globals_vars_d.html",
 "group___utilities.html#ga3818ad01572db6ef6e8ca2fae09abfd1",
-"group___utilities.html#gaabda3952e00d301d103bc3425cae3303",
-"matrixconv_8c.html#aa08e64548bd4845f68cef2f82341a460",
-"panner__internal_8h.html#a2fd67ee931340e58aed858081fdbd096",
-"rotator_8c.html#aa5a19958361ede8d14cb73d16a3baf9b",
-"saf__test_8h.html#a0d7a7f9075302291e06092caaa6f07cc",
-"safmex__get_s_hreal_8c.html",
-"structambi__bin__codec_pars.html",
-"structbinauraliser__data.html#a561da0a36f194951908d6a62b32dfceb",
-"structpanner__data.html#a32f958df72ed4faf99e7db1f7ea58b26",
-"structspreader__data.html#a5a67a64b87346b0caa7d65588645b458"
+"group___utilities.html#gaaba3cc8dab9c07a2c55be527b3814a00",
+"matrixconv_8c.html#a912f4937644305b34af5a9e018e70fe3",
+"panner__internal_8h.html#a190f30638949e0ed78192e63f6270e52",
+"rotator_8c.html#aa07bb8a0fa3e0b026891d3dd6aaf0ebc",
+"saf__test_8h.html",
+"safmex__get_s_hcomplex_8c.html",
+"structaf_s_t_f_t__data.html#af4eb9ce96212013222e58cc50a873a27",
+"structbinauraliser__data.html#a50eeb512792c4ae41823bd0de0dad1e3",
+"structpanner__data.html#a2bf03ccf6f4e8ee3099da610813b5a99",
+"structspreader__data.html#a582c71493b6ed8f69336534a8eca5689"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
