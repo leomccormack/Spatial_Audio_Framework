@@ -1,5 +1,7 @@
 var NAVTREEINDEX13 =
 {
+"safmex__generate_v_b_a_pgain_table3_d_8c.html":[2,0,1,0,3],
+"safmex__generate_v_b_a_pgain_table3_d_8c_source.html":[2,0,1,0,3],
 "safmex__get_s_hcomplex_8c.html":[2,0,1,0,4],
 "safmex__get_s_hcomplex_8c_source.html":[2,0,1,0,4],
 "safmex__get_s_hreal_8c.html":[2,0,1,0,5],
@@ -247,7 +249,5 @@ var NAVTREEINDEX13 =
 "structaf_s_t_f_t__data.html#a8a77b95e972cafd001eda86eedaecbcc":[1,0,1,1],
 "structaf_s_t_f_t__data.html#a9047d21ba6b054c499c4d037aa314bda":[1,0,1,4],
 "structaf_s_t_f_t__data.html#aaec6635f47a5c989784e449abf787468":[1,0,1,0],
-"structaf_s_t_f_t__data.html#acf52707889305bc0b91cfcb7ccc1538c":[1,0,1,3],
-"structaf_s_t_f_t__data.html#ae940a937f67c944e861cf0f263c077fe":[1,0,1,8],
-"structaf_s_t_f_t__data.html#af3db6690c474c901dad6acd5755d0683":[1,0,1,2]
+"structaf_s_t_f_t__data.html#acf52707889305bc0b91cfcb7ccc1538c":[1,0,1,3]
 };

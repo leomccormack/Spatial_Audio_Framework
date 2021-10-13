@@ -6,6 +6,7 @@ var saf__test_8c =
     [ "tearDown", "saf__test_8c.html#a9909011e5fea0c018842eec4d93d0662", null ],
     [ "test__afSTFT", "saf__test_8c.html#a905bf3c380d7d04e6a0a4d9b4e056bf7", null ],
     [ "test__butterCoeffs", "saf__test_8c.html#a394db4aaade6966e740d8ca24a04dc7b", null ],
+    [ "test__cart2sph", "saf__test_8c.html#abf9662ef7915426f52af62ffa70418f6", null ],
     [ "test__checkCondNumberSHTReal", "saf__test_8c.html#aa8b8eef199b8983d3b18cbf453fc2cf0", null ],
     [ "test__cmplxPairUp", "saf__test_8c.html#a48643f2e901629d2d1fea9474932ba14", null ],
     [ "test__complex2realSHMtx", "saf__test_8c.html#aa287f898d7c0f64e7823c09bc11824fa", null ],

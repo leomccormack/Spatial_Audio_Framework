@@ -63,12 +63,12 @@ var NAVTREEINDEX =
 "matrixconv_8c.html#a912f4937644305b34af5a9e018e70fe3",
 "panner__internal_8h.html#a190f30638949e0ed78192e63f6270e52",
 "rotator_8c.html#aa07bb8a0fa3e0b026891d3dd6aaf0ebc",
-"saf__test_8h.html",
-"safmex__get_s_hcomplex_8c.html",
-"structaf_s_t_f_t__data.html#af4eb9ce96212013222e58cc50a873a27",
-"structbinauraliser__data.html#a50eeb512792c4ae41823bd0de0dad1e3",
-"structpanner__data.html#a2bf03ccf6f4e8ee3099da610813b5a99",
-"structspreader__data.html#a582c71493b6ed8f69336534a8eca5689"
+"saf__test_8c_source.html",
+"safmex__generate_v_b_a_pgain_table3_d_8c.html",
+"structaf_s_t_f_t__data.html#ae940a937f67c944e861cf0f263c077fe",
+"structbinauraliser__data.html#a484d2463f3b1f2c84f5afcdcc4755c4a",
+"structpanner__data.html#a1eab0a2cf8e1ba891bf050882881c610",
+"structspreader__data.html#a55f2df69f559f771632c5718b1f15a4a"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
