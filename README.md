@@ -1,5 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4707945.svg)](https://doi.org/10.5281/zenodo.4118286) 
-
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/leomccormack/Spatial_Audio_Framework) ![GitHub Release Date](https://img.shields.io/github/release-date/leomccormack/Spatial_Audio_Framework) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4707945.svg)](https://doi.org/10.5281/zenodo.4118286)  
 
 <img src="saf.svg"> 
 
