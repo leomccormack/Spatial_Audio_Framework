@@ -1,5 +1,5 @@
 
-# Source
+# Source for core SAF modules
 target_sources(${PROJECT_NAME}
 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_cdf4sap/saf_cdf4sap.c
@@ -37,4 +37,15 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap.c
 )
 
-add_subdirectory(saf_sofa_reader)
+# Source for optional SAF modules
+if(SAF_ENABLE_SOFA_READER_MODULE)
+    add_subdirectory(saf_sofa_reader)
+endif()
+if(SAF_ENABLE_TRACKER_MODULE)
+    target_sources(${PROJECT_NAME}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker_internal.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker_internal.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker.c
+    )
+endif()
