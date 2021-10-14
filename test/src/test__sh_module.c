@@ -8,7 +8,6 @@
 
 #include "saf_test.h"      /* the SAF unit test declarations */
 
-
 void test__getSHreal(void){
     int i, j, k, order, nDirs, nSH;
     float scale;

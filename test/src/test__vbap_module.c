@@ -7,5 +7,3 @@
  */
 
 #include "saf_test.h"
-
-

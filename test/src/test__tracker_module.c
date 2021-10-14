@@ -200,4 +200,4 @@ void test__tracker3d(void){
     free(Vn);
     free(Vn_cmplx);
 }
-#endif
+#endif /* SAF_ENABLE_TRACKER_MODULE */

@@ -7,26 +7,6 @@
  */
 
 #include "saf_test.h"
-#ifdef SAF_ENABLE_EXAMPLES_TESTS
-# include "ambi_bin.h"
-# include "ambi_dec.h"
-# include "ambi_drc.h"
-# include "ambi_enc.h"
-# include "ambi_roomsim.h"
-# include "array2sh.h"
-# include "beamformer.h"
-# include "binauraliser.h"
-# include "decorrelator.h"
-# include "dirass.h"
-# include "matrixconv.h"
-# include "multiconv.h"
-# include "panner.h"
-# include "pitch_shifter.h"
-# include "powermap.h"
-# include "rotator.h"
-# include "sldoa.h"
-# include "spreader.h"
-#endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
 #ifdef SAF_ENABLE_EXAMPLES_TESTS
 

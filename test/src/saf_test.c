@@ -50,9 +50,9 @@ static void timerResult(void) {
 #undef RUN_TEST
 /** A custom Unity RUN_TEST, which calls timerResult() upon exiting each test */
 #define RUN_TEST(testfunc)  UNITY_NEW_TEST(#testfunc) \
-if (TEST_PROTECT()) {  setUp();  testfunc();  } \
-if (TEST_PROTECT() && (!TEST_IS_IGNORED))  {tearDown(); } \
-UnityConcludeTest(); timerResult();
+    if (TEST_PROTECT()) {  setUp();  testfunc();  } \
+    if (TEST_PROTECT() && (!TEST_IS_IGNORED))  {tearDown(); } \
+    UnityConcludeTest(); timerResult();
 
 /* Main test program */
 int main_test(void) {

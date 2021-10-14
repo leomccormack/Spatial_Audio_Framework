@@ -12,7 +12,7 @@
 # define SAF_TEST_SOFA_FILE_PATH "/Users/mccorml1/Documents/FABIAN_HRTF_DATABASE_V1/1 HRIRs/SOFA/FABIAN_HRIR_measured_HATO_20.sofa"
 #endif
 
-#if defined(SAF_ENABLE_SOFA_READER_MODULE)
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
 void test__saf_sofa_open(void){
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
@@ -58,4 +58,4 @@ void test__sofa_comparison(void){
     saf_sofa_close(&sofa);
     mysofa_free(hrtf);
 }
-#endif
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */
