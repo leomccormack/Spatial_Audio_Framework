@@ -106,13 +106,31 @@ $(document).ready(function(){initNavTree('saf__test_8h.html',''); initResizable(
 <code>#include &quot;resources/timer.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="saf_8h_source.html">saf.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="saf__externals_8h_source.html">saf_externals.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="ambi__bin_8h_source.html">ambi_bin.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="ambi__dec_8h_source.html">ambi_dec.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="ambi__drc_8h_source.html">ambi_drc.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="ambi__enc_8h_source.html">ambi_enc.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="ambi__roomsim_8h_source.html">ambi_roomsim.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="array2sh_8h_source.html">array2sh.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="beamformer_8h_source.html">beamformer.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="binauraliser_8h_source.html">binauraliser.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="decorrelator_8h_source.html">decorrelator.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="dirass_8h_source.html">dirass.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="matrixconv_8h_source.html">matrixconv.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="multiconv_8h_source.html">multiconv.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="panner_8h_source.html">panner.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="pitch__shifter_8h_source.html">pitch_shifter.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="powermap_8h_source.html">powermap.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="rotator_8h_source.html">rotator.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="sldoa_8h_source.html">sldoa.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="spreader_8h_source.html">spreader.h</a>&quot;</code><br />
 </div>
 <p><a href="saf__test_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:acfeb9407e10c9d0488784cf02748be16"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__test_8h.html#acfeb9407e10c9d0488784cf02748be16">main_test</a> (void)</td></tr>
-<tr class="memdesc:acfeb9407e10c9d0488784cf02748be16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main testing program.  <a href="saf__test_8h.html#acfeb9407e10c9d0488784cf02748be16">More...</a><br /></td></tr>
+<tr class="memdesc:acfeb9407e10c9d0488784cf02748be16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main unit testing program.  <a href="saf__test_8h.html#acfeb9407e10c9d0488784cf02748be16">More...</a><br /></td></tr>
 <tr class="separator:acfeb9407e10c9d0488784cf02748be16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf9662ef7915426f52af62ffa70418f6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__test_8h.html#abf9662ef7915426f52af62ffa70418f6">test__cart2sph</a> (void)</td></tr>
 <tr class="memdesc:abf9662ef7915426f52af62ffa70418f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Testing <a class="el" href="group___utilities.html#gacf7b2c5a9357e4e4b6c2d079c6593db8" title="Converts Cartesian coordinates to spherical coordinates.">cart2sph()</a> and <a class="el" href="group___utilities.html#ga6d6346f44f08ddae58339b54be3fa49b" title="Converts spherical coordinates to Cartesian coordinates.">sph2cart()</a> are reversible.  <a href="saf__test_8h.html#abf9662ef7915426f52af62ffa70418f6">More...</a><br /></td></tr>
@@ -286,7 +304,7 @@ Functions</h2></td></tr>
 <div class="line">    <span class="comment">//     https://github.com/ThrowTheSwitch/Unity</span></div>
 <div class="line">}</div>
 </div><!-- fragment --><p >3) add a call for the new unit test in the main test source file: <a class="el" href="saf__test_8c.html" title="Unit test program for the Spatial_Audio_Framework.">saf_test.c</a> for example: </p><div class="fragment"><div class="line"><a class="code hl_define" href="saf__test_8c.html#a2dd273a252c1e79b21f222579a35c21a">RUN_TEST</a>(test__descriptiveNameOfNewUnitTest);</div>
-<div class="ttc" id="asaf__test_8c_html_a2dd273a252c1e79b21f222579a35c21a"><div class="ttname"><a href="saf__test_8c.html#a2dd273a252c1e79b21f222579a35c21a">RUN_TEST</a></div><div class="ttdeci">#define RUN_TEST(testfunc)</div><div class="ttdoc">A custom Unity RUN_TEST, which calls timerResult() upon exiting each test.</div><div class="ttdef"><b>Definition:</b> <a href="saf__test_8c_source.html#l00052">saf_test.c:52</a></div></div>
+<div class="ttc" id="asaf__test_8c_html_a2dd273a252c1e79b21f222579a35c21a"><div class="ttname"><a href="saf__test_8c.html#a2dd273a252c1e79b21f222579a35c21a">RUN_TEST</a></div><div class="ttdeci">#define RUN_TEST(testfunc)</div><div class="ttdoc">A custom Unity RUN_TEST, which calls timerResult() upon exiting each test.</div><div class="ttdef"><b>Definition:</b> <a href="saf__test_8c_source.html#l00067">saf_test.c:67</a></div></div>
 </div><!-- fragment --><dl class="section author"><dt>Author</dt><dd>Leo McCormack </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>27.04.2020 </dd></dl>
 <dl class="section user"><dt>License</dt><dd>Mixed (module dependent) </dd></dl>
@@ -309,9 +327,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Main testing program. </p>
+<p>Main unit testing program. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__test_8c_source.html#l00058">58</a> of file <a class="el" href="saf__test_8c_source.html">saf_test.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__test_8c_source.html#l00073">73</a> of file <a class="el" href="saf__test_8c_source.html">saf_test.c</a>.</p>
 
 </div>
 </div>
@@ -333,7 +351,7 @@ Functions</h2></td></tr>
 
 <p>Testing the alias-free STFT filterbank (near)-perfect reconstruction performance. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____resources_8c_source.html#l00011">11</a> of file <a class="el" href="test____resources_8c_source.html">test__resources.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____resources_8c_source.html#l00027">27</a> of file <a class="el" href="test____resources_8c_source.html">test__resources.c</a>.</p>
 
 </div>
 </div>
@@ -355,7 +373,7 @@ Functions</h2></td></tr>
 
 <p>Testing that the coefficients computed with <a class="el" href="group___utilities.html#gaafbb552f618e0672c0acfc4d171da212" title="Computes Butterworth IIR filter coefficients [1].">butterCoeffs()</a> are numerically similar to the "butter" function in Matlab. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00782">782</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00798">798</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -377,7 +395,7 @@ Functions</h2></td></tr>
 
 <p>Testing <a class="el" href="group___utilities.html#gacf7b2c5a9357e4e4b6c2d079c6593db8" title="Converts Cartesian coordinates to spherical coordinates.">cart2sph()</a> and <a class="el" href="group___utilities.html#ga6d6346f44f08ddae58339b54be3fa49b" title="Converts spherical coordinates to Cartesian coordinates.">sph2cart()</a> are reversible. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00011">11</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00027">27</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -399,7 +417,7 @@ Functions</h2></td></tr>
 
 <p>Testing that for T-designs, the condition numbers are all equal to 1. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00374">374</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00389">389</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
 
 </div>
 </div>
@@ -421,7 +439,7 @@ Functions</h2></td></tr>
 
 <p>Testing the <a class="el" href="group___utilities.html#ga4be4a4a82a31cde4fde08490baedbed0" title="Pairs up complex numbers and sorts them in ascending order based on their real parts first,...">cmplxPairUp()</a> function (grouping up conjugate symmetric values) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00550">550</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00566">566</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -443,7 +461,7 @@ Functions</h2></td></tr>
 
 <p>Testing the complex to real spherical harmonic conversion, using <a class="el" href="group___s_h.html#gadab8bc47f1068e8edd58e5d5c93a3fa4" title="Computes real-valued spherical harmonics [1] for each given direction on the unit sphere.">getSHreal()</a> as the reference. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00277">277</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00292">292</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
 
 </div>
 </div>
@@ -465,7 +483,7 @@ Functions</h2></td></tr>
 
 <p>Testing the <a class="el" href="group___s_h.html#ga383baca216c2fa72fe1a7c5804133203" title="Computes beamforming matrices (sector coefficients) which, when applied to input SH signals,...">computeSectorCoeffsEP()</a> and <a class="el" href="group___s_h.html#gacb1a65a8f85a1505d0a96212775b4ae0" title="Computes the matrices which generate the coefficients of a beampattern of order (sectorOrder+1) that ...">computeVelCoeffsMtx()</a> functions and comparing their output to that of a reference Matlab function. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00333">333</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00348">348</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
 
 </div>
 </div>
@@ -487,7 +505,7 @@ Functions</h2></td></tr>
 
 <p>Testing that the <a class="el" href="group___utilities.html#gae58c09c415e9a7f6eeac6cf495bcef42" title="Computes the Delaunay triangulation of an arrangement of points in N-dimensional space.">delaunaynd()</a> function can triangulate basic shapes. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00035">35</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00051">51</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -509,7 +527,7 @@ Functions</h2></td></tr>
 
 <p>Testing that the faf_IIRFilterbank can reconstruct the original signal power. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00897">897</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00913">913</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -531,7 +549,7 @@ Functions</h2></td></tr>
 
 <p>Testing the <a class="el" href="group___c_d_f4_s_a_p.html#gada902126734f26fa3628592f62cfd320" title="Computes the optimal mixing matrices.">formulate_M_and_Cr()</a> function, and verifying that the output mixing matrices yield signals that have the target covariance. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____cdf4sap__module_8c_source.html#l00011">11</a> of file <a class="el" href="test____cdf4sap__module_8c_source.html">test__cdf4sap_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____cdf4sap__module_8c_source.html#l00027">27</a> of file <a class="el" href="test____cdf4sap__module_8c_source.html">test__cdf4sap_module.c</a>.</p>
 
 </div>
 </div>
@@ -553,7 +571,7 @@ Functions</h2></td></tr>
 
 <p>Testing the <a class="el" href="group___c_d_f4_s_a_p.html#ga5b5ee42376101dc186c0610b405b79bf" title="Computes the optimal mixing matrices.">formulate_M_and_Cr_cmplx()</a> function, and verifying that the output mixing matrices yield signals that have the target covariance. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____cdf4sap__module_8c_source.html#l00165">165</a> of file <a class="el" href="test____cdf4sap__module_8c_source.html">test__cdf4sap_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____cdf4sap__module_8c_source.html#l00181">181</a> of file <a class="el" href="test____cdf4sap__module_8c_source.html">test__cdf4sap_module.c</a>.</p>
 
 </div>
 </div>
@@ -575,7 +593,7 @@ Functions</h2></td></tr>
 
 <p>Testing to assure that (given a uniform loudspeaker layout), the SAD, MMD and EPAD decoders are all equivalent. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____hoa__module_8c_source.html#l00011">11</a> of file <a class="el" href="test____hoa__module_8c_source.html">test__hoa_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____hoa__module_8c_source.html#l00027">27</a> of file <a class="el" href="test____hoa__module_8c_source.html">test__hoa_module.c</a>.</p>
 
 </div>
 </div>
@@ -597,7 +615,7 @@ Functions</h2></td></tr>
 
 <p>Testing the orthogonality of the <a class="el" href="group___s_h.html#ga4f83c48c3d7c7f20726512e0495cf4b9" title="Computes complex-valued spherical harmonics [1] for each given direction on the unit sphere.">getSHcomplex()</a> function. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00096">96</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00111">111</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
 
 </div>
 </div>
@@ -619,7 +637,7 @@ Functions</h2></td></tr>
 
 <p>Testing the orthogonality of the <a class="el" href="group___s_h.html#gadab8bc47f1068e8edd58e5d5c93a3fa4" title="Computes real-valued spherical harmonics [1] for each given direction on the unit sphere.">getSHreal()</a> function. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00012">12</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00027">27</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
 
 </div>
 </div>
@@ -641,7 +659,7 @@ Functions</h2></td></tr>
 
 <p>Testing that the <a class="el" href="group___s_h.html#gabf4d86ed458c9fcdb13065c7e2f4c436" title="Computes real-valued spherical harmonics [1] for each given direction on the unit sphere.">getSHreal_recur()</a> function is somewhat numerically identical to the full-fat <a class="el" href="group___s_h.html#gadab8bc47f1068e8edd58e5d5c93a3fa4" title="Computes real-valued spherical harmonics [1] for each given direction on the unit sphere.">getSHreal()</a> function. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00069">69</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00084">84</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
 
 </div>
 </div>
@@ -663,7 +681,7 @@ Functions</h2></td></tr>
 
 <p>Testing the spherical harmonic rotation matrix function <a class="el" href="group___s_h.html#gabb0681d04a190b7e1fe3d362f301f63e" title="Generates a real-valued spherical harmonic rotation matrix [1] based on a 3x3 rotation matrix (see qu...">getSHrotMtxReal()</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00155">155</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00170">170</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
 
 </div>
 </div>
@@ -685,7 +703,7 @@ Functions</h2></td></tr>
 
 <p>Testing that the weights from the <a class="el" href="group___utilities.html#ga4357fa77f8fea3ee1bccacdceb984013" title="Computes the integration weights, based on the areas of each face of the corresponding Voronoi diagra...">getVoronoiWeights()</a> function sum to 4pi and that the weights are all identical for a uniform arrangement of points. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00593">593</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00609">609</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -707,7 +725,7 @@ Functions</h2></td></tr>
 
 <p>Testing computing the matrix exponential - comparing the output to that of the "expm" function in Matlab. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00970">970</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00986">986</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -729,7 +747,7 @@ Functions</h2></td></tr>
 
 <p>Testing the ims shoebox simulator, when generating room impulse respones (RIRs) from the computed echograms. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____reverb__module_8c_source.html#l00011">11</a> of file <a class="el" href="test____reverb__module_8c_source.html">test__reverb_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____reverb__module_8c_source.html#l00027">27</a> of file <a class="el" href="test____reverb__module_8c_source.html">test__reverb_module.c</a>.</p>
 
 </div>
 </div>
@@ -751,7 +769,7 @@ Functions</h2></td></tr>
 
 <p>Testing the ims shoebox simulator, when applying the echograms in the time- domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____reverb__module_8c_source.html#l00082">82</a> of file <a class="el" href="test____reverb__module_8c_source.html">test__reverb_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____reverb__module_8c_source.html#l00098">98</a> of file <a class="el" href="test____reverb__module_8c_source.html">test__reverb_module.c</a>.</p>
 
 </div>
 </div>
@@ -773,7 +791,7 @@ Functions</h2></td></tr>
 
 <p>Testing the performance of the latticeDecorrelator, verifying that the inter- channel cross-correlation coefficients are near 0. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00680">680</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00696">696</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -795,7 +813,7 @@ Functions</h2></td></tr>
 
 <p>Testing that <a class="el" href="md__malloc_8c.html#a88ad6bf51694adce0e4cc4e32afce59b" title="4-D malloc (contiguously allocated, so use free() as usual to deallocate)">malloc4d()</a> works, and is truely contiguously allocated. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____resources_8c_source.html#l00146">146</a> of file <a class="el" href="test____resources_8c_source.html">test__resources.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____resources_8c_source.html#l00162">162</a> of file <a class="el" href="test____resources_8c_source.html">test__resources.c</a>.</p>
 
 </div>
 </div>
@@ -817,7 +835,7 @@ Functions</h2></td></tr>
 
 <p>Testing that <a class="el" href="md__malloc_8c.html#adc945805e7ff7984d90f55665b759359" title="5-D malloc (contiguously allocated, so use free() as usual to deallocate)">malloc5d()</a> works, and is truely contiguously allocated. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____resources_8c_source.html#l00177">177</a> of file <a class="el" href="test____resources_8c_source.html">test__resources.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____resources_8c_source.html#l00193">193</a> of file <a class="el" href="test____resources_8c_source.html">test__resources.c</a>.</p>
 
 </div>
 </div>
@@ -839,7 +857,7 @@ Functions</h2></td></tr>
 
 <p>Testing that <a class="el" href="md__malloc_8c.html#a27c33603a1700b341c8a199f35c0795c" title="6-D malloc (contiguously allocated, so use free() as usual to deallocate)">malloc6d()</a> works, and is truely contiguously allocated. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____resources_8c_source.html#l00211">211</a> of file <a class="el" href="test____resources_8c_source.html">test__resources.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____resources_8c_source.html#l00227">227</a> of file <a class="el" href="test____resources_8c_source.html">test__resources.c</a>.</p>
 
 </div>
 </div>
@@ -861,7 +879,7 @@ Functions</h2></td></tr>
 
 <p>Testing the dependency free mysofa SOFA reader. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sofa__reader__module_8c_source.html#l00026">26</a> of file <a class="el" href="test____sofa__reader__module_8c_source.html">test__sofa_reader_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sofa__reader__module_8c_source.html#l00042">42</a> of file <a class="el" href="test____sofa__reader__module_8c_source.html">test__sofa_reader_module.c</a>.</p>
 
 </div>
 </div>
@@ -883,7 +901,7 @@ Functions</h2></td></tr>
 
 <p>Testing the (near)-perfect reconstruction performance of the QMF filterbank. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00366">366</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00382">382</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -905,7 +923,7 @@ Functions</h2></td></tr>
 
 <p>Testing that <a class="el" href="group___utilities.html#ga2e80b68f78c7c6317073e603b6ed0b78" title="Constructs a 3x3 rotation matrix based on a quaternion.">quaternion2rotationMatrix()</a> and <a class="el" href="group___utilities.html#ga7a6535d2ee4b9f1147d3394b2d186a1a" title="Calculates the quaternion corresponding to a 3x3 rotation matrix.">rotationMatrix2quaternion()</a> are reversible. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00082">82</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00098">98</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -927,7 +945,7 @@ Functions</h2></td></tr>
 
 <p>Testing the real to complex spherical harmonic conversion, using <a class="el" href="group___s_h.html#ga4f83c48c3d7c7f20726512e0495cf4b9" title="Computes complex-valued spherical harmonics [1] for each given direction on the unit sphere.">getSHcomplex()</a> as the reference. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00216">216</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00231">231</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
 
 </div>
 </div>
@@ -949,7 +967,7 @@ Functions</h2></td></tr>
 
 <p>Testing the <a class="el" href="md__malloc_8c.html#ac1df6d471ef3a376f5a5eccabd8e62b7" title="2-D realloc which does retain previous data order">realloc2d_r()</a> function (reallocating 2-D array, while retaining the previous data order; except truncated or extended) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____resources_8c_source.html#l00086">86</a> of file <a class="el" href="test____resources_8c_source.html">test__resources.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____resources_8c_source.html#l00102">102</a> of file <a class="el" href="test____resources_8c_source.html">test__resources.c</a>.</p>
 
 </div>
 </div>
@@ -971,7 +989,7 @@ Functions</h2></td></tr>
 
 <p>Testing that <a class="el" href="group___h_r_i_r.html#gad49d2272299ecf0bdb6aaa71ea110f25" title="Resamples a set of HRIRs from its original samplerate to a new samplerate.">resampleHRIRs()</a> is resampling adequately. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____hrir__module_8c_source.html#l00011">11</a> of file <a class="el" href="test____hrir__module_8c_source.html">test__hrir_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____hrir__module_8c_source.html#l00027">27</a> of file <a class="el" href="test____hrir__module_8c_source.html">test__hrir_module.c</a>.</p>
 
 </div>
 </div>
@@ -993,7 +1011,7 @@ Functions</h2></td></tr>
 
 <p>Testing the SAF <a class="el" href="ambi__bin_8h.html" title="A binaural Ambisonic decoder for reproducing Ambisonic sound scenes over headphones.">ambi_bin.h</a> example (this may also serve as a tutorial on how to use it) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____examples_8c_source.html#l00033">33</a> of file <a class="el" href="test____examples_8c_source.html">test__examples.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____examples_8c_source.html#l00029">29</a> of file <a class="el" href="test____examples_8c_source.html">test__examples.c</a>.</p>
 
 </div>
 </div>
@@ -1015,7 +1033,7 @@ Functions</h2></td></tr>
 
 <p>Testing the SAF <a class="el" href="ambi__dec_8h.html" title="A frequency-dependent Ambisonic decoder for reproducing Ambisonic sound scenes over loudspeakers.">ambi_dec.h</a> example (this may also serve as a tutorial on how to use it) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____examples_8c_source.html#l00113">113</a> of file <a class="el" href="test____examples_8c_source.html">test__examples.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____examples_8c_source.html#l00109">109</a> of file <a class="el" href="test____examples_8c_source.html">test__examples.c</a>.</p>
 
 </div>
 </div>
@@ -1037,7 +1055,7 @@ Functions</h2></td></tr>
 
 <p>Testing the SAF <a class="el" href="ambi__enc_8h.html" title="A basic Ambisonic encoder.">ambi_enc.h</a> example (this may also serve as a tutorial on how to use it) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____examples_8c_source.html#l00196">196</a> of file <a class="el" href="test____examples_8c_source.html">test__examples.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____examples_8c_source.html#l00192">192</a> of file <a class="el" href="test____examples_8c_source.html">test__examples.c</a>.</p>
 
 </div>
 </div>
@@ -1059,7 +1077,7 @@ Functions</h2></td></tr>
 
 <p>Testing the SAF <a class="el" href="array2sh_8h.html" title="Spatially encodes spherical microphone array signals into spherical harmonic signals (aka: Ambisonic ...">array2sh.h</a> example (this may also serve as a tutorial on how to use it) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____examples_8c_source.html#l00269">269</a> of file <a class="el" href="test____examples_8c_source.html">test__examples.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____examples_8c_source.html#l00265">265</a> of file <a class="el" href="test____examples_8c_source.html">test__examples.c</a>.</p>
 
 </div>
 </div>
@@ -1081,7 +1099,7 @@ Functions</h2></td></tr>
 
 <p>Testing the SAF <a class="el" href="rotator_8h.html" title="A basic spherical harmonic/ Ambisonic signals rotator, based on the recursive approach detailed in [1...">rotator.h</a> example (this may also serve as a tutorial on how to use it) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____examples_8c_source.html#l00361">361</a> of file <a class="el" href="test____examples_8c_source.html">test__examples.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____examples_8c_source.html#l00357">357</a> of file <a class="el" href="test____examples_8c_source.html">test__examples.c</a>.</p>
 
 </div>
 </div>
@@ -1103,7 +1121,7 @@ Functions</h2></td></tr>
 
 <p>Testing the SAF <a class="el" href="spreader_8h.html" title="An arbitrary array panner (HRIRs, microphone array IRs, etc.) with coherent and incoherent spreading ...">spreader.h</a> example (this may also serve as a tutorial on how to use it) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____examples_8c_source.html#l00446">446</a> of file <a class="el" href="test____examples_8c_source.html">test__examples.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____examples_8c_source.html#l00442">442</a> of file <a class="el" href="test____examples_8c_source.html">test__examples.c</a>.</p>
 
 </div>
 </div>
@@ -1125,7 +1143,7 @@ Functions</h2></td></tr>
 
 <p>Testing the forward and backward complex-complex FFT (saf_fft) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00325">325</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00341">341</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -1147,7 +1165,7 @@ Functions</h2></td></tr>
 
 <p>Testing the saf_matrixConv. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00242">242</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00258">258</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -1169,7 +1187,7 @@ Functions</h2></td></tr>
 
 <p>Testing the forward and backward real-(half)complex FFT (saf_rfft) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00286">286</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00302">302</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -1191,7 +1209,7 @@ Functions</h2></td></tr>
 
 <p>Testing the SAF SOFA reader that uses the netcdf library. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sofa__reader__module_8c_source.html#l00016">16</a> of file <a class="el" href="test____sofa__reader__module_8c_source.html">test__sofa_reader_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sofa__reader__module_8c_source.html#l00032">32</a> of file <a class="el" href="test____sofa__reader__module_8c_source.html">test__sofa_reader_module.c</a>.</p>
 
 </div>
 </div>
@@ -1213,7 +1231,7 @@ Functions</h2></td></tr>
 
 <p>Testing for perfect reconstruction of the saf_stft (when configured for 50% window overlap) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00119">119</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00135">135</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -1235,7 +1253,7 @@ Functions</h2></td></tr>
 
 <p>Testing for perfect reconstruction of the saf_stft (when configured for linear time-invariant (LTI) filtering applications) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00183">183</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00199">199</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -1257,7 +1275,7 @@ Functions</h2></td></tr>
 
 <p>Testing that the smb_pitchShifter can shift the energy of input spectra by one octave down. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00432">432</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00448">448</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -1279,7 +1297,7 @@ Functions</h2></td></tr>
 
 <p>Testing that the two SOFA readers produce the same results. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sofa__reader__module_8c_source.html#l00035">35</a> of file <a class="el" href="test____sofa__reader__module_8c_source.html">test__sofa_reader_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sofa__reader__module_8c_source.html#l00051">51</a> of file <a class="el" href="test____sofa__reader__module_8c_source.html">test__sofa_reader_module.c</a>.</p>
 
 </div>
 </div>
@@ -1301,7 +1319,7 @@ Functions</h2></td></tr>
 
 <p>Testing the <a class="el" href="group___utilities.html#ga289eb2f7e45d17a787d0f193641c6b50" title="Sort a vector of floating-point values into ascending/decending order (optionally returning the new i...">sortf()</a> function (sorting real floating point numbers) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00472">472</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00488">488</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -1323,7 +1341,7 @@ Functions</h2></td></tr>
 
 <p>Testing the <a class="el" href="group___utilities.html#gab0931ca50923ff84c52d328c93bd96e8" title="Sort a vector of complex double floating-point values into ascending/ decending order.">sortz()</a> function (sorting complex double-floating point numbers) </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00504">504</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00520">520</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -1345,7 +1363,7 @@ Functions</h2></td></tr>
 
 <p>Testing the DoA estimation performance of sphESPRIT() </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00548">548</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00563">563</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
 
 </div>
 </div>
@@ -1367,7 +1385,7 @@ Functions</h2></td></tr>
 
 <p>Testing the <a class="el" href="group___s_h.html#ga6c331fd73b56845ab0ecbf4b0d5fc640" title="Calculates the modal coefficients for open/rigid spherical arrays.">sphModalCoeffs()</a> function. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00647">647</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00662">662</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
 
 </div>
 </div>
@@ -1389,7 +1407,7 @@ Functions</h2></td></tr>
 
 <p>Testing the DoA estimation performance of sphMUSIC() </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00411">411</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00426">426</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
 
 </div>
 </div>
@@ -1411,7 +1429,7 @@ Functions</h2></td></tr>
 
 <p>Testing the DoA estimation performance of sphPWD() </p>
 
-<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00486">486</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____sh__module_8c_source.html#l00501">501</a> of file <a class="el" href="test____sh__module_8c_source.html">test__sh_module.c</a>.</p>
 
 </div>
 </div>
@@ -1433,7 +1451,7 @@ Functions</h2></td></tr>
 
 <p>Testing that the particle-filtering based tracker is able to correctly track two simultaneous targets. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____tracker__module_8c_source.html#l00012">12</a> of file <a class="el" href="test____tracker__module_8c_source.html">test__tracker_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____tracker__module_8c_source.html#l00030">30</a> of file <a class="el" href="test____tracker__module_8c_source.html">test__tracker_module.c</a>.</p>
 
 </div>
 </div>
@@ -1455,7 +1473,7 @@ Functions</h2></td></tr>
 
 <p>Testing the truncation EQ. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____hoa__module_8c_source.html#l00090">90</a> of file <a class="el" href="test____hoa__module_8c_source.html">test__hoa_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____hoa__module_8c_source.html#l00106">106</a> of file <a class="el" href="test____hoa__module_8c_source.html">test__hoa_module.c</a>.</p>
 
 </div>
 </div>
@@ -1477,7 +1495,7 @@ Functions</h2></td></tr>
 
 <p>Testing that the <a class="el" href="group___utilities.html#ga426cf3884b949ed5d8debc6a941b814a" title="Finds the unique values (and their indices) of the input vector.">unique_i()</a> function operates correctly. </p>
 
-<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00648">648</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="test____utilities__module_8c_source.html#l00664">664</a> of file <a class="el" href="test____utilities__module_8c_source.html">test__utilities_module.c</a>.</p>
 
 </div>
 </div>
@@ -1488,7 +1506,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_13e138d54eb8818da29c3992edef070a.html">test</a></li><li class="navelem"><a class="el" href="dir_68def62d34bdcd9a1f109a12da3cfb88.html">include</a></li><li class="navelem"><a class="el" href="saf__test_8h.html">saf_test.h</a></li>
-    <li class="footer">Generated on Thu Oct 14 2021 10:30:52 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Thu Oct 14 2021 10:52:37 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 <script type="text/javascript">
