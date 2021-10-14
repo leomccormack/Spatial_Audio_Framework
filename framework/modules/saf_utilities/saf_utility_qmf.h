@@ -118,7 +118,14 @@ void qmf_channelChange(void * const hQMF,
 /** Flushes the analysis and synthesis buffers with zeros. */
 void qmf_clearBuffers(void * const hQMF);
 
-/** Returns the processing delay in samples */
+/**
+ * Returns the processing delay in samples
+ *
+ * @note The QMF filterbank delay is broken down into the following:
+ *          analysis delay:         5*hopsize
+ *        + hybrid-filtering delay: 6*hopsize     (or 0, if it is disabled)
+ *        + synthesis delay         4*hopsize
+ */
 int qmf_getProcDelay(void * const hQMF);
 
 /** Returns the number of frequency bands */
