@@ -8,7 +8,7 @@
  *
  */
 
-#include "timer.h"
+#include "saf_test.h"
 
 #define TIMER_PLATFORM_WINDOWS 0
 #define TIMER_PLATFORM_APPLE   0

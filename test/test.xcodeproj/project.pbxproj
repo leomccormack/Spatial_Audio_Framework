@@ -10,12 +10,23 @@
 		506DE0D1268311B700BFD406 /* resample.c in Sources */ = {isa = PBXBuildFile; fileRef = 506DE0CE268311B700BFD406 /* resample.c */; };
 		508CC48024EAA0A4006DF0C7 /* saf_tracker_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 508CC47C24EAA0A4006DF0C7 /* saf_tracker_internal.c */; };
 		508CC48124EAA0A4006DF0C7 /* saf_tracker.c in Sources */ = {isa = PBXBuildFile; fileRef = 508CC47E24EAA0A4006DF0C7 /* saf_tracker.c */; };
-		508FBDA12456D31F0076C205 /* unity.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBD9E2456D31F0076C205 /* unity.c */; };
-		508FBDA52456D3300076C205 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 508FBDA32456D3300076C205 /* timer.c */; };
+		50933FED27181A450064F222 /* saf_test_wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50933FDF27181A450064F222 /* saf_test_wrapper.cpp */; };
+		50933FEF27181A450064F222 /* saf_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 50933FE127181A450064F222 /* saf_test.c */; };
+		50933FF027181A450064F222 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 50933FE327181A450064F222 /* timer.c */; };
+		50933FF127181A450064F222 /* unity.c in Sources */ = {isa = PBXBuildFile; fileRef = 50933FE427181A450064F222 /* unity.c */; };
+		5093400A27181D460064F222 /* test__hoa_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093400127181D450064F222 /* test__hoa_module.c */; };
+		5093400B27181D460064F222 /* test__hrir_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093400227181D450064F222 /* test__hrir_module.c */; };
+		5093400C27181D460064F222 /* test__tracker_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093400327181D450064F222 /* test__tracker_module.c */; };
+		5093400D27181D460064F222 /* test__vbap_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093400427181D460064F222 /* test__vbap_module.c */; };
+		5093400E27181D460064F222 /* test__sh_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093400527181D460064F222 /* test__sh_module.c */; };
+		5093400F27181D460064F222 /* test__utilities_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093400627181D460064F222 /* test__utilities_module.c */; };
+		5093401027181D460064F222 /* test__reverb_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093400727181D460064F222 /* test__reverb_module.c */; };
+		5093401127181D460064F222 /* test__sofa_reader_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093400827181D460064F222 /* test__sofa_reader_module.c */; };
+		5093401227181D460064F222 /* test__cdf4sap_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093400927181D460064F222 /* test__cdf4sap_module.c */; };
+		5093401727181F8B0064F222 /* test__examples.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093401527181F8B0064F222 /* test__examples.c */; };
+		5093401827181F8B0064F222 /* test__resources.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093401627181F8B0064F222 /* test__resources.c */; };
 		50C18ED6261E3FCC008A17B1 /* spreader.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C18ED3261E3FCC008A17B1 /* spreader.c */; };
 		50C18ED7261E3FCC008A17B1 /* spreader_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C18ED5261E3FCC008A17B1 /* spreader_internal.c */; };
-		50E35D1F2475AECA00B74C25 /* saf_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E35D1E2475AECA00B74C25 /* saf_test.c */; };
-		50E35E732481353300B74C25 /* saf_test_wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50E35E712481353300B74C25 /* saf_test_wrapper.cpp */; };
 		50E3605C249BDDCC00B74C25 /* md_malloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3600D249BDDCB00B74C25 /* md_malloc.c */; };
 		50E3605D249BDDCC00B74C25 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36010249BDDCB00B74C25 /* kiss_fft.c */; };
 		50E3605E249BDDCC00B74C25 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36011249BDDCB00B74C25 /* kiss_fftr.c */; };
@@ -117,18 +128,29 @@
 		508CC47D24EAA0A4006DF0C7 /* saf_tracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_tracker.h; sourceTree = "<group>"; };
 		508CC47E24EAA0A4006DF0C7 /* saf_tracker.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_tracker.c; sourceTree = "<group>"; };
 		508CC47F24EAA0A4006DF0C7 /* saf_tracker_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_tracker_internal.h; sourceTree = "<group>"; };
-		508FBD9E2456D31F0076C205 /* unity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unity.c; sourceTree = "<group>"; };
-		508FBD9F2456D31F0076C205 /* unity_internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unity_internals.h; sourceTree = "<group>"; };
-		508FBDA02456D31F0076C205 /* unity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unity.h; sourceTree = "<group>"; };
-		508FBDA32456D3300076C205 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timer.c; sourceTree = "<group>"; };
-		508FBDA42456D3300076C205 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
+		50933FDF27181A450064F222 /* saf_test_wrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = saf_test_wrapper.cpp; sourceTree = "<group>"; };
+		50933FE127181A450064F222 /* saf_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_test.c; sourceTree = "<group>"; };
+		50933FE327181A450064F222 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timer.c; sourceTree = "<group>"; };
+		50933FE427181A450064F222 /* unity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unity.c; sourceTree = "<group>"; };
+		50933FEB27181A450064F222 /* saf_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_test.h; sourceTree = "<group>"; };
+		5093400127181D450064F222 /* test__hoa_module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__hoa_module.c; sourceTree = "<group>"; };
+		5093400227181D450064F222 /* test__hrir_module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__hrir_module.c; sourceTree = "<group>"; };
+		5093400327181D450064F222 /* test__tracker_module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__tracker_module.c; sourceTree = "<group>"; };
+		5093400427181D460064F222 /* test__vbap_module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__vbap_module.c; sourceTree = "<group>"; };
+		5093400527181D460064F222 /* test__sh_module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__sh_module.c; sourceTree = "<group>"; };
+		5093400627181D460064F222 /* test__utilities_module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__utilities_module.c; sourceTree = "<group>"; };
+		5093400727181D460064F222 /* test__reverb_module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__reverb_module.c; sourceTree = "<group>"; };
+		5093400827181D460064F222 /* test__sofa_reader_module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__sofa_reader_module.c; sourceTree = "<group>"; };
+		5093400927181D460064F222 /* test__cdf4sap_module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__cdf4sap_module.c; sourceTree = "<group>"; };
+		5093401527181F8B0064F222 /* test__examples.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__examples.c; sourceTree = "<group>"; };
+		5093401627181F8B0064F222 /* test__resources.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__resources.c; sourceTree = "<group>"; };
+		5093401C2718205E0064F222 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
+		5093401D2718205E0064F222 /* unity_internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unity_internals.h; sourceTree = "<group>"; };
+		5093401E2718205E0064F222 /* unity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unity.h; sourceTree = "<group>"; };
 		50C18ED1261E3FBB008A17B1 /* spreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spreader.h; sourceTree = "<group>"; };
 		50C18ED3261E3FCC008A17B1 /* spreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spreader.c; sourceTree = "<group>"; };
 		50C18ED4261E3FCC008A17B1 /* spreader_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spreader_internal.h; sourceTree = "<group>"; };
 		50C18ED5261E3FCC008A17B1 /* spreader_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spreader_internal.c; sourceTree = "<group>"; };
-		50E35D1E2475AECA00B74C25 /* saf_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_test.c; sourceTree = "<group>"; };
-		50E35E712481353300B74C25 /* saf_test_wrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = saf_test_wrapper.cpp; sourceTree = "<group>"; };
-		50E35E722481353300B74C25 /* saf_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_test.h; sourceTree = "<group>"; };
 		50E36007249BDDCB00B74C25 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		50E36009249BDDCB00B74C25 /* saf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf.h; sourceTree = "<group>"; };
 		50E3600B249BDDCB00B74C25 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -300,13 +322,10 @@
 			isa = PBXGroup;
 			children = (
 				506254BA2456BCCB00C304A7 /* Products */,
-				50E35E712481353300B74C25 /* saf_test_wrapper.cpp */,
-				50E35E722481353300B74C25 /* saf_test.h */,
-				50E35D1E2475AECA00B74C25 /* saf_test.c */,
+				50933FE927181A450064F222 /* include */,
+				50933FDE27181A450064F222 /* src */,
 				50E3DE3524C1B81200589B17 /* examples */,
 				50E36006249BDDCB00B74C25 /* framework */,
-				508FBDA22456D3300076C205 /* timer */,
-				508FBD9D2456D31F0076C205 /* unity */,
 			);
 			sourceTree = "<group>";
 		};
@@ -343,23 +362,53 @@
 			path = saf_tracker;
 			sourceTree = "<group>";
 		};
-		508FBD9D2456D31F0076C205 /* unity */ = {
+		50933FDE27181A450064F222 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				508FBD9E2456D31F0076C205 /* unity.c */,
-				508FBD9F2456D31F0076C205 /* unity_internals.h */,
-				508FBDA02456D31F0076C205 /* unity.h */,
+				50933FE227181A450064F222 /* resources */,
+				50933FDF27181A450064F222 /* saf_test_wrapper.cpp */,
+				50933FE127181A450064F222 /* saf_test.c */,
+				5093400927181D460064F222 /* test__cdf4sap_module.c */,
+				5093401527181F8B0064F222 /* test__examples.c */,
+				5093400127181D450064F222 /* test__hoa_module.c */,
+				5093400227181D450064F222 /* test__hrir_module.c */,
+				5093401627181F8B0064F222 /* test__resources.c */,
+				5093400727181D460064F222 /* test__reverb_module.c */,
+				5093400527181D460064F222 /* test__sh_module.c */,
+				5093400827181D460064F222 /* test__sofa_reader_module.c */,
+				5093400327181D450064F222 /* test__tracker_module.c */,
+				5093400627181D460064F222 /* test__utilities_module.c */,
+				5093400427181D460064F222 /* test__vbap_module.c */,
 			);
-			path = unity;
+			path = src;
 			sourceTree = "<group>";
 		};
-		508FBDA22456D3300076C205 /* timer */ = {
+		50933FE227181A450064F222 /* resources */ = {
 			isa = PBXGroup;
 			children = (
-				508FBDA32456D3300076C205 /* timer.c */,
-				508FBDA42456D3300076C205 /* timer.h */,
+				50933FE327181A450064F222 /* timer.c */,
+				50933FE427181A450064F222 /* unity.c */,
 			);
-			path = timer;
+			path = resources;
+			sourceTree = "<group>";
+		};
+		50933FE927181A450064F222 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				5093401B2718205E0064F222 /* resources */,
+				50933FEB27181A450064F222 /* saf_test.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		5093401B2718205E0064F222 /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				5093401C2718205E0064F222 /* timer.h */,
+				5093401D2718205E0064F222 /* unity_internals.h */,
+				5093401E2718205E0064F222 /* unity.h */,
+			);
+			path = resources;
 			sourceTree = "<group>";
 		};
 		50C18ED2261E3FCC008A17B1 /* spreader */ = {
@@ -898,6 +947,7 @@
 				50E36063249BDDCC00B74C25 /* saf_hoa.c in Sources */,
 				50E3DE3124BE00F400589B17 /* saf_utility_qmf.c in Sources */,
 				50E3DEE724C1C80C00589B17 /* matrixconv_internal.c in Sources */,
+				50933FF027181A450064F222 /* timer.c in Sources */,
 				50FA6AC026D433B000369945 /* mysofa.c in Sources */,
 				50E3DEDF24C1C80C00589B17 /* pitch_shifter_internal.c in Sources */,
 				50E36072249BDDCC00B74C25 /* saf_reverb.c in Sources */,
@@ -909,7 +959,7 @@
 				50E3DEB124C1BC1B00589B17 /* ambi_dec_internal.c in Sources */,
 				50E36073249BDDCC00B74C25 /* saf_reverb_internal.c in Sources */,
 				50E3606E249BDDCC00B74C25 /* saf_utility_veclib.c in Sources */,
-				50E35D1F2475AECA00B74C25 /* saf_test.c in Sources */,
+				5093401827181F8B0064F222 /* test__resources.c in Sources */,
 				50E3605D249BDDCC00B74C25 /* kiss_fft.c in Sources */,
 				50FA6ABB26D433B000369945 /* mysofa_internal.c in Sources */,
 				50E3606B249BDDCC00B74C25 /* saf_utility_filters.c in Sources */,
@@ -920,21 +970,25 @@
 				506DE0D1268311B700BFD406 /* resample.c in Sources */,
 				50E36075249BDDCC00B74C25 /* saf_sh_internal.c in Sources */,
 				50E3DEE124C1C80C00589B17 /* rotator_internal.c in Sources */,
+				50933FEF27181A450064F222 /* saf_test.c in Sources */,
+				5093400C27181D460064F222 /* test__tracker_module.c in Sources */,
 				50E36078249BDDCC00B74C25 /* saf_vbap.c in Sources */,
 				50FA6ABC26D433B000369945 /* hdf_dataobject.c in Sources */,
 				50E3605F249BDDCC00B74C25 /* afSTFTlib.c in Sources */,
 				50E3DF0724C1D4EA00589B17 /* sldoa_internal.c in Sources */,
 				50E36061249BDDCC00B74C25 /* saf_cdf4sap.c in Sources */,
 				50E3DF0424C1D4EA00589B17 /* panner.c in Sources */,
+				5093400D27181D460064F222 /* test__vbap_module.c in Sources */,
 				50E36069249BDDCC00B74C25 /* saf_utility_pitch.c in Sources */,
 				50E3DFBA24E1B64800589B17 /* ambi_roomsim.c in Sources */,
 				50E3605E249BDDCC00B74C25 /* kiss_fftr.c in Sources */,
 				50E3DEE524C1C80C00589B17 /* multiconv_internal.c in Sources */,
 				50E36071249BDDCC00B74C25 /* saf_utility_decor.c in Sources */,
-				508FBDA52456D3300076C205 /* timer.c in Sources */,
 				50E3DF0924C1D4EA00589B17 /* powermap_internal.c in Sources */,
+				50933FF127181A450064F222 /* unity.c in Sources */,
 				50E3DEB724C1C36E00589B17 /* ambi_drc.c in Sources */,
 				50E3DEE324C1C80C00589B17 /* beamformer.c in Sources */,
+				5093401027181D460064F222 /* test__reverb_module.c in Sources */,
 				508CC48124EAA0A4006DF0C7 /* saf_tracker.c in Sources */,
 				50E3DEBD24C1C56800589B17 /* ambi_enc.c in Sources */,
 				50E36074249BDDCC00B74C25 /* saf_sh.c in Sources */,
@@ -942,16 +996,20 @@
 				50E3607B249BDDCC00B74C25 /* saf_hrir.c in Sources */,
 				50C18ED7261E3FCC008A17B1 /* spreader_internal.c in Sources */,
 				50FA6ABF26D433B000369945 /* hdf_reader.c in Sources */,
+				5093401227181D460064F222 /* test__cdf4sap_module.c in Sources */,
 				508CC48024EAA0A4006DF0C7 /* saf_tracker_internal.c in Sources */,
 				50E3DEF324C1D3A900589B17 /* decorrelator.c in Sources */,
+				5093401127181D460064F222 /* test__sofa_reader_module.c in Sources */,
 				50FA6ABE26D433B000369945 /* hdf_fractalhead.c in Sources */,
 				50E36079249BDDCC00B74C25 /* saf_default_hrirs.c in Sources */,
+				50933FED27181A450064F222 /* saf_test_wrapper.cpp in Sources */,
 				50E3605C249BDDCC00B74C25 /* md_malloc.c in Sources */,
-				508FBDA12456D31F0076C205 /* unity.c in Sources */,
 				50E36070249BDDCC00B74C25 /* saf_utility_matrixConv.c in Sources */,
 				50E3DEE824C1C80C00589B17 /* matrixconv.c in Sources */,
+				5093401727181F8B0064F222 /* test__examples.c in Sources */,
 				50E3DE3424C087B300589B17 /* afSTFT_internal.c in Sources */,
 				50E3DEE224C1C80C00589B17 /* rotator.c in Sources */,
+				5093400B27181D460064F222 /* test__hrir_module.c in Sources */,
 				50E3DEE624C1C80C00589B17 /* multiconv.c in Sources */,
 				50E5CD1624AF3E5800019898 /* saf_utility_geometry.c in Sources */,
 				50E3DF0324C1D4EA00589B17 /* panner_internal.c in Sources */,
@@ -962,17 +1020,19 @@
 				50E36067249BDDCC00B74C25 /* saf_utility_misc.c in Sources */,
 				50E3DF0524C1D4EA00589B17 /* sldoa_database.c in Sources */,
 				50E3DEDD24C1C80C00589B17 /* dirass_internal.c in Sources */,
-				50E35E732481353300B74C25 /* saf_test_wrapper.cpp in Sources */,
 				50E36062249BDDCC00B74C25 /* saf_hoa_internal.c in Sources */,
 				50E3606C249BDDCC00B74C25 /* saf_utility_complex.c in Sources */,
+				5093400F27181D460064F222 /* test__utilities_module.c in Sources */,
 				50E3DFB924E1B64800589B17 /* ambi_roomsim_internal.c in Sources */,
 				50E3DEC324C1C5AB00589B17 /* array2sh_internal.c in Sources */,
 				50C18ED6261E3FCC008A17B1 /* spreader.c in Sources */,
+				5093400E27181D460064F222 /* test__sh_module.c in Sources */,
 				50E36060249BDDCC00B74C25 /* convhull_3d.c in Sources */,
 				50E3DEED24C1D16400589B17 /* binauraliser_internal.c in Sources */,
 				50E3606D249BDDCC00B74C25 /* saf_utility_loudspeaker_presets.c in Sources */,
 				50E3DE9524C1B81300589B17 /* ambi_bin_internal.c in Sources */,
 				50E3DEDE24C1C80C00589B17 /* dirass.c in Sources */,
+				5093400A27181D460064F222 /* test__hoa_module.c in Sources */,
 				50E3DEE424C1C80C00589B17 /* beamformer_internal.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1032,23 +1092,9 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					unity/,
 					../framework/include/,
-					../examples/ambi_bin/include/,
-					../examples/ambi_dec/include/,
-					../examples/ambi_drc/include/,
-					../examples/ambi_enc/include/,
-					../examples/array2sh/include/,
-					../examples/beamformer/include/,
-					../examples/binauraliser/include/,
-					../examples/dirass/include/,
-					../examples/pitch_shifter/include/,
-					../examples/matrixconv/include/,
-					../examples/multiconv/include/,
-					../examples/powermap/include/,
-					../examples/panner/include/,
-					../examples/rotator/include/,
-					../examples/sldoa/include/,
+					../examples/include/,
+					./include/,
 				);
 				INSTALL_PATH = bin/;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
@@ -1057,10 +1103,9 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = (
+					./include/,
+					../examples/include,
 					../framework/include,
-					unity/,
-					../examples/ambi_bin/include,
-					../examples/ambi_dec/include,
 				);
 			};
 			name = Debug;
@@ -1111,23 +1156,9 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					unity/,
 					../framework/include/,
-					../examples/ambi_bin/include/,
-					../examples/ambi_dec/include/,
-					../examples/ambi_drc/include/,
-					../examples/ambi_enc/include/,
-					../examples/array2sh/include/,
-					../examples/beamformer/include/,
-					../examples/binauraliser/include/,
-					../examples/dirass/include/,
-					../examples/pitch_shifter/include/,
-					../examples/matrixconv/include/,
-					../examples/multiconv/include/,
-					../examples/powermap/include/,
-					../examples/panner/include/,
-					../examples/rotator/include/,
-					../examples/sldoa/include/,
+					../examples/include/,
+					./include/,
 				);
 				INSTALL_PATH = bin/;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
@@ -1135,10 +1166,9 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = (
+					./include/,
+					../examples/include,
 					../framework/include,
-					unity/,
-					../examples/ambi_bin/include,
-					../examples/ambi_dec/include,
 				);
 			};
 			name = Release;
@@ -1160,10 +1190,9 @@
 					SAF_ENABLE_NETCDF,
 				);
 				HEADER_SEARCH_PATHS = (
-					unity,
+					./include/,
 					../examples/include,
 					"../framework/include/**",
-					timer,
 					../dependencies/MacOSX/include,
 					/opt/intel/compilers_and_libraries/mac/mkl/include,
 					/opt/intel/compilers_and_libraries/mac/ipp/include,
@@ -1211,10 +1240,9 @@
 					SAF_ENABLE_NETCDF,
 				);
 				HEADER_SEARCH_PATHS = (
-					unity,
+					./include/,
 					../examples/include,
 					"../framework/include/**",
-					timer,
 					../dependencies/MacOSX/include,
 					/opt/intel/compilers_and_libraries/mac/mkl/include,
 					/opt/intel/compilers_and_libraries/mac/ipp/include,
