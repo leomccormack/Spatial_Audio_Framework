@@ -1,9 +1,27 @@
+/*
+ * This file is part of the saf_tracker module unit tests.
+ * Copyright (c) 2020-2021 - Leo McCormack
+ *
+ * The saf_tracker module is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * The saf_tracker module is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * See <http://www.gnu.org/licenses/> for a copy of the GNU General Public
+ * License.
+ */
+
 /**
  * @file test__tracker_module.c
  * @brief Unit tests for the SAF tracker module
  * @author Leo McCormack
  * @date 27.04.2020
- * @license Mixed (module dependent)
+ * @license GNU GPLv2
  */
 
 #include "saf_test.h"

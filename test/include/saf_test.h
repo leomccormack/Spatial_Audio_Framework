@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020-2021 Leo McCormack
+ *
+ * This software is dual-licensed. Please refer to the LICENCE.md file for more
+ * information.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+ * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /**
  * @file saf_test.h
  * @brief Unit test program for the Spatial_Audio_Framework
@@ -37,7 +52,7 @@
 #ifndef __SAF_TEST_H_INCLUDED__
 #define __SAF_TEST_H_INCLUDED__
 
-#include "resources/unity.h" /* unit testing suite */
+#include "resources/unity.h" /* unit testing suite (MIT license) */
 #include "resources/timer.h" /* for timing the individual tests */
 #include "saf.h"             /* master framework include header */
 #include "saf_externals.h"   /* to also include saf dependencies (cblas etc.) */
