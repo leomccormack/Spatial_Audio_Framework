@@ -83,7 +83,7 @@
 # define SAF_PId ( 3.14159265358979323846264338327950288 )
 
 /** Returns 0 if "x" is not a power of 2 */
-#define SAF_ISPOW2(x) (((x & ~(x-1))==x) ? x : 0);
+#define SAF_ISPOW2(x) (((x & ~(x-1))==x) ? x : 0)
 
 #ifndef ISEVEN
 /** Returns 1 if "n" is even valued, and 0 if it is not */
