@@ -852,7 +852,7 @@ void lti_disc
 }
 
 /* Approximate expf and logf (BSD-3-clause License), Copyright 2011 Edward Kmett, https://github.com/ekmett/approximate */
-#ifdef LITTLE_ENDIAN
+#if defined(LITTLE_ENDIAN) && 0
 static float expf_fast(float a) {
     union { float f; int x; } u;
     a=SAF_MAX(a, -80.0f);
@@ -895,12 +895,12 @@ float gauss_pdf3
     E += DX[2] * S_DX[2];
     E *= 0.5f;
 
-#ifdef LITTLE_ENDIAN
+#if defined(LITTLE_ENDIAN) && 0
     E = E + 1.5f * SAF_LOG_2PI + 0.5f *
         logf_fast(S[0][0] * (S[1][1] * S[2][2] - S[2][1] * S[1][2])-S[1][0] * (S[0][1] * S[2][2] - S[2][1] * S[0][2])+S[2][0] * (S[0][1] * S[1][2] - S[1][1] * S[0][2]));
     return expf_fast(-E);
 #else
-    E = E + 1.5f * SAF_LOG_2PI + 0.5f * logf(utility_sdet(NULL, (float*)S, 3));
+    E = E + 1.5f * SAF_LOG_2PI + 0.5f * logf(S[0][0] * (S[1][1] * S[2][2] - S[2][1] * S[1][2])-S[1][0] * (S[0][1] * S[2][2] - S[2][1] * S[0][2])+S[2][0] * (S[0][1] * S[1][2] - S[1][1] * S[0][2]));
     return expf(-E);
 #endif
 }
