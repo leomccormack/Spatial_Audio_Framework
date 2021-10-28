@@ -17,7 +17,13 @@
 /**
  * @file: spreader_internal.h
  * @brief An arbitrary array panner (HRIRs, microphone array IRs, etc.) with
- *        coherent and incoherent spreading modes.
+ *        coherent and incoherent spreading modes, as described in [1].
+ *
+ * @see [1] McCormack, L. Politis, A., and Pulkki, V., 2021, October. Rendering
+ *          of source spread for arbitrary playback setups based on spatial
+ *          covariance matching. In 2021 IEEE Workshop on Applications of Signal
+ *          Processing to Audio and Acoustics (WASPAA). IEEE
+ *
  * @author Leo McCormack
  * @date 07.04.2021
  * @license ISC

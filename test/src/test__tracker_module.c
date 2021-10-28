@@ -27,6 +27,7 @@
 #include "saf_test.h"
 
 #ifdef SAF_ENABLE_TRACKER_MODULE
+
 void test__tracker3d(void){
     int hop, i, j, k, nSH, nGrid, rand_idx, dropouts;
     int inds[2];
@@ -218,4 +219,5 @@ void test__tracker3d(void){
     free(Vn);
     free(Vn_cmplx);
 }
+
 #endif /* SAF_ENABLE_TRACKER_MODULE */

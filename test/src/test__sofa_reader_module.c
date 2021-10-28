@@ -29,6 +29,7 @@
 #endif
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
+
 void test__saf_sofa_open(void){
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
@@ -74,4 +75,5 @@ void test__sofa_comparison(void){
     saf_sofa_close(&sofa);
     mysofa_free(hrtf);
 }
+
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */

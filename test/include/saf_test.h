@@ -265,6 +265,8 @@ void test__ims_shoebox_RIR(void);
 /*                     SAF sofa reader module unit tests                      */
 /* ========================================================================== */
 
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
+
 /**
  * Testing the SAF SOFA reader that uses the netcdf library */
 void test__saf_sofa_open(void);
@@ -275,15 +277,21 @@ void test__mysofa_load(void);
  * Testing that the two SOFA readers produce the same results */
 void test__sofa_comparison(void);
 
+#endif /* SAF_ENABLE_SOFA_READER_MODULE */
+
 
 /* ========================================================================== */
 /*                       SAF tracker module unit tests                        */
 /* ========================================================================== */
 
+#ifdef SAF_ENABLE_TRACKER_MODULE
+
 /**
  * Testing that the particle-filtering based tracker is able to correctly track
  * two simultaneous targets */
 void test__tracker3d(void);
+
+#endif /* SAF_ENABLE_TRACKER_MODULE */
 
 
 /* ========================================================================== */
@@ -313,6 +321,8 @@ void test__malloc6d(void);
 /*                           SAF examples unit tests                          */
 /* ========================================================================== */
 
+#ifdef SAF_ENABLE_EXAMPLES_TESTS
+
 /**
  * Testing the SAF ambi_bin.h example (this may also serve as a tutorial on how
  * to use it) */
@@ -337,6 +347,8 @@ void test__saf_example_rotator(void);
  * Testing the SAF spreader.h example (this may also serve as a tutorial on how
  * to use it) */
 void test__saf_example_spreader(void);
+
+#endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
 
 #ifdef __cplusplus
