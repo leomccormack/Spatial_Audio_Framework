@@ -113,34 +113,34 @@ $(document).ready(function(){initNavTree('spreader__internal_8c_source.html','')
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment"> * PERFORMANCE OF THIS SOFTWARE.</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &quot;<a class="code" href="spreader__internal_8h.html">spreader_internal.h</a>&quot;</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="spreader__internal_8c.html#a646714716eadf3b1fadfff27853d029d">   28</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="spreader__internal_8c.html#a646714716eadf3b1fadfff27853d029d">spreader_setCodecStatus</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hSpr, <a class="code hl_enumeration" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9">CODEC_STATUS</a> newStatus)</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>{</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <a class="code hl_struct" href="structspreader__data.html">spreader_data</a> *pData = (<a class="code hl_struct" href="structspreader__data.html">spreader_data</a>*)(hSpr);</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">if</span>(newStatus==<a class="code hl_enumvalue" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9a2080f5e18f142bf2de337f666a572daf">CODEC_STATUS_NOT_INITIALISED</a>){</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        <span class="comment">/* Pause until current initialisation is complete */</span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        <span class="keywordflow">while</span>(pData-&gt;<a class="code hl_variable" href="structspreader__data.html#ad06b8746465d5a6cd5ff75a152ba0f17">codecStatus</a> == <a class="code hl_enumvalue" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9af77e47c2718ffc2335f5bf1542f92bc5">CODEC_STATUS_INITIALISING</a>)</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>            SAF_SLEEP(10);</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    }</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    pData-&gt;<a class="code hl_variable" href="structspreader__data.html#ad06b8746465d5a6cd5ff75a152ba0f17">codecStatus</a> = newStatus;</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>}</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#include &quot;<a class="code" href="spreader__internal_8h.html">spreader_internal.h</a>&quot;</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="spreader__internal_8c.html#a646714716eadf3b1fadfff27853d029d">   34</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="spreader__internal_8c.html#a646714716eadf3b1fadfff27853d029d">spreader_setCodecStatus</a>(<span class="keywordtype">void</span>* <span class="keyword">const</span> hSpr, <a class="code hl_enumeration" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9">CODEC_STATUS</a> newStatus)</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>{</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <a class="code hl_struct" href="structspreader__data.html">spreader_data</a> *pData = (<a class="code hl_struct" href="structspreader__data.html">spreader_data</a>*)(hSpr);</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordflow">if</span>(newStatus==<a class="code hl_enumvalue" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9a2080f5e18f142bf2de337f666a572daf">CODEC_STATUS_NOT_INITIALISED</a>){</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="comment">/* Pause until current initialisation is complete */</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        <span class="keywordflow">while</span>(pData-&gt;<a class="code hl_variable" href="structspreader__data.html#ad06b8746465d5a6cd5ff75a152ba0f17">codecStatus</a> == <a class="code hl_enumvalue" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9af77e47c2718ffc2335f5bf1542f92bc5">CODEC_STATUS_INITIALISING</a>)</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            SAF_SLEEP(10);</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    }</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    pData-&gt;<a class="code hl_variable" href="structspreader__data.html#ad06b8746465d5a6cd5ff75a152ba0f17">codecStatus</a> = newStatus;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>}</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  </div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
 <div class="ttc" id="a__common_8h_html_af0ded734eade63c6af9f797988fffcd9"><div class="ttname"><a href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9">CODEC_STATUS</a></div><div class="ttdeci">CODEC_STATUS</div><div class="ttdoc">Current status of the codec.</div><div class="ttdef"><b>Definition:</b> <a href="__common_8h_source.html#l00199">_common.h:199</a></div></div>
 <div class="ttc" id="a__common_8h_html_af0ded734eade63c6af9f797988fffcd9a2080f5e18f142bf2de337f666a572daf"><div class="ttname"><a href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9a2080f5e18f142bf2de337f666a572daf">CODEC_STATUS_NOT_INITIALISED</a></div><div class="ttdeci">@ CODEC_STATUS_NOT_INITIALISED</div><div class="ttdoc">Codec has not yet been initialised, or the codec configuration has changed.</div><div class="ttdef"><b>Definition:</b> <a href="__common_8h_source.html#l00204">_common.h:202</a></div></div>
 <div class="ttc" id="a__common_8h_html_af0ded734eade63c6af9f797988fffcd9af77e47c2718ffc2335f5bf1542f92bc5"><div class="ttname"><a href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9af77e47c2718ffc2335f5bf1542f92bc5">CODEC_STATUS_INITIALISING</a></div><div class="ttdeci">@ CODEC_STATUS_INITIALISING</div><div class="ttdoc">Codec is currently being initialised, input audio should not be processed.</div><div class="ttdef"><b>Definition:</b> <a href="__common_8h_source.html#l00207">_common.h:205</a></div></div>
-<div class="ttc" id="aspreader__internal_8c_html_a646714716eadf3b1fadfff27853d029d"><div class="ttname"><a href="spreader__internal_8c.html#a646714716eadf3b1fadfff27853d029d">spreader_setCodecStatus</a></div><div class="ttdeci">void spreader_setCodecStatus(void *const hSpr, CODEC_STATUS newStatus)</div><div class="ttdoc">Sets codec status (see CODEC_STATUS enum)</div><div class="ttdef"><b>Definition:</b> <a href="spreader__internal_8c_source.html#l00028">spreader_internal.c:28</a></div></div>
+<div class="ttc" id="aspreader__internal_8c_html_a646714716eadf3b1fadfff27853d029d"><div class="ttname"><a href="spreader__internal_8c.html#a646714716eadf3b1fadfff27853d029d">spreader_setCodecStatus</a></div><div class="ttdeci">void spreader_setCodecStatus(void *const hSpr, CODEC_STATUS newStatus)</div><div class="ttdoc">Sets codec status (see CODEC_STATUS enum)</div><div class="ttdef"><b>Definition:</b> <a href="spreader__internal_8c_source.html#l00034">spreader_internal.c:34</a></div></div>
 <div class="ttc" id="aspreader__internal_8h_html"><div class="ttname"><a href="spreader__internal_8h.html">spreader_internal.h</a></div><div class="ttdoc">An arbitrary array panner (HRIRs, microphone array IRs, etc.) with coherent and incoherent spreading ...</div></div>
-<div class="ttc" id="astructspreader__data_html"><div class="ttname"><a href="structspreader__data.html">spreader_data</a></div><div class="ttdoc">Main structure for spreader.</div><div class="ttdef"><b>Definition:</b> <a href="spreader__internal_8h_source.html#l00066">spreader_internal.h:67</a></div></div>
-<div class="ttc" id="astructspreader__data_html_ad06b8746465d5a6cd5ff75a152ba0f17"><div class="ttname"><a href="structspreader__data.html#ad06b8746465d5a6cd5ff75a152ba0f17">spreader_data::codecStatus</a></div><div class="ttdeci">CODEC_STATUS codecStatus</div><div class="ttdoc">see CODEC_STATUS</div><div class="ttdef"><b>Definition:</b> <a href="spreader__internal_8h_source.html#l00117">spreader_internal.h:117</a></div></div>
+<div class="ttc" id="astructspreader__data_html"><div class="ttname"><a href="structspreader__data.html">spreader_data</a></div><div class="ttdoc">Main structure for spreader.</div><div class="ttdef"><b>Definition:</b> <a href="spreader__internal_8h_source.html#l00072">spreader_internal.h:73</a></div></div>
+<div class="ttc" id="astructspreader__data_html_ad06b8746465d5a6cd5ff75a152ba0f17"><div class="ttname"><a href="structspreader__data.html#ad06b8746465d5a6cd5ff75a152ba0f17">spreader_data::codecStatus</a></div><div class="ttdeci">CODEC_STATUS codecStatus</div><div class="ttdoc">see CODEC_STATUS</div><div class="ttdef"><b>Definition:</b> <a href="spreader__internal_8h_source.html#l00123">spreader_internal.h:123</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.1-->
@@ -148,7 +148,7 @@ $(document).ready(function(){initNavTree('spreader__internal_8c_source.html','')
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_95b57effb8038f90624a8a5b60361b2e.html">src</a></li><li class="navelem"><a class="el" href="dir_2587efe1801158f1709bec254537c358.html">spreader</a></li><li class="navelem"><a class="el" href="spreader__internal_8c.html">spreader_internal.c</a></li>
-    <li class="footer">Generated on Thu Oct 14 2021 10:52:33 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Thu Oct 28 2021 13:14:33 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

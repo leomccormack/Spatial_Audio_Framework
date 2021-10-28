@@ -242,7 +242,7 @@ Macros</h2></td></tr>
 <tr class="memitem:ga4298fd359b9720411539372bcb353f66"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga4298fd359b9720411539372bcb353f66">SAF_PId</a>&#160;&#160;&#160;( 3.14159265358979323846264338327950288 )</td></tr>
 <tr class="memdesc:ga4298fd359b9720411539372bcb353f66"><td class="mdescLeft">&#160;</td><td class="mdescRight">pi constant (double precision)  <a href="group___utilities.html#ga4298fd359b9720411539372bcb353f66">More...</a><br /></td></tr>
 <tr class="separator:ga4298fd359b9720411539372bcb353f66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaac660048f746e3568501e471a539f2c8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaac660048f746e3568501e471a539f2c8">SAF_ISPOW2</a>(x)&#160;&#160;&#160;(((x &amp; ~(x-1))==x) ? x : 0);</td></tr>
+<tr class="memitem:gaac660048f746e3568501e471a539f2c8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaac660048f746e3568501e471a539f2c8">SAF_ISPOW2</a>(x)&#160;&#160;&#160;(((x &amp; ~(x-1))==x) ? x : 0)</td></tr>
 <tr class="memdesc:gaac660048f746e3568501e471a539f2c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns 0 if "x" is not a power of 2.  <a href="group___utilities.html#gaac660048f746e3568501e471a539f2c8">More...</a><br /></td></tr>
 <tr class="separator:gaac660048f746e3568501e471a539f2c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabb05654602cfc66de387630c21351635"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gabb05654602cfc66de387630c21351635">ISEVEN</a>(n)&#160;&#160;&#160;((n%2 == 0) ? 1 : 0)</td></tr>
@@ -2277,7 +2277,7 @@ Variables</h2></td></tr>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">x</td><td>)</td>
-          <td>&#160;&#160;&#160;(((x &amp; ~(x-1))==x) ? x : 0);</td>
+          <td>&#160;&#160;&#160;(((x &amp; ~(x-1))==x) ? x : 0)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -6759,6 +6759,11 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the processing delay in samples. </p>
+<dl class="section note"><dt>Note</dt><dd>The QMF filterbank delay is broken down into the following: analysis delay: 5*hopsize<ul>
+<li>hybrid-filtering delay: 6*hopsize (or 0, if it is disabled)</li>
+<li>synthesis delay 4*hopsize </li>
+</ul>
+</dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="saf__utility__qmf_8c_source.html#l00609">609</a> of file <a class="el" href="saf__utility__qmf_8c_source.html">saf_utility_qmf.c</a>.</p>
 
@@ -20908,7 +20913,7 @@ Example Usage</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Oct 14 2021 10:52:37 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Thu Oct 28 2021 13:14:38 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 <script type="text/javascript">
