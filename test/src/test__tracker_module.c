@@ -42,7 +42,7 @@ void test__tracker3d(void){
     float *target_dirs_xyz, *target_var_xyz;
 
     /* Test configuration */
-    const float acceptedTolerance = 0.001f;
+    const float acceptedTolerance = 0.005f;
     const int order = 2;
     const float fs = 48e3;
     const int hopsize = 128;
@@ -201,7 +201,7 @@ void test__tracker3d(void){
                 dropouts++; /* Should be very unlikely, (as the probably of death set to be so low), but it can still happen... */
         }
     }
-    TEST_ASSERT_TRUE(dropouts<10);
+    TEST_ASSERT_TRUE(dropouts<12);
 
     /* Clean-up */
     tracker3d_destroy(&hT3d);
