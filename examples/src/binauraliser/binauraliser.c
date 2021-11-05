@@ -60,19 +60,31 @@ void binauraliser_create
     pData->useRollPitchYawFlag = 0;
     pData->enableRotation = 0;
 
-    /* Near field DVF variables*/
-    pData->head_radius_recip = 1.f / 0.0875; // TODO: make variable
-    /* NOTE: this default distance values is also hardcoded in
-       PluginProcessor::loadConfiguration & PluginProcessor::setStateInformation */
-    // TODO: proper way to set? default distance 3 m, change?
-    memset(pData->src_dists_m, 3.0f, MAX_NUM_INPUTS * sizeof(float));
+    /* Near field DVF settings */
+    // Head radius set according to the linear combination of head width, height and depth from Algazi VR, Avendano C, Duda RO. Estimation of a spherical-head model from anthropometry. J Audio Eng Soc 2001; 49(6):472-9.
+    // rho = 34 gives ~3 m far field, where the max DVF filter response is about +/-0.5 dB
+    // Near field limit set where filters are stable, in meters from head _center_
+    pData->head_radius = 0.09096;
+    pData->head_radius_recip = 1.f / pData->head_radius;
+    pData->farfield_thresh_m = pData->head_radius * 34.f;
+    pData->nearfield_limit_m = 0.15f;
+
+    /* Set default source directions and distances */
+    // must be called after pData->farfield_thresh_m is set
+    binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
+    for(int i=0; i<MAX_NUM_INPUTS; i++){
+        pData->src_dists_m[i] = pData->farfield_thresh_m;
+    }
 
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
-    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, BINAURALISER_FRAME_SIZE, sizeof(float));
-    pData->outframeTD = (float**)malloc2d(NUM_EARS, BINAURALISER_FRAME_SIZE, sizeof(float));
+    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, FRAME_SIZE, sizeof(float));
+    pData->ffsumTD = (float**)malloc2d(NUM_EARS, FRAME_SIZE, sizeof(float));
+    pData->nfsumTD = (float**)malloc2d(NUM_EARS, FRAME_SIZE, sizeof(float));
+    pData->nfsrcsTD = (float***)malloc3d(MAX_NUM_INPUTS, NUM_EARS, FRAME_SIZE, sizeof(float));
     pData->inputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
-    pData->outputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
+    pData->ffsumTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
+    pData->nfsrcTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
 
     /* hrir data */
     pData->hrirs = NULL;
@@ -124,9 +136,12 @@ void binauraliser_destroy
         if(pData->hSTFT !=NULL)
             afSTFT_destroy(&(pData->hSTFT));
         free(pData->inputFrameTD);
-        free(pData->outframeTD);
+        free(pData->ffsumTD);
+        free(pData->nfsrcsTD);
+        free(pData->nfsumTD);
         free(pData->inputframeTF);
-        free(pData->outputframeTF);
+        free(pData->ffsumTF);
+        free(pData->nfsrcTF);
         free(pData->hrtf_vbap_gtableComp);
         free(pData->hrtf_vbap_gtableIdx);
         free(pData->hrtf_fb);
@@ -209,23 +224,25 @@ void binauraliser_process
 )
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    int ch, ear, i, band, nSources;
-    float src_dirs[MAX_NUM_INPUTS][2], Rxyz[3][3], hypotxy;
+    int t, ch, ear, i, band, nSources, n;
+    float src_dirs[MAX_NUM_INPUTS][2], src_dists[MAX_NUM_INPUTS], Rxyz[3][3];
+    float hypotxy, headRadiusRecip, sourceScale, fs, ffThresh;
     int enableRotation;
+    float thetaLR[2] = { 0.0, 0.0 };
 
     /* copy user parameters to local variables */
+    memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
+    memcpy(src_dists, pData->src_dists_m, MAX_NUM_INPUTS*sizeof(float));
     nSources = pData->nSources;
     enableRotation = pData->enableRotation;
-    memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
+    headRadiusRecip = pData->head_radius_recip;
+    fs = (float)pData->fs;
+    ffThresh = pData->farfield_thresh_m;
+    sourceScale = 1.0f/sqrtf((float)nSources);
 
     /* apply binaural panner */
     if ((nSamples == BINAURALISER_FRAME_SIZE) && (pData->hrtf_fb!=NULL) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ){
         pData->procStatus = PROC_STATUS_ONGOING;
-
-        /* get last frame's final sample for DVF IIR filter */
-        float wzL = pData->outframeTD[0][FRAME_SIZE-1]; // TODO: confirm indexing, should be pointer?
-        float wzR = pData->outframeTD[1][FRAME_SIZE-1];
-        float fs =(float)pData->fs; // TODO: why is pData->fs an int?
 
         /* Load time-domain data */
         for(i=0; i < SAF_MIN(nSources,nInputs); i++)
@@ -263,8 +280,12 @@ void binauraliser_process
             pData->recalc_M_rotFLAG = 0;
         }
 
-        /* interpolate hrtfs and apply to each source */
-        memset(FLATTEN3D(pData->outputframeTF), 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
+        /* Interpolate hrtfs and apply to each source */
+        // Zero out near-field (nf) and far-field (ff) summing busses
+        memset(FLATTEN2D(pData->nfsumTD), 0, NUM_EARS*FRAME_SIZE * sizeof(float));
+        memset(FLATTEN3D(pData->ffsumTF), 0, HYBRID_BANDS*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
+
+        float rho, wzL, wzR;
         for (ch = 0; ch < nSources; ch++) {
             if(pData->recalc_hrtf_interpFLAG[ch]){
                 if(enableRotation)
@@ -274,39 +295,68 @@ void binauraliser_process
                 pData->recalc_hrtf_interpFLAG[ch] = 0;
             }
 
-            /* Convolve this channel with the interpolated HRTF, and add it to the binaural buffer */
-            for (band = 0; band < HYBRID_BANDS; band++)
-                for (ear = 0; ear < NUM_EARS; ear++)
-                    cblas_caxpy(TIME_SLOTS, &pData->hrtf_interp[ch][band][ear], pData->inputframeTF[band][ch], 1, pData->outputframeTF[band][ear], 1);
+            /* Apply DVF to near field sources, sum far field sources */
+
+            // TODO: useful to move nested loops below into cblas style? e.g. cblas_sscal
+            if (src_dists[ch] < ffThresh) {
+                // Near field source, apply HRTF, iTFT, then individual DVF
+                for (band = 0; band < HYBRID_BANDS; band++) {
+                    for (ear = 0; ear < NUM_EARS; ear++) {
+                        for (t = 0; t < TIME_SLOTS; t++) {
+                            /* apply HRTF filter, scale this near field source by the number of sources */
+                            pData->nfsrcTF[band][ear][t] = crmulf(ccmulf(pData->inputframeTF[band][ch][t],
+                                                                          pData->hrtf_interp[ch][band][ear]),
+                                                                   sourceScale);
+                        }
+                    }
+                }
+                /* inverse-TFT: individual near field source */
+                afSTFT_backward(pData->hSTFT, pData->nfsrcTF, FRAME_SIZE, pData->nfsrcsTD[ch]);
+                /* apply DVF for near field proximity */
+                rho = src_dists[ch] * headRadiusRecip;
+                /* get previous frame's last sample for DVF IIR filter */
+                // TODO: if the last frame was farfield signal (didn't apply the filter), set wz to first sample of input buffer
+                wzL = pData->nfsrcsTD[ch][0][FRAME_SIZE-1];
+                wzR = pData->nfsrcsTD[ch][1][FRAME_SIZE-1];
+                convertFrontalDoAToIpsilateral(src_dirs[ch][0], &thetaLR[0]);
+                // TODO: confirm channel indexing
+                applyDVF(thetaLR[0], rho, pData->nfsrcsTD[ch][0], FRAME_SIZE, fs, &wzL, pData->nfsrcsTD[ch][0]);
+                applyDVF(thetaLR[1], rho, pData->nfsrcsTD[ch][1], FRAME_SIZE, fs, &wzR, pData->nfsrcsTD[ch][1]);
+
+                for (ear = 0; ear < NUM_EARS; ear++) {
+                    for (n = 0; n < FRAME_SIZE; n++) {
+                        // TODO: vector add? see ultility_svvadd
+                        pData->nfsumTD[ear][n] += pData->nfsrcsTD[ch][ear][n];
+                    }
+                }
+
+            } else {
+                // Far field source, apply HRTF, sum with other far field sources
+                for (band = 0; band < HYBRID_BANDS; band++) {
+                    for (ear = 0; ear < NUM_EARS; ear++) {
+                        for (t = 0; t < TIME_SLOTS; t++) {
+                            /* apply HRTF filter and add to output buffer */
+                            pData->ffsumTF[band][ear][t] = ccaddf(pData->ffsumTF[band][ear][t],
+                                                                  ccmulf(pData->inputframeTF[band][ch][t],
+                                                                         pData->hrtf_interp[ch][band][ear])
+                                                                  );
+                        }
+                    }
+                }
+            }
         }
+        /* Scale summed far field sources by the number of sources */
+        for (band = 0; band < HYBRID_BANDS; band++)
+            for (ear = 0; ear < NUM_EARS; ear++)
+                for (t = 0; t < TIME_SLOTS; t++)
+                    pData->ffsumTF[band][ear][t] = crmulf(pData->ffsumTF[band][ear][t], sourceScale);
 
-        /* scale by number of sources */
-        cblas_sscal(/*re+im*/2*HYBRID_BANDS*NUM_EARS*TIME_SLOTS, 1.0f/sqrtf((float)nSources), (float*)FLATTEN3D(pData->outputframeTF), 1);
+        /* inverse-TFT: summed far field sources */
+        afSTFT_backward(pData->hSTFT, pData->ffsumTF, FRAME_SIZE, pData->ffsumTD);
 
-        /* inverse-TFT */
-        // TODO: Resolve post rebase:
-        // afSTFT_backward_knownDimensions(pData->hSTFT, pData->outputframeTF, BINAURALISER_FRAME_SIZE, NUM_EARS, TIME_SLOTS, pData->outframeTD);
-        afSTFT_backward(pData->hSTFT, pData->outputframeTF, FRAME_SIZE, pData->outframeTD);
-
-
-        /* apply DVF for near field proximity*/
-        // TODO: Temporarily assuming one source
-        float rho = pData->src_dists_m[0] * pData->head_radius_recip;
-        if (rho < 25.f) { // Distance threshold: 2.1875 m distance, given head radius of 0.0875 m
-            // TODO: what is the consideration for `MIN(NUM_EARS, nOutputs)` below?
-            float azim = src_dirs[0][0];                    // azimuth of (first) source TODO: only update on change
-            float thetaLR[2] = {0.0, 0.0};                  // TODO: need to cleanup? store globally like src_dirs?
-            convertFrontalDoAToIpsilateral(azim, &thetaLR[0]);
-            applyDVF(thetaLR[0], rho, pData->outframeTD[0], // TODO: confirm channel indexing
-                     FRAME_SIZE, fs,
-                     &wzL,                                  // TODO: confirm wz, needs to be from previous pass output
-                     pData->outframeTD[0]);
-            applyDVF(thetaLR[1], rho, pData->outframeTD[1], FRAME_SIZE, fs, &wzR, pData->outframeTD[1]);
-        }
-
-        /* Copy to output buffer */
-        for (ch = 0; ch < SAF_MIN(NUM_EARS, nOutputs); ch++)
-            utility_svvcopy(pData->outframeTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
+        /* Sum near + far field signals to output buffer */
+        for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
+            utility_svvadd(pData->ffsumTD[ch], pData->nfsumTD[ch], FRAME_SIZE, outputs[ch]);
         for (; ch < nOutputs; ch++)
             memset(outputs[ch], 0, BINAURALISER_FRAME_SIZE*sizeof(float));
     }
@@ -335,8 +385,10 @@ void binauraliser_setSourceAzi_deg(void* const hBin, int index, float newAzi_deg
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     if(newAzi_deg>180.0f)
         newAzi_deg = -360.0f + newAzi_deg;
-    newAzi_deg = SAF_MAX(newAzi_deg, -180.0f);
-    newAzi_deg = SAF_MIN(newAzi_deg, 180.0f);
+    else if(newAzi_deg<-180.0f)
+        newAzi_deg = 360.0f + newAzi_deg;
+    newAzi_deg = MAX(newAzi_deg, -180.0f);
+    newAzi_deg = MIN(newAzi_deg, 180.0f);
     if(pData->src_dirs_deg[index][0]!=newAzi_deg){
         pData->src_dirs_deg[index][0] = newAzi_deg;
         pData->recalc_hrtf_interpFLAG[index] = 1;
@@ -405,9 +457,12 @@ void binauraliser_setEnableHRIRsDiffuseEQ(void* const hBin, int newState)
 void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    int ch, dummy;
+    int ch;
 
-    binauraliser_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &(dummy));
+    binauraliser_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims));
+    for(int i=0; i<MAX_NUM_INPUTS; i++){ /* presets default to far field source distance */
+        pData->src_dists_m[i] = pData->farfield_thresh_m;
+    }
     if(pData->nSources != pData->new_nSources)
         binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
@@ -555,6 +610,18 @@ float binauraliser_getSourceDist_m(void* const hBin, int index)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     return pData->src_dists_m[index];
+}
+
+float binauraliser_getFarfieldThresh_m(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->farfield_thresh_m;
+}
+
+float binauraliser_getNearfieldLimit_m(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->nearfield_limit_m;
 }
 
 int binauraliser_getNumSources(void* const hBin)

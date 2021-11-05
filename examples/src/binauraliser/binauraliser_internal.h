@@ -72,13 +72,18 @@ extern "C" {
 typedef struct _binauraliser
 {
     /* audio buffers */
+    // TODO: post rebase - update comments to accurately reflect description and dimension
     float** inputFrameTD;            /**< time-domain input frame; #MAX_NUM_INPUTS x #BINAURALISER_FRAME_SIZE */
-    float** outframeTD;              /**< time-domain output frame; #NUM_EARS x #BINAURALISER_FRAME_SIZE */
+    float** ffsumTD;                 /**< time-domain output frame, far field sum bus; #NUM_EARS x #BINAURALISER_FRAME_SIZE */
+    float** nfsumTD;                 /**< near field sum bus frame */
+    float*** nfsrcsTD;               /**< near field DVF-filtered sources frame */
     float_complex*** inputframeTF;   /**< time-frequency domain input frame; #HYBRID_BANDS x #MAX_NUM_INPUTS x #TIME_SLOTS */
-    float_complex*** outputframeTF;  /**< time-frequency domain input frame; #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS */
+    float_complex*** ffsumTF;        /**< time-frequency domain output frame; TODO: ??? #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS ??? */
+    float_complex*** nfsrcTF;
     int fs;                          /**< Host sampling rate, in Hz */
-    float freqVector[HYBRID_BANDS];  /**< Frequency vector (filterbank centre frequencies) */
+    float freqVector[HYBRID_BANDS];
     void* hSTFT;                     /**< afSTFT handle */
+    float freqVector[HYBRID_BANDS];  /**< Frequency vector (filterbank centre frequencies) */
 
     /* sofa file info */
     char* sofa_filepath;             /**< absolute/relevative file path for a sofa file */
@@ -123,6 +128,9 @@ typedef struct _binauraliser
     int nSources;
     float src_dirs_deg[MAX_NUM_INPUTS][2];
     float src_dists_m[MAX_NUM_INPUTS];       /**< source distance,  meters */
+    float farfield_thresh_m;
+    float nearfield_limit_m;
+    float head_radius;
     float head_radius_recip;
     INTERP_MODES interpMode;
     int useDefaultHRIRsFLAG;                 /**< 1: use default HRIRs in database, 0: use those from SOFA file */

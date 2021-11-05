@@ -32,7 +32,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "saf_utilities.h" // MTM added... why wasn't this here?
+#include "saf_utilities.h" // TODO: MTM added... why wasn't this here?
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
