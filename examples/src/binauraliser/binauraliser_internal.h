@@ -198,13 +198,15 @@ void binauraliser_initTFT(void* const hBin);
  * this. This can help avoid scenarios of many sources being panned in the same
  * direction, or triangulations errors.
  *
+ * @param[in]  hBin          binauraliser handle
  * @param[in]  preset   See #SOURCE_CONFIG_PRESETS enum.
  * @param[out] dirs_deg Source directions, [azimuth elevation] convention, in
  *                      DEGREES;
  * @param[out] newNCH   (&) new number of channels
  * @param[out] nDims    (&) estimate of the number of dimensions (2 or 3)
  */
-void binauraliser_loadPreset(SOURCE_CONFIG_PRESETS preset,
+void binauraliser_loadPreset(void* const hBin,
+                             SOURCE_CONFIG_PRESETS preset,
                              float dirs_deg[MAX_NUM_INPUTS][2],
                              int* newNCH,
                              int* nDims);

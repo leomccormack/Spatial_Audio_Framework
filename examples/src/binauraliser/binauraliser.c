@@ -71,10 +71,7 @@ void binauraliser_create
 
     /* Set default source directions and distances */
     // must be called after pData->farfield_thresh_m is set
-    binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
-    for(int i=0; i<MAX_NUM_INPUTS; i++){
-        pData->src_dists_m[i] = pData->farfield_thresh_m;
-    }
+    binauraliser_loadPreset(pData, SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
 
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
@@ -459,10 +456,7 @@ void binauraliser_setInputConfigPreset(void* const hBin, int newPresetID)
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     int ch;
 
-    binauraliser_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims));
-    for(int i=0; i<MAX_NUM_INPUTS; i++){ /* presets default to far field source distance */
-        pData->src_dists_m[i] = pData->farfield_thresh_m;
-    }
+    binauraliser_loadPreset(pData, newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims));
     if(pData->nSources != pData->new_nSources)
         binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)

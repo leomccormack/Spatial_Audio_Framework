@@ -272,12 +272,14 @@ void binauraliser_initTFT
 
 void binauraliser_loadPreset
 (
+    void* const hBin,
     SOURCE_CONFIG_PRESETS preset,
     float dirs_deg[MAX_NUM_INPUTS][2],
     int* newNCH,
     int* nDims
 )
 {
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
     float sum_elev;
     int ch, i, nCH;
     
@@ -470,6 +472,12 @@ void binauraliser_loadPreset
         for(i=0; i<2; i++){
             dirs_deg[ch][i] = __default_LScoords64_rad[ch][i]* (180.0f/SAF_PI);
         }
+    }
+    
+    /* Set default distance to far field (no near field filtering) */
+    float ffDist = pData->farfield_thresh_m;
+    for(int i=0; i<MAX_NUM_INPUTS; i++){
+        pData->src_dists_m[i] = ffDist;
     }
     
     /* For dynamically changing the number of TFT channels */
