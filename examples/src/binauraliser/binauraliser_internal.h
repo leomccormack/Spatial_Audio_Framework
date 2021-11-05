@@ -129,6 +129,7 @@ typedef struct _binauraliser
     float src_dirs_deg[MAX_NUM_INPUTS][2];
     float src_dists_m[MAX_NUM_INPUTS];       /**< source distance,  meters */
     float farfield_thresh_m;
+    float farfield_headroom;
     float nearfield_limit_m;
     float head_radius;
     float head_radius_recip;

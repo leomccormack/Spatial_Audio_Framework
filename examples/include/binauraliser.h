@@ -286,6 +286,11 @@ float binauraliser_getSourceDist_m(void* const hBin, int index);
 float binauraliser_getFarfieldThresh_m(void* const hBin);
 
 /**
+* Returns the scaling factor to give the far field threshold headroom (useful for UI range limits)
+*/
+float binauraliser_getFarfieldHeadroom(void* const hBin);
+
+/**
 * Returns the minimum distance possible for near field filter, in METERS
 */
 float binauraliser_getNearfieldLimit_m(void* const hBin);

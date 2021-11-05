@@ -67,6 +67,7 @@ void binauraliser_create
     pData->head_radius = 0.09096;
     pData->head_radius_recip = 1.f / pData->head_radius;
     pData->farfield_thresh_m = pData->head_radius * 34.f;
+    pData->farfield_headroom = 1.05f; /* 5% headroom above the far field threshold, for default distances */
     pData->nearfield_limit_m = 0.15f;
 
     /* Set default source directions and distances */
@@ -611,6 +612,13 @@ float binauraliser_getFarfieldThresh_m(void* const hBin)
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     return pData->farfield_thresh_m;
 }
+
+float binauraliser_getFarfieldHeadroom(void* const hBin)
+{
+    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    return pData->farfield_headroom;
+}
+
 
 float binauraliser_getNearfieldLimit_m(void* const hBin)
 {

@@ -475,7 +475,7 @@ void binauraliser_loadPreset
     }
     
     /* Set default distance to far field (no near field filtering) */
-    float ffDist = pData->farfield_thresh_m;
+    float ffDist = pData->farfield_thresh_m * pData->farfield_headroom;
     for(int i=0; i<MAX_NUM_INPUTS; i++){
         pData->src_dists_m[i] = ffDist;
     }
