@@ -33,6 +33,11 @@
 #ifndef __BINAURALISER_INTERNAL_H_INCLUDED__
 #define __BINAURALISER_INTERNAL_H_INCLUDED__
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+#include <string.h>        // TODO: this include and above... sort out why/if they're needed
 #include "binauraliser.h"  /* Include header for this example */
 #include "saf.h"           /* Main include header for SAF */
 #include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
@@ -72,16 +77,13 @@ extern "C" {
 typedef struct _binauraliser
 {
     /* audio buffers */
+
     // TODO: post rebase - update comments to accurately reflect description and dimension
     float** inputFrameTD;            /**< time-domain input frame; #MAX_NUM_INPUTS x #BINAURALISER_FRAME_SIZE */
-    float** ffsumTD;                 /**< time-domain output frame, far field sum bus; #NUM_EARS x #BINAURALISER_FRAME_SIZE */
-    float** nfsumTD;                 /**< near field sum bus frame */
-    float*** nfsrcsTD;               /**< near field DVF-filtered sources frame */
+    float** binsrcsTD;               /**< near field DVF-filtered sources frame */
     float_complex*** inputframeTF;   /**< time-frequency domain input frame; #HYBRID_BANDS x #MAX_NUM_INPUTS x #TIME_SLOTS */
-    float_complex*** ffsumTF;        /**< time-frequency domain output frame; TODO: ??? #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS ??? */
-    float_complex*** nfsrcTF;
+    float_complex*** binauralTF;     /**< time-frequency domain output frame; TODO: ??? #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS ??? */
     int fs;                          /**< Host sampling rate, in Hz */
-    float freqVector[HYBRID_BANDS];
     void* hSTFT;                     /**< afSTFT handle */
     float freqVector[HYBRID_BANDS];  /**< Frequency vector (filterbank centre frequencies) */
 
@@ -128,6 +130,7 @@ typedef struct _binauraliser
     int nSources;
     float src_dirs_deg[MAX_NUM_INPUTS][2];
     float src_dists_m[MAX_NUM_INPUTS];       /**< source distance,  meters */
+    bool inNearfield[MAX_NUM_INPUTS];
     float farfield_thresh_m;
     float farfield_headroom;
     float nearfield_limit_m;
