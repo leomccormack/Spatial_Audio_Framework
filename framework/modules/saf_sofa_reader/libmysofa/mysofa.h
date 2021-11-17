@@ -40,6 +40,7 @@ extern "C" {
 
 #if defined(SAF_ENABLE_SOFA_READER_MODULE)
 
+#include "../../saf_utilities/saf_utilities.h"
 #include <stdbool.h>
 #include <stdint.h>
 

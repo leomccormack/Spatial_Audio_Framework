@@ -12,6 +12,8 @@ For descriptions of minor changes and bug fixes, please refer to the git log.
 v1.2.4
  - Added libmysofa to the saf_sofa_reader module. The saf_sofa_open() function now uses libmysofa by
    default, unless "SAF_ENABLE_NETCDF" is defined. The libmysofa interface may also be used directly
+ - Added zlib to framework/resources, therefore by default the saf_sofa_reader module may be enabled
+   without the need to link external dependencies
  - The default interpolation mode for the binauraliser example is now "Triangular".
  - The ambi_dec example no longer places +/-90degrees virtual loudspeakers for the 2D case, unless
    the selected decoding mode is "AllRAD".
@@ -19,10 +21,9 @@ v1.2.4
 
 Breaking changes:
 
-Since saf_sofa_open() now uses libmysofa by default, the required dependency is zlib and no longer 
-netcdf. Note that zlib is still included in the dependencies folder for MacOS and Win64. If you 
-would like to revert to the previous behaviour (using netcdf directly rather than libmysofa), 
-add the following pre-processing definition to your project: SAF_ENABLE_NETCDF
+Since saf_sofa_open() now uses libmysofa by default, netcdf is no longer a required dependency.
+However, if you would like to revert to the previous behaviour (using netcd rather than using
+libmysofa), then you can use the following pre-processing definition: SAF_ENABLE_NETCDF
 
 ====================================================================================================
 v1.2.3

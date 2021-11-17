@@ -136,7 +136,7 @@
  *
  * ## Dependencies
  *   The following resources: afSTFTlib.h, convhull_3d.h, kiss_fft.h,
- *   md_malloc.h
+ *   md_malloc.h, zlib.h
  *
  * @license ISC
  */
@@ -255,7 +255,6 @@
  * ## Enable instructions
  *   Add this pre-processor definition to your project to enable this module:
  *       SAF_ENABLE_SOFA_READER_MODULE
- *   Then ensure that the zlib library is also linked to your project.
  *   Optionally, if SAF_ENABLE_NETCDF is defined, then the netcdf library must
  *   also be linked to your project.
  *   More information can be found in: docs/SOFA_READER_MODULE_DEPENDENCIES.md

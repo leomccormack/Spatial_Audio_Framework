@@ -20,6 +20,8 @@
  *
  * @note Including this header is optional and only needed if you wish to have
  *       access to these external libraries in your own project.
+ * @note More information can be found in the docs folder regarding where to
+ *       find and how to link dependencies
  * @warning Using ATLAS (SAF_USE_ATLAS) as the performance library is not
  *          recommended, since some LAPACK routines are not implemented by the
  *          library! However, if you don't mind losing some SAF functionality
@@ -43,23 +45,18 @@
  *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
  *
  * ## Optional dependencies
- *   zlib is required by the optional saf_sofa_reader module, which is enabled
- *   with the following pre-processor flag: SAF_ENABLE_SOFA_READER_MODULE
+ *   If the optional saf_sofa_reader module is enabled and SAF_ENABLE_NETCDF is
+ *   defined, then the netcdf library must also be linked along with saf.
  *
- *   Optionally, SAF_ENABLE_NETCDF can be defined, in which case the netcdf
- *   library is employed by the saf_sofa_reader.
+ *   Intel IPP may be optionally employed with the flag: SAF_USE_INTEL_IPP
  *
- *   Intel IPP may be optionally used with the flag: SAF_USE_INTEL_IPP
+ *   FFTW may be optionally employed with the flag: SAF_USE_FFTW
  *
- *   FFTW may be optionally used with the flag: SAF_USE_FFTW
- *
- *   SIMD intrinsics support may be enabled with: SAF_ENABLE_SIMD
+ *   SIMD intrinsics utilisation may be enabled with: SAF_ENABLE_SIMD
  *    - SSE/SSE2/SSE3 intrinsics are used by default
  *    - AVX/AVX2 intrinsics are enabled with compiler flag: -mavx2
  *    - AVX-512  intrinsics are enabled with compiler flag: -mavx512f
  *   (Note that intrinsics require a CPU that supports them)
- *
- * @see More information can be found in the docs folder regarding dependencies
  *
  * @author Leo McCormack
  * @date 06.08.2020
@@ -268,7 +265,8 @@
 /*
  * The built-in saf_sofa_open() SOFA file reader has two implementations:
  *    - By default, the function wraps around the "libmysofa" library
- *      (BSD-3-Clause license), which depends only on zlib.
+ *      (BSD-3-Clause license), which depends only on zlib (which is included
+ *      in framework/resources/zlib)
  *    - However, if SAF_ENABLE_NETCDF is defined, then an approximately 3 times
  *      faster implementation is used instead. Therefore, if you intend to load
  *      many large SOFA files (especially microphone arrays or Ambisonic IRs),
@@ -278,13 +276,12 @@
  * The "mysofa" interface, e.g. mysofa_load(), may also be used directly in
  * either case.
  *
- * Instructions for linking the required "netcdf" or "zlib" library can be
- * found in: docs/SOFA_READER_MODULE_DEPENDENCIES.md
+ * Instructions regarding where to find and how to link the "netcdf" library
+ *     can be found in: docs/SOFA_READER_MODULE_DEPENDENCIES.md
  */
 # ifdef SAF_ENABLE_NETCDF
 #  include <netcdf.h>
 # endif
-# include <zlib.h>
 #endif
 
 

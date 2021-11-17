@@ -181,6 +181,13 @@
  *   https://github.com/xiph/speexdsp/
  */
 #include "../../resources/speex_resampler/speex_resampler.h"
+
+/* For data compression/decompression (Lempel–Ziv 1977 and Huffman coding based)
+ * The original source code can be found here (BSD-3-Clause license):
+ *   https://github.com/madler/zlib
+ */
+#include "../../resources/zlib/zlib.h"
+
 /* For cross-platform complex number support */
 #include "saf_utility_complex.h"
 
